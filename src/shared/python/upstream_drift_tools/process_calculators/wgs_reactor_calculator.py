@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 #!/usr/bin/env python3
 """Water-Gas Shift Reactor Calculator
 ====================================
@@ -88,7 +90,11 @@ else:
         QWidget = object
         QTimer = object
 
+<<<<<<< HEAD
         def pyqtSignal(*args: Any) -> None:
+=======
+        def pyqtSignal(*args) -> Any:
+>>>>>>> origin/main
             return None
 
     try:
@@ -178,7 +184,8 @@ except ImportError:
             Handles phase notations like "H2O_g" (gas) by stripping the suffix.
             """
             # Strip phase suffix (_g, _l, _s) if present
-            assert species is not None, "species must be provided"
+            if not (species is not None):
+                raise ValueError("species must be provided")
             base_species = species.split("_")[0]
 
             h_f = self.get_formation_enthalpy(base_species)
@@ -250,7 +257,12 @@ class WGSReactorEngine:
         # CO + H2O ⇌ CO2 + H2
         # ΔH° = -41.2 kJ/mol, ΔS° = -42.1 J/(mol·K)
 
+<<<<<<< HEAD
         check_temperature(temperature, "temperature")
+=======
+        if not (temperature is not None):
+            raise ValueError("temperature must be provided")
+>>>>>>> origin/main
         delta_H = WGS_DELTA_H  # J/mol
         delta_S = WGS_DELTA_S  # J/(mol·K)
 
@@ -270,7 +282,12 @@ class WGSReactorEngine:
         Returns:
             (n_CO_0, n_H2O_0, n_CO2_0, n_H2_0, n_total_0)
         """
+<<<<<<< HEAD
         require(inlet_composition is not None, "inlet_composition must be provided")
+=======
+        if not (inlet_composition is not None):
+            raise ValueError("inlet_composition must be provided")
+>>>>>>> origin/main
         n_CO_0 = inlet_composition.get("CO", 0)
         n_H2O_0 = inlet_composition.get("H2O", 0) + n_CO_0 * steam_ratio
         n_CO2_0 = inlet_composition.get("CO2", 0)
@@ -288,7 +305,8 @@ class WGSReactorEngine:
         K_eq: float,
     ) -> dict[str, Any]:
         """Assemble the equilibrium result dictionary from the solved extent."""
-        assert x_eq is not None, "x_eq must be provided"
+        if not (x_eq is not None):
+            raise ValueError("x_eq must be provided")
         n_CO_eq = n_CO_0 - x_eq
         n_H2O_eq = n_H2O_0 - x_eq
         n_CO2_eq = n_CO2_0 + x_eq
@@ -328,6 +346,7 @@ class WGSReactorEngine:
         """Calculate equilibrium composition for WGS reaction
         using Gibbs free energy minimization.
 
+<<<<<<< HEAD
         Args:
             inlet_composition: Inlet gas mole fractions (must contain 'CO')
             temperature: Reaction temperature (K)
@@ -343,6 +362,10 @@ class WGSReactorEngine:
         check_temperature(temperature, "temperature")
         check_pressure(pressure, "pressure")
         require(steam_ratio >= 0, "steam_ratio must be non-negative", steam_ratio)
+=======
+        if not (inlet_composition is not None):
+            raise ValueError("inlet_composition must be provided")
+>>>>>>> origin/main
         n_CO_0, n_H2O_0, n_CO2_0, n_H2_0, n_total_0 = self._prepare_initial_moles(
             inlet_composition, steam_ratio
         )
@@ -440,6 +463,7 @@ class WGSReactorEngine:
         temperature: float,
         catalyst_type: str,
     ) -> dict[str, Any]:
+<<<<<<< HEAD
         """Size WGS reactor based on throughput and conversion.
 
         Args:
@@ -460,6 +484,12 @@ class WGSReactorEngine:
             conversion,
         )
         check_temperature(temperature, "temperature")
+=======
+        """Size WGS reactor based on throughput and conversion"""
+        # Space velocity (GHSV)
+        if not (feed_rate is not None):
+            raise ValueError("feed_rate must be provided")
+>>>>>>> origin/main
         ghsv = WGS_TYPICAL_GHSV  # h^-1 (typical for WGS)
 
         # Reactor volume
@@ -695,8 +725,12 @@ if BASE_CALCULATOR_AVAILABLE:
                     "Product Composition:\n",
                 ]
 
-                for species, content in equilibrium["composition"].items():
-                    output_parts.append(f"  {species}: {content:.2f} mol%\n")
+                output_parts.extend(
+                    [
+                        f"  {species}: {content:.2f} mol%\n"
+                        for (species, content) in equilibrium["composition"].items()
+                    ]
+                )
 
                 output_parts.extend(
                     [
@@ -726,7 +760,8 @@ if BASE_CALCULATOR_AVAILABLE:
             self, inlet: dict[str, float], outlet: dict[str, float]
         ) -> None:
             """Create composition comparison plot"""
-            assert inlet is not None, "inlet must be provided"
+            if not (inlet is not None):
+                raise ValueError("inlet must be provided")
             self.figure.clear()
 
             ax = self.figure.add_subplot(111)

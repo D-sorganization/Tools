@@ -52,7 +52,7 @@ class TestTrimeshGeometryContracts:
             # If boolean is available (requires manifold/blender backend)
             assert result is not None
             assert result.volume > 0
-        except Exception:
+        except Exception:  # noqa: BLE001
             pytest.skip("Trimesh boolean backend not available in this environment")
 
 
@@ -62,7 +62,10 @@ class TestSignalProcessingStack:
 
     def test_butterworth_filter_attenuation(self) -> None:
         """Prove a 4th-order Butterworth low-pass filter attenuates high-freq signals."""
+        pytest.importorskip("numpy")
         import numpy as np
+
+        pytest.importorskip("scipy")
         from scipy import signal
 
         # Design a 4th-order Butterworth low-pass at 0.1 (normalized)

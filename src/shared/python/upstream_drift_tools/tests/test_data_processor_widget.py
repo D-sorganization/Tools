@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import numpy as np
@@ -11,13 +12,13 @@ from upstream_drift_tools.ui.widgets.data_processor_widget import DataProcessorW
 
 
 @pytest.fixture
-def empty_widget(qapp):
+def empty_widget(qapp) -> Any:
     widget = DataProcessorWidget()
     return widget
 
 
 @pytest.fixture
-def populated_widget(qapp):
+def populated_widget(qapp) -> Any:
     widget = DataProcessorWidget()
     df = pd.DataFrame(
         {

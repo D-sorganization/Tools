@@ -48,7 +48,8 @@ class PipelineExecutor:
         Returns:
             Processed DataFrame
         """
-        assert pipeline is not None, "pipeline must be provided"
+        if not (pipeline is not None):
+            raise ValueError("pipeline must be provided")
         import pandas as pd
 
         # Load data if path provided
@@ -60,10 +61,10 @@ class PipelineExecutor:
         # Execute each step
         for i, step in enumerate(pipeline.steps):
             if not step.enabled:
-                logger.debug(f"Skipping disabled step {i+1}: {step.description}")
+                logger.debug(f"Skipping disabled step {i + 1}: {step.description}")
                 continue
 
-            logger.info(f"Executing step {i+1}: {step.description}")
+            logger.info(f"Executing step {i + 1}: {step.description}")
             df = self._execute_step(df, step)
 
         # Export if output path provided
@@ -86,7 +87,8 @@ class PipelineExecutor:
 
     def _execute_step(self, df: pd.DataFrame, step: ProcessingStep) -> pd.DataFrame:
         """Execute a single processing step."""
-        assert df is not None, "df must be provided"
+        if not (df is not None):
+            raise ValueError("df must be provided")
         params = step.parameters
 
         if step.operation == OperationType.FILTER:

@@ -37,7 +37,7 @@ npm test
 Follow the rules in `.cursor/rules/webdevrules.md` and `.cursor/rules/.cursorrules.md`:
 
 - TypeScript strict mode
-- No placeholders (no TODO, FIXME, etc.)
+- No placeholders (no TRACKED_TASK, TRACKED_DEFECT, etc.)
 - Complete error handling
 - Type all functions
 - Include tests for all functions

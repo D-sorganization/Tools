@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """TabCreationMixin -- UI tab creation methods for DataProcessorMainWindow.
 
 Creates all tab widgets: file, filter, advanced, resample, time range,

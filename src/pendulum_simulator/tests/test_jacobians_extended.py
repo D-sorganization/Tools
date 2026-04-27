@@ -106,16 +106,16 @@ class TestEllipsoidFromJacobian:
         assert svs.shape == (2,)
 
     def test_invalid_shape_raises(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             ellipsoid_from_jacobian(np.ones((3, 2)))  # wrong row count
 
     def test_non_finite_raises(self) -> None:
         J = np.array([[1.0, np.nan], [0.0, 1.0]])
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             ellipsoid_from_jacobian(J)
 
     def test_not_array_raises(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             ellipsoid_from_jacobian([[1, 0], [0, 1]])  # list, not ndarray
 
 
@@ -149,7 +149,7 @@ class TestJacobianDouble:
             assert np.all(np.isfinite(J))
 
     def test_negative_L_raises(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             jacobian_double(0.0, 0.0, L1=-0.5, L2=1.0)
 
 
@@ -202,7 +202,7 @@ class TestJacobianTriple:
             assert np.all(np.isfinite(J))
 
     def test_zero_L3_raises(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             jacobian_triple(0.0, 0.0, 0.0, L1=0.6, L2=0.6, L3=0.0)
 
 

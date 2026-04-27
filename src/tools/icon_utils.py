@@ -9,7 +9,16 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from PIL import Image
 
+<<<<<<< HEAD
 from contracts import require
+=======
+try:
+    from shared.python.contracts import require
+except ImportError:  # pragma: no cover
+    _SRC = Path(__file__).resolve().parent.parent
+    sys.path.insert(0, str(_SRC))
+    from shared.python.contracts import require
+>>>>>>> origin/main
 
 logger = logging.getLogger(__name__)
 
@@ -98,7 +107,8 @@ def create_resized_images(
     Returns:
         List of resized images.
     """
-    assert img is not None, "img must be provided"
+    if not (img is not None):
+        raise ValueError("img must be provided")
     require(
         isinstance(sizes, list) and len(sizes) > 0, "sizes must be a non-empty list"
     )
@@ -123,7 +133,8 @@ def convert_png_to_ico(
     Returns:
         True if successful, False otherwise.
     """
-    assert png_path is not None, "png_path must be provided"
+    if not (png_path is not None):
+        raise ValueError("png_path must be provided")
     require(isinstance(png_path, Path), "png_path must be a Path")
     require(isinstance(ico_path, Path), "ico_path must be a Path")
 

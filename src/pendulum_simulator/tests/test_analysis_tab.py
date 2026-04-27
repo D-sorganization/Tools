@@ -1,4 +1,7 @@
+from typing import Any
+
 """Tests for AnalysisTab."""
+
 
 import numpy as np
 import pytest
@@ -12,6 +15,7 @@ from double_pendulum_golf.gui.analysis_tab import (
 import double_pendulum_golf.gui.analysis_tab as at
 
 
+<<<<<<< HEAD
 # ---------------------------------------------------------------------------
 # GH1735 — DRY: unit tests for extracted evaluator factories
 # ---------------------------------------------------------------------------
@@ -70,6 +74,9 @@ class TestMakeCondEvaluator:
 
 
 def test_analysis_tab_no_mpl(qapp, monkeypatch):
+=======
+def test_analysis_tab_no_mpl(qapp, monkeypatch) -> Any:
+>>>>>>> origin/main
     monkeypatch.setattr(at, "_HAS_MPL", False)
 
     # Check fallback UI
@@ -82,7 +89,7 @@ def test_analysis_tab_no_mpl(qapp, monkeypatch):
     tab._on_plot_surface()
 
 
-def test_analysis_tab_plotting(qapp, monkeypatch):
+def test_analysis_tab_plotting(qapp, monkeypatch) -> Any:
     tab = AnalysisTab()
 
     # Mock result
@@ -116,7 +123,7 @@ def test_analysis_tab_plotting(qapp, monkeypatch):
     tab.plot_2d("time", "tip_speed")
 
 
-def test_analysis_tab_surface(qapp, monkeypatch):
+def test_analysis_tab_surface(qapp, monkeypatch) -> Any:
     tab = AnalysisTab()
     res = MagicMock()
     del res.params  # Use default params!
@@ -172,7 +179,7 @@ def test_analysis_tab_surface(qapp, monkeypatch):
     tab.plot_2d("time", "tip_speed")
 
 
-def test_analysis_tab_evaluators(qapp):
+def test_analysis_tab_evaluators(qapp) -> Any:
     tab = AnalysisTab()
 
     # test double
@@ -210,7 +217,29 @@ def test_analysis_tab_evaluators(qapp):
         assert isinstance(mani_eval3({"theta1": 0.0}), float)
 
 
-def test_analysis_tab_plot_2d_errors(qapp, monkeypatch):
+def test_analysis_tab_shared_evaluator_helpers(qapp) -> Any:
+    tab = AnalysisTab()
+
+    matrix_eval = tab._matrix_metric_evaluator(
+        lambda angles: np.array([[angles["x"], 0.0], [0.0, 2.0]]),
+        np.linalg.det,
+    )
+    assert matrix_eval({"x": 3.0}) == 6.0
+
+    transformed_eval = tab._transformed_scalar_evaluator(
+        lambda angles: np.array([angles["x"], angles["y"]]),
+        np.sum,
+    )
+    assert transformed_eval({"x": 1.5, "y": 2.5}) == 4.0
+
+    q_eval = tab._q_scalar_evaluator(
+        lambda angles: np.array([angles["x"], angles["y"]]),
+        np.linalg.norm,
+    )
+    assert q_eval({"x": 3.0, "y": 4.0}) == 5.0
+
+
+def test_analysis_tab_plot_2d_errors(qapp, monkeypatch) -> Any:
     tab = AnalysisTab()
     tab.set_result(MagicMock(), "double")
 
@@ -225,7 +254,7 @@ def test_analysis_tab_plot_2d_errors(qapp, monkeypatch):
     tab._x_combo.setCurrentIndex(0)
     tab._y_combo.setCurrentIndex(0)
 
-    def mock_extract(*args):
+    def mock_extract(*args) -> Any:
         raise KeyError()
 
     monkeypatch.setattr("double_pendulum_golf.data_extractor.extract_series", mock_extract)

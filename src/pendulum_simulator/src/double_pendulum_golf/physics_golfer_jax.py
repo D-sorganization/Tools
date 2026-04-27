@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """
 JAX-compatible pure-function implementation of golfer upper-body physics.
 
@@ -264,7 +266,8 @@ def forward_kinematics_jax(q: JaxArray, p: GolferParamsJAX) -> dict[str, JaxArra
         'club_base', 'club_tip', 'grip_right', 'grip_left'
         Each value is shape (2,) as [x, y]
     """
-    assert q is not None, "q must be provided"
+    if not (q is not None):
+        raise ValueError("q must be provided")
     th_hub = q[0]
     alpha_rs, alpha_re = q[1], q[2]
     alpha_ls, alpha_le = q[4], q[5]
@@ -454,6 +457,94 @@ def _club_jacobians_jax(
 # ---------------------------------------------------------------------------
 
 
+def _hub_jacobian(p: GolferParamsJAX, cos_hub: JaxArray, sin_hub: JaxArray) -> JaxArray:
+    """Return 2×N_DOF Jacobian for the hub mass point (DOF 0 only).
+
+    The hub swings on a rigid link of length L_hub anchored at the origin.
+    Precondition: cos_hub and sin_hub are JAX scalars (not None).
+    """
+    J = jnp.zeros((2, N_DOF))
+    J = J.at[0, 0].set(p.L_hub * cos_hub)
+    J = J.at[1, 0].set(p.L_hub * sin_hub)
+    return J
+
+
+def _right_arm_base_jacobian(
+    p: GolferParamsJAX,
+    cos_hub: JaxArray,
+    sin_hub: JaxArray,
+    cos_rs: JaxArray,
+    sin_rs: JaxArray,
+    cos_re: JaxArray,
+    sin_re: JaxArray,
+) -> JaxArray:
+    """Return 2×N_DOF Jacobian rows for the right-hand position (DOFs 0, 1, 2).
+
+    This helper captures the full hub→shoulder→elbow→wrist chain and is
+    shared by the right-hand, club-COM, and club-tip Jacobians.
+    Precondition: all trig arguments are JAX scalars (not None).
+    """
+    J = jnp.zeros((2, N_DOF))
+    # DOF 0: hub rotation affects the entire chain
+    J = J.at[0, 0].set(
+        p.L_hub * cos_hub
+        - p.d_rs * sin_hub
+        + p.L_r_upper * cos_rs
+        + p.L_r_fore * cos_re
+    )
+    J = J.at[1, 0].set(
+        p.L_hub * sin_hub
+        + p.d_rs * cos_hub
+        + p.L_r_upper * sin_rs
+        + p.L_r_fore * sin_re
+    )
+    # DOF 1: right-shoulder flexion/extension
+    J = J.at[0, 1].set(p.L_r_upper * cos_rs + p.L_r_fore * cos_re)
+    J = J.at[1, 1].set(p.L_r_upper * sin_rs + p.L_r_fore * sin_re)
+    # DOF 2: right-elbow flexion/extension
+    J = J.at[0, 2].set(p.L_r_fore * cos_re)
+    J = J.at[1, 2].set(p.L_r_fore * sin_re)
+    return J
+
+
+def _left_arm_base_jacobian(
+    p: GolferParamsJAX,
+    cos_hub: JaxArray,
+    sin_hub: JaxArray,
+    cos_ls: JaxArray,
+    sin_ls: JaxArray,
+    cos_le: JaxArray,
+    sin_le: JaxArray,
+) -> JaxArray:
+    """Return 2×N_DOF Jacobian rows for the left-hand position (DOFs 0, 4, 5).
+
+    This helper captures the full hub→shoulder→elbow→wrist chain for
+    the left arm and is shared by the left-hand Jacobian.
+    Precondition: all trig arguments are JAX scalars (not None).
+    """
+    J = jnp.zeros((2, N_DOF))
+    # DOF 0: hub rotation affects the entire left chain
+    J = J.at[0, 0].set(
+        p.L_hub * cos_hub
+        + p.d_ls * sin_hub
+        + p.L_l_upper * cos_ls
+        + p.L_l_fore * cos_le
+    )
+    J = J.at[1, 0].set(
+        p.L_hub * sin_hub
+        - p.d_ls * cos_hub
+        + p.L_l_upper * sin_ls
+        + p.L_l_fore * sin_le
+    )
+    # DOF 4: left-shoulder flexion/extension
+    J = J.at[0, 4].set(p.L_l_upper * cos_ls + p.L_l_fore * cos_le)
+    J = J.at[1, 4].set(p.L_l_upper * sin_ls + p.L_l_fore * sin_le)
+    # DOF 5: left-elbow flexion/extension
+    J = J.at[0, 5].set(p.L_l_fore * cos_le)
+    J = J.at[1, 5].set(p.L_l_fore * sin_le)
+    return J
+
+
 def analytical_fk_jacobians_jax(q: JaxArray, p: GolferParamsJAX) -> dict[str, JaxArray]:
     """Compute position Jacobians analytically for all mass points (JAX version).
 
@@ -470,48 +561,110 @@ def analytical_fk_jacobians_jax(q: JaxArray, p: GolferParamsJAX) -> dict[str, Ja
         Keys: 'hub', 're', 'rh', 'le', 'lh', 'club_com', 'club_tip'
         Each value is shape (2, 8): J[row, col] = d(pos[row])/dq[col]
     """
-    # Extract coordinates for clarity
-    assert q is not None, "q must be provided"
+    if not (q is not None):
+        raise ValueError("q must be provided")
+
     th_hub = q[0]
     alpha_rs, alpha_re = q[1], q[2]
     alpha_ls, alpha_le = q[4], q[5]
     th_club = q[7]
 
-    # Precompute sine/cosine values
-    sin_hub = jnp.sin(th_hub)
-    cos_hub = jnp.cos(th_hub)
-
+    # Precompute sine/cosine values for all joint angles
+    sin_hub, cos_hub = jnp.sin(th_hub), jnp.cos(th_hub)
     th_rs_abs = th_hub + alpha_rs
-    sin_rs = jnp.sin(th_rs_abs)
-    cos_rs = jnp.cos(th_rs_abs)
-
+    sin_rs, cos_rs = jnp.sin(th_rs_abs), jnp.cos(th_rs_abs)
     th_re_abs = th_hub + alpha_rs + alpha_re
-    sin_re = jnp.sin(th_re_abs)
-    cos_re = jnp.cos(th_re_abs)
-
+    sin_re, cos_re = jnp.sin(th_re_abs), jnp.cos(th_re_abs)
     th_ls_abs = th_hub + alpha_ls
-    sin_ls = jnp.sin(th_ls_abs)
-    cos_ls = jnp.cos(th_ls_abs)
-
+    sin_ls, cos_ls = jnp.sin(th_ls_abs), jnp.cos(th_ls_abs)
     th_le_abs = th_hub + alpha_ls + alpha_le
-    sin_le = jnp.sin(th_le_abs)
-    cos_le = jnp.cos(th_le_abs)
+    sin_le, cos_le = jnp.sin(th_le_abs), jnp.cos(th_le_abs)
+    sin_club, cos_club = jnp.sin(th_club), jnp.cos(th_club)
 
-    sin_club = jnp.sin(th_club)
-    cos_club = jnp.cos(th_club)
+    jacobians: dict[str, JaxArray] = {}
 
+<<<<<<< HEAD
     jacobians: dict = {}
     jacobians.update(
         _right_arm_jacobians_jax(p, sin_hub, cos_hub, sin_rs, cos_rs, sin_re, cos_re)
+=======
+    # 1. Hub
+    jacobians["hub"] = _hub_jacobian(p, cos_hub, sin_hub)
+
+    # 2. RS (Right Shoulder) — hub + perpendicular shoulder offset
+    J_rs = jnp.zeros((2, N_DOF))
+    J_rs = J_rs.at[0, 0].set(p.L_hub * cos_hub - p.d_rs * sin_hub)
+    J_rs = J_rs.at[1, 0].set(p.L_hub * sin_hub + p.d_rs * cos_hub)
+    jacobians["rs"] = J_rs
+
+    # 3. RE (Right Elbow) — RS + upper-arm link
+    J_re = jnp.zeros((2, N_DOF))
+    J_re = J_re.at[0, 0].set(
+        p.L_hub * cos_hub - p.d_rs * sin_hub + p.L_r_upper * cos_rs
+>>>>>>> origin/main
     )
     jacobians.update(
         _left_arm_jacobians_jax(p, sin_hub, cos_hub, sin_ls, cos_ls, sin_le, cos_le)
     )
+<<<<<<< HEAD
     jacobians.update(
         _club_jacobians_jax(
             p, sin_hub, cos_hub, sin_rs, cos_rs, sin_re, cos_re, sin_club, cos_club
         )
     )
+=======
+    J_re = J_re.at[0, 1].set(p.L_r_upper * cos_rs)
+    J_re = J_re.at[1, 1].set(p.L_r_upper * sin_rs)
+    jacobians["re"] = J_re
+
+    # 4. RH (Right Hand) — full right-arm chain
+    jacobians["rh"] = _right_arm_base_jacobian(
+        p, cos_hub, sin_hub, cos_rs, sin_rs, cos_re, sin_re
+    )
+
+    # 5. LS (Left Shoulder) — hub + perpendicular shoulder offset
+    J_ls = jnp.zeros((2, N_DOF))
+    J_ls = J_ls.at[0, 0].set(p.L_hub * cos_hub + p.d_ls * sin_hub)
+    J_ls = J_ls.at[1, 0].set(p.L_hub * sin_hub - p.d_ls * cos_hub)
+    jacobians["ls"] = J_ls
+
+    # 6. LE (Left Elbow) — LS + upper-arm link
+    J_le = jnp.zeros((2, N_DOF))
+    J_le = J_le.at[0, 0].set(
+        p.L_hub * cos_hub + p.d_ls * sin_hub + p.L_l_upper * cos_ls
+    )
+    J_le = J_le.at[1, 0].set(
+        p.L_hub * sin_hub - p.d_ls * cos_hub + p.L_l_upper * sin_ls
+    )
+    J_le = J_le.at[0, 4].set(p.L_l_upper * cos_ls)
+    J_le = J_le.at[1, 4].set(p.L_l_upper * sin_ls)
+    jacobians["le"] = J_le
+
+    # 7. LH (Left Hand) — full left-arm chain
+    jacobians["lh"] = _left_arm_base_jacobian(
+        p, cos_hub, sin_hub, cos_ls, sin_ls, cos_le, sin_le
+    )
+
+    # 8. Club COM — right-hand attachment + club-angle contribution
+    coeff_com_x = 0.5 * p.L_club - p.grip_right
+    coeff_com_y = -0.5 * (p.L_club - 2 * p.grip_right)
+    J_club_com = _right_arm_base_jacobian(
+        p, cos_hub, sin_hub, cos_rs, sin_rs, cos_re, sin_re
+    )
+    J_club_com = J_club_com.at[0, 7].set(coeff_com_x * cos_club)
+    J_club_com = J_club_com.at[1, 7].set(coeff_com_y * sin_club)
+    jacobians["club_com"] = J_club_com
+
+    # 9. Club Tip — right-hand attachment + full-club-length contribution
+    coeff_tip = p.L_club - p.grip_right
+    J_club_tip = _right_arm_base_jacobian(
+        p, cos_hub, sin_hub, cos_rs, sin_rs, cos_re, sin_re
+    )
+    J_club_tip = J_club_tip.at[0, 7].set(coeff_tip * cos_club)
+    J_club_tip = J_club_tip.at[1, 7].set(-coeff_tip * sin_club)
+    jacobians["club_tip"] = J_club_tip
+
+>>>>>>> origin/main
     return jacobians
 
 
@@ -535,7 +688,8 @@ def mass_matrix_jax(q: JaxArray, p: GolferParamsJAX) -> JaxArray:
     -------
     M : JaxArray, shape (8, 8) — symmetric positive semi-definite
     """
-    assert q is not None, "q must be provided"
+    if not (q is not None):
+        raise ValueError("q must be provided")
     jacobians = analytical_fk_jacobians_jax(q, p)
 
     M = jnp.zeros((N_DOF, N_DOF))
@@ -581,7 +735,8 @@ def coriolis_jax(q: JaxArray, qdot: JaxArray, p: GolferParamsJAX) -> JaxArray:
     -------
     C_qdot : JaxArray, shape (8,)
     """
-    assert q is not None, "q must be provided"
+    if not (q is not None):
+        raise ValueError("q must be provided")
     eps = 1e-7
     M0 = mass_matrix_jax(q, p)
 
@@ -614,7 +769,8 @@ def gravity_vector_jax(q: JaxArray, p: GolferParamsJAX) -> JaxArray:
     -------
     G : JaxArray, shape (8,)
     """
-    assert q is not None, "q must be provided"
+    if not (q is not None):
+        raise ValueError("q must be provided")
     jacobians = analytical_fk_jacobians_jax(q, p)
 
     G = jnp.zeros(N_DOF)
@@ -658,7 +814,8 @@ def constraint_vector_jax(q: JaxArray, p: GolferParamsJAX) -> JaxArray:
     -------
     Phi : JaxArray, shape (4,)
     """
-    assert q is not None, "q must be provided"
+    if not (q is not None):
+        raise ValueError("q must be provided")
     fk = forward_kinematics_jax(q, p)
 
     rh = fk["rh"]
@@ -699,7 +856,8 @@ def constraint_jacobian_jax(q: JaxArray, p: GolferParamsJAX) -> JaxArray:
     -------
     Phi_q : JaxArray, shape (4, 8)
     """
-    assert q is not None, "q must be provided"
+    if not (q is not None):
+        raise ValueError("q must be provided")
     jacobians = analytical_fk_jacobians_jax(q, p)
     J_lh = jacobians["lh"]
     J_rh = jacobians["rh"]
@@ -768,7 +926,8 @@ def _constraint_acceleration_bias_jax(
     -------
     gamma : JaxArray, shape (4,)
     """
-    assert q is not None, "q must be provided"
+    if not (q is not None):
+        raise ValueError("q must be provided")
     eps = 1e-7
     Phi_q_0 = constraint_jacobian_jax(q, p)
 

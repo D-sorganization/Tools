@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """Physical Constants and Conversion Factors for Process Calculators.
 
 This module provides NIST-standard physical constants and conversion factors

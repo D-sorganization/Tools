@@ -12,6 +12,8 @@ Design by Contract
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 # Minimal URDF for round-trip testing
@@ -211,8 +213,7 @@ class TestURDFSemanticEquality:
 
     def test_parsed_output_is_valid_xml(self) -> None:
         """to_urdf() must produce valid XML."""
-        import xml.etree.ElementTree as ET
-
+        import defusedxml.ElementTree as ET
         from model_generation.converters.urdf_parser import URDFParser
 
         parser = URDFParser(resolve_meshes=False)
@@ -250,3 +251,48 @@ class TestURDFSemanticEquality:
         copy.name = "modified"
         assert model.name == "test_robot"
         assert copy.name == "modified"
+
+
+class TestURDFMeshPathHandling:
+    """Validation around mesh filename handling in the URDF parser."""
+
+    def _write_urdf(self, directory: Path, filename: str) -> Path:
+        urdf_path = directory / "robot.urdf"
+        urdf_text = f"""
+        <robot name="mesh-path-test">
+          <link name="base">
+            <visual>
+              <geometry>
+                <mesh filename="{filename}" scale="1 1 1"/>
+              </geometry>
+            </visual>
+          </link>
+        </robot>
+        """
+        urdf_path.write_text(urdf_text)
+        return urdf_path
+
+    def test_traversal_mesh_path_is_not_resolved(self, tmp_path: Path) -> None:
+        from model_generation.converters.urdf_parser import URDFParser
+
+        workspace = tmp_path / "workspace"
+        workspace.mkdir()
+        outside_mesh = tmp_path / "outside.stl"
+        outside_mesh.write_text("placeholder")
+
+        urdf_path = self._write_urdf(workspace, "../outside.stl")
+        model = URDFParser().parse(str(urdf_path))
+        mesh_filename = model.links[0].visual_geometry.mesh_filename
+
+        assert mesh_filename == "../outside.stl"
+
+    def test_unsupported_uri_mesh_path_is_preserved_as_text(
+        self, tmp_path: Path
+    ) -> None:
+        from model_generation.converters.urdf_parser import URDFParser
+
+        urdf_path = self._write_urdf(tmp_path, "http://example.com/mesh.stl")
+        model = URDFParser().parse(str(urdf_path))
+        mesh_filename = model.links[0].visual_geometry.mesh_filename
+
+        assert mesh_filename == "http://example.com/mesh.stl"

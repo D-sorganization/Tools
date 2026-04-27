@@ -1,6 +1,7 @@
 """Design by Contract helpers for the vessel_drafter package.
 
 Re-exports the fleet-standard contract primitives from the shared
+<<<<<<< HEAD
 ``contracts`` module (``src/shared/python/contracts.py``) with lightweight
 wrappers that preserve the legacy ``(name: str, value: float)`` parameter
 order used throughout vessel_drafter source code.
@@ -17,12 +18,27 @@ Fallback
 When the shared ``contracts`` module is not importable (e.g. standalone
 pip-install without the monorepo) a minimal inline implementation is
 provided so the package remains self-contained.
+=======
+``contracts`` module (``src/shared/python/contracts.py``). Domain-specific
+helpers (``require_nonnegative``, ``require_fraction``, etc.) are kept here
+as thin wrappers around ``require()``.
+
+Signature fix (closes #1930): ``require_positive(value, name)`` now matches
+the canonical signature in ``src/shared/python/contracts.py`` while still
+accepting the legacy local ``(name, value)`` order during migration.
+
+De-duplicated per https://github.com/D-sorganization/Tools/issues/1926.
+>>>>>>> origin/main
 """
 
 from __future__ import annotations
 
 import logging
 from math import isfinite
+<<<<<<< HEAD
+=======
+from numbers import Real
+>>>>>>> origin/main
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -35,8 +51,17 @@ try:
         ensure,
         require,
     )
+<<<<<<< HEAD
 except ImportError:
     # ── Standalone fallback ────────────────────────────────────────────────
+=======
+    from contracts import (
+        require_positive as _shared_require_positive,
+    )
+except ImportError:
+    # ── Standalone fallback ────────────────────────────────────────────────
+
+>>>>>>> origin/main
     class PreconditionError(AssertionError, ValueError):  # type: ignore[no-redef]
         """Raised when a pre-condition is violated."""
 
@@ -56,6 +81,7 @@ except ImportError:
         if not condition:
             raise ValueError(f"[DbC post-condition] {message}")
 
+<<<<<<< HEAD
 
 # ── Legacy (name, value) wrapper helpers ───────────────────────────────────
 # These preserve the parameter order used throughout vessel_drafter source
@@ -75,6 +101,50 @@ def require_positive(name: str, value: float) -> None:
     """
     if value <= 0.0:
         raise PreconditionError(f"{name} must be positive, got {value!r}", value)
+=======
+    def _shared_require_positive(value: float, name: str = "value") -> None:
+        """Require that *value* is strictly positive."""
+        if value <= 0:
+            raise PreconditionError(f"{name} must be positive (got {value})")
+
+
+def _normalize_value_and_name(
+    first: object,
+    second: object,
+    *,
+    function_name: str,
+) -> tuple[float, str]:
+    """Normalize either ``(value, name)`` or legacy ``(name, value)`` pairs."""
+    if isinstance(first, str):
+        if not isinstance(second, Real):
+            raise TypeError(
+                f"{function_name} expects (value, name) or legacy (name, value); "
+                f"got {type(first).__name__}, {type(second).__name__}"
+            )
+        return float(second), first
+    if isinstance(second, str):
+        if not isinstance(first, Real):
+            raise TypeError(
+                f"{function_name} expects (value, name) or legacy (name, value); "
+                f"got {type(first).__name__}, {type(second).__name__}"
+            )
+        return float(first), second
+    raise TypeError(
+        f"{function_name} expects (value, name) or legacy (name, value); "
+        f"got {type(first).__name__}, {type(second).__name__}"
+    )
+
+
+def require_positive(value: float | str, name: str | float = "value") -> None:
+    """Require a strictly positive numeric value."""
+    normalized_value, normalized_name = _normalize_value_and_name(
+        value, name, function_name="require_positive"
+    )
+    _shared_require_positive(normalized_value, normalized_name)
+
+
+# ── Domain-specific wrapper helpers ──────────────────────────────────────
+>>>>>>> origin/main
 
 
 def require_nonnegative(name: str, value: float) -> None:
@@ -152,11 +222,17 @@ def require_finite(name: str, value: float) -> None:
 
 
 __all__ = [
+<<<<<<< HEAD
     # Shared primitives
     "PreconditionError",
     "ensure",
     "require",
     # Legacy (name, value) wrappers
+=======
+    "PreconditionError",
+    "ensure",
+    "require",
+>>>>>>> origin/main
     "require_finite",
     "require_fraction",
     "require_integer_at_least",

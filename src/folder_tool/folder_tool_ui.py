@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """UICreationMixin -- UI widget creation methods for FolderProcessorApp."""
 
 from __future__ import annotations
@@ -44,7 +46,7 @@ class UICreationMixin:
                 # Fallback to PNG if ICO doesn't exist
                 self._load_png_fallback(base_dir)  # type: ignore[arg-type]
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"Could not load icon: {e}")
 
     def _set_windows_app_id(self) -> None:
@@ -61,8 +63,14 @@ class UICreationMixin:
     def _load_ico_icon(self, ico_path: str) -> None:
         """Loads and sets the ICO icon for the application."""
         # Use iconbitmap for Windows taskbar integration
+<<<<<<< HEAD
         assert ico_path is not None, "ico_path must be provided"
         self.root.iconbitmap(ico_path)  # type: ignore[attr-defined]
+=======
+        if not (ico_path is not None):
+            raise ValueError("ico_path must be provided")
+        self.root.iconbitmap(ico_path)  # type: ignore[no-untyped-call]
+>>>>>>> origin/main
         logger.info(f"Loaded ICO icon for taskbar: {ico_path}")
 
         # Also set iconphoto with multiple sizes for better display
@@ -99,12 +107,13 @@ class UICreationMixin:
                 self.icon_photos = photos
                 logger.info(f"Set iconphoto with {len(photos)} different sizes")
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.warning(f"Could not set iconphoto from ICO: {e}")
 
     def _load_png_fallback(self, base_dir: str) -> None:
         """Loads PNG icon as fallback when ICO is not available."""
-        assert base_dir is not None, "base_dir must be provided"
+        if not (base_dir is not None):
+            raise ValueError("base_dir must be provided")
         png_path = Path(base_dir) / "paper_plane_icon.png"
         if Path(png_path).exists():
             from PIL import Image, ImageTk
@@ -129,7 +138,7 @@ class UICreationMixin:
                     self.root.iconphoto(True, *photos)  # type: ignore[attr-defined]
                     self.icon_photos = photos
                     logger.info(f"Loaded PNG icon: {png_path}")
-            except (IOError, PermissionError, OSError) as e:
+            except (PermissionError, OSError) as e:
                 logger.warning(f"Failed to load PNG icon: {e}")
 
         else:
@@ -209,7 +218,8 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the source widgets
         """
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         self.source_frame = ttk.LabelFrame(
             parent,
             text="1. Select Folder(s) to Process",
@@ -259,7 +269,8 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the destination widgets
         """
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         self.dest_frame = ttk.LabelFrame(
             parent,
             text="2. Select Final Destination Folder",
@@ -284,7 +295,8 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the filtering widgets
         """
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         filter_frame = ttk.LabelFrame(
             parent,
             text="3. File Filtering Options",
@@ -327,7 +339,8 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the preprocessing widgets
         """
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         self.pre_process_frame = ttk.LabelFrame(
             parent,
             text="4. Pre-processing Options (On Source)",
@@ -352,7 +365,8 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the main operation widgets
         """
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         self.mode_frame = ttk.LabelFrame(
             parent,
             text="5. Choose Main Operation",
@@ -410,7 +424,8 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the organization widgets
         """
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         org_frame = ttk.LabelFrame(
             parent,
             text="6. File Organization Options",
@@ -435,7 +450,8 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the postprocessing widgets
         """
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         self.post_process_frame = ttk.LabelFrame(
             parent,
             text="7. Post-processing Options (On Destination)",
@@ -455,7 +471,8 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the output options widgets
         """
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         output_frame = ttk.LabelFrame(parent, text="8. Output Options", padding="10")
         output_frame.pack(fill=tk.X, pady=5)
 
@@ -471,7 +488,8 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the advanced options widgets
         """
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         advanced_frame = ttk.LabelFrame(
             parent,
             text="9. Advanced Options",
@@ -496,7 +514,8 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the progress widgets
         """
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         progress_frame = ttk.LabelFrame(parent, text="Progress", padding="10")
         progress_frame.pack(fill=tk.X, pady=5)
 
@@ -517,7 +536,8 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the run button
         """
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         button_frame = ttk.Frame(parent)
         button_frame.pack(fill=tk.X, pady=(10, 5))
 
@@ -639,7 +659,7 @@ class UICreationMixin:
             else:
                 logger.debug("Folder selection cancelled by user")
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.exception("Error selecting source folder")
             messagebox.showerror("Error", f"Failed to select source folder: {e}")
 
@@ -689,7 +709,7 @@ class UICreationMixin:
 
                 self.update_source_info()  # type: ignore[attr-defined]
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.exception("Error removing source folders")
             messagebox.showerror("Error", f"Failed to remove source folders: {e}")
 
@@ -735,6 +755,6 @@ class UICreationMixin:
             else:
                 logger.debug("Destination folder selection cancelled by user")
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.exception("Error selecting destination folder")
             messagebox.showerror("Error", f"Failed to select destination folder: {e}")

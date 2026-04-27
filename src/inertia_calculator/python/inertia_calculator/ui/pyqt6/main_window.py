@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 #!/usr/bin/env python3
 """Inertia Calculator PyQt6 Main Window.
 
@@ -509,6 +511,7 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
         mass: float,
         description: str,
     ) -> None:
+<<<<<<< HEAD
         """Display calculation results.
 
         Preconditions:
@@ -541,6 +544,11 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
             )
         if mass <= 0:
             raise ValueError(f"mass must be positive, got {mass}")
+=======
+        """Display calculation results."""
+        if not (ixx is not None):
+            raise ValueError("ixx must be provided")
+>>>>>>> origin/main
         results = []
         results.append("Inertia Calculation Results")
         results.append("=" * 50)
@@ -576,8 +584,7 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
         errors = self._validate_inertia(ixx, iyy, izz, ixy, ixz, iyz)
         if errors:
             results.append("  INVALID - Issues found:")
-            for error in errors:
-                results.append(f"    - {error}")
+            results.extend([f"    - {error}" for error in errors])
             self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['yellow']};")
         else:
             results.append("  VALID - All checks passed")
@@ -594,6 +601,7 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
         ixz: float,
         iyz: float,
     ) -> list[str]:
+<<<<<<< HEAD
         """Validate inertia tensor.
 
         Preconditions:
@@ -617,6 +625,11 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
                 )
             if not math.isfinite(val):
                 raise ValueError(f"{name} must be a finite number, got {val}")
+=======
+        """Validate inertia tensor."""
+        if not (ixx is not None):
+            raise ValueError("ixx must be provided")
+>>>>>>> origin/main
         errors = []
 
         # Check positive diagonal

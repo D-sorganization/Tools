@@ -10,6 +10,8 @@ engine. When the thermo module is not available, it uses simplified ideal gas ca
 from dataclasses import dataclass
 from typing import Any
 
+from shared.python.contracts import require, require_positive
+
 from .constants import (
     ATM_PA,
     CELSIUS_TO_KELVIN_OFFSET,
@@ -348,6 +350,7 @@ class BaghouseCalculator:
             BaghouseResult object
         """
         # DbC preconditions on physical quantities
+<<<<<<< HEAD
         assert gas_flow_kg_s > 0, f"Gas flow must be positive, got {gas_flow_kg_s}"
         assert inlet_temp_k > 0, f"Temperature must be positive (K), got {inlet_temp_k}"
         assert pressure_pa > 0, f"Pressure must be positive, got {pressure_pa}"
@@ -361,6 +364,24 @@ class BaghouseCalculator:
         assert solid_density_kg_m3 > 0, (
             f"Solid density must be positive, got {solid_density_kg_m3}"
         )
+=======
+        require_positive(gas_flow_kg_s, "gas_flow_kg_s")
+        require_positive(inlet_temp_k, "inlet_temp_k")
+        require_positive(pressure_pa, "pressure_pa")
+        require(
+            0 <= carbon_removal_efficiency <= 1,
+            "carbon_removal_efficiency must be in [0, 1]",
+            carbon_removal_efficiency,
+        )
+        require(
+            0 <= ash_removal_efficiency <= 1,
+            "ash_removal_efficiency must be in [0, 1]",
+            ash_removal_efficiency,
+        )
+        require_positive(drum_volume_m3, "drum_volume_m3")
+        require_positive(solid_density_kg_m3, "solid_density_kg_m3")
+        require_positive(bag_area_ft2, "bag_area_ft2")
+>>>>>>> origin/main
 
         outlet_temp_c, flow_acfm, flow_scfm = self._calculate_outlet_thermal(
             gas_flow_kg_s,

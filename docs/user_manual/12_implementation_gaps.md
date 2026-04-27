@@ -73,7 +73,7 @@ The following components have minimal or placeholder implementations:
 ### 12.3.2 Unit Converter Web App
 
 **File:** `src/web_applications/unit_converter/`
-**Current State:** Basic HTML/CSS/JS app with TODO markers in multiple files
+**Current State:** Basic HTML/CSS/JS app with TRACKED_TASK markers in multiple files
 
 **Required Improvements:**
 
@@ -86,7 +86,7 @@ The following components have minimal or placeholder implementations:
 ### 12.3.3 URDF Web Viewer
 
 **File:** `src/web_applications/urdf_viewer/`
-**Current State:** Basic viewer with TODO markers
+**Current State:** Basic viewer with TRACKED_TASK markers
 
 **Required Improvements:**
 
@@ -136,9 +136,9 @@ The following components have minimal or placeholder implementations:
 
 ---
 
-## 12.5 TODO/FIXME Inventory
+## 12.5 TRACKED_TASK/TRACKED_DEFECT Inventory
 
-The codebase contains 85 TODO/FIXME/NotImplementedError markers across 30 files.
+The codebase contains 85 TRACKED_TASK/TRACKED_DEFECT/NotImplementedError markers across 30 files.
 
 **Distribution by Category:**
 

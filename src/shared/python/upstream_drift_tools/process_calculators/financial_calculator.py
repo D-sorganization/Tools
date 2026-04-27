@@ -19,6 +19,7 @@ class FinancialParameters:
 
     # Revenue Parameters
     product_price_per_ton: float = 0.0  # $/ton of product
+    product_yield_factor: float = 0.85  # Feedstock to product conversion (default 85%)
     byproduct_revenue_per_ton: float = 0.0  # $/ton byproduct revenue
     byproduct_yield_factor: float = 0.0  # Byproduct yield
 
@@ -108,11 +109,23 @@ class FinancialResults:
 class FinancialModelCalculator:
     """Core financial model calculation engine"""
 
+    # Default product yield factor (feedstock to product conversion)
+    DEFAULT_PRODUCT_YIELD_FACTOR = 0.85
+
+    # Default inflation/escalation factors (as decimal multipliers)
+    DEFAULT_PRICE_ESCALATION_RATE = 0.02  # 2% annually
+    DEFAULT_COST_INFLATION_RATE = 0.03  # 3% annually
+    DEFAULT_UTILITY_INFLATION_RATE = 0.025  # 2.5% annually for utilities
+
     def __init__(self) -> None:
         """Initialize the class."""
         self.parameters = FinancialParameters()
         self.results = FinancialResults()
         self.yearly_projections: list[dict[str, Any]] = []
+        # Projection parameters
+        self.price_escalation_rate = self.DEFAULT_PRICE_ESCALATION_RATE
+        self.cost_inflation_rate = self.DEFAULT_COST_INFLATION_RATE
+        self.utility_inflation_rate = self.DEFAULT_UTILITY_INFLATION_RATE
 
     def _calculate_volumes_and_revenues(
         self,
@@ -126,7 +139,10 @@ class FinancialModelCalculator:
             * parameters.operating_days_per_year
             * parameters.capacity_utilization
         )
-        results.annual_product_tons = results.annual_feedstock_tons * 0.85
+        # Use parameterized product and byproduct yield factors
+        results.annual_product_tons = (
+            results.annual_feedstock_tons * parameters.product_yield_factor
+        )
         results.annual_byproduct_tons = (
             results.annual_feedstock_tons * parameters.byproduct_yield_factor
         )
@@ -271,26 +287,69 @@ class FinancialModelCalculator:
         self.results = results
         return results
 
-    def generate_yearly_projections(self, years: int = 10) -> list[dict[str, Any]]:
-        """Generate multi-year financial projections"""
-        assert years is not None, "years must be provided"
+    def generate_yearly_projections(
+        self,
+        years: int = 10,
+        price_escalation_rate: float | None = None,
+        cost_inflation_rate: float | None = None,
+        utility_inflation_rate: float | None = None,
+    ) -> list[dict[str, Any]]:
+        """Generate multi-year financial projections.
+
+        Args:
+            years: Number of years to project
+            price_escalation_rate: Annual price escalation rate (default 2%)
+            cost_inflation_rate: Annual cost inflation rate (default 3%)
+            utility_inflation_rate: Annual utility inflation rate (default 2.5%)
+
+        Pre: years > 0, inflation rates >= 0
+        Post: Returns list of annual projections without modifying self.parameters
+
+        Raises:
+            ValueError: If inflation rates are negative
+        """
+        if years <= 0:
+            raise ValueError(f"years must be positive, got {years}")
+
+        # Use instance or provided inflation rates
+        price_rate = (
+            price_escalation_rate
+            if price_escalation_rate is not None
+            else self.price_escalation_rate
+        )
+        cost_rate = (
+            cost_inflation_rate
+            if cost_inflation_rate is not None
+            else self.cost_inflation_rate
+        )
+        utility_rate = (
+            utility_inflation_rate
+            if utility_inflation_rate is not None
+            else self.utility_inflation_rate
+        )
+
+        if price_rate < 0 or cost_rate < 0 or utility_rate < 0:
+            raise ValueError("Inflation rates must be non-negative")
+
         projections = []
-        base_params = self.parameters
+        # Use immutable copy to avoid mutating self.parameters
+        from copy import deepcopy
+
+        base_params = deepcopy(self.parameters)
 
         for year in range(1, years + 1):
             # Apply growth/inflation assumptions
-            year_params = FinancialParameters()
-            year_params.__dict__.update(base_params.__dict__)
+            year_params = deepcopy(base_params)
 
-            # Price escalation (2% annually)
-            year_params.product_price_per_ton *= 1.02**year
-            year_params.byproduct_revenue_per_ton *= 1.02**year
+            # Price escalation
+            year_params.product_price_per_ton *= (1 + price_rate) ** year
+            year_params.byproduct_revenue_per_ton *= (1 + price_rate) ** year
 
-            # Cost inflation (3% annually for most costs)
-            year_params.feedstock_cost_per_ton *= 1.03**year
-            year_params.labor_cost_per_ton *= 1.03**year
-            year_params.utilities_cost_per_ton *= 1.025**year  # Lower utility inflation
-            year_params.fixed_labor_cost_annual *= 1.03**year
+            # Cost inflation
+            year_params.feedstock_cost_per_ton *= (1 + cost_rate) ** year
+            year_params.labor_cost_per_ton *= (1 + cost_rate) ** year
+            year_params.utilities_cost_per_ton *= (1 + utility_rate) ** year
+            year_params.fixed_labor_cost_annual *= (1 + cost_rate) ** year
 
             # Calculate year results
             year_results = self.calculate_financial_model(year_params)

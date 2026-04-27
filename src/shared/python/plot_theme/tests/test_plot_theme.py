@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """Comprehensive tests for the plot_theme module.
 
 Covers PlotTheme dataclass, theme registry, get_theme/register_theme,

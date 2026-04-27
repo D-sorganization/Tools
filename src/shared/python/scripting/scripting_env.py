@@ -3,6 +3,28 @@
 Provides an interactive console environment that can be embedded into applications
 or run standalone, featuring namespace management, persistent user scripts, and
 stdout capturing.
+
+Security notice — controlled use of ``exec`` / ``eval``
+--------------------------------------------------------
+This module intentionally uses Python's ``exec()`` and ``eval()`` builtins.
+The usage is *controlled* for the following reasons:
+
+1. **Explicit consent**: The scripting environment is an opt-in interactive
+   console.  Users deliberately type code into it; they are not supplying
+   untrusted third-party input.
+2. **Restricted namespace**: The execution namespace is seeded only with
+   vetted scientific libraries (``numpy``, ``math``, optionally ``pandas``
+   and ``scipy``).  It does *not* expose ``os``, ``subprocess``, or
+   ``__builtins__`` in raw form beyond what Python injects by default.
+3. **No web-facing exposure**: This class is never called from a network
+   handler.  It is only instantiated by GUI widgets running in-process.
+4. **Bandit suppression**: The ``# nosec B102`` / ``# nosec B307`` markers
+   are intentional and reviewed.  Do not remove them without re-evaluating
+   the threat model above.
+
+If you need to evaluate *user-supplied expressions from an untrusted source*
+(e.g. a REST API), use :mod:`shared.python.safe_eval` instead, which
+performs AST-level validation before execution.
 """
 
 import contextlib
@@ -14,6 +36,20 @@ import traceback
 from typing import Any
 
 import numpy as np
+
+USER_CODE_ERROR_TYPES = (
+    ArithmeticError,
+    AssertionError,
+    AttributeError,
+    ImportError,
+    LookupError,
+    NameError,
+    OSError,
+    RuntimeError,
+    SyntaxError,
+    TypeError,
+    ValueError,
+)
 
 try:
     import pandas as pd
@@ -82,11 +118,21 @@ class ConsoleEnvironment:
         sys.stdout.write(pydoc.render_doc(obj) + "\n")
 
     def set_user_library_path(self, path: str) -> None:
-        """Set the path for saving/loading user custom functions."""
+        """Set the path for saving/loading user custom functions.
+
+        Args:
+            path: The file path for the user library. If relative, it will be
+                relative to the current working directory. If absolute, it will
+                be used as-is.
+
+        Raises:
+            ValueError: If path is empty.
+        """
         # Precondition check
         if not path:
             raise ValueError("Library path cannot be empty.")
-        self._user_lib_path = path
+        expanded_path = os.path.expanduser(path)
+        self._user_lib_path = expanded_path
 
     def save_user_code(self, code: str) -> None:
         """Save raw python code to the user library path."""
@@ -106,7 +152,12 @@ class ConsoleEnvironment:
             return f.read()
 
     def refresh_user_functions(self) -> None:
-        """Reload user functions into the namespace."""
+        """Reload user functions into the namespace.
+
+        Raises:
+            KeyboardInterrupt: If the user interrupts execution.
+            SystemExit: If the code explicitly calls sys.exit().
+        """
         if not os.path.exists(self._user_lib_path):
             return
 
@@ -116,10 +167,17 @@ class ConsoleEnvironment:
         try:
             # Execute within current namespace so imports/functions are persistent
             exec(code, self.namespace)  # nosec B102
+<<<<<<< HEAD
         except Exception as e:
+=======
+        except (KeyboardInterrupt, SystemExit):
+            raise
+        except USER_CODE_ERROR_TYPES as e:
+>>>>>>> origin/main
             sys.stderr.write(f"Error loading user library: {e}\n")
+            sys.stderr.flush()
 
-    def execute(self, source: str) -> tuple[str, str]:
+    def execute(self, source: str | None) -> tuple[str, str]:
         """Execute a block of source code, capturing stdout and stderr.
 
         Args:
@@ -128,7 +186,8 @@ class ConsoleEnvironment:
         Returns:
             (stdout_output, stderr_output)
         """
-        assert source is not None, "source must be provided"
+        if source is None:
+            raise ValueError("source must be provided")
         if not source.strip():
             return "", ""
 
@@ -151,8 +210,11 @@ class ConsoleEnvironment:
                     code_obj = compile(source, "<console>", "exec")
                     exec(code_obj, self.namespace)  # nosec B102
 
-        except Exception:
-            # Format exception similar to REPL
+        except (KeyboardInterrupt, SystemExit):
+            raise
+        except USER_CODE_ERROR_TYPES:
+            # Expected user-code failures are formatted REPL-style so the
+            # console displays them without crashing the host application.
             exc_type, exc_value, exc_traceback = sys.exc_info()
             if exc_traceback:
                 # Skip the context wrapper internal frames

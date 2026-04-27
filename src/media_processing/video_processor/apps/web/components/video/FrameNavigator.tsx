@@ -59,8 +59,9 @@ export default function FrameNavigator({
         <button
           onClick={handlePreviousFrame}
           disabled={disabled || currentFrame <= 0}
-          className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
           title="Previous Frame"
+          aria-label="Previous Frame"
         >
           ‹
         </button>
@@ -73,6 +74,7 @@ export default function FrameNavigator({
             value={currentFrame}
             onChange={(e) => handleFrameInput(parseInt(e.target.value) || 0)}
             disabled={disabled}
+            aria-label="Current frame number"
             className="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
           />
           <span className="text-sm text-gray-600">/ {totalFrames - 1}</span>
@@ -81,8 +83,9 @@ export default function FrameNavigator({
         <button
           onClick={handleNextFrame}
           disabled={disabled || currentFrame >= totalFrames - 1}
-          className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
           title="Next Frame"
+          aria-label="Next Frame"
         >
           ›
         </button>

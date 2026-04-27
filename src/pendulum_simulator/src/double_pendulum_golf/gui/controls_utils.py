@@ -13,10 +13,20 @@ Design by Contract
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+import importlib.util
 
-if TYPE_CHECKING:
-    from .controls_widget import LabeledInput
+from PyQt6.QtWidgets import (
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QWidget,
+)
+
+# ── UnitAwareInput availability (DRY: single check shared by all widgets) ──
+HAS_UNIT_AWARE_INPUT = (
+    importlib.util.find_spec("upstream_drift_tools.ui.widgets.unit_aware_input")
+    is not None
+)
 
 # ---------------------------------------------------------------------------
 # Stylesheet tokens shared by both control panels
@@ -34,9 +44,10 @@ FONT_BTN: int = 11  # button labels
 FONT_TITLE: int = 14  # major titles
 FONT_STATUS: int = 11  # status bar text
 
-assert all(
+if not all(
     v >= MIN_FONT_PX for v in (FONT_BODY, FONT_GROUP, FONT_EDIT, FONT_BTN, FONT_STATUS)
-), "All font sizes must meet minimum readability threshold"
+):
+    raise ValueError("All font sizes must meet minimum readability threshold")
 
 STYLE_GROUP = (
     f"QGroupBox {{ color: #c8c8e0; border: 1px solid #404060;"
@@ -80,7 +91,6 @@ STYLE_BTN_IMPORT = (
 )
 
 # ── Full-window dark stylesheet (fallback when fleet ThemeManager unavailable)
-# TODO(#1042): Derive from fleet ThemeManager palette when it's a hard dep.
 PENDULUM_DARK_STYLE = f"""
     QMainWindow {{ background: #12121c; }}
     QStatusBar  {{ background: #12121c; color: #7878a0; font-size: {FONT_STATUS}px;
@@ -111,6 +121,59 @@ PENDULUM_DARK_STYLE = f"""
             font-size: {FONT_BODY}px; }}
     QMenu::item:selected {{ background: #383868; }}
 """
+
+
+# ---------------------------------------------------------------------------
+# Reusable widgets (DRY: shared across double, triple, and golfer panels)
+# ---------------------------------------------------------------------------
+
+
+class LabeledInput(QWidget):
+    """A label + line-edit pair used throughout the control panel."""
+
+    def __init__(
+        self,
+        label: str,
+        default: str,
+        tooltip: str = "",
+        label_width: int = 80,
+        parent: QWidget | None = None,
+    ) -> None:
+        if not (label is not None):
+            raise ValueError("label must be provided")
+        super().__init__(parent)
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(3)
+
+        lbl = QLabel(label)
+        lbl.setFixedWidth(label_width)
+        lbl.setStyleSheet(STYLE_LABEL)
+        layout.addWidget(lbl)
+
+        self.edit = QLineEdit(default)
+        self.edit.setStyleSheet(STYLE_EDIT)
+        self.edit.setMinimumHeight(22)
+        if tooltip:
+            self.edit.setToolTip(tooltip)
+        layout.addWidget(self.edit)
+
+    @property
+    def value(self) -> str:
+        return self.edit.text().strip()
+
+    def set_value(self, text: str) -> None:
+        self.edit.setText(text)
+
+
+def make_row(*widgets: QWidget) -> QHBoxLayout:
+    """Pack widgets into a horizontal row with no margin."""
+    row = QHBoxLayout()
+    row.setContentsMargins(0, 0, 0, 0)
+    row.setSpacing(4)
+    for w in widgets:
+        row.addWidget(w, stretch=1)
+    return row
 
 
 # ---------------------------------------------------------------------------
@@ -191,7 +254,8 @@ def clamp_dt(raw: float) -> float:
 
     Precondition: raw is a finite float (already parsed).
     """
-    assert isinstance(raw, float), "dt must be a float"
+    if not isinstance(raw, float):
+        raise ValueError("dt must be a float")
     return max(1e-5, min(0.1, raw))
 
 

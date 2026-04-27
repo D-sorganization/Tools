@@ -4,7 +4,7 @@
 //! calculations for altitudes in the troposphere (0–11 km).
 //!
 //! # Design by Contract
-//! - Altitude must be finite
+//! - Altitude must be finite and non-negative
 //! - Output density, pressure, temperature are always positive
 //!
 //! # DRY
@@ -58,7 +58,7 @@ pub struct AtmosphereProperties {
 /// (0–11,000 m). Above the tropopause, results are approximate.
 ///
 /// # Contracts (DbC)
-/// - Precondition: `altitude_m` is finite
+/// - Precondition: `altitude_m` is finite and non-negative
 /// - Postcondition: `density > 0`, `pressure > 0`, `temperature > 0`
 ///
 /// # Arguments
@@ -68,7 +68,8 @@ pub struct AtmosphereProperties {
 /// `AtmosphereProperties` with density, viscosity, temperature, pressure
 #[must_use]
 pub fn atmosphere_at_altitude(altitude_m: f64) -> AtmosphereProperties {
-    debug_assert!(altitude_m.is_finite(), "DbC: altitude must be finite");
+    assert!(altitude_m.is_finite(), "DbC: altitude must be finite");
+    assert!(altitude_m >= 0.0, "DbC: altitude must be non-negative");
 
     let t = T0 - LAPSE_RATE * altitude_m;
     let p = P0 * (t / T0).powf(GRAVITY * M_AIR / (R_GAS * LAPSE_RATE));
@@ -222,6 +223,18 @@ mod tests {
         let rho = air_density_at_altitude(5000.0);
         let atm = atmosphere_at_altitude(5000.0);
         assert!((rho - atm.density).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    #[should_panic(expected = "altitude must be non-negative")]
+    fn test_negative_altitude_rejected() {
+        let _ = atmosphere_at_altitude(-1.0);
+    }
+
+    #[test]
+    #[should_panic(expected = "altitude must be finite")]
+    fn test_non_finite_altitude_rejected() {
+        let _ = atmosphere_at_altitude(f64::NAN);
     }
 
     /// Test 6: Viscosity increases with altitude (hotter → more viscous for gases... but

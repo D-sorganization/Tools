@@ -1,3 +1,5 @@
+from typing import Any
+
 """
 Steam Engine Calculator GUI Tests
 =================================
@@ -17,7 +19,7 @@ class TestSteamEngineCalculatorMainWindow:
     """Tests for the PyQt6 Steam Engine Calculator main window."""
 
     @pytest.fixture
-    def mock_qt_app(self):
+    def mock_qt_app(self) -> Any:
         """Create mock Qt application for headless testing."""
         import types
 
@@ -48,7 +50,7 @@ class TestSteamEngineCalculatorMainWindow:
                     del sys.modules[key]
             yield
 
-    def test_main_window_imports(self, mock_qt_app):
+    def test_main_window_imports(self, mock_qt_app) -> Any:
         """Test that main window module can be imported."""
         try:
             from steam_engine_calculator.ui.pyqt6 import main_window
@@ -57,7 +59,7 @@ class TestSteamEngineCalculatorMainWindow:
         except ImportError:
             pytest.skip("PyQt6 main window not yet implemented")
 
-    def test_main_window_has_calculation_modes(self, mock_qt_app):
+    def test_main_window_has_calculation_modes(self, mock_qt_app) -> Any:
         """Test that window has calculation mode selector."""
         try:
             from steam_engine_calculator.ui.pyqt6.main_window import (
@@ -71,7 +73,7 @@ class TestSteamEngineCalculatorMainWindow:
         except ImportError:
             pytest.skip("Main window not yet implemented")
 
-    def test_main_window_has_input_fields(self, mock_qt_app):
+    def test_main_window_has_input_fields(self, mock_qt_app) -> Any:
         """Test that window defines required input fields."""
         try:
             from steam_engine_calculator.ui.pyqt6.main_window import (
@@ -83,7 +85,7 @@ class TestSteamEngineCalculatorMainWindow:
         except ImportError:
             pytest.skip("Main window not yet implemented")
 
-    def test_main_window_has_result_fields(self, mock_qt_app):
+    def test_main_window_has_result_fields(self, mock_qt_app) -> Any:
         """Test that window defines expected result fields."""
         try:
             from steam_engine_calculator.ui.pyqt6.main_window import (
@@ -98,7 +100,7 @@ class TestSteamEngineCalculatorMainWindow:
 class TestSteamEngineCalculatorValidation:
     """Tests for input validation logic."""
 
-    def test_temperature_kelvin_validation(self):
+    def test_temperature_kelvin_validation(self) -> Any:
         """Test temperature input validation in Kelvin."""
         # Valid range: 273.16 K (triple point) to 647.15 K (critical point)
         from steam_engine_calculator.ui.pyqt6.main_window import validate_temperature_k
@@ -117,7 +119,7 @@ class TestSteamEngineCalculatorValidation:
         assert not valid
         assert "above" in msg.lower() or "maximum" in msg.lower()
 
-    def test_pressure_validation(self):
+    def test_pressure_validation(self) -> Any:
         """Test pressure input validation in Pa."""
         from steam_engine_calculator.ui.pyqt6.main_window import validate_pressure_pa
 
@@ -138,7 +140,7 @@ class TestSteamEngineCalculatorValidation:
 class TestSteamEngineCalculatorIntegration:
     """Integration tests for calculator engine connection."""
 
-    def test_engine_import(self):
+    def test_engine_import(self) -> Any:
         """Test that calculation engine can be imported."""
         try:
             from upstream_drift_tools.calculators.thermo.steam_engine import (
@@ -151,7 +153,7 @@ class TestSteamEngineCalculatorIntegration:
         except ImportError:
             pytest.skip("Steam engine not available in test environment")
 
-    def test_engine_calculation_tp_mode(self):
+    def test_engine_calculation_tp_mode(self) -> Any:
         """Test T-P mode calculation through engine."""
         try:
             from upstream_drift_tools.calculators.thermo.steam_engine import (
@@ -172,7 +174,7 @@ class TestSteamEngineCalculatorIntegration:
         except ImportError:
             pytest.skip("Steam engine not available")
 
-    def test_engine_saturated_from_temp(self):
+    def test_engine_saturated_from_temp(self) -> Any:
         """Test saturated properties from temperature."""
         try:
             from upstream_drift_tools.calculators.thermo.steam_engine import (
@@ -192,7 +194,7 @@ class TestSteamEngineCalculatorIntegration:
         except ImportError:
             pytest.skip("Steam engine not available")
 
-    def test_engine_saturated_from_pressure(self):
+    def test_engine_saturated_from_pressure(self) -> Any:
         """Test saturated properties from pressure."""
         try:
             from upstream_drift_tools.calculators.thermo.steam_engine import (
@@ -216,7 +218,7 @@ class TestSteamEngineCalculatorIntegration:
 class TestSteamEngineCalculatorResultDisplay:
     """Tests for result display formatting."""
 
-    def test_format_temperature(self):
+    def test_format_temperature(self) -> Any:
         """Test temperature formatting with units."""
         from steam_engine_calculator.ui.pyqt6.main_window import format_temperature
 
@@ -229,7 +231,7 @@ class TestSteamEngineCalculatorResultDisplay:
         assert "100" in result_c
         assert "°C" in result_c
 
-    def test_format_pressure(self):
+    def test_format_pressure(self) -> Any:
         """Test pressure formatting with units."""
         from steam_engine_calculator.ui.pyqt6.main_window import format_pressure
 
@@ -240,7 +242,7 @@ class TestSteamEngineCalculatorResultDisplay:
         result_bar = format_pressure(101325.0, "bar")
         assert "1.01" in result_bar
 
-    def test_format_enthalpy(self):
+    def test_format_enthalpy(self) -> Any:
         """Test enthalpy formatting."""
         from steam_engine_calculator.ui.pyqt6.main_window import format_enthalpy
 
@@ -248,7 +250,7 @@ class TestSteamEngineCalculatorResultDisplay:
         result = format_enthalpy(2676000.0)  # J/kg
         assert "2676" in result or "2.676" in result
 
-    def test_format_entropy(self):
+    def test_format_entropy(self) -> Any:
         """Test entropy formatting."""
         from steam_engine_calculator.ui.pyqt6.main_window import format_entropy
 
@@ -259,7 +261,7 @@ class TestSteamEngineCalculatorResultDisplay:
 class TestSteamEngineCalculatorGUIRegistration:
     """Tests for GUI framework registration."""
 
-    def test_gui_registration_exists(self):
+    def test_gui_registration_exists(self) -> Any:
         """Test that gui_registration.py exists and has required metadata."""
         try:
             from steam_engine_calculator import gui_registration
@@ -274,7 +276,7 @@ class TestSteamEngineCalculatorGUIRegistration:
         except ImportError:
             pytest.skip("GUI registration not yet implemented")
 
-    def test_gui_registration_category(self):
+    def test_gui_registration_category(self) -> Any:
         """Test that calculator is in thermodynamics category."""
         try:
             from steam_engine_calculator import gui_registration

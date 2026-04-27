@@ -1,22 +1,26 @@
+from typing import Any
+
 """
 Tests for the model library module.
 """
 
+import json
 import tempfile
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 
 class TestModelLibrary:
     """Tests for ModelLibrary class."""
 
-    def test_library_creation(self):
+    def test_library_creation(self) -> Any:
         """Test library instantiation."""
         from model_generation.library import ModelLibrary
 
         library = ModelLibrary()
         assert library is not None
 
-    def test_list_models_empty(self):
+    def test_list_models_empty(self) -> Any:
         """Test listing models on fresh library."""
         from model_generation.library import ModelLibrary
 
@@ -25,7 +29,7 @@ class TestModelLibrary:
         # Should return empty or built-in models
         assert isinstance(models, list)
 
-    def test_add_local_model(self):
+    def test_add_local_model(self) -> Any:
         """Test adding a local URDF model."""
         from model_generation.library import ModelCategory, ModelLibrary
 
@@ -62,7 +66,7 @@ class TestModelLibrary:
         finally:
             temp_path.unlink()
 
-    def test_list_models_with_filter(self):
+    def test_list_models_with_filter(self) -> Any:
         """Test filtering models by category."""
         from model_generation.library import ModelCategory, ModelLibrary
 
@@ -77,7 +81,7 @@ class TestModelLibrary:
 class TestModelCache:
     """Tests for ModelCache class."""
 
-    def test_cache_creation(self):
+    def test_cache_creation(self) -> Any:
         """Test cache instantiation."""
         from model_generation.library.cache import CacheConfig, ModelCache
 
@@ -88,7 +92,7 @@ class TestModelCache:
         cache = ModelCache(config)
         assert cache is not None
 
-    def test_cache_put_get(self):
+    def test_cache_put_get(self) -> Any:
         """Test adding and retrieving from cache."""
         from model_generation.library.cache import CacheConfig, ModelCache
 
@@ -116,7 +120,7 @@ class TestModelCache:
         assert retrieved is not None
         assert retrieved.model_id == "test_model"
 
-    def test_cache_contains(self):
+    def test_cache_contains(self) -> Any:
         """Test cache contains check."""
         from model_generation.library.cache import CacheConfig, ModelCache
 
@@ -132,7 +136,7 @@ class TestModelCache:
         assert cache.contains("existing")
         assert not cache.contains("nonexistent")
 
-    def test_cache_statistics(self):
+    def test_cache_statistics(self) -> Any:
         """Test cache statistics."""
         from model_generation.library.cache import CacheConfig, ModelCache
 
@@ -149,7 +153,7 @@ class TestModelCache:
 class TestRepository:
     """Tests for Repository classes."""
 
-    def test_local_repository(self):
+    def test_local_repository(self) -> Any:
         """Test LocalRepository."""
         from model_generation.library.repository import LocalRepository
 
@@ -170,7 +174,7 @@ class TestRepository:
         assert "robot1" in names
         assert "robot2" in names
 
-    def test_github_repository_list(self):
+    def test_github_repository_list(self) -> Any:
         """Test GitHubRepository model listing (mocked)."""
         from model_generation.library.repository import GitHubRepository
 
@@ -182,3 +186,59 @@ class TestRepository:
             repo="test_repo",
         )
         assert repo.name == "test_repo"
+
+    def test_download_meshes_rejects_traversal_filenames(self) -> Any:
+        """Test mesh filenames cannot escape the mesh destination."""
+        from model_generation.library.repository import GitHubRepository
+
+        repo = GitHubRepository(owner="owner", repo="repo")
+        destination = Path(tempfile.mkdtemp())
+
+        mock_response = MagicMock()
+        mock_response.read.return_value = json.dumps(
+            [
+                {
+                    "type": "file",
+                    "name": "safe_mesh.stl",
+                    "path": "meshes/safe_mesh.stl",
+                    "download_url": (
+                        "https://raw.githubusercontent.com/owner/repo/main/meshes/safe_mesh.stl"
+                    ),
+                },
+                {
+                    "type": "file",
+                    "name": "../traversal_attempt.stl",
+                    "path": "meshes/traversal_attempt.stl",
+                    "download_url": (
+                        "https://raw.githubusercontent.com/owner/repo/main/meshes"
+                        "/traversal_attempt.stl"
+                    ),
+                },
+            ]
+        ).encode()
+        mock_response.__enter__.return_value = mock_response
+
+        downloaded_paths: list[Path] = []
+
+        def fake_urlretrieve(url: str, filename: Path) -> tuple[str, Any]:
+            downloaded_paths.append(Path(filename))
+            Path(filename).write_text("data")
+            return (str(filename), None)
+
+        with (
+            patch(
+                "model_generation.library.repository._urlopen_https",
+                return_value=mock_response,
+            ),
+            patch(
+                "model_generation.library.repository._urlretrieve_https",
+                side_effect=fake_urlretrieve,
+            ),
+        ):
+            repo._download_meshes("meshes", destination)
+
+        assert (destination / "meshes" / "safe_mesh.stl") in downloaded_paths
+        assert (
+            destination / "meshes" / "traversal_attempt.stl"
+        ) not in downloaded_paths
+        assert not (destination / "traversal_attempt.stl").exists()

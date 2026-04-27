@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """
 Steam Engine Calculator - PyQt6 Main Window
 ============================================
@@ -85,6 +87,7 @@ def validate_pressure_pa(value: float) -> tuple[bool, str]:
 
 
 def format_temperature(value: float, unit: str = "K") -> str:
+<<<<<<< HEAD
     """Format temperature with units.
 
     Args:
@@ -96,12 +99,18 @@ def format_temperature(value: float, unit: str = "K") -> str:
     """
     if not isinstance(value, (int, float)):
         raise TypeError(f"value must be a number, got {type(value).__name__}")
+=======
+    """Format temperature with units."""
+    if not (value is not None):
+        raise ValueError("value must be provided")
+>>>>>>> origin/main
     if unit == "C":
         return f"{value - 273.15:.2f} °C"
     return f"{value:.2f} K"
 
 
 def format_pressure(value: float, unit: str = "Pa") -> str:
+<<<<<<< HEAD
     """Format pressure with units.
 
     Args:
@@ -113,6 +122,11 @@ def format_pressure(value: float, unit: str = "Pa") -> str:
     """
     if not isinstance(value, (int, float)):
         raise TypeError(f"value must be a number, got {type(value).__name__}")
+=======
+    """Format pressure with units."""
+    if not (value is not None):
+        raise ValueError("value must be provided")
+>>>>>>> origin/main
     if unit == "bar":
         return f"{value / 1e5:.4f} bar"
     if unit == "kPa":
@@ -396,6 +410,7 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
         return panel
 
     def _create_group(self, title: str) -> QGroupBox:
+<<<<<<< HEAD
         """Create a styled group box.
 
         Args:
@@ -406,11 +421,17 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
         """
         if not isinstance(title, str):
             raise TypeError(f"title must be a string, got {type(title).__name__}")
+=======
+        """Create a styled group box."""
+        if not (title is not None):
+            raise ValueError("title must be provided")
+>>>>>>> origin/main
         group = QGroupBox(title)
         group.setFont(QFont("Segoe UI", 10, _FONT_WEIGHT_BOLD))
         return group
 
     def _create_label(self, text: str) -> QLabel:
+<<<<<<< HEAD
         """Create a styled label.
 
         Args:
@@ -421,11 +442,17 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
         """
         if not isinstance(text, str):
             raise TypeError(f"text must be a string, got {type(text).__name__}")
+=======
+        """Create a styled label."""
+        if not (text is not None):
+            raise ValueError("text must be provided")
+>>>>>>> origin/main
         label = QLabel(text)
         label.setStyleSheet(f"color: {COLORS['text']};")
         return label
 
     def _create_result_card(self, name: str, key: str, color: str) -> QFrame:
+<<<<<<< HEAD
         """Create a result display card.
 
         Args:
@@ -442,6 +469,11 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
             raise TypeError(f"key must be a string, got {type(key).__name__}")
         if not isinstance(color, str):
             raise TypeError(f"color must be a string, got {type(color).__name__}")
+=======
+        """Create a result display card."""
+        if not (name is not None):
+            raise ValueError("name must be provided")
+>>>>>>> origin/main
         card = QFrame()
         card.setFrameShape(_FRAME_STYLED_PANEL)
         card.setMinimumHeight(60)
@@ -706,6 +738,11 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
         if result is None:
             raise ValueError("result must not be None")
         # Phase state
+<<<<<<< HEAD
+=======
+        if not (result is not None):
+            raise ValueError("result must be provided")
+>>>>>>> origin/main
         phase_colors = {
             "liquid": COLORS["blue"],
             "vapor": COLORS["peach"],

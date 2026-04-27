@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """
 Control panel widget (double pendulum) — parameter inputs,
 torque polynomial editors, gravity toggle.
@@ -26,11 +28,14 @@ from PyQt6.QtWidgets import (
 )
 
 from .controls_utils import (
+    HAS_UNIT_AWARE_INPUT as _HAS_UAI,
     STYLE_CHECK,
     STYLE_EDIT,
     STYLE_GROUP,
     STYLE_LABEL,
+    LabeledInput,
     clamp_dt,
+    make_row as _row,
     parse_coeffs,
     parse_coeffs_lenient,
     parse_float,
@@ -40,64 +45,8 @@ from .controls_utils import (
 from .controls_widget_base import ControlsWidgetBase
 from .torque_preview_widget import TorquePreviewWidget
 
-try:
+if _HAS_UAI:
     from upstream_drift_tools.ui.widgets.unit_aware_input import UnitAwareInput
-
-    _HAS_UAI = True
-except ImportError:
-    _HAS_UAI = False
-
-
-# ---------------------------------------------------------------------------
-# Reusable widgets (imported by triple / golfer variants)
-# ---------------------------------------------------------------------------
-
-
-class LabeledInput(QWidget):
-    """A label + line-edit pair used throughout the control panel."""
-
-    def __init__(
-        self,
-        label: str,
-        default: str,
-        tooltip: str = "",
-        label_width: int = 80,
-        parent: QWidget | None = None,
-    ) -> None:
-        assert label is not None, "label must be provided"
-        super().__init__(parent)
-        layout = QHBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(3)
-
-        lbl = QLabel(label)
-        lbl.setFixedWidth(label_width)
-        lbl.setStyleSheet(STYLE_LABEL)
-        layout.addWidget(lbl)
-
-        self.edit = QLineEdit(default)
-        self.edit.setStyleSheet(STYLE_EDIT)
-        self.edit.setMinimumHeight(22)
-        if tooltip:
-            self.edit.setToolTip(tooltip)
-        layout.addWidget(self.edit)
-
-    @property
-    def value(self) -> str:
-        return self.edit.text().strip()
-
-    def set_value(self, text: str) -> None:
-        self.edit.setText(text)
-
-
-def _row(*widgets: QWidget) -> QHBoxLayout:
-    """Helper: pack widgets into a horizontal row with no margin."""
-    row = QHBoxLayout()
-    row.setContentsMargins(0, 0, 0, 0)
-    row.setSpacing(4)
-    for w in widgets:
-        row.addWidget(w, stretch=1)
-    return row
 
 
 # ---------------------------------------------------------------------------
@@ -561,7 +510,8 @@ class ControlsWidget(ControlsWidgetBase):
         }
 
     def _apply_preset(self, name: str) -> None:
-        assert name is not None, "name must be provided"
+        if not (name is not None):
+            raise ValueError("name must be provided")
         if name not in self.PRESETS:
             return
         theta1, phi, dth, dph, tau_sh, tau_wr, tend, m1, m2, mClub, L1, L2 = self.PRESETS[name]
@@ -596,7 +546,8 @@ class ControlsWidget(ControlsWidgetBase):
     @staticmethod
     def _uai_or_parse(widget: object, label: str) -> float:
         """Extract SI value from UnitAwareInput or parse from LabeledInput."""
-        assert widget is not None, "widget must be provided"
+        if not (widget is not None):
+            raise ValueError("widget must be provided")
         if _HAS_UAI and isinstance(widget, UnitAwareInput):
             return widget.value_si()  # type: ignore[no-any-return]
         return parse_float(widget, label)  # type: ignore[arg-type]
@@ -692,7 +643,8 @@ class ControlsWidget(ControlsWidgetBase):
     # ------------------------------------------------------------------
 
     def _on_play_toggled(self, checked: bool) -> None:
-        assert checked is not None, "checked must be provided"
+        if not (checked is not None):
+            raise ValueError("checked must be provided")
         self._is_playing = checked
         self.btn_play.setText("‖ Pause" if checked else "▶ Play")
         self.play_toggled.emit(checked)

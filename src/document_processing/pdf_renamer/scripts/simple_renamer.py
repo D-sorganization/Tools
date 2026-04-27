@@ -1,3 +1,5 @@
+from numba import jit
+
 """
 Simple PDF Renamer script using PyPDF2.
 Acts as a secondary/fallback option to the main PDFRenamer tool.
@@ -84,6 +86,8 @@ def extract_title_author(pdf_path: str | Path) -> tuple[str, str]:
         return "Unknown", "Unknown Title"
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def rename_pdfs(root_folder: str) -> None:
     """Recursively rename PDFs in the given folder."""
     for dirpath, _, filenames in os.walk(root_folder):

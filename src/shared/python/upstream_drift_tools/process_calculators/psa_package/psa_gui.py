@@ -1,3 +1,6 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+# UPDATE: Decomposed into ui/ package.
+
 """
 PyQt6 GUI for Two-Stage PSA System Analysis.
 
@@ -5,6 +8,7 @@ This GUI provides interactive visualization and analysis of PSA system
 performance, including sensitivity analysis and O2 safety calculations.
 """
 
+<<<<<<< HEAD
 import logging
 import os
 import subprocess
@@ -12,50 +16,38 @@ import sys
 import webbrowser
 from collections.abc import Callable
 from typing import Any
+=======
+import sys
+>>>>>>> origin/main
 
-import matplotlib
-import numpy as np
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
-from matplotlib.figure import Figure
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QAction, QDoubleValidator, QFont, QPixmap
-from PyQt6.QtWidgets import (
-    QApplication,
-    QCheckBox,
-    QComboBox,
-    QGridLayout,
-    QGroupBox,
-    QHBoxLayout,
-    QLabel,
-    QLineEdit,
-    QMainWindow,
-    QMessageBox,
-    QPushButton,
-    QScrollArea,
-    QSizePolicy,
-    QSlider,
-    QSpinBox,
-    QTableWidget,
-    QTableWidgetItem,
-    QTabWidget,
-    QVBoxLayout,
-    QWidget,
+from PyQt6.QtWidgets import QApplication
+
+# Expose components for backward compatibility
+from .ui import (
+    InputPanel,
+    MplCanvas,
+    PFDWidget,
+    PSAMainWindow,
+    ResultsPanel,
+    SensitivityPlotWidget,
+    create_slider,
 )
 
-from .psa_model import (
-    DEFAULT_COMPONENTS,
-    ComponentData,
-    PSAModel,
-    PSAResults,
-    calculate_o2_safety_analysis,
-    calculate_sensitivity,
-    get_flammability_status,
+__all__ = (
+    "InputPanel",
+    "ResultsPanel",
+    "SensitivityPlotWidget",
+    "PFDWidget",
+    "PSAMainWindow",
+    "create_slider",
+    "MplCanvas",
+    "main",
 )
 
 logger = logging.getLogger(__name__)
 
 
+<<<<<<< HEAD
 def create_slider(
     min_value: int,
     max_value: int,
@@ -1024,6 +1016,8 @@ class PSAMainWindow(QMainWindow):
             QMessageBox.critical(self, "Calculation Error", f"Error: {e}")
 
 
+=======
+>>>>>>> origin/main
 def main() -> None:
     """Main entry point for the GUI application."""
     from shared.python.theme import setup_themed_app

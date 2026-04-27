@@ -82,7 +82,7 @@ export default function VideoUploader({ onVideoUpload }: VideoUploaderProps) {
         onClick={handleClick}
         className={`
           relative border-2 border-dashed rounded-lg p-12 text-center cursor-pointer
-          transition-colors duration-200
+          transition-colors duration-200 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2
           ${
             isDragging
               ? 'border-blue-500 bg-blue-50'

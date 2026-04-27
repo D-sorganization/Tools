@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """Command-line interface and sheet generation orchestration.
 
 This module contains the high-level ``generate`` function and the
@@ -14,14 +16,15 @@ Or programmatically::
     generate("spec.yml", "out.dxf", svg_path="out.svg")
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import argparse
-import logging
-from copy import deepcopy
-from pathlib import Path
-from typing import Any
+import argparse  # noqa: E402
+import logging  # noqa: E402
+from copy import deepcopy  # noqa: E402
+from pathlib import Path  # noqa: E402
+from typing import Any  # noqa: E402
 
+<<<<<<< HEAD
 try:
     import ezdxf
 except ImportError:  # pragma: no cover — optional heavy dep
@@ -31,13 +34,24 @@ from programmatic_pid.equipment import draw_equipment_symbol, equipment_dims
 from programmatic_pid.geometry import to_float
 from programmatic_pid.instruments import add_instrument
 from programmatic_pid.layout import (
+=======
+import ezdxf  # noqa: E402
+from programmatic_pid.controls import add_control_loops  # noqa: E402
+from programmatic_pid.equipment import (  # noqa: E402
+    draw_equipment_symbol,
+    equipment_dims,
+)
+from programmatic_pid.geometry import to_float  # noqa: E402
+from programmatic_pid.instruments import add_instrument  # noqa: E402
+from programmatic_pid.layout import (  # noqa: E402
+>>>>>>> origin/main
     LabelPlacer,
     compute_layout_regions,
     get_modelspace_extent,
     spread_instrument_positions,
 )
-from programmatic_pid.profiles import PROFILE_PRESETS
-from programmatic_pid.rendering import (
+from programmatic_pid.profiles import PROFILE_PRESETS  # noqa: E402
+from programmatic_pid.rendering import (  # noqa: E402
     add_arrow,
     add_box,
     add_text,
@@ -47,14 +61,14 @@ from programmatic_pid.rendering import (
     export_svg_from_dxf,
     layer_name,
 )
-from programmatic_pid.spec_loader import (
+from programmatic_pid.spec_loader import (  # noqa: E402
     get_layout_config,
     get_project,
     get_text_config,
     prepare_spec,
 )
-from programmatic_pid.streams import add_stream
-from programmatic_pid.title_block import add_notes, add_title_block
+from programmatic_pid.streams import add_stream  # noqa: E402
+from programmatic_pid.title_block import add_notes, add_title_block  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +87,8 @@ def add_equipment(
     show_inline_notes: bool = False,
 ) -> None:
     """Draw one equipment item: symbol + labels + optional inline notes."""
-    assert eq is not None, "eq must be provided"
+    if not (eq is not None):
+        raise ValueError("eq must be provided")
     x = to_float(eq.get("x", 0.0))
     y = to_float(eq.get("y", 0.0))
     w, hh = equipment_dims(eq)
@@ -134,10 +149,27 @@ def add_equipment(
 # ---------------------------------------------------------------------------
 
 
+<<<<<<< HEAD
 def _setup_process_doc(
     spec: dict[str, Any],
 ) -> tuple[Any, Any, dict[str, Any], dict[str, Any], str, str, str, str, float, float]:
     """Create ezdxf document, resolve layers, and compute layout/text config.
+=======
+def generate_process_sheet(
+    spec_path: str | Path,
+    out_path: str | Path,
+    svg_path: str | Path | None = None,
+    profile: str | None = "presentation",
+    prepared_spec: dict[str, Any] | None = None,
+) -> None:
+    """Generate the process (Sheet 1) DXF and optional SVG."""
+    if not (spec_path is not None):
+        raise ValueError("spec_path must be provided")
+    if prepared_spec is None:
+        spec = prepare_spec(spec_path, profile)
+    else:
+        spec = deepcopy(prepared_spec)
+>>>>>>> origin/main
 
     Parameters
     ----------
@@ -269,7 +301,7 @@ def _render_process_elements(
             stream_id = stream.get("id")
             if stream_id and stream_point:
                 stream_points[stream_id] = stream_point
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             logger.warning("Skipped stream %s: %s", stream.get("id", "<unknown>"), exc)
 
     add_control_loops(
@@ -711,7 +743,8 @@ def generate_controls_sheet(
     prepared_spec: dict[str, Any] | None = None,
 ) -> None:
     """Generate the controls and interlocks (Sheet 2) DXF and optional SVG."""
-    assert spec_path is not None, "spec_path must be provided"
+    if not (spec_path is not None):
+        raise ValueError("spec_path must be provided")
     if prepared_spec is None:
         spec = prepare_spec(spec_path, profile)
     else:
@@ -791,7 +824,8 @@ def generate_controls_sheet(
 
 def derive_related_path(path: str | Path, suffix: str) -> Path:
     """Derive a related file path by appending a suffix before the extension."""
-    assert path is not None, "path must be provided"
+    if not (path is not None):
+        raise ValueError("path must be provided")
     p = Path(path)
     return p.with_name(f"{p.stem}_{suffix}{p.suffix}")
 
@@ -816,7 +850,8 @@ def generate(
         controls_svg: Optional path for the controls sheet SVG.
         profile: Layout profile name (default ``"presentation"``).
     """
-    assert spec_path is not None, "spec_path must be provided"
+    if not (spec_path is not None):
+        raise ValueError("spec_path must be provided")
     prepared_spec = prepare_spec(spec_path, profile)
     generate_process_sheet(
         spec_path,

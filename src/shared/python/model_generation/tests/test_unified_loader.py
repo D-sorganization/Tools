@@ -11,7 +11,11 @@ Covers:
 """
 
 import json
+import logging
 from pathlib import Path
+from typing import Any
+
+import pytest
 
 
 class TestFormatDetection:
@@ -152,10 +156,206 @@ class TestBundledManifest:
         assert "mujoco_humanoid" in ids
 
 
+class TestConversionApi:
+    """Regression tests for conversion error handling."""
+
+    def test_convert_to_urdf_raises_for_missing_source(self, tmp_path: Path) -> None:
+        from model_generation.library.unified_loader import (
+            ModelNotFoundError,
+            UnifiedModelLoader,
+        )
+
+        loader = UnifiedModelLoader(prefs_dir=tmp_path)
+        with pytest.raises(ModelNotFoundError):
+            loader.convert_to_urdf(tmp_path / "missing.mjcf")
+
+    def test_convert_to_urdf_raises_for_unsupported_format(
+        self, tmp_path: Path
+    ) -> None:
+        from model_generation.library.unified_loader import (
+            UnifiedModelLoader,
+            UnsupportedFormatError,
+        )
+
+        source = tmp_path / "bad.txt"
+        source.write_text("not a model")
+        loader = UnifiedModelLoader(prefs_dir=tmp_path)
+        with pytest.raises(UnsupportedFormatError):
+            loader.convert_to_urdf(source)
+
+    def test_convert_to_urdf_raises_conversion_error(
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        from model_generation.library.unified_loader import (
+            ConversionError,
+            UnifiedModelLoader,
+        )
+
+        source = tmp_path / "model.mjcf"
+        source.write_text("<mujoco model='x'/>")
+        loader = UnifiedModelLoader(prefs_dir=tmp_path)
+        monkeypatch.setattr(
+            loader._mjcf_converter,
+            "mjcf_to_urdf",
+            lambda _source: (_ for _ in ()).throw(ValueError("boom")),
+        )
+
+        with pytest.raises(ConversionError):
+            loader.convert_to_urdf(source)
+
+    def test_convert_to_mjcf_raises_for_unsupported_format(
+        self, tmp_path: Path
+    ) -> None:
+        from model_generation.library.unified_loader import (
+            UnifiedModelLoader,
+            UnsupportedFormatError,
+        )
+
+        source = tmp_path / "bad.xml"
+        source.write_text("<mujoco model='x'/>")
+        loader = UnifiedModelLoader(prefs_dir=tmp_path)
+        with pytest.raises(UnsupportedFormatError):
+            loader.convert_to_mjcf(source)
+
+    def test_convert_to_mjcf_raises_conversion_error(
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        from model_generation.library.unified_loader import (
+            ConversionError,
+            UnifiedModelLoader,
+        )
+
+        source = tmp_path / "model.urdf"
+        source.write_text('<robot name="x"/>')
+        loader = UnifiedModelLoader(prefs_dir=tmp_path)
+        monkeypatch.setattr(
+            loader._mjcf_converter,
+            "urdf_to_mjcf",
+            lambda _source: (_ for _ in ()).throw(ValueError("boom")),
+        )
+        with pytest.raises(ConversionError):
+            loader.convert_to_mjcf(source)
+
+    @pytest.mark.parametrize(
+        ("method_name", "converter_method", "filename", "source_text"),
+        [
+            (
+                "convert_to_urdf",
+                "mjcf_to_urdf",
+                "model.mjcf",
+                "<mujoco model='x'/>",
+            ),
+            (
+                "convert_to_mjcf",
+                "urdf_to_mjcf",
+                "model.urdf",
+                '<robot name="x"/>',
+            ),
+        ],
+    )
+    def test_convert_methods_preserve_conversion_error(
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+        method_name: str,
+        converter_method: str,
+        filename: str,
+        source_text: str,
+    ) -> None:
+        from model_generation.library.unified_loader import (
+            ConversionError,
+            UnifiedModelLoader,
+        )
+
+        source = tmp_path / filename
+        source.write_text(source_text)
+        loader = UnifiedModelLoader(prefs_dir=tmp_path)
+        monkeypatch.setattr(
+            loader._mjcf_converter,
+            converter_method,
+            lambda _source: (_ for _ in ()).throw(ConversionError("boom")),
+        )
+
+        with pytest.raises(ConversionError, match="boom"):
+            getattr(loader, method_name)(source)
+
+    def test_convert_to_urdf_wraps_malformed_mjcf_parse_error(
+        self,
+        tmp_path: Path,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        from model_generation.library.unified_loader import (
+            ConversionError,
+            UnifiedModelLoader,
+        )
+
+        source = tmp_path / "broken.mjcf"
+        source.write_text("<mujoco model='x'><worldbody></mujoco>")
+        loader = UnifiedModelLoader(prefs_dir=tmp_path)
+
+        with caplog.at_level(
+            logging.ERROR,
+            logger="model_generation.library.unified_loader",
+        ):
+            with pytest.raises(ConversionError) as exc_info:
+                loader.convert_to_urdf(source)
+
+        assert "Unable to convert MJCF source to URDF" in str(exc_info.value)
+        assert exc_info.value.__cause__ is not None
+        assert "MJCF to URDF conversion failed" in caplog.text
+
+    def test_convert_to_mjcf_wraps_malformed_urdf_parse_error(
+        self,
+        tmp_path: Path,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        from model_generation.library.unified_loader import (
+            ConversionError,
+            UnifiedModelLoader,
+        )
+
+        source = tmp_path / "broken.urdf"
+        source.write_text("<robot name='x'><link name='base'></robot>")
+        loader = UnifiedModelLoader(prefs_dir=tmp_path)
+
+        with caplog.at_level(
+            logging.ERROR,
+            logger="model_generation.library.unified_loader",
+        ):
+            with pytest.raises(ConversionError) as exc_info:
+                loader.convert_to_mjcf(source)
+
+        assert "Unable to convert URDF source to MJCF" in str(exc_info.value)
+        assert exc_info.value.__cause__ is not None
+        assert "URDF to MJCF conversion failed" in caplog.text
+
+    def test_convert_to_urdf_succeeds_for_valid_source(self, tmp_path: Path) -> None:
+        from model_generation.library.unified_loader import UnifiedModelLoader
+
+        source = tmp_path / "good.mjcf"
+        source.write_text(
+            "<mujoco model='test'><worldbody><body name='base'><geom type='sphere' size='0.1'/></body></worldbody></mujoco>"
+        )
+        loader = UnifiedModelLoader(prefs_dir=tmp_path)
+        assert loader.convert_to_urdf(source).startswith("<")
+
+    def test_convert_to_mjcf_succeeds_for_valid_source(self, tmp_path: Path) -> None:
+        from model_generation.library.unified_loader import UnifiedModelLoader
+
+        source = tmp_path / "good.urdf"
+        source.write_text("<robot name='x'><link name='base'/></robot>")
+        loader = UnifiedModelLoader(prefs_dir=tmp_path)
+        assert loader.convert_to_mjcf(source).startswith("<")
+
+
 class TestUnifiedLoader:
     """Tests for loading bundled models via UnifiedModelLoader."""
 
-    def _make_loader(self, tmp_path: Path):
+    def _make_loader(self, tmp_path: Path) -> Any:
         from model_generation.library.unified_loader import UnifiedModelLoader
 
         return UnifiedModelLoader(prefs_dir=tmp_path)
@@ -588,8 +788,16 @@ class TestURDFDeterministicFormatting:
                     stripped = part.lstrip("-").lstrip("0").replace(".", "")
                     stripped = stripped.lstrip("0")
                     # :.6g can produce up to 6 sig figs
+<<<<<<< HEAD
                     assert len(stripped) <= 6, (
                         f"Value '{part}' has more than 6 significant digits"
                     )
+=======
+                    # fmt: off
+                    assert (
+                        len(stripped) <= 6
+                    ), f"Value '{part}' has more than 6 significant digits"
+                    # fmt: on
+>>>>>>> origin/main
                 except ValueError:
                     pass  # non-numeric attribute value

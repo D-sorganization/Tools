@@ -1,3 +1,5 @@
+from typing import Any
+
 """
 Tests for the CLI module.
 """
@@ -22,14 +24,14 @@ SIMPLE_URDF = """<?xml version="1.0"?>
 class TestCLIParser:
     """Tests for CLI argument parsing."""
 
-    def test_create_parser(self):
+    def test_create_parser(self) -> Any:
         """Test parser creation."""
         from model_generation.cli import create_parser
 
         parser = create_parser()
         assert parser is not None
 
-    def test_parse_generate_command(self):
+    def test_parse_generate_command(self) -> Any:
         """Test parsing generate command."""
         from model_generation.cli import create_parser
 
@@ -40,7 +42,7 @@ class TestCLIParser:
         assert args.name == "my_robot"
         assert args.humanoid is True
 
-    def test_parse_convert_command(self):
+    def test_parse_convert_command(self) -> Any:
         """Test parsing convert command."""
         from model_generation.cli import create_parser
 
@@ -54,7 +56,7 @@ class TestCLIParser:
         assert args.output == "output.urdf"
         assert args.from_format == "simscape"
 
-    def test_parse_validate_command(self):
+    def test_parse_validate_command(self) -> Any:
         """Test parsing validate command."""
         from model_generation.cli import create_parser
 
@@ -65,7 +67,7 @@ class TestCLIParser:
         assert args.input == "robot.urdf"
         assert args.json is True
 
-    def test_parse_diff_command(self):
+    def test_parse_diff_command(self) -> Any:
         """Test parsing diff command."""
         from model_generation.cli import create_parser
 
@@ -77,7 +79,7 @@ class TestCLIParser:
         assert args.file_b == "file2.urdf"
         assert args.side_by_side is True
 
-    def test_parse_info_command(self):
+    def test_parse_info_command(self) -> Any:
         """Test parsing info command."""
         from model_generation.cli import create_parser
 
@@ -88,7 +90,7 @@ class TestCLIParser:
         assert args.input == "robot.urdf"
         assert args.json is True
 
-    def test_parse_inertia_command(self):
+    def test_parse_inertia_command(self) -> Any:
         """Test parsing inertia command."""
         from model_generation.cli import create_parser
 
@@ -103,7 +105,7 @@ class TestCLIParser:
         assert args.dimensions == [0.1, 0.2, 0.3]
         assert args.json is True
 
-    def test_parse_library_list(self):
+    def test_parse_library_list(self) -> Any:
         """Test parsing library list command."""
         from model_generation.cli import create_parser
 
@@ -114,7 +116,7 @@ class TestCLIParser:
         assert args.lib_command == "list"
         assert args.category == "humanoid"
 
-    def test_parse_compose_command(self):
+    def test_parse_compose_command(self) -> Any:
         """Test parsing compose command."""
         from model_generation.cli import create_parser
 
@@ -142,7 +144,7 @@ class TestCLIParser:
 class TestCLICommands:
     """Tests for CLI command execution."""
 
-    def test_cmd_validate_valid_urdf(self):
+    def test_cmd_validate_valid_urdf(self) -> Any:
         """Test validate command with valid URDF."""
         import argparse
 
@@ -166,7 +168,7 @@ class TestCLICommands:
         finally:
             temp_path.unlink()
 
-    def test_cmd_validate_invalid_urdf(self):
+    def test_cmd_validate_invalid_urdf(self) -> Any:
         """Test validate command with invalid URDF."""
         import argparse
 
@@ -192,7 +194,7 @@ class TestCLICommands:
         finally:
             temp_path.unlink()
 
-    def test_cmd_info(self):
+    def test_cmd_info(self) -> Any:
         """Test info command."""
         import argparse
 
@@ -214,7 +216,7 @@ class TestCLICommands:
         finally:
             temp_path.unlink()
 
-    def test_cmd_inertia_box(self):
+    def test_cmd_inertia_box(self) -> Any:
         """Test inertia calculation for box."""
         import argparse
 
@@ -230,7 +232,7 @@ class TestCLICommands:
         result = cmd_inertia(args)
         assert result == 0
 
-    def test_cmd_inertia_cylinder(self):
+    def test_cmd_inertia_cylinder(self) -> Any:
         """Test inertia calculation for cylinder."""
         import argparse
 
@@ -246,7 +248,7 @@ class TestCLICommands:
         result = cmd_inertia(args)
         assert result == 0
 
-    def test_cmd_inertia_sphere(self):
+    def test_cmd_inertia_sphere(self) -> Any:
         """Test inertia calculation for sphere."""
         import argparse
 
@@ -262,7 +264,7 @@ class TestCLICommands:
         result = cmd_inertia(args)
         assert result == 0
 
-    def test_cmd_diff(self):
+    def test_cmd_diff(self) -> Any:
         """Test diff command."""
         import argparse
 
@@ -299,7 +301,7 @@ class TestCLICommands:
 class TestCLIMain:
     """Tests for main entry point."""
 
-    def test_main_no_args(self):
+    def test_main_no_args(self) -> Any:
         """Test main with no arguments shows help."""
         from model_generation.cli import main
 
@@ -307,7 +309,7 @@ class TestCLIMain:
         result = main([])
         assert result == 0
 
-    def test_main_help(self):
+    def test_main_help(self) -> Any:
         """Test main with --help."""
         from model_generation.cli import main
 
@@ -315,7 +317,7 @@ class TestCLIMain:
             main(["--help"])
         assert exc_info.value.code == 0
 
-    def test_main_version(self):
+    def test_main_version(self) -> Any:
         """Test main with --version."""
         from model_generation.cli import main
 

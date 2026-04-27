@@ -158,8 +158,9 @@ export default function AudioRecorder({
         <h3 className="text-sm font-medium text-gray-700">Audio Commentary</h3>
         {isRecording && (
           <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" aria-hidden="true" />
             <span className="text-sm text-gray-600">
+              <span className="sr-only">Recording duration: </span>
               {formatTime(recordingTime)}
             </span>
           </div>
@@ -171,12 +172,14 @@ export default function AudioRecorder({
           <button
             onClick={startRecording}
             disabled={disabled || !videoElement}
-            className="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center space-x-2"
+            aria-label="Start Recording audio commentary"
+            className="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center space-x-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
           >
             <svg
               className="w-5 h-5"
               fill="currentColor"
               viewBox="0 0 24 24"
+              aria-hidden="true"
             >
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
             </svg>
@@ -188,7 +191,8 @@ export default function AudioRecorder({
               <button
                 onClick={resumeRecording}
                 disabled={disabled}
-                className="flex-1 px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-md hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                aria-label="Resume recording"
+                className="flex-1 px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-md hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
                 Resume
               </button>
@@ -196,7 +200,8 @@ export default function AudioRecorder({
               <button
                 onClick={pauseRecording}
                 disabled={disabled}
-                className="flex-1 px-4 py-2 text-sm font-medium text-yellow-700 bg-yellow-50 rounded-md hover:bg-yellow-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                aria-label="Pause recording"
+                className="flex-1 px-4 py-2 text-sm font-medium text-yellow-700 bg-yellow-50 rounded-md hover:bg-yellow-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
                 Pause
               </button>
@@ -204,7 +209,8 @@ export default function AudioRecorder({
             <button
               onClick={stopRecording}
               disabled={disabled}
-              className="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              aria-label="Stop recording"
+              className="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
               Stop
             </button>

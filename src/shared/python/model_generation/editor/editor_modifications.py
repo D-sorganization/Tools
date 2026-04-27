@@ -1,16 +1,18 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """Modification operations mixin for the Frankenstein Editor.
 
 Provides link/joint deletion, renaming, modification, attachment/detachment,
 batch prefix application, and subtree mirroring.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-from collections.abc import Callable
-from typing import TYPE_CHECKING, Any
+import logging  # noqa: E402
+from collections.abc import Callable  # noqa: E402
+from typing import TYPE_CHECKING, Any  # noqa: E402
 
-from model_generation.core.types import Joint, JointType, Link, Origin
+from model_generation.core.types import Joint, JointType, Link, Origin  # noqa: E402
 
 if TYPE_CHECKING:
     from model_generation.converters.urdf_parser import ParsedModel
@@ -69,7 +71,8 @@ class ModificationMixin:
         Returns:
             True if deleted
         """
-        assert model_id is not None, "model_id must be provided"
+        if not (model_id is not None):
+            raise ValueError("model_id must be provided")
         model = self._models.get(model_id)
         if not model:
             logger.error(f"Model '{model_id}' not found")
@@ -133,7 +136,8 @@ class ModificationMixin:
         Returns:
             True if deleted
         """
-        assert model_id is not None, "model_id must be provided"
+        if not (model_id is not None):
+            raise ValueError("model_id must be provided")
         model = self._models.get(model_id)
         if not model:
             logger.error(f"Model '{model_id}' not found")
@@ -185,7 +189,8 @@ class ModificationMixin:
         Returns:
             True if renamed
         """
-        assert model_id is not None, "model_id must be provided"
+        if not (model_id is not None):
+            raise ValueError("model_id must be provided")
         if not new_name or not new_name.strip():
             logger.error("new_name must be a non-empty string")
             return False
@@ -248,7 +253,8 @@ class ModificationMixin:
         Returns:
             True if renamed
         """
-        assert model_id is not None, "model_id must be provided"
+        if not (model_id is not None):
+            raise ValueError("model_id must be provided")
         if not new_name or not new_name.strip():
             logger.error("new_name must be a non-empty string")
             return False
@@ -298,7 +304,8 @@ class ModificationMixin:
         Returns:
             True if modified
         """
-        assert model_id is not None, "model_id must be provided"
+        if not (model_id is not None):
+            raise ValueError("model_id must be provided")
         model = self._models.get(model_id)
         if not model:
             logger.error(f"Model '{model_id}' not found")
@@ -378,7 +385,8 @@ class ModificationMixin:
         Returns:
             True if attached
         """
-        assert model_id is not None, "model_id must be provided"
+        if not (model_id is not None):
+            raise ValueError("model_id must be provided")
         model = self._models.get(model_id)
         if not model:
             logger.error(f"Model '{model_id}' not found")
@@ -439,7 +447,8 @@ class ModificationMixin:
         Returns:
             True if detached
         """
-        assert model_id is not None, "model_id must be provided"
+        if not (model_id is not None):
+            raise ValueError("model_id must be provided")
         model = self._models.get(model_id)
         if not model:
             logger.error(f"Model '{model_id}' not found")
@@ -485,7 +494,8 @@ class ModificationMixin:
         Returns:
             True if applied
         """
-        assert model_id is not None, "model_id must be provided"
+        if not (model_id is not None):
+            raise ValueError("model_id must be provided")
         model = self._models.get(model_id)
         if not model:
             logger.error(f"Model '{model_id}' not found")
@@ -552,7 +562,8 @@ class ModificationMixin:
         Returns:
             List of created link names.
         """
-        assert links is not None, "links must be provided"
+        if not (links is not None):
+            raise ValueError("links must be provided")
         created_links: list[str] = []
         for link in links:
             new_link = Link.from_dict(link.to_dict())

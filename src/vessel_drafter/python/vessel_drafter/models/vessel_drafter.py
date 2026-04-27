@@ -92,7 +92,7 @@ class VesselSidePort:
     height_above_glass_surface_in: float
 
     def __post_init__(self) -> None:
-        require_positive("diameter_in", self.diameter_in)
+        require_positive(self.diameter_in, "diameter_in")
         require_nonnegative(
             "height_above_glass_surface_in",
             self.height_above_glass_surface_in,
@@ -121,7 +121,7 @@ class VesselLidPort:
     radial_distance_from_center_in: float
 
     def __post_init__(self) -> None:
-        require_positive("diameter_in", self.diameter_in)
+        require_positive(self.diameter_in, "diameter_in")
         require_nonnegative(
             "radial_distance_from_center_in",
             self.radial_distance_from_center_in,
@@ -159,23 +159,23 @@ class VesselDrafterLayout:
     lid_ports: tuple[VesselLidPort, ...] = ()
 
     def __post_init__(self) -> None:
-        require_positive("inner_diameter_in", self.inner_diameter_in)
-        require_positive("glass_depth_in", self.glass_depth_in)
-        require_positive("plenum_height_in", self.plenum_height_in)
-        require_positive("head_depth_in", self.head_depth_in)
-        require_positive("hot_face_thickness_in", self.hot_face_thickness_in)
-        require_positive("ifb_thickness_in", self.ifb_thickness_in)
-        require_positive("duraboard_thickness_in", self.duraboard_thickness_in)
-        require_positive("steel_thickness_in", self.steel_thickness_in)
+        require_positive(self.inner_diameter_in, "inner_diameter_in")
+        require_positive(self.glass_depth_in, "glass_depth_in")
+        require_positive(self.plenum_height_in, "plenum_height_in")
+        require_positive(self.head_depth_in, "head_depth_in")
+        require_positive(self.hot_face_thickness_in, "hot_face_thickness_in")
+        require_positive(self.ifb_thickness_in, "ifb_thickness_in")
+        require_positive(self.duraboard_thickness_in, "duraboard_thickness_in")
+        require_positive(self.steel_thickness_in, "steel_thickness_in")
         require_integer_at_least("electrode_count", self.electrode_count, 1)
-        require_positive("electrode_diameter_in", self.electrode_diameter_in)
+        require_positive(self.electrode_diameter_in, "electrode_diameter_in")
         require_positive(
-            "electrode_insertion_into_inner_circle_in",
             self.electrode_insertion_into_inner_circle_in,
+            "electrode_insertion_into_inner_circle_in",
         )
         require_positive(
-            "electrode_extension_past_inner_circle_in",
             self.electrode_extension_past_inner_circle_in,
+            "electrode_extension_past_inner_circle_in",
         )
         require_fraction(
             "electrode_centerline_height_fraction",

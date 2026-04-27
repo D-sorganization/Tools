@@ -1,14 +1,14 @@
 """ODE solver router.  See issue #608."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import math
+import math  # noqa: E402
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException  # noqa: E402
 
-from shared.python.safe_eval import safe_eval
+from shared.python.safe_eval import safe_eval  # noqa: E402
 
-from ..contracts.ode_solver import (
+from ..contracts.ode_solver import (  # noqa: E402
     ODESolverRequest,
     ODESolverResponse,
     ODEVariableSummary,
@@ -58,7 +58,8 @@ def _safe_eval(
     via attribute access on the ``math`` module.
     """
     # Build the evaluation namespace with math functions exposed directly
-    assert expr is not None, "expr must be provided"
+    if not (expr is not None):
+        raise ValueError("expr must be provided")
     namespace: dict[str, object] = {
         "sin": math.sin,
         "cos": math.cos,
@@ -91,7 +92,10 @@ def _rk4_solve(
     num_points: int,
 ) -> ODESolverResponse:
     """RK4 integration of the ODE system."""
-    assert var_names is not None, "var_names must be provided"
+    if not (var_names is not None):
+        raise ValueError("var_names must be provided")
+    if num_points < 2:
+        raise ValueError("num_points must be at least 2")
     dt = (t_end - t_start) / (num_points - 1)
     state = {v: initial[v] for v in var_names}
 

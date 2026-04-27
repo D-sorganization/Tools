@@ -23,6 +23,7 @@ class PluginManager:
     """Manages tool discovery and loading."""
 
     def __init__(self, repo_root: Path):
+<<<<<<< HEAD
         """Initialize the plugin manager.
 
         Args:
@@ -33,6 +34,10 @@ class PluginManager:
         """
         if not isinstance(repo_root, Path):
             raise TypeError(f"repo_root must be a Path, got {type(repo_root).__name__}")
+=======
+        if not (repo_root is not None):
+            raise ValueError("repo_root must be provided")
+>>>>>>> origin/main
         self.repo_root = repo_root
         self.tools_file = repo_root / "tools.json"
         self.tools: dict[str, list[Tool]] = {}
@@ -131,6 +136,7 @@ class PluginManager:
             return {}
 
     def get_tool_by_name(self, name: str) -> Tool | None:
+<<<<<<< HEAD
         """Find a tool by name.
 
         Args:
@@ -141,6 +147,11 @@ class PluginManager:
         """
         if not isinstance(name, str):
             raise TypeError(f"name must be a str, got {type(name).__name__}")
+=======
+        """Find a tool by name."""
+        if not (name is not None):
+            raise ValueError("name must be provided")
+>>>>>>> origin/main
         for category in self.tools.values():
             for tool in category:
                 if tool.name == name:

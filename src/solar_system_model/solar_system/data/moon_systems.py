@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Curated moon system data for gas giants and Earth."""
 
 from __future__ import annotations

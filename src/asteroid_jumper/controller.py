@@ -54,6 +54,31 @@ ASTEROID_DENSITY: float = 2000.0  # kg/m³ (rocky)
 
 
 @dataclass
+class AsteroidJumperSnapshot:
+    """Flat view model for renderers and dashboards."""
+
+    phase: str
+    time: float
+    shape: AsteroidShape
+    asteroid_pos: Vec2
+    asteroid_angle: float
+    asteroid_speed: float
+    asteroid_angular_speed: float
+    jumper_pos: Vec2
+    jumper_angle: float
+    jumper_speed: float
+    jumper_angular_speed: float
+    force_angle_deg: float
+    off_centre_fraction: float
+    leg_phase: float
+
+    @property
+    def is_ready(self) -> bool:
+        """True when the simulation is idle and reconfigurable."""
+        return self.phase == "ready"
+
+
+@dataclass
 class SimController:
     """Owns all simulation state and exposes high-level control API."""
 
@@ -89,20 +114,25 @@ class SimController:
         impulse: float | None = None,
     ) -> None:
         """Reconfigure and reset — call before jumping."""
-        assert self.state.phase == "ready", "Cannot reconfigure mid-flight"
+        if not (self.state.phase == "ready"):
+            raise ValueError("Cannot reconfigure mid-flight")
         if asteroid_mass is not None:
-            assert asteroid_mass > 0
+            if not (asteroid_mass > 0):
+                raise ValueError("DbC Blocked: Precondition failed.")
             self.asteroid_mass = asteroid_mass
         if shape_kind is not None:
             self.asteroid_shape_kind = shape_kind
         if semi_a is not None:
-            assert semi_a > 0
+            if not (semi_a > 0):
+                raise ValueError("DbC Blocked: Precondition failed.")
             self.asteroid_semi_a = semi_a
         if semi_b is not None:
-            assert semi_b > 0
+            if not (semi_b > 0):
+                raise ValueError("DbC Blocked: Precondition failed.")
             self.asteroid_semi_b = semi_b
         if impulse is not None:
-            assert impulse >= 0
+            if not (impulse >= 0):
+                raise ValueError("DbC Blocked: Precondition failed.")
             self.impulse_magnitude = impulse
         self.shape = self._build_shape()
         self.state = self._build_state()
@@ -117,12 +147,14 @@ class SimController:
 
     def set_impulse(self, n_s: float) -> None:
         """Set the total impulse of the jump."""
-        assert n_s >= 0
+        if not (n_s >= 0):
+            raise ValueError("DbC Blocked: Precondition failed.")
         self.impulse_magnitude = float(n_s)
 
     def start_jump(self) -> None:
         """Begin the spring-launch sequence."""
-        assert self.state.phase == "ready", "Already jumping or in flight"
+        if not (self.state.phase == "ready"):
+            raise ValueError("Already jumping or in flight")
         contact_pt = self._contact_point()
         asteroid_com = self.state.asteroid.pos
         jumper_com = self.state.jumper.pos
@@ -136,17 +168,39 @@ class SimController:
             duration=self.spring_duration,
         )
         self.state.phase = "jumping"
-        self._initial_momentum = self._total_momentum_magnitude()
+        self._initial_momentum = self.total_momentum_magnitude()
 
     def tick(self, dt: float) -> None:
         """Advance simulation by *dt* seconds."""
-        assert dt > 0
+        if not (dt > 0):
+            raise ValueError("DbC Blocked: Precondition failed.")
         step_simulation(self.state, dt)
 
     def reset(self) -> None:
         """Return to initial ready state."""
         self.shape = self._build_shape()
         self.state = self._build_state()
+
+    def snapshot(self) -> AsteroidJumperSnapshot:
+        """Return a flat snapshot of the current simulation state."""
+        asteroid = self.state.asteroid
+        jumper = self.state.jumper
+        return AsteroidJumperSnapshot(
+            phase=self.state.phase,
+            time=self.state.time,
+            shape=self.shape,
+            asteroid_pos=asteroid.pos,
+            asteroid_angle=asteroid.angle,
+            asteroid_speed=asteroid.speed,
+            asteroid_angular_speed=abs(asteroid.angular_vel),
+            jumper_pos=jumper.pos,
+            jumper_angle=jumper.angle,
+            jumper_speed=jumper.speed,
+            jumper_angular_speed=abs(jumper.angular_vel),
+            force_angle_deg=self.force_angle_deg,
+            off_centre_fraction=self.off_centre_fraction(),
+            leg_phase=self.leg_phase(),
+        )
 
     # ------------------------------------------------------------------
     # Read-only metrics
@@ -237,7 +291,7 @@ class SimController:
         sx, sy = surface_point_at_angle(self.shape, surface_angle_rad)
         return Vec2(sx, sy)
 
-    def _total_momentum_magnitude(self) -> float:
-        """Total system linear momentum magnitude."""
+    def total_momentum_magnitude(self) -> float:
+        """Total system linear momentum magnitude (kg·m/s)."""
         total = self.state.total_linear_momentum
         return float(total.length())

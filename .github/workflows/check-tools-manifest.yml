@@ -4,19 +4,66 @@ on:
   push:
     paths:
       - "src/**/gui_registration.py"
+      - "src/**/launch_gui.py"
+      - "src/**/launch_pyqt6.py"
+      - "src/**/launch_web.py"
+      - "scripts/check_tools_manifest_layout.py"
       - "scripts/generate_tools_json.py"
       - "tools.json"
       - "tool_surface_contract.json"
   pull_request:
     paths:
       - "src/**/gui_registration.py"
+      - "src/**/launch_gui.py"
+      - "src/**/launch_pyqt6.py"
+      - "src/**/launch_web.py"
+      - "scripts/check_tools_manifest_layout.py"
       - "scripts/generate_tools_json.py"
       - "tools.json"
       - "tool_surface_contract.json"
 
 jobs:
+  # ── Dispatcher: route to self-hosted if available ──────────────────────────
+  pick-runner:
+    runs-on: self-hosted
+    timeout-minutes: 2
+    outputs:
+      runner: ${{ steps.check.outputs.runner }}
+    steps:
+      - name: Check for self-hosted runner
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
+          LOCAL_MODE: ${{ vars.LOCAL_RUNNER_MODE }}
+        run: |
+          MODE="${LOCAL_MODE:-local}"
+          echo "Fleet mode: $MODE"
+
+          case "$MODE" in
+            local)
+              echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
+              echo "Routing to self-hosted fleet (mode=local)"
+              ;;
+            disabled)
+              echo "::error::No local self-hosted runner available; failing closed"
+              exit 1
+              ;;
+            *)
+              AVAILABLE=$(gh api /orgs/${{ github.repository_owner }}/actions/runners \
+                --jq '[.runners[] | select(.status == "online") | select(.busy == false) | select(.labels[].name == "d-sorg-fleet")] | length' \
+                2>/dev/null || echo "0")
+              if [[ "$AVAILABLE" -gt 0 ]]; then
+                echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
+                echo "$AVAILABLE idle fleet runner(s) - routing locally"
+              else
+                echo "::error::No local self-hosted runner available; failing closed"
+                exit 1
+              fi
+              ;;
+          esac
   check-manifest:
-    runs-on: ubuntu-latest
+    needs: pick-runner
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v6
 
@@ -26,6 +73,9 @@ jobs:
 
       - name: Generate tools.json and tool_surface_contract.json
         run: python scripts/generate_tools_json.py
+
+      - name: Check launcher-backed tool registrations
+        run: python scripts/check_tools_manifest_layout.py
 
       - name: Check tools.json for changes
         run: |

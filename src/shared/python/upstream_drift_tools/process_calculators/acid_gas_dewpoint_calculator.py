@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 #!/usr/bin/env python3
 """
 Acid Gas Dewpoint Calculator for Syngas Applications
@@ -41,6 +43,8 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+
+from shared.python.contracts import require, require_positive
 
 # Optional thermodynamic libraries for more accurate vapor pressure
 try:
@@ -327,12 +331,21 @@ class AcidGasDewpointCalculator:
             Vapor pressure in Pa
         """
         # DbC preconditions
+<<<<<<< HEAD
         assert isinstance(temperature_c, (int, float)), (
             f"temperature_c must be numeric, got {type(temperature_c).__name__}"
         )
         assert isinstance(component, str) and len(component) > 0, (
             "component must be a non-empty string"
         )
+=======
+        if not isinstance(temperature_c, int | float):
+            raise ValueError(
+                f"temperature_c must be numeric, got {type(temperature_c).__name__}"
+            )
+        if not (isinstance(component, str) and len(component) > 0):
+            raise ValueError("component must be a non-empty string")
+>>>>>>> origin/main
 
         if component not in self.antoine_constants:
             msg = f"Unknown component: {component}"
@@ -429,16 +442,13 @@ class AcidGasDewpointCalculator:
         Returns:
             Dewpoint temperature in Celsius
         """
-        if partial_pressure_pa <= 0:
-            raise ValueError(
-                f"partial_pressure_pa must be > 0, got {partial_pressure_pa}"
-            )
-
-        if component not in self.antoine_constants:
-            raise ValueError(
-                f"unknown component: {component!r}, "
-                f"expected one of {list(self.antoine_constants.keys())}"
-            )
+        require_positive(partial_pressure_pa, "partial_pressure_pa")
+        require(
+            component in self.antoine_constants,
+            f"unknown component: {component!r}, "
+            f"expected one of {list(self.antoine_constants.keys())}",
+            component,
+        )
 
         # Convert partial pressure to mmHg for the Antoine equation
         p_mmHg = partial_pressure_pa / MMHG_TO_PA_CONV
@@ -477,7 +487,8 @@ class AcidGasDewpointCalculator:
         self, partial_pressures: dict[str, float], total_pressure_pa: float
     ) -> dict[str, float]:
         """Calculate dewpoints for each component in the mixture."""
-        assert partial_pressures is not None, "partial_pressures must be provided"
+        if not (partial_pressures is not None):
+            raise ValueError("partial_pressures must be provided")
         dewpoints = {}
         for component, partial_pa in partial_pressures.items():
             if partial_pa > 0:
@@ -490,7 +501,8 @@ class AcidGasDewpointCalculator:
 
     def _assess_condensation_risk(self, margin: float) -> str:
         """Categorize condensation risk based on safety margin."""
-        assert margin is not None, "margin must be provided"
+        if not (margin is not None):
+            raise ValueError("margin must be provided")
         if np.isnan(margin):
             return "Unknown"
         if margin < 0:
@@ -521,13 +533,12 @@ class AcidGasDewpointCalculator:
         Returns:
             Comprehensive dewpoint results
         """
-        if pressure_bar <= 0:
-            raise ValueError(f"pressure_bar must be > 0, got {pressure_bar}")
-        if temperature_c + CELSIUS_TO_KELVIN_OFFSET <= 0:
-            raise ValueError(
-                f"temperature must yield a positive Kelvin value, "
-                f"got {temperature_c} C ({temperature_c + CELSIUS_TO_KELVIN_OFFSET} K)"
-            )
+        require_positive(pressure_bar, "pressure_bar")
+        require(
+            temperature_c + CELSIUS_TO_KELVIN_OFFSET > 0,
+            "temperature must yield a positive Kelvin value",
+            temperature_c,
+        )
 
         # Convert units
         pressure_pa = pressure_bar * BAR_TO_PA
@@ -623,7 +634,8 @@ class AcidGasDewpointCalculator:
         Returns:
             DataFrame with temperature and dewpoint data
         """
-        assert pressure_bar is not None, "pressure_bar must be provided"
+        if not (pressure_bar is not None):
+            raise ValueError("pressure_bar must be provided")
         temperatures = np.linspace(temp_range[0], temp_range[1], num_points)
         results = []
 
@@ -692,7 +704,8 @@ def quick_dewpoint_calculation(
     Returns:
         Dictionary with key results
     """
-    assert temperature_c is not None, "temperature_c must be provided"
+    if not (temperature_c is not None):
+        raise ValueError("temperature_c must be provided")
     calc = AcidGasDewpointCalculator()
     composition = AcidGasComposition(
         h2o=h2o_fraction, hf=hf_fraction, hcl=hcl_fraction, h2s=h2s_fraction
@@ -730,7 +743,8 @@ def estimate_condensation_risk(
     Returns:
         Risk assessment dictionary
     """
-    assert temperature_c is not None, "temperature_c must be provided"
+    if not (temperature_c is not None):
+        raise ValueError("temperature_c must be provided")
     calc = AcidGasDewpointCalculator()
     result = calc.calculate_dewpoint_mixture(
         temperature_c, pressure_bar, composition, method
@@ -893,7 +907,8 @@ if GUI_AVAILABLE:
 
         def display_result(self, result: DewpointResult) -> None:
             """Format and display results in the UI."""
-            assert result is not None, "result must be provided"
+            if not (result is not None):
+                raise ValueError("result must be provided")
             text = (
                 f"<b>Input:</b> T = {result.temperature_c:.2f} °C, "
                 f"P = {result.pressure_bar:.2f} bar<br>"

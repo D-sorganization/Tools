@@ -1,3 +1,8 @@
+# mypy: ignore-errors
+import logging
+
+logger = logging.getLogger(__name__)
+
 #!/usr/bin/env python3
 """Minimal test to verify PyQt signals work."""
 
@@ -33,8 +38,13 @@ class TestWindow(QMainWindow):
         # Connect our own handler
         self.run_requested.connect(self.on_run)
 
+<<<<<<< HEAD
     def on_run(self):  # type: ignore[no-untyped-def]
         print("[TEST] Signal received!")  # noqa: T201
+=======
+    def on_run(self) -> None:
+        logger.info("[TEST] Signal received!")
+>>>>>>> origin/main
         QMessageBox.information(self, "Success", "Signal was received!")
 
 

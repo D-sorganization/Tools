@@ -60,6 +60,22 @@ class TestConsoleEnvironment(unittest.TestCase):
         out, err = self.env.execute("1/0")
         self.assertIn("ZeroDivisionError: division by zero", err)
 
+    def test_execute_none_source_raises_value_error(self) -> None:
+        """None source is programmer error even when Python assertions are disabled."""
+        with self.assertRaisesRegex(ValueError, "source must be provided"):
+            self.env.execute(None)
+
+    def test_execute_propagates_unexpected_custom_exception(self) -> None:
+        """Unexpected custom exceptions should not be silently swallowed."""
+        source = (
+            "class UnexpectedConsoleFailure(Exception):\n"
+            "    pass\n"
+            "raise UnexpectedConsoleFailure('boom')"
+        )
+
+        with self.assertRaisesRegex(Exception, "boom"):
+            self.env.execute(source)
+
     def test_user_functions(self) -> None:
         """Test saving and loading user-defined functions."""
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -75,6 +91,49 @@ class TestConsoleEnvironment(unittest.TestCase):
             # Call it
             out, err = self.env.execute("result = custom_func(21)\nprint(result)")
             self.assertEqual(self.env.namespace["result"], 42)
+
+    def test_refresh_user_functions_keyboard_interrupt_propagates(self) -> None:
+        """Test that KeyboardInterrupt during user function loading propagates."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            user_lib_path = os.path.join(tmpdir, "user_libs.py")
+            self.env.set_user_library_path(user_lib_path)
+
+            # Save code that raises KeyboardInterrupt
+            self.env.save_user_code("raise KeyboardInterrupt()")
+
+            # Should propagate instead of being caught and logged
+            with self.assertRaises(KeyboardInterrupt):
+                self.env.refresh_user_functions()
+
+    def test_refresh_user_functions_system_exit_propagates(self) -> None:
+        """Test that SystemExit during user function loading propagates."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            user_lib_path = os.path.join(tmpdir, "user_libs.py")
+            self.env.set_user_library_path(user_lib_path)
+
+            # Save code that raises SystemExit
+            self.env.save_user_code("import sys; sys.exit(1)")
+
+            # Should propagate instead of being caught and logged
+            with self.assertRaises(SystemExit):
+                self.env.refresh_user_functions()
+
+    def test_refresh_user_functions_handles_user_code_errors(self) -> None:
+        """Test that user code errors are logged to stderr but not propagated."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            user_lib_path = os.path.join(tmpdir, "user_libs.py")
+            self.env.set_user_library_path(user_lib_path)
+
+            # Save code that raises a user-level error
+            self.env.save_user_code("raise ValueError('User code error')")
+
+            # Should not raise, but should print traceback
+            try:
+                self.env.refresh_user_functions()
+            except Exception:
+                self.fail(
+                    "refresh_user_functions should not propagate user-code errors"
+                )
 
 
 if __name__ == "__main__":

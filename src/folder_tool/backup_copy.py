@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """BackupCopyMixin -- Backup creation and safe file copy methods."""
 
 from __future__ import annotations
@@ -7,7 +8,7 @@ import os
 import shutil
 import sys
 import time
-from datetime import datetime
+from datetime import timezone, datetime
 from pathlib import Path
 
 from Folders_Tool_r0 import (
@@ -54,7 +55,8 @@ class BackupCopyMixin:
 
     def _backup_single_folder(self, folder: str, backup_base: Path) -> bool:
         """Backup one folder into *backup_base*. Returns True on success."""
-        assert folder is not None, "folder must be provided"
+        if not (folder is not None):
+            raise ValueError("folder must be provided")
         if not Path(folder).exists():
             logger.warning(f"Source folder no longer exists: {folder}")
             return False
@@ -64,7 +66,7 @@ class BackupCopyMixin:
             backup_path = backup_base / folder_name
             if backup_path.exists():
                 backup_path = Path(self._get_unique_path(str(backup_path)))
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"Failed to create backup path for {folder}: {e}")
             return False
 
@@ -74,12 +76,12 @@ class BackupCopyMixin:
             if not backup_path.exists() or not any(backup_path.iterdir()):
                 raise OSError("Backup directory was not created or is empty")
             return True
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"Failed to backup folder {folder}: {e}")
             if backup_path.exists():
                 try:
                     shutil.rmtree(backup_path, ignore_errors=True)
-                except (IOError, PermissionError, OSError) as ce:
+                except (PermissionError, OSError) as ce:
                     logger.warning(f"Cleanup failed for {backup_path}: {ce}")
             return False
 
@@ -90,7 +92,7 @@ class BackupCopyMixin:
             try:
                 shutil.rmtree(backup_base, ignore_errors=True)
                 logger.info(f"Cleaned up backup directory: {backup_base}")
-            except (IOError, PermissionError, OSError) as e:
+            except (PermissionError, OSError) as e:
                 logger.warning(f"Failed to cleanup {backup_base}: {e}")
 
     def create_backup(self) -> str | None:
@@ -101,10 +103,10 @@ class BackupCopyMixin:
         """
         valid_folders = self._validated_source_folders(self.source_folders)  # type: ignore[attr-defined]
 
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         try:
             backup_base = Path(valid_folders[0]).parent / f"backup_{timestamp}"
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             raise ValueError(f"Cannot determine backup location: {e}") from e
 
         self.update_status("Creating backup...")  # type: ignore[attr-defined]
@@ -151,7 +153,7 @@ class BackupCopyMixin:
             logger.error("Backup directory is empty or was not created")
             return None
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"Backup creation failed: {e}")
             self._cleanup_backup_dir(backup_base)
             raise
@@ -175,7 +177,8 @@ class BackupCopyMixin:
             PermissionError: If insufficient permissions to read source or write
                 destination
         """
-        assert source_path is not None, "source_path must be provided"
+        if not (source_path is not None):
+            raise ValueError("source_path must be provided")
         source_path_obj, dest_path_obj = self._validate_copy_inputs(
             source_path, dest_path
         )
@@ -277,7 +280,8 @@ class BackupCopyMixin:
         Returns:
             True if sizes match, False otherwise.
         """
-        assert source_path_obj is not None, "source_path_obj must be provided"
+        if not (source_path_obj is not None):
+            raise ValueError("source_path_obj must be provided")
         if not dest_path_obj.exists():
             logger.error(f"Destination file was not created: {dest_path}")
             return False
@@ -328,7 +332,7 @@ class BackupCopyMixin:
                     drive = path_obj.parts[0]
                     if not Path(drive).exists():
                         raise ValueError(f"Drive does not exist: {drive}")
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             raise ValueError(f"Invalid path format: {path} - {e}") from e
 
         # Check if path already exists
@@ -379,7 +383,7 @@ class BackupCopyMixin:
             counter += 1
 
         # If we've exhausted all reasonable attempts, append timestamp
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         fallback_name = f"{filename}_{timestamp}{ext}"
         fallback_path = parent / fallback_name
 

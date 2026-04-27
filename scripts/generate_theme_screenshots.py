@@ -22,10 +22,13 @@ from pathlib import Path
 # Ensure offscreen rendering is set before any Qt imports
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-# Bootstrap imports
+# Bootstrap imports — use the sanctioned _bootstrap module
 _REPO_ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
-sys.path.insert(0, str(_REPO_ROOT / "src"))
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
+from _bootstrap import bootstrap  # noqa: E402
+
+bootstrap(__file__)
 
 from PyQt6.QtCore import QSize  # noqa: E402
 from PyQt6.QtWidgets import (  # noqa: E402

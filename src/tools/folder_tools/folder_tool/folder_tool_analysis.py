@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 import os
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from Folders_Tool_r0 import (
@@ -72,7 +72,8 @@ class AnalysisMixin:
         Returns:
             (folder_files, folder_size, folder_errors)
         """
-        assert folder is not None, "folder must be provided"
+        if not (folder is not None):
+            raise ValueError("folder must be provided")
         folder_files = 0
         folder_size = 0
         folder_errors = 0
@@ -130,7 +131,8 @@ class AnalysisMixin:
         num_folders: int,
     ) -> list[str]:
         """Build the summary section of the analysis report."""
-        assert total_files is not None, "total_files must be provided"
+        if not (total_files is not None):
+            raise ValueError("total_files must be provided")
         report: list[str] = [
             "",
             f"TOTAL FILES: {total_files}",
@@ -155,7 +157,7 @@ class AnalysisMixin:
                 "ANALYSIS METADATA:",
                 f"  Source folders processed: {num_folders}",
                 f"  Total folders analyzed: {num_folders}",
-                f"  Analysis timestamp: {datetime.now()}",
+                f"  Analysis timestamp: {datetime.now(timezone.utc)}",  # noqa: UP017
                 f"  File size limits: {MIN_FILE_SIZE_BYTES} bytes - "
                 f"{MAX_FILE_SIZE_MB} MB",
             ],
@@ -174,7 +176,11 @@ class AnalysisMixin:
             PermissionError: If insufficient permissions to access source folders
         """
         valid_source_folders = self._validate_source_folders()
-        report = ["=== FOLDER ANALYSIS REPORT ===", f"Generated: {datetime.now()}", ""]
+        report = [
+            "=== FOLDER ANALYSIS REPORT ===",
+            f"Generated: {datetime.now(timezone.utc)}",  # noqa: UP017
+            "",
+        ]
         logger.info(f"Starting analysis of {len(valid_source_folders)} source folders")
 
         total_files = 0
@@ -252,7 +258,8 @@ class AnalysisMixin:
             ValueError: If file size inputs are invalid
             Exception: If extension filter validation fails
         """
-        assert check_destination is not None, "check_destination must be provided"
+        if not (check_destination is not None):
+            raise ValueError("check_destination must be provided")
         from tkinter import messagebox
 
         if not self.source_folders:

@@ -1,3 +1,5 @@
+from typing import Any
+
 """
 Inertia Calculator GUI Tests
 ============================
@@ -17,7 +19,7 @@ class TestInertiaCalculatorMainWindow:
     """Tests for the PyQt6 Inertia Calculator main window."""
 
     @pytest.fixture
-    def mock_qt_app(self):
+    def mock_qt_app(self) -> Any:
         """Create mock Qt application for headless testing."""
         with patch.dict(
             sys.modules,
@@ -30,7 +32,7 @@ class TestInertiaCalculatorMainWindow:
         ):
             yield
 
-    def test_main_window_imports(self, mock_qt_app):
+    def test_main_window_imports(self, mock_qt_app) -> Any:
         """Test that main window module can be imported."""
         try:
             from inertia_calculator.ui.pyqt6 import main_window
@@ -39,7 +41,7 @@ class TestInertiaCalculatorMainWindow:
         except ImportError:
             pytest.skip("PyQt6 main window not yet implemented")
 
-    def test_main_window_class_exists(self, mock_qt_app):
+    def test_main_window_class_exists(self, mock_qt_app) -> Any:
         """Test that window class is defined and callable."""
         try:
             from inertia_calculator.ui.pyqt6.main_window import (
@@ -54,7 +56,7 @@ class TestInertiaCalculatorMainWindow:
 class TestInertiaCalculations:
     """Tests for inertia calculation formulas."""
 
-    def test_solid_box_inertia(self):
+    def test_solid_box_inertia(self) -> Any:
         """Test inertia calculation for solid box."""
         mass = 1.0
         lx, ly, lz = 0.1, 0.1, 0.1
@@ -67,7 +69,7 @@ class TestInertiaCalculations:
         assert iyy == pytest.approx((1 / 12) * 1.0 * (0.01 + 0.01), rel=1e-6)
         assert izz == pytest.approx((1 / 12) * 1.0 * (0.01 + 0.01), rel=1e-6)
 
-    def test_solid_cylinder_inertia(self):
+    def test_solid_cylinder_inertia(self) -> Any:
         """Test inertia calculation for solid cylinder."""
         mass = 1.0
         r = 0.05
@@ -81,7 +83,7 @@ class TestInertiaCalculations:
         assert ixx == pytest.approx(iyy, rel=1e-6)
         assert izz == pytest.approx(0.5 * mass * r**2, rel=1e-6)
 
-    def test_solid_sphere_inertia(self):
+    def test_solid_sphere_inertia(self) -> Any:
         """Test inertia calculation for solid sphere."""
         mass = 1.0
         r = 0.05
@@ -95,7 +97,7 @@ class TestInertiaCalculations:
         assert iyy == pytest.approx(izz, rel=1e-6)
         assert ixx == pytest.approx((2 / 5) * mass * r**2, rel=1e-6)
 
-    def test_hollow_cylinder_inertia(self):
+    def test_hollow_cylinder_inertia(self) -> Any:
         """Test inertia calculation for hollow cylinder."""
         mass = 1.0
         r_out = 0.1
@@ -114,7 +116,7 @@ class TestInertiaCalculations:
 class TestInertiaValidation:
     """Tests for inertia tensor validation."""
 
-    def test_valid_diagonal_inertia(self):
+    def test_valid_diagonal_inertia(self) -> Any:
         """Test validation of valid diagonal inertia tensor."""
         import numpy as np
 
@@ -134,7 +136,7 @@ class TestInertiaValidation:
         eigenvalues = np.linalg.eigvalsh(tensor)
         assert all(ev > 0 for ev in eigenvalues)
 
-    def test_triangle_inequality(self):
+    def test_triangle_inequality(self) -> Any:
         """Test triangle inequality validation."""
         # Valid values that satisfy triangle inequality
         ixx = 1.0
@@ -146,7 +148,7 @@ class TestInertiaValidation:
         assert abs(iyy - izz) <= ixx <= iyy + izz
         assert abs(ixx - izz) <= iyy <= ixx + izz
 
-    def test_invalid_negative_inertia(self):
+    def test_invalid_negative_inertia(self) -> Any:
         """Test detection of invalid negative inertia values."""
         # Invalid - negative diagonal
         ixx = -0.1
@@ -156,7 +158,7 @@ class TestInertiaValidation:
         # Valid inertia values should be positive
         assert 0.1 > 0  # iyy, izz would be positive
 
-    def test_invalid_triangle_inequality(self):
+    def test_invalid_triangle_inequality(self) -> Any:
         """Test detection of violated triangle inequality."""
         # Invalid - violates triangle inequality
         ixx = 0.1
@@ -302,7 +304,7 @@ class TestValidateInertiaDbC:
 class TestInertiaCalculatorGUIRegistration:
     """Tests for GUI framework registration."""
 
-    def test_gui_registration_exists(self):
+    def test_gui_registration_exists(self) -> Any:
         """Test that gui_registration.py exists and has required metadata."""
         try:
             from inertia_calculator import gui_registration
@@ -317,7 +319,7 @@ class TestInertiaCalculatorGUIRegistration:
         except ImportError:
             pytest.skip("GUI registration not yet implemented")
 
-    def test_gui_registration_category(self):
+    def test_gui_registration_category(self) -> Any:
         """Test that calculator is in robotics category."""
         try:
             from inertia_calculator import gui_registration
@@ -326,7 +328,7 @@ class TestInertiaCalculatorGUIRegistration:
         except ImportError:
             pytest.skip("GUI registration not yet implemented")
 
-    def test_launcher_exists(self):
+    def test_launcher_exists(self) -> Any:
         """Test that launcher script exists."""
         try:
             from inertia_calculator import launch_pyqt6

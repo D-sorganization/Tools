@@ -27,7 +27,8 @@ import math
 from typing import Any
 
 import numpy as np
-from contracts import require
+
+from shared.python.contracts import require
 
 __all__ = [
     "safe_eval",
@@ -61,10 +62,7 @@ _ALLOWED_NODE_TYPES: tuple[type, ...] = (
     ast.keyword,
     # Subscript / slice (for array indexing)
     ast.Subscript,
-    ast.Index,  # kept for Python 3.8 compat
     ast.Slice,
-    # Starred args (e.g. f(*x))
-    ast.Starred,
     # IfExp (ternary)
     ast.IfExp,
 )
@@ -75,8 +73,10 @@ _ALLOWED_NODE_TYPES: tuple[type, ...] = (
 NUMPY_MATH_NAMESPACE: dict[str, Any] = {
     # Standard functions (numpy versions for array support)
     "abs": np.abs,
-    "min": np.minimum,
-    "max": np.maximum,
+    "min": np.min,
+    "max": np.max,
+    "minimum": np.minimum,
+    "maximum": np.maximum,
     "sum": np.sum,
     "len": len,
     "round": np.round,
@@ -132,7 +132,6 @@ SCALAR_MATH_NAMESPACE: dict[str, Any] = {
     "tan": math.tan,
     "pi": math.pi,
     "e": math.e,
-    "math": math,
 }
 
 
@@ -170,7 +169,6 @@ def validate_expression(
     require(
         isinstance(expression, str),
         "expression must be a string",
-        type(expression).__name__,
     )
 
     try:
@@ -225,12 +223,21 @@ def safe_eval(
     Any
         Result of the expression evaluation.
     """
+<<<<<<< HEAD
+=======
+    if expression is None:
+        raise ValueError("expression must be provided")
+>>>>>>> origin/main
     if allowed_names is None:
         allowed_names = set(namespace.keys())
 
     tree = validate_expression(expression, allowed_names)
     code = compile(tree, "<safe_eval>", "eval")
+<<<<<<< HEAD
     return eval(code, {"__builtins__": {}}, namespace)  # nosec B307
+=======
+    return eval(code, {"__builtins__": {}}, namespace)  # nosec B307  # noqa: S307
+>>>>>>> origin/main
 
 
 def safe_eval_math(
@@ -251,6 +258,11 @@ def safe_eval_math(
         If True, use numpy math functions (array-safe).  Otherwise use
         scalar ``math`` module functions.
     """
+<<<<<<< HEAD
+=======
+    if expression is None:
+        raise ValueError("expression must be provided")
+>>>>>>> origin/main
     base = dict(NUMPY_MATH_NAMESPACE if use_numpy else SCALAR_MATH_NAMESPACE)
     if variables:
         base.update(variables)

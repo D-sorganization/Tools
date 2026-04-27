@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """Function Generator PyQt6 Main Window.
 
 A comprehensive GUI for generating and visualizing various waveforms
@@ -9,6 +11,8 @@ from __future__ import annotations
 import os
 
 import numpy as np
+
+from shared.python.contracts import require, require_positive
 
 # Handle matplotlib backend
 if os.environ.get("HEADLESS", "false").lower() == "true":
@@ -372,10 +376,15 @@ class FunctionGeneratorWidget(QWidget):
         Returns:
             Generated signal array, or None if waveform is unknown
         """
+<<<<<<< HEAD
         if waveform is None:
             raise ValueError("waveform must be provided")
         if not isinstance(t, np.ndarray):
             raise TypeError(f"t must be a numpy ndarray, got {type(t).__name__}")
+=======
+        if not (waveform is not None):
+            raise ValueError("waveform must be provided")
+>>>>>>> origin/main
         amp = self.amplitude_spin.value()
         freq = self.frequency_spin.value()
         phase = np.radians(self.phase_spin.value())
@@ -466,10 +475,17 @@ class FunctionGeneratorWidget(QWidget):
         return None
 
     def _generate_signal(self) -> None:
-        """Generate the signal based on current parameters."""
+        """Generate the signal based on current parameters.
+
+        Pre: duration > 0
+        Pre: sample_rate > 0
+        """
         duration = self.duration_spin.value()
         sample_rate = self.sample_rate_spin.value()
+        require_positive(duration, "duration")
+        require_positive(sample_rate, "sample_rate")
         n_samples = int(duration * sample_rate)
+        require(n_samples >= 2, "Need at least 2 samples", n_samples)
         t = np.linspace(0, duration, n_samples)
 
         try:

@@ -1,0 +1,590 @@
+[
+  {
+    "file": "migrate_print_to_logging.py",
+    "line_num": 53615,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "    if \"print(\" not in content:"
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/cli.py",
+    "line_num": 72370,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        console.print("
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/cli.py",
+    "line_num": 72456,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        console.print(\"[yellow]No signals detected.[/yellow]\")"
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/cli.py",
+    "line_num": 72464,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "    console.print(table)"
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/cli.py",
+    "line_num": 72561,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        console.print(f\"[green]Saved processed data to {output_path}[/green]\")"
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/cli.py",
+    "line_num": 72563,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        console.print(\"[cyan]Pipeline completed (no output specified).[/cyan]\")"
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/cli.py",
+    "line_num": 72600,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        console.print("
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/cli.py",
+    "line_num": 72605,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        console.print("
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/core/cross_correlation.py",
+    "line_num": 76819,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        >>> print(f\"Optimal lag: {result.optimal_lag}\")"
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/core/data_augmentation.py",
+    "line_num": 77364,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        >>> print(f\"Augmentation factor: {result.augmentation_factor:.1f}x\")"
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/core/feature_extractor.py",
+    "line_num": 79530,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        >>> print(f\"Extracted {result.n_features} features\")"
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/core/nn_script_exporter.py",
+    "line_num": 81751,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "            \"    print(f'Epoch {epoch+1}: Train Loss = {train_loss/len(train_loader):.4f}, Val Loss = {val_loss:.4f}')\",  # noqa: E501"
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/core/nn_script_exporter.py",
+    "line_num": 81761,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "            \"            print(f'Early stopping at epoch {epoch+1}')\","
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/core/nn_script_exporter.py",
+    "line_num": 81780,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "            \"print(f'Test MSE: {mse:.4f}')\","
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/core/nn_script_exporter.py",
+    "line_num": 81781,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "            \"print(f'Test R2: {r2:.4f}')\","
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/core/nn_script_exporter.py",
+    "line_num": 81931,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "            \"print(f'Test Loss: {results[0]:.4f}')\","
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/core/nn_script_exporter.py",
+    "line_num": 81932,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "            \"print(f'Test MAE: {results[1]:.4f}')\","
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/core/nn_script_exporter.py",
+    "line_num": 82068,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "            \"print(f'Test MSE: {mse:.4f}')\","
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/core/nn_script_exporter.py",
+    "line_num": 82069,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "            \"print(f'Test R2: {r2:.4f}')\","
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/core/script_generator.py",
+    "line_num": 86949,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "                    \"    print(f'Processing complete. Output shape: {result.shape}')\","
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/core/script_generator.py",
+    "line_num": 87054,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "                \"        print(f'Error processing {input_path}: {e}')\","
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/core/script_generator.py",
+    "line_num": 87081,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "            \"    print(f'Found {len(input_files)} files to process')\","
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/core/script_generator.py",
+    "line_num": 87099,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "                    \"                print(f'Processed: {input_file} -> {result}')\","
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/core/script_generator.py",
+    "line_num": 87109,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "                    \"            print(f'Processed: {input_file} -> {result}')\","
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/core/state_space.py",
+    "line_num": 90551,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        >>> print(f\"AIC: {result.aic:.2f}\")"
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/core/time_series_decomposition.py",
+    "line_num": 92244,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        >>> print(f\"Trend strength: {result.trend_strength:.2f}\")"
+  },
+  {
+    "file": "src/data_processing/data_processor/python/data_processor/core/uncertainty_quantification.py",
+    "line_num": 93228,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        >>> print(f\"CI: ({result.ci_lower:.3f}, {result.ci_upper:.3f})\")"
+  },
+  {
+    "file": "src/pendulum_simulator/tests/test_issue_fixes.py",
+    "line_num": 277389,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "                assert \"print(\" not in stripped, ("
+  },
+  {
+    "file": "src/pendulum_simulator/tests/test_issue_fixes.py",
+    "line_num": 277390,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "                    f\"optimizer_gpu.py line {i}: found print() call\""
+  },
+  {
+    "file": "src/pendulum_simulator/tests/test_issue_fixes.py",
+    "line_num": 277413,
+    "severity": "CRITICAL",
+    "message": "Bare except block found",
+    "code": "                    if stripped == \"except:\":"
+  },
+  {
+    "file": "src/pendulum_simulator/tests/test_issue_fixes.py",
+    "line_num": 277414,
+    "severity": "CRITICAL",
+    "message": "Bare except block found",
+    "code": "                        pytest.fail(f\"{mod_name} line {i}: bare 'except:' found\")"
+  },
+  {
+    "file": "src/pendulum_simulator/tests/test_main_window.py",
+    "line_num": 279448,
+    "severity": "CRITICAL",
+    "message": "eval() or exec() used",
+    "code": "            def exec(self) -> Any:"
+  },
+  {
+    "file": "src/pendulum_simulator/tests/test_main_window.py",
+    "line_num": 279490,
+    "severity": "CRITICAL",
+    "message": "eval() or exec() used",
+    "code": "            def exec(self) -> Any:"
+  },
+  {
+    "file": "src/pendulum_simulator/tests/test_main_window.py",
+    "line_num": 279525,
+    "severity": "CRITICAL",
+    "message": "eval() or exec() used",
+    "code": "            def exec(self) -> Any:"
+  },
+  {
+    "file": "src/pendulum_simulator/tests/test_v2_comprehensive.py",
+    "line_num": 290309,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        assert len(matches) == 0, f\"Found {len(matches)} print() calls in physics.py\""
+  },
+  {
+    "file": "src/pendulum_simulator/tests/test_v2_comprehensive.py",
+    "line_num": 290319,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        assert len(matches) == 0, f\"Found {len(matches)} print() calls in physics_triple.py\""
+  },
+  {
+    "file": "src/python/src/utils/secrets_scanner.py",
+    "line_num": 302279,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        print(f\"{issue['file']}:{issue['line']}: {issue['pattern']}\")"
+  },
+  {
+    "file": "src/shared/python/calc_backend/routers/ode_solver.py",
+    "line_num": 336064,
+    "severity": "CRITICAL",
+    "message": "eval() or exec() used",
+    "code": "    Uses AST-validated safe_eval instead of raw eval().  Math function names"
+  },
+  {
+    "file": "src/shared/python/calc_backend/tests/test_calc_backend.py",
+    "line_num": 337551,
+    "severity": "CRITICAL",
+    "message": "eval() or exec() used",
+    "code": "                return eval(expression, {}, namespace)  # noqa: S307"
+  },
+  {
+    "file": "src/shared/python/safe_eval.py",
+    "line_num": 384783,
+    "severity": "CRITICAL",
+    "message": "eval() or exec() used",
+    "code": "Replaces all uses of ``eval()`` with a hardened AST-based evaluator that:"
+  },
+  {
+    "file": "src/shared/python/safe_eval.py",
+    "line_num": 384790,
+    "severity": "CRITICAL",
+    "message": "eval() or exec() used",
+    "code": "This eliminates the class of attacks where ``eval()`` can be abused even"
+  },
+  {
+    "file": "src/shared/python/safe_eval.py",
+    "line_num": 385013,
+    "severity": "CRITICAL",
+    "message": "eval() or exec() used",
+    "code": "    return eval(code, {\"__builtins__\": {}}, namespace)  # noqa: S307"
+  },
+  {
+    "file": "src/shared/python/scripting/scripting_env.py",
+    "line_num": 385163,
+    "severity": "CRITICAL",
+    "message": "eval() or exec() used",
+    "code": "            exec(code, self.namespace)  # nosec B102"
+  },
+  {
+    "file": "src/shared/python/scripting/scripting_env.py",
+    "line_num": 385191,
+    "severity": "CRITICAL",
+    "message": "eval() or exec() used",
+    "code": "                    res = eval(code_obj, self.namespace)  # nosec B307"
+  },
+  {
+    "file": "src/shared/python/scripting/scripting_env.py",
+    "line_num": 385197,
+    "severity": "CRITICAL",
+    "message": "eval() or exec() used",
+    "code": "                    exec(code_obj, self.namespace)  # nosec B102"
+  },
+  {
+    "file": "src/shared/python/upstream_drift_tools/bootstrap.py",
+    "line_num": 401833,
+    "severity": "CRITICAL",
+    "message": "eval() or exec() used",
+    "code": "    exec((_root / \"src\" / \"shared\" / \"python\" / \"upstream_drift_tools\" / \"bootstrap.py\").read_text())"
+  },
+  {
+    "file": "src/tools/matlab_quality_utils.py",
+    "line_num": 471693,
+    "severity": "CRITICAL",
+    "message": "eval() or exec() used",
+    "code": "                \"Avoid eval() - security risk and perf issue\","
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543574,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "    print(\"=\" * 60)"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543575,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "    print(\"\ud83d\udd0d LAUNCHER VERIFICATION SCRIPT\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543576,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "    print(\"=\" * 60)"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543577,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "    print(f\"\ud83d\udcc1 Current working directory: {os.getcwd()}\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543578,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "    print(f\"\ud83d\udcc4 This script location: {current_file}\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543579,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "    print(f\"\ud83d\udc0d Python executable: {sys.executable}\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543580,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "    print(f\"\ud83d\udccb Python version: {sys.version}\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543586,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        print(f\"\u274c {launcher_path.name} - NOT FOUND\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543593,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "    print(f\"\u2705 {launcher_path.name}\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543594,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "    print(f\"   \ud83d\udccf Size: {size:,} bytes\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543595,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "    print(f\"   \ud83d\udcc5 Modified: {mod_time}\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543602,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "                    print(f\"   \ud83d\udcdd Line {i}: {line[:60]}...\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543605,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        print(f\"   \u274c Could not read file: {e}\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543606,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "    print()"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543611,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "    print(\"=\" * 60)"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543612,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "    print(\"\ud83d\udca1 RECOMMENDATIONS\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543613,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "    print(\"=\" * 60)"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543617,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        print(\"\u2705 Use 'UnifiedToolsLauncher.py' - This is the PRIMARY launcher with:\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543618,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        print(\"   \u2022 Modern PyQt6 GUI interface\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543619,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        print(\"   \u2022 Full plugin system support\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543620,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        print(\"   \u2022 Comprehensive error handling\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543621,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        print(\"   \u2022 Tool path validation and security\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543622,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        print(\"   \u2022 Output/error capture\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543623,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        print(f\"\\n\ud83d\ude80 To launch: python {unified_launcher}\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543625,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        print(\"\u274c UnifiedToolsLauncher.py not found!\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543627,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "    print(\"\\n\u26a0\ufe0f  Note: 'tools_launcher.py' does not exist.\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543628,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "    print(\"   Any references to it are outdated. Use UnifiedToolsLauncher.py instead.\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543633,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "    print(\"\\n\" + \"=\" * 60)"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543634,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "    print(\"\ud83d\udd17 DESKTOP SHORTCUTS\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543635,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "    print(\"=\" * 60)"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543643,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        print(\"Found desktop shortcuts:\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543645,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "            print(f\"\ud83d\udd17 {shortcut.name}\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543647,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        print(\"\u274c No Tools Launcher shortcuts found on desktop\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543648,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "        print(\"\ud83d\udca1 Run 'create_launcher_shortcut.ps1' to create one\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543658,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "    print(\"\\n\" + \"=\" * 60)"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543659,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "    print(\"\ud83d\ude80 AVAILABLE LAUNCHER FILES\")"
+  },
+  {
+    "file": "verify_launcher.py",
+    "line_num": 543660,
+    "severity": "MAJOR",
+    "message": "Print statement found (use logging)",
+    "code": "    print(\"=\" * 60)"
+  }
+]

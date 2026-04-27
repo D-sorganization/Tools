@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 #!/usr/bin/env python3
 """C3D Motion Capture Viewer PyQt6 Main Window.
 
@@ -592,13 +594,15 @@ class C3DViewerWindow(QMainWindow):
 
     def _update_marker_list(self, labels: list[str]) -> None:
         """Update the marker list widget."""
-        assert labels is not None, "labels must be provided"
+        if not (labels is not None):
+            raise ValueError("labels must be provided")
         self.marker_list.clear()
         self.marker_list.addItems(labels)
 
     def _update_analog_table(self, labels: list[str], units: list[str]) -> None:
         """Update the analog channels table."""
-        assert labels is not None, "labels must be provided"
+        if not (labels is not None):
+            raise ValueError("labels must be provided")
         self.analog_table.setRowCount(len(labels))
         for row, (label, unit) in enumerate(zip(labels, units, strict=True)):
             self.analog_table.setItem(row, 0, QTableWidgetItem(label))
@@ -615,8 +619,7 @@ class C3DViewerWindow(QMainWindow):
         marker_names = [item.text() for item in selected]
         analysis = []
         analysis.append(f"Selected {len(marker_names)} markers:")
-        for name in marker_names:
-            analysis.append(f"  - {name}")
+        analysis.extend([f"  - {name}" for name in marker_names])
         analysis.append("")
         analysis.append("Note: Full trajectory analysis requires ezc3d library.")
         analysis.append("Install with: pip install ezc3d")
@@ -642,8 +645,9 @@ class C3DViewerWindow(QMainWindow):
                 analysis = [f"Detected {plate_count} force plate(s):"]
                 for plate_num, ch in channels.items():
                     analysis.append(f"\nPlate {plate_num}:")
-                    for key, label in ch.items():
-                        analysis.append(f"  {key.upper()}: {label}")
+                    analysis.extend(
+                        [f"  {key.upper()}: {label}" for (key, label) in ch.items()]
+                    )
                 self.force_text.setPlainText("\n".join(analysis))
 
         except ImportError:
@@ -678,7 +682,8 @@ class C3DViewerWindow(QMainWindow):
 
     def _do_export(self, data_type: str) -> None:
         """Perform the export operation."""
-        assert data_type is not None, "data_type must be provided"
+        if not (data_type is not None):
+            raise ValueError("data_type must be provided")
         if self._current_file is None:
             self.export_status.setPlainText("No file loaded.")
             return

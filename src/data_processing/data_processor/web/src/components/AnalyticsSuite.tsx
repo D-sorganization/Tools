@@ -8,7 +8,7 @@
  *
  * See issue #607.
  */
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, memo } from 'react';
 import {
   BarChart,
   Bar,
@@ -47,42 +47,57 @@ type AnalyticsTab = 'correlation' | 'pca' | 'regression';
 // Math helpers
 // ---------------------------------------------------------------------------
 
-function pearsonCorrelation(x: number[], y: number[]): number {
-  const n = x.length;
-  if (n < 2) return NaN;
-  const meanX = x.reduce((a, b) => a + b, 0) / n;
-  const meanY = y.reduce((a, b) => a + b, 0) / n;
-  let num = 0;
-  let denX = 0;
-  let denY = 0;
-  for (let i = 0; i < n; i++) {
-    const dx = x[i] - meanX;
-    const dy = y[i] - meanY;
-    num += dx * dy;
-    denX += dx * dx;
-    denY += dy * dy;
+function pearsonCorrelation(x: number[] | Float64Array, y: number[] | Float64Array): number {
+  const len = x.length;
+  let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0, sumY2 = 0, count = 0;
+
+  for (let i = 0; i < len; i++) {
+    const vx = x[i];
+    const vy = y[i];
+    if (!Number.isNaN(vx) && !Number.isNaN(vy)) {
+      sumX += vx;
+      sumY += vy;
+      sumXY += vx * vy;
+      sumX2 += vx * vx;
+      sumY2 += vy * vy;
+      count++;
+    }
   }
-  const den = Math.sqrt(denX * denY);
+
+  if (count < 2) return NaN;
+
+  const num = count * sumXY - sumX * sumY;
+  const denX = count * sumX2 - sumX * sumX;
+  const denY = count * sumY2 - sumY * sumY;
+
+  // Due to floating point inaccuracy, denX or denY might be very slightly negative
+  // if variance is essentially 0. Clamp to 0 before sqrt.
+  const den = Math.sqrt(Math.max(0, denX) * Math.max(0, denY));
+
   return den === 0 ? 0 : num / den;
 }
 
 function computeCorrelation(data: DataRow[], signals: string[]): CorrelationMatrix {
   const n = signals.length;
+  const rowCount = data.length;
   const matrix: number[][] = Array.from({ length: n }, () => Array(n).fill(0));
 
-  const columns = signals.map((sig) =>
-    data.map((row) => (typeof row[sig] === 'number' ? (row[sig] as number) : NaN)),
-  );
+  // ⚡ Bolt Optimization: Allocate column-wise buffers using Float64Array
+  // instead of allocating standard array rows (N x P) via chained map() calls.
+  // This avoids massive garbage collection pauses and O(N) allocations.
+  const columns = signals.map((sig) => {
+    const col = new Float64Array(rowCount);
+    for (let i = 0; i < rowCount; i++) {
+      const val = data[i][sig];
+      col[i] = typeof val === 'number' ? val : NaN;
+    }
+    return col;
+  });
 
   for (let i = 0; i < n; i++) {
     for (let j = i; j < n; j++) {
-      const valid = columns[i]
-        .map((v, k) => ({ x: v, y: columns[j][k] }))
-        .filter(({ x, y }) => !isNaN(x) && !isNaN(y));
-      const r = pearsonCorrelation(
-        valid.map((d) => d.x),
-        valid.map((d) => d.y),
-      );
+      // Avoid massive map/filter arrays for every pair calculation
+      const r = pearsonCorrelation(columns[i], columns[j]);
       matrix[i][j] = r;
       matrix[j][i] = r;
     }
@@ -101,28 +116,64 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
   const p = signals.length;
   const nc = Math.min(numComponents ?? p, p);
 
-  // Build centered/scaled column matrix
-  const cols = signals.map((sig) =>
-    data.map((row) => (typeof row[sig] === 'number' ? (row[sig] as number) : 0)),
-  );
-
-  const means = cols.map((c) => c.reduce((a, b) => a + b, 0) / n);
-  const stds = cols.map((c, ci) => {
-    const s = Math.sqrt(c.reduce((a, v) => a + (v - means[ci]) ** 2, 0) / n);
-    return s === 0 ? 1 : s;
+  // ⚡ Bolt Optimization: Allocate column-wise buffers using Float64Array
+  // instead of allocating standard array rows (N x P) via chained map() calls.
+  // This drastically reduces garbage collection overhead and improves execution speed.
+  const cols = signals.map((sig) => {
+    const col = new Float64Array(n);
+    for (let i = 0; i < n; i++) {
+      const val = data[i][sig];
+      col[i] = typeof val === 'number' ? val : 0;
+    }
+    return col;
   });
 
-  // Standardized matrix (n x p)
-  const Z: number[][] = Array.from({ length: n }, (_, i) =>
-    cols.map((c, j) => (c[i] - means[j]) / stds[j]),
-  );
+  // ⚡ Bolt Optimization: Replace map/reduce chains with a single-pass loop for variance
+  // Reduces O(N*P) array allocations and amortized callback execution overhead
+  const means: number[] = new Array(p);
+  const stds: number[] = new Array(p);
+
+  for (let ci = 0; ci < p; ci++) {
+    const c = cols[ci];
+    let sum = 0;
+    for (let i = 0; i < n; i++) {
+      sum += c[i];
+    }
+    const mean = sum / n;
+    means[ci] = mean;
+
+    let sqSum = 0;
+    for (let i = 0; i < n; i++) {
+      const diff = c[i] - mean;
+      sqSum += diff * diff;
+    }
+    const s = Math.sqrt(sqSum / n);
+    stds[ci] = s === 0 ? 1 : s;
+  }
+
+  // Standardized column matrix (p x n) using Float64Array for performance
+  // This avoids O(N) row allocations and speeds up covariance / score calculations
+  const Z_cols: Float64Array[] = Array.from({ length: p }, (_, j) => {
+    const colBuffer = new Float64Array(n);
+    const mean = means[j];
+    const std = stds[j];
+    const c = cols[j];
+    for (let i = 0; i < n; i++) {
+      colBuffer[i] = (c[i] - mean) / std;
+    }
+    return colBuffer;
+  });
 
   // Covariance matrix (p x p)
   const cov: number[][] = Array.from({ length: p }, () => Array(p).fill(0));
   for (let i = 0; i < p; i++) {
+    const zi = Z_cols[i];
     for (let j = i; j < p; j++) {
+      const zj = Z_cols[j];
       let s = 0;
-      for (let k = 0; k < n; k++) s += Z[k][i] * Z[k][j];
+      for (let k = 0; k < n; k++) {
+        s += zi[k] * zj[k];
+      }
       s /= n - 1 || 1;
       cov[i][j] = s;
       cov[j][i] = s;
@@ -132,22 +183,61 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
   // Power-iteration for top eigenvalues (simple Jacobi-like)
   const eigenvalues: number[] = [];
   const eigenvectors: number[][] = [];
-  const A = cov.map((row) => [...row]);
+
+  // ⚡ Bolt Optimization: Replace A.map() and array spread [...row] with a single-pass loop.
+  // Pre-allocating the augmented row avoids massive garbage collection and O(N^2) reallocation overhead.
+  const A = new Array(p);
+  for (let i = 0; i < p; i++) {
+    const row = cov[i];
+    const newRow = new Array(p);
+    for (let j = 0; j < p; j++) {
+      newRow[j] = row[j];
+    }
+    A[i] = newRow;
+  }
+
+  // ⚡ Bolt Optimization: Pre-allocate Av to avoid thousands of array allocations inside the tight iteration loop.
+  const Av = new Array<number>(p);
 
   for (let comp = 0; comp < nc; comp++) {
     let v = Array.from({ length: p }, () => Math.random());
-    let norm = Math.sqrt(v.reduce((a, b) => a + b * b, 0));
-    v = v.map((x) => x / norm);
 
+    // Initial norm
+    let sqSum = 0;
+    for (let i = 0; i < p; i++) {
+      sqSum += v[i] * v[i];
+    }
+    let norm = Math.sqrt(sqSum);
+    if (norm > 0) {
+      for (let i = 0; i < p; i++) {
+        v[i] /= norm;
+      }
+    }
+
+    // ⚡ Bolt: Replaced .map() and .reduce() with standard loops.
+    // Performance impact: Eliminates thousands of array allocations per PCA execution and avoids callback overhead.
     for (let iter = 0; iter < 300; iter++) {
-      const Av = A.map((row) => row.reduce((s, aij, j) => s + aij * v[j], 0));
-      norm = Math.sqrt(Av.reduce((a, b) => a + b * b, 0));
+      let nextSqSum = 0;
+      for (let i = 0; i < p; i++) {
+        let s = 0;
+        const row = A[i];
+        for (let j = 0; j < p; j++) {
+          s += row[j] * v[j];
+        }
+        Av[i] = s;
+        nextSqSum += s * s;
+      }
+
+      norm = Math.sqrt(nextSqSum);
       if (norm === 0) break;
-      v = Av.map((x) => x / norm);
+
+      for (let i = 0; i < p; i++) {
+        v[i] = Av[i] / norm;
+      }
     }
 
     eigenvalues.push(norm);
-    eigenvectors.push(v);
+    eigenvectors.push([...v]);
 
     // Deflate
     for (let i = 0; i < p; i++) {
@@ -157,28 +247,58 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
     }
   }
 
-  const totalVar = eigenvalues.reduce((a, b) => a + b, 0) || 1;
-  const explained = eigenvalues.map((e) => e / totalVar);
-  const cumulative: number[] = [];
-  explained.reduce((acc, e, i) => {
-    cumulative[i] = acc + e;
-    return cumulative[i];
-  }, 0);
+  // ⚡ Bolt Optimization: Replace chained reduce() and map() with a single-pass loop
+  // Performance impact: Avoids multiple intermediate array allocations and callback overhead.
+  let totalVar = 0;
+  for (let i = 0; i < eigenvalues.length; i++) {
+    totalVar += eigenvalues[i];
+  }
+  totalVar = totalVar || 1;
+
+  const explained = new Array<number>(eigenvalues.length);
+  const cumulative = new Array<number>(eigenvalues.length);
+  let currentCumulative = 0;
+
+  for (let i = 0; i < eigenvalues.length; i++) {
+    const e = eigenvalues[i] / totalVar;
+    explained[i] = e;
+    currentCumulative += e;
+    cumulative[i] = currentCumulative;
+  }
 
   // Scores (n x nc)
-  const scores = Z.map((row) =>
-    eigenvectors.map((ev) => row.reduce((s, z, j) => s + z * ev[j], 0)),
-  );
+  // ⚡ Bolt Optimization: Reverse loop order to traverse elements sequentially within a single column (Z_cols[j][i]).
+  // This maximizes CPU cache locality for the column-major Z_cols array (Float64Array[])
+  // and significantly reduces execution time.
+  const scores: number[][] = Array.from({ length: n }, () => new Array(nc).fill(0));
+  for (let j = 0; j < p; j++) {
+    const col = Z_cols[j];
+    for (let c = 0; c < nc; c++) {
+      const loading = eigenvectors[c][j];
+      for (let i = 0; i < n; i++) {
+        scores[i][c] += col[i] * loading;
+      }
+    }
+  }
 
   // Loadings (p x nc)
-  const loadings = eigenvectors.map((ev) => [...ev]);
+  // ⚡ Bolt Optimization: Replace map() and array spread with a single-pass loop.
+  const numEigenvectors = eigenvectors.length;
+  const transposedLoadings = new Array(p);
+  for (let ci = 0; ci < p; ci++) {
+    const col = new Array(numEigenvectors);
+    for (let i = 0; i < numEigenvectors; i++) {
+      col[i] = eigenvectors[i][ci];
+    }
+    transposedLoadings[ci] = col;
+  }
 
   return {
     explainedVariance: explained,
     cumulativeVariance: cumulative,
     numComponents: nc,
     scores,
-    loadings: loadings[0].map((_, ci) => eigenvectors.map((ev) => ev[ci])),
+    loadings: transposedLoadings,
     signals,
   };
 }
@@ -189,62 +309,122 @@ function computeRegression(
   ySignal: string,
   degree: number,
 ): RegressionResult {
-  const pairs = data
-    .map((row) => ({
-      x: typeof row[xSignal] === 'number' ? (row[xSignal] as number) : NaN,
-      y: typeof row[ySignal] === 'number' ? (row[ySignal] as number) : NaN,
-    }))
-    .filter(({ x, y }) => !isNaN(x) && !isNaN(y));
+  // ⚡ Bolt Optimization: Pre-allocate Float64Array buffers instead of pushing to standard JS arrays.
+  // Performance impact: Eliminates array reallocation and garbage collection overhead when filtering data.
+  const maxN = data.length;
+  const xsBuffer = new Float64Array(maxN);
+  const ysBuffer = new Float64Array(maxN);
+  let n = 0;
 
-  const xs = pairs.map((d) => d.x);
-  const ys = pairs.map((d) => d.y);
-  const n = xs.length;
+  for (let i = 0; i < maxN; i++) {
+    const row = data[i];
+    const x = row[xSignal];
+    const y = row[ySignal];
+
+    if (typeof x === 'number' && typeof y === 'number' && !Number.isNaN(x) && !Number.isNaN(y)) {
+      xsBuffer[n] = x;
+      ysBuffer[n] = y;
+      n++;
+    }
+  }
+
+  const xs = Array.from(xsBuffer.subarray(0, n));
+  const ys = Array.from(ysBuffer.subarray(0, n));
 
   let coefficients: number[];
   let predictions: number[];
 
   if (degree === 1) {
-    // Simple linear regression
-    const meanX = xs.reduce((a, b) => a + b, 0) / n;
-    const meanY = ys.reduce((a, b) => a + b, 0) / n;
-    let num = 0;
-    let den = 0;
+    // ⚡ Bolt Optimization: Calculate linear regression in single pass
+    // instead of chained reduce and map to prevent allocation overhead
+    let sumX = 0;
+    let sumY = 0;
+    let sumXY = 0;
+    let sumXX = 0;
+
     for (let i = 0; i < n; i++) {
-      num += (xs[i] - meanX) * (ys[i] - meanY);
-      den += (xs[i] - meanX) ** 2;
+      const x = xs[i];
+      const y = ys[i];
+      sumX += x;
+      sumY += y;
+      sumXY += x * y;
+      sumXX += x * x;
     }
-    const slope = den === 0 ? 0 : num / den;
-    const intercept = meanY - slope * meanX;
+
+    const denom = n * sumXX - sumX * sumX;
+    const slope = denom === 0 ? 0 : (n * sumXY - sumX * sumY) / denom;
+    const intercept = (sumY - slope * sumX) / n;
     coefficients = [intercept, slope];
-    predictions = xs.map((x) => intercept + slope * x);
+
+    predictions = new Array(n);
+    for (let i = 0; i < n; i++) {
+      predictions[i] = intercept + slope * xs[i];
+    }
   } else {
     // Polynomial regression via normal equations
-    // Build Vandermonde matrix
-    const X: number[][] = xs.map((x) =>
-      Array.from({ length: degree + 1 }, (_, d) => x ** d),
-    );
-    // X^T X
-    const XtX: number[][] = Array.from({ length: degree + 1 }, (_, i) =>
-      Array.from({ length: degree + 1 }, (__, j) =>
-        X.reduce((s, row) => s + row[i] * row[j], 0),
-      ),
-    );
-    // X^T y
-    const XtY: number[] = Array.from({ length: degree + 1 }, (_, i) =>
-      X.reduce((s, row, k) => s + row[i] * ys[k], 0),
-    );
+    // ⚡ Bolt Optimization: Replace multiple .reduce()/.map() calls with a single-pass loop
+    // Performance impact: Drastically reduces array allocations and callback overhead for quadratic regressions.
+    const cols = degree + 1;
+    const XtX: number[][] = Array.from({ length: cols }, () => new Array(cols).fill(0));
+    const XtY: number[] = new Array(cols).fill(0);
+
+    for (let k = 0; k < n; k++) {
+      const x = xs[k];
+      const y = ys[k];
+
+      let x_i = 1;
+      for (let i = 0; i < cols; i++) {
+        XtY[i] += x_i * y;
+        let x_ij = x_i * x_i;
+        for (let j = i; j < cols; j++) {
+          XtX[i][j] += x_ij;
+          if (i !== j) {
+            XtX[j][i] += x_ij;
+          }
+          x_ij *= x;
+        }
+        x_i *= x;
+      }
+    }
 
     // Solve via Gaussian elimination
     coefficients = solveLinearSystem(XtX, XtY);
-    predictions = xs.map((x) =>
-      coefficients.reduce((s, c, d) => s + c * x ** d, 0),
-    );
+
+    // ⚡ Bolt Optimization: Replace map/reduce chains with a single-pass loop for predictions
+    // Performance impact: Speeds up prediction calculation by avoiding map/reduce allocations and optimizing polynomial evaluation.
+    predictions = new Array(n);
+    const p = coefficients.length;
+    for (let i = 0; i < n; i++) {
+      const x = xs[i];
+      let s = coefficients[0];
+      let x_pow = x;
+      for (let d = 1; d < p; d++) {
+        s += coefficients[d] * x_pow;
+        x_pow *= x;
+      }
+      predictions[i] = s;
+    }
   }
 
-  const residuals = ys.map((y, i) => y - predictions[i]);
-  const meanY = ys.reduce((a, b) => a + b, 0) / n;
-  const ssTotal = ys.reduce((s, y) => s + (y - meanY) ** 2, 0);
-  const ssResidual = residuals.reduce((s, r) => s + r * r, 0);
+  // ⚡ Bolt Optimization: Use single-pass loops for residuals and sum of squares
+  // to avoid .map() allocations and chained .reduce() callback overhead
+  const residuals = new Array(n);
+  let sumY = 0;
+  let ssResidual = 0;
+
+  for (let i = 0; i < n; i++) {
+    const y = ys[i];
+    const r = y - predictions[i];
+    residuals[i] = r;
+    sumY += y;
+    ssResidual += r * r;
+  }
+
+  const meanY = sumY / n;
+  let ssTotal = 0;
+  for (let i = 0; i < n; i++) {
+    ssTotal += (ys[i] - meanY) ** 2;
+  }
   const rSquared = ssTotal === 0 ? 1 : 1 - ssResidual / ssTotal;
   const p = coefficients.length;
   const adjustedRSquared = n <= p ? rSquared : 1 - ((1 - rSquared) * (n - 1)) / (n - p);
@@ -281,7 +461,18 @@ function computeRegression(
 
 function solveLinearSystem(A: number[][], b: number[]): number[] {
   const n = A.length;
-  const aug = A.map((row, i) => [...row, b[i]]);
+  // ⚡ Bolt Optimization: Replace A.map() and array spread [...row] with a single-pass loop.
+  // Pre-allocating the augmented row avoids massive garbage collection and O(N^2) reallocation overhead.
+  const aug = new Array(n);
+  for (let i = 0; i < n; i++) {
+    const row = A[i];
+    const newRow = new Array(n + 1);
+    for (let j = 0; j < n; j++) {
+      newRow[j] = row[j];
+    }
+    newRow[n] = b[i];
+    aug[i] = newRow;
+  }
 
   // Forward elimination
   for (let i = 0; i < n; i++) {
@@ -324,13 +515,15 @@ function correlationColor(r: number): string {
   return r >= 0 ? COLORS_POSITIVE[4 - idx] : COLORS_NEGATIVE[4 - idx];
 }
 
-export function AnalyticsSuite({ data, signals, selectedSignals }: AnalyticsSuiteProps) {
+export const AnalyticsSuite = memo(function AnalyticsSuite({ data, signals, selectedSignals }: AnalyticsSuiteProps) {
   const [tab, setTab] = useState<AnalyticsTab>('correlation');
   const [regXSignal, setRegXSignal] = useState<string>(selectedSignals[0] ?? '');
   const [regYSignal, setRegYSignal] = useState<string>(selectedSignals[1] ?? selectedSignals[0] ?? '');
   const [regDegree, setRegDegree] = useState<number>(1);
 
-  const activeSignals = selectedSignals.length > 0 ? selectedSignals : signals.slice(0, 5);
+  const activeSignals = useMemo(() => {
+    return selectedSignals.length > 0 ? selectedSignals : signals.slice(0, 5);
+  }, [selectedSignals, signals]);
 
   // Correlation
   const correlation = useMemo<CorrelationMatrix | null>(() => {
@@ -352,6 +545,42 @@ export function AnalyticsSuite({ data, signals, selectedSignals }: AnalyticsSuit
     const result = computeRegression(data, regXSignal, regYSignal, regDegree);
     setRegression(result);
   }, [data, regXSignal, regYSignal, regDegree]);
+
+  // Memoize PCA chart data
+  const pcaScreeData = useMemo(() => {
+    if (!pca) return [];
+    return pca.explainedVariance.map((ev, i) => ({
+      name: `PC${i + 1}`,
+      variance: +(ev * 100).toFixed(1),
+      cumulative: +(pca.cumulativeVariance[i] * 100).toFixed(1),
+    }));
+  }, [pca]);
+
+  const pcaScatterData = useMemo(() => {
+    if (!pca || pca.numComponents < 2) return [];
+    return pca.scores.map((s) => ({ x: s[0], y: s[1] }));
+  }, [pca]);
+
+  // Memoize Regression chart data
+  const regressionScatterData = useMemo(() => {
+    if (!regression) return [];
+    // ⚡ Bolt Optimization: Use single-pass for loop to build scatter data, avoiding chained .map().filter() and GC overhead
+    const result = [];
+    for (let i = 0; i < data.length; i++) {
+      const row = data[i];
+      const x = row[regression.xSignal];
+      const y = row[regression.ySignal];
+      if (typeof x === 'number' && typeof y === 'number') {
+        result.push({ x, y });
+      }
+    }
+    return result;
+  }, [data, regression]);
+
+  const regressionResidualsData = useMemo(() => {
+    if (!regression) return [];
+    return regression.residuals.map((r, i) => ({ index: i, residual: r }));
+  }, [regression]);
 
   if (data.length === 0 || activeSignals.length < 2) {
     return (
@@ -433,13 +662,7 @@ export function AnalyticsSuite({ data, signals, selectedSignals }: AnalyticsSuit
             <div className="card-header">Scree Plot (Variance Explained)</div>
             <div className="card-body h-56">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={pca.explainedVariance.map((ev, i) => ({
-                    name: `PC${i + 1}`,
-                    variance: +(ev * 100).toFixed(1),
-                    cumulative: +(pca.cumulativeVariance[i] * 100).toFixed(1),
-                  }))}
-                >
+                <BarChart data={pcaScreeData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                   <XAxis dataKey="name" stroke="#94a3b8" />
                   <YAxis stroke="#94a3b8" label={{ value: '%', angle: -90, position: 'insideLeft', fill: '#94a3b8' }} />
@@ -477,11 +700,8 @@ export function AnalyticsSuite({ data, signals, selectedSignals }: AnalyticsSuit
                       label={{ value: `PC2 (${(pca.explainedVariance[1] * 100).toFixed(1)}%)`, angle: -90, position: 'insideLeft', fill: '#94a3b8' }}
                     />
                     <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none' }} />
-                    <Scatter
-                      data={pca.scores.map((s) => ({ x: s[0], y: s[1] }))}
-                      fill="#3b82f6"
-                    >
-                      {pca.scores.map((_, i) => (
+                    <Scatter data={pcaScatterData} fill="#3b82f6">
+                      {pcaScatterData.map((_, i) => (
                         <Cell key={i} fill="#3b82f6" opacity={0.6} />
                       ))}
                     </Scatter>
@@ -616,13 +836,7 @@ export function AnalyticsSuite({ data, signals, selectedSignals }: AnalyticsSuit
                       <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none' }} />
                       <Scatter
                         name="Data"
-                        data={data
-                          .map((row) => ({
-                            x: typeof row[regression.xSignal] === 'number' ? row[regression.xSignal] : undefined,
-                            y: typeof row[regression.ySignal] === 'number' ? row[regression.ySignal] : undefined,
-                          }))
-                          .filter((d) => d.x !== undefined && d.y !== undefined)
-                        }
+                        data={regressionScatterData}
                         fill="#3b82f6"
                         opacity={0.5}
                       />
@@ -636,9 +850,7 @@ export function AnalyticsSuite({ data, signals, selectedSignals }: AnalyticsSuit
                 <div className="card-header">Residual Plot</div>
                 <div className="card-body h-48">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart
-                      data={regression.residuals.map((r, i) => ({ index: i, residual: r }))}
-                    >
+                    <LineChart data={regressionResidualsData}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                       <XAxis dataKey="index" stroke="#94a3b8" />
                       <YAxis stroke="#94a3b8" />
@@ -660,6 +872,6 @@ export function AnalyticsSuite({ data, signals, selectedSignals }: AnalyticsSuit
       )}
     </div>
   );
-}
+});
 
 export default AnalyticsSuite;

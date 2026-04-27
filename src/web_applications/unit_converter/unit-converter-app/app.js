@@ -470,6 +470,7 @@ function clearHistory() {
   } else {
     clearHistoryButton.classList.add('confirming');
     clearHistoryButton.textContent = 'Confirm?';
+    clearHistoryButton.setAttribute('aria-label', 'Confirm clear conversion history');
     clearHistoryTimeout = setTimeout(resetClearButton, 3000);
   }
 }
@@ -477,6 +478,7 @@ function clearHistory() {
 function resetClearButton() {
   clearHistoryButton.classList.remove('confirming');
   clearHistoryButton.textContent = 'Clear';
+  clearHistoryButton.setAttribute('aria-label', 'Clear conversion history');
   if (clearHistoryTimeout) {
     clearTimeout(clearHistoryTimeout);
     clearHistoryTimeout = null;
@@ -486,9 +488,11 @@ function resetClearButton() {
 function renderHistory() {
   if (conversionHistory.length === 0) {
     recentList.innerHTML = '<p class="empty-state">No recent conversions</p>';
+    clearHistoryButton.disabled = true;
     return;
   }
 
+  clearHistoryButton.disabled = false;
   recentList.innerHTML = '';
   conversionHistory.forEach((item, index) => {
     const timeAgo = formatTimeAgo(item.timestamp);
@@ -598,12 +602,16 @@ function addCustomUnit() {
 
     if (!unit) {
       customUnitInput.classList.add('has-error');
+      customUnitInput.setAttribute('aria-invalid', 'true');
+      customUnitInput.focus();
       showModalError('Please enter a unit symbol');
       return;
     }
 
     if (isNaN(factor) || factor <= 0) {
       conversionFactorInput.classList.add('has-error');
+      conversionFactorInput.setAttribute('aria-invalid', 'true');
+      conversionFactorInput.focus();
       showModalError('Please enter a valid positive conversion factor');
       return;
     }
@@ -651,19 +659,17 @@ function hideModalMessage() {
 }
 
 function removeCustomUnit(category, unit) {
-  if (confirm(`Remove custom unit '${unit}'?`)) {
-    try {
-      customUnitManager.removeUnit(category, unit);
-      renderCustomUnitsList();
+  try {
+    customUnitManager.removeUnit(category, unit);
+    renderCustomUnitsList();
 
-      // If current category matches, repopulate units
-      if (currentCategory === category) {
-        populateUnits(currentCategory);
-      }
-      showModalSuccess(`Custom unit '${unit}' removed`);
-    } catch (error) {
-      showModalError('Error: ' + error.message);
+    // If current category matches, repopulate units
+    if (currentCategory === category) {
+      populateUnits(currentCategory);
     }
+    showModalSuccess(`Custom unit '${unit}' removed`);
+  } catch (error) {
+    showModalError('Error: ' + error.message);
   }
 }
 
@@ -702,6 +708,8 @@ function renderCustomUnitsList() {
       removeBtn.className = 'custom-unit-remove';
       removeBtn.dataset.category = category;
       removeBtn.dataset.unit = unit;
+      removeBtn.setAttribute('aria-label', `Remove custom unit ${unit}`);
+      removeBtn.setAttribute('title', `Remove ${unit}`);
       removeBtn.textContent = '×';
       itemDiv.appendChild(removeBtn);
 
@@ -714,8 +722,31 @@ function renderCustomUnitsList() {
 
   // Add remove handlers
   customUnitsList.querySelectorAll('.custom-unit-remove').forEach(btn => {
+    let removeTimeout = null;
+    const unit = btn.dataset.unit;
+
+    const resetBtn = () => {
+      btn.classList.remove('confirming');
+      btn.textContent = '×';
+      btn.setAttribute('aria-label', `Remove custom unit ${unit}`);
+      btn.setAttribute('title', `Remove ${unit}`);
+      if (removeTimeout) {
+        clearTimeout(removeTimeout);
+        removeTimeout = null;
+      }
+    };
+
     btn.addEventListener('click', () => {
-      removeCustomUnit(btn.dataset.category, btn.dataset.unit);
+      if (btn.classList.contains('confirming')) {
+        removeCustomUnit(btn.dataset.category, btn.dataset.unit);
+        resetBtn();
+      } else {
+        btn.classList.add('confirming');
+        btn.textContent = 'Confirm?';
+        btn.setAttribute('aria-label', `Confirm remove custom unit ${unit}`);
+        btn.setAttribute('title', `Confirm remove ${unit}`);
+        removeTimeout = setTimeout(resetBtn, 3000);
+      }
     });
   });
 }
@@ -985,6 +1016,7 @@ function setupEventListeners() {
   [customUnitInput, conversionFactorInput].forEach(input => {
     input.addEventListener('input', () => {
       input.classList.remove('has-error');
+      input.removeAttribute('aria-invalid');
       hideModalMessage();
     });
   });

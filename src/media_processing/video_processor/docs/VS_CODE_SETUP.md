@@ -77,8 +77,8 @@ I've created `.vscode/extensions.json` which will prompt you to install these au
     - API testing inside VS Code
     - Alternative to Postman
 
-16. **Todo Tree** (`gruntfuggly.todo-tree`)
-    - Highlights TODO, FIXME, etc.
+16. **TRACKED_TASK Tree** (`gruntfuggly.TRACKED_TASK-tree`)
+    - Highlights TRACKED_TASK, TRACKED_DEFECT, etc.
     - Helps track tasks
 
 ---

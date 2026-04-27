@@ -13,7 +13,7 @@ import time
 from collections.abc import Callable, Generator
 from contextlib import contextmanager
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, TypeVar
 
@@ -65,7 +65,8 @@ def profile(
         Decorator function
     """
     # Import here to avoid circular dependency at module level
-    assert sort_by is not None, "sort_by must be provided"
+    if not (sort_by is not None):
+        raise ValueError("sort_by must be provided")
     from utils.debug_utils import is_debug_mode
 
     def decorator(func: F) -> F:
@@ -110,7 +111,8 @@ def profile_block(
         ProfileResult object (populated after block completes)
     """
     # Import here to avoid circular dependency at module level
-    assert name is not None, "name must be provided"
+    if not (name is not None):
+        raise ValueError("name must be provided")
     from utils.debug_utils import is_debug_mode
 
     profiler = cProfile.Profile()
@@ -182,7 +184,8 @@ def timed(
         Decorator function
     """
 
-    assert log_level is not None, "log_level must be provided"
+    if not (log_level is not None):
+        raise ValueError("log_level must be provided")
 
     def decorator(func: F) -> F:
         @functools.wraps(func)
@@ -219,17 +222,18 @@ def timer(
     Yields:
         TimingStats object (populated after block completes)
     """
-    assert name is not None, "name must be provided"
+    if not (name is not None):
+        raise ValueError("name must be provided")
     stats = TimingStats(
         name=name,
         elapsed_seconds=0.0,
-        start_time=datetime.now(),
-        end_time=datetime.now(),
+        start_time=datetime.now(timezone.utc),  # noqa: UP017
+        end_time=datetime.now(timezone.utc),  # noqa: UP017
     )
     start = time.perf_counter()
     try:
         yield stats
     finally:
         stats.elapsed_seconds = time.perf_counter() - start
-        stats.end_time = datetime.now()
+        stats.end_time = datetime.now(timezone.utc)  # noqa: UP017
         logger.log(log_level, "%s", stats)

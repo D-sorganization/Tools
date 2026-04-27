@@ -328,7 +328,7 @@ DRY_RUN=true
 # Created: 2026-01-02
 
 # Gemini API Key for AI-powered extraction
-GEMINI_API_KEY=AIzaSyDxxxxxxxxxxxxxxxxxxxxxxxxxxx
+GEMINI_API_KEY=your_gemini_api_key_here
 
 # Optional: Default settings
 # DEFAULT_STYLE=standard

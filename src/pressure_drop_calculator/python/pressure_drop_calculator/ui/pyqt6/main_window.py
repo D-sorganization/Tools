@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """Pressure Drop Calculator PyQt6 Main Window.
 
 A comprehensive GUI for calculating pipe pressure drops using the
@@ -14,10 +16,12 @@ if os.environ.get("HEADLESS", "false").lower() == "true":
 
     matplotlib.use("Agg")
 
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import (
+from matplotlib.backends.backend_qtagg import (
+    FigureCanvasQTAgg as FigureCanvas,  # noqa: E402
+)
+from matplotlib.figure import Figure  # noqa: E402
+from PyQt6.QtCore import Qt  # noqa: E402
+from PyQt6.QtWidgets import (  # noqa: E402
     QComboBox,
     QDoubleSpinBox,
     QFormLayout,

@@ -1,4 +1,7 @@
+from typing import Any
+
 """Tests for OptimizationWidget and its underlying logic."""
+
 
 import numpy as np
 from unittest.mock import MagicMock, patch
@@ -11,12 +14,12 @@ from double_pendulum_golf.gui.optimization_widget import (
 )
 
 
-def dummy_objective(x):
+def dummy_objective(x) -> Any:
     # simple quadratic objective
     return np.sum(x**2)
 
 
-def test_cmaes_step():
+def test_cmaes_step() -> Any:
     rng = np.random.default_rng(42)
     state = CMAESState(
         mean=np.array([1.0, 1.0]),
@@ -32,14 +35,14 @@ def test_cmaes_step():
     assert fitnesses[0] <= fitnesses[-1]  # sorted
 
     # Test flat-line / exception in objective wrapper
-    def bad_obj(x):
+    def bad_obj(x) -> Any:
         raise ValueError("bad")
 
     new_state_bad, fit_bad = _cmaes_step(state, bad_obj, pop_size=10, rng=rng)
     assert fit_bad[0] == float("inf")
 
 
-def test_worker_cmaes(qapp):
+def test_worker_cmaes(qapp) -> Any:
     worker = _OptimizerWorker(
         objective_fn=dummy_objective,
         n_params=2,
@@ -60,7 +63,7 @@ def test_worker_cmaes(qapp):
     assert "coeffs" in result
 
 
-def test_worker_de(qapp):
+def test_worker_de(qapp) -> Any:
     worker = _OptimizerWorker(
         objective_fn=dummy_objective,
         n_params=2,
@@ -82,14 +85,14 @@ def test_worker_de(qapp):
     fin_mock = MagicMock()
     worker.finished.connect(fin_mock)
 
-    def on_iter(*args):
+    def on_iter(*args) -> Any:
         worker.cancel()
 
     worker.iteration_done.connect(on_iter)
     worker.run()
 
 
-def test_worker_scipy_methods(qapp):
+def test_worker_scipy_methods(qapp) -> Any:
     for method in ["Nelder-Mead", "L-BFGS-B"]:
         worker = _OptimizerWorker(
             objective_fn=dummy_objective,
@@ -104,8 +107,8 @@ def test_worker_scipy_methods(qapp):
         fin_mock.assert_called_once()
 
 
-def test_worker_error(qapp):
-    def error_obj(x):
+def test_worker_error(qapp) -> Any:
+    def error_obj(x) -> Any:
         raise RuntimeError("simulated error")
 
     worker = _OptimizerWorker(
@@ -121,7 +124,7 @@ def test_worker_error(qapp):
 
 
 @patch("double_pendulum_golf.gui.optimization_widget.QThread.start")
-def test_optimization_widget_ui(mock_start, qapp):
+def test_optimization_widget_ui(mock_start, qapp) -> Any:
     w = OptimizationWidget("Test Model", 2)
 
     # Without objective fn
@@ -177,3 +180,27 @@ def test_optimization_widget_ui(mock_start, qapp):
     # Clean up what happens when cancel is pressed
     # the worker internally receives cancel
     assert w._worker._cancelled is True
+
+
+def test_optimization_widget_bound_objective_builder(qapp) -> Any:
+    w = OptimizationWidget("Test Model", 2)
+    params_getter = MagicMock(return_value={"gain": 3.0})
+    objective_builder = MagicMock(return_value=dummy_objective)
+
+    w.bind_objective_builder(params_getter, objective_builder)
+    assert w._refresh_bound_objective() is True
+
+    params_getter.assert_called_once()
+    objective_builder.assert_called_once_with({"gain": 3.0})
+    assert w._objective_fn is dummy_objective
+
+
+def test_optimization_widget_bound_objective_builder_error(qapp) -> Any:
+    w = OptimizationWidget("Test Model", 2)
+    params_getter = MagicMock(side_effect=ValueError("bad params"))
+    objective_builder = MagicMock()
+
+    w.bind_objective_builder(params_getter, objective_builder)
+
+    assert w._refresh_bound_objective() is False
+    assert "Cannot build objective" in w._log.toPlainText()

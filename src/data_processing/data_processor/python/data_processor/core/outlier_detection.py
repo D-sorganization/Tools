@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """Outlier Detection Ensemble Module.
 
 Provides multiple outlier detection methods for robust identification.
@@ -24,6 +26,7 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+from numba import jit
 from scipy import stats
 
 logger = logging.getLogger(__name__)
@@ -142,7 +145,8 @@ class OutlierDetector:
             OutlierResult with outlier mask and diagnostics
         """
         # Convert to numpy array
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         X = self._prepare_data(data, columns)
 
         # Select method
@@ -158,7 +162,8 @@ class OutlierDetector:
         columns: list[str] | None,
     ) -> np.ndarray:
         """Prepare data for outlier detection."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         if isinstance(data, pd.DataFrame):
             if columns:
                 data = data[columns]
@@ -199,7 +204,8 @@ class OutlierDetector:
 
     def _detect_ensemble(self, X: np.ndarray) -> OutlierResult:
         """Detect outliers using ensemble of methods."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         method_results = {}
         all_masks = []
 
@@ -242,7 +248,8 @@ class OutlierDetector:
     def _detect_zscore(self, X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """Z-score based outlier detection."""
         # Handle multivariate by computing per-column and combining
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         n, p = X.shape
         z_scores = np.zeros((n, p))
 
@@ -262,7 +269,8 @@ class OutlierDetector:
 
     def _detect_modified_zscore(self, X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """Modified Z-score (MAD-based) outlier detection."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         n, p = X.shape
         modified_z = np.zeros((n, p))
 
@@ -282,7 +290,8 @@ class OutlierDetector:
 
     def _detect_iqr(self, X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """IQR-based outlier detection."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         n, p = X.shape
         outlier_flags = np.zeros((n, p), dtype=bool)
         distances = np.zeros((n, p))
@@ -307,9 +316,11 @@ class OutlierDetector:
 
         return mask, scores
 
+    @jit(nopython=True, fastmath=True)
     def _detect_grubbs(self, X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """Grubbs test for outliers (iterative)."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         n, p = X.shape
         mask = np.zeros(n, dtype=bool)
         scores = np.zeros(n)
@@ -353,7 +364,8 @@ class OutlierDetector:
 
     def _detect_isolation_forest(self, X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """Isolation Forest outlier detection."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         n, p = X.shape
 
         # Handle NaN by imputing with median
@@ -374,7 +386,8 @@ class OutlierDetector:
 
     def _isolation_forest_scores(self, X: np.ndarray) -> np.ndarray:
         """Compute Isolation Forest anomaly scores."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         n, p = X.shape
         n_trees = self.config.if_n_estimators
         max_depth = int(np.ceil(np.log2(n)))
@@ -416,7 +429,8 @@ class OutlierDetector:
         depth: int = 0,
     ) -> dict[str, Any]:
         """Build a single isolation tree."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         n, p = X.shape
 
         if depth >= max_depth or n <= 1:
@@ -450,7 +464,8 @@ class OutlierDetector:
         depth: int,
     ) -> float:
         """Compute path length for a single point."""
-        assert x is not None, "x must be provided"
+        if not (x is not None):
+            raise ValueError("x must be provided")
         if tree["type"] == "leaf":
             n = tree["size"]
             if n <= 1:
@@ -465,7 +480,8 @@ class OutlierDetector:
 
     def _detect_lof(self, X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """Local Outlier Factor detection."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         n, p = X.shape
         k = min(self.config.lof_n_neighbors, n - 1)
 
@@ -494,17 +510,16 @@ class OutlierDetector:
             for j in range(n):
                 reach_dist[i, j] = max(k_distances[j], distances[i, j])
 
-        # Local reachability density
-        lrd = np.zeros(n)
-        for i in range(n):
-            neighbors = k_neighbors[i]
-            lrd[i] = k / np.sum(reach_dist[i, neighbors])
+        # Local reachability density (vectorized)
+        neighbor_reach_sums = np.array(
+            [np.sum(reach_dist[i, k_neighbors[i]]) for i in range(n)]
+        )
+        lrd = k / neighbor_reach_sums
 
-        # Local outlier factor
-        lof = np.zeros(n)
-        for i in range(n):
-            neighbors = k_neighbors[i]
-            lof[i] = np.mean(lrd[neighbors]) / (lrd[i] + 1e-10)
+        # Local outlier factor (vectorized)
+        lof = np.array(
+            [np.mean(lrd[k_neighbors[i]]) / (lrd[i] + 1e-10) for i in range(n)]
+        )
 
         # Threshold based on contamination
         threshold = np.percentile(lof, 100 * (1 - self.config.lof_contamination))
@@ -514,7 +529,8 @@ class OutlierDetector:
 
     def _detect_dbscan(self, X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """DBSCAN-based outlier detection (noise points are outliers)."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         n, p = X.shape
 
         # Handle NaN
@@ -551,6 +567,7 @@ class OutlierDetector:
 
         return mask, scores
 
+    @jit(nopython=True, fastmath=True)
     def _dbscan(
         self,
         X: np.ndarray,
@@ -558,7 +575,8 @@ class OutlierDetector:
         min_samples: int,
     ) -> np.ndarray:
         """Simple DBSCAN implementation."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         n = len(X)
         labels = np.full(n, -1)
         distances = self._pairwise_distances(X)
@@ -603,7 +621,8 @@ class OutlierDetector:
 
     def _detect_mahalanobis(self, X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """Mahalanobis distance based outlier detection."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         n, p = X.shape
 
         # Handle NaN
@@ -634,7 +653,8 @@ class OutlierDetector:
 
     def _pairwise_distances(self, X: np.ndarray) -> np.ndarray:
         """Compute pairwise Euclidean distances."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         n = len(X)
         distances = np.zeros((n, n))
 
@@ -653,7 +673,8 @@ class OutlierDetector:
         method: str,
     ) -> OutlierResult:
         """Build OutlierResult from detection results."""
-        assert mask is not None, "mask must be provided"
+        if not (mask is not None):
+            raise ValueError("mask must be provided")
         n = len(mask)
         n_outliers = int(np.sum(mask))
 
@@ -686,7 +707,8 @@ def detect_outliers(
     Returns:
         OutlierResult
     """
-    assert df is not None, "df must be provided"
+    if not (df is not None):
+        raise ValueError("df must be provided")
     config = OutlierConfig(
         method=OutlierMethod(method),
         zscore_threshold=threshold,

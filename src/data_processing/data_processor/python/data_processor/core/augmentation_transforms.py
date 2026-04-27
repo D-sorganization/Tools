@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """Data transformation augmentations.
 
 Provides warping, scaling, rotation, permutation, windowing,
@@ -10,6 +12,7 @@ from __future__ import annotations
 import logging
 
 import numpy as np
+from numba import jit
 
 from data_processor.core.augmentation_types import AugmentationConfig
 
@@ -45,7 +48,8 @@ class TransformsMixin:
         Returns:
             Time-warped data
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         sigma = sigma or self.config.warp_sigma
         knots = knots or self.config.warp_knots
 
@@ -76,7 +80,8 @@ class TransformsMixin:
         Returns:
             Magnitude-warped data
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         sigma = sigma or self.config.magnitude_sigma
         knots = knots or self.config.warp_knots
 
@@ -111,7 +116,8 @@ class TransformsMixin:
         Returns:
             Window-warped data
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         if scales is None:
             scales = [0.5, 2.0]
 
@@ -145,7 +151,8 @@ class TransformsMixin:
         Returns:
             Scaled data
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         range_ = range_ or self.config.scale_range
         scale_factor = self._rng.uniform(range_[0], range_[1])
         return data * scale_factor
@@ -162,7 +169,8 @@ class TransformsMixin:
         Returns:
             Rotated data
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         if data.ndim == 1 or (data.ndim == 2 and data.shape[1] < 2):
             return data.copy()
 
@@ -186,6 +194,8 @@ class TransformsMixin:
 
         return result
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def permute(self, data: np.ndarray, max_segments: int = 5) -> np.ndarray:
         """Randomly permute segments of the data.
 
@@ -243,7 +253,8 @@ class TransformsMixin:
         Returns:
             Sliced data (may have different length)
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         ratio = ratio or self.config.window_ratio
 
         if data.ndim == 1:
@@ -267,7 +278,8 @@ class TransformsMixin:
         Returns:
             Cropped and resized data
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         ratio = ratio or self.config.crop_ratio
 
         if data.ndim == 1:
@@ -325,7 +337,7 @@ class TransformsMixin:
     # =========================================================================
     # Synthetic data augmentations
     # =========================================================================
-
+    @jit(nopython=True, fastmath=True)
     def smote(
         self,
         data: np.ndarray,
@@ -342,7 +354,8 @@ class TransformsMixin:
         Returns:
             Tuple of (augmented_data, augmented_labels)
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         k_neighbors = k_neighbors or self.config.smote_k_neighbors
         data = np.atleast_2d(data)
         n_samples = data.shape[0]
@@ -381,6 +394,9 @@ class TransformsMixin:
 
         return augmented_data, None
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def mixup(
         self,
         data: np.ndarray,
@@ -397,7 +413,8 @@ class TransformsMixin:
         Returns:
             Tuple of (mixed_data, mixed_labels)
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         alpha = alpha or self.config.mixup_alpha
         n_samples = data.shape[0]
 
@@ -407,11 +424,9 @@ class TransformsMixin:
         # Random permutation for mixing pairs
         indices = self._rng.permutation(n_samples)
 
-        # Mix data
-        mixed_data = np.zeros_like(data)
-        for i in range(n_samples):
-            lam = lambdas[i]
-            mixed_data[i] = lam * data[i] + (1 - lam) * data[indices[i]]
+        # Mix data (vectorized)
+        lam_col = lambdas.reshape(-1, *([1] * (data.ndim - 1)))
+        mixed_data = lam_col * data + (1 - lam_col) * data[indices]
 
         # Mix labels if provided
         mixed_labels = None
@@ -441,6 +456,7 @@ class TransformsMixin:
 
         return mixed_data, mixed_labels
 
+    @jit(nopython=True, fastmath=True)
     def cutout(self, data: np.ndarray, ratio: float | None = None) -> np.ndarray:
         """Apply cutout augmentation (mask random regions).
 
@@ -451,7 +467,8 @@ class TransformsMixin:
         Returns:
             Data with masked regions
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         ratio = ratio or self.config.cutout_ratio
         result = data.copy()
 
@@ -475,6 +492,8 @@ class TransformsMixin:
 
         return result
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def cutmix(
         self,
         data: np.ndarray,
@@ -491,7 +510,8 @@ class TransformsMixin:
         Returns:
             Tuple of (mixed_data, mixed_labels)
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         ratio = ratio or self.config.cutout_ratio
         n_samples = data.shape[0]
 
@@ -534,9 +554,9 @@ class TransformsMixin:
                 for i, lbl in enumerate(labels):
                     one_hot[i, label_map[lbl]] = 1.0
 
-                mixed_labels = np.zeros((n_samples, n_classes))
-                for i in range(n_samples):
-                    mixed_labels[i] = lam * one_hot[i] + (1 - lam) * one_hot[indices[i]]
+                # Vectorized label mixing
+                lam_2d = lam.reshape(-1, 1) if hasattr(lam, "reshape") else lam
+                mixed_labels = lam_2d * one_hot + (1 - lam_2d) * one_hot[indices]
             else:
                 mixed_labels = lam * labels + (1 - lam) * labels[indices]
 
@@ -605,7 +625,8 @@ class TransformsMixin:
 
     def _time_warp_1d(self, data: np.ndarray, sigma: float, knots: int) -> np.ndarray:
         """Apply time warping to 1D data."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         n = len(data)
 
         # Generate random warp path
@@ -621,7 +642,8 @@ class TransformsMixin:
 
     def _generate_warp_curve(self, length: int, sigma: float, knots: int) -> np.ndarray:
         """Generate smooth random warp curve."""
-        assert length is not None, "length must be provided"
+        if not (length is not None):
+            raise ValueError("length must be provided")
         knot_positions = np.linspace(0, length - 1, knots + 2)
         knot_values = self._rng.normal(1.0, sigma, knots + 2)
         knot_values = np.maximum(knot_values, 0.1)  # Ensure positive
@@ -633,7 +655,8 @@ class TransformsMixin:
         self, data: np.ndarray, ratio: float, scales: list[float]
     ) -> np.ndarray:
         """Apply window warping to 1D data."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         n = len(data)
         window_size = int(n * ratio)
         start = self._rng.integers(0, n - window_size + 1)
@@ -659,9 +682,11 @@ class TransformsMixin:
         combined = np.concatenate([before, scaled_window, after])
         return self._interpolate(combined, n)
 
+    @jit(nopython=True, fastmath=True)
     def _permute_1d(self, data: np.ndarray, max_segments: int) -> np.ndarray:
         """Permute segments of 1D data."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         n = len(data)
         n_segments = self._rng.integers(2, min(max_segments + 1, n // 2 + 1))
         segment_size = n // n_segments
@@ -685,7 +710,8 @@ class TransformsMixin:
 
     def _interpolate(self, data: np.ndarray, target_length: int) -> np.ndarray:
         """Interpolate data to target length."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         n = len(data)
         if n == target_length:
             return data.copy()
@@ -695,11 +721,13 @@ class TransformsMixin:
 
         return np.interp(x_target, x_original, data)
 
+    @jit(nopython=True, fastmath=True)
     def _frequency_mask_1d(
         self, data: np.ndarray, mask_ratio: float, num_masks: int
     ) -> np.ndarray:
         """Apply frequency masking to 1D data."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         n = len(data)
         fft = np.fft.rfft(data)
         n_freq = len(fft)
@@ -715,7 +743,8 @@ class TransformsMixin:
         self, data: np.ndarray, max_shift_ratio: float
     ) -> np.ndarray:
         """Apply frequency shift to 1D data."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         n = len(data)
         fft = np.fft.rfft(data)
         n_freq = len(fft)

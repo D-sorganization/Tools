@@ -177,7 +177,8 @@ class InputHandler:
             action: The action to listen for
             callback: Function to call when action is triggered
         """
-        assert action is not None, "action must be provided"
+        if not (action is not None):
+            raise ValueError("action must be provided")
         if action not in self._action_callbacks:
             self._action_callbacks[action] = []
         self._action_callbacks[action].append(callback)
@@ -242,7 +243,8 @@ class InputHandler:
         Returns:
             False if should quit
         """
-        assert key is not None, "key must be provided"
+        if not (key is not None):
+            raise ValueError("key must be provided")
         for binding in self._key_bindings:
             if binding.key == key and (
                 binding.modifiers == 0 or (modifiers & binding.modifiers)
@@ -256,7 +258,8 @@ class InputHandler:
 
     def _handle_mouse_button_down(self, button: int, pos: tuple[int, int]) -> None:
         """Handle mouse button press."""
-        assert button is not None, "button must be provided"
+        if not (button is not None):
+            raise ValueError("button must be provided")
         self.mouse_state.position = pos
 
         if button == 1:  # Left
@@ -270,7 +273,8 @@ class InputHandler:
 
     def _handle_mouse_button_up(self, button: int, pos: tuple[int, int]) -> None:
         """Handle mouse button release."""
-        assert button is not None, "button must be provided"
+        if not (button is not None):
+            raise ValueError("button must be provided")
         self.mouse_state.position = pos
 
         if button == 1:
@@ -282,7 +286,8 @@ class InputHandler:
 
     def _handle_mouse_motion(self, pos: tuple[int, int], rel: tuple[int, int]) -> None:
         """Handle mouse movement."""
-        assert pos is not None, "pos must be provided"
+        if not (pos is not None):
+            raise ValueError("pos must be provided")
         self.mouse_state.position = pos
         self.mouse_state.drag_delta = rel
 
@@ -293,7 +298,8 @@ class InputHandler:
 
     def _handle_mouse_wheel(self, delta: int) -> None:
         """Handle mouse wheel scroll."""
-        assert delta is not None, "delta must be provided"
+        if not (delta is not None):
+            raise ValueError("delta must be provided")
         self.mouse_state.scroll_delta = delta
 
         if delta > 0:

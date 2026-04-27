@@ -1,3 +1,5 @@
+from typing import Any
+
 """
 Multi-Parameter Analysis GUI Tests
 ==================================
@@ -17,7 +19,7 @@ class TestMultiParamAnalysisMainWindow:
     """Tests for the PyQt6 Multi-Parameter Analysis main window."""
 
     @pytest.fixture
-    def mock_qt_app(self):
+    def mock_qt_app(self) -> Any:
         """Create mock Qt application for headless testing."""
         with patch.dict(
             sys.modules,
@@ -30,7 +32,7 @@ class TestMultiParamAnalysisMainWindow:
         ):
             yield
 
-    def test_main_window_imports(self, mock_qt_app):
+    def test_main_window_imports(self, mock_qt_app) -> Any:
         """Test that main window module can be imported."""
         try:
             from multi_param_analysis.ui.pyqt6 import main_window
@@ -39,7 +41,7 @@ class TestMultiParamAnalysisMainWindow:
         except ImportError:
             pytest.skip("PyQt6 main window not yet implemented")
 
-    def test_main_window_class_exists(self, mock_qt_app):
+    def test_main_window_class_exists(self, mock_qt_app) -> Any:
         """Test that window class is defined and callable."""
         try:
             from multi_param_analysis.ui.pyqt6.main_window import (
@@ -54,7 +56,7 @@ class TestMultiParamAnalysisMainWindow:
 class TestGridEvaluation:
     """Tests for parameter grid evaluation."""
 
-    def test_linspace_grid_creation(self):
+    def test_linspace_grid_creation(self) -> Any:
         """Test grid creation with linspace."""
         param1 = np.linspace(0, 10, 5)
         param2 = np.linspace(0, 1, 5)
@@ -66,7 +68,7 @@ class TestGridEvaluation:
         assert param2[0] == 0
         assert param2[-1] == 1
 
-    def test_meshgrid_creation(self):
+    def test_meshgrid_creation(self) -> Any:
         """Test 2D meshgrid creation."""
         x = np.array([1, 2, 3])
         y = np.array([4, 5])
@@ -78,7 +80,7 @@ class TestGridEvaluation:
         np.testing.assert_array_equal(X[0], [1, 2, 3])
         np.testing.assert_array_equal(Y[:, 0], [4, 5])
 
-    def test_grid_point_count(self):
+    def test_grid_point_count(self) -> Any:
         """Test total grid points calculation."""
         n1, n2 = 10, 15
         total = n1 * n2
@@ -88,25 +90,25 @@ class TestGridEvaluation:
 class TestDemoFunctions:
     """Tests for demo test functions."""
 
-    def test_rosenbrock_minimum(self):
+    def test_rosenbrock_minimum(self) -> Any:
         """Test Rosenbrock function minimum at (1, 1)."""
         x, y = 1.0, 1.0
         f = (1 - x) ** 2 + 100 * (y - x**2) ** 2
         assert f == pytest.approx(0.0)
 
-    def test_sphere_minimum(self):
+    def test_sphere_minimum(self) -> Any:
         """Test Sphere function minimum at (0, 0)."""
         x, y = 0.0, 0.0
         f = x**2 + y**2
         assert f == pytest.approx(0.0)
 
-    def test_rastrigin_minimum(self):
+    def test_rastrigin_minimum(self) -> Any:
         """Test Rastrigin function minimum at (0, 0)."""
         x, y = 0.0, 0.0
         f = 20 + x**2 + y**2 - 10 * (np.cos(2 * np.pi * x) + np.cos(2 * np.pi * y))
         assert f == pytest.approx(0.0)
 
-    def test_himmelblau_minimum(self):
+    def test_himmelblau_minimum(self) -> Any:
         """Test Himmelblau function has minimum at (3, 2)."""
         x, y = 3.0, 2.0
         f = (x**2 + y - 11) ** 2 + (x + y**2 - 7) ** 2
@@ -116,13 +118,13 @@ class TestDemoFunctions:
 class TestSensitivityAnalysis:
     """Tests for sensitivity analysis calculations."""
 
-    def test_variance_calculation(self):
+    def test_variance_calculation(self) -> Any:
         """Test variance calculation on grid."""
         Z = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
         variance = Z.var()
         assert variance > 0
 
-    def test_main_effect_param1(self):
+    def test_main_effect_param1(self) -> Any:
         """Test main effect calculation for parameter 1."""
         Z = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
 
@@ -130,7 +132,7 @@ class TestSensitivityAnalysis:
         param1_means = Z.mean(axis=0)
         np.testing.assert_array_equal(param1_means, [4, 5, 6])
 
-    def test_main_effect_param2(self):
+    def test_main_effect_param2(self) -> Any:
         """Test main effect calculation for parameter 2."""
         Z = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
 
@@ -138,7 +140,7 @@ class TestSensitivityAnalysis:
         param2_means = Z.mean(axis=1)
         np.testing.assert_array_equal(param2_means, [2, 5, 8])
 
-    def test_sensitivity_indices_sum(self):
+    def test_sensitivity_indices_sum(self) -> Any:
         """Test that sensitivity indices approximately sum to 1."""
         # Create test data with known structure
         x = np.linspace(0, 1, 10)
@@ -157,7 +159,7 @@ class TestSensitivityAnalysis:
 class TestMultiParamAnalysisGUIRegistration:
     """Tests for GUI framework registration."""
 
-    def test_gui_registration_exists(self):
+    def test_gui_registration_exists(self) -> Any:
         """Test that gui_registration.py exists and has required metadata."""
         try:
             from multi_param_analysis import gui_registration
@@ -172,7 +174,7 @@ class TestMultiParamAnalysisGUIRegistration:
         except ImportError:
             pytest.skip("GUI registration not yet implemented")
 
-    def test_gui_registration_category(self):
+    def test_gui_registration_category(self) -> Any:
         """Test that tool is in analysis category."""
         try:
             from multi_param_analysis import gui_registration
@@ -181,7 +183,7 @@ class TestMultiParamAnalysisGUIRegistration:
         except ImportError:
             pytest.skip("GUI registration not yet implemented")
 
-    def test_launcher_exists(self):
+    def test_launcher_exists(self) -> Any:
         """Test that launcher script exists."""
         try:
             from multi_param_analysis import launch_pyqt6

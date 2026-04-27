@@ -30,7 +30,8 @@ def add_title_block(
     title_box: tuple[float, float, float, float],
 ) -> None:
     """Draw the drawing title block at the bottom of the canvas."""
-    assert spec is not None, "spec must be provided"
+    if not (spec is not None):
+        raise ValueError("spec must be provided")
     x, y, w, h = title_box
     if w <= 0 or h <= 0:
         return
@@ -126,7 +127,8 @@ def add_notes(
     layout_regions: dict[str, Any],
 ) -> None:
     """Render the three notes panels: control loops, mass balance, and design notes."""
-    assert spec is not None, "spec must be provided"
+    if not (spec is not None):
+        raise ValueError("spec must be provided")
     panels = layout_regions["panels"]
     cfg = layout_regions["layout_cfg"]
     max_chars = cfg["panel_text_chars"]
@@ -195,8 +197,7 @@ def add_notes(
             design_notes.insert(0, f"Pressure mode: {mode}")
         if pset is not None:
             design_notes.insert(1, f"Normal operating pressure target: {pset} psig")
-        for note in pressure.get("notes", [])[:2]:
-            design_notes.append(note)
+        design_notes.extend([note for note in pressure.get("notes", [])[:2]])
 
     interlock_lines = [
         f"{i.get('id', '')}: {i.get('trigger', '')}"

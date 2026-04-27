@@ -19,8 +19,47 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # ── Dispatcher: route to self-hosted if available ──────────────────────────
+  pick-runner:
+    runs-on: self-hosted
+    timeout-minutes: 2
+    outputs:
+      runner: ${{ steps.check.outputs.runner }}
+    steps:
+      - name: Check for self-hosted runner
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
+          LOCAL_MODE: ${{ vars.LOCAL_RUNNER_MODE }}
+        run: |
+          MODE="${LOCAL_MODE:-local}"
+          echo "Fleet mode: $MODE"
+
+          case "$MODE" in
+            local)
+              echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
+              echo "Routing to self-hosted fleet (mode=local)"
+              ;;
+            disabled)
+              echo "::error::No local self-hosted runner available; failing closed"
+              exit 1
+              ;;
+            *)
+              AVAILABLE=$(gh api /orgs/${{ github.repository_owner }}/actions/runners \
+                --jq '[.runners[] | select(.status == "online") | select(.busy == false) | select(.labels[].name == "d-sorg-fleet")] | length' \
+                2>/dev/null || echo "0")
+              if [[ "$AVAILABLE" -gt 0 ]]; then
+                echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
+                echo "$AVAILABLE idle fleet runner(s) - routing locally"
+              else
+                echo "::error::No local self-hosted runner available; failing closed"
+                exit 1
+              fi
+              ;;
+          esac
   lint-workflows:
-    runs-on: ubuntu-latest
+    needs: pick-runner
+    runs-on: self-hosted
 
     steps:
       - name: Checkout repository
@@ -33,8 +72,10 @@ jobs:
 
       - name: Install workflow validation dependencies
         run: |
-          pip install --upgrade pip
-          pip install PyYAML
+          python -m ensurepip --upgrade
+          python -m pip install --upgrade pip setuptools
+          python -m pip install --ignore-installed --no-deps wheel
+          python -m pip install PyYAML
 
       - name: Validate workflow YAML structure
         run: python3 scripts/validate_workflows.py
@@ -46,7 +87,7 @@ jobs:
           sudo mv actionlint /usr/local/bin/actionlint
 
       - name: Install shellcheck
-        run: sudo apt-get update && sudo apt-get install -y shellcheck
+        run: while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo apt-get -o DPkg::Lock::Timeout=300 update || true && while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo apt-get -o DPkg::Lock::Timeout=300 update --fix-missing || true; sudo apt-get -o DPkg::Lock::Timeout=300 install -y shellcheck
 
       - name: Run actionlint
         run: actionlint -color -shellcheck ./scripts/actionlint_shellcheck.sh -pyflakes=

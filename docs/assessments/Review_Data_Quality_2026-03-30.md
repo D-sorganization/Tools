@@ -1,0 +1,94 @@
+# Code Quality Review (2026-03-30)
+
+Automated review of recent changes from `.jules/review_data/`.
+
+## Summary
+- **Total Issues Found**: 84
+- **CRITICAL**: 15
+- **MAJOR**: 69
+
+## Issues
+- **MAJOR** in `migrate_print_to_logging.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/cli.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/cli.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/cli.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/cli.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/cli.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/cli.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/cli.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/core/cross_correlation.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/core/data_augmentation.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/core/feature_extractor.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/core/nn_script_exporter.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/core/nn_script_exporter.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/core/nn_script_exporter.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/core/nn_script_exporter.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/core/nn_script_exporter.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/core/nn_script_exporter.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/core/nn_script_exporter.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/core/nn_script_exporter.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/core/script_generator.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/core/script_generator.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/core/script_generator.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/core/script_generator.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/core/script_generator.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/core/state_space.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/core/time_series_decomposition.py`: Print statement found (use logging)
+- **MAJOR** in `src/data_processing/data_processor/python/data_processor/core/uncertainty_quantification.py`: Print statement found (use logging)
+- **MAJOR** in `src/pendulum_simulator/tests/test_issue_fixes.py`: Print statement found (use logging)
+- **MAJOR** in `src/pendulum_simulator/tests/test_issue_fixes.py`: Print statement found (use logging)
+- **CRITICAL** in `src/pendulum_simulator/tests/test_issue_fixes.py`: Bare except block found
+- **CRITICAL** in `src/pendulum_simulator/tests/test_issue_fixes.py`: Bare except block found
+- **CRITICAL** in `src/pendulum_simulator/tests/test_main_window.py`: eval() or exec() used
+- **CRITICAL** in `src/pendulum_simulator/tests/test_main_window.py`: eval() or exec() used
+- **CRITICAL** in `src/pendulum_simulator/tests/test_main_window.py`: eval() or exec() used
+- **MAJOR** in `src/pendulum_simulator/tests/test_v2_comprehensive.py`: Print statement found (use logging)
+- **MAJOR** in `src/pendulum_simulator/tests/test_v2_comprehensive.py`: Print statement found (use logging)
+- **MAJOR** in `src/python/src/utils/secrets_scanner.py`: Print statement found (use logging)
+- **CRITICAL** in `src/shared/python/calc_backend/routers/ode_solver.py`: eval() or exec() used
+- **CRITICAL** in `src/shared/python/calc_backend/tests/test_calc_backend.py`: eval() or exec() used
+- **CRITICAL** in `src/shared/python/safe_eval.py`: eval() or exec() used
+- **CRITICAL** in `src/shared/python/safe_eval.py`: eval() or exec() used
+- **CRITICAL** in `src/shared/python/safe_eval.py`: eval() or exec() used
+- **CRITICAL** in `src/shared/python/scripting/scripting_env.py`: eval() or exec() used
+- **CRITICAL** in `src/shared/python/scripting/scripting_env.py`: eval() or exec() used
+- **CRITICAL** in `src/shared/python/scripting/scripting_env.py`: eval() or exec() used
+- **CRITICAL** in `src/shared/python/upstream_drift_tools/bootstrap.py`: eval() or exec() used
+- **CRITICAL** in `src/tools/matlab_quality_utils.py`: eval() or exec() used
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)
+- **MAJOR** in `verify_launcher.py`: Print statement found (use logging)

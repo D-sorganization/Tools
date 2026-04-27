@@ -6,30 +6,20 @@ Skips gracefully when run from CI root (where cors/shared deps may be missing).
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import pytest
 
-# ── Path setup (needed when running from this directory) ────────────────
-_REPO_ROOT = str(Path(__file__).resolve().parent.parent.parent.parent.parent)
-_SHARED_DIR = str(
-    Path(__file__).resolve().parent.parent.parent.parent / "shared" / "python"
-)
-_URDF_DIR = str(
-    Path(__file__).resolve().parent.parent.parent.parent / "urdf_builder_gui" / "python"
-)
-_APP_DIR = str(Path(__file__).resolve().parent.parent)
-
-for _p in [_REPO_ROOT, _SHARED_DIR, _URDF_DIR, _APP_DIR]:
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
+# Path setup is handled by conftest.py — no sys.path manipulation needed here.
 
 # Skip entire module if FastAPI app can't be imported/initialized
 # (CI may lack python-multipart, cors deps, etc.)
 try:
+<<<<<<< HEAD
     from app import app
 except Exception as _exc:
+=======
+    from app import app  # noqa: F401
+except Exception as _exc:  # noqa: BLE001
+>>>>>>> origin/main
     pytest.skip(
         f"Skipping urdf_viewer tests — app import failed: {_exc}",
         allow_module_level=True,
@@ -158,3 +148,19 @@ class TestPathSafety:
         response = client.get("/api/models/../../etc/passwd")
         # Should either 404 or 400, but NOT serve the file
         assert response.status_code in (400, 403, 404)
+
+    def test_upload_rejects_traversal_filename(self, client) -> None:  # type: ignore[no-untyped-def]
+        """Upload should reject traversal filenames."""
+        response = client.post(
+            "/api/upload",
+            files={"file": ("../../etc/passwd", b"<robot />")},
+        )
+        assert response.status_code == 400
+
+    def test_upload_rejects_path_separators(self, client) -> None:  # type: ignore[no-untyped-def]
+        """Upload should reject filename paths with separators."""
+        response = client.post(
+            "/api/upload",
+            files={"file": ("nested/robot.urdf", b"<robot />")},
+        )
+        assert response.status_code == 400

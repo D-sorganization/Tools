@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """Folder Tool Tab and Logic for Data Processor."""
 
 from __future__ import annotations
@@ -6,12 +8,13 @@ import heapq
 import logging
 import os
 import shutil
-import threading
 from pathlib import Path
 from tkinter import filedialog, messagebox
 from typing import Any
 
 import customtkinter as ctk
+
+from .background_worker import start_background_thread
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +49,8 @@ class FolderToolMixin:
 
     def create_folder_tool_tab(self, parent_tab: ctk.CTkFrame) -> None:
         """Create the folder tool tab with integrated folder processor functionality."""
-        assert parent_tab is not None, "parent_tab must be provided"
+        if not (parent_tab is not None):
+            raise ValueError("parent_tab must be provided")
         parent_tab.grid_columnconfigure(0, weight=1)
         parent_tab.grid_rowconfigure(0, weight=1)
 
@@ -70,7 +74,8 @@ class FolderToolMixin:
 
     def _create_folder_source_section(self, parent) -> None:
         """Create the source folders section."""
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         source_frame = ctk.CTkFrame(parent)
         source_frame.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
         source_frame.grid_columnconfigure(0, weight=1)
@@ -110,9 +115,10 @@ class FolderToolMixin:
         )
         self.folder_source_info_label.grid(row=3, column=0, sticky="w", padx=10, pady=5)
 
-    def _create_folder_destination_section(self, parent):
+    def _create_folder_destination_section(self, parent: ctk.CTkFrame) -> None:
         """Create the destination folder section."""
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         dest_frame = ctk.CTkFrame(parent)
         dest_frame.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
         dest_frame.grid_columnconfigure(1, weight=1)
@@ -135,9 +141,10 @@ class FolderToolMixin:
             dest_frame, text="Set Destination", command=self._folder_select_dest_folder
         ).grid(row=1, column=1, padx=10, pady=5)
 
-    def _create_folder_filtering_section(self, parent):
+    def _create_folder_filtering_section(self, parent: ctk.CTkFrame) -> None:
         """Create the file filtering section."""
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         filter_frame = ctk.CTkFrame(parent)
         filter_frame.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
         filter_frame.grid_columnconfigure(1, weight=1)
@@ -182,9 +189,10 @@ class FolderToolMixin:
             font=ctk.CTkFont(size=12),
         ).grid(row=4, column=0, columnspan=2, sticky="w", padx=10, pady=5)
 
-    def _create_folder_operation_section(self, parent):
+    def _create_folder_operation_section(self, parent: ctk.CTkFrame) -> None:
         """Create the main operation section."""
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         operation_frame = ctk.CTkFrame(parent)
         operation_frame.grid(row=3, column=0, sticky="ew", padx=5, pady=5)
 
@@ -221,9 +229,10 @@ class FolderToolMixin:
             row=len(operations) + 1, column=0, sticky="w", padx=10, pady=10
         )
 
-    def _create_folder_organization_section(self, parent):
+    def _create_folder_organization_section(self, parent: ctk.CTkFrame) -> None:
         """Create the organization options section."""
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         org_frame = ctk.CTkFrame(parent)
         org_frame.grid(row=4, column=0, sticky="ew", padx=5, pady=5)
 
@@ -246,9 +255,10 @@ class FolderToolMixin:
             variable=self.folder_organize_by_date_var,
         ).grid(row=2, column=0, sticky="w", padx=10, pady=2)
 
-    def _create_folder_output_section(self, parent):
+    def _create_folder_output_section(self, parent: ctk.CTkFrame) -> None:
         """Create the output options section."""
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         output_frame = ctk.CTkFrame(parent)
         output_frame.grid(row=5, column=0, sticky="ew", padx=5, pady=5)
 
@@ -281,9 +291,10 @@ class FolderToolMixin:
             variable=self.folder_backup_before_var,
         ).grid(row=4, column=0, sticky="w", padx=10, pady=2)
 
-    def _create_folder_progress_section(self, parent):
+    def _create_folder_progress_section(self, parent: ctk.CTkFrame) -> None:
         """Create the progress section."""
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         progress_frame = ctk.CTkFrame(parent)
         progress_frame.grid(row=6, column=0, sticky="ew", padx=5, pady=5)
 
@@ -303,9 +314,10 @@ class FolderToolMixin:
         )
         self.folder_status_label.grid(row=2, column=0, sticky="w", padx=10, pady=5)
 
-    def _create_folder_run_section(self, parent):
+    def _create_folder_run_section(self, parent: ctk.CTkFrame) -> None:
         """Create the run button section."""
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         run_frame = ctk.CTkFrame(parent)
         run_frame.grid(row=7, column=0, sticky="ew", padx=5, pady=5)
 
@@ -327,7 +339,7 @@ class FolderToolMixin:
         )
         self.folder_cancel_button.grid(row=0, column=1, padx=10, pady=10)
 
-    def _update_folder_mode_description(self):
+    def _update_folder_mode_description(self) -> None:
         """Update the mode description based on selected operation."""
         mode = self.folder_operation_mode.get()
         descriptions = {
@@ -366,18 +378,18 @@ class FolderToolMixin:
         except (OSError, RuntimeError) as e:
             messagebox.showerror("Error", f"Failed to select source folders: {str(e)}")
 
-    def _folder_remove_selected_source(self):
+    def _folder_remove_selected_source(self) -> None:
         """Remove selected source folder from the list."""
         if self.folder_source_folders:
             self.folder_source_folders.pop()
             self._folder_update_source_display()
 
-    def _folder_clear_source_folders(self):
+    def _folder_clear_source_folders(self) -> None:
         """Clear all source folders."""
         self.folder_source_folders = []
         self._folder_update_source_display()
 
-    def _folder_update_source_display(self):
+    def _folder_update_source_display(self) -> None:
         """Update the source folders display."""
         self.folder_source_listbox.delete("1.0", "end")
         if self.folder_source_folders:
@@ -389,7 +401,7 @@ class FolderToolMixin:
         else:
             self.folder_source_info_label.configure(text="No folders selected")
 
-    def _folder_select_dest_folder(self):
+    def _folder_select_dest_folder(self) -> None:
         """Select destination folder."""
         try:
             folder = filedialog.askdirectory(title="Select Destination Folder")
@@ -417,7 +429,12 @@ class FolderToolMixin:
             return
 
         self.folder_cancel_flag = False
-        threading.Thread(target=self._folder_perform_processing, daemon=True).start()
+        start_background_thread(
+            self,
+            self._folder_perform_processing,
+            name="data-processor-folder-operation",
+            on_error=self._folder_handle_processing_error,
+        )
 
         self.folder_run_button.configure(state="disabled")
         self.folder_cancel_button.configure(state="normal")
@@ -438,7 +455,8 @@ class FolderToolMixin:
         - Precondition: folder_source_folders must not be empty.
         - Precondition: mode must be valid.
         """
-        assert self.folder_source_folders, "No source folders selected"
+        if not (self.folder_source_folders):
+            raise ValueError("No source folders selected")
 
         try:
             mode = self.folder_operation_mode.get()
@@ -458,20 +476,52 @@ class FolderToolMixin:
             self.after(0, lambda: self.folder_run_button.configure(state="normal"))  # type: ignore[attr-defined]
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))  # type: ignore[attr-defined]
         except (OSError, PermissionError, ValueError) as exc:
+<<<<<<< HEAD
             msg = f"Error: {exc}"
             self.after(0, lambda m=msg: self.folder_status_var.set(m))  # type: ignore[attr-defined]
             self.after(0, lambda: self.folder_run_button.configure(state="normal"))  # type: ignore[attr-defined]
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))  # type: ignore[attr-defined]
+=======
+            self._folder_schedule_processing_error(exc, "")
+        except Exception as exc:
+            logger.exception("Unexpected error in folder processing: %s", exc)
+            self._folder_schedule_processing_error(exc, "")
+
+    def _folder_schedule_processing_error(
+        self, exc: BaseException, traceback_text: str
+    ) -> None:
+        """Schedule folder error handling on the UI thread."""
+        self.after(  # type: ignore
+            0,
+            lambda e=exc, tb=traceback_text: self._folder_handle_processing_error(
+                e, tb
+            ),
+        )
+
+    def _folder_handle_processing_error(
+        self, exc: BaseException, traceback_text: str
+    ) -> None:
+        """Reset folder controls and make background failures visible."""
+        message = f"Folder processing failed: {exc}"
+        if traceback_text:
+            logger.error("Folder processing traceback:\n%s", traceback_text)
+        self.folder_status_var.set(message)
+        self.folder_progress_bar.set(0)
+        self.folder_run_button.configure(state="normal")
+        self.folder_cancel_button.configure(state="disabled")
+        messagebox.showerror("Folder Processing Failed", message)
+>>>>>>> origin/main
 
     def _folder_combine_operation(self) -> None:
         """Combine operation - copy all files from source folders to destination."""
         try:
             os.makedirs(self.folder_destination, exist_ok=True)
-            all_file_paths = []
-            for src in self.folder_source_folders:
-                for root, _, files in os.walk(src):
-                    for file in files:
-                        all_file_paths.append(Path(root) / file)
+            all_file_paths = [
+                Path(root) / file
+                for src in self.folder_source_folders
+                for root, _, files in os.walk(src)
+                for file in files
+            ]
 
             total_files = len(all_file_paths)
             if total_files == 0:
@@ -512,11 +562,12 @@ class FolderToolMixin:
         """Flatten operation - copy files from nested folders to top level."""
         try:
             os.makedirs(self.folder_destination, exist_ok=True)
-            all_files = []
-            for src in self.folder_source_folders:
-                for root, _, files in os.walk(src):
-                    for f in files:
-                        all_files.append((Path(root) / f, f))
+            all_files = [
+                (Path(root) / f, f)
+                for src in self.folder_source_folders
+                for root, _, files in os.walk(src)
+                for f in files
+            ]
 
             total = len(all_files)
             if total == 0:
@@ -607,8 +658,14 @@ class FolderToolMixin:
 
     def _show_folder_analysis_report(self, text: str) -> None:
         """Show report."""
+<<<<<<< HEAD
         assert text is not None, "text must be provided"
         dialog = ctk.CTkToplevel(self)  # type: ignore[attr-defined]
+=======
+        if not (text is not None):
+            raise ValueError("text must be provided")
+        dialog = ctk.CTkToplevel(self)  # type: ignore
+>>>>>>> origin/main
         dialog.title("Analysis Report")
         t = ctk.CTkTextbox(dialog)
         t.pack(fill="both", expand=True)
@@ -616,7 +673,8 @@ class FolderToolMixin:
 
     def _folder_validate_file_filters(self, file_path: Path) -> bool:
         """Validate filters."""
-        assert file_path is not None, "file_path must be provided"
+        if not (file_path is not None):
+            raise ValueError("file_path must be provided")
         exts = self.folder_filter_extensions.get().strip().lower()
         if exts:
             if file_path.suffix.lower() not in [e.strip() for e in exts.split(",")]:
@@ -633,7 +691,8 @@ class FolderToolMixin:
 
     def _folder_get_organized_path(self, file_path: Path, dest_base: str) -> Path:
         """Get organized path."""
-        assert file_path is not None, "file_path must be provided"
+        if not (file_path is not None):
+            raise ValueError("file_path must be provided")
         dest = Path(dest_base)
         if self.folder_organize_by_type_var.get():
             dest = dest / "Organized"
@@ -646,7 +705,8 @@ class FolderToolMixin:
 
     def _folder_get_unique_path(self, path: Path) -> Path:
         """Get unique path."""
-        assert path is not None, "path must be provided"
+        if not (path is not None):
+            raise ValueError("path must be provided")
         if not path.exists():
             return path
         i = 1

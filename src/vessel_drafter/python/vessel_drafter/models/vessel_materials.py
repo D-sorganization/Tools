@@ -19,14 +19,14 @@ class MaterialProperties:
     preview_alpha: float
 
     def __post_init__(self) -> None:
-        require_positive("density_lb_per_ft3", self.density_lb_per_ft3)
+        require_positive(self.density_lb_per_ft3, "density_lb_per_ft3")
         require_positive(
-            "thermal_conductivity_w_per_mk",
             self.thermal_conductivity_w_per_mk,
+            "thermal_conductivity_w_per_mk",
         )
         require_positive(
-            "thermal_expansion_um_per_m_c",
             self.thermal_expansion_um_per_m_c,
+            "thermal_expansion_um_per_m_c",
         )
         require_nonnegative("preview_alpha", self.preview_alpha)
         if self.preview_alpha > 1.0:

@@ -102,8 +102,9 @@ class TestReadData:
 
     def test_read_unsupported_extension_raises(self, tmp_path: Path):
         """require() contract violation for unsupported extension."""
-        from contracts import PreconditionError
         from upstream_drift_tools.data_io import read_data
+
+        from contracts import PreconditionError
 
         fake = tmp_path / "data.xyz"
         fake.write_text("foo")
@@ -152,8 +153,9 @@ class TestWriteData:
         self, sample_df: pd.DataFrame, tmp_path: Path
     ):
         """ensure() contract violation on bad extension."""
-        from contracts import PostconditionError, PreconditionError
         from upstream_drift_tools.data_io import write_data
+
+        from contracts import PostconditionError, PreconditionError
 
         with pytest.raises((PreconditionError, PostconditionError, ValueError)):
             write_data(sample_df, tmp_path / "out.xyz")

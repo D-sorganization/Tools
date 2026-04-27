@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """
 Custom QWidget that draws the golfer upper-body model animation.
 
@@ -107,7 +109,8 @@ class GolferPendulumWidget(BasePendulumWidget):
 
         Pre: result is not None
         """
-        assert result is not None, "GolferSimulationResult must not be None"
+        if not (result is not None):
+            raise ValueError("GolferSimulationResult must not be None")
         self._result = result
         self._current_idx = 0
         self._trail.clear()
@@ -164,7 +167,8 @@ class GolferPendulumWidget(BasePendulumWidget):
         Rebuilds the trail from the precomputed club tip positions so
         scrubbing back and forth always shows a clean path.
         """
-        assert idx is not None, "idx must be provided"
+        if not (idx is not None):
+            raise ValueError("idx must be provided")
         if self._result is None:
             return
         idx = max(0, min(idx, self._result.n_steps - 1))
@@ -193,7 +197,8 @@ class GolferPendulumWidget(BasePendulumWidget):
     # ------------------------------------------------------------------
 
     def paintEvent(self, event: object) -> None:
-        assert event is not None, "event must be provided"
+        if not (event is not None):
+            raise ValueError("event must be provided")
         self._pixels_per_meter = self._compute_base_scale() * self._zoom
 
         painter = QPainter(self)
@@ -271,7 +276,8 @@ class GolferPendulumWidget(BasePendulumWidget):
 
     def _draw_golfer(self, painter: QPainter) -> None:
         """Draw the full golfer topology."""
-        assert self._result is not None
+        if not (self._result is not None):
+            raise ValueError("DbC Blocked: Precondition failed.")
         pos = self._result.positions_at(self._current_idx)
 
         origin = self._world_to_pixel(0.0, 0.0)
@@ -285,13 +291,8 @@ class GolferPendulumWidget(BasePendulumWidget):
         club_base = self._world_to_pixel(*pos["club_base"])
         club_tip = self._world_to_pixel(*pos["club_tip"])
 
-        # Standoff (origin -> hub) — massless, COM offset adjustment
-        pen = QPen(self.COLOR_HUB, 4)
-        pen.setCapStyle(Qt.PenCapStyle.RoundCap)
-        painter.setPen(pen)
-        painter.drawLine(origin, hub)
-
         # Upper body segments (hub -> shoulders) (#1104, #1111)
+        # Scapula rendering is always drawn the same way.
         if "rscap" in pos:
             rscap = self._world_to_pixel(*pos["rscap"])
             pen = QPen(QColor(180, 120, 120), 2, Qt.PenStyle.DashDotLine)
@@ -309,32 +310,54 @@ class GolferPendulumWidget(BasePendulumWidget):
             painter.setBrush(QBrush(QColor(120, 120, 180, 150)))
             painter.drawEllipse(lscap, 3, 3)
 
-        # Shoulder bar (RS -> LS through hub)
-        pen = QPen(self.COLOR_SHOULDER_BAR, 3, Qt.PenStyle.DashLine)
-        painter.setPen(pen)
-        painter.drawLine(rs, ls)
+        if self._3d_mode:
+            # 3D tapered segment rendering
+            # Standoff (origin -> hub)
+            self._draw_3d_segment(painter, origin, hub, 8, 6, self.COLOR_HUB)
+            # Shoulder bar (RS -> LS through hub) — flat dashed even in 3D
+            pen = QPen(self.COLOR_SHOULDER_BAR, 3, Qt.PenStyle.DashLine)
+            painter.setPen(pen)
+            painter.drawLine(rs, ls)
+            # Right arm: upper (RS -> RE) tapered, forearm (RE -> RH) tapered
+            self._draw_3d_segment(painter, rs, re, 12, 9, self.COLOR_RIGHT_ARM)
+            self._draw_3d_segment(painter, re, rh, 9, 6, self.COLOR_RIGHT_ARM)
+            # Left arm: upper (LS -> LE) tapered, forearm (LE -> LH) tapered
+            self._draw_3d_segment(painter, ls, le, 12, 9, self.COLOR_LEFT_ARM)
+            self._draw_3d_segment(painter, le, lh, 9, 6, self.COLOR_LEFT_ARM)
+            # Club shaft — tapered from grip to head
+            self._draw_3d_segment(
+                painter, club_base, club_tip, 10, 4, self.COLOR_CLUB_SHAFT
+            )
+        else:
+            # Original flat-line rendering
+            # Standoff (origin -> hub) — massless, COM offset adjustment
+            pen = QPen(self.COLOR_HUB, 4)
+            pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+            painter.setPen(pen)
+            painter.drawLine(origin, hub)
+            # Shoulder bar (RS -> LS through hub)
+            pen = QPen(self.COLOR_SHOULDER_BAR, 3, Qt.PenStyle.DashLine)
+            painter.setPen(pen)
+            painter.drawLine(rs, ls)
+            # Right arm: RS -> RE -> RH
+            pen = QPen(self.COLOR_RIGHT_ARM, 4)
+            pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+            painter.setPen(pen)
+            painter.drawLine(rs, re)
+            painter.drawLine(re, rh)
+            # Left arm: LS -> LE -> LH
+            pen = QPen(self.COLOR_LEFT_ARM, 4)
+            pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+            painter.setPen(pen)
+            painter.drawLine(ls, le)
+            painter.drawLine(le, lh)
+            # Club shaft
+            pen = QPen(self.COLOR_CLUB_SHAFT, 5)
+            pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+            painter.setPen(pen)
+            painter.drawLine(club_base, club_tip)
 
-        # Right arm: RS -> RE -> RH
-        pen = QPen(self.COLOR_RIGHT_ARM, 4)
-        pen.setCapStyle(Qt.PenCapStyle.RoundCap)
-        painter.setPen(pen)
-        painter.drawLine(rs, re)
-        painter.drawLine(re, rh)
-
-        # Left arm: LS -> LE -> LH
-        pen = QPen(self.COLOR_LEFT_ARM, 4)
-        pen.setCapStyle(Qt.PenCapStyle.RoundCap)
-        painter.setPen(pen)
-        painter.drawLine(ls, le)
-        painter.drawLine(le, lh)
-
-        # Club shaft
-        pen = QPen(self.COLOR_CLUB_SHAFT, 5)
-        pen.setCapStyle(Qt.PenCapStyle.RoundCap)
-        painter.setPen(pen)
-        painter.drawLine(club_base, club_tip)
-
-        # Grip connection lines (hands -> club grip points)
+        # Grip connection lines (hands -> club grip points) — always thin dotted
         grip_r = self._world_to_pixel(*pos["grip_right"])
         grip_l = self._world_to_pixel(*pos["grip_left"])
         pen = QPen(self.COLOR_GRIP, 2, Qt.PenStyle.DotLine)
@@ -358,7 +381,8 @@ class GolferPendulumWidget(BasePendulumWidget):
     # ------------------------------------------------------------------
 
     def _draw_force_vectors(self, painter: QPainter) -> None:
-        assert painter is not None, "painter must be provided"
+        if not (painter is not None):
+            raise ValueError("painter must be provided")
         if self._result is None:
             return
         try:
@@ -426,7 +450,8 @@ class GolferPendulumWidget(BasePendulumWidget):
 
     def _draw_zero_torque_force_vectors(self, painter: QPainter) -> None:
         """Draw zero-torque (passive drift) force vectors at each joint (#1148)."""
-        assert painter is not None, "painter must be provided"
+        if not (painter is not None):
+            raise ValueError("painter must be provided")
         if self._result is None or self._zero_torque_forces is None:
             return
         forces = self._zero_torque_forces[self._current_idx]
@@ -498,7 +523,8 @@ class GolferPendulumWidget(BasePendulumWidget):
         Convention: clockwise = negative, counterclockwise = positive.
         Arc radius scales with torque magnitude.
         """
-        assert painter is not None, "painter must be provided"
+        if not (painter is not None):
+            raise ValueError("painter must be provided")
         if self._result is None:
             return
         try:
@@ -564,7 +590,8 @@ class GolferPendulumWidget(BasePendulumWidget):
 
     def _draw_com(self, painter: QPainter) -> None:
         """Draw the combined center of mass of the golfer system."""
-        assert painter is not None, "painter must be provided"
+        if not (painter is not None):
+            raise ValueError("painter must be provided")
         if self._result is None:
             return
 
@@ -625,7 +652,8 @@ class GolferPendulumWidget(BasePendulumWidget):
         Pre:  self._result is not None.
         Post: Ellipsoids drawn at each visible endpoint.
         """
-        assert self._result is not None
+        if not (self._result is not None):
+            raise ValueError("DbC Blocked: Precondition failed.")
         state = self._result.states[self._current_idx]
         params = self._result.params
         ppm = self._pixels_per_meter
@@ -718,8 +746,10 @@ class GolferPendulumWidget(BasePendulumWidget):
         Pre: directions.shape == (2, 2)
         Pre: semi_axes_px.shape == (2,)
         """
-        assert directions.shape == (2, 2), "directions must be (2, 2)"
-        assert semi_axes_px.shape == (2,), "semi_axes_px must be (2,)"
+        if not (directions.shape == (2, 2)):
+            raise ValueError("directions must be (2, 2)")
+        if not (semi_axes_px.shape == (2,)):
+            raise ValueError("semi_axes_px must be (2,)")
 
         a = float(semi_axes_px[0])
         b = float(semi_axes_px[1])
@@ -749,7 +779,8 @@ class GolferPendulumWidget(BasePendulumWidget):
     # ------------------------------------------------------------------
 
     def _draw_info(self, painter: QPainter) -> None:
-        assert self._result is not None
+        if not (self._result is not None):
+            raise ValueError("DbC Blocked: Precondition failed.")
         t = self._result.t[self._current_idx]
         s = self._result.states[self._current_idx]
         theta_deg = np.degrees(s[0])
@@ -767,7 +798,8 @@ class GolferPendulumWidget(BasePendulumWidget):
             y += 15
 
     def _draw_placeholder(self, painter: QPainter) -> None:
-        assert painter is not None, "painter must be provided"
+        if not (painter is not None):
+            raise ValueError("painter must be provided")
         painter.setPen(QColor(80, 80, 110))
         painter.setFont(QFont("Sans", 12))
         painter.drawText(

@@ -41,7 +41,8 @@ class ToolCard(QFrame):
         tool_info: dict[str, Any],
         launch_callback: Callable[[dict[str, Any]], None],
     ) -> None:
-        assert tool_info is not None, "tool_info must be provided"
+        if not (tool_info is not None):
+            raise ValueError("tool_info must be provided")
         super().__init__()
         self.tool_info = tool_info
         self.launch_callback = launch_callback
@@ -115,7 +116,8 @@ class ToolCard(QFrame):
 
     def _get_type_color(self, tool_type: str) -> str:
         """Get badge color based on tool type."""
-        assert tool_type is not None, "tool_type must be provided"
+        if not (tool_type is not None):
+            raise ValueError("tool_type must be provided")
         colors = {
             "python": "#4CAF50",  # Green
             "matlab": "#FF9800",  # Orange

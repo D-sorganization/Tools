@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """
 Model Explorer PyQt6 Main Window.
 
@@ -16,6 +18,8 @@ from __future__ import annotations
 
 import logging
 import sys
+from collections.abc import Callable
+from pathlib import Path
 
 from model_generation.explorer.display_config import DISPLAY_OPTIONS
 from model_generation.library.unified_loader import (
@@ -29,7 +33,6 @@ from PyQt6.QtWidgets import (
     QApplication,
     QCheckBox,
     QComboBox,
-    QFileDialog,
     QGridLayout,
     QGroupBox,
     QHBoxLayout,
@@ -49,6 +52,17 @@ from PyQt6.QtWidgets import (
 )
 
 logger = logging.getLogger(__name__)
+
+ModelFileSelector = Callable[[], str | Path | None]
+
+
+class ModelFileSelectionRequiredError(NotImplementedError):
+    """Raised when a caller asks the shared explorer to choose a local file."""
+
+
+def _missing_model_file_selector() -> str | Path | None:
+    raise ModelFileSelectionRequiredError("caller must provide a file selector")
+
 
 # Catppuccin Mocha color palette
 CATPPUCCIN_MOCHA = {
@@ -258,10 +272,16 @@ class DisplayPreviewPanel(QGroupBox):
 
     display_changed = pyqtSignal(str, bool)
 
+<<<<<<< HEAD
     def __init__(
         self, preferences: UserPreferences, parent: QWidget | None = None
     ) -> None:
         assert preferences is not None, "preferences must be provided"
+=======
+    def __init__(self, preferences: UserPreferences, parent: QWidget | None = None):
+        if not (preferences is not None):
+            raise ValueError("preferences must be provided")
+>>>>>>> origin/main
         super().__init__("Display Preview", parent)
         self._preferences = preferences
         self._checkboxes: dict[str, QCheckBox] = {}
@@ -288,7 +308,8 @@ class DisplayPreviewPanel(QGroupBox):
 
     def _on_toggle(self, key: str, checked: bool) -> None:
         """Handle checkbox toggle and update preferences."""
-        assert key is not None, "key must be provided"
+        if not (key is not None):
+            raise ValueError("key must be provided")
         attr_name = f"show_{key}"
         if hasattr(self._preferences, attr_name):
             setattr(self._preferences, attr_name, checked)
@@ -311,10 +332,11 @@ class ModelExplorerWindow(QMainWindow):
     - View model information (links, joints, DOF)
     """
 
-    def __init__(self) -> None:
+    def __init__(self, *, file_selector: ModelFileSelector | None = None) -> None:
         super().__init__()
         self._loader = UnifiedModelLoader()
         self._current_result: LoadResult | None = None
+        self._file_selector = file_selector or _missing_model_file_selector
         self._setup_ui()
         self._load_default_model()
 
@@ -465,7 +487,8 @@ class ModelExplorerWindow(QMainWindow):
 
     def _populate_model_list(self, category_filter: str = "") -> None:
         """Populate the model list from bundled library."""
-        assert category_filter is not None, "category_filter must be provided"
+        if not (category_filter is not None):
+            raise ValueError("category_filter must be provided")
         self.model_list.clear()
         for entry in self._loader.list_bundled_models():
             if category_filter and entry.get("category") != category_filter:
@@ -561,17 +584,19 @@ class ModelExplorerWindow(QMainWindow):
     # -- Actions --
 
     def _load_from_file(self) -> None:
-        """Open file dialog to load a URDF or MJCF file."""
-        file_path, _ = QFileDialog.getOpenFileName(
-            self,
-            "Open Model File",
-            "",
-            "Model Files (*.urdf *.xml *.mjcf);;URDF Files (*.urdf);;MJCF Files (*.xml *.mjcf);;All Files (*)",
-        )
+        """Load a URDF or MJCF file selected by the host application."""
+        try:
+            file_path = self._file_selector()
+        except ModelFileSelectionRequiredError as exc:
+            self._status_label.setText(str(exc))
+            self._status_label.setStyleSheet(
+                f"color: {CATPPUCCIN_MOCHA['yellow']}; padding: 4px;"
+            )
+            return
         if not file_path:
             return
 
-        result = self._loader.load_file(file_path)
+        result = self._loader.load_file(str(file_path))
         self._show_load_result(result)
 
     def _load_default_model(self) -> None:
@@ -593,7 +618,8 @@ class ModelExplorerWindow(QMainWindow):
 
     def _on_model_selected(self, item: QListWidgetItem) -> None:
         """Handle single click: show model info."""
-        assert item is not None, "item must be provided"
+        if not (item is not None):
+            raise ValueError("item must be provided")
         model_id = item.data(Qt.ItemDataRole.UserRole)
         if model_id:
             result = self._loader.load_bundled(model_id)
@@ -610,7 +636,8 @@ class ModelExplorerWindow(QMainWindow):
 
     def _on_display_changed(self, key: str, checked: bool) -> None:
         """Handle display checkbox change."""
-        assert key is not None, "key must be provided"
+        if not (key is not None):
+            raise ValueError("key must be provided")
         self._loader.save_preferences()
         self._status_label.setText(
             f"Display: {key} {'enabled' if checked else 'disabled'}"
@@ -620,7 +647,8 @@ class ModelExplorerWindow(QMainWindow):
 
     def _show_load_result(self, result: LoadResult) -> None:
         """Update all panels with a load result."""
-        assert result is not None, "result must be provided"
+        if not (result is not None):
+            raise ValueError("result must be provided")
         self._current_result = result
 
         if not result.success:

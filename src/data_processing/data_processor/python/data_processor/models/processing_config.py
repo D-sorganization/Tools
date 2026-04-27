@@ -60,7 +60,8 @@ class FilterConfig:
     @classmethod
     def from_mapping(cls, mapping: Mapping[str, Any]) -> FilterConfig:
         """Construct a FilterConfig from a mapping with validation."""
-        assert mapping is not None, "mapping must be provided"
+        if not (mapping is not None):
+            raise ValueError("mapping must be provided")
         if "filter_type" not in mapping:
             msg = "filter.filter_type is required"
             raise ValueError(msg)
@@ -134,7 +135,8 @@ class OutputConfig:
 
     @classmethod
     def from_mapping(cls, mapping: Mapping[str, Any]) -> OutputConfig:
-        assert mapping is not None, "mapping must be provided"
+        if not (mapping is not None):
+            raise ValueError("mapping must be provided")
         if "path" not in mapping:
             msg = "output.path is required when an output section is provided"
             raise ValueError(msg)
@@ -172,7 +174,8 @@ class PipelineConfig:
 
     @classmethod
     def from_mapping(cls, mapping: Mapping[str, Any]) -> PipelineConfig:
-        assert mapping is not None, "mapping must be provided"
+        if not (mapping is not None):
+            raise ValueError("mapping must be provided")
         normalized: MutableMapping[str, Any] = dict(mapping)
         files = _normalize_files(normalized.get("files"))
         combine = bool(normalized.get("combine", True))

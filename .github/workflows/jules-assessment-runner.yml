@@ -13,9 +13,6 @@ name: Jules Assessment Runner
 
 on:
   # Scheduled runs - adjust time as needed (UTC)
-  schedule:
-    # Run at 2 AM UTC daily
-    - cron: "0 8 * * 0,4"
 
   # Manual trigger with assessment selection
   workflow_dispatch:
@@ -38,9 +35,48 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # ── Dispatcher: route to self-hosted if available ──────────────────────────
+  pick-runner:
+    runs-on: self-hosted
+    timeout-minutes: 2
+    outputs:
+      runner: ${{ steps.check.outputs.runner }}
+    steps:
+      - name: Check for self-hosted runner
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
+          LOCAL_MODE: ${{ vars.LOCAL_RUNNER_MODE }}
+        run: |
+          MODE="${LOCAL_MODE:-local}"
+          echo "Fleet mode: $MODE"
+
+          case "$MODE" in
+            local)
+              echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
+              echo "Routing to self-hosted fleet (mode=local)"
+              ;;
+            disabled)
+              echo "::error::No local self-hosted runner available; failing closed"
+              exit 1
+              ;;
+            *)
+              AVAILABLE=$(gh api /orgs/${{ github.repository_owner }}/actions/runners \
+                --jq '[.runners[] | select(.status == "online") | select(.busy == false) | select(.labels[].name == "d-sorg-fleet")] | length' \
+                2>/dev/null || echo "0")
+              if [[ "$AVAILABLE" -gt 0 ]]; then
+                echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
+                echo "$AVAILABLE idle fleet runner(s) - routing locally"
+              else
+                echo "::error::No local self-hosted runner available; failing closed"
+                exit 1
+              fi
+              ;;
+          esac
   determine-assessment:
+    needs: pick-runner
     name: Determine Assessment Type
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     outputs:
       assessment: ${{ steps.select.outputs.assessment }}
       prompt_file: ${{ steps.select.outputs.prompt_file }}
@@ -78,8 +114,8 @@ jobs:
 
   run-assessment:
     name: Run Assessment ${{ needs.determine-assessment.outputs.assessment }}
-    needs: determine-assessment
-    runs-on: ubuntu-latest
+    needs: [pick-runner, determine-assessment]
+    runs-on: self-hosted
 
     # Skip if triggered by Jules bot (loop prevention)
     if: github.actor != 'jules-bot'

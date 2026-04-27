@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """Principal Component Analysis (PCA) Module.
 
 Provides comprehensive PCA functionality for identifying:
@@ -124,7 +126,8 @@ class PCAAnalyzer:
         Returns:
             Tuple of (component_list, cumulative_variance_ratio)
         """
-        assert components is not None, "components must be provided"
+        if not (components is not None):
+            raise ValueError("components must be provided")
         cumulative_var = np.cumsum(explained_var_ratio)
         component_list = []
         for i in range(len(explained_var)):
@@ -169,7 +172,7 @@ class PCAAnalyzer:
             X_processed
         )
 
-        pc_labels = [f"PC{i+1}" for i in range(components.shape[0])]
+        pc_labels = [f"PC{i + 1}" for i in range(components.shape[0])]
         transformed_df = pd.DataFrame(
             X_processed @ components.T,
             columns=pc_labels,
@@ -230,7 +233,8 @@ class PCAAnalyzer:
         Returns:
             List of component indices (1-based)
         """
-        assert result is not None, "result must be provided"
+        if not (result is not None):
+            raise ValueError("result must be provided")
         for comp in result.components:
             if comp.cumulative_variance_ratio >= variance_threshold:
                 return list(range(1, comp.index + 1))
@@ -277,7 +281,8 @@ class PCAAnalyzer:
         Returns:
             Dict mapping component names to lists of influential features
         """
-        assert result is not None, "result must be provided"
+        if not (result is not None):
+            raise ValueError("result must be provided")
         interpretations = {}
 
         for comp in result.components:
@@ -317,7 +322,8 @@ class PCAAnalyzer:
         X: np.ndarray,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Center and/or standardize data."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         mean = np.zeros(X.shape[1])
         std = np.ones(X.shape[1])
 
@@ -341,7 +347,8 @@ class PCAAnalyzer:
         Returns:
             components, explained_variance, explained_variance_ratio, singular_values
         """
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         n_samples, n_features = X.shape
 
         # Determine number of components
@@ -387,7 +394,8 @@ class PCAAnalyzer:
 
         Importance = sum of (loading^2 * variance_explained) for each component
         """
-        assert components is not None, "components must be provided"
+        if not (components is not None):
+            raise ValueError("components must be provided")
         importance = np.zeros(len(feature_names))
 
         for i, var_ratio in enumerate(explained_var_ratio):
@@ -410,7 +418,8 @@ class PCAAnalyzer:
 
         Contribution = loading^2 / sum(loading^2) * 100
         """
-        assert loading_matrix is not None, "loading_matrix must be provided"
+        if not (loading_matrix is not None):
+            raise ValueError("loading_matrix must be provided")
         contributions = loading_matrix.copy() ** 2
 
         # Normalize per component (column)
@@ -439,7 +448,8 @@ class PCAAnalyzer:
 
     def _find_elbow(self, variance_ratio: np.ndarray) -> int:
         """Find elbow point in scree plot using second derivative."""
-        assert variance_ratio is not None, "variance_ratio must be provided"
+        if not (variance_ratio is not None):
+            raise ValueError("variance_ratio must be provided")
         if len(variance_ratio) < 3:
             return len(variance_ratio)
 
@@ -464,7 +474,8 @@ def create_scree_plot(result: PCAResult, ax: Any = None) -> Any:
     Returns:
         matplotlib figure
     """
-    assert result is not None, "result must be provided"
+    if not (result is not None):
+        raise ValueError("result must be provided")
     import matplotlib.pyplot as plt
 
     fig = None
@@ -500,7 +511,7 @@ def create_scree_plot(result: PCAResult, ax: Any = None) -> Any:
         color="g",
         linestyle="--",
         alpha=0.5,
-        label=f"Kaiser threshold ({100/result.n_features:.1f}%)",
+        label=f"Kaiser threshold ({100 / result.n_features:.1f}%)",
     )
 
     # Mark elbow point
@@ -542,7 +553,8 @@ def create_loading_plot(
     Returns:
         matplotlib figure
     """
-    assert result is not None, "result must be provided"
+    if not (result is not None):
+        raise ValueError("result must be provided")
     import matplotlib.pyplot as plt
 
     fig = None
@@ -582,10 +594,10 @@ def create_loading_plot(
     ax.set_xlim(-1.2, 1.2)
     ax.set_ylim(-1.2, 1.2)
     ax.set_xlabel(
-        f"PC{pc_x} ({result.components[pc_x-1].explained_variance_ratio*100:.1f}%)"
+        f"PC{pc_x} ({result.components[pc_x - 1].explained_variance_ratio * 100:.1f}%)"
     )
     ax.set_ylabel(
-        f"PC{pc_y} ({result.components[pc_y-1].explained_variance_ratio*100:.1f}%)"
+        f"PC{pc_y} ({result.components[pc_y - 1].explained_variance_ratio * 100:.1f}%)"
     )
     ax.set_title("PCA Loading Plot")
     ax.axhline(y=0, color="k", linestyle="-", linewidth=0.5)

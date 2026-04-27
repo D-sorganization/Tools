@@ -1,3 +1,5 @@
+from typing import Any
+
 """
 C3D Motion Capture Viewer GUI Tests
 ===================================
@@ -16,7 +18,7 @@ class TestC3DViewerMainWindow:
     """Tests for the PyQt6 C3D Viewer main window."""
 
     @pytest.fixture
-    def mock_qt_app(self):
+    def mock_qt_app(self) -> Any:
         """Create mock Qt application for headless testing."""
         with patch.dict(
             sys.modules,
@@ -29,7 +31,7 @@ class TestC3DViewerMainWindow:
         ):
             yield
 
-    def test_main_window_imports(self, mock_qt_app):
+    def test_main_window_imports(self, mock_qt_app) -> Any:
         """Test that main window module can be imported."""
         try:
             from c3d_viewer.ui.pyqt6 import main_window
@@ -38,7 +40,7 @@ class TestC3DViewerMainWindow:
         except ImportError:
             pytest.skip("PyQt6 main window not yet implemented")
 
-    def test_main_window_class_exists(self, mock_qt_app):
+    def test_main_window_class_exists(self, mock_qt_app) -> Any:
         """Test that window class is defined and callable."""
         try:
             from c3d_viewer.ui.pyqt6.main_window import C3DViewerWindow
@@ -51,7 +53,7 @@ class TestC3DViewerMainWindow:
 class TestC3DDataProcessing:
     """Tests for C3D data processing logic."""
 
-    def test_frame_to_time_conversion(self):
+    def test_frame_to_time_conversion(self) -> Any:
         """Test frame index to time conversion."""
         frame_rate = 100.0  # Hz
         frame_count = 1000
@@ -64,7 +66,7 @@ class TestC3DDataProcessing:
         time = frame / frame_rate
         assert time == pytest.approx(5.0)
 
-    def test_unit_conversion_mm_to_m(self):
+    def test_unit_conversion_mm_to_m(self) -> Any:
         """Test unit conversion from mm to m."""
         # Conversion factors
         mm_to_m = 0.001
@@ -78,7 +80,7 @@ class TestC3DDataProcessing:
         value_mm2 = value_m2 * m_to_mm
         assert value_mm2 == pytest.approx(2500.0)
 
-    def test_biomechanical_range_validation(self):
+    def test_biomechanical_range_validation(self) -> Any:
         """Test biomechanical marker position validation."""
         # Valid range for biomechanical markers: 1mm to 10m
         min_valid = 0.001  # 1mm in meters
@@ -97,7 +99,7 @@ class TestC3DDataProcessing:
         too_large = 15.0  # 15m - unrealistic
         assert too_large > max_valid
 
-    def test_analog_rate_relation(self):
+    def test_analog_rate_relation(self) -> Any:
         """Test analog rate is typically multiple of frame rate."""
         frame_rate = 100.0  # Hz
         analog_rate = 1000.0  # Hz
@@ -111,7 +113,7 @@ class TestC3DDataProcessing:
 class TestForcePlateAnalysis:
     """Tests for force plate data analysis."""
 
-    def test_cop_calculation_valid(self):
+    def test_cop_calculation_valid(self) -> Any:
         """Test center of pressure calculation with valid force."""
         import numpy as np
 
@@ -127,7 +129,7 @@ class TestForcePlateAnalysis:
         assert cop_x[0] == pytest.approx(0.05, rel=1e-3)  # 50mm
         assert cop_y[0] == pytest.approx(0.1, rel=1e-3)  # 100mm
 
-    def test_cop_invalid_when_no_contact(self):
+    def test_cop_invalid_when_no_contact(self) -> Any:
         """Test COP is NaN when force is too small."""
         import numpy as np
 
@@ -138,7 +140,7 @@ class TestForcePlateAnalysis:
         valid_contact = np.abs(fz) > min_force_threshold
         assert not valid_contact[0]
 
-    def test_force_plate_channel_naming(self):
+    def test_force_plate_channel_naming(self) -> Any:
         """Test force plate channel naming conventions."""
         # Standard naming patterns
         standard_channels = ["Fx1", "Fy1", "Fz1", "Mx1", "My1", "Mz1"]
@@ -152,7 +154,7 @@ class TestForcePlateAnalysis:
 class TestC3DViewerGUIRegistration:
     """Tests for GUI framework registration."""
 
-    def test_gui_registration_exists(self):
+    def test_gui_registration_exists(self) -> Any:
         """Test that gui_registration.py exists and has required metadata."""
         try:
             from c3d_viewer import gui_registration
@@ -167,7 +169,7 @@ class TestC3DViewerGUIRegistration:
         except ImportError:
             pytest.skip("GUI registration not yet implemented")
 
-    def test_gui_registration_category(self):
+    def test_gui_registration_category(self) -> Any:
         """Test that viewer is in biomechanics category."""
         try:
             from c3d_viewer import gui_registration
@@ -176,7 +178,7 @@ class TestC3DViewerGUIRegistration:
         except ImportError:
             pytest.skip("GUI registration not yet implemented")
 
-    def test_launcher_exists(self):
+    def test_launcher_exists(self) -> Any:
         """Test that launcher script exists."""
         try:
             from c3d_viewer import launch_pyqt6

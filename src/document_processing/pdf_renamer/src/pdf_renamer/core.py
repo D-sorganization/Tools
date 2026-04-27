@@ -18,7 +18,8 @@ def extract_title(pdf_path: Path, llm: TitleLLM | None = None) -> TitleResult:
     """
 
     # 0) Metadata
-    assert pdf_path is not None, "pdf_path must be provided"
+    if not (pdf_path is not None):
+        raise ValueError("pdf_path must be provided")
     r0 = title_from_metadata(pdf_path)
     # title_from_metadata returns 0.95 conf if it passes looks_like_title
     if r0.title:

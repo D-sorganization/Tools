@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 from PyQt6.QtCore import Qt
@@ -363,11 +364,11 @@ def test_get_text_from_widget_variants(qapp) -> None:
     calc = MockCalculator()
 
     class DummyText:
-        def toPlainText(self):
+        def toPlainText(self) -> Any:
             return "plain"
 
     class DummyTextFallback:
-        def text(self):
+        def text(self) -> Any:
             return "txt"
 
     assert calc.get_text_from_widget(DummyText()) == "plain"
@@ -440,7 +441,7 @@ def test_paste_text_plain_text(qapp) -> None:
             def __init__(self) -> None:
                 self.val = ""
 
-            def setPlainText(self, text):
+            def setPlainText(self, text) -> Any:
                 self.val = text
 
         editor = MockEditor()
@@ -452,7 +453,7 @@ def test_paste_text_plain_text(qapp) -> None:
             def __init__(self) -> None:
                 self.val = ""
 
-            def insertPlainText(self, text):
+            def insertPlainText(self, text) -> Any:
                 self.val = text
 
         insert_editor = MockInsertEditor()
@@ -476,7 +477,7 @@ def test_exceptions_coverage(qapp) -> None:
     # get_text_from_widget exception
     # pass something that throws RuntimeError when checked type
     class BadWidget:
-        def __class__(self):
+        def __class__(self) -> Any:
             raise RuntimeError()
 
     calc.get_text_from_widget(BadWidget())

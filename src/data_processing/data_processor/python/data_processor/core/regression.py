@@ -179,7 +179,8 @@ class MultivariateRegressor(FittingMixin, DiagnosticsMixin):
             X grid, Y grid, Z predictions
         """
         # Create grid
-        assert result is not None, "result must be provided"
+        if not (result is not None):
+            raise ValueError("result must be provided")
         x_lin = np.linspace(x_range[0], x_range[1], grid_size)
         y_lin = np.linspace(y_range[0], y_range[1], grid_size)
         x_grid, y_grid = np.meshgrid(x_lin, y_lin)
@@ -284,8 +285,7 @@ def format_regression_report(result: RegressionResult) -> str:
         sorted_imp = sorted(
             result.variable_importance.items(), key=lambda x: x[1], reverse=True
         )
-        for name, imp in sorted_imp[:10]:
-            lines.append(f"  {name}: {imp:.4f}")
+        lines.extend([f"  {name}: {imp:.4f}" for (name, imp) in sorted_imp[:10]])
 
     # Diagnostics summary
     if result.diagnostics:

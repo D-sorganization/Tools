@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """Signal Toolkit Widget UI Setup Mixin.
 
 Contains all widget construction and signal-slot connection methods.

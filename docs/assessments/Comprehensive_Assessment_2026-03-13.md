@@ -87,11 +87,11 @@
 
 ## Assessment I: Code Style
 
-**Score: 7/10** — 379 TODO/FIXME/HACK markers remain.
+**Score: 7/10** — 379 TRACKED_TASK/TRACKED_DEFECT/HACK markers remain.
 
 | Finding | Severity | Location |
 |---|---|---|
-| 379 TODO/FIXME/HACK/noqa comments across codebase | 🟡 Medium | Various |
+| 379 TRACKED_TASK/TRACKED_DEFECT/HACK/noqa comments across codebase | 🟡 Medium | Various |
 | `modern_robotics.py` has `# mypy: ignore-errors` at top (2,066 lines untyped) | 🟡 Medium | rotation_converter/ |
 
 ## Assessment J: Design Patterns
@@ -197,12 +197,12 @@
 
 ## Broken Windows
 
-**Score: 6/10** — 379 TODO/FIXME markers + `# mypy: ignore-errors` on 2,066-line file.
+**Score: 6/10** — 379 TRACKED_TASK/TRACKED_DEFECT markers + `# mypy: ignore-errors` on 2,066-line file.
 
 | Window | Impact |
 |---|---|
 | `modern_robotics.py` line 1: `# mypy: ignore-errors` | Entire file exempt from type checking |
-| 379 TODO/FIXME/HACK comments | Accumulated debt signals neglect |
+| 379 TRACKED_TASK/TRACKED_DEFECT/HACK comments | Accumulated debt signals neglect |
 | `bare except:` in `modern_robotics.py` | Violates AGENTS.md rules |
 
 ---
@@ -246,7 +246,7 @@ graph TD
     C --> D[Rust: EOM + constraints]
     D --> E[Rust: FK + Jacobians]
     E --> F[Rust: math-primitives]
-    
+
     style A fill:#4CAF50
     style B fill:#f44336
     style C fill:#4CAF50

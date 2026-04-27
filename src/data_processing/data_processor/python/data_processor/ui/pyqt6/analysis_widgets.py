@@ -91,7 +91,8 @@ if PYQT6_AVAILABLE:
 
         def set_dataframe(self, df: pd.DataFrame) -> None:
             """Update all widgets with new DataFrame."""
-            assert df is not None, "df must be provided"
+            if not (df is not None):
+                raise ValueError("df must be provided")
             self.pca_widget.set_dataframe(df)
             self.anova_widget.set_dataframe(df)
             self.regression_widget.set_dataframe(df)

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import logging
+import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -28,6 +29,18 @@ class ModelFormat(Enum):
     URDF = "urdf"
     MJCF = "mjcf"
     UNKNOWN = "unknown"
+
+
+class ConversionError(RuntimeError):
+    """Base exception for conversion API failures."""
+
+
+class UnsupportedFormatError(ConversionError):
+    """Raised when a conversion source format is not supported."""
+
+
+class ModelNotFoundError(ConversionError):
+    """Raised when the requested model source cannot be read."""
 
 
 # Map of file extensions to formats
@@ -77,7 +90,8 @@ class UserPreferences:
 
     def add_recent(self, model_id: str) -> None:
         """Add a model to the recent list."""
-        assert model_id is not None, "model_id must be provided"
+        if not (model_id is not None):
+            raise ValueError("model_id must be provided")
         if model_id in self.recent_models:
             self.recent_models.remove(model_id)
         self.recent_models.insert(0, model_id)
@@ -203,7 +217,8 @@ class UnifiedModelLoader:
         Args:
             model_id: ID of the model to set as default.
         """
-        assert model_id is not None, "model_id must be provided"
+        if not (model_id is not None):
+            raise ValueError("model_id must be provided")
         self._preferences.default_model_id = model_id
         self.save_preferences()
 
@@ -235,7 +250,8 @@ class UnifiedModelLoader:
 
     def get_bundled_model_info(self, model_id: str) -> dict[str, Any] | None:
         """Get metadata for a specific bundled model."""
-        assert model_id is not None, "model_id must be provided"
+        if not (model_id is not None):
+            raise ValueError("model_id must be provided")
         for entry in self.list_bundled_models():
             if entry["id"] == model_id:
                 return entry
@@ -258,7 +274,8 @@ class UnifiedModelLoader:
         Returns:
             LoadResult with the parsed model or error information.
         """
-        assert file_path is not None, "file_path must be provided"
+        if not (file_path is not None):
+            raise ValueError("file_path must be provided")
         path = Path(file_path)
         if not path.exists():
             return LoadResult(
@@ -292,7 +309,8 @@ class UnifiedModelLoader:
         Returns:
             LoadResult with the parsed model.
         """
-        assert model_id is not None, "model_id must be provided"
+        if not (model_id is not None):
+            raise ValueError("model_id must be provided")
         info = self.get_bundled_model_info(model_id)
         if info is None:
             return LoadResult(error=f"Bundled model not found: {model_id}")
@@ -399,7 +417,7 @@ class UnifiedModelLoader:
 
     # -- Format conversion utilities --
 
-    def convert_to_urdf(self, source: str | Path) -> str | None:
+    def convert_to_urdf(self, source: str | Path) -> str:
         """
         Convert an MJCF file to URDF XML string.
 
@@ -407,15 +425,38 @@ class UnifiedModelLoader:
             source: Path to MJCF file.
 
         Returns:
-            URDF XML string or None on failure.
+            URDF XML string.
         """
-        try:
-            return str(self._mjcf_converter.mjcf_to_urdf(source))
-        except (OSError, ValueError, KeyError) as exc:
-            logger.error("MJCF to URDF conversion failed: %s", exc)
-            return None
+        if not (source is not None):
+            raise ValueError("source must be provided")
 
-    def convert_to_mjcf(self, source: str | Path) -> str | None:
+        source_data: str | Path
+
+        if isinstance(source, str) and source.strip().startswith("<"):
+            source_data = source
+        else:
+            source_path = Path(source)
+            if not source_path.exists():
+                raise ModelNotFoundError(f"Source model not found: {source_path}")
+            source_data = source_path
+
+            source_format = detect_format(source_path)
+            if source_format != ModelFormat.MJCF:
+                raise UnsupportedFormatError(
+                    f"Expected MJCF source for URDF conversion, got: {source_format.value}"
+                )
+
+        try:
+            return str(self._mjcf_converter.mjcf_to_urdf(source_data))
+        except ConversionError:
+            raise
+        except (ET.ParseError, ValueError, KeyError, OSError, RuntimeError) as exc:
+            logger.exception("MJCF to URDF conversion failed")
+            raise ConversionError(
+                f"Unable to convert MJCF source to URDF: {source}"
+            ) from exc
+
+    def convert_to_mjcf(self, source: str | Path) -> str:
         """
         Convert a URDF file to MJCF XML string.
 
@@ -423,10 +464,33 @@ class UnifiedModelLoader:
             source: Path to URDF file.
 
         Returns:
-            MJCF XML string or None on failure.
+            MJCF XML string.
         """
+        if not (source is not None):
+            raise ValueError("source must be provided")
+
+        source_data: str | Path
+
+        if isinstance(source, str) and source.strip().startswith("<"):
+            source_data = source
+        else:
+            source_path = Path(source)
+            if not source_path.exists():
+                raise ModelNotFoundError(f"Source model not found: {source_path}")
+            source_data = source_path
+
+            source_format = detect_format(source_path)
+            if source_format != ModelFormat.URDF:
+                raise UnsupportedFormatError(
+                    f"Expected URDF source for MJCF conversion, got: {source_format.value}"
+                )
+
         try:
-            return str(self._mjcf_converter.urdf_to_mjcf(source))
-        except (OSError, ValueError, KeyError) as exc:
-            logger.error("URDF to MJCF conversion failed: %s", exc)
-            return None
+            return str(self._mjcf_converter.urdf_to_mjcf(source_data))
+        except ConversionError:
+            raise
+        except (ET.ParseError, ValueError, KeyError, OSError, RuntimeError) as exc:
+            logger.exception("URDF to MJCF conversion failed")
+            raise ConversionError(
+                f"Unable to convert URDF source to MJCF: {source}"
+            ) from exc

@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """Signal Processing Studio - Unified signal processing application.
 
 Hosts Function Generator, Signal Toolkit, and Polynomial Generator
@@ -153,10 +155,15 @@ class SignalProcessingStudio(*_get_base_classes()):  # type: ignore[misc]
 
     def _on_poly_fallback(self, joint_name: str, coeffs: list) -> None:
         """Fallback when Function Generator is unavailable."""
+<<<<<<< HEAD
         if joint_name is None:
             raise ValueError("joint_name must not be None")
         if not isinstance(coeffs, list):
             raise TypeError(f"coeffs must be a list, got {type(coeffs).__name__}")
+=======
+        if not (joint_name is not None):
+            raise ValueError("joint_name must be provided")
+>>>>>>> origin/main
         import numpy as np
         from signal_toolkit.core import SignalGenerator
 

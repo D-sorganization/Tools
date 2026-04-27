@@ -1,3 +1,5 @@
+from typing import Any
+
 """
 ODE Solver GUI Tests
 ====================
@@ -16,7 +18,7 @@ class TestODESolverMainWindow:
     """Tests for the PyQt6 ODE Solver main window."""
 
     @pytest.fixture
-    def mock_qt_app(self):
+    def mock_qt_app(self) -> Any:
         """Create mock Qt application for headless testing."""
         with patch.dict(
             sys.modules,
@@ -29,7 +31,7 @@ class TestODESolverMainWindow:
         ):
             yield
 
-    def test_main_window_imports(self, mock_qt_app):
+    def test_main_window_imports(self, mock_qt_app) -> Any:
         """Test that main window module can be imported."""
         try:
             from ode_solver.ui.pyqt6 import main_window
@@ -38,7 +40,7 @@ class TestODESolverMainWindow:
         except ImportError:
             pytest.skip("PyQt6 main window not yet implemented")
 
-    def test_main_window_class_exists(self, mock_qt_app):
+    def test_main_window_class_exists(self, mock_qt_app) -> Any:
         """Test that window class is defined and callable."""
         try:
             from ode_solver.ui.pyqt6.main_window import ODESolverWindow
@@ -47,7 +49,7 @@ class TestODESolverMainWindow:
         except ImportError:
             pytest.skip("Main window not yet implemented")
 
-    def test_preset_definitions_exist(self, mock_qt_app):
+    def test_preset_definitions_exist(self, mock_qt_app) -> Any:
         """Test that ODE presets are defined."""
         try:
             from ode_solver.ui.pyqt6.main_window import ODE_PRESETS
@@ -62,7 +64,7 @@ class TestODESolverMainWindow:
 class TestODESolverEngineIntegration:
     """Integration tests for ODE solver engine connection."""
 
-    def test_solver_class_import(self):
+    def test_solver_class_import(self) -> Any:
         """Test that ODESolver class can be imported."""
         try:
             from upstream_drift_tools.process_calculators.ode_solver import (
@@ -73,7 +75,7 @@ class TestODESolverEngineIntegration:
         except ImportError:
             pytest.skip("ODE solver not available in test environment")
 
-    def test_simple_ode_solution(self):
+    def test_simple_ode_solution(self) -> Any:
         """Test solving a simple exponential decay ODE."""
         try:
             import numpy as np
@@ -96,7 +98,7 @@ class TestODESolverEngineIntegration:
         except ImportError:
             pytest.skip("ODE solver not available")
 
-    def test_two_variable_system(self):
+    def test_two_variable_system(self) -> Any:
         """Test solving a two-variable ODE system."""
         try:
             import numpy as np
@@ -124,7 +126,7 @@ class TestODESolverEngineIntegration:
 class TestODESolverGUIRegistration:
     """Tests for GUI framework registration."""
 
-    def test_gui_registration_exists(self):
+    def test_gui_registration_exists(self) -> Any:
         """Test that gui_registration.py exists and has required metadata."""
         try:
             from ode_solver import gui_registration
@@ -139,7 +141,7 @@ class TestODESolverGUIRegistration:
         except ImportError:
             pytest.skip("GUI registration not yet implemented")
 
-    def test_gui_registration_category(self):
+    def test_gui_registration_category(self) -> Any:
         """Test that solver is in mathematics category."""
         try:
             from ode_solver import gui_registration
@@ -148,7 +150,7 @@ class TestODESolverGUIRegistration:
         except ImportError:
             pytest.skip("GUI registration not yet implemented")
 
-    def test_launcher_exists(self):
+    def test_launcher_exists(self) -> Any:
         """Test that launcher script exists."""
         try:
             from ode_solver import launch_pyqt6

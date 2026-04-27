@@ -266,7 +266,8 @@ class Config {
       'Set NEXTAUTH_SECRET in .env for production.'
     );
 
-    return 'dev-secret-' + Math.random().toString(36).substring(2, 15);
+    const { randomBytes } = require('crypto');
+    return 'dev-secret-' + randomBytes(24).toString('base64url');
   }
 
   /**

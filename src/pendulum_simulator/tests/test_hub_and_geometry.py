@@ -175,7 +175,7 @@ class TestCylinderCrossSection:
         assert np.all(np.isfinite(corners))
 
     def test_negative_radius_raises(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             cylinder_cross_section(
                 np.array([0.0, 0.0]), np.array([1.0, 0.0]), radius=-0.1
             )
@@ -216,7 +216,7 @@ class TestEllipsoidCrossSection:
         assert np.all(np.isfinite(pts))
 
     def test_negative_semi_axis_raises(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             ellipsoid_cross_section(np.zeros(2), semi_a=-0.1, semi_b=0.2)
 
     def test_centred_at_origin(self) -> None:
@@ -227,7 +227,7 @@ class TestEllipsoidCrossSection:
         assert pts[:, 0].max() == pytest.approx(1.0, abs=0.01)
 
     def test_too_few_points_raises(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             ellipsoid_cross_section(np.zeros(2), 0.5, 0.3, n_points=2)
 
 
@@ -253,7 +253,7 @@ class TestTaperedCylinderCrossSection:
         assert corners.shape == (4, 2)
 
     def test_negative_radius_raises(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             tapered_cylinder_cross_section(
                 np.array([0.0, 0.0]),
                 np.array([1.0, 0.0]),
@@ -322,9 +322,9 @@ class TestAutoRadiusFromMass:
         assert np.isfinite(auto_radius_from_mass(0.5, 0.3))
 
     def test_negative_mass_raises(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             auto_radius_from_mass(-1.0, 1.0)
 
     def test_negative_length_raises(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             auto_radius_from_mass(1.0, -1.0)

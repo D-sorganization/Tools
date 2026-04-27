@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 #!/usr/bin/env python3
 """Flow rate unit conversions for pressure drop calculator.
 
@@ -153,7 +155,7 @@ def mass_to_mass(value: float, from_unit: str, to_unit: str) -> float:
 
     Example:
         >>> flow_lbhr = mass_to_mass(1000, 'kg/h', 'lb/hr')
-        >>> print(f"{flow_lbhr:.1f} lb/hr")
+        >>> logger.debug(f"{flow_lbhr:.1f} lb/hr")
     """
     if not math.isfinite(value):
         raise ValueError(f"value must be finite, got {value}")
@@ -186,7 +188,7 @@ def molar_to_molar(value: float, from_unit: str, to_unit: str) -> float:
 
     Example:
         >>> flow_kmol = molar_to_molar(100, 'lbmol/hr', 'kmol/h')
-        >>> print(f"{flow_kmol:.2f} kmol/h")
+        >>> logger.debug(f"{flow_kmol:.2f} kmol/h")
     """
     if not math.isfinite(value):
         raise ValueError(f"value must be finite, got {value}")
@@ -225,9 +227,10 @@ def mass_to_molar(
     Example:
         >>> # 100 kg/h of air (MW = 29 kg/kmol)
         >>> n_dot = mass_to_molar(100, 'kg/h', 29.0, 'kmol/h')
-        >>> print(f"{n_dot:.2f} kmol/h")
+        >>> logger.debug(f"{n_dot:.2f} kmol/h")
     """
-    assert mass_flow is not None, "mass_flow must be provided"
+    if not (mass_flow is not None):
+        raise ValueError("mass_flow must be provided")
     _require_finite(mass_flow, "mass_flow")
     _require_positive_finite(molecular_weight, "molecular_weight")
     _require_known_unit(mass_unit, MASS_FLOW_CONVERSIONS, "mass flow")
@@ -269,9 +272,10 @@ def molar_to_mass(
     Example:
         >>> # 10 kmol/h of CO2 (MW = 44 kg/kmol)
         >>> m_dot = molar_to_mass(10, 'kmol/h', 44.0, 'kg/h')
-        >>> print(f"{m_dot:.1f} kg/h")
+        >>> logger.debug(f"{m_dot:.1f} kg/h")
     """
-    assert molar_flow is not None, "molar_flow must be provided"
+    if not (molar_flow is not None):
+        raise ValueError("molar_flow must be provided")
     _require_finite(molar_flow, "molar_flow")
     _require_positive_finite(molecular_weight, "molecular_weight")
     _require_known_unit(molar_unit, MOLAR_FLOW_CONVERSIONS, "molar flow")
@@ -313,9 +317,10 @@ def volumetric_actual_to_mass(
     Example:
         >>> # 1000 m³/h at ρ = 1.2 kg/m³
         >>> m_dot = volumetric_actual_to_mass(1000, 'm3/h', 1.2, 'kg/h')
-        >>> print(f"{m_dot:.1f} kg/h")
+        >>> logger.debug(f"{m_dot:.1f} kg/h")
     """
-    assert vol_flow is not None, "vol_flow must be provided"
+    if not (vol_flow is not None):
+        raise ValueError("vol_flow must be provided")
     _require_finite(vol_flow, "vol_flow")
     _require_positive_finite(density, "density")
     _require_known_unit(
@@ -360,9 +365,10 @@ def mass_to_volumetric_actual(
     Example:
         >>> # 100 kg/h at ρ = 1.2 kg/m³
         >>> Q = mass_to_volumetric_actual(100, 'kg/h', 1.2, 'm3/h')
-        >>> print(f"{Q:.1f} m³/h")
+        >>> logger.debug(f"{Q:.1f} m³/h")
     """
-    assert mass_flow is not None, "mass_flow must be provided"
+    if not (mass_flow is not None):
+        raise ValueError("mass_flow must be provided")
     _require_finite(mass_flow, "mass_flow")
     _require_positive_finite(density, "density")
     _require_known_unit(mass_unit, MASS_FLOW_CONVERSIONS, "mass flow")
@@ -410,7 +416,7 @@ def standard_volumetric_to_mass(
     Example:
         >>> # 1000 SCFM of air (MW = 29 kg/kmol)
         >>> m_dot = standard_volumetric_to_mass(1000, 'ft3/min', 29.0, 'SCFM', 'lb/hr')
-        >>> print(f"{m_dot:.1f} lb/hr")
+        >>> logger.debug(f"{m_dot:.1f} lb/hr")
 
     Raises:
         ValueError: If inputs are not valid.
@@ -420,7 +426,8 @@ def standard_volumetric_to_mass(
         - Nm³/h refers to "Normal" m³/h at 0°C, 1 atm
         - The standard parameter specifies which reference conditions to use
     """
-    assert vol_flow_std is not None, "vol_flow_std must be provided"
+    if not (vol_flow_std is not None):
+        raise ValueError("vol_flow_std must be provided")
     _require_finite(vol_flow_std, "vol_flow_std")
     _require_positive_finite(molecular_weight, "molecular_weight")
     _require_known_unit(mass_unit, MASS_FLOW_CONVERSIONS, "mass flow")
@@ -464,9 +471,10 @@ def mass_to_standard_volumetric(
     Example:
         >>> # 100 kg/h of CH4 (MW = 16 kg/kmol)
         >>> Q_std = mass_to_standard_volumetric(100, 'kg/h', 16.0, 'STP', 'Nm3/h')
-        >>> print(f"{Q_std:.1f} Nm³/h")
+        >>> logger.debug(f"{Q_std:.1f} Nm³/h")
     """
-    assert mass_flow is not None, "mass_flow must be provided"
+    if not (mass_flow is not None):
+        raise ValueError("mass_flow must be provided")
     _require_finite(mass_flow, "mass_flow")
     _require_positive_finite(molecular_weight, "molecular_weight")
     _require_known_unit(mass_unit, MASS_FLOW_CONVERSIONS, "mass flow")
@@ -506,9 +514,10 @@ def scfm_to_acfm(
     Example:
         >>> # 1000 SCFM at 500°F (533 K) and 5 bar
         >>> acfm = scfm_to_acfm(1000, 533, 5e5, 'SCFM')
-        >>> print(f"{acfm:.0f} ACFM")
+        >>> logger.debug(f"{acfm:.0f} ACFM")
     """
-    assert scfm is not None, "scfm must be provided"
+    if not (scfm is not None):
+        raise ValueError("scfm must be provided")
     _require_finite(scfm, "scfm")
     _require_positive_finite(temperature, "temperature")
     _require_positive_finite(pressure, "pressure")
@@ -542,7 +551,8 @@ def acfm_to_scfm(
     Raises:
         ValueError: If temperature or pressure is not positive and finite.
     """
-    assert acfm is not None, "acfm must be provided"
+    if not (acfm is not None):
+        raise ValueError("acfm must be provided")
     _require_finite(acfm, "acfm")
     _require_positive_finite(temperature, "temperature")
     _require_positive_finite(pressure, "pressure")
@@ -588,7 +598,7 @@ def convert_flow_rate_to_mass(
     Example:
         >>> # Convert 1000 SCFM to kg/s for air
         >>> m_dot = convert_flow_rate_to_mass(1000, 'SCFM', 29.0, standard='SCFM')
-        >>> print(f"{m_dot:.3f} kg/s")
+        >>> logger.debug(f"{m_dot:.3f} kg/s")
     """
     _require_finite(value, "value")
     if from_unit in MASS_FLOW_CONVERSIONS:

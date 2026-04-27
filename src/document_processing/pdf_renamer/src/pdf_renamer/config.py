@@ -3,7 +3,7 @@
 import logging
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,8 @@ except ImportError:
     # Final fallback - inline implementations
     def safe_read_json(file_path: Path | str, default: Any = None) -> Any:
         """Fallback safe JSON reader."""
-        assert file_path is not None, "file_path must be provided"
+        if not (file_path is not None):
+            raise ValueError("file_path must be provided")
         path = Path(file_path)
         if not path.exists():
             return default
@@ -36,7 +37,8 @@ except ImportError:
         create_parents: bool = True,
     ) -> bool:
         """Fallback safe JSON writer."""
-        assert file_path is not None, "file_path must be provided"
+        if not (file_path is not None):
+            raise ValueError("file_path must be provided")
         path = Path(file_path)
         try:
             if create_parents:
@@ -48,19 +50,17 @@ except ImportError:
             return False
 
 
-# Constants for configuration paths
-TOOLS_ENV_PATH = Path(
-    "c:/Users/diete/Repositories/Tools/document_processing/pdf_renamer/.env"
-)
+KEYRING_SERVICE = "pdf_renamer"
+KEYRING_USERNAME = "gemini"
+API_KEY_NAMES = ("GEMINI_API_KEY", "GOOGLE_API_KEY")
 
-# Try to load from .env file if available
-try:
+
+def _get_keyring() -> Any | None:
+    """Return the optional keyring module when it is available."""
     try:
-        from utils.env_utils import find_env_file, load_env_file
-        from utils.path_helpers import ensure_utils_in_path
-
-        ensure_utils_in_path()
+        import keyring
     except ImportError:
+<<<<<<< HEAD
         # Fallback if utils not available
         find_env_file = None
         load_env_file = None
@@ -102,17 +102,20 @@ except ImportError:
     except ImportError:
         # python-dotenv not installed, will fall back to environment variables
         pass
+=======
+        return None
+    return keyring
+>>>>>>> origin/main
 
 
 def get_api_key(key_name: str = "GEMINI_API_KEY") -> str | None:
     """
-    Get API key from multiple sources with priority order.
+    Get API key from secure sources with priority order.
 
     Priority:
-    1. Environment variable (current session) - checks both GEMINI_API_KEY and GOOGLE_API_KEY
-    2. .env file in project root
-    3. .env file in Tools folder
-    4. .env file in user home (~/.pdf_renamer/.env)
+    1. Environment variable (current session) - checks both GEMINI_API_KEY and
+       GOOGLE_API_KEY
+    2. OS keyring entry for the pdf_renamer Gemini credential
 
     Args:
         key_name: Name of the API key (default: GEMINI_API_KEY)
@@ -120,40 +123,26 @@ def get_api_key(key_name: str = "GEMINI_API_KEY") -> str | None:
     Returns:
         API key string or None if not found
     """
-    # Check both old and new environment variable names
-    api_key = os.environ.get(key_name) or os.environ.get("GOOGLE_API_KEY")
-    if api_key:
-        return api_key
+    for candidate_name in (key_name, *API_KEY_NAMES):
+        api_key = os.environ.get(candidate_name)
+        if api_key:
+            return api_key
 
-    # If not in environment, try to manually load from known locations
-    env_locations = [
-        Path(__file__).parent.parent.parent / ".env",  # Project root
-        TOOLS_ENV_PATH,  # Tools version
-        Path.home() / ".pdf_renamer" / ".env",  # User home
-    ]
-
-    # Check for both key names in .env files
-    key_names = [key_name, "GOOGLE_API_KEY", "GEMINI_API_KEY"]
-
-    for env_path in env_locations:
-        if env_path.exists():
-            try:
-                with open(env_path) as f:
-                    for line in f:
-                        line = line.strip()
-                        if line and not line.startswith("#") and "=" in line:
-                            var_name, var_value = line.split("=", 1)
-                            if var_name.strip() in key_names:
-                                return var_value.strip().strip('"').strip("'")
-            except (PermissionError, OSError):
-                continue
+    keyring = _get_keyring()
+    if keyring is not None:
+        try:
+            return cast(
+                "str | None", keyring.get_password(KEYRING_SERVICE, KEYRING_USERNAME)
+            )
+        except Exception as exc:  # noqa: BLE001 - keyring backends vary widely.
+            logger.warning("Unable to read Gemini API key from keyring: %s", exc)
 
     return None
 
 
 def setup_api_key_interactive() -> bool:
     """
-    Interactive setup for API key. Prompts user and saves to .env file.
+    Interactive setup for API key. Prompts user and stores it in OS keyring.
 
     Returns:
         True if API key was set up successfully, False otherwise
@@ -179,8 +168,8 @@ def setup_api_key_interactive() -> bool:
     )
     if response != "y":
         logger.info("\nSkipping API key setup. You can set it later by:")
-        logger.info("  1. Creating a .env file with: GEMINI_API_KEY=your_key")
-        logger.info("  2. Setting environment variable: GEMINI_API_KEY=your_key")
+        logger.info("  1. Setting environment variable: GEMINI_API_KEY=your_key")
+        logger.info("  2. Installing keyring and rerunning this setup helper")
         return False
 
     api_key = input("\nEnter your Gemini API key: ").strip()
@@ -188,63 +177,21 @@ def setup_api_key_interactive() -> bool:
         logger.info("\n✗ No API key entered. Setup cancelled.")
         return False
 
-    # Choose save location
-    logger.info("\nWhere should I save the API key?")
-    logger.info("  1. Project folder (Playground/PDFRenamer/.env)")
-    logger.info("  2. Tools folder (Tools/document_processing/pdf_renamer/.env)")
-    logger.info("  3. User home (~/.pdf_renamer/.env)")
+    keyring = _get_keyring()
+    if keyring is None:
+        logger.error("\n✗ keyring is not installed; API key was not saved.")
+        logger.info("Set GEMINI_API_KEY in your shell environment instead.")
+        return False
 
-    choice = input("\nChoice (1-3, default=1): ").strip() or "1"
-
-    save_locations = {
-        "1": Path(__file__).parent.parent.parent / ".env",
-        "2": TOOLS_ENV_PATH,
-        "3": Path.home() / ".pdf_renamer" / ".env",
-    }
-
-    env_path = save_locations.get(choice, save_locations["1"])
-
-    # Create directory if needed
-    env_path.parent.mkdir(parents=True, exist_ok=True)
-
-    # Save to .env file
     try:
-        # Read existing content
-        existing_content = []
-        if env_path.exists():
-            with open(env_path) as f:
-                existing_content = [
-                    line
-                    for line in f
-                    if not line.strip().startswith("GEMINI_API_KEY")
-                    and not line.strip().startswith("GOOGLE_API_KEY")
-                ]
-
-        # Write new content
-        with open(env_path, "w") as f:
-            # Write header
-            f.write("# PDF Renamer Configuration\n")
-            f.write("# Auto-generated API key configuration\n\n")
-
-            # Write API key with both names for compatibility
-            f.write(f"GEMINI_API_KEY={api_key}\n")
-            f.write(f"GOOGLE_API_KEY={api_key}\n")
-
-            # Write back other existing variables
-            if existing_content:
-                f.write("\n# Other settings\n")
-                for line in existing_content:
-                    if line.strip() and not line.strip().startswith("#"):
-                        f.write(line)
-
-        logger.info(f"\n✓ API key saved to: {env_path}")
-        logger.info("  File is gitignored and secure.")
+        keyring.set_password(KEYRING_SERVICE, KEYRING_USERNAME, api_key)
+        logger.info("\n✓ API key saved to the OS keyring.")
         logger.info("\nAI features are now enabled!")
         return True
 
-    except (PermissionError, OSError) as e:
-        logger.error(f"\n✗ Failed to save API key: {e}")
-        logger.info(f"\nYou can manually create {env_path} with your API key.")
+    except Exception as exc:  # noqa: BLE001 - keyring backends vary widely.
+        logger.error("\n✗ Failed to save API key to keyring: %s", exc)
+        logger.info("Set GEMINI_API_KEY in your shell environment instead.")
         return False
 
 
@@ -253,23 +200,13 @@ def _find_key_location() -> str:
     if os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY"):
         return "Environment variable"
 
-    env_locations = [
-        (Path(__file__).parent.parent.parent / ".env", "Project folder"),
-        (TOOLS_ENV_PATH, "Tools folder"),
-        (Path.home() / ".pdf_renamer" / ".env", "User home"),
-    ]
-
-    for env_path, location in env_locations:
-        if env_path.exists():
-            try:
-                with open(env_path) as f:
-                    for line in f:
-                        if line.strip().startswith(
-                            "GEMINI_API_KEY="
-                        ) or line.strip().startswith("GOOGLE_API_KEY="):
-                            return f"{location} ({env_path})"
-            except (PermissionError, OSError):
-                continue
+    keyring = _get_keyring()
+    if keyring is not None:
+        try:
+            if keyring.get_password(KEYRING_SERVICE, KEYRING_USERNAME):
+                return "OS keyring"
+        except Exception as exc:  # noqa: BLE001 - keyring backends vary widely.
+            logger.warning("Unable to inspect Gemini API key in keyring: %s", exc)
 
     return "Unknown"
 
@@ -317,10 +254,3 @@ def update_last_directory(directory: str) -> None:
     prefs = get_user_preferences()
     prefs["last_directory"] = directory
     save_user_preferences(prefs)
-
-
-# Auto-load .env on import
-try:
-    from dotenv import load_dotenv
-except ImportError:
-    pass

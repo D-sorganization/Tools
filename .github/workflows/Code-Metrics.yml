@@ -5,9 +5,6 @@ name: Code Metrics
 
 on:
   # COST OPTIMIZATION: Removed pull_request and push triggers to reduce CI costs
-  schedule:
-    # Weekly on Sundays at 4 AM PST (12 UTC)
-    - cron: "0 8 * * 0,4"
   workflow_dispatch:
 
 permissions:
@@ -15,9 +12,48 @@ permissions:
   pull-requests: write
 
 jobs:
+  # ── Dispatcher: route to self-hosted if available ──────────────────────────
+  pick-runner:
+    runs-on: self-hosted
+    timeout-minutes: 2
+    outputs:
+      runner: ${{ steps.check.outputs.runner }}
+    steps:
+      - name: Check for self-hosted runner
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
+          LOCAL_MODE: ${{ vars.LOCAL_RUNNER_MODE }}
+        run: |
+          MODE="${LOCAL_MODE:-local}"
+          echo "Fleet mode: $MODE"
+
+          case "$MODE" in
+            local)
+              echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
+              echo "Routing to self-hosted fleet (mode=local)"
+              ;;
+            disabled)
+              echo "::error::No local self-hosted runner available; failing closed"
+              exit 1
+              ;;
+            *)
+              AVAILABLE=$(gh api /orgs/${{ github.repository_owner }}/actions/runners \
+                --jq '[.runners[] | select(.status == "online") | select(.busy == false) | select(.labels[].name == "d-sorg-fleet")] | length' \
+                2>/dev/null || echo "0")
+              if [[ "$AVAILABLE" -gt 0 ]]; then
+                echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
+                echo "$AVAILABLE idle fleet runner(s) - routing locally"
+              else
+                echo "::error::No local self-hosted runner available; failing closed"
+                exit 1
+              fi
+              ;;
+          esac
   complexity-metrics:
+    needs: pick-runner
     name: Complexity Analysis (radon)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v6
 
@@ -94,15 +130,20 @@ jobs:
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
   duplication-metrics:
+    needs: pick-runner
     name: Duplication Analysis (jscpd)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
+<<<<<<< HEAD
           node-version: "24"
+=======
+          node-version: "22"
+>>>>>>> origin/main
 
       - name: Install jscpd
         run: npm install -g jscpd
@@ -175,9 +216,9 @@ jobs:
 
   summary:
     name: Metrics Summary
-    needs: [complexity-metrics, duplication-metrics]
+    needs: [pick-runner, complexity-metrics, duplication-metrics]
     if: always()
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Final Summary
         run: |

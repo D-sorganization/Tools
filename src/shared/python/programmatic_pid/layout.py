@@ -13,14 +13,14 @@ Postconditions:
     - ``LabelPlacer.find_position`` always returns a valid (x, y, align) tuple.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-from collections.abc import Sequence
-from typing import Any
+from collections.abc import Sequence  # noqa: E402
+from typing import Any  # noqa: E402
 
-from programmatic_pid.equipment import equipment_dims
-from programmatic_pid.geometry import rects_overlap, text_box, to_float
-from programmatic_pid.spec_loader import get_drawing, get_layout_config
+from programmatic_pid.equipment import equipment_dims  # noqa: E402
+from programmatic_pid.geometry import rects_overlap, text_box, to_float  # noqa: E402
+from programmatic_pid.spec_loader import get_drawing, get_layout_config  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Label collision avoidance
@@ -69,7 +69,8 @@ class LabelPlacer:
             - Always returns a valid (x, y, align) — falls back to first
               preferred offset if all collide.
         """
-        assert preferred, "preferred positions list must not be empty"
+        if not (preferred):
+            raise ValueError("preferred positions list must not be empty")
 
         ax, ay = to_float(anchor[0]), to_float(anchor[1])
         for dx, dy, align in preferred:
@@ -107,7 +108,8 @@ def spread_instrument_positions(
         - Returned list has the same length as *instruments*.
         - Each returned dict is a shallow copy with updated ``x`` / ``y``.
     """
-    assert instruments is not None, "instruments must be provided"
+    if not (instruments is not None):
+        raise ValueError("instruments must be provided")
     placed: list[tuple[float, float]] = []
     output: list[dict[str, Any]] = []
     ring = [

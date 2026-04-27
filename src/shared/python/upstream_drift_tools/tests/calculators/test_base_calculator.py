@@ -1,9 +1,11 @@
+from typing import Any
+
 import pytest
 from upstream_drift_tools.calculators.base import BaseCalculationEngine
 
 
 class DummyEngine(BaseCalculationEngine):
-    def calculate(self, *args, **kwargs):
+    def calculate(self, *args, **kwargs) -> Any:
         return {"args": args, "kwargs": kwargs}
 
 

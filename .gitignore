@@ -51,6 +51,11 @@ coverage.json
 .hypothesis/
 .dmypy.json
 dmypy.json
+/.ci_trigger.py
+/MUJOCO_LOG.TXT
+/error_log.txt
+/wave_log.txt
+/*Last
 
 # Binary documents (should not be in VCS)
 *.docx
@@ -78,6 +83,7 @@ build/
 .jules/palette*
 .jules/pallette*
 .jules/sentinel*
+!/.jules/pending/pr_comments.json
 
 # Enforce NPM
 pnpm-lock.yaml
@@ -101,6 +107,7 @@ test_output.txt
 *.env
 !*.env.example
 document_processing/pdf_renamer/.env
+src/document_processing/pdf_renamer/.env
 *.msg
 
 # Legacy stub directories (migrated to src/). See issue #612
@@ -121,4 +128,5 @@ src/pendulum_simulator/pendulum-core/target/
 Cargo.lock
 # WASM build output
 pkg/
-.jules/
+.jules/*
+!/.jules/pending

@@ -38,9 +38,15 @@ def export_default_layout_step(
     manifest_path: Path | None = None,
     layout: ElectrodeAdvisorLayout = DEFAULT_ELECTRODE_ADVISOR_LAYOUT,
 ) -> Path:
+<<<<<<< HEAD
     assert output_path is not None, "output_path must be provided"
     output_dir = output_path.parent
     output_dir.mkdir(parents=True, exist_ok=True)
+=======
+    if not (output_path is not None):
+        raise ValueError("output_path must be provided")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+>>>>>>> origin/main
     shape = build_default_layout_shape(layout)
     export_step(shape, output_path)
 
@@ -60,9 +66,15 @@ def export_cylindrical_bath_layout_step(
     manifest_path: Path | None = None,
     layout: CylindricalBathLayout = DEFAULT_CYLINDRICAL_BATH_LAYOUT,
 ) -> Path:
+<<<<<<< HEAD
     assert output_path is not None, "output_path must be provided"
     output_dir = output_path.parent
     output_dir.mkdir(parents=True, exist_ok=True)
+=======
+    if not (output_path is not None):
+        raise ValueError("output_path must be provided")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+>>>>>>> origin/main
     shape = build_cylindrical_bath_layout_shape(layout)
     export_step(shape, output_path)
 
@@ -82,9 +94,15 @@ def export_vessel_drafter_step(
     manifest_path: Path | None = None,
     layout: VesselDrafterLayout = DEFAULT_VESSEL_DRAFTER_LAYOUT,
 ) -> Path:
+<<<<<<< HEAD
     assert output_path is not None, "output_path must be provided"
     output_dir = output_path.parent
     output_dir.mkdir(parents=True, exist_ok=True)
+=======
+    if not (output_path is not None):
+        raise ValueError("output_path must be provided")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+>>>>>>> origin/main
     shape = build_vessel_drafter_shape(layout)
     export_step(shape, output_path)
 

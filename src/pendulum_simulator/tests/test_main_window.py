@@ -1,27 +1,36 @@
+from typing import Any
+
 """Tests for MainWindow."""
 
+<<<<<<< HEAD
 from typing import Any
+=======
+
+>>>>>>> origin/main
 from unittest.mock import MagicMock, patch
 from PyQt6.QtCore import Qt, QSettings
 from PyQt6.QtGui import QWheelEvent
 from double_pendulum_golf.gui.main_window import MainWindow, _find_sibling_package
 
 
-def test_find_sibling_package():
+def test_find_sibling_package() -> Any:
     # It should find itself if we look for the current folder
     assert _find_sibling_package("gui") is not None
     # Looking for a non-existent folder should return None
     assert _find_sibling_package("does_not_exist_at_all_12345") is None
 
 
-def test_main_window_init(qapp, monkeypatch):
+def test_main_window_init(qapp, monkeypatch) -> Any:
     w = MainWindow()
     assert w.windowTitle() == "Pendulums"
     w.close()
 
 
 def test_wheel_event_zoom(qapp) -> Any:
+<<<<<<< HEAD
     """Ctrl+wheel zoom respects offset bounds and never escapes them."""
+=======
+>>>>>>> origin/main
     w = MainWindow()
     w._font_zoom_pt = 0  # Start from the canonical zero offset
 
@@ -73,7 +82,7 @@ def test_wheel_event_zoom(qapp) -> Any:
     w.close()
 
 
-def test_shortcuts(qapp):
+def test_shortcuts(qapp) -> Any:
     w = MainWindow()
     # Execute shortcuts mechanically
     w._on_shortcut_play_pause()
@@ -90,7 +99,7 @@ def test_shortcuts(qapp):
     w.close()
 
 
-def test_wire_analysis_tab_emits(qapp):
+def test_wire_analysis_tab_emits(qapp) -> Any:
     w = MainWindow()
     double_p = w._double_panel
     # Emit sim finished
@@ -99,7 +108,7 @@ def test_wire_analysis_tab_emits(qapp):
     w.close()
 
 
-def test_on_tab_changed(qapp):
+def test_on_tab_changed(qapp) -> Any:
     w = MainWindow()
 
     # Switch to triple
@@ -111,7 +120,7 @@ def test_on_tab_changed(qapp):
     w.close()
 
 
-def test_popout_chart_no_result(qapp, monkeypatch):
+def test_popout_chart_no_result(qapp, monkeypatch) -> Any:
     w = MainWindow()
 
     # Mock messagebox
@@ -127,7 +136,7 @@ def test_popout_chart_no_result(qapp, monkeypatch):
     w.close()
 
 
-def test_popout_chart_with_result_dialog_accepted(qapp, monkeypatch):
+def test_popout_chart_with_result_dialog_accepted(qapp, monkeypatch) -> Any:
     w = MainWindow()
 
     mock_panel = MagicMock()
@@ -141,10 +150,10 @@ def test_popout_chart_with_result_dialog_accepted(qapp, monkeypatch):
             def __init__(self, *args, **kwargs):
                 pass
 
-            def exec(self):
+            def exec(self) -> Any:
                 return 1  # Accepted
 
-            def get_selection(self):
+            def get_selection(self) -> Any:
                 return "x", "y", 1
 
         monkeypatch.setattr(
@@ -170,7 +179,7 @@ def test_popout_chart_with_result_dialog_accepted(qapp, monkeypatch):
     w.close()
 
 
-def test_popout_chart_with_result_data_error(qapp, monkeypatch):
+def test_popout_chart_with_result_data_error(qapp, monkeypatch) -> Any:
     w = MainWindow()
 
     mock_panel = MagicMock()
@@ -183,17 +192,17 @@ def test_popout_chart_with_result_data_error(qapp, monkeypatch):
             def __init__(self, *args, **kwargs):
                 pass
 
-            def exec(self):
+            def exec(self) -> Any:
                 return 1
 
-            def get_selection(self):
+            def get_selection(self) -> Any:
                 return "x", "y", 0
 
         monkeypatch.setattr(
             "double_pendulum_golf.gui.chart_data_dialog.ChartDataDialog", MockDialog
         )
 
-        def mock_extract(*args):
+        def mock_extract(*args) -> Any:
             raise KeyError("bad")
 
         monkeypatch.setattr("double_pendulum_golf.data_extractor.extract_series", mock_extract)
@@ -207,7 +216,7 @@ def test_popout_chart_with_result_data_error(qapp, monkeypatch):
     w.close()
 
 
-def test_popout_chart_dialog_cancelled(qapp, monkeypatch):
+def test_popout_chart_dialog_cancelled(qapp, monkeypatch) -> Any:
     w = MainWindow()
     mock_panel = MagicMock()
     mock_panel._result = MagicMock()
@@ -218,7 +227,7 @@ def test_popout_chart_dialog_cancelled(qapp, monkeypatch):
             def __init__(self, *args, **kwargs):
                 pass
 
-            def exec(self):
+            def exec(self) -> Any:
                 return 0  # Rejected
 
         monkeypatch.setattr(
@@ -229,7 +238,7 @@ def test_popout_chart_dialog_cancelled(qapp, monkeypatch):
     w.close()
 
 
-def test_theme_manager_methods(qapp, monkeypatch):
+def test_theme_manager_methods(qapp, monkeypatch) -> Any:
     w = MainWindow()
 
     w._theme_manager = MagicMock()
@@ -262,7 +271,7 @@ def test_theme_manager_methods(qapp, monkeypatch):
     w.close()
 
 
-def test_ui_interactions(qapp):
+def test_ui_interactions(qapp) -> Any:
     w = MainWindow()
 
     # About
@@ -281,7 +290,7 @@ def test_ui_interactions(qapp):
     w.close()
 
 
-def test_close_event(qapp):
+def test_close_event(qapp) -> Any:
     from PyQt6.QtGui import QCloseEvent
 
     w = MainWindow()

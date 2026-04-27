@@ -30,6 +30,7 @@ export default function VideoEditor({
   disabled = false,
 }: VideoEditorProps) {
   const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [trimRange, setTrimRange] = useState<TrimRange>({ start: 0, end: 0 });
   const [cropArea, _setCropArea] = useState<CropArea | null>(null);
   const [rotation, setRotation] = useState<RotationAngle>(0);
@@ -70,6 +71,7 @@ export default function VideoEditor({
     if (!videoFile || disabled || isProcessing) return;
 
     setIsProcessing(true);
+    setError(null);
 
     try {
       await loadFFmpeg();
@@ -126,7 +128,7 @@ export default function VideoEditor({
       onExport(blob);
     } catch (error) {
       console.error('Export error:', error);
-      alert('Failed to export video. Please try again.');
+      setError('Failed to export video. Please try again.');
     } finally {
       setIsProcessing(false);
     }
@@ -166,7 +168,8 @@ export default function VideoEditor({
                 })
               }
               disabled={disabled || videoDuration === 0}
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600 disabled:opacity-50"
+              aria-label="Trim start time"
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600 disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
             />
           </div>
           <div>
@@ -186,7 +189,8 @@ export default function VideoEditor({
                 })
               }
               disabled={disabled || videoDuration === 0}
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600 disabled:opacity-50"
+              aria-label="Trim end time"
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600 disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
             />
           </div>
         </div>
@@ -202,8 +206,10 @@ export default function VideoEditor({
               key={angle}
               onClick={() => setRotation(angle)}
               disabled={disabled}
+              aria-label={`Rotate ${angle} degrees`}
+              aria-pressed={rotation === angle}
               className={`
-                px-3 py-2 text-sm font-medium rounded-md transition-colors
+                px-3 py-2 text-sm font-medium rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none
                 ${
                   rotation === angle
                     ? 'bg-blue-600 text-white'
@@ -218,12 +224,28 @@ export default function VideoEditor({
         </div>
       </div>
 
+      {error && (
+        <div role="alert" className="p-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded-md">
+          {error}
+        </div>
+      )}
+
       <button
         onClick={handleExport}
         disabled={disabled || isProcessing || !videoFile}
-        className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
       >
-        {isProcessing ? 'Processing...' : 'Export Video'}
+        {isProcessing ? (
+          <>
+            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Processing...
+          </>
+        ) : (
+          'Export Video'
+        )}
       </button>
 
       <video

@@ -150,7 +150,7 @@ def analytical_constraint_jacobian(q: np.ndarray, p: GolferParams) -> np.ndarray
     Phi_q[1, :] -= J_rh[1, :]
 
     # d((grip_left - grip_right) * sin(th_club))/dq_7 = (grip_left - grip_right) * cos(th_club)
-    # d(-(grip_left - grip_right) * cos(th_club))/dq_7 = (grip_left - grip_right) * sin(th_club)
+    # d(-(grip_left - grip_right) * cos(th_club))/dq_7 = (grip_l - grip_r) * sin(th_club)
     Phi_q[0, 7] -= (p.grip_left - p.grip_right) * cos_club
     Phi_q[1, 7] += (p.grip_left - p.grip_right) * sin_club
 
@@ -260,7 +260,8 @@ def net_joint_forces(
 
     Returns dict with joint name → (fx, fy) tuples.
     """
-    assert q is not None, "q must be provided"
+    if not (q is not None):
+        raise ValueError("q must be provided")
     acc = linear_accelerations(q, qdot, qddot, p)
     g_vec = np.array([0.0, -p.g])
 

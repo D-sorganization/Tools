@@ -36,29 +36,37 @@ except ImportError:
 # ── Try to import shared PlotThemeManager ──────────────────────────────────
 _PLOT_THEME_AVAILABLE = False
 _get_plot_theme_manager: Any = None
-try:
-    import sys
-    from pathlib import Path
 
-    _shared_root = None
-    _p = Path(__file__).resolve().parent
-    for _ in range(10):
-        _candidate = _p / "shared" / "python"
-        if _candidate.exists():
-            _shared_root = _candidate
-            break
-        _p = _p.parent
-    if _shared_root is not None and str(_shared_root) not in sys.path:
-        sys.path.insert(0, str(_shared_root))
 
-    from plot_theme.manager import (
-        get_plot_theme_manager as _shared_get_plot_theme_manager,
-    )
+def _try_load_plot_theme() -> tuple[bool, Any]:
+    """Attempt to import PlotThemeManager, searching shared/python if needed."""
+    try:
+        from plot_theme.manager import get_plot_theme_manager
 
-    _get_plot_theme_manager = _shared_get_plot_theme_manager
-    _PLOT_THEME_AVAILABLE = True
-except ImportError:
-    pass
+        return True, get_plot_theme_manager
+    except ImportError:
+        pass
+    # plot_theme not on sys.path -- try to locate shared/python dynamically
+    try:
+        import sys
+        from pathlib import Path
+
+        search = Path(__file__).resolve().parent
+        for _ in range(10):
+            candidate = search / "shared" / "python"
+            if candidate.exists():
+                if str(candidate) not in sys.path:
+                    sys.path.insert(0, str(candidate))
+                from plot_theme.manager import get_plot_theme_manager
+
+                return True, get_plot_theme_manager
+            search = search.parent
+    except ImportError:
+        pass
+    return False, None
+
+
+_PLOT_THEME_AVAILABLE, _get_plot_theme_manager = _try_load_plot_theme()
 
 
 # ---------------------------------------------------------------------------
@@ -122,7 +130,8 @@ class TorqueHistoryWidget(QWidget):
 
     def _on_plot_theme_changed(self, theme: object) -> None:
         """Update backgrounds when the plot theme changes."""
-        assert theme is not None, "theme must be provided"
+        if not (theme is not None):
+            raise ValueError("theme must be provided")
         if not _HAS_PYQTGRAPH:
             return
         try:
@@ -176,7 +185,8 @@ class TorqueHistoryWidget(QWidget):
 
         Clears any existing plots first.
         """
-        assert n_joints is not None, "n_joints must be provided"
+        if not (n_joints is not None):
+            raise ValueError("n_joints must be provided")
         if not _HAS_PYQTGRAPH:
             return
 
@@ -245,7 +255,8 @@ class TorqueHistoryWidget(QWidget):
             - result has n_steps >= 2.
             - result has torques_at(), friction_torques_at(), total_torques_at().
         """
-        assert result.n_steps >= 2, "Result must have at least 2 time steps"
+        if not (result.n_steps >= 2):
+            raise ValueError("Result must have at least 2 time steps")
         self._result = result
 
         if not _HAS_PYQTGRAPH:
@@ -298,7 +309,8 @@ class TorqueHistoryWidget(QWidget):
         """
         if self._result is None or not _HAS_PYQTGRAPH:
             return
-        assert 0 <= idx < self._result.n_steps
+        if not (0 <= idx < self._result.n_steps):
+            raise ValueError("DbC Blocked: Precondition failed.")
         t_now = self._result.t[idx]
         for cursor in self._cursors:
             cursor.setValue(t_now)

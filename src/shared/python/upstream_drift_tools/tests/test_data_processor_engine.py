@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """Comprehensive tests for upstream_drift_tools.data_processing.core.DataProcessorEngine.
 
 Covers all first-party logic: load_dataframe, column ops, smoothing, aggregation,
@@ -502,6 +504,11 @@ class TestFilterData:
         engine = _make_engine_with_data()
         with pytest.raises(ColumnNotFoundError):
             engine.filter_data("nonexistent", ">", 1.0)
+
+    def test_invalid_operator_rejected_before_query(self):
+        engine = _make_engine_with_data()
+        with pytest.raises(FilterError, match="Unsupported filter operator"):
+            engine.filter_data("x", "or x > 0 or", 1.0)
 
 
 # ---------------------------------------------------------------------------

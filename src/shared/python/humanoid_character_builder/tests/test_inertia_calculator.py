@@ -56,6 +56,13 @@ class TestInertiaResult:
         assert "izz" in urdf_dict
         assert "ixy" in urdf_dict
         assert urdf_dict["ixx"] == 1.0
+        # URDF negates products of inertia per ROS convention
+        assert urdf_dict["ixy"] == -0.1
+        assert urdf_dict["ixz"] == -0.2
+        assert urdf_dict["iyz"] == -0.3
+        # Diagonal elements unchanged
+        assert urdf_dict["iyy"] == 2.0
+        assert urdf_dict["izz"] == 3.0
 
     def test_is_valid_positive(self) -> None:
         # Valid inertia for a symmetric shape

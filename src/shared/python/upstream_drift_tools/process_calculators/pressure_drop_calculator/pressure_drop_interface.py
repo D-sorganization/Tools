@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""User-friendly Python interface for advanced pressure drop calculator.
+"""Thin public facade for advanced pressure drop calculations.
 
+<<<<<<< HEAD
 Refactored from a single 1407-line file into focused submodules (issue #1952):
 
     pressure_drop_units.py      — _convert_temperature, _convert_pressure
@@ -40,23 +41,32 @@ FRICTION FACTOR METHODS:
 
 GAS COMPONENTS:
     H2, CO, CO2, CH4, C2H6, C2H4, N2, O2, H2O, Ar, H2S, NH3, Air
+=======
+The implementation now lives in focused helper modules:
+- ``pressure_drop_reference`` for discovery/help utilities
+- ``pressure_drop_validation`` for input validation
+- ``pressure_drop_api`` for public calculation entrypoints and orchestration
+- ``pressure_drop_results`` for formatting and result presentation
+>>>>>>> origin/main
 """
 
-import logging
-from typing import Any
+from __future__ import annotations
 
-from .engine.pressure_drop_calculation_engine import (
-    PressureDropCalculationEngine,
-    friction_factor_churchill,
-    friction_factor_colebrook,
-    friction_factor_haaland,
-    friction_factor_swamee_jain,
+from .pressure_drop_api import (
+    calculate_pressure_drop,
+    calculate_pressure_drop_custom_gas,
+    calculate_pressure_drop_syngas,
 )
-from .models.pressure_drop_data_models import (
-    GasComposition,
-    PipeFitting,
-    PressureDropInputs,
+from .pressure_drop_reference import (
+    compare_friction_methods,
+    list_fittings,
+    list_flow_units,
+    list_gas_components,
+    list_materials,
+    list_pipe_sizes,
+    show_help,
 )
+<<<<<<< HEAD
 
 # Re-export submodule symbols so callers that import from here continue to work
 from .pressure_drop_results import (  # noqa: F401
@@ -784,20 +794,14 @@ def calculate_pressure_drop_syngas(
 # ============================================================================
 # COMMAND LINE INTERFACE
 # ============================================================================
+=======
+from .pressure_drop_results import print_results
+from .pressure_drop_validation import validate_inputs
+>>>>>>> origin/main
 
 
 def main() -> None:
-    """Command line interface for pressure drop calculator."""
-    logger.info("\n" + "=" * 80)
-    logger.info("ADVANCED PRESSURE DROP CALCULATOR".center(80))
-    logger.info("For Combustion and Gasification Gases".center(80))
-    logger.info("=" * 80)
-
-    # Example 1: Standard pipe with air
-    logger.info("\n" + "-" * 80)
-    logger.info('Example 1: Air in 4" Schedule 40 pipe')
-    logger.info("-" * 80)
-
+    """Command line entrypoint with a representative example."""
     result = calculate_pressure_drop(
         pipe_size="4",
         pipe_schedule="40",
@@ -813,33 +817,21 @@ def main() -> None:
             {"type": "gate_valve_open", "quantity": 2},
         ],
     )
-
-    print_results(result, "Example 1: Air Flow")
-
-    # Example 2: Syngas
-    logger.info("\n" + "-" * 80)
-    logger.info('Example 2: Syngas in 6" Schedule 40 pipe')
-    logger.info("-" * 80)
-
-    result = calculate_pressure_drop_syngas(
-        pipe_size="6",
-        pipe_schedule="40",
-        pipe_length=50,
-        flow_rate=2000,
-        flow_unit="kg/h",
-        pressure=25,
-        temperature=800,
-        fittings=[
-            {"type": "90_elbow_std", "quantity": 2},
-            {"type": "tee_through_run", "quantity": 1},
-        ],
-    )
-
-    print_results(result, "Example 2: Syngas Flow")
+    print_results(result, "Example: Air Flow")
 
 
-if __name__ == "__main__":
-    # Setup logging
-    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
-
-    main()
+__all__ = [
+    "show_help",
+    "list_gas_components",
+    "list_fittings",
+    "list_pipe_sizes",
+    "list_flow_units",
+    "list_materials",
+    "compare_friction_methods",
+    "validate_inputs",
+    "calculate_pressure_drop",
+    "calculate_pressure_drop_custom_gas",
+    "calculate_pressure_drop_syngas",
+    "print_results",
+    "main",
+]

@@ -14,6 +14,14 @@ from pathlib import Path
 from typing import Any
 from unittest.mock import MagicMock
 
+# Pre-load tkinter to prevent namespace corruption on Windows 3.13 during pytest collection
+try:
+    import tkinter  # noqa: F401
+    import tkinter.ttk  # noqa: F401
+except ImportError:
+    pass
+
+
 # ---------------------------------------------------------------------------
 # Headless / thread-safety env vars — must be set BEFORE any scipy/matplotlib
 # import so that both the main process and any xdist worker sub-processes
@@ -53,6 +61,18 @@ TOOLS_DIR = SRC_DIR / "tools"
 # =============================================================================
 # Pytest Configuration Hooks
 # =============================================================================
+
+# Directories that require a GUI display and/or have Qt backend conflicts.
+# Excluded from collection even when files are passed explicitly via CLI
+# (norecursedirs only blocks discovery, not explicit path arguments).
+_HEADLESS_EXCLUDE_PATHS = ("shared/python/chat",)
+
+
+def pytest_ignore_collect(collection_path: Path, config: pytest.Config) -> bool | None:
+    path_str = str(collection_path).replace("\\", "/")
+    if any(excl in path_str for excl in _HEADLESS_EXCLUDE_PATHS):
+        return True
+    return None
 
 
 def pytest_configure(config: pytest.Config) -> None:

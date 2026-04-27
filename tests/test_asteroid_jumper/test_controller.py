@@ -2,12 +2,7 @@
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import pytest
-
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
 from asteroid_jumper.asteroid_shape import ShapeKind
 from asteroid_jumper.controller import SimController
@@ -45,7 +40,7 @@ class TestSimController:
 
     def test_negative_impulse_raises(self) -> None:
         ctrl = SimController()
-        with pytest.raises(AssertionError):
+        with pytest.raises((AssertionError, ValueError)):
             ctrl.set_impulse(-100.0)
 
     def test_start_jump_changes_phase(self) -> None:
@@ -56,7 +51,7 @@ class TestSimController:
     def test_double_jump_raises(self) -> None:
         ctrl = SimController()
         ctrl.start_jump()
-        with pytest.raises(AssertionError):
+        with pytest.raises((AssertionError, ValueError)):
             ctrl.start_jump()
 
     def test_reset_restores_ready_state(self) -> None:
@@ -79,6 +74,24 @@ class TestSimController:
         ctrl = SimController()
         frac = ctrl.off_centre_fraction()
         assert 0.0 <= frac <= 1.0
+
+    def test_snapshot_flattens_nested_state(self) -> None:
+        ctrl = SimController()
+        ctrl.start_jump()
+
+        snapshot = ctrl.snapshot()
+
+        assert snapshot.phase == "jumping"
+        assert snapshot.is_ready is False
+        assert snapshot.shape is ctrl.shape
+        assert snapshot.asteroid_pos == ctrl.state.asteroid.pos
+        assert snapshot.jumper_pos == ctrl.state.jumper.pos
+        assert snapshot.asteroid_speed == pytest.approx(ctrl.asteroid_speed())
+        assert snapshot.jumper_angular_speed == pytest.approx(
+            ctrl.jumper_angular_speed()
+        )
+        assert snapshot.off_centre_fraction == pytest.approx(ctrl.off_centre_fraction())
+        assert snapshot.leg_phase == pytest.approx(ctrl.leg_phase())
 
     def test_colinear_jump_minimises_spin(self) -> None:
         """When force goes through both COMs, angular speed is minimal."""

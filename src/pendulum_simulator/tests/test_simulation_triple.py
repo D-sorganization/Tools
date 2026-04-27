@@ -37,7 +37,7 @@ class TestTriplePolynomialTorque:
         assert func(2.0) == (5.0, 0.0, 1.0)
 
     def test_empty_coefficients_rejected(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             make_polynomial_torque([], [1.0], [0.0])
 
 
@@ -108,7 +108,7 @@ class TestTripleSimulationResultContracts:
         self,
         triple_params: TriplePendulumParams,
     ) -> None:
-        with pytest.raises(AssertionError, match="strictly increasing"):
+        with pytest.raises((ValueError, TypeError), match="strictly increasing"):
             TripleSimulationResult(
                 t=np.array([0.0, 0.0]),
                 states=np.zeros((2, 6)),
@@ -120,7 +120,7 @@ class TestTripleSimulationResultContracts:
         self,
         triple_params: TriplePendulumParams,
     ) -> None:
-        with pytest.raises(AssertionError, match="states must have width 6"):
+        with pytest.raises((ValueError, TypeError), match="states must have width 6"):
             TripleSimulationResult(
                 t=np.array([0.0, 0.1]),
                 states=np.zeros((2, 5)),

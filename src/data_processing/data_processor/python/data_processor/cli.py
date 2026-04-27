@@ -113,7 +113,8 @@ def _apply_filter_if_requested(
     signal_processor: SignalProcessor,
 ) -> pd.DataFrame:
     """Apply configured filter if specified."""
-    assert df is not None, "df must be provided"
+    if not (df is not None):
+        raise ValueError("df must be provided")
     if filter_config is None:
         return df
 
@@ -127,7 +128,8 @@ def _process_dataframe(
     source_label: str,
 ) -> pd.DataFrame:
     """Run the configured operations for a single dataframe."""
-    assert df is not None, "df must be provided"
+    if not (df is not None):
+        raise ValueError("df must be provided")
     result = df.copy()
     result = _select_signals(
         result,
@@ -143,7 +145,8 @@ def _process_dataframe(
 
 def _format_output_filename(source_path: str, output_format: str) -> str:
     """Generate an output filename for per-file exports."""
-    assert source_path is not None, "source_path must be provided"
+    if not (source_path is not None):
+        raise ValueError("source_path must be provided")
     stem = Path(source_path).stem
     extension_map = {
         "csv": ".csv",
@@ -225,7 +228,8 @@ def run(
     ),
 ) -> None:
     """Execute a lightweight processing pipeline."""
-    assert output_format is not None, "output_format must be provided"
+    if not (output_format is not None):
+        raise ValueError("output_format must be provided")
     pipeline_data: dict[str, object] = {}
     if config:
         pipeline_data.update(_load_config(config))
@@ -264,7 +268,8 @@ def _run_combined(
     loader: DataLoader,
 ) -> None:
     """Process a combined dataset and optionally save the result."""
-    assert data is not None, "data must be provided"
+    if not (data is not None):
+        raise ValueError("data must be provided")
     dataframe = _process_dataframe(
         cast("pd.DataFrame", data),
         pipeline,
@@ -291,7 +296,8 @@ def _run_uncombined(
     loader: DataLoader,
 ) -> None:
     """Process each file independently and optionally save results."""
-    assert data is not None, "data must be provided"
+    if not (data is not None):
+        raise ValueError("data must be provided")
     processed_frames: dict[str, pd.DataFrame] = {}
     for source_path, frame in cast("dict[str, pd.DataFrame]", data).items():
         processed_frames[source_path] = _process_dataframe(

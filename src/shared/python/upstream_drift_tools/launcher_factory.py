@@ -164,7 +164,8 @@ def launch_app(
     Postconditions:
         - Returns an integer exit code
     """
-    assert config is not None, "config must be provided"
+    if not (config is not None):
+        raise ValueError("config must be provided")
     validate_launcher_config(config)
 
     try:

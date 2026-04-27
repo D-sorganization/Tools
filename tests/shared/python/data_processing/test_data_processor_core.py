@@ -5,9 +5,13 @@ Focuses on strict adherence to the new shared-component testing quality standard
 
 from __future__ import annotations
 
-import numpy as np
-import pandas as pd
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
+
+pytest.importorskip("pandas")
+import pandas as pd
 from upstream_drift_tools.data_processing.core import (
     AggregationType,
     DataProcessorEngine,
@@ -102,6 +106,30 @@ class TestDataProcessorEngineColumns:
         assert eng.data is not None
         assert "A_plus_B" in eng.data.columns
         assert eng.data["A_plus_B"].iloc[0] == 11.0
+
+    def test_add_calculated_column_falls_back_without_numexpr(
+        self, eng: DataProcessorEngine, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Missing numexpr should fall back to the python eval engine."""
+
+        def fake_eval(
+            frame: pd.DataFrame, expression: str, engine: str | None = None, **_: object
+        ) -> pd.Series:
+            if engine == "numexpr":
+                raise ImportError("No module named 'numexpr'")
+            assert engine == "python"
+            return frame["A"] + frame["B"]
+
+        monkeypatch.setattr(pd.DataFrame, "eval", fake_eval)
+
+        eng.add_calculated_column("A_plus_B", "A + B")
+
+        assert eng.data is not None
+        pd.testing.assert_series_equal(
+            eng.data["A_plus_B"],
+            eng.data["A"] + eng.data["B"],
+            check_names=False,
+        )
 
     def test_transform_column_log(self, eng: DataProcessorEngine) -> None:
         """Log transformation applies correctly to numeric columns."""

@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """Tests for the signal processing toolkit.
 
 This module contains comprehensive tests for all signal toolkit components:

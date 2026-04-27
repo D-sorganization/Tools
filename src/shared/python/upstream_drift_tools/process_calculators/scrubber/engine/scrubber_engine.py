@@ -1,9 +1,9 @@
 """Scrubber Calculation Engine."""
 
-import logging
-from typing import Any
+import logging  # noqa: E402
+from typing import Any  # noqa: E402
 
-from ...scrubber_calculator import (
+from ...scrubber_calculator import (  # noqa: E402
     PACKING_DATABASE,
     calculate_caustic_requirement,
     calculate_column_diameter,
@@ -16,7 +16,7 @@ from ...scrubber_calculator import (
     calculate_pressure_drop,
     calculate_required_packed_height,
 )
-from ..models.scrubber_models import ScrubberInputs, ScrubberResults
+from ..models.scrubber_models import ScrubberInputs, ScrubberResults  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +94,8 @@ class ScrubberEngine:
 
         Returns (packed_height, max_ntu, acid_gas_details, acid_gas_removed).
         """
-        assert inputs is not None, "inputs must be provided"
+        if not (inputs is not None):
+            raise ValueError("inputs must be provided")
         mw_gases = {"HCl": 36.458, "SO2": 64.06, "H2S": 34.08, "HF": 20.01}
         acid_gas_details: list[dict[str, Any]] = []
         acid_gas_removed: dict[str, float] = {}
@@ -148,7 +149,8 @@ class ScrubberEngine:
 
         Returns (naoh_pure, naoh_solution, heat_kw, cooling_L_min, warnings).
         """
-        assert inputs is not None, "inputs must be provided"
+        if not (inputs is not None):
+            raise ValueError("inputs must be provided")
         warnings: list[str] = []
         caustic_req = calculate_caustic_requirement(
             acid_gas_removed=acid_gas_removed,

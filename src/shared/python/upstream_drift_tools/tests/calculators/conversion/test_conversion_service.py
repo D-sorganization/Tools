@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """Extended tests for UnitConversionService targeting uncovered lines.
 
 Targets: 41% → ~95%+ coverage of service.py

@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, memo } from 'react';
 import { Upload, FileText, X } from 'lucide-react';
 
 interface FileUploadProps {
@@ -8,7 +8,8 @@ interface FileUploadProps {
   isLoading: boolean;
 }
 
-export function FileUpload({ onFileSelect, fileName, onClear, isLoading }: FileUploadProps) {
+// ⚡ Bolt Optimization: Wrap component in React.memo to prevent unnecessary re-renders when unrelated parent state changes
+export const FileUpload = memo(function FileUpload({ onFileSelect, fileName, onClear, isLoading }: FileUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleDrop = useCallback(
@@ -30,6 +31,13 @@ export function FileUpload({ onFileSelect, fileName, onClear, isLoading }: FileU
     inputRef.current?.click();
   }, []);
 
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleClick();
+    }
+  }, [handleClick]);
+
   const handleFileChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
@@ -49,8 +57,8 @@ export function FileUpload({ onFileSelect, fileName, onClear, isLoading }: FileU
         </div>
         <button
           onClick={onClear}
-          className="p-1 hover:bg-dark-700 rounded-lg transition-colors"
-          title="Clear file"
+          className="p-1 hover:bg-dark-700 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+          aria-label="Clear file"
         >
           <X className="w-4 h-4 text-dark-400 hover:text-dark-100" />
         </button>
@@ -63,9 +71,13 @@ export function FileUpload({ onFileSelect, fileName, onClear, isLoading }: FileU
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={isLoading ? -1 : 0}
+      aria-label="Upload CSV file"
       className={`
         flex flex-col items-center justify-center p-8
-        border-2 border-dashed border-dark-600 rounded-xl
+        border-2 border-dashed border-dark-600 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500
         bg-dark-800/50 hover:bg-dark-800 hover:border-blue-500
         cursor-pointer transition-all duration-200
         ${isLoading ? 'opacity-50 cursor-wait' : ''}
@@ -86,6 +98,6 @@ export function FileUpload({ onFileSelect, fileName, onClear, isLoading }: FileU
       <p className="text-dark-400 text-sm">or click to browse</p>
     </div>
   );
-}
+});
 
 export default FileUpload;

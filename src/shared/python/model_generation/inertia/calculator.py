@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """
 Unified inertia calculator with multiple computation modes.
 
@@ -192,7 +194,8 @@ class InertiaCalculator:
             # Manual values
             calc.compute({"ixx": 0.1, "iyy": 0.1, "izz": 0.05, "mass": 2.0})
         """
-        assert source is not None, "source must be provided"
+        if not (source is not None):
+            raise ValueError("source must be provided")
         mode = mode or self.default_mode
         density = density or self.default_density
 
@@ -249,7 +252,8 @@ class InertiaCalculator:
         Returns:
             InertiaResult
         """
-        assert mesh_path is not None, "mesh_path must be provided"
+        if not (mesh_path is not None):
+            raise ValueError("mesh_path must be provided")
         mode = (
             InertiaMode.MESH_SPECIFIED_MASS
             if mass is not None
@@ -305,7 +309,7 @@ class InertiaCalculator:
                 return InertiaMode.MESH_UNIFORM_DENSITY
             return InertiaMode.PRIMITIVE
 
-        if isinstance(source, (str, Path)):
+        if isinstance(source, str | Path):
             path = Path(source)
             if path.suffix.lower() in (".stl", ".obj", ".ply", ".dae", ".glb"):
                 return InertiaMode.MESH_UNIFORM_DENSITY
@@ -396,7 +400,8 @@ class InertiaCalculator:
         mode: InertiaMode,
     ) -> InertiaResult:
         """Compute from mesh file using trimesh."""
-        assert density is not None, "density must be provided"
+        if not (density is not None):
+            raise ValueError("density must be provided")
         mesh_path = self._resolve_mesh_path(source)
         cache_key = f"{mesh_path}:{density}:{mass}"
 
@@ -422,7 +427,7 @@ class InertiaCalculator:
         """Resolve source to a mesh file path."""
         if isinstance(source, Geometry) and source.mesh_filename:
             return Path(source.mesh_filename)
-        elif isinstance(source, (str, Path)):
+        elif isinstance(source, str | Path):
             return Path(source)
         else:
             raise ValueError(f"Mesh mode requires path, got {type(source)}")
@@ -431,7 +436,8 @@ class InertiaCalculator:
         self, mesh_path: Path, mode: InertiaMode, mass: float | None
     ) -> Any | None:
         """Load mesh from file, returning None on failure."""
-        assert mesh_path is not None, "mesh_path must be provided"
+        if not (mesh_path is not None):
+            raise ValueError("mesh_path must be provided")
         try:
             import trimesh
         except ImportError:
@@ -455,7 +461,8 @@ class InertiaCalculator:
         self, mesh: Any, mesh_path: Path, mode: InertiaMode, mass: float | None
     ) -> dict[str, Any] | None:
         """Extract inertia properties from mesh, returning None on failure."""
-        assert mesh_path is not None, "mesh_path must be provided"
+        if not (mesh_path is not None):
+            raise ValueError("mesh_path must be provided")
         is_watertight = mesh.is_watertight
         if not is_watertight:
             logger.warning(
@@ -482,7 +489,8 @@ class InertiaCalculator:
         source_path: str,
     ) -> InertiaResult:
         """Scale inertia based on mode and create result."""
-        assert mesh_props is not None, "mesh_props must be provided"
+        if not (mesh_props is not None):
+            raise ValueError("mesh_props must be provided")
         raw_inertia = mesh_props["raw_inertia"]
         volume = mesh_props["volume"]
         com = mesh_props["com"]

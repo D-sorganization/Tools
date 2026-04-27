@@ -1,4 +1,7 @@
+from typing import Any
+
 """Tests for panel builders."""
+
 
 import numpy as np
 from unittest.mock import MagicMock, patch
@@ -18,16 +21,16 @@ class MockResult:
         self.n_steps = steps
         self.t = np.linspace(0, 1, steps)
 
-    def joint_velocities_at(self, idx):
+    def joint_velocities_at(self, idx) -> Any:
         return {"tip": (1.0, 2.0), "club_tip": (3.0, 4.0)}
 
-    def positions_at(self, idx):
+    def positions_at(self, idx) -> Any:
         return {"tip": (10.0 + idx, 20.0 + idx), "club_tip": (30.0 + idx, 40.0 + idx)}
 
 
 @patch("double_pendulum_golf.gui.panel_builders.SimulationPanel.set_perturbation_panel")
 @patch("double_pendulum_golf.gui.panel_builders.run_simulation")
-def test_build_double_panel(mock_run, mock_set_perturb, qapp):
+def test_build_double_panel(mock_run, mock_set_perturb, qapp) -> Any:
     mw = MagicMock()
     panel = build_double_panel(mw)
 
@@ -119,7 +122,7 @@ def test_build_double_panel(mock_run, mock_set_perturb, qapp):
 
 @patch("double_pendulum_golf.gui.panel_builders.SimulationPanel.set_perturbation_panel")
 @patch("double_pendulum_golf.gui.panel_builders.run_simulation_triple")
-def test_build_triple_panel(mock_run, mock_set_perturb, qapp):
+def test_build_triple_panel(mock_run, mock_set_perturb, qapp) -> Any:
     mw = MagicMock()
     panel = build_triple_panel(mw)
 
@@ -188,7 +191,7 @@ def test_build_triple_panel(mock_run, mock_set_perturb, qapp):
 
 @patch("double_pendulum_golf.gui.panel_builders.SimulationPanel.set_perturbation_panel")
 @patch("double_pendulum_golf.gui.panel_builders.run_simulation_golfer")
-def test_build_golfer_panel(mock_run, mock_set_perturb, qapp):
+def test_build_golfer_panel(mock_run, mock_set_perturb, qapp) -> Any:
     mw = MagicMock()
     panel = build_golfer_panel(mw)
 
@@ -265,7 +268,7 @@ def test_build_golfer_panel(mock_run, mock_set_perturb, qapp):
     assert len(parsed) == 7
 
 
-def test_wire_toolstrip(qapp):
+def test_wire_toolstrip(qapp) -> Any:
     class DummyMainWindow(QMainWindow):
         def __init__(self):
             super().__init__()
@@ -279,13 +282,13 @@ def test_wire_toolstrip(qapp):
             self._triple_panel = MagicMock()
             self._golfer_panel = MagicMock()
 
-        def _active_panel(self):
+        def _active_panel(self) -> Any:
             return self._double_panel
 
-        def _on_popout_chart(self):
+        def _on_popout_chart(self) -> Any:
             pass
 
-        def _on_tab_changed(self, idx):
+        def _on_tab_changed(self, idx) -> Any:
             pass
 
     mw = DummyMainWindow()

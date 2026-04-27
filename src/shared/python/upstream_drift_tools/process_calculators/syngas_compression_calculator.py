@@ -1,26 +1,42 @@
 #!/usr/bin/env python3
-"""Advanced Syngas Compression Calculator
-======================================
+"""Advanced Syngas Compression Calculator — GUI widget and worker thread.
 
-A comprehensive calculator for syngas compression analysis including:
-- Water dropout calculations
-- Compression horsepower requirements
-- Heat rise analysis
-- Multiple compression methods (isentropic, polytropic, isothermal)
-- Process condition monitoring
-- Safety and efficiency analysis
+Separation of concerns (closes #1943)
+--------------------------------------
+The original 1,218-line file previously mixed three concerns in one module.
+They have been fully separated:
 
-Integrated with the existing PyQt6-based calculator system.
+* **Calculation engine** → ``syngas_compression_engine.py``
+  ``SyngasCompressionEngine`` and ``CompressionStage`` live there.  No Qt
+  dependency.  Safe to import headlessly (tests, API handlers, batch jobs).
 
-Author: AI Assistant
-Version: 1.0
+* **Worker thread** → ``CompressionCalculationWorker`` (this file)
+  Thin ``QThread`` subclass that delegates to the engine and emits signals.
+
+* **GUI widget** → ``SyngasCompressionCalculatorWidget`` (this file)
+  PyQt6 widget.  Imports from the engine module and uses the worker.
+
+``CompressionStage`` and ``SyngasCompressionEngine`` are re-exported here so
+existing ``from ...syngas_compression_calculator import X`` imports continue
+to work without changes.
 """
 
 import logging
-import math
 import os
-from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, cast
+
+from .constants import (
+    ATOL_ZERO,
+    CELSIUS_TO_KELVIN_OFFSET,
+    INTERCOOLER_OUTLET_TEMP_K,
+)
+
+# Re-export engine classes so existing ``from ...syngas_compression_calculator import X``
+# imports continue to work.
+from .syngas_compression_engine import (  # noqa: F401
+    CompressionStage,
+    SyngasCompressionEngine,
+)
 
 # matplotlib is imported lazily inside methods to prevent Windows hang
 
@@ -53,30 +69,12 @@ except ImportError:
     QWidget = object  # type: ignore[assignment,misc]
     QThread = object  # type: ignore[assignment,misc]
 
-# Try to import logging and validation utilities
 try:
     from integrated_process_simulator.utilities.logging_config import get_logger
 
     logger = get_logger(__name__)
 except ImportError:
     logger = logging.getLogger(__name__)
-
-try:
-    from integrated_process_simulator.utilities.validation import (
-        validate_gas_composition,
-    )
-except ImportError:
-
-    def validate_gas_composition(comp: dict, auto_normalize: bool = False) -> dict:
-        """Simple validation and normalization fallback."""
-        if not comp:
-            raise ValueError("Empty composition")
-        total = sum(comp.values())
-        if auto_normalize and total > 0:
-            return {k: v / total for k, v in comp.items()}
-        if abs(total - 1.0) > 0.01 and abs(total - 100.0) > 1.0:
-            raise ValueError(f"Composition sum {total} not normalized")
-        return comp
 
 
 def _setup_matplotlib_backend() -> None:
@@ -114,6 +112,7 @@ def _get_figure_canvas_class() -> type:
 if TYPE_CHECKING:
     from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 
+<<<<<<< HEAD
 # Import existing syngas water content utility
 # ruff: noqa: E402
 from contracts import check_positive, check_pressure, check_temperature, require
@@ -135,6 +134,8 @@ from .constants import (
 )
 from .syngas_water_calculator import SyngasWaterCalculator
 
+=======
+>>>>>>> origin/main
 # Import BaseCalculatorWidget for state management
 try:
     from ..ui.widgets.base_calculator_widget import BaseCalculatorWidget
@@ -149,6 +150,7 @@ except ImportError:
             QWidget.__init__(self, *args, **kwargs)
 
 
+<<<<<<< HEAD
 # Import species database with fallback
 try:
     from integrated_process_simulator.calculators.thermodynamic_properties.species_database import (  # noqa: E501
@@ -563,6 +565,8 @@ class SyngasCompressionEngine:
         }
 
 
+=======
+>>>>>>> origin/main
 class CompressionCalculationWorker(QThread):
     """Worker thread for compression calculations"""
 
@@ -578,7 +582,8 @@ class CompressionCalculationWorker(QThread):
         intercooling: bool,
     ) -> None:
         """Initialize the class."""
-        assert flow_rate is not None, "flow_rate must be provided"
+        if not (flow_rate is not None):
+            raise ValueError("flow_rate must be provided")
         super().__init__()
         self.engine = engine
         self.stages = stages
@@ -619,9 +624,11 @@ if HAS_PYQT:
                 super().__init__(parent)
             self.engine = SyngasCompressionEngine()
             self.init_ui()
-            # Defer default values with longer delay to ensure UI is fully initialized
-            QTimer.singleShot(100, self.set_default_values)
-            QTimer.singleShot(200, self.setup_state_management)
+            # init_ui() completes synchronously; call directly rather than
+            # relying on timed delays (which masked init-order bugs and raced
+            # with parent show). See #2098.
+            self.set_default_values()
+            self.setup_state_management()
 
         def setup_state_management(self) -> None:
             """Set up state management for UI components.
@@ -1000,7 +1007,8 @@ if HAS_PYQT:
             Args:
                 data: Dictionary containing calculation results and analysis.
             """
-            assert data is not None, "data must be provided"
+            if not (data is not None):
+                raise ValueError("data must be provided")
             result = data["result"]
             analysis = data["analysis"]
 
@@ -1035,7 +1043,8 @@ if HAS_PYQT:
                 analysis: Dictionary containing analysis data.
             """
             # Use list join for O(n) instead of O(n²) string concatenation
-            assert result is not None, "result must be provided"
+            if not (result is not None):
+                raise ValueError("result must be provided")
             output_parts = [
                 "SYNGAS COMPRESSION CALCULATION RESULTS\n",
                 "=" * 50 + "\n\n",
@@ -1109,7 +1118,8 @@ if HAS_PYQT:
                 analysis: Dictionary containing analysis data and warnings.
             """
             # Use list join for O(n) instead of O(n²) string concatenation
-            assert analysis is not None, "analysis must be provided"
+            if not (analysis is not None):
+                raise ValueError("analysis must be provided")
             output_parts = [
                 "PROCESS ANALYSIS & CONCERNS\n",
                 "=" * 40 + "\n\n",
@@ -1122,8 +1132,9 @@ if HAS_PYQT:
                         "-" * 25 + "\n",
                     ]
                 )
-                for warning in analysis["warnings"]:
-                    output_parts.append(f"• {warning}\n")
+                output_parts.extend(
+                    [f"• {warning}\n" for warning in analysis["warnings"]]
+                )
                 output_parts.append("\n")
 
             if analysis["concerns"]:
@@ -1133,8 +1144,9 @@ if HAS_PYQT:
                         "-" * 15 + "\n",
                     ]
                 )
-                for concern in analysis["concerns"]:
-                    output_parts.append(f"• {concern}\n")
+                output_parts.extend(
+                    [f"• {concern}\n" for concern in analysis["concerns"]]
+                )
                 output_parts.append("\n")
 
             if analysis["recommendations"]:
@@ -1144,8 +1156,9 @@ if HAS_PYQT:
                         "-" * 20 + "\n",
                     ]
                 )
-                for rec in analysis["recommendations"]:
-                    output_parts.append(f"• {rec}\n")
+                output_parts.extend(
+                    [f"• {rec}\n" for rec in analysis["recommendations"]]
+                )
                 output_parts.append("\n")
 
             if not analysis["warnings"] and not analysis["concerns"]:
@@ -1162,7 +1175,8 @@ if HAS_PYQT:
         def create_plots(self, result: dict[str, Any]) -> None:
             """Create visualization plots"""
             # Clear previous plots
-            assert result is not None, "result must be provided"
+            if not (result is not None):
+                raise ValueError("result must be provided")
             self.figure.clear()
 
             stages = result["stages"]

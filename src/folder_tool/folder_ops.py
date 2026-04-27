@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """FolderOperationsMixin -- Folder-level operations for FolderProcessorApp."""
 
 from __future__ import annotations
@@ -117,7 +118,8 @@ class FolderOperationsMixin:
         """Core logic to find and delete renamed duplicates in a single
         target folder.
         """
-        assert target_folder is not None, "target_folder must be provided"
+        if not (target_folder is not None):
+            raise ValueError("target_folder must be provided")
         log = []
         deleted_count = 0
         pattern = re.compile(r"(.+?)(?: \((\d+)\))?(\.\w+)$")
@@ -322,8 +324,14 @@ class FolderOperationsMixin:
         Returns:
             Tuple of (files_copied, files_failed)
         """
+<<<<<<< HEAD
         assert source_file_path is not None, "source_file_path must be provided"
         if not self.validate_file_filters(source_file_path):  # type: ignore[attr-defined]
+=======
+        if not (source_file_path is not None):
+            raise ValueError("source_file_path must be provided")
+        if not self.validate_file_filters(source_file_path):
+>>>>>>> origin/main
             return 0, 0
 
         dest_file_path = Path(dest_path) / file

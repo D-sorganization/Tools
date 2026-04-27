@@ -20,7 +20,7 @@ from .physics_golfer import (
 )
 
 
-def _zero_torque(t: float) -> tuple:  # noqa: ARG001
+def _zero_torque(_t: float) -> tuple:
     """Zero torque for all 7 joints."""
     return (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 
@@ -32,8 +32,10 @@ def zero_torque_accelerations(state: State, params: GolferParams) -> np.ndarray:
     -------
     qddot : np.ndarray, shape (8,)
     """
-    assert state.shape == (2 * N_DOF,)
-    assert np.all(np.isfinite(state))
+    if not (state.shape == (2 * N_DOF,)):
+        raise ValueError("State shape must match N_DOF")
+    if not (np.all(np.isfinite(state))):
+        raise ValueError("DbC Blocked: Precondition failed.")
 
     return constrained_accelerations(state, 0.0, params, _zero_torque)
 
@@ -52,8 +54,10 @@ def zero_torque_joint_forces(
     -------
     dict with joint name → (fx, fy) tuples.
     """
-    assert state.shape == (2 * N_DOF,)
-    assert np.all(np.isfinite(state))
+    if not (state.shape == (2 * N_DOF,)):
+        raise ValueError("State shape must match N_DOF")
+    if not (np.all(np.isfinite(state))):
+        raise ValueError("DbC Blocked: Precondition failed.")
 
     q = state[:N_DOF]
     qdot = state[N_DOF:]

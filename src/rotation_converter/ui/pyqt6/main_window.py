@@ -1,86 +1,65 @@
 # mypy: disable-error-code="attr-defined, misc"
-"""Rotation Converter Main Window — PyQt6 GUI.
+"""Rotation Converter Main Window -- PyQt6 GUI.
 
 Tabbed interface providing:
-1. Rotation Converter — live pairwise conversion between all representations
-2. Rigid Transform — frame-aware SE(3) with body/space twist conversion
-3. Trajectory Plots — screw axis, Euler, quaternion, and body-frame plots
-4. 3D Visualiser — interactive coordinate-frame and screw-axis rendering
+1. Rotation Converter -- live pairwise conversion between all representations
+2. Rigid Transform -- frame-aware SE(3) with body/space twist conversion
+3. Trajectory Plots -- screw axis, Euler, quaternion, and body-frame plots
+4. 3D Visualiser -- interactive coordinate-frame and screw-axis rendering
 
-Integrates with the shared fleet theme system for consistent styling.
+Each tab is implemented in its own module (god-class decomposition):
+- rotation_tab.py       -> RotationConverterTab
+- rigid_transform_tab.py -> RigidTransformTab
+- trajectory_tab.py     -> TrajectoryPlotsTab
+- screw_visualiser_tab.py -> ScrewVisualiserTab
+- console_tab.py        -> CommandConsoleTab
+- reference_frame_tab.py -> ReferenceFrameTab
+
+Shared plotting helpers live in plot_helpers.py.
 """
 
 from __future__ import annotations
 
-import math
-from typing import Any
+import logging
 
-import numpy as np
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
-from matplotlib.figure import Figure
-from PyQt6.QtCore import QTimer
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (
-    QComboBox,
-    QDoubleSpinBox,
-    QFormLayout,
-    QGroupBox,
-    QHBoxLayout,
-    QLabel,
-    QLineEdit,
     QMainWindow,
-    QPushButton,
-    QSizePolicy,
-    QSpinBox,
     QStatusBar,
     QTabWidget,
-    QTextEdit,
     QVBoxLayout,
     QWidget,
 )
 
-# ── Rotation converter imports ────────────────────────────────────
 import rotation_converter as rc
-from rotation_converter.converter import Rotation
-from rotation_converter.rigid_transform import RigidTransform
 from rotation_converter.ui.pyqt6.console_tab import CommandConsoleTab
 from rotation_converter.ui.pyqt6.reference_frame_tab import ReferenceFrameTab
+from rotation_converter.ui.pyqt6.rigid_transform_tab import RigidTransformTab
+from rotation_converter.ui.pyqt6.rotation_tab import RotationConverterTab
+from rotation_converter.ui.pyqt6.screw_visualiser_tab import ScrewVisualiserTab
+from rotation_converter.ui.pyqt6.trajectory_tab import TrajectoryPlotsTab
 
-# ── Theme integration (optional — graceful fallback) ──────────────
+logger = logging.getLogger(__name__)
+
+# ── Theme integration (optional -- graceful fallback) ──────────────
 _THEME_AVAILABLE = False
 try:
-    from theme import (
-        get_theme_manager,
-        is_dark_theme,
-    )
+    from theme import get_theme_manager
 
     _THEME_AVAILABLE = True
 except ImportError:
     pass
 
-# ── Default colours (used when theme system is unavailable) ───────
-_DARK_BG = "#1e1e2e"
-_DARK_FG = "#cdd6f4"
-_DARK_ACCENT = "#89b4fa"
-_DARK_SURFACE = "#313244"
-_AXIS_COLORS = ["#f38ba8", "#a6e3a1", "#89b4fa"]  # RGB axes
-
-EULER_CONVENTIONS = [
-    "xyz",
-    "xzy",
-    "yxz",
-    "yzx",
-    "zxy",
-    "zyx",
-    "xyx",
-    "xzx",
-    "yxy",
-    "yzy",
-    "zxz",
-    "zyz",
+# Re-export tab classes for backward compatibility
+__all__ = [
+    "RotationConverterMainWindow",
+    "RotationConverterTab",
+    "RigidTransformTab",
+    "TrajectoryPlotsTab",
+    "ScrewVisualiserTab",
 ]
 
+<<<<<<< HEAD
 
 # =====================================================================
 # Helpers
@@ -1142,6 +1121,13 @@ class ScrewVisualiserTab(QWidget):
 # =====================================================================
 # Main Window
 # =====================================================================
+=======
+# Backward-compatible aliases for the helper functions that were
+# previously defined here (used by tests and external callers).
+from rotation_converter.ui.pyqt6.plot_helpers import (  # noqa: E402, F401
+    EULER_CONVENTIONS,
+)
+>>>>>>> origin/main
 
 
 class RotationConverterMainWindow(QMainWindow):
@@ -1172,15 +1158,17 @@ class RotationConverterMainWindow(QMainWindow):
 
         self._status = QStatusBar()
         self.setStatusBar(self._status)
-        self._status.showMessage("Ready — select a tab to begin")
+        self._status.showMessage("Ready -- select a tab to begin")
 
     def _build_menus(self) -> None:
         menu_bar = self.menuBar()
-        assert menu_bar is not None
+        if menu_bar is None:
+            raise RuntimeError("Rotation converter menu bar is unavailable")
 
         # File menu
         file_menu = menu_bar.addMenu("&File")
-        assert file_menu is not None
+        if file_menu is None:
+            raise RuntimeError("Rotation converter File menu is unavailable")
         quit_action = QAction("&Quit", self)
         quit_action.setShortcut("Ctrl+Q")
         quit_action.triggered.connect(self.close)
@@ -1188,7 +1176,8 @@ class RotationConverterMainWindow(QMainWindow):
 
         # Help menu
         help_menu = menu_bar.addMenu("&Help")
-        assert help_menu is not None
+        if help_menu is None:
+            raise RuntimeError("Rotation converter Help menu is unavailable")
         about = QAction("&About", self)
         about.triggered.connect(self._show_about)
         help_menu.addAction(about)
@@ -1199,8 +1188,9 @@ class RotationConverterMainWindow(QMainWindow):
                 mgr = get_theme_manager()
                 mgr.apply_theme_to_window(self)
                 mgr.themeChanged.connect(self._on_theme_changed)
-            except Exception:
-                pass
+            except (AttributeError, RuntimeError, TypeError, ValueError):
+                # Theme system is optional; window still works without it.
+                logger.exception("Failed to apply optional rotation converter theme")
 
     def _on_theme_changed(self, theme_name: str) -> None:
         """Refresh all plots when the theme changes."""

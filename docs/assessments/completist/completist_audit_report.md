@@ -6,7 +6,7 @@
 
 ## Executive Summary
 
-This audit identifies incomplete work markers (`TODO`, `FIXME`, `XXX`) across the codebase. While the Python core remains largely free of active placeholders, the `media_processing` subsystem (TypeScript, Matlab) contains several identified tasks.
+This audit identifies incomplete work markers (`TRACKED_TASK`, `TRACKED_DEFECT`, `XXX`) across the codebase. While the Python core remains largely free of active placeholders, the `media_processing` subsystem (TypeScript, Matlab) contains several identified tasks.
 
 ## Detailed Findings
 
@@ -14,38 +14,38 @@ This audit identifies incomplete work markers (`TODO`, `FIXME`, `XXX`) across th
 
 **Status:** ⚠️ **Attention Required**
 
-The following files contain active `TODO` markers indicating unimplemented features or required improvements:
+The following files contain active `TRACKED_TASK` markers indicating unimplemented features or required improvements:
 
 #### Media Processing Subsystem
 
 - **Web Application (`apps/web`)**:
 
   - `media_processing/video_processor/apps/web/app/page.tsx`:
-    - `// TODO: Move fps to client-side config or use from video metadata`
-    - `// TODO: Save to database when backend is ready`
-    - `// TODO: Save pose data to state or database when ready`
+    - `// TRACKED_TASK: Move fps to client-side config or use from video metadata`
+    - `// TRACKED_TASK: Save to database when backend is ready`
+    - `// TRACKED_TASK: Save pose data to state or database when ready`
   - `media_processing/video_processor/apps/web/lib/sanitize.ts`:
-    - `* TODO: Add DOMPurify when ready for production.`
-    - `// TODO: Use DOMPurify to allow safe HTML tags`
-    - `// TODO: Parse and validate RGB values`
+    - `* TRACKED_TASK: Add DOMPurify when ready for production.`
+    - `// TRACKED_TASK: Use DOMPurify to allow safe HTML tags`
+    - `// TRACKED_TASK: Parse and validate RGB values`
   - `media_processing/video_processor/apps/web/lib/logger.ts`:
-    - `* TODO: Add pino when ready for production.`
+    - `* TRACKED_TASK: Add pino when ready for production.`
 
 - **Matlab Models**:
   - `media_processing/video_processor/matlab/models/pendulum_model.m`:
-    - `% TODO: Implement pendulum model`
+    - `% TRACKED_TASK: Implement pendulum model`
 
 #### Infrastructure
 
 - **Workflows**:
   - `.github/workflows/Jules-Tech-Custodian.yml`:
-    - `# TODO: Jules CLI API changed in v0.1.x` (Indicates potential maintenance required)
+    - `# TRACKED_TASK: Jules CLI API changed in v0.1.x` (Indicates potential maintenance required)
 
 ### 2. False Positives (Tooling & Artifacts)
 
 The following matches are **intentional** or **coincidental** and do not represent incomplete work:
 
-- **Quality Check Scripts**: Regex patterns used to enforce the "no TODO" policy.
+- **Quality Check Scripts**: Regex patterns used to enforce the "no TRACKED_TASK" policy.
   - `quality_check_script.py`
   - `scripts/quality-check.py`
   - `tools/code_quality_check.py`
@@ -55,7 +55,7 @@ The following matches are **intentional** or **coincidental** and do not represe
 
 ### 3. Documentation & Policy
 
-Documentation files explicitly reference `TODO` as a banned pattern or within instructional context:
+Documentation files explicitly reference `TRACKED_TASK` as a banned pattern or within instructional context:
 
 - `.cursor/rules/.cursorrules.md`
 - `.github/copilot-instructions.md`

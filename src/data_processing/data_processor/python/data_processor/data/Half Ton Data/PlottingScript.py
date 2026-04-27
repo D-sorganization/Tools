@@ -1,3 +1,4 @@
+from typing import Any
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -11,13 +12,13 @@ except ImportError:
 
     import pandas as pd
 
-    def safe_read_csv(path, default=None, **kwargs):
+    def safe_read_csv(path, default=None, **kwargs) -> Any:
         try:
             return pd.read_csv(path, **kwargs)
         except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             return default if default is not None else pd.DataFrame()
 
-    def safe_write_csv(df, path, create_parents=True, **kwargs):
+    def safe_write_csv(df, path, create_parents=True, **kwargs) -> Any:
         Path(path).parent.mkdir(parents=True, exist_ok=True)
         safe_write_csv(df, path, **kwargs)
 
@@ -76,8 +77,7 @@ ws.append(["Time", "CO %", "CO2 %", "CH4 %", "Filtered H2 %"])
 # Write data to Excel (vectorized approach for 100-1000x performance improvement)
 columns_to_write = ["time", "co_pct", "co2_pct", "ch4_pct", "h2_filtered"]
 data_rows = df[columns_to_write].values.tolist()
-for row_data in data_rows:
-    ws.append(row_data)
+ws.extend([row_data for row_data in data_rows])
 
 # Insert the plot into the Excel file
 img = Image(plot_path)

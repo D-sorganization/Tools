@@ -112,7 +112,8 @@ class HighPerformanceDataLoader:
 
     def __setstate__(self, state: dict[str, Any]) -> None:
         """Restore loader state after pickling."""
-        assert state is not None, "state must be provided"
+        if not (state is not None):
+            raise ValueError("state must be provided")
         self.__dict__.update(state)
         self._loading_lock = threading.Lock()
 
@@ -133,7 +134,8 @@ class HighPerformanceDataLoader:
         Returns:
             Tuple of (unique_signals_set, file_metadata_dict)
         """
-        assert file_paths is not None, "file_paths must be provided"
+        if not (file_paths is not None):
+            raise ValueError("file_paths must be provided")
         if not file_paths:
             return set(), {}
 
@@ -167,7 +169,8 @@ class HighPerformanceDataLoader:
         cancel_flag: threading.Event | None = None,
     ) -> dict[str, FileMetadata]:
         """Collect file metadata in parallel."""
-        assert file_paths is not None, "file_paths must be provided"
+        if not (file_paths is not None):
+            raise ValueError("file_paths must be provided")
         file_metadata = {}
 
         # Use appropriate executor based on configuration
@@ -215,7 +218,8 @@ class HighPerformanceDataLoader:
 
     def _get_file_metadata(self, file_path: str) -> FileMetadata | None:
         """Get metadata for a single file with caching."""
-        assert file_path is not None, "file_path must be provided"
+        if not (file_path is not None):
+            raise ValueError("file_path must be provided")
         if not Path(file_path).exists():
             return None
 
@@ -299,16 +303,18 @@ class HighPerformanceDataLoader:
             # Use file size and modification time for quick hash
             stat = os.stat(file_path)
             content = f"{stat.st_size}_{stat.st_mtime}_{Path(file_path).name}"
-            return hashlib.md5(content.encode()).hexdigest()
+            return hashlib.md5(content.encode(), usedforsecurity=False).hexdigest()
         except (PermissionError, OSError):
             return "unknown"
 
     def _get_cached_metadata(self, file_path: str) -> FileMetadata | None:
         """Get cached metadata for a file (using secure JSON storage)."""
-        assert file_path is not None, "file_path must be provided"
+        if not (file_path is not None):
+            raise ValueError("file_path must be provided")
         try:
             cache_file = (
-                self.cache_dir / f"{hashlib.md5(file_path.encode()).hexdigest()}.json"
+                self.cache_dir
+                / f"{hashlib.md5(file_path.encode(), usedforsecurity=False).hexdigest()}.json"
             )
             if cache_file.exists():
                 data = safe_read_json(cache_file, default=None)
@@ -327,7 +333,7 @@ class HighPerformanceDataLoader:
         try:
             cache_file = (
                 self.cache_dir
-                / f"{hashlib.md5(metadata.path.encode()).hexdigest()}.json"
+                / f"{hashlib.md5(metadata.path.encode(), usedforsecurity=False).hexdigest()}.json"
             )
             with open(cache_file, "w", encoding="utf-8") as f:
                 data = asdict(metadata)
@@ -371,7 +377,8 @@ class HighPerformanceDataLoader:
             DataFrame with the data or None if error
         """
         # Check file size for security
-        assert file_path is not None, "file_path must be provided"
+        if not (file_path is not None):
+            raise ValueError("file_path must be provided")
         try:
             check_file_size(file_path)
         except FileSizeError as e:
@@ -487,7 +494,8 @@ class HighPerformanceDataLoader:
         Returns:
             Dictionary mapping file paths to DataFrames
         """
-        assert file_paths is not None, "file_paths must be provided"
+        if not (file_paths is not None):
+            raise ValueError("file_paths must be provided")
         results = {}
 
         # Process files in batches
@@ -575,6 +583,7 @@ def load_data_fast(
     **kwargs: Any,
 ) -> dict[str, pd.DataFrame]:
     """Fast data loading function."""
-    assert file_paths is not None, "file_paths must be provided"
+    if not (file_paths is not None):
+        raise ValueError("file_paths must be provided")
     loader = HighPerformanceDataLoader()
     return loader.batch_load_files(file_paths, signals, **kwargs)

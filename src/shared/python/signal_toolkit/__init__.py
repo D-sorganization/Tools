@@ -28,7 +28,91 @@ import importlib
 import logging
 from typing import Any
 
+<<<<<<< HEAD
 from signal_toolkit._lazy_map import LAZY
+=======
+from .adaptive_filter import AdaptiveFilter
+from .calculus import (
+    DifferentiationMethod,
+    Differentiator,
+    IntegralResult,
+    IntegrationMethod,
+    Integrator,
+    TangentLine,
+    compute_arc_length,
+    compute_curvature,
+    compute_derivative,
+    compute_integral,
+    compute_tangent_line,
+    find_extrema,
+    find_inflection_points,
+)
+from .core import Signal, SignalGenerator
+from .filters import (
+    FilterDesign,
+    FilterDesigner,
+    FilterSpec,
+    FilterType,
+    apply_bilateral_filter,
+    apply_exponential_smoothing,
+    apply_filter,
+    apply_gaussian_smoothing,
+    apply_median_filter,
+    apply_moving_average,
+    apply_savgol,
+    create_butterworth_filter,
+    create_chebyshev_filter,
+    create_moving_average_filter,
+    create_savgol_filter,
+)
+from .fitting import (
+    CosineFitter,
+    CustomFunctionFitter,
+    ExponentialFitter,
+    FitResult,
+    FunctionFitter,
+    LinearFitter,
+    PolynomialFitter,
+    SinusoidFitter,
+)
+from .io import (
+    BatchProcessor,
+    SignalExporter,
+    SignalImporter,
+    SignalLoader,
+    export_to_csv,
+    import_from_csv,
+)
+from .limits import (
+    SaturationMode,
+    apply_backlash,
+    apply_deadband,
+    apply_hysteresis,
+    apply_rate_limiter,
+    apply_saturation,
+    create_saturation_function,
+    visualize_saturation_curves,
+)
+from .noise import (
+    DisturbanceSimulator,
+    NoiseGenerator,
+    NoiseType,
+    add_noise_to_signal,
+    generate_disturbance_profile,
+)
+from .series import (
+    SeriesExpansion,
+    SeriesResult,
+    arctan_series,
+    cos_series,
+    cosh_series,
+    exp_series,
+    geometric_series,
+    ln_series,
+    sin_series,
+    sinh_series,
+)
+>>>>>>> origin/main
 
 logger = logging.getLogger(__name__)
 

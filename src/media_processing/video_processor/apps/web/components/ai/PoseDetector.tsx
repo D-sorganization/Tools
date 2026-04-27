@@ -138,9 +138,9 @@ export default function PoseDetector({
         <h3 className="text-sm font-medium text-gray-700">Pose Detection</h3>
         <div className="flex items-center space-x-2">
           {isDetecting && (
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" aria-hidden="true" />
           )}
-          <span className="text-xs text-gray-500">{detectionCount} detections</span>
+          <span className="text-xs text-gray-500"><span className="sr-only">Pose </span>{detectionCount} detections</span>
         </div>
       </div>
       <canvas

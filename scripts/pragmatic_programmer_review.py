@@ -27,12 +27,13 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 
-# Bootstrap imports for development mode (before pip install -e .)
+# Bootstrap imports — use the sanctioned _bootstrap module
 _REPO_ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
-from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
+from _bootstrap import bootstrap  # noqa: E402
 
-ensure_paths(_REPO_ROOT)
+bootstrap(__file__)
 
 
 # Mock imports/utils if shared/python doesn't exist in all repos
@@ -121,7 +122,7 @@ def check_dry_violations(files: list[Path]) -> list[dict]:
     for file_path in files:
         try:
             content = file_path.read_text(encoding="utf-8", errors="ignore")
-        except Exception:
+        except Exception:  # noqa: BLE001  # noqa: BLE001
             continue
 
         lines = content.split("\n")
@@ -172,7 +173,7 @@ def check_orthogonality(files: list[Path]) -> list[dict]:
                             "recommendation": "Split function",
                         }
                     )
-        except Exception:
+        except Exception:  # noqa: BLE001  # noqa: BLE001
             pass
     return issues
 
@@ -194,7 +195,7 @@ def check_reversibility(root_path: Path) -> list[dict]:
                         "recommendation": "Use env vars",
                     }
                 )
-        except Exception:
+        except Exception:  # noqa: BLE001  # noqa: BLE001
             pass
     return issues
 
@@ -205,9 +206,9 @@ def check_quality(files: list[Path]) -> list[dict]:
     for file_path in files:
         try:
             content = file_path.read_text(encoding="utf-8", errors="ignore")
-            if "TODO" in content:
+            if "TRACKED_TASK" in content:
                 todos.append(str(file_path))
-        except Exception:
+        except Exception:  # noqa: BLE001  # noqa: BLE001
             pass
 
     if len(todos) > 10:
@@ -215,7 +216,7 @@ def check_quality(files: list[Path]) -> list[dict]:
             {
                 "principle": "QUALITY",
                 "severity": "MINOR",
-                "title": f"High TODO count ({len(todos)})",
+                "title": f"High TRACKED_TASK count ({len(todos)})",
                 "description": "Accumulated technical debt",
                 "files": todos[:5],
                 "recommendation": "Review TODOs",

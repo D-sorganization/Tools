@@ -1,3 +1,5 @@
+from typing import Any
+
 """
 Test suite for PSA Model.
 
@@ -54,7 +56,7 @@ class TestPSAModelBaseCase:
         )
 
     @pytest.fixture
-    def base_results(self, base_model: PSAModel):
+    def base_results(self, base_model: PSAModel) -> Any:
         """Calculate base case results."""
         return base_model.calculate()
 
@@ -132,7 +134,7 @@ class TestPSAModelH2Flows:
     """Test H2 component flows against Excel."""
 
     @pytest.fixture
-    def base_results(self):
+    def base_results(self) -> Any:
         """Calculate base case results."""
         model = PSAModel()
         return model.calculate()
@@ -190,7 +192,7 @@ class TestPSAModelO2Flows:
     """Test O2 component flows against Excel."""
 
     @pytest.fixture
-    def base_results(self):
+    def base_results(self) -> Any:
         """Calculate base case results."""
         model = PSAModel()
         return model.calculate()

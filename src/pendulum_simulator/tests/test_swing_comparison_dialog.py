@@ -68,7 +68,7 @@ def _stub_extract(result):
 
 class TestSetPresetSource:
     @pytest.fixture
-    def panel(self, app):  # noqa: ARG002
+    def panel(self, _app):
         from double_pendulum_golf.gui.perturbation_panel import PerturbationPanel
 
         p = PerturbationPanel()
@@ -86,11 +86,11 @@ class TestSetPresetSource:
         assert panel._compare_btn.isEnabled()
 
     def test_rejects_non_callable_names_fn(self, panel) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             panel.set_preset_source("not_callable", lambda name: [])  # type: ignore[arg-type]
 
     def test_rejects_non_callable_coeffs_fn(self, panel) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             panel.set_preset_source(lambda: [], "not_callable")  # type: ignore[arg-type]
 
     def test_stores_preset_fns(self, panel) -> None:
@@ -112,7 +112,7 @@ class TestSetPresetSource:
 
 class TestSwingComparisonDialogConstruction:
     @pytest.fixture
-    def dialog(self, app):  # noqa: ARG002
+    def dialog(self, _app):
         from double_pendulum_golf.gui.swing_comparison_dialog import (
             SwingComparisonDialog,
         )
@@ -162,12 +162,12 @@ class TestSwingComparisonDialogConstruction:
 
 
 class TestSwingComparisonDialogContracts:
-    def test_init_rejects_single_preset(self, app) -> None:  # noqa: ARG002
+    def test_init_rejects_single_preset(self, _app) -> None:
         from double_pendulum_golf.gui.swing_comparison_dialog import (
             SwingComparisonDialog,
         )
 
-        with pytest.raises(AssertionError, match="Need at least 2 presets"):
+        with pytest.raises((ValueError, TypeError), match="Need at least 2 presets"):
             SwingComparisonDialog(
                 preset_names=["Only One"],
                 get_coeffs_for_preset=lambda name: [[0.0]],

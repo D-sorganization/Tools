@@ -1,0 +1,29 @@
+manifest_version: "1.0.0"
+pack_id: "tools-pendulum-simulator"
+pack_name: "Tools Pendulum Simulator"
+provider: "tools"
+models:
+  - id: "pendulum_simulator"
+    name: "Pendulum Simulator"
+    description: "Shared pendulum simulation, analysis, and optimization suite for double, triple, and golfer upper-body models."
+    type: "special_app"
+    path: "src/double_pendulum_golf/__main__.py"
+    source_root: "src/pendulum_simulator"
+    working_dir: "src/pendulum_simulator"
+    python_paths:
+      - "src/pendulum_simulator/src"
+    capabilities:
+      - "pendulum"
+      - "simulation"
+      - "optimization"
+      - "biomechanics"
+    tags:
+      - "golf"
+      - "double-pendulum"
+      - "triple-pendulum"
+      - "golfer"
+    launcher:
+      category: "tool"
+      logo: "src/double_pendulum_golf/resources/pendulum_icon.png"
+      status: "provider_ready"
+      web_route: "/tools/pendulum-simulator"

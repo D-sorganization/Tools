@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """3D Renderer
 ===============
 
@@ -400,7 +402,8 @@ class Renderer:
 
     def _draw_circle(self, radius: float, segments: int) -> None:
         """Draw a circle in the XY plane."""
-        assert radius is not None, "radius must be provided"
+        if not (radius is not None):
+            raise ValueError("radius must be provided")
         glBegin(GL_LINE_LOOP)
         for i in range(segments):
             angle = 2 * math.pi * i / segments
@@ -439,7 +442,8 @@ class Renderer:
         self, camera_state: CameraState | None = None, clear: bool = True
     ) -> None:
         """Begin a new frame."""
-        assert clear is not None, "clear must be provided"
+        if not (clear is not None):
+            raise ValueError("clear must be provided")
         if self.ui_renderer:
             self.ui_renderer.drawn_labels.clear()
         if clear:
@@ -496,7 +500,8 @@ class Renderer:
             julian_date: Current simulation time
             highlight: Whether to highlight (selected/hovered)
         """
-        assert body is not None, "body must be provided"
+        if not (body is not None):
+            raise ValueError("body must be provided")
         state = body.get_state_at_time(julian_date)
         position = state.position * self.distance_scale
 
@@ -567,7 +572,8 @@ class Renderer:
         self, body_size: float, color: tuple[float, float, float]
     ) -> None:
         """Render a soft halo to make the Sun feel more luminous."""
-        assert body_size is not None, "body_size must be provided"
+        if not (body_size is not None):
+            raise ValueError("body_size must be provided")
         glDisable(GL_LIGHTING)
         glEnable(GL_BLEND)
         glow_radius = body_size * 1.9
@@ -586,7 +592,8 @@ class Renderer:
 
     def _render_selection_ring(self, body_size: float) -> None:
         """Render an orbit-plane selection ring for the chosen body."""
-        assert body_size is not None, "body_size must be provided"
+        if not (body_size is not None):
+            raise ValueError("body_size must be provided")
         glDisable(GL_LIGHTING)
         glColor4f(0.95, 0.95, 0.6, 0.85)
         glLineWidth(2.0)
@@ -604,7 +611,8 @@ class Renderer:
     def _render_rings(self, body: CelestialBody, body_size: float) -> None:
         """Render planetary rings."""
         # Ring color (semi-transparent)
-        assert body is not None, "body must be provided"
+        if not (body is not None):
+            raise ValueError("body must be provided")
         glDisable(GL_LIGHTING)
         glEnable(GL_BLEND)
 
@@ -641,7 +649,8 @@ class Renderer:
             julian_date: Current time for element calculation
             color: Optional override color (RGBA)
         """
-        assert body is not None, "body must be provided"
+        if not (body is not None):
+            raise ValueError("body must be provided")
         if body.orbital_elements is None:
             return
 
@@ -683,7 +692,8 @@ class Renderer:
             color: Line color (RGBA)
             line_width: Width of the trajectory line
         """
-        assert points is not None, "points must be provided"
+        if not (points is not None):
+            raise ValueError("points must be provided")
         if len(points) < 2:
             return
 
@@ -709,7 +719,8 @@ class Renderer:
     def render_asteroid_belt(self, belt_points_au: np.ndarray) -> None:
         """Render a faint asteroid belt based on pre-generated particle positions."""
 
-        assert belt_points_au is not None, "belt_points_au must be provided"
+        if not (belt_points_au is not None):
+            raise ValueError("belt_points_au must be provided")
         if belt_points_au.size == 0:
             return
 
@@ -729,7 +740,8 @@ class Renderer:
 
     def render_grid(self, size: float = 10.0, divisions: int = 20) -> None:
         """Render a reference grid in the ecliptic plane."""
-        assert size is not None, "size must be provided"
+        if not (size is not None):
+            raise ValueError("size must be provided")
         if not self.settings.show_grid:
             return
 
@@ -760,7 +772,8 @@ class Renderer:
 
     def render_axes(self, size: float = 2.0) -> None:
         """Render coordinate axes for reference."""
-        assert size is not None, "size must be provided"
+        if not (size is not None):
+            raise ValueError("size must be provided")
         if not self.settings.show_axes:
             return
 
@@ -805,7 +818,8 @@ class Renderer:
             2 = important bodies (medium font, moderate distance)
             1 = minor bodies (small font, only when nearby)
         """
-        assert text is not None, "text must be provided"
+        if not (text is not None):
+            raise ValueError("text must be provided")
         if not self.settings.show_labels:
             return
 
@@ -853,7 +867,8 @@ class Renderer:
 
     def _project_to_screen(self, position_3d: np.ndarray) -> tuple[int, int] | None:
         """Project 3D position to 2D screen coordinates."""
-        assert position_3d is not None, "position_3d must be provided"
+        if not (position_3d is not None):
+            raise ValueError("position_3d must be provided")
         modelview = glGetDoublev(GL_MODELVIEW_MATRIX)
         projection = glGetDoublev(GL_PROJECTION_MATRIX)
         viewport = glGetIntegerv(GL_VIEWPORT)

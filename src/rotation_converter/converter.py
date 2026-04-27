@@ -16,19 +16,13 @@ methods guarantee postconditions (unit quaternion, SO(3), etc.).
 
 from __future__ import annotations
 
-from typing import Any
+from rotation_transforms.rotation import Rotation
 
-import numpy as np
-
-from rotation_converter._contracts import require, require_finite
 from rotation_converter.core import (
     axis_angle_to_quaternion,
     axis_angle_to_rotation_matrix,
     euler_to_quaternion,
     euler_to_rotation_matrix,
-    normalize_quaternion,
-    quaternion_conjugate,
-    quaternion_multiply,
     quaternion_to_axis_angle,
     quaternion_to_euler,
     quaternion_to_rodrigues,
@@ -39,6 +33,7 @@ from rotation_converter.core import (
     rotation_matrix_to_quaternion,
 )
 
+<<<<<<< HEAD
 
 class Rotation:
     """Immutable rotation stored internally as a unit quaternion.
@@ -175,6 +170,9 @@ class Rotation:
             return NotImplemented
         # q and -q represent the same rotation
         return bool(np.allclose(self._q, other._q, atol=1e-10))
+=======
+__all__ = ["Rotation", "RotationConverter"]
+>>>>>>> origin/main
 
 
 class RotationConverter:

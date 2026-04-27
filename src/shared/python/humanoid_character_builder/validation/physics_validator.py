@@ -7,12 +7,12 @@ This module provides validation checks for:
 - Collision detection
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field  # noqa: E402
 
-import numpy as np
-from humanoid_character_builder.core.model import (
+import numpy as np  # noqa: E402
+from humanoid_character_builder.core.model import (  # noqa: E402
     GeneratedLink,
     HumanoidModel,
 )
@@ -42,7 +42,8 @@ class ValidationResult:
 
     def add_error(self, msg: str) -> None:
         """Append an error message and mark the result as invalid."""
-        assert msg is not None, "msg must be provided"
+        if not (msg is not None):
+            raise ValueError("msg must be provided")
         self.is_valid = False
         self.messages.append(f"ERROR: {msg}")
 
@@ -72,7 +73,8 @@ class PhysicsValidator:
         - Positive definiteness
         - Triangle inequality
         """
-        assert link is not None, "link must be provided"
+        if not (link is not None):
+            raise ValueError("link must be provided")
         result = ValidationResult.ok()
 
         try:
@@ -111,7 +113,8 @@ class PhysicsValidator:
         Assumes the model is in its default configuration (usually T-pose or A-pose).
         Checks if the global Center of Mass (COM) projects into the support polygon.
         """
-        assert model is not None, "model must be provided"
+        if not (model is not None):
+            raise ValueError("model must be provided")
         com = model.compute_center_of_mass()
         support = model.compute_support_polygon()
 
@@ -145,7 +148,8 @@ class PhysicsValidator:
         Returns:
             List of messages describing detected collisions.
         """
-        assert model is not None, "model must be provided"
+        if not (model is not None):
+            raise ValueError("model must be provided")
         messages = []
 
         transforms = model.get_global_transforms()
@@ -185,8 +189,7 @@ class PhysicsValidator:
             corners = []
             for x in [min_bound[0], max_bound[0]]:
                 for y in [min_bound[1], max_bound[1]]:
-                    for z in [min_bound[2], max_bound[2]]:
-                        corners.append([x, y, z])
+                    corners.extend([[x, y, z] for z in [min_bound[2], max_bound[2]]])
 
             T = transforms[name]
             global_corners = []
@@ -232,7 +235,8 @@ class PhysicsValidator:
     def _are_connected(self, model: HumanoidModel, name1: str, name2: str) -> bool:
         """Check if two links are directly connected by a joint."""
         # Check child map
-        assert model is not None, "model must be provided"
+        if not (model is not None):
+            raise ValueError("model must be provided")
         for joint in model.children_map.get(name1, []):
             if joint.child == name2:
                 return True

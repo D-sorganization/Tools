@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """Reference data for unit conversion tables and gas properties.
 
 These tables are deliberately defined as immutable module-level mappings so that conversion

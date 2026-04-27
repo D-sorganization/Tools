@@ -34,7 +34,8 @@ except ImportError:
         """Raised when a pre-condition is violated."""
 
         def __init__(self, message: str, value: Any = None) -> None:
-            assert message is not None, "message must be provided"
+            if not (message is not None):
+                raise ValueError("message must be provided")
             detail = f"[DbC pre-condition] {message}"
             if value is not None:
                 detail += f" (got: {value!r})"
@@ -44,7 +45,8 @@ except ImportError:
         """Raised when a post-condition is violated."""
 
         def __init__(self, message: str, value: Any = None) -> None:
-            assert message is not None, "message must be provided"
+            if not (message is not None):
+                raise ValueError("message must be provided")
             detail = f"[DbC post-condition] {message}"
             if value is not None:
                 detail += f" (got: {value!r})"

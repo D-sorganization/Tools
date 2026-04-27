@@ -11,6 +11,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
+pytest.importorskip("pandas")
 import pandas as pd
 from utils.csv_utils import (
     merge_csv_files,

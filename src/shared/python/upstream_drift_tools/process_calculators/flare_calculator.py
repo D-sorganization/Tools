@@ -174,6 +174,7 @@ class FlareCalculator:
             heat_release=heat_release,
             radiation_intensity=target_radiation,
         )
+<<<<<<< HEAD
         # DbC postconditions (via contracts module)
         ensure(
             result.height >= FLARE_MIN_HEIGHT,
@@ -184,6 +185,14 @@ class FlareCalculator:
             result.diameter >= 0,
             "Flare diameter must be non-negative",
             result.diameter,
+=======
+        # DbC postconditions
+        assert result.height >= FLARE_MIN_HEIGHT, (
+            f"Flare height must be >= minimum ({FLARE_MIN_HEIGHT}), got {result.height}"
+        )
+        assert result.diameter >= 0, (
+            f"Flare diameter must be non-negative, got {result.diameter}"
+>>>>>>> origin/main
         )
         return result
 

@@ -199,11 +199,16 @@ def _make_scale_slider(
     Pre: ``style`` is non-None, ``divisor > 0``, ``default`` and
          ``max_val`` are positive, ``default <= max_val``.
     """
+<<<<<<< HEAD
     assert style is not None, "style must be provided"
     assert divisor > 0, f"divisor must be > 0, got {divisor}"
     assert max_val > 0 and default > 0 and default <= max_val, (
         f"invalid slider bounds: default={default}, max_val={max_val}"
     )
+=======
+    if not (style is not None):
+        raise ValueError("style must be provided")
+>>>>>>> origin/main
     s = QSlider(Qt.Orientation.Horizontal)
     s.setRange(1, max_val)
     s.setValue(default)
@@ -241,7 +246,8 @@ def _overlay_row(
     label: QLabel,
 ) -> QHBoxLayout:
     """Build a single overlay row: [☑ Name] [---slider---] [value]."""
-    assert checkbox is not None, "checkbox must be provided"
+    if not (checkbox is not None):
+        raise ValueError("checkbox must be provided")
     row = QHBoxLayout()
     row.setContentsMargins(0, 0, 0, 0)
     row.setSpacing(3)
@@ -344,8 +350,13 @@ class ToolStrip(QWidget):
         layout.addWidget(_vline())
         self._build_sim_controls(layout)
 
+<<<<<<< HEAD
     def _build_model_selector(self, layout: QHBoxLayout) -> None:
         """Add title label and model-selection combo box to layout."""
+=======
+        if not (layout is not None):
+            raise ValueError("layout must be provided")
+>>>>>>> origin/main
         title = QLabel("Pendulums")
         title.setStyleSheet(_TITLE)
         title.setFont(QFont("Sans", 11, QFont.Weight.Bold))
@@ -567,6 +578,7 @@ class ToolStrip(QWidget):
         All three overlay types (Force Vectors, Mobility Ellipsoids, Force Ellipsoids)
         are stacked vertically in a compact section.
         """
+<<<<<<< HEAD
         assert layout is not None, "layout must be provided"
         overlay_frame, overlay_layout = self._create_overlay_frame()
 
@@ -592,6 +604,11 @@ class ToolStrip(QWidget):
 
     def _create_overlay_frame(self) -> tuple[QFrame, QVBoxLayout]:
         """Create the overlay section container frame and its vertical layout."""
+=======
+        # --- Overlay section container ---
+        if not (layout is not None):
+            raise ValueError("layout must be provided")
+>>>>>>> origin/main
         overlay_frame = QFrame()
         overlay_frame.setObjectName("overlay_section")
         overlay_frame.setStyleSheet(_OVERLAY_SECTION)
@@ -838,7 +855,8 @@ class ToolStrip(QWidget):
         self.play_toggled.emit(checked)
 
     def _on_frame_slider_changed(self, val: int) -> None:
-        assert val is not None, "val must be provided"
+        if not (val is not None):
+            raise ValueError("val must be provided")
         total = self._frame_slider.maximum()
         pct = int(100 * val / max(total, 1))
         self._frame_lbl.setText(f"{pct}% ({val}/{total})")
@@ -861,7 +879,8 @@ class ToolStrip(QWidget):
 
     def _on_azimuth_slider(self, deg: int) -> None:
         """Emit azimuth rotation in radians from slider value (#1146)."""
-        assert deg is not None, "deg must be provided"
+        if not (deg is not None):
+            raise ValueError("deg must be provided")
         import numpy as np
 
         self._lbl_azimuth.setText(f"{deg}°")
@@ -869,7 +888,8 @@ class ToolStrip(QWidget):
 
     def _on_tilt_slider(self, deg: int) -> None:
         """Emit tilt rotation in radians from slider value (#1146)."""
-        assert deg is not None, "deg must be provided"
+        if not (deg is not None):
+            raise ValueError("deg must be provided")
         import numpy as np
 
         self._lbl_tilt.setText(f"{deg}°")
@@ -881,21 +901,24 @@ class ToolStrip(QWidget):
 
     def set_running(self, running: bool) -> None:
         """Disable run/reset while simulation is computing."""
-        assert running is not None, "running must be provided"
+        if not (running is not None):
+            raise ValueError("running must be provided")
         self.btn_run.setEnabled(not running)
         self.btn_reset.setEnabled(not running)
         self.set_status("Simulating…" if running else "Ready")
 
     def set_frame_range(self, n_steps: int) -> None:
         """Set the playback slider maximum after simulation completes."""
-        assert n_steps >= 0
+        if not (n_steps >= 0):
+            raise ValueError("DbC Blocked: Precondition failed.")
         self._frame_slider.setRange(0, max(0, n_steps - 1))
         self._frame_slider.setValue(0)
         self._frame_lbl.setText(f"0% (0/{max(0, n_steps - 1)})")
 
     def set_frame(self, idx: int) -> None:
         """Update slider + label to reflect current frame (no re-emission)."""
-        assert idx is not None, "idx must be provided"
+        if not (idx is not None):
+            raise ValueError("idx must be provided")
         self._frame_slider.blockSignals(True)
         self._frame_slider.setValue(idx)
         self._frame_slider.blockSignals(False)
@@ -927,7 +950,8 @@ class ToolStrip(QWidget):
             e.g. [("shoulder", "Shoulder"), ("wrist", "Wrist")] for double.
         """
         # Remove old checkboxes
-        assert names is not None, "names must be provided"
+        if not (names is not None):
+            raise ValueError("names must be provided")
         for chk in self._segment_checks.values():
             chk.setParent(None)
             chk.deleteLater()

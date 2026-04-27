@@ -7,18 +7,33 @@ simplified, chainable interface suitable for scripting, API backends, and tests.
 See issue #407.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Any
+import logging  # noqa: E402
+from dataclasses import dataclass, field  # noqa: E402
+from pathlib import Path  # noqa: E402
+from typing import Any  # noqa: E402
 
+<<<<<<< HEAD
 import pandas as pd
 from contracts import require
+=======
+import pandas as pd  # noqa: E402
+
+from contracts import require  # noqa: E402
+>>>>>>> origin/main
 
 logger = logging.getLogger(__name__)
 SUPPORTED_FILTER_TYPES = {"butterworth", "moving_average", "median", "savgol"}
+
+
+def _eval_with_optional_numexpr(df: pd.DataFrame, expression: str) -> pd.Series:
+    """Prefer numexpr when present but keep formula evaluation functional without it."""
+
+    try:
+        return df.eval(expression, engine="numexpr")
+    except ImportError:
+        return df.eval(expression, engine="python")
 
 
 @dataclass
@@ -103,6 +118,11 @@ class DataProcessor:
 
         Returns *self* for method chaining.
         """
+<<<<<<< HEAD
+=======
+        if not (path is not None):
+            raise ValueError("path must be provided")
+>>>>>>> origin/main
         path = Path(path)
         suffix = path.suffix.lower()
 
@@ -119,11 +139,19 @@ class DataProcessor:
                 from data_processor.core.dat_importer import read_dat_file
 
                 self._df = read_dat_file(str(path))
+<<<<<<< HEAD
             except ImportError:
                 raise ImportError(
                     "Loading .dat files requires the 'data_processor' package. "
                     "Install it or convert the file to CSV format first."
                 ) from None
+=======
+            except ImportError as exc:
+                raise ImportError(
+                    "DAT importer not available. Install the data_processor package "
+                    "or convert the file to CSV/TSV before loading."
+                ) from exc
+>>>>>>> origin/main
         else:
             raise ValueError(f"Unsupported file format: {suffix}")
 
@@ -141,6 +169,11 @@ class DataProcessor:
 
     def load_dataframe(self, df: pd.DataFrame, name: str = "inline") -> DataProcessor:
         """Load from an existing DataFrame."""
+<<<<<<< HEAD
+=======
+        if not (df is not None):
+            raise ValueError("df must be provided")
+>>>>>>> origin/main
         require(isinstance(df, pd.DataFrame), "df must be a pandas DataFrame")
         require(isinstance(name, str) and bool(name), "name must be a non-empty string")
         self._df = df.copy()
@@ -161,6 +194,11 @@ class DataProcessor:
         time_column: str | None = None,
     ) -> DataProcessor:
         """Trim data to a time range.  Auto-detects the time column if not given."""
+<<<<<<< HEAD
+=======
+        if not (start is not None):
+            raise ValueError("start must be provided")
+>>>>>>> origin/main
         require(isinstance(start, int | float), "start must be numeric")
         require(isinstance(end, int | float), "end must be numeric")
         require(end >= start, "end must be >= start")
@@ -188,6 +226,11 @@ class DataProcessor:
             time_column: Column containing time values. Auto-detected if None.
             method: Interpolation method ('linear', 'cubic', etc.).
         """
+<<<<<<< HEAD
+=======
+        if not (target_rate is not None):
+            raise ValueError("target_rate must be provided")
+>>>>>>> origin/main
         require(
             isinstance(target_rate, int | float) and target_rate > 0,
             "target_rate must be a positive number",
@@ -203,6 +246,7 @@ class DataProcessor:
                 df, target_rate, time_col=time_column, method=method
             )
         except ImportError:
+<<<<<<< HEAD
             import numpy as np
 
             t = np.asarray(df[time_column].values)
@@ -214,6 +258,34 @@ class DataProcessor:
                 ) from None
             n_samples = int(round((t[-1] - t[0]) * target_rate)) + 1
             t_new = np.linspace(t[0], t[-1], n_samples)
+=======
+            # Fallback using numpy interpolation
+            import numpy as np
+
+            t = df[time_column].values
+            if len(t) < 2:
+                raise ValueError(
+                    f"Time column '{time_column}' has fewer than 2 samples; "
+                    "cannot resample."
+                )
+            if not np.all(np.diff(t) > 0):
+                raise ValueError(
+                    f"Time column '{time_column}' is not strictly monotonically "
+                    "increasing. Sort the DataFrame before resampling."
+                )
+
+            n_samples = max(2, int(np.ceil((t[-1] - t[0]) * target_rate)) + 1)
+            t_new = np.linspace(t[0], t[-1], n_samples)
+            if t_new[-1] > t[-1]:
+                logger.warning(
+                    "Resample target_rate=%.3f Hz extends t_new (%.6f) past "
+                    "original endpoint (%.6f); np.interp will clamp.",
+                    target_rate,
+                    float(t_new[-1]),
+                    float(t[-1]),
+                )
+
+>>>>>>> origin/main
             new_df = pd.DataFrame({time_column: t_new})
             for col in df.columns:
                 if col == time_column:
@@ -232,6 +304,7 @@ class DataProcessor:
         cutoff: float = 10.0,
         order: int = 4,
         window_size: int = 11,
+        sample_rate: float = 1000.0,
     ) -> DataProcessor:
         """Apply a signal filter (butterworth, moving_average, median, savgol).
 
@@ -247,7 +320,15 @@ class DataProcessor:
             Filter order.
         window_size : int
             Window size for moving_average / median / savgol.
+        sample_rate : float
+            Sample rate of the data [Hz].  Used by the Butterworth filter
+            to correctly interpret the cutoff frequency.  Defaults to 1000.
         """
+<<<<<<< HEAD
+=======
+        if not (filter_type is not None):
+            raise ValueError("filter_type must be provided")
+>>>>>>> origin/main
         self._validate_filter_contract(filter_type, window_size)
         df = self.dataframe
         selected_columns = self._resolve_filter_columns(df, columns)
@@ -258,6 +339,7 @@ class DataProcessor:
             cutoff=cutoff,
             order=order,
             window_size=window_size,
+            sample_rate=sample_rate,
         )
         self._df = df
         self._history.append(
@@ -293,6 +375,7 @@ class DataProcessor:
         cutoff: float,
         order: int,
         window_size: int,
+        sample_rate: float = 1000.0,
     ) -> None:
         """Apply filter using SciPy implementation when available."""
         try:
@@ -303,6 +386,7 @@ class DataProcessor:
                 cutoff=cutoff,
                 order=order,
                 window_size=window_size,
+                sample_rate=sample_rate,
             )
         except ImportError:
             self._apply_filter_fallback(df=df, columns=columns, window_size=window_size)
@@ -315,13 +399,20 @@ class DataProcessor:
         cutoff: float,
         order: int,
         window_size: int,
+        sample_rate: float = 1000.0,
     ) -> None:
         """Apply filter implementation backed by scipy.signal."""
+<<<<<<< HEAD
+=======
+        if not (df is not None):
+            raise ValueError("df must be provided")
+>>>>>>> origin/main
         from scipy.signal import butter, filtfilt, medfilt, savgol_filter
 
         for column in columns:
             values = df[column].values.astype(float)
             if filter_type == "butterworth":
+<<<<<<< HEAD
                 sample_rate = 1000
                 nyquist = sample_rate / 2.0
                 if cutoff >= nyquist:
@@ -337,6 +428,21 @@ class DataProcessor:
                         f"Column has {len(values)} samples but filtfilt requires"
                         f" at least {min_len} samples for a filter of this order."
                         " Use a lower filter order."
+=======
+                nyquist = sample_rate / 2.0
+                if cutoff >= nyquist:
+                    raise ValueError(
+                        f"Butterworth cutoff ({cutoff} Hz) must be less than "
+                        f"Nyquist ({nyquist} Hz) for sample_rate={sample_rate} Hz"
+                    )
+                b, a = butter(order, cutoff, btype="low", fs=sample_rate)
+                min_len = 3 * (max(len(b), len(a)) - 1)
+                if len(values) <= min_len:
+                    raise ValueError(
+                        f"Column '{column}' has {len(values)} samples, but "
+                        f"butterworth(order={order}) requires > {min_len} samples "
+                        f"(filtfilt padding rule)."
+>>>>>>> origin/main
                     )
                 df[column] = filtfilt(b, a, values)
             elif filter_type == "moving_average":
@@ -369,6 +475,11 @@ class DataProcessor:
 
         Example: ``dp.apply_formula("speed", "distance / time")``
         """
+<<<<<<< HEAD
+=======
+        if not (new_column is not None):
+            raise ValueError("new_column must be provided")
+>>>>>>> origin/main
         require(
             isinstance(new_column, str) and bool(new_column),
             "new_column must be a non-empty string",
@@ -378,14 +489,17 @@ class DataProcessor:
             "expression must be a non-empty string",
         )
         df = self.dataframe
-        # pandas DataFrame.eval() is safe -- it only resolves column names
-        # within the dataframe and does not execute arbitrary Python code.
-        df[new_column] = df.eval(expression)
+        df[new_column] = _eval_with_optional_numexpr(df, expression)
         self._history.append(f"Created column '{new_column}' = {expression}")
         return self
 
     def drop_columns(self, columns: list[str]) -> DataProcessor:
         """Drop specified columns."""
+<<<<<<< HEAD
+=======
+        if not (columns is not None):
+            raise ValueError("columns must be provided")
+>>>>>>> origin/main
         require(
             isinstance(columns, list) and bool(columns),
             "columns must be a non-empty list",
@@ -396,6 +510,11 @@ class DataProcessor:
 
     def rename_columns(self, mapping: dict[str, str]) -> DataProcessor:
         """Rename columns."""
+<<<<<<< HEAD
+=======
+        if not (mapping is not None):
+            raise ValueError("mapping must be provided")
+>>>>>>> origin/main
         require(
             isinstance(mapping, dict) and bool(mapping),
             "mapping must be a non-empty dict",
@@ -406,6 +525,11 @@ class DataProcessor:
 
     def sort(self, by: str, ascending: bool = True) -> DataProcessor:
         """Sort by a column."""
+<<<<<<< HEAD
+=======
+        if not (by is not None):
+            raise ValueError("by must be provided")
+>>>>>>> origin/main
         require(isinstance(by, str) and bool(by), "by must be a non-empty string")
         require(isinstance(ascending, bool), "ascending must be a boolean")
         self._df = self.dataframe.sort_values(by=by, ascending=ascending).reset_index(
@@ -504,6 +628,11 @@ class DataProcessor:
 
         Supported formats: .csv, .xlsx, .parquet, .json
         """
+<<<<<<< HEAD
+=======
+        if not (path is not None):
+            raise ValueError("path must be provided")
+>>>>>>> origin/main
         path = Path(path)
         suffix = path.suffix.lower()
         df = self.dataframe
@@ -515,6 +644,7 @@ class DataProcessor:
         elif suffix == ".parquet":
             import importlib.util
 
+<<<<<<< HEAD
             if (
                 importlib.util.find_spec("pyarrow") is None
                 and importlib.util.find_spec("fastparquet") is None
@@ -522,6 +652,14 @@ class DataProcessor:
                 raise ImportError(
                     "Parquet export requires pyarrow or fastparquet:"
                     " pip install pyarrow"
+=======
+            if importlib.util.find_spec("pyarrow") is None and importlib.util.find_spec(
+                "fastparquet"
+            ) is None:
+                raise ImportError(
+                    "Parquet export requires 'pyarrow' or 'fastparquet'. "
+                    "Install one of them: pip install pyarrow"
+>>>>>>> origin/main
                 )
             df.to_parquet(path, index=index)
         elif suffix == ".json":

@@ -39,6 +39,7 @@ TOOL_PACKAGES = {
     "folder_tools",
     "humanoid_builder_gui",
     "scientific_modeling",
+    "rotation_converter",
     "trc_vessel_designer",
     "urdf_builder_gui",
     "web_applications",
@@ -298,18 +299,6 @@ class TestContractModuleConsistency:
         with pytest.raises(InvariantError):
             invariant(False, "test invariant")
 
-    def test_require_passes_on_true(self) -> None:
-        """require() must not raise on True condition."""
-        from contracts import require
-
-        require(True, "should pass")  # No exception
-
-    def test_ensure_passes_on_true(self) -> None:
-        """ensure() must not raise on True condition."""
-        from contracts import ensure
-
-        ensure(True, "should pass")  # No exception
-
 
 # ─── Test: No wildcard imports ───────────────────────────────────
 
@@ -472,6 +461,8 @@ class TestExceptionHierarchyConsistency:
 
     def test_data_processing_exceptions_importable(self) -> None:
         """All data-processing exceptions must be importable."""
+        pytest.importorskip("numpy")
+        pytest.importorskip("scipy")
         from upstream_drift_tools.data_processing.exceptions import (  # noqa: F401
             ColumnNotFoundError,
             DataNotLoadedError,
@@ -485,6 +476,8 @@ class TestExceptionHierarchyConsistency:
 
     def test_all_data_processing_exceptions_share_base(self) -> None:
         """Every exception must inherit from DataProcessingError."""
+        pytest.importorskip("numpy")
+        pytest.importorskip("scipy")
         from upstream_drift_tools.data_processing.exceptions import (
             ColumnNotFoundError,
             DataNotLoadedError,

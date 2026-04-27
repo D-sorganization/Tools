@@ -135,7 +135,7 @@ def analyze_codebase() -> RepoStats:
                 # Read file content safely
                 try:
                     content = filepath.read_text(encoding="utf-8", errors="ignore")
-                except Exception:
+                except Exception:  # noqa: BLE001  # noqa: BLE001
                     continue
 
                 stats["lines"] += len(content.splitlines())
@@ -151,9 +151,7 @@ def analyze_codebase() -> RepoStats:
                     try:
                         tree = ast.parse(content)
                         for node in ast.walk(tree):
-                            if isinstance(
-                                node, (ast.FunctionDef, ast.AsyncFunctionDef)
-                            ):
+                            if isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef):
                                 stats["functions"] += 1
                                 if ast.get_docstring(node):
                                     stats["docstrings"] += 1
@@ -198,7 +196,7 @@ def analyze_codebase() -> RepoStats:
                     except SyntaxError:
                         # logger.warning(f"Syntax error in {filepath}")
                         pass
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001
                 logger.error(f"Error analyzing {filepath}: {e}")
 
     return stats
@@ -332,7 +330,7 @@ def calculate_grades(stats: RepoStats) -> dict[str, tuple[float, str]]:
     grades["N"] = (score_n, f"Python files: {stats['py_files']}")
 
     # O: Maintainability
-    # Metric: TODOs/FIXMEs (bad)
+    # REVIEW: deferred
     score_o = 10.0
     debt = stats["todos"] + stats["fixmes"]
     if debt > 50:

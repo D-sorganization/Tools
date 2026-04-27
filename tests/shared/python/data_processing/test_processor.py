@@ -15,11 +15,17 @@ Covers:
 
 from __future__ import annotations
 
+import sys
+import types
 from pathlib import Path
 
-import numpy as np
-import pandas as pd
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
+
+pytest.importorskip("pandas")
+import pandas as pd
 from data_processing.processor import DataProcessor, DatasetInfo
 
 # ── Construction & Loading ───────────────────────────────────────────────
@@ -127,6 +133,27 @@ class TestDataProcessorTransformations:
             dp.dataframe["double_signal"], expected, check_names=False
         )
 
+    def test_apply_formula_falls_back_without_numexpr(
+        self, dp: DataProcessor, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        def fake_eval(
+            frame: pd.DataFrame, expression: str, engine: str | None = None, **_: object
+        ) -> pd.Series:
+            if engine == "numexpr":
+                raise ImportError("No module named 'numexpr'")
+            assert engine == "python"
+            return frame["signal"] * 2
+
+        monkeypatch.setattr(pd.DataFrame, "eval", fake_eval)
+
+        dp.apply_formula("double_signal", "signal * 2")
+
+        pd.testing.assert_series_equal(
+            dp.dataframe["double_signal"],
+            dp.dataframe["signal"] * 2,
+            check_names=False,
+        )
+
     def test_dropna(self) -> None:
         dp = DataProcessor()
         df = pd.DataFrame(
@@ -150,6 +177,41 @@ class TestDataProcessorTransformations:
     def test_apply_filter_no_matching_columns_raises(self, dp: DataProcessor) -> None:
         with pytest.raises(ValueError, match="No valid columns to filter"):
             dp.apply_filter("moving_average", columns=["missing_col"])
+
+    def test_butterworth_filter_uses_detected_sample_rate(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        captured: dict[str, float] = {}
+
+        fake_scipy = types.ModuleType("scipy")
+        fake_signal = types.ModuleType("scipy.signal")
+
+        def fake_butter(
+            order: int, cutoff: float, *, btype: str, fs: float
+        ) -> tuple[list[float], list[float]]:
+            captured["fs"] = fs
+            return [1.0], [1.0]
+
+        fake_signal.butter = fake_butter
+        fake_signal.filtfilt = lambda b, a, values: values
+        fake_signal.medfilt = lambda values, kernel_size: values
+        fake_signal.savgol_filter = lambda values, window_size, polyorder: values
+        monkeypatch.setitem(sys.modules, "scipy", fake_scipy)
+        monkeypatch.setitem(sys.modules, "scipy.signal", fake_signal)
+
+        dp = DataProcessor()
+        dp.load_dataframe(
+            pd.DataFrame(
+                {
+                    "time": np.arange(30, dtype=float) * 0.01,
+                    "signal": np.sin(np.arange(30, dtype=float)),
+                }
+            )
+        )
+
+        dp.apply_filter("butterworth", columns=["signal"], cutoff=10.0, order=2)
+
+        assert captured["fs"] == pytest.approx(100.0)
 
 
 # ── Analysis Methods ─────────────────────────────────────────────────────

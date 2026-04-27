@@ -4,22 +4,17 @@ name: Jules PR Cleanup
 # Preserves PRs that are actively being iterated on (recent commits)
 
 on:
-  schedule:
-    - cron: "0 8 * * 0,4" # Weekly on Sundays at 5 AM PST (13 UTC)
   workflow_dispatch:
     inputs:
-      dry_run:
-        description: "Dry run - show what would be closed without acting"
-        required: false
-        default: "true"
-        type: choice
-        options:
-          - "true"
-          - "false"
       max_age_days:
-        description: "Close PRs older than this many days"
+        description: "Maximum age in days before a PR is considered stale"
         required: false
         default: "7"
+        type: string
+      dry_run:
+        description: "If true, only report stale PRs without closing them"
+        required: false
+        default: "true"
         type: string
 
 permissions:
@@ -31,15 +26,54 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # ── Dispatcher: route to self-hosted if available ──────────────────────────
+  pick-runner:
+    runs-on: self-hosted
+    timeout-minutes: 2
+    outputs:
+      runner: ${{ steps.check.outputs.runner }}
+    steps:
+      - name: Check for self-hosted runner
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
+          LOCAL_MODE: ${{ vars.LOCAL_RUNNER_MODE }}
+        run: |
+          MODE="${LOCAL_MODE:-local}"
+          echo "Fleet mode: $MODE"
+
+          case "$MODE" in
+            local)
+              echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
+              echo "Routing to self-hosted fleet (mode=local)"
+              ;;
+            disabled)
+              echo "::error::No local self-hosted runner available; failing closed"
+              exit 1
+              ;;
+            *)
+              AVAILABLE=$(gh api /orgs/${{ github.repository_owner }}/actions/runners \
+                --jq '[.runners[] | select(.status == "online") | select(.busy == false) | select(.labels[].name == "d-sorg-fleet")] | length' \
+                2>/dev/null || echo "0")
+              if [[ "$AVAILABLE" -gt 0 ]]; then
+                echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
+                echo "$AVAILABLE idle fleet runner(s) - routing locally"
+              else
+                echo "::error::No local self-hosted runner available; failing closed"
+                exit 1
+              fi
+              ;;
+          esac
   cleanup:
+    needs: pick-runner
     name: Cleanup Stale Jules PRs
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - name: Find Stale Jules PRs
         id: find
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
           MAX_AGE_DAYS: ${{ inputs.max_age_days || '7' }}
         run: |
           echo "Looking for stale Jules PRs..."
@@ -69,7 +103,7 @@ jobs:
         id: check_ci
         if: steps.find.outputs.count != '0'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
         run: |
           echo "Checking CI status for stale PRs..."
 
@@ -98,7 +132,7 @@ jobs:
       - name: Close Stale PRs
         if: steps.check_ci.outputs.close_count != '0'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
           DRY_RUN: ${{ inputs.dry_run || 'true' }}
         run: |
           CLOSED=0

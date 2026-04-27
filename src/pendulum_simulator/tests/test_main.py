@@ -1,8 +1,11 @@
+from typing import Any
+
 """Tests for __main__.py and gui.__init__.py in double_pendulum_golf.
 
 This covers the application entry point, logging configuration, and
 global event filters like Ctrl+Wheel UI zooming.
 """
+
 
 import logging
 import sys
@@ -20,13 +23,13 @@ from double_pendulum_golf.gui import __getattr__ as gui_getattr
 # ---------------------------------------------------------------------------
 
 
-def test_gui_init_getattr_main_window():
+def test_gui_init_getattr_main_window() -> Any:
     """Verify lazy-loading of MainWindow via __getattr__."""
     mw = gui_getattr("MainWindow")
     assert mw.__name__ == "MainWindow"
 
 
-def test_gui_init_getattr_unknown():
+def test_gui_init_getattr_unknown() -> Any:
     """Verify AttributeError for unknown attributes."""
     with pytest.raises(AttributeError, match="has no attribute 'DoesNotExist'"):
         gui_getattr("DoesNotExist")
@@ -38,19 +41,20 @@ def test_gui_init_getattr_unknown():
 
 
 class TestWheelBlockFilter:
-    def test_event_filter_not_wheel(self):
+    def test_event_filter_not_wheel(self) -> Any:
         f = __main__._WheelBlockFilter()
         event = MagicMock()
         event.type.return_value = QEvent.Type.User
         assert f.eventFilter(None, event) is False
 
     @patch("double_pendulum_golf.__main__.QApplication.instance")
-    def test_event_filter_ctrl_wheel(self, mock_instance):
+    def test_event_filter_ctrl_wheel(self, mock_instance) -> Any:
         # Because _WheelBlockFilter does isinstance(app, QApplication), we need a real or subclassed app.
         # However, mocking the instance might fail the isinstance check unless we patch QApplication itself.
         pass
 
     def test_event_filter_ctrl_wheel_actual_app(self, qapp) -> Any:
+<<<<<<< HEAD
         """Filter delegates Ctrl+wheel to MainWindow.adjust_global_font_zoom.
 
         The bounded helper guarantees the new size is base + clamped offset,
@@ -64,6 +68,9 @@ class TestWheelBlockFilter:
         QSettings("D-sorganization", "PendulumSimulator").setValue("font_zoom_pt", 0)
         MainWindow._apply_offset_to_app_font(0)
 
+=======
+        # qapp is provided by pytest-qt, giving a real QApplication
+>>>>>>> origin/main
         f = __main__._WheelBlockFilter()
 
         event = MagicMock()
@@ -77,7 +84,7 @@ class TestWheelBlockFilter:
         # After one zoom-in step, the application font should be base + 1
         assert qapp.font().pointSize() == MainWindow._FONT_BASE_PT + 1
 
-    def test_event_filter_blocks_spinbox_wheel(self, qapp):
+    def test_event_filter_blocks_spinbox_wheel(self, qapp) -> Any:
         from PyQt6.QtWidgets import QSpinBox
 
         f = __main__._WheelBlockFilter()
@@ -92,6 +99,7 @@ class TestWheelBlockFilter:
         event.ignore.assert_called_once()
 
     def test_reset_font(self, qapp) -> Any:
+<<<<<<< HEAD
         """Filter.reset_font delegates to MainWindow.reset_global_font_zoom.
 
         The reset always restores the application font to the canonical
@@ -106,6 +114,8 @@ class TestWheelBlockFilter:
             MainWindow._FONT_BASE_PT + MainWindow._FONT_OFFSET_MAX
         )
 
+=======
+>>>>>>> origin/main
         f = __main__._WheelBlockFilter()
         f.reset_font()
         assert qapp.font().pointSize() == MainWindow._FONT_BASE_PT
@@ -118,14 +128,14 @@ class TestWheelBlockFilter:
 
 class TestMainFunctions:
     @patch("double_pendulum_golf.__main__.logging.basicConfig")
-    def test_configure_logging(self, mock_basic):
+    def test_configure_logging(self, mock_basic) -> Any:
         __main__._configure_logging()
         mock_basic.assert_called_once()
         kwargs = mock_basic.call_args[1]
         assert kwargs["level"] == logging.INFO
         assert len(kwargs["handlers"]) == 2
 
-    def test_main_version(self, capsys):
+    def test_main_version(self, capsys) -> Any:
         with patch.object(sys, "argv", ["prog", "--version"]):
             with pytest.raises(SystemExit) as exit_exc:
                 __main__.main()
@@ -137,7 +147,7 @@ class TestMainFunctions:
     @patch("double_pendulum_golf.__main__._WheelBlockFilter")
     @patch("double_pendulum_golf.__main__.QApplication")
     @patch("double_pendulum_golf.__main__.MainWindow.show")
-    def test_main_execution(self, mock_show, mock_qapp, mock_wbf):
+    def test_main_execution(self, mock_show, mock_qapp, mock_wbf) -> Any:
         mock_exec = mock_qapp.return_value.exec
         mock_exec.return_value = 0
 
@@ -153,7 +163,7 @@ class TestMainFunctions:
     @patch("double_pendulum_golf.__main__._WheelBlockFilter")
     @patch("double_pendulum_golf.__main__.QApplication")
     @patch("double_pendulum_golf.__main__.MainWindow.show")
-    def test_main_execution_no_icon(self, mock_show, mock_qapp, mock_wbf):
+    def test_main_execution_no_icon(self, mock_show, mock_qapp, mock_wbf) -> Any:
         mock_exec = mock_qapp.return_value.exec
         mock_exec.return_value = 0
         with patch.object(sys, "argv", ["prog"]):

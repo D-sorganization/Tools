@@ -13,16 +13,15 @@ Usage:
 from __future__ import annotations
 
 import logging
-from enum import Enum
 
+from cors import add_cors_middleware
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from upstream_drift_tools.calculators.thermo.steam_engine import (
     SteamCalculationEngine,
     SteamProperties,
 )
-
-from shared.python.cors import add_cors_middleware
+from utils.compatibility import StrEnum
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +45,7 @@ _engine = SteamCalculationEngine()
 # ---------------------------------------------------------------------------
 
 
-class CalculationMode(str, Enum):
+class CalculationMode(StrEnum):
     """Supported calculation modes."""
 
     TP = "tp"

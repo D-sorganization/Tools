@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, memo } from 'react';
 import { Database, Settings, BarChart3, Table, Calculator, Clock, Scissors, LineChart, HelpCircle, FlaskConical } from 'lucide-react';
 import {
   FileUpload,
@@ -392,7 +392,7 @@ interface DataTableViewProps {
   selectedSignals: string[];
 }
 
-function DataTableView({ data, selectedSignals }: DataTableViewProps) {
+const DataTableView = memo(function DataTableView({ data, selectedSignals }: DataTableViewProps) {
   if (data.length === 0 || selectedSignals.length === 0) {
     return (
       <div className="card">
@@ -451,6 +451,6 @@ function DataTableView({ data, selectedSignals }: DataTableViewProps) {
       </div>
     </div>
   );
-}
+});
 
 export default App;

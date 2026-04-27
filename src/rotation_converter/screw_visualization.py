@@ -161,7 +161,8 @@ def build_animation_frames(
     Returns:
         List of N frame dicts.
     """
-    assert trajectory is not None, "trajectory must be provided"
+    if not (trajectory is not None):
+        raise ValueError("trajectory must be provided")
     require(len(trajectory) >= 1, "need at least 1 frame")
 
     screw_axes = (
@@ -172,14 +173,13 @@ def build_animation_frames(
     for i, T in enumerate(trajectory):
         R, p = TransToRp(T)
         # Body frame axes in world coordinates
-        body_axes = []
-        for col in range(3):
-            body_axes.append(
-                {
-                    "origin": p.copy(),
-                    "direction": R[:, col] * body_axis_length,
-                }
-            )
+        body_axes = [
+            {
+                "origin": p.copy(),
+                "direction": R[:, col] * body_axis_length,
+            }
+            for col in range(3)
+        ]
 
         frame: dict[str, Any] = {
             "position": p,
@@ -224,7 +224,8 @@ class ScrewAxisAnimator:
         screw_axis_length: float = 1.5,
         trail_length: int = 20,
     ) -> None:
-        assert trajectory is not None, "trajectory must be provided"
+        if not (trajectory is not None):
+            raise ValueError("trajectory must be provided")
         require(len(trajectory) >= 2, "need at least 2 frames")
         self._trajectory = trajectory
         self._title = title
@@ -287,7 +288,8 @@ class ScrewAxisAnimator:
 
     def _draw_frame(self, ax: Any, frame_idx: int) -> None:
         """Draw a single animation frame onto the axes."""
-        assert frame_idx is not None, "frame_idx must be provided"
+        if not (frame_idx is not None):
+            raise ValueError("frame_idx must be provided")
         ax.cla()
         self._setup_axes(ax)
 
@@ -448,7 +450,8 @@ class ScrewAxisAnimator:
         Args:
             interval: Milliseconds between frames.
         """
-        assert interval is not None, "interval must be provided"
+        if not (interval is not None):
+            raise ValueError("interval must be provided")
         import matplotlib.pyplot as plt
         from matplotlib.animation import FuncAnimation
 
@@ -482,7 +485,8 @@ class ScrewAxisAnimator:
             fps: Frames per second.
             dpi: Resolution.
         """
-        assert filepath is not None, "filepath must be provided"
+        if not (filepath is not None):
+            raise ValueError("filepath must be provided")
         import matplotlib.pyplot as plt
         from matplotlib.animation import FuncAnimation
 
@@ -516,7 +520,8 @@ class ScrewAxisAnimator:
             frame_idx: Which frame to render.
             dpi: Resolution.
         """
-        assert filepath is not None, "filepath must be provided"
+        if not (filepath is not None):
+            raise ValueError("filepath must be provided")
         import matplotlib.pyplot as plt
 
         fig = plt.figure(figsize=(10, 8), facecolor="black")

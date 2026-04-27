@@ -199,7 +199,7 @@ class TestClampDt:
         assert clamp_dt(-0.5) == pytest.approx(1e-5)
 
     def test_non_float_raises(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             clamp_dt(5)  # type: ignore[arg-type]
 
 

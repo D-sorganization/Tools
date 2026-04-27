@@ -1,21 +1,23 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """Signal filtering utilities.
 
 This module provides a comprehensive set of digital filters for signal
 processing including IIR and FIR filters, smoothing, and specialized filters.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-from collections.abc import Callable
-from dataclasses import dataclass
-from enum import Enum
+from collections.abc import Callable  # noqa: E402
+from dataclasses import dataclass  # noqa: E402
+from enum import Enum  # noqa: E402
 
-import numpy as np
-from scipy import signal as scipy_signal
-from scipy.signal import (
+import numpy as np  # noqa: E402
+from scipy import signal as scipy_signal  # noqa: E402
+from scipy.signal import (  # noqa: E402
     bessel as _scipy_bessel,
 )
-from scipy.signal import (
+from scipy.signal import (  # noqa: E402
     butter,
     cheby1,
     cheby2,
@@ -26,7 +28,8 @@ from scipy.signal import (
     savgol_filter,
 )
 
-from .core import Signal
+from .adaptive_filter import AdaptiveFilter  # noqa: E402,F401
+from .core import Signal  # noqa: E402
 
 
 class FilterType(Enum):
@@ -83,6 +86,11 @@ class FilterSpec:
         Returns:
             Tuple of (frequencies, magnitude, phase).
         """
+<<<<<<< HEAD
+=======
+        if not (num_points is not None):
+            raise ValueError("num_points must be provided")
+>>>>>>> origin/main
         w, h = scipy_signal.freqz(self.b, self.a, worN=num_points, fs=self.fs)
         magnitude = np.abs(h)
         phase = np.angle(h)
@@ -100,6 +108,11 @@ class FilterSpec:
         Returns:
             Tuple of (time, impulse_response).
         """
+<<<<<<< HEAD
+=======
+        if not (num_samples is not None):
+            raise ValueError("num_samples must be provided")
+>>>>>>> origin/main
         impulse = np.zeros(num_samples)
         impulse[0] = 1.0
 
@@ -143,9 +156,7 @@ def _normalize_cutoff(
             btype = "bandstop"
     else:
         wn = (
-            cutoff / nyquist
-            if isinstance(cutoff, (int, float))
-            else cutoff[0] / nyquist
+            cutoff / nyquist if isinstance(cutoff, int | float) else cutoff[0] / nyquist
         )
 
     return wn, btype
@@ -346,6 +357,11 @@ def apply_filter(
     Returns:
         Filtered signal.
     """
+<<<<<<< HEAD
+=======
+    if not (signal is not None):
+        raise ValueError("signal must be provided")
+>>>>>>> origin/main
     if zero_phase:
         # Zero-phase filtering (no phase distortion)
         filtered_values = filtfilt(filter_spec.b, filter_spec.a, signal.values)
@@ -401,6 +417,11 @@ def create_butterworth_filter(
     Returns:
         FilterSpec.
     """
+<<<<<<< HEAD
+=======
+    if not (filter_type is not None):
+        raise ValueError("filter_type must be provided")
+>>>>>>> origin/main
     ft = FilterType(filter_type)
     return FilterDesigner.butterworth(ft, cutoff, fs, order)
 
@@ -424,6 +445,11 @@ def create_chebyshev_filter(
     Returns:
         FilterSpec.
     """
+<<<<<<< HEAD
+=======
+    if not (filter_type is not None):
+        raise ValueError("filter_type must be provided")
+>>>>>>> origin/main
     ft = FilterType(filter_type)
     return FilterDesigner.chebyshev1(ft, cutoff, fs, order, ripple_db)
 
@@ -460,6 +486,11 @@ def create_savgol_filter(
     Returns:
         Function that applies Savitzky-Golay filter to values.
     """
+<<<<<<< HEAD
+=======
+    if not (window_length is not None):
+        raise ValueError("window_length must be provided")
+>>>>>>> origin/main
     if window_length % 2 == 0:
         window_length += 1
 
@@ -484,6 +515,11 @@ def apply_moving_average(
     Returns:
         Filtered signal.
     """
+<<<<<<< HEAD
+=======
+    if not (signal is not None):
+        raise ValueError("signal must be provided")
+>>>>>>> origin/main
     filter_func = create_moving_average_filter(window_size)
     filtered_values = filter_func(signal.values)
 
@@ -511,6 +547,11 @@ def apply_savgol(
     Returns:
         Filtered signal.
     """
+<<<<<<< HEAD
+=======
+    if not (signal is not None):
+        raise ValueError("signal must be provided")
+>>>>>>> origin/main
     if window_length % 2 == 0:
         window_length += 1
 
@@ -548,6 +589,11 @@ def apply_median_filter(
     Returns:
         Filtered signal.
     """
+<<<<<<< HEAD
+=======
+    if not (signal is not None):
+        raise ValueError("signal must be provided")
+>>>>>>> origin/main
     if kernel_size % 2 == 0:
         kernel_size += 1
 
@@ -575,6 +621,11 @@ def apply_exponential_smoothing(
     Returns:
         Smoothed signal.
     """
+<<<<<<< HEAD
+=======
+    if not (signal is not None):
+        raise ValueError("signal must be provided")
+>>>>>>> origin/main
     values = signal.values
     smoothed = np.zeros_like(values)
     smoothed[0] = values[0]
@@ -604,6 +655,11 @@ def apply_gaussian_smoothing(
     Returns:
         Smoothed signal.
     """
+<<<<<<< HEAD
+=======
+    if not (signal is not None):
+        raise ValueError("signal must be provided")
+>>>>>>> origin/main
     from scipy.ndimage import gaussian_filter1d
 
     filtered_values = gaussian_filter1d(signal.values, sigma)
@@ -636,6 +692,11 @@ def apply_bilateral_filter(
     Returns:
         Filtered signal.
     """
+<<<<<<< HEAD
+=======
+    if not (signal is not None):
+        raise ValueError("signal must be provided")
+>>>>>>> origin/main
     values = signal.values
     n = len(values)
     filtered = np.zeros(n)
@@ -675,6 +736,7 @@ def apply_bilateral_filter(
             "sigma_intensity": sigma_intensity,
         },
     )
+<<<<<<< HEAD
 
 
 class AdaptiveFilter:
@@ -784,3 +846,5 @@ class AdaptiveFilter:
         )
 
         return filtered, error
+=======
+>>>>>>> origin/main

@@ -67,7 +67,8 @@ class PerformanceBenchmark:
         suffix: str = "",
     ) -> str:
         """Create test CSV file with specified dimensions."""
-        assert n_rows is not None, "n_rows must be provided"
+        if not (n_rows is not None):
+            raise ValueError("n_rows must be provided")
         np.random.seed(42)
 
         # Generate test data
@@ -128,7 +129,8 @@ class PerformanceBenchmark:
                 elapsed = time.perf_counter() - start
 
                 # Validate the load was successful
-                assert df is not None and len(df) == n_rows, f"Load failed for {label}"
+                if not (df is not None and len(df) == n_rows):
+                    raise ValueError(f"Load failed for {label}")
 
                 throughput = n_rows / elapsed
                 results[f"load_{label}"] = {
@@ -149,7 +151,7 @@ class PerformanceBenchmark:
 
             # Validate all files loaded successfully
             assert len(dataframes) == len(
-                files,
+                files
             ), f"Expected {len(files)} dataframes, got {len(dataframes)}"
 
             results["load_multiple_5_files"] = {
@@ -261,7 +263,8 @@ class PerformanceBenchmark:
         elapsed = time.perf_counter() - start
 
         # Validate integration output
-        assert int_df is not None and len(int_df) == n_rows, "Integration failed"
+        if not (int_df is not None and len(int_df) == n_rows):
+            raise ValueError("Integration failed")
 
         results["integration"] = {
             "time": elapsed,
@@ -280,7 +283,8 @@ class PerformanceBenchmark:
         elapsed = time.perf_counter() - start
 
         # Validate differentiation output
-        assert diff_df is not None and len(diff_df) == n_rows, "Differentiation failed"
+        if not (diff_df is not None and len(diff_df) == n_rows):
+            raise ValueError("Differentiation failed")
 
         results["differentiation"] = {
             "time": elapsed,

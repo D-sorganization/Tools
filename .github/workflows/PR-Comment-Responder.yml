@@ -21,12 +21,51 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # ── Dispatcher: route to self-hosted if available ──────────────────────────
+  pick-runner:
+    runs-on: self-hosted
+    timeout-minutes: 2
+    outputs:
+      runner: ${{ steps.check.outputs.runner }}
+    steps:
+      - name: Check for self-hosted runner
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
+          LOCAL_MODE: ${{ vars.LOCAL_RUNNER_MODE }}
+        run: |
+          MODE="${LOCAL_MODE:-local}"
+          echo "Fleet mode: $MODE"
+
+          case "$MODE" in
+            local)
+              echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
+              echo "Routing to self-hosted fleet (mode=local)"
+              ;;
+            disabled)
+              echo "::error::No local self-hosted runner available; failing closed"
+              exit 1
+              ;;
+            *)
+              AVAILABLE=$(gh api /orgs/${{ github.repository_owner }}/actions/runners \
+                --jq '[.runners[] | select(.status == "online") | select(.busy == false) | select(.labels[].name == "d-sorg-fleet")] | length' \
+                2>/dev/null || echo "0")
+              if [[ "$AVAILABLE" -gt 0 ]]; then
+                echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
+                echo "$AVAILABLE idle fleet runner(s) - routing locally"
+              else
+                echo "::error::No local self-hosted runner available; failing closed"
+                exit 1
+              fi
+              ;;
+          esac
   collect-comment:
+    needs: pick-runner
     # Only run on PR comments (not issue comments)
     if: |
       (github.event_name == 'pull_request_review_comment') ||
       (github.event_name == 'issue_comment' && github.event.issue.pull_request != null)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Filter Bot Comments
         id: filter
@@ -50,7 +89,7 @@ jobs:
         id: pr_state
         if: steps.filter.outputs.is_bot != 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           if [ "${{ github.event_name }}" = "pull_request_review_comment" ]; then
             PR_NUMBER="${{ github.event.pull_request.number }}"
@@ -210,7 +249,10 @@ jobs:
           This comment will be processed by Jules-Comment-Processor on the next scheduled run."
 
             git pull --rebase origin main || git pull origin main
-            git push origin main
+            git push origin main || {
+              echo "::warning::Could not push queued comment to protected main; leaving comment unqueued."
+              exit 0
+            }
             echo "::notice::Comment queued for batch processing"
           else
             echo "No changes to commit"

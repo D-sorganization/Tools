@@ -35,7 +35,8 @@ def add_instrument(
         - Tag text is centred inside the bubble.
         - If *label_placer* is provided, the bubble rect is reserved.
     """
-    assert instrument is not None, "instrument must be provided"
+    if not (instrument is not None):
+        raise ValueError("instrument must be provided")
     layer = instrument.get("layer", default_layer)
     x = to_float(instrument.get("x", 0.0))
     y = to_float(instrument.get("y", 0.0))

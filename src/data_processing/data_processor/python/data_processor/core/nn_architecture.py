@@ -155,7 +155,8 @@ class NetworkConfig:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> NetworkConfig:
         """Create from dictionary."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         layers = [
             LayerConfig(
                 layer_type=layer_data["layer_type"],

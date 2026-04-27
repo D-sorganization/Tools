@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """
 Mesh-based inertia calculation for humanoid character builder.
 
@@ -90,13 +92,18 @@ class InertiaResult:
         )
 
     def as_urdf_dict(self) -> dict[str, float]:
-        """Return inertia values for URDF format."""
+        """Return inertia values for URDF format.
+
+        URDF uses the convention where products of inertia are negated
+        compared to the standard mathematical inertia tensor.
+        See: https://wiki.ros.org/urdf/XML/link
+        """
         return {
             "ixx": self.ixx,
-            "ixy": self.ixy,
-            "ixz": self.ixz,
+            "ixy": -self.ixy,  # URDF negates products of inertia
+            "ixz": -self.ixz,
             "iyy": self.iyy,
-            "iyz": self.iyz,
+            "iyz": -self.iyz,
             "izz": self.izz,
         }
 
@@ -141,7 +148,8 @@ class InertiaResult:
     def create_default(cls, mass: float = 1.0) -> InertiaResult:
         """Create default inertia (small sphere approximation)."""
         # Default to 0.1 kg*m^2 (reasonable for small-medium rigid body)
-        assert mass is not None, "mass must be provided"
+        if not (mass is not None):
+            raise ValueError("mass must be provided")
         i_default = 0.1 * mass
         return cls(
             ixx=i_default,
@@ -174,7 +182,8 @@ class MeshInertiaCalculator:
         Args:
             default_density: Default density in kg/m^3 for uniform density mode
         """
-        assert default_density is not None, "default_density must be provided"
+        if not (default_density is not None):
+            raise ValueError("default_density must be provided")
         self.default_density = default_density
         self._trimesh_available = self._check_trimesh()
 
@@ -284,7 +293,8 @@ class MeshInertiaCalculator:
         self, mesh: Any, repair_mesh: bool
     ) -> tuple[Any, bool]:
         """Validate mesh watertightness and optionally repair."""
-        assert repair_mesh is not None, "repair_mesh must be provided"
+        if not (repair_mesh is not None):
+            raise ValueError("repair_mesh must be provided")
         was_watertight = mesh.is_watertight
 
         if not was_watertight and repair_mesh:
@@ -332,7 +342,8 @@ class MeshInertiaCalculator:
         was_watertight: bool,
     ) -> InertiaResult:
         """Create InertiaResult from mesh properties."""
-        assert mesh_props is not None, "mesh_props must be provided"
+        if not (mesh_props is not None):
+            raise ValueError("mesh_props must be provided")
         volume = mesh_props["volume"]
         center_mass = mesh_props["center_mass"]
         inertia_unit = mesh_props["inertia_unit"]
@@ -473,7 +484,8 @@ class MeshInertiaCalculator:
         Returns:
             New InertiaResult in transformed frame
         """
-        assert inertia is not None, "inertia must be provided"
+        if not (inertia is not None):
+            raise ValueError("inertia must be provided")
         I_original = inertia.as_matrix()
         mass = inertia.mass
         com = np.array(inertia.center_of_mass)
@@ -490,7 +502,8 @@ class MeshInertiaCalculator:
         rotation: NDArray[np.float64] | None,
     ) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
         """Apply rotation transformation to inertia matrix and COM."""
-        assert inertia_matrix is not None, "inertia_matrix must be provided"
+        if not (inertia_matrix is not None):
+            raise ValueError("inertia_matrix must be provided")
         if rotation is not None:
             R = np.asarray(rotation)
             return R @ inertia_matrix @ R.T, R @ com
@@ -504,7 +517,8 @@ class MeshInertiaCalculator:
         translation: NDArray[np.float64] | None,
     ) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
         """Apply parallel axis theorem for translation."""
-        assert inertia_matrix is not None, "inertia_matrix must be provided"
+        if not (inertia_matrix is not None):
+            raise ValueError("inertia_matrix must be provided")
         if translation is not None:
             d = np.asarray(translation)
             new_com = com - d

@@ -73,7 +73,7 @@ The pendulum simulator is a technically ambitious project with solid physics fou
 3. `physics_native.py` uses `Dict, Tuple` from typing (pre-3.9 style)
 
 **MINOR findings:**
-4. Two TODO comments (#1042) for unfinished theme manager integration
+4. Two TRACKED_TASK comments (#1042) for unfinished theme manager integration
 5. Inconsistent None return value handling in `native_backend.py`
 
 ### C — Documentation & Comments (7.5/10)
@@ -427,7 +427,7 @@ None.
 - Category: J
 - Effort: Large (2-3 days)
 
-**#m6 — Complete theme manager integration (#1042 TODO)**
+**#m6 — Complete theme manager integration (#1042 TRACKED_TASK)**
 - Category: D
 - Effort: Small (0.5 day)
 

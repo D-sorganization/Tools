@@ -1,25 +1,21 @@
 """Rotation Converter calculator router.
 
 .. note::
-   This router uses the deprecated ``rotation_converter`` Python package.
-   When ``math-primitives`` Rust bindings gain euler-convention and
-   rodrigues support, this router should migrate to
-   ``tools_core.math_primitives``.  See issue #1255.
+   This router uses shared ``rotation_transforms`` primitives. When
+   ``math-primitives`` Rust bindings gain euler-convention and rodrigues
+   support, this router can migrate to ``tools_core.math_primitives``.
+   See issue #1255.
 """
 
 from __future__ import annotations
 
-import warnings
-
 import numpy as np
 from fastapi import APIRouter, HTTPException
+from rotation_transforms.reference_frame_operations import (
+    compute_reference_frame_operation,
+)
+from rotation_transforms.rotation import Rotation
 
-# Suppress DeprecationWarning from rotation_converter import (we know it's deprecated)
-with warnings.catch_warnings():
-    warnings.simplefilter("ignore", DeprecationWarning)
-    from rotation_converter.reference_frame_operations import (
-        compute_reference_frame_operation,
-    )
 from ..contracts.rotation_converter import (
     ReferenceFrameConversionRequest,
     ReferenceFrameConversionResponse,
@@ -34,16 +30,6 @@ router = APIRouter(prefix="/api/calc/rotation-converter", tags=["rotation-conver
 @router.post("", response_model=RotationConverterResponse)
 def compute_rotation(request: RotationConverterRequest) -> RotationConverterResponse:
     """Convert between different 3D rotation representations."""
-    try:
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", DeprecationWarning)
-            from rotation_converter.converter import Rotation
-    except ImportError as e:
-        raise HTTPException(
-            status_code=503,
-            detail="Rotation Converter package is not available in the environment.",
-        ) from e
-
     rot = None
     try:
         if request.type == "quaternion":
@@ -79,7 +65,7 @@ def compute_rotation(request: RotationConverterRequest) -> RotationConverterResp
             rot = Rotation.from_rotation_matrix(request.value)
         else:
             raise ValueError(f"Unknown representation type: {request.type}")
-    except Exception as exc:
+    except (ValueError, TypeError, IndexError) as exc:
         raise HTTPException(
             status_code=422, detail=f"Invalid rotation input: {exc}"
         ) from exc
@@ -92,7 +78,8 @@ def compute_rotation(request: RotationConverterRequest) -> RotationConverterResp
         try:
             eul = list(rot.as_euler(request.euler_convention))
             conv = request.euler_convention
-        except Exception:
+        except (ValueError, KeyError):
+            # Unknown Euler convention from the request; fall back to xyz.
             eul = list(rot.as_euler("xyz"))
             conv = "xyz"
 
@@ -114,7 +101,7 @@ def compute_rotation(request: RotationConverterRequest) -> RotationConverterResp
 
         return RotationConverterResponse(representations=rep_model)
 
-    except Exception as exc:
+    except (ValueError, TypeError, KeyError) as exc:
         raise HTTPException(
             status_code=500, detail=f"Failed building outputs: {exc}"
         ) from exc
@@ -137,7 +124,7 @@ def compute_reference_frame_conversion(
         )
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
-    except Exception as error:
+    except (TypeError, KeyError) as error:
         raise HTTPException(
             status_code=500,
             detail="Failed to compute reference-frame conversion.",

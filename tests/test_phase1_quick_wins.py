@@ -46,6 +46,31 @@ class TestLegacyDirCleanup:
         assert "/web_applications/calculator/" in gitignore
 
 
+class TestTopLevelArtifactCleanup:
+    """Verify stale root-level artifacts are removed and ignored."""
+
+    def test_gitignore_blocks_root_artifacts(self):
+        gitignore = (REPO_ROOT / ".gitignore").read_text()
+        for entry in (
+            "/.ci_trigger.py",
+            "/MUJOCO_LOG.TXT",
+            "/error_log.txt",
+            "/wave_log.txt",
+            "/*Last",
+        ):
+            assert entry in gitignore
+
+    def test_root_artifacts_are_not_present(self):
+        for relative_path in (
+            ".ci_trigger.py",
+            "MUJOCO_LOG.TXT",
+            "error_log.txt",
+            "wave_log.txt",
+            "Last",
+        ):
+            assert not (REPO_ROOT / relative_path).exists(), relative_path
+
+
 # =========================================================================
 # #627 - NotImplementedError stubs
 # =========================================================================
@@ -114,6 +139,7 @@ class TestDataIO:
     def test_read_data_prefers_parquet_sibling(self, tmp_path):
         """read_data should prefer .parquet sibling when prefer_parquet=True."""
         pytest.importorskip("pyarrow", reason="pyarrow not installed")
+        pytest.importorskip("pandas")
         import pandas as pd
 
         csv_path = tmp_path / "data.csv"
@@ -162,8 +188,9 @@ class TestDataIO:
         bad_file = tmp_path / "data.xyz"
         bad_file.write_text("some data")
 
-        from contracts import PreconditionError
         from upstream_drift_tools.data_io import read_data
+
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError, match="Unsupported file extension"):
             read_data(bad_file)

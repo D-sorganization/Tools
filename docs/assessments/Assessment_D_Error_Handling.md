@@ -1,11 +1,11 @@
 # Assessment: Error Handling (Category D)
 
-## Grade: 5.3/10
+## Grade: 5/10
 
 ## Justification
-Try/Except blocks: 1402 (Ratio: 0.11)
+Try/Except blocks: 1247 (Ratio: 0.08)
 
 ## Statistics
-- Total Python Files: 1366
-- Total Lines of Code: 2043689
-- Analysis Date: 2026-03-12
+- Total Python Files: 1412
+- Total Lines of Code: 1969361
+- Analysis Date: 2026-04-02

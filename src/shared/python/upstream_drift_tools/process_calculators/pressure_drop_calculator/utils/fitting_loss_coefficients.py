@@ -26,7 +26,7 @@ References:
     - Miller, D.S. (1990): Internal Flow Systems, 2nd Edition
 """
 
-import logging
+import logging  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -170,7 +170,7 @@ def get_fitting_k_factor(fitting_type: str) -> float:
 
     Example:
         >>> k = get_fitting_k_factor('90_elbow_std')
-        >>> print(k)
+        >>> logger.debug(k)
         30
     """
     if fitting_type not in FITTING_K_FACTORS:
@@ -198,7 +198,7 @@ def get_multiple_fittings_k(fittings: dict[str, int]) -> float:
         ...     'tee_through_run': 1
         ... }
         >>> total_k = get_multiple_fittings_k(fittings)
-        >>> print(total_k)  # 4*30 + 2*8 + 1*20 = 156
+        >>> logger.debug(total_k)  # 4*30 + 2*8 + 1*20 = 156
         156
     """
     total_k = 0.0
@@ -230,7 +230,7 @@ def k_to_equivalent_length(k_factor: float, friction_factor: float) -> float:
     Example:
         >>> # 90° elbow with K = 30, assuming f = 0.02
         >>> L_over_D = k_to_equivalent_length(30, 0.02)
-        >>> print(f"Equivalent to {L_over_D:.0f} diameters of straight pipe")
+        >>> logger.debug(f"Equivalent to {L_over_D:.0f} diameters of straight pipe")
         Equivalent to 1500 diameters of straight pipe
     """
     if friction_factor <= 0:
@@ -252,7 +252,7 @@ def equivalent_length_to_k(L_over_D: float, friction_factor: float) -> float:
     Example:
         >>> # 30 diameters equivalent length with f = 0.02
         >>> k = equivalent_length_to_k(30, 0.02)
-        >>> print(f"K-factor = {k:.1f}")
+        >>> logger.debug(f"K-factor = {k:.1f}")
         K-factor = 0.6
     """
     if friction_factor <= 0:
@@ -342,7 +342,7 @@ def calculate_two_k_factor(
 
     Example:
         >>> k = calculate_two_k_factor('90_elbow_std_2k', 50000, 4.0)
-        >>> print(f"K = {k:.2f}")
+        >>> logger.debug(f"K = {k:.2f}")
     """
     if fitting_type not in TWO_K_COEFFICIENTS:
         raise ValueError(f"Fitting '{fitting_type}' not in Two-K database")
@@ -417,12 +417,15 @@ def print_fitting_database() -> None:
                 logger.info(f"  {name:50s} K = {k_factor:6.0f}")
 
 
-def calculate_fitting_pressure_drop(
-    k_factor: float, density: float, velocity: float
-) -> float:
-    """Calculate pressure drop across a fitting.
+def apply_k_factor(k_factor: float, density: float, velocity: float) -> float:
+    """Apply a single K-factor to compute fitting pressure drop.
 
     ΔP = K × (ρV²/2)
+
+    This is the primitive operation for one K-factor.  For a full list of
+    ``PipeFitting`` objects use
+    ``pressure_drop_calculator.engine.fittings.calculate_fitting_pressure_drop``
+    instead.
 
     Args:
         k_factor: Resistance coefficient
@@ -435,12 +438,17 @@ def calculate_fitting_pressure_drop(
     Example:
         >>> # 90° elbow, water at 5 m/s
         >>> k = get_fitting_k_factor('90_elbow_std')
-        >>> dp = calculate_fitting_pressure_drop(k, 1000, 5)
-        >>> print(f"ΔP = {dp:.0f} Pa = {dp/1e5:.3f} bar")
+        >>> dp = apply_k_factor(k, 1000, 5)
+        >>> logger.debug(f"DP = {dp:.0f} Pa = {dp/1e5:.3f} bar")
     """
-    assert k_factor is not None, "k_factor must be provided"
+    if not (k_factor is not None):
+        raise ValueError("k_factor must be provided")
     velocity_pressure = 0.5 * density * velocity**2
     return k_factor * velocity_pressure
+
+
+# Backward-compatible alias — prefer apply_k_factor for new code
+calculate_fitting_pressure_drop = apply_k_factor
 
 
 if __name__ == "__main__":
@@ -459,7 +467,7 @@ if __name__ == "__main__":
     k = get_fitting_k_factor("90_elbow_std")
     rho = 1.2  # kg/m³ (air)
     v = 15  # m/s
-    dp = calculate_fitting_pressure_drop(k, rho, v)
+    dp = apply_k_factor(k, rho, v)
     logger.info("  Fitting: 90° standard elbow")
     logger.info(f"  K-factor: {k}")
     logger.info(f"  Density: {rho} kg/m³")

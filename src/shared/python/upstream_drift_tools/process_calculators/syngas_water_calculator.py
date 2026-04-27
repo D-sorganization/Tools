@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """
 Syngas Water Calculator
 =======================
@@ -6,18 +8,20 @@ Core logic for calculating water content in saturated syngas.
 Provides calculation methods without GUI dependencies.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-import math
-from dataclasses import dataclass, field
-from datetime import datetime
-from typing import Any
+import logging  # noqa: E402
+import math  # noqa: E402
+from dataclasses import dataclass, field  # noqa: E402
+from datetime import datetime  # noqa: E402
+from typing import Any  # noqa: E402
 
-import numpy as np
-import pandas as pd
+import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
 
-from .constants import (
+from shared.python.contracts import require, require_positive  # noqa: E402
+
+from .constants import (  # noqa: E402
     ANTOINE_WATER_A,
     ANTOINE_WATER_B,
     ANTOINE_WATER_C,
@@ -285,7 +289,8 @@ class SyngasWaterCalculator:
         Returns:
             Tuple of (vapor_pressure_pa, method_used)
         """
-        assert temperature_c is not None, "temperature_c must be provided"
+        if not (temperature_c is not None):
+            raise ValueError("temperature_c must be provided")
         if method == "antoine":
             return self._antoine_equation(temperature_c), "Antoine Equation"
         if method == "buck":
@@ -305,7 +310,8 @@ class SyngasWaterCalculator:
 
     def _antoine_equation(self, temperature_c: float) -> float:
         """Antoine equation for vapor pressure"""
-        assert temperature_c is not None, "temperature_c must be provided"
+        if not (temperature_c is not None):
+            raise ValueError("temperature_c must be provided")
         A, B, C = (
             self.antoine_constants["A"],
             self.antoine_constants["B"],
@@ -318,7 +324,8 @@ class SyngasWaterCalculator:
 
     def _buck_equation(self, temperature_c: float) -> float:
         """Buck equation for improved accuracy at moderate temperatures"""
-        assert temperature_c is not None, "temperature_c must be provided"
+        if not (temperature_c is not None):
+            raise ValueError("temperature_c must be provided")
         if temperature_c >= 0:
             # Above freezing
             a, b, c, d = (
@@ -419,7 +426,8 @@ class SyngasWaterCalculator:
         Returns:
             Vapor pressure in Pa
         """
-        assert temperature_k is not None, "temperature_k must be provided"
+        if not (temperature_k is not None):
+            raise ValueError("temperature_k must be provided")
         if not hasattr(self, "vapor_pressure_table"):
             self._init_vapor_pressure_table()
         return float(self.vapor_pressure_table(temperature_k))
@@ -438,7 +446,8 @@ class SyngasWaterCalculator:
             Dew point temperature in Celsius
         """
         # Use Buck equation inverse
-        assert partial_pressure_pa is not None, "partial_pressure_pa must be provided"
+        require_positive(partial_pressure_pa, "partial_pressure_pa")
+        require_positive(total_pressure_pa, "total_pressure_pa")
         p_kpa = partial_pressure_pa / 1000
 
         # Newton-Raphson iteration for dew point
@@ -484,8 +493,14 @@ class SyngasWaterCalculator:
         Returns:
             WaterContentResult with all calculated values
         """
+        # DbC preconditions
+        require_positive(pressure_bar, "pressure_bar")
+        require(
+            temperature_c + CELSIUS_TO_KELVIN_OFFSET > 0,
+            "temperature must yield a positive Kelvin value",
+            temperature_c,
+        )
         # Get composition
-        assert temperature_c is not None, "temperature_c must be provided"
         if isinstance(gas_composition, str):
             comp = SYNGAS_PRESETS.get(gas_composition, SYNGAS_PRESETS["typical_syngas"])
             comp_name = gas_composition
@@ -567,7 +582,8 @@ class SyngasWaterCalculator:
     ) -> dict[str, float]:
         """Convert water mole fraction to various engineering unit systems."""
         # Water content at actual conditions (g/m³)
-        assert y_water is not None, "y_water must be provided"
+        if not (y_water is not None):
+            raise ValueError("y_water must be provided")
         water_content_g_m3 = (
             vapor_pressure_pa * self.mw_water / (R_GAS_DENSITY * temperature_k)
         )
@@ -596,7 +612,8 @@ class SyngasWaterCalculator:
 
     def _calculate_mixture_mw(self, composition: SyngasComposition) -> float:
         """Calculate molecular weight of dry gas mixture"""
-        assert composition is not None, "composition must be provided"
+        if not (composition is not None):
+            raise ValueError("composition must be provided")
         mw_components = {
             "h2": 2.016,
             "co": 28.01,
@@ -634,7 +651,8 @@ class SyngasWaterCalculator:
         Returns:
             DataFrame with temperature and water content data
         """
-        assert pressure_bar is not None, "pressure_bar must be provided"
+        if not (pressure_bar is not None):
+            raise ValueError("pressure_bar must be provided")
         temperatures = np.linspace(temp_range[0], temp_range[1], num_points)
         results = []
 
@@ -665,7 +683,8 @@ def quick_water_content(temperature_c: float, pressure_bar: float) -> dict[str, 
     Returns:
         Dictionary with key results
     """
-    assert temperature_c is not None, "temperature_c must be provided"
+    if not (temperature_c is not None):
+        raise ValueError("temperature_c must be provided")
     calc = SyngasWaterCalculator()
     result = calc.calculate_water_content(temperature_c, pressure_bar)
 
@@ -691,7 +710,8 @@ def estimate_condensation_risk(
     Returns:
         Dictionary with risk assessment
     """
-    assert temperature_c is not None, "temperature_c must be provided"
+    if not (temperature_c is not None):
+        raise ValueError("temperature_c must be provided")
     calc = SyngasWaterCalculator()
     result = calc.calculate_water_content(temperature_c, pressure_bar)
 

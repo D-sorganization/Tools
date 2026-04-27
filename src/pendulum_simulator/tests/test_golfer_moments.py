@@ -79,7 +79,7 @@ class TestGolferPendulumMoments:
 
     def test_too_few_torques_raises(self, sample_positions, sample_forces):
         """Must have at least 7 applied torques."""
-        with pytest.raises(AssertionError, match="Need >= 7"):
+        with pytest.raises((ValueError, TypeError), match="Need >= 7"):
             golfer_pendulum_moments(sample_positions, sample_forces, (1.0, 2.0), None)
 
     def test_zero_torques_yield_nonzero_moments(self, sample_positions, sample_forces):

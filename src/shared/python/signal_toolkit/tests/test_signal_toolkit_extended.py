@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """Extended tests for signal toolkit - coverage gaps identified in assessment.
 
 Tests for:
@@ -20,6 +22,7 @@ from pathlib import Path
 
 import numpy as np
 import pytest
+from signal_toolkit.adaptive_filter import AdaptiveFilter as ExtractedAdaptiveFilter
 from signal_toolkit.calculus import (
     compute_arc_length,
     compute_curvature,
@@ -335,6 +338,10 @@ class TestFilterDbC:
 
 class TestAdaptiveFilter:
     """Tests for LMS and RLS adaptive filters."""
+
+    def test_extracted_module_matches_public_api(self) -> None:
+        """Test that the extracted module preserves the public class identity."""
+        assert ExtractedAdaptiveFilter is AdaptiveFilter
 
     def test_lms_filter_output_length(self) -> None:
         """Test that LMS filter output has correct length."""

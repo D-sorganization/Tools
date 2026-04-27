@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 # mypy: ignore-errors
 """GUI Application using refactored core modules.
 
@@ -87,7 +89,8 @@ class DataProcessorGUI(ctk.CTk):  # type: ignore[attr-defined]
 
     def _set_cursor_recursive(self, widget: Any, cursor: str) -> None:
         """Set cursor recursively for widget and all children."""
-        assert cursor is not None, "cursor must be provided"
+        if not (cursor is not None):
+            raise ValueError("cursor must be provided")
         try:
             widget.configure(cursor=cursor)
         except (TclError, AttributeError):
@@ -779,7 +782,8 @@ class DataProcessorGUI(ctk.CTk):  # type: ignore[attr-defined]
 
     def update_status(self, message: str) -> None:
         """Update status bar."""
-        assert message is not None, "message must be provided"
+        if not (message is not None):
+            raise ValueError("message must be provided")
         self.status_label.configure(text=message)
         logger.debug(f"Status: {message}")
 

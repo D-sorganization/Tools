@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """
 Docked Analysis tab for the Pendulum Simulator.
 
@@ -21,6 +23,8 @@ DRY
 """
 
 from __future__ import annotations
+
+from numba import jit
 
 import logging
 from typing import TYPE_CHECKING, Any
@@ -220,7 +224,8 @@ class AnalysisTab:
 
         Pre: result has .t, .states, and data_extractor-compatible API.
         """
-        assert model_type is not None, "model_type must be provided"
+        if not (model_type is not None):
+            raise ValueError("model_type must be provided")
         self._result = result
         old_model = self._model_type
         self._model_type = model_type
@@ -321,7 +326,8 @@ class AnalysisTab:
         title: str,
     ) -> None:
         """Render a 2D line plot on the embedded canvas."""
-        assert len(x) == len(y), "x and y must have same length"
+        if not (len(x) == len(y)):
+            raise ValueError("x and y must have same length")
 
         ax = self._ax_2d
         ax.clear()
@@ -405,11 +411,14 @@ class AnalysisTab:
         zlabel: str,
     ) -> None:
         """Compute a parameter sweep and render the 3D surface."""
-        assert x_key is not None, "x_key must be provided"
+        if not (x_key is not None):
+            raise ValueError("x_key must be provided")
         x_vals = np.linspace(x_range[0], x_range[1], n_pts)
         y_vals = np.linspace(y_range[0], y_range[1], n_pts)
+        X: np.ndarray
+        Y: np.ndarray
         X, Y = np.meshgrid(x_vals, y_vals)
-        Z = np.zeros_like(X)
+        Z: np.ndarray = np.zeros_like(X)
 
         # Compute Z values via the appropriate physics function
         evaluator = self._get_surface_evaluator(z_key)
@@ -438,7 +447,8 @@ class AnalysisTab:
         Pre:  z_key is a valid surface output key.
         Post: Returns a callable or None.
         """
-        assert z_key is not None, "z_key must be provided"
+        if not (z_key is not None):
+            raise ValueError("z_key must be provided")
         if self._model_type == "double":
             return self._evaluator_double(z_key)
         if self._model_type == "triple":
@@ -455,7 +465,8 @@ class AnalysisTab:
 
     def _evaluator_double(self, z_key: str) -> Any:
         """Return surface evaluator for the double pendulum model."""
-        assert z_key is not None, "z_key must be provided"
+        if not (z_key is not None):
+            raise ValueError("z_key must be provided")
         from ..physics import (
             PendulumParams,
             forward_kinematics,
@@ -473,6 +484,7 @@ class AnalysisTab:
         )
 
         if z_key == "mass_matrix_det":
+<<<<<<< HEAD
             return _make_det_evaluator(
                 lambda angles: mass_matrix(angles.get("phi", 0.0), params)
             )
@@ -487,6 +499,24 @@ class AnalysisTab:
                 return potential_energy(state, params)
 
             return _eval
+=======
+            return self._matrix_metric_evaluator(
+                lambda angles: mass_matrix(angles.get("phi", 0.0), params),
+                np.linalg.det,
+            )
+        if z_key == "mass_matrix_cond":
+            return self._matrix_metric_evaluator(
+                lambda angles: mass_matrix(angles.get("phi", 0.0), params),
+                np.linalg.cond,
+            )
+        if z_key == "potential_energy":
+            return self._transformed_scalar_evaluator(
+                lambda angles: np.array(
+                    [angles.get("theta1", 0.0), angles.get("phi", 0.0), 0.0, 0.0]
+                ),
+                lambda state: potential_energy(state, params),
+            )
+>>>>>>> origin/main
         if z_key == "manipulability":
             return self._numerical_manipulability(
                 lambda a: forward_kinematics(a["theta1"], a["phi"], params),
@@ -499,7 +529,8 @@ class AnalysisTab:
 
     def _evaluator_triple(self, z_key: str) -> Any:
         """Return surface evaluator for the triple pendulum model."""
-        assert z_key is not None, "z_key must be provided"
+        if not (z_key is not None):
+            raise ValueError("z_key must be provided")
         from ..physics_triple import (
             TriplePendulumParams,
             forward_kinematics as triple_fk,
@@ -519,6 +550,7 @@ class AnalysisTab:
         )
 
         if z_key == "mass_matrix_det":
+<<<<<<< HEAD
             return _make_det_evaluator(
                 lambda angles: triple_mm(
                     angles.get("phi1", 0.0), angles.get("phi2", 0.0), params
@@ -529,11 +561,24 @@ class AnalysisTab:
                 lambda angles: triple_mm(
                     angles.get("phi1", 0.0), angles.get("phi2", 0.0), params
                 )
+=======
+            return self._matrix_metric_evaluator(
+                lambda angles: triple_mm(
+                    angles.get("phi1", 0.0), angles.get("phi2", 0.0), params
+                ),
+                np.linalg.det,
+            )
+        if z_key == "mass_matrix_cond":
+            return self._matrix_metric_evaluator(
+                lambda angles: triple_mm(
+                    angles.get("phi1", 0.0), angles.get("phi2", 0.0), params
+                ),
+                np.linalg.cond,
+>>>>>>> origin/main
             )
         if z_key == "potential_energy":
-
-            def _eval(angles: dict) -> float:
-                state = np.array(
+            return self._transformed_scalar_evaluator(
+                lambda angles: np.array(
                     [
                         angles.get("theta1", 0.0),
                         angles.get("phi1", 0.0),
@@ -542,10 +587,9 @@ class AnalysisTab:
                         0.0,
                         0.0,
                     ]
-                )
-                return triple_pe(state, params)
-
-            return _eval
+                ),
+                lambda state: triple_pe(state, params),
+            )
         if z_key == "manipulability":
             return self._numerical_manipulability(
                 lambda a: triple_fk(
@@ -560,7 +604,8 @@ class AnalysisTab:
 
     def _evaluator_golfer(self, z_key: str) -> Any:
         """Return surface evaluator for the golfer upper-body model."""
-        assert z_key is not None, "z_key must be provided"
+        if not (z_key is not None):
+            raise ValueError("z_key must be provided")
         from ..physics_golfer import GolferParams, mass_matrix as golfer_mm
         from ..golfer_dynamics import potential_energy_from_q
 
@@ -586,20 +631,29 @@ class AnalysisTab:
         )
 
         if z_key == "mass_matrix_det":
+<<<<<<< HEAD
             return _make_det_evaluator(
                 lambda angles: golfer_mm(self._golfer_q_from_angles(angles), params)
             )
         if z_key == "mass_matrix_cond":
             return _make_cond_evaluator(
                 lambda angles: golfer_mm(self._golfer_q_from_angles(angles), params)
+=======
+            return self._q_scalar_evaluator(
+                self._golfer_q_from_angles,
+                lambda q: np.linalg.det(golfer_mm(q, params)),
+            )
+        if z_key == "mass_matrix_cond":
+            return self._q_scalar_evaluator(
+                self._golfer_q_from_angles,
+                lambda q: np.linalg.cond(golfer_mm(q, params)),
+>>>>>>> origin/main
             )
         if z_key == "potential_energy":
-
-            def _eval(angles: dict) -> float:
-                q = self._golfer_q_from_angles(angles)
-                return potential_energy_from_q(q, params)
-
-            return _eval
+            return self._q_scalar_evaluator(
+                self._golfer_q_from_angles,
+                lambda q: potential_energy_from_q(q, params),
+            )
         if z_key == "manipulability":
             try:
                 from ..golfer_dynamics import analytical_fk_jacobians
@@ -628,6 +682,33 @@ class AnalysisTab:
         return default_factory()
 
     @staticmethod
+    def _matrix_metric_evaluator(matrix_builder: Any, metric: Any) -> Any:
+        """Return an evaluator that applies a scalar metric to a matrix."""
+
+        def _eval(angles: dict) -> float:
+            return float(metric(matrix_builder(angles)))
+
+        return _eval
+
+    @staticmethod
+    def _transformed_scalar_evaluator(value_builder: Any, scalar_fn: Any) -> Any:
+        """Return an evaluator that transforms angles before a scalar call."""
+
+        def _eval(angles: dict) -> float:
+            return float(scalar_fn(value_builder(angles)))
+
+        return _eval
+
+    @staticmethod
+    def _q_scalar_evaluator(q_builder: Any, scalar_fn: Any) -> Any:
+        """Return an evaluator that computes a q vector before a scalar call."""
+
+        def _eval(angles: dict) -> float:
+            return float(scalar_fn(q_builder(angles)))
+
+        return _eval
+
+    @staticmethod
     def _golfer_q_from_angles(angles: dict) -> np.ndarray:
         """Build an 8-DOF generalized coordinate vector from sweep angles.
 
@@ -647,7 +728,7 @@ class AnalysisTab:
                 q[idx] = val
         return q
 
-    @staticmethod  # noqa: B027
+    @staticmethod
     def _numerical_manipulability(
         fk_fn: Any,
         tip_key: str,
@@ -658,14 +739,19 @@ class AnalysisTab:
         Returns w = sqrt(det(J J^T)) where J is the 2 × n_dof Jacobian
         approximated by central differences.
         """
-        assert tip_key is not None, "tip_key must be provided"
+        if not (tip_key is not None):
+            raise ValueError("tip_key must be provided")
         eps = 1e-7
         n_dof = len(angle_keys)
 
+<<<<<<< HEAD
         # Note: this closure cannot be JIT-compiled — it captures Python
         # callables (fk_fn) and uses dict types that numba cannot infer.
         # A prior @jit(nopython=True) decorator here crashed the analysis
         # tab the moment manipulability was computed.
+=======
+        @jit(nopython=True, fastmath=True)
+>>>>>>> origin/main
         def _eval(angles: dict) -> float:
             fk0 = fk_fn(angles)
             tip0 = np.asarray(fk0[tip_key], dtype=float)
@@ -690,7 +776,8 @@ class AnalysisTab:
         zlabel: str,
     ) -> None:
         """Render a 3D surface on the embedded canvas."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         ax = self._ax_3d
         ax.clear()
 
@@ -705,7 +792,7 @@ class AnalysisTab:
         ax.zaxis.pane.fill = False
 
         # Mask NaN for cleaner rendering
-        Z_masked = np.ma.array(Z, mask=~np.isfinite(Z))
+        Z_masked: np.ma.MaskedArray[Any] = np.ma.array(Z, mask=~np.isfinite(Z))
 
         ax.plot_surface(
             X,
@@ -727,7 +814,8 @@ class AnalysisTab:
 
     def plot_2d(self, x_key: str, y_key: str) -> None:
         """Programmatic 2D plot (for external callers)."""
-        assert x_key is not None, "x_key must be provided"
+        if not (x_key is not None):
+            raise ValueError("x_key must be provided")
         if self._result is None:
             logger.warning("No result loaded")
             return

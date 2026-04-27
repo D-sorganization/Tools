@@ -65,7 +65,8 @@ def copy_required_files(source_dir: Path, package_dir: Path) -> bool:
         bool: True if all files were copied successfully.
 
     """
-    assert source_dir is not None, "source_dir must be provided"
+    if not (source_dir is not None):
+        raise ValueError("source_dir must be provided")
     for filename in REQUIRED_FILES:
         source_file = source_dir / filename
         if not source_file.exists():
@@ -91,7 +92,8 @@ def create_zip_archive(source_dir: Path, zip_path: Path) -> None:
         zip_path: Path for the zip file.
 
     """
-    assert source_dir is not None, "source_dir must be provided"
+    if not (source_dir is not None):
+        raise ValueError("source_dir must be provided")
     with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
         for file_path in source_dir.rglob("*"):
             if file_path.is_file():

@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """
 Main application window for the Double Pendulum Golf Swing Simulator.
 
@@ -66,7 +68,8 @@ def _find_sibling_package(marker_path: str) -> Path | None:
     Pre:  marker_path is a non-empty relative path string.
     Post: returns a valid directory Path or None.
     """
-    assert marker_path, "marker_path must be non-empty"
+    if not (marker_path):
+        raise ValueError("marker_path must be non-empty")
     p = Path(__file__).resolve().parent
     for _ in range(10):
         candidate = p / marker_path
@@ -173,7 +176,8 @@ class MainWindow(QMainWindow):
 
     def wheelEvent(self, event: object) -> None:
         """Ctrl+mousewheel scales all UI fonts (#1147)."""
-        assert event is not None, "event must be provided"
+        if not (event is not None):
+            raise ValueError("event must be provided")
         from PyQt6.QtGui import QWheelEvent
 
         if not isinstance(event, QWheelEvent):
@@ -264,12 +268,14 @@ class MainWindow(QMainWindow):
 
     def _build_menu(self) -> None:
         _mb = self.menuBar()
-        assert _mb is not None
+        if not (_mb is not None):
+            raise ValueError("DbC Blocked: Precondition failed.")
         menubar: QMenuBar = _mb
 
         # View menu
         _view = menubar.addMenu("&View")
-        assert _view is not None
+        if not (_view is not None):
+            raise ValueError("DbC Blocked: Precondition failed.")
         view_menu: QMenu = _view
 
         # Quick theme submenu
@@ -305,7 +311,8 @@ class MainWindow(QMainWindow):
 
         # Help menu
         _help = menubar.addMenu("&Help")
-        assert _help is not None
+        if not (_help is not None):
+            raise ValueError("DbC Blocked: Precondition failed.")
         action_about = QAction("About…", self)
         action_about.triggered.connect(self._show_about)
         _help.addAction(action_about)
@@ -364,19 +371,42 @@ class MainWindow(QMainWindow):
         self._wire_analysis_tab()
 
     def _setup_keyboard_shortcuts(self) -> None:
-        """Set up global keyboard shortcuts for simulation control."""
+        """Set up global keyboard shortcuts for simulation control.
+
+        Shortcut reference:
+            Space       Play/Pause animation
+            R           Reset simulation
+            F5          Run simulation
+            Escape      Stop animation
+            Ctrl+E      Export CSV data
+            Ctrl+Shift+E  Export image (PNG/SVG/PDF)
+            3           Toggle 3D rendering mode
+            F           Toggle force vectors
+            G           Toggle gravity
+            T           Toggle trail display
+            Ctrl+0      Reset zoom/pan
+            Ctrl+H      Show keyboard shortcut help
+        """
         from PyQt6.QtGui import QKeySequence
 
-        # Space = play/pause toggle
+        # Simulation control
         QShortcut(QKeySequence(Qt.Key.Key_Space), self, self._on_shortcut_play_pause)
-        # R = reset simulation
         QShortcut(QKeySequence(Qt.Key.Key_R), self, self._on_shortcut_reset)
-        # Ctrl+E = export CSV
         QShortcut(QKeySequence("Ctrl+E"), self, self._on_shortcut_export_data)
-        # F5 = run simulation
         QShortcut(QKeySequence(Qt.Key.Key_F5), self, self._on_shortcut_run)
-        # Escape = stop animation
         QShortcut(QKeySequence(Qt.Key.Key_Escape), self, self._on_shortcut_stop)
+
+        # Visualization toggles
+        QShortcut(QKeySequence(Qt.Key.Key_3), self, self._on_shortcut_toggle_3d)
+        QShortcut(QKeySequence(Qt.Key.Key_F), self, self._on_shortcut_toggle_forces)
+        QShortcut(QKeySequence(Qt.Key.Key_G), self, self._on_shortcut_toggle_gravity)
+        QShortcut(QKeySequence("Ctrl+0"), self, self._on_shortcut_reset_view)
+
+        # Export
+        QShortcut(QKeySequence("Ctrl+Shift+E"), self, self._on_shortcut_export_image)
+
+        # Help
+        QShortcut(QKeySequence("Ctrl+H"), self, self._on_shortcut_help)
 
     def _on_shortcut_play_pause(self) -> None:
         """Space key: toggle play/pause."""
@@ -399,6 +429,80 @@ class MainWindow(QMainWindow):
     def _on_shortcut_stop(self) -> None:
         """Escape: stop animation."""
         self._active_panel().controls.stop_playback()
+
+    def _on_shortcut_toggle_3d(self) -> None:
+        """3 key: toggle 3D rendering mode."""
+        panel = self._active_panel()
+        widget = panel.pendulum_widget
+        new_state = not widget._3d_mode
+        widget.set_3d_mode(new_state)
+        self.statusBar().showMessage(
+            f"3D mode {'enabled' if new_state else 'disabled'}", 2000
+        )
+
+    def _on_shortcut_toggle_forces(self) -> None:
+        """F key: toggle force vector display."""
+        panel = self._active_panel()
+        widget = panel.pendulum_widget
+        new_state = not widget._show_forces
+        widget.set_show_forces(new_state)
+        self.statusBar().showMessage(
+            f"Forces {'shown' if new_state else 'hidden'}", 2000
+        )
+
+    def _on_shortcut_toggle_gravity(self) -> None:
+        """G key: toggle gravity display indicator."""
+        panel = self._active_panel()
+        widget = panel.pendulum_widget
+        new_state = not widget._gravity_on
+        widget.set_gravity_on(new_state)
+        self.statusBar().showMessage(f"Gravity {'on' if new_state else 'off'}", 2000)
+
+    def _on_shortcut_reset_view(self) -> None:
+        """Ctrl+0: reset zoom and pan."""
+        panel = self._active_panel()
+        panel.pendulum_widget.reset_view()
+        self.statusBar().showMessage("View reset", 2000)
+
+    def _on_shortcut_export_image(self) -> None:
+        """Ctrl+Shift+E: export current view as image."""
+        from PyQt6.QtWidgets import QFileDialog
+
+        path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Export Image",
+            "pendulum_export.png",
+            "PNG Image (*.png);;SVG Vector (*.svg);;PDF Document (*.pdf)",
+        )
+        if path:
+            panel = self._active_panel()
+            panel.pendulum_widget.export_image(path)
+            self.statusBar().showMessage(f"Exported to {path}", 3000)
+
+    def _on_shortcut_help(self) -> None:
+        """Ctrl+H: show keyboard shortcut reference."""
+        from PyQt6.QtWidgets import QMessageBox
+
+        shortcuts = (
+            "<b>Keyboard Shortcuts</b><br><br>"
+            "<table>"
+            "<tr><td><b>Space</b></td><td>Play / Pause</td></tr>"
+            "<tr><td><b>F5</b></td><td>Run Simulation</td></tr>"
+            "<tr><td><b>R</b></td><td>Reset</td></tr>"
+            "<tr><td><b>Escape</b></td><td>Stop</td></tr>"
+            "<tr><td><b>3</b></td><td>Toggle 3D Mode</td></tr>"
+            "<tr><td><b>F</b></td><td>Toggle Forces</td></tr>"
+            "<tr><td><b>G</b></td><td>Toggle Gravity</td></tr>"
+            "<tr><td><b>Ctrl+0</b></td><td>Reset View</td></tr>"
+            "<tr><td><b>Ctrl+E</b></td><td>Export CSV</td></tr>"
+            "<tr><td><b>Ctrl+Shift+E</b></td><td>Export Image</td></tr>"
+            "<tr><td><b>Ctrl+H</b></td><td>This Help</td></tr>"
+            "</table><br>"
+            "<b>Mouse Controls</b><br>"
+            "Left drag: Pan &nbsp;|&nbsp; Right drag: Rotate 3D<br>"
+            "Scroll: Zoom &nbsp;|&nbsp; Double-click: Reset view"
+        )
+        QMessageBox.information(self, "Keyboard Shortcuts", shortcuts)
 
     def _wire_analysis_tab(self) -> None:
         """Connect each panel's sim_finished signal to push results to analysis.
@@ -461,7 +565,8 @@ class MainWindow(QMainWindow):
         receive the current overlay toggle states from the toolstrip so
         that forces, ellipsoids, COM, etc. match the checkbox display.
         """
-        assert index is not None, "index must be provided"
+        if not (index is not None):
+            raise ValueError("index must be provided")
         segment_map = {
             0: self._SEGMENTS_DOUBLE,
             1: self._SEGMENTS_TRIPLE,
@@ -602,7 +707,8 @@ class MainWindow(QMainWindow):
             self._theme_manager.themeChanged.connect(self._on_theme_changed)  # type: ignore[union-attr]
 
             # Use shared helper to build a full theme submenu (window first, then parent)
-            assert self._quick_theme_menu is not None
+            if not (self._quick_theme_menu is not None):
+                raise ValueError("DbC Blocked: Precondition failed.")
             if create_theme_menu is not None:
                 create_theme_menu(
                     self,
@@ -664,7 +770,8 @@ class MainWindow(QMainWindow):
             self.restoreGeometry(geom)
 
     def closeEvent(self, event: object) -> None:
-        assert event is not None, "event must be provided"
+        if not (event is not None):
+            raise ValueError("event must be provided")
         settings = QSettings(_SETTINGS_ORG, _SETTINGS_APP)
         settings.setValue("window_geometry", self.saveGeometry())
         self._double_panel.save_layout()

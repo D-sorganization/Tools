@@ -174,7 +174,7 @@ class TestGolferParamsValidation:
 
     def test_negative_mass_rejected(self) -> None:
         """Negative mass must raise AssertionError."""
-        with pytest.raises(AssertionError, match="must be positive"):
+        with pytest.raises((ValueError, TypeError), match="must be positive"):
             GolferParams(
                 m_hub=-1.0,
                 m_r_upper=3.5,
@@ -196,7 +196,7 @@ class TestGolferParamsValidation:
 
     def test_zero_mass_rejected(self) -> None:
         """Zero mass must raise AssertionError (solver requires positive mass)."""
-        with pytest.raises(AssertionError, match="must be positive"):
+        with pytest.raises((ValueError, TypeError), match="must be positive"):
             GolferParams(
                 m_hub=0.0,
                 m_r_upper=3.5,
@@ -218,7 +218,7 @@ class TestGolferParamsValidation:
 
     def test_grip_beyond_club_rejected(self) -> None:
         """Grip position beyond club length must raise AssertionError."""
-        with pytest.raises(AssertionError, match="grip_right must be"):
+        with pytest.raises((ValueError, TypeError), match="grip_right must be"):
             GolferParams(
                 m_hub=0.001,
                 m_r_upper=3.5,

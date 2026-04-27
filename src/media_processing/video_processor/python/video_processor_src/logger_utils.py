@@ -25,6 +25,7 @@ try:
 except ImportError:
     # Minimal fallback if shared utils not available
     import sys
+    from pathlib import Path
 
     DEFAULT_SEED = 42
     LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -32,18 +33,38 @@ except ImportError:
     LOG_LEVEL = logging.INFO
     logger = logging.getLogger(__name__)
 
+<<<<<<< HEAD
     def get_logger(name: str) -> logging.Logger:  # type: ignore[misc]
+=======
+    def get_logger(
+        name: str | None = None,
+        level: int | str = logging.INFO,
+        use_simple_format: bool = False,
+    ) -> logging.Logger:
+>>>>>>> origin/main
         """Get a logger instance."""
+        if name is None:
+            name = __name__
         return logging.getLogger(name)
 
+<<<<<<< HEAD
     def setup_logging(  # type: ignore[misc]
         level: int = LOG_LEVEL,
         format_string: str = LOG_FORMAT,
+=======
+    def setup_logging(
+        level: int | str = logging.INFO,
+        log_file: Path | str | None = None,
+        format_string: str | None = None,
+        json_logs: bool = False,
+        force: bool = False,
+>>>>>>> origin/main
     ) -> None:
         """Set up logging configuration."""
+        fmt = format_string if format_string is not None else LOG_FORMAT
         logging.basicConfig(
             level=level,
-            format=format_string,
+            format=fmt,
             handlers=[logging.StreamHandler(sys.stdout)],
         )
 
@@ -57,8 +78,12 @@ except ImportError:
         try:
             import numpy as np
 
+<<<<<<< HEAD
             np_random = np.random
             np_random.seed(seed)
+=======
+            np.random.seed(seed)  # noqa: NPY002 — legacy compat required here
+>>>>>>> origin/main
         except ImportError:
             pass
 

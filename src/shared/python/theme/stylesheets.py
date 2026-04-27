@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """Qt stylesheet generation for the fleet-wide theme system.
 
 This module generates complete QSS stylesheets for PyQt6 applications

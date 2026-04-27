@@ -1,3 +1,7 @@
+from numba import jit
+
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """Tests for advanced statistical analysis modules.
 
 Tests for:
@@ -272,6 +276,49 @@ class TestOutlierDetection:
 class TestTimeSeriesDecomposition:
     """Tests for time series decomposition module."""
 
+    def test_contracts_module_re_exports_public_types(self) -> None:
+        """Time-series contracts remain importable from a focused support module."""
+        from data_processor.core.time_series_decomposition import (
+            DecompositionConfig,
+            DecompositionMethod,
+            DecompositionResult,
+            SeasonalModel,
+            TrendModel,
+        )
+        from data_processor.core.time_series_decomposition_contracts import (
+            DecompositionConfig as ContractsDecompositionConfig,
+        )
+        from data_processor.core.time_series_decomposition_contracts import (
+            DecompositionMethod as ContractsDecompositionMethod,
+        )
+        from data_processor.core.time_series_decomposition_contracts import (
+            DecompositionResult as ContractsDecompositionResult,
+        )
+        from data_processor.core.time_series_decomposition_contracts import (
+            SeasonalModel as ContractsSeasonalModel,
+        )
+        from data_processor.core.time_series_decomposition_contracts import (
+            TrendModel as ContractsTrendModel,
+        )
+
+        assert ContractsDecompositionConfig is DecompositionConfig
+        assert ContractsDecompositionMethod is DecompositionMethod
+        assert ContractsDecompositionResult is DecompositionResult
+        assert ContractsSeasonalModel is SeasonalModel
+        assert ContractsTrendModel is TrendModel
+
+    def test_helper_module_exposes_moving_average_kernel(self) -> None:
+        """Low-level smoothing helpers remain importable outside the facade."""
+        from data_processor.core.time_series_decomposition_helpers import (
+            moving_average,
+        )
+
+        data = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
+        result = moving_average(data, 3)
+
+        assert result.shape == data.shape
+        assert np.isclose(result[2], 3.0)
+
     def test_stl_decomposition(self) -> None:
         """Test STL decomposition."""
         from data_processor.core.time_series_decomposition import (
@@ -347,6 +394,7 @@ class TestCrossCorrelation:
         # Optimal lag should be around 5
         assert abs(result.optimal_lag - 5) < 3
 
+    @jit(nopython=True, fastmath=True)
     def test_granger_causality(self) -> None:
         """Test Granger causality test."""
         from data_processor.core.cross_correlation import CrossCorrelationAnalyzer
@@ -758,6 +806,7 @@ class TestIntegration:
 
         assert result.seasonal_strength > 0.3
 
+    @jit(nopython=True, fastmath=True)
     def test_outlier_detection_then_smoothing(self) -> None:
         """Test outlier detection then Kalman smoothing."""
         from data_processor.core.kalman_filter import kalman_smooth

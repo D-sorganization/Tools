@@ -1,7 +1,6 @@
 # Standard library imports
 import logging
 import tkinter as tk
-
 from tkinter import ttk
 
 from _bootstrap import bootstrap
@@ -54,9 +53,16 @@ except ImportError:
         content: str,
         encoding: str = "utf-8",
         create_parents: bool = True,
+<<<<<<< HEAD
     ) -> bool:
         assert file_path is not None, "file_path must be provided"
         p = Path(file_path)
+=======
+    ) -> None:
+        if not (path is not None):
+            raise ValueError("path must be provided")
+        p = Path(path)
+>>>>>>> origin/main
         if create_parents:
             parent_dir = p.parent
             parent_dir.mkdir(parents=True, exist_ok=True)
@@ -112,7 +118,8 @@ class FolderProcessorApp(UICreationMixin, FileOperationsMixin, ProcessingMixin):
         Args:
             root_window: The root Tkinter window
         """
-        assert root_window is not None, "root_window must be provided"
+        if not (root_window is not None):
+            raise ValueError("root_window must be provided")
         self.root = root_window
         self.root.title("Folder Fix - Enhanced Folder Processor v2.0")
         self.root.geometry("700x900")

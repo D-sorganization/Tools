@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """Time-Series Decomposition Module.
 
 Provides comprehensive time-series decomposition capabilities including
@@ -16,144 +18,33 @@ Features:
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass, field
-from enum import Enum
 from typing import Any
 
 import numpy as np
+from numba import jit
+
+from data_processor.core.time_series_decomposition_contracts import (
+    DecompositionConfig,
+    DecompositionMethod,
+    DecompositionResult,
+    SeasonalityDetectionResult,
+    SeasonalModel,
+    TrendModel,
+)
+from data_processor.core.time_series_decomposition_helpers import (
+    autocorrelation,
+    centered_moving_average,
+    exponential_smooth,
+    extract_stl_seasonal,
+    extrapolate_exponential,
+    find_acf_peaks,
+    hp_filter,
+    lowess_smooth,
+    moving_average,
+    polynomial_trend,
+)
 
 logger = logging.getLogger(__name__)
-
-
-class DecompositionMethod(Enum):
-    """Available decomposition methods."""
-
-    STL = "stl"
-    CLASSICAL_ADDITIVE = "classical_additive"
-    CLASSICAL_MULTIPLICATIVE = "classical_multiplicative"
-    MOVING_AVERAGE = "moving_average"
-    LOWESS = "lowess"
-    HP_FILTER = "hp_filter"  # Hodrick-Prescott filter
-
-
-class SeasonalModel(Enum):
-    """Seasonal model types."""
-
-    ADDITIVE = "additive"
-    MULTIPLICATIVE = "multiplicative"
-
-
-class TrendModel(Enum):
-    """Trend estimation methods."""
-
-    MOVING_AVERAGE = "moving_average"
-    LOWESS = "lowess"
-    POLYNOMIAL = "polynomial"
-    EXPONENTIAL = "exponential"
-    HP_FILTER = "hp_filter"
-
-
-@dataclass
-class DecompositionConfig:
-    """Configuration for time-series decomposition."""
-
-    # General settings
-    method: DecompositionMethod = DecompositionMethod.STL
-    seasonal_model: SeasonalModel = SeasonalModel.ADDITIVE
-
-    # Seasonality settings
-    period: int | None = None  # Auto-detect if None
-    seasonal_deg: int = 1  # Degree of LOESS for seasonal extraction
-    seasonal_jump: int = 1  # LOESS jump for seasonal
-
-    # Trend settings
-    trend_deg: int = 1  # Degree of LOESS for trend extraction
-    trend_jump: int = 1  # LOESS jump for trend
-    low_pass_deg: int = 1  # Degree of LOESS for low-pass filter
-    low_pass_jump: int = 1  # LOESS jump for low-pass
-
-    # Robustness
-    robust: bool = False  # Use robust fitting (iterative re-weighting)
-    robust_iterations: int = 2  # Number of robustness iterations
-
-    # HP filter
-    hp_lambda: float = 1600.0  # Smoothing parameter for HP filter
-
-    # Moving average
-    ma_window: int | None = None  # Window size for moving average
-
-    # Polynomial trend
-    polynomial_degree: int = 2
-
-
-@dataclass
-class DecompositionResult:
-    """Results from time-series decomposition."""
-
-    # Original data
-    observed: np.ndarray
-
-    # Decomposed components
-    trend: np.ndarray
-    seasonal: np.ndarray
-    residual: np.ndarray
-
-    # Method information
-    method: DecompositionMethod
-    seasonal_model: SeasonalModel
-    period: int
-
-    # Quality metrics
-    trend_strength: float = 0.0
-    seasonal_strength: float = 0.0
-    residual_variance: float = 0.0
-
-    # Optional: multiple seasonalities
-    seasonal_components: dict[int, np.ndarray] = field(default_factory=dict)
-
-    # Statistics
-    residual_mean: float = 0.0
-    residual_std: float = 0.0
-    residual_autocorrelation: float = 0.0
-
-    def get_deseasonalized(self) -> np.ndarray:
-        """Get data with seasonal component removed."""
-        if self.seasonal_model == SeasonalModel.ADDITIVE:
-            return self.observed - self.seasonal
-        else:
-            return self.observed / np.where(self.seasonal != 0, self.seasonal, 1.0)
-
-    def get_detrended(self) -> np.ndarray:
-        """Get data with trend removed."""
-        if self.seasonal_model == SeasonalModel.ADDITIVE:
-            return self.observed - self.trend
-        else:
-            return self.observed / np.where(self.trend != 0, self.trend, 1.0)
-
-    def get_seasonally_adjusted(self) -> np.ndarray:
-        """Get seasonally adjusted series (trend + residual)."""
-        if self.seasonal_model == SeasonalModel.ADDITIVE:
-            return self.trend + self.residual
-        else:
-            return self.trend * self.residual
-
-    def reconstruct(self) -> np.ndarray:
-        """Reconstruct original series from components."""
-        if self.seasonal_model == SeasonalModel.ADDITIVE:
-            return self.trend + self.seasonal + self.residual
-        else:
-            return self.trend * self.seasonal * self.residual
-
-
-@dataclass
-class SeasonalityDetectionResult:
-    """Results from seasonality detection."""
-
-    detected_periods: list[int]
-    period_strengths: dict[int, float]
-    dominant_period: int | None
-    is_seasonal: bool
-    autocorrelation_peaks: list[int]
 
 
 class TimeSeriesDecomposer:
@@ -241,7 +132,8 @@ class TimeSeriesDecomposer:
         Returns:
             SeasonalityDetectionResult with detected periods
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         data = np.asarray(data, dtype=np.float64)
         n = len(data)
 
@@ -249,10 +141,10 @@ class TimeSeriesDecomposer:
             max_period = min(n // 2, 365)  # Reasonable default
 
         # Calculate autocorrelation
-        acf = self._autocorrelation(data, max_period)
+        acf = autocorrelation(data, max_period)
 
         # Find peaks in ACF
-        peaks = self._find_acf_peaks(acf)
+        peaks = find_acf_peaks(acf)
 
         # Calculate strength for each peak
         period_strengths = {}
@@ -298,28 +190,29 @@ class TimeSeriesDecomposer:
         Returns:
             Trend component array
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         data = np.asarray(data, dtype=np.float64)
 
         if method == TrendModel.MOVING_AVERAGE:
             window = kwargs.get("window", self.config.ma_window or len(data) // 10)
-            return self._moving_average(data, window)
+            return moving_average(data, window)
 
         elif method == TrendModel.LOWESS:
             frac = kwargs.get("frac", 0.3)
-            return self._lowess_smooth(data, frac)
+            return lowess_smooth(data, frac)
 
         elif method == TrendModel.POLYNOMIAL:
             degree = kwargs.get("degree", self.config.polynomial_degree)
-            return self._polynomial_trend(data, degree)
+            return polynomial_trend(data, degree)
 
         elif method == TrendModel.EXPONENTIAL:
             alpha = kwargs.get("alpha", 0.3)
-            return self._exponential_smooth(data, alpha)
+            return exponential_smooth(data, alpha)
 
         elif method == TrendModel.HP_FILTER:
             lambd = kwargs.get("lambda", self.config.hp_lambda)
-            return self._hp_filter(data, lambd)
+            return hp_filter(data, lambd)
 
         else:
             raise ValueError(f"Unknown trend method: {method}")
@@ -340,7 +233,8 @@ class TimeSeriesDecomposer:
         Returns:
             Seasonal component array
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         data = np.asarray(data, dtype=np.float64)
         n = len(data)
 
@@ -372,6 +266,7 @@ class TimeSeriesDecomposer:
 
         return seasonal
 
+    @jit(nopython=True, fastmath=True)
     def multi_seasonal_decompose(
         self,
         data: np.ndarray,
@@ -386,7 +281,8 @@ class TimeSeriesDecomposer:
         Returns:
             DecompositionResult with multiple seasonal components
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         data = np.asarray(data, dtype=np.float64)
         n = len(data)
 
@@ -401,7 +297,7 @@ class TimeSeriesDecomposer:
         # Extract each seasonal component
         for period in periods:
             # Extract trend from current residual
-            trend = self._moving_average(residual, period)
+            trend = moving_average(residual, period)
 
             # Detrend
             detrended = residual - trend
@@ -415,7 +311,7 @@ class TimeSeriesDecomposer:
             residual = residual - seasonal
 
         # Final trend extraction
-        trend = self._moving_average(residual, periods[-1])
+        trend = moving_average(residual, periods[-1])
         final_residual = residual - trend
 
         result = DecompositionResult(
@@ -447,7 +343,8 @@ class TimeSeriesDecomposer:
         Returns:
             Dictionary with forecasted components and combined forecast
         """
-        assert result is not None, "result must be provided"
+        if not (result is not None):
+            raise ValueError("result must be provided")
         n = len(result.observed)
 
         # Forecast trend
@@ -461,7 +358,7 @@ class TimeSeriesDecomposer:
             trend_forecast = np.full(horizon, result.trend[-1])
         else:
             # Exponential extrapolation
-            trend_forecast = self._extrapolate_exponential(result.trend, horizon)
+            trend_forecast = extrapolate_exponential(result.trend, horizon)
 
         # Forecast seasonal (just repeat the pattern)
         period = result.period
@@ -496,7 +393,8 @@ class TimeSeriesDecomposer:
         Returns:
             Dictionary with anomaly information
         """
-        assert result is not None, "result must be provided"
+        if not (result is not None):
+            raise ValueError("result must be provided")
         residuals = result.residual
         mean = np.nanmean(residuals)
         std = np.nanstd(residuals)
@@ -527,8 +425,9 @@ class TimeSeriesDecomposer:
     def _stl_decompose(self, data: np.ndarray, period: int) -> DecompositionResult:
         """STL decomposition implementation."""
         # Initial trend using moving average
-        assert data is not None, "data must be provided"
-        trend = self._moving_average(data, period)
+        if not (data is not None):
+            raise ValueError("data must be provided")
+        trend = moving_average(data, period)
 
         # Iterate for robustness
         iterations = self.config.robust_iterations if self.config.robust else 1
@@ -538,11 +437,11 @@ class TimeSeriesDecomposer:
             detrended = data - trend
 
             # Extract seasonal
-            seasonal = self._extract_stl_seasonal(detrended, period)
+            seasonal = extract_stl_seasonal(detrended, period)
 
             # Calculate new trend from deseasonalized data
             deseasonalized = data - seasonal
-            trend = self._lowess_smooth(deseasonalized, frac=0.3)
+            trend = lowess_smooth(deseasonalized, frac=0.3)
 
         # Calculate residual
         residual = data - trend - seasonal
@@ -564,11 +463,12 @@ class TimeSeriesDecomposer:
         model: SeasonalModel,
     ) -> DecompositionResult:
         """Classical decomposition."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         n = len(data)
 
         # Step 1: Calculate trend using centered moving average
-        trend = self._centered_moving_average(data, period)
+        trend = centered_moving_average(data, period)
 
         # Step 2: Detrend
         if model == SeasonalModel.ADDITIVE:
@@ -617,8 +517,9 @@ class TimeSeriesDecomposer:
     def _ma_decompose(self, data: np.ndarray, period: int) -> DecompositionResult:
         """Moving average based decomposition."""
         # Trend
-        assert data is not None, "data must be provided"
-        trend = self._moving_average(data, period)
+        if not (data is not None):
+            raise ValueError("data must be provided")
+        trend = moving_average(data, period)
 
         # Detrend
         detrended = data - trend
@@ -642,8 +543,9 @@ class TimeSeriesDecomposer:
     def _lowess_decompose(self, data: np.ndarray, period: int) -> DecompositionResult:
         """LOWESS-based decomposition."""
         # Trend using LOWESS
-        assert data is not None, "data must be provided"
-        trend = self._lowess_smooth(data, frac=0.3)
+        if not (data is not None):
+            raise ValueError("data must be provided")
+        trend = lowess_smooth(data, frac=0.3)
 
         # Detrend
         detrended = data - trend
@@ -669,8 +571,9 @@ class TimeSeriesDecomposer:
     ) -> DecompositionResult:
         """Hodrick-Prescott filter decomposition."""
         # Trend using HP filter
-        assert data is not None, "data must be provided"
-        trend = self._hp_filter(data, self.config.hp_lambda)
+        if not (data is not None):
+            raise ValueError("data must be provided")
+        trend = hp_filter(data, self.config.hp_lambda)
 
         # Cycle (detrended)
         cycle = data - trend
@@ -691,231 +594,11 @@ class TimeSeriesDecomposer:
             period=period,
         )
 
-    # Helper methods
-
-    def _moving_average(self, data: np.ndarray, window: int) -> np.ndarray:
-        """Calculate moving average."""
-        assert data is not None, "data must be provided"
-        if window < 1:
-            window = 1
-        if window > len(data):
-            window = len(data)
-
-        # Use convolution for efficiency
-        kernel = np.ones(window) / window
-        ma = np.convolve(data, kernel, mode="same")
-
-        # Handle edges
-        half = window // 2
-        for i in range(half):
-            ma[i] = np.mean(data[: i + half + 1])
-            ma[-(i + 1)] = np.mean(data[-(i + half + 1) :])
-
-        return ma
-
-    def _centered_moving_average(self, data: np.ndarray, period: int) -> np.ndarray:
-        """Calculate centered moving average for classical decomposition."""
-        assert data is not None, "data must be provided"
-        n = len(data)
-        result = np.full(n, np.nan)
-
-        half = period // 2
-
-        for i in range(half, n - half):
-            if period % 2 == 0:
-                # For even periods, use weighted average
-                result[i] = (
-                    0.5 * data[i - half]
-                    + np.sum(data[i - half + 1 : i + half])
-                    + 0.5 * data[i + half]
-                ) / period
-            else:
-                result[i] = np.mean(data[i - half : i + half + 1])
-
-        # Fill edges with nearest valid values
-        first_valid = half
-        last_valid = n - half - 1
-
-        result[:first_valid] = result[first_valid]
-        result[last_valid + 1 :] = result[last_valid]
-
-        return result
-
-    def _lowess_smooth(self, data: np.ndarray, frac: float = 0.3) -> np.ndarray:
-        """LOWESS (Locally Weighted Scatterplot Smoothing)."""
-        assert data is not None, "data must be provided"
-        n = len(data)
-        x = np.arange(n)
-        result = np.zeros(n)
-
-        # Number of points to use for local regression
-        k = max(int(frac * n), 2)
-
-        for i in range(n):
-            # Calculate distances
-            distances = np.abs(x - x[i])
-
-            # Get k nearest neighbors
-            nearest_idx = np.argsort(distances)[:k]
-
-            # Calculate weights using tricube kernel
-            max_dist = distances[nearest_idx[-1]]
-            if max_dist == 0:
-                max_dist = 1.0
-            u = distances[nearest_idx] / max_dist
-            weights = (1 - u**3) ** 3
-            weights = np.clip(weights, 0, None)
-
-            # Weighted linear regression
-            x_local = x[nearest_idx]
-            y_local = data[nearest_idx]
-
-            # Weighted least squares
-            sum_w = np.sum(weights)
-            if sum_w == 0:
-                result[i] = data[i]
-                continue
-
-            sum_wx = np.sum(weights * x_local)
-            sum_wy = np.sum(weights * y_local)
-            sum_wxx = np.sum(weights * x_local * x_local)
-            sum_wxy = np.sum(weights * x_local * y_local)
-
-            denom = sum_w * sum_wxx - sum_wx * sum_wx
-            if abs(denom) < 1e-10:
-                result[i] = sum_wy / sum_w
-            else:
-                b = (sum_w * sum_wxy - sum_wx * sum_wy) / denom
-                a = (sum_wy - b * sum_wx) / sum_w
-                result[i] = a + b * x[i]
-
-        return result
-
-    def _polynomial_trend(self, data: np.ndarray, degree: int) -> np.ndarray:
-        """Fit polynomial trend."""
-        assert data is not None, "data must be provided"
-        n = len(data)
-        x = np.arange(n)
-        coeffs = np.polyfit(x, data, degree)
-        return np.polyval(coeffs, x)
-
-    def _exponential_smooth(self, data: np.ndarray, alpha: float) -> np.ndarray:
-        """Exponential smoothing."""
-        assert data is not None, "data must be provided"
-        n = len(data)
-        result = np.zeros(n)
-        result[0] = data[0]
-
-        for i in range(1, n):
-            result[i] = alpha * data[i] + (1 - alpha) * result[i - 1]
-
-        return result
-
-    def _hp_filter(self, data: np.ndarray, lambd: float) -> np.ndarray:
-        """Hodrick-Prescott filter implementation."""
-        assert data is not None, "data must be provided"
-        n = len(data)
-
-        # Construct the penalty matrix
-        # Second difference matrix
-        d2 = np.zeros((n - 2, n))
-        for i in range(n - 2):
-            d2[i, i] = 1
-            d2[i, i + 1] = -2
-            d2[i, i + 2] = 1
-
-        # Solve (I + lambda * D2' * D2) * trend = data
-        penalty = lambd * d2.T @ d2
-        identity = np.eye(n)
-
-        try:
-            trend = np.linalg.solve(identity + penalty, data)
-        except np.linalg.LinAlgError:
-            # Fallback to pseudo-inverse
-            trend = np.linalg.lstsq(identity + penalty, data, rcond=None)[0]
-
-        return trend
-
-    def _extract_stl_seasonal(self, detrended: np.ndarray, period: int) -> np.ndarray:
-        """Extract seasonal component for STL."""
-        assert detrended is not None, "detrended must be provided"
-        n = len(detrended)
-
-        # Calculate cycle-subseries
-        seasonal_indices = np.zeros(period)
-
-        for i in range(period):
-            subseries = detrended[i::period]
-            # Apply LOWESS to each subseries
-            smoothed = self._lowess_smooth(subseries, frac=0.5)
-            seasonal_indices[i] = np.mean(smoothed)
-
-        # Normalize
-        seasonal_indices -= np.mean(seasonal_indices)
-
-        # Tile to match data length
-        seasonal = np.tile(seasonal_indices, n // period + 1)[:n]
-
-        return seasonal
-
-    def _autocorrelation(self, data: np.ndarray, max_lag: int) -> np.ndarray:
-        """Calculate autocorrelation function."""
-        assert data is not None, "data must be provided"
-        n = len(data)
-        data_centered = data - np.mean(data)
-        var = np.var(data_centered)
-
-        if var == 0:
-            return np.zeros(max_lag + 1)
-
-        acf = np.zeros(max_lag + 1)
-        acf[0] = 1.0
-
-        for lag in range(1, max_lag + 1):
-            acf[lag] = np.sum(data_centered[lag:] * data_centered[:-lag]) / (
-                (n - lag) * var
-            )
-
-        return acf
-
-    def _find_acf_peaks(self, acf: np.ndarray) -> list[int]:
-        """Find peaks in autocorrelation function."""
-        assert acf is not None, "acf must be provided"
-        peaks = []
-        n = len(acf)
-
-        for i in range(2, n - 1):
-            if acf[i] > acf[i - 1] and acf[i] > acf[i + 1] and acf[i] > 0.1:
-                peaks.append(i)
-
-        return peaks
-
-    def _extrapolate_exponential(self, trend: np.ndarray, horizon: int) -> np.ndarray:
-        """Extrapolate trend exponentially."""
-        # Fit exponential to last portion of trend
-        assert trend is not None, "trend must be provided"
-        n = len(trend)
-        fit_length = min(n, 50)
-
-        x = np.arange(fit_length)
-        y = trend[-fit_length:]
-
-        # Log transform for linear fit
-        y_pos = y - np.min(y) + 1
-        log_y = np.log(y_pos)
-
-        slope, intercept = np.polyfit(x, log_y, 1)
-
-        # Extrapolate
-        future_x = np.arange(fit_length, fit_length + horizon)
-        forecast = np.exp(intercept + slope * future_x) + np.min(y) - 1
-
-        return forecast
-
     def _calculate_metrics(self, result: DecompositionResult) -> DecompositionResult:
         """Calculate quality metrics for decomposition."""
         # Variance of detrended data
-        assert result is not None, "result must be provided"
+        if not (result is not None):
+            raise ValueError("result must be provided")
         detrended_var = np.var(result.observed - result.trend)
         residual_var = np.var(result.residual)
 
@@ -936,7 +619,7 @@ class TimeSeriesDecomposer:
 
         # Residual autocorrelation (lag 1)
         if len(result.residual) > 1:
-            acf = self._autocorrelation(result.residual, 1)
+            acf = autocorrelation(result.residual, 1)
             result.residual_autocorrelation = float(acf[1]) if len(acf) > 1 else 0.0
 
         return result
@@ -962,7 +645,8 @@ def decompose_time_series(
         >>> result = decompose_time_series(data, period=25)
         >>> print(f"Trend strength: {result.trend_strength:.2f}")
     """
-    assert data is not None, "data must be provided"
+    if not (data is not None):
+        raise ValueError("data must be provided")
     method_map = {
         "stl": DecompositionMethod.STL,
         "classical": DecompositionMethod.CLASSICAL_ADDITIVE,

@@ -79,19 +79,19 @@ class TestPendulumParamsContracts:
         assert p.mu2 == 0.2
 
     def test_negative_b1_rejected(self) -> None:
-        with pytest.raises(AssertionError, match="b1 must be non-negative"):
+        with pytest.raises((ValueError, TypeError), match="b1 must be non-negative"):
             PendulumParams(m1=1.0, m2=1.0, L1=1.0, L2=1.0, b1=-0.1)
 
     def test_negative_b2_rejected(self) -> None:
-        with pytest.raises(AssertionError, match="b2 must be non-negative"):
+        with pytest.raises((ValueError, TypeError), match="b2 must be non-negative"):
             PendulumParams(m1=1.0, m2=1.0, L1=1.0, L2=1.0, b2=-0.1)
 
     def test_negative_mu1_rejected(self) -> None:
-        with pytest.raises(AssertionError, match="mu1 must be non-negative"):
+        with pytest.raises((ValueError, TypeError), match="mu1 must be non-negative"):
             PendulumParams(m1=1.0, m2=1.0, L1=1.0, L2=1.0, mu1=-0.01)
 
     def test_negative_mu2_rejected(self) -> None:
-        with pytest.raises(AssertionError, match="mu2 must be non-negative"):
+        with pytest.raises((ValueError, TypeError), match="mu2 must be non-negative"):
             PendulumParams(m1=1.0, m2=1.0, L1=1.0, L2=1.0, mu2=-0.01)
 
 

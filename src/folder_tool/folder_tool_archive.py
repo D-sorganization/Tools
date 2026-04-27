@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """ArchiveMixin -- ZIP archive creation for FolderProcessorApp."""
 
 from __future__ import annotations
@@ -5,7 +6,7 @@ from __future__ import annotations
 import logging
 import os
 import zipfile
-from datetime import datetime
+from datetime import timezone, datetime
 from pathlib import Path
 
 from Folders_Tool_r0 import (
@@ -92,7 +93,8 @@ class ArchiveMixin:
         Returns:
             (processed_files, processed_size, failed_files)
         """
-        assert zipf is not None, "zipf must be provided"
+        if not (zipf is not None):
+            raise ValueError("zipf must be provided")
         processed_files = 0
         processed_size = 0
         failed_files = 0
@@ -125,7 +127,7 @@ class ArchiveMixin:
                             progress,
                             f"Added {processed_files}/{total_files} files to ZIP",
                         )
-                except (IOError, PermissionError, OSError) as e:
+                except (PermissionError, OSError) as e:
                     failed_files += 1
                     logger.warning(
                         f"Failed to add file to ZIP: {file_path} - {e}",
@@ -144,7 +146,7 @@ class ArchiveMixin:
         """
         dest_path_obj = self._validate_dest_folder()
 
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         zip_filename = f"processed_files_{timestamp}.zip"
         try:
             zip_path = dest_path_obj.parent / zip_filename
@@ -193,7 +195,7 @@ class ArchiveMixin:
                 else:
                     logger.info("ZIP creation completed successfully")
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             if zip_path.exists():
                 try:
                     zip_path.unlink()

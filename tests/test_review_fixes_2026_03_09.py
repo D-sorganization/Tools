@@ -12,8 +12,10 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import patch
 
-import numpy as np
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
 
 # ──────────────────────────────────────────────────────────────────
 # C3D Reader Tests
@@ -437,6 +439,7 @@ class TestURDFWriterMaterialCollision:
 
 _has_scipy = pytest.importorskip is not None  # placeholder
 try:
+    pytest.importorskip("scipy")
     import scipy  # noqa: F401
 
     _has_scipy = True

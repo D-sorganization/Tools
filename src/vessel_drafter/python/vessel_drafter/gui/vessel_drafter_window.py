@@ -174,16 +174,13 @@ class VesselDrafterWindow(QMainWindow):
         for widget in widgets:
             widget.valueChanged.connect(self.update_preview)
 
-        self.side_port_panel.add_button.clicked.connect(self._prompt_add_side_port)
-        self.lid_port_panel.add_button.clicked.connect(self._prompt_add_lid_port)
-        self.side_port_panel.remove_button.clicked.connect(
-            self._remove_selected_side_ports
-        )
-        self.lid_port_panel.remove_button.clicked.connect(
-            self._remove_selected_lid_ports
-        )
-        self.side_port_panel.table.itemChanged.connect(self.update_preview)
-        self.lid_port_panel.table.itemChanged.connect(self.update_preview)
+        # Connect via panel-level signals (LOD: never touch internal widgets).
+        self.side_port_panel.add_requested.connect(self._prompt_add_side_port)
+        self.lid_port_panel.add_requested.connect(self._prompt_add_lid_port)
+        self.side_port_panel.remove_requested.connect(self._remove_selected_side_ports)
+        self.lid_port_panel.remove_requested.connect(self._remove_selected_lid_ports)
+        self.side_port_panel.data_changed.connect(self.update_preview)
+        self.lid_port_panel.data_changed.connect(self.update_preview)
         for checkbox in self.layer_visibility_checkboxes.values():
             checkbox.toggled.connect(self.refresh_three_d_preview)
         self.section_cut_checkbox.toggled.connect(self._handle_section_cut_toggled)
@@ -193,7 +190,8 @@ class VesselDrafterWindow(QMainWindow):
         self.preview_tabs.currentChanged.connect(self._handle_preview_tab_changed)
 
     def write_layout(self, layout: VesselDrafterLayout) -> None:
-        assert layout is not None, "layout must be provided"
+        if not (layout is not None):
+            raise ValueError("layout must be provided")
         self._suppress_preview_updates = True
         self.inner_diameter_spin.setValue(layout.inner_diameter_in)
         self.glass_depth_spin.setValue(layout.glass_depth_in)
@@ -356,7 +354,7 @@ class VesselDrafterWindow(QMainWindow):
                 layout, output_dir=path.parent, stem=path.stem, formats=(fmt,)
             )
             QMessageBox.information(self, "Export Complete", f"Exported to {path}")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             QMessageBox.critical(self, "Export Failed", str(exc))
 
     def _prompt_add_side_port(self) -> None:
@@ -412,7 +410,8 @@ class VesselDrafterWindow(QMainWindow):
         title: str,
         view: ZoomableGraphicsView,
     ) -> QWidget:
-        assert title is not None, "title must be provided"
+        if not (title is not None):
+            raise ValueError("title must be provided")
         title_label = QLabel(title)
         zoom_in_button = QPushButton("+")
         zoom_in_button.clicked.connect(view.zoom_in)
@@ -515,7 +514,8 @@ class VesselDrafterWindow(QMainWindow):
         return cast(QDoubleSpinBox, spin)
 
     def _update_three_d_preview(self, layout: VesselDrafterLayout) -> None:
-        assert layout is not None, "layout must be provided"
+        if not (layout is not None):
+            raise ValueError("layout must be provided")
         view_options = self._read_three_d_view_options()
         self.three_d_canvas.draw_scene(
             build_vessel_3d_scene(
@@ -550,7 +550,8 @@ class VesselDrafterWindow(QMainWindow):
             self._update_three_d_preview(layout)
 
     def _handle_section_cut_toggled(self, checked: bool) -> None:
-        assert checked is not None, "checked must be provided"
+        if not (checked is not None):
+            raise ValueError("checked must be provided")
         self.section_cut_angle_spin.setEnabled(checked)
         self.three_d_canvas.queue_default_view(self._read_three_d_view_options())
         self.refresh_three_d_preview()

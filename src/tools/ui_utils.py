@@ -51,7 +51,8 @@ def set_tk_icon(root: Any, icon_name: str = "tools_icon.ico") -> bool:
     Returns:
         True if icon was set, False otherwise.
     """
-    assert icon_name is not None, "icon_name must be provided"
+    if not (icon_name is not None):
+        raise ValueError("icon_name must be provided")
     icon_path = find_icon(icon_name)
     if not icon_path:
         return False
@@ -75,7 +76,8 @@ def set_qt_icon(window: Any, icon_name: str = "tools_icon.ico") -> bool:
     Returns:
         True if icon was set, False otherwise.
     """
-    assert icon_name is not None, "icon_name must be provided"
+    if not (icon_name is not None):
+        raise ValueError("icon_name must be provided")
     icon_path = find_icon(icon_name)
     if not icon_path:
         return False

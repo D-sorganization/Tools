@@ -156,7 +156,7 @@ The architecture supports scaling.
         5,
         """
 Technical debt is accumulating.
-- **Markers**: 445 `TODO` and 140 `FIXME` markers indicate significant unfinished work.
+- **Markers**: 445 `TRACKED_TASK` and 140 `TRACKED_DEFECT` markers indicate significant unfinished work.
 - **Legacy**: Existence of "legacy" launchers (`Launcher.py`, `launch_tools_main.py`) alongside `UnifiedToolsLauncher.py` creates confusion (though documented).
 """,
     ),
@@ -210,12 +210,12 @@ Test coverage is significantly below industry standards.
         "High Technical Debt (445 TODOs)",
         """
 The codebase has accumulated significant technical debt.
--   445 `TODO` markers.
--   140 `FIXME` markers.
+-   445 `TRACKED_TASK` markers.
+-   140 `TRACKED_DEFECT` markers.
 
 **Action Items**:
--   Audit all `FIXME` items and resolve high-priority ones.
--   Convert valid `TODO` items into GitHub Issues.
+-   Audit all `TRACKED_DEFECT` items and resolve high-priority ones.
+-   Convert valid `TRACKED_TASK` items into GitHub Issues.
 -   Remove obsolete code.
 """,
     ),
@@ -300,7 +300,7 @@ with open(os.path.join(ASSESSMENT_DIR, "Comprehensive_Assessment.md"), "w") as f
     )
 
     f.write("4.  **Pay Down Technical Debt (Category O)**\n")
-    f.write("    - **Issue**: 445 `TODO` markers.\n")
+    f.write("    - **Issue**: 445 `TRACKED_TASK` markers.\n")
     f.write(
         "    - **Action**: Conduct a specific sprint to resolve or ticket these items.\n\n"
     )

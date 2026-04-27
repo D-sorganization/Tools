@@ -64,7 +64,8 @@ def club_action_point(
     Pre:  -1.0 <= alpha <= 1.0
     Post: returned array is shape (2,) and finite.
     """
-    assert -1.0 <= alpha <= 1.0, f"alpha must be in [-1, 1], got {alpha}"
+    if not (-1.0 <= alpha <= 1.0):
+        raise ValueError(f"alpha must be in [-1, 1], got {alpha}")
 
     if q.shape[0] > N_DOF:
         q = q[:N_DOF]
@@ -79,8 +80,10 @@ def club_action_point(
     t = (alpha + 1.0) / 2.0
     result = (1.0 - t) * grip_r + t * grip_l
 
-    assert result.shape == (2,), f"Expected shape (2,), got {result.shape}"
-    assert np.all(np.isfinite(result)), f"Action point is not finite: {result}"
+    if not (result.shape == (2,)):
+        raise ValueError(f"Expected shape (2,), got {result.shape}")
+    if not (np.all(np.isfinite(result))):
+        raise ValueError(f"Action point is not finite: {result}")
     return result
 
 
@@ -109,8 +112,10 @@ def net_force_on_club(
     Post: returned array is shape (2,) and finite.
     """
     net = np.array(f_right, dtype=float) + np.array(f_left, dtype=float)
-    assert net.shape == (2,)
-    assert np.all(np.isfinite(net)), f"Net force is not finite: {net}"
+    if not (net.shape == (2,)):
+        raise ValueError("Net force has wrong shape")
+    if not (np.all(np.isfinite(net))):
+        raise ValueError(f"Net force is not finite: {net}")
     return net  # type: ignore[no-any-return]
 
 
@@ -145,7 +150,8 @@ def moment_of_net_force(
     """
     r = force_point - action_point
     m = _cross_2d(r, net_force)
-    assert np.isfinite(m), f"Moment is not finite: {m}"
+    if not (np.isfinite(m)):
+        raise ValueError(f"Moment is not finite: {m}")
     return m
 
 
@@ -205,7 +211,8 @@ def equivalent_couple(
     # Couple = total moment - moment of net force at action point = total moment - 0
     couple = total_moment
 
-    assert np.isfinite(couple), f"Couple is not finite: {couple}"
+    if not (np.isfinite(couple)):
+        raise ValueError(f"Couple is not finite: {couple}")
     return couple
 
 
@@ -250,8 +257,10 @@ def club_force_decomposition(
     Pre:  'rh' and 'lh' in forces dict
     Post: all values are finite
     """
-    assert "rh" in forces, "forces dict must contain 'rh' (right hand)"
-    assert "lh" in forces, "forces dict must contain 'lh' (left hand)"
+    if "rh" not in forces:
+        raise ValueError("forces dict must contain 'rh' (right hand)")
+    if "lh" not in forces:
+        raise ValueError("forces dict must contain 'lh' (left hand)")
 
     if q.shape[0] > N_DOF:
         q = q[:N_DOF]
@@ -301,12 +310,17 @@ def overall_club_decomposition(
     Uses the actual constrained dynamics to get accelerations and
     computes net joint forces from F = ma - mg.
     """
+<<<<<<< HEAD
     if not isinstance(state, np.ndarray):
         raise TypeError(f"state must be a numpy ndarray, got {type(state).__name__}")
     if state.shape != (2 * N_DOF,):
         raise ValueError(f"state must have shape ({2 * N_DOF},), got {state.shape}")
     if not isinstance(t, (int, float)):
         raise TypeError(f"t must be a number, got {type(t).__name__}")
+=======
+    if not (state is not None):
+        raise ValueError("state must be provided")
+>>>>>>> origin/main
     from .constraint_solver import constrained_accelerations
     from .physics_golfer import net_joint_forces
 
@@ -323,10 +337,15 @@ def ztcf_club_decomposition(
     alpha: float = 0.0,
 ) -> dict[str, float | np.ndarray]:
     """Club force decomposition using zero-torque counterfactual forces."""
+<<<<<<< HEAD
     if not isinstance(state, np.ndarray):
         raise TypeError(f"state must be a numpy ndarray, got {type(state).__name__}")
     if state.shape != (2 * N_DOF,):
         raise ValueError(f"state must have shape ({2 * N_DOF},), got {state.shape}")
+=======
+    if not (state is not None):
+        raise ValueError("state must be provided")
+>>>>>>> origin/main
     from .counterfactual_golfer import zero_torque_accelerations
     from .physics_golfer import net_joint_forces
 
@@ -347,6 +366,7 @@ def delta_club_decomposition(
 
     DELTA accelerations = M^+ * tau at zero velocity.
     """
+<<<<<<< HEAD
     if not isinstance(state, np.ndarray):
         raise TypeError(f"state must be a numpy ndarray, got {type(state).__name__}")
     if state.shape != (2 * N_DOF,):
@@ -355,6 +375,10 @@ def delta_club_decomposition(
         raise TypeError(f"tau must be a numpy ndarray, got {type(tau).__name__}")
     if tau.shape != (N_DOF,):
         raise ValueError(f"tau must have shape ({N_DOF},), got {tau.shape}")
+=======
+    if not (state is not None):
+        raise ValueError("state must be provided")
+>>>>>>> origin/main
     from .jacobians_golfer import delta_matrix
     from .physics_golfer import net_joint_forces
 

@@ -307,7 +307,7 @@ def get_pipe_spec(
 
     Example:
         >>> spec = get_pipe_spec("4", "40")
-        >>> print(spec.inner_diameter)  # mm
+        >>> logger.debug(spec.inner_diameter)  # mm
         102.26
     """
     key = (nominal_size, schedule)

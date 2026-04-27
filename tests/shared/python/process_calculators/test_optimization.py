@@ -13,8 +13,10 @@ from __future__ import annotations
 
 from typing import Any
 
-import numpy as np
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
 from upstream_drift_tools.process_calculators.optimization import (
     _adam_update,
     _AdamState,

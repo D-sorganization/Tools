@@ -6,6 +6,10 @@ from unittest.mock import MagicMock, patch
 import pytest
 from contracts import PreconditionError
 
+<<<<<<< HEAD
+=======
+from contracts import PreconditionError
+>>>>>>> origin/main
 from tools.ui_utils import find_icon, set_qt_icon, set_tk_icon
 
 # ─── find_icon ─────────────────────────────────────────────────

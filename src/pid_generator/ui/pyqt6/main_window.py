@@ -1,3 +1,5 @@
+# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+
 """P&ID Generator — PyQt6 main window.
 
 Provides a file-picker GUI that selects a YAML spec file and output
@@ -24,6 +26,8 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+
+from shared.python.contracts import require
 
 logger = logging.getLogger(__name__)
 
@@ -122,6 +126,11 @@ class PIDGeneratorMainWindow(QMainWindow):
             self._out_edit.setText(path)
 
     def _generate(self) -> None:
+        """Generate P&ID from spec file.
+
+        Pre: spec_path must be a non-empty string pointing to an existing file
+        Pre: out_path must be a non-empty string
+        """
         spec_path = self._spec_edit.text().strip()
         out_path = self._out_edit.text().strip()
         profile_text = self._profile_combo.currentText()
@@ -138,6 +147,12 @@ class PIDGeneratorMainWindow(QMainWindow):
             )
             return
 
+        require(
+            Path(spec_path).exists(),
+            f"Spec file does not exist: {spec_path}",
+            spec_path,
+        )
+
         self._status_label.setText("Generating\u2026")
         QApplication.processEvents()
         try:
@@ -153,7 +168,7 @@ class PIDGeneratorMainWindow(QMainWindow):
                 "Done",
                 f"Generated:\n  {out_path}\n  {svg_path}",
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             logger.exception("Generation failed")
             self._status_label.setText(f"\u2717 Error: {exc}")
             QMessageBox.critical(self, "Generation Failed", str(exc))

@@ -82,7 +82,7 @@ class TestNumericalJacobian:
         p = _default_golfer_params()
         q_wrong = np.zeros(7)  # wrong size
 
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             _numerical_jacobian(q_wrong, p, "rh")
 
     def test_multiple_joints_independent(self):
@@ -194,7 +194,6 @@ class TestJacobianGolfer:
 
         # Hub primarily depends on theta_hub (q[0])
         # Columns for arm angles should be smaller or zero
-        _arm_cols = np.abs(J_hub[:, 1:])  # noqa: F841
         # At least the q[0] column should have significant values
         assert np.max(np.abs(J_hub[:, 0])) > 0
 
@@ -541,7 +540,7 @@ class TestRobustness:
         try:
             J = jacobian_golfer(q, p)
             assert len(J) == 6
-        except Exception:
+        except Exception:  # noqa: BLE001
             pass  # Some configs may be singular
 
     def test_large_angle_values(self):
