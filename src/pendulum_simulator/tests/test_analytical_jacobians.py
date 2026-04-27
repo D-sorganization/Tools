@@ -25,11 +25,7 @@ from double_pendulum_golf.physics_golfer import (
     mass_matrix as numerical_mass_matrix,
 )
 
-<<<<<<< HEAD
 _logger = logging.getLogger(__name__)
-=======
-logger = logging.getLogger(__name__)
->>>>>>> origin/main
 
 # Test parameters
 _PARAMS = GolferParams(
@@ -411,15 +407,9 @@ class TestAnalyticalBenchmark:
         t_numerical = time.perf_counter() - start
 
         speedup = t_numerical / t_analytical
-<<<<<<< HEAD
         _logger.debug("\nMass matrix speedup: %.1fx", speedup)
         _logger.debug("  Analytical: %.3fs", t_analytical)
         _logger.debug("  Numerical:  %.3fs", t_numerical)
-=======
-        logger.info(f"\nMass matrix speedup: {speedup:.1f}x")
-        logger.info(f"  Analytical: {t_analytical:.3f}s")
-        logger.info(f"  Numerical:  {t_numerical:.3f}s")
->>>>>>> origin/main
 
     def test_speed_comparison_coriolis(self, test_configs: list[np.ndarray]) -> None:
         """Print timing comparison for Coriolis."""
@@ -448,15 +438,9 @@ class TestAnalyticalBenchmark:
         t_numerical = time.perf_counter() - start
 
         speedup = t_numerical / t_analytical
-<<<<<<< HEAD
         _logger.debug("\nCoriolis speedup: %.1fx", speedup)
         _logger.debug("  Analytical: %.3fs", t_analytical)
         _logger.debug("  Numerical:  %.3fs", t_numerical)
-=======
-        logger.info(f"\nCoriolis speedup: {speedup:.1f}x")
-        logger.info(f"  Analytical: {t_analytical:.3f}s")
-        logger.info(f"  Numerical:  {t_numerical:.3f}s")
->>>>>>> origin/main
 
     def test_speed_comparison_gravity(self, test_configs: list[np.ndarray]) -> None:
         """Print timing comparison for gravity."""
@@ -482,7 +466,6 @@ class TestAnalyticalBenchmark:
         t_numerical = time.perf_counter() - start
 
         speedup = t_numerical / t_analytical
-<<<<<<< HEAD
         _logger.debug("\nGravity speedup: %.1fx", speedup)
         _logger.debug("  Analytical: %.3fs", t_analytical)
         _logger.debug("  Numerical:  %.3fs", t_numerical)
@@ -683,8 +666,3 @@ class TestJacobianHelpers:
                 tr["sin_re"],
                 tr["cos_re"],
             )
-=======
-        logger.info(f"\nGravity speedup: {speedup:.1f}x")
-        logger.info(f"  Analytical: {t_analytical:.3f}s")
-        logger.info(f"  Numerical:  {t_numerical:.3f}s")
->>>>>>> origin/main

@@ -14,7 +14,7 @@ permissions:
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
@@ -53,7 +53,7 @@ jobs:
   complexity-metrics:
     needs: pick-runner
     name: Complexity Analysis (radon)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v6
 
@@ -132,21 +132,17 @@ jobs:
   duplication-metrics:
     needs: pick-runner
     name: Duplication Analysis (jscpd)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-<<<<<<< HEAD
           node-version: "24"
-=======
-          node-version: "22"
->>>>>>> origin/main
 
       - name: Install jscpd
-        run: npm install -g jscpd
+        run: npm install -g jscpd@4.0.0
 
       - name: Run Duplication Analysis
         run: |
@@ -218,7 +214,7 @@ jobs:
     name: Metrics Summary
     needs: [pick-runner, complexity-metrics, duplication-metrics]
     if: always()
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Final Summary
         run: |

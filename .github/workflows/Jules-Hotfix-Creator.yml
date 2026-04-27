@@ -22,7 +22,7 @@ jobs:
 
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
@@ -60,7 +60,7 @@ jobs:
           esac
   create-hotfix:
     needs: pick-runner
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Validate failed branch
         id: branch
@@ -99,11 +99,7 @@ jobs:
 
       - uses: actions/setup-node@v6
         if: steps.jules.outputs.enabled == 'true'
-<<<<<<< HEAD
         with: { node-version: "24" }
-=======
-        with: { node-version: "22" }
->>>>>>> origin/main
       - run: npm install -g @google/jules
         if: steps.jules.outputs.enabled == 'true'
       - run: jules auth --token ${{ secrets.JULES_API_KEY }}

@@ -2,115 +2,12 @@
 
 """
 Steam Engine Calculator - PyQt6 Main Window
-============================================
-
-Full-featured GUI for steam thermodynamic property calculations.
-Uses Catppuccin Mocha dark theme for modern appearance.
-"""
-
-from __future__ import annotations
-
-import logging
-import sys
-from typing import TYPE_CHECKING, Any
-
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QFont
-from PyQt6.QtWidgets import (
-    QApplication,
-    QComboBox,
-    QFrame,
-    QGridLayout,
-    QGroupBox,
-    QHBoxLayout,
-    QLabel,
-    QLineEdit,
-    QMessageBox,
-    QPushButton,
-    QScrollArea,
-    QVBoxLayout,
-    QWidget,
-)
-from upstream_drift_tools.ui.widgets.base_calculator_widget import BaseCalculatorWindow
-
-if TYPE_CHECKING:
-    from upstream_drift_tools.calculators.thermo.steam_engine import SteamProperties
-
-logger = logging.getLogger(__name__)
-
-# LoD: module-level aliases for Qt enum chains (avoids 3-level deep attribute access)
-_SCROLL_BAR_AS_NEEDED = Qt.ScrollBarPolicy.ScrollBarAsNeeded
-_FONT_WEIGHT_BOLD = QFont.Weight.Bold
-_ALIGN_CENTER = Qt.AlignmentFlag.AlignCenter
-_FRAME_STYLED_PANEL = QFrame.Shape.StyledPanel
-
-# Catppuccin Mocha color palette
-COLORS = {
-    "base": "#1e1e2e",
-    "mantle": "#181825",
-    "crust": "#11111b",
-    "surface0": "#313244",
-    "surface1": "#45475a",
-    "surface2": "#585b70",
-    "text": "#cdd6f4",
-    "subtext0": "#a6adc8",
-    "subtext1": "#bac2de",
-    "blue": "#89b4fa",
-    "green": "#a6e3a1",
-    "red": "#f38ba8",
-    "yellow": "#f9e2af",
-    "peach": "#fab387",
-    "mauve": "#cba6f7",
-    "teal": "#94e2d5",
-    "lavender": "#b4befe",
-    "sky": "#89dceb",
-    "sapphire": "#74c7ec",
-}
-
-
-def validate_temperature_k(value: float) -> tuple[bool, str]:
-    """Validate temperature in Kelvin."""
-    if value < 273.16:
-        return False, "Temperature below triple point (273.16 K)"
-    if value > 647.15:
-        return False, "Temperature above critical point (647.15 K)"
-    return True, ""
-
-
-def validate_pressure_pa(value: float) -> tuple[bool, str]:
-    """Validate pressure in Pascals."""
-    if value <= 0:
-        return False, "Pressure must be positive"
-    if value > 100e6:
-        return False, "Pressure exceeds maximum (100 MPa)"
-    return True, ""
-
-
-def format_temperature(value: float, unit: str = "K") -> str:
-<<<<<<< HEAD
-    """Format temperature with units.
-
-    Args:
-        value: Temperature value (numeric).
-        unit: Unit string, "K" or "C".
-
-    Raises:
-        TypeError: If value is not a number.
-    """
-    if not isinstance(value, (int, float)):
-        raise TypeError(f"value must be a number, got {type(value).__name__}")
-=======
-    """Format temperature with units."""
-    if not (value is not None):
-        raise ValueError("value must be provided")
->>>>>>> origin/main
     if unit == "C":
         return f"{value - 273.15:.2f} °C"
     return f"{value:.2f} K"
 
 
 def format_pressure(value: float, unit: str = "Pa") -> str:
-<<<<<<< HEAD
     """Format pressure with units.
 
     Args:
@@ -122,11 +19,6 @@ def format_pressure(value: float, unit: str = "Pa") -> str:
     """
     if not isinstance(value, (int, float)):
         raise TypeError(f"value must be a number, got {type(value).__name__}")
-=======
-    """Format pressure with units."""
-    if not (value is not None):
-        raise ValueError("value must be provided")
->>>>>>> origin/main
     if unit == "bar":
         return f"{value / 1e5:.4f} bar"
     if unit == "kPa":
@@ -410,7 +302,6 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
         return panel
 
     def _create_group(self, title: str) -> QGroupBox:
-<<<<<<< HEAD
         """Create a styled group box.
 
         Args:
@@ -421,17 +312,11 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
         """
         if not isinstance(title, str):
             raise TypeError(f"title must be a string, got {type(title).__name__}")
-=======
-        """Create a styled group box."""
-        if not (title is not None):
-            raise ValueError("title must be provided")
->>>>>>> origin/main
         group = QGroupBox(title)
         group.setFont(QFont("Segoe UI", 10, _FONT_WEIGHT_BOLD))
         return group
 
     def _create_label(self, text: str) -> QLabel:
-<<<<<<< HEAD
         """Create a styled label.
 
         Args:
@@ -442,17 +327,11 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
         """
         if not isinstance(text, str):
             raise TypeError(f"text must be a string, got {type(text).__name__}")
-=======
-        """Create a styled label."""
-        if not (text is not None):
-            raise ValueError("text must be provided")
->>>>>>> origin/main
         label = QLabel(text)
         label.setStyleSheet(f"color: {COLORS['text']};")
         return label
 
     def _create_result_card(self, name: str, key: str, color: str) -> QFrame:
-<<<<<<< HEAD
         """Create a result display card.
 
         Args:
@@ -469,11 +348,6 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
             raise TypeError(f"key must be a string, got {type(key).__name__}")
         if not isinstance(color, str):
             raise TypeError(f"color must be a string, got {type(color).__name__}")
-=======
-        """Create a result display card."""
-        if not (name is not None):
-            raise ValueError("name must be provided")
->>>>>>> origin/main
         card = QFrame()
         card.setFrameShape(_FRAME_STYLED_PANEL)
         card.setMinimumHeight(60)
@@ -738,11 +612,6 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
         if result is None:
             raise ValueError("result must not be None")
         # Phase state
-<<<<<<< HEAD
-=======
-        if not (result is not None):
-            raise ValueError("result must be provided")
->>>>>>> origin/main
         phase_colors = {
             "liquid": COLORS["blue"],
             "vapor": COLORS["peach"],

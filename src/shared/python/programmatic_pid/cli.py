@@ -24,7 +24,6 @@ from copy import deepcopy  # noqa: E402
 from pathlib import Path  # noqa: E402
 from typing import Any  # noqa: E402
 
-<<<<<<< HEAD
 try:
     import ezdxf
 except ImportError:  # pragma: no cover — optional heavy dep
@@ -34,17 +33,6 @@ from programmatic_pid.equipment import draw_equipment_symbol, equipment_dims
 from programmatic_pid.geometry import to_float
 from programmatic_pid.instruments import add_instrument
 from programmatic_pid.layout import (
-=======
-import ezdxf  # noqa: E402
-from programmatic_pid.controls import add_control_loops  # noqa: E402
-from programmatic_pid.equipment import (  # noqa: E402
-    draw_equipment_symbol,
-    equipment_dims,
-)
-from programmatic_pid.geometry import to_float  # noqa: E402
-from programmatic_pid.instruments import add_instrument  # noqa: E402
-from programmatic_pid.layout import (  # noqa: E402
->>>>>>> origin/main
     LabelPlacer,
     compute_layout_regions,
     get_modelspace_extent,
@@ -149,27 +137,10 @@ def add_equipment(
 # ---------------------------------------------------------------------------
 
 
-<<<<<<< HEAD
 def _setup_process_doc(
     spec: dict[str, Any],
 ) -> tuple[Any, Any, dict[str, Any], dict[str, Any], str, str, str, str, float, float]:
     """Create ezdxf document, resolve layers, and compute layout/text config.
-=======
-def generate_process_sheet(
-    spec_path: str | Path,
-    out_path: str | Path,
-    svg_path: str | Path | None = None,
-    profile: str | None = "presentation",
-    prepared_spec: dict[str, Any] | None = None,
-) -> None:
-    """Generate the process (Sheet 1) DXF and optional SVG."""
-    if not (spec_path is not None):
-        raise ValueError("spec_path must be provided")
-    if prepared_spec is None:
-        spec = prepare_spec(spec_path, profile)
-    else:
-        spec = deepcopy(prepared_spec)
->>>>>>> origin/main
 
     Parameters
     ----------

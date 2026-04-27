@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Thin public facade for advanced pressure drop calculations.
 
-<<<<<<< HEAD
 Refactored from a single 1407-line file into focused submodules (issue #1952):
 
     pressure_drop_units.py      — _convert_temperature, _convert_pressure
@@ -41,13 +40,6 @@ FRICTION FACTOR METHODS:
 
 GAS COMPONENTS:
     H2, CO, CO2, CH4, C2H6, C2H4, N2, O2, H2O, Ar, H2S, NH3, Air
-=======
-The implementation now lives in focused helper modules:
-- ``pressure_drop_reference`` for discovery/help utilities
-- ``pressure_drop_validation`` for input validation
-- ``pressure_drop_api`` for public calculation entrypoints and orchestration
-- ``pressure_drop_results`` for formatting and result presentation
->>>>>>> origin/main
 """
 
 from __future__ import annotations
@@ -66,7 +58,6 @@ from .pressure_drop_reference import (
     list_pipe_sizes,
     show_help,
 )
-<<<<<<< HEAD
 
 # Re-export submodule symbols so callers that import from here continue to work
 from .pressure_drop_results import (  # noqa: F401
@@ -794,10 +785,6 @@ def calculate_pressure_drop_syngas(
 # ============================================================================
 # COMMAND LINE INTERFACE
 # ============================================================================
-=======
-from .pressure_drop_results import print_results
-from .pressure_drop_validation import validate_inputs
->>>>>>> origin/main
 
 
 def main() -> None:

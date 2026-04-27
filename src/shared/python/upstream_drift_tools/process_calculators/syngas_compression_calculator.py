@@ -112,7 +112,6 @@ def _get_figure_canvas_class() -> type:
 if TYPE_CHECKING:
     from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 
-<<<<<<< HEAD
 # Import existing syngas water content utility
 # ruff: noqa: E402
 from contracts import check_positive, check_pressure, check_temperature, require
@@ -134,8 +133,6 @@ from .constants import (
 )
 from .syngas_water_calculator import SyngasWaterCalculator
 
-=======
->>>>>>> origin/main
 # Import BaseCalculatorWidget for state management
 try:
     from ..ui.widgets.base_calculator_widget import BaseCalculatorWidget
@@ -150,7 +147,6 @@ except ImportError:
             QWidget.__init__(self, *args, **kwargs)
 
 
-<<<<<<< HEAD
 # Import species database with fallback
 try:
     from integrated_process_simulator.calculators.thermodynamic_properties.species_database import (  # noqa: E501
@@ -565,8 +561,6 @@ class SyngasCompressionEngine:
         }
 
 
-=======
->>>>>>> origin/main
 class CompressionCalculationWorker(QThread):
     """Worker thread for compression calculations"""
 

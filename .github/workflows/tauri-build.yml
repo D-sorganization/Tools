@@ -38,7 +38,7 @@ jobs:
 
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
@@ -80,7 +80,7 @@ jobs:
   check:
     needs: pick-runner
     name: Check (${{ matrix.app }})
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 15
     strategy:
       fail-fast: false
@@ -98,11 +98,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-<<<<<<< HEAD
           node-version: "24"
-=======
-          node-version: "22"
->>>>>>> origin/main
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
@@ -167,11 +163,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-<<<<<<< HEAD
           node-version: "24"
-=======
-          node-version: "22"
->>>>>>> origin/main
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable

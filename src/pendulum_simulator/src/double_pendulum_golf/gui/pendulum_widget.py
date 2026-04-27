@@ -904,7 +904,6 @@ class PendulumWidget(BasePendulumWidget):
     # ------------------------------------------------------------------
 
     def _draw_zoom_controls(self, painter: QPainter) -> None:
-<<<<<<< HEAD
         """Draw a small zoom toolbar in the top-right corner.
 
         Buttons (top to bottom):
@@ -913,11 +912,6 @@ class PendulumWidget(BasePendulumWidget):
             ⤢  fit view to trajectory (always recoverable; press F)
         """
         assert painter is not None, "painter must be provided"
-=======
-        """Draw a small zoom toolbar in the top-right corner."""
-        if not (painter is not None):
-            raise ValueError("painter must be provided")
->>>>>>> origin/main
         r = self.rect()
         btn_size = 24
         margin = 6
