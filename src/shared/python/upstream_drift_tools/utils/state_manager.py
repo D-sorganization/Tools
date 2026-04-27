@@ -15,28 +15,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-<<<<<<< HEAD
 # Use canonical file I/O utilities instead of reimplementing them
 from utils.file_utils import safe_read_json, safe_write_json
-=======
-
-def safe_read_json(file_path: Path | str, default: Any = None) -> Any:
-    try:
-        with open(file_path, encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return default
-
-
-def safe_write_json(file_path: Path | str, data: Any) -> bool:
-    try:
-        with open(file_path, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2)
-        return True
-    except Exception:
-        return False
-
->>>>>>> origin/main
 
 # Setup logging
 logger = logging.getLogger(__name__)

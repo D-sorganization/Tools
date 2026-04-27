@@ -31,7 +31,6 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-<<<<<<< HEAD
 from ode_solver.timeout import SolverTimeoutError, with_timeout
 
 _log = logging.getLogger(__name__)
@@ -39,9 +38,6 @@ _log = logging.getLogger(__name__)
 # Qt enum aliases — break LoD chains (Qt.X.Y is a 3-level access)
 _SCROLL_BAR_OFF = Qt.ScrollBarPolicy.ScrollBarAlwaysOff
 _ALIGN_CENTER = Qt.AlignmentFlag.AlignCenter
-=======
-from shared.python.contracts import require
->>>>>>> origin/main
 
 # Catppuccin Mocha color palette
 CATPPUCCIN_MOCHA = {
@@ -254,19 +250,10 @@ class ODESolverWindow(QMainWindow):
 
         # Menu bar with Notes toggle
         menu_bar = self.menuBar()
-<<<<<<< HEAD
         view_menu = menu_bar.addMenu("&View")  # type: ignore[union-attr]
         notes_action = view_menu.addAction("Toggle &Notes")  # type: ignore[union-attr]
         notes_triggered = notes_action.triggered  # type: ignore[union-attr]
         notes_triggered.connect(self._toggle_notes)
-=======
-        assert menu_bar is not None
-        view_menu = menu_bar.addMenu("&View")
-        assert view_menu is not None
-        notes_action = view_menu.addAction("Toggle &Notes")
-        assert notes_action is not None
-        notes_action.triggered.connect(self._toggle_notes)
->>>>>>> origin/main
 
         # Central widget with scroll area
         scroll_area = QScrollArea()
@@ -413,7 +400,6 @@ class ODESolverWindow(QMainWindow):
         return group
 
     def _on_preset_changed(self, preset_name: str) -> None:
-<<<<<<< HEAD
         """Handle preset selection change.
 
         Preconditions:
@@ -429,11 +415,6 @@ class ODESolverWindow(QMainWindow):
             )
         if not preset_name:
             raise ValueError("preset_name must not be empty")
-=======
-        """Handle preset selection change."""
-        if not (preset_name is not None):
-            raise ValueError("preset_name must be provided")
->>>>>>> origin/main
         if preset_name == "Custom":
             self.preset_description.setText("")
             return
@@ -459,7 +440,6 @@ class ODESolverWindow(QMainWindow):
         self.initial_edit.setPlainText("\n".join(init_lines))
 
     def _parse_dict_input(self, text: str) -> dict[str, str]:
-<<<<<<< HEAD
         """Parse colon-separated key-value pairs from text.
 
         Preconditions:
@@ -470,11 +450,6 @@ class ODESolverWindow(QMainWindow):
         """
         if not isinstance(text, str):
             raise TypeError(f"text must be str, got {type(text).__name__}")
-=======
-        """Parse colon-separated key-value pairs from text."""
-        if not (text is not None):
-            raise ValueError("text must be provided")
->>>>>>> origin/main
         result = {}
         for line in text.strip().split("\n"):
             line = line.strip()
@@ -488,20 +463,12 @@ class ODESolverWindow(QMainWindow):
     _SOLVER_TIMEOUT_S: float = 30.0
 
     def _solve(self) -> None:
-<<<<<<< HEAD
         """Solve the ODE system with a timeout guard.
 
         Wraps the scipy integration call with ``with_timeout`` so that
         pathological or stiff systems cannot hang the GUI indefinitely.
         Raises ``SolverTimeoutError`` if the computation exceeds
         ``_SOLVER_TIMEOUT_S`` seconds.
-=======
-        """Solve the ODE system.
-
-        Pre: derivatives must be non-empty
-        Pre: t_end > t_start
-        Pre: num_points >= 2
->>>>>>> origin/main
         """
         try:
             from upstream_drift_tools.process_calculators.ode_solver import (

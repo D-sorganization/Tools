@@ -511,7 +511,6 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
         mass: float,
         description: str,
     ) -> None:
-<<<<<<< HEAD
         """Display calculation results.
 
         Preconditions:
@@ -544,11 +543,6 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
             )
         if mass <= 0:
             raise ValueError(f"mass must be positive, got {mass}")
-=======
-        """Display calculation results."""
-        if not (ixx is not None):
-            raise ValueError("ixx must be provided")
->>>>>>> origin/main
         results = []
         results.append("Inertia Calculation Results")
         results.append("=" * 50)
@@ -601,7 +595,6 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
         ixz: float,
         iyz: float,
     ) -> list[str]:
-<<<<<<< HEAD
         """Validate inertia tensor.
 
         Preconditions:
@@ -625,11 +618,6 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
                 )
             if not math.isfinite(val):
                 raise ValueError(f"{name} must be a finite number, got {val}")
-=======
-        """Validate inertia tensor."""
-        if not (ixx is not None):
-            raise ValueError("ixx must be provided")
->>>>>>> origin/main
         errors = []
 
         # Check positive diagonal

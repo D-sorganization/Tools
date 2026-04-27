@@ -15,7 +15,6 @@ from double_pendulum_golf.gui.analysis_tab import (
 import double_pendulum_golf.gui.analysis_tab as at
 
 
-<<<<<<< HEAD
 # ---------------------------------------------------------------------------
 # GH1735 — DRY: unit tests for extracted evaluator factories
 # ---------------------------------------------------------------------------
@@ -74,9 +73,6 @@ class TestMakeCondEvaluator:
 
 
 def test_analysis_tab_no_mpl(qapp, monkeypatch):
-=======
-def test_analysis_tab_no_mpl(qapp, monkeypatch) -> Any:
->>>>>>> origin/main
     monkeypatch.setattr(at, "_HAS_MPL", False)
 
     # Check fallback UI

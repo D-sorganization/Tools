@@ -36,7 +36,6 @@ from ...constants import (
 )
 from ..models.pressure_drop_data_models import (
     FlowProperties,
-<<<<<<< HEAD
     GasComposition,  # noqa: F401 – re-exported for backward compat
     PipeFitting,  # noqa: F401 – re-exported for backward compat
     PressureDropInputs,
@@ -50,28 +49,11 @@ from ._flow_calculations import (  # noqa: F401
     calculate_erosional_velocity,
     calculate_expansion_factor,
     calculate_fitting_pressure_drop,
-=======
-    PressureDropInputs,
-    PressureDropResults,
-)
-from .compressible_flow import (
-    calculate_compressible_flow_correction,
-    calculate_expansion_factor,
-)
-from .fittings import calculate_fitting_pressure_drop
-from .flow_properties import (
-    calculate_elevation_pressure_drop,
-    calculate_erosional_velocity,
->>>>>>> origin/main
     calculate_flow_properties,
     calculate_frictional_pressure_drop,
     classify_flow_regime,
 )
-<<<<<<< HEAD
 from ._friction_factors import (  # noqa: F401
-=======
-from .friction_factors import (
->>>>>>> origin/main
     friction_factor_churchill,
     friction_factor_colebrook,
     friction_factor_haaland,
@@ -82,30 +64,10 @@ from .friction_factors import (
 
 logger = logging.getLogger(__name__)
 
-<<<<<<< HEAD
 
 # ============================================================================
 # MAIN CALCULATION ENGINE
 # ============================================================================
-=======
-__all__ = [
-    "PressureDropCalculationEngine",
-    "calculate_compressible_flow_correction",
-    "calculate_elevation_pressure_drop",
-    "calculate_erosional_velocity",
-    "calculate_expansion_factor",
-    "calculate_fitting_pressure_drop",
-    "calculate_flow_properties",
-    "calculate_frictional_pressure_drop",
-    "classify_flow_regime",
-    "friction_factor_churchill",
-    "friction_factor_colebrook",
-    "friction_factor_haaland",
-    "friction_factor_laminar",
-    "friction_factor_swamee_jain",
-    "select_friction_factor_method",
-]
->>>>>>> origin/main
 
 
 class PressureDropCalculationEngine:

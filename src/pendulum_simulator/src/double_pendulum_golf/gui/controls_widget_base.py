@@ -360,15 +360,8 @@ class ControlsWidgetBase(QWidget):
         inputs = self._get_torque_inputs()
         key = joint.lower()
         valid_keys = {k.lower() for k in inputs}
-<<<<<<< HEAD
         assert key in valid_keys, f"Unknown joint '{joint}', expected one of {valid_keys}"
         assert len(coeffs) >= 1, "Coefficients list must not be empty"
-=======
-        if key not in valid_keys:
-            raise ValueError(f"Unknown joint '{joint}', expected one of {valid_keys}")
-        if not (len(coeffs) >= 1):
-            raise ValueError("Coefficients list must not be empty")
->>>>>>> origin/main
 
         coeffs_str = ", ".join(f"{c:.4g}" for c in coeffs)
         # Find the matching input (case-insensitive)
@@ -397,16 +390,9 @@ class ControlsWidgetBase(QWidget):
 
     def set_slider_value(self, val: int) -> None:
         """Pre: 0 <= val <= slider.maximum()"""
-<<<<<<< HEAD
         assert 0 <= val <= self.slider.maximum(), (
             f"Slider value {val} out of range [0, {self.slider.maximum()}]"
         )
-=======
-        if not (0 <= val <= self.slider.maximum()):
-            raise ValueError(
-                f"Slider value {val} out of range [0, {self.slider.maximum()}]"
-            )
->>>>>>> origin/main
         self.slider.blockSignals(True)
         self.slider.setValue(val)
         self.slider.blockSignals(False)

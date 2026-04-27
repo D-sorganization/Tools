@@ -199,16 +199,11 @@ def _make_scale_slider(
     Pre: ``style`` is non-None, ``divisor > 0``, ``default`` and
          ``max_val`` are positive, ``default <= max_val``.
     """
-<<<<<<< HEAD
     assert style is not None, "style must be provided"
     assert divisor > 0, f"divisor must be > 0, got {divisor}"
     assert max_val > 0 and default > 0 and default <= max_val, (
         f"invalid slider bounds: default={default}, max_val={max_val}"
     )
-=======
-    if not (style is not None):
-        raise ValueError("style must be provided")
->>>>>>> origin/main
     s = QSlider(Qt.Orientation.Horizontal)
     s.setRange(1, max_val)
     s.setValue(default)
@@ -350,13 +345,8 @@ class ToolStrip(QWidget):
         layout.addWidget(_vline())
         self._build_sim_controls(layout)
 
-<<<<<<< HEAD
     def _build_model_selector(self, layout: QHBoxLayout) -> None:
         """Add title label and model-selection combo box to layout."""
-=======
-        if not (layout is not None):
-            raise ValueError("layout must be provided")
->>>>>>> origin/main
         title = QLabel("Pendulums")
         title.setStyleSheet(_TITLE)
         title.setFont(QFont("Sans", 11, QFont.Weight.Bold))
@@ -578,7 +568,6 @@ class ToolStrip(QWidget):
         All three overlay types (Force Vectors, Mobility Ellipsoids, Force Ellipsoids)
         are stacked vertically in a compact section.
         """
-<<<<<<< HEAD
         assert layout is not None, "layout must be provided"
         overlay_frame, overlay_layout = self._create_overlay_frame()
 
@@ -604,11 +593,6 @@ class ToolStrip(QWidget):
 
     def _create_overlay_frame(self) -> tuple[QFrame, QVBoxLayout]:
         """Create the overlay section container frame and its vertical layout."""
-=======
-        # --- Overlay section container ---
-        if not (layout is not None):
-            raise ValueError("layout must be provided")
->>>>>>> origin/main
         overlay_frame = QFrame()
         overlay_frame.setObjectName("overlay_section")
         overlay_frame.setStyleSheet(_OVERLAY_SECTION)

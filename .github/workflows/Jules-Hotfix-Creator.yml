@@ -99,11 +99,7 @@ jobs:
 
       - uses: actions/setup-node@v6
         if: steps.jules.outputs.enabled == 'true'
-<<<<<<< HEAD
         with: { node-version: "24" }
-=======
-        with: { node-version: "22" }
->>>>>>> origin/main
       - run: npm install -g @google/jules
         if: steps.jules.outputs.enabled == 'true'
       - run: jules auth --token ${{ secrets.JULES_API_KEY }}

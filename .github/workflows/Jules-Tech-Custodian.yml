@@ -54,11 +54,7 @@ jobs:
       - uses: actions/setup-python@v6
         with: { python-version: "3.11" }
       - uses: actions/setup-node@v6
-<<<<<<< HEAD
         with: { node-version: "24" }
-=======
-        with: { node-version: "22" }
->>>>>>> origin/main
       - run: |
           npm install -g @google/jules
           pip install ruff==0.14.10

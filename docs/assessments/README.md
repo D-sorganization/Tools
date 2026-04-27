@@ -198,20 +198,12 @@ _See individual Assessment_Prompt_X.md files for detailed prompts._
 | 4.6 | 2026-03 | Executed Completist Audit (Mar 22) |
 | 4.7 | 2026-03 | Generated Comprehensive Assessments and applied AUTO-FIXED changes |
 | 4.8 | 2026-03 | Executed Completist Audit (Mar 29) |
-<<<<<<< HEAD
-=======
-| 4.9 | 2026-04 | Added adversarial security assessment report (2026-04-22) and synchronized assessment governance references |
->>>>>>> origin/main
 | 4.9 | 2026-03 | Code Quality Review of .jules/review_data/ (2026-03-30) |
 | 4.10 | 2026-04 | Executed Completist Audit (Apr 02) |
 | 5.0 | 2026-04 | Generated Comprehensive Assessments and applied AUTO-FIXED changes |
 | 5.1 | 2026-04 | Executed Completist Audit (Apr 05) |
 | 5.2 | 2026-04 | A-N comprehensive review 2026-04-09 (see `A-N_Assessment_2026-04-09.md`) |
-<<<<<<< HEAD
 | 5.3 | 2026-04 | A-N Assessment 2026-04-10 refresh (see `A-N_Assessment_2026-04-10.md`) |
-=======
-| 5.3 | 2026-04 | A-N comprehensive review 2026-04-17 (see `A-N_Assessment_2026-04-17.md`) |
->>>>>>> origin/main
 
 ---
 

@@ -9,10 +9,6 @@ This module provides bidirectional conversion between URDF and MJCF formats.
 from __future__ import annotations
 
 import logging
-<<<<<<< HEAD
-=======
-import xml.etree.ElementTree as ET  # nosec B405 — type annotations only; parsing uses defusedxml
->>>>>>> origin/main
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any

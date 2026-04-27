@@ -484,7 +484,6 @@ class AnalysisTab:
         )
 
         if z_key == "mass_matrix_det":
-<<<<<<< HEAD
             return _make_det_evaluator(
                 lambda angles: mass_matrix(angles.get("phi", 0.0), params)
             )
@@ -499,24 +498,6 @@ class AnalysisTab:
                 return potential_energy(state, params)
 
             return _eval
-=======
-            return self._matrix_metric_evaluator(
-                lambda angles: mass_matrix(angles.get("phi", 0.0), params),
-                np.linalg.det,
-            )
-        if z_key == "mass_matrix_cond":
-            return self._matrix_metric_evaluator(
-                lambda angles: mass_matrix(angles.get("phi", 0.0), params),
-                np.linalg.cond,
-            )
-        if z_key == "potential_energy":
-            return self._transformed_scalar_evaluator(
-                lambda angles: np.array(
-                    [angles.get("theta1", 0.0), angles.get("phi", 0.0), 0.0, 0.0]
-                ),
-                lambda state: potential_energy(state, params),
-            )
->>>>>>> origin/main
         if z_key == "manipulability":
             return self._numerical_manipulability(
                 lambda a: forward_kinematics(a["theta1"], a["phi"], params),
@@ -550,7 +531,6 @@ class AnalysisTab:
         )
 
         if z_key == "mass_matrix_det":
-<<<<<<< HEAD
             return _make_det_evaluator(
                 lambda angles: triple_mm(
                     angles.get("phi1", 0.0), angles.get("phi2", 0.0), params
@@ -561,20 +541,6 @@ class AnalysisTab:
                 lambda angles: triple_mm(
                     angles.get("phi1", 0.0), angles.get("phi2", 0.0), params
                 )
-=======
-            return self._matrix_metric_evaluator(
-                lambda angles: triple_mm(
-                    angles.get("phi1", 0.0), angles.get("phi2", 0.0), params
-                ),
-                np.linalg.det,
-            )
-        if z_key == "mass_matrix_cond":
-            return self._matrix_metric_evaluator(
-                lambda angles: triple_mm(
-                    angles.get("phi1", 0.0), angles.get("phi2", 0.0), params
-                ),
-                np.linalg.cond,
->>>>>>> origin/main
             )
         if z_key == "potential_energy":
             return self._transformed_scalar_evaluator(
@@ -631,23 +597,12 @@ class AnalysisTab:
         )
 
         if z_key == "mass_matrix_det":
-<<<<<<< HEAD
             return _make_det_evaluator(
                 lambda angles: golfer_mm(self._golfer_q_from_angles(angles), params)
             )
         if z_key == "mass_matrix_cond":
             return _make_cond_evaluator(
                 lambda angles: golfer_mm(self._golfer_q_from_angles(angles), params)
-=======
-            return self._q_scalar_evaluator(
-                self._golfer_q_from_angles,
-                lambda q: np.linalg.det(golfer_mm(q, params)),
-            )
-        if z_key == "mass_matrix_cond":
-            return self._q_scalar_evaluator(
-                self._golfer_q_from_angles,
-                lambda q: np.linalg.cond(golfer_mm(q, params)),
->>>>>>> origin/main
             )
         if z_key == "potential_energy":
             return self._q_scalar_evaluator(
@@ -744,14 +699,10 @@ class AnalysisTab:
         eps = 1e-7
         n_dof = len(angle_keys)
 
-<<<<<<< HEAD
         # Note: this closure cannot be JIT-compiled — it captures Python
         # callables (fk_fn) and uses dict types that numba cannot infer.
         # A prior @jit(nopython=True) decorator here crashed the analysis
         # tab the moment manipulability was computed.
-=======
-        @jit(nopython=True, fastmath=True)
->>>>>>> origin/main
         def _eval(angles: dict) -> float:
             fk0 = fk_fn(angles)
             tip0 = np.asarray(fk0[tip_key], dtype=float)

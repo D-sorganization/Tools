@@ -191,7 +191,6 @@ class FinancialCalculatorEngine:
         depreciation_years: int,
         tax_rate: float,
     ) -> FinancialDesign:
-<<<<<<< HEAD
         """Run financial calculation.
 
         Preconditions:
@@ -250,11 +249,6 @@ class FinancialCalculatorEngine:
                 f"depreciation_years must be positive, got {depreciation_years}"
             )
 
-=======
-        """Run financial calculation."""
-        if not (plant_capacity is not None):
-            raise ValueError("plant_capacity must be provided")
->>>>>>> origin/main
         params = self._params_class(
             plant_capacity_tpd=plant_capacity,
             operating_days_per_year=operating_days,
@@ -291,7 +285,6 @@ class FinancialCalculatorEngine:
         )
 
     def generate_projections(self, years: int = 10) -> list[dict]:
-<<<<<<< HEAD
         """Generate yearly projections.
 
         Preconditions:
@@ -305,11 +298,6 @@ class FinancialCalculatorEngine:
             raise TypeError(f"years must be an int, got {type(years)}")
         if years <= 0:
             raise ValueError(f"years must be positive, got {years}")
-=======
-        """Generate yearly projections."""
-        if not (years is not None):
-            raise ValueError("years must be provided")
->>>>>>> origin/main
         result = self._calculator.generate_yearly_projections(years)
         return list(result)
 
@@ -657,7 +645,6 @@ class FinancialCalculatorMainWindow(QMainWindow):
         self._update_projections(projections)
 
     def _update_results(self, results: FinancialDesign) -> None:
-<<<<<<< HEAD
         """Update results display.
 
         Preconditions:
@@ -668,11 +655,6 @@ class FinancialCalculatorMainWindow(QMainWindow):
         """
         if not isinstance(results, FinancialDesign):
             raise TypeError(f"results must be a FinancialDesign, got {type(results)}")
-=======
-        """Update results display."""
-        if not (results is not None):
-            raise ValueError("results must be provided")
->>>>>>> origin/main
         self.metric_labels["annual_tons"].setText(
             f"{results.annual_feedstock_tons:,.0f} tons"
         )
@@ -684,7 +666,6 @@ class FinancialCalculatorMainWindow(QMainWindow):
         self.metric_labels["payback"].setText(f"{results.payback_years:.1f} years")
 
     def _update_projections(self, projections: list[dict]) -> None:
-<<<<<<< HEAD
         """Update projections table.
 
         Preconditions:
@@ -695,11 +676,6 @@ class FinancialCalculatorMainWindow(QMainWindow):
         """
         if not isinstance(projections, list):
             raise TypeError(f"projections must be a list, got {type(projections)}")
-=======
-        """Update projections table."""
-        if not (projections is not None):
-            raise ValueError("projections must be provided")
->>>>>>> origin/main
         self.projections_table.setRowCount(len(projections))
 
         for row, proj in enumerate(projections):

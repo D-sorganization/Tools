@@ -66,7 +66,6 @@ class DoublePendulumParams:
             friction2: Friction coefficient for second joint
             m_clubhead: Clubhead point mass at the tip (kg)
         """
-<<<<<<< HEAD
         if not isinstance(m1, (int, float)):
             raise TypeError(f"m1 must be a number, got {type(m1).__name__}")
         if not isinstance(m2, (int, float)):
@@ -93,10 +92,6 @@ class DoublePendulumParams:
             raise ValueError(f"friction2 must be non-negative, got {friction2}")
         if m_clubhead < 0:
             raise ValueError(f"m_clubhead must be non-negative, got {m_clubhead}")
-=======
-        if not (m1 is not None):
-            raise ValueError("m1 must be provided")
->>>>>>> origin/main
         self.m1 = m1
         self.m2 = m2
         self.l1 = l1
@@ -134,12 +129,7 @@ class DoublePendulum:
         g: float = 9.81,
         m_clubhead: float = 0.0,
     ):
-<<<<<<< HEAD
         # Validation delegated to DoublePendulumParams (raises TypeError/ValueError on bad input)
-=======
-        if not (m1 is not None):
-            raise ValueError("m1 must be provided")
->>>>>>> origin/main
         self.params = DoublePendulumParams(
             m1=m1, m2=m2, l1=l1, l2=l2, g=g, m_clubhead=m_clubhead
         )
@@ -147,15 +137,10 @@ class DoublePendulum:
 
     def mass_matrix(self, q: np.ndarray) -> np.ndarray:
         """Compute the 2x2 mass matrix M(q)."""
-<<<<<<< HEAD
         if not isinstance(q, np.ndarray):
             raise TypeError(f"q must be a numpy ndarray, got {type(q).__name__}")
         if q.shape != (2,):
             raise ValueError(f"q must have shape (2,), got {q.shape}")
-=======
-        if not (q is not None):
-            raise ValueError("q must be provided")
->>>>>>> origin/main
         if self.use_native:
             try:
                 result = pendulum_core.py_double_mass_matrix(q.tolist(), self.params.to_rust())
@@ -179,15 +164,10 @@ class DoublePendulum:
 
     def gravity_vector(self, q: np.ndarray) -> np.ndarray:
         """Compute the gravity vector G(q)."""
-<<<<<<< HEAD
         if not isinstance(q, np.ndarray):
             raise TypeError(f"q must be a numpy ndarray, got {type(q).__name__}")
         if q.shape != (2,):
             raise ValueError(f"q must have shape (2,), got {q.shape}")
-=======
-        if not (q is not None):
-            raise ValueError("q must be provided")
->>>>>>> origin/main
         if self.use_native:
             try:
                 result = pendulum_core.py_double_gravity_vector(
@@ -212,7 +192,6 @@ class DoublePendulum:
 
     def coriolis(self, q: np.ndarray, qdot: np.ndarray) -> np.ndarray:
         """Compute the Coriolis vector C(q, qdot)."""
-<<<<<<< HEAD
         if not isinstance(q, np.ndarray):
             raise TypeError(f"q must be a numpy ndarray, got {type(q).__name__}")
         if q.shape != (2,):
@@ -221,10 +200,6 @@ class DoublePendulum:
             raise TypeError(f"qdot must be a numpy ndarray, got {type(qdot).__name__}")
         if qdot.shape != (2,):
             raise ValueError(f"qdot must have shape (2,), got {qdot.shape}")
-=======
-        if not (q is not None):
-            raise ValueError("q must be provided")
->>>>>>> origin/main
         if self.use_native:
             try:
                 result = pendulum_core.py_double_coriolis(
@@ -247,15 +222,10 @@ class DoublePendulum:
 
     def forward_kinematics(self, q: np.ndarray) -> Dict[str, float]:
         """Compute forward kinematics."""
-<<<<<<< HEAD
         if not isinstance(q, np.ndarray):
             raise TypeError(f"q must be a numpy ndarray, got {type(q).__name__}")
         if q.shape != (2,):
             raise ValueError(f"q must have shape (2,), got {q.shape}")
-=======
-        if not (q is not None):
-            raise ValueError("q must be provided")
->>>>>>> origin/main
         if self.use_native:
             try:
                 return pendulum_core.py_double_forward_kinematics(  # type: ignore[no-any-return]
@@ -309,7 +279,6 @@ class GolferParams:
         g: float = 9.81,
     ):
         """Initialize golfer model parameters."""
-<<<<<<< HEAD
         _lengths = {
             "l_hub": l_hub,
             "l_r_upper": l_r_upper,
@@ -347,10 +316,6 @@ class GolferParams:
             raise TypeError(f"g must be a number, got {type(g).__name__}")
         if g <= 0:
             raise ValueError(f"g must be positive, got {g}")
-=======
-        if not (l_hub is not None):
-            raise ValueError("l_hub must be provided")
->>>>>>> origin/main
         self.l_hub = l_hub
         self.m_hub = m_hub
         self.d_rs = d_rs
@@ -420,12 +385,7 @@ class Golfer:
         grip_left: float,
         g: float = 9.81,
     ):
-<<<<<<< HEAD
         # Validation delegated to GolferParams (raises TypeError/ValueError on bad input)
-=======
-        if not (l_hub is not None):
-            raise ValueError("l_hub must be provided")
->>>>>>> origin/main
         self.params = GolferParams(
             l_hub=l_hub,
             m_hub=m_hub,
@@ -450,15 +410,10 @@ class Golfer:
 
     def mass_matrix(self, q: np.ndarray) -> np.ndarray:
         """Compute the 8x8 mass matrix M(q)."""
-<<<<<<< HEAD
         if not isinstance(q, np.ndarray):
             raise TypeError(f"q must be a numpy ndarray, got {type(q).__name__}")
         if q.shape != (8,):
             raise ValueError(f"q must have shape (8,), got {q.shape}")
-=======
-        if not (q is not None):
-            raise ValueError("q must be provided")
->>>>>>> origin/main
         if self.use_native:
             try:
                 result = pendulum_core.py_golfer_mass_matrix(q.tolist(), self.params.to_rust())
@@ -479,15 +434,10 @@ class Golfer:
 
     def gravity_vector(self, q: np.ndarray) -> np.ndarray:
         """Compute the gravity vector G(q)."""
-<<<<<<< HEAD
         if not isinstance(q, np.ndarray):
             raise TypeError(f"q must be a numpy ndarray, got {type(q).__name__}")
         if q.shape != (8,):
             raise ValueError(f"q must have shape (8,), got {q.shape}")
-=======
-        if not (q is not None):
-            raise ValueError("q must be provided")
->>>>>>> origin/main
         if self.use_native:
             try:
                 result = pendulum_core.py_golfer_gravity_vector(
@@ -505,15 +455,10 @@ class Golfer:
 
     def forward_kinematics(self, q: np.ndarray) -> Dict[str, Tuple[float, float]]:
         """Compute forward kinematics."""
-<<<<<<< HEAD
         if not isinstance(q, np.ndarray):
             raise TypeError(f"q must be a numpy ndarray, got {type(q).__name__}")
         if q.shape != (8,):
             raise ValueError(f"q must have shape (8,), got {q.shape}")
-=======
-        if not (q is not None):
-            raise ValueError("q must be provided")
->>>>>>> origin/main
         if self.use_native:
             try:
                 result = pendulum_core.py_golfer_forward_kinematics(

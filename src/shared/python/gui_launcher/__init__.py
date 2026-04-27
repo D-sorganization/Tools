@@ -48,11 +48,7 @@ __all__ = [
     "launch_web_app",
     "generate_launch_script",
     "launch_web_from_gui_info",
-<<<<<<< HEAD
     "load_manifest",
-=======
-    "make_launcher",
->>>>>>> origin/main
     "make_pyqt6_launcher",
     "register_gui",
     "get_registry",

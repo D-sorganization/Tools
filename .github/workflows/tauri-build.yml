@@ -98,11 +98,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-<<<<<<< HEAD
           node-version: "24"
-=======
-          node-version: "22"
->>>>>>> origin/main
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
@@ -167,11 +163,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-<<<<<<< HEAD
           node-version: "24"
-=======
-          node-version: "22"
->>>>>>> origin/main
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable

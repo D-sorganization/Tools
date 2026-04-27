@@ -639,11 +639,7 @@ class BatchProcessor:
         pattern: str = "*.csv",
         output_dir: str | Path | None = None,
         output_format: str = "csv",
-<<<<<<< HEAD
         **kwargs: typing.Any,
-=======
-        **kwargs,
->>>>>>> origin/main
     ) -> dict[str, Signal | list[Signal]]:
         """Load, process, and optionally save all signals.
 

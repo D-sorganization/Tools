@@ -1,21 +1,12 @@
-<<<<<<< HEAD
 """ModelGenerationAPI class with all route handler methods.
 
 This module contains the main API class that registers routes and implements
 handlers for URDF generation, conversion, validation, inertia, library, and
 editor operations.
-=======
-"""
-Route implementation for the model_generation REST API.
-
-Provides HTTP endpoints for URDF generation, conversion, editing, and library
-access. Framework adapters live in sibling modules.
->>>>>>> origin/main
 """
 
 from __future__ import annotations
 
-<<<<<<< HEAD
 import logging
 import tempfile
 from collections.abc import Callable
@@ -25,94 +16,6 @@ from typing import Any
 from .rest_api_types import APIRequest, APIResponse, HTTPMethod, Route
 
 logger = logging.getLogger(__name__)
-=======
-import tempfile
-from collections.abc import Callable
-from dataclasses import dataclass, field
-from enum import Enum
-from pathlib import Path
-from typing import Any
-
-
-class HTTPMethod(Enum):
-    """HTTP methods."""
-
-    GET = "GET"
-    POST = "POST"
-    PUT = "PUT"
-    DELETE = "DELETE"
-    PATCH = "PATCH"
-
-
-@dataclass
-class APIRequest:
-    """Abstraction for HTTP request."""
-
-    method: HTTPMethod
-    path: str
-    query_params: dict[str, str] = field(default_factory=dict)
-    body: dict[str, Any] | None = None
-    files: dict[str, bytes] = field(default_factory=dict)
-    headers: dict[str, str] = field(default_factory=dict)
-
-
-@dataclass
-class APIResponse:
-    """Abstraction for HTTP response."""
-
-    status_code: int
-    body: dict[str, Any] | str | bytes
-    content_type: str = "application/json"
-    headers: dict[str, str] = field(default_factory=dict)
-
-    @classmethod
-    def ok(cls, data: dict[str, Any]) -> APIResponse:
-        """Create a 200 OK response with *data* as the JSON body."""
-        return cls(status_code=200, body=data)
-
-    @classmethod
-    def created(cls, data: dict[str, Any]) -> APIResponse:
-        """Create a 201 Created response with *data* as the JSON body."""
-        return cls(status_code=201, body=data)
-
-    @classmethod
-    def error(cls, message: str, status_code: int = 400) -> APIResponse:
-        """Create an error response with the given *status_code* (default 400)."""
-        return cls(status_code=status_code, body={"error": message})
-
-    @classmethod
-    def not_found(cls, message: str = "Not found") -> APIResponse:
-        """Create a 404 Not Found response with *message*."""
-        return cls(status_code=404, body={"error": message})
-
-    @classmethod
-    def file(
-        cls,
-        content: str | bytes,
-        filename: str,
-        content_type: str = "application/xml",
-    ) -> APIResponse:
-        """Create a file-download response with a Content-Disposition header."""
-        return cls(
-            status_code=200,
-            body=content if isinstance(content, bytes) else content.encode(),
-            content_type=content_type,
-            headers={
-                "Content-Disposition": f'attachment; filename="{filename}"',
-            },
-        )
-
-
-@dataclass
-class Route:
-    """API route definition."""
-
-    method: HTTPMethod
-    path: str
-    handler: Callable[[APIRequest], APIResponse]
-    description: str = ""
-    tags: list[str] = field(default_factory=list)
->>>>>>> origin/main
 
 
 class ModelGenerationAPI:
@@ -150,11 +53,7 @@ class ModelGenerationAPI:
         Args:
             prefix: URL prefix for all routes
         """
-<<<<<<< HEAD
         if prefix is None:
-=======
-        if not (prefix is not None):
->>>>>>> origin/main
             raise ValueError("prefix must be provided")
         self.prefix = prefix
         self._routes: list[Route] = []
@@ -318,11 +217,7 @@ class ModelGenerationAPI:
 
     def _add_security_headers(self, response: APIResponse) -> None:
         """Add security headers to response."""
-<<<<<<< HEAD
         if response is None:
-=======
-        if not (response is not None):
->>>>>>> origin/main
             raise ValueError("response must be provided")
         response.headers["Content-Security-Policy"] = "default-src 'self'"
         response.headers["X-Content-Type-Options"] = "nosniff"
@@ -334,11 +229,7 @@ class ModelGenerationAPI:
     def handle_request(self, request: APIRequest) -> APIResponse:
         """Handle an API request."""
         # Find matching route
-<<<<<<< HEAD
         if request is None:
-=======
-        if not (request is not None):
->>>>>>> origin/main
             raise ValueError("request must be provided")
         for route in self._routes:
             if route.method != request.method:
@@ -364,7 +255,6 @@ class ModelGenerationAPI:
             if match:
                 # Add path params to query params
                 request.query_params.update(params)
-<<<<<<< HEAD
                 try:
                     response = route.handler(request)
                     self._add_security_headers(response)
@@ -374,11 +264,6 @@ class ModelGenerationAPI:
                     response = APIResponse.error(str(e), 500)
                     self._add_security_headers(response)
                     return response
-=======
-                response = route.handler(request)
-                self._add_security_headers(response)
-                return response
->>>>>>> origin/main
 
         response = APIResponse.not_found(
             f"No route for {request.method.value} {request.path}"
@@ -419,11 +304,7 @@ class ModelGenerationAPI:
 
     def generate_humanoid(self, request: APIRequest) -> APIResponse:
         """Generate humanoid URDF."""
-<<<<<<< HEAD
         if request is None:
-=======
-        if not (request is not None):
->>>>>>> origin/main
             raise ValueError("request must be provided")
         from model_generation.builders.parametric_builder import ParametricBuilder
 
@@ -461,11 +342,7 @@ class ModelGenerationAPI:
 
     def generate_from_params(self, request: APIRequest) -> APIResponse:
         """Generate URDF from detailed parameters."""
-<<<<<<< HEAD
         if request is None:
-=======
-        if not (request is not None):
->>>>>>> origin/main
             raise ValueError("request must be provided")
         from model_generation.builders.manual_builder import ManualBuilder
         from model_generation.core.types import (
@@ -516,11 +393,7 @@ class ModelGenerationAPI:
 
     def convert_simscape_to_urdf(self, request: APIRequest) -> APIResponse:
         """Convert SimScape MDL/SLX to URDF."""
-<<<<<<< HEAD
         if request is None:
-=======
-        if not (request is not None):
->>>>>>> origin/main
             raise ValueError("request must be provided")
         from model_generation.converters.simscape import (
             ConversionConfig,
@@ -572,11 +445,7 @@ class ModelGenerationAPI:
 
     def convert_mjcf_to_urdf(self, request: APIRequest) -> APIResponse:
         """Convert MJCF to URDF."""
-<<<<<<< HEAD
         if request is None:
-=======
-        if not (request is not None):
->>>>>>> origin/main
             raise ValueError("request must be provided")
         from model_generation.converters.mjcf_converter import MJCFConverter
 
@@ -605,11 +474,7 @@ class ModelGenerationAPI:
 
     def convert_urdf_to_mjcf(self, request: APIRequest) -> APIResponse:
         """Convert URDF to MJCF."""
-<<<<<<< HEAD
         if request is None:
-=======
-        if not (request is not None):
->>>>>>> origin/main
             raise ValueError("request must be provided")
         from model_generation.converters.mjcf_converter import MJCFConverter
 
@@ -642,11 +507,7 @@ class ModelGenerationAPI:
 
     def validate_urdf(self, request: APIRequest) -> APIResponse:
         """Validate URDF content."""
-<<<<<<< HEAD
         if request is None:
-=======
-        if not (request is not None):
->>>>>>> origin/main
             raise ValueError("request must be provided")
         from model_generation.editor.text_editor import (
             URDFTextEditor,
@@ -697,11 +558,7 @@ class ModelGenerationAPI:
 
     def parse_urdf(self, request: APIRequest) -> APIResponse:
         """Parse URDF and return structure."""
-<<<<<<< HEAD
         if request is None:
-=======
-        if not (request is not None):
->>>>>>> origin/main
             raise ValueError("request must be provided")
         from model_generation.converters.urdf_parser import URDFParser
 
@@ -740,11 +597,7 @@ class ModelGenerationAPI:
 
     def calculate_inertia(self, request: APIRequest) -> APIResponse:
         """Calculate inertia for primitive shape."""
-<<<<<<< HEAD
         if request is None:
-=======
-        if not (request is not None):
->>>>>>> origin/main
             raise ValueError("request must be provided")
         from model_generation.core.types import Inertia
 
@@ -808,11 +661,7 @@ class ModelGenerationAPI:
 
     def inertia_from_mesh(self, request: APIRequest) -> APIResponse:
         """Calculate inertia from mesh file."""
-<<<<<<< HEAD
         if request is None:
-=======
-        if not (request is not None):
->>>>>>> origin/main
             raise ValueError("request must be provided")
         body = request.body or {}
 
@@ -835,7 +684,6 @@ class ModelGenerationAPI:
                 f.write(mesh_content)
                 temp_path = f.name
 
-<<<<<<< HEAD
             mesh: Any = trimesh.load(temp_path)
 
             if density:
@@ -866,41 +714,6 @@ class ModelGenerationAPI:
                     },
                 }
             )
-=======
-            try:
-                mesh: Any = trimesh.load(temp_path)
-
-                if density:
-                    mesh.density = density
-                    inertia_tensor = mesh.moment_inertia
-                    calculated_mass = mesh.mass
-                else:
-                    # Scale inertia to specified mass
-                    volume = mesh.volume
-                    inertia_tensor = mesh.moment_inertia * (mass / mesh.mass)
-                    calculated_mass = mass
-
-                return APIResponse.ok(
-                    {
-                        "mass": calculated_mass,
-                        "volume": volume if density else mesh.volume,
-                        "center_of_mass": mesh.center_mass.tolist(),
-                        "inertia": {
-                            "ixx": float(inertia_tensor[0, 0]),
-                            "iyy": float(inertia_tensor[1, 1]),
-                            "izz": float(inertia_tensor[2, 2]),
-                            "ixy": float(inertia_tensor[0, 1]),
-                            "ixz": float(inertia_tensor[0, 2]),
-                            "iyz": float(inertia_tensor[1, 2]),
-                        },
-                    }
-                )
-            finally:
-                # Clean up
-                temp_file = Path(temp_path)
-                if temp_file.exists():
-                    temp_file.unlink()
->>>>>>> origin/main
 
         except ImportError:
             return APIResponse.error(
@@ -916,11 +729,7 @@ class ModelGenerationAPI:
 
     def library_list_models(self, request: APIRequest) -> APIResponse:
         """List models in library."""
-<<<<<<< HEAD
         if request is None:
-=======
-        if not (request is not None):
->>>>>>> origin/main
             raise ValueError("request must be provided")
         from model_generation.library import ModelLibrary
 
@@ -961,11 +770,7 @@ class ModelGenerationAPI:
 
     def library_get_model(self, request: APIRequest) -> APIResponse:
         """Get model details."""
-<<<<<<< HEAD
         if request is None:
-=======
-        if not (request is not None):
->>>>>>> origin/main
             raise ValueError("request must be provided")
         from model_generation.library import ModelLibrary
 
@@ -994,11 +799,7 @@ class ModelGenerationAPI:
 
     def library_add_model(self, request: APIRequest) -> APIResponse:
         """Add model to library."""
-<<<<<<< HEAD
         if request is None:
-=======
-        if not (request is not None):
->>>>>>> origin/main
             raise ValueError("request must be provided")
         from model_generation.library import ModelCategory, ModelLibrary
 
@@ -1051,11 +852,7 @@ class ModelGenerationAPI:
 
     def library_remove_model(self, request: APIRequest) -> APIResponse:
         """Remove model from library."""
-<<<<<<< HEAD
         if request is None:
-=======
-        if not (request is not None):
->>>>>>> origin/main
             raise ValueError("request must be provided")
         from model_generation.library import ModelLibrary
 
@@ -1071,11 +868,7 @@ class ModelGenerationAPI:
 
     def library_download_model(self, request: APIRequest) -> APIResponse:
         """Download model URDF."""
-<<<<<<< HEAD
         if request is None:
-=======
-        if not (request is not None):
->>>>>>> origin/main
             raise ValueError("request must be provided")
         from model_generation.library import ModelLibrary
 
@@ -1099,11 +892,7 @@ class ModelGenerationAPI:
 
     def compose_models(self, request: APIRequest) -> APIResponse:
         """Compose model from multiple sources."""
-<<<<<<< HEAD
         if request is None:
-=======
-        if not (request is not None):
->>>>>>> origin/main
             raise ValueError("request must be provided")
         from model_generation.editor import FrankensteinEditor
 
@@ -1163,11 +952,7 @@ class ModelGenerationAPI:
 
     def diff_urdfs(self, request: APIRequest) -> APIResponse:
         """Compare two URDF files."""
-<<<<<<< HEAD
         if request is None:
-=======
-        if not (request is not None):
->>>>>>> origin/main
             raise ValueError("request must be provided")
         from model_generation.editor.text_editor import URDFTextEditor
 

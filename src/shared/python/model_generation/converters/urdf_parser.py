@@ -9,15 +9,9 @@ from __future__ import annotations
 
 import logging
 import math
-<<<<<<< HEAD
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING
-=======
-import xml.etree.ElementTree as ET  # nosec B405 — type annotations + ParseError only; parsing uses defusedxml
-from dataclasses import dataclass, field
-from pathlib import Path, PurePosixPath
->>>>>>> origin/main
 
 import defusedxml.ElementTree as DefusedET
 

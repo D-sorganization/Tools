@@ -19,7 +19,6 @@ class PressureDropRequest(BaseModel):
     molecular_weight_kg_mol: float = Field(
         ..., gt=0, description="Molecular weight [kg/mol]"
     )
-<<<<<<< HEAD
     viscosity_pa_s: float | None = Field(
         default=None,
         gt=0,
@@ -27,14 +26,6 @@ class PressureDropRequest(BaseModel):
             "Dynamic viscosity [Pa·s]. If provided, used directly. "
             "If omitted, Sutherland air approximation is used (air only)."
         ),
-=======
-    gas_name: str | None = Field(
-        default=None,
-        description="Gas name for Sutherland lookup (e.g. 'air', 'steam', 'h2', 'n2', 'co2', 'ch4')",
-    )
-    dynamic_viscosity_pa_s: float | None = Field(
-        default=None, gt=0, description="Optional manual viscosity [Pa·s] override"
->>>>>>> origin/main
     )
 
 
