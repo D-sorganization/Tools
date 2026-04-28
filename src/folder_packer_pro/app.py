@@ -75,7 +75,9 @@ class FolderPackerPro(
         # Operation variables
         self.compression_level = "balanced"
         self.encrypt_enabled = False
-        self.encryption_password = ""  # populated at runtime from UI entry widget; not a hard-coded credential  # noqa: S105
+        # populated at runtime from UI entry widget;
+        # not a hard-coded credential  # noqa: S105
+        self.encryption_password = ""
         self.include_git = False
         self.create_manifest = True
         self.cancel_operation: bool = False
