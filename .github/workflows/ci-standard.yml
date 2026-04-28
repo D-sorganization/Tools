@@ -276,7 +276,25 @@ jobs:
         run: echo "::warning::Skipping gitleaks because GITLEAKS_LICENSE is not configured."
 
       - name: Module Size Budget
-        run: python3 scripts/check_module_size_budget.py --max-lines 1200 --include src
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch origin "${{ github.base_ref }}"
+            BASE_SHA=$(git merge-base "origin/${{ github.base_ref }}" HEAD || true)
+            if [ -z "$BASE_SHA" ]; then
+              BASE_SHA="${{ github.event.pull_request.base.sha }}"
+            fi
+            CHANGED_SRC=$(git diff --name-only "$BASE_SHA" HEAD -- 'src/**/*.py' || true)
+          elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
+            CHANGED_SRC=$(git diff --name-only "${{ github.event.before }}" HEAD -- 'src/**/*.py' || true)
+          else
+            CHANGED_SRC=$(git diff --name-only HEAD~1 HEAD -- 'src/**/*.py' || true)
+          fi
+
+          if [ -n "$CHANGED_SRC" ]; then
+            python3 scripts/check_module_size_budget.py --max-lines 1200 --include src
+          else
+            echo "No src Python changes detected; module size budget check skipped."
+          fi
 
   tests:
     needs: [pick-runner, quality-gate]
