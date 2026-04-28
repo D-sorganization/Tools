@@ -17,11 +17,15 @@ on:
       - "scripts/check_repo_topology.py"
       - ".github/workflows/topology-governance.yml"
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
 
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
@@ -59,7 +63,7 @@ jobs:
           esac
   topology-check:
     needs: pick-runner
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
