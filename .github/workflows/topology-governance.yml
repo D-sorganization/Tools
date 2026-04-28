@@ -17,6 +17,10 @@ on:
       - "scripts/check_repo_topology.py"
       - ".github/workflows/topology-governance.yml"
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
 
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
