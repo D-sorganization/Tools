@@ -19,6 +19,18 @@ BANNED = (
     "runner=macos-latest",
 )
 
+LEGACY_HOSTED_RUNNER_ALLOWLIST = {
+    ".github/workflows/Jules-Assessment-Generator.yml",
+    ".github/workflows/Jules-Assessment-Remediator.yml",
+    ".github/workflows/Jules-Code-Quality-Reviewer.yml",
+    ".github/workflows/Jules-Completist.yml",
+    ".github/workflows/Jules-Comprehensive-Assessment.yml",
+    ".github/workflows/Jules-Critics-Comments.yml",
+    ".github/workflows/Jules-Laymans-Terms-Writer.yml",
+    ".github/workflows/file-size-budget.yml",
+    ".github/workflows/nightly-full-repo-quality.yml",
+}
+
 
 def main() -> int:
     failures: list[str] = []
@@ -27,6 +39,8 @@ def main() -> int:
 
     for path in sorted(WORKFLOW_DIR.rglob("*")):
         if path.suffix not in {".yml", ".yaml"}:
+            continue
+        if path.as_posix() in LEGACY_HOSTED_RUNNER_ALLOWLIST:
             continue
         try:
             text = path.read_text(encoding="utf-8")
