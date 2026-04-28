@@ -57,7 +57,7 @@
 **Learning:** When implementing multi-step or confirming buttons (like a 'Clear' button that temporarily changes to 'Confirm?'), the visual text change is not always announced by screen readers if focus remains on the button, leaving users unaware of the new required action.
 **Action:** Always dynamically update the element's `aria-label` to reflect the new state (e.g., "Confirm clear history"), and ensure a relevant parent container uses `aria-live='polite'` so the state change is announced smoothly.
 
-## $(date +%Y-%m-%d) - [Accessible Soft Confirm Pattern]
+## 2026-04-28 - [Accessible Soft Confirm Pattern]
 **Learning:** Native `confirm()` dialogs block the main thread and provide poor user experience, especially for accessibility where focus management can be lost upon return.
 **Action:** When implementing destructive actions, use an inline "soft confirm" pattern (requiring a second click on the same button with updated text/aria-label) combined with `aria-live` on the container to ensure smooth flow and screen reader awareness.
 
@@ -68,3 +68,7 @@
 ## 2026-04-26 - [Dynamic Accessible Name for Soft Confirm Pattern]
 **Learning:** When using the soft confirm pattern on destructive actions (e.g., clear buttons changing to "CONFIRM?"), merely changing the text content (`textContent`) and providing `aria-live="polite"` on the parent does not update the accessible name of the button itself, leaving screen reader users without explicit context for the required secondary action.
 **Action:** Always dynamically manipulate the `aria-label` attribute (e.g., changing from "Clear all fields" to "Confirm clear all fields") concurrently with the visual text change, restoring it appropriately when the timeout occurs or the action completes.
+
+## 2026-04-28 - [Combobox Label Retargeting]
+**Learning:** When replacing native `<select>` elements with custom comboboxes (search inputs with dropdowns), leaving the `<label for="...">` targeted at the hidden select element breaks click-to-focus behavior and fails to provide the newly visible search input with its required accessible name.
+**Action:** Always dynamically update the `for` attribute of the corresponding `<label>` to target the newly visible interactive input field's `id` (and restore it if swapping back) to maintain accessibility and user flow.
