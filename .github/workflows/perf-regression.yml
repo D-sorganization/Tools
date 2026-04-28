@@ -1,0 +1,86 @@
+name: Performance Regression
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "src/data_processing/**"
+      - "benchmarks/**"
+      - ".github/workflows/perf-regression.yml"
+  pull_request:
+    paths:
+      - "src/data_processing/**"
+      - "benchmarks/**"
+      - ".github/workflows/perf-regression.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: perf-regression-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy pandas pytest pytest-benchmark
+          # Install the data_processor package if available
+          if [ -f "src/data_processing/data_processor/python/setup.py" ] || [ -f "src/data_processing/data_processor/python/pyproject.toml" ]; then
+            pip install -e "src/data_processing/data_processor/python"
+          fi
+
+      - name: Run benchmarks
+        run: |
+          cd src/data_processing/data_processor/python/benchmarks
+          python -m pytest performance_benchmark.py \
+            --benchmark-only \
+            --benchmark-json=benchmark-results.json \
+            --benchmark-compare \
+            --benchmark-compare-fail=min:5% \
+            || true
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results-${{ github.run_id }}
+          path: src/data_processing/data_processor/python/benchmarks/benchmark-results.json
+
+      - name: Comment benchmark results on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = 'src/data_processing/data_processor/python/benchmarks/benchmark-results.json';
+            let body = '## Performance Benchmark Results\n\n';
+            if (fs.existsSync(path)) {
+              const results = JSON.parse(fs.readFileSync(path, 'utf8'));
+              if (results.benchmarks && results.benchmarks.length > 0) {
+                body += '| Benchmark | Mean (s) | StdDev | Rounds |\n';
+                body += '|-----------|----------|--------|--------|\n';
+                for (const b of results.benchmarks) {
+                  body += `| ${b.name} | ${b.stats.mean.toFixed(6)} | ${b.stats.stddev.toFixed(6)} | ${b.stats.rounds} |\n`;
+                }
+              } else {
+                body += 'No benchmark results available.\n';
+              }
+            } else {
+              body += 'Benchmark results file not found.\n';
+            }
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
