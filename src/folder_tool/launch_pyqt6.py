@@ -1,5 +1,3 @@
-from typing import Any
-
 #!/usr/bin/env python3
 """
 Cross-platform launcher for Folder Tool.
