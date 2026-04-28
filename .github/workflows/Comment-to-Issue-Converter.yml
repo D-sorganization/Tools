@@ -36,7 +36,7 @@ defaults:
 jobs:
   pick-runner:
     name: pick-runner
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     timeout-minutes: 3
     outputs:
       runner: ${{ steps.pick.outputs.runner }}
@@ -174,7 +174,7 @@ jobs:
           PY
   process-comments:
     needs: pick-runner
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     if: |
       github.event_name == 'workflow_dispatch' ||
       (github.actor != 'github-actions[bot]' &&
