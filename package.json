@@ -1,0 +1,25 @@
+{
+  "name": "tools-workspace",
+  "version": "0.1.0",
+  "description": "D-Sorganization Tools monorepo workspace root",
+  "private": true,
+  "workspaces": [
+    "src/media_processing/video_processor",
+    "src/media_processing/video_processor/apps/web",
+    "src/rotation_converter/web",
+    "src/data_processing/data_processor/web",
+    "src/pressure_drop_calculator/web",
+    "src/financial_calculator/web",
+    "src/pendulum_simulator/pendulum-web",
+    "src/function_generator/web",
+    "src/web_applications/unit_converter",
+    "src/ode_solver/web"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
