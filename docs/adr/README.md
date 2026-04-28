@@ -14,3 +14,9 @@ This directory stores architecture decisions for cross-tool boundaries and share
 1. Shared tool skeleton and extension boundaries.
 2. UI/shared/core layering and import direction.
 3. CI gate ownership and blocking scope.
+
+## Records
+
+| ADR | Status | Summary |
+| --- | --- | --- |
+| [ADR-001](ADR-001-monorepo-workspaces.md) | Accepted | Defines monorepo workspace package boundaries and dependency direction. |
