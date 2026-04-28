@@ -116,6 +116,12 @@ function setupUnitSearch(searchInput, dropdown, unitSelect) {
   searchInput.addEventListener('focus', () => {
     unitSelect.style.display = 'none';
     searchInput.style.display = 'block';
+
+    // Retarget label to search input
+    const label = document.querySelector(`label[for="${unitSelect.id}"]`);
+    if (label) {
+      label.setAttribute('for', searchInput.id);
+    }
   });
 
   searchInput.addEventListener('input', e => {
@@ -195,6 +201,12 @@ function setupUnitSearch(searchInput, dropdown, unitSelect) {
       if (!searchInput.value) {
         searchInput.style.display = 'none';
         unitSelect.style.display = 'block';
+
+        // Restore label target to select
+        const label = document.querySelector(`label[for="${searchInput.id}"]`);
+        if (label) {
+          label.setAttribute('for', unitSelect.id);
+        }
       }
     }, 200);
   });
@@ -963,12 +975,26 @@ function setupEventListeners() {
   fromUnitSearchTrigger.addEventListener('click', () => {
     fromUnitSelect.style.display = 'none';
     fromUnitSearch.style.display = 'block';
+
+    // Retarget label to search input
+    const label = document.querySelector(`label[for="fromUnit"]`);
+    if (label) {
+      label.setAttribute('for', 'fromUnitSearch');
+    }
+
     fromUnitSearch.focus();
   });
 
   toUnitSearchTrigger.addEventListener('click', () => {
     toUnitSelect.style.display = 'none';
     toUnitSearch.style.display = 'block';
+
+    // Retarget label to search input
+    const label = document.querySelector(`label[for="toUnit"]`);
+    if (label) {
+      label.setAttribute('for', 'toUnitSearch');
+    }
+
     toUnitSearch.focus();
   });
 
