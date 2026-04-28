@@ -46,6 +46,7 @@ jobs:
     steps:
       - name: Select runner
         id: check
+        shell: bash
         run: |
           echo "runner=d-sorg-fleet-4core" >> $GITHUB_OUTPUT
           echo "Routing to self-hosted fleet runner."
