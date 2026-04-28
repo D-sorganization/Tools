@@ -29,7 +29,7 @@ permissions:
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
@@ -68,7 +68,7 @@ jobs:
           esac
   triage:
     needs: pick-runner
-    runs-on: self-hosted
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
     # Removed global actor check to allow scheduled runs even if file modified by bot
     outputs:
       target: ${{ steps.decide.outputs.target }}
@@ -77,6 +77,7 @@ jobs:
       - name: Check Iteration Limits
         id: check-limits
         if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'failure'
+        shell: bash
         env:
           GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
           MAX_REPAIR_LIMIT: ${{ env.MAX_REPAIR_ITERATIONS }}

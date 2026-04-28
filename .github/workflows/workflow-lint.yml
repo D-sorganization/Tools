@@ -21,13 +21,14 @@ concurrency:
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
     steps:
       - name: Check for self-hosted runner
         id: check
+        shell: bash
         env:
           GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
           LOCAL_MODE: ${{ vars.LOCAL_RUNNER_MODE }}
@@ -59,7 +60,7 @@ jobs:
           esac
   lint-workflows:
     needs: pick-runner
-    runs-on: self-hosted
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
 
     steps:
       - name: Checkout repository
