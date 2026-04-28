@@ -109,7 +109,7 @@ jobs:
         # failures; mirrors UpstreamDrift ci-standard.yml fix).
         run: |
           pip install --force-reinstall --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
-          pip install --upgrade pip
+          python -m pip install --ignore-installed --upgrade pip
           pip install --ignore-installed --no-deps mypy==1.13.0
           pip install -r requirements.txt
           pip install fastapi
@@ -336,7 +336,7 @@ jobs:
         # fail during pytest_terminal_summary.
         run: |
           pip install --force-reinstall --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
-          pip install --upgrade pip
+          python -m pip install --ignore-installed --upgrade pip
           pip install -r requirements.txt
           pip install fastapi
           pip install httpx pytest-cov pytest-xdist pytest-benchmark
