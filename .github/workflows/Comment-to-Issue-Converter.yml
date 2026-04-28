@@ -50,128 +50,17 @@ jobs:
       - name: Select runner target
         id: pick
         shell: bash
-        env:
-          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN || secrets.GITHUB_TOKEN }}
-          RUNNER_OWNER: D-sorganization
-          RUNNER_LABEL: d-sorg-fleet
-          RUNNER_QUEUE_THRESHOLD: "12"
-        run: |-
-          python3 <<'PY'
-          import json
-          import os
-          import subprocess
-
-          owner = os.environ["RUNNER_OWNER"]
-          label = os.environ["RUNNER_LABEL"]
-          threshold = int(os.environ["RUNNER_QUEUE_THRESHOLD"])
-
-
-          def run_json(command: list[str], default):
-              result = subprocess.run(command, capture_output=True, text=True, check=False)
-              if result.returncode != 0 or not result.stdout.strip():
-                  return default
-              try:
-                  return json.loads(result.stdout)
-              except json.JSONDecodeError:
-                  return default
-
-
-          runners_response = run_json(
-              ["gh", "api", f"/orgs/{owner}/actions/runners?per_page=100"],
-              {"runners": []},
-          )
-          runners = [
-              runner
-              for runner in runners_response.get("runners", [])
-              if any(item.get("name") == label for item in runner.get("labels", []))
-          ]
-          online = sum(1 for runner in runners if runner.get("status") == "online")
-          idle = sum(
-              1
-              for runner in runners
-              if runner.get("status") == "online" and not runner.get("busy", False)
-          )
-          busy = sum(
-              1
-              for runner in runners
-              if runner.get("status") == "online" and runner.get("busy", False)
-          )
-
-          repos = run_json(
-              [
-                  "gh",
-                  "repo",
-                  "list",
-                  owner,
-                  "--limit",
-                  "100",
-                  "--json",
-                  "name,isArchived",
-              ],
-              [],
-          )
-          queued_runs = 0
-          for repo in repos:
-              if repo.get("isArchived"):
-                  continue
-              repo_name = repo.get("name")
-              if not repo_name:
-                  continue
-              result = subprocess.run(
-                  [
-                      "gh",
-                      "api",
-                      f"/repos/{owner}/{repo_name}/actions/runs?status=queued&per_page=1",
-                      "--jq",
-                      ".total_count",
-                  ],
-                  capture_output=True,
-                  text=True,
-                  check=False,
-              )
-              if result.returncode == 0 and result.stdout.strip().isdigit():
-                  queued_runs += int(result.stdout.strip())
-
-          if online == 0:
-              runner = "d-sorg-fleet"
-              mode = "cloud-no-self-hosted"
-          elif idle > 0:
-              runner = label
-              mode = "self-hosted-idle"
-          elif queued_runs < threshold:
-              runner = label
-              mode = "self-hosted-queue"
-          else:
-              runner = "d-sorg-fleet"
-              mode = "cloud-queue-threshold"
-
-          output_path = os.environ["GITHUB_OUTPUT"]
-          with open(output_path, "a", encoding="utf-8") as handle:
-              handle.write(f"runner={runner}\n")
-              handle.write(f"mode={mode}\n")
-              handle.write(f"online={online}\n")
-              handle.write(f"idle={idle}\n")
-              handle.write(f"busy={busy}\n")
-              handle.write(f"queued_runs={queued_runs}\n")
-              handle.write(f"threshold={threshold}\n")
-
-          summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
-          if summary_path:
-              with open(summary_path, "a", encoding="utf-8") as handle:
-                  handle.write("## Runner Selection\n")
-                  handle.write(f"- label: `{label}`\n")
-                  handle.write(f"- online: `{online}`\n")
-                  handle.write(f"- idle: `{idle}`\n")
-                  handle.write(f"- busy: `{busy}`\n")
-                  handle.write(f"- queued workflow runs (fleet): `{queued_runs}`\n")
-                  handle.write(f"- queue threshold: `{threshold}`\n")
-                  handle.write(f"- selected target: `{runner}` (`{mode}`)\n")
-
-          print(
-              f"Selected {runner} ({mode}); online={online}, idle={idle}, "
-              f"busy={busy}, queued_runs={queued_runs}, threshold={threshold}"
-          )
-          PY
+        run: |
+          {
+            echo "runner=d-sorg-fleet"
+            echo "mode=self-hosted-fleet"
+            echo "online=unknown"
+            echo "idle=unknown"
+            echo "busy=unknown"
+            echo "queued_runs=unknown"
+            echo "threshold=12"
+          } >> "$GITHUB_OUTPUT"
+          echo "Selected d-sorg-fleet (self-hosted-fleet)"
   process-comments:
     needs: pick-runner
     runs-on: d-sorg-fleet

@@ -55,13 +55,14 @@ jobs:
 
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
     steps:
       - name: Check for self-hosted runner
         id: check
+        shell: bash
         env:
           GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
           LOCAL_MODE: ${{ vars.LOCAL_RUNNER_MODE }}
@@ -94,7 +95,7 @@ jobs:
   iterative-fix:
     needs: pick-runner
     name: Fix and Verify CI (Iterative)
-    runs-on: self-hosted
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
     timeout-minutes: 30
     # Only run on failures (not success) for workflow_run events
     if: |
