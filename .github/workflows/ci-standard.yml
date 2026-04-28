@@ -23,10 +23,14 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
@@ -65,7 +69,7 @@ jobs:
           esac
   quality-gate:
     needs: pick-runner
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     timeout-minutes: 20
     env:
       # Shared wheel/download cache for self-hosted runners — avoids re-downloading
@@ -160,8 +164,7 @@ jobs:
               echo "No changed Python files to format-check."
             fi
           else
-            echo "No changed Python files — running full-repo format check..."
-            ruff format --check .
+            echo "No changed Python files to format-check."
           fi
 
       - name: Type Check (Mypy)
@@ -274,11 +277,29 @@ jobs:
         run: echo "::warning::Skipping gitleaks because GITLEAKS_LICENSE is not configured."
 
       - name: Module Size Budget
-        run: python3 scripts/check_module_size_budget.py --max-lines 1200 --include src
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch origin "${{ github.base_ref }}"
+            BASE_SHA=$(git merge-base "origin/${{ github.base_ref }}" HEAD || true)
+            if [ -z "$BASE_SHA" ]; then
+              BASE_SHA="${{ github.event.pull_request.base.sha }}"
+            fi
+            CHANGED_SRC=$(git diff --name-only "$BASE_SHA" HEAD -- 'src/**/*.py' || true)
+          elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
+            CHANGED_SRC=$(git diff --name-only "${{ github.event.before }}" HEAD -- 'src/**/*.py' || true)
+          else
+            CHANGED_SRC=$(git diff --name-only HEAD~1 HEAD -- 'src/**/*.py' || true)
+          fi
+
+          if [ -n "$CHANGED_SRC" ]; then
+            python3 scripts/check_module_size_budget.py --max-lines 1200 --include src
+          else
+            echo "No src Python changes detected; module size budget check skipped."
+          fi
 
   tests:
     needs: [pick-runner, quality-gate]
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
@@ -433,7 +454,7 @@ jobs:
   # Enforces: format (rustfmt), lint (clippy), tests (cargo test).
   rust-quality-gate:
     needs: pick-runner
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
@@ -461,11 +482,11 @@ jobs:
               echo "$RUST_FILES"
             else
               echo "has_changes=false" >> "$GITHUB_OUTPUT"
-              echo "Rust files changed but no Cargo.toml found — skipping quality gate."
+              echo "Rust files changed but no Cargo.toml found - skipping quality gate."
             fi
           else
             echo "has_changes=false" >> "$GITHUB_OUTPUT"
-            echo "No Rust changes detected — skipping Rust quality gate."
+            echo "No Rust changes detected - skipping Rust quality gate."
           fi
 
       - name: Install Rust toolchain

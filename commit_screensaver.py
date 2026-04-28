@@ -50,7 +50,10 @@ if __name__ == "__main__":
             "git",
             "commit",
             "-m",
-            "feat(shared): incorporate chaotic pendulum screensaver\n\nAdheres to TDD, DbC, and DRY.",
+            (
+                "feat(shared): incorporate chaotic pendulum screensaver"
+                "\n\nAdheres to TDD, DbC, and DRY."
+            ),
         ]
     )
     run(["git", "push", "-u", "origin", "feat/chaotic-pendulum-screensaver"])

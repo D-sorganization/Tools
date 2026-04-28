@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.111                                    |
-| **Last Spec Update**    | 2026-04-26                                 |
+| **Spec Version**        | 1.1.112                                    |
+| **Last Spec Update**    | 2026-04-28                                 |
 
 ## 2. Purpose & Mission
 
@@ -584,6 +584,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-22 | 1.1.94  | Updated the shared `DataProcessor.apply_filter()` Butterworth path to use an explicit `sample_rate` or infer it from time-column spacing instead of hard-coding 1000 Hz, with regression coverage for non-1 kHz datasets.                                                                                                                                                                                                                                                                                                                                           |
 | 2026-04-22 | 1.1.95  | Canonicalized the Rust universal gas constant by updating `math::R_GAS` to the full CODATA value and having `engineering::R_UNIVERSAL` reuse the same constant.                                                                                                                                                                                                                                                                                                                                                                                                     |
 | 2026-04-23 | 1.1.102 | Updated Unit Converter `removeCustomUnit` workflow to use an inline soft confirm pattern, eliminating thread-blocking `confirm()` dialogs and improving accessibility with `aria-live`.                                                                                                                                                                                                                                                                                                                                                                             |
+| 2026-04-28 | 1.1.112 | Updated Unit Converter UI to dynamically retarget labels for custom combobox search inputs, ensuring explicit accessible names and resolving click-to-focus gaps.                                                                                                                                                                                                                                                                                                                                                                            |
 
 ---
 
