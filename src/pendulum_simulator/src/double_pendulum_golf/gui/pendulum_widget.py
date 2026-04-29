@@ -302,7 +302,7 @@ class PendulumWidget(BasePendulumWidget):
         except Exception:  # noqa: BLE001
             # Off-screen detection is purely diagnostic; never let it
             # break the main render path.
-            pass
+            logging.debug("Exception suppressed")
 
         if not self._gravity_on:
             self._draw_no_gravity_badge(painter)

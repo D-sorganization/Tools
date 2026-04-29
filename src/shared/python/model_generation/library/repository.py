@@ -307,7 +307,7 @@ class GitHubRepository(Repository):
                     urllib.request.urlretrieve(raw_url, local_file)
 
         except (PermissionError, OSError):
-            pass  # Meshes not found or not accessible
+            logging.debug("Exception suppressed")
 
     def download_archive(self, destination: Path) -> bool:
         """Download entire repository as archive."""

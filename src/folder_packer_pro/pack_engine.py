@@ -344,7 +344,7 @@ def unpack_files(
         try:
             data = gzip.decompress(data)
         except (gzip.BadGzipFile, OSError):
-            pass  # Not compressed or already decompressed
+            logging.debug("Exception suppressed")
 
         # Parse JSON
         package_data = json.loads(data.decode("utf-8"))

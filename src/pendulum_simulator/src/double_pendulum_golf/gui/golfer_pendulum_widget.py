@@ -260,7 +260,7 @@ class GolferPendulumWidget(BasePendulumWidget):
             if not in_view:
                 self._draw_offscreen_indicator(painter, centroid)
         except Exception:  # noqa: BLE001
-            pass
+            logging.debug("Exception suppressed")
 
         if not self._gravity_on:
             self._draw_no_gravity_badge(painter)

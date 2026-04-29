@@ -128,7 +128,7 @@ class _SplitterStateMixin:
                     splitter.setSizes(state.get("sizes", splitter.sizes()))
                     self.change_tracking_enabled = True  # type: ignore[attr-defined]
         except (KeyError, ValueError, TypeError):
-            pass
+            logging.debug("Exception suppressed")
 
 
 # ---------------------------------------------------------------------------
@@ -172,7 +172,7 @@ class _ClipboardMixin:
             # Setup keyboard shortcuts
             self.setup_shortcuts()
         except (RuntimeError, AttributeError):
-            pass
+            logging.debug("Exception suppressed")
 
     def setup_shortcuts(self) -> None:
         """Setup keyboard shortcuts for copy/paste operations"""
@@ -226,7 +226,7 @@ class _ClipboardMixin:
                         return
 
         except (KeyError, ValueError, TypeError):
-            pass
+            logging.debug("Exception suppressed")
 
     def copy_all_results(self, checked: bool = False) -> None:
         """Copy all results from the calculator"""
@@ -248,7 +248,7 @@ class _ClipboardMixin:
                 logger.debug("No copyable results available")
 
         except (KeyError, ValueError, TypeError):
-            pass
+            logging.debug("Exception suppressed")
 
     def get_text_from_widget(self, widget: Any) -> str:
         """Extract text from various widget types"""
@@ -305,7 +305,7 @@ class _ClipboardMixin:
             if clipboard:
                 clipboard.setText(text)
         except (RuntimeError, AttributeError):
-            pass
+            logging.debug("Exception suppressed")
 
     def paste_text(self, checked: bool = False) -> None:
         """Paste text from clipboard to focused widget"""
@@ -323,7 +323,7 @@ class _ClipboardMixin:
                     focused_widget.insertPlainText(text)
 
         except (RuntimeError, AttributeError):
-            pass
+            logging.debug("Exception suppressed")
 
     def show_context_menu(self, position: Any) -> None:
         """Show context menu for the calculator"""
@@ -667,7 +667,7 @@ class CalculatorStateMixin(_SplitterStateMixin, _ClipboardMixin):
                     elif hasattr(widget, "setChecked"):
                         widget.setChecked(bool(value))
         except (ValueError, ZeroDivisionError, OverflowError, TypeError):
-            pass
+            logging.debug("Exception suppressed")
         finally:
             self.change_tracking_enabled = True
 
@@ -736,7 +736,7 @@ class CalculatorStateMixin(_SplitterStateMixin, _ClipboardMixin):
             self.unsaved_changes = False
 
         except ImportError:
-            pass
+            logging.debug("Exception suppressed")
 
     def set_calculator_specific_state(self, state: dict[str, Any]) -> None:
         """Set calculator-specific state data

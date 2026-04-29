@@ -955,7 +955,7 @@ def main() -> None:
 
         setup_themed_app(app, window, settings_app="PDFRenamer")
     except ImportError:
-        pass  # theme system not installed
+        logging.debug("Exception suppressed")
 
     window.show()
     sys.exit(app.exec())

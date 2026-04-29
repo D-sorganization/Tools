@@ -18,6 +18,7 @@ from dataclasses import dataclass
 
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
+import logging
 
 
 @dataclass
@@ -427,7 +428,7 @@ class SeriesExpansion:
                 if np.isfinite(val):
                     result += coeff * val
             except (ValueError, RuntimeError, FloatingPointError):
-                pass
+                logging.debug("Exception suppressed")
 
         return result / (h**n)
 

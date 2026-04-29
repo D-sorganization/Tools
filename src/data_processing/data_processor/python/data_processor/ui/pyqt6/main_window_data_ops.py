@@ -326,7 +326,7 @@ class DataOperationsMixin:
             try:
                 filter_type = self.filter_config.get_filter_type()
             except (KeyError, ValueError, TypeError):
-                pass
+                logging.debug("Exception suppressed")
 
         name = generate_dataset_name(
             base_name=base_name,
