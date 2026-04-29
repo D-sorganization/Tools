@@ -19,7 +19,6 @@ permissions:
   id-token: write # Required for PyPI trusted publishing
 
 jobs:
-
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
     runs-on: self-hosted
@@ -63,13 +62,13 @@ jobs:
     name: Build Python Wheel
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
       - name: Setup Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
@@ -84,7 +83,7 @@ jobs:
           ls -la ../../target/wheels/
 
       - name: Upload Wheel Artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
           name: python-wheel
           path: target/wheels/*.whl
@@ -95,7 +94,7 @@ jobs:
     name: Build WASM/NPM Package
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
@@ -113,7 +112,7 @@ jobs:
           ls -la pkg/
 
       - name: Upload WASM Artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
           name: wasm-package
           path: rust_core/tools-core/pkg/
@@ -130,7 +129,7 @@ jobs:
       name: pypi # GitHub environment with PyPI trusted publishing configured
     steps:
       - name: Download Wheel
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v4
         with:
           name: python-wheel
           path: dist/
@@ -161,13 +160,13 @@ jobs:
       (github.event_name == 'workflow_dispatch' && inputs.dry_run == 'false')
     steps:
       - name: Download WASM Package
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v4
         with:
           name: wasm-package
           path: pkg/
 
       - name: Setup Node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: "24"
           registry-url: "https://registry.npmjs.org"

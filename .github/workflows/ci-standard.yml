@@ -77,10 +77,10 @@ jobs:
       # runners on the same machine.  See issue #2160.
       PIP_CACHE_DIR: /home/dieterolson/actions-runners/.shared-tool-cache/pip
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
 
       - name: Reject Raw Merge Conflict Markers
@@ -308,10 +308,10 @@ jobs:
       # Shared wheel/download cache — mirrors quality-gate setting.  See issue #2160.
       PIP_CACHE_DIR: /home/dieterolson/actions-runners/.shared-tool-cache/pip
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -439,7 +439,7 @@ jobs:
         run: python3 scripts/check_coverage_policy.py --coverage-file coverage.xml --policy-file config/coverage_policy.json --baseline-file config/coverage_baseline.json --output-json coverage_trend_${{ matrix.python-version }}.json
 
       - name: Upload Coverage Trend
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-trend-${{ matrix.python-version }}
           path: coverage_trend_${{ matrix.python-version }}.json
@@ -458,7 +458,7 @@ jobs:
     runs-on: d-sorg-fleet
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
       - name: Check for Rust changes
         id: rust-changes
@@ -498,7 +498,7 @@ jobs:
 
       - name: Set up Python for wheel checks
         if: steps.rust-changes.outputs.has_changes == 'true'
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
@@ -580,7 +580,7 @@ jobs:
 
       - name: Upload Benchmark Results
         if: steps.rust-changes.outputs.has_changes == 'true'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
           name: rust-benchmarks
           path: benchmark_results.txt
