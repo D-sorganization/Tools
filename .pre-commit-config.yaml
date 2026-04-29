@@ -83,6 +83,15 @@ repos:
         types_or: [yaml, markdown, json]
         exclude: '(\.py|\.m|package-lock\.json|\.ipynb)$'
 
+  # Detect-secrets - Secret keyword scanning (Issue #2356)
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        name: "detect-secrets (scan for secrets)"
+        args: ["--baseline", ".secrets.baseline"]
+        exclude: ^(\.secrets\.baseline|package-lock\.json|__pycache__|.*\.egg-info)
+
   # -------------------------------------------------------------------------
   # Stage 4: Pre-push Hooks (Slower - PYTHON FILES ONLY)
   # -------------------------------------------------------------------------
