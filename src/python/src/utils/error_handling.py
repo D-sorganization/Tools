@@ -91,7 +91,7 @@ def safe_execute(
     """
     try:
         return func(*args, **kwargs)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — intentional catch-all; safe_execute must not propagate
         if log_error:
             logger.error(f"Error executing {func.__name__}: {e}")
         return default
