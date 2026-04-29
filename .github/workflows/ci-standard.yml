@@ -287,6 +287,10 @@ jobs:
             pytest "${core_tests[@]}" -m "not live_simulation" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=0
           fi
 
+      - name: Export Coverage to JSON (Issue #2354)
+        if: always()
+        run: python3 scripts/export_coverage_json.py --output coverage.json
+
       - name: Provider-Contract Suite (Exported Packages)
         # Always runs — unconditional, not gated on changed files.
         # Enforces that breaking imports or minimal-runtime regressions in core
@@ -318,11 +322,14 @@ jobs:
       - name: Coverage Policy Gate
         run: python3 scripts/check_coverage_policy.py --coverage-file coverage.xml --policy-file config/coverage_policy.json --baseline-file config/coverage_baseline.json --output-json coverage_trend_${{ matrix.python-version }}.json
 
-      - name: Upload Coverage Trend
+      - name: Upload Coverage Reports
         uses: actions/upload-artifact@v6
         with:
-          name: coverage-trend-${{ matrix.python-version }}
-          path: coverage_trend_${{ matrix.python-version }}.json
+          name: coverage-reports-${{ matrix.python-version }}
+          path: |
+            coverage.json
+            coverage.xml
+            coverage_trend_${{ matrix.python-version }}.json
 
       - name: Coverage Summary
         if: always()
