@@ -3,6 +3,340 @@
 #!/usr/bin/env python3
 """
 Acid Gas Dewpoint Calculator for Syngas Applications
+===================================================
+
+A comprehensive calculator for predicting dewpoint temperatures of acid gases
+(HF, HCl, H2S) in syngas/water vapor mixtures.
+
+Key Features:
+- Multi-component acid gas dewpoint calculations
+- Literature-based thermodynamic correlations
+- Support for HF, HCl, and H2S
+- Temperature and pressure range validation
+- Comprehensive documentation with sources
+- Modern GUI interface
+
+Literature Sources:
+- Perry's Chemical Engineers' Handbook (8th Ed.)
+- NIST Chemistry WebBook
+- CRC Handbook of Chemistry and Physics
+- Journal of Chemical & Engineering Data
+- Industrial & Engineering Chemistry Research
+
+Example Usage:
+    from acid_gas_dewpoint_calculator import AcidGasDewpointCalculator
+
+    calc = AcidGasDewpointCalculator()
+    result = calc.calculate_dewpoint(
+        temperature_c=150,
+        pressure_bar=30,
+        composition={'H2O': 0.15, 'HF': 0.001, 'HCl': 0.002, 'H2S': 0.005}
+    )
+"""
+
+from __future__ import annotations
+
+import logging
+from dataclasses import dataclass, field
+from datetime import datetime
+from typing import Any
+
+import numpy as np
+import pandas as pd
+
+from shared.python.contracts import require, require_positive
+
+# Optional thermodynamic libraries for more accurate vapor pressure
+try:
+    import thermo
+
+    THERMO_AVAILABLE = True
+except ImportError:  # pragma: no cover - optional dependency
+    thermo = None
+    THERMO_AVAILABLE = False
+
+try:
+    from CoolProp.CoolProp import PropsSI
+
+    COOLPROP_AVAILABLE = True
+except ImportError:  # pragma: no cover - optional dependency
+    PropsSI = None
+    COOLPROP_AVAILABLE = False
+
+# Try to import PyQt6 for GUI, but make it optional
+try:
+    from PyQt6.QtCore import QTimer, pyqtSignal
+    from PyQt6.QtGui import QFont
+    from PyQt6.QtWidgets import (
+        QDoubleSpinBox,
+        QGridLayout,
+        QGroupBox,
+        QLabel,
+        QPushButton,
+        QSplitter,
+        QTableWidget,
+        QTextEdit,
+        QVBoxLayout,
+        QWidget,
+    )
+
+    GUI_AVAILABLE = True
+except ImportError:
+    GUI_AVAILABLE = False
+
+# Import BaseCalculatorWidget for state management
+try:
+    from ..ui.widgets.base_calculator_widget import BaseCalculatorWidget
+
+    BASE_CALCULATOR_AVAILABLE = True
+except ImportError:
+    BASE_CALCULATOR_AVAILABLE = False
+
+    # Fallback to QWidget if BaseCalculatorWidget is not available
+    class BaseCalculatorWidget(QWidget):  # type: ignore
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            QWidget.__init__(self, *args, **kwargs)
+
+
+from .constants import (
+    ANTOINE_H2S_A,
+    ANTOINE_H2S_B,
+    ANTOINE_H2S_C,
+    ANTOINE_HCL_A,
+    ANTOINE_HCL_B,
+    ANTOINE_HCL_C,
+    ANTOINE_HF_A,
+    ANTOINE_HF_B,
+    ANTOINE_HF_C,
+    ANTOINE_WATER_A,
+    ANTOINE_WATER_B,
+    ANTOINE_WATER_C,
+    ANTOINE_WATER_HIGH_A,
+    ANTOINE_WATER_HIGH_B,
+    ANTOINE_WATER_HIGH_C,
+    BAR_TO_PA,
+    CELSIUS_TO_KELVIN_OFFSET,
+    MMHG_TO_PA_CONV,
+)
+
+logger = logging.getLogger(__name__)
+
+
+@dataclass
+class AcidGasComposition:
+    """Composition of acid gases and water vapor in syngas"""
+
+    h2o: float = 0.0  # Water vapor mole fraction
+    hf: float = 0.0  # Hydrogen fluoride mole fraction
+    hcl: float = 0.0  # Hydrogen chloride mole fraction
+    h2s: float = 0.0  # Hydrogen sulfide mole fraction
+    other: float = 0.0  # Other components (H2, CO, CO2, etc.)
+    name: str = ""
+
+    def normalize(self) -> AcidGasComposition:
+        """Normalize composition to sum to 1.0"""
+        total = self.h2o + self.hf + self.hcl + self.h2s + self.other
+        if total > 0:
+            return AcidGasComposition(
+                h2o=self.h2o / total,
+                hf=self.hf / total,
+                hcl=self.hcl / total,
+                h2s=self.h2s / total,
+                other=self.other / total,
+                name=self.name,
+            )
+        return self
+
+    def to_dict(self) -> dict[str, float]:
+        """Convert composition to dictionary format.
+
+        Returns:
+            Dictionary with component names as keys and mole fractions as values.
+        """
+        return {
+            "H2O": self.h2o,
+            "HF": self.hf,
+            "HCl": self.hcl,
+            "H2S": self.h2s,
+            "Other": self.other,
+        }
+
+    @property
+    def total(self) -> float:
+        """Total mole fraction (should be 1.0 for normalized composition).
+
+        Returns:
+            Sum of all component mole fractions.
+        """
+        return self.h2o + self.hf + self.hcl + self.h2s + self.other
+
+
+@dataclass
+class DewpointResult:
+    """Comprehensive dewpoint calculation results"""
+
+    # Input conditions
+    temperature_c: float
+    temperature_k: float
+    pressure_bar: float
+    pressure_pa: float
+    composition: AcidGasComposition
+
+    # Individual acid gas dewpoints
+    h2o_dewpoint_c: float
+    hf_dewpoint_c: float
+    hcl_dewpoint_c: float
+    h2s_dewpoint_c: float
+
+    # Overall dewpoint (highest among all components)
+    overall_dewpoint_c: float
+    limiting_component: str
+
+    # Vapor pressures at current conditions
+    h2o_vapor_pressure_pa: float
+    hf_vapor_pressure_pa: float
+    hcl_vapor_pressure_pa: float
+    h2s_vapor_pressure_pa: float
+
+    # Partial pressures
+    h2o_partial_pressure_pa: float
+    hf_partial_pressure_pa: float
+    hcl_partial_pressure_pa: float
+    h2s_partial_pressure_pa: float
+
+    # Safety margins
+    dewpoint_margin_c: float
+    condensation_risk: str
+
+    # Additional info
+    calculation_method: str
+    timestamp: datetime = field(default_factory=datetime.now)
+    warnings: list[str] = field(default_factory=list)
+    sources: list[str] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert to dictionary for export.
+
+        Returns:
+            Dictionary containing all result data in exportable format.
+        """
+        return {
+            "timestamp": self.timestamp.isoformat(),
+            "input": {
+                "temperature_c": self.temperature_c,
+                "pressure_bar": self.pressure_bar,
+                "composition": self.composition.to_dict(),
+            },
+            "dewpoints": {
+                "H2O": self.h2o_dewpoint_c,
+                "HF": self.hf_dewpoint_c,
+                "HCl": self.hcl_dewpoint_c,
+                "H2S": self.h2s_dewpoint_c,
+                "overall": self.overall_dewpoint_c,
+                "limiting_component": self.limiting_component,
+            },
+            "vapor_pressures_pa": {
+                "H2O": self.h2o_vapor_pressure_pa,
+                "HF": self.hf_vapor_pressure_pa,
+                "HCl": self.hcl_vapor_pressure_pa,
+                "H2S": self.h2s_vapor_pressure_pa,
+            },
+            "safety": {
+                "dewpoint_margin_c": self.dewpoint_margin_c,
+                "condensation_risk": self.condensation_risk,
+            },
+            "method": self.calculation_method,
+            "sources": self.sources,
+            "warnings": self.warnings,
+        }
+
+
+class AcidGasDewpointCalculator:
+    """
+    Core calculator for acid gas dewpoint predictions
+
+    Based on established thermodynamic correlations and literature sources:
+    - Perry's Chemical Engineers' Handbook (8th Ed.)
+    - NIST Chemistry WebBook
+    - CRC Handbook of Chemistry and Physics
+    - Journal of Chemical & Engineering Data
+    """
+
+    def __init__(self) -> None:
+        """Initialize calculator with thermodynamic constants"""
+
+        # Antoine equation constants for acid gases
+        # Source: Perry's Chemical Engineers' Handbook, 8th Ed.
+        self.antoine_constants = {
+            "H2O": {"A": ANTOINE_WATER_A, "B": ANTOINE_WATER_B, "C": ANTOINE_WATER_C},
+            "HF": {"A": ANTOINE_HF_A, "B": ANTOINE_HF_B, "C": ANTOINE_HF_C},
+            "HCl": {"A": ANTOINE_HCL_A, "B": ANTOINE_HCL_B, "C": ANTOINE_HCL_C},
+            "H2S": {"A": ANTOINE_H2S_A, "B": ANTOINE_H2S_B, "C": ANTOINE_H2S_C},
+        }
+
+        # Literature sources for validation
+        self.literature_sources = {
+            "H2O": [
+                "Perry's Chemical Engineers' Handbook, 8th Ed.",
+                "NIST Chemistry WebBook",
+                "IAPWS-IF97 Formulation",
+            ],
+            "HF": [
+                "Perry's Chemical Engineers' Handbook, 8th Ed.",
+                "CRC Handbook of Chemistry and Physics",
+                "Journal of Chemical & Engineering Data, 2001",
+            ],
+            "HCl": [
+                "Perry's Chemical Engineers' Handbook, 8th Ed.",
+                "NIST Chemistry WebBook",
+                "Industrial & Engineering Chemistry Research, 1995",
+            ],
+            "H2S": [
+                "Perry's Chemical Engineers' Handbook, 8th Ed.",
+                "NIST Chemistry WebBook",
+                "Journal of Chemical & Engineering Data, 2003",
+            ],
+        }
+
+        # Temperature and pressure limits for correlations
+        self.validity_limits = {
+            "H2O": {"T_min": -20, "T_max": 374, "P_max": 220},
+            "HF": {"T_min": -83, "T_max": 19, "P_max": 65},
+            "HCl": {"T_min": -85, "T_max": 51, "P_max": 83},
+            "H2S": {"T_min": -85, "T_max": 100, "P_max": 89},
+        }
+
+        # Component names for external libraries
+        self.thermo_names = {
+            "H2O": "water",
+            "HF": "hydrogen fluoride",
+            "HCl": "hydrogen chloride",
+            "H2S": "hydrogen sulfide",
+        }
+
+        self.coolprop_names = {"H2O": "Water", "HF": "HF", "HCl": "HCl", "H2S": "H2S"}
+
+    def calculate_vapor_pressure(
+        self, temperature_c: float, component: str, method: str = "antoine"
+    ) -> float:
+        """Calculate vapor pressure using different methods.
+
+        Args:
+            temperature_c: Temperature in Celsius
+            component: Component name ('H2O', 'HF', 'HCl', 'H2S')
+            method: Calculation method ('antoine', 'extended_antoine',
+                'thermo', 'coolprop')
+
+        Returns:
+            Vapor pressure in Pa
+        """
+        # DbC preconditions
+        if not isinstance(temperature_c, int | float):
+            raise ValueError(
+                f"temperature_c must be numeric, got {type(temperature_c).__name__}"
+            )
+        if not (isinstance(component, str) and len(component) > 0):
+            raise ValueError("component must be a non-empty string")
 
         if component not in self.antoine_constants:
             msg = f"Unknown component: {component}"
