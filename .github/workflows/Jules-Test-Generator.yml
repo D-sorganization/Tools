@@ -4,7 +4,6 @@ on:
   workflow_call:
 
 jobs:
-
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
     runs-on: self-hosted
@@ -47,7 +46,7 @@ jobs:
     needs: pick-runner
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
         with: { fetch-depth: 2 }
 
       - name: Identify New/Modified Files
@@ -66,7 +65,7 @@ jobs:
           FILES_FLAT=$(echo "$CHANGED_FILES" | tr '\n' ', ')
           echo "files=$FILES_FLAT" >> $GITHUB_OUTPUT
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v4
         with: { node-version: "24" }
       - run: npm install -g @google/jules
 

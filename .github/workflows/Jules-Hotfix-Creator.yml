@@ -19,7 +19,6 @@ permissions:
   actions: write
 
 jobs:
-
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
     runs-on: self-hosted
@@ -80,7 +79,7 @@ jobs:
           fi
           echo "failed_branch=$FAILED_BRANCH" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
         with:
           ref: ${{ steps.branch.outputs.failed_branch }}
           fetch-depth: 0
@@ -97,7 +96,7 @@ jobs:
             echo "enabled=true" >> $GITHUB_OUTPUT
           fi
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v4
         if: steps.jules.outputs.enabled == 'true'
         with: { node-version: "24" }
       - run: npm install -g @google/jules

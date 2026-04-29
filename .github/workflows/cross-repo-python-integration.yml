@@ -80,12 +80,12 @@ jobs:
 
     steps:
       - name: Checkout Tools
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Checkout ${{ matrix.downstream.repo }}
         id: checkout_downstream
         continue-on-error: true
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           repository: ${{ matrix.downstream.repo }}
           path: ${{ matrix.downstream.path }}
@@ -93,7 +93,7 @@ jobs:
 
       - name: Set up Python
         if: steps.checkout_downstream.outcome == 'success'
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
