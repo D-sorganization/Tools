@@ -13,7 +13,7 @@ permissions:
 jobs:
   comprehensive-assessment:
     name: Comprehensive Assessment & Audit
-    runs-on: ubuntu-latest
+    runs-on: d-sorg-fleet
     steps:
       - name: Checkout
         uses: actions/checkout@v4

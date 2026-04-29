@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   generate-assessments:
-    runs-on: ubuntu-latest
+    runs-on: d-sorg-fleet
     steps:
       - uses: actions/checkout@v4
         with:

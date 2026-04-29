@@ -36,7 +36,7 @@ permissions:
 
 jobs:
   write-laymans-terms:
-    runs-on: ubuntu-latest
+    runs-on: d-sorg-fleet
     steps:
       - uses: actions/checkout@v4
         with:
