@@ -98,6 +98,7 @@ This document defines the comprehensive 16-point assessment framework (A-O + Hig
 | ---------- | ------------------------------- | ----------------------------------------------- |
 | 2026-03-15 | Testing Improvement Action Plan | `TESTING_IMPROVEMENT_ACTION_PLAN_2026-03-15.md` |
 | 2026-03-19 | Automated Assessment Update     | `Comprehensive_Assessment.md`                   |
+| 2026-04-29 | TODO/FIXME Count Reconciliation | `todo_fixme_count_reconciliation_2026-04-29.md` |
 
 ---
 
@@ -204,6 +205,7 @@ _See individual Assessment_Prompt_X.md files for detailed prompts._
 | 5.1 | 2026-04 | Executed Completist Audit (Apr 05) |
 | 5.2 | 2026-04 | A-N comprehensive review 2026-04-09 (see `A-N_Assessment_2026-04-09.md`) |
 | 5.3 | 2026-04 | A-N Assessment 2026-04-10 refresh (see `A-N_Assessment_2026-04-10.md`) |
+| 5.4 | 2026-04 | Added TODO/FIXME count reconciliation report for #2360 |
 
 ---
 
