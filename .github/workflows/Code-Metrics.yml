@@ -24,6 +24,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
           LOCAL_MODE: ${{ vars.LOCAL_RUNNER_MODE }}
+        shell: bash
         run: |
           MODE="${LOCAL_MODE:-local}"
           echo "Fleet mode: $MODE"
