@@ -1,4 +1,8 @@
+import logging
 import os
+
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+logger = logging.getLogger(__name__)
 
 ASSESSMENT_DIR = "docs/assessments"
 ISSUES_DIR = "docs/assessments/issues"
@@ -172,7 +176,7 @@ for code, (name, grade, analysis) in assessments.items():
         f.write(f"## Grade: {grade}/10\n\n")
         f.write("## Analysis\n")
         f.write(analysis.strip() + "\n")
-    print(f"Generated {filepath}")
+    logger.info("Generated %s", filepath)
 
 # Generate Issues for Low Grades (< 5)
 issues = {
@@ -229,7 +233,7 @@ for code, (name, title, body) in issues.items():
             f.write("--- \nlabels: jules:assessment, needs-attention\n---\n\n")
             f.write(f"# {title}\n\n")
             f.write(body.strip() + "\n")
-        print(f"Generated {filepath}")
+        logger.info("Generated %s", filepath)
 
 
 # Generate Comprehensive Assessment
@@ -311,4 +315,4 @@ with open(os.path.join(ASSESSMENT_DIR, "Comprehensive_Assessment.md"), "w") as f
         "    - **Action**: Enforce a linting rule to ban `print()` in library code.\n"
     )
 
-print(f"Generated {os.path.join(ASSESSMENT_DIR, 'Comprehensive_Assessment.md')}")
+logger.info("Generated %s", os.path.join(ASSESSMENT_DIR, "Comprehensive_Assessment.md"))

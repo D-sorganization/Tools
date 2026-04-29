@@ -6,9 +6,13 @@ This script systematically fixes common DRY violations across the codebase
 with better pattern matching and import management.
 """
 
+import logging
 import re
 import sys
 from pathlib import Path
+
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+logger = logging.getLogger(__name__)
 
 # Track total fixes
 TOTAL_FIXES = 0
@@ -380,7 +384,7 @@ def process_file(file_path: Path) -> int:
 
         return 0
     except Exception as e:  # noqa: BLE001
-        print(f"Error processing {file_path}: {e}", file=sys.stderr)
+        logger.error("Error processing %s: %s", file_path, e)
         return 0
 
 
@@ -410,9 +414,9 @@ def main() -> int:
     repo_root = Path("/home/dieterolson/Linux_Tools/Tools")
 
     # Find Python files
-    print("Finding Python files...")
+    logger.info("Finding Python files...")
     files = find_python_files(repo_root)
-    print(f"Found {len(files)} Python files")
+    logger.info("Found %d Python files", len(files))
 
     total_fixes = 0
     fixed_files = 0
@@ -420,11 +424,11 @@ def main() -> int:
     for file_path in sorted(files):
         fixes = process_file(file_path)
         if fixes > 0:
-            print(f"Fixed {fixes} violations in {file_path.relative_to(repo_root)}")
+            logger.info("Fixed %d violations in %s", fixes, file_path.relative_to(repo_root))
             total_fixes += fixes
             fixed_files += 1
 
-    print(f"\nTotal: {fixed_files} files, {total_fixes} violations fixed")
+    logger.info("Total: %d files, %d violations fixed", fixed_files, total_fixes)
     return 0
 
 
