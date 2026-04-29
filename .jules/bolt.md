@@ -13,3 +13,6 @@
 ## 2024-05-24 - Maximize CPU Cache Locality in Column-Major Matrices
 **Learning:** When computing PCA scores over column-major data implemented as `Float64Array[]`, a traditional row-major inner loop severely thrashes the CPU cache by hopping between disjoint memory buffers.
 **Action:** Reordered the nested loops to ensure the innermost loop iterates sequentially over rows for a given column (`cols[j][i]`), resulting in a sequential memory access pattern that drastically reduces execution time.
+## 2024-05-25 - Avoid Dynamic Array Resizing and .reduce() Overhead in FFT Windowing
+**Learning:** In fast Fourier transform calculations (`computeFFT`), inline array construction and functional array methods (like `.map()` and `.reduce()`) introduce dynamic array resizing overhead and intermediary array allocations, stalling signal updates.
+**Action:** Replaced dynamic `.push()` calls and array method chains with pre-allocated arrays (`new Array(n)`) and a single-pass `for` loop to inline Hanning windowing, which significantly boosts real-time processing throughput.
