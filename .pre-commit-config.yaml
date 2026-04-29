@@ -47,6 +47,14 @@ repos:
 
   - repo: local
     hooks:
+      # Reject newly introduced TODO/FIXME-style markers unless they link to a GitHub issue.
+      - id: todo-issue-links
+        name: "TODO/FIXME markers require issue links"
+        entry: python scripts/check_todo_issue_links.py --check-staged
+        language: system
+        pass_filenames: false
+        always_run: true
+
       # Prevent wildcard imports
       - id: no-wildcard-imports
         name: "no wildcard imports"
@@ -180,7 +188,7 @@ repos:
 # =============================================================================
 
 default_language_version:
-  python: python3.11  # Matches pyproject requires-python and ruff target-version
+  python: python3.11 # Matches pyproject requires-python and ruff target-version
 
 # Files to always exclude from all hooks
 exclude: |
