@@ -31,6 +31,9 @@ exclude = [
 ]
 
 [lint]
+# Ignore notebooks globally
+extend-exclude = ["*.ipynb", "**/*.ipynb"]
+
 # Enable specific rule sets:
 # E = pycodestyle errors
 # F = Pyflakes (Logic errors)
