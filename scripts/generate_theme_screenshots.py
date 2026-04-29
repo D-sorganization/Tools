@@ -15,6 +15,7 @@ Usage:
 
 from __future__ import annotations
 
+import logging
 import os
 import sys
 from pathlib import Path
@@ -29,6 +30,8 @@ if str(_REPO_ROOT) not in sys.path:
 from _bootstrap import bootstrap  # noqa: E402
 
 bootstrap(__file__)
+
+logger = logging.getLogger(__name__)
 
 from PyQt6.QtCore import QSize  # noqa: E402
 from PyQt6.QtWidgets import (  # noqa: E402
@@ -139,7 +142,7 @@ def generate_screenshots(output_dir: Path | None = None) -> list[Path]:
         out_path = output_dir / f"{safe_name}.png"
         pixmap.save(str(out_path))
         generated.append(out_path)
-        print(f"  Saved: {out_path.name}")
+        logger.info("  Saved: %s", out_path.name)
 
         window.close()
 
@@ -148,9 +151,11 @@ def generate_screenshots(output_dir: Path | None = None) -> list[Path]:
 
 def main() -> int:
     """Entry point."""
-    print(f"Generating theme previews for {len(BUILTIN_THEMES)} themes...")
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+    logger.info("Generating theme previews for %d themes...", len(BUILTIN_THEMES))
     paths = generate_screenshots()
-    print(f"\nDone. {len(paths)} screenshots saved to {paths[0].parent}")
+    if paths:
+        logger.info("Done. %d screenshots saved to %s", len(paths), paths[0].parent)
     return 0
 
 
