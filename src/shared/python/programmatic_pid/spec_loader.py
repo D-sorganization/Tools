@@ -6,30 +6,27 @@ get_text_config / get_layout_config / get_layer_config accessor functions.
 
 from __future__ import annotations
 
-import logging
 from pathlib import Path
 from typing import Any, cast
 
+import yaml
+from programmatic_pid.geometry import to_float
+from programmatic_pid.profiles import apply_profile
+from programmatic_pid.types import SpecDict, TextConfig
 from programmatic_pid.validation import validate_spec
+
+
 def load_spec(path: str | Path) -> SpecDict:
     """Load a YAML specification file.
 
-    Precondition: *path* points to a valid YAML file containing a dict at root.
+    Precondition: *path* points to a valid YAML file.
     Postcondition: returns a dict (possibly empty if YAML is blank).
-
-    Raises:
-        ValueError: if YAML root is not a dict (e.g., list, string, null).
     """
     with open(path, encoding="utf-8") as f:
         data = yaml.safe_load(f)
-    if data is None:
-        return {}
-    if not isinstance(data, dict):
-        raise ValueError(
-            f"YAML spec in {path} must contain a dict at root, "
-            f"not {type(data).__name__}"
-        )
-    return cast(SpecDict, data)
+    return cast(SpecDict, data) if isinstance(data, dict) else {}
+
+
 def prepare_spec(spec_path: str | Path, profile: str | None) -> SpecDict:
     """Load, validate, and apply profile to a spec.
 
@@ -42,6 +39,8 @@ def prepare_spec(spec_path: str | Path, profile: str | None) -> SpecDict:
     prepared = apply_profile(raw, profile)
     validate_spec(prepared)
     return prepared
+
+
 class SpecAccessor:
     """Unified read-only access to spec configuration with defaults.
 
@@ -168,18 +167,26 @@ class SpecAccessor:
     def interlocks(self) -> list[dict[str, Any]]:
         v = self._spec.get("interlocks")
         return cast(list[dict[str, Any]], v) if isinstance(v, list) else []
+
+
 # ---------------------------------------------------------------------------
 # Backward-compatible free functions that delegate to the old interface.
 # These are kept so that generator.py continues to work during migration.
 # ---------------------------------------------------------------------------
+
+
 def get_project(spec: SpecDict) -> dict[str, Any]:
     p = spec.get("project")
     return p if isinstance(p, dict) else {}
+
+
 def get_drawing(spec: SpecDict) -> dict[str, Any]:
     if "drawing" in spec and isinstance(spec["drawing"], dict):
         return spec["drawing"]
     d = get_project(spec).get("drawing")
     return cast(dict[str, Any], d) if isinstance(d, dict) else {}
+
+
 def ensure_drawing(spec: SpecDict) -> dict[str, Any]:
     if "drawing" in spec and isinstance(spec["drawing"], dict):
         return spec["drawing"]
@@ -189,6 +196,8 @@ def ensure_drawing(spec: SpecDict) -> dict[str, Any]:
         drawing = {}
         project["drawing"] = drawing
     return cast(dict[str, Any], drawing)
+
+
 def get_text_config(spec: SpecDict) -> dict[str, float]:
     tc = SpecAccessor(spec).text_config
     return {
@@ -197,7 +206,11 @@ def get_text_config(spec: SpecDict) -> dict[str, float]:
         "body_height": tc.body_height,
         "small_height": tc.small_height,
     }
+
+
 def get_layout_config(spec: SpecDict) -> dict[str, Any]:
     return SpecAccessor(spec).layout_config
+
+
 def get_layer_config(spec: SpecDict) -> dict[str, Any]:
     return SpecAccessor(spec).layer_config

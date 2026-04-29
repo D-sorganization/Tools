@@ -8,12 +8,11 @@ Provides:
 
 import logging
 import os
-import shutil
 import sys
 from pathlib import Path
 
 from cors import add_cors_middleware
-from fastapi import FastAPI, HTTPException, UploadFile, Query
+from fastapi import FastAPI, HTTPException, Query, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field

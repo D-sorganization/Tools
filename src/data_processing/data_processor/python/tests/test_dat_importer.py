@@ -11,7 +11,6 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
-
 from data_processor.core.dat_importer import (
     detect_dat_delimiter,
     export_dat_to_csv,

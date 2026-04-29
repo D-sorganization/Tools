@@ -5,6 +5,7 @@ Design-by-Contract:
   - PRE: mypy.ini exists and is parseable
   - POST: Returns 0 if config is valid, 1 otherwise
 """
+
 from __future__ import annotations
 
 import re
@@ -83,7 +84,7 @@ def main() -> int:
     # Validate no phantom exclusions
     phantoms = [p for p, c in results.items() if c == 0 and not p.endswith("tests/")]
     if phantoms:
-        print(f"\n⚠️  Phantom exclusions found (0 files matched):")
+        print("\n⚠️  Phantom exclusions found (0 files matched):")
         for p in phantoms:
             print(f"   - {p}")
 
@@ -97,10 +98,12 @@ def main() -> int:
             if line.startswith("src/") or line.startswith("tools/"):
                 ruff_excluded.add(line)
 
-        mypy_dirs = {p for p in patterns if p.startswith("src/") or p.startswith("tools/")}
+        mypy_dirs = {
+            p for p in patterns if p.startswith("src/") or p.startswith("tools/")
+        }
         overlap = mypy_dirs & ruff_excluded
         if overlap:
-            print(f"\n🔍 Directories excluded by BOTH mypy and ruff:")
+            print("\n🔍 Directories excluded by BOTH mypy and ruff:")
             for o in sorted(overlap):
                 print(f"   - {o}")
 

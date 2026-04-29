@@ -306,7 +306,6 @@ def precondition(
     decorated function, or a subset matched by parameter name.
     """
 
-
     def decorator(func: F) -> F:
         if _ContractState.level == ContractLevel.OFF:
             return func
@@ -338,8 +337,7 @@ def postcondition(
     condition: Callable[[Any], bool],
     message: str = "Postcondition failed",
 ) -> Callable[[F], F]:
-    """Decorator to enforce a postcondition on a function's return value.
-
+    """Decorator to enforce a postcondition on a function's return value."""
 
     def decorator(func: F) -> F:
         if _ContractState.level == ContractLevel.OFF:
@@ -395,7 +393,6 @@ def contract(
             return x ** 0.5
     """
 
-
     def decorator(func: F) -> F:
         result_func = func
         if post is not None:
@@ -446,7 +443,6 @@ def _wrap_method_with_invariant(
 ) -> Callable[..., Any]:
     """Wrap a single method to check the class invariant after execution."""
 
-
     @functools.wraps(orig_method)
     def wrapper(self: Any, *args: Any, **kwargs: Any) -> Any:
         result = orig_method(self, *args, **kwargs)
@@ -478,7 +474,6 @@ def class_invariant(
             def decrement(self) -> None:
                 self.count -= 1
     """
-
 
     def class_decorator(cls: type) -> type:
         if _ContractState.level == ContractLevel.OFF:

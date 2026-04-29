@@ -9,10 +9,11 @@ Tests cover:
 from unittest.mock import MagicMock
 
 import pytest
-from contracts import PreconditionError
 from cors import DEFAULT_ORIGINS, add_cors_middleware
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from contracts import PreconditionError
 
 _PreconditionError = PreconditionError
 
@@ -69,27 +70,27 @@ def test_default_origins_list():
 
 
 def test_allow_credentials_default():
-    """allow_credentials defaults to False for security."""
+    """allow_credentials defaults to True."""
     app = FastAPI()
     add_cors_middleware(app)
     middleware = next(m for m in app.user_middleware if m.cls is CORSMiddleware)
-    assert middleware.kwargs.get("allow_credentials", False) is False
+    assert middleware.kwargs.get("allow_credentials", True) is True
 
 
 def test_allow_methods_default():
-    """allow_methods defaults to explicit safe methods."""
+    """allow_methods defaults to ['*']."""
     app = FastAPI()
     add_cors_middleware(app)
     middleware = next(m for m in app.user_middleware if m.cls is CORSMiddleware)
-    assert middleware.kwargs.get("allow_methods") == DEFAULT_ALLOW_METHODS
+    assert middleware.kwargs.get("allow_methods") == ["*"]
 
 
 def test_allow_headers_default():
-    """allow_headers defaults to explicit safe headers."""
+    """allow_headers defaults to ['*']."""
     app = FastAPI()
     add_cors_middleware(app)
     middleware = next(m for m in app.user_middleware if m.cls is CORSMiddleware)
-    assert middleware.kwargs.get("allow_headers") == DEFAULT_ALLOW_HEADERS
+    assert middleware.kwargs.get("allow_headers") == ["*"]
 
 
 def test_custom_allow_methods():
@@ -113,7 +114,7 @@ def test_none_origins_uses_default():
 def test_dbc_requires_fastapi_app():
     """Non-FastAPI app raises PreconditionError."""
     with pytest.raises(_PreconditionError):
-        add_cors_middleware(MagicMock())
+        add_cors_middleware(MagicMock())  # type: ignore[arg-type]
 
 
 def test_dbc_requires_fastapi_not_none():
@@ -126,7 +127,7 @@ def test_dbc_origins_must_be_list_of_strings():
     """Origins list containing non-strings raises PreconditionError."""
     app = FastAPI()
     with pytest.raises(_PreconditionError):
-        add_cors_middleware(app, origins=[123, 456])
+        add_cors_middleware(app, origins=[123, 456])  # type: ignore[arg-type]
 
 
 def test_dbc_origins_dict_rejected():

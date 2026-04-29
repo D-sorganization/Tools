@@ -16,13 +16,19 @@ methods guarantee postconditions (unit quaternion, SO(3), etc.).
 
 from __future__ import annotations
 
-from rotation_transforms.rotation import Rotation
+from typing import Any
 
+import numpy as np
+
+from rotation_converter._contracts import require, require_finite
 from rotation_converter.core import (
     axis_angle_to_quaternion,
     axis_angle_to_rotation_matrix,
     euler_to_quaternion,
     euler_to_rotation_matrix,
+    normalize_quaternion,
+    quaternion_conjugate,
+    quaternion_multiply,
     quaternion_to_axis_angle,
     quaternion_to_euler,
     quaternion_to_rodrigues,
@@ -47,8 +53,8 @@ class Rotation:
 
     def __init__(self, q: np.ndarray) -> None:
         """Private — use factory methods instead."""
-        if q is None:
-            raise TypeError("q must be provided, got None")
+        if not (q is not None):
+            raise ValueError("q must be provided")
         q = np.asarray(q, dtype=float)
         require(q.shape == (4,), "internal quaternion must have 4 elements")
         norm = np.linalg.norm(q)
@@ -95,8 +101,8 @@ class Rotation:
             a, b, c: angles in radians.
             convention: e.g. "xyz", "zyx", "zyz".
         """
-        if not isinstance(a, (int, float)):
-            raise TypeError(f"a must be a number, got {type(a).__name__!r}")
+        if not (a is not None):
+            raise ValueError("a must be provided")
         q = euler_to_quaternion(a, b, c, convention)
         return cls(q)
 
@@ -106,8 +112,8 @@ class Rotation:
 
         Precondition: axis is a unit vector.
         """
-        if not isinstance(angle, (int, float)):
-            raise TypeError(f"angle must be a number, got {type(angle).__name__!r}")
+        if not (angle is not None):
+            raise ValueError("angle must be provided")
         axis = np.asarray(axis, dtype=float)
         require(axis.shape == (3,), "axis must have 3 elements", axis.shape)
         q = axis_angle_to_quaternion(axis, angle)
@@ -150,9 +156,9 @@ class Rotation:
 
     def compose(self, other: Rotation) -> Rotation:
         """Compose this rotation with another: self * other."""
-        if not isinstance(other, Rotation):
-            raise TypeError(f"other must be a Rotation, got {type(other).__name__!r}")
-        q = quaternion_multiply(self._q, other.as_quaternion())
+        if not (other is not None):
+            raise ValueError("other must be provided")
+        q = quaternion_multiply(self._q, other._q)
         return Rotation(normalize_quaternion(q))
 
     def inverse(self) -> Rotation:

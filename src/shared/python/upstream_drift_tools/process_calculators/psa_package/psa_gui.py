@@ -1,5 +1,6 @@
-# TRACKED_TASK: see #2310 — architecture debt extraction schedule
-# UPDATE: Decomposed into ui/ package.
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
 
 """
 PyQt6 GUI for Two-Stage PSA System Analysis.
@@ -8,39 +9,55 @@ This GUI provides interactive visualization and analysis of PSA system
 performance, including sensitivity analysis and O2 safety calculations.
 """
 
-import logging
-import os
-import subprocess
-import sys
-import webbrowser
-from collections.abc import Callable
-from typing import Any
+import os  # noqa: E402
+import subprocess  # noqa: E402
+import sys  # noqa: E402
+import webbrowser  # noqa: E402
+from collections.abc import Callable  # noqa: E402
 
-from PyQt6.QtWidgets import QApplication
-
-# Expose components for backward compatibility
-from .ui import (
-    InputPanel,
-    MplCanvas,
-    PFDWidget,
-    PSAMainWindow,
-    ResultsPanel,
-    SensitivityPlotWidget,
-    create_slider,
+import matplotlib  # noqa: E402
+import numpy as np  # noqa: E402
+from matplotlib.backends.backend_qtagg import (  # noqa: E402
+    FigureCanvasQTAgg as FigureCanvas,
+)
+from matplotlib.backends.backend_qtagg import (  # noqa: E402
+    NavigationToolbar2QT as NavigationToolbar,
+)
+from matplotlib.figure import Figure  # noqa: E402
+from PyQt6.QtCore import Qt  # noqa: E402
+from PyQt6.QtGui import QAction, QDoubleValidator, QFont, QPixmap  # noqa: E402
+from PyQt6.QtWidgets import (  # noqa: E402
+    QApplication,
+    QCheckBox,
+    QComboBox,
+    QGridLayout,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QMainWindow,
+    QMessageBox,
+    QPushButton,
+    QScrollArea,
+    QSizePolicy,
+    QSlider,
+    QSpinBox,
+    QTableWidget,
+    QTableWidgetItem,
+    QTabWidget,
+    QVBoxLayout,
+    QWidget,
 )
 
-__all__ = (
-    "InputPanel",
-    "ResultsPanel",
-    "SensitivityPlotWidget",
-    "PFDWidget",
-    "PSAMainWindow",
-    "create_slider",
-    "MplCanvas",
-    "main",
+from .psa_model import (  # noqa: E402
+    DEFAULT_COMPONENTS,
+    ComponentData,
+    PSAModel,
+    PSAResults,
+    calculate_o2_safety_analysis,
+    calculate_sensitivity,
+    get_flammability_status,
 )
-
-logger = logging.getLogger(__name__)
 
 
 def create_slider(
@@ -67,7 +84,8 @@ class MplCanvas(FigureCanvas):
     def __init__(
         self, parent: QWidget | None = None, width: float = 8, height: float = 6
     ) -> None:
-        assert width is not None, "width must be provided"
+        if not (width is not None):
+            raise ValueError("width must be provided")
         self.fig = Figure(figsize=(width, height), dpi=100)
         super().__init__(self.fig)
         self.setParent(parent)
@@ -319,7 +337,8 @@ class ResultsPanel(QWidget):
 
     def update_results(self, results: PSAResults) -> None:
         """Update display with calculation results."""
-        assert results is not None, "results must be provided"
+        if not (results is not None):
+            raise ValueError("results must be provided")
         self._update_key_metrics(results)
         self._update_safety_metrics(results)
         self._update_flows_table(results)
@@ -327,7 +346,8 @@ class ResultsPanel(QWidget):
 
     def _update_key_metrics(self, results: PSAResults) -> None:
         """Update key performance metric labels."""
-        assert results is not None, "results must be provided"
+        if not (results is not None):
+            raise ValueError("results must be provided")
         self.h2_recovery_label.setText(f"{results.h2_recovery_pct:.2f}%")
         self.h2_purity_label.setText(f"{results.h2_purity_pct:.5f}%")
         self.net_product_label.setText(f"{results.total_net_product_scfm:.2f} SCFM")
@@ -336,7 +356,8 @@ class ResultsPanel(QWidget):
 
     def _update_safety_metrics(self, results: PSAResults) -> None:
         """Update safety/flammability metric labels and styling."""
-        assert results is not None, "results must be provided"
+        if not (results is not None):
+            raise ValueError("results must be provided")
         self.s2_tail_h2_label.setText(f"{results.s2_tail_h2_pct:.2f}%")
         self.s2_tail_o2_label.setText(f"{results.s2_tail_o2_pct:.2f}%")
 
@@ -358,7 +379,8 @@ class ResultsPanel(QWidget):
 
     def _update_flows_table(self, results: PSAResults) -> None:
         """Populate the flows table with component flow data and totals."""
-        assert results is not None, "results must be provided"
+        if not (results is not None):
+            raise ValueError("results must be provided")
         n_comp = len(results.component_names)
         self.flows_table.setRowCount(n_comp + 1)
 
@@ -401,7 +423,8 @@ class ResultsPanel(QWidget):
 
     def _update_compositions_table(self, results: PSAResults) -> None:
         """Populate the compositions table with component percentage data."""
-        assert results is not None, "results must be provided"
+        if not (results is not None):
+            raise ValueError("results must be provided")
         n_comp = len(results.component_names)
         self.comp_table.setRowCount(n_comp + 1)
 
@@ -659,13 +682,13 @@ class SensitivityPlotWidget(QWidget):
 
         S2, PROD = np.meshgrid(s2_range, prod_range, indexing="ij")
 
-        ax: Any = self.canvas.fig.add_subplot(111, projection="3d")
-        surf = ax.plot_surface(
+        ax = self.canvas.fig.add_subplot(111, projection="3d")
+        surf = ax.plot_surface(  # type: ignore[attr-defined]
             S2 * 100, PROD * 100, sensitivity["h2_recovery"], cmap="viridis", alpha=0.8
         )
         ax.set_xlabel("S2 Tail Recycle (%)")
         ax.set_ylabel("Product Recycle (%)")
-        ax.set_zlabel("H2 Recovery (%)")
+        ax.set_zlabel("H2 Recovery (%)")  # type: ignore[attr-defined]
         ax.set_title("H2 Recovery Surface")
         self.canvas.fig.colorbar(surf, ax=ax, shrink=0.5, label="H2 Recovery (%)")
 

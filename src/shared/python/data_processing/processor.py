@@ -15,6 +15,7 @@ from pathlib import Path  # noqa: E402
 from typing import Any  # noqa: E402
 
 import pandas as pd
+
 from contracts import require
 
 logger = logging.getLogger(__name__)

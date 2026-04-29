@@ -1,4 +1,6 @@
-# TRACKED_TASK: see #2310 — architecture debt extraction schedule
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
 
 #!/usr/bin/env python3
 """ODE Solver PyQt6 Main Window.
@@ -8,7 +10,6 @@ A PyQt6 GUI for solving systems of ordinary differential equations.
 
 from __future__ import annotations
 
-import logging
 import sys
 from typing import Any
 
@@ -31,13 +32,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from ode_solver.timeout import SolverTimeoutError, with_timeout
-
-_log = logging.getLogger(__name__)
-
-# Qt enum aliases — break LoD chains (Qt.X.Y is a 3-level access)
-_SCROLL_BAR_OFF = Qt.ScrollBarPolicy.ScrollBarAlwaysOff
-_ALIGN_CENTER = Qt.AlignmentFlag.AlignCenter
+from shared.python.contracts import require
 
 # Catppuccin Mocha color palette
 CATPPUCCIN_MOCHA = {
@@ -250,15 +245,17 @@ class ODESolverWindow(QMainWindow):
 
         # Menu bar with Notes toggle
         menu_bar = self.menuBar()
-        view_menu = menu_bar.addMenu("&View")  # type: ignore[union-attr]
-        notes_action = view_menu.addAction("Toggle &Notes")  # type: ignore[union-attr]
-        notes_triggered = notes_action.triggered  # type: ignore[union-attr]
-        notes_triggered.connect(self._toggle_notes)
+        assert menu_bar is not None
+        view_menu = menu_bar.addMenu("&View")
+        assert view_menu is not None
+        notes_action = view_menu.addAction("Toggle &Notes")
+        assert notes_action is not None
+        notes_action.triggered.connect(self._toggle_notes)
 
         # Central widget with scroll area
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
-        scroll_area.setHorizontalScrollBarPolicy(_SCROLL_BAR_OFF)
+        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setCentralWidget(scroll_area)
 
         central_widget = QWidget()
@@ -274,7 +271,7 @@ class ODESolverWindow(QMainWindow):
         title_font.setPointSize(18)
         title_font.setBold(True)
         title_label.setFont(title_font)
-        title_label.setAlignment(_ALIGN_CENTER)
+        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         title_label.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['blue']};")
         main_layout.addWidget(title_label)
 
@@ -400,21 +397,9 @@ class ODESolverWindow(QMainWindow):
         return group
 
     def _on_preset_changed(self, preset_name: str) -> None:
-        """Handle preset selection change.
-
-        Preconditions:
-            preset_name must be a non-empty str.
-
-        Raises:
-            TypeError: if preset_name is not a str.
-            ValueError: if preset_name is an empty string.
-        """
-        if not isinstance(preset_name, str):
-            raise TypeError(
-                f"preset_name must be str, got {type(preset_name).__name__}"
-            )
-        if not preset_name:
-            raise ValueError("preset_name must not be empty")
+        """Handle preset selection change."""
+        if not (preset_name is not None):
+            raise ValueError("preset_name must be provided")
         if preset_name == "Custom":
             self.preset_description.setText("")
             return
@@ -440,16 +425,9 @@ class ODESolverWindow(QMainWindow):
         self.initial_edit.setPlainText("\n".join(init_lines))
 
     def _parse_dict_input(self, text: str) -> dict[str, str]:
-        """Parse colon-separated key-value pairs from text.
-
-        Preconditions:
-            text must be a str.
-
-        Raises:
-            TypeError: if text is not a str.
-        """
-        if not isinstance(text, str):
-            raise TypeError(f"text must be str, got {type(text).__name__}")
+        """Parse colon-separated key-value pairs from text."""
+        if not (text is not None):
+            raise ValueError("text must be provided")
         result = {}
         for line in text.strip().split("\n"):
             line = line.strip()
@@ -459,16 +437,12 @@ class ODESolverWindow(QMainWindow):
             result[key.strip()] = value.strip()
         return result
 
-    # Default solver timeout in seconds (30 s is generous for typical ODEs)
-    _SOLVER_TIMEOUT_S: float = 30.0
-
     def _solve(self) -> None:
-        """Solve the ODE system with a timeout guard.
+        """Solve the ODE system.
 
-        Wraps the scipy integration call with ``with_timeout`` so that
-        pathological or stiff systems cannot hang the GUI indefinitely.
-        Raises ``SolverTimeoutError`` if the computation exceeds
-        ``_SOLVER_TIMEOUT_S`` seconds.
+        Pre: derivatives must be non-empty
+        Pre: t_end > t_start
+        Pre: num_points >= 2
         """
         try:
             from upstream_drift_tools.process_calculators.ode_solver import (
@@ -500,15 +474,9 @@ class ODESolverWindow(QMainWindow):
             require(num_points >= 2, "Need at least 2 points", num_points)
             t_eval = np.linspace(t_start, t_end, num_points)
 
-            # Solve — guarded by timeout to prevent unbounded hangs
+            # Solve
             solver = ODESolver(derivatives, parameters)
-            solution = with_timeout(
-                self._SOLVER_TIMEOUT_S,
-                solver.solve,
-                (t_start, t_end),
-                y0,
-                t_eval=t_eval,
-            )
+            solution = solver.solve((t_start, t_end), y0, t_eval=t_eval)
 
             # Format results
             results = []
@@ -574,12 +542,6 @@ class ODESolverWindow(QMainWindow):
             self.results_text.setPlainText("\n".join(results))
             self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['green']};")
 
-        except SolverTimeoutError as e:
-            _log.warning("Solver timed out: %s", e)
-            self.results_text.setPlainText(
-                f"Timeout: {e}\n\nTry reducing the time span or simplifying the ODE system."
-            )
-            self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['yellow']};")
         except ImportError as e:
             self.results_text.setPlainText(f"Error: {e}")
             self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['red']};")
