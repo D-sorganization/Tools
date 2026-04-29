@@ -2,6 +2,94 @@
 
 #!/usr/bin/env python3
 """Water-Gas Shift Reactor Calculator
+====================================
+
+Comprehensive WGS reactor analysis tool for:
+- High-temperature shift (HTS) and low-temperature shift (LTS)
+- Equilibrium composition at various temperatures
+- H2/CO ratio adjustment for downstream processes
+- Reactor sizing and heat integration
+- Catalyst selection guidance
+- Multi-stage reactor design
+
+Author: AI Assistant
+Version: 1.0
+"""
+
+from __future__ import annotations
+
+import logging
+import math
+import os
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, Any
+
+# matplotlib and scipy imported lazily to prevent Windows hang at module load
+import numpy as np
+from upstream_drift_tools.utils.state_manager import safe_read_json
+
+from .constants import (
+    CELSIUS_TO_KELVIN_OFFSET,
+    KJ_HR_TO_KW,
+    R_GAS_J_MOL_K,
+    STANDARD_STATE_PRESSURE_PA,
+    WGS_CATALYST_VOLUME_FRACTION,
+    WGS_DELTA_H,
+    WGS_DELTA_S,
+    WGS_HEAT_KJ_PER_MOL,
+    WGS_REACTOR_LD_RATIO,
+    WGS_TYPICAL_GHSV,
+)
+
+if TYPE_CHECKING:
+    from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+    from matplotlib.figure import Figure
+    from PyQt6.QtCore import QTimer, pyqtSignal
+    from PyQt6.QtWidgets import (
+        QComboBox,
+        QDoubleSpinBox,
+        QFormLayout,
+        QGroupBox,
+        QLabel,
+        QPushButton,
+        QScrollArea,
+        QSplitter,
+        QTableWidget,
+        QTabWidget,
+        QTextEdit,
+        QVBoxLayout,
+        QWidget,
+    )
+
+    PYQT_AVAILABLE = True
+
+else:
+    try:
+        from PyQt6.QtCore import QTimer, pyqtSignal
+        from PyQt6.QtWidgets import (
+            QComboBox,
+            QDoubleSpinBox,
+            QFormLayout,
+            QGroupBox,
+            QLabel,
+            QPushButton,
+            QScrollArea,
+            QSplitter,
+            QTableWidget,
+            QTabWidget,
+            QTextEdit,
+            QVBoxLayout,
+            QWidget,
+        )
+
+        PYQT_AVAILABLE = True
+    except ImportError:
+        PYQT_AVAILABLE = False
+        # Mock/dummy classes to prevent NameError in type hints or unused imports if needed
+        QWidget = object
+        QTimer = object
+
+        def pyqtSignal(*args) -> Any:
             return None
 
     try:
@@ -122,7 +210,7 @@ except ImportError:
     # Fallback to QWidget if BaseCalculatorWidget is not available
     if PYQT_AVAILABLE:
 
-        class BaseCalculatorWidget(QWidget):  # type: ignore[attr-defined]
+        class BaseCalculatorWidget(QWidget):  # type: ignore
             def __init__(self, *args: Any, **kwargs: Any) -> None:
                 QWidget.__init__(self, *args, **kwargs)
 
@@ -153,18 +241,12 @@ class WGSReactorEngine:
         self.catalysts = data.get("catalysts", {})
 
     def calculate_equilibrium_constant(self, temperature: float) -> float:
-        """Calculate WGS equilibrium constant using Van't Hoff equation.
-
-        Args:
-            temperature: Reaction temperature (K)
-
-        Preconditions:
-            temperature > 0 K
-        """
+        """Calculate WGS equilibrium constant using Van't Hoff equation"""
         # CO + H2O ⇌ CO2 + H2
         # ΔH° = -41.2 kJ/mol, ΔS° = -42.1 J/(mol·K)
 
-        check_temperature(temperature, "temperature")
+        if not (temperature is not None):
+            raise ValueError("temperature must be provided")
         delta_H = WGS_DELTA_H  # J/mol
         delta_S = WGS_DELTA_S  # J/(mol·K)
 
@@ -184,7 +266,8 @@ class WGSReactorEngine:
         Returns:
             (n_CO_0, n_H2O_0, n_CO2_0, n_H2_0, n_total_0)
         """
-        require(inlet_composition is not None, "inlet_composition must be provided")
+        if not (inlet_composition is not None):
+            raise ValueError("inlet_composition must be provided")
         n_CO_0 = inlet_composition.get("CO", 0)
         n_H2O_0 = inlet_composition.get("H2O", 0) + n_CO_0 * steam_ratio
         n_CO2_0 = inlet_composition.get("CO2", 0)
@@ -241,23 +324,10 @@ class WGSReactorEngine:
         steam_ratio: float = 2.0,
     ) -> dict[str, Any]:
         """Calculate equilibrium composition for WGS reaction
-        using Gibbs free energy minimization.
+        using Gibbs free energy minimization."""
 
-        Args:
-            inlet_composition: Inlet gas mole fractions (must contain 'CO')
-            temperature: Reaction temperature (K)
-            pressure: Reaction pressure (bar)
-            steam_ratio: Steam-to-CO molar ratio
-
-        Preconditions:
-            inlet_composition must not be empty
-            temperature > 0 K
-            pressure > 0 bar
-            steam_ratio >= 0
-        """
-        check_temperature(temperature, "temperature")
-        check_pressure(pressure, "pressure")
-        require(steam_ratio >= 0, "steam_ratio must be non-negative", steam_ratio)
+        if not (inlet_composition is not None):
+            raise ValueError("inlet_composition must be provided")
         n_CO_0, n_H2O_0, n_CO2_0, n_H2_0, n_total_0 = self._prepare_initial_moles(
             inlet_composition, steam_ratio
         )
@@ -355,26 +425,10 @@ class WGSReactorEngine:
         temperature: float,
         catalyst_type: str,
     ) -> dict[str, Any]:
-        """Size WGS reactor based on throughput and conversion.
-
-        Args:
-            feed_rate: Volumetric feed rate (m³/h)
-            conversion: Target CO conversion (%)
-            temperature: Reactor temperature (K)
-            catalyst_type: Catalyst type identifier
-
-        Preconditions:
-            feed_rate > 0
-            0 < conversion <= 100
-            temperature > 0 K
-        """
-        check_positive(feed_rate, "feed_rate")
-        require(
-            0 < conversion <= 100,
-            "conversion must be in (0, 100]",
-            conversion,
-        )
-        check_temperature(temperature, "temperature")
+        """Size WGS reactor based on throughput and conversion"""
+        # Space velocity (GHSV)
+        if not (feed_rate is not None):
+            raise ValueError("feed_rate must be provided")
         ghsv = WGS_TYPICAL_GHSV  # h^-1 (typical for WGS)
 
         # Reactor volume
