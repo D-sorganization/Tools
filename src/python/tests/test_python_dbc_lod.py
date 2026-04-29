@@ -158,7 +158,7 @@ def _get_plugin_manager_class():
             spec.loader.exec_module(module)  # type: ignore[union-attr]
 
         return module.PluginManager
-    except Exception:
+    except Exception:  # noqa: BLE001 — test isolation: any import failure returns None to skip
         return None
 
 
@@ -229,7 +229,7 @@ def _import_help_handlers():
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)  # type: ignore[union-attr]
         return module
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — test isolation: any import failure skips suite
         pytest.skip(f"help_system not importable: {e}")
 
 

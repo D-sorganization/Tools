@@ -71,7 +71,7 @@ def with_timeout(
     def _target() -> None:
         try:
             result.append(func(*args, **kwargs))
-        except Exception as err:
+        except Exception as err:  # noqa: BLE001 — propagated to caller via exc_holder
             exc_holder.append(err)
 
     worker = threading.Thread(target=_target, daemon=True, name="ode-solver-worker")

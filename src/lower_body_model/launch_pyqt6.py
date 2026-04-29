@@ -347,7 +347,7 @@ class ControlPanel(QMainWindow):
                 c = [float(x) for x in coeffs]
                 self.sim.set_joint_polynomial(joint_name, c)
                 logging.info(f"Imported torque polynomial for {joint_name}: {c}")
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — caller-supplied data may be any type
                 logging.error(f"Failed to set polynomial: {e}")
 
     def physics_loop(self) -> None:
