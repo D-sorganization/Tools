@@ -226,7 +226,7 @@ class PluginManager:
                         f"Discovered tool: {tool_name} in {manifest_path.parent}"
                     )
 
-                except (json.JSONDecodeError, KeyError, Exception) as e:
+                except Exception as e:  # noqa: BLE001 — manifest parsing must not crash discovery
                     logger.warning(f"Failed to parse manifest at {manifest_path}: {e}")
                     continue
 
