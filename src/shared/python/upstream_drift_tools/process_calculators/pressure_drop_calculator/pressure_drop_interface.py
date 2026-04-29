@@ -83,6 +83,31 @@ from .pressure_drop_validation import (  # noqa: F401
     _validate_pipe_params,
     validate_inputs,
 )
+
+# Re-export submodule symbols so callers that import from here continue to work
+from .pressure_drop_results import (  # noqa: F401
+    _format_results,
+    _generate_recommendations,
+    _print_breakdown_section,
+    _print_flow_and_gas_sections,
+    _print_safety_section,
+    _print_summary_section,
+    _print_warnings_and_recommendations,
+    _wrap_text,
+    print_results,
+)
+from .pressure_drop_units import (  # noqa: F401
+    _convert_pressure,
+    _convert_temperature,
+)
+from .pressure_drop_validation import (  # noqa: F401
+    _log_validation_report,
+    _validate_composition_and_fittings,
+    _validate_conditions,
+    _validate_flow_params,
+    _validate_pipe_params,
+    validate_inputs,
+)
 from .utils.fitting_loss_coefficients import FITTING_K_FACTORS
 from .utils.flow_rate_converter import (
     MASS_FLOW_CONVERSIONS,
