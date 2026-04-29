@@ -60,47 +60,8 @@ def _get_keyring() -> Any | None:
     try:
         import keyring
     except ImportError:
-        # Fallback if utils not available
-        find_env_file = None
-        load_env_file = None
-
-    # Search for .env file in multiple locations
-    # Use get_project_root_from_file for consistent path resolution
-    try:
-        from utils.path_helpers import get_project_root_from_file
-
-        project_root = get_project_root_from_file(__file__)
-    except ImportError:
-        project_root = Path(__file__).parent.parent.parent
-
-    env_file = find_env_file(
-        search_locations=[
-            project_root,  # Project root
-            Path.cwd(),  # Current working directory
-            TOOLS_ENV_PATH.parent,  # Tools version
-        ]
-    )
-    if env_file:
-        load_env_file(env_file)
-except ImportError:
-    # Fallback: try direct dotenv import
-    try:
-        from dotenv import load_dotenv
-
-        env_locations = [
-            Path(__file__).parent.parent.parent / ".env",
-            Path.cwd() / ".env",
-            Path.home() / ".pdf_renamer" / ".env",
-            TOOLS_ENV_PATH,
-        ]
-
-        for env_path in env_locations:
-            if env_path.exists():
-                load_dotenv(env_path)
-                break
-    except ImportError:
-        # python-dotenv not installed, will fall back to environment variables
-        pass
+        return None
+    return keyring
 
 
 def get_api_key(key_name: str = "GEMINI_API_KEY") -> str | None:
