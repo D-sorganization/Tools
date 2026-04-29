@@ -251,6 +251,9 @@ exclude_lines = [
     "pass",
 ]
 
+[tool.coverage.json]
+output = "coverage.json"
+
 [tool.mypy]
 python_version = "3.11"  # Matches pyproject requires-python and ruff target-version
 files = ["src"]

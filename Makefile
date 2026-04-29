@@ -8,7 +8,7 @@
 #   make test     - Run tests
 #   make clean    - Clean build artifacts
 
-.PHONY: help lint format test clean install check all
+.PHONY: help lint format test coverage clean install check all
 
 # Default target
 help:
@@ -20,6 +20,7 @@ help:
 	@echo "  make test      - Run pytest"
 	@echo "  make check     - Run all checks (lint + test)"
 	@echo "  make clean     - Remove build artifacts"
+	@echo "  make coverage  - Run pytest with coverage and emit coverage.json"
 	@echo "  make all       - Install, format, lint, test"
 	@echo ""
 
@@ -48,6 +49,11 @@ format:
 test:
 	@echo "Running pytest..."
 	python -m pytest
+
+# Run tests with coverage and emit coverage.json
+coverage:
+	@echo "Running pytest with coverage..."
+	python -m pytest --cov=src --cov-report=json:coverage.json --cov-report=term-missing -n auto
 
 # Run all checks
 check: lint test
