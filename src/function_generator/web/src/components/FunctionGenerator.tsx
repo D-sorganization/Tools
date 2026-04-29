@@ -153,30 +153,30 @@ function generateConstant(t: number[], params: WaveformParams): number[] {
   return t.map(() => constantValue);
 }
 
-// Hanning window to reduce spectral leakage
-function hanningWindow(n: number): number[] {
-  const window: number[] = [];
-  for (let i = 0; i < n; i++) {
-    window.push(0.5 * (1 - Math.cos((2 * Math.PI * i) / (n - 1))));
-  }
-  return window;
-}
-
 // FFT implementation with windowing for accurate frequency visualization
 function computeFFT(values: number[], sampleRate: number): { freq: number[]; magnitude: number[] } {
   const n = values.length;
-  const freq: number[] = [];
-  const magnitude: number[] = [];
+  const halfN = Math.ceil(n / 2);
 
-  // Apply Hanning window to reduce spectral leakage
-  const window = hanningWindow(n);
-  const windowedValues = values.map((v, i) => v * window[i]);
+  // ⚡ Bolt Optimization: Pre-allocate arrays to avoid dynamic resizing overhead
+  const freq = new Array<number>(halfN);
+  const magnitude = new Array<number>(halfN);
+  const windowedValues = new Array<number>(n);
+
+  let windowSum = 0;
+
+  // ⚡ Bolt Optimization: Inline Hanning window application and sum calculation
+  // to avoid multiple O(n) passes, intermediate array allocations, and .reduce() overhead
+  for (let i = 0; i < n; i++) {
+    const w = 0.5 * (1 - Math.cos((2 * Math.PI * i) / (n - 1)));
+    windowSum += w;
+    windowedValues[i] = values[i] * w;
+  }
 
   // Compute window correction factor (for amplitude accuracy)
-  const windowSum = window.reduce((a, b) => a + b, 0);
   const windowCorrection = n / windowSum;
 
-  for (let k = 0; k < n / 2; k++) {
+  for (let k = 0; k < halfN; k++) {
     let real = 0;
     let imag = 0;
     for (let j = 0; j < n; j++) {
@@ -184,10 +184,10 @@ function computeFFT(values: number[], sampleRate: number): { freq: number[]; mag
       real += windowedValues[j] * Math.cos(angle);
       imag -= windowedValues[j] * Math.sin(angle);
     }
-    freq.push((k * sampleRate) / n);
+    freq[k] = (k * sampleRate) / n;
     // Apply correct scaling: 2/n for one-sided spectrum, but DC (k=0) uses 1/n
     const scale = k === 0 ? 1 / n : 2 / n;
-    magnitude.push(Math.sqrt(real * real + imag * imag) * scale * windowCorrection);
+    magnitude[k] = Math.sqrt(real * real + imag * imag) * scale * windowCorrection;
   }
 
   return { freq, magnitude };
