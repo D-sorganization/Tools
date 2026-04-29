@@ -51,11 +51,6 @@ coverage.json
 .hypothesis/
 .dmypy.json
 dmypy.json
-/.ci_trigger.py
-/MUJOCO_LOG.TXT
-/error_log.txt
-/wave_log.txt
-/*Last
 
 # Binary documents (should not be in VCS)
 *.docx
@@ -83,7 +78,6 @@ build/
 .jules/palette*
 .jules/pallette*
 .jules/sentinel*
-!/.jules/pending/pr_comments.json
 
 # Enforce NPM
 pnpm-lock.yaml
@@ -107,7 +101,6 @@ test_output.txt
 *.env
 !*.env.example
 document_processing/pdf_renamer/.env
-src/document_processing/pdf_renamer/.env
 *.msg
 
 # Legacy stub directories (migrated to src/). See issue #612
@@ -128,5 +121,49 @@ src/pendulum_simulator/pendulum-core/target/
 Cargo.lock
 # WASM build output
 pkg/
-.jules/*
-!/.jules/pending
+.jules/
+
+# ── Security: Secrets & Credentials (Issue #2356) ──
+# Enhanced protection for secrets and credentials
+.env.local
+.env.*.local
+*.env.local
+src/document_processing/pdf_renamer/.env
+
+# Config files that may contain secrets
+.secrets/
+secrets/
+config/secrets/
+config/*.local.yaml
+config/*.local.yml
+config/*.local.json
+*.key
+*.pem
+*.p12
+*.pfx
+*.p8
+
+# Database/service credentials
+.keyring/
+
+# AWS credentials and config
+~/.aws/credentials
+~/.aws/config
+.aws/credentials
+.aws/config
+
+# Google Cloud credentials
+google-credentials.json
+gcloud-credentials.json
+
+# Azure credentials
+.azure/
+azure-credentials.json
+
+# SSH keys and certificates
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+ssl/
+certs/

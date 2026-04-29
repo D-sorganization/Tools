@@ -20,7 +20,6 @@ exclude = [
     "**/legacy",
     "replicants",
     # Exclude directories/files with syntax errors or intentional non-compliance
-    "src/data_processing",
     "src/document_processing",
     "src/scientific_modeling",
     "src/tools/folder_tools",
@@ -29,12 +28,6 @@ exclude = [
     "tests/data_processor",
     "python/src/tile_launcher/app_catalog.json",
     "python/tests",
-    # Jupyter notebooks: long f-strings and markdown cells cannot be wrapped without
-    # breaking execution or rendering. Ruff 0.14+ traverses notebooks in subdirectories
-    # independently of `exclude` globs, so explicit notebook paths are listed here.
-    "src/shared/python/upstream_drift_tools/process_calculators/psa_package/psa_analysis.ipynb",
-    "src/shared/python/upstream_drift_tools/process_calculators/psa_package/psa_analysis_colab.ipynb",
-    "src/shared/python/upstream_drift_tools/process_calculators/psa_package/References/psa_stage_removal_sensitivity.ipynb",
 ]
 
 [lint]
@@ -78,6 +71,11 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 # Root-level launcher and utility scripts use print() for CLI output
 "launch.py" = ["T201"]
 "verify_launcher.py" = ["T201"]
+# Data processing script generator creates print() statements in generated code output
+# (not executed by the module itself, but produced as string output)
+"src/data_processing/data_processor/python/data_processor/core/script_generator.py" = ["T201"]
+# Neural network script exporter creates print() statements in generated training scripts
+"src/data_processing/data_processor/python/data_processor/core/nn_script_exporter_renderers.py" = ["T201"]
 # Jupyter notebooks use print() for output display - this is intentional and correct.
 # E501 suppressed: notebook cells contain long f-strings and markdown that cannot
 # be wrapped without breaking execution or rendering.
@@ -87,6 +85,8 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "src/shared/python/upstream_drift_tools/process_calculators/psa_package/psa_analysis.ipynb" = ["E402", "T201", "E501"]
 "src/shared/python/upstream_drift_tools/process_calculators/psa_package/psa_analysis_colab.ipynb" = ["E402", "T201", "E501"]
 "src/shared/python/upstream_drift_tools/process_calculators/psa_package/References/psa_stage_removal_sensitivity.ipynb" = ["E402", "T201", "E501"]
+# PSA package notebooks use print() for analysis output
+"src/shared/python/upstream_drift_tools/process_calculators/psa_package/**/*.ipynb" = ["E402", "T201", "E501"]
 # Tests intentionally use print() for capturing stdout in test assertions
 "tests/**/*.py" = ["T201"]
 "tests/*.py" = ["T201"]
