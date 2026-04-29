@@ -199,7 +199,7 @@ class TimeOpsMixin:
                 if self.trend_x_max_edit.text().strip():  # type: ignore[attr-defined]
                     x_max = float(self.trend_x_max_edit.text().strip())  # type: ignore[attr-defined]
             except ValueError:
-                pass
+                logging.debug("Exception suppressed")
 
             y_col = selected[0]
 

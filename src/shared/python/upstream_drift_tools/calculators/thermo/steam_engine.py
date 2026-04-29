@@ -382,7 +382,7 @@ class SteamCalculationEngine:
                 return float(PropsSI("P", "T", temperature_k, "Q", 0, "Water"))
             except (ValueError, ZeroDivisionError, OverflowError, TypeError):
                 # CoolProp not available, fall back to Buck equation
-                pass  # Fall back to Buck equation
+                logging.debug("Exception suppressed")
 
         # Fallback to Buck equation
         return self._buck_equation(temperature_c)

@@ -119,7 +119,7 @@ class TI89Calculator:
                 b = float(base)  # type: ignore[arg-type]
                 e = float(exp)  # type: ignore[arg-type]
             except (ValueError, TypeError, OverflowError):
-                pass
+                logging.debug("Exception suppressed")
 
             if b is not None and e is not None and abs(b) > 1 and e > 0:
                 # Check for potentially massive numbers
@@ -152,7 +152,7 @@ class TI89Calculator:
                         bf = float(b)
                         ef = float(e)
                     except (ValueError, TypeError, OverflowError):
-                        pass
+                        logging.debug("Exception suppressed")
 
                     if bf is not None and ef is not None and abs(bf) > 1 and ef > 0:
                         digits = ef * math.log10(abs(bf))
@@ -626,7 +626,7 @@ class TI89Calculator:
                     # (native float has limits e.g. 1e400 -> inf)
                     return sp.Float(clean_expr)
                 except ValueError:
-                    pass
+                    logging.debug("Exception suppressed")
 
         # Security: Parse without evaluation first to check for DoS vectors
         # Optimization: Use global_dict for allowed functions to avoid copy

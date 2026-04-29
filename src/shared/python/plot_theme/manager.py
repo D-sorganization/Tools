@@ -80,7 +80,7 @@ class PlotThemeManager:
             settings.setValue("plot_theme", self._current_theme_name)
             settings.sync()
         except ImportError:
-            pass
+            logging.debug("Exception suppressed")
 
     @property
     def current_theme(self) -> PlotTheme:

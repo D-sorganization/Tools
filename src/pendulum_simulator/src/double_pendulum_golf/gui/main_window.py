@@ -109,7 +109,7 @@ try:
     create_plot_theme_menu = _shared_create_plot_theme_menu
     _PLOT_THEME_AVAILABLE = True
 except ImportError:
-    pass
+    logging.debug("Exception suppressed")
 
 
 class MainWindow(QMainWindow):

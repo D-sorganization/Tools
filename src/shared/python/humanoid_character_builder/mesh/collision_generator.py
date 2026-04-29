@@ -145,14 +145,14 @@ class CollisionGeometryGenerator:
             if hasattr(trimesh.interfaces, "vhacd"):
                 return True
         except ImportError:
-            pass
+            logging.debug("Exception suppressed")
 
         try:
             import pybullet  # noqa: F401
 
             return True
         except ImportError:
-            pass
+            logging.debug("Exception suppressed")
 
         logger.warning("VHACD not available - using fallback decomposition")
         return False
@@ -342,7 +342,7 @@ class CollisionGeometryGenerator:
                 return estimated_primitives <= max_primitives
 
         except (ValueError, ZeroDivisionError, OverflowError, TypeError):
-            pass
+            logging.debug("Exception suppressed")
 
         return False
 

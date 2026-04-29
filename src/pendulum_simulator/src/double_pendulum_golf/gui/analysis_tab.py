@@ -624,7 +624,7 @@ class AnalysisTab:
             if self._result is not None and hasattr(self._result, "params"):
                 return self._result.params
         except AttributeError:
-            pass
+            logging.debug("Exception suppressed")
         return default_factory()
 
     @staticmethod

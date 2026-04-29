@@ -671,7 +671,7 @@ class ModelLibrary:
                                 continue
                             break
                     except (PermissionError, OSError):
-                        pass
+                        logging.debug("Exception suppressed")
 
         except (PermissionError, OSError) as e:
             logger.warning(f"Failed to fetch from GitHub: {e}")

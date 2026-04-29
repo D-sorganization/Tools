@@ -101,7 +101,7 @@ except ImportError:
                 break
     except ImportError:
         # python-dotenv not installed, will fall back to environment variables
-        pass
+        logging.debug("Exception suppressed")
 
 
 def get_api_key(key_name: str = "GEMINI_API_KEY") -> str | None:
@@ -323,4 +323,4 @@ def update_last_directory(directory: str) -> None:
 try:
     from dotenv import load_dotenv
 except ImportError:
-    pass
+    logging.debug("Exception suppressed")

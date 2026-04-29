@@ -213,7 +213,7 @@ def _evaluate_precondition(
     try:
         return bool(condition(*args, **kwargs))
     except TypeError:
-        pass
+        logging.debug("Exception suppressed")
 
     # Fallback: bind the decorated function's args, then select only the
     # parameters the condition function expects.

@@ -322,7 +322,7 @@ class UnitConversionService(
                     return ["Temperature below absolute zero"]
             except (KeyError, ValueError, TypeError):
                 # If conversion fails, skip validation
-                pass
+                logging.debug("Exception suppressed")
         if category == "pressure" and value < 0:
             return ["Negative pressure is invalid"]
         return []

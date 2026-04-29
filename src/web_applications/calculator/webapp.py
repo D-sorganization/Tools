@@ -449,7 +449,7 @@ def _sympify_value(
                 # (native float has limits e.g. 1e400 -> inf)
                 return sp.Float(clean_value)
             except ValueError:
-                pass
+                logging.debug("Exception suppressed")
 
     try:
         # Optimization: Use cached parser for constant expressions

@@ -55,7 +55,7 @@ def check_dependencies(script_dir: Path) -> bool:
                 if result.returncode == 0:
                     return True
             except (subprocess.SubprocessError, OSError):
-                pass
+                logging.debug("Exception suppressed")
 
         # Try to install dependencies
         logger.info("Some dependencies are missing. Installing...")

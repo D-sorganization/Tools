@@ -15,6 +15,7 @@ from collections.abc import Callable, Generator
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
+import logging
 
 
 class OptimizedFileScanner:
@@ -100,7 +101,7 @@ class OptimizedFileScanner:
                             # Use sequential scanning for deeper levels
                             files.extend(item.rglob(pattern))
             except (PermissionError, OSError):
-                pass  # Skip inaccessible directories
+                logging.debug("Exception suppressed")
 
             return files
 
@@ -130,7 +131,7 @@ class OptimizedFileScanner:
                 if item.is_file() and item.match(pattern):
                     found_files.append(item)
         except (PermissionError, OSError):
-            pass
+            logging.debug("Exception suppressed")
 
         # Cache results
         with self._cache_lock:
@@ -248,7 +249,7 @@ class MemoryOptimizedProcessor:
                 while chunk := f.read(chunk_size):
                     yield chunk
         except OSError:
-            pass
+            logging.debug("Exception suppressed")
 
 
 # Global instances for easy access

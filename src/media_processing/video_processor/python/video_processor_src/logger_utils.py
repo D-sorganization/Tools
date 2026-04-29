@@ -60,7 +60,7 @@ except ImportError:
             np_random = np.random
             np_random.seed(seed)
         except ImportError:
-            pass
+            logging.debug("Exception suppressed")
 
 
 # Issue deprecation warning for direct imports

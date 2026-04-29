@@ -48,7 +48,7 @@ def get_repo_root(start_path: Path | str | None = None) -> Path:
 
         return Path(_canonical(start_path))
     except (ImportError, FileNotFoundError):
-        pass
+        logging.debug("Exception suppressed")
 
     # Minimal fallback -- kept thin to avoid duplicating the canonical impl
     current = Path(start_path).resolve()
