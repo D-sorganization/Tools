@@ -20,6 +20,9 @@ import defusedxml.ElementTree as DefusedET  # noqa: E402
 if TYPE_CHECKING:
     import xml.etree.ElementTree as ET
 
+if TYPE_CHECKING:
+    import xml.etree.ElementTree as ET
+
 logger = logging.getLogger(__name__)
 
 

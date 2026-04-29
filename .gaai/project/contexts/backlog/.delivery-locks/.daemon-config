@@ -10,4 +10,8 @@ TIMEOUT="14400"
 DRY_RUN="false"
 HOST="DeskComputer"
 CAFFEINATE_PID=""
+<<<<<<< HEAD
 STARTED="14:38:35"
+=======
+STARTED="09:34:37"
+>>>>>>> origin/staging
