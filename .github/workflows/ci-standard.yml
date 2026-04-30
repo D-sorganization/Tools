@@ -108,7 +108,7 @@ jobs:
         # hypothesis-using pytest run (see PR #2054 / #2056 quality-gate
         # failures; mirrors UpstreamDrift ci-standard.yml fix).
         run: |
-          pip install --force-reinstall --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
+          python -m pip install --ignore-installed --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
           python -m pip install --ignore-installed --upgrade pip
           pip install --ignore-installed --no-deps mypy==1.13.0
           pip install -r requirements.txt
@@ -335,7 +335,7 @@ jobs:
         # toolcache can carry a stale `sortedcontainers` that makes hypothesis
         # fail during pytest_terminal_summary.
         run: |
-          pip install --force-reinstall --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
+          python -m pip install --ignore-installed --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
           python -m pip install --ignore-installed --upgrade pip
           pip install -r requirements.txt
           pip install fastapi

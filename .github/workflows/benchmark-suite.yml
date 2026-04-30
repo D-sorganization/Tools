@@ -46,7 +46,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
+          python -m pip install --ignore-installed --upgrade pip
           python -m pip install --ignore-installed --no-deps "setuptools<82" wheel
           pip install -e ".[dev]"
 
@@ -110,6 +110,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: benchmark-results-${{ github.run_id }}
+          if-no-files-found: warn
           path: |
             .benchmarks/results.json
             benchmark_report.md
@@ -159,7 +160,7 @@ jobs:
     name: Benchmark SLA Validation
     runs-on: d-sorg-fleet
     timeout-minutes: 10
-    if: always()
+    if: ${{ always() && needs.benchmark-foundation.result != 'failure' && needs.benchmark-foundation.result != 'cancelled' }}
     needs: [benchmark-foundation]
 
     steps:
