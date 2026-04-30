@@ -1,6 +1,7 @@
 """GUI registration for Rotation Converter."""
 
 from __future__ import annotations
+
 from typing import Any
 
 GUI_INFO = {
