@@ -376,22 +376,24 @@ export function FunctionGenerator() {
     const maxPoints = 2000;
     const step = Math.max(1, Math.floor(signal.time.length / maxPoints));
 
-    return signal.time
-      .filter((_, i) => i % step === 0)
-      .map((t, idx) => {
-        const i = idx * step;
-        const dataPoint: Record<string, number> = {
-          time: t,
-          combined: signal.values[i],
-        };
-        // Add individual layer values
-        if (showLayers && layers.length > 1) {
-          layerSignals.forEach(({ layer, values }) => {
-            dataPoint[`layer_${layer.id}`] = values[i];
-          });
-        }
-        return dataPoint;
-      });
+    // ⚡ Bolt Optimization: Replace chained .filter() and .map() with a single-pass for loop
+    // to avoid intermediate array allocation and reduce garbage collection pauses.
+    const result = [];
+    const len = signal.time.length;
+    for (let i = 0; i < len; i += step) {
+      const dataPoint: Record<string, number> = {
+        time: signal.time[i],
+        combined: signal.values[i],
+      };
+      // Add individual layer values
+      if (showLayers && layers.length > 1) {
+        layerSignals.forEach(({ layer, values }) => {
+          dataPoint[`layer_${layer.id}`] = values[i];
+        });
+      }
+      result.push(dataPoint);
+    }
+    return result;
   }, [signal, layerSignals, layers, showLayers]);
 
   const freqChartData = useMemo(() => {

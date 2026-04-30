@@ -16,3 +16,6 @@
 ## 2024-05-25 - Avoid Dynamic Array Resizing and .reduce() Overhead in FFT Windowing
 **Learning:** In fast Fourier transform calculations (`computeFFT`), inline array construction and functional array methods (like `.map()` and `.reduce()`) introduce dynamic array resizing overhead and intermediary array allocations, stalling signal updates.
 **Action:** Replaced dynamic `.push()` calls and array method chains with pre-allocated arrays (`new Array(n)`) and a single-pass `for` loop to inline Hanning windowing, which significantly boosts real-time processing throughput.
+## 2026-04-30 - Optimize Array Downsampling in Chart Data Generation
+**Learning:** When downsampling large arrays in JS/TS (e.g., extracting data points for charts using a calculated `step`), avoid chained iterators like `.filter((_, i) => i % step === 0).map(...)`. These execute in O(N) iterations and allocate intermediate arrays.
+**Action:** Instead, use a single-pass `for` loop that increments by `step` (`for (let i = 0; i < len; i += step)`) to reduce iterations to O(N/step) and eliminate garbage collection overhead.
