@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 GUI_INFO = {
     "name": "Signal Processing Studio",
     "tool_name": "signal_processing_studio",
@@ -17,6 +19,6 @@ GUI_INFO = {
 }
 
 
-def get_gui_info() -> dict:
+def get_gui_info() -> dict[str, Any]:
     """Return GUI registration information."""
     return GUI_INFO

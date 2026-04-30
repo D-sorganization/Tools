@@ -394,7 +394,7 @@ class FolderPackerPro(
         if log_path.exists():
             try:
                 if sys.platform == "win32":
-                    os.startfile(log_path)  # type: ignore[attr-defined]
+                    os.startfile(log_path)
                 elif sys.platform == "darwin":
                     subprocess.run(["open", str(log_path)], check=False)
                 else:
