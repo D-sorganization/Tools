@@ -3,16 +3,14 @@
 from typing import Any
 
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QFont, QKeySequence
+from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
     QDialog,
-    QFrame,
+    QHeaderView,
     QLabel,
-    QScrollArea,
     QTableWidget,
     QTableWidgetItem,
     QVBoxLayout,
-    QHeaderView,
 )
 
 
@@ -33,8 +31,7 @@ class KeyboardShortcutsDialog(QDialog):
         self.setWindowTitle("Keyboard Shortcuts")
         self.setModal(True)
         self.resize(600, 500)
-        self.setStyleSheet(
-            """
+        self.setStyleSheet("""
             QDialog {
                 background-color: #f5f5f5;
             }
@@ -58,8 +55,7 @@ class KeyboardShortcutsDialog(QDialog):
                 border-right: 1px solid #ccc;
                 border-bottom: 1px solid #ccc;
             }
-            """
-        )
+            """)
 
         layout = QVBoxLayout(self)
         layout.setSpacing(15)
@@ -70,7 +66,7 @@ class KeyboardShortcutsDialog(QDialog):
         title.setFont(QFont("Segoe UI", 14, QFont.Weight.Bold))
         layout.addWidget(title)
 
-        subtitle = QLabel("Quick reference for available keyboard shortcuts in the Unified Tools Launcher")
+        subtitle = QLabel("Quick reference for available keyboard shortcuts")
         subtitle.setFont(QFont("Segoe UI", 10))
         subtitle.setStyleSheet("color: #666;")
         layout.addWidget(subtitle)
@@ -79,12 +75,12 @@ class KeyboardShortcutsDialog(QDialog):
         table = QTableWidget()
         table.setColumnCount(2)
         table.setHorizontalHeaderLabels(["Shortcut", "Action"])
-        table.horizontalHeader().setSectionResizeMode(
-            0, QHeaderView.ResizeMode.ResizeToContents
-        )
-        table.horizontalHeader().setSectionResizeMode(
-            1, QHeaderView.ResizeMode.Stretch
-        )
+        horizontal_header = table.horizontalHeader()
+        if horizontal_header is not None:
+            horizontal_header.setSectionResizeMode(
+                0, QHeaderView.ResizeMode.ResizeToContents
+            )
+            horizontal_header.setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
         table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         table.setSelectionMode(QTableWidget.SelectionMode.NoSelection)
         table.setAlternatingRowColors(True)
