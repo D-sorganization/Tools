@@ -33,7 +33,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip "setuptools<82" wheel
+          python -m pip install --upgrade pip
+          python -m pip install --ignore-installed --no-deps "setuptools<82" wheel
           pip install numpy pandas pytest pytest-benchmark
           # Install the data_processor package if available
           if [ -f "src/data_processing/data_processor/python/setup.py" ] || [ -f "src/data_processing/data_processor/python/pyproject.toml" ]; then
