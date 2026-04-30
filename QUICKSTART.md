@@ -59,11 +59,71 @@ python UnifiedToolsLauncher.py
 
 This opens a GUI with all available tools organized by category:
 
-- **Media Processing**: Audio/Video tools
+- **Analysis**: Multi-parameter sensitivity analysis
+- **Biomechanics**: C3D viewer, motion capture analysis
 - **Data Processing**: CSV/Parquet analyzers
+- **Development Tools**: Folder management, PDF renaming
+- **Engineering Drafting**: P&ID generator
+- **Mathematics**: ODE solver
+- **Optimization**: Adam optimizer
+- **Process Simulation**: Financial calculator, pressure drop analysis
 - **Scientific Modeling**: Solar system simulations, path planners
 - **Web Applications**: Calculator, Unit Converter
-- **Development Tools**: Folder management utilities
+
+### Launcher Features
+
+#### Error Notifications
+When a tool fails to launch, a detailed error notification appears showing:
+- The error message
+- Error type (ToolNotFoundError, LaunchError, etc.)
+- Suggestions for remediation based on the error type
+- Example: "Python not found. Install Python 3.11+"
+
+#### Launch Progress Indicator
+While a tool is starting:
+- A progress dialog shows with animated spinner
+- Status message displays: "Starting [Tool Name]..."
+- Progress bar indicates elapsed time
+- Auto-closes with success message: "✓ Tool launched successfully"
+- Timeout after 5 minutes if tool hangs
+
+#### Debug Mode
+Toggle "Debug Mode (Verbose Logs)" in the header to:
+- See detailed stdout/stderr output
+- Monitor tool process IDs
+- Troubleshoot launch issues
+
+#### Activity Log
+The bottom panel shows:
+- Tool launch history
+- Success/error messages with timestamps
+- Color-coded: green for success, red for errors
+- Scrollable history for reference
+
+### Keyboard Shortcuts
+
+Press **Ctrl+?** to view all available shortcuts:
+
+| Shortcut | Action |
+|----------|--------|
+| Ctrl+F | Search tools (case-insensitive) |
+| Esc | Clear search / Close dialog |
+| Tab | Navigate to next tool |
+| Shift+Tab | Navigate to previous tool |
+| Arrow Up/Down | Navigate between tools |
+| Arrow Left/Right | Navigate between categories |
+| Enter | Launch selected tool |
+| F1 | Open User Manual |
+| Ctrl+? | Show keyboard shortcuts help |
+
+### Help System
+
+Access help through the **Help** menu:
+- **User Manual (F1)**: Complete launcher documentation
+- **Tool Help**: Context-sensitive help for selected category
+- **Getting Started**: Quick setup guide
+- **About**: Launcher version and information
+- **Keyboard Shortcuts (Ctrl+?)**: All available shortcuts
 
 ## Common Tasks
 

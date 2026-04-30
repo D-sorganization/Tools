@@ -1,0 +1,86 @@
+# Git and version control
+.git
+.gitignore
+.gitattributes
+.gitlab-ci.yml
+.github
+
+# Python cache and build artifacts
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info
+dist
+build
+.Python
+.eggs
+
+# Testing
+.pytest_cache
+.coverage
+.coveragerc
+htmlcov
+.tox
+.hypothesis
+
+# IDE and editor files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+.project
+.pydevproject
+.settings
+
+# Virtual environments
+venv
+env
+ENV
+.venv
+
+# Dependencies lock files (use requirements.txt instead)
+Pipfile.lock
+poetry.lock
+
+# Documentation
+docs
+*.md
+LICENSE
+
+# Large media files
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.tar.gz
+*.zip
+
+# Build artifacts
+*.whl
+*.tar
+
+# Cache directories
+.mypy_cache
+.ruff_cache
+.pytest_cache
+
+# CI/CD
+.gitlab-ci.yml
+.travis.yml
+azure-pipelines.yml
+
+# Environment files
+.env.local
+.env.*.local
+
+# Misc
+.benchmarks
+.coverage
+.Jules
+.claude
+.agent
+.cursor

@@ -1,0 +1,125 @@
+# docker-compose.yml — Local Development Environment
+# Purpose: Multi-service development environment with live code editing
+# Usage: docker-compose up
+# Services: tools (main app), postgres (optional), redis (optional)
+
+version: '3.9'
+
+services:
+  # Main Tools Application (Flask)
+  tools:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: tools-dev
+    environment:
+      FLASK_APP: web_applications.calculator.webapp
+      FLASK_ENV: development
+      FLASK_DEBUG: 1
+      SECRET_KEY: OWASP-TEST-SECRET-KEY-SAFE-FOR-TESTING-ONLY
+      # Optional: Uncomment to connect to PostgreSQL
+      # DATABASE_URL: postgresql://tools:password@postgres:5432/tools_db
+      # Optional: Uncomment to connect to Redis
+      # REDIS_URL: redis://redis:6379/0
+    ports:
+      - "5000:5000"
+    volumes:
+      # Mount entire project directory for live code editing
+      - .:/workspace
+      # Exclude .git and large directories from sync
+      - /workspace/.git
+      - /workspace/.pytest_cache
+      - /workspace/.ruff_cache
+      - /workspace/.mypy_cache
+      - /workspace/build
+      - /workspace/dist
+      - /workspace/*.egg-info
+    working_dir: /workspace
+    # Run development server with auto-reload
+    command: flask run --host=0.0.0.0
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - tools-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
+  # PostgreSQL Database (Optional)
+  postgres:
+    image: postgres:16-alpine
+    container_name: tools-postgres
+    environment:
+      POSTGRES_USER: tools
+      POSTGRES_PASSWORD: tools-dev-password
+      POSTGRES_DB: tools_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - tools-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tools"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Redis Cache (Optional)
+  redis:
+    image: redis:7-alpine
+    container_name: tools-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - tools-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  # Optional: Test runner container
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: tools-tests
+    environment:
+      PYTHONDONTWRITEBYTECODE: 1
+      PYTHONUNBUFFERED: 1
+    volumes:
+      - .:/workspace
+      - /workspace/.pytest_cache
+      - /workspace/.ruff_cache
+    working_dir: /workspace
+    command: pytest -n auto --timeout=60 -v
+    depends_on:
+      tools:
+        condition: service_healthy
+    networks:
+      - tools-network
+    profiles:
+      - tests  # Run with: docker-compose --profile tests up
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  tools-network:
+    driver: bridge

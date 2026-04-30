@@ -14,8 +14,9 @@ from __future__ import annotations
 import logging
 
 from cors import add_cors_middleware
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 
+from .health import CheckStatus, get_health_checker
 from .routers import (
     acid_gas_dewpoint,
     baghouse,
@@ -66,14 +67,83 @@ app.include_router(rotation_converter.router)
 
 
 # ---------------------------------------------------------------------------
-# Health check
+# Health check endpoints
 # ---------------------------------------------------------------------------
 
 
 @app.get("/health")
-def health() -> dict[str, str]:
-    """Health-check endpoint."""
+async def health() -> dict[str, str]:
+    """Health-check endpoint (liveness probe).
+
+    Used by Docker/Kubernetes to verify the application is running.
+    Returns HTTP 200 if responsive.
+
+    Returns:
+        {"status": "ok"} if healthy
+    """
     return {"status": "ok"}
+
+
+@app.get("/api/health")
+async def api_health() -> dict[str, str]:
+    """API health endpoint (liveness probe).
+
+    Alternative path for containerized deployment.
+    Used by Docker HEALTHCHECK and Kubernetes liveness probes.
+
+    Returns:
+        {"status": "ok"} if healthy
+    """
+    return {"status": "ok"}
+
+
+@app.get("/api/ready")
+async def api_ready() -> dict[str, str | dict[str, object] | bool]:
+    """Readiness probe endpoint.
+
+    Verifies the application is ready to serve requests.
+    Runs comprehensive health checks on:
+    - Python runtime
+    - Required dependencies
+    - Application initialization state
+
+    Used by Kubernetes readiness probes and load balancers to determine
+    if traffic should be routed to this instance.
+
+    Returns:
+        {
+            "status": "ok" | "degraded" | "unhealthy",
+            "ready": true | false,
+            "checks": {
+                "python_runtime": {"status": "ok", "details": {...}},
+                "dependencies": {"status": "ok", "details": {...}},
+                ...
+            }
+        }
+
+    Status codes:
+        200: Ready to serve requests
+        503: Not ready (degraded or unhealthy)
+    """
+    health_checker = get_health_checker()
+    overall_status, checks = await health_checker.run_checks()
+
+    ready = overall_status == CheckStatus.OK
+
+    response = {
+        "status": overall_status.value,
+        "ready": ready,
+        "checks": checks,
+    }
+
+    # Raise HTTP 503 if not ready
+    if not ready:
+        raise HTTPException(
+            status_code=503,
+            detail=response,
+        )
+
+    return response
 
 
 @app.get("/api/calc/endpoints")

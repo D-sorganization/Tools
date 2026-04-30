@@ -11,3 +11,4 @@ export { TimeRangePanel } from './TimeRangePanel';
 export { TrendlinePanel } from './TrendlinePanel';
 export { HelpPanel } from './HelpPanel';
 export { AnalyticsSuite } from './AnalyticsSuite';
+export { ToastContainer } from './Toast';

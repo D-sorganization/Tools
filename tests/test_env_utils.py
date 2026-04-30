@@ -217,7 +217,7 @@ class TestFindEnvFile:
         config_dir = tmp_path / "config"
         config_dir.mkdir()
         env_file = config_dir / ".env"
-        env_file.write_text("API_KEY=secret")
+        env_file.write_text("API_KEY=OWASP-TEST-API-KEY-SAFE-VALUE")
 
         # Search with explicit search locations
         result = find_env_file(search_locations=[config_dir / ".env"])
