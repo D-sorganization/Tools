@@ -1,0 +1,230 @@
+name: Benchmark Suite
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "src/**"
+      - "tests/benchmarks/**"
+      - ".github/workflows/benchmark-suite.yml"
+      - "pyproject.toml"
+      - ".benchmarks/**"
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "src/**"
+      - "tests/benchmarks/**"
+      - ".github/workflows/benchmark-suite.yml"
+      - "pyproject.toml"
+  workflow_dispatch:
+
+concurrency:
+  group: benchmarks-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  benchmark-foundation:
+    name: Benchmark Suite (pytest-benchmark)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for comparison
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install -e ".[dev]"
+
+      - name: Run benchmark suite
+        run: |
+          python -m pytest tests/benchmarks/ \
+            --override-ini="addopts=" \
+            --benchmark-only \
+            --benchmark-json=.benchmarks/results.json \
+            --benchmark-columns=min,max,mean,stddev,median \
+            -v --tb=short
+        continue-on-error: true
+
+      - name: Compare against baseline
+        if: github.event_name == 'pull_request'
+        run: |
+          python -m pytest tests/benchmarks/ \
+            --override-ini="addopts=" \
+            --benchmark-only \
+            --benchmark-compare=.benchmarks/baseline.json \
+            --benchmark-compare-fail=min:10% \
+            --benchmark-columns=min,max,mean,stddev,median,ops \
+            -v --tb=short
+        continue-on-error: true
+
+      - name: Generate benchmark report
+        if: always()
+        run: |
+          python3 << 'EOF'
+          import json
+          import sys
+
+          try:
+              with open('.benchmarks/results.json') as f:
+                  data = json.load(f)
+          except FileNotFoundError:
+              print("No benchmark results found")
+              sys.exit(0)
+
+          # Generate markdown summary
+          md = "## Benchmark Results\n\n"
+          md += "| Test | Min (μs) | Mean (μs) | Max (μs) | StdDev |\n"
+          md += "|------|----------|-----------|----------|--------|\n"
+
+          for b in data.get('benchmarks', []):
+              name = b['name'].split('::')[-1]
+              stats = b['stats']
+              md += f"| {name} | "
+              md += f"{stats['min']*1e6:.1f} | "
+              md += f"{stats['mean']*1e6:.1f} | "
+              md += f"{stats['max']*1e6:.1f} | "
+              md += f"{stats['stddev']*1e6:.1f} |\n"
+
+          with open('benchmark_report.md', 'w') as f:
+              f.write(md)
+          print(md)
+          EOF
+
+      - name: Upload benchmark results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results-${{ github.run_id }}
+          path: |
+            .benchmarks/results.json
+            benchmark_report.md
+
+      - name: Comment benchmark results on PR
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            let body = '';
+
+            // Try to read markdown report
+            if (fs.existsSync('benchmark_report.md')) {
+              body += fs.readFileSync('benchmark_report.md', 'utf8');
+            }
+
+            // Add SLA summary
+            body += '\n\n### SLA Status\n\n';
+            body += '**Note:** Full SLA validation available in `.benchmarks/PERFORMANCE_SLA.md`\n\n';
+            body += '- **Rotation Converter:** Target < 50ms per conversion\n';
+            body += '- **Pressure Drop:** Target < 100ms per calculation\n';
+            body += '- **Data Processor:** Target < 500ms for 10K-row filtering\n';
+
+            // Add diagnostic info
+            body += '\n\n### Diagnostics\n\n';
+            body += `- **Run ID:** ${context.runId}\n`;
+            body += `- **Commit:** ${context.sha.substring(0, 7)}\n`;
+            body += `- **See also:** [Artifacts](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})\n`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+      - name: Set benchmark status check
+        if: always()
+        run: |
+          # This allows the benchmark suite to be gated in branch protection
+          # without blocking merges if benchmarks can't run
+          echo "Benchmark suite completed with status: ${{ job.status }}"
+
+  benchmark-validation:
+    name: Benchmark SLA Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: always()
+    needs: [benchmark-foundation]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download benchmark results
+        uses: actions/download-artifact@v4
+        with:
+          name: benchmark-results-${{ github.run_id }}
+          path: .benchmarks
+
+      - name: Validate SLAs
+        run: |
+          python3 << 'EOF'
+          import json
+          import sys
+
+          # SLA targets in seconds
+          SLAS = {
+              "pressure_drop": 0.1,  # 100ms
+              "rotation_converter": 0.05,  # 50ms
+              "data_processor": 0.5,  # 500ms for 10K rows
+          }
+
+          results_file = '.benchmarks/results.json'
+          try:
+              with open(results_file) as f:
+                  data = json.load(f)
+          except FileNotFoundError:
+              print("No results file found; skipping validation")
+              sys.exit(0)
+
+          violations = []
+          for bench in data.get('benchmarks', []):
+              name = bench['name']
+              mean_time = bench['stats']['mean']
+
+              # Map benchmark to SLA category
+              sla_key = None
+              if 'pressure_drop' in name:
+                  sla_key = 'pressure_drop'
+              elif 'rotation' in name:
+                  sla_key = 'rotation_converter'
+              elif 'data_processor' in name or 'fft' in name:
+                  sla_key = 'data_processor'
+
+              if sla_key and sla_key in SLAS:
+                  sla = SLAS[sla_key]
+                  if mean_time > sla:
+                      violations.append(f"{name}: {mean_time*1e6:.1f}μs (SLA: {sla*1e6:.0f}μs)")
+
+          if violations:
+              print("⚠ SLA Violations Detected:")
+              for v in violations:
+                  print(f"  - {v}")
+              sys.exit(1)
+          else:
+              print("✓ All benchmarks within SLA")
+              sys.exit(0)
+          EOF
+        continue-on-error: true
+
+      - name: Report validation status
+        if: always()
+        run: |
+          echo "SLA validation completed"
+          # In branch protection, this job can optionally be required
+          # Set continue-on-error: true to make it advisory only

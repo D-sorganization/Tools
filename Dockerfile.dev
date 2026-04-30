@@ -1,51 +1,52 @@
-# Dockerfile.dev — Development image for Tools shared library
-# Build: docker build -f Dockerfile.dev -t tools:dev .
-# Run: docker run -it -v $(pwd):/workspace tools:dev bash
-#
-# Features:
-# - Python 3.11+ with all dev dependencies
-# - Ruff, pytest, mypy pre-installed for linting/testing
-# - Live code editing via volume mounts
-# - Hot-reload support for FastAPI via uvicorn
+# Dockerfile.dev — Development Image for Tools
+# Purpose: Live development environment with all dependencies and dev tools
+# Usage: docker build -f Dockerfile.dev -t tools:dev .
+# Runtime: docker run -it -v $(pwd):/workspace tools:dev
 
 FROM python:3.11-slim
-
-LABEL maintainer="UpstreamDrift Team"
-LABEL description="Development image for Tools shared library"
-LABEL version="1.0.0"
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    WORKSPACE=/workspace
+    LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8
 
-# Install system dependencies
-# Keep to a minimal set needed for dev tools and scientific computing
+# Set working directory
+WORKDIR /workspace
+
+# Install system dependencies (required for some Python packages)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
-    curl \
     git \
+    curl \
     ca-certificates \
+    libffi-dev \
+    libssl-dev \
+    libjpeg-dev \
+    zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR ${WORKSPACE}
+# Copy dependency files
+COPY requirements.txt requirements-lock.txt* pyproject.toml setup.py ./
 
-# Copy dependency specifications
-COPY pyproject.toml requirements.txt requirements-lock.txt ./
-
-# Install Python dependencies in single layer to reduce image size
-# Install base + dev deps for testing and linting
+# Install Python dependencies
 RUN pip install --upgrade pip setuptools wheel && \
-    pip install -r requirements-lock.txt && \
-    pip install -e ".[dev,all]"
+    pip install -e ".[all,dev]"
 
-# Create non-root user for security (optional but recommended)
-RUN useradd -m -u 1000 appuser && \
-    chown -R appuser:appuser ${WORKSPACE}
+# Copy source code
+COPY . .
 
-USER appuser
+# Install package in development mode (editable)
+RUN pip install -e .
 
-# Default command: bash for interactive development
-CMD ["/bin/bash"]
+# Create non-root user for development (optional but recommended)
+RUN useradd -m -s /bin/bash devuser && \
+    chown -R devuser:devuser /workspace
+
+# Switch to non-root user
+USER devuser
+
+# Default command: Python interactive shell
+CMD ["python3"]

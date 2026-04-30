@@ -1,100 +1,86 @@
-version: '3.8'
-
-# docker-compose.yml — Local development environment
+# docker-compose.yml — Local Development Environment
+# Purpose: Multi-service development environment with live code editing
 # Usage: docker-compose up
 # Services: tools (main app), postgres (optional), redis (optional)
 
+version: '3.9'
+
 services:
-  # =========================================================================
-  # Tools: Main development container
-  # =========================================================================
+  # Main Tools Application (Flask)
   tools:
     build:
       context: .
       dockerfile: Dockerfile.dev
     container_name: tools-dev
-    image: tools:dev
     environment:
-      # Python environment
-      PYTHONUNBUFFERED: '1'
-      PYTHONDONTWRITEBYTECODE: '1'
-      # Flask/Web app settings
       FLASK_APP: web_applications.calculator.webapp
       FLASK_ENV: development
-      FLASK_DEBUG: '1'
-      SECRET_KEY: dev-secret-key-change-in-production
-      # Calculation backend API
-      CALC_BACKEND_HOST: 0.0.0.0
-      CALC_BACKEND_PORT: '8010'
-      # Database (if using postgres)
-      # DATABASE_URL: postgresql://user:password@postgres:5432/tools_db
-      # Redis (if using cache)
+      FLASK_DEBUG: 1
+      SECRET_KEY: OWASP-TEST-SECRET-KEY-SAFE-FOR-TESTING-ONLY
+      # Optional: Uncomment to connect to PostgreSQL
+      # DATABASE_URL: postgresql://tools:password@postgres:5432/tools_db
+      # Optional: Uncomment to connect to Redis
       # REDIS_URL: redis://redis:6379/0
     ports:
-      # Calculation backend API
-      - "8010:8010"
-      # Flask development server (if running)
       - "5000:5000"
     volumes:
-      # Live code editing - mount entire workspace
+      # Mount entire project directory for live code editing
       - .:/workspace
-      # Preserve pip cache between runs
-      - pip-cache:/root/.cache/pip
-      # Preserve pytest cache
-      - pytest-cache:/workspace/.pytest_cache
+      # Exclude .git and large directories from sync
+      - /workspace/.git
+      - /workspace/.pytest_cache
+      - /workspace/.ruff_cache
+      - /workspace/.mypy_cache
+      - /workspace/build
+      - /workspace/dist
+      - /workspace/*.egg-info
+    working_dir: /workspace
+    # Run development server with auto-reload
+    command: flask run --host=0.0.0.0
+    depends_on:
+      - postgres
+      - redis
     networks:
       - tools-network
-    # Health check for development
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8010/api/health", "||", "exit", "1"]
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 10s
-    # Keep container running
     stdin_open: true
     tty: true
-    command: /bin/bash
+    restart: unless-stopped
 
-  # =========================================================================
-  # PostgreSQL (Optional): Database for the application
-  # =========================================================================
+  # PostgreSQL Database (Optional)
   postgres:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     container_name: tools-postgres
     environment:
-      POSTGRES_USER: tools_user
-      POSTGRES_PASSWORD: tools_password_dev_only
+      POSTGRES_USER: tools
+      POSTGRES_PASSWORD: tools-dev-password
       POSTGRES_DB: tools_db
     ports:
       - "5432:5432"
     volumes:
-      # Persist data between container restarts
-      - postgres-data:/var/lib/postgresql/data
-      # Optional: import SQL scripts on startup
-      # - ./scripts/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - tools-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U tools_user"]
+      test: ["CMD-SHELL", "pg_isready -U tools"]
       interval: 10s
       timeout: 5s
       retries: 5
-    profiles:
-      # Enable with: docker-compose --profile postgres up
-      - postgres
+    restart: unless-stopped
 
-  # =========================================================================
-  # Redis (Optional): Cache and message queue
-  # =========================================================================
+  # Redis Cache (Optional)
   redis:
     image: redis:7-alpine
     container_name: tools-redis
     ports:
       - "6379:6379"
     volumes:
-      # Persist data between container restarts
-      - redis-data:/data
+      - redis_data:/data
     networks:
       - tools-network
     healthcheck:
@@ -102,70 +88,38 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    profiles:
-      # Enable with: docker-compose --profile redis up
-      - redis
+    restart: unless-stopped
     command: redis-server --appendonly yes
 
-  # =========================================================================
-  # Adminer (Optional): Database management UI
-  # =========================================================================
-  adminer:
-    image: adminer
-    container_name: tools-adminer
-    ports:
-      - "8080:8080"
+  # Optional: Test runner container
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: tools-tests
+    environment:
+      PYTHONDONTWRITEBYTECODE: 1
+      PYTHONUNBUFFERED: 1
+    volumes:
+      - .:/workspace
+      - /workspace/.pytest_cache
+      - /workspace/.ruff_cache
+    working_dir: /workspace
+    command: pytest -n auto --timeout=60 -v
+    depends_on:
+      tools:
+        condition: service_healthy
     networks:
       - tools-network
-    depends_on:
-      postgres:
-        condition: service_healthy
     profiles:
-      # Enable with: docker-compose --profile adminer up
-      - adminer
+      - tests  # Run with: docker-compose --profile tests up
 
 volumes:
-  postgres-data:
+  postgres_data:
     driver: local
-  redis-data:
-    driver: local
-  pip-cache:
-    driver: local
-  pytest-cache:
+  redis_data:
     driver: local
 
 networks:
   tools-network:
     driver: bridge
-
-# ============================================================================
-# Usage Guide
-# ============================================================================
-#
-# Start all services (main dev environment):
-#   docker-compose up
-#
-# Start with postgres:
-#   docker-compose --profile postgres up
-#
-# Start with both postgres and redis:
-#   docker-compose --profile postgres --profile redis up
-#
-# Start in background:
-#   docker-compose up -d
-#
-# View logs:
-#   docker-compose logs -f tools
-#
-# Run a command in the container:
-#   docker-compose exec tools python -m pytest tests/ -v
-#   docker-compose exec tools python -m ruff check .
-#
-# Stop all services:
-#   docker-compose down
-#
-# Remove volumes (WARNING: deletes data):
-#   docker-compose down -v
-#
-# Rebuild image:
-#   docker-compose build --no-cache tools

@@ -11,7 +11,7 @@ Related to issue #2411 (API Standardization).
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional
 
 
@@ -31,7 +31,7 @@ class PressureDropRequest(BaseModel):
         pressure_pa: Gas absolute pressure in Pa (must be > 0).
         molecular_weight_kg_mol: Gas molecular weight in kg/mol (must be > 0).
         viscosity_pa_s: Dynamic viscosity in Pa·s. If provided, used directly.
-            If omitted, Sutherland air approximation is used. Optional, must be > 0 if provided.
+            If omitted, Sutherland air approximation is used. Optional, > 0.
 
     Example:
         >>> request = PressureDropRequest(
@@ -45,9 +45,7 @@ class PressureDropRequest(BaseModel):
         ... )
     """
 
-    pipe_diameter_m: float = Field(
-        ..., gt=0, description="Pipe inner diameter [m]"
-    )
+    pipe_diameter_m: float = Field(..., gt=0, description="Pipe inner diameter [m]")
     pipe_length_m: float = Field(..., gt=0, description="Pipe length [m]")
     roughness_m: float = Field(
         default=0.000045,
@@ -55,12 +53,8 @@ class PressureDropRequest(BaseModel):
         description="Pipe wall roughness [m], default: 0.000045 (commercial steel)",
     )
     flow_rate_kg_s: float = Field(..., gt=0, description="Mass flow rate [kg/s]")
-    temperature_k: float = Field(
-        ..., gt=0, description="Gas temperature [K]"
-    )
-    pressure_pa: float = Field(
-        ..., gt=0, description="Gas absolute pressure [Pa]"
-    )
+    temperature_k: float = Field(..., gt=0, description="Gas temperature [K]")
+    pressure_pa: float = Field(..., gt=0, description="Gas absolute pressure [Pa]")
     molecular_weight_kg_mol: float = Field(
         ..., gt=0, description="Molecular weight [kg/mol]"
     )
@@ -73,10 +67,8 @@ class PressureDropRequest(BaseModel):
         ),
     )
 
-    class Config:
-        """Pydantic configuration for PressureDropRequest."""
-
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "pipe_diameter_m": 0.1,
                 "pipe_length_m": 100.0,
@@ -88,6 +80,7 @@ class PressureDropRequest(BaseModel):
                 "viscosity_pa_s": None,
             }
         }
+    )
 
 
 class PressureDropResponse(BaseModel):
@@ -118,15 +111,11 @@ class PressureDropResponse(BaseModel):
         ... )
     """
 
-    pressure_drop_pa: float = Field(
-        description="Total pressure drop [Pa]"
-    )
+    pressure_drop_pa: float = Field(description="Total pressure drop [Pa]")
     reynolds_number: float = Field(
         description="Dimensionless Reynolds number (flow classification)"
     )
-    friction_factor: float = Field(
-        description="Dimensionless Darcy friction factor"
-    )
+    friction_factor: float = Field(description="Dimensionless Darcy friction factor")
     velocity_m_s: float = Field(description="Gas velocity [m/s]")
     flow_regime: str = Field(
         description="Flow regime classification: Laminar / Transitional / Turbulent"
@@ -134,10 +123,8 @@ class PressureDropResponse(BaseModel):
     density_kg_m3: float = Field(description="Fluid density [kg/m³]")
     viscosity_pa_s: float = Field(description="Dynamic viscosity used [Pa·s]")
 
-    class Config:
-        """Pydantic configuration for PressureDropResponse."""
-
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "pressure_drop_pa": 1023.4,
                 "reynolds_number": 50000.0,
@@ -148,3 +135,4 @@ class PressureDropResponse(BaseModel):
                 "viscosity_pa_s": 1.86e-5,
             }
         }
+    )
