@@ -33,7 +33,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip "setuptools<82" wheel
           pip install numpy pandas pytest pytest-benchmark
           # Install the data_processor package if available
           if [ -f "src/data_processing/data_processor/python/setup.py" ] || [ -f "src/data_processing/data_processor/python/pyproject.toml" ]; then
@@ -65,7 +65,8 @@ jobs:
             const path = 'src/data_processing/data_processor/python/benchmarks/benchmark-results.json';
             let body = '## Performance Benchmark Results\n\n';
             if (fs.existsSync(path)) {
-              const results = JSON.parse(fs.readFileSync(path, 'utf8'));
+              const raw = fs.readFileSync(path, 'utf8').trim();
+              const results = raw ? JSON.parse(raw) : { benchmarks: [] };
               if (results.benchmarks && results.benchmarks.length > 0) {
                 body += '| Benchmark | Mean (s) | StdDev | Rounds |\n';
                 body += '|-----------|----------|--------|--------|\n';

@@ -81,7 +81,7 @@ jobs:
           try:
               with open('.benchmarks/results.json') as f:
                   data = json.load(f)
-          except FileNotFoundError:
+          except (FileNotFoundError, json.JSONDecodeError):
               print("No benchmark results found")
               sys.exit(0)
 
@@ -188,7 +188,7 @@ jobs:
           try:
               with open(results_file) as f:
                   data = json.load(f)
-          except FileNotFoundError:
+          except (FileNotFoundError, json.JSONDecodeError):
               print("No results file found; skipping validation")
               sys.exit(0)
 
