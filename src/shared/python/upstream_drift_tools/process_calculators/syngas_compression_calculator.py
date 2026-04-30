@@ -149,8 +149,6 @@ except ImportError:
             QWidget.__init__(self, *args, **kwargs)
 
 
-from dataclasses import dataclass
-
 # Import species database with fallback
 try:
     from integrated_process_simulator.calculators.thermodynamic_properties.species_database import (  # noqa: E501
@@ -158,8 +156,11 @@ try:
     )
 except ImportError:
     # Minimal fallback for standalone use
+    from dataclasses import dataclass as _dc
+    from dataclasses import dataclass
 
-    @dataclass
+
+    @_dc
     class _SpeciesData:
         molecular_weight: float  # kg/mol
         critical_temperature: float  # K
