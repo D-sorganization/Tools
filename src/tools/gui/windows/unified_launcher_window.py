@@ -3,7 +3,7 @@
 import html
 import queue
 import threading
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from PyQt6.QtCore import Qt, QTimer
@@ -14,6 +14,7 @@ from PyQt6.QtWidgets import (
     QGridLayout,
     QHBoxLayout,
     QLabel,
+    QLineEdit,
     QMainWindow,
     QMenu,
     QScrollArea,
@@ -28,6 +29,7 @@ from tools.gui.components.error_notification import ErrorNotificationDialog
 from tools.gui.components.keyboard_shortcuts_dialog import KeyboardShortcutsDialog
 from tools.gui.components.launch_progress import LaunchProgressDialog
 from tools.gui.components.tool_card import ToolCard
+from tools.gui.search import SearchEngine
 from tools.launch_utils import (
     LaunchError,
     PlatformError,
@@ -62,6 +64,9 @@ class UnifiedLauncher(ThemedWindowMixin, QMainWindow):
             self.setWindowIcon(QIcon(str(icon_path)))
 
         self.log_queue: queue.Queue[str] = queue.Queue()
+        self.tools_config: dict[str, list[dict[str, Any]]] = {}
+        self.search_engine = SearchEngine()
+        self.help_manager: Any | None = None
         self.setup_ui()
         self.setup_log_consumer()
 
@@ -80,7 +85,11 @@ class UnifiedLauncher(ThemedWindowMixin, QMainWindow):
         main_layout.setContentsMargins(20, 20, 20, 20)
 
         main_layout.addLayout(self._create_header_layout())
-        self.tabs = self._create_tool_tabs()
+        self.search_box = self._create_search_box()
+        main_layout.addWidget(self.search_box)
+
+        self._load_tool_index()
+        self.tabs = self._create_tool_tabs(self.tools_config)
         main_layout.addWidget(self.tabs, stretch=1)
 
         self.log_area = self._create_log_area()
@@ -90,6 +99,12 @@ class UnifiedLauncher(ThemedWindowMixin, QMainWindow):
         status_bar = self.statusBar()
         if status_bar:
             status_bar.showMessage(f"Repository Root: {self.repo_root}")
+
+        search_shortcut = QShortcut(QKeySequence("Ctrl+F"), self)
+        search_shortcut.activated.connect(self.search_box.setFocus)
+
+        clear_search_shortcut = QShortcut(QKeySequence("Esc"), self)
+        clear_search_shortcut.activated.connect(self.search_box.clear)
 
     def _create_header_layout(self) -> QHBoxLayout:
         """Create the header layout with title and debug checkbox."""
@@ -108,6 +123,16 @@ class UnifiedLauncher(ThemedWindowMixin, QMainWindow):
 
         return header_layout
 
+    def _create_search_box(self) -> QLineEdit:
+        """Create the live tool search box."""
+        search_box = QLineEdit()
+        search_box.setObjectName("toolSearchBox")
+        search_box.setPlaceholderText("Search tools by name or description")
+        search_box.setClearButtonEnabled(True)
+        search_box.setToolTip("Search tools by name, description, or keyword")
+        search_box.textChanged.connect(self._apply_search_filter)
+        return search_box
+
     def _create_log_area(self) -> QTextEdit:
         """Create the activity log area widget."""
         log_area = QTextEdit()
@@ -117,14 +142,14 @@ class UnifiedLauncher(ThemedWindowMixin, QMainWindow):
         log_area.setObjectName("activityLog")  # For theme-specific styling
         return log_area
 
-    def _create_tool_tabs(self) -> QTabWidget:
+    def _create_tool_tabs(
+        self, tools_config: dict[str, list[dict[str, Any]]]
+    ) -> QTabWidget:
         """Create the tabbed interface for tool categories."""
         tabs = QTabWidget()
         tabs.setObjectName("toolTabs")  # For theme-specific styling
 
-        from tools.config_loader import CATEGORY_ORDER, load_tools_config
-
-        tools_config = load_tools_config(self.repo_root)
+        from tools.config_loader import CATEGORY_ORDER
 
         if not tools_config:
             self.log(
@@ -152,6 +177,74 @@ class UnifiedLauncher(ThemedWindowMixin, QMainWindow):
                 self.log(f"Error creating tab for {category}: {e}")
 
         return tabs
+
+    def _load_tool_index(self) -> None:
+        """Load launcher tools and build the search index."""
+        from tools.config_loader import load_tools_config
+
+        self.tools_config = load_tools_config(self.repo_root)
+        flattened_tools = self._flatten_tools_config(self.tools_config)
+        self.search_engine.index_tools(flattened_tools)
+
+    def _flatten_tools_config(
+        self, tools_config: dict[str, list[dict[str, Any]]]
+    ) -> list[dict[str, Any]]:
+        """Return searchable tool records with their category included."""
+        flattened_tools: list[dict[str, Any]] = []
+        for category, tools in tools_config.items():
+            for tool_info in tools:
+                searchable_tool = dict(tool_info)
+                searchable_tool["category"] = category
+                flattened_tools.append(searchable_tool)
+        return flattened_tools
+
+    def _apply_search_filter(self, query: str) -> None:
+        """Refresh category tabs to show tools matching the live search query."""
+        if not hasattr(self, "tabs"):
+            return
+
+        central_widget = self.centralWidget()
+        if central_widget is None:
+            return
+
+        layout = central_widget.layout()
+        if not isinstance(layout, QVBoxLayout):
+            return
+
+        filtered_config = self._filter_tools_config(query)
+        old_tabs = self.tabs
+        layout.removeWidget(old_tabs)
+        old_tabs.setParent(None)
+        old_tabs.deleteLater()
+
+        self.tabs = self._create_tool_tabs(filtered_config)
+        layout.insertWidget(2, self.tabs, stretch=1)
+
+        status_bar = self.statusBar()
+        if status_bar:
+            query = query.strip()
+            if query:
+                match_count = sum(len(tools) for tools in filtered_config.values())
+                status_bar.showMessage(f"Search: {match_count} matching tool(s)")
+            else:
+                status_bar.showMessage(f"Repository Root: {self.repo_root}")
+
+    def _filter_tools_config(self, query: str) -> dict[str, list[dict[str, Any]]]:
+        """Return tools grouped by category for a search query."""
+        if not query.strip():
+            return self.tools_config
+
+        all_tools = self._flatten_tools_config(self.tools_config)
+        matched_tools = self.search_engine.search(query, max_results=len(all_tools))
+
+        filtered_config: dict[str, list[dict[str, Any]]] = {}
+        for tool_info in matched_tools:
+            category = str(tool_info.get("category", "Other"))
+            filtered_tool = dict(tool_info)
+            filtered_tool.pop("category", None)
+            filtered_config.setdefault(category, []).append(filtered_tool)
+
+        return filtered_config
 
     def setup_category_tab(self, tab: QWidget, tools: list[dict[str, Any]]) -> bool:
         """Set up a tab for a category of tools."""
@@ -197,7 +290,7 @@ class UnifiedLauncher(ThemedWindowMixin, QMainWindow):
         def process_queue() -> None:
             while not self.log_queue.empty():
                 msg = self.log_queue.get()
-                timestamp = datetime.now(timezone.utc).strftime("%H:%M:%S")  # noqa: UP017
+                timestamp = datetime.now(UTC).strftime("%H:%M:%S")
                 # Basic HTML escaping just in case
                 safe_msg = html.escape(msg)
 

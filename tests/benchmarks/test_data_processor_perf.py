@@ -100,10 +100,8 @@ class TestDataProcessorFilterOperations:
         SLA: < 50ms
         Tests: Hamming window application
         """
-        window = np.hamming(len(sample_small_array))
-
         result = benchmark(
-            apply_window_function, sample_small_array, window
+            apply_window_function, sample_small_array, "Hamming"
         )
         assert len(result) == len(sample_small_array)
 
@@ -115,10 +113,8 @@ class TestDataProcessorFilterOperations:
         SLA: < 100ms
         Tests: Hann window application
         """
-        window = np.hanning(len(sample_medium_array))
-
         result = benchmark(
-            apply_window_function, sample_medium_array, window
+            apply_window_function, sample_medium_array, "Hann"
         )
         assert len(result) == len(sample_medium_array)
 
@@ -130,10 +126,8 @@ class TestDataProcessorFilterOperations:
         SLA: < 500ms
         Tests: Blackman window application at scale
         """
-        window = np.blackman(len(sample_large_array))
-
         result = benchmark(
-            apply_window_function, sample_large_array, window
+            apply_window_function, sample_large_array, "Blackman"
         )
         assert len(result) == len(sample_large_array)
 
@@ -152,7 +146,7 @@ class TestDataProcessorFilterOperations:
             return apply_fft_filter_core(
                 signal,
                 window,
-                filter_type="FFT Low-pass",
+                zero_phase=False,
             )
 
         result = benchmark(apply_filter)
@@ -173,7 +167,7 @@ class TestDataProcessorFilterOperations:
             return apply_fft_filter_core(
                 signal,
                 window,
-                filter_type="FFT Band-pass",
+                zero_phase=False,
             )
 
         result = benchmark(apply_filter)
@@ -194,7 +188,7 @@ class TestDataProcessorFilterOperations:
             return apply_fft_filter_core(
                 signal,
                 window,
-                filter_type="FFT Low-pass",
+                zero_phase=False,
             )
 
         result = benchmark(apply_filter)
@@ -224,7 +218,7 @@ class TestDataProcessorChainedOperations:
                 n_samples=len(signal),
                 transition_bw=0.05,
             )
-            filtered = apply_window_function(signal, window)
+            filtered = apply_window_function(signal, "Hamming")
             return filtered
 
         result = benchmark(design_and_apply)
@@ -249,9 +243,9 @@ class TestDataProcessorChainedOperations:
                 n_samples=len(signal),
                 transition_bw=0.01,
             )
-            windowed = apply_window_function(signal, window)
+            windowed = apply_window_function(signal, "Hann")
             filtered = apply_fft_filter_core(
-                windowed, window, filter_type="FFT Band-pass"
+                windowed, window, zero_phase=False
             )
             return filtered
 
@@ -277,9 +271,9 @@ class TestDataProcessorChainedOperations:
                 n_samples=len(signal),
                 transition_bw=0.01,
             )
-            windowed = apply_window_function(signal, window)
+            windowed = apply_window_function(signal, "Blackman")
             filtered = apply_fft_filter_core(
-                windowed, window, filter_type="FFT Low-pass"
+                windowed, window, zero_phase=False
             )
             return filtered
 
@@ -308,7 +302,7 @@ class TestDataProcessorChainedOperations:
                     transition_bw=0.01,
                 )
                 filtered = apply_fft_filter_core(
-                    signal, window, filter_type="FFT Band-pass"
+                    signal, window, zero_phase=False
                 )
                 results.append(filtered)
             return results

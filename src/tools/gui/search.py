@@ -4,7 +4,11 @@ Provides fuzzy matching and keyword-based search functionality to help
 users find tools quickly without knowing exact names.
 """
 
+import re
 from typing import Any
+
+_IGNORED_TERMS = frozenset({"and", "the", "for", "with"})
+_TOKEN_PATTERN = re.compile(r"[a-z0-9]+")
 
 
 class SearchEngine:
@@ -22,7 +26,7 @@ class SearchEngine:
         self.tools: list[dict[str, Any]] = []
         self.index: dict[str, list[int]] = {}  # keyword -> list of tool indices
 
-    def index_tools(self, tools: list[dict[str, Any]]) -> None:
+    def index_tools(self, tools: list[Any]) -> None:
         """Build search index from tools list.
 
         Args:
@@ -38,18 +42,17 @@ class SearchEngine:
             if not isinstance(tool, dict):
                 continue
 
-            # Index name (split into words)
+            # Index name.
             name = tool.get("name", "")
             if isinstance(name, str):
-                for word in name.lower().split():
+                for word in self._tokenize(name):
                     self._add_to_index(word, idx)
 
-            # Index description keywords
+            # Index description keywords.
             desc = tool.get("desc", "")
             if isinstance(desc, str):
-                for word in desc.lower().split():
-                    # Skip common words to reduce noise
-                    if len(word) > 2 and word not in ("and", "the", "for", "with"):
+                for word in self._tokenize(desc):
+                    if len(word) > 2 and word not in _IGNORED_TERMS:
                         self._add_to_index(word, idx)
 
             # Index custom keywords if provided
@@ -58,6 +61,8 @@ class SearchEngine:
                 for keyword in keywords:
                     if isinstance(keyword, str):
                         self._add_to_index(keyword.lower(), idx)
+                        for word in self._tokenize(keyword):
+                            self._add_to_index(word, idx)
 
     def _add_to_index(self, keyword: str, tool_idx: int) -> None:
         """Add a keyword -> tool mapping to the index."""
@@ -86,33 +91,62 @@ class SearchEngine:
         if not query.strip():
             return []
 
-        query_lower = query.lower().strip()
+        query_tokens = self._tokenize(query)
+        if not query_tokens:
+            return []
+
         scored_tools: dict[int, float] = {}
+        for query_token in query_tokens:
+            token_scores = self._score_token(query_token)
+            if not token_scores:
+                return []
 
-        # 1. Exact and prefix matches (highest score)
-        for keyword, tool_indices in self.index.items():
-            if keyword.startswith(query_lower):
-                for idx in tool_indices:
-                    score = 1.0 if keyword == query_lower else 0.8
-                    scored_tools[idx] = max(scored_tools.get(idx, 0), score)
+            if not scored_tools:
+                scored_tools = token_scores
+                continue
 
-        # 2. Fuzzy matching on indexed keywords for typos
-        for keyword, tool_indices in self.index.items():
-            if keyword not in scored_tools and self._fuzzy_match_word(
-                query_lower, keyword
-            ):
-                for idx in tool_indices:
-                    scored_tools[idx] = max(scored_tools.get(idx, 0), 0.7)
+            scored_tools = {
+                idx: score + token_scores[idx]
+                for idx, score in scored_tools.items()
+                if idx in token_scores
+            }
 
-        # 3. Partial word matches
-        for keyword, tool_indices in self.index.items():
-            if query_lower in keyword:  # substring match
-                for idx in tool_indices:
-                    scored_tools[idx] = max(scored_tools.get(idx, 0), 0.5)
+            if not scored_tools:
+                return []
 
         # Sort by score (descending) and return
         sorted_results = sorted(scored_tools.items(), key=lambda x: x[1], reverse=True)
         return [self.tools[idx] for idx, _score in sorted_results[:max_results]]
+
+    def _score_token(self, query_token: str) -> dict[int, float]:
+        """Return matching tool indexes and relevance scores for one token."""
+        scored_tools: dict[int, float] = {}
+
+        # 1. Exact and prefix matches (highest score).
+        for keyword, tool_indices in self.index.items():
+            if keyword.startswith(query_token):
+                for idx in tool_indices:
+                    score = 1.0 if keyword == query_token else 0.8
+                    scored_tools[idx] = max(scored_tools.get(idx, 0), score)
+
+        # 2. Fuzzy matching on indexed keywords for typos.
+        for keyword, tool_indices in self.index.items():
+            if self._fuzzy_match_word(query_token, keyword):
+                for idx in tool_indices:
+                    scored_tools[idx] = max(scored_tools.get(idx, 0), 0.7)
+
+        # 3. Partial word matches.
+        for keyword, tool_indices in self.index.items():
+            if query_token in keyword:
+                for idx in tool_indices:
+                    scored_tools[idx] = max(scored_tools.get(idx, 0), 0.5)
+
+        return scored_tools
+
+    @staticmethod
+    def _tokenize(value: str) -> list[str]:
+        """Normalize free text into lowercase searchable tokens."""
+        return _TOKEN_PATTERN.findall(value.lower())
 
     def _fuzzy_match_word(self, query: str, word: str, max_distance: int = 2) -> bool:
         """Check if a word is similar to query within edit distance.
@@ -173,7 +207,7 @@ class SearchEngine:
         if len(s2) == 0:
             return len(s1)
 
-        previous_row = range(len(s2) + 1)
+        previous_row = list(range(len(s2) + 1))
         for i, c1 in enumerate(s1):
             current_row = [i + 1]
             for j, c2 in enumerate(s2):

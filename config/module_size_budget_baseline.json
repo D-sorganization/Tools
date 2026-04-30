@@ -8,6 +8,6 @@
     "src/tools/folder_tools/folder_tool/Folders_Tool_r0.py": 3288,
     "src/rotation_converter/modern_robotics.py": 2101,
     "src/electrode_advisor/tests/test_electrode_advisor_contracts.py": 1562,
-    "src/rotation_converter/ui/pyqt6/main_window.py": 1233,
+    "src/rotation_converter/ui/pyqt6/main_window.py": 1252,
     "src/shared/python/upstream_drift_tools/process_calculators/syngas_compression_calculator.py": 1218
 }

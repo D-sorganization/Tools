@@ -87,7 +87,17 @@ jobs:
         run: |
           conflict_marker='<<<<<'
           conflict_marker="${conflict_marker}<< HEAD"
-          if grep -rne "$conflict_marker" . --exclude-dir=.git --exclude-dir=.github; then
+          if grep -rne "$conflict_marker" . \
+            --exclude-dir=.git \
+            --exclude-dir=.github \
+            --exclude-dir=.mypy_cache \
+            --exclude-dir=.pytest_cache \
+            --exclude-dir=.venv \
+            --exclude-dir=__pycache__ \
+            --exclude-dir=build \
+            --exclude-dir=dist \
+            --exclude-dir=node_modules \
+            --exclude-dir=target; then
             echo "::error::Raw git merge conflict markers found!"
             exit 1
           fi
@@ -319,7 +329,17 @@ jobs:
         run: |
           conflict_marker='<<<<<'
           conflict_marker="${conflict_marker}<< HEAD"
-          if grep -rne "$conflict_marker" . --exclude-dir=.git --exclude-dir=.github; then
+          if grep -rne "$conflict_marker" . \
+            --exclude-dir=.git \
+            --exclude-dir=.github \
+            --exclude-dir=.mypy_cache \
+            --exclude-dir=.pytest_cache \
+            --exclude-dir=.venv \
+            --exclude-dir=__pycache__ \
+            --exclude-dir=build \
+            --exclude-dir=dist \
+            --exclude-dir=node_modules \
+            --exclude-dir=target; then
             echo "::error::Raw git merge conflict markers found!"
             exit 1
           fi

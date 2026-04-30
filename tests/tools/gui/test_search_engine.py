@@ -246,6 +246,28 @@ class TestFuzzyMatching:
         assert len(results) > 0
         assert any("Lower Body" in t.get("name", "") for t in results)
 
+    def test_multi_word_description_search(
+        self, search_engine: SearchEngine, sample_tools: list[dict]
+    ) -> None:
+        """Test that all words in a multi-word query can match descriptions."""
+        search_engine.index_tools(sample_tools)
+
+        results = search_engine.search("pipe flow")
+
+        assert len(results) > 0
+        assert "Pressure Drop" in results[0].get("name", "")
+
+    def test_punctuation_does_not_block_keyword_search(
+        self, search_engine: SearchEngine, sample_tools: list[dict]
+    ) -> None:
+        """Test hyphenated description terms are normalized for discovery."""
+        search_engine.index_tools(sample_tools)
+
+        results = search_engine.search("series")
+
+        assert len(results) > 0
+        assert any("Data Processor" in t.get("name", "") for t in results)
+
 
 # ── Relevance and Scoring Tests ─────────────────────────────────────────────
 

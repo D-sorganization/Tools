@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.112                                    |
-| **Last Spec Update**    | 2026-04-28                                 |
+| **Spec Version**        | 1.1.114                                    |
+| **Last Spec Update**    | 2026-04-30                                 |
 
 ## 2. Purpose & Mission
 
@@ -585,6 +585,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-22 | 1.1.95  | Canonicalized the Rust universal gas constant by updating `math::R_GAS` to the full CODATA value and having `engineering::R_UNIVERSAL` reuse the same constant.                                                                                                                                                                                                                                                                                                                                                                                                     |
 | 2026-04-23 | 1.1.102 | Updated Unit Converter `removeCustomUnit` workflow to use an inline soft confirm pattern, eliminating thread-blocking `confirm()` dialogs and improving accessibility with `aria-live`.                                                                                                                                                                                                                                                                                                                                                                             |
 | 2026-04-28 | 1.1.112 | Updated Unit Converter UI to dynamically retarget labels for custom combobox search inputs, ensuring explicit accessible names and resolving click-to-focus gaps.                                                                                                                                                                                                                                                                                                                                                                            |
+| 2026-04-30 | 1.1.114 | Integrated full-text live search into the Unified Tools Launcher tabs, including name, description, keyword, multi-word, and punctuation-normalized matching, with Ctrl+F focus and Esc clear shortcuts.                                                                                                                                                                                                                                                                                                                                       |
 | 2026-05-24 | 1.1.113 | Fixed a vulnerability in CSRF cookie parsing logic where cookies with values containing an equals sign were previously being truncated. This allows base64 encoded CSRF tokens with padding to be parsed correctly.                                                                                                                                                                                                                                                                                                                        |
 
 ---
