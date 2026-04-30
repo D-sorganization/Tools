@@ -21,6 +21,7 @@ slprj/
 *.cursor-chat
 .vscode/
 .idea/
+.claude/worktrees/
 
 # OS
 .DS_Store
