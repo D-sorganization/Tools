@@ -289,7 +289,7 @@ class PressureDropCalculatorWidget(QWidget):
         layout = QVBoxLayout(tab)
 
         self.figure = Figure(figsize=(8, 5), facecolor="#1e1e2e")
-        self.canvas = FigureCanvas(self.figure)  # type: ignore[no-untyped-call]
+        self.canvas = FigureCanvas(self.figure)
         layout.addWidget(self.canvas)
 
         return tab
@@ -444,7 +444,7 @@ class PressureDropCalculatorWidget(QWidget):
             spine.set_color("#585b70")
 
         self.figure.tight_layout()
-        self.canvas.draw()  # type: ignore[no-untyped-call]
+        self.canvas.draw()
 
     def _apply_styling(self) -> None:
         """Apply dark theme styling."""
