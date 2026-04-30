@@ -75,9 +75,7 @@ class TestSpecImmutability:
         apply_profile(original, "compact")
         # Original layout values must be unchanged after applying a profile.
         assert original["project"]["drawing"]["layout"]["gap"] == snapshot["gap"]
-        assert (
-            original["defaults"]["instrument_bubble_radius"] == snapshot["bubble"]
-        )
+        assert original["defaults"]["instrument_bubble_radius"] == snapshot["bubble"]
         assert "meta" not in original  # meta is added to the copy only
 
     def test_independent_apply_calls(self) -> None:
@@ -108,9 +106,7 @@ class TestProfileMergeSemantics:
         spec = _full_spec()
         spec["project"]["drawing"]["layout"]["custom_extra"] = "keep me"
         result = apply_profile(spec, "presentation")
-        assert (
-            result["project"]["drawing"]["layout"]["custom_extra"] == "keep me"
-        )
+        assert result["project"]["drawing"]["layout"]["custom_extra"] == "keep me"
 
     def test_drawing_created_when_missing(self) -> None:
         spec = {"project": {"id": "P-1"}, "equipment": []}
