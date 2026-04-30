@@ -32,7 +32,6 @@ from programmatic_pid.geometry import (
 )
 from programmatic_pid.types import BBox, Point
 
-
 # ── to_float ─────────────────────────────────────────────────────────────
 
 
