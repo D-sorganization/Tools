@@ -44,6 +44,8 @@ GAS COMPONENTS:
 
 from __future__ import annotations
 
+import logging
+
 from .pressure_drop_api import (
     calculate_pressure_drop,
     calculate_pressure_drop_custom_gas,
