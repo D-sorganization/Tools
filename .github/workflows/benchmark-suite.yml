@@ -29,14 +29,14 @@ defaults:
 jobs:
   benchmark-foundation:
     name: Benchmark Suite (pytest-benchmark)
-    runs-on: ubuntu-latest
+    runs-on: d-sorg-fleet
     timeout-minutes: 30
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Full history for comparison
+          fetch-depth: 0 # Full history for comparison
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -157,7 +157,7 @@ jobs:
 
   benchmark-validation:
     name: Benchmark SLA Validation
-    runs-on: ubuntu-latest
+    runs-on: d-sorg-fleet
     timeout-minutes: 10
     if: always()
     needs: [benchmark-foundation]
