@@ -44,7 +44,8 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from shared.python.contracts import require, require_positive
+from contracts import check_positive as require_positive
+from contracts import require
 
 # Optional thermodynamic libraries for more accurate vapor pressure
 try:
@@ -83,6 +84,7 @@ try:
     GUI_AVAILABLE = True
 except ImportError:
     GUI_AVAILABLE = False
+    QWidget = object
 
 # Import BaseCalculatorWidget for state management
 try:

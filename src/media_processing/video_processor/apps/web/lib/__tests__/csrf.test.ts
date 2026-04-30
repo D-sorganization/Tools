@@ -696,10 +696,7 @@ describe('CSRF Protection', () => {
         },
       });
 
-      // This will fail because cookie parsing splits on first =
-      // The current implementation doesn't handle this edge case
-      // This test documents the limitation
-      expect(validateCsrfToken(request)).toBe(false);
+      expect(validateCsrfToken(request)).toBe(true);
     });
 
     it('should handle whitespace in tokens', () => {
