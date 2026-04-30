@@ -68,6 +68,8 @@ except ImportError:
     HAS_PYQT = False
     QWidget = object  # type: ignore[assignment,misc]
     QThread = object  # type: ignore[assignment,misc]
+    def pyqtSignal(*args, **kwargs): return None
+    def pyqtSlot(*args, **kwargs): return lambda f: f
 
 try:
     from integrated_process_simulator.utilities.logging_config import get_logger
@@ -147,6 +149,8 @@ except ImportError:
             QWidget.__init__(self, *args, **kwargs)
 
 
+from dataclasses import dataclass
+
 # Import species database with fallback
 try:
     from integrated_process_simulator.calculators.thermodynamic_properties.species_database import (  # noqa: E501
@@ -154,9 +158,8 @@ try:
     )
 except ImportError:
     # Minimal fallback for standalone use
-    from dataclasses import dataclass as _dc
 
-    @_dc
+    @dataclass
     class _SpeciesData:
         molecular_weight: float  # kg/mol
         critical_temperature: float  # K
