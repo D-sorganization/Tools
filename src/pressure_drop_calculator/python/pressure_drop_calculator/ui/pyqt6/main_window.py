@@ -289,7 +289,7 @@ class PressureDropCalculatorWidget(QWidget):
         layout = QVBoxLayout(tab)
 
         self.figure = Figure(figsize=(8, 5), facecolor="#1e1e2e")
-        self.canvas = FigureCanvas(self.figure)
+        self.canvas = FigureCanvas(self.figure)  # type: ignore[no-untyped-call]
         layout.addWidget(self.canvas)
 
         return tab
@@ -344,7 +344,7 @@ class PressureDropCalculatorWidget(QWidget):
                 temperature=self.temperature_spin.value(),
                 gas_composition=gas_comp,
                 elevation_change=self.elevation_spin.value(),
-                roughness=roughness,
+                pipe_roughness=roughness,
                 friction_method=self.friction_method_combo.currentText(),
             )
 
@@ -444,7 +444,7 @@ class PressureDropCalculatorWidget(QWidget):
             spine.set_color("#585b70")
 
         self.figure.tight_layout()
-        self.canvas.draw()
+        self.canvas.draw()  # type: ignore[no-untyped-call]
 
     def _apply_styling(self) -> None:
         """Apply dark theme styling."""
