@@ -45,20 +45,19 @@ GAS COMPONENTS:
 from __future__ import annotations
 
 import logging
+from typing import Any
 
-from .pressure_drop_api import (
-    calculate_pressure_drop,
-    calculate_pressure_drop_custom_gas,
-    calculate_pressure_drop_syngas,
+from .engine.pressure_drop_calculation_engine import (
+    PressureDropCalculationEngine,
+    friction_factor_churchill,
+    friction_factor_colebrook,
+    friction_factor_haaland,
+    friction_factor_swamee_jain,
 )
-from .pressure_drop_reference import (
-    compare_friction_methods,
-    list_fittings,
-    list_flow_units,
-    list_gas_components,
-    list_materials,
-    list_pipe_sizes,
-    show_help,
+from .models.pressure_drop_data_models import (
+    GasComposition,
+    PipeFitting,
+    PressureDropInputs,
 )
 
 # Re-export submodule symbols so callers that import from here continue to work
