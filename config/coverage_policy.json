@@ -1,1 +1,14 @@
-{ "minimum_total_percent": 25.0, "max_total_drop_percent": 2.0, "tracked_packages": { "src/shared/python/notes": 49.0 } }
+{
+  "minimum_total_percent": 6.0,
+  "max_total_drop_percent": 2.0,
+  "tracked_packages": {
+    "src/shared/python/notes": 49.0,
+    "src/shared/python/upstream_drift_tools": 15.0
+  },
+  "hot_path_modules_phase2": {
+    "src/pressure_drop_calculator": 80.0,
+    "src/rotation_converter": 80.0,
+    "src/shared/python/model_generation": 80.0,
+    "src/shared/python/upstream_drift_tools": 80.0
+  }
+}

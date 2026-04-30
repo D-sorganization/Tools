@@ -24,6 +24,9 @@ from PyQt6.QtWidgets import (
 )
 
 from shared.python.theme import ThemedWindowMixin
+from tools.gui.components.error_notification import ErrorNotificationDialog
+from tools.gui.components.keyboard_shortcuts_dialog import KeyboardShortcutsDialog
+from tools.gui.components.launch_progress import LaunchProgressDialog
 from tools.gui.components.tool_card import ToolCard
 from tools.launch_utils import (
     LaunchError,
@@ -213,28 +216,43 @@ class UnifiedLauncher(ThemedWindowMixin, QMainWindow):
         self.timer.start(100)
 
     def launch_tool_wrapper(self, tool_info: dict[str, Any]) -> None:
-        """Wrapper to launch tool in background thread."""
+        """Wrapper to launch tool in background thread with progress tracking."""
         if not (tool_info is not None):
             raise ValueError("tool_info must be provided")
         is_debug = self.debug_mode.isChecked()
+        tool_name = tool_info.get("name", "Unknown Tool")
+
+        # Show progress dialog
+        progress_dialog = LaunchProgressDialog(self, tool_name)
 
         def run_launch() -> None:
             try:
-                self.log(f"🚀 Launching: {tool_info.get('name')}...")
+                self.log(f"🚀 Launching: {tool_name}...")
                 launch_tool(
                     tool_info=tool_info,
                     repo_root=self.repo_root,
                     is_debug=is_debug,
                     log_func=self.log,
                 )
+                # Mark as successful
+                progress_dialog.on_success()
+                self.log(f"✓ {tool_name} launched successfully")
             except (LaunchError, SecurityError, ToolNotFoundError, PlatformError) as e:
                 self.log(f"❌ Launch Error: {e}")
-                # We can't show message box from thread easily, but log is visible
+                # Show error notification dialog
+                progress_dialog.close()
+                error_dialog = ErrorNotificationDialog(self, tool_name, e)
+                error_dialog.exec()
             except (KeyError, ValueError, TypeError) as e:
                 self.log(f"❌ Unexpected Error: {e}")
+                progress_dialog.close()
+                error_dialog = ErrorNotificationDialog(self, tool_name, e)
+                error_dialog.exec()
 
-        # Launch in thread to keep UI responsive
+        # Show progress dialog modally in main thread
+        # The dialog will be closed/updated from the launch thread
         threading.Thread(target=run_launch, daemon=True).start()
+        progress_dialog.exec()
 
     def _setup_help_system(self) -> None:
         """Initialize the help system with menu and shortcuts."""
@@ -297,6 +315,15 @@ class UnifiedLauncher(ThemedWindowMixin, QMainWindow):
 
         help_menu.addSeparator()
 
+        # Keyboard Shortcuts action
+        shortcuts_action = QAction("&Keyboard Shortcuts", self)
+        shortcuts_action.setShortcut(QKeySequence("Ctrl+?"))
+        shortcuts_action.setStatusTip("Show keyboard shortcuts")
+        shortcuts_action.triggered.connect(self._show_keyboard_shortcuts)
+        help_menu.addAction(shortcuts_action)
+
+        help_menu.addSeparator()
+
         # About action
         about_action = QAction("&About", self)
         about_action.setStatusTip("About Unified Tools Launcher")
@@ -325,6 +352,11 @@ class UnifiedLauncher(ThemedWindowMixin, QMainWindow):
         """Show the getting started guide."""
         if self.help_manager:
             self.help_manager.show_topic("getting_started", self)
+
+    def _show_keyboard_shortcuts(self) -> None:
+        """Show the keyboard shortcuts help dialog."""
+        shortcuts_dialog = KeyboardShortcutsDialog(self)
+        shortcuts_dialog.exec()
 
     def _show_about(self) -> None:
         """Show the about dialog."""

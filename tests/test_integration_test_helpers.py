@@ -498,13 +498,13 @@ class TestAPITestBase:
 
         class TestAPI(APITestBase):
             default_headers = {"Content-Type": "application/json"}
-            auth_token = "test_token"
+            auth_token = "OWASP-TEST-TOKEN-SAFE-VALUE"
 
         api = TestAPI()
         headers = api.get_headers({"X-Custom": "value"})
 
         assert headers["Content-Type"] == "application/json"
-        assert headers["Authorization"] == "Bearer test_token"
+        assert headers["Authorization"] == "Bearer OWASP-TEST-TOKEN-SAFE-VALUE"
         assert headers["X-Custom"] == "value"
 
     def test_get_headers_no_auth(self) -> None:
@@ -512,7 +512,7 @@ class TestAPITestBase:
 
         class TestAPI(APITestBase):
             default_headers = {"Content-Type": "application/json"}
-            auth_token = None
+            auth_token: str | None = None
 
         api = TestAPI()
         headers = api.get_headers()

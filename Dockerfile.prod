@@ -1,0 +1,96 @@
+# Dockerfile.prod — Production image for Tools shared library
+# Build: docker build -f Dockerfile.prod -t tools:latest .
+# Run: docker run -e CALC_BACKEND_PORT=8010 -p 8010:8010 tools:latest
+#
+# Multi-stage build for minimal image size:
+# - Stage 1: Builder — compile dependencies
+# - Stage 2: Runtime — minimal production image (~200-300MB)
+#
+# Features:
+# - Optimized for deployment
+# - Minimal attack surface (no build tools, no dev dependencies)
+# - Health check endpoint support
+# - FastAPI application ready
+# - Non-root user for security
+
+# ============================================================================
+# Stage 1: Builder
+# ============================================================================
+FROM python:3.11-slim as builder
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+WORKDIR /build
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and build wheels
+COPY requirements.txt requirements-lock.txt ./
+RUN pip install --upgrade pip setuptools wheel && \
+    pip wheel --no-cache-dir --requirement requirements-lock.txt \
+    --wheel-dir /wheels
+
+# ============================================================================
+# Stage 2: Runtime
+# ============================================================================
+FROM python:3.11-slim
+
+LABEL maintainer="UpstreamDrift Team"
+LABEL description="Production image for Tools shared library"
+LABEL version="1.0.0"
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    CALC_BACKEND_PORT=8010 \
+    CALC_BACKEND_HOST=0.0.0.0
+
+WORKDIR /app
+
+# Install runtime system dependencies only
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy wheels from builder stage
+COPY --from=builder /wheels /wheels
+
+# Install Python dependencies from wheels
+RUN pip install --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir --no-index --find-links /wheels /wheels/* && \
+    rm -rf /wheels
+
+# Copy application code
+COPY pyproject.toml setup.py ./
+COPY src ./src
+COPY tests ./tests
+
+# Install application in production mode (no dev dependencies)
+RUN pip install --no-cache-dir -e .
+
+# Create non-root user for security
+RUN useradd -m -u 1000 appuser && \
+    chown -R appuser:appuser /app
+
+USER appuser
+
+# Expose default port for calculation backend
+EXPOSE ${CALC_BACKEND_PORT}
+
+# Health check endpoint
+# Verifies the FastAPI application is responding
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:${CALC_BACKEND_PORT}/api/health || exit 1
+
+# Default command: run calculation backend with uvicorn
+CMD ["uvicorn", "calc_backend.app:app", \
+     "--host", "0.0.0.0", \
+     "--port", "8010", \
+     "--log-level", "info"]

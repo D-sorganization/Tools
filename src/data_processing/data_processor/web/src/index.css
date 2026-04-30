@@ -14,7 +14,7 @@
 
 @layer components {
   .btn {
-    @apply px-4 py-2 rounded-lg font-medium transition-colors duration-200;
+    @apply px-4 py-2 min-h-[48px] min-w-[48px] rounded-lg font-medium transition-colors duration-200 flex items-center justify-center;
   }
 
   .btn-primary {
@@ -62,12 +62,20 @@
   }
 
   .tab {
-    @apply px-4 py-2 text-dark-400 hover:text-dark-100 border-b-2 border-transparent
+    @apply px-4 py-2 min-h-[48px] min-w-[48px] flex items-center justify-center text-dark-400 hover:text-dark-100 border-b-2 border-transparent
            transition-colors duration-200 cursor-pointer;
   }
 
   .tab-active {
     @apply text-blue-500 border-blue-500;
+  }
+
+  /* Responsive input and select for mobile touch */
+  @media (max-width: 640px) {
+    .input,
+    .select {
+      @apply text-base;
+    }
   }
 }
 
@@ -97,4 +105,20 @@
 
 .custom-tooltip {
   @apply bg-dark-800 border border-dark-600 rounded-lg p-3 shadow-xl;
+}
+
+/* Toast animations */
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(400px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
 }

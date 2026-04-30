@@ -7,7 +7,7 @@
  * No 1000-point downsampling limit — Plotly handles large datasets via WebGL.
  */
 
-import { useMemo, memo } from 'react';
+import { useMemo, memo, useRef, useEffect, useState } from 'react';
 import Plot from 'react-plotly.js';
 import { BarChart2 } from 'lucide-react';
 import type { DataRow } from '../types';
@@ -58,8 +58,10 @@ interface PlotViewProps {
   plotlyData?: PlotlyData;
   /** Chart title */
   title?: string;
-  /** Chart height in pixels */
+  /** Chart height in pixels (default: 400, min on mobile: 300) */
   height?: number;
+  /** Whether to adapt height on mobile (default: true) */
+  responsiveHeight?: boolean;
 }
 
 // ── Component ───────────────────────────────────────────────────────────────
@@ -70,7 +72,32 @@ export const PlotView = memo(function PlotView({
   plotlyData,
   title = 'Signal Plot',
   height = 400,
+  responsiveHeight = true,
 }: PlotViewProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  // Track viewport changes for responsive behavior
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    handleResize();
+    const resizeObserver = new ResizeObserver(handleResize);
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  // Adjust height for mobile devices: reduce on very small screens
+  const displayHeight = responsiveHeight && isMobile ? Math.max(250, height - 100) : height;
   // Build traces from raw data (backward-compatible with DataChart)
   const traces: PlotlyTrace[] = useMemo(() => {
     if (plotlyData) return plotlyData.data;
@@ -111,18 +138,29 @@ export const PlotView = memo(function PlotView({
     });
   }, [data, selectedSignals, plotlyData]);
 
-  // Build layout
+  // Build layout with responsive margins and legend positioning for mobile
   const layout: Partial<PlotlyLayout> = useMemo(() => {
     const base = plotlyData?.layout ?? {};
+    const responsiveMargin = isMobile
+      ? { t: 25, r: 8, b: 25, l: 35 }
+      : { t: 40, r: 20, b: 40, l: 60 };
+    const responsiveLegendOrientation = isMobile
+      ? { x: 0, y: -0.15, orientation: 'h' as const, yanchor: 'top' as const, xanchor: 'left' as const }
+      : { x: 1.05, y: 1, orientation: 'v' as const };
     return {
       ...DARK_LAYOUT,
       ...base,
       title: base.title ?? title,
-      height,
+      height: displayHeight,
       autosize: true,
       showlegend: traces.length > 0,
+      margin: responsiveMargin,
+      legend: {
+        ...(DARK_LAYOUT.legend || {}),
+        ...responsiveLegendOrientation,
+      },
     };
-  }, [plotlyData, title, height, traces.length]);
+  }, [plotlyData, title, displayHeight, traces.length, isMobile]);
 
   // Empty states
   if (!plotlyData && (!data || data.length === 0)) {
@@ -154,19 +192,21 @@ export const PlotView = memo(function PlotView({
   }
 
   return (
-    <div className="card h-full">
+    <div ref={containerRef} className="card h-full w-full">
       <div className="card-header flex items-center gap-2">
-        <BarChart2 className="w-4 h-4" />
-        {title}
+        <BarChart2 className="w-4 h-4 flex-shrink-0" />
+        <span className="truncate">{title}</span>
       </div>
-      <div className="card-body">
+      <div className="card-body overflow-x-auto">
         <Plot
           data={traces}
           layout={layout as Record<string, unknown>}
           config={{
             responsive: true,
-            displayModeBar: true,
-            modeBarButtonsToRemove: ['lasso2d', 'select2d'],
+            displayModeBar: !isMobile,
+            modeBarButtonsToRemove: isMobile
+              ? ['lasso2d', 'select2d', 'pan2d', 'zoom2d', 'resetScale2d']
+              : ['lasso2d', 'select2d'],
             displaylogo: false,
             toImageButtonOptions: {
               format: 'png',
@@ -177,7 +217,11 @@ export const PlotView = memo(function PlotView({
             },
           }}
           useResizeHandler
-          style={{ width: '100%', height: `${height}px` }}
+          style={{
+            width: '100%',
+            height: `${displayHeight}px`,
+            minHeight: '300px',
+          }}
         />
       </div>
     </div>
