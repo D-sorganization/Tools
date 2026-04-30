@@ -744,9 +744,10 @@ function getTimeDelta(t1: string | number, t2: string | number): number {
   if (typeof t1 === 'number' && typeof t2 === 'number') {
     return t1 - t2;
   }
-  // For date strings, calculate difference in seconds
-  const d1 = new Date(t1).getTime();
-  const d2 = new Date(t2).getTime();
+  // ⚡ Bolt Optimization: Replace new Date().getTime() with Date.parse()
+  // Performance impact: Speeds up timestamp difference calculations in tight loops by avoiding object instantiation overhead.
+  const d1 = typeof t1 === 'string' ? Date.parse(t1) : Number(t1);
+  const d2 = typeof t2 === 'string' ? Date.parse(t2) : Number(t2);
   return (d1 - d2) / 1000;
 }
 
