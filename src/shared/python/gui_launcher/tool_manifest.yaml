@@ -164,6 +164,20 @@ tools:
         - numpy
       settings_app: InertiaCalculator
 
+  - tool_name: lower_body_model
+    name: Lower Body Model
+    description: Simulate and inspect lower-body MuJoCo kinematics and controls
+    category: Biomechanics
+    icon: accessibility
+    pyqt6:
+      module: lower_body_model.launch_pyqt6
+      class: ControlPanel
+      dependencies:
+        - PyQt6
+        - mujoco
+        - numpy
+      settings_app: LowerBodyModel
+
   - tool_name: multi_param_analysis
     name: Multi-Parameter Analysis
     description: Run multi-parameter sensitivity analysis with grid evaluation
