@@ -1,0 +1,206 @@
+{
+  "generated_at": "2026-04-30",
+  "total_coverage_percent": 6.25,
+  "total_covered_lines": 1438,
+  "total_statements": 20668,
+  "baseline_threshold": 60,
+  "notes": "Phase 1 baseline established. Coverage includes core test suite (476 tests) covering architecture, contracts, manifest, and rotation math. Threshold targets: total min 25%, tracked packages >=10-49%, hot-path modules >=80%.",
+  "policy": {
+    "minimum_total_percent": 25.0,
+    "max_total_drop_percent": 2.0,
+    "tracked_packages": {
+      "src/shared/python/notes": 49.0,
+      "src/shared/python/upstream_drift_tools": 15.0,
+      "src/shared/python/signal_toolkit": 10.0,
+      "src/shared/python/model_generation": 10.0
+    },
+    "hot_path_modules": {
+      "src/pressure_drop_calculator": 80.0,
+      "src/rotation_converter": 80.0,
+      "src/shared/python/model_generation": 80.0,
+      "src/shared/python/upstream_drift_tools": 80.0
+    }
+  },
+  "module_coverage_snapshot": {
+    "src/contracts.py": {
+      "coverage": 100.0,
+      "covered_lines": 2,
+      "total_lines": 2
+    },
+    "src/asteroid_jumper": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 1098
+    },
+    "src/c3d_viewer": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 9
+    },
+    "src/financial_calculator": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 308
+    },
+    "src/flow_rate_converter": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 10
+    },
+    "src/folder_packer_pro": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 970
+    },
+    "src/folder_tool": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 1707
+    },
+    "src/folder_tool_pro": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 33
+    },
+    "src/function_generator": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 360
+    },
+    "src/humanoid_builder_gui": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 9
+    },
+    "src/inertia_calculator": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 10
+    },
+    "src/lower_body_model": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 732
+    },
+    "src/multi_param_analysis": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 9
+    },
+    "src/ode_solver": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 10
+    },
+    "src/optimizer_gui": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 9
+    },
+    "src/pid_generator": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 116
+    },
+    "src/pressure_drop_calculator": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 251
+    },
+    "src/project_packer": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 368
+    },
+    "src/python": {
+      "coverage": 67.84,
+      "covered_lines": 135,
+      "total_lines": 199
+    },
+    "src/rotation_converter": {
+      "coverage": 10.17,
+      "covered_lines": 436,
+      "total_lines": 4289
+    },
+    "src/rrt_path_planner": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 540
+    },
+    "src/shared/python/__init__.py": {
+      "coverage": 100.0,
+      "covered_lines": 1,
+      "total_lines": 1
+    },
+    "src/shared/python/contracts.py": {
+      "coverage": 78.95,
+      "covered_lines": 225,
+      "total_lines": 285
+    },
+    "src/shared/python/safe_eval.py": {
+      "coverage": 100.0,
+      "covered_lines": 43,
+      "total_lines": 43
+    },
+    "src/shared/python/gui_launcher": {
+      "coverage": 44.49,
+      "covered_lines": 210,
+      "total_lines": 472
+    },
+    "src/shared/python/notes": {
+      "coverage": 49.3,
+      "covered_lines": 105,
+      "total_lines": 213
+    },
+    "src/shared/python/rotation_transforms": {
+      "coverage": 32.18,
+      "covered_lines": 56,
+      "total_lines": 174
+    },
+    "src/shared/python/upstream_drift_tools": {
+      "coverage": 23.2,
+      "covered_lines": 225,
+      "total_lines": 970
+    },
+    "src/signal_processing_studio": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 14
+    },
+    "src/solar_system_model": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 4437
+    },
+    "src/steam_engine_calculator": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 9
+    },
+    "src/tools": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 1442
+    },
+    "src/urdf_builder_gui": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 244
+    },
+    "src/verification": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 102
+    },
+    "src/vessel_drafter": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 9
+    },
+    "src/web_applications": {
+      "coverage": 0.0,
+      "covered_lines": 0,
+      "total_lines": 1214
+    }
+  }
+}

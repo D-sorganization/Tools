@@ -16,13 +16,19 @@ methods guarantee postconditions (unit quaternion, SO(3), etc.).
 
 from __future__ import annotations
 
-from rotation_transforms.rotation import Rotation
+from typing import Any
 
+import numpy as np
+
+from rotation_converter._contracts import require, require_finite
 from rotation_converter.core import (
     axis_angle_to_quaternion,
     axis_angle_to_rotation_matrix,
     euler_to_quaternion,
     euler_to_rotation_matrix,
+    normalize_quaternion,
+    quaternion_conjugate,
+    quaternion_multiply,
     quaternion_to_axis_angle,
     quaternion_to_euler,
     quaternion_to_rodrigues,
@@ -32,6 +38,8 @@ from rotation_converter.core import (
     rotation_matrix_to_euler,
     rotation_matrix_to_quaternion,
 )
+
+# Local Rotation class defined below overrides any imported rotation_transforms.Rotation
 
 
 class Rotation:
@@ -56,7 +64,7 @@ class Rotation:
         # Canonical form
         if q[0] < 0:
             q = -q
-        self._q = q
+        self._q: np.ndarray = q
 
     # ── Factory methods ───────────────────────────────────────────
 

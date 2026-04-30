@@ -114,6 +114,7 @@ Repository = "https://github.com/D-sorganization/Tools"
 # See: https://github.com/D-sorganization/Tools/issues/1695
 py-modules = ["contracts", "cors", "deprecation", "safe_eval"]
 
+
 [tool.setuptools.packages.find]
 where = ["src/shared/python", "src/python/src", "src"]
 include = [
@@ -137,6 +138,10 @@ exclude = [
     "*.tests*",
     "*tests*",
 ]
+
+[tool.setuptools.package-data]
+# Include py.typed marker for PEP 561 type hint support
+"" = ["py.typed"]
 
 # =============================================================================
 # Pytest Configuration

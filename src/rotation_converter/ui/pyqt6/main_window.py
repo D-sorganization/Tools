@@ -21,23 +21,37 @@ Shared plotting helpers live in plot_helpers.py.
 from __future__ import annotations
 
 import logging
+import math
+from typing import Any
 
+import numpy as np
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.figure import Figure
+from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (
+    QComboBox,
+    QDoubleSpinBox,
+    QFormLayout,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
     QMainWindow,
+    QSizePolicy,
+    QSpinBox,
     QStatusBar,
     QTabWidget,
+    QTextEdit,
     QVBoxLayout,
     QWidget,
+    QPushButton,
 )
 
 import rotation_converter as rc
 from rotation_converter.ui.pyqt6.console_tab import CommandConsoleTab
 from rotation_converter.ui.pyqt6.reference_frame_tab import ReferenceFrameTab
-from rotation_converter.ui.pyqt6.rigid_transform_tab import RigidTransformTab
-from rotation_converter.ui.pyqt6.rotation_tab import RotationConverterTab
-from rotation_converter.ui.pyqt6.screw_visualiser_tab import ScrewVisualiserTab
-from rotation_converter.ui.pyqt6.trajectory_tab import TrajectoryPlotsTab
 
 logger = logging.getLogger(__name__)
 
@@ -49,6 +63,29 @@ try:
     _THEME_AVAILABLE = True
 except ImportError:
     pass
+
+# ── Default theme colors (fallback if theme unavailable) ──────────────
+_DARK_BG: str = "#1e1e1e"
+_DARK_FG: str = "#e0e0e0"
+_DARK_ACCENT: str = "#2196f3"
+_DARK_SURFACE: str = "#2d2d2d"
+_AXIS_COLORS: list[str] = ["#ff6b6b", "#51cf66", "#4ecdc4"]
+
+# ── Default Euler conventions ──────────────────────────────────────
+EULER_CONVENTIONS: list[str] = [
+    "xyz", "xyx", "xzy", "xzx",
+    "yzx", "yzy", "yxz", "yxy",
+    "zxy", "zxz", "zyx", "zyz"
+]
+
+# ── Rotation and Transform imports ──────────────────────────────────
+from rotation_converter import Rotation
+from rotation_converter.rigid_transform import RigidTransform
+
+# ── Helper function for theme detection ──────────────────────────────
+def is_dark_theme(theme_name: str) -> bool:
+    """Check if the given theme name is a dark theme."""
+    return "dark" in theme_name.lower()
 
 # Re-export tab classes for backward compatibility
 __all__ = [

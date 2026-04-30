@@ -24,6 +24,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 from .calculator import CalculatorResult, TI89Calculator
 from .limiter import RateLimiter
+from ..health_checks import register_health_endpoints
 
 logger = logging.getLogger(__name__)
 
@@ -130,6 +131,9 @@ def create_app() -> Flask:
     def service_worker() -> Response:
         """Serve the service worker for PWA."""
         return send_from_directory(app.static_folder or "static", "service-worker.js")
+
+    # Register health check endpoints for containerization
+    register_health_endpoints(app)
 
     return app
 
