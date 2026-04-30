@@ -61,8 +61,8 @@ export function validateCsrfToken(request: Request): boolean {
 
   const cookies = Object.fromEntries(
     cookieHeader.split(';').map((cookie) => {
-      const [key, value] = cookie.trim().split('=');
-      return [key, value];
+      const [key, ...valueParts] = cookie.trim().split('=');
+      return [key, valueParts.join('=')];
     })
   );
 
