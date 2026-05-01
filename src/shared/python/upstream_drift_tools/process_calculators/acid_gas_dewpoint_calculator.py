@@ -84,7 +84,7 @@ try:
     GUI_AVAILABLE = True
 except ImportError:
     GUI_AVAILABLE = False
-    QWidget = object
+    QWidget = object  # type: ignore[assignment,misc]
 
 # Import BaseCalculatorWidget for state management
 try:
@@ -356,7 +356,7 @@ class AcidGasDewpointCalculator:
             # Antoine equation: log10(P) = A - B/(C + T)
             log_p = A - B / (C + temperature_c)
             p_mmhg = 10**log_p
-            return p_mmhg * MMHG_TO_PA_CONV  # Convert mmHg to Pa
+            return float(p_mmhg * MMHG_TO_PA_CONV)  # Convert mmHg to Pa
 
         if method == "extended_antoine":
             # Extended Antoine equation for wider temperature range
@@ -379,7 +379,7 @@ class AcidGasDewpointCalculator:
 
             log_p = A - B / (C + temperature_c)
             p_mmhg = 10**log_p
-            return p_mmhg * MMHG_TO_PA_CONV
+            return float(p_mmhg * MMHG_TO_PA_CONV)
 
         if method == "thermo":
             if not THERMO_AVAILABLE:
