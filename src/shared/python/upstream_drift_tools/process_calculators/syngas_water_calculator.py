@@ -72,7 +72,7 @@ def _safe_exp(x: float) -> float:
         Return value is a finite, non-negative float.
     """
     clamped = max(-_EXP_MAX_ARG, min(x, _EXP_MAX_ARG))
-    return math.exp(clamped)
+    return float(math.exp(clamped))
 
 
 logger = logging.getLogger(__name__)
