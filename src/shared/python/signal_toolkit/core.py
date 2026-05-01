@@ -569,6 +569,8 @@ class SignalGenerator:
         Returns:
             Signal with sawtooth waveform.
         """
+        if frequency <= 0:
+            raise ValueError(f"frequency must be positive (got {frequency})")
         period = 1.0 / frequency
         t_shifted = t - t[0]
         phase = (t_shifted % period) / period
@@ -595,6 +597,8 @@ class SignalGenerator:
         Returns:
             Signal with triangle waveform.
         """
+        if frequency <= 0:
+            raise ValueError(f"frequency must be positive (got {frequency})")
         period = 1.0 / frequency
         t_shifted = t - t[0]
         phase = (t_shifted % period) / period
@@ -624,6 +628,8 @@ class SignalGenerator:
         Returns:
             Signal with square waveform.
         """
+        if frequency <= 0:
+            raise ValueError(f"frequency must be positive (got {frequency})")
         period = 1.0 / frequency
         t_shifted = t - t[0]
         phase = (t_shifted % period) / period

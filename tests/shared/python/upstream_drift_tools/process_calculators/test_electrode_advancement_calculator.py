@@ -6,6 +6,7 @@ Covers construction, consumption calculation, and edge cases.
 from __future__ import annotations
 
 import pytest
+from shared.python.contracts import PreconditionError
 from upstream_drift_tools.process_calculators.electrode_advancement_calculator import (
     ElectrodeAdvancementCalculator,
 )
@@ -29,11 +30,13 @@ class TestCalculateConsumption:
 
     def test_zero_current(self) -> None:
         calc = ElectrodeAdvancementCalculator()
-        assert calc.calculate_consumption(0.0, 5.0) == 0.0
+        with pytest.raises(PreconditionError, match="current_ka must be positive"):
+            calc.calculate_consumption(0.0, 5.0)
 
     def test_zero_time(self) -> None:
         calc = ElectrodeAdvancementCalculator()
-        assert calc.calculate_consumption(10.0, 0.0) == 0.0
+        with pytest.raises(PreconditionError, match="time_hrs must be positive"):
+            calc.calculate_consumption(10.0, 0.0)
 
     def test_custom_rate(self) -> None:
         calc = ElectrodeAdvancementCalculator()

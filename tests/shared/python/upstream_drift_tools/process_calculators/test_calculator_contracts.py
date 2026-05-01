@@ -216,7 +216,7 @@ class TestSyngasWaterContracts:
             temperature_c=100.0,
             pressure_bar=30.0,
         )
-        assert hasattr(result, "water_fraction")
+        assert hasattr(result, "mole_fraction_water")
 
     def test_negative_pressure_bar_rejected(self):
         from upstream_drift_tools.process_calculators.syngas_water_calculator import (

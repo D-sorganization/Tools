@@ -12,6 +12,7 @@ import sys
 from datetime import datetime
 
 import pytest
+from shared.python.contracts import PreconditionError
 
 pytest.importorskip("pandas")
 import pandas as pd
@@ -215,11 +216,11 @@ class TestCalculateDewpoint:
         assert t_low < t_high
 
     def test_zero_pressure_raises(self, calc: AcidGasDewpointCalculator) -> None:
-        with pytest.raises(ValueError, match="partial_pressure_pa must be > 0"):
+        with pytest.raises(PreconditionError, match="partial_pressure_pa must be positive"):
             calc.calculate_dewpoint(0.0, "H2O")
 
     def test_negative_pressure_raises(self, calc: AcidGasDewpointCalculator) -> None:
-        with pytest.raises(ValueError, match="partial_pressure_pa must be > 0"):
+        with pytest.raises(PreconditionError, match="partial_pressure_pa must be positive"):
             calc.calculate_dewpoint(-100.0, "H2O")
 
     def test_unknown_component_raises(self, calc: AcidGasDewpointCalculator) -> None:
