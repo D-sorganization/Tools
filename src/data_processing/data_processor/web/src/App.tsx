@@ -327,7 +327,11 @@ function App() {
       {/* Main Content */}
       <main className="flex-1 w-full overflow-hidden">
         {error && (
-          <div className="m-4 md:m-6 p-4 bg-red-500/10 border border-red-500/50 rounded-lg text-red-400">
+          <div
+            className="m-4 md:m-6 p-4 bg-red-500/10 border border-red-500/50 rounded-lg text-red-400"
+            role="alert"
+            aria-live="assertive"
+          >
             {error}
           </div>
         )}
@@ -359,16 +363,24 @@ function App() {
             />
 
             {/* Left Panel Tabs */}
-            <div className="flex overflow-x-auto border-b border-dark-700 text-xs">
+            <div
+              className="flex overflow-x-auto border-b border-dark-700 text-xs"
+              role="tablist"
+              aria-label="Left panel tabs"
+            >
               <button
                 onClick={() => setLeftPanelTab('signals')}
-                className={`px-3 py-2 min-h-[48px] flex items-center whitespace-nowrap transition-colors ${leftPanelTab === 'signals' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-dark-400'}`}
+                role="tab"
+                aria-selected={leftPanelTab === 'signals'}
+                className={`px-3 py-2 min-h-[48px] flex items-center whitespace-nowrap transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${leftPanelTab === 'signals' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-dark-300'}`}
               >
                 Signals
               </button>
               <button
                 onClick={() => setLeftPanelTab('advanced')}
-                className={`px-3 py-2 min-h-[48px] flex items-center whitespace-nowrap transition-colors ${leftPanelTab === 'advanced' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-dark-400'}`}
+                role="tab"
+                aria-selected={leftPanelTab === 'advanced'}
+                className={`px-3 py-2 min-h-[48px] flex items-center whitespace-nowrap transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${leftPanelTab === 'advanced' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-dark-300'}`}
               >
                 <Calculator className="w-3 h-3 mr-1 flex-shrink-0" />
                 <span className="hidden sm:inline">Advanced</span>
@@ -376,7 +388,9 @@ function App() {
               </button>
               <button
                 onClick={() => setLeftPanelTab('resample')}
-                className={`px-3 py-2 min-h-[48px] flex items-center whitespace-nowrap transition-colors ${leftPanelTab === 'resample' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-dark-400'}`}
+                role="tab"
+                aria-selected={leftPanelTab === 'resample'}
+                className={`px-3 py-2 min-h-[48px] flex items-center whitespace-nowrap transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${leftPanelTab === 'resample' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-dark-300'}`}
               >
                 <Clock className="w-3 h-3 mr-1 flex-shrink-0" />
                 <span className="hidden sm:inline">Resample</span>
@@ -384,7 +398,9 @@ function App() {
               </button>
               <button
                 onClick={() => setLeftPanelTab('timerange')}
-                className={`px-3 py-2 min-h-[48px] flex items-center whitespace-nowrap transition-colors ${leftPanelTab === 'timerange' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-dark-400'}`}
+                role="tab"
+                aria-selected={leftPanelTab === 'timerange'}
+                className={`px-3 py-2 min-h-[48px] flex items-center whitespace-nowrap transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${leftPanelTab === 'timerange' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-dark-300'}`}
               >
                 <Scissors className="w-3 h-3 mr-1 flex-shrink-0" />
                 <span className="hidden sm:inline">Time</span>
@@ -441,9 +457,17 @@ function App() {
           {/* Main Content Area - Responsive: Full width on mobile, centered on desktop */}
           <div className="col-span-12 lg:col-span-6 space-y-4 md:space-y-6 min-h-0 flex-1 lg:flex-auto">
             {/* Tabs - Responsive: Flexible on mobile, wrapped on small screens */}
-            <div className="flex flex-wrap border-b border-dark-700 gap-1 sm:gap-0">
+            <div
+              className="flex flex-wrap border-b border-dark-700 gap-1 sm:gap-0"
+              role="tablist"
+              aria-label="Data view tabs"
+            >
               <button
                 onClick={() => setActiveTab('chart')}
+                role="tab"
+                aria-selected={activeTab === 'chart'}
+                aria-controls="panel-chart"
+                id="tab-chart"
                 className={`tab min-h-[48px] flex items-center gap-2 transition-colors flex-1 sm:flex-none ${activeTab === 'chart' ? 'tab-active' : ''}`}
               >
                 <BarChart3 className="w-4 h-4 flex-shrink-0" />
@@ -452,6 +476,10 @@ function App() {
               </button>
               <button
                 onClick={() => setActiveTab('table')}
+                role="tab"
+                aria-selected={activeTab === 'table'}
+                aria-controls="panel-table"
+                id="tab-table"
                 className={`tab min-h-[48px] flex items-center gap-2 transition-colors flex-1 sm:flex-none ${activeTab === 'table' ? 'tab-active' : ''}`}
               >
                 <Table className="w-4 h-4 flex-shrink-0" />
@@ -462,14 +490,26 @@ function App() {
 
             {/* Tab Content */}
             {activeTab === 'chart' ? (
-              <PlotView
-                data={filteredData}
-                selectedSignals={selectedSignals}
-                title="Filtered Data"
-                height={400}
-              />
+              <div
+                id="panel-chart"
+                role="tabpanel"
+                aria-labelledby="tab-chart"
+              >
+                <PlotView
+                  data={filteredData}
+                  selectedSignals={selectedSignals}
+                  title="Filtered Data"
+                  height={400}
+                />
+              </div>
             ) : (
-              <DataTableView data={filteredData} selectedSignals={selectedSignals} />
+              <div
+                id="panel-table"
+                role="tabpanel"
+                aria-labelledby="tab-table"
+              >
+                <DataTableView data={filteredData} selectedSignals={selectedSignals} />
+              </div>
             )}
 
             {/* Original vs Filtered Comparison */}
@@ -486,36 +526,50 @@ function App() {
           {/* Right Sidebar - Hidden on mobile and tablet, visible on desktop */}
           <aside className="col-span-3 hidden lg:block space-y-4">
             {/* Right Panel Tabs */}
-            <div className="flex overflow-x-auto border-b border-dark-700 text-xs">
+            <div
+              className="flex overflow-x-auto border-b border-dark-700 text-xs"
+              role="tablist"
+              aria-label="Right panel tabs"
+            >
               <button
                 onClick={() => setRightPanelTab('stats')}
-                className={`px-3 py-2 min-h-[48px] flex items-center whitespace-nowrap transition-colors ${rightPanelTab === 'stats' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-dark-400'}`}
+                role="tab"
+                aria-selected={rightPanelTab === 'stats'}
+                className={`px-3 py-2 min-h-[48px] flex items-center whitespace-nowrap transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${rightPanelTab === 'stats' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-dark-300'}`}
               >
                 Stats
               </button>
               <button
                 onClick={() => setRightPanelTab('analytics')}
-                className={`px-3 py-2 min-h-[48px] flex items-center whitespace-nowrap transition-colors ${rightPanelTab === 'analytics' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-dark-400'}`}
+                role="tab"
+                aria-selected={rightPanelTab === 'analytics'}
+                className={`px-3 py-2 min-h-[48px] flex items-center whitespace-nowrap transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${rightPanelTab === 'analytics' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-dark-300'}`}
               >
                 <FlaskConical className="w-3 h-3 mr-1 flex-shrink-0" />
                 Analytics
               </button>
               <button
                 onClick={() => setRightPanelTab('trendline')}
-                className={`px-3 py-2 min-h-[48px] flex items-center whitespace-nowrap transition-colors ${rightPanelTab === 'trendline' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-dark-400'}`}
+                role="tab"
+                aria-selected={rightPanelTab === 'trendline'}
+                className={`px-3 py-2 min-h-[48px] flex items-center whitespace-nowrap transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${rightPanelTab === 'trendline' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-dark-300'}`}
               >
                 <LineChart className="w-3 h-3 mr-1 flex-shrink-0" />
                 Trendline
               </button>
               <button
                 onClick={() => setRightPanelTab('export')}
-                className={`px-3 py-2 min-h-[48px] flex items-center whitespace-nowrap transition-colors ${rightPanelTab === 'export' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-dark-400'}`}
+                role="tab"
+                aria-selected={rightPanelTab === 'export'}
+                className={`px-3 py-2 min-h-[48px] flex items-center whitespace-nowrap transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${rightPanelTab === 'export' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-dark-300'}`}
               >
                 Export
               </button>
               <button
                 onClick={() => setRightPanelTab('help')}
-                className={`px-3 py-2 min-h-[48px] flex items-center whitespace-nowrap transition-colors ${rightPanelTab === 'help' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-dark-400'}`}
+                role="tab"
+                aria-selected={rightPanelTab === 'help'}
+                className={`px-3 py-2 min-h-[48px] flex items-center whitespace-nowrap transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${rightPanelTab === 'help' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-dark-300'}`}
               >
                 <HelpCircle className="w-3 h-3 mr-1 flex-shrink-0" />
                 Help

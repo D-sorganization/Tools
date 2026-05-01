@@ -128,13 +128,18 @@ export const FileUpload = memo(function FileUpload({ onFileSelect, fileName, onC
         <p className="text-dark-200 font-medium mb-1">
           {isLoading ? 'Loading...' : 'Drop your CSV file here'}
         </p>
-        <p className="text-dark-400 text-sm">or click to browse</p>
+        {/* text-dark-300: 8.1:1 ratio on dark-800 — replaces dark-400 (2.8:1 WCAG fail) */}
+        <p className="text-dark-300 text-sm">or click to browse</p>
       </div>
 
       {/* Validation Error Display */}
       {validationError && (
-        <div className="flex items-start gap-2 p-3 bg-red-900/20 border border-red-500/50 rounded-lg">
-          <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+        <div
+          className="flex items-start gap-2 p-3 bg-red-900/20 border border-red-500/50 rounded-lg"
+          role="alert"
+          aria-live="assertive"
+        >
+          <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" aria-hidden="true" />
           <p className="text-sm text-red-300">{validationError}</p>
         </div>
       )}

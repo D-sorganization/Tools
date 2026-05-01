@@ -126,20 +126,30 @@ export const SignalList = memo(function SignalList({ signals, selectedSignals, o
             onClick={loadSignalSet}
             className="text-xs text-blue-500 hover:text-blue-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded p-1"
             title="Load Signal Set"
+            aria-label="Load signal set from file"
           >
-            <Upload className="w-3 h-3" />
+            <Upload className="w-3 h-3" aria-hidden="true" />
           </button>
           <button
             onClick={saveSignalSet}
             className="text-xs text-blue-500 hover:text-blue-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded p-1"
             title="Save Signal Set"
+            aria-label="Save selected signals to file"
           >
-            <Download className="w-3 h-3" />
+            <Download className="w-3 h-3" aria-hidden="true" />
           </button>
-          <button onClick={selectAll} className="text-xs text-blue-500 hover:text-blue-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-1">
+          <button
+            onClick={selectAll}
+            aria-label="Select all signals"
+            className="text-xs text-blue-500 hover:text-blue-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-1"
+          >
             All
           </button>
-          <button onClick={deselectAll} className="text-xs text-dark-400 hover:text-dark-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-1">
+          <button
+            onClick={deselectAll}
+            aria-label="Deselect all signals"
+            className="text-xs text-dark-300 hover:text-dark-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-1"
+          >
             None
           </button>
         </div>
@@ -153,13 +163,21 @@ export const SignalList = memo(function SignalList({ signals, selectedSignals, o
         )}
         {/* Search field */}
         <div className="relative mb-3">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" />
+          <Search
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-300"
+            aria-hidden="true"
+          />
+          <label htmlFor="signal-search" className="sr-only">
+            Search signals
+          </label>
           <input
+            id="signal-search"
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search signals..."
-            className="w-full pl-9 pr-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-sm text-dark-100 placeholder-dark-400 focus:outline-none focus:border-blue-500"
+            aria-label="Search signals"
+            className="w-full pl-9 pr-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-sm text-dark-100 placeholder-dark-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus:border-blue-500"
           />
         </div>
         {/* Signal list */}
@@ -189,7 +207,8 @@ export const SignalList = memo(function SignalList({ signals, selectedSignals, o
                   >
                     {isSelected && <Check className="w-3 h-3 text-white" />}
                   </div>
-                  <span className={isSelected ? 'text-dark-100' : 'text-dark-400'}>
+                  {/* text-dark-200: 9.8:1 ratio on dark-800 — replaces dark-400 (2.8:1) */}
+                  <span className={isSelected ? 'text-dark-100' : 'text-dark-200'}>
                     {signal}
                   </span>
                 </button>
