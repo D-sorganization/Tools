@@ -6,8 +6,8 @@ import time
 
 import numpy as np
 
-from src.double_pendulum_golf.physics import PendulumParams
-from src.double_pendulum_golf.simulation import make_polynomial_torque, run_simulation
+from double_pendulum_golf.physics import PendulumParams
+from double_pendulum_golf.simulation import make_polynomial_torque, run_simulation
 
 logger = logging.getLogger(__name__)
 
