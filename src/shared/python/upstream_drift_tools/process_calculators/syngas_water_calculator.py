@@ -178,6 +178,11 @@ class WaterContentResult:
     timestamp: datetime = field(default_factory=datetime.now)
     warnings: list[str] = field(default_factory=list)
 
+    @property
+    def water_fraction(self) -> float:
+        """Compatibility alias for legacy consumers of the result object."""
+        return self.mole_fraction_water
+
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for export."""
         return {
