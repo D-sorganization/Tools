@@ -325,7 +325,7 @@ class SyngasWaterCalculator:
         log10_p_mmhg = A - B / (C + temperature_c)
         # Convert log10 to natural log and use safe exp to prevent overflow.
         p_mmhg = _safe_exp(log10_p_mmhg * math.log(10))
-        return p_mmhg * MMHG_TO_PA_CONV  # Convert to Pa
+        return float(p_mmhg * MMHG_TO_PA_CONV)  # Convert to Pa
 
     def _buck_equation(self, temperature_c: float) -> float:
         """Buck equation for improved accuracy at moderate temperatures"""
@@ -345,7 +345,7 @@ class SyngasWaterCalculator:
 
         exponent = (b - temperature_c / d) * temperature_c / (c + temperature_c)
         p_kpa = a * _safe_exp(exponent)
-        return p_kpa * 1000  # Convert to Pa
+        return float(p_kpa * 1000)  # Convert to Pa
 
     def _iapws_equation(self, temperature_c: float) -> float:
         """Calculate vapor pressure using IAPWS-IF97 formulation.
@@ -383,7 +383,7 @@ class SyngasWaterCalculator:
                 + a[5] * theta**7.5
             )
         )
-        return Pc * _safe_exp(lnP)
+        return float(Pc * _safe_exp(lnP))
 
     def _magnus_equation(self, temperature_c: float) -> float:
         """Magnus equation for vapor pressure (very accurate for 0-100°C)"""
@@ -399,7 +399,7 @@ class SyngasWaterCalculator:
         p_hpa = MAGNUS_A * _safe_exp(exponent)
 
         # Convert hPa to Pa
-        return p_hpa * 100
+        return float(p_hpa * 100)
 
     def _init_vapor_pressure_table(self) -> None:
         """Init Vapor Pressure Table method."""
