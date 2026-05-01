@@ -1,4 +1,5 @@
 {
-  "total_percent": 6.25,
+  "_comment": "Coverage baseline — updated 2026-05-01 (issue #2406). Run scripts/check_coverage_policy.py to verify.",
+  "total_percent": 42.9,
   "package_percent": {}
 }
