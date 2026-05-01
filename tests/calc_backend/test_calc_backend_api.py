@@ -237,8 +237,13 @@ class TestPressureDropEndpoint:
     def test_pressure_drop_success(self) -> None:
         resp = client.post("/api/calc/pressure-drop", json=self.PAYLOAD)
         assert resp.status_code == 200
-        data = resp.json()
+        envelope = resp.json()
 
+        # The pressure-drop endpoint uses StandardResponse wrapping (issue #2411).
+        # Fields are nested under "data".
+        assert envelope["status"] == "success"
+        assert "metadata" in envelope
+        data = envelope["data"]
         assert data["pressure_drop_pa"] > 0
         assert data["reynolds_number"] > 0
         assert data["velocity_m_s"] > 0
@@ -248,8 +253,8 @@ class TestPressureDropEndpoint:
         short = {**self.PAYLOAD, "pipe_length_m": 10.0}
         long = {**self.PAYLOAD, "pipe_length_m": 100.0}
 
-        r_short = client.post("/api/calc/pressure-drop", json=short).json()
-        r_long = client.post("/api/calc/pressure-drop", json=long).json()
+        r_short = client.post("/api/calc/pressure-drop", json=short).json()["data"]
+        r_long = client.post("/api/calc/pressure-drop", json=long).json()["data"]
 
         assert r_long["pressure_drop_pa"] > r_short["pressure_drop_pa"]
 

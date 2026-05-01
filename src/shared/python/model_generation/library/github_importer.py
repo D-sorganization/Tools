@@ -139,7 +139,11 @@ class GitHubImporter:
                 "Accept": "application/vnd.github.v3+json",
                 "User-Agent": "ModelGeneration-GitHubImporter",
             }
-            token = os.environ.get("GITHUB_TOKEN")
+            # Prefer TOOLS_GITHUB_TOKEN (canonical TOOLS_* convention); fall back to
+            # bare GITHUB_TOKEN for backward compatibility.
+            token = os.environ.get("TOOLS_GITHUB_TOKEN") or os.environ.get(
+                "GITHUB_TOKEN"
+            )
             if token:
                 headers["Authorization"] = f"token {token}"
 
@@ -323,7 +327,11 @@ class GitHubImporter:
                 "Accept": "application/vnd.github.v3+json",
                 "User-Agent": "ModelGeneration-GitHubImporter",
             }
-            token = os.environ.get("GITHUB_TOKEN")
+            # Prefer TOOLS_GITHUB_TOKEN (canonical TOOLS_* convention); fall back to
+            # bare GITHUB_TOKEN for backward compatibility.
+            token = os.environ.get("TOOLS_GITHUB_TOKEN") or os.environ.get(
+                "GITHUB_TOKEN"
+            )
             if token:
                 headers["Authorization"] = f"token {token}"
 
