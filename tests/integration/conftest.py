@@ -7,9 +7,9 @@ scenarios with actual file I/O and tool APIs.
 
 import json
 import logging
-import tempfile
+from collections.abc import Generator
 from pathlib import Path
-from typing import Any, Generator
+from typing import Any
 
 import pandas as pd
 import pytest
@@ -73,13 +73,21 @@ def sample_pressure_data_csv(integration_temp_dir: Path) -> Path:
     """
     csv_path = integration_temp_dir / "pressure_data.csv"
 
-    # Create realistic pressure drop calculation data
+    # Create realistic pressure drop calculation data.
+    # Flow rates are kept low relative to pipe size and pressure to avoid
+    # choked-flow conditions in the calculator.
     data = {
-        "pipe_diameter_m": [0.05, 0.05, 0.075, 0.1, 0.1],
+        "pipe_diameter_m": [0.15, 0.15, 0.20, 0.20, 0.15],
         "pipe_length_m": [100.0, 200.0, 150.0, 250.0, 100.0],
-        "flow_rate_kg_s": [1.5, 2.0, 3.5, 5.0, 2.5],
-        "inlet_pressure_pa": [101325.0, 101325.0, 101325.0, 101325.0, 101325.0],
-        "inlet_temperature_k": [288.15, 288.15, 288.15, 288.15, 288.15],
+        "flow_rate_kg_s": [0.3, 0.5, 0.6, 0.8, 0.4],
+        "inlet_pressure_pa": [
+            500_000.0,
+            500_000.0,
+            500_000.0,
+            500_000.0,
+            500_000.0,
+        ],
+        "inlet_temperature_k": [300.0, 300.0, 300.0, 300.0, 300.0],
         "gas_type": ["air", "air", "syngas", "air", "natural_gas"],
         "pipe_roughness": [0.000045, 0.000045, 0.000045, 0.000045, 0.000045],
     }
@@ -130,18 +138,13 @@ def sample_json_data_file(integration_temp_dir: Path) -> Path:
     """
     json_path = integration_temp_dir / "data.json"
 
-    data = {
-        "metadata": {
-            "version": "1.0",
-            "created": "2024-01-01",
-            "source": "integration_test",
-        },
-        "measurements": [
-            {"id": 1, "value": 10.5, "unit": "bar"},
-            {"id": 2, "value": 20.3, "unit": "bar"},
-            {"id": 3, "value": 15.8, "unit": "bar"},
-        ],
-    }
+    # Use a flat list-of-dicts structure so pd.read_json() can parse it
+    # without "Mixing dicts with non-Series" errors.
+    data = [
+        {"id": 1, "value": 10.5, "unit": "bar", "source": "integration_test"},
+        {"id": 2, "value": 20.3, "unit": "bar", "source": "integration_test"},
+        {"id": 3, "value": 15.8, "unit": "bar", "source": "integration_test"},
+    ]
 
     with json_path.open("w") as f:
         json.dump(data, f, indent=2)
@@ -162,7 +165,7 @@ def sample_excel_file(integration_temp_dir: Path) -> Path:
         Path to Excel file with sample data
     """
     try:
-        import openpyxl
+        import openpyxl  # noqa: F401
     except ImportError:
         pytest.skip("openpyxl not installed")
 
@@ -193,12 +196,12 @@ def pressure_drop_simple_inputs() -> dict[str, Any]:
         Dictionary of pressure drop calculator parameters
     """
     return {
-        "pipe_diameter": 0.05,  # 50 mm
+        "pipe_diameter": 0.15,  # 150 mm (6-inch)
         "pipe_length": 100.0,  # 100 meters
         "pipe_roughness": 0.000045,  # Commercial steel
-        "flow_rate": 2.0,  # 2 kg/s
-        "inlet_pressure": 101325.0,  # 1 bar in Pa
-        "inlet_temperature": 288.15,  # 15°C in K
+        "flow_rate": 0.5,  # 0.5 kg/s — kept low to avoid choked flow
+        "inlet_pressure": 500_000.0,  # 5 bar in Pa
+        "inlet_temperature": 300.0,  # ~27°C in K
         "elevation_change": 0.0,
         "gas_composition": {"N2": 0.79, "O2": 0.21},  # Air
     }
@@ -214,11 +217,11 @@ def pressure_drop_complex_inputs() -> dict[str, Any]:
         Dictionary of pressure drop calculator parameters
     """
     return {
-        "pipe_diameter": 0.075,  # 75 mm
+        "pipe_diameter": 0.20,  # 200 mm (8-inch)
         "pipe_length": 250.0,  # 250 meters
         "pipe_roughness": 0.000045,
-        "flow_rate": 5.0,  # 5 kg/s
-        "inlet_pressure": 250000.0,  # 2.5 bar in Pa
+        "flow_rate": 0.8,  # 0.8 kg/s — kept low to avoid choked flow
+        "inlet_pressure": 800_000.0,  # 8 bar in Pa
         "inlet_temperature": 323.15,  # 50°C in K
         "elevation_change": 50.0,  # 50 meters elevation change
         "gas_composition": {
@@ -268,13 +271,15 @@ def data_processor_sample_dataframe() -> pd.DataFrame:
     Returns:
         pandas DataFrame with realistic data
     """
-    return pd.DataFrame({
-        "timestamp": pd.date_range("2024-01-01", periods=50, freq="30min"),
-        "temperature": [20.0 + i * 0.5 for i in range(50)],
-        "pressure": [1.0 + (i % 10) * 0.1 for i in range(50)],
-        "flow_rate": [100.0 - (i % 20) * 2 for i in range(50)],
-        "status": ["OK" if i % 5 != 0 else "WARNING" for i in range(50)],
-    })
+    return pd.DataFrame(
+        {
+            "timestamp": pd.date_range("2024-01-01", periods=50, freq="30min"),
+            "temperature": [20.0 + i * 0.5 for i in range(50)],
+            "pressure": [1.0 + (i % 10) * 0.1 for i in range(50)],
+            "flow_rate": [100.0 - (i % 20) * 2 for i in range(50)],
+            "status": ["OK" if i % 5 != 0 else "WARNING" for i in range(50)],
+        }
+    )
 
 
 @pytest.fixture
@@ -284,10 +289,12 @@ def data_processor_with_outliers() -> pd.DataFrame:
     Returns:
         pandas DataFrame with intentional outliers
     """
-    df = pd.DataFrame({
-        "value": [10.0 + i for i in range(50)],
-        "measured_at": pd.date_range("2024-01-01", periods=50, freq="1H"),
-    })
+    df = pd.DataFrame(
+        {
+            "value": [10.0 + i for i in range(50)],
+            "measured_at": pd.date_range("2024-01-01", periods=50, freq="1H"),
+        }
+    )
 
     # Inject outliers
     df.loc[10, "value"] = 200.0  # Spike
@@ -352,7 +359,7 @@ def get_tools():
 
     # Create __init__.py
     init_file = plugins_dir / "__init__.py"
-    init_file.write_text("\"\"\"Plugin package.\"\"\"")
+    init_file.write_text('"""Plugin package."""')
 
     return plugins_dir
 
@@ -375,7 +382,7 @@ def mock_manifest_file(integration_temp_dir: Path) -> Path:
             {
                 "name": "pressure_drop_calculator",
                 "version": "1.2.0",
-                "module": "upstream_drift_tools.process_calculators.pressure_drop_calculator",
+                "module": "upstream_drift_tools.process_calculators.pressure_drop_calculator",  # noqa: E501
                 "enabled": True,
             },
             {
@@ -412,12 +419,14 @@ def multi_step_workflow_data(integration_temp_dir: Path) -> dict[str, Path]:
 
     # CSV input file
     csv_path = integration_temp_dir / "input_data.csv"
-    input_df = pd.DataFrame({
-        "sensor_id": [1, 2, 3, 4, 5] * 10,
-        "temperature": [20 + i * 0.1 for i in range(50)],
-        "humidity": [50 + i * 0.2 for i in range(50)],
-        "timestamp": pd.date_range("2024-01-01", periods=50, freq="1H"),
-    })
+    input_df = pd.DataFrame(
+        {
+            "sensor_id": [1, 2, 3, 4, 5] * 10,
+            "temperature": [20 + i * 0.1 for i in range(50)],
+            "humidity": [50 + i * 0.2 for i in range(50)],
+            "timestamp": pd.date_range("2024-01-01", periods=50, freq="1H"),
+        }
+    )
     input_df.to_csv(csv_path, index=False)
     files["csv_input"] = csv_path
 
