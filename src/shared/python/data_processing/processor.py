@@ -75,6 +75,7 @@ class DataProcessor:
 
     @dataframe.setter
     def dataframe(self, value: pd.DataFrame) -> None:
+        """Replace the working DataFrame directly (used by tests and pipeline code)."""
         self._df = value
 
     @property
