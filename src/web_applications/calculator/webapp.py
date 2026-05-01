@@ -198,12 +198,20 @@ def _validate_security(value: str | None) -> None:
         "__mro__",
         "__subclasses__",
         "__bases__",
+        "__base__",
         "__code__",
         "__globals__",
+        "__init__",
         "eval(",
         "exec(",
         "compile(",
         "__import__(",
+        "async ",
+        "await ",
+        "global ",
+        "del ",
+        "try:",
+        "except:",
     ]
 
     value_lower = value.lower()
