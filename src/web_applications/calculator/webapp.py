@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import logging
 import os
-import re
 import warnings
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -22,9 +21,9 @@ from flask import (
 )
 from werkzeug.middleware.proxy_fix import ProxyFix
 
+from ..health_checks import register_health_endpoints
 from .calculator import CalculatorResult, TI89Calculator
 from .limiter import RateLimiter
-from ..health_checks import register_health_endpoints
 
 logger = logging.getLogger(__name__)
 
@@ -194,24 +193,10 @@ def _validate_security(value: str | None) -> None:
     # Reject input that contains obvious code-injection attempts
     # (these would be caught by SymPy's parser anyway, but fail fast here)
     dangerous_patterns = [
-        "__class__",
-        "__mro__",
-        "__subclasses__",
-        "__bases__",
-        "__base__",
-        "__code__",
-        "__globals__",
-        "__init__",
-        "eval(",
-        "exec(",
-        "compile(",
-        "__import__(",
-        "async ",
-        "await ",
-        "global ",
-        "del ",
-        "try:",
-        "except:",
+        "__class__", "__mro__", "__subclasses__", "__bases__", "__base__",
+        "__code__", "__globals__", "__init__", "eval(", "exec(",
+        "compile(", "__import__(", "async ", "await ", "global ", "del ",
+        "try:", "except:",
     ]
 
     value_lower = value.lower()
