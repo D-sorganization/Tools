@@ -41,7 +41,7 @@ def count_affected_files(patterns: set[str]) -> dict[str, int]:
 
         try:
             out = subprocess.run(cmd, capture_output=True, text=True, check=True)
-            count = len([l for l in out.stdout.splitlines() if l.strip()])
+            count = len([ln for ln in out.stdout.splitlines() if ln.strip()])
         except subprocess.CalledProcessError:
             count = 0
 
@@ -83,7 +83,7 @@ def main() -> int:
     # Validate no phantom exclusions
     phantoms = [p for p, c in results.items() if c == 0 and not p.endswith("tests/")]
     if phantoms:
-        print(f"\n⚠️  Phantom exclusions found (0 files matched):")
+        print("\n⚠️  Phantom exclusions found (0 files matched):")
         for p in phantoms:
             print(f"   - {p}")
 
@@ -100,7 +100,7 @@ def main() -> int:
         mypy_dirs = {p for p in patterns if p.startswith("src/") or p.startswith("tools/")}
         overlap = mypy_dirs & ruff_excluded
         if overlap:
-            print(f"\n🔍 Directories excluded by BOTH mypy and ruff:")
+            print("\n🔍 Directories excluded by BOTH mypy and ruff:")
             for o in sorted(overlap):
                 print(f"   - {o}")
 

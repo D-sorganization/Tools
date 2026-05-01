@@ -67,7 +67,9 @@ class TestCountAffectedFiles:
         """A pattern matching real tracked files should report >0."""
         fake_output = "src/data_processing/__init__.py\nsrc/data_processing/cli.py\n"
         with patch.object(
-            vma.subprocess, "run", return_value=MagicMock(stdout=fake_output, returncode=0)
+            vma.subprocess,
+            "run",
+            return_value=MagicMock(stdout=fake_output, returncode=0),
         ):
             results = vma.count_affected_files({"src/data_processing/"})
         assert results["src/data_processing/"] == 2
