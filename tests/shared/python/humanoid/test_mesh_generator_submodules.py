@@ -8,9 +8,9 @@ are import-time optional so we only test their interface contracts.
 from __future__ import annotations
 
 import pytest
-import upstream_drift_tools.process_calculators.pressure_drop_calculator._pdi_unit_converters as _uc  # noqa: E501
-import upstream_drift_tools.process_calculators.pressure_drop_calculator._pdi_validators as _val  # noqa: E501
 import upstream_drift_tools.process_calculators.pressure_drop_calculator.pressure_drop_interface as _pdi  # noqa: E501
+import upstream_drift_tools.process_calculators.pressure_drop_calculator.pressure_drop_units as _uc  # noqa: E501
+import upstream_drift_tools.process_calculators.pressure_drop_calculator.pressure_drop_validation as _val  # noqa: E501
 from humanoid_character_builder.generators._mesh_types import (
     GeneratedMeshResult,
     MeshGeneratorBackend,
