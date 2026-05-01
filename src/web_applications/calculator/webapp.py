@@ -28,6 +28,22 @@ from .limiter import RateLimiter
 logger = logging.getLogger(__name__)
 
 
+def _error_response(
+    message: str,
+    code: str,
+    status: int,
+    detail: dict[str, object] | None = None,
+) -> tuple[Any, int]:
+    """Return a standard JSON error envelope.
+
+    Schema: {"error": str, "code": str, "detail": Optional[dict]}
+    """
+    body: dict[str, object] = {"error": message, "code": code}
+    if detail is not None:
+        body["detail"] = detail
+    return jsonify(body), status
+
+
 @dataclass
 class CalculationPayload:
     operation: str
@@ -102,9 +118,8 @@ def create_app() -> Flask:
             client_ip = request.remote_addr or "unknown"
             # Access limiter via closure over 'app'
             if not app.limiter.is_allowed(client_ip):
-                return (
-                    jsonify({"error": "Rate limit exceeded. Please try again later."}),
-                    429,
+                return _error_response(
+                    "Rate limit exceeded. Please try again later.", "RATE_LIMITED", 429
                 )
 
         payload = request.get_json(silent=True) or {}
@@ -114,10 +129,10 @@ def create_app() -> Flask:
             response = _serialize_result(calculation)
             return jsonify(response), 200
         except ValueError as error:
-            return jsonify({"error": str(error)}), 400
+            return _error_response(str(error), "VALIDATION_ERROR", 400)
         except Exception as e:  # noqa: F841  # pragma: no cover - fallback safety
             logger.exception("Calculation failed")
-            return jsonify({"error": "An internal error occurred."}), 500
+            return _error_response("An internal error occurred.", "INTERNAL_ERROR", 500)
 
     @app.get("/manifest.webmanifest")
     def manifest() -> Response:
@@ -193,10 +208,24 @@ def _validate_security(value: str | None) -> None:
     # Reject input that contains obvious code-injection attempts
     # (these would be caught by SymPy's parser anyway, but fail fast here)
     dangerous_patterns = [
-        "__class__", "__mro__", "__subclasses__", "__bases__", "__base__",
-        "__code__", "__globals__", "__init__", "eval(", "exec(",
-        "compile(", "__import__(", "async ", "await ", "global ", "del ",
-        "try:", "except:",
+        "__class__",
+        "__mro__",
+        "__subclasses__",
+        "__bases__",
+        "__base__",
+        "__code__",
+        "__globals__",
+        "__init__",
+        "eval(",
+        "exec(",
+        "compile(",
+        "__import__(",
+        "async ",
+        "await ",
+        "global ",
+        "del ",
+        "try:",
+        "except:",
     ]
 
     value_lower = value.lower()
