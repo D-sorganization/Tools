@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, cast
 
 from .engine.pressure_drop_calculation_engine import PressureDropCalculationEngine
 from .models.pressure_drop_data_models import (
@@ -71,7 +71,7 @@ def calculate_pressure_drop(
         friction_method=friction_method,
     )
     engine = PressureDropCalculationEngine()
-    return format_results(engine.calculate(inputs))
+    return cast(dict[str, Any], format_results(engine.calculate(inputs)))
 
 
 def calculate_pressure_drop_custom_gas(
