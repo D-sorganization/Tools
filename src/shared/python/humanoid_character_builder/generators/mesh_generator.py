@@ -27,7 +27,7 @@ All public symbols remain importable from this module.
 from __future__ import annotations  # noqa: E402, F404
 
 import logging
-from typing import Any
+from typing import Any, cast
 
 from humanoid_character_builder.core.body_parameters import BodyParameters  # noqa: F401
 

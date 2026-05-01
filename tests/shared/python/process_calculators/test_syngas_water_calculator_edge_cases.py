@@ -32,6 +32,8 @@ from upstream_drift_tools.process_calculators.syngas_water_calculator import (
     quick_water_content,
 )
 
+from contracts import PreconditionError
+
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
@@ -140,11 +142,12 @@ class TestDewPointEdgeCases:
     """Edge cases for calculate_dew_point."""
 
     def test_zero_partial_pressure(self, calculator):
-        """Zero partial pressure should give a very low dew point."""
-        dp = calculator.calculate_dew_point(0.0, 101325.0)
-        # With zero partial pressure, dew point from Newton-Raphson may converge
-        # to a very low value or behave unexpectedly; just check it's finite
-        assert math.isfinite(dp)
+        """Zero partial pressure should be rejected by the DbC precondition."""
+        with pytest.raises(
+            PreconditionError,
+            match="partial_pressure_pa must be positive",
+        ):
+            calculator.calculate_dew_point(0.0, 101325.0)
 
     def test_normal_conditions(self, calculator):
         """At partial pressure of ~2.3 kPa (sat. at 20 C), dew point ~ 20 C."""

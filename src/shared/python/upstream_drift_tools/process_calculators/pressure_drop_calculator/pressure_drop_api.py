@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, cast
 
 from .engine.pressure_drop_calculation_engine import PressureDropCalculationEngine
 from .models.pressure_drop_data_models import (
@@ -11,11 +11,9 @@ from .models.pressure_drop_data_models import (
     PipeFitting,
     PressureDropInputs,
 )
-from .pressure_drop_results import (
-    convert_pressure,
-    convert_temperature,
-    format_results,
-)
+from .pressure_drop_results import _format_results as format_results
+from .pressure_drop_units import _convert_pressure as convert_pressure
+from .pressure_drop_units import _convert_temperature as convert_temperature
 from .utils.fitting_loss_coefficients import FITTING_K_FACTORS
 from .utils.flow_rate_converter import convert_flow_rate_to_mass
 from .utils.gas_properties import calculate_mixture_molecular_weight
@@ -73,7 +71,7 @@ def calculate_pressure_drop(
         friction_method=friction_method,
     )
     engine = PressureDropCalculationEngine()
-    return format_results(engine.calculate(inputs))
+    return cast(dict[str, Any], format_results(engine.calculate(inputs)))
 
 
 def calculate_pressure_drop_custom_gas(
