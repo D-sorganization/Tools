@@ -435,7 +435,10 @@ class AcidGasDewpointCalculator:
         Returns:
             Dewpoint temperature in Celsius
         """
-        require_positive(partial_pressure_pa, "partial_pressure_pa")
+        if partial_pressure_pa <= 0:
+            msg = f"partial_pressure_pa must be > 0, got {partial_pressure_pa}"
+            raise ValueError(msg)
+
         require(
             component in self.antoine_constants,
             f"unknown component: {component!r}, "
