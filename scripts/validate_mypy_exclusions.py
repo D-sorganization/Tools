@@ -5,6 +5,7 @@ Design-by-Contract:
   - PRE: mypy.ini exists and is parseable
   - POST: Returns 0 if config is valid, 1 otherwise
 """
+
 from __future__ import annotations
 
 import re
@@ -97,7 +98,9 @@ def main() -> int:
             if line.startswith("src/") or line.startswith("tools/"):
                 ruff_excluded.add(line)
 
-        mypy_dirs = {p for p in patterns if p.startswith("src/") or p.startswith("tools/")}
+        mypy_dirs = {
+            p for p in patterns if p.startswith("src/") or p.startswith("tools/")
+        }
         overlap = mypy_dirs & ruff_excluded
         if overlap:
             print("\n🔍 Directories excluded by BOTH mypy and ruff:")

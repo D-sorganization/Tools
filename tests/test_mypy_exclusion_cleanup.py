@@ -3,6 +3,7 @@
 These tests verify that the mypy exclusion audit script correctly identifies
 phantom exclusions and calculates coverage impact.
 """
+
 from __future__ import annotations
 
 import sys
@@ -22,9 +23,7 @@ class TestParseMypyExcludes:
     def test_extracts_patterns_from_valid_ini(self, tmp_path: Path) -> None:
         ini = tmp_path / "mypy.ini"
         ini.write_text(
-            "[mypy]\n"
-            "exclude = (\\.*/tests/|src/foo\\.py)\n"
-            "warn_return_any = True\n"
+            "[mypy]\nexclude = (\\.*/tests/|src/foo\\.py)\nwarn_return_any = True\n"
         )
         patterns = vma.parse_mypy_excludes(ini)
         # strip("\\") removes the leading backslash from \.*/tests/
@@ -80,11 +79,7 @@ class TestMainSmoke:
 
     def test_main_returns_zero_on_valid_ini(self, tmp_path: Path) -> None:
         ini = tmp_path / "mypy.ini"
-        ini.write_text(
-            "[mypy]\n"
-            "exclude = (\\.*/tests/)\n"
-            "warn_return_any = True\n"
-        )
+        ini.write_text("[mypy]\nexclude = (\\.*/tests/)\nwarn_return_any = True\n")
         with patch.object(vma, "REPO_ROOT", tmp_path):
             rc = vma.main()
         assert rc == 0
