@@ -78,17 +78,45 @@ def test_api_call(tmp_path):
 
 ## Environment Variables
 
+### Naming Convention: `TOOLS_*` Prefix
+
+All new optional-service credentials **must** use the `TOOLS_*` prefix (issue #2407):
+
+| Canonical Name            | Purpose                                     | Legacy name (still accepted) |
+| ------------------------- | ------------------------------------------- | ----------------------------- |
+| `TOOLS_GITHUB_TOKEN`      | GitHub API; raises rate limit 60→5000/hr    | `GITHUB_TOKEN`               |
+| `TOOLS_GEMINI_API_KEY`    | Gemini AI for PDF renaming                  | `GEMINI_API_KEY`, `GOOGLE_API_KEY` |
+| `TOOLS_MATLAB_PATH`       | Full path to `matlab` executable            | (none)                        |
+
+The `TOOLS_` prefix:
+- Namespaces all Tools variables to avoid collisions with system or third-party env vars
+- Makes it clear in shell environment dumps which variables belong to this project
+- Enables future tooling to validate/warn on missing service variables at startup
+
+When writing code that reads these variables, always check the canonical `TOOLS_*` name
+first, then the legacy name as a fallback:
+
+```python
+import os
+
+# Good: canonical first, legacy fallback
+token = os.environ.get("TOOLS_GITHUB_TOKEN") or os.environ.get("GITHUB_TOKEN")
+
+# Bad: only legacy name
+token = os.environ.get("GITHUB_TOKEN")
+```
+
 Use the `.env.example` file as a reference for safe environment variable values:
 
 ```bash
 # Good: Use OWASP-safe values in .env
-GITHUB_TOKEN=OWASP-TEST-TOKEN-GITHUB-EXAMPLE
-OPENAI_API_KEY=OWASP-TEST-API-KEY-OPENAI-EXAMPLE
+TOOLS_GITHUB_TOKEN=OWASP-TEST-TOKEN-GITHUB-EXAMPLE
+TOOLS_GEMINI_API_KEY=OWASP-TEST-API-KEY-GEMINI-EXAMPLE
 SECRET_KEY=OWASP-TEST-SECRET-KEY-SAFE-FOR-TESTING-ONLY
 
 # Bad: NEVER commit real credentials
-# GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-# OPENAI_API_KEY=sk-proj-xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# TOOLS_GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# TOOLS_GEMINI_API_KEY=AIzaSy-xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 ## GitHub API Hardening
