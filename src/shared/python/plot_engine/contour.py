@@ -7,7 +7,10 @@ and heatmaps, bridging scatter data to gridded formats.
 from __future__ import annotations
 
 import numpy as np
-from scipy.interpolate import griddata
+
+# scipy.interpolate is a heavy dependency (~20 MB import chain) that is only
+# needed when scatter_to_grid is actually called.  Importing it lazily keeps
+# module import time fast for callers that only use correlation_matrix.
 
 
 def scatter_to_grid(
@@ -30,6 +33,8 @@ def scatter_to_grid(
         Tuple of (x_grid, y_grid, z_grid) where x_grid and y_grid are 1D
         arrays of grid coordinates and z_grid is the 2D interpolated values.
     """
+    from scipy.interpolate import griddata  # lazy: only pay import cost when used
+
     x = np.asarray(x, dtype=np.float64)
     y = np.asarray(y, dtype=np.float64)
     z = np.asarray(z, dtype=np.float64)

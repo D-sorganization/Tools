@@ -7,6 +7,7 @@ from __future__ import annotations
 import logging
 import math
 from dataclasses import dataclass, field
+from functools import lru_cache
 from typing import Any
 
 from .core import (
@@ -26,6 +27,25 @@ from .tables import (
 from .tar_concentration_mixin import TarConcentrationConversionMixin
 
 logger = logging.getLogger(__name__)
+
+
+@lru_cache(maxsize=512)
+def _clean_unit_string(text: str) -> str:
+    """Normalize a unit string for case/punctuation-insensitive matching.
+
+    Cached at module level so repeated normalizations (e.g. batch conversions
+    using the same unit labels) hit O(1) memory lookups instead of re-running
+    the string replacements every call.
+    """
+    return (
+        text.lower()
+        .replace(" ", "")
+        .replace("°", "")
+        .replace("·", "")
+        .replace("⋅", "")
+        .replace("-", "")
+        .replace("_", "")
+    )
 
 
 class UnitConversionError(Exception):
@@ -82,18 +102,13 @@ class UnitConversionService(
         logger.info("UnitConversionService initialised")
 
     def _clean_string(self, text: str) -> str:
-        """Normalize unit strings by converting to lowercase and removing spaces,
-        special characters (°, ·, ⋅), hyphens, and underscores for consistent matching.
+        """Normalize unit strings for consistent matching.
+
+        Delegates to the module-level :func:`_clean_unit_string` which is
+        decorated with ``@lru_cache``, so repeated normalizations of the same
+        string (common in batch conversions) incur only a dictionary lookup.
         """
-        return (
-            text.lower()
-            .replace(" ", "")
-            .replace("°", "")
-            .replace("·", "")
-            .replace("⋅", "")
-            .replace("-", "")
-            .replace("_", "")
-        )
+        return _clean_unit_string(text)
 
     @staticmethod
     def _require_positive_finite(value: float, name: str) -> None:

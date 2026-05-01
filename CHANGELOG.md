@@ -9,6 +9,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `docs/performance.md`: performance optimisation guide documenting LRU-cache
+  additions and lazy-import changes (closes #2426)
+- `docs/security-audit.md`: adversarial security audit report with findings and
+  mitigations (closes #2418)
+- `docs/quickstart.md`: 5-minute getting-started guide for new contributors
+  (closes #2427)
+- `CONTRIBUTING.md`: expanded with full development setup, coding standards,
+  testing pipeline, and PR process (closes #2427)
+
+### Changed
+
+- `upstream_drift_tools.calculators.conversion.service`: extracted module-level
+  `_clean_unit_string` with `@lru_cache(maxsize=512)`; repeated batch conversions
+  now hit O(1) cache instead of re-running six `.replace()` calls per unit string
+  (closes #2426)
+- `upstream_drift_tools.calculators.thermo.thermo_properties`: extracted
+  `_mixture_mw_cp` helper with `@lru_cache(maxsize=256)`; simulation loops that
+  sweep T/P at fixed gas composition compute MW and Cp once instead of N times
+  (closes #2426)
+- `plot_engine.contour`: moved `from scipy.interpolate import griddata` inside
+  `scatter_to_grid` function body (lazy import); callers that do not invoke
+  `scatter_to_grid` avoid the ~300 ms scipy import cost (closes #2426)
+
 - Comprehensive assessment framework (A-O) with 15 quality categories
 - Executive summary (Highlight) assessment template
 - `src/shared/python/deprecation.py`: shared `@deprecated` decorator for marking
