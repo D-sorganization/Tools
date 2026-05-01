@@ -228,11 +228,30 @@ Pickle-backed DataFrame reads and writes are disabled by default in shared data-
 
 **Environment Variables:**
 
+All Tools environment variables use the `TOOLS_*` prefix. This is the canonical naming
+convention enforced for all new variables. See `docs/SECRETS_MANAGEMENT.md` for guidance
+on using these variables safely without hardcoding values.
+
+_System configuration:_
+
 - `TOOLS_PLUGIN_PATH` — Colon-separated paths to plugin directories
 - `TOOLS_THEME` — Default theme name (light/dark/custom)
 - `TOOLS_CACHE_DIR` — Cache directory for results
 - `TOOLS_LOG_LEVEL` — Logging verbosity (DEBUG/INFO/WARNING)
 - `TOOLS_RUST_WORKERS` — Number of Rust kernel worker threads
+
+_Optional service credentials (all optional; tools degrade gracefully when absent):_
+
+- `TOOLS_GEMINI_API_KEY` — Gemini API key for AI-powered PDF renaming
+  (also accepts legacy `GEMINI_API_KEY` / `GOOGLE_API_KEY` for backward compatibility)
+- `TOOLS_GITHUB_TOKEN` — GitHub personal access token for model-generation downloads;
+  increases rate limit from 60 to 5000 requests/hour. See QUICKSTART for details.
+- `TOOLS_MATLAB_PATH` — Full path to the `matlab` executable. If unset, the launcher
+  searches `PATH` via `shutil.which("matlab")` then falls back gracefully.
+
+_Naming convention enforcement:_ New optional-service variables **must** use the
+`TOOLS_` prefix. Legacy bare names (e.g. `GEMINI_API_KEY`) are accepted only for
+backward compatibility and will not be added for new services.
 
 **Config Files:**
 

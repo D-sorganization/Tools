@@ -178,8 +178,29 @@ If you see `ImportError: cannot import name 'StrEnum'`:
 ### MATLAB Tools Not Working
 
 - Install MATLAB R2020a or later
-- Add MATLAB to system PATH
+- Add MATLAB to system PATH, or set `TOOLS_MATLAB_PATH=/path/to/matlab`
 - Verify with: `matlab -batch "version"`
+
+### GitHub API Rate Limits
+
+Model-generation tools that download URDF models from GitHub are subject to GitHub's
+API rate limits: 60 requests/hour for unauthenticated requests, 5000/hour with a
+personal access token.
+
+To avoid rate-limit errors during offline or heavy-download work:
+
+```bash
+# Set a GitHub personal access token (read-only scope is sufficient)
+export TOOLS_GITHUB_TOKEN=ghp_your_personal_access_token
+
+# For local .env usage (copy .env.example first)
+cp .env.example .env
+# Edit .env and set TOOLS_GITHUB_TOKEN to your real token
+```
+
+The `model_generation` library automatically reads `TOOLS_GITHUB_TOKEN` and includes
+it in API requests. It also handles 429 (Too Many Requests) responses with exponential
+backoff so transient rate-limit hits recover automatically.
 
 ### Launcher Won't Start
 
