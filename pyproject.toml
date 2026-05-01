@@ -245,7 +245,12 @@ omit = [
 ]
 
 [tool.coverage.report]
-fail_under = 30
+# Coverage floor — ratchet plan (issue #2406):
+#   Current baseline: ~43% (measured 2026-05-01)
+#   Phase 1 (now):     40%  — enforce the floor slightly below current baseline
+#   Phase 2 (v1.2):    50%  — raise after adding hot-path tests
+#   Phase 3 (v1.3):    60%  — target from issue #2406
+fail_under = 40
 show_missing = true
 skip_empty = true
 exclude_lines = [
