@@ -523,6 +523,9 @@ class SignalGenerator:
         Returns:
             Signal with chirp waveform.
         """
+        if len(t) < 2:
+            raise ValueError("chirp() requires at least two time points")
+
         t_shifted = t - t[0]
         t_end = t_shifted[-1]
         if t_end <= 0:
@@ -570,7 +573,8 @@ class SignalGenerator:
             Signal with sawtooth waveform.
         """
         if frequency <= 0:
-            raise ValueError(f"frequency must be positive (got {frequency})")
+            raise ValueError("frequency must be positive")
+
         period = 1.0 / frequency
         t_shifted = t - t[0]
         phase = (t_shifted % period) / period
@@ -598,7 +602,8 @@ class SignalGenerator:
             Signal with triangle waveform.
         """
         if frequency <= 0:
-            raise ValueError(f"frequency must be positive (got {frequency})")
+            raise ValueError("frequency must be positive")
+
         period = 1.0 / frequency
         t_shifted = t - t[0]
         phase = (t_shifted % period) / period
@@ -629,7 +634,8 @@ class SignalGenerator:
             Signal with square waveform.
         """
         if frequency <= 0:
-            raise ValueError(f"frequency must be positive (got {frequency})")
+            raise ValueError("frequency must be positive")
+
         period = 1.0 / frequency
         t_shifted = t - t[0]
         phase = (t_shifted % period) / period

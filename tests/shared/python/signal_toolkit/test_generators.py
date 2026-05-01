@@ -12,7 +12,7 @@ from signal_toolkit.core import SignalGenerator
 
 
 def test_chirp_requires_at_least_two_time_points() -> None:
-    with pytest.raises(ValueError, match="positive time span"):
+    with pytest.raises(ValueError, match="at least two time points"):
         SignalGenerator.chirp(np.array([0.0]))
 
 

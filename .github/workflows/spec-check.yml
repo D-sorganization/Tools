@@ -78,13 +78,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Check if source files changed without SPEC.md update
         id: check
         run: |
+          git fetch --depth=1 origin "${{ github.base_ref }}"
+
           # Get the list of changed files in this PR
-          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }} HEAD)
 
           echo "Changed files:"
           echo "$CHANGED_FILES"

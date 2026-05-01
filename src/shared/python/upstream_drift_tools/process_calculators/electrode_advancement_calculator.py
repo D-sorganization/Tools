@@ -4,7 +4,7 @@ Electrode Advancement Calculator
 Calculates electrode consumption and slip rates for arc furnaces.
 """
 
-from shared.python.contracts import require_positive
+from shared.python.contracts import check_non_negative, require_positive
 
 
 class ElectrodeAdvancementCalculator:
@@ -25,12 +25,12 @@ class ElectrodeAdvancementCalculator:
         Calculate electrode consumption.
 
         Args:
-            current_ka: Current in kA (must be positive)
-            time_hrs: Time in hours (must be positive)
+            current_ka: Current in kA (must be non-negative)
+            time_hrs: Time in hours (must be non-negative)
 
         Returns:
             Consumption in inches
         """
-        require_positive(current_ka, "current_ka")
-        require_positive(time_hrs, "time_hrs")
+        check_non_negative(current_ka, "current_ka")
+        check_non_negative(time_hrs, "time_hrs")
         return self.consumption_rate * current_ka * time_hrs
