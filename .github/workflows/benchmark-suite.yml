@@ -36,7 +36,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Full history for comparison
+          fetch-depth: 0 # Full history for comparison
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -115,6 +115,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: benchmark-results-${{ github.run_id }}
+          if-no-files-found: warn
           path: |
             .benchmarks/results.json
             benchmark_report.md
@@ -164,7 +165,7 @@ jobs:
     name: Benchmark SLA Validation
     runs-on: d-sorg-fleet
     timeout-minutes: 10
-    if: always()
+    if: ${{ always() && needs.benchmark-foundation.result != 'failure' && needs.benchmark-foundation.result != 'cancelled' }}
     needs: [benchmark-foundation]
 
     steps:
@@ -172,6 +173,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download benchmark results
+        continue-on-error: true
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:

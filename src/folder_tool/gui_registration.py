@@ -1,6 +1,7 @@
 """GUI registration for Folder Tool."""
 
 from __future__ import annotations
+from typing import Any
 
 GUI_INFO = {
     "name": "Folder Tool (Utility)",
@@ -16,6 +17,6 @@ GUI_INFO = {
 }
 
 
-def get_gui_info() -> dict:
+def get_gui_info() -> dict[str, Any]:
     """Return GUI registration information."""
     return GUI_INFO
