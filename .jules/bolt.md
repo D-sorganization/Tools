@@ -19,3 +19,6 @@
 ## 2026-04-30 - Optimize Array Downsampling in Chart Data Generation
 **Learning:** When downsampling large arrays in JS/TS (e.g., extracting data points for charts using a calculated `step`), avoid chained iterators like `.filter((_, i) => i % step === 0).map(...)`. These execute in O(N) iterations and allocate intermediate arrays.
 **Action:** Instead, use a single-pass `for` loop that increments by `step` (`for (let i = 0; i < len; i += step)`) to reduce iterations to O(N/step) and eliminate garbage collection overhead.
+## 2024-05-18 - Avoid array methods chained with mapped row building for large datasets
+**Learning:** Generating downsampled data table views using chained `.filter().map()` causes massive O(N) intermediate array generation and garbage collection pauses when running on large `results` arrays.
+**Action:** Replaced chained iterators with an inline IIFE containing a single-pass `for` loop to increment by the calculated `step`, allowing O(N/step) performance without intermediate mapping allocations.
