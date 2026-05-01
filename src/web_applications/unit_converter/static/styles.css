@@ -436,3 +436,147 @@ body {
 .result-flash {
   animation: flash-result 0.3s ease-out;
 }
+
+/* ============================================================================
+   TOAST NOTIFICATIONS (issue #2410)
+   ============================================================================ */
+
+#toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.toast {
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: auto;
+  max-width: 320px;
+}
+
+.toast--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast--error {
+  background-color: var(--error, #c0392b);
+  color: #fff;
+}
+
+.toast--success {
+  background-color: var(--success, #27ae60);
+  color: #fff;
+}
+
+/* ============================================================================
+   RESPONSIVE ENHANCEMENTS — issue #2408
+   Touch targets >= 44px, mobile-first layout improvements
+   ============================================================================ */
+
+/* Ensure all interactive elements meet 44×44px touch target minimum */
+.btn,
+.btn-swap,
+.btn-text,
+.select,
+.input {
+  min-height: 44px;
+}
+
+/* Make result and table sections scrollable on small screens */
+.recent-list {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure form rows stack nicely on very small screens */
+@media (max-width: 400px) {
+  .form-row {
+    flex-direction: column;
+  }
+
+  .form-row .form-group {
+    width: 100%;
+  }
+
+  .header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .theme-selector {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-container {
+    max-width: 100%;
+  }
+
+  .main-content {
+    padding: 12px;
+  }
+
+  .header {
+    padding: 12px;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .swap-row {
+    display: flex;
+    justify-content: center;
+  }
+
+  .btn-swap {
+    width: auto;
+  }
+
+  /* Stack form rows on mobile */
+  .form-row {
+    flex-wrap: wrap;
+  }
+}
+
+/* ============================================================================
+   ACCESSIBILITY — issue #2409
+   Skip-to-content link, enhanced focus-visible styles
+   ============================================================================ */
+
+.skip-to-content {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  padding: 12px 20px;
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 700;
+  border-radius: 0 0 8px 0;
+  z-index: 10000;
+  text-decoration: none;
+  transition: top 0.2s;
+}
+
+.skip-to-content:focus {
+  top: 0;
+}
+
+/* Enhanced focus-visible for inputs and selects */
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--border-focus, var(--accent));
+  outline-offset: 2px;
+}

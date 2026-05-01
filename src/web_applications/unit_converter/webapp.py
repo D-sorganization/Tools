@@ -28,6 +28,22 @@ from .web_theme import (
 logger = logging.getLogger(__name__)
 
 
+def _error_response(
+    message: str,
+    code: str,
+    status: int,
+    detail: dict[str, object] | None = None,
+) -> tuple[Any, int]:
+    """Return a standard JSON error envelope.
+
+    Schema: {"error": str, "code": str, "detail": Optional[dict]}
+    """
+    body: dict[str, object] = {"error": message, "code": code}
+    if detail is not None:
+        body["detail"] = detail
+    return jsonify(body), status
+
+
 def _add_security_headers(response: Response) -> Response:
     """Add security headers to every response."""
     response.headers["Content-Security-Policy"] = (
@@ -162,10 +178,10 @@ def create_app() -> Flask:
                 200,
             )
         except ValueError as e:
-            return jsonify({"error": str(e)}), 400
+            return _error_response(str(e), "VALIDATION_ERROR", 400)
         except (ZeroDivisionError, OverflowError, TypeError):
             logger.exception("Conversion failed")
-            return jsonify({"error": "An internal error occurred."}), 500
+            return _error_response("An internal error occurred.", "INTERNAL_ERROR", 500)
 
     @app.get("/api/categories")
     def api_categories() -> tuple[Any, int]:
@@ -185,7 +201,7 @@ def create_app() -> Flask:
         """Return units for a specific category."""
         units = converter.get_units_for_category(category)
         if not units:
-            return jsonify({"error": f"Unknown category: {category}"}), 404
+            return _error_response(f"Unknown category: {category}", "NOT_FOUND", 404)
         return (
             jsonify(
                 {

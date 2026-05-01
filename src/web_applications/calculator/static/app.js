@@ -1,3 +1,28 @@
+// ============================================================================
+// TOAST NOTIFICATIONS (issue #2410)
+// ============================================================================
+
+function showToast(message, type) {
+  var container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    container.setAttribute('role', 'status');
+    container.setAttribute('aria-live', 'polite');
+    document.body.appendChild(container);
+  }
+  var toast = document.createElement('div');
+  toast.className = 'toast toast--' + (type || 'error');
+  toast.textContent = message;
+  container.appendChild(toast);
+  void toast.offsetWidth;
+  toast.classList.add('toast--visible');
+  setTimeout(function () {
+    toast.classList.remove('toast--visible');
+    setTimeout(function () { toast.remove(); }, 300);
+  }, 4000);
+}
+
 const expressionInput = document.getElementById("expression");
 const variableInput = document.getElementById("variable");
 const orderInput = document.getElementById("order");
@@ -90,6 +115,7 @@ async function executeCalculation() {
     pushHistory(payload.expression, data.result);
   } catch (error) {
     resultText.textContent = error.message;
+    showToast(error.message, 'error');
   } finally {
     executeButton.textContent = originalText;
     executeButton.disabled = false;

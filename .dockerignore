@@ -84,3 +84,21 @@ azure-pipelines.yml
 .claude
 .agent
 .cursor
+
+# Additional exclusions for issue #2415
+*.log
+*.txt
+drafts
+assessments
+output
+benchmarks
+PHASE_*.md
+ACCESSIBILITY_*.md
+RESPONSIVE_*.md
+CONTAINERIZATION_*.md
+AUDIT_*.md
+COLLISION_*.md
+MANIFEST_*.md
+MYPY_*.md
+IMPLEMENTATION_*.txt
+PHASE_2*.txt
