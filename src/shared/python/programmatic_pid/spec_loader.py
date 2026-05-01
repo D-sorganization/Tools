@@ -54,15 +54,22 @@ class SpecAccessor:
 
     @property
     def spec(self) -> SpecDict:
+        """Return the raw specification dictionary."""
         return self._spec
 
     @property
     def project(self) -> dict[str, Any]:
+        """Return the top-level ``project`` section, or an empty dict if absent."""
         p = self._spec.get("project")
         return p if isinstance(p, dict) else {}
 
     @property
     def drawing(self) -> dict[str, Any]:
+        """Return the drawing configuration dict.
+
+        Checks ``spec["drawing"]`` first, then ``spec["project"]["drawing"]``.
+        Returns an empty dict when neither is present.
+        """
         d = self._spec.get("drawing")
         if isinstance(d, dict):
             return d
@@ -92,6 +99,11 @@ class SpecAccessor:
 
     @property
     def layer_config(self) -> dict[str, Any]:
+        """Return the layer configuration dict.
+
+        Checks ``drawing["layers"]`` then falls back to ``spec["layers"]``.
+        Returns an empty dict when no layer config is defined.
+        """
         drawing = self.drawing
         layers = drawing.get("layers")
         if isinstance(layers, dict) and layers:
@@ -103,6 +115,11 @@ class SpecAccessor:
 
     @property
     def layout_config(self) -> dict[str, Any]:
+        """Return the layout configuration dict with validated defaults.
+
+        All numeric values are clamped to safe minima so downstream
+        rendering code never has to guard against nonsensical values.
+        """
         drawing = self.drawing
         layout = drawing.get("layout", {})
         if not isinstance(layout, dict):
@@ -141,31 +158,37 @@ class SpecAccessor:
 
     @property
     def defaults(self) -> dict[str, Any]:
+        """Return the ``defaults`` section, or an empty dict if absent."""
         d = self._spec.get("defaults", {})
         return d if isinstance(d, dict) else {}
 
     @property
     def equipment(self) -> list[dict[str, Any]]:
+        """Return the list of equipment entries, or ``[]`` if absent."""
         v = self._spec.get("equipment")
         return cast(list[dict[str, Any]], v) if isinstance(v, list) else []
 
     @property
     def instruments(self) -> list[dict[str, Any]]:
+        """Return the list of instrument entries, or ``[]`` if absent."""
         v = self._spec.get("instruments")
         return cast(list[dict[str, Any]], v) if isinstance(v, list) else []
 
     @property
     def streams(self) -> list[dict[str, Any]]:
+        """Return the list of process stream entries, or ``[]`` if absent."""
         v = self._spec.get("streams")
         return cast(list[dict[str, Any]], v) if isinstance(v, list) else []
 
     @property
     def control_loops(self) -> list[dict[str, Any]]:
+        """Return the list of control loop entries, or ``[]`` if absent."""
         v = self._spec.get("control_loops")
         return cast(list[dict[str, Any]], v) if isinstance(v, list) else []
 
     @property
     def interlocks(self) -> list[dict[str, Any]]:
+        """Return the list of interlock entries, or ``[]`` if absent."""
         v = self._spec.get("interlocks")
         return cast(list[dict[str, Any]], v) if isinstance(v, list) else []
 # ---------------------------------------------------------------------------
@@ -173,14 +196,35 @@ class SpecAccessor:
 # These are kept so that generator.py continues to work during migration.
 # ---------------------------------------------------------------------------
 def get_project(spec: SpecDict) -> dict[str, Any]:
+    """Return the ``project`` section from *spec*, or an empty dict.
+
+    Deprecated: use ``SpecAccessor(spec).project`` instead.
+    """
     p = spec.get("project")
     return p if isinstance(p, dict) else {}
+
+
 def get_drawing(spec: SpecDict) -> dict[str, Any]:
+    """Return the drawing configuration dict from *spec*.
+
+    Checks ``spec["drawing"]`` first, then ``spec["project"]["drawing"]``.
+
+    Deprecated: use ``SpecAccessor(spec).drawing`` instead.
+    """
     if "drawing" in spec and isinstance(spec["drawing"], dict):
         return spec["drawing"]
     d = get_project(spec).get("drawing")
     return cast(dict[str, Any], d) if isinstance(d, dict) else {}
+
+
 def ensure_drawing(spec: SpecDict) -> dict[str, Any]:
+    """Return or create the drawing dict inside *spec* (mutates *spec*).
+
+    Ensures that ``spec["project"]["drawing"]`` exists and returns it.
+    Used during spec preparation before rendering.
+
+    Deprecated: use ``SpecAccessor`` for read-only access instead.
+    """
     if "drawing" in spec and isinstance(spec["drawing"], dict):
         return spec["drawing"]
     project = spec.setdefault("project", {})
@@ -189,7 +233,16 @@ def ensure_drawing(spec: SpecDict) -> dict[str, Any]:
         drawing = {}
         project["drawing"] = drawing
     return cast(dict[str, Any], drawing)
+
+
 def get_text_config(spec: SpecDict) -> dict[str, float]:
+    """Return text height configuration as a plain dict.
+
+    Returns keys: ``title_height``, ``subtitle_height``, ``body_height``,
+    ``small_height`` (all floats in drawing units).
+
+    Deprecated: use ``SpecAccessor(spec).text_config`` instead.
+    """
     tc = SpecAccessor(spec).text_config
     return {
         "title_height": tc.title_height,
@@ -197,7 +250,19 @@ def get_text_config(spec: SpecDict) -> dict[str, float]:
         "body_height": tc.body_height,
         "small_height": tc.small_height,
     }
+
+
 def get_layout_config(spec: SpecDict) -> dict[str, Any]:
+    """Return the layout configuration dict with validated defaults.
+
+    Deprecated: use ``SpecAccessor(spec).layout_config`` instead.
+    """
     return SpecAccessor(spec).layout_config
+
+
 def get_layer_config(spec: SpecDict) -> dict[str, Any]:
+    """Return the layer configuration dict.
+
+    Deprecated: use ``SpecAccessor(spec).layer_config`` instead.
+    """
     return SpecAccessor(spec).layer_config

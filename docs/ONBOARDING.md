@@ -210,8 +210,53 @@ Tools/
 | `QUICKSTART.md` | Quick reference for common tasks |
 | `requirements.txt` | Core Python dependencies |
 | `pyproject.toml` | Package metadata (name, version, entry points) |
-| `tools.json` | Registry of available tools |
-| `docs/PLUGIN_SYSTEM.md` | How tool discovery works |
+| `tools.json` | Registry of available tools (centralized, explicit ordering) |
+| `src/<tool>/tool_manifest.json` | Per-tool auto-discovery manifest |
+| `src/<tool>/gui_registration.py` | PyQt6 launcher metadata for a tool |
+| `docs/architecture/PLUGIN_SYSTEM.md` | Full plugin system reference |
+
+## Plugin System and Tool Registration
+
+Tools are registered with the launcher in two ways:
+
+### Auto-discovery (recommended for new tools)
+
+Drop a `tool_manifest.json` in the tool directory:
+
+```json
+{
+  "name": "My Tool",
+  "path": "launch_pyqt6.py",
+  "type": "python",
+  "description": "Brief description",
+  "category": "Development Tools"
+}
+```
+
+The launcher scans `src/` for these files at startup and includes them automatically.
+
+### Centralized registry (`tools.json`)
+
+Edit the root `tools.json` to add a tool with explicit ordering:
+
+```json
+{
+  "Development Tools": [
+    {
+      "name": "My Tool",
+      "path": "src/my_tool/launch_pyqt6.py",
+      "type": "python",
+      "desc": "Brief description"
+    }
+  ]
+}
+```
+
+### PyQt6 launcher integration (`gui_registration.py`)
+
+Every tool that opens a PyQt6 window must have a `gui_registration.py` in its root directory. This file exposes a `get_gui_info()` function returning the module path, widget class, dependencies, and minimum window size. See the full reference in [`docs/architecture/PLUGIN_SYSTEM.md`](architecture/PLUGIN_SYSTEM.md).
+
+---
 
 ## Making Your First Change
 
@@ -400,7 +445,7 @@ git commit -m "Your message"
 1. **Read the architecture**: `docs/ARCHITECTURE_OVERVIEW.md`
 2. **Build a simple tool**: Follow `docs/BUILD_A_TOOL.md` tutorial
 3. **Understand governance**: Read `CLAUDE.md` (critical for shared library work)
-4. **Check the plugin system**: `docs/PLUGIN_SYSTEM.md`
+4. **Check the plugin system**: `docs/architecture/PLUGIN_SYSTEM.md`
 5. **Review coding standards**: `docs/development/GUARDRAILS_GUIDELINES.md`
 
 ## Getting Help
