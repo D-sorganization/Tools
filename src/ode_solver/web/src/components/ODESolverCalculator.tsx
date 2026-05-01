@@ -495,14 +495,24 @@ export function ODESolverCalculator() {
                       </tr>
                     </thead>
                     <tbody>
-                      {results.filter((_, i) => i % Math.max(1, Math.floor(results.length / 15)) === 0).map((row, idx) => (
-                        <tr key={idx} className="border-b border-slate-700/50">
-                          <td className="py-1 px-3 text-white">{row.time.toFixed(3)}</td>
-                          {varNames.map((v) => (
-                            <td key={v} className="py-1 px-3 text-white">{row[v].toFixed(6)}</td>
-                          ))}
-                        </tr>
-                      ))}
+                      {(() => {
+                        // ⚡ Bolt Optimization: Replace .filter().map() chains with a single-pass loop.
+                        // This prevents creating intermediate arrays and limits iterations to O(N/step).
+                        const step = Math.max(1, Math.floor(results.length / 15));
+                        const rows = [];
+                        for (let i = 0; i < results.length; i += step) {
+                          const row = results[i];
+                          rows.push(
+                            <tr key={i} className="border-b border-slate-700/50">
+                              <td className="py-1 px-3 text-white">{row.time.toFixed(3)}</td>
+                              {varNames.map((v) => (
+                                <td key={v} className="py-1 px-3 text-white">{row[v].toFixed(6)}</td>
+                              ))}
+                            </tr>
+                          );
+                        }
+                        return rows;
+                      })()}
                     </tbody>
                   </table>
                 </div>
