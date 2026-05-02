@@ -26,7 +26,7 @@ jobs:
   # ── 1. Determine if this commit warrants a release ────────────────────
   analyse-commits:
     name: Analyse Commits
-    runs-on: ubuntu-latest
+    runs-on: d-sorg-fleet
     outputs:
       bump: ${{ steps.bump.outputs.bump }}
       new_version: ${{ steps.bump.outputs.new_version }}
@@ -134,7 +134,7 @@ jobs:
   # ── 2. Validate: tests + quality gates ──────────────────────────────
   validate:
     name: Validate
-    runs-on: ubuntu-latest
+    runs-on: d-sorg-fleet
     needs: analyse-commits
     if: needs.analyse-commits.outputs.bump != 'none'
     steps:
@@ -164,7 +164,7 @@ jobs:
   # ── 3. Bump version in pyproject.toml + VERSION file ────────────────
   bump-version:
     name: Bump Version
-    runs-on: ubuntu-latest
+    runs-on: d-sorg-fleet
     needs: [analyse-commits, validate]
     if: needs.analyse-commits.outputs.bump != 'none'
     outputs:
@@ -263,7 +263,7 @@ jobs:
   # ── 4. Create GitHub Release ─────────────────────────────────────────
   github-release:
     name: GitHub Release
-    runs-on: ubuntu-latest
+    runs-on: d-sorg-fleet
     needs: [analyse-commits, bump-version]
     if: needs.analyse-commits.outputs.bump != 'none'
     steps:
