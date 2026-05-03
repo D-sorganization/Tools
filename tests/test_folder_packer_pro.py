@@ -6,6 +6,8 @@ constants that can be tested without instantiating tkinter/GUI components.
 
 from __future__ import annotations
 
+import base64
+import json
 import sys
 from pathlib import Path
 
@@ -113,3 +115,55 @@ def test_format_size_bytes(_import_file_ops) -> None:  # type: ignore[no-untyped
     assert "B" in file_ops.format_size(512)
     assert "KB" in file_ops.format_size(2048)
     assert "MB" in file_ops.format_size(2 * 1024 * 1024)
+
+
+def test_unpack_rejects_path_traversal(tmp_path: Path) -> None:
+    """Archives must not extract files outside the destination directory."""
+    from folder_packer_pro.pack_engine import unpack_files
+
+    package_path = tmp_path / "malicious.fpp"
+    package_path.write_text(
+        json.dumps(
+            {
+                "metadata": {"compression": "none", "encrypted": False},
+                "files": {
+                    "../escaped.txt": base64.b64encode(b"owned").decode("ascii"),
+                    "safe.txt": base64.b64encode(b"safe").decode("ascii"),
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    dest_path = tmp_path / "dest"
+    result = unpack_files(package_path, dest_path)
+
+    assert result.success is True
+    assert result.total_files == 2
+    assert result.errors
+    assert not (tmp_path / "escaped.txt").exists()
+    assert (dest_path / "safe.txt").read_text(encoding="utf-8") == "safe"
+
+
+def test_unpack_rejects_absolute_paths(tmp_path: Path) -> None:
+    """Absolute archive member names must not be written to the host path."""
+    from folder_packer_pro.pack_engine import unpack_files
+
+    package_path = tmp_path / "malicious_absolute.fpp"
+    package_path.write_text(
+        json.dumps(
+            {
+                "metadata": {"compression": "none", "encrypted": False},
+                "files": {
+                    "C:/temp/escaped.txt": base64.b64encode(b"owned").decode("ascii"),
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    result = unpack_files(package_path, tmp_path / "dest")
+
+    assert result.success is True
+    assert result.errors
+    assert not (tmp_path / "dest" / "C:" / "temp" / "escaped.txt").exists()
