@@ -108,9 +108,6 @@ jobs:
         # hypothesis-using pytest run (see PR #2054 / #2056 quality-gate
         # failures; mirrors UpstreamDrift ci-standard.yml fix).
         run: |
-          # Repair partially-corrupted pip installs from the shared runner
-          # toolcache before invoking `python -m pip`.
-          python -m ensurepip --upgrade
           # Keep pip and python bound to the same setup-python interpreter so
           # pytest plugins land in the environment that later runs `python -m pytest`.
           python -m pip install --ignore-installed --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
@@ -339,9 +336,6 @@ jobs:
         # toolcache can carry a stale `sortedcontainers` that makes hypothesis
         # fail during pytest_terminal_summary.
         run: |
-          # Repair partially-corrupted pip installs from the shared runner
-          # toolcache before invoking `python -m pip`.
-          python -m ensurepip --upgrade
           # Match the plugin install interpreter to the `python -m pytest`
           # invocation below so benchmark support is always discoverable.
           python -m pip install --ignore-installed --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
@@ -356,32 +350,21 @@ jobs:
           # PyQt6 widgets render off-screen; all Qt widget tests run safely.
           echo "QT_QPA_PLATFORM=offscreen" >> $GITHUB_ENV
 
-      - name: Collect Changed Coverage Inputs
-        id: coverage_inputs
+      - name: Collect Changed Test Files
         run: |
-          coverage_gate_required=true
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             git fetch origin "${{ github.base_ref }}"
             BASE_SHA=$(git merge-base "origin/${{ github.base_ref }}" HEAD || true)
             if [ -z "$BASE_SHA" ]; then
               BASE_SHA="${{ github.event.pull_request.base.sha }}"
             fi
+            git diff --name-only "$BASE_SHA" HEAD -- 'tests/test_*.py' 'tests/**/test_*.py' 'tests/**/*test.py' 'src/**/tests/test_*.py' 'src/**/tests/**/*test.py' > changed_test_files.txt
           elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
-            BASE_SHA="${{ github.event.before }}"
+            git diff --name-only "${{ github.event.before }}" HEAD -- 'tests/test_*.py' 'tests/**/test_*.py' 'tests/**/*test.py' 'src/**/tests/test_*.py' 'src/**/tests/**/*test.py' > changed_test_files.txt
           else
-            BASE_SHA="HEAD~1"
+            git diff --name-only HEAD~1 HEAD -- 'tests/test_*.py' 'tests/**/test_*.py' 'tests/**/*test.py' 'src/**/tests/test_*.py' 'src/**/tests/**/*test.py' > changed_test_files.txt || echo "No previous commit found (initial commit?)"
           fi
-
-          git diff --name-only "$BASE_SHA" HEAD -- 'tests/test_*.py' 'tests/**/test_*.py' 'tests/**/*test.py' 'src/**/tests/test_*.py' 'src/**/tests/**/*test.py' > changed_test_files.txt || echo "No previous commit found (initial commit?)"
-          git diff --name-only "$BASE_SHA" HEAD -- '*.py' > changed_python_files.txt || echo "No previous commit found (initial commit?)"
-
-          if [ "${{ github.event_name }}" = "pull_request" ] && [ ! -s changed_test_files.txt ] && [ ! -s changed_python_files.txt ]; then
-            coverage_gate_required=false
-          fi
-
           cat changed_test_files.txt
-          cat changed_python_files.txt
-          echo "coverage_gate_required=$coverage_gate_required" >> "$GITHUB_OUTPUT"
 
       - name: Run Tests with Coverage (Python ${{ matrix.python-version }})
         run: |
@@ -456,11 +439,9 @@ jobs:
           echo "Coverage gate: ≥10% for upstream_drift_tools + signal_toolkit + model_generation" >> $GITHUB_STEP_SUMMARY
 
       - name: Coverage Policy Gate
-        if: steps.coverage_inputs.outputs.coverage_gate_required == 'true'
         run: python3 scripts/check_coverage_policy.py --coverage-file coverage.xml --policy-file config/coverage_policy.json --baseline-file config/coverage_baseline.json --output-json coverage_trend_${{ matrix.python-version }}.json
 
       - name: Upload Coverage Trend
-        if: steps.coverage_inputs.outputs.coverage_gate_required == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: coverage-trend-${{ matrix.python-version }}
@@ -470,11 +451,7 @@ jobs:
         if: always()
         run: |
           echo "## Coverage Report (Python ${{ matrix.python-version }})" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ steps.coverage_inputs.outputs.coverage_gate_required }}" = "true" ]; then
-            echo "Coverage policy gate enforced via scripts/check_coverage_policy.py (minimum + non-regression)." >> $GITHUB_STEP_SUMMARY
-          else
-            echo "Coverage policy gate skipped because this change touched no Python source or Python tests." >> $GITHUB_STEP_SUMMARY
-          fi
+          echo "Coverage policy gate enforced via scripts/check_coverage_policy.py (minimum + non-regression)." >> $GITHUB_STEP_SUMMARY
 
   # ── Rust Quality Gate ─────────────────────────────────────────────────────
   # Only runs when Rust source files or Cargo manifests change.

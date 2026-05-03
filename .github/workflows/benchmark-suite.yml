@@ -60,7 +60,7 @@ jobs:
         run: |
           python -m pytest tests/benchmarks/ \
             --override-ini="addopts=" \
-            --benchmark-only \
+            --benchmark-enable --benchmark-only \
             --benchmark-json=.benchmarks/results.json \
             --benchmark-columns=min,max,mean,stddev,median \
             -v --tb=short
@@ -71,7 +71,7 @@ jobs:
         run: |
           python -m pytest tests/benchmarks/ \
             --override-ini="addopts=" \
-            --benchmark-only \
+            --benchmark-enable --benchmark-only \
             --benchmark-compare=.benchmarks/baseline.json \
             --benchmark-compare-fail=min:10% \
             --benchmark-columns=min,max,mean,stddev,median,ops \
