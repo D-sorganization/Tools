@@ -248,18 +248,52 @@ export function smoothAngles(
   angleHistory: number[],
   windowSize: number = 5
 ): number[] {
-  if (angleHistory.length < windowSize) {
+  const len = angleHistory.length;
+  if (len < windowSize || windowSize <= 1) {
     return angleHistory;
   }
 
-  const smoothed: number[] = [];
-  for (let i = 0; i < angleHistory.length; i++) {
-    const start = Math.max(0, i - Math.floor(windowSize / 2));
-    const end = Math.min(angleHistory.length, i + Math.ceil(windowSize / 2));
-    const window = angleHistory.slice(start, end);
-    const avg = window.reduce((sum, val) => sum + val, 0) / window.length;
-    smoothed.push(avg);
+  // ⚡ Bolt Optimization: Use a pre-allocated array instead of pushing to an empty array.
+  // We also split the loop into three parts (left edge, middle hot-path, right edge)
+  // to avoid Math.min() and Math.max() checks on every iteration.
+  // And we track the sum manually to avoid the O(N) allocation of .slice() and overhead of .reduce().
+  const smoothed = new Array<number>(len);
+  const leftHalf = Math.floor(windowSize / 2);
+  const rightHalf = Math.ceil(windowSize / 2);
+  const middleWindowSpan = leftHalf + rightHalf;
+
+  // Left edge (bounds checking needed for start)
+  for (let i = 0; i < leftHalf; i++) {
+    const end = Math.min(len, i + rightHalf);
+    let sum = 0;
+    for (let j = 0; j < end; j++) {
+      sum += angleHistory[j];
+    }
+    smoothed[i] = sum / end;
   }
+
+  // Middle section (hot path, no bounds checking)
+  const endMiddle = Math.max(leftHalf, len - rightHalf + 1);
+  for (let i = leftHalf; i < endMiddle; i++) {
+    const start = i - leftHalf;
+    const end = i + rightHalf;
+    let sum = 0;
+    for (let j = start; j < end; j++) {
+      sum += angleHistory[j];
+    }
+    smoothed[i] = sum / middleWindowSpan;
+  }
+
+  // Right edge (bounds checking needed for end)
+  for (let i = endMiddle; i < len; i++) {
+    const start = i - leftHalf;
+    let sum = 0;
+    for (let j = start; j < len; j++) {
+      sum += angleHistory[j];
+    }
+    smoothed[i] = sum / (len - start);
+  }
+
   return smoothed;
 }
 
