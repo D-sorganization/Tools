@@ -63,18 +63,38 @@ except ImportError:
 # via ``set_contract_level()`` is respected.
 
 
-def require_positive(name: str, value: float) -> None:
+def _coerce_name_value(
+    first: object, second: object, helper_name: str
+) -> tuple[str, float]:
+    """Accept both legacy ``(name, value)`` and shared ``(value, name)`` order."""
+    if isinstance(first, str) and isinstance(second, int | float):
+        return first, float(second)
+    if isinstance(second, str) and isinstance(first, int | float):
+        return second, float(first)
+    raise TypeError(
+        f"{helper_name} expects (name: str, value: number) or "
+        "(value: number, name: str)"
+    )
+
+
+def require_positive(name: str | float, value: float | str) -> None:
     """Assert that *value* is strictly positive.
 
     Args:
-        name: Human-readable parameter name for error messages.
-        value: The numeric value to check.
+        name: Human-readable parameter name, or the numeric value when using
+            the shared ``(value, name)`` call order.
+        value: Numeric value to check, or the parameter name when using the
+            shared ``(value, name)`` call order.
 
     Raises:
         PreconditionError: If *value* <= 0.
     """
-    if value <= 0.0:
-        raise PreconditionError(f"{name} must be positive, got {value!r}", value)
+    parameter_name, numeric_value = _coerce_name_value(name, value, "require_positive")
+    if numeric_value <= 0.0:
+        raise PreconditionError(
+            f"{parameter_name} must be positive, got {numeric_value!r}",
+            numeric_value,
+        )
 
 
 def require_nonnegative(name: str, value: float) -> None:

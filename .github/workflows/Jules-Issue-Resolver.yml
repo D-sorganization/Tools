@@ -207,7 +207,7 @@ jobs:
 
           # Poll for completion
           MAX_WAIT=1800
-          POLL_INTERVAL=30
+          POLL_INTERVAL=300
           ELAPSED=0
 
           while [ $ELAPSED -lt $MAX_WAIT ]; do

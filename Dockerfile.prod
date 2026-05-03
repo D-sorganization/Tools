@@ -24,16 +24,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy dependency files
+# Copy dependency and source files needed for package metadata and wheel builds
 COPY requirements.txt pyproject.toml setup.py ./
+COPY src/ ./src/
 
 # Create wheels directory
 RUN mkdir -p /build/wheels
 
-# Build wheels for all dependencies (excludes dev dependencies)
+# Build wheels for dependencies and the application package.
 RUN pip install --upgrade pip setuptools wheel && \
-    pip wheel --no-cache-dir --no-deps --wheel-dir /build/wheels \
-    -e ".[all]" && \
+    pip wheel --no-cache-dir --wheel-dir /build/wheels -r requirements.txt && \
+    pip wheel --no-cache-dir --no-deps --wheel-dir /build/wheels ".[all]" && \
     rm -rf /build/setup.py /build/pyproject.toml
 
 # Stage 2: Runtime
@@ -68,8 +69,7 @@ COPY --from=builder /build/wheels /tmp/wheels
 
 # Install wheels (no build step needed)
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir --no-index --find-links /tmp/wheels \
-    -e /tmp/wheels/* && \
+    pip install --no-cache-dir --no-index --find-links /tmp/wheels ud-tools && \
     rm -rf /tmp/wheels
 
 # Copy only source code and necessary files
@@ -77,15 +77,12 @@ COPY --chown=appuser:appuser src/ ./src/
 COPY --chown=appuser:appuser setup.py pyproject.toml ./
 COPY --chown=appuser:appuser .env.example ./.env.example
 
-# Install package (wheels already installed, so this just registers entry points)
-RUN pip install --no-deps -e .
-
 # Switch to non-root user
 USER appuser
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python3 -c "import requests; requests.get('http://localhost:5000/api/health', timeout=5)" || exit 1
+    CMD python3 -c "import urllib.request; urllib.request.urlopen('http://localhost:5000/api/health', timeout=5).read()" || exit 1
 
 # Expose Flask default port
 EXPOSE 5000
