@@ -42,9 +42,9 @@ const initialState: DataProcessorState = {
 
 function copyOwnRowProperties(row: DataRow): DataRow {
   const newRow: DataRow = {};
-  // ⚡ Bolt Optimization: Replaced for...in loop with Object.keys() + for loop.
-  // The previous for...in optimization was surprisingly slower due to prototype chain crawling.
-  // Object.keys() natively filters own properties and is significantly faster despite the array allocation.
+  // ⚡ Bolt Optimization: Use Object.keys() combined with a standard for loop instead of for...in.
+  // This natively filters own properties and is significantly faster than for...in combined with
+  // Object.prototype.hasOwnProperty.call() because it avoids prototype chain crawling.
   const keys = Object.keys(row);
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
