@@ -260,6 +260,7 @@ export function smoothAngles(
   const smoothed = new Array<number>(len);
   const leftHalf = Math.floor(windowSize / 2);
   const rightHalf = Math.ceil(windowSize / 2);
+  const middleWindowSpan = leftHalf + rightHalf;
 
   // Left edge (bounds checking needed for start)
   for (let i = 0; i < leftHalf; i++) {
@@ -280,7 +281,7 @@ export function smoothAngles(
     for (let j = start; j < end; j++) {
       sum += angleHistory[j];
     }
-    smoothed[i] = sum / windowSize;
+    smoothed[i] = sum / middleWindowSpan;
   }
 
   // Right edge (bounds checking needed for end)
