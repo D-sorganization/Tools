@@ -16,7 +16,7 @@ from typing import Any
 from .rest_api_types import APIRequest, APIResponse, HTTPMethod, Route
 
 logger = logging.getLogger(__name__)
-MAX_MESH_UPLOAD_BYTES = 10 * 1024 * 1024
+MAX_MESH_UPLOAD_BYTES = 50 * 1024 * 1024  # 50 MiB — closes #2479
 ALLOWED_MESH_SUFFIXES = {".stl", ".obj", ".ply", ".off", ".dae", ".glb", ".gltf"}
 
 
@@ -685,13 +685,21 @@ class ModelGenerationAPI:
         except ValueError as e:
             return APIResponse.error(str(e), 413)
 
+        # Derive the correct file suffix from the filename so trimesh uses the
+        # right loader (OBJ, PLY, GLB, etc.).  Fall back to .stl for unknown types.
+        _filename = str(body.get("filename") or "")
+        _suffix = Path(_filename).suffix.lower() if _filename else ".stl"
+        if _suffix not in ALLOWED_MESH_SUFFIXES:
+            _suffix = ".stl"
+
         # Try to use trimesh for mesh-based inertia
         temp_path = ""
         try:
             import trimesh
 
-            # Save to temp file
-            with tempfile.NamedTemporaryFile(suffix=".stl", delete=False) as f:
+            # Save to temp file; delete=False so trimesh can re-open it by path.
+            # The finally block below guarantees cleanup on every exit path.
+            with tempfile.NamedTemporaryFile(suffix=_suffix, delete=False) as f:
                 f.write(mesh_content)
                 temp_path = f.name
 
