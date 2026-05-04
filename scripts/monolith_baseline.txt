@@ -92,6 +92,7 @@ src/shared/python/data_processing/tests/test_processor.py
 src/shared/python/gui_launcher/launcher.py
 src/shared/python/humanoid_character_builder/core/anthropometry.py
 src/shared/python/humanoid_character_builder/core/segment_definitions.py
+src/shared/python/humanoid_character_builder/generators/_makehuman_generator.py
 src/shared/python/humanoid_character_builder/generators/urdf_generator.py
 src/shared/python/humanoid_character_builder/interfaces/api.py
 src/shared/python/humanoid_character_builder/mesh/collision_generator.py
