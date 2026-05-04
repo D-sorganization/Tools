@@ -21,6 +21,17 @@ logger = logging.getLogger(__name__)
 _MAKEHUMAN_MODIFIER_RE = re.compile(r"^[A-Za-z0-9_./-]+$")
 
 
+def _single_quoted_python_literal(value: str) -> str:
+    """Serialize a string as a Python literal without exposing raw quote joins."""
+    escaped = (
+        value.replace("\\", "\\\\")
+        .replace("'", "\\'")
+        .replace("\r", "\\r")
+        .replace("\n", "\\n")
+    )
+    return f"'{escaped}'"
+
+
 class MakeHumanMeshGenerator(MeshGeneratorInterface):
     """
     Generate meshes using MakeHuman.
@@ -159,6 +170,7 @@ class MakeHumanMeshGenerator(MeshGeneratorInterface):
         assert modifiers is not None, "modifiers must be provided"
         self._validate_makehuman_script_inputs(modifiers, output_dir)
         export_path = str((output_dir / "humanoid.obj").resolve())
+        export_path_literal = _single_quoted_python_literal(export_path)
         script = f"""
 import mh
 import human
@@ -174,7 +186,7 @@ def generate_human():
         except Exception:
             pass
 
-    export_path = {export_path!r}
+    export_path = {export_path_literal}
     export.exportObj(h, export_path, config={{
         'exportGroups': True,
         'helper': False,
