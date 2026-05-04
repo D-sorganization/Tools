@@ -15,6 +15,8 @@ from pathlib import Path  # noqa: E402
 from typing import Any  # noqa: E402
 
 import pandas as pd
+from safe_pandas_eval import log_formula_rejected, validate_pandas_formula
+
 from contracts import require
 
 logger = logging.getLogger(__name__)
@@ -23,6 +25,12 @@ SUPPORTED_FILTER_TYPES = {"butterworth", "moving_average", "median", "savgol"}
 
 def _eval_with_optional_numexpr(df: pd.DataFrame, expression: str) -> pd.Series:
     """Prefer numexpr when present but keep formula evaluation functional without it."""
+
+    try:
+        validate_pandas_formula(expression, allowed_columns=df.columns)
+    except ValueError as error:
+        log_formula_rejected(expression, error)
+        raise
 
     try:
         return df.eval(expression, engine="numexpr")
@@ -265,6 +273,7 @@ class DataProcessor:
         self._validate_filter_contract(filter_type, window_size)
         df = self.dataframe
         selected_columns = self._resolve_filter_columns(df, columns)
+        effective_sample_rate = self._resolve_sample_rate(df, filter_type, sample_rate)
         self._apply_filter_impl(
             df=df,
             filter_type=filter_type,
@@ -272,7 +281,7 @@ class DataProcessor:
             cutoff=cutoff,
             order=order,
             window_size=window_size,
-            sample_rate=sample_rate,
+            sample_rate=effective_sample_rate,
         )
         self._df = df
         self._history.append(
@@ -299,6 +308,20 @@ class DataProcessor:
         if not selected_columns:
             raise ValueError("No valid columns to filter")
         return selected_columns
+
+    def _resolve_sample_rate(
+        self, df: pd.DataFrame, filter_type: str, sample_rate: float
+    ) -> float:
+        """Use detected timestamp spacing for Butterworth filters when available."""
+        if filter_type != "butterworth":
+            return sample_rate
+        try:
+            time_column = self._detect_time_column(df)
+        except ValueError:
+            return sample_rate
+        intervals = pd.Series(df[time_column]).diff().dropna()
+        median_interval = float(intervals.median()) if not intervals.empty else 0.0
+        return 1.0 / median_interval if median_interval > 0.0 else sample_rate
 
     def _apply_filter_impl(
         self,
@@ -340,7 +363,6 @@ class DataProcessor:
         for column in columns:
             values = df[column].values.astype(float)
             if filter_type == "butterworth":
-                sample_rate = 1000
                 nyquist = sample_rate / 2.0
                 if cutoff >= nyquist:
                     raise ValueError(

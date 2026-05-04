@@ -18,6 +18,7 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+from safe_pandas_eval import log_formula_rejected, validate_pandas_formula
 from scipy.signal import butter, filtfilt, medfilt, savgol_filter
 
 from ..calculators.base import BaseCalculationEngine
@@ -38,6 +39,12 @@ UTC = timezone.utc  # noqa: UP017 - Python 3.10 lacks datetime.UTC.
 
 def _eval_with_optional_numexpr(df: pd.DataFrame, expression: str) -> pd.Series:
     """Prefer numexpr when available but preserve the optional dependency contract."""
+
+    try:
+        validate_pandas_formula(expression, allowed_columns=df.columns)
+    except ValueError as error:
+        log_formula_rejected(expression, error)
+        raise
 
     try:
         return df.eval(expression, engine="numexpr")
@@ -523,8 +530,8 @@ class DataProcessorEngine(BaseCalculationEngine):
                 f"Fit type '{fit_type.value}' not yet implemented"
             )
 
-        ss_res = np.sum((y - f) ** 2)
-        ss_tot = np.sum((y - np.mean(y)) ** 2)
+        ss_res: float = float(np.sum((y - f) ** 2))
+        ss_tot: float = float(np.sum((y - np.mean(y)) ** 2))
         r2 = 1 - ss_res / ss_tot if ss_tot != 0 else 0.0
         return FitResult(fit_type.value, list(c), float(r2), eq, f, y - f)
 
