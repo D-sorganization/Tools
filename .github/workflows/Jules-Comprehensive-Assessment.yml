@@ -1,19 +1,40 @@
 name: Jules Comprehensive Assessment
 
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │ BLAST RADIUS DOCUMENTATION — Jules Comprehensive Assessment                │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CAN DO:                                                  │
+# │  • Run multi-dimensional assessment (A–O criteria) across the codebase     │
+# │  • Commit the assessment report to docs/assessments/ on main               │
+# │  • Open GitHub issues for each criterion below threshold                   │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CANNOT DO:                                               │
+# │  • Modify application source code — assessment and report writing only     │
+# │  • Create PRs (assessment report committed directly to docs/)              │
+# │  • Delete branches or trigger other workflows                              │
+# │                                                                             │
+# │ APPROVAL GATES:                                                             │
+# │  • Scheduled (0 8 * * 0,4) or manual dispatch — not triggered on push     │
+# │  • Report commit scoped to docs/assessments/ path only                   │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
 on:
   schedule:
     - cron: "0 8 * * 0,4" # Every 3 days at 5 AM PST (10 UTC) - cost optimized
   workflow_dispatch:
 
+# Least-privilege top level: no write access by default.
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
+  contents: read
 
 jobs:
   comprehensive-assessment:
     name: Comprehensive Assessment & Audit
     runs-on: ubuntu-latest
+    # Grant write only at this job level.
+    permissions:
+      contents: write  # commit assessment report to docs/assessments/
+      issues: write    # open tracking issues for below-threshold criteria
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -1,5 +1,26 @@
 name: Jules Sentinel (Security Audit)
 
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │ BLAST RADIUS DOCUMENTATION — Jules Sentinel                                │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CAN DO:                                                  │
+# │  • Run pip-audit, bandit, and semgrep scanners (read-only analysis)        │
+# │  • Invoke Jules AI to interpret findings (READ-ONLY audit mode)            │
+# │  • Commit updated .jules/sentinel.md journal to main                      │
+# │  • Upload SARIF results to GitHub security-events (code scanning)         │
+# │  • Create GitHub issues for HIGH/MEDIUM severity findings                 │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CANNOT DO:                                               │
+# │  • Modify application source code — audit and document only               │
+# │  • Create PRs (automationMode: AUTO_CREATE_PR is explicitly disabled)      │
+# │  • Auto-merge or delete branches                                           │
+# │                                                                             │
+# │ APPROVAL GATES:                                                             │
+# │  • Scheduled/dispatched only via Control Tower                             │
+# │  • Concurrency lock prevents simultaneous sentinel runs per repo           │
+# │  • Jules session created without AUTO_CREATE_PR to prevent PR cascade     │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
 on:
   workflow_call:
   workflow_dispatch:
@@ -7,11 +28,9 @@ on:
   # schedule:
   #   - cron: "0 8 * * 0,4"  # Weekly on Mondays at 1:30 AM UTC (overnight window)
 
+# Least-privilege top level: no write access by default.
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
-  security-events: write
+  contents: read
 
 # HARDENING: Prevent concurrent runs
 concurrency:
@@ -61,6 +80,12 @@ jobs:
   security-audit:
     needs: pick-runner
     runs-on: self-hosted
+    # Grant write only at this job level.
+    # Note: pull-requests: write intentionally omitted — Sentinel is read-only audit.
+    permissions:
+      contents: write          # commit .jules/sentinel.md journal to main
+      issues: write            # open tracking issues for HIGH/MEDIUM findings
+      security-events: write   # upload SARIF to GitHub code-scanning
     steps:
       - uses: actions/checkout@v4
         with:

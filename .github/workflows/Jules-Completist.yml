@@ -1,19 +1,41 @@
 name: Jules Completist (Incomplete Implementation Auditor)
 
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │ BLAST RADIUS DOCUMENTATION — Jules Completist                              │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CAN DO:                                                  │
+# │  • Scan for TODO/FIXME, stub functions, and incomplete implementations     │
+# │  • Create GitHub issues for each incomplete item found                     │
+# │  • Optionally push completion commits to a jules/completist-* branch       │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CANNOT DO:                                               │
+# │  • Push directly to main or any protected branch                           │
+# │  • Auto-merge any PR — human review required                               │
+# │  • Delete branches or trigger other workflows                              │
+# │                                                                             │
+# │ APPROVAL GATES:                                                             │
+# │  • Scheduled (0 8 * * 0,4) or dispatched via Control Tower                │
+# │  • Issues are created for review before any code changes are merged        │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
 on:
   workflow_call:
   workflow_dispatch:
   schedule:
     - cron: "0 8 * * 0,4" # Daily at 4 AM UTC
 
+# Least-privilege top level: no write access by default.
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
+  contents: read
 
 jobs:
   audit:
     runs-on: ubuntu-latest
+    # Grant write only at this job level.
+    permissions:
+      contents: write      # push completist fixes to jules/completist-* branch
+      pull-requests: write # open PR for completist fixes
+      issues: write        # create tracking issues for incomplete items
     steps:
       - uses: actions/checkout@v4
 
