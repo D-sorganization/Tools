@@ -20,6 +20,8 @@ mesh generators.
 from __future__ import annotations  # noqa: E402, F404
 
 import logging  # noqa: E402
+import math  # noqa: E402
+import re  # noqa: E402
 from abc import ABC, abstractmethod  # noqa: E402
 from dataclasses import dataclass, field  # noqa: E402
 from enum import Enum  # noqa: E402
@@ -29,6 +31,7 @@ from typing import Any  # noqa: E402
 from humanoid_character_builder.core.body_parameters import BodyParameters  # noqa: E402
 
 logger = logging.getLogger(__name__)
+_MAKEHUMAN_MODIFIER_RE = re.compile(r"^[A-Za-z0-9_./-]+$")
 
 
 class MeshGeneratorBackend(Enum):
@@ -173,6 +176,8 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
             )
 
         output_dir = Path(output_dir)
+        if output_dir.exists() and not output_dir.is_dir():
+            raise ValueError("output_dir must be a directory")
         visual_dir = output_dir / "visual"
         collision_dir = output_dir / "collision"
         visual_dir.mkdir(parents=True, exist_ok=True)
@@ -221,6 +226,7 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
 
         # Create MakeHuman script
         script_content = self._create_makehuman_script(modifiers, visual_dir)
+        script_path = ""
 
         with tempfile.NamedTemporaryFile(
             mode="w", suffix=".py", delete=False
@@ -258,6 +264,8 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
         """Create a MakeHuman Python script for mesh generation."""
         if not (modifiers is not None):
             raise ValueError("modifiers must be provided")
+        self._validate_makehuman_script_inputs(modifiers, output_dir)
+        export_path = str((output_dir / "humanoid.obj").resolve())
         script = f"""
 import mh
 import human
@@ -273,10 +281,10 @@ def generate_human():
         try:
             h.setDetail(key, value)
         except Exception as exc:  # noqa: BLE001
-            logger.warning(f"Failed to set modifier {{key}}={{value}}: {{exc}}")
+            pass
 
     # Export as OBJ with vertex groups
-    export_path = "{output_dir}/humanoid.obj"
+    export_path = {export_path!r}
     export.exportObj(h, export_path, config={{
         'exportGroups': True,
         'helper': False,
@@ -286,6 +294,20 @@ def generate_human():
 generate_human()
 """
         return script
+
+    @staticmethod
+    def _validate_makehuman_script_inputs(
+        modifiers: dict[str, float], output_dir: Path
+    ) -> None:
+        """Validate generated-script inputs before invoking MakeHuman."""
+        output_path = output_dir.resolve()
+        if output_path.exists() and not output_path.is_dir():
+            raise ValueError("output_dir must resolve to a directory")
+        for key, value in modifiers.items():
+            if not isinstance(key, str) or not _MAKEHUMAN_MODIFIER_RE.fullmatch(key):
+                raise ValueError(f"Invalid MakeHuman modifier key: {key!r}")
+            if not isinstance(value, int | float) or not math.isfinite(float(value)):
+                raise ValueError(f"Invalid MakeHuman modifier value for {key!r}")
 
     def _generate_from_presets(
         self,

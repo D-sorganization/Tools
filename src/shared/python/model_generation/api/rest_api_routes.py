@@ -16,6 +16,8 @@ from typing import Any
 from .rest_api_types import APIRequest, APIResponse, HTTPMethod, Route
 
 logger = logging.getLogger(__name__)
+MAX_MESH_UPLOAD_BYTES = 10 * 1024 * 1024
+ALLOWED_MESH_SUFFIXES = {".stl", ".obj", ".ply", ".off", ".dae", ".glb", ".gltf"}
 
 
 class ModelGenerationAPI:
@@ -675,7 +677,16 @@ class ModelGenerationAPI:
         if not mass and not density:
             return APIResponse.error("Must provide either 'mass' or 'density'")
 
+        try:
+            self._validate_mesh_upload(
+                mesh_content,
+                filename=str(body.get("filename") or ""),
+            )
+        except ValueError as e:
+            return APIResponse.error(str(e), 413)
+
         # Try to use trimesh for mesh-based inertia
+        temp_path = ""
         try:
             import trimesh
 
@@ -695,9 +706,6 @@ class ModelGenerationAPI:
                 volume = mesh.volume
                 inertia_tensor = mesh.moment_inertia * (mass / mesh.mass)
                 calculated_mass = mass
-
-            # Clean up
-            Path(temp_path).unlink()
 
             return APIResponse.ok(
                 {
@@ -720,8 +728,28 @@ class ModelGenerationAPI:
                 "trimesh library not available for mesh-based inertia calculation",
                 501,
             )
-        except (PermissionError, OSError) as e:
+        except (PermissionError, OSError, ValueError, TypeError) as e:
             return APIResponse.error(f"Mesh processing failed: {e}")
+        except Exception:
+            logger.warning("Mesh parser failed", exc_info=True)
+            return APIResponse.error("Mesh processing failed")
+        finally:
+            if temp_path:
+                Path(temp_path).unlink(missing_ok=True)
+
+    @staticmethod
+    def _validate_mesh_upload(mesh_content: bytes, filename: str | None = None) -> None:
+        """Validate mesh upload metadata and size before parser handoff."""
+        if not mesh_content:
+            raise ValueError("Mesh file is empty")
+        if len(mesh_content) > MAX_MESH_UPLOAD_BYTES:
+            raise ValueError(
+                f"Mesh file exceeds {MAX_MESH_UPLOAD_BYTES // (1024 * 1024)} MiB limit"
+            )
+        if filename:
+            suffix = Path(filename).suffix.lower()
+            if suffix not in ALLOWED_MESH_SUFFIXES:
+                raise ValueError(f"Unsupported mesh file type: {suffix}")
 
     # ============================================================
     # Library Handlers

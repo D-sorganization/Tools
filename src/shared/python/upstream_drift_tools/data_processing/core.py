@@ -20,6 +20,8 @@ import numpy as np
 import pandas as pd
 from scipy.signal import butter, filtfilt, medfilt, savgol_filter
 
+from safe_pandas_eval import log_formula_rejected, validate_pandas_formula
+
 from ..calculators.base import BaseCalculationEngine
 from .exceptions import (
     ColumnNotFoundError,
@@ -38,6 +40,12 @@ UTC = timezone.utc  # noqa: UP017 - Python 3.10 lacks datetime.UTC.
 
 def _eval_with_optional_numexpr(df: pd.DataFrame, expression: str) -> pd.Series:
     """Prefer numexpr when available but preserve the optional dependency contract."""
+
+    try:
+        validate_pandas_formula(expression, allowed_columns=df.columns)
+    except ValueError as error:
+        log_formula_rejected(expression, error)
+        raise
 
     try:
         return df.eval(expression, engine="numexpr")

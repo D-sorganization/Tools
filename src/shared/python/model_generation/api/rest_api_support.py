@@ -10,6 +10,9 @@ from typing import Any
 
 from model_generation.api.rest_api_contracts import APIRequest, APIResponse
 
+MAX_MESH_UPLOAD_BYTES = 10 * 1024 * 1024
+ALLOWED_MESH_SUFFIXES = {".stl", ".obj", ".ply", ".off", ".dae", ".glb", ".gltf"}
+
 
 def ensure_request(request: APIRequest | None) -> APIRequest:
     """Validate that a framework-neutral request object is present."""
@@ -86,6 +89,24 @@ def temporary_payload_file(
         yield temp_path
     finally:
         temp_path.unlink(missing_ok=True)
+
+
+def validate_mesh_upload(
+    *,
+    payload: bytes,
+    filename: str | None = None,
+) -> None:
+    """Validate mesh upload metadata and size before parser handoff."""
+    if not payload:
+        raise ValueError("Mesh file is empty")
+    if len(payload) > MAX_MESH_UPLOAD_BYTES:
+        raise ValueError(
+            f"Mesh file exceeds {MAX_MESH_UPLOAD_BYTES // (1024 * 1024)} MiB limit"
+        )
+    if filename:
+        suffix = Path(filename).suffix.lower()
+        if suffix not in ALLOWED_MESH_SUFFIXES:
+            raise ValueError(f"Unsupported mesh file type: {suffix}")
 
 
 def inertia_payload(inertia: Any) -> dict[str, float]:

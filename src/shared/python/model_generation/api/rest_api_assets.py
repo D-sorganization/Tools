@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 from model_generation.api.rest_api_contracts import APIRequest, APIResponse
@@ -12,7 +13,10 @@ from model_generation.api.rest_api_support import (
     request_body,
     request_content,
     temporary_payload_file,
+    validate_mesh_upload,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class AssetLibraryEditorRoutesMixin:
@@ -61,6 +65,14 @@ class AssetLibraryEditorRoutesMixin:
             return APIResponse.error("Must provide either 'mass' or 'density'")
 
         try:
+            validate_mesh_upload(
+                payload=mesh_content,
+                filename=str(body.get("filename") or ""),
+            )
+        except ValueError as error:
+            return APIResponse.error(str(error), 413)
+
+        try:
             import trimesh
         except ImportError:
             return APIResponse.error(
@@ -77,8 +89,11 @@ class AssetLibraryEditorRoutesMixin:
                 inertia_tensor, calculated_mass = self._mesh_inertia(
                     mesh, mass, density
                 )
-        except (PermissionError, OSError) as error:
+        except (PermissionError, OSError, ValueError, TypeError) as error:
             return APIResponse.error(f"Mesh processing failed: {error}")
+        except Exception:
+            logger.warning("Mesh parser failed", exc_info=True)
+            return APIResponse.error("Mesh processing failed")
 
         return APIResponse.ok(
             {

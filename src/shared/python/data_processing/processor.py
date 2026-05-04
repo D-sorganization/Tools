@@ -16,6 +16,7 @@ from typing import Any  # noqa: E402
 
 import pandas as pd
 from contracts import require
+from safe_pandas_eval import log_formula_rejected, validate_pandas_formula
 
 logger = logging.getLogger(__name__)
 SUPPORTED_FILTER_TYPES = {"butterworth", "moving_average", "median", "savgol"}
@@ -23,6 +24,12 @@ SUPPORTED_FILTER_TYPES = {"butterworth", "moving_average", "median", "savgol"}
 
 def _eval_with_optional_numexpr(df: pd.DataFrame, expression: str) -> pd.Series:
     """Prefer numexpr when present but keep formula evaluation functional without it."""
+
+    try:
+        validate_pandas_formula(expression, allowed_columns=df.columns)
+    except ValueError as error:
+        log_formula_rejected(expression, error)
+        raise
 
     try:
         return df.eval(expression, engine="numexpr")
