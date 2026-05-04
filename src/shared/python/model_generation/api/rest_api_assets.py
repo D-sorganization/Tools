@@ -47,7 +47,9 @@ class AssetLibraryEditorRoutesMixin:
                 "dimensions": dimensions,
                 "inertia": inertia_payload(inertia),
                 "is_positive_definite": inertia.is_positive_definite(),
-                "satisfies_triangle_inequality": inertia.satisfies_triangle_inequality(),
+                "satisfies_triangle_inequality": (
+                    inertia.satisfies_triangle_inequality()
+                ),
             }
         )
 
@@ -314,7 +316,8 @@ class AssetLibraryEditorRoutesMixin:
             suffix = f" ({label})" if label else ""
             dimension_label = "dimension" if expected_count == 1 else "dimensions"
             raise ValueError(
-                f"{shape.capitalize()} requires {expected_count} {dimension_label}{suffix}"
+                f"{shape.capitalize()} requires "
+                f"{expected_count} {dimension_label}{suffix}"
             )
         return factory()
 

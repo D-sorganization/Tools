@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.123                                    |
-| **Last Spec Update**    | 2026-05-03                                 |
+| **Spec Version**        | 1.1.124                                    |
+| **Last Spec Update**    | 2026-05-04                                 |
 
 ## 2. Purpose & Mission
 
@@ -136,6 +136,29 @@ Tools/
 | Rust Kernels             | `rust_core/`                                                                           | High-performance mathematical operations, including standard atmosphere calculations that require finite, non-negative altitudes and a canonical full-precision universal gas constant                                                                                                                              |
 | MATLAB Integration       | `matlab/`                                                                              | Wrapped MATLAB scientific code                                                                                                                                                                                                                                                                                      |
 | Fleet Theme System       | `src/python/shared_utilities/theme/`                                                   | Consistent UI theming across tools                                                                                                                                                                                                                                                                                  |
+
+### Production-Readiness Hardening
+
+- Generated data-processing batch scripts serialize input glob patterns and
+  output directories with Python literal-safe formatting, write CSV outputs via
+  temporary files followed by atomic replace, aggregate per-file failures, and
+  exit non-zero when any file fails. Parallel generated scripts bound worker
+  count by default and allow `DATA_PROCESSOR_BATCH_MAX_WORKERS` overrides.
+- Shared pandas formula entry points validate expressions before calling
+  `DataFrame.eval`. The allowlist accepts column names, numeric/boolean
+  constants, arithmetic, boolean operators, and comparisons; it rejects function
+  calls, attribute access, indexing, unknown names, overly long formulas, overly
+  complex ASTs, and unbounded exponent expressions. `numexpr` remains an
+  optional accelerator with the existing Python-engine fallback.
+- Model-generation mesh inertia upload handlers reject empty payloads,
+  unsupported mesh filename suffixes, and payloads above the configured 10 MiB
+  limit before parser handoff. Temporary mesh files are deleted in cleanup
+  paths, and malformed parser failures are normalized into API error responses.
+- MakeHuman humanoid mesh generation uses safely serialized export paths inside
+  generated scripts, validates modifier keys and finite numeric values before
+  script creation, rejects non-directory output paths, and keeps
+  `mesh_generator_makehuman.py` as a compatibility shim over the extracted
+  `_makehuman_generator.py` implementation.
 
 ## 5. Desired Functionality
 
@@ -483,6 +506,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-04 | 1.1.124 | Documented production-readiness hardening for generated data-processing batch scripts, shared pandas formula allowlist validation, model-generation mesh upload size and filename checks with cleanup, and MakeHuman generated-script serialization plus the `mesh_generator_makehuman.py` compatibility shim.                                                                                                                                                                                                                                                        |
 | 2026-04-26 | 1.1.111 | Improved accessibility for the calculator clear button's soft confirm state. Added `aria-live="polite"` to the parent row and dynamically toggled the `aria-label` between "Clear all fields" and "Confirm clear all fields" to keep screen reader users informed of the required secondary action.                                                                                                                                                                                                                                                                 |
 | 2026-04-25 | 1.1.107 | Fixed StrEnum import compatibility for Python 3.10 by routing `steam_engine_calculator` and `video_processor` API modules through the existing `utils.compatibility` backport facade, eliminating import-time failures on the 3.10 CI interpreter.                                                                                                                                                                                                                                                                                                                  |
 | 2026-04-25 | 1.1.106 | Added dynamic focus shifting to inline form validation within the Unit Converter app's Custom Units modal. This prevents keyboard focus traps by focusing the first invalid input (`.focus()`) and marking it with `aria-invalid="true"`.                                                                                                                                                                                                                                                                                                                           |

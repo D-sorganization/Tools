@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-import math
 import ast
+import math
 from pathlib import Path
 
 import pytest
-
 from humanoid_character_builder.generators._makehuman_generator import (
     MakeHumanMeshGenerator,
 )

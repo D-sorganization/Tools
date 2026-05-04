@@ -18,9 +18,8 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-from scipy.signal import butter, filtfilt, medfilt, savgol_filter
-
 from safe_pandas_eval import log_formula_rejected, validate_pandas_formula
+from scipy.signal import butter, filtfilt, medfilt, savgol_filter
 
 from ..calculators.base import BaseCalculationEngine
 from .exceptions import (

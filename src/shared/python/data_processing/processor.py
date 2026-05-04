@@ -15,8 +15,9 @@ from pathlib import Path  # noqa: E402
 from typing import Any  # noqa: E402
 
 import pandas as pd
-from contracts import require
 from safe_pandas_eval import log_formula_rejected, validate_pandas_formula
+
+from contracts import require
 
 logger = logging.getLogger(__name__)
 SUPPORTED_FILTER_TYPES = {"butterworth", "moving_average", "median", "savgol"}

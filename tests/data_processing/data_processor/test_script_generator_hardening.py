@@ -5,7 +5,9 @@ import types
 from pathlib import Path
 
 TOOLS_ROOT = Path(__file__).resolve().parents[3]
-DATA_PROCESSOR_ROOT = TOOLS_ROOT / "src" / "data_processing" / "data_processor" / "python"
+DATA_PROCESSOR_ROOT = (
+    TOOLS_ROOT / "src" / "data_processing" / "data_processor" / "python"
+)
 sys.path.insert(0, str(DATA_PROCESSOR_ROOT))
 
 from data_processor.core.script_generator import ProcessingPipeline, ScriptGenerator
