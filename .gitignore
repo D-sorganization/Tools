@@ -56,6 +56,13 @@ dmypy.json
 # Binary documents (should not be in VCS)
 *.docx
 
+# Internal/vendor reference artifacts (Issue #2477)
+# PDFs and Excel files must not be committed to this public repo
+*.pdf
+*.PDF
+*.xlsx
+*.xls
+
 # Temp output files (explicitly listed for clarity)
 mypy_output.txt
 mypy_errors_temp.txt
