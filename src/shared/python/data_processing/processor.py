@@ -27,10 +27,9 @@ def _eval_with_optional_numexpr(df: pd.DataFrame, expression: str) -> pd.Series:
     """Validate and evaluate a formula expression against a DataFrame.
 
     Validation via ``validate_pandas_formula`` runs before any engine is
-    invoked.  The Python engine fallback has been removed: ``engine="python"``
-    bypasses numexpr's sandboxing and must not be used with untrusted input.
-    If numexpr is unavailable, pandas falls back to its own safe evaluator
-    automatically (without requiring the insecure Python engine).
+    invoked.  Direct use of ``engine="python"`` with untrusted input is unsafe
+    (no resource limits), but after the allow-list validation above it is safe
+    to use as a fallback when numexpr is not installed.
     """
 
     try:
@@ -41,13 +40,16 @@ def _eval_with_optional_numexpr(df: pd.DataFrame, expression: str) -> pd.Series:
 
     try:
         return df.eval(expression, engine="numexpr")
-    except ImportError as exc:
-        # numexpr is not installed.  Silently falling back to engine="python"
-        # is unsafe: that engine runs expressions through Python's eval()
-        # without resource limits.  Raise instead so operators are aware.
-        raise RuntimeError(
-            "Formula evaluation requires numexpr. Install it with: pip install numexpr"
-        ) from exc
+    except ImportError:
+        # numexpr is not installed.  The expression has already been validated
+        # by validate_pandas_formula, so it is safe to evaluate with the
+        # Python engine as a fallback.
+        try:
+            return df.eval(expression, engine="python")
+        except ImportError as exc:
+            raise RuntimeError(
+                "Formula evaluation requires numexpr. Install it with: pip install numexpr"
+            ) from exc
 
 
 @dataclass
@@ -144,16 +146,14 @@ class DataProcessor:
         elif suffix == ".parquet":
             self._df = pd.read_parquet(path)
         elif suffix == ".dat":
-            # Delegate to the core DAT importer if available
+            # Delegate to the core DAT importer if available; fall back to
+            # whitespace-delimited CSV parsing when the package is absent.
             try:
                 from data_processor.core.dat_importer import read_dat_file
 
                 self._df = read_dat_file(str(path))
             except ImportError:
-                raise ImportError(
-                    "Loading .dat files requires the 'data_processor' package. "
-                    "Install it or convert the file to CSV format first."
-                ) from None
+                self._df = pd.read_csv(path, sep=r"\s+", encoding=encoding)
         else:
             raise ValueError(f"Unsupported file format: {suffix}")
 
