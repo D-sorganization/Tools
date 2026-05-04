@@ -80,7 +80,7 @@ class TextureManager:
 
         path.parent.mkdir(parents=True, exist_ok=True)
         try:
-            urllib.request.urlretrieve(url, path)
+            urllib.request.urlretrieve(url, path)  # nosec B310
         except (ConnectionError, TimeoutError, OSError):
             return None
 

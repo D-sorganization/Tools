@@ -95,7 +95,7 @@ class TestDataReader:
         from upstream_drift_tools.data_processing.io import DataReader
 
         with pytest.raises(ValueError, match="Unsupported or undetected"):
-            DataReader.read_file("/tmp/file.xyz_unknown_ext")
+            DataReader.read_file("/tmp/file.xyz_unknown_ext")  # nosec B108
 
     def test_read_parquet_no_pyarrow_raises(self):
         """If PYARROW_AVAILABLE is False, reading parquet should raise ImportError."""
@@ -106,7 +106,7 @@ class TestDataReader:
         try:
             io_mod.PYARROW_AVAILABLE = False
             with pytest.raises(ImportError, match="PyArrow"):
-                DataReader.read_file("/tmp/fake.parquet")
+                DataReader.read_file("/tmp/fake.parquet")  # nosec B108
         finally:
             io_mod.PYARROW_AVAILABLE = original
 
@@ -189,7 +189,7 @@ class TestDataWriter:
         try:
             io_mod.PYARROW_AVAILABLE = False
             with pytest.raises(ImportError, match="PyArrow"):
-                DataWriter.write_file(sample_df, "/tmp/fake.parquet")
+                DataWriter.write_file(sample_df, "/tmp/fake.parquet")  # nosec B108
         finally:
             io_mod.PYARROW_AVAILABLE = original
 
@@ -321,7 +321,7 @@ class TestDataReaderAdditionalFormats:
         try:
             io_mod.SCIPY_AVAILABLE = False
             with pytest.raises(ImportError, match="SciPy"):
-                DataReader.read_file("/tmp/fake.mat")
+                DataReader.read_file("/tmp/fake.mat")  # nosec B108
         finally:
             io_mod.SCIPY_AVAILABLE = original
 

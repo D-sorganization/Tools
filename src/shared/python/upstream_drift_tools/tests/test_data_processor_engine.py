@@ -153,14 +153,14 @@ class TestExportData:
     def test_no_data_raises(self):
         engine = DataProcessorEngine()
         with pytest.raises(DataNotLoadedError):
-            engine.export_data("/tmp/out.csv")
+            engine.export_data("/tmp/out.csv")  # nosec B108
 
     def test_export_success(self):
         engine = _make_engine_with_data()
         with patch(
             "upstream_drift_tools.data_processing.core.DataWriter.write_file"
         ) as mock_write:
-            result = engine.export_data("/tmp/out.csv", DataFormat.CSV)
+            result = engine.export_data("/tmp/out.csv", DataFormat.CSV)  # nosec B108
         mock_write.assert_called_once()
         assert result.success
 
@@ -171,7 +171,7 @@ class TestExportData:
             side_effect=OSError("disk full"),
         ):
             with pytest.raises(FileIOError, match="disk full"):
-                engine.export_data("/tmp/out.csv")
+                engine.export_data("/tmp/out.csv")  # nosec B108
 
 
 # ---------------------------------------------------------------------------
