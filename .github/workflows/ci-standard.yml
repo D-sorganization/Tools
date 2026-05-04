@@ -406,7 +406,7 @@ jobs:
             # GUI launcher: data-driven manifest loader (issue #1863)
             "tests/shared/python/gui_launcher/test_manifest_loader.py"
             "tests/shared/python/gui_launcher/test_registry.py"
-            # Notes model coverage (keeps total coverage above 25% floor)
+            # Notes model coverage (keeps total coverage above 60% floor)
             "tests/shared/python/notes/test_models.py"
           )
           # Use `python -m pytest` rather than the `pytest` console script so
@@ -419,9 +419,9 @@ jobs:
           # producing `pytest: error: unrecognized arguments: --cov=.`.
           if [ -s changed_test_files.txt ]; then
             mapfile -t changed_test_files < changed_test_files.txt
-            python -m pytest "${changed_test_files[@]}" "${core_tests[@]}" -m "not live_simulation" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=20
+            python -m pytest "${changed_test_files[@]}" "${core_tests[@]}" -m "not live_simulation" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=60
           else
-            python -m pytest "${core_tests[@]}" -m "not live_simulation" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=20
+            python -m pytest "${core_tests[@]}" -m "not live_simulation" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=60
           fi
 
       - name: Provider-Contract Suite (Exported Packages)
@@ -446,11 +446,11 @@ jobs:
             --cov=src/shared/python/signal_toolkit \
             --cov=src/shared/python/model_generation \
             --cov-report=term \
-            --cov-fail-under=10
+            --cov-fail-under=60
 
           echo "## Provider-Contract Suite (Python ${{ matrix.python-version }})" >> $GITHUB_STEP_SUMMARY
           echo "Packages verified: upstream_drift_tools, signal_toolkit, model_generation, theme" >> $GITHUB_STEP_SUMMARY
-          echo "Coverage gate: ≥10% for upstream_drift_tools + signal_toolkit + model_generation" >> $GITHUB_STEP_SUMMARY
+          echo "Coverage gate: ≥60% for upstream_drift_tools + signal_toolkit + model_generation" >> $GITHUB_STEP_SUMMARY
 
       - name: Coverage Policy Gate
         if: steps.coverage_inputs.outputs.coverage_gate_required == 'true'
