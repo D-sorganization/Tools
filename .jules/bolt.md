@@ -10,3 +10,6 @@
 ## 2024-05-19 - Optimization of Object Property Copying in Tight Loops
 **Learning:** Using a `for...in` loop combined with `Object.prototype.hasOwnProperty.call()` to copy object properties is significantly slower than using `Object.keys()` combined with a standard `for` loop, because `for...in` crawls the entire prototype chain.
 **Action:** When copying own properties of objects inside tight data processing loops, use `Object.keys()` with a standard `for` loop. It natively filters own properties and avoids the overhead of prototype chain traversal and repeated function calls.
+## 2024-05-19 - Optimization of High-Frequency Event Handlers
+**Learning:** Using array iterator methods like `.reduce()` inside event handlers that run per-frame (e.g., 30-60 times a second, like MediaPipe pose detection callbacks) introduces continuous callback allocation overhead and can hurt overall framerate.
+**Action:** Replace iterator methods like `.reduce()`, `.map()`, and `.filter()` with standard `for` loops inside high-frequency real-time event handlers to eliminate callback overhead and minimize garbage collection.

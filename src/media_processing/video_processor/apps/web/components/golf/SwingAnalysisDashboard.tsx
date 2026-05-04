@@ -36,11 +36,18 @@ export default function SwingAnalysisDashboard({
   const handlePoseDetected = useCallback((landmarks: Landmark[]) => {
     if (!videoElement || isAnalyzing) return;
 
+    // ⚡ Bolt: Replace .reduce() with a standard for-loop to eliminate callback overhead in high-frequency event handler
+    let totalVisibility = 0;
+    const len = landmarks.length;
+    for (let i = 0; i < len; i++) {
+      totalVisibility += landmarks[i].visibility || 0;
+    }
+
     const frame: PoseFrame = {
       frameNumber: Math.floor(videoElement.currentTime * fps),
       timestamp: videoElement.currentTime * 1000,
       landmarks,
-      confidence: landmarks.reduce((acc, l) => acc + (l.visibility || 0), 0) / landmarks.length,
+      confidence: totalVisibility / len,
     };
 
     setPoseFrames((prev) => {
