@@ -1,5 +1,23 @@
 name: Jules Assessment Generator (Worker)
 
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │ BLAST RADIUS DOCUMENTATION — Jules Assessment Generator                    │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CAN DO:                                                  │
+# │  • Run code quality / assessment tools and write reports to docs/           │
+# │  • Commit assessment markdown files to main (via git-auto-commit)          │
+# │  • Open issues to track findings                                           │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CANNOT DO:                                               │
+# │  • Modify source code — reports only                                       │
+# │  • Merge PRs or delete branches                                            │
+# │  • Trigger other autonomous workflows                                      │
+# │                                                                             │
+# │ APPROVAL GATES:                                                             │
+# │  • Scheduled/dispatched only via Control Tower — not triggered on push     │
+# │  • Commits are limited to docs/assessments/ path                          │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
 on:
   workflow_call:
   workflow_dispatch:
@@ -7,14 +25,18 @@ on:
   # schedule:
   #   - cron: "0 8 * * 0,4"  # Daily at midnight UTC (overnight window)
 
+# Least-privilege top level: no write access by default.
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
+  contents: read
 
 jobs:
   generate-assessments:
     runs-on: ubuntu-latest
+    # Grant write only at this job level — assessment commits and issue creation
+    # happen here.
+    permissions:
+      contents: write  # commit assessment reports to docs/assessments/
+      issues: write    # open tracking issues for findings
     steps:
       - uses: actions/checkout@v4
         with:

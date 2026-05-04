@@ -1,5 +1,22 @@
 name: Jules Auto-Rebase (Worker)
 
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │ BLAST RADIUS DOCUMENTATION — Jules Auto-Rebase                             │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CAN DO:                                                  │
+# │  • Rebase open PRs that are behind main (force-push to feature branch)     │
+# │  • Apply the "needs-rebase" label to PRs with unresolvable merge conflicts │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CANNOT DO:                                               │
+# │  • Touch main or any protected branch                                       │
+# │  • Merge PRs or create new branches                                         │
+# │  • Delete branches, manage issues, or trigger other workflows               │
+# │                                                                             │
+# │ APPROVAL GATES:                                                             │
+# │  • Dispatched only by Control Tower on a fixed schedule                    │
+# │  • Conflicts are labelled, not resolved — human author must resolve        │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
 # Replaces Jules-Conflict-Fix workflow
 # Automatically rebases PRs that are behind main
 # Labels PRs that have actual merge conflicts for manual resolution
@@ -8,9 +25,9 @@ on:
   workflow_call:
   workflow_dispatch:
 
+# Least-privilege top level: no write access by default.
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
@@ -55,6 +72,11 @@ jobs:
   auto-rebase-prs:
     needs: pick-runner
     runs-on: self-hosted
+    # Grant write only at this job level — rebasing pushes to feature branches
+    # and may add labels. pick-runner needs no write access.
+    permissions:
+      contents: write      # force-push rebased feature branch
+      pull-requests: write # apply labels to conflicted PRs
     steps:
       - name: Checkout
         uses: actions/checkout@v4

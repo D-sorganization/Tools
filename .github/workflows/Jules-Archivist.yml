@@ -1,11 +1,29 @@
 name: Jules Archivist
 
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │ BLAST RADIUS DOCUMENTATION — Jules Archivist                               │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CAN DO:                                                  │
+# │  • Delete remote branches prefixed with "jules/" after they are merged     │
+# │    (git push origin --delete <branch>)                                     │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CANNOT DO:                                               │
+# │  • Delete main, master, or any non-jules/* branch                          │
+# │  • Close or merge pull requests                                             │
+# │  • Commit new code or modify file contents                                 │
+# │                                                                             │
+# │ APPROVAL GATES:                                                             │
+# │  • Only triggered on pull_request.closed+merged (via Control Tower)        │
+# │  • Only targets branches matching "jules/" prefix — other branches ignored │
+# │  • Gracefully skips on API rate-limit errors                               │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
 on:
   workflow_call:
 
-# Grants access to delete remote branches.
+# Least-privilege top level: no write access by default.
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   # Dispatcher: route to self-hosted if available.
@@ -50,6 +68,10 @@ jobs:
   archive-tasks:
     needs: pick-runner
     runs-on: ${{ needs.pick-runner.outputs.runner }}
+    # Grant write only at this job level — branch deletion requires contents: write.
+    # pick-runner needs no write access.
+    permissions:
+      contents: write  # delete merged jules/* branches
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -12,13 +12,24 @@ The usage is *controlled* for the following reasons:
 1. **Explicit consent**: The scripting environment is an opt-in interactive
    console.  Users deliberately type code into it; they are not supplying
    untrusted third-party input.
-2. **Restricted namespace**: The execution namespace is seeded only with
-   vetted scientific libraries (``numpy``, ``math``, optionally ``pandas``
-   and ``scipy``).  It does *not* expose ``os``, ``subprocess``, or
-   ``__builtins__`` in raw form beyond what Python injects by default.
+2. **Restricted namespace**: The execution namespace is seeded with a
+   restricted ``__builtins__`` dict.  Dangerous primitives (``open``,
+   ``exec``, ``eval``, ``compile``, ``breakpoint``) are removed.
+   ``__import__`` is *replaced* with a sandbox-aware wrapper that denies
+   host-process modules (``os``, ``subprocess``, ``sys``, ``socket``, …)
+   while still allowing internal C-extension sub-imports (numpy, scipy, …).
 3. **No web-facing exposure**: This class is never called from a network
    handler.  It is only instantiated by GUI widgets running in-process.
-4. **Bandit suppression**: The ``# nosec B102`` / ``# nosec B307`` markers
+4. **Execution timeout**: Each ``execute()`` call is bounded by
+   ``max_execution_time`` seconds (default 30 s).  On Linux/macOS the
+   timeout is enforced via ``signal.alarm``; on Windows a daemon thread
+   is used to interrupt the main thread.
+5. **Resource limits (Linux only)**: CPU time and virtual-memory ceilings
+   are applied via ``resource.setrlimit`` when the ``resource`` module is
+   available.  On Windows these limits cannot be applied in-process;
+   full process-level sandboxing requires running ``ConsoleEnvironment``
+   inside a subprocess (e.g. via ``multiprocessing`` with a ``Pool``).
+6. **Bandit suppression**: The ``# nosec B102`` / ``# nosec B307`` markers
    are intentional and reviewed.  Do not remove them without re-evaluating
    the threat model above.
 
@@ -27,15 +38,156 @@ If you need to evaluate *user-supplied expressions from an untrusted source*
 performs AST-level validation before execution.
 """
 
+import builtins
 import contextlib
+import ctypes
 import io
 import math
 import os
 import sys
+import threading
 import traceback
 from typing import Any
 
 import numpy as np
+
+# ---------------------------------------------------------------------------
+# Resource limits (Linux / macOS only)
+# ---------------------------------------------------------------------------
+try:
+    import resource as _resource
+
+    _HAS_RESOURCE = True
+except ImportError:  # Windows
+    _resource = None  # type: ignore[assignment]
+    _HAS_RESOURCE = False
+
+# CPU soft/hard limits in seconds applied at module import time on supported
+# platforms.  These are process-wide ceilings; the per-call timeout inside
+# execute() provides a finer-grained guard on all platforms.
+_CPU_SOFT_LIMIT_S = 5
+_CPU_HARD_LIMIT_S = 10
+# Virtual memory ceiling: 512 MiB
+_MEM_LIMIT_BYTES = 512 * 1024 * 1024
+
+if _HAS_RESOURCE and _resource is not None:
+    try:
+        _resource.setrlimit(
+            _resource.RLIMIT_CPU, (_CPU_SOFT_LIMIT_S, _CPU_HARD_LIMIT_S)
+        )
+    except (ValueError, _resource.error):
+        pass
+    try:
+        _resource.setrlimit(_resource.RLIMIT_AS, (_MEM_LIMIT_BYTES, _MEM_LIMIT_BYTES))
+    except (ValueError, _resource.error):
+        pass
+
+# ---------------------------------------------------------------------------
+# Restricted builtins
+# ---------------------------------------------------------------------------
+# The following names are *removed* from the sandbox __builtins__ dict.
+# NOTE: ``__import__`` is handled separately — it must exist so that C
+# extensions (numpy, scipy) can perform internal sub-imports, but it is
+# *replaced* with a restricted wrapper that blocks dangerous top-level
+# module names (see _make_restricted_import / _BLOCKED_IMPORT_MODULES).
+_BLOCKED_BUILTINS: frozenset[str] = frozenset(
+    {
+        "open",
+        "exec",
+        "eval",
+        "compile",
+        "breakpoint",
+    }
+)
+
+# Modules that user code must NOT be able to import from the sandbox.
+_BLOCKED_IMPORT_MODULES: frozenset[str] = frozenset(
+    {
+        "os",
+        "subprocess",
+        "sys",
+        "socket",
+        "shutil",
+        "pathlib",
+        "io",
+        "builtins",
+        "importlib",
+        "ctypes",
+        "signal",
+        "resource",
+        "threading",
+        "multiprocessing",
+        "pty",
+        "atexit",
+        "gc",
+        "code",
+        "codeop",
+        "runpy",
+        "ast",
+        "dis",
+        "marshal",
+        "pickle",
+        "shelve",
+        "dbm",
+        "sqlite3",
+        "struct",
+    }
+)
+
+
+def _make_restricted_import(
+    blocked: frozenset[str] = _BLOCKED_IMPORT_MODULES,
+) -> Any:
+    """Return a ``__import__`` wrapper that blocks host-process modules.
+
+    The wrapper delegates to the real ``builtins.__import__`` for safe
+    modules so that C extensions (numpy, scipy) can perform their internal
+    sub-imports normally.  Any attempt to import a blocked top-level module
+    raises ``ImportError``.
+
+    Args:
+        blocked: Set of top-level module names to deny.
+
+    Returns:
+        A callable with the same signature as ``builtins.__import__``.
+    """
+    _real_import = builtins.__import__
+
+    def _restricted_import(
+        name: str,
+        globals: dict[str, Any] | None = None,  # noqa: A002
+        locals: dict[str, Any] | None = None,  # noqa: A002
+        fromlist: tuple[str, ...] = (),
+        level: int = 0,
+    ) -> Any:
+        top_level = name.split(".")[0]
+        if top_level in blocked:
+            raise ImportError(f"import of '{name}' is blocked in the scripting sandbox")
+        return _real_import(name, globals, locals, fromlist, level)
+
+    return _restricted_import
+
+
+def _make_restricted_builtins() -> dict[str, Any]:
+    """Return a copy of ``builtins.__dict__`` with dangerous names removed/replaced.
+
+    Returns:
+        A dict suitable for use as the ``__builtins__`` value in an exec/eval
+        namespace.  Dangerous primitives are absent; ``__import__`` is replaced
+        with a module-blocking wrapper.
+    """
+    safe: dict[str, Any] = {
+        k: v for k, v in vars(builtins).items() if k not in _BLOCKED_BUILTINS
+    }
+    # Replace __import__ with a restricted wrapper so internal C-extension
+    # imports still work while user-initiated imports of dangerous modules
+    # are blocked.
+    safe["__import__"] = _make_restricted_import()
+    return safe
+
+
+# Default per-call execution timeout (seconds).
+_DEFAULT_MAX_EXECUTION_TIME = 30
 
 USER_CODE_ERROR_TYPES = (
     ArithmeticError,
@@ -68,6 +220,32 @@ except ImportError:
     HAS_SCIPY = False
 
 
+# ---------------------------------------------------------------------------
+# Timeout helpers
+# ---------------------------------------------------------------------------
+
+try:
+    import signal as _signal
+
+    _HAS_SIGNAL_ALARM = hasattr(_signal, "alarm")
+except ImportError:
+    _signal = None  # type: ignore[assignment]
+    _HAS_SIGNAL_ALARM = False
+
+
+def _raise_keyboard_interrupt_in_thread(thread_id: int) -> None:
+    """Raise ``KeyboardInterrupt`` in *thread_id* using the CPython C API.
+
+    This is the Windows-compatible fallback for enforcing the execution
+    timeout.  Only works with CPython; on other runtimes the call is a
+    no-op.
+    """
+    ctypes.pythonapi.PyThreadState_SetAsyncExc(
+        ctypes.c_ulong(thread_id),
+        ctypes.py_object(KeyboardInterrupt),
+    )
+
+
 class ConsoleEnvironment:
     """Manages the interactive Python namespace and execution for the CLI."""
 
@@ -75,24 +253,45 @@ class ConsoleEnvironment:
         self,
         default_namespace: dict[str, Any] | None = None,
         user_lib_path: str = "~/.shared_console_user_funcs.py",
+        max_execution_time: int = _DEFAULT_MAX_EXECUTION_TIME,
     ) -> None:
         """Initialize the console environment.
 
         Args:
             default_namespace: Variables/modules to inject into the namespace.
             user_lib_path: Path to the user's persistent functions file.
+            max_execution_time: Wall-clock timeout in seconds for each
+                ``execute()`` call (default 30 s).  On Linux/macOS the
+                timeout is enforced via ``signal.alarm``; on Windows a
+                daemon thread raises ``KeyboardInterrupt`` in the calling
+                thread after this many seconds.  Set to 0 to disable.
+
+        Raises:
+            ValueError: If ``max_execution_time`` is negative.
         """
+        if max_execution_time < 0:
+            raise ValueError("max_execution_time must be >= 0")
         self._initial_namespace = default_namespace or {}
         self.namespace: dict[str, Any] = {}
         self._user_lib_path = os.path.expanduser(user_lib_path)
+        self._max_execution_time = max_execution_time
         self.reset()
 
     def reset(self) -> None:
         """Reset the namespace to its initial state.
 
         Follows DbC by ensuring the namespace is clear before population.
+        The namespace is seeded with a restricted ``__builtins__`` dict that
+        removes dangerous host-process access primitives (``open``, ``exec``,
+        ``eval``, ``compile``, ``breakpoint``) and replaces ``__import__``
+        with a module-blocking wrapper.
         """
         self.namespace.clear()
+
+        # Install restricted builtins — this is the primary blast-radius guard.
+        # User code running inside exec/eval will only see this dict for name
+        # lookups on builtins, preventing access to file I/O and code injection.
+        self.namespace["__builtins__"] = _make_restricted_builtins()
 
         # Add basic dependencies
         self.namespace["np"] = np
@@ -102,7 +301,7 @@ class ConsoleEnvironment:
         if HAS_SCIPY:
             self.namespace["scipy"] = scipy
 
-        # Inject injected defaults
+        # Inject caller-supplied defaults (vetted by the embedding application)
         self.namespace.update(self._initial_namespace)
 
         # Provide specialized help function that works within the console
@@ -154,9 +353,16 @@ class ConsoleEnvironment:
     def refresh_user_functions(self) -> None:
         """Reload user functions into the namespace.
 
+        Expected user-code errors (those listed in ``USER_CODE_ERROR_TYPES``)
+        are caught, reported to stderr, and swallowed so the host application
+        keeps running.  System-level failures (``MemoryError``, etc.) are
+        **re-raised** so they are not silently hidden.
+
         Raises:
             KeyboardInterrupt: If the user interrupts execution.
             SystemExit: If the code explicitly calls sys.exit().
+            BaseException: Any non-user-code exception (e.g. ``MemoryError``)
+                is re-raised after reporting.
         """
         if not os.path.exists(self._user_lib_path):
             return
@@ -167,9 +373,55 @@ class ConsoleEnvironment:
         try:
             # Execute within current namespace so imports/functions are persistent
             exec(code, self.namespace)  # nosec B102
-        except Exception as e:  # noqa: BLE001 — user library code may raise anything; report and continue
+        except USER_CODE_ERROR_TYPES as e:  # noqa: BLE001 — user library code may raise anything; report and continue
             sys.stderr.write(f"Error loading user library: {e}\n")
             sys.stderr.flush()
+
+    # ------------------------------------------------------------------
+    # Internal timeout context managers
+    # ------------------------------------------------------------------
+
+    @contextlib.contextmanager
+    def _timeout_context(self):  # type: ignore[return]
+        """Context manager that enforces ``_max_execution_time``.
+
+        On Linux/macOS uses ``signal.alarm`` (only valid on the main thread).
+        On Windows, or when called from a non-main thread, falls back to a
+        daemon thread that raises ``KeyboardInterrupt`` via the CPython C API.
+        """
+        timeout = self._max_execution_time
+        if not timeout:
+            yield
+            return
+
+        on_main_thread = threading.current_thread() is threading.main_thread()
+
+        if _HAS_SIGNAL_ALARM and on_main_thread:
+            # Unix path — signal.alarm is precise and zero-overhead.
+            def _handler(signum: int, frame: object) -> None:  # noqa: ARG001
+                raise TimeoutError(f"Execution exceeded {timeout} s CPU time limit")
+
+            old_handler = _signal.signal(_signal.SIGALRM, _handler)  # type: ignore[attr-defined]
+            _signal.alarm(timeout)  # type: ignore[attr-defined]
+            try:
+                yield
+            finally:
+                _signal.alarm(0)  # type: ignore[attr-defined]
+                _signal.signal(_signal.SIGALRM, old_handler)  # type: ignore[attr-defined]
+        else:
+            # Windows / non-main-thread path — daemon thread fires KI.
+            caller_id = threading.get_ident()
+
+            def _fire() -> None:
+                _raise_keyboard_interrupt_in_thread(caller_id)
+
+            timer = threading.Timer(timeout, _fire)
+            timer.daemon = True
+            timer.start()
+            try:
+                yield
+            finally:
+                timer.cancel()
 
     def execute(self, source: str | None) -> tuple[str, str]:
         """Execute a block of source code, capturing stdout and stderr.
@@ -192,20 +444,23 @@ class ConsoleEnvironment:
             with (
                 contextlib.redirect_stdout(out_buf),
                 contextlib.redirect_stderr(err_buf),
+                self._timeout_context(),
             ):
                 # Try to evaluate as an expression first for REPL output behavior
                 try:
-                    code_obj = compile(source, "<console>", "eval")
-                    res = eval(code_obj, self.namespace)  # nosec B307
+                    code_obj = builtins.compile(source, "<console>", "eval")
+                    res = builtins.eval(code_obj, self.namespace)  # nosec B307
                     if res is not None:
                         sys.stdout.write(repr(res) + "\n")
                 except SyntaxError:
                     # Not an expression, try exec
-                    code_obj = compile(source, "<console>", "exec")
-                    exec(code_obj, self.namespace)  # nosec B102
+                    code_obj = builtins.compile(source, "<console>", "exec")
+                    builtins.exec(code_obj, self.namespace)  # nosec B102
 
         except (KeyboardInterrupt, SystemExit):
             raise
+        except TimeoutError as e:
+            err_buf.write(f"TimeoutError: {e}\n")
         except USER_CODE_ERROR_TYPES:
             # Expected user-code failures are formatted REPL-style so the
             # console displays them without crashing the host application.
