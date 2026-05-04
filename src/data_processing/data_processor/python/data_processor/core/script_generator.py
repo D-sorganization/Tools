@@ -303,10 +303,15 @@ class ScriptGenerator:
         """Generate the main function and entry point for batch script."""
         if not (input_patterns is not None):
             raise ValueError("input_patterns must be provided")
+        # Use json.dumps instead of repr() so that user-supplied paths (which may
+        # contain backslashes, quotes, or non-ASCII characters) are embedded as
+        # well-defined JSON string literals, eliminating any injection risk.
+        safe_patterns = json.dumps(input_patterns)
+        safe_output_dir = json.dumps(output_dir)
         lines = [
             "def main(max_workers: int | None = None) -> int:",
-            f"    input_patterns = {input_patterns!r}",
-            f"    output_dir = {output_dir!r}",
+            f"    input_patterns = {safe_patterns}",
+            f"    output_dir = {safe_output_dir}",
             "",
             "    # Ensure output directory exists",
             "    os.makedirs(output_dir, exist_ok=True)",
@@ -339,8 +344,12 @@ class ScriptGenerator:
                     "",
                     "        for future in as_completed(futures):",
                     "            input_file = futures[future]",
-                    "            result = future.result()",
-                    "            success, source, detail = result",
+                    "            try:",
+                    "                success, source, detail = future.result()",
+                    "            except Exception as exc:  # worker raised unexpectedly",
+                    "                failures.append((input_file, str(exc)))",
+                    "                print(f'Failed: {input_file}: {exc}', file=sys.stderr)",
+                    "                continue",
                     "            if success:",
                     "                print(f'Processed: {source} -> {detail}')",
                     "            else:",
