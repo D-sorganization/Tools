@@ -56,6 +56,9 @@ dmypy.json
 # Binary documents (should not be in VCS)
 *.docx
 
+# PSA reference directory — contains overlong paths that break Windows checkout (Issue #2475)
+src/shared/python/upstream_drift_tools/process_calculators/psa_package/References/
+
 # Temp output files (explicitly listed for clarity)
 mypy_output.txt
 mypy_errors_temp.txt
