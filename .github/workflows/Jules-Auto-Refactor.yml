@@ -1,5 +1,23 @@
 name: Jules Auto-Refactor (Worker)
 
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │ BLAST RADIUS DOCUMENTATION — Jules Auto-Refactor                           │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CAN DO:                                                  │
+# │  • Run ruff/isort/autoflake on files with the most linting issues          │
+# │  • Create a new jules/auto-refactor/* branch and push the fixes            │
+# │  • Open a pull request with the automated improvements                     │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CANNOT DO:                                               │
+# │  • Push directly to main or any protected branch                           │
+# │  • Auto-merge the PR it creates                                            │
+# │  • Delete branches, manage issues, or trigger other workflows              │
+# │                                                                             │
+# │ APPROVAL GATES:                                                             │
+# │  • Scheduled/dispatched only via Control Tower — not triggered on push     │
+# │  • PR requires human review before merge                                   │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
 # Replaces Jules-Tech-Custodian workflow
 # Finds files with the most linting issues and auto-fixes them
 # Creates a PR with the automated improvements
@@ -8,9 +26,9 @@ on:
   workflow_call:
   workflow_dispatch:
 
+# Least-privilege top level: no write access by default.
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
@@ -55,6 +73,11 @@ jobs:
   auto-refactor:
     needs: pick-runner
     runs-on: self-hosted
+    # Grant write only at this job level — branch creation, fix pushes, and PR
+    # opening happen here. pick-runner needs no write access.
+    permissions:
+      contents: write      # create jules/auto-refactor-* branch and push fixes
+      pull-requests: write # open PR with automated refactor improvements
     steps:
       - name: Checkout
         uses: actions/checkout@v4

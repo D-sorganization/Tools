@@ -1,5 +1,25 @@
 name: Jules Assessment Remediator (Worker)
 
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │ BLAST RADIUS DOCUMENTATION — Jules Assessment Remediator                   │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CAN DO:                                                  │
+# │  • Pick the top N assessment findings and create one PR per fix            │
+# │  • Push code changes to a new remediation/* branch                        │
+# │  • Close GitHub issues that are resolved by the automated fixes            │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CANNOT DO:                                               │
+# │  • Push directly to main or any protected branch                           │
+# │  • Auto-merge any PR — human review required                               │
+# │  • Exceed MAX_ISSUES_PER_RUN (10) fixes per execution                     │
+# │  • Delete branches other than merged remediation/* branches                │
+# │                                                                             │
+# │ APPROVAL GATES:                                                             │
+# │  • Manual dispatch or scheduled (0 8 * * 0,4) — not triggered on push     │
+# │  • dry_run input available to preview without creating PRs                 │
+# │  • Concurrency lock prevents simultaneous remediation runs                 │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
 # Automated issue remediation workflow for assessment-identified issues
 # Creates PRs with automated fixes for the top N most impactful issues
 
@@ -40,10 +60,9 @@ on:
     # Daily at 5 AM PST (13:00 UTC) - runs after overnight assessments complete
     - cron: "0 8 * * 0,4"
 
+# Least-privilege top level: no write access by default.
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
+  contents: read
 
 # Prevent multiple remediation runs simultaneously
 concurrency:
@@ -58,6 +77,12 @@ jobs:
   remediate:
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    # Grant write only at this job level — remediation creates branches, pushes
+    # fixes, opens PRs, and closes resolved issues.
+    permissions:
+      contents: write      # create remediation branch and push fixes
+      pull-requests: write # open PR with automated fixes
+      issues: write        # close issues that are resolved by the fixes
 
     steps:
       - name: Checkout Code
