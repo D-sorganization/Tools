@@ -12,6 +12,21 @@ MAX_POWER_EXPONENT = 6
 
 logger = logging.getLogger(__name__)
 
+# Patterns whose mere presence in the raw expression string indicates an
+# injection attempt.  Checked before AST parsing so that obfuscated or
+# unparseable payloads are caught at the string level.
+_BLOCKED_PATTERNS: tuple[str, ...] = (
+    "__",
+    "import",
+    "exec",
+    "eval",
+    "open",
+    "os.",
+    "sys.",
+    "subprocess",
+    "lambda",
+)
+
 _ALLOWED_NODES = (
     ast.Expression,
     ast.BinOp,
@@ -58,6 +73,14 @@ def validate_pandas_formula(
         raise ValueError("Formula expression must be a non-empty string")
     if len(expression) > MAX_FORMULA_LENGTH:
         raise ValueError("Formula expression is too long")
+
+    # String-level blocklist: reject dangerous patterns before AST parsing so
+    # that obfuscated or unparseable payloads are caught early.
+    for pattern in _BLOCKED_PATTERNS:
+        if pattern in expression:
+            raise ValueError(
+                f"Formula expression contains forbidden pattern: {pattern!r}"
+            )
 
     try:
         tree = ast.parse(expression, mode="eval")

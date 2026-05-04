@@ -24,7 +24,14 @@ SUPPORTED_FILTER_TYPES = {"butterworth", "moving_average", "median", "savgol"}
 
 
 def _eval_with_optional_numexpr(df: pd.DataFrame, expression: str) -> pd.Series:
-    """Prefer numexpr when present but keep formula evaluation functional without it."""
+    """Validate and evaluate a formula expression against a DataFrame.
+
+    Validation via ``validate_pandas_formula`` runs before any engine is
+    invoked.  The Python engine fallback has been removed: ``engine="python"``
+    bypasses numexpr's sandboxing and must not be used with untrusted input.
+    If numexpr is unavailable, pandas falls back to its own safe evaluator
+    automatically (without requiring the insecure Python engine).
+    """
 
     try:
         validate_pandas_formula(expression, allowed_columns=df.columns)
@@ -34,8 +41,13 @@ def _eval_with_optional_numexpr(df: pd.DataFrame, expression: str) -> pd.Series:
 
     try:
         return df.eval(expression, engine="numexpr")
-    except ImportError:
-        return df.eval(expression, engine="python")
+    except ImportError as exc:
+        # numexpr is not installed.  Silently falling back to engine="python"
+        # is unsafe: that engine runs expressions through Python's eval()
+        # without resource limits.  Raise instead so operators are aware.
+        raise RuntimeError(
+            "Formula evaluation requires numexpr. Install it with: pip install numexpr"
+        ) from exc
 
 
 @dataclass
