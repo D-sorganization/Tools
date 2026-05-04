@@ -1,11 +1,32 @@
 name: Jules Documentation Scribe (Worker)
 
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │ BLAST RADIUS DOCUMENTATION — Jules Documentation Scribe                    │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CAN DO:                                                  │
+# │  • Create a new docs/update-* branch                                       │
+# │  • Dispatch Jules AI to update Google-style docstrings for changed .py     │
+# │    files (does not touch READMEs)                                          │
+# │  • Open a pull request targeting main with the docstring updates           │
+# │  • Delete the docs branch if Jules makes no changes                        │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CANNOT DO:                                               │
+# │  • Push directly to main                                                   │
+# │  • Auto-merge the PR it creates                                            │
+# │  • Modify non-Python files or READMEs                                      │
+# │                                                                             │
+# │ APPROVAL GATES:                                                             │
+# │  • Only triggered on push to main by non-bot actors (via Control Tower)    │
+# │  • Bot-actor guard in Control Tower prevents doc-scribe loops              │
+# │  • PR requires human review before merge                                   │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
 on:
   workflow_call:
 
+# Least-privilege top level: no write access by default.
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
@@ -51,6 +72,11 @@ jobs:
     needs: pick-runner
     runs-on: self-hosted
     timeout-minutes: 30
+    # Grant write only at this job level — branch creation, Jules dispatch, and
+    # PR creation all happen here. pick-runner needs no write access.
+    permissions:
+      contents: write      # create docs/update-* branch and push Jules changes
+      pull-requests: write # open the docstring-update PR
 
     steps:
       - name: Checkout Code

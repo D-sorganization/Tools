@@ -1,5 +1,29 @@
 name: Jules Control Tower
 
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │ BLAST RADIUS DOCUMENTATION — Jules Control Tower                           │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CAN DO:                                                  │
+# │  • Read repository contents and workflow run status (top-level)             │
+# │  • Dispatch to worker sub-workflows via workflow_call (secrets: inherit)    │
+# │  • Read CI run results and check iteration limits                           │
+# │  • Route events to the appropriate worker workflow                          │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CANNOT DO (by itself):                                   │
+# │  • Push commits or create/delete branches directly                          │
+# │  • Open, close, or merge pull requests directly                             │
+# │  • Trigger or cancel other workflow runs directly                           │
+# │  • Write to issues or security events directly                              │
+# │  ──  Write permissions are granted only at the job level of the             │
+# │       worker workflow that actually requires them, not here.                │
+# │                                                                             │
+# │ APPROVAL GATES:                                                             │
+# │  • Iteration limit: MAX_REPAIR_ITERATIONS=3 per MAX_ITERATIONS_WINDOW_HOURS │
+# │  • Bot-actor guard: push/PR events from jules-bot are dropped silently      │
+# │  • Protected-branch guard: main/master failures route to hotfix (no direct  │
+# │    push); non-main failures route to auto-repair with its own limits        │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
 on:
   push:
     branches: [main]
@@ -18,12 +42,10 @@ concurrency:
   group: jules-control-tower-${{ github.repository }}
   cancel-in-progress: false
 
+# Least-privilege: this orchestrator only reads; write grants live in workers.
 permissions:
-  contents: write
-  pull-requests: write
-  actions: write
-  issues: write
-  security-events: write
+  contents: read
+  actions: read
   checks: read
 
 jobs:
