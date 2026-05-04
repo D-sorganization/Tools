@@ -22,12 +22,27 @@ _MAKEHUMAN_MODIFIER_RE = re.compile(r"^[A-Za-z0-9_./-]+$")
 
 
 def _single_quoted_python_literal(value: str) -> str:
-    """Serialize a string as a Python literal without exposing raw quote joins."""
+    """Serialize *value* as a single-quoted Python string literal.
+
+    All characters that would otherwise be syntactically significant inside a
+    Python string literal — backslashes, single quotes, carriage returns,
+    newlines, and null bytes — are replaced with their ``\\`` escape
+    sequences.  The result is always a syntactically valid Python expression
+    that can be embedded verbatim in generated source code.
+
+    Args:
+        value: Arbitrary string to serialize.
+
+    Returns:
+        A ``'…'`` Python string literal whose ``ast.literal_eval`` round-trip
+        recovers the original *value*.
+    """
     escaped = (
         value.replace("\\", "\\\\")
         .replace("'", "\\'")
         .replace("\r", "\\r")
         .replace("\n", "\\n")
+        .replace("\x00", "\\x00")
     )
     return f"'{escaped}'"
 
@@ -103,7 +118,7 @@ class MakeHumanMeshGenerator(MeshGeneratorInterface):
 
         try:
             return self._generate_via_api(
-                params, modifiers, visual_dir, collision_dir, **kwargs
+                params, modifiers, visual_dir, collision_dir, output_dir, **kwargs
             )
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.warning(f"MakeHuman API generation failed: {e}")
@@ -125,6 +140,7 @@ class MakeHumanMeshGenerator(MeshGeneratorInterface):
         modifiers: dict[str, float],
         visual_dir: Path,
         collision_dir: Path,
+        base_output_dir: Path,
         **kwargs: Any,
     ) -> GeneratedMeshResult:
         """Generate meshes using MakeHuman Python API."""
@@ -132,7 +148,9 @@ class MakeHumanMeshGenerator(MeshGeneratorInterface):
         import subprocess
         import tempfile
 
-        script_content = self._create_makehuman_script(modifiers, visual_dir)
+        script_content = self._create_makehuman_script(
+            modifiers, visual_dir, base_output_dir=base_output_dir
+        )
         script_path = ""
 
         with tempfile.NamedTemporaryFile(
@@ -164,11 +182,36 @@ class MakeHumanMeshGenerator(MeshGeneratorInterface):
             Path(script_path).unlink(missing_ok=True)
 
     def _create_makehuman_script(
-        self, modifiers: dict[str, float], output_dir: Path
+        self,
+        modifiers: dict[str, float],
+        output_dir: Path,
+        base_output_dir: Path | None = None,
     ) -> str:
-        """Create a MakeHuman Python script for mesh generation."""
+        """Create a MakeHuman Python script for mesh generation.
+
+        All caller-controlled values embedded in the generated script are
+        serialized via :func:`_single_quoted_python_literal` so that shell
+        metacharacters, quote characters, and newlines cannot escape the
+        string literal context.
+
+        Args:
+            modifiers: Validated MakeHuman modifier key/value pairs.
+            output_dir: Directory where the generated OBJ will be written.
+                The export path embedded in the script is derived from this
+                value via ``Path.resolve()``.
+            base_output_dir: When provided, the resolved *output_dir* must be
+                contained within this directory.  Pass the caller-supplied root
+                ``output_dir`` to prevent path-traversal escapes from reaching
+                the generated script.
+
+        Returns:
+            Python source code string safe to write to a temporary file and
+            executed by the MakeHuman Python interpreter.
+        """
         assert modifiers is not None, "modifiers must be provided"
-        self._validate_makehuman_script_inputs(modifiers, output_dir)
+        self._validate_makehuman_script_inputs(
+            modifiers, output_dir, base_output_dir=base_output_dir
+        )
         export_path = str((output_dir / "humanoid.obj").resolve())
         export_path_literal = _single_quoted_python_literal(export_path)
         script = f"""
@@ -198,13 +241,56 @@ generate_human()
         return script
 
     @staticmethod
+    def _validate_output_path_within_base(output_path: Path, base: Path) -> None:
+        """Raise ``ValueError`` if *output_path* is not contained within *base*.
+
+        Both paths are resolved before comparison so that symlinks and ``..``
+        components cannot be used to escape the intended directory.
+
+        Args:
+            output_path: The candidate output path to validate.
+            base: The expected root directory that must contain *output_path*.
+
+        Raises:
+            ValueError: If *output_path* is not under *base*.
+        """
+        resolved_output = output_path.resolve()
+        resolved_base = base.resolve()
+        try:
+            resolved_output.relative_to(resolved_base)
+        except ValueError:
+            raise ValueError(
+                f"Output path {output_path!r} escapes the expected base directory"
+                f" {base!r}"
+            )
+
+    @staticmethod
     def _validate_makehuman_script_inputs(
-        modifiers: dict[str, float], output_dir: Path
+        modifiers: dict[str, float],
+        output_dir: Path,
+        base_output_dir: Path | None = None,
     ) -> None:
-        """Validate generated-script inputs before invoking MakeHuman."""
+        """Validate generated-script inputs before invoking MakeHuman.
+
+        Args:
+            modifiers: MakeHuman modifier key/value pairs to validate.
+            output_dir: The directory where the script will write output.
+            base_output_dir: When provided, the resolved *output_dir* must be
+                contained within this directory.  Prevents path-traversal
+                escapes from reaching the generated script.
+
+        Raises:
+            ValueError: For invalid modifier keys/values, if *output_dir*
+                exists but is not a directory, or if *output_dir* escapes
+                *base_output_dir*.
+        """
         output_path = output_dir.resolve()
         if output_path.exists() and not output_path.is_dir():
             raise ValueError("output_dir must resolve to a directory")
+        if base_output_dir is not None:
+            MakeHumanMeshGenerator._validate_output_path_within_base(
+                output_dir, base_output_dir
+            )
         for key, value in modifiers.items():
             if not isinstance(key, str) or not _MAKEHUMAN_MODIFIER_RE.fullmatch(key):
                 raise ValueError(f"Invalid MakeHuman modifier key: {key!r}")
