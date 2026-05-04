@@ -72,7 +72,7 @@ class TestLoadFileErrorPath:
             side_effect=ValueError("unsupported format"),
         ):
             with pytest.raises((FileIOError, ValueError)):
-                engine.load_file("/tmp/bad.xyz")
+                engine.load_file("/tmp/bad.xyz")  # nosec B108
 
     def test_load_file_empty_path_raises(self):
         from upstream_drift_tools.data_processing.core import DataProcessorEngine

@@ -94,7 +94,7 @@ def check_http_service(
 
         start = time.perf_counter()
         request = urllib.request.Request(url, method="GET")
-        with urllib.request.urlopen(request, timeout=timeout) as response:
+        with urllib.request.urlopen(request, timeout=timeout) as response:  # nosec B310
             latency = (time.perf_counter() - start) * 1000
             status_code = response.getcode()
 

@@ -349,7 +349,7 @@ class TestGenerateURDF:
         config = URDFConfig(robot_name="test_robot", height_m=1.75, mass_kg=70.0)
         xml = generate_urdf_xml(config)
         # Should parse without error
-        root = ET.fromstring(xml)
+        root = ET.fromstring(xml)  # nosec B314
         assert root.tag == "robot"
         assert root.attrib["name"] == "test_robot"
 
@@ -357,7 +357,7 @@ class TestGenerateURDF:
         """Full Humanoid template should produce expected links."""
         config = URDFConfig(template="Full Humanoid")
         xml = generate_urdf_xml(config)
-        root = ET.fromstring(xml)
+        root = ET.fromstring(xml)  # nosec B314
         link_names = {link.get("name") for link in root.findall("link")}
         assert "pelvis" in link_names
         assert "torso" in link_names
@@ -368,7 +368,7 @@ class TestGenerateURDF:
         """Upper Body Only template should NOT include leg links."""
         config = URDFConfig(template="Upper Body Only")
         xml = generate_urdf_xml(config)
-        root = ET.fromstring(xml)
+        root = ET.fromstring(xml)  # nosec B314
         link_names = {link.get("name") for link in root.findall("link")}
         assert "upper_arm_l" in link_names
         assert "thigh_l" not in link_names
@@ -566,7 +566,7 @@ class TestIntegration:
                 assert seg in preview, f"{template}: {seg} not in preview"
 
             # Generated XML should have links for each segment
-            root = ET.fromstring(xml)
+            root = ET.fromstring(xml)  # nosec B314
             link_names = {link.get("name") for link in root.findall("link")}
             for seg in get_template_segments(template):
                 assert seg in link_names, f"{template}: {seg} not in XML"
@@ -580,7 +580,7 @@ class TestIntegration:
     def test_all_inertia_values_positive(self) -> None:
         """Every inertia value in generated URDF must be positive."""
         xml = generate_urdf_xml(URDFConfig())
-        root = ET.fromstring(xml)
+        root = ET.fromstring(xml)  # nosec B314
         for inertia_el in root.iter("inertia"):
             for attr in ["ixx", "iyy", "izz"]:
                 val = float(inertia_el.get(attr, "0"))

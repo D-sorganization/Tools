@@ -120,7 +120,7 @@ def make_request_with_backoff(
             for key, value in headers.items():
                 req.add_header(key, value)
 
-            response = urllib.request.urlopen(req, timeout=10)
+            response = urllib.request.urlopen(req, timeout=10)  # nosec B310
 
             # Log rate-limit status on success
             rate_limit_info = extract_rate_limit_info(response)
