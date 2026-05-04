@@ -331,6 +331,8 @@ class AssetLibraryEditorRoutesMixin:
         if density is not None:
             mesh.density = density
             return mesh.moment_inertia, mesh.mass
+        if mass is None:
+            raise ValueError("Must provide either 'mass' or 'density'")
         return mesh.moment_inertia * (mass / mesh.mass), mass
 
     def _model_summary_payload(self, model: Any) -> dict[str, Any]:

@@ -37,7 +37,8 @@ def request_file_text(
     uploaded_file = ensure_request(request).files.get(file_key)
     if uploaded_file is None:
         return None
-    return uploaded_file.decode(encoding, errors="ignore")
+    decoded: str = uploaded_file.decode(encoding, errors="ignore")
+    return decoded
 
 
 def request_content(
@@ -56,7 +57,8 @@ def request_content(
 
 def download_requested(request: APIRequest) -> bool:
     """Return whether the caller requested a file download response."""
-    return ensure_request(request).query_params.get("download") == "true"
+    requested: bool = ensure_request(request).query_params.get("download") == "true"
+    return requested
 
 
 def maybe_file_response(
