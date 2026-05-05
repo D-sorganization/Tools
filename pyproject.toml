@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools>=61.0,<82", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -114,6 +114,7 @@ Repository = "https://github.com/D-sorganization/Tools"
 # See: https://github.com/D-sorganization/Tools/issues/1695
 py-modules = ["contracts", "cors", "deprecation", "safe_eval"]
 
+
 [tool.setuptools.packages.find]
 where = ["src/shared/python", "src/python/src", "src"]
 include = [
@@ -137,6 +138,10 @@ exclude = [
     "*.tests*",
     "*tests*",
 ]
+
+[tool.setuptools.package-data]
+# Include py.typed marker for PEP 561 type hint support
+"*" = ["py.typed"]
 
 # =============================================================================
 # Pytest Configuration
@@ -240,7 +245,10 @@ omit = [
 ]
 
 [tool.coverage.report]
-fail_under = 30
+# Coverage floor — raised to 60% per issue #2474 (production readiness).
+# Previous ratchet plan (issue #2406) targeted 60% as Phase 3 / v1.3;
+# issue #2474 accelerates this directly as the repo-wide gate.
+fail_under = 60
 show_missing = true
 skip_empty = true
 exclude_lines = [

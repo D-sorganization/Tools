@@ -1,5 +1,26 @@
 name: Jules Auto-Repair (Worker)
 
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │ BLAST RADIUS DOCUMENTATION — Jules Auto-Repair                             │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CAN DO:                                                  │
+# │  • Push commits directly to the failing feature branch (not main/master)   │
+# │  • Run ruff, autoflake, and mypy to apply automated lint/type fixes        │
+# │  • Comment on the associated PR with repair status                         │
+# │  • Optionally invoke the Jules AI API to generate targeted fixes           │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CANNOT DO:                                               │
+# │  • Push to main or master (protected-branch guard enforced in script)      │
+# │  • Open, close, or merge pull requests                                     │
+# │  • Create or delete branches beyond the target repair branch               │
+# │  • Exceed MAX_REPAIR_ATTEMPTS commits within REPAIR_WINDOW_HOURS           │
+# │                                                                             │
+# │ APPROVAL GATES:                                                             │
+# │  • Max repair commits per branch per 72-hour window (MAX_REPAIR_ATTEMPTS)  │
+# │  • Protected-branch guard: refuses to touch main/master                    │
+# │  • Loop-prevention: concurrency group prevents parallel repairs per branch │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
 # Re-enabled with proper safeguards against PR explosion.
 # This workflow uses the Jules API for intelligent fixes when simple linting isn't enough.
 #
@@ -35,9 +56,9 @@ on:
         default: "5"
         type: string
 
+# Least-privilege top level: no write access until the job that needs it.
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
   actions: read
   checks: read
 
@@ -90,6 +111,11 @@ jobs:
   intelligent-repair:
     needs: pick-runner
     runs-on: self-hosted
+    # Grant write only at this job level — this is the only job that pushes commits
+    # or comments on PRs. pick-runner needs no write access.
+    permissions:
+      contents: write      # push repair commits to the target branch
+      pull-requests: write # post repair-status comment on the associated PR
     # Prevent multiple repairs on same branch simultaneously
     concurrency:
       group: auto-repair-${{ inputs.branch || github.event.workflow_run.head_branch }}

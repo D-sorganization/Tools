@@ -1,18 +1,18 @@
-## 2024-05-14 - Optimize Array Methods in PCA Calculation
-**Learning:** Chained array methods like `.reduce()` and `.map()` on arrays (e.g. eigenvalues in PCA calculations) cause noticeable garbage collection and allocation overhead in performance-critical sections.
-**Action:** Replace chained `.reduce()` and `.map()` calls with single-pass `for` loops that pre-allocate target arrays (`new Array(size)`) to avoid intermediate array creation.
-## 2026-04-25 - Optimize 2D matrix transpositions
-**Learning:** Chained array methods like `.map()` to transpose a 2D matrix cause severe O(N^2) memory allocation overhead and garbage collection pauses during calculations.
-**Action:** Use pre-allocated nested `for` loops for transposing 2D arrays in performance-critical areas instead of chained iterators.
-## 2024-05-18 - Split Array Windowing to Avoid Bounds Checking in Hot Paths
-**Learning:** For array sliding-window algorithms (like median or Gaussian filtering), running `Math.min` and `Math.max` bounds checks on every iteration of the main loop adds significant overhead.
-**Action:** Split the loop into three parts: left edge, middle section, and right edge. The middle section (the hot path) can then run without bounds checking, which noticeably speeds up execution for large arrays.
-## 2024-05-18 - Optimize array statistics and chained iteration on large datasets
-**Learning:** Using the spread operator (`...vals`) inside `Math.min()` or `Math.max()` on large signal data arrays causes a "Maximum call stack size exceeded" error. Similarly, using chained `.map().filter()` or `.reduce()` calls on such datasets incurs significant overhead and triggers excessive garbage collection pauses.
-**Action:** Replace `Math.min(...vals)` and chained iterators with single-pass `for` loops to manually track statistics and build subset arrays without intermediate array allocation.
-## 2024-05-24 - Maximize CPU Cache Locality in Column-Major Matrices
-**Learning:** When computing PCA scores over column-major data implemented as `Float64Array[]`, a traditional row-major inner loop severely thrashes the CPU cache by hopping between disjoint memory buffers.
-**Action:** Reordered the nested loops to ensure the innermost loop iterates sequentially over rows for a given column (`cols[j][i]`), resulting in a sequential memory access pattern that drastically reduces execution time.
-## 2024-05-25 - Avoid Dynamic Array Resizing and .reduce() Overhead in FFT Windowing
-**Learning:** In fast Fourier transform calculations (`computeFFT`), inline array construction and functional array methods (like `.map()` and `.reduce()`) introduce dynamic array resizing overhead and intermediary array allocations, stalling signal updates.
-**Action:** Replaced dynamic `.push()` calls and array method chains with pre-allocated arrays (`new Array(n)`) and a single-pass `for` loop to inline Hanning windowing, which significantly boosts real-time processing throughput.
+## 2024-05-01 - Optimization of ODESolverCalculator Downsampling
+**Learning:** Chaining `.filter()` and `.map()` with an index check (`i % step === 0`) on large result arrays is inefficient, causing O(N) intermediate array allocations and slowing down rendering loops.
+**Action:** Replace `.filter().map()` chains with single-pass manual loops pre-allocated to the correct size or standard downsampling iterators to minimize garbage collection overhead.
+## 2024-05-01 - Optimization of Results Iteration in ODESolverCalculator
+**Learning:** Using `results.map` followed by `Math.min(...values)` and `Math.max(...values)` on large dataset arrays in JS causes excessive memory allocation (the intermediate mapped array) and throws "Maximum call stack size exceeded" errors if the array size exceeds the stack limit.
+**Action:** Replace `map` and spread operations for min/max calculations with a single-pass `for` loop tracking min and max manually.
+## 2024-05-19 - Optimization of Sliding Window Algorithms
+**Learning:** Using `.slice()` and `.reduce()` inside a sliding-window loop (like `smoothAngles`) creates massive O(N) array allocations and garbage collection overhead. Furthermore, running `Math.min()` and `Math.max()` bounds checks on every iteration of the main loop adds significant execution time.
+**Action:** Replace slice/reduce chains in sliding-window algorithms with manual inner loops tracking the sum. To eliminate bounds checking in the hot path, split the main loop into three parts: left edge, middle section (running without bounds checking), and right edge.
+## 2024-05-19 - Optimization of Object Property Copying in Tight Loops
+**Learning:** Using a `for...in` loop combined with `Object.prototype.hasOwnProperty.call()` to copy object properties is significantly slower than using `Object.keys()` combined with a standard `for` loop, because `for...in` crawls the entire prototype chain.
+**Action:** When copying own properties of objects inside tight data processing loops, use `Object.keys()` with a standard `for` loop. It natively filters own properties and avoids the overhead of prototype chain traversal and repeated function calls.
+## 2024-05-19 - Optimization of High-Frequency Event Handlers
+**Learning:** Using array iterator methods like `.reduce()` inside event handlers that run per-frame (e.g., 30-60 times a second, like MediaPipe pose detection callbacks) introduces continuous callback allocation overhead and can hurt overall framerate.
+**Action:** Replace iterator methods like `.reduce()`, `.map()`, and `.filter()` with standard `for` loops inside high-frequency real-time event handlers to eliminate callback overhead and minimize garbage collection.
+## 2024-05-19 - Optimization of Polynomial Evaluation in Physics Engine
+**Learning:** Using `.reduce()` combined with exponentiation (`t ** i`) to evaluate polynomials in tight high-frequency physics loops (like RK4 integration steps) introduces massive function call overhead and allocations.
+**Action:** Replace `.reduce()`-based polynomial evaluation with a manual loop implementing Horner's method (`acc = acc * t + coeffs[i]`). This avoids function callback allocations per term and replaces expensive exponentiation with simple multiplication, resulting in significantly faster evaluation.

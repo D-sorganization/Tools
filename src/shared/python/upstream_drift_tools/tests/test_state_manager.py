@@ -134,7 +134,7 @@ def test_json_serializer(manager) -> Any:
     res = manager._json_serializer(dt)
     assert res == "2023-01-01T12:00:00"
 
-    p = Path("/tmp/foo")
+    p = Path("/tmp/foo")  # nosec B108
     res = manager._json_serializer(p)
     assert res == str(p)
 

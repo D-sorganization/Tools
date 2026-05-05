@@ -1,0 +1,91 @@
+# Dockerfile.prod — Optimized Production Image for Tools
+# Purpose: Minimal, secure production image with strict layer separation
+# Usage: docker build -f Dockerfile.prod -t tools:prod .
+# Image size target: < 500MB
+# Runtime: docker run -e FLASK_ENV=production tools:prod
+
+# Stage 1: Builder
+# Compile dependencies and build wheels to minimize final image size
+FROM python:3.11-slim as builder
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+WORKDIR /build
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libffi-dev \
+    libssl-dev \
+    libjpeg-dev \
+    zlib1g-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy dependency and source files needed for package metadata and wheel builds
+COPY requirements.txt pyproject.toml setup.py ./
+COPY src/ ./src/
+
+# Create wheels directory
+RUN mkdir -p /build/wheels
+
+# Build wheels for dependencies and the application package.
+RUN pip install --upgrade pip setuptools wheel && \
+    pip wheel --no-cache-dir --wheel-dir /build/wheels -r requirements.txt && \
+    pip wheel --no-cache-dir --no-deps --wheel-dir /build/wheels ".[all]" && \
+    rm -rf /build/setup.py /build/pyproject.toml
+
+# Stage 2: Runtime
+# Minimal final image with only runtime dependencies
+FROM python:3.11-slim
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    FLASK_ENV=production \
+    FLASK_APP=web_applications.calculator.webapp \
+    LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8
+
+WORKDIR /app
+
+# Install minimal runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    libffi8 \
+    libssl3 \
+    libjpeg62-turbo \
+    zlib1g \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
+RUN useradd -m -s /bin/bash appuser
+
+# Copy wheels from builder
+COPY --from=builder /build/wheels /tmp/wheels
+
+# Install wheels (no build step needed)
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir --no-index --find-links /tmp/wheels ud-tools && \
+    rm -rf /tmp/wheels
+
+# Copy only source code and necessary files
+COPY --chown=appuser:appuser src/ ./src/
+COPY --chown=appuser:appuser setup.py pyproject.toml ./
+COPY --chown=appuser:appuser .env.example ./.env.example
+
+# Switch to non-root user
+USER appuser
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python3 -c "import urllib.request; urllib.request.urlopen('http://localhost:5000/api/health', timeout=5).read()" || exit 1
+
+# Expose Flask default port
+EXPOSE 5000
+
+# Run Flask app
+CMD ["flask", "run", "--host=0.0.0.0"]

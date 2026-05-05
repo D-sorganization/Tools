@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 from model_generation.api.rest_api_contracts import APIRequest, APIResponse
@@ -12,7 +13,10 @@ from model_generation.api.rest_api_support import (
     request_body,
     request_content,
     temporary_payload_file,
+    validate_mesh_upload,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class AssetLibraryEditorRoutesMixin:
@@ -43,7 +47,9 @@ class AssetLibraryEditorRoutesMixin:
                 "dimensions": dimensions,
                 "inertia": inertia_payload(inertia),
                 "is_positive_definite": inertia.is_positive_definite(),
-                "satisfies_triangle_inequality": inertia.satisfies_triangle_inequality(),
+                "satisfies_triangle_inequality": (
+                    inertia.satisfies_triangle_inequality()
+                ),
             }
         )
 
@@ -59,6 +65,14 @@ class AssetLibraryEditorRoutesMixin:
         density = body.get("density")
         if mass is None and density is None:
             return APIResponse.error("Must provide either 'mass' or 'density'")
+
+        try:
+            validate_mesh_upload(
+                payload=mesh_content,
+                filename=str(body.get("filename") or ""),
+            )
+        except ValueError as error:
+            return APIResponse.error(str(error), 413)
 
         try:
             import trimesh
@@ -77,8 +91,11 @@ class AssetLibraryEditorRoutesMixin:
                 inertia_tensor, calculated_mass = self._mesh_inertia(
                     mesh, mass, density
                 )
-        except (PermissionError, OSError) as error:
+        except (PermissionError, OSError, ValueError, TypeError) as error:
             return APIResponse.error(f"Mesh processing failed: {error}")
+        except Exception:
+            logger.warning("Mesh parser failed", exc_info=True)
+            return APIResponse.error("Mesh processing failed")
 
         return APIResponse.ok(
             {
@@ -299,7 +316,8 @@ class AssetLibraryEditorRoutesMixin:
             suffix = f" ({label})" if label else ""
             dimension_label = "dimension" if expected_count == 1 else "dimensions"
             raise ValueError(
-                f"{shape.capitalize()} requires {expected_count} {dimension_label}{suffix}"
+                f"{shape.capitalize()} requires "
+                f"{expected_count} {dimension_label}{suffix}"
             )
         return factory()
 
@@ -313,6 +331,8 @@ class AssetLibraryEditorRoutesMixin:
         if density is not None:
             mesh.density = density
             return mesh.moment_inertia, mesh.mass
+        if mass is None:
+            raise ValueError("Must provide either 'mass' or 'density'")
         return mesh.moment_inertia * (mass / mesh.mass), mass
 
     def _model_summary_payload(self, model: Any) -> dict[str, Any]:

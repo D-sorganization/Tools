@@ -11,12 +11,13 @@ from unittest.mock import patch
 import numpy as np
 import pandas as pd
 import pytest
-from contracts import PreconditionError
 from data_processing.processor import (
     SUPPORTED_FILTER_TYPES,
     DataProcessor,
     DatasetInfo,
 )
+
+from contracts import PreconditionError
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Fixtures
@@ -365,6 +366,50 @@ class TestApplyFormula:
     def test_apply_formula_empty_expression_raises(self, dp: DataProcessor):
         with pytest.raises(PreconditionError):
             dp.apply_formula("result", "")
+
+    # ------------------------------------------------------------------
+    # Blocked-expression tests (issue #2481)
+    # ------------------------------------------------------------------
+
+    @pytest.mark.parametrize(
+        "expression",
+        [
+            # dunder attribute access
+            "x.__class__",
+            "x.__dict__",
+            "x.__builtins__",
+            # import injection
+            "import os",
+            "__import__('os')",
+            # exec / eval injection
+            "exec('print(1)')",
+            "eval('1+1')",
+            # file access
+            "open('/etc/passwd')",
+            # module attribute access
+            "os.getcwd()",
+            "sys.path",
+            # subprocess execution
+            "subprocess.call(['id'])",
+            # lambda
+            "lambda: None",
+        ],
+    )
+    def test_apply_formula_blocks_dangerous_expression(
+        self, dp: DataProcessor, expression: str
+    ):
+        """Dangerous patterns must be rejected before reaching pandas eval."""
+        with pytest.raises(ValueError, match="forbidden pattern|Unsupported formula"):
+            dp.apply_formula("result", expression)
+
+    def test_apply_formula_numexpr_unavailable_raises(self, dp: DataProcessor):
+        """If numexpr is not installed, eval must raise rather than silently fall back."""
+        with patch(
+            "pandas.DataFrame.eval",
+            side_effect=ImportError("numexpr not installed"),
+        ):
+            with pytest.raises(RuntimeError, match="numexpr"):
+                dp.apply_formula("result", "x + y")
 
 
 # ──────────────────────────────────────────────────────────────────────────────

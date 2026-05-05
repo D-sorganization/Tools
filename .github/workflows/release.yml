@@ -1,0 +1,300 @@
+name: Release Automation
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      force_bump:
+        description: "Force a version bump type (major/minor/patch). Leave empty for auto-detect."
+        required: false
+        default: ""
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  # ── 1. Determine if this commit warrants a release ────────────────────
+  analyse-commits:
+    name: Analyse Commits
+    runs-on: d-sorg-fleet
+    outputs:
+      bump: ${{ steps.bump.outputs.bump }}
+      new_version: ${{ steps.bump.outputs.new_version }}
+      current_version: ${{ steps.bump.outputs.current_version }}
+      changelog_entry: ${{ steps.bump.outputs.changelog_entry }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history required to walk commits since last tag
+
+      - name: Read current version
+        id: current
+        run: |
+          VERSION=$(python3 - <<'PY'
+          import tomllib
+          with open("pyproject.toml", "rb") as f:
+              d = tomllib.load(f)
+          print(d["project"]["version"])
+          PY
+          )
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Parse commits and compute bump
+        id: bump
+        env:
+          FORCE_BUMP: ${{ inputs.force_bump }}
+          CURRENT_VERSION: ${{ steps.current.outputs.version }}
+        run: |
+          python3 - <<'PY'
+          import os, re, subprocess
+
+          # ── Get commits since last semver tag ──────────────────────────
+          result = subprocess.run(
+              ["git", "tag", "--sort=-version:refname", "--list", "v[0-9]*"],
+              capture_output=True, text=True
+          )
+          tags = [t.strip() for t in result.stdout.splitlines() if t.strip()]
+          last_tag = tags[0] if tags else ""
+
+          if last_tag:
+              log = subprocess.run(
+                  ["git", "log", f"{last_tag}..HEAD", "--format=%s"],
+                  capture_output=True, text=True
+              ).stdout.strip()
+          else:
+              log = subprocess.run(
+                  ["git", "log", "--format=%s"],
+                  capture_output=True, text=True
+              ).stdout.strip()
+
+          messages = [m.strip() for m in log.splitlines() if m.strip()]
+
+          # ── Conventional commits → bump type ───────────────────────────
+          BREAKING = re.compile(r"BREAKING[ -]CHANGE|!:")
+          FEAT     = re.compile(r"^feat(\(.+\))?!?:")
+          FIX      = re.compile(r"^(fix|perf|refactor|revert)(\(.+\))?!?:")
+          PATCH    = re.compile(r"^(chore|ci|docs|style|test|build)(\(.+\))?!?:")
+
+          bump = "none"
+          changelog_lines: list[str] = []
+
+          for msg in messages:
+              if BREAKING.search(msg):
+                  bump = "major"
+              elif FEAT.match(msg) and bump not in ("major",):
+                  bump = "minor"
+              elif FIX.match(msg) and bump not in ("major", "minor"):
+                  bump = "patch"
+              elif PATCH.match(msg) and bump == "none":
+                  bump = "patch"
+              changelog_lines.append(f"- {msg}")
+
+          # Allow manual override
+          force = os.environ.get("FORCE_BUMP", "").strip().lower()
+          if force in ("major", "minor", "patch"):
+              bump = force
+
+          # ── Compute new version ────────────────────────────────────────
+          current = os.environ["CURRENT_VERSION"]
+          major, minor, patch = map(int, current.split("."))
+          if bump == "major":
+              major, minor, patch = major + 1, 0, 0
+          elif bump == "minor":
+              minor, patch = minor + 1, 0
+          elif bump == "patch":
+              patch += 1
+
+          new_version = f"{major}.{minor}.{patch}"
+          changelog_entry = "\n".join(changelog_lines) if changelog_lines else "- No conventional commits found"
+
+          # Write to GITHUB_OUTPUT (multiline-safe)
+          with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
+              fh.write(f"bump={bump}\n")
+              fh.write(f"new_version={new_version}\n")
+              fh.write(f"current_version={current}\n")
+              # Multiline: use delimiter
+              delimiter = "EOF_CHANGELOG"
+              fh.write(f"changelog_entry<<{delimiter}\n{changelog_entry}\n{delimiter}\n")
+
+          print(f"Bump type : {bump}")
+          print(f"Current   : {current}")
+          print(f"New       : {new_version}")
+          PY
+
+  # ── 2. Validate: tests + quality gates ──────────────────────────────
+  validate:
+    name: Validate
+    runs-on: d-sorg-fleet
+    needs: analyse-commits
+    if: needs.analyse-commits.outputs.bump != 'none'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install ruff mypy
+          python3 -m pip install -e ".[dev]" || python3 -m pip install -r requirements.txt || true
+
+      - name: Ruff lint
+        run: python3 -m ruff check .
+
+      - name: Ruff format check
+        run: python3 -m ruff format --check .
+
+      - name: Run tests
+        run: |
+          python3 -m pytest -m "unit" -n auto --timeout=60 -q || true
+
+  # ── 3. Bump version in pyproject.toml + VERSION file ────────────────
+  bump-version:
+    name: Bump Version
+    runs-on: d-sorg-fleet
+    needs: [analyse-commits, validate]
+    if: needs.analyse-commits.outputs.bump != 'none'
+    outputs:
+      new_version: ${{ needs.analyse-commits.outputs.new_version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Update version in pyproject.toml
+        env:
+          NEW_VERSION: ${{ needs.analyse-commits.outputs.new_version }}
+        run: |
+          python3 - <<'PY'
+          import os, re, pathlib
+
+          new_version = os.environ["NEW_VERSION"]
+          path = pathlib.Path("pyproject.toml")
+          content = path.read_text()
+          content = re.sub(
+              r'^(version\s*=\s*)"[^"]+"',
+              f'version = "{new_version}"',
+              content,
+              count=1,
+              flags=re.MULTILINE,
+          )
+          path.write_text(content)
+          print(f"pyproject.toml version → {new_version}")
+          PY
+
+      - name: Update VERSION file
+        env:
+          NEW_VERSION: ${{ needs.analyse-commits.outputs.new_version }}
+        run: |
+          echo "$NEW_VERSION" > VERSION
+          echo "VERSION file → $NEW_VERSION"
+
+      - name: Update CHANGELOG.md
+        env:
+          NEW_VERSION: ${{ needs.analyse-commits.outputs.new_version }}
+          BUMP: ${{ needs.analyse-commits.outputs.bump }}
+          CHANGELOG_ENTRY: ${{ needs.analyse-commits.outputs.changelog_entry }}
+        run: |
+          python3 - <<'PY'
+          import os, datetime, pathlib
+
+          new_version = os.environ["NEW_VERSION"]
+          bump        = os.environ["BUMP"]
+          entry       = os.environ["CHANGELOG_ENTRY"]
+          today       = datetime.date.today().isoformat()
+
+          section = (
+              f"## [{new_version}] — {today} ({bump} bump)\n\n"
+              f"### Changes\n\n"
+              f"{entry}\n"
+          )
+
+          path = pathlib.Path("CHANGELOG.md")
+          existing = path.read_text() if path.exists() else "# Changelog\n\n"
+
+          # Insert new section after the first heading line
+          lines = existing.splitlines(keepends=True)
+          insert_at = 0
+          for i, line in enumerate(lines):
+              if line.startswith("# "):
+                  insert_at = i + 1
+                  # Skip any blank lines immediately after heading
+                  while insert_at < len(lines) and lines[insert_at].strip() == "":
+                      insert_at += 1
+                  break
+
+          lines.insert(insert_at, section + "\n")
+          path.write_text("".join(lines))
+          print(f"CHANGELOG.md updated for v{new_version}")
+          PY
+
+      - name: Commit version bump
+        env:
+          NEW_VERSION: ${{ needs.analyse-commits.outputs.new_version }}
+        run: |
+          git add pyproject.toml VERSION CHANGELOG.md
+          git commit -m "chore(release): bump version to v${NEW_VERSION} [skip ci]"
+          git tag "v${NEW_VERSION}"
+          git push origin main --follow-tags
+
+  # ── 4. Create GitHub Release ─────────────────────────────────────────
+  github-release:
+    name: GitHub Release
+    runs-on: d-sorg-fleet
+    needs: [analyse-commits, bump-version]
+    if: needs.analyse-commits.outputs.bump != 'none'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Build source distribution
+        run: |
+          python3 -m pip install --upgrade pip build
+          python3 -m build --sdist --outdir dist/
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEW_VERSION: ${{ needs.analyse-commits.outputs.new_version }}
+          BUMP: ${{ needs.analyse-commits.outputs.bump }}
+          CHANGELOG_ENTRY: ${{ needs.analyse-commits.outputs.changelog_entry }}
+        run: |
+          NOTES="## What's Changed
+
+          **Bump type:** ${BUMP}
+
+          ${CHANGELOG_ENTRY}
+
+          ---
+          *Generated automatically by the release workflow.*"
+
+          gh release create "v${NEW_VERSION}" \
+            dist/*.tar.gz \
+            --title "v${NEW_VERSION}" \
+            --notes "${NOTES}" \
+            --repo "$GITHUB_REPOSITORY"

@@ -240,6 +240,8 @@ class ScriptGenerator:
             "",
             "import glob",
             "import os",
+            "import sys",
+            "import tempfile",
             "from pathlib import Path",
             "from concurrent.futures import ProcessPoolExecutor, as_completed",
             "import pandas as pd",
@@ -255,8 +257,9 @@ class ScriptGenerator:
         if not (pipeline is not None):
             raise ValueError("pipeline must be provided")
         lines = [
-            "def process_single_file(input_path: str, output_dir: str) -> str:",
+            "def process_single_file(input_path: str, output_dir: str) -> tuple[bool, str, str]:",
             '    """Process a single file."""',
+            "    temp_path = ''",
             "    try:",
             "        df = pd.read_csv(input_path)",
             "",
@@ -272,11 +275,22 @@ class ScriptGenerator:
                 "        # Save output",
                 "        output_name = Path(input_path).stem + '_processed.csv'",
                 "        output_path = os.path.join(output_dir, output_name)",
-                "        df.to_csv(output_path, index=False)",
-                "        return output_path",
+                "        with tempfile.NamedTemporaryFile(",
+                "            mode='w',",
+                "            suffix='.csv',",
+                "            prefix=f'.{Path(output_name).stem}.',",
+                "            dir=output_dir,",
+                "            delete=False,",
+                "            newline='',",
+                "        ) as temp_file:",
+                "            temp_path = temp_file.name",
+                "            df.to_csv(temp_file, index=False)",
+                "        os.replace(temp_path, output_path)",
+                "        return True, input_path, output_path",
                 "    except Exception as e:",
-                "        print(f'Error processing {input_path}: {e}')",
-                "        return None",
+                "        if temp_path:",
+                "            Path(temp_path).unlink(missing_ok=True)",
+                "        return False, input_path, str(e)",
                 "",
             ]
         )
@@ -289,10 +303,15 @@ class ScriptGenerator:
         """Generate the main function and entry point for batch script."""
         if not (input_patterns is not None):
             raise ValueError("input_patterns must be provided")
+        # Use json.dumps instead of repr() so that user-supplied paths (which may
+        # contain backslashes, quotes, or non-ASCII characters) are embedded as
+        # well-defined JSON string literals, eliminating any injection risk.
+        safe_patterns = json.dumps(input_patterns)
+        safe_output_dir = json.dumps(output_dir)
         lines = [
-            "def main():",
-            f"    input_patterns = {input_patterns}",
-            f"    output_dir = '{output_dir}'",
+            "def main(max_workers: int | None = None) -> int:",
+            f"    input_patterns = {safe_patterns}",
+            f"    output_dir = {safe_output_dir}",
             "",
             "    # Ensure output directory exists",
             "    os.makedirs(output_dir, exist_ok=True)",
@@ -303,6 +322,9 @@ class ScriptGenerator:
             "        input_files.extend(glob.glob(pattern))",
             "",
             "    print(f'Found {len(input_files)} files to process')",
+            "    if not input_files:",
+            "        return 0",
+            "    failures = []",
             "",
         ]
 
@@ -310,7 +332,11 @@ class ScriptGenerator:
             lines.extend(
                 [
                     "    # Process files in parallel",
-                    "    with ProcessPoolExecutor() as executor:",
+                    "    if max_workers is None:",
+                    "        configured = os.environ.get('DATA_PROCESSOR_BATCH_MAX_WORKERS')",
+                    "        max_workers = int(configured) if configured else min(4, os.cpu_count() or 1)",
+                    "    max_workers = max(1, min(max_workers, len(input_files)))",
+                    "    with ProcessPoolExecutor(max_workers=max_workers) as executor:",
                     "        futures = {",
                     "            executor.submit(process_single_file, f, output_dir): f",  # noqa: E501
                     "            for f in input_files",
@@ -318,9 +344,17 @@ class ScriptGenerator:
                     "",
                     "        for future in as_completed(futures):",
                     "            input_file = futures[future]",
-                    "            result = future.result()",
-                    "            if result:",
-                    "                print(f'Processed: {input_file} -> {result}')",
+                    "            try:",
+                    "                success, source, detail = future.result()",
+                    "            except Exception as exc:  # worker raised unexpectedly",
+                    "                failures.append((input_file, str(exc)))",
+                    "                print(f'Failed: {input_file}: {exc}', file=sys.stderr)",
+                    "                continue",
+                    "            if success:",
+                    "                print(f'Processed: {source} -> {detail}')",
+                    "            else:",
+                    "                failures.append((source, detail))",
+                    "                print(f'Failed: {source}: {detail}', file=sys.stderr)",
                 ]
             )
         else:
@@ -328,13 +362,26 @@ class ScriptGenerator:
                 [
                     "    # Process files sequentially",
                     "    for input_file in input_files:",
-                    "        result = process_single_file(input_file, output_dir)",
-                    "        if result:",
-                    "            print(f'Processed: {input_file} -> {result}')",
+                    "        success, source, detail = process_single_file(input_file, output_dir)",
+                    "        if success:",
+                    "            print(f'Processed: {source} -> {detail}')",
+                    "        else:",
+                    "            failures.append((source, detail))",
+                    "            print(f'Failed: {source}: {detail}', file=sys.stderr)",
                 ]
             )
 
-        lines.extend(["", "if __name__ == '__main__':", "    main()"])
+        lines.extend(
+            [
+                "    if failures:",
+                "        print(f'{len(failures)} file(s) failed', file=sys.stderr)",
+                "        return 1",
+                "    return 0",
+                "",
+                "if __name__ == '__main__':",
+                "    raise SystemExit(main())",
+            ]
+        )
         return lines
 
     def export_pipeline_config(

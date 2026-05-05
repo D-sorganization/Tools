@@ -344,7 +344,7 @@ class PressureDropCalculatorWidget(QWidget):
                 temperature=self.temperature_spin.value(),
                 gas_composition=gas_comp,
                 elevation_change=self.elevation_spin.value(),
-                roughness=roughness,
+                pipe_roughness=roughness,
                 friction_method=self.friction_method_combo.currentText(),
             )
 

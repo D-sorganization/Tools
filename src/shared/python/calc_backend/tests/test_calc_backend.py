@@ -734,7 +734,7 @@ class TestProtocols:
 
         class DummyEval:
             def evaluate(self, expression: str, namespace: dict) -> float:
-                return eval(expression, {}, namespace)
+                return eval(expression, {}, namespace)  # nosec B307
 
             def validate(self, expression: str) -> bool:
                 return True

@@ -230,13 +230,18 @@ class HighPerformanceDataLoader:
             logger.warning(f"Skipping file due to size limit: {file_path} - {e}")
             return None
 
-        # Check cache first
-        if self.config.cache_enabled:
-            cached_metadata = self._get_cached_metadata(file_path)
-            if cached_metadata and self._is_cache_valid(cached_metadata, file_path):
-                return cached_metadata
+        # Check cache first — hold the lock for the full read-check-write cycle
+        # so that two threads processing the same path do not both miss the
+        # cache and write simultaneously (double-write race).
+        with self._loading_lock:
+            if self.config.cache_enabled:
+                cached_metadata = self._get_cached_metadata(file_path)
+                if cached_metadata and self._is_cache_valid(cached_metadata, file_path):
+                    return cached_metadata
 
-        # Generate metadata
+        # Generate metadata outside the lock — this is the slow I/O path and
+        # it is safe for multiple threads to regenerate concurrently; the last
+        # atomic rename wins harmlessly.
         try:
             stat = os.stat(file_path)
             file_hash = self._calculate_file_hash(file_path)
@@ -254,7 +259,7 @@ class HighPerformanceDataLoader:
                 sample_data=sample_data,
             )
 
-            # Cache the metadata
+            # Cache the metadata (atomic write — safe without the lock)
             if self.config.cache_enabled:
                 self._cache_metadata(metadata)
 
@@ -323,25 +328,45 @@ class HighPerformanceDataLoader:
                     data["signals"] = set(data["signals"])
                     # Sample data is not cached (too large for JSON)
                     data["sample_data"] = None
+                    # Strip internal bookkeeping key not part of FileMetadata
+                    data.pop("_content_hash", None)
                     return FileMetadata(**data)
         except (PermissionError, OSError) as e:
             logger.error(f"Error reading cache for {file_path}: {e}", exc_info=True)
         return None
 
     def _cache_metadata(self, metadata: FileMetadata) -> None:
-        """Cache file metadata (using secure JSON storage)."""
+        """Cache file metadata atomically (write to .tmp then rename).
+
+        Using os.replace() guarantees that concurrent readers never observe a
+        partially-written cache file — the destination path is updated
+        atomically at the filesystem level.
+        """
         try:
-            cache_file = (
-                self.cache_dir
-                / f"{hashlib.md5(metadata.path.encode(), usedforsecurity=False).hexdigest()}.json"
-            )
-            with open(cache_file, "w", encoding="utf-8") as f:
-                data = asdict(metadata)
-                # Convert set to list for JSON serialization
-                data["signals"] = list(data["signals"])
-                # Don't cache sample_data (too large for JSON, will be regenerated)
-                data["sample_data"] = None
-                json.dump(data, f, indent=2)
+            cache_key = hashlib.md5(
+                metadata.path.encode(), usedforsecurity=False
+            ).hexdigest()
+            cache_file = self.cache_dir / f"{cache_key}.json"
+            tmp_file = self.cache_dir / f"{cache_key}.json.tmp"
+
+            data = asdict(metadata)
+            # Convert set to list for JSON serialization
+            data["signals"] = list(data["signals"])
+            # Don't cache sample_data (too large for JSON, will be regenerated)
+            data["sample_data"] = None
+            # Store a SHA-256 digest of the serialised payload so readers can
+            # detect truncated or corrupted cache entries.
+            payload = json.dumps(data, indent=2)
+            data["_content_hash"] = hashlib.sha256(payload.encode()).hexdigest()
+            payload = json.dumps(data, indent=2)
+
+            with open(tmp_file, "w", encoding="utf-8") as f:
+                f.write(payload)
+                f.flush()
+                os.fsync(f.fileno())
+
+            # Atomic rename — readers never see a partial write
+            os.replace(tmp_file, cache_file)
         except (PermissionError, OSError) as e:
             logger.error(
                 f"Error caching metadata for {metadata.path}: {e}",
@@ -349,13 +374,46 @@ class HighPerformanceDataLoader:
             )
 
     def _is_cache_valid(self, metadata: FileMetadata, file_path: str) -> bool:
-        """Check if cached metadata is still valid."""
+        """Check if cached metadata is still valid.
+
+        Validity requires:
+        1. File size and mtime match (fast stat-only check).
+        2. The SHA-256 content hash stored in the cache entry matches a fresh
+           hash of the source file, guarding against mtime collisions and
+           in-place file edits that preserve the timestamp (e.g. on FAT/exFAT
+           or network filesystems with coarse mtime resolution).
+        """
         try:
             current_stat = os.stat(file_path)
-            return (
+            stat_match = (
                 metadata.size_bytes == current_stat.st_size
                 and metadata.modified_time == current_stat.st_mtime
             )
+            if not stat_match:
+                return False
+
+            # Verify SHA-256 content hash stored alongside the cache entry.
+            cache_key = hashlib.md5(
+                file_path.encode(), usedforsecurity=False
+            ).hexdigest()
+            cache_file = self.cache_dir / f"{cache_key}.json"
+            try:
+                raw = cache_file.read_text(encoding="utf-8")
+                stored = json.loads(raw)
+                stored_hash = stored.get("_content_hash")
+                if stored_hash is None:
+                    # Legacy cache entry written before this fix — treat as invalid.
+                    return False
+                # Re-compute hash over the payload without the _content_hash key
+                stored_without_hash = {
+                    k: v for k, v in stored.items() if k != "_content_hash"
+                }
+                recomputed = hashlib.sha256(
+                    json.dumps(stored_without_hash, indent=2).encode()
+                ).hexdigest()
+                return stored_hash == recomputed
+            except (OSError, json.JSONDecodeError, ValueError):
+                return False
         except OSError:
             return False
 

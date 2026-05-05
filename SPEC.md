@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.113                                    |
+| **Spec Version**        | 1.1.125                                    |
 | **Last Spec Update**    | 2026-05-05                                 |
 
 ## 2. Purpose & Mission
@@ -123,7 +123,7 @@ Tools/
 | GUI Launcher Web Helpers | `src/shared/python/gui_launcher/launcher_web.py`                                       | Focused React/Vite launcher process helpers shared by direct web launch scripts and the unified GUI launcher                                                                                                                                                                                                        |
 | Plugin System            | `src/python/plugin_system/`                                                            | Discover, load, and manage plugins                                                                                                                                                                                                                                                                                  |
 | Shared Utilities         | `src/python/shared_utilities/`                                                         | Common functions, decorators, error handling                                                                                                                                                                                                                                                                        |
-| Signal Toolkit           | `src/shared/python/signal_toolkit/`                                                    | Shared signal-processing primitives, including adaptive filters implemented in `adaptive_filter.py` and re-exported through the package and legacy `filters` module                                                                                                                                                 |
+| Signal Toolkit           | `src/shared/python/signal_toolkit/`                                                    | Shared signal-processing primitives, including adaptive filters implemented in `adaptive_filter.py`, waveform generators that reject underspecified sample arrays and non-positive frequencies, and re-exports through the package and legacy `filters` module                                                      |
 | Pressure Drop Calculator | `src/shared/python/upstream_drift_tools/process_calculators/pressure_drop_calculator/` | Facade-driven gas pressure-drop workflows with extracted API, validation, reference, results, and engine-domain helper modules                                                                                                                                                                                      |
 | Model Generation API     | `src/shared/python/model_generation/api/`                                              | Route facade with framework-specific Flask and FastAPI adapters behind a compatibility shim, plus repository download helpers that require HTTPS downloads and validate archive and mesh paths to prevent traversal                                                                                                 |
 | Engineering Tools        | `src/tools/`                                                                           | 45+ specialized calculation and processing tools                                                                                                                                                                                                                                                                    |
@@ -136,6 +136,29 @@ Tools/
 | Rust Kernels             | `rust_core/`                                                                           | High-performance mathematical operations, including standard atmosphere calculations that require finite, non-negative altitudes and a canonical full-precision universal gas constant                                                                                                                              |
 | MATLAB Integration       | `matlab/`                                                                              | Wrapped MATLAB scientific code                                                                                                                                                                                                                                                                                      |
 | Fleet Theme System       | `src/python/shared_utilities/theme/`                                                   | Consistent UI theming across tools                                                                                                                                                                                                                                                                                  |
+
+### Production-Readiness Hardening
+
+- Generated data-processing batch scripts serialize input glob patterns and
+  output directories with Python literal-safe formatting, write CSV outputs via
+  temporary files followed by atomic replace, aggregate per-file failures, and
+  exit non-zero when any file fails. Parallel generated scripts bound worker
+  count by default and allow `DATA_PROCESSOR_BATCH_MAX_WORKERS` overrides.
+- Shared pandas formula entry points validate expressions before calling
+  `DataFrame.eval`. The allowlist accepts column names, numeric/boolean
+  constants, arithmetic, boolean operators, and comparisons; it rejects function
+  calls, attribute access, indexing, unknown names, overly long formulas, overly
+  complex ASTs, and unbounded exponent expressions. `numexpr` remains an
+  optional accelerator with the existing Python-engine fallback.
+- Model-generation mesh inertia upload handlers reject empty payloads,
+  unsupported mesh filename suffixes, and payloads above the configured 10 MiB
+  limit before parser handoff. Temporary mesh files are deleted in cleanup
+  paths, and malformed parser failures are normalized into API error responses.
+- MakeHuman humanoid mesh generation uses safely serialized export paths inside
+  generated scripts, validates modifier keys and finite numeric values before
+  script creation, rejects non-directory output paths, and keeps
+  `mesh_generator_makehuman.py` as a compatibility shim over the extracted
+  `_makehuman_generator.py` implementation.
 
 ## 5. Desired Functionality
 
@@ -228,11 +251,30 @@ Pickle-backed DataFrame reads and writes are disabled by default in shared data-
 
 **Environment Variables:**
 
+All Tools environment variables use the `TOOLS_*` prefix. This is the canonical naming
+convention enforced for all new variables. See `docs/SECRETS_MANAGEMENT.md` for guidance
+on using these variables safely without hardcoding values.
+
+_System configuration:_
+
 - `TOOLS_PLUGIN_PATH` — Colon-separated paths to plugin directories
 - `TOOLS_THEME` — Default theme name (light/dark/custom)
 - `TOOLS_CACHE_DIR` — Cache directory for results
 - `TOOLS_LOG_LEVEL` — Logging verbosity (DEBUG/INFO/WARNING)
 - `TOOLS_RUST_WORKERS` — Number of Rust kernel worker threads
+
+_Optional service credentials (all optional; tools degrade gracefully when absent):_
+
+- `TOOLS_GEMINI_API_KEY` — Gemini API key for AI-powered PDF renaming
+  (also accepts legacy `GEMINI_API_KEY` / `GOOGLE_API_KEY` for backward compatibility)
+- `TOOLS_GITHUB_TOKEN` — GitHub personal access token for model-generation downloads;
+  increases rate limit from 60 to 5000 requests/hour. See QUICKSTART for details.
+- `TOOLS_MATLAB_PATH` — Full path to the `matlab` executable. If unset, the launcher
+  searches `PATH` via `shutil.which("matlab")` then falls back gracefully.
+
+_Naming convention enforcement:_ New optional-service variables **must** use the
+`TOOLS_` prefix. Legacy bare names (e.g. `GEMINI_API_KEY`) are accepted only for
+backward compatibility and will not be added for new services.
 
 **Config Files:**
 
@@ -464,6 +506,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-05 | 1.1.125 | Optimized polynomial evaluation using Horners method in `pendulum-web` physics engines (`physics.ts`, `physics_triple.ts`, `physics_golfer.ts`). |
+| 2026-05-04 | 1.1.124 | Documented production-readiness hardening for generated data-processing batch scripts, shared pandas formula allowlist validation, model-generation mesh upload size and filename checks with cleanup, and MakeHuman generated-script serialization plus the `mesh_generator_makehuman.py` compatibility shim.                                                                                                                                                                                                                                                        |
 | 2026-04-26 | 1.1.111 | Improved accessibility for the calculator clear button's soft confirm state. Added `aria-live="polite"` to the parent row and dynamically toggled the `aria-label` between "Clear all fields" and "Confirm clear all fields" to keep screen reader users informed of the required secondary action.                                                                                                                                                                                                                                                                 |
 | 2026-04-25 | 1.1.107 | Fixed StrEnum import compatibility for Python 3.10 by routing `steam_engine_calculator` and `video_processor` API modules through the existing `utils.compatibility` backport facade, eliminating import-time failures on the 3.10 CI interpreter.                                                                                                                                                                                                                                                                                                                  |
 | 2026-04-25 | 1.1.106 | Added dynamic focus shifting to inline form validation within the Unit Converter app's Custom Units modal. This prevents keyboard focus traps by focusing the first invalid input (`.focus()`) and marking it with `aria-invalid="true"`.                                                                                                                                                                                                                                                                                                                           |
@@ -585,6 +629,17 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-22 | 1.1.95  | Canonicalized the Rust universal gas constant by updating `math::R_GAS` to the full CODATA value and having `engineering::R_UNIVERSAL` reuse the same constant.                                                                                                                                                                                                                                                                                                                                                                                                     |
 | 2026-04-23 | 1.1.102 | Updated Unit Converter `removeCustomUnit` workflow to use an inline soft confirm pattern, eliminating thread-blocking `confirm()` dialogs and improving accessibility with `aria-live`.                                                                                                                                                                                                                                                                                                                                                                             |
 | 2026-04-28 | 1.1.112 | Updated Unit Converter UI to dynamically retarget labels for custom combobox search inputs, ensuring explicit accessible names and resolving click-to-focus gaps.                                                                                                                                                                                                                                                                                                                                                                            |
+| 2026-05-02 | 1.1.121 | Preserved `smoothAngles` behavior for fractional moving-average window sizes by dividing optimized mid-window sums by the actual sample span, added a Vitest regression in the golf video-processor web app, hardened the benchmark plugin bootstrap in CI/benchmark workflows against shared-runner cache drift, and restored the CI Standard coverage-policy skip for PRs that touch no Python source or Python tests. |
+| 2026-05-01 | 1.1.120 | Hardened the calculator web expression validation gate by rejecting Python object hierarchy, lifecycle, async, import, and control-flow injection markers before SymPy parsing.                                                                                                                                                                                                                                                        |
+| 2026-05-01 | 1.1.119 | Replaced the ODESolverCalculator data-table `.filter().map()` chain with a single-pass `for` loop that pre-allocates a result array and iterates in steps, eliminating O(N) intermediate array allocations and reducing GC pressure during large-dataset renders. |
+| 2026-05-03 | 1.1.122 | Optimized row copying logic in useDataProcessor.ts by replacing the slow `for...in` and `hasOwnProperty` check with `Object.keys()` and a standard `for` loop, eliminating prototype chain crawling overhead. |
+| 2026-05-03 | 1.1.123 | Hardened Folder Packer Pro archive extraction against absolute and parent-traversal member paths, made vessel drafter positive-value contracts accept both legacy and fleet-standard argument order, repaired the production Docker wheel build/install path, expanded Docker context cache exclusions, made CI quality-gate jobs informational, and lengthened Jules issue resolver polling. |
+| 2026-05-01 | 1.1.118 | Bound the CI Standard workflow's dependency bootstrap to `python -m pip` in both quality-gate and test-matrix jobs so pytest plugins, including `pytest-benchmark`, install into the same interpreter that later runs `python -m pytest`.                                                                                                                                                                                                                                                   |
+| 2026-05-01 | 1.1.117 | Made the shared syngas water vapor-pressure helpers return explicit `float` values so delta `mypy` checks stay green while preserving the `water_fraction` compatibility alias for downstream consumers.                                                                                                                                                                                                                                                                                               |
+| 2026-05-01 | 1.1.116 | Tightened signal generator and acid gas dewpoint precondition handling so short chirp inputs, zero-frequency periodic signals, and non-positive dewpoint partial pressures raise deterministic `ValueError` messages.                                                                                                                                                                                                                                                                                 |
+| 2026-04-30 | 1.1.115 | Hardened CI packaging and workflow checks by pinning the setuptools build backend below 82, using the supported package-data wildcard for `py.typed` markers, scanning merge-conflict markers with tracked-file `git grep`, normalizing detect-secrets result comparisons, and tolerating missing or empty benchmark JSON artifacts.                                                                                                                                                                                                              |
+| 2026-04-30 | 1.1.114 | Integrated full-text live search into the Unified Tools Launcher tabs, including name, description, keyword, multi-word, and punctuation-normalized matching, with Ctrl+F focus and Esc clear shortcuts.                                                                                                                                                                                                                                                                                                                                       |
+| 2026-05-24 | 1.1.113 | Fixed a vulnerability in CSRF cookie parsing logic where cookies with values containing an equals sign were previously being truncated. This allows base64 encoded CSRF tokens with padding to be parsed correctly.                                                                                                                                                                                                                                                                                                                        |
 
 ---
 
@@ -607,6 +662,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ### Performance
 
+- `getTimeDelta` calculations inside tight loops use `Date.parse(dateString)` instead of `new Date(dateString).getTime()` to directly retrieve numeric timestamps without the memory overhead and GC pressure associated with instantiating temporary `Date` objects.
 - Data-processing formula evaluation now treats `numexpr` as an optional accelerator rather than a hard runtime dependency. Shared `DataProcessor` and `upstream_drift_tools` formula columns fall back to the pandas Python eval engine when `numexpr` is unavailable, preserving the documented `TransformationError` contract for invalid expressions.
 - The application uses `Float64Array` and iterative loops instead of `Array.prototype.map`/`filter`/`reduce` to optimize memory and processing speed for large numerical datasets, including reusable typed-array buffering for median-filter windows in `useDataProcessor.ts`. Chained array functional methods like `reduce` and `map` have been largely replaced with standard iterative loops in mathematical computation methods such as `zScoreFilter`, `linearRegression` and `polynomialRegression`.
 - Mathematical matrix calculations such as Principal Component Analysis (PCA) utilize column-wise typed arrays (e.g. `Float64Array` buffers) rather than traditional N x P row-wise arrays, drastically reducing O(N) allocation overheads and mitigating garbage collection pauses on large scale analysis.
@@ -643,9 +699,11 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Performance**: Replaced `.map()` and `.push()` with pre-allocated single-pass `for` loops in `pcaScatterData`, `regressionScatterData`, and `regressionResidualsData` within `AnalyticsSuite.tsx` to eliminate dynamic resizing overhead and intermediate object allocations.
 - **Security**: Fixed DOM-based Cross-Site Scripting (XSS) vulnerability in `psa_calculator.html` by implementing and applying an `escapeHtml` function to user-controlled inputs before updating `innerHTML`.
 - **Performance**: Optimized `computeFFT` inside `FunctionGenerator.tsx` by pre-allocating output arrays and substituting functional iterations (`.map()` and `.reduce()`) with an inline single-pass Hanning window loop. This bypasses intermediary array processing steps and lowers garbage collection occurrences.
+- **Performance**: Replaced O(N) chained `.filter().map()` iterators with an $O(N/\text{step})$ `for` loop in `FunctionGenerator.tsx` when preparing data points for time charts to prevent the allocation of intermediate arrays and reduce unnecessary iterations.
 
-## 2026-05-05
+## Performance Optimizations
+- **ODESolverCalculator:** Replaced `.map()` and `Math.max(...values)` with a single-pass `for` loop to prevent "Maximum call stack size exceeded" errors on large dataset arrays generated by the ODE solver.
+- **Performance**: Optimized the sliding-window algorithm `smoothAngles` in the video processor's `angleCalculator.ts` by replacing `.slice()` and `.reduce()` inside the loop with a single-pass sum tracker, and splitting the loop into three parts (left, middle, right) to eliminate `Math.min()` and `Math.max()` bounds checking from the hot path.
 
-### Version 1.1.113
-
-- **Performance**: Optimized polynomial evaluation in physics engines (`physics.ts`, `physics_triple.ts`, `physics_golfer.ts`) by replacing `.reduce()`-based evaluation with Horner's method. Eliminates callback allocations and substitutes expensive exponentiation (`t ** i`) with simple multiplication, dramatically reducing overhead in tight RK4 integration loops used for golf swing and pendulum simulations.
+### Web Frontends
+- `data_processor`: Improved performance in tight object loops by replacing `for...in` and `hasOwnProperty` with `Object.keys()` and standard `for` loops in `useDataProcessor.ts`.

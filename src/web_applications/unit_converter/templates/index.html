@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
   <body>
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
     <div class="app-container">
       <!-- Header -->
       <header class="header">
@@ -37,7 +38,7 @@
       </header>
 
       <!-- Main Content -->
-      <main class="main-content">
+      <main id="main-content" class="main-content">
         <!-- Category Selector -->
         <div class="form-group">
           <label for="category" class="label">Category</label>
@@ -147,11 +148,11 @@
         </div>
 
         <!-- Convert Button -->
-        <button id="convertBtn" class="btn btn-primary">Convert</button>
+        <button id="convertBtn" class="btn btn-primary" aria-label="Perform unit conversion">Convert</button>
 
         <!-- Swap Button -->
         <div class="swap-row">
-          <button id="swapBtn" class="btn btn-swap" title="Swap units">&#x21C5;</button>
+          <button id="swapBtn" class="btn btn-swap" aria-label="Swap from and to units">&#x21C5;</button>
         </div>
 
         <!-- Result Section -->
@@ -168,7 +169,7 @@
         <div class="card">
           <div class="card-header-row">
             <div class="card-title">Recent Conversions</div>
-            <button id="clearHistory" class="btn-text">Clear</button>
+            <button id="clearHistory" class="btn-text" aria-label="Clear conversion history">Clear</button>
           </div>
           <div id="recentList" class="recent-list">
             <p class="empty-state">No recent conversions</p>

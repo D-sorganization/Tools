@@ -1,5 +1,24 @@
 name: Jules Issue Resolver (Daily Priority Fixer)
 
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │ BLAST RADIUS DOCUMENTATION — Jules Issue Resolver                          │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CAN DO:                                                  │
+# │  • Select up to max_issues open GitHub issues and attempt automated fixes  │
+# │  • Create one jules/issue-* branch per fix and push the changes            │
+# │  • Open a pull request per issue and transition the issue to "In Review"   │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CANNOT DO:                                               │
+# │  • Push directly to main or any protected branch                           │
+# │  • Auto-merge any PR — human review required                               │
+# │  • Delete branches or cancel other workflow runs                           │
+# │                                                                             │
+# │ APPROVAL GATES:                                                             │
+# │  • Dispatched only by Control Tower on a fixed schedule                    │
+# │  • Concurrency lock prevents simultaneous resolver runs per repo           │
+# │  • max_issues (default 5) caps the number of issues addressed per run     │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
 on:
   workflow_call:
   workflow_dispatch:
@@ -13,10 +32,9 @@ on:
   # schedule:
   #   - cron: "0 8 * * 0,4"  # Daily at 2:30 AM UTC (overnight window)
 
+# Least-privilege top level: no write access by default.
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
+  contents: read
 
 concurrency:
   group: jules-issue-resolver-${{ github.repository }}
@@ -65,6 +83,12 @@ jobs:
   resolve-issues:
     needs: pick-runner
     runs-on: self-hosted
+    # Grant write only at this job level — branch creation, fix pushes, PR
+    # creation, and issue updates all happen here. pick-runner needs no write.
+    permissions:
+      contents: write      # create jules/issue-* branch and push fixes
+      pull-requests: write # open PR for each resolved issue
+      issues: write        # transition issue status to "In Review"
     steps:
       - uses: actions/checkout@v4
         with:
@@ -207,7 +231,7 @@ jobs:
 
           # Poll for completion
           MAX_WAIT=1800
-          POLL_INTERVAL=30
+          POLL_INTERVAL=300
           ELAPSED=0
 
           while [ $ELAPSED -lt $MAX_WAIT ]; do

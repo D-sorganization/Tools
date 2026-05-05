@@ -42,12 +42,13 @@ const initialState: DataProcessorState = {
 
 function copyOwnRowProperties(row: DataRow): DataRow {
   const newRow: DataRow = {};
-  // ⚡ Bolt Optimization: Use a for...in loop instead of Object.keys() to avoid
-  // O(N) array allocations of keys per row, significantly reducing garbage collection overhead.
-  for (const key in row) {
-    if (Object.prototype.hasOwnProperty.call(row, key)) {
-      newRow[key] = row[key];
-    }
+  // ⚡ Bolt Optimization: Use Object.keys() combined with a standard for loop instead of for...in.
+  // This natively filters own properties and is significantly faster than for...in combined with
+  // Object.prototype.hasOwnProperty.call() because it avoids prototype chain crawling.
+  const keys = Object.keys(row);
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    newRow[key] = row[key];
   }
   return newRow;
 }
@@ -744,9 +745,10 @@ function getTimeDelta(t1: string | number, t2: string | number): number {
   if (typeof t1 === 'number' && typeof t2 === 'number') {
     return t1 - t2;
   }
-  // For date strings, calculate difference in seconds
-  const d1 = new Date(t1).getTime();
-  const d2 = new Date(t2).getTime();
+  // ⚡ Bolt Optimization: Replace new Date().getTime() with Date.parse()
+  // Performance impact: Speeds up timestamp difference calculations in tight loops by avoiding object instantiation overhead.
+  const d1 = typeof t1 === 'string' ? Date.parse(t1) : Number(t1);
+  const d2 = typeof t2 === 'string' ? Date.parse(t2) : Number(t2);
   return (d1 - d2) / 1000;
 }
 

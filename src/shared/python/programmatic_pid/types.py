@@ -29,6 +29,7 @@ class ValidationIssue:
     severity: str = "error"
 
     def to_dict(self) -> dict[str, str]:
+        """Serialize to a plain dict suitable for JSON output."""
         return {"path": self.path, "message": self.message, "severity": self.severity}
 
 

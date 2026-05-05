@@ -29,6 +29,33 @@ const gasDensityInput = document.getElementById('gasDensity');
 // Theme selector
 const themeSelect = document.getElementById('themeSelect');
 
+
+// ============================================================================
+// TOAST NOTIFICATIONS
+// ============================================================================
+
+function showToast(message, type) {
+  var container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    container.setAttribute('role', 'status');
+    container.setAttribute('aria-live', 'polite');
+    document.body.appendChild(container);
+  }
+  var toast = document.createElement('div');
+  toast.className = 'toast toast--' + (type || 'error');
+  toast.textContent = message;
+  container.appendChild(toast);
+  // Force reflow then animate in
+  void toast.offsetWidth;
+  toast.classList.add('toast--visible');
+  setTimeout(function () {
+    toast.classList.remove('toast--visible');
+    setTimeout(function () { toast.remove(); }, 300);
+  }, 4000);
+}
+
 // State
 let categoryData = {};
 let conversionHistory = [];
@@ -159,6 +186,11 @@ async function performConversion() {
     if (!isNaN(density)) payload.gas_density_stp = density;
   }
 
+  // Loading state
+  convertBtn.disabled = true;
+  convertBtn.textContent = 'Converting…';
+  convertBtn.setAttribute('aria-busy', 'true');
+
   try {
     const response = await fetch('/api/convert', {
       method: 'POST',
@@ -169,7 +201,8 @@ async function performConversion() {
     const data = await response.json();
 
     if (!response.ok) {
-      showError(data.error || 'Conversion failed');
+      var errorMsg = data.error || 'Conversion failed';
+      showError(errorMsg, true);
       return;
     }
 
@@ -184,7 +217,11 @@ async function performConversion() {
 
     addToHistory(value, fromUnit, data.result, toUnit, category);
   } catch (err) {
-    showError('Network error: could not reach backend');
+    showError('Network error: could not reach backend', true);
+  } finally {
+    convertBtn.disabled = false;
+    convertBtn.textContent = 'Convert';
+    convertBtn.removeAttribute('aria-busy');
   }
 }
 
@@ -298,9 +335,12 @@ function loadFromHistory(item) {
 // ERROR HANDLING
 // ============================================================================
 
-function showError(message) {
+function showError(message, showToastNotification) {
   errorMessage.textContent = message;
   errorMessage.classList.remove('hidden');
+  if (showToastNotification) {
+    showToast(message, 'error');
+  }
 }
 
 function hideError() {

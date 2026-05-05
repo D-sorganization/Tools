@@ -131,6 +131,23 @@ class TestDataProcessorEngineColumns:
             check_names=False,
         )
 
+    def test_add_calculated_column_rejects_function_calls(
+        self, eng: DataProcessorEngine
+    ) -> None:
+        """Formula validation rejects calls before pandas eval."""
+        with pytest.raises(TransformationError, match="Unsupported formula syntax"):
+            eng.add_calculated_column("bad", "__import__('os')")
+
+    def test_add_calculated_column_rolls_back_after_rejected_formula(
+        self, eng: DataProcessorEngine
+    ) -> None:
+        """Rejected formulas must not leave partial columns behind."""
+        with pytest.raises(TransformationError):
+            eng.add_calculated_column("bad", "A.__class__")
+
+        assert eng.data is not None
+        assert "bad" not in eng.data.columns
+
     def test_transform_column_log(self, eng: DataProcessorEngine) -> None:
         """Log transformation applies correctly to numeric columns."""
         eng.transform_column("A", "log")

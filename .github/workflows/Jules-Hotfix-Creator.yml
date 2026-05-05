@@ -1,5 +1,24 @@
 name: Jules Hotfix-Creator (Worker)
 
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │ BLAST RADIUS DOCUMENTATION — Jules Hotfix-Creator                          │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CAN DO:                                                  │
+# │  • Create a new hotfix/* branch from the failed protected branch           │
+# │  • Push commits to that hotfix branch via Jules AI                         │
+# │  • Open a pull request targeting the failed branch (NOT auto-merged)       │
+# │                                                                             │
+# │ WHAT THIS WORKFLOW CANNOT DO:                                               │
+# │  • Push directly to main or master                                         │
+# │  • Auto-merge the PR it creates — human review is required                 │
+# │  • Delete branches or cancel other workflow runs                           │
+# │                                                                             │
+# │ APPROVAL GATES:                                                             │
+# │  • Only triggered when CI fails on main/master (via Control Tower triage)  │
+# │  • PR must be manually reviewed and merged — no auto-merge configured      │
+# │  • Skips entirely if JULES_API_KEY is not configured                       │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
 # Triggers when CI fails on protected branches (main/master)
 # Creates a hotfix branch, triggers Auto-Repair, and opens urgent PR
 
@@ -13,10 +32,9 @@ on:
         required: true
         type: string
 
+# Least-privilege top level: no write access by default.
 permissions:
-  contents: write
-  pull-requests: write
-  actions: write
+  contents: read
 
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
@@ -61,6 +79,11 @@ jobs:
   create-hotfix:
     needs: pick-runner
     runs-on: self-hosted
+    # Grant write only at this job level — hotfix branch creation and PR opening
+    # happen here. The pick-runner job needs no write access.
+    permissions:
+      contents: write      # create and push hotfix/* branch
+      pull-requests: write # open the urgent PR for human review
     steps:
       - name: Validate failed branch
         id: branch

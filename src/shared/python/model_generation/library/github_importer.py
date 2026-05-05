@@ -14,6 +14,11 @@ import urllib.request
 from dataclasses import dataclass
 from typing import Any
 
+from model_generation.library._rate_limiter import (
+    extract_rate_limit_info,
+    log_rate_limit_status,
+    make_request_with_backoff,
+)
 from model_generation.library.model_library import ModelLibrary
 
 logger = logging.getLogger(__name__)
@@ -130,16 +135,21 @@ class GitHubImporter:
 
         try:
             logger.info(f"Searching GitHub: {url}")
-            req = urllib.request.Request(url)
-            req.add_header("Accept", "application/vnd.github.v3+json")
-            # Add user agent to avoid strict rate limiting
-            req.add_header("User-Agent", "ModelGeneration-GitHubImporter")
-            token = os.environ.get("GITHUB_TOKEN")
+            headers = {
+                "Accept": "application/vnd.github.v3+json",
+                "User-Agent": "ModelGeneration-GitHubImporter",
+            }
+            # Prefer TOOLS_GITHUB_TOKEN (canonical TOOLS_* convention); fall back to
+            # bare GITHUB_TOKEN for backward compatibility.
+            token = os.environ.get("TOOLS_GITHUB_TOKEN") or os.environ.get(
+                "GITHUB_TOKEN"
+            )
             if token:
-                req.add_header("Authorization", f"token {token}")
+                headers["Authorization"] = f"token {token}"
 
-            with urllib.request.urlopen(req, timeout=10) as response:  # nosec B310 - GitHub API URL is constructed from validated owner/repo inputs
-                data = json.loads(response.read().decode())
+            # Use rate-limit aware request
+            response = make_request_with_backoff(url, headers=headers)
+            data = json.loads(response.read().decode())
 
             items = data.get("items", [])
             logger.info(f"Found {len(items)} repositories")
@@ -313,16 +323,26 @@ class GitHubImporter:
         branch = "main"
 
         try:
-            req = urllib.request.Request(api_url)
-            req.add_header("Accept", "application/vnd.github.v3+json")
-            req.add_header("User-Agent", "ModelGeneration-GitHubImporter")
-            token = os.environ.get("GITHUB_TOKEN")
+            headers = {
+                "Accept": "application/vnd.github.v3+json",
+                "User-Agent": "ModelGeneration-GitHubImporter",
+            }
+            # Prefer TOOLS_GITHUB_TOKEN (canonical TOOLS_* convention); fall back to
+            # bare GITHUB_TOKEN for backward compatibility.
+            token = os.environ.get("TOOLS_GITHUB_TOKEN") or os.environ.get(
+                "GITHUB_TOKEN"
+            )
             if token:
-                req.add_header("Authorization", f"token {token}")
-            with urllib.request.urlopen(req, timeout=10) as response:  # nosec B310 - GitHub API URL is constructed from validated owner/repo inputs
-                repo_data = json.loads(response.read().decode())
-                branch = repo_data.get("default_branch", "main")
-                description = repo_data.get("description", "")
+                headers["Authorization"] = f"token {token}"
+
+            # Use rate-limit aware request
+            response = make_request_with_backoff(api_url, headers=headers)
+            rate_limit_info = extract_rate_limit_info(response)
+            log_rate_limit_status(api_url, rate_limit_info, 200)
+
+            repo_data = json.loads(response.read().decode())
+            branch = repo_data.get("default_branch", "main")
+            description = repo_data.get("description", "")
         except (PermissionError, OSError):
             logger.warning(
                 f"Could not fetch repo metadata for {url}, assuming branch '{branch}'"

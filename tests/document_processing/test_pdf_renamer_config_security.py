@@ -47,7 +47,7 @@ def test_setup_api_key_interactive_saves_keyring_not_env_file(
     monkeypatch, tmp_path
 ) -> None:
     keyring = DummyKeyring()
-    answers = iter(["y", "secret-key"])
+    answers = iter(["y", "OWASP-TEST-API-KEY-SAFE-VALUE"])
     monkeypatch.setattr(config, "_get_keyring", lambda: keyring)
     monkeypatch.setattr(config, "get_api_key", lambda: None)
     monkeypatch.setattr("builtins.input", lambda _prompt: next(answers))
@@ -56,7 +56,7 @@ def test_setup_api_key_interactive_saves_keyring_not_env_file(
 
     assert config.setup_api_key_interactive() is True
     assert keyring.get_password(config.KEYRING_SERVICE, config.KEYRING_USERNAME) == (
-        "secret-key"
+        "OWASP-TEST-API-KEY-SAFE-VALUE"
     )
     assert not (tmp_path / ".env").exists()
     assert not (tmp_path / ".pdf_renamer" / ".env").exists()
@@ -65,7 +65,7 @@ def test_setup_api_key_interactive_saves_keyring_not_env_file(
 def test_setup_api_key_interactive_without_keyring_does_not_write_env(
     monkeypatch, tmp_path
 ) -> None:
-    answers = iter(["y", "secret-key"])
+    answers = iter(["y", "OWASP-TEST-API-KEY-SAFE-VALUE"])
     monkeypatch.setattr(config, "_get_keyring", lambda: None)
     monkeypatch.setattr(config, "get_api_key", lambda: None)
     monkeypatch.setattr("builtins.input", lambda _prompt: next(answers))

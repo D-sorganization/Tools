@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 GUI_INFO = {
     "name": "Humanoid Character Builder",
     "tool_name": "humanoid_builder_gui",
@@ -17,6 +19,6 @@ GUI_INFO = {
 }
 
 
-def get_gui_info() -> dict:
+def get_gui_info() -> dict[str, Any]:
     """Return GUI registration information."""
     return GUI_INFO

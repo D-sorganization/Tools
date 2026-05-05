@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 GUI_INFO = {
     "name": "Pressure Drop Calculator",
     "tool_name": "pressure_drop_calculator",
@@ -22,6 +24,6 @@ GUI_INFO = {
 }
 
 
-def get_gui_info() -> dict:
+def get_gui_info() -> dict[str, Any]:
     """Return GUI registration information."""
     return GUI_INFO

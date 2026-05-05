@@ -15,6 +15,8 @@ from pathlib import Path  # noqa: E402
 from typing import Any  # noqa: E402
 
 import pandas as pd
+from safe_pandas_eval import log_formula_rejected, validate_pandas_formula
+
 from contracts import require
 
 logger = logging.getLogger(__name__)
@@ -22,12 +24,32 @@ SUPPORTED_FILTER_TYPES = {"butterworth", "moving_average", "median", "savgol"}
 
 
 def _eval_with_optional_numexpr(df: pd.DataFrame, expression: str) -> pd.Series:
-    """Prefer numexpr when present but keep formula evaluation functional without it."""
+    """Validate and evaluate a formula expression against a DataFrame.
+
+    Validation via ``validate_pandas_formula`` runs before any engine is
+    invoked.  Direct use of ``engine="python"`` with untrusted input is unsafe
+    (no resource limits), but after the allow-list validation above it is safe
+    to use as a fallback when numexpr is not installed.
+    """
+
+    try:
+        validate_pandas_formula(expression, allowed_columns=df.columns)
+    except ValueError as error:
+        log_formula_rejected(expression, error)
+        raise
 
     try:
         return df.eval(expression, engine="numexpr")
     except ImportError:
-        return df.eval(expression, engine="python")
+        # numexpr is not installed.  The expression has already been validated
+        # by validate_pandas_formula, so it is safe to evaluate with the
+        # Python engine as a fallback.
+        try:
+            return df.eval(expression, engine="python")
+        except ImportError as exc:
+            raise RuntimeError(
+                "Formula evaluation requires numexpr. Install it with: pip install numexpr"
+            ) from exc
 
 
 @dataclass
@@ -75,6 +97,7 @@ class DataProcessor:
 
     @dataframe.setter
     def dataframe(self, value: pd.DataFrame) -> None:
+        """Replace the working DataFrame directly (used by tests and pipeline code)."""
         self._df = value
 
     @property
@@ -123,16 +146,14 @@ class DataProcessor:
         elif suffix == ".parquet":
             self._df = pd.read_parquet(path)
         elif suffix == ".dat":
-            # Delegate to the core DAT importer if available
+            # Delegate to the core DAT importer if available; fall back to
+            # whitespace-delimited CSV parsing when the package is absent.
             try:
                 from data_processor.core.dat_importer import read_dat_file
 
                 self._df = read_dat_file(str(path))
             except ImportError:
-                raise ImportError(
-                    "Loading .dat files requires the 'data_processor' package. "
-                    "Install it or convert the file to CSV format first."
-                ) from None
+                self._df = pd.read_csv(path, sep=r"\s+", encoding=encoding)
         else:
             raise ValueError(f"Unsupported file format: {suffix}")
 
@@ -264,6 +285,7 @@ class DataProcessor:
         self._validate_filter_contract(filter_type, window_size)
         df = self.dataframe
         selected_columns = self._resolve_filter_columns(df, columns)
+        effective_sample_rate = self._resolve_sample_rate(df, filter_type, sample_rate)
         self._apply_filter_impl(
             df=df,
             filter_type=filter_type,
@@ -271,7 +293,7 @@ class DataProcessor:
             cutoff=cutoff,
             order=order,
             window_size=window_size,
-            sample_rate=sample_rate,
+            sample_rate=effective_sample_rate,
         )
         self._df = df
         self._history.append(
@@ -298,6 +320,20 @@ class DataProcessor:
         if not selected_columns:
             raise ValueError("No valid columns to filter")
         return selected_columns
+
+    def _resolve_sample_rate(
+        self, df: pd.DataFrame, filter_type: str, sample_rate: float
+    ) -> float:
+        """Use detected timestamp spacing for Butterworth filters when available."""
+        if filter_type != "butterworth":
+            return sample_rate
+        try:
+            time_column = self._detect_time_column(df)
+        except ValueError:
+            return sample_rate
+        intervals = pd.Series(df[time_column]).diff().dropna()
+        median_interval = float(intervals.median()) if not intervals.empty else 0.0
+        return 1.0 / median_interval if median_interval > 0.0 else sample_rate
 
     def _apply_filter_impl(
         self,
@@ -339,7 +375,6 @@ class DataProcessor:
         for column in columns:
             values = df[column].values.astype(float)
             if filter_type == "butterworth":
-                sample_rate = 1000
                 nyquist = sample_rate / 2.0
                 if cutoff >= nyquist:
                     raise ValueError(

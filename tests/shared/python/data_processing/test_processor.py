@@ -154,6 +154,14 @@ class TestDataProcessorTransformations:
             check_names=False,
         )
 
+    def test_apply_formula_rejects_unknown_name(self, dp: DataProcessor) -> None:
+        with pytest.raises(ValueError, match="Unknown formula column"):
+            dp.apply_formula("bad", "signal + missing")
+
+    def test_apply_formula_rejects_function_calls(self, dp: DataProcessor) -> None:
+        with pytest.raises(ValueError, match="Unsupported formula syntax"):
+            dp.apply_formula("bad", "__import__('os')")
+
     def test_dropna(self) -> None:
         dp = DataProcessor()
         df = pd.DataFrame(

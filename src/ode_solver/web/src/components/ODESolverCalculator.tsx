@@ -387,10 +387,16 @@ export function ODESolverCalculator() {
               {/* Summary Cards */}
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {varNames.map((varName, idx) => {
-                  const values = results.map((r) => r[varName])
-                  const final = values[values.length - 1]
-                  const min = Math.min(...values)
-                  const max = Math.max(...values)
+                  // ⚡ Bolt Optimization: Replace map and spread min/max with single-pass loop
+                  // Prevents "Maximum call stack size exceeded" on large datasets
+                  let min = Infinity;
+                  let max = -Infinity;
+                  for (let i = 0; i < results.length; i++) {
+                    const val = results[i][varName];
+                    if (val < min) min = val;
+                    if (val > max) max = val;
+                  }
+                  const final = results[results.length - 1]?.[varName];
                   return (
                     <div key={varName} className="bg-slate-800 rounded-lg p-4">
                       <p className="text-slate-400 text-sm" style={{ color: LINE_COLORS[idx % LINE_COLORS.length] }}>
@@ -495,14 +501,24 @@ export function ODESolverCalculator() {
                       </tr>
                     </thead>
                     <tbody>
-                      {results.filter((_, i) => i % Math.max(1, Math.floor(results.length / 15)) === 0).map((row, idx) => (
-                        <tr key={idx} className="border-b border-slate-700/50">
-                          <td className="py-1 px-3 text-white">{row.time.toFixed(3)}</td>
-                          {varNames.map((v) => (
-                            <td key={v} className="py-1 px-3 text-white">{row[v].toFixed(6)}</td>
-                          ))}
-                        </tr>
-                      ))}
+                      {(() => {
+                        // ⚡ Bolt Optimization: Replace .filter().map() chains with a single-pass loop.
+                        // This prevents creating intermediate arrays and limits iterations to O(N/step).
+                        const step = Math.max(1, Math.floor(results.length / 15));
+                        const rows = [];
+                        for (let i = 0; i < results.length; i += step) {
+                          const row = results[i];
+                          rows.push(
+                            <tr key={i} className="border-b border-slate-700/50">
+                              <td className="py-1 px-3 text-white">{row.time.toFixed(3)}</td>
+                              {varNames.map((v) => (
+                                <td key={v} className="py-1 px-3 text-white">{row[v].toFixed(6)}</td>
+                              ))}
+                            </tr>
+                          );
+                        }
+                        return rows;
+                      })()}
                     </tbody>
                   </table>
                 </div>

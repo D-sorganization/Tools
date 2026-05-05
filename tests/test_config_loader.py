@@ -196,7 +196,7 @@ class TestLoadConfig:
         """Test loading config from file."""
         from utils.config_loader import load_config
 
-        config_data = {"api_key": "secret", "debug": True}
+        config_data = {"api_key": "OWASP-TEST-API-KEY-SAFE-VALUE", "debug": True}
         config_file = tmp_path / "settings.json"
         config_file.write_text(json.dumps(config_data))
 

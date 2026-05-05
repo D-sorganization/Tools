@@ -12,7 +12,7 @@ import json
 import logging
 import os
 from datetime import datetime, timezone
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import Any
 
 from utils.file_utils import safe_write_json
@@ -22,6 +22,8 @@ from .encryption import EncryptionManager
 from .file_ops import format_size, should_exclude
 
 logger = logging.getLogger(__name__)
+
+UNSAFE_ARCHIVE_PATH_MESSAGE = "Archive member path escapes destination"
 
 
 class PackResult:
@@ -81,6 +83,41 @@ class UnpackResult:
         self.total_files = total_files
         self.error = error
         self.errors = errors or []
+
+
+def _safe_extract_path(dest_path: Path, archive_path: str) -> Path:
+    """Resolve an archive member path inside *dest_path*.
+
+    Args:
+        dest_path: Extraction root.
+        archive_path: Relative archive member name.
+
+    Returns:
+        Destination path for the archive member.
+
+    Raises:
+        ValueError: If the archive member is absolute or traverses outside
+            the extraction root.
+    """
+    if not archive_path:
+        raise ValueError(f"{UNSAFE_ARCHIVE_PATH_MESSAGE}: empty path")
+
+    posix_path = PurePosixPath(archive_path)
+    windows_path = PureWindowsPath(archive_path)
+    if posix_path.is_absolute() or windows_path.is_absolute() or windows_path.drive:
+        raise ValueError(f"{UNSAFE_ARCHIVE_PATH_MESSAGE}: {archive_path!r}")
+
+    normalized_parts = PurePosixPath(archive_path.replace("\\", "/")).parts
+    if any(part in {"", ".", ".."} for part in normalized_parts):
+        raise ValueError(f"{UNSAFE_ARCHIVE_PATH_MESSAGE}: {archive_path!r}")
+
+    resolved_dest = dest_path.resolve()
+    resolved_file = (resolved_dest / Path(*normalized_parts)).resolve()
+    try:
+        resolved_file.relative_to(resolved_dest)
+    except ValueError as exc:
+        raise ValueError(f"{UNSAFE_ARCHIVE_PATH_MESSAGE}: {archive_path!r}") from exc
+    return resolved_file
 
 
 def collect_files(
@@ -365,7 +402,7 @@ def unpack_files(
                 return UnpackResult(success=False, error="Operation cancelled")
 
             try:
-                file_path = dest_path / rel_path
+                file_path = _safe_extract_path(dest_path, rel_path)
                 file_path.parent.mkdir(parents=True, exist_ok=True)
 
                 content = base64.b64decode(encoded_content)

@@ -16,6 +16,7 @@ from __future__ import annotations
 import logging
 import math
 from dataclasses import dataclass
+from functools import lru_cache
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +61,30 @@ MOLAR_CP_298: dict[str, float] = {
 }
 
 R_GAS = 8.314  # J/(mol*K)
+
+
+@lru_cache(maxsize=256)
+def _mixture_mw_cp(
+    fractions: tuple[tuple[str, float], ...],
+) -> tuple[float, float]:
+    """Return (mixture_MW, mixture_Cp) for a normalised composition tuple.
+
+    Accepts a sorted, hashable tuple of ``(species, mole_fraction)`` pairs so
+    the result can be cached across repeated calls with the same gas mixture
+    (e.g. simulation loops that evaluate the same syngas composition thousands
+    of times at different T/P points).
+
+    Args:
+        fractions: Sorted tuple of ``(species_name, mole_fraction)`` pairs.
+            Fractions must already be normalised (sum to 1.0).
+
+    Returns:
+        ``(mix_mw, mix_cp)`` where ``mix_mw`` is in g/mol and ``mix_cp`` is
+        in J/(mol·K) at 298 K.
+    """
+    mix_mw = sum(frac * MOLECULAR_WEIGHTS.get(sp, 28.0) for sp, frac in fractions)
+    mix_cp = sum(frac * MOLAR_CP_298.get(sp, 29.0) for sp, frac in fractions)
+    return mix_mw, mix_cp
 
 
 @dataclass
@@ -119,15 +144,12 @@ class ThermoPropertiesCalculator:
         total = sum(composition.values())
         if total <= 0:
             total = 1.0
-        fractions = {k: v / total for k, v in composition.items()}
+        norm_fracs: dict[str, float] = {k: v / total for k, v in composition.items()}
 
-        # Mixture molecular weight
-        mix_mw = sum(
-            fractions.get(s, 0) * MOLECULAR_WEIGHTS.get(s, 28.0) for s in fractions
-        )
-
-        # Mixture molar Cp
-        mix_cp = sum(fractions.get(s, 0) * MOLAR_CP_298.get(s, 29.0) for s in fractions)
+        # Convert to a sorted, hashable tuple so we can hit the LRU cache.
+        # Sorting by species name gives a canonical form regardless of insertion order.
+        fractions_key = tuple(sorted(norm_fracs.items()))
+        mix_mw, mix_cp = _mixture_mw_cp(fractions_key)
         mix_cv = mix_cp - R_GAS
         gamma = mix_cp / mix_cv if mix_cv > 0 else 1.4
 
