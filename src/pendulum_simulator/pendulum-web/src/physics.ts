@@ -433,8 +433,15 @@ export function makePolynomialTorque(
     if (coeffsShoulder.length < 1 || coeffsWrist.length < 1)
         throw new RangeError('[DbC] coefficient arrays must have ≥ 1 element');
 
-    const polyval = (coeffs: number[], t: number): number =>
-        coeffs.reduce((acc, c, i) => acc + c * t ** i, 0);
+    const polyval = (coeffs: number[], t: number): number => {
+        // ⚡ Bolt Optimization: Replace .reduce() and t**i with Horner's method
+        // to avoid callback overhead and expensive exponentiation in tight integration loop.
+        let acc = 0;
+        for (let i = coeffs.length - 1; i >= 0; i--) {
+            acc = acc * t + coeffs[i];
+        }
+        return acc;
+    };
 
     return (t: number): [number, number] => [
         polyval(coeffsShoulder, t),
