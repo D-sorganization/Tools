@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.112                                    |
-| **Last Spec Update**    | 2026-04-28                                 |
+| **Spec Version**        | 1.1.113                                    |
+| **Last Spec Update**    | 2026-05-05                                 |
 
 ## 2. Purpose & Mission
 
@@ -643,3 +643,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Performance**: Replaced `.map()` and `.push()` with pre-allocated single-pass `for` loops in `pcaScatterData`, `regressionScatterData`, and `regressionResidualsData` within `AnalyticsSuite.tsx` to eliminate dynamic resizing overhead and intermediate object allocations.
 - **Security**: Fixed DOM-based Cross-Site Scripting (XSS) vulnerability in `psa_calculator.html` by implementing and applying an `escapeHtml` function to user-controlled inputs before updating `innerHTML`.
 - **Performance**: Optimized `computeFFT` inside `FunctionGenerator.tsx` by pre-allocating output arrays and substituting functional iterations (`.map()` and `.reduce()`) with an inline single-pass Hanning window loop. This bypasses intermediary array processing steps and lowers garbage collection occurrences.
+
+## 2026-05-05
+
+### Version 1.1.113
+
+- **Performance**: Optimized polynomial evaluation in physics engines (`physics.ts`, `physics_triple.ts`, `physics_golfer.ts`) by replacing `.reduce()`-based evaluation with Horner's method. Eliminates callback allocations and substitutes expensive exponentiation (`t ** i`) with simple multiplication, dramatically reducing overhead in tight RK4 integration loops used for golf swing and pendulum simulations.
