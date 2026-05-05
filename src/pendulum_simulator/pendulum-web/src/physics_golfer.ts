@@ -508,8 +508,15 @@ export function makePolynomialTorque_golfer(
     coeff_le: number[],
     coeff_lh: number[]
 ): TorqueFuncGolfer {
-    const polyval = (coeffs: number[], t: number): number =>
-        coeffs.reduce((acc, c, i) => acc + c * t ** i, 0);
+    const polyval = (coeffs: number[], t: number): number => {
+        // ⚡ Bolt Optimization: Replace .reduce() and t**i with Horner's method
+        // to avoid callback overhead and expensive exponentiation in tight integration loop.
+        let acc = 0;
+        for (let i = coeffs.length - 1; i >= 0; i--) {
+            acc = acc * t + coeffs[i];
+        }
+        return acc;
+    };
 
     return (t: number): [number, number, number, number, number, number, number] => [
         polyval(coeff_hub, t),
