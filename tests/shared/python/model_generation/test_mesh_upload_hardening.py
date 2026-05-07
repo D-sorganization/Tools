@@ -124,15 +124,18 @@ def test_mesh_upload_no_trimesh_returns_501() -> None:
     """When trimesh is not installed the route must return HTTP 501."""
     api = ModelGenerationAPI()
 
-    original = sys.modules.pop("trimesh", None)
+    original = sys.modules.get("trimesh")
+    sys.modules["trimesh"] = None  # type: ignore[assignment]
     try:
         response = api.inertia_from_mesh(_mesh_request(_ASCII_STL))
     finally:
         if original is not None:
             sys.modules["trimesh"] = original
+        else:
+            sys.modules.pop("trimesh", None)
 
     assert response.status_code == 501
-    assert "trimesh" in response.body["error"]
+    assert "trimesh" in response.body["error"].lower()
 
 
 def test_mesh_upload_missing_file_returns_error() -> None:
