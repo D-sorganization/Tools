@@ -23,7 +23,7 @@ types-PyYAML==6.0.12.20250915
 types-requests==2.32.4.20250913
 
 # GUI & Desktop Applications
-PyQt6==6.9.1
+PyQt6==6.11.0
 pygame==2.6.1
 PyOpenGL==3.1.9
 
