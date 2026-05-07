@@ -1,0 +1,21 @@
+{
+  "repo": "Tools",
+  "owner_repo": "D-sorganization/Tools",
+  "branch": "codex/prod-readiness-tools-hardening",
+  "head_sha": "6f0ffea60c8e6200dc1df61a914dc4ba294616b6",
+  "head_date": "2026-05-03",
+  "A": {"src_files": 29114, "test_files": 653, "manifests": 5, "gitignore_lines": 170, "has_readme": 1},
+  "B": {"readme_lines": 305, "readme_headers": 19, "docs_files": 244, "md_files": 36},
+  "C": {"test_py": 327, "test_rs": 0, "src_py": 9978, "src_rs": 30},
+  "D": {"bare_except": 166, "except_exception": 954, "noqa_suppressions": 8701},
+  "F": {"todo_fixme": 4801},
+  "G": {"req_lockfiles": 3},
+  "H": {"secrets_raw": 617},
+  "I": {"env_example": 1},
+  "J": {"logging_refs": 3356, "metrics_refs": 983},
+  "K": {"suppressions": 8831},
+  "L": {"workflow_files": 55},
+  "M": {"dockerfile": 1},
+  "N": {"license": 1},
+  "O": {"claude_md": 1, "agents_md": 1, "claude_lines": 88}
+}

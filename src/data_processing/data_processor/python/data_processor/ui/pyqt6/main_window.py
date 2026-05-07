@@ -656,6 +656,19 @@ def main() -> None:
     from shared.python.theme import setup_themed_app
 
     app = QApplication(sys.argv)
+    # Block mouse wheel on value-input widgets (audit scroll-wheel policy)
+            from PyQt6.QtCore import QEvent, QObject
+            from PyQt6.QtWidgets import QComboBox, QDoubleSpinBox, QSlider, QSpinBox
+    
+            class _WheelBlockFilter(QObject):
+                def eventFilter(self, obj, event):
+                    if event is not None and event.type() == QEvent.Type.Wheel:
+                        if isinstance(obj, (QComboBox, QDoubleSpinBox, QSpinBox, QSlider)):
+                            event.ignore()
+                            return True
+                    return False
+    
+            app.installEventFilter(_WheelBlockFilter(app))
     app.setStyle("Fusion")
 
     window = DataProcessorMainWindow()
