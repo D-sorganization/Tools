@@ -77,7 +77,7 @@ jobs:
       # runners on the same machine.  See issue #2160.
       PIP_CACHE_DIR: /home/dieterolson/actions-runners/.shared-tool-cache/pip
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - uses: actions/setup-python@v5
@@ -309,7 +309,7 @@ jobs:
       # Shared wheel/download cache — mirrors quality-gate setting.  See issue #2160.
       PIP_CACHE_DIR: /home/dieterolson/actions-runners/.shared-tool-cache/pip
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - uses: actions/setup-python@v5
@@ -481,7 +481,7 @@ jobs:
     runs-on: d-sorg-fleet
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Check for Rust changes
         id: rust-changes

@@ -87,7 +87,7 @@ jobs:
       issues: write            # open tracking issues for HIGH/MEDIUM findings
       security-events: write   # upload SARIF to GitHub code-scanning
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 

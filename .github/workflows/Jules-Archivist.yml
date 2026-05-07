@@ -74,7 +74,7 @@ jobs:
       contents: write  # delete merged jules/* branches
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Cleanup Merged Branches
         env:
