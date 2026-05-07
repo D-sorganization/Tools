@@ -9,14 +9,16 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 
+import typing
+
 import numpy as np
 from scipy import integrate
 from scipy.signal import savgol_filter
 
 from .core import Signal
 
-# Backward-compatible trapezoid integration (np.trapz removed in NumPy 2.0+)
-_trapz = getattr(np, "trapezoid", None) or np.trapz
+# np.trapz was removed in NumPy 2.0; np.trapezoid is the current API.
+_trapz = np.trapezoid
 
 
 class DifferentiationMethod(Enum):
@@ -194,7 +196,7 @@ class Differentiator:
                 dy = np.gradient(y, t)
 
         else:
-            dy = np.gradient(y, t)
+            dy = np.gradient(y, t)  # type: ignore[unreachable]
 
         return dy
 
@@ -226,9 +228,9 @@ class Differentiator:
             t0, t1 = signal.time[idx - 1], signal.time[idx]
             y0, y1 = derivative_signal.values[idx - 1], derivative_signal.values[idx]
             alpha = (t_point - t0) / (t1 - t0) if t1 != t0 else 0
-            return y0 + alpha * (y1 - y0)
+            return float(y0 + alpha * (y1 - y0))
 
-        return derivative_signal.values[idx]
+        return float(derivative_signal.values[idx])
 
 
 class Integrator:
@@ -352,7 +354,7 @@ def compute_derivative(
     signal: Signal,
     order: int = 1,
     method: DifferentiationMethod = DifferentiationMethod.SAVGOL,
-    **kwargs,
+    **kwargs: typing.Any,
 ) -> Signal:
     """Convenience function to compute signal derivative.
 
@@ -535,7 +537,7 @@ def compute_arc_length(
     # Arc length element: ds = sqrt(1 + (dy/dt)^2) * dt
     ds = np.sqrt(1 + y_prime**2)
 
-    return _trapz(ds, signal.time)
+    return float(_trapz(ds, signal.time))
 
 
 def find_extrema(

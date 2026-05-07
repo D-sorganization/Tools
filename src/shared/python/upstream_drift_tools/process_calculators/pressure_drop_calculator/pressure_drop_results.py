@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 def _wrap_text(text: str, width: int) -> list[str]:
     """Wrap text to specified width."""
-    if not (text is not None):
+    if text is None:
         raise ValueError("text must be provided")
     words = text.split()
     lines = []
@@ -179,7 +179,7 @@ def _print_warnings_and_recommendations(
     results: dict[str, Any], show_recommendations: bool
 ) -> None:
     """Log warnings and engineering recommendations."""
-    if not (results is not None):
+    if results is None:
         raise ValueError("results must be provided")
     if results.get("warnings"):
         warnings = results["warnings"]
@@ -218,7 +218,7 @@ def print_results(
         title: Title for the output
         show_recommendations: Whether to show engineering recommendations
     """
-    if not (results is not None):
+    if results is None:
         raise ValueError("results must be provided")
     logger.info("\n" + "═" * 80)
     logger.info(f"  {title}  ".center(80, "═"))

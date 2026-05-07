@@ -297,8 +297,18 @@ class _SimulationLifecycleMixin:
             _log.info("Applied golfer optimizer coefficients")
 
     def _display_frame(self, idx: int) -> None:  # pragma: no cover - overridden
+        """Abstract mixin stub — overridden by SimulationPanel (the concrete class).
+
+        This raise is intentional: the mixin cannot render frames standalone.
+        Do not implement here; the concrete class provides the implementation.
+        """
         raise NotImplementedError
 
     # QWidget-compat stubs so mypy/mixin checks don't trip over method calls
     def width(self) -> int:  # pragma: no cover
+        """QWidget-compat stub — provided by the QWidget base class at runtime.
+
+        Raises NotImplementedError in mixin context where QWidget is not yet
+        in the MRO.  This is intentional for static analysis compatibility.
+        """
         raise NotImplementedError

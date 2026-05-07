@@ -1,4 +1,4 @@
-fastapi  # Web framework for building APIs with Python 3.7+
-uvicorn  # ASGI server implementation, using uvloop and httptools
-python-multipart  # Parsing of multipart/form-data for file uploads
-aiofiles  # File support for asyncio
+fastapi>=0.104.0  # Web framework for building APIs with Python 3.7+
+uvicorn>=0.24.0  # ASGI server implementation, using uvloop and httptools
+python-multipart>=0.0.6  # Parsing of multipart/form-data for file uploads
+aiofiles>=23.2.1  # File support for asyncio

@@ -396,7 +396,7 @@ def compare_friction_methods(
     Example:
         >>> compare_friction_methods(100000, 0.001)
     """
-    if not (reynolds_number is not None):
+    if reynolds_number is None:
         raise ValueError("reynolds_number must be provided")
     logger.info(
         "\n╔═══════════════════════════════════════════════════════════════════╗"

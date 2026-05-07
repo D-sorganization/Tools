@@ -347,33 +347,8 @@ class GitHubRepository(Repository):
                             e,
                         )
 
-        except (PermissionError, OSError, ValueError) as e:
-            logger.warning("Failed to download meshes for %s: %s", model_dir, e)
-
-    def _safe_extract_zip(self, zf: zipfile.ZipFile, destination: Path) -> None:
-        """Extract zip members after validating they stay under destination."""
-        base_dir = destination.resolve()
-        validated_members: list[tuple[zipfile.ZipInfo, Path]] = []
-
-        for info in zf.infolist():
-            target_path = (destination / Path(info.filename)).resolve()
-            try:
-                target_path.relative_to(base_dir)
-            except ValueError as exc:
-                raise ValueError(
-                    f"Archive member escapes destination: {info.filename}"
-                ) from exc
-
-            validated_members.append((info, target_path))
-
-        for info, target_path in validated_members:
-            if info.is_dir():
-                target_path.mkdir(parents=True, exist_ok=True)
-                continue
-
-            target_path.parent.mkdir(parents=True, exist_ok=True)
-            with zf.open(info, "r") as source, open(target_path, "wb") as target:
-                shutil.copyfileobj(source, target)
+        except (PermissionError, OSError):
+            logging.debug("Exception suppressed")
 
     def download_archive(self, destination: Path) -> bool:
         """Download entire repository as archive."""

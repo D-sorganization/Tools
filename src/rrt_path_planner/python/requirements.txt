@@ -15,7 +15,7 @@ trimesh>=3.9.0
 numpy-stl>=2.16.0
 
 # Optional: GUI enhancements
-tkinter  # Usually comes with Python
+# tkinter  # Standard library module — ships with Python, not pip-installable
 PyQt5>=5.15.0  # For advanced GUI (optional)
 
 # Optional: Performance improvements

@@ -92,7 +92,8 @@ class EditorHistoryMixin:
         Returns:
             True if successful
         """
-        assert index is not None, "index must be provided"
+        if index is None:
+            raise ValueError("index must be provided")
         if index < 0 or index >= len(self._history):
             logger.error(f"Invalid version index: {index}")
             return False
@@ -106,7 +107,8 @@ class EditorHistoryMixin:
         """Add current content to history."""
         from .text_editor import EditorVersion
 
-        assert description is not None, "description must be provided"
+        if description is None:
+            raise ValueError("description must be provided")
         checksum = hashlib.md5(
             self._content.encode(), usedforsecurity=False
         ).hexdigest()

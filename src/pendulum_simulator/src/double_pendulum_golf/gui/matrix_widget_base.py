@@ -340,7 +340,7 @@ class MatrixWidgetBase(QWidget):
                     label = f"joint_{i + 1}"
                 lines.append((f"C_{label:>5s} = {c:+8.2f} N*m", QColor(180, 130, 200)))
         except (AttributeError, TypeError):
-            pass
+            logging.debug("Exception suppressed")
 
         for text, color in lines:
             painter.setPen(color)

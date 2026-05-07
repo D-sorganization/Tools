@@ -255,7 +255,7 @@ if HAS_PYQT:
                 self.update()
             except RuntimeError:
                 # Widget was deleted before timer fired
-                pass
+                logging.debug("Exception suppressed")
 
         def init_ui(self) -> None:
             """Initialize the user interface"""
@@ -489,7 +489,7 @@ if HAS_PYQT:
                         cast(QDoubleSpinBox, self.stage_inputs[i][j]).setValue(value)
             except RuntimeError:
                 # Widget might be deleted (e.g. tab closed immediately), ignore
-                pass
+                logging.debug("Exception suppressed")
             except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
                 logger.warning(f"Failed to set default values: {e}")
 

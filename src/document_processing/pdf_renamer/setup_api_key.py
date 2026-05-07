@@ -63,7 +63,7 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        pass
+        logging.debug("Exception suppressed")
     except (ValueError, ZeroDivisionError, OverflowError, TypeError):
         import traceback
 

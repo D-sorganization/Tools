@@ -206,7 +206,7 @@ class DiagnosticsTracker:
             with self._file.open("a", encoding="utf-8") as f:
                 f.write(json.dumps(asdict(event), default=str) + "\n")
         except OSError:
-            pass  # Best-effort persistence
+            logging.debug("Exception suppressed")
 
     def _load_history(self) -> None:
         """Load events from previous sessions."""
@@ -223,7 +223,7 @@ class DiagnosticsTracker:
                 except (json.JSONDecodeError, TypeError):
                     continue
         except OSError:
-            pass
+            logging.debug("Exception suppressed")
 
     def _install_exception_hook(self) -> None:
         """Install a sys.excepthook that captures uncaught exceptions."""

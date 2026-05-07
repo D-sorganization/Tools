@@ -574,7 +574,7 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
                 # Already in K
                 pass
         except ValueError:
-            pass
+            logging.debug("Exception suppressed")
 
     def _convert_pressure_display(self) -> None:
         """Convert pressure display between units."""

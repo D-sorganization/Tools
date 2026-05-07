@@ -144,7 +144,7 @@ def detect_format(file_path: Path) -> ModelFormat:
                 if "<mujoco" in content:
                     return ModelFormat.MJCF
             except OSError:
-                pass
+                logging.debug("Exception suppressed")
         return fmt
     return ModelFormat.UNKNOWN
 

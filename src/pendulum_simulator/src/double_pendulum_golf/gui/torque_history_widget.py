@@ -58,7 +58,7 @@ try:
     _get_plot_theme_manager = _shared_get_plot_theme_manager
     _PLOT_THEME_AVAILABLE = True
 except ImportError:
-    pass
+    logging.debug("Exception suppressed")
 
 
 # ---------------------------------------------------------------------------

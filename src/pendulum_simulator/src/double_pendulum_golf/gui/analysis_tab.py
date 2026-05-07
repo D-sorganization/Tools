@@ -473,19 +473,13 @@ class AnalysisTab:
         )
 
         if z_key == "mass_matrix_det":
-
-            def _eval(angles: dict) -> float:
-                M = mass_matrix(angles.get("phi", 0.0), params)
-                return float(np.linalg.det(M))
-
-            return _eval
+            return _make_det_evaluator(
+                lambda angles: mass_matrix(angles.get("phi", 0.0), params)
+            )
         if z_key == "mass_matrix_cond":
-
-            def _eval(angles: dict) -> float:
-                M = mass_matrix(angles.get("phi", 0.0), params)
-                return float(np.linalg.cond(M))
-
-            return _eval
+            return _make_cond_evaluator(
+                lambda angles: mass_matrix(angles.get("phi", 0.0), params)
+            )
         if z_key == "potential_energy":
 
             def _eval(angles: dict) -> float:
@@ -525,19 +519,17 @@ class AnalysisTab:
         )
 
         if z_key == "mass_matrix_det":
-
-            def _eval(angles: dict) -> float:
-                M = triple_mm(angles.get("phi1", 0.0), angles.get("phi2", 0.0), params)
-                return float(np.linalg.det(M))
-
-            return _eval
+            return _make_det_evaluator(
+                lambda angles: triple_mm(
+                    angles.get("phi1", 0.0), angles.get("phi2", 0.0), params
+                )
+            )
         if z_key == "mass_matrix_cond":
-
-            def _eval(angles: dict) -> float:
-                M = triple_mm(angles.get("phi1", 0.0), angles.get("phi2", 0.0), params)
-                return float(np.linalg.cond(M))
-
-            return _eval
+            return _make_cond_evaluator(
+                lambda angles: triple_mm(
+                    angles.get("phi1", 0.0), angles.get("phi2", 0.0), params
+                )
+            )
         if z_key == "potential_energy":
 
             def _eval(angles: dict) -> float:
@@ -594,21 +586,13 @@ class AnalysisTab:
         )
 
         if z_key == "mass_matrix_det":
-
-            def _eval(angles: dict) -> float:
-                q = self._golfer_q_from_angles(angles)
-                M = golfer_mm(q, params)
-                return float(np.linalg.det(M))
-
-            return _eval
+            return _make_det_evaluator(
+                lambda angles: golfer_mm(self._golfer_q_from_angles(angles), params)
+            )
         if z_key == "mass_matrix_cond":
-
-            def _eval(angles: dict) -> float:
-                q = self._golfer_q_from_angles(angles)
-                M = golfer_mm(q, params)
-                return float(np.linalg.cond(M))
-
-            return _eval
+            return _make_cond_evaluator(
+                lambda angles: golfer_mm(self._golfer_q_from_angles(angles), params)
+            )
         if z_key == "potential_energy":
 
             def _eval(angles: dict) -> float:
@@ -640,7 +624,7 @@ class AnalysisTab:
             if self._result is not None and hasattr(self._result, "params"):
                 return self._result.params
         except AttributeError:
-            pass
+            logging.debug("Exception suppressed")
         return default_factory()
 
     @staticmethod
@@ -758,6 +742,36 @@ class AnalysisTab:
             f"{y_desc} ({y_unit})",
             f"{y_desc} vs {x_desc}",
         )
+
+
+def _make_det_evaluator(matrix_fn: Any) -> Any:
+    """Return a closure that evaluates ``det(M)`` for the given matrix function.
+
+    ``matrix_fn(angles)`` must accept an angle dict and return a square matrix.
+    Extracted from the triple evaluator pattern to satisfy DRY (was inlined in
+    _evaluator_double, _evaluator_triple, and _evaluator_golfer).
+    """
+
+    def _eval(angles: dict) -> float:
+        M = matrix_fn(angles)
+        return float(np.linalg.det(M))
+
+    return _eval
+
+
+def _make_cond_evaluator(matrix_fn: Any) -> Any:
+    """Return a closure that evaluates ``cond(M)`` for the given matrix function.
+
+    ``matrix_fn(angles)`` must accept an angle dict and return a square matrix.
+    Extracted from the triple evaluator pattern to satisfy DRY (was inlined in
+    _evaluator_double, _evaluator_triple, and _evaluator_golfer).
+    """
+
+    def _eval(angles: dict) -> float:
+        M = matrix_fn(angles)
+        return float(np.linalg.cond(M))
+
+    return _eval
 
 
 def _style_axes(ax: Any) -> None:

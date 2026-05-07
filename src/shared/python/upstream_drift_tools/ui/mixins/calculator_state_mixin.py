@@ -11,6 +11,10 @@ class MyCalculator(QWidget, CalculatorStateMixin):
         QWidget.__init__(self, parent)
         CalculatorStateMixin.__init__(self, "MyCalculator")
         # ... rest of initialization
+
+Internal sub-mixins (private, not exported):
+  - ``_SplitterStateMixin`` — splitter registration and save/restore
+  - ``_ClipboardMixin``    — copy/paste, context menus, widget text extraction
 """
 
 from __future__ import annotations
@@ -37,57 +41,106 @@ from ...utils.state_manager import state_manager
 logger = logging.getLogger(__name__)
 
 
-class CalculatorStateMixin:
-    """Mixin class providing state management and copy/paste functionality for calculators.
+# ---------------------------------------------------------------------------
+# Private sub-mixin: Splitter state management
+# ---------------------------------------------------------------------------
 
-    Note: This mixin does NOT inherit from QObject or QWidget to avoid MRO conflicts
-    and segfaults caused by Qt's metaclass system when combined with QWidget.
-    It's designed to be used with QWidget subclasses as:
-        class MyCalculator(QWidget, CalculatorStateMixin): ...
 
-    The mixin uses duck typing and assumes it will be mixed with a QWidget.
-    QWidget methods (focusWidget, mapToGlobal, etc.) will be available at runtime.
+class _SplitterStateMixin:
+    """Manages QSplitter registration, persistence, and restore.
+
+    Private to this module — not exported. Composed into :class:`CalculatorStateMixin`.
     """
 
-    # Note: Signals removed - they require QObject inheritance which causes segfaults
-    # when combined with QWidget (diamond inheritance with Qt metaclass).
-    # If signals are needed, define them in the concrete class that uses this mixin.
-
-    def __init__(self, calculator_name: str | None = None) -> None:
-        """Initialize the mixin
+    def register_splitter(self, splitter: QSplitter, name: str | None = None) -> None:
+        """Register a splitter for state management
 
         Args:
-            calculator_name: Name of the calculator for state management
+            splitter: QSplitter widget to track
+            name: Optional name for the splitter
 
         """
-        self.calculator_name = calculator_name or "UnknownCalculator"
-        self.state_manager = state_manager
+        assert splitter is not None, "splitter must be provided"
+        if name is None:
+            name = f"splitter_{len(self.splitters)}"  # type: ignore[attr-defined]
 
-        # State management
-        self.auto_save_enabled = True
-        self.last_save_time: datetime | None = None
-        self.unsaved_changes = False
+        splitter_info = {
+            "widget": splitter,
+            "name": name,
+            "orientation": splitter.orientation(),
+        }
 
-        # Splitter tracking
-        self.splitters: list[dict[str, Any]] = []
-        self.splitter_states: dict[str, dict[str, Any]] = {}
+        self.splitters.append(splitter_info)  # type: ignore[attr-defined]
 
-        # Input widget tracking
-        self.input_widgets: list[dict[str, Any]] = []
+        # Connect splitter signals to track changes
+        splitter.splitterMoved.connect(lambda: self.on_splitter_moved(splitter_info))
 
-        # Copy/paste functionality
-        self.copyable_widgets: list[dict[str, Any]] = []
+        # Restore saved state if available
+        self.restore_splitter_state(splitter_info)
 
-        # Auto-save timer
-        self.auto_save_timer = QTimer()
-        self.auto_save_timer.timeout.connect(self.auto_save_state)
-        self.auto_save_timer.start(30000)  # Auto-save every 30 seconds
+    def on_splitter_moved(self, splitter_info: dict[str, Any]) -> None:
+        """Handle splitter movement to track state changes"""
+        if self.change_tracking_enabled:  # type: ignore[attr-defined]
+            self.unsaved_changes = True  # type: ignore[attr-defined]
+            self.splitter_states[splitter_info["name"]] = {  # type: ignore[attr-defined]
+                "sizes": splitter_info["widget"].sizes(),
+                "orientation": splitter_info["widget"].orientation(),
+            }
 
-        # Track changes
-        self.change_tracking_enabled = True
+    def save_splitter_states(self) -> dict[str, Any]:
+        """Save current splitter states"""
+        states = {}
+        for splitter_info in self.splitters:  # type: ignore[attr-defined]
+            splitter = splitter_info["widget"]
+            states[splitter_info["name"]] = {
+                "sizes": splitter.sizes(),
+                "orientation": splitter.orientation(),
+            }
+        return states
 
-        # Setup copy/paste after widget is fully initialized
-        QTimer.singleShot(0, self.setup_copy_paste)
+    def restore_splitter_states(self, states: dict[str, Any]) -> None:
+        """Restore splitter states from saved data"""
+        for splitter_info in self.splitters:  # type: ignore[attr-defined]
+            name = splitter_info["name"]
+            if name in states:
+                splitter = splitter_info["widget"]
+                state = states[name]
+
+                # Temporarily disable change tracking
+                self.change_tracking_enabled = False  # type: ignore[attr-defined]
+                splitter.setSizes(state.get("sizes", splitter.sizes()))
+                self.change_tracking_enabled = True  # type: ignore[attr-defined]
+
+    def restore_splitter_state(self, splitter_info: dict[str, Any]) -> None:
+        """Restore a single splitter state from saved state"""
+        try:
+            saved_state = self.load_calculator_state()  # type: ignore[attr-defined]
+            if saved_state and "splitter_states" in saved_state:
+                splitter_states = saved_state["splitter_states"]
+                name = splitter_info["name"]
+
+                if name in splitter_states:
+                    splitter = splitter_info["widget"]
+                    state = splitter_states[name]
+
+                    # Temporarily disable change tracking
+                    self.change_tracking_enabled = False  # type: ignore[attr-defined]
+                    splitter.setSizes(state.get("sizes", splitter.sizes()))
+                    self.change_tracking_enabled = True  # type: ignore[attr-defined]
+        except (KeyError, ValueError, TypeError):
+            logging.debug("Exception suppressed")
+
+
+# ---------------------------------------------------------------------------
+# Private sub-mixin: Clipboard and context-menu operations
+# ---------------------------------------------------------------------------
+
+
+class _ClipboardMixin:
+    """Manages copy/paste, context menus, and text extraction from widgets.
+
+    Private to this module — not exported. Composed into :class:`CalculatorStateMixin`.
+    """
 
     def setup_copy_paste(self) -> None:
         """Setup copy/paste functionality for the calculator"""
@@ -119,7 +172,7 @@ class CalculatorStateMixin:
             # Setup keyboard shortcuts
             self.setup_shortcuts()
         except (RuntimeError, AttributeError):
-            pass
+            logging.debug("Exception suppressed")
 
     def setup_shortcuts(self) -> None:
         """Setup keyboard shortcuts for copy/paste operations"""
@@ -133,31 +186,351 @@ class CalculatorStateMixin:
         copy_all_shortcut = QShortcut(QKeySequence("Ctrl+Shift+C"), parent)
         copy_all_shortcut.activated.connect(self.copy_all_results)
 
-    def register_splitter(self, splitter: QSplitter, name: str | None = None) -> None:
-        """Register a splitter for state management
+    def register_copyable_widget(self, widget: Any, widget_type: str = "text") -> None:
+        """Register a widget for copy/paste operations
 
         Args:
-            splitter: QSplitter widget to track
-            name: Optional name for the splitter
+            widget: Widget to register (QTableWidget, QTextEdit, QLabel, etc.)
+            widget_type: Type of widget for appropriate copy handling
 
         """
-        assert splitter is not None, "splitter must be provided"
-        if name is None:
-            name = f"splitter_{len(self.splitters)}"
+        assert widget_type is not None, "widget_type must be provided"
+        widget_info = {"widget": widget, "type": widget_type}
 
-        splitter_info = {
-            "widget": splitter,
-            "name": name,
-            "orientation": splitter.orientation(),
-        }
+        self.copyable_widgets.append(widget_info)  # type: ignore[attr-defined]
 
-        self.splitters.append(splitter_info)
+        # Setup context menu for the widget
+        if hasattr(widget, "setContextMenuPolicy"):
+            widget.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            widget.customContextMenuRequested.connect(
+                lambda pos, w=widget_info: self.show_widget_context_menu(pos, w),
+            )
 
-        # Connect splitter signals to track changes
-        splitter.splitterMoved.connect(lambda: self.on_splitter_moved(splitter_info))
+    def copy_selected_text(self, checked: bool = False) -> None:
+        """Copy selected text from focused widget"""
+        try:
+            focused_widget = self.focusWidget()  # type: ignore[attr-defined]
+            if focused_widget:
+                text = self.get_text_from_widget(focused_widget)
+                if text:
+                    self.copy_to_clipboard(text)
+                    return
 
-        # Restore saved state if available
-        self.restore_splitter_state(splitter_info)
+            # If no focused widget or no selection, try to copy from any copyable widget
+            for widget_info in self.copyable_widgets:  # type: ignore[attr-defined]
+                widget = widget_info["widget"]
+                if widget.hasFocus():
+                    text = self.get_text_from_widget(widget)
+                    if text:
+                        self.copy_to_clipboard(text)
+                        return
+
+        except (KeyError, ValueError, TypeError):
+            logging.debug("Exception suppressed")
+
+    def copy_all_results(self, checked: bool = False) -> None:
+        """Copy all results from the calculator"""
+        try:
+            all_text = []
+
+            # Collect text from all copyable widgets
+            for widget_info in self.copyable_widgets:  # type: ignore[attr-defined]
+                widget = widget_info["widget"]
+                text = self.get_text_from_widget(widget)
+                if text:
+                    all_text.append(text)
+
+            if all_text:
+                combined_text = "\n\n".join(all_text)
+                self.copy_to_clipboard(combined_text)
+                logger.info("All results copied to clipboard")
+            else:
+                logger.debug("No copyable results available")
+
+        except (KeyError, ValueError, TypeError):
+            logging.debug("Exception suppressed")
+
+    def get_text_from_widget(self, widget: Any) -> str:
+        """Extract text from various widget types"""
+        try:
+            if isinstance(widget, QTableWidget):
+                return self.get_table_text(widget)
+            if isinstance(widget, QTextEdit):
+                return widget.toPlainText()
+            if isinstance(widget, QLabel):
+                return widget.text()
+            if hasattr(widget, "text"):
+                return str(widget.text())
+            if hasattr(widget, "toPlainText"):
+                return str(widget.toPlainText())
+            return ""
+        except (RuntimeError, AttributeError):
+            return ""
+
+    def get_table_text(self, table: QTableWidget) -> str:
+        """Extract text from QTableWidget with formatting"""
+        try:
+            text_lines = []
+
+            # Add headers
+            headers = []
+            for col in range(table.columnCount()):
+                header = table.horizontalHeaderItem(col)
+                if header:
+                    headers.append(header.text())
+                else:
+                    headers.append(f"Column {col}")
+            text_lines.append("\t".join(headers))
+
+            # Add data rows
+            for row in range(table.rowCount()):
+                row_data = []
+                for col in range(table.columnCount()):
+                    item = table.item(row, col)
+                    if item:
+                        row_data.append(item.text())
+                    else:
+                        row_data.append("")
+                text_lines.append("\t".join(row_data))
+
+            return "\n".join(text_lines)
+
+        except (RuntimeError, AttributeError):
+            return ""
+
+    def copy_to_clipboard(self, text: str) -> None:
+        """Copy text to clipboard"""
+        try:
+            clipboard = QApplication.clipboard()
+            if clipboard:
+                clipboard.setText(text)
+        except (RuntimeError, AttributeError):
+            logging.debug("Exception suppressed")
+
+    def paste_text(self, checked: bool = False) -> None:
+        """Paste text from clipboard to focused widget"""
+        try:
+            clipboard = QApplication.clipboard()
+            text = clipboard.text() if clipboard else ""
+
+            if text:
+                focused_widget = self.focusWidget()  # type: ignore[attr-defined]
+                if focused_widget and hasattr(focused_widget, "setText"):
+                    focused_widget.setText(text)
+                elif focused_widget and hasattr(focused_widget, "setPlainText"):
+                    focused_widget.setPlainText(text)
+                elif focused_widget and hasattr(focused_widget, "insertPlainText"):
+                    focused_widget.insertPlainText(text)
+
+        except (RuntimeError, AttributeError):
+            logging.debug("Exception suppressed")
+
+    def show_context_menu(self, position: Any) -> None:
+        """Show context menu for the calculator"""
+        menu = QMenu(cast(QWidget, self))
+        # Copy actions
+        copy_action = menu.addAction("Copy Selected")
+        if copy_action is not None:
+            copy_action.triggered.connect(self.copy_selected_text)
+
+        copy_all_action = menu.addAction("Copy All Results")
+        if copy_all_action is not None:
+            copy_all_action.triggered.connect(self.copy_all_results)
+
+        menu.addSeparator()
+
+        # Paste action
+        paste_action = menu.addAction("Paste")
+        if paste_action is not None:
+            paste_action.triggered.connect(self.paste_text)
+
+        menu.addSeparator()
+
+        # State management actions
+        save_action = menu.addAction("Save State")
+        if save_action is not None:
+            save_action.triggered.connect(lambda: self.save_calculator_state())  # type: ignore[attr-defined]
+
+        load_action = menu.addAction("Load State")
+        if load_action is not None:
+            load_action.triggered.connect(lambda: self.load_calculator_state())  # type: ignore[attr-defined]
+
+        menu.exec(cast(QWidget, self).mapToGlobal(position))
+
+    def show_widget_context_menu(
+        self, position: Any, widget_info: dict[str, Any]
+    ) -> None:
+        """Show context menu for a specific widget"""
+        assert widget_info is not None, "widget_info must be provided"
+        menu = QMenu(cast(QWidget, self))
+        widget = widget_info["widget"]
+
+        # Copy action
+        copy_action = menu.addAction("Copy")
+        if copy_action is not None:
+            copy_action.triggered.connect(lambda: self.copy_widget_text(widget))
+
+        # Copy all action
+        copy_all_action = menu.addAction("Copy All")
+        if copy_all_action is not None:
+            copy_all_action.triggered.connect(self.copy_all_results)
+
+        menu.addSeparator()
+
+        # Paste action (if applicable)
+        if hasattr(widget, "setText") or hasattr(widget, "setPlainText"):
+            paste_action = menu.addAction("Paste")
+            if paste_action is not None:
+                paste_action.triggered.connect(self.paste_text)
+
+        menu.exec(widget.mapToGlobal(position))
+
+    def copy_widget_text(self, widget: Any) -> None:
+        """Copy text from a specific widget"""
+        text = self.get_text_from_widget(widget)
+        if text:
+            self.copy_to_clipboard(text)
+
+    def create_copy_button(self, text: str = "Copy Results") -> Any:
+        """Create a copy button for the calculator"""
+        assert text is not None, "text must be provided"
+        from PyQt6.QtWidgets import QPushButton
+
+        copy_btn = QPushButton(text)
+        copy_btn.clicked.connect(self.copy_all_results)
+        copy_btn.setStyleSheet(
+            """
+            QPushButton {
+                background-color: #3498db;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #2980b9;
+            }
+            QPushButton:pressed {
+                background-color: #21618c;
+            }
+        """,
+        )
+        return copy_btn
+
+    def create_save_load_buttons(self) -> tuple[Any, Any]:
+        """Create save and load state buttons"""
+        from PyQt6.QtWidgets import QPushButton
+
+        save_btn = QPushButton("Save State")
+        save_btn.clicked.connect(lambda: self.save_calculator_state())  # type: ignore[attr-defined]
+        save_btn.setStyleSheet(
+            """
+            QPushButton {
+                background-color: #27ae60;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #229954;
+            }
+            QPushButton:pressed {
+                background-color: #1e8449;
+            }
+        """,
+        )
+
+        load_btn = QPushButton("Load State")
+        load_btn.clicked.connect(lambda: self.load_calculator_state())  # type: ignore[attr-defined]
+        load_btn.setStyleSheet(
+            """
+            QPushButton {
+                background-color: #f39c12;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #e67e22;
+            }
+            QPushButton:pressed {
+                background-color: #d35400;
+            }
+        """,
+        )
+
+        return save_btn, load_btn
+
+
+# ---------------------------------------------------------------------------
+# Public mixin: CalculatorStateMixin  (composes the two sub-mixins)
+# ---------------------------------------------------------------------------
+
+
+class CalculatorStateMixin(_SplitterStateMixin, _ClipboardMixin):
+    """Mixin class providing state management and copy/paste functionality for calculators.
+
+    Note: This mixin does NOT inherit from QObject or QWidget to avoid MRO conflicts
+    and segfaults caused by Qt's metaclass system when combined with QWidget.
+    It's designed to be used with QWidget subclasses as:
+        class MyCalculator(QWidget, CalculatorStateMixin): ...
+
+    The mixin uses duck typing and assumes it will be mixed with a QWidget.
+    QWidget methods (focusWidget, mapToGlobal, etc.) will be available at runtime.
+
+    Responsibilities are delegated to private sub-mixins:
+    - :class:`_SplitterStateMixin` — splitter registration, persistence, restore
+    - :class:`_ClipboardMixin`    — copy/paste, context menus, widget text extraction
+    """
+
+    # Note: Signals removed - they require QObject inheritance which causes segfaults
+    # when combined with QWidget (diamond inheritance with Qt metaclass).
+    # If signals are needed, define them in the concrete class that uses this mixin.
+
+    def __init__(self, calculator_name: str | None = None) -> None:
+        """Initialize the mixin
+
+        Args:
+            calculator_name: Name of the calculator for state management
+
+        """
+        self.calculator_name = calculator_name or "UnknownCalculator"
+        self.state_manager = state_manager
+
+        # State management
+        self.auto_save_enabled = True
+        self.last_save_time: datetime | None = None
+        self.unsaved_changes = False
+
+        # Splitter tracking (used by _SplitterStateMixin)
+        self.splitters: list[dict[str, Any]] = []
+        self.splitter_states: dict[str, dict[str, Any]] = {}
+
+        # Input widget tracking
+        self.input_widgets: list[dict[str, Any]] = []
+
+        # Copy/paste functionality (used by _ClipboardMixin)
+        self.copyable_widgets: list[dict[str, Any]] = []
+
+        # Auto-save timer
+        self.auto_save_timer = QTimer()
+        self.auto_save_timer.timeout.connect(self.auto_save_state)
+        self.auto_save_timer.start(30000)  # Auto-save every 30 seconds
+
+        # Track changes
+        self.change_tracking_enabled = True
+
+        # Setup copy/paste after widget is fully initialized
+        QTimer.singleShot(0, self.setup_copy_paste)
+
+    # ------------------------------------------------------------------
+    # Input widget management
+    # ------------------------------------------------------------------
 
     def register_input_widget(self, widget: Any, name: str | None = None) -> None:
         """Register an input widget for state management"""
@@ -178,26 +551,6 @@ class CalculatorStateMixin:
             widget.currentTextChanged.connect(self.mark_changed)
         elif hasattr(widget, "toggled"):
             widget.toggled.connect(self.mark_changed)
-
-    def register_copyable_widget(self, widget: Any, widget_type: str = "text") -> None:
-        """Register a widget for copy/paste operations
-
-        Args:
-            widget: Widget to register (QTableWidget, QTextEdit, QLabel, etc.)
-            widget_type: Type of widget for appropriate copy handling
-
-        """
-        assert widget_type is not None, "widget_type must be provided"
-        widget_info = {"widget": widget, "type": widget_type}
-
-        self.copyable_widgets.append(widget_info)
-
-        # Setup context menu for the widget
-        if hasattr(widget, "setContextMenuPolicy"):
-            widget.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-            widget.customContextMenuRequested.connect(
-                lambda pos, w=widget_info: self.show_widget_context_menu(pos, w),
-            )
 
     def auto_register_widgets(self) -> None:
         """Automatically register input widgets and splitters found in the UI."""
@@ -261,58 +614,6 @@ class CalculatorStateMixin:
             if not is_registered:
                 self.register_copyable_widget(widget, "table")
 
-    def on_splitter_moved(self, splitter_info: dict[str, Any]) -> None:
-        """Handle splitter movement to track state changes"""
-        if self.change_tracking_enabled:
-            self.unsaved_changes = True
-            self.splitter_states[splitter_info["name"]] = {
-                "sizes": splitter_info["widget"].sizes(),
-                "orientation": splitter_info["widget"].orientation(),
-            }
-
-    def save_splitter_states(self) -> dict[str, Any]:
-        """Save current splitter states"""
-        states = {}
-        for splitter_info in self.splitters:
-            splitter = splitter_info["widget"]
-            states[splitter_info["name"]] = {
-                "sizes": splitter.sizes(),
-                "orientation": splitter.orientation(),
-            }
-        return states
-
-    def restore_splitter_states(self, states: dict[str, Any]) -> None:
-        """Restore splitter states from saved data"""
-        for splitter_info in self.splitters:
-            name = splitter_info["name"]
-            if name in states:
-                splitter = splitter_info["widget"]
-                state = states[name]
-
-                # Temporarily disable change tracking
-                self.change_tracking_enabled = False
-                splitter.setSizes(state.get("sizes", splitter.sizes()))
-                self.change_tracking_enabled = True
-
-    def restore_splitter_state(self, splitter_info: dict[str, Any]) -> None:
-        """Restore a single splitter state from saved state"""
-        try:
-            saved_state = self.load_calculator_state()
-            if saved_state and "splitter_states" in saved_state:
-                splitter_states = saved_state["splitter_states"]
-                name = splitter_info["name"]
-
-                if name in splitter_states:
-                    splitter = splitter_info["widget"]
-                    state = splitter_states[name]
-
-                    # Temporarily disable change tracking
-                    self.change_tracking_enabled = False
-                    splitter.setSizes(state.get("sizes", splitter.sizes()))
-                    self.change_tracking_enabled = True
-        except (KeyError, ValueError, TypeError):
-            pass
-
     def save_input_states(self) -> dict[str, Any]:
         """Save current input widget states"""
         states = {}
@@ -366,9 +667,13 @@ class CalculatorStateMixin:
                     elif hasattr(widget, "setChecked"):
                         widget.setChecked(bool(value))
         except (ValueError, ZeroDivisionError, OverflowError, TypeError):
-            pass
+            logging.debug("Exception suppressed")
         finally:
             self.change_tracking_enabled = True
+
+    # ------------------------------------------------------------------
+    # Core state persistence
+    # ------------------------------------------------------------------
 
     def get_calculator_state(self) -> dict[str, Any]:
         """Get current calculator state for saving
@@ -431,7 +736,7 @@ class CalculatorStateMixin:
             self.unsaved_changes = False
 
         except ImportError:
-            pass
+            logging.debug("Exception suppressed")
 
     def set_calculator_specific_state(self, state: dict[str, Any]) -> None:
         """Set calculator-specific state data
@@ -465,7 +770,7 @@ class CalculatorStateMixin:
             if success:
                 self.last_save_time = datetime.now(UTC)
                 self.unsaved_changes = False
-                logger.info("✓ Calculator state saved: %s", state_name)
+                logger.info("Calculator state saved: %s", state_name)
 
             return bool(success)
 
@@ -492,7 +797,7 @@ class CalculatorStateMixin:
 
             if state_data:
                 self.set_calculator_state(state_data)
-                logger.info("✓ Calculator state loaded: %s", state_name)
+                logger.info("Calculator state loaded: %s", state_name)
 
             return state_data
 
@@ -504,190 +809,9 @@ class CalculatorStateMixin:
         if self.auto_save_enabled and self.unsaved_changes:
             self.save_calculator_state()
 
-    def copy_selected_text(self, checked: bool = False) -> None:
-        """Copy selected text from focused widget"""
-        try:
-            focused_widget = self.focusWidget()  # type: ignore[attr-defined]
-            if focused_widget:
-                text = self.get_text_from_widget(focused_widget)
-                if text:
-                    self.copy_to_clipboard(text)
-                    return
-
-            # If no focused widget or no selection, try to copy from any copyable widget
-            for widget_info in self.copyable_widgets:
-                widget = widget_info["widget"]
-                if widget.hasFocus():
-                    text = self.get_text_from_widget(widget)
-                    if text:
-                        self.copy_to_clipboard(text)
-                        return
-
-        except (KeyError, ValueError, TypeError):
-            pass
-
-    def copy_all_results(self, checked: bool = False) -> None:
-        """Copy all results from the calculator"""
-        try:
-            all_text = []
-
-            # Collect text from all copyable widgets
-            for widget_info in self.copyable_widgets:
-                widget = widget_info["widget"]
-                text = self.get_text_from_widget(widget)
-                if text:
-                    all_text.append(text)
-
-            if all_text:
-                combined_text = "\n\n".join(all_text)
-                self.copy_to_clipboard(combined_text)
-                logger.info("✓ All results copied to clipboard")
-            else:
-                logger.debug("No copyable results available")
-
-        except (KeyError, ValueError, TypeError):
-            pass
-
-    def get_text_from_widget(self, widget: Any) -> str:
-        """Extract text from various widget types"""
-        try:
-            if isinstance(widget, QTableWidget):
-                return self.get_table_text(widget)
-            if isinstance(widget, QTextEdit):
-                return widget.toPlainText()
-            if isinstance(widget, QLabel):
-                return widget.text()
-            if hasattr(widget, "text"):
-                return str(widget.text())
-            if hasattr(widget, "toPlainText"):
-                return str(widget.toPlainText())
-            return ""
-        except (RuntimeError, AttributeError):
-            return ""
-
-    def get_table_text(self, table: QTableWidget) -> str:
-        """Extract text from QTableWidget with formatting"""
-        try:
-            text_lines = []
-
-            # Add headers
-            headers = []
-            for col in range(table.columnCount()):
-                header = table.horizontalHeaderItem(col)
-                if header:
-                    headers.append(header.text())
-                else:
-                    headers.append(f"Column {col}")
-            text_lines.append("\t".join(headers))
-
-            # Add data rows
-            for row in range(table.rowCount()):
-                row_data = []
-                for col in range(table.columnCount()):
-                    item = table.item(row, col)
-                    if item:
-                        row_data.append(item.text())
-                    else:
-                        row_data.append("")
-                text_lines.append("\t".join(row_data))
-
-            return "\n".join(text_lines)
-
-        except (RuntimeError, AttributeError):
-            return ""
-
-    def copy_to_clipboard(self, text: str) -> None:
-        """Copy text to clipboard"""
-        try:
-            clipboard = QApplication.clipboard()
-            if clipboard:
-                clipboard.setText(text)
-        except (RuntimeError, AttributeError):
-            pass
-
-    def paste_text(self, checked: bool = False) -> None:
-        """Paste text from clipboard to focused widget"""
-        try:
-            clipboard = QApplication.clipboard()
-            text = clipboard.text() if clipboard else ""
-
-            if text:
-                focused_widget = self.focusWidget()  # type: ignore[attr-defined]
-                if focused_widget and hasattr(focused_widget, "setText"):
-                    focused_widget.setText(text)
-                elif focused_widget and hasattr(focused_widget, "setPlainText"):
-                    focused_widget.setPlainText(text)
-                elif focused_widget and hasattr(focused_widget, "insertPlainText"):
-                    focused_widget.insertPlainText(text)
-
-        except (RuntimeError, AttributeError):
-            pass
-
-    def show_context_menu(self, position: Any) -> None:
-        """Show context menu for the calculator"""
-        menu = QMenu(cast(QWidget, self))
-        # Copy actions
-        copy_action = menu.addAction("Copy Selected")
-        if copy_action is not None:
-            copy_action.triggered.connect(self.copy_selected_text)
-
-        copy_all_action = menu.addAction("Copy All Results")
-        if copy_all_action is not None:
-            copy_all_action.triggered.connect(self.copy_all_results)
-
-        menu.addSeparator()
-
-        # Paste action
-        paste_action = menu.addAction("Paste")
-        if paste_action is not None:
-            paste_action.triggered.connect(self.paste_text)
-
-        menu.addSeparator()
-
-        # State management actions
-        save_action = menu.addAction("Save State")
-        if save_action is not None:
-            save_action.triggered.connect(lambda: self.save_calculator_state())
-
-        load_action = menu.addAction("Load State")
-        if load_action is not None:
-            load_action.triggered.connect(lambda: self.load_calculator_state())
-
-        menu.exec(cast(QWidget, self).mapToGlobal(position))
-
-    def show_widget_context_menu(
-        self, position: Any, widget_info: dict[str, Any]
-    ) -> None:
-        """Show context menu for a specific widget"""
-        assert widget_info is not None, "widget_info must be provided"
-        menu = QMenu(cast(QWidget, self))
-        widget = widget_info["widget"]
-
-        # Copy action
-        copy_action = menu.addAction("Copy")
-        if copy_action is not None:
-            copy_action.triggered.connect(lambda: self.copy_widget_text(widget))
-
-        # Copy all action
-        copy_all_action = menu.addAction("Copy All")
-        if copy_all_action is not None:
-            copy_all_action.triggered.connect(self.copy_all_results)
-
-        menu.addSeparator()
-
-        # Paste action (if applicable)
-        if hasattr(widget, "setText") or hasattr(widget, "setPlainText"):
-            paste_action = menu.addAction("Paste")
-            if paste_action is not None:
-                paste_action.triggered.connect(self.paste_text)
-
-        menu.exec(widget.mapToGlobal(position))
-
-    def copy_widget_text(self, widget: Any) -> None:
-        """Copy text from a specific widget"""
-        text = self.get_text_from_widget(widget)
-        if text:
-            self.copy_to_clipboard(text)
+    # ------------------------------------------------------------------
+    # Lifecycle hooks
+    # ------------------------------------------------------------------
 
     def handle_close_event(self, event: Any) -> None:
         """Handle close event - save state before closing"""
@@ -710,82 +834,10 @@ class CalculatorStateMixin:
         if self.change_tracking_enabled:
             self.unsaved_changes = True
 
-    def create_copy_button(self, text: str = "Copy Results") -> Any:
-        """Create a copy button for the calculator"""
-        assert text is not None, "text must be provided"
-        from PyQt6.QtWidgets import QPushButton
+    # ------------------------------------------------------------------
+    # Aliases for backward compatibility
+    # ------------------------------------------------------------------
 
-        copy_btn = QPushButton(text)
-        copy_btn.clicked.connect(self.copy_all_results)
-        copy_btn.setStyleSheet(
-            """
-            QPushButton {
-                background-color: #3498db;
-                color: white;
-                border: none;
-                padding: 8px 16px;
-                border-radius: 4px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #2980b9;
-            }
-            QPushButton:pressed {
-                background-color: #21618c;
-            }
-        """,
-        )
-        return copy_btn
-
-    def create_save_load_buttons(self) -> tuple[Any, Any]:
-        """Create save and load state buttons"""
-        from PyQt6.QtWidgets import QPushButton
-
-        save_btn = QPushButton("Save State")
-        save_btn.clicked.connect(lambda: self.save_calculator_state())
-        save_btn.setStyleSheet(
-            """
-            QPushButton {
-                background-color: #27ae60;
-                color: white;
-                border: none;
-                padding: 8px 16px;
-                border-radius: 4px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #229954;
-            }
-            QPushButton:pressed {
-                background-color: #1e8449;
-            }
-        """,
-        )
-
-        load_btn = QPushButton("Load State")
-        load_btn.clicked.connect(lambda: self.load_calculator_state())
-        load_btn.setStyleSheet(
-            """
-            QPushButton {
-                background-color: #f39c12;
-                color: white;
-                border: none;
-                padding: 8px 16px;
-                border-radius: 4px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #e67e22;
-            }
-            QPushButton:pressed {
-                background-color: #d35400;
-            }
-        """,
-        )
-
-        return save_btn, load_btn
-
-    # Alias methods for backward compatibility
     def save_state(self, state_name: str | None = None) -> bool:
         """Alias for save_calculator_state"""
         return self.save_calculator_state(state_name)

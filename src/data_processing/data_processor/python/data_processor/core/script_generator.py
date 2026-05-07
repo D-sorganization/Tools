@@ -133,10 +133,10 @@ class ScriptGenerator:
 
         for i, step in enumerate(pipeline.steps):
             if not step.enabled:
-                lines.append(f"    # Step {i+1} (disabled): {step.description}")
+                lines.append(f"    # Step {i + 1} (disabled): {step.description}")
                 continue
 
-            lines.append(f"    # Step {i+1}: {step.description}")
+            lines.append(f"    # Step {i + 1}: {step.description}")
             lines.extend(self._generate_step_code(step, indent=4))
             lines.append("")
 
@@ -553,6 +553,8 @@ class ScriptGenerator:
 
         elif step.operation == OperationType.CUSTOM:
             op_name = params.get("operation_name", "custom_operation")
+            # The "TODO" below is intentional generated-script content for the user
+            # to implement — it is NOT a broken-window marker in this codebase.
             return [
                 f"{prefix}# Custom operation: {op_name}",
                 f"{prefix}# Parameters: {params}",

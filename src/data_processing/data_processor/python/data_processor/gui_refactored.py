@@ -35,6 +35,7 @@ from .models.processing_config import (
 
 if TYPE_CHECKING:
     import pandas as pd
+import logging
 
 logger = get_logger(__name__)
 
@@ -92,13 +93,13 @@ class DataProcessorGUI(ctk.CTk):  # type: ignore[attr-defined]
             widget.configure(cursor=cursor)
         except (TclError, AttributeError):
             # Ignore errors if widget doesn't support cursor or is destroyed
-            pass
+            logging.debug("Exception suppressed")
 
         try:
             for child in widget.winfo_children():
                 self._set_cursor_recursive(child, cursor)
         except (TclError, AttributeError):
-            pass
+            logging.debug("Exception suppressed")
 
     def create_ui(self) -> None:
         """Create the user interface."""

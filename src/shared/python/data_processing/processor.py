@@ -123,8 +123,10 @@ class DataProcessor:
 
                 self._df = read_dat_file(str(path))
             except ImportError:
-                # Fallback: try whitespace-delimited
-                self._df = pd.read_csv(path, sep=r"\s+", encoding=encoding)
+                raise ImportError(
+                    "Loading .dat files requires the 'data_processor' package. "
+                    "Install it or convert the file to CSV format first."
+                ) from None
         else:
             raise ValueError(f"Unsupported file format: {suffix}")
 
@@ -210,18 +212,22 @@ class DataProcessor:
                 df, target_rate, time_col=time_column, method=method
             )
         except ImportError:
-            # Fallback using pandas
             import numpy as np
 
-            t = df[time_column].values
-            t_new = np.arange(t[0], t[-1], 1.0 / target_rate)
+            t = np.asarray(df[time_column].values)
+            # Validate monotonicity
+            if not np.all(np.diff(t) > 0):
+                raise ValueError(
+                    f"Time column '{time_column}' is not strictly monotonically"
+                    " increasing; resampling requires sorted timestamps."
+                ) from None
+            n_samples = int(round((t[-1] - t[0]) * target_rate)) + 1
+            t_new = np.linspace(t[0], t[-1], n_samples)
             new_df = pd.DataFrame({time_column: t_new})
             for col in df.columns:
                 if col == time_column:
                     continue
-                new_df[col] = np.interp(
-                    t_new, np.asarray(t), np.asarray(df[col].values)
-                )
+                new_df[col] = np.interp(t_new, t, np.asarray(df[col].values))
             self._df = new_df
 
         self._history.append(f"Resampled to {target_rate} Hz ({method})")
@@ -523,6 +529,16 @@ class DataProcessor:
         elif suffix in (".xlsx", ".xls"):
             df.to_excel(path, index=index)
         elif suffix == ".parquet":
+            import importlib.util
+
+            if (
+                importlib.util.find_spec("pyarrow") is None
+                and importlib.util.find_spec("fastparquet") is None
+            ):
+                raise ImportError(
+                    "Parquet export requires pyarrow or fastparquet:"
+                    " pip install pyarrow"
+                )
             df.to_parquet(path, index=index)
         elif suffix == ".json":
             df.to_json(path, orient="records", indent=2)

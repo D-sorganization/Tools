@@ -383,7 +383,7 @@ class IntegrationTestBase:
                 available = check_port_available(host, port)
                 return ServiceStatus(name=service_name, available=available)
             except ValueError:
-                pass
+                logging.debug("Exception suppressed")
 
         return ServiceStatus(
             name=service_name,

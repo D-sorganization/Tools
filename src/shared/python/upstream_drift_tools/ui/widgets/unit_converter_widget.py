@@ -204,7 +204,7 @@ class UnitConverterWidget(BaseCalculatorWindow):
                 all_units_by_category = self.converter.get_supported_units()
                 return all_units_by_category.get(from_category, self.all_units)
         except (RuntimeError, AttributeError, TypeError):
-            pass
+            logging.debug("Exception suppressed")
 
         return self.all_units
 

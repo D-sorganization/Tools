@@ -113,7 +113,8 @@ class URDFValidationMixin:
         """Check root is <robot> with a name. Return False to abort."""
         from .text_editor import ValidationMessage, ValidationSeverity
 
-        assert root is not None, "root must be provided"
+        if root is None:
+            raise ValueError("root must be provided")
         if root.tag != "robot":
             messages.append(
                 ValidationMessage(
@@ -145,7 +146,8 @@ class URDFValidationMixin:
         """Validate link elements and return name→element map."""
         from .text_editor import ValidationMessage, ValidationSeverity
 
-        assert root is not None, "root must be provided"
+        if root is None:
+            raise ValueError("root must be provided")
         links: dict[str, ET.Element] = {}
 
         for link_elem in root.findall("link"):
@@ -190,7 +192,8 @@ class URDFValidationMixin:
         """Validate inertial/mass properties of a link."""
         from .text_editor import ValidationMessage, ValidationSeverity
 
-        assert link_elem is not None, "link_elem must be provided"
+        if link_elem is None:
+            raise ValueError("link_elem must be provided")
         inertial = link_elem.find("inertial")
         if inertial is None:
             return
@@ -245,7 +248,8 @@ class URDFValidationMixin:
         """Validate joint elements (type, parent/child, limits)."""
         from .text_editor import ValidationMessage, ValidationSeverity
 
-        assert root is not None, "root must be provided"
+        if root is None:
+            raise ValueError("root must be provided")
         seen: dict[str, ET.Element] = {}
 
         for joint_elem in root.findall("joint"):
@@ -350,7 +354,8 @@ class URDFValidationMixin:
         """Detect links that are not connected to any joint."""
         from .text_editor import ValidationMessage, ValidationSeverity
 
-        assert root is not None, "root must be provided"
+        if root is None:
+            raise ValueError("root must be provided")
         child_links = set()
         for joint_elem in root.findall("joint"):
             child_elem = joint_elem.find("child")
@@ -379,7 +384,8 @@ class URDFValidationMixin:
     def _find_element_line(self, elem: ET.Element) -> int:
         """Find the line number of an element (approximate)."""
         # This is a simple heuristic - search for element in content
-        assert elem is not None, "elem must be provided"
+        if elem is None:
+            raise ValueError("elem must be provided")
         ET.tostring(elem, encoding="unicode")
         tag_start = f"<{elem.tag}"
 

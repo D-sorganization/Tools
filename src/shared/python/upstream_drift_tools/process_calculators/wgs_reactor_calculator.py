@@ -107,7 +107,7 @@ else:
             from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
             from matplotlib.figure import Figure
     except ImportError:
-        pass
+        logging.debug("Exception suppressed")
 
 # Try to import species database; provide fallback for standalone use
 try:

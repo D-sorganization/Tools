@@ -1,6 +1,8 @@
 # Locked dependency versions for reproducible builds
-# Generated: 2026-03-09
+# Generated: 2026-04-20
 # To regenerate: pip install -r requirements.txt && pip freeze > requirements-lock.txt
+# See DEPENDENCIES.md for the full dependency pinning policy.
+# Regenerate at the start of each sprint cycle or after any requirements.txt change.
 
 # Core Scientific Computing
 numpy==2.4.1
