@@ -20,7 +20,7 @@ ruff==0.15.12
 mypy==1.13.0
 bandit==1.9.4
 types-PyYAML==6.0.12.20250915
-types-requests==2.32.4.20250913
+types-requests==2.33.0.20260503
 
 # GUI & Desktop Applications
 PyQt6==6.11.0
