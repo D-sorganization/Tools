@@ -44,7 +44,7 @@ jobs:
       contents: write  # commit quality review report to docs/assessments/
       issues: write    # open tracking issues for findings
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 

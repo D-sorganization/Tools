@@ -47,7 +47,7 @@ jobs:
     needs: pick-runner
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with: { fetch-depth: 2 }
 
       - name: Identify New/Modified Files

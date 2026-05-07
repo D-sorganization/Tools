@@ -90,7 +90,7 @@ jobs:
       pull-requests: write # open PR for each resolved issue
       issues: write        # transition issue status to "In Review"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
