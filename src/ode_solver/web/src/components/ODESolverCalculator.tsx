@@ -93,8 +93,17 @@ function compileExpression(
 
   try {
     // eslint-disable-next-line no-new-func
-    const func = new Function(...varNames, `"use strict"; return (${processedExpr})`)
-    return func as (...args: number[]) => number
+    const compiled = new Function(...varNames, `"use strict"; return (${processedExpr})`) as (
+      ...args: number[]
+    ) => unknown
+    return (...args: number[]) => {
+      try {
+        const result = compiled(...args)
+        return typeof result === 'number' && isFinite(result) ? result : 0
+      } catch {
+        return 0
+      }
+    }
   } catch {
     return () => 0
   }
