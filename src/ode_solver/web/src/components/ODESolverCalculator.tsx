@@ -71,24 +71,13 @@ const ODE_PRESETS: Record<string, ODEPreset> = {
   },
 }
 
-// Safe expression evaluator for simple math expressions
-function evaluateExpression(
+// ⚡ Bolt Optimization: Pre-compile expression to a native JS function.
+// Eliminates repetitive "new Function()" and string processing during numerical integration loop.
+function compileExpression(
   expr: string,
-  variables: Record<string, number>,
-  parameters: Record<string, number>
-): number {
-  // Build context with both variables and parameters
-  const ctx: Record<string, number> = { ...parameters, ...variables }
-
-  // Replace variable names in expression with their values
-  // Sort by length descending to avoid partial replacements
+  varNames: string[]
+): (...args: number[]) => number {
   let processedExpr = expr
-  const sortedNames = Object.keys(ctx).sort((a, b) => b.length - a.length)
-  for (const name of sortedNames) {
-    // Use word boundary matching
-    const regex = new RegExp(`\\b${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g')
-    processedExpr = processedExpr.replace(regex, `(${ctx[name]})`)
-  }
 
   // Add Math functions
   processedExpr = processedExpr
@@ -99,18 +88,15 @@ function evaluateExpression(
     .replace(/\babs\b/g, 'Math.abs')
     .replace(/\bPI\b/g, 'Math.PI')
 
-  // Replace ** with Math.pow
-  processedExpr = processedExpr.replace(
-    /\(([^)]+)\)\s*\*\*\s*(\d+(?:\.\d+)?)/g,
-    'Math.pow($1,$2)'
-  )
+  // Note: JavaScript natively supports the ** operator for exponentiation,
+  // so we don't need to replace it like we did previously.
 
   try {
     // eslint-disable-next-line no-new-func
-    const result = new Function(`"use strict"; return (${processedExpr})`)()
-    return typeof result === 'number' && isFinite(result) ? result : 0
+    const func = new Function(...varNames, `"use strict"; return (${processedExpr})`)
+    return func as (...args: number[]) => number
   } catch {
-    return 0
+    return () => 0
   }
 }
 
@@ -124,19 +110,34 @@ function solveODESystem(
   numPoints: number
 ): Array<Record<string, number>> {
   const varNames = Object.keys(derivatives)
+  const paramNames = Object.keys(parameters)
+  const allVarNames = [...varNames, 't', ...paramNames]
+
+  const compiledDerivs: Record<string, (...args: number[]) => number> = {}
+  for (const varName of varNames) {
+    compiledDerivs[varName] = compileExpression(derivatives[varName], allVarNames)
+  }
+
   const dt = (tEnd - tStart) / (numPoints - 1)
   const results: Array<Record<string, number>> = []
 
   const state: Record<string, number> = { ...initialValues }
 
+  const paramValues = paramNames.map(p => parameters[p])
+
   const computeDerivatives = (
     t: number,
     currentState: Record<string, number>
   ): Record<string, number> => {
-    const vars: Record<string, number> = { ...currentState, t }
+    // ⚡ Bolt: Construct argument array in the exact order of allVarNames
+    const args: number[] = []
+    for (const v of varNames) args.push(currentState[v])
+    args.push(t)
+    for (const val of paramValues) args.push(val)
+
     const derivs: Record<string, number> = {}
     for (const varName of varNames) {
-      derivs[varName] = evaluateExpression(derivatives[varName], vars, parameters)
+      derivs[varName] = compiledDerivs[varName](...args)
     }
     return derivs
   }

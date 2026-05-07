@@ -13,3 +13,6 @@
 ## 2024-05-19 - Optimization of High-Frequency Event Handlers
 **Learning:** Using array iterator methods like `.reduce()` inside event handlers that run per-frame (e.g., 30-60 times a second, like MediaPipe pose detection callbacks) introduces continuous callback allocation overhead and can hurt overall framerate.
 **Action:** Replace iterator methods like `.reduce()`, `.map()`, and `.filter()` with standard `for` loops inside high-frequency real-time event handlers to eliminate callback overhead and minimize garbage collection.
+## 2024-05-19 - Optimization of Equation Evaluation in Tight Loops
+**Learning:** Instantiating `new Function(...)` inside a tight numerical loop (e.g. within an RK4 solver integrating thousands of time steps) bypasses JavaScript engine optimizations, results in continuous parsing overhead, and causes extreme garbage collection pauses, dragging down overall loop performance.
+**Action:** When evaluating dynamic math equations multiple times, pre-compile the string expression into a JavaScript function via `new Function` *once* outside the loop, passing variable names as arguments. Inside the loop, simply call the pre-compiled function with the current numeric values.
