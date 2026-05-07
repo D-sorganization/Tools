@@ -155,7 +155,7 @@ jobs:
           done
 
       - name: Commit
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "docs(review): code quality review"
           file_pattern: "docs/assessments/**/*.md"
