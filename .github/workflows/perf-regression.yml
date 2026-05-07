@@ -51,7 +51,7 @@ jobs:
             || true
 
       - name: Upload benchmark results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: benchmark-results-${{ github.run_id }}
           path: src/data_processing/data_processor/python/benchmarks/benchmark-results.json
