@@ -35,4 +35,4 @@ cryptography==46.0.7
 defusedxml==0.7.1
 PyYAML==6.0.2
 pillow==12.2.0
-trimesh==4.11.1
+trimesh==4.12.2
