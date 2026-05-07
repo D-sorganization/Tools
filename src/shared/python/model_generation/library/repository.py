@@ -9,7 +9,9 @@ from __future__ import annotations
 
 import json
 import logging
+import shutil
 import tempfile
+import urllib.parse
 import urllib.request
 import zipfile
 from abc import ABC, abstractmethod
@@ -18,6 +20,32 @@ from pathlib import Path
 from typing import Any
 
 logger = logging.getLogger(__name__)
+
+
+def _require_https_url(url: str) -> str:
+    """Return url only when it is an absolute HTTPS URL."""
+    parsed = urllib.parse.urlparse(url)
+    if parsed.scheme != "https" or not parsed.netloc:
+        raise ValueError(f"URL must be absolute HTTPS: {url}")
+    return url
+
+
+def _urlopen_https(
+    request: urllib.request.Request,
+    *,
+    timeout: float,
+) -> Any:
+    """Open a request after validating it targets an HTTPS URL."""
+    _require_https_url(request.full_url)
+    return urllib.request.urlopen(request, timeout=timeout)  # nosec B310
+
+
+def _urlretrieve_https(url: str, filename: str | Path) -> tuple[str, Any]:
+    """Retrieve an HTTPS URL to a local file."""
+    return urllib.request.urlretrieve(  # nosec B310
+        _require_https_url(url),
+        filename,
+    )
 
 
 @dataclass
@@ -57,7 +85,7 @@ class Repository(ABC):
         self,
         model_path: str,
         destination: Path,
-    ) -> Path | None:
+    ) -> Path:
         """
         Download a model to local storage.
 
@@ -66,13 +94,14 @@ class Repository(ABC):
             destination: Local destination directory
 
         Returns:
-            Path to downloaded URDF or None if failed
+            Path to downloaded URDF
         """
         ...
 
     def search(self, query: str) -> list[RepositoryModel]:
         """Search models by name or description."""
-        assert query is not None, "query must be provided"
+        if not (query is not None):
+            raise ValueError("query must be provided")
         query_lower = query.lower()
         return [
             m
@@ -89,7 +118,7 @@ class LocalRepository(Repository):
         path: Path | str,
         name: str | None = None,
         description: str = "",
-    ) -> None:
+    ):
         """
         Initialize local repository.
 
@@ -98,7 +127,8 @@ class LocalRepository(Repository):
             name: Repository name
             description: Repository description
         """
-        assert path is not None, "path must be provided"
+        if not (path is not None):
+            raise ValueError("path must be provided")
         self._path = Path(path)
         self._name = name or self._path.name
         self._description = description
@@ -136,14 +166,14 @@ class LocalRepository(Repository):
         self,
         model_path: str,
         destination: Path,
-    ) -> Path | None:
+    ) -> Path:
         """Copy model to destination (local copy)."""
-        assert model_path is not None, "model_path must be provided"
-        import shutil
+        if not (model_path is not None):
+            raise ValueError("model_path must be provided")
 
         source = self._path / model_path
         if not source.exists():
-            return None
+            raise FileNotFoundError(f"Model not found: {source}")
 
         destination.mkdir(parents=True, exist_ok=True)
         dest_file = destination / source.name
@@ -171,7 +201,7 @@ class GitHubRepository(Repository):
         path: str = "",
         name: str | None = None,
         description: str = "",
-    ) -> None:
+    ):
         """
         Initialize GitHub repository.
 
@@ -183,7 +213,8 @@ class GitHubRepository(Repository):
             name: Display name
             description: Repository description
         """
-        assert owner is not None, "owner must be provided"
+        if not (owner is not None):
+            raise ValueError("owner must be provided")
         self._owner = owner
         self._repo = repo
         self._branch = branch
@@ -216,7 +247,8 @@ class GitHubRepository(Repository):
 
     def _scan_directory(self, path: str, depth: int = 0) -> list[RepositoryModel]:
         """Recursively scan directory for URDF files."""
-        assert path is not None, "path must be provided"
+        if not (path is not None):
+            raise ValueError("path must be provided")
         if depth > 3:  # Limit recursion
             return []
 
@@ -227,7 +259,7 @@ class GitHubRepository(Repository):
             req = urllib.request.Request(api_url)
             req.add_header("Accept", "application/vnd.github.v3+json")
 
-            with urllib.request.urlopen(req, timeout=10) as response:
+            with _urlopen_https(req, timeout=10) as response:
                 contents = json.loads(response.read().decode())
 
             for item in contents:
@@ -255,9 +287,10 @@ class GitHubRepository(Repository):
         self,
         model_path: str,
         destination: Path,
-    ) -> Path | None:
+    ) -> Path:
         """Download model from GitHub."""
-        assert model_path is not None, "model_path must be provided"
+        if not (model_path is not None):
+            raise ValueError("model_path must be provided")
         destination.mkdir(parents=True, exist_ok=True)
 
         # Download URDF
@@ -268,7 +301,7 @@ class GitHubRepository(Repository):
         local_path = destination / filename
 
         try:
-            urllib.request.urlretrieve(urdf_url, local_path)
+            _urlretrieve_https(urdf_url, local_path)
             logger.info(f"Downloaded: {filename}")
 
             # Try to download meshes from same directory
@@ -279,11 +312,12 @@ class GitHubRepository(Repository):
 
         except (PermissionError, OSError) as e:
             logger.error(f"Failed to download {model_path}: {e}")
-            return None
+            raise
 
     def _download_meshes(self, model_dir: str, destination: Path) -> None:
         """Download mesh files from model directory."""
-        assert model_dir is not None, "model_dir must be provided"
+        if not (model_dir is not None):
+            raise ValueError("model_dir must be provided")
         mesh_dir = f"{model_dir}/meshes"
         api_url = (
             f"{self.API_BASE}/repos/{self._owner}/{self._repo}/contents/{mesh_dir}"
@@ -291,7 +325,7 @@ class GitHubRepository(Repository):
 
         try:
             req = urllib.request.Request(api_url)
-            with urllib.request.urlopen(req, timeout=10) as response:
+            with _urlopen_https(req, timeout=10) as response:
                 contents = json.loads(response.read().decode())
 
             local_mesh_dir = destination / "meshes"
@@ -304,30 +338,50 @@ class GitHubRepository(Repository):
                         or f"{self.RAW_BASE}/{self._owner}/{self._repo}/{self._branch}/{item['path']}"
                     )
                     local_file = local_mesh_dir / item["name"]
-                    urllib.request.urlretrieve(raw_url, local_file)
+                    try:
+                        _urlretrieve_https(raw_url, local_file)
+                    except (PermissionError, OSError) as e:
+                        logger.warning(
+                            "Failed to download mesh '%s': %s",
+                            local_file,
+                            e,
+                        )
 
         except (PermissionError, OSError):
             logging.debug("Exception suppressed")
 
     def download_archive(self, destination: Path) -> bool:
         """Download entire repository as archive."""
-        assert destination is not None, "destination must be provided"
+        if not (destination is not None):
+            raise ValueError("destination must be provided")
+        destination.mkdir(parents=True, exist_ok=True)
         archive_url = (
             f"https://github.com/{self._owner}/{self._repo}/archive/{self._branch}.zip"
         )
+        tmp_file: Path | None = None
 
         try:
             with tempfile.NamedTemporaryFile(suffix=".zip", delete=False) as tmp:
-                urllib.request.urlretrieve(archive_url, tmp.name)
+                tmp_file = Path(tmp.name)
+                _urlretrieve_https(archive_url, tmp_file)
 
-                with zipfile.ZipFile(tmp.name, "r") as zf:
-                    zf.extractall(destination)
+                with zipfile.ZipFile(tmp_file, "r") as zf:
+                    self._safe_extract_zip(zf, destination)
 
             return True
 
-        except (ConnectionError, TimeoutError, OSError) as e:
+        except (
+            ConnectionError,
+            TimeoutError,
+            OSError,
+            ValueError,
+            zipfile.BadZipFile,
+        ) as e:
             logger.error(f"Failed to download archive: {e}")
             return False
+        finally:
+            if tmp_file is not None:
+                tmp_file.unlink(missing_ok=True)
 
 
 class CompositeRepository(Repository):
@@ -338,7 +392,7 @@ class CompositeRepository(Repository):
         repositories: list[Repository],
         name: str = "Combined",
         description: str = "Combined repository",
-    ) -> None:
+    ):
         """
         Initialize composite repository.
 
@@ -347,7 +401,8 @@ class CompositeRepository(Repository):
             name: Display name
             description: Description
         """
-        assert repositories is not None, "repositories must be provided"
+        if not (repositories is not None):
+            raise ValueError("repositories must be provided")
         self._repositories = repositories
         self._name = name
         self._description = description
@@ -382,13 +437,14 @@ class CompositeRepository(Repository):
         self,
         model_path: str,
         destination: Path,
-    ) -> Path | None:
+    ) -> Path:
         """Download from appropriate repository."""
         # Extract repo name from path
-        assert model_path is not None, "model_path must be provided"
+        if not (model_path is not None):
+            raise ValueError("model_path must be provided")
         parts = model_path.split("/", 1)
         if len(parts) != 2:
-            return None
+            raise ValueError(f"Invalid model path: {model_path}")
 
         repo_name, actual_path = parts
 
@@ -396,4 +452,4 @@ class CompositeRepository(Repository):
             if repo.name == repo_name:
                 return repo.download_model(actual_path, destination)
 
-        return None
+        raise ValueError(f"Repository not found: {repo_name}")

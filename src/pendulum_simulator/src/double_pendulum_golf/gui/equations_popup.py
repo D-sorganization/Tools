@@ -1,3 +1,12 @@
+# ARCHITECTURE_DEBT — tracked as GitHub issue #1937
+# This file is 1,160 lines with 2 classes — almost all lines are inline HTML/LaTeX
+# equation strings embedded in Python list literals.
+# Recommended split:
+#   equations_data.py   — all equation string constants (pure data, no Qt)
+#   equations_popup.py  — EquationsPopup widget, imports from equations_data
+# Risk: low — data and widget are clearly separated; no downstream imports.
+# Prerequisite: none — safe to split at any time.
+
 """
 LaTeX-quality math popup for the Pendulum Simulator.
 
@@ -1122,7 +1131,8 @@ def show_equations_popup(parent: QWidget | None, topic: EquationTopic) -> QDialo
         QVBoxLayout,
     )
 
-    assert topic in _TOPICS, f"Unknown topic: {topic}"
+    if topic not in _TOPICS:
+        raise ValueError(f"Unknown topic: {topic}")
     title, html = _TOPICS[topic]
 
     dlg = QDialog(parent)

@@ -11,7 +11,7 @@ import os
 import subprocess
 import sys
 import tkinter as tk
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
@@ -57,7 +57,8 @@ class FolderPackerPro(
         Args:
             root: The tkinter root window.
         """
-        assert root is not None, "root must be provided"
+        if not (root is not None):
+            raise ValueError("root must be provided")
         self.root = root
         self.root.title("Folder Packer Pro v2.0 - Professional Project Packager")
         self.root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
@@ -74,7 +75,7 @@ class FolderPackerPro(
         # Operation variables
         self.compression_level = "balanced"
         self.encrypt_enabled = False
-        self.encryption_password = ""
+        self.encryption_password = ""  # populated at runtime from UI entry widget; not a hard-coded credential  # noqa: S105
         self.include_git = False
         self.create_manifest = True
         self.cancel_operation: bool = False
@@ -250,7 +251,8 @@ class FolderPackerPro(
         Args:
             event: The tkinter event.
         """
-        assert event is not None, "event must be provided"
+        if not (event is not None):
+            raise ValueError("event must be provided")
         selection = self.preview_tree.selection()
         if not selection:
             return
@@ -270,7 +272,8 @@ class FolderPackerPro(
         Args:
             file_path: Path to the file to preview.
         """
-        assert file_path is not None, "file_path must be provided"
+        if not (file_path is not None):
+            raise ValueError("file_path must be provided")
         self.preview_text.configure(state="normal")
         self.preview_text.delete("1.0", "end")
 
@@ -315,7 +318,8 @@ class FolderPackerPro(
         Args:
             message: Status message to display.
         """
-        assert message is not None, "message must be provided"
+        if not (message is not None):
+            raise ValueError("message must be provided")
         self.status_label.configure(text=message)
         self.root.update_idletasks()
 
@@ -346,8 +350,9 @@ class FolderPackerPro(
             message: Log message text.
             level: Log level ("info", "success", "warning", "error").
         """
-        assert message is not None, "message must be provided"
-        timestamp = datetime.now().strftime("%H:%M:%S")
+        if not (message is not None):
+            raise ValueError("message must be provided")
+        timestamp = datetime.now(UTC).strftime("%H:%M:%S")
 
         def update_log() -> None:
             """Update log widget from thread."""
@@ -387,11 +392,11 @@ class FolderPackerPro(
         if log_path.exists():
             try:
                 if sys.platform == "win32":
-                    os.startfile(log_path)  # type: ignore[attr-defined]
+                    os.startfile(log_path)  # type: ignore[attr-defined]  # noqa: S606
                 elif sys.platform == "darwin":
-                    subprocess.run(["open", str(log_path)], check=False)
+                    subprocess.run(["open", str(log_path)], check=False)  # noqa: S603, S607
                 else:
-                    subprocess.run(["xdg-open", str(log_path)], check=False)
+                    subprocess.run(["xdg-open", str(log_path)], check=False)  # noqa: S603, S607
             except (OSError, subprocess.SubprocessError) as e:
                 messagebox.showerror("Error", f"Could not open log file: {e}")
         else:

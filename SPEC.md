@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST UPDATED: 2026-04-09
+  LAST UPDATED: 2026-04-16
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -123,7 +123,7 @@ Tools/
 | Plugin System            | `src/python/plugin_system/`                                                            | Discover, load, and manage plugins                                                                                                     |
 | Shared Utilities         | `src/python/shared_utilities/`                                                         | Common functions, decorators, error handling                                                                                           |
 | Pressure Drop Calculator | `src/shared/python/upstream_drift_tools/process_calculators/pressure_drop_calculator/` | Facade-driven gas pressure-drop workflows with extracted API, validation, reference, results, and engine-domain helper modules         |
-| Model Generation API     | `src/shared/python/model_generation/api/`                                              | Route facade with framework-specific Flask and FastAPI adapters behind a compatibility shim                                            |
+| Model Generation API     | `src/shared/python/model_generation/api/`                                              | Route facade with framework-specific Flask and FastAPI adapters behind a compatibility shim, plus repository download helpers that validate archive extraction paths to prevent zip-slip traversal |
 | Engineering Tools        | `src/tools/`                                                                           | 45+ specialized calculation and processing tools                                                                                       |
 | Data Processing          | `src/data_processing/`                                                                 | Pipelines, transformers, validators, and facade-based data-processor core modules for exporter, ANOVA, and vectorized filter workflows |
 | Document Processing      | `src/document_processing/`                                                             | PDF extraction, text processing                                                                                                        |
@@ -216,7 +216,7 @@ class MyTool(BaseTool):
 | ------------------- | ------------- | ------------------------- | -------------------------------- |
 | Calculation results | JSON/CSV/HDF5 | User's disk, API response | Tool output matching schema      |
 | Cached results      | SQLite/HDF5   | `.cache/`                 | Memoized expensive calculations  |
-| Logs                | JSON/text     | `logs/`                   | Tool execution logs with timings |
+| Logs                | JSON/text     | `logs/`                   | Tool execution logs with timings; root-level debug logs and trigger markers must not be committed |
 | Reports             | HTML/PDF      | User's disk               | Generated analysis reports       |
 
 ### Configuration
@@ -235,6 +235,11 @@ class MyTool(BaseTool):
 - `config/theme_config.yml` — Theme settings and customization
 - `config/plugin_config.yml` — Plugin discovery paths and settings
 - `config/web_api_config.yml` — FastAPI server configuration
+
+### Repository Hygiene
+
+- Generated logs, trigger files, and empty marker files belong in `logs/`, `output/`, or temporary work directories and must not be tracked at the repository root.
+- Root-level artifacts such as `.ci_trigger.py`, `MUJOCO_LOG.TXT`, `error_log.txt`, `wave_log.txt`, and marker files ending in `Last` are treated as disposable debug output.
 
 ## 7. Testing Specification
 
@@ -449,6 +454,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-04-16 | 1.1.61  | Hardened launcher process handling by validating tool names, cleaning up spawned process groups, surfacing explicit model-conversion errors, and regression-testing temporary-file cleanup paths. |
+| 2026-04-16 | 1.1.60  | Removed stale root-level debug artifacts (`.ci_trigger.py`, `MUJOCO_LOG.TXT`, `error_log.txt`, `wave_log.txt`, and the empty marker file ending in `Last`), added root-scoped ignore rules for those paths, and locked the hygiene policy with regression tests. |
 | 2026-04-16 | 1.1.59  | Consolidated the root pytest configuration into `pyproject.toml` by migrating the remaining discovery, path, marker, warning, and logging settings from `pytest.ini`; kept root discovery scoped to `tests/` so embedded project suites do not get double-collected by default. |
 | 2026-04-16 | 1.1.58  | Hardened GitHub archive extraction in the model-generation repository helper by validating zip members before unpacking so repository downloads cannot escape the destination directory. |
 | 2026-04-16 | 1.1.55  | Replaced object spread operator with manual property copy in `integrateSignals` and `differentiateSignals` loops in `useDataProcessor.ts`; wrapped UI components (`AdvancedPanel`, `ExportPanel`, `FilterPanel`, `ResamplePanel`) in `React.memo()` to prevent unnecessary re-renders. |
@@ -517,6 +524,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-09 | 1.1.34  | Wrapped DataTableView, PlotView, and AnalyticsSuite in `React.memo`, and memoized activeSignals with `useMemo` to prevent expensive visualization re-renders on unrelated UI state changes.                                                                                                                                                                                                                                                                                                                                                                         |
 | 2026-04-10 | 1.1.37  | Add explicit focus-visible styles to the interactive buttons (Upload New Video, Play/Pause, Mute/Unmute) within the `VideoPlayer` component for improved keyboard navigation visibility.                                                                                                                                                                                                                                                                                                                                                                            |
 | 2026-04-12 | 1.1.48  | Optimized exponential and power regression calculation in `useDataProcessor.ts` by replacing chained array methods with single-pass loops and pre-allocated arrays to eliminate GC overhead. |
+| 2026-04-15 | 1.1.49  | Optimized exponential and power regression calculation in `useDataProcessor.ts` by replacing chained array methods with single-pass loops and pre-allocated arrays to eliminate GC overhead. |
 
 ---
 

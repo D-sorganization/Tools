@@ -1,3 +1,7 @@
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+
 """
 Advanced optimization panel for the pendulum simulator GUI.
 
@@ -120,7 +124,8 @@ def _cmaes_step(
 
     Returns updated state and fitness values for the population.
     """
-    assert state is not None, "state must be provided"
+    if not (state is not None):
+        raise ValueError("state must be provided")
     n = len(state.mean)
     mu = pop_size // 2  # number of parents
 
@@ -131,10 +136,14 @@ def _cmaes_step(
 
     # Learning rates
     c_sigma = (mu_eff + 2.0) / (n + mu_eff + 5.0)
-    d_sigma = 1.0 + 2.0 * max(0.0, math.sqrt((mu_eff - 1.0) / (n + 1.0)) - 1.0) + c_sigma
+    d_sigma = (
+        1.0 + 2.0 * max(0.0, math.sqrt((mu_eff - 1.0) / (n + 1.0)) - 1.0) + c_sigma
+    )
     c_c = (4.0 + mu_eff / n) / (n + 4.0 + 2.0 * mu_eff / n)
     c1 = 2.0 / ((n + 1.3) ** 2 + mu_eff)
-    c_mu_lr = min(1.0 - c1, 2.0 * (mu_eff - 2.0 + 1.0 / mu_eff) / ((n + 2.0) ** 2 + mu_eff))
+    c_mu_lr = min(
+        1.0 - c1, 2.0 * (mu_eff - 2.0 + 1.0 / mu_eff) / ((n + 2.0) ** 2 + mu_eff)
+    )
 
     # Sample population
     try:
@@ -182,9 +191,9 @@ def _cmaes_step(
         else 0.0
     )
 
-    p_c_new = (1.0 - c_c) * state.p_c + h_sigma * math.sqrt(c_c * (2.0 - c_c) * mu_eff) * (
-        new_mean - old_mean
-    ) / state.sigma
+    p_c_new = (1.0 - c_c) * state.p_c + h_sigma * math.sqrt(
+        c_c * (2.0 - c_c) * mu_eff
+    ) * (new_mean - old_mean) / state.sigma
 
     # Update covariance matrix
     artmp = (selected - old_mean) / state.sigma
@@ -250,14 +259,17 @@ class _OptimizerWorker(QObject):
         use_native_batch: bool = False,
         native_batch_config: dict | None = None,
     ) -> None:
-        assert objective_fn is not None, "objective_fn must be provided"
+        if not (objective_fn is not None):
+            raise ValueError("objective_fn must be provided")
         super().__init__()
         self._objective = objective_fn
         self._n_params = n_params
         self._n_iterations = n_iterations
         self._method = method
         self._warm_start = warm_start
-        self._population_size = population_size or max(10, 4 + int(3 * np.log(n_params)))
+        self._population_size = population_size or max(
+            10, 4 + int(3 * np.log(n_params))
+        )
         self._plateau_patience = plateau_patience
         self._use_native_batch = use_native_batch
         self._native_config = native_batch_config or {}
@@ -328,7 +340,9 @@ class _OptimizerWorker(QObject):
         self.finished.emit(
             {
                 "coeffs": (
-                    state.best_solution if state.best_solution is not None else state.mean
+                    state.best_solution
+                    if state.best_solution is not None
+                    else state.mean
                 ),
                 "speed": -state.best_fitness,
                 "history": history,
@@ -347,7 +361,8 @@ class _OptimizerWorker(QObject):
         history: list[float] = []
 
         def callback(xk: Any, convergence: float = 0.0) -> bool:
-            assert convergence is not None, "convergence must be provided"
+            if not (convergence is not None):
+                raise ValueError("convergence must be provided")
             history.append(float(convergence))
             self.iteration_done.emit(len(history), convergence)
             return bool(self._cancelled)
@@ -387,7 +402,8 @@ class _OptimizerWorker(QObject):
 
     def _run_scipy(self, method: str) -> None:
         """Run a scipy.optimize.minimize method."""
-        assert method is not None, "method must be provided"
+        if not (method is not None):
+            raise ValueError("method must be provided")
         from scipy.optimize import minimize
 
         history: list[float] = []
@@ -451,11 +467,14 @@ class OptimizationWidget(QWidget):
         n_torque_params: int = 2,
         parent: QWidget | None = None,
     ) -> None:
-        assert model_name is not None, "model_name must be provided"
+        if not (model_name is not None):
+            raise ValueError("model_name must be provided")
         super().__init__(parent)
         self._model_name = model_name
         self._n_torque_params = n_torque_params
         self._objective_fn: Callable | None = None
+        self._params_getter: Callable[[], dict[str, Any]] | None = None
+        self._objective_builder: Callable[[dict[str, Any]], Callable] | None = None
         self._result: dict | None = None
         self._last_best_coeffs: np.ndarray | None = None
         self._convergence_history: list[float] = []
@@ -467,29 +486,23 @@ class OptimizationWidget(QWidget):
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(4)
 
-        self._build_ui_header(layout)
-        layout.addWidget(self._build_ui_config_group())
-        layout.addWidget(self._build_ui_options_group())
-        self._build_ui_action_buttons(layout)
-        self._build_ui_progress_status(layout)
-        layout.addStretch()
-
-    def _build_ui_header(self, layout: QVBoxLayout) -> None:
-        """Build the title and backend-status labels."""
+        # Title
         title = QLabel(f"⚡ {self._model_name} Optimizer")
         title.setStyleSheet("color:#a0a0e0;font-size:11px;font-weight:bold;")
         layout.addWidget(title)
 
+        # Backend status
         backend_lbl = QLabel(
-            "[Rust] parallel batch enabled" if _HAS_NATIVE_BATCH else "[Python] sequential"
+            "🦀 Rust parallel batch enabled"
+            if _HAS_NATIVE_BATCH
+            else "🐍 Python sequential"
         )
         backend_lbl.setStyleSheet(
             f"color:{'#60c060' if _HAS_NATIVE_BATCH else '#c0a060'};font-size:9px;"
         )
         layout.addWidget(backend_lbl)
 
-    def _build_ui_config_group(self) -> QGroupBox:
-        """Build the 'Configuration' group with objective/method/numeric spinners."""
+        # Config group
         config = QGroupBox("Configuration")
         cfg_lay = QVBoxLayout(config)
         cfg_lay.setContentsMargins(4, 14, 4, 4)
@@ -499,7 +512,9 @@ class OptimizationWidget(QWidget):
         obj_row = QHBoxLayout()
         obj_row.addWidget(QLabel("Objective:"))
         self._cmb_objective = QComboBox()
-        self._cmb_objective.addItems(["Max Tip Speed", "Max Height", "Min Control Effort"])
+        self._cmb_objective.addItems(
+            ["Max Tip Speed", "Max Height", "Min Control Effort"]
+        )
         obj_row.addWidget(self._cmb_objective)
         cfg_lay.addLayout(obj_row)
 
@@ -548,14 +563,15 @@ class OptimizationWidget(QWidget):
         self._spin_patience = QSpinBox()
         self._spin_patience.setRange(5, 200)
         self._spin_patience.setValue(20)
-        self._spin_patience.setToolTip("Stop if no improvement for this many generations")
+        self._spin_patience.setToolTip(
+            "Stop if no improvement for this many generations"
+        )
         pat_row.addWidget(self._spin_patience)
         cfg_lay.addLayout(pat_row)
 
-        return config
+        layout.addWidget(config)
 
-    def _build_ui_options_group(self) -> QGroupBox:
-        """Build the 'Options' group with warm-start / constraint / native checkboxes."""
+        # Options group
         opts = QGroupBox("Options")
         opts_lay = QVBoxLayout(opts)
         opts_lay.setContentsMargins(4, 14, 4, 4)
@@ -574,16 +590,15 @@ class OptimizationWidget(QWidget):
         self._chk_native.setEnabled(_HAS_NATIVE_BATCH)
         opts_lay.addWidget(self._chk_native)
 
-        return opts
+        layout.addWidget(opts)
 
-    def _build_ui_action_buttons(self, layout: QVBoxLayout) -> None:
-        """Build the Optimize/Cancel/Apply button row."""
+        # Controls
         btn_row = QHBoxLayout()
         self._btn_run = QPushButton("▶ Optimize")
         self._btn_run.clicked.connect(self._on_run)
         btn_row.addWidget(self._btn_run)
 
-        self._btn_cancel = QPushButton("■ Cancel")
+        self._btn_cancel = QPushButton("⏹ Cancel")
         self._btn_cancel.setEnabled(False)
         self._btn_cancel.clicked.connect(self._on_cancel)
         btn_row.addWidget(self._btn_cancel)
@@ -595,21 +610,24 @@ class OptimizationWidget(QWidget):
         btn_row.addWidget(self._btn_apply)
         layout.addLayout(btn_row)
 
-    def _build_ui_progress_status(self, layout: QVBoxLayout) -> None:
-        """Build the progress bar, status label, and log view."""
+        # Progress
         self._progress = QProgressBar()
         self._progress.setRange(0, 100)
         self._progress.setValue(0)
         layout.addWidget(self._progress)
 
+        # Status
         self._lbl_status = QLabel("Ready")
         self._lbl_status.setStyleSheet("color:#606080;font-size:9px;")
         layout.addWidget(self._lbl_status)
 
+        # Log
         self._log = QTextEdit()
         self._log.setReadOnly(True)
         self._log.setMaximumHeight(150)
         layout.addWidget(self._log)
+
+        layout.addStretch()
 
     def set_objective_function(self, fn: Callable) -> None:
         """Set the objective function for optimization.
@@ -622,9 +640,75 @@ class OptimizationWidget(QWidget):
         """
         self._objective_fn = fn
 
+    def bind_objective_builder(
+        self,
+        params_getter: Callable[[], dict[str, Any]],
+        objective_builder: Callable[[dict[str, Any]], Callable],
+    ) -> None:
+        """Bind callables that rebuild the objective from current UI params."""
+        self._params_getter = params_getter
+        self._objective_builder = objective_builder
+
+    def append_status_message(self, message: str) -> None:
+        """Append a status message to the optimizer log."""
+        if not (message is not None):
+            raise ValueError("message must be provided")
+        self._log.append(message)
+
+    def append_log(self, message: str) -> None:
+        """Append *message* to the optimizer's status log.
+
+        Public interface replacing direct ``opt._log.append(...)`` access.
+        Callers (e.g. SimulationPanel) should use this instead of touching
+        the private ``_log`` widget.
+        """
+        self._log.append(message)
+
+    def reconnect_run(self, new_slot: Callable) -> None:
+        """Disconnect the default run handler and connect *new_slot* instead.
+
+        Public interface replacing direct ``opt._btn_run.clicked`` manipulation.
+        Restoring the original handler is the caller's responsibility via
+        :meth:`restore_run_handler`.
+        """
+        self._btn_run.clicked.disconnect()
+        self._btn_run.clicked.connect(new_slot)
+
+    def restore_run_handler(self) -> None:
+        """Restore the built-in run handler on the Optimize button.
+
+        Call this to undo a previous :meth:`reconnect_run`.
+        """
+        self._btn_run.clicked.disconnect()
+        self._btn_run.clicked.connect(self._on_run)
+
+    def run_optimization(self) -> None:
+        """Programmatically trigger the optimizer run as if the button was clicked.
+
+        Public interface replacing direct ``opt._on_run()`` invocations from
+        external code.
+        """
+        self._on_run()
+
+    def _refresh_bound_objective(self) -> bool:
+        """Refresh the objective function from bound UI providers when present."""
+        if self._params_getter is None or self._objective_builder is None:
+            return True
+        try:
+            params = self._params_getter()
+            self.set_objective_function(self._objective_builder(params))
+        except (ValueError, AssertionError) as exc:
+            self.append_status_message(f"⚠ Cannot build objective: {exc}")
+            return False
+        return True
+
     def _on_run(self) -> None:
+        if not self._refresh_bound_objective():
+            return
         if self._objective_fn is None:
-            self._log.append("⚠ No objective function set. Run a simulation first.")
+            self.append_status_message(
+                "⚠ No objective function set. Run a simulation first."
+            )
             return
 
         n_params = self._n_torque_params * self._spin_degree.value()
@@ -638,15 +722,19 @@ class OptimizationWidget(QWidget):
         if self._chk_warm.isChecked() and self._last_best_coeffs is not None:
             if len(self._last_best_coeffs) == n_params:
                 warm_start = self._last_best_coeffs.copy()
-                self._log.append("↻ Warm-starting from previous best solution")
+                self.append_status_message(
+                    "🔄 Warm-starting from previous best solution"
+                )
 
         self._log.clear()
-        self._log.append(f"Starting {method} optimization...")
-        self._log.append(f"  Params: {n_params}, Generations: {n_iters}, Pop: {pop_size}")
+        self.append_status_message(f"Starting {method} optimization...")
+        self.append_status_message(
+            f"  Params: {n_params}, Generations: {n_iters}, Pop: {pop_size}"
+        )
         if _HAS_NATIVE_BATCH and self._chk_native.isChecked():
-            self._log.append("  Backend: [Rust] parallel (rayon)")
+            self.append_status_message("  Backend: 🦀 Rust parallel (rayon)")
         else:
-            self._log.append("  Backend: [Python] sequential")
+            self.append_status_message("  Backend: 🐍 Python sequential")
         self._progress.setValue(0)
         self._convergence_history.clear()
         self._btn_run.setEnabled(False)
@@ -684,7 +772,8 @@ class OptimizationWidget(QWidget):
         self._lbl_status.setText("Cancelling...")
 
     def _on_iteration(self, iteration: int, loss: float) -> None:
-        assert iteration is not None, "iteration must be provided"
+        if not (iteration is not None):
+            raise ValueError("iteration must be provided")
         max_iter = self._spin_iters.value()
         pct = min(100, int(100 * iteration / max_iter))
         self._progress.setValue(pct)
@@ -711,33 +800,40 @@ class OptimizationWidget(QWidget):
             self._last_best_coeffs = np.array(coeffs).copy()
 
         self._lbl_status.setText(f"{'✓' if success else '⚠'} Speed: {speed:.4f} m/s")
-        self._log.append(f"\n{'✓' if success else '⚠'} {method} optimization complete:")
-        self._log.append(f"  Max speed: {speed:.4f} m/s")
-        self._log.append(f"  Status: {msg}")
+        self.append_status_message(
+            f"\n{'✓' if success else '⚠'} {method} optimization complete:"
+        )
+        self.append_status_message(f"  Max speed: {speed:.4f} m/s")
+        self.append_status_message(f"  Status: {msg}")
 
         # Convergence summary
         if self._convergence_history:
             n_gens = len(self._convergence_history)
             best = min(self._convergence_history)
-            self._log.append(f"  Generations: {n_gens}, Best loss: {best:.6f}")
+            self.append_status_message(
+                f"  Generations: {n_gens}, Best loss: {best:.6f}"
+            )
 
         if coeffs is not None:
-            self._log.append(
+            self.append_status_message(
                 f"  Coefficients: {np.array2string(np.asarray(coeffs), precision=4)}"
             )
 
         self.optimized_coefficients.emit(result)
 
     def _on_error(self, msg: str) -> None:
-        assert msg is not None, "msg must be provided"
+        if not (msg is not None):
+            raise ValueError("msg must be provided")
         self._btn_run.setEnabled(True)
         self._btn_cancel.setEnabled(False)
         self._progress.setValue(0)
         self._lbl_status.setText("⚠ Error")
-        self._log.append(f"\n⚠ Optimization error: {msg}")
+        self.append_status_message(f"\n⚠ Optimization error: {msg}")
         logger.error("Optimization error: %s", msg)
 
     def _on_apply(self) -> None:
         if self._result is not None:
             self.optimized_coefficients.emit(self._result)
-            self._log.append("\n✓ Applied optimized coefficients to controls.")
+            self.append_status_message(
+                "\n✓ Applied optimized coefficients to controls."
+            )

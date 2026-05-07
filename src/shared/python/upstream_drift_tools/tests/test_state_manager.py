@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from unittest.mock import patch
 
@@ -114,7 +114,7 @@ def test_cleanup_backups(manager, tmp_path):
     assert len(backups) == 1
 
     # Modify mtime to be old
-    old_time = datetime.now().timestamp() - (35 * 24 * 3600)
+    old_time = datetime.now(UTC).timestamp() - (35 * 24 * 3600)
     import os
 
     os.utime(backups[0], (old_time, old_time))

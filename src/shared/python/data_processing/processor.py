@@ -7,15 +7,16 @@ simplified, chainable interface suitable for scripting, API backends, and tests.
 See issue #407.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Any
+import logging  # noqa: E402
+from dataclasses import dataclass, field  # noqa: E402
+from pathlib import Path  # noqa: E402
+from typing import Any  # noqa: E402
 
-import pandas as pd
-from contracts import require
+import pandas as pd  # noqa: E402
+
+from contracts import require  # noqa: E402
 
 logger = logging.getLogger(__name__)
 SUPPORTED_FILTER_TYPES = {"butterworth", "moving_average", "median", "savgol"}
@@ -103,6 +104,8 @@ class DataProcessor:
 
         Returns *self* for method chaining.
         """
+        if not (path is not None):
+            raise ValueError("path must be provided")
         path = Path(path)
         suffix = path.suffix.lower()
 
@@ -141,6 +144,8 @@ class DataProcessor:
 
     def load_dataframe(self, df: pd.DataFrame, name: str = "inline") -> DataProcessor:
         """Load from an existing DataFrame."""
+        if not (df is not None):
+            raise ValueError("df must be provided")
         require(isinstance(df, pd.DataFrame), "df must be a pandas DataFrame")
         require(isinstance(name, str) and bool(name), "name must be a non-empty string")
         self._df = df.copy()
@@ -161,6 +166,8 @@ class DataProcessor:
         time_column: str | None = None,
     ) -> DataProcessor:
         """Trim data to a time range.  Auto-detects the time column if not given."""
+        if not (start is not None):
+            raise ValueError("start must be provided")
         require(isinstance(start, int | float), "start must be numeric")
         require(isinstance(end, int | float), "end must be numeric")
         require(end >= start, "end must be >= start")
@@ -188,6 +195,8 @@ class DataProcessor:
             time_column: Column containing time values. Auto-detected if None.
             method: Interpolation method ('linear', 'cubic', etc.).
         """
+        if not (target_rate is not None):
+            raise ValueError("target_rate must be provided")
         require(
             isinstance(target_rate, int | float) and target_rate > 0,
             "target_rate must be a positive number",
@@ -232,6 +241,7 @@ class DataProcessor:
         cutoff: float = 10.0,
         order: int = 4,
         window_size: int = 11,
+        sample_rate: float = 1000.0,
     ) -> DataProcessor:
         """Apply a signal filter (butterworth, moving_average, median, savgol).
 
@@ -247,7 +257,12 @@ class DataProcessor:
             Filter order.
         window_size : int
             Window size for moving_average / median / savgol.
+        sample_rate : float
+            Sample rate of the data [Hz].  Used by the Butterworth filter
+            to correctly interpret the cutoff frequency.  Defaults to 1000.
         """
+        if not (filter_type is not None):
+            raise ValueError("filter_type must be provided")
         self._validate_filter_contract(filter_type, window_size)
         df = self.dataframe
         selected_columns = self._resolve_filter_columns(df, columns)
@@ -258,6 +273,7 @@ class DataProcessor:
             cutoff=cutoff,
             order=order,
             window_size=window_size,
+            sample_rate=sample_rate,
         )
         self._df = df
         self._history.append(
@@ -293,6 +309,7 @@ class DataProcessor:
         cutoff: float,
         order: int,
         window_size: int,
+        sample_rate: float = 1000.0,
     ) -> None:
         """Apply filter using SciPy implementation when available."""
         try:
@@ -303,6 +320,7 @@ class DataProcessor:
                 cutoff=cutoff,
                 order=order,
                 window_size=window_size,
+                sample_rate=sample_rate,
             )
         except ImportError:
             self._apply_filter_fallback(df=df, columns=columns, window_size=window_size)
@@ -315,29 +333,17 @@ class DataProcessor:
         cutoff: float,
         order: int,
         window_size: int,
+        sample_rate: float = 1000.0,
     ) -> None:
         """Apply filter implementation backed by scipy.signal."""
+        if not (df is not None):
+            raise ValueError("df must be provided")
         from scipy.signal import butter, filtfilt, medfilt, savgol_filter
 
         for column in columns:
             values = df[column].values.astype(float)
             if filter_type == "butterworth":
-                sample_rate = 1000
-                nyquist = sample_rate / 2.0
-                if cutoff >= nyquist:
-                    raise ValueError(
-                        f"Filter cutoff {cutoff} Hz must be below the Nyquist"
-                        f" frequency ({nyquist} Hz = sample_rate/2)."
-                        " Reduce cutoff or increase sample_rate."
-                    )
                 b, a = butter(order, cutoff, btype="low", fs=sample_rate)
-                min_len = 3 * (max(len(b), len(a)) - 1)
-                if len(values) < min_len:
-                    raise ValueError(
-                        f"Column has {len(values)} samples but filtfilt requires"
-                        f" at least {min_len} samples for a filter of this order."
-                        " Use a lower filter order."
-                    )
                 df[column] = filtfilt(b, a, values)
             elif filter_type == "moving_average":
                 df[column] = (
@@ -369,6 +375,8 @@ class DataProcessor:
 
         Example: ``dp.apply_formula("speed", "distance / time")``
         """
+        if not (new_column is not None):
+            raise ValueError("new_column must be provided")
         require(
             isinstance(new_column, str) and bool(new_column),
             "new_column must be a non-empty string",
@@ -379,13 +387,15 @@ class DataProcessor:
         )
         df = self.dataframe
         # pandas DataFrame.eval() is safe -- it only resolves column names
-        # within the dataframe and does not execute arbitrary Python code.
-        df[new_column] = df.eval(expression)
+        # pandas DataFrame.eval() is safe with numexpr engine
+        df[new_column] = df.eval(expression, engine="numexpr")
         self._history.append(f"Created column '{new_column}' = {expression}")
         return self
 
     def drop_columns(self, columns: list[str]) -> DataProcessor:
         """Drop specified columns."""
+        if not (columns is not None):
+            raise ValueError("columns must be provided")
         require(
             isinstance(columns, list) and bool(columns),
             "columns must be a non-empty list",
@@ -396,6 +406,8 @@ class DataProcessor:
 
     def rename_columns(self, mapping: dict[str, str]) -> DataProcessor:
         """Rename columns."""
+        if not (mapping is not None):
+            raise ValueError("mapping must be provided")
         require(
             isinstance(mapping, dict) and bool(mapping),
             "mapping must be a non-empty dict",
@@ -406,6 +418,8 @@ class DataProcessor:
 
     def sort(self, by: str, ascending: bool = True) -> DataProcessor:
         """Sort by a column."""
+        if not (by is not None):
+            raise ValueError("by must be provided")
         require(isinstance(by, str) and bool(by), "by must be a non-empty string")
         require(isinstance(ascending, bool), "ascending must be a boolean")
         self._df = self.dataframe.sort_values(by=by, ascending=ascending).reset_index(
@@ -504,6 +518,8 @@ class DataProcessor:
 
         Supported formats: .csv, .xlsx, .parquet, .json
         """
+        if not (path is not None):
+            raise ValueError("path must be provided")
         path = Path(path)
         suffix = path.suffix.lower()
         df = self.dataframe

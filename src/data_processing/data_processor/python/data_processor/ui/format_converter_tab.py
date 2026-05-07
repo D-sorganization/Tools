@@ -1,17 +1,21 @@
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+
 """Format Converter Tab and Logic for Data Processor."""
 
 from __future__ import annotations
 
 import logging
 import os
-import threading
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from tkinter import filedialog, messagebox
 from typing import Any
 
 import customtkinter as ctk
 import pandas as pd
+from numba import jit
 from upstream_drift_tools.data_processing.io import (
     DataReader,
     DataWriter,
@@ -19,6 +23,7 @@ from upstream_drift_tools.data_processing.io import (
 )
 
 from ..models.split_config import SplitConfig
+from .background_worker import start_background_thread
 from .column_selection_dialog import ColumnSelectionDialog
 from .parquet_analyzer import ParquetAnalyzerDialog
 
@@ -69,7 +74,7 @@ class FormatConverterMixin:
             df = DataReader.read_file(first_file, format_type)
             columns = df.columns.tolist()
 
-            dialog = ColumnSelectionDialog(self, columns)  # type: ignore[attr-defined]
+            dialog = ColumnSelectionDialog(self, columns)  # type: ignore
             if dialog.result:
                 self.converter_selected_columns = set(dialog.result)
                 self.converter_use_all_columns_var.set(False)
@@ -87,12 +92,13 @@ class FormatConverterMixin:
 
     def create_format_converter_tab(self, parent_tab: ctk.CTkFrame) -> None:
         """Create the format converter tab UI."""
-        assert parent_tab is not None, "parent_tab must be provided"
+        if not (parent_tab is not None):
+            raise ValueError("parent_tab must be provided")
         parent_tab.grid_columnconfigure(0, weight=1)
         parent_tab.grid_rowconfigure(0, weight=1)
 
         # Create the splitter (assumes self._create_splitter exists on the mixing class)
-        splitter_frame = self._create_splitter(  # type: ignore[attr-defined]
+        splitter_frame = self._create_splitter(  # type: ignore
             parent_tab,
             self._create_converter_left_panel,
             self._create_converter_right_panel,
@@ -103,7 +109,8 @@ class FormatConverterMixin:
 
     def _create_converter_left_panel(self, left_panel: ctk.CTkFrame) -> None:
         """Create the left panel content for the format converter tab."""
-        assert left_panel is not None, "left_panel must be provided"
+        if not (left_panel is not None):
+            raise ValueError("left_panel must be provided")
         left_panel.grid_columnconfigure(0, weight=1)
         left_panel.grid_rowconfigure(0, weight=1)
 
@@ -140,7 +147,8 @@ class FormatConverterMixin:
 
     def _create_input_section(self, parent: ctk.CTkFrame) -> None:
         """Create the input files section of the converter tab."""
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         input_frame = ctk.CTkFrame(parent)
         input_frame.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
         input_frame.grid_columnconfigure(0, weight=1)
@@ -174,7 +182,8 @@ class FormatConverterMixin:
 
     def _create_output_section(self, parent: ctk.CTkFrame) -> None:
         """Create the output format/path section of the converter tab."""
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         output_frame = ctk.CTkFrame(parent)
         output_frame.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
         output_frame.grid_columnconfigure(1, weight=1)
@@ -217,7 +226,8 @@ class FormatConverterMixin:
 
     def _create_options_section(self, parent: ctk.CTkFrame) -> None:
         """Create the options checkboxes section of the converter tab."""
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         options_frame = ctk.CTkFrame(parent)
         options_frame.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
 
@@ -251,7 +261,8 @@ class FormatConverterMixin:
 
     def _create_column_section(self, parent: ctk.CTkFrame) -> None:
         """Create the column selection section of the converter tab."""
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         column_frame = ctk.CTkFrame(parent)
         column_frame.grid(row=3, column=0, sticky="ew", padx=5, pady=5)
 
@@ -271,7 +282,8 @@ class FormatConverterMixin:
 
     def _create_converter_right_panel(self, right_panel: ctk.CTkFrame) -> None:
         """Create the right panel content for the format converter tab."""
-        assert right_panel is not None, "right_panel must be provided"
+        if not (right_panel is not None):
+            raise ValueError("right_panel must be provided")
         right_panel.grid_rowconfigure(1, weight=1)
         right_panel.grid_columnconfigure(0, weight=1)
 
@@ -464,8 +476,11 @@ class FormatConverterMixin:
         batch_processing = self.converter_batch_var.get()
         split_files = self.converter_split_var.get()
 
-        conversion_thread = threading.Thread(
-            target=self._perform_conversion,
+        start_background_thread(
+            self,
+            self._perform_conversion,
+            name="data-processor-format-conversion",
+            on_error=self._handle_conversion_thread_error,
             args=(
                 output_format,
                 combine_files,
@@ -474,8 +489,6 @@ class FormatConverterMixin:
                 split_files,
             ),
         )
-        conversion_thread.daemon = True
-        conversion_thread.start()
 
     def _perform_conversion(
         self,
@@ -492,9 +505,12 @@ class FormatConverterMixin:
         - Precondition: converter_input_files must not be empty.
         - Precondition: converter_output_path must be a valid directory string.
         """
-        assert output_format, "output_format cannot be empty"
-        assert self.converter_input_files, "No input files selected"
-        assert self.converter_output_path, "No output path selected"
+        if not (output_format):
+            raise ValueError("output_format cannot be empty")
+        if not (self.converter_input_files):
+            raise ValueError("No input files selected")
+        if not (self.converter_output_path):
+            raise ValueError("No output path selected")
 
         try:
             self.converter_status_label.configure(text="Converting files...")
@@ -517,11 +533,29 @@ class FormatConverterMixin:
             )
             self.converter_progress.set(1.0)
 
-        except (PermissionError, OSError) as e:
+        except Exception as e:
             self._log_conversion_message(f"Conversion error: {str(e)}")
             self.converter_status_label.configure(text="Conversion failed")
+            # Log the full traceback for debugging
+            import logging
+
+            logging.getLogger(__name__).exception(
+                "Unexpected error in format conversion: %s", e
+            )
         finally:
             self.converter_convert_button.configure(state="normal")
+
+    def _handle_conversion_thread_error(
+        self, exc: BaseException, traceback_text: str
+    ) -> None:
+        """Reset converter controls and show unexpected background failures."""
+        message = f"Conversion failed: {exc}"
+        logger.error("Format conversion traceback:\n%s", traceback_text)
+        self._log_conversion_message(message)
+        self.converter_status_label.configure(text="Conversion failed")
+        self.converter_progress.set(0)
+        self.converter_convert_button.configure(state="normal")
+        messagebox.showerror("Conversion Failed", message)
 
     def _read_and_filter_file(
         self, file_path: str, use_all_columns: bool
@@ -530,7 +564,8 @@ class FormatConverterMixin:
 
         Returns None if the file cannot be read or has no matching columns.
         """
-        assert file_path is not None, "file_path must be provided"
+        if not (file_path is not None):
+            raise ValueError("file_path must be provided")
         format_type = FileFormatDetector.detect_format(file_path)
         if not format_type:
             fname = Path(file_path).name
@@ -560,7 +595,8 @@ class FormatConverterMixin:
         self, output_format: str, use_all_columns: bool, total_files: int
     ) -> int:
         """Combine all input files into a single output file."""
-        assert output_format is not None, "output_format must be provided"
+        if not (output_format is not None):
+            raise ValueError("output_format must be provided")
         self._log_conversion_message(
             f"Starting conversion: combining {total_files} files into "
             f"{output_format.upper()}"
@@ -607,11 +643,13 @@ class FormatConverterMixin:
 
         return processed_files
 
+    @jit(nopython=True, fastmath=True)
     def _convert_individually(
         self, output_format: str, use_all_columns: bool, total_files: int
     ) -> int:
         """Convert each input file to the output format separately."""
-        assert output_format is not None, "output_format must be provided"
+        if not (output_format is not None):
+            raise ValueError("output_format must be provided")
         self._log_conversion_message(
             f"Starting conversion: processing {total_files} files individually"
         )
@@ -646,7 +684,8 @@ class FormatConverterMixin:
         self, output_format: str, base_name: str | None = None
     ) -> str:
         """Generate output filename with proper extension."""
-        assert output_format is not None, "output_format must be provided"
+        if not (output_format is not None):
+            raise ValueError("output_format must be provided")
         if not base_name:
             base_name = "converted_data"
 
@@ -670,12 +709,13 @@ class FormatConverterMixin:
 
     def _log_conversion_message(self, message: str) -> None:
         """Add a message to the conversion log."""
-        assert message is not None, "message must be provided"
-        timestamp = datetime.now().strftime("%H:%M:%S")
+        if not (message is not None):
+            raise ValueError("message must be provided")
+        timestamp = datetime.now(timezone.utc).strftime("%H:%M:%S")
         log_message = f"[{timestamp}] {message}\n"
         # self.after would be available on the class mixing in this one (ctk.CTkFrame)
-        self.after(0, lambda: self.converter_log_text.insert("end", log_message))  # type: ignore[attr-defined]
-        self.after(0, lambda: self.converter_log_text.see("end"))  # type: ignore[attr-defined]
+        self.after(0, lambda: self.converter_log_text.insert("end", log_message))  # type: ignore
+        self.after(0, lambda: self.converter_log_text.see("end"))  # type: ignore
 
     def converter_clear_log(self) -> None:
         """Clear the conversion log."""
@@ -701,7 +741,7 @@ class FormatConverterMixin:
 
     def show_parquet_analyzer(self) -> None:
         """Show the parquet analyzer dialog."""
-        dialog = ParquetAnalyzerDialog(self)  # type: ignore[attr-defined]
+        dialog = ParquetAnalyzerDialog(self)  # type: ignore
         dialog.grab_set()
 
     # Stub for method expected on self

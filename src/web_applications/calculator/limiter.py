@@ -28,7 +28,6 @@ class RateLimiter:
             limit: Maximum number of requests allowed per window.
             window: Duration of the window in seconds.
         """
-        assert limit is not None, "limit must be provided"
         self.limit = limit
         self.window = window
         # Storage: key -> (window_start_timestamp, count)
@@ -46,7 +45,6 @@ class RateLimiter:
         Returns:
             True if allowed, False if limit exceeded.
         """
-        assert key is not None, "key must be provided"
         now = time.time()
         current_window = int(now / self.window)
 
