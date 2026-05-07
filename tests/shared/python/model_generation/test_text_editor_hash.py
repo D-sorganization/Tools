@@ -35,22 +35,22 @@ class TestTextEditorHashSecurity:
         version = editor._history[-1]
         assert version.checksum, "Checksum must be non-empty"
 
-    def test_checksum_is_valid_md5_hex(self) -> None:
-        """Checksum must be a valid 32-character MD5 hex digest."""
+    def test_checksum_is_valid_sha256_hex(self) -> None:
+        """Checksum must be a valid 64-character SHA256 hex digest."""
         editor = URDFTextEditor()
         editor.set_content(_MINIMAL_URDF)
         version = editor._history[-1]
-        # MD5 hex digest is always 32 lowercase hex characters
-        assert len(version.checksum) == 32
+        # SHA256 hex digest is always 64 lowercase hex characters
+        assert len(version.checksum) == 64
         assert all(c in "0123456789abcdef" for c in version.checksum)
 
-    def test_checksum_matches_expected_md5(self) -> None:
-        """Checksum value must equal hashlib.md5(..., usedforsecurity=False)."""
+    def test_checksum_matches_expected_sha256(self) -> None:
+        """Checksum value must equal hashlib.sha256(...)."""
         editor = URDFTextEditor()
         editor.set_content(_MINIMAL_URDF)
         version = editor._history[-1]
-        expected = hashlib.md5(
-            _MINIMAL_URDF.encode(), usedforsecurity=False
+        expected = hashlib.sha256(
+            _MINIMAL_URDF.encode()
         ).hexdigest()
         assert version.checksum == expected
 
