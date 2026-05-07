@@ -263,7 +263,7 @@ jobs:
           python prioritize_issues.py
 
       - name: Upload prioritized issues
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: prioritized-issues
           path: prioritized_issues.json
