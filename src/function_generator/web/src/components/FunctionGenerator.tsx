@@ -223,7 +223,7 @@ function generateSignalValues(time: number[], waveformType: WaveformType, params
     case 'polynomial': return generatePolynomial(time, params);
     case 'chirp': return generateChirp(time, params);
     case 'constant': return generateConstant(time, params);
-    default: return time.map(() => 0);
+    default: return new Array<number>(time.length).fill(0);
   }
 }
 
@@ -339,7 +339,7 @@ export function FunctionGenerator() {
 
     return layers.map(layer => ({
       layer,
-      values: layer.enabled ? generateSignalValues(time, layer.waveformType, layer.params) : time.map(() => 0),
+      values: layer.enabled ? generateSignalValues(time, layer.waveformType, layer.params) : new Array<number>(n).fill(0),
     }));
   }, [layers, duration, sampleRate]);
 
@@ -349,7 +349,10 @@ export function FunctionGenerator() {
     const time = Array.from({ length: n }, (_, i) => (i / sampleRate));
 
     // Combine all enabled layers
-    const values = time.map((_, i) => {
+    const values = new Array<number>(n);
+    // ⚡ Bolt Optimization: Replace time.map() with a pre-allocated array and single-pass for loop
+    // to avoid intermediate array allocation and reduce garbage collection pauses.
+    for (let i = 0; i < n; i++) {
       let sum = 0;
       for (const { layer, values: layerVals } of layerSignals) {
         if (layer.enabled) {
@@ -360,8 +363,8 @@ export function FunctionGenerator() {
           }
         }
       }
-      return sum;
-    });
+      values[i] = sum;
+    }
 
     return { time, values };
   }, [duration, sampleRate, layerSignals]);
