@@ -392,7 +392,30 @@ function setupEventListeners() {
 
   convertBtn.addEventListener('click', performConversion);
   swapBtn.addEventListener('click', swapUnits);
-  clearHistoryBtn.addEventListener('click', clearHistory);
+
+  let clearConfirmTimeout = null;
+  clearHistoryBtn.addEventListener('click', () => {
+    if (clearHistoryBtn.dataset.confirming) {
+      clearHistory();
+      clearHistoryBtn.textContent = 'Clear';
+      clearHistoryBtn.setAttribute('aria-label', 'Clear conversion history');
+      clearHistoryBtn.classList.remove('confirming');
+      delete clearHistoryBtn.dataset.confirming;
+      clearTimeout(clearConfirmTimeout);
+    } else {
+      clearHistoryBtn.textContent = 'CONFIRM?';
+      clearHistoryBtn.setAttribute('aria-label', 'Confirm clear history');
+      clearHistoryBtn.classList.add('confirming');
+      clearHistoryBtn.dataset.confirming = 'true';
+
+      clearConfirmTimeout = setTimeout(() => {
+        clearHistoryBtn.textContent = 'Clear';
+        clearHistoryBtn.setAttribute('aria-label', 'Clear conversion history');
+        clearHistoryBtn.classList.remove('confirming');
+        delete clearHistoryBtn.dataset.confirming;
+      }, 3000);
+    }
+  });
 
   // Gas flow / heating value param changes trigger re-conversion
   standardConditionSelect.addEventListener('change', performConversion);
