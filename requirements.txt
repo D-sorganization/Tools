@@ -17,7 +17,7 @@ mypy==1.13.0  # Static type checker for Python (pinned to match CI workflow)
 types-PyYAML>=6.0.0  # Type stubs for PyYAML (static typing)
 types-requests>=2.33.0.20260508  # Type stubs for requests library (static typing)
 types-python-dateutil>=2.9.0.20260408  # Type stubs for python-dateutil (avoids mypy --install-types cache issue)
-types-decorator>=5.1.0  # Type stubs for decorator (avoids mypy --install-types cache issue)
+types-decorator>=5.2.0.20260508  # Type stubs for decorator (avoids mypy --install-types cache issue)
 
 # GUI & Desktop Applications
 PyQt6>=6.7.0  # Qt6 Python bindings for GUI applications
