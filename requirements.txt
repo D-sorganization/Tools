@@ -22,7 +22,7 @@ types-decorator>=5.2.0.20260508  # Type stubs for decorator (avoids mypy --insta
 # GUI & Desktop Applications
 PyQt6>=6.7.0  # Qt6 Python bindings for GUI applications
 pygame>=2.0.0  # Game development and multimedia library
-PyOpenGL>=3.1.5  # OpenGL bindings for Python
+PyOpenGL>=3.1.10  # OpenGL bindings for Python
 PyOpenGL_accelerate>=3.1.10  # Accelerated OpenGL extensions
 
 # Web Applications
