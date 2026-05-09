@@ -7,3 +7,6 @@
 ## 2024-05-15 - Optimization of Array Allocations in FunctionGenerator
 **Learning:** Using `time.map(() => 0)` or `time.map((_, i) => ...)` to generate large high-frequency signal arrays inside React components triggers significant garbage collection overhead and intermediate closures for every data point.
 **Action:** Replace `.map()` on large sample rate arrays with pre-allocated arrays (`new Array(n)`) combined with `.fill(0)` for zeroing out, or single-pass `for` loops when computing mathematical sums over signal layers.
+## 2024-05-18 - Optimization of Numerical Integration Loops
+**Learning:** Creating thousands of short-lived objects (like intermediate states or argument arrays) per numerical integration step (e.g., RK4) causes severe garbage collection pauses and degrades simulation performance.
+**Action:** Avoid in-loop allocations. Pre-allocate state objects and argument arrays outside the integration loop, and use an out-parameter pattern (e.g., passing `outDerivs` to the derivative function) to mutate existing objects rather than returning new ones.
