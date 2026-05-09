@@ -19,13 +19,13 @@ pytest-benchmark==5.2.3
 ruff==0.15.12
 mypy==1.13.0
 bandit==1.9.4
-types-PyYAML==6.0.12.20250915
-types-requests==2.33.0.20260503
+types-PyYAML==6.0.12.20260508
+types-requests==2.33.0.20260508
 
 # GUI & Desktop Applications
 PyQt6==6.11.0
 pygame==2.6.1
-PyOpenGL==3.1.9
+PyOpenGL==3.1.10
 
 # Web Applications
 flask==3.1.3
