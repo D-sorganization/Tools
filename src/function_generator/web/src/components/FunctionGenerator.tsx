@@ -125,13 +125,21 @@ function generateLinear(t: number[], params: WaveformParams): number[] {
 
 function generatePolynomial(t: number[], params: WaveformParams): number[] {
   const { polyCoeffs } = params;
-  return t.map(ti => {
+  // ⚡ Bolt Optimization: Use Horner's method and single-pass loop pre-allocating the array
+  // to eliminate O(N) allocation and expensive Math.pow() exponentiation.
+  const n = t.length;
+  const result = new Array<number>(n);
+  const degree = polyCoeffs.length - 1;
+
+  for (let j = 0; j < n; j++) {
+    const ti = t[j];
     let value = 0;
-    for (let i = 0; i < polyCoeffs.length; i++) {
-      value += polyCoeffs[i] * Math.pow(ti, i);
+    for (let i = degree; i >= 0; i--) {
+      value = value * ti + polyCoeffs[i];
     }
-    return value;
-  });
+    result[j] = value;
+  }
+  return result;
 }
 
 function generateChirp(t: number[], params: WaveformParams): number[] {
