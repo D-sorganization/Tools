@@ -14,7 +14,8 @@ from pathlib import Path
 from typing import Any
 from unittest.mock import MagicMock
 
-# Pre-load tkinter to prevent namespace corruption on Windows 3.13 during pytest collection
+# Pre-load tkinter to prevent namespace corruption on Windows 3.13
+# during pytest collection.
 try:
     import tkinter  # noqa: F401
     import tkinter.ttk  # noqa: F401
@@ -43,6 +44,8 @@ os.environ.setdefault("OMP_NUM_THREADS", "1")
 os.environ.setdefault("MKL_NUM_THREADS", "1")
 os.environ.setdefault("NUMEXPR_NUM_THREADS", "1")
 os.environ.setdefault("HEADLESS", "true")
+# Fleet testing standards §5: Qt headless backend for indirect PyQt/PySide imports.
+os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 import pytest
 
