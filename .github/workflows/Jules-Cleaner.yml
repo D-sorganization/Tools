@@ -7,7 +7,7 @@ on:
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
@@ -47,7 +47,7 @@ jobs:
   cleanup:
     needs: pick-runner
     if: github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'jules:consolidation')
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     permissions:
       pull-requests: write
       contents: write

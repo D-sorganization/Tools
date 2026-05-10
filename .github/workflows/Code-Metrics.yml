@@ -14,7 +14,7 @@ permissions:
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
@@ -54,7 +54,7 @@ jobs:
   complexity-metrics:
     needs: pick-runner
     name: Complexity Analysis (radon)
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     steps:
       - uses: actions/checkout@v6
 
@@ -133,7 +133,7 @@ jobs:
   duplication-metrics:
     needs: pick-runner
     name: Duplication Analysis (jscpd)
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     steps:
       - uses: actions/checkout@v6
 
@@ -215,7 +215,7 @@ jobs:
     name: Metrics Summary
     needs: [pick-runner, complexity-metrics, duplication-metrics]
     if: always()
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     steps:
       - name: Final Summary
         run: |

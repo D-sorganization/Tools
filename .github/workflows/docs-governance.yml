@@ -16,7 +16,7 @@ on:
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
@@ -55,7 +55,7 @@ jobs:
           esac
   docs-governance:
     needs: pick-runner
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     steps:
       - uses: actions/checkout@v6
         with:

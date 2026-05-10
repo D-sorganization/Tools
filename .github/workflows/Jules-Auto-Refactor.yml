@@ -33,7 +33,7 @@ permissions:
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
@@ -72,7 +72,7 @@ jobs:
           esac
   auto-refactor:
     needs: pick-runner
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     # Grant write only at this job level — branch creation, fix pushes, and PR
     # opening happen here. pick-runner needs no write access.
     permissions:
