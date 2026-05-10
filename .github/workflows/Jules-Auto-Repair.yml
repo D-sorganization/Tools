@@ -71,7 +71,7 @@ env:
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
@@ -110,7 +110,7 @@ jobs:
           esac
   intelligent-repair:
     needs: pick-runner
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     # Grant write only at this job level — this is the only job that pushes commits
     # or comments on PRs. pick-runner needs no write access.
     permissions:

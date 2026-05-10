@@ -43,7 +43,7 @@ concurrency:
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
@@ -82,7 +82,7 @@ jobs:
           esac
   resolve-issues:
     needs: pick-runner
-    runs-on: self-hosted
+    runs-on: d-sorg-fleet
     # Grant write only at this job level — branch creation, fix pushes, PR
     # creation, and issue updates all happen here. pick-runner needs no write.
     permissions:
