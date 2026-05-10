@@ -166,7 +166,14 @@ pythonpath = [
     "src/pendulum_simulator/src",
     "src/folder_tool",
 ]
-addopts = "-ra -v --strict-markers --strict-config --tb=short --color=yes --durations=20 --benchmark-disable -n auto --dist loadscope -m \"not live_simulation\" -p no:xvfb"
+# Fleet testing standards (§2): explicit timeout + asyncio config.
+# See: Repository_Management/docs/FLEET_TESTING_STANDARDS.md
+timeout = 60
+timeout_method = "thread"
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+# Default lane excludes heavy + offline-only-violating selections per §2.
+addopts = "-ra -v --strict-markers --strict-config --tb=short --color=yes --durations=20 --benchmark-disable -n auto --dist loadscope -m \"not slow and not live_simulation and not e2e and not requires_network\" -p no:xvfb"
 console_output_style = "progress"
 norecursedirs = [
     "replicants",
@@ -233,6 +240,13 @@ markers = [
     "math_regression: tests looking for unintended calculation changes",
     "flaky: tests that are known to fail intermittently",
     "tools_contracts: tests verifying shared tools libraries interfaces",
+    # ---- fleet testing standards §2 additions ----
+    "serial: must run with -n 0 (xdist parallel breaks this test)",
+    "requires_mujoco: skip when import mujoco fails",
+    "requires_drake: skip when import pydrake fails",
+    "requires_pinocchio: skip when pinocchio is the stub PyPI wheel",
+    "requires_opensim: skip when import opensim fails",
+    "requires_matlab: skip when MATLAB Engine for Python is unavailable",
 ]
 
 [tool.coverage.run]
