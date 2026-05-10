@@ -639,6 +639,7 @@ To maintain a clean repository root, all development-related documentation (summ
 - Prefer creating issues for task tracking rather than temporary markdown files.
 
 <!-- BEGIN FLEET-MANAGED: network-api-hygiene -->
+
 ## 🛑 NETWORK & API HYGIENE (CRITICAL)
 
 > This section is managed centrally by Repository_Management and synced fleet-wide.
@@ -646,16 +647,16 @@ To maintain a clean repository root, all development-related documentation (summ
 
 ### GitHub API Quotas
 
-| API Type | Quota | Consumed By |
-|----------|-------|-------------|
-| REST (`gh api repos/...`) | 5,000 req/hr | Safe for polling |
-| GraphQL | 5,000 req/hr | `gh pr list --json`, `gh pr checks`, `gh pr create`, `gh pr merge` |
+| API Type                  | Quota        | Consumed By                                                        |
+| ------------------------- | ------------ | ------------------------------------------------------------------ |
+| REST (`gh api repos/...`) | 5,000 req/hr | Safe for polling                                                   |
+| GraphQL                   | 5,000 req/hr | `gh pr list --json`, `gh pr checks`, `gh pr create`, `gh pr merge` |
 
 GraphQL and REST have **separate** quotas. Exhausting GraphQL blocks PR creation and merging fleet-wide for an entire hour.
 
 ### Mandatory Rules
 
-- **NO MASS POLLING**: Agents MUST NEVER use `gh pr list`, `gh issue list`, or arbitrary REST/GraphQL loops to "scan" or "sweep" the repository fleet. Single, scoped repository lookups are allowed when needed.
+- **NO MASS POLLING**: Agents MUST NEVER use `gh pr list`, `gh issue list`, or arbitrary REST/GraphQL loops in a bulk manner to "scan" or "sweep" the repository fleet. Single, scoped repository lookups are allowed when needed (e.g., checking if a specific PR exists).
 - **LOCAL FIRST**: Rely on local `.md` files, previously generated `issues.json` artifacts, or user assistance to find task context — do not query GitHub to discover what to work on.
 - **NO PARALLELIZED GITHUB CLI**: Never write or execute scripts that loop over multiple repositories performing `gh` operations (automated PR merge scripts, fleet-wide status sweeps, etc.).
 - **NO TIGHT POLLING LOOPS**: Never implement `while true; do gh pr checks $PR; sleep 30; done` patterns. Each iteration of such a loop costs 1–3 GraphQL calls; at 30-second intervals that drains the 5,000/hr quota in under 3 hours.
@@ -680,12 +681,32 @@ d = json.load(sys.stdin)['resources']
 for k in ['core', 'graphql']:
     r = d[k]
     reset = datetime.datetime.fromtimestamp(r['reset']).strftime('%H:%M:%S')
-    rem, lim = r['remaining'], r['limit']
-    print(f'{k}: {rem}/{lim} remaining — resets {reset}')
+    print(f'{k}: {r["remaining"]}/{r["limit"]} remaining — resets {reset}')
 "
 ```
 
 <!-- END FLEET-MANAGED: network-api-hygiene -->
+---
+
+<!-- BEGIN FLEET-MANAGED: reasoning-engagement -->
+
+## 🧠 Reasoning & Engagement
+
+> This section is managed centrally by Repository_Management and synced fleet-wide.
+> Do NOT edit it directly in individual repositories — edit the source in Repository_Management/AGENTS.md.
+
+These rules govern *how* you engage with a task before and during implementation. They exist because LLM agents tend to pick an interpretation silently, overcomplicate the solution, and edit code they were not asked to touch. Each rule directly counteracts one of those failure modes.
+
+- **Surface ambiguity. Do not guess silently.** If the request has more than one plausible interpretation, list the options and ask before implementing. Picking one and running with it is the single most common cause of rework in this fleet.
+- **Push back on overcomplication.** If a simpler approach would satisfy the request, say so before you build the complicated one. Do not implement bloated 1000-line constructions when 100 would do. The senior-engineer test: would they call this overcomplicated? If yes, simplify.
+- **Stay surgical.** Every changed line must trace directly to the user's request. Do not "improve" adjacent code, comments, formatting, or imports. Do not refactor things that are not broken. Match existing style even if you would do it differently.
+- **Spotted ≠ fix.** If you notice unrelated dead code, latent bugs, or stylistic problems while working, *mention them in the PR body or as a follow-up issue* — do not fix them in the same PR. (The `mcp__ccd_session__spawn_task` tool is the right channel when working interactively.)
+- **Clean up only your own orphans.** If your changes leave imports, variables, or functions newly unused, remove them. Do not delete pre-existing dead code unless the task asked for it.
+- **State a verifiable success criterion before coding.** For a bug fix, that's a failing test that reproduces it (RED → GREEN, see TDD section below). For a feature, the explicit check that says "done." "Make it work" is not a success criterion.
+
+**The diff test:** every line in your final diff should answer "this is here because the user asked for X." If you cannot answer that for a given line, remove it.
+
+<!-- END FLEET-MANAGED: reasoning-engagement -->
 ---
 
 ## Specification
