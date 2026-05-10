@@ -5,10 +5,10 @@
 # Regenerate at the start of each sprint cycle or after any requirements.txt change.
 
 # Core Scientific Computing
-numpy==2.4.1
+numpy==2.4.4
 pandas==2.2.3
 scipy==1.16.0
-matplotlib==3.10.3
+matplotlib==3.10.9
 sympy==1.14.0
 
 # Testing & Quality Assurance
