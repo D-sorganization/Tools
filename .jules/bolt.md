@@ -14,3 +14,6 @@
 ## 2024-05-18 - Optimization of Numerical Integration Loops
 **Learning:** Creating thousands of short-lived objects (like intermediate states or argument arrays) per numerical integration step (e.g., RK4) causes severe garbage collection pauses and degrades simulation performance.
 **Action:** Avoid in-loop allocations. Pre-allocate state objects and argument arrays outside the integration loop, and use an out-parameter pattern (e.g., passing `outDerivs` to the derivative function) to mutate existing objects rather than returning new ones.
+## 2024-05-18 - Optimization of Array Allocations and Reductions in PSA Calculator
+**Learning:** Using multiple chained `.map()` allocations and array `.reduce()` inside tight calculation steps generates numerous intermediate arrays, leading to O(N) memory allocation and subsequent garbage collection overhead.
+**Action:** Replace multiple `.map()` and `.reduce()` invocations with a single-pass `for` loop that uses pre-allocated arrays (e.g., `new Array(size)`) and accumulates totals manually in high-frequency data calculation modules.

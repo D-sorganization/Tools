@@ -618,6 +618,11 @@
     </div>
 
     <script>
+      function sumArray(arr) {
+        let s = 0;
+        for (let i = 0; i < arr.length; i++) s += arr[i];
+        return s;
+      }
       function updateSliderValue(sliderId, valueId) {
         document.getElementById(valueId).textContent =
           document.getElementById(sliderId).value;
@@ -685,34 +690,59 @@
 
       function calculatePSA(totalFeed, s2Recycle, prodRecycle, components) {
         const n = components.length;
-        const feedPct = components.map((c) => c.feed_pct);
-        const r1 = components.map((c) => c.s1_removal / 100);
-        const r2 = components.map((c) => c.s2_removal / 100);
+        // ⚡ Bolt Optimization: Replace multiple .map() allocations with single-pass pre-allocated loops to prevent GC overhead
+        const feedPct = new Array(n);
+        const r1 = new Array(n);
+        const r2 = new Array(n);
         const rTail = s2Recycle;
         const rProd = prodRecycle;
 
-        const feedSum = feedPct.reduce((a, b) => a + b, 0);
-        const freshFeed = feedPct.map((p) => (totalFeed * p) / feedSum);
+        let feedSum = 0;
+        for (let i = 0; i < n; i++) {
+          feedPct[i] = components[i].feed_pct;
+          r1[i] = components[i].s1_removal / 100;
+          r2[i] = components[i].s2_removal / 100;
+          feedSum += feedPct[i];
+        }
 
-        const denominator = r1.map(
-          (r1i, i) => 1 - (1 - r1i) * (r2[i] * rTail + (1 - r2[i]) * rProd),
-        );
-        const mixedFeed = freshFeed.map((f, i) => f / denominator[i]);
-        const exhaust = mixedFeed.map((m, i) => m * r1[i]);
-        const interstage = mixedFeed.map((m, i) => m - exhaust[i]);
-        const s2Tail = interstage.map((h, i) => h * r2[i]);
-        const s2TailRecycle = s2Tail.map((j) => j * rTail);
-        const s2TailVent = s2Tail.map((j) => j * (1 - rTail));
-        const grossProduct = interstage.map((h, i) => h - s2Tail[i]);
-        const productRecycle = grossProduct.map((g) => g * rProd);
-        const netProduct = grossProduct.map((g) => g * (1 - rProd));
+        const freshFeed = new Array(n);
+        const denominator = new Array(n);
+        const mixedFeed = new Array(n);
+        const exhaust = new Array(n);
+        const interstage = new Array(n);
+        const s2Tail = new Array(n);
+        const s2TailRecycle = new Array(n);
+        const s2TailVent = new Array(n);
+        const grossProduct = new Array(n);
+        const productRecycle = new Array(n);
+        const netProduct = new Array(n);
 
-        const sum = (arr) => arr.reduce((a, b) => a + b, 0);
+        for (let i = 0; i < n; i++) {
+          freshFeed[i] = (totalFeed * feedPct[i]) / feedSum;
+          denominator[i] = 1 - (1 - r1[i]) * (r2[i] * rTail + (1 - r2[i]) * rProd);
+          mixedFeed[i] = freshFeed[i] / denominator[i];
+          exhaust[i] = mixedFeed[i] * r1[i];
+          interstage[i] = mixedFeed[i] - exhaust[i];
+          s2Tail[i] = interstage[i] * r2[i];
+          s2TailRecycle[i] = s2Tail[i] * rTail;
+          s2TailVent[i] = s2Tail[i] * (1 - rTail);
+          grossProduct[i] = interstage[i] - s2Tail[i];
+          productRecycle[i] = grossProduct[i] * rProd;
+          netProduct[i] = grossProduct[i] * (1 - rProd);
+        }
+
+
         const calcComp = (arr) => {
-          const total = sum(arr);
-          return total === 0
-            ? arr.map(() => 0)
-            : arr.map((v) => (v / total) * 100);
+          const total = sumArray(arr);
+          if (total === 0) {
+            const zeros = new Array(arr.length);
+            for (let i = 0; i < arr.length; i++) zeros[i] = 0;
+            return zeros;
+          } else {
+            const result = new Array(arr.length);
+            for (let i = 0; i < arr.length; i++) result[i] = (arr[i] / total) * 100;
+            return result;
+          }
         };
 
         const h2Idx = 0,
@@ -838,12 +868,10 @@
         massHtml += `<tr style="font-weight: bold; background: #f9f9f9;">
                 <td>TOTAL</td>
                 <td>${results.totalFeed.toFixed(2)}</td>
-                <td>${results.flows.mixedFeed
-                  .reduce((a, b) => a + b, 0)
+                <td>${sumArray(results.flows.mixedFeed)
                   .toFixed(2)}</td>
                 <td>${results.totalExhaust.toFixed(2)}</td>
-                <td>${results.flows.interstage
-                  .reduce((a, b) => a + b, 0)
+                <td>${sumArray(results.flows.interstage)
                   .toFixed(2)}</td>
                 <td>${results.totalNetProduct.toFixed(2)}</td>
             </tr>`;
@@ -884,9 +912,9 @@
               value: [
                 results.totalFeed,
                 results.totalExhaust,
-                results.flows.interstage.reduce((a, b) => a + b, 0),
+                sumArray(results.flows.interstage),
                 results.totalNetProduct,
-                results.flows.s2TailRecycle.reduce((a, b) => a + b, 0),
+                sumArray(results.flows.s2TailRecycle),
               ],
             },
           },
