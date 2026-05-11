@@ -424,7 +424,9 @@ def main() -> int:
     for file_path in sorted(files):
         fixes = process_file(file_path)
         if fixes > 0:
-            logger.info("Fixed %d violations in %s", fixes, file_path.relative_to(repo_root))
+            logger.info(
+                "Fixed %d violations in %s", fixes, file_path.relative_to(repo_root)
+            )
             total_fixes += fixes
             fixed_files += 1
 

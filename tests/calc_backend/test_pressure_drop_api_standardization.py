@@ -9,15 +9,13 @@ Related to issue #2411 (API Standardization) and #613 (Calc Backend).
 from __future__ import annotations
 
 import json
-from unittest.mock import patch
 
 import pytest
-from pydantic import ValidationError
-
 from calc_backend.models.pressure_drop import (
     PressureDropRequest,
     PressureDropResponse,
 )
+from pydantic import ValidationError
 from upstream_drift_tools.api import ErrorCode, StandardResponse
 
 

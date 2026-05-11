@@ -14,7 +14,7 @@ import numpy as np
 from scipy import integrate
 from scipy.signal import savgol_filter
 
-from src.shared.python._contracts_exceptions import PreconditionError
+from src.shared.python.contracts import require
 
 from .core import Signal
 
@@ -121,9 +121,7 @@ class Differentiator:
             Signal containing the derivative.
         """
         assert signal is not None, "signal must be provided"
-        if order < 1:
-            raise PreconditionError(f"Order must be >= 1, got {order}")
-
+        require(order >= 1, "Derivative order must be >= 1")
         result = signal.copy()
         result.name = f"d{order}({signal.name})/dt{order}"
         result.units = f"{signal.units}/s^{order}" if signal.units else ""

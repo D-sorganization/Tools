@@ -11,9 +11,9 @@ import pytest
 
 try:
     from data_processor.fft_filter_ops import (
-        design_frequency_window,
-        apply_window_function,
         apply_fft_filter_core,
+        apply_window_function,
+        design_frequency_window,
     )
 except (ImportError, NameError):
     pytest.skip(
@@ -35,6 +35,7 @@ class TestDataProcessorFilterOperations:
         SLA: < 100ms
         Tests: Low-pass filter window design
         """
+
         def design_window():
             return design_frequency_window(
                 filter_type="FFT Low-pass",
@@ -56,6 +57,7 @@ class TestDataProcessorFilterOperations:
         SLA: < 100ms
         Tests: Band-pass filter window design
         """
+
         def design_window():
             return design_frequency_window(
                 filter_type="FFT Band-pass",
@@ -77,6 +79,7 @@ class TestDataProcessorFilterOperations:
         SLA: < 500ms
         Tests: High-pass filter window design at scale
         """
+
         def design_window():
             return design_frequency_window(
                 filter_type="FFT High-pass",
@@ -92,48 +95,34 @@ class TestDataProcessorFilterOperations:
         assert np.all(result >= 0.0)
         assert np.all(result <= 1.0)
 
-    def test_apply_window_function_small(
-        self, benchmark, sample_small_array
-    ):
+    def test_apply_window_function_small(self, benchmark, sample_small_array):
         """Benchmark window function application to small signal (100 samples).
 
         SLA: < 50ms
         Tests: Hamming window application
         """
-        result = benchmark(
-            apply_window_function, sample_small_array, "Hamming"
-        )
+        result = benchmark(apply_window_function, sample_small_array, "Hamming")
         assert len(result) == len(sample_small_array)
 
-    def test_apply_window_function_medium(
-        self, benchmark, sample_medium_array
-    ):
+    def test_apply_window_function_medium(self, benchmark, sample_medium_array):
         """Benchmark window function application to medium signal (1000 samples).
 
         SLA: < 100ms
         Tests: Hann window application
         """
-        result = benchmark(
-            apply_window_function, sample_medium_array, "Hann"
-        )
+        result = benchmark(apply_window_function, sample_medium_array, "Hann")
         assert len(result) == len(sample_medium_array)
 
-    def test_apply_window_function_large(
-        self, benchmark, sample_large_array
-    ):
+    def test_apply_window_function_large(self, benchmark, sample_large_array):
         """Benchmark window function application to large signal (10K samples).
 
         SLA: < 500ms
         Tests: Blackman window application at scale
         """
-        result = benchmark(
-            apply_window_function, sample_large_array, "Blackman"
-        )
+        result = benchmark(apply_window_function, sample_large_array, "Blackman")
         assert len(result) == len(sample_large_array)
 
-    def test_fft_filter_core_lowpass(
-        self, benchmark, sample_time_series_data
-    ):
+    def test_fft_filter_core_lowpass(self, benchmark, sample_time_series_data):
         """Benchmark FFT low-pass filter on 1000-sample signal.
 
         SLA: < 100ms
@@ -152,9 +141,7 @@ class TestDataProcessorFilterOperations:
         result = benchmark(apply_filter)
         assert len(result) == len(signal)
 
-    def test_fft_filter_core_bandpass(
-        self, benchmark, sample_time_series_data
-    ):
+    def test_fft_filter_core_bandpass(self, benchmark, sample_time_series_data):
         """Benchmark FFT band-pass filter on 1000-sample signal.
 
         SLA: < 100ms
@@ -199,9 +186,7 @@ class TestDataProcessorFilterOperations:
 class TestDataProcessorChainedOperations:
     """Performance benchmarks for chained filter operations."""
 
-    def test_window_design_and_application(
-        self, benchmark, sample_time_series_data
-    ):
+    def test_window_design_and_application(self, benchmark, sample_time_series_data):
         """Benchmark combined window design and application.
 
         SLA: < 200ms
@@ -224,9 +209,7 @@ class TestDataProcessorChainedOperations:
         result = benchmark(design_and_apply)
         assert len(result) == len(signal)
 
-    def test_complete_filter_pipeline_small(
-        self, benchmark, sample_time_series_data
-    ):
+    def test_complete_filter_pipeline_small(self, benchmark, sample_time_series_data):
         """Benchmark complete filter pipeline on 1000-sample signal.
 
         SLA: < 200ms
@@ -244,9 +227,7 @@ class TestDataProcessorChainedOperations:
                 transition_bw=0.01,
             )
             windowed = apply_window_function(signal, "Hann")
-            filtered = apply_fft_filter_core(
-                windowed, window, zero_phase=False
-            )
+            filtered = apply_fft_filter_core(windowed, window, zero_phase=False)
             return filtered
 
         result = benchmark(complete_pipeline)
@@ -272,17 +253,13 @@ class TestDataProcessorChainedOperations:
                 transition_bw=0.01,
             )
             windowed = apply_window_function(signal, "Blackman")
-            filtered = apply_fft_filter_core(
-                windowed, window, zero_phase=False
-            )
+            filtered = apply_fft_filter_core(windowed, window, zero_phase=False)
             return filtered
 
         result = benchmark(complete_pipeline)
         assert len(result) == len(signal)
 
-    def test_repeated_filter_operations(
-        self, benchmark, sample_time_series_data
-    ):
+    def test_repeated_filter_operations(self, benchmark, sample_time_series_data):
         """Benchmark 10 repeated complete filter operations.
 
         SLA: < 500ms (amortized)
@@ -301,9 +278,7 @@ class TestDataProcessorChainedOperations:
                     n_samples=len(signal),
                     transition_bw=0.01,
                 )
-                filtered = apply_fft_filter_core(
-                    signal, window, zero_phase=False
-                )
+                filtered = apply_fft_filter_core(signal, window, zero_phase=False)
                 results.append(filtered)
             return results
 

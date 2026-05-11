@@ -447,15 +447,26 @@ function rk4Step_golfer(
     tf: TorqueFuncGolfer,
 ): StateGolfer {
     const f = (s: StateGolfer, ti: number): StateGolfer => equationsOfMotion_golfer(s, ti, p, tf);
-    const add = (a: StateGolfer, b: StateGolfer, scale: number): StateGolfer =>
-        a.map((v, i) => v + b[i] * scale) as StateGolfer;
+    const add = (a: StateGolfer, b: StateGolfer, scale: number): StateGolfer => {
+        const len = a.length;
+        const out = new Array<number>(len);
+        for (let i = 0; i < len; i++) {
+            out[i] = a[i] + b[i] * scale;
+        }
+        return out as StateGolfer;
+    };
 
     const k1 = f(state, t);
     const k2 = f(add(state, k1, dt / 2), t + dt / 2);
     const k3 = f(add(state, k2, dt / 2), t + dt / 2);
     const k4 = f(add(state, k3, dt), t + dt);
 
-    return state.map((v, i) => v + (dt / 6) * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i])) as StateGolfer;
+    const len = state.length;
+    const nextState = new Array<number>(len);
+    for (let i = 0; i < len; i++) {
+        nextState[i] = state[i] + (dt / 6) * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]);
+    }
+    return nextState as StateGolfer;
 }
 
 // ── Simulation ────────────────────────────────────────────────────────────────

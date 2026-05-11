@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST UPDATED: 2026-04-27
+  LAST UPDATED: 2026-05-11
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -506,6 +506,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-11 | 1.1.129 | Added dynamic focus shifting to inline form validation within the Calculator app. This prevents keyboard focus traps by focusing the first invalid input (`.focus()`) and marking it with `aria-invalid="true"`. |
 | 2026-05-07 | 1.1.128 | Pre-compiled ODE Solver derivative expressions outside the RK4 loop while preserving the existing non-finite fallback behavior, so singular or overflowing user formulas still collapse to `0` instead of poisoning the integration state with `NaN` or `Infinity`. |
 | 2026-05-05 | 1.1.125 | Optimized polynomial evaluation using Horners method in `pendulum-web` physics engines (`physics.ts`, `physics_triple.ts`, `physics_golfer.ts`). |
 | 2026-05-04 | 1.1.124 | Documented production-readiness hardening for generated data-processing batch scripts, shared pandas formula allowlist validation, model-generation mesh upload size and filename checks with cleanup, and MakeHuman generated-script serialization plus the `mesh_generator_makehuman.py` compatibility shim.                                                                                                                                                                                                                                                        |
@@ -641,6 +642,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-30 | 1.1.115 | Hardened CI packaging and workflow checks by pinning the setuptools build backend below 82, using the supported package-data wildcard for `py.typed` markers, scanning merge-conflict markers with tracked-file `git grep`, normalizing detect-secrets result comparisons, and tolerating missing or empty benchmark JSON artifacts.                                                                                                                                                                                                              |
 | 2026-04-30 | 1.1.114 | Integrated full-text live search into the Unified Tools Launcher tabs, including name, description, keyword, multi-word, and punctuation-normalized matching, with Ctrl+F focus and Esc clear shortcuts.                                                                                                                                                                                                                                                                                                                                       |
 | 2026-05-24 | 1.1.113 | Fixed a vulnerability in CSRF cookie parsing logic where cookies with values containing an equals sign were previously being truncated. This allows base64 encoded CSRF tokens with padding to be parsed correctly.                                                                                                                                                                                                                                                                                                                        |
+| 2026-05-11 | 1.1.127 | Replaced `.map()` array allocations in the `rk4Step_golfer` numerical integration function with pre-allocated arrays and standard `for` loops in `physics_golfer.ts` to reduce GC overhead. |
 
 ---
 
@@ -710,6 +712,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ### Web Frontends
 - `data_processor`: Improved performance in tight object loops by replacing `for...in` and `hasOwnProperty` with `Object.keys()` and standard `for` loops in `useDataProcessor.ts`.
+- **Performance**: Replaced `.map()` with pre-allocated arrays and single-pass `for` loops across all signal generation functions (`generateSinusoid`, `generateCosine`, `generateSquare`, `generateTriangle`, `generateSawtooth`, `generatePulse`, `generateStep`, `generateExponential`, `generateLinear`, `generateChirp`, `generateConstant`) in `FunctionGenerator.tsx` to minimize garbage collection overhead for large sample arrays.
 - **Performance**: Optimized `generatePolynomial` in `FunctionGenerator.tsx` by using Horner's method and pre-allocating output arrays instead of `.map()` with `Math.pow()`, significantly reducing overhead and improving calculation speed.
 
 ### Version 1.1.128

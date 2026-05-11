@@ -17,9 +17,9 @@ Tests include:
 
 from __future__ import annotations
 
-import math
-import sys
 import os
+import sys
+
 import pytest
 
 pytest.importorskip("numpy")
@@ -28,19 +28,24 @@ import numpy as np
 from numpy.testing import assert_allclose
 
 # Add src path for imports
-_SRC = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "../src/shared/python")
-)
+_SRC = os.path.abspath(os.path.join(os.path.dirname(__file__), "../src/shared/python"))
 if _SRC not in sys.path:
     sys.path.insert(0, _SRC)
 
 # Import calculator modules directly to avoid broken syngas_compression_calculator import
 from upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator import (
-    AcidGasDewpointCalculator,
     AcidGasComposition,
+    AcidGasDewpointCalculator,
 )
 from upstream_drift_tools.process_calculators.baghouse_calculator import (
     BaghouseCalculator,
+)
+from upstream_drift_tools.process_calculators.constants import (
+    R_GAS_J_MOL_K,
+    R_UNIVERSAL,
+    STANDARD_GRAVITY,
+    celsius_to_kelvin,
+    kelvin_to_celsius,
 )
 from upstream_drift_tools.process_calculators.electrode_advancement_calculator import (
     ElectrodeAdvancementCalculator,
@@ -49,19 +54,11 @@ from upstream_drift_tools.process_calculators.financial_calculator import (
     FinancialModelCalculator as FinancialCalculator,
 )
 from upstream_drift_tools.process_calculators.flare_calculator import FlareCalculator
-from upstream_drift_tools.process_calculators.constants import (
-    R_UNIVERSAL,
-    R_GAS_J_MOL_K,
-    STANDARD_GRAVITY,
-    celsius_to_kelvin,
-    kelvin_to_celsius,
-)
 
 # Import gas properties utilities - these use dict composition format
 from upstream_drift_tools.process_calculators.pressure_drop_calculator.utils.gas_properties import (
     calculate_heat_capacity_ratio,
     calculate_ideal_gas_cp,
-    calculate_ideal_gas_density,
     calculate_mixture_cp,
     calculate_mixture_molecular_weight,
     calculate_speed_of_sound,
@@ -342,7 +339,9 @@ class TestPressureDropBasics:
     Invariants: Laminar vs turbulent transition at Re ≈ 2300
     """
 
-    @pytest.mark.skipif(not HAS_PRESSURE_DROP, reason="PressureDropCalculator not available")
+    @pytest.mark.skipif(
+        not HAS_PRESSURE_DROP, reason="PressureDropCalculator not available"
+    )
     def test_pressure_drop_basic_air(self) -> None:
         """Basic pressure drop calculation with air."""
         calc = PressureDropCalculator()
@@ -363,7 +362,9 @@ class TestPressureDropBasics:
         if hasattr(result, "pressure_drop"):
             assert result.pressure_drop >= 0.0
 
-    @pytest.mark.skipif(not HAS_PRESSURE_DROP, reason="PressureDropCalculator not available")
+    @pytest.mark.skipif(
+        not HAS_PRESSURE_DROP, reason="PressureDropCalculator not available"
+    )
     def test_pressure_drop_increases_with_flow(self) -> None:
         """Pressure drop should increase with flow rate."""
         calc = PressureDropCalculator()
@@ -390,10 +391,14 @@ class TestPressureDropBasics:
             temperature_unit="K",
         )
         # Both should have pressure drops
-        if hasattr(result_low, "pressure_drop") and hasattr(result_high, "pressure_drop"):
+        if hasattr(result_low, "pressure_drop") and hasattr(
+            result_high, "pressure_drop"
+        ):
             assert result_high.pressure_drop > result_low.pressure_drop
 
-    @pytest.mark.skipif(not HAS_PRESSURE_DROP, reason="PressureDropCalculator not available")
+    @pytest.mark.skipif(
+        not HAS_PRESSURE_DROP, reason="PressureDropCalculator not available"
+    )
     def test_pressure_drop_increases_with_length(self) -> None:
         """Pressure drop should increase with pipe length."""
         calc = PressureDropCalculator()
@@ -420,7 +425,9 @@ class TestPressureDropBasics:
             temperature_unit="K",
         )
         # Both should have pressure drops
-        if hasattr(result_short, "pressure_drop") and hasattr(result_long, "pressure_drop"):
+        if hasattr(result_short, "pressure_drop") and hasattr(
+            result_long, "pressure_drop"
+        ):
             assert result_long.pressure_drop > result_short.pressure_drop
 
 
@@ -553,7 +560,9 @@ class TestBaghouseCalculator:
         """Baghouse calculator should have calculate methods."""
         calc = BaghouseCalculator()
         # Check if it has methods for calculation
-        assert hasattr(calc, 'calculate_collection_efficiency') or hasattr(calc, 'calculate')
+        assert hasattr(calc, "calculate_collection_efficiency") or hasattr(
+            calc, "calculate"
+        )
 
 
 class TestFlareCalculator:
@@ -573,7 +582,7 @@ class TestFlareCalculator:
         """Flare calculator should have calculation methods."""
         calc = FlareCalculator()
         # Check what methods are available
-        assert hasattr(calc, 'calculate_flare_size') or hasattr(calc, 'calculate')
+        assert hasattr(calc, "calculate_flare_size") or hasattr(calc, "calculate")
 
 
 class TestElectrodeAdvancementCalculator:
