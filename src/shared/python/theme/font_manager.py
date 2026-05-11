@@ -54,7 +54,7 @@ class FontManager(QObject):
         """
         super().__init__()
         self.app_context = app_context or "Global"
-        
+
         # Configure settings scope
         if settings_org and settings_app:
             self.settings = QSettings(settings_org, settings_app)
@@ -62,9 +62,12 @@ class FontManager(QObject):
             self.settings = QSettings("D-sorganization", "FleetShared")
 
         self.settings.beginGroup(f"Font_{self.app_context}")
-        
+
         self.current_font = self._load_preference()
-        logger.info(f"FontManager initialized: font={self.current_font}, context={self.app_context}")
+        logger.info(
+            f"FontManager initialized: font={self.current_font}, "
+            f"context={self.app_context}"
+        )
 
     def _load_preference(self) -> str:
         """Load the saved font preference or return the default."""
@@ -79,16 +82,16 @@ class FontManager(QObject):
         # Check which of the built-in fonts are actually available on the system
         db = QFontDatabase()
         system_fonts = db.families()
-        
+
         available = [f for f in BUILTIN_FONTS if f in system_fonts]
         # Always add a system default option
         if "System Default" not in available:
             available.append("System Default")
-            
+
         # If no professional fonts are found, fallback
         if not available:
             available = ["System Default", "Arial"]
-            
+
         return available
 
     def get_current_font(self) -> str:
@@ -106,7 +109,7 @@ class FontManager(QObject):
 
         self.current_font = font_family
         self.settings.setValue("font_family", font_family)
-        
+
         self.apply_font()
         self.fontChanged.emit(font_family)
         logger.info(f"Font changed to: {font_family}")
