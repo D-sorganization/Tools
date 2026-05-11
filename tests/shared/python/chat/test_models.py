@@ -11,6 +11,8 @@ from chat.models import (  # noqa: E402
     ChatHistoryResponse,
     ChatIndexStatusResponse,
     ChatMessageRequest,
+    ChatModelInfo,
+    ChatModelListResponse,
     ChatSessionInfo,
 )
 
@@ -205,3 +207,49 @@ class TestChatIndexStatusResponse:
             ChatIndexStatusResponse(state="running", symbols_inserted=-3)
         with pytest.raises(ValueError):
             ChatIndexStatusResponse(state="complete", duration_seconds=-0.5)
+
+
+class TestChatModelInfo:
+    """Tests for ChatModelInfo (added in #2547)."""
+
+    def test_defaults(self):
+        info = ChatModelInfo(id="ollama:llama3", name="Llama 3", provider="ollama")
+        assert info.id == "ollama:llama3"
+        assert info.name == "Llama 3"
+        assert info.provider == "ollama"
+        assert info.available is True
+
+    def test_unavailable(self):
+        info = ChatModelInfo(
+            id="openai:gpt-4o",
+            name="GPT-4o",
+            provider="openai",
+            available=False,
+        )
+        assert info.available is False
+
+
+class TestChatModelListResponse:
+    """Tests for ChatModelListResponse (added in #2547)."""
+
+    def test_empty(self):
+        resp = ChatModelListResponse(refreshed_at="2026-05-11T00:00:00Z")
+        assert resp.models == []
+        assert resp.refreshed_at == "2026-05-11T00:00:00Z"
+
+    def test_with_models(self):
+        resp = ChatModelListResponse(
+            refreshed_at="2026-05-11T00:00:00Z",
+            models=[
+                ChatModelInfo(id="ollama:llama3", name="Llama 3", provider="ollama"),
+                ChatModelInfo(
+                    id="openai:gpt-4o",
+                    name="GPT-4o",
+                    provider="openai",
+                    available=False,
+                ),
+            ],
+        )
+        assert len(resp.models) == 2
+        assert resp.models[0].provider == "ollama"
+        assert resp.models[1].available is False
