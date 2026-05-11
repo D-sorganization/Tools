@@ -72,3 +72,7 @@
 ## 2026-04-28 - [Combobox Label Retargeting]
 **Learning:** When replacing native `<select>` elements with custom comboboxes (search inputs with dropdowns), leaving the `<label for="...">` targeted at the hidden select element breaks click-to-focus behavior and fails to provide the newly visible search input with its required accessible name.
 **Action:** Always dynamically update the `for` attribute of the corresponding `<label>` to target the newly visible interactive input field's `id` (and restore it if swapping back) to maintain accessibility and user flow.
+
+## 2024-05-11 - Improve form validation with inline feedback
+**Learning:** Visual validation states and `aria-invalid` must be paired with `.focus()` to prevent focus traps and ensure screen readers announce the error context immediately.
+**Action:** When an input is marked invalid, automatically shift focus to it, and remove `aria-invalid` on the next input event.
