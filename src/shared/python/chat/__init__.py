@@ -22,6 +22,8 @@ try:
         ChatHistoryResponse,
         ChatIndexStatusResponse,
         ChatMessageRequest,
+        ChatModelInfo,
+        ChatModelListResponse,
         ChatSessionInfo,
     )
 
@@ -32,6 +34,8 @@ except ImportError:
     ChatHistoryResponse = None  # type: ignore[assignment, misc]
     ChatIndexStatusResponse = None  # type: ignore[assignment, misc]
     ChatMessageRequest = None  # type: ignore[assignment, misc]
+    ChatModelInfo = None  # type: ignore[assignment, misc]
+    ChatModelListResponse = None  # type: ignore[assignment, misc]
     ChatSessionInfo = None  # type: ignore[assignment, misc]
 
 try:
@@ -51,4 +55,6 @@ __all__ = [
     "ChatSessionInfo",
     "ChatHistoryResponse",
     "ChatIndexStatusResponse",
+    "ChatModelInfo",
+    "ChatModelListResponse",
 ]
