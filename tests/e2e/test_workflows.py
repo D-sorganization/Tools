@@ -7,7 +7,6 @@ ingestion through transformation and export.
 
 import json
 from pathlib import Path
-from typing import Any
 
 import pandas as pd
 import pytest
@@ -178,14 +177,16 @@ class TestBasicDataWorkflow:
         aggregated_records = []
         for sensor_id in unique_sensors:
             sensor_df = df[df["sensor_id"] == sensor_id]
-            aggregated_records.append({
-                "sensor_id": sensor_id,
-                "temp_mean": sensor_df["temperature_c"].mean(),
-                "temp_std": sensor_df["temperature_c"].std(),
-                "humidity_mean": sensor_df["humidity_percent"].mean(),
-                "pressure_mean": sensor_df["pressure_kpa"].mean(),
-                "record_count": len(sensor_df),
-            })
+            aggregated_records.append(
+                {
+                    "sensor_id": sensor_id,
+                    "temp_mean": sensor_df["temperature_c"].mean(),
+                    "temp_std": sensor_df["temperature_c"].std(),
+                    "humidity_mean": sensor_df["humidity_percent"].mean(),
+                    "pressure_mean": sensor_df["pressure_kpa"].mean(),
+                    "record_count": len(sensor_df),
+                }
+            )
 
         aggregated = pd.DataFrame(aggregated_records)
         e2e_logger.info(f"Aggregated data for {len(aggregated)} sensors")
@@ -250,12 +251,9 @@ class TestComplexDataTransformationWorkflows:
             bins=[0, 30, 60, 100],
             labels=["low", "medium", "high"],
         )
-        df_clean["pressure_anomaly"] = (
-            df_clean["pressure_kpa"].std() > 0
-            and (
-                (df_clean["pressure_kpa"] - df_clean["pressure_kpa"].mean()).abs()
-                > 2 * df_clean["pressure_kpa"].std()
-            )
+        df_clean["pressure_anomaly"] = df_clean["pressure_kpa"].std() > 0 and (
+            (df_clean["pressure_kpa"] - df_clean["pressure_kpa"].mean()).abs()
+            > 2 * df_clean["pressure_kpa"].std()
         )
 
         # Step 4: Validate
@@ -310,15 +308,23 @@ class TestComplexDataTransformationWorkflows:
         e2e_logger.info("Parsing timestamp column")
         df["timestamp"] = pd.to_datetime(df["timestamp"])
         df = df.sort_values("timestamp")
-        e2e_logger.info(f"Time range: {df['timestamp'].min()} to {df['timestamp'].max()}")
+        e2e_logger.info(
+            f"Time range: {df['timestamp'].min()} to {df['timestamp'].max()}"
+        )
 
         # Step 3: Resample and aggregate by hour
         e2e_logger.info("Aggregating to hourly intervals")
-        df_hourly = df.set_index("timestamp").resample("1h").agg({
-            "temperature_c": ["mean", "min", "max", "std"],
-            "humidity_percent": ["mean", "min", "max"],
-            "pressure_kpa": ["mean", "std"],
-        })
+        df_hourly = (
+            df.set_index("timestamp")
+            .resample("1h")
+            .agg(
+                {
+                    "temperature_c": ["mean", "min", "max", "std"],
+                    "humidity_percent": ["mean", "min", "max"],
+                    "pressure_kpa": ["mean", "std"],
+                }
+            )
+        )
 
         e2e_logger.info(f"Created {len(df_hourly)} hourly aggregations")
 
@@ -564,7 +570,18 @@ class TestErrorHandlingInWorkflows:
         data = {
             "temperature_c": [20, -500, 25, 30, 150, 22, 21, 19, 23, 25],
             "humidity_percent": [50, 60, 120, 30, 40, 50, -10, 55, 60, 65],
-            "pressure_kpa": [101.3, 102.0, 100.5, 0, 103.0, 101.5, 102.0, 101.0, 102.5, 101.8],
+            "pressure_kpa": [
+                101.3,
+                102.0,
+                100.5,
+                0,
+                103.0,
+                101.5,
+                102.0,
+                101.0,
+                102.5,
+                101.8,
+            ],
         }
         df = pd.DataFrame(data)
 
@@ -577,7 +594,7 @@ class TestErrorHandlingInWorkflows:
         }
 
         validation_results = {}
-        df_clean = df.copy()
+        df_clean = df.copy()  # noqa: F841
 
         for column, (min_val, max_val) in validation_rules.items():
             invalid_mask = (df[column] < min_val) | (df[column] > max_val)

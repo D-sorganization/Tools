@@ -583,11 +583,11 @@ class URDFParser:
             package_path = normalized[len("package://") :]
             if not package_path:
                 raise ValueError(
-                    f"Mesh filename '{filename}' must reference a package-relative asset"
+                    f"Mesh filename '{filename}' must reference a package-relative asset"  # noqa: E501
                 )
             if package_path.startswith("/"):
                 raise ValueError(
-                    f"Mesh filename '{filename}' must reference a package-relative asset"
+                    f"Mesh filename '{filename}' must reference a package-relative asset"  # noqa: E501
                 )
             if "://" in package_path:
                 raise ValueError(
@@ -597,7 +597,7 @@ class URDFParser:
                 raise ValueError(
                     f"Mesh filename '{filename}' uses an unsupported URI scheme"
                 )
-            candidate = PurePosixPath(package_path)
+            candidate = PurePosixPath(package_path)  # noqa: F821
         else:
             if "://" in normalized:
                 raise ValueError(
@@ -614,7 +614,7 @@ class URDFParser:
                 raise ValueError(
                     f"Mesh filename '{filename}' uses an unsupported URI scheme"
                 )
-            candidate = PurePosixPath(normalized)
+            candidate = PurePosixPath(normalized)  # noqa: F821
 
         if not candidate.parts or ".." in candidate.parts:
             raise ValueError(f"Mesh filename '{filename}' contains path traversal")

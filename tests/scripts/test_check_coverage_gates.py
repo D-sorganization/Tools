@@ -56,7 +56,7 @@ def test_main_reports_passing_gates(
             }
           }
         }
-        """.strip(),
+        """.strip(),  # noqa: E501
         encoding="utf-8",
     )
 
@@ -89,7 +89,7 @@ def test_main_reports_gate_failures(
             }
           }
         }
-        """.strip(),
+        """.strip(),  # noqa: E501
         encoding="utf-8",
     )
 

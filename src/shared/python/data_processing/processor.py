@@ -48,7 +48,7 @@ def _eval_with_optional_numexpr(df: pd.DataFrame, expression: str) -> pd.Series:
             return df.eval(expression, engine="python")
         except ImportError as exc:
             raise RuntimeError(
-                "Formula evaluation requires numexpr. Install it with: pip install numexpr"
+                "Formula evaluation requires numexpr. Install it with: pip install numexpr"  # noqa: E501
             ) from exc
 
 

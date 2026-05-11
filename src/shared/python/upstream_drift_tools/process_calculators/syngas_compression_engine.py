@@ -10,7 +10,7 @@ CompressionStage
 SyngasCompressionEngine
     Core calculation engine: mixture properties, water dropout, compression work,
     multistage analysis, and process-condition diagnostics.
-"""
+"""  # noqa: E501
 
 from __future__ import annotations
 
@@ -57,7 +57,7 @@ except ImportError:
 
 # Species database — graceful fallback for standalone use
 try:
-    from integrated_process_simulator.calculators.thermodynamic_properties.species_database import (
+    from integrated_process_simulator.calculators.thermodynamic_properties.species_database import (  # noqa: E501
         get_species_database,
     )
 except ImportError:

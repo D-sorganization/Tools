@@ -17,13 +17,13 @@ with warnings.catch_warnings():
     warnings.filterwarnings("ignore", category=DeprecationWarning)
     try:
         from rotation_converter.core import (
+            axis_angle_to_quaternion,
             euler_to_quaternion,
+            normalize_quaternion,
+            quaternion_multiply,
+            quaternion_to_axis_angle,
             quaternion_to_rotation_matrix,
             rotation_matrix_to_quaternion,
-            quaternion_to_axis_angle,
-            axis_angle_to_quaternion,
-            quaternion_multiply,
-            normalize_quaternion,
         )
     except (ImportError, NameError):
         pytest.skip(
@@ -39,18 +39,14 @@ pytestmark = pytest.mark.benchmark
 class TestRotationConverterBasic:
     """Performance benchmarks for basic rotation conversions."""
 
-    def test_euler_to_quaternion_conversion(
-        self, benchmark, sample_euler_angles
-    ):
+    def test_euler_to_quaternion_conversion(self, benchmark, sample_euler_angles):
         """Benchmark Euler angles to quaternion conversion.
 
         SLA: < 50ms
         Tests: Single conversion from Euler XYZ convention
         """
         alpha, beta, gamma = sample_euler_angles
-        result = benchmark(
-            euler_to_quaternion, alpha, beta, gamma, convention="xyz"
-        )
+        result = benchmark(euler_to_quaternion, alpha, beta, gamma, convention="xyz")
         assert result is not None
         assert len(result) == 4
 
@@ -62,14 +58,10 @@ class TestRotationConverterBasic:
         SLA: < 50ms
         Tests: Single conversion to 3x3 SO(3) matrix
         """
-        result = benchmark(
-            quaternion_to_rotation_matrix, sample_quaternion
-        )
+        result = benchmark(quaternion_to_rotation_matrix, sample_quaternion)
         assert result.shape == (3, 3)
         # Verify orthogonality
-        assert np.allclose(
-            result @ result.T, np.eye(3), atol=1e-6
-        )
+        assert np.allclose(result @ result.T, np.eye(3), atol=1e-6)
 
     def test_rotation_matrix_to_quaternion_conversion(
         self, benchmark, sample_rotation_matrix
@@ -79,15 +71,11 @@ class TestRotationConverterBasic:
         SLA: < 50ms
         Tests: Single conversion from 3x3 matrix
         """
-        result = benchmark(
-            rotation_matrix_to_quaternion, sample_rotation_matrix
-        )
+        result = benchmark(rotation_matrix_to_quaternion, sample_rotation_matrix)
         assert result is not None
         assert len(result) == 4
 
-    def test_axis_angle_to_quaternion_conversion(
-        self, benchmark
-    ):
+    def test_axis_angle_to_quaternion_conversion(self, benchmark):
         """Benchmark axis-angle to quaternion conversion.
 
         SLA: < 50ms
@@ -96,9 +84,7 @@ class TestRotationConverterBasic:
         axis = np.array([0.0, 0.0, 1.0])  # Z axis
         angle = np.radians(45)
 
-        result = benchmark(
-            axis_angle_to_quaternion, axis, angle
-        )
+        result = benchmark(axis_angle_to_quaternion, axis, angle)
         assert result is not None
         assert len(result) == 4
 
@@ -107,9 +93,7 @@ class TestRotationConverterBasic:
 class TestRotationConverterChains:
     """Performance benchmarks for chained conversions."""
 
-    def test_euler_to_matrix_chain(
-        self, benchmark, sample_euler_angles
-    ):
+    def test_euler_to_matrix_chain(self, benchmark, sample_euler_angles):
         """Benchmark Euler to matrix conversion chain.
 
         SLA: < 50ms
@@ -118,23 +102,20 @@ class TestRotationConverterChains:
         alpha, beta, gamma = sample_euler_angles
 
         def convert_chain():
-            q = euler_to_quaternion(
-                alpha, beta, gamma, convention="xyz"
-            )
+            q = euler_to_quaternion(alpha, beta, gamma, convention="xyz")
             R = quaternion_to_rotation_matrix(q)
             return R
 
         result = benchmark(convert_chain)
         assert result.shape == (3, 3)
 
-    def test_matrix_to_axis_angle_chain(
-        self, benchmark, sample_rotation_matrix
-    ):
+    def test_matrix_to_axis_angle_chain(self, benchmark, sample_rotation_matrix):
         """Benchmark matrix to axis-angle conversion chain.
 
         SLA: < 50ms
         Tests: Matrix -> Quaternion -> Axis-Angle (2 conversions)
         """
+
         def convert_chain():
             q = rotation_matrix_to_quaternion(sample_rotation_matrix)
             axis, angle = quaternion_to_axis_angle(q)
@@ -144,9 +125,7 @@ class TestRotationConverterChains:
         assert len(axis) == 3
         assert isinstance(angle, (float, np.floating))
 
-    def test_quaternion_multiply_sequence(
-        self, benchmark, sample_quaternion
-    ):
+    def test_quaternion_multiply_sequence(self, benchmark, sample_quaternion):
         """Benchmark sequential quaternion multiplications.
 
         SLA: < 50ms
@@ -169,9 +148,7 @@ class TestRotationConverterChains:
 class TestRotationConverterScaling:
     """Performance benchmarks for scaling with input count."""
 
-    def test_batch_euler_conversions(
-        self, benchmark, sample_euler_angles
-    ):
+    def test_batch_euler_conversions(self, benchmark, sample_euler_angles):
         """Benchmark batch conversion of 100 Euler angle sets.
 
         SLA: < 50ms (amortized per conversion)
@@ -195,9 +172,7 @@ class TestRotationConverterScaling:
         results = benchmark(convert_batch)
         assert len(results) == 100
 
-    def test_normalize_quaternion_sequence(
-        self, benchmark, sample_quaternion
-    ):
+    def test_normalize_quaternion_sequence(self, benchmark, sample_quaternion):
         """Benchmark 50 quaternion normalization operations.
 
         SLA: < 50ms (amortized)

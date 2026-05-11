@@ -106,7 +106,7 @@ def CartesianTrajectory(
     N: int,
     method: int,
 ) -> list:
-    """Computes a trajectory as a list of N SE(3) matrices (straight-line origin path)."""
+    """Computes a trajectory as a list of N SE(3) matrices (straight-line origin path)."""  # noqa: E501
     if not (Xstart is not None):
         raise ValueError("Xstart must be provided")
     N = int(N)

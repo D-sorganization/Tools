@@ -31,7 +31,7 @@ from .constants import (
     INTERCOOLER_OUTLET_TEMP_K,
 )
 
-# Re-export engine classes so existing ``from ...syngas_compression_calculator import X``
+# Re-export engine classes so existing ``from ...syngas_compression_calculator import X``  # noqa: E501
 # imports continue to work.
 from .syngas_compression_engine import (  # noqa: F401
     CompressionStage,

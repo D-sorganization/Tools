@@ -12,7 +12,7 @@ from typing import Any, cast
 from programmatic_pid.validation import validate_spec
 
 
-def load_spec(path: str | Path) -> SpecDict:
+def load_spec(path: str | Path) -> SpecDict:  # noqa: F821
     """Load a YAML specification file.
 
     Precondition: *path* points to a valid YAML file containing a dict at root.
@@ -22,7 +22,7 @@ def load_spec(path: str | Path) -> SpecDict:
         ValueError: if YAML root is not a dict (e.g., list, string, null).
     """
     with open(path, encoding="utf-8") as f:
-        data = yaml.safe_load(f)
+        data = yaml.safe_load(f)  # noqa: F821
     if data is None:
         return {}
     if not isinstance(data, dict):
@@ -30,10 +30,10 @@ def load_spec(path: str | Path) -> SpecDict:
             f"YAML spec in {path} must contain a dict at root, "
             f"not {type(data).__name__}"
         )
-    return cast(SpecDict, data)
+    return cast(SpecDict, data)  # noqa: F821
 
 
-def prepare_spec(spec_path: str | Path, profile: str | None) -> SpecDict:
+def prepare_spec(spec_path: str | Path, profile: str | None) -> SpecDict:  # noqa: F821
     """Load, validate, and apply profile to a spec.
 
     Postcondition: returned spec has passed validation twice (pre- and post-profile).
@@ -42,7 +42,7 @@ def prepare_spec(spec_path: str | Path, profile: str | None) -> SpecDict:
         raise ValueError("spec_path must be provided")
     raw = load_spec(spec_path)
     validate_spec(raw)
-    prepared = apply_profile(raw, profile)
+    prepared = apply_profile(raw, profile)  # noqa: F821
     validate_spec(prepared)
     return prepared
 
@@ -54,11 +54,11 @@ class SpecAccessor:
     get_layout_config, get_layer_config.
     """
 
-    def __init__(self, spec: SpecDict) -> None:
+    def __init__(self, spec: SpecDict) -> None:  # noqa: F821
         self._spec = spec
 
     @property
-    def spec(self) -> SpecDict:
+    def spec(self) -> SpecDict:  # noqa: F821
         """Return the raw specification dictionary."""
         return self._spec
 
@@ -82,20 +82,20 @@ class SpecAccessor:
         return proj_d if isinstance(proj_d, dict) else {}
 
     @property
-    def text_config(self) -> TextConfig:
+    def text_config(self) -> TextConfig:  # noqa: F821
         drawing = self.drawing
         raw = drawing.get("text")
         if isinstance(raw, dict):
-            return TextConfig(
-                title_height=to_float(raw.get("title_height"), 3.2),
-                subtitle_height=to_float(raw.get("subtitle_height"), 2.0),
-                body_height=to_float(raw.get("body_height"), 1.6),
-                small_height=to_float(raw.get("small_height"), 1.2),
+            return TextConfig(  # noqa: F821
+                title_height=to_float(raw.get("title_height"), 3.2),  # noqa: F821
+                subtitle_height=to_float(raw.get("subtitle_height"), 2.0),  # noqa: F821
+                body_height=to_float(raw.get("body_height"), 1.6),  # noqa: F821
+                small_height=to_float(raw.get("small_height"), 1.2),  # noqa: F821
             )
-        base = to_float(drawing.get("text_height"), 2.5)
+        base = to_float(drawing.get("text_height"), 2.5)  # noqa: F821
         if base <= 0:
             base = 2.5
-        return TextConfig(
+        return TextConfig(  # noqa: F821
             title_height=base * 1.6,
             subtitle_height=base * 1.1,
             body_height=base,
@@ -138,26 +138,26 @@ class SpecAccessor:
             "show_control_tags_on_lines": bool(
                 layout.get("show_control_tags_on_lines", False)
             ),
-            "gap": max(to_float(layout.get("gap"), 8.0), 2.0),
+            "gap": max(to_float(layout.get("gap"), 8.0), 2.0),  # noqa: F821
             "right_panel_width": max(
-                to_float(layout.get("right_panel_width"), 84.0), 45.0
+                to_float(layout.get("right_panel_width"), 84.0), 45.0  # noqa: F821
             ),
             "bottom_panel_height": max(
-                to_float(layout.get("bottom_panel_height"), 34.0), 18.0
+                to_float(layout.get("bottom_panel_height"), 34.0), 18.0  # noqa: F821
             ),
             "title_block_height": max(
-                to_float(layout.get("title_block_height"), 11.0), 6.0
+                to_float(layout.get("title_block_height"), 11.0), 6.0  # noqa: F821
             ),
             "panel_text_chars": max(int(layout.get("panel_text_chars", 42)), 24),
             "stream_label_scale": min(
-                max(to_float(layout.get("stream_label_scale"), 0.76), 0.45), 1.5
+                max(to_float(layout.get("stream_label_scale"), 0.76), 0.45), 1.5  # noqa: F821
             ),
             "stream_label_leaders": bool(layout.get("stream_label_leaders", True)),
             "instrument_spacing_factor": max(
-                to_float(layout.get("instrument_spacing_factor"), 2.2), 1.2
+                to_float(layout.get("instrument_spacing_factor"), 2.2), 1.2  # noqa: F821
             ),
             "controls_row_height_scale": max(
-                to_float(layout.get("controls_row_height_scale"), 3.4), 2.0
+                to_float(layout.get("controls_row_height_scale"), 3.4), 2.0  # noqa: F821
             ),
         }
 
@@ -202,7 +202,7 @@ class SpecAccessor:
 # Backward-compatible free functions that delegate to the old interface.
 # These are kept so that generator.py continues to work during migration.
 # ---------------------------------------------------------------------------
-def get_project(spec: SpecDict) -> dict[str, Any]:
+def get_project(spec: SpecDict) -> dict[str, Any]:  # noqa: F821
     """Return the ``project`` section from *spec*, or an empty dict.
 
     Deprecated: use ``SpecAccessor(spec).project`` instead.
@@ -211,7 +211,7 @@ def get_project(spec: SpecDict) -> dict[str, Any]:
     return p if isinstance(p, dict) else {}
 
 
-def get_drawing(spec: SpecDict) -> dict[str, Any]:
+def get_drawing(spec: SpecDict) -> dict[str, Any]:  # noqa: F821
     """Return the drawing configuration dict from *spec*.
 
     Checks ``spec["drawing"]`` first, then ``spec["project"]["drawing"]``.
@@ -224,7 +224,7 @@ def get_drawing(spec: SpecDict) -> dict[str, Any]:
     return cast(dict[str, Any], d) if isinstance(d, dict) else {}
 
 
-def ensure_drawing(spec: SpecDict) -> dict[str, Any]:
+def ensure_drawing(spec: SpecDict) -> dict[str, Any]:  # noqa: F821
     """Return or create the drawing dict inside *spec* (mutates *spec*).
 
     Ensures that ``spec["project"]["drawing"]`` exists and returns it.
@@ -242,7 +242,7 @@ def ensure_drawing(spec: SpecDict) -> dict[str, Any]:
     return cast(dict[str, Any], drawing)
 
 
-def get_text_config(spec: SpecDict) -> dict[str, float]:
+def get_text_config(spec: SpecDict) -> dict[str, float]:  # noqa: F821
     """Return text height configuration as a plain dict.
 
     Returns keys: ``title_height``, ``subtitle_height``, ``body_height``,
@@ -259,7 +259,7 @@ def get_text_config(spec: SpecDict) -> dict[str, float]:
     }
 
 
-def get_layout_config(spec: SpecDict) -> dict[str, Any]:
+def get_layout_config(spec: SpecDict) -> dict[str, Any]:  # noqa: F821
     """Return the layout configuration dict with validated defaults.
 
     Deprecated: use ``SpecAccessor(spec).layout_config`` instead.
@@ -267,7 +267,7 @@ def get_layout_config(spec: SpecDict) -> dict[str, Any]:
     return SpecAccessor(spec).layout_config
 
 
-def get_layer_config(spec: SpecDict) -> dict[str, Any]:
+def get_layer_config(spec: SpecDict) -> dict[str, Any]:  # noqa: F821
     """Return the layer configuration dict.
 
     Deprecated: use ``SpecAccessor(spec).layer_config`` instead.

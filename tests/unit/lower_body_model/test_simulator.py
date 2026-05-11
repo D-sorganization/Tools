@@ -72,7 +72,7 @@ def test_induced_acceleration_analysis(simulator: LowerBodySimulator) -> None:
         "act_r_hip_x", torque_value=10.0
     )
 
-    # Driving the right hip in x (which is the forward/backward axis or lateral depending on orientation)
+    # Driving the right hip in x (which is the forward/backward axis or lateral depending on orientation)  # noqa: E501
     # Should induce some acceleration on the floating pelvis.
     assert "forward_accel" in iaa_result
     assert "lateral_accel" in iaa_result
@@ -86,7 +86,7 @@ def test_induced_acceleration_analysis(simulator: LowerBodySimulator) -> None:
 
 
 def test_history_recording_and_restoring(simulator: LowerBodySimulator) -> None:
-    """Test that simulator tracks history and can restore previous frames for scrubbing."""
+    """Test that simulator tracks history and can restore previous frames for scrubbing."""  # noqa: E501
     assert len(simulator.history) == 0
 
     simulator.step()

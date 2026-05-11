@@ -8,7 +8,7 @@ drop, elevation pressure drop, erosional velocity, and expansion factor.
 from __future__ import annotations
 
 import pytest
-from upstream_drift_tools.process_calculators.pressure_drop_calculator.engine.pressure_drop_calculation_engine import (
+from upstream_drift_tools.process_calculators.pressure_drop_calculator.engine.pressure_drop_calculation_engine import (  # noqa: E501
     calculate_elevation_pressure_drop,
     calculate_erosional_velocity,
     calculate_expansion_factor,

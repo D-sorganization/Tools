@@ -5,9 +5,8 @@ Provides common test data and SLA thresholds for performance benchmarks.
 
 from __future__ import annotations
 
-import pytest
 import numpy as np
-
+import pytest
 
 # =============================================================================
 # Pytest Hook to Disable xdist for Benchmarks

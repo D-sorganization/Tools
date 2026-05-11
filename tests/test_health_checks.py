@@ -8,7 +8,9 @@ Tests containerization health check endpoints:
 from __future__ import annotations
 
 import json
+
 import pytest
+
 from web_applications.calculator.webapp import create_app
 from web_applications.health_checks import get_health_status, get_readiness_status
 
@@ -136,7 +138,7 @@ class TestHealthCheckEndpoints:
         """Ready endpoint checks should have consistent structure."""
         response = client.get("/api/ready")
         data = json.loads(response.data)
-        for check_name, check_value in data["checks"].items():
+        for check_name, check_value in data["checks"].items():  # noqa: B007
             assert isinstance(check_value, dict)
             assert "healthy" in check_value
 

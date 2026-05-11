@@ -134,7 +134,7 @@ async def upload_file(
         if ext not in ALLOWED_EXTENSIONS:
             raise HTTPException(
                 status_code=400,
-                detail=f"Invalid file extension '{ext}'. Only {ALLOWED_EXTENSIONS} allowed.",
+                detail=f"Invalid file extension '{ext}'. Only {ALLOWED_EXTENSIONS} allowed.",  # noqa: E501
             )
 
         file_path = get_safe_path(file.filename)
@@ -160,7 +160,7 @@ async def upload_file(
                     file_path.unlink(missing_ok=True)
                     raise HTTPException(
                         status_code=413,
-                        detail=f"File too large. Maximum size is {MAX_UPLOAD_SIZE // (1024 * 1024)} MB.",
+                        detail=f"File too large. Maximum size is {MAX_UPLOAD_SIZE // (1024 * 1024)} MB.",  # noqa: E501
                     )
                 buffer.write(chunk)
 

@@ -124,7 +124,7 @@ def _stream_reader(
 def _reap_process(
     process: subprocess.Popen[Any], log_func: Callable[[str], None] | None = None
 ) -> None:
-    """Wait for a child process and emit an exit-code log entry if logging is enabled."""
+    """Wait for a child process and emit an exit-code log entry if logging is enabled."""  # noqa: E501
     try:
         exit_code = process.wait()
         if log_func:

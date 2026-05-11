@@ -42,7 +42,7 @@ def InverseDynamics(
     Glist: Any,
     Slist: Any,
 ) -> np.ndarray:
-    """Computes inverse dynamics in the space frame using forward-backward Newton-Euler."""
+    """Computes inverse dynamics in the space frame using forward-backward Newton-Euler."""  # noqa: E501
     if not (thetalist is not None):
         raise ValueError("thetalist must be provided")
     n = len(thetalist)
@@ -168,7 +168,7 @@ def ForwardDynamics(
 def EulerStep(
     thetalist: Any, dthetalist: Any, ddthetalist: Any, dt: float
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Compute the joint angles and velocities at the next timestep using Euler integration."""
+    """Compute the joint angles and velocities at the next timestep using Euler integration."""  # noqa: E501
     return thetalist + dt * np.array(dthetalist), dthetalist + dt * np.array(
         ddthetalist
     )
@@ -219,7 +219,7 @@ def ForwardDynamicsTrajectory(
     dt: float,
     intRes: int,
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Simulates the motion of a serial chain given an open-loop history of joint forces/torques."""
+    """Simulates the motion of a serial chain given an open-loop history of joint forces/torques."""  # noqa: E501
     if not (thetalist is not None):
         raise ValueError("thetalist must be provided")
     taumat = np.array(taumat).T

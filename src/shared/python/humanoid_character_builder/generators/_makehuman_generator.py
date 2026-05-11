@@ -259,7 +259,7 @@ generate_human()
         try:
             resolved_output.relative_to(resolved_base)
         except ValueError:
-            raise ValueError(
+            raise ValueError(  # noqa: B904
                 f"Output path {output_path!r} escapes the expected base directory"
                 f" {base!r}"
             )

@@ -159,7 +159,7 @@ class InvariantError(ContractViolationError):
 
 
 class PreconditionEvaluationError(ContractViolationError):
-    """Raised when a precondition cannot be evaluated due to an error in the condition itself."""
+    """Raised when a precondition cannot be evaluated due to an error in the condition itself."""  # noqa: E501
 
     def __init__(self, message: str, underlying_error: Exception) -> None:
         if not (message is not None):
@@ -177,7 +177,7 @@ class PreconditionEvaluationError(ContractViolationError):
 
 
 class PostconditionEvaluationError(ContractViolationError):
-    """Raised when a postcondition cannot be evaluated due to an error in the condition itself."""
+    """Raised when a postcondition cannot be evaluated due to an error in the condition itself."""  # noqa: E501
 
     def __init__(self, message: str, underlying_error: Exception) -> None:
         if not (message is not None):
@@ -362,7 +362,7 @@ def postcondition(
                 check = condition(result)
             except Exception as exc:
                 raise PostconditionEvaluationError(
-                    f"Failed to evaluate postcondition for {func.__qualname__}: {exc!r}",
+                    f"Failed to evaluate postcondition for {func.__qualname__}: {exc!r}",  # noqa: E501
                     exc,
                 ) from exc
 

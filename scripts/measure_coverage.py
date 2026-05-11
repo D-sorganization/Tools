@@ -19,7 +19,9 @@ from datetime import datetime
 from pathlib import Path
 
 
-def parse_coverage_xml(xml_file: Path, tracked_prefixes: list[str]) -> dict[str, object]:
+def parse_coverage_xml(
+    xml_file: Path, tracked_prefixes: list[str]
+) -> dict[str, object]:
     """Parse coverage.xml and extract per-package coverage metrics."""
     root = ET.parse(xml_file).getroot()
     total_line_rate = float(root.attrib.get("line-rate", "0"))
@@ -46,7 +48,10 @@ def parse_coverage_xml(xml_file: Path, tracked_prefixes: list[str]) -> dict[str,
         pct = round(((stats["covered"] / valid) * 100) if valid else 0.0, 2)
         package_pct[prefix] = pct
 
-    return {"total_percent": round(total_line_rate * 100, 2), "package_percent": package_pct}
+    return {
+        "total_percent": round(total_line_rate * 100, 2),
+        "package_percent": package_pct,
+    }
 
 
 def compare_coverage(
@@ -74,9 +79,7 @@ def compare_coverage(
 
     # Check total coverage thresholds
     if current_total < min_total:
-        failures.append(
-            f"Total coverage {current_total}% below minimum {min_total}%"
-        )
+        failures.append(f"Total coverage {current_total}% below minimum {min_total}%")
     if baseline_total > 0 and current_total < (baseline_total - max_drop):
         failures.append(
             f"Total coverage {current_total}% regressed beyond allowed drop "

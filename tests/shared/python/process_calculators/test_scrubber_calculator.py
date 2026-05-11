@@ -6,12 +6,6 @@ This test file adheres to the Fleet-Wide Shared Component Testing Strategy, test
 from __future__ import annotations
 
 import pytest
-from contracts import (
-    ContractLevel,
-    PreconditionError,
-    get_contract_level,
-    set_contract_level,
-)
 from upstream_drift_tools.process_calculators.scrubber_calculator import (
     PACKING_DATABASE,
     WATER_DENSITY,
@@ -22,6 +16,13 @@ from upstream_drift_tools.process_calculators.scrubber_calculator import (
     calculate_gas_density,
     calculate_gas_viscosity,
     calculate_heat_transfer_duty,
+)
+
+from contracts import (
+    ContractLevel,
+    PreconditionError,
+    get_contract_level,
+    set_contract_level,
 )
 
 

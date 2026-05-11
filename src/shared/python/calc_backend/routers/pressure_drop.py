@@ -112,7 +112,7 @@ def calculate_pressure_drop(
             error=error,
             processing_time_ms=processing_time_ms,
         )
-        raise HTTPException(status_code=422, detail=response.to_dict())
+        raise HTTPException(status_code=422, detail=response.to_dict())  # noqa: B904
 
     processing_time_ms = (time.perf_counter() - start_time) * 1000
 

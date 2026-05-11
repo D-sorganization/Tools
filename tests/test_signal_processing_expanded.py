@@ -12,37 +12,37 @@ Tests cover:
 - Postconditions: output properties (finite, proper shape)
 """
 
-import pytest
-import numpy as np
-from scipy import signal as scipy_signal
-
 # Add src/shared/python to path to import signal_toolkit
 import sys
 from pathlib import Path
+
+import numpy as np
+import pytest
+from scipy import signal as scipy_signal
+
 sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "shared" / "python"))
 
-from signal_toolkit.core import Signal, SignalGenerator
+from signal_toolkit.core import Signal
 from signal_toolkit.filters import (
+    FilterDesign,
     FilterDesigner,
     FilterType,
-    FilterDesign,
-    FilterSpec,
+    apply_bilateral_filter,
+    apply_exponential_smoothing,
     apply_filter,
+    apply_gaussian_smoothing,
+    apply_median_filter,
+    apply_moving_average,
+    apply_savgol,
     create_butterworth_filter,
     create_chebyshev_filter,
     create_moving_average_filter,
-    apply_moving_average,
-    apply_savgol,
-    apply_median_filter,
-    apply_exponential_smoothing,
-    apply_gaussian_smoothing,
-    apply_bilateral_filter,
 )
-
 
 # =============================================================================
 # IIR Filter Design Tests (Butterworth, Chebyshev, Elliptic, Bessel)
 # =============================================================================
+
 
 class TestButterworthFilterDesign:
     """Tests for Butterworth IIR filter design.
@@ -60,10 +60,7 @@ class TestButterworthFilterDesign:
         Postcondition: filter coefficients are finite.
         """
         filt = FilterDesigner.butterworth(
-            FilterType.LOWPASS,
-            cutoff=100,
-            fs=1000,
-            order=4
+            FilterType.LOWPASS, cutoff=100, fs=1000, order=4
         )
         assert filt.design == FilterDesign.BUTTERWORTH
         assert filt.order == 4
@@ -76,10 +73,7 @@ class TestButterworthFilterDesign:
         Postcondition: cutoff frequency preserved in metadata.
         """
         filt = FilterDesigner.butterworth(
-            FilterType.HIGHPASS,
-            cutoff=100,
-            fs=1000,
-            order=4
+            FilterType.HIGHPASS, cutoff=100, fs=1000, order=4
         )
         assert filt.cutoff == 100
         assert filt.filter_type == FilterType.HIGHPASS
@@ -90,10 +84,7 @@ class TestButterworthFilterDesign:
         Precondition: cutoff must be tuple for bandpass.
         """
         filt = FilterDesigner.butterworth(
-            FilterType.BANDPASS,
-            cutoff=(100, 200),
-            fs=1000,
-            order=4
+            FilterType.BANDPASS, cutoff=(100, 200), fs=1000, order=4
         )
         assert isinstance(filt.cutoff, tuple)
         assert filt.cutoff == (100, 200)
@@ -104,10 +95,7 @@ class TestButterworthFilterDesign:
         Postcondition: creates stable bandstop filter.
         """
         filt = FilterDesigner.butterworth(
-            FilterType.BANDSTOP,
-            cutoff=(100, 200),
-            fs=1000,
-            order=4
+            FilterType.BANDSTOP, cutoff=(100, 200), fs=1000, order=4
         )
         assert filt.filter_type == FilterType.BANDSTOP
         assert len(filt.b) > 0 and len(filt.a) > 0
@@ -119,12 +107,7 @@ class TestButterworthFilterDesign:
         Postcondition: ValueError if order < 1.
         """
         with pytest.raises(ValueError, match="order must be >= 1"):
-            FilterDesigner.butterworth(
-                FilterType.LOWPASS,
-                cutoff=100,
-                fs=1000,
-                order=0
-            )
+            FilterDesigner.butterworth(FilterType.LOWPASS, cutoff=100, fs=1000, order=0)
 
     def test_butterworth_fs_constraint(self) -> None:
         """Sampling frequency must be positive.
@@ -134,10 +117,7 @@ class TestButterworthFilterDesign:
         """
         with pytest.raises(ValueError, match="must be positive"):
             FilterDesigner.butterworth(
-                FilterType.LOWPASS,
-                cutoff=100,
-                fs=-1000,
-                order=4
+                FilterType.LOWPASS, cutoff=100, fs=-1000, order=4
             )
 
     def test_butterworth_cutoff_nyquist(self) -> None:
@@ -150,7 +130,7 @@ class TestButterworthFilterDesign:
             FilterType.LOWPASS,
             cutoff=400,  # Less than Nyquist (500)
             fs=1000,
-            order=4
+            order=4,
         )
         assert filt is not None
 
@@ -161,10 +141,7 @@ class TestButterworthFilterDesign:
         Invariant: magnitude decreasing with frequency for lowpass.
         """
         filt = FilterDesigner.butterworth(
-            FilterType.LOWPASS,
-            cutoff=100,
-            fs=1000,
-            order=4
+            FilterType.LOWPASS, cutoff=100, fs=1000, order=4
         )
         freqs, mags, phases = filt.get_frequency_response(num_points=512)
 
@@ -200,11 +177,7 @@ class TestChebyshevFilterDesign:
         Postcondition: filter coefficients finite.
         """
         filt = FilterDesigner.chebyshev1(
-            FilterType.LOWPASS,
-            cutoff=100,
-            fs=1000,
-            order=4,
-            ripple_db=1.0
+            FilterType.LOWPASS, cutoff=100, fs=1000, order=4, ripple_db=1.0
         )
         assert filt.design == FilterDesign.CHEBYSHEV1
         assert np.all(np.isfinite(filt.b))
@@ -218,11 +191,7 @@ class TestChebyshevFilterDesign:
         """
         with pytest.raises(ValueError, match="ripple_db must be > 0"):
             FilterDesigner.chebyshev1(
-                FilterType.LOWPASS,
-                cutoff=100,
-                fs=1000,
-                order=4,
-                ripple_db=-1.0
+                FilterType.LOWPASS, cutoff=100, fs=1000, order=4, ripple_db=-1.0
             )
 
     def test_chebyshev2_basic(self) -> None:
@@ -232,11 +201,7 @@ class TestChebyshevFilterDesign:
         Postcondition: filter coefficients finite.
         """
         filt = FilterDesigner.chebyshev2(
-            FilterType.LOWPASS,
-            cutoff=100,
-            fs=1000,
-            order=4,
-            attenuation_db=40.0
+            FilterType.LOWPASS, cutoff=100, fs=1000, order=4, attenuation_db=40.0
         )
         assert filt.design == FilterDesign.CHEBYSHEV2
         assert np.all(np.isfinite(filt.b))
@@ -250,11 +215,7 @@ class TestChebyshevFilterDesign:
         """
         with pytest.raises(ValueError, match="attenuation_db must be > 0"):
             FilterDesigner.chebyshev2(
-                FilterType.LOWPASS,
-                cutoff=100,
-                fs=1000,
-                order=4,
-                attenuation_db=-40.0
+                FilterType.LOWPASS, cutoff=100, fs=1000, order=4, attenuation_db=-40.0
             )
 
     def test_chebyshev1_steeper_rolloff(self) -> None:
@@ -263,17 +224,10 @@ class TestChebyshevFilterDesign:
         Invariant: Chebyshev achieves faster transition.
         """
         butter = FilterDesigner.butterworth(
-            FilterType.LOWPASS,
-            cutoff=100,
-            fs=1000,
-            order=4
+            FilterType.LOWPASS, cutoff=100, fs=1000, order=4
         )
         cheby = FilterDesigner.chebyshev1(
-            FilterType.LOWPASS,
-            cutoff=100,
-            fs=1000,
-            order=4,
-            ripple_db=1.0
+            FilterType.LOWPASS, cutoff=100, fs=1000, order=4, ripple_db=1.0
         )
 
         # Both should be stable
@@ -296,7 +250,7 @@ class TestEllipticFilterDesign:
             fs=1000,
             order=4,
             ripple_db=1.0,
-            attenuation_db=40.0
+            attenuation_db=40.0,
         )
         assert filt.design == FilterDesign.ELLIPTIC
         assert np.all(np.isfinite(filt.b))
@@ -314,7 +268,7 @@ class TestEllipticFilterDesign:
                 fs=1000,
                 order=4,
                 ripple_db=-1.0,
-                attenuation_db=40.0
+                attenuation_db=40.0,
             )
 
         with pytest.raises(ValueError):
@@ -324,7 +278,7 @@ class TestEllipticFilterDesign:
                 fs=1000,
                 order=4,
                 ripple_db=1.0,
-                attenuation_db=-40.0
+                attenuation_db=-40.0,
             )
 
 
@@ -336,12 +290,7 @@ class TestBesselFilterDesign:
 
         Postcondition: filter coefficients finite, monotonic magnitude.
         """
-        filt = FilterDesigner.bessel(
-            FilterType.LOWPASS,
-            cutoff=100,
-            fs=1000,
-            order=4
-        )
+        filt = FilterDesigner.bessel(FilterType.LOWPASS, cutoff=100, fs=1000, order=4)
         assert filt.design == FilterDesign.BESSEL
         assert np.all(np.isfinite(filt.b))
         assert np.all(np.isfinite(filt.a))
@@ -351,12 +300,7 @@ class TestBesselFilterDesign:
 
         Invariant: constant group delay is preserved.
         """
-        filt = FilterDesigner.bessel(
-            FilterType.LOWPASS,
-            cutoff=100,
-            fs=1000,
-            order=4
-        )
+        filt = FilterDesigner.bessel(FilterType.LOWPASS, cutoff=100, fs=1000, order=4)
         freqs, mags, phases = filt.get_frequency_response(512)
 
         # Phase should vary more slowly for Bessel
@@ -367,6 +311,7 @@ class TestBesselFilterDesign:
 # =============================================================================
 # Filter Application and Response Tests
 # =============================================================================
+
 
 class TestFilterApplication:
     """Tests for applying filters to signals."""
@@ -383,10 +328,7 @@ class TestFilterApplication:
 
         # Design filter
         filt = FilterDesigner.butterworth(
-            FilterType.LOWPASS,
-            cutoff=100,
-            fs=1000,
-            order=4
+            FilterType.LOWPASS, cutoff=100, fs=1000, order=4
         )
 
         # Apply filter (zero-phase)
@@ -406,10 +348,7 @@ class TestFilterApplication:
         signal = Signal(t, np.sin(2 * np.pi * 10 * t), name="test")
 
         filt = FilterDesigner.butterworth(
-            FilterType.LOWPASS,
-            cutoff=100,
-            fs=1000,
-            order=4
+            FilterType.LOWPASS, cutoff=100, fs=1000, order=4
         )
 
         # Apply causal filter
@@ -425,17 +364,11 @@ class TestFilterApplication:
         """
         t = np.linspace(0, 1, 1000)
         signal = Signal(
-            t,
-            np.sin(2 * np.pi * 10 * t),
-            name="accelerometer",
-            units="m/s^2"
+            t, np.sin(2 * np.pi * 10 * t), name="accelerometer", units="m/s^2"
         )
 
         filt = FilterDesigner.butterworth(
-            FilterType.LOWPASS,
-            cutoff=100,
-            fs=1000,
-            order=4
+            FilterType.LOWPASS, cutoff=100, fs=1000, order=4
         )
 
         filtered = apply_filter(signal, filt)
@@ -464,9 +397,7 @@ class TestFilterApplication:
         """
         t = np.linspace(0, 1, 1000)
         signal = Signal(
-            t,
-            np.sin(2 * np.pi * 10 * t) + 0.05 * np.random.randn(1000),
-            name="noisy"
+            t, np.sin(2 * np.pi * 10 * t) + 0.05 * np.random.randn(1000), name="noisy"
         )
 
         filtered = apply_savgol(signal, window_length=11, polyorder=3)
@@ -498,9 +429,7 @@ class TestFilterApplication:
         """
         t = np.linspace(0, 1, 1000)
         signal = Signal(
-            t,
-            np.sin(2 * np.pi * 10 * t) + 0.1 * np.random.randn(1000),
-            name="noisy"
+            t, np.sin(2 * np.pi * 10 * t) + 0.1 * np.random.randn(1000), name="noisy"
         )
 
         filtered = apply_exponential_smoothing(signal, alpha=0.3)
@@ -516,9 +445,7 @@ class TestFilterApplication:
         """
         t = np.linspace(0, 1, 1000)
         signal = Signal(
-            t,
-            np.sin(2 * np.pi * 10 * t) + 0.1 * np.random.randn(1000),
-            name="noisy"
+            t, np.sin(2 * np.pi * 10 * t) + 0.1 * np.random.randn(1000), name="noisy"
         )
 
         filtered = apply_gaussian_smoothing(signal, sigma=1.0)
@@ -533,16 +460,11 @@ class TestFilterApplication:
         """
         t = np.linspace(0, 1, 1000)
         signal = Signal(
-            t,
-            np.sin(2 * np.pi * 10 * t) + 0.1 * np.random.randn(1000),
-            name="noisy"
+            t, np.sin(2 * np.pi * 10 * t) + 0.1 * np.random.randn(1000), name="noisy"
         )
 
         filtered = apply_bilateral_filter(
-            signal,
-            window_size=5,
-            sigma_space=1.0,
-            sigma_intensity=0.1
+            signal, window_size=5, sigma_space=1.0, sigma_intensity=0.1
         )
 
         assert len(filtered.values) == len(signal.values)
@@ -552,6 +474,7 @@ class TestFilterApplication:
 # =============================================================================
 # Edge Cases and Boundary Conditions
 # =============================================================================
+
 
 class TestEdgeCases:
     """Tests for boundary conditions and edge cases."""
@@ -589,10 +512,7 @@ class TestEdgeCases:
         signal = Signal(t, np.ones(1000) * 5.0, name="dc")
 
         filt = FilterDesigner.butterworth(
-            FilterType.LOWPASS,
-            cutoff=100,
-            fs=1000,
-            order=4
+            FilterType.LOWPASS, cutoff=100, fs=1000, order=4
         )
 
         filtered = apply_filter(signal, filt)
@@ -607,15 +527,12 @@ class TestEdgeCases:
         """
         fs = 1000
         nyquist = fs / 2
-        t = np.arange(0, 1, 1/fs)
+        t = np.arange(0, 1, 1 / fs)
         # Signal at Nyquist: alternating +1, -1
         signal = Signal(t, np.sin(np.pi * t * nyquist), name="nyquist")
 
         filt = FilterDesigner.butterworth(
-            FilterType.LOWPASS,
-            cutoff=100,
-            fs=fs,
-            order=4
+            FilterType.LOWPASS, cutoff=100, fs=fs, order=4
         )
 
         filtered = apply_filter(signal, filt)
@@ -642,10 +559,7 @@ class TestEdgeCases:
         Postcondition: coefficients finite, filter stable.
         """
         filt = FilterDesigner.butterworth(
-            FilterType.LOWPASS,
-            cutoff=100,
-            fs=1000,
-            order=10
+            FilterType.LOWPASS, cutoff=100, fs=1000, order=10
         )
 
         assert np.all(np.isfinite(filt.b))
@@ -661,7 +575,7 @@ class TestEdgeCases:
             FilterType.LOWPASS,
             cutoff=0.1,  # Very low
             fs=1000,
-            order=4
+            order=4,
         )
 
         assert np.all(np.isfinite(filt.b))
@@ -677,7 +591,7 @@ class TestEdgeCases:
             FilterType.LOWPASS,
             cutoff=499.0,  # Near Nyquist at fs=1000
             fs=1000,
-            order=4
+            order=4,
         )
 
         assert np.all(np.isfinite(filt.b))
@@ -687,6 +601,7 @@ class TestEdgeCases:
 # =============================================================================
 # Spectral Analysis and Parseval's Theorem
 # =============================================================================
+
 
 class TestSpectralAnalysis:
     """Tests for FFT, spectral properties, and Parseval's theorem."""
@@ -704,7 +619,7 @@ class TestSpectralAnalysis:
 
         # Frequency domain energy (FFT)
         X = np.fft.rfft(x)
-        energy_freq = np.sum(np.abs(X)**2)
+        energy_freq = np.sum(np.abs(X) ** 2)
 
         # Energy ratio should be consistent
         # (FFT scaling differs, but should be proportional)
@@ -720,14 +635,17 @@ class TestSpectralAnalysis:
         Invariant: sum(|X_k|^2) conserves energy.
         """
         fs = 1000
-        t = np.arange(0, 1, 1/fs)
+        t = np.arange(0, 1, 1 / fs)
         # Multiple frequencies: 10 Hz, 25 Hz, 50 Hz
-        x = (np.sin(2*np.pi*10*t) + 0.5*np.sin(2*np.pi*25*t) +
-             0.3*np.sin(2*np.pi*50*t))
+        x = (
+            np.sin(2 * np.pi * 10 * t)
+            + 0.5 * np.sin(2 * np.pi * 25 * t)
+            + 0.3 * np.sin(2 * np.pi * 50 * t)
+        )
 
         energy_time = np.sum(x**2)
         X = np.fft.rfft(x)
-        energy_freq = np.sum(np.abs(X)**2)
+        energy_freq = np.sum(np.abs(X) ** 2)
 
         # Ratio should be consistent
         assert energy_freq > 0
@@ -776,10 +694,7 @@ class TestSpectralAnalysis:
         Postcondition: impulse response computed, all finite.
         """
         filt = FilterDesigner.butterworth(
-            FilterType.LOWPASS,
-            cutoff=100,
-            fs=1000,
-            order=4
+            FilterType.LOWPASS, cutoff=100, fs=1000, order=4
         )
 
         t, h = filt.get_impulse_response(num_samples=100)
@@ -794,10 +709,7 @@ class TestSpectralAnalysis:
         Postcondition: magnitudes in reasonable range.
         """
         filt = FilterDesigner.butterworth(
-            FilterType.LOWPASS,
-            cutoff=100,
-            fs=1000,
-            order=4
+            FilterType.LOWPASS, cutoff=100, fs=1000, order=4
         )
 
         freqs, mags, phases = filt.get_frequency_response(512)
@@ -811,6 +723,7 @@ class TestSpectralAnalysis:
 # =============================================================================
 # Window Functions and Spectral Leakage
 # =============================================================================
+
 
 class TestWindowFunctions:
     """Tests for window functions and their properties.
@@ -826,7 +739,7 @@ class TestWindowFunctions:
 
         Postcondition: window has correct length, all finite values.
         """
-        window = scipy_signal.get_window('hann', 100)
+        window = scipy_signal.get_window("hann", 100)
 
         assert len(window) == 100
         assert np.all(np.isfinite(window))
@@ -836,7 +749,7 @@ class TestWindowFunctions:
 
         Postcondition: w[0] and w[-1] both small.
         """
-        window = scipy_signal.get_window('hann', 100)
+        window = scipy_signal.get_window("hann", 100)
 
         # Hann window with periodic=False has near-zero at edges
         assert window[0] < 0.01
@@ -847,7 +760,7 @@ class TestWindowFunctions:
 
         Postcondition: window has correct length, all finite values.
         """
-        window = scipy_signal.get_window('hamming', 100)
+        window = scipy_signal.get_window("hamming", 100)
 
         assert len(window) == 100
         assert np.all(np.isfinite(window))
@@ -857,7 +770,7 @@ class TestWindowFunctions:
 
         Invariant: w[0] = w[-1] > 0.
         """
-        window = scipy_signal.get_window('hamming', 100)
+        window = scipy_signal.get_window("hamming", 100)
 
         assert window[0] > 0
         assert window[-1] > 0
@@ -867,7 +780,7 @@ class TestWindowFunctions:
 
         Postcondition: window has correct length, all finite values.
         """
-        window = scipy_signal.get_window('blackman', 100)
+        window = scipy_signal.get_window("blackman", 100)
 
         assert len(window) == 100
         assert np.all(np.isfinite(window))
@@ -877,7 +790,7 @@ class TestWindowFunctions:
 
         Postcondition: w[0], w[-1] both small.
         """
-        window = scipy_signal.get_window('blackman', 100)
+        window = scipy_signal.get_window("blackman", 100)
 
         assert window[0] < 0.01
         assert window[-1] < 0.01
@@ -887,7 +800,7 @@ class TestWindowFunctions:
 
         Invariant: sum(w) = N.
         """
-        window = scipy_signal.get_window('boxcar', 100)
+        window = scipy_signal.get_window("boxcar", 100)
 
         assert np.allclose(np.sum(window), 100)
 
@@ -896,7 +809,7 @@ class TestWindowFunctions:
 
         Postcondition: w[n] >= -1e-10 for all n (numerical precision).
         """
-        for win_name in ['hann', 'hamming', 'blackman', 'boxcar']:
+        for win_name in ["hann", "hamming", "blackman", "boxcar"]:
             window = scipy_signal.get_window(win_name, 100)
             # Allow small negative values due to floating point precision
             assert np.all(window >= -1e-10), f"{win_name} has negative values"
@@ -906,7 +819,7 @@ class TestWindowFunctions:
 
         Postcondition: max(w) <= 1.
         """
-        for win_name in ['hann', 'hamming', 'blackman', 'boxcar']:
+        for win_name in ["hann", "hamming", "blackman", "boxcar"]:
             window = scipy_signal.get_window(win_name, 100)
             assert np.max(window) <= 1.0, f"{win_name} max > 1"
 
@@ -914,6 +827,7 @@ class TestWindowFunctions:
 # =============================================================================
 # Filter Stability and Numerical Properties
 # =============================================================================
+
 
 class TestFilterStability:
     """Tests for filter stability and numerical behavior."""
@@ -940,32 +854,21 @@ class TestFilterStability:
         """
         # Butterworth (simple design)
         filt_butter = FilterDesigner.butterworth(
-            FilterType.LOWPASS,
-            cutoff=100,
-            fs=1000,
-            order=4
+            FilterType.LOWPASS, cutoff=100, fs=1000, order=4
         )
         assert np.all(np.isfinite(filt_butter.b))
         assert np.all(np.isfinite(filt_butter.a))
 
         # Chebyshev Type I (with ripple)
         filt_cheby1 = FilterDesigner.chebyshev1(
-            FilterType.LOWPASS,
-            cutoff=100,
-            fs=1000,
-            order=4,
-            ripple_db=1.0
+            FilterType.LOWPASS, cutoff=100, fs=1000, order=4, ripple_db=1.0
         )
         assert np.all(np.isfinite(filt_cheby1.b))
         assert np.all(np.isfinite(filt_cheby1.a))
 
         # Chebyshev Type II (with attenuation)
         filt_cheby2 = FilterDesigner.chebyshev2(
-            FilterType.LOWPASS,
-            cutoff=100,
-            fs=1000,
-            order=4,
-            attenuation_db=40.0
+            FilterType.LOWPASS, cutoff=100, fs=1000, order=4, attenuation_db=40.0
         )
         assert np.all(np.isfinite(filt_cheby2.b))
         assert np.all(np.isfinite(filt_cheby2.a))
@@ -977,17 +880,14 @@ class TestFilterStability:
             fs=1000,
             order=4,
             ripple_db=1.0,
-            attenuation_db=40.0
+            attenuation_db=40.0,
         )
         assert np.all(np.isfinite(filt_elliptic.b))
         assert np.all(np.isfinite(filt_elliptic.a))
 
         # Bessel (no ripple parameters)
         filt_bessel = FilterDesigner.bessel(
-            FilterType.LOWPASS,
-            cutoff=100,
-            fs=1000,
-            order=4
+            FilterType.LOWPASS, cutoff=100, fs=1000, order=4
         )
         assert np.all(np.isfinite(filt_bessel.b))
         assert np.all(np.isfinite(filt_bessel.a))
@@ -998,17 +898,10 @@ class TestFilterStability:
         Postcondition: output finite even for large input.
         """
         t = np.linspace(0, 1, 10000)
-        large_signal = Signal(
-            t,
-            1000.0 * np.sin(2*np.pi*10*t),
-            name="large"
-        )
+        large_signal = Signal(t, 1000.0 * np.sin(2 * np.pi * 10 * t), name="large")
 
         filt = FilterDesigner.butterworth(
-            FilterType.LOWPASS,
-            cutoff=100,
-            fs=10000,
-            order=4
+            FilterType.LOWPASS, cutoff=100, fs=10000, order=4
         )
 
         filtered = apply_filter(large_signal, filt)
@@ -1022,16 +915,11 @@ class TestFilterStability:
         """
         t = np.linspace(0, 100, 100000)  # 100 seconds at 1kHz
         signal = Signal(
-            t,
-            np.sin(2*np.pi*10*t) + 0.1*np.random.randn(len(t)),
-            name="long"
+            t, np.sin(2 * np.pi * 10 * t) + 0.1 * np.random.randn(len(t)), name="long"
         )
 
         filt = FilterDesigner.butterworth(
-            FilterType.LOWPASS,
-            cutoff=100,
-            fs=1000,
-            order=4
+            FilterType.LOWPASS, cutoff=100, fs=1000, order=4
         )
 
         filtered = apply_filter(signal, filt)
@@ -1043,6 +931,7 @@ class TestFilterStability:
 # =============================================================================
 # Reciprocal Filter Relationships
 # =============================================================================
+
 
 class TestReciprocalFilterProperties:
     """Tests for reciprocal relationships between filters."""
@@ -1075,7 +964,7 @@ class TestConvenienceFunctions:
 
         Precondition: filter_type in {'lowpass', 'highpass', ...}.
         """
-        filt = create_butterworth_filter('lowpass', 100, 1000, 4)
+        filt = create_butterworth_filter("lowpass", 100, 1000, 4)
 
         assert filt.filter_type == FilterType.LOWPASS
 
@@ -1084,7 +973,7 @@ class TestConvenienceFunctions:
 
         Precondition: filter_type in {'lowpass', 'highpass', ...}.
         """
-        filt = create_chebyshev_filter('lowpass', 100, 1000, 4, ripple_db=1.0)
+        filt = create_chebyshev_filter("lowpass", 100, 1000, 4, ripple_db=1.0)
 
         assert filt.filter_type == FilterType.LOWPASS
 
@@ -1109,6 +998,7 @@ class TestConvenienceFunctions:
 # Input Validation and Error Handling
 # =============================================================================
 
+
 class TestInputValidation:
     """Tests for input validation and error messages."""
 
@@ -1122,7 +1012,7 @@ class TestInputValidation:
                 FilterType.BANDPASS,
                 cutoff=100,  # Wrong: should be tuple
                 fs=1000,
-                order=4
+                order=4,
             )
 
     def test_bandstop_requires_tuple_cutoff(self) -> None:
@@ -1135,7 +1025,7 @@ class TestInputValidation:
                 FilterType.BANDSTOP,
                 cutoff=100,  # Wrong: should be tuple
                 fs=1000,
-                order=4
+                order=4,
             )
 
     def test_invalid_sampling_frequency(self) -> None:
@@ -1144,19 +1034,11 @@ class TestInputValidation:
         Precondition: fs > 0.
         """
         with pytest.raises(ValueError):
-            FilterDesigner.butterworth(
-                FilterType.LOWPASS,
-                cutoff=100,
-                fs=0,
-                order=4
-            )
+            FilterDesigner.butterworth(FilterType.LOWPASS, cutoff=100, fs=0, order=4)
 
         with pytest.raises(ValueError):
             FilterDesigner.butterworth(
-                FilterType.LOWPASS,
-                cutoff=100,
-                fs=-1000,
-                order=4
+                FilterType.LOWPASS, cutoff=100, fs=-1000, order=4
             )
 
 

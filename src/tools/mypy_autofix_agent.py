@@ -17,7 +17,7 @@ Safeguards:
 
 Usage:
     python scripts/mypy_autofix_agent.py [--max-fixes N] [--max-files N] [--dry-run] [--verbose]
-"""
+"""  # noqa: E501
 
 from __future__ import annotations
 
@@ -207,7 +207,7 @@ def write_file_lines(filepath: str, lines: list[str]) -> None:
             original_line_count = len(path.read_text(encoding="utf-8").splitlines())
             if len(lines) < original_line_count * 0.5 and original_line_count > 10:
                 logger.info(
-                    f"!!! LOBOTOMY GUARD: Aborting write to {filepath} (new length: {len(lines)}, original: {original_line_count})"
+                    f"!!! LOBOTOMY GUARD: Aborting write to {filepath} (new length: {len(lines)}, original: {original_line_count})"  # noqa: E501
                 )
                 return
     except (OSError, UnicodeError) as exc:
@@ -351,7 +351,7 @@ def fix_union_attr(lines: list[str], error: MypyError) -> Fix | None:
     return Fix(
         file=error.file,
         line=error.line,
-        description=f"Add isinstance({var_name}, {target_type}) narrowing for union-attr",
+        description=f"Add isinstance({var_name}, {target_type}) narrowing for union-attr",  # noqa: E501
         strategy="real-fix",
         original_code=line.strip(),
     )
@@ -613,11 +613,11 @@ def run_agent(
                 )
                 if verbose:
                     logger.info(
-                        f"  FIX: {fix.file}:{fix.line} [{fix.strategy}] {fix.description}"
+                        f"  FIX: {fix.file}:{fix.line} [{fix.strategy}] {fix.description}"  # noqa: E501
                     )
             else:
                 report.skipped_reasons.append(
-                    f"No fix available: {error.file}:{error.line} [{error.code}] {error.message[:60]}"
+                    f"No fix available: {error.file}:{error.line} [{error.code}] {error.message[:60]}"  # noqa: E501
                 )
 
         if file_changed:
