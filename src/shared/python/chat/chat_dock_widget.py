@@ -44,9 +44,10 @@ from PyQt6.QtWidgets import (
 def _get_theme_colors() -> dict[str, str]:
     """Get the current theme colors, falling back to defaults."""
     try:
+        from typing import cast
         from src.shared.python.theme.theme_manager import get_theme_manager
 
-        return get_theme_manager().get_current_colors()
+        return cast(dict[str, str], get_theme_manager().get_current_colors())
     except ImportError:
         return {}
 
