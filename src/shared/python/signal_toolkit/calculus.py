@@ -14,7 +14,16 @@ import numpy as np
 from scipy import integrate
 from scipy.signal import savgol_filter
 
-from src.shared.python.contracts import require
+try:
+    from src.shared.python.contracts import require
+except ImportError:
+    from typing import Any
+
+    def require(condition: bool, message: str, value: Any = None) -> None:
+        """Fallback DbC require when shared contracts module is unavailable."""
+        if not condition:
+            raise ValueError(message)
+
 
 from .core import Signal
 
@@ -200,7 +209,7 @@ class Differentiator:
         else:
             dy = np.gradient(y, t)  # type: ignore[unreachable]
 
-        return dy
+        return dy  # type: ignore[no-any-return,unused-ignore]
 
     def compute_at_point(
         self,
