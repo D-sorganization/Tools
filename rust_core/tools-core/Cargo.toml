@@ -25,6 +25,7 @@ numpy = { workspace = true, optional = true }
 wasm-bindgen = { workspace = true, optional = true }
 serde = { workspace = true }
 math-primitives = { path = "../math-primitives" }
+rand = "0.8"
 
 [dev-dependencies]
 proptest = { workspace = true }
