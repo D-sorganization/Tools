@@ -26,7 +26,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from PyQt6.QtCore import Qt, QTimer, QUrl
+from PyQt6.QtCore import Qt, QTimer, QUrl, pyqtSignal
 from PyQt6.QtWebSockets import QWebSocket
 from PyQt6.QtWidgets import (
     QDockWidget,
@@ -49,6 +49,7 @@ def _get_theme_colors() -> dict[str, str]:
         return get_theme_manager().get_current_colors()
     except ImportError:
         return {}
+
 
 _DEFAULT_SERVER = "ws://127.0.0.1:8000"
 
@@ -154,10 +155,20 @@ class ChatDockWidget(QDockWidget):
         placeholder_text: Placeholder text for the input field.
         accent_color: Primary accent color for styling.
         parent: Parent widget.
+        auto_index_on_open: When True, send an ``index_codebase`` action on
+            every successful connect so the chat backend has fresh codebase
+            context without the user manually triggering an index (#2549).
+            Indexing itself is performed by the server via the existing
+            :mod:`codemap` pathway; this flag only opts the client in.
     """
 
     # Class-level session for in-process sharing
     _shared_session_id: str | None = None
+
+    # Emitted on each ``index_status`` push from the server. The payload is
+    # the parsed status dict (state, files, symbols, error). Downstream UIs
+    # can show progress / completion in their own status bar (#2549).
+    index_status_changed = pyqtSignal(dict)
 
     def __init__(
         self,
@@ -169,6 +180,7 @@ class ChatDockWidget(QDockWidget):
         placeholder_text: str = "Ask a question...",
         accent_color: str = "#FF8800",
         parent: QWidget | None = None,
+        auto_index_on_open: bool = False,
     ) -> None:
         if not (app_context is not None):
             raise ValueError("app_context must be provided")
@@ -179,6 +191,7 @@ class ChatDockWidget(QDockWidget):
         self._ws_path_template = ws_path_template
         self._accent_color = accent_color
         self._placeholder_text = placeholder_text
+        self._auto_index_on_open = bool(auto_index_on_open)
         self._is_streaming = False
         self._current_bubble: ChatMessageBubble | None = None
         self._socket: QWebSocket | None = None
@@ -299,6 +312,22 @@ class ChatDockWidget(QDockWidget):
     def _on_connected(self) -> None:
         self._status_label.setText("Connected")
         self._status_label.setStyleSheet("color: #3fb950; font-size: 10px;")
+        # If the user opted in, kick off a codebase index so the chat has
+        # full context as soon as the chat opens (#2549). The server is
+        # responsible for invoking the existing ``codemap.rebuild`` pathway
+        # and pushing ``index_status`` updates back over the socket.
+        if self._auto_index_on_open:
+            self.index_codebase()
+
+    def index_codebase(self) -> None:
+        """Ask the server to (re)index the codebase for chat context.
+
+        Wires to the existing :mod:`codemap` indexing pathway on the server
+        side; the client merely sends an ``index_codebase`` action and waits
+        for ``index_status`` pushes. Safe to call before the socket is
+        connected — the message is silently dropped in that case.
+        """
+        self._send_ws({"action": "index_codebase"})
 
     def _on_disconnected(self) -> None:
         self._status_label.setText("Disconnected - retrying in 3s...")
@@ -348,6 +377,12 @@ class ChatDockWidget(QDockWidget):
 
         elif msg_type == "history":
             self._populate_history(data.get("messages", []))
+
+        elif msg_type == "index_status":
+            # Server-pushed codebase index progress / completion (#2549).
+            # Forward to listeners; the dock widget itself does not own a
+            # progress UI.
+            self.index_status_changed.emit(dict(data))
 
         elif msg_type == "error":
             detail = data.get("detail", "Unknown error")

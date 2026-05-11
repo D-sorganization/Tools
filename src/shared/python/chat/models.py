@@ -43,3 +43,22 @@ class ChatHistoryResponse(BaseModel):
 
     session_id: str
     messages: list[dict]
+
+
+class ChatIndexStatusResponse(BaseModel):
+    """Codebase indexing progress / completion status.
+
+    Sent by the server in response to an ``index_codebase`` action (or
+    pushed unsolicited while indexing runs in the background) so the chat
+    UI can show progress and indicate when full-codebase context becomes
+    available (#2549).
+    """
+
+    state: str = Field(
+        ...,
+        description="One of: 'idle', 'running', 'complete', 'error'",
+    )
+    files_parsed: int = Field(0, ge=0)
+    symbols_inserted: int = Field(0, ge=0)
+    duration_seconds: float | None = Field(None, ge=0.0)
+    error: str | None = Field(None, description="Populated when state == 'error'")
