@@ -9,6 +9,7 @@ pydantic = pytest.importorskip("pydantic")
 from chat.models import (  # noqa: E402
     ChatChunkResponse,
     ChatHistoryResponse,
+    ChatIndexStatusResponse,
     ChatMessageRequest,
     ChatSessionInfo,
 )
@@ -168,3 +169,39 @@ class TestChatHistoryResponse:
             messages=[{"role": "user", "content": "Hello"}],
         )
         assert len(resp.messages) == 1
+
+
+class TestChatIndexStatusResponse:
+    """Tests for ChatIndexStatusResponse (added in #2549)."""
+
+    def test_minimal_running(self):
+        resp = ChatIndexStatusResponse(state="running")
+        assert resp.state == "running"
+        assert resp.files_parsed == 0
+        assert resp.symbols_inserted == 0
+        assert resp.duration_seconds is None
+        assert resp.error is None
+
+    def test_complete(self):
+        resp = ChatIndexStatusResponse(
+            state="complete",
+            files_parsed=120,
+            symbols_inserted=4500,
+            duration_seconds=2.7,
+        )
+        assert resp.state == "complete"
+        assert resp.files_parsed == 120
+        assert resp.symbols_inserted == 4500
+        assert resp.duration_seconds == pytest.approx(2.7)
+
+    def test_error_state(self):
+        resp = ChatIndexStatusResponse(state="error", error="git not available")
+        assert resp.error == "git not available"
+
+    def test_negative_counts_rejected(self):
+        with pytest.raises(ValueError):
+            ChatIndexStatusResponse(state="running", files_parsed=-1)
+        with pytest.raises(ValueError):
+            ChatIndexStatusResponse(state="running", symbols_inserted=-3)
+        with pytest.raises(ValueError):
+            ChatIndexStatusResponse(state="complete", duration_seconds=-0.5)
