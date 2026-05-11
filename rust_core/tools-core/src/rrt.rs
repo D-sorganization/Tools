@@ -37,7 +37,7 @@ impl Obstacle {
             let half_size = self.size / 2.0;
             let mut outside_dist_sq = 0.0;
             let mut inside_max = f64::NEG_INFINITY;
-            
+
             for i in 0..3 {
                 let delta = (point[i] - self.position[i]).abs() - half_size;
                 if delta > 0.0 {
@@ -47,7 +47,7 @@ impl Obstacle {
                     inside_max = delta;
                 }
             }
-            
+
             if outside_dist_sq > 0.0 {
                 outside_dist_sq.sqrt()
             } else {
@@ -109,19 +109,19 @@ impl RRTPlanner {
                 nodes[nearest_idx][1],
                 nodes[nearest_idx][2],
             ];
-            
+
             let new_point = self.steer(&nearest_point, &sample);
 
             if self.check_collision(&new_point, &obstacles) {
                 continue;
             }
-            
+
             if !self.segment_is_collision_free(&nearest_point, &new_point, &obstacles) {
                 continue;
             }
 
             nodes.push([new_point[0], new_point[1], new_point[2], nearest_idx as f64]);
-            
+
             let dist_to_goal = Self::distance(&new_point, &goal);
             if dist_to_goal <= self.goal_radius {
                 let path = self.extract_path(&nodes, nodes.len() - 1);
@@ -203,7 +203,7 @@ impl RRTPlanner {
         let step = (self.step_size / 2.0).max(1e-6);
         let samples = (dist / step).ceil() as usize;
         let samples = samples.max(2);
-        
+
         let dir = [
             end[0] - start[0],
             end[1] - start[1],
