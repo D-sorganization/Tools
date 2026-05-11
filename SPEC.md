@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST UPDATED: 2026-04-27
+  LAST UPDATED: 2026-05-11
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -506,6 +506,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-11 | 1.1.129 | Added dynamic focus shifting to inline form validation within the Calculator app. This prevents keyboard focus traps by focusing the first invalid input (`.focus()`) and marking it with `aria-invalid="true"`. |
 | 2026-05-07 | 1.1.128 | Pre-compiled ODE Solver derivative expressions outside the RK4 loop while preserving the existing non-finite fallback behavior, so singular or overflowing user formulas still collapse to `0` instead of poisoning the integration state with `NaN` or `Infinity`. |
 | 2026-05-05 | 1.1.125 | Optimized polynomial evaluation using Horners method in `pendulum-web` physics engines (`physics.ts`, `physics_triple.ts`, `physics_golfer.ts`). |
 | 2026-05-04 | 1.1.124 | Documented production-readiness hardening for generated data-processing batch scripts, shared pandas formula allowlist validation, model-generation mesh upload size and filename checks with cleanup, and MakeHuman generated-script serialization plus the `mesh_generator_makehuman.py` compatibility shim.                                                                                                                                                                                                                                                        |
