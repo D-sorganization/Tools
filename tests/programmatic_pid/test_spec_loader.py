@@ -91,6 +91,7 @@ def test_load_spec_with_blank_yaml():
     """Blank YAML (null) should return empty dict."""
     import tempfile
     from pathlib import Path
+
     with tempfile.NamedTemporaryFile(mode="w", suffix=".yml", delete=False) as f:
         f.write("")
         path = f.name
@@ -105,6 +106,7 @@ def test_load_spec_with_list_root():
     """YAML with list at root should raise ValueError."""
     import tempfile
     from pathlib import Path
+
     with tempfile.NamedTemporaryFile(mode="w", suffix=".yml", delete=False) as f:
         f.write("- item1\n- item2\n")
         path = f.name
@@ -119,6 +121,7 @@ def test_load_spec_with_string_root():
     """YAML with string at root should raise ValueError."""
     import tempfile
     from pathlib import Path
+
     with tempfile.NamedTemporaryFile(mode="w", suffix=".yml", delete=False) as f:
         f.write("just a string")
         path = f.name
@@ -133,6 +136,7 @@ def test_load_spec_with_number_root():
     """YAML with number at root should raise ValueError."""
     import tempfile
     from pathlib import Path
+
     with tempfile.NamedTemporaryFile(mode="w", suffix=".yml", delete=False) as f:
         f.write("42")
         path = f.name

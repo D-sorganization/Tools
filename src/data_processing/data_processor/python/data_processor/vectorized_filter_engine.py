@@ -10,8 +10,6 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-from scipy.ndimage import gaussian_filter1d, uniform_filter1d
-from scipy.signal import butter, filtfilt, medfilt
 
 try:
     from .constants import MIN_SIGNAL_DATA_POINTS

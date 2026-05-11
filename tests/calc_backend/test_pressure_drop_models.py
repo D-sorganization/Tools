@@ -9,13 +9,13 @@ Related to issue #2411 (API Standardization).
 from __future__ import annotations
 
 import json
-import pytest
-from pydantic import ValidationError
 
+import pytest
 from calc_backend.models.pressure_drop import (
     PressureDropRequest,
     PressureDropResponse,
 )
+from pydantic import ValidationError
 
 
 class TestPressureDropRequest:

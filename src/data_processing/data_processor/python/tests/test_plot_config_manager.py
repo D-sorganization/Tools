@@ -5,11 +5,9 @@ Covers: save, load, delete, list, info, duplicate, export/import.
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 import pytest
-
 from data_processor.core.plot_config_manager import PlotConfigManager
 
 

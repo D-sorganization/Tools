@@ -26,14 +26,6 @@ import json
 from pathlib import Path
 from typing import Any
 
-def _get_theme_colors() -> dict[str, str]:
-    """Get the current theme colors, falling back to defaults."""
-    try:
-        from src.shared.python.theme.theme_manager import get_theme_manager
-        return get_theme_manager().get_current_colors()
-    except ImportError:
-        return {}
-
 from PyQt6.QtCore import Qt, QTimer, QUrl
 from PyQt6.QtWebSockets import QWebSocket
 from PyQt6.QtWidgets import (
@@ -47,6 +39,16 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+
+
+def _get_theme_colors() -> dict[str, str]:
+    """Get the current theme colors, falling back to defaults."""
+    try:
+        from src.shared.python.theme.theme_manager import get_theme_manager
+
+        return get_theme_manager().get_current_colors()
+    except ImportError:
+        return {}
 
 _DEFAULT_SERVER = "ws://127.0.0.1:8000"
 
@@ -104,7 +106,8 @@ class ChatMessageBubble(QFrame):
 
         # Role label
         user_style = f"font-size: 10px; font-weight: bold; color: {accent_color};"
-        ai_style = f"font-size: 10px; font-weight: bold; color: {colors.get('accent', '#58a6ff')};"
+        ai_color = colors.get("accent", "#58a6ff")
+        ai_style = f"font-size: 10px; font-weight: bold; color: {ai_color};"
         role_label = QLabel("You" if role == "user" else "AI")
         role_label.setStyleSheet(user_style if role == "user" else ai_style)
         layout.addWidget(role_label)

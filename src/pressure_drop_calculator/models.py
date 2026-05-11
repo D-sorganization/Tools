@@ -7,8 +7,6 @@ and provide clear, validated request/response contracts.
 
 from __future__ import annotations
 
-from typing import Any
-
 from pydantic import BaseModel, Field
 
 
@@ -32,10 +30,14 @@ class PressureDropInput(BaseModel):
         apply_compressibility: Whether to apply compressible flow corrections. Defaults to True.
     """
 
-    pipe_diameter_m: float = Field(..., gt=0, description="Internal pipe diameter in meters")
+    pipe_diameter_m: float = Field(
+        ..., gt=0, description="Internal pipe diameter in meters"
+    )
     pipe_length_m: float = Field(..., gt=0, description="Pipe length in meters")
     mass_flow_rate_kg_s: float = Field(..., gt=0, description="Mass flow rate in kg/s")
-    inlet_pressure_pa: float = Field(..., gt=0, description="Inlet absolute pressure in Pa")
+    inlet_pressure_pa: float = Field(
+        ..., gt=0, description="Inlet absolute pressure in Pa"
+    )
     inlet_temperature_k: float = Field(..., gt=0, description="Inlet temperature in K")
     pipe_roughness_m: float = Field(
         default=0.000045, ge=0, description="Absolute roughness in meters"
@@ -101,8 +103,12 @@ class PressureDropOutput(BaseModel):
     """
 
     pressure_drop_pa: float = Field(..., ge=0, description="Total pressure drop in Pa")
-    pressure_drop_bar: float = Field(..., ge=0, description="Total pressure drop in bar")
-    pressure_drop_psi: float = Field(..., ge=0, description="Total pressure drop in psi")
+    pressure_drop_bar: float = Field(
+        ..., ge=0, description="Total pressure drop in bar"
+    )
+    pressure_drop_psi: float = Field(
+        ..., ge=0, description="Total pressure drop in psi"
+    )
     friction_pressure_drop_pa: float = Field(
         default=0.0, ge=0, description="Friction pressure drop in Pa"
     )
@@ -112,7 +118,9 @@ class PressureDropOutput(BaseModel):
     elevation_pressure_drop_pa: float = Field(
         default=0.0, description="Elevation pressure drop in Pa"
     )
-    inlet_velocity_m_s: float = Field(default=0.0, ge=0, description="Inlet velocity in m/s")
+    inlet_velocity_m_s: float = Field(
+        default=0.0, ge=0, description="Inlet velocity in m/s"
+    )
     outlet_velocity_m_s: float = Field(
         default=0.0, ge=0, description="Outlet velocity in m/s"
     )

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import re
-from typing import Any
 from unittest.mock import patch
 
 import pytest
@@ -226,7 +225,9 @@ class TestStandardResponseBuilder:
         )
 
         # Both responses from same builder should have same request_id
-        assert success_response.metadata.request_id == error_response.metadata.request_id
+        assert (
+            success_response.metadata.request_id == error_response.metadata.request_id
+        )
 
     def test_builder_processing_time_recorded(self) -> None:
         """Verify processing time is computed."""
