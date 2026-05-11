@@ -14,9 +14,10 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from contracts import PreconditionError
 from signal_toolkit.core import Signal
 from signal_toolkit.io import SignalImporter
+
+from contracts import PreconditionError
 
 # ─────────────────────── Signal core edge cases ──────────────────────────────
 

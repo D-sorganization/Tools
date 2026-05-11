@@ -9,7 +9,6 @@ import json
 from pathlib import Path
 
 import pytest
-
 from data_processor.core.signal_list_manager import SignalListManager
 
 

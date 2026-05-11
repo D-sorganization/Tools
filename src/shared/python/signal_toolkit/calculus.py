@@ -6,10 +6,9 @@ tangent lines, and visualizing calculus operations on signals.
 
 from __future__ import annotations
 
+import typing
 from dataclasses import dataclass
 from enum import Enum
-
-import typing
 
 import numpy as np
 from scipy import integrate

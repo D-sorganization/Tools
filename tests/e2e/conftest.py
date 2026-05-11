@@ -7,7 +7,6 @@ across multiple tools and systems.
 import json
 import logging
 from pathlib import Path
-from typing import Generator
 
 import pandas as pd
 import pytest
@@ -111,7 +110,12 @@ def configuration_file(e2e_temp_dir: Path) -> Path:
                 "type": "transform",
                 "operations": [
                     {"field": "temperature_c", "type": "round", "precision": 2},
-                    {"field": "humidity_percent", "type": "normalize", "min": 0, "max": 100},
+                    {
+                        "field": "humidity_percent",
+                        "type": "normalize",
+                        "min": 0,
+                        "max": 100,
+                    },
                 ],
             },
             {

@@ -682,7 +682,9 @@ class BatchProcessor:
                     elif output_format == "json":
                         processed_single: Signal
                         if isinstance(processed, list):
-                            processed_single = processed[0]  # JSON only supports single signal
+                            processed_single = processed[
+                                0
+                            ]  # JSON only supports single signal
                         else:
                             processed_single = processed
                         SignalExporter.to_json(processed_single, output_path)

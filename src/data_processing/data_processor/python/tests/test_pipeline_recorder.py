@@ -5,8 +5,6 @@ Covers: init, recording state, record operations, clear, and assertions.
 
 from __future__ import annotations
 
-import pytest
-
 from data_processor.core.pipeline_recorder import PipelineRecorder
 from data_processor.core.script_generator_types import OperationType
 

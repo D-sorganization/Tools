@@ -9,11 +9,8 @@ See issue #2411 - API Standardization Foundation.
 
 from __future__ import annotations
 
-from typing import Optional
-
+from calc_backend.api import StandardResponse
 from pydantic import BaseModel, Field
-
-from calc_backend.api import ErrorDetail, ResponseMetadata, StandardResponse
 
 
 class PressureDropRequestV2(BaseModel):
@@ -61,7 +58,7 @@ class PressureDropRequestV2(BaseModel):
         gt=0,
         description="Molecular weight [kg/mol]. Must be positive.",
     )
-    viscosity_pa_s: Optional[float] = Field(
+    viscosity_pa_s: float | None = Field(
         default=None,
         gt=0,
         description=(
@@ -105,9 +102,7 @@ class PressureDropDataV2(BaseModel):
     friction_factor: float = Field(
         description="Darcy friction factor (dimensionless). Always positive."
     )
-    velocity_m_s: float = Field(
-        description="Gas velocity [m/s]. Always non-negative."
-    )
+    velocity_m_s: float = Field(description="Gas velocity [m/s]. Always non-negative.")
     flow_regime: str = Field(
         description="Flow regime classification: 'Laminar', 'Transitional', or 'Turbulent'."
     )

@@ -7,11 +7,10 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
-
 from data_processor.core.wavelet_denoising import (
+    ThresholdingMethod,
     ThresholdMethod,
     ThresholdSelection,
-    ThresholdingMethod,
     WaveletDenoiseConfig,
     WaveletDenoiser,
     WaveletFamily,
