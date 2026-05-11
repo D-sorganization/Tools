@@ -451,7 +451,7 @@ SPACE_EVENTS: list[dict[str, Any]] = [
         "month": 4,
         "day": 14,
         "title": "JUICE Mission Launch",
-        "description": "ESA mission launches to study Jupiter's icy moons: Ganymede, Callisto, and Europa",
+        "description": "ESA mission launches to study Jupiter's icy moons: Ganymede, Callisto, and Europa",  # noqa: E501
         "category": "mission",
     },
     {
@@ -483,7 +483,7 @@ SPACE_EVENTS: list[dict[str, Any]] = [
         "month": 2,
         "day": 14,
         "title": "Pale Blue Dot Photo",
-        "description": "Voyager 1 takes the famous photo of Earth from 6 billion km away",
+        "description": "Voyager 1 takes the famous photo of Earth from 6 billion km away",  # noqa: E501
         "category": "observation",
     },
     {
@@ -491,7 +491,7 @@ SPACE_EVENTS: list[dict[str, Any]] = [
         "month": 7,
         "day": 16,
         "title": "Comet Shoemaker-Levy 9 Impacts Jupiter",
-        "description": "First time scientists observe a collision between two solar system bodies",
+        "description": "First time scientists observe a collision between two solar system bodies",  # noqa: E501
         "category": "discovery",
     },
     {
@@ -515,7 +515,7 @@ SPACE_EVENTS: list[dict[str, Any]] = [
         "month": 2,
         "day": 6,
         "title": "Falcon Heavy Maiden Flight",
-        "description": "World's most powerful operational rocket launches Starman into solar orbit",
+        "description": "World's most powerful operational rocket launches Starman into solar orbit",  # noqa: E501
         "category": "mission",
     },
     # Mercury Program
@@ -692,7 +692,7 @@ SPACE_EVENTS: list[dict[str, Any]] = [
         "month": 6,
         "day": 18,
         "title": "First American Woman in Space",
-        "description": "Sally Ride flies aboard STS-7, becoming the first American woman in space",
+        "description": "Sally Ride flies aboard STS-7, becoming the first American woman in space",  # noqa: E501
         "category": "mission",
     },
     {

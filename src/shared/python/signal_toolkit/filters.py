@@ -678,7 +678,7 @@ def apply_bilateral_filter(
     )
 
 
-class AdaptiveFilter:
+class AdaptiveFilter:  # noqa: F811
     """Adaptive filter implementations (LMS, RLS)."""
 
     @staticmethod

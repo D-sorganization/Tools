@@ -195,7 +195,7 @@ class TestDataProcessorChainedOperations:
         signal = sample_time_series_data["signal"]
 
         def design_and_apply():
-            window = design_frequency_window(
+            window = design_frequency_window(  # noqa: F841
                 filter_type="FFT Low-pass",
                 freq_low=0.1,
                 freq_high=0.3,

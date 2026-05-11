@@ -74,10 +74,10 @@ def main() -> None:
         # Determine strict instructions for Claude Code depending on issue
         # We must keep instructions concise and actionable for Claude Code
         prompt = (
-            f"Fix GitHub Issue #{num}: {title}. You are solving this autonomously for high-quality, long-term codebase health. "
+            f"Fix GitHub Issue #{num}: {title}. You are solving this autonomously for high-quality, long-term codebase health. "  # noqa: E501
             f"Context: {body}. "
-            f"Instructions: Open the referenced files (e.g., controller.py, main_window.py, renderer.py, etc.) and strictly solve the refactoring criteria (DRY, LOD, TDD, Changeability, DbC). "
-            f"Apply robust changes locally, then test with pytest before finishing. DO NOT commit or push anything! Only yield the local file changes."
+            f"Instructions: Open the referenced files (e.g., controller.py, main_window.py, renderer.py, etc.) and strictly solve the refactoring criteria (DRY, LOD, TDD, Changeability, DbC). "  # noqa: E501
+            f"Apply robust changes locally, then test with pytest before finishing. DO NOT commit or push anything! Only yield the local file changes."  # noqa: E501
         )
 
         # Claude runs synchronously
@@ -98,7 +98,7 @@ def main() -> None:
         # Commit & Push
         run_cmd("git add -A", cwd=repo_path)
         run_cmd(
-            f'git commit -m "fix: resolve A-N assessment finding #{num} - {title}" --no-verify',
+            f'git commit -m "fix: resolve A-N assessment finding #{num} - {title}" --no-verify',  # noqa: E501
             cwd=repo_path,
         )
         run_cmd(
@@ -107,7 +107,7 @@ def main() -> None:
 
         # PR and Merge
         safe_title = title.replace('"', '\\"')
-        pr_cmd = f'gh pr create --title "fix: Resolve #{num} - {safe_title}" --body "Resolves #{num}. Built via Autonomous Iterative Wave." --base main'
+        pr_cmd = f'gh pr create --title "fix: Resolve #{num} - {safe_title}" --body "Resolves #{num}. Built via Autonomous Iterative Wave." --base main'  # noqa: E501
         run_cmd(pr_cmd, cwd=repo_path, ignore_err=True)
 
         # Enable Auto-Merge

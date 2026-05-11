@@ -451,7 +451,7 @@ class TestPreconditionEvaluationError:
         set_contract_level(self._orig)
 
     def test_precondition_with_buggy_lambda_raises_underlying_error(self) -> None:
-        """Precondition that references non-existent attribute should raise AttributeError."""
+        """Precondition that references non-existent attribute should raise AttributeError."""  # noqa: E501
 
         @precondition(lambda x: x.non_existent > 0)  # type: ignore[attr-defined]
         def func(x: int) -> int:
@@ -513,7 +513,7 @@ class TestPostconditionEvaluationError:
         assert isinstance(exc_info.value.underlying_error, AttributeError)
 
     def test_postcondition_evaluation_error_before_return(self) -> None:
-        """Postcondition evaluation error should occur even though function succeeded."""
+        """Postcondition evaluation error should occur even though function succeeded."""  # noqa: E501
 
         @postcondition(lambda result: int(result) > 0)
         def func() -> str:

@@ -9,6 +9,7 @@ from programmatic_pid.spec_loader import (
     SpecAccessor,
     get_layout_config,
     get_text_config,
+    load_spec,
 )
 
 

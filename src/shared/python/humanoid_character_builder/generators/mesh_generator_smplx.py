@@ -163,7 +163,7 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
         if not self.is_available:
             return GeneratedMeshResult(
                 success=False,
-                error_message="smplx package not installed. Install with: pip install smplx",
+                error_message="smplx package not installed. Install with: pip install smplx",  # noqa: E501
             )
 
         try:

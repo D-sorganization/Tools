@@ -33,7 +33,7 @@ class TestPlotConfigManagerInit:
 
     def test_creates_config_dir(self, tmp_path: Path) -> None:
         sub = tmp_path / "subdir"
-        mgr = PlotConfigManager(config_dir=sub)
+        mgr = PlotConfigManager(config_dir=sub)  # noqa: F841
         assert sub.exists()
 
     def test_default_filename(self, tmp_path: Path) -> None:

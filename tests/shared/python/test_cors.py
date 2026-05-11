@@ -9,7 +9,12 @@ Tests cover:
 from unittest.mock import MagicMock
 
 import pytest
-from cors import DEFAULT_ORIGINS, add_cors_middleware
+from cors import (
+    DEFAULT_ALLOW_HEADERS,
+    DEFAULT_ALLOW_METHODS,
+    DEFAULT_ORIGINS,
+    add_cors_middleware,
+)
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 

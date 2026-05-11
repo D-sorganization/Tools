@@ -443,7 +443,7 @@ class UnifiedModelLoader:
             source_format = detect_format(source_path)
             if source_format != ModelFormat.MJCF:
                 raise UnsupportedFormatError(
-                    f"Expected MJCF source for URDF conversion, got: {source_format.value}"
+                    f"Expected MJCF source for URDF conversion, got: {source_format.value}"  # noqa: E501
                 )
 
         try:
@@ -482,7 +482,7 @@ class UnifiedModelLoader:
             source_format = detect_format(source_path)
             if source_format != ModelFormat.URDF:
                 raise UnsupportedFormatError(
-                    f"Expected URDF source for MJCF conversion, got: {source_format.value}"
+                    f"Expected URDF source for MJCF conversion, got: {source_format.value}"  # noqa: E501
                 )
 
         try:

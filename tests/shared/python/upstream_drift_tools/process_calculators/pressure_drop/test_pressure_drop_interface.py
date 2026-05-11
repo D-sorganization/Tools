@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from upstream_drift_tools.process_calculators.pressure_drop_calculator.pressure_drop_interface import (
+from upstream_drift_tools.process_calculators.pressure_drop_calculator.pressure_drop_interface import (  # noqa: E501
     calculate_pressure_drop,
     compare_friction_methods,
     list_fittings,

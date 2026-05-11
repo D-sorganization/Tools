@@ -204,7 +204,7 @@ class ModelGenerationAPI(
             {
                 "name": "Model Generation API",
                 "version": "1.0.0",
-                "description": "REST API for URDF generation, conversion, and manipulation",
+                "description": "REST API for URDF generation, conversion, and manipulation",  # noqa: E501
                 "endpoints": [
                     {
                         "method": route.method.value,

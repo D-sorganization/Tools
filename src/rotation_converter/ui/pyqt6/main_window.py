@@ -88,8 +88,9 @@ EULER_CONVENTIONS: list[str] = [
 ]
 
 # ── Rotation and Transform imports ──────────────────────────────────
-from rotation_converter import Rotation
-from rotation_converter.rigid_transform import RigidTransform
+from rotation_converter import Rotation  # noqa: E402
+from rotation_converter.rigid_transform import RigidTransform  # noqa: E402
+
 
 
 # ── Helper function for theme detection ──────────────────────────────

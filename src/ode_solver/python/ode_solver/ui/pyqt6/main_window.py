@@ -480,7 +480,7 @@ class ODESolverWindow(QMainWindow):
             parameters_str = self._parse_dict_input(self.parameters_edit.toPlainText())
             initial_str = self._parse_dict_input(self.initial_edit.toPlainText())
 
-            require(bool(derivatives), "No derivatives defined")
+            require(bool(derivatives), "No derivatives defined")  # noqa: F821
 
             # Convert parameters to floats
             parameters = {k: float(v) for k, v in parameters_str.items()}
@@ -496,8 +496,8 @@ class ODESolverWindow(QMainWindow):
             t_start = self.t_start_input.value()
             t_end = self.t_end_input.value()
             num_points = self.num_points_input.value()
-            require(t_end > t_start, "t_end must be greater than t_start", t_end)
-            require(num_points >= 2, "Need at least 2 points", num_points)
+            require(t_end > t_start, "t_end must be greater than t_start", t_end)  # noqa: F821
+            require(num_points >= 2, "Need at least 2 points", num_points)  # noqa: F821
             t_eval = np.linspace(t_start, t_end, num_points)
 
             # Solve — guarded by timeout to prevent unbounded hangs

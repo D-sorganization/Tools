@@ -90,7 +90,7 @@ class TestElectrodeAdvancementContracts:
     """Contract tests for ElectrodeAdvancementCalculator."""
 
     def test_valid_inputs_succeed(self):
-        from upstream_drift_tools.process_calculators.electrode_advancement_calculator import (
+        from upstream_drift_tools.process_calculators.electrode_advancement_calculator import (  # noqa: E501
             ElectrodeAdvancementCalculator,
         )
 
@@ -99,7 +99,7 @@ class TestElectrodeAdvancementContracts:
         assert result > 0
 
     def test_negative_consumption_rate_rejected(self):
-        from upstream_drift_tools.process_calculators.electrode_advancement_calculator import (
+        from upstream_drift_tools.process_calculators.electrode_advancement_calculator import (  # noqa: E501
             ElectrodeAdvancementCalculator,
         )
 
@@ -107,7 +107,7 @@ class TestElectrodeAdvancementContracts:
             ElectrodeAdvancementCalculator(consumption_rate=-1.0)
 
     def test_negative_current_rejected(self):
-        from upstream_drift_tools.process_calculators.electrode_advancement_calculator import (
+        from upstream_drift_tools.process_calculators.electrode_advancement_calculator import (  # noqa: E501
             ElectrodeAdvancementCalculator,
         )
 
@@ -116,7 +116,7 @@ class TestElectrodeAdvancementContracts:
             calc.calculate_consumption(current_ka=-10.0, time_hrs=8.0)
 
     def test_negative_time_rejected(self):
-        from upstream_drift_tools.process_calculators.electrode_advancement_calculator import (
+        from upstream_drift_tools.process_calculators.electrode_advancement_calculator import (  # noqa: E501
             ElectrodeAdvancementCalculator,
         )
 
@@ -130,7 +130,7 @@ class TestAcidGasDewpointContracts:
     """Contract tests for AcidGasDewpointCalculator."""
 
     def test_valid_dewpoint_succeeds(self):
-        from upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator import (
+        from upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator import (  # noqa: E501
             AcidGasDewpointCalculator,
         )
 
@@ -142,7 +142,7 @@ class TestAcidGasDewpointContracts:
         assert isinstance(result, float)
 
     def test_negative_partial_pressure_rejected(self):
-        from upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator import (
+        from upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator import (  # noqa: E501
             AcidGasDewpointCalculator,
         )
 
@@ -154,7 +154,7 @@ class TestAcidGasDewpointContracts:
             )
 
     def test_unknown_component_rejected(self):
-        from upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator import (
+        from upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator import (  # noqa: E501
             AcidGasDewpointCalculator,
         )
 

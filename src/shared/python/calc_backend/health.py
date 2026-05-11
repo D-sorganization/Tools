@@ -57,7 +57,7 @@ class HealthChecker:
                     return HealthCheckResult('database', CheckStatus.OK)
                 except Exception as e:
                     return HealthCheckResult('database', CheckStatus.UNHEALTHY, error=str(e))
-        """
+        """  # noqa: E501
         self.checks[name] = check_fn
 
     async def run_checks(self) -> tuple[CheckStatus, dict[str, Any]]:
@@ -131,7 +131,7 @@ def check_python_runtime() -> HealthCheckResult:
             "python_runtime",
             CheckStatus.OK,
             details={
-                "version": f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
+                "version": f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",  # noqa: E501
                 "implementation": sys.implementation.name,
             },
         )

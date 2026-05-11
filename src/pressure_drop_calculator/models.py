@@ -28,7 +28,7 @@ class PressureDropInput(BaseModel):
         friction_method: Friction factor correlation method. One of "colebrook",
             "churchill", "swamee-jain". Defaults to "colebrook".
         apply_compressibility: Whether to apply compressible flow corrections. Defaults to True.
-    """
+    """  # noqa: E501
 
     pipe_diameter_m: float = Field(
         ..., gt=0, description="Internal pipe diameter in meters"
@@ -51,7 +51,7 @@ class PressureDropInput(BaseModel):
     )
     friction_method: str = Field(
         default="colebrook",
-        description="Friction factor method: 'colebrook', 'churchill', or 'swamee-jain'",
+        description="Friction factor method: 'colebrook', 'churchill', or 'swamee-jain'",  # noqa: E501
     )
     apply_compressibility: bool = Field(
         default=True, description="Apply compressible flow corrections"
@@ -100,7 +100,7 @@ class PressureDropOutput(BaseModel):
         mach_number: Mach number at outlet (for compressible flow analysis).
         compressibility_factor: Compressibility factor (Z) used in calculations.
         calculation_method: Method used for friction factor ("colebrook", "churchill", etc.).
-    """
+    """  # noqa: E501
 
     pressure_drop_pa: float = Field(..., ge=0, description="Total pressure drop in Pa")
     pressure_drop_bar: float = Field(

@@ -338,7 +338,7 @@ class TestConversionApi:
 
         source = tmp_path / "good.mjcf"
         source.write_text(
-            "<mujoco model='test'><worldbody><body name='base'><geom type='sphere' size='0.1'/></body></worldbody></mujoco>"
+            "<mujoco model='test'><worldbody><body name='base'><geom type='sphere' size='0.1'/></body></worldbody></mujoco>"  # noqa: E501
         )
         loader = UnifiedModelLoader(prefs_dir=tmp_path)
         assert loader.convert_to_urdf(source).startswith("<")

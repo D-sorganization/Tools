@@ -138,7 +138,7 @@ class TestHealthCheckEndpoints:
         """Ready endpoint checks should have consistent structure."""
         response = client.get("/api/ready")
         data = json.loads(response.data)
-        for check_name, check_value in data["checks"].items():
+        for check_name, check_value in data["checks"].items():  # noqa: B007
             assert isinstance(check_value, dict)
             assert "healthy" in check_value
 

@@ -594,7 +594,7 @@ class TestErrorHandlingInWorkflows:
         }
 
         validation_results = {}
-        df_clean = df.copy()
+        df_clean = df.copy()  # noqa: F841
 
         for column, (min_val, max_val) in validation_rules.items():
             invalid_mask = (df[column] < min_val) | (df[column] > max_val)

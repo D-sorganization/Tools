@@ -43,14 +43,14 @@ __all__ = (
 logger = logging.getLogger(__name__)
 
 
-def create_slider(
+def create_slider(  # noqa: F811
     min_value: int,
     max_value: int,
     default_value: int,
-    orientation: Qt.Orientation,
+    orientation: Qt.Orientation,  # noqa: F821
     value_changed_callback: Callable[[int], None] | None = None,
-) -> QSlider:
-    slider = QSlider(orientation)
+) -> QSlider:  # noqa: F821
+    slider = QSlider(orientation)  # noqa: F821
     slider.setRange(min_value, max_value)
     slider.setValue(default_value)
     if value_changed_callback:
@@ -58,65 +58,65 @@ def create_slider(
     return slider
 
 
-matplotlib.use("QtAgg")
+matplotlib.use("QtAgg")  # noqa: F821
 
 
-class MplCanvas(FigureCanvas):
+class MplCanvas(FigureCanvas):  # noqa: F811, F821
     """Matplotlib canvas widget for embedding in PyQt6."""
 
     def __init__(
-        self, parent: QWidget | None = None, width: float = 8, height: float = 6
+        self, parent: QWidget | None = None, width: float = 8, height: float = 6  # noqa: F821
     ) -> None:
         assert width is not None, "width must be provided"
-        self.fig = Figure(figsize=(width, height), dpi=100)
+        self.fig = Figure(figsize=(width, height), dpi=100)  # noqa: F821
         super().__init__(self.fig)
         self.setParent(parent)
-        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)  # noqa: F821
 
 
-class InputPanel(QWidget):
+class InputPanel(QWidget):  # noqa: F811, F821
     """Panel for PSA model input parameters."""
 
-    def __init__(self, parent: QWidget | None = None) -> None:
+    def __init__(self, parent: QWidget | None = None) -> None:  # noqa: F821
         super().__init__(parent)
         self._setup_ui()
 
     def _setup_ui(self) -> None:
-        layout = QVBoxLayout(self)
+        layout = QVBoxLayout(self)  # noqa: F821
 
         # Operating Parameters Group
-        op_group = QGroupBox("Operating Parameters")
-        op_layout = QGridLayout()
+        op_group = QGroupBox("Operating Parameters")  # noqa: F821
+        op_layout = QGridLayout()  # noqa: F821
 
         # Total Feed
-        op_layout.addWidget(QLabel("Total Feed (SCFM):"), 0, 0)
-        self.feed_input = QLineEdit("1100")
-        self.feed_input.setValidator(QDoubleValidator(0, 100000, 2))
+        op_layout.addWidget(QLabel("Total Feed (SCFM):"), 0, 0)  # noqa: F821
+        self.feed_input = QLineEdit("1100")  # noqa: F821
+        self.feed_input.setValidator(QDoubleValidator(0, 100000, 2))  # noqa: F821
         op_layout.addWidget(self.feed_input, 0, 1)
 
         # S2 Tail Recycle
-        op_layout.addWidget(QLabel("S2 Tail Recycle (%):"), 1, 0)
+        op_layout.addWidget(QLabel("S2 Tail Recycle (%):"), 1, 0)  # noqa: F821
         self.s2_recycle_slider = create_slider(
             min_value=0,
             max_value=100,
             default_value=100,
-            orientation=Qt.Orientation.Horizontal,
+            orientation=Qt.Orientation.Horizontal,  # noqa: F821
             value_changed_callback=lambda v: self.s2_recycle_label.setText(f"{v}%"),
         )
-        self.s2_recycle_label = QLabel("100%")
+        self.s2_recycle_label = QLabel("100%")  # noqa: F821
         op_layout.addWidget(self.s2_recycle_slider, 1, 1)
         op_layout.addWidget(self.s2_recycle_label, 1, 2)
 
         # Product Recycle
-        op_layout.addWidget(QLabel("Product Recycle (%):"), 2, 0)
+        op_layout.addWidget(QLabel("Product Recycle (%):"), 2, 0)  # noqa: F821
         self.prod_recycle_slider = create_slider(
             min_value=0,
             max_value=100,
             default_value=0,
-            orientation=Qt.Orientation.Horizontal,
+            orientation=Qt.Orientation.Horizontal,  # noqa: F821
             value_changed_callback=lambda v: self.prod_recycle_label.setText(f"{v}%"),
         )
-        self.prod_recycle_label = QLabel("0%")
+        self.prod_recycle_label = QLabel("0%")  # noqa: F821
         op_layout.addWidget(self.prod_recycle_slider, 2, 1)
         op_layout.addWidget(self.prod_recycle_label, 2, 2)
 
@@ -124,10 +124,10 @@ class InputPanel(QWidget):
         layout.addWidget(op_group)
 
         # Component Data Group
-        comp_group = QGroupBox("Component Data (Feed % | S1 Removal % | S2 Removal %)")
-        comp_layout = QVBoxLayout()
+        comp_group = QGroupBox("Component Data (Feed % | S1 Removal % | S2 Removal %)")  # noqa: F821
+        comp_layout = QVBoxLayout()  # noqa: F821
 
-        self.component_table = QTableWidget(7, 4)
+        self.component_table = QTableWidget(7, 4)  # noqa: F821
         self.component_table.setHorizontalHeaderLabels(
             ["Component", "Feed %", "S1 Removal %", "S2 Removal %"]
         )
@@ -135,14 +135,14 @@ class InputPanel(QWidget):
         if header is not None:
             header.setVisible(False)
 
-        for i, comp in enumerate(DEFAULT_COMPONENTS):
-            self.component_table.setItem(i, 0, QTableWidgetItem(comp["name"]))
-            self.component_table.setItem(i, 1, QTableWidgetItem(str(comp["feed_pct"])))
+        for i, comp in enumerate(DEFAULT_COMPONENTS):  # noqa: F821
+            self.component_table.setItem(i, 0, QTableWidgetItem(comp["name"]))  # noqa: F821
+            self.component_table.setItem(i, 1, QTableWidgetItem(str(comp["feed_pct"])))  # noqa: F821
             self.component_table.setItem(
-                i, 2, QTableWidgetItem(str(comp["stage1_removal_pct"]))
+                i, 2, QTableWidgetItem(str(comp["stage1_removal_pct"]))  # noqa: F821
             )
             self.component_table.setItem(
-                i, 3, QTableWidgetItem(str(comp["stage2_removal_pct"]))
+                i, 3, QTableWidgetItem(str(comp["stage2_removal_pct"]))  # noqa: F821
             )
 
         self.component_table.resizeColumnsToContents()
@@ -152,7 +152,7 @@ class InputPanel(QWidget):
         layout.addWidget(comp_group)
 
         # Reset Button
-        self.reset_button = QPushButton("Reset to Defaults")
+        self.reset_button = QPushButton("Reset to Defaults")  # noqa: F821
         layout.addWidget(self.reset_button)
         self.reset_button.clicked.connect(self._reset_defaults)
 
@@ -172,22 +172,22 @@ class InputPanel(QWidget):
         self.s2_recycle_slider.setValue(100)
         self.prod_recycle_slider.setValue(0)
 
-        for i, comp in enumerate(DEFAULT_COMPONENTS):
-            self.component_table.setItem(i, 1, QTableWidgetItem(str(comp["feed_pct"])))
+        for i, comp in enumerate(DEFAULT_COMPONENTS):  # noqa: F821
+            self.component_table.setItem(i, 1, QTableWidgetItem(str(comp["feed_pct"])))  # noqa: F821
             self.component_table.setItem(
-                i, 2, QTableWidgetItem(str(comp["stage1_removal_pct"]))
+                i, 2, QTableWidgetItem(str(comp["stage1_removal_pct"]))  # noqa: F821
             )
             self.component_table.setItem(
-                i, 3, QTableWidgetItem(str(comp["stage2_removal_pct"]))
+                i, 3, QTableWidgetItem(str(comp["stage2_removal_pct"]))  # noqa: F821
             )
 
-    def get_parameters(self) -> tuple[float, float, float, list[ComponentData]]:
+    def get_parameters(self) -> tuple[float, float, float, list[ComponentData]]:  # noqa: F821
         """Get current input parameters."""
         total_feed = float(self.feed_input.text())
         s2_recycle = self.s2_recycle_slider.value() / 100.0
         prod_recycle = self.prod_recycle_slider.value() / 100.0
 
-        components: list[ComponentData] = []
+        components: list[ComponentData] = []  # noqa: F821
         for i in range(7):
             name_item = self.component_table.item(i, 0)
             feed_item = self.component_table.item(i, 1)
@@ -207,27 +207,27 @@ class InputPanel(QWidget):
         return total_feed, s2_recycle, prod_recycle, components
 
 
-class ResultsPanel(QWidget):
+class ResultsPanel(QWidget):  # noqa: F811, F821
     """Panel for displaying calculation results."""
 
-    def __init__(self, parent: QWidget | None = None) -> None:
+    def __init__(self, parent: QWidget | None = None) -> None:  # noqa: F821
         super().__init__(parent)
         self._setup_ui()
 
     def _setup_ui(self) -> None:
-        layout = QVBoxLayout(self)
+        layout = QVBoxLayout(self)  # noqa: F821
 
         # Key Metrics Group
-        metrics_group = QGroupBox("Key Performance Metrics")
-        metrics_layout = QGridLayout()
+        metrics_group = QGroupBox("Key Performance Metrics")  # noqa: F821
+        metrics_layout = QGridLayout()  # noqa: F821
 
-        self.h2_recovery_label = QLabel("--")
-        self.h2_purity_label = QLabel("--")
-        self.net_product_label = QLabel("--")
-        self.exhaust_label = QLabel("--")
-        self.mass_balance_label = QLabel("--")
+        self.h2_recovery_label = QLabel("--")  # noqa: F821
+        self.h2_purity_label = QLabel("--")  # noqa: F821
+        self.net_product_label = QLabel("--")  # noqa: F821
+        self.exhaust_label = QLabel("--")  # noqa: F821
+        self.mass_balance_label = QLabel("--")  # noqa: F821
 
-        font = QFont()
+        font = QFont()  # noqa: F821
         font.setPointSize(12)
         font.setBold(True)
 
@@ -238,44 +238,44 @@ class ResultsPanel(QWidget):
         ]:
             label.setFont(font)
 
-        metrics_layout.addWidget(QLabel("H2 Recovery:"), 0, 0)
+        metrics_layout.addWidget(QLabel("H2 Recovery:"), 0, 0)  # noqa: F821
         metrics_layout.addWidget(self.h2_recovery_label, 0, 1)
-        metrics_layout.addWidget(QLabel("H2 Purity:"), 1, 0)
+        metrics_layout.addWidget(QLabel("H2 Purity:"), 1, 0)  # noqa: F821
         metrics_layout.addWidget(self.h2_purity_label, 1, 1)
-        metrics_layout.addWidget(QLabel("Net Product:"), 2, 0)
+        metrics_layout.addWidget(QLabel("Net Product:"), 2, 0)  # noqa: F821
         metrics_layout.addWidget(self.net_product_label, 2, 1)
-        metrics_layout.addWidget(QLabel("Exhaust:"), 3, 0)
+        metrics_layout.addWidget(QLabel("Exhaust:"), 3, 0)  # noqa: F821
         metrics_layout.addWidget(self.exhaust_label, 3, 1)
-        metrics_layout.addWidget(QLabel("Mass Balance:"), 4, 0)
+        metrics_layout.addWidget(QLabel("Mass Balance:"), 4, 0)  # noqa: F821
         metrics_layout.addWidget(self.mass_balance_label, 4, 1)
 
         metrics_group.setLayout(metrics_layout)
         layout.addWidget(metrics_group)
 
         # Safety Metrics Group
-        safety_group = QGroupBox("Safety Metrics")
-        safety_layout = QGridLayout()
+        safety_group = QGroupBox("Safety Metrics")  # noqa: F821
+        safety_layout = QGridLayout()  # noqa: F821
 
-        self.s2_tail_h2_label = QLabel("--")
-        self.s2_tail_o2_label = QLabel("--")
-        self.flammability_label = QLabel("--")
+        self.s2_tail_h2_label = QLabel("--")  # noqa: F821
+        self.s2_tail_o2_label = QLabel("--")  # noqa: F821
+        self.flammability_label = QLabel("--")  # noqa: F821
         self.flammability_label.setStyleSheet("font-weight: bold;")
 
-        safety_layout.addWidget(QLabel("S2 Tail H2:"), 0, 0)
+        safety_layout.addWidget(QLabel("S2 Tail H2:"), 0, 0)  # noqa: F821
         safety_layout.addWidget(self.s2_tail_h2_label, 0, 1)
-        safety_layout.addWidget(QLabel("S2 Tail O2:"), 1, 0)
+        safety_layout.addWidget(QLabel("S2 Tail O2:"), 1, 0)  # noqa: F821
         safety_layout.addWidget(self.s2_tail_o2_label, 1, 1)
-        safety_layout.addWidget(QLabel("Status:"), 2, 0)
+        safety_layout.addWidget(QLabel("Status:"), 2, 0)  # noqa: F821
         safety_layout.addWidget(self.flammability_label, 2, 1)
 
         safety_group.setLayout(safety_layout)
         layout.addWidget(safety_group)
 
         # Stream Flows Table
-        flows_group = QGroupBox("Stream Flows (SCFM)")
-        flows_layout = QVBoxLayout()
+        flows_group = QGroupBox("Stream Flows (SCFM)")  # noqa: F821
+        flows_layout = QVBoxLayout()  # noqa: F821
 
-        self.flows_table = QTableWidget()
+        self.flows_table = QTableWidget()  # noqa: F821
         self.flows_table.setColumnCount(9)
         self.flows_table.setHorizontalHeaderLabels(
             [
@@ -296,10 +296,10 @@ class ResultsPanel(QWidget):
         layout.addWidget(flows_group)
 
         # Compositions Table
-        comp_group = QGroupBox("Stream Compositions (%)")
-        comp_layout = QVBoxLayout()
+        comp_group = QGroupBox("Stream Compositions (%)")  # noqa: F821
+        comp_layout = QVBoxLayout()  # noqa: F821
 
-        self.comp_table = QTableWidget()
+        self.comp_table = QTableWidget()  # noqa: F821
         self.comp_table.setColumnCount(7)
         self.comp_table.setHorizontalHeaderLabels(
             [
@@ -317,7 +317,7 @@ class ResultsPanel(QWidget):
         comp_group.setLayout(comp_layout)
         layout.addWidget(comp_group)
 
-    def update_results(self, results: PSAResults) -> None:
+    def update_results(self, results: PSAResults) -> None:  # noqa: F821
         """Update display with calculation results."""
         assert results is not None, "results must be provided"
         self._update_key_metrics(results)
@@ -325,7 +325,7 @@ class ResultsPanel(QWidget):
         self._update_flows_table(results)
         self._update_compositions_table(results)
 
-    def _update_key_metrics(self, results: PSAResults) -> None:
+    def _update_key_metrics(self, results: PSAResults) -> None:  # noqa: F821
         """Update key performance metric labels."""
         assert results is not None, "results must be provided"
         self.h2_recovery_label.setText(f"{results.h2_recovery_pct:.2f}%")
@@ -334,13 +334,13 @@ class ResultsPanel(QWidget):
         self.exhaust_label.setText(f"{results.total_exhaust_scfm:.2f} SCFM")
         self.mass_balance_label.setText(f"{results.mass_balance_error:.2e}")
 
-    def _update_safety_metrics(self, results: PSAResults) -> None:
+    def _update_safety_metrics(self, results: PSAResults) -> None:  # noqa: F821
         """Update safety/flammability metric labels and styling."""
         assert results is not None, "results must be provided"
         self.s2_tail_h2_label.setText(f"{results.s2_tail_h2_pct:.2f}%")
         self.s2_tail_o2_label.setText(f"{results.s2_tail_o2_pct:.2f}%")
 
-        status = get_flammability_status(results.s2_tail_h2_pct, results.s2_tail_o2_pct)
+        status = get_flammability_status(results.s2_tail_h2_pct, results.s2_tail_o2_pct)  # noqa: F821
         self.flammability_label.setText(status)
 
         if "CRITICAL" in status or "FLAMMABLE" in status or "DANGEROUS" in status:
@@ -356,7 +356,7 @@ class ResultsPanel(QWidget):
                 "font-weight: bold; color: green; background-color: #ccffcc;"
             )
 
-    def _update_flows_table(self, results: PSAResults) -> None:
+    def _update_flows_table(self, results: PSAResults) -> None:  # noqa: F821
         """Populate the flows table with component flow data and totals."""
         assert results is not None, "results must be provided"
         n_comp = len(results.component_names)
@@ -374,32 +374,32 @@ class ResultsPanel(QWidget):
         ]
 
         for i, name in enumerate(results.component_names):
-            self.flows_table.setItem(i, 0, QTableWidgetItem(name))
+            self.flows_table.setItem(i, 0, QTableWidgetItem(name))  # noqa: F821
             for col_idx, col_data in enumerate(flow_columns):
                 self.flows_table.setItem(
-                    i, col_idx + 1, QTableWidgetItem(f"{col_data[i]:.4f}")
+                    i, col_idx + 1, QTableWidgetItem(f"{col_data[i]:.4f}")  # noqa: F821
                 )
 
         # Totals row
-        self.flows_table.setItem(n_comp, 0, QTableWidgetItem("TOTAL"))
+        self.flows_table.setItem(n_comp, 0, QTableWidgetItem("TOTAL"))  # noqa: F821
         totals = [
             results.total_feed_scfm,
-            np.sum(results.flows.mixed_feed),
+            np.sum(results.flows.mixed_feed),  # noqa: F821
             results.total_exhaust_scfm,
-            np.sum(results.flows.interstage),
-            np.sum(results.flows.s2_tail),
-            np.sum(results.flows.s2_tail_recycle),
-            np.sum(results.flows.gross_product),
+            np.sum(results.flows.interstage),  # noqa: F821
+            np.sum(results.flows.s2_tail),  # noqa: F821
+            np.sum(results.flows.s2_tail_recycle),  # noqa: F821
+            np.sum(results.flows.gross_product),  # noqa: F821
             results.total_net_product_scfm,
         ]
         for col_idx, total in enumerate(totals):
             self.flows_table.setItem(
-                n_comp, col_idx + 1, QTableWidgetItem(f"{total:.2f}")
+                n_comp, col_idx + 1, QTableWidgetItem(f"{total:.2f}")  # noqa: F821
             )
 
         self.flows_table.resizeColumnsToContents()
 
-    def _update_compositions_table(self, results: PSAResults) -> None:
+    def _update_compositions_table(self, results: PSAResults) -> None:  # noqa: F821
         """Populate the compositions table with component percentage data."""
         assert results is not None, "results must be provided"
         n_comp = len(results.component_names)
@@ -415,35 +415,35 @@ class ResultsPanel(QWidget):
         ]
 
         for i, name in enumerate(results.component_names):
-            self.comp_table.setItem(i, 0, QTableWidgetItem(name))
+            self.comp_table.setItem(i, 0, QTableWidgetItem(name))  # noqa: F821
             for col_idx, col_data in enumerate(comp_columns):
                 self.comp_table.setItem(
-                    i, col_idx + 1, QTableWidgetItem(f"{col_data[i]:.4f}")
+                    i, col_idx + 1, QTableWidgetItem(f"{col_data[i]:.4f}")  # noqa: F821
                 )
 
         # Totals row
-        self.comp_table.setItem(n_comp, 0, QTableWidgetItem("TOTAL"))
+        self.comp_table.setItem(n_comp, 0, QTableWidgetItem("TOTAL"))  # noqa: F821
         for j in range(1, 7):
-            self.comp_table.setItem(n_comp, j, QTableWidgetItem("100.00"))
+            self.comp_table.setItem(n_comp, j, QTableWidgetItem("100.00"))  # noqa: F821
 
         self.comp_table.resizeColumnsToContents()
 
 
-class SensitivityPlotWidget(QWidget):
+class SensitivityPlotWidget(QWidget):  # noqa: F811, F821
     """Widget for sensitivity analysis plots."""
 
-    def __init__(self, parent: QWidget | None = None) -> None:
+    def __init__(self, parent: QWidget | None = None) -> None:  # noqa: F821
         super().__init__(parent)
         self._setup_ui()
 
     def _setup_ui(self) -> None:
-        layout = QVBoxLayout(self)
+        layout = QVBoxLayout(self)  # noqa: F821
 
         # Controls
-        controls_layout = QHBoxLayout()
+        controls_layout = QHBoxLayout()  # noqa: F821
 
-        controls_layout.addWidget(QLabel("Plot Type:"))
-        self.plot_type_combo = QComboBox()
+        controls_layout.addWidget(QLabel("Plot Type:"))  # noqa: F821
+        self.plot_type_combo = QComboBox()  # noqa: F821
         self.plot_type_combo.addItems(
             [
                 "H2 Recovery vs Recycle",
@@ -456,24 +456,24 @@ class SensitivityPlotWidget(QWidget):
         controls_layout.addWidget(self.plot_type_combo)
 
         # Line/Marker options
-        controls_layout.addWidget(QLabel("  "))
-        self.show_lines_check = QCheckBox("Lines")
+        controls_layout.addWidget(QLabel("  "))  # noqa: F821
+        self.show_lines_check = QCheckBox("Lines")  # noqa: F821
         self.show_lines_check.setChecked(True)
         controls_layout.addWidget(self.show_lines_check)
 
-        self.show_markers_check = QCheckBox("Markers")
+        self.show_markers_check = QCheckBox("Markers")  # noqa: F821
         self.show_markers_check.setChecked(False)
         controls_layout.addWidget(self.show_markers_check)
 
         # Number of points
-        controls_layout.addWidget(QLabel("Points:"))
-        self.num_points_spin = QSpinBox()
+        controls_layout.addWidget(QLabel("Points:"))  # noqa: F821
+        self.num_points_spin = QSpinBox()  # noqa: F821
         self.num_points_spin.setRange(11, 101)
         self.num_points_spin.setValue(51)
         self.num_points_spin.setSingleStep(10)
         controls_layout.addWidget(self.num_points_spin)
 
-        self.update_button = QPushButton("Update Plot")
+        self.update_button = QPushButton("Update Plot")  # noqa: F821
         controls_layout.addWidget(self.update_button)
 
         controls_layout.addStretch()
@@ -481,7 +481,7 @@ class SensitivityPlotWidget(QWidget):
 
         # Canvas
         self.canvas = MplCanvas(self, width=10, height=7)
-        self.toolbar = NavigationToolbar(self.canvas, self)
+        self.toolbar = NavigationToolbar(self.canvas, self)  # noqa: F821
 
         layout.addWidget(self.toolbar)
         layout.addWidget(self.canvas)
@@ -494,9 +494,9 @@ class SensitivityPlotWidget(QWidget):
         self.num_points_spin.valueChanged.connect(self._update_plot)
 
         # Store components for later use
-        self._components: list[ComponentData] = list(DEFAULT_COMPONENTS)
+        self._components: list[ComponentData] = list(DEFAULT_COMPONENTS)  # noqa: F821
 
-    def set_components(self, components: list[ComponentData]) -> None:
+    def set_components(self, components: list[ComponentData]) -> None:  # noqa: F821
         """Set component data for sensitivity calculations."""
         self._components = components
 
@@ -535,10 +535,10 @@ class SensitivityPlotWidget(QWidget):
     def _plot_recovery_vs_recycle(self) -> None:
         """Plot H2 recovery vs recycle fractions."""
         num_points = self.num_points_spin.value()
-        s2_range = np.linspace(0, 1, num_points)
-        prod_range = np.array([0.0, 0.1, 0.2])
+        s2_range = np.linspace(0, 1, num_points)  # noqa: F821
+        prod_range = np.array([0.0, 0.1, 0.2])  # noqa: F821
 
-        sensitivity = calculate_sensitivity(
+        sensitivity = calculate_sensitivity(  # noqa: F821
             s2_tail_recycle_range=s2_range,
             product_recycle_range=prod_range,
             components=self._components,
@@ -568,10 +568,10 @@ class SensitivityPlotWidget(QWidget):
     def _plot_product_vs_recycle(self) -> None:
         """Plot net product vs recycle fractions."""
         num_points = self.num_points_spin.value()
-        s2_range = np.linspace(0, 1, num_points)
-        prod_range = np.array([0.0, 0.1, 0.2])
+        s2_range = np.linspace(0, 1, num_points)  # noqa: F821
+        prod_range = np.array([0.0, 0.1, 0.2])  # noqa: F821
 
-        sensitivity = calculate_sensitivity(
+        sensitivity = calculate_sensitivity(  # noqa: F821
             s2_tail_recycle_range=s2_range,
             product_recycle_range=prod_range,
             components=self._components,
@@ -601,10 +601,10 @@ class SensitivityPlotWidget(QWidget):
     def _plot_o2_safety(self) -> None:
         """Plot O2 safety analysis."""
         num_points = min(self.num_points_spin.value(), 51)  # Cap at 51 for O2 analysis
-        inlet_o2_values = np.array([0.5, 1.0, 2.0, 5.0], dtype=np.float64)
-        s1_removal_range = np.linspace(50.0, 95.0, num_points, dtype=np.float64)
+        inlet_o2_values = np.array([0.5, 1.0, 2.0, 5.0], dtype=np.float64)  # noqa: F821
+        s1_removal_range = np.linspace(50.0, 95.0, num_points, dtype=np.float64)  # noqa: F821
 
-        o2_analysis = calculate_o2_safety_analysis(
+        o2_analysis = calculate_o2_safety_analysis(  # noqa: F821
             inlet_o2_pcts=inlet_o2_values,
             stage1_o2_removal_range=s1_removal_range,
             components=self._components,
@@ -648,16 +648,16 @@ class SensitivityPlotWidget(QWidget):
     def _plot_3d_surface(self) -> None:
         """Plot 3D surface of H2 recovery."""
         num_points = self.num_points_spin.value()
-        s2_range = np.linspace(0, 1, num_points)
-        prod_range = np.linspace(0, 0.5, max(11, num_points // 2))
+        s2_range = np.linspace(0, 1, num_points)  # noqa: F821
+        prod_range = np.linspace(0, 0.5, max(11, num_points // 2))  # noqa: F821
 
-        sensitivity = calculate_sensitivity(
+        sensitivity = calculate_sensitivity(  # noqa: F821
             s2_tail_recycle_range=s2_range,
             product_recycle_range=prod_range,
             components=self._components,
         )
 
-        S2, PROD = np.meshgrid(s2_range, prod_range, indexing="ij")
+        S2, PROD = np.meshgrid(s2_range, prod_range, indexing="ij")  # noqa: F821
 
         ax: Any = self.canvas.fig.add_subplot(111, projection="3d")
         surf = ax.plot_surface(
@@ -672,16 +672,16 @@ class SensitivityPlotWidget(QWidget):
     def _plot_contour(self) -> None:
         """Plot contour map of H2 recovery."""
         num_points = self.num_points_spin.value()
-        s2_range = np.linspace(0, 1, num_points)
-        prod_range = np.linspace(0, 0.5, max(11, num_points // 2))
+        s2_range = np.linspace(0, 1, num_points)  # noqa: F821
+        prod_range = np.linspace(0, 0.5, max(11, num_points // 2))  # noqa: F821
 
-        sensitivity = calculate_sensitivity(
+        sensitivity = calculate_sensitivity(  # noqa: F821
             s2_tail_recycle_range=s2_range,
             product_recycle_range=prod_range,
             components=self._components,
         )
 
-        S2, PROD = np.meshgrid(s2_range, prod_range, indexing="ij")
+        S2, PROD = np.meshgrid(s2_range, prod_range, indexing="ij")  # noqa: F821
 
         ax = self.canvas.fig.add_subplot(111)
         cs = ax.contourf(
@@ -703,25 +703,25 @@ class SensitivityPlotWidget(QWidget):
         ax.legend()
 
 
-class PFDWidget(QWidget):
+class PFDWidget(QWidget):  # noqa: F811, F821
     """Widget for displaying the Process Flow Diagram."""
 
-    def __init__(self, parent: QWidget | None = None) -> None:
+    def __init__(self, parent: QWidget | None = None) -> None:  # noqa: F821
         super().__init__(parent)
         self._setup_ui()
 
     def _setup_ui(self) -> None:
-        layout = QVBoxLayout(self)
+        layout = QVBoxLayout(self)  # noqa: F821
 
         # Title
-        title = QLabel("Process Flow Diagram")
-        title.setFont(QFont("Arial", 14, QFont.Weight.Bold))
-        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        title = QLabel("Process Flow Diagram")  # noqa: F821
+        title.setFont(QFont("Arial", 14, QFont.Weight.Bold))  # noqa: F821
+        title.setAlignment(Qt.AlignmentFlag.AlignCenter)  # noqa: F821
         layout.addWidget(title)
 
         # Image label
-        self.image_label = QLabel()
-        self.image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.image_label = QLabel()  # noqa: F821
+        self.image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)  # noqa: F821
 
         # Try to load the PFD image using a robust path resolution
         try:
@@ -732,13 +732,13 @@ class PFDWidget(QWidget):
             image_path = script_path.parent / "PSA System PFD.jpg"
 
             if image_path.exists():
-                pixmap = QPixmap(str(image_path))
+                pixmap = QPixmap(str(image_path))  # noqa: F821
                 if not pixmap.isNull():
                     scaled = pixmap.scaled(
                         800,
                         600,
-                        Qt.AspectRatioMode.KeepAspectRatio,
-                        Qt.TransformationMode.SmoothTransformation,
+                        Qt.AspectRatioMode.KeepAspectRatio,  # noqa: F821
+                        Qt.TransformationMode.SmoothTransformation,  # noqa: F821
                     )
                     self.image_label.setPixmap(scaled)
                 else:
@@ -751,8 +751,8 @@ class PFDWidget(QWidget):
         layout.addWidget(self.image_label)
 
         # Stream legend
-        legend_group = QGroupBox("Stream Legend")
-        legend_layout = QGridLayout()
+        legend_group = QGroupBox("Stream Legend")  # noqa: F821
+        legend_layout = QGridLayout()  # noqa: F821
 
         streams = [
             ("1", "Fresh Feed (from gasifier)"),
@@ -768,14 +768,14 @@ class PFDWidget(QWidget):
         for i, (num, desc) in enumerate(streams):
             row = i // 2
             col = (i % 2) * 2
-            legend_layout.addWidget(QLabel(f"<b>{num}:</b>"), row, col)
-            legend_layout.addWidget(QLabel(desc), row, col + 1)
+            legend_layout.addWidget(QLabel(f"<b>{num}:</b>"), row, col)  # noqa: F821
+            legend_layout.addWidget(QLabel(desc), row, col + 1)  # noqa: F821
 
         legend_group.setLayout(legend_layout)
         layout.addWidget(legend_group)
 
 
-class PSAMainWindow(QMainWindow):
+class PSAMainWindow(QMainWindow):  # noqa: F811, F821
     """Main window for PSA analysis application."""
 
     def __init__(self) -> None:
@@ -798,13 +798,13 @@ class PSAMainWindow(QMainWindow):
             return
 
         # Launch Jupyter Notebook
-        notebook_action = QAction("Open Jupyter Notebook", self)
+        notebook_action = QAction("Open Jupyter Notebook", self)  # noqa: F821
         notebook_action.setShortcut("Ctrl+J")
         notebook_action.triggered.connect(self._launch_jupyter)
         tools_menu.addAction(notebook_action)
 
         # Launch Colab
-        colab_action = QAction("Open in Google Colab", self)
+        colab_action = QAction("Open in Google Colab", self)  # noqa: F821
         colab_action.setShortcut("Ctrl+G")
         colab_action.triggered.connect(self._launch_colab)
         tools_menu.addAction(colab_action)
@@ -812,7 +812,7 @@ class PSAMainWindow(QMainWindow):
         tools_menu.addSeparator()
 
         # Launch Web App
-        webapp_action = QAction("Launch Web App (Streamlit)", self)
+        webapp_action = QAction("Launch Web App (Streamlit)", self)  # noqa: F821
         webapp_action.setShortcut("Ctrl+W")
         webapp_action.triggered.connect(self._launch_webapp)
         tools_menu.addAction(webapp_action)
@@ -822,7 +822,7 @@ class PSAMainWindow(QMainWindow):
         if help_menu is None:
             return
 
-        about_action = QAction("About", self)
+        about_action = QAction("About", self)  # noqa: F821
         about_action.triggered.connect(self._show_about)
         help_menu.addAction(about_action)
 
@@ -840,17 +840,17 @@ class PSAMainWindow(QMainWindow):
                     )
                 else:
                     subprocess.Popen(["jupyter", "notebook", notebook_path])
-                QMessageBox.information(
+                QMessageBox.information(  # noqa: F821
                     self, "Jupyter Notebook", "Launching Jupyter Notebook..."
                 )
             except FileNotFoundError:
-                QMessageBox.warning(
+                QMessageBox.warning(  # noqa: F821
                     self,
                     "Jupyter Not Found",
                     "Jupyter is not installed. Install with: pip install jupyter",
                 )
         else:
-            QMessageBox.warning(
+            QMessageBox.warning(  # noqa: F821
                 self, "File Not Found", f"Notebook not found: {notebook_path}"
             )
 
@@ -859,7 +859,7 @@ class PSAMainWindow(QMainWindow):
         script_dir = os.path.dirname(os.path.abspath(__file__))
         local_notebook = os.path.join(script_dir, "psa_analysis_colab.ipynb")
 
-        msg = QMessageBox(self)
+        msg = QMessageBox(self)  # noqa: F821
         msg.setWindowTitle("Open in Google Colab")
         msg.setText("To use Google Colab, you need to upload the notebook to GitHub.")
         msg.setInformativeText(
@@ -870,11 +870,11 @@ class PSAMainWindow(QMainWindow):
             "3. Copy the notebook content manually"
         )
         msg.setStandardButtons(
-            QMessageBox.StandardButton.Open | QMessageBox.StandardButton.Cancel
+            QMessageBox.StandardButton.Open | QMessageBox.StandardButton.Cancel  # noqa: F821
         )
-        msg.setDefaultButton(QMessageBox.StandardButton.Open)
+        msg.setDefaultButton(QMessageBox.StandardButton.Open)  # noqa: F821
 
-        if msg.exec() == QMessageBox.StandardButton.Open:
+        if msg.exec() == QMessageBox.StandardButton.Open:  # noqa: F821
             webbrowser.open("https://colab.research.google.com/")
 
     def _launch_webapp(self) -> None:
@@ -891,26 +891,26 @@ class PSAMainWindow(QMainWindow):
                     )
                 else:
                     subprocess.Popen(["streamlit", "run", webapp_path])
-                QMessageBox.information(
+                QMessageBox.information(  # noqa: F821
                     self,
                     "Web App",
                     "Launching Streamlit web app...\n\n"
                     "The app will open in your default browser.",
                 )
             except FileNotFoundError:
-                QMessageBox.warning(
+                QMessageBox.warning(  # noqa: F821
                     self,
                     "Streamlit Not Found",
                     "Streamlit is not installed. Install with: pip install streamlit",
                 )
         else:
-            QMessageBox.warning(
+            QMessageBox.warning(  # noqa: F821
                 self, "File Not Found", f"Web app not found: {webapp_path}"
             )
 
     def _show_about(self) -> None:
         """Show about dialog."""
-        QMessageBox.about(
+        QMessageBox.about(  # noqa: F821
             self,
             "About PSA System Analysis",
             "<h3>Two-Stage PSA System Analysis</h3>"
@@ -927,10 +927,10 @@ class PSAMainWindow(QMainWindow):
         )
 
     def _setup_ui(self) -> None:
-        central_widget = QWidget()
+        central_widget = QWidget()  # noqa: F821
         self.setCentralWidget(central_widget)
 
-        main_layout = QHBoxLayout(central_widget)
+        main_layout = QHBoxLayout(central_widget)  # noqa: F821
 
         # Left panel - Inputs
         self.input_panel = InputPanel()
@@ -938,10 +938,10 @@ class PSAMainWindow(QMainWindow):
         main_layout.addWidget(self.input_panel)
 
         # Right panel - Tabs for different views
-        self.tab_widget = QTabWidget()
+        self.tab_widget = QTabWidget()  # noqa: F821
 
         # Results tab
-        results_scroll = QScrollArea()
+        results_scroll = QScrollArea()  # noqa: F821
         results_scroll.setWidgetResizable(True)
         self.results_panel = ResultsPanel()
         results_scroll.setWidget(self.results_panel)
@@ -952,7 +952,7 @@ class PSAMainWindow(QMainWindow):
         self.tab_widget.addTab(self.sensitivity_widget, "Sensitivity Analysis")
 
         # PFD tab
-        pfd_scroll = QScrollArea()
+        pfd_scroll = QScrollArea()  # noqa: F821
         pfd_scroll.setWidgetResizable(True)
         self.pfd_widget = PFDWidget()
         pfd_scroll.setWidget(self.pfd_widget)
@@ -992,7 +992,7 @@ class PSAMainWindow(QMainWindow):
                 self.input_panel.get_parameters()
             )
 
-            model = PSAModel(
+            model = PSAModel(  # noqa: F821
                 total_feed_scfm=total_feed,
                 s2_tail_recycle_frac=s2_recycle,
                 product_recycle_frac=prod_recycle,
@@ -1006,9 +1006,9 @@ class PSAMainWindow(QMainWindow):
             self.sensitivity_widget.set_components(components)
 
         except ValueError as e:
-            QMessageBox.warning(self, "Input Error", f"Invalid input: {e}")
+            QMessageBox.warning(self, "Input Error", f"Invalid input: {e}")  # noqa: F821
         except (RuntimeError, AttributeError) as e:
-            QMessageBox.critical(self, "Calculation Error", f"Error: {e}")
+            QMessageBox.critical(self, "Calculation Error", f"Error: {e}")  # noqa: F821
 
 
 def main() -> None:

@@ -160,7 +160,7 @@ class RigidTransformTab(QWidget):
         Vs = T.space_twist()
 
         lines = [
-            f"\u2501\u2501\u2501 Frame: {T.source_frame} \u2192 {T.target_frame} \u2501\u2501\u2501",
+            f"\u2501\u2501\u2501 Frame: {T.source_frame} \u2192 {T.target_frame} \u2501\u2501\u2501",  # noqa: E501
             "",
             "\u2501\u2501\u2501 Quaternion + Translation \u2501\u2501\u2501",
             f"  q: {fmt_vec(q)}",

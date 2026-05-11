@@ -104,7 +104,7 @@ class PressureDropDataV2(BaseModel):
     )
     velocity_m_s: float = Field(description="Gas velocity [m/s]. Always non-negative.")
     flow_regime: str = Field(
-        description="Flow regime classification: 'Laminar', 'Transitional', or 'Turbulent'."
+        description="Flow regime classification: 'Laminar', 'Transitional', or 'Turbulent'."  # noqa: E501
     )
     density_kg_m3: float = Field(
         description="Gas density [kg/m³] at given P and T. Always positive."

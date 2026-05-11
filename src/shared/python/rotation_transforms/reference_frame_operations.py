@@ -78,7 +78,7 @@ def compute_twist_frame_conversion(transform: Any, twist: Any) -> ReferenceFrame
             "output_twist": output_twist.tolist(),
         },
         explanation_markdown=(
-            "Twists transform with the **adjoint matrix** of a homogeneous transform:\n\n"
+            "Twists transform with the **adjoint matrix** of a homogeneous transform:\n\n"  # noqa: E501
             "`V_b = Ad_T * V_a`, where `Ad_T = [[R, 0], [skew(p)R, R]]` for "
             "`T = [[R, p], [0, 1]]`."
         ),

@@ -32,7 +32,7 @@ _SRC = os.path.abspath(os.path.join(os.path.dirname(__file__), "../src/shared/py
 if _SRC not in sys.path:
     sys.path.insert(0, _SRC)
 
-# Import calculator modules directly to avoid broken syngas_compression_calculator import
+# Import calculator modules directly to avoid broken syngas_compression_calculator import  # noqa: E501
 from upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator import (
     AcidGasComposition,
     AcidGasDewpointCalculator,
@@ -56,7 +56,7 @@ from upstream_drift_tools.process_calculators.financial_calculator import (
 from upstream_drift_tools.process_calculators.flare_calculator import FlareCalculator
 
 # Import gas properties utilities - these use dict composition format
-from upstream_drift_tools.process_calculators.pressure_drop_calculator.utils.gas_properties import (
+from upstream_drift_tools.process_calculators.pressure_drop_calculator.utils.gas_properties import (  # noqa: E501
     calculate_heat_capacity_ratio,
     calculate_ideal_gas_cp,
     calculate_mixture_cp,
@@ -96,7 +96,7 @@ class TestGasMolecularWeight:
     Preconditions: Mole fractions must be non-negative and sum to ~1.0
     Postconditions: MW must respect composition bounds (min_component < MW < max_component)
     Invariants: Pure gas composition should equal component MW
-    """
+    """  # noqa: E501
 
     def test_pure_h2_molecular_weight(self) -> None:
         """Pure H2 should have MW ≈ 2.016 g/mol."""
@@ -124,7 +124,7 @@ class TestGasMolecularWeight:
         assert_allclose(mw, 28.97, rtol=0.01)
 
     def test_syngas_mixture_molecular_weight(self) -> None:
-        """Typical syngas (30% H2, 40% CO, 20% CO2, 10% N2) should give reasonable MW."""
+        """Typical syngas (30% H2, 40% CO, 20% CO2, 10% N2) should give reasonable MW."""  # noqa: E501
         comp = {"H2": 0.3, "CO": 0.4, "CO2": 0.2, "N2": 0.1}
         mw = calculate_mixture_molecular_weight(comp)
         # Bounds: H2 (2) < MW < CO2 (44), more specifically around 18

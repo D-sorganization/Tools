@@ -78,7 +78,7 @@ def test_builder_foot_geoms_are_named_for_grf_lookup() -> None:
 
 
 def test_pelvis_has_anatomical_landmark_geoms() -> None:
-    """The pelvis body must expose named anatomical landmarks for clear tilt visibility."""
+    """The pelvis body must expose named anatomical landmarks for clear tilt visibility."""  # noqa: E501
     xml_string = build_lower_body_xml()
     model = mujoco.MjModel.from_xml_string(xml_string)
 
