@@ -15,6 +15,7 @@ from scipy import integrate
 from scipy.signal import savgol_filter
 
 from src.shared.python.contracts import require
+
 from .core import Signal
 
 # np.trapz was removed in NumPy 2.0; np.trapezoid is the current API.
