@@ -6,11 +6,12 @@ get_text_config / get_layout_config / get_layer_config accessor functions.
 
 from __future__ import annotations
 
-import logging
 from pathlib import Path
 from typing import Any, cast
 
 from programmatic_pid.validation import validate_spec
+
+
 def load_spec(path: str | Path) -> SpecDict:
     """Load a YAML specification file.
 
@@ -30,6 +31,8 @@ def load_spec(path: str | Path) -> SpecDict:
             f"not {type(data).__name__}"
         )
     return cast(SpecDict, data)
+
+
 def prepare_spec(spec_path: str | Path, profile: str | None) -> SpecDict:
     """Load, validate, and apply profile to a spec.
 
@@ -42,6 +45,8 @@ def prepare_spec(spec_path: str | Path, profile: str | None) -> SpecDict:
     prepared = apply_profile(raw, profile)
     validate_spec(prepared)
     return prepared
+
+
 class SpecAccessor:
     """Unified read-only access to spec configuration with defaults.
 
@@ -191,6 +196,8 @@ class SpecAccessor:
         """Return the list of interlock entries, or ``[]`` if absent."""
         v = self._spec.get("interlocks")
         return cast(list[dict[str, Any]], v) if isinstance(v, list) else []
+
+
 # ---------------------------------------------------------------------------
 # Backward-compatible free functions that delegate to the old interface.
 # These are kept so that generator.py continues to work during migration.

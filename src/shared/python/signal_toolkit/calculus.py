@@ -6,10 +6,9 @@ tangent lines, and visualizing calculus operations on signals.
 
 from __future__ import annotations
 
+import typing
 from dataclasses import dataclass
 from enum import Enum
-
-import typing
 
 import numpy as np
 from scipy import integrate
@@ -124,7 +123,7 @@ class Differentiator:
         assert signal is not None, "signal must be provided"
         if order < 1:
             raise PreconditionError(f"Order must be >= 1, got {order}")
-            
+
         result = signal.copy()
         result.name = f"d{order}({signal.name})/dt{order}"
         result.units = f"{signal.units}/s^{order}" if signal.units else ""

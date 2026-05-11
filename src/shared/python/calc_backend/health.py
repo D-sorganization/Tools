@@ -136,9 +136,7 @@ def check_python_runtime() -> HealthCheckResult:
             },
         )
     except Exception as e:
-        return HealthCheckResult(
-            "python_runtime", CheckStatus.UNHEALTHY, error=str(e)
-        )
+        return HealthCheckResult("python_runtime", CheckStatus.UNHEALTHY, error=str(e))
 
 
 async def check_dependencies() -> HealthCheckResult:

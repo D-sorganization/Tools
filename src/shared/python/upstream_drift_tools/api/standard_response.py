@@ -29,11 +29,11 @@ Example:
 
 from __future__ import annotations
 
-from dataclasses import dataclass, asdict
-from enum import Enum
-from typing import Any, Optional
-from uuid import uuid4
 import logging
+from dataclasses import asdict, dataclass
+from enum import Enum
+from typing import Any
+from uuid import uuid4
 
 logger = logging.getLogger(__name__)
 
@@ -77,8 +77,8 @@ class ErrorDetail:
 
     code: ErrorCode
     message: str
-    details: Optional[dict[str, Any]] = None
-    request_id: Optional[str] = None
+    details: dict[str, Any] | None = None
+    request_id: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary representation."""
@@ -125,9 +125,9 @@ class StandardResponse:
     def __init__(
         self,
         status: str,
-        data: Optional[dict[str, Any]] = None,
-        error: Optional[ErrorDetail] = None,
-        metadata: Optional[ResponseMetadata] = None,
+        data: dict[str, Any] | None = None,
+        error: ErrorDetail | None = None,
+        metadata: ResponseMetadata | None = None,
     ):
         """Initialize a StandardResponse.
 
@@ -156,7 +156,7 @@ class StandardResponse:
         cls,
         data: dict[str, Any],
         processing_time_ms: float = 0.0,
-        request_id: Optional[str] = None,
+        request_id: str | None = None,
     ) -> StandardResponse:
         """Create a success response.
 
