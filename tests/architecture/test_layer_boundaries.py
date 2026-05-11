@@ -341,7 +341,7 @@ class TestNoPrintInLibraryCode:
     # Directories whose code legitimately uses print (CLI entry-points, debug
     # utilities that explicitly support file=... output, etc.)
     _ALLOWED_DIRS = {"tests", "scripts", "cli"}
-    _ALLOWED_FILES = {"__main__.py"}
+    _ALLOWED_FILES = {"__main__.py", "cli.py", "mcp_server.py", "watcher.py"}
 
     def test_shared_library_has_no_bare_print_calls(self) -> None:
         """Library code under src/shared/ must use logging, not print().

@@ -27,6 +27,9 @@ slprj/
 .DS_Store
 Thumbs.db
 
+# Codemap index (per-repo, local-only artifact)
+.codemap/
+
 # Data & Outputs
 data/raw/
 output/**/temp/
