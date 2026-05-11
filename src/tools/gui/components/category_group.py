@@ -2,13 +2,11 @@
 
 from typing import Any
 
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QFont, QIcon
+from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
     QFrame,
     QGridLayout,
     QLabel,
-    QPushButton,
     QScrollArea,
     QVBoxLayout,
     QWidget,
@@ -77,7 +75,9 @@ class CollapsibleCategoryGroup(QFrame):
         title_label.setObjectName("categoryTitle")
         label_layout.addWidget(title_label)
 
-        count_label = QLabel(f"{len(self.tools)} tool{'s' if len(self.tools) != 1 else ''}")
+        count_label = QLabel(
+            f"{len(self.tools)} tool{'s' if len(self.tools) != 1 else ''}"
+        )
         count_label.setFont(QFont("Segoe UI", 9))
         count_label.setStyleSheet("color: #666;")
         label_layout.addWidget(count_label)

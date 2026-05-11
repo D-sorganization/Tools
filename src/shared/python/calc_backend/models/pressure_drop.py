@@ -12,7 +12,6 @@ Related to issue #2411 (API Standardization).
 from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict, Field
-from typing import Optional
 
 
 class PressureDropRequest(BaseModel):
@@ -58,7 +57,7 @@ class PressureDropRequest(BaseModel):
     molecular_weight_kg_mol: float = Field(
         ..., gt=0, description="Molecular weight [kg/mol]"
     )
-    viscosity_pa_s: Optional[float] = Field(
+    viscosity_pa_s: float | None = Field(
         default=None,
         gt=0,
         description=(

@@ -28,7 +28,7 @@ import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
-from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtCore import QTimer
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (
     QComboBox,
@@ -39,6 +39,7 @@ from PyQt6.QtWidgets import (
     QLabel,
     QLineEdit,
     QMainWindow,
+    QPushButton,
     QSizePolicy,
     QSpinBox,
     QStatusBar,
@@ -46,7 +47,6 @@ from PyQt6.QtWidgets import (
     QTextEdit,
     QVBoxLayout,
     QWidget,
-    QPushButton,
 )
 
 import rotation_converter as rc
@@ -73,19 +73,30 @@ _AXIS_COLORS: list[str] = ["#ff6b6b", "#51cf66", "#4ecdc4"]
 
 # ── Default Euler conventions ──────────────────────────────────────
 EULER_CONVENTIONS: list[str] = [
-    "xyz", "xyx", "xzy", "xzx",
-    "yzx", "yzy", "yxz", "yxy",
-    "zxy", "zxz", "zyx", "zyz"
+    "xyz",
+    "xyx",
+    "xzy",
+    "xzx",
+    "yzx",
+    "yzy",
+    "yxz",
+    "yxy",
+    "zxy",
+    "zxz",
+    "zyx",
+    "zyz",
 ]
 
 # ── Rotation and Transform imports ──────────────────────────────────
 from rotation_converter import Rotation
 from rotation_converter.rigid_transform import RigidTransform
 
+
 # ── Helper function for theme detection ──────────────────────────────
 def is_dark_theme(theme_name: str) -> bool:
     """Check if the given theme name is a dark theme."""
     return "dark" in theme_name.lower()
+
 
 # Re-export tab classes for backward compatibility
 __all__ = [

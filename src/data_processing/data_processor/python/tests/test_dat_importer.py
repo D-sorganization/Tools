@@ -11,7 +11,6 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
-
 from data_processor.core.dat_importer import (
     detect_dat_delimiter,
     export_dat_to_csv,
@@ -43,7 +42,7 @@ def csv_dat(tmp_path: Path) -> Path:
     """Create a comma-separated DAT file."""
     dat_file = tmp_path / "comma.dat"
     dat_file.write_text(
-        "Time,Temperature,Pressure\n" "0.0,100.5,1.01\n" "1.0,101.2,1.02\n",
+        "Time,Temperature,Pressure\n0.0,100.5,1.01\n1.0,101.2,1.02\n",
         encoding="utf-8",
     )
     return dat_file

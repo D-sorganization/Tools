@@ -12,8 +12,9 @@ from __future__ import annotations
 import logging
 import time
 import uuid
+from datetime import UTC
 from enum import Enum
-from typing import Any, Generic, Optional, TypeVar
+from typing import Any, Generic, TypeVar
 
 from pydantic import BaseModel, Field
 
@@ -52,9 +53,7 @@ class ErrorDetail(BaseModel):
 
     code: ErrorCode = Field(description="Machine-readable error code")
     message: str = Field(description="Human-readable error message")
-    details: Optional[str] = Field(
-        default=None, description="Additional error context"
-    )
+    details: str | None = Field(default=None, description="Additional error context")
 
 
 class ResponseMetadata(BaseModel):
@@ -121,8 +120,8 @@ class StandardResponse(BaseModel, Generic[T]):
         description='Response status: "success" or "error"',
         pattern="^(success|error)$",
     )
-    data: Optional[T] = Field(default=None, description="Calculation result or None")
-    error: Optional[ErrorDetail] = Field(default=None, description="Error details")
+    data: T | None = Field(default=None, description="Calculation result or None")
+    error: ErrorDetail | None = Field(default=None, description="Error details")
     metadata: ResponseMetadata = Field(description="Response metadata")
 
     def model_validate(self, obj: Any) -> StandardResponse[T]:
@@ -185,7 +184,7 @@ class StandardResponseBuilder:
         self,
         code: ErrorCode,
         message: str,
-        details: Optional[str] = None,
+        details: str | None = None,
         api_version: str = "v1",
     ) -> StandardResponse[Any]:
         """Build error response.
@@ -225,6 +224,6 @@ def _get_utc_timestamp() -> str:
     Returns:
         ISO 8601 formatted timestamp string (e.g. "2026-04-30T12:34:56Z").
     """
-    from datetime import datetime, timezone
+    from datetime import datetime
 
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")

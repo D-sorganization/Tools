@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 """Advanced Syngas Compression Calculator — GUI widget and worker thread.
 
@@ -24,7 +23,6 @@ to work without changes.
 
 import logging
 import os
-from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, cast
 
 from .constants import (
@@ -70,8 +68,13 @@ except ImportError:
     HAS_PYQT = False
     QWidget = object  # type: ignore[assignment,misc]
     QThread = object  # type: ignore[assignment,misc]
-    def pyqtSignal(*args, **kwargs): return None
-    def pyqtSlot(*args, **kwargs): return lambda f: f
+
+    def pyqtSignal(*args, **kwargs):
+        return None
+
+    def pyqtSlot(*args, **kwargs):
+        return lambda f: f
+
 
 try:
     from integrated_process_simulator.utilities.logging_config import get_logger
@@ -143,7 +146,6 @@ except ImportError:
     # Minimal fallback for standalone use
     from dataclasses import dataclass as _dc
 
-
     @_dc
     class _SpeciesData:
         molecular_weight: float  # kg/mol
@@ -173,9 +175,6 @@ except ImportError:
 
     def get_species_database() -> Any:
         return _MinimalSpeciesDB()
-
-
-
 
 
 class CompressionCalculationWorker(QThread):

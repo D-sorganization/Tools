@@ -12,7 +12,6 @@ import json
 from uuid import UUID
 
 import pytest
-
 from upstream_drift_tools.api import (
     ErrorCode,
     ErrorDetail,

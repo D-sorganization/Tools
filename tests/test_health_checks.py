@@ -8,7 +8,9 @@ Tests containerization health check endpoints:
 from __future__ import annotations
 
 import json
+
 import pytest
+
 from web_applications.calculator.webapp import create_app
 from web_applications.health_checks import get_health_status, get_readiness_status
 
