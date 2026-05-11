@@ -26,7 +26,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from PyQt6.QtCore import Qt, QTimer, QUrl
+from PyQt6.QtCore import Qt, QTimer, QUrl, pyqtSignal
 from PyQt6.QtWebSockets import QWebSocket
 from PyQt6.QtWidgets import (
     QDockWidget,
@@ -49,6 +49,7 @@ def _get_theme_colors() -> dict[str, str]:
         return get_theme_manager().get_current_colors()
     except ImportError:
         return {}
+
 
 _DEFAULT_SERVER = "ws://127.0.0.1:8000"
 
@@ -158,6 +159,11 @@ class ChatDockWidget(QDockWidget):
 
     # Class-level session for in-process sharing
     _shared_session_id: str | None = None
+
+    # Emitted when the server returns a refreshed model list. The payload is
+    # the raw ``models`` array from the WebSocket ``model_list`` response so
+    # downstream UIs can repopulate their model dropdowns.
+    models_refreshed = pyqtSignal(list)
 
     def __init__(
         self,
@@ -299,6 +305,21 @@ class ChatDockWidget(QDockWidget):
     def _on_connected(self) -> None:
         self._status_label.setText("Connected")
         self._status_label.setStyleSheet("color: #3fb950; font-size: 10px;")
+        # Auto-refresh available models so the dropdown reflects the
+        # current state of Ollama / cloud providers each time the chat
+        # is opened (#2547). The server replies with a ``model_list``
+        # message, which is forwarded via the ``models_refreshed`` signal.
+        self.refresh_models()
+
+    def refresh_models(self) -> None:
+        """Ask the server to re-poll providers and return the model list.
+
+        Safe to call before the socket is connected; the request is dropped
+        silently if the WebSocket is not yet open. Downstream UIs that own
+        the actual model dropdown should connect to ``models_refreshed`` to
+        receive the updated list.
+        """
+        self._send_ws({"action": "refresh_models"})
 
     def _on_disconnected(self) -> None:
         self._status_label.setText("Disconnected - retrying in 3s...")
@@ -348,6 +369,13 @@ class ChatDockWidget(QDockWidget):
 
         elif msg_type == "history":
             self._populate_history(data.get("messages", []))
+
+        elif msg_type == "model_list":
+            # Server-pushed refresh of available models (#2547). Forward to
+            # listeners; the dock widget itself does not own a dropdown.
+            models = data.get("models", [])
+            if isinstance(models, list):
+                self.models_refreshed.emit(models)
 
         elif msg_type == "error":
             detail = data.get("detail", "Unknown error")

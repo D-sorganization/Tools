@@ -43,3 +43,27 @@ class ChatHistoryResponse(BaseModel):
 
     session_id: str
     messages: list[dict]
+
+
+class ChatModelInfo(BaseModel):
+    """A single model entry returned by the server's model-list endpoint."""
+
+    id: str = Field(
+        ..., description="Provider-qualified model id (e.g. 'ollama:llama3')"
+    )
+    name: str = Field(..., description="Human-readable label")
+    provider: str = Field(..., description="Provider key, e.g. 'ollama', 'openai'")
+    available: bool = Field(True, description="False if the provider is unreachable")
+
+
+class ChatModelListResponse(BaseModel):
+    """Server response listing currently-available chat models.
+
+    Sent in reply to the WebSocket ``{"action": "refresh_models"}`` request,
+    or pushed unsolicited when the server detects model availability changes.
+    """
+
+    models: list[ChatModelInfo] = Field(default_factory=list)
+    refreshed_at: str = Field(
+        ..., description="ISO-8601 timestamp of when the providers were polled"
+    )
