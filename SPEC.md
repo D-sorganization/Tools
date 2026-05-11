@@ -710,6 +710,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ### Web Frontends
 - `data_processor`: Improved performance in tight object loops by replacing `for...in` and `hasOwnProperty` with `Object.keys()` and standard `for` loops in `useDataProcessor.ts`.
+- **Performance**: Replaced `.map()` with pre-allocated arrays and single-pass `for` loops across all signal generation functions (`generateSinusoid`, `generateCosine`, `generateSquare`, `generateTriangle`, `generateSawtooth`, `generatePulse`, `generateStep`, `generateExponential`, `generateLinear`, `generateChirp`, `generateConstant`) in `FunctionGenerator.tsx` to minimize garbage collection overhead for large sample arrays.
 - **Performance**: Optimized `generatePolynomial` in `FunctionGenerator.tsx` by using Horner's method and pre-allocating output arrays instead of `.map()` with `Math.pow()`, significantly reducing overhead and improving calculation speed.
 
 ### Version 1.1.128
