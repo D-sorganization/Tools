@@ -13,7 +13,7 @@ from typing import ClassVar
 import numpy as np
 
 try:
-    from contracts import require
+    from src.shared.python.contracts import require
 except ImportError:
 
     def require(condition: object, message: str = "", *args: object) -> None:
