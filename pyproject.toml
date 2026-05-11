@@ -330,3 +330,11 @@ ignore_errors = true
 [[tool.mypy.overrides]]
 module = "signal_toolkit.widget_ui"
 ignore_errors = true
+
+# codemap: tree-sitter Node objects are untyped pervasively and the package
+# uses optional-dep import guards (mcp, blake3, pathspec, watchdog) that
+# mypy flags as unused on systems where the deps happen to be installed.
+# Strict typing can be revisited in a follow-up.
+[[tool.mypy.overrides]]
+module = "codemap.*"
+ignore_errors = true
