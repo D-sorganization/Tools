@@ -209,7 +209,7 @@ class Differentiator:
         else:
             dy = np.gradient(y, t)  # type: ignore[unreachable]
 
-        return dy
+        return np.asarray(dy)
 
     def compute_at_point(
         self,
