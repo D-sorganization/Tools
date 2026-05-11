@@ -141,7 +141,8 @@ repos:
             src/optimizer_gui/|
             src/humanoid_builder_gui/|
             src/rrt_path_planner/|
-            src/rotation_converter/screw_visualization\.py
+            src/rotation_converter/screw_visualization\.py|
+            src/shared/python/codemap/
           )
 
   # Bandit - Security scanning (pre-push only, Python only)
