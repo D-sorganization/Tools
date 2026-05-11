@@ -40,6 +40,82 @@ class TestChatMessageRequest:
         assert req.expertise_level == "expert"
 
 
+class TestResponseStyle:
+    """Tests for the response_style field added in #2552."""
+
+    def test_default_response_style(self):
+        req = ChatMessageRequest(message="Hi")
+        assert req.response_style == "standard"
+
+    def test_explicit_concise(self):
+        req = ChatMessageRequest(message="Hi", response_style="concise")
+        assert req.response_style == "concise"
+
+    def test_explicit_detailed(self):
+        req = ChatMessageRequest(message="Hi", response_style="detailed")
+        assert req.response_style == "detailed"
+
+    def test_invalid_response_style_rejected(self):
+        with pytest.raises(ValueError):
+            ChatMessageRequest(message="Hi", response_style="verbose")
+
+    def test_legacy_beginner_maps_to_detailed(self):
+        # Old "beginner" label implied the AI should be more verbose; the
+        # equivalent new style is "detailed".
+        req = ChatMessageRequest(message="Hi", expertise_level="beginner")
+        assert req.response_style == "detailed"
+
+    def test_legacy_expert_maps_to_concise(self):
+        req = ChatMessageRequest(message="Hi", expertise_level="expert")
+        assert req.response_style == "concise"
+
+    def test_legacy_advanced_maps_to_concise(self):
+        req = ChatMessageRequest(message="Hi", expertise_level="advanced")
+        assert req.response_style == "concise"
+
+    def test_legacy_intermediate_maps_to_standard(self):
+        req = ChatMessageRequest(message="Hi", expertise_level="intermediate")
+        assert req.response_style == "standard"
+
+    def test_explicit_response_style_overrides_legacy_field(self):
+        req = ChatMessageRequest(
+            message="Hi", expertise_level="beginner", response_style="concise"
+        )
+        # Explicit response_style wins over the legacy mapping.
+        assert req.response_style == "concise"
+
+
+class TestStylePromptHelper:
+    """Tests for the style_prompt() helper added in #2552."""
+
+    def test_known_styles(self):
+        from chat.models import (
+            RESPONSE_STYLE_PROMPTS,
+            style_prompt,
+        )
+
+        for style, expected in RESPONSE_STYLE_PROMPTS.items():
+            assert style_prompt(style) == expected
+
+    def test_unknown_falls_back_to_default(self):
+        from chat.models import (
+            DEFAULT_RESPONSE_STYLE,
+            RESPONSE_STYLE_PROMPTS,
+            style_prompt,
+        )
+
+        assert style_prompt("garbage") == RESPONSE_STYLE_PROMPTS[DEFAULT_RESPONSE_STYLE]
+
+    def test_none_falls_back_to_default(self):
+        from chat.models import (
+            DEFAULT_RESPONSE_STYLE,
+            RESPONSE_STYLE_PROMPTS,
+            style_prompt,
+        )
+
+        assert style_prompt(None) == RESPONSE_STYLE_PROMPTS[DEFAULT_RESPONSE_STYLE]
+
+
 class TestChatChunkResponse:
     """Tests for ChatChunkResponse defaults."""
 
