@@ -89,6 +89,13 @@ function deleteToken() {
 }
 
 async function executeCalculation() {
+  if (!expressionInput.value.trim()) {
+    expressionInput.setAttribute("aria-invalid", "true");
+    showToast("Expression is required", 'error');
+    expressionInput.focus();
+    return;
+  }
+
   const payload = buildPayload();
   resultText.textContent = "Working…";
   approxLine.hidden = true;
@@ -98,6 +105,8 @@ async function executeCalculation() {
   executeButton.textContent = "Processing...";
   executeButton.disabled = true;
   executeButton.setAttribute("aria-busy", "true");
+
+  let hasErrorFocus = false;
 
   try {
     const response = await fetch("/api/calculate", {
@@ -116,11 +125,29 @@ async function executeCalculation() {
   } catch (error) {
     resultText.textContent = error.message;
     showToast(error.message, 'error');
+
+    // Shift focus to specific fields based on error message
+    const msg = error.message.toLowerCase();
+    if (msg.includes("variable is required") || msg.includes("function name is required") || msg.includes("comma-separated variables")) {
+      variableInput.setAttribute("aria-invalid", "true");
+      variableInput.focus();
+      hasErrorFocus = true;
+    } else if (msg.includes("limit value is required") || msg.includes("expansion point is required")) {
+      valueInput.setAttribute("aria-invalid", "true");
+      valueInput.focus();
+      hasErrorFocus = true;
+    } else if (msg.includes("expression")) {
+      expressionInput.setAttribute("aria-invalid", "true");
+      expressionInput.focus();
+      hasErrorFocus = true;
+    }
   } finally {
     executeButton.textContent = originalText;
     executeButton.disabled = false;
     executeButton.removeAttribute("aria-busy");
-    expressionInput.focus();
+    if (!hasErrorFocus) {
+      expressionInput.focus();
+    }
   }
 }
 
@@ -297,6 +324,15 @@ function registerEvents() {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       executeCalculation();
+    }
+  });
+
+  // Clear aria-invalid on input
+  [expressionInput, variableInput, valueInput].forEach((input) => {
+    if (input) {
+      input.addEventListener("input", () => {
+        input.removeAttribute("aria-invalid");
+      });
     }
   });
 

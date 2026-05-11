@@ -66,6 +66,7 @@ try:
         create_theme_menu,
         setup_themed_app,
     )
+    from .font_manager import FontManager, get_font_manager
     from .theme_manager import ThemeManager, get_theme_manager
 
     _PYQT6_AVAILABLE = True
@@ -73,6 +74,8 @@ except ImportError:
     _PYQT6_AVAILABLE = False
     ThemeManager = None  # type: ignore[assignment, misc]
     get_theme_manager = None  # type: ignore[assignment]
+    FontManager = None  # type: ignore[assignment, misc]
+    get_font_manager = None  # type: ignore[assignment]
     get_qcolor = None  # type: ignore[assignment]
     ThemedWindowMixin = None  # type: ignore[assignment, misc]
     apply_theme_to_window = None  # type: ignore[assignment]
@@ -94,6 +97,9 @@ __all__ = [
     # Theme manager (requires PyQt6)
     "ThemeManager",
     "get_theme_manager",
+    # Font manager (requires PyQt6)
+    "FontManager",
+    "get_font_manager",
     # Integration helpers (requires PyQt6)
     "ThemedWindowMixin",
     "apply_theme_to_window",

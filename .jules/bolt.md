@@ -17,3 +17,6 @@
 ## 2024-05-18 - Optimization of Array Allocations and Reductions in PSA Calculator
 **Learning:** Using multiple chained `.map()` allocations and array `.reduce()` inside tight calculation steps generates numerous intermediate arrays, leading to O(N) memory allocation and subsequent garbage collection overhead.
 **Action:** Replace multiple `.map()` and `.reduce()` invocations with a single-pass `for` loop that uses pre-allocated arrays (e.g., `new Array(size)`) and accumulates totals manually in high-frequency data calculation modules.
+## 2024-05-18 - Optimization of Numerical Integration RK4 Mapping
+**Learning:** Using `Array.map` to perform vector addition inside the tight `rk4Step` function of a numerical simulation triggers O(N) array allocations on every sub-step (e.g., `a.map((v, i) => v + b[i] * scale)`). This compounds rapidly over thousands of integration steps, creating significant garbage collection overhead and potential UI stutter.
+**Action:** Replace functional array iteration methods like `.map` in high-frequency integration loops with manual pre-allocation (`new Array(size)`) and standard `for` loops to ensure minimal memory pressure.

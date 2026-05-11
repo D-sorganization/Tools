@@ -63,64 +63,119 @@ const LAYER_COLORS = ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#e
 // Signal generation functions
 function generateSinusoid(t: number[], params: WaveformParams): number[] {
   const { amplitude, frequency, phase, offset } = params;
-  return t.map(ti => amplitude * Math.sin(2 * Math.PI * frequency * ti + phase) + offset);
+  // ⚡ Bolt Optimization: Use single-pass for loop and pre-allocated array instead of t.map()
+  // to avoid intermediate closures and minimize garbage collection overhead for large sample arrays.
+  const n = t.length;
+  const result = new Array<number>(n);
+  const angularFreq = 2 * Math.PI * frequency;
+  for (let i = 0; i < n; i++) {
+    result[i] = amplitude * Math.sin(angularFreq * t[i] + phase) + offset;
+  }
+  return result;
 }
 
 function generateCosine(t: number[], params: WaveformParams): number[] {
   const { amplitude, frequency, phase, offset } = params;
-  return t.map(ti => amplitude * Math.cos(2 * Math.PI * frequency * ti + phase) + offset);
+  // ⚡ Bolt Optimization: Use single-pass for loop and pre-allocated array instead of t.map()
+  // to avoid intermediate closures and minimize garbage collection overhead.
+  const n = t.length;
+  const result = new Array<number>(n);
+  const angularFreq = 2 * Math.PI * frequency;
+  for (let i = 0; i < n; i++) {
+    result[i] = amplitude * Math.cos(angularFreq * t[i] + phase) + offset;
+  }
+  return result;
 }
 
 function generateSquare(t: number[], params: WaveformParams): number[] {
   const { amplitude, frequency, dutyCycle, offset } = params;
-  return t.map(ti => {
-    const period = 1 / frequency;
-    const phase = (ti % period) / period;
-    return (phase < dutyCycle ? amplitude : -amplitude) + offset;
-  });
+  // ⚡ Bolt Optimization: Use single-pass for loop and pre-allocated array instead of t.map()
+  const n = t.length;
+  const result = new Array<number>(n);
+  const period = 1 / frequency;
+  for (let i = 0; i < n; i++) {
+    const phase = (t[i] % period) / period;
+    result[i] = (phase < dutyCycle ? amplitude : -amplitude) + offset;
+  }
+  return result;
 }
 
 function generateTriangle(t: number[], params: WaveformParams): number[] {
   const { amplitude, frequency, offset } = params;
-  return t.map(ti => {
-    const period = 1 / frequency;
-    const phase = (ti % period) / period;
+  // ⚡ Bolt Optimization: Use single-pass for loop and pre-allocated array instead of t.map()
+  const n = t.length;
+  const result = new Array<number>(n);
+  const period = 1 / frequency;
+  const amp4 = 4 * amplitude;
+  for (let i = 0; i < n; i++) {
+    const phase = (t[i] % period) / period;
     const value = phase < 0.5
-      ? 4 * amplitude * phase - amplitude
-      : -4 * amplitude * phase + 3 * amplitude;
-    return value + offset;
-  });
+      ? amp4 * phase - amplitude
+      : -amp4 * phase + 3 * amplitude;
+    result[i] = value + offset;
+  }
+  return result;
 }
 
 function generateSawtooth(t: number[], params: WaveformParams): number[] {
   const { amplitude, frequency, offset } = params;
-  return t.map(ti => {
-    const period = 1 / frequency;
-    const phase = (ti % period) / period;
-    return 2 * amplitude * phase - amplitude + offset;
-  });
+  // ⚡ Bolt Optimization: Use single-pass for loop and pre-allocated array instead of t.map()
+  const n = t.length;
+  const result = new Array<number>(n);
+  const period = 1 / frequency;
+  const amp2 = 2 * amplitude;
+  for (let i = 0; i < n; i++) {
+    const phase = (t[i] % period) / period;
+    result[i] = amp2 * phase - amplitude + offset;
+  }
+  return result;
 }
 
 function generatePulse(t: number[], params: WaveformParams): number[] {
   const { amplitude, pulseStart, pulseDuration, offset } = params;
-  return t.map(ti =>
-    ti >= pulseStart && ti < pulseStart + pulseDuration ? amplitude + offset : offset
-  );
+  // ⚡ Bolt Optimization: Use single-pass for loop and pre-allocated array instead of t.map()
+  const n = t.length;
+  const result = new Array<number>(n);
+  const pulseEnd = pulseStart + pulseDuration;
+  const pulseVal = amplitude + offset;
+  for (let i = 0; i < n; i++) {
+    const ti = t[i];
+    result[i] = (ti >= pulseStart && ti < pulseEnd) ? pulseVal : offset;
+  }
+  return result;
 }
 
 function generateStep(t: number[], params: WaveformParams): number[] {
   const { amplitude, stepTime, offset } = params;
-  return t.map(ti => (ti >= stepTime ? amplitude : offset));
+  // ⚡ Bolt Optimization: Use single-pass for loop and pre-allocated array instead of t.map()
+  const n = t.length;
+  const result = new Array<number>(n);
+  for (let i = 0; i < n; i++) {
+    result[i] = t[i] >= stepTime ? amplitude : offset;
+  }
+  return result;
 }
 
 function generateExponential(t: number[], params: WaveformParams): number[] {
   const { amplitude, decayRate, offset } = params;
-  return t.map(ti => amplitude * Math.exp(-decayRate * ti) + offset);
+  // ⚡ Bolt Optimization: Use single-pass for loop and pre-allocated array instead of t.map()
+  const n = t.length;
+  const result = new Array<number>(n);
+  for (let i = 0; i < n; i++) {
+    result[i] = amplitude * Math.exp(-decayRate * t[i]) + offset;
+  }
+  return result;
 }
 
 function generateLinear(t: number[], params: WaveformParams): number[] {
   const { slope, intercept } = params;
-  return t.map(ti => slope * ti + intercept);
+  // ⚡ Bolt Optimization: Use single-pass for loop and pre-allocated array instead of t.map()
+  const n = t.length;
+  const result = new Array<number>(n);
+  for (let i = 0; i < n; i++) {
+    result[i] = slope * t[i] + intercept;
+  }
+  return result;
 }
 
 function generatePolynomial(t: number[], params: WaveformParams): number[] {
@@ -144,21 +199,32 @@ function generatePolynomial(t: number[], params: WaveformParams): number[] {
 
 function generateChirp(t: number[], params: WaveformParams): number[] {
   const { amplitude, chirpF0, chirpF1, chirpMethod } = params;
-  const duration = t[t.length - 1];
-  return t.map(ti => {
-    let freq: number;
-    if (chirpMethod === 'linear') {
-      freq = chirpF0 + (chirpF1 - chirpF0) * ti / duration;
-    } else {
-      freq = chirpF0 * Math.pow(chirpF1 / chirpF0, ti / duration);
-    }
-    return amplitude * Math.sin(2 * Math.PI * freq * ti);
-  });
+  // ⚡ Bolt Optimization: Use single-pass for loop and pre-allocated array instead of t.map()
+  const n = t.length;
+  const result = new Array<number>(n);
+  const duration = t[n - 1];
+  const isLinear = chirpMethod === 'linear';
+  const freqDiff = chirpF1 - chirpF0;
+  const freqRatio = chirpF1 / chirpF0;
+  const pi2 = 2 * Math.PI;
+
+  for (let i = 0; i < n; i++) {
+    const ti = t[i];
+    const freq = isLinear
+      ? chirpF0 + freqDiff * ti / duration
+      : chirpF0 * Math.pow(freqRatio, ti / duration);
+    result[i] = amplitude * Math.sin(pi2 * freq * ti);
+  }
+  return result;
 }
 
 function generateConstant(t: number[], params: WaveformParams): number[] {
   const { constantValue } = params;
-  return t.map(() => constantValue);
+  // ⚡ Bolt Optimization: Use pre-allocated array and fill instead of t.map()
+  const n = t.length;
+  const result = new Array<number>(n);
+  result.fill(constantValue);
+  return result;
 }
 
 // FFT implementation with windowing for accurate frequency visualization

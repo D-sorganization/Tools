@@ -92,6 +92,7 @@ from rotation_converter import Rotation  # noqa: E402
 from rotation_converter.rigid_transform import RigidTransform  # noqa: E402
 
 
+
 # ── Helper function for theme detection ──────────────────────────────
 def is_dark_theme(theme_name: str) -> bool:
     """Check if the given theme name is a dark theme."""
