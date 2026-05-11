@@ -86,6 +86,23 @@ dwsim = [
     "pythonnet>=3.0.0",
     "pydantic>=2.0.0",
 ]
+# Repo-aware code map (tree-sitter symbol index + SQLite FTS5).
+# See: docs/codemap.md and chat_codemap_design.md
+codemap = [
+    "tree-sitter>=0.21,<0.26",
+    "tree-sitter-python>=0.21",
+    "tree-sitter-javascript>=0.21",
+    "tree-sitter-typescript>=0.21",
+    "tree-sitter-rust>=0.21",
+    "tree-sitter-markdown>=0.3",
+    "pydantic>=2.0.0",
+    "watchdog>=3.0.0",
+    "pathspec>=0.11.0",
+]
+# Optional MCP server for external coding agents (Codex, Claude Code).
+codemap-mcp = [
+    "mcp>=1.0.0",
+]
 # Development tools
 dev = [
     "pytest>=9.0.3",
@@ -102,6 +119,9 @@ urdf-gen = "model_generation.cli:main"
 generate-pid = "programmatic_pid.cli:main"
 dwsim-model = "dwsim_model.__main__:main"
 mypy-autofix = "tools.mypy_autofix_agent:main"
+codemap = "codemap.cli:main"
+codemap-watch = "codemap.watcher:main"
+codemap-mcp = "codemap.mcp_server:main"
 
 [project.urls]
 Homepage = "https://github.com/D-sorganization/Tools"
@@ -133,6 +153,7 @@ include = [
     "web_applications*",
     "contracts*",
     "lower_body_model*",
+    "codemap*",
 ]
 exclude = [
     "*.tests*",
