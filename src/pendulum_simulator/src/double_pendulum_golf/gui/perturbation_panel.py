@@ -25,6 +25,8 @@ Closes #1284
 
 from __future__ import annotations
 
+from shared.python.theme.integration import get_theme_manager
+from shared.python.theme.matplotlib_style import apply_plot_theme
 import logging
 from collections.abc import Callable
 from typing import Any
@@ -339,6 +341,9 @@ class PerturbationPanel(QWidget):
         grp = QGroupBox("Tip Speed Distribution")
         lay = QVBoxLayout(grp)
         fig = Figure(figsize=(4, 2.5), facecolor="#12121e")
+        _tm = get_theme_manager()
+        apply_plot_theme(fig, _tm.get_current_colors())
+        _tm.themeChanged.connect(lambda name: apply_plot_theme(fig, _tm.get_theme_colors(name) or _tm.get_current_colors()))
         self._canvas = FigureCanvasQTAgg(fig)
         self._ax = fig.add_subplot(111)
         self._ax.set_facecolor("#1a1a2e")

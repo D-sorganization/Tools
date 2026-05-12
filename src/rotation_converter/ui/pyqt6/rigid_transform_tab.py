@@ -32,6 +32,8 @@ from rotation_converter.ui.pyqt6.plot_helpers import (
     parse_vec,
     style_figure,
 )
+from shared.python.theme.integration import get_theme_manager
+from shared.python.theme.matplotlib_style import apply_plot_theme
 
 
 class RigidTransformTab(QWidget):
@@ -92,6 +94,13 @@ class RigidTransformTab(QWidget):
         plot_group = QGroupBox("3D Transform Visualisation")
         plot_layout = QVBoxLayout(plot_group)
         self._tf_fig = Figure(figsize=(4, 3), dpi=100)
+        _tm = get_theme_manager()
+        apply_plot_theme(self._tf_fig, _tm.get_current_colors())
+        _tm.themeChanged.connect(
+            lambda name: apply_plot_theme(
+                self._tf_fig, _tm.get_theme_colors(name) or _tm.get_current_colors()
+            )
+        )
         self._tf_canvas = FigureCanvas(self._tf_fig)
         self._tf_toolbar = NavigationToolbar(self._tf_canvas, self)
         self._tf_toolbar.setMaximumHeight(30)

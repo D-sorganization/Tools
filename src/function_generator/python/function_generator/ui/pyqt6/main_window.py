@@ -13,6 +13,8 @@ import os
 import numpy as np
 
 from shared.python.contracts import require, require_positive
+from shared.python.theme.integration import get_theme_manager
+from shared.python.theme.matplotlib_style import apply_plot_theme
 
 # Handle matplotlib backend
 if os.environ.get("HEADLESS", "false").lower() == "true":
@@ -162,6 +164,13 @@ class FunctionGeneratorWidget(QWidget):
         time_tab = QWidget()
         time_layout_inner = QVBoxLayout(time_tab)
         self.time_figure = Figure(figsize=(8, 5), facecolor="#1e1e2e")
+        _tm = get_theme_manager()
+        apply_plot_theme(self.time_figure, _tm.get_current_colors())
+        _tm.themeChanged.connect(
+            lambda name: apply_plot_theme(
+                self.time_figure, _tm.get_theme_colors(name) or _tm.get_current_colors()
+            )
+        )
         self.time_canvas = FigureCanvas(self.time_figure)
         self.time_toolbar = NavigationToolbar(self.time_canvas, time_tab)
         time_layout_inner.addWidget(self.time_toolbar)
@@ -172,6 +181,13 @@ class FunctionGeneratorWidget(QWidget):
         freq_tab = QWidget()
         freq_layout_inner = QVBoxLayout(freq_tab)
         self.freq_figure = Figure(figsize=(8, 5), facecolor="#1e1e2e")
+        _tm = get_theme_manager()
+        apply_plot_theme(self.freq_figure, _tm.get_current_colors())
+        _tm.themeChanged.connect(
+            lambda name: apply_plot_theme(
+                self.freq_figure, _tm.get_theme_colors(name) or _tm.get_current_colors()
+            )
+        )
         self.freq_canvas = FigureCanvas(self.freq_figure)
         self.freq_toolbar = NavigationToolbar(self.freq_canvas, freq_tab)
         freq_layout_inner.addWidget(self.freq_toolbar)

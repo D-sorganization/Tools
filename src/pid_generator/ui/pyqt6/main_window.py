@@ -13,6 +13,7 @@ from pathlib import Path
 
 from programmatic_pid import PIDDocument
 from programmatic_pid.profiles import PROFILE_PRESETS
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QApplication,
     QComboBox,
@@ -28,11 +29,12 @@ from PyQt6.QtWidgets import (
 )
 
 from shared.python.contracts import require
+from shared.python.theme.integration import ThemedWindowMixin
 
 logger = logging.getLogger(__name__)
 
 
-class PIDGeneratorMainWindow(QMainWindow):
+class PIDGeneratorMainWindow(ThemedWindowMixin, QMainWindow):
     """Main window for the P&ID Generator tool."""
 
     def __init__(self, parent: QWidget | None = None) -> None:
@@ -41,6 +43,8 @@ class PIDGeneratorMainWindow(QMainWindow):
                 f"parent must be a QWidget or None, got {type(parent).__name__!r}"
             )
         super().__init__(parent)
+        self.setup_theme_support()
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setWindowTitle("P&ID Generator")
         self.setMinimumSize(800, 400)
         self._build_ui()

@@ -32,6 +32,8 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from shared.python.theme.integration import ThemedWindowMixin
+
 # LOD: Extract deep Qt constant chains (>2 levels) to module-level aliases.
 _SCROLLBAR_ALWAYS_OFF = Qt.ScrollBarPolicy.ScrollBarAlwaysOff
 _ALIGN_CENTER = Qt.AlignmentFlag.AlignCenter
@@ -216,12 +218,14 @@ QPushButton#runBtn:hover {{
 """
 
 
-class MultiParamAnalysisWindow(QMainWindow):
+class MultiParamAnalysisWindow(ThemedWindowMixin, QMainWindow):
     """Main window for Multi-Parameter Analysis application."""
 
     def __init__(self) -> None:
         """Initialize the main window."""
         super().__init__()
+        self.setup_theme_support()
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self._results: dict | None = None
         self._setup_ui()
 
@@ -756,7 +760,7 @@ def main() -> int:
     app = QApplication(sys.argv)
     window = MultiParamAnalysisWindow()
     window.show()
-    return app.exec()
+    return int(app.exec())
 
 
 if __name__ == "__main__":

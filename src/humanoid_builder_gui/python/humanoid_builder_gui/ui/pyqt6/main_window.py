@@ -38,6 +38,8 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from shared.python.theme.integration import ThemedWindowMixin
+
 logger = logging.getLogger(__name__)
 
 # PyQt6 enum aliases — eliminate 3-level deep attribute chains (LoD compliance)
@@ -319,12 +321,14 @@ SEGMENT_LENGTH_RATIOS = {
 }
 
 
-class HumanoidBuilderWindow(QMainWindow):
+class HumanoidBuilderWindow(ThemedWindowMixin, QMainWindow):
     """Main window for Humanoid Character Builder application."""
 
     def __init__(self) -> None:
         """Initialize the main window."""
         super().__init__()
+        self.setup_theme_support()
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self._segments: list[SegmentData] = []
         self._setup_ui()
 
