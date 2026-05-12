@@ -588,7 +588,7 @@ class ModelLibrary:
         """Fetch model list from repository."""
         if not (repo_name is not None):
             raise ValueError("repo_name must be provided")
-        models = []
+        models: list[ModelEntry] = []
 
         repo_type = config.get("type", "github")
 
@@ -607,7 +607,7 @@ class ModelLibrary:
         """Fetch models from GitHub repository."""
         if not (repo_name is not None):
             raise ValueError("repo_name must be provided")
-        models = []
+        models: list[ModelEntry] = []
 
         owner = config.get("owner")
         repo = config.get("repo")

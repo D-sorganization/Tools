@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.135                                    |
+| **Spec Version**        | 1.1.136                                    |
 | **Last Spec Update**    | 2026-05-12                                 |
 
 ## 2. Purpose & Mission
@@ -135,7 +135,7 @@ Tools/
 | Unit Converter WSGI      | `src/web_applications/unit_converter/`                                                 | Flask web application with a production WSGI entry point; debug mode is development-only and gated by `FLASK_DEBUG`                                                                                                                                                                                                 |
 | Rust Kernels             | `rust_core/`                                                                           | High-performance mathematical operations, including standard atmosphere calculations that require finite, non-negative altitudes and a canonical full-precision universal gas constant                                                                                                                              |
 | MATLAB Integration       | `matlab/`                                                                              | Wrapped MATLAB scientific code                                                                                                                                                                                                                                                                                      |
-| Fleet Theme System       | `src/python/shared_utilities/theme/`                                                   | Consistent UI theming across tools                                                                                                                                                                                                                                                                                  |
+| Fleet Theme System       | `src/shared/python/theme/`                                                             | Shared PyQt6 theme infrastructure for fleet UI parity, including built-in/custom themes, generated QSS, theme-aware mixins, icon colorization, Matplotlib color synchronization, and compatibility exports for downstream tools                                                                                     |
 
 ### Production-Readiness Hardening
 

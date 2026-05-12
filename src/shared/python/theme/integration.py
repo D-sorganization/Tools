@@ -25,7 +25,7 @@ Usage:
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 from PyQt6.QtWidgets import QApplication, QMenu, QMenuBar
 
@@ -291,8 +291,9 @@ class ThemedWindowMixin:
         elif self._settings_app is None:
             self._settings_app = self.__class__.__name__
 
+        window = cast("QMainWindow", self)
         self._theme_manager = get_theme_manager(
-            self,
+            window,
             self._settings_org,
             self._settings_app,
         )
@@ -308,7 +309,7 @@ class ThemedWindowMixin:
             menubar = self.menuBar()  # type: ignore[attr-defined]
             if menubar is not None:
                 create_theme_menu(
-                    self,
+                    window,
                     menubar,
                     show_custom_options=show_custom_options,
                 )

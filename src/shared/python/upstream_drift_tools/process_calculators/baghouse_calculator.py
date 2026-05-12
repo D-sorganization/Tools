@@ -158,7 +158,7 @@ class BaghouseCalculator:
 
         if mw_avg > 0:
             return cp_mol / mw_avg  # J/(kg·K)
-        return CP_MASS_DEFAULT_FALLBACK  # Default fallback
+        return float(CP_MASS_DEFAULT_FALLBACK)  # Default fallback
 
     def _estimate_volume_flow(
         self,

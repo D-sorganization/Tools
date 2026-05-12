@@ -107,7 +107,7 @@ class SupportPolygon:
             p = np.array([px, py])
 
             # Project p onto line containing p1-p2
-            l2 = np.sum((p1 - p2) ** 2)
+            l2: float = float(np.sum((p1 - p2) ** 2))
             if l2 == 0:
                 dist = np.linalg.norm(p - p1)
             else:
