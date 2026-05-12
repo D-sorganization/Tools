@@ -22,7 +22,7 @@ from __future__ import annotations
 
 import logging
 import math
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -131,7 +131,7 @@ def _parse_vec(text: str) -> np.ndarray | None:
     """Parse a whitespace/comma separated string into a numpy array."""
     try:
         parts = text.replace(",", " ").split()
-        return np.array([float(p) for p in parts])
+        return cast(np.ndarray, np.array([float(p) for p in parts]))
     except (ValueError, TypeError):
         return None
 

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 from PyQt6.QtWidgets import (
@@ -34,7 +34,7 @@ _OPS: tuple[tuple[str, OperationName], ...] = (
 
 def _parse_numbers(value: str) -> np.ndarray:
     parts = value.replace(",", " ").split()
-    return np.asarray([float(part) for part in parts], dtype=float)
+    return cast(np.ndarray, np.asarray([float(part) for part in parts], dtype=float))
 
 
 def _make_matrix_grid(parent: QWidget, rows: int, cols: int) -> list[list[QLineEdit]]:
@@ -55,7 +55,7 @@ def _make_matrix_grid(parent: QWidget, rows: int, cols: int) -> list[list[QLineE
 def _read_matrix(edits: list[list[QLineEdit]]) -> np.ndarray:
     rows = []
     rows.extend([[float(edit.text()) for edit in row_edits] for row_edits in edits])
-    return np.asarray(rows, dtype=float)
+    return cast(np.ndarray, np.asarray(rows, dtype=float))
 
 
 class ReferenceFrameTab(QWidget):

@@ -255,4 +255,4 @@ class FlareCalculator:
         elif temperature > FLARE_HOT_TEMP_K:
             efficiency += FLARE_HOT_TEMP_BOOST
 
-        return max(FLARE_MIN_EFFICIENCY, min(FLARE_MAX_EFFICIENCY, efficiency))
+        return float(max(FLARE_MIN_EFFICIENCY, min(FLARE_MAX_EFFICIENCY, efficiency)))

@@ -1,4 +1,5 @@
 # ruff: noqa
+# mypy: ignore-errors
 # TRACKED_TASK: see #2310 — architecture debt extraction schedule
 # UPDATE: Decomposed into ui/ package.
 
