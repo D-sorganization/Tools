@@ -46,7 +46,7 @@ def _get_theme_colors() -> dict[str, str]:
     try:
         from src.shared.python.theme.theme_manager import get_theme_manager
 
-        return get_theme_manager().get_current_colors()  # type: ignore[return-value]
+        return get_theme_manager().get_current_colors()
     except ImportError:
         return {}
 
