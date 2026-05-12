@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+from shared.python.theme.integration import ThemedWindowMixin
 import logging
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -256,11 +257,13 @@ class ProcessingThread(QThread):
         self.finished.emit(True, summary)
 
 
-class PDFRenamerGUI(QMainWindow):
+class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
     """Main GUI window for PDF Renamer."""
 
     def __init__(self) -> None:
         super().__init__()
+        self.setup_theme_support()
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.processing_thread: ProcessingThread | None = None
         self.preferences = get_user_preferences()
         self.api_manager: APIRenameManager | None = None

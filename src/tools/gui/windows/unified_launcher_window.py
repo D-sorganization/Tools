@@ -24,7 +24,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from shared.python.theme import ThemedWindowMixin
+from shared.python.theme.integration import ThemedWindowMixin
 from tools.gui.components.error_notification import ErrorNotificationDialog
 from tools.gui.components.keyboard_shortcuts_dialog import KeyboardShortcutsDialog
 from tools.gui.components.launch_progress import LaunchProgressDialog
@@ -49,11 +49,13 @@ except ImportError:
     HELP_AVAILABLE = False
 
 
-class UnifiedLauncher(ThemedWindowMixin, QMainWindow):
+class UnifiedLauncher(ThemedWindowMixin, ThemedWindowMixin, QMainWindow):
     """Main launcher window with tabbed interface for all tools."""
 
     def __init__(self) -> None:
         super().__init__()
+        self.setup_theme_support()
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setWindowTitle("Antigravity Unified Tools Launcher")
         self.resize(1000, 700)
         self.repo_root = get_repo_root()

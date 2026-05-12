@@ -14,6 +14,7 @@ New in UI/UX upgrade:
 
 from __future__ import annotations
 
+from shared.python.theme.integration import ThemedWindowMixin
 import logging
 import sys
 from pathlib import Path
@@ -115,7 +116,7 @@ except ImportError:
     pass
 
 
-class MainWindow(QMainWindow):
+class MainWindow(ThemedWindowMixin, QMainWindow):
     """Top-level window for the double pendulum simulator."""
 
     WINDOW_TITLE = "Pendulums"
@@ -134,6 +135,8 @@ class MainWindow(QMainWindow):
 
     def __init__(self) -> None:
         super().__init__()
+        self.setup_theme_support()
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setWindowTitle(self.WINDOW_TITLE)
         self.resize(1400, 800)
         self.setMinimumSize(900, 550)

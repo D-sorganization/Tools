@@ -12,6 +12,7 @@ import logging
 
 import numpy as np
 import pandas as pd
+from shared.python.theme.integration import ThemedDialogMixin
 
 try:
     from PyQt6.QtWidgets import (
@@ -39,7 +40,7 @@ logger = logging.getLogger(__name__)
 
 if PYQT6_AVAILABLE:
 
-    class ContourPlotDialog(QDialog):
+    class ContourPlotDialog(ThemedDialogMixin, QDialog):
         """Dialog for creating contour plots from DataFrame columns."""
 
         def __init__(
@@ -162,7 +163,7 @@ if PYQT6_AVAILABLE:
             except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
                 logger.error(f"Contour plot failed: {e}")
 
-    class HeatmapDialog(QDialog):
+    class HeatmapDialog(ThemedDialogMixin, QDialog):
         """Dialog for creating heatmaps (correlation matrix or custom)."""
 
         def __init__(
@@ -253,7 +254,7 @@ if PYQT6_AVAILABLE:
             except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
                 logger.error(f"Heatmap generation failed: {e}")
 
-    class FilterComparisonDialog(QDialog):
+    class FilterComparisonDialog(ThemedDialogMixin, QDialog):
         """Dialog for comparing original vs filtered signals."""
 
         def __init__(

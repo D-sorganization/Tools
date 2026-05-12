@@ -12,6 +12,7 @@ Design by Contract
 
 from __future__ import annotations
 
+from shared.python.theme.integration import ThemedDialogMixin
 import logging
 
 from PyQt6.QtWidgets import (
@@ -30,7 +31,7 @@ from ..data_extractor import list_available_series
 logger = logging.getLogger(__name__)
 
 
-class ChartDataDialog(QDialog):
+class ChartDataDialog(ThemedDialogMixin, QDialog):
     """Dialog for selecting X/Y data series and regression options.
 
     Usage::

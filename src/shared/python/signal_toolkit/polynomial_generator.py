@@ -68,6 +68,18 @@ class MplCanvas(FigureCanvasQTAgg):
         if not (width is not None):
             raise ValueError("width must be provided")
         self.fig = Figure(figsize=(width, height), dpi=dpi)
+
+        from shared.python.theme.integration import get_theme_manager
+        from shared.python.theme.matplotlib_style import apply_plot_theme
+
+        _tm = get_theme_manager()
+        apply_plot_theme(self.fig, _tm.get_current_colors())
+        _tm.themeChanged.connect(
+            lambda name: apply_plot_theme(
+                self.fig, _tm.get_theme_colors(name) or _tm.get_current_colors()
+            )
+        )
+
         self.axes = self.fig.add_subplot(111)
         super().__init__(self.fig)
         self.setParent(parent)
@@ -349,17 +361,17 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
     def _update_plot(self) -> None:
         """Redraw the plot with current data."""
         self.canvas.axes.clear()
-        self.canvas.axes.set_facecolor("#1e1e1e")
-        self.canvas.figure.patch.set_facecolor("#2b2b2b")
-        self.canvas.axes.grid(True, color="#444444", linestyle="--", linewidth=0.5)
 
-        self.canvas.axes.set_title("Joint Function Generator", color="white")
-        self.canvas.axes.set_xlabel("Time / Input", color="#aaaaaa")
-        self.canvas.axes.set_ylabel("Value", color="#aaaaaa")
+        from shared.python.theme.integration import get_theme_manager
+        from shared.python.theme.matplotlib_style import apply_plot_theme
 
-        self.canvas.axes.tick_params(colors="#aaaaaa", which="both")
-        for spine in self.canvas.axes.spines.values():
-            spine.set_edgecolor("#555555")
+        _tm = get_theme_manager()
+        apply_plot_theme(self.canvas.fig, _tm.get_current_colors())
+
+        self.canvas.axes.grid(True, alpha=0.5)
+        self.canvas.axes.set_title("Joint Function Generator")
+        self.canvas.axes.set_xlabel("Time / Input")
+        self.canvas.axes.set_ylabel("Value")
 
         # Set limits
         self.canvas.axes.set_xlim(self.x_min_spin.value(), self.x_max_spin.value())

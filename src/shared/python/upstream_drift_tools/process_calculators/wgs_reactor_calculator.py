@@ -28,6 +28,9 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 from upstream_drift_tools.utils.state_manager import safe_read_json
 
+from shared.python.theme.integration import get_theme_manager
+from shared.python.theme.matplotlib_style import apply_plot_theme
+
 from .constants import (
     CELSIUS_TO_KELVIN_OFFSET,
     KJ_HR_TO_KW,
@@ -599,6 +602,13 @@ if BASE_CALCULATOR_AVAILABLE:
             layout = QVBoxLayout()
 
             self.figure = Figure(figsize=(10, 6))
+            _tm = get_theme_manager()
+            apply_plot_theme(self.figure, _tm.get_current_colors())
+            _tm.themeChanged.connect(
+                lambda name: apply_plot_theme(
+                    self.figure, _tm.get_theme_colors(name) or _tm.get_current_colors()
+                )
+            )
             self.canvas = FigureCanvas(self.figure)
 
             # Check if canvas is a valid widget before adding to layout

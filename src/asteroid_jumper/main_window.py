@@ -17,13 +17,16 @@ from asteroid_jumper.controller import SimController
 from asteroid_jumper.controls_panel import ControlsPanel
 from asteroid_jumper.metrics_panel import MetricsPanel
 from asteroid_jumper.renderer import AsteroidJumperRenderer
+from shared.python.theme.integration import ThemedWindowMixin
 
 
-class AsteroidJumperWindow(QMainWindow):
+class AsteroidJumperWindow(ThemedWindowMixin, QMainWindow):
     """Top-level window for the Asteroid Jumper simulation."""
 
     def __init__(self) -> None:
         super().__init__()
+        self.setup_theme_support()
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self._ctrl = SimController()
         self._build_ui()
         self._connect_signals()

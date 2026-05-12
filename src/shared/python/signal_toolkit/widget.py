@@ -146,6 +146,18 @@ if HAS_MATPLOTLIB and HAS_PYQT:
             if not (width is not None):
                 raise ValueError("width must be provided")
             fig = Figure(figsize=(width, height), dpi=dpi)
+
+            from shared.python.theme.integration import get_theme_manager
+            from shared.python.theme.matplotlib_style import apply_plot_theme
+
+            _tm = get_theme_manager()
+            apply_plot_theme(fig, _tm.get_current_colors())
+            _tm.themeChanged.connect(
+                lambda name: apply_plot_theme(
+                    self.figure, _tm.get_theme_colors(name) or _tm.get_current_colors()
+                )
+            )
+
             self.axes = fig.add_subplot(111)
             super().__init__(fig)
             self.setSizePolicy(
@@ -155,15 +167,8 @@ if HAS_MATPLOTLIB and HAS_PYQT:
             self.updateGeometry()
 
         def setup_dark_theme(self) -> None:
-            """Apply dark theme to the plot."""
-            self.figure.set_facecolor("#2b2b2b")
-            self.axes.set_facecolor("#1e1e1e")
-            self.axes.tick_params(colors="#ccc")
-            self.axes.xaxis.label.set_color("#ccc")
-            self.axes.yaxis.label.set_color("#ccc")
-            self.axes.title.set_color("white")
-            for spine in self.axes.spines.values():
-                spine.set_color("#555")
+            """Apply dark theme to the plot (deprecated)."""
+            pass
 
     # Import mixins (only available when dependencies are present)
     from .widget_plotting import PlottingMixin

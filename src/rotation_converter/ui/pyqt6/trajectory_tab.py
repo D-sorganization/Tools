@@ -27,6 +27,8 @@ from rotation_converter.ui.pyqt6.plot_helpers import (
     get_plot_colors,
     style_figure,
 )
+from shared.python.theme.integration import get_theme_manager
+from shared.python.theme.matplotlib_style import apply_plot_theme
 
 
 class TrajectoryPlotsTab(QWidget):
@@ -99,6 +101,13 @@ class TrajectoryPlotsTab(QWidget):
 
         # Plot area
         self._fig = Figure(figsize=(10, 5), dpi=100)
+        _tm = get_theme_manager()
+        apply_plot_theme(self._fig, _tm.get_current_colors())
+        _tm.themeChanged.connect(
+            lambda name: apply_plot_theme(
+                self._fig, _tm.get_theme_colors(name) or _tm.get_current_colors()
+            )
+        )
         self._canvas = FigureCanvas(self._fig)
         self._toolbar = NavigationToolbar(self._canvas, self)
         layout.addWidget(self._toolbar)

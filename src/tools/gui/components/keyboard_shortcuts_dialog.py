@@ -13,8 +13,10 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
 )
 
+from shared.python.theme.integration import ThemedDialogMixin
 
-class KeyboardShortcutsDialog(QDialog):
+
+class KeyboardShortcutsDialog(ThemedDialogMixin, QDialog):
     """Dialog showing available keyboard shortcuts."""
 
     def __init__(self, parent: Any) -> None:
@@ -24,6 +26,8 @@ class KeyboardShortcutsDialog(QDialog):
             parent: Parent widget.
         """
         super().__init__(parent)
+        self.setup_theme_support()
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setup_ui()
 
     def setup_ui(self) -> None:

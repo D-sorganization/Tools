@@ -38,6 +38,18 @@ class MplCanvas(FigureCanvas):
         if not (width is not None):
             raise ValueError("width must be provided")
         self.fig = Figure(figsize=(width, height), dpi=100)
+
+        from shared.python.theme.integration import get_theme_manager
+        from shared.python.theme.matplotlib_style import apply_plot_theme
+
+        _tm = get_theme_manager()
+        apply_plot_theme(self.fig, _tm.get_current_colors())
+        _tm.themeChanged.connect(
+            lambda name: apply_plot_theme(
+                self.fig, _tm.get_theme_colors(name) or _tm.get_current_colors()
+            )
+        )
+
         super().__init__(self.fig)
         self.setParent(parent)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)

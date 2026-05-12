@@ -1,4 +1,5 @@
 # mypy: ignore-errors
+from shared.python.theme.integration import ThemedWindowMixin
 import logging
 
 logger = logging.getLogger(__name__)
@@ -18,11 +19,13 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import pyqtSignal
 
 
-class TestWindow(QMainWindow):
+class TestWindow(ThemedWindowMixin, QMainWindow):
     run_requested = pyqtSignal()
 
     def __init__(self):  # type: ignore[no-untyped-def]
         super().__init__()
+        self.setup_theme_support()
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setWindowTitle("Signal Test")
         self.setGeometry(100, 100, 300, 200)
 
@@ -39,7 +42,7 @@ class TestWindow(QMainWindow):
         self.run_requested.connect(self.on_run)
 
     def on_run(self):  # type: ignore[no-untyped-def]
-        print("[TEST] Signal received!")  # noqa: T201
+        logger.info("[TEST] Signal received!")  # noqa: T201
         QMessageBox.information(self, "Success", "Signal was received!")
 
 

@@ -33,6 +33,7 @@ from PyQt6.QtWidgets import (
 
 from contracts import require
 from ode_solver.timeout import SolverTimeoutError, with_timeout
+from shared.python.theme.integration import ThemedWindowMixin
 
 _log = logging.getLogger(__name__)
 
@@ -220,12 +221,14 @@ ODE_PRESETS: dict[str, dict[str, Any]] = {
 }
 
 
-class ODESolverWindow(QMainWindow):
+class ODESolverWindow(ThemedWindowMixin, QMainWindow):
     """Main window for ODE Solver application."""
 
     def __init__(self) -> None:
         """Initialize the main window."""
         super().__init__()
+        self.setup_theme_support()
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self._notes_dock: Any | None = None
         self._setup_ui()
 
@@ -251,9 +254,9 @@ class ODESolverWindow(QMainWindow):
 
         # Menu bar with Notes toggle
         menu_bar = self.menuBar()
-        view_menu = menu_bar.addMenu("&View")  # type: ignore[union-attr]
-        notes_action = view_menu.addAction("Toggle &Notes")  # type: ignore[union-attr]
-        notes_triggered = notes_action.triggered  # type: ignore[union-attr]
+        view_menu = menu_bar.addMenu("&View")
+        notes_action = view_menu.addAction("Toggle &Notes")
+        notes_triggered = notes_action.triggered
         notes_triggered.connect(self._toggle_notes)
 
         # Central widget with scroll area

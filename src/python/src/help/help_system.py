@@ -34,6 +34,8 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from shared.python.theme.integration import ThemedDialogMixin
+
 if TYPE_CHECKING:
     pass
 
@@ -297,7 +299,7 @@ def _process_inline_formatting(text: str) -> str:
     return text
 
 
-class HelpDialog(QDialog):
+class HelpDialog(ThemedDialogMixin, QDialog):
     """Modal dialog for displaying help documentation.
 
     Supports markdown content with navigation history and topic links.
@@ -401,7 +403,7 @@ class HelpDialog(QDialog):
             splitter.setSizes([180, 700])
             layout.addWidget(splitter)
         else:
-            self.topic_list = None  # type: ignore[assignment]
+            self.topic_list = None
             self.content_browser = QTextBrowser()
             self.content_browser.setOpenExternalLinks(True)
             layout.addWidget(self.content_browser)
@@ -963,7 +965,7 @@ def create_help_menu_actions(
     actions.append(tool_help_action)
 
     # Separator (None represents separator)
-    actions.append(None)  # type: ignore[arg-type]
+    actions.append(None)
 
     # About action
     about_action = QAction("About", parent)

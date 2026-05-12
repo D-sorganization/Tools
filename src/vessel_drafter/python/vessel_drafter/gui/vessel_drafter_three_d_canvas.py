@@ -9,6 +9,8 @@ from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
+from shared.python.theme.integration import get_theme_manager
+from shared.python.theme.matplotlib_style import apply_plot_theme
 from vessel_drafter.preview.vessel_drafter_scene import Vessel3DScene
 from vessel_drafter.preview.vessel_drafter_view_options import (
     Vessel3DViewOptions,
@@ -23,6 +25,13 @@ class VesselDrafterThreeDCanvas(FigureCanvasQTAgg):
     def __init__(self) -> None:
         self.figure = Figure(figsize=(7.5, 6.0))
         super().__init__(self.figure)
+        _tm = get_theme_manager()
+        apply_plot_theme(self.figure, _tm.get_current_colors())
+        _tm.themeChanged.connect(
+            lambda name: apply_plot_theme(
+                self.figure, _tm.get_theme_colors(name) or _tm.get_current_colors()
+            )
+        )
         self._scene: Vessel3DScene | None = None
         self._view_state = DEFAULT_VIEW
         self._view_options = Vessel3DViewOptions()

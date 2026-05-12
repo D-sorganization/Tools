@@ -26,9 +26,10 @@ from PyQt6.QtWidgets import (
 
 from lower_body_model.builder import build_lower_body_xml
 from lower_body_model.simulator import LowerBodySimulator
+from shared.python.theme.integration import ThemedWindowMixin
 
 
-class ControlPanel(QMainWindow):
+class ControlPanel(ThemedWindowMixin, QMainWindow):
     """
     Control Panel for Lower Body Simulator.
     Allows real-time tweaking of initial posture and applies basic PD stability.
@@ -36,6 +37,8 @@ class ControlPanel(QMainWindow):
 
     def __init__(self, sim: LowerBodySimulator, mujoco_viewer: viewer.Handle) -> None:
         super().__init__()
+        self.setup_theme_support()
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.sim = sim
         self.viewer = mujoco_viewer
 

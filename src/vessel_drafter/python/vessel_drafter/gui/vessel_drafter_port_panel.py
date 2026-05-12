@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import (
     QDialog,
     QDialogButtonBox,
@@ -18,6 +18,8 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+
+from shared.python.theme.integration import ThemedDialogMixin
 
 
 def make_double_spin(value: float, minimum: float, maximum: float) -> QDoubleSpinBox:
@@ -39,11 +41,13 @@ class PortFieldSpec:
     maximum: float
 
 
-class PortValueDialog(QDialog):
+class PortValueDialog(ThemedDialogMixin, QDialog):
     def __init__(self, title: str, fields: tuple[PortFieldSpec, ...], parent: QWidget):
         if not (title is not None):
             raise ValueError("title must be provided")
         super().__init__(parent)
+        self.setup_theme_support()
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setWindowTitle(title)
         self._spins = tuple(
             make_double_spin(field.default, field.minimum, field.maximum)

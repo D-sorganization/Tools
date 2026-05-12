@@ -37,6 +37,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from shared.python.theme.integration import ThemedWindowMixin
 from urdf_builder_gui.theme import CATPPUCCIN_MOCHA, build_stylesheet
 
 logger = logging.getLogger(__name__)
@@ -44,12 +45,14 @@ logger = logging.getLogger(__name__)
 STYLESHEET = build_stylesheet()
 
 
-class URDFBuilderWindow(QMainWindow):
+class URDFBuilderWindow(ThemedWindowMixin, QMainWindow):
     """Main window for Parametric URDF Builder application."""
 
     def __init__(self) -> None:
         """Initialize the main window."""
         super().__init__()
+        self.setup_theme_support()
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self._setup_ui()
 
     def _setup_ui(self) -> None:
@@ -461,7 +464,7 @@ def main() -> int:
     app = QApplication(sys.argv)
     window = URDFBuilderWindow()
     window.show()
-    return app.exec()
+    return int(app.exec())
 
 
 if __name__ == "__main__":

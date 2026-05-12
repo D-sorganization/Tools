@@ -34,6 +34,8 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from shared.python.theme.integration import ThemedWindowMixin
+
 # Catppuccin Mocha color palette
 CATPPUCCIN_MOCHA = {
     "rosewater": "#f5e0dc",
@@ -201,12 +203,14 @@ QPushButton#loadBtn:hover {{
 """
 
 
-class C3DViewerWindow(QMainWindow):
+class C3DViewerWindow(ThemedWindowMixin, QMainWindow):
     """Main window for C3D Motion Capture Viewer application."""
 
     def __init__(self) -> None:
         """Initialize the main window."""
         super().__init__()
+        self.setup_theme_support()
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self._current_file: Path | None = None
         self._metadata: dict | None = None
         self._notes_dock: Any | None = None
@@ -232,9 +236,9 @@ class C3DViewerWindow(QMainWindow):
 
         # Menu bar with Notes toggle
         menu_bar = self.menuBar()
-        view_menu = menu_bar.addMenu("&View")  # type: ignore[union-attr]
-        notes_action = view_menu.addAction("Toggle &Notes")  # type: ignore[union-attr]
-        notes_action.triggered.connect(self._toggle_notes)  # type: ignore[union-attr]
+        view_menu = menu_bar.addMenu("&View")
+        notes_action = view_menu.addAction("Toggle &Notes")
+        notes_action.triggered.connect(self._toggle_notes)
 
         # Central widget with scroll area
         scroll_area = QScrollArea()
@@ -740,7 +744,7 @@ def main() -> int:
     app = QApplication(sys.argv)
     window = C3DViewerWindow()
     window.show()
-    return app.exec()
+    return int(app.exec())
 
 
 if __name__ == "__main__":

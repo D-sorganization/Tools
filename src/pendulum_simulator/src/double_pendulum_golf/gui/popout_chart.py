@@ -181,17 +181,12 @@ class PopOutChart:
 
         # Create figure
         self._fig = Figure(figsize=(8, 5), dpi=100)
-        self._fig.patch.set_facecolor("#1a1a28")
         self._ax = self._fig.add_subplot(111)
-
         ax = self._ax
-        ax.set_facecolor("#1a1a28")
-        ax.tick_params(colors="#c0c0d8")
-        ax.xaxis.label.set_color("#c0c0d8")
-        ax.yaxis.label.set_color("#c0c0d8")
-        ax.title.set_color("#c0c0d8")
-        for spine in ax.spines.values():
-            spine.set_color("#505070")
+        
+        from shared.python.theme.integration import get_theme_manager
+        from shared.python.theme.matplotlib_style import apply_plot_theme
+        apply_plot_theme(self._fig, get_theme_manager().get_current_colors())
 
         # Plot data
         ax.plot(self._x, self._y, color="#6fa8dc", linewidth=1.5, label="Data")
@@ -211,8 +206,8 @@ class PopOutChart:
         ax.set_xlabel(self._xlabel)
         ax.set_ylabel(self._ylabel)
         ax.set_title(self._title)
-        ax.legend(facecolor="#252540", edgecolor="#505070", labelcolor="#c0c0d8")
-        ax.grid(True, color="#303050", alpha=0.5)
+        ax.legend()
+        ax.grid(True, alpha=0.5)
 
         self._fig.tight_layout()
 
@@ -220,7 +215,13 @@ class PopOutChart:
         from PyQt6.QtCore import Qt
         from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget
 
-        self._window = QMainWindow(self._parent)
+        from shared.python.theme.integration import ThemedWindowMixin
+        class PopOutWindow(ThemedWindowMixin, QMainWindow):
+            pass
+            
+        self._window = PopOutWindow(self._parent)
+        self._window.setup_theme_support()
+        self._window.setWindowFlags(self._window.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self._window.setWindowTitle(self._title)
         self._window.setMinimumSize(700, 450)
         self._window.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)

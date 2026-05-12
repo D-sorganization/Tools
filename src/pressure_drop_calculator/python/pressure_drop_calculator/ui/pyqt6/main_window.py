@@ -11,6 +11,9 @@ from __future__ import annotations
 import os
 from typing import Any
 
+from shared.python.theme.integration import get_theme_manager
+from shared.python.theme.matplotlib_style import apply_plot_theme
+
 if os.environ.get("HEADLESS", "false").lower() == "true":
     import matplotlib
 
@@ -289,6 +292,13 @@ class PressureDropCalculatorWidget(QWidget):
         layout = QVBoxLayout(tab)
 
         self.figure = Figure(figsize=(8, 5), facecolor="#1e1e2e")
+        _tm = get_theme_manager()
+        apply_plot_theme(self.figure, _tm.get_current_colors())
+        _tm.themeChanged.connect(
+            lambda name: apply_plot_theme(
+                self.figure, _tm.get_theme_colors(name) or _tm.get_current_colors()
+            )
+        )
         self.canvas = FigureCanvas(self.figure)
         layout.addWidget(self.canvas)
 

@@ -15,6 +15,7 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
 )
 
+from shared.python.theme.integration import ThemedDialogMixin
 from tools.launch_utils import (
     LaunchError,
     PlatformError,
@@ -23,7 +24,7 @@ from tools.launch_utils import (
 )
 
 
-class ErrorNotificationDialog(QDialog):
+class ErrorNotificationDialog(ThemedDialogMixin, QDialog):
     """Modal dialog for displaying tool launch errors with suggestions."""
 
     def __init__(

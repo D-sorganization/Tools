@@ -22,6 +22,9 @@ Closes #1285
 
 from __future__ import annotations
 
+from shared.python.theme.integration import get_theme_manager
+from shared.python.theme.matplotlib_style import apply_plot_theme
+from shared.python.theme.integration import ThemedDialogMixin
 import csv
 import logging
 from collections.abc import Callable
@@ -182,7 +185,7 @@ class _ComparisonWorker(QObject):
 # ---------------------------------------------------------------------------
 
 
-class SwingComparisonDialog(QDialog):
+class SwingComparisonDialog(ThemedDialogMixin, QDialog):
     """Dialog for comparing swing robustness across multiple presets.
 
     Parameters
@@ -335,6 +338,9 @@ class SwingComparisonDialog(QDialog):
         grp = QGroupBox("Mean ± Std Tip Speed by Preset")
         lay = QVBoxLayout(grp)
         fig = Figure(figsize=(6, 2.5), facecolor="#12121e")
+        _tm = get_theme_manager()
+        apply_plot_theme(fig, _tm.get_current_colors())
+        _tm.themeChanged.connect(lambda name: apply_plot_theme(fig, _tm.get_theme_colors(name) or _tm.get_current_colors()))
         self._canvas = FigureCanvasQTAgg(fig)
         self._ax = fig.add_subplot(111)
         self._ax.set_facecolor("#1a1a2e")

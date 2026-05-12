@@ -10,6 +10,8 @@ This GUI provides interactive visualization and analysis of PSA system
 performance, including sensitivity analysis and O2 safety calculations.
 """
 
+from PyQt6.QtCore import Qt
+from shared.python.theme.integration import ThemedWindowMixin
 import logging
 import os
 import subprocess
@@ -796,11 +798,13 @@ class PFDWidget(QWidget):  # noqa: F811, F821
         layout.addWidget(legend_group)
 
 
-class PSAMainWindow(QMainWindow):  # noqa: F811, F821
+class PSAMainWindow(ThemedWindowMixin, QMainWindow):  # noqa: F811, F821
     """Main window for PSA analysis application."""
 
     def __init__(self) -> None:
         super().__init__()
+        self.setup_theme_support()
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setWindowTitle("Two-Stage PSA System Analysis")
         self.setMinimumSize(1400, 900)
         self._setup_menu()
