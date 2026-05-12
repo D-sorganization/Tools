@@ -20,6 +20,7 @@ try:
     from .models import (
         ChatChunkResponse,
         ChatHistoryResponse,
+        ChatIndexStatusResponse,
         ChatMessageRequest,
         ChatModelInfo,
         ChatModelListResponse,
@@ -31,6 +32,7 @@ except ImportError:
     _PYDANTIC_AVAILABLE = False
     ChatChunkResponse = None  # type: ignore[assignment, misc]
     ChatHistoryResponse = None  # type: ignore[assignment, misc]
+    ChatIndexStatusResponse = None  # type: ignore[assignment, misc]
     ChatMessageRequest = None  # type: ignore[assignment, misc]
     ChatModelInfo = None  # type: ignore[assignment, misc]
     ChatModelListResponse = None  # type: ignore[assignment, misc]
@@ -52,6 +54,7 @@ __all__ = [
     "ChatChunkResponse",
     "ChatSessionInfo",
     "ChatHistoryResponse",
+    "ChatIndexStatusResponse",
     "ChatModelInfo",
     "ChatModelListResponse",
 ]
