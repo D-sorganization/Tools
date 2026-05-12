@@ -1,8 +1,9 @@
-"""Shared AI chat widget and contract models.
+"""Shared AI chat widget, service base, and contract models.
 
 Provides a portable ChatDockWidget (QDockWidget + QWebSocket) that connects
 to any FastAPI-based chat WebSocket endpoint, plus Pydantic contract models
-for the chat protocol.
+for the chat protocol, a shared ChatServiceBase for session management,
+and a reusable WebSocket router factory.
 
 Usage::
 
@@ -16,14 +17,13 @@ Usage::
     main_window.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, dock)
 """
 
+from .service_base import ChatMessage, ChatServiceBase, ChatSession
+
 try:
     from .models import (
         ChatChunkResponse,
         ChatHistoryResponse,
-        ChatIndexStatusResponse,
         ChatMessageRequest,
-        ChatModelInfo,
-        ChatModelListResponse,
         ChatSessionInfo,
     )
 
@@ -32,20 +32,23 @@ except ImportError:
     _PYDANTIC_AVAILABLE = False
     ChatChunkResponse = None  # type: ignore[assignment, misc]
     ChatHistoryResponse = None  # type: ignore[assignment, misc]
-    ChatIndexStatusResponse = None  # type: ignore[assignment, misc]
     ChatMessageRequest = None  # type: ignore[assignment, misc]
-    ChatModelInfo = None  # type: ignore[assignment, misc]
-    ChatModelListResponse = None  # type: ignore[assignment, misc]
     ChatSessionInfo = None  # type: ignore[assignment, misc]
 
-try:
-    from .chat_dock_widget import ChatDockWidget, ChatMessageBubble
+_PYQT6_AVAILABLE = None
 
-    _PYQT6_AVAILABLE = True
-except ImportError:
-    _PYQT6_AVAILABLE = False
-    ChatDockWidget = None  # type: ignore[assignment, misc]
-    ChatMessageBubble = None  # type: ignore[assignment, misc]
+
+def __getattr__(name: str):
+    if name in {"ChatDockWidget", "ChatMessageBubble"}:
+        from . import chat_dock_widget
+
+        return getattr(chat_dock_widget, name)
+    if name == "create_chat_router":
+        from .router_factory import create_chat_router
+
+        return create_chat_router
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 __all__ = [
     "ChatDockWidget",
@@ -54,7 +57,8 @@ __all__ = [
     "ChatChunkResponse",
     "ChatSessionInfo",
     "ChatHistoryResponse",
-    "ChatIndexStatusResponse",
-    "ChatModelInfo",
-    "ChatModelListResponse",
+    "ChatServiceBase",
+    "ChatSession",
+    "ChatMessage",
+    "create_chat_router",
 ]
