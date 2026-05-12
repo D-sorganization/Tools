@@ -86,6 +86,14 @@ fn tools_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
         signal::py_bindings::py_bilateral_filter,
         &signal_mod
     )?)?;
+    signal_mod.add_function(wrap_pyfunction!(
+        signal::py_bindings::py_lms_filter,
+        &signal_mod
+    )?)?;
+    signal_mod.add_function(wrap_pyfunction!(
+        signal::py_bindings::py_rls_filter,
+        &signal_mod
+    )?)?;
     m.add_submodule(&signal_mod)?;
 
     // Register engineering submodule
