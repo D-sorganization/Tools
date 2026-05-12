@@ -128,8 +128,7 @@ impl RRTPlanner {
                 let rows = flat_path.len() / 3;
                 // pyo3/numpy 0.24 dropped `from_vec_bound`; `PyArray1::from_vec`
                 // returns a 1-D bound array which we then reshape to (rows, 3).
-                let py_array =
-                    numpy::PyArray1::from_vec(py, flat_path).reshape([rows, 3])?;
+                let py_array = numpy::PyArray1::from_vec(py, flat_path).reshape([rows, 3])?;
                 return Ok(Some(py_array));
             }
         }

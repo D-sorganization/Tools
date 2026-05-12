@@ -18,6 +18,8 @@
 //! - `triangle` — Triangle wave
 //! - `chirp` — Linear frequency sweep
 //! - `polynomial` — y = Σ cₙ·tⁿ
+//! - `moving_average` — centered rectangular smoothing matching NumPy `same`
+//! - `exponential_smoothing` — first-order recursive smoothing
 
 use std::f64::consts::PI;
 
@@ -252,6 +254,61 @@ pub fn bilateral_filter(
     out
 }
 
+/// Apply centered moving-average smoothing.
+///
+/// The output alignment matches `numpy.convolve(values, ones(window)/window, mode="same")`.
+/// Near the boundaries this is equivalent to zero-padding outside the input signal.
+pub fn moving_average(values: &[f64], window_size: usize) -> Vec<f64> {
+    debug_assert!(window_size > 0, "window_size must be >= 1");
+
+    let n = values.len();
+    if n == 0 {
+        return Vec::new();
+    }
+    if window_size == 0 {
+        return vec![f64::NAN; n];
+    }
+
+    let mut prefix = Vec::with_capacity(n + 1);
+    prefix.push(0.0);
+    for &value in values {
+        prefix.push(prefix.last().copied().unwrap_or(0.0) + value);
+    }
+
+    let full_len = n + window_size - 1;
+    let start = (window_size - 1) / 2;
+    let mut out = Vec::with_capacity(n);
+    for k in start..(start + n).min(full_len) {
+        let input_start = k.saturating_sub(window_size - 1);
+        let input_end = k.min(n - 1) + 1;
+        out.push((prefix[input_end] - prefix[input_start]) / window_size as f64);
+    }
+    out
+}
+
+/// Apply first-order exponential smoothing.
+///
+/// Uses the canonical recurrence `out[0] = values[0]` and
+/// `out[i] = alpha * values[i] + (1 - alpha) * out[i - 1]`.
+pub fn exponential_smoothing(values: &[f64], alpha: f64) -> Vec<f64> {
+    debug_assert!(
+        alpha > 0.0 && alpha <= 1.0,
+        "alpha must be in the interval (0, 1]"
+    );
+
+    if values.is_empty() {
+        return Vec::new();
+    }
+
+    let mut out = Vec::with_capacity(values.len());
+    out.push(values[0]);
+    for &value in values.iter().skip(1) {
+        let previous = *out.last().expect("output contains the initial sample");
+        out.push(alpha * value + (1.0 - alpha) * previous);
+    }
+    out
+}
+
 /// Generate a rectangular pulse.
 pub fn pulse(
     times: &[f64],
@@ -290,7 +347,11 @@ pub fn lms_filter(
     order: usize,
     step_size: f64,
 ) -> (Vec<f64>, Vec<f64>) {
-    debug_assert_eq!(signal.len(), reference.len(), "signal and reference must match");
+    debug_assert_eq!(
+        signal.len(),
+        reference.len(),
+        "signal and reference must match"
+    );
     debug_assert!(order >= 1, "order must be >= 1");
     debug_assert!(step_size > 0.0, "step_size must be > 0");
 
@@ -333,7 +394,11 @@ pub fn rls_filter(
     forgetting_factor: f64,
     delta: f64,
 ) -> (Vec<f64>, Vec<f64>) {
-    debug_assert_eq!(signal.len(), reference.len(), "signal and reference must match");
+    debug_assert_eq!(
+        signal.len(),
+        reference.len(),
+        "signal and reference must match"
+    );
     debug_assert!(order >= 1, "order must be >= 1");
     debug_assert!(forgetting_factor > 0.0 && forgetting_factor <= 1.0);
     debug_assert!(delta > 0.0, "delta must be > 0");
@@ -370,10 +435,19 @@ pub fn rls_filter(
 
         // px = P * x_window
         for row in 0..order {
-            px[row] = p[row].iter().zip(x_window.iter()).map(|(pij, xj)| pij * xj).sum();
+            px[row] = p[row]
+                .iter()
+                .zip(x_window.iter())
+                .map(|(pij, xj)| pij * xj)
+                .sum();
         }
         // denom = lam + x_window^T * px
-        let denom: f64 = lam + x_window.iter().zip(px.iter()).map(|(xi, pxi)| xi * pxi).sum::<f64>();
+        let denom: f64 = lam
+            + x_window
+                .iter()
+                .zip(px.iter())
+                .map(|(xi, pxi)| xi * pxi)
+                .sum::<f64>();
         // k = px / denom
         for row in 0..order {
             k_vec[row] = px[row] / denom;
@@ -402,7 +476,6 @@ pub mod py_bindings {
     use super::*;
     use numpy::{PyArray1, PyReadonlyArray1};
     use pyo3::prelude::*;
-
 
     #[pyfunction]
     #[pyo3(name = "sinusoid")]
@@ -580,6 +653,42 @@ pub mod py_bindings {
         Ok(PyArray1::from_vec(py, result))
     }
 
+    /// PyO3 binding for `moving_average`.
+    #[pyfunction]
+    #[pyo3(name = "moving_average")]
+    pub fn py_moving_average<'py>(
+        py: Python<'py>,
+        values: PyReadonlyArray1<'py, f64>,
+        window_size: usize,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if window_size == 0 {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "window_size must be >= 1",
+            ));
+        }
+        let v = values.as_slice().unwrap().to_vec();
+        let result = py.allow_threads(move || moving_average(&v, window_size));
+        Ok(PyArray1::from_vec(py, result))
+    }
+
+    /// PyO3 binding for `exponential_smoothing`.
+    #[pyfunction]
+    #[pyo3(name = "exponential_smoothing")]
+    pub fn py_exponential_smoothing<'py>(
+        py: Python<'py>,
+        values: PyReadonlyArray1<'py, f64>,
+        alpha: f64,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if alpha.is_nan() || alpha <= 0.0 || alpha > 1.0 {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "alpha must be in (0, 1]",
+            ));
+        }
+        let v = values.as_slice().unwrap().to_vec();
+        let result = py.allow_threads(move || exponential_smoothing(&v, alpha));
+        Ok(PyArray1::from_vec(py, result))
+    }
+
     /// PyO3 binding for `lms_filter`.
     ///
     /// Runs the full LMS loop natively in Rust without acquiring the GIL on
@@ -656,9 +765,7 @@ pub mod py_bindings {
             ));
         }
         if delta <= 0.0 || delta.is_nan() {
-            return Err(pyo3::exceptions::PyValueError::new_err(
-                "delta must be > 0",
-            ));
+            return Err(pyo3::exceptions::PyValueError::new_err("delta must be > 0"));
         }
         let x = signal.as_slice().unwrap().to_vec();
         let d = reference.as_slice().unwrap().to_vec();
@@ -859,6 +966,36 @@ mod tests {
     }
 
     #[test]
+    fn test_moving_average_matches_numpy_same_for_odd_window() {
+        let values = [1.0, 2.0, 4.0, 8.0, 16.0];
+        let out = moving_average(&values, 3);
+        let expected = [1.0, 7.0 / 3.0, 14.0 / 3.0, 28.0 / 3.0, 8.0];
+        for (actual, expected) in out.iter().zip(expected) {
+            assert!((actual - expected).abs() < 1e-12);
+        }
+    }
+
+    #[test]
+    fn test_moving_average_matches_numpy_same_for_even_window() {
+        let values = [1.0, 2.0, 4.0, 8.0];
+        let out = moving_average(&values, 4);
+        let expected = [0.75, 1.75, 3.75, 3.5];
+        for (actual, expected) in out.iter().zip(expected) {
+            assert!((actual - expected).abs() < 1e-12);
+        }
+    }
+
+    #[test]
+    fn test_exponential_smoothing_matches_python_recurrence() {
+        let values = [10.0, 14.0, 13.0, 20.0];
+        let out = exponential_smoothing(&values, 0.25);
+        let expected = [10.0, 11.0, 11.5, 13.625];
+        for (actual, expected) in out.iter().zip(expected) {
+            assert!((actual - expected).abs() < 1e-12);
+        }
+    }
+
+    #[test]
     fn test_lms_output_length_matches_input() {
         let n = 200;
         let x: Vec<f64> = (0..n).map(|i| (i as f64 * 0.1).sin()).collect();
@@ -878,7 +1015,10 @@ mod tests {
         let (_, e) = lms_filter(&x, &d, 10, 0.005);
         let early_err: f64 = e[10..60].iter().map(|v| v * v).sum::<f64>() / 50.0;
         let late_err: f64 = e[1900..].iter().map(|v| v * v).sum::<f64>() / 100.0;
-        assert!(late_err < early_err, "LMS error must decrease over time (early={early_err:.4}, late={late_err:.4})");
+        assert!(
+            late_err < early_err,
+            "LMS error must decrease over time (early={early_err:.4}, late={late_err:.4})"
+        );
     }
 
     #[test]
@@ -902,6 +1042,9 @@ mod tests {
         let (_, e_rls) = rls_filter(&x, &d, 10, 0.99, 0.01);
         let mse_lms: f64 = e_lms[10..200].iter().map(|v| v * v).sum::<f64>();
         let mse_rls: f64 = e_rls[10..200].iter().map(|v| v * v).sum::<f64>();
-        assert!(mse_rls < mse_lms, "RLS should converge faster than LMS (rls={mse_rls:.4}, lms={mse_lms:.4})");
+        assert!(
+            mse_rls < mse_lms,
+            "RLS should converge faster than LMS (rls={mse_rls:.4}, lms={mse_lms:.4})"
+        );
     }
 }

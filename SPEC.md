@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST UPDATED: 2026-05-11
+  LAST UPDATED: 2026-05-12
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.134                                    |
+| **Spec Version**        | 1.1.135                                    |
 | **Last Spec Update**    | 2026-05-12                                 |
 
 ## 2. Purpose & Mission
@@ -506,6 +506,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-12 | 1.1.135 | Added Rust `tools-core.signal` moving-average and exponential-smoothing kernels with PyO3 numpy vector-in/vector-out endpoints, filling the remaining smoothing-filter slice after the LMS/RLS migration.                                                                                                                                                                                                                                                                                                                                                           |
 | 2026-05-12 | 1.1.134 | Promoted LMS/RLS adaptive filters to native Rust implementations via PyO3 bindings, eliminating Python-side vectorization overhead for high-frequency signal processing pipelines (PR #2575).                                                                                                                                                                                                                                                                                                                                                                       |
 | 2026-05-11 | 1.1.132 | Fixed `signal_toolkit.calculus` import: replaced bare `from src.shared.python.contracts import require` (broken because the repo root is not on `pytest`'s pythonpath) with the sibling-module try/except pattern used in `core.py`, and cast `Differentiator.differentiate`'s return to `np.asarray(dy)` to keep mypy `no-any-return` clean. Unblocks `tests (3.x)` matrix on `main`.                                                                                                                                                                              |
 | 2026-05-11 | 1.1.131 | Added shared `codemap` package (`src/shared/python/codemap/`) — tree-sitter symbol index over SQLite FTS5 with a 6-function pydantic query API (`search_code`, `get_symbol`, `who_calls`, `imports_of`, `neighbors`, `repo_summary`), CLI (`codemap rebuild/search/who-calls/export/info`), `watchdog` daemon (`codemap-watch`), and FastMCP server (`codemap-mcp`) so external coding agents inherit the same data the in-app chat consumes. `.codemap/` is gitignored; embedding layer deferred to a follow-up.                                                   |
