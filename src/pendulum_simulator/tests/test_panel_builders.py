@@ -1,3 +1,5 @@
+from PyQt6.QtCore import Qt
+from shared.python.theme.integration import ThemedWindowMixin
 from typing import Any
 
 """Tests for panel builders."""
@@ -269,9 +271,11 @@ def test_build_golfer_panel(mock_run, mock_set_perturb, qapp) -> Any:
 
 
 def test_wire_toolstrip(qapp) -> Any:
-    class DummyMainWindow(QMainWindow):
+    class DummyMainWindow(ThemedWindowMixin, QMainWindow):
         def __init__(self):
             super().__init__()
+            self.setup_theme_support()
+            self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
             self._toolstrip = ToolStrip()
             self._tabs = QTabWidget()
             self._double_panel = MagicMock()

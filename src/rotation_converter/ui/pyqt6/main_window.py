@@ -28,7 +28,7 @@ import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
-from PyQt6.QtCore import QTimer
+from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (
     QComboBox,
@@ -52,6 +52,8 @@ from PyQt6.QtWidgets import (
 import rotation_converter as rc
 from rotation_converter.ui.pyqt6.console_tab import CommandConsoleTab
 from rotation_converter.ui.pyqt6.reference_frame_tab import ReferenceFrameTab
+from shared.python.theme.integration import ThemedWindowMixin, get_theme_manager
+from shared.python.theme.matplotlib_style import apply_plot_theme
 
 logger = logging.getLogger(__name__)
 
@@ -261,6 +263,13 @@ class RotationConverterTab(QWidget):
         plot_group = QGroupBox("3D Rotation Axes")
         plot_layout = QVBoxLayout(plot_group)
         self._fig = Figure(figsize=(4, 3), dpi=100)
+        _tm = get_theme_manager()
+        apply_plot_theme(self._fig, _tm.get_current_colors())
+        _tm.themeChanged.connect(
+            lambda name: apply_plot_theme(
+                self._fig, _tm.get_theme_colors(name) or _tm.get_current_colors()
+            )
+        )
         self._canvas = FigureCanvas(self._fig)
         self._toolbar = NavigationToolbar(self._canvas, self)
         self._toolbar.setMaximumHeight(30)
@@ -501,6 +510,13 @@ class RigidTransformTab(QWidget):
         plot_group = QGroupBox("3D Transform Visualisation")
         plot_layout = QVBoxLayout(plot_group)
         self._tf_fig = Figure(figsize=(4, 3), dpi=100)
+        _tm = get_theme_manager()
+        apply_plot_theme(self._tf_fig, _tm.get_current_colors())
+        _tm.themeChanged.connect(
+            lambda name: apply_plot_theme(
+                self._tf_fig, _tm.get_theme_colors(name) or _tm.get_current_colors()
+            )
+        )
         self._tf_canvas = FigureCanvas(self._tf_fig)
         self._tf_toolbar = NavigationToolbar(self._tf_canvas, self)
         self._tf_toolbar.setMaximumHeight(30)
@@ -761,6 +777,13 @@ class TrajectoryPlotsTab(QWidget):
 
         # Plot area
         self._fig = Figure(figsize=(10, 5), dpi=100)
+        _tm = get_theme_manager()
+        apply_plot_theme(self._fig, _tm.get_current_colors())
+        _tm.themeChanged.connect(
+            lambda name: apply_plot_theme(
+                self._fig, _tm.get_theme_colors(name) or _tm.get_current_colors()
+            )
+        )
         self._canvas = FigureCanvas(self._fig)
         self._toolbar = NavigationToolbar(self._canvas, self)
         layout.addWidget(self._toolbar)
@@ -1082,6 +1105,13 @@ class ScrewVisualiserTab(QWidget):
         layout.addLayout(ctrl2)
 
         self._fig = Figure(figsize=(10, 7), dpi=100)
+        _tm = get_theme_manager()
+        apply_plot_theme(self._fig, _tm.get_current_colors())
+        _tm.themeChanged.connect(
+            lambda name: apply_plot_theme(
+                self._fig, _tm.get_theme_colors(name) or _tm.get_current_colors()
+            )
+        )
         self._canvas = FigureCanvas(self._fig)
         self._toolbar = NavigationToolbar(self._canvas, self)
         layout.addWidget(self._toolbar)
@@ -1170,11 +1200,13 @@ class ScrewVisualiserTab(QWidget):
 # =====================================================================
 
 
-class RotationConverterMainWindow(QMainWindow):
+class RotationConverterMainWindow(ThemedWindowMixin, QMainWindow):
     """Main window with tabbed interface and theme integration."""
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
+        self.setup_theme_support()
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setWindowTitle("Rotation Converter")
         self.setMinimumSize(1200, 800)
         self._build_ui()

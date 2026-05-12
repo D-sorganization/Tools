@@ -25,6 +25,9 @@ import logging
 import os
 from typing import TYPE_CHECKING, Any, cast
 
+from shared.python.theme.integration import get_theme_manager
+from shared.python.theme.matplotlib_style import apply_plot_theme
+
 from .constants import (
     ATOL_ZERO,
     CELSIUS_TO_KELVIN_OFFSET,
@@ -500,6 +503,13 @@ if HAS_PYQT:
             from matplotlib.figure import Figure  # lazy import
 
             self.figure = Figure(figsize=(10, 8))
+            _tm = get_theme_manager()
+            apply_plot_theme(self.figure, _tm.get_current_colors())
+            _tm.themeChanged.connect(
+                lambda name: apply_plot_theme(
+                    self.figure, _tm.get_theme_colors(name) or _tm.get_current_colors()
+                )
+            )
             self.canvas = FigureCanvas(self.figure)
             layout.addWidget(self.canvas)
 

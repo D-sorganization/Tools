@@ -13,6 +13,7 @@ for the selected pendulum joint.
 
 from __future__ import annotations
 
+from shared.python.theme.integration import ThemedDialogMixin
 import logging
 import os
 import sys
@@ -107,7 +108,7 @@ else:
     )
 
 
-class FunctionGeneratorDialog(QDialog):
+class FunctionGeneratorDialog(ThemedDialogMixin, QDialog):
     """Tabbed dialog for torque profile design.
 
     Tab 1 — **Design**: PolynomialGeneratorWidget (draw / click / drag / equation → fit)

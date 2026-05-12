@@ -32,13 +32,15 @@ from PyQt6.QtWidgets import (
 from tile_launcher.manager import AppManager
 from tile_launcher.models import AppDefinition, LaunchType
 
+from shared.python.theme.integration import ThemedDialogMixin, ThemedWindowMixin
+
 logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from notes.notes_dock_widget import NotesDockWidget
 
 
-class SelectionDialog(QDialog):
+class SelectionDialog(ThemedDialogMixin, QDialog):
     """Dialog that allows users to pick an app from a provided list."""
 
     def __init__(self, title: str, apps: Iterable[AppDefinition]) -> None:
@@ -46,6 +48,8 @@ class SelectionDialog(QDialog):
         if not (title is not None):
             raise ValueError("title must be provided")
         super().__init__()
+        self.setup_theme_support()
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setWindowTitle(title)
         self.setModal(True)
         self.selected_id: str | None = None
@@ -82,7 +86,7 @@ class SelectionDialog(QDialog):
         self.accept()
 
 
-class LauncherWindow(QMainWindow):
+class LauncherWindow(ThemedWindowMixin, QMainWindow):
     """Main window hosting the tile-based launcher experience."""
 
     def __init__(self, manager: AppManager) -> None:
@@ -90,6 +94,8 @@ class LauncherWindow(QMainWindow):
         if not (manager is not None):
             raise ValueError("manager must be provided")
         super().__init__()
+        self.setup_theme_support()
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.manager = manager
         self.edit_mode = False
         self.notes_dock: NotesDockWidget | None = None

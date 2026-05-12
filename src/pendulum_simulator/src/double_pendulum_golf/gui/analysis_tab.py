@@ -24,6 +24,8 @@ DRY
 
 from __future__ import annotations
 
+from shared.python.theme.integration import get_theme_manager
+from shared.python.theme.matplotlib_style import apply_plot_theme
 from numba import jit
 
 import logging
@@ -203,6 +205,9 @@ class AnalysisTab:
             self._fig_2d = Figure(figsize=(7, 5), dpi=100)
             self._fig_2d.patch.set_facecolor("#1a1a28")  # type: ignore[attr-defined]
             self._ax_2d = self._fig_2d.add_subplot(111)
+            _tm = get_theme_manager()
+            apply_plot_theme(self._fig_2d, _tm.get_current_colors())
+            _tm.themeChanged.connect(lambda name: apply_plot_theme(self._fig_2d, _tm.get_theme_colors(name) or _tm.get_current_colors()))
             self._canvas_2d = FigureCanvasQTAgg(self._fig_2d)
             self._plot_tabs.addTab(self._canvas_2d, "2D Plot")
 
@@ -210,6 +215,9 @@ class AnalysisTab:
             self._fig_3d = Figure(figsize=(7, 5), dpi=100)
             self._fig_3d.patch.set_facecolor("#1a1a28")  # type: ignore[attr-defined]
             self._ax_3d = self._fig_3d.add_subplot(111, projection="3d")
+            _tm = get_theme_manager()
+            apply_plot_theme(self._fig_3d, _tm.get_current_colors())
+            _tm.themeChanged.connect(lambda name: apply_plot_theme(self._fig_3d, _tm.get_theme_colors(name) or _tm.get_current_colors()))
             self._canvas_3d = FigureCanvasQTAgg(self._fig_3d)
             self._plot_tabs.addTab(self._canvas_3d, "3D Surface")
         else:

@@ -22,6 +22,9 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from shared.python.theme.integration import get_theme_manager
+from shared.python.theme.matplotlib_style import apply_plot_theme
+
 from .matplotlib_renderer import MatplotlibRenderer
 from .specs import PlotSpec
 
@@ -64,6 +67,13 @@ class PlotWidget(QWidget):
 
         # Matplotlib canvas
         self._figure = Figure(figsize=(8, 6), dpi=100)
+        _tm = get_theme_manager()
+        apply_plot_theme(self._figure, _tm.get_current_colors())
+        _tm.themeChanged.connect(
+            lambda name: apply_plot_theme(
+                self._figure, _tm.get_theme_colors(name) or _tm.get_current_colors()
+            )
+        )
         self._canvas = FigureCanvasQTAgg(self._figure)
         self._toolbar = NavigationToolbar2QT(self._canvas, self)
 

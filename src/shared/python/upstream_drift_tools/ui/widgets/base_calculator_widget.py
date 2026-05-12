@@ -7,6 +7,8 @@ from typing import Any
 
 from PyQt6.QtWidgets import QMainWindow, QMessageBox, QVBoxLayout, QWidget
 
+from shared.python.theme.integration import ThemedWindowMixin
+
 from ..mixins.base_calculator_mixin import BaseCalculatorMixin
 
 logger = logging.getLogger(__name__)
@@ -32,7 +34,7 @@ class BaseCalculatorWidget(QWidget, BaseCalculatorMixin):
         QMessageBox.information(self, title, message)
 
 
-class BaseCalculatorWindow(QMainWindow, BaseCalculatorMixin):
+class BaseCalculatorWindow(ThemedWindowMixin, QMainWindow, BaseCalculatorMixin):
     """Base QMainWindow for standalone calculator applications."""
 
     def __init__(

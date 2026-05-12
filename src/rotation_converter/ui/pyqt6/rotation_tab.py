@@ -33,6 +33,8 @@ from rotation_converter.ui.pyqt6.plot_helpers import (
     parse_vec,
     style_figure,
 )
+from shared.python.theme.integration import get_theme_manager
+from shared.python.theme.matplotlib_style import apply_plot_theme
 
 
 class RotationConverterTab(QWidget):
@@ -117,6 +119,13 @@ class RotationConverterTab(QWidget):
         plot_group = QGroupBox("3D Rotation Axes")
         plot_layout = QVBoxLayout(plot_group)
         self._fig = Figure(figsize=(4, 3), dpi=100)
+        _tm = get_theme_manager()
+        apply_plot_theme(self._fig, _tm.get_current_colors())
+        _tm.themeChanged.connect(
+            lambda name: apply_plot_theme(
+                self._fig, _tm.get_theme_colors(name) or _tm.get_current_colors()
+            )
+        )
         self._canvas = FigureCanvas(self._fig)
         self._toolbar = NavigationToolbar(self._canvas, self)
         self._toolbar.setMaximumHeight(30)

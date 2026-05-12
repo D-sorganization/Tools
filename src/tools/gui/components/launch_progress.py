@@ -16,8 +16,10 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
 )
 
+from shared.python.theme.integration import ThemedDialogMixin
 
-class LaunchProgressDialog(QDialog):
+
+class LaunchProgressDialog(ThemedDialogMixin, QDialog):
     """Modal dialog showing launch progress with spinner and timeout."""
 
     # Spinner animation frames

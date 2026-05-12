@@ -23,6 +23,7 @@ Design by Contract
 
 from __future__ import annotations
 
+from shared.python.theme.integration import ThemedDialogMixin
 import json
 import logging
 import sys
@@ -269,7 +270,7 @@ class DiagnosticsTracker:
 # ---------------------------------------------------------------------------
 
 
-class DiagnosticsViewer(QDialog):
+class DiagnosticsViewer(ThemedDialogMixin, QDialog):
     """Modal dialog that displays diagnostic events in a searchable table."""
 
     def __init__(

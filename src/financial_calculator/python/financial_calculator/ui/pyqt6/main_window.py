@@ -31,6 +31,8 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from shared.python.theme.integration import ThemedWindowMixin
+
 # Catppuccin Mocha colors
 COLORS = {
     "base": "#1e1e2e",
@@ -302,7 +304,7 @@ class FinancialCalculatorEngine:
         return list(result)
 
 
-class FinancialCalculatorMainWindow(QMainWindow):
+class FinancialCalculatorMainWindow(ThemedWindowMixin, QMainWindow):
     """Main window for Financial Calculator application."""
 
     def __init__(self, parent: QWidget | None = None) -> None:
@@ -317,6 +319,8 @@ class FinancialCalculatorMainWindow(QMainWindow):
         if parent is not None and not isinstance(parent, QWidget):
             raise TypeError(f"parent must be a QWidget or None, got {type(parent)}")
         super().__init__(parent)
+        self.setup_theme_support()
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setWindowTitle("Financial Calculator")
         self.setMinimumSize(1200, 800)
         self.setStyleSheet(get_stylesheet())
@@ -344,9 +348,9 @@ class FinancialCalculatorMainWindow(QMainWindow):
         """Set up the user interface."""
         # Menu bar with Notes toggle — break into named intermediates (LoD)
         menu_bar = self.menuBar()
-        view_menu = menu_bar.addMenu("&View")  # type: ignore[union-attr]
-        notes_action = view_menu.addAction("Toggle &Notes")  # type: ignore[union-attr]
-        notes_action.triggered.connect(self._toggle_notes)  # type: ignore[union-attr]
+        view_menu = menu_bar.addMenu("&View")
+        notes_action = view_menu.addAction("Toggle &Notes")
+        notes_action.triggered.connect(self._toggle_notes)
 
         central = QWidget()
         self.setCentralWidget(central)
