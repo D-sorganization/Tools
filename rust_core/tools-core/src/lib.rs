@@ -8,8 +8,8 @@ pub mod atmosphere;
 pub mod ball_flight;
 pub mod engineering;
 pub mod math;
-pub mod signal;
 pub mod rrt;
+pub mod signal;
 // Re-export primary types
 pub use math::{clamp, lerp, GRAVITY, R_GAS};
 pub use math_primitives::matrix3::Matrix3;
@@ -80,6 +80,10 @@ fn tools_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     )?)?;
     signal_mod.add_function(wrap_pyfunction!(
         signal::py_bindings::py_pulse,
+        &signal_mod
+    )?)?;
+    signal_mod.add_function(wrap_pyfunction!(
+        signal::py_bindings::py_bilateral_filter,
         &signal_mod
     )?)?;
     m.add_submodule(&signal_mod)?;
