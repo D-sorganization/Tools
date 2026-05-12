@@ -191,9 +191,9 @@ class TestSemanticVersioning:
         assert pyproject.exists(), "pyproject.toml not found"
         content = pyproject.read_text()
         # Naive but reliable: look for the project version declaration
-        assert (
-            'version = "1.0.0"' in content
-        ), "Expected 'version = \"1.0.0\"' in pyproject.toml"
+        assert 'version = "1.0.0"' in content, (
+            "Expected 'version = \"1.0.0\"' in pyproject.toml"
+        )
 
     @pytest.mark.unit
     def test_programmatic_pid_version_is_1_0_0(self):
@@ -208,6 +208,6 @@ class TestSemanticVersioning:
         )
         assert init_py.exists(), f"programmatic_pid __init__.py not found at {init_py}"
         content = init_py.read_text()
-        assert (
-            '__version__ = "1.0.0"' in content
-        ), "Expected '__version__ = \"1.0.0\"' in programmatic_pid/__init__.py"
+        assert '__version__ = "1.0.0"' in content, (
+            "Expected '__version__ = \"1.0.0\"' in programmatic_pid/__init__.py"
+        )

@@ -496,9 +496,7 @@ class ODESolverWindow(QMainWindow):
             t_start = self.t_start_input.value()
             t_end = self.t_end_input.value()
             num_points = self.num_points_input.value()
-            require(
-                t_end > t_start, "t_end must be greater than t_start", t_end
-            )  # noqa: F821
+            require(t_end > t_start, "t_end must be greater than t_start", t_end)  # noqa: F821
             require(num_points >= 2, "Need at least 2 points", num_points)  # noqa: F821
             t_eval = np.linspace(t_start, t_end, num_points)
 

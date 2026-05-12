@@ -11,7 +11,7 @@ from __future__ import annotations
 import json
 import logging
 import shutil
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -332,9 +332,7 @@ class StateManager:
 
             if export_path is None:
                 safe_name = self._sanitize_filename(state_name)
-                timestamp = datetime.now(timezone.utc).strftime(
-                    "%Y%m%d_%H%M%S"
-                )  # noqa: UP017
+                timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")  # noqa: UP017
                 export_filename = f"{safe_name}_{timestamp}.cestate"
                 final_export_path = self.exports_dir / export_filename
             else:
@@ -477,9 +475,7 @@ class StateManager:
     def _create_backup(self, state_file: Path) -> None:
         """Create backup of existing state file"""
         try:
-            timestamp = datetime.now(timezone.utc).strftime(
-                "%Y%m%d_%H%M%S"
-            )  # noqa: UP017
+            timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")  # noqa: UP017
             backup_name = f"{state_file.stem}_{timestamp}.backup"
             backup_path = self.backups_dir / backup_name
 

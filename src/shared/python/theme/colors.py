@@ -83,7 +83,7 @@ def _load_themes_from_json() -> dict[str, dict[str, str]] | None:
             data = json.load(f)
 
         themes: dict[str, dict[str, str]] = {}
-        for _theme_id, theme_def in data.get("themes", {}).items():
+        for theme_def in data.get("themes", {}).values():
             # Convert kebab-case ID to display name and merge colors + semantic
             flat: dict[str, str] = {"name": theme_def["name"]}
             flat.update(theme_def.get("colors", {}))
@@ -410,8 +410,7 @@ def is_valid_hex_color(value: str) -> bool:
     if not value:
         return False
 
-    if value.startswith("#"):
-        value = value[1:]
+    value = value.removeprefix("#")
 
     return bool(re.fullmatch(r"[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8}", value))
 
@@ -432,8 +431,7 @@ def normalise_hex_color(value: str) -> str:
         raise ValueError(f"Invalid colour value: {value!r}")
 
     stripped = value.strip()
-    if stripped.startswith("#"):
-        stripped = stripped[1:]
+    stripped = stripped.removeprefix("#")
 
     if len(stripped) == 3:
         stripped = "".join(ch * 2 for ch in stripped)
@@ -470,6 +468,8 @@ def get_rgba(hex_color: str, alpha: float = 1.0) -> tuple[float, float, float, f
     """
     if not (hex_color is not None):
         raise ValueError("hex_color must be provided")
+    if not (hex_color is not None):
+        raise ValueError("hex_color must be provided")
     hex_color = hex_color.lstrip("#")
 
     if len(hex_color) == 8:  # Has alpha component
@@ -478,11 +478,10 @@ def get_rgba(hex_color: str, alpha: float = 1.0) -> tuple[float, float, float, f
         b = int(hex_color[4:6], 16) / 255
         a = int(hex_color[6:8], 16) / 255
         return (r, g, b, a * alpha)
-    else:
-        r = int(hex_color[0:2], 16) / 255
-        g = int(hex_color[2:4], 16) / 255
-        b = int(hex_color[4:6], 16) / 255
-        return (r, g, b, alpha)
+    r = int(hex_color[0:2], 16) / 255
+    g = int(hex_color[2:4], 16) / 255
+    b = int(hex_color[4:6], 16) / 255
+    return (r, g, b, alpha)
 
 
 def get_matplotlib_colors(theme: dict[str, str]) -> dict[str, str | float]:

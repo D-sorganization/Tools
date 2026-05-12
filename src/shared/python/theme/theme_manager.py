@@ -107,14 +107,13 @@ class ThemeManager(QObject):
     ) -> ThemeManager:
         """Get the singleton ThemeManager instance.
 
-        On first call, creates the instance with the provided parameters.
-        Subsequent calls return the existing instance (parameters are ignored).
+        On first call, creates the instance. Subsequent calls return it.
 
         Args:
-            main_window: Optional main window (only used on first call)
-            app_context: Optional app context (only used on first call)
-            settings_org: Optional settings org (only used on first call)
-            settings_app: Optional settings app (only used on first call)
+            main_window: Optional main window.
+            app_context: Optional app context.
+            settings_org: Optional settings org.
+            settings_app: Optional settings app.
 
         Returns:
             The singleton ThemeManager instance

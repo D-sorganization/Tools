@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 from typing import Any, cast
 
 from PyQt6.QtCore import (
@@ -65,9 +65,7 @@ class ConversionRow:
         self.from_value = from_value
         self.to_value = to_value
         self.is_saved = is_saved
-        self.last_used = (
-            last_used or datetime.now(timezone.utc).isoformat()
-        )  # noqa: UP017
+        self.last_used = last_used or datetime.now(UTC).isoformat()  # noqa: UP017
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""
