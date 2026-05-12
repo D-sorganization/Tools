@@ -292,7 +292,7 @@ class ThemedWindowMixin:
             self._settings_app = self.__class__.__name__
 
         self._theme_manager = get_theme_manager(
-            self,  # type: ignore[arg-type]
+            self,
             self._settings_org,
             self._settings_app,
         )
@@ -308,7 +308,7 @@ class ThemedWindowMixin:
             menubar = self.menuBar()  # type: ignore[attr-defined]
             if menubar is not None:
                 create_theme_menu(
-                    self,  # type: ignore[arg-type]
+                    self,
                     menubar,
                     show_custom_options=show_custom_options,
                 )
