@@ -180,3 +180,5 @@ src/vessel_drafter/python/vessel_drafter/gui/vessel_drafter_window.py
 src/vessel_drafter/python/vessel_drafter/preview/vessel_drafter_scene.py
 src/web_applications/calculator/calculator.py
 src/web_applications/unit_converter/converter.py
+src/pendulum_simulator/src/double_pendulum_golf/gui/controls_widget_base.py
+src/pendulum_simulator/tests/test_simulation_panel.py
