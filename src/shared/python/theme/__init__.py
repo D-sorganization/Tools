@@ -60,13 +60,13 @@ try:
         ThemeManagerDialog,
         ThemePreviewWidget,
     )
+    from .font_manager import FontManager, get_font_manager
     from .integration import (
         ThemedWindowMixin,
         apply_theme_to_window,
         create_theme_menu,
         setup_themed_app,
     )
-    from .font_manager import FontManager, get_font_manager
     from .theme_manager import ThemeManager, get_theme_manager
 
     _PYQT6_AVAILABLE = True

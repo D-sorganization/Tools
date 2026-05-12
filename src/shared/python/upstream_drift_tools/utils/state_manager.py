@@ -332,7 +332,9 @@ class StateManager:
 
             if export_path is None:
                 safe_name = self._sanitize_filename(state_name)
-                timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")  # noqa: UP017
+                timestamp = datetime.now(timezone.utc).strftime(
+                    "%Y%m%d_%H%M%S"
+                )  # noqa: UP017
                 export_filename = f"{safe_name}_{timestamp}.cestate"
                 final_export_path = self.exports_dir / export_filename
             else:
@@ -475,7 +477,9 @@ class StateManager:
     def _create_backup(self, state_file: Path) -> None:
         """Create backup of existing state file"""
         try:
-            timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")  # noqa: UP017
+            timestamp = datetime.now(timezone.utc).strftime(
+                "%Y%m%d_%H%M%S"
+            )  # noqa: UP017
             backup_name = f"{state_file.stem}_{timestamp}.backup"
             backup_path = self.backups_dir / backup_name
 
@@ -500,9 +504,8 @@ class StateManager:
     def cleanup_old_backups(self, max_age_days: int = 30) -> None:
         """Clean up old backup files"""
         try:
-            cutoff_date = (
-                datetime.now(timezone.utc).timestamp()  # noqa: UP017
-                - (max_age_days * 24 * 3600)
+            cutoff_date = datetime.now(timezone.utc).timestamp() - (  # noqa: UP017
+                max_age_days * 24 * 3600
             )
 
             for backup_file in self.backups_dir.glob("*.backup"):

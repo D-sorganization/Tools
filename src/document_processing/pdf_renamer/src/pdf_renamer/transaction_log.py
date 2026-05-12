@@ -22,7 +22,9 @@ class TransactionLog:
         if log_path is None:
             log_path = Path.cwd() / "pdf_renamer_transactions.jsonl"
         self.log_path = log_path
-        self.session_id = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")  # noqa: UP017
+        self.session_id = datetime.now(timezone.utc).strftime(
+            "%Y%m%d_%H%M%S"
+        )  # noqa: UP017
 
     def log_rename(
         self, original_path: Path, new_path: Path, success: bool, error: str = ""

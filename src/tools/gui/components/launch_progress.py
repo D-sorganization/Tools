@@ -50,8 +50,7 @@ class LaunchProgressDialog(QDialog):
         self.setModal(True)
         self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.resize(400, 200)
-        self.setStyleSheet(
-            """
+        self.setStyleSheet("""
             QDialog {
                 background-color: #f5f5f5;
                 border-radius: 8px;
@@ -91,8 +90,7 @@ class LaunchProgressDialog(QDialog):
             QPushButton:hover {
                 background-color: #da190b;
             }
-            """
-        )
+            """)
 
         layout = QVBoxLayout(self)
         layout.setSpacing(15)

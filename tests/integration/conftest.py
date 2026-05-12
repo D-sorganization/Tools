@@ -326,8 +326,7 @@ def mock_plugin_directory(integration_temp_dir: Path) -> Path:
 
     # Create plugin files
     plugin_a = plugins_dir / "plugin_a.py"
-    plugin_a.write_text(
-        """
+    plugin_a.write_text("""
 \"\"\"Sample plugin A for testing.\"\"\"
 
 PLUGIN_NAME = "Plugin A"
@@ -338,12 +337,10 @@ def activate():
 
 def get_tools():
     return {"tool_a": "function_a", "tool_b": "function_b"}
-"""
-    )
+""")
 
     plugin_b = plugins_dir / "plugin_b.py"
-    plugin_b.write_text(
-        """
+    plugin_b.write_text("""
 \"\"\"Sample plugin B for testing.\"\"\"
 
 PLUGIN_NAME = "Plugin B"
@@ -354,8 +351,7 @@ def activate():
 
 def get_tools():
     return {"tool_c": "function_c", "tool_d": "function_d"}
-"""
-    )
+""")
 
     # Create __init__.py
     init_file = plugins_dir / "__init__.py"

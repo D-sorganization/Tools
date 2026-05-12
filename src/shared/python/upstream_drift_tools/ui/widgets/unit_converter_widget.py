@@ -65,7 +65,9 @@ class ConversionRow:
         self.from_value = from_value
         self.to_value = to_value
         self.is_saved = is_saved
-        self.last_used = last_used or datetime.now(timezone.utc).isoformat()  # noqa: UP017
+        self.last_used = (
+            last_used or datetime.now(timezone.utc).isoformat()
+        )  # noqa: UP017
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""

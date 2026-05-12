@@ -20,7 +20,6 @@ if _NATIVE_DIR not in sys.path:
 
 from physics_native import DoublePendulum, DoublePendulumParams  # noqa: E402
 
-
 # ---------------------------------------------------------------------------
 # DoublePendulumParams constructor preconditions
 # ---------------------------------------------------------------------------

@@ -25,7 +25,7 @@ BUILTIN_FONTS = [
     "Outfit",
     "Helvetica Neue",
     "Arial",
-    "Sans Serif"
+    "Sans Serif",
 ]
 
 

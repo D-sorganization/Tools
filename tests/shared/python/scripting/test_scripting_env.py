@@ -24,9 +24,9 @@ def test_blocked_builtins_not_present_in_namespace() -> None:
     sandbox_builtins = env.namespace["__builtins__"]
     assert isinstance(sandbox_builtins, dict), "__builtins__ must be a restricted dict"
     for name in _BLOCKED_BUILTINS:
-        assert name not in sandbox_builtins, (
-            f"Blocked builtin '{name}' leaked into sandbox"
-        )
+        assert (
+            name not in sandbox_builtins
+        ), f"Blocked builtin '{name}' leaked into sandbox"
 
 
 @pytest.mark.unit
@@ -34,15 +34,15 @@ def test_import_is_replaced_not_removed() -> None:
     """``__import__`` must be present in __builtins__ but be a restricted wrapper."""
     env = ConsoleEnvironment()
     sandbox_builtins = env.namespace["__builtins__"]
-    assert "__import__" in sandbox_builtins, (
-        "__import__ must exist for C-extension sub-imports"
-    )
+    assert (
+        "__import__" in sandbox_builtins
+    ), "__import__ must exist for C-extension sub-imports"
     # The wrapper must not be the real builtins.__import__
     import builtins as _builtins
 
-    assert sandbox_builtins["__import__"] is not _builtins.__import__, (
-        "__import__ must be the restricted wrapper, not the real one"
-    )
+    assert (
+        sandbox_builtins["__import__"] is not _builtins.__import__
+    ), "__import__ must be the restricted wrapper, not the real one"
 
 
 @pytest.mark.unit
@@ -65,9 +65,9 @@ def test_os_system_is_blocked_via_import_restriction(tmp_path: Path) -> None:
     _, err = env.execute("import os; os.system('echo pwned')")
     # The restricted __import__ wrapper raises ImportError for os.
     assert err, "Expected an error when attempting os.system() via import"
-    assert "ImportError" in err or "blocked" in err.lower(), (
-        f"Unexpected error message: {err!r}"
-    )
+    assert (
+        "ImportError" in err or "blocked" in err.lower()
+    ), f"Unexpected error message: {err!r}"
 
 
 @pytest.mark.unit
@@ -76,15 +76,15 @@ def test_blocked_import_modules_are_denied() -> None:
     env = ConsoleEnvironment()
     # Spot-check a representative subset to keep the test fast.
     spot_check = {"os", "subprocess", "sys", "socket"}
-    assert spot_check.issubset(_BLOCKED_IMPORT_MODULES), (
-        "spot-check set must be a subset"
-    )
+    assert spot_check.issubset(
+        _BLOCKED_IMPORT_MODULES
+    ), "spot-check set must be a subset"
     for module_name in spot_check:
         _, err = env.execute(f"import {module_name}")
         assert err, f"Expected ImportError when importing '{module_name}'"
-        assert "ImportError" in err or "blocked" in err.lower(), (
-            f"import of '{module_name}' did not produce expected error: {err!r}"
-        )
+        assert (
+            "ImportError" in err or "blocked" in err.lower()
+        ), f"import of '{module_name}' did not produce expected error: {err!r}"
 
 
 @pytest.mark.unit
