@@ -1,26 +1,35 @@
+#[cfg(feature = "python")]
 use numpy::{PyArray2, PyArrayMethods};
+#[cfg(feature = "python")]
 use pyo3::prelude::*;
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 use std::f64;
 
 #[derive(Clone, Debug)]
-#[pyclass]
+#[cfg_attr(feature = "python", pyclass)]
 pub struct Obstacle {
     pub obs_type: i32, // 0=sphere, 1=cube
     pub position: [f64; 3],
     pub size: f64,
 }
 
-#[pymethods]
 impl Obstacle {
-    #[new]
     pub fn new(obs_type: i32, position: [f64; 3], size: f64) -> Self {
         Self {
             obs_type,
             position,
             size,
         }
+    }
+}
+
+#[cfg(feature = "python")]
+#[pymethods]
+impl Obstacle {
+    #[new]
+    fn py_new(obs_type: i32, position: [f64; 3], size: f64) -> Self {
+        Self::new(obs_type, position, size)
     }
 }
 
@@ -56,7 +65,8 @@ impl Obstacle {
     }
 }
 
-#[pyclass]
+#[cfg_attr(feature = "python", pyclass)]
+#[cfg_attr(not(feature = "python"), allow(dead_code))]
 pub struct RRTPlanner {
     bounds: [f64; 6],
     max_iterations: usize,
@@ -66,10 +76,7 @@ pub struct RRTPlanner {
     rng: StdRng,
 }
 
-#[pymethods]
 impl RRTPlanner {
-    #[new]
-    #[pyo3(signature = (bounds, max_iterations=5000, seed=None))]
     pub fn new(bounds: [f64; 6], max_iterations: usize, seed: Option<u64>) -> Self {
         let rng = match seed {
             Some(s) => StdRng::seed_from_u64(s),
@@ -83,6 +90,16 @@ impl RRTPlanner {
             goal_bias: 0.2,
             rng,
         }
+    }
+}
+
+#[cfg(feature = "python")]
+#[pymethods]
+impl RRTPlanner {
+    #[new]
+    #[pyo3(signature = (bounds, max_iterations=5000, seed=None))]
+    fn py_new(bounds: [f64; 6], max_iterations: usize, seed: Option<u64>) -> Self {
+        Self::new(bounds, max_iterations, seed)
     }
 
     pub fn plan_path<'py>(
@@ -138,6 +155,7 @@ impl RRTPlanner {
 }
 
 impl RRTPlanner {
+    #[cfg_attr(not(feature = "python"), allow(dead_code))]
     fn distance(a: &[f64; 3], b: &[f64; 3]) -> f64 {
         let dx = a[0] - b[0];
         let dy = a[1] - b[1];
@@ -145,6 +163,7 @@ impl RRTPlanner {
         (dx * dx + dy * dy + dz * dz).sqrt()
     }
 
+    #[cfg_attr(not(feature = "python"), allow(dead_code))]
     fn sample_point(&mut self, goal: &[f64; 3]) -> [f64; 3] {
         if self.rng.gen::<f64>() < self.goal_bias {
             *goal
@@ -157,6 +176,7 @@ impl RRTPlanner {
         }
     }
 
+    #[cfg_attr(not(feature = "python"), allow(dead_code))]
     fn nearest_node_index(&self, nodes: &[[f64; 4]], sample: &[f64; 3]) -> usize {
         let mut min_dist = f64::MAX;
         let mut min_idx = 0;
@@ -171,6 +191,7 @@ impl RRTPlanner {
         min_idx
     }
 
+    #[cfg_attr(not(feature = "python"), allow(dead_code))]
     fn steer(&self, origin: &[f64; 3], target: &[f64; 3]) -> [f64; 3] {
         let dir = [
             target[0] - origin[0],
@@ -190,6 +211,7 @@ impl RRTPlanner {
         }
     }
 
+    #[cfg_attr(not(feature = "python"), allow(dead_code))]
     fn check_collision(&self, point: &[f64; 3], obstacles: &[Obstacle]) -> bool {
         for obs in obstacles {
             if obs.distance_to_surface(point) <= 0.0 {
@@ -199,6 +221,7 @@ impl RRTPlanner {
         false
     }
 
+    #[cfg_attr(not(feature = "python"), allow(dead_code))]
     fn segment_is_collision_free(
         &self,
         start: &[f64; 3],
@@ -226,6 +249,7 @@ impl RRTPlanner {
         true
     }
 
+    #[cfg_attr(not(feature = "python"), allow(dead_code))]
     fn extract_path(&self, nodes: &[[f64; 4]], goal_idx: usize) -> Vec<[f64; 3]> {
         let mut path = Vec::new();
         let mut current_idx = goal_idx as i32;
