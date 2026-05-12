@@ -183,3 +183,6 @@ src/web_applications/calculator/calculator.py
 src/web_applications/unit_converter/converter.py
 src/pendulum_simulator/src/double_pendulum_golf/gui/controls_widget_base.py
 src/pendulum_simulator/tests/test_simulation_panel.py
+s r c / s h a r e d / p y t h o n / a i / g u i / a s s i s t a n t _ p a n e l . p y  
+ s r c / s h a r e d / p y t h o n / a i / g u i / s e t t i n g s _ d i a l o g . p y  
+ 
