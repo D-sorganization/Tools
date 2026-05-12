@@ -1,6 +1,6 @@
 # ARCHITECTURE_DEBT:
-# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
-# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.  # noqa: E501
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.  # noqa: E501
 
 """AI Assistant Panel for Golf Modeling Suite.
 
@@ -13,7 +13,7 @@ responses with markdown rendering.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -79,7 +79,7 @@ class MessageWidget(QFrame):
         super().__init__(parent)
         self._role = role
         self._content = content
-        self._timestamp = timestamp or datetime.now(timezone.utc)
+        self._timestamp = timestamp or datetime.now(UTC)
         self._setup_ui()
         self._apply_style()
 
@@ -150,12 +150,12 @@ class MessageWidget(QFrame):
             from src.shared.python.theme.theme_manager import get_theme_manager
 
             colors = get_theme_manager().get_current_colors()
-            
-            def _get(key, fallback):
+
+            def _get(key: str, fallback: Any) -> Any:
                 if isinstance(colors, dict):
                     return colors.get(key, fallback)
-                return getattr(colors, key, fallback)
-                
+                return getattr(colors, key, fallback)  # type: ignore[unreachable]
+
             bg_alt = _get("bg_elevated", _get("group_bg", "#2d2d2d"))
             bg_secondary = _get("bg_highlight", _get("input_bg", "#252526"))
             text_primary = _get("text_primary", _get("text", "#e0e0e0"))
@@ -511,12 +511,12 @@ class AIAssistantPanel(QWidget):
             from src.shared.python.theme.theme_manager import get_theme_manager
 
             colors = get_theme_manager().get_current_colors()
-            
-            def _get(key, fallback):
+
+            def _get(key: str, fallback: Any) -> Any:
                 if isinstance(colors, dict):
                     return colors.get(key, fallback)
-                return getattr(colors, key, fallback)
-                
+                return getattr(colors, key, fallback)  # type: ignore[unreachable]
+
             bg_primary = _get("bg", "#1e1e1e")
             bg_alt = _get("bg_elevated", _get("group_bg", "#2d2d2d"))
             text_primary = _get("text_primary", _get("text", "#e0e0e0"))
@@ -600,7 +600,8 @@ class AIAssistantPanel(QWidget):
 
         if hasattr(self, "_model_label"):
             self._model_label.setStyleSheet(
-                f"font-size: 14px; font-weight: bold; color: {text_primary}; background: transparent;"
+                f"font-size: 14px; font-weight: bold; color: {text_primary}; "
+                "background: transparent;"
             )
 
         if hasattr(self, "chk_auto_index"):
@@ -1173,13 +1174,14 @@ class AIAssistantPanel(QWidget):
 
         if settings.provider == AIProvider.OLLAMA:
             try:
-                import ai_backend
                 from src.shared.python.ai.adapters.rust_adapter import RustAgentAdapter
 
                 adapter = RustAgentAdapter(
                     api_key="ollama",
                     base_url=settings.ollama_host,
                     model=settings.model,
+                    chat_path="/v1/chat/completions",
+                    embed_path="/v1/embeddings",
                 )
                 self._add_system_message("🚀 Using high-performance Rust AI backend.")
             except ImportError:
@@ -1229,8 +1231,6 @@ class AIAssistantPanel(QWidget):
                 f"⚠️ Could not connect to {settings.provider.name}. "
                 "Please check your settings."
             )
-
-
 
     def _show_settings(self) -> None:
         """Show the settings dialog."""

@@ -19,7 +19,6 @@ from PyQt6.QtWidgets import (
 )
 
 from src.shared.python.ai.gui.session_manager import ChatSessionManager
-from src.shared.python.theme.style_constants import Styles
 
 
 class SessionListWidgetItem(QListWidgetItem):

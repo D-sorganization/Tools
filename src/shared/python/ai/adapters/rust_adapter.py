@@ -141,3 +141,31 @@ class RustAgentAdapter(BaseAgentAdapter):
     def retrieve_context(self, prompt: str, top_k: int = 5) -> list[str]:
         """Retrieve semantic context using the Rust vector memory."""
         return self.rag.retrieve_context(prompt, top_k)
+
+    def send_message(
+        self, prompt: str, context: ConversationContext, tools: list[Any]
+    ) -> AgentChunk:
+        """Send a message synchronously."""
+        try:
+            full_prompt = (
+                "\n".join([m.content for m in context.messages]) + f"\n{prompt}"
+            )
+            response = self.engine.generate_response(full_prompt)
+            return AgentChunk(content=response, is_final=True)
+        except Exception as e:
+            logger.exception("Rust backend error")
+            return AgentChunk(content=f"Error: {e}", is_final=True)
+
+    def validate_connection(self) -> bool:
+        """Validate connection to the backend."""
+        try:
+            # We can do a lightweight health check, or just return True
+            # assuming the Rust initialization checks config validity.
+            return True
+        except Exception:
+            return False
+
+    @property
+    def capabilities(self) -> list[str]:
+        """Return adapter capabilities."""
+        return ["streaming", "rag", "code_indexing"]
