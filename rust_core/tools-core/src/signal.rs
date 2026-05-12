@@ -169,6 +169,89 @@ pub fn polynomial(times: &[f64], coefficients: &[f64]) -> Vec<f64> {
         .collect()
 }
 
+// ---------------------------------------------------------------------------
+// Edge-preserving smoothing
+// ---------------------------------------------------------------------------
+
+/// Apply a 1-D bilateral filter to a signal.
+///
+/// The bilateral filter is an edge-preserving smoother that combines a
+/// spatial Gaussian kernel (distance from the centre sample) with an
+/// intensity Gaussian kernel (value similarity to the centre sample). It is
+/// the canonical Python implementation in
+/// `signal_toolkit.filters.apply_bilateral_filter` ported sample-for-sample
+/// — the per-sample window is asymmetric near the edges, matching the
+/// reference `start = max(0, i - half)`, `end = min(n, i + half + 1)`
+/// convention used by NumPy.
+///
+/// # Parameters
+/// - `values`: input signal samples.
+/// - `window_size`: full window width (the half-window is `window_size / 2`,
+///   integer division — odd and even values are accepted to preserve parity
+///   with the existing Python helper).
+/// - `sigma_space`: spatial Gaussian sigma; must be > 0.
+/// - `sigma_intensity`: intensity Gaussian sigma; must be > 0.
+///
+/// # Numerical notes
+/// - Weights are accumulated with the same `+ 1e-10` denominator stabiliser
+///   the Python reference uses, so per-sample outputs match to within
+///   floating-point rounding tolerance (`< 1e-12` typical).
+/// - Single-pass and allocation-free in the hot loop. The PyO3 wrapper
+///   releases the GIL via `py.allow_threads`, so callers can drive the
+///   filter from worker threads without serialising on Python.
+pub fn bilateral_filter(
+    values: &[f64],
+    window_size: usize,
+    sigma_space: f64,
+    sigma_intensity: f64,
+) -> Vec<f64> {
+    debug_assert!(sigma_space > 0.0, "sigma_space must be > 0");
+    debug_assert!(sigma_intensity > 0.0, "sigma_intensity must be > 0");
+
+    let n = values.len();
+    let mut out = vec![0.0; n];
+    if n == 0 {
+        return out;
+    }
+
+    let half = window_size / 2;
+    let inv_two_sigma_space_sq = 1.0 / (2.0 * sigma_space * sigma_space);
+    let inv_two_sigma_int_sq = 1.0 / (2.0 * sigma_intensity * sigma_intensity);
+
+    for i in 0..n {
+        let start = i.saturating_sub(half);
+        let end = (i + half + 1).min(n);
+        let centre = values[i];
+
+        let mut weight_sum = 0.0;
+        let mut value_sum = 0.0;
+        // The index `j` is used both to compute the signed spatial offset
+        // (`j - i`) and to index `values[j]`; an iterator-based form would
+        // require zipping `(start..end)` with `&values[start..end]` and is
+        // strictly less clear here, so silence clippy locally.
+        #[allow(clippy::needless_range_loop)]
+        for j in start..end {
+            // Spatial weight: signed offset from the centre.
+            let dpos = j as f64 - i as f64;
+            let spatial = (-dpos * dpos * inv_two_sigma_space_sq).exp();
+
+            // Intensity weight: value similarity to the centre sample.
+            let dval = values[j] - centre;
+            let intensity = (-dval * dval * inv_two_sigma_int_sq).exp();
+
+            let w = spatial * intensity;
+            weight_sum += w;
+            value_sum += w * values[j];
+        }
+
+        // Match the Python reference's `+ 1e-10` denominator stabiliser so
+        // outputs stay bit-for-bit comparable across the parity boundary.
+        out[i] = value_sum / (weight_sum + 1e-10);
+    }
+
+    out
+}
+
 /// Generate a rectangular pulse.
 pub fn pulse(
     times: &[f64],
@@ -340,6 +423,42 @@ pub mod py_bindings {
         let result = pulse(t, start_time, duration, amplitude, baseline);
         PyArray1::from_vec(py, result)
     }
+
+    /// PyO3 binding for `bilateral_filter`.
+    ///
+    /// Mirrors the `apply_bilateral_filter` signature in
+    /// `signal_toolkit.filters` so the eventual Python facade can be a
+    /// one-line swap. The compute is run inside `py.allow_threads` so
+    /// long signals do not block Python worker threads.
+    #[pyfunction]
+    #[pyo3(name = "bilateral_filter")]
+    pub fn py_bilateral_filter<'py>(
+        py: Python<'py>,
+        values: PyReadonlyArray1<'py, f64>,
+        window_size: usize,
+        sigma_space: f64,
+        sigma_intensity: f64,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        // Use `<=` rather than `!(x > 0.0)` so NaN inputs are caught as
+        // invalid here too (NaN comparisons return false, which would
+        // otherwise slip past a `> 0.0` precondition).
+        if sigma_space.is_nan() || sigma_space <= 0.0 {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "sigma_space must be > 0",
+            ));
+        }
+        if sigma_intensity.is_nan() || sigma_intensity <= 0.0 {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "sigma_intensity must be > 0",
+            ));
+        }
+        // Copy the input so the GIL-free section owns its data — the
+        // `PyReadonlyArray1` borrow cannot cross `allow_threads`.
+        let v = values.as_slice().unwrap().to_vec();
+        let result = py
+            .allow_threads(move || bilateral_filter(&v, window_size, sigma_space, sigma_intensity));
+        Ok(PyArray1::from_vec(py, result))
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -480,5 +599,51 @@ mod tests {
         // Find a point during the pulse (t ≈ 3.5)
         let mid_idx = (1000.0 * 3.5 / 10.0) as usize;
         assert_eq!(y[mid_idx], 5.0, "during pulse should be amplitude");
+    }
+
+    #[test]
+    fn test_bilateral_filter_constant_signal_is_unchanged() {
+        // A constant signal has zero intensity gradient, so the filter must
+        // pass it through almost unchanged. The `+ 1e-10` denominator
+        // stabiliser (matched against the Python reference for parity)
+        // introduces a bias of order `value * 1e-10 / weight_sum`, so we
+        // assert against a 1e-9 tolerance rather than full precision.
+        let values = vec![3.5_f64; 64];
+        let out = bilateral_filter(&values, 5, 1.0, 0.1);
+        for (i, v) in out.iter().enumerate() {
+            assert!(
+                (v - 3.5).abs() < 1e-9,
+                "constant in must equal constant out at i={}, got {}",
+                i,
+                v
+            );
+        }
+    }
+
+    #[test]
+    fn test_bilateral_filter_preserves_step_edge() {
+        // Build a sharp step. With small sigma_intensity, the filter should
+        // preserve the discontinuity (samples on either side of the step
+        // stay near their original values, not midpoint-averaged).
+        let mut values = vec![0.0_f64; 32];
+        for v in values.iter_mut().skip(16) {
+            *v = 1.0;
+        }
+        let out = bilateral_filter(&values, 5, 1.0, 0.05);
+        // Samples well away from the edge are unchanged.
+        assert!(out[5].abs() < 1e-9, "left plateau should stay at 0");
+        assert!(
+            (out[26] - 1.0).abs() < 1e-9,
+            "right plateau should stay at 1"
+        );
+        // Edge samples are pulled toward their own value, not the midpoint.
+        assert!(out[15] < 0.1, "last 0-sample must not jump toward 0.5");
+        assert!(out[16] > 0.9, "first 1-sample must not drop toward 0.5");
+    }
+
+    #[test]
+    fn test_bilateral_filter_empty_input() {
+        let out = bilateral_filter(&[], 5, 1.0, 0.1);
+        assert!(out.is_empty(), "empty in must give empty out");
     }
 }

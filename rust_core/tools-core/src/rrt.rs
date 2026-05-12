@@ -1,6 +1,5 @@
-use numpy::{IntoPyArray, PyArray1, PyArray2};
+use numpy::{PyArray2, PyArrayMethods};
 use pyo3::prelude::*;
-use pyo3::types::PyType;
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 use std::f64;
@@ -38,8 +37,8 @@ impl Obstacle {
             let mut outside_dist_sq = 0.0;
             let mut inside_max = f64::NEG_INFINITY;
 
-            for i in 0..3 {
-                let delta = (point[i] - self.position[i]).abs() - half_size;
+            for (i, &p) in point.iter().enumerate().take(3) {
+                let delta = (p - self.position[i]).abs() - half_size;
                 if delta > 0.0 {
                     outside_dist_sq += delta * delta;
                 }
@@ -127,7 +126,10 @@ impl RRTPlanner {
                 let path = self.extract_path(&nodes, nodes.len() - 1);
                 let flat_path: Vec<f64> = path.into_iter().flatten().collect();
                 let rows = flat_path.len() / 3;
-                let py_array = PyArray2::from_vec_bound(py, flat_path).reshape([rows, 3])?;
+                // pyo3/numpy 0.24 dropped `from_vec_bound`; `PyArray1::from_vec`
+                // returns a 1-D bound array which we then reshape to (rows, 3).
+                let py_array =
+                    numpy::PyArray1::from_vec(py, flat_path).reshape([rows, 3])?;
                 return Ok(Some(py_array));
             }
         }
@@ -198,17 +200,18 @@ impl RRTPlanner {
         false
     }
 
-    fn segment_is_collision_free(&self, start: &[f64; 3], end: &[f64; 3], obstacles: &[Obstacle]) -> bool {
+    fn segment_is_collision_free(
+        &self,
+        start: &[f64; 3],
+        end: &[f64; 3],
+        obstacles: &[Obstacle],
+    ) -> bool {
         let dist = Self::distance(start, end);
         let step = (self.step_size / 2.0).max(1e-6);
         let samples = (dist / step).ceil() as usize;
         let samples = samples.max(2);
 
-        let dir = [
-            end[0] - start[0],
-            end[1] - start[1],
-            end[2] - start[2],
-        ];
+        let dir = [end[0] - start[0], end[1] - start[1], end[2] - start[2]];
 
         for i in 0..samples {
             let fraction = i as f64 / (samples - 1) as f64;
