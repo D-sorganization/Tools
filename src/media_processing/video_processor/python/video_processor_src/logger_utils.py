@@ -32,7 +32,7 @@ except ImportError:
     LOG_LEVEL = logging.INFO
     logger = logging.getLogger(__name__)
 
-    def get_logger(name: str) -> logging.Logger:
+    def get_logger(name: str | None = None) -> logging.Logger:
         """Get a logger instance."""
         if name is None:
             name = __name__
