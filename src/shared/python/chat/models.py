@@ -11,44 +11,29 @@ from typing import Literal
 
 from pydantic import BaseModel, Field, model_validator
 
-# ---------------------------------------------------------------------------
-# Response style (#2552).
-#
-# The chat used to expose a "skill level" selector (beginner / intermediate /
-# expert) which conflated the user's expertise with how verbose they want the
-# AI to be. We now describe the *response*, not the user — concise, standard,
-# or detailed. The literal values are stable and form part of the wire
-# protocol.
-# ---------------------------------------------------------------------------
-
+# Tools issue #2552 / PR #2568: ``response_style`` is the new contract field
+# describing how verbose the AI's reply should be. ``expertise_level`` is
+# kept as a deprecated alias and auto-mapped to a ``response_style`` value
+# so older clients keep working during the cutover.
 ResponseStyle = Literal["concise", "standard", "detailed"]
-
 DEFAULT_RESPONSE_STYLE: ResponseStyle = "standard"
 
-#: System-prompt fragment for each style. The chat backend appends the
-#: appropriate string to its base system prompt so the model adapts its
-#: verbosity to the user's choice.
 RESPONSE_STYLE_PROMPTS: dict[ResponseStyle, str] = {
     "concise": (
-        "Respond as concisely as possible. Prefer short sentences, bullet "
-        "points, and minimal preamble. Skip examples unless explicitly asked."
+        "Reply concisely. Prefer code, tables, and short bullet lists over "
+        "prose. Skip preamble and recap."
     ),
     "standard": (
-        "Respond at a balanced length: enough detail to be useful, but no "
-        "filler. Include a short example when it materially clarifies the "
-        "answer."
+        "Reply at a standard level of detail. Briefly explain reasoning "
+        "where it helps the user act on the answer."
     ),
     "detailed": (
-        "Respond in depth. Walk through the reasoning, cover edge cases and "
-        "trade-offs, and include illustrative examples or code where they "
-        "help. Err on the side of more context rather than less."
+        "Reply in detail. Walk through reasoning, name relevant trade-offs, "
+        "and include worked examples when they clarify the answer."
     ),
 }
 
-# Legacy skill-level labels mapped to the new response-style values so
-# existing clients continue to work without coordination. New code should
-# pass ``response_style`` directly.
-_LEGACY_EXPERTISE_TO_STYLE: dict[str, ResponseStyle] = {
+_EXPERTISE_TO_STYLE: dict[str, ResponseStyle] = {
     "beginner": "detailed",
     "intermediate": "standard",
     "advanced": "concise",
@@ -56,11 +41,10 @@ _LEGACY_EXPERTISE_TO_STYLE: dict[str, ResponseStyle] = {
 }
 
 
-def style_prompt(style: str | None) -> str:
-    """Return the system-prompt fragment for ``style``.
+def style_prompt(style: ResponseStyle | str | None) -> str:
+    """Return the system-prompt fragment for a ``response_style`` value.
 
-    Falls back to the default style for unknown / ``None`` inputs so callers
-    can pass user-supplied values without pre-validation.
+    Unknown / ``None`` values fall back to ``DEFAULT_RESPONSE_STYLE``.
     """
     if style in RESPONSE_STYLE_PROMPTS:
         return RESPONSE_STYLE_PROMPTS[style]  # type: ignore[index]
@@ -70,10 +54,10 @@ def style_prompt(style: str | None) -> str:
 class ChatMessageRequest(BaseModel):
     """Request to send a chat message.
 
-    The ``response_style`` field (#2552) describes how verbose the AI's
-    response should be. The legacy ``expertise_level`` field is kept for
-    backward compatibility and is auto-translated to ``response_style``
-    when the latter is not supplied.
+    The ``response_style`` field (Tools #2552) describes how verbose the
+    AI's response should be. The legacy ``expertise_level`` field is
+    retained for backward compatibility and is auto-mapped to a
+    ``response_style`` value when ``response_style`` is not set.
     """
 
     message: str = Field(..., min_length=1, max_length=10000)
@@ -83,37 +67,23 @@ class ChatMessageRequest(BaseModel):
     response_style: ResponseStyle = Field(
         DEFAULT_RESPONSE_STYLE,
         description=(
-            "How verbose the AI's response should be: 'concise', 'standard', "
-            "or 'detailed'. Describes the response, not the user's skill."
+            "How verbose the AI reply should be. One of 'concise', "
+            "'standard', or 'detailed' (Tools issue #2552)."
         ),
     )
-    # Deprecated. Retained so existing UpstreamDrift / Gasification_Model
-    # builds keep working. New code should use ``response_style``.
     expertise_level: str = Field(
         "beginner",
-        description="DEPRECATED: use ``response_style`` instead (#2552).",
+        description="DEPRECATED: use ``response_style`` instead (Tools #2552).",
     )
 
     @model_validator(mode="after")
-    def _coerce_legacy_expertise_level(self) -> ChatMessageRequest:
-        """Map legacy ``expertise_level`` onto ``response_style``.
-
-        Only fires when the caller explicitly passed ``expertise_level`` and
-        did *not* pass ``response_style``, so new clients that set
-        ``response_style`` always win and pure defaults always resolve to
-        ``DEFAULT_RESPONSE_STYLE``.
-        """
+    def _back_fill_response_style(self) -> ChatMessageRequest:
+        """Map a legacy ``expertise_level`` onto ``response_style``."""
         fields_set = self.model_fields_set
-        if (
-            "expertise_level" in fields_set
-            and "response_style" not in fields_set
-            and self.expertise_level in _LEGACY_EXPERTISE_TO_STYLE
-        ):
-            object.__setattr__(
-                self,
-                "response_style",
-                _LEGACY_EXPERTISE_TO_STYLE[self.expertise_level],
-            )
+        if "expertise_level" in fields_set and "response_style" not in fields_set:
+            mapped = _EXPERTISE_TO_STYLE.get(self.expertise_level.lower())
+            if mapped is not None:
+                object.__setattr__(self, "response_style", mapped)
         return self
 
 
@@ -142,44 +112,55 @@ class ChatHistoryResponse(BaseModel):
     messages: list[dict]
 
 
-class ChatIndexStatusResponse(BaseModel):
-    """Codebase indexing progress / completion status.
+class ChatModelInfo(BaseModel):
+    """Single available chat model entry.
 
-    Sent by the server in response to an ``index_codebase`` action (or
-    pushed unsolicited while indexing runs in the background) so the chat
-    UI can show progress and indicate when full-codebase context becomes
-    available (#2549).
+    Mirrors the Tools-side ``ChatModelInfo`` contract introduced in
+    Tools issue #2547 / PR #2566. Serialised in ``model_list`` payloads
+    sent over the chat WebSocket.
     """
 
-    state: str = Field(
-        ...,
-        description="One of: 'idle', 'running', 'complete', 'error'",
+    name: str = Field(..., description="Provider-specific model identifier")
+    provider: str = Field(
+        ..., description="Provider id (e.g. 'ollama', 'openai', 'anthropic')"
     )
-    files_parsed: int = Field(0, ge=0)
-    symbols_inserted: int = Field(0, ge=0)
-    duration_seconds: float | None = Field(None, ge=0.0)
-    error: str | None = Field(None, description="Populated when state == 'error'")
-
-
-class ChatModelInfo(BaseModel):
-    """A single model entry returned by the server's model-list endpoint."""
-
-    id: str = Field(
-        ..., description="Provider-qualified model id (e.g. 'ollama:llama3')"
+    display_name: str | None = Field(
+        None, description="Optional human-readable label for UI display"
     )
-    name: str = Field(..., description="Human-readable label")
-    provider: str = Field(..., description="Provider key, e.g. 'ollama', 'openai'")
-    available: bool = Field(True, description="False if the provider is unreachable")
 
 
 class ChatModelListResponse(BaseModel):
-    """Server response listing currently-available chat models.
+    """Server response to a ``refresh_models`` action.
 
     Sent in reply to the WebSocket ``{"action": "refresh_models"}`` request,
-    or pushed unsolicited when the server detects model availability changes.
+    carrying the freshly polled list of available models for the configured
+    provider plus an ISO-8601 ``refreshed_at`` timestamp.
     """
 
     models: list[ChatModelInfo] = Field(default_factory=list)
     refreshed_at: str = Field(
-        ..., description="ISO-8601 timestamp of when the providers were polled"
+        ..., description="ISO-8601 UTC timestamp of when the list was polled"
     )
+
+
+class ChatIndexStatusResponse(BaseModel):
+    """Server progress / completion event for the ``index_codebase`` action.
+
+    Tools issue #2549 / PR #2567 introduced the ``auto_index_on_open`` flag
+    on ``ChatDockWidget`` and an ``index_codebase`` WebSocket action that
+    rebuilds the in-tree codemap. The server pushes ``index_status``
+    messages of this shape so the widget can surface progress and
+    completion to the user.
+    """
+
+    state: str = Field(..., description="One of 'running', 'complete', or 'error'")
+    files_parsed: int = Field(
+        0, description="Files indexed so far (or total when state=='complete')"
+    )
+    symbols_inserted: int = Field(
+        0, description="Symbols inserted so far (or total when state=='complete')"
+    )
+    duration_seconds: float | None = Field(
+        None, description="Wall-clock elapsed seconds (set when state=='complete')"
+    )
+    error: str | None = Field(None, description="Error message when state=='error'")
