@@ -32,7 +32,7 @@ dependencies = [
 [project.optional-dependencies]
 # Full installation with all features
 all = [
-    "scipy>=1.10.0",
+    "scipy>=1.10.0,<1.17",
     "pandas>=2.0.0",
     "matplotlib>=3.7.0",
     "trimesh>=4.0.0",
@@ -43,17 +43,17 @@ all = [
 # URDF/Model generation only
 urdf = [
     "trimesh>=4.0.0",
-    "scipy>=1.10.0",
+    "scipy>=1.10.0,<1.17",
 ]
 # Signal processing
 signal = [
-    "scipy>=1.10.0",
+    "scipy>=1.10.0,<1.17",
     "matplotlib>=3.7.0",
     "sympy>=1.12",
 ]
 # Process calculators
 process = [
-    "scipy>=1.10.0",
+    "scipy>=1.10.0,<1.17",
     "pandas>=2.0.0",
     "matplotlib>=3.7.0",
 ]

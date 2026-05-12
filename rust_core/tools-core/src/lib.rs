@@ -87,6 +87,14 @@ fn tools_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
         &signal_mod
     )?)?;
     signal_mod.add_function(wrap_pyfunction!(
+        signal::py_bindings::py_moving_average,
+        &signal_mod
+    )?)?;
+    signal_mod.add_function(wrap_pyfunction!(
+        signal::py_bindings::py_exponential_smoothing,
+        &signal_mod
+    )?)?;
+    signal_mod.add_function(wrap_pyfunction!(
         signal::py_bindings::py_lms_filter,
         &signal_mod
     )?)?;
