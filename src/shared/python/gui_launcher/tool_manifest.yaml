@@ -330,3 +330,31 @@ tools:
         - build123d
       settings_app: VesselDrafter
       min_size: [1400, 900]
+
+  - tool_name: video_analyzer
+    name: Video Analyzer
+    description: Video-based motion analysis with pose tracking
+    category: Motion Capture
+    icon: video
+    pyqt6:
+      module: video_analyzer.launch_video_analyzer
+      class: main
+      dependencies:
+        - PyQt6
+        - cv2
+        - mediapipe
+      settings_app: VideoAnalyzer
+
+  - tool_name: data_explorer
+    name: Data Explorer
+    description: Import, filter, and visualise simulation datasets
+    category: Analysis
+    icon: table
+    pyqt6:
+      module: data_explorer.gui
+      class: DataExplorerWindow
+      dependencies:
+        - PyQt6
+        - pandas
+        - numpy
+      settings_app: DataExplorer
