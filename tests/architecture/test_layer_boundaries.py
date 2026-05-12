@@ -17,8 +17,10 @@ Addresses #765 (Phase 4), #832 (orthogonality/boundary checks).
 from __future__ import annotations
 
 import ast
+import importlib
 import logging
 import os
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -473,6 +475,16 @@ class TestExceptionHierarchyConsistency:
             TransformationError,
             UnsupportedOperationError,
         )
+
+    def test_exception_import_does_not_eagerly_import_scipy_signal(self) -> None:
+        """Exception-only imports must not initialize SciPy signal internals."""
+        sys.modules.pop("upstream_drift_tools.data_processing", None)
+        sys.modules.pop("upstream_drift_tools.data_processing.exceptions", None)
+        sys.modules.pop("scipy.signal", None)
+
+        importlib.import_module("upstream_drift_tools.data_processing.exceptions")
+
+        assert "scipy.signal" not in sys.modules
 
     def test_all_data_processing_exceptions_share_base(self) -> None:
         """Every exception must inherit from DataProcessingError."""

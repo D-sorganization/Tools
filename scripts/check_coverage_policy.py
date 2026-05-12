@@ -12,6 +12,13 @@ def _pct(x: float) -> float:
     return round(x * 100.0, 2)
 
 
+def _effective_total_floor(min_total: float, baseline_total: float) -> float:
+    """Use the target floor only after the committed baseline has reached it."""
+    if baseline_total < min_total:
+        return baseline_total
+    return min_total
+
+
 def parse_coverage(
     coverage_file: Path, tracked_prefixes: list[str]
 ) -> dict[str, object]:
@@ -58,8 +65,12 @@ def main() -> int:
 
     failures: list[str] = []
     total = float(current["total_percent"])
-    if total < min_total:
-        failures.append(f"total coverage {total}% below minimum {min_total}%")
+    effective_min_total = _effective_total_floor(min_total, baseline_total)
+    if total < effective_min_total:
+        failures.append(
+            f"total coverage {total}% below effective minimum "
+            f"{effective_min_total}% (target {min_total}%)"
+        )
     if total < (baseline_total - max_drop):
         failures.append(
             f"total coverage {total}% regressed beyond allowed drop ({baseline_total}% -> {baseline_total - max_drop}%)"

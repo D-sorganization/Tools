@@ -549,7 +549,7 @@ class ProviderConfigWidget(QWidget):
         """Get Ollama host if applicable."""
         if hasattr(self, "_host_input"):
             return str(self._host_input.text().strip())
-        return get_ollama_host()
+        return str(get_ollama_host())
 
 
 class AISettingsDialog(QDialog):

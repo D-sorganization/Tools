@@ -232,18 +232,21 @@ class ChatHistorySidebar(QWidget):
 
         if is_archived:
             restore_action = menu.addAction("Restore")
-            restore_action.triggered.connect(
-                lambda: self._manager.archive_session(session_id, False)
-            )
+            if restore_action is not None:
+                restore_action.triggered.connect(
+                    lambda: self._manager.archive_session(session_id, False)
+                )
         else:
             archive_action = menu.addAction("Archive")
-            archive_action.triggered.connect(
-                lambda: self._manager.archive_session(session_id, True)
-            )
+            if archive_action is not None:
+                archive_action.triggered.connect(
+                    lambda: self._manager.archive_session(session_id, True)
+                )
 
         menu.addSeparator()
         delete_action = menu.addAction("Delete Permanently")
-        delete_action.triggered.connect(lambda: self._confirm_delete(session_id))
+        if delete_action is not None:
+            delete_action.triggered.connect(lambda: self._confirm_delete(session_id))
 
         menu.exec(list_widget.mapToGlobal(pos))
 

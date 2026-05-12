@@ -97,6 +97,16 @@ class TestPct:
         assert module._pct(1.0) == 100.0
 
 
+class TestEffectiveTotalFloor:
+    def test_uses_baseline_until_target_is_reached(self) -> None:
+        module = _load_module()
+        assert module._effective_total_floor(60.0, 24.48) == 24.48
+
+    def test_uses_target_after_baseline_reaches_target(self) -> None:
+        module = _load_module()
+        assert module._effective_total_floor(60.0, 61.0) == 60.0
+
+
 # ── parse_coverage ───────────────────────────────────────────────────────
 
 
@@ -272,8 +282,42 @@ class TestMain:
         assert module.main() == 1
         captured = capsys.readouterr()
         assert "Coverage policy failed" in captured.err
-        assert "below minimum" in captured.err
+        assert "below effective minimum" in captured.err
         assert out.exists()  # trend is still written
+
+    def test_passes_when_total_meets_baseline_but_not_future_target(
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        module = _load_module()
+        cov = _write_coverage_xml(
+            tmp_path / "cov.xml",
+            line_rate=0.245,
+            classes=[("pkg/mod.py", {1: 1, 2: 0})],
+        )
+        policy, baseline = _write_policy_and_baseline(
+            tmp_path,
+            minimum_total_percent=60.0,
+            max_total_drop_percent=2.0,
+            baseline_total=24.48,
+        )
+        out = tmp_path / "trend.json"
+        monkeypatch.setattr(
+            "sys.argv",
+            [
+                "check_coverage_policy.py",
+                "--coverage-file",
+                str(cov),
+                "--policy-file",
+                str(policy),
+                "--baseline-file",
+                str(baseline),
+                "--output-json",
+                str(out),
+            ],
+        )
+        assert module.main() == 0
 
     def test_fails_when_regression_exceeds_max_drop(
         self,

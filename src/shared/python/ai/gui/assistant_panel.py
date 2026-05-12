@@ -149,12 +149,12 @@ class MessageWidget(QFrame):
         try:
             from src.shared.python.theme.theme_manager import get_theme_manager
 
-            colors = get_theme_manager().get_current_colors()
+            color_source: object = get_theme_manager().get_current_colors()
 
             def _get(key: str, fallback: Any) -> Any:
-                if isinstance(colors, dict):
-                    return colors.get(key, fallback)
-                return getattr(colors, key, fallback)  # type: ignore[unreachable]
+                if isinstance(color_source, dict):
+                    return color_source.get(key, fallback)
+                return getattr(color_source, key, fallback)
 
             bg_alt = _get("bg_elevated", _get("group_bg", "#2d2d2d"))
             bg_secondary = _get("bg_highlight", _get("input_bg", "#252526"))
@@ -510,12 +510,12 @@ class AIAssistantPanel(QWidget):
         try:
             from src.shared.python.theme.theme_manager import get_theme_manager
 
-            colors = get_theme_manager().get_current_colors()
+            color_source: object = get_theme_manager().get_current_colors()
 
             def _get(key: str, fallback: Any) -> Any:
-                if isinstance(colors, dict):
-                    return colors.get(key, fallback)
-                return getattr(colors, key, fallback)  # type: ignore[unreachable]
+                if isinstance(color_source, dict):
+                    return color_source.get(key, fallback)
+                return getattr(color_source, key, fallback)
 
             bg_primary = _get("bg", "#1e1e1e")
             bg_alt = _get("bg_elevated", _get("group_bg", "#2d2d2d"))
