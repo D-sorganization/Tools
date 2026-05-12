@@ -19,7 +19,6 @@ from PyQt6.QtGui import QFont, QFontMetrics
 from double_pendulum_golf.gui.simulation_panel import SimulationPanel
 from double_pendulum_golf.gui.toolstrip_widget import ToolStrip
 
-
 # ──────────────────────────────────────────────────────────────────────
 # (1) Font zoom offset bounds + persistence
 # ──────────────────────────────────────────────────────────────────────
@@ -126,9 +125,9 @@ class TestTabLabelsRenderable:
             assert stripped, f"Empty label: {label!r}"
             first = stripped[0]
             # First non-space char must be non-ASCII (a symbol/icon)
-            assert not first.isascii(), (
-                f"Label {label!r} should start with a symbol prefix, not {first!r}"
-            )
+            assert (
+                not first.isascii()
+            ), f"Label {label!r} should start with a symbol prefix, not {first!r}"
 
 
 # ──────────────────────────────────────────────────────────────────────

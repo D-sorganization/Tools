@@ -275,6 +275,125 @@ pub fn pulse(
         .collect()
 }
 
+/// Apply Least Mean Squares (LMS) adaptive filter.
+///
+/// Returns `(filtered, error)` where `filtered[i]` is the filter output and
+/// `error[i] = reference[i] - filtered[i]`.
+///
+/// # Preconditions
+/// - `signal.len() == reference.len()`
+/// - `order >= 1`
+/// - `step_size > 0`
+pub fn lms_filter(
+    signal: &[f64],
+    reference: &[f64],
+    order: usize,
+    step_size: f64,
+) -> (Vec<f64>, Vec<f64>) {
+    debug_assert_eq!(signal.len(), reference.len(), "signal and reference must match");
+    debug_assert!(order >= 1, "order must be >= 1");
+    debug_assert!(step_size > 0.0, "step_size must be > 0");
+
+    let n = signal.len();
+    let mut w = vec![0.0_f64; order];
+    let mut y = vec![0.0_f64; n];
+    let mut e = vec![0.0_f64; n];
+
+    for i in order..n {
+        // Dot product of weights with reversed window
+        let mut yi = 0.0_f64;
+        for k in 0..order {
+            yi += w[k] * signal[i - order + k];
+        }
+        y[i] = yi;
+        e[i] = reference[i] - yi;
+        // Weight update: w += step_size * error * x_window (reversed)
+        let ei = e[i];
+        for k in 0..order {
+            w[k] += step_size * ei * signal[i - order + k];
+        }
+    }
+    (y, e)
+}
+
+/// Apply Recursive Least Squares (RLS) adaptive filter.
+///
+/// Returns `(filtered, error)` where `filtered[i]` is the filter output and
+/// `error[i] = reference[i] - filtered[i]`.
+///
+/// # Preconditions
+/// - `signal.len() == reference.len()`
+/// - `order >= 1`
+/// - `forgetting_factor` in `(0, 1]`
+/// - `delta > 0`
+pub fn rls_filter(
+    signal: &[f64],
+    reference: &[f64],
+    order: usize,
+    forgetting_factor: f64,
+    delta: f64,
+) -> (Vec<f64>, Vec<f64>) {
+    debug_assert_eq!(signal.len(), reference.len(), "signal and reference must match");
+    debug_assert!(order >= 1, "order must be >= 1");
+    debug_assert!(forgetting_factor > 0.0 && forgetting_factor <= 1.0);
+    debug_assert!(delta > 0.0, "delta must be > 0");
+
+    let n = signal.len();
+    let mut w = vec![0.0_f64; order];
+    // P = (1/delta) * I
+    let mut p: Vec<Vec<f64>> = (0..order)
+        .map(|i| {
+            let mut row = vec![0.0_f64; order];
+            row[i] = 1.0 / delta;
+            row
+        })
+        .collect();
+    let mut y = vec![0.0_f64; n];
+    let mut e = vec![0.0_f64; n];
+    let lam = forgetting_factor;
+    let inv_lam = 1.0 / lam;
+
+    let mut x_window = vec![0.0_f64; order];
+    let mut k_vec = vec![0.0_f64; order];
+    let mut px = vec![0.0_f64; order]; // P * x
+
+    for i in order..n {
+        // Build reversed window: x_window[k] = signal[i - order + k]
+        for k in 0..order {
+            x_window[k] = signal[i - order + k];
+        }
+
+        // Output
+        let yi: f64 = w.iter().zip(x_window.iter()).map(|(wi, xi)| wi * xi).sum();
+        y[i] = yi;
+        e[i] = reference[i] - yi;
+
+        // px = P * x_window
+        for row in 0..order {
+            px[row] = p[row].iter().zip(x_window.iter()).map(|(pij, xj)| pij * xj).sum();
+        }
+        // denom = lam + x_window^T * px
+        let denom: f64 = lam + x_window.iter().zip(px.iter()).map(|(xi, pxi)| xi * pxi).sum::<f64>();
+        // k = px / denom
+        for row in 0..order {
+            k_vec[row] = px[row] / denom;
+        }
+        // Weight update: w += k * error
+        let ei = e[i];
+        for row in 0..order {
+            w[row] += k_vec[row] * ei;
+        }
+        // P update: P = (P - k * (px^T)) / lam
+        // Note: k * px^T is the outer product
+        for row in 0..order {
+            for col in 0..order {
+                p[row][col] = (p[row][col] - k_vec[row] * px[col]) * inv_lam;
+            }
+        }
+    }
+    (y, e)
+}
+
 // ---------------------------------------------------------------------------
 // PyO3 Bindings (feature-gated)
 // ---------------------------------------------------------------------------
@@ -283,6 +402,7 @@ pub mod py_bindings {
     use super::*;
     use numpy::{PyArray1, PyReadonlyArray1};
     use pyo3::prelude::*;
+
 
     #[pyfunction]
     #[pyo3(name = "sinusoid")]
@@ -459,7 +579,98 @@ pub mod py_bindings {
             .allow_threads(move || bilateral_filter(&v, window_size, sigma_space, sigma_intensity));
         Ok(PyArray1::from_vec(py, result))
     }
-}
+
+    /// PyO3 binding for `lms_filter`.
+    ///
+    /// Runs the full LMS loop natively in Rust without acquiring the GIL on
+    /// every sample. Returns `(filtered_values, error_values)` as two
+    /// contiguous NumPy arrays.
+    ///
+    /// # Arguments
+    /// * `signal` — Input signal samples (read-only NumPy array).
+    /// * `reference` — Desired / reference signal samples (same length).
+    /// * `order` — Filter order (tap count); must be `>= 1`.
+    /// * `step_size` — LMS step size µ (convergence parameter); must be `> 0`.
+    #[pyfunction]
+    #[pyo3(name = "lms_filter", signature = (signal, reference, order=10, step_size=0.01))]
+    pub fn py_lms_filter<'py>(
+        py: Python<'py>,
+        signal: PyReadonlyArray1<'py, f64>,
+        reference: PyReadonlyArray1<'py, f64>,
+        order: usize,
+        step_size: f64,
+    ) -> PyResult<(Bound<'py, PyArray1<f64>>, Bound<'py, PyArray1<f64>>)> {
+        if order == 0 {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "order must be >= 1",
+            ));
+        }
+        if step_size <= 0.0 || step_size.is_nan() {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "step_size must be > 0",
+            ));
+        }
+        let x = signal.as_slice().unwrap().to_vec();
+        let d = reference.as_slice().unwrap().to_vec();
+        if x.len() != d.len() {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "signal and reference must have the same length",
+            ));
+        }
+        let (y, e) = py.allow_threads(move || lms_filter(&x, &d, order, step_size));
+        Ok((PyArray1::from_vec(py, y), PyArray1::from_vec(py, e)))
+    }
+
+    /// PyO3 binding for `rls_filter`.
+    ///
+    /// Runs the full RLS loop natively in Rust. Returns
+    /// `(filtered_values, error_values)` as two contiguous NumPy arrays.
+    ///
+    /// # Arguments
+    /// * `signal` — Input signal samples (read-only NumPy array).
+    /// * `reference` — Desired / reference signal samples (same length).
+    /// * `order` — Filter order (tap count); must be `>= 1`.
+    /// * `forgetting_factor` — RLS forgetting factor λ; typically in (0, 1].
+    /// * `delta` — Initial diagonal loading for the inverse correlation matrix P₀ = (1/δ)·I.
+    #[pyfunction]
+    #[pyo3(
+        name = "rls_filter",
+        signature = (signal, reference, order=10, forgetting_factor=0.99, delta=0.01)
+    )]
+    pub fn py_rls_filter<'py>(
+        py: Python<'py>,
+        signal: PyReadonlyArray1<'py, f64>,
+        reference: PyReadonlyArray1<'py, f64>,
+        order: usize,
+        forgetting_factor: f64,
+        delta: f64,
+    ) -> PyResult<(Bound<'py, PyArray1<f64>>, Bound<'py, PyArray1<f64>>)> {
+        if order == 0 {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "order must be >= 1",
+            ));
+        }
+        if forgetting_factor <= 0.0 || forgetting_factor > 1.0 || forgetting_factor.is_nan() {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "forgetting_factor must be in (0, 1]",
+            ));
+        }
+        if delta <= 0.0 || delta.is_nan() {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "delta must be > 0",
+            ));
+        }
+        let x = signal.as_slice().unwrap().to_vec();
+        let d = reference.as_slice().unwrap().to_vec();
+        if x.len() != d.len() {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "signal and reference must have the same length",
+            ));
+        }
+        let (y, e) = py.allow_threads(move || rls_filter(&x, &d, order, forgetting_factor, delta));
+        Ok((PyArray1::from_vec(py, y), PyArray1::from_vec(py, e)))
+    }
+} // end pub mod py_bindings
 
 // ---------------------------------------------------------------------------
 // Unit tests (TDD)
@@ -645,5 +856,52 @@ mod tests {
     fn test_bilateral_filter_empty_input() {
         let out = bilateral_filter(&[], 5, 1.0, 0.1);
         assert!(out.is_empty(), "empty in must give empty out");
+    }
+
+    #[test]
+    fn test_lms_output_length_matches_input() {
+        let n = 200;
+        let x: Vec<f64> = (0..n).map(|i| (i as f64 * 0.1).sin()).collect();
+        let d: Vec<f64> = x.iter().map(|v| v * 0.8 + 0.1).collect();
+        let (y, e) = lms_filter(&x, &d, 10, 0.01);
+        assert_eq!(y.len(), n, "filtered length must match input");
+        assert_eq!(e.len(), n, "error length must match input");
+    }
+
+    #[test]
+    fn test_lms_error_decreases_over_stationary_input() {
+        // For a stationary mapping d = 2*x, the LMS filter should learn the
+        // coefficients and drive the error toward zero over time.
+        let n = 2000;
+        let x: Vec<f64> = (0..n).map(|i| (i as f64 * 0.05).sin()).collect();
+        let d: Vec<f64> = x.iter().map(|v| v * 2.0).collect();
+        let (_, e) = lms_filter(&x, &d, 10, 0.005);
+        let early_err: f64 = e[10..60].iter().map(|v| v * v).sum::<f64>() / 50.0;
+        let late_err: f64 = e[1900..].iter().map(|v| v * v).sum::<f64>() / 100.0;
+        assert!(late_err < early_err, "LMS error must decrease over time (early={early_err:.4}, late={late_err:.4})");
+    }
+
+    #[test]
+    fn test_rls_output_length_matches_input() {
+        let n = 200;
+        let x: Vec<f64> = (0..n).map(|i| (i as f64 * 0.1).sin()).collect();
+        let d: Vec<f64> = x.iter().map(|v| v * 0.5 + 0.05).collect();
+        let (y, e) = rls_filter(&x, &d, 8, 0.99, 0.01);
+        assert_eq!(y.len(), n);
+        assert_eq!(e.len(), n);
+    }
+
+    #[test]
+    fn test_rls_converges_faster_than_lms_on_stationary_input() {
+        // RLS has faster convergence rate than LMS by design — verify
+        // the squared error sum over the first 200 samples is lower for RLS.
+        let n = 500;
+        let x: Vec<f64> = (0..n).map(|i| (i as f64 * 0.1).cos()).collect();
+        let d: Vec<f64> = x.iter().map(|v| v * 1.5 - 0.2).collect();
+        let (_, e_lms) = lms_filter(&x, &d, 10, 0.01);
+        let (_, e_rls) = rls_filter(&x, &d, 10, 0.99, 0.01);
+        let mse_lms: f64 = e_lms[10..200].iter().map(|v| v * v).sum::<f64>();
+        let mse_rls: f64 = e_rls[10..200].iter().map(|v| v * v).sum::<f64>();
+        assert!(mse_rls < mse_lms, "RLS should converge faster than LMS (rls={mse_rls:.4}, lms={mse_lms:.4})");
     }
 }

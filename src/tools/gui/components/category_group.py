@@ -48,8 +48,7 @@ class CollapsibleCategoryGroup(QFrame):
         # Header with category name and expand/collapse button
         header = QFrame()
         header.setObjectName("categoryHeader")
-        header.setStyleSheet(
-            """
+        header.setStyleSheet("""
             #categoryHeader {
                 background-color: #f5f5f5;
                 border: 1px solid #ddd;
@@ -59,8 +58,7 @@ class CollapsibleCategoryGroup(QFrame):
             #categoryHeader:hover {
                 background-color: #efefef;
             }
-            """
-        )
+            """)
         header_layout = QVBoxLayout(header)
         header_layout.setContentsMargins(12, 10, 12, 10)
         header_layout.setSpacing(0)
@@ -93,14 +91,12 @@ class CollapsibleCategoryGroup(QFrame):
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setFrameShape(QFrame.Shape.NoFrame)
-        self.scroll_area.setStyleSheet(
-            """
+        self.scroll_area.setStyleSheet("""
             QScrollArea {
                 border: 1px solid #ddd;
                 border-top: none;
             }
-            """
-        )
+            """)
 
         self.content_widget = QWidget()
         self.content_layout = QGridLayout(self.content_widget)

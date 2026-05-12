@@ -23,7 +23,6 @@ from PyQt6.QtWidgets import QLabel, QScrollArea
 
 from double_pendulum_golf.gui.side_panel_tabs import SidePanelTabs
 
-
 _TEST_KEY = "test_side_panel_tabs/active_tab"
 
 
@@ -99,9 +98,9 @@ def test_each_panel_is_wrapped_in_scroll_area(qapp) -> Any:
     tabs.add_panel("Plots", QLabel("b"))
     for i in range(tabs.count()):
         wrapper = tabs.widget(i)
-        assert isinstance(wrapper, QScrollArea), (
-            f"Tab {i} is {type(wrapper).__name__}, expected QScrollArea"
-        )
+        assert isinstance(
+            wrapper, QScrollArea
+        ), f"Tab {i} is {type(wrapper).__name__}, expected QScrollArea"
 
 
 def test_added_widget_reachable_through_panel_widget(qapp) -> Any:
@@ -185,7 +184,9 @@ def test_restore_state_with_no_saved_value_is_noop(qapp) -> Any:
 
 def test_restore_state_with_obsolete_label_falls_back(qapp) -> Any:
     """Saved label that no longer exists keeps the default tab."""
-    QSettings("D-sorganization", "PendulumSimulator").setValue(_TEST_KEY, "ObsoleteLabel")
+    QSettings("D-sorganization", "PendulumSimulator").setValue(
+        _TEST_KEY, "ObsoleteLabel"
+    )
     tabs = SidePanelTabs(settings_key=_TEST_KEY)
     tabs.add_panel("Setup", QLabel("a"))
     tabs.add_panel("Plots", QLabel("b"))

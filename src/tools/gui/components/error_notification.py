@@ -49,8 +49,7 @@ class ErrorNotificationDialog(QDialog):
         self.setWindowTitle(f"Launch Failed: {self.tool_name}")
         self.setModal(True)
         self.resize(500, 400)
-        self.setStyleSheet(
-            """
+        self.setStyleSheet("""
             QDialog {
                 background-color: #f5f5f5;
             }
@@ -80,8 +79,7 @@ class ErrorNotificationDialog(QDialog):
             QPushButton:hover {
                 background-color: #1976D2;
             }
-            """
-        )
+            """)
 
         layout = QVBoxLayout(self)
         layout.setSpacing(12)

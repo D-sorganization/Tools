@@ -117,7 +117,9 @@ def apply_toolstrip_overlay_state(
     for src_attr, dst_setter, extract in _OVERLAY_BINDINGS:
         src = getattr(toolstrip, src_attr, None)
         if src is None:
-            logger.debug("toolstrip has no attribute %r; skipping %s", src_attr, dst_setter)
+            logger.debug(
+                "toolstrip has no attribute %r; skipping %s", src_attr, dst_setter
+            )
             continue
         setter = getattr(pendulum, dst_setter, None)
         if setter is None:

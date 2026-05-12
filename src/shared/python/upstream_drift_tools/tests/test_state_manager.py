@@ -115,10 +115,7 @@ def test_cleanup_backups(manager, tmp_path) -> Any:
     assert len(backups) == 1
 
     # Modify mtime to be old
-    old_time = (
-        datetime.now(timezone.utc).timestamp()  # noqa: UP017
-        - (35 * 24 * 3600)
-    )
+    old_time = datetime.now(timezone.utc).timestamp() - (35 * 24 * 3600)  # noqa: UP017
     import os
 
     os.utime(backups[0], (old_time, old_time))

@@ -190,9 +190,9 @@ class TestProfileRelativeSizes:
         keysets = [
             set(p["layout"].keys()) for p in PROFILE_PRESETS.values() if "layout" in p
         ]
-        assert all(k == keysets[0] for k in keysets), (
-            "all presets must declare the same layout keys for predictable merging"
-        )
+        assert all(
+            k == keysets[0] for k in keysets
+        ), "all presets must declare the same layout keys for predictable merging"
 
     def test_presentation_has_no_defaults_section(self) -> None:
         # presentation preset deliberately omits a defaults block.

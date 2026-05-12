@@ -252,7 +252,9 @@ class MainWindow(QMainWindow):
         Returns the resulting (clamped) offset.
         """
         try:
-            current = int(QSettings(_SETTINGS_ORG, _SETTINGS_APP).value("font_zoom_pt", 0))
+            current = int(
+                QSettings(_SETTINGS_ORG, _SETTINGS_APP).value("font_zoom_pt", 0)
+            )
         except (TypeError, ValueError):
             current = 0
         return cls._apply_offset_to_app_font(current + int(delta_steps))
@@ -517,7 +519,9 @@ class MainWindow(QMainWindow):
         for idx, panel in enumerate(self._panels):
             model_type = model_map[idx]
 
-            def _on_finished(_p: SimulationPanel = panel, _mt: str = model_type) -> None:
+            def _on_finished(
+                _p: SimulationPanel = panel, _mt: str = model_type
+            ) -> None:
                 result = _p._result
                 if result is not None:
                     self._analysis_tab.set_result(result, model_type=_mt)
@@ -724,7 +728,11 @@ class MainWindow(QMainWindow):
         self.status.showMessage(f"Theme changed to: {name}", 3000)
 
     def _open_theme_manager(self) -> None:
-        if not _THEME_AVAILABLE or self._theme_manager is None or ThemeManagerDialog is None:
+        if (
+            not _THEME_AVAILABLE
+            or self._theme_manager is None
+            or ThemeManagerDialog is None
+        ):
             from PyQt6.QtWidgets import QMessageBox
 
             QMessageBox.information(
