@@ -127,13 +127,13 @@ class TestInputValidatorSignatures:
 
         sig = inspect.signature(InputValidator.validate_composition)
         params = sig.parameters
-        assert (
-            "composition" in params
-        ), "validate_composition must have 'composition' param"
+        assert "composition" in params, (
+            "validate_composition must have 'composition' param"
+        )
         assert "tolerance" in params, "validate_composition must have 'tolerance' param"
-        assert (
-            params["tolerance"].default is not inspect.Parameter.empty
-        ), "validate_composition 'tolerance' must have a default value"
+        assert params["tolerance"].default is not inspect.Parameter.empty, (
+            "validate_composition 'tolerance' must have a default value"
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -271,18 +271,18 @@ class TestProcessCalculatorSignatures:
         """BaghouseCalculator must expose a 'calculate' method."""
         from upstream_drift_tools.process_calculators import BaghouseCalculator
 
-        assert hasattr(
-            BaghouseCalculator, "calculate"
-        ), "BaghouseCalculator.calculate() is missing"
+        assert hasattr(BaghouseCalculator, "calculate"), (
+            "BaghouseCalculator.calculate() is missing"
+        )
         assert callable(BaghouseCalculator.calculate)
 
     def test_financial_calculator_has_calculate_method(self) -> None:
         """FinancialCalculator must expose a 'calculate' method."""
         from upstream_drift_tools.process_calculators import FinancialCalculator
 
-        assert hasattr(
-            FinancialCalculator, "calculate"
-        ), "FinancialCalculator.calculate() is missing"
+        assert hasattr(FinancialCalculator, "calculate"), (
+            "FinancialCalculator.calculate() is missing"
+        )
         assert callable(FinancialCalculator.calculate)
 
     def test_flare_design_is_dataclass_or_namedtuple(self) -> None:
@@ -377,9 +377,9 @@ class TestDataProcessingExceptionHierarchy:
             FitError,
             UnsupportedOperationError,
         ):
-            assert issubclass(
-                exc_cls, Exception
-            ), f"{exc_cls.__name__} must be a subclass of Exception"
+            assert issubclass(exc_cls, Exception), (
+                f"{exc_cls.__name__} must be a subclass of Exception"
+            )
 
     def test_specific_exceptions_are_subclass_of_base(self) -> None:
         """Specific exceptions must be catchable via the base DataProcessingError.
@@ -466,9 +466,9 @@ class TestContractsReExportSurface:
         import importlib
 
         mod = importlib.import_module("contracts")
-        assert hasattr(
-            mod, symbol
-        ), f"contracts.{symbol} is missing — downstream repos import it by name"
+        assert hasattr(mod, symbol), (
+            f"contracts.{symbol} is missing — downstream repos import it by name"
+        )
 
     def test_require_is_callable(self) -> None:
         """require must be callable (function or callable class)."""
@@ -486,14 +486,14 @@ class TestContractsReExportSurface:
         """ContractLevel must have an OFF member — used to disable checks in prod."""
         from contracts import ContractLevel
 
-        assert hasattr(
-            ContractLevel, "OFF"
-        ), "ContractLevel.OFF is required — downstream repos set it in production"
+        assert hasattr(ContractLevel, "OFF"), (
+            "ContractLevel.OFF is required — downstream repos set it in production"
+        )
 
     def test_contract_level_has_enforce_variant(self) -> None:
         """ContractLevel must have an ENFORCE member — used in test environments."""
         from contracts import ContractLevel
 
-        assert hasattr(
-            ContractLevel, "ENFORCE"
-        ), "ContractLevel.ENFORCE is required — downstream test suites activate it"
+        assert hasattr(ContractLevel, "ENFORCE"), (
+            "ContractLevel.ENFORCE is required — downstream test suites activate it"
+        )

@@ -588,7 +588,7 @@ class ModelLibrary:
         """Fetch model list from repository."""
         if not (repo_name is not None):
             raise ValueError("repo_name must be provided")
-        models = []
+        models: list[ModelEntry] = []
 
         repo_type = config.get("type", "github")
 
@@ -607,7 +607,7 @@ class ModelLibrary:
         """Fetch models from GitHub repository."""
         if not (repo_name is not None):
             raise ValueError("repo_name must be provided")
-        models = []
+        models: list[ModelEntry] = []
 
         owner = config.get("owner")
         repo = config.get("repo")
@@ -670,9 +670,7 @@ class ModelLibrary:
                             )
                             continue
 
-                        with urllib.request.urlopen(
-                            subdir_url
-                        ) as sub_response:  # nosec B310
+                        with urllib.request.urlopen(subdir_url) as sub_response:  # nosec B310
                             sub_contents = json.loads(sub_response.read().decode())
                         for sub_item in sub_contents:
                             if sub_item["type"] != "file":

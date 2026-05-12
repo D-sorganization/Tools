@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 from typing import Any, cast
 
 from PyQt6.QtCore import (
@@ -65,9 +65,7 @@ class ConversionRow:
         self.from_value = from_value
         self.to_value = to_value
         self.is_saved = is_saved
-        self.last_used = (
-            last_used or datetime.now(timezone.utc).isoformat()
-        )  # noqa: UP017
+        self.last_used = last_used or datetime.now(UTC).isoformat()  # noqa: UP017
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""
@@ -207,7 +205,10 @@ class UnitConverterWidget(BaseCalculatorWindow):
             )
             if from_category:
                 all_units_by_category = self.converter.get_supported_units()
-                return all_units_by_category.get(from_category, self.all_units)
+                return cast(
+                    list[str],
+                    all_units_by_category.get(from_category, self.all_units),
+                )
         except (RuntimeError, AttributeError, TypeError):
             pass
 
@@ -216,8 +217,9 @@ class UnitConverterWidget(BaseCalculatorWindow):
     def _init_ui(self) -> None:
         """Initialize the user interface."""
         # Use main_layout from BaseCalculatorWidget
-        self.main_layout.setContentsMargins(0, 0, 0, 0)
-        self.main_layout.setSpacing(0)
+        main_layout = self.main_layout
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
 
         # Content area with scroll
         scroll = QScrollArea()
@@ -259,7 +261,7 @@ class UnitConverterWidget(BaseCalculatorWindow):
         content_layout.addStretch()
 
         scroll.setWidget(content)
-        self.main_layout.addWidget(scroll)
+        main_layout.addWidget(scroll)
 
     def _create_single_line_conversion(
         self, index: int, conv: ConversionRow, is_saved: bool
@@ -522,8 +524,9 @@ class UnitConverterWidget(BaseCalculatorWindow):
         cw = self.centralWidget()
         if cw:
             cw.deleteLater()
-        if hasattr(self, "central_widget"):
-            self.central_widget.setFocus()
+        existing_central = cast(QWidget | None, getattr(self, "central_widget", None))
+        if existing_central is not None:
+            existing_central.setFocus()
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
         self.main_layout = QVBoxLayout(self.central_widget)

@@ -191,9 +191,9 @@ class TestCanonicalManifest:
         from gui_launcher.manifest_loader import load_manifest
 
         infos = load_manifest(manifest_path)
-        assert (
-            len(infos) >= 20
-        ), f"Expected at least 20 tools in canonical manifest, got {len(infos)}"
+        assert len(infos) >= 20, (
+            f"Expected at least 20 tools in canonical manifest, got {len(infos)}"
+        )
 
     def test_all_tools_have_required_fields(self, manifest_path: Path) -> None:
         from gui_launcher.manifest_loader import load_manifest
@@ -202,9 +202,9 @@ class TestCanonicalManifest:
         required_fields = {"tool_name", "name", "description", "category"}
         for info in infos:
             missing = required_fields - set(info.keys())
-            assert (
-                not missing
-            ), f"Tool {info.get('tool_name', '?')} missing fields: {missing}"
+            assert not missing, (
+                f"Tool {info.get('tool_name', '?')} missing fields: {missing}"
+            )
 
     def test_tool_names_are_snake_case(self, manifest_path: Path) -> None:
         import re
@@ -215,18 +215,18 @@ class TestCanonicalManifest:
         pattern = re.compile(r"^[a-z0-9_]+$")
         for info in infos:
             tool_name = info.get("tool_name", "")
-            assert pattern.match(
-                tool_name
-            ), f"tool_name {tool_name!r} is not snake_case"
+            assert pattern.match(tool_name), (
+                f"tool_name {tool_name!r} is not snake_case"
+            )
 
     def test_no_duplicate_tool_names(self, manifest_path: Path) -> None:
         from gui_launcher.manifest_loader import load_manifest
 
         infos = load_manifest(manifest_path)
         names = [i["tool_name"] for i in infos]
-        assert len(names) == len(
-            set(names)
-        ), f"Duplicate tool_names found: {[n for n in names if names.count(n) > 1]}"
+        assert len(names) == len(set(names)), (
+            f"Duplicate tool_names found: {[n for n in names if names.count(n) > 1]}"
+        )
 
     def test_all_tools_have_at_least_one_surface(self, manifest_path: Path) -> None:
         from gui_launcher.manifest_loader import load_manifest
@@ -234,9 +234,9 @@ class TestCanonicalManifest:
         infos = load_manifest(manifest_path)
         for info in infos:
             has_surface = "pyqt6" in info or "web" in info
-            assert (
-                has_surface
-            ), f"Tool {info.get('tool_name', '?')} has no surface (pyqt6 or web)"
+            assert has_surface, (
+                f"Tool {info.get('tool_name', '?')} has no surface (pyqt6 or web)"
+            )
 
 
 # ---------------------------------------------------------------------------

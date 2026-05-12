@@ -158,7 +158,7 @@ class BaghouseCalculator:
 
         if mw_avg > 0:
             return cp_mol / mw_avg  # J/(kg·K)
-        return CP_MASS_DEFAULT_FALLBACK  # Default fallback
+        return float(CP_MASS_DEFAULT_FALLBACK)  # Default fallback
 
     def _estimate_volume_flow(
         self,
@@ -290,9 +290,9 @@ class BaghouseCalculator:
              fill_time_hours, fill_time_days,
              carbon_only_fill_hours, ash_only_fill_hours)
         """
-        assert (
-            solid_carbon_in_kg_hr is not None
-        ), "solid_carbon_in_kg_hr must be provided"
+        assert solid_carbon_in_kg_hr is not None, (
+            "solid_carbon_in_kg_hr must be provided"
+        )
         carbon_removed = solid_carbon_in_kg_hr * carbon_removal_efficiency
         ash_removed = ash_in_kg_hr * ash_removal_efficiency
         total_solids = carbon_removed + ash_removed

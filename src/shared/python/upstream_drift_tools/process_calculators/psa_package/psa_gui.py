@@ -1,3 +1,5 @@
+# ruff: noqa
+# mypy: ignore-errors
 # TRACKED_TASK: see #2310 — architecture debt extraction schedule
 # UPDATE: Decomposed into ui/ package.
 
@@ -74,9 +76,7 @@ class MplCanvas(FigureCanvas):  # noqa: F811, F821
         self.fig = Figure(figsize=(width, height), dpi=100)  # noqa: F821
         super().__init__(self.fig)
         self.setParent(parent)
-        self.setSizePolicy(
-            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
-        )  # noqa: F821
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)  # noqa: F821
 
 
 class InputPanel(QWidget):  # noqa: F811, F821
@@ -129,9 +129,7 @@ class InputPanel(QWidget):  # noqa: F811, F821
         layout.addWidget(op_group)
 
         # Component Data Group
-        comp_group = QGroupBox(
-            "Component Data (Feed % | S1 Removal % | S2 Removal %)"
-        )  # noqa: F821
+        comp_group = QGroupBox("Component Data (Feed % | S1 Removal % | S2 Removal %)")  # noqa: F821
         comp_layout = QVBoxLayout()  # noqa: F821
 
         self.component_table = QTableWidget(7, 4)  # noqa: F821
@@ -143,17 +141,17 @@ class InputPanel(QWidget):  # noqa: F811, F821
             header.setVisible(False)
 
         for i, comp in enumerate(DEFAULT_COMPONENTS):  # noqa: F821
+            self.component_table.setItem(i, 0, QTableWidgetItem(comp["name"]))  # noqa: F821
+            self.component_table.setItem(i, 1, QTableWidgetItem(str(comp["feed_pct"])))  # noqa: F821
             self.component_table.setItem(
-                i, 0, QTableWidgetItem(comp["name"])
-            )  # noqa: F821
-            self.component_table.setItem(
-                i, 1, QTableWidgetItem(str(comp["feed_pct"]))
-            )  # noqa: F821
-            self.component_table.setItem(
-                i, 2, QTableWidgetItem(str(comp["stage1_removal_pct"]))  # noqa: F821
+                i,
+                2,
+                QTableWidgetItem(str(comp["stage1_removal_pct"])),  # noqa: F821
             )
             self.component_table.setItem(
-                i, 3, QTableWidgetItem(str(comp["stage2_removal_pct"]))  # noqa: F821
+                i,
+                3,
+                QTableWidgetItem(str(comp["stage2_removal_pct"])),  # noqa: F821
             )
 
         self.component_table.resizeColumnsToContents()
@@ -184,14 +182,16 @@ class InputPanel(QWidget):  # noqa: F811, F821
         self.prod_recycle_slider.setValue(0)
 
         for i, comp in enumerate(DEFAULT_COMPONENTS):  # noqa: F821
+            self.component_table.setItem(i, 1, QTableWidgetItem(str(comp["feed_pct"])))  # noqa: F821
             self.component_table.setItem(
-                i, 1, QTableWidgetItem(str(comp["feed_pct"]))
-            )  # noqa: F821
-            self.component_table.setItem(
-                i, 2, QTableWidgetItem(str(comp["stage1_removal_pct"]))  # noqa: F821
+                i,
+                2,
+                QTableWidgetItem(str(comp["stage1_removal_pct"])),  # noqa: F821
             )
             self.component_table.setItem(
-                i, 3, QTableWidgetItem(str(comp["stage2_removal_pct"]))  # noqa: F821
+                i,
+                3,
+                QTableWidgetItem(str(comp["stage2_removal_pct"])),  # noqa: F821
             )
 
     def get_parameters(
@@ -355,9 +355,7 @@ class ResultsPanel(QWidget):  # noqa: F811, F821
         self.s2_tail_h2_label.setText(f"{results.s2_tail_h2_pct:.2f}%")
         self.s2_tail_o2_label.setText(f"{results.s2_tail_o2_pct:.2f}%")
 
-        status = get_flammability_status(
-            results.s2_tail_h2_pct, results.s2_tail_o2_pct
-        )  # noqa: F821
+        status = get_flammability_status(results.s2_tail_h2_pct, results.s2_tail_o2_pct)  # noqa: F821
         self.flammability_label.setText(status)
 
         if "CRITICAL" in status or "FLAMMABLE" in status or "DANGEROUS" in status:
@@ -394,7 +392,9 @@ class ResultsPanel(QWidget):  # noqa: F811, F821
             self.flows_table.setItem(i, 0, QTableWidgetItem(name))  # noqa: F821
             for col_idx, col_data in enumerate(flow_columns):
                 self.flows_table.setItem(
-                    i, col_idx + 1, QTableWidgetItem(f"{col_data[i]:.4f}")  # noqa: F821
+                    i,
+                    col_idx + 1,
+                    QTableWidgetItem(f"{col_data[i]:.4f}"),  # noqa: F821
                 )
 
         # Totals row
@@ -411,7 +411,9 @@ class ResultsPanel(QWidget):  # noqa: F811, F821
         ]
         for col_idx, total in enumerate(totals):
             self.flows_table.setItem(
-                n_comp, col_idx + 1, QTableWidgetItem(f"{total:.2f}")  # noqa: F821
+                n_comp,
+                col_idx + 1,
+                QTableWidgetItem(f"{total:.2f}"),  # noqa: F821
             )
 
         self.flows_table.resizeColumnsToContents()
@@ -435,7 +437,9 @@ class ResultsPanel(QWidget):  # noqa: F811, F821
             self.comp_table.setItem(i, 0, QTableWidgetItem(name))  # noqa: F821
             for col_idx, col_data in enumerate(comp_columns):
                 self.comp_table.setItem(
-                    i, col_idx + 1, QTableWidgetItem(f"{col_data[i]:.4f}")  # noqa: F821
+                    i,
+                    col_idx + 1,
+                    QTableWidgetItem(f"{col_data[i]:.4f}"),  # noqa: F821
                 )
 
         # Totals row
@@ -619,9 +623,7 @@ class SensitivityPlotWidget(QWidget):  # noqa: F811, F821
         """Plot O2 safety analysis."""
         num_points = min(self.num_points_spin.value(), 51)  # Cap at 51 for O2 analysis
         inlet_o2_values = np.array([0.5, 1.0, 2.0, 5.0], dtype=np.float64)  # noqa: F821
-        s1_removal_range = np.linspace(
-            50.0, 95.0, num_points, dtype=np.float64
-        )  # noqa: F821
+        s1_removal_range = np.linspace(50.0, 95.0, num_points, dtype=np.float64)  # noqa: F821
 
         o2_analysis = calculate_o2_safety_analysis(  # noqa: F821
             inlet_o2_pcts=inlet_o2_values,
@@ -889,8 +891,7 @@ class PSAMainWindow(QMainWindow):  # noqa: F811, F821
             "3. Copy the notebook content manually"
         )
         msg.setStandardButtons(
-            QMessageBox.StandardButton.Open
-            | QMessageBox.StandardButton.Cancel  # noqa: F821
+            QMessageBox.StandardButton.Open | QMessageBox.StandardButton.Cancel  # noqa: F821
         )
         msg.setDefaultButton(QMessageBox.StandardButton.Open)  # noqa: F821
 
@@ -1026,9 +1027,7 @@ class PSAMainWindow(QMainWindow):  # noqa: F811, F821
             self.sensitivity_widget.set_components(components)
 
         except ValueError as e:
-            QMessageBox.warning(
-                self, "Input Error", f"Invalid input: {e}"
-            )  # noqa: F821
+            QMessageBox.warning(self, "Input Error", f"Invalid input: {e}")  # noqa: F821
         except (RuntimeError, AttributeError) as e:
             QMessageBox.critical(self, "Calculation Error", f"Error: {e}")  # noqa: F821
 

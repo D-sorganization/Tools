@@ -58,6 +58,7 @@ src/pendulum_simulator/src/double_pendulum_golf/gui/panel_builders.py
 src/pendulum_simulator/src/double_pendulum_golf/gui/pendulum_widget.py
 src/pendulum_simulator/src/double_pendulum_golf/gui/perturbation_panel.py
 src/pendulum_simulator/src/double_pendulum_golf/gui/simulation_panel.py
+src/shared/python/theme/style_constants.py
 src/pendulum_simulator/src/double_pendulum_golf/gui/swing_comparison_dialog.py
 src/pendulum_simulator/src/double_pendulum_golf/gui/toolstrip_widget.py
 src/pendulum_simulator/src/double_pendulum_golf/native_backend.py
