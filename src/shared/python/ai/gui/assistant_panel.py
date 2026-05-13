@@ -557,9 +557,9 @@ class AIAssistantPanel(QWidget):
             }}
         """)
 
-        # Mode Combo
+        # Mode Combo and new combos
         if hasattr(self, "_mode_combo"):
-            self._mode_combo.setStyleSheet(f"""
+            combo_style = f"""
                 QComboBox {{
                     background-color: {bg_primary};
                     color: {text_primary};
@@ -586,22 +586,16 @@ class AIAssistantPanel(QWidget):
                     border-radius: 4px;
                     selection-background-color: {accent};
                 }}
-            """)
+            """
+            self._mode_combo.setStyleSheet(combo_style)
+            if hasattr(self, "_provider_combo"):
+                self._provider_combo.setStyleSheet(combo_style)
+            if hasattr(self, "_model_combo"):
+                self._model_combo.setStyleSheet(combo_style)
 
         if hasattr(self, "_status_label"):
             self._status_label.setStyleSheet(
                 f"font-size: 11px; color: {text_muted}; background: transparent;"
-            )
-
-        if hasattr(self, "_provider_icon"):
-            self._provider_icon.setStyleSheet(
-                f"font-size: 18px; color: {text_primary}; background: transparent;"
-            )
-
-        if hasattr(self, "_model_label"):
-            self._model_label.setStyleSheet(
-                f"font-size: 14px; font-weight: bold; color: {text_primary}; "
-                "background: transparent;"
             )
 
         if hasattr(self, "chk_auto_index"):
@@ -695,25 +689,76 @@ class AIAssistantPanel(QWidget):
     def _add_header_title_widgets(self, layout: Any) -> None:
         if not (layout is not None):
             raise ValueError("layout must be provided")
-        if not (layout is not None):
-            raise ValueError("layout must be provided")
-        self._provider_icon = QLabel("\U0001f916")
-        layout.addWidget(self._provider_icon)
 
-        self._model_label = QLabel("AI Assistant")
-        layout.addWidget(self._model_label)
+        from src.shared.python.ai.gui.settings_dialog import PROVIDER_INFO, AIProvider
+
+        self._provider_combo = QComboBox()
+        self._provider_combo.setToolTip("Select AI Provider")
+        for provider in AIProvider:
+            info = PROVIDER_INFO[provider]
+            name = str(info.get("name", provider.name))
+            self._provider_combo.addItem(name, provider)
+
+        self._provider_combo.currentIndexChanged.connect(
+            self._on_inline_provider_changed
+        )
+        layout.addWidget(self._provider_combo)
+
+        self._model_combo = QComboBox()
+        self._model_combo.setToolTip("Select Model")
+        self._model_combo.currentIndexChanged.connect(self._on_inline_model_changed)
+        layout.addWidget(self._model_combo)
 
         layout.addSpacing(10)
+
+    def _on_inline_provider_changed(self, index: int) -> None:
+        if index < 0:
+            return
+        provider = self._provider_combo.itemData(index)
+        if not provider:
+            return
+
+        from src.shared.python.ai.gui.settings_dialog import PROVIDER_INFO, AISettings
+
+        self._model_combo.blockSignals(True)
+        self._model_combo.clear()
+
+        info = PROVIDER_INFO.get(provider, {})
+        models = info.get("models", [])
+        for model in models:
+            self._model_combo.addItem(str(model), model)
+
+        self._model_combo.blockSignals(False)
+
+        settings = AISettings.load()
+        if settings.provider == provider and settings.model in models:
+            self._model_combo.setCurrentText(settings.model)
+        else:
+            default_model = str(info.get("default_model", models[0] if models else ""))
+            self._model_combo.setCurrentText(default_model)
+
+        settings.provider = provider
+        settings.model = self._model_combo.currentText()
+        settings.save()
+        self.apply_settings(settings)
+
+    def _on_inline_model_changed(self, index: int) -> None:
+        if index < 0:
+            return
+        from src.shared.python.ai.gui.settings_dialog import AISettings
+
+        settings = AISettings.load()
+        settings.model = self._model_combo.currentText()
+        settings.save()
+        self.apply_settings(settings)
 
     def _add_header_mode_and_status(self, layout: Any) -> None:
         if not (layout is not None):
             raise ValueError("layout must be provided")
-        if not (layout is not None):
-            raise ValueError("layout must be provided")
         self._mode_combo = QComboBox()
-        self._mode_combo.addItems(["Ask", "Plan", "Agent"])
+        self._mode_combo.addItems(["Ask", "Diagnose (read-only)", "Agent"])
         self._mode_combo.setToolTip(
-            "Select AI Mode: Ask (Chat), Plan (Reasoning), Agent (Tools)"
+            "Select AI Mode: Ask (Chat), Diagnose (read-only), Agent (Tools)"
         )
         layout.addWidget(self._mode_combo)
 
@@ -1140,23 +1185,19 @@ class AIAssistantPanel(QWidget):
         from src.shared.python.ai.gui.settings_dialog import AIProvider, get_api_key
         from src.shared.python.ai.types import ExpertiseLevel
 
-        # Update Header Icons
-        provider_icons = {
-            AIProvider.OLLAMA: "🦙",
-            AIProvider.OPENAI: "🧠",
-            AIProvider.ANTHROPIC: "🤖",
-            AIProvider.GEMINI: "✨",
-        }
-        icon = provider_icons.get(settings.provider, "🤖")
-        self._provider_icon.setText(icon)
+        # Update inline combos
+        self._provider_combo.blockSignals(True)
+        idx = self._provider_combo.findData(settings.provider)
+        if idx >= 0:
+            self._provider_combo.setCurrentIndex(idx)
+        self._provider_combo.blockSignals(False)
 
-        # Update Model Label
-        self._model_label.setText(
-            f"{settings.provider.name.title()} ({settings.model})"
-        )
-        self._model_label.setToolTip(
-            f"Provider: {settings.provider.name}\nModel: {settings.model}"
-        )
+        # Repopulate models if needed, and set
+        self._model_combo.blockSignals(True)
+        if self._model_combo.findText(settings.model) < 0:
+            self._model_combo.addItem(settings.model, settings.model)
+        self._model_combo.setCurrentText(settings.model)
+        self._model_combo.blockSignals(False)
 
         # Set expertise level
         level_map = {
