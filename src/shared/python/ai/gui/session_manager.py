@@ -110,11 +110,17 @@ class ChatSessionManager(QObject):
         sessions.sort(key=lambda x: x["timestamp"], reverse=True)
         return sessions
 
-    def load_session(self, session_id: str) -> ConversationContext | None:
+    def load_session(
+        self,
+        session_id: str,
+        *,
+        emit: bool = True,
+    ) -> ConversationContext | None:
         """Load a specific session by ID.
 
         Args:
             session_id: The session ID to load.
+            emit: Whether to emit ``session_loaded`` after loading.
 
         Returns:
             The loaded ConversationContext or None if not found.
@@ -123,7 +129,8 @@ class ChatSessionManager(QObject):
         if file_path.exists():
             try:
                 context = ConversationContext.load_from_file(file_path)
-                self.session_loaded.emit(context)
+                if emit:
+                    self.session_loaded.emit(context)
                 return context
             except Exception as e:
                 logger.error(f"Failed to load session {session_id}: {e}")

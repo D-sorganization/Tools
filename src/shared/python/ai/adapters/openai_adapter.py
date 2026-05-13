@@ -413,6 +413,7 @@ class OpenAIAdapter(BaseAgentAdapter):
         if not (context is not None):
             raise ValueError("context must be provided")
         expertise = context.user_expertise.name.lower()
+        context_instructions = self.build_context_instruction_section(context)
 
         return (
             f"You are an AI assistant for the Golf Modeling Suite, a research-grade "
@@ -424,6 +425,7 @@ class OpenAIAdapter(BaseAgentAdapter):
             f"- Computing inverse dynamics and joint torques\n"
             f"- Performing drift-control decomposition\n"
             f"- Generating visualizations and reports\n\n"
+            f"{context_instructions}\n\n"
             f"Guidelines:\n"
             f"1. Use tools to perform analyses - never make up numerical results\n"
             f"2. Explain concepts at the {expertise} level\n"

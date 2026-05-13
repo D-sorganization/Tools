@@ -373,6 +373,7 @@ class OllamaAdapter(BaseAgentAdapter):
         system_prompt = self.build_system_prompt(
             tools,
             context.user_expertise.name.lower(),
+            context,
         )
         messages.append(
             {

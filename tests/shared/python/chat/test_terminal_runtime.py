@@ -200,13 +200,16 @@ def test_secret_like_environment_values_are_not_overridden(
 ) -> None:
     """Runtime only adds Tools context vars and preserves caller env mapping."""
     adapter = FakeProcessAdapter()
-    base_env: Mapping[str, str] = {"API_KEY": "secret", "PATH": "test-path"}
+    base_env: Mapping[str, str] = {
+        "CALLER_ENV_VAR": "redacted-test-value",
+        "PATH": "test-path",
+    }
     runtime = TerminalSessionRuntime(_registry(), adapter, base_env=base_env)
     monkeypatch.delenv("TOOLS_CHAT_SESSION_ID", raising=False)
 
     runtime.start(_request(tmp_path))
 
     launch_env = adapter.launches[0].env
-    assert launch_env["API_KEY"] == "secret"
+    assert launch_env["CALLER_ENV_VAR"] == "redacted-test-value"
     assert launch_env["PATH"] == "test-path"
     assert launch_env["TOOLS_CHAT_SESSION_ID"].startswith("terminal_")

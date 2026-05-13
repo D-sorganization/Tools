@@ -46,6 +46,7 @@ class ChatHistorySidebar(QWidget):
 
     session_selected = pyqtSignal(str)  # Emits session ID
     new_chat_requested = pyqtSignal()
+    memory_sync_requested = pyqtSignal()
 
     def __init__(
         self, session_manager: ChatSessionManager, parent: QWidget | None = None
@@ -55,6 +56,7 @@ class ChatHistorySidebar(QWidget):
         self._manager.sessions_updated.connect(self.refresh_lists)
         self.refresh_theme()
         self._setup_ui()
+        self.refresh_theme()
         self.refresh_lists()
 
     def refresh_theme(self) -> None:
@@ -110,6 +112,20 @@ class ChatHistorySidebar(QWidget):
                 QPushButton:hover {{
                     background-color: {self._theme_colors["accent"]};
                     color: {self._theme_colors["bg_base"]};
+                }}
+            """)
+        if hasattr(self, "_sync_memory_btn"):
+            self._sync_memory_btn.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: transparent;
+                    color: {self._theme_colors["text_color"]};
+                    border: 1px solid {self._theme_colors["border"]};
+                    border-radius: 4px;
+                    padding: 4px 8px;
+                }}
+                QPushButton:hover {{
+                    border-color: {self._theme_colors["accent"]};
+                    color: {self._theme_colors["accent"]};
                 }}
             """)
         if hasattr(self, "_tabs"):
@@ -176,6 +192,13 @@ class ChatHistorySidebar(QWidget):
         self._new_btn.setToolTip("Start a new conversation")
         self._new_btn.clicked.connect(self.new_chat_requested.emit)
         header_layout.addWidget(self._new_btn)
+
+        self._sync_memory_btn = QPushButton("Sync")
+        self._sync_memory_btn.setToolTip(
+            "Extract explicit preferences from archived conversations"
+        )
+        self._sync_memory_btn.clicked.connect(self.memory_sync_requested.emit)
+        header_layout.addWidget(self._sync_memory_btn)
 
         layout.addWidget(self._header)
 

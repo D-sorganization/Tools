@@ -38,6 +38,13 @@ from src.shared.python.ai.exceptions import (
     ToolExecutionError,
     WorkflowError,
 )
+from src.shared.python.ai.memory_manager import (
+    MemoryCandidate,
+    MemoryManager,
+    build_memory_prompt_section,
+    extract_memory_candidates,
+    load_agents_md,
+)
 from src.shared.python.ai.tool_registry import (
     Tool,
     ToolCategory,
@@ -117,6 +124,12 @@ __all__ = [
     "ScientificValidationError",
     "WorkflowError",
     "ToolExecutionError",
+    # Memory
+    "MemoryCandidate",
+    "MemoryManager",
+    "build_memory_prompt_section",
+    "extract_memory_candidates",
+    "load_agents_md",
 ]
 
 __version__ = "0.1.0"

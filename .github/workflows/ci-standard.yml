@@ -96,7 +96,7 @@ jobs:
         run: |
           set -o pipefail
           while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock && sudo apt-get -o DPkg::Lock::Timeout=300 update --fix-missing
-          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done;  sudo apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
+          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done;  sudo apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6 xvfb
 
       - name: Install Dependencies
         # Force-reinstall sortedcontainers (and hypothesis) before anything
@@ -441,7 +441,7 @@ jobs:
         # API-surface / contract tests run on every PR. Tests marked @pytest.mark.contract
         # and tests in shared_contracts/ directories are always executed here.
         run: |
-          python -m pytest \
+          xvfb-run -a python -m pytest \
             tests/shared/python/upstream_drift_tools/ \
             tests/shared/python/signal_toolkit/ \
             tests/shared/python/model_generation/ \
