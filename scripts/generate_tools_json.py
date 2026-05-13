@@ -250,7 +250,7 @@ def main() -> int:
     # Generate manifest
     manifest = generate_manifest_data(repo_root)
     tools_json_path = repo_root / "tools.json"
-    with open(tools_json_path, "w", encoding="utf-8") as f:
+    with open(tools_json_path, "w", encoding="utf-8", newline="\n") as f:
         json.dump(manifest, f, indent=4)
         f.write("\n")  # POSIX newline
 
@@ -260,7 +260,7 @@ def main() -> int:
     # Generate contract
     contract = generate_contract_data(repo_root)
     contract_path = repo_root / "tool_surface_contract.json"
-    with open(contract_path, "w", encoding="utf-8") as f:
+    with open(contract_path, "w", encoding="utf-8", newline="\n") as f:
         json.dump(contract, f, indent=2)
         f.write("\n")
 

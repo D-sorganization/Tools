@@ -178,7 +178,7 @@ class GUILauncher:
 
         self._process: subprocess.Popen | None = None
 
-    def _set_process(self, process: subprocess.Popen) -> None:  # type: ignore[type-arg]
+    def _set_process(self, process: subprocess.Popen) -> None:
         """Store the active child process for later shutdown."""
         self._process = process
 

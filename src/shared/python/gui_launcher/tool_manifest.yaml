@@ -351,6 +351,7 @@ tools:
     category: Media Processing
     icon: video
     web:
+      path: apps/web
       port: 3001
       auto_open_browser: true
 

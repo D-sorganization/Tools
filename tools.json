@@ -35,14 +35,6 @@
             "desc": "Signal processing and time-series data analysis tool"
         }
     ],
-    "Media Processing": [
-        {
-            "name": "Video Processor (Web)",
-            "path": "src/media_processing/video_processor/apps/web/launch_platform.py",
-            "type": "python",
-            "desc": "Video file format conversion, frame extraction, and media analysis"
-        }
-    ],
     "Development Tools": [
         {
             "name": "Folder Packer Pro",
@@ -77,6 +69,14 @@
             "path": "src/ode_solver/launch_pyqt6.py",
             "type": "python",
             "desc": "Solve systems of ordinary differential equations symbolically"
+        }
+    ],
+    "Media Processing": [
+        {
+            "name": "Video Processor (Web)",
+            "path": "src/media_processing/video_processor/launch_web.py",
+            "type": "python",
+            "desc": "Video file format conversion, frame extraction, and media analysis"
         }
     ],
     "Optimization": [

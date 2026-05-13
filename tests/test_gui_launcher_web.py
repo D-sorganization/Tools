@@ -31,6 +31,29 @@ def test_launch_web_from_gui_info_uses_web_directory_next_to_caller(
     )
 
 
+def test_launch_web_from_gui_info_uses_configured_relative_web_path(
+    tmp_path: Path,
+) -> None:
+    """GUI_INFO can point to a nested web application directory."""
+    caller = tmp_path / "launch_web.py"
+    caller.write_text("", encoding="utf-8")
+
+    with patch("gui_launcher.launcher_web.launch_web_app") as mock_launch:
+        mock_launch.return_value = 0
+        result = launch_web_from_gui_info(
+            {"name": "Video Tool", "web": {"path": "apps/web", "port": 3001}},
+            str(caller),
+        )
+
+    assert result == 0
+    mock_launch.assert_called_once_with(
+        tool_name="Video Tool",
+        web_dir=tmp_path / "apps" / "web",
+        port=3001,
+        auto_open_browser=True,
+    )
+
+
 @patch("gui_launcher.launcher_web._npm_executable")
 def test_launch_web_app_fails_when_npm_is_unavailable(
     mock_npm: MagicMock,
