@@ -72,6 +72,9 @@ class MplCanvas(FigureCanvasQTAgg):
         from shared.python.theme.integration import get_theme_manager
         from shared.python.theme.matplotlib_style import apply_plot_theme
 
+        self.axes = self.fig.add_subplot(111)
+        super().__init__(self.fig)
+
         _tm = get_theme_manager()
         apply_plot_theme(self.fig, _tm.get_current_colors())
         _tm.themeChanged.connect(
@@ -80,8 +83,6 @@ class MplCanvas(FigureCanvasQTAgg):
             )
         )
 
-        self.axes = self.fig.add_subplot(111)
-        super().__init__(self.fig)
         self.setParent(parent)
         self.setSizePolicy(
             QtWidgets.QSizePolicy.Policy.Expanding,
@@ -343,9 +344,9 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
         self.btn_drag.toggled.connect(partial(self._set_mode, "drag"))
 
         # Matplotlib events
-        self.canvas.mpl_connect("button_press_event", self._on_canvas_click)  # type: ignore[arg-type]
-        self.canvas.mpl_connect("button_release_event", self._on_canvas_release)  # type: ignore[arg-type]
-        self.canvas.mpl_connect("motion_notify_event", self._on_canvas_motion)  # type: ignore[arg-type]
+        self.canvas.mpl_connect("button_press_event", self._on_canvas_click)
+        self.canvas.mpl_connect("button_release_event", self._on_canvas_release)
+        self.canvas.mpl_connect("motion_notify_event", self._on_canvas_motion)
 
     def _set_mode(self, mode: str, checked: bool) -> None:
         """Set the current interaction mode."""

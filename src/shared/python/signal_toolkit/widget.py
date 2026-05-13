@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import logging
 import sys
+from typing import Any
 
 import numpy as np
 
@@ -150,16 +151,17 @@ if HAS_MATPLOTLIB and HAS_PYQT:
             from shared.python.theme.integration import get_theme_manager
             from shared.python.theme.matplotlib_style import apply_plot_theme
 
+            self.axes = fig.add_subplot(111)
+            super().__init__(fig)
+
             _tm = get_theme_manager()
-            apply_plot_theme(fig, _tm.get_current_colors())
+            apply_plot_theme(self.figure, _tm.get_current_colors())
             _tm.themeChanged.connect(
                 lambda name: apply_plot_theme(
                     self.figure, _tm.get_theme_colors(name) or _tm.get_current_colors()
                 )
             )
 
-            self.axes = fig.add_subplot(111)
-            super().__init__(fig)
             self.setSizePolicy(
                 QtWidgets.QSizePolicy.Policy.Expanding,
                 QtWidgets.QSizePolicy.Policy.Expanding,
@@ -167,8 +169,12 @@ if HAS_MATPLOTLIB and HAS_PYQT:
             self.updateGeometry()
 
         def setup_dark_theme(self) -> None:
-            """Apply dark theme to the plot (deprecated)."""
-            pass
+            """Apply the current fleet plot theme to existing axes."""
+            from shared.python.theme.integration import get_theme_manager
+            from shared.python.theme.matplotlib_style import apply_plot_theme
+
+            _tm = get_theme_manager()
+            apply_plot_theme(self.figure, _tm.get_current_colors())
 
     # Import mixins (only available when dependencies are present)
     from .widget_plotting import PlottingMixin
@@ -234,7 +240,7 @@ else:
     class SignalToolkitWidget:  # type: ignore[no-redef]
         """Stub class when PyQt6 or matplotlib is not available."""
 
-        def __init__(self, *args, **kwargs) -> None:
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
             msg = "SignalToolkitWidget requires PyQt6 and matplotlib"
             raise ImportError(msg)
 
