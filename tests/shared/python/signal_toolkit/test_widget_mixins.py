@@ -381,3 +381,57 @@ class TestWidgetModuleAvailability:
         from shared.python.signal_toolkit.widget import SignalToolkitWidget
 
         assert SignalToolkitWidget is not None
+
+    def test_mpl_canvas_themes_axes_on_creation(self) -> None:
+        """Signal Toolkit canvases theme axes after they are created."""
+        matplotlib_colors = pytest.importorskip("matplotlib.colors")
+        pytest.importorskip("PyQt6")
+        from PyQt6.QtWidgets import QApplication
+
+        from shared.python.signal_toolkit.widget import (
+            HAS_MATPLOTLIB,
+            HAS_PYQT,
+            MplCanvas,
+        )
+        from shared.python.theme.integration import get_theme_manager
+
+        if not (HAS_MATPLOTLIB and HAS_PYQT):
+            pytest.skip("Signal Toolkit canvas dependencies are unavailable")
+
+        QApplication.instance() or QApplication([])
+        canvas = MplCanvas(width=2, height=2, dpi=80)
+        colors = get_theme_manager().get_current_colors()
+
+        assert canvas.axes.get_facecolor() == matplotlib_colors.to_rgba(
+            colors.get("group_bg", "#f8f9fa")
+        )
+        assert canvas.axes.spines[
+            "bottom"
+        ].get_edgecolor() == matplotlib_colors.to_rgba(colors.get("border", "#ced4da"))
+
+    def test_mpl_canvas_setup_dark_theme_rethemes_existing_axes(self) -> None:
+        """Legacy theme setup path still rethemes the active axes."""
+        matplotlib_colors = pytest.importorskip("matplotlib.colors")
+        pytest.importorskip("PyQt6")
+        from PyQt6.QtWidgets import QApplication
+
+        from shared.python.signal_toolkit.widget import (
+            HAS_MATPLOTLIB,
+            HAS_PYQT,
+            MplCanvas,
+        )
+        from shared.python.theme.integration import get_theme_manager
+
+        if not (HAS_MATPLOTLIB and HAS_PYQT):
+            pytest.skip("Signal Toolkit canvas dependencies are unavailable")
+
+        QApplication.instance() or QApplication([])
+        canvas = MplCanvas(width=2, height=2, dpi=80)
+        canvas.axes.set_facecolor("#ff00ff")
+
+        canvas.setup_dark_theme()
+        colors = get_theme_manager().get_current_colors()
+
+        assert canvas.axes.get_facecolor() == matplotlib_colors.to_rgba(
+            colors.get("group_bg", "#f8f9fa")
+        )

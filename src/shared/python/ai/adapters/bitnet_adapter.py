@@ -17,6 +17,7 @@ from src.shared.python.ai.types import (
     AgentResponse,
     ConversationContext,
     ProviderCapabilities,
+    ProviderCapability,
 )
 from src.shared.python.logging_pkg.logging_config import get_logger
 
@@ -48,10 +49,15 @@ class BitnetAdapter(BaseAgentAdapter):
         )
         self._process: subprocess.Popen | None = None
         self._capabilities = ProviderCapabilities(
-            supports_vision=False,
-            supports_function_calling=False,
-            supports_streaming=True,
-            context_window=2048,
+            supported=frozenset(
+                {
+                    ProviderCapability.STREAMING,
+                    ProviderCapability.SYSTEM_MESSAGE,
+                }
+            ),
+            max_tokens=2048,
+            model_name=self.model,
+            provider_name="bitnet",
         )
 
     @property
@@ -120,15 +126,14 @@ class BitnetAdapter(BaseAgentAdapter):
 
             return AgentResponse(
                 content=output,
-                role="assistant",
-                raw_response={"stdout": result.stdout},
+                metadata={"stdout": result.stdout},
             )
         except subprocess.CalledProcessError as e:
             logger.error("BitNet process failed: %s", e.stderr)
-            raise RuntimeError(f"BitNet process failed: {e.stderr}")
+            raise RuntimeError(f"BitNet process failed: {e.stderr}") from e
         except Exception as e:
             logger.error("Failed to run BitNet: %s", e)
-            raise RuntimeError(f"Failed to run BitNet: {e}")
+            raise RuntimeError(f"Failed to run BitNet: {e}") from e
 
     def stream_response(
         self,
@@ -162,13 +167,11 @@ class BitnetAdapter(BaseAgentAdapter):
             if not process.stdout:
                 raise RuntimeError("Process stdout is unavailable")
 
-            # Skip the prompt in the output
-            prompt_lines = prompt.split("\n")
-
-            for line in process.stdout:
+            for index, line in enumerate(process.stdout):
                 yield AgentChunk(
                     content=line,
                     is_final=False,
+                    index=index,
                 )
 
             process.wait()
