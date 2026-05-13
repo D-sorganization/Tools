@@ -59,6 +59,7 @@ KEY_PROVIDER = "ai/provider"
 KEY_MODEL = "ai/model"
 KEY_EXPERTISE = "ai/expertise_level"  # legacy alias, see Tools #2552
 KEY_RESPONSE_STYLE = "ai/response_style"
+KEY_CHAT_MODE = "ai/chat_mode"
 KEY_OLLAMA_HOST = "ai/ollama_host"
 KEY_STREAMING = "ai/streaming_enabled"
 KEY_RAG_ENABLED = "ai/rag_enabled"
@@ -153,6 +154,56 @@ PROVIDER_INFO: dict[AIProvider, dict[str, str | bool | list[str]]] = {
 }
 
 
+def provider_display_name(provider: AIProvider) -> str:
+    """Return the user-facing provider name from the shared registry."""
+    info = PROVIDER_INFO[provider]
+    return str(info.get("name", provider.name))
+
+
+def provider_default_model(provider: AIProvider) -> str:
+    """Return the provider default model from the shared registry."""
+    info = PROVIDER_INFO[provider]
+    default_model = info.get("default_model", "")
+    return str(default_model) if isinstance(default_model, str) else ""
+
+
+def provider_model_names(provider: AIProvider) -> list[str]:
+    """Return model names for a provider from the shared registry."""
+    info = PROVIDER_INFO[provider]
+    models = info.get("models", [])
+    if not isinstance(models, list):
+        return []
+    return [str(model) for model in models]
+
+
+def populate_provider_combo(combo: QComboBox) -> None:
+    """Populate a provider combo from ``AIProvider`` and ``PROVIDER_INFO``."""
+    combo.clear()
+    for provider in AIProvider:
+        combo.addItem(provider_display_name(provider), provider)
+
+
+def populate_model_combo(
+    combo: QComboBox,
+    provider: AIProvider,
+    selected_model: str | None = None,
+) -> None:
+    """Populate a model combo and select a valid model for ``provider``."""
+    combo.clear()
+    models = provider_model_names(provider)
+    for model in models:
+        combo.addItem(model)
+
+    target = (
+        selected_model if selected_model in models else provider_default_model(provider)
+    )
+    idx = combo.findText(target)
+    if idx < 0 and combo.count():
+        idx = 0
+    if idx >= 0:
+        combo.setCurrentIndex(idx)
+
+
 @dataclass
 class AISettings:
     """AI configuration settings.
@@ -165,6 +216,7 @@ class AISettings:
             (Tools issue #2552).
         response_style: How verbose AI replies should be — one of
             ``"concise"``, ``"standard"``, or ``"detailed"``.
+        chat_mode: Runtime access mode for inline chat controls.
         ollama_host: Ollama server URL.
         streaming_enabled: Whether to stream responses.
         rag_enabled: Whether to use RAG (Codebase awareness).
@@ -177,6 +229,7 @@ class AISettings:
     model: str = DEFAULT_OLLAMA_MODEL
     expertise_level: int = 1
     response_style: str = "standard"
+    chat_mode: str = "ask"
     ollama_host: str = DEFAULT_OLLAMA_HOST
     streaming_enabled: bool = True
     rag_enabled: bool = True
@@ -190,6 +243,7 @@ class AISettings:
         settings.setValue(KEY_MODEL, self.model)
         settings.setValue(KEY_EXPERTISE, self.expertise_level)
         settings.setValue(KEY_RESPONSE_STYLE, self.response_style)
+        settings.setValue(KEY_CHAT_MODE, self.chat_mode)
         settings.setValue(KEY_OLLAMA_HOST, self.ollama_host)
         settings.setValue(KEY_STREAMING, self.streaming_enabled)
         settings.setValue(KEY_RAG_ENABLED, self.rag_enabled)
@@ -215,11 +269,15 @@ class AISettings:
         response_style = str(settings.value(KEY_RESPONSE_STYLE, "standard")).lower()
         if response_style not in {"concise", "standard", "detailed"}:
             response_style = "standard"
+        chat_mode = str(settings.value(KEY_CHAT_MODE, "ask")).lower()
+        if chat_mode not in {"ask", "diagnose", "agent"}:
+            chat_mode = "ask"
         return cls(
             provider=provider,
             model=settings.value(KEY_MODEL, DEFAULT_OLLAMA_MODEL),
             expertise_level=int(settings.value(KEY_EXPERTISE, 1)),
             response_style=response_style,
+            chat_mode=chat_mode,
             ollama_host=settings.value(KEY_OLLAMA_HOST, default_host),
             streaming_enabled=settings.value(KEY_STREAMING, True, type=bool),
             rag_enabled=settings.value(KEY_RAG_ENABLED, True, type=bool),
@@ -681,10 +739,7 @@ class AISettingsDialog(QDialog):
         provider_layout = QVBoxLayout(provider_group)
 
         self._provider_combo = QComboBox()
-        for provider in AIProvider:
-            info = PROVIDER_INFO[provider]
-            name = str(info.get("name", provider.name))
-            self._provider_combo.addItem(name, provider)
+        populate_provider_combo(self._provider_combo)
         self._provider_combo.currentIndexChanged.connect(self._on_provider_changed)
         provider_layout.addWidget(self._provider_combo)
 
@@ -873,20 +928,7 @@ class AISettingsDialog(QDialog):
             return
         provider: AIProvider = provider_data
 
-        # Update model combo
-        info = PROVIDER_INFO[provider]
-        self._model_combo.clear()
-        models = info.get("models", [])
-        if isinstance(models, list):
-            for model in models:
-                self._model_combo.addItem(str(model))
-
-        # Select default model
-        default_model = info.get("default_model", "")
-        if isinstance(default_model, str):
-            idx = self._model_combo.findText(default_model)
-            if idx >= 0:
-                self._model_combo.setCurrentIndex(idx)
+        populate_model_combo(self._model_combo, provider, self._settings.model)
 
         # Show/hide provider configs
         for p, widget in self._provider_configs.items():

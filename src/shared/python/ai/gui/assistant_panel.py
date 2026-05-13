@@ -13,6 +13,7 @@ responses with markdown rendering.
 
 from __future__ import annotations
 
+import contextlib
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
@@ -37,7 +38,14 @@ from PyQt6.QtWidgets import (
 
 from src.shared.python.ai.gui.history_sidebar import ChatHistorySidebar
 from src.shared.python.ai.gui.session_manager import ChatSessionManager
-from src.shared.python.ai.gui.settings_dialog import AISettingsDialog
+from src.shared.python.ai.gui.settings_dialog import (
+    AIProvider,
+    AISettings,
+    AISettingsDialog,
+    populate_model_combo,
+    populate_provider_combo,
+    provider_display_name,
+)
 from src.shared.python.ai.rag.indexer_worker import IndexerWorker
 from src.shared.python.ai.rag.simple_rag import SimpleRAGStore
 from src.shared.python.ai.tool_registry import ToolCategory, get_global_registry
@@ -47,7 +55,6 @@ from src.shared.python.theme.style_constants import Styles
 
 if TYPE_CHECKING:
     from src.shared.python.ai.adapters.base import BaseAgentAdapter
-    from src.shared.python.ai.gui.settings_dialog import AISettings
 
 from src.shared.python.ai.types import ConversationContext, ExpertiseLevel
 
@@ -296,6 +303,11 @@ class AIAssistantPanel(QWidget):
     message_sent = pyqtSignal(str)  # Emits when user sends message
     settings_requested = pyqtSignal()  # Emits when settings button clicked
     close_requested = pyqtSignal()  # Emits when close button clicked
+    _CHAT_MODES = (
+        ("Ask", "ask"),
+        ("Diagnose (read-only)", "diagnose"),
+        ("Agent", "agent"),
+    )
 
     def __init__(self, parent: QWidget | None = None) -> None:
         """Initialize AI assistant panel.
@@ -308,6 +320,8 @@ class AIAssistantPanel(QWidget):
         self._adapter: BaseAgentAdapter | None = None
         self._current_worker: StreamWorker | None = None
         self._current_assistant_message: MessageWidget | None = None
+        self._current_settings = AISettings.load()
+        self._syncing_header_controls = False
 
         # Tools & RAG
         # Tools & RAG
@@ -557,9 +571,11 @@ class AIAssistantPanel(QWidget):
             }}
         """)
 
-        # Mode Combo
-        if hasattr(self, "_mode_combo"):
-            self._mode_combo.setStyleSheet(f"""
+        # Header combos
+        for combo_name in ("_provider_combo", "_model_combo", "_mode_combo"):
+            if not hasattr(self, combo_name):
+                continue
+            getattr(self, combo_name).setStyleSheet(f"""
                 QComboBox {{
                     background-color: {bg_primary};
                     color: {text_primary};
@@ -700,8 +716,29 @@ class AIAssistantPanel(QWidget):
         self._provider_icon = QLabel("\U0001f916")
         layout.addWidget(self._provider_icon)
 
+        self._provider_combo = QComboBox()
+        self._provider_combo.setObjectName("aiProviderCombo")
+        self._provider_combo.setToolTip("Select AI provider")
+        populate_provider_combo(self._provider_combo)
+        self._set_combo_data(self._provider_combo, self._current_settings.provider)
+        self._provider_combo.currentIndexChanged.connect(
+            self._on_header_provider_changed
+        )
+        layout.addWidget(self._provider_combo)
+
+        self._model_combo = QComboBox()
+        self._model_combo.setObjectName("aiModelCombo")
+        self._model_combo.setToolTip("Select AI model")
+        populate_model_combo(
+            self._model_combo,
+            self._current_settings.provider,
+            self._current_settings.model,
+        )
+        self._model_combo.currentIndexChanged.connect(self._on_header_model_changed)
+        layout.addWidget(self._model_combo)
+
         self._model_label = QLabel("AI Assistant")
-        layout.addWidget(self._model_label)
+        self._model_label.setVisible(False)
 
         layout.addSpacing(10)
 
@@ -711,14 +748,124 @@ class AIAssistantPanel(QWidget):
         if not (layout is not None):
             raise ValueError("layout must be provided")
         self._mode_combo = QComboBox()
-        self._mode_combo.addItems(["Ask", "Plan", "Agent"])
+        self._mode_combo.setObjectName("aiModeCombo")
+        for label, value in self._CHAT_MODES:
+            self._mode_combo.addItem(label, value)
+        self._set_combo_data(self._mode_combo, self._current_settings.chat_mode)
         self._mode_combo.setToolTip(
-            "Select AI Mode: Ask (Chat), Plan (Reasoning), Agent (Tools)"
+            "Select AI mode: Ask, Diagnose (read-only), or Agent"
         )
+        self._mode_combo.currentIndexChanged.connect(self._on_header_mode_changed)
         layout.addWidget(self._mode_combo)
 
         self._status_label = QLabel("Ready")
         layout.addWidget(self._status_label)
+
+    def _set_combo_data(self, combo: QComboBox, data: object) -> bool:
+        idx = combo.findData(data)
+        if idx < 0:
+            return False
+        combo.setCurrentIndex(idx)
+        return True
+
+    def _sync_header_controls(self, settings: AISettings) -> None:
+        if not hasattr(self, "_provider_combo"):
+            return
+
+        self._syncing_header_controls = True
+        try:
+            self._provider_combo.blockSignals(True)
+            self._model_combo.blockSignals(True)
+            self._mode_combo.blockSignals(True)
+            self._set_combo_data(self._provider_combo, settings.provider)
+            populate_model_combo(self._model_combo, settings.provider, settings.model)
+            self._set_combo_data(self._mode_combo, settings.chat_mode)
+        finally:
+            self._provider_combo.blockSignals(False)
+            self._model_combo.blockSignals(False)
+            self._mode_combo.blockSignals(False)
+            self._syncing_header_controls = False
+
+    def _persist_header_selection(self, *, reconnect: bool) -> None:
+        if self._syncing_header_controls:
+            return
+
+        provider = self._provider_combo.currentData()
+        if not isinstance(provider, AIProvider):
+            return
+
+        self._current_settings.provider = provider
+        self._current_settings.model = self._model_combo.currentText()
+        mode = self._mode_combo.currentData()
+        self._current_settings.chat_mode = mode if isinstance(mode, str) else "ask"
+        self._current_settings.save()
+        if reconnect:
+            self.apply_settings(self._current_settings)
+
+    def _on_header_provider_changed(self, index: int) -> None:
+        if self._syncing_header_controls:
+            return
+        provider = self._provider_combo.itemData(index)
+        if not isinstance(provider, AIProvider):
+            return
+
+        current_model = self._current_settings.model
+        self._syncing_header_controls = True
+        try:
+            self._model_combo.blockSignals(True)
+            populate_model_combo(self._model_combo, provider, current_model)
+        finally:
+            self._model_combo.blockSignals(False)
+            self._syncing_header_controls = False
+        self._persist_header_selection(reconnect=True)
+
+    def _on_header_model_changed(self, index: int) -> None:
+        if index < 0:
+            return
+        self._persist_header_selection(reconnect=True)
+
+    def _on_header_mode_changed(self, index: int) -> None:
+        if index < 0:
+            return
+        self._persist_header_selection(reconnect=False)
+
+    def _update_header_models(self, models: list[str]) -> None:
+        if not models or not hasattr(self, "_model_combo"):
+            return
+
+        current = self._model_combo.currentText()
+        self._model_combo.blockSignals(True)
+        try:
+            self._model_combo.clear()
+            for model in models:
+                self._model_combo.addItem(model)
+            idx = self._model_combo.findText(current)
+            if idx < 0 and self._model_combo.count():
+                idx = 0
+            if idx >= 0:
+                self._model_combo.setCurrentIndex(idx)
+        finally:
+            self._model_combo.blockSignals(False)
+
+    def _on_chat_models_refreshed(self, models: list[Any]) -> None:
+        names: list[str] = []
+        for entry in models:
+            if isinstance(entry, str) and entry:
+                names.append(entry)
+            elif isinstance(entry, dict):
+                name = entry.get("name")
+                if isinstance(name, str) and name:
+                    names.append(name)
+        self._update_header_models(names)
+
+    def bind_to_chat_dock(self, chat_dock: Any) -> None:
+        """Wire inline model choices to a chat dock ``models_refreshed`` signal."""
+        signal = getattr(chat_dock, "models_refreshed", None)
+        if signal is None or not hasattr(signal, "connect"):
+            return
+        with contextlib.suppress(TypeError):
+            signal.disconnect(self._on_chat_models_refreshed)
+        signal.connect(self._on_chat_models_refreshed)
 
     def _add_header_action_buttons(self, layout: Any) -> None:
         if not (layout is not None):
@@ -1137,8 +1284,11 @@ class AIAssistantPanel(QWidget):
             raise ValueError("settings must be provided")
         if not (settings is not None):
             raise ValueError("settings must be provided")
-        from src.shared.python.ai.gui.settings_dialog import AIProvider, get_api_key
+        from src.shared.python.ai.gui.settings_dialog import get_api_key
         from src.shared.python.ai.types import ExpertiseLevel
+
+        self._current_settings = settings
+        self._sync_header_controls(settings)
 
         # Update Header Icons
         provider_icons = {
@@ -1152,7 +1302,7 @@ class AIAssistantPanel(QWidget):
 
         # Update Model Label
         self._model_label.setText(
-            f"{settings.provider.name.title()} ({settings.model})"
+            f"{provider_display_name(settings.provider)} ({settings.model})"
         )
         self._model_label.setToolTip(
             f"Provider: {settings.provider.name}\nModel: {settings.model}"
