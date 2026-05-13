@@ -247,9 +247,16 @@ class ChatDockWidget(QDockWidget):
         layout.setSpacing(4)
 
         # Status bar
+        status_row = QHBoxLayout()
         self._status_label = QLabel("Connecting...")
         self._status_label.setStyleSheet(f"color: {text_secondary}; font-size: 10px;")
-        layout.addWidget(self._status_label)
+        status_row.addWidget(self._status_label, stretch=1)
+
+        self._close_btn = QPushButton("Close")
+        self._close_btn.setToolTip("Close chat")
+        self._close_btn.clicked.connect(self.close)
+        status_row.addWidget(self._close_btn)
+        layout.addLayout(status_row)
 
         mode_row = QHBoxLayout()
         self._mode_combo = QComboBox()
@@ -275,10 +282,6 @@ class ChatDockWidget(QDockWidget):
         self._terminal_stop_btn.clicked.connect(self._on_terminal_stop)
         mode_row.addWidget(self._terminal_stop_btn)
 
-        self._close_btn = QPushButton("Close")
-        self._close_btn.setToolTip("Close chat")
-        self._close_btn.clicked.connect(self.close)
-        mode_row.addWidget(self._close_btn)
         layout.addLayout(mode_row)
 
         # Message scroll area

@@ -300,3 +300,22 @@ class TestChatDockWidget:
         widget._close_btn.click()
 
         assert not widget.isVisible()
+        widget.close()
+
+    def test_close_button_stays_visible_outside_terminal_toolbar(self, qtbot):
+        from chat.chat_dock_widget import ChatDockWidget
+
+        ChatDockWidget._shared_session_id = None
+        widget = ChatDockWidget(app_name="test_app")
+        _track_widget(qtbot, widget)
+        widget.show()
+
+        assert widget._current_mode() == "chat"
+        assert widget._close_btn.isVisibleTo(widget)
+        assert not widget._terminal_start_btn.isVisibleTo(widget)
+
+        widget._mode_combo.setCurrentIndex(1)
+
+        assert widget._close_btn.isVisibleTo(widget)
+        assert widget._terminal_start_btn.isVisibleTo(widget)
+        widget.close()
