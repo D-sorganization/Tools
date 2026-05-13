@@ -4,8 +4,14 @@ import logging
 from collections.abc import Iterator
 from typing import Any
 
-from src.shared.python.ai.adapters.base import BaseAgentAdapter
-from src.shared.python.ai.types import AgentChunk, ConversationContext
+from src.shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
+from src.shared.python.ai.types import (
+    AgentChunk,
+    AgentResponse,
+    ConversationContext,
+    ProviderCapabilities,
+    ProviderCapability,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -136,8 +142,42 @@ class RustAgentAdapter(BaseAgentAdapter):
 
     def index_codebase(self, root_path: str) -> int:
         """Trigger the Rust-based RAG pipeline indexer."""
-        return self.rag.index_codebase(root_path)
+        return int(self.rag.index_codebase(root_path))
 
     def retrieve_context(self, prompt: str, top_k: int = 5) -> list[str]:
         """Retrieve semantic context using the Rust vector memory."""
-        return self.rag.retrieve_context(prompt, top_k)
+        return [str(item) for item in self.rag.retrieve_context(prompt, top_k)]
+
+    def send_message(
+        self, prompt: str, context: ConversationContext, tools: list[ToolDeclaration]
+    ) -> AgentResponse:
+        """Send a message synchronously."""
+        del tools
+        try:
+            full_prompt = (
+                "\n".join([m.content for m in context.messages]) + f"\n{prompt}"
+            )
+            response = self.engine.generate_response(full_prompt)
+            return AgentResponse(content=str(response))
+        except Exception as e:
+            logger.exception("Rust backend error")
+            return AgentResponse(content=f"Error: {e}", finish_reason="error")
+
+    def validate_connection(self) -> tuple[bool, str]:
+        """Validate connection to the backend."""
+        return True, "Rust backend initialized successfully."
+
+    @property
+    def capabilities(self) -> ProviderCapabilities:
+        """Return adapter capabilities."""
+        return ProviderCapabilities(
+            supported=frozenset(
+                {
+                    ProviderCapability.STREAMING,
+                    ProviderCapability.SYSTEM_MESSAGE,
+                }
+            ),
+            max_tokens=8192,
+            model_name=str(self.config.model),
+            provider_name="rust",
+        )

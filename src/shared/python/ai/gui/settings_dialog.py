@@ -1,6 +1,6 @@
 # ARCHITECTURE_DEBT:
-# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
-# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.  # noqa: E501
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.  # noqa: E501
 
 """AI Assistant Settings Dialog.
 
@@ -20,7 +20,7 @@ from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import TYPE_CHECKING, Any
 
-from PyQt6.QtCore import QSettings, pyqtSignal, QTimer
+from PyQt6.QtCore import QSettings, QTimer, pyqtSignal
 from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -247,7 +247,7 @@ def get_api_key(provider: AIProvider) -> str | None:
     try:
         import keyring
 
-        result = keyring.get_password(service_name, "api_key")
+        result = keyring.get_password(str(service_name), "api_key")
         return result if isinstance(result, str) else None
     except ImportError:
         logger.warning("keyring package not installed for secure key storage")
@@ -282,7 +282,7 @@ def set_api_key(provider: AIProvider, key: str) -> bool:
     try:
         import keyring
 
-        keyring.set_password(service_name, "api_key", key)
+        keyring.set_password(str(service_name), "api_key", key)
         logger.info("Stored API key for %s", provider.name)
         return True
     except ImportError:
@@ -313,7 +313,7 @@ def delete_api_key(provider: AIProvider) -> bool:
     try:
         import keyring
 
-        keyring.delete_password(service_name, "api_key")
+        keyring.delete_password(str(service_name), "api_key")
         logger.info("Deleted API key for %s", provider.name)
         return True
     except ImportError:
@@ -549,7 +549,7 @@ class ProviderConfigWidget(QWidget):
         """Get Ollama host if applicable."""
         if hasattr(self, "_host_input"):
             return str(self._host_input.text().strip())
-        return get_ollama_host()
+        return str(get_ollama_host())
 
 
 class AISettingsDialog(QDialog):
@@ -688,10 +688,9 @@ class AISettingsDialog(QDialog):
         self._provider_combo.currentIndexChanged.connect(self._on_provider_changed)
         provider_layout.addWidget(self._provider_combo)
 
-        # Cost note
         cost_label = QLabel(
-            "<b>💡 Tip:</b> Local models (like Ollama) are completely FREE and run locally. "
-            "Cloud models may incur usage costs."
+            "<b>💡 Tip:</b> Local models (like Ollama) are completely FREE "
+            "and run locally. Cloud models may incur usage costs."
         )
         cost_label.setWordWrap(True)
         provider_layout.addWidget(cost_label)
@@ -823,7 +822,8 @@ class AISettingsDialog(QDialog):
         QMessageBox.information(
             self,
             "Rebuild Started",
-            "Index rebuild started in background. The assistant will be updated shortly.",
+            "Index rebuild started in background. "
+            "The assistant will be updated shortly.",
         )
 
     def _load_settings(self) -> None:
