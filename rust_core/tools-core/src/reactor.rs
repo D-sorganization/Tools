@@ -32,7 +32,11 @@ impl Rk4Integrator {
         y0: &[f64],
     ) -> Vec<(f64, Vec<f64>)> {
         let dim = system.state_dim();
-        assert_eq!(y0.len(), dim, "Initial state length must match system dimension");
+        assert_eq!(
+            y0.len(),
+            dim,
+            "Initial state length must match system dimension"
+        );
 
         let mut trajectory = Vec::new();
         let mut z = z_start;
@@ -157,10 +161,16 @@ pub mod py_bindings {
 
         /// Integrates the TRC ODE system from z_start to z_end with given step size and initial state [conversion, temperature].
         /// Returns a list of tuples (z, conversion, temperature).
-        pub fn integrate(&self, step_size: f64, z_start: f64, z_end: f64, y0: Vec<f64>) -> Vec<(f64, f64, f64)> {
+        pub fn integrate(
+            &self,
+            step_size: f64,
+            z_start: f64,
+            z_end: f64,
+            y0: Vec<f64>,
+        ) -> Vec<(f64, f64, f64)> {
             let integrator = Rk4Integrator::new(step_size);
             let trajectory = integrator.integrate(&self.inner, z_start, z_end, &y0);
-            
+
             trajectory
                 .into_iter()
                 .map(|(z, y)| (z, y[0], y[1]))

@@ -18,10 +18,7 @@ pub mod python {
 
     /// Golfer constraint vector
     #[pyfunction]
-    pub fn py_golfer_constraint_vector(
-        q: Vec<f64>,
-        params: &PyGolferParams,
-    ) -> PyResult<Vec<f64>> {
+    pub fn py_golfer_constraint_vector(q: Vec<f64>, params: &PyGolferParams) -> PyResult<Vec<f64>> {
         if q.len() != 8 {
             return Err(pyo3::exceptions::PyValueError::new_err(
                 "q must have length 8",
@@ -209,8 +206,7 @@ pub mod python {
         l2: f64,
         l3: f64,
     ) -> PyResult<HashMap<String, Vec<Vec<f64>>>> {
-        let (j_w1, j_w2, j_tip) =
-            crate::jacobians::jacobian_triple(theta1, phi1, phi2, l1, l2, l3);
+        let (j_w1, j_w2, j_tip) = crate::jacobians::jacobian_triple(theta1, phi1, phi2, l1, l2, l3);
         let mut result = HashMap::new();
         for (name, j) in [("wrist1", j_w1), ("wrist2", j_w2), ("tip", j_tip)] {
             result.insert(
@@ -243,9 +239,7 @@ pub mod python {
         Ok(result)
     }
 
-    fn ellipsoid_to_map(
-        e: &crate::jacobians::EllipsoidResult,
-    ) -> HashMap<String, Vec<f64>> {
+    fn ellipsoid_to_map(e: &crate::jacobians::EllipsoidResult) -> HashMap<String, Vec<f64>> {
         let mut m = HashMap::new();
         m.insert(
             "directions".to_string(),
