@@ -24,7 +24,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from PyQt6.QtCore import Qt, QTimer, QUrl, pyqtSignal
 from PyQt6.QtWebSockets import QWebSocket
@@ -51,7 +51,7 @@ def _get_theme_colors() -> dict[str, str]:
     try:
         from src.shared.python.theme.theme_manager import get_theme_manager
 
-        return get_theme_manager().get_current_colors()
+        return cast(dict[str, str], get_theme_manager().get_current_colors())
     except ImportError:
         return {}
 
