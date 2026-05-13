@@ -112,7 +112,8 @@ jobs:
           # pytest plugins land in the environment that later runs `python -m pytest`.
           python -m pip install --ignore-installed --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
           python -m pip install --ignore-installed --no-deps mypy==2.0.0
-          python -m pip install -r requirements.txt
+          grep -v -E '^mypy==' requirements.txt > requirements-ci.txt
+          python -m pip install -r requirements-ci.txt
           python -m pip install fastapi
           python -m pip install httpx pytest-cov pytest-xdist pytest-benchmark
           python -m pip install ruff==0.14.10 bandit==1.7.7 pip-audit sortedcontainers types-PyYAML types-requests
@@ -343,7 +344,8 @@ jobs:
           python -m pip install --ignore-installed --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
           python -m pip install --ignore-installed --no-deps "py-cpuinfo>=9.0.0" "pytest-benchmark>=5.2.3"
           python -m pip install --ignore-installed --no-deps mypy==2.0.0
-          python -m pip install -r requirements.txt
+          grep -v -E '^mypy==' requirements.txt > requirements-ci.txt
+          python -m pip install -r requirements-ci.txt
           # The shared self-hosted runner cache has produced mixed NumPy/SciPy
           # binary installs on individual Python minors. Reinstall the compiled
           # numerical stack without cache before importing provider contracts.
