@@ -19,6 +19,16 @@ pytest.importorskip("PyQt6.QtWebSockets", reason="PyQt6.QtWebSockets DLL load fa
 pytest.importorskip("pytestqt", reason="pytest-qt required for widget tests")
 
 
+def _track_widget(qtbot, widget) -> None:
+    """Register Qt widgets when pytest-qt accepts the platform wrapper."""
+    try:
+        qtbot.addWidget(widget)
+    except TypeError:
+        from PyQt6.QtCore import Qt
+
+        widget.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose, True)
+
+
 class TestChatMessageBubble:
     """Tests for ChatMessageBubble widget."""
 
@@ -26,7 +36,7 @@ class TestChatMessageBubble:
         from chat.chat_dock_widget import ChatMessageBubble
 
         bubble = ChatMessageBubble("user", "Hello")
-        qtbot.addWidget(bubble)
+        _track_widget(qtbot, bubble)
         assert bubble._role == "user"
         assert bubble._content == "Hello"
 
@@ -34,14 +44,14 @@ class TestChatMessageBubble:
         from chat.chat_dock_widget import ChatMessageBubble
 
         bubble = ChatMessageBubble("assistant", "Hi there")
-        qtbot.addWidget(bubble)
+        _track_widget(qtbot, bubble)
         assert bubble._role == "assistant"
 
     def test_append_content(self, qtbot):
         from chat.chat_dock_widget import ChatMessageBubble
 
         bubble = ChatMessageBubble("assistant", "")
-        qtbot.addWidget(bubble)
+        _track_widget(qtbot, bubble)
         bubble.append_content("Hello ")
         bubble.append_content("world")
         assert bubble._content == "Hello world"
@@ -50,7 +60,7 @@ class TestChatMessageBubble:
         from chat.chat_dock_widget import ChatMessageBubble
 
         bubble = ChatMessageBubble("user", "old")
-        qtbot.addWidget(bubble)
+        _track_widget(qtbot, bubble)
         bubble.set_content("new")
         assert bubble._content == "new"
 
@@ -58,7 +68,7 @@ class TestChatMessageBubble:
         from chat.chat_dock_widget import ChatMessageBubble
 
         bubble = ChatMessageBubble("user", "test", accent_color="#3498db")
-        qtbot.addWidget(bubble)
+        _track_widget(qtbot, bubble)
         assert bubble._role == "user"
 
 
@@ -70,7 +80,7 @@ class TestChatDockWidget:
 
         ChatDockWidget._shared_session_id = None
         widget = ChatDockWidget(app_name="test_app")
-        qtbot.addWidget(widget)
+        _track_widget(qtbot, widget)
         assert widget._app_context == "unknown"
         assert widget._app_name == "test_app"
         assert widget._server_url == "ws://127.0.0.1:8000"
@@ -87,7 +97,7 @@ class TestChatDockWidget:
             accent_color="#3498db",
             placeholder_text="Ask about gasification...",
         )
-        qtbot.addWidget(widget)
+        _track_widget(qtbot, widget)
         assert widget._app_context == "gasification"
         assert widget._accent_color == "#3498db"
         widget.close()
@@ -97,7 +107,7 @@ class TestChatDockWidget:
 
         ChatDockWidget._shared_session_id = None
         widget = ChatDockWidget(app_name="test_app", session_id="explicit-123")
-        qtbot.addWidget(widget)
+        _track_widget(qtbot, widget)
         assert ChatDockWidget._shared_session_id == "explicit-123"
         widget.close()
 
@@ -106,7 +116,7 @@ class TestChatDockWidget:
 
         ChatDockWidget._shared_session_id = None
         widget = ChatDockWidget(app_name="test_app", project_root=tmp_path)
-        qtbot.addWidget(widget)
+        _track_widget(qtbot, widget)
 
         widget._mode_combo.setCurrentIndex(1)
 
@@ -127,7 +137,7 @@ class TestChatDockWidget:
             project_root=tmp_path,
             terminal_registry=registry,
         )
-        qtbot.addWidget(widget)
+        _track_widget(qtbot, widget)
 
         shell_ids = [
             widget._shell_combo.itemData(i) for i in range(widget._shell_combo.count())
@@ -150,7 +160,7 @@ class TestChatDockWidget:
         sent = []
         ChatDockWidget._shared_session_id = None
         widget = ChatDockWidget(app_name="test_app", project_root=tmp_path)
-        qtbot.addWidget(widget)
+        _track_widget(qtbot, widget)
         monkeypatch.setattr(widget, "_send_ws", sent.append)
 
         widget._mode_combo.setCurrentIndex(1)
@@ -174,7 +184,7 @@ class TestChatDockWidget:
         sent = []
         ChatDockWidget._shared_session_id = None
         widget = ChatDockWidget(app_name="test_app")
-        qtbot.addWidget(widget)
+        _track_widget(qtbot, widget)
         monkeypatch.setattr(widget, "_send_ws", sent.append)
 
         widget._mode_combo.setCurrentIndex(1)
@@ -191,7 +201,7 @@ class TestChatDockWidget:
         sent = []
         ChatDockWidget._shared_session_id = None
         widget = ChatDockWidget(app_name="test_app")
-        qtbot.addWidget(widget)
+        _track_widget(qtbot, widget)
         monkeypatch.setattr(widget, "_send_ws", sent.append)
 
         widget._mode_combo.setCurrentIndex(1)
@@ -214,7 +224,7 @@ class TestChatDockWidget:
         sent = []
         ChatDockWidget._shared_session_id = None
         widget = ChatDockWidget(app_name="test_app")
-        qtbot.addWidget(widget)
+        _track_widget(qtbot, widget)
         monkeypatch.setattr(widget, "_send_ws", sent.append)
 
         widget._mode_combo.setCurrentIndex(1)
@@ -231,14 +241,13 @@ class TestChatDockWidget:
 
     def test_close_button_closes_dock(self, qtbot):
         from chat.chat_dock_widget import ChatDockWidget
-        from PyQt6.QtCore import Qt
 
         ChatDockWidget._shared_session_id = None
         widget = ChatDockWidget(app_name="test_app")
-        qtbot.addWidget(widget)
+        _track_widget(qtbot, widget)
         widget.show()
         assert widget.isVisible()
 
-        qtbot.mouseClick(widget._close_btn, Qt.MouseButton.LeftButton)
+        widget._close_btn.click()
 
         assert not widget.isVisible()
