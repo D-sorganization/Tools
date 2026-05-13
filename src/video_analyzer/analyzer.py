@@ -17,7 +17,7 @@ from collections.abc import Callable
 from datetime import datetime
 from typing import cast
 
-from src.shared.python.core.contracts import precondition
+from contracts import precondition
 
 from .types import (
     BalanceMetrics,

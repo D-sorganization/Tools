@@ -103,6 +103,11 @@ codemap = [
 codemap-mcp = [
     "mcp>=1.0.0",
 ]
+# Video analyzer migration package.
+video-analyzer = [
+    "opencv-python>=4.8.0",
+    "mediapipe>=0.10.0",
+]
 # Development tools
 dev = [
     "pytest>=9.0.3",
@@ -122,6 +127,7 @@ mypy-autofix = "tools.mypy_autofix_agent:main"
 codemap = "codemap.cli:main"
 codemap-watch = "codemap.watcher:main"
 codemap-mcp = "codemap.mcp_server:main"
+video-analyzer = "video_analyzer.launch_video_analyzer:main"
 
 [project.urls]
 Homepage = "https://github.com/D-sorganization/Tools"
@@ -154,6 +160,7 @@ include = [
     "contracts*",
     "lower_body_model*",
     "codemap*",
+    "video_analyzer*",
 ]
 exclude = [
     "*.tests*",
