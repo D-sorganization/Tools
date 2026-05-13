@@ -113,3 +113,8 @@ these additional actions:
 If a product has not configured terminal mode, terminal actions return the
 structured error `Terminal runtime is not configured` and existing chat actions
 continue to work.
+
+`ChatDockWidget` exposes terminal mode as a UI option. Embedders may pass
+`project_root` so the selected terminal provider starts in the product checkout.
+The dock sends only protocol payloads; shell/provider command details remain in
+the registry/runtime layers.
