@@ -127,8 +127,8 @@ def _build_leg_xml(
         f'                        <joint name="{side}_knee" type="hinge" axis="0 1 0" range="0 150"/>\n'
         f'                        <geom type="ellipsoid" size="0.06 0.06 {calf_length / 2}" pos="0 0 -{calf_length / 2}" mass="{calf_mass}" material="matgeom"/>\n'
         f'                        <body name="{side}_foot" pos="0 0 -{calf_length}">\n'
-        f'                            <joint name="{side}_ankle_x" type="hinge" axis="1 0 0" range="-30 30"/>\n'
-        f'                            <joint name="{side}_ankle_y" type="hinge" axis="0 1 0" range="-30 30"/>\n'
+        f'                            <joint name="{side}_ankle_x" type="hinge" axis="1 0 0" range="-60 60"/>\n'
+        f'                            <joint name="{side}_ankle_y" type="hinge" axis="0 1 0" range="-60 60"/>\n'
         f'                            <geom name="{side}_foot_geom" type="ellipsoid" size="0.13 0.05 0.04" pos="0.06 0 -0.04" mass="{foot_mass}" material="matfoot" condim="3"/>\n'
         f'                            <site name="{side}_foot_center" type="sphere" size="0.01" pos="0.06 0 -0.04" rgba="1 0 0 1"/>\n'
         f"                        </body>\n"
