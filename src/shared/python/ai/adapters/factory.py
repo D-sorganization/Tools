@@ -10,6 +10,7 @@ Supported providers:
     - anthropic (Claude)
     - gemini  (Google)
     - cline   (local IDE agent)
+    - bitnet  (local 1.58b models via direct subprocess)
 
 Usage::
 
@@ -30,8 +31,8 @@ from src.shared.python.logging_pkg.logging_config import get_logger
 logger = get_logger(__name__)
 
 # Provider resolution order (local-first)
-_LOCAL_FIRST_ORDER = ("ollama", "cline", "openai", "anthropic", "gemini")
-_CLOUD_FIRST_ORDER = ("openai", "anthropic", "gemini", "ollama", "cline")
+_LOCAL_FIRST_ORDER = ("ollama", "bitnet", "cline", "openai", "anthropic", "gemini")
+_CLOUD_FIRST_ORDER = ("openai", "anthropic", "gemini", "ollama", "bitnet", "cline")
 
 
 class AdapterFactory:
@@ -66,7 +67,7 @@ class AdapterFactory:
     }
 
     _SUPPORTED_PROVIDERS = frozenset(
-        {"ollama", "openai", "codex", "anthropic", "gemini", "cline"}
+        {"ollama", "bitnet", "openai", "codex", "anthropic", "gemini", "cline"}
     )
 
     @classmethod
@@ -113,6 +114,12 @@ class AdapterFactory:
             from src.shared.python.ai.adapters.cline_adapter import ClineAdapter
 
             return ClineAdapter(host=host, timeout=timeout)
+
+        if provider == "bitnet":
+            from src.shared.python.ai.adapters.bitnet_adapter import BitnetAdapter
+
+            # Bitnet uses 'host' param as bitnet_root in this context if provided
+            return BitnetAdapter(model=model, bitnet_root=host)
 
         # "codex" is an alias for OpenAI
         lookup_key = "openai" if provider == "codex" else provider
