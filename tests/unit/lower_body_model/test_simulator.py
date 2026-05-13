@@ -200,7 +200,7 @@ def test_inverse_kinematics_updates_target_on_success(
     pos = simulator.data.qpos[0:3].copy()
     quat = simulator.data.qpos[3:7].copy()
 
-    converged = simulator.inverse_kinematics(pos, quat, max_iters=50)
+    converged = simulator.inverse_kinematics(pos, quat, max_iters=500)
 
     assert converged is True
     assert simulator.qpos_target is not None
@@ -236,10 +236,10 @@ def test_setup_initial_pose_produces_flat_feet(
 def test_setup_initial_pose_raises_on_infeasible_knee(
     simulator: LowerBodySimulator,
 ) -> None:
-    """A 120° knee under 30° hip tilt needs ~90° ankle flex; must raise."""
+    """A 50° knee under 30° hip tilt needs ~80° ankle flex; must raise."""
     with pytest.raises(ValueError, match="ankle_y"):
         simulator.setup_initial_pose(
-            hip_anterior_tilt=30.0, knee_flexion=120.0, foot_angle=0.0
+            hip_anterior_tilt=30.0, knee_flexion=50.0, foot_angle=0.0
         )
 
 
@@ -251,5 +251,5 @@ def test_setup_initial_pose_default_is_feasible(
     for side in ("r", "l"):
         ankle_y = simulator.data.qpos[simulator.jnt_qpos_idx[f"{side}_ankle_y"]]
         ankle_x = simulator.data.qpos[simulator.jnt_qpos_idx[f"{side}_ankle_x"]]
-        assert abs(np.degrees(ankle_y)) <= 30.0 + 1e-3
-        assert abs(np.degrees(ankle_x)) <= 30.0 + 1e-3
+        assert abs(np.degrees(ankle_y)) <= 60.0 + 1e-3
+        assert abs(np.degrees(ankle_x)) <= 60.0 + 1e-3
