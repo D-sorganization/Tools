@@ -12,6 +12,8 @@ pub mod rrt;
 pub mod signal;
 pub mod thermodynamics;
 pub mod reactor;
+#[cfg(feature = "python")]
+pub mod electrode_advisor;
 // Re-export primary types
 pub use math::{clamp, lerp, GRAVITY, R_GAS};
 pub use math_primitives::matrix3::Matrix3;
@@ -147,6 +149,11 @@ fn tools_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
 
     // Register reactor classes
     m.add_class::<reactor::py_bindings::PyTrc1DSystem>()?;
+
+    // Register electrode advisor classes
+    let electrode_mod = PyModule::new(m.py(), "electrode_advisor")?;
+    electrode_advisor::py_bindings::register_module(&electrode_mod)?;
+    m.add_submodule(&electrode_mod)?;
 
     Ok(())
 }

@@ -2,9 +2,16 @@
 
 from __future__ import annotations
 
+import warnings
 from dataclasses import dataclass
 from math import cos, pi, sin
 from typing import Any
+
+# Try to import rust_kernel adapter
+try:
+    from . import rust_kernel
+except ImportError:
+    rust_kernel = None  # type: ignore[assignment]
 
 MM_PER_M = 1000.0
 
@@ -177,7 +184,13 @@ def _build_default_placements(
     return tuple(placements)
 
 
-def build_default_electrode_advisor_layout() -> ElectrodeAdvisorLayout:
+def _py_build_default_electrode_advisor_layout() -> ElectrodeAdvisorLayout:
+    warnings.warn(
+        "build_default_electrode_advisor_layout has a Rust kernel replacement. "
+        "Migrate to rust_kernel adapter.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     bath = BathDefaults()
     electrodes = ElectrodeDefaults()
     drafting = DraftingEnvelope()
@@ -187,6 +200,13 @@ def build_default_electrode_advisor_layout() -> ElectrodeAdvisorLayout:
         drafting=drafting,
         placements=_build_default_placements(bath, electrodes),
     )
+
+
+def build_default_electrode_advisor_layout() -> Any:
+    """Build the default layout, preferring the Rust kernel if available."""
+    if rust_kernel is not None:
+        return rust_kernel.build_default_electrode_advisor_layout()
+    return _py_build_default_electrode_advisor_layout()  # type: ignore[unreachable]
 
 
 DEFAULT_ELECTRODE_ADVISOR_LAYOUT = build_default_electrode_advisor_layout()
