@@ -10,6 +10,8 @@ pub mod engineering;
 pub mod math;
 pub mod rrt;
 pub mod signal;
+pub mod thermodynamics;
+pub mod reactor;
 // Re-export primary types
 pub use math::{clamp, lerp, GRAVITY, R_GAS};
 pub use math_primitives::matrix3::Matrix3;
@@ -139,6 +141,12 @@ fn tools_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
         &eng_mod
     )?)?;
     m.add_submodule(&eng_mod)?;
+
+    // Register thermodynamics classes
+    m.add_class::<thermodynamics::py_bindings::PyNasa7Species>()?;
+
+    // Register reactor classes
+    m.add_class::<reactor::py_bindings::PyTrc1DSystem>()?;
 
     Ok(())
 }
