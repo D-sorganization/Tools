@@ -155,9 +155,7 @@ pub fn equations_of_motion(
 
     let rhs = SVector::<f64, 3>::new(tau[0], tau[1], tau[2]) + f - c - g;
     let decomp = m.lu();
-    let qddot = decomp
-        .solve(&rhs)
-        .unwrap_or_else(SVector::<f64, 3>::zeros);
+    let qddot = decomp.solve(&rhs).unwrap_or_else(SVector::<f64, 3>::zeros);
 
     [qddot[0], qddot[1], qddot[2]]
 }

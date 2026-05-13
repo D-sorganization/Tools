@@ -16,9 +16,8 @@ pub mod python {
         double_coriolis, double_equations_of_motion, double_forward_kinematics,
         double_friction_torque, double_gravity_vector, double_mass_matrix,
         golfer_forward_kinematics, golfer_friction_torque, golfer_gravity_vector,
-        golfer_mass_matrix, triple_coriolis, triple_equations_of_motion,
-        triple_forward_kinematics, triple_friction_torque, triple_gravity_vector,
-        triple_mass_matrix,
+        golfer_mass_matrix, triple_coriolis, triple_equations_of_motion, triple_forward_kinematics,
+        triple_friction_torque, triple_gravity_vector, triple_mass_matrix,
     };
     use pyo3::prelude::*;
     use std::collections::HashMap;
@@ -247,10 +246,7 @@ pub mod python {
     // -------- Golfer (8-DOF) --------
 
     #[pyfunction]
-    pub fn py_golfer_mass_matrix(
-        q: Vec<f64>,
-        params: &PyGolferParams,
-    ) -> PyResult<Vec<Vec<f64>>> {
+    pub fn py_golfer_mass_matrix(q: Vec<f64>, params: &PyGolferParams) -> PyResult<Vec<Vec<f64>>> {
         if q.len() != 8 {
             return Err(pyo3::exceptions::PyValueError::new_err(
                 "q must have length 8",
@@ -266,10 +262,7 @@ pub mod python {
     }
 
     #[pyfunction]
-    pub fn py_golfer_gravity_vector(
-        q: Vec<f64>,
-        params: &PyGolferParams,
-    ) -> PyResult<Vec<f64>> {
+    pub fn py_golfer_gravity_vector(q: Vec<f64>, params: &PyGolferParams) -> PyResult<Vec<f64>> {
         if q.len() != 8 {
             return Err(pyo3::exceptions::PyValueError::new_err(
                 "q must have length 8",
@@ -341,8 +334,9 @@ pub mod python {
 #[cfg(feature = "wasm")]
 pub mod wasm {
     use crate::bindings::state::wasm::{WasmDoublePendulumParams, WasmGolferParams};
-    use crate::{double_gravity_vector, double_mass_matrix, golfer_forward_kinematics,
-        golfer_mass_matrix};
+    use crate::{
+        double_gravity_vector, double_mass_matrix, golfer_forward_kinematics, golfer_mass_matrix,
+    };
     use wasm_bindgen::prelude::*;
 
     /// Double pendulum mass matrix (WASM)

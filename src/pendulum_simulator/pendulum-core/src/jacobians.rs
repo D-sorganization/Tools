@@ -100,16 +100,10 @@ pub fn jacobian_double(
     let (c2, s2) = (theta2.cos(), theta2.sin());
 
     // J_wrist: wrist depends only on theta1
-    let j_wrist = SMatrix::<f64, 2, 2>::new(
-        l1 * c1, 0.0,
-        l1 * s1, 0.0,
-    );
+    let j_wrist = SMatrix::<f64, 2, 2>::new(l1 * c1, 0.0, l1 * s1, 0.0);
 
     // J_tip: full 2×2
-    let j_tip = SMatrix::<f64, 2, 2>::new(
-        l1 * c1 + l2 * c2, l2 * c2,
-        l1 * s1 + l2 * s2, l2 * s2,
-    );
+    let j_tip = SMatrix::<f64, 2, 2>::new(l1 * c1 + l2 * c2, l2 * c2, l1 * s1 + l2 * s2, l2 * s2);
 
     (j_wrist, j_tip)
 }
@@ -143,7 +137,10 @@ pub fn jacobian_triple(
     l2: f64,
     l3: f64,
 ) -> (SMatrix<f64, 2, 3>, SMatrix<f64, 2, 3>, SMatrix<f64, 2, 3>) {
-    assert!(l1 > 0.0 && l2 > 0.0 && l3 > 0.0, "All lengths must be positive");
+    assert!(
+        l1 > 0.0 && l2 > 0.0 && l3 > 0.0,
+        "All lengths must be positive"
+    );
     assert!(
         theta1.is_finite() && phi1.is_finite() && phi2.is_finite(),
         "All angles must be finite"
@@ -156,21 +153,26 @@ pub fn jacobian_triple(
     let (c3, s3) = (theta3.cos(), theta3.sin());
 
     // Wrist1: only theta1 contributes
-    let j_w1 = SMatrix::<f64, 2, 3>::new(
-        l1 * c1, 0.0, 0.0,
-        l1 * s1, 0.0, 0.0,
-    );
+    let j_w1 = SMatrix::<f64, 2, 3>::new(l1 * c1, 0.0, 0.0, l1 * s1, 0.0, 0.0);
 
     // Wrist2: theta1 and phi1 contribute
     let j_w2 = SMatrix::<f64, 2, 3>::new(
-        l1 * c1 + l2 * c2, l2 * c2, 0.0,
-        l1 * s1 + l2 * s2, l2 * s2, 0.0,
+        l1 * c1 + l2 * c2,
+        l2 * c2,
+        0.0,
+        l1 * s1 + l2 * s2,
+        l2 * s2,
+        0.0,
     );
 
     // Tip: all three DOFs contribute
     let j_tip = SMatrix::<f64, 2, 3>::new(
-        l1 * c1 + l2 * c2 + l3 * c3, l2 * c2 + l3 * c3, l3 * c3,
-        l1 * s1 + l2 * s2 + l3 * s3, l2 * s2 + l3 * s3, l3 * s3,
+        l1 * c1 + l2 * c2 + l3 * c3,
+        l2 * c2 + l3 * c3,
+        l3 * c3,
+        l1 * s1 + l2 * s2 + l3 * s3,
+        l2 * s2 + l3 * s3,
+        l3 * s3,
     );
 
     (j_w1, j_w2, j_tip)

@@ -7,9 +7,9 @@
 
 #[cfg(feature = "python")]
 pub(crate) fn to_array_8(values: Vec<f64>, name: &str) -> pyo3::PyResult<[f64; 8]> {
-    values.try_into().map_err(|_| {
-        pyo3::exceptions::PyValueError::new_err(format!("{name} must have length 8"))
-    })
+    values
+        .try_into()
+        .map_err(|_| pyo3::exceptions::PyValueError::new_err(format!("{name} must have length 8")))
 }
 
 // ---------------------------------------------------------------------------

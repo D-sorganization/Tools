@@ -74,7 +74,7 @@ class LowerBodySimulator:
         the ankle angles are then solved by a closed-form 2-DOF IK so both feet
         land flat on the ground (world Z-axis of each foot body == (0, 0, 1))
         regardless of the hip/knee configuration. If the required ankle angles
-        exceed the ±30° joint limits declared in builder.py the pose is
+        exceed the ±60° joint limits declared in builder.py the pose is
         infeasible and :class:`ValueError` is raised identifying the offending
         axis.
 
@@ -88,7 +88,7 @@ class LowerBodySimulator:
             ValueError: If any argument is outside its physiological range:
                 -90 <= hip_anterior_tilt <= 90, 0 <= knee_flexion <= 150,
                 -90 <= foot_angle <= 90; or if the resulting pose requires an
-                ankle angle outside ±30°.
+                ankle angle outside ±60°.
         """
         for name, value in (
             ("hip_anterior_tilt", hip_anterior_tilt),
@@ -164,7 +164,7 @@ class LowerBodySimulator:
         with ``sx=sin(qx), cx=cos(qx), sy=sin(qy), cy=cos(qy)``. Solve for
         ``qy = arcsin(sy)`` and then ``qx = atan2(-(-sx*cy), cx*cy)``.
 
-        Raises ``ValueError`` if either solved angle exceeds the ±30° joint
+        Raises ``ValueError`` if either solved angle exceeds the ±60° joint
         limit declared in ``builder.py``, identifying the axis and overshoot.
         """
         calf_mat = self.data.xmat[self.body_ids[f"{side}_calf"]].reshape(3, 3)
@@ -177,15 +177,15 @@ class LowerBodySimulator:
         else:
             qx = float(np.arctan2(-float(target_local_z[1]), float(target_local_z[2])))
 
-        limit_rad = np.radians(30.0)
+        limit_rad = np.radians(60.0)
         if abs(qy) > limit_rad + 1e-9:
             raise ValueError(
-                f"{side}_ankle_y required {np.degrees(qy):.1f}° exceeds ±30° limit; "
+                f"{side}_ankle_y required {np.degrees(qy):.1f}° exceeds ±60° limit; "
                 "reduce knee_flexion or hip_anterior_tilt"
             )
         if abs(qx) > limit_rad + 1e-9:
             raise ValueError(
-                f"{side}_ankle_x required {np.degrees(qx):.1f}° exceeds ±30° limit; "
+                f"{side}_ankle_x required {np.degrees(qx):.1f}° exceeds ±60° limit; "
                 "reduce foot_angle"
             )
         return qx, qy
