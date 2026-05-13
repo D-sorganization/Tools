@@ -233,6 +233,17 @@
       }
     },
     {
+      "id": "video_analyzer",
+      "name": "Video Analyzer",
+      "description": "Video-based motion analysis with pose tracking",
+      "category": "Motion Capture",
+      "surfaces": {
+        "pyqt6": true,
+        "web": false,
+        "legacy_gui": false
+      }
+    },
+    {
       "id": "video_processor",
       "name": "Video Processor",
       "description": "Video file format conversion, frame extraction, and media analysis",

@@ -79,6 +79,14 @@
             "desc": "Video file format conversion, frame extraction, and media analysis"
         }
     ],
+    "Motion Capture": [
+        {
+            "name": "Video Analyzer",
+            "path": "src/video_analyzer/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Video-based motion analysis with pose tracking"
+        }
+    ],
     "Optimization": [
         {
             "name": "Adam Optimizer",
