@@ -25,6 +25,10 @@ Consumers may import these symbols from `chat`:
 - `TerminalAgentEvent`
 - `TerminalProviderRegistry`
 - `TerminalRegistryError`
+- `ProcessLaunchRequest`
+- `TerminalProcessAdapter`
+- `TerminalRuntimeError`
+- `TerminalSessionRuntime`
 - `ResponseStyle`
 - `DEFAULT_RESPONSE_STYLE`
 - `RESPONSE_STYLE_PROMPTS`
@@ -80,3 +84,10 @@ must launch providers with a validated project root as the process working
 directory and may pass explicit Tools context through environment variables or a
 generated context file. Secrets must stay out of command strings, diagnostics,
 and persisted UI selections.
+
+`TerminalSessionRuntime` owns terminal lifecycle coordination. It accepts a
+registry plus a process adapter, resolves shell/provider compatibility, launches
+the provider in the validated project root, injects explicit `TOOLS_CHAT_*`
+context variables, and exposes start/write/resize/stop/event-drain operations.
+The process adapter boundary keeps PTY/subprocess details outside Qt widgets and
+outside provider descriptors.
