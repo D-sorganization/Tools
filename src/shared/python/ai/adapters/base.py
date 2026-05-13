@@ -11,13 +11,17 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 from src.shared.python.logging_pkg.logging_config import get_logger
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
+from src.shared.python.ai.memory_manager import (
+    build_memory_prompt_section,
+    load_agents_md,
+)
 from src.shared.python.ai.types import (
     AgentChunk,
     AgentResponse,
@@ -229,6 +233,7 @@ class BaseAgentAdapter(ABC):
         self,
         tools: list[ToolDeclaration],
         expertise_level: str = "beginner",
+        context: ConversationContext | None = None,
     ) -> str:
         """Build a system prompt including tool context.
 
@@ -238,6 +243,8 @@ class BaseAgentAdapter(ABC):
         Args:
             tools: Available tools to describe.
             expertise_level: User's expertise level.
+            context: Optional conversation context containing project and
+                prompt-memory metadata.
 
         Returns:
             System prompt string.
@@ -249,6 +256,7 @@ class BaseAgentAdapter(ABC):
         tool_descriptions = "\n".join(
             f"- {tool.name}: {tool.description}" for tool in tools
         )
+        memory_section = self.build_context_instruction_section(context)
 
         return (
             f"You are an AI assistant for the Golf Modeling Suite, a research-grade "
@@ -256,6 +264,7 @@ class BaseAgentAdapter(ABC):
             f"Your role is to help users analyze golf swings using advanced physics "
             f"simulations across multiple engines (MuJoCo, Drake, Pinocchio).\n\n"
             f"User expertise level: {expertise_level}\n\n"
+            f"{memory_section}\n\n"
             f"Available tools:\n{tool_descriptions}\n\n"
             f"Guidelines:\n"
             f"1. Always validate scientific claims before presenting them\n"
@@ -263,4 +272,31 @@ class BaseAgentAdapter(ABC):
             f"3. Use tools to perform analyses rather than making up results\n"
             f"4. Cite sources and acknowledge uncertainty\n"
             f"5. Guide users through workflows step by step"
+        )
+
+    def build_context_instruction_section(
+        self,
+        context: ConversationContext | None,
+    ) -> str:
+        """Build repository and persisted-memory prompt context."""
+        if context is None:
+            return ""
+
+        project_root_value = context.metadata.get("project_root")
+        project_root = None
+        if isinstance(project_root_value, str) and project_root_value:
+            from pathlib import Path
+
+            project_root = Path(project_root_value)
+
+        prompt_memory = context.metadata.get("prompt_memory")
+        if not isinstance(prompt_memory, dict):
+            prompt_memory = None
+
+        return cast(
+            str,
+            build_memory_prompt_section(
+                prompt_memory=prompt_memory,
+                agents_md=load_agents_md(project_root),
+            ),
         )

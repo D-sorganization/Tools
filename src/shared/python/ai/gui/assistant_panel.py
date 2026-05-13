@@ -14,24 +14,21 @@ responses with markdown rendering.
 from __future__ import annotations
 
 import contextlib
-from datetime import UTC, datetime
+from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
 
-from PyQt6 import QtCore, QtGui
-from PyQt6.QtCore import Qt, QThread, pyqtSignal
+from PyQt6 import QtCore
+from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QKeySequence, QShortcut
 from PyQt6.QtWidgets import (
     QComboBox,
     QFrame,
     QHBoxLayout,
     QLabel,
-    QPlainTextEdit,
     QPushButton,
     QScrollArea,
-    QSizePolicy,
     QSplitter,
-    QTextEdit,
     QVBoxLayout,
     QWidget,
 )
@@ -40,6 +37,11 @@ from src.shared.python.ai.access_policy import (
     ChatAccessMode,
     coerce_access_mode,
     tool_declarations_for_access_mode,
+)
+from src.shared.python.ai.gui.assistant_widgets import (
+    ChatInput,
+    MessageWidget,
+    StreamWorker,
 )
 from src.shared.python.ai.gui.history_sidebar import ChatHistorySidebar
 from src.shared.python.ai.gui.session_manager import ChatSessionManager
@@ -51,6 +53,7 @@ from src.shared.python.ai.gui.settings_dialog import (
     populate_provider_combo,
     provider_display_name,
 )
+from src.shared.python.ai.memory_manager import MemoryManager
 from src.shared.python.ai.rag.indexer_worker import IndexerWorker
 from src.shared.python.ai.rag.simple_rag import SimpleRAGStore
 from src.shared.python.ai.tool_registry import ToolCategory, get_global_registry
@@ -67,233 +70,13 @@ from src.shared.python.ai.types import ConversationContext, ExpertiseLevel
 logger = get_logger(__name__)
 
 
-class MessageWidget(QFrame):
-    """Widget displaying a single message in the conversation."""
-
-    def __init__(
-        self,
-        role: str,
-        content: str,
-        timestamp: datetime | None = None,
-        parent: QWidget | None = None,
-    ) -> None:
-        """Initialize message widget.
-
-        Args:
-            role: Message role (user, assistant, system).
-            content: Message content.
-            timestamp: When the message was created.
-            parent: Parent widget.
-        """
-        if not (role is not None):
-            raise ValueError("role must be provided")
-        if not (role is not None):
-            raise ValueError("role must be provided")
-        super().__init__(parent)
-        self._role = role
-        self._content = content
-        self._timestamp = timestamp or datetime.now(UTC)
-        self._setup_ui()
-        self._apply_style()
-
-    def _setup_ui(self) -> None:
-        """Set up the widget UI."""
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(12, 8, 12, 8)
-        layout.setSpacing(4)
-
-        # Header with role and time
-        header = QHBoxLayout()
-
-        role_label = QLabel(self._get_role_display())
-        role_label.setStyleSheet(Styles.TEXT_LABEL_BOLD_WHITE)
-        header.addWidget(role_label)
-
-        header.addStretch()
-
-        time_label = QLabel(self._timestamp.strftime("%H:%M"))
-        time_label.setStyleSheet(Styles.TEXT_MUTED)
-        header.addWidget(time_label)
-
-        layout.addLayout(header)
-
-        # Content
-        self._content_label = QTextEdit()
-        self._content_label.setReadOnly(True)
-        self._content_label.setFrameShape(QFrame.Shape.NoFrame)
-        self._content_label.setVerticalScrollBarPolicy(
-            Qt.ScrollBarPolicy.ScrollBarAlwaysOff
-        )
-        self._content_label.setHorizontalScrollBarPolicy(
-            Qt.ScrollBarPolicy.ScrollBarAlwaysOff
-        )
-        self._content_label.setSizePolicy(
-            QSizePolicy.Policy.Expanding,
-            QSizePolicy.Policy.Minimum,
-        )
-        self._content_label.setMarkdown(self._content)
-        # Ensure text is visible on dark backgrounds
-        self._content_label.setStyleSheet(Styles.TEXT_CONTENT_TRANSPARENT)
-
-        # Auto-resize to content
-        doc = self._content_label.document()
-        if doc is not None:
-            doc.contentsChanged.connect(self._adjust_height)
-        self._adjust_height()
-
-        layout.addWidget(self._content_label)
-
-    def _get_role_display(self) -> str:
-        """Get display name for role."""
-        role_map = {
-            "user": "You",
-            "assistant": "AI Assistant",
-            "system": "System",
-            "tool": "Tool Result",
-        }
-        return role_map.get(self._role, self._role.title())
-
-    def _apply_style(self) -> None:
-        """Apply styling based on role and current theme."""
-        self.refresh_theme()
-
-    def refresh_theme(self) -> None:
-        """Refresh colors from ThemeManager."""
-        try:
-            from src.shared.python.theme.theme_manager import get_theme_manager
-
-            color_source: object = get_theme_manager().get_current_colors()
-
-            def _get(key: str, fallback: Any) -> Any:
-                if isinstance(color_source, dict):
-                    return color_source.get(key, fallback)
-                return getattr(color_source, key, fallback)
-
-            bg_alt = _get("bg_elevated", _get("group_bg", "#2d2d2d"))
-            bg_secondary = _get("bg_highlight", _get("input_bg", "#252526"))
-            text_primary = _get("text_primary", _get("text", "#e0e0e0"))
-        except ImportError:
-            bg_alt = "#2d2d2d"
-            bg_secondary = "#252526"
-            text_primary = "#e0e0e0"
-
-        bg = bg_alt if self._role == "user" else bg_secondary
-        self.setStyleSheet(
-            f"MessageWidget {{ background-color: {bg}; border-radius: 6px; }}"
-        )
-        self._content_label.setStyleSheet(
-            f"color: {text_primary}; background: transparent; border: none;"
-        )
-
-    def _adjust_height(self) -> None:
-        """Adjust height to fit content."""
-        doc = self._content_label.document()
-        if doc is not None:
-            doc_height = doc.size().height()
-            self._content_label.setFixedHeight(int(doc_height) + 10)
-
-    def append_content(self, text: str) -> None:
-        """Append content to the message (for streaming).
-
-        Args:
-            text: Text to append.
-        """
-        if not (text is not None):
-            raise ValueError("text must be provided")
-        if not (text is not None):
-            raise ValueError("text must be provided")
-        self._content += text
-        self._content_label.setMarkdown(self._content)
-
-    def set_content(self, text: str) -> None:
-        """Set message content.
-
-        Args:
-            text: New content.
-        """
-        if not (text is not None):
-            raise ValueError("text must be provided")
-        if not (text is not None):
-            raise ValueError("text must be provided")
-        self._content = text
-        self._content_label.setMarkdown(self._content)
-
-    def get_content(self) -> str:
-        """Get current content."""
-        return self._content
-
-
-class StreamWorker(QThread):
-    """Worker thread for streaming AI responses."""
-
-    chunk_received = pyqtSignal(str)  # Emits content chunk
-    finished = pyqtSignal()  # Emits when complete
-    error = pyqtSignal(str)  # Emits error message
-
-    def __init__(
-        self,
-        adapter: BaseAgentAdapter,
-        message: str,
-        context: ConversationContext,
-        tools: list[Any],
-    ) -> None:
-        """Initialize stream worker.
-
-        Args:
-            adapter: AI adapter to use.
-            message: User message.
-            context: Conversation context.
-            tools: Available tools.
-        """
-        if not (adapter is not None):
-            raise ValueError("adapter must be provided")
-        if not (adapter is not None):
-            raise ValueError("adapter must be provided")
-        super().__init__()
-        self._adapter = adapter
-        self._message = message
-        self._context = context
-        self._tools = tools
-
-    def run(self) -> None:
-        """Execute streaming in background thread."""
-        try:
-            # Note: Adapter expects ToolDeclaration objects
-            # We need to convert registry tools to declarations if they aren't already
-            # But get_tools_for_provider returns dicts usually.
-            # The adapter protocol says `list[ToolDeclaration]`.
-            # Let's fix this in _process_message
-            for chunk in self._adapter.stream_response(
-                self._message,
-                self._context,
-                self._tools,  # This should be compatible
-            ):
-                if chunk.content:
-                    self.chunk_received.emit(chunk.content)
-        except (RuntimeError, ValueError, OSError) as e:
-            logger.exception("Streaming error")
-            self.error.emit(str(e))
-        finally:
-            self.finished.emit()
-
-
-class ChatInput(QPlainTextEdit):
-    """Custom input widget handling Send vs Newline."""
-
-    submit_requested = pyqtSignal()
-
-    def keyPressEvent(self, event: QtGui.QKeyEvent | None) -> None:
-        """Handle key press events."""
-        if event is None:
-            return
-        if (
-            event.key() == Qt.Key.Key_Return
-            and not event.modifiers() & Qt.KeyboardModifier.ShiftModifier
-        ):
-            event.accept()
-            self.submit_requested.emit()
-        else:
-            super().keyPressEvent(event)
+def _discover_project_root(start: Path) -> Path:
+    """Find a nearby project root for repository instruction loading."""
+    current = start.resolve()
+    for candidate in (current, *current.parents):
+        if (candidate / ".git").exists() or (candidate / "AGENTS.md").is_file():
+            return candidate
+    return current
 
 
 class AIAssistantPanel(QWidget):
@@ -315,11 +98,17 @@ class AIAssistantPanel(QWidget):
         ("Agent", "agent"),
     )
 
-    def __init__(self, parent: QWidget | None = None) -> None:
+    def __init__(
+        self,
+        parent: QWidget | None = None,
+        *,
+        project_root: Path | None = None,
+    ) -> None:
         """Initialize AI assistant panel.
 
         Args:
             parent: Parent widget.
+            project_root: Project root used for AGENTS.md prompt context.
         """
         super().__init__(parent)
         self._context = ConversationContext()
@@ -332,10 +121,13 @@ class AIAssistantPanel(QWidget):
         self._rag_enabled = True
         self._auto_index_on_open = False
         self._indexer_worker: IndexerWorker | None = None
+        self._project_root = project_root or _discover_project_root(Path.cwd())
 
         # Tools & RAG
         self._tools_registry = get_global_registry()
         self._rag_store = SimpleRAGStore()
+        self._memory_manager = MemoryManager()
+        self._refresh_prompt_memory()
 
         # Persistence
         self._session_manager = ChatSessionManager()
@@ -358,11 +150,13 @@ class AIAssistantPanel(QWidget):
             loaded = self._session_manager.load_session(latest_id)
             if loaded:
                 self._context = loaded
+                self._refresh_prompt_memory()
                 logger.info(f"Loaded chat session {latest_id}")
 
     def _save_history(self) -> None:
         """Save conversation history via session manager."""
         try:
+            self._refresh_prompt_memory()
             self._session_manager.save_session(self._context)
         except Exception as e:
             logger.warning(f"Failed to save chat session: {e}")
@@ -370,6 +164,7 @@ class AIAssistantPanel(QWidget):
     def _on_session_loaded(self, context: ConversationContext) -> None:
         """Handle when a session is loaded from the sidebar."""
         self._context = context
+        self._refresh_prompt_memory()
         # Clear UI messages (keep stretch and welcome message? no, just keep stretch)
         while self._message_layout.count() > 1:
             item = self._message_layout.takeAt(0)
@@ -458,6 +253,7 @@ class AIAssistantPanel(QWidget):
         self._sidebar = ChatHistorySidebar(self._session_manager)
         self._sidebar.session_selected.connect(self._session_manager.load_session)
         self._sidebar.new_chat_requested.connect(self._on_new_chat)
+        self._sidebar.memory_sync_requested.connect(self._on_memory_sync_requested)
         main_splitter.addWidget(self._sidebar)
 
         # Splitter for messages and input
@@ -1078,6 +874,7 @@ class AIAssistantPanel(QWidget):
             return
 
         # Update status
+        self._refresh_prompt_memory()
         self._set_status("Thinking...")
         self._send_btn.setEnabled(False)
 
@@ -1302,10 +1099,34 @@ class AIAssistantPanel(QWidget):
 
         # Reset context
         self._context = ConversationContext()
+        self._refresh_prompt_memory()
         self._save_history()
 
         # Add welcome back
         self._add_system_message("🔄 New chat started. How can I help you?")
+
+    def _refresh_prompt_memory(self) -> None:
+        """Attach bounded memory and project context to the active session."""
+        self._context.metadata["prompt_memory"] = (
+            self._memory_manager.build_prompt_memory()
+        )
+        self._context.metadata["project_root"] = str(self._project_root)
+
+    def _on_memory_sync_requested(self) -> None:
+        """Digest archived conversations into persistent prompt memory."""
+        archived_contexts: list[ConversationContext] = []
+        for session in self._session_manager.list_sessions():
+            if not session.get("archived", False):
+                continue
+            context = self._session_manager.load_session(str(session["id"]), emit=False)
+            if context is not None:
+                archived_contexts.append(context)
+
+        inserted = self._memory_manager.digest_archived_contexts(archived_contexts)
+        self._refresh_prompt_memory()
+        self._add_system_message(
+            f"Memory sync complete. Added {inserted} archived preference(s)."
+        )
 
     def set_adapter(self, adapter: BaseAgentAdapter) -> None:
         """Set the AI adapter to use.
