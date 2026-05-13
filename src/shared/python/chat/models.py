@@ -120,13 +120,15 @@ class ChatModelInfo(BaseModel):
     sent over the chat WebSocket.
     """
 
-    name: str = Field(..., description="Provider-specific model identifier")
+    id: str | None = Field(None, description="Provider-specific stable model id")
+    name: str = Field(..., description="Provider-specific model name")
     provider: str = Field(
         ..., description="Provider id (e.g. 'ollama', 'openai', 'anthropic')"
     )
     display_name: str | None = Field(
         None, description="Optional human-readable label for UI display"
     )
+    available: bool = Field(True, description="Whether this model can be selected")
 
 
 class ChatModelListResponse(BaseModel):
@@ -155,12 +157,18 @@ class ChatIndexStatusResponse(BaseModel):
 
     state: str = Field(..., description="One of 'running', 'complete', or 'error'")
     files_parsed: int = Field(
-        0, description="Files indexed so far (or total when state=='complete')"
+        0,
+        ge=0,
+        description="Files indexed so far (or total when state=='complete')",
     )
     symbols_inserted: int = Field(
-        0, description="Symbols inserted so far (or total when state=='complete')"
+        0,
+        ge=0,
+        description="Symbols inserted so far (or total when state=='complete')",
     )
     duration_seconds: float | None = Field(
-        None, description="Wall-clock elapsed seconds (set when state=='complete')"
+        None,
+        ge=0,
+        description="Wall-clock elapsed seconds (set when state=='complete')",
     )
     error: str | None = Field(None, description="Error message when state=='error'")

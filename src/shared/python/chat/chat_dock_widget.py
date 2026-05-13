@@ -42,7 +42,7 @@ def _write_shared_session_id(session_id: str, path: Path) -> None:
 
 
 def _load_qt_module() -> Any:
-    from src.shared.python.chat import _chat_dock_widget_qt
+    from . import _chat_dock_widget_qt
 
     return _chat_dock_widget_qt
 

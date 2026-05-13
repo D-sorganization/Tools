@@ -53,7 +53,7 @@ if TYPE_CHECKING:
 logger = get_logger(__name__)
 
 # Settings keys
-SETTINGS_ORG = "UpstreamDrift"
+SETTINGS_ORG = "D-sorganization"
 SETTINGS_APP = "AIAssistant"
 KEY_PROVIDER = "ai/provider"
 KEY_MODEL = "ai/model"
