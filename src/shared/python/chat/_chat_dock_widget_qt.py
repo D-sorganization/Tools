@@ -29,6 +29,7 @@ from typing import Any
 from PyQt6.QtCore import Qt, QTimer, QUrl, pyqtSignal
 from PyQt6.QtWebSockets import QWebSocket
 from PyQt6.QtWidgets import (
+    QComboBox,
     QDockWidget,
     QFrame,
     QHBoxLayout,
@@ -36,6 +37,7 @@ from PyQt6.QtWidgets import (
     QPlainTextEdit,
     QPushButton,
     QScrollArea,
+    QStackedWidget,
     QVBoxLayout,
     QWidget,
 )
@@ -181,6 +183,7 @@ class ChatDockWidget(QDockWidget):
         placeholder_text: str = "Ask a question...",
         accent_color: str = "#FF8800",
         auto_index_on_open: bool = False,
+        project_root: str | Path | None = None,
         parent: QWidget | None = None,
     ) -> None:
         if not (app_context is not None):
@@ -193,8 +196,12 @@ class ChatDockWidget(QDockWidget):
         self._accent_color = accent_color
         self._placeholder_text = placeholder_text
         self._auto_index_on_open = bool(auto_index_on_open)
+        self._project_root = (
+            Path(project_root).resolve() if project_root else Path.cwd()
+        )
         self._is_streaming = False
         self._current_bubble: ChatMessageBubble | None = None
+        self._terminal_session_id: str | None = None
         self._socket: QWebSocket | None = None
         self._session_file = _session_file_path(app_name)
         self._reconnect_timer = QTimer(self)
@@ -234,6 +241,31 @@ class ChatDockWidget(QDockWidget):
         self._status_label.setStyleSheet(f"color: {text_secondary}; font-size: 10px;")
         layout.addWidget(self._status_label)
 
+        mode_row = QHBoxLayout()
+        self._mode_combo = QComboBox()
+        self._mode_combo.addItem("Chat", "chat")
+        self._mode_combo.addItem("Terminal", "terminal")
+        self._mode_combo.currentIndexChanged.connect(self._on_mode_changed)
+        mode_row.addWidget(self._mode_combo)
+
+        self._shell_combo = QComboBox()
+        self._shell_combo.addItem("PowerShell", "powershell")
+        self._shell_combo.addItem("Bash", "bash")
+        self._shell_combo.addItem("WSL", "wsl")
+        mode_row.addWidget(self._shell_combo)
+
+        self._provider_combo = QComboBox()
+        self._provider_combo.addItem("Claude Code", "claude-code")
+        self._provider_combo.addItem("Codex", "codex")
+        self._provider_combo.addItem("Cline CLI", "cline-cli")
+        self._provider_combo.addItem("Gemini CLI", "gemini-cli")
+        mode_row.addWidget(self._provider_combo)
+
+        self._terminal_start_btn = QPushButton("Start")
+        self._terminal_start_btn.clicked.connect(self._on_terminal_start)
+        mode_row.addWidget(self._terminal_start_btn)
+        layout.addLayout(mode_row)
+
         # Message scroll area
         self._scroll_area = QScrollArea()
         self._scroll_area.setWidgetResizable(True)
@@ -246,7 +278,21 @@ class ChatDockWidget(QDockWidget):
         self._message_layout.setSpacing(4)
         self._message_layout.addStretch()
         self._scroll_area.setWidget(self._message_container)
-        layout.addWidget(self._scroll_area, stretch=1)
+
+        self._terminal_output = QPlainTextEdit()
+        self._terminal_output.setReadOnly(True)
+        self._terminal_output.setStyleSheet(
+            "QPlainTextEdit {"
+            f"  background-color: {bg_alt}; color: {text_primary};"
+            f"  border: 1px solid {border}; border-radius: 4px;"
+            "  font-family: Consolas, monospace; font-size: 12px; padding: 4px;"
+            "}"
+        )
+
+        self._content_stack = QStackedWidget()
+        self._content_stack.addWidget(self._scroll_area)
+        self._content_stack.addWidget(self._terminal_output)
+        layout.addWidget(self._content_stack, stretch=1)
 
         # Input row
         input_row = QHBoxLayout()
@@ -277,6 +323,7 @@ class ChatDockWidget(QDockWidget):
 
         layout.addLayout(input_row)
         self.setWidget(container)
+        self._on_mode_changed()
 
         # Dock widget styling
         self.setStyleSheet(
@@ -422,11 +469,30 @@ class ChatDockWidget(QDockWidget):
             self._is_streaming = False
             self._send_btn.setEnabled(True)
 
+        elif msg_type == "terminal_session":
+            session = data.get("session", {})
+            self._terminal_session_id = session.get("session_id")
+            state = session.get("state", "unknown")
+            self._status_label.setText(f"Terminal {state}")
+            if self._terminal_session_id:
+                self._append_terminal_line(f"[terminal] session {state}")
+
+        elif msg_type == "terminal_events":
+            for event in data.get("events", []):
+                self._append_terminal_line(event.get("data", ""))
+
+        elif msg_type == "terminal_ack":
+            self._status_label.setText("Terminal input sent")
+
     # ── UI actions ───────────────────────────────────────────────────
 
     def _on_send(self) -> None:
         text = self._input_edit.toPlainText().strip()
         if not text or self._is_streaming:
+            return
+
+        if self._current_mode() == "terminal":
+            self._on_terminal_input(text)
             return
 
         self._input_edit.clear()
@@ -443,6 +509,55 @@ class ChatDockWidget(QDockWidget):
                 "app_context": self._app_context,
             }
         )
+
+    def _on_terminal_start(self) -> None:
+        """Start a terminal-agent session for the selected shell/provider."""
+        self._terminal_output.clear()
+        self._append_terminal_line("[terminal] starting...")
+        self._send_ws(
+            {
+                "action": "terminal_start",
+                "project_root": str(self._project_root),
+                "shell_id": self._shell_combo.currentData(),
+                "provider_id": self._provider_combo.currentData(),
+                "app_context": self._app_context,
+            }
+        )
+
+    def _on_terminal_input(self, text: str) -> None:
+        """Send user input to the active terminal session."""
+        if not self._terminal_session_id:
+            self._append_terminal_line("[terminal] start a session first")
+            return
+        self._input_edit.clear()
+        self._append_terminal_line(f"> {text}")
+        self._send_ws(
+            {
+                "action": "terminal_input",
+                "terminal_session_id": self._terminal_session_id,
+                "text": f"{text}\n",
+            }
+        )
+
+    def _on_mode_changed(self) -> None:
+        """Switch between chat transcript and terminal output surfaces."""
+        is_terminal = self._current_mode() == "terminal"
+        self._content_stack.setCurrentIndex(1 if is_terminal else 0)
+        self._shell_combo.setVisible(is_terminal)
+        self._provider_combo.setVisible(is_terminal)
+        self._terminal_start_btn.setVisible(is_terminal)
+        placeholder = (
+            "Type terminal input..." if is_terminal else self._placeholder_text
+        )
+        self._input_edit.setPlaceholderText(placeholder)
+
+    def _current_mode(self) -> str:
+        mode = self._mode_combo.currentData()
+        return str(mode or "chat")
+
+    def _append_terminal_line(self, text: str) -> None:
+        if text:
+            self._terminal_output.appendPlainText(text)
 
     def _send_ws(self, payload: dict) -> None:
         """Send JSON payload over WebSocket."""
