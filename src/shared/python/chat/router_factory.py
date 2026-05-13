@@ -34,6 +34,10 @@ import logging
 from typing import Any
 
 from fastapi import APIRouter, Request, WebSocket, WebSocketDisconnect
+from pydantic import ValidationError
+
+from .terminal_contracts import TerminalAgentSessionRequest, TerminalRegistryError
+from .terminal_runtime import TerminalRuntimeError
 
 logger = logging.getLogger(__name__)
 
@@ -126,6 +130,21 @@ def create_chat_router(
                         {"type": "session_created", "session_id": session_id}
                     )
 
+                elif action == "terminal_start":
+                    await _handle_terminal_start(websocket, msg)
+
+                elif action == "terminal_input":
+                    await _handle_terminal_input(websocket, msg)
+
+                elif action == "terminal_resize":
+                    await _handle_terminal_resize(websocket, msg)
+
+                elif action == "terminal_stop":
+                    await _handle_terminal_stop(websocket, msg)
+
+                elif action == "terminal_events":
+                    await _handle_terminal_events(websocket, msg)
+
                 else:
                     await websocket.send_json(
                         {
@@ -157,3 +176,81 @@ def create_chat_router(
         return {"session_id": session_id, "messages": messages}
 
     return router
+
+
+def _terminal_runtime(websocket: WebSocket) -> Any:
+    runtime = getattr(websocket.app.state, "terminal_runtime", None)
+    if runtime is None:
+        raise TerminalRuntimeError("Terminal runtime is not configured")
+    return runtime
+
+
+async def _handle_terminal_start(websocket: WebSocket, msg: dict[str, Any]) -> None:
+    try:
+        request = TerminalAgentSessionRequest(
+            app_context=msg.get("app_context") or "unknown",
+            project_root=msg.get("project_root", ""),
+            shell_id=msg.get("shell_id", ""),
+            provider_id=msg.get("provider_id", ""),
+            session_id=msg.get("terminal_session_id"),
+            provider_args=msg.get("provider_args") or [],
+        )
+        info = _terminal_runtime(websocket).start(request)
+    except (ValidationError, TerminalRegistryError, TerminalRuntimeError) as exc:
+        await websocket.send_json({"type": "error", "detail": str(exc)})
+        return
+    await websocket.send_json(
+        {"type": "terminal_session", "session": info.model_dump(mode="json")}
+    )
+
+
+async def _handle_terminal_input(websocket: WebSocket, msg: dict[str, Any]) -> None:
+    terminal_session_id = msg.get("terminal_session_id", "")
+    text = msg.get("text", "")
+    try:
+        _terminal_runtime(websocket).write(terminal_session_id, text)
+    except TerminalRuntimeError as exc:
+        await websocket.send_json({"type": "error", "detail": str(exc)})
+        return
+    await websocket.send_json({"type": "terminal_ack", "action": "terminal_input"})
+
+
+async def _handle_terminal_resize(websocket: WebSocket, msg: dict[str, Any]) -> None:
+    terminal_session_id = msg.get("terminal_session_id", "")
+    try:
+        _terminal_runtime(websocket).resize(
+            terminal_session_id,
+            columns=int(msg.get("columns", 0)),
+            rows=int(msg.get("rows", 0)),
+        )
+    except (TypeError, ValueError, TerminalRuntimeError) as exc:
+        await websocket.send_json({"type": "error", "detail": str(exc)})
+        return
+    await websocket.send_json({"type": "terminal_ack", "action": "terminal_resize"})
+
+
+async def _handle_terminal_stop(websocket: WebSocket, msg: dict[str, Any]) -> None:
+    terminal_session_id = msg.get("terminal_session_id", "")
+    try:
+        info = _terminal_runtime(websocket).stop(terminal_session_id)
+    except TerminalRuntimeError as exc:
+        await websocket.send_json({"type": "error", "detail": str(exc)})
+        return
+    await websocket.send_json(
+        {"type": "terminal_session", "session": info.model_dump(mode="json")}
+    )
+
+
+async def _handle_terminal_events(websocket: WebSocket, msg: dict[str, Any]) -> None:
+    terminal_session_id = msg.get("terminal_session_id", "")
+    try:
+        events = _terminal_runtime(websocket).drain_events(terminal_session_id)
+    except TerminalRuntimeError as exc:
+        await websocket.send_json({"type": "error", "detail": str(exc)})
+        return
+    await websocket.send_json(
+        {
+            "type": "terminal_events",
+            "events": [event.model_dump(mode="json") for event in events],
+        }
+    )
