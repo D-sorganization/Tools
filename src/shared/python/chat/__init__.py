@@ -17,14 +17,23 @@ Usage::
     main_window.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, dock)
 """
 
+from typing import Any
+
 from .service_base import ChatMessage, ChatServiceBase, ChatSession
 
 try:
     from .models import (
+        DEFAULT_RESPONSE_STYLE,
+        RESPONSE_STYLE_PROMPTS,
         ChatChunkResponse,
         ChatHistoryResponse,
+        ChatIndexStatusResponse,
         ChatMessageRequest,
+        ChatModelInfo,
+        ChatModelListResponse,
         ChatSessionInfo,
+        ResponseStyle,
+        style_prompt,
     )
 
     _PYDANTIC_AVAILABLE = True
@@ -32,13 +41,20 @@ except ImportError:
     _PYDANTIC_AVAILABLE = False
     ChatChunkResponse = None  # type: ignore[assignment, misc]
     ChatHistoryResponse = None  # type: ignore[assignment, misc]
+    ChatIndexStatusResponse = None  # type: ignore[assignment, misc]
     ChatMessageRequest = None  # type: ignore[assignment, misc]
+    ChatModelInfo = None  # type: ignore[assignment, misc]
+    ChatModelListResponse = None  # type: ignore[assignment, misc]
     ChatSessionInfo = None  # type: ignore[assignment, misc]
+    DEFAULT_RESPONSE_STYLE = "standard"
+    RESPONSE_STYLE_PROMPTS = {}
+    ResponseStyle = str  # type: ignore[misc]
+    style_prompt = None  # type: ignore[assignment]
 
 _PYQT6_AVAILABLE = None
 
 
-def __getattr__(name: str):
+def __getattr__(name: str) -> Any:
     if name in {"ChatDockWidget", "ChatMessageBubble"}:
         from . import chat_dock_widget
 
@@ -57,6 +73,13 @@ __all__ = [
     "ChatChunkResponse",
     "ChatSessionInfo",
     "ChatHistoryResponse",
+    "ChatModelInfo",
+    "ChatModelListResponse",
+    "ChatIndexStatusResponse",
+    "ResponseStyle",
+    "DEFAULT_RESPONSE_STYLE",
+    "RESPONSE_STYLE_PROMPTS",
+    "style_prompt",
     "ChatServiceBase",
     "ChatSession",
     "ChatMessage",

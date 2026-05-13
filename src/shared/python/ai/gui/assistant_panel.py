@@ -2,7 +2,7 @@
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.  # noqa: E501
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.  # noqa: E501
 
-"""AI Assistant Panel for Golf Modeling Suite.
+"""Reusable AI assistant conversation panel.
 
 This module provides the main AI assistant conversation panel,
 including message display, input handling, and streaming support.
@@ -783,7 +783,7 @@ class AIAssistantPanel(QWidget):
 
         # Add welcome message
         self._add_system_message(
-            "👋 Welcome to the Golf Modeling Suite AI Assistant!\n\n"
+            "👋 Welcome to the shared Tools AI Assistant!\n\n"
             "I can help you:\n"
             "- Load and analyze C3D motion capture files\n"
             "- Run inverse dynamics simulations\n"
@@ -1245,7 +1245,7 @@ class AIAssistantPanel(QWidget):
         self._set_status("Indexing codebase...")
 
         # Safer: use CWD if it's the repo root, or try to find it.
-        # Let's assume repo root is .../UpstreamDrift
+        # Prefer the active checkout root when available.
         # and we want to index 'src'.
 
         repo_root = Path(__file__).resolve().parent  # gui
