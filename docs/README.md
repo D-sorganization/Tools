@@ -6,6 +6,7 @@ This directory contains detailed documentation for the AffineDrift Tools reposit
 
 - **[Jules Architecture](architecture/JULES_ARCHITECTURE.md)**: Describes the "Control Tower" CI/CD architecture, agent roles, and automated workflows.
 - **[Modification Guidance](architecture/Modification_Guidance.md)**: Guide for upgrading and modifying the architecture and tools.
+- **[Shared Chat Contract](architecture/SHARED_CHAT_CONTRACT.md)**: Public facade and compatibility matrix for Tools-owned chat/AI integrations.
 
 ## 💻 Development
 
