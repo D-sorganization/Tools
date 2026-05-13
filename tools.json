@@ -71,6 +71,14 @@
             "desc": "Solve systems of ordinary differential equations symbolically"
         }
     ],
+    "Media Processing": [
+        {
+            "name": "Video Processor (Web)",
+            "path": "src/media_processing/video_processor/launch_web.py",
+            "type": "python",
+            "desc": "Video file format conversion, frame extraction, and media analysis"
+        }
+    ],
     "Optimization": [
         {
             "name": "Adam Optimizer",

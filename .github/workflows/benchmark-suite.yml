@@ -51,7 +51,8 @@ jobs:
           python -m pip install --ignore-installed --no-deps "py-cpuinfo>=9.0.0" "pytest-benchmark>=5.2.3"
           python -m pip install --ignore-installed --no-deps mypy==1.13.0
           python -m pip install --ignore-installed --no-deps ruff==0.14.10
-          python -m pip install -r requirements.txt
+          grep -v -E '^mypy==' requirements.txt > requirements-ci.txt
+          python -m pip install -r requirements-ci.txt
           python -m pip install numpy>=2.0.1
           python -m pip install fastapi httpx pytest-cov pytest-xdist pytest-benchmark bandit==1.7.7 pip-audit types-PyYAML types-requests
           python -m pip install --ignore-installed mypy==1.13.0

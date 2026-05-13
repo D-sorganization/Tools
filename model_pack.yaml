@@ -1,0 +1,93 @@
+manifest_version: "1.0.0"
+pack_id: "tools-pack"
+pack_name: "Tools"
+provider: "tools"
+description: "Shared utility tools consumed by UpstreamDrift launcher surfaces."
+source_repo: "D-sorganization/Tools"
+models:
+  - id: "video_analyzer"
+    name: "Video Analyzer"
+    description: "Video-based motion analysis with pose tracking."
+    type: "special_app"
+    path: "src/video_analyzer/launch_video_analyzer.py"
+    working_dir: "."
+    python_paths:
+      - "src"
+      - "src/shared/python"
+    capabilities:
+      - "video_processing"
+      - "pose_estimation"
+      - "motion_tracking"
+      - "frame_analysis"
+    order: 11
+    launcher:
+      category: "tool"
+      logo: "video_analyzer.svg"
+      status: "external"
+      web_route: "/tools/video-analyzer"
+
+  - id: "video_processor"
+    name: "Video Processor"
+    description: "Video file format conversion, frame extraction, and media analysis."
+    type: "special_app"
+    path: "src/media_processing/video_processor/apps/web/launch_platform.py"
+    working_dir: "src/media_processing/video_processor/apps/web"
+    python_paths:
+      - "src"
+      - "src/shared/python"
+    capabilities:
+      - "video_processing"
+      - "format_conversion"
+      - "frame_extraction"
+      - "media_analysis"
+    order: 12
+    launcher:
+      category: "tool"
+      logo: "video_analyzer.svg"
+      status: "external"
+      web_route: "/tools/video-processor"
+
+  - id: "data_explorer"
+    name: "Data Explorer"
+    description: "Import, filter, and visualize simulation datasets."
+    type: "special_app"
+    path: "src/data_explorer/data_explorer_app.py"
+    working_dir: "."
+    python_paths:
+      - "src"
+      - "src/shared/python"
+    capabilities:
+      - "data_import"
+      - "filtering"
+      - "visualization"
+      - "export"
+    order: 13
+    launcher:
+      category: "tool"
+      logo: "data_explorer.svg"
+      status: "external"
+      web_route: "/tools/data-explorer"
+
+  - id: "data_processor"
+    name: "Data Processor"
+    description: "Signal processing and time-series data analysis tool."
+    type: "special_app"
+    path: "src/data_processing/data_processor/launch_pyqt6.py"
+    working_dir: "."
+    python_paths:
+      - "src"
+      - "src/shared/python"
+      - "src/data_processing/data_processor/python"
+    capabilities:
+      - "data_import"
+      - "signal_processing"
+      - "time_series"
+      - "filtering"
+      - "statistics"
+      - "export"
+    order: 14
+    launcher:
+      category: "tool"
+      logo: "data_explorer.svg"
+      status: "external"
+      web_route: "/tools/data-processor"

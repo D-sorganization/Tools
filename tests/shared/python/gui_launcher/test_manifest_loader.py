@@ -238,6 +238,27 @@ class TestCanonicalManifest:
                 f"Tool {info.get('tool_name', '?')} has no surface (pyqt6 or web)"
             )
 
+    def test_shared_upstreamdrift_surfaces_are_registered(
+        self, manifest_path: Path
+    ) -> None:
+        from gui_launcher.manifest_loader import load_manifest
+
+        infos = load_manifest(manifest_path)
+        tools = {info["tool_name"]: info for info in infos}
+
+        for tool_name in (
+            "video_analyzer",
+            "video_processor",
+            "data_explorer",
+            "data_processor",
+        ):
+            assert tool_name in tools, f"Missing shared tool: {tool_name}"
+
+        assert "pyqt6" in tools["video_analyzer"]
+        assert "web" in tools["video_processor"]
+        assert "pyqt6" in tools["data_explorer"]
+        assert "pyqt6" in tools["data_processor"]
+
 
 # ---------------------------------------------------------------------------
 # Integration: load_manifest + auto_discover_guis

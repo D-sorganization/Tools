@@ -345,6 +345,16 @@ tools:
         - mediapipe
       settings_app: VideoAnalyzer
 
+  - tool_name: video_processor
+    name: Video Processor
+    description: Video file format conversion, frame extraction, and media analysis
+    category: Media Processing
+    icon: video
+    web:
+      path: apps/web
+      port: 3001
+      auto_open_browser: true
+
   - tool_name: data_explorer
     name: Data Explorer
     description: Import, filter, and visualise simulation datasets

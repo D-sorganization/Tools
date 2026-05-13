@@ -76,7 +76,7 @@ def launch_web_app(
     auto_open_browser: bool = True,
     npm_args: list[str] | None = None,
     env_vars: dict[str, str] | None = None,
-    process_started: Callable[[subprocess.Popen], None] | None = None,  # type: ignore[type-arg]
+    process_started: Callable[[subprocess.Popen], None] | None = None,
 ) -> int:
     """Launch a React/Vite web application dev server."""
     if not (tool_name is not None):
@@ -137,7 +137,8 @@ def launch_web_from_gui_info(gui_info: dict[str, object], caller_file: str) -> i
         web_cfg = {}
     tool_name = str(gui_info.get("name", gui_info.get("tool_name", "Unknown")))
 
-    web_dir = Path(caller_file).parent / "web"
+    web_path = str(web_cfg.get("path", "web"))
+    web_dir = Path(caller_file).parent / web_path
     port = web_cfg.get("port", 5173)
     auto_open = web_cfg.get("auto_open_browser", True)
 

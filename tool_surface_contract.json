@@ -231,6 +231,17 @@
         "web": false,
         "legacy_gui": false
       }
+    },
+    {
+      "id": "video_processor",
+      "name": "Video Processor",
+      "description": "Video file format conversion, frame extraction, and media analysis",
+      "category": "Media Processing",
+      "surfaces": {
+        "pyqt6": false,
+        "web": true,
+        "legacy_gui": false
+      }
     }
   ]
 }
