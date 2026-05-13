@@ -63,6 +63,8 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Document and media processing (PDF, audio, video tools)
 - Web service capabilities (FastAPI)
 - GUI building blocks (PyQt6 theme system, shared widgets)
+- Shared chat contracts, including optional terminal-agent shell/provider
+  descriptors for project-scoped agent sessions
 - Plugin system for extending functionality
 
 No repo is required to use Tools, but it provides optional high-value integrations.
