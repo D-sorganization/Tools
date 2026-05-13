@@ -35,12 +35,18 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from src.shared.python.ai.access_policy import (
+    ChatAccessMode,
+    coerce_access_mode,
+    tool_declarations_for_access_mode,
+)
 from src.shared.python.ai.gui.history_sidebar import ChatHistorySidebar
 from src.shared.python.ai.gui.session_manager import ChatSessionManager
 from src.shared.python.ai.gui.settings_dialog import AISettingsDialog
 from src.shared.python.ai.rag.indexer_worker import IndexerWorker
 from src.shared.python.ai.rag.simple_rag import SimpleRAGStore
 from src.shared.python.ai.tool_registry import ToolCategory, get_global_registry
+from src.shared.python.ai.tools.codemap_tools import register_codemap_tools
 from src.shared.python.ai.tools.file_ops import register_file_tools
 from src.shared.python.logging_pkg.logging_config import get_logger
 from src.shared.python.theme.style_constants import Styles
@@ -308,6 +314,10 @@ class AIAssistantPanel(QWidget):
         self._adapter: BaseAgentAdapter | None = None
         self._current_worker: StreamWorker | None = None
         self._current_assistant_message: MessageWidget | None = None
+        self._access_mode = ChatAccessMode.NO_REPO_ACCESS
+        self._rag_enabled = True
+        self._auto_index_on_open = False
+        self._indexer_worker: IndexerWorker | None = None
 
         # Tools & RAG
         # Tools & RAG
@@ -367,6 +377,7 @@ class AIAssistantPanel(QWidget):
         """Initialize default tools."""
         # 1. File Ops
         register_file_tools(self._tools_registry)
+        register_codemap_tools(self._tools_registry)
 
         # 2. System CLI Tools
         @self._tools_registry.register(
@@ -477,13 +488,8 @@ class AIAssistantPanel(QWidget):
         """Refresh models and auto-index when panel becomes visible."""
         super().showEvent(event)
         self._refresh_models()
-        if hasattr(self, "chk_auto_index") and self.chk_auto_index.isChecked():
-            self._add_system_message("Indexing codebase for full context...")
-            # Placeholder for actual RAG index trigger
-            QtCore.QTimer.singleShot(
-                1000,
-                lambda: self._add_system_message("Codebase indexed successfully."),
-            )
+        if self._auto_index_enabled():
+            self._start_indexing()
 
     def _refresh_models(self) -> None:
         """Refresh available models from the backend adapter."""
@@ -717,6 +723,20 @@ class AIAssistantPanel(QWidget):
         )
         layout.addWidget(self._mode_combo)
 
+        self._access_mode_combo = QComboBox()
+        self._access_mode_combo.addItem("No repo access", ChatAccessMode.NO_REPO_ACCESS)
+        self._access_mode_combo.addItem(
+            "Read-only diagnostics", ChatAccessMode.READ_ONLY_DIAGNOSTICS
+        )
+        self._access_mode_combo.addItem("Agent/tools", ChatAccessMode.AGENT_TOOLS)
+        self._access_mode_combo.setToolTip(
+            "Controls which repo and local tools the assistant may receive."
+        )
+        self._access_mode_combo.currentIndexChanged.connect(
+            self._on_access_mode_changed
+        )
+        layout.addWidget(self._access_mode_combo)
+
         self._status_label = QLabel("Ready")
         layout.addWidget(self._status_label)
 
@@ -727,7 +747,9 @@ class AIAssistantPanel(QWidget):
         from PyQt6.QtWidgets import QCheckBox
 
         self.chk_auto_index = QCheckBox("Auto-Index")
-        self.chk_auto_index.setToolTip("Index the full codebase for context")
+        self.chk_auto_index.setToolTip(
+            "Rebuild the local codebase index when chat opens."
+        )
         layout.addWidget(self.chk_auto_index)
 
         new_chat_btn = QPushButton("New Chat")
@@ -913,12 +935,14 @@ class AIAssistantPanel(QWidget):
         self._set_status("Thinking...")
         self._send_btn.setEnabled(False)
 
+        tools = self._build_tool_declarations()
+
         # Create streaming worker
         self._current_worker = StreamWorker(
             self._adapter,
             message,
             self._context,
-            [],  # Tools will be added later
+            tools,
         )
         self._current_worker.chunk_received.connect(self._on_stream_chunk)
         self._current_worker.finished.connect(self._on_stream_finished)
@@ -1069,6 +1093,45 @@ class AIAssistantPanel(QWidget):
         """
         self._status_label.setText(status)
 
+    def _auto_index_enabled(self) -> bool:
+        """Return whether automatic indexing is currently enabled."""
+        if hasattr(self, "chk_auto_index"):
+            return self.chk_auto_index.isChecked()
+        return self._auto_index_on_open
+
+    def _on_access_mode_changed(self, *_args: Any) -> None:
+        """Persist header access-mode changes immediately."""
+        if not hasattr(self, "_access_mode_combo"):
+            return
+        self._access_mode = coerce_access_mode(self._access_mode_combo.currentData())
+        try:
+            from src.shared.python.ai.gui.settings_dialog import AISettings
+
+            settings = AISettings.load()
+            settings.access_mode = self._access_mode
+            settings.save()
+        except (RuntimeError, ValueError, OSError, ImportError) as exc:
+            logger.warning("Failed to persist chat access mode: %s", exc)
+
+    def _provider_tool_format(self) -> str:
+        """Infer the provider tool format expected by the current adapter."""
+        if self._adapter is None:
+            return "openai"
+        adapter_name = type(self._adapter).__name__.lower()
+        if "anthropic" in adapter_name:
+            return "anthropic"
+        return "openai"
+
+    def _build_tool_declarations(self) -> list[dict[str, Any]]:
+        """Build provider tool declarations permitted by access policy."""
+        return tool_declarations_for_access_mode(
+            self._tools_registry,
+            self._access_mode,
+            provider_format=self._provider_tool_format(),
+            rag_enabled=self._rag_enabled,
+            max_expertise=self._context.user_expertise.value,
+        )
+
     def _on_new_chat(self) -> None:
         """Start a new chat session."""
         # Clear messages (except welcome)
@@ -1169,6 +1232,19 @@ class AIAssistantPanel(QWidget):
             level_map.get(settings.expertise_level, ExpertiseLevel.BEGINNER)
         )
 
+        self._rag_enabled = settings.rag_enabled
+        self._auto_index_on_open = settings.auto_index_on_open
+        self._access_mode = coerce_access_mode(settings.access_mode)
+        if hasattr(self, "chk_auto_index"):
+            self.chk_auto_index.setChecked(settings.auto_index_on_open)
+        if hasattr(self, "_access_mode_combo"):
+            for i in range(self._access_mode_combo.count()):
+                if self._access_mode_combo.itemData(i) == self._access_mode:
+                    self._access_mode_combo.blockSignals(True)
+                    self._access_mode_combo.setCurrentIndex(i)
+                    self._access_mode_combo.blockSignals(False)
+                    break
+
         # Create adapter based on provider
         adapter: BaseAgentAdapter | None = None
 
@@ -1242,7 +1318,11 @@ class AIAssistantPanel(QWidget):
 
     def _start_indexing(self) -> None:
         """Start the codebase indexing process."""
+        if self._indexer_worker is not None and self._indexer_worker.isRunning():
+            self._set_status("Indexing already in progress...")
+            return
         self._set_status("Indexing codebase...")
+        self._add_system_message("Indexing local codebase context...")
 
         # Safer: use CWD if it's the repo root, or try to find it.
         # Prefer the active checkout root when available.
@@ -1259,12 +1339,23 @@ class AIAssistantPanel(QWidget):
         if not src_path.exists():
             logger.error(f"Could not find src directory to index at {src_path}")
             self._set_status("Error: 'src' not found")
+            self._add_system_message("Codebase indexing failed: 'src' not found.")
             return
 
         self._indexer_worker = IndexerWorker(src_path, self._rag_store)
         self._indexer_worker.progress.connect(self._set_status)
-        self._indexer_worker.finished.connect(
-            lambda n: self._set_status(f"Ready ({n} docs indexed)")
-        )
-        self._indexer_worker.error.connect(lambda e: self._set_status(f"Error: {e}"))
+        self._indexer_worker.finished.connect(self._on_indexing_finished)
+        self._indexer_worker.error.connect(self._on_indexing_error)
         self._indexer_worker.start()
+
+    def _on_indexing_finished(self, docs_indexed: int) -> None:
+        """Handle successful local codebase indexing."""
+        self._set_status(f"Index ready ({docs_indexed} docs)")
+        self._add_system_message(f"Codebase index ready ({docs_indexed} docs indexed).")
+        self._indexer_worker = None
+
+    def _on_indexing_error(self, error: str) -> None:
+        """Handle local codebase indexing failure."""
+        self._set_status(f"Index error: {error}")
+        self._add_system_message(f"Codebase indexing failed: {error}")
+        self._indexer_worker = None

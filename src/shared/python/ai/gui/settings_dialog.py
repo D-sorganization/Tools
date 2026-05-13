@@ -38,6 +38,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from src.shared.python.ai.access_policy import ChatAccessMode, coerce_access_mode
 from src.shared.python.ai.config import (
     DEFAULT_OLLAMA_HOST,
     DEFAULT_OLLAMA_MODEL,
@@ -63,6 +64,7 @@ KEY_OLLAMA_HOST = "ai/ollama_host"
 KEY_STREAMING = "ai/streaming_enabled"
 KEY_RAG_ENABLED = "ai/rag_enabled"
 KEY_AUTO_INDEX_ON_OPEN = "ai/auto_index_on_open"
+KEY_ACCESS_MODE = "ai/access_mode"
 
 
 class AIProvider(Enum):
@@ -170,6 +172,7 @@ class AISettings:
         rag_enabled: Whether to use RAG (Codebase awareness).
         auto_index_on_open: When True, the chat dock asks the server to
             rebuild the codemap on connect (Tools issue #2549 / PR #2567).
+        access_mode: Explicit chat repository/tool access mode.
         api_keys: In-memory API keys (not persisted directly).
     """
 
@@ -181,6 +184,7 @@ class AISettings:
     streaming_enabled: bool = True
     rag_enabled: bool = True
     auto_index_on_open: bool = False
+    access_mode: ChatAccessMode = ChatAccessMode.NO_REPO_ACCESS
     api_keys: dict[AIProvider, str] = field(default_factory=dict)
 
     def save(self) -> None:
@@ -194,6 +198,8 @@ class AISettings:
         settings.setValue(KEY_STREAMING, self.streaming_enabled)
         settings.setValue(KEY_RAG_ENABLED, self.rag_enabled)
         settings.setValue(KEY_AUTO_INDEX_ON_OPEN, self.auto_index_on_open)
+        self.access_mode = coerce_access_mode(self.access_mode)
+        settings.setValue(KEY_ACCESS_MODE, self.access_mode.value)
         # Note: API keys are stored separately in keyring
         logger.info("Saved AI settings: provider=%s", self.provider.name)
 
@@ -224,6 +230,7 @@ class AISettings:
             streaming_enabled=settings.value(KEY_STREAMING, True, type=bool),
             rag_enabled=settings.value(KEY_RAG_ENABLED, True, type=bool),
             auto_index_on_open=settings.value(KEY_AUTO_INDEX_ON_OPEN, False, type=bool),
+            access_mode=coerce_access_mode(settings.value(KEY_ACCESS_MODE, None)),
         )
 
 
@@ -781,6 +788,17 @@ class AISettingsDialog(QDialog):
         )
         rag_layout.addWidget(self._rag_enabled_check)
 
+        self._access_mode_combo = QComboBox()
+        self._access_mode_combo.addItem("No repo access", ChatAccessMode.NO_REPO_ACCESS)
+        self._access_mode_combo.addItem(
+            "Read-only diagnostics", ChatAccessMode.READ_ONLY_DIAGNOSTICS
+        )
+        self._access_mode_combo.addItem("Agent/tools", ChatAccessMode.AGENT_TOOLS)
+        self._access_mode_combo.setToolTip(
+            "Controls which codebase and local tools the assistant may receive."
+        )
+        rag_layout.addWidget(self._access_mode_combo)
+
         # Tools issue #2549 / PR #2567: ChatDockWidget can request a
         # codemap rebuild on connect via the ``index_codebase`` action.
         # Toggling this persists ``auto_index_on_open`` in AISettings,
@@ -862,6 +880,12 @@ class AISettingsDialog(QDialog):
         if hasattr(self, "_auto_index_check"):
             self._auto_index_check.setChecked(self._settings.auto_index_on_open)
 
+        if hasattr(self, "_access_mode_combo"):
+            for i in range(self._access_mode_combo.count()):
+                if self._access_mode_combo.itemData(i) == self._settings.access_mode:
+                    self._access_mode_combo.setCurrentIndex(i)
+                    break
+
     def _on_provider_changed(self, index: int) -> None:
         """Handle provider selection change."""
         if not (index is not None):
@@ -926,6 +950,10 @@ class AISettingsDialog(QDialog):
             self._settings.rag_enabled = self._rag_enabled_check.isChecked()
         if hasattr(self, "_auto_index_check"):
             self._settings.auto_index_on_open = self._auto_index_check.isChecked()
+        if hasattr(self, "_access_mode_combo"):
+            self._settings.access_mode = coerce_access_mode(
+                self._access_mode_combo.currentData()
+            )
 
         # Get Ollama host if applicable
         if self._settings.provider == AIProvider.OLLAMA:
