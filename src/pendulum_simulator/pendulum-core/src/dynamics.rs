@@ -44,8 +44,16 @@ pub fn angular_power_series(torques: &[f64], angular_velocities: &[f64]) -> Vec<
 /// # Panics
 /// Panics if lengths don't match or aren't multiples of 2.
 pub fn linear_power_series(forces: &[f64], velocities: &[f64]) -> Vec<f64> {
-    assert_eq!(forces.len(), velocities.len(), "forces and velocities must match");
-    assert_eq!(forces.len() % 2, 0, "forces length must be even (2D vectors)");
+    assert_eq!(
+        forces.len(),
+        velocities.len(),
+        "forces and velocities must match"
+    );
+    assert_eq!(
+        forces.len() % 2,
+        0,
+        "forces length must be even (2D vectors)"
+    );
 
     forces
         .chunks_exact(2)
@@ -60,11 +68,7 @@ pub fn linear_power_series(forces: &[f64], velocities: &[f64]) -> Vec<f64> {
 ///
 /// # Panics
 /// Panics on mismatched lengths or non-increasing time.
-pub fn angular_work_series(
-    torques: &[f64],
-    angular_velocities: &[f64],
-    time: &[f64],
-) -> Vec<f64> {
+pub fn angular_work_series(torques: &[f64], angular_velocities: &[f64], time: &[f64]) -> Vec<f64> {
     let power = angular_power_series(torques, angular_velocities);
     cumulative_trapz(&power, time)
 }

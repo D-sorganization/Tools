@@ -6,14 +6,14 @@
 
 pub mod atmosphere;
 pub mod ball_flight;
+#[cfg(feature = "python")]
+pub mod electrode_advisor;
 pub mod engineering;
 pub mod math;
+pub mod reactor;
 pub mod rrt;
 pub mod signal;
 pub mod thermodynamics;
-pub mod reactor;
-#[cfg(feature = "python")]
-pub mod electrode_advisor;
 // Re-export primary types
 pub use math::{clamp, lerp, GRAVITY, R_GAS};
 pub use math_primitives::matrix3::Matrix3;

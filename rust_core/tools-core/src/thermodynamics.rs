@@ -15,11 +15,7 @@ pub struct Nasa7Coefficients {
 impl Nasa7Coefficients {
     /// Computes dimensionless specific heat capacity (Cp/R)
     pub fn cp_over_r(&self, t: f64) -> f64 {
-        self.a1
-            + self.a2 * t
-            + self.a3 * t.powi(2)
-            + self.a4 * t.powi(3)
-            + self.a5 * t.powi(4)
+        self.a1 + self.a2 * t + self.a3 * t.powi(2) + self.a4 * t.powi(3) + self.a5 * t.powi(4)
     }
 
     /// Computes dimensionless enthalpy (H/RT)

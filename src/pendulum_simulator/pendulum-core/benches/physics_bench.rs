@@ -108,8 +108,7 @@ fn bench_rk45_double_integration(c: &mut Criterion) {
                     let qd = [y[2], y[3]];
                     let tau1 = 50.0 * (1.0 - t);
                     let tau2 = -30.0 * t;
-                    let qddot =
-                        double_equations_of_motion(&q, &qd, &[tau1, tau2], &params);
+                    let qddot = double_equations_of_motion(&q, &qd, &[tau1, tau2], &params);
                     [qd[0], qd[1], qddot[0], qddot[1]]
                 },
                 0.0,

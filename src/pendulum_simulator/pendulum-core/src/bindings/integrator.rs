@@ -73,12 +73,7 @@ pub mod python {
                     .map(|(i, c)| c * t.powi(i as i32))
                     .sum();
 
-                let qddot = double_equations_of_motion(
-                    &q,
-                    &qd,
-                    &[tau1, tau2],
-                    &params.inner,
-                );
+                let qddot = double_equations_of_motion(&q, &qd, &[tau1, tau2], &params.inner);
 
                 [qd[0], qd[1], qddot[0], qddot[1]]
             },
@@ -226,9 +221,7 @@ pub mod python {
 
                 // Solve constrained dynamics
                 let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-                    golfer_constrained_accelerations(
-                        &q, &qd, &tau, &params.inner, &gains,
-                    )
+                    golfer_constrained_accelerations(&q, &qd, &tau, &params.inner, &gains)
                 }));
 
                 let mut dy = [0.0; 16];
