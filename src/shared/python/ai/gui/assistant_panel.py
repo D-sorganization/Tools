@@ -16,7 +16,7 @@ from __future__ import annotations
 import contextlib
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 from PyQt6 import QtCore, QtGui
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
@@ -333,7 +333,6 @@ class AIAssistantPanel(QWidget):
         self._auto_index_on_open = False
         self._indexer_worker: IndexerWorker | None = None
 
-        # Tools & RAG
         # Tools & RAG
         self._tools_registry = get_global_registry()
         self._rag_store = SimpleRAGStore()
@@ -1243,7 +1242,7 @@ class AIAssistantPanel(QWidget):
     def _auto_index_enabled(self) -> bool:
         """Return whether automatic indexing is currently enabled."""
         if hasattr(self, "chk_auto_index"):
-            return self.chk_auto_index.isChecked()
+            return bool(self.chk_auto_index.isChecked())
         return self._auto_index_on_open
 
     def _on_access_mode_changed(self, *_args: Any) -> None:
@@ -1271,12 +1270,15 @@ class AIAssistantPanel(QWidget):
 
     def _build_tool_declarations(self) -> list[dict[str, Any]]:
         """Build provider tool declarations permitted by access policy."""
-        return tool_declarations_for_access_mode(
-            self._tools_registry,
-            self._access_mode,
-            provider_format=self._provider_tool_format(),
-            rag_enabled=self._rag_enabled,
-            max_expertise=self._context.user_expertise.value,
+        return cast(
+            list[dict[str, Any]],
+            tool_declarations_for_access_mode(
+                self._tools_registry,
+                self._access_mode,
+                provider_format=self._provider_tool_format(),
+                rag_enabled=self._rag_enabled,
+                max_expertise=self._context.user_expertise.value,
+            ),
         )
 
     def _on_new_chat(self) -> None:
