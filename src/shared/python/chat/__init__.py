@@ -20,6 +20,15 @@ Usage::
 from typing import Any
 
 from .service_base import ChatMessage, ChatServiceBase, ChatSession
+from .terminal_contracts import (
+    TerminalAgentEvent,
+    TerminalAgentProviderInfo,
+    TerminalAgentSessionInfo,
+    TerminalAgentSessionRequest,
+    TerminalProviderRegistry,
+    TerminalRegistryError,
+    TerminalShellInfo,
+)
 
 try:
     from .models import (
@@ -84,4 +93,11 @@ __all__ = [
     "ChatSession",
     "ChatMessage",
     "create_chat_router",
+    "TerminalAgentEvent",
+    "TerminalAgentProviderInfo",
+    "TerminalAgentSessionInfo",
+    "TerminalAgentSessionRequest",
+    "TerminalProviderRegistry",
+    "TerminalRegistryError",
+    "TerminalShellInfo",
 ]

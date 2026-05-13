@@ -18,6 +18,13 @@ Consumers may import these symbols from `chat`:
 - `ChatModelInfo`
 - `ChatModelListResponse`
 - `ChatIndexStatusResponse`
+- `TerminalShellInfo`
+- `TerminalAgentProviderInfo`
+- `TerminalAgentSessionRequest`
+- `TerminalAgentSessionInfo`
+- `TerminalAgentEvent`
+- `TerminalProviderRegistry`
+- `TerminalRegistryError`
 - `ResponseStyle`
 - `DEFAULT_RESPONSE_STYLE`
 - `RESPONSE_STYLE_PROMPTS`
@@ -51,3 +58,25 @@ facade is importable.
 - Preserve package-relative imports so vendored and editable installs both work.
 - Add or update contract tests whenever the public facade changes.
 - Do not add a second shared chat implementation under another Tools package.
+
+## Terminal-Agent Contract
+
+Terminal-agent mode is an optional shared-chat extension for users who prefer
+Claude Code, Codex, Cline CLI, Gemini CLI, or future terminal-native agents. It
+keeps shell runtime selection separate from agent provider selection:
+
+- Shell descriptors describe where the command runs, such as PowerShell, Bash,
+  or WSL.
+- Provider descriptors describe which agent CLI is launched inside the selected
+  shell.
+- Session requests carry the app context, resolved project root, shell id, and
+  provider id.
+- Session events normalize terminal output into stdout, stderr, status, exit,
+  error, and auth-required payloads.
+
+Downstream applications should populate dropdowns from `TerminalProviderRegistry`
+instead of copying provider lists into product UI code. Runtime implementations
+must launch providers with a validated project root as the process working
+directory and may pass explicit Tools context through environment variables or a
+generated context file. Secrets must stay out of command strings, diagnostics,
+and persisted UI selections.
