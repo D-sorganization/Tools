@@ -344,6 +344,10 @@ jobs:
           python -m pip install --ignore-installed --no-deps "py-cpuinfo>=9.0.0" "pytest-benchmark>=5.2.3"
           python -m pip install --ignore-installed --no-deps mypy==1.13.0
           python -m pip install -r requirements.txt
+          # The shared self-hosted runner cache has produced mixed NumPy/SciPy
+          # binary installs on individual Python minors. Reinstall the compiled
+          # numerical stack without cache before importing provider contracts.
+          python -m pip install --upgrade --force-reinstall --no-cache-dir "numpy>=2.0.1" "scipy>=1.13.1"
           python -m pip install fastapi
           python -m pip install httpx pytest-cov pytest-xdist pytest-benchmark
 
@@ -435,7 +439,7 @@ jobs:
         # API-surface / contract tests run on every PR. Tests marked @pytest.mark.contract
         # and tests in shared_contracts/ directories are always executed here.
         run: |
-          pytest \
+          python -m pytest \
             tests/shared/python/upstream_drift_tools/ \
             tests/shared/python/signal_toolkit/ \
             tests/shared/python/model_generation/ \
