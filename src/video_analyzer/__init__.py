@@ -16,7 +16,7 @@ Features:
 - Professional reports and recommendations
 
 Usage:
-    from src.tools.video_analyzer import SwingAnalyzer, VideoProcessor
+    from video_analyzer import SwingAnalyzer, VideoProcessor
 
     # Analyze a video file
     analyzer = SwingAnalyzer()
