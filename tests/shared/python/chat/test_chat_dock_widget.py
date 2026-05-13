@@ -116,6 +116,29 @@ class TestChatDockWidget:
         assert widget._content_stack.currentWidget() is widget._terminal_output
         widget.close()
 
+    def test_terminal_dropdowns_are_registry_backed(self, qtbot, tmp_path):
+        from chat.chat_dock_widget import ChatDockWidget
+        from chat.terminal_providers import build_default_terminal_provider_registry
+
+        registry = build_default_terminal_provider_registry()
+        ChatDockWidget._shared_session_id = None
+        widget = ChatDockWidget(
+            app_name="test_app",
+            project_root=tmp_path,
+            terminal_registry=registry,
+        )
+        qtbot.addWidget(widget)
+
+        shell_ids = [
+            widget._shell_combo.itemData(i) for i in range(widget._shell_combo.count())
+        ]
+        assert shell_ids == [shell.id for shell in registry.shells()]
+        assert [
+            widget._provider_combo.itemData(i)
+            for i in range(widget._provider_combo.count())
+        ] == [provider.id for provider in registry.providers_for_shell("powershell")]
+        widget.close()
+
     def test_terminal_start_sends_selected_shell_provider(
         self,
         qtbot,
@@ -184,3 +207,38 @@ class TestChatDockWidget:
             }
         ]
         widget.close()
+
+    def test_terminal_stop_sends_active_session(self, qtbot, monkeypatch):
+        from chat.chat_dock_widget import ChatDockWidget
+
+        sent = []
+        ChatDockWidget._shared_session_id = None
+        widget = ChatDockWidget(app_name="test_app")
+        qtbot.addWidget(widget)
+        monkeypatch.setattr(widget, "_send_ws", sent.append)
+
+        widget._mode_combo.setCurrentIndex(1)
+        widget._terminal_session_id = "terminal_123"
+        widget._on_terminal_stop()
+
+        assert sent == [
+            {
+                "action": "terminal_stop",
+                "terminal_session_id": "terminal_123",
+            }
+        ]
+        widget.close()
+
+    def test_close_button_closes_dock(self, qtbot):
+        from chat.chat_dock_widget import ChatDockWidget
+        from PyQt6.QtCore import Qt
+
+        ChatDockWidget._shared_session_id = None
+        widget = ChatDockWidget(app_name="test_app")
+        qtbot.addWidget(widget)
+        widget.show()
+        assert widget.isVisible()
+
+        qtbot.mouseClick(widget._close_btn, Qt.MouseButton.LeftButton)
+
+        assert not widget.isVisible()

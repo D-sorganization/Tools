@@ -42,6 +42,9 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from .terminal_contracts import TerminalProviderRegistry
+from .terminal_providers import build_default_terminal_provider_registry
+
 
 def _get_theme_colors() -> dict[str, str]:
     """Get the current theme colors, falling back to defaults."""
@@ -159,6 +162,7 @@ class ChatDockWidget(QDockWidget):
         auto_index_on_open: When True, send an ``index_codebase`` action on
             connect so the chat backend rebuilds its codemap before the user
             starts typing. Tools issue #2549 / PR #2567.
+        terminal_registry: Registry used to populate shell/provider dropdowns.
         parent: Parent widget.
     """
 
@@ -184,6 +188,7 @@ class ChatDockWidget(QDockWidget):
         accent_color: str = "#FF8800",
         auto_index_on_open: bool = False,
         project_root: str | Path | None = None,
+        terminal_registry: TerminalProviderRegistry | None = None,
         parent: QWidget | None = None,
     ) -> None:
         if not (app_context is not None):
@@ -198,6 +203,9 @@ class ChatDockWidget(QDockWidget):
         self._auto_index_on_open = bool(auto_index_on_open)
         self._project_root = (
             Path(project_root).resolve() if project_root else Path.cwd()
+        )
+        self._terminal_registry = (
+            terminal_registry or build_default_terminal_provider_registry()
         )
         self._is_streaming = False
         self._current_bubble: ChatMessageBubble | None = None
@@ -249,21 +257,26 @@ class ChatDockWidget(QDockWidget):
         mode_row.addWidget(self._mode_combo)
 
         self._shell_combo = QComboBox()
-        self._shell_combo.addItem("PowerShell", "powershell")
-        self._shell_combo.addItem("Bash", "bash")
-        self._shell_combo.addItem("WSL", "wsl")
+        self._populate_shell_combo()
+        self._shell_combo.currentIndexChanged.connect(self._on_terminal_shell_changed)
         mode_row.addWidget(self._shell_combo)
 
         self._provider_combo = QComboBox()
-        self._provider_combo.addItem("Claude Code", "claude-code")
-        self._provider_combo.addItem("Codex", "codex")
-        self._provider_combo.addItem("Cline CLI", "cline-cli")
-        self._provider_combo.addItem("Gemini CLI", "gemini-cli")
+        self._populate_provider_combo()
         mode_row.addWidget(self._provider_combo)
 
         self._terminal_start_btn = QPushButton("Start")
         self._terminal_start_btn.clicked.connect(self._on_terminal_start)
         mode_row.addWidget(self._terminal_start_btn)
+
+        self._terminal_stop_btn = QPushButton("Stop")
+        self._terminal_stop_btn.clicked.connect(self._on_terminal_stop)
+        mode_row.addWidget(self._terminal_stop_btn)
+
+        self._close_btn = QPushButton("Close")
+        self._close_btn.setToolTip("Close chat")
+        self._close_btn.clicked.connect(self.close)
+        mode_row.addWidget(self._close_btn)
         layout.addLayout(mode_row)
 
         # Message scroll area
@@ -476,6 +489,8 @@ class ChatDockWidget(QDockWidget):
             self._status_label.setText(f"Terminal {state}")
             if self._terminal_session_id:
                 self._append_terminal_line(f"[terminal] session {state}")
+            if state in {"stopped", "exited", "error"}:
+                self._terminal_session_id = None
 
         elif msg_type == "terminal_events":
             for event in data.get("events", []):
@@ -510,6 +525,33 @@ class ChatDockWidget(QDockWidget):
             }
         )
 
+    def _populate_shell_combo(self) -> None:
+        """Populate terminal shell choices from the provider registry."""
+        self._shell_combo.clear()
+        for shell in self._terminal_registry.shells():
+            self._shell_combo.addItem(shell.display_name, shell.id)
+
+    def _populate_provider_combo(self) -> None:
+        """Populate terminal providers compatible with the selected shell."""
+        shell_id = str(self._shell_combo.currentData() or "")
+        providers = self._terminal_registry.providers_for_shell(shell_id)
+        current_provider = self._provider_combo.currentData()
+
+        self._provider_combo.blockSignals(True)
+        try:
+            self._provider_combo.clear()
+            for provider in providers:
+                self._provider_combo.addItem(provider.display_name, provider.id)
+            if current_provider:
+                idx = self._provider_combo.findData(current_provider)
+                if idx >= 0:
+                    self._provider_combo.setCurrentIndex(idx)
+        finally:
+            self._provider_combo.blockSignals(False)
+
+    def _on_terminal_shell_changed(self, _index: int) -> None:
+        self._populate_provider_combo()
+
     def _on_terminal_start(self) -> None:
         """Start a terminal-agent session for the selected shell/provider."""
         self._terminal_output.clear()
@@ -521,6 +563,18 @@ class ChatDockWidget(QDockWidget):
                 "shell_id": self._shell_combo.currentData(),
                 "provider_id": self._provider_combo.currentData(),
                 "app_context": self._app_context,
+            }
+        )
+
+    def _on_terminal_stop(self) -> None:
+        """Stop the active terminal-agent session."""
+        if not self._terminal_session_id:
+            self._append_terminal_line("[terminal] start a session first")
+            return
+        self._send_ws(
+            {
+                "action": "terminal_stop",
+                "terminal_session_id": self._terminal_session_id,
             }
         )
 
@@ -546,6 +600,7 @@ class ChatDockWidget(QDockWidget):
         self._shell_combo.setVisible(is_terminal)
         self._provider_combo.setVisible(is_terminal)
         self._terminal_start_btn.setVisible(is_terminal)
+        self._terminal_stop_btn.setVisible(is_terminal)
         placeholder = (
             "Type terminal input..." if is_terminal else self._placeholder_text
         )
