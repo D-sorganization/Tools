@@ -30,6 +30,7 @@ _rust: Any = None
 if _REQUESTED_BACKEND != "python":
     try:
         from tools_core import electrode_advisor
+
         _rust = electrode_advisor
 
         _RUST_AVAILABLE = True
@@ -47,15 +48,12 @@ def is_rust_available() -> bool:
 def build_default_electrode_advisor_layout() -> Any:
     if _RUST_AVAILABLE:
         return _rust.build_default_electrode_advisor_layout()
-    else:
-        # Fallback to python
-        from .electrode_advisor import (
-            build_default_electrode_advisor_layout as _py_build,
-        )
 
-        warnings.warn(
-            "Using slow pure-Python electrode advisor backend",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return _py_build()
+    from .electrode_advisor import _py_build_default_electrode_advisor_layout
+
+    warnings.warn(
+        "Using slow pure-Python electrode advisor backend",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return _py_build_default_electrode_advisor_layout()

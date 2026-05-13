@@ -138,17 +138,17 @@ impl ElectrodeAdvisorLayout {
     pub fn bath_width_mm(&self) -> f64 {
         self.bath.width_m * MM_PER_M
     }
-    
+
     #[getter]
     pub fn bath_depth_mm(&self) -> f64 {
         self.bath.depth_m * MM_PER_M
     }
-    
+
     #[getter]
     pub fn bath_height_mm(&self) -> f64 {
         self.bath.height_m * MM_PER_M
     }
-    
+
     #[getter]
     pub fn glass_level_mm(&self) -> f64 {
         self.bath.glass_level_m * MM_PER_M
@@ -175,10 +175,19 @@ impl ElectrodeAdvisorLayout {
         electrodes.set_item("plasma_temperature_c", self.electrodes.plasma_temperature_c)?;
 
         let drafting = PyDict::new(py);
-        drafting.set_item("bath_shell_thickness_mm", self.drafting.bath_shell_thickness_mm)?;
+        drafting.set_item(
+            "bath_shell_thickness_mm",
+            self.drafting.bath_shell_thickness_mm,
+        )?;
         drafting.set_item("glass_clearance_mm", self.drafting.glass_clearance_mm)?;
-        drafting.set_item("electrode_holder_height_mm", self.drafting.electrode_holder_height_mm)?;
-        drafting.set_item("electrode_holder_radius_factor", self.drafting.electrode_holder_radius_factor)?;
+        drafting.set_item(
+            "electrode_holder_height_mm",
+            self.drafting.electrode_holder_height_mm,
+        )?;
+        drafting.set_item(
+            "electrode_holder_radius_factor",
+            self.drafting.electrode_holder_radius_factor,
+        )?;
         drafting.set_item("tip_band_height_mm", self.drafting.tip_band_height_mm)?;
 
         let placements = PyList::empty(py);
@@ -186,22 +195,28 @@ impl ElectrodeAdvisorLayout {
             let p_dict = PyDict::new(py);
             p_dict.set_item("index", p.index)?;
             p_dict.set_item("angle_radians", p.angle_radians)?;
-            
+
             let pos_m = PyList::new(py, &[p.viewer_x_m, p.viewer_y_m, p.viewer_z_m])?;
             p_dict.set_item("viewer_position_m", pos_m)?;
-            
+
             let pos_mm = PyList::new(py, &[p.cad_x_mm, p.cad_y_mm, p.cad_z_mm])?;
             p_dict.set_item("cad_position_mm", pos_mm)?;
-            
+
             p_dict.set_item("effective_length_mm", p.effective_length_mm)?;
             p_dict.set_item("current_a", p.current_a)?;
-            
+
             placements.append(p_dict)?;
         }
 
         let source_viewer = PyDict::new(py);
-        source_viewer.set_item("component", "Tools/src/electrode_advisor/web/src/components/GlassBath3DViewer.tsx")?;
-        source_viewer.set_item("calculator", "Tools/src/electrode_advisor/web/src/components/ElectrodeAdvisorCalculator.tsx")?;
+        source_viewer.set_item(
+            "component",
+            "Tools/src/electrode_advisor/web/src/components/GlassBath3DViewer.tsx",
+        )?;
+        source_viewer.set_item(
+            "calculator",
+            "Tools/src/electrode_advisor/web/src/components/ElectrodeAdvisorCalculator.tsx",
+        )?;
 
         let root = PyDict::new(py);
         root.set_item("project", "electrode_advisor_default_layout")?;
@@ -229,9 +244,17 @@ pub fn build_default_placements(
     let mut placements = Vec::with_capacity(electrodes.count);
     for index in 0..electrodes.count {
         let angle = (index as f64 / electrodes.count as f64) * 2.0 * PI;
-        let viewer_x_m = if electrodes.count == 1 { 0.0 } else { angle.cos() * radius_m };
-        let viewer_z_m = if electrodes.count == 1 { 0.0 } else { angle.sin() * radius_m };
-        
+        let viewer_x_m = if electrodes.count == 1 {
+            0.0
+        } else {
+            angle.cos() * radius_m
+        };
+        let viewer_z_m = if electrodes.count == 1 {
+            0.0
+        } else {
+            angle.sin() * radius_m
+        };
+
         placements.push(ElectrodePlacement {
             index: index + 1,
             angle_radians: angle,
@@ -254,10 +277,19 @@ pub fn build_default_placements(
 #[pyfunction]
 pub fn build_default_electrode_advisor_layout() -> ElectrodeAdvisorLayout {
     let bath = BathDefaults::new("rectangular".to_string(), 3.0, 2.0, 2.5, 1.5);
-    let electrodes = ElectrodeDefaults::new("graphite_standard".to_string(), 3, 0.1, 1500.0, 150.0, 150.0, 2500.0, 1500.0);
+    let electrodes = ElectrodeDefaults::new(
+        "graphite_standard".to_string(),
+        3,
+        0.1,
+        1500.0,
+        150.0,
+        150.0,
+        2500.0,
+        1500.0,
+    );
     let drafting = DraftingEnvelope::new(25.0, 10.0, 100.0, 2.0, 20.0);
     let placements = build_default_placements(&bath, &electrodes);
-    
+
     ElectrodeAdvisorLayout {
         bath,
         electrodes,
@@ -279,17 +311,23 @@ impl ElectrodeAdvancementCalculator {
     #[pyo3(signature = (consumption_rate=0.5))]
     pub fn new(consumption_rate: f64) -> PyResult<Self> {
         if consumption_rate <= 0.0 {
-            return Err(pyo3::exceptions::PyValueError::new_err("consumption_rate must be positive"));
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "consumption_rate must be positive",
+            ));
         }
         Ok(Self { consumption_rate })
     }
 
     pub fn calculate_consumption(&self, current_ka: f64, time_hrs: f64) -> PyResult<f64> {
         if current_ka < 0.0 {
-            return Err(pyo3::exceptions::PyValueError::new_err("current_ka must be non-negative"));
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "current_ka must be non-negative",
+            ));
         }
         if time_hrs < 0.0 {
-            return Err(pyo3::exceptions::PyValueError::new_err("time_hrs must be non-negative"));
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "time_hrs must be non-negative",
+            ));
         }
         Ok(self.consumption_rate * current_ka * time_hrs)
     }
@@ -297,7 +335,6 @@ impl ElectrodeAdvancementCalculator {
 
 pub mod py_bindings {
     use super::*;
-    use pyo3::prelude::*;
 
     pub fn register_module(m: &Bound<'_, PyModule>) -> PyResult<()> {
         m.add_class::<BathDefaults>()?;
