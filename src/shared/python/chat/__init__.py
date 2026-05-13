@@ -29,6 +29,12 @@ from .terminal_contracts import (
     TerminalRegistryError,
     TerminalShellInfo,
 )
+from .terminal_runtime import (
+    ProcessLaunchRequest,
+    TerminalProcessAdapter,
+    TerminalRuntimeError,
+    TerminalSessionRuntime,
+)
 
 try:
     from .models import (
@@ -100,4 +106,8 @@ __all__ = [
     "TerminalProviderRegistry",
     "TerminalRegistryError",
     "TerminalShellInfo",
+    "ProcessLaunchRequest",
+    "TerminalProcessAdapter",
+    "TerminalRuntimeError",
+    "TerminalSessionRuntime",
 ]

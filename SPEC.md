@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.144                                    |
+| **Spec Version**        | 1.1.145                                    |
 | **Last Spec Update**    | 2026-05-13                                 |
 
 ## 2. Purpose & Mission
@@ -65,6 +65,8 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - GUI building blocks (PyQt6 theme system, shared widgets)
 - Shared chat contracts, including optional terminal-agent shell/provider
   descriptors for project-scoped agent sessions
+- Project-scoped terminal-agent runtime coordination for shared chat provider
+  processes
 - Plugin system for extending functionality
 
 No repo is required to use Tools, but it provides optional high-value integrations.
