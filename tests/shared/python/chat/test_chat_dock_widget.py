@@ -178,6 +178,55 @@ class TestChatDockWidget:
         ]
         widget.close()
 
+    def test_terminal_lifecycle_buttons_track_session_state(
+        self,
+        qtbot,
+        tmp_path,
+        monkeypatch,
+    ):
+        from chat.chat_dock_widget import ChatDockWidget
+
+        sent = []
+        ChatDockWidget._shared_session_id = None
+        widget = ChatDockWidget(app_name="test_app", project_root=tmp_path)
+        _track_widget(qtbot, widget)
+        monkeypatch.setattr(widget, "_send_ws", sent.append)
+
+        widget._mode_combo.setCurrentIndex(1)
+        assert widget._terminal_start_btn.isEnabled()
+        assert not widget._terminal_stop_btn.isEnabled()
+
+        widget._on_terminal_start()
+        widget._on_terminal_start()
+
+        assert len(sent) == 1
+        assert not widget._terminal_start_btn.isEnabled()
+        assert not widget._terminal_stop_btn.isEnabled()
+        assert not widget._shell_combo.isEnabled()
+        assert not widget._provider_combo.isEnabled()
+        assert "session already active" in widget._terminal_output.toPlainText()
+
+        widget._on_message(
+            '{"type":"terminal_session","session":'
+            '{"session_id":"terminal_123","state":"running"}}'
+        )
+
+        assert not widget._terminal_start_btn.isEnabled()
+        assert widget._terminal_stop_btn.isEnabled()
+        assert not widget._shell_combo.isEnabled()
+        assert not widget._provider_combo.isEnabled()
+
+        widget._on_message(
+            '{"type":"terminal_session","session":'
+            '{"session_id":"terminal_123","state":"stopped"}}'
+        )
+
+        assert widget._terminal_start_btn.isEnabled()
+        assert not widget._terminal_stop_btn.isEnabled()
+        assert widget._shell_combo.isEnabled()
+        assert widget._provider_combo.isEnabled()
+        widget.close()
+
     def test_terminal_input_requires_active_session(self, qtbot, monkeypatch):
         from chat.chat_dock_widget import ChatDockWidget
 
