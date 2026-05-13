@@ -25,6 +25,11 @@ Consumers may import these symbols from `chat`:
 - `TerminalAgentEvent`
 - `TerminalProviderRegistry`
 - `TerminalRegistryError`
+- `build_default_terminal_provider_registry`
+- `default_terminal_agent_providers`
+- `default_terminal_shells`
+- `provider_probe_commands`
+- `redact_terminal_command`
 - `ProcessLaunchRequest`
 - `TerminalProcessAdapter`
 - `TerminalRuntimeError`
@@ -84,6 +89,15 @@ must launch providers with a validated project root as the process working
 directory and may pass explicit Tools context through environment variables or a
 generated context file. Secrets must stay out of command strings, diagnostics,
 and persisted UI selections.
+
+Tools provides initial data-driven descriptors for Claude Code, Codex, Cline
+CLI, and Gemini CLI through `default_terminal_agent_providers()` and
+`build_default_terminal_provider_registry()`. These helpers return metadata
+only: they do not check whether a CLI is installed, perform authentication, or
+couple provider data to Qt or web UI components. `provider_probe_commands()`
+exposes install/auth probe command metadata for diagnostics, and
+`redact_terminal_command()` masks secret-like option values before commands are
+logged or displayed.
 
 `TerminalSessionRuntime` owns terminal lifecycle coordination. It accepts a
 registry plus a process adapter, resolves shell/provider compatibility, launches

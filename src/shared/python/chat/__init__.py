@@ -29,6 +29,13 @@ from .terminal_contracts import (
     TerminalRegistryError,
     TerminalShellInfo,
 )
+from .terminal_providers import (
+    build_default_terminal_provider_registry,
+    default_terminal_agent_providers,
+    default_terminal_shells,
+    provider_probe_commands,
+    redact_terminal_command,
+)
 from .terminal_runtime import (
     ProcessLaunchRequest,
     TerminalProcessAdapter,
@@ -106,6 +113,11 @@ __all__ = [
     "TerminalProviderRegistry",
     "TerminalRegistryError",
     "TerminalShellInfo",
+    "build_default_terminal_provider_registry",
+    "default_terminal_agent_providers",
+    "default_terminal_shells",
+    "provider_probe_commands",
+    "redact_terminal_command",
     "ProcessLaunchRequest",
     "TerminalProcessAdapter",
     "TerminalRuntimeError",
