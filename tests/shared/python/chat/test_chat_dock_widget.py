@@ -100,3 +100,87 @@ class TestChatDockWidget:
         qtbot.addWidget(widget)
         assert ChatDockWidget._shared_session_id == "explicit-123"
         widget.close()
+
+    def test_terminal_mode_controls_are_available(self, qtbot, tmp_path):
+        from chat.chat_dock_widget import ChatDockWidget
+
+        ChatDockWidget._shared_session_id = None
+        widget = ChatDockWidget(app_name="test_app", project_root=tmp_path)
+        qtbot.addWidget(widget)
+
+        widget._mode_combo.setCurrentIndex(1)
+
+        assert widget._current_mode() == "terminal"
+        assert widget._shell_combo.currentData() == "powershell"
+        assert widget._provider_combo.currentData() == "claude-code"
+        assert widget._content_stack.currentWidget() is widget._terminal_output
+        widget.close()
+
+    def test_terminal_start_sends_selected_shell_provider(
+        self,
+        qtbot,
+        tmp_path,
+        monkeypatch,
+    ):
+        from chat.chat_dock_widget import ChatDockWidget
+
+        sent = []
+        ChatDockWidget._shared_session_id = None
+        widget = ChatDockWidget(app_name="test_app", project_root=tmp_path)
+        qtbot.addWidget(widget)
+        monkeypatch.setattr(widget, "_send_ws", sent.append)
+
+        widget._mode_combo.setCurrentIndex(1)
+        widget._provider_combo.setCurrentIndex(1)
+        widget._on_terminal_start()
+
+        assert sent == [
+            {
+                "action": "terminal_start",
+                "project_root": str(tmp_path.resolve()),
+                "shell_id": "powershell",
+                "provider_id": "codex",
+                "app_context": "unknown",
+            }
+        ]
+        widget.close()
+
+    def test_terminal_input_requires_active_session(self, qtbot, monkeypatch):
+        from chat.chat_dock_widget import ChatDockWidget
+
+        sent = []
+        ChatDockWidget._shared_session_id = None
+        widget = ChatDockWidget(app_name="test_app")
+        qtbot.addWidget(widget)
+        monkeypatch.setattr(widget, "_send_ws", sent.append)
+
+        widget._mode_combo.setCurrentIndex(1)
+        widget._input_edit.setPlainText("status")
+        widget._on_send()
+
+        assert sent == []
+        assert "start a session first" in widget._terminal_output.toPlainText()
+        widget.close()
+
+    def test_terminal_input_sends_to_active_session(self, qtbot, monkeypatch):
+        from chat.chat_dock_widget import ChatDockWidget
+
+        sent = []
+        ChatDockWidget._shared_session_id = None
+        widget = ChatDockWidget(app_name="test_app")
+        qtbot.addWidget(widget)
+        monkeypatch.setattr(widget, "_send_ws", sent.append)
+
+        widget._mode_combo.setCurrentIndex(1)
+        widget._terminal_session_id = "terminal_123"
+        widget._input_edit.setPlainText("pwd")
+        widget._on_send()
+
+        assert sent == [
+            {
+                "action": "terminal_input",
+                "terminal_session_id": "terminal_123",
+                "text": "pwd\n",
+            }
+        ]
+        widget.close()
