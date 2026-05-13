@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.150                                    |
+| **Spec Version**        | 1.1.151                                    |
 | **Last Spec Update**    | 2026-05-13                                 |
 
 ## 2. Purpose & Mission
@@ -77,6 +77,9 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   session input routing
 - Shared chat dock close and terminal stop controls, with terminal
   shell/provider dropdowns populated from the shared provider registry
+- Shared chat dock terminal lifecycle controls disable duplicate starts,
+  enable Stop only for active sessions, and lock shell/provider choices while
+  a terminal session is pending or active
 - Data-driven shared chat terminal-provider descriptors for Claude Code, Codex,
   Cline CLI, and Gemini CLI, including probe command metadata with diagnostic
   redaction helpers
@@ -524,6 +527,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-13 | 1.1.151 | Hardened shared chat dock terminal lifecycle controls so Start is disabled while a terminal session is pending or active, Stop is enabled only for active sessions, and shell/provider selectors are locked while the selected terminal agent session is running.                                                                                                                                                                                                                                                                                                   |
 | 2026-05-13 | 1.1.150 | Improved the shared chat dock terminal interface by populating shell/provider selectors from the terminal provider registry, adding an explicit terminal Stop action wired to the existing WebSocket stop protocol, and adding an in-dock Close button so embedded chat windows can be dismissed from inside the chat UI.                                                                                                                                                                                                                                           |
 | 2026-05-13 | 1.1.149 | Added shared AI chat memory management with a Tools-scoped `user_memory.json` store, explicit archived-conversation preference extraction, project-root `AGENTS.md` prompt inclusion, bounded prompt-memory formatting across provider adapters, and focused regression coverage so archived chats inform future sessions without becoming opaque model training data.                                                                                                                                                                                              |
 | 2026-05-13 | 1.1.148 | Added data-driven shared chat terminal-provider descriptors for Claude Code, Codex, Cline CLI, and Gemini CLI, plus default registry builders, install/auth probe command metadata, and command redaction helpers so downstream UIs can enumerate terminal agents without copying provider lists or logging secret-like command values.                                                                                                                                                                                                                             |

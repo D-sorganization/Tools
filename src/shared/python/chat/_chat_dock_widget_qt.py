@@ -24,7 +24,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 from PyQt6.QtCore import Qt, QTimer, QUrl, pyqtSignal
 from PyQt6.QtWebSockets import QWebSocket
@@ -51,7 +51,8 @@ def _get_theme_colors() -> dict[str, str]:
     try:
         from src.shared.python.theme.theme_manager import get_theme_manager
 
-        return cast(dict[str, str], get_theme_manager().get_current_colors())
+        colors: dict[str, str] = get_theme_manager().get_current_colors()
+        return colors
     except ImportError:
         return {}
 
@@ -210,6 +211,7 @@ class ChatDockWidget(QDockWidget):
         self._is_streaming = False
         self._current_bubble: ChatMessageBubble | None = None
         self._terminal_session_id: str | None = None
+        self._terminal_start_pending = False
         self._socket: QWebSocket | None = None
         self._session_file = _session_file_path(app_name)
         self._reconnect_timer = QTimer(self)
@@ -485,12 +487,14 @@ class ChatDockWidget(QDockWidget):
         elif msg_type == "terminal_session":
             session = data.get("session", {})
             self._terminal_session_id = session.get("session_id")
+            self._terminal_start_pending = False
             state = session.get("state", "unknown")
             self._status_label.setText(f"Terminal {state}")
             if self._terminal_session_id:
                 self._append_terminal_line(f"[terminal] session {state}")
             if state in {"stopped", "exited", "error"}:
                 self._terminal_session_id = None
+            self._sync_terminal_controls()
 
         elif msg_type == "terminal_events":
             for event in data.get("events", []):
@@ -548,12 +552,24 @@ class ChatDockWidget(QDockWidget):
                     self._provider_combo.setCurrentIndex(idx)
         finally:
             self._provider_combo.blockSignals(False)
+        self._sync_terminal_controls()
 
     def _on_terminal_shell_changed(self, _index: int) -> None:
         self._populate_provider_combo()
 
     def _on_terminal_start(self) -> None:
         """Start a terminal-agent session for the selected shell/provider."""
+        if self._terminal_session_id or self._terminal_start_pending:
+            self._append_terminal_line("[terminal] session already active")
+            return
+        if (
+            not self._shell_combo.currentData()
+            or not self._provider_combo.currentData()
+        ):
+            self._append_terminal_line("[terminal] select a shell and provider first")
+            return
+        self._terminal_start_pending = True
+        self._sync_terminal_controls()
         self._terminal_output.clear()
         self._append_terminal_line("[terminal] starting...")
         self._send_ws(
@@ -601,6 +617,7 @@ class ChatDockWidget(QDockWidget):
         self._provider_combo.setVisible(is_terminal)
         self._terminal_start_btn.setVisible(is_terminal)
         self._terminal_stop_btn.setVisible(is_terminal)
+        self._sync_terminal_controls()
         placeholder = (
             "Type terminal input..." if is_terminal else self._placeholder_text
         )
@@ -609,6 +626,23 @@ class ChatDockWidget(QDockWidget):
     def _current_mode(self) -> str:
         mode = self._mode_combo.currentData()
         return str(mode or "chat")
+
+    def _sync_terminal_controls(self) -> None:
+        """Keep terminal lifecycle controls aligned with session state."""
+        if not hasattr(self, "_terminal_start_btn"):
+            return
+        active = bool(self._terminal_session_id)
+        pending = bool(self._terminal_start_pending)
+        startable = (
+            not active
+            and not pending
+            and bool(self._shell_combo.currentData())
+            and bool(self._provider_combo.currentData())
+        )
+        self._terminal_start_btn.setEnabled(startable)
+        self._terminal_stop_btn.setEnabled(active)
+        self._shell_combo.setEnabled(not active and not pending)
+        self._provider_combo.setEnabled(not active and not pending)
 
     def _append_terminal_line(self, text: str) -> None:
         if text:
