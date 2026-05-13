@@ -75,6 +75,7 @@ class AIProvider(Enum):
     CLAUDE_CLI = auto()  # Anthropic's Claude Code CLI
     CLINE_CLI = auto()  # Cline CLI
     CODEX_CLI = auto()  # OpenAI's Codex CLI
+    BITNET = auto()  # BitNet 1.58b
 
 
 # Provider display info - explicitly typed for mypy
@@ -149,6 +150,16 @@ PROVIDER_INFO: dict[AIProvider, dict[str, str | bool | list[str]]] = {
         "requires_key": False,
         "default_model": "gpt-4o",
         "models": ["gpt-4o", "o1-preview", "o1-mini", "gpt-4-turbo"],
+    },
+    AIProvider.BITNET: {
+        "name": "BitNet (1.58b)",
+        "description": "Run 1.58b quantized models natively via direct subprocess. No API key needed.",
+        "requires_key": False,
+        "default_model": "bitnet-1.58b-q4_0.gguf",
+        "models": [
+            "bitnet-1.58b-q4_0.gguf",
+            "bitnet-3b-q4_0.gguf",
+        ],
     },
 }
 
