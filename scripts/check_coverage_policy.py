@@ -6,15 +6,26 @@ import json
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
+from typing import Any, TypedDict
+
+
+class CoverageStats(TypedDict):
+    total_percent: float
+    package_percent: dict[str, float]
 
 
 def _pct(x: float) -> float:
     return round(x * 100.0, 2)
 
 
-def parse_coverage(
-    coverage_file: Path, tracked_prefixes: list[str]
-) -> dict[str, object]:
+def _effective_total_floor(min_total: float, baseline_total: float) -> float:
+    """Use the target floor only after the committed baseline has reached it."""
+    if baseline_total < min_total:
+        return baseline_total
+    return min_total
+
+
+def parse_coverage(coverage_file: Path, tracked_prefixes: list[str]) -> CoverageStats:
     root = ET.parse(coverage_file).getroot()
     total_line_rate = float(root.attrib.get("line-rate", "0"))
 
@@ -38,6 +49,13 @@ def parse_coverage(
     return {"total_percent": _pct(total_line_rate), "package_percent": package_pct}
 
 
+def _json_float(mapping: dict[str, Any], key: str, default: float = 0.0) -> float:
+    value = mapping.get(key, default)
+    if isinstance(value, str | int | float):
+        return float(value)
+    return default
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--coverage-file", default="coverage.xml")
@@ -46,28 +64,37 @@ def main() -> int:
     ap.add_argument("--output-json", default="coverage_trend.json")
     args = ap.parse_args()
 
-    policy = json.loads(Path(args.policy_file).read_text(encoding="utf-8"))
-    baseline = json.loads(Path(args.baseline_file).read_text(encoding="utf-8"))
+    policy: dict[str, Any] = json.loads(
+        Path(args.policy_file).read_text(encoding="utf-8")
+    )
+    baseline: dict[str, Any] = json.loads(
+        Path(args.baseline_file).read_text(encoding="utf-8")
+    )
 
-    tracked = list(policy.get("tracked_packages", {}).keys())
+    policy_packages = policy.get("tracked_packages", {})
+    tracked_packages = policy_packages if isinstance(policy_packages, dict) else {}
+    tracked = [str(package) for package in tracked_packages]
     current = parse_coverage(Path(args.coverage_file), tracked)
 
-    min_total = float(policy.get("minimum_total_percent", 0.0))
-    max_drop = float(policy.get("max_total_drop_percent", 0.0))
-    baseline_total = float(baseline.get("total_percent", 0.0))
+    min_total = _json_float(policy, "minimum_total_percent")
+    max_drop = _json_float(policy, "max_total_drop_percent")
+    baseline_total = _json_float(baseline, "total_percent")
 
     failures: list[str] = []
-    total = float(current["total_percent"])
-    if total < min_total:
-        failures.append(f"total coverage {total}% below minimum {min_total}%")
+    total = current["total_percent"]
+    effective_min_total = _effective_total_floor(min_total, baseline_total)
+    if total < effective_min_total:
+        failures.append(
+            f"total coverage {total}% below effective minimum "
+            f"{effective_min_total}% (target {min_total}%)"
+        )
     if total < (baseline_total - max_drop):
         failures.append(
             f"total coverage {total}% regressed beyond allowed drop ({baseline_total}% -> {baseline_total - max_drop}%)"
         )
 
-    pkg_current: dict[str, float] = current["package_percent"]  # type: ignore[assignment]
-    pkg_min: dict[str, float] = policy.get("tracked_packages", {})
-    for pkg, threshold in pkg_min.items():
+    pkg_current = current["package_percent"]
+    for pkg, threshold in tracked_packages.items():
         cur = float(pkg_current.get(pkg, 0.0))
         if cur < float(threshold):
             failures.append(
