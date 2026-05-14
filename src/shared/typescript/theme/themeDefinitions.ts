@@ -211,7 +211,58 @@ export function generateCSSVariables(theme: ThemeColors): Record<string, string>
     '--theme-link-hover': theme.linkHover,
     '--theme-selection-bg': theme.selectionBg,
     '--theme-selection-text': theme.selectionText,
+    ...generateSidekickCSSVariables(theme),
   };
+}
+
+/** Generate Sidekick CSS variables from the same theme colors as PyQt Sidekick. */
+export function generateSidekickCSSVariables(theme: ThemeColors): Record<string, string> {
+  return {
+    '--sidekick-color-canvas': theme.bg,
+    '--sidekick-color-background': theme.bg,
+    '--sidekick-color-surface': theme.groupBg,
+    '--sidekick-color-surface-elevated': theme.bg,
+    '--sidekick-color-surface-raised': theme.tableAlt,
+    '--sidekick-color-surface-muted': theme.tableAlt,
+    '--sidekick-color-border': theme.border,
+    '--sidekick-color-border-strong': theme.titleBorder,
+    '--sidekick-color-text': theme.text,
+    '--sidekick-color-text-muted': theme.textSecondary,
+    '--sidekick-color-text-subtle': theme.label,
+    '--sidekick-color-accent': theme.accent,
+    '--sidekick-color-accent-hover': theme.buttonHover,
+    '--sidekick-color-accent-soft': `color-mix(in srgb, ${theme.accent} 16%, transparent)`,
+    '--sidekick-color-focus': theme.focus,
+    '--sidekick-color-selection': theme.selectionBg,
+    '--sidekick-color-selection-text': theme.selectionText,
+    '--sidekick-color-error': theme.error,
+    '--sidekick-color-danger': theme.error,
+    '--sidekick-color-warning': theme.warning,
+    '--sidekick-color-success': theme.success,
+    '--sidekick-color-info': theme.info,
+    '--sidekick-color-link': theme.link,
+    '--sidekick-color-link-hover': theme.linkHover,
+    '--sidekick-radius-lg': '8px',
+    '--sidekick-radius-chat': '8px',
+    '--sidekick-radius-md': '6px',
+    '--sidekick-radius-control': '6px',
+    '--sidekick-shadow-md': '0 12px 28px rgba(15, 23, 42, 0.14)',
+    '--sidekick-shadow-panel': 'var(--sidekick-shadow-md)',
+    '--sidekick-control-height': '28px',
+    '--sidekick-size-control-height': 'var(--sidekick-control-height)',
+  };
+}
+
+/** Apply only Sidekick CSS variables to a host element. */
+export function applySidekickThemeToElement(
+  element: HTMLElement,
+  theme: ThemeColors,
+): void {
+  const cssVars = generateSidekickCSSVariables(theme);
+
+  Object.entries(cssVars).forEach(([key, value]) => {
+    element.style.setProperty(key, value);
+  });
 }
 
 /** Apply theme CSS variables to the document root */
