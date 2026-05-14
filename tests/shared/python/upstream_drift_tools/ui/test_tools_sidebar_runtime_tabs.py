@@ -217,3 +217,91 @@ def test_sidekick_terminal_and_notes_controls_have_tooltips(tmp_path: Path) -> N
     for widget in note_widgets:
         assert widget is not None
         assert widget.toolTip()
+
+
+def test_sidekick_data_explorer_preview_export_and_handoff(tmp_path: Path) -> None:
+    try:
+        from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
+    except ImportError:
+        pytest.skip("Qt widgets unavailable")
+
+    from upstream_drift_tools.ui.tools_sidebar import UnifiedToolsSidebar
+
+    csv_path = tmp_path / "sample.csv"
+    csv_path.write_text(
+        "temperature,status\n293.15,ok\n294.0,warn\n295.2,ok\n",
+        encoding="utf-8",
+    )
+
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    _ = app
+    sidebar = UnifiedToolsSidebar(project_root=tmp_path)
+    launches: list[tuple[str, dict[str, object]]] = []
+    sidebar.tool_launch_requested.connect(
+        lambda tool_id, payload: launches.append((tool_id, payload))
+    )
+
+    assert sidebar.set_active_tab("data_explorer") is True
+    explorer = sidebar.tabs.currentWidget()
+    assert explorer is not None
+
+    path_input = explorer.findChild(QtWidgets.QLineEdit, "SidekickDataExplorerPath")
+    load_button = explorer.findChild(
+        QtWidgets.QPushButton,
+        "SidekickDataExplorerLoad",
+    )
+    column_input = explorer.findChild(
+        QtWidgets.QLineEdit,
+        "SidekickDataExplorerColumns",
+    )
+    variable_input = explorer.findChild(
+        QtWidgets.QLineEdit,
+        "SidekickDataExplorerVariable",
+    )
+    export_button = explorer.findChild(
+        QtWidgets.QPushButton,
+        "SidekickDataExplorerExport",
+    )
+    handoff_button = explorer.findChild(
+        QtWidgets.QPushButton,
+        "SidekickDataExplorerSendToDataProcessor",
+    )
+    preview_table = explorer.findChild(
+        QtWidgets.QTableWidget,
+        "SidekickDataExplorerPreviewTable",
+    )
+
+    assert path_input is not None
+    assert load_button is not None
+    assert column_input is not None
+    assert variable_input is not None
+    assert export_button is not None
+    assert handoff_button is not None
+    assert preview_table is not None
+
+    path_input.setText(str(csv_path))
+    load_button.click()
+
+    assert preview_table.rowCount() == 3
+    assert preview_table.columnCount() == 2
+
+    column_input.setText("temperature")
+    variable_input.setText("temperature_preview")
+    export_button.click()
+
+    assert sidebar.registry.get("temperature_preview") == [293.15, 294.0, 295.2]
+
+    handoff_button.click()
+
+    assert launches == [
+        (
+            "data_processor",
+            {
+                "tool_id": "data_processor",
+                "source_path": str(csv_path),
+                "source_format": "csv",
+                "selected_columns": ["temperature"],
+                "row_limit": 20,
+            },
+        )
+    ]

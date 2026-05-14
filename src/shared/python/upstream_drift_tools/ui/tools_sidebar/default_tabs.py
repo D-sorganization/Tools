@@ -10,6 +10,11 @@ from typing import Any
 
 from . import design_tokens as theme
 from .calculator_plotting import CALCULATOR_PLOT_TAB_ID
+from .data_explorer_tab import (
+    DATA_EXPLORER_TAB_ID,
+    DATA_EXPLORER_TAB_SETTINGS,
+    build_data_explorer_tab,
+)
 from .help_content import DEFAULT_SIDEBAR_TAB_HELP
 from .project_file_explorer import ProjectFileExplorer
 from .qt_compat import QT_API, QtWidgets
@@ -72,6 +77,13 @@ def build_default_tab_definitions(
             visible=False,
             duplicate_enabled=True,
             help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP["calculator_plot"]),
+        ),
+        tab_definition(
+            DATA_EXPLORER_TAB_ID,
+            "Data Explorer",
+            build_data_explorer_tab,
+            help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP[DATA_EXPLORER_TAB_ID]),
+            settings=DATA_EXPLORER_TAB_SETTINGS,
         ),
         tab_definition(
             "units",

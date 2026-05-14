@@ -84,6 +84,22 @@ DEFAULT_SIDEBAR_TAB_HELP: dict[str, dict[str, str]] = {
         ),
         source="upstream_drift_tools.ui.tools_sidebar.calculator_plotting",
     ),
+    "data_explorer": _tab_help(
+        "Data Explorer",
+        "Preview project data files with bounded schema, null-count, and "
+        "sample-row summaries.",
+        tips=(
+            "Use this tab for lightweight inspection before opening heavier "
+            "processing tools.",
+            "Exports stay bounded to preview-safe rows and validated workspace "
+            "variables.",
+        ),
+        examples=(
+            "data/example.csv",
+            "results/run_001.json",
+        ),
+        source="upstream_drift_tools.ui.tools_sidebar.data_explorer_service",
+    ),
     "units": _tab_help(
         "Units",
         "Convert values between supported engineering unit systems.",
@@ -96,9 +112,7 @@ DEFAULT_SIDEBAR_TAB_HELP: dict[str, dict[str, str]] = {
         "Rotation Converter",
         "Convert between quaternions, Euler angles, matrices, and related "
         "rigid-body frames.",
-        tips=(
-            "The tab stays hidden by default until the host enables it.",
-        ),
+        tips=("The tab stays hidden by default until the host enables it.",),
         source="rotation_converter.gui_registration",
     ),
     "notes": _tab_help(
@@ -178,9 +192,7 @@ def render_help_markdown(metadata: dict[str, str]) -> str:
     if examples:
         lines.extend(["", "## Examples", ""])
         lines.extend(
-            f"- `{example}`"
-            for example in examples.splitlines()
-            if example.strip()
+            f"- `{example}`" for example in examples.splitlines() if example.strip()
         )
     source = metadata.get("source", "").strip()
     if source:

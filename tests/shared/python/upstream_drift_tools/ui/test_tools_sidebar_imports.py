@@ -113,6 +113,7 @@ def test_default_sidekick_tab_help_metadata_imports_without_qt() -> None:
         "terminal",
         "calculator",
         "calculator_plot",
+        "data_explorer",
         "units",
         "rotation_converter",
         "notes",
@@ -256,6 +257,12 @@ def test_tools_sidebar_widget_contract_when_qt_available(tmp_path: Path) -> None
     assert plot_definition.duplicate_enabled is True
     assert plot_definition.help_metadata["title"] == "Calculator Plot"
     assert "workspace variables" in plot_definition.help_metadata["summary"]
+    data_explorer_definition = sidebar._tab_definitions["data_explorer"]
+    assert data_explorer_definition.visible is True
+    assert data_explorer_definition.duplicate_enabled is False
+    assert data_explorer_definition.help_metadata["title"] == "Data Explorer"
+    assert "schema" in data_explorer_definition.help_metadata["summary"]
+    assert data_explorer_definition.settings is not None
     rotation_definition = sidebar._tab_definitions["rotation_converter"]
     assert rotation_definition.visible is False
     assert rotation_definition.duplicate_enabled is True
@@ -485,7 +492,7 @@ def test_sidekick_default_runtime_tabs_are_real_widgets(tmp_path: Path) -> None:
     _ = app
     sidebar = UnifiedToolsSidebar(project_root=tmp_path)
 
-    for tab_id in ("chat", "terminal", "calculator", "notes"):
+    for tab_id in ("chat", "terminal", "calculator", "data_explorer", "notes"):
         assert sidebar.set_active_tab(tab_id) is True
         tab = sidebar.tabs.currentWidget()
         assert tab is not None

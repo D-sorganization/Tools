@@ -56,6 +56,7 @@ class UnifiedToolsSidebar(
 
     file_open_requested = Signal(str)
     context_updated = Signal(dict)
+    tool_launch_requested = Signal(str, object)
 
     def __init__(
         self,
@@ -399,6 +400,10 @@ class UnifiedToolsSidebar(
     def set_context_variable(self, name: str, value: Any) -> None:
         self.registry.set(name, value)
         self.refresh_workspace()
+
+    def request_tool_launch(self, tool_id: str, payload: dict[str, Any]) -> None:
+        """Emit a structured host-tool launch request."""
+        self.tool_launch_requested.emit(tool_id, dict(payload))
 
     def refresh_workspace(self) -> None:
         """Refresh workspace-derived UI and emit the latest sidebar context."""
