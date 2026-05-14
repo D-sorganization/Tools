@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (closes #2427)
 - `CONTRIBUTING.md`: expanded with full development setup, coding standards,
   testing pipeline, and PR process (closes #2427)
+- `upstream_drift_tools.ui.tools_sidebar`: added a pure-Python Sidekick
+  design-token bridge with CSS-variable/QSS mapping exports and stable Qt
+  stylesheet selectors for shared sidebar host integration.
 
 ### Changed
 

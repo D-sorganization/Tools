@@ -6,13 +6,44 @@ on demand so non-GUI hosts can still use persistence and workspace contracts.
 
 from __future__ import annotations
 
+from .design_tokens import (
+    SIDEKICK_DESIGN_TOKENS,
+    SIDEKICK_DOCK_OBJECT_NAME,
+    SIDEKICK_PLACEHOLDER_LABEL_OBJECT_NAME,
+    SIDEKICK_PLACEHOLDER_OBJECT_NAME,
+    SIDEKICK_PROJECT_EXPLORER_OBJECT_NAME,
+    SIDEKICK_PROJECT_TREE_OBJECT_NAME,
+    SIDEKICK_SIDEBAR_OBJECT_NAME,
+    SIDEKICK_TAB_BAR_OBJECT_NAME,
+    SIDEKICK_TABS_OBJECT_NAME,
+    SIDEKICK_TOKEN_NAMES,
+    SIDEKICK_TOOLBAR_OBJECT_NAME,
+    SIDEKICK_WORKSPACE_LIST_OBJECT_NAME,
+    SIDEKICK_WORKSPACE_TAB_OBJECT_NAME,
+    SidekickDesignTokens,
+    sidekick_qss,
+)
 from .registry import WorkspaceRegistry, WorkspaceVariable
 from .state import SidebarState
 
 __all__ = [
+    "SIDEKICK_DESIGN_TOKENS",
     "ProjectFileExplorer",
     "SidebarState",
     "SidebarTabDefinition",
+    "SIDEKICK_DOCK_OBJECT_NAME",
+    "SIDEKICK_PLACEHOLDER_LABEL_OBJECT_NAME",
+    "SIDEKICK_PLACEHOLDER_OBJECT_NAME",
+    "SIDEKICK_PROJECT_EXPLORER_OBJECT_NAME",
+    "SIDEKICK_PROJECT_TREE_OBJECT_NAME",
+    "SIDEKICK_SIDEBAR_OBJECT_NAME",
+    "SIDEKICK_TAB_BAR_OBJECT_NAME",
+    "SIDEKICK_TABS_OBJECT_NAME",
+    "SIDEKICK_TOKEN_NAMES",
+    "SIDEKICK_TOOLBAR_OBJECT_NAME",
+    "SIDEKICK_WORKSPACE_LIST_OBJECT_NAME",
+    "SIDEKICK_WORKSPACE_TAB_OBJECT_NAME",
+    "SidekickDesignTokens",
     "SidekickSidebar",
     "ToolsSidebarInstallResult",
     "UnifiedToolsSidebar",
@@ -20,6 +51,7 @@ __all__ = [
     "WorkspaceVariable",
     "create_tools_sidebar",
     "install_tools_sidebar",
+    "sidekick_qss",
 ]
 
 

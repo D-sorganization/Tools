@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from .design_tokens import SidekickDesignTokens
 from .qt_compat import QtWidgets
 from .registry import WorkspaceRegistry
 from .sidebar import SidebarTabDefinition, UnifiedToolsSidebar
@@ -31,16 +32,22 @@ def create_tools_sidebar(
     registry: WorkspaceRegistry | None = None,
     state: SidebarState | None = None,
     tab_definitions: list[SidebarTabDefinition] | None = None,
+    design_tokens: SidekickDesignTokens | None = None,
+    sidekick_tokens: dict[str, str] | None = None,
     parent: QtWidgets.QWidget | None = None,
     context_provider: Callable[[], Any] | None = None,
     **_: Any,
 ) -> UnifiedToolsSidebar:
     """Create a sidebar widget using the stable shared factory contract."""
+    resolved_tokens = design_tokens
+    if resolved_tokens is None and sidekick_tokens is not None:
+        resolved_tokens = SidekickDesignTokens.from_sidekick_tokens(sidekick_tokens)
     sidebar = UnifiedToolsSidebar(
         project_root=project_root,
         registry=registry,
         state=state,
         tab_definitions=tab_definitions,
+        design_tokens=resolved_tokens,
         parent=parent,
     )
     if context_provider is not None:
@@ -58,6 +65,8 @@ def install_tools_sidebar(
     registry: WorkspaceRegistry | None = None,
     state: SidebarState | None = None,
     tab_definitions: list[SidebarTabDefinition] | None = None,
+    design_tokens: SidekickDesignTokens | None = None,
+    sidekick_tokens: dict[str, str] | None = None,
     context_provider: Callable[[], Any] | None = None,
     area: str | None = None,
     title: str = "Tools",
@@ -73,6 +82,8 @@ def install_tools_sidebar(
         registry=registry,
         state=state,
         tab_definitions=tab_definitions,
+        design_tokens=design_tokens,
+        sidekick_tokens=sidekick_tokens,
         parent=main_window,
         context_provider=context_provider,
     )

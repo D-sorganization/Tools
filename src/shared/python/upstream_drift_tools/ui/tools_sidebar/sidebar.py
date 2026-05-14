@@ -7,12 +7,24 @@ from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any
 
+from .design_tokens import (
+    SIDEKICK_DESIGN_TOKENS,
+    SIDEKICK_DOCK_OBJECT_NAME,
+    SIDEKICK_PLACEHOLDER_LABEL_OBJECT_NAME,
+    SIDEKICK_PLACEHOLDER_OBJECT_NAME,
+    SIDEKICK_SIDEBAR_OBJECT_NAME,
+    SIDEKICK_TAB_BAR_OBJECT_NAME,
+    SIDEKICK_TABS_OBJECT_NAME,
+    SIDEKICK_TOOLBAR_OBJECT_NAME,
+    SIDEKICK_WORKSPACE_LIST_OBJECT_NAME,
+    SIDEKICK_WORKSPACE_TAB_OBJECT_NAME,
+    SidekickDesignTokens,
+    sidekick_qss,
+)
 from .project_file_explorer import ProjectFileExplorer
 from .qt_compat import QT_API, QtWidgets, Signal, all_sidebar_dock_features, dock_area
 from .registry import WorkspaceRegistry
 from .state import SidebarState
-
-SIDEKICK_DOCK_OBJECT_NAME = "SidekickToolsSidebarDock"
 
 
 @dataclass(frozen=True)
@@ -39,11 +51,14 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
         registry: WorkspaceRegistry | None = None,
         state: SidebarState | None = None,
         tab_definitions: list[SidebarTabDefinition] | None = None,
+        design_tokens: SidekickDesignTokens | None = None,
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
         super().__init__(parent)
+        self.setObjectName(SIDEKICK_SIDEBAR_OBJECT_NAME)
         self.registry = registry or WorkspaceRegistry()
         self._state = state or SidebarState()
+        self._design_tokens = design_tokens or SIDEKICK_DESIGN_TOKENS
         self._dock_widget: QtWidgets.QDockWidget | None = None
         self._expanded_width = self._state.width
         self._tab_ids: list[str] = []
@@ -55,9 +70,12 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
 
         self.toolbar = self._build_toolbar()
         self.tabs = QtWidgets.QTabWidget(self)
+        self.tabs.setObjectName(SIDEKICK_TABS_OBJECT_NAME)
+        self.tabs.tabBar().setObjectName(SIDEKICK_TAB_BAR_OBJECT_NAME)
         self.tabs.setMovable(True)
         self.tabs.currentChanged.connect(self._emit_context)
         self.tabs.tabBar().tabMoved.connect(self._sync_tab_order_from_widget)
+        self.setStyleSheet(sidekick_qss(self._design_tokens))
 
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -383,7 +401,7 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
 
     def _build_toolbar(self) -> QtWidgets.QToolBar:
         toolbar = QtWidgets.QToolBar("Sidekick", self)
-        toolbar.setObjectName("SidekickToolbar")
+        toolbar.setObjectName(SIDEKICK_TOOLBAR_OBJECT_NAME)
         toolbar.setMovable(False)
         left_action = toolbar.addAction("Left")
         left_action.triggered.connect(lambda: self.set_dock_area("left"))
@@ -405,8 +423,10 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
 
     def _build_workspace_tab(self) -> QtWidgets.QWidget:
         widget = QtWidgets.QWidget(self)
+        widget.setObjectName(SIDEKICK_WORKSPACE_TAB_OBJECT_NAME)
         layout = QtWidgets.QVBoxLayout(widget)
         self._workspace_list = QtWidgets.QListWidget(widget)
+        self._workspace_list.setObjectName(SIDEKICK_WORKSPACE_LIST_OBJECT_NAME)
         layout.addWidget(self._workspace_list)
         self._refresh_workspace_list()
         return widget
@@ -433,8 +453,10 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
 
     def _placeholder(self, title: str) -> QtWidgets.QWidget:
         widget = QtWidgets.QWidget(self)
+        widget.setObjectName(SIDEKICK_PLACEHOLDER_OBJECT_NAME)
         layout = QtWidgets.QVBoxLayout(widget)
         label = QtWidgets.QLabel(title, widget)
+        label.setObjectName(SIDEKICK_PLACEHOLDER_LABEL_OBJECT_NAME)
         label.setWordWrap(True)
         layout.addWidget(label)
         layout.addStretch(1)
