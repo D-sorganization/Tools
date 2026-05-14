@@ -76,3 +76,6 @@
 ## 2024-05-11 - Improve form validation with inline feedback
 **Learning:** Visual validation states and `aria-invalid` must be paired with `.focus()` to prevent focus traps and ensure screen readers announce the error context immediately.
 **Action:** When an input is marked invalid, automatically shift focus to it, and remove `aria-invalid` on the next input event.
+## 2026-05-14 - Group and label bound inputs
+**Learning:** When multiple inputs logically belong together (like lower, upper, and limit bounds) but don't have individual visible labels, grouping them with `role="group"` and `aria-labelledby` a common pseudo-label, while adding individual `aria-label`s to each input, ensures screen readers announce the context correctly without breaking the visual design.
+**Action:** Always verify that every input inside a grouped UI has an explicit accessible name (`aria-label`) if a visible `<label>` isn't feasible, and group related inputs properly.

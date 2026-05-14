@@ -55,23 +55,26 @@
             placeholder="1"
           />
 
-          <label for="bounds">Bounds / Values</label>
-          <div class="bounds-row">
+          <label id="bounds-group-label">Bounds / Values</label>
+          <div class="bounds-row" role="group" aria-labelledby="bounds-group-label">
             <input
               id="lower"
               name="lower"
+              aria-label="Lower bound"
               autocomplete="off"
               placeholder="lower"
             />
             <input
               id="upper"
               name="upper"
+              aria-label="Upper bound"
               autocomplete="off"
               placeholder="upper"
             />
             <input
               id="value"
               name="value"
+              aria-label="Limit or evaluation point"
               autocomplete="off"
               placeholder="limit or around"
             />
