@@ -22,7 +22,7 @@ from .calculator_assist import (
     set_calculator_predictive_text_enabled,
 )
 from .qt_compat import QT_API, QtCore, QtWidgets
-from .registry import WorkspaceRegistry
+from .registry import WorkspaceRegistry, format_workspace_value_preview
 
 logger = logging.getLogger(__name__)
 
@@ -195,9 +195,10 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
             self._result.setText(f"Error: {exc}")
             return
 
-        text = str(result.result)
+        workspace_value = _workspace_value_for_calculator_result(result.result)
+        text = format_workspace_value_preview(workspace_value)
         self._result.setText(text)
-        self._set_variable(_CALCULATOR_RESULT_NAME, text)
+        self._set_variable(_CALCULATOR_RESULT_NAME, workspace_value)
 
     def _refresh_predictive_suggestions(self, prefix: str) -> None:
         self._completer_model.setStringList(list(self.suggestions_for(prefix)))
@@ -420,6 +421,25 @@ def _calculator() -> Any:
     from web_applications.calculator.calculator import TI89Calculator
 
     return TI89Calculator()
+
+
+def _workspace_value_for_calculator_result(value: Any) -> Any:
+    """Normalize array-like calculator outputs for shared workspace metadata."""
+    tolist = getattr(value, "tolist", None)
+    if callable(tolist):
+        return tolist()
+    if isinstance(value, list | tuple):
+        return _listify(value)
+    return str(value)
+
+
+def _listify(value: Any) -> Any:
+    if isinstance(value, list | tuple):
+        return [_listify(item) for item in value]
+    tolist = getattr(value, "tolist", None)
+    if callable(tolist):
+        return _listify(tolist())
+    return value
 
 
 def _notes_storage(project_root: Path) -> Any:

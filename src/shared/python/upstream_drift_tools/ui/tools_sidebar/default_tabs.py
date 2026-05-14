@@ -129,7 +129,15 @@ def refresh_workspace_list(sidebar: Any) -> None:
         return
     workspace_list.clear()
     for variable in sidebar.registry.variables():
-        label = f"{variable.name}: {variable.type_name} ({variable.summary})"
+        details = [variable.summary]
+        if variable.dtype:
+            details.append(variable.dtype)
+        if variable.size is not None:
+            details.append(f"size={variable.size}")
+        label = (
+            f"{variable.name}: {variable.type_name} ({', '.join(details)}) "
+            f"{variable.preview}"
+        )
         workspace_list.addItem(label)
 
 
