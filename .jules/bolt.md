@@ -4,3 +4,6 @@
 ## 2024-05-01 - Optimization of Results Iteration in ODESolverCalculator
 **Learning:** Using `results.map` followed by `Math.min(...values)` and `Math.max(...values)` on large dataset arrays in JS causes excessive memory allocation (the intermediate mapped array) and throws "Maximum call stack size exceeded" errors if the array size exceeds the stack limit.
 **Action:** Replace `map` and spread operations for min/max calculations with a single-pass `for` loop tracking min and max manually.
+## 2024-05-14 - Optimization of Gas Composition Object Iteration in PressureDropCalculator
+**Learning:** Using `Object.values().reduce()` and `Object.entries().map()` inside hot rendering loops causes O(N) intermediate array allocations and excessive garbage collection overhead.
+**Action:** Replace these operations with a single-pass standard `for` loop over `Object.keys()` to prevent intermediate object allocations and minimize garbage collection.
