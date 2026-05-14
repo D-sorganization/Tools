@@ -25,6 +25,7 @@ from .tab_visibility import (
     with_default_tab_visibility,
     without_default_tab_visibility,
 )
+from .theme_settings import resolve_sidekick_theme
 
 
 @dataclass(frozen=True)
@@ -59,7 +60,10 @@ class UnifiedToolsSidebar(QtWidgets.QWidget, TabDisplayNameMixin):
         self.setObjectName(theme.SIDEKICK_SIDEBAR_OBJECT_NAME)
         self.registry = registry or WorkspaceRegistry()
         self._state = state or SidebarState()
-        self._design_tokens = design_tokens or theme.SIDEKICK_DESIGN_TOKENS
+        self._design_tokens = resolve_sidekick_theme(
+            parent_tokens=design_tokens,
+            settings=self._state.theme_settings,
+        )
         self._dock_widget: QtWidgets.QDockWidget | None = None
         self._expanded_width = self._state.width
         self._tab_ids: list[str] = []
@@ -344,6 +348,7 @@ class UnifiedToolsSidebar(QtWidgets.QWidget, TabDisplayNameMixin):
             default_hidden_tabs=self._state.default_hidden_tabs,
             popped_out_tabs=list(self._popout_windows),
             tab_display_names=self._state.tab_display_names,
+            theme_settings=self._state.theme_settings,
             **calculator_state_fields(self._state),
         )
 

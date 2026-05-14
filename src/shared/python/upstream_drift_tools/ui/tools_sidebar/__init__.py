@@ -64,6 +64,12 @@ from .file_navigation import (
 )
 from .registry import WorkspaceRegistry, WorkspaceVariable
 from .state import SidebarState
+from .theme_settings import (
+    SidekickFontSettings,
+    SidekickThemeMode,
+    SidekickThemeSettings,
+    resolve_sidekick_theme,
+)
 
 __all__ = [
     "SIDEKICK_DESIGN_TOKENS",
@@ -104,7 +110,10 @@ __all__ = [
     "SIDEKICK_WORKSPACE_LIST_OBJECT_NAME",
     "SIDEKICK_WORKSPACE_TAB_OBJECT_NAME",
     "SidekickDesignTokens",
+    "SidekickFontSettings",
     "SidekickTerminalTheme",
+    "SidekickThemeMode",
+    "SidekickThemeSettings",
     "StaticCalculatorPredictionProvider",
     "CALCULATOR_PLOT_TAB_ID",
     "SidekickSidebar",
@@ -116,6 +125,7 @@ __all__ = [
     "create_tools_sidebar",
     "default_calculator_startup_config",
     "install_tools_sidebar",
+    "resolve_sidekick_theme",
     "sidekick_qss",
     "validate_calculator_workspace_path",
 ]

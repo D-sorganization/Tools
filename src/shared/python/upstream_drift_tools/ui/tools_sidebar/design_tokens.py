@@ -44,6 +44,7 @@ _DEFAULT_TOKEN_VALUES: dict[str, str] = {
     "space.3": "12px",
     "space.4": "16px",
     "size.control.height": "28px",
+    "font.family": "Arial",
     "font.size": "12px",
     "font.size.small": "11px",
 }
@@ -314,6 +315,7 @@ def sidekick_qss(tokens: SidekickDesignTokens | None = None) -> str:
 QWidget#{SIDEKICK_SIDEBAR_OBJECT_NAME} {{
     background: {value("color.background")};
     color: {value("color.text")};
+    font-family: {value("font.family")};
     font-size: {value("font.size")};
 }}
 
