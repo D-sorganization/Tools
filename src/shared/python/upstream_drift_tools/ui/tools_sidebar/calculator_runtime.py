@@ -23,8 +23,10 @@ from .calculator_workspace import (
     default_calculator_workspace_controller,
     evaluate_calculator_expression,
 )
+from .command_history import CommandHistoryController
 from .qt_compat import QtCore, QtWidgets
 from .registry import WorkspaceRegistry
+from .workspace_commands import WorkspaceCommandExecutor
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +35,7 @@ _CALCULATOR_RESULT_NAME = "calculator_result"
 
 SetVariable = Callable[[str, Any], None]
 SetPredictiveTextEnabled = Callable[[bool], None]
+RefreshWorkspace = Callable[[], None]
 
 
 class SidekickCalculatorWidget(QtWidgets.QWidget):
@@ -48,6 +51,7 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
         prediction_provider: CalculatorPredictionProvider | None = None,
         startup_import_config: CalculatorStartupConfig | None = None,
         set_predictive_text_enabled: SetPredictiveTextEnabled | None = None,
+        refresh_workspace: RefreshWorkspace | None = None,
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
         if registry is None:
@@ -75,7 +79,17 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
             startup_import_config or default_calculator_startup_config(),
         )
         self._set_predictive_text_enabled = set_predictive_text_enabled
+        self._refresh_workspace = refresh_workspace
         self._predictive_text_enabled = bool(predictive_text_enabled)
+        self._workspace_command_history = CommandHistoryController()
+        self._workspace_command_executor = WorkspaceCommandExecutor(
+            workspace=self._workspace,
+            local_controller=self._workspace_controller,
+            global_registry=self._workspace_registry,
+            global_storage_path=(
+                self._workspace_controller.settings.default_directory / "workspace.json"
+            ),
+        )
         self._build_ui()
         self.set_predictive_text_enabled(self._predictive_text_enabled)
 
@@ -132,6 +146,30 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
         layout.addLayout(
             build_calculator_workspace_controls(self, self._workspace_actions),
         )
+        self._workspace_command_input = QtWidgets.QLineEdit(self)
+        self._workspace_command_input.setObjectName("SidekickWorkspaceCommandInput")
+        self._workspace_command_input.setPlaceholderText(
+            "global alpha = 42 | show local calculator_result | clear global confirm"
+        )
+        self._workspace_command_input.setToolTip(
+            "Run bounded workspace commands for local or global Sidekick variables."
+        )
+        self._workspace_command_input.returnPressed.connect(
+            self.execute_workspace_command
+        )
+        self._workspace_command_input.installEventFilter(self)
+        layout.addWidget(self._workspace_command_input)
+
+        self._workspace_command_run = QtWidgets.QPushButton(
+            "Run Workspace Command",
+            self,
+        )
+        self._workspace_command_run.setObjectName("SidekickWorkspaceCommandRun")
+        self._workspace_command_run.setToolTip(
+            "Execute the current bounded workspace command without opening a terminal."
+        )
+        self._workspace_command_run.clicked.connect(self.execute_workspace_command)
+        layout.addWidget(self._workspace_command_run)
         layout.addWidget(self._result)
         layout.addStretch(1)
 
@@ -185,6 +223,43 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
 
         self._result.setText(text)
         self._workspace.set_local(_CALCULATOR_RESULT_NAME, workspace_value)
+        self._refresh_predictive_suggestions(self._input.text())
+
+    def execute_workspace_command(self) -> None:
+        """Execute one bounded workspace command and report the result."""
+        command = self._workspace_command_input.text().strip()
+        if not command:
+            self._result.setText("Enter a workspace command.")
+            return
+        try:
+            normalized = self._workspace_command_history.submit(command)
+            result = self._workspace_command_executor.execute(normalized)
+        except Exception as exc:  # noqa: BLE001 - user-facing command errors
+            logger.debug("Sidekick workspace command failed: %s", exc)
+            self._result.setText(f"Workspace command failed: {exc}")
+            return
+
+        self._result.setText(result.message)
+        self._refresh_predictive_suggestions(self._input.text())
+        if result.scope == "global" and self._refresh_workspace is not None:
+            self._refresh_workspace()
+
+    def eventFilter(self, watched: Any, event: Any) -> bool:  # noqa: N802
+        """Handle history previews for the bounded workspace command line."""
+        if watched is self._workspace_command_input and _is_key_press(event):
+            if _matches_key(event, "Key_Up"):
+                preview = self._workspace_command_history.previous_preview(
+                    self._workspace_command_input.text()
+                )
+                if preview is not None:
+                    self._workspace_command_input.setText(preview)
+                return True
+            if _matches_key(event, "Key_Down"):
+                preview = self._workspace_command_history.next_preview()
+                if preview is not None:
+                    self._workspace_command_input.setText(preview)
+                return True
+        return super().eventFilter(watched, event)
 
     def _refresh_predictive_suggestions(self, prefix: str) -> None:
         self._completer_model.setStringList(list(self.suggestions_for(prefix)))
@@ -205,3 +280,17 @@ def _case_insensitive_flag() -> Any:
     if case_sensitivity is not None:
         return case_sensitivity.CaseInsensitive
     return QtCore.Qt.CaseInsensitive
+
+
+def _is_key_press(event: Any) -> bool:
+    event_type = getattr(QtCore.QEvent, "Type", None)
+    if event_type is not None:
+        return event.type() == event_type.KeyPress
+    return event.type() == QtCore.QEvent.KeyPress
+
+
+def _matches_key(event: Any, key_name: str) -> bool:
+    key_enum = getattr(QtCore.Qt, "Key", None)
+    if key_enum is not None:
+        return event.key() == getattr(key_enum, key_name)
+    return event.key() == getattr(QtCore.Qt, key_name)

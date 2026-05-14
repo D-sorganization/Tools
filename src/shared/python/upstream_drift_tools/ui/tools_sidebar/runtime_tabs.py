@@ -81,6 +81,7 @@ def build_calculator_tab(sidebar: Any) -> QtWidgets.QWidget:
             set_calculator_predictive_text_enabled,
             sidebar,
         ),
+        refresh_workspace=sidebar.refresh_workspace,
         parent=sidebar,
     )
     widget.setToolTip(DEFAULT_SIDEBAR_TAB_HELP["calculator"]["summary"])
