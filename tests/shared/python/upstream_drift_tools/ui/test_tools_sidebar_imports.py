@@ -72,6 +72,12 @@ rotation_converter_ui = [
     if name.startswith("rotation_converter.ui")
 ]
 assert rotation_converter_ui == [], rotation_converter_ui
+data_processor_modules = [
+    name for name in sys.modules
+    if name.startswith("data_processor")
+    or name.startswith("data_processing.data_processor")
+]
+assert data_processor_modules == [], data_processor_modules
 """
     result = subprocess.run(
         [sys.executable, "-c", script],
@@ -114,6 +120,7 @@ def test_default_sidekick_tab_help_metadata_imports_without_qt() -> None:
         "calculator",
         "calculator_plot",
         "data_explorer",
+        "data_processor",
         "units",
         "rotation_converter",
         "notes",
@@ -263,6 +270,12 @@ def test_tools_sidebar_widget_contract_when_qt_available(tmp_path: Path) -> None
     assert data_explorer_definition.help_metadata["title"] == "Data Explorer"
     assert "schema" in data_explorer_definition.help_metadata["summary"]
     assert data_explorer_definition.settings is not None
+    data_processor_definition = sidebar._tab_definitions["data_processor"]
+    assert data_processor_definition.visible is False
+    assert data_processor_definition.duplicate_enabled is False
+    assert data_processor_definition.help_metadata["title"] == "Data Processor"
+    assert "workspace" in data_processor_definition.help_metadata["summary"]
+    assert "data_processor" in sidebar.hidden_tab_ids()
     rotation_definition = sidebar._tab_definitions["rotation_converter"]
     assert rotation_definition.visible is False
     assert rotation_definition.duplicate_enabled is True

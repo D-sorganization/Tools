@@ -15,6 +15,7 @@ from .data_explorer_tab import (
     DATA_EXPLORER_TAB_SETTINGS,
     build_data_explorer_tab,
 )
+from .data_processor_tab import DATA_PROCESSOR_TAB_ID, build_data_processor_tab
 from .help_content import DEFAULT_SIDEBAR_TAB_HELP
 from .project_file_explorer import ProjectFileExplorer
 from .qt_compat import QT_API, QtWidgets
@@ -84,6 +85,13 @@ def build_default_tab_definitions(
             build_data_explorer_tab,
             help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP[DATA_EXPLORER_TAB_ID]),
             settings=DATA_EXPLORER_TAB_SETTINGS,
+        ),
+        tab_definition(
+            DATA_PROCESSOR_TAB_ID,
+            "Data Processor",
+            build_data_processor_tab,
+            visible=False,
+            help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP[DATA_PROCESSOR_TAB_ID]),
         ),
         tab_definition(
             "units",
