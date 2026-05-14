@@ -21,8 +21,14 @@ from .calculator_assist import (
     calculator_predictive_text_enabled,
     set_calculator_predictive_text_enabled,
 )
+from .calculator_workspace import (
+    CalculatorWorkspaceActions,
+    build_calculator_workspace_controls,
+    default_calculator_workspace_controller,
+    evaluate_calculator_expression,
+)
 from .qt_compat import QT_API, QtCore, QtWidgets
-from .registry import WorkspaceRegistry, format_workspace_value_preview
+from .registry import WorkspaceRegistry
 
 logger = logging.getLogger(__name__)
 
@@ -93,6 +99,7 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
         *,
         registry: WorkspaceRegistry,
         set_variable: SetVariable,
+        local_registry: WorkspaceRegistry | None = None,
         predictive_text_enabled: bool = False,
         prediction_provider: CalculatorPredictionProvider | None = None,
         set_predictive_text_enabled: SetPredictiveTextEnabled | None = None,
@@ -104,10 +111,14 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
             raise ValueError("set_variable must be provided")
         super().__init__(parent)
         self.setObjectName(SIDEKICK_CALCULATOR_OBJECT_NAME)
-        self._registry = registry
+        self._workspace_registry = registry
+        self._registry = local_registry or WorkspaceRegistry()
         self._set_variable = set_variable
         self._prediction_provider = (
             prediction_provider or StaticCalculatorPredictionProvider()
+        )
+        self._workspace_controller = default_calculator_workspace_controller(
+            self._registry,
         )
         self._set_predictive_text_enabled = set_predictive_text_enabled
         self._predictive_text_enabled = bool(predictive_text_enabled)
@@ -151,6 +162,13 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
         self._result.setObjectName("SidekickCalculatorResult")
         self._result.setWordWrap(True)
         self._result.setToolTip("Displays the latest calculator result or error.")
+        self._workspace_actions = CalculatorWorkspaceActions(
+            self._workspace_controller,
+            self._result,
+        )
+        layout.addLayout(
+            build_calculator_workspace_controls(self, self._workspace_actions),
+        )
         layout.addWidget(self._result)
         layout.addStretch(1)
 
@@ -176,7 +194,10 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
         )
         suggestions = predictive.suggest(
             prefix,
-            workspace_variables=self._registry.variables(),
+            workspace_variables=[
+                *self._registry.variables(),
+                *self._workspace_registry.variables(),
+            ],
             loaded_dependencies=_loaded_scientific_dependencies(),
         )
         return tuple(suggestion.label for suggestion in suggestions)
@@ -188,16 +209,14 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
             self._result.setText("Enter an expression.")
             return
         try:
-            calculator = _calculator()
-            result = calculator.evaluate(expression)
+            workspace_value, text = evaluate_calculator_expression(expression)
         except Exception as exc:  # noqa: BLE001 - user-facing calculator errors
             logger.debug("Sidekick calculator evaluation failed: %s", exc)
             self._result.setText(f"Error: {exc}")
             return
 
-        workspace_value = _workspace_value_for_calculator_result(result.result)
-        text = format_workspace_value_preview(workspace_value)
         self._result.setText(text)
+        self._registry.set(_CALCULATOR_RESULT_NAME, workspace_value)
         self._set_variable(_CALCULATOR_RESULT_NAME, workspace_value)
 
     def _refresh_predictive_suggestions(self, prefix: str) -> None:
@@ -415,31 +434,6 @@ def _case_insensitive_flag() -> Any:
     if case_sensitivity is not None:
         return case_sensitivity.CaseInsensitive
     return QtCore.Qt.CaseInsensitive
-
-
-def _calculator() -> Any:
-    from web_applications.calculator.calculator import TI89Calculator
-
-    return TI89Calculator()
-
-
-def _workspace_value_for_calculator_result(value: Any) -> Any:
-    """Normalize array-like calculator outputs for shared workspace metadata."""
-    tolist = getattr(value, "tolist", None)
-    if callable(tolist):
-        return tolist()
-    if isinstance(value, list | tuple):
-        return _listify(value)
-    return str(value)
-
-
-def _listify(value: Any) -> Any:
-    if isinstance(value, list | tuple):
-        return [_listify(item) for item in value]
-    tolist = getattr(value, "tolist", None)
-    if callable(tolist):
-        return _listify(tolist())
-    return value
 
 
 def _notes_storage(project_root: Path) -> Any:

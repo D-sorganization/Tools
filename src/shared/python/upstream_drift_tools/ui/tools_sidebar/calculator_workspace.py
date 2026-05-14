@@ -1,0 +1,247 @@
+"""Calculator-local workspace persistence helpers for Sidekick."""
+
+from __future__ import annotations
+
+import json
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
+
+from .registry import (
+    WorkspaceRegistry,
+    WorkspaceVariable,
+    format_workspace_value_preview,
+)
+
+CALCULATOR_WORKSPACE_FORMAT_VERSION = 1
+CALCULATOR_WORKSPACE_SCOPE = "calculator"
+
+
+@dataclass(frozen=True)
+class CalculatorWorkspaceSettings:
+    """Settings contract for calculator-local workspace files."""
+
+    default_directory: Path
+    default_filename: str = "calculator_workspace.json"
+
+    def default_path(self) -> Path:
+        """Return the configured default calculator workspace path."""
+        return self.default_directory / self.default_filename
+
+
+@dataclass(frozen=True)
+class CalculatorWorkspaceLoadResult:
+    """Summary returned after a calculator workspace import."""
+
+    variables: tuple[WorkspaceVariable, ...]
+    replaced: bool
+
+    @property
+    def summary(self) -> str:
+        """Return a compact imported-variable summary for the UI."""
+        if not self.variables:
+            return "Loaded 0 variables."
+        names = ", ".join(variable.name for variable in self.variables)
+        return f"Loaded {len(self.variables)} variables: {names}"
+
+
+class CalculatorWorkspaceController:
+    """Persist a calculator-local workspace without touching global state."""
+
+    def __init__(
+        self,
+        registry: WorkspaceRegistry,
+        *,
+        settings: CalculatorWorkspaceSettings,
+        scope: str = CALCULATOR_WORKSPACE_SCOPE,
+    ) -> None:
+        if registry is None:
+            raise ValueError("registry must be provided")
+        if settings is None:
+            raise ValueError("settings must be provided")
+        if scope != CALCULATOR_WORKSPACE_SCOPE:
+            raise ValueError("calculator workspace scope must be explicit")
+        self._registry = registry
+        self._settings = settings
+        self._scope = scope
+
+    def save(self, path: str | Path | None = None) -> Path:
+        """Save the calculator-local registry to ``path``."""
+        target = validate_calculator_workspace_path(
+            path or self._settings.default_path(),
+        )
+        target.parent.mkdir(parents=True, exist_ok=True)
+        payload = self._payload()
+        temp = target.with_name(f".{target.name}.tmp")
+        temp.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        temp.replace(target)
+        return target
+
+    def load(
+        self,
+        path: str | Path | None = None,
+        *,
+        replace: bool = False,
+        confirm_replace: bool = False,
+    ) -> CalculatorWorkspaceLoadResult:
+        """Load a calculator-local workspace, merging by default."""
+        if replace and not confirm_replace:
+            raise PermissionError("replace load requires explicit confirmation")
+        source = validate_calculator_workspace_path(
+            path or self._settings.default_path(),
+        )
+        incoming = _registry_from_payload(source)
+        imported = tuple(incoming.variables())
+        if replace:
+            self._registry.clear()
+        for variable in imported:
+            self._registry.set(variable.name, incoming.get(variable.name))
+        return CalculatorWorkspaceLoadResult(imported, replaced=replace)
+
+    def _payload(self) -> dict[str, Any]:
+        payload = self._registry.to_dict()
+        payload["version"] = CALCULATOR_WORKSPACE_FORMAT_VERSION
+        payload["scope"] = self._scope
+        return payload
+
+
+class CalculatorWorkspaceActions:
+    """UI action adapter around calculator-local workspace persistence."""
+
+    def __init__(
+        self,
+        controller: CalculatorWorkspaceController,
+        status_label: Any,
+    ) -> None:
+        if controller is None:
+            raise ValueError("controller must be provided")
+        if status_label is None:
+            raise ValueError("status_label must be provided")
+        self._controller = controller
+        self._status_label = status_label
+
+    def save_workspace(self, path: str | Path | None = None) -> None:
+        """Persist calculator-local variables and update the status label."""
+        try:
+            saved = self._controller.save(path)
+        except Exception as exc:  # noqa: BLE001 - user-facing persistence errors
+            self._status_label.setText(f"Workspace save failed: {exc}")
+            return
+        self._status_label.setText(f"Workspace saved: {saved}")
+
+    def load_workspace(
+        self,
+        path: str | Path | None = None,
+        *,
+        replace: bool = False,
+        confirm_replace: bool = False,
+    ) -> None:
+        """Load calculator-local variables and update the status label."""
+        try:
+            result = self._controller.load(
+                path,
+                replace=replace,
+                confirm_replace=confirm_replace,
+            )
+        except Exception as exc:  # noqa: BLE001 - user-facing persistence errors
+            self._status_label.setText(f"Workspace load failed: {exc}")
+            return
+        self._status_label.setText(result.summary)
+
+
+def default_calculator_workspace_controller(
+    registry: WorkspaceRegistry,
+) -> CalculatorWorkspaceController:
+    """Build the default Sidekick calculator-local workspace controller."""
+    return CalculatorWorkspaceController(
+        registry,
+        settings=CalculatorWorkspaceSettings(
+            default_directory=Path.home() / ".upstream_drift_tools" / "sidekick",
+        ),
+    )
+
+
+def build_calculator_workspace_controls(
+    parent: Any,
+    actions: CalculatorWorkspaceActions,
+) -> Any:
+    """Build Save/Load Workspace controls for the calculator tab."""
+    from .qt_compat import QtWidgets
+
+    row = QtWidgets.QHBoxLayout()
+    save_workspace = QtWidgets.QPushButton("Save Workspace", parent)
+    save_workspace.setObjectName("SidekickCalculatorSaveWorkspace")
+    save_workspace.setToolTip("Save the calculator-local workspace.")
+    save_workspace.clicked.connect(lambda: actions.save_workspace())
+    row.addWidget(save_workspace)
+
+    load_workspace = QtWidgets.QPushButton("Load Workspace", parent)
+    load_workspace.setObjectName("SidekickCalculatorLoadWorkspace")
+    load_workspace.setToolTip("Load variables into the calculator-local workspace.")
+    load_workspace.clicked.connect(lambda: actions.load_workspace())
+    row.addWidget(load_workspace)
+    return row
+
+
+def evaluate_calculator_expression(expression: str) -> tuple[Any, str]:
+    """Evaluate a calculator expression and return workspace value plus preview."""
+    from web_applications.calculator.calculator import TI89Calculator
+
+    result = TI89Calculator().evaluate(expression).result
+    workspace_value = workspace_value_for_calculator_result(result)
+    return workspace_value, format_workspace_value_preview(workspace_value)
+
+
+def workspace_value_for_calculator_result(value: Any) -> Any:
+    """Normalize array-like calculator outputs for shared workspace metadata."""
+    tolist = getattr(value, "tolist", None)
+    if callable(tolist):
+        return tolist()
+    if isinstance(value, list | tuple):
+        return _listify(value)
+    return str(value)
+
+
+def _listify(value: Any) -> Any:
+    if isinstance(value, list | tuple):
+        return [_listify(item) for item in value]
+    tolist = getattr(value, "tolist", None)
+    if callable(tolist):
+        return _listify(tolist())
+    return value
+
+
+def validate_calculator_workspace_path(path: str | Path) -> Path:
+    """Return a normalized JSON workspace path or raise a user-facing error."""
+    if path is None:
+        raise ValueError("workspace path is required")
+    candidate = Path(path).expanduser()
+    if candidate.exists() and candidate.is_dir():
+        raise ValueError("workspace path must be a file, not a directory")
+    if candidate.suffix.lower() != ".json":
+        raise ValueError("calculator workspace files must use a .json suffix")
+    return candidate
+
+
+def _registry_from_payload(path: Path) -> WorkspaceRegistry:
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError("workspace file is not valid JSON") from exc
+    if not isinstance(payload, dict):
+        raise ValueError("workspace file must contain an object")
+    if payload.get("version") != CALCULATOR_WORKSPACE_FORMAT_VERSION:
+        raise ValueError("unsupported calculator workspace version")
+    if payload.get("scope") != CALCULATOR_WORKSPACE_SCOPE:
+        raise ValueError("workspace scope must be calculator")
+    registry = WorkspaceRegistry()
+    for entry in payload.get("variables", []):
+        if not isinstance(entry, dict) or "name" not in entry:
+            raise ValueError("workspace variables must contain names")
+        name = str(entry["name"])
+        if entry.get("json_safe", False):
+            registry.set(name, entry.get("value"))
+        else:
+            repr_value = str(entry.get("repr", ""))
+            registry.set(name, repr_value)
+    return registry
