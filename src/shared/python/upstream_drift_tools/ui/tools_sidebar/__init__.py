@@ -11,6 +11,13 @@ from .calculator_assist import (
     CalculatorPredictiveText,
     StaticCalculatorPredictionProvider,
 )
+from .calculator_plotting import (
+    CALCULATOR_PLOT_TAB_ID,
+    CalculatorPlotRequest,
+    CalculatorPlotSource,
+    CalculatorPlotTabConfig,
+    build_calculator_plot_spec,
+)
 from .command_history import (
     DEFAULT_COMMAND_HISTORY_LIMIT,
     CommandHistoryController,
@@ -51,6 +58,9 @@ __all__ = [
     "DEFAULT_COMMAND_HISTORY_LIMIT",
     "CALCULATOR_HELP",
     "CalculatorPredictiveText",
+    "CalculatorPlotRequest",
+    "CalculatorPlotSource",
+    "CalculatorPlotTabConfig",
     "CommandHistoryController",
     "DefaultCommonLocationsProvider",
     "FileNavigationController",
@@ -74,11 +84,13 @@ __all__ = [
     "SidekickDesignTokens",
     "SidekickTerminalTheme",
     "StaticCalculatorPredictionProvider",
+    "CALCULATOR_PLOT_TAB_ID",
     "SidekickSidebar",
     "ToolsSidebarInstallResult",
     "UnifiedToolsSidebar",
     "WorkspaceRegistry",
     "WorkspaceVariable",
+    "build_calculator_plot_spec",
     "create_tools_sidebar",
     "install_tools_sidebar",
     "sidekick_qss",

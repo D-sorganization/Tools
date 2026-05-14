@@ -191,6 +191,12 @@ def test_tools_sidebar_widget_contract_when_qt_available(tmp_path: Path) -> None
     assert calculator_definition.help_metadata["title"] == "Calculator"
     assert "solve(x**2 - 4, x)" in calculator_definition.help_metadata["examples"]
     assert "Workspace" in calculator_definition.help_metadata["tips"]
+    plot_definition = sidebar._tab_definitions["calculator_plot"]
+    assert plot_definition.title == "Calculator Plot"
+    assert plot_definition.visible is False
+    assert plot_definition.duplicate_enabled is True
+    assert plot_definition.help_metadata["title"] == "Calculator Plot"
+    assert "workspace variables" in plot_definition.help_metadata["summary"]
     rotation_definition = sidebar._tab_definitions["rotation_converter"]
     assert rotation_definition.visible is False
     assert rotation_definition.duplicate_enabled is True
