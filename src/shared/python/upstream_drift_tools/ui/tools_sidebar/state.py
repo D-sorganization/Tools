@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from .calculator_startup import default_calculator_startup_config
+from .theme_settings import SidekickThemeSettings
 
 VALID_DOCK_AREAS = {"left", "right"}
 
@@ -28,6 +29,9 @@ class SidebarState:
     hidden_tabs: list[str] = field(default_factory=list)
     popped_out_tabs: list[str] = field(default_factory=list)
     tab_display_names: dict[str, str] = field(default_factory=dict)
+    theme_settings: dict[str, Any] = field(
+        default_factory=lambda: SidekickThemeSettings().to_dict()
+    )
     calculator_predictive_text_enabled: bool = False
     calculator_startup_imports: list[dict[str, Any]] = field(
         default_factory=lambda: default_calculator_startup_config().to_list()
@@ -46,6 +50,9 @@ class SidebarState:
         self.hidden_tabs = _dedupe_strings(self.hidden_tabs)
         self.popped_out_tabs = _dedupe_strings(self.popped_out_tabs)
         self.tab_display_names = _string_mapping(self.tab_display_names)
+        self.theme_settings = SidekickThemeSettings.from_dict(
+            self.theme_settings
+        ).to_dict()
         self.calculator_startup_imports = _startup_imports_payload(
             self.calculator_startup_imports
         )
@@ -72,6 +79,9 @@ class SidebarState:
             hidden_tabs=_string_list(payload.get("hidden_tabs")),
             popped_out_tabs=_string_list(payload.get("popped_out_tabs")),
             tab_display_names=_string_mapping(payload.get("tab_display_names")),
+            theme_settings=SidekickThemeSettings.from_dict(
+                payload.get("theme_settings")
+            ).to_dict(),
             calculator_predictive_text_enabled=bool(
                 payload.get("calculator_predictive_text_enabled", False)
             ),

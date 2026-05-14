@@ -250,6 +250,8 @@ export function generateSidekickCSSVariables(theme: ThemeColors): Record<string,
     '--sidekick-shadow-panel': 'var(--sidekick-shadow-md)',
     '--sidekick-control-height': '28px',
     '--sidekick-size-control-height': 'var(--sidekick-control-height)',
+    '--sidekick-font-family': 'Arial',
+    '--sidekick-font-size': '12px',
   };
 }
 
