@@ -6,6 +6,11 @@ on demand so non-GUI hosts can still use persistence and workspace contracts.
 
 from __future__ import annotations
 
+from .calculator_assist import (
+    CALCULATOR_HELP,
+    CalculatorPredictiveText,
+    StaticCalculatorPredictionProvider,
+)
 from .command_history import (
     DEFAULT_COMMAND_HISTORY_LIMIT,
     CommandHistoryController,
@@ -44,6 +49,8 @@ __all__ = [
     "CommonLocation",
     "CommonLocationsProvider",
     "DEFAULT_COMMAND_HISTORY_LIMIT",
+    "CALCULATOR_HELP",
+    "CalculatorPredictiveText",
     "CommandHistoryController",
     "DefaultCommonLocationsProvider",
     "FileNavigationController",
@@ -66,6 +73,7 @@ __all__ = [
     "SIDEKICK_WORKSPACE_TAB_OBJECT_NAME",
     "SidekickDesignTokens",
     "SidekickTerminalTheme",
+    "StaticCalculatorPredictionProvider",
     "SidekickSidebar",
     "ToolsSidebarInstallResult",
     "UnifiedToolsSidebar",

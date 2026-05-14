@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from . import design_tokens as theme
+from .calculator_assist import calculator_context_preferences, calculator_state_fields
 from .default_tabs import (
     build_default_tab_definitions,
     refresh_workspace_list,
@@ -343,6 +344,7 @@ class UnifiedToolsSidebar(QtWidgets.QWidget, TabDisplayNameMixin):
             default_hidden_tabs=self._state.default_hidden_tabs,
             popped_out_tabs=list(self._popout_windows),
             tab_display_names=self._state.tab_display_names,
+            **calculator_state_fields(self._state),
         )
 
     def save_state(self, path: str | Path) -> SidebarState:
@@ -419,6 +421,7 @@ class UnifiedToolsSidebar(QtWidgets.QWidget, TabDisplayNameMixin):
                     for tab_id, definition in self._tab_definitions.items()
                     if definition.help_metadata
                 },
+                "preferences": calculator_context_preferences(self._state),
                 "workspace_variables": [
                     variable.to_metadata() for variable in self.registry.variables()
                 ],
