@@ -29,13 +29,25 @@ from .design_tokens import (
     SidekickTerminalTheme,
     sidekick_qss,
 )
+from .file_navigation import (
+    CommonLocation,
+    CommonLocationsProvider,
+    DefaultCommonLocationsProvider,
+    FileNavigationController,
+    FileNavigationState,
+)
 from .registry import WorkspaceRegistry, WorkspaceVariable
 from .state import SidebarState
 
 __all__ = [
     "SIDEKICK_DESIGN_TOKENS",
+    "CommonLocation",
+    "CommonLocationsProvider",
     "DEFAULT_COMMAND_HISTORY_LIMIT",
     "CommandHistoryController",
+    "DefaultCommonLocationsProvider",
+    "FileNavigationController",
+    "FileNavigationState",
     "ProjectFileExplorer",
     "SidebarState",
     "SidebarTabDefinition",
