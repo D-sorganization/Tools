@@ -34,6 +34,7 @@ def create_tools_sidebar(
     tab_definitions: list[SidebarTabDefinition] | None = None,
     design_tokens: SidekickDesignTokens | None = None,
     sidekick_tokens: dict[str, str] | None = None,
+    theme_name: str | None = None,
     parent: QtWidgets.QWidget | None = None,
     context_provider: Callable[[], Any] | None = None,
     **_: Any,
@@ -42,6 +43,8 @@ def create_tools_sidebar(
     resolved_tokens = design_tokens
     if resolved_tokens is None and sidekick_tokens is not None:
         resolved_tokens = SidekickDesignTokens.from_sidekick_tokens(sidekick_tokens)
+    if resolved_tokens is None and theme_name is not None:
+        resolved_tokens = SidekickDesignTokens.from_shared_theme(theme_name)
     sidebar = UnifiedToolsSidebar(
         project_root=project_root,
         registry=registry,
@@ -67,6 +70,7 @@ def install_tools_sidebar(
     tab_definitions: list[SidebarTabDefinition] | None = None,
     design_tokens: SidekickDesignTokens | None = None,
     sidekick_tokens: dict[str, str] | None = None,
+    theme_name: str | None = None,
     context_provider: Callable[[], Any] | None = None,
     area: str | None = None,
     title: str = "Tools",
@@ -84,6 +88,7 @@ def install_tools_sidebar(
         tab_definitions=tab_definitions,
         design_tokens=design_tokens,
         sidekick_tokens=sidekick_tokens,
+        theme_name=theme_name,
         parent=main_window,
         context_provider=context_provider,
     )
