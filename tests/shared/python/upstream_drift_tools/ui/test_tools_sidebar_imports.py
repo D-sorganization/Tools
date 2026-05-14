@@ -84,6 +84,39 @@ def test_tools_sidebar_public_widget_api_is_lazy() -> None:
     assert "sidekick_qss" in tools_sidebar.__all__
 
 
+def test_sidekick_token_contract_spans_pyqt_and_web_css() -> None:
+    from upstream_drift_tools.ui.tools_sidebar import SidekickDesignTokens
+
+    tokens = SidekickDesignTokens.from_sidekick_tokens(
+        {
+            "sidekick.color.canvas": "#0f172a",
+            "sidekick.color.surface.elevated": "#111827",
+            "sidekick.radius.lg": "10px",
+        }
+    )
+
+    assert tokens["color.background"] == "#0f172a"
+    assert tokens["color.surface.raised"] == "#111827"
+    assert tokens["radius.panel"] == "10px"
+    assert tokens.css_variables()["--sidekick-color-background"] == "#0f172a"
+    assert tokens.qss_variables()["sidekick-color-background"] == "#0f172a"
+
+    css_path = Path("src/shared/typescript/theme/theme-variables.css")
+    css = css_path.read_text(encoding="utf-8")
+    expected_aliases = {
+        "--sidekick-color-canvas: var(--theme-bg);",
+        "--sidekick-color-surface: var(--theme-group-bg);",
+        "--sidekick-color-border: var(--theme-border);",
+        "--sidekick-color-text: var(--theme-text);",
+        "--sidekick-color-accent: var(--theme-accent);",
+        "--sidekick-color-focus: var(--theme-focus);",
+        "--sidekick-control-height: 28px;",
+    }
+
+    for alias in expected_aliases:
+        assert alias in css
+
+
 def test_tools_sidebar_widget_contract_when_qt_available(tmp_path: Path) -> None:
     try:
         from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
