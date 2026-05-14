@@ -16,6 +16,8 @@ from .default_tabs import (
 from .qt_compat import QtCore, QtWidgets, Signal, all_sidebar_dock_features, dock_area
 from .registry import WorkspaceRegistry
 from .state import SidebarState
+from .tab_context_menu import show_tab_context_menu
+from .tab_display_names import TabDisplayNameMixin
 from .tab_visibility import (
     initially_visible_tab_ids,
     sanitize_tab_state,
@@ -37,7 +39,7 @@ class SidebarTabDefinition:
     help_metadata: Mapping[str, str] = field(default_factory=dict)
 
 
-class UnifiedToolsSidebar(QtWidgets.QWidget):
+class UnifiedToolsSidebar(QtWidgets.QWidget, TabDisplayNameMixin):
     """Tabbed sidebar that can be installed as a tear-off dock widget."""
 
     file_open_requested = Signal(str)
@@ -109,7 +111,7 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
             raise ValueError(f"Duplicate sidebar tab id: {tab_id}")
         self._tab_ids.append(tab_id)
         self._tab_widgets[tab_id] = widget
-        self.tabs.addTab(widget, title)
+        self.tabs.addTab(widget, self._tab_display_name(tab_id, title))
 
     def configure_tabs(self, definitions: list[SidebarTabDefinition]) -> None:
         """Configure the available tab set for this Sidekick instance."""
@@ -241,7 +243,7 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
 
         window = QtWidgets.QMainWindow(self)
         window.setObjectName(f"SidekickPopout_{tab_id}")
-        window.setWindowTitle(f"Sidekick - {definition.title}")
+        window.setWindowTitle(f"Sidekick - {self.tab_display_name(tab_id)}")
         window.setCentralWidget(widget)
         window.resize(max(self._state.width, 360), max(self._state.height, 360))
         window.closeEvent = self._redock_close_event(tab_id, window)
@@ -258,10 +260,9 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
         widget = window.centralWidget()
         window.setCentralWidget(None)
         window.hide()
-        definition = self._tab_definitions[tab_id]
         self._tab_ids.append(tab_id)
         self._tab_widgets[tab_id] = widget
-        self.tabs.addTab(widget, definition.title)
+        self.tabs.addTab(widget, self.tab_display_name(tab_id))
         self.set_active_tab(tab_id)
         self._sync_tab_order_from_widget()
         self._emit_context()
@@ -341,6 +342,7 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
             default_visible_tabs=self._state.default_visible_tabs,
             default_hidden_tabs=self._state.default_hidden_tabs,
             popped_out_tabs=list(self._popout_windows),
+            tab_display_names=self._state.tab_display_names,
         )
 
     def save_state(self, path: str | Path) -> SidebarState:
@@ -399,48 +401,7 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
         self.add_tab(definition.tab_id, definition.title, widget)
 
     def _show_tab_context_menu(self, pos: QtCore.QPoint) -> None:
-        index = self.tabs.tabBar().tabAt(pos)
-        if index < 0 or index >= len(self._tab_ids):
-            return
-
-        tab_id = self._tab_ids[index]
-        definition = self._tab_definitions.get(tab_id)
-
-        menu = QtWidgets.QMenu(self)
-
-        move_menu = menu.addMenu("Move Sidebar")
-        move_menu.addAction("Left").triggered.connect(
-            lambda: self.set_dock_area("left")
-        )
-        move_menu.addAction("Right").triggered.connect(
-            lambda: self.set_dock_area("right")
-        )
-
-        menu.addSeparator()
-
-        if definition and definition.popout_enabled:
-            menu.addAction("Pop Out").triggered.connect(
-                lambda: self.pop_out_tab(tab_id)
-            )
-
-        if definition and definition.duplicate_enabled:
-            menu.addAction("Duplicate").triggered.connect(
-                lambda: self.duplicate_tab(tab_id)
-            )
-
-        menu.addSeparator()
-
-        menu.addAction("Close").triggered.connect(
-            lambda: self.set_tab_visible(tab_id, False)
-        )
-
-        menu.addSeparator()
-
-        menu.addAction("Minimize Sidebar").triggered.connect(
-            lambda: self.set_minimized(True)
-        )
-
-        menu.exec(self.tabs.tabBar().mapToGlobal(pos))
+        show_tab_context_menu(self, pos)
 
     def _emit_context(self) -> None:
         self.context_updated.emit(
@@ -452,6 +413,7 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
                 "visible_tabs": self.visible_tab_ids(),
                 "hidden_tabs": self.hidden_tab_ids(),
                 "popped_out_tabs": list(self._popout_windows),
+                "tab_display_names": dict(self._state.tab_display_names),
                 "tab_help": {
                     tab_id: dict(definition.help_metadata)
                     for tab_id, definition in self._tab_definitions.items()
@@ -486,6 +448,8 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
                 self.set_tab_visible(tab_id, True)
         for index, tab_id in enumerate(state.tab_order):
             self.move_tab(tab_id, index)
+        for tab_id in self._tab_definitions:
+            self._refresh_tab_display_name(tab_id)
 
     def _redock_close_event(
         self,

@@ -241,6 +241,44 @@ def test_tools_sidebar_widget_contract_when_qt_available(tmp_path: Path) -> None
     assert duplicate_id is not None
     assert duplicate_id in configured.visible_tab_ids()
 
+    configured.rename_tab("calculator", "  Steam calc  ")
+    assert configured.tab_display_name("calculator") == "Steam calc"
+    assert "calculator" in configured.visible_tab_ids()
+    calculator_index = configured.visible_tab_ids().index("calculator")
+    assert configured.tabs.tabText(calculator_index) == "Steam calc"
+    assert configured.active_tab_id() == duplicate_id
+    assert configured.snapshot_state().tab_display_names == {"calculator": "Steam calc"}
+
+    with pytest.raises(ValueError):
+        configured.rename_tab("calculator", "   ")
+    with pytest.raises(KeyError):
+        configured.rename_tab("missing", "Name")
+
+    duplicated_from_custom = configured.duplicate_tab("calculator")
+    assert duplicated_from_custom is not None
+    duplicate_index = configured.visible_tab_ids().index(duplicated_from_custom)
+    assert configured.tabs.tabText(duplicate_index) == "Calculator 3"
+
+    configured.reset_tab_display_name("calculator")
+    assert configured.tab_display_name("calculator") == "Calculator"
+    assert configured.tabs.tabText(calculator_index) == "Calculator"
+    assert configured.snapshot_state().tab_display_names == {}
+
+    restored = UnifiedToolsSidebar(
+        project_root=tmp_path,
+        state=SidebarState(
+            tab_display_names={
+                "calculator": "Restored calc",
+                "missing": "Stale custom name",
+            }
+        ),
+    )
+    restored_index = restored.visible_tab_ids().index("calculator")
+    assert restored.tabs.tabText(restored_index) == "Restored calc"
+    assert restored.snapshot_state().tab_display_names == {
+        "calculator": "Restored calc"
+    }
+
     custom = UnifiedToolsSidebar(
         project_root=tmp_path,
         design_tokens=SidekickDesignTokens({"color.background": "#ffffff"}),
@@ -281,6 +319,28 @@ def test_tools_sidebar_widget_contract_when_qt_available(tmp_path: Path) -> None
     themed.set_design_tokens(SidekickDesignTokens({"color.background": "#123456"}))
     assert "#123456" in themed.styleSheet()
     assert custom.duplicate_tab("scratch") == "scratch#1"
+
+
+def test_sidekick_custom_tab_names_update_popout_titles(tmp_path: Path) -> None:
+    try:
+        from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
+    except ImportError:
+        pytest.skip("Qt widgets unavailable")
+
+    from upstream_drift_tools.ui.tools_sidebar import UnifiedToolsSidebar
+
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    _ = app
+    sidebar = UnifiedToolsSidebar(project_root=tmp_path)
+
+    sidebar.rename_tab("notes", "Run notes")
+    popped = sidebar.pop_out_tab("notes")
+
+    assert popped is not None
+    assert popped.windowTitle() == "Sidekick - Run notes"
+
+    sidebar.rename_tab("notes", "Session notes")
+    assert popped.windowTitle() == "Sidekick - Session notes"
 
 
 def test_sidekick_rotation_converter_import_is_lazy(tmp_path: Path) -> None:

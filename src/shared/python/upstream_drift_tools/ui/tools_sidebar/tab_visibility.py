@@ -105,4 +105,9 @@ def sanitize_tab_state(
         popped_out_tabs=[
             tab_id for tab_id in state.popped_out_tabs if tab_id in available
         ],
+        tab_display_names={
+            tab_id: display_name
+            for tab_id, display_name in state.tab_display_names.items()
+            if tab_id in available
+        },
     )
