@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.152                                    |
+| **Spec Version**        | 1.1.153                                    |
 | **Last Spec Update**    | 2026-05-13                                 |
 
 ## 2. Purpose & Mission
@@ -84,6 +84,9 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   icon-only archive, restore, and delete controls available without right-click
 - Shared chat dock close control lives in the persistent status header instead
   of the terminal provider control row
+- Shared unified tools sidebar widgets provide optional dockable/tear-off host
+  integration for project file browsing, workspace variables, chat, terminal,
+  calculator, unit conversion, and notes tabs
 - Data-driven shared chat terminal-provider descriptors for Claude Code, Codex,
   Cline CLI, and Gemini CLI, including probe command metadata with diagnostic
   redaction helpers
@@ -145,6 +148,7 @@ Tools/
 | ------------------------ | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | UnifiedToolsLauncher     | `UnifiedToolsLauncher.py`                                                              | PyQt6 GUI for tool discovery and execution                                                                                                                                                                                                                                                                          |
 | Shared Chat              | `src/shared/python/chat/`                                                              | Shared chat contracts, dock widgets, terminal-agent runtime boundaries, UI-agnostic default provider descriptors for Claude Code, Codex, Cline CLI, and Gemini CLI, and prompt-time AI memory context backed by explicit archived-chat preference extraction                                                        |
+| Unified Tools Sidebar    | `src/shared/python/upstream_drift_tools/ui/tools_sidebar/`                             | Optional Qt dock widget contract for downstream host applications, including project-scoped file browsing, workspace registry/state persistence, and tabbed utility surfaces for chat, terminal, calculator, unit conversion, and notes                                                                              |
 | GUI Launcher Web Helpers | `src/shared/python/gui_launcher/launcher_web.py`                                       | Focused React/Vite launcher process helpers shared by direct web launch scripts and the unified GUI launcher                                                                                                                                                                                                        |
 | Plugin System            | `src/python/plugin_system/`                                                            | Discover, load, and manage plugins                                                                                                                                                                                                                                                                                  |
 | Shared Utilities         | `src/python/shared_utilities/`                                                         | Common functions, decorators, error handling                                                                                                                                                                                                                                                                        |
@@ -200,6 +204,7 @@ Tools/
 | F7  | MATLAB scientific tools             | ✅     | Integration with MATLAB code and wrappers                                                     |
 | F8  | Fleet theme system                  | ✅     | Consistent theming across all PyQt6 GUIs                                                      |
 | F9  | Lower-body hip rotation target      | ✅     | Deterministic inclined-plane golf hip rotation profile with both-socket simulator application |
+| F10 | Unified Tools Sidebar               | 🔄     | Optional dockable tabbed utility sidebar for downstream PyQt/PySide host applications         |
 
 ### API / Interface Contract
 
@@ -223,6 +228,15 @@ from tools import get_tool_loader
 loader = get_tool_loader()
 calculator = loader.load("Engineering_Calculator")
 result = calculator.compute(params)
+```
+
+Shared Qt hosts can install the optional unified tools sidebar when the
+`upstream_drift_tools.ui.tools_sidebar` package is available:
+
+```python
+from upstream_drift_tools.ui.tools_sidebar import install_tools_sidebar
+
+status = install_tools_sidebar(main_window, project_root=project_root)
 ```
 
 **Web API:**
@@ -531,6 +545,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-13 | 1.1.153 | Added the shared `upstream_drift_tools.ui.tools_sidebar` package with a Qt-binding-compatible dockable sidebar, project file explorer, workspace registry/state persistence, public `create_tools_sidebar` and `install_tools_sidebar` APIs, and focused backend/import/widget contract tests for downstream host integration.                                                                                                                                                                                                                                      |
 | 2026-05-13 | 1.1.152 | Improved chat layout by moving the shared dock Close button into the persistent status header, replacing clipped history-list text with wrapped row widgets, and adding transparent icon-only archive, restore, and delete actions directly on chat-history rows.                                                                                                                                                                                                                                                                                                   |
 | 2026-05-13 | 1.1.151 | Hardened shared chat dock terminal lifecycle controls so Start is disabled while a terminal session is pending or active, Stop is enabled only for active sessions, and shell/provider selectors are locked while the selected terminal agent session is running.                                                                                                                                                                                                                                                                                                   |
 | 2026-05-13 | 1.1.150 | Improved the shared chat dock terminal interface by populating shell/provider selectors from the terminal provider registry, adding an explicit terminal Stop action wired to the existing WebSocket stop protocol, and adding an in-dock Close button so embedded chat windows can be dismissed from inside the chat UI.                                                                                                                                                                                                                                           |
