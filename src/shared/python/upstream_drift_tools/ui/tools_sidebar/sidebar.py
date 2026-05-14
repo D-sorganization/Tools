@@ -8,8 +8,12 @@ from pathlib import Path
 from typing import Any
 
 from . import design_tokens as theme
-from .project_file_explorer import ProjectFileExplorer
-from .qt_compat import QT_API, QtWidgets, Signal, all_sidebar_dock_features, dock_area
+from .default_tabs import (
+    build_default_tab_definitions,
+    refresh_workspace_list,
+    set_project_explorer_root,
+)
+from .qt_compat import QtWidgets, Signal, all_sidebar_dock_features, dock_area
 from .registry import WorkspaceRegistry
 from .state import SidebarState
 
@@ -77,6 +81,11 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
     def dock_widget(self) -> QtWidgets.QDockWidget | None:
         """Return the installed dock widget, if any."""
         return self._dock_widget
+
+    @property
+    def project_root(self) -> Path:
+        """Return the current project root used by runtime tabs."""
+        return self._project_root
 
     def add_tab(self, tab_id: str, title: str, widget: QtWidgets.QWidget) -> None:
         """Add a tab with a stable persistence id."""
@@ -320,65 +329,30 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
 
     def set_context_variable(self, name: str, value: Any) -> None:
         self.registry.set(name, value)
-        self._refresh_workspace_list()
+        refresh_workspace_list(self)
         self._emit_context()
+
+    def set_design_tokens(self, design_tokens: theme.SidekickDesignTokens) -> None:
+        """Apply a new Sidekick token set to this sidebar."""
+        self._design_tokens = design_tokens
+        self.setStyleSheet(theme.sidekick_qss(self._design_tokens))
+        self._emit_context()
+
+    def set_theme(self, theme_name: str) -> None:
+        """Apply a shared fleet theme by name to this sidebar."""
+        self.set_design_tokens(theme.SidekickDesignTokens.from_shared_theme(theme_name))
 
     def set_project_root(self, project_root: str | Path) -> None:
         self._project_root = Path(project_root).expanduser().resolve()
-        file_explorer = self._tab_widgets.get("files")
-        if isinstance(file_explorer, ProjectFileExplorer):
-            file_explorer.set_project_root(self._project_root)
+        set_project_explorer_root(self._tab_widgets.get("files"), self._project_root)
         self._emit_context()
 
     def _default_tab_definitions(self) -> list[SidebarTabDefinition]:
-        return [
-            SidebarTabDefinition(
-                "files", "Files", self._build_file_explorer_tab, duplicate_enabled=True
-            ),
-            SidebarTabDefinition(
-                "workspace",
-                "Workspace",
-                lambda _sidebar: self._build_workspace_tab(),
-            ),
-            SidebarTabDefinition(
-                "chat", "Chat", lambda _sidebar: self._placeholder("Chat panel")
-            ),
-            SidebarTabDefinition(
-                "terminal",
-                "Terminal",
-                lambda _sidebar: self._placeholder("Terminal panel"),
-                duplicate_enabled=True,
-            ),
-            SidebarTabDefinition(
-                "calculator",
-                "Calculator",
-                lambda _sidebar: self._placeholder("Calculator panel"),
-                duplicate_enabled=True,
-            ),
-            SidebarTabDefinition(
-                "units",
-                "Units",
-                lambda _sidebar: self._build_unit_converter_tab(),
-                duplicate_enabled=True,
-            ),
-            SidebarTabDefinition(
-                "notes",
-                "Notes",
-                lambda _sidebar: self._placeholder("Notepad"),
-                duplicate_enabled=True,
-            ),
-        ]
+        return build_default_tab_definitions(self, SidebarTabDefinition)
 
     def _add_defined_tab(self, definition: SidebarTabDefinition) -> None:
         widget = definition.factory(self)
         self.add_tab(definition.tab_id, definition.title, widget)
-
-    def _build_file_explorer_tab(
-        self, _sidebar: UnifiedToolsSidebar
-    ) -> QtWidgets.QWidget:
-        explorer = ProjectFileExplorer(self._project_root, self)
-        explorer.file_open_requested.connect(self.file_open_requested.emit)
-        return explorer
 
     def _build_toolbar(self) -> QtWidgets.QToolBar:
         toolbar = QtWidgets.QToolBar("Sidekick", self)
@@ -401,47 +375,6 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
             lambda: self.set_minimized(not self._state.minimized)
         )
         return toolbar
-
-    def _build_workspace_tab(self) -> QtWidgets.QWidget:
-        widget = QtWidgets.QWidget(self)
-        widget.setObjectName(theme.SIDEKICK_WORKSPACE_TAB_OBJECT_NAME)
-        layout = QtWidgets.QVBoxLayout(widget)
-        self._workspace_list = QtWidgets.QListWidget(widget)
-        self._workspace_list.setObjectName(theme.SIDEKICK_WORKSPACE_LIST_OBJECT_NAME)
-        layout.addWidget(self._workspace_list)
-        self._refresh_workspace_list()
-        return widget
-
-    def _refresh_workspace_list(self) -> None:
-        if not hasattr(self, "_workspace_list"):
-            return
-        self._workspace_list.clear()
-        for variable in self.registry.variables():
-            label = f"{variable.name}: {variable.type_name} ({variable.summary})"
-            self._workspace_list.addItem(label)
-
-    def _build_unit_converter_tab(self) -> QtWidgets.QWidget:
-        if QT_API != "PyQt6":
-            return self._placeholder("Unit converter")
-        try:
-            from upstream_drift_tools.ui.widgets.unit_converter_widget import (
-                UnitConverterWidget,
-            )
-
-            return UnitConverterWidget(self)
-        except Exception:
-            return self._placeholder("Unit converter")
-
-    def _placeholder(self, title: str) -> QtWidgets.QWidget:
-        widget = QtWidgets.QWidget(self)
-        widget.setObjectName(theme.SIDEKICK_PLACEHOLDER_OBJECT_NAME)
-        layout = QtWidgets.QVBoxLayout(widget)
-        label = QtWidgets.QLabel(title, widget)
-        label.setObjectName(theme.SIDEKICK_PLACEHOLDER_LABEL_OBJECT_NAME)
-        label.setWordWrap(True)
-        layout.addWidget(label)
-        layout.addStretch(1)
-        return widget
 
     def _emit_context(self) -> None:
         self.context_updated.emit(

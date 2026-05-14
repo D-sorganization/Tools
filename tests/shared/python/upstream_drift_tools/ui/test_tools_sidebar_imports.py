@@ -242,4 +242,106 @@ def test_tools_sidebar_widget_contract_when_qt_available(tmp_path: Path) -> None
     )
     assert installed.sidebar is not None
     assert "#0f172a" in installed.sidebar.styleSheet()
+
+    themed = create_tools_sidebar(project_root=tmp_path, theme_name="dark")
+    assert "#1a1d23" in themed.styleSheet()
+    assert "#e1e4e8" in themed.styleSheet()
+
+    installed_theme = install_tools_sidebar(
+        host,
+        project_root=tmp_path,
+        theme_name="dark",
+    )
+    assert installed_theme.sidebar is not None
+    assert "#1a1d23" in installed_theme.sidebar.styleSheet()
+
+    themed.set_theme("light")
+    assert "#ffffff" in themed.styleSheet()
+    assert "#212529" in themed.styleSheet()
+    themed.set_design_tokens(SidekickDesignTokens({"color.background": "#123456"}))
+    assert "#123456" in themed.styleSheet()
     assert custom.duplicate_tab("scratch") == "scratch#1"
+
+
+def test_sidekick_default_runtime_tabs_are_real_widgets(tmp_path: Path) -> None:
+    try:
+        from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
+    except ImportError:
+        pytest.skip("Qt widgets unavailable")
+
+    from upstream_drift_tools.ui.tools_sidebar import (
+        SIDEKICK_PLACEHOLDER_OBJECT_NAME,
+        UnifiedToolsSidebar,
+    )
+
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    _ = app
+    sidebar = UnifiedToolsSidebar(project_root=tmp_path)
+
+    for tab_id in ("chat", "terminal", "calculator", "notes"):
+        assert sidebar.set_active_tab(tab_id) is True
+        tab = sidebar.tabs.currentWidget()
+        assert tab is not None
+        assert tab.objectName() != SIDEKICK_PLACEHOLDER_OBJECT_NAME
+
+
+def test_sidekick_calculator_terminal_and_notes_runtime_flow(tmp_path: Path) -> None:
+    try:
+        from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
+    except ImportError:
+        pytest.skip("Qt widgets unavailable")
+
+    from upstream_drift_tools.ui.tools_sidebar import UnifiedToolsSidebar
+
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    _ = app
+    sidebar = UnifiedToolsSidebar(project_root=tmp_path)
+
+    assert sidebar.set_active_tab("calculator") is True
+    calculator = sidebar.tabs.currentWidget()
+    expression = calculator.findChild(QtWidgets.QLineEdit, "SidekickCalculatorInput")
+    evaluate = calculator.findChild(QtWidgets.QPushButton, "SidekickCalculatorRun")
+    result = calculator.findChild(QtWidgets.QLabel, "SidekickCalculatorResult")
+    assert expression is not None
+    assert evaluate is not None
+    assert result is not None
+
+    expression.setText("2 + 2")
+    evaluate.click()
+
+    assert result.text() == "4"
+    assert sidebar.registry.get("calculator_result") == "4"
+
+    assert sidebar.set_active_tab("terminal") is True
+    terminal = sidebar.tabs.currentWidget()
+    script = terminal.findChild(QtWidgets.QPlainTextEdit, "SidekickTerminalInput")
+    run = terminal.findChild(QtWidgets.QPushButton, "SidekickTerminalRun")
+    output = terminal.findChild(QtWidgets.QPlainTextEdit, "SidekickTerminalOutput")
+    assert script is not None
+    assert run is not None
+    assert output is not None
+
+    script.setPlainText("answer = 21 * 2\nprint(answer)")
+    run.click()
+
+    assert "42" in output.toPlainText()
+    assert sidebar.registry.get("answer") == 42
+
+    assert sidebar.set_active_tab("notes") is True
+    notes = sidebar.tabs.currentWidget()
+    editor = notes.findChild(QtWidgets.QPlainTextEdit, "SidekickNotesEditor")
+    save = notes.findChild(QtWidgets.QPushButton, "SidekickNotesSave")
+    assert editor is not None
+    assert save is not None
+
+    editor.setPlainText("persistent note")
+    save.click()
+
+    reloaded = UnifiedToolsSidebar(project_root=tmp_path)
+    assert reloaded.set_active_tab("notes") is True
+    reloaded_editor = reloaded.tabs.currentWidget().findChild(
+        QtWidgets.QPlainTextEdit,
+        "SidekickNotesEditor",
+    )
+    assert reloaded_editor is not None
+    assert reloaded_editor.toPlainText() == "persistent note"
