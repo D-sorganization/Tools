@@ -10,6 +10,7 @@ from typing import Any
 
 from . import design_tokens as theme
 from .calculator_assist import CALCULATOR_HELP
+from .calculator_plotting import CALCULATOR_PLOT_TAB_ID
 from .project_file_explorer import ProjectFileExplorer
 from .qt_compat import QT_API, QtWidgets
 from .runtime_tabs import (
@@ -51,6 +52,21 @@ def build_default_tab_definitions(
             build_calculator_tab,
             duplicate_enabled=True,
             help_metadata=CALCULATOR_HELP.to_metadata(),
+        ),
+        tab_definition(
+            CALCULATOR_PLOT_TAB_ID,
+            "Calculator Plot",
+            build_calculator_plot_tab,
+            visible=False,
+            duplicate_enabled=True,
+            help_metadata={
+                "title": "Calculator Plot",
+                "summary": (
+                    "Build validated plot requests from calculator expressions "
+                    "and workspace variables using the shared PlotSpec contract."
+                ),
+                "source": "upstream_drift_tools.ui.tools_sidebar.calculator_plotting",
+            },
         ),
         tab_definition(
             "units",
@@ -129,6 +145,37 @@ def build_unit_converter_tab(sidebar: Any) -> QtWidgets.QWidget:
         logger.debug("Unit converter unavailable for Sidekick: %s", exc)
         return placeholder(sidebar, "Unit converter")
     return UnitConverterWidget(sidebar)
+
+
+def build_calculator_plot_tab(sidebar: Any) -> QtWidgets.QWidget:
+    """Build the Calculator Plot tab with graceful optional dependency handling."""
+    if QT_API != "PyQt6":
+        return placeholder(
+            sidebar,
+            "Calculator Plot",
+            "Calculator plotting requires the PyQt6 UI backend.",
+        )
+    try:
+        from plot_engine.pyqt6_widget import PlotWidget
+        from plot_engine.specs import PlotSpec
+    except Exception as exc:  # noqa: BLE001 - optional plot UI dependencies
+        logger.debug("Calculator plot tab unavailable for Sidekick: %s", exc)
+        return placeholder(
+            sidebar,
+            "Calculator Plot",
+            "Calculator plotting is unavailable because optional plot UI "
+            "dependencies could not be loaded.",
+        )
+
+    widget = PlotWidget(parent=sidebar)
+    widget.setObjectName("SidekickCalculatorPlotTab")
+    widget.set_spec(
+        PlotSpec(
+            title="Calculator Plot",
+            series=[],
+        )
+    )
+    return widget
 
 
 def build_rotation_converter_tab(sidebar: Any) -> QtWidgets.QWidget:
