@@ -35,12 +35,22 @@ def test_sidekick_calculator_terminal_and_notes_runtime_flow(tmp_path: Path) -> 
         QtWidgets.QPushButton,
         "SidekickCalculatorLoadWorkspace",
     )
+    workspace_command = calculator.findChild(
+        QtWidgets.QLineEdit,
+        "SidekickWorkspaceCommandInput",
+    )
+    run_workspace_command = calculator.findChild(
+        QtWidgets.QPushButton,
+        "SidekickWorkspaceCommandRun",
+    )
     result = calculator.findChild(QtWidgets.QLabel, "SidekickCalculatorResult")
     assert expression is not None
     assert predictive is not None
     assert evaluate is not None
     assert save_workspace is not None
     assert load_workspace is not None
+    assert workspace_command is not None
+    assert run_workspace_command is not None
     assert result is not None
     widgets = (
         expression,
@@ -48,6 +58,8 @@ def test_sidekick_calculator_terminal_and_notes_runtime_flow(tmp_path: Path) -> 
         evaluate,
         save_workspace,
         load_workspace,
+        workspace_command,
+        run_workspace_command,
         result,
     )
     for widget in widgets:
@@ -92,6 +104,19 @@ def test_sidekick_calculator_terminal_and_notes_runtime_flow(tmp_path: Path) -> 
     load_workspace.click()
 
     assert workspace_action_calls == ["save", "load"]
+
+    workspace_command.setText("global answer = 42")
+    run_workspace_command.click()
+    assert sidebar.registry.get("answer") == 42
+    assert "answer" in result.text()
+
+    workspace_command.setText("local gain = [1, 2, 3]")
+    run_workspace_command.click()
+    assert calculator._registry.get("gain") == [1, 2, 3]  # noqa: SLF001
+    assert calculator._workspace_command_history.commands == (  # noqa: SLF001
+        "global answer = 42",
+        "local gain = [1, 2, 3]",
+    )
 
     assert sidebar.set_active_tab("terminal") is True
     terminal = sidebar.tabs.currentWidget()

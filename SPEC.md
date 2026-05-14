@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.172                                    |
+| **Spec Version**        | 1.1.173                                    |
 | **Last Spec Update**    | 2026-05-14                                 |
 
 ## 2. Purpose & Mission
@@ -129,6 +129,9 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Sidekick default tabs now ship shared help metadata that stays import-safe in
   headless contexts, exposes a Help action from the shared tab context menu,
   and standardizes hover hints for compact runtime controls
+- Sidekick calculator tabs expose a bounded workspace command line for
+  explicit local/global variable assignment, inspection, deletion, clear,
+  and load/save workflows without falling back to arbitrary terminal execution
 - Data-driven shared chat terminal-provider descriptors for Claude Code, Codex,
   Cline CLI, and Gemini CLI, including probe command metadata with diagnostic
   redaction helpers
@@ -587,6 +590,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-14 | 1.1.173 | Added a bounded Sidekick workspace command line to the calculator tab for explicit local/global variable assignment, inspection, deletion, clear, and load/save operations, reusing the shared command-history and workspace persistence contracts while keeping workspace mutations separate from arbitrary terminal execution.                                                                                                                                                                                |
 | 2026-05-14 | 1.1.172 | Added a pure-Python Sidekick help registry for default tabs and shared context-menu actions, wired default-tab help metadata into the shared sidebar, exposed a Help action in the tab context menu, added hover hints to compact terminal/notes controls, documented custom-tab help requirements in the sidebar README, and expanded the shared UI regression suite to enforce the new help contract.                                                                                                                                                      |
 | 2026-05-14 | 1.1.171 | Added Sidekick named state profile storage helpers with path-safe save/load contracts, atomic malformed-profile rejection, explicit clear-data warning confirmation, sidebar wrapper methods, README guidance, and focused regression coverage.                                                                                                                                                                                                                                                                                                                     |
 | 2026-05-14 | 1.1.170 | Added validated Sidekick calculator startup import preferences with default optional NumPy/SciPy aliases, JSON sidebar-state persistence, transaction-safe import execution, missing-dependency diagnostics in the calculator tab, and focused backend/UI regression coverage.                                                                                                                                                                                                                                                                                      |

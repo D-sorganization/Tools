@@ -70,6 +70,16 @@ class CalculatorWorkspaceFacade:
         """Return the stable calculator-local workspace scope id."""
         return self._calculator_scope_id
 
+    @property
+    def local_registry(self) -> WorkspaceRegistry:
+        """Return the calculator-local registry for bounded adapters."""
+        return self._local_registry
+
+    @property
+    def global_registry(self) -> WorkspaceRegistry:
+        """Return the shared global registry for bounded adapters."""
+        return self._global_registry
+
     def set_local(self, name: str, value: Any) -> WorkspaceVariable:
         """Set a calculator-local value without mutating global Sidekick state."""
         return self._local_registry.set(name, value)
@@ -93,6 +103,23 @@ class CalculatorWorkspaceFacade:
     def remove_local(self, name: str) -> bool:
         """Remove only the calculator-local value."""
         return self._local_registry.remove(name)
+
+    def clear_local(self) -> None:
+        """Clear only the calculator-local registry."""
+        self._local_registry.clear()
+
+    def describe(
+        self,
+        name: str,
+        *,
+        include_global: bool = False,
+    ) -> WorkspaceVariable:
+        """Describe a visible variable without mutating either registry."""
+        if name in self._local_registry.list_names():
+            return self._local_registry.describe(name)
+        if include_global and name in self._global_registry.list_names():
+            return self._global_registry.describe(name)
+        raise KeyError(name)
 
     def variables(
         self,
@@ -172,6 +199,11 @@ class CalculatorWorkspaceController:
         temp.replace(target)
         return target
 
+    @property
+    def settings(self) -> CalculatorWorkspaceSettings:
+        """Return the configured calculator workspace persistence settings."""
+        return self._settings
+
     def load(
         self,
         path: str | Path | None = None,
@@ -192,6 +224,12 @@ class CalculatorWorkspaceController:
         for variable in imported:
             self._registry.set(variable.name, incoming.get(variable.name))
         return CalculatorWorkspaceLoadResult(imported, replaced=replace)
+
+    def clear(self, *, confirm_clear: bool = False) -> None:
+        """Clear the calculator-local registry after explicit confirmation."""
+        if not confirm_clear:
+            raise PermissionError("clear requires explicit confirmation")
+        self._registry.clear()
 
     def _payload(self) -> dict[str, Any]:
         payload = self._registry.to_dict()
@@ -242,6 +280,15 @@ class CalculatorWorkspaceActions:
             self._status_label.setText(f"Workspace load failed: {exc}")
             return
         self._status_label.setText(result.summary)
+
+    def clear_workspace(self, *, confirm_clear: bool = False) -> None:
+        """Clear calculator-local variables and update the status label."""
+        try:
+            self._controller.clear(confirm_clear=confirm_clear)
+        except Exception as exc:  # noqa: BLE001 - user-facing persistence errors
+            self._status_label.setText(f"Workspace clear failed: {exc}")
+            return
+        self._status_label.setText("Cleared calculator workspace.")
 
 
 def default_calculator_workspace_controller(

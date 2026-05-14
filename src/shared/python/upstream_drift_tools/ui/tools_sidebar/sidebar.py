@@ -398,6 +398,10 @@ class UnifiedToolsSidebar(
 
     def set_context_variable(self, name: str, value: Any) -> None:
         self.registry.set(name, value)
+        self.refresh_workspace()
+
+    def refresh_workspace(self) -> None:
+        """Refresh workspace-derived UI and emit the latest sidebar context."""
         refresh_workspace_list(self)
         self._emit_context()
 
