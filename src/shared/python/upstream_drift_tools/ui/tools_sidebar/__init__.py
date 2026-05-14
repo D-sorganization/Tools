@@ -6,6 +6,10 @@ on demand so non-GUI hosts can still use persistence and workspace contracts.
 
 from __future__ import annotations
 
+from .command_history import (
+    DEFAULT_COMMAND_HISTORY_LIMIT,
+    CommandHistoryController,
+)
 from .design_tokens import (
     SIDEKICK_DESIGN_TOKENS,
     SIDEKICK_DOCK_OBJECT_NAME,
@@ -13,6 +17,7 @@ from .design_tokens import (
     SIDEKICK_PLACEHOLDER_OBJECT_NAME,
     SIDEKICK_PROJECT_EXPLORER_OBJECT_NAME,
     SIDEKICK_PROJECT_TREE_OBJECT_NAME,
+    SIDEKICK_ROTATION_CONVERTER_OBJECT_NAME,
     SIDEKICK_SIDEBAR_OBJECT_NAME,
     SIDEKICK_TAB_BAR_OBJECT_NAME,
     SIDEKICK_TABS_OBJECT_NAME,
@@ -29,6 +34,8 @@ from .state import SidebarState
 
 __all__ = [
     "SIDEKICK_DESIGN_TOKENS",
+    "DEFAULT_COMMAND_HISTORY_LIMIT",
+    "CommandHistoryController",
     "ProjectFileExplorer",
     "SidebarState",
     "SidebarTabDefinition",
@@ -37,6 +44,7 @@ __all__ = [
     "SIDEKICK_PLACEHOLDER_OBJECT_NAME",
     "SIDEKICK_PROJECT_EXPLORER_OBJECT_NAME",
     "SIDEKICK_PROJECT_TREE_OBJECT_NAME",
+    "SIDEKICK_ROTATION_CONVERTER_OBJECT_NAME",
     "SIDEKICK_SIDEBAR_OBJECT_NAME",
     "SIDEKICK_TAB_BAR_OBJECT_NAME",
     "SIDEKICK_TABS_OBJECT_NAME",

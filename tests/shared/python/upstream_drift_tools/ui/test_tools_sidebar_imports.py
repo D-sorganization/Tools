@@ -19,12 +19,14 @@ def test_tools_sidebar_backend_imports_without_qt() -> None:
 
     from upstream_drift_tools.ui.tools_sidebar import (
         SIDEKICK_TOKEN_NAMES,
+        CommandHistoryController,
         SidebarState,
         SidekickDesignTokens,
         SidekickTerminalTheme,
         WorkspaceRegistry,
     )
 
+    assert CommandHistoryController().commands == ()
     assert SidebarState().active_tab == "files"
     assert WorkspaceRegistry().list() == []
     assert SidekickDesignTokens()["color.accent"] == "#2563eb"
@@ -50,11 +52,13 @@ def test_tools_sidebar_backend_imports_without_qt_in_clean_python() -> None:
     script = """
 import sys
 from upstream_drift_tools.ui.tools_sidebar import (
+    CommandHistoryController,
     SidebarState,
     SidekickDesignTokens,
     WorkspaceRegistry,
 )
 
+assert CommandHistoryController().commands == ()
 assert SidebarState().active_tab == "files"
 assert WorkspaceRegistry().list() == []
 assert SidekickDesignTokens()["color.accent"] == "#2563eb"
@@ -63,6 +67,11 @@ loaded = [
     if name.partition(".")[0] in {"PyQt6", "PySide6", "PyQt5", "PySide2"}
 ]
 assert loaded == [], loaded
+rotation_converter_ui = [
+    name for name in sys.modules
+    if name.startswith("rotation_converter.ui")
+]
+assert rotation_converter_ui == [], rotation_converter_ui
 """
     result = subprocess.run(
         [sys.executable, "-c", script],
@@ -83,6 +92,7 @@ def test_tools_sidebar_public_widget_api_is_lazy() -> None:
     assert "SidekickSidebar" in tools_sidebar.__all__
     assert "SidebarTabDefinition" in tools_sidebar.__all__
     assert "SidekickDesignTokens" in tools_sidebar.__all__
+    assert "CommandHistoryController" in tools_sidebar.__all__
     assert "SidekickTerminalTheme" in tools_sidebar.__all__
     assert "sidekick_qss" in tools_sidebar.__all__
 
@@ -175,6 +185,12 @@ def test_tools_sidebar_widget_contract_when_qt_available(tmp_path: Path) -> None
     assert dock.objectName() == SIDEKICK_DOCK_OBJECT_NAME
     assert dock.widget() is sidebar
     assert sidebar.active_tab_id() == "files"
+    assert "rotation_converter" not in sidebar.visible_tab_ids()
+    assert "rotation_converter" in sidebar.hidden_tab_ids()
+    rotation_definition = sidebar._tab_definitions["rotation_converter"]
+    assert rotation_definition.visible is False
+    assert rotation_definition.duplicate_enabled is True
+    assert rotation_definition.help_metadata["title"] == "Rotation Converter"
     assert (
         sidebar.findChild(QtWidgets.QTreeView, SIDEKICK_PROJECT_TREE_OBJECT_NAME)
         is not None
@@ -205,6 +221,7 @@ def test_tools_sidebar_widget_contract_when_qt_available(tmp_path: Path) -> None
     configured = UnifiedToolsSidebar(project_root=tmp_path, state=state)
     assert configured.visible_tab_ids()[0] == "notes"
     assert "chat" in configured.hidden_tab_ids()
+    assert configured.set_tab_visible("rotation_converter", False) is True
 
     assert configured.move_tab("files", 0) is True
     assert configured.visible_tab_ids()[0] == "files"
@@ -264,6 +281,64 @@ def test_tools_sidebar_widget_contract_when_qt_available(tmp_path: Path) -> None
     themed.set_design_tokens(SidekickDesignTokens({"color.background": "#123456"}))
     assert "#123456" in themed.styleSheet()
     assert custom.duplicate_tab("scratch") == "scratch#1"
+
+
+def test_sidekick_rotation_converter_import_is_lazy(tmp_path: Path) -> None:
+    try:
+        from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
+    except ImportError:
+        pytest.skip("Qt widgets unavailable")
+
+    from upstream_drift_tools.ui.tools_sidebar import UnifiedToolsSidebar
+
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    _ = app
+    before = {name for name in sys.modules if name.startswith("rotation_converter.ui")}
+
+    sidebar = UnifiedToolsSidebar(project_root=tmp_path)
+
+    after = {name for name in sys.modules if name.startswith("rotation_converter.ui")}
+    assert after == before
+    assert "rotation_converter" in sidebar.hidden_tab_ids()
+
+
+def test_sidekick_rotation_converter_unavailable_placeholder(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    try:
+        from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
+    except ImportError:
+        pytest.skip("Qt widgets unavailable")
+
+    from upstream_drift_tools.ui.tools_sidebar import (
+        SIDEKICK_PLACEHOLDER_OBJECT_NAME,
+        UnifiedToolsSidebar,
+        default_tabs,
+    )
+
+    def fail_rotation_converter_import(name: str) -> object:
+        if name == "rotation_converter.ui.pyqt6.main_window":
+            raise ImportError("missing optional rotation converter UI")
+        return original_import_module(name)
+
+    original_import_module = default_tabs.importlib.import_module
+    monkeypatch.setattr(
+        default_tabs.importlib,
+        "import_module",
+        fail_rotation_converter_import,
+    )
+
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    _ = app
+    sidebar = UnifiedToolsSidebar(project_root=tmp_path)
+
+    assert sidebar.set_tab_visible("rotation_converter", True) is True
+    assert sidebar.set_active_tab("rotation_converter") is True
+    tab = sidebar.tabs.currentWidget()
+    assert tab is not None
+    assert tab.objectName() == SIDEKICK_PLACEHOLDER_OBJECT_NAME
+    assert "rotation_converter" in sidebar.visible_tab_ids()
 
 
 def test_sidekick_default_runtime_tabs_are_real_widgets(tmp_path: Path) -> None:
