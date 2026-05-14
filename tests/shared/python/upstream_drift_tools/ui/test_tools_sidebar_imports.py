@@ -21,12 +21,14 @@ def test_tools_sidebar_backend_imports_without_qt() -> None:
         SIDEKICK_TOKEN_NAMES,
         SidebarState,
         SidekickDesignTokens,
+        SidekickTerminalTheme,
         WorkspaceRegistry,
     )
 
     assert SidebarState().active_tab == "files"
     assert WorkspaceRegistry().list() == []
     assert SidekickDesignTokens()["color.accent"] == "#2563eb"
+    assert SidekickTerminalTheme.inherited()["background"].startswith("#")
     assert "color.background" in SIDEKICK_TOKEN_NAMES
 
     qt_modules_after = {
@@ -81,6 +83,7 @@ def test_tools_sidebar_public_widget_api_is_lazy() -> None:
     assert "SidekickSidebar" in tools_sidebar.__all__
     assert "SidebarTabDefinition" in tools_sidebar.__all__
     assert "SidekickDesignTokens" in tools_sidebar.__all__
+    assert "SidekickTerminalTheme" in tools_sidebar.__all__
     assert "sidekick_qss" in tools_sidebar.__all__
 
 
@@ -283,6 +286,40 @@ def test_sidekick_default_runtime_tabs_are_real_widgets(tmp_path: Path) -> None:
         tab = sidebar.tabs.currentWidget()
         assert tab is not None
         assert tab.objectName() != SIDEKICK_PLACEHOLDER_OBJECT_NAME
+
+
+def test_sidekick_terminal_tab_uses_scoped_inherited_theme(tmp_path: Path) -> None:
+    try:
+        from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
+    except ImportError:
+        pytest.skip("Qt widgets unavailable")
+
+    from upstream_drift_tools.ui.tools_sidebar import (
+        SidekickDesignTokens,
+        UnifiedToolsSidebar,
+    )
+
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    _ = app
+    sidebar = UnifiedToolsSidebar(
+        project_root=tmp_path,
+        design_tokens=SidekickDesignTokens(
+            {
+                "color.text": "#111111",
+                "color.surface": "#222222",
+                "color.accent": "#333333",
+                "color.selection": "#444444",
+            },
+        ),
+    )
+
+    assert sidebar.set_active_tab("terminal") is True
+    terminal = sidebar.tabs.currentWidget()
+
+    assert "QWidget#SidekickTerminalTab QPlainTextEdit" in terminal.styleSheet()
+    assert "color: #111111" in terminal.styleSheet()
+    assert "background: #222222" in terminal.styleSheet()
+    assert "border: 1px solid #333333" in terminal.styleSheet()
 
 
 def test_sidekick_calculator_terminal_and_notes_runtime_flow(tmp_path: Path) -> None:

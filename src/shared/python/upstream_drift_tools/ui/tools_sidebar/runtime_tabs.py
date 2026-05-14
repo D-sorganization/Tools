@@ -11,6 +11,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
+from . import design_tokens as theme
 from .qt_compat import QT_API, QtCore, QtWidgets
 from .registry import WorkspaceRegistry
 
@@ -48,6 +49,9 @@ def build_terminal_tab(sidebar: Any) -> QtWidgets.QWidget:
     return SidekickTerminalWidget(
         registry=sidebar.registry,
         set_variable=sidebar.set_context_variable,
+        terminal_theme=theme.SidekickTerminalTheme.inherited(
+            getattr(sidebar, "_design_tokens", None),
+        ),
         parent=sidebar,
     )
 
@@ -130,6 +134,7 @@ class SidekickTerminalWidget(QtWidgets.QWidget):
         *,
         registry: WorkspaceRegistry,
         set_variable: SetVariable,
+        terminal_theme: theme.SidekickTerminalTheme | None = None,
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
         if registry is None:
@@ -140,10 +145,12 @@ class SidekickTerminalWidget(QtWidgets.QWidget):
         self.setObjectName(SIDEKICK_TERMINAL_OBJECT_NAME)
         self._registry = registry
         self._set_variable = set_variable
+        self._terminal_theme = terminal_theme or theme.SidekickTerminalTheme.inherited()
         self._namespace: dict[str, Any] = {}
         self._load_workspace_namespace()
         _preload_scientific_namespace(self._namespace)
         self._build_ui()
+        self.apply_terminal_theme(self._terminal_theme)
 
     def _build_ui(self) -> None:
         layout = QtWidgets.QVBoxLayout(self)
@@ -197,6 +204,13 @@ class SidekickTerminalWidget(QtWidgets.QWidget):
         existing = self._output.toPlainText().strip()
         combined = f"{existing}\n{text}" if existing else text
         self._output.setPlainText(combined.strip())
+
+    def apply_terminal_theme(self, terminal_theme: theme.SidekickTerminalTheme) -> None:
+        """Apply terminal-scoped colors without changing global Sidekick QSS."""
+        if terminal_theme is None:
+            raise ValueError("terminal_theme must be provided")
+        self._terminal_theme = terminal_theme
+        self.setStyleSheet(terminal_theme.qss(SIDEKICK_TERMINAL_OBJECT_NAME))
 
 
 class SidekickNotesWidget(QtWidgets.QWidget):
