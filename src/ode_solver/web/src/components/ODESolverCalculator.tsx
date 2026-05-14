@@ -122,52 +122,53 @@ function solveODESystem(
   const paramNames = Object.keys(parameters)
   const allVarNames = [...varNames, 't', ...paramNames]
 
-  const compiledDerivs: Record<string, (...args: number[]) => number> = {}
-  for (const varName of varNames) {
-    compiledDerivs[varName] = compileExpression(derivatives[varName], allVarNames)
+  const compiledDerivsArr: Array<(...args: number[]) => number> = new Array(varNames.length)
+  for (let i = 0; i < varNames.length; i++) {
+    compiledDerivsArr[i] = compileExpression(derivatives[varNames[i]], allVarNames)
   }
 
   const dt = (tEnd - tStart) / (numPoints - 1)
   const results: Array<Record<string, number>> = []
 
-  const state: Record<string, number> = { ...initialValues }
-
   const paramValues = paramNames.map(p => parameters[p])
+  const numVars = varNames.length
 
-  // ⚡ Bolt Optimization: Pre-allocate reusable objects and arrays for the RK4 step.
-  // This avoids allocating thousands of short-lived objects per integration step,
-  // drastically reducing garbage collection pauses and speeding up the simulation.
-  const k1: Record<string, number> = {}
-  const k2: Record<string, number> = {}
-  const k3: Record<string, number> = {}
-  const k4: Record<string, number> = {}
-  const state2: Record<string, number> = {}
-  const state3: Record<string, number> = {}
-  const state4: Record<string, number> = {}
+  // ⚡ Bolt Optimization: Replace object property access with array index access in the RK4 loop.
+  // This eliminates object hashing overhead and drastically improves execution speed for hot loops.
+  const stateArr = new Array<number>(numVars)
+  for (let i = 0; i < numVars; i++) {
+    stateArr[i] = initialValues[varNames[i]]
+  }
+
+  const k1 = new Array<number>(numVars)
+  const k2 = new Array<number>(numVars)
+  const k3 = new Array<number>(numVars)
+  const k4 = new Array<number>(numVars)
+  const state2 = new Array<number>(numVars)
+  const state3 = new Array<number>(numVars)
+  const state4 = new Array<number>(numVars)
 
   // Pre-allocate arguments array for the compiled derivative functions
-  const args = new Array<number>(varNames.length + 1 + paramValues.length)
-  const numVars = varNames.length
+  const args = new Array<number>(numVars + 1 + paramValues.length)
 
   // Set constant parameters at the end of the args array
   for (let i = 0; i < paramValues.length; i++) {
     args[numVars + 1 + i] = paramValues[i]
   }
 
-  const computeDerivatives = (
+  const computeDerivativesArr = (
     t: number,
-    currentState: Record<string, number>,
-    outDerivs: Record<string, number>
+    currentArr: number[],
+    outDerivsArr: number[]
   ) => {
     // ⚡ Bolt: Re-use pre-allocated args array
     for (let i = 0; i < numVars; i++) {
-      args[i] = currentState[varNames[i]]
+      args[i] = currentArr[i]
     }
     args[numVars] = t
 
     for (let i = 0; i < numVars; i++) {
-      const varName = varNames[i]
-      outDerivs[varName] = compiledDerivs[varName](...args)
+      outDerivsArr[i] = compiledDerivsArr[i](...args)
     }
   }
 
@@ -175,36 +176,31 @@ function solveODESystem(
     const t = tStart + i * dt
     const point: Record<string, number> = { time: t }
     for (let j = 0; j < numVars; j++) {
-      const varName = varNames[j]
-      point[varName] = state[varName]
+      point[varNames[j]] = stateArr[j]
     }
     results.push(point)
 
     if (i < numPoints - 1) {
       // RK4
-      computeDerivatives(t, state, k1)
+      computeDerivativesArr(t, stateArr, k1)
 
       for (let j = 0; j < numVars; j++) {
-        const v = varNames[j]
-        state2[v] = state[v] + (dt / 2) * k1[v]
+        state2[j] = stateArr[j] + (dt / 2) * k1[j]
       }
-      computeDerivatives(t + dt / 2, state2, k2)
+      computeDerivativesArr(t + dt / 2, state2, k2)
 
       for (let j = 0; j < numVars; j++) {
-        const v = varNames[j]
-        state3[v] = state[v] + (dt / 2) * k2[v]
+        state3[j] = stateArr[j] + (dt / 2) * k2[j]
       }
-      computeDerivatives(t + dt / 2, state3, k3)
+      computeDerivativesArr(t + dt / 2, state3, k3)
 
       for (let j = 0; j < numVars; j++) {
-        const v = varNames[j]
-        state4[v] = state[v] + dt * k3[v]
+        state4[j] = stateArr[j] + dt * k3[j]
       }
-      computeDerivatives(t + dt, state4, k4)
+      computeDerivativesArr(t + dt, state4, k4)
 
       for (let j = 0; j < numVars; j++) {
-        const v = varNames[j]
-        state[v] += (dt / 6) * (k1[v] + 2 * k2[v] + 2 * k3[v] + k4[v])
+        stateArr[j] += (dt / 6) * (k1[j] + 2 * k2[j] + 2 * k3[j] + k4[j])
       }
     }
   }
