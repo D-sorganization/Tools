@@ -100,6 +100,22 @@ DEFAULT_SIDEBAR_TAB_HELP: dict[str, dict[str, str]] = {
         ),
         source="upstream_drift_tools.ui.tools_sidebar.data_explorer_service",
     ),
+    "data_processor": _tab_help(
+        "Data Processor",
+        "Open the heavier Data Processor surface on demand and export selected "
+        "results into the shared workspace.",
+        tips=(
+            "The tab stays optional so Sidekick startup does not depend on the "
+            "full Data Processor UI stack.",
+            "Workspace exports validate variable names and selected columns "
+            "before mutating shared state.",
+        ),
+        examples=(
+            "temperature",
+            "temperature, pressure",
+        ),
+        source="upstream_drift_tools.ui.tools_sidebar.data_processor_tab",
+    ),
     "units": _tab_help(
         "Units",
         "Convert values between supported engineering unit systems.",
