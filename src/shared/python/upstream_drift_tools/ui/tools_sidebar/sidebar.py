@@ -11,6 +11,12 @@ from . import design_tokens as theme
 from .project_file_explorer import ProjectFileExplorer
 from .qt_compat import QT_API, QtWidgets, Signal, all_sidebar_dock_features, dock_area
 from .registry import WorkspaceRegistry
+from .runtime_tabs import (
+    build_calculator_tab,
+    build_chat_tab,
+    build_notes_tab,
+    build_terminal_tab,
+)
 from .state import SidebarState
 
 
@@ -77,6 +83,11 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
     def dock_widget(self) -> QtWidgets.QDockWidget | None:
         """Return the installed dock widget, if any."""
         return self._dock_widget
+
+    @property
+    def project_root(self) -> Path:
+        """Return the current project root used by runtime tabs."""
+        return self._project_root
 
     def add_tab(self, tab_id: str, title: str, widget: QtWidgets.QWidget) -> None:
         """Add a tab with a stable persistence id."""
@@ -351,18 +362,20 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
                 lambda _sidebar: self._build_workspace_tab(),
             ),
             SidebarTabDefinition(
-                "chat", "Chat", lambda _sidebar: self._placeholder("Chat panel")
+                "chat",
+                "Chat",
+                build_chat_tab,
             ),
             SidebarTabDefinition(
                 "terminal",
                 "Terminal",
-                lambda _sidebar: self._placeholder("Terminal panel"),
+                build_terminal_tab,
                 duplicate_enabled=True,
             ),
             SidebarTabDefinition(
                 "calculator",
                 "Calculator",
-                lambda _sidebar: self._placeholder("Calculator panel"),
+                build_calculator_tab,
                 duplicate_enabled=True,
             ),
             SidebarTabDefinition(
@@ -374,7 +387,7 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
             SidebarTabDefinition(
                 "notes",
                 "Notes",
-                lambda _sidebar: self._placeholder("Notepad"),
+                build_notes_tab,
                 duplicate_enabled=True,
             ),
         ]
