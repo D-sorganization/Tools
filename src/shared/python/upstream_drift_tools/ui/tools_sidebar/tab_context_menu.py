@@ -4,7 +4,56 @@ from __future__ import annotations
 
 from typing import Any
 
+from .help_content import SIDEBAR_CONTEXT_ACTIONS
 from .qt_compat import QtWidgets
+
+
+def _add_action(
+    menu: QtWidgets.QMenu,
+    action_id: str,
+    callback: Any,
+) -> QtWidgets.QAction:
+    metadata = SIDEBAR_CONTEXT_ACTIONS[action_id]
+    action = menu.addAction(metadata.label)
+    action.setToolTip(metadata.tooltip)
+    action.setStatusTip(metadata.status_tip)
+    action.triggered.connect(callback)
+    return action
+
+
+def build_tab_context_menu(sidebar: Any, tab_id: str) -> QtWidgets.QMenu:
+    """Build the reusable context menu for one stable tab id."""
+    definition = sidebar._tab_definitions.get(tab_id)
+
+    menu = QtWidgets.QMenu(sidebar)
+
+    move_menu = menu.addMenu("Move Sidebar")
+    _add_action(move_menu, "move_left", lambda: sidebar.set_dock_area("left"))
+    _add_action(move_menu, "move_right", lambda: sidebar.set_dock_area("right"))
+
+    menu.addSeparator()
+
+    if definition and definition.popout_enabled:
+        _add_action(menu, "pop_out", lambda: sidebar.pop_out_tab(tab_id))
+
+    if definition and definition.duplicate_enabled:
+        _add_action(menu, "duplicate", lambda: sidebar.duplicate_tab(tab_id))
+
+    _add_action(menu, "rename", lambda: sidebar._prompt_rename_tab(tab_id))
+    if tab_id in sidebar._state.tab_display_names:
+        _add_action(menu, "reset_name", lambda: sidebar.reset_tab_display_name(tab_id))
+    if definition and definition.help_metadata:
+        _add_action(menu, "help", lambda: sidebar.show_tab_help(tab_id))
+
+    menu.addSeparator()
+
+    _add_action(menu, "close", lambda: sidebar.set_tab_visible(tab_id, False))
+
+    menu.addSeparator()
+
+    _add_action(menu, "minimize", lambda: sidebar.set_minimized(True))
+
+    return menu
 
 
 def show_tab_context_menu(sidebar: Any, pos: Any) -> None:
@@ -14,43 +63,5 @@ def show_tab_context_menu(sidebar: Any, pos: Any) -> None:
         return
 
     tab_id = sidebar._tab_ids[index]
-    definition = sidebar._tab_definitions.get(tab_id)
-
-    menu = QtWidgets.QMenu(sidebar)
-
-    move_menu = menu.addMenu("Move Sidebar")
-    move_menu.addAction("Left").triggered.connect(lambda: sidebar.set_dock_area("left"))
-    move_menu.addAction("Right").triggered.connect(
-        lambda: sidebar.set_dock_area("right")
-    )
-
-    menu.addSeparator()
-
-    if definition and definition.popout_enabled:
-        menu.addAction("Pop Out").triggered.connect(lambda: sidebar.pop_out_tab(tab_id))
-
-    if definition and definition.duplicate_enabled:
-        menu.addAction("Duplicate").triggered.connect(
-            lambda: sidebar.duplicate_tab(tab_id)
-        )
-
-    rename_action = menu.addAction("Rename")
-    rename_action.triggered.connect(lambda: sidebar._prompt_rename_tab(tab_id))
-    if tab_id in sidebar._state.tab_display_names:
-        menu.addAction("Reset Name").triggered.connect(
-            lambda: sidebar.reset_tab_display_name(tab_id)
-        )
-
-    menu.addSeparator()
-
-    menu.addAction("Close").triggered.connect(
-        lambda: sidebar.set_tab_visible(tab_id, False)
-    )
-
-    menu.addSeparator()
-
-    menu.addAction("Minimize Sidebar").triggered.connect(
-        lambda: sidebar.set_minimized(True)
-    )
-
+    menu = build_tab_context_menu(sidebar, tab_id)
     menu.exec(sidebar.tabs.tabBar().mapToGlobal(pos))

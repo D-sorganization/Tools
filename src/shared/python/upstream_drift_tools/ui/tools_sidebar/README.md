@@ -74,6 +74,11 @@ Hosts can pass `tab_definitions=[...]` to `UnifiedToolsSidebar`,
 `create_tools_sidebar`, or `install_tools_sidebar` to choose which utilities are
 enabled for a specific application while keeping the default import contract.
 
+Custom tab definitions should ship non-empty `help_metadata` with at least
+`title` and `summary` keys so host apps can expose a consistent Help entry from
+the shared tab context menu. Optional `tips`, `examples`, and `source` fields
+are rendered automatically by the built-in help dialog when provided.
+
 The project file explorer is read-only in this first slice. It emits
 `file_open_requested` for files under the scoped project root and intentionally
 does not expose destructive file actions yet.

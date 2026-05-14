@@ -126,3 +126,69 @@ def test_sidekick_calculator_terminal_and_notes_runtime_flow(tmp_path: Path) -> 
     )
     assert reloaded_editor is not None
     assert reloaded_editor.toPlainText() == "persistent note"
+
+
+def test_sidekick_tab_context_menu_exposes_help_text(tmp_path: Path) -> None:
+    try:
+        from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
+    except ImportError:
+        pytest.skip("Qt widgets unavailable")
+
+    from upstream_drift_tools.ui.tools_sidebar import UnifiedToolsSidebar
+    from upstream_drift_tools.ui.tools_sidebar.tab_context_menu import (
+        build_tab_context_menu,
+    )
+
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    _ = app
+    sidebar = UnifiedToolsSidebar(project_root=tmp_path)
+
+    menu = build_tab_context_menu(sidebar, "calculator")
+    actions = {
+        action.text().replace("&", ""): action
+        for action in menu.actions()
+        if not action.isSeparator()
+    }
+
+    assert "Help" in actions
+    assert actions["Help"].toolTip()
+    assert actions["Help"].statusTip()
+    assert actions["Rename"].toolTip()
+    assert actions["Close"].statusTip()
+
+
+def test_sidekick_terminal_and_notes_controls_have_tooltips(tmp_path: Path) -> None:
+    try:
+        from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
+    except ImportError:
+        pytest.skip("Qt widgets unavailable")
+
+    from upstream_drift_tools.ui.tools_sidebar import UnifiedToolsSidebar
+
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    _ = app
+    sidebar = UnifiedToolsSidebar(project_root=tmp_path)
+
+    assert sidebar.set_active_tab("terminal") is True
+    terminal = sidebar.tabs.currentWidget()
+    terminal_widgets = (
+        terminal.findChild(QtWidgets.QPlainTextEdit, "SidekickTerminalInput"),
+        terminal.findChild(QtWidgets.QPushButton, "SidekickTerminalRun"),
+        terminal.findChild(QtWidgets.QPlainTextEdit, "SidekickTerminalOutput"),
+    )
+    for widget in terminal_widgets:
+        assert widget is not None
+        assert widget.toolTip()
+
+    assert sidebar.set_active_tab("notes") is True
+    notes = sidebar.tabs.currentWidget()
+    note_widgets = (
+        notes.findChild(QtWidgets.QLabel, "SidekickNotesStatus"),
+        notes.findChild(QtWidgets.QPlainTextEdit, "SidekickNotesEditor"),
+        notes.findChild(QtWidgets.QPushButton, "SidekickNotesSave"),
+        notes.findChild(QtWidgets.QPushButton, "SidekickNotesClear"),
+        notes.findChild(QtWidgets.QPushButton, "SidekickNotesRestore"),
+    )
+    for widget in note_widgets:
+        assert widget is not None
+        assert widget.toolTip()

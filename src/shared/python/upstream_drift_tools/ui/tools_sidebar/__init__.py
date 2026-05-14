@@ -64,6 +64,11 @@ from .file_navigation import (
     FileNavigationController,
     FileNavigationState,
 )
+from .help_content import (
+    DEFAULT_SIDEBAR_TAB_HELP,
+    SIDEBAR_CONTEXT_ACTIONS,
+    SidebarActionMetadata,
+)
 from .registry import WorkspaceRegistry, WorkspaceVariable
 from .settings import (
     SidebarTabSettingsDescriptor,
@@ -107,6 +112,7 @@ __all__ = [
     "CalculatorWorkspaceSettings",
     "CommandHistoryController",
     "DefaultCommonLocationsProvider",
+    "DEFAULT_SIDEBAR_TAB_HELP",
     "FileNavigationController",
     "FileNavigationState",
     "ProjectFileExplorer",
@@ -128,7 +134,9 @@ __all__ = [
     "SIDEKICK_TOOLBAR_OBJECT_NAME",
     "SIDEKICK_WORKSPACE_LIST_OBJECT_NAME",
     "SIDEKICK_WORKSPACE_TAB_OBJECT_NAME",
+    "SIDEBAR_CONTEXT_ACTIONS",
     "SidekickDesignTokens",
+    "SidebarActionMetadata",
     "SidekickFontSettings",
     "SidekickTerminalTheme",
     "SidekickThemeMode",

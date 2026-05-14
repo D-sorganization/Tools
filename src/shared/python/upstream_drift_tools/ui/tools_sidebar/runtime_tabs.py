@@ -24,6 +24,7 @@ from .calculator_startup import (
     apply_calculator_startup_imports,
     default_calculator_startup_config,
 )
+from .help_content import DEFAULT_SIDEBAR_TAB_HELP
 from .qt_compat import QT_API, QtCore, QtWidgets
 from .registry import WorkspaceRegistry
 
@@ -50,13 +51,14 @@ def build_chat_tab(sidebar: Any) -> QtWidgets.QWidget:
     if QT_API == "PyQt6":
         widget = _build_pyqt_chat_dock(sidebar)
         if widget is not None:
+            widget.setToolTip(DEFAULT_SIDEBAR_TAB_HELP["chat"]["summary"])
             return widget
     return _build_chat_status_tab(sidebar)
 
 
 def build_terminal_tab(sidebar: Any) -> QtWidgets.QWidget:
     """Build an embedded Python terminal tab bound to the workspace registry."""
-    return SidekickTerminalWidget(
+    widget = SidekickTerminalWidget(
         registry=sidebar.registry,
         set_variable=sidebar.set_context_variable,
         terminal_theme=theme.SidekickTerminalTheme.inherited(
@@ -64,11 +66,13 @@ def build_terminal_tab(sidebar: Any) -> QtWidgets.QWidget:
         ),
         parent=sidebar,
     )
+    widget.setToolTip(DEFAULT_SIDEBAR_TAB_HELP["terminal"]["summary"])
+    return widget
 
 
 def build_calculator_tab(sidebar: Any) -> QtWidgets.QWidget:
     """Build an embedded symbolic calculator tab bound to workspace state."""
-    return SidekickCalculatorWidget(
+    widget = SidekickCalculatorWidget(
         registry=sidebar.registry,
         set_variable=sidebar.set_context_variable,
         predictive_text_enabled=calculator_predictive_text_enabled(sidebar),
@@ -79,11 +83,15 @@ def build_calculator_tab(sidebar: Any) -> QtWidgets.QWidget:
         ),
         parent=sidebar,
     )
+    widget.setToolTip(DEFAULT_SIDEBAR_TAB_HELP["calculator"]["summary"])
+    return widget
 
 
 def build_notes_tab(sidebar: Any) -> QtWidgets.QWidget:
     """Build a project-persistent notes tab."""
-    return SidekickNotesWidget(project_root=sidebar.project_root, parent=sidebar)
+    widget = SidekickNotesWidget(project_root=sidebar.project_root, parent=sidebar)
+    widget.setToolTip(DEFAULT_SIDEBAR_TAB_HELP["notes"]["summary"])
+    return widget
 
 
 class SidekickTerminalWidget(QtWidgets.QWidget):
@@ -120,16 +128,23 @@ class SidekickTerminalWidget(QtWidgets.QWidget):
         self._input = QtWidgets.QPlainTextEdit(self)
         self._input.setObjectName("SidekickTerminalInput")
         self._input.setPlaceholderText("result = np.array([1, 2, 3]).sum()")
+        self._input.setToolTip(
+            "Enter Python code that can read and write shared workspace variables."
+        )
         layout.addWidget(self._input, stretch=2)
 
         self._run_button = QtWidgets.QPushButton("Run", self)
         self._run_button.setObjectName("SidekickTerminalRun")
+        self._run_button.setToolTip(
+            "Execute the current terminal script and export assigned variables."
+        )
         self._run_button.clicked.connect(self.execute_script)
         layout.addWidget(self._run_button)
 
         self._output = QtWidgets.QPlainTextEdit(self)
         self._output.setObjectName("SidekickTerminalOutput")
         self._output.setReadOnly(True)
+        self._output.setToolTip("Shows terminal stdout, stderr, and execution errors.")
         layout.addWidget(self._output, stretch=3)
 
     def execute_script(self) -> None:
@@ -201,27 +216,38 @@ class SidekickNotesWidget(QtWidgets.QWidget):
 
         self._status = QtWidgets.QLabel("Ready", self)
         self._status.setObjectName("SidekickNotesStatus")
+        self._status.setToolTip("Reports the latest notes persistence status.")
         layout.addWidget(self._status)
 
         self._editor = QtWidgets.QPlainTextEdit(self)
         self._editor.setObjectName("SidekickNotesEditor")
         self._editor.setPlaceholderText("Project notes")
+        self._editor.setToolTip(
+            "Edit project-scoped notes that persist beside the workspace."
+        )
         self._editor.textChanged.connect(self._schedule_autosave)
         layout.addWidget(self._editor, stretch=1)
 
         row = QtWidgets.QHBoxLayout()
         self._save = QtWidgets.QPushButton("Save", self)
         self._save.setObjectName("SidekickNotesSave")
+        self._save.setToolTip("Persist the current notes text immediately.")
         self._save.clicked.connect(self.save_notes)
         row.addWidget(self._save)
 
         clear = QtWidgets.QPushButton("Clear", self)
         clear.setObjectName("SidekickNotesClear")
+        clear.setToolTip(
+            "Clear the current note text while keeping the notes file available."
+        )
         clear.clicked.connect(self.clear_notes)
         row.addWidget(clear)
 
         restore = QtWidgets.QPushButton("Restore", self)
         restore.setObjectName("SidekickNotesRestore")
+        restore.setToolTip(
+            "Restore the latest recycled notes snapshot when one exists."
+        )
         restore.clicked.connect(self.restore_latest)
         row.addWidget(restore)
         layout.addLayout(row)
@@ -272,6 +298,7 @@ def _build_pyqt_chat_dock(sidebar: Any) -> QtWidgets.QWidget | None:
 def _build_chat_status_tab(sidebar: Any) -> QtWidgets.QWidget:
     widget = QtWidgets.QWidget(sidebar)
     widget.setObjectName(SIDEKICK_CHAT_RUNTIME_OBJECT_NAME)
+    widget.setToolTip(DEFAULT_SIDEBAR_TAB_HELP["chat"]["summary"])
     layout = QtWidgets.QVBoxLayout(widget)
     layout.setContentsMargins(8, 8, 8, 8)
     label = QtWidgets.QLabel(
