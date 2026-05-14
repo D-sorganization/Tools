@@ -6,6 +6,10 @@ from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from typing import Any, Protocol
 
+from .calculator_startup import (
+    CalculatorStartupConfig,
+    calculator_startup_config_from_state_payload,
+)
 from .registry import WorkspaceVariable
 from .state import SidebarState
 
@@ -176,18 +180,44 @@ def set_calculator_predictive_text_enabled(sidebar: Any, enabled: bool) -> None:
         emit_context()
 
 
-def calculator_state_fields(state: SidebarState) -> dict[str, bool]:
+def calculator_state_fields(state: SidebarState) -> dict[str, Any]:
     """Return calculator-specific fields for SidebarState reconstruction."""
     return {
         "calculator_predictive_text_enabled": state.calculator_predictive_text_enabled,
+        "calculator_startup_imports": list(state.calculator_startup_imports),
     }
 
 
-def calculator_context_preferences(state: SidebarState) -> dict[str, bool]:
+def calculator_context_preferences(state: SidebarState) -> dict[str, Any]:
     """Return calculator preferences for Sidekick context payloads."""
     return {
         "calculator_predictive_text_enabled": state.calculator_predictive_text_enabled,
+        "calculator_startup_imports": list(state.calculator_startup_imports),
     }
+
+
+def calculator_startup_config(sidebar: Any) -> CalculatorStartupConfig:
+    """Return validated calculator startup imports from a sidebar host."""
+    state = getattr(sidebar, "_state", SidebarState())
+    return calculator_startup_config_from_state_payload(
+        state.calculator_startup_imports
+    )
+
+
+def set_calculator_startup_config(
+    sidebar: Any,
+    config: CalculatorStartupConfig,
+) -> None:
+    """Persist validated calculator startup imports on a sidebar host."""
+    if not isinstance(config, CalculatorStartupConfig):
+        raise TypeError("config must be CalculatorStartupConfig")
+    state = getattr(sidebar, "_state", None)
+    if state is None:
+        raise ValueError("sidebar must expose _state")
+    state.calculator_startup_imports = config.to_list()
+    emit_context = getattr(sidebar, "_emit_context", None)
+    if emit_context is not None:
+        emit_context()
 
 
 def _dependency_aliases(loaded_dependencies: Iterable[str]) -> tuple[str, ...]:

@@ -3,10 +3,8 @@
 from __future__ import annotations
 
 import contextlib
-import importlib
 import io
 import logging
-import sys
 import types
 from collections.abc import Callable
 from functools import partial
@@ -19,7 +17,13 @@ from .calculator_assist import (
     CalculatorPredictiveText,
     StaticCalculatorPredictionProvider,
     calculator_predictive_text_enabled,
+    calculator_startup_config,
     set_calculator_predictive_text_enabled,
+)
+from .calculator_startup import (
+    CalculatorStartupConfig,
+    apply_calculator_startup_imports,
+    default_calculator_startup_config,
 )
 from .calculator_workspace import (
     CalculatorWorkspaceActions,
@@ -78,6 +82,7 @@ def build_calculator_tab(sidebar: Any) -> QtWidgets.QWidget:
         registry=sidebar.registry,
         set_variable=sidebar.set_context_variable,
         predictive_text_enabled=calculator_predictive_text_enabled(sidebar),
+        startup_import_config=calculator_startup_config(sidebar),
         set_predictive_text_enabled=partial(
             set_calculator_predictive_text_enabled,
             sidebar,
@@ -102,6 +107,7 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
         local_registry: WorkspaceRegistry | None = None,
         predictive_text_enabled: bool = False,
         prediction_provider: CalculatorPredictionProvider | None = None,
+        startup_import_config: CalculatorStartupConfig | None = None,
         set_predictive_text_enabled: SetPredictiveTextEnabled | None = None,
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
@@ -119,6 +125,11 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
         )
         self._workspace_controller = default_calculator_workspace_controller(
             self._registry,
+        )
+        self._startup_namespace: dict[str, Any] = {}
+        self._startup_result = apply_calculator_startup_imports(
+            self._startup_namespace,
+            startup_import_config or default_calculator_startup_config(),
         )
         self._set_predictive_text_enabled = set_predictive_text_enabled
         self._predictive_text_enabled = bool(predictive_text_enabled)
@@ -151,6 +162,15 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
         )
         self._predictive_toggle.toggled.connect(self.set_predictive_text_enabled)
         layout.addWidget(self._predictive_toggle)
+
+        self._startup_status = QtWidgets.QLabel("", self)
+        self._startup_status.setObjectName("SidekickCalculatorStartupStatus")
+        self._startup_status.setWordWrap(True)
+        self._startup_status.setToolTip(
+            "Reports optional calculator startup dependencies that are unavailable."
+        )
+        layout.addWidget(self._startup_status)
+        self._refresh_startup_status()
 
         self._run_button = QtWidgets.QPushButton("Evaluate", self)
         self._run_button.setObjectName("SidekickCalculatorRun")
@@ -198,9 +218,17 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
                 *self._registry.variables(),
                 *self._workspace_registry.variables(),
             ],
-            loaded_dependencies=_loaded_scientific_dependencies(),
+            loaded_dependencies=self.loaded_startup_dependencies(),
         )
         return tuple(suggestion.label for suggestion in suggestions)
+
+    def loaded_startup_dependencies(self) -> tuple[str, ...]:
+        """Return optional dependency modules loaded for this calculator instance."""
+        return self._startup_result.loaded_modules
+
+    def startup_warnings(self) -> tuple[str, ...]:
+        """Return user-facing optional dependency diagnostics."""
+        return tuple(warning.message for warning in self._startup_result.warnings)
 
     def evaluate_expression(self) -> None:
         """Evaluate the current expression and publish the result."""
@@ -221,6 +249,16 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
 
     def _refresh_predictive_suggestions(self, prefix: str) -> None:
         self._completer_model.setStringList(list(self.suggestions_for(prefix)))
+
+    def _refresh_startup_status(self) -> None:
+        warnings = self.startup_warnings()
+        if not warnings:
+            loaded = ", ".join(self.loaded_startup_dependencies())
+            self._startup_status.setText(
+                f"Startup imports loaded: {loaded}" if loaded else ""
+            )
+            return
+        self._startup_status.setText("Optional dependency unavailable: " + warnings[0])
 
 
 class SidekickTerminalWidget(QtWidgets.QWidget):
@@ -443,22 +481,9 @@ def _notes_storage(project_root: Path) -> Any:
 
 
 def _preload_scientific_namespace(namespace: dict[str, Any]) -> None:
-    for module_name, alias in (
-        ("numpy", "np"),
-        ("pandas", "pd"),
-        ("scipy", "scipy"),
-    ):
-        with contextlib.suppress(ImportError):
-            module = importlib.import_module(module_name)
-            namespace[alias] = module
-            namespace[module_name] = module
-
-
-def _loaded_scientific_dependencies() -> tuple[str, ...]:
-    return tuple(
-        module_name
-        for module_name in ("numpy", "pandas", "scipy")
-        if module_name in sys.modules
+    apply_calculator_startup_imports(
+        namespace,
+        default_calculator_startup_config(),
     )
 
 

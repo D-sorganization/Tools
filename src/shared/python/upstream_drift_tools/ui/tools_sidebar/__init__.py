@@ -18,6 +18,13 @@ from .calculator_plotting import (
     CalculatorPlotTabConfig,
     build_calculator_plot_spec,
 )
+from .calculator_startup import (
+    CalculatorStartupConfig,
+    CalculatorStartupImport,
+    CalculatorStartupResult,
+    CalculatorStartupWarning,
+    default_calculator_startup_config,
+)
 from .calculator_workspace import (
     CALCULATOR_WORKSPACE_SCOPE,
     CalculatorWorkspaceController,
@@ -65,6 +72,10 @@ __all__ = [
     "DEFAULT_COMMAND_HISTORY_LIMIT",
     "CALCULATOR_HELP",
     "CALCULATOR_WORKSPACE_SCOPE",
+    "CalculatorStartupConfig",
+    "CalculatorStartupImport",
+    "CalculatorStartupResult",
+    "CalculatorStartupWarning",
     "CalculatorPredictiveText",
     "CalculatorPlotRequest",
     "CalculatorPlotSource",
@@ -103,6 +114,7 @@ __all__ = [
     "WorkspaceVariable",
     "build_calculator_plot_spec",
     "create_tools_sidebar",
+    "default_calculator_startup_config",
     "install_tools_sidebar",
     "sidekick_qss",
     "validate_calculator_workspace_path",
