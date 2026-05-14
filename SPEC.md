@@ -80,6 +80,9 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Shared chat dock terminal lifecycle controls disable duplicate starts,
   enable Stop only for active sessions, and lock shell/provider choices while
   a terminal session is pending or active
+- Sidekick tabs declare versioned per-tab settings schemas and persist
+  materialized settings by stable tab or duplicate instance id behind the
+  selected-tab settings action
 - Shared chat history rows use wrapped readable item widgets with transparent
   icon-only archive, restore, and delete controls available without right-click
 - Shared chat dock close control lives in the persistent status header instead
