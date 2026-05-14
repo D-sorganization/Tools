@@ -487,12 +487,30 @@ def test_sidekick_calculator_terminal_and_notes_runtime_flow(tmp_path: Path) -> 
         "SidekickCalculatorPredictiveText",
     )
     evaluate = calculator.findChild(QtWidgets.QPushButton, "SidekickCalculatorRun")
+    save_workspace = calculator.findChild(
+        QtWidgets.QPushButton,
+        "SidekickCalculatorSaveWorkspace",
+    )
+    load_workspace = calculator.findChild(
+        QtWidgets.QPushButton,
+        "SidekickCalculatorLoadWorkspace",
+    )
     result = calculator.findChild(QtWidgets.QLabel, "SidekickCalculatorResult")
     assert expression is not None
     assert predictive is not None
     assert evaluate is not None
+    assert save_workspace is not None
+    assert load_workspace is not None
     assert result is not None
-    for widget in (expression, predictive, evaluate, result):
+    widgets = (
+        expression,
+        predictive,
+        evaluate,
+        save_workspace,
+        load_workspace,
+        result,
+    )
+    for widget in widgets:
         assert widget.toolTip()
 
     assert calculator.predictive_text_enabled is False
@@ -520,6 +538,18 @@ def test_sidekick_calculator_terminal_and_notes_runtime_flow(tmp_path: Path) -> 
     assert sidebar.registry.get("calculator_result") == [[1, 2], [3, 4]]
     assert matrix_result.shape == (2, 2)
     assert matrix_result.size == 4
+
+    workspace_action_calls: list[str] = []
+    calculator._workspace_actions.save_workspace = (  # noqa: SLF001
+        lambda: workspace_action_calls.append("save")
+    )
+    calculator._workspace_actions.load_workspace = (  # noqa: SLF001
+        lambda: workspace_action_calls.append("load")
+    )
+    save_workspace.click()
+    load_workspace.click()
+
+    assert workspace_action_calls == ["save", "load"]
 
     assert sidebar.set_active_tab("terminal") is True
     terminal = sidebar.tabs.currentWidget()
