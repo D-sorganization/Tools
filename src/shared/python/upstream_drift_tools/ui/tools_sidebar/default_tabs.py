@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib
 import logging
 from collections.abc import Callable
 from pathlib import Path
@@ -20,6 +21,7 @@ from .runtime_tabs import (
 logger = logging.getLogger(__name__)
 
 TabDefinitionFactory = Callable[..., Any]
+ROTATION_CONVERTER_TAB_ID = "rotation_converter"
 
 
 def build_default_tab_definitions(
@@ -53,6 +55,21 @@ def build_default_tab_definitions(
             "Units",
             build_unit_converter_tab,
             duplicate_enabled=True,
+        ),
+        tab_definition(
+            ROTATION_CONVERTER_TAB_ID,
+            "Rotation Converter",
+            build_rotation_converter_tab,
+            visible=False,
+            duplicate_enabled=True,
+            help_metadata={
+                "title": "Rotation Converter",
+                "summary": (
+                    "Convert between rotation matrices, quaternions, Euler "
+                    "angles, axis-angle, rigid transforms, twists, and frames."
+                ),
+                "source": "rotation_converter.gui_registration",
+            },
         ),
         tab_definition("notes", "Notes", build_notes_tab, duplicate_enabled=True),
     ]
@@ -112,7 +129,35 @@ def build_unit_converter_tab(sidebar: Any) -> QtWidgets.QWidget:
     return UnitConverterWidget(sidebar)
 
 
-def placeholder(sidebar: Any, title: str) -> QtWidgets.QWidget:
+def build_rotation_converter_tab(sidebar: Any) -> QtWidgets.QWidget:
+    """Build the Rotation Converter tab when its PyQt6 surface is available."""
+    if QT_API != "PyQt6":
+        return placeholder(
+            sidebar,
+            "Rotation Converter",
+            "Rotation Converter requires the PyQt6 UI backend.",
+        )
+    try:
+        module = importlib.import_module("rotation_converter.ui.pyqt6.main_window")
+        window_type = module.RotationConverterMainWindow
+        widget = window_type(sidebar)
+    except Exception as exc:  # noqa: BLE001 - optional GUI surface
+        logger.debug("Rotation converter unavailable for Sidekick: %s", exc)
+        return placeholder(
+            sidebar,
+            "Rotation Converter",
+            "Rotation Converter is unavailable because optional UI dependencies "
+            "could not be loaded.",
+        )
+    widget.setObjectName(theme.SIDEKICK_ROTATION_CONVERTER_OBJECT_NAME)
+    return widget
+
+
+def placeholder(
+    sidebar: Any,
+    title: str,
+    message: str | None = None,
+) -> QtWidgets.QWidget:
     """Build a compact placeholder for optional tabs."""
     widget = QtWidgets.QWidget(sidebar)
     widget.setObjectName(theme.SIDEKICK_PLACEHOLDER_OBJECT_NAME)
@@ -121,5 +166,9 @@ def placeholder(sidebar: Any, title: str) -> QtWidgets.QWidget:
     label.setObjectName(theme.SIDEKICK_PLACEHOLDER_LABEL_OBJECT_NAME)
     label.setWordWrap(True)
     layout.addWidget(label)
+    if message:
+        detail = QtWidgets.QLabel(message, widget)
+        detail.setWordWrap(True)
+        layout.addWidget(detail)
     layout.addStretch(1)
     return widget

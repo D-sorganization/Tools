@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
-from dataclasses import dataclass, replace
+from collections.abc import Callable, Mapping
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any
 
@@ -28,6 +28,7 @@ class SidebarTabDefinition:
     visible: bool = True
     popout_enabled: bool = True
     duplicate_enabled: bool = False
+    help_metadata: Mapping[str, str] = field(default_factory=dict)
 
 
 class UnifiedToolsSidebar(QtWidgets.QWidget):
@@ -417,6 +418,11 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
                 "visible_tabs": self.visible_tab_ids(),
                 "hidden_tabs": self.hidden_tab_ids(),
                 "popped_out_tabs": list(self._popout_windows),
+                "tab_help": {
+                    tab_id: dict(definition.help_metadata)
+                    for tab_id, definition in self._tab_definitions.items()
+                    if definition.help_metadata
+                },
                 "workspace_variables": [
                     variable.to_metadata() for variable in self.registry.variables()
                 ],

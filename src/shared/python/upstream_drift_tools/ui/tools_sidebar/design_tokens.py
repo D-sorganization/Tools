@@ -17,6 +17,7 @@ SIDEKICK_WORKSPACE_TAB_OBJECT_NAME = "SidekickWorkspaceTab"
 SIDEKICK_WORKSPACE_LIST_OBJECT_NAME = "SidekickWorkspaceList"
 SIDEKICK_PLACEHOLDER_OBJECT_NAME = "SidekickPlaceholder"
 SIDEKICK_PLACEHOLDER_LABEL_OBJECT_NAME = "SidekickPlaceholderLabel"
+SIDEKICK_ROTATION_CONVERTER_OBJECT_NAME = "SidekickRotationConverterTab"
 
 _DEFAULT_TOKEN_VALUES: dict[str, str] = {
     "color.background": "#f7f9fc",
