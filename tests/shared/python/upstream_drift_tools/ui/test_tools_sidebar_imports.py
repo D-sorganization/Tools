@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 
@@ -21,7 +23,7 @@ def test_tools_sidebar_public_widget_api_is_lazy() -> None:
     assert "SidebarTabDefinition" in tools_sidebar.__all__
 
 
-def test_tools_sidebar_widget_contract_when_qt_available(tmp_path) -> None:
+def test_tools_sidebar_widget_contract_when_qt_available(tmp_path: Path) -> None:
     try:
         from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
     except ImportError:
