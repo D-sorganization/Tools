@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.170                                    |
+| **Spec Version**        | 1.1.171                                    |
 | **Last Spec Update**    | 2026-05-14                                 |
 
 ## 2. Purpose & Mission
@@ -119,6 +119,10 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Sidekick calculator startup imports are validated, persisted in sidebar
   state, optional-dependency safe for NumPy/SciPy defaults, and surfaced as
   structured UI diagnostics when a configured dependency is unavailable
+- Sidekick state profiles persist named sidebar snapshots below a host-provided
+  storage root, validate path-safe profile names, reject malformed loads without
+  mutating the active sidebar, and require an explicit confirmation token before
+  clearing profile data
 - Data-driven shared chat terminal-provider descriptors for Claude Code, Codex,
   Cline CLI, and Gemini CLI, including probe command metadata with diagnostic
   redaction helpers
@@ -577,6 +581,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-14 | 1.1.171 | Added Sidekick named state profile storage helpers with path-safe save/load contracts, atomic malformed-profile rejection, explicit clear-data warning confirmation, sidebar wrapper methods, README guidance, and focused regression coverage.                                                                                                                                                                                                                                                                                                                     |
 | 2026-05-14 | 1.1.170 | Added validated Sidekick calculator startup import preferences with default optional NumPy/SciPy aliases, JSON sidebar-state persistence, transaction-safe import execution, missing-dependency diagnostics in the calculator tab, and focused backend/UI regression coverage.                                                                                                                                                                                                                                                                                      |
 | 2026-05-14 | 1.1.169 | Added calculator-local Sidekick workspace save/load wiring with an explicit scoped persistence controller, JSON path validation, atomic save, merge-versus-confirmed-replace load behavior, malformed-file rollback, and UI button coverage that keeps calculator workspace persistence separate from the global sidebar workspace registry.                                                                                                                                                                                                                        |
 | 2026-05-14 | 1.1.168 | Added a Sidekick file explorer navigation controller with normalized current path state, back/forward/up history, injectable common-location discovery, project-boundary containment, and predictable disabled-state flags, then wired the project explorer widget to expose a compact navigation bar and common-locations sidebar.                                                                                                                                                                                                                                 |
