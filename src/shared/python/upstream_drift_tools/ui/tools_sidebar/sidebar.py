@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-import logging
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any
 
@@ -13,27 +12,19 @@ from .qt_compat import QT_API, QtWidgets, Signal, all_sidebar_dock_features, doc
 from .registry import WorkspaceRegistry
 from .state import SidebarState
 
-DEFAULT_TABS = (
-    "files",
-    "workspace",
-    "chat",
-    "terminal",
-    "calculator",
-    "units",
-    "notes",
-)
-
-logger = logging.getLogger(__name__)
+SIDEKICK_DOCK_OBJECT_NAME = "SidekickToolsSidebarDock"
 
 
 @dataclass(frozen=True)
-class ToolsSidebarInstallResult:
-    """Result returned by the shared host install helper."""
+class SidebarTabDefinition:
+    """Configurable Sidekick tab contract."""
 
-    installed: bool
-    reason: str
-    sidebar: UnifiedToolsSidebar | None = None
-    dock_widget: QtWidgets.QDockWidget | None = None
+    tab_id: str
+    title: str
+    factory: Callable[[UnifiedToolsSidebar], QtWidgets.QWidget]
+    visible: bool = True
+    popout_enabled: bool = True
+    duplicate_enabled: bool = False
 
 
 class UnifiedToolsSidebar(QtWidgets.QWidget):
@@ -47,30 +38,33 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
         project_root: str | Path | None = None,
         registry: WorkspaceRegistry | None = None,
         state: SidebarState | None = None,
+        tab_definitions: list[SidebarTabDefinition] | None = None,
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
         super().__init__(parent)
         self.registry = registry or WorkspaceRegistry()
         self._state = state or SidebarState()
         self._dock_widget: QtWidgets.QDockWidget | None = None
+        self._expanded_width = self._state.width
         self._tab_ids: list[str] = []
+        self._tab_definitions: dict[str, SidebarTabDefinition] = {}
+        self._tab_widgets: dict[str, QtWidgets.QWidget] = {}
+        self._popout_windows: dict[str, QtWidgets.QMainWindow] = {}
+        self._duplicate_counts: dict[str, int] = {}
+        self._project_root = Path(project_root or Path.cwd()).expanduser().resolve()
 
+        self.toolbar = self._build_toolbar()
         self.tabs = QtWidgets.QTabWidget(self)
+        self.tabs.setMovable(True)
         self.tabs.currentChanged.connect(self._emit_context)
+        self.tabs.tabBar().tabMoved.connect(self._sync_tab_order_from_widget)
 
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(self.toolbar)
         layout.addWidget(self.tabs)
 
-        self.file_explorer = ProjectFileExplorer(project_root or Path.cwd(), self)
-        self.file_explorer.file_open_requested.connect(self.file_open_requested.emit)
-        self.add_tab("files", "Files", self.file_explorer)
-        self.add_tab("workspace", "Workspace", self._build_workspace_tab())
-        self.add_tab("chat", "Chat", self._placeholder("Chat panel"))
-        self.add_tab("terminal", "Terminal", self._placeholder("Terminal panel"))
-        self.add_tab("calculator", "Calculator", self._placeholder("Calculator panel"))
-        self.add_tab("units", "Units", self._build_unit_converter_tab())
-        self.add_tab("notes", "Notes", self._placeholder("Notepad"))
+        self.configure_tabs(tab_definitions or self._default_tab_definitions())
 
         self.apply_state(self._state)
 
@@ -84,7 +78,158 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
         if tab_id in self._tab_ids:
             raise ValueError(f"Duplicate sidebar tab id: {tab_id}")
         self._tab_ids.append(tab_id)
+        self._tab_widgets[tab_id] = widget
         self.tabs.addTab(widget, title)
+
+    def configure_tabs(self, definitions: list[SidebarTabDefinition]) -> None:
+        """Configure the available tab set for this Sidekick instance."""
+        self.tabs.clear()
+        self._tab_ids.clear()
+        self._tab_widgets.clear()
+        self._tab_definitions = {
+            definition.tab_id: definition for definition in definitions
+        }
+        for definition in definitions:
+            if definition.visible:
+                self._add_defined_tab(definition)
+
+    def visible_tab_ids(self) -> list[str]:
+        """Return tab ids currently docked in the sidebar."""
+        return list(self._tab_ids)
+
+    def hidden_tab_ids(self) -> list[str]:
+        """Return configured tabs that are currently hidden."""
+        return [
+            tab_id
+            for tab_id in self._tab_definitions
+            if tab_id not in self._tab_ids and tab_id not in self._popout_windows
+        ]
+
+    def move_tab(self, tab_id: str, index: int) -> bool:
+        """Move a visible tab to ``index``."""
+        if tab_id not in self._tab_ids:
+            return False
+        current = self._tab_ids.index(tab_id)
+        target = max(0, min(index, len(self._tab_ids) - 1))
+        if current == target:
+            return True
+        self.tabs.tabBar().moveTab(current, target)
+        self._sync_tab_order_from_widget()
+        return True
+
+    def set_tab_visible(self, tab_id: str, visible: bool) -> bool:
+        """Show or hide a configured tab."""
+        if visible:
+            if tab_id in self._tab_ids:
+                return True
+            definition = self._tab_definitions.get(tab_id)
+            if definition is None:
+                return False
+            self._add_defined_tab(definition)
+            self._sync_tab_order_from_widget()
+            self._emit_context()
+            return True
+
+        if tab_id not in self._tab_ids:
+            return tab_id in self._tab_definitions
+        index = self._tab_ids.index(tab_id)
+        widget = self.tabs.widget(index)
+        self.tabs.removeTab(index)
+        self._tab_ids.pop(index)
+        self._tab_widgets.pop(tab_id, None)
+        if widget is not None:
+            widget.setParent(None)
+            widget.deleteLater()
+        self._emit_context()
+        return True
+
+    def set_minimized(self, minimized: bool) -> None:
+        """Collapse or expand the sidebar without destroying tab state."""
+        self._state.minimized = minimized
+        if minimized:
+            self._expanded_width = max(self.width(), self._expanded_width)
+            self.tabs.setVisible(False)
+            self.setMaximumWidth(56)
+        else:
+            self.tabs.setVisible(True)
+            self.setMaximumWidth(16777215)
+            self.resize(max(self._expanded_width, 240), self.height())
+        self._emit_context()
+
+    def set_dock_area(self, area: str) -> bool:
+        """Move the installed dock widget to the left or right side."""
+        if area not in {"left", "right"}:
+            return False
+        self._state.dock_area = area
+        if self._dock_widget is not None:
+            host = self._dock_widget.parent()
+            if hasattr(host, "addDockWidget"):
+                host.addDockWidget(dock_area(area), self._dock_widget)
+        self._emit_context()
+        return True
+
+    def pop_out_tab(self, tab_id: str) -> QtWidgets.QMainWindow | None:
+        """Move one visible tab into a standalone utility window."""
+        definition = self._tab_definitions.get(tab_id)
+        if (
+            definition is None
+            or not definition.popout_enabled
+            or tab_id not in self._tab_ids
+        ):
+            return None
+        index = self._tab_ids.index(tab_id)
+        widget = self.tabs.widget(index)
+        self.tabs.removeTab(index)
+        self._tab_ids.pop(index)
+        self._tab_widgets.pop(tab_id, None)
+
+        window = QtWidgets.QMainWindow(self)
+        window.setObjectName(f"SidekickPopout_{tab_id}")
+        window.setWindowTitle(f"Sidekick - {definition.title}")
+        window.setCentralWidget(widget)
+        window.resize(max(self._state.width, 360), max(self._state.height, 360))
+        window.closeEvent = self._redock_close_event(tab_id, window)
+        self._popout_windows[tab_id] = window
+        window.show()
+        self._emit_context()
+        return window
+
+    def redock_tab(self, tab_id: str) -> bool:
+        """Return a popped-out tab to the sidebar."""
+        window = self._popout_windows.pop(tab_id, None)
+        if window is None:
+            return tab_id in self._tab_ids
+        widget = window.centralWidget()
+        window.setCentralWidget(None)
+        window.hide()
+        definition = self._tab_definitions[tab_id]
+        self._tab_ids.append(tab_id)
+        self._tab_widgets[tab_id] = widget
+        self.tabs.addTab(widget, definition.title)
+        self.set_active_tab(tab_id)
+        self._sync_tab_order_from_widget()
+        self._emit_context()
+        return True
+
+    def duplicate_tab(self, tab_id: str) -> str | None:
+        """Create a second docked instance of a duplicable tab."""
+        definition = self._tab_definitions.get(tab_id)
+        if definition is None or not definition.duplicate_enabled:
+            return None
+        count = self._duplicate_counts.get(tab_id, 0) + 1
+        self._duplicate_counts[tab_id] = count
+        duplicate_id = f"{tab_id}#{count}"
+        duplicate = replace(
+            definition,
+            tab_id=duplicate_id,
+            title=f"{definition.title} {count + 1}",
+        )
+        self._tab_definitions[duplicate_id] = duplicate
+        self._add_defined_tab(duplicate)
+        self.set_active_tab(duplicate_id)
+        self._sync_tab_order_from_widget()
+        self._emit_context()
+        return duplicate_id
 
     def install_as_dock(
         self,
@@ -99,7 +244,7 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
             self.apply_state(SidebarState.load_json(state_path))
 
         dock = QtWidgets.QDockWidget(title, main_window)
-        dock.setObjectName("UnifiedToolsSidebarDock")
+        dock.setObjectName(SIDEKICK_DOCK_OBJECT_NAME)
         dock.setFeatures(all_sidebar_dock_features())
         dock.setWidget(self)
         dock.setFloating(self._state.floating)
@@ -134,6 +279,10 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
             width=width,
             height=height,
             active_tab=self.active_tab_id(),
+            minimized=self._state.minimized,
+            tab_order=self.visible_tab_ids(),
+            hidden_tabs=self.hidden_tab_ids(),
+            popped_out_tabs=list(self._popout_windows),
         )
 
     def save_state(self, path: str | Path) -> SidebarState:
@@ -147,6 +296,8 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
         """Apply active-tab and size state."""
         self._state = state
         self.resize(state.width, state.height)
+        self._apply_tab_state(state)
+        self.set_minimized(state.minimized)
         self.set_active_tab(state.active_tab)
         if self._dock_widget is not None:
             self._dock_widget.setFloating(state.floating)
@@ -174,8 +325,83 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
 
     def set_project_root(self, project_root: str | Path) -> None:
         """Update the project explorer root."""
-        self.file_explorer.set_project_root(project_root)
+        self._project_root = Path(project_root).expanduser().resolve()
+        file_explorer = self._tab_widgets.get("files")
+        if isinstance(file_explorer, ProjectFileExplorer):
+            file_explorer.set_project_root(self._project_root)
         self._emit_context()
+
+    def _default_tab_definitions(self) -> list[SidebarTabDefinition]:
+        return [
+            SidebarTabDefinition(
+                "files", "Files", self._build_file_explorer_tab, duplicate_enabled=True
+            ),
+            SidebarTabDefinition(
+                "workspace",
+                "Workspace",
+                lambda _sidebar: self._build_workspace_tab(),
+            ),
+            SidebarTabDefinition(
+                "chat", "Chat", lambda _sidebar: self._placeholder("Chat panel")
+            ),
+            SidebarTabDefinition(
+                "terminal",
+                "Terminal",
+                lambda _sidebar: self._placeholder("Terminal panel"),
+                duplicate_enabled=True,
+            ),
+            SidebarTabDefinition(
+                "calculator",
+                "Calculator",
+                lambda _sidebar: self._placeholder("Calculator panel"),
+                duplicate_enabled=True,
+            ),
+            SidebarTabDefinition(
+                "units",
+                "Units",
+                lambda _sidebar: self._build_unit_converter_tab(),
+                duplicate_enabled=True,
+            ),
+            SidebarTabDefinition(
+                "notes",
+                "Notes",
+                lambda _sidebar: self._placeholder("Notepad"),
+                duplicate_enabled=True,
+            ),
+        ]
+
+    def _add_defined_tab(self, definition: SidebarTabDefinition) -> None:
+        widget = definition.factory(self)
+        self.add_tab(definition.tab_id, definition.title, widget)
+
+    def _build_file_explorer_tab(
+        self, _sidebar: UnifiedToolsSidebar
+    ) -> QtWidgets.QWidget:
+        explorer = ProjectFileExplorer(self._project_root, self)
+        explorer.file_open_requested.connect(self.file_open_requested.emit)
+        return explorer
+
+    def _build_toolbar(self) -> QtWidgets.QToolBar:
+        toolbar = QtWidgets.QToolBar("Sidekick", self)
+        toolbar.setObjectName("SidekickToolbar")
+        toolbar.setMovable(False)
+        left_action = toolbar.addAction("Left")
+        left_action.triggered.connect(lambda: self.set_dock_area("left"))
+        right_action = toolbar.addAction("Right")
+        right_action.triggered.connect(lambda: self.set_dock_area("right"))
+        toolbar.addSeparator()
+        popout_action = toolbar.addAction("Pop Out")
+        popout_action.triggered.connect(lambda: self.pop_out_tab(self.active_tab_id()))
+        duplicate_action = toolbar.addAction("Duplicate")
+        duplicate_action.triggered.connect(
+            lambda: self.duplicate_tab(self.active_tab_id())
+        )
+        toolbar.addSeparator()
+        minimize_action = toolbar.addAction("Minimize")
+        minimize_action.triggered.connect(
+            lambda: self.set_minimized(not self._state.minimized)
+        )
+        return toolbar
 
     def _build_workspace_tab(self) -> QtWidgets.QWidget:
         widget = QtWidgets.QWidget(self)
@@ -218,69 +444,51 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
         self.context_updated.emit(
             {
                 "active_tab": self.active_tab_id(),
-                "project_root": str(self.file_explorer.project_root),
+                "project_root": str(self._project_root),
+                "dock_area": self._state.dock_area,
+                "minimized": self._state.minimized,
+                "visible_tabs": self.visible_tab_ids(),
+                "hidden_tabs": self.hidden_tab_ids(),
+                "popped_out_tabs": list(self._popout_windows),
                 "workspace_variables": [
                     variable.to_metadata() for variable in self.registry.variables()
                 ],
             }
         )
 
+    def _sync_tab_order_from_widget(self, *_args: Any) -> None:
+        ordered: list[str] = []
+        for index in range(self.tabs.count()):
+            widget = self.tabs.widget(index)
+            for tab_id, tab_widget in self._tab_widgets.items():
+                if tab_widget is widget:
+                    ordered.append(tab_id)
+                    break
+        if len(ordered) == len(self._tab_ids):
+            self._tab_ids = ordered
+        self._emit_context()
 
-def create_tools_sidebar(
-    project_root: str | Path | None = None,
-    registry: WorkspaceRegistry | None = None,
-    state: SidebarState | None = None,
-    parent: QtWidgets.QWidget | None = None,
-    context_provider: Callable[[], Any] | None = None,
-    **_: Any,
-) -> UnifiedToolsSidebar:
-    """Create a sidebar widget using the stable shared factory contract."""
-    sidebar = UnifiedToolsSidebar(
-        project_root=project_root,
-        registry=registry,
-        state=state,
-        parent=parent,
-    )
-    if context_provider is not None:
-        try:
-            sidebar.set_context_variable("host_context", context_provider())
-        except Exception as exc:  # noqa: BLE001 - host context is optional
-            logger.debug("Tools sidebar context provider failed: %s", exc)
-    return sidebar
+    def _apply_tab_state(self, state: SidebarState) -> None:
+        for tab_id in list(self._tab_ids):
+            if tab_id in state.hidden_tabs:
+                self.set_tab_visible(tab_id, False)
+        for tab_id in state.tab_order:
+            if tab_id in self._tab_definitions and tab_id not in self._tab_ids:
+                self.set_tab_visible(tab_id, True)
+        for index, tab_id in enumerate(state.tab_order):
+            self.move_tab(tab_id, index)
+
+    def _redock_close_event(
+        self,
+        tab_id: str,
+        window: QtWidgets.QMainWindow,
+    ) -> Callable[[Any], None]:
+        def _handle_close(event: Any) -> None:
+            self.redock_tab(tab_id)
+            event.ignore()
+            window.hide()
+
+        return _handle_close
 
 
-def install_tools_sidebar(
-    main_window: QtWidgets.QMainWindow,
-    *,
-    project_root: str | Path | None = None,
-    registry: WorkspaceRegistry | None = None,
-    state: SidebarState | None = None,
-    context_provider: Callable[[], Any] | None = None,
-    area: str | None = None,
-    title: str = "Tools",
-    state_path: str | Path | None = None,
-    **_: Any,
-) -> ToolsSidebarInstallResult:
-    """Install the shared sidebar as a dock widget in a Qt main window."""
-    if main_window is None or not hasattr(main_window, "addDockWidget"):
-        return ToolsSidebarInstallResult(False, "main_window does not support docks")
-
-    sidebar = create_tools_sidebar(
-        project_root=project_root,
-        registry=registry,
-        state=state,
-        parent=main_window,
-        context_provider=context_provider,
-    )
-    dock_widget = sidebar.install_as_dock(
-        main_window,
-        area=area,
-        title=title,
-        state_path=state_path,
-    )
-    return ToolsSidebarInstallResult(
-        True,
-        "installed",
-        sidebar=sidebar,
-        dock_widget=dock_widget,
-    )
+SidekickSidebar = UnifiedToolsSidebar

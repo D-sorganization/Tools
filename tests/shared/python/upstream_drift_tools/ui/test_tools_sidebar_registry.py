@@ -73,9 +73,13 @@ def test_sidebar_state_round_trip_and_sanitizes_values(tmp_path) -> None:
     state = SidebarState(
         dock_area="invalid",
         floating=True,
+        minimized=True,
         width=1,
         height=2,
         active_tab="terminal",
+        tab_order=["notes", "terminal", "notes", ""],
+        hidden_tabs=["chat", "chat"],
+        popped_out_tabs=["calculator"],
     )
 
     state.save_json(path)
@@ -86,3 +90,7 @@ def test_sidebar_state_round_trip_and_sanitizes_values(tmp_path) -> None:
     assert loaded.width == 240
     assert loaded.height == 240
     assert loaded.active_tab == "terminal"
+    assert loaded.minimized is True
+    assert loaded.tab_order == ["notes", "terminal"]
+    assert loaded.hidden_tabs == ["chat"]
+    assert loaded.popped_out_tabs == ["calculator"]
