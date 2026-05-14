@@ -64,6 +64,13 @@ from .file_navigation import (
 )
 from .registry import WorkspaceRegistry, WorkspaceVariable
 from .state import SidebarState
+from .state_profiles import (
+    CLEAR_SIDEKICK_DATA_CONFIRMATION,
+    CLEAR_SIDEKICK_DATA_WARNING,
+    SidekickStateProfileResult,
+    SidekickStateProfileStore,
+    validate_profile_name,
+)
 from .theme_settings import (
     SidekickFontSettings,
     SidekickThemeMode,
@@ -116,7 +123,11 @@ __all__ = [
     "SidekickThemeSettings",
     "StaticCalculatorPredictionProvider",
     "CALCULATOR_PLOT_TAB_ID",
+    "CLEAR_SIDEKICK_DATA_CONFIRMATION",
+    "CLEAR_SIDEKICK_DATA_WARNING",
     "SidekickSidebar",
+    "SidekickStateProfileResult",
+    "SidekickStateProfileStore",
     "ToolsSidebarInstallResult",
     "UnifiedToolsSidebar",
     "WorkspaceRegistry",
@@ -128,6 +139,7 @@ __all__ = [
     "resolve_sidekick_theme",
     "sidekick_qss",
     "validate_calculator_workspace_path",
+    "validate_profile_name",
 ]
 
 

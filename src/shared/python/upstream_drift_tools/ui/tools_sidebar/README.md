@@ -31,6 +31,26 @@ Call `sidebar.save_state(state_path)` during host shutdown to persist dock area,
 floating state, minimized state, dock size, active tab, tab order, hidden tabs,
 and popped-out tab ids.
 
+Named Sidekick profiles are stored below a host-provided storage root:
+
+```python
+store = SidekickStateProfileStore(storage_root)
+store.save_profile("Run 01", sidebar.snapshot_state())
+result = store.load_profile("Run 01")
+if result.ok and result.state is not None:
+    sidebar.apply_state(result.state)
+```
+
+Profile files live under `<storage_root>/profiles/<name>.json`. Profile names
+must be non-empty and path-safe. Loading a missing or malformed profile returns a
+result without mutating the current sidebar; existing `SidebarState.load_json`
+behavior remains compatible for host shutdown/startup state files.
+
+Clear operations are intentionally guarded at the service boundary. Show
+`CLEAR_SIDEKICK_DATA_WARNING` in UI code, then pass
+`CLEAR_SIDEKICK_DATA_CONFIRMATION` to `clear_data(...)` only after the user
+confirms.
+
 ## Flexible workflows
 
 Sidekick supports modern tab workflow controls:
