@@ -13,7 +13,7 @@ from .default_tabs import (
     refresh_workspace_list,
     set_project_explorer_root,
 )
-from .qt_compat import QtWidgets, Signal, all_sidebar_dock_features, dock_area
+from .qt_compat import QtCore, QtWidgets, Signal, all_sidebar_dock_features, dock_area
 from .registry import WorkspaceRegistry
 from .state import SidebarState
 
@@ -59,18 +59,27 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
         self._duplicate_counts: dict[str, int] = {}
         self._project_root = Path(project_root or Path.cwd()).expanduser().resolve()
 
-        self.toolbar = self._build_toolbar()
         self.tabs = QtWidgets.QTabWidget(self)
         self.tabs.setObjectName(theme.SIDEKICK_TABS_OBJECT_NAME)
         self.tabs.tabBar().setObjectName(theme.SIDEKICK_TAB_BAR_OBJECT_NAME)
         self.tabs.setMovable(True)
         self.tabs.currentChanged.connect(self._emit_context)
         self.tabs.tabBar().tabMoved.connect(self._sync_tab_order_from_widget)
+
+        policy_enum = getattr(QtCore.Qt, "ContextMenuPolicy", None)
+        self.tabs.tabBar().setContextMenuPolicy(
+            policy_enum.CustomContextMenu
+            if policy_enum
+            else QtCore.Qt.CustomContextMenu
+        )
+        self.tabs.tabBar().customContextMenuRequested.connect(
+            self._show_tab_context_menu
+        )
+
         self.setStyleSheet(theme.sidekick_qss(self._design_tokens))
 
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(self.toolbar)
         layout.addWidget(self.tabs)
 
         self.configure_tabs(tab_definitions or self._default_tab_definitions())
@@ -354,27 +363,49 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
         widget = definition.factory(self)
         self.add_tab(definition.tab_id, definition.title, widget)
 
-    def _build_toolbar(self) -> QtWidgets.QToolBar:
-        toolbar = QtWidgets.QToolBar("Sidekick", self)
-        toolbar.setObjectName(theme.SIDEKICK_TOOLBAR_OBJECT_NAME)
-        toolbar.setMovable(False)
-        left_action = toolbar.addAction("Left")
-        left_action.triggered.connect(lambda: self.set_dock_area("left"))
-        right_action = toolbar.addAction("Right")
-        right_action.triggered.connect(lambda: self.set_dock_area("right"))
-        toolbar.addSeparator()
-        popout_action = toolbar.addAction("Pop Out")
-        popout_action.triggered.connect(lambda: self.pop_out_tab(self.active_tab_id()))
-        duplicate_action = toolbar.addAction("Duplicate")
-        duplicate_action.triggered.connect(
-            lambda: self.duplicate_tab(self.active_tab_id())
+    def _show_tab_context_menu(self, pos: QtCore.QPoint) -> None:
+        index = self.tabs.tabBar().tabAt(pos)
+        if index < 0 or index >= len(self._tab_ids):
+            return
+
+        tab_id = self._tab_ids[index]
+        definition = self._tab_definitions.get(tab_id)
+
+        menu = QtWidgets.QMenu(self)
+
+        move_menu = menu.addMenu("Move Sidebar")
+        move_menu.addAction("Left").triggered.connect(
+            lambda: self.set_dock_area("left")
         )
-        toolbar.addSeparator()
-        minimize_action = toolbar.addAction("Minimize")
-        minimize_action.triggered.connect(
-            lambda: self.set_minimized(not self._state.minimized)
+        move_menu.addAction("Right").triggered.connect(
+            lambda: self.set_dock_area("right")
         )
-        return toolbar
+
+        menu.addSeparator()
+
+        if definition and definition.popout_enabled:
+            menu.addAction("Pop Out").triggered.connect(
+                lambda: self.pop_out_tab(tab_id)
+            )
+
+        if definition and definition.duplicate_enabled:
+            menu.addAction("Duplicate").triggered.connect(
+                lambda: self.duplicate_tab(tab_id)
+            )
+
+        menu.addSeparator()
+
+        menu.addAction("Close").triggered.connect(
+            lambda: self.set_tab_visible(tab_id, False)
+        )
+
+        menu.addSeparator()
+
+        menu.addAction("Minimize Sidebar").triggered.connect(
+            lambda: self.set_minimized(True)
+        )
+
+        menu.exec(self.tabs.tabBar().mapToGlobal(pos))
 
     def _emit_context(self) -> None:
         self.context_updated.emit(
