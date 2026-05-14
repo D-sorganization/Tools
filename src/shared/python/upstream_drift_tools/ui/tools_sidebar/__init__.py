@@ -26,6 +26,7 @@ from .design_tokens import (
     SIDEKICK_WORKSPACE_LIST_OBJECT_NAME,
     SIDEKICK_WORKSPACE_TAB_OBJECT_NAME,
     SidekickDesignTokens,
+    SidekickTerminalTheme,
     sidekick_qss,
 )
 from .registry import WorkspaceRegistry, WorkspaceVariable
@@ -52,6 +53,7 @@ __all__ = [
     "SIDEKICK_WORKSPACE_LIST_OBJECT_NAME",
     "SIDEKICK_WORKSPACE_TAB_OBJECT_NAME",
     "SidekickDesignTokens",
+    "SidekickTerminalTheme",
     "SidekickSidebar",
     "ToolsSidebarInstallResult",
     "UnifiedToolsSidebar",

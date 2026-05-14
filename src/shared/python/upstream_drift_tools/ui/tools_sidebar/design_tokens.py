@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from types import MappingProxyType
@@ -46,6 +47,23 @@ _DEFAULT_TOKEN_VALUES: dict[str, str] = {
     "font.size": "12px",
     "font.size.small": "11px",
 }
+
+_DEFAULT_TERMINAL_PALETTE: dict[str, str] = {
+    "foreground": "color.text",
+    "background": "color.surface",
+    "cursor": "color.accent",
+    "selection": "color.selection",
+    "ansi.black": "#1c2430",
+    "ansi.red": "color.danger",
+    "ansi.green": "color.success",
+    "ansi.yellow": "color.warning",
+    "ansi.blue": "color.accent",
+    "ansi.magenta": "#7c3aed",
+    "ansi.cyan": "#0891b2",
+    "ansi.white": "#f8fafc",
+}
+
+_HEX_COLOR_RE = re.compile(r"^#[0-9a-fA-F]{6}$")
 
 SIDEKICK_TOKEN_NAMES: tuple[str, ...] = tuple(_DEFAULT_TOKEN_VALUES)
 
@@ -214,6 +232,77 @@ class SidekickDesignTokens:
         return cls(_shared_theme_values(theme_name))
 
 
+@dataclass(frozen=True)
+class SidekickTerminalTheme:
+    """Terminal-scoped colors with inherited Sidekick defaults."""
+
+    mode: str = "inherit"
+    values: Mapping[str, str] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        if self.mode not in {"inherit", "custom"}:
+            raise ValueError("Terminal theme mode must be 'inherit' or 'custom'")
+        normalized = _normalize_terminal_palette(self.values)
+        object.__setattr__(self, "values", MappingProxyType(normalized))
+
+    @classmethod
+    def inherited(
+        cls,
+        tokens: SidekickDesignTokens | None = None,
+    ) -> SidekickTerminalTheme:
+        """Build terminal colors from resolved Sidekick design tokens."""
+        token_set = tokens or SIDEKICK_DESIGN_TOKENS
+        return cls(
+            values={
+                name: _resolve_terminal_color(value, token_set)
+                for name, value in _DEFAULT_TERMINAL_PALETTE.items()
+            },
+        )
+
+    @classmethod
+    def custom(
+        cls,
+        *,
+        foreground: str,
+        background: str,
+        cursor: str | None = None,
+        selection: str | None = None,
+        ansi: Mapping[str, str] | None = None,
+    ) -> SidekickTerminalTheme:
+        """Build a validated custom terminal palette."""
+        palette = {
+            "foreground": foreground,
+            "background": background,
+            "cursor": cursor or foreground,
+            "selection": selection or background,
+        }
+        if ansi:
+            palette.update({f"ansi.{name}": value for name, value in ansi.items()})
+        return cls(mode="custom", values=palette)
+
+    def __getitem__(self, name: str) -> str:
+        return self.values[name]
+
+    def qss(self, object_name: str) -> str:
+        """Return QSS scoped to one terminal widget object name."""
+        foreground = self.values["foreground"]
+        background = self.values["background"]
+        cursor = self.values["cursor"]
+        selection = self.values["selection"]
+        return f"""
+QWidget#{object_name} QPlainTextEdit {{
+    color: {foreground};
+    background: {background};
+    selection-background-color: {selection};
+    selection-color: {foreground};
+}}
+
+QWidget#{object_name} QPlainTextEdit:focus {{
+    border: 1px solid {cursor};
+}}
+""".strip()
+
+
 SIDEKICK_DESIGN_TOKENS = SidekickDesignTokens.from_shared_theme("light")
 
 
@@ -300,3 +389,23 @@ QLabel#{SIDEKICK_PLACEHOLDER_LABEL_OBJECT_NAME} {{
     padding: {value("space.4")};
 }}
 """.strip()
+
+
+def _normalize_terminal_palette(values: Mapping[str, str]) -> dict[str, str]:
+    merged = {**_DEFAULT_TERMINAL_PALETTE, **dict(values)}
+    color_keys = {"foreground", "background", "cursor", "selection"}
+    for name, value in merged.items():
+        if not (name in color_keys or name.startswith("ansi.")):
+            continue
+        color_value = str(value)
+        if color_value in SIDEKICK_TOKEN_NAMES:
+            continue
+        if not _HEX_COLOR_RE.match(color_value):
+            raise ValueError(f"Invalid terminal color for {name}: {color_value}")
+    return merged
+
+
+def _resolve_terminal_color(value: str, tokens: SidekickDesignTokens) -> str:
+    if value in SIDEKICK_TOKEN_NAMES:
+        return tokens[value]
+    return value

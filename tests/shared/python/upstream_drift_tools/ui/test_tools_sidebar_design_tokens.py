@@ -9,6 +9,7 @@ from upstream_drift_tools.ui.tools_sidebar import (
     SIDEKICK_TOKEN_NAMES,
     SIDEKICK_TOOLBAR_OBJECT_NAME,
     SidekickDesignTokens,
+    SidekickTerminalTheme,
     sidekick_qss,
 )
 
@@ -72,3 +73,48 @@ def test_sidekick_design_tokens_can_derive_from_shared_schema() -> None:
 def test_sidekick_design_tokens_reject_blank_required_values() -> None:
     with pytest.raises(ValueError, match="color.background"):
         SidekickDesignTokens({"color.background": ""})
+
+
+def test_sidekick_terminal_theme_inherits_resolved_tokens() -> None:
+    tokens = SidekickDesignTokens(
+        {
+            "color.text": "#111111",
+            "color.surface": "#222222",
+            "color.accent": "#333333",
+            "color.selection": "#444444",
+        },
+    )
+
+    terminal_theme = SidekickTerminalTheme.inherited(tokens)
+
+    assert terminal_theme.mode == "inherit"
+    assert terminal_theme["foreground"] == "#111111"
+    assert terminal_theme["background"] == "#222222"
+    assert terminal_theme["cursor"] == "#333333"
+    assert terminal_theme["selection"] == "#444444"
+    assert "QWidget#SidekickTerminalTab QPlainTextEdit" in terminal_theme.qss(
+        "SidekickTerminalTab",
+    )
+
+
+def test_sidekick_terminal_theme_accepts_custom_palette() -> None:
+    terminal_theme = SidekickTerminalTheme.custom(
+        foreground="#f8fafc",
+        background="#020617",
+        cursor="#38bdf8",
+        selection="#1e293b",
+        ansi={"red": "#ef4444"},
+    )
+
+    assert terminal_theme.mode == "custom"
+    assert terminal_theme["foreground"] == "#f8fafc"
+    assert terminal_theme["ansi.red"] == "#ef4444"
+    assert "background: #020617" in terminal_theme.qss("SidekickTerminalTab")
+
+
+def test_sidekick_terminal_theme_rejects_invalid_colors() -> None:
+    with pytest.raises(ValueError, match="foreground"):
+        SidekickTerminalTheme.custom(
+            foreground="not-a-color",
+            background="#020617",
+        )
