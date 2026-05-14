@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
 from upstream_drift_tools.ui.tools_sidebar import SidebarState, WorkspaceRegistry
 
 
@@ -43,6 +44,64 @@ def test_workspace_registry_json_round_trip(tmp_path: Path) -> None:
     assert loaded.get("values") == [1, 2, 3]
 
 
+def test_workspace_registry_matrix_metadata_and_preview() -> None:
+    registry = WorkspaceRegistry()
+
+    variable = registry.set("matrix", [[1, 2, 3], [4, 5, 6]])
+    metadata = variable.to_metadata()
+
+    assert variable.summary == "2x3"
+    assert variable.shape == (2, 3)
+    assert variable.dtype == "int"
+    assert variable.size == 6
+    assert variable.preview == "[[1, 2, 3], [4, 5, 6]]"
+    assert metadata["shape"] == [2, 3]
+    assert metadata["dtype"] == "int"
+    assert metadata["size"] == 6
+    assert metadata["preview"] == "[[1, 2, 3], [4, 5, 6]]"
+
+
+def test_workspace_registry_large_matrix_preview_is_bounded() -> None:
+    matrix = [[row * 10 + column for column in range(8)] for row in range(6)]
+    registry = WorkspaceRegistry({"large": matrix})
+
+    variable = registry.describe("large")
+
+    assert variable.summary == "6x8"
+    assert variable.shape == (6, 8)
+    assert variable.size == 48
+    assert "..." in variable.preview
+    assert len(variable.preview) <= 120
+    assert "57" not in variable.preview
+
+
+def test_workspace_registry_rejects_ragged_matrix_values() -> None:
+    registry = WorkspaceRegistry()
+
+    try:
+        registry.set("ragged", [[1, 2], [3]])
+    except ValueError as exc:
+        assert "ragged" in str(exc)
+    else:
+        raise AssertionError("ragged matrix should be rejected")
+
+
+def test_workspace_registry_numpy_array_metadata_when_available() -> None:
+    np = pytest.importorskip("numpy")
+    registry = WorkspaceRegistry({"array": np.array([[1.5, 2.5], [3.5, 4.5]])})
+
+    variable = registry.describe("array")
+    metadata = variable.to_metadata()
+
+    assert variable.shape == (2, 2)
+    assert variable.dtype == "float64"
+    assert variable.size == 4
+    assert variable.json_safe is False
+    assert metadata["shape"] == [2, 2]
+    assert metadata["dtype"] == "float64"
+    assert metadata["preview"] == "[[1.5, 2.5], [3.5, 4.5]]"
+
+
 def test_workspace_registry_non_json_repr_metadata(tmp_path: Path) -> None:
     path = tmp_path / "workspace.json"
     registry = WorkspaceRegistry()
@@ -58,6 +117,20 @@ def test_workspace_registry_non_json_repr_metadata(tmp_path: Path) -> None:
     loaded = WorkspaceRegistry.load_json(path)
     assert loaded.get("object") == "<NotJson demo>"
     assert loaded.describe("object").json_safe is False
+
+
+def test_workspace_registry_matrix_json_round_trip_preserves_metadata(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "workspace.json"
+    registry = WorkspaceRegistry({"matrix": [[1, 2], [3, 4]]})
+
+    registry.save_json(path)
+    loaded = WorkspaceRegistry.load_json(path)
+
+    assert loaded.get("matrix") == [[1, 2], [3, 4]]
+    assert loaded.describe("matrix").shape == (2, 2)
+    assert loaded.describe("matrix").preview == "[[1, 2], [3, 4]]"
 
 
 def test_workspace_registry_environment_export() -> None:

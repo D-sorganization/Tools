@@ -512,6 +512,15 @@ def test_sidekick_calculator_terminal_and_notes_runtime_flow(tmp_path: Path) -> 
     assert result.text() == "4"
     assert sidebar.registry.get("calculator_result") == "4"
 
+    expression.setText("Matrix([[1, 2], [3, 4]])")
+    evaluate.click()
+
+    matrix_result = sidebar.registry.describe("calculator_result")
+    assert result.text() == "[[1, 2], [3, 4]]"
+    assert sidebar.registry.get("calculator_result") == [[1, 2], [3, 4]]
+    assert matrix_result.shape == (2, 2)
+    assert matrix_result.size == 4
+
     assert sidebar.set_active_tab("terminal") is True
     terminal = sidebar.tabs.currentWidget()
     script = terminal.findChild(QtWidgets.QPlainTextEdit, "SidekickTerminalInput")
