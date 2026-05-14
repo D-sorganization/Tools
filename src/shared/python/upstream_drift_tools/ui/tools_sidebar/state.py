@@ -21,6 +21,8 @@ class SidebarState:
     height: int = 720
     active_tab: str = "files"
     tab_order: list[str] = field(default_factory=list)
+    default_visible_tabs: list[str] = field(default_factory=list)
+    default_hidden_tabs: list[str] = field(default_factory=list)
     hidden_tabs: list[str] = field(default_factory=list)
     popped_out_tabs: list[str] = field(default_factory=list)
     tab_display_names: dict[str, str] = field(default_factory=dict)
@@ -33,6 +35,8 @@ class SidebarState:
         if not self.active_tab:
             self.active_tab = "files"
         self.tab_order = _dedupe_strings(self.tab_order)
+        self.default_visible_tabs = _dedupe_strings(self.default_visible_tabs)
+        self.default_hidden_tabs = _dedupe_strings(self.default_hidden_tabs)
         self.hidden_tabs = _dedupe_strings(self.hidden_tabs)
         self.popped_out_tabs = _dedupe_strings(self.popped_out_tabs)
         self.tab_display_names = _string_mapping(self.tab_display_names)
@@ -54,6 +58,8 @@ class SidebarState:
             height=int(payload.get("height", 720)),
             active_tab=str(payload.get("active_tab", "files")),
             tab_order=_string_list(payload.get("tab_order")),
+            default_visible_tabs=_string_list(payload.get("default_visible_tabs")),
+            default_hidden_tabs=_string_list(payload.get("default_hidden_tabs")),
             hidden_tabs=_string_list(payload.get("hidden_tabs")),
             popped_out_tabs=_string_list(payload.get("popped_out_tabs")),
             tab_display_names=_string_mapping(payload.get("tab_display_names")),

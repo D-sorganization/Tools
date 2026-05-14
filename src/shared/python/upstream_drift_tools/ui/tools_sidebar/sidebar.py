@@ -16,6 +16,12 @@ from .default_tabs import (
 from .qt_compat import QtCore, QtWidgets, Signal, all_sidebar_dock_features, dock_area
 from .registry import WorkspaceRegistry
 from .state import SidebarState
+from .tab_visibility import (
+    initially_visible_tab_ids,
+    sanitize_tab_state,
+    with_default_tab_visibility,
+    without_default_tab_visibility,
+)
 
 
 @dataclass(frozen=True)
@@ -113,9 +119,14 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
         self._tab_definitions = {
             definition.tab_id: definition for definition in definitions
         }
+        visible_defaults = initially_visible_tab_ids(definitions, self._state)
         for definition in definitions:
-            if definition.visible:
+            if definition.tab_id in visible_defaults:
                 self._add_defined_tab(definition)
+
+    def available_tab_ids(self) -> list[str]:
+        """Return all configured tab ids, including hidden tabs."""
+        return list(self._tab_definitions)
 
     def visible_tab_ids(self) -> list[str]:
         """Return tab ids currently docked in the sidebar."""
@@ -156,6 +167,8 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
 
         if tab_id not in self._tab_ids:
             return tab_id in self._tab_definitions
+        if len(self._tab_ids) == 1:
+            return False
         index = self._tab_ids.index(tab_id)
         widget = self.tabs.widget(index)
         self.tabs.removeTab(index)
@@ -166,6 +179,25 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
             widget.deleteLater()
         self._emit_context()
         return True
+
+    def set_default_tab_visible(self, tab_id: str, visible: bool) -> bool:
+        """Persist a default visibility preference for a configured tab."""
+        candidate = with_default_tab_visibility(
+            self._state,
+            list(self._tab_definitions.values()),
+            tab_id,
+            visible,
+        )
+        if candidate is None:
+            return False
+        self._state = candidate
+        self._emit_context()
+        return True
+
+    def reset_default_tab_visibility(self) -> None:
+        """Reset persisted default visibility preferences to host defaults."""
+        self._state = without_default_tab_visibility(self._state)
+        self._emit_context()
 
     def set_minimized(self, minimized: bool) -> None:
         """Collapse or expand the sidebar without destroying tab state."""
@@ -305,6 +337,8 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
             minimized=self._state.minimized,
             tab_order=self.visible_tab_ids(),
             hidden_tabs=self.hidden_tab_ids(),
+            default_visible_tabs=self._state.default_visible_tabs,
+            default_hidden_tabs=self._state.default_hidden_tabs,
             popped_out_tabs=list(self._popout_windows),
             tab_display_names=self._state.tab_display_names,
         )
@@ -485,6 +519,8 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
         self._emit_context()
 
     def _apply_tab_state(self, state: SidebarState) -> None:
+        self._state = sanitize_tab_state(state, self._tab_definitions)
+        state = self._state
         for tab_id in list(self._tab_ids):
             if tab_id in state.hidden_tabs:
                 self.set_tab_visible(tab_id, False)

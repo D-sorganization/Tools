@@ -11,6 +11,10 @@ from .design_tokens import (
     SIDEKICK_PROJECT_EXPLORER_OBJECT_NAME,
     SIDEKICK_PROJECT_TREE_OBJECT_NAME,
 )
+from .file_navigation import (
+    CommonLocationsProvider,
+    FileNavigationController,
+)
 from .qt_compat import FileSystemModel, QtCore, QtWidgets, Signal
 
 
@@ -43,26 +47,56 @@ class ProjectFileExplorer(QtWidgets.QWidget):
         self,
         project_root: str | Path | None = None,
         default_program_launcher: DefaultProgramLauncher | None = None,
+        allow_outside_project: bool = False,
+        common_locations_provider: CommonLocationsProvider | None = None,
+        persisted_path: str | Path | None = None,
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
         super().__init__(parent)
         self.setObjectName(SIDEKICK_PROJECT_EXPLORER_OBJECT_NAME)
         self._project_root = Path.cwd()
+        self._allow_outside_project = allow_outside_project
+        self._common_locations_provider = common_locations_provider
+        self._persisted_path = persisted_path
+        self._navigation = FileNavigationController(
+            project_root or Path.cwd(),
+            allow_outside_project=allow_outside_project,
+            persisted_path=persisted_path,
+            common_locations_provider=common_locations_provider,
+        )
         self._default_program_launcher = (
             default_program_launcher or WindowsDefaultProgramLauncher()
         )
         self._model = FileSystemModel(self)
         self._model.setReadOnly(True)
+        self._back_button = QtWidgets.QPushButton("Back", self)
+        self._forward_button = QtWidgets.QPushButton("Forward", self)
+        self._up_button = QtWidgets.QPushButton("Up", self)
+        self._location_label = QtWidgets.QLabel(self)
+        self._common_locations = QtWidgets.QListWidget(self)
         self._tree = QtWidgets.QTreeView(self)
         self._tree.setObjectName(SIDEKICK_PROJECT_TREE_OBJECT_NAME)
         self._tree.setModel(self._model)
         self._tree.doubleClicked.connect(self._open_index)
         self._tree.setContextMenuPolicy(_custom_context_menu_policy())
         self._tree.customContextMenuRequested.connect(self._show_context_menu)
+        self._back_button.clicked.connect(self._go_back)
+        self._forward_button.clicked.connect(self._go_forward)
+        self._up_button.clicked.connect(self._go_up)
+        self._common_locations.itemActivated.connect(self._go_to_common_location)
 
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(self._tree)
+        nav_layout = QtWidgets.QHBoxLayout()
+        nav_layout.addWidget(self._back_button)
+        nav_layout.addWidget(self._forward_button)
+        nav_layout.addWidget(self._up_button)
+        nav_layout.addWidget(self._location_label, 1)
+        layout.addLayout(nav_layout)
+        content_layout = QtWidgets.QHBoxLayout()
+        content_layout.addWidget(self._common_locations)
+        content_layout.addWidget(self._tree, 1)
+        layout.addLayout(content_layout)
 
         self.set_project_root(project_root or Path.cwd())
 
@@ -73,20 +107,60 @@ class ProjectFileExplorer(QtWidgets.QWidget):
 
     def set_project_root(self, project_root: str | Path) -> None:
         """Scope the explorer to ``project_root``."""
-        root = Path(project_root).expanduser().resolve()
-        if not root.exists() or not root.is_dir():
-            raise ValueError(f"Project root is not a directory: {root}")
+        self._navigation = FileNavigationController(
+            project_root,
+            allow_outside_project=self._allow_outside_project,
+            persisted_path=self._persisted_path,
+            common_locations_provider=self._common_locations_provider,
+        )
+        root = self._navigation.project_root
         self._project_root = root
-        root_index = self._model.setRootPath(str(root))
-        self._tree.setRootIndex(root_index)
         self._tree.setColumnWidth(0, 240)
         for column in range(1, self._model.columnCount()):
             self._tree.hideColumn(column)
+        self._refresh_common_locations()
+        self._apply_navigation_state()
 
     def _open_index(self, index: QtCore.QModelIndex) -> None:
         path = self._path_for_index(index)
+        if path is not None and path.is_dir() and self._navigation.navigate_to(path):
+            self._apply_navigation_state()
+            return
         if path is not None and self._can_open_file(path):
             self.file_open_requested.emit(str(path))
+
+    def _go_back(self) -> None:
+        if self._navigation.back():
+            self._apply_navigation_state()
+
+    def _go_forward(self) -> None:
+        if self._navigation.forward():
+            self._apply_navigation_state()
+
+    def _go_up(self) -> None:
+        if self._navigation.up():
+            self._apply_navigation_state()
+
+    def _go_to_common_location(self, item: QtWidgets.QListWidgetItem) -> None:
+        path = item.data(_user_role())
+        if path is not None and self._navigation.navigate_to(Path(path)):
+            self._apply_navigation_state()
+
+    def _apply_navigation_state(self) -> None:
+        state = self._navigation.state()
+        root_index = self._model.setRootPath(str(state.current_path))
+        self._tree.setRootIndex(root_index)
+        self._location_label.setText(str(state.current_path))
+        self._back_button.setEnabled(state.can_go_back)
+        self._forward_button.setEnabled(state.can_go_forward)
+        self._up_button.setEnabled(state.can_go_up)
+
+    def _refresh_common_locations(self) -> None:
+        self._common_locations.clear()
+        for location in self._navigation.common_locations():
+            item = QtWidgets.QListWidgetItem(location.label)
+            item.setData(_user_role(), str(location.path))
+            self._common_locations.addItem(item)
 
     def _show_context_menu(self, pos: QtCore.QPoint) -> None:
         menu = self._context_menu_for_index(self._tree.indexAt(pos))
@@ -143,3 +217,10 @@ def _custom_context_menu_policy() -> QtCore.Qt.ContextMenuPolicy:
     if policy_type is not None:
         return policy_type.CustomContextMenu
     return QtCore.Qt.CustomContextMenu
+
+
+def _user_role() -> int:
+    item_data_role = getattr(QtCore.Qt, "ItemDataRole", None)
+    if item_data_role is not None:
+        return item_data_role.UserRole
+    return QtCore.Qt.UserRole
