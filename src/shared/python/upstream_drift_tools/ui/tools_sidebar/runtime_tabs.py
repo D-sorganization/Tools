@@ -6,12 +6,21 @@ import contextlib
 import importlib
 import io
 import logging
+import sys
 import types
 from collections.abc import Callable
+from functools import partial
 from pathlib import Path
 from typing import Any
 
 from . import design_tokens as theme
+from .calculator_assist import (
+    CalculatorPredictionProvider,
+    CalculatorPredictiveText,
+    StaticCalculatorPredictionProvider,
+    calculator_predictive_text_enabled,
+    set_calculator_predictive_text_enabled,
+)
 from .qt_compat import QT_API, QtCore, QtWidgets
 from .registry import WorkspaceRegistry
 
@@ -33,6 +42,7 @@ _RESERVED_NAMESPACE_NAMES = {
 }
 
 SetVariable = Callable[[str, Any], None]
+SetPredictiveTextEnabled = Callable[[bool], None]
 
 
 def build_chat_tab(sidebar: Any) -> QtWidgets.QWidget:
@@ -59,7 +69,13 @@ def build_terminal_tab(sidebar: Any) -> QtWidgets.QWidget:
 def build_calculator_tab(sidebar: Any) -> QtWidgets.QWidget:
     """Build an embedded symbolic calculator tab bound to workspace state."""
     return SidekickCalculatorWidget(
+        registry=sidebar.registry,
         set_variable=sidebar.set_context_variable,
+        predictive_text_enabled=calculator_predictive_text_enabled(sidebar),
+        set_predictive_text_enabled=partial(
+            set_calculator_predictive_text_enabled,
+            sidebar,
+        ),
         parent=sidebar,
     )
 
@@ -75,15 +91,28 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
     def __init__(
         self,
         *,
+        registry: WorkspaceRegistry,
         set_variable: SetVariable,
+        predictive_text_enabled: bool = False,
+        prediction_provider: CalculatorPredictionProvider | None = None,
+        set_predictive_text_enabled: SetPredictiveTextEnabled | None = None,
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
+        if registry is None:
+            raise ValueError("registry must be provided")
         if set_variable is None:
             raise ValueError("set_variable must be provided")
         super().__init__(parent)
         self.setObjectName(SIDEKICK_CALCULATOR_OBJECT_NAME)
+        self._registry = registry
         self._set_variable = set_variable
+        self._prediction_provider = (
+            prediction_provider or StaticCalculatorPredictionProvider()
+        )
+        self._set_predictive_text_enabled = set_predictive_text_enabled
+        self._predictive_text_enabled = bool(predictive_text_enabled)
         self._build_ui()
+        self.set_predictive_text_enabled(self._predictive_text_enabled)
 
     def _build_ui(self) -> None:
         layout = QtWidgets.QVBoxLayout(self)
@@ -93,19 +122,64 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
         self._input = QtWidgets.QLineEdit(self)
         self._input.setObjectName("SidekickCalculatorInput")
         self._input.setPlaceholderText("2 + 2, sin(pi/2), diff(x**2, x)")
+        self._input.setToolTip("Enter a symbolic or numeric expression.")
         self._input.returnPressed.connect(self.evaluate_expression)
+        self._input.textEdited.connect(self._refresh_predictive_suggestions)
         layout.addWidget(self._input)
+
+        self._completer_model = QtCore.QStringListModel(self)
+        self._completer = QtWidgets.QCompleter(self._completer_model, self)
+        self._completer.setCaseSensitivity(_case_insensitive_flag())
+        self._input.setCompleter(self._completer)
+
+        self._predictive_toggle = QtWidgets.QCheckBox("Predictive text", self)
+        self._predictive_toggle.setObjectName("SidekickCalculatorPredictiveText")
+        self._predictive_toggle.setToolTip(
+            "Show suggestions from calculator commands, Workspace, "
+            "and loaded dependencies."
+        )
+        self._predictive_toggle.toggled.connect(self.set_predictive_text_enabled)
+        layout.addWidget(self._predictive_toggle)
 
         self._run_button = QtWidgets.QPushButton("Evaluate", self)
         self._run_button.setObjectName("SidekickCalculatorRun")
+        self._run_button.setToolTip("Evaluate the current calculator expression.")
         self._run_button.clicked.connect(self.evaluate_expression)
         layout.addWidget(self._run_button)
 
         self._result = QtWidgets.QLabel("", self)
         self._result.setObjectName("SidekickCalculatorResult")
         self._result.setWordWrap(True)
+        self._result.setToolTip("Displays the latest calculator result or error.")
         layout.addWidget(self._result)
         layout.addStretch(1)
+
+    @property
+    def predictive_text_enabled(self) -> bool:
+        """Return whether predictive text is active for this widget."""
+        return self._predictive_text_enabled
+
+    def set_predictive_text_enabled(self, enabled: bool) -> None:
+        """Toggle predictive text without evaluating calculator input."""
+        self._predictive_text_enabled = bool(enabled)
+        if self._predictive_toggle.isChecked() != self._predictive_text_enabled:
+            self._predictive_toggle.setChecked(self._predictive_text_enabled)
+        if self._set_predictive_text_enabled is not None:
+            self._set_predictive_text_enabled(self._predictive_text_enabled)
+        self._refresh_predictive_suggestions(self._input.text())
+
+    def suggestions_for(self, prefix: str) -> tuple[str, ...]:
+        """Return prediction labels for tests and host integrations."""
+        predictive = CalculatorPredictiveText(
+            enabled=self._predictive_text_enabled,
+            provider=self._prediction_provider,
+        )
+        suggestions = predictive.suggest(
+            prefix,
+            workspace_variables=self._registry.variables(),
+            loaded_dependencies=_loaded_scientific_dependencies(),
+        )
+        return tuple(suggestion.label for suggestion in suggestions)
 
     def evaluate_expression(self) -> None:
         """Evaluate the current expression and publish the result."""
@@ -124,6 +198,9 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
         text = str(result.result)
         self._result.setText(text)
         self._set_variable(_CALCULATOR_RESULT_NAME, text)
+
+    def _refresh_predictive_suggestions(self, prefix: str) -> None:
+        self._completer_model.setStringList(list(self.suggestions_for(prefix)))
 
 
 class SidekickTerminalWidget(QtWidgets.QWidget):
@@ -332,6 +409,13 @@ def _disable_dock_chrome(dock: Any) -> None:
     dock.setFeatures(QtWidgets.QDockWidget.NoDockWidgetFeatures)
 
 
+def _case_insensitive_flag() -> Any:
+    case_sensitivity = getattr(QtCore.Qt, "CaseSensitivity", None)
+    if case_sensitivity is not None:
+        return case_sensitivity.CaseInsensitive
+    return QtCore.Qt.CaseInsensitive
+
+
 def _calculator() -> Any:
     from web_applications.calculator.calculator import TI89Calculator
 
@@ -354,6 +438,14 @@ def _preload_scientific_namespace(namespace: dict[str, Any]) -> None:
             module = importlib.import_module(module_name)
             namespace[alias] = module
             namespace[module_name] = module
+
+
+def _loaded_scientific_dependencies() -> tuple[str, ...]:
+    return tuple(
+        module_name
+        for module_name in ("numpy", "pandas", "scipy")
+        if module_name in sys.modules
+    )
 
 
 def _exportable_values(namespace: dict[str, Any]) -> dict[str, Any]:

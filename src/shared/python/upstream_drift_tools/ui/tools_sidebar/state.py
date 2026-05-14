@@ -26,6 +26,7 @@ class SidebarState:
     hidden_tabs: list[str] = field(default_factory=list)
     popped_out_tabs: list[str] = field(default_factory=list)
     tab_display_names: dict[str, str] = field(default_factory=dict)
+    calculator_predictive_text_enabled: bool = False
 
     def __post_init__(self) -> None:
         if self.dock_area not in VALID_DOCK_AREAS:
@@ -63,6 +64,9 @@ class SidebarState:
             hidden_tabs=_string_list(payload.get("hidden_tabs")),
             popped_out_tabs=_string_list(payload.get("popped_out_tabs")),
             tab_display_names=_string_mapping(payload.get("tab_display_names")),
+            calculator_predictive_text_enabled=bool(
+                payload.get("calculator_predictive_text_enabled", False)
+            ),
         )
 
     def save_json(self, path: str | Path) -> None:

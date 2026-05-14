@@ -187,6 +187,10 @@ def test_tools_sidebar_widget_contract_when_qt_available(tmp_path: Path) -> None
     assert sidebar.active_tab_id() == "files"
     assert "rotation_converter" not in sidebar.visible_tab_ids()
     assert "rotation_converter" in sidebar.hidden_tab_ids()
+    calculator_definition = sidebar._tab_definitions["calculator"]
+    assert calculator_definition.help_metadata["title"] == "Calculator"
+    assert "solve(x**2 - 4, x)" in calculator_definition.help_metadata["examples"]
+    assert "Workspace" in calculator_definition.help_metadata["tips"]
     rotation_definition = sidebar._tab_definitions["rotation_converter"]
     assert rotation_definition.visible is False
     assert rotation_definition.duplicate_enabled is True
@@ -472,11 +476,29 @@ def test_sidekick_calculator_terminal_and_notes_runtime_flow(tmp_path: Path) -> 
     assert sidebar.set_active_tab("calculator") is True
     calculator = sidebar.tabs.currentWidget()
     expression = calculator.findChild(QtWidgets.QLineEdit, "SidekickCalculatorInput")
+    predictive = calculator.findChild(
+        QtWidgets.QCheckBox,
+        "SidekickCalculatorPredictiveText",
+    )
     evaluate = calculator.findChild(QtWidgets.QPushButton, "SidekickCalculatorRun")
     result = calculator.findChild(QtWidgets.QLabel, "SidekickCalculatorResult")
     assert expression is not None
+    assert predictive is not None
     assert evaluate is not None
     assert result is not None
+    for widget in (expression, predictive, evaluate, result):
+        assert widget.toolTip()
+
+    assert calculator.predictive_text_enabled is False
+    assert calculator.suggestions_for("sol") == ()
+    predictive.setChecked(True)
+    assert sidebar.snapshot_state().calculator_predictive_text_enabled is True
+    assert "solve(" in calculator.suggestions_for("sol")
+    sidebar.set_context_variable("solution_rate", 3.14)
+    assert "solution_rate" in calculator.suggestions_for("sol")
+    predictive.setChecked(False)
+    assert sidebar.snapshot_state().calculator_predictive_text_enabled is False
+    assert calculator.suggestions_for("sol") == ()
 
     expression.setText("2 + 2")
     evaluate.click()
@@ -517,3 +539,34 @@ def test_sidekick_calculator_terminal_and_notes_runtime_flow(tmp_path: Path) -> 
     )
     assert reloaded_editor is not None
     assert reloaded_editor.toPlainText() == "persistent note"
+
+
+def test_sidekick_calculator_predictive_preference_survives_state_round_trip(
+    tmp_path: Path,
+) -> None:
+    try:
+        from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
+    except ImportError:
+        pytest.skip("Qt widgets unavailable")
+
+    from upstream_drift_tools.ui.tools_sidebar import SidebarState, UnifiedToolsSidebar
+
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    _ = app
+    state_path = tmp_path / "sidekick-state.json"
+    SidebarState(calculator_predictive_text_enabled=True).save_json(state_path)
+
+    state = SidebarState.load_json(state_path)
+    sidebar = UnifiedToolsSidebar(project_root=tmp_path, state=state)
+
+    assert sidebar.set_active_tab("calculator") is True
+    calculator = sidebar.tabs.currentWidget()
+    predictive = calculator.findChild(
+        QtWidgets.QCheckBox,
+        "SidekickCalculatorPredictiveText",
+    )
+
+    assert predictive is not None
+    assert predictive.isChecked() is True
+    assert sidebar.snapshot_state().calculator_predictive_text_enabled is True
+    assert "solve(" in calculator.suggestions_for("sol")

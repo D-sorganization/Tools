@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from . import design_tokens as theme
+from .calculator_assist import CALCULATOR_HELP
 from .project_file_explorer import ProjectFileExplorer
 from .qt_compat import QT_API, QtWidgets
 from .runtime_tabs import (
@@ -49,6 +50,7 @@ def build_default_tab_definitions(
             "Calculator",
             build_calculator_tab,
             duplicate_enabled=True,
+            help_metadata=CALCULATOR_HELP.to_metadata(),
         ),
         tab_definition(
             "units",
