@@ -4,6 +4,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from .design_tokens import (
+    SIDEKICK_PROJECT_EXPLORER_OBJECT_NAME,
+    SIDEKICK_PROJECT_TREE_OBJECT_NAME,
+)
 from .qt_compat import FileSystemModel, QtCore, QtWidgets, Signal
 
 
@@ -18,10 +22,12 @@ class ProjectFileExplorer(QtWidgets.QWidget):
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
         super().__init__(parent)
+        self.setObjectName(SIDEKICK_PROJECT_EXPLORER_OBJECT_NAME)
         self._project_root = Path.cwd()
         self._model = FileSystemModel(self)
         self._model.setReadOnly(True)
         self._tree = QtWidgets.QTreeView(self)
+        self._tree.setObjectName(SIDEKICK_PROJECT_TREE_OBJECT_NAME)
         self._tree.setModel(self._model)
         self._tree.doubleClicked.connect(self._open_index)
 
