@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.165                                    |
+| **Spec Version**        | 1.1.166                                    |
 | **Last Spec Update**    | 2026-05-14                                 |
 
 ## 2. Purpose & Mission
@@ -93,8 +93,14 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Sidekick sidebar configuration extends the shared sidebar with persisted
   left/right docking, minimized state, tab order, hidden tabs, popped-out tab
   tracking, duplicate tab instances, and host-provided tab definitions
+- Sidekick tab bars expose per-tab context menus for left/right dock moves,
+  pop-out, duplicate, close, and sidebar minimization actions without relying
+  on a separate toolbar
 - Sidekick design tokens provide reusable QSS and CSS-variable mappings, with
   stable Qt object names/selectors for downstream host styling
+- Shared Qt theme stylesheets use relative control typography and minimum tab
+  widths so application-level zoom scales shared sidebar and launcher text more
+  consistently
 - Sidekick web/Tauri styling aliases expose the same `--sidekick-*` token names
   as the PyQt sidebar contract, mapped onto the shared `--theme-*` variables
 - Shared TypeScript theme helpers generate and apply dynamic `--sidekick-*`
