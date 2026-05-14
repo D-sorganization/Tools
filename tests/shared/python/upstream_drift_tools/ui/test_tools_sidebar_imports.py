@@ -254,4 +254,10 @@ def test_tools_sidebar_widget_contract_when_qt_available(tmp_path: Path) -> None
     )
     assert installed_theme.sidebar is not None
     assert "#1a1d23" in installed_theme.sidebar.styleSheet()
+
+    themed.set_theme("light")
+    assert "#ffffff" in themed.styleSheet()
+    assert "#212529" in themed.styleSheet()
+    themed.set_design_tokens(SidekickDesignTokens({"color.background": "#123456"}))
+    assert "#123456" in themed.styleSheet()
     assert custom.duplicate_tab("scratch") == "scratch#1"
