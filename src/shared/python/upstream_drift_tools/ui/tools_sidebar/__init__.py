@@ -27,7 +27,9 @@ from .calculator_startup import (
 )
 from .calculator_workspace import (
     CALCULATOR_WORKSPACE_SCOPE,
+    GLOBAL_WORKSPACE_SCOPE,
     CalculatorWorkspaceController,
+    CalculatorWorkspaceFacade,
     CalculatorWorkspaceLoadResult,
     CalculatorWorkspaceSettings,
     validate_calculator_workspace_path,
@@ -78,6 +80,7 @@ __all__ = [
     "DEFAULT_COMMAND_HISTORY_LIMIT",
     "CALCULATOR_HELP",
     "CALCULATOR_WORKSPACE_SCOPE",
+    "GLOBAL_WORKSPACE_SCOPE",
     "CalculatorStartupConfig",
     "CalculatorStartupImport",
     "CalculatorStartupResult",
@@ -87,6 +90,7 @@ __all__ = [
     "CalculatorPlotSource",
     "CalculatorPlotTabConfig",
     "CalculatorWorkspaceController",
+    "CalculatorWorkspaceFacade",
     "CalculatorWorkspaceLoadResult",
     "CalculatorWorkspaceSettings",
     "CommandHistoryController",

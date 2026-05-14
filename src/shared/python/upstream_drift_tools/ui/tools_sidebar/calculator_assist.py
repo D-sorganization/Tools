@@ -39,8 +39,8 @@ class CalculatorHelpTopic:
 CALCULATOR_HELP = CalculatorHelpTopic(
     title="Calculator",
     summary=(
-        "Evaluate symbolic and numeric expressions, publish the last result to "
-        "Workspace, and reuse workspace variables in adjacent Sidekick tools."
+        "Evaluate symbolic and numeric expressions, keep the last result in "
+        "the calculator-local workspace, and reuse Sidekick workspace variables."
     ),
     examples=(
         "2 + 2",
@@ -52,7 +52,7 @@ CALCULATOR_HELP = CalculatorHelpTopic(
     ),
     tips=(
         "Use assignments such as a = 12 to keep intermediate values available.",
-        "The latest result is exported as calculator_result in Workspace.",
+        "The latest result is stored as calculator_result in the local Workspace.",
         "Arrays and matrices can be built with Matrix([[1, 2], [3, 4]]).",
         "Plotting expressions should stay explicit, for example plot(sin(x)).",
         "Use solve(expression, symbol) for symbolic solving.",

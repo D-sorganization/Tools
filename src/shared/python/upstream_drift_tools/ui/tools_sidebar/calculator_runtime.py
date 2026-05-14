@@ -18,6 +18,7 @@ from .calculator_startup import (
 )
 from .calculator_workspace import (
     CalculatorWorkspaceActions,
+    CalculatorWorkspaceFacade,
     build_calculator_workspace_controls,
     default_calculator_workspace_controller,
     evaluate_calculator_expression,
@@ -57,6 +58,10 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
         self.setObjectName(SIDEKICK_CALCULATOR_OBJECT_NAME)
         self._workspace_registry = registry
         self._registry = local_registry or WorkspaceRegistry()
+        self._workspace = CalculatorWorkspaceFacade(
+            local_registry=self._registry,
+            global_registry=self._workspace_registry,
+        )
         self._set_variable = set_variable
         self._prediction_provider = (
             prediction_provider or StaticCalculatorPredictionProvider()
@@ -152,10 +157,7 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
         )
         suggestions = predictive.suggest(
             prefix,
-            workspace_variables=[
-                *self._registry.variables(),
-                *self._workspace_registry.variables(),
-            ],
+            workspace_variables=self._workspace.variables(include_global=True),
             loaded_dependencies=self.loaded_startup_dependencies(),
         )
         return tuple(suggestion.label for suggestion in suggestions)
@@ -182,8 +184,7 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
             return
 
         self._result.setText(text)
-        self._registry.set(_CALCULATOR_RESULT_NAME, workspace_value)
-        self._set_variable(_CALCULATOR_RESULT_NAME, workspace_value)
+        self._workspace.set_local(_CALCULATOR_RESULT_NAME, workspace_value)
 
     def _refresh_predictive_suggestions(self, prefix: str) -> None:
         self._completer_model.setStringList(list(self.suggestions_for(prefix)))

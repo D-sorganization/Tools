@@ -15,6 +15,7 @@ from .registry import (
 
 CALCULATOR_WORKSPACE_FORMAT_VERSION = 1
 CALCULATOR_WORKSPACE_SCOPE = "calculator"
+GLOBAL_WORKSPACE_SCOPE = "global"
 
 
 @dataclass(frozen=True)
@@ -43,6 +44,100 @@ class CalculatorWorkspaceLoadResult:
             return "Loaded 0 variables."
         names = ", ".join(variable.name for variable in self.variables)
         return f"Loaded {len(self.variables)} variables: {names}"
+
+
+class CalculatorWorkspaceFacade:
+    """Calculator-local view over a shared global Sidekick workspace."""
+
+    def __init__(
+        self,
+        *,
+        local_registry: WorkspaceRegistry,
+        global_registry: WorkspaceRegistry,
+        calculator_scope_id: str = CALCULATOR_WORKSPACE_SCOPE,
+    ) -> None:
+        if local_registry is None:
+            raise ValueError("local_registry must be provided")
+        if global_registry is None:
+            raise ValueError("global_registry must be provided")
+        _validate_scope_id(calculator_scope_id)
+        self._local_registry = local_registry
+        self._global_registry = global_registry
+        self._calculator_scope_id = calculator_scope_id
+
+    @property
+    def calculator_scope_id(self) -> str:
+        """Return the stable calculator-local workspace scope id."""
+        return self._calculator_scope_id
+
+    def set_local(self, name: str, value: Any) -> WorkspaceVariable:
+        """Set a calculator-local value without mutating global Sidekick state."""
+        return self._local_registry.set(name, value)
+
+    def get(
+        self,
+        name: str,
+        default: Any = None,
+        *,
+        include_global: bool = False,
+    ) -> Any:
+        """Return a local value, optionally falling back to global Sidekick state."""
+        local_missing = object()
+        value = self._local_registry.get(name, local_missing)
+        if value is not local_missing:
+            return value
+        if include_global:
+            return self._global_registry.get(name, default)
+        return default
+
+    def remove_local(self, name: str) -> bool:
+        """Remove only the calculator-local value."""
+        return self._local_registry.remove(name)
+
+    def variables(
+        self,
+        *,
+        include_global: bool = False,
+    ) -> tuple[WorkspaceVariable, ...]:
+        """Return visible variables with local values shadowing global names."""
+        variables = {
+            variable.name: variable for variable in self._local_registry.variables()
+        }
+        if include_global:
+            for variable in self._global_registry.variables():
+                variables.setdefault(variable.name, variable)
+        return tuple(variables[name] for name in sorted(variables))
+
+    def export_variables(self, *, include_global: bool = True) -> dict[str, Any]:
+        """Return execution variables with local names shadowing global names."""
+        exported: dict[str, Any] = {}
+        if include_global:
+            exported.update(
+                {
+                    name: self._global_registry.get(name)
+                    for name in self._global_registry.list_names()
+                }
+            )
+        exported.update(
+            {
+                name: self._local_registry.get(name)
+                for name in self._local_registry.list_names()
+            }
+        )
+        return exported
+
+    def promote_to_global(
+        self,
+        name: str,
+        *,
+        overwrite: bool = False,
+    ) -> WorkspaceVariable:
+        """Copy a local value into the global workspace with explicit overwrite."""
+        if name not in self._local_registry.list_names():
+            raise KeyError(name)
+        if not overwrite and name in self._global_registry.list_names():
+            raise FileExistsError(f"global workspace variable already exists: {name}")
+        return self._global_registry.set(name, self._local_registry.get(name))
 
 
 class CalculatorWorkspaceController:
@@ -221,6 +316,11 @@ def validate_calculator_workspace_path(path: str | Path) -> Path:
     if candidate.suffix.lower() != ".json":
         raise ValueError("calculator workspace files must use a .json suffix")
     return candidate
+
+
+def _validate_scope_id(scope_id: str) -> None:
+    if not isinstance(scope_id, str) or not scope_id.strip():
+        raise ValueError("workspace scope id must be a non-empty string")
 
 
 def _registry_from_payload(path: Path) -> WorkspaceRegistry:
