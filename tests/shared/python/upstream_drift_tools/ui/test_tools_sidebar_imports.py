@@ -242,4 +242,16 @@ def test_tools_sidebar_widget_contract_when_qt_available(tmp_path: Path) -> None
     )
     assert installed.sidebar is not None
     assert "#0f172a" in installed.sidebar.styleSheet()
+
+    themed = create_tools_sidebar(project_root=tmp_path, theme_name="dark")
+    assert "#1a1d23" in themed.styleSheet()
+    assert "#e1e4e8" in themed.styleSheet()
+
+    installed_theme = install_tools_sidebar(
+        host,
+        project_root=tmp_path,
+        theme_name="dark",
+    )
+    assert installed_theme.sidebar is not None
+    assert "#1a1d23" in installed_theme.sidebar.styleSheet()
     assert custom.duplicate_tab("scratch") == "scratch#1"

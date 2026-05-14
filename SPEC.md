@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.158                                    |
+| **Spec Version**        | 1.1.159                                    |
 | **Last Spec Update**    | 2026-05-14                                 |
 
 ## 2. Purpose & Mission
@@ -96,6 +96,9 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   as the PyQt sidebar contract, mapped onto the shared `--theme-*` variables
 - Shared TypeScript theme helpers generate and apply dynamic `--sidekick-*`
   variables from the same canonical theme definitions used by React/Tauri hosts
+- Sidekick host factory/install helpers accept shared theme names and resolve
+  them through the canonical design-token bridge when explicit token overrides
+  are not supplied
 - Data-driven shared chat terminal-provider descriptors for Claude Code, Codex,
   Cline CLI, and Gemini CLI, including probe command metadata with diagnostic
   redaction helpers
@@ -554,6 +557,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-14 | 1.1.159 | Added shared-theme-name resolution to the Sidekick host factory/install helpers so PyQt hosts can opt into canonical theme definitions without hand-building design tokens.                                                                                                                                                                                                                                                                                                                            |
 | 2026-05-14 | 1.1.156 | Added shared PyQt6 responsive sizing and application zoom utilities for issue #2647. The theme package now exposes text-aware minimum width helpers, readable form-layout configuration, scroll-area wrapping, a persisted application zoom event filter for Ctrl+wheel/Ctrl+plus/Ctrl+minus/Ctrl+0, and scaled UI tokens for downstream QSS/layout regeneration; package discovery now includes the `shared*` namespace so these fleet imports ship with `ud-tools`.                                      |
 | 2026-05-14 | 1.1.155 | Added the canonical Sidekick design-token bridge with pure-Python token exports, CSS-variable and QSS mapping helpers, stable Qt object names/selectors, default shared sidebar styling, and focused tests for token contract and backend import safety.                                                                                                                                                                                                                                                                                                             |
 | 2026-05-13 | 1.1.154 | Expanded the shared sidebar into the Sidekick toolkit with configurable tab definitions, persisted left/right dock placement, minimized state, tab ordering, hidden tabs, popped-out tab tracking, redock and duplicate-tab APIs, and tests for flexible host workflows while preserving the existing `install_tools_sidebar` contract.                                                                                                                                                                                                                                  |
