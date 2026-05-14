@@ -103,7 +103,7 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
             raise ValueError(f"Duplicate sidebar tab id: {tab_id}")
         self._tab_ids.append(tab_id)
         self._tab_widgets[tab_id] = widget
-        self.tabs.addTab(widget, title)
+        self.tabs.addTab(widget, self._tab_display_name(tab_id, title))
 
     def configure_tabs(self, definitions: list[SidebarTabDefinition]) -> None:
         """Configure the available tab set for this Sidekick instance."""
@@ -209,7 +209,7 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
 
         window = QtWidgets.QMainWindow(self)
         window.setObjectName(f"SidekickPopout_{tab_id}")
-        window.setWindowTitle(f"Sidekick - {definition.title}")
+        window.setWindowTitle(f"Sidekick - {self.tab_display_name(tab_id)}")
         window.setCentralWidget(widget)
         window.resize(max(self._state.width, 360), max(self._state.height, 360))
         window.closeEvent = self._redock_close_event(tab_id, window)
@@ -226,10 +226,9 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
         widget = window.centralWidget()
         window.setCentralWidget(None)
         window.hide()
-        definition = self._tab_definitions[tab_id]
         self._tab_ids.append(tab_id)
         self._tab_widgets[tab_id] = widget
-        self.tabs.addTab(widget, definition.title)
+        self.tabs.addTab(widget, self.tab_display_name(tab_id))
         self.set_active_tab(tab_id)
         self._sync_tab_order_from_widget()
         self._emit_context()
@@ -307,6 +306,7 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
             tab_order=self.visible_tab_ids(),
             hidden_tabs=self.hidden_tab_ids(),
             popped_out_tabs=list(self._popout_windows),
+            tab_display_names=self._state.tab_display_names,
         )
 
     def save_state(self, path: str | Path) -> SidebarState:
@@ -317,6 +317,11 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
 
     def apply_state(self, state: SidebarState) -> None:
         self._state = state
+        self._state.tab_display_names = {
+            tab_id: display_name
+            for tab_id, display_name in state.tab_display_names.items()
+            if tab_id in self._tab_definitions
+        }
         self.resize(state.width, state.height)
         self._apply_tab_state(state)
         self.set_minimized(state.minimized)
@@ -336,6 +341,36 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
             return False
         self.tabs.setCurrentIndex(self._tab_ids.index(tab_id))
         return True
+
+    def tab_display_name(self, tab_id: str) -> str:
+        """Return the user-facing name for ``tab_id``."""
+        definition = self._tab_definitions.get(tab_id)
+        if definition is None:
+            raise KeyError(tab_id)
+        return self._tab_display_name(tab_id, definition.title)
+
+    def rename_tab(self, tab_id: str, title: str) -> None:
+        """Persist a custom display name and refresh any visible tab label."""
+        definition = self._tab_definitions.get(tab_id)
+        if definition is None:
+            raise KeyError(tab_id)
+        normalized = title.strip()
+        if not normalized:
+            raise ValueError("Sidekick tab display name must be non-empty")
+        if normalized == definition.title:
+            self._state.tab_display_names.pop(tab_id, None)
+        else:
+            self._state.tab_display_names[tab_id] = normalized
+        self._refresh_tab_display_name(tab_id)
+        self._emit_context()
+
+    def reset_tab_display_name(self, tab_id: str) -> None:
+        """Restore the default display name for ``tab_id``."""
+        if tab_id not in self._tab_definitions:
+            raise KeyError(tab_id)
+        self._state.tab_display_names.pop(tab_id, None)
+        self._refresh_tab_display_name(tab_id)
+        self._emit_context()
 
     def set_context_variable(self, name: str, value: Any) -> None:
         self.registry.set(name, value)
@@ -394,6 +429,13 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
                 lambda: self.duplicate_tab(tab_id)
             )
 
+        rename_action = menu.addAction("Rename")
+        rename_action.triggered.connect(lambda: self._prompt_rename_tab(tab_id))
+        if tab_id in self._state.tab_display_names:
+            menu.addAction("Reset Name").triggered.connect(
+                lambda: self.reset_tab_display_name(tab_id)
+            )
+
         menu.addSeparator()
 
         menu.addAction("Close").triggered.connect(
@@ -418,6 +460,7 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
                 "visible_tabs": self.visible_tab_ids(),
                 "hidden_tabs": self.hidden_tab_ids(),
                 "popped_out_tabs": list(self._popout_windows),
+                "tab_display_names": dict(self._state.tab_display_names),
                 "tab_help": {
                     tab_id: dict(definition.help_metadata)
                     for tab_id, definition in self._tab_definitions.items()
@@ -450,6 +493,32 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
                 self.set_tab_visible(tab_id, True)
         for index, tab_id in enumerate(state.tab_order):
             self.move_tab(tab_id, index)
+        for tab_id in self._tab_definitions:
+            self._refresh_tab_display_name(tab_id)
+
+    def _tab_display_name(self, tab_id: str, default_title: str) -> str:
+        return self._state.tab_display_names.get(tab_id, default_title)
+
+    def _refresh_tab_display_name(self, tab_id: str) -> None:
+        definition = self._tab_definitions.get(tab_id)
+        if definition is None:
+            return
+        display_name = self._tab_display_name(tab_id, definition.title)
+        if tab_id in self._tab_ids:
+            self.tabs.setTabText(self._tab_ids.index(tab_id), display_name)
+        popout = self._popout_windows.get(tab_id)
+        if popout is not None:
+            popout.setWindowTitle(f"Sidekick - {display_name}")
+
+    def _prompt_rename_tab(self, tab_id: str) -> None:
+        title, accepted = QtWidgets.QInputDialog.getText(
+            self,
+            "Rename Tab",
+            "Tab name:",
+            text=self.tab_display_name(tab_id),
+        )
+        if accepted:
+            self.rename_tab(tab_id, title)
 
     def _redock_close_event(
         self,

@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.167                                    |
+| **Spec Version**        | 1.1.168                                    |
 | **Last Spec Update**    | 2026-05-14                                 |
 
 ## 2. Purpose & Mission
@@ -96,6 +96,9 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Sidekick tab bars expose per-tab context menus for left/right dock moves,
   pop-out, duplicate, close, and sidebar minimization actions without relying
   on a separate toolbar
+- Sidekick tab display names can be customized per stable tab id, persisted in
+  sidebar state, reset to defaults, and resolved consistently for docked tab
+  labels and pop-out window titles
 - Sidekick design tokens provide reusable QSS and CSS-variable mappings, with
   stable Qt object names/selectors for downstream host styling
 - Shared Qt theme stylesheets use relative control typography and minimum tab

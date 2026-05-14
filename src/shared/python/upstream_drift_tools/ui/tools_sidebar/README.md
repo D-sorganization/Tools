@@ -42,6 +42,13 @@ Sidekick supports modern tab workflow controls:
 - pop a tab into its own window with `pop_out_tab(...)`
 - redock popped-out tabs with `redock_tab(...)`
 - duplicate tabs that opt in through `SidebarTabDefinition.duplicate_enabled`
+- rename tabs with `rename_tab(...)` and restore defaults with
+  `reset_tab_display_name(...)`
+
+Sidekick keeps stable tab ids separate from user-facing display names. Host
+applications should persist and route by `tab_id`; custom names are presentation
+metadata stored under `SidebarState.tab_display_names` and resolved by the
+sidebar before updating `QTabWidget` labels or pop-out window titles.
 
 Hosts can pass `tab_definitions=[...]` to `UnifiedToolsSidebar`,
 `create_tools_sidebar`, or `install_tools_sidebar` to choose which utilities are

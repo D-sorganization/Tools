@@ -81,6 +81,7 @@ def test_sidebar_state_round_trip_and_sanitizes_values(tmp_path: Path) -> None:
         tab_order=["notes", "terminal", "notes", ""],
         hidden_tabs=["chat", "chat"],
         popped_out_tabs=["calculator"],
+        tab_display_names={" notes ": " Project notes ", "terminal": "  "},
     )
 
     state.save_json(path)
@@ -95,3 +96,24 @@ def test_sidebar_state_round_trip_and_sanitizes_values(tmp_path: Path) -> None:
     assert loaded.tab_order == ["notes", "terminal"]
     assert loaded.hidden_tabs == ["chat"]
     assert loaded.popped_out_tabs == ["calculator"]
+    assert loaded.tab_display_names == {"notes": "Project notes"}
+
+
+def test_sidebar_state_sanitizes_malformed_custom_tab_names() -> None:
+    loaded = SidebarState.from_dict(
+        {
+            "tab_display_names": {
+                "files": " Project files ",
+                "blank": "",
+                "  ": "Missing id",
+            }
+        }
+    )
+
+    assert loaded.tab_display_names == {"files": "Project files"}
+
+
+def test_sidebar_state_rejects_non_mapping_custom_tab_names() -> None:
+    loaded = SidebarState.from_dict({"tab_display_names": ["files"]})
+
+    assert loaded.tab_display_names == {}
