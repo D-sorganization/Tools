@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -16,9 +16,13 @@ class SidebarState:
 
     dock_area: str = "right"
     floating: bool = False
+    minimized: bool = False
     width: int = 360
     height: int = 720
     active_tab: str = "files"
+    tab_order: list[str] = field(default_factory=list)
+    hidden_tabs: list[str] = field(default_factory=list)
+    popped_out_tabs: list[str] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         if self.dock_area not in VALID_DOCK_AREAS:
@@ -27,6 +31,9 @@ class SidebarState:
         self.height = max(240, int(self.height))
         if not self.active_tab:
             self.active_tab = "files"
+        self.tab_order = _dedupe_strings(self.tab_order)
+        self.hidden_tabs = _dedupe_strings(self.hidden_tabs)
+        self.popped_out_tabs = _dedupe_strings(self.popped_out_tabs)
 
     def to_dict(self) -> dict[str, Any]:
         """Return a JSON-safe representation."""
@@ -40,9 +47,13 @@ class SidebarState:
         return cls(
             dock_area=str(payload.get("dock_area", "right")),
             floating=bool(payload.get("floating", False)),
+            minimized=bool(payload.get("minimized", False)),
             width=int(payload.get("width", 360)),
             height=int(payload.get("height", 720)),
             active_tab=str(payload.get("active_tab", "files")),
+            tab_order=_string_list(payload.get("tab_order")),
+            hidden_tabs=_string_list(payload.get("hidden_tabs")),
+            popped_out_tabs=_string_list(payload.get("popped_out_tabs")),
         )
 
     def save_json(self, path: str | Path) -> None:
@@ -58,3 +69,21 @@ class SidebarState:
         if not source.exists():
             return cls()
         return cls.from_dict(json.loads(source.read_text(encoding="utf-8")))
+
+
+def _string_list(value: Any) -> list[str]:
+    if not isinstance(value, list):
+        return []
+    return [str(item) for item in value if str(item)]
+
+
+def _dedupe_strings(value: list[str] | None) -> list[str]:
+    if not value:
+        return []
+    seen: set[str] = set()
+    result: list[str] = []
+    for item in value:
+        if item and item not in seen:
+            result.append(item)
+            seen.add(item)
+    return result

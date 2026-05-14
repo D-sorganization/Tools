@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 from upstream_drift_tools.ui.tools_sidebar import SidebarState, WorkspaceRegistry
 
@@ -31,7 +32,7 @@ def test_workspace_registry_crud_and_summaries() -> None:
     assert registry.list() == []
 
 
-def test_workspace_registry_json_round_trip(tmp_path) -> None:
+def test_workspace_registry_json_round_trip(tmp_path: Path) -> None:
     path = tmp_path / "workspace.json"
     registry = WorkspaceRegistry({"name": "case-a", "values": [1, 2, 3]})
 
@@ -42,7 +43,7 @@ def test_workspace_registry_json_round_trip(tmp_path) -> None:
     assert loaded.get("values") == [1, 2, 3]
 
 
-def test_workspace_registry_non_json_repr_metadata(tmp_path) -> None:
+def test_workspace_registry_non_json_repr_metadata(tmp_path: Path) -> None:
     path = tmp_path / "workspace.json"
     registry = WorkspaceRegistry()
     registry.set("object", NotJson())
@@ -68,14 +69,18 @@ def test_workspace_registry_environment_export() -> None:
     assert exported["TEST_ITEMS"] == '["a", "b"]'
 
 
-def test_sidebar_state_round_trip_and_sanitizes_values(tmp_path) -> None:
+def test_sidebar_state_round_trip_and_sanitizes_values(tmp_path: Path) -> None:
     path = tmp_path / "sidebar.json"
     state = SidebarState(
         dock_area="invalid",
         floating=True,
+        minimized=True,
         width=1,
         height=2,
         active_tab="terminal",
+        tab_order=["notes", "terminal", "notes", ""],
+        hidden_tabs=["chat", "chat"],
+        popped_out_tabs=["calculator"],
     )
 
     state.save_json(path)
@@ -86,3 +91,7 @@ def test_sidebar_state_round_trip_and_sanitizes_values(tmp_path) -> None:
     assert loaded.width == 240
     assert loaded.height == 240
     assert loaded.active_tab == "terminal"
+    assert loaded.minimized is True
+    assert loaded.tab_order == ["notes", "terminal"]
+    assert loaded.hidden_tabs == ["chat"]
+    assert loaded.popped_out_tabs == ["calculator"]

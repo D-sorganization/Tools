@@ -12,6 +12,8 @@ from .state import SidebarState
 __all__ = [
     "ProjectFileExplorer",
     "SidebarState",
+    "SidebarTabDefinition",
+    "SidekickSidebar",
     "ToolsSidebarInstallResult",
     "UnifiedToolsSidebar",
     "WorkspaceRegistry",
@@ -24,13 +26,20 @@ __all__ = [
 def __getattr__(name: str) -> object:
     if name in {
         "UnifiedToolsSidebar",
-        "ToolsSidebarInstallResult",
-        "create_tools_sidebar",
-        "install_tools_sidebar",
+        "SidekickSidebar",
+        "SidebarTabDefinition",
     }:
         from . import sidebar
 
         return getattr(sidebar, name)
+    if name in {
+        "ToolsSidebarInstallResult",
+        "create_tools_sidebar",
+        "install_tools_sidebar",
+    }:
+        from . import api
+
+        return getattr(api, name)
     if name == "ProjectFileExplorer":
         from .project_file_explorer import ProjectFileExplorer
 
