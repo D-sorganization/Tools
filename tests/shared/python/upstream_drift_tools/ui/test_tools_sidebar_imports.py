@@ -19,11 +19,13 @@ def test_tools_sidebar_backend_imports_without_qt() -> None:
 
     from upstream_drift_tools.ui.tools_sidebar import (
         SIDEKICK_TOKEN_NAMES,
+        CommandHistoryController,
         SidebarState,
         SidekickDesignTokens,
         WorkspaceRegistry,
     )
 
+    assert CommandHistoryController().commands == ()
     assert SidebarState().active_tab == "files"
     assert WorkspaceRegistry().list() == []
     assert SidekickDesignTokens()["color.accent"] == "#2563eb"
@@ -48,11 +50,13 @@ def test_tools_sidebar_backend_imports_without_qt_in_clean_python() -> None:
     script = """
 import sys
 from upstream_drift_tools.ui.tools_sidebar import (
+    CommandHistoryController,
     SidebarState,
     SidekickDesignTokens,
     WorkspaceRegistry,
 )
 
+assert CommandHistoryController().commands == ()
 assert SidebarState().active_tab == "files"
 assert WorkspaceRegistry().list() == []
 assert SidekickDesignTokens()["color.accent"] == "#2563eb"
@@ -81,6 +85,7 @@ def test_tools_sidebar_public_widget_api_is_lazy() -> None:
     assert "SidekickSidebar" in tools_sidebar.__all__
     assert "SidebarTabDefinition" in tools_sidebar.__all__
     assert "SidekickDesignTokens" in tools_sidebar.__all__
+    assert "CommandHistoryController" in tools_sidebar.__all__
     assert "sidekick_qss" in tools_sidebar.__all__
 
 
