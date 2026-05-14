@@ -116,6 +116,26 @@ def test_sidekick_token_contract_spans_pyqt_and_web_css() -> None:
     for alias in expected_aliases:
         assert alias in css
 
+    theme_definitions = Path(
+        "src/shared/typescript/theme/themeDefinitions.ts"
+    ).read_text(encoding="utf-8")
+    expected_exports = {
+        "export function generateSidekickCSSVariables(",
+        "export function applySidekickThemeToElement(",
+        "'--sidekick-color-canvas': theme.bg,",
+        "'--sidekick-color-surface': theme.groupBg,",
+        "'--sidekick-color-accent': theme.accent,",
+        "'--sidekick-radius-control': '6px',",
+    }
+    for export in expected_exports:
+        assert export in theme_definitions
+
+    theme_index = Path("src/shared/typescript/theme/index.ts").read_text(
+        encoding="utf-8"
+    )
+    assert "generateSidekickCSSVariables" in theme_index
+    assert "applySidekickThemeToElement" in theme_index
+
 
 def test_tools_sidebar_widget_contract_when_qt_available(tmp_path: Path) -> None:
     try:

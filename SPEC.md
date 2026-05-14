@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.157                                    |
+| **Spec Version**        | 1.1.158                                    |
 | **Last Spec Update**    | 2026-05-14                                 |
 
 ## 2. Purpose & Mission
@@ -94,6 +94,8 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   stable Qt object names/selectors for downstream host styling
 - Sidekick web/Tauri styling aliases expose the same `--sidekick-*` token names
   as the PyQt sidebar contract, mapped onto the shared `--theme-*` variables
+- Shared TypeScript theme helpers generate and apply dynamic `--sidekick-*`
+  variables from the same canonical theme definitions used by React/Tauri hosts
 - Data-driven shared chat terminal-provider descriptors for Claude Code, Codex,
   Cline CLI, and Gemini CLI, including probe command metadata with diagnostic
   redaction helpers
