@@ -16,13 +16,12 @@ from .default_tabs import (
 )
 from .qt_compat import QtCore, QtWidgets, Signal, all_sidebar_dock_features, dock_area
 from .registry import WorkspaceRegistry
+from .settings import SidebarTabSettingsDescriptor
 from .state import SidebarState
-from .state_profiles import (
-    SidekickStateProfileResult,
-    SidekickStateProfileStore,
-)
+from .state_profile_actions import StateProfileMixin
 from .tab_context_menu import show_tab_context_menu
 from .tab_display_names import TabDisplayNameMixin
+from .tab_settings_panel import TabSettingsMixin, build_tab_settings_toolbar
 from .tab_visibility import (
     initially_visible_tab_ids,
     sanitize_tab_state,
@@ -43,9 +42,15 @@ class SidebarTabDefinition:
     popout_enabled: bool = True
     duplicate_enabled: bool = False
     help_metadata: Mapping[str, str] = field(default_factory=dict)
+    settings: SidebarTabSettingsDescriptor | None = None
 
 
-class UnifiedToolsSidebar(QtWidgets.QWidget, TabDisplayNameMixin):
+class UnifiedToolsSidebar(
+    QtWidgets.QWidget,
+    TabDisplayNameMixin,
+    TabSettingsMixin,
+    StateProfileMixin,
+):
     """Tabbed sidebar that can be installed as a tear-off dock widget."""
 
     file_open_requested = Signal(str)
@@ -75,6 +80,7 @@ class UnifiedToolsSidebar(QtWidgets.QWidget, TabDisplayNameMixin):
         self._tab_widgets: dict[str, QtWidgets.QWidget] = {}
         self._popout_windows: dict[str, QtWidgets.QMainWindow] = {}
         self._duplicate_counts: dict[str, int] = {}
+        self._settings_dialog: QtWidgets.QDialog | None = None
         self._project_root = Path(project_root or Path.cwd()).expanduser().resolve()
 
         self.tabs = QtWidgets.QTabWidget(self)
@@ -98,6 +104,7 @@ class UnifiedToolsSidebar(QtWidgets.QWidget, TabDisplayNameMixin):
 
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(build_tab_settings_toolbar(self))
         layout.addWidget(self.tabs)
 
         self.configure_tabs(tab_definitions or self._default_tab_definitions())
@@ -130,6 +137,7 @@ class UnifiedToolsSidebar(QtWidgets.QWidget, TabDisplayNameMixin):
         self._tab_definitions = {
             definition.tab_id: definition for definition in definitions
         }
+        self._configure_tab_settings()
         visible_defaults = initially_visible_tab_ids(definitions, self._state)
         for definition in definitions:
             if definition.tab_id in visible_defaults:
@@ -291,6 +299,7 @@ class UnifiedToolsSidebar(QtWidgets.QWidget, TabDisplayNameMixin):
             title=f"{definition.title} {count + 1}",
         )
         self._tab_definitions[duplicate_id] = duplicate
+        self._configure_tab_settings()
         self._add_defined_tab(duplicate)
         self.set_active_tab(duplicate_id)
         self._sync_tab_order_from_widget()
@@ -353,6 +362,7 @@ class UnifiedToolsSidebar(QtWidgets.QWidget, TabDisplayNameMixin):
             popped_out_tabs=list(self._popout_windows),
             tab_display_names=self._state.tab_display_names,
             theme_settings=self._state.theme_settings,
+            tab_settings=self._tab_settings_payload(),
             **calculator_state_fields(self._state),
         )
 
@@ -361,40 +371,6 @@ class UnifiedToolsSidebar(QtWidgets.QWidget, TabDisplayNameMixin):
         state.save_json(path)
         self._state = state
         return state
-
-    def save_state_profile(
-        self,
-        storage_root: str | Path,
-        name: str,
-    ) -> SidekickStateProfileResult:
-        """Save the current sidebar state as a named Sidekick profile."""
-        state = self.snapshot_state()
-        result = SidekickStateProfileStore(storage_root).save_profile(name, state)
-        if result.ok:
-            self._state = state
-        return result
-
-    def load_state_profile(
-        self,
-        storage_root: str | Path,
-        name: str,
-    ) -> SidekickStateProfileResult:
-        """Load and apply a named Sidekick profile atomically."""
-        result = SidekickStateProfileStore(storage_root).load_profile(name)
-        if result.ok and result.state is not None:
-            self.apply_state(result.state)
-        return result
-
-    def clear_state_profiles(
-        self,
-        storage_root: str | Path,
-        *,
-        confirmation: str | None = None,
-    ) -> SidekickStateProfileResult:
-        """Clear stored Sidekick profiles after explicit confirmation."""
-        return SidekickStateProfileStore(storage_root).clear_data(
-            confirmation=confirmation
-        )
 
     def apply_state(self, state: SidebarState) -> None:
         self._state = state
@@ -449,6 +425,7 @@ class UnifiedToolsSidebar(QtWidgets.QWidget, TabDisplayNameMixin):
         show_tab_context_menu(self, pos)
 
     def _emit_context(self) -> None:
+        self._refresh_settings_button()
         self.context_updated.emit(
             {
                 "active_tab": self.active_tab_id(),
@@ -465,6 +442,7 @@ class UnifiedToolsSidebar(QtWidgets.QWidget, TabDisplayNameMixin):
                     if definition.help_metadata
                 },
                 "preferences": calculator_context_preferences(self._state),
+                "tab_settings": self._tab_settings_payload(),
                 "workspace_variables": [
                     variable.to_metadata() for variable in self.registry.variables()
                 ],
@@ -481,6 +459,7 @@ class UnifiedToolsSidebar(QtWidgets.QWidget, TabDisplayNameMixin):
                     break
         if len(ordered) == len(self._tab_ids):
             self._tab_ids = ordered
+        self._refresh_settings_button()
         self._emit_context()
 
     def _apply_tab_state(self, state: SidebarState) -> None:

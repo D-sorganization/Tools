@@ -32,6 +32,7 @@ class SidebarState:
     theme_settings: dict[str, Any] = field(
         default_factory=lambda: SidekickThemeSettings().to_dict()
     )
+    tab_settings: dict[str, dict[str, Any]] = field(default_factory=dict)
     calculator_predictive_text_enabled: bool = False
     calculator_startup_imports: list[dict[str, Any]] = field(
         default_factory=lambda: default_calculator_startup_config().to_list()
@@ -53,6 +54,7 @@ class SidebarState:
         self.theme_settings = SidekickThemeSettings.from_dict(
             self.theme_settings
         ).to_dict()
+        self.tab_settings = _tab_settings_mapping(self.tab_settings)
         self.calculator_startup_imports = _startup_imports_payload(
             self.calculator_startup_imports
         )
@@ -82,6 +84,7 @@ class SidebarState:
             theme_settings=SidekickThemeSettings.from_dict(
                 payload.get("theme_settings")
             ).to_dict(),
+            tab_settings=_tab_settings_mapping(payload.get("tab_settings")),
             calculator_predictive_text_enabled=bool(
                 payload.get("calculator_predictive_text_enabled", False)
             ),
@@ -132,6 +135,25 @@ def _string_mapping(value: Any) -> dict[str, str]:
         name = str(raw_value).strip()
         if key and name:
             result[key] = name
+    return result
+
+
+def _tab_settings_mapping(value: Any) -> dict[str, dict[str, Any]]:
+    if not isinstance(value, dict):
+        return {}
+    result: dict[str, dict[str, Any]] = {}
+    for raw_key, raw_entry in value.items():
+        key = str(raw_key).strip()
+        if not key or not isinstance(raw_entry, dict):
+            continue
+        values = raw_entry.get("values", {})
+        if not isinstance(values, dict):
+            continue
+        try:
+            version = int(raw_entry.get("schema_version", 1))
+        except (TypeError, ValueError):
+            version = 1
+        result[key] = {"schema_version": max(1, version), "values": dict(values)}
     return result
 
 

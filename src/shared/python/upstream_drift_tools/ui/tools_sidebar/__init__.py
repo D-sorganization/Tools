@@ -65,6 +65,11 @@ from .file_navigation import (
     FileNavigationState,
 )
 from .registry import WorkspaceRegistry, WorkspaceVariable
+from .settings import (
+    SidebarTabSettingsDescriptor,
+    SidebarTabSettingsSchema,
+    SidebarTabSettingsStore,
+)
 from .state import SidebarState
 from .state_profiles import (
     CLEAR_SIDEKICK_DATA_CONFIRMATION,
@@ -106,6 +111,9 @@ __all__ = [
     "FileNavigationState",
     "ProjectFileExplorer",
     "SidebarState",
+    "SidebarTabSettingsDescriptor",
+    "SidebarTabSettingsSchema",
+    "SidebarTabSettingsStore",
     "SidebarTabDefinition",
     "SIDEKICK_DOCK_OBJECT_NAME",
     "SIDEKICK_PLACEHOLDER_LABEL_OBJECT_NAME",
