@@ -323,6 +323,16 @@ class UnifiedToolsSidebar(QtWidgets.QWidget):
         self._refresh_workspace_list()
         self._emit_context()
 
+    def set_design_tokens(self, design_tokens: theme.SidekickDesignTokens) -> None:
+        """Apply a new Sidekick token set to this sidebar."""
+        self._design_tokens = design_tokens
+        self.setStyleSheet(theme.sidekick_qss(self._design_tokens))
+        self._emit_context()
+
+    def set_theme(self, theme_name: str) -> None:
+        """Apply a shared fleet theme by name to this sidebar."""
+        self.set_design_tokens(theme.SidekickDesignTokens.from_shared_theme(theme_name))
+
     def set_project_root(self, project_root: str | Path) -> None:
         self._project_root = Path(project_root).expanduser().resolve()
         file_explorer = self._tab_widgets.get("files")
