@@ -9,6 +9,7 @@ import pytest
 from upstream_drift_tools.ui.tools_sidebar import (
     CALCULATOR_WORKSPACE_SCOPE,
     CalculatorWorkspaceController,
+    CalculatorWorkspaceFacade,
     CalculatorWorkspaceSettings,
     WorkspaceRegistry,
     validate_calculator_workspace_path,
@@ -89,3 +90,74 @@ def test_path_validation_rejects_non_workspace_files(tmp_path: Path) -> None:
 
     with pytest.raises(ValueError, match="file"):
         validate_calculator_workspace_path(tmp_path)
+
+
+def test_calculator_facade_shadows_global_without_overwrite() -> None:
+    local = WorkspaceRegistry()
+    global_workspace = WorkspaceRegistry({"temperature": 900, "pressure": 14.7})
+    workspace = CalculatorWorkspaceFacade(
+        local_registry=local,
+        global_registry=global_workspace,
+        calculator_scope_id="calculator-tab-a",
+    )
+
+    workspace.set_local("temperature", 300)
+
+    assert workspace.calculator_scope_id == "calculator-tab-a"
+    assert workspace.get("temperature", include_global=True) == 300
+    assert workspace.get("pressure", include_global=True) == 14.7
+    assert workspace.get("pressure") is None
+    assert global_workspace.get("temperature") == 900
+    assert workspace.export_variables() == {"pressure": 14.7, "temperature": 300}
+
+
+def test_deleting_local_variable_leaves_global_value_intact() -> None:
+    local = WorkspaceRegistry({"answer": 10})
+    global_workspace = WorkspaceRegistry({"answer": 42})
+    workspace = CalculatorWorkspaceFacade(
+        local_registry=local,
+        global_registry=global_workspace,
+    )
+
+    assert workspace.remove_local("answer") is True
+
+    assert workspace.get("answer", include_global=True) == 42
+    assert global_workspace.get("answer") == 42
+
+
+def test_duplicate_calculator_facades_keep_local_workspaces_separate() -> None:
+    global_workspace = WorkspaceRegistry({"shared": 1})
+    first_local = WorkspaceRegistry({"scratch": "first"})
+    second_local = WorkspaceRegistry({"scratch": "second"})
+    first = CalculatorWorkspaceFacade(
+        local_registry=first_local,
+        global_registry=global_workspace,
+        calculator_scope_id="calculator-tab-1",
+    )
+    second = CalculatorWorkspaceFacade(
+        local_registry=second_local,
+        global_registry=global_workspace,
+        calculator_scope_id="calculator-tab-2",
+    )
+
+    first.set_local("shared", 100)
+
+    assert first.export_variables() == {"scratch": "first", "shared": 100}
+    assert second.export_variables() == {"scratch": "second", "shared": 1}
+    assert global_workspace.get("shared") == 1
+
+
+def test_promote_local_variable_requires_explicit_overwrite() -> None:
+    local = WorkspaceRegistry({"result": 7})
+    global_workspace = WorkspaceRegistry({"result": 3})
+    workspace = CalculatorWorkspaceFacade(
+        local_registry=local,
+        global_registry=global_workspace,
+    )
+
+    with pytest.raises(FileExistsError, match="already exists"):
+        workspace.promote_to_global("result")
+
+    workspace.promote_to_global("result", overwrite=True)
+
+    assert global_workspace.get("result") == 7
