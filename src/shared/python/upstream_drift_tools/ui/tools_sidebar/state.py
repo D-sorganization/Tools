@@ -7,6 +7,8 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
+from .calculator_startup import default_calculator_startup_config
+
 VALID_DOCK_AREAS = {"left", "right"}
 
 
@@ -27,6 +29,9 @@ class SidebarState:
     popped_out_tabs: list[str] = field(default_factory=list)
     tab_display_names: dict[str, str] = field(default_factory=dict)
     calculator_predictive_text_enabled: bool = False
+    calculator_startup_imports: list[dict[str, Any]] = field(
+        default_factory=lambda: default_calculator_startup_config().to_list()
+    )
 
     def __post_init__(self) -> None:
         if self.dock_area not in VALID_DOCK_AREAS:
@@ -41,6 +46,9 @@ class SidebarState:
         self.hidden_tabs = _dedupe_strings(self.hidden_tabs)
         self.popped_out_tabs = _dedupe_strings(self.popped_out_tabs)
         self.tab_display_names = _string_mapping(self.tab_display_names)
+        self.calculator_startup_imports = _startup_imports_payload(
+            self.calculator_startup_imports
+        )
 
     def to_dict(self) -> dict[str, Any]:
         """Return a JSON-safe representation."""
@@ -66,6 +74,9 @@ class SidebarState:
             tab_display_names=_string_mapping(payload.get("tab_display_names")),
             calculator_predictive_text_enabled=bool(
                 payload.get("calculator_predictive_text_enabled", False)
+            ),
+            calculator_startup_imports=_startup_imports_payload(
+                payload.get("calculator_startup_imports")
             ),
         )
 
@@ -112,3 +123,11 @@ def _string_mapping(value: Any) -> dict[str, str]:
         if key and name:
             result[key] = name
     return result
+
+
+def _startup_imports_payload(value: Any) -> list[dict[str, Any]]:
+    if value is None:
+        return default_calculator_startup_config().to_list()
+    if not isinstance(value, list):
+        return []
+    return [dict(item) for item in value if isinstance(item, dict)]
