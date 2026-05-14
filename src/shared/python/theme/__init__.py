@@ -67,7 +67,22 @@ try:
         create_theme_menu,
         setup_themed_app,
     )
+    from .responsive import (
+        TextWidthSpec,
+        configure_form_layout_for_readability,
+        derive_text_candidates,
+        readable_text_width,
+        set_text_minimum_width,
+        wrap_in_scroll_area,
+    )
     from .theme_manager import ThemeManager, get_theme_manager
+    from .zoom import (
+        ApplicationZoomController,
+        ZoomConfig,
+        ZoomTokenSet,
+        install_application_zoom,
+        scale_px,
+    )
 
     _PYQT6_AVAILABLE = True
 except ImportError:
@@ -88,6 +103,17 @@ except ImportError:
     ThemeListItem = None  # type: ignore[assignment, misc]
     ThemeManagerDialog = None  # type: ignore[assignment, misc]
     ThemePreviewWidget = None  # type: ignore[assignment, misc]
+    TextWidthSpec = None  # type: ignore[assignment, misc]
+    configure_form_layout_for_readability = None  # type: ignore[assignment]
+    derive_text_candidates = None  # type: ignore[assignment]
+    readable_text_width = None  # type: ignore[assignment]
+    set_text_minimum_width = None  # type: ignore[assignment]
+    wrap_in_scroll_area = None  # type: ignore[assignment]
+    ApplicationZoomController = None  # type: ignore[assignment, misc]
+    ZoomConfig = None  # type: ignore[assignment, misc]
+    ZoomTokenSet = None  # type: ignore[assignment, misc]
+    install_application_zoom = None  # type: ignore[assignment]
+    scale_px = None  # type: ignore[assignment]
 
 __all__ = [
     # Protocols (no PyQt6 dependency)
@@ -105,6 +131,18 @@ __all__ = [
     "apply_theme_to_window",
     "create_theme_menu",
     "setup_themed_app",
+    # Responsive sizing and zoom helpers (require PyQt6)
+    "TextWidthSpec",
+    "configure_form_layout_for_readability",
+    "derive_text_candidates",
+    "readable_text_width",
+    "set_text_minimum_width",
+    "wrap_in_scroll_area",
+    "ApplicationZoomController",
+    "ZoomConfig",
+    "ZoomTokenSet",
+    "install_application_zoom",
+    "scale_px",
     # Dialogs (requires PyQt6)
     "ColorFieldEditor",
     "ColorPickerButton",
