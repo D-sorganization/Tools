@@ -7,3 +7,6 @@
 ## 2024-05-14 - Optimization of Gas Composition Object Iteration in PressureDropCalculator
 **Learning:** Using `Object.values().reduce()` and `Object.entries().map()` inside hot rendering loops causes O(N) intermediate array allocations and excessive garbage collection overhead.
 **Action:** Replace these operations with a single-pass standard `for` loop over `Object.keys()` to prevent intermediate object allocations and minimize garbage collection.
+## 2024-05-19 - Object vs Array access in numerical hot paths
+**Learning:** Tight numerical integration loops (like RK4 solvers in JS/TS) that use Object lookup for variables (`currentState[varName]`) are significantly slower due to property hashing overhead in JavaScript engines.
+**Action:** Replace Object states with contiguous Arrays (`new Array<number>(len)`) and use positional index mapping in tight loops. This avoids the hashing overhead and massively improves execution speed.
