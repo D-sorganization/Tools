@@ -59,6 +59,16 @@ def test_sidekick_design_tokens_accept_host_sidekick_names() -> None:
     assert tokens["size.control.height"] == "32px"
 
 
+def test_sidekick_design_tokens_can_derive_from_shared_schema() -> None:
+    tokens = SidekickDesignTokens.from_shared_theme("dark")
+
+    assert tokens["color.background"] == "#1a1d23"
+    assert tokens["color.surface"] == "#24272e"
+    assert tokens["color.accent"] == "#4a7ba7"
+    assert tokens["radius.control"] == "6px"
+    assert tokens["radius.panel"] == "8px"
+
+
 def test_sidekick_design_tokens_reject_blank_required_values() -> None:
     with pytest.raises(ValueError, match="color.background"):
         SidekickDesignTokens({"color.background": ""})

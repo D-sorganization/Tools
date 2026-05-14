@@ -48,6 +48,33 @@ _DEFAULT_TOKEN_VALUES: dict[str, str] = {
 
 SIDEKICK_TOKEN_NAMES: tuple[str, ...] = tuple(_DEFAULT_TOKEN_VALUES)
 
+_SHARED_THEME_TOKEN_MAP: dict[str, str] = {
+    "bg": "color.background",
+    "group_bg": "color.surface",
+    "table_alt": "color.surface.raised",
+    "border": "color.border",
+    "title_border": "color.border.strong",
+    "text": "color.text",
+    "text_secondary": "color.text.muted",
+    "accent": "color.accent",
+    "button_hover": "color.accent.hover",
+    "focus": "color.focus",
+    "selection_bg": "color.selection",
+    "error": "color.danger",
+    "warning": "color.warning",
+    "success": "color.success",
+}
+
+_SHARED_SPACING_TOKEN_MAP: dict[str, str] = {
+    "xs": "space.1",
+    "sm": "space.2",
+    "md": "space.4",
+}
+
+_SHARED_RADII_TOKEN_MAP: dict[str, str] = {
+    "md": "radius.control",
+}
+
 _SIDEKICK_TOKEN_ALIASES: dict[str, str] = {
     "sidekick.color.canvas": "color.background",
     "sidekick.color.background": "color.background",
@@ -93,6 +120,53 @@ def _normalize_token_values(values: Mapping[str, str]) -> dict[str, str]:
     return normalized
 
 
+def _capped_radius(value: str, maximum_px: int = 8) -> str:
+    if value.endswith("px"):
+        try:
+            return f"{min(int(value[:-2]), maximum_px)}px"
+        except ValueError:
+            return value
+    return value
+
+
+def _shared_theme_values(theme_name: str = "light") -> dict[str, str]:
+    try:
+        from ..design_tokens import load_design_tokens
+    except Exception:  # noqa: BLE001 - Sidekick must import without full install data
+        return {}
+
+    try:
+        shared_tokens = load_design_tokens()
+        theme = shared_tokens.get("themes", {}).get(theme_name, {})
+        spacing = shared_tokens.get("spacing", {})
+        radii = shared_tokens.get("radii", {})
+    except Exception:  # noqa: BLE001 - fall back to local defaults
+        return {}
+
+    values: dict[str, str] = {
+        token_name: theme[source_name]
+        for source_name, token_name in _SHARED_THEME_TOKEN_MAP.items()
+        if source_name in theme
+    }
+    values.update(
+        {
+            token_name: spacing[source_name]
+            for source_name, token_name in _SHARED_SPACING_TOKEN_MAP.items()
+            if source_name in spacing
+        }
+    )
+    values.update(
+        {
+            token_name: radii[source_name]
+            for source_name, token_name in _SHARED_RADII_TOKEN_MAP.items()
+            if source_name in radii
+        }
+    )
+    if "lg" in radii:
+        values["radius.panel"] = _capped_radius(str(radii["lg"]))
+    return values
+
+
 @dataclass(frozen=True)
 class SidekickDesignTokens:
     """Reusable Sidekick token set that can emit CSS and QSS mappings."""
@@ -133,8 +207,13 @@ class SidekickDesignTokens:
         """Create tokens from host maps using canonical ``sidekick.*`` names."""
         return cls(tokens)
 
+    @classmethod
+    def from_shared_theme(cls, theme_name: str = "light") -> SidekickDesignTokens:
+        """Create Sidekick tokens from the fleet shared design-token schema."""
+        return cls(_shared_theme_values(theme_name))
 
-SIDEKICK_DESIGN_TOKENS = SidekickDesignTokens()
+
+SIDEKICK_DESIGN_TOKENS = SidekickDesignTokens.from_shared_theme("light")
 
 
 def sidekick_qss(tokens: SidekickDesignTokens | None = None) -> str:
