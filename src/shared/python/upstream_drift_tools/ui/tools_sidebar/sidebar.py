@@ -14,6 +14,7 @@ from .default_tabs import (
     refresh_workspace_list,
     set_project_explorer_root,
 )
+from .help_content import render_help_markdown
 from .qt_compat import QtCore, QtWidgets, Signal, all_sidebar_dock_features, dock_area
 from .registry import WorkspaceRegistry
 from .settings import SidebarTabSettingsDescriptor
@@ -80,6 +81,7 @@ class UnifiedToolsSidebar(
         self._tab_widgets: dict[str, QtWidgets.QWidget] = {}
         self._popout_windows: dict[str, QtWidgets.QMainWindow] = {}
         self._duplicate_counts: dict[str, int] = {}
+        self._help_dialog: QtWidgets.QDialog | None = None
         self._settings_dialog: QtWidgets.QDialog | None = None
         self._project_root = Path(project_root or Path.cwd()).expanduser().resolve()
 
@@ -423,6 +425,33 @@ class UnifiedToolsSidebar(
 
     def _show_tab_context_menu(self, pos: QtCore.QPoint) -> None:
         show_tab_context_menu(self, pos)
+
+    def tab_help_metadata(self, tab_id: str) -> dict[str, str]:
+        """Return a copy of the configured help metadata for one tab id."""
+        definition = self._tab_definitions.get(tab_id)
+        if definition is None:
+            return {}
+        return dict(definition.help_metadata)
+
+    def show_tab_help(self, tab_id: str | None = None) -> bool:
+        """Open a compact dialog for one tab's help metadata."""
+        resolved_tab_id = tab_id or self.active_tab_id()
+        metadata = self.tab_help_metadata(resolved_tab_id)
+        if not metadata:
+            return False
+
+        dialog = QtWidgets.QDialog(self)
+        dialog.setObjectName(f"SidekickTabHelpDialog_{resolved_tab_id}")
+        dialog.setWindowTitle(f"{self.tab_display_name(resolved_tab_id)} Help")
+        dialog.resize(480, 360)
+        layout = QtWidgets.QVBoxLayout(dialog)
+        browser = QtWidgets.QTextBrowser(dialog)
+        browser.setOpenExternalLinks(True)
+        browser.setMarkdown(render_help_markdown(metadata))
+        layout.addWidget(browser)
+        dialog.show()
+        self._help_dialog = dialog
+        return True
 
     def _emit_context(self) -> None:
         self._refresh_settings_button()

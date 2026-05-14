@@ -87,6 +87,8 @@ assert rotation_converter_ui == [], rotation_converter_ui
 def test_tools_sidebar_public_widget_api_is_lazy() -> None:
     import upstream_drift_tools.ui.tools_sidebar as tools_sidebar
 
+    assert "DEFAULT_SIDEBAR_TAB_HELP" in tools_sidebar.__all__
+    assert "SIDEBAR_CONTEXT_ACTIONS" in tools_sidebar.__all__
     assert "create_tools_sidebar" in tools_sidebar.__all__
     assert "install_tools_sidebar" in tools_sidebar.__all__
     assert "SidekickSidebar" in tools_sidebar.__all__
@@ -95,6 +97,60 @@ def test_tools_sidebar_public_widget_api_is_lazy() -> None:
     assert "CommandHistoryController" in tools_sidebar.__all__
     assert "SidekickTerminalTheme" in tools_sidebar.__all__
     assert "sidekick_qss" in tools_sidebar.__all__
+
+
+def test_default_sidekick_tab_help_metadata_imports_without_qt() -> None:
+    qt_modules_before = {
+        name for name in sys.modules if name.partition(".")[0] in QT_BINDINGS
+    }
+
+    from upstream_drift_tools.ui.tools_sidebar import DEFAULT_SIDEBAR_TAB_HELP
+
+    required_tabs = {
+        "files",
+        "workspace",
+        "chat",
+        "terminal",
+        "calculator",
+        "calculator_plot",
+        "units",
+        "rotation_converter",
+        "notes",
+    }
+
+    assert required_tabs.issubset(DEFAULT_SIDEBAR_TAB_HELP)
+    for tab_id in required_tabs:
+        metadata = DEFAULT_SIDEBAR_TAB_HELP[tab_id]
+        assert metadata["title"].strip()
+        assert metadata["summary"].strip()
+
+    qt_modules_after = {
+        name for name in sys.modules if name.partition(".")[0] in QT_BINDINGS
+    }
+    assert qt_modules_after == qt_modules_before
+
+
+def test_sidekick_context_actions_include_hover_help_without_qt() -> None:
+    from upstream_drift_tools.ui.tools_sidebar import SIDEBAR_CONTEXT_ACTIONS
+
+    required_actions = {
+        "move_left",
+        "move_right",
+        "pop_out",
+        "duplicate",
+        "rename",
+        "reset_name",
+        "help",
+        "close",
+        "minimize",
+    }
+
+    assert required_actions.issubset(SIDEBAR_CONTEXT_ACTIONS)
+    for action_id in required_actions:
+        action = SIDEBAR_CONTEXT_ACTIONS[action_id]
+        assert action.label.strip()
+        assert action.tooltip.strip()
+        assert action.status_tip.strip()
 
 
 def test_sidekick_token_contract_spans_pyqt_and_web_css() -> None:
@@ -191,6 +247,9 @@ def test_tools_sidebar_widget_contract_when_qt_available(tmp_path: Path) -> None
     assert calculator_definition.help_metadata["title"] == "Calculator"
     assert "solve(x**2 - 4, x)" in calculator_definition.help_metadata["examples"]
     assert "Workspace" in calculator_definition.help_metadata["tips"]
+    for definition in sidebar._tab_definitions.values():
+        assert definition.help_metadata["title"].strip()
+        assert definition.help_metadata["summary"].strip()
     plot_definition = sidebar._tab_definitions["calculator_plot"]
     assert plot_definition.title == "Calculator Plot"
     assert plot_definition.visible is False

@@ -9,8 +9,8 @@ from pathlib import Path
 from typing import Any
 
 from . import design_tokens as theme
-from .calculator_assist import CALCULATOR_HELP
 from .calculator_plotting import CALCULATOR_PLOT_TAB_ID
+from .help_content import DEFAULT_SIDEBAR_TAB_HELP
 from .project_file_explorer import ProjectFileExplorer
 from .qt_compat import QT_API, QtWidgets
 from .runtime_tabs import (
@@ -37,21 +37,33 @@ def build_default_tab_definitions(
             "Files",
             build_file_explorer_tab,
             duplicate_enabled=True,
+            help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP["files"]),
         ),
-        tab_definition("workspace", "Workspace", build_workspace_tab),
-        tab_definition("chat", "Chat", build_chat_tab),
+        tab_definition(
+            "workspace",
+            "Workspace",
+            build_workspace_tab,
+            help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP["workspace"]),
+        ),
+        tab_definition(
+            "chat",
+            "Chat",
+            build_chat_tab,
+            help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP["chat"]),
+        ),
         tab_definition(
             "terminal",
             "Terminal",
             build_terminal_tab,
             duplicate_enabled=True,
+            help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP["terminal"]),
         ),
         tab_definition(
             "calculator",
             "Calculator",
             build_calculator_tab,
             duplicate_enabled=True,
-            help_metadata=CALCULATOR_HELP.to_metadata(),
+            help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP["calculator"]),
         ),
         tab_definition(
             CALCULATOR_PLOT_TAB_ID,
@@ -59,20 +71,14 @@ def build_default_tab_definitions(
             build_calculator_plot_tab,
             visible=False,
             duplicate_enabled=True,
-            help_metadata={
-                "title": "Calculator Plot",
-                "summary": (
-                    "Build validated plot requests from calculator expressions "
-                    "and workspace variables using the shared PlotSpec contract."
-                ),
-                "source": "upstream_drift_tools.ui.tools_sidebar.calculator_plotting",
-            },
+            help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP["calculator_plot"]),
         ),
         tab_definition(
             "units",
             "Units",
             build_unit_converter_tab,
             duplicate_enabled=True,
+            help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP["units"]),
         ),
         tab_definition(
             ROTATION_CONVERTER_TAB_ID,
@@ -80,22 +86,22 @@ def build_default_tab_definitions(
             build_rotation_converter_tab,
             visible=False,
             duplicate_enabled=True,
-            help_metadata={
-                "title": "Rotation Converter",
-                "summary": (
-                    "Convert between rotation matrices, quaternions, Euler "
-                    "angles, axis-angle, rigid transforms, twists, and frames."
-                ),
-                "source": "rotation_converter.gui_registration",
-            },
+            help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP["rotation_converter"]),
         ),
-        tab_definition("notes", "Notes", build_notes_tab, duplicate_enabled=True),
+        tab_definition(
+            "notes",
+            "Notes",
+            build_notes_tab,
+            duplicate_enabled=True,
+            help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP["notes"]),
+        ),
     ]
 
 
 def build_file_explorer_tab(sidebar: Any) -> QtWidgets.QWidget:
     """Build the project file explorer tab and forward open-file signals."""
     explorer = ProjectFileExplorer(sidebar.project_root, sidebar)
+    explorer.setToolTip(DEFAULT_SIDEBAR_TAB_HELP["files"]["summary"])
     explorer.file_open_requested.connect(sidebar.file_open_requested.emit)
     return explorer
 
@@ -116,6 +122,7 @@ def build_workspace_tab(sidebar: Any) -> QtWidgets.QWidget:
     layout = QtWidgets.QVBoxLayout(widget)
     workspace_list = QtWidgets.QListWidget(widget)
     workspace_list.setObjectName(theme.SIDEKICK_WORKSPACE_LIST_OBJECT_NAME)
+    workspace_list.setToolTip(DEFAULT_SIDEBAR_TAB_HELP["workspace"]["summary"])
     sidebar._workspace_list = workspace_list
     layout.addWidget(workspace_list)
     refresh_workspace_list(sidebar)
@@ -152,7 +159,9 @@ def build_unit_converter_tab(sidebar: Any) -> QtWidgets.QWidget:
     except Exception as exc:  # noqa: BLE001 - optional GUI widget
         logger.debug("Unit converter unavailable for Sidekick: %s", exc)
         return placeholder(sidebar, "Unit converter")
-    return UnitConverterWidget(sidebar)
+    widget = UnitConverterWidget(sidebar)
+    widget.setToolTip(DEFAULT_SIDEBAR_TAB_HELP["units"]["summary"])
+    return widget
 
 
 def build_calculator_plot_tab(sidebar: Any) -> QtWidgets.QWidget:
@@ -177,6 +186,7 @@ def build_calculator_plot_tab(sidebar: Any) -> QtWidgets.QWidget:
 
     widget = PlotWidget(parent=sidebar)
     widget.setObjectName("SidekickCalculatorPlotTab")
+    widget.setToolTip(DEFAULT_SIDEBAR_TAB_HELP["calculator_plot"]["summary"])
     widget.set_spec(
         PlotSpec(
             title="Calculator Plot",
@@ -207,6 +217,7 @@ def build_rotation_converter_tab(sidebar: Any) -> QtWidgets.QWidget:
             "could not be loaded.",
         )
     widget.setObjectName(theme.SIDEKICK_ROTATION_CONVERTER_OBJECT_NAME)
+    widget.setToolTip(DEFAULT_SIDEBAR_TAB_HELP["rotation_converter"]["summary"])
     return widget
 
 
