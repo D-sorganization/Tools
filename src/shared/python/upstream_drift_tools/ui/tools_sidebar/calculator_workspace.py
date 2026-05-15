@@ -369,27 +369,60 @@ class CalculatorWorkspaceActions:
         self._status_label.setText("Cleared calculator workspace.")
 
 
+def get_default_sidekick_dir(app_name: str | None = None) -> Path:
+    """Return the default Sidekick storage directory for an application.
+
+    Args:
+        app_name: Optional application name. When given, returns
+            ``~/.{app_name}/sidekick``; otherwise returns ``~/.sidekick``.
+
+    Returns:
+        Resolved path to the Sidekick storage directory.
+    """
+    if app_name is not None:
+        return Path.home() / f".{app_name}" / "sidekick"
+    return Path.home() / ".sidekick"
+
+
 def default_calculator_workspace_controller(
     registry: WorkspaceRegistry,
+    *,
+    storage_dir: Path | None = None,
 ) -> CalculatorWorkspaceController:
-    """Build the default Sidekick calculator-local workspace controller."""
+    """Build the default Sidekick calculator-local workspace controller.
+
+    Args:
+        registry: The calculator-local workspace registry.
+        storage_dir: Directory for workspace files. Defaults to
+            ``~/.sidekick`` when ``None``. Pass
+            ``get_default_sidekick_dir("upstream_drift_tools")`` to preserve
+            the legacy ``~/.upstream_drift_tools/sidekick`` path.
+    """
+    directory = storage_dir if storage_dir is not None else get_default_sidekick_dir()
     return CalculatorWorkspaceController(
         registry,
-        settings=CalculatorWorkspaceSettings(
-            default_directory=Path.home() / ".upstream_drift_tools" / "sidekick",
-        ),
+        settings=CalculatorWorkspaceSettings(default_directory=directory),
     )
 
 
 def default_global_workspace_controller(
     registry: WorkspaceRegistry,
+    *,
+    storage_dir: Path | None = None,
 ) -> GlobalWorkspaceController:
-    """Build the default Sidekick global workspace controller."""
+    """Build the default Sidekick global workspace controller.
+
+    Args:
+        registry: The shared global workspace registry.
+        storage_dir: Directory for workspace files. Defaults to
+            ``~/.sidekick`` when ``None``. Pass
+            ``get_default_sidekick_dir("upstream_drift_tools")`` to preserve
+            the legacy ``~/.upstream_drift_tools/sidekick`` path.
+    """
+    directory = storage_dir if storage_dir is not None else get_default_sidekick_dir()
     return GlobalWorkspaceController(
         registry,
-        settings=GlobalWorkspaceSettings(
-            default_directory=Path.home() / ".upstream_drift_tools" / "sidekick",
-        ),
+        settings=GlobalWorkspaceSettings(default_directory=directory),
     )
 
 

@@ -34,7 +34,9 @@ from .calculator_workspace import (
     CalculatorWorkspaceSettings,
     GlobalWorkspaceController,
     GlobalWorkspaceSettings,
+    default_calculator_workspace_controller,
     default_global_workspace_controller,
+    get_default_sidekick_dir,
     validate_calculator_workspace_path,
 )
 from .command_history import (
@@ -161,8 +163,10 @@ __all__ = [
     "WorkspaceVariable",
     "build_calculator_plot_spec",
     "create_tools_sidebar",
+    "default_calculator_workspace_controller",
     "default_global_workspace_controller",
     "default_calculator_startup_config",
+    "get_default_sidekick_dir",
     "install_tools_sidebar",
     "resolve_sidekick_theme",
     "sidekick_qss",
