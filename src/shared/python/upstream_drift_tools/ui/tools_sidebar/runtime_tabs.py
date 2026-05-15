@@ -363,6 +363,145 @@ class SidekickNotesWidget(QtWidgets.QWidget):
         self._autosave.start()
 
 
+class _SidebarWorkspaceAdapter:
+    """Adapt a sidebar :class:`WorkspaceRegistry` to the chat workspace bridge.
+
+    Tools issue #2849. The chat module depends only on the
+    ``WorkspaceContextProtocol`` Protocol; this adapter implements that
+    contract on top of the existing sidebar registry without leaking the
+    Sidekick package back into the chat module.
+    """
+
+    def __init__(self, registry: WorkspaceRegistry) -> None:
+        if registry is None:
+            raise ValueError("registry must be provided")
+        self._registry = registry
+
+    def describe(self) -> list[Any]:
+        """Return :class:`WorkspaceVariableInfo` snapshots for all variables.
+
+        The return type is annotated as ``list[Any]`` so this module does
+        not need to import from the chat package at module-import time;
+        the chat dock duck-types against the actual values returned.
+        """
+        from chat._workspace_protocol import WorkspaceVariableInfo
+
+        items: list[Any] = []
+        for variable in self._registry.variables():
+            items.append(
+                WorkspaceVariableInfo(
+                    name=variable.name,
+                    dtype=variable.dtype or variable.type_name,
+                    shape=tuple(variable.shape) if variable.shape else None,
+                    preview=variable.preview or "",
+                )
+            )
+        return items
+
+    def read(self, name: str) -> Any:
+        """Return the registry value for ``name``.
+
+        Raises:
+            KeyError: If ``name`` is not registered.
+        """
+        if name not in self._registry.list_names():
+            raise KeyError(name)
+        return self._registry.get(name)
+
+    def write(self, name: str, value: Any) -> None:
+        """Write ``value`` into the registry under ``name``.
+
+        Raises:
+            TypeError: If ``name`` is not a ``str``.
+        """
+        if not isinstance(name, str):
+            raise TypeError("name must be a str")
+        self._registry.set(name, value)
+
+
+def _build_sidebar_plot_request_sink(sidebar: Any) -> Callable[[Any], None] | None:
+    """Return a sink that routes plot requests to the Calculator Plot tab.
+
+    The sink accepts either a dict in the
+    :class:`CalculatorPlotRequest`-shaped JSON form or an already-built
+    request object, and submits the resulting :class:`PlotSpec` to the
+    sidebar's Calculator Plot tab widget. Returns ``None`` when any
+    required sidebar attribute is missing (host without calculator
+    plotting); the caller logs at DEBUG and degrades silently.
+    """
+    try:
+        from .calculator_plotting import (
+            CALCULATOR_PLOT_TAB_ID,
+            CalculatorPlotRequest,
+            CalculatorPlotSource,
+            CalculatorPlotTabConfig,
+            build_calculator_plot_spec,
+        )
+    except Exception as exc:  # noqa: BLE001 - optional plot dependency
+        logger.debug("Calculator plot module unavailable for chat: %s", exc)
+        return None
+
+    registry = getattr(sidebar, "registry", None)
+    if registry is None:
+        logger.debug("Sidebar has no registry; chat plot sink disabled.")
+        return None
+
+    set_tab_visible = getattr(sidebar, "set_tab_visible", None)
+    tab_widgets = getattr(sidebar, "_tab_widgets", None)
+    if not callable(set_tab_visible) or tab_widgets is None:
+        logger.debug("Sidebar lacks tab APIs; chat plot sink disabled.")
+        return None
+
+    def _coerce_request(spec: Any) -> Any:
+        if isinstance(spec, CalculatorPlotRequest):
+            return spec
+        if not isinstance(spec, dict):
+            raise TypeError("plot spec must be a dict or CalculatorPlotRequest")
+        source = spec.get("source")
+        if isinstance(source, str):
+            source = CalculatorPlotSource(source)
+        config_data = spec.get("config")
+        config = (
+            CalculatorPlotTabConfig(**config_data)
+            if isinstance(config_data, dict)
+            else CalculatorPlotTabConfig()
+        )
+        return CalculatorPlotRequest(
+            source=source,
+            x_ref=spec.get("x_ref"),
+            y_ref=spec.get("y_ref"),
+            expression=spec.get("expression"),
+            x_min=spec.get("x_min"),
+            x_max=spec.get("x_max"),
+            points=spec.get("points"),
+            title=spec.get("title"),
+            config=config,
+        )
+
+    def _sink(spec: Any) -> None:
+        request = _coerce_request(spec)
+        plot_spec = build_calculator_plot_spec(request, registry)
+        # Tools issue #2849: prefer a hidden-tab activation over dropping
+        # the request silently. ``set_tab_visible`` is the canonical
+        # sidebar API for this.
+        if CALCULATOR_PLOT_TAB_ID not in tab_widgets:
+            set_tab_visible(CALCULATOR_PLOT_TAB_ID, True)
+        widget = tab_widgets.get(CALCULATOR_PLOT_TAB_ID)
+        if widget is None:
+            logger.warning("Calculator Plot tab not available; dropping plot request.")
+            return
+        set_spec = getattr(widget, "set_spec", None)
+        if not callable(set_spec):
+            logger.warning(
+                "Calculator Plot tab does not implement set_spec; "
+                "dropping plot request."
+            )
+            return
+        set_spec(plot_spec)
+
+    return _sink
+
+
 def _build_pyqt_chat_dock(sidebar: Any) -> QtWidgets.QWidget | None:
     try:
         chat_module = importlib.import_module("chat.chat_dock_widget")
@@ -381,11 +520,28 @@ def _build_pyqt_chat_dock(sidebar: Any) -> QtWidgets.QWidget | None:
     except Exception as exc:  # noqa: BLE001 - theme is optional at this layer
         logger.debug("Theme manager unavailable for chat dock: %s", exc)
 
+    # Tools issue #2849: wire optional workspace + plot bridges. Any
+    # failure here degrades gracefully — the chat dock continues to work
+    # with workspace_provider=None / plot_request_sink=None.
+    workspace_provider: Any = None
+    plot_request_sink: Callable[[Any], None] | None = None
+    try:
+        registry = getattr(sidebar, "registry", None)
+        if registry is not None:
+            workspace_provider = _SidebarWorkspaceAdapter(registry)
+        plot_request_sink = _build_sidebar_plot_request_sink(sidebar)
+    except Exception as exc:  # noqa: BLE001 - bridge is best-effort
+        logger.debug("Sidekick workspace bridge unavailable for chat: %s", exc)
+        workspace_provider = None
+        plot_request_sink = None
+
     dock = chat_module.ChatDockWidget(
         app_context="sidekick",
         app_name="sidekick",
         project_root=sidebar.project_root,
         theme_provider=theme_provider,
+        workspace_provider=workspace_provider,
+        plot_request_sink=plot_request_sink,
         parent=sidebar,
     )
     dock.setObjectName(SIDEKICK_CHAT_RUNTIME_OBJECT_NAME)
