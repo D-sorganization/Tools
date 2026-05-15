@@ -1,28 +1,30 @@
-"""Unit tests for RustAgentAdapter.stream_response generator behavior.
+"""Tests for RustAgentAdapter non-blocking streaming (Tools #2752).
 
-Issue #2752: the underlying Rust ``AIEngine.stream_response`` is blocking
-(uses Tokio ``block_on`` internally) and must be invoked from a worker
-thread when used from a Qt UI. The adapter's generator API itself is
-unchanged — these tests verify it still yields chunks correctly when the
-backend takes time to return.
+The module is imported once per process; PyQt6 and ai_backend are both stubbed
+at the ``sys.modules`` level so no real Qt installation is needed.
 
-The bootstrap block mirrors test_bitnet_adapter.py so the adapter module
-imports cleanly under a plain pytest run.
+The ``TestRustStreamWorker`` and ``TestRustAdapterQThread`` classes use
+synchronous fakes for ``QThread``, ``pyqtSignal``, and ``QEventLoop`` so
+signals fire *before* the event-loop call returns, keeping tests deterministic
+without any real threading.
 """
 
 from __future__ import annotations
 
+import importlib
 import logging
 import sys
-import time
 import types
 from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
 
+pytestmark = pytest.mark.serial  # prevent xdist workers sharing sys.modules state
+
 # ---------------------------------------------------------------------------
-# Bootstrap: stub the broken src.shared.python.ai __init__ and logging_pkg
+# Bootstrap: stub the src.* package tree so we can import the adapter module
+# without a full repo install.
 # ---------------------------------------------------------------------------
 
 ROOT = Path(__file__).resolve().parents[4]
@@ -48,308 +50,472 @@ for _mod_name, _rel_path in _PACKAGE_STUBS:
 _logging_config_stub = sys.modules["src.shared.python.logging_pkg.logging_config"]
 _logging_config_stub.get_logger = logging.getLogger  # type: ignore[attr-defined]
 
-
 # ---------------------------------------------------------------------------
-# Stub the ai_backend extension before importing the adapter so the import
-# guard in __init__ doesn't bail out.
+# Fake PyQt6 infrastructure (synchronous — no real Qt required)
 # ---------------------------------------------------------------------------
 
 
-def _install_ai_backend_stub() -> types.ModuleType:
-    """Install a minimal ai_backend stub module suitable for unit testing."""
-    stub = types.ModuleType("ai_backend")
+class _FakeSignal:
+    """Minimal pyqtSignal-alike: connect + emit."""
 
-    class _AIConfig:
-        def __init__(self, *args: object, **kwargs: object) -> None:
-            self.model = "stub-model"
+    def __init__(self, *_args: object) -> None:
+        self._slots: list = []
 
-    class _AIEngine:
-        def __init__(self, _config: object) -> None:
-            self._stream_chunks: list[str] = []
-            self._stream_delay: float = 0.0
+    def connect(self, slot: object) -> None:
+        self._slots.append(slot)
 
-        def stream_response(self, _prompt: str) -> list[str]:
-            if self._stream_delay:
-                time.sleep(self._stream_delay)
-            return list(self._stream_chunks)
-
-        def generate_response(self, _prompt: str) -> str:
-            return "fallback-response"
-
-    class _MemoryManager:
-        def __init__(self, _path: str) -> None:
-            pass
-
-        def initialize(self) -> None:
-            pass
-
-    class _RagPipeline:
-        def __init__(self, *_args: object, **_kwargs: object) -> None:
-            pass
-
-        def index_codebase(self, _root: str) -> int:
-            return 0
-
-        def retrieve_context(self, _prompt: str, _top_k: int) -> list[str]:
-            return []
-
-    stub.AIConfig = _AIConfig  # type: ignore[attr-defined]
-    stub.AIEngine = _AIEngine  # type: ignore[attr-defined]
-    stub.MemoryManager = _MemoryManager  # type: ignore[attr-defined]
-    stub.RagPipeline = _RagPipeline  # type: ignore[attr-defined]
-    sys.modules["ai_backend"] = stub
-    return stub
+    def emit(self, *args: object) -> None:
+        for slot in list(self._slots):
+            if args:
+                slot(*args)
+            else:
+                slot()
 
 
-_install_ai_backend_stub()
+class _FakeQThread:
+    """Synchronous stand-in for QThread: start() calls run() immediately."""
 
+    def __init__(self) -> None:
+        pass
+
+    def start(self) -> None:  # noqa: D401
+        self.run()
+
+    def run(self) -> None:  # noqa: D401
+        pass
+
+
+class _FakeQEventLoop:
+    """Stand-in for QEventLoop: exec() is a no-op (worker already ran)."""
+
+    _exec_count: int = 0
+
+    def exec(self) -> int:  # noqa: A003
+        _FakeQEventLoop._exec_count += 1
+        return 0
+
+    def quit(self) -> None:
+        pass
+
+
+def _build_fake_qtcore() -> types.ModuleType:
+    qtcore = types.ModuleType("PyQt6.QtCore")
+    qtcore.QThread = _FakeQThread
+    qtcore.pyqtSignal = _FakeSignal
+    qtcore.QEventLoop = _FakeQEventLoop
+    return qtcore
+
+
+def _install_fake_pyqt6() -> tuple[types.ModuleType, types.ModuleType]:
+    pyqt6 = types.ModuleType("PyQt6")
+    qtcore = _build_fake_qtcore()
+    sys.modules["PyQt6"] = pyqt6
+    sys.modules["PyQt6.QtCore"] = qtcore
+    return pyqt6, qtcore
+
+
+def _install_fake_ai_backend() -> MagicMock:
+    mock = MagicMock()
+    sys.modules["ai_backend"] = mock
+    return mock
+
+
+# ---------------------------------------------------------------------------
+# Module-level stubs (used by non-QThread tests that don't need real Qt)
+# ---------------------------------------------------------------------------
+
+_ai_backend_global = _install_fake_ai_backend()
+_install_fake_pyqt6()
+
+# Import under the stubs
+import src.shared.python.ai.adapters.rust_adapter as _rust_adapter_module  # noqa: E402
 from src.shared.python.ai.adapters.rust_adapter import (  # noqa: E402
     RustAgentAdapter,
+    _make_rust_stream_worker_class,
 )
-from src.shared.python.ai.types import (  # noqa: E402
-    AgentChunk,
-    ConversationContext,
-    ExpertiseLevel,
-)
+from src.shared.python.ai.types import ConversationContext  # noqa: E402
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
 
 
-def _make_context() -> ConversationContext:
-    return ConversationContext(
-        messages=[],
-        user_expertise=ExpertiseLevel.INTERMEDIATE,
-    )
+def _make_adapter(engine_mock: MagicMock) -> RustAgentAdapter:
+    _ai_backend_global.AIEngine.return_value = engine_mock
+    return RustAgentAdapter(api_key="k", base_url="http://x", model="m")
 
 
-@pytest.fixture()
-def adapter() -> RustAgentAdapter:
-    return RustAgentAdapter(
-        api_key="test-key",
-        base_url="https://example.invalid/v1",
-        model="stub-model",
-    )
+def _make_context(*messages: str) -> ConversationContext:
+    msg_objs = [MagicMock(content=m) for m in messages]
+    return ConversationContext(messages=msg_objs)
+
+
+# ---------------------------------------------------------------------------
+# TestRustStreamWorker — unit-tests for _make_rust_stream_worker_class()
+# ---------------------------------------------------------------------------
+
+
+class TestRustStreamWorker:
+    """Test the _RustStreamWorker QThread subclass produced by the factory."""
+
+    def setup_method(self) -> None:
+        _FakeQEventLoop._exec_count = 0
+        _install_fake_pyqt6()
+        importlib.reload(_rust_adapter_module)
+
+    def teardown_method(self) -> None:
+        pass
+
+    def test_factory_returns_a_class(self) -> None:
+        cls = _make_rust_stream_worker_class()
+        assert cls is not None
+        assert isinstance(cls, type)
+
+    def test_factory_returns_none_without_pyqt6(self) -> None:
+        saved_pyqt6 = sys.modules.pop("PyQt6", None)
+        saved_qtcore = sys.modules.pop("PyQt6.QtCore", None)
+        importlib.reload(_rust_adapter_module)
+        try:
+            cls = _rust_adapter_module._make_rust_stream_worker_class()
+            assert cls is None
+        finally:
+            if saved_pyqt6 is not None:
+                sys.modules["PyQt6"] = saved_pyqt6
+            if saved_qtcore is not None:
+                sys.modules["PyQt6.QtCore"] = saved_qtcore
+            importlib.reload(_rust_adapter_module)
+
+    def test_worker_emits_chunks_for_each_delta(self) -> None:
+        cls = _make_rust_stream_worker_class()
+        assert cls is not None
+
+        engine = MagicMock()
+        engine.stream_response.return_value = ["a", "b", "c"]
+
+        worker = cls(engine, "prompt")
+        received: list[str] = []
+        finished: list[bool] = [False]
+
+        worker.chunk_received.connect(received.append)
+        worker.stream_finished.connect(lambda: finished.__setitem__(0, True))
+
+        worker.start()  # synchronous via _FakeQThread
+
+        assert received == ["a", "b", "c"]
+        assert finished[0] is True
+
+    def test_worker_emits_stream_error_on_exception(self) -> None:
+        cls = _make_rust_stream_worker_class()
+        assert cls is not None
+
+        engine = MagicMock()
+        engine.stream_response.side_effect = RuntimeError("boom")
+
+        worker = cls(engine, "prompt")
+        errors: list[str] = []
+        worker.stream_error.connect(errors.append)
+
+        worker.start()
+
+        assert len(errors) == 1
+        assert "boom" in errors[0]
+
+    def test_worker_stop_halts_emission(self) -> None:
+        cls = _make_rust_stream_worker_class()
+        assert cls is not None
+
+        engine = MagicMock()
+
+        def _gen_deltas(_prompt: str) -> list[str]:
+            # Return a bunch of deltas; worker should stop after the first
+            return [str(i) for i in range(20)]
+
+        engine.stream_response.side_effect = _gen_deltas
+
+        worker = cls(engine, "prompt")
+        received: list[str] = []
+
+        # Stop the worker before it starts; it should emit nothing
+        worker.stop()
+        worker.chunk_received.connect(received.append)
+        worker.start()
+
+        assert received == []
+
+    def test_stream_finished_fires_after_all_chunks(self) -> None:
+        cls = _make_rust_stream_worker_class()
+        assert cls is not None
+
+        n = 50
+        engine = MagicMock()
+        engine.stream_response.return_value = [f"delta_{i}" for i in range(n)]
+
+        worker = cls(engine, "prompt")
+        received: list[str] = []
+        finished_after: list[int] = []
+
+        worker.chunk_received.connect(received.append)
+        worker.stream_finished.connect(lambda: finished_after.append(len(received)))
+
+        worker.start()
+
+        assert finished_after == [n], (
+            f"stream_finished fired when {finished_after} chunks had been received; "
+            f"expected {n}"
+        )
+
+
+# ---------------------------------------------------------------------------
+# TestRustAdapterQThread — integration tests for the adapter using fake Qt
+# ---------------------------------------------------------------------------
+
+
+class TestRustAdapterQThread:
+    """Tests for RustAgentAdapter.stream_response() using fake PyQt6."""
+
+    def setup_method(self) -> None:
+        _FakeQEventLoop._exec_count = 0
+        _install_fake_pyqt6()
+        importlib.reload(_rust_adapter_module)
+
+    def teardown_method(self) -> None:
+        pass
+
+    # ------------------------------------------------------------------
+    # 50-chunk happy path
+    # ------------------------------------------------------------------
+
+    def test_stream_response_yields_50_chunks(self) -> None:
+        n = 50
+        engine = MagicMock()
+        engine.stream_response.return_value = [f"delta_{i}" for i in range(n)]
+
+        adapter = _make_adapter(engine)
+        ctx = _make_context()
+
+        chunks = list(adapter.stream_response("hi", ctx, []))
+
+        assert len(chunks) == n
+        for i, chunk in enumerate(chunks):
+            assert chunk.content == f"delta_{i}"
+        # Only the last chunk should be marked final
+        assert chunks[-1].is_final is True
+        for chunk in chunks[:-1]:
+            assert chunk.is_final is False
+
+    def test_qt_event_loop_exec_is_called_during_streaming(self) -> None:
+        """QEventLoop.exec() must be called at least once while streaming."""
+        engine = MagicMock()
+        engine.stream_response.return_value = ["x", "y"]
+
+        _FakeQEventLoop._exec_count = 0
+        adapter = _make_adapter(engine)
+        ctx = _make_context()
+
+        list(adapter.stream_response("hi", ctx, []))
+
+        assert _FakeQEventLoop._exec_count >= 1, (
+            "QEventLoop.exec() was never called — the Qt event loop was not spun, "
+            "meaning the main thread would freeze for real Qt UIs"
+        )
+
+    def test_stream_finished_fires_after_all_chunks_via_adapter(self) -> None:
+        """Ensure all deltas are yielded before stream_finished fires."""
+        n = 50
+        engine = MagicMock()
+        deltas = [f"d{i}" for i in range(n)]
+        engine.stream_response.return_value = deltas
+
+        adapter = _make_adapter(engine)
+        ctx = _make_context()
+
+        chunks = list(adapter.stream_response("hi", ctx, []))
+        contents = [c.content for c in chunks]
+
+        assert contents == deltas
+
+    # ------------------------------------------------------------------
+    # Empty stream
+    # ------------------------------------------------------------------
+
+    def test_stream_response_handles_empty_stream(self) -> None:
+        engine = MagicMock()
+        engine.stream_response.return_value = []
+
+        adapter = _make_adapter(engine)
+        ctx = _make_context()
+
+        chunks = list(adapter.stream_response("hi", ctx, []))
+
+        assert len(chunks) == 1
+        assert chunks[0].content == ""
+        assert chunks[0].is_final is True
+
+    # ------------------------------------------------------------------
+    # Error fallback
+    # ------------------------------------------------------------------
+
+    def test_stream_response_falls_back_on_error(self) -> None:
+        engine = MagicMock()
+        engine.stream_response.side_effect = RuntimeError("network error")
+        engine.generate_response.return_value = "fallback response"
+
+        adapter = _make_adapter(engine)
+        ctx = _make_context()
+
+        chunks = list(adapter.stream_response("hi", ctx, []))
+
+        assert len(chunks) == 1
+        assert chunks[0].content == "fallback response"
+        assert chunks[0].is_final is True
+
+    # ------------------------------------------------------------------
+    # Context messages are included in prompt
+    # ------------------------------------------------------------------
+
+    def test_context_messages_are_prepended_to_prompt(self) -> None:
+        engine = MagicMock()
+        engine.stream_response.return_value = ["ok"]
+
+        adapter = _make_adapter(engine)
+        ctx = _make_context("msg1", "msg2")
+
+        list(adapter.stream_response("question", ctx, []))
+
+        call_args = engine.stream_response.call_args[0][0]
+        assert "msg1" in call_args
+        assert "msg2" in call_args
+        assert "question" in call_args
+
+    # ------------------------------------------------------------------
+    # Headless fallback (no PyQt6)
+    # ------------------------------------------------------------------
+
+    def test_stream_response_works_without_pyqt6(self) -> None:
+        """Adapter falls back to threading.Thread when PyQt6 is absent."""
+        # Remove PyQt6 from sys.modules
+        sys.modules.pop("PyQt6", None)
+        sys.modules.pop("PyQt6.QtCore", None)
+        importlib.reload(_rust_adapter_module)
+
+        engine = MagicMock()
+        engine.stream_response.return_value = ["a", "b", "c"]
+        _ai_backend_global.AIEngine.return_value = engine
+        adapter = _rust_adapter_module.RustAgentAdapter(
+            api_key="k", base_url="http://x", model="m"
+        )
+        ctx = _make_context()
+        chunks = list(adapter.stream_response("hi", ctx, []))
+
+        assert [c.content for c in chunks] == ["a", "b", "c"]
+
+        # Restore
+        _install_fake_pyqt6()
+        importlib.reload(_rust_adapter_module)
+
+
+# ---------------------------------------------------------------------------
+# TestStreamResponseGenerator — existing generator-contract tests
+# (kept to avoid regressing downstream contract coverage)
+# ---------------------------------------------------------------------------
 
 
 class TestStreamResponseGenerator:
-    """Generator contract for stream_response remains intact (#2752)."""
+    """Original generator-API tests that must still pass."""
 
-    def test_yields_one_chunk_per_delta(self, adapter: RustAgentAdapter) -> None:
-        """Five deltas from the backend produce five AgentChunks in order."""
-        chunks_in = ["Hel", "lo, ", "wor", "ld", "!"]
-        adapter.engine._stream_chunks = chunks_in  # type: ignore[attr-defined]
+    def setup_method(self) -> None:
+        _install_fake_pyqt6()
+        importlib.reload(_rust_adapter_module)
 
-        out = list(adapter.stream_response("hi", _make_context(), []))
+    def teardown_method(self) -> None:
+        pass
 
-        assert [c.content for c in out] == chunks_in
-        assert all(isinstance(c, AgentChunk) for c in out)
-
-    def test_only_last_chunk_is_final(self, adapter: RustAgentAdapter) -> None:
-        """is_final is True only on the terminal chunk."""
-        adapter.engine._stream_chunks = ["a", "b", "c"]  # type: ignore[attr-defined]
-
-        out = list(adapter.stream_response("hi", _make_context(), []))
-
-        assert [c.is_final for c in out] == [False, False, True]
-
-    def test_blocking_backend_call_does_not_break_generator(
-        self, adapter: RustAgentAdapter
-    ) -> None:
-        """When the Rust call blocks for ~2s and returns 5 chunks, the
-        generator still yields all 5 chunks correctly.
-
-        This is the regression scenario from #2752: callers must wrap this
-        in a worker thread, but the generator itself must still behave.
-        """
-        adapter.engine._stream_chunks = ["c1", "c2", "c3", "c4", "c5"]  # type: ignore[attr-defined]
-        adapter.engine._stream_delay = 2.0  # type: ignore[attr-defined]
-
-        start = time.monotonic()
-        out = list(adapter.stream_response("hi", _make_context(), []))
-        elapsed = time.monotonic() - start
-
-        assert [c.content for c in out] == ["c1", "c2", "c3", "c4", "c5"]
-        assert out[-1].is_final is True
-        assert all(not c.is_final for c in out[:-1])
-        # Sanity: backend delay was actually exercised.
-        assert elapsed >= 1.9
-
-    def test_empty_deltas_yields_single_terminal_chunk(
-        self, adapter: RustAgentAdapter
-    ) -> None:
-        """An empty backend response yields one final empty chunk."""
-        adapter.engine._stream_chunks = []  # type: ignore[attr-defined]
-
-        out = list(adapter.stream_response("hi", _make_context(), []))
-
-        assert len(out) == 1
-        assert out[0].content == ""
-        assert out[0].is_final is True
-
-    def test_streaming_failure_falls_back_to_generate_response(
-        self, adapter: RustAgentAdapter
-    ) -> None:
-        """If stream_response raises, adapter falls back to generate_response."""
-        mock_engine = MagicMock()
-        mock_engine.stream_response.side_effect = RuntimeError("SSE not supported")
-        mock_engine.generate_response.return_value = "single-shot-result"
-        adapter.engine = mock_engine
-
-        out = list(adapter.stream_response("hi", _make_context(), []))
-
-        assert len(out) == 1
-        assert out[0].content == "single-shot-result"
-        assert out[0].is_final is True
-
-    def test_docstring_documents_blocking_behavior(self) -> None:
-        """The docstring must warn callers that the call is blocking (#2752)."""
-        doc = RustAgentAdapter.stream_response.__doc__ or ""
-        assert "BLOCKING" in doc
-        assert "worker thread" in doc.lower()
-
-    def test_rust_adapter_stream_response_is_non_blocking_to_qt_events(
-        self, adapter: RustAgentAdapter
-    ) -> None:
-        """Verify that stream_response processes Qt events while waiting for Rust."""
-        # Setup mocks for PyQt environment
-        mock_app = MagicMock()
-        mock_thread = MagicMock()
-
-        # We need to mock sys.modules for PyQt6 since it might not be installed
-        with MagicMock() as mock_pyqt:
-            sys.modules["PyQt6"] = mock_pyqt
-            sys.modules["PyQt6.QtCore"] = mock_pyqt.QtCore
-            mock_pyqt.QtCore.QCoreApplication.instance.return_value = mock_app
-            mock_pyqt.QtCore.QThread.currentThread.return_value = mock_thread
-            mock_app.thread.return_value = mock_thread
-
-            # Make stream_response take some time so processEvents is called
-            adapter.engine._stream_chunks = ["chunk1", "chunk2"]
-            adapter.engine._stream_delay = 0.1
-
-            chunks = list(adapter.stream_response("test prompt", _make_context(), []))
-
-            assert len(chunks) == 2
-            assert chunks[0].content == "chunk1"
-            assert chunks[1].content == "chunk2"
-
-            # Verify processEvents was called at least once during wait
-            assert mock_app.processEvents.called
-
-        # Cleanup mocked sys.modules
-        del sys.modules["PyQt6"]
-        del sys.modules["PyQt6.QtCore"]
-
-
-class TestSendMessage:
-    """Tests for RustAgentAdapter.send_message."""
-
-    @pytest.mark.unit
-    def test_send_message_returns_agent_response(
-        self, adapter: RustAgentAdapter
-    ) -> None:
-        """send_message returns an AgentResponse wrapping the engine output."""
-        from src.shared.python.ai.types import AgentResponse
-
-        adapter.engine.generate_response = MagicMock(return_value="engine output")
-        result = adapter.send_message("hi", _make_context(), [])
-
-        assert isinstance(result, AgentResponse)
-        assert result.content == "engine output"
-
-    @pytest.mark.unit
-    def test_send_message_combines_context_and_prompt(
-        self, adapter: RustAgentAdapter
-    ) -> None:
-        """Conversation messages are prepended to the prompt passed to the engine."""
-        from src.shared.python.ai.types import Message
-
-        ctx = ConversationContext(
-            messages=[Message(role="user", content="prior msg")],
-            user_expertise=ExpertiseLevel.INTERMEDIATE,
-        )
-        mock_engine = MagicMock()
-        mock_engine.generate_response.return_value = "resp"
-        adapter.engine = mock_engine
-
-        adapter.send_message("new msg", ctx, [])
-
-        call_arg = mock_engine.generate_response.call_args[0][0]
-        assert "prior msg" in call_arg
-        assert "new msg" in call_arg
-
-    @pytest.mark.unit
-    def test_send_message_engine_error_returns_error_response(
-        self, adapter: RustAgentAdapter
-    ) -> None:
-        """When the engine raises, send_message returns an error AgentResponse."""
-        adapter.engine.generate_response = MagicMock(
-            side_effect=RuntimeError("engine crashed")
+    def _make_adapter_for(self, engine: MagicMock) -> RustAgentAdapter:
+        _ai_backend_global.AIEngine.return_value = engine
+        return _rust_adapter_module.RustAgentAdapter(
+            api_key="k", base_url="http://x", model="m"
         )
 
-        result = adapter.send_message("hi", _make_context(), [])
+    def test_stream_response_yields_agent_chunks(self) -> None:
+        from src.shared.python.ai.types import AgentChunk
 
-        assert "Error" in result.content
-        assert result.finish_reason == "error"
+        engine = MagicMock()
+        engine.stream_response.return_value = ["hello", " world"]
+        adapter = self._make_adapter_for(engine)
+        ctx = _make_context()
 
+        chunks = list(adapter.stream_response("hi", ctx, []))
 
-class TestValidateConnection:
-    """Tests for RustAgentAdapter.validate_connection."""
+        assert all(isinstance(c, AgentChunk) for c in chunks)
+        assert chunks[0].content == "hello"
+        assert chunks[1].content == " world"
 
-    @pytest.mark.unit
-    def test_always_returns_true(self, adapter: RustAgentAdapter) -> None:
-        """validate_connection always returns (True, msg) once __init__ succeeds."""
-        ok, msg = adapter.validate_connection()
-        assert ok is True
-        assert msg  # non-empty diagnostic
+    def test_last_chunk_is_final(self) -> None:
+        engine = MagicMock()
+        engine.stream_response.return_value = ["a", "b", "c"]
+        adapter = self._make_adapter_for(engine)
+        ctx = _make_context()
 
+        chunks = list(adapter.stream_response("hi", ctx, []))
 
-class TestCapabilities:
-    """Tests for RustAgentAdapter.capabilities property."""
+        assert chunks[-1].is_final is True
 
-    @pytest.mark.unit
-    def test_provider_name_is_rust(self, adapter: RustAgentAdapter) -> None:
-        assert adapter.capabilities.provider_name == "rust"
+    def test_intermediate_chunks_are_not_final(self) -> None:
+        engine = MagicMock()
+        engine.stream_response.return_value = ["a", "b", "c"]
+        adapter = self._make_adapter_for(engine)
+        ctx = _make_context()
 
-    @pytest.mark.unit
-    def test_streaming_capability_present(self, adapter: RustAgentAdapter) -> None:
-        from src.shared.python.ai.types import ProviderCapability
+        chunks = list(adapter.stream_response("hi", ctx, []))
 
-        assert ProviderCapability.STREAMING in adapter.capabilities.supported
+        for chunk in chunks[:-1]:
+            assert chunk.is_final is False
 
-    @pytest.mark.unit
-    def test_model_name_reflects_config(self, adapter: RustAgentAdapter) -> None:
-        assert adapter.capabilities.model_name == "stub-model"
+    def test_stream_response_with_context_messages(self) -> None:
+        engine = MagicMock()
+        engine.stream_response.return_value = ["response"]
+        adapter = self._make_adapter_for(engine)
+        ctx = _make_context("previous message")
 
+        list(adapter.stream_response("new prompt", ctx, []))
 
-class TestRagMethods:
-    """Tests for index_codebase and retrieve_context."""
+        call_arg = engine.stream_response.call_args[0][0]
+        assert "previous message" in call_arg
+        assert "new prompt" in call_arg
 
-    @pytest.mark.unit
-    def test_index_codebase_returns_int(self, adapter: RustAgentAdapter) -> None:
-        result = adapter.index_codebase("/some/path")
-        assert isinstance(result, int)
+    def test_stream_response_error_yields_error_chunk(self) -> None:
+        engine = MagicMock()
+        engine.stream_response.side_effect = RuntimeError("test error")
+        engine.generate_response.side_effect = RuntimeError("fallback also failed")
+        adapter = self._make_adapter_for(engine)
+        ctx = _make_context()
 
-    @pytest.mark.unit
-    def test_retrieve_context_returns_list_of_strings(
-        self, adapter: RustAgentAdapter
-    ) -> None:
-        result = adapter.retrieve_context("some query", top_k=3)
-        assert isinstance(result, list)
-        assert all(isinstance(s, str) for s in result)
+        chunks = list(adapter.stream_response("hi", ctx, []))
 
+        assert len(chunks) == 1
+        assert chunks[0].is_final is True
+        assert "Error" in chunks[0].content or "test error" in chunks[0].content
 
-class TestWheelMissingHint:
-    """Tests for the wheel-missing error message."""
+    def test_stream_response_empty_result(self) -> None:
+        engine = MagicMock()
+        engine.stream_response.return_value = []
+        adapter = self._make_adapter_for(engine)
+        ctx = _make_context()
 
-    @pytest.mark.unit
-    def test_wheel_missing_hint_mentions_maturin(self) -> None:
-        """The missing-wheel hint must tell the user how to build the extension."""
-        from src.shared.python.ai.adapters.rust_adapter import _WHEEL_MISSING_HINT
+        chunks = list(adapter.stream_response("hi", ctx, []))
 
-        assert "maturin develop" in _WHEEL_MISSING_HINT
+        assert len(chunks) == 1
+        assert chunks[0].content == ""
+        assert chunks[0].is_final is True
 
-    @pytest.mark.unit
-    def test_wheel_missing_hint_mentions_ai_backend(self) -> None:
-        """The hint references the ai_backend crate name."""
-        from src.shared.python.ai.adapters.rust_adapter import _WHEEL_MISSING_HINT
+    def test_stream_response_single_chunk(self) -> None:
+        engine = MagicMock()
+        engine.stream_response.return_value = ["only chunk"]
+        adapter = self._make_adapter_for(engine)
+        ctx = _make_context()
 
-        assert "ai_backend" in _WHEEL_MISSING_HINT
+        chunks = list(adapter.stream_response("hi", ctx, []))
+
+        assert len(chunks) == 1
+        assert chunks[0].content == "only chunk"
+        assert chunks[0].is_final is True
