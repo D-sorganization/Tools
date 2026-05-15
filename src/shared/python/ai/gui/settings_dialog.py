@@ -424,8 +424,6 @@ class ProviderConfigWidget(QWidget):
         """
         if provider is None:
             raise ValueError("provider must be provided")
-        if provider is None:
-            raise ValueError("provider must be provided")
         super().__init__(parent)
         self._provider = provider
         self._info = PROVIDER_INFO[provider]
@@ -467,8 +465,88 @@ class ProviderConfigWidget(QWidget):
             # Key status
             self._key_status = QLabel()
             layout.addWidget(self._key_status)
+<<<<<<< HEAD
         else:
             self._setup_local_provider_ui(layout)
+=======
+        elif self._provider == AIProvider.OLLAMA:
+            # Ollama host configuration
+            host_layout = QFormLayout()
+            self._host_input = QLineEdit(get_ollama_host())
+            host_layout.addRow("Ollama Host:", self._host_input)
+            layout.addLayout(host_layout)
+
+            # Test connection button
+            self._test_btn = QPushButton("Test Connection")
+            self._test_btn.clicked.connect(self._test_ollama_connection)
+            layout.addWidget(self._test_btn)
+
+            # Refresh models button
+            self._refresh_models_btn = QPushButton("🔄 Refresh Available Models")
+            self._refresh_models_btn.setToolTip(
+                "Fetch the list of installed models from your local Ollama instance"
+            )
+            self._refresh_models_btn.clicked.connect(self._refresh_ollama_models)
+            layout.addWidget(self._refresh_models_btn)
+
+            self._status_label = QLabel()
+            layout.addWidget(self._status_label)
+
+            # Model count display
+            self._model_count_label = QLabel()
+            self._model_count_label.setStyleSheet(Styles.TEXT_MUTED)
+            layout.addWidget(self._model_count_label)
+        elif self._provider == AIProvider.BITNET:
+            # BitNet local model configuration
+            bitnet_layout = QFormLayout()
+            self._model_path_input = QLineEdit()
+            self._model_path_input.setPlaceholderText(
+                "Path to .gguf model file (leave blank for default)"
+            )
+            bitnet_layout.addRow("Model Path:", self._model_path_input)
+
+            self._threads_input = QLineEdit()
+            self._threads_input.setPlaceholderText("Number of CPU threads (e.g. 4)")
+            bitnet_layout.addRow("Threads:", self._threads_input)
+
+            layout.addLayout(bitnet_layout)
+
+            info_label = QLabel(
+                "BitNet runs 1.58b quantized models locally via subprocess. "
+                "No network connection or API key required."
+            )
+            info_label.setWordWrap(True)
+            info_label.setStyleSheet(Styles.TEXT_MUTED)
+            layout.addWidget(info_label)
+        elif self._provider == AIProvider.CLINE_CLI:
+            # Cline CLI configuration
+            cline_layout = QFormLayout()
+            self._cline_path_input = QLineEdit()
+            self._cline_path_input.setPlaceholderText(
+                "Path to cline executable (leave blank to use PATH)"
+            )
+            cline_layout.addRow("Cline Path:", self._cline_path_input)
+
+            layout.addLayout(cline_layout)
+
+            info_label = QLabel(
+                "Cline CLI agent runs tasks locally. Ensure 'cline' is installed "
+                "and accessible. No API key is stored here; configure credentials "
+                "in Cline's own settings."
+            )
+            info_label.setWordWrap(True)
+            info_label.setStyleSheet(Styles.TEXT_MUTED)
+            layout.addWidget(info_label)
+        else:
+            # Generic local/CLI provider — no additional configuration required.
+            info_label = QLabel(
+                "This provider runs locally and requires no API key or host "
+                "configuration."
+            )
+            info_label.setWordWrap(True)
+            info_label.setStyleSheet(Styles.TEXT_MUTED)
+            layout.addWidget(info_label)
+>>>>>>> 692119b2 (fix: branch ProviderConfigWidget UI on provider name, not just requires_key)
 
         layout.addStretch()
 
