@@ -7,6 +7,9 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
+from .calculator_startup import default_calculator_startup_config
+from .theme_settings import SidekickThemeSettings
+
 VALID_DOCK_AREAS = {"left", "right"}
 
 
@@ -21,8 +24,19 @@ class SidebarState:
     height: int = 720
     active_tab: str = "files"
     tab_order: list[str] = field(default_factory=list)
+    default_visible_tabs: list[str] = field(default_factory=list)
+    default_hidden_tabs: list[str] = field(default_factory=list)
     hidden_tabs: list[str] = field(default_factory=list)
     popped_out_tabs: list[str] = field(default_factory=list)
+    tab_display_names: dict[str, str] = field(default_factory=dict)
+    theme_settings: dict[str, Any] = field(
+        default_factory=lambda: SidekickThemeSettings().to_dict()
+    )
+    tab_settings: dict[str, dict[str, Any]] = field(default_factory=dict)
+    calculator_predictive_text_enabled: bool = False
+    calculator_startup_imports: list[dict[str, Any]] = field(
+        default_factory=lambda: default_calculator_startup_config().to_list()
+    )
 
     def __post_init__(self) -> None:
         if self.dock_area not in VALID_DOCK_AREAS:
@@ -32,8 +46,18 @@ class SidebarState:
         if not self.active_tab:
             self.active_tab = "files"
         self.tab_order = _dedupe_strings(self.tab_order)
+        self.default_visible_tabs = _dedupe_strings(self.default_visible_tabs)
+        self.default_hidden_tabs = _dedupe_strings(self.default_hidden_tabs)
         self.hidden_tabs = _dedupe_strings(self.hidden_tabs)
         self.popped_out_tabs = _dedupe_strings(self.popped_out_tabs)
+        self.tab_display_names = _string_mapping(self.tab_display_names)
+        self.theme_settings = SidekickThemeSettings.from_dict(
+            self.theme_settings
+        ).to_dict()
+        self.tab_settings = _tab_settings_mapping(self.tab_settings)
+        self.calculator_startup_imports = _startup_imports_payload(
+            self.calculator_startup_imports
+        )
 
     def to_dict(self) -> dict[str, Any]:
         """Return a JSON-safe representation."""
@@ -52,8 +76,21 @@ class SidebarState:
             height=int(payload.get("height", 720)),
             active_tab=str(payload.get("active_tab", "files")),
             tab_order=_string_list(payload.get("tab_order")),
+            default_visible_tabs=_string_list(payload.get("default_visible_tabs")),
+            default_hidden_tabs=_string_list(payload.get("default_hidden_tabs")),
             hidden_tabs=_string_list(payload.get("hidden_tabs")),
             popped_out_tabs=_string_list(payload.get("popped_out_tabs")),
+            tab_display_names=_string_mapping(payload.get("tab_display_names")),
+            theme_settings=SidekickThemeSettings.from_dict(
+                payload.get("theme_settings")
+            ).to_dict(),
+            tab_settings=_tab_settings_mapping(payload.get("tab_settings")),
+            calculator_predictive_text_enabled=bool(
+                payload.get("calculator_predictive_text_enabled", False)
+            ),
+            calculator_startup_imports=_startup_imports_payload(
+                payload.get("calculator_startup_imports")
+            ),
         )
 
     def save_json(self, path: str | Path) -> None:
@@ -87,3 +124,42 @@ def _dedupe_strings(value: list[str] | None) -> list[str]:
             result.append(item)
             seen.add(item)
     return result
+
+
+def _string_mapping(value: Any) -> dict[str, str]:
+    if not isinstance(value, dict):
+        return {}
+    result: dict[str, str] = {}
+    for raw_key, raw_value in value.items():
+        key = str(raw_key).strip()
+        name = str(raw_value).strip()
+        if key and name:
+            result[key] = name
+    return result
+
+
+def _tab_settings_mapping(value: Any) -> dict[str, dict[str, Any]]:
+    if not isinstance(value, dict):
+        return {}
+    result: dict[str, dict[str, Any]] = {}
+    for raw_key, raw_entry in value.items():
+        key = str(raw_key).strip()
+        if not key or not isinstance(raw_entry, dict):
+            continue
+        values = raw_entry.get("values", {})
+        if not isinstance(values, dict):
+            continue
+        try:
+            version = int(raw_entry.get("schema_version", 1))
+        except (TypeError, ValueError):
+            version = 1
+        result[key] = {"schema_version": max(1, version), "values": dict(values)}
+    return result
+
+
+def _startup_imports_payload(value: Any) -> list[dict[str, Any]]:
+    if value is None:
+        return default_calculator_startup_config().to_list()
+    if not isinstance(value, list):
+        return []
+    return [dict(item) for item in value if isinstance(item, dict)]

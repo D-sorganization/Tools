@@ -93,7 +93,14 @@ const R = 8.314; // J/(mol·K)
 const MW: Record<string, number> = { N2: 28.01, O2: 32.0, CO2: 44.01, H2O: 18.015, H2: 2.016, CO: 28.01, CH4: 16.04, Ar: 39.95 };
 
 function calcMixtureMW(comp: GasComp): number {
-  return Object.entries(comp).reduce((sum, [k, v]) => sum + v * MW[k], 0);
+  // ⚡ Bolt Optimization: Replace Object.entries().reduce() with a single-pass loop
+  let sum = 0;
+  const keys = Object.keys(comp) as (keyof GasComp)[];
+  for (let i = 0; i < keys.length; i++) {
+    const k = keys[i];
+    sum += comp[k] * MW[k];
+  }
+  return sum;
 }
 
 function calcDensity(P: number, T: number, mw: number): number {
@@ -113,6 +120,17 @@ function colebrookFrictionFactor(Re: number, roughness: number, diameter: number
   const term2 = 5.74 / Math.pow(Re, 0.9);
   return 0.25 / Math.pow(Math.log10(term1 + term2), 2);
 }
+
+
+// ⚡ Bolt Optimization: Pre-calculate total and replace Object.values().reduce() to eliminate intermediate object creation and iteration overhead
+const getTotalGasComp = (comp: GasComp) => {
+  let sum = 0;
+  const keys = Object.keys(comp) as (keyof GasComp)[];
+  for (let i = 0; i < keys.length; i++) {
+    sum += comp[keys[i]];
+  }
+  return sum;
+};
 
 export function PressureDropCalculator() {
   const [activeTab, setActiveTab] = useState<'input' | 'results' | 'chart'>('input');
@@ -142,12 +160,18 @@ export function PressureDropCalculator() {
 
   const calculate = useCallback(async () => {
     // Normalize composition
-    const total = Object.values(gasComp).reduce((a, b) => a + b, 0);
+    const total = getTotalGasComp(gasComp);
     if (Math.abs(total - 100) > 1) {
       alert(`Gas composition must sum to 100% (current: ${total.toFixed(1)}%)`);
       return;
     }
-    const normComp = Object.fromEntries(Object.entries(gasComp).map(([k, v]) => [k, v / 100])) as GasComp;
+    // ⚡ Bolt Optimization: Replace Object.entries().map() and Object.fromEntries() with a single-pass loop
+    const normComp = {} as GasComp;
+    const keys = Object.keys(gasComp) as (keyof GasComp)[];
+    for (let i = 0; i < keys.length; i++) {
+      const k = keys[i];
+      normComp[k] = gasComp[k] / 100;
+    }
 
     // Get pipe diameter
     const diameter = PIPE_DIAMETERS[pipeSize] || 0.1;
@@ -345,8 +369,8 @@ export function PressureDropCalculator() {
               ))}
             </div>
             <div className="mt-3 text-sm text-slate-400">
-              Total: <span className={Math.abs(Object.values(gasComp).reduce((a, b) => a + b, 0) - 100) < 1 ? 'text-green-400' : 'text-yellow-400'}>
-                {Object.values(gasComp).reduce((a, b) => a + b, 0).toFixed(1)}%
+              Total: <span className={Math.abs(getTotalGasComp(gasComp) - 100) < 1 ? 'text-green-400' : 'text-yellow-400'}>
+                {getTotalGasComp(gasComp).toFixed(1)}%
               </span>
             </div>
           </div>
