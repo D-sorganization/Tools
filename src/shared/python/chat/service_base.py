@@ -300,6 +300,27 @@ class ChatServiceBase(abc.ABC):
         """
         ...  # pragma: no cover
 
+    @abc.abstractmethod
+    async def refresh_models(self) -> list[dict[str, Any]]:
+        """Refresh the list of available models from the provider.
+
+        Returns:
+            List of model info dicts.
+        """
+        ...  # pragma: no cover
+
+    @abc.abstractmethod
+    async def index_codebase(self, root_path: str) -> dict[str, Any]:
+        """Trigger a re-index of the codebase for RAG.
+
+        Args:
+            root_path: Filesystem path to the project root.
+
+        Returns:
+            Index status dict (matches ChatIndexStatusResponse).
+        """
+        ...  # pragma: no cover
+
     # ── Hooks for subclass customization ─────────────────────────────
 
     def _load_session(self, session_id: str) -> ChatSession | None:

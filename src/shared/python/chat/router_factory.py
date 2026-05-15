@@ -284,6 +284,56 @@ def create_chat_router(
                         # connection abruptly, but DO log full traceback so monitoring
                         # sees it.
 
+                elif action == "refresh_models":
+                    try:
+                        models = await chat_service.refresh_models()
+                        from datetime import datetime, timezone
+
+                        await websocket.send_json(
+                            {
+                                "type": "model_list",
+                                "models": models,
+                                "refreshed_at": datetime.now(timezone.utc).isoformat(),
+                            }
+                        )
+                    except (
+                        AIProviderError,
+                        ValueError,
+                        ConnectionError,
+                        TimeoutError,
+                    ) as exc:
+                        logger.warning("Refresh models failed: %s", exc)
+                        await websocket.send_json({"type": "error", "detail": str(exc)})
+                    except Exception:
+                        logger.exception("Unexpected error refreshing models")
+                        await websocket.send_json(
+                            {"type": "error", "detail": "Internal server error"}
+                        )
+
+                elif action == "index_codebase":
+                    root_path = msg.get("root_path")
+                    if not root_path:
+                        await websocket.send_json(
+                            {"type": "error", "detail": "Missing root_path"}
+                        )
+                        continue
+                    try:
+                        status = await chat_service.index_codebase(root_path)
+                        await websocket.send_json({"type": "index_status", **status})
+                    except (
+                        AIProviderError,
+                        ValueError,
+                        ConnectionError,
+                        TimeoutError,
+                    ) as exc:
+                        logger.warning("Indexing failed for root=%s: %s", root_path, exc)
+                        await websocket.send_json({"type": "error", "detail": str(exc)})
+                    except Exception:
+                        logger.exception("Unexpected error indexing root=%s", root_path)
+                        await websocket.send_json(
+                            {"type": "error", "detail": "Internal server error"}
+                        )
+
                 else:
                     await websocket.send_json(
                         {

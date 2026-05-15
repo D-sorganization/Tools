@@ -37,6 +37,10 @@ class _FakeChatService(ChatServiceBase):
         self._condense_fn: Any = AsyncMock(return_value=None)
         self._skill_fn: Any = AsyncMock(return_value=None)
         self._review_fn: Any = AsyncMock(return_value="review_session_123")
+        self._refresh_fn: Any = AsyncMock(return_value=[])
+        self._index_fn: Any = AsyncMock(
+            return_value={"state": "complete", "files_parsed": 10, "symbols_inserted": 50}
+        )
 
     async def stream_response(self, session_id: str) -> AsyncIterator[Any]:
         yield "ok"
@@ -49,6 +53,12 @@ class _FakeChatService(ChatServiceBase):
 
     async def request_review(self, session_id: str, provider: str) -> str:
         return await self._review_fn(session_id, provider)
+
+    async def refresh_models(self) -> list[dict[str, Any]]:
+        return await self._refresh_fn()
+
+    async def index_codebase(self, root_path: str) -> dict[str, Any]:
+        return await self._index_fn(root_path)
 
 
 def _make_client(service: _FakeChatService) -> Any:
@@ -235,3 +245,35 @@ class TestRequestReviewErrorLogging:
         error_records = [r for r in caplog.records if r.levelno >= logging.ERROR]
         assert error_records
         assert any("Unexpected error" in r.message for r in error_records)
+
+
+class TestNewActionsErrorLogging:
+    def test_refresh_models_error_logging(self, caplog: pytest.LogCaptureFixture) -> None:
+        """AIProviderError from refresh_models → warning."""
+        service = _FakeChatService()
+        service._refresh_fn = AsyncMock(side_effect=AIProviderError("failed to poll"))
+        client = _make_client(service)
+
+        with caplog.at_level(logging.WARNING, logger="chat.router_factory"):
+            with client.websocket_connect("/api/ws/chat/new") as ws:
+                ws.receive_json()
+                ws.send_json({"action": "refresh_models"})
+                payload = ws.receive_json()
+
+        assert payload == {"type": "error", "detail": "failed to poll"}
+        assert any("Refresh models failed" in r.message for r in caplog.records)
+
+    def test_index_codebase_error_logging(self, caplog: pytest.LogCaptureFixture) -> None:
+        """AIProviderError from index_codebase → warning."""
+        service = _FakeChatService()
+        service._index_fn = AsyncMock(side_effect=AIProviderError("disk full"))
+        client = _make_client(service)
+
+        with caplog.at_level(logging.WARNING, logger="chat.router_factory"):
+            with client.websocket_connect("/api/ws/chat/new") as ws:
+                ws.receive_json()
+                ws.send_json({"action": "index_codebase", "root_path": "/tmp"})
+                payload = ws.receive_json()
+
+        assert payload == {"type": "error", "detail": "disk full"}
+        assert any("Indexing failed" in r.message for r in caplog.records)
