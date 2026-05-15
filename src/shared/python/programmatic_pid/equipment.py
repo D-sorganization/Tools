@@ -71,7 +71,7 @@ def equipment_side_anchors(eq: dict[str, Any]) -> dict[str, tuple[float, float]]
 def equipment_anchor(
     eq: dict[str, Any], side: str | None, offset: float = 0.0
 ) -> tuple[float, float]:
-    if not (eq is not None):
+    if eq is None:
         raise ValueError("eq must be provided")
     x = to_float(eq.get("x", 0.0))
     y = to_float(eq.get("y", 0.0))
@@ -90,7 +90,7 @@ def equipment_anchor(
 def nearest_equipment_anchor(
     eq: dict[str, Any], source: tuple[float, float]
 ) -> tuple[float, float]:
-    if not (eq is not None):
+    if eq is None:
         raise ValueError("eq must be provided")
     sx, sy = to_float(source[0]), to_float(source[1])
     anchors = equipment_side_anchors(eq).values()
@@ -119,7 +119,7 @@ def render_box(msp: Any, x: float, y: float, w: float, h: float, layer: str) -> 
 
 @register_equipment("hopper")
 def render_hopper(msp: Any, x: float, y: float, w: float, h: float, layer: str) -> None:
-    if not (x is not None):
+    if x is None:
         raise ValueError("x must be provided")
     bot_w = w * 0.72
     cx = x + w / 2
@@ -129,7 +129,7 @@ def render_hopper(msp: Any, x: float, y: float, w: float, h: float, layer: str) 
 
 @register_equipment("fan")
 def render_fan(msp: Any, x: float, y: float, w: float, h: float, layer: str) -> None:
-    if not (x is not None):
+    if x is None:
         raise ValueError("x must be provided")
     cx, cy = x + w / 2, y + h / 2
     r = max(min(w, h) * 0.42, 0.5)
@@ -146,7 +146,7 @@ def render_fan(msp: Any, x: float, y: float, w: float, h: float, layer: str) -> 
 def render_rotary_valve(
     msp: Any, x: float, y: float, w: float, h: float, layer: str
 ) -> None:
-    if not (x is not None):
+    if x is None:
         raise ValueError("x must be provided")
     cx, cy = x + w / 2, y + h / 2
     r = max(min(w, h) * 0.35, 0.5)
@@ -165,7 +165,7 @@ def render_rotary_valve(
 
 @register_equipment("burner")
 def render_burner(msp: Any, x: float, y: float, w: float, h: float, layer: str) -> None:
-    if not (x is not None):
+    if x is None:
         raise ValueError("x must be provided")
     _add_box(msp, x, y, w, h, layer)
     cx = x + w / 2
@@ -180,7 +180,7 @@ def render_burner(msp: Any, x: float, y: float, w: float, h: float, layer: str) 
 
 @register_equipment("bin")
 def render_bin(msp: Any, x: float, y: float, w: float, h: float, layer: str) -> None:
-    if not (x is not None):
+    if x is None:
         raise ValueError("x must be provided")
     _add_box(msp, x, y, w, h, layer)
     msp.add_line((x, y + h), (x + w, y + h), dxfattribs={"layer": layer})
@@ -201,7 +201,7 @@ def render_gate_valve(
     msp: Any, x: float, y: float, w: float, h: float, layer: str
 ) -> None:
     """ISA-5.1 gate valve: two opposing triangles meeting at a vertical line."""
-    if not (x is not None):
+    if x is None:
         raise ValueError("x must be provided")
     cx, cy = x + w / 2, y + h / 2
     hw, hh = w * 0.4, h * 0.4
@@ -226,7 +226,7 @@ def render_globe_valve(
     msp: Any, x: float, y: float, w: float, h: float, layer: str
 ) -> None:
     """ISA-5.1 globe valve: like gate valve but with a circle at center."""
-    if not (x is not None):
+    if x is None:
         raise ValueError("x must be provided")
     cx, cy = x + w / 2, y + h / 2
     hw, hh = w * 0.4, h * 0.4
@@ -250,7 +250,7 @@ def render_ball_valve(
     msp: Any, x: float, y: float, w: float, h: float, layer: str
 ) -> None:
     """Ball valve: two triangles with a filled circle."""
-    if not (x is not None):
+    if x is None:
         raise ValueError("x must be provided")
     cx, cy = x + w / 2, y + h / 2
     hw, hh = w * 0.4, h * 0.4
@@ -273,7 +273,7 @@ def render_check_valve(
     msp: Any, x: float, y: float, w: float, h: float, layer: str
 ) -> None:
     """Check valve: single triangle pointing into a vertical bar."""
-    if not (x is not None):
+    if x is None:
         raise ValueError("x must be provided")
     cx, cy = x + w / 2, y + h / 2
     hw, hh = w * 0.4, h * 0.4
@@ -296,7 +296,7 @@ def render_control_valve(
     msp: Any, x: float, y: float, w: float, h: float, layer: str
 ) -> None:
     """ISA-5.1 control valve: gate valve body with diaphragm actuator."""
-    if not (x is not None):
+    if x is None:
         raise ValueError("x must be provided")
     cx, cy = x + w / 2, y + h / 2
     hw, hh = w * 0.35, h * 0.3
@@ -325,7 +325,7 @@ def render_relief_valve(
     msp: Any, x: float, y: float, w: float, h: float, layer: str
 ) -> None:
     """Pressure safety / relief valve: triangle with a bent vent line."""
-    if not (x is not None):
+    if x is None:
         raise ValueError("x must be provided")
     cx, cy = x + w / 2, y + h / 2
     hw, hh = w * 0.4, h * 0.35
@@ -346,7 +346,7 @@ def render_rupture_disk(
     msp: Any, x: float, y: float, w: float, h: float, layer: str
 ) -> None:
     """Rupture disk: two arcs forming a lens shape."""
-    if not (x is not None):
+    if x is None:
         raise ValueError("x must be provided")
     cx, cy = x + w / 2, y + h / 2
     r = min(w, h) * 0.4
@@ -373,7 +373,7 @@ def render_heat_exchanger(
     msp: Any, x: float, y: float, w: float, h: float, layer: str
 ) -> None:
     """Shell-and-tube heat exchanger: circle with internal lines."""
-    if not (x is not None):
+    if x is None:
         raise ValueError("x must be provided")
     cx, cy = x + w / 2, y + h / 2
     r = min(w, h) * 0.42
@@ -390,7 +390,7 @@ def render_heat_exchanger(
 @register_equipment("pump")
 def render_pump(msp: Any, x: float, y: float, w: float, h: float, layer: str) -> None:
     """Centrifugal pump: circle with discharge nozzle triangle."""
-    if not (x is not None):
+    if x is None:
         raise ValueError("x must be provided")
     cx, cy = x + w / 2, y + h / 2
     r = min(w, h) * 0.38
@@ -406,7 +406,7 @@ def render_pump(msp: Any, x: float, y: float, w: float, h: float, layer: str) ->
 @register_equipment("tank")
 def render_tank(msp: Any, x: float, y: float, w: float, h: float, layer: str) -> None:
     """Flat-bottom storage tank with roof line."""
-    if not (x is not None):
+    if x is None:
         raise ValueError("x must be provided")
     _add_box(msp, x, y, w, h, layer)
     # Roof line (slight peak)
@@ -427,7 +427,7 @@ def draw_equipment_symbol(msp: Any, eq: dict[str, Any], layer: str) -> None:
     Uses the registry first; falls back to vertical_retort special case,
     then to a plain box.
     """
-    if not (eq is not None):
+    if eq is None:
         raise ValueError("eq must be provided")
     x = to_float(eq.get("x", 0.0))
     y = to_float(eq.get("y", 0.0))

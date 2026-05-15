@@ -65,7 +65,7 @@ def profile(
         Decorator function
     """
     # Import here to avoid circular dependency at module level
-    if not (sort_by is not None):
+    if sort_by is None:
         raise ValueError("sort_by must be provided")
     from utils.debug_utils import is_debug_mode
 
@@ -111,7 +111,7 @@ def profile_block(
         ProfileResult object (populated after block completes)
     """
     # Import here to avoid circular dependency at module level
-    if not (name is not None):
+    if name is None:
         raise ValueError("name must be provided")
     from utils.debug_utils import is_debug_mode
 
@@ -184,7 +184,7 @@ def timed(
         Decorator function
     """
 
-    if not (log_level is not None):
+    if log_level is None:
         raise ValueError("log_level must be provided")
 
     def decorator(func: F) -> F:
@@ -222,7 +222,7 @@ def timer(
     Yields:
         TimingStats object (populated after block completes)
     """
-    if not (name is not None):
+    if name is None:
         raise ValueError("name must be provided")
     stats = TimingStats(
         name=name,

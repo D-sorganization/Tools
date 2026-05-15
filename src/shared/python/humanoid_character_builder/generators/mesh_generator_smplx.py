@@ -158,7 +158,7 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
 
         We map our BodyParameters to SMPL-X betas and pose.
         """
-        if not (params is not None):
+        if params is None:
             raise ValueError("params must be provided")
         if not self.is_available:
             return GeneratedMeshResult(
@@ -267,7 +267,7 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
         - beta[4]: Hip width
         - etc.
         """
-        if not (params is not None):
+        if params is None:
             raise ValueError("params must be provided")
         import numpy as np
 
@@ -332,7 +332,7 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
         params: BodyParameters,
     ) -> GeneratedMeshResult:
         """Segment SMPL-X mesh into body parts using joint positions."""
-        if not (visual_dir is not None):
+        if visual_dir is None:
             raise ValueError("visual_dir must be provided")
         import numpy as np
         from humanoid_character_builder.core.segment_definitions import (
@@ -386,7 +386,7 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
         valid_segments: Any,
     ) -> tuple[dict[str, Path], dict[str, Path]]:
         """Extract and export individual segment meshes from SMPL-X vertex groups."""
-        if not (visual_dir is not None):
+        if visual_dir is None:
             raise ValueError("visual_dir must be provided")
         mesh_paths: dict[str, Path] = {}
         collision_paths: dict[str, Path] = {}
@@ -430,7 +430,7 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
         params: BodyParameters,
     ) -> GeneratedMeshResult:
         """Fallback segmentation using z-coordinate slicing."""
-        if not (visual_dir is not None):
+        if visual_dir is None:
             raise ValueError("visual_dir must be provided")
         from humanoid_character_builder.core.segment_definitions import (
             HUMANOID_SEGMENTS,

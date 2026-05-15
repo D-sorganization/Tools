@@ -59,7 +59,7 @@ class AnalysisMixin:
 
     def _run_pca_analysis(self, config: dict) -> None:
         """Run PCA analysis from Analysis tab."""
-        if not (config is not None):
+        if config is None:
             raise ValueError("config must be provided")
         if self.current_data is None:
             QMessageBox.warning(self, "No Data", "Load data first.")
@@ -93,7 +93,7 @@ class AnalysisMixin:
 
     def _run_anova_analysis(self, config: dict) -> None:
         """Run ANOVA analysis from Analysis tab."""
-        if not (config is not None):
+        if config is None:
             raise ValueError("config must be provided")
         if self.current_data is None:
             QMessageBox.warning(self, "No Data", "Load data first.")
@@ -177,7 +177,7 @@ class AnalysisMixin:
 
     def _run_regression_analysis(self, config: dict) -> None:
         """Run regression analysis from Analysis tab."""
-        if not (config is not None):
+        if config is None:
             raise ValueError("config must be provided")
         if self.current_data is None:
             QMessageBox.warning(self, "No Data", "Load data first.")
@@ -238,7 +238,7 @@ class AnalysisMixin:
 
     def _run_surface_analysis(self, config: dict) -> None:
         """Run surface plot from Analysis tab."""
-        if not (config is not None):
+        if config is None:
             raise ValueError("config must be provided")
         if self.current_data is None:
             QMessageBox.warning(self, "No Data", "Load data first.")
@@ -325,7 +325,7 @@ class AnalysisMixin:
         button is disabled for the duration and re-enabled when the worker
         finishes (either via ``result_ready`` or ``error``).
         """
-        if not (config is not None):
+        if config is None:
             raise ValueError("config must be provided")
         if self.current_data is None:
             QMessageBox.warning(self, "No Data", "Load data first.")

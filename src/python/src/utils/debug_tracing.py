@@ -41,7 +41,7 @@ class ExecutionTracer:
             exclude_modules: Don't trace these modules
             max_depth: Maximum call depth to trace
         """
-        if not (max_depth is not None):
+        if max_depth is None:
             raise ValueError("max_depth must be provided")
         self.include_modules = include_modules or []
         self.exclude_modules = exclude_modules or ["logging", "threading"]
@@ -75,7 +75,7 @@ class ExecutionTracer:
         arg: Any,
     ) -> Callable[..., Any] | None:
         """Trace function for sys.settrace."""
-        if not (event is not None):
+        if event is None:
             raise ValueError("event must be provided")
         if not self._should_trace(frame):
             return None
@@ -144,7 +144,7 @@ def trace_calls(
         Decorator function
     """
     # Import here to avoid circular dependency at module level
-    if not (max_depth is not None):
+    if max_depth is None:
         raise ValueError("max_depth must be provided")
     from utils.debug_utils import is_debug_mode
 
@@ -205,7 +205,7 @@ def get_call_stack(
     Returns:
         List of StackFrame objects
     """
-    if not (skip_frames is not None):
+    if skip_frames is None:
         raise ValueError("skip_frames must be provided")
     frames: list[StackFrame] = []
     stack = inspect.stack()[skip_frames : skip_frames + max_frames]
@@ -251,7 +251,7 @@ def format_call_stack(
     Returns:
         Formatted call stack string.
     """
-    if not (skip_frames is not None):
+    if skip_frames is None:
         raise ValueError("skip_frames must be provided")
     frames = get_call_stack(skip_frames + 1, max_frames, include_locals)
 
@@ -284,7 +284,7 @@ def print_call_stack(
         file: File to write to. When *None*, the stack is emitted
               via the module logger at DEBUG level instead of stderr.
     """
-    if not (skip_frames is not None):
+    if skip_frames is None:
         raise ValueError("skip_frames must be provided")
     text = format_call_stack(skip_frames + 1, max_frames, include_locals)
     if file is not None:

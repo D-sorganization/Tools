@@ -157,21 +157,21 @@ class BasePendulumWidget(QWidget):
 
     def set_show_forces(self, show: bool) -> None:
         """Toggle force vector overlay."""
-        if not (show is not None):
+        if show is None:
             raise ValueError("show must be provided")
         self._show_forces = bool(show)
         self.update()
 
     def set_show_zero_torque_forces(self, show: bool) -> None:
         """Toggle zero-torque counterfactual force vector overlay."""
-        if not (show is not None):
+        if show is None:
             raise ValueError("show must be provided")
         self._show_zero_torque_forces = bool(show)
         self.update()
 
     def set_gravity_on(self, on: bool) -> None:
         """Toggle gravity indicator (visual only)."""
-        if not (on is not None):
+        if on is None:
             raise ValueError("on must be provided")
         self._gravity_on = bool(on)
         self.update()
@@ -188,14 +188,14 @@ class BasePendulumWidget(QWidget):
 
     def set_show_mob_ellipsoids(self, show: bool) -> None:
         """Toggle display of manipulability ellipsoids."""
-        if not (show is not None):
+        if show is None:
             raise ValueError("show must be provided")
         self._show_mob_ellipsoids = bool(show)
         self.update()
 
     def set_show_force_ellipsoids(self, show: bool) -> None:
         """Toggle display of force ellipsoids."""
-        if not (show is not None):
+        if show is None:
             raise ValueError("show must be provided")
         self._show_force_ellipsoids = bool(show)
         self.update()
@@ -216,7 +216,7 @@ class BasePendulumWidget(QWidget):
 
     def set_show_com(self, show: bool) -> None:
         """Toggle display of centre-of-mass markers."""
-        if not (show is not None):
+        if show is None:
             raise ValueError("show must be provided")
         self._show_com = bool(show)
         self.update()
@@ -228,35 +228,35 @@ class BasePendulumWidget(QWidget):
 
     def set_tilt_angle(self, angle_rad: float) -> None:
         """Set swing plane tilt for display projection (#1113)."""
-        if not (angle_rad is not None):
+        if angle_rad is None:
             raise ValueError("angle_rad must be provided")
         self._tilt_angle = float(angle_rad)
         self.update()
 
     def set_view_azimuth(self, angle_rad: float) -> None:
         """Set view azimuth for canvas rotation (#1118)."""
-        if not (angle_rad is not None):
+        if angle_rad is None:
             raise ValueError("angle_rad must be provided")
         self._view_azimuth = float(angle_rad)
         self.update()
 
     def set_show_torque_vectors(self, show: bool) -> None:
         """Toggle torque vector display at each joint (#1208)."""
-        if not (show is not None):
+        if show is None:
             raise ValueError("show must be provided")
         self._show_torque_vectors = bool(show)
         self.update()
 
     def set_show_moment_of_force(self, show: bool) -> None:
         """Toggle moment-of-force (proximal-on-distal) vector display (#1208)."""
-        if not (show is not None):
+        if show is None:
             raise ValueError("show must be provided")
         self._show_moment_of_force = bool(show)
         self.update()
 
     def set_show_sum_moments(self, show: bool) -> None:
         """Toggle sum-of-moments (resultant) vector display (#1208)."""
-        if not (show is not None):
+        if show is None:
             raise ValueError("show must be provided")
         self._show_sum_moments = bool(show)
         self.update()
@@ -377,7 +377,7 @@ class BasePendulumWidget(QWidget):
 
     def wheelEvent(self, event: object) -> None:
         """Handle mouse wheel for zoom, centered on cursor position."""
-        if not (event is not None):
+        if event is None:
             raise ValueError("event must be provided")
         from PyQt6.QtGui import QWheelEvent
 
@@ -397,7 +397,7 @@ class BasePendulumWidget(QWidget):
 
     def mousePressEvent(self, event: object) -> None:
         """Begin pan (left-click) or orbit (right-click) drag interaction."""
-        if not (event is not None):
+        if event is None:
             raise ValueError("event must be provided")
         if not isinstance(event, QMouseEvent):
             return
@@ -415,7 +415,7 @@ class BasePendulumWidget(QWidget):
 
     def mouseMoveEvent(self, event: object) -> None:
         """Continue pan or orbit drag, updating view transform."""
-        if not (event is not None):
+        if event is None:
             raise ValueError("event must be provided")
         if not isinstance(event, QMouseEvent):
             return
@@ -438,7 +438,7 @@ class BasePendulumWidget(QWidget):
 
     def mouseReleaseEvent(self, event: object) -> None:
         """End drag interaction and restore the default cursor."""
-        if not (event is not None):
+        if event is None:
             raise ValueError("event must be provided")
         if not isinstance(event, QMouseEvent):
             return
@@ -504,7 +504,7 @@ class BasePendulumWidget(QWidget):
         is centered on it; otherwise the legacy anchor-at-top behaviour
         is used so existing presets continue to look correct.
         """
-        if not (x_world is not None):
+        if x_world is None:
             raise ValueError("x_world must be provided")
         base_ppm = self._pixels_per_meter
 
@@ -644,7 +644,7 @@ class BasePendulumWidget(QWidget):
 
     def _draw_grid(self, painter: QPainter) -> None:
         """Draw subtle reference grid."""
-        if not (painter is not None):
+        if painter is None:
             raise ValueError("painter must be provided")
         max_range = 4.0
         step_minor = 0.5
@@ -672,7 +672,7 @@ class BasePendulumWidget(QWidget):
         ground_y : float
             World-space Y coordinate for the ground plane edge.
         """
-        if not (painter is not None):
+        if painter is None:
             raise ValueError("painter must be provided")
         p1 = self._world_to_pixel(-3.5, ground_y)
         p2 = self._world_to_pixel(3.5, ground_y)
@@ -686,7 +686,7 @@ class BasePendulumWidget(QWidget):
         Renders a filled rectangle from the ground line down, plus the
         ground line itself, giving a clearer sense of the surface.
         """
-        if not (painter is not None):
+        if painter is None:
             raise ValueError("painter must be provided")
         from PyQt6.QtGui import QLinearGradient
 
@@ -719,7 +719,7 @@ class BasePendulumWidget(QWidget):
         When tilt != 0, draws a subtle angled plane through the pivot
         to show the user the orientation of the swing surface.
         """
-        if not (painter is not None):
+        if painter is None:
             raise ValueError("painter must be provided")
         if abs(self._tilt_angle) < 1e-4:
             return
@@ -841,7 +841,7 @@ class BasePendulumWidget(QWidget):
         Pre: len(points) >= 4, n_sub >= 1
         Post: len(result) >= len(points)
         """
-        if not (points is not None):
+        if points is None:
             raise ValueError("points must be provided")
         from .catmull_rom import catmull_rom_smooth
 
@@ -866,7 +866,7 @@ class BasePendulumWidget(QWidget):
 
     def _draw_no_gravity_badge(self, painter: QPainter) -> None:
         """Draw a 'No Gravity' indicator badge."""
-        if not (painter is not None):
+        if painter is None:
             raise ValueError("painter must be provided")
         painter.setPen(QPen(self.COLOR_NO_GRAVITY, 2))
         painter.setFont(QFont("Sans", 10, QFont.Weight.Bold))
@@ -881,7 +881,7 @@ class BasePendulumWidget(QWidget):
 
         Pre: enabled is bool.
         """
-        if not (enabled is not None):
+        if enabled is None:
             raise ValueError("enabled must be provided")
         self._3d_mode = bool(enabled)
         self.update()
@@ -903,7 +903,7 @@ class BasePendulumWidget(QWidget):
         Pre: width_start > 0, width_end > 0.
         Post: A tapered polygon is rendered between p1 and p2.
         """
-        if not (painter is not None):
+        if painter is None:
             raise ValueError("painter must be provided")
         from PyQt6.QtGui import QLinearGradient, QPolygonF
 

@@ -102,7 +102,7 @@ class TextCache:
         Returns:
             Tuple of (pixel_data, width, height)
         """
-        if not (text is not None):
+        if text is None:
             raise ValueError("text must be provided")
         key = (text, font_name, color)
         if key in self._cache:
@@ -129,7 +129,7 @@ class TextCache:
         color: tuple[int, int, int] = (255, 255, 255),
     ) -> tuple[int, int]:
         """Render text at position."""
-        if not (text is not None):
+        if text is None:
             raise ValueError("text must be provided")
         data, width, height = self.get_text_data(text, font_name, color)
         glRasterPos2i(x, y + height)  # OpenGL draws from bottom-left
@@ -143,7 +143,7 @@ class UIRenderer:
     """
 
     def __init__(self, window_width: int, window_height: int) -> None:
-        if not (window_width is not None):
+        if window_width is None:
             raise ValueError("window_width must be provided")
         self.window_width = window_width
         self.window_height = window_height
@@ -153,7 +153,7 @@ class UIRenderer:
 
     def update_dimensions(self, width: int, height: int) -> None:
         """Update window dimensions for UI rendering."""
-        if not (width is not None):
+        if width is None:
             raise ValueError("width must be provided")
         self.window_width = width
         self.window_height = height
@@ -194,7 +194,7 @@ class UIRenderer:
         filled: bool = True,
     ) -> None:
         """Draw a rectangle."""
-        if not (x is not None):
+        if x is None:
             raise ValueError("x must be provided")
         glColor4f(*color)
         if filled:
@@ -224,7 +224,7 @@ class UIRenderer:
             font_name: Font size key -- "default" (large), "small", or "title".
         """
         # Get dimensions without drawing
-        if not (text is not None):
+        if text is None:
             raise ValueError("text must be provided")
         _, width, height = self.text_cache.get_text_data(text, font_name, color)
 
@@ -264,7 +264,7 @@ class UIRenderer:
 
     def render_status_bar(self, text: str) -> None:
         """Render a status bar at the bottom of the screen."""
-        if not (text is not None):
+        if text is None:
             raise ValueError("text must be provided")
         self.begin_2d()
         y = self.window_height - 30
@@ -274,7 +274,7 @@ class UIRenderer:
 
     def render_help_overlay(self, help_data: dict[str, Any]) -> None:
         """Render the help overlay with controls list."""
-        if not (help_data is not None):
+        if help_data is None:
             raise ValueError("help_data must be provided")
         if not help_data.get("visible", False):
             return
@@ -326,7 +326,7 @@ class UIRenderer:
 
     def render_date_picker(self, picker_data: dict[str, Any]) -> None:
         """Render the date picker widget."""
-        if not (picker_data is not None):
+        if picker_data is None:
             raise ValueError("picker_data must be provided")
         if not picker_data.get("visible", False):
             return
@@ -360,7 +360,7 @@ class UIRenderer:
         self, sidebar_data: dict[str, Any], content_data: dict[str, Any] | None
     ) -> None:
         """Render the sidebar with tabs and content."""
-        if not (sidebar_data is not None):
+        if sidebar_data is None:
             raise ValueError("sidebar_data must be provided")
         if not sidebar_data.get("visible", False):
             return
@@ -427,7 +427,7 @@ class UIRenderer:
 
     def render_mission_list(self, data: dict[str, Any]) -> None:
         """Render the list of famous space missions."""
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         if not data.get("visible", False):
             return
@@ -509,7 +509,7 @@ class UIRenderer:
 
     def render_educational_panel(self, edu_data: dict[str, Any]) -> None:
         """Render educational information about selected body."""
-        if not (edu_data is not None):
+        if edu_data is None:
             raise ValueError("edu_data must be provided")
         if not edu_data.get("visible", False):
             return
@@ -566,7 +566,7 @@ class UIRenderer:
 
     def render_historical_events(self, events_data: dict[str, Any]) -> None:
         """Render list of historical events."""
-        if not (events_data is not None):
+        if events_data is None:
             raise ValueError("events_data must be provided")
         if not events_data.get("visible", False):
             return
@@ -602,7 +602,7 @@ class UIRenderer:
 
     def render_immersion_checklist(self, checklist_data: dict[str, Any]) -> None:
         """Render the immersion checklist."""
-        if not (checklist_data is not None):
+        if checklist_data is None:
             raise ValueError("checklist_data must be provided")
         if not checklist_data.get("visible", False):
             return
@@ -641,7 +641,7 @@ class UIRenderer:
         self, ctrl_data: dict[str, Any], time_data: dict[str, Any]
     ) -> None:
         """Render the unified control panel."""
-        if not (ctrl_data is not None):
+        if ctrl_data is None:
             raise ValueError("ctrl_data must be provided")
         if not ctrl_data.get("visible", False):
             return
@@ -710,7 +710,7 @@ class UIRenderer:
 
     def render_planet_selector(self, data: dict[str, Any]) -> None:
         """Render a clickable list of planets."""
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         if not data.get("visible", False):
             return
@@ -739,7 +739,7 @@ class UIRenderer:
 
     def render_speed_indicator(self, time_warp: float) -> None:
         """Render a visual bar indicating time speed."""
-        if not (time_warp is not None):
+        if time_warp is None:
             raise ValueError("time_warp must be provided")
         self.begin_2d()
 
@@ -779,7 +779,7 @@ class UIRenderer:
 
     def render_compass(self, camera_yaw: float) -> None:
         """Render a small N compass."""
-        if not (camera_yaw is not None):
+        if camera_yaw is None:
             raise ValueError("camera_yaw must be provided")
         self.begin_2d()
 

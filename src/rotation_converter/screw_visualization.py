@@ -161,7 +161,7 @@ def build_animation_frames(
     Returns:
         List of N frame dicts.
     """
-    if not (trajectory is not None):
+    if trajectory is None:
         raise ValueError("trajectory must be provided")
     require(len(trajectory) >= 1, "need at least 1 frame")
 
@@ -224,7 +224,7 @@ class ScrewAxisAnimator:
         screw_axis_length: float = 1.5,
         trail_length: int = 20,
     ) -> None:
-        if not (trajectory is not None):
+        if trajectory is None:
             raise ValueError("trajectory must be provided")
         require(len(trajectory) >= 2, "need at least 2 frames")
         self._trajectory = trajectory
@@ -288,7 +288,7 @@ class ScrewAxisAnimator:
 
     def _draw_frame(self, ax: Any, frame_idx: int) -> None:
         """Draw a single animation frame onto the axes."""
-        if not (frame_idx is not None):
+        if frame_idx is None:
             raise ValueError("frame_idx must be provided")
         ax.cla()
         self._setup_axes(ax)
@@ -450,7 +450,7 @@ class ScrewAxisAnimator:
         Args:
             interval: Milliseconds between frames.
         """
-        if not (interval is not None):
+        if interval is None:
             raise ValueError("interval must be provided")
         import matplotlib.pyplot as plt
         from matplotlib.animation import FuncAnimation
@@ -485,7 +485,7 @@ class ScrewAxisAnimator:
             fps: Frames per second.
             dpi: Resolution.
         """
-        if not (filepath is not None):
+        if filepath is None:
             raise ValueError("filepath must be provided")
         import matplotlib.pyplot as plt
         from matplotlib.animation import FuncAnimation
@@ -520,7 +520,7 @@ class ScrewAxisAnimator:
             frame_idx: Which frame to render.
             dpi: Resolution.
         """
-        if not (filepath is not None):
+        if filepath is None:
             raise ValueError("filepath must be provided")
         import matplotlib.pyplot as plt
 

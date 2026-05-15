@@ -137,7 +137,7 @@ def IKinBody(
     max_iter: int = 100,
 ) -> tuple[np.ndarray, bool]:
     """Iterative inverse kinematics using Newton-Raphson in the body frame."""
-    if not (eomg is not None):
+    if eomg is None:
         raise ValueError("eomg must be provided")
     Blist = np.asarray(Blist, dtype=float)
     M = np.asarray(M, dtype=float)
@@ -175,7 +175,7 @@ def IKinSpace(
     Slist: Any, M: Any, T: Any, thetalist0: Any, eomg: float, ev: float
 ) -> tuple[np.ndarray, bool]:
     """Computes inverse kinematics in the space frame for an open chain robot."""
-    if not (Slist is not None):
+    if Slist is None:
         raise ValueError("Slist must be provided")
     thetalist = np.array(thetalist0).copy()
     i = 0

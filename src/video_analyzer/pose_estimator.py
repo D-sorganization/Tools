@@ -94,9 +94,9 @@ class PoseEstimator:
             min_tracking_confidence: Minimum confidence for landmark tracking (0-1).
             smooth_landmarks: Whether to apply landmark smoothing.
         """
-        if not (model_complexity is not None):
+        if model_complexity is None:
             raise ValueError("model_complexity must be provided")
-        if not (model_complexity is not None):
+        if model_complexity is None:
             raise ValueError("model_complexity must be provided")
         self.model_complexity = model_complexity
         self.min_detection_confidence = min_detection_confidence
@@ -150,9 +150,9 @@ class PoseEstimator:
         Returns:
             PoseFrame with landmarks, or None if no pose detected.
         """
-        if not (frame is not None):
+        if frame is None:
             raise ValueError("frame must be provided")
-        if not (frame is not None):
+        if frame is None:
             raise ValueError("frame must be provided")
         if not self._initialized and not self.initialize():
             return None
@@ -210,9 +210,9 @@ class PoseEstimator:
         Returns:
             PoseFrame with world-space landmarks, or None if no pose detected.
         """
-        if not (frame is not None):
+        if frame is None:
             raise ValueError("frame must be provided")
-        if not (frame is not None):
+        if frame is None:
             raise ValueError("frame must be provided")
         if not self._initialized and not self.initialize():
             return None
@@ -276,9 +276,9 @@ class PoseEstimator:
         Returns:
             Frame with landmarks drawn.
         """
-        if not (frame is not None):
+        if frame is None:
             raise ValueError("frame must be provided")
-        if not (frame is not None):
+        if frame is None:
             raise ValueError("frame must be provided")
         if not MEDIAPIPE_AVAILABLE:
             return frame

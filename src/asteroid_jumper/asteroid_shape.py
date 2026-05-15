@@ -166,7 +166,7 @@ def surface_point_at_angle(
     shape: AsteroidShape, angle_rad: float
 ) -> tuple[float, float]:
     """Body-frame point on the asteroid surface at the given angle."""
-    if not (shape is not None):
+    if shape is None:
         raise ValueError("shape must be provided")
     n = len(shape.vertices)
     # Find the two vertices that bracket the angle
@@ -193,7 +193,7 @@ def surface_point_at_angle(
 
 def _angle_diff(a: float, b: float) -> float:
     """Signed angle difference a - b, wrapped to [-π, π]."""
-    if not (a is not None):
+    if a is None:
         raise ValueError("a must be provided")
     d = a - b
     while d > math.pi:

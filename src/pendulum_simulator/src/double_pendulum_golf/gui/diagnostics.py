@@ -128,7 +128,7 @@ class DiagnosticsTracker:
         extra: dict[str, Any] | None = None,
     ) -> None:
         """Record a diagnostic event and flush to disk."""
-        if not (category is not None):
+        if category is None:
             raise ValueError("category must be provided")
         event = DiagnosticEvent(
             timestamp=datetime.now(tz=timezone.utc).isoformat(),
@@ -164,7 +164,7 @@ class DiagnosticsTracker:
         context: str = "",
     ) -> None:
         """Convenience: record an exception with its full traceback."""
-        if not (category is not None):
+        if category is None:
             raise ValueError("category must be provided")
         tb = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__))
         msg = f"{type(exc).__name__}: {exc}"
@@ -237,7 +237,7 @@ class DiagnosticsTracker:
             exc_value: BaseException,
             exc_tb: Any,
         ) -> None:
-            if not (exc_type is not None):
+            if exc_type is None:
                 raise ValueError("exc_type must be provided")
             tb_str = "".join(traceback.format_exception(exc_type, exc_value, exc_tb))
             self.record(
@@ -278,7 +278,7 @@ class DiagnosticsViewer(ThemedDialogMixin, QDialog):
         tracker: DiagnosticsTracker,
         parent: QWidget | None = None,
     ) -> None:
-        if not (tracker is not None):
+        if tracker is None:
             raise ValueError("tracker must be provided")
         super().__init__(parent)
         self._tracker = tracker
@@ -328,7 +328,7 @@ class DiagnosticsViewer(ThemedDialogMixin, QDialog):
             ["Time", "Severity", "Category", "Message", "Source"]
         )
         header_view = self._table.horizontalHeader()
-        if not (header_view is not None):
+        if header_view is None:
             raise ValueError("DbC Blocked: Precondition failed.")
         header_view.setStretchLastSection(True)
         header_view.setSectionResizeMode(0, QHeaderView.ResizeMode.ResizeToContents)

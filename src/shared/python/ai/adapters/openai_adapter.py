@@ -33,10 +33,7 @@ from src.shared.python.ai.config import (
     get_openai_timeout,
 )
 from src.shared.python.ai.exceptions import (
-    AIConnectionError,
     AIProviderError,
-    AIRateLimitError,
-    AITimeoutError,
 )
 from src.shared.python.ai.types import (
     AgentChunk,
@@ -107,9 +104,9 @@ class OpenAIAdapter(BaseAgentAdapter):
             timeout: Request timeout [s]. Uses OPENAI_TIMEOUT env var or default.
             organization: Organization ID. Uses OPENAI_ORGANIZATION env var if not set.
         """
-        if not (api_key is not None):
+        if api_key is None:
             raise ValueError("api_key must be provided")
-        if not (api_key is not None):
+        if api_key is None:
             raise ValueError("api_key must be provided")
         self._api_key = api_key
         self._model = model or get_openai_model()
@@ -171,9 +168,9 @@ class OpenAIAdapter(BaseAgentAdapter):
             AIRateLimitError: If rate limit exceeded.
             AITimeoutError: If request times out.
         """
-        if not (message is not None):
+        if message is None:
             raise ValueError("message must be provided")
-        if not (message is not None):
+        if message is None:
             raise ValueError("message must be provided")
         client = self._get_client()
 
@@ -213,9 +210,9 @@ class OpenAIAdapter(BaseAgentAdapter):
         Yields:
             AgentChunk instances as they arrive.
         """
-        if not (message is not None):
+        if message is None:
             raise ValueError("message must be provided")
-        if not (message is not None):
+        if message is None:
             raise ValueError("message must be provided")
         client = self._get_client()
         messages = self._format_messages(context, message)
@@ -348,9 +345,9 @@ class OpenAIAdapter(BaseAgentAdapter):
         Returns:
             List of message dicts for OpenAI.
         """
-        if not (context is not None):
+        if context is None:
             raise ValueError("context must be provided")
-        if not (context is not None):
+        if context is None:
             raise ValueError("context must be provided")
         messages: list[dict[str, Any]] = []
 
@@ -408,9 +405,9 @@ class OpenAIAdapter(BaseAgentAdapter):
         Returns:
             System message string.
         """
-        if not (context is not None):
+        if context is None:
             raise ValueError("context must be provided")
-        if not (context is not None):
+        if context is None:
             raise ValueError("context must be provided")
         expertise = context.user_expertise.name.lower()
         context_instructions = self.build_context_instruction_section(context)
@@ -492,40 +489,5 @@ class OpenAIAdapter(BaseAgentAdapter):
         )
 
     def _handle_error(self, error: Exception) -> AgentResponse:
-        """Handle OpenAI API errors.
-
-        Args:
-            error: The exception that occurred.
-
-        Raises:
-            Appropriate AIError subclass.
-        """
-        error_str = str(error).lower()
-
-        # Rate limit
-        if "rate limit" in error_str or "429" in error_str:
-            raise AIRateLimitError(
-                "OpenAI rate limit exceeded. Please wait and retry.",
-                provider="openai",
-            ) from error
-
-        # Timeout
-        if "timeout" in error_str:
-            raise AITimeoutError(
-                f"OpenAI request timed out after {self._timeout}s",
-                provider="openai",
-                timeout=self._timeout,
-            ) from error
-
-        # Connection
-        if "connection" in error_str or "network" in error_str:
-            raise AIConnectionError(
-                "Cannot connect to OpenAI. Check your network.",
-                provider="openai",
-            ) from error
-
-        # Generic
-        raise AIProviderError(
-            f"OpenAI error: {error}",
-            provider="openai",
-        ) from error
+        """Handle OpenAI API errors."""
+        return super()._handle_error(error)

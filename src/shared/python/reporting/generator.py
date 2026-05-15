@@ -3,12 +3,14 @@
 import json
 from typing import Any, Protocol
 
+
 class InsightsProvider(Protocol):
     """Protocol for providing AI insights."""
-    
+
     async def generate_insights(self, prompt: str) -> str:
         """Generate insights given a prompt."""
         ...
+
 
 class ReportGenerator:
     """Shared report generator for injecting agentic insights into reports."""

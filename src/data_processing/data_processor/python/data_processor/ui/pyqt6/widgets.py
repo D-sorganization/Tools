@@ -87,7 +87,7 @@ class SignalListWidget(QWidget):
 
     def set_signals(self, signals: list[str]) -> None:
         """Set the list of available signals."""
-        if not (signals is not None):
+        if signals is None:
             raise ValueError("signals must be provided")
         self._all_signals = signals.copy()
         self._populate_list(signals)
@@ -96,7 +96,7 @@ class SignalListWidget(QWidget):
 
     def _populate_list(self, signals: list[str]) -> None:
         """Populate list widget with signals."""
-        if not (signals is not None):
+        if signals is None:
             raise ValueError("signals must be provided")
         self.list_widget.clear()
         for signal in signals:
@@ -104,7 +104,7 @@ class SignalListWidget(QWidget):
 
     def _filter_signals(self, search_text: str) -> None:
         """Filter signals based on search text."""
-        if not (search_text is not None):
+        if search_text is None:
             raise ValueError("search_text must be provided")
         search_lower = search_text.lower().strip()
         if not search_lower:
@@ -126,7 +126,7 @@ class SignalListWidget(QWidget):
 
     def select_signals(self, signals: list[str]) -> None:
         """Select specific signals by name."""
-        if not (signals is not None):
+        if signals is None:
             raise ValueError("signals must be provided")
         self.list_widget.clearSelection()
         for i in range(self.list_widget.count()):
@@ -349,7 +349,7 @@ class FilterConfigWidget(QWidget):
 
     def _on_filter_changed(self, filter_type: str) -> None:
         """Handle filter type change."""
-        if not (filter_type is not None):
+        if filter_type is None:
             raise ValueError("filter_type must be provided")
         index = self.FILTER_TYPES.index(filter_type)
         self.param_stack.setCurrentIndex(index)
@@ -428,7 +428,7 @@ class StatisticsWidget(QWidget):
 
     def update_statistics(self, df: pd.DataFrame, signals: list[str]) -> None:
         """Update statistics display."""
-        if not (df is not None):
+        if df is None:
             raise ValueError("df must be provided")
         self.table.setRowCount(len(signals))
 
@@ -470,7 +470,7 @@ class DataPreviewWidget(QWidget):
 
     def update_preview(self, df: pd.DataFrame, max_rows: int = 100) -> None:
         """Update data preview."""
-        if not (df is not None):
+        if df is None:
             raise ValueError("df must be provided")
         if df is None or df.empty:
             self.info_label.setText("No data loaded")
@@ -527,7 +527,7 @@ class StatusBar(QWidget):
 
     def show_progress(self, value: int = 0, maximum: int = 100) -> None:
         """Show progress bar."""
-        if not (value is not None):
+        if value is None:
             raise ValueError("value must be provided")
         self.progress_bar.setMaximum(maximum)
         self.progress_bar.setValue(value)

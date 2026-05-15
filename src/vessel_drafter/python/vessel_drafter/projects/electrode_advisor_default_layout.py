@@ -50,7 +50,7 @@ def _build_electrode_assembly(
     placement: ElectrodePlacement,
     layout: ElectrodeAdvisorLayout,
 ) -> Solid:
-    if not (placement is not None):
+    if placement is None:
         raise ValueError("placement must be provided")
     holder_height = layout.drafting.electrode_holder_height_mm
     holder_radius = (

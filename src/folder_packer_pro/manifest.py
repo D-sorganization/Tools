@@ -24,7 +24,7 @@ class PackageManifest:
 
     def add_file(self, file_path: str, size: int, checksum: str) -> None:
         """Add file to manifest."""
-        if not (file_path is not None):
+        if file_path is None:
             raise ValueError("file_path must be provided")
         self.files.append(
             {
@@ -61,7 +61,7 @@ class PackageManifest:
     @classmethod
     def from_json(cls, json_str: str) -> PackageManifest:
         """Create manifest from JSON string."""
-        if not (json_str is not None):
+        if json_str is None:
             raise ValueError("json_str must be provided")
         data = json.loads(json_str)
         manifest = cls()

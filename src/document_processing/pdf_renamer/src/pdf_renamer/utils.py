@@ -70,7 +70,7 @@ def sha256_file(path: Path, chunk_size: int = 1024 * 1024) -> str:
     Returns:
         Hexadecimal SHA256 hash string
     """
-    if not (path is not None):
+    if path is None:
         raise ValueError("path must be provided")
     h = hashlib.sha256()
     with path.open("rb") as f:
@@ -153,7 +153,7 @@ def sanitize_filename(s: str, max_length: int = MAX_FILENAME_LENGTH) -> str:
     Returns:
         Sanitized filename string
     """
-    if not (s is not None):
+    if s is None:
         raise ValueError("s must be provided")
     if not s:
         return ""
