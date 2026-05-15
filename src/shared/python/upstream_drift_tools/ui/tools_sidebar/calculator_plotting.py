@@ -6,13 +6,12 @@ calculator/workspace requests into the shared ``plot_engine`` PlotSpec contract.
 
 from __future__ import annotations
 
+import importlib
 import math
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from enum import StrEnum
 from typing import Any
-
-from plot_engine.specs import AxisSpec, LegendSpec, PlotSpec, SeriesData
 
 from .registry import WorkspaceRegistry
 
@@ -111,7 +110,7 @@ class CalculatorPlotRequest:
 def build_calculator_plot_spec(
     request: CalculatorPlotRequest,
     registry: WorkspaceRegistry,
-) -> PlotSpec:
+) -> Any:
     """Build a shared PlotSpec from a validated calculator plot request."""
     if request is None:
         raise ValueError("request must be provided")
@@ -135,23 +134,24 @@ def _xy_plot_spec(
     request: CalculatorPlotRequest,
     x_values: list[float],
     y_values: list[float],
-) -> PlotSpec:
+) -> Any:
     if len(x_values) != len(y_values):
         raise ValueError("x and y arrays must have the same length")
     if len(x_values) < 2:
         raise ValueError("plot data must contain at least two points")
     sampled_x, sampled_y = _sample_xy(x_values, y_values, request.config.max_points)
     series_name = request.y_ref or request.expression or "calculator_result"
-    return PlotSpec(
+    specs = importlib.import_module("plot_engine.specs")
+    return specs.PlotSpec(
         title=request.title or series_name,
-        series=[SeriesData(name=series_name, x=sampled_x, y=sampled_y)],
-        x_axis=AxisSpec(label=request.x_ref or "index"),
-        y_axis=AxisSpec(label=request.y_ref or "value"),
-        legend=LegendSpec(visible=True),
+        series=[specs.SeriesData(name=series_name, x=sampled_x, y=sampled_y)],
+        x_axis=specs.AxisSpec(label=request.x_ref or "index"),
+        y_axis=specs.AxisSpec(label=request.y_ref or "value"),
+        legend=specs.LegendSpec(visible=True),
     )
 
 
-def _expression_plot_spec(request: CalculatorPlotRequest) -> PlotSpec:
+def _expression_plot_spec(request: CalculatorPlotRequest) -> Any:
     expression = (request.expression or "").strip()
     if not expression:
         raise ValueError("expression must be provided")
