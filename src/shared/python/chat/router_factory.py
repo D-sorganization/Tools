@@ -145,6 +145,22 @@ def create_chat_router(
                 elif action == "terminal_events":
                     await _handle_terminal_events(websocket, msg)
 
+                elif action == "condense":
+                    try:
+                        await chat_service.condense_session(session_id)
+                        await websocket.send_json(
+                            {
+                                "type": "history",
+                                "messages": chat_service.get_session_history(
+                                    session_id
+                                ),
+                            }
+                        )
+                    except Exception as exc:
+                        await websocket.send_json(
+                            {"type": "error", "detail": f"Condense error: {exc}"}
+                        )
+
                 else:
                     await websocket.send_json(
                         {

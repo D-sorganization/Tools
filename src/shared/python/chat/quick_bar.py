@@ -32,7 +32,6 @@ try:
     from PyQt6.QtCore import Qt, QTimer, QUrl, pyqtSignal
     from PyQt6.QtWebSockets import QWebSocket
     from PyQt6.QtWidgets import (
-        QDockWidget,
         QFrame,
         QHBoxLayout,
         QLabel,
@@ -40,7 +39,6 @@ try:
         QMainWindow,
         QPushButton,
         QToolBar,
-        QVBoxLayout,
         QWidget,
     )
 
@@ -82,10 +80,11 @@ class ChatQuickBar(QFrame if _QT_AVAILABLE else object):  # type: ignore[misc]
         self,
         app_context: str = "assistant",
         server_url: str = "ws://127.0.0.1:8000",
-        parent: QWidget | None = None,  # type: ignore[assignment]
+        parent: QWidget | None = None,
     ) -> None:
         _require_qt()
-        super().__init__(parent)  # type: ignore[call-arg]
+        super().__init__(parent)
+        self.setObjectName("QuickBarChatWidget")
 
         self._app_context = app_context
         self._server_url = server_url.rstrip("/")

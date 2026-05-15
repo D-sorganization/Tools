@@ -319,3 +319,45 @@ class TestChatDockWidget:
         assert widget._close_btn.isVisibleTo(widget)
         assert widget._terminal_start_btn.isVisibleTo(widget)
         widget.close()
+
+    def test_condense_thread_action(self, qtbot, monkeypatch):
+        from chat.chat_dock_widget import ChatDockWidget
+
+        sent = []
+        ChatDockWidget._shared_session_id = None
+        widget = ChatDockWidget(app_name="test_app")
+        _track_widget(qtbot, widget)
+        monkeypatch.setattr(widget, "_send_ws", sent.append)
+
+        widget._condense_thread()
+
+        assert sent == [
+            {
+                "action": "condense",
+                "app_context": "unknown",
+            }
+        ]
+        assert "Condensing" in widget._status_label.text()
+        widget.close()
+
+    def test_copy_entire_thread(self, qtbot, monkeypatch):
+        from chat.chat_dock_widget import ChatDockWidget
+        from PyQt6.QtWidgets import QApplication
+
+        ChatDockWidget._shared_session_id = None
+        widget = ChatDockWidget(app_name="test_app")
+        _track_widget(qtbot, widget)
+
+        widget._add_bubble("user", "test user message")
+        widget._add_bubble("assistant", "test assistant message")
+
+        widget._copy_entire_thread()
+
+        clipboard = QApplication.clipboard()
+        text = clipboard.text()
+        assert "**You**" in text
+        assert "test user message" in text
+        assert "**AI**" in text
+        assert "test assistant message" in text
+
+        widget.close()
