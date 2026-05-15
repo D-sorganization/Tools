@@ -32,7 +32,10 @@ try:
     else:
         logger.debug("tools_core: lms/rls_filter missing; Python fallback")
 except ImportError:
-    logger.debug("tools_core not available; adaptive filters use pure-Python fallback")
+    logger.warning(
+        "adaptive_filter: tools_core wheel not available; using pure-Python path. "
+        "See docs/development/rust_distribution.md"
+    )
 
 
 class AdaptiveFilter:

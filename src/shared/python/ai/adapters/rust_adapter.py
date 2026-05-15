@@ -69,7 +69,11 @@ class RustAgentAdapter(BaseAgentAdapter):
         """
         try:
             import ai_backend
-        except ImportError as exc:  # pragma: no cover - environment-specific
+        except ImportError as exc:
+            logger.warning(
+                "rust_adapter: ai_backend wheel not available; using pure-Python path. "
+                "See docs/development/rust_distribution.md"
+            )
             raise ImportError(_WHEEL_MISSING_HINT) from exc
 
         self.config = ai_backend.AIConfig(
