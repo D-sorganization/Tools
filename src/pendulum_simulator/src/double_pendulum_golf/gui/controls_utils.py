@@ -139,7 +139,7 @@ class LabeledInput(QWidget):
         label_width: int = 80,
         parent: QWidget | None = None,
     ) -> None:
-        if not (label is not None):
+        if label is None:
             raise ValueError("label must be provided")
         super().__init__(parent)
         layout = QHBoxLayout(self)

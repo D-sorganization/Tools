@@ -14,7 +14,7 @@ def create_launcher(
     **kwargs: Any,
 ) -> Any:
     """Create a configured GUI launcher."""
-    if not (tool_name is not None):
+    if tool_name is None:
         raise ValueError("tool_name must be provided")
 
     from .launcher import GUILauncher, LaunchConfig
@@ -57,7 +57,7 @@ def generate_launch_script(
     tool_display_name: str,
 ) -> str:
     """Generate the source text for a standard ``launch_pyqt6.py`` script."""
-    if not (gui_info_module is not None):
+    if gui_info_module is None:
         raise ValueError("gui_info_module must be provided")
     return (
         "#!/usr/bin/env python3\n"

@@ -35,7 +35,7 @@ class MplCanvas(FigureCanvas):
     def __init__(
         self, parent: QWidget | None = None, width: float = 8, height: float = 6
     ) -> None:
-        if not (width is not None):
+        if width is None:
             raise ValueError("width must be provided")
         self.fig = Figure(figsize=(width, height), dpi=100)
 

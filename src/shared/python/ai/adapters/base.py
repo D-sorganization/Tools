@@ -18,6 +18,12 @@ from src.shared.python.logging_pkg.logging_config import get_logger
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
+from src.shared.python.ai.exceptions import (
+    AIConnectionError,
+    AIProviderError,
+    AIRateLimitError,
+    AITimeoutError,
+)
 from src.shared.python.ai.memory_manager import (
     build_memory_prompt_section,
     load_agents_md,
@@ -320,3 +326,55 @@ class BaseAgentAdapter(ABC):
                 agents_md=load_agents_md(project_root),
             ),
         )
+
+    def _classify_error(self, error: Exception) -> AIProviderError:
+        """Classify a provider error into a canonical AIError subclass.
+
+        This helper deduplicates the error-mapping ladder across adapters
+        by analyzing the exception string for common failure patterns.
+
+        Args:
+            error: The original exception from the provider client.
+
+        Returns:
+            A canonical AIProviderError (or subclass).
+        """
+        err_str = str(error).lower()
+        provider = self.capabilities.provider_name
+
+        if "rate limit" in err_str or "429" in err_str:
+            return AIRateLimitError(
+                f"{provider.capitalize()} rate limit exceeded. Please wait and retry.",
+                provider=provider,
+            )
+
+        if "timeout" in err_str:
+            return AITimeoutError(
+                f"{provider.capitalize()} request timed out.",
+                provider=provider,
+            )
+
+        if any(s in err_str for s in ("connection", "network", "unreachable")):
+            return AIConnectionError(
+                f"Cannot connect to {provider.capitalize()}. Check your network.",
+                provider=provider,
+            )
+
+        return AIProviderError(
+            f"{provider.capitalize()} error: {error}",
+            provider=provider,
+        )
+
+    def _handle_error(self, error: Exception) -> AgentResponse:
+        """Classify a provider error and raise the canonical AIError.
+
+        This provides a default implementation for adapters to use in
+        their catch blocks: ``return self._handle_error(e)``.
+
+        Args:
+            error: The original exception from the provider client.
+
+        Raises:
+            Appropriate AIError subclass.
+        """
+        raise self._classify_error(error) from error

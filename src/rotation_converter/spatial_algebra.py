@@ -29,7 +29,7 @@ class SpatialModel:
 
 
 def _validate_spatial_vector(v: np.ndarray, name: str) -> np.ndarray:
-    if not (v is not None):
+    if v is None:
         raise ValueError("v must be provided")
     v = np.asarray(v, dtype=float).flatten()
     require(v.shape == (6,), f"{name} must be a 6-vector [omega; v]")
@@ -140,7 +140,7 @@ def jcalc(pitch: float, q: float) -> tuple[np.ndarray, np.ndarray]:
         Xj: 6x6 spatial transform
         S: 6-vector motion subspace
     """
-    if not (pitch is not None):
+    if pitch is None:
         raise ValueError("pitch must be provided")
     if pitch == 0.0:
         Xj = Xrotz(q)
@@ -173,7 +173,7 @@ def ID(
     Returns:
         tau: NB-vector of required joint forces/torques.
     """
-    if not (model is not None):
+    if model is None:
         raise ValueError("model must be provided")
     q = np.asarray(q, dtype=float).flatten()
     qd = np.asarray(qd, dtype=float).flatten()
@@ -247,7 +247,7 @@ def FDab(
     Returns:
         qdd: NB-vector of resulting joint accelerations.
     """
-    if not (model is not None):
+    if model is None:
         raise ValueError("model must be provided")
     q = np.asarray(q, dtype=float).flatten()
     qd = np.asarray(qd, dtype=float).flatten()

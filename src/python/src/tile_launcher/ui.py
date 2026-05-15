@@ -45,7 +45,7 @@ class SelectionDialog(ThemedDialogMixin, QDialog):
 
     def __init__(self, title: str, apps: Iterable[AppDefinition]) -> None:
         """Initialize the dialog with a title and list of apps."""
-        if not (title is not None):
+        if title is None:
             raise ValueError("title must be provided")
         super().__init__()
         self.setup_theme_support()
@@ -91,7 +91,7 @@ class LauncherWindow(ThemedWindowMixin, QMainWindow):
 
     def __init__(self, manager: AppManager) -> None:
         """Initialize the main window."""
-        if not (manager is not None):
+        if manager is None:
             raise ValueError("manager must be provided")
         super().__init__()
         self.setup_theme_support()
@@ -212,7 +212,7 @@ class LauncherWindow(ThemedWindowMixin, QMainWindow):
 
     def _icon_for_app(self, app: AppDefinition) -> QIcon:
         """Load the icon for the given app, or a fallback."""
-        if not (app is not None):
+        if app is None:
             raise ValueError("app must be provided")
         icon_path = self._logo_path(app)
         if icon_path and icon_path.exists():
@@ -227,7 +227,7 @@ class LauncherWindow(ThemedWindowMixin, QMainWindow):
 
     def _logo_path(self, app: AppDefinition) -> Path | None:
         """Resolve the full path to the app's logo."""
-        if not (app is not None):
+        if app is None:
             raise ValueError("app must be provided")
         if not app.logo:
             return None
@@ -280,7 +280,7 @@ class LauncherWindow(ThemedWindowMixin, QMainWindow):
 
     def _launch_selected(self, item: QListWidgetItem) -> None:
         """Launch the app corresponding to the clicked tile."""
-        if not (item is not None):
+        if item is None:
             raise ValueError("item must be provided")
         if self.edit_mode:
             return
@@ -291,7 +291,7 @@ class LauncherWindow(ThemedWindowMixin, QMainWindow):
 
     def _launch_app(self, app: AppDefinition) -> None:
         """Execute the launch logic for the given app."""
-        if not (app is not None):
+        if app is None:
             raise ValueError("app must be provided")
         target_path = app.resolved_path(self.manager.repository_root)
         if not target_path.exists():

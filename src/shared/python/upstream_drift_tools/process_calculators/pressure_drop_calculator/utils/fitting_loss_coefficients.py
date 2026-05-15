@@ -441,7 +441,7 @@ def apply_k_factor(k_factor: float, density: float, velocity: float) -> float:
         >>> dp = apply_k_factor(k, 1000, 5)
         >>> logger.debug(f"DP = {dp:.0f} Pa = {dp/1e5:.3f} bar")
     """
-    if not (k_factor is not None):
+    if k_factor is None:
         raise ValueError("k_factor must be provided")
     velocity_pressure = 0.5 * density * velocity**2
     return k_factor * velocity_pressure

@@ -99,7 +99,7 @@ def check_python_dependencies(
     Returns:
         DependencyStatus with results
     """
-    if not (packages is not None):
+    if packages is None:
         raise ValueError("packages must be provided")
     install_hints = {
         "PyQt6": "pip install PyQt6",
@@ -288,7 +288,7 @@ class GUILauncher:
 
     def _print_missing_deps(self, status: DependencyStatus) -> None:
         """Print missing dependency information."""
-        if not (status is not None):
+        if status is None:
             raise ValueError("status must be provided")
         logger.info("Missing dependencies detected:")
         for pkg in status.missing:

@@ -33,10 +33,7 @@ from src.shared.python.ai.config import (
     get_openai_timeout,
 )
 from src.shared.python.ai.exceptions import (
-    AIConnectionError,
     AIProviderError,
-    AIRateLimitError,
-    AITimeoutError,
 )
 from src.shared.python.ai.types import (
     AgentChunk,
@@ -492,40 +489,5 @@ class OpenAIAdapter(BaseAgentAdapter):
         )
 
     def _handle_error(self, error: Exception) -> AgentResponse:
-        """Handle OpenAI API errors.
-
-        Args:
-            error: The exception that occurred.
-
-        Raises:
-            Appropriate AIError subclass.
-        """
-        error_str = str(error).lower()
-
-        # Rate limit
-        if "rate limit" in error_str or "429" in error_str:
-            raise AIRateLimitError(
-                "OpenAI rate limit exceeded. Please wait and retry.",
-                provider="openai",
-            ) from error
-
-        # Timeout
-        if "timeout" in error_str:
-            raise AITimeoutError(
-                f"OpenAI request timed out after {self._timeout}s",
-                provider="openai",
-                timeout=self._timeout,
-            ) from error
-
-        # Connection
-        if "connection" in error_str or "network" in error_str:
-            raise AIConnectionError(
-                "Cannot connect to OpenAI. Check your network.",
-                provider="openai",
-            ) from error
-
-        # Generic
-        raise AIProviderError(
-            f"OpenAI error: {error}",
-            provider="openai",
-        ) from error
+        """Handle OpenAI API errors."""
+        return super()._handle_error(error)

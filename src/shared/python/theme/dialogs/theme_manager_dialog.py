@@ -488,7 +488,7 @@ class ThemeManagerDialog(QDialog):
 
     def _on_theme_created(self, theme_name: str) -> None:
         """Handle new theme creation."""
-        if not (theme_name is not None):
+        if theme_name is None:
             raise ValueError("theme_name must be provided")
         self._populate_themes()
 
@@ -497,7 +497,7 @@ class ThemeManagerDialog(QDialog):
 
     def _on_theme_updated(self, theme_name: str) -> None:
         """Handle theme update."""
-        if not (theme_name is not None):
+        if theme_name is None:
             raise ValueError("theme_name must be provided")
         self._populate_themes()
         self._update_current_theme_info()

@@ -1,6 +1,6 @@
 # ARCHITECTURE_DEBT:
-# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
-# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+# This module historically exceeds standard length metrics and accumulates excessive
+# domain responsibility. It requires domain-aware structural extraction.
 
 """Educational content system for the AI Assistant.
 
@@ -86,8 +86,9 @@ def _build_dynamics_entries() -> dict[str, GlossaryEntry]:
                 ),
                 ExpertiseLevel.INTERMEDIATE: (
                     "A computational method that calculates joint torques from "
-                    "measured kinematics. Given positions, velocities, and accelerations, "
-                    "inverse dynamics solves for the net torques at each joint."
+                    "measured kinematics. Given positions, velocities, and "
+                    "accelerations, inverse dynamics solves for the net torques "
+                    "at each joint."
                 ),
                 ExpertiseLevel.ADVANCED: (
                     "The solution of τ = M(q)q̈ + C(q,q̇)q̇ + g(q) for joint torques τ, "
@@ -120,7 +121,8 @@ def _build_dynamics_entries() -> dict[str, GlossaryEntry]:
                 ),
                 ExpertiseLevel.ADVANCED: (
                     "Solving q̈ = M(q)⁻¹ [τ - C(q,q̇)q̇ - g(q)] for accelerations. "
-                    "Requires mass matrix inversion, typically using Cholesky decomposition."
+                    "Requires mass matrix inversion, typically using Cholesky "
+                    "decomposition."
                 ),
             },
             formula="q̈ = M(q)⁻¹ [τ - C(q,q̇) - g(q)]",
@@ -142,9 +144,10 @@ def _build_dynamics_entries() -> dict[str, GlossaryEntry]:
                     "causing rotation at that joint."
                 ),
                 ExpertiseLevel.ADVANCED: (
-                    "Generalized force corresponding to a rotational degree of freedom. "
-                    "In inverse dynamics, it's the torque required to produce "
-                    "the observed angular acceleration given the inertial properties."
+                    "Generalized force corresponding to a rotational degree of "
+                    "freedom. In inverse dynamics, it's the torque required to "
+                    "produce the observed angular acceleration given the "
+                    "inertial properties."
                 ),
             },
             units="N·m (Newton-meters)",
@@ -251,19 +254,19 @@ def _build_golf_entries() -> dict[str, GlossaryEntry]:
             category="golf",
             definitions={
                 ExpertiseLevel.BEGINNER: (
-                    "The twist between your hips and shoulders at the top of the swing. "
-                    "A bigger X-Factor means you've stored more rotational energy, "
-                    "which can translate to more power."
+                    "The twist between your hips and shoulders at the top of the "
+                    "swing. A bigger X-Factor means you've stored more rotational "
+                    "energy, which translates to more power."
                 ),
                 ExpertiseLevel.INTERMEDIATE: (
                     "The difference between thorax and pelvis rotation angles "
-                    "at the top of backswing. Associated with increased club head speed, "
-                    "though individual optimal values vary."
+                    "at the top of backswing. Associated with increased club head "
+                    "speed, though individual optimal values vary."
                 ),
                 ExpertiseLevel.ADVANCED: (
-                    "Angular separation between thorax and pelvis in the transverse plane. "
-                    "Elite PGA: 45-55°. X-Factor Stretch (additional separation into "
-                    "downswing) correlates r=0.7 with ball speed."
+                    "Angular separation between thorax and pelvis in the transverse "
+                    "plane. Elite PGA: 45-55°. X-Factor Stretch (additional "
+                    "separation into downswing) correlates r=0.7 with ball speed."
                 ),
             },
             units="degrees",
@@ -428,9 +431,9 @@ def _build_validation_analysis_entries() -> dict[str, GlossaryEntry]:
                     "muscles are really working versus just going along for the ride."
                 ),
                 ExpertiseLevel.INTERMEDIATE: (
-                    "Separating motion into: drift (gravity, inertia, passive dynamics) "
-                    "and control (active muscle contribution). The Drift-Control Ratio "
-                    "indicates how much active control a movement requires."
+                    "Separating motion into: drift (gravity, inertia, "
+                    "passive dynamics) and control (active muscle contribution). "
+                    "The DCR indicates how much active control a movement requires."
                 ),
                 ExpertiseLevel.ADVANCED: (
                     "Affine decomposition: q̈ = drift(q, q̇) + B(q)u. "

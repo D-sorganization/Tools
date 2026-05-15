@@ -38,7 +38,7 @@ class ControlsPanel(QWidget):
         self, controller: SimController, parent: QWidget | None = None
     ) -> None:
         super().__init__(parent)
-        if not (controller is not None):
+        if controller is None:
             raise ValueError("DbC Blocked: Precondition failed.")
         self._ctrl = controller
         self._build_ui()
@@ -49,7 +49,7 @@ class ControlsPanel(QWidget):
 
     def set_force_angle(self, angle_deg: float) -> None:
         """Update force-angle display when mouse drag triggers change."""
-        if not (angle_deg is not None):
+        if angle_deg is None:
             raise ValueError("angle_deg must be provided")
         self._force_angle_spin.blockSignals(True)
         self._force_angle_spin.setValue(angle_deg)
@@ -63,7 +63,7 @@ class ControlsPanel(QWidget):
 
     def enable_controls(self, enabled: bool) -> None:
         """Lock controls during flight."""
-        if not (enabled is not None):
+        if enabled is None:
             raise ValueError("enabled must be provided")
         self._asteroid_mass_spin.setEnabled(enabled)
         self._shape_combo.setEnabled(enabled)
@@ -170,7 +170,7 @@ class ControlsPanel(QWidget):
     # ------------------------------------------------------------------
 
     def _on_shape_changed(self, index: int) -> None:
-        if not (index is not None):
+        if index is None:
             raise ValueError("index must be provided")
         shapes = [ShapeKind.ELLIPSE, ShapeKind.CIRCLE, ShapeKind.RANDOM]
         self._ctrl.configure(shape_kind=shapes[index])
@@ -190,7 +190,7 @@ class ControlsPanel(QWidget):
         self.config_changed.emit()
 
     def _on_force_angle_changed(self, value: float) -> None:
-        if not (value is not None):
+        if value is None:
             raise ValueError("value must be provided")
         self._ctrl.set_force_angle(value)
         self._ctrl.set_jump_direction(value)
@@ -215,7 +215,7 @@ def _make_dspin(
     decimals: int = 2,
 ) -> QDoubleSpinBox:
     """Create a configured QDoubleSpinBox."""
-    if not (lo is not None):
+    if lo is None:
         raise ValueError("lo must be provided")
     spin = QDoubleSpinBox()
     spin.setRange(lo, hi)

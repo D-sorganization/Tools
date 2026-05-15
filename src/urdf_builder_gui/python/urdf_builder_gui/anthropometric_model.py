@@ -110,7 +110,7 @@ def compute_segment_length(
       - ``segment_key`` must be in HEIGHT_RATIOS.
       - ``proportion_factor`` must be positive.
     """
-    if not (total_height is not None):
+    if total_height is None:
         raise ValueError("total_height must be provided")
     require(total_height > 0, "total_height must be positive", total_height)
     require(
@@ -134,7 +134,7 @@ def compute_segment_mass(total_mass: float, segment_key: str, count: int = 1) ->
       - ``segment_key`` must be in MASS_RATIOS.
       - ``count`` must be >= 1.
     """
-    if not (total_mass is not None):
+    if total_mass is None:
         raise ValueError("total_mass must be provided")
     require(total_mass > 0, "total_mass must be positive", total_mass)
     require(
@@ -157,7 +157,7 @@ def compute_box_inertia(
     Returns:
         Tuple of (ixx, iyy, izz) in kg·m².
     """
-    if not (mass is not None):
+    if mass is None:
         raise ValueError("mass must be provided")
     require(mass > 0, "mass must be positive", mass)
     require(width > 0, "width must be positive", width)
@@ -176,7 +176,7 @@ def compute_cylinder_inertia(
 
     z-axis is the cylinder axis.
     """
-    if not (mass is not None):
+    if mass is None:
         raise ValueError("mass must be provided")
     require(mass > 0, "mass must be positive", mass)
     require(radius > 0, "radius must be positive", radius)
@@ -189,7 +189,7 @@ def compute_cylinder_inertia(
 
 def compute_sphere_inertia(mass: float, radius: float) -> tuple[float, float, float]:
     """Compute sphere inertia tensor (ixx, iyy, izz)."""
-    if not (mass is not None):
+    if mass is None:
         raise ValueError("mass must be provided")
     require(mass > 0, "mass must be positive", mass)
     require(radius > 0, "radius must be positive", radius)
@@ -204,7 +204,7 @@ def interpolate_gender_factor(
 
     ``factor`` = 0 → female, ``factor`` = 1 → male.
     """
-    if not (factor is not None):
+    if factor is None:
         raise ValueError("factor must be provided")
     clamped = max(0.0, min(1.0, factor))
     return female_val + clamped * (male_val - female_val)

@@ -1,6 +1,6 @@
 # ARCHITECTURE_DEBT:
-# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
-# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+# This module historically exceeds standard length metrics and accumulates excessive
+# domain responsibility. It requires domain-aware structural extraction.
 
 """Sample tools for AI integration with Golf Suite.
 
@@ -341,7 +341,9 @@ def _register_interpret_torques_tool(registry: ToolRegistry) -> None:
             "shoulder": {
                 "value": shoulder_torque,
                 "classification": classify(shoulder_torque, ranges["shoulder"]),
-                "typical_range": f"{ranges['shoulder']['low']}-{ranges['shoulder']['high']} N·m",
+                "typical_range": (
+                    f"{ranges['shoulder']['low']}-{ranges['shoulder']['high']} N·m"
+                ),
             },
             "hip": {
                 "value": hip_torque,
@@ -351,7 +353,9 @@ def _register_interpret_torques_tool(registry: ToolRegistry) -> None:
             "wrist": {
                 "value": wrist_torque,
                 "classification": classify(wrist_torque, ranges["wrist"]),
-                "typical_range": f"{ranges['wrist']['low']}-{ranges['wrist']['high']} N·m",
+                "typical_range": (
+                    f"{ranges['wrist']['low']}-{ranges['wrist']['high']} N·m"
+                ),
             },
             "message": (
                 "Torque values have been classified based on typical ranges "

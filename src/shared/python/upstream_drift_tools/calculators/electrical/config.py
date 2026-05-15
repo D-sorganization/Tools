@@ -110,7 +110,7 @@ class ElectrodeConfig:
         status_type : str
             One of ``'ok'``, ``'warn'``, or ``'error'``.
         """
-        if not (status_type is not None):
+        if status_type is None:
             raise ValueError("status_type must be provided")
         if self.colors is None:
             return "#C8FFC8"
@@ -131,7 +131,7 @@ class ElectrodeConfig:
         path_type : str
             Path type key, e.g. ``'direct_glass'``.
         """
-        if not (scheme is not None):
+        if scheme is None:
             raise ValueError("scheme must be provided")
         if self.color_schemes is None:
             return "lightblue"

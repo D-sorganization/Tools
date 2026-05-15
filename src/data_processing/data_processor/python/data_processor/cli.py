@@ -113,7 +113,7 @@ def _apply_filter_if_requested(
     signal_processor: SignalProcessor,
 ) -> pd.DataFrame:
     """Apply configured filter if specified."""
-    if not (df is not None):
+    if df is None:
         raise ValueError("df must be provided")
     if filter_config is None:
         return df
@@ -128,7 +128,7 @@ def _process_dataframe(
     source_label: str,
 ) -> pd.DataFrame:
     """Run the configured operations for a single dataframe."""
-    if not (df is not None):
+    if df is None:
         raise ValueError("df must be provided")
     result = df.copy()
     result = _select_signals(
@@ -145,7 +145,7 @@ def _process_dataframe(
 
 def _format_output_filename(source_path: str, output_format: str) -> str:
     """Generate an output filename for per-file exports."""
-    if not (source_path is not None):
+    if source_path is None:
         raise ValueError("source_path must be provided")
     stem = Path(source_path).stem
     extension_map = {
@@ -228,7 +228,7 @@ def run(
     ),
 ) -> None:
     """Execute a lightweight processing pipeline."""
-    if not (output_format is not None):
+    if output_format is None:
         raise ValueError("output_format must be provided")
     pipeline_data: dict[str, object] = {}
     if config:
@@ -268,7 +268,7 @@ def _run_combined(
     loader: DataLoader,
 ) -> None:
     """Process a combined dataset and optionally save the result."""
-    if not (data is not None):
+    if data is None:
         raise ValueError("data must be provided")
     dataframe = _process_dataframe(
         cast("pd.DataFrame", data),
@@ -296,7 +296,7 @@ def _run_uncombined(
     loader: DataLoader,
 ) -> None:
     """Process each file independently and optionally save results."""
-    if not (data is not None):
+    if data is None:
         raise ValueError("data must be provided")
     processed_frames: dict[str, pd.DataFrame] = {}
     for source_path, frame in cast("dict[str, pd.DataFrame]", data).items():
