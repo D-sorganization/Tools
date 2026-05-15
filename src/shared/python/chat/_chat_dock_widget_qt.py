@@ -45,6 +45,12 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from .chat_dock_widget import (
+    _DEFAULT_SERVER,
+    _read_shared_session_id,
+    _session_file_path,
+    _write_shared_session_id,
+)
 from .terminal_contracts import TerminalProviderRegistry
 from .terminal_providers import build_default_terminal_provider_registry
 
@@ -52,41 +58,12 @@ from .terminal_providers import build_default_terminal_provider_registry
 def _get_theme_colors() -> dict[str, str]:
     """Get the current theme colors, falling back to defaults."""
     try:
-        from src.shared.python.theme.theme_manager import get_theme_manager
+        from theme.theme_manager import get_theme_manager
 
         colors: dict[str, str] = get_theme_manager().get_current_colors()
         return colors
     except ImportError:
         return {}
-
-
-_DEFAULT_SERVER = "ws://127.0.0.1:8000"
-
-
-def _session_file_path(app_name: str) -> Path:
-    """Return the path to the shared session ID file for an application."""
-    return Path.home() / f".{app_name}" / "active_chat_session.txt"
-
-
-def _read_shared_session_id(path: Path) -> str | None:
-    """Read the active session ID from a shared file."""
-    try:
-        if path.exists():
-            text = path.read_text(encoding="utf-8").strip()
-            if text:
-                return text
-    except (PermissionError, OSError):
-        pass
-    return None
-
-
-def _write_shared_session_id(session_id: str, path: Path) -> None:
-    """Write the active session ID to the shared file."""
-    try:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(session_id, encoding="utf-8")
-    except (PermissionError, OSError):
-        pass
 
 
 class ChatMessageBubble(QFrame):
