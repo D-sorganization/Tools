@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
+import importlib
+import sys
+import types
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -330,3 +334,329 @@ def test_sidekick_data_explorer_preview_export_and_handoff(tmp_path: Path) -> No
             },
         )
     ]
+
+
+class _ChatDockSpy:
+    """Container for the latest ChatDockWidget construction kwargs.
+
+    The actual widget class is built lazily inside ``_install_fake_chat_module``
+    so it can extend the real ``QDockWidget`` available at test time.
+    """
+
+    last_kwargs: dict[str, Any] = {}
+
+    @classmethod
+    def reset(cls) -> None:
+        cls.last_kwargs = {}
+
+
+class _FakeThemeProvider:
+    """Theme provider returning a known accent color via the dict protocol."""
+
+    def __init__(self, accent: str = "#123456") -> None:
+        self._accent = accent
+
+    def get_current_colors(self) -> dict[str, str]:
+        return {"accent": self._accent, "bg": "#222"}
+
+
+def _build_fake_sidebar(
+    project_root: Path,
+    *,
+    terminal_registry: Any = None,
+    auto_index_on_open: bool = False,
+    chat_session_id: str | None = None,
+) -> Any:
+    """Return a minimal QWidget-based sidebar double for runtime-tab tests."""
+    from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
+
+    sidebar = QtWidgets.QWidget()
+    sidebar.project_root = project_root
+    sidebar.terminal_registry = terminal_registry
+    sidebar.auto_index_on_open = auto_index_on_open
+    sidebar.chat_session_id = chat_session_id
+    return sidebar
+
+
+_QT_APP_REF: list[Any] = []
+
+
+def _ensure_qt_widgets() -> Any:
+    try:
+        from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
+    except ImportError:
+        pytest.skip("Qt widgets unavailable")
+
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    # Hold a process-wide reference so the QApplication is not GC'd after the
+    # helper returns. Without this, subsequent QWidget creations crash because
+    # PyQt6 reaps the application instance when its last reference dies.
+    if not _QT_APP_REF:
+        _QT_APP_REF.append(app)
+    return QtWidgets
+
+
+def _install_fake_chat_module(
+    monkeypatch: pytest.MonkeyPatch,
+) -> type[_ChatDockSpy]:
+    """Install a synthetic ``chat.chat_dock_widget`` exposing a spy widget."""
+    from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
+
+    _ChatDockSpy.reset()
+
+    class _SpyChatDockWidget(QtWidgets.QDockWidget):  # type: ignore[misc]
+        def __init__(self, **kwargs: Any) -> None:
+            super().__init__("AI Chat", kwargs.get("parent"))
+            _ChatDockSpy.last_kwargs = dict(kwargs)
+
+    module = types.ModuleType("chat.chat_dock_widget")
+    module.ChatDockWidget = _SpyChatDockWidget  # type: ignore[attr-defined]
+
+    chat_pkg = sys.modules.get("chat")
+    if chat_pkg is None or not isinstance(chat_pkg, types.ModuleType):
+        chat_pkg = types.ModuleType("chat")
+        chat_pkg.__path__ = []  # type: ignore[attr-defined]
+        monkeypatch.setitem(sys.modules, "chat", chat_pkg)
+    monkeypatch.setitem(sys.modules, "chat.chat_dock_widget", module)
+    return _ChatDockSpy
+
+
+def test_chat_dock_forwards_sidebar_params(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Issue #2850: forward four extra params from sidebar to ChatDockWidget."""
+    _ensure_qt_widgets()
+    from upstream_drift_tools.ui.tools_sidebar import runtime_tabs
+
+    sentinel_registry = object()
+    sidebar = _build_fake_sidebar(
+        project_root=tmp_path,
+        terminal_registry=sentinel_registry,
+        auto_index_on_open=True,
+        chat_session_id="abc",
+    )
+    sidebar_theme = _FakeThemeProvider(accent="#ABCDEF")
+
+    spy_cls = _install_fake_chat_module(monkeypatch)
+
+    # Force the theme.theme_manager import path to return our fake provider.
+    fake_theme_module = types.ModuleType("theme.theme_manager")
+    fake_theme_module.get_theme_manager = lambda: sidebar_theme  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, "theme.theme_manager", fake_theme_module)
+    theme_pkg = sys.modules.get("theme")
+    if theme_pkg is None:
+        theme_pkg = types.ModuleType("theme")
+        theme_pkg.__path__ = []  # type: ignore[attr-defined]
+        monkeypatch.setitem(sys.modules, "theme", theme_pkg)
+
+    dock = runtime_tabs._build_pyqt_chat_dock(sidebar)
+    assert dock is not None
+    kwargs = spy_cls.last_kwargs
+
+    assert kwargs["terminal_registry"] is sentinel_registry
+    assert kwargs["auto_index_on_open"] is True
+    assert kwargs["session_id"] == "abc"
+    assert kwargs["accent_color"] == "#ABCDEF"
+    # Existing forwarded params remain intact.
+    assert kwargs["project_root"] == tmp_path
+    assert kwargs["app_context"] == "sidekick"
+    assert kwargs["app_name"] == "sidekick"
+
+
+def test_chat_dock_accent_color_falls_back_when_theme_missing(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Misshaped theme providers must yield the documented fallback color."""
+    _ensure_qt_widgets()
+    from upstream_drift_tools.ui.tools_sidebar import runtime_tabs
+
+    sidebar = _build_fake_sidebar(project_root=tmp_path)
+    spy_cls = _install_fake_chat_module(monkeypatch)
+
+    # Make the theme import fail entirely.
+    def _raise_theme(*_args: Any, **_kwargs: Any) -> Any:
+        raise RuntimeError("theme unavailable")
+
+    monkeypatch.setattr(
+        importlib,
+        "import_module",
+        _wrap_import_module(_raise_theme, {"theme.theme_manager"}),
+    )
+
+    dock = runtime_tabs._build_pyqt_chat_dock(sidebar)
+    assert dock is not None
+    assert spy_cls.last_kwargs["accent_color"] == "#FF8800"
+
+
+def _wrap_import_module(
+    raiser: Any,
+    targets: set[str],
+) -> Any:
+    """Return an ``import_module`` shim that raises for ``targets`` only."""
+    real = importlib.import_module
+
+    def _shim(name: str, package: str | None = None) -> Any:
+        if name in targets:
+            return raiser(name)
+        return real(name, package)
+
+    return _shim
+
+
+def test_chat_dock_stashes_import_error_on_failure(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Issue #2851: a failed import must be stashed on the sidebar."""
+    _ensure_qt_widgets()
+    from upstream_drift_tools.ui.tools_sidebar import runtime_tabs
+
+    sidebar = _build_fake_sidebar(project_root=tmp_path)
+    raised = ImportError("PyQt6 not installed")
+
+    def _shim(name: str, package: str | None = None) -> Any:
+        if name == "chat.chat_dock_widget":
+            raise raised
+        return importlib.import_module(name, package)
+
+    monkeypatch.setattr(runtime_tabs.importlib, "import_module", _shim)
+
+    result = runtime_tabs._build_pyqt_chat_dock(sidebar)
+    assert result is None
+    assert sidebar._chat_dock_import_error is raised
+
+
+def test_chat_status_tab_shows_import_error(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Issue #2851: fallback tab must surface the captured error + install hint."""
+    QtWidgets = _ensure_qt_widgets()
+    from upstream_drift_tools.ui.tools_sidebar import runtime_tabs
+
+    sidebar = _build_fake_sidebar(project_root=tmp_path)
+    sidebar._chat_dock_import_error = ImportError("PyQt6 not installed")
+
+    widget = runtime_tabs._build_chat_status_tab(sidebar)
+    try:
+        assert widget.objectName() == runtime_tabs.SIDEKICK_CHAT_STATUS_OBJECT_NAME
+
+        error_view = widget.findChild(
+            QtWidgets.QPlainTextEdit, "SidekickChatStatusError"
+        )
+        assert error_view is not None
+        assert "PyQt6 not installed" in error_view.toPlainText()
+
+        install_hint = widget.findChild(
+            QtWidgets.QLabel, "SidekickChatStatusInstallHint"
+        )
+        assert install_hint is not None
+        assert "pip install" in install_hint.text()
+
+        retry = widget.findChild(QtWidgets.QPushButton, "SidekickChatStatusRetry")
+        assert retry is not None
+        assert retry.text() == "Retry"
+    finally:
+        widget.deleteLater()
+
+
+def test_chat_status_tab_default_message_when_no_error(
+    tmp_path: Path,
+) -> None:
+    """Without a stashed error the fallback widget should still build cleanly."""
+    QtWidgets = _ensure_qt_widgets()
+    from upstream_drift_tools.ui.tools_sidebar import runtime_tabs
+
+    sidebar = _build_fake_sidebar(project_root=tmp_path)
+    widget = runtime_tabs._build_chat_status_tab(sidebar)
+    try:
+        error_view = widget.findChild(
+            QtWidgets.QPlainTextEdit, "SidekickChatStatusError"
+        )
+        assert error_view is not None
+        assert "Reason unknown" in error_view.toPlainText()
+    finally:
+        widget.deleteLater()
+
+
+def test_chat_status_tab_retry_button_retries_import(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Issue #2851: Retry triggers another chat-module import attempt."""
+    QtWidgets = _ensure_qt_widgets()
+    from upstream_drift_tools.ui.tools_sidebar import runtime_tabs
+
+    sidebar = _build_fake_sidebar(project_root=tmp_path)
+
+    raised = ImportError("PyQt6 not installed")
+    call_log: list[str] = []
+
+    def _failing_shim(name: str, package: str | None = None) -> Any:
+        if name == "chat.chat_dock_widget":
+            call_log.append(name)
+            raise raised
+        return importlib.import_module(name, package)
+
+    monkeypatch.setattr(runtime_tabs.importlib, "import_module", _failing_shim)
+
+    # Initial build fails and stashes the error.
+    assert runtime_tabs._build_pyqt_chat_dock(sidebar) is None
+    assert sidebar._chat_dock_import_error is raised
+
+    widget = runtime_tabs._build_chat_status_tab(sidebar)
+    try:
+        retry = widget.findChild(QtWidgets.QPushButton, "SidekickChatStatusRetry")
+        assert retry is not None
+
+        # Retry while the import still fails -> another import attempt occurs
+        # and the error text refreshes.
+        retry.click()
+        assert call_log.count("chat.chat_dock_widget") >= 2
+        error_view = widget.findChild(
+            QtWidgets.QPlainTextEdit, "SidekickChatStatusError"
+        )
+        assert error_view is not None
+        assert "PyQt6 not installed" in error_view.toPlainText()
+    finally:
+        widget.deleteLater()
+
+
+def test_chat_status_tab_retry_swaps_widget_on_success(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Successful retry swaps the fallback widget for the real dock."""
+    QtWidgets = _ensure_qt_widgets()
+    from upstream_drift_tools.ui.tools_sidebar import runtime_tabs
+
+    raised = ImportError("PyQt6 not installed")
+
+    class _Sidebar(QtWidgets.QWidget):
+        def __init__(self, project_root: Path) -> None:
+            super().__init__()
+            self.project_root = project_root
+            self.tabs = QtWidgets.QTabWidget(self)
+            self._tab_widgets: dict[str, QtWidgets.QWidget] = {}
+            self._chat_dock_import_error = raised
+
+    sidebar = _Sidebar(tmp_path)
+
+    fallback = runtime_tabs._build_chat_status_tab(sidebar)
+    sidebar.tabs.addTab(fallback, "Chat")
+    sidebar._tab_widgets["chat"] = fallback
+
+    # Install a spy chat module so the second import succeeds.
+    _install_fake_chat_module(monkeypatch)
+
+    retry = fallback.findChild(QtWidgets.QPushButton, "SidekickChatStatusRetry")
+    assert retry is not None
+    retry.click()
+
+    # Index 0 should now hold something other than the original fallback widget.
+    swapped = sidebar.tabs.widget(0)
+    assert swapped is not fallback
+    assert sidebar._tab_widgets["chat"] is swapped
+    sidebar.deleteLater()
