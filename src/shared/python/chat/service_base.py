@@ -315,26 +315,36 @@ class ChatServiceBase(abc.ABC):
         )
         return session_id
 
-    @abc.abstractmethod
     async def refresh_models(self) -> list[dict[str, Any]]:
         """Refresh the list of available models from the provider.
 
-        Returns:
-            List of model info dicts.
-        """
-        ...  # pragma: no cover
+        Default implementation raises ``NotImplementedError``.  Subclasses
+        that wire a provider with a model-listing API (e.g. Ollama)
+        should override.  The router converts this exception into a clear
+        ``"refresh_models not supported by this service"`` error reply
+        instead of leaving the action silently broken (Tools issue #2751).
 
-    @abc.abstractmethod
+        Returns:
+            List of model info dicts (matches ``ChatModelInfo``).
+        """
+        raise NotImplementedError("refresh_models must be implemented by subclass")
+
     async def index_codebase(self, root_path: str) -> dict[str, Any]:
         """Trigger a re-index of the codebase for RAG.
+
+        Default implementation raises ``NotImplementedError``.  Subclasses
+        that bundle an embedding/codemap pipeline should override.  The
+        router converts this exception into a clear
+        ``"index_codebase not supported by this service"`` error reply
+        instead of leaving the action silently broken (Tools issue #2751).
 
         Args:
             root_path: Filesystem path to the project root.
 
         Returns:
-            Index status dict (matches ChatIndexStatusResponse).
+            Index status dict (matches ``ChatIndexStatusResponse``).
         """
-        ...  # pragma: no cover
+        raise NotImplementedError("index_codebase must be implemented by subclass")
 
     # ── Hooks for subclass customization ─────────────────────────────
 
