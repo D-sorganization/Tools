@@ -16,6 +16,7 @@ members = [
     "rust_core/tools-core",
     "rust_core/math-primitives",
     "rust_core/ai_backend",
+    "rust_core/file_watcher",
 ]
 
 [workspace.package]

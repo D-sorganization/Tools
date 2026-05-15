@@ -43,6 +43,7 @@ from src.shared.python.ai.types import (
     ProviderCapability,
     ToolCall,
 )
+from src.shared.python.contracts import precondition
 from src.shared.python.logging_pkg.logging_config import get_logger
 
 if TYPE_CHECKING:
@@ -136,6 +137,9 @@ class OllamaAdapter(BaseAgentAdapter):
                 ) from e
         return self._client
 
+    @precondition(
+        lambda message: bool(message.strip()), "message must not be empty or blank"
+    )
     def send_message(
         self,
         message: str,
@@ -413,12 +417,15 @@ class OllamaAdapter(BaseAgentAdapter):
                 ]
             )
 
-        # Extract usage if available
-        usage: dict[str, int] = {}
+        # Extract usage and normalize to canonical keys (issue #2763).
+        # Ollama uses ``prompt_eval_count`` / ``eval_count`` internally;
+        # _normalize_token_counts maps prompt_tokens → input_tokens etc.
+        raw_usage: dict[str, int] = {}
         if "prompt_eval_count" in data:
-            usage["prompt_tokens"] = data["prompt_eval_count"]
+            raw_usage["prompt_tokens"] = data["prompt_eval_count"]
         if "eval_count" in data:
-            usage["completion_tokens"] = data["eval_count"]
+            raw_usage["completion_tokens"] = data["eval_count"]
+        usage = self._normalize_token_counts(raw_usage)
 
         return AgentResponse(
             content=content,

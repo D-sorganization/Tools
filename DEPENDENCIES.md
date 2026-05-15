@@ -2,17 +2,31 @@
 
 This document describes the dependency version strategy for this repository.
 
+## Rust (Optional Native Extensions)
+
+Two Rust crates — `rust_core/tools-core` and `rust_core/ai_backend` — provide optional
+acceleration via PyO3/maturin wheels. These are **not Python dependencies** and are
+therefore not listed in `requirements.txt` or `pyproject.toml`. They are purely
+additive: when absent, pure-Python fallbacks activate automatically and emit a
+`WARNING`-level log so users know they are on the slow path.
+
+To build locally: `pip install maturin && cd rust_core/tools-core && maturin develop
+--features python` (repeat for `rust_core/ai_backend`).
+
+See [docs/development/rust_distribution.md](docs/development/rust_distribution.md) for
+the full distribution model, the CI gap, and build instructions.
+
 ## Overview
 
 This repo is a **shared library** consumed by UpstreamDrift and Gasification_Model.
 Library packaging best practice (PEP 517) requires different strategies at different layers:
 
-| Layer | File | Strategy | Rationale |
-|-------|------|----------|-----------|
-| Library package | `pyproject.toml` | `>=` minimum bounds | Consumers set their own pins; over-constraining breaks compatibility |
-| Dev/CI environment | `requirements.txt` | `>=` minimum bounds | Paired with lock file for reproducibility |
-| Reproducible builds | `requirements-lock.txt` | `==` exact pins | Used in CI and for reproducing specific environments |
-| Sub-module apps | `src/*/requirements.txt` | `>=` minimum bounds | Each sub-module is independently deployable; they own their pins |
+| Layer               | File                     | Strategy            | Rationale                                                            |
+| ------------------- | ------------------------ | ------------------- | -------------------------------------------------------------------- |
+| Library package     | `pyproject.toml`         | `>=` minimum bounds | Consumers set their own pins; over-constraining breaks compatibility |
+| Dev/CI environment  | `requirements.txt`       | `>=` minimum bounds | Paired with lock file for reproducibility                            |
+| Reproducible builds | `requirements-lock.txt`  | `==` exact pins     | Used in CI and for reproducing specific environments                 |
+| Sub-module apps     | `src/*/requirements.txt` | `>=` minimum bounds | Each sub-module is independently deployable; they own their pins     |
 
 ## Pinning Tiers
 
@@ -31,6 +45,7 @@ These are the versions actually tested in CI. The companion `requirements-lock.t
 provides exact reproducible pins.
 
 To regenerate the lock file:
+
 ```bash
 pip install -r requirements.txt
 pip freeze > requirements-lock.txt
@@ -39,6 +54,7 @@ pip freeze > requirements-lock.txt
 ### Tier 3 — Reproducible builds (`requirements-lock.txt`)
 
 Exact `==` pins for every package. Used when:
+
 - Setting up a fresh CI environment
 - Reproducing a specific build for debugging
 - Ensuring bit-for-bit reproducibility across machines

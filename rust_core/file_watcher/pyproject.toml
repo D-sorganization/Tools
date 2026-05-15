@@ -1,0 +1,20 @@
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "file-watcher"
+version = "0.1.0"
+description = "Rust-compiled cross-platform file watcher with debouncing and gitignore filtering"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+]
+
+[tool.maturin]
+features = ["python"]
+module-name = "file_watcher"
+manifest-path = "Cargo.toml"

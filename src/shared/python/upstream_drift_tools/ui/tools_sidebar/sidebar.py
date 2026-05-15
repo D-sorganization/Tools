@@ -164,6 +164,36 @@ class UnifiedToolsSidebar(
             if tab_id not in self._tab_ids and tab_id not in self._popout_windows
         ]
 
+    def get_tab_definition(self, tab_id: str) -> SidebarTabDefinition | None:
+        """Return the definition for ``tab_id``, or *None* if not found."""
+        return self._tab_definitions.get(tab_id)
+
+    def get_tab_id_at(self, index: int) -> str | None:
+        """Return the stable tab id at visual ``index``, or *None* if out of range."""
+        if 0 <= index < len(self._tab_ids):
+            return self._tab_ids[index]
+        return None
+
+    def get_tab_display_name(self, tab_id: str) -> str | None:
+        """Return the persisted custom display name for ``tab_id``, or *None*."""
+        return self._state.tab_display_names.get(tab_id)
+
+    def prompt_rename_tab(self, tab_id: str) -> None:
+        """Open an input dialog so the user can rename ``tab_id``."""
+        self._prompt_rename_tab(tab_id)
+
+    def register_workspace_list_widget(self, widget: QtWidgets.QListWidget) -> None:
+        """Register the workspace list widget used by the workspace tab."""
+        self._workspace_list = widget
+
+    def workspace_list_widget(self) -> QtWidgets.QListWidget | None:
+        """Return the registered workspace list widget, or *None*."""
+        return getattr(self, "_workspace_list", None)
+
+    def register_settings_button(self, button: QtWidgets.QToolButton) -> None:
+        """Register the settings toolbar button for enabled-state management."""
+        self._settings_button = button
+
     def move_tab(self, tab_id: str, index: int) -> bool:
         """Move a visible tab to ``index``."""
         if tab_id not in self._tab_ids:
@@ -411,32 +441,6 @@ class UnifiedToolsSidebar(
         """Refresh workspace-derived UI and emit the latest sidebar context."""
         refresh_workspace_list(self)
         self._emit_context()
-
-    def get_tab_definition(self, tab_id: str) -> SidebarTabDefinition | None:
-        """Return the definition for a tab id, if configured."""
-        return self._tab_definitions.get(tab_id)
-
-    def get_tab_id_at(self, index: int) -> str | None:
-        """Return the stable tab id at a specific widget index."""
-        if 0 <= index < len(self._tab_ids):
-            return self._tab_ids[index]
-        return None
-
-    def has_custom_display_name(self, tab_id: str) -> bool:
-        """Return True if ``tab_id`` has a user-persisted display name."""
-        return tab_id in self._state.tab_display_names
-
-    def prompt_rename_tab(self, tab_id: str) -> None:
-        """Trigger a rename dialog for a specific tab."""
-        self._prompt_rename_tab(tab_id)
-
-    def register_workspace_list_widget(self, widget: QtWidgets.QListWidget) -> None:
-        """Associate a list widget with the shared workspace variable view."""
-        self._workspace_list = widget
-
-    def register_settings_button_widget(self, widget: QtWidgets.QToolButton) -> None:
-        """Associate a button with the active tab settings trigger."""
-        self._settings_button = widget
 
     def set_design_tokens(self, design_tokens: theme.SidekickDesignTokens) -> None:
         """Apply a new Sidekick token set to this sidebar."""
