@@ -712,8 +712,10 @@ class ChatDockWidget(QDockWidget):
 
     def _on_upload(self) -> None:
         """Prompt user to attach a file and send it to the server."""
-        from PyQt6.QtWidgets import QFileDialog
         import base64
+
+        from PyQt6.QtWidgets import QFileDialog
+
         file_path, _ = QFileDialog.getOpenFileName(
             self, "Attach File", "", "All Files (*)"
         )
@@ -721,12 +723,14 @@ class ChatDockWidget(QDockWidget):
             path = Path(file_path)
             try:
                 data = path.read_bytes()
-                b64 = base64.b64encode(data).decode('ascii')
-                self._send_ws({
-                    "action": "file_upload",
-                    "filename": path.name,
-                    "content": b64,
-                })
+                b64 = base64.b64encode(data).decode("ascii")
+                self._send_ws(
+                    {
+                        "action": "file_upload",
+                        "filename": path.name,
+                        "content": b64,
+                    }
+                )
                 self._add_bubble("user", f"[Uploaded file: {path.name}]")
             except Exception as e:
                 self._status_label.setText(f"Upload failed: {e}")
@@ -734,26 +738,30 @@ class ChatDockWidget(QDockWidget):
     def _on_screenshot(self) -> None:
         """Capture application screenshot and send to server."""
         import base64
+
+        from PyQt6.QtCore import QBuffer, QByteArray, QIODevice
         from PyQt6.QtWidgets import QApplication
-        from PyQt6.QtCore import QByteArray, QBuffer, QIODevice
+
         app = QApplication.instance()
         if not app:
             return
-        
+
         parent = self.parentWidget()
         pixmap = parent.grab() if parent else app.primaryScreen().grabWindow(0)
-        
+
         ba = QByteArray()
         buffer = QBuffer(ba)
         buffer.open(QIODevice.OpenModeFlag.WriteOnly)
         pixmap.save(buffer, "PNG")
-        b64 = base64.b64encode(ba.data()).decode('ascii')
-        
-        self._send_ws({
-            "action": "file_upload",
-            "filename": "screenshot.png",
-            "content": b64,
-        })
+        b64 = base64.b64encode(ba.data()).decode("ascii")
+
+        self._send_ws(
+            {
+                "action": "file_upload",
+                "filename": "screenshot.png",
+                "content": b64,
+            }
+        )
         self._add_bubble("user", "[Captured screenshot]")
 
     def _on_mode_changed(self) -> None:
