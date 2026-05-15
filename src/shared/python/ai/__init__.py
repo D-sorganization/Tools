@@ -27,6 +27,7 @@ Example:
     >>> edu = EducationSystem()
 """
 
+from src.shared.python.ai import integrations
 from src.shared.python.ai.education import EducationSystem, GlossaryEntry
 from src.shared.python.ai.exceptions import (
     AIConnectionError,
