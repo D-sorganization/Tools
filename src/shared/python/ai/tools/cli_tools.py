@@ -479,7 +479,9 @@ def create_cli_tools_for_registry() -> list[dict[str, Any]]:
         tools.append(
             {
                 "name": "claude_ask",
-                "description": "Ask Claude Code CLI for code analysis or development assistance",
+                "description": (
+                    "Ask Claude Code CLI for code analysis or development assistance"
+                ),
                 "handler": manager.claude.ask,
                 "parameters": [
                     {
@@ -520,7 +522,9 @@ def create_cli_tools_for_registry() -> list[dict[str, Any]]:
         tools.append(
             {
                 "name": "shell_execute",
-                "description": "Execute a safe shell command (limited to allowed commands)",
+                "description": (
+                    "Execute a safe shell command (limited to allowed commands)"
+                ),
                 "handler": manager.shell.execute,
                 "parameters": [
                     {

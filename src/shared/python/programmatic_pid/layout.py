@@ -108,7 +108,7 @@ def spread_instrument_positions(
         - Returned list has the same length as *instruments*.
         - Each returned dict is a shallow copy with updated ``x`` / ``y``.
     """
-    if not (instruments is not None):
+    if instruments is None:
         raise ValueError("instruments must be provided")
     placed: list[tuple[float, float]] = []
     output: list[dict[str, Any]] = []

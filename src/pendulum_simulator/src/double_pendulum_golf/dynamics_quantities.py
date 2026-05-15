@@ -314,7 +314,7 @@ def compute_all_dynamics(
         angular_work, linear_work,
         angular_impulse, linear_impulse
     """
-    if not (time is not None):
+    if time is None:
         raise ValueError("time must be provided")
     logger.debug("Computing all dynamics quantities for %d timesteps", len(time))
 

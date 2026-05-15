@@ -113,7 +113,7 @@ def get_dat_columns(
     Returns:
         List of column names
     """
-    if not (file_path is not None):
+    if file_path is None:
         raise ValueError("file_path must be provided")
     df = read_dat_file(file_path, delimiter=delimiter, nrows=nrows)
     return df.columns.tolist()
@@ -182,7 +182,7 @@ def export_dat_to_csv(
     Returns:
         Path to the created CSV file
     """
-    if not (dat_path is not None):
+    if dat_path is None:
         raise ValueError("dat_path must be provided")
     df = import_dat_with_tags(
         dat_path,
@@ -254,7 +254,7 @@ def get_dat_file_info(file_path: str | Path, delimiter: str = "\t") -> dict[str,
         - file_size: File size in bytes
         - has_time_column: Whether a time column was detected
     """
-    if not (file_path is not None):
+    if file_path is None:
         raise ValueError("file_path must be provided")
     file_path = Path(file_path)
 

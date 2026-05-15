@@ -76,7 +76,7 @@ class UndoRedoManager(Generic[T]):
         Args:
             max_history: Maximum number of commands to keep in history
         """
-        if not (max_history is not None):
+        if max_history is None:
             raise ValueError("max_history must be provided")
         self._history: list[CommandRecord] = []
         self._redo_stack: list[CommandRecord] = []
@@ -121,7 +121,7 @@ class UndoRedoManager(Generic[T]):
         Returns:
             Result of the command execution
         """
-        if not (command is not None):
+        if command is None:
             raise ValueError("command must be provided")
         result = command.execute()
 
@@ -220,7 +220,7 @@ class DataFrameCommand(Command):
             df_getter: Function to get current DataFrame
             df_setter: Function to set new DataFrame
         """
-        if not (df_getter is not None):
+        if df_getter is None:
             raise ValueError("df_getter must be provided")
         self._get_df = df_getter
         self._set_df = df_setter
@@ -238,7 +238,7 @@ class FilterCommand(DataFrameCommand):
         filter_name: str,
         filter_params: dict[str, Any],
     ) -> None:
-        if not (df_getter is not None):
+        if df_getter is None:
             raise ValueError("df_getter must be provided")
         super().__init__(df_getter, df_setter)
         self._filter_func = filter_func
@@ -279,7 +279,7 @@ class ColumnOperationCommand(DataFrameCommand):
         new_data: pd.Series | None = None,
         formula: str | None = None,
     ) -> None:
-        if not (df_getter is not None):
+        if df_getter is None:
             raise ValueError("df_getter must be provided")
         super().__init__(df_getter, df_setter)
         self._operation = operation  # "add", "remove", "rename", "modify"
@@ -347,7 +347,7 @@ class RowFilterCommand(DataFrameCommand):
         mask: pd.Series,
         filter_description: str,
     ) -> None:
-        if not (df_getter is not None):
+        if df_getter is None:
             raise ValueError("df_getter must be provided")
         super().__init__(df_getter, df_setter)
         self._mask = mask
@@ -385,7 +385,7 @@ class ResampleCommand(DataFrameCommand):
         rule: str,
         method: str,
     ) -> None:
-        if not (df_getter is not None):
+        if df_getter is None:
             raise ValueError("df_getter must be provided")
         super().__init__(df_getter, df_setter)
         self._resample_func = resample_func
@@ -427,7 +427,7 @@ class CompositeCommand(Command):
             commands: List of commands to execute as a group
             group_name: Name for the composite operation
         """
-        if not (commands is not None):
+        if commands is None:
             raise ValueError("commands must be provided")
         self._commands = commands
         self._group_name = group_name
@@ -467,7 +467,7 @@ class LambdaCommand(Command):
         name: str,
         description: str = "",
     ) -> None:
-        if not (execute_fn is not None):
+        if execute_fn is None:
             raise ValueError("execute_fn must be provided")
         self._execute_fn = execute_fn
         self._undo_fn = undo_fn

@@ -83,7 +83,7 @@ def memory_tracker(
         MemoryStats object (populated after block completes)
     """
     # Import here to avoid circular dependency at module level
-    if not (name is not None):
+    if name is None:
         raise ValueError("name must be provided")
     from utils.debug_utils import is_debug_mode
 

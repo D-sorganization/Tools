@@ -97,9 +97,9 @@ class RigidBody:
 
     def __post_init__(self) -> None:
         assert self.mass > 0, f"mass must be positive, got {self.mass}"
-        assert self.moment_of_inertia > 0, (
-            f"moment_of_inertia must be positive, got {self.moment_of_inertia}"
-        )
+        assert (
+            self.moment_of_inertia > 0
+        ), f"moment_of_inertia must be positive, got {self.moment_of_inertia}"
 
     @property
     def speed(self) -> float:

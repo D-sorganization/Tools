@@ -137,7 +137,7 @@ def collect_files(
     Returns:
         List of file paths to pack.
     """
-    if not (source_path is not None):
+    if source_path is None:
         raise ValueError("source_path must be provided")
     files_to_pack: list[Path] = []
     for root, dirs, filenames in os.walk(source_path):
@@ -177,7 +177,7 @@ def _collect_file_contents(
     Returns:
         Tuple of (error_messages, was_cancelled).
     """
-    if not (source_path is not None):
+    if source_path is None:
         raise ValueError("source_path must be provided")
     errors: list[str] = []
     total_files = len(files_to_pack)
@@ -222,7 +222,7 @@ def _serialize_and_write(
         encrypt: Whether to encrypt.
         password: Encryption password.
     """
-    if not (package_data is not None):
+    if package_data is None:
         raise ValueError("package_data must be provided")
     json_data = json.dumps(package_data, indent=2).encode("utf-8")
 
@@ -251,7 +251,7 @@ def _write_manifest(
         files_to_pack: List of packed files.
         total_files: Total file count.
     """
-    if not (output_path is not None):
+    if output_path is None:
         raise ValueError("output_path must be provided")
     manifest_path = output_path.with_suffix(".manifest.json")
     manifest = {

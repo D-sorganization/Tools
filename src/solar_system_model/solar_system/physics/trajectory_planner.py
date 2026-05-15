@@ -160,7 +160,7 @@ class TrajectoryPlanner:
             - a_transfer: Semi-major axis of transfer orbit (meters)
         """
         # Transfer orbit semi-major axis
-        if not (r1 is not None):
+        if r1 is None:
             raise ValueError("r1 must be provided")
         a_transfer = (r1 + r2) / 2
 
@@ -196,7 +196,7 @@ class TrajectoryPlanner:
             Phase angle in degrees
         """
         # Transfer orbit semi-major axis
-        if not (r1 is not None):
+        if r1 is None:
             raise ValueError("r1 must be provided")
         a_transfer = (r1 + r2) / 2
 
@@ -231,7 +231,7 @@ class TrajectoryPlanner:
             Tuple of (delta_v1, delta_v2, delta_v3, time_of_flight)
         """
         # First transfer ellipse (r1 to r_intermediate)
-        if not (r1 is not None):
+        if r1 is None:
             raise ValueError("r1 must be provided")
         a1 = (r1 + r_intermediate) / 2
 
@@ -279,7 +279,7 @@ class TrajectoryPlanner:
         Returns:
             Synodic period in days
         """
-        if not (origin is not None):
+        if origin is None:
             raise ValueError("origin must be provided")
         t1 = origin.get_orbital_period()
         t2 = destination.get_orbital_period()
@@ -307,7 +307,7 @@ class TrajectoryPlanner:
         Returns:
             List of launch window opportunities
         """
-        if not (origin is not None):
+        if origin is None:
             raise ValueError("origin must be provided")
         windows = []
 
@@ -389,9 +389,9 @@ class TrajectoryPlanner:
             TransferTrajectory with complete trajectory information
         """
         # DbC preconditions
-        if not (origin is not None):
+        if origin is None:
             raise ValueError("Origin body must not be None")
-        if not (destination is not None):
+        if destination is None:
             raise ValueError("Destination body must not be None")
         if not (departure_date > 0):
             raise ValueError(
@@ -431,7 +431,7 @@ class TrajectoryPlanner:
     ) -> TransferTrajectory:
         """Calculate a Hohmann transfer trajectory."""
         # Get transfer parameters
-        if not (origin is not None):
+        if origin is None:
             raise ValueError("origin must be provided")
         dv1, dv2, tof, a_transfer = self.hohmann_transfer(r1, r2)
         tof_days = tof / SECONDS_PER_DAY
@@ -497,7 +497,7 @@ class TrajectoryPlanner:
     ) -> TransferTrajectory:
         """Calculate a bi-elliptic transfer trajectory."""
         # Use intermediate radius 1.5x the larger orbit
-        if not (origin is not None):
+        if origin is None:
             raise ValueError("origin must be provided")
         r_intermediate = max(r1, r2) * 1.5
 
@@ -563,7 +563,7 @@ class TrajectoryPlanner:
     ) -> TransferTrajectory:
         """Plan a patched-conic gravity assist sequence."""
 
-        if not (origin is not None):
+        if origin is None:
             raise ValueError("origin must be provided")
         first_leg = self.calculate_transfer(
             origin, assist_body, departure_date, TransferType.HOHMANN
@@ -619,7 +619,7 @@ class TrajectoryPlanner:
         num_points: int = 100,
     ) -> list[StateVector]:
         """Generate points along a transfer trajectory."""
-        if not (initial_state is not None):
+        if initial_state is None:
             raise ValueError("initial_state must be provided")
         points = []
 
@@ -734,7 +734,7 @@ class TrajectoryPlanner:
         Returns:
             Spacecraft with the trajectory set
         """
-        if not (trajectory is not None):
+        if trajectory is None:
             raise ValueError("trajectory must be provided")
         spacecraft = Spacecraft(name=name, trajectory=trajectory.trajectory_points)
         return spacecraft
@@ -752,7 +752,7 @@ class TrajectoryPlanner:
         Returns:
             Dictionary with transfer information
         """
-        if not (origin is not None):
+        if origin is None:
             raise ValueError("origin must be provided")
         r1 = (
             origin.orbital_elements.semi_major_axis * AU

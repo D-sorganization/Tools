@@ -38,7 +38,7 @@ def _parse_numbers(value: str) -> np.ndarray:
 
 
 def _make_matrix_grid(parent: QWidget, rows: int, cols: int) -> list[list[QLineEdit]]:
-    if not (parent is not None):
+    if parent is None:
         raise ValueError("parent must be provided")
     layout = QGridLayout(parent)
     edits: list[list[QLineEdit]] = []
@@ -144,13 +144,15 @@ class ReferenceFrameTab(QWidget):
             self._results.setPlainText(json.dumps(result.results, indent=2))
             self._markdown.setPlainText(result.explanation_markdown)
             self._latex.setPlainText(result.explanation_latex)
-        except Exception as error:  # noqa: BLE001 — user input can raise any error; display it
+        except (
+            Exception
+        ) as error:  # noqa: BLE001 — user input can raise any error; display it
             self._results.setPlainText(f"Error: {error}")
             self._markdown.clear()
             self._latex.clear()
 
     def _compute_operation(self, operation: OperationName) -> Any:
-        if not (operation is not None):
+        if operation is None:
             raise ValueError("operation must be provided")
         if operation == "twist_frame_conversion":
             transform = _read_matrix(self._transform_edits)

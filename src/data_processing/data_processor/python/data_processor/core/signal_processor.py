@@ -44,7 +44,7 @@ class SignalProcessor:
           - ``df`` must not be empty.
           - ``config.filter_type`` must be supported by the engine.
         """
-        if not (df is not None):
+        if df is None:
             raise ValueError("df must be provided")
         require(not df.empty, "Cannot filter an empty dataframe")
         engine_params = config.to_engine_parameters()
@@ -102,7 +102,7 @@ class SignalProcessor:
 
         Delegates to ``signal_processing.integrate_signals``.
         """
-        if not (df is not None):
+        if df is None:
             raise ValueError("df must be provided")
         require(not df.empty, "Cannot integrate an empty dataframe")
         require(time_col in df.columns, f"time_col '{time_col}' not in df", time_col)
@@ -126,7 +126,7 @@ class SignalProcessor:
 
         Delegates to ``signal_processing.differentiate_signals``.
         """
-        if not (df is not None):
+        if df is None:
             raise ValueError("df must be provided")
         require(not df.empty, "Cannot differentiate an empty dataframe")
         require(time_col in df.columns, f"time_col '{time_col}' not in df", time_col)
@@ -146,7 +146,7 @@ class SignalProcessor:
 
         Delegates to ``signal_processing.apply_custom_variable``.
         """
-        if not (df is not None):
+        if df is None:
             raise ValueError("df must be provided")
         require(not df.empty, "Cannot apply formula to an empty dataframe")
         require(bool(formula.strip()), "formula must be a non-empty string", formula)
@@ -163,7 +163,7 @@ class SignalProcessor:
         **Pre-conditions** (DbC):
           - ``df`` must not be empty.
         """
-        if not (df is not None):
+        if df is None:
             raise ValueError("df must be provided")
         require(not df.empty, "Cannot compute statistics on an empty dataframe")
         numeric_df = df.select_dtypes(include=[np.number])
@@ -188,7 +188,7 @@ class SignalProcessor:
         Accepts an IntegrationConfig (or any object with ``signals``
         and ``method`` attributes) and delegates to the real implementation.
         """
-        if not (df is not None):
+        if df is None:
             raise ValueError("df must be provided")
         signals = getattr(config, "signals", [])
         method = getattr(config, "method", "trapezoidal")
@@ -202,7 +202,7 @@ class SignalProcessor:
         Accepts a DifferentiationConfig (or any object with ``signals``
         and ``method``/``order`` attributes) and delegates.
         """
-        if not (df is not None):
+        if df is None:
             raise ValueError("df must be provided")
         signals = getattr(config, "signals", [])
         method = getattr(config, "method", "spline")

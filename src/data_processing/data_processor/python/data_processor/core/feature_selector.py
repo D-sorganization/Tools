@@ -44,7 +44,7 @@ class FeatureSelector:
         Returns:
             SelectionResult with selected features
         """
-        if not (features is not None):
+        if features is None:
             raise ValueError("features must be provided")
         threshold = threshold or self.config.correlation_threshold
         features = np.atleast_2d(features)
@@ -114,7 +114,7 @@ class FeatureSelector:
         Returns:
             SelectionResult with selected features
         """
-        if not (features is not None):
+        if features is None:
             raise ValueError("features must be provided")
         threshold = threshold or self.config.variance_threshold
         features = np.atleast_2d(features)
@@ -160,7 +160,7 @@ class FeatureSelector:
         Returns:
             SelectionResult with selected features
         """
-        if not (features is not None):
+        if features is None:
             raise ValueError("features must be provided")
         features = np.atleast_2d(features)
         n_features = features.shape[1]
@@ -192,7 +192,7 @@ class FeatureSelector:
 
     def _mutual_information(self, x: np.ndarray, y: np.ndarray) -> float:
         """Compute mutual information (simplified binning approach)."""
-        if not (x is not None):
+        if x is None:
             raise ValueError("x must be provided")
         n_bins = self.config.n_bins
 
@@ -236,7 +236,7 @@ def select_features(
     Returns:
         SelectionResult with selected features
     """
-    if not (features is not None):
+    if features is None:
         raise ValueError("features must be provided")
     selector = FeatureSelector()
 

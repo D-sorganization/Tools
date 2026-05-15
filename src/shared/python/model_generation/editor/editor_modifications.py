@@ -71,7 +71,7 @@ class ModificationMixin:
         Returns:
             True if deleted
         """
-        if not (model_id is not None):
+        if model_id is None:
             raise ValueError("model_id must be provided")
         model = self._models.get(model_id)
         if not model:
@@ -136,7 +136,7 @@ class ModificationMixin:
         Returns:
             True if deleted
         """
-        if not (model_id is not None):
+        if model_id is None:
             raise ValueError("model_id must be provided")
         model = self._models.get(model_id)
         if not model:
@@ -189,7 +189,7 @@ class ModificationMixin:
         Returns:
             True if renamed
         """
-        if not (model_id is not None):
+        if model_id is None:
             raise ValueError("model_id must be provided")
         if not new_name or not new_name.strip():
             logger.error("new_name must be a non-empty string")
@@ -253,7 +253,7 @@ class ModificationMixin:
         Returns:
             True if renamed
         """
-        if not (model_id is not None):
+        if model_id is None:
             raise ValueError("model_id must be provided")
         if not new_name or not new_name.strip():
             logger.error("new_name must be a non-empty string")
@@ -304,7 +304,7 @@ class ModificationMixin:
         Returns:
             True if modified
         """
-        if not (model_id is not None):
+        if model_id is None:
             raise ValueError("model_id must be provided")
         model = self._models.get(model_id)
         if not model:
@@ -385,7 +385,7 @@ class ModificationMixin:
         Returns:
             True if attached
         """
-        if not (model_id is not None):
+        if model_id is None:
             raise ValueError("model_id must be provided")
         model = self._models.get(model_id)
         if not model:
@@ -447,7 +447,7 @@ class ModificationMixin:
         Returns:
             True if detached
         """
-        if not (model_id is not None):
+        if model_id is None:
             raise ValueError("model_id must be provided")
         model = self._models.get(model_id)
         if not model:
@@ -494,7 +494,7 @@ class ModificationMixin:
         Returns:
             True if applied
         """
-        if not (model_id is not None):
+        if model_id is None:
             raise ValueError("model_id must be provided")
         model = self._models.get(model_id)
         if not model:
@@ -562,7 +562,7 @@ class ModificationMixin:
         Returns:
             List of created link names.
         """
-        if not (links is not None):
+        if links is None:
             raise ValueError("links must be provided")
         created_links: list[str] = []
         for link in links:

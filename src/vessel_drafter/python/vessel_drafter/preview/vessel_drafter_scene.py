@@ -79,7 +79,7 @@ def _build_vessel_3d_scene_cached(
     split_enabled: bool,
     split_angle_degrees: float,
 ) -> Vessel3DScene:
-    if not (layout is not None):
+    if layout is None:
         raise ValueError("layout must be provided")
     view_options = Vessel3DViewOptions(
         split_enabled=split_enabled,
@@ -111,7 +111,7 @@ def _build_glass_mesh(
     visible_labels: set[str] | None,
     view_options: Vessel3DViewOptions,
 ) -> VesselSceneMesh | None:
-    if not (layout is not None):
+    if layout is None:
         raise ValueError("layout must be provided")
     layer = layout.layers[0]
     if not _is_visible(layer.name, layer.name, visible_labels):
@@ -134,7 +134,7 @@ def _build_shell_meshes(
     visible_labels: set[str] | None,
     view_options: Vessel3DViewOptions,
 ) -> tuple[VesselSceneMesh, ...]:
-    if not (layout is not None):
+    if layout is None:
         raise ValueError("layout must be provided")
     meshes: list[VesselSceneMesh] = []
     for profile in build_shell_band_profiles(layout):
@@ -173,7 +173,7 @@ def _build_electrode_meshes(
     visible_labels: set[str] | None,
     view_options: Vessel3DViewOptions,
 ) -> tuple[VesselSceneMesh, ...]:
-    if not (layout is not None):
+    if layout is None:
         raise ValueError("layout must be provided")
     if not _is_visible("electrodes", "electrodes", visible_labels):
         return ()
@@ -227,7 +227,7 @@ def _build_exact_meshes(
     visible_labels: set[str] | None,
     view_options: Vessel3DViewOptions,
 ) -> tuple[VesselSceneMesh, ...]:
-    if not (layout is not None):
+    if layout is None:
         raise ValueError("layout must be provided")
     from vessel_drafter.projects.vessel_drafter_layout import (  # lazy: needs build123d
         build_vessel_drafter_components,
@@ -313,7 +313,7 @@ def _revolved_profile_mesh(
     half_profile: tuple[ProfilePoint, ...],
     view_options: Vessel3DViewOptions,
 ) -> tuple[FloatArray, IntArray]:
-    if not (half_profile is not None):
+    if half_profile is None:
         raise ValueError("half_profile must be provided")
     angles = _preview_angles(view_options)
     angle_count = len(angles)
@@ -384,7 +384,7 @@ def _segment_faces(
     *,
     wrap_around: bool,
 ) -> IntArray:
-    if not (start_group is not None):
+    if start_group is None:
         raise ValueError("start_group must be provided")
     if isinstance(start_group, int) and isinstance(end_group, int):
         return np.empty((0, 3), dtype=np.int32)
@@ -433,7 +433,7 @@ def _cylinder_mesh(
     end_point: FloatArray,
     radius_in: float,
 ) -> tuple[FloatArray, IntArray]:
-    if not (start_point is not None):
+    if start_point is None:
         raise ValueError("start_point must be provided")
     axis_vector = end_point - start_point
     axis_length = np.linalg.norm(axis_vector)
@@ -521,7 +521,7 @@ def _section_cap_mesh(
     half_profile: tuple[ProfilePoint, ...],
     view_options: Vessel3DViewOptions,
 ) -> tuple[FloatArray, IntArray]:
-    if not (half_profile is not None):
+    if half_profile is None:
         raise ValueError("half_profile must be provided")
     triangles = _triangulate_profile_loop(half_profile)
     if not triangles:
@@ -635,7 +635,7 @@ def _is_convex(
 
 
 def _point_in_triangle(point: FloatArray, triangle: FloatArray) -> bool:
-    if not (point is not None):
+    if point is None:
         raise ValueError("point must be provided")
     first_sign = _edge_sign(point, triangle[0], triangle[1])
     second_sign = _edge_sign(point, triangle[1], triangle[2])
@@ -653,7 +653,7 @@ def _edge_sign(point: FloatArray, first: FloatArray, second: FloatArray) -> floa
 
 
 def _cross_z(previous: FloatArray, current: FloatArray, following: FloatArray) -> float:
-    if not (previous is not None):
+    if previous is None:
         raise ValueError("previous must be provided")
     first = current - previous
     second = following - current
@@ -685,7 +685,7 @@ def _maybe_apply_section_cut(
     vertices_faces: tuple[FloatArray, IntArray],
     view_options: Vessel3DViewOptions,
 ) -> tuple[FloatArray, IntArray]:
-    if not (vertices_faces is not None):
+    if vertices_faces is None:
         raise ValueError("vertices_faces must be provided")
     if not view_options.split_enabled:
         return vertices_faces

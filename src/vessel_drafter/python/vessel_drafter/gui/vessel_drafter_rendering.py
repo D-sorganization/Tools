@@ -24,7 +24,7 @@ PREVIEW_MARGIN = 24.0
 
 
 def render_cross_section(scene: QGraphicsScene, preview: CrossSectionPreview) -> None:
-    if not (scene is not None):
+    if scene is None:
         raise ValueError("scene must be provided")
     scene.clear()
     top_z_in = preview.straight_shell_height_in + preview.outer_head_depth_in
@@ -101,7 +101,7 @@ def render_cross_section(scene: QGraphicsScene, preview: CrossSectionPreview) ->
 
 
 def render_plan(scene: QGraphicsScene, preview: PlanPreview) -> None:
-    if not (scene is not None):
+    if scene is None:
         raise ValueError("scene must be provided")
     scene.clear()
     diameter_px = preview.outer_radius_in * 2.0 * PREVIEW_SCALE
@@ -157,7 +157,7 @@ def _add_band_polygon(
     map_point: Callable[[Any], QPointF],
     z_value: float,
 ) -> None:
-    if not (scene is not None):
+    if scene is None:
         raise ValueError("scene must be provided")
     path = _loop_path(polygon.outer_loop, map_point)
     if polygon.inner_loop is not None:
@@ -169,7 +169,7 @@ def _add_band_polygon(
 def _loop_path(
     loop: tuple[ProfilePoint, ...], map_point: Callable[[Any], QPointF]
 ) -> QPainterPath:
-    if not (loop is not None):
+    if loop is None:
         raise ValueError("loop must be provided")
     path = QPainterPath()
     first_point = map_point(loop[0])
@@ -186,7 +186,7 @@ def _add_path(
     color_hex: str,
     z_value: float,
 ) -> None:
-    if not (scene is not None):
+    if scene is None:
         raise ValueError("scene must be provided")
     item = QGraphicsPathItem(path)
     item.setPen(_band_pen())
@@ -208,7 +208,7 @@ def _add_plan_circle(
     feature: PlanCircularFeature,
     z_value: float,
 ) -> None:
-    if not (scene is not None):
+    if scene is None:
         raise ValueError("scene must be provided")
     radius_px = feature.diameter_in * 0.5 * PREVIEW_SCALE
     item = scene.addEllipse(
@@ -230,7 +230,7 @@ def _add_radial_feature(
     feature: PlanRadialFeature,
     z_value: float,
 ) -> None:
-    if not (scene is not None):
+    if scene is None:
         raise ValueError("scene must be provided")
     pen = _accent_pen(feature.color_hex)
     pen.setWidth(max(2, int(round(feature.diameter_in * PREVIEW_SCALE))))

@@ -194,7 +194,7 @@ def mass_matrix_components(
     -------
     dict with keys M11..M33 and M_full.
     """
-    if not (phi1 is not None):
+    if phi1 is None:
         raise ValueError("phi1 must be provided")
     M = mass_matrix(phi1, phi2, params)
     return {
@@ -476,7 +476,7 @@ def forward_kinematics(
     dict with 'hub', 'shoulder', 'wrist1', 'wrist2', 'tip' as (x, y) tuples.
     The shoulder is displaced from the hub by the scapula offset (#1152).
     """
-    if not (theta1 is not None):
+    if theta1 is None:
         raise ValueError("theta1 must be provided")
     native_positions = _native_backend.triple_forward_kinematics(
         theta1, phi1, phi2, params
@@ -572,7 +572,7 @@ def net_joint_forces(
     -------
     dict with keys: 'shoulder', 'wrist1', 'wrist2' as (fx, fy) tuples.
     """
-    if not (state is not None):
+    if state is None:
         raise ValueError("state must be provided")
     acc = linear_accelerations(state, qddot, params)
     g_vec = np.array([0.0, -params.g])
@@ -600,7 +600,7 @@ def net_joint_forces(
 
 def kinetic_energy(state: State, params: TriplePendulumParams) -> float:
     """Compute total kinetic energy T = 0.5 * qdot^T M qdot."""
-    if not (state is not None):
+    if state is None:
         raise ValueError("state must be provided")
     from .physics_base import kinetic_energy_from_M
 
@@ -612,7 +612,7 @@ def kinetic_energy(state: State, params: TriplePendulumParams) -> float:
 
 def potential_energy(state: State, params: TriplePendulumParams) -> float:
     """Compute total potential energy."""
-    if not (state is not None):
+    if state is None:
         raise ValueError("state must be provided")
     theta1, phi1, phi2, _, _, _ = state
 
@@ -637,7 +637,7 @@ def potential_energy(state: State, params: TriplePendulumParams) -> float:
 
 def total_energy(state: State, params: TriplePendulumParams) -> float:
     """Compute total energy E = T + V."""
-    if not (state is not None):
+    if state is None:
         raise ValueError("state must be provided")
     from .physics_base import total_energy_from_parts
 

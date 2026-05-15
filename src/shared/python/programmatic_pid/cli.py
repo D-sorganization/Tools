@@ -75,7 +75,7 @@ def add_equipment(
     show_inline_notes: bool = False,
 ) -> None:
     """Draw one equipment item: symbol + labels + optional inline notes."""
-    if not (eq is not None):
+    if eq is None:
         raise ValueError("eq must be provided")
     x = to_float(eq.get("x", 0.0))
     y = to_float(eq.get("y", 0.0))
@@ -714,7 +714,7 @@ def generate_controls_sheet(
     prepared_spec: dict[str, Any] | None = None,
 ) -> None:
     """Generate the controls and interlocks (Sheet 2) DXF and optional SVG."""
-    if not (spec_path is not None):
+    if spec_path is None:
         raise ValueError("spec_path must be provided")
     if prepared_spec is None:
         spec = prepare_spec(spec_path, profile)
@@ -795,7 +795,7 @@ def generate_controls_sheet(
 
 def derive_related_path(path: str | Path, suffix: str) -> Path:
     """Derive a related file path by appending a suffix before the extension."""
-    if not (path is not None):
+    if path is None:
         raise ValueError("path must be provided")
     p = Path(path)
     return p.with_name(f"{p.stem}_{suffix}{p.suffix}")
@@ -821,7 +821,7 @@ def generate(
         controls_svg: Optional path for the controls sheet SVG.
         profile: Layout profile name (default ``"presentation"``).
     """
-    if not (spec_path is not None):
+    if spec_path is None:
         raise ValueError("spec_path must be provided")
     prepared_spec = prepare_spec(spec_path, profile)
     generate_process_sheet(

@@ -84,6 +84,8 @@ class UnifiedToolsSidebar(
         self._duplicate_counts: dict[str, int] = {}
         self._help_dialog: QtWidgets.QDialog | None = None
         self._settings_dialog: QtWidgets.QDialog | None = None
+        self._workspace_list: QtWidgets.QListWidget | None = None
+        self._settings_button: QtWidgets.QToolButton | None = None
         self._project_root = Path(project_root or Path.cwd()).expanduser().resolve()
 
         self.tabs = QtWidgets.QTabWidget(self)
@@ -409,6 +411,32 @@ class UnifiedToolsSidebar(
         """Refresh workspace-derived UI and emit the latest sidebar context."""
         refresh_workspace_list(self)
         self._emit_context()
+
+    def get_tab_definition(self, tab_id: str) -> SidebarTabDefinition | None:
+        """Return the definition for a tab id, if configured."""
+        return self._tab_definitions.get(tab_id)
+
+    def get_tab_id_at(self, index: int) -> str | None:
+        """Return the stable tab id at a specific widget index."""
+        if 0 <= index < len(self._tab_ids):
+            return self._tab_ids[index]
+        return None
+
+    def has_custom_display_name(self, tab_id: str) -> bool:
+        """Return True if ``tab_id`` has a user-persisted display name."""
+        return tab_id in self._state.tab_display_names
+
+    def prompt_rename_tab(self, tab_id: str) -> None:
+        """Trigger a rename dialog for a specific tab."""
+        self._prompt_rename_tab(tab_id)
+
+    def register_workspace_list_widget(self, widget: QtWidgets.QListWidget) -> None:
+        """Associate a list widget with the shared workspace variable view."""
+        self._workspace_list = widget
+
+    def register_settings_button_widget(self, widget: QtWidgets.QToolButton) -> None:
+        """Associate a button with the active tab settings trigger."""
+        self._settings_button = widget
 
     def set_design_tokens(self, design_tokens: theme.SidekickDesignTokens) -> None:
         """Apply a new Sidekick token set to this sidebar."""

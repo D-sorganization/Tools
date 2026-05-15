@@ -120,7 +120,7 @@ class ContractViolationError(AssertionError, ValueError):
         message: str,
         value: Any = None,
     ) -> None:
-        if not (condition_type is not None):
+        if condition_type is None:
             raise ValueError("condition_type must be provided")
         self.condition_type = condition_type
         self.message = message
@@ -135,7 +135,7 @@ class PreconditionError(ContractViolationError):
     """Raised when a pre-condition is violated."""
 
     def __init__(self, message: str, value: Any = None) -> None:
-        if not (message is not None):
+        if message is None:
             raise ValueError("message must be provided")
         super().__init__("pre-condition", message, value)
 
@@ -144,7 +144,7 @@ class PostconditionError(ContractViolationError):
     """Raised when a post-condition is violated."""
 
     def __init__(self, message: str, value: Any = None) -> None:
-        if not (message is not None):
+        if message is None:
             raise ValueError("message must be provided")
         super().__init__("post-condition", message, value)
 
@@ -153,7 +153,7 @@ class InvariantError(ContractViolationError):
     """Raised when a class or loop invariant is violated."""
 
     def __init__(self, message: str, value: Any = None) -> None:
-        if not (message is not None):
+        if message is None:
             raise ValueError("message must be provided")
         super().__init__("invariant", message, value)
 
@@ -162,7 +162,7 @@ class PreconditionEvaluationError(ContractViolationError):
     """Raised when a precondition cannot be evaluated due to an error in the condition itself."""  # noqa: E501
 
     def __init__(self, message: str, underlying_error: Exception) -> None:
-        if not (message is not None):
+        if message is None:
             raise ValueError("message must be provided")
         if not (isinstance(underlying_error, Exception)):
             raise TypeError(
@@ -180,7 +180,7 @@ class PostconditionEvaluationError(ContractViolationError):
     """Raised when a postcondition cannot be evaluated due to an error in the condition itself."""  # noqa: E501
 
     def __init__(self, message: str, underlying_error: Exception) -> None:
-        if not (message is not None):
+        if message is None:
             raise ValueError("message must be provided")
         if not (isinstance(underlying_error, Exception)):
             raise TypeError(
@@ -223,7 +223,7 @@ def _handle_violation(
 
 def require(condition: bool, message: str, value: Any = None) -> None:
     """Assert a pre-condition at function entry."""
-    if not (condition is not None):
+    if condition is None:
         raise ValueError("condition must be provided")
     if not _contracts_enabled():
         return
@@ -233,7 +233,7 @@ def require(condition: bool, message: str, value: Any = None) -> None:
 
 def ensure(condition: bool, message: str, value: Any = None) -> None:
     """Assert a post-condition before function return."""
-    if not (condition is not None):
+    if condition is None:
         raise ValueError("condition must be provided")
     if not _contracts_enabled():
         return
@@ -243,7 +243,7 @@ def ensure(condition: bool, message: str, value: Any = None) -> None:
 
 def invariant(condition: bool, message: str, value: Any = None) -> None:
     """Assert a class or loop invariant."""
-    if not (condition is not None):
+    if condition is None:
         raise ValueError("condition must be provided")
     if not _contracts_enabled():
         return
@@ -271,7 +271,7 @@ def _evaluate_precondition(
         PreconditionEvaluationError: If the condition evaluation fails with an error
             other than a simple argument-matching TypeError.
     """
-    if not (condition is not None):
+    if condition is None:
         raise ValueError("condition must be provided")
     try:
         return bool(condition(*args, **kwargs))
@@ -316,7 +316,7 @@ def precondition(
     decorated function, or a subset matched by parameter name.
     """
 
-    if not (condition is not None):
+    if condition is None:
         raise ValueError("condition must be provided")
 
     def decorator(func: F) -> F:
@@ -347,7 +347,7 @@ def postcondition(
         PostconditionEvaluationError: If the condition evaluation fails with an error.
     """
 
-    if not (condition is not None):
+    if condition is None:
         raise ValueError("condition must be provided")
 
     def decorator(func: F) -> F:
@@ -402,7 +402,7 @@ def contract(
             return x ** 0.5
     """
 
-    if not (pre_msg is not None):
+    if pre_msg is None:
         raise ValueError("pre_msg must be provided")
 
     def decorator(func: F) -> F:
@@ -455,7 +455,7 @@ def _wrap_method_with_invariant(
 ) -> Callable[..., Any]:
     """Wrap a single method to check the class invariant after execution."""
 
-    if not (orig_method is not None):
+    if orig_method is None:
         raise ValueError("orig_method must be provided")
 
     @functools.wraps(orig_method)
@@ -490,7 +490,7 @@ def class_invariant(
                 self.count -= 1
     """
 
-    if not (condition is not None):
+    if condition is None:
         raise ValueError("condition must be provided")
 
     def class_decorator(cls: type) -> type:

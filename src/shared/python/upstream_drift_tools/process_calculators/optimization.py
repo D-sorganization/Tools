@@ -38,7 +38,7 @@ def _build_override_mapping(
 ) -> dict[str, float]:
     """Create a mapping of parameter names to their associated values."""
 
-    if not (parameter_names is not None):
+    if parameter_names is None:
         raise ValueError("parameter_names must be provided")
     override: dict[str, float] = {}
     for name, value in zip(parameter_names, values, strict=False):
@@ -64,7 +64,7 @@ def _compute_gradient_component(
     Selects forward, backward, or central differencing depending on
     whether the current value lies at a parameter bound.
     """
-    if not (index is not None):
+    if index is None:
         raise ValueError("index must be provided")
     lower = float(cfg["min"])
     upper = float(cfg["max"])
@@ -155,7 +155,7 @@ def _init_adam_state(
     maximize: bool,
 ) -> _AdamState:
     """Extract parameters, build bounds, and initialise Adam moment vectors."""
-    if not (analysis_params is not None):
+    if analysis_params is None:
         raise ValueError("analysis_params must be provided")
     parameter_names = [cfg["name"] for cfg in parameter_configs]
     lower_bounds = np.array([cfg["min"] for cfg in parameter_configs], dtype=float)
@@ -190,7 +190,7 @@ def _evaluate_and_record(
 
     Returns the (possibly clamped) objective value.
     """
-    if not (st is not None):
+    if st is None:
         raise ValueError("st must be provided")
     overrides = _build_override_mapping(st.parameter_names, st.values.tolist())
     objective, composition, state = evaluate_output(
@@ -232,7 +232,7 @@ def _adam_update(
     epsilon: float,
 ) -> None:
     """Apply one Adam parameter update in-place."""
-    if not (st is not None):
+    if st is None:
         raise ValueError("st must be provided")
     st.m = beta1 * st.m + (1 - beta1) * gradient
     st.v = beta2 * st.v + (1 - beta2) * (gradient**2)
@@ -384,7 +384,7 @@ def find_optimal_on_surface(
     """
     # Prepare data for interpolation
     # Ensure 1D unique sorted arrays for RegularGridInterpolator
-    if not (x_grid is not None):
+    if x_grid is None:
         raise ValueError("x_grid must be provided")
     x_vals = np.unique(x_grid) if x_grid.ndim > 1 else x_grid
 

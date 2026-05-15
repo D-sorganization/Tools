@@ -42,7 +42,7 @@ def find_env_file(
     Returns:
         Path to .env file if found, None otherwise
     """
-    if not (filename is not None):
+    if filename is None:
         raise ValueError("filename must be provided")
     locations: list[Path] = []
 
@@ -102,7 +102,7 @@ def load_env_file(
     Returns:
         True if file was loaded, False otherwise
     """
-    if not (filename is not None):
+    if filename is None:
         raise ValueError("filename must be provided")
     try:
         from dotenv import load_dotenv
@@ -159,7 +159,7 @@ def get_env_bool(key: str, default: bool = False) -> bool:
     Returns:
         Boolean value
     """
-    if not (key is not None):
+    if key is None:
         raise ValueError("key must be provided")
     value = os.environ.get(key, str(default)).lower()
     return value in ("true", "1", "yes", "on")
@@ -178,7 +178,7 @@ def get_env_int(key: str, default: int = 0) -> int:
     Raises:
         ValueError: If value cannot be converted to int
     """
-    if not (key is not None):
+    if key is None:
         raise ValueError("key must be provided")
     value = os.environ.get(key)
     if value is None:

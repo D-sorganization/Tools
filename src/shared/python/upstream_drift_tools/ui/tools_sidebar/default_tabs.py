@@ -160,7 +160,7 @@ def build_workspace_tab(sidebar: Any) -> QtWidgets.QWidget:
     workspace_list = QtWidgets.QListWidget(widget)
     workspace_list.setObjectName(theme.SIDEKICK_WORKSPACE_LIST_OBJECT_NAME)
     workspace_list.setToolTip(DEFAULT_SIDEBAR_TAB_HELP["workspace"]["summary"])
-    sidebar._workspace_list = workspace_list
+    sidebar.register_workspace_list_widget(workspace_list)
     layout.addWidget(workspace_list)
     refresh_workspace_list(sidebar)
     return widget

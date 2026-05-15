@@ -35,7 +35,7 @@ except ImportError:
         **kwargs: Any,
     ) -> pd.DataFrame:
         """Read CSV with error handling (inline fallback)."""
-        if not (file_path is not None):
+        if file_path is None:
             raise ValueError("file_path must be provided")
         path = Path(file_path)
         if not path.exists():
@@ -75,7 +75,7 @@ class DataLoader:
         Args:
             use_high_performance: Whether to use high-performance parallel loading
         """
-        if not (use_high_performance is not None):
+        if use_high_performance is None:
             raise ValueError("use_high_performance must be provided")
         self.use_high_performance = use_high_performance
         if use_high_performance:
@@ -103,7 +103,7 @@ class DataLoader:
             DataFrame or None if loading fails
         """
         # --- Pre-conditions ---
-        if not (file_path is not None):
+        if file_path is None:
             raise ValueError("file_path must be provided")
         require(
             isinstance(file_path, str) and bool(file_path.strip()),
@@ -160,7 +160,7 @@ class DataLoader:
             Dictionary mapping file paths to DataFrames, or single combined
             DataFrame if combine=True
         """
-        if not (file_paths is not None):
+        if file_paths is None:
             raise ValueError("file_paths must be provided")
         require(
             isinstance(file_paths, list) and len(file_paths) > 0,
@@ -222,7 +222,7 @@ class DataLoader:
         Returns:
             Set of unique signal names
         """
-        if not (file_paths is not None):
+        if file_paths is None:
             raise ValueError("file_paths must be provided")
         require(
             isinstance(file_paths, list) and len(file_paths) > 0,
@@ -259,7 +259,7 @@ class DataLoader:
 
     def detect_time_column(self, df: pd.DataFrame) -> str | None:
         """Detect the time column in a DataFrame."""
-        if not (df is not None):
+        if df is None:
             raise ValueError("df must be provided")
         for col in df.columns:
             col_str: str = str(col)
@@ -294,7 +294,7 @@ class DataLoader:
 
     def get_numeric_signals(self, df: pd.DataFrame) -> list[str]:
         """Get list of numeric signal names."""
-        if not (df is not None):
+        if df is None:
             raise ValueError("df must be provided")
         numeric_cols: list[str] = df.select_dtypes(include=np.number).columns.tolist()
         logger.info(f"Found {len(numeric_cols)} numeric signals")
@@ -311,7 +311,7 @@ class DataLoader:
         **Pre-conditions** (DbC):
           - ``how`` must be one of 'inner', 'outer', 'left', 'right'.
         """
-        if not (dataframes is not None):
+        if dataframes is None:
             raise ValueError("dataframes must be provided")
         require(
             how in {"inner", "outer", "left", "right"},
@@ -357,7 +357,7 @@ class DataLoader:
         end_time: str,
     ) -> pd.DataFrame:
         """Filter DataFrame by time range."""
-        if not (df is not None):
+        if df is None:
             raise ValueError("df must be provided")
         if not isinstance(df.index, pd.DatetimeIndex):
             logger.error("DataFrame must have DatetimeIndex for time filtering")
@@ -394,7 +394,7 @@ class DataLoader:
           - ``output_path`` must be a non-empty string.
           - ``format_type`` must be a recognised format.
         """
-        if not (df is not None):
+        if df is None:
             raise ValueError("df must be provided")
         require(
             isinstance(df, pd.DataFrame) and not df.empty,
