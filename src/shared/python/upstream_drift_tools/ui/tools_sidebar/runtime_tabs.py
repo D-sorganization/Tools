@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import contextlib
+import importlib
 import io
 import logging
 import types
@@ -159,7 +160,7 @@ class SidekickTerminalWidget(QtWidgets.QWidget):
         try:
             compiled = compile(script, "<sidekick-terminal>", "exec")
             with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
-                exec(compiled, self._namespace, self._namespace)  # noqa: S102
+                exec(compiled, self._namespace, self._namespace)  # nosec B102
         except Exception as exc:  # noqa: BLE001 - terminal reports user code errors
             logger.debug("Sidekick terminal execution failed: %s", exc)
             self._append_output(_format_terminal_output(stdout, stderr, exc))
@@ -364,12 +365,12 @@ class SidekickNotesWidget(QtWidgets.QWidget):
 
 def _build_pyqt_chat_dock(sidebar: Any) -> QtWidgets.QWidget | None:
     try:
-        from chat.chat_dock_widget import ChatDockWidget
+        chat_module = importlib.import_module("chat.chat_dock_widget")
     except Exception as exc:  # noqa: BLE001 - optional chat dependency
         logger.debug("PyQt chat dock unavailable for Sidekick: %s", exc)
         return None
 
-    dock = ChatDockWidget(
+    dock = chat_module.ChatDockWidget(
         app_context="sidekick",
         app_name="sidekick",
         project_root=sidebar.project_root,

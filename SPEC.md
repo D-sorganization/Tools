@@ -28,7 +28,7 @@
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
 | **Spec Version**        | 1.1.176                                    |
-| **Last Spec Update**    | 2026-05-14                                 |
+| **Last Spec Update**    | 2026-05-15                                 |
 
 ## 2. Purpose & Mission
 
@@ -132,6 +132,9 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Sidekick calculator tabs expose a bounded workspace command line for
   explicit local/global variable assignment, inspection, deletion, clear,
   and load/save workflows without falling back to arbitrary terminal execution
+- Sidekick calculator workspaces keep local variables isolated from shared
+  global state by default, support explicit local-to-global promotion, and
+  persist local/global JSON workspace files through shared scoped helpers
 - Sidekick can lazily expose the existing Data Processor UI as an optional
   first-class tab, degrade to a clear placeholder when its heavier runtime
   dependencies are missing, and export validated selected results into the
@@ -139,6 +142,9 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Sidekick notes use shared markdown-backed note cards with path-safe IDs,
   validated per-card colors, persisted board background settings, reversible
   recycle-bin deletion, and legacy `project.notes.txt` migration
+- Sidekick can lazily expose the Function Generator as an optional tab,
+  launch the PyQt6 generator through an import-safe wrapper, and provide
+  compact help/design-token metadata for downstream sidebar hosts
 - Data-driven shared chat terminal-provider descriptors for Claude Code, Codex,
   Cline CLI, and Gemini CLI, including probe command metadata with diagnostic
   redaction helpers
@@ -597,7 +603,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-05-14 | 1.1.176 | Added a markdown-backed shared notes card store with stable path-safe IDs, metadata round trips, validated note and board colors, reversible markdown-card recycling/restoration, legacy `project.notes.txt` migration, import-safe backend coverage, and a lightweight Sidekick Notes color-control contract that reuses the shared store.                                                                                                                                                                                                                         |
+| 2026-05-15 | 1.1.179 | Added a markdown-backed shared notes card store with stable path-safe IDs, metadata round trips, validated note and board colors, reversible markdown-card recycling/restoration, legacy `project.notes.txt` migration, import-safe backend coverage, and a lightweight Sidekick Notes color-control contract that reuses the shared store.                                                                                                                                                                                                                         |
+| 2026-05-15 | 1.1.178 | Added an optional Sidekick Function Generator tab with import-safe PyQt6 launcher integration, shared default-tab/help metadata, design-token aliases, and focused sidebar regression coverage.                                                                                                                                                                                                                                                                                                                                                                     |
+| 2026-05-15 | 1.1.176 | Added Sidekick calculator workspace management with isolated calculator-local variables, explicit local-to-global promotion, scoped local/global JSON workspace persistence helpers, focused regression coverage for merge, replace, malformed-file rollback, and duplicate-facade separation behavior, stabilized Sidekick data explorer dtype summaries across pandas string dtype changes, and kept calculator-tab expression evaluation inside the shared safe math evaluator so headless imports do not require Flask or tool-specific calculator packages.    |
 | 2026-05-14 | 1.1.175 | Added a lazy optional Sidekick Data Processor tab that stays hidden by default, reports missing UI/runtime dependencies without crashing Sidekick, and exports validated selected Data Processor results into the shared workspace registry with focused import/runtime regression coverage.                                                                                                                                                                                                                                                                        |
 | 2026-05-14 | 1.1.174 | Added a Sidekick Data Explorer tab with project-scoped file validation, bounded CSV/TSV/JSON/Parquet/Excel preview service limits, schema/null-count sample summaries, preview-to-workspace export, and a structured Data Processor handoff request contract plus focused backend/UI regression coverage.                                                                                                                                                                                                                                                           |
 | 2026-05-14 | 1.1.173 | Added a bounded Sidekick workspace command line to the calculator tab for explicit local/global variable assignment, inspection, deletion, clear, and load/save operations, reusing the shared command-history and workspace persistence contracts while keeping workspace mutations separate from arbitrary terminal execution.                                                                                                                                                                                                                                    |
