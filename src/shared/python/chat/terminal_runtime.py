@@ -20,14 +20,78 @@ from .terminal_contracts import (
 _POWERSHELL_IDS = {"powershell", "pwsh"}
 _BASH_IDS = {"bash", "wsl"}
 
-# Keys matching this pattern are stripped from any env passed to child processes.
-# This prevents accidental credential leaks when a caller supplies a base_env
-# that was derived from (or still contains) the host process environment.
-_SENSITIVE_ENV_PATTERNS = re.compile(
-    r".*(API_KEY|TOKEN|SECRET|PASSWORD|CREDENTIAL).*",
-    re.IGNORECASE,
+# ---------------------------------------------------------------------------
+# Minimal environment allowlist for spawned agent sessions.
+#
+# When no explicit base_env is provided, the runtime builds a sanitised copy
+# of os.environ that contains only well-known, non-sensitive variables.
+# Any variable whose name matches a credential-like pattern is excluded so
+# that parent-process API keys and secrets never leak into agent subprocesses.
+# Callers that need specific credentials must pass them explicitly via
+# base_env; that signal makes the intent deliberate and reviewable.
+# ---------------------------------------------------------------------------
+
+_SESSION_ENV_ALLOWLIST: frozenset[str] = frozenset(
+    {
+        "PATH",
+        "HOME",
+        "USER",
+        "USERNAME",
+        "USERPROFILE",
+        "LANG",
+        "LC_ALL",
+        "LC_CTYPE",
+        "LANGUAGE",
+        "TZ",
+        "TERM",
+        "TEMP",
+        "TMP",
+        "TMPDIR",
+        # Windows minimums
+        "SYSTEMROOT",
+        "WINDIR",
+        "COMSPEC",
+        # POSIX minimums
+        "SHELL",
+    }
 )
 
+_SESSION_ENV_SENSITIVE_PATTERNS: tuple[str, ...] = (
+    "_API_KEY",
+    "_TOKEN",
+    "_SECRET",
+    "_PASSWORD",
+    "_CREDENTIAL",
+    "_PRIVATE_KEY",
+    "_ACCESS_KEY",
+)
+
+
+def _is_sensitive(name: str) -> bool:
+    """Return True when *name* looks like a credential variable."""
+    upper = name.upper()
+    return any(pat in upper for pat in _SESSION_ENV_SENSITIVE_PATTERNS)
+
+
+def _build_default_session_env() -> dict[str, str]:
+    """Build a minimal environment mapping for a spawned agent session.
+
+    Includes only variables on the ``_SESSION_ENV_ALLOWLIST`` (PATH, HOME,
+    TZ and similar OS-level vars) and excludes anything whose name matches a
+    credential-like pattern (``*_API_KEY``, ``*_TOKEN``, ``*_SECRET``,
+    ``*_PASSWORD``, ``*_CREDENTIAL``, ``*_PRIVATE_KEY``, ``*_ACCESS_KEY``).
+
+    Callers that need specific environment variables — including API keys —
+    must pass them explicitly via the ``base_env`` argument on
+    ``TerminalSessionRuntime``.  That makes the intent deliberate and
+    auditable rather than relying on implicit inheritance from the parent
+    process.
+    """
+    return {
+        k: v
+        for k, v in os.environ.items()
+        if k in _SESSION_ENV_ALLOWLIST and not _is_sensitive(k)
+    }
 
 class TerminalRuntimeError(RuntimeError):
     """Raised when a terminal session lifecycle operation is invalid."""
@@ -84,43 +148,9 @@ class TerminalSessionRuntime:
         self._allowed_roots = [
             root.expanduser().resolve() for root in (allowed_roots or [])
         ]
-
-        # Tools issue #2758: prevent leaking full host environment (including
-        # API keys) to spawned terminal sessions.
-        if base_env is not None:
-            # Strip any sensitive keys the caller may have included.
-            self._base_env = {
-                k: v
-                for k, v in base_env.items()
-                if not _SENSITIVE_ENV_PATTERNS.match(k)
-            }
-        else:
-            # Default to a minimal safe allowlist rather than inheriting the
-            # full parent environment.
-            safe_keys = {
-                "PATH",
-                "HOME",
-                "USERPROFILE",
-                "HOMEDRIVE",
-                "HOMEPATH",
-                "USER",
-                "USERNAME",
-                "LOGNAME",
-                "COMPUTERNAME",
-                "TERM",
-                "SHELL",
-                "LANG",
-                "LC_ALL",
-                "TEMP",
-                "TMP",
-                "TZ",
-                "SYSTEMROOT",
-                "SystemRoot",
-                "WINDIR",
-                "COMSPEC",
-                "PATHEXT",
-            }
-            self._base_env = {k: v for k, v in os.environ.items() if k in safe_keys}
+        self._base_env = (
+            dict(base_env) if base_env is not None else _build_default_session_env()
+        )
         self._sessions: dict[str, _RuntimeSession] = {}
 
     def start(
