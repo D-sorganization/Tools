@@ -312,3 +312,23 @@ def get_tool_timeout() -> float:
         get_env_float(ENV_TOOL_TIMEOUT, default=DEFAULT_TOOL_TIMEOUT)
         or DEFAULT_TOOL_TIMEOUT
     )
+
+
+# ============================================================================
+# AI Settings dataclass persistence keys (used by gui/settings_dialog.py)
+# Tools #2762: keys live here so headless callers can construct
+# ``AISettings`` without importing the GUI module.
+# ============================================================================
+
+SETTINGS_ORG = "D-sorganization"
+SETTINGS_APP = "AIAssistant"
+KEY_PROVIDER = "ai/provider"
+KEY_MODEL = "ai/model"
+KEY_EXPERTISE = "ai/expertise_level"  # legacy alias, see Tools #2552
+KEY_RESPONSE_STYLE = "ai/response_style"
+KEY_CHAT_MODE = "ai/chat_mode"
+KEY_OLLAMA_HOST = "ai/ollama_host"
+KEY_STREAMING = "ai/streaming_enabled"
+KEY_RAG_ENABLED = "ai/rag_enabled"
+KEY_AUTO_INDEX_ON_OPEN = "ai/auto_index_on_open"
+KEY_ACCESS_MODE = "ai/access_mode"
