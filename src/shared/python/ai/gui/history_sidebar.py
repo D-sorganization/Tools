@@ -367,7 +367,9 @@ class ChatHistorySidebar(QWidget):
                 archived=is_archived,
                 on_archive_toggle=lambda _checked=False,
                 sid=session_id,
-                archived=is_archived: self._manager.archive_session(sid, not archived),
+                archived=is_archived: (
+                    self._manager.archive_session(sid, not archived)
+                ),
                 on_delete=lambda _checked=False, sid=session_id: self._confirm_delete(
                     sid
                 ),

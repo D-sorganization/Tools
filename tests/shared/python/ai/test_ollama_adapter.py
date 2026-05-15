@@ -64,11 +64,11 @@ def context() -> ConversationContext:
 def test_ollama_adapter_format_messages_includes_response_style(adapter, context):
     """Verify that ResponseStyle is correctly injected into the system prompt."""
     context.response_style = "concise"
-    
+
     with patch("httpx.Client") as mock_client:
         # We don't actually need to send the message, just check formatting
         messages = adapter._format_messages(context, "Hello", [])
-        
+
         system_msg = next(m for m in messages if m["role"] == "system")
         assert "Reply concisely" in system_msg["content"]
         assert "Prefer code, tables" in system_msg["content"]
@@ -77,9 +77,9 @@ def test_ollama_adapter_format_messages_includes_response_style(adapter, context
 def test_ollama_adapter_format_messages_default_style(adapter, context):
     """Verify that default (standard) ResponseStyle is used."""
     # response_style defaults to "standard" in ConversationContext
-    
+
     messages = adapter._format_messages(context, "Hello", [])
-    
+
     system_msg = next(m for m in messages if m["role"] == "system")
     assert "Reply at a standard level of detail" in system_msg["content"]
 
@@ -87,9 +87,9 @@ def test_ollama_adapter_format_messages_default_style(adapter, context):
 def test_ollama_adapter_format_messages_detailed_style(adapter, context):
     """Verify that detailed ResponseStyle is used."""
     context.response_style = "detailed"
-    
+
     messages = adapter._format_messages(context, "Hello", [])
-    
+
     system_msg = next(m for m in messages if m["role"] == "system")
     assert "Reply in detail" in system_msg["content"]
     assert "Walk through reasoning" in system_msg["content"]

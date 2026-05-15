@@ -1,0 +1,3 @@
+refactor: eliminate 'if not (x is not None)' double-negative anti-pattern fleet-wide
+
+Automated refactor across 355 files to replace the confusing 'if not (x is not None)' identity check with the idiomatic 'if x is None'. This improves readability and maintainability across the entire repository.

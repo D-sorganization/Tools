@@ -32,7 +32,7 @@ def handle_file_errors(
         Decorator function
     """
 
-    if not (log_error is not None):
+    if log_error is None:
         raise ValueError("log_error must be provided")
 
     def decorator(func: Callable[..., T]) -> Callable[..., T | None]:
@@ -139,7 +139,7 @@ def log_and_continue(
         Decorator function
     """
 
-    if not (error_message is not None):
+    if error_message is None:
         raise ValueError("error_message must be provided")
 
     def decorator(func: Callable[..., T]) -> Callable[..., T | None]:
@@ -172,7 +172,7 @@ def exit_on_error(
         Decorator function
     """
 
-    if not (error_message is not None):
+    if error_message is None:
         raise ValueError("error_message must be provided")
 
     def decorator(func: Callable[..., T]) -> Callable[..., T]:

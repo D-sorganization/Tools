@@ -113,7 +113,7 @@ def format_exception_with_locals(
     Returns:
         Formatted exception string
     """
-    if not (exc is not None):
+    if exc is None:
         raise ValueError("exc must be provided")
     lines = ["Exception: " + str(exc), ""]
 
@@ -159,7 +159,7 @@ def debug_exception(
         exc: Exception to debug (or None to use current exception)
         log_level: Level to log at
     """
-    if not (log_level is not None):
+    if log_level is None:
         raise ValueError("log_level must be provided")
     from utils.debug_utils import is_debug_mode
 
@@ -236,7 +236,7 @@ def get_system_diagnostics(
         SystemDiagnostics object
     """
     # Safe environment variables to include by default
-    if not (include_env is not None):
+    if include_env is None:
         raise ValueError("include_env must be provided")
     safe_env_vars = env_filter or [
         "PATH",
@@ -326,7 +326,7 @@ def conditional_breakpoint(
     if condition:
         if message:
             logger.info(f"Breakpoint: {message}")
-        breakpoint()
+        breakpoint()  # noqa: T100
 
 
 def debug_breakpoint() -> None:
@@ -334,7 +334,7 @@ def debug_breakpoint() -> None:
     from utils.debug_utils import is_debug_mode
 
     if is_debug_mode():
-        breakpoint()
+        breakpoint()  # noqa: T100
 
 
 # =============================================================================
@@ -356,7 +356,7 @@ class PerformanceWatchdog:
             warn_threshold_ms: Threshold for warning (ms)
             error_threshold_ms: Threshold for error (ms)
         """
-        if not (warn_threshold_ms is not None):
+        if warn_threshold_ms is None:
             raise ValueError("warn_threshold_ms must be provided")
         self.warn_threshold = warn_threshold_ms
         self.error_threshold = error_threshold_ms
@@ -369,7 +369,7 @@ class PerformanceWatchdog:
             name: Name of the operation
             elapsed_ms: Elapsed time in milliseconds
         """
-        if not (name is not None):
+        if name is None:
             raise ValueError("name must be provided")
         if name not in self._timings:
             self._timings[name] = []
@@ -400,7 +400,7 @@ class PerformanceWatchdog:
         Yields:
             None
         """
-        if not (name is not None):
+        if name is None:
             raise ValueError("name must be provided")
         start = time.perf_counter()
         try:
@@ -418,7 +418,7 @@ class PerformanceWatchdog:
         Returns:
             Dictionary with min, max, avg, count
         """
-        if not (name is not None):
+        if name is None:
             raise ValueError("name must be provided")
         timings = self._timings.get(name, [])
         if not timings:
@@ -471,7 +471,7 @@ def deprecated(
         Decorator function
     """
 
-    if not (reason is not None):
+    if reason is None:
         raise ValueError("reason must be provided")
 
     def decorator(func: F) -> F:

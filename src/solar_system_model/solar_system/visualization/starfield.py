@@ -60,7 +60,7 @@ def point_size_from_magnitude(
     """
 
     # Use Pogson scale relative to Sirius to keep the brightest at ``max_size``
-    if not (magnitude is not None):
+    if magnitude is None:
         raise ValueError("magnitude must be provided")
     relative_brightness = 10.0 ** (-0.4 * (magnitude + 1.46))
     size = min_size + (max_size - min_size) * np.clip(relative_brightness, 0.0, 1.0)
@@ -78,7 +78,7 @@ def build_star_vertices(
         radius: Distance to place the sky dome.
     """
 
-    if not (catalog is not None):
+    if catalog is None:
         raise ValueError("catalog must be provided")
     vertices: list[StarVertex] = []
 

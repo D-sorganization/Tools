@@ -122,7 +122,7 @@ class URDFWriter:
 
     def _write_link(self, link: Link, level: int) -> list[str]:
         """Generate XML for a link."""
-        if not (link is not None):
+        if link is None:
             raise ValueError("link must be provided")
         lines: list[str] = []
         indent = self.indent * level
@@ -181,7 +181,7 @@ class URDFWriter:
 
     def _write_joint(self, joint: Joint, level: int) -> list[str]:
         """Generate XML for a joint."""
-        if not (joint is not None):
+        if joint is None:
             raise ValueError("joint must be provided")
         lines: list[str] = []
         indent = self.indent * level
@@ -240,7 +240,7 @@ class URDFWriter:
 
     def _write_geometry(self, geometry: Geometry, level: int) -> list[str]:
         """Generate XML for geometry."""
-        if not (geometry is not None):
+        if geometry is None:
             raise ValueError("geometry must be provided")
         lines: list[str] = []
         indent = self.indent * level
@@ -282,7 +282,7 @@ class URDFWriter:
 
     def _write_material_definition(self, material: Material, level: int) -> list[str]:
         """Generate XML for material definition."""
-        if not (material is not None):
+        if material is None:
             raise ValueError("material must be provided")
         lines: list[str] = []
         indent = self.indent * level
@@ -312,7 +312,7 @@ class URDFWriter:
         first definition wins; subsequent conflicting definitions are
         logged at WARNING level.
         """
-        if not (links is not None):
+        if links is None:
             raise ValueError("links must be provided")
         materials: dict[str, Material] = {}
 
@@ -351,7 +351,7 @@ class URDFWriter:
     ) -> list[Link]:
         """Sort links so parents come before children."""
         # Build parent map
-        if not (links is not None):
+        if links is None:
             raise ValueError("links must be provided")
         parent_map: dict[str, str | None] = {}
         for joint in joints:
@@ -390,7 +390,7 @@ class URDFWriter:
         self, links: list[Link], joints: list[Joint]
     ) -> tuple[list[Link], list[Joint]]:
         """Expand composite joints (gimbal, universal) to multiple revolute joints."""
-        if not (links is not None):
+        if links is None:
             raise ValueError("links must be provided")
         if not self.expand_composite_joints:
             return links, joints
@@ -419,7 +419,7 @@ class URDFWriter:
     def _expand_gimbal_joint(self, joint: Joint) -> tuple[list[Link], list[Joint]]:
         """Expand gimbal joint to 3 revolute joints."""
         # Default axes: Z-Y-X Euler sequence
-        if not (joint is not None):
+        if joint is None:
             raise ValueError("joint must be provided")
         default_axes = [(0, 0, 1), (0, 1, 0), (1, 0, 0)]
         axes = self._normalize_composite_axes(
@@ -480,7 +480,7 @@ class URDFWriter:
     def _expand_universal_joint(self, joint: Joint) -> tuple[list[Link], list[Joint]]:
         """Expand universal joint to 2 revolute joints."""
         # Default axes: perpendicular
-        if not (joint is not None):
+        if joint is None:
             raise ValueError("joint must be provided")
         default_axes = [(1, 0, 0), (0, 1, 0)]
         axes = self._normalize_composite_axes(
@@ -604,7 +604,7 @@ class URDFWriter:
         defaults: list[tuple[float, float, float]],
     ) -> list[tuple[float, float, float]]:
         """Return a full axis list, replacing missing entries with defaults."""
-        if not (joint_name is not None):
+        if joint_name is None:
             raise ValueError("joint_name must be provided")
         normalized: list[tuple[float, float, float]] = []
         source = list(axes or [])
@@ -628,7 +628,7 @@ class URDFWriter:
         dof_count: int,
     ) -> list[JointLimits]:
         """Return a full limit list, replacing missing entries with defaults."""
-        if not (dof_count is not None):
+        if dof_count is None:
             raise ValueError("dof_count must be provided")
         normalized: list[JointLimits] = []
         source = list(composite_limits or [])

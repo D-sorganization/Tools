@@ -69,7 +69,7 @@ class ConfigLoader:
             config_path: Path to configuration file
             default_config: Default configuration to use if file doesn't exist
         """
-        if not (config_path is not None):
+        if config_path is None:
             raise ValueError("config_path must be provided")
         self.config_path = Path(config_path)
         self.default_config = default_config or {}
@@ -84,7 +84,7 @@ class ConfigLoader:
         Returns:
             Configuration dictionary
         """
-        if not (reload is not None):
+        if reload is None:
             raise ValueError("reload must be provided")
         if self._config is not None and not reload:
             return self._config
@@ -105,7 +105,7 @@ class ConfigLoader:
         Returns:
             Configuration value or default
         """
-        if not (key is not None):
+        if key is None:
             raise ValueError("key must be provided")
         if self._config is None:
             self.load()
@@ -130,7 +130,7 @@ class ConfigLoader:
             key: Configuration key (supports dot notation)
             value: Value to set
         """
-        if not (key is not None):
+        if key is None:
             raise ValueError("key must be provided")
         if self._config is None:
             self.load()
@@ -183,7 +183,7 @@ def load_config(
     Returns:
         Configuration dictionary
     """
-    if not (config_path is not None):
+    if config_path is None:
         raise ValueError("config_path must be provided")
     loader = ConfigLoader(config_path, default_config)
     return loader.load()

@@ -89,7 +89,7 @@ def convert_urdf_to_mjcf(
     Example:
         mjcf = convert_urdf_to_mjcf("robot.urdf", output_path="robot.xml")
     """
-    if not (source is not None):
+    if source is None:
         raise ValueError("source must be provided")
     from model_generation.converters.mjcf_converter import MJCFConfig, MJCFConverter
 
@@ -115,7 +115,7 @@ def convert_mjcf_to_urdf(
     Example:
         urdf = convert_mjcf_to_urdf("robot.xml", output_path="robot.urdf")
     """
-    if not (source is not None):
+    if source is None:
         raise ValueError("source must be provided")
     from model_generation.converters.mjcf_converter import MJCFConverter
 

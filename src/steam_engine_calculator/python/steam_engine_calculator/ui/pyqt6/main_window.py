@@ -79,7 +79,7 @@ def validate_pressure_pa(value: float) -> tuple[bool, str]:
 
 def format_temperature(value: float, unit: str = "K") -> str:
     """Format temperature with units."""
-    if not (value is not None):
+    if value is None:
         raise ValueError("value must be provided")
     if unit == "C":
         return f"{value - 273.15:.2f} °C"
@@ -88,7 +88,7 @@ def format_temperature(value: float, unit: str = "K") -> str:
 
 def format_pressure(value: float, unit: str = "Pa") -> str:
     """Format pressure with units."""
-    if not (value is not None):
+    if value is None:
         raise ValueError("value must be provided")
     if unit == "bar":
         return f"{value / 1e5:.4f} bar"
@@ -374,7 +374,7 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
 
     def _create_group(self, title: str) -> QGroupBox:
         """Create a styled group box."""
-        if not (title is not None):
+        if title is None:
             raise ValueError("title must be provided")
         group = QGroupBox(title)
         group.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
@@ -382,7 +382,7 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
 
     def _create_label(self, text: str) -> QLabel:
         """Create a styled label."""
-        if not (text is not None):
+        if text is None:
             raise ValueError("text must be provided")
         label = QLabel(text)
         label.setStyleSheet(f"color: {COLORS['text']};")
@@ -390,7 +390,7 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
 
     def _create_result_card(self, name: str, key: str, color: str) -> QFrame:
         """Create a result display card."""
-        if not (name is not None):
+        if name is None:
             raise ValueError("name must be provided")
         card = QFrame()
         card.setFrameShape(QFrame.Shape.StyledPanel)
@@ -645,7 +645,7 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
     def _display_results(self, result: SteamProperties) -> None:
         """Display calculation results."""
         # Phase state
-        if not (result is not None):
+        if result is None:
             raise ValueError("result must be provided")
         phase_colors = {
             "liquid": COLORS["blue"],

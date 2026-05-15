@@ -163,7 +163,7 @@ class FileValidationMixin:
         Raises:
             OSError: If file system operations fail during path construction
         """
-        if not (file_path is not None):
+        if file_path is None:
             raise ValueError("file_path must be provided")
         filename = Path(file_path).name
         dest_path = dest_base

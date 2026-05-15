@@ -70,7 +70,7 @@ class Camera:
             up: Up vector
             fov: Field of view in degrees
         """
-        if not (position is not None):
+        if position is None:
             raise ValueError("position must be provided")
         self.position = np.array(position, dtype=np.float64)
         self.target = np.array(target, dtype=np.float64)
@@ -123,7 +123,7 @@ class Camera:
     def apply_state(self, state: CameraState) -> None:
         """Apply a stored camera state."""
         # Use array assignment instead of copy for better performance
-        if not (state is not None):
+        if state is None:
             raise ValueError("state must be provided")
         self.position[:] = state.position
         self.target[:] = state.target
@@ -137,7 +137,7 @@ class Camera:
     ) -> tuple[CameraState, CameraState]:
         """Generate left/right stereo eye offsets for VR-style rendering."""
 
-        if not (eye_separation is not None):
+        if eye_separation is None:
             raise ValueError("eye_separation must be provided")
         base = self.snapshot()
         forward = base.target - base.position
@@ -192,7 +192,7 @@ class Camera:
             mode: New camera mode
             target_body: Body to track (for planet-centric modes)
         """
-        if not (mode is not None):
+        if mode is None:
             raise ValueError("mode must be provided")
         self.mode = mode
         self.tracked_body = target_body
@@ -208,7 +208,7 @@ class Camera:
 
     def _animate_to(self, position: np.ndarray, target: np.ndarray) -> None:
         """Start smooth animation to new position."""
-        if not (position is not None):
+        if position is None:
             raise ValueError("position must be provided")
         self._target_position = position
         self._target_target = target
@@ -222,7 +222,7 @@ class Camera:
             delta_azimuth: Change in horizontal angle (radians)
             delta_elevation: Change in vertical angle (radians)
         """
-        if not (delta_azimuth is not None):
+        if delta_azimuth is None:
             raise ValueError("delta_azimuth must be provided")
         self._azimuth += delta_azimuth * self.rotate_speed
         self._elevation += delta_elevation * self.rotate_speed
@@ -241,7 +241,7 @@ class Camera:
         Args:
             delta: Zoom amount (positive = zoom in)
         """
-        if not (delta is not None):
+        if delta is None:
             raise ValueError("delta must be provided")
         self._distance *= 1 - delta * self.zoom_speed
         self._distance = np.clip(self._distance, self.min_distance, self.max_distance)
@@ -258,7 +258,7 @@ class Camera:
            mouse_ndc: Mouse coordinates in Normalized Device Coordinates (-1 to 1).
            aspect_ratio: Screen aspect ratio.
         """
-        if not (delta is not None):
+        if delta is None:
             raise ValueError("delta must be provided")
         factor = 1.0 - delta * self.zoom_speed
         new_distance = self._distance * factor
@@ -340,7 +340,7 @@ class Camera:
             delta_y: Vertical pan amount
         """
         # Get right and up vectors in view space
-        if not (delta_x is not None):
+        if delta_x is None:
             raise ValueError("delta_x must be provided")
         forward = self.target - self.position
         forward = forward / np.linalg.norm(forward)
@@ -360,7 +360,7 @@ class Camera:
 
     def move_forward(self, amount: float) -> None:
         """Move camera forward/backward."""
-        if not (amount is not None):
+        if amount is None:
             raise ValueError("amount must be provided")
         direction = self.target - self.position
         direction = direction / np.linalg.norm(direction)
@@ -384,7 +384,7 @@ class Camera:
             scale: Scale factor for converting positions
         """
         # Handle smooth animation
-        if not (julian_date is not None):
+        if julian_date is None:
             raise ValueError("julian_date must be provided")
         if self._animating:
             self.position = (
@@ -493,7 +493,7 @@ class Camera:
         Returns:
             4x4 projection matrix
         """
-        if not (aspect_ratio is not None):
+        if aspect_ratio is None:
             raise ValueError("aspect_ratio must be provided")
         fov_rad = math.radians(self.fov)
         f = 1.0 / math.tan(fov_rad / 2)
@@ -521,7 +521,7 @@ class Camera:
 
     def set_state(self, state: CameraState) -> None:
         """Restore camera from state."""
-        if not (state is not None):
+        if state is None:
             raise ValueError("state must be provided")
         self.position = state.position.copy()
         self.target = state.target.copy()
@@ -548,7 +548,7 @@ class Camera:
 
     def set_distance(self, distance: float) -> None:
         """Set distance from target."""
-        if not (distance is not None):
+        if distance is None:
             raise ValueError("distance must be provided")
         self._distance = np.clip(distance, self.min_distance, self.max_distance)
         self._update_position_from_angles()

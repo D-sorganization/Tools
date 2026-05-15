@@ -212,7 +212,7 @@ class TestStreamResponseGenerator:
         # Setup mocks for PyQt environment
         mock_app = MagicMock()
         mock_thread = MagicMock()
-        
+
         # We need to mock sys.modules for PyQt6 since it might not be installed
         with MagicMock() as mock_pyqt:
             sys.modules["PyQt6"] = mock_pyqt
@@ -224,16 +224,16 @@ class TestStreamResponseGenerator:
             # We need to make stream_response take some time so we can check if processEvents was called
             adapter.engine._stream_chunks = ["chunk1", "chunk2"]
             adapter.engine._stream_delay = 0.1
-            
+
             chunks = list(adapter.stream_response("test prompt", _make_context(), []))
-            
+
             assert len(chunks) == 2
             assert chunks[0].content == "chunk1"
             assert chunks[1].content == "chunk2"
-            
+
             # Verify processEvents was called at least once during wait
             assert mock_app.processEvents.called
-        
+
         # Cleanup mocked sys.modules
         del sys.modules["PyQt6"]
         del sys.modules["PyQt6.QtCore"]

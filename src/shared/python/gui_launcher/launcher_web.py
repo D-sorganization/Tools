@@ -79,7 +79,7 @@ def launch_web_app(
     process_started: Callable[[subprocess.Popen], None] | None = None,
 ) -> int:
     """Launch a React/Vite web application dev server."""
-    if not (tool_name is not None):
+    if tool_name is None:
         raise ValueError("tool_name must be provided")
 
     npm_path = _npm_executable()
@@ -130,7 +130,7 @@ def launch_web_app(
 
 def launch_web_from_gui_info(gui_info: dict[str, object], caller_file: str) -> int:
     """Launch a React web app from a ``GUI_INFO`` dict."""
-    if not (gui_info is not None):
+    if gui_info is None:
         raise ValueError("gui_info must be provided")
     web_cfg = gui_info.get("web", {})
     if not isinstance(web_cfg, dict):
