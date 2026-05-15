@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import ast
-import json
 import re
 import shlex
 from dataclasses import dataclass
@@ -15,8 +14,8 @@ from .calculator_workspace import (
     GLOBAL_WORKSPACE_SCOPE,
     CalculatorWorkspaceController,
     CalculatorWorkspaceFacade,
-    CalculatorWorkspaceLoadResult,
-    validate_calculator_workspace_path,
+    GlobalWorkspaceController,
+    GlobalWorkspaceSettings,
 )
 from .registry import WorkspaceRegistry
 
@@ -55,9 +54,12 @@ class WorkspaceCommandExecutor:
             raise ValueError("global_registry must be provided")
         self._workspace = workspace
         self._local_controller = local_controller
-        self._global_controller = _GlobalWorkspaceController(
+        self._global_controller = GlobalWorkspaceController(
             global_registry,
-            storage_path=global_storage_path,
+            settings=GlobalWorkspaceSettings(
+                default_directory=Path(global_storage_path).parent,
+                default_filename=Path(global_storage_path).name,
+            ),
         )
 
     def execute(self, command: str) -> WorkspaceCommandResult:
@@ -147,7 +149,7 @@ class WorkspaceCommandExecutor:
         if tokens[2].lower() != "confirm":
             raise PermissionError("clear requires confirm")
         if scope == GLOBAL_WORKSPACE_SCOPE:
-            self._workspace.global_registry.clear()
+            self._global_controller.clear(confirm_clear=True)
         else:
             self._local_controller.clear(confirm_clear=True)
         return WorkspaceCommandResult(
@@ -190,64 +192,6 @@ class WorkspaceCommandExecutor:
         if scope == CALCULATOR_WORKSPACE_SCOPE:
             return self._local_controller
         raise ValueError(f"Unsupported workspace scope: {scope}")
-
-
-class _GlobalWorkspaceController:
-    """Persist and restore the shared global workspace."""
-
-    def __init__(
-        self,
-        registry: WorkspaceRegistry,
-        *,
-        storage_path: str | Path,
-    ) -> None:
-        if registry is None:
-            raise ValueError("registry must be provided")
-        self._registry = registry
-        self._storage_path = Path(storage_path)
-
-    def save(self, path: str | Path | None = None) -> Path:
-        target = validate_calculator_workspace_path(path or self._storage_path)
-        target.parent.mkdir(parents=True, exist_ok=True)
-        payload = self._registry.to_dict()
-        payload["scope"] = GLOBAL_WORKSPACE_SCOPE
-        temp = target.with_name(f".{target.name}.tmp")
-        temp.write_text(json.dumps(payload, indent=2), encoding="utf-8")
-        temp.replace(target)
-        return target
-
-    def load(
-        self,
-        path: str | Path | None = None,
-        *,
-        replace: bool = False,
-        confirm_replace: bool = False,
-    ) -> CalculatorWorkspaceLoadResult:
-        if replace and not confirm_replace:
-            raise PermissionError("replace load requires explicit confirmation")
-        source = validate_calculator_workspace_path(path or self._storage_path)
-        incoming = _load_global_registry(source)
-        imported = tuple(incoming.variables())
-        if replace:
-            self._registry.clear()
-        for variable in imported:
-            self._registry.set(variable.name, incoming.get(variable.name))
-        return CalculatorWorkspaceLoadResult(imported, replaced=replace)
-
-
-def _load_global_registry(path: Path) -> WorkspaceRegistry:
-    try:
-        payload = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        raise ValueError("workspace file is not valid JSON") from exc
-    if not isinstance(payload, dict):
-        raise ValueError("workspace file must contain an object")
-    if payload.get("scope") != GLOBAL_WORKSPACE_SCOPE:
-        raise ValueError("workspace scope must be global")
-    try:
-        return WorkspaceRegistry.load_json(path)
-    except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
-        raise ValueError("workspace file is not valid JSON") from exc
 
 
 def _normalize_command(command: str) -> str:

@@ -131,6 +131,22 @@ DEFAULT_SIDEBAR_TAB_HELP: dict[str, dict[str, str]] = {
         tips=("The tab stays hidden by default until the host enables it.",),
         source="rotation_converter.gui_registration",
     ),
+    "function_generator": _tab_help(
+        "Function Generator",
+        "Generate and visualize common waveform signals inside Sidekick when "
+        "the optional PyQt Function Generator stack is installed.",
+        tips=(
+            "The tab stays hidden by default so Sidekick startup does not import "
+            "PyQt, matplotlib, numpy, or signal generation dependencies.",
+            "Enable it when a workflow needs sine, square, triangle, chirp, or "
+            "other generated signal previews.",
+        ),
+        examples=(
+            "Sinusoid, 5 Hz, amplitude 2",
+            "Square Wave, duty cycle 0.5",
+        ),
+        source="function_generator.gui_registration",
+    ),
     "notes": _tab_help(
         "Notes",
         "Capture project notes with explicit save, clear, and restore controls.",
