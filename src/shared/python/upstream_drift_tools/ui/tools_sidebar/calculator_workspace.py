@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -12,8 +11,13 @@ from .registry import (
     WorkspaceVariable,
     format_workspace_value_preview,
 )
+from .workspace_persistence import (
+    CALCULATOR_WORKSPACE_FORMAT_VERSION,  # noqa: F401 - re-exported API
+    load_workspace_registry,
+    save_workspace_registry,
+    validate_calculator_workspace_path,  # noqa: F401 - re-exported API
+)
 
-CALCULATOR_WORKSPACE_FORMAT_VERSION = 1
 CALCULATOR_WORKSPACE_SCOPE = "calculator"
 GLOBAL_WORKSPACE_SCOPE = "global"
 
@@ -201,15 +205,11 @@ class CalculatorWorkspaceController:
 
     def save(self, path: str | Path | None = None) -> Path:
         """Save the calculator-local registry to ``path``."""
-        target = validate_calculator_workspace_path(
+        return save_workspace_registry(
+            self._registry,
             path or self._settings.default_path(),
+            scope=self._scope,
         )
-        target.parent.mkdir(parents=True, exist_ok=True)
-        payload = self._payload()
-        temp = target.with_name(f".{target.name}.tmp")
-        temp.write_text(json.dumps(payload, indent=2), encoding="utf-8")
-        temp.replace(target)
-        return target
 
     @property
     def settings(self) -> CalculatorWorkspaceSettings:
@@ -224,17 +224,13 @@ class CalculatorWorkspaceController:
         confirm_replace: bool = False,
     ) -> CalculatorWorkspaceLoadResult:
         """Load a calculator-local workspace, merging by default."""
-        if replace and not confirm_replace:
-            raise PermissionError("replace load requires explicit confirmation")
-        source = validate_calculator_workspace_path(
+        imported = load_workspace_registry(
+            self._registry,
             path or self._settings.default_path(),
-        )
-        incoming = _registry_from_payload(
-            source,
             expected_scope=CALCULATOR_WORKSPACE_SCOPE,
+            replace=replace,
+            confirm_replace=confirm_replace,
         )
-        imported = tuple(incoming.variables())
-        self._registry.update_from(incoming, replace=replace)
         return CalculatorWorkspaceLoadResult(imported, replaced=replace)
 
     def clear(self, *, confirm_clear: bool = False) -> None:
@@ -242,12 +238,6 @@ class CalculatorWorkspaceController:
         if not confirm_clear:
             raise PermissionError("clear requires explicit confirmation")
         self._registry.clear()
-
-    def _payload(self) -> dict[str, Any]:
-        payload = self._registry.to_dict()
-        payload["version"] = CALCULATOR_WORKSPACE_FORMAT_VERSION
-        payload["scope"] = self._scope
-        return payload
 
 
 class GlobalWorkspaceController:
@@ -301,15 +291,11 @@ class GlobalWorkspaceController:
 
     def save(self, path: str | Path | None = None) -> Path:
         """Save the global registry to ``path``."""
-        target = validate_calculator_workspace_path(
+        return save_workspace_registry(
+            self._registry,
             path or self._settings.default_path(),
+            scope=self._scope,
         )
-        target.parent.mkdir(parents=True, exist_ok=True)
-        payload = self._payload()
-        temp = target.with_name(f".{target.name}.tmp")
-        temp.write_text(json.dumps(payload, indent=2), encoding="utf-8")
-        temp.replace(target)
-        return target
 
     def load(
         self,
@@ -319,24 +305,14 @@ class GlobalWorkspaceController:
         confirm_replace: bool = False,
     ) -> CalculatorWorkspaceLoadResult:
         """Load the global workspace, merging by default."""
-        if replace and not confirm_replace:
-            raise PermissionError("replace load requires explicit confirmation")
-        source = validate_calculator_workspace_path(
+        imported = load_workspace_registry(
+            self._registry,
             path or self._settings.default_path(),
-        )
-        incoming = _registry_from_payload(
-            source,
             expected_scope=GLOBAL_WORKSPACE_SCOPE,
+            replace=replace,
+            confirm_replace=confirm_replace,
         )
-        imported = tuple(incoming.variables())
-        self._registry.update_from(incoming, replace=replace)
         return CalculatorWorkspaceLoadResult(imported, replaced=replace)
-
-    def _payload(self) -> dict[str, Any]:
-        payload = self._registry.to_dict()
-        payload["version"] = CALCULATOR_WORKSPACE_FORMAT_VERSION
-        payload["scope"] = self._scope
-        return payload
 
 
 class CalculatorWorkspaceActions:
@@ -466,45 +442,6 @@ def _listify(value: Any) -> Any:
     return value
 
 
-def validate_calculator_workspace_path(path: str | Path) -> Path:
-    """Return a normalized JSON workspace path or raise a user-facing error."""
-    if path is None:
-        raise ValueError("workspace path is required")
-    candidate = Path(path).expanduser()
-    if candidate.exists() and candidate.is_dir():
-        raise ValueError("workspace path must be a file, not a directory")
-    if candidate.suffix.lower() != ".json":
-        raise ValueError("calculator workspace files must use a .json suffix")
-    return candidate
-
-
 def _validate_scope_id(scope_id: str) -> None:
     if not isinstance(scope_id, str) or not scope_id.strip():
         raise ValueError("workspace scope id must be a non-empty string")
-
-
-def _registry_from_payload(
-    path: Path,
-    *,
-    expected_scope: str,
-) -> WorkspaceRegistry:
-    try:
-        payload = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        raise ValueError("workspace file is not valid JSON") from exc
-    if not isinstance(payload, dict):
-        raise ValueError("workspace file must contain an object")
-    if payload.get("version") != CALCULATOR_WORKSPACE_FORMAT_VERSION:
-        raise ValueError("unsupported workspace version")
-    if payload.get("scope") != expected_scope:
-        raise ValueError(f"workspace scope must be {expected_scope}")
-    variables = payload.get("variables")
-    if not isinstance(variables, list):
-        raise ValueError("workspace variables must be a list")
-    for entry in variables:
-        if not isinstance(entry, dict) or "name" not in entry:
-            raise ValueError("workspace variables must contain names")
-    try:
-        return WorkspaceRegistry.load_json(path)
-    except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
-        raise ValueError("workspace file is not valid JSON") from exc
