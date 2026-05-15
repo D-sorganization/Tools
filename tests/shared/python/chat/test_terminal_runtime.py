@@ -19,6 +19,7 @@ from chat.terminal_runtime import (
     TerminalProcessAdapter,
     TerminalRuntimeError,
     TerminalSessionRuntime,
+    _build_default_session_env,
 )
 
 
@@ -235,3 +236,89 @@ def test_secret_like_environment_values_are_not_overridden(
     assert launch_env["CALLER_ENV_VAR"] == "redacted-test-value"
     assert launch_env["PATH"] == "test-path"
     assert launch_env["TOOLS_CHAT_SESSION_ID"].startswith("terminal_")
+
+
+# ---------------------------------------------------------------------------
+# Security: credential scrubbing in default session env (issue #2758)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "var_name",
+    [
+        "ANTHROPIC_API_KEY",
+        "OPENAI_API_KEY",
+        "GITHUB_TOKEN",
+        "MY_PASSWORD",
+        "AWS_SECRET_ACCESS_KEY",
+        "STRIPE_PRIVATE_KEY",
+    ],
+)
+def test_default_session_env_excludes_credential_variables(
+    monkeypatch: pytest.MonkeyPatch,
+    var_name: str,
+) -> None:
+    """_build_default_session_env never includes credential-like variables.
+
+    Parent-process API keys, tokens, secrets, and passwords must not leak
+    into spawned agent subprocesses when no explicit base_env is provided.
+    """
+    monkeypatch.setenv(var_name, "secret123")
+
+    env = _build_default_session_env()
+
+    assert var_name not in env, (
+        f"{var_name!r} must not appear in the default session env"
+    )
+
+
+def test_default_session_env_includes_path(monkeypatch: pytest.MonkeyPatch) -> None:
+    """PATH is on the allowlist and must be present in the default session env."""
+    monkeypatch.setenv("PATH", "/usr/bin:/bin")
+
+    env = _build_default_session_env()
+
+    assert "PATH" in env
+    assert env["PATH"] == "/usr/bin:/bin"
+
+
+def test_runtime_without_base_env_excludes_credentials(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """TerminalSessionRuntime launched without base_env scrubs credentials.
+
+    The spawned process environment must not contain ANTHROPIC_API_KEY or
+    any other credential-like variable inherited from the parent process.
+    """
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-parent-secret")
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-another-secret")
+
+    adapter = FakeProcessAdapter()
+    runtime = TerminalSessionRuntime(_registry(), adapter)
+    runtime.start(_request(tmp_path))
+
+    launch_env = adapter.launches[0].env
+    assert "ANTHROPIC_API_KEY" not in launch_env
+    assert "OPENAI_API_KEY" not in launch_env
+
+
+def test_runtime_with_explicit_base_env_passes_credentials_through(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Explicit base_env is passed through unchanged — caller opts in deliberately.
+
+    When the caller explicitly constructs base_env containing an API key, the
+    runtime trusts that intent and forwards the key to the spawned process.
+    """
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-parent-secret")
+
+    explicit_env: dict[str, str] = {"ANTHROPIC_API_KEY": "sk-caller-provided"}
+    adapter = FakeProcessAdapter()
+    runtime = TerminalSessionRuntime(_registry(), adapter, base_env=explicit_env)
+    runtime.start(_request(tmp_path))
+
+    launch_env = adapter.launches[0].env
+    # The caller-provided value must be forwarded; parent env must not override.
+    assert launch_env["ANTHROPIC_API_KEY"] == "sk-caller-provided"
