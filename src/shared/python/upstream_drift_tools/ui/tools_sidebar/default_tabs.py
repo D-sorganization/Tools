@@ -19,6 +19,7 @@ from .data_processor_tab import DATA_PROCESSOR_TAB_ID, build_data_processor_tab
 from .help_content import DEFAULT_SIDEBAR_TAB_HELP
 from .project_file_explorer import ProjectFileExplorer
 from .qt_compat import QT_API, QtWidgets
+from .reporting_tab import build_reporting_tab
 from .runtime_tabs import (
     build_calculator_tab,
     build_chat_tab,
@@ -123,6 +124,13 @@ def build_default_tab_definitions(
             build_notes_tab,
             duplicate_enabled=True,
             help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP["notes"]),
+        ),
+        tab_definition(
+            "reporting",
+            "Reporting",
+            build_reporting_tab,
+            duplicate_enabled=False,
+            help_metadata={"summary": "Agentic reporting and summarization."},
         ),
     ]
 
