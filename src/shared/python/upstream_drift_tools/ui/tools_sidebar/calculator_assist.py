@@ -6,9 +6,6 @@ from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from typing import Any, Protocol
 
-from calc_backend.contracts.symbolic import SymbolicWorkflow
-from calc_backend.symbolic import symbolic_workflows
-
 from .calculator_startup import (
     CalculatorStartupConfig,
     calculator_startup_config_from_state_payload,
@@ -64,7 +61,6 @@ CALCULATOR_HELP = CalculatorHelpTopic(
     ),
 )
 
-SYMBOLIC_CALCULATOR_WORKFLOWS = symbolic_workflows()
 
 ALLOWED_CALCULATOR_COMMANDS = (
     "diff(",
@@ -212,12 +208,17 @@ def calculator_startup_config(sidebar: Any) -> CalculatorStartupConfig:
 
 def symbolic_calculator_workflow_metadata() -> tuple[dict[str, Any], ...]:
     """Return static guided symbolic workflow metadata for UI hosts."""
-    return tuple(
-        _workflow_to_dict(workflow) for workflow in SYMBOLIC_CALCULATOR_WORKFLOWS
-    )
+    try:
+        import importlib
+
+        backend = importlib.import_module("calc_backend.symbolic")
+        workflows = backend.symbolic_workflows()
+    except Exception:
+        workflows = ()
+    return tuple(_workflow_to_dict(workflow) for workflow in workflows)
 
 
-def _workflow_to_dict(workflow: SymbolicWorkflow) -> dict[str, Any]:
+def _workflow_to_dict(workflow: Any) -> dict[str, Any]:
     model_dump = getattr(workflow, "model_dump", None)
     if callable(model_dump):
         return dict(model_dump())

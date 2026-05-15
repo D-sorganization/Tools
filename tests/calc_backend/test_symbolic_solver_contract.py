@@ -20,10 +20,14 @@ def test_symbolic_solver_solves_equation_and_returns_latex() -> None:
 
     response = client.post(
         "/api/calc/symbolic/solve",
-        json={"equations": ["x**2 - 4"], "symbols": ["x"]},
+        json={
+            "equations": ["x**2 - 4"],
+            "symbols": ["x"],
+            "limits": {"timeout_seconds": 5.0},
+        },
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 200, response.json()
     data = response.json()
     assert data["success"] is True
     assert data["backend"] == "sympy"

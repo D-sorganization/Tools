@@ -8,7 +8,6 @@ from __future__ import annotations
 
 from .calculator_assist import (
     CALCULATOR_HELP,
-    SYMBOLIC_CALCULATOR_WORKFLOWS,
     CalculatorPredictiveText,
     StaticCalculatorPredictionProvider,
     symbolic_calculator_workflow_metadata,
@@ -99,7 +98,6 @@ __all__ = [
     "DEFAULT_COMMAND_HISTORY_LIMIT",
     "CALCULATOR_HELP",
     "CALCULATOR_WORKSPACE_SCOPE",
-    "SYMBOLIC_CALCULATOR_WORKFLOWS",
     "GLOBAL_WORKSPACE_SCOPE",
     "CalculatorStartupConfig",
     "CalculatorStartupImport",
