@@ -855,8 +855,8 @@ class ChatDockWidget(QDockWidget):
                 widget = item.widget()
                 if isinstance(widget, ChatMessageBubble):
                     role_str = "You" if widget._role == "user" else "AI"
-                    lines.append(f"**{role_str}**:\\n\\n{widget._content}\\n")
-        return "\\n".join(lines)
+                    lines.append(f"**{role_str}**:\n\n{widget._content}\n")
+        return "\n".join(lines)
 
     def _copy_entire_thread(self) -> None:
         clipboard = QApplication.clipboard()
