@@ -18,6 +18,12 @@ from src.shared.python.logging_pkg.logging_config import get_logger
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
+from src.shared.python.ai.exceptions import (
+    AIConnectionError,
+    AIRateLimitError,
+    AITimeoutError,
+    AIProviderError,
+)
 from src.shared.python.ai.memory_manager import (
     build_memory_prompt_section,
     load_agents_md,
@@ -272,6 +278,47 @@ class BaseAgentAdapter(ABC):
             f"3. Use tools to perform analyses rather than making up results\n"
             f"4. Cite sources and acknowledge uncertainty\n"
             f"5. Guide users through workflows step by step"
+        )
+
+    def _classify_error(
+        self,
+        error: Exception,
+        timeout: float | None = None,
+    ) -> AIProviderError:
+        """Classify a provider exception into a canonical AIError subclass.
+
+        Extracted to BaseAgentAdapter to eliminate ~40 lines of duplication
+        across AnthropicAdapter, OpenAIAdapter, and ClineAdapter.
+
+        Args:
+            error: The raw exception from the provider.
+            timeout: Optional timeout value for AITimeoutError.
+
+        Returns:
+            An appropriate AIError subclass (never raises directly).
+        """
+        error_str = str(error).lower()
+
+        if any(s in error_str for s in ("rate limit", "429", "too many requests")):
+            return AIRateLimitError(
+                f"{self.__class__.__name__.replace('Adapter', '')} rate limit exceeded. Please wait and retry.",
+                provider=self.__class__.__name__.replace("Adapter", "").lower(),
+            )
+        if any(s in error_str for s in ("timeout", "timed out")):
+            return AITimeoutError(
+                f"{self.__class__.__name__.replace('Adapter', '')} request timed out"
+                + (f" after {timeout}s" if timeout else ""),
+                provider=self.__class__.__name__.replace("Adapter", "").lower(),
+                timeout=timeout,
+            )
+        if any(s in error_str for s in ("connection", "network", "unreachable", "refused")):
+            return AIConnectionError(
+                f"Cannot connect to {self.__class__.__name__.replace('Adapter', '')}. Check your network.",
+                provider=self.__class__.__name__.replace("Adapter", "").lower(),
+            )
+        return AIProviderError(
+            f"{self.__class__.__name__.replace('Adapter', '')} error: {error}",
+            provider=self.__class__.__name__.replace("Adapter", "").lower(),
         )
 
     def build_context_instruction_section(

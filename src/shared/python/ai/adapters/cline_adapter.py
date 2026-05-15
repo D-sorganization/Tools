@@ -332,23 +332,4 @@ class ClineAdapter(BaseAgentAdapter):
         Raises:
             Appropriate AIError subclass.
         """
-        error_str = str(error).lower()
-
-        if "timeout" in error_str:
-            raise AITimeoutError(
-                f"Cline request timed out after {self._timeout}s",
-                provider="cline",
-                timeout=self._timeout,
-            ) from error
-
-        if "connection" in error_str or "refused" in error_str:
-            raise AIConnectionError(
-                f"Cannot connect to Cline at {self._host}. "
-                "Ensure VS Code with Cline extension is running.",
-                provider="cline",
-            ) from error
-
-        raise AIProviderError(
-            f"Cline error: {error}",
-            provider="cline",
-        ) from error
+        raise self._classify_error(error, timeout=self._timeout) from error

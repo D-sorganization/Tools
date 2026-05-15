@@ -522,32 +522,4 @@ class AnthropicAdapter(BaseAgentAdapter):
         Raises:
             Appropriate AIError subclass.
         """
-        error_str = str(error).lower()
-
-        # Rate limit
-        if "rate limit" in error_str or "429" in error_str:
-            raise AIRateLimitError(
-                "Anthropic rate limit exceeded. Please wait and retry.",
-                provider="anthropic",
-            ) from error
-
-        # Timeout
-        if "timeout" in error_str:
-            raise AITimeoutError(
-                f"Anthropic request timed out after {self._timeout}s",
-                provider="anthropic",
-                timeout=self._timeout,
-            ) from error
-
-        # Connection
-        if "connection" in error_str or "network" in error_str:
-            raise AIConnectionError(
-                "Cannot connect to Anthropic. Check your network.",
-                provider="anthropic",
-            ) from error
-
-        # Generic
-        raise AIProviderError(
-            f"Anthropic error: {error}",
-            provider="anthropic",
-        ) from error
+        raise self._classify_error(error, timeout=self._timeout) from error
