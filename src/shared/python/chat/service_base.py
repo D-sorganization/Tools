@@ -5,7 +5,8 @@ interface that both UpstreamDrift and Gasification_Model extend.
 
 Design Contracts:
     - ``get_or_create_session`` postcondition: returned session is never None
-    - ``add_user_message`` precondition: session_id is non-empty, message is 1-10000 chars
+    - ``add_user_message`` precondition: session_id is non-empty,
+      message is 1-10000 chars
     - ``stream_response`` postcondition: yields at least one item or raises
 
 This module has ZERO application-specific imports.
@@ -261,6 +262,41 @@ class ChatServiceBase(abc.ABC):
 
         Yields:
             Response chunks (str for text, dict for tool events).
+        """
+        ...  # pragma: no cover
+
+    @abc.abstractmethod
+    async def condense_session(self, session_id: str) -> None:
+        """Condense the session history to reduce token usage.
+
+        Subclasses should implement an LLM summarization of the current thread
+        and replace the history with the condensed version.
+
+        Args:
+            session_id: Target session to condense.
+        """
+        ...  # pragma: no cover
+
+    @abc.abstractmethod
+    async def execute_skill(self, session_id: str, skill_id: str) -> None:
+        """Execute a predefined skill or workflow.
+
+        Args:
+            session_id: Target session.
+            skill_id: ID of the skill to execute.
+        """
+        ...  # pragma: no cover
+
+    @abc.abstractmethod
+    async def request_review(self, session_id: str, provider: str) -> str:
+        """Request a multi-agent review of the current thread.
+
+        Args:
+            session_id: Target session.
+            provider: The LLM provider to use for the review.
+
+        Returns:
+            The session ID of the newly created review session.
         """
         ...  # pragma: no cover
 

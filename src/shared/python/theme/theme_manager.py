@@ -17,10 +17,10 @@ import json
 import logging
 import weakref
 from collections.abc import Iterable
-from typing import TYPE_CHECKING, ClassVar
 from pathlib import Path
+from typing import TYPE_CHECKING, ClassVar
 
-from PyQt6.QtCore import QObject, QSettings, pyqtSignal, QStandardPaths
+from PyQt6.QtCore import QObject, QSettings, QStandardPaths, pyqtSignal
 
 from .colors import BUILTIN_THEMES, THEME_COLOR_KEYS, normalise_hex_color
 from .stylesheets import generate_stylesheet
@@ -447,7 +447,11 @@ class ThemeManager(QObject):
 
     def _get_custom_theme_path(self) -> Path:
         """Get the path to the user_themes.json file."""
-        config_dir = Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppConfigLocation))
+        config_dir = Path(
+            QStandardPaths.writableLocation(
+                QStandardPaths.StandardLocation.AppConfigLocation
+            )
+        )
         config_dir.mkdir(parents=True, exist_ok=True)
         return config_dir / "user_themes.json"
 
@@ -456,9 +460,9 @@ class ThemeManager(QObject):
         theme_path = self._get_custom_theme_path()
         if not theme_path.exists():
             return {}
-            
+
         try:
-            with open(theme_path, "r", encoding="utf-8") as f:
+            with open(theme_path, encoding="utf-8") as f:
                 data = json.load(f)
             if not isinstance(data, dict):
                 raise ValueError("Invalid custom theme data structure")
