@@ -83,14 +83,6 @@ from src.shared.python.ai.integrations.linear import (  # noqa: E402
     linear_create_issue,
     linear_query_issues,
 )
-from src.shared.python.ai.integrations.notion import (  # noqa: E402
-    notion_push_report,
-    notion_read_knowledge_base,
-)
-from src.shared.python.ai.integrations.obsidian import (  # noqa: E402
-    obsidian_read_note,
-    obsidian_write_note,
-)
 
 # ---------------------------------------------------------------------------
 # Tests
@@ -111,21 +103,6 @@ from src.shared.python.ai.integrations.obsidian import (  # noqa: E402
             {"title": "Test issue", "description": "desc", "team_id": "TEAM-1"},
             id="linear_create_issue",
         ),
-        # Notion
-        pytest.param(
-            notion_push_report,
-            {
-                "title": "Q1 Report",
-                "markdown_content": "# Q1\ncontent",
-                "parent_page_id": "abc123",
-            },
-            id="notion_push_report",
-        ),
-        pytest.param(
-            notion_read_knowledge_base,
-            {"query": "onboarding"},
-            id="notion_read_knowledge_base",
-        ),
         # Affine
         pytest.param(
             affine_sync_notes,
@@ -135,21 +112,6 @@ from src.shared.python.ai.integrations.obsidian import (  # noqa: E402
                 "workspace_id": "ws-1",
             },
             id="affine_sync_notes",
-        ),
-        # Obsidian
-        pytest.param(
-            obsidian_read_note,
-            {"note_name": "Daily Note"},
-            id="obsidian_read_note",
-        ),
-        pytest.param(
-            obsidian_write_note,
-            {
-                "note_name": "New Note",
-                "markdown_content": "# New\ncontent",
-                "overwrite": False,
-            },
-            id="obsidian_write_note",
         ),
     ],
 )
