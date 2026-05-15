@@ -634,7 +634,7 @@ def _register_agent_control_tools(registry: ToolRegistry) -> None:
             create_agent_tools_for_registry,
         )
 
-        controller = AgentController()
+        AgentController()
         tools = create_agent_tools_for_registry()
 
         for tool_def in tools:
@@ -659,7 +659,7 @@ def _register_cli_tools(registry: ToolRegistry) -> None:
             create_cli_tools_for_registry,
         )
 
-        manager = CLIToolManager()
+        CLIToolManager()
         tools = create_cli_tools_for_registry()
 
         for tool_def in tools:
