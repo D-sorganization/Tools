@@ -192,6 +192,55 @@ class BaseAgentAdapter(ABC):
         """
         ...
 
+    # ------------------------------------------------------------------ #
+    # Token-count normalization (issue #2763)                           #
+    # ------------------------------------------------------------------ #
+    @staticmethod
+    def _normalize_token_counts(raw_usage: dict[str, int]) -> dict[str, int]:
+        """Normalize provider-specific token-count keys to a canonical set.
+
+        Each provider uses different key names for the same concepts:
+        - Anthropic: ``input_tokens``, ``output_tokens``
+        - OpenAI / Ollama: ``prompt_tokens``, ``completion_tokens``, ``total_tokens``
+        - Cline: already uses ``input_tokens`` / ``output_tokens``
+        - BitNet / Rust: return ``{}``
+
+        This method maps all variants to the canonical keys so callers never
+        need to know which provider produced a response (issue #2763).
+
+        Args:
+            raw_usage: Raw usage dict from the provider.
+
+        Returns:
+            Dict with keys ``input_tokens``, ``output_tokens``,
+            ``total_tokens`` (all ``int``).  Missing source keys default to 0.
+            ``total_tokens`` is computed as ``input + output`` when not
+            present in the raw dict.
+        """
+        if not raw_usage:
+            return {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
+
+        # Resolve input tokens (Anthropic / Cline style vs. OpenAI / Ollama style)
+        input_tokens: int = raw_usage.get(
+            "input_tokens",
+            raw_usage.get("prompt_tokens", 0),
+        )
+        # Resolve output tokens
+        output_tokens: int = raw_usage.get(
+            "output_tokens",
+            raw_usage.get("completion_tokens", 0),
+        )
+        # Prefer an explicit total; fall back to sum
+        total_tokens: int = raw_usage.get(
+            "total_tokens",
+            input_tokens + output_tokens,
+        )
+        return {
+            "input_tokens": input_tokens,
+            "output_tokens": output_tokens,
+            "total_tokens": total_tokens,
+        }
+
     def format_messages_for_provider(
         self,
         context: ConversationContext,

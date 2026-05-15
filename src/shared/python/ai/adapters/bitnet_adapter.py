@@ -20,6 +20,7 @@ from src.shared.python.ai.types import (
     ProviderCapabilities,
     ProviderCapability,
 )
+from src.shared.python.contracts import precondition
 from src.shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
@@ -110,6 +111,9 @@ class BitnetAdapter(BaseAgentAdapter):
         prompt += f"User: {message}\nAssistant:"
         return prompt
 
+    @precondition(
+        lambda message: bool(message.strip()), "message must not be empty or blank"
+    )
     def send_message(
         self,
         message: str,
@@ -139,8 +143,11 @@ class BitnetAdapter(BaseAgentAdapter):
 
             output = result.stdout.replace(prompt, "").strip()
 
+            # BitNet does not report token counts; emit canonical zeros so
+            # callers always see the same keys (issue #2763).
             return AgentResponse(
                 content=output,
+                usage=self._normalize_token_counts({}),
                 metadata={"stdout": result.stdout},
             )
         except Exception as e:
