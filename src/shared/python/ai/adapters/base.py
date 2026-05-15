@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any
 
 from src.shared.python.logging_pkg.logging_config import get_logger
 
@@ -376,12 +376,9 @@ class BaseAgentAdapter(ABC):
         if not isinstance(prompt_memory, dict):
             prompt_memory = None
 
-        return cast(
-            str,
-            build_memory_prompt_section(
-                prompt_memory=prompt_memory,
-                agents_md=load_agents_md(project_root),
-            ),
+        return build_memory_prompt_section(
+            prompt_memory=prompt_memory,
+            agents_md=load_agents_md(project_root),
         )
 
     def _classify_error(

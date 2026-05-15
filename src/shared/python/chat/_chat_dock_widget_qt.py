@@ -25,6 +25,7 @@ from __future__ import annotations
 import base64
 import json
 import logging
+import threading
 from pathlib import Path
 from typing import Any
 
@@ -191,6 +192,19 @@ class ChatDockWidget(QDockWidget):
     # serialized through ``_SHARED_SESSION_LOCK`` in ``chat_dock_widget``
     # to prevent the multi-window race described in Tools issue #2753.
     _shared_session_id: str | None = None
+    _session_lock: threading.Lock = threading.Lock()
+
+    @classmethod
+    def _get_shared_session_id(cls) -> str | None:
+        """Return the shared session ID under the class lock."""
+        with cls._session_lock:
+            return cls._shared_session_id
+
+    @classmethod
+    def _set_shared_session_id(cls, val: str | None) -> None:
+        """Set the shared session ID under the class lock."""
+        with cls._session_lock:
+            cls._shared_session_id = val
 
     # Signals for external UI integration
     models_refreshed = pyqtSignal(list)
@@ -242,10 +256,10 @@ class ChatDockWidget(QDockWidget):
 
         # Resolve session ID: explicit > class-level > file > "new"
         if session_id:
-            ChatDockWidget._shared_session_id = session_id
-        elif not ChatDockWidget._shared_session_id:
-            ChatDockWidget._shared_session_id = _read_shared_session_id(
-                self._session_file
+            ChatDockWidget._set_shared_session_id(session_id)
+        elif not ChatDockWidget._get_shared_session_id():
+            ChatDockWidget._set_shared_session_id(
+                _read_shared_session_id(self._session_file)
             )
 
         self._setup_ui()
@@ -434,7 +448,7 @@ class ChatDockWidget(QDockWidget):
         self._socket.disconnected.connect(self._on_disconnected)
         self._socket.textMessageReceived.connect(self._on_message)
 
-        sid = ChatDockWidget._shared_session_id or "new"
+        sid = ChatDockWidget._get_shared_session_id() or "new"
         path = self._ws_path_template.replace("{session_id}", sid)
         url = QUrl(f"{self._server_url}{path}")
         self._status_label.setText("Connecting...")
@@ -473,7 +487,7 @@ class ChatDockWidget(QDockWidget):
 
         if msg_type == "session_info":
             sid = data.get("session_id", "")
-            ChatDockWidget._shared_session_id = sid
+            ChatDockWidget._set_shared_session_id(sid)
             _write_shared_session_id(sid, self._session_file)
             self._send_ws({"action": "history"})
 
@@ -489,12 +503,12 @@ class ChatDockWidget(QDockWidget):
             self._current_bubble = None
             sid = data.get("session_id")
             if sid:
-                ChatDockWidget._shared_session_id = sid
+                ChatDockWidget._set_shared_session_id(sid)
                 _write_shared_session_id(sid, self._session_file)
 
         elif msg_type == "session_created":
             sid = data.get("session_id", "")
-            ChatDockWidget._shared_session_id = sid
+            ChatDockWidget._set_shared_session_id(sid)
             _write_shared_session_id(sid, self._session_file)
 
         elif msg_type == "history":

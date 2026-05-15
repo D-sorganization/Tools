@@ -204,8 +204,8 @@ class AdapterFactory:
 
         # Gemini adapter doesn't accept timeout
         if provider == "gemini":
-            return adapter_cls(api_key=key, model=model)
-        return adapter_cls(api_key=key, model=model, timeout=timeout)
+            return adapter_cls(api_key=key, model=model)  # type: ignore[no-any-return]
+        return adapter_cls(api_key=key, model=model, timeout=timeout)  # type: ignore[no-any-return]
 
     @classmethod
     def get_best_available(
@@ -289,7 +289,7 @@ class AdapterFactory:
             mgr = CredentialManager()
             key = mgr.get_api_key(provider)
             if key:
-                return key
+                return key  # type: ignore[no-any-return]
         except (ImportError, ValueError):
             pass
 

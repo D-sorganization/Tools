@@ -143,7 +143,7 @@ def get_openai_api_key(*, required: bool = False) -> str | None:
     Raises:
         EnvironmentError: If required and key not set.
     """
-    return get_env(ENV_OPENAI_API_KEY, required=required)
+    return get_env(ENV_OPENAI_API_KEY, required=required)  # type: ignore[no-any-return]
 
 
 def get_openai_model() -> str:
@@ -175,7 +175,7 @@ def get_openai_organization() -> str | None:
     Returns:
         Organization ID from OPENAI_ORGANIZATION or None.
     """
-    return get_env(ENV_OPENAI_ORGANIZATION)
+    return get_env(ENV_OPENAI_ORGANIZATION)  # type: ignore[no-any-return]
 
 
 # ============================================================================
@@ -195,7 +195,7 @@ def get_anthropic_api_key(*, required: bool = False) -> str | None:
     Raises:
         EnvironmentError: If required and key not set.
     """
-    return get_env(ENV_ANTHROPIC_API_KEY, required=required)
+    return get_env(ENV_ANTHROPIC_API_KEY, required=required)  # type: ignore[no-any-return]
 
 
 def get_anthropic_model() -> str:
@@ -239,7 +239,7 @@ def get_gemini_api_key(*, required: bool = False) -> str | None:
     Raises:
         EnvironmentError: If required and key not set.
     """
-    return get_env(ENV_GEMINI_API_KEY, required=required)
+    return get_env(ENV_GEMINI_API_KEY, required=required)  # type: ignore[no-any-return]
 
 
 def get_gemini_model() -> str:
