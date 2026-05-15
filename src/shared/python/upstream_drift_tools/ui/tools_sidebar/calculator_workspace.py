@@ -31,6 +31,18 @@ class CalculatorWorkspaceSettings:
 
 
 @dataclass(frozen=True)
+class GlobalWorkspaceSettings:
+    """Settings contract for shared global workspace files."""
+
+    default_directory: Path
+    default_filename: str = "global_workspace.json"
+
+    def default_path(self) -> Path:
+        """Return the configured default global workspace path."""
+        return self.default_directory / self.default_filename
+
+
+@dataclass(frozen=True)
 class CalculatorWorkspaceLoadResult:
     """Summary returned after a calculator workspace import."""
 
@@ -217,12 +229,12 @@ class CalculatorWorkspaceController:
         source = validate_calculator_workspace_path(
             path or self._settings.default_path(),
         )
-        incoming = _registry_from_payload(source)
+        incoming = _registry_from_payload(
+            source,
+            expected_scope=CALCULATOR_WORKSPACE_SCOPE,
+        )
         imported = tuple(incoming.variables())
-        if replace:
-            self._registry.clear()
-        for variable in imported:
-            self._registry.set(variable.name, incoming.get(variable.name))
+        self._registry.update_from(incoming, replace=replace)
         return CalculatorWorkspaceLoadResult(imported, replaced=replace)
 
     def clear(self, *, confirm_clear: bool = False) -> None:
@@ -230,6 +242,95 @@ class CalculatorWorkspaceController:
         if not confirm_clear:
             raise PermissionError("clear requires explicit confirmation")
         self._registry.clear()
+
+    def _payload(self) -> dict[str, Any]:
+        payload = self._registry.to_dict()
+        payload["version"] = CALCULATOR_WORKSPACE_FORMAT_VERSION
+        payload["scope"] = self._scope
+        return payload
+
+
+class GlobalWorkspaceController:
+    """Persist and manage the shared Sidekick global workspace."""
+
+    def __init__(
+        self,
+        registry: WorkspaceRegistry,
+        *,
+        settings: GlobalWorkspaceSettings,
+        scope: str = GLOBAL_WORKSPACE_SCOPE,
+    ) -> None:
+        if registry is None:
+            raise ValueError("registry must be provided")
+        if settings is None:
+            raise ValueError("settings must be provided")
+        if scope != GLOBAL_WORKSPACE_SCOPE:
+            raise ValueError("global workspace scope must be explicit")
+        self._registry = registry
+        self._settings = settings
+        self._scope = scope
+
+    @property
+    def settings(self) -> GlobalWorkspaceSettings:
+        """Return the configured global workspace persistence settings."""
+        return self._settings
+
+    def set(self, name: str, value: Any) -> WorkspaceVariable:
+        """Set a global workspace variable."""
+        return self._registry.set(name, value)
+
+    def describe(self, name: str) -> WorkspaceVariable:
+        """Return metadata for a global workspace variable."""
+        return self._registry.describe(name)
+
+    def variables(self) -> tuple[WorkspaceVariable, ...]:
+        """Return global workspace variables in stable display order."""
+        return tuple(self._registry.variables())
+
+    def remove(self, name: str, *, confirm_delete: bool = False) -> bool:
+        """Delete a global variable after explicit confirmation."""
+        if not confirm_delete:
+            raise PermissionError("delete requires explicit confirmation")
+        return self._registry.remove(name)
+
+    def clear(self, *, confirm_clear: bool = False) -> None:
+        """Clear the global workspace after explicit confirmation."""
+        if not confirm_clear:
+            raise PermissionError("clear requires explicit confirmation")
+        self._registry.clear()
+
+    def save(self, path: str | Path | None = None) -> Path:
+        """Save the global registry to ``path``."""
+        target = validate_calculator_workspace_path(
+            path or self._settings.default_path(),
+        )
+        target.parent.mkdir(parents=True, exist_ok=True)
+        payload = self._payload()
+        temp = target.with_name(f".{target.name}.tmp")
+        temp.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        temp.replace(target)
+        return target
+
+    def load(
+        self,
+        path: str | Path | None = None,
+        *,
+        replace: bool = False,
+        confirm_replace: bool = False,
+    ) -> CalculatorWorkspaceLoadResult:
+        """Load the global workspace, merging by default."""
+        if replace and not confirm_replace:
+            raise PermissionError("replace load requires explicit confirmation")
+        source = validate_calculator_workspace_path(
+            path or self._settings.default_path(),
+        )
+        incoming = _registry_from_payload(
+            source,
+            expected_scope=GLOBAL_WORKSPACE_SCOPE,
+        )
+        imported = tuple(incoming.variables())
+        self._registry.update_from(incoming, replace=replace)
+        return CalculatorWorkspaceLoadResult(imported, replaced=replace)
 
     def _payload(self) -> dict[str, Any]:
         payload = self._registry.to_dict()
@@ -303,6 +404,18 @@ def default_calculator_workspace_controller(
     )
 
 
+def default_global_workspace_controller(
+    registry: WorkspaceRegistry,
+) -> GlobalWorkspaceController:
+    """Build the default Sidekick global workspace controller."""
+    return GlobalWorkspaceController(
+        registry,
+        settings=GlobalWorkspaceSettings(
+            default_directory=Path.home() / ".upstream_drift_tools" / "sidekick",
+        ),
+    )
+
+
 def build_calculator_workspace_controls(
     parent: Any,
     actions: CalculatorWorkspaceActions,
@@ -370,7 +483,11 @@ def _validate_scope_id(scope_id: str) -> None:
         raise ValueError("workspace scope id must be a non-empty string")
 
 
-def _registry_from_payload(path: Path) -> WorkspaceRegistry:
+def _registry_from_payload(
+    path: Path,
+    *,
+    expected_scope: str,
+) -> WorkspaceRegistry:
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
@@ -378,17 +495,16 @@ def _registry_from_payload(path: Path) -> WorkspaceRegistry:
     if not isinstance(payload, dict):
         raise ValueError("workspace file must contain an object")
     if payload.get("version") != CALCULATOR_WORKSPACE_FORMAT_VERSION:
-        raise ValueError("unsupported calculator workspace version")
-    if payload.get("scope") != CALCULATOR_WORKSPACE_SCOPE:
-        raise ValueError("workspace scope must be calculator")
-    registry = WorkspaceRegistry()
-    for entry in payload.get("variables", []):
+        raise ValueError("unsupported workspace version")
+    if payload.get("scope") != expected_scope:
+        raise ValueError(f"workspace scope must be {expected_scope}")
+    variables = payload.get("variables")
+    if not isinstance(variables, list):
+        raise ValueError("workspace variables must be a list")
+    for entry in variables:
         if not isinstance(entry, dict) or "name" not in entry:
             raise ValueError("workspace variables must contain names")
-        name = str(entry["name"])
-        if entry.get("json_safe", False):
-            registry.set(name, entry.get("value"))
-        else:
-            repr_value = str(entry.get("repr", ""))
-            registry.set(name, repr_value)
-    return registry
+    try:
+        return WorkspaceRegistry.load_json(path)
+    except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
+        raise ValueError("workspace file is not valid JSON") from exc

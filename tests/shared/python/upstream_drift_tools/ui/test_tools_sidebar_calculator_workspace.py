@@ -8,9 +8,12 @@ from pathlib import Path
 import pytest
 from upstream_drift_tools.ui.tools_sidebar import (
     CALCULATOR_WORKSPACE_SCOPE,
+    GLOBAL_WORKSPACE_SCOPE,
     CalculatorWorkspaceController,
     CalculatorWorkspaceFacade,
     CalculatorWorkspaceSettings,
+    GlobalWorkspaceController,
+    GlobalWorkspaceSettings,
     WorkspaceRegistry,
     validate_calculator_workspace_path,
 )
@@ -23,6 +26,16 @@ def _controller(
     return CalculatorWorkspaceController(
         registry,
         settings=CalculatorWorkspaceSettings(default_directory=tmp_path),
+    )
+
+
+def _global_controller(
+    registry: WorkspaceRegistry,
+    tmp_path: Path,
+) -> GlobalWorkspaceController:
+    return GlobalWorkspaceController(
+        registry,
+        settings=GlobalWorkspaceSettings(default_directory=tmp_path),
     )
 
 
@@ -82,6 +95,96 @@ def test_malformed_workspace_leaves_current_variables_unchanged(tmp_path: Path) 
         _controller(local, tmp_path).load(path)
 
     assert local.get("existing") == 1
+
+
+def test_global_workspace_round_trip_preserves_local_separation(
+    tmp_path: Path,
+) -> None:
+    global_workspace = WorkspaceRegistry(
+        {
+            "scalar": 1.5,
+            "matrix": [[1, 2], [3, 4]],
+            "config": {"enabled": True},
+            "name": "case-a",
+            "active": False,
+            "missing": None,
+        },
+    )
+    local = WorkspaceRegistry({"scalar": 99})
+    path = _global_controller(global_workspace, tmp_path).save()
+
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    assert payload["version"] == 1
+    assert payload["scope"] == GLOBAL_WORKSPACE_SCOPE
+
+    global_workspace.clear()
+    result = _global_controller(global_workspace, tmp_path).load(path)
+
+    assert result.summary == (
+        "Loaded 6 variables: active, config, matrix, missing, name, scalar"
+    )
+    assert global_workspace.get("matrix") == [[1, 2], [3, 4]]
+    assert global_workspace.describe("matrix").summary == "2x2"
+    assert local.get("scalar") == 99
+
+
+def test_global_workspace_clear_delete_and_replace_require_confirmation(
+    tmp_path: Path,
+) -> None:
+    path = _global_controller(
+        WorkspaceRegistry({"incoming": 2}),
+        tmp_path,
+    ).save(tmp_path / "global.json")
+    registry = WorkspaceRegistry({"existing": 1, "stale": 3})
+    controller = _global_controller(registry, tmp_path)
+
+    with pytest.raises(PermissionError, match="explicit confirmation"):
+        controller.remove("stale")
+    with pytest.raises(PermissionError, match="explicit confirmation"):
+        controller.clear()
+    with pytest.raises(PermissionError, match="explicit confirmation"):
+        controller.load(path, replace=True)
+
+    assert controller.remove("stale", confirm_delete=True) is True
+    assert registry.list_names() == ["existing"]
+    result = controller.load(path, replace=True, confirm_replace=True)
+    assert result.replaced is True
+    assert registry.list_names() == ["incoming"]
+    controller.clear(confirm_clear=True)
+    assert registry.list_names() == []
+
+
+def test_global_workspace_malformed_file_leaves_variables_unchanged(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "global.json"
+    path.write_text('{"version": 1, "scope": "calculator", "variables": []}')
+    registry = WorkspaceRegistry({"existing": 1})
+
+    with pytest.raises(ValueError, match="scope must be global"):
+        _global_controller(registry, tmp_path).load(path)
+
+    assert registry.get("existing") == 1
+
+
+def test_global_workspace_non_json_metadata_survives_replace_load(
+    tmp_path: Path,
+) -> None:
+    registry = WorkspaceRegistry()
+    registry.set("object", object())
+    path = _global_controller(registry, tmp_path).save(tmp_path / "global.json")
+    loaded = WorkspaceRegistry({"other": 1})
+
+    _global_controller(loaded, tmp_path).load(
+        path,
+        replace=True,
+        confirm_replace=True,
+    )
+
+    variable = loaded.describe("object")
+    assert loaded.list_names() == ["object"]
+    assert variable.json_safe is False
+    assert variable.preview.startswith("<object object at")
 
 
 def test_path_validation_rejects_non_workspace_files(tmp_path: Path) -> None:
