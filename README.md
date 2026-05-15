@@ -158,6 +158,34 @@ The easiest way to explore the available tools is via the unified launcher:
 python UnifiedToolsLauncher.py
 ```
 
+## Optional Rust Acceleration
+
+Several modules ship optional Rust extensions (via [maturin](https://www.maturin.rs/))
+that replace hot Python loops with compiled native code.
+
+```bash
+pip install maturin
+cd rust_core/ai_backend && maturin develop --features python
+```
+
+### Local Embeddings (`ai_backend`)
+
+`ai_backend` supports an optional `local-embeddings` feature for offline
+ONNX-based embeddings without a remote API. This requires the ONNX Runtime
+shared library and the `ORT_DYLIB_PATH` environment variable — especially on
+Windows where the library must be downloaded manually.
+
+```bash
+# Build with local embeddings (ORT_DYLIB_PATH must be set first)
+cd rust_core/ai_backend && maturin develop --features python,local-embeddings
+
+# Preflight check — verifies ORT_DYLIB_PATH before starting your app
+python -m src.shared.python.ai._onnx_preflight
+```
+
+See [docs/ai_backend_setup.md](docs/ai_backend_setup.md) for the full setup
+guide, per-OS instructions, download links, and troubleshooting.
+
 ## 📖 Documentation
 
 Detailed documentation is available in the `docs/` directory:
@@ -172,6 +200,7 @@ Detailed documentation is available in the `docs/` directory:
 - **[Quick Start Guide](QUICKSTART.md)**: Getting started with the Tools repository.
 - **[Release Notes](docs/release/CHANGELOG.md)**: History of changes and updates.
 - **[Security Policy](SECURITY.md)**: How to report vulnerabilities responsibly.
+- **[AI Backend Setup](docs/ai_backend_setup.md)**: ONNX Runtime setup for `local-embeddings`.
 
 ## 🤝 Contribution
 
