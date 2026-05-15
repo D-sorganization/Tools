@@ -33,19 +33,25 @@ _PACKAGE_STUBS: list[tuple[str, str | None]] = [
     ("src", "src"),
     ("src.shared", "src/shared"),
     ("src.shared.python", "src/shared/python"),
+    ("src.shared.python.config", "src/shared/python/config"),
     ("src.shared.python.ai", "src/shared/python/ai"),
     ("src.shared.python.ai.adapters", "src/shared/python/ai/adapters"),
-    ("src.shared.python.logging_pkg", None),
-    ("src.shared.python.logging_pkg.logging_config", None),
 ]
 for _mod_name, _rel_path in _PACKAGE_STUBS:
     if _mod_name not in sys.modules:
+        import types
         _stub = types.ModuleType(_mod_name)
         if _rel_path is not None:
-            _stub.__path__ = [str(ROOT / _rel_path)]  # type: ignore[attr-defined]
+            _stub.__path__ = [str(ROOT / _rel_path)]
         sys.modules[_mod_name] = _stub
 
-_logging_config_stub = sys.modules["src.shared.python.logging_pkg.logging_config"]
+
+
+
+_logging_config_stub = sys.modules.get("src.shared.python.logging_pkg.logging_config")
+if not isinstance(_logging_config_stub, types.ModuleType):
+    _logging_config_stub = types.ModuleType("src.shared.python.logging_pkg.logging_config")
+    sys.modules["src.shared.python.logging_pkg.logging_config"] = _logging_config_stub
 _logging_config_stub.get_logger = logging.getLogger  # type: ignore[attr-defined]
 
 
@@ -57,6 +63,7 @@ _logging_config_stub.get_logger = logging.getLogger  # type: ignore[attr-defined
 
 def _install_ai_backend_stub() -> types.ModuleType:
     """Install a minimal ai_backend stub module suitable for unit testing."""
+    import time
     stub = types.ModuleType("ai_backend")
 
     class _AIConfig:
@@ -65,33 +72,36 @@ def _install_ai_backend_stub() -> types.ModuleType:
 
     class _AIEngine:
         def __init__(self, _config: object) -> None:
+            self._response = "default-response"
             self._stream_chunks: list[str] = []
             self._stream_delay: float = 0.0
+
+        def generate_response(self, _prompt: str) -> str:
+            return self._response
 
         def stream_response(self, _prompt: str) -> list[str]:
             if self._stream_delay:
                 time.sleep(self._stream_delay)
             return list(self._stream_chunks)
 
-        def generate_response(self, _prompt: str) -> str:
-            return "fallback-response"
-
     class _MemoryManager:
         def __init__(self, _path: str) -> None:
-            pass
+            self.initialized = False
 
         def initialize(self) -> None:
-            pass
+            self.initialized = True
 
     class _RagPipeline:
         def __init__(self, *_args: object, **_kwargs: object) -> None:
-            pass
+            self._indexed_path: str = ""
+            self._context: list[str] = []
 
-        def index_codebase(self, _root: str) -> int:
-            return 0
+        def index_codebase(self, root: str) -> int:
+            self._indexed_path = root
+            return len(root)
 
-        def retrieve_context(self, _prompt: str, _top_k: int) -> list[str]:
-            return []
+        def retrieve_context(self, _prompt: str, top_k: int) -> list[str]:
+            return self._context[:top_k]
 
     stub.AIConfig = _AIConfig  # type: ignore[attr-defined]
     stub.AIEngine = _AIEngine  # type: ignore[attr-defined]

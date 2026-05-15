@@ -39,27 +39,27 @@ _PACKAGE_STUBS: list[tuple[str, str | None]] = [
     ("src.shared.python.config", "src/shared/python/config"),
     ("src.shared.python.ai", "src/shared/python/ai"),
     ("src.shared.python.ai.adapters", "src/shared/python/ai/adapters"),
-    ("src.shared.python.logging_pkg", None),
-    ("src.shared.python.logging_pkg.logging_config", None),
 ]
 for _mod_name, _rel_path in _PACKAGE_STUBS:
     if _mod_name not in sys.modules:
+        import types
         _stub = types.ModuleType(_mod_name)
         if _rel_path is not None:
-            _stub.__path__ = [str(ROOT / _rel_path)]  # type: ignore[attr-defined]
+            _stub.__path__ = [str(ROOT / _rel_path)]
         sys.modules[_mod_name] = _stub
 
-_logging_config_stub = sys.modules["src.shared.python.logging_pkg.logging_config"]
+
+
+
+_logging_config_stub = sys.modules.setdefault("src.shared.python.logging_pkg.logging_config", types.ModuleType("src.shared.python.logging_pkg.logging_config"))
 _logging_config_stub.get_logger = MagicMock()  # type: ignore[attr-defined]
 
-_config_stub = types.ModuleType("src.shared.python.ai.config")
-_config_stub.get_ollama_host = MagicMock(return_value="http://localhost:11434")
-_config_stub.get_ollama_model = MagicMock(return_value="llama3.1:8b")
-_config_stub.get_ollama_timeout = MagicMock(return_value=120.0)
-_config_stub.DEFAULT_OLLAMA_HOST = "http://localhost:11434"
-_config_stub.DEFAULT_OLLAMA_MODEL = "llama3.1:8b"
-_config_stub.DEFAULT_OLLAMA_TIMEOUT = 120.0
-sys.modules["src.shared.python.ai.config"] = _config_stub
+_env_stub = sys.modules.get("src.shared.python.config.environment")
+if not isinstance(_env_stub, types.ModuleType):
+    _env_stub = types.ModuleType("src.shared.python.config.environment")
+    sys.modules["src.shared.python.config.environment"] = _env_stub
+_env_stub.get_env = lambda key, default=None, required=False: default
+_env_stub.get_env_float = lambda key, default=0.0: float(default)
 
 from src.shared.python.ai.adapters.ollama_adapter import OllamaAdapter  # noqa: E402
 from src.shared.python.ai.exceptions import (  # noqa: E402
@@ -168,8 +168,8 @@ class TestSendMessageHappyPath:
 
         response = adapter.send_message("hi", context, [])
 
-        assert response.usage["prompt_tokens"] == 42
-        assert response.usage["completion_tokens"] == 17
+        assert response.usage["input_tokens"] == 42
+        assert response.usage["output_tokens"] == 17
 
     def test_tool_calls_are_parsed_from_response(
         self, adapter: OllamaAdapter, context: ConversationContext

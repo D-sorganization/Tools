@@ -28,52 +28,32 @@ _PACKAGE_STUBS: list[tuple[str, str | None]] = [
     ("src", "src"),
     ("src.shared", "src/shared"),
     ("src.shared.python", "src/shared/python"),
+    ("src.shared.python.config", "src/shared/python/config"),
     ("src.shared.python.ai", "src/shared/python/ai"),
     ("src.shared.python.ai.adapters", "src/shared/python/ai/adapters"),
-    ("src.shared.python.logging_pkg", None),
-    ("src.shared.python.logging_pkg.logging_config", None),
 ]
 for _mod_name, _rel_path in _PACKAGE_STUBS:
     if _mod_name not in sys.modules:
+        import types
         _stub = types.ModuleType(_mod_name)
         if _rel_path is not None:
-            _stub.__path__ = [str(ROOT / _rel_path)]  # type: ignore[attr-defined]
+            _stub.__path__ = [str(ROOT / _rel_path)]
         sys.modules[_mod_name] = _stub
 
+
+
+
 # Stub get_logger so adapter modules that call it don't break.
-_logging_config_stub = sys.modules["src.shared.python.logging_pkg.logging_config"]
+_logging_config_stub = sys.modules.setdefault("src.shared.python.logging_pkg.logging_config", types.ModuleType("src.shared.python.logging_pkg.logging_config"))
 _logging_config_stub.get_logger = logging.getLogger  # type: ignore[attr-defined]
 
-# Stub the base adapter and types so rust_adapter can be imported without the
-# full AI package being installed.
-_base_mod = types.ModuleType("src.shared.python.ai.adapters.base")
-
-
-class _FakeBase:
-    pass
-
-
-_base_mod.BaseAgentAdapter = _FakeBase  # type: ignore[attr-defined]
-_base_mod.ToolDeclaration = object  # type: ignore[attr-defined]
-sys.modules["src.shared.python.ai.adapters.base"] = _base_mod
-
-_types_mod = types.ModuleType("src.shared.python.ai.types")
-for _name in (
-    "AgentChunk",
-    "AgentResponse",
-    "ConversationContext",
-    "ProviderCapabilities",
-    "ProviderCapability",
-):
-    setattr(_types_mod, _name, object)
-sys.modules["src.shared.python.ai.types"] = _types_mod
-
-# Remove any stale cached module so the import always runs fresh in this test
-# module. The conftest may have already loaded rust_adapter with ai_backend
-# stubbed as a MagicMock (see test_rust_adapter.py bootstrap).
-sys.modules.pop("src.shared.python.ai.adapters.rust_adapter", None)
-# Also ensure ai_backend is absent so the ImportError path is exercised.
-sys.modules.pop("ai_backend", None)
+# Stub ai.config so adapters can import without a real environment.
+_env_stub = sys.modules.get("src.shared.python.config.environment")
+if not isinstance(_env_stub, types.ModuleType):
+    _env_stub = types.ModuleType("src.shared.python.config.environment")
+    sys.modules["src.shared.python.config.environment"] = _env_stub
+_env_stub.get_env = lambda key, default=None, required=False: default
+_env_stub.get_env_float = lambda key, default=0.0: float(default)
 
 from src.shared.python.ai.adapters.rust_adapter import RustAgentAdapter  # noqa: E402
 

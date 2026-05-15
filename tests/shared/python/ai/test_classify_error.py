@@ -34,40 +34,33 @@ _PACKAGE_STUBS: list[tuple[str, str | None]] = [
     ("src.shared.python.config", "src/shared/python/config"),
     ("src.shared.python.ai", "src/shared/python/ai"),
     ("src.shared.python.ai.adapters", "src/shared/python/ai/adapters"),
-    ("src.shared.python.logging_pkg", None),
-    ("src.shared.python.logging_pkg.logging_config", None),
-    ("src.shared.python.contracts", None),
 ]
 for _mod_name, _rel_path in _PACKAGE_STUBS:
     if _mod_name not in sys.modules:
+        import types
         _stub = types.ModuleType(_mod_name)
         if _rel_path is not None:
             _stub.__path__ = [str(ROOT / _rel_path)]
-            _stub.__package__ = _mod_name
         sys.modules[_mod_name] = _stub
 
-# Stub logging config
-_log_cfg = sys.modules["src.shared.python.logging_pkg.logging_config"]
+
+
+
+_log_cfg = sys.modules.get("src.shared.python.logging_pkg.logging_config")
+if not isinstance(_log_cfg, types.ModuleType):
+    _log_cfg = types.ModuleType("src.shared.python.logging_pkg.logging_config")
+    sys.modules["src.shared.python.logging_pkg.logging_config"] = _log_cfg
 _log_cfg.get_logger = logging.getLogger  # type: ignore[attr-defined]
 
-# Stub precondition decorator (passthrough)
-_contracts = sys.modules["src.shared.python.contracts"]
-_contracts.precondition = lambda *_a, **_kw: (lambda fn: fn)  # type: ignore[attr-defined]
+
 
 # Stub ai.config so adapters can import without a real environment.
-_ai_config = types.ModuleType("src.shared.python.ai.config")
-_ai_config.get_anthropic_model = lambda: "claude-3-sonnet-20240229"  # type: ignore[attr-defined]
-_ai_config.get_anthropic_timeout = lambda: 60.0  # type: ignore[attr-defined]
-_ai_config.get_openai_model = lambda: "gpt-4-turbo-preview"  # type: ignore[attr-defined]
-_ai_config.get_openai_timeout = lambda: 60.0  # type: ignore[attr-defined]
-_ai_config.get_openai_organization = lambda: None  # type: ignore[attr-defined]
-_ai_config.DEFAULT_ANTHROPIC_MODEL = "claude-3-sonnet-20240229"  # type: ignore[attr-defined]
-_ai_config.DEFAULT_ANTHROPIC_TIMEOUT = 60.0  # type: ignore[attr-defined]
-_ai_config.DEFAULT_ANTHROPIC_MAX_TOKENS = 200000  # type: ignore[attr-defined]
-_ai_config.DEFAULT_OPENAI_MODEL = "gpt-4-turbo-preview"  # type: ignore[attr-defined]
-_ai_config.DEFAULT_OPENAI_TIMEOUT = 60.0  # type: ignore[attr-defined]
-_ai_config.DEFAULT_OPENAI_MAX_TOKENS = 128000  # type: ignore[attr-defined]
-sys.modules["src.shared.python.ai.config"] = _ai_config
+_env_stub = sys.modules.get("src.shared.python.config.environment")
+if not isinstance(_env_stub, types.ModuleType):
+    _env_stub = types.ModuleType("src.shared.python.config.environment")
+    sys.modules["src.shared.python.config.environment"] = _env_stub
+_env_stub.get_env = lambda key, default=None, required=False: default
+_env_stub.get_env_float = lambda key, default=0.0: float(default)
 
 # Stub memory_manager
 if "src.shared.python.ai.memory_manager" not in sys.modules:
@@ -169,6 +162,8 @@ def test_generic_error(factory, provider):
     adapter = factory()
     exc = RuntimeError("something completely unexpected")
     result = adapter._classify_error(exc, provider=provider)
+    print(f"DEBUG AIProviderError is: {AIProviderError!r}")
+    print(f"DEBUG result is: {result!r}")
     assert isinstance(result, AIProviderError)
     assert result.provider == provider
     # Must NOT be a subclass (rate-limit / timeout / connection)
