@@ -558,6 +558,10 @@ class ChatDockWidget(QDockWidget):
             self._on_terminal_input(text)
             return
 
+        if text.startswith("/"):
+            self._handle_slash_command(text)
+            return
+
         self._input_edit.clear()
         self._add_bubble("user", text)
 
@@ -569,6 +573,28 @@ class ChatDockWidget(QDockWidget):
             {
                 "action": "send",
                 "message": text,
+                "app_context": self._app_context,
+            }
+        )
+
+    def _handle_slash_command(self, text: str) -> None:
+        """Handle UI-driven slash commands like /lint or /tests."""
+        parts = text.split()
+        cmd = parts[0][1:].lower()
+
+        self._input_edit.clear()
+        self._add_bubble("user", text)
+
+        self._is_streaming = True
+        self._send_btn.setEnabled(False)
+        self._current_bubble = self._add_bubble(
+            "assistant", f"Starting workflow: {cmd}..."
+        )
+
+        self._send_ws(
+            {
+                "action": "skill_invoke",
+                "skill_id": cmd,
                 "app_context": self._app_context,
             }
         )
