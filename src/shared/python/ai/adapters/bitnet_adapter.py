@@ -12,6 +12,7 @@ import subprocess
 from collections.abc import Iterator
 
 from src.shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
+from src.shared.python.ai.exceptions import AIConnectionError, AIProviderError
 from src.shared.python.ai.types import (
     AgentChunk,
     AgentResponse,
@@ -63,6 +64,31 @@ class BitnetAdapter(BaseAgentAdapter):
     @property
     def capabilities(self) -> ProviderCapabilities:
         return self._capabilities
+
+    def _handle_error(self, error: Exception) -> AgentResponse:
+        """Classify BitNet subprocess errors into the AIProviderError hierarchy.
+
+        Overrides the base implementation to map subprocess-specific failures:
+        - FileNotFoundError (binary missing) → AIConnectionError
+        - CalledProcessError (non-zero exit) → AIProviderError
+        - All others → delegated to parent classify_ai_error
+
+        Args:
+            error: The raw exception from subprocess.
+
+        Raises:
+            AIConnectionError: When the llama-cli binary cannot be found.
+            AIProviderError: For all other BitNet process failures.
+        """
+        if isinstance(error, FileNotFoundError):
+            raise AIConnectionError(
+                f"Failed to run BitNet: {error}", provider="bitnet"
+            ) from error
+        if isinstance(error, subprocess.CalledProcessError):
+            raise AIProviderError(
+                f"BitNet process failed: {error.stderr}", provider="bitnet"
+            ) from error
+        return super()._handle_error(error)
 
     def validate_connection(self) -> tuple[bool, str]:
         """Validate that the llama-cli executable is available."""
@@ -128,12 +154,9 @@ class BitnetAdapter(BaseAgentAdapter):
                 content=output,
                 metadata={"stdout": result.stdout},
             )
-        except subprocess.CalledProcessError as e:
-            logger.error("BitNet process failed: %s", e.stderr)
-            raise RuntimeError(f"BitNet process failed: {e.stderr}") from e
         except Exception as e:
             logger.error("Failed to run BitNet: %s", e)
-            raise RuntimeError(f"Failed to run BitNet: {e}") from e
+            return self._handle_error(e)
 
     def stream_response(
         self,
@@ -165,7 +188,9 @@ class BitnetAdapter(BaseAgentAdapter):
             )
 
             if not process.stdout:
-                raise RuntimeError("Process stdout is unavailable")
+                raise AIProviderError(
+                    "BitNet process stdout is unavailable", provider="bitnet"
+                )
 
             for index, line in enumerate(process.stdout):
                 yield AgentChunk(

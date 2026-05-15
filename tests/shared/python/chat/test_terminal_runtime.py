@@ -194,6 +194,28 @@ def test_unknown_session_operations_fail_fast() -> None:
         runtime.write("missing", "text")
 
 
+def test_stop_does_not_mutate_held_reference_to_old_info(tmp_path: Path) -> None:
+    """Stopping a session must not mutate a previously captured info reference.
+
+    TerminalAgentSessionInfo is frozen; stop() must produce a new instance via
+    model_copy so callers that stored the old reference see its original state.
+    """
+    adapter = FakeProcessAdapter()
+    runtime = TerminalSessionRuntime(_registry(), adapter)
+    runtime.start(_request(tmp_path))
+    session_id = runtime.start(_request(tmp_path)).session_id
+
+    old_info = runtime.get_session(session_id)
+    assert old_info.state == "running"
+
+    runtime.stop(session_id)
+
+    # The held reference must be unchanged (frozen model — no mutation)
+    assert old_info.state != "stopped"
+    # The registry must reflect the new state
+    assert runtime.get_session(session_id).state == "stopped"
+
+
 def test_secret_like_environment_values_are_not_overridden(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,

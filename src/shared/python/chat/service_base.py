@@ -265,31 +265,42 @@ class ChatServiceBase(abc.ABC):
         """
         ...  # pragma: no cover
 
-    @abc.abstractmethod
     async def condense_session(self, session_id: str) -> None:
         """Condense the session history to reduce token usage.
 
-        Subclasses should implement an LLM summarization of the current thread
-        and replace the history with the condensed version.
+        Default implementation logs a warning and does nothing.
+        Subclasses should override with an LLM summarization of the current
+        thread and replace the history with the condensed version.
 
         Args:
             session_id: Target session to condense.
         """
-        ...  # pragma: no cover
+        logger.warning(
+            "condense_session not implemented for %s; override in subclass",
+            type(self).__name__,
+        )
 
-    @abc.abstractmethod
     async def execute_skill(self, session_id: str, skill_id: str) -> None:
         """Execute a predefined skill or workflow.
+
+        Default implementation logs a warning and does nothing.
+        Subclasses should override to implement skill execution.
 
         Args:
             session_id: Target session.
             skill_id: ID of the skill to execute.
         """
-        ...  # pragma: no cover
+        logger.warning(
+            "execute_skill not implemented for %s; override in subclass",
+            type(self).__name__,
+        )
 
-    @abc.abstractmethod
     async def request_review(self, session_id: str, provider: str) -> str:
         """Request a multi-agent review of the current thread.
+
+        Default implementation logs a warning and returns the original
+        session ID unchanged.  Subclasses should override to spawn a
+        dedicated review session.
 
         Args:
             session_id: Target session.
@@ -297,6 +308,31 @@ class ChatServiceBase(abc.ABC):
 
         Returns:
             The session ID of the newly created review session.
+        """
+        logger.warning(
+            "request_review not implemented for %s; override in subclass",
+            type(self).__name__,
+        )
+        return session_id
+
+    @abc.abstractmethod
+    async def refresh_models(self) -> list[dict[str, Any]]:
+        """Refresh the list of available models from the provider.
+
+        Returns:
+            List of model info dicts.
+        """
+        ...  # pragma: no cover
+
+    @abc.abstractmethod
+    async def index_codebase(self, root_path: str) -> dict[str, Any]:
+        """Trigger a re-index of the codebase for RAG.
+
+        Args:
+            root_path: Filesystem path to the project root.
+
+        Returns:
+            Index status dict (matches ChatIndexStatusResponse).
         """
         ...  # pragma: no cover
 

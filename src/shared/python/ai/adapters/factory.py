@@ -34,6 +34,9 @@ logger = get_logger(__name__)
 _LOCAL_FIRST_ORDER = ("ollama", "bitnet", "cline", "openai", "anthropic", "gemini")
 _CLOUD_FIRST_ORDER = ("openai", "anthropic", "gemini", "ollama", "bitnet", "cline")
 
+# Type alias for the cache key tuple: (provider, api_key, model, host, timeout)
+_CacheKey = tuple[str, str | None, str | None, str | None, float | None]
+
 
 class AdapterFactory:
     """Factory for creating and managing AI provider adapters.
@@ -42,10 +45,18 @@ class AdapterFactory:
     to import individual adapter modules. Supports automatic provider
     discovery and health-checking.
 
-    All adapters are created lazily and cached per-configuration.
+    Adapters are cached per-configuration: calling ``create()`` twice with
+    identical arguments returns the **same** instance, avoiding redundant
+    HTTP client setup, auth handshakes, and capability probes.  Call
+    ``clear_cache()`` to force fresh construction (e.g. after rotating
+    credentials).
+
+    Cache key: ``(provider, api_key, model, host, timeout)`` — all
+    keyword arguments are included so that any configuration difference
+    produces a distinct cached entry.
     """
 
-    _cache: dict[str, BaseAgentAdapter] = {}
+    _cache: dict[_CacheKey, BaseAgentAdapter] = {}
 
     # Provider → (module_path, class_name, env_var_hint) for cloud providers
     _CLOUD_PROVIDERS: dict[str, tuple[str, str, str]] = {
@@ -82,6 +93,11 @@ class AdapterFactory:
     ) -> BaseAgentAdapter:
         """Create an adapter for a specific provider.
 
+        Returns a cached adapter when the same ``(provider, api_key, model,
+        host, timeout)`` combination has been requested before, avoiding
+        redundant adapter construction.  Use ``clear_cache()`` to invalidate
+        the cache (e.g. after rotating credentials).
+
         Args:
             provider: Provider name (ollama, openai, anthropic, gemini, cline).
             api_key: API key (for cloud providers).
@@ -90,7 +106,7 @@ class AdapterFactory:
             timeout: Request timeout override.
 
         Returns:
-            Configured adapter instance.
+            Configured adapter instance (may be a previously cached object).
 
         Raises:
             ValueError: If provider is unknown or empty.
@@ -104,36 +120,50 @@ class AdapterFactory:
 
         provider = provider.lower().strip()
 
+        # Check cache before constructing a new adapter
+        cache_key: _CacheKey = (provider, api_key, model, host, timeout)
+        if cache_key in cls._cache:
+            logger.debug("AdapterFactory cache hit for provider=%s", provider)
+            return cls._cache[cache_key]
+
+        # Construct adapter, then store in cache before returning
+        adapter: BaseAgentAdapter
+
         # Local adapters — no API key required
         if provider == "ollama":
             from src.shared.python.ai.adapters.ollama_adapter import OllamaAdapter
 
-            return OllamaAdapter(host=host, model=model, timeout=timeout)
+            adapter = OllamaAdapter(host=host, model=model, timeout=timeout)
 
-        if provider == "cline":
+        elif provider == "cline":
             from src.shared.python.ai.adapters.cline_adapter import ClineAdapter
 
-            return ClineAdapter(host=host, timeout=timeout)
+            adapter = ClineAdapter(host=host, timeout=timeout)
 
-        if provider == "bitnet":
+        elif provider == "bitnet":
             from src.shared.python.ai.adapters.bitnet_adapter import BitnetAdapter
 
             # Bitnet uses 'host' param as bitnet_root in this context if provided
-            return BitnetAdapter(model=model, bitnet_root=host)
+            adapter = BitnetAdapter(model=model, bitnet_root=host)
 
-        # "codex" is an alias for OpenAI
-        lookup_key = "openai" if provider == "codex" else provider
+        else:
+            # "codex" is an alias for OpenAI
+            lookup_key = "openai" if provider == "codex" else provider
 
-        # Cloud adapters — DRY key resolution
-        if lookup_key in cls._CLOUD_PROVIDERS:
-            return cls._create_cloud_adapter(
-                lookup_key, api_key=api_key, model=model, timeout=timeout
-            )
+            # Cloud adapters — DRY key resolution
+            if lookup_key in cls._CLOUD_PROVIDERS:
+                adapter = cls._create_cloud_adapter(
+                    lookup_key, api_key=api_key, model=model, timeout=timeout
+                )
+            else:
+                raise ValueError(
+                    f"Unknown provider: {provider}. "
+                    f"Supported: {', '.join(sorted(cls._SUPPORTED_PROVIDERS))}"
+                )
 
-        raise ValueError(
-            f"Unknown provider: {provider}. "
-            f"Supported: {', '.join(sorted(cls._SUPPORTED_PROVIDERS))}"
-        )
+        cls._cache[cache_key] = adapter
+        logger.debug("AdapterFactory cached new adapter for provider=%s", provider)
+        return adapter
 
     @classmethod
     def _create_cloud_adapter(
@@ -281,5 +311,10 @@ class AdapterFactory:
 
     @classmethod
     def clear_cache(cls) -> None:
-        """Clear the adapter cache."""
+        """Clear the adapter cache.
+
+        Forces the next ``create()`` call to construct a fresh adapter
+        instance even for previously seen configurations.  Use after
+        rotating API keys or changing connection settings.
+        """
         cls._cache.clear()

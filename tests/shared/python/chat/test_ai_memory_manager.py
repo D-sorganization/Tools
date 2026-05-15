@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import hashlib
 import logging
 import sys
+import threading
 import types
 from collections.abc import Iterator
 from pathlib import Path
@@ -34,6 +36,7 @@ sys.modules.setdefault("src.shared.python.logging_pkg.logging_config", logging_c
 
 from src.shared.python.ai.adapters.base import BaseAgentAdapter
 from src.shared.python.ai.memory_manager import (
+    MemoryCandidate,
     MemoryManager,
     build_memory_prompt_section,
     extract_memory_candidates,
@@ -122,6 +125,58 @@ def test_base_adapter_uses_project_root_agents_and_prompt_memory(
     assert "Use DbC for contracts." in prompt
     assert "style: direct" in prompt
     assert "Always keep work on PRs." in prompt
+
+
+def test_concurrent_mutations_are_consistent(tmp_path: Path) -> None:
+    """MemoryManager must serialize mutations from multiple threads."""
+    manager = MemoryManager(tmp_path)
+    errors: list[BaseException] = []
+    iterations = 100
+    workers = 4
+
+    def worker(worker_id: int) -> None:
+        try:
+            for j in range(iterations):
+                manager.set_preference(f"k{worker_id}_{j}", f"v{worker_id}_{j}")
+                source = f"worker{worker_id}:{j}"
+                content = f"Please remember text {worker_id}_{j}"
+                digest = hashlib.sha256(f"{source}:{content}".encode()).hexdigest()
+                manager.add_memory(
+                    MemoryCandidate(
+                        kind="preference",
+                        content=content,
+                        source=source,
+                        source_hash=digest,
+                    )
+                )
+        except BaseException as exc:  # noqa: BLE001 - capture for assertion
+            errors.append(exc)
+
+    threads = [threading.Thread(target=worker, args=(i,)) for i in range(workers)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+
+    assert not errors, f"worker errors: {errors!r}"
+
+    snapshot = manager.get_snapshot()
+    assert isinstance(snapshot, dict)
+
+    preferences = snapshot["preferences"]
+    assert isinstance(preferences, dict)
+    assert len(preferences) == workers * iterations
+    for worker_id in range(workers):
+        for j in range(iterations):
+            assert preferences[f"k{worker_id}_{j}"] == f"v{worker_id}_{j}"
+
+    memories = snapshot["memories"]
+    assert isinstance(memories, list)
+    assert len(memories) == workers * iterations
+    for entry in memories:
+        assert isinstance(entry, dict)
+        assert isinstance(entry.get("content"), str)
+        assert isinstance(entry.get("source_hash"), str)
 
 
 class _Adapter(BaseAgentAdapter):

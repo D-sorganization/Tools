@@ -22,6 +22,7 @@ from .calculator_workspace import (
     build_calculator_workspace_controls,
     default_calculator_workspace_controller,
     evaluate_calculator_expression,
+    get_default_sidekick_dir,
 )
 from .command_history import CommandHistoryController
 from .qt_compat import QtCore, QtWidgets
@@ -72,6 +73,7 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
         )
         self._workspace_controller = default_calculator_workspace_controller(
             self._registry,
+            storage_dir=get_default_sidekick_dir("upstream_drift_tools"),
         )
         self._startup_namespace: dict[str, Any] = {}
         self._startup_result = apply_calculator_startup_imports(

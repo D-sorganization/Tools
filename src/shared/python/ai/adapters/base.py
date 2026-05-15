@@ -264,12 +264,32 @@ class BaseAgentAdapter(ABC):
         )
         memory_section = self.build_context_instruction_section(context)
 
+        # Response style instructions (Tools #2750)
+        style = (context.response_style if context else "standard").lower()
+        style_instructions = ""
+        if style == "concise":
+            style_instructions = (
+                "Reply concisely. Prefer code, tables, and short bullet lists over "
+                "prose. Skip preamble and recap."
+            )
+        elif style == "detailed":
+            style_instructions = (
+                "Reply in detail. Walk through reasoning, name relevant trade-offs, "
+                "and include worked examples when they clarify the answer."
+            )
+        else:  # standard
+            style_instructions = (
+                "Reply at a standard level of detail. Briefly explain reasoning "
+                "where it helps the user act on the answer."
+            )
+
         return (
             f"You are an AI assistant for the Golf Modeling Suite, a research-grade "
             f"biomechanics simulation platform.\n\n"
             f"Your role is to help users analyze golf swings using advanced physics "
             f"simulations across multiple engines (MuJoCo, Drake, Pinocchio).\n\n"
-            f"User expertise level: {expertise_level}\n\n"
+            f"User expertise level: {expertise_level}\n"
+            f"Response style: {style_instructions}\n\n"
             f"{memory_section}\n\n"
             f"Available tools:\n{tool_descriptions}\n\n"
             f"Guidelines:\n"
