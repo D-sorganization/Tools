@@ -334,7 +334,6 @@ class TestChatDockWidget:
         assert sent == [
             {
                 "action": "condense",
-                "app_context": "unknown",
             }
         ]
         assert "Condensing" in widget._status_label.text()
@@ -355,10 +354,8 @@ class TestChatDockWidget:
 
         clipboard = QApplication.clipboard()
         text = clipboard.text()
-        assert "**You**" in text
-        assert "test user message" in text
-        assert "**AI**" in text
-        assert "test assistant message" in text
+        assert "User: test user message" in text
+        assert "AI: test assistant message" in text
 
         widget.close()
 
@@ -381,8 +378,8 @@ class TestChatDockWidget:
         # Must contain real newline characters
         assert chr(10) in markdown, "No real newline (chr(10)) found in markdown output"
         # Content must appear correctly separated
-        assert "**You**" in markdown
-        assert "**AI**" in markdown
+        assert "### User" in markdown
+        assert "### AI" in markdown
         assert "Hello world" in markdown
         assert "Hi there" in markdown
         assert "How are you?" in markdown

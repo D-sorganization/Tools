@@ -792,121 +792,77 @@ class ChatDockWidget(QDockWidget):
         if self._socket and self._socket.isValid():
             self._socket.sendTextMessage(json.dumps(payload))
 
-    def _add_bubble(self, role: str, content: str) -> ChatMessageBubble:
-        """Add a message bubble to the scroll area."""
-        if not (role is not None):
-            raise ValueError("role must be provided")
-        bubble = ChatMessageBubble(role, content, accent_color=self._accent_color)
-        # Insert before the stretch item at the end
-        count = self._message_layout.count()
-        self._message_layout.insertWidget(count - 1, bubble)
-        self._scroll_to_bottom()
-        return bubble
-
-    def _populate_history(self, messages: list[dict]) -> None:
-        """Clear and rebuild message bubbles from history."""
-        # Remove existing bubbles (keep the stretch)
-        if not (messages is not None):
-            raise ValueError("messages must be provided")
-        while self._message_layout.count() > 1:
-            item = self._message_layout.takeAt(0)
-            widget = item.widget() if item else None
-            if widget is not None:
-                widget.deleteLater()
-
-        for msg in messages:
-            role = msg.get("role", "user")
-            content = msg.get("content", "")
-            if role in ("user", "assistant"):
-                self._add_bubble(role, content)
-
-    def _scroll_to_bottom(self) -> None:
-        """Scroll message area to bottom."""
-        QTimer.singleShot(
-            10,
-            lambda: (
-                scrollbar.setValue(scrollbar.maximum())
-                if (scrollbar := self._scroll_area.verticalScrollBar()) is not None
-                else None
-            ),
-        )
-
-    def _get_thread_markdown(self) -> str:
+    def _copy_entire_thread(self) -> None:
+        """Copy the entire chat history to the clipboard as plain text."""
+        clipboard = QApplication.clipboard()
+        if not clipboard:
+            return
         lines = []
         for i in range(self._message_layout.count()):
             item = self._message_layout.itemAt(i)
-            if item:
-                widget = item.widget()
-                if isinstance(widget, ChatMessageBubble):
-                    role_str = "You" if widget._role == "user" else "AI"
-                    lines.append(f"**{role_str}**:\n\n{widget._content}\n")
+            widget = item.widget() if item else None
+            if isinstance(widget, ChatMessageBubble):
+                role = "User" if widget._role == "user" else "AI"
+                lines.append(f"{role}: {widget._content}")
+        clipboard.setText("\n\n".join(lines))
+        self._status_label.setText("Thread copied to clipboard")
+
+    def _get_thread_markdown(self) -> str:
+        """Return the current chat thread as a Markdown string."""
+        lines = [f"# Chat History - {self._app_context}\n"]
+        for i in range(self._message_layout.count()):
+            item = self._message_layout.itemAt(i)
+            widget = item.widget() if item else None
+            if isinstance(widget, ChatMessageBubble):
+                role = "### User" if widget._role == "user" else "### AI"
+                lines.append(f"{role}\n{widget._content}\n")
         return "\n".join(lines)
 
-    def _copy_entire_thread(self) -> None:
-        clipboard = QApplication.clipboard()
-        if clipboard is not None:
-            clipboard.setText(self._get_thread_markdown())
-            self._status_label.setText("Thread copied to clipboard")
-            self._status_label.setStyleSheet("color: #3fb950; font-size: 10px;")
-
     def _export_to_markdown(self) -> None:
-        path, _ = QFileDialog.getSaveFileName(
-            self,
-            "Export Chat Thread",
-            str(self._project_root / "chat_export.md"),
-            "Markdown Files (*.md);;All Files (*)",
+        """Export the chat history to a Markdown file."""
+        file_path, _ = QFileDialog.getSaveFileName(
+            self, "Export Chat", "chat_history.md", "Markdown Files (*.md)"
         )
-        if path:
-            try:
-                Path(path).write_text(self._get_thread_markdown(), encoding="utf-8")
-                self._status_label.setText("Exported successfully")
-                self._status_label.setStyleSheet("color: #3fb950; font-size: 10px;")
-            except OSError as exc:
-                self._status_label.setText(f"Export error: {exc}")
-                self._status_label.setStyleSheet("color: #f85149; font-size: 10px;")
+        if not file_path:
+            return
+        try:
+            Path(file_path).write_text(self._get_thread_markdown(), encoding="utf-8")
+            self._status_label.setText(f"Exported to {Path(file_path).name}")
+        except OSError as exc:
+            self._status_label.setText(f"Export failed: {exc}")
 
     def _condense_thread(self) -> None:
+        """Trigger thread condensation (summarization) on the server."""
+        self._send_ws({"action": "condense"})
         self._status_label.setText("Condensing thread...")
-        self._send_ws(
-            {
-                "action": "condense",
-                "app_context": self._app_context,
-            }
-        )
 
     def _request_review(self) -> None:
-        from PyQt6.QtWidgets import QInputDialog
+        """Request a multi-agent review of the current thread."""
+        # Simple default provider for now; could be made configurable
+        self._send_ws({"action": "request_review", "provider": "openai"})
+        self._status_label.setText("Review requested...")
 
-        provider, ok = QInputDialog.getItem(
-            self,
-            "Select Review Provider",
-            "Provider:",
-            ["claude-3-opus", "gpt-4-turbo", "gemini-1.5-pro", "local-llama3"],
-            0,
-            False,
-        )
-        if ok and provider:
-            self._status_label.setText(f"Requesting review from {provider}...")
-            self._send_ws(
-                {
-                    "action": "request_review",
-                    "provider": provider,
-                    "app_context": self._app_context,
-                }
-            )
+    def _scroll_to_bottom(self) -> None:
+        """Scroll message area to the latest content."""
+        QTimer.singleShot(10, lambda: self._scroll_area.verticalScrollBar().setValue(
+            self._scroll_area.verticalScrollBar().maximum()
+        ))
 
-    # ── Cleanup ──────────────────────────────────────────────────────
+    def _add_bubble(self, role: str, content: str) -> ChatMessageBubble:
+        """Add a new message bubble to the layout."""
+        bubble = ChatMessageBubble(role, content, self._accent_color)
+        # Insert before the stretch at the bottom
+        self._message_layout.insertWidget(self._message_layout.count() - 1, bubble)
+        self._scroll_to_bottom()
+        return bubble
 
-    def showEvent(self, event: Any) -> None:  # noqa: D401 - Qt override
-        """Initiate WebSocket connection the first time the dock is shown."""
-        super().showEvent(event)
-        if getattr(self, "_connect_on_show", False):
-            self._connect_on_show = False
-            self._connect()
-
-    def closeEvent(self, event: Any) -> None:
-        """Clean up WebSocket on close."""
-        self._reconnect_timer.stop()
-        if self._socket:
-            self._socket.close()
-        super().closeEvent(event)
+    def _populate_history(self, messages: list[dict[str, Any]]) -> None:
+        """Clear and repopulate the UI with message history."""
+        # Clear existing bubbles (skip stretch)
+        while self._message_layout.count() > 1:
+            item = self._message_layout.takeAt(0)
+            if item and item.widget():
+                item.widget().deleteLater()
+        # Add historical messages
+        for msg in messages:
+            self._add_bubble(msg.get("role", "unknown"), msg.get("content", ""))
