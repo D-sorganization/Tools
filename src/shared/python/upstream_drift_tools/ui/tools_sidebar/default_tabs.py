@@ -30,6 +30,7 @@ logger = logging.getLogger(__name__)
 
 TabDefinitionFactory = Callable[..., Any]
 ROTATION_CONVERTER_TAB_ID = "rotation_converter"
+FUNCTION_GENERATOR_TAB_ID = "function_generator"
 
 
 def build_default_tab_definitions(
@@ -107,6 +108,14 @@ def build_default_tab_definitions(
             visible=False,
             duplicate_enabled=True,
             help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP["rotation_converter"]),
+        ),
+        tab_definition(
+            FUNCTION_GENERATOR_TAB_ID,
+            "Function Generator",
+            build_function_generator_tab,
+            visible=False,
+            duplicate_enabled=True,
+            help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP[FUNCTION_GENERATOR_TAB_ID]),
         ),
         tab_definition(
             "notes",
@@ -238,6 +247,34 @@ def build_rotation_converter_tab(sidebar: Any) -> QtWidgets.QWidget:
         )
     widget.setObjectName(theme.SIDEKICK_ROTATION_CONVERTER_OBJECT_NAME)
     widget.setToolTip(DEFAULT_SIDEBAR_TAB_HELP["rotation_converter"]["summary"])
+    return widget
+
+
+def build_function_generator_tab(sidebar: Any) -> QtWidgets.QWidget:
+    """Build the Function Generator tab when its PyQt6 surface is available."""
+    if QT_API != "PyQt6":
+        return placeholder(
+            sidebar,
+            "Function Generator",
+            "Function Generator requires the PyQt6 UI backend.",
+        )
+    try:
+        registration = importlib.import_module("function_generator.gui_registration")
+        gui_info = registration.get_gui_info()
+        pyqt_info = gui_info["pyqt6"]
+        module = importlib.import_module(pyqt_info["module"])
+        widget_type = getattr(module, pyqt_info["class"])
+        widget = widget_type(sidebar, use_builtin_theme=False)
+    except Exception as exc:  # noqa: BLE001 - optional GUI surface
+        logger.debug("Function Generator unavailable for Sidekick: %s", exc)
+        return placeholder(
+            sidebar,
+            "Function Generator",
+            "Function Generator is unavailable because optional UI dependencies "
+            "could not be loaded.",
+        )
+    widget.setObjectName(theme.SIDEKICK_FUNCTION_GENERATOR_OBJECT_NAME)
+    widget.setToolTip(DEFAULT_SIDEBAR_TAB_HELP[FUNCTION_GENERATOR_TAB_ID]["summary"])
     return widget
 
 
