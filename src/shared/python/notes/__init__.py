@@ -6,7 +6,8 @@ Provides a reusable project-backed notes file model with safe deletion
 
 from __future__ import annotations
 
-from .models import RecycledNoteItem
+from .card_store import NoteCardStore
+from .models import NoteCard, NotesBoardSettings, RecycledNoteItem
 from .storage import NotesStorage
 
 try:
@@ -25,6 +26,9 @@ except ImportError:
 
 __all__ = [
     "NotesStorage",
+    "NoteCardStore",
+    "NoteCard",
+    "NotesBoardSettings",
     "RecycledNoteItem",
     "NotesDockWidget",
 ]

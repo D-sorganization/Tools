@@ -137,10 +137,19 @@ def test_sidekick_calculator_terminal_and_notes_runtime_flow(tmp_path: Path) -> 
     notes = sidebar.tabs.currentWidget()
     editor = notes.findChild(QtWidgets.QPlainTextEdit, "SidekickNotesEditor")
     save = notes.findChild(QtWidgets.QPushButton, "SidekickNotesSave")
+    card_color = notes.findChild(QtWidgets.QLineEdit, "SidekickNotesCardColor")
+    board_color = notes.findChild(QtWidgets.QLineEdit, "SidekickNotesBoardColor")
+    apply_colors = notes.findChild(QtWidgets.QPushButton, "SidekickNotesApplyColors")
     assert editor is not None
     assert save is not None
+    assert card_color is not None
+    assert board_color is not None
+    assert apply_colors is not None
 
     editor.setPlainText("persistent note")
+    card_color.setText("#C7F9CC")
+    board_color.setText("#EEE4FF")
+    apply_colors.click()
     save.click()
 
     reloaded = UnifiedToolsSidebar(project_root=tmp_path)
@@ -151,6 +160,19 @@ def test_sidekick_calculator_terminal_and_notes_runtime_flow(tmp_path: Path) -> 
     )
     assert reloaded_editor is not None
     assert reloaded_editor.toPlainText() == "persistent note"
+    reloaded_notes = reloaded.tabs.currentWidget()
+    reloaded_card_color = reloaded_notes.findChild(
+        QtWidgets.QLineEdit,
+        "SidekickNotesCardColor",
+    )
+    reloaded_board_color = reloaded_notes.findChild(
+        QtWidgets.QLineEdit,
+        "SidekickNotesBoardColor",
+    )
+    assert reloaded_card_color is not None
+    assert reloaded_board_color is not None
+    assert reloaded_card_color.text() == "#c7f9cc"
+    assert reloaded_board_color.text() == "#eee4ff"
 
 
 def test_sidekick_tab_context_menu_exposes_help_text(tmp_path: Path) -> None:
@@ -210,9 +232,12 @@ def test_sidekick_terminal_and_notes_controls_have_tooltips(tmp_path: Path) -> N
     note_widgets = (
         notes.findChild(QtWidgets.QLabel, "SidekickNotesStatus"),
         notes.findChild(QtWidgets.QPlainTextEdit, "SidekickNotesEditor"),
+        notes.findChild(QtWidgets.QLineEdit, "SidekickNotesCardColor"),
+        notes.findChild(QtWidgets.QLineEdit, "SidekickNotesBoardColor"),
         notes.findChild(QtWidgets.QPushButton, "SidekickNotesSave"),
         notes.findChild(QtWidgets.QPushButton, "SidekickNotesClear"),
         notes.findChild(QtWidgets.QPushButton, "SidekickNotesRestore"),
+        notes.findChild(QtWidgets.QPushButton, "SidekickNotesApplyColors"),
     )
     for widget in note_widgets:
         assert widget is not None
