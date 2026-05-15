@@ -334,7 +334,6 @@ class TestChatDockWidget:
         assert sent == [
             {
                 "action": "condense",
-                "app_context": "unknown",
             }
         ]
         assert "Condensing" in widget._status_label.text()
