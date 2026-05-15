@@ -362,12 +362,18 @@ class ChatHistorySidebar(QWidget):
             item = SessionListWidgetItem(s)
             is_archived = bool(s.get("archived", False))
             session_id = str(s["id"])
+
+            def on_archive(
+                _c: bool = False,
+                sid: str = session_id,
+                arc: bool = is_archived,
+            ) -> None:
+                self._manager.archive_session(sid, not arc)
+
             row = SessionListItemWidget(
                 s,
                 archived=is_archived,
-                on_archive_toggle=lambda _checked=False,
-                sid=session_id,
-                archived=is_archived: self._manager.archive_session(sid, not archived),
+                on_archive_toggle=on_archive,
                 on_delete=lambda _checked=False, sid=session_id: self._confirm_delete(
                     sid
                 ),

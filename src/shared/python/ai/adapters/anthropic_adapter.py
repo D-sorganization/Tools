@@ -32,10 +32,7 @@ from src.shared.python.ai.config import (
     get_anthropic_timeout,
 )
 from src.shared.python.ai.exceptions import (
-    AIConnectionError,
     AIProviderError,
-    AIRateLimitError,
-    AITimeoutError,
 )
 from src.shared.python.ai.types import (
     AgentChunk,
@@ -101,9 +98,9 @@ class AnthropicAdapter(BaseAgentAdapter):
             model: Model name. Uses ANTHROPIC_MODEL env var or default.
             timeout: Request timeout [s]. Uses ANTHROPIC_TIMEOUT env var or default.
         """
-        if not (api_key is not None):
+        if api_key is None:
             raise ValueError("api_key must be provided")
-        if not (api_key is not None):
+        if api_key is None:
             raise ValueError("api_key must be provided")
         self._api_key = api_key
         self._model = model or get_anthropic_model()
@@ -156,9 +153,9 @@ class AnthropicAdapter(BaseAgentAdapter):
         Returns:
             AgentResponse with model's reply.
         """
-        if not (message is not None):
+        if message is None:
             raise ValueError("message must be provided")
-        if not (message is not None):
+        if message is None:
             raise ValueError("message must be provided")
         client = self._get_client()
 
@@ -201,9 +198,9 @@ class AnthropicAdapter(BaseAgentAdapter):
         Yields:
             AgentChunk instances as they arrive.
         """
-        if not (message is not None):
+        if message is None:
             raise ValueError("message must be provided")
-        if not (message is not None):
+        if message is None:
             raise ValueError("message must be provided")
         client = self._get_client()
         messages = self._format_messages(context, message)
@@ -318,9 +315,9 @@ class AnthropicAdapter(BaseAgentAdapter):
         Returns:
             List of message dicts for Anthropic.
         """
-        if not (context is not None):
+        if context is None:
             raise ValueError("context must be provided")
-        if not (context is not None):
+        if context is None:
             raise ValueError("context must be provided")
         messages: list[dict[str, Any]] = []
 
@@ -393,9 +390,9 @@ class AnthropicAdapter(BaseAgentAdapter):
         Returns:
             Messages with alternating roles.
         """
-        if not (messages is not None):
+        if messages is None:
             raise ValueError("messages must be provided")
-        if not (messages is not None):
+        if messages is None:
             raise ValueError("messages must be provided")
         if not messages:
             return messages
@@ -439,9 +436,9 @@ class AnthropicAdapter(BaseAgentAdapter):
         Returns:
             System message string.
         """
-        if not (context is not None):
+        if context is None:
             raise ValueError("context must be provided")
-        if not (context is not None):
+        if context is None:
             raise ValueError("context must be provided")
         expertise = context.user_expertise.name.lower()
         context_instructions = self.build_context_instruction_section(context)
@@ -514,40 +511,5 @@ class AnthropicAdapter(BaseAgentAdapter):
         )
 
     def _handle_error(self, error: Exception) -> AgentResponse:
-        """Handle Anthropic API errors.
-
-        Args:
-            error: The exception that occurred.
-
-        Raises:
-            Appropriate AIError subclass.
-        """
-        error_str = str(error).lower()
-
-        # Rate limit
-        if "rate limit" in error_str or "429" in error_str:
-            raise AIRateLimitError(
-                "Anthropic rate limit exceeded. Please wait and retry.",
-                provider="anthropic",
-            ) from error
-
-        # Timeout
-        if "timeout" in error_str:
-            raise AITimeoutError(
-                f"Anthropic request timed out after {self._timeout}s",
-                provider="anthropic",
-                timeout=self._timeout,
-            ) from error
-
-        # Connection
-        if "connection" in error_str or "network" in error_str:
-            raise AIConnectionError(
-                "Cannot connect to Anthropic. Check your network.",
-                provider="anthropic",
-            ) from error
-
-        # Generic
-        raise AIProviderError(
-            f"Anthropic error: {error}",
-            provider="anthropic",
-        ) from error
+        """Handle Anthropic API errors."""
+        return super()._handle_error(error)
