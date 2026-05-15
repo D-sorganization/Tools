@@ -31,6 +31,13 @@ class RustAgentAdapter(BaseAgentAdapter):
     ``pyproject.toml``); if the wheel isn't installed in the active
     environment we raise a clear ``ImportError`` rather than failing with a
     bare ``ModuleNotFoundError`` later in the call chain.
+
+    Token usage:
+        The Rust ``ai_backend`` wheel does not yet plumb provider-side
+        token counts back through PyO3, so :pyattr:`AgentResponse.usage`
+        is always a zero-valued :class:`TokenUsage`. This satisfies the
+        cross-adapter contract (issue #2763); a future PR will surface
+        real counts once the Rust side exposes them.
     """
 
     def __init__(

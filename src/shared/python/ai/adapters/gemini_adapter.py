@@ -46,6 +46,7 @@ from src.shared.python.ai.types import (
     AgentResponse,
     ConversationContext,
     ProviderCapabilities,
+    TokenUsage,
 )
 from src.shared.python.contracts import precondition
 from src.shared.python.logging_pkg.logging_config import get_logger
@@ -193,7 +194,10 @@ class GeminiAdapter(BaseAgentAdapter):
                 self._with_configured_sdk()
                 chat = self._build_chat_session(context)
                 response = chat.send_message(message)
-            return AgentResponse(content=response.text)
+            return AgentResponse(
+                content=response.text,
+                usage=self._extract_usage(response),
+            )
         except (RuntimeError, ValueError, OSError) as e:
             logger.error(f"Gemini API error: {e}")
             return AgentResponse(content=f"Error: {e}")
@@ -261,6 +265,25 @@ class GeminiAdapter(BaseAgentAdapter):
         except (RuntimeError, ValueError, OSError) as e:
             logger.error(f"Gemini validation error: {e}")
             return False, f"Connection failed: {e}"
+
+    @staticmethod
+    def _extract_usage(response: Any) -> TokenUsage:
+        """Pull token counts off a Gemini response, normalized to TokenUsage.
+
+        The Gemini SDK exposes ``usage_metadata`` on responses (SDK >=0.4)
+        with ``prompt_token_count`` / ``candidates_token_count`` fields.
+        Older SDKs may omit it entirely. Returns zero-valued TokenUsage
+        when the metadata is missing or unparseable (issue #2763).
+        """
+        meta = getattr(response, "usage_metadata", None)
+        if meta is None:
+            return TokenUsage()
+        try:
+            input_tokens = int(getattr(meta, "prompt_token_count", 0) or 0)
+            output_tokens = int(getattr(meta, "candidates_token_count", 0) or 0)
+        except (TypeError, ValueError):
+            return TokenUsage()
+        return TokenUsage(input_tokens=input_tokens, output_tokens=output_tokens)
 
     def _build_chat_session(self, context: ConversationContext) -> Any:
         """Build a chat session with history."""

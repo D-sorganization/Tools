@@ -30,6 +30,13 @@ class BitnetAdapter(BaseAgentAdapter):
 
     This adapter launches and manages a llama.cpp / llama-cli process directly,
     providing a seamless local LLM experience within the shared chat interface.
+
+    Token usage:
+        BitNet's llama-cli does not surface token counts in a parseable
+        form, so :pyattr:`AgentResponse.usage` is always a zero-valued
+        :class:`TokenUsage`. This satisfies the cross-adapter contract
+        (issue #2763) at the cost of zero observability into actual
+        token consumption.
     """
 
     def __init__(

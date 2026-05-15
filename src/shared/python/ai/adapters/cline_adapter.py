@@ -36,6 +36,7 @@ from src.shared.python.ai.types import (
     ConversationContext,
     ProviderCapabilities,
     ProviderCapability,
+    TokenUsage,
     ToolCall,
 )
 from src.shared.python.logging_pkg.logging_config import get_logger
@@ -311,15 +312,17 @@ class ClineAdapter(BaseAgentAdapter):
                 )
             )
 
-        usage = data.get("usage", {})
+        # Cline speaks the OpenAI protocol; normalize to TokenUsage (#2763).
+        raw_usage = data.get("usage", {}) or {}
+        usage = TokenUsage(
+            input_tokens=int(raw_usage.get("prompt_tokens", 0) or 0),
+            output_tokens=int(raw_usage.get("completion_tokens", 0) or 0),
+        )
         return AgentResponse(
             content=content,
             tool_calls=tool_calls,
             finish_reason=choice.get("finish_reason", "stop"),
-            usage={
-                "input_tokens": usage.get("prompt_tokens", 0),
-                "output_tokens": usage.get("completion_tokens", 0),
-            },
+            usage=usage,
             metadata={"model": data.get("model", "cline")},
         )
 

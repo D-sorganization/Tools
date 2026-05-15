@@ -42,6 +42,7 @@ from src.shared.python.ai.types import (
     ConversationContext,
     ProviderCapabilities,
     ProviderCapability,
+    TokenUsage,
     ToolCall,
 )
 from src.shared.python.logging_pkg.logging_config import get_logger
@@ -433,12 +434,11 @@ class OllamaAdapter(BaseAgentAdapter):
                 ]
             )
 
-        # Extract usage if available
-        usage: dict[str, int] = {}
-        if "prompt_eval_count" in data:
-            usage["prompt_tokens"] = data["prompt_eval_count"]
-        if "eval_count" in data:
-            usage["completion_tokens"] = data["eval_count"]
+        # Extract usage (normalized to TokenUsage per #2763).
+        usage = TokenUsage(
+            input_tokens=int(data.get("prompt_eval_count", 0) or 0),
+            output_tokens=int(data.get("eval_count", 0) or 0),
+        )
 
         return AgentResponse(
             content=content,

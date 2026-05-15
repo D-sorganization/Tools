@@ -43,6 +43,7 @@ from src.shared.python.ai.types import (
     ConversationContext,
     ProviderCapabilities,
     ProviderCapability,
+    TokenUsage,
     ToolCall,
 )
 from src.shared.python.contracts import precondition
@@ -494,13 +495,13 @@ class AnthropicAdapter(BaseAgentAdapter):
 
         content = "\n".join(content_parts)
 
-        # Extract usage
-        usage: dict[str, int] = {}
+        # Extract usage (normalized to TokenUsage per #2763)
+        usage = TokenUsage()
         if hasattr(response, "usage"):
-            usage = {
-                "input_tokens": response.usage.input_tokens,
-                "output_tokens": response.usage.output_tokens,
-            }
+            usage = TokenUsage(
+                input_tokens=int(response.usage.input_tokens or 0),
+                output_tokens=int(response.usage.output_tokens or 0),
+            )
 
         return AgentResponse(
             content=content,

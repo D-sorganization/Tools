@@ -44,6 +44,7 @@ from src.shared.python.ai.types import (
     ConversationContext,
     ProviderCapabilities,
     ProviderCapability,
+    TokenUsage,
     ToolCall,
 )
 from src.shared.python.contracts import precondition
@@ -471,14 +472,15 @@ class OpenAIAdapter(BaseAgentAdapter):
                     )
                 )
 
-        # Extract usage
-        usage: dict[str, int] = {}
+        # Extract usage (normalized to TokenUsage per #2763).
+        # OpenAI exposes prompt_tokens/completion_tokens; total_tokens is
+        # discarded because TokenUsage.total_tokens is computed from the sum.
+        usage = TokenUsage()
         if response.usage:
-            usage = {
-                "prompt_tokens": response.usage.prompt_tokens,
-                "completion_tokens": response.usage.completion_tokens,
-                "total_tokens": response.usage.total_tokens,
-            }
+            usage = TokenUsage(
+                input_tokens=int(response.usage.prompt_tokens or 0),
+                output_tokens=int(response.usage.completion_tokens or 0),
+            )
 
         return AgentResponse(
             content=content,
