@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass, field
-from enum import StrEnum
+from enum import Enum
 from types import MappingProxyType
 from typing import Any
 
@@ -20,7 +20,7 @@ MAX_FONT_SIZE_PX = 24
 MAX_FONT_FAMILY_LENGTH = 64
 
 
-class SidekickThemeMode(StrEnum):
+class SidekickThemeMode(str, Enum):
     """Constrained Sidekick theme resolution modes."""
 
     INHERIT_PARENT = "inherit_parent"
@@ -142,7 +142,16 @@ def resolve_sidekick_theme(
 
 def _coerce_theme_mode(value: Any) -> SidekickThemeMode:
     try:
-        return SidekickThemeMode(str(value))
+        if isinstance(value, SidekickThemeMode):
+            return value
+
+        # When moving from StrEnum (Python 3.11+) to str, Enum (Python 3.10)
+        # str(enum_member) changes from "inherit_parent" to a full class name
+        val_str = str(value)
+        if val_str.startswith("SidekickThemeMode."):
+            val_str = val_str.split(".")[1].lower()
+
+        return SidekickThemeMode(val_str)
     except ValueError as exc:
         message = "Sidekick theme mode must be inherit_parent or custom"
         raise ValueError(message) from exc

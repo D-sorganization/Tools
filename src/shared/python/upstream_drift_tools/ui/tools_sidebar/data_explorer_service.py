@@ -242,31 +242,6 @@ def _frame_rows(frame: pd.DataFrame) -> list[dict[str, Any]]:
     return rows
 
 
-def _normalize_dtype(dtype: Any) -> str:
-    """Normalize pandas dtype names for stable cross-version summaries."""
-    dtype_str = str(dtype).lower()
-    # Normalize string-like dtype names across pandas versions
-    if dtype_str in {"object", "string", "string[python]", "string[pyarrow]"}:
-        return "object"
-    # Normalize integer types
-    if dtype_str in {"int64", "int32", "int16", "int8", "uint64", "uint32", "uint16", "uint8"}:
-        return "int"
-    # Normalize float types
-    if dtype_str in {"float64", "float32", "float16"}:
-        return "float"
-    # Normalize boolean type
-    if dtype_str in {"bool", "boolean"}:
-        return "bool"
-    # Normalize datetime types
-    if "datetime" in dtype_str or "timedelta" in dtype_str:
-        return "datetime"
-    # Normalize category type
-    if "category" in dtype_str:
-        return "category"
-    # Return original for other types
-    return dtype_str
-
-
 def _column_summaries(frame: pd.DataFrame) -> list[DataExplorerColumnSummary]:
     return [
         DataExplorerColumnSummary(

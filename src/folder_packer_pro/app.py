@@ -57,7 +57,7 @@ class FolderPackerPro(
         Args:
             root: The tkinter root window.
         """
-        if not (root is not None):
+        if root is None:
             raise ValueError("root must be provided")
         self.root = root
         self.root.title("Folder Packer Pro v2.0 - Professional Project Packager")
@@ -253,7 +253,7 @@ class FolderPackerPro(
         Args:
             event: The tkinter event.
         """
-        if not (event is not None):
+        if event is None:
             raise ValueError("event must be provided")
         selection = self.preview_tree.selection()
         if not selection:
@@ -274,7 +274,7 @@ class FolderPackerPro(
         Args:
             file_path: Path to the file to preview.
         """
-        if not (file_path is not None):
+        if file_path is None:
             raise ValueError("file_path must be provided")
         self.preview_text.configure(state="normal")
         self.preview_text.delete("1.0", "end")
@@ -320,7 +320,7 @@ class FolderPackerPro(
         Args:
             message: Status message to display.
         """
-        if not (message is not None):
+        if message is None:
             raise ValueError("message must be provided")
         self.status_label.configure(text=message)
         self.root.update_idletasks()
@@ -352,7 +352,7 @@ class FolderPackerPro(
             message: Log message text.
             level: Log level ("info", "success", "warning", "error").
         """
-        if not (message is not None):
+        if message is None:
             raise ValueError("message must be provided")
         timestamp = datetime.now(timezone.utc).strftime("%H:%M:%S")  # noqa: UP017
 

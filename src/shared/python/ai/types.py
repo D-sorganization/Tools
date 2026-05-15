@@ -38,9 +38,9 @@ class ExpertiseLevel(Enum):
 
     def __lt__(self, other: object) -> bool:
         """Support comparison for level filtering."""
-        if not (other is not None):
+        if other is None:
             raise ValueError("other must be provided")
-        if not (other is not None):
+        if other is None:
             raise ValueError("other must be provided")
         if isinstance(other, ExpertiseLevel):
             return self.value < other.value
@@ -48,9 +48,9 @@ class ExpertiseLevel(Enum):
 
     def __le__(self, other: object) -> bool:
         """Support comparison for level filtering."""
-        if not (other is not None):
+        if other is None:
             raise ValueError("other must be provided")
-        if not (other is not None):
+        if other is None:
             raise ValueError("other must be provided")
         if isinstance(other, ExpertiseLevel):
             return self.value <= other.value
@@ -235,6 +235,7 @@ class ConversationContext:
     session_id: str = field(default_factory=lambda: f"session_{uuid.uuid4().hex[:12]}")
     messages: list[Message] = field(default_factory=list)
     user_expertise: ExpertiseLevel = ExpertiseLevel.BEGINNER
+    response_style: str = "standard"
     active_workflow_id: str | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
 
@@ -253,9 +254,9 @@ class ConversationContext:
         Returns:
             The created Message instance.
         """
-        if not (role is not None):
+        if role is None:
             raise ValueError("role must be provided")
-        if not (role is not None):
+        if role is None:
             raise ValueError("role must be provided")
         message = Message(role=role, content=content, **kwargs)
         self.messages.append(message)
@@ -351,6 +352,7 @@ class ConversationContext:
             "session_id": self.session_id,
             "messages": [m.to_dict() for m in self.messages],
             "user_expertise": self.user_expertise.name,
+            "response_style": self.response_style,
             "active_workflow_id": self.active_workflow_id,
             "metadata": self.metadata,
         }
@@ -366,9 +368,9 @@ class ConversationContext:
             New ConversationContext instance.
         """
         # Reconstruct messages
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         messages = []
         for m_data in data.get("messages", []):
@@ -415,6 +417,7 @@ class ConversationContext:
             session_id=data.get("session_id", ""),
             messages=messages,
             user_expertise=expertise,
+            response_style=data.get("response_style", "standard"),
             active_workflow_id=data.get("active_workflow_id"),
             metadata=data.get("metadata", {}),
         )
@@ -425,9 +428,9 @@ class ConversationContext:
         Args:
             path: Path to save to.
         """
-        if not (path is not None):
+        if path is None:
             raise ValueError("path must be provided")
-        if not (path is not None):
+        if path is None:
             raise ValueError("path must be provided")
         import json
         from pathlib import Path
@@ -448,9 +451,9 @@ class ConversationContext:
         Returns:
             Loaded context, or new context if file not found.
         """
-        if not (path is not None):
+        if path is None:
             raise ValueError("path must be provided")
-        if not (path is not None):
+        if path is None:
             raise ValueError("path must be provided")
         path_obj = Path(path) if isinstance(path, str) else path
         if not path_obj.exists():

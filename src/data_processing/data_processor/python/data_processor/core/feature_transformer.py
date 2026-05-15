@@ -42,7 +42,7 @@ class FeatureTransformer:
         Returns:
             Transformed features
         """
-        if not (features is not None):
+        if features is None:
             raise ValueError("features must be provided")
         features = np.atleast_2d(features)
 
@@ -121,7 +121,7 @@ class FeatureTransformer:
         Returns:
             Transformed features
         """
-        if not (features is not None):
+        if features is None:
             raise ValueError("features must be provided")
         features = np.atleast_2d(features)
 

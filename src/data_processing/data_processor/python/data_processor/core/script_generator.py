@@ -64,7 +64,7 @@ class ScriptGenerator:
         Returns:
             Generated script as string
         """
-        if not (pipeline is not None):
+        if pipeline is None:
             raise ValueError("pipeline must be provided")
         lines: list[str] = []
 
@@ -122,7 +122,7 @@ class ScriptGenerator:
 
     def _generate_process_function(self, pipeline: ProcessingPipeline) -> list[str]:
         """Generate the main process_data function."""
-        if not (pipeline is not None):
+        if pipeline is None:
             raise ValueError("pipeline must be provided")
         lines = [
             "",
@@ -191,7 +191,7 @@ class ScriptGenerator:
         Returns:
             CLI command string
         """
-        if not (pipeline is not None):
+        if pipeline is None:
             raise ValueError("pipeline must be provided")
         config = pipeline.to_dict()
         config_json = json.dumps(config)
@@ -221,7 +221,7 @@ class ScriptGenerator:
         Returns:
             Batch processing script
         """
-        if not (pipeline is not None):
+        if pipeline is None:
             raise ValueError("pipeline must be provided")
         lines: list[str] = []
         lines.extend(self._generate_batch_header(pipeline))
@@ -254,7 +254,7 @@ class ScriptGenerator:
 
     def _generate_batch_process_func(self, pipeline: ProcessingPipeline) -> list[str]:
         """Generate the process_single_file function for batch script."""
-        if not (pipeline is not None):
+        if pipeline is None:
             raise ValueError("pipeline must be provided")
         lines = [
             "def process_single_file(input_path: str, output_dir: str) -> tuple[bool, str, str]:",
@@ -301,7 +301,7 @@ class ScriptGenerator:
         input_patterns: list[str], output_dir: str, parallel: bool
     ) -> list[str]:
         """Generate the main function and entry point for batch script."""
-        if not (input_patterns is not None):
+        if input_patterns is None:
             raise ValueError("input_patterns must be provided")
         # Use json.dumps instead of repr() so that user-supplied paths (which may
         # contain backslashes, quotes, or non-ASCII characters) are embedded as
@@ -398,7 +398,7 @@ class ScriptGenerator:
         Returns:
             Path to exported file
         """
-        if not (pipeline is not None):
+        if pipeline is None:
             raise ValueError("pipeline must be provided")
         output_path = Path(output_path)
         config = pipeline.to_dict()
@@ -418,7 +418,7 @@ class ScriptGenerator:
         Returns:
             ProcessingPipeline object
         """
-        if not (config_path is not None):
+        if config_path is None:
             raise ValueError("config_path must be provided")
         with open(config_path) as f:
             config = json.load(f)
@@ -432,7 +432,7 @@ class ScriptGenerator:
         use_argparse: bool,
     ) -> list[str]:
         """Generate import statements based on pipeline operations."""
-        if not (pipeline is not None):
+        if pipeline is None:
             raise ValueError("pipeline must be provided")
         imports: list[str] = [
             "from __future__ import annotations",
@@ -489,7 +489,7 @@ class ScriptGenerator:
         prefix: str,
     ) -> list[str]:
         """Generate code for a LOAD operation."""
-        if not (params is not None):
+        if params is None:
             raise ValueError("params must be provided")
         file_path = params.get("file_path", "input_path")
         file_format = params.get("file_format", "csv")
@@ -508,7 +508,7 @@ class ScriptGenerator:
         prefix: str,
     ) -> list[str]:
         """Generate code for a FILTER operation."""
-        if not (params is not None):
+        if params is None:
             raise ValueError("params must be provided")
         filter_type = params.get("filter_type")
         filter_params = params.get("filter_params", {})
@@ -532,7 +532,7 @@ class ScriptGenerator:
         prefix: str,
     ) -> list[str]:
         """Generate code for an EXPORT operation."""
-        if not (params is not None):
+        if params is None:
             raise ValueError("params must be provided")
         file_path = params.get("file_path", "output_path")
         file_format = params.get("file_format", "csv")
@@ -547,7 +547,7 @@ class ScriptGenerator:
 
     def _generate_step_code(self, step: ProcessingStep, indent: int = 0) -> list[str]:
         """Generate Python code for a processing step."""
-        if not (step is not None):
+        if step is None:
             raise ValueError("step must be provided")
         prefix = " " * indent
         params = step.parameters

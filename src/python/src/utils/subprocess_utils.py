@@ -122,7 +122,7 @@ def run_pip_command(
     Returns:
         CompletedProcess object
     """
-    if not (command is not None):
+    if command is None:
         raise ValueError("command must be provided")
     pip_cmd = [sys.executable, "-m", "pip", command]
 
@@ -177,7 +177,7 @@ def get_command_output(
     Returns:
         Command stdout as string
     """
-    if not (command is not None):
+    if command is None:
         raise ValueError("command must be provided")
     result = run_command(command, cwd=cwd, timeout=timeout, check=True)
     return result.stdout.strip()

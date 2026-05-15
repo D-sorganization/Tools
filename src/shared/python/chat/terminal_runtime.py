@@ -140,7 +140,7 @@ class TerminalSessionRuntime:
         """Stop the session's process and mark it stopped."""
         session = self._session_for(session_id)
         self._process_adapter.stop(session.process_id)
-        session.info.state = "stopped"
+        session.info = session.info.model_copy(update={"state": "stopped"})
         return session.info
 
     def drain_events(self, session_id: str) -> list[TerminalAgentEvent]:

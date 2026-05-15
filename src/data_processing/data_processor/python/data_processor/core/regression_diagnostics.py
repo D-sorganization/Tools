@@ -64,7 +64,7 @@ class DiagnosticsMixin:
         Returns:
             Tuple of (intercept_se, coefficient_se_array)
         """
-        if not (X is not None):
+        if X is None:
             raise ValueError("X must be provided")
         X_with_intercept = np.column_stack([np.ones(n), X])
         try:
@@ -101,7 +101,7 @@ class DiagnosticsMixin:
         Returns:
             List of CoefficientInfo objects
         """
-        if not (coeffs is not None):
+        if coeffs is None:
             raise ValueError("coeffs must be provided")
         coef_info = []
         for i, name in enumerate(feature_names):
@@ -133,7 +133,7 @@ class DiagnosticsMixin:
         feature_names: list[str],
     ) -> RegressionResult:
         """Calculate comprehensive regression statistics."""
-        if not (X is not None):
+        if X is None:
             raise ValueError("X must be provided")
         n, p = X.shape
 
@@ -196,7 +196,7 @@ class DiagnosticsMixin:
 
     def _calculate_vif(self, X: np.ndarray) -> np.ndarray:
         """Calculate Variance Inflation Factors."""
-        if not (X is not None):
+        if X is None:
             raise ValueError("X must be provided")
         n, p = X.shape
         vifs = np.ones(p)
@@ -232,7 +232,7 @@ class DiagnosticsMixin:
         residuals: np.ndarray,
     ) -> RegressionDiagnostics:
         """Calculate regression diagnostics."""
-        if not (X is not None):
+        if X is None:
             raise ValueError("X must be provided")
         n, p = X.shape
 
@@ -327,7 +327,7 @@ class DiagnosticsMixin:
     ) -> dict[str, float]:
         """Calculate variable importance (standardized coefficients)."""
         # Standardize coefficients by feature standard deviation
-        if not (coeffs is not None):
+        if coeffs is None:
             raise ValueError("coeffs must be provided")
         x_std = np.std(X, axis=0)
         x_std[x_std == 0] = 1
@@ -351,7 +351,7 @@ class DiagnosticsMixin:
     ) -> Callable[[np.ndarray], np.ndarray]:
         """Create prediction function for the model."""
 
-        if not (coeffs is not None):
+        if coeffs is None:
             raise ValueError("coeffs must be provided")
 
         def predict(X: np.ndarray) -> np.ndarray:

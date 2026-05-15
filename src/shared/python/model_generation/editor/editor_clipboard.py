@@ -51,7 +51,7 @@ class ClipboardMixin:
         Returns:
             True if copied
         """
-        if not (model_id is not None):
+        if model_id is None:
             raise ValueError("model_id must be provided")
         model = self._models.get(model_id)
         if not model:
@@ -97,7 +97,7 @@ class ClipboardMixin:
         Returns:
             True if copied
         """
-        if not (model_id is not None):
+        if model_id is None:
             raise ValueError("model_id must be provided")
         model = self._models.get(model_id)
         if not model:
@@ -152,7 +152,7 @@ class ClipboardMixin:
         Returns:
             True if copied
         """
-        if not (model_id is not None):
+        if model_id is None:
             raise ValueError("model_id must be provided")
         model = self._models.get(model_id)
         if not model:

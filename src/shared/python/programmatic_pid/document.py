@@ -53,7 +53,7 @@ class PIDDocument:
     """
 
     def __init__(self, spec_data: SpecDict, profile: str | None = None) -> None:
-        if not (spec_data is not None):
+        if spec_data is None:
             raise ValueError("spec_data must be provided")
         self._raw = deepcopy(spec_data)
         self._spec = apply_profile(spec_data, profile)
@@ -66,7 +66,7 @@ class PIDDocument:
     @classmethod
     def from_yaml(cls, path: str | Path, profile: str | None = None) -> PIDDocument:
         """Load from a YAML file path."""
-        if not (path is not None):
+        if path is None:
             raise ValueError("path must be provided")
         spec = load_spec(path)
         return cls(spec, profile=profile)
@@ -80,7 +80,7 @@ class PIDDocument:
         Returns None if the spec has fatal errors; otherwise returns
         a PIDDocument (with warnings logged).
         """
-        if not (spec_data is not None):
+        if spec_data is None:
             raise ValueError("spec_data must be provided")
         issues = collect_issues(spec_data)
         errors = [i for i in issues if i.severity == "error"]
@@ -122,7 +122,7 @@ class PIDDocument:
 
         Returns None if the equipment ID is not found.
         """
-        if not (eq_id is not None):
+        if eq_id is None:
             raise ValueError("eq_id must be provided")
         eq = self._equipment_by_id.get(eq_id)
         if eq is None:
@@ -134,7 +134,7 @@ class PIDDocument:
 
     def equipment_position(self, eq_id: str) -> Point | None:
         """Return the center point of a specific equipment item."""
-        if not (eq_id is not None):
+        if eq_id is None:
             raise ValueError("eq_id must be provided")
         eq = self._equipment_by_id.get(eq_id)
         if eq is None:
@@ -162,7 +162,7 @@ class PIDDocument:
 
         Searches outward from the process area center.
         """
-        if not (width is not None):
+        if width is None:
             raise ValueError("width must be provided")
         occupied = []
         for eq in self._accessor.equipment:
@@ -186,7 +186,7 @@ class PIDDocument:
         Delegates to the existing generate() function for backward compat.
         """
         # Import here to avoid circular imports during transition
-        if not (path is not None):
+        if path is None:
             raise ValueError("path must be provided")
         from programmatic_pid.generator import (
             generate_controls_sheet,
@@ -215,7 +215,7 @@ class PIDDocument:
 
     def export_svg(self, path: Path) -> None:
         """Generate DXF then convert to SVG."""
-        if not (path is not None):
+        if path is None:
             raise ValueError("path must be provided")
         import tempfile
 
@@ -240,7 +240,7 @@ class PIDDocument:
         Requires svglib + reportlab or ezdxf's drawing backend.
         Falls back gracefully with a clear error message.
         """
-        if not (path is not None):
+        if path is None:
             raise ValueError("path must be provided")
         import os
         import tempfile

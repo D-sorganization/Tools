@@ -50,9 +50,9 @@ def get_theme_manager(
     Returns:
         ThemeManager instance
     """
-    if not (settings_org is not None):
+    if settings_org is None:
         raise ValueError("settings_org must be provided")
-    if not (settings_org is not None):
+    if settings_org is None:
         raise ValueError("settings_org must be provided")
     from .theme_manager import ThemeManager
 
@@ -72,9 +72,9 @@ def apply_theme_to_window(window: QMainWindow, theme_name: str | None = None) ->
         window: Window to apply theme to
         theme_name: Optional specific theme name, or None for current theme
     """
-    if not (window is not None):
+    if window is None:
         raise ValueError("window must be provided")
-    if not (window is not None):
+    if window is None:
         raise ValueError("window must be provided")
     manager = get_theme_manager(window)
 
@@ -100,9 +100,9 @@ def create_theme_menu(
     Returns:
         The created QMenu
     """
-    if not (window is not None):
+    if window is None:
         raise ValueError("window must be provided")
-    if not (window is not None):
+    if window is None:
         raise ValueError("window must be provided")
     from PyQt6.QtGui import QAction, QActionGroup
 
@@ -166,9 +166,9 @@ def create_theme_menu(
 
 def _open_custom_theme_editor(manager: Any, window: QMainWindow) -> None:
     """Open the custom theme editor dialog."""
-    if not (window is not None):
+    if window is None:
         raise ValueError("window must be provided")
-    if not (window is not None):
+    if window is None:
         raise ValueError("window must be provided")
     from .dialogs import CustomThemeEditor
 
@@ -178,9 +178,9 @@ def _open_custom_theme_editor(manager: Any, window: QMainWindow) -> None:
 
 def _open_theme_manager_dialog(manager: Any, window: QMainWindow) -> None:
     """Open the theme manager dialog."""
-    if not (window is not None):
+    if window is None:
         raise ValueError("window must be provided")
-    if not (window is not None):
+    if window is None:
         raise ValueError("window must be provided")
     from .dialogs import ThemeManagerDialog
 
@@ -214,9 +214,9 @@ def setup_themed_app(
         base_icon_path: Optional path to an SVG icon to colorize
     """
     # Use window class name as default app name
-    if not (app is not None):
+    if app is None:
         raise ValueError("app must be provided")
-    if not (app is not None):
+    if app is None:
         raise ValueError("app must be provided")
     if settings_app is None:
         settings_app = window.__class__.__name__
@@ -280,9 +280,9 @@ class ThemedWindowMixin:
             settings_app: Override default settings application name
             base_icon_path: Optional path to an SVG icon to colorize
         """
-        if not (add_menu is not None):
+        if add_menu is None:
             raise ValueError("add_menu must be provided")
-        if not (add_menu is not None):
+        if add_menu is None:
             raise ValueError("add_menu must be provided")
         if settings_org:
             self._settings_org = settings_org

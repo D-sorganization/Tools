@@ -48,7 +48,7 @@ class TransformsMixin:
         Returns:
             Time-warped data
         """
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         sigma = sigma or self.config.warp_sigma
         knots = knots or self.config.warp_knots
@@ -80,7 +80,7 @@ class TransformsMixin:
         Returns:
             Magnitude-warped data
         """
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         sigma = sigma or self.config.magnitude_sigma
         knots = knots or self.config.warp_knots
@@ -116,7 +116,7 @@ class TransformsMixin:
         Returns:
             Window-warped data
         """
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         if scales is None:
             scales = [0.5, 2.0]
@@ -151,7 +151,7 @@ class TransformsMixin:
         Returns:
             Scaled data
         """
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         range_ = range_ or self.config.scale_range
         scale_factor = self._rng.uniform(range_[0], range_[1])
@@ -169,7 +169,7 @@ class TransformsMixin:
         Returns:
             Rotated data
         """
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         if data.ndim == 1 or (data.ndim == 2 and data.shape[1] < 2):
             return data.copy()
@@ -253,7 +253,7 @@ class TransformsMixin:
         Returns:
             Sliced data (may have different length)
         """
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         ratio = ratio or self.config.window_ratio
 
@@ -278,7 +278,7 @@ class TransformsMixin:
         Returns:
             Cropped and resized data
         """
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         ratio = ratio or self.config.crop_ratio
 
@@ -354,7 +354,7 @@ class TransformsMixin:
         Returns:
             Tuple of (augmented_data, augmented_labels)
         """
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         k_neighbors = k_neighbors or self.config.smote_k_neighbors
         data = np.atleast_2d(data)
@@ -413,7 +413,7 @@ class TransformsMixin:
         Returns:
             Tuple of (mixed_data, mixed_labels)
         """
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         alpha = alpha or self.config.mixup_alpha
         n_samples = data.shape[0]
@@ -467,7 +467,7 @@ class TransformsMixin:
         Returns:
             Data with masked regions
         """
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         ratio = ratio or self.config.cutout_ratio
         result = data.copy()
@@ -510,7 +510,7 @@ class TransformsMixin:
         Returns:
             Tuple of (mixed_data, mixed_labels)
         """
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         ratio = ratio or self.config.cutout_ratio
         n_samples = data.shape[0]
@@ -625,7 +625,7 @@ class TransformsMixin:
 
     def _time_warp_1d(self, data: np.ndarray, sigma: float, knots: int) -> np.ndarray:
         """Apply time warping to 1D data."""
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         n = len(data)
 
@@ -642,7 +642,7 @@ class TransformsMixin:
 
     def _generate_warp_curve(self, length: int, sigma: float, knots: int) -> np.ndarray:
         """Generate smooth random warp curve."""
-        if not (length is not None):
+        if length is None:
             raise ValueError("length must be provided")
         knot_positions = np.linspace(0, length - 1, knots + 2)
         knot_values = self._rng.normal(1.0, sigma, knots + 2)
@@ -655,7 +655,7 @@ class TransformsMixin:
         self, data: np.ndarray, ratio: float, scales: list[float]
     ) -> np.ndarray:
         """Apply window warping to 1D data."""
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         n = len(data)
         window_size = int(n * ratio)
@@ -685,7 +685,7 @@ class TransformsMixin:
     @jit(nopython=True, fastmath=True)
     def _permute_1d(self, data: np.ndarray, max_segments: int) -> np.ndarray:
         """Permute segments of 1D data."""
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         n = len(data)
         n_segments = self._rng.integers(2, min(max_segments + 1, n // 2 + 1))
@@ -710,7 +710,7 @@ class TransformsMixin:
 
     def _interpolate(self, data: np.ndarray, target_length: int) -> np.ndarray:
         """Interpolate data to target length."""
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         n = len(data)
         if n == target_length:
@@ -726,7 +726,7 @@ class TransformsMixin:
         self, data: np.ndarray, mask_ratio: float, num_masks: int
     ) -> np.ndarray:
         """Apply frequency masking to 1D data."""
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         n = len(data)
         fft = np.fft.rfft(data)
@@ -743,7 +743,7 @@ class TransformsMixin:
         self, data: np.ndarray, max_shift_ratio: float
     ) -> np.ndarray:
         """Apply frequency shift to 1D data."""
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         n = len(data)
         fft = np.fft.rfft(data)

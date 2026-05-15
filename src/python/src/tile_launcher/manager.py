@@ -56,7 +56,7 @@ class AppManager:
         layout_store: LayoutStore | None = None,
     ) -> None:
         """Initialize the manager with a catalog and layout store."""
-        if not (catalog is not None):
+        if catalog is None:
             raise ValueError("catalog must be provided")
         self._catalog = {app.id: app for app in catalog}
         self.repository_root = repository_root
@@ -127,7 +127,7 @@ class AppManager:
 
     def remove_app(self, app_id: str) -> None:
         """Remove an app from the layout."""
-        if not (app_id is not None):
+        if app_id is None:
             raise ValueError("app_id must be provided")
         if app_id not in self.layout:
             logger.info("App %s not in layout; skipping remove", app_id)

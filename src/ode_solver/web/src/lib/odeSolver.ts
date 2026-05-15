@@ -83,7 +83,7 @@ function assertSolverInputs(
 function compileExpression(
   expr: string,
   varNames: string[]
-): (...args: number[]) => number {
+): (args: number[]) => number {
   let processedExpr = expr
 
   processedExpr = processedExpr
@@ -95,13 +95,15 @@ function compileExpression(
     .replace(/\bPI\b/g, 'Math.PI')
 
   try {
+    // ⚡ Bolt Optimization: Avoid spreading array arguments inside hot loop
+    const declarations = varNames.map((v, i) => `const ${v} = __args__[${i}];`).join('\n')
     // eslint-disable-next-line no-new-func
-    const compiled = new Function(...varNames, `"use strict"; return (${processedExpr})`) as (
-      ...args: number[]
+    const compiled = new Function("__args__", `"use strict";\n${declarations}\nreturn (${processedExpr});`) as (
+      args: number[]
     ) => unknown
-    return (...args: number[]) => {
+    return (args: number[]) => {
       try {
-        const result = compiled(...args)
+        const result = compiled(args)
         return typeof result === 'number' && isFinite(result) ? result : 0
       } catch {
         return 0
@@ -126,7 +128,7 @@ export function solveODESystem(
   const paramNames = Object.keys(parameters)
   const allVarNames = [...varNames, 't', ...paramNames]
 
-  const compiledDerivsArr: Array<(...args: number[]) => number> = new Array(varNames.length)
+  const compiledDerivsArr: Array<(args: number[]) => number> = new Array(varNames.length)
   for (let i = 0; i < varNames.length; i++) {
     compiledDerivsArr[i] = compileExpression(derivatives[varNames[i]], allVarNames)
   }
@@ -165,7 +167,7 @@ export function solveODESystem(
     args[numVars] = t
 
     for (let i = 0; i < numVars; i++) {
-      outDerivsArr[i] = compiledDerivsArr[i](...args)
+      outDerivsArr[i] = compiledDerivsArr[i](args)
     }
   }
 

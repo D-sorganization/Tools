@@ -10,7 +10,7 @@ import importlib
 import math
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
-from enum import StrEnum
+from enum import Enum
 from typing import Any
 
 from .registry import WorkspaceRegistry
@@ -47,7 +47,7 @@ _SAFE_EXPRESSION_NAMES: Mapping[str, Any] = {
 }
 
 
-class CalculatorPlotSource(StrEnum):
+class CalculatorPlotSource(str, Enum):
     """Supported calculator plot request sources."""
 
     WORKSPACE_XY = "workspace_xy"

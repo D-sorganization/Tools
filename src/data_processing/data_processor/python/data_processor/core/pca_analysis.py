@@ -126,7 +126,7 @@ class PCAAnalyzer:
         Returns:
             Tuple of (component_list, cumulative_variance_ratio)
         """
-        if not (components is not None):
+        if components is None:
             raise ValueError("components must be provided")
         cumulative_var = np.cumsum(explained_var_ratio)
         component_list = []
@@ -233,7 +233,7 @@ class PCAAnalyzer:
         Returns:
             List of component indices (1-based)
         """
-        if not (result is not None):
+        if result is None:
             raise ValueError("result must be provided")
         for comp in result.components:
             if comp.cumulative_variance_ratio >= variance_threshold:
@@ -281,7 +281,7 @@ class PCAAnalyzer:
         Returns:
             Dict mapping component names to lists of influential features
         """
-        if not (result is not None):
+        if result is None:
             raise ValueError("result must be provided")
         interpretations = {}
 
@@ -322,7 +322,7 @@ class PCAAnalyzer:
         X: np.ndarray,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Center and/or standardize data."""
-        if not (X is not None):
+        if X is None:
             raise ValueError("X must be provided")
         mean = np.zeros(X.shape[1])
         std = np.ones(X.shape[1])
@@ -347,7 +347,7 @@ class PCAAnalyzer:
         Returns:
             components, explained_variance, explained_variance_ratio, singular_values
         """
-        if not (X is not None):
+        if X is None:
             raise ValueError("X must be provided")
         n_samples, n_features = X.shape
 
@@ -394,7 +394,7 @@ class PCAAnalyzer:
 
         Importance = sum of (loading^2 * variance_explained) for each component
         """
-        if not (components is not None):
+        if components is None:
             raise ValueError("components must be provided")
         importance = np.zeros(len(feature_names))
 
@@ -418,7 +418,7 @@ class PCAAnalyzer:
 
         Contribution = loading^2 / sum(loading^2) * 100
         """
-        if not (loading_matrix is not None):
+        if loading_matrix is None:
             raise ValueError("loading_matrix must be provided")
         contributions = loading_matrix.copy() ** 2
 
@@ -448,7 +448,7 @@ class PCAAnalyzer:
 
     def _find_elbow(self, variance_ratio: np.ndarray) -> int:
         """Find elbow point in scree plot using second derivative."""
-        if not (variance_ratio is not None):
+        if variance_ratio is None:
             raise ValueError("variance_ratio must be provided")
         if len(variance_ratio) < 3:
             return len(variance_ratio)
@@ -474,7 +474,7 @@ def create_scree_plot(result: PCAResult, ax: Any = None) -> Any:
     Returns:
         matplotlib figure
     """
-    if not (result is not None):
+    if result is None:
         raise ValueError("result must be provided")
     import matplotlib.pyplot as plt
 
@@ -553,7 +553,7 @@ def create_loading_plot(
     Returns:
         matplotlib figure
     """
-    if not (result is not None):
+    if result is None:
         raise ValueError("result must be provided")
     import matplotlib.pyplot as plt
 

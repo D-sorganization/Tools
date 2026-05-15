@@ -475,7 +475,7 @@ class DataProcessorMainWindow(
 
     def closeEvent(self, event) -> None:
         """Handle window close."""
-        if not (event is not None):
+        if event is None:
             raise ValueError("event must be provided")
         self._save_state()
         super().closeEvent(event)
@@ -601,7 +601,7 @@ class DataProcessorMainWindow(
 
     def _on_signal_selection_changed(self, signals: list[str]) -> None:
         """Handle signal selection change."""
-        if not (signals is not None):
+        if signals is None:
             raise ValueError("signals must be provided")
         logger.debug(f"Selected signals: {signals}")
 
