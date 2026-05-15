@@ -12,6 +12,15 @@ from .flow_rate import FlowRateConvertRequest, FlowRateConvertResponse
 from .ode_solver import ODESolverRequest, ODESolverResponse
 from .pressure_drop import PressureDropRequest, PressureDropResponse
 from .scrubber import ScrubberRequest, ScrubberResponse
+from .symbolic_solver import (
+    SymbolicDerivativeRequest,
+    SymbolicDerivativeResponse,
+    SymbolicHelpResponse,
+    SymbolicSimplifyRequest,
+    SymbolicSimplifyResponse,
+    SymbolicSolveRequest,
+    SymbolicSolveResponse,
+)
 from .syngas_water import SyngasWaterRequest, SyngasWaterResponse
 from .thermal_profile import ThermalProfileRequest, ThermalProfileResponse
 from .wgs_reactor import WGSReactorRequest, WGSReactorResponse
@@ -39,4 +48,11 @@ __all__ = [
     "ThermalProfileResponse",
     "ODESolverRequest",
     "ODESolverResponse",
+    "SymbolicSolveRequest",
+    "SymbolicSolveResponse",
+    "SymbolicDerivativeRequest",
+    "SymbolicDerivativeResponse",
+    "SymbolicSimplifyRequest",
+    "SymbolicSimplifyResponse",
+    "SymbolicHelpResponse",
 ]
