@@ -113,7 +113,21 @@ class RustAgentAdapter(BaseAgentAdapter):
         eagerly drains the SSE stream and returns the ordered delta list.
         We re-emit each delta as an ``AgentChunk`` so callers that already
         iterate this iterator-of-chunks contract keep working. Truly-
-        incremental streaming across the PyO3 boundary is a follow-up.
+        incremental streaming across the PyO3 boundary is a follow-up
+        (tracked separately; see issue #2752).
+
+        .. warning::
+
+            **This call is BLOCKING.** The underlying Rust ``AIEngine``
+            uses a Tokio ``block_on`` to drain the SSE stream eagerly,
+            holding the GIL for the duration of the request. When invoked
+            from a Qt UI it MUST be called from a worker thread (e.g.
+            ``QThread`` or ``QRunnable``) — otherwise the event loop will
+            freeze for the full duration of the LLM response.
+
+            The canonical worker pattern lives in
+            ``src/shared/python/ai/gui/assistant_widgets.py`` (see
+            ``StreamWorker``); reuse it rather than reimplementing.
         """
         try:
             full_prompt = (
