@@ -73,6 +73,12 @@ chat = [
     "fastapi>=0.100.0",
     "PyQt6>=6.5.0",
 ]
+# Voice-to-text addon for ChatDockWidget (Tools issue #2744).
+# Install with: pip install "tools[chat-voice]"
+chat-voice = [
+    "SpeechRecognition>=3.10.0",
+    "PyAudio>=0.2.13",
+]
 # Fleet-wide theme system (PyQt6 required for full features;
 # color utilities work without Qt). See issue #551
 theme = [

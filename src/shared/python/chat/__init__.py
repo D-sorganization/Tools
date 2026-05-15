@@ -81,6 +81,10 @@ def __getattr__(name: str) -> Any:
         from . import chat_dock_widget
 
         return getattr(chat_dock_widget, name)
+    if name == "VoiceInputManager":
+        from .voice_input_manager import VoiceInputManager
+
+        return VoiceInputManager
     if name == "create_chat_router":
         from .router_factory import create_chat_router
 
@@ -91,6 +95,7 @@ def __getattr__(name: str) -> Any:
 __all__ = [
     "ChatDockWidget",
     "ChatMessageBubble",
+    "VoiceInputManager",
     "ChatMessageRequest",
     "ChatChunkResponse",
     "ChatSessionInfo",
