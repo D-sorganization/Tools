@@ -140,6 +140,15 @@ DEFAULT_SIDEBAR_TAB_HELP: dict[str, dict[str, str]] = {
             "restore points.",
         ),
     ),
+    "function_generator": _tab_help(
+        "Function Generator",
+        "Generate and visualize various waveforms (sine, square, triangle, etc.).",
+        tips=(
+            "This tab provides lazy-loaded access to the Function Generator tool.",
+            "The tab is hidden by default and must be enabled through sidebar settings.",
+        ),
+        source="function_generator.gui_registration",
+    ),
 }
 
 
