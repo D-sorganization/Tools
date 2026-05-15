@@ -259,10 +259,13 @@ export function constraintJacobian(
     ];
 
     // Constraint 1: rh_x = lh_x => Φ₁ = rh_x - lh_x
-    const phi1_q = Jrh[0].map((v, i) => v - Jlh[0][i]);
+    // ⚡ Bolt Optimization: Use single-pass for loop over pre-allocated arrays
+    const phi1_q = new Array<number>(8);
+    for (let i = 0; i < 8; i++) phi1_q[i] = Jrh[0][i] - Jlh[0][i];
 
     // Constraint 2: rh_y = lh_y => Φ₂ = rh_y - lh_y
-    const phi2_q = Jrh[1].map((v, i) => v - Jlh[1][i]);
+    const phi2_q = new Array<number>(8);
+    for (let i = 0; i < 8; i++) phi2_q[i] = Jrh[1][i] - Jlh[1][i];
 
     // Constraint 3 & 4: Left hand distance from club shaft
     // Simplified: just enforce lh matches a point on club shaft
@@ -270,19 +273,21 @@ export function constraintJacobian(
     // φ₄: lh_y = club_base_y - grip_left*cos(θ_club)
 
     // ∂club_base/∂q
-    const dclub_x_q = [0, 0, 0, 0, 0, 0, 0, 0];
-    const dclub_y_q = [0, 0, 0, 0, 0, 0, 0, 0];
+    const dclub_x_q = new Array<number>(8);
+    const dclub_y_q = new Array<number>(8);
     for (let i = 0; i < 8; i++) {
         dclub_x_q[i] = Jrh[0][i] - p.grip_right * Math.cos(theta_club) * (i === 7 ? 1 : 0);
         dclub_y_q[i] = Jrh[1][i] - p.grip_right * (-Math.sin(theta_club)) * (i === 7 ? 1 : 0);
     }
 
     // φ₃: lh_x - club_base_x - grip_left*sin(θ_club) = 0
-    const phi3_q = Jlh[0].map((v, i) => v - dclub_x_q[i]);
+    const phi3_q = new Array<number>(8);
+    for (let i = 0; i < 8; i++) phi3_q[i] = Jlh[0][i] - dclub_x_q[i];
     phi3_q[7] -= p.grip_left * Math.cos(theta_club);
 
     // φ₄: lh_y - club_base_y + grip_left*cos(θ_club) = 0
-    const phi4_q = Jlh[1].map((v, i) => v - dclub_y_q[i]);
+    const phi4_q = new Array<number>(8);
+    for (let i = 0; i < 8; i++) phi4_q[i] = Jlh[1][i] - dclub_y_q[i];
     phi4_q[7] += p.grip_left * Math.sin(theta_club);
 
     return [phi1_q, phi2_q, phi3_q, phi4_q];
@@ -307,7 +312,13 @@ export function massMatrix_golfer(
     _q: [number, number, number, number, number, number, number, number],
     p: GolferParams
 ): number[][] {
-    const M: number[][] = Array(8).fill(null).map(() => Array(8).fill(0));
+    // ⚡ Bolt Optimization: Use single-pass for loop over pre-allocated arrays
+    const M: number[][] = new Array(8);
+    for (let i = 0; i < 8; i++) {
+        const row = new Array(8);
+        for (let j = 0; j < 8; j++) row[j] = 0;
+        M[i] = row;
+    }
 
     // Simple approach: approximate each Jacobian numerically for now
     // In production, use analytical Jacobians
@@ -414,7 +425,11 @@ export function equationsOfMotion_golfer(
     // Constraint penalties (simple spring penalty)
     const phi = constraintValues(q, p);
     const penalty_gain = 1000;
-    const constraint_tau = phi.map(ph => -penalty_gain * ph) as [number, number, number, number];
+    // ⚡ Bolt Optimization: Use manual loop over pre-allocated array instead of .map()
+    const constraint_tau = new Array<number>(4);
+    for (let i = 0; i < 4; i++) {
+        constraint_tau[i] = -penalty_gain * phi[i];
+    }
 
     // Approximate accelerations (ignoring Coriolis for simplicity in constraint solver)
     // Full implementation would solve the KKT system
