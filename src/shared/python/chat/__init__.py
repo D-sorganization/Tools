@@ -16,6 +16,9 @@ Usage::
     )
     main_window.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, dock)
 """
+# mypy: disable-error-code="unused-ignore"
+# The optional-pydantic import block below uses type: ignore comments that are
+# redundant when mypy runs with --follow-imports=skip (CI) but required locally.
 
 from typing import Any
 
@@ -61,17 +64,17 @@ try:
     _PYDANTIC_AVAILABLE = True
 except ImportError:
     _PYDANTIC_AVAILABLE = False
-    ChatChunkResponse = None  # type: ignore
-    ChatHistoryResponse = None  # type: ignore
-    ChatIndexStatusResponse = None  # type: ignore
-    ChatMessageRequest = None  # type: ignore
-    ChatModelInfo = None  # type: ignore
-    ChatModelListResponse = None  # type: ignore
-    ChatSessionInfo = None  # type: ignore
+    ChatChunkResponse = None  # type: ignore[assignment, misc]
+    ChatHistoryResponse = None  # type: ignore[assignment, misc]
+    ChatIndexStatusResponse = None  # type: ignore[assignment, misc]
+    ChatMessageRequest = None  # type: ignore[assignment, misc]
+    ChatModelInfo = None  # type: ignore[assignment, misc]
+    ChatModelListResponse = None  # type: ignore[assignment, misc]
+    ChatSessionInfo = None  # type: ignore[assignment, misc]
     DEFAULT_RESPONSE_STYLE = "standard"
     RESPONSE_STYLE_PROMPTS = {}
-    ResponseStyle = str  # type: ignore
-    style_prompt = None  # type: ignore
+    ResponseStyle = str  # type: ignore[assignment, misc]
+    style_prompt = None  # type: ignore[assignment, misc]
 
 _PYQT6_AVAILABLE = None
 
