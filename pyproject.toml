@@ -150,6 +150,7 @@ py-modules = ["contracts", "cors", "deprecation", "safe_eval"]
 [tool.setuptools.packages.find]
 where = ["src/shared/python", "src/python/src", "src"]
 include = [
+    "shared*",
     "chat*",
     "notes*",
     "upstream_drift_tools*",
