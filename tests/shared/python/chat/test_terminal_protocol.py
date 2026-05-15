@@ -182,3 +182,129 @@ def test_terminal_start_validation_error_is_structured() -> None:
 
     assert payload["type"] == "error"
     assert "project_root" in payload["detail"]
+
+
+# ── refresh_models / index_codebase (Tools issue #2751) ──────────────
+
+
+class _ModelListService(ChatServiceBase):
+    """Service double that returns a fixed model list."""
+
+    async def stream_response(self, session_id: str) -> AsyncIterator[Any]:
+        yield "ok"
+
+    async def refresh_models(self) -> list[dict[str, Any]]:
+        return [
+            {"id": "model-a", "name": "model-a", "provider": "fake"},
+            {"id": "model-b", "name": "model-b", "provider": "fake"},
+        ]
+
+
+class _IndexService(ChatServiceBase):
+    """Service double that records the index_codebase root_path it received."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.received_root: str | None = None
+
+    async def stream_response(self, session_id: str) -> AsyncIterator[Any]:
+        yield "ok"
+
+    async def index_codebase(self, root_path: str) -> dict[str, Any]:
+        self.received_root = root_path
+        return {
+            "state": "complete",
+            "files_parsed": 42,
+            "symbols_inserted": 100,
+            "duration_seconds": 1.5,
+        }
+
+
+def _client_with(service: ChatServiceBase) -> Any:
+    app = fastapi.FastAPI()
+    app.state.chat_service = service
+    app.include_router(create_chat_router(), prefix="/api")
+    return testclient.TestClient(app)
+
+
+def test_refresh_models_returns_model_list_payload() -> None:
+    """refresh_models action returns a model_list response with models."""
+    client = _client_with(_ModelListService())
+
+    with client.websocket_connect("/api/ws/chat/new") as websocket:
+        websocket.receive_json()
+        websocket.send_json({"action": "refresh_models"})
+        payload = websocket.receive_json()
+
+    assert payload["type"] == "model_list"
+    assert payload["models"] == [
+        {"id": "model-a", "name": "model-a", "provider": "fake"},
+        {"id": "model-b", "name": "model-b", "provider": "fake"},
+    ]
+    assert "refreshed_at" in payload
+
+
+def test_index_codebase_returns_index_status_payload(tmp_path: Path) -> None:
+    """index_codebase action returns an index_status response with totals."""
+    service = _IndexService()
+    client = _client_with(service)
+
+    with client.websocket_connect("/api/ws/chat/new") as websocket:
+        websocket.receive_json()
+        websocket.send_json({"action": "index_codebase", "root_path": str(tmp_path)})
+        payload = websocket.receive_json()
+
+    assert payload["type"] == "index_status"
+    assert payload["state"] == "complete"
+    assert payload["files_parsed"] == 42
+    assert payload["symbols_inserted"] == 100
+    assert service.received_root == str(tmp_path)
+
+
+def test_index_codebase_defaults_root_path_when_missing() -> None:
+    """index_codebase falls back to cwd when no root_path is supplied.
+
+    The dock widget sends ``{"action": "index_codebase"}`` with no
+    ``root_path`` (Tools issue #2751).
+    """
+    service = _IndexService()
+    client = _client_with(service)
+
+    with client.websocket_connect("/api/ws/chat/new") as websocket:
+        websocket.receive_json()
+        websocket.send_json({"action": "index_codebase"})
+        payload = websocket.receive_json()
+
+    assert payload["type"] == "index_status"
+    assert service.received_root is not None
+    assert service.received_root != ""
+
+
+def test_refresh_models_not_implemented_returns_clear_error() -> None:
+    """A service that does not override refresh_models gets a clear error
+    message — NOT a generic 'Unknown action' reply (Tools issue #2751)."""
+    client = _client_with(FakeChatService())
+
+    with client.websocket_connect("/api/ws/chat/new") as websocket:
+        websocket.receive_json()
+        websocket.send_json({"action": "refresh_models"})
+        payload = websocket.receive_json()
+
+    assert payload["type"] == "error"
+    assert "not supported" in payload["detail"]
+    assert "Unknown action" not in payload["detail"]
+
+
+def test_index_codebase_not_implemented_returns_clear_error(tmp_path: Path) -> None:
+    """A service that does not override index_codebase gets a clear error
+    message — NOT a generic 'Unknown action' reply (Tools issue #2751)."""
+    client = _client_with(FakeChatService())
+
+    with client.websocket_connect("/api/ws/chat/new") as websocket:
+        websocket.receive_json()
+        websocket.send_json({"action": "index_codebase", "root_path": str(tmp_path)})
+        payload = websocket.receive_json()
+
+    assert payload["type"] == "error"
+    assert "not supported" in payload["detail"]
+    assert "Unknown action" not in payload["detail"]
