@@ -10,7 +10,6 @@ Tools issue #2744.
 from __future__ import annotations
 
 import logging
-import types
 from collections.abc import Callable
 from typing import Any
 
@@ -19,12 +18,13 @@ from PyQt6.QtCore import QThread, pyqtSignal
 logger = logging.getLogger(__name__)
 
 try:
-    import speech_recognition as sr
+    import speech_recognition as _sr_mod
 
     _SR_AVAILABLE = True
+    sr: Any = _sr_mod
 except ImportError:
     _SR_AVAILABLE = False
-    sr: types.ModuleType | None = None
+    sr = None
 
 
 class _ListenWorker(QThread):
