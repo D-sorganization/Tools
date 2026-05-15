@@ -357,7 +357,6 @@ def create_chat_router(
                         await websocket.send_json(
                             {"type": "error", "detail": "Internal server error"}
                         )
-                        )
 
                 else:
                     await websocket.send_json(

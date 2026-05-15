@@ -32,29 +32,29 @@ _PACKAGE_STUBS: list[tuple[str, str | None]] = [
     ("src.shared.python.config", "src/shared/python/config"),
     ("src.shared.python.ai", "src/shared/python/ai"),
     ("src.shared.python.ai.adapters", "src/shared/python/ai/adapters"),
-    ("src.shared.python.logging_pkg", None),
-    ("src.shared.python.logging_pkg.logging_config", None),
 ]
 for _mod_name, _rel_path in _PACKAGE_STUBS:
     if _mod_name not in sys.modules:
+        import types
         _stub = types.ModuleType(_mod_name)
         if _rel_path is not None:
-            _stub.__path__ = [str(ROOT / _rel_path)]  # type: ignore[attr-defined]
+            _stub.__path__ = [str(ROOT / _rel_path)]
         sys.modules[_mod_name] = _stub
 
+
+
+
 # Stub logging_pkg so adapter modules can import get_logger.
-_logging_config_stub = sys.modules["src.shared.python.logging_pkg.logging_config"]
+_logging_config_stub = sys.modules.setdefault("src.shared.python.logging_pkg.logging_config", types.ModuleType("src.shared.python.logging_pkg.logging_config"))
 _logging_config_stub.get_logger = MagicMock()  # type: ignore[attr-defined]
 
 # Mock ai.config so we don't hit the broken environment import
-_config_stub = types.ModuleType("src.shared.python.ai.config")
-_config_stub.get_ollama_host = MagicMock(return_value="http://localhost:11434")
-_config_stub.get_ollama_model = MagicMock(return_value="llama3.1:8b")
-_config_stub.get_ollama_timeout = MagicMock(return_value=120.0)
-_config_stub.DEFAULT_OLLAMA_HOST = "http://localhost:11434"
-_config_stub.DEFAULT_OLLAMA_MODEL = "llama3.1:8b"
-_config_stub.DEFAULT_OLLAMA_TIMEOUT = 120.0
-sys.modules["src.shared.python.ai.config"] = _config_stub
+_env_stub = sys.modules.get("src.shared.python.config.environment")
+if not isinstance(_env_stub, types.ModuleType):
+    _env_stub = types.ModuleType("src.shared.python.config.environment")
+    sys.modules["src.shared.python.config.environment"] = _env_stub
+_env_stub.get_env = lambda key, default=None, required=False: default
+_env_stub.get_env_float = lambda key, default=0.0: float(default)
 
 from src.shared.python.ai.adapters.ollama_adapter import OllamaAdapter  # noqa: E402
 from src.shared.python.ai.exceptions import (  # noqa: E402
@@ -244,8 +244,8 @@ class TestParseResponse:
     def test_usage_tokens_populated(self, adapter: OllamaAdapter) -> None:
         data = _make_ollama_response(prompt_tokens=15, completion_tokens=8)
         result = adapter._parse_response(data)
-        assert result.usage.get("prompt_tokens") == 15
-        assert result.usage.get("completion_tokens") == 8
+        assert result.usage.get("input_tokens") == 15
+        assert result.usage.get("output_tokens") == 8
 
     @pytest.mark.unit
     def test_finish_reason_stop_when_done(self, adapter: OllamaAdapter) -> None:

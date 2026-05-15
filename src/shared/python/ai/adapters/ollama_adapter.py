@@ -507,4 +507,6 @@ class OllamaAdapter(BaseAgentAdapter):
                 "Is Ollama running? Start with: ollama serve",
                 provider="ollama",
             ) from error
-        return super()._handle_error(error)
+        raise self._classify_error(
+            error, provider="ollama", timeout=self._timeout
+        ) from error

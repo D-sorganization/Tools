@@ -29,36 +29,39 @@ _PACKAGE_STUBS: list[tuple[str, str | None]] = [
     ("src", "src"),
     ("src.shared", "src/shared"),
     ("src.shared.python", "src/shared/python"),
+    ("src.shared.python.config", "src/shared/python/config"),
     ("src.shared.python.ai", "src/shared/python/ai"),
     ("src.shared.python.ai.adapters", "src/shared/python/ai/adapters"),
-    ("src.shared.python.logging_pkg", None),
-    ("src.shared.python.logging_pkg.logging_config", None),
 ]
 for _mod_name, _rel_path in _PACKAGE_STUBS:
     if _mod_name not in sys.modules:
+        import types
         _stub = types.ModuleType(_mod_name)
         if _rel_path is not None:
-            _stub.__path__ = [str(ROOT / _rel_path)]  # type: ignore[attr-defined]
+            _stub.__path__ = [str(ROOT / _rel_path)]
         sys.modules[_mod_name] = _stub
 
+
+
+
 # Stub logging_pkg so factory.py can import get_logger without extra deps.
-_logging_config_stub = sys.modules["src.shared.python.logging_pkg.logging_config"]
+_logging_config_stub = sys.modules.setdefault("src.shared.python.logging_pkg.logging_config", types.ModuleType("src.shared.python.logging_pkg.logging_config"))
 _logging_config_stub.get_logger = logging.getLogger  # type: ignore[attr-defined]
 _logging_config_stub.setup_logging = lambda *a, **kw: None  # type: ignore[attr-defined]
 
-# Pre-register adapter sub-modules with sentinel class attrs so patch() can
-# replace them.  The factory uses lazy `from X import Cls` inside create(),
-# so the sub-modules must exist in sys.modules before patch resolves the path.
-_ADAPTER_MODULES = {
-    "src.shared.python.ai.adapters.ollama_adapter": "OllamaAdapter",
-    "src.shared.python.ai.adapters.cline_adapter": "ClineAdapter",
-    "src.shared.python.ai.adapters.bitnet_adapter": "BitnetAdapter",
-}
-for _amod_name, _cls_name in _ADAPTER_MODULES.items():
-    if _amod_name not in sys.modules:
-        _amod = types.ModuleType(_amod_name)
-        setattr(_amod, _cls_name, MagicMock)
-        sys.modules[_amod_name] = _amod
+# Stub ai.config so adapters can import without a real environment.
+_env_stub = sys.modules.get("src.shared.python.config.environment")
+if not isinstance(_env_stub, types.ModuleType):
+    _env_stub = types.ModuleType("src.shared.python.config.environment")
+    sys.modules["src.shared.python.config.environment"] = _env_stub
+_env_stub.get_env = lambda key, default=None, required=False: default
+_env_stub.get_env_float = lambda key, default=0.0: float(default)
+
+# The adapter sub-modules can now be safely imported natively
+# without artificial module pollution.
+import src.shared.python.ai.adapters.ollama_adapter  # noqa: F401
+import src.shared.python.ai.adapters.cline_adapter  # noqa: F401
+import src.shared.python.ai.adapters.bitnet_adapter  # noqa: F401
 
 # Now safe to import the factory (bypasses the broken ai/__init__.py).
 from src.shared.python.ai.adapters.factory import AdapterFactory  # noqa: E402

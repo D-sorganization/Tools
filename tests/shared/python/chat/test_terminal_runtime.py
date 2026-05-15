@@ -281,7 +281,6 @@ def test_runtime_without_base_env_excludes_credentials(
     assert "OPENAI_API_KEY" not in launch_env
 
 
-
 def test_runtime_with_explicit_base_env_passes_credentials_through(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
