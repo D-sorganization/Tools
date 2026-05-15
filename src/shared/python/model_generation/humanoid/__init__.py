@@ -6,18 +6,18 @@ unified model_generation package.
 
 try:
     from humanoid_character_builder import (
+        DE_LEVA_DATA,
+        HUMANOID_JOINTS,
+        HUMANOID_SEGMENTS,
+        PRESET_NAMES,
         AnthropometryData,
         BodyParameters,
         BuildType,
         CharacterBuilder,
         CharacterBuildResult,
-        DE_LEVA_DATA,
         ExportOptions,
         GenderModel,
-        HUMANOID_JOINTS,
-        HUMANOID_SEGMENTS,
         JointDefinition,
-        PRESET_NAMES,
         SegmentDefinition,
         SegmentMeshInfo,
         quick_build,
@@ -37,6 +37,13 @@ try:
         GenderModel,
         SegmentParameters,
     )
+    from humanoid_character_builder.mesh import (
+        InertiaMode,
+        InertiaResult,
+        MeshInertiaCalculator,
+        PrimitiveInertiaCalculator,
+        PrimitiveShape,
+    )
     from humanoid_character_builder.presets.loader import (
         get_preset_info,
         list_available_presets,
@@ -51,13 +58,6 @@ try:
     from humanoid_character_builder.urdf import (
         HumanoidURDFGenerator,
         URDFGeneratorConfig,
-    )
-    from humanoid_character_builder.mesh import (
-        InertiaMode,
-        InertiaResult,
-        MeshInertiaCalculator,
-        PrimitiveInertiaCalculator,
-        PrimitiveShape,
     )
 except ImportError:  # pragma: no cover
     pass

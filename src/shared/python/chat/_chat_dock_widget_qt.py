@@ -29,11 +29,14 @@ from typing import Any
 from PyQt6.QtCore import Qt, QTimer, QUrl, pyqtSignal
 from PyQt6.QtWebSockets import QWebSocket
 from PyQt6.QtWidgets import (
+    QApplication,
     QComboBox,
     QDockWidget,
+    QFileDialog,
     QFrame,
     QHBoxLayout,
     QLabel,
+    QMenu,
     QPlainTextEdit,
     QPushButton,
     QScrollArea,
@@ -117,7 +120,25 @@ class ChatMessageBubble(QFrame):
         ai_style = f"font-size: 10px; font-weight: bold; color: {ai_color};"
         role_label = QLabel("You" if role == "user" else "AI")
         role_label.setStyleSheet(user_style if role == "user" else ai_style)
-        layout.addWidget(role_label)
+
+        header_row = QHBoxLayout()
+        header_row.setContentsMargins(0, 0, 0, 0)
+        header_row.addWidget(role_label)
+        header_row.addStretch()
+
+        self._copy_btn = QPushButton("Copy")
+        self._copy_btn.setToolTip("Copy message to clipboard")
+        self._copy_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        self._copy_btn.setStyleSheet(
+            "QPushButton { background-color: transparent; "
+            f"color: {colors.get('text_secondary', '#888')}; "
+            "border: none; font-size: 10px; padding: 0px; }"
+            f"QPushButton:hover {{ color: {colors.get('text', '#e0e0e0')}; }}"
+        )
+        self._copy_btn.clicked.connect(self._copy_to_clipboard)
+        header_row.addWidget(self._copy_btn)
+
+        layout.addLayout(header_row)
 
         # Content
         self._content_label = QLabel(content)
@@ -144,6 +165,11 @@ class ChatMessageBubble(QFrame):
             raise ValueError("text must be provided")
         self._content += text
         self._content_label.setText(self._content)
+
+    def _copy_to_clipboard(self) -> None:
+        clipboard = QApplication.clipboard()
+        if clipboard is not None:
+            clipboard.setText(self._content)
 
 
 class ChatDockWidget(QDockWidget):
@@ -251,6 +277,26 @@ class ChatDockWidget(QDockWidget):
         self._status_label = QLabel("Connecting...")
         self._status_label.setStyleSheet(f"color: {text_secondary}; font-size: 10px;")
         status_row.addWidget(self._status_label, stretch=1)
+
+        self._tools_btn = QPushButton("Tools")
+        self._tools_btn.setToolTip("Chat tools and actions")
+        self._tools_menu = QMenu(self)
+        self._action_copy_thread = self._tools_menu.addAction("Copy Entire Thread")
+        self._action_export_thread = self._tools_menu.addAction("Export to Markdown...")
+        self._action_condense_thread = self._tools_menu.addAction("Condense Thread")
+        self._action_review_thread = self._tools_menu.addAction(
+            "Request Agent Review..."
+        )
+        if self._action_copy_thread is not None:
+            self._action_copy_thread.triggered.connect(self._copy_entire_thread)
+        if self._action_export_thread is not None:
+            self._action_export_thread.triggered.connect(self._export_to_markdown)
+        if self._action_condense_thread is not None:
+            self._action_condense_thread.triggered.connect(self._condense_thread)
+        if self._action_review_thread is not None:
+            self._action_review_thread.triggered.connect(self._request_review)
+        self._tools_btn.setMenu(self._tools_menu)
+        status_row.addWidget(self._tools_btn)
 
         self._close_btn = QPushButton("Close")
         self._close_btn.setToolTip("Close chat")
@@ -543,6 +589,10 @@ class ChatDockWidget(QDockWidget):
             self._on_terminal_input(text)
             return
 
+        if text.startswith("/"):
+            self._handle_slash_command(text)
+            return
+
         self._input_edit.clear()
         self._add_bubble("user", text)
 
@@ -554,6 +604,28 @@ class ChatDockWidget(QDockWidget):
             {
                 "action": "send",
                 "message": text,
+                "app_context": self._app_context,
+            }
+        )
+
+    def _handle_slash_command(self, text: str) -> None:
+        """Handle UI-driven slash commands like /lint or /tests."""
+        parts = text.split()
+        cmd = parts[0][1:].lower()
+
+        self._input_edit.clear()
+        self._add_bubble("user", text)
+
+        self._is_streaming = True
+        self._send_btn.setEnabled(False)
+        self._current_bubble = self._add_bubble(
+            "assistant", f"Starting workflow: {cmd}..."
+        )
+
+        self._send_ws(
+            {
+                "action": "skill_invoke",
+                "skill_id": cmd,
                 "app_context": self._app_context,
             }
         )
@@ -640,8 +712,10 @@ class ChatDockWidget(QDockWidget):
 
     def _on_upload(self) -> None:
         """Prompt user to attach a file and send it to the server."""
-        from PyQt6.QtWidgets import QFileDialog
         import base64
+
+        from PyQt6.QtWidgets import QFileDialog
+
         file_path, _ = QFileDialog.getOpenFileName(
             self, "Attach File", "", "All Files (*)"
         )
@@ -649,12 +723,14 @@ class ChatDockWidget(QDockWidget):
             path = Path(file_path)
             try:
                 data = path.read_bytes()
-                b64 = base64.b64encode(data).decode('ascii')
-                self._send_ws({
-                    "action": "file_upload",
-                    "filename": path.name,
-                    "content": b64,
-                })
+                b64 = base64.b64encode(data).decode("ascii")
+                self._send_ws(
+                    {
+                        "action": "file_upload",
+                        "filename": path.name,
+                        "content": b64,
+                    }
+                )
                 self._add_bubble("user", f"[Uploaded file: {path.name}]")
             except Exception as e:
                 self._status_label.setText(f"Upload failed: {e}")
@@ -662,26 +738,30 @@ class ChatDockWidget(QDockWidget):
     def _on_screenshot(self) -> None:
         """Capture application screenshot and send to server."""
         import base64
+
+        from PyQt6.QtCore import QBuffer, QByteArray, QIODevice
         from PyQt6.QtWidgets import QApplication
-        from PyQt6.QtCore import QByteArray, QBuffer, QIODevice
+
         app = QApplication.instance()
         if not app:
             return
-        
+
         parent = self.parentWidget()
         pixmap = parent.grab() if parent else app.primaryScreen().grabWindow(0)
-        
+
         ba = QByteArray()
         buffer = QBuffer(ba)
         buffer.open(QIODevice.OpenModeFlag.WriteOnly)
         pixmap.save(buffer, "PNG")
-        b64 = base64.b64encode(ba.data()).decode('ascii')
-        
-        self._send_ws({
-            "action": "file_upload",
-            "filename": "screenshot.png",
-            "content": b64,
-        })
+        b64 = base64.b64encode(ba.data()).decode("ascii")
+
+        self._send_ws(
+            {
+                "action": "file_upload",
+                "filename": "screenshot.png",
+                "content": b64,
+            }
+        )
         self._add_bubble("user", "[Captured screenshot]")
 
     def _on_mode_changed(self) -> None:
@@ -766,6 +846,70 @@ class ChatDockWidget(QDockWidget):
                 else None
             ),
         )
+
+    def _get_thread_markdown(self) -> str:
+        lines = []
+        for i in range(self._message_layout.count()):
+            item = self._message_layout.itemAt(i)
+            if item:
+                widget = item.widget()
+                if isinstance(widget, ChatMessageBubble):
+                    role_str = "You" if widget._role == "user" else "AI"
+                    lines.append(f"**{role_str}**:\\n\\n{widget._content}\\n")
+        return "\\n".join(lines)
+
+    def _copy_entire_thread(self) -> None:
+        clipboard = QApplication.clipboard()
+        if clipboard is not None:
+            clipboard.setText(self._get_thread_markdown())
+            self._status_label.setText("Thread copied to clipboard")
+            self._status_label.setStyleSheet("color: #3fb950; font-size: 10px;")
+
+    def _export_to_markdown(self) -> None:
+        path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Export Chat Thread",
+            str(self._project_root / "chat_export.md"),
+            "Markdown Files (*.md);;All Files (*)",
+        )
+        if path:
+            try:
+                Path(path).write_text(self._get_thread_markdown(), encoding="utf-8")
+                self._status_label.setText("Exported successfully")
+                self._status_label.setStyleSheet("color: #3fb950; font-size: 10px;")
+            except OSError as exc:
+                self._status_label.setText(f"Export error: {exc}")
+                self._status_label.setStyleSheet("color: #f85149; font-size: 10px;")
+
+    def _condense_thread(self) -> None:
+        self._status_label.setText("Condensing thread...")
+        self._send_ws(
+            {
+                "action": "condense",
+                "app_context": self._app_context,
+            }
+        )
+
+    def _request_review(self) -> None:
+        from PyQt6.QtWidgets import QInputDialog
+
+        provider, ok = QInputDialog.getItem(
+            self,
+            "Select Review Provider",
+            "Provider:",
+            ["claude-3-opus", "gpt-4-turbo", "gemini-1.5-pro", "local-llama3"],
+            0,
+            False,
+        )
+        if ok and provider:
+            self._status_label.setText(f"Requesting review from {provider}...")
+            self._send_ws(
+                {
+                    "action": "request_review",
+                    "provider": provider,
+                    "app_context": self._app_context,
+                }
+            )
 
     # ── Cleanup ──────────────────────────────────────────────────────
 

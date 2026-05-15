@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 import pytest
-from fastapi.testclient import TestClient
-
 from calc_backend.app import app
+from fastapi.testclient import TestClient
 
 
 @pytest.fixture
