@@ -20,6 +20,53 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
+GENERIC_SYSTEM_PROMPT = (
+    "You are a helpful AI assistant integrated into a desktop application.\n\n"
+    "Guidelines:\n"
+    "1. Use available tools to perform analyses — never fabricate numerical results\n"
+    "2. Explain concepts clearly at the user's level\n"
+    "3. Validate claims before presenting them\n"
+    "4. Guide users through workflows step by step\n"
+    "5. Acknowledge uncertainty and cite limitations"
+)
+
+GOLF_MODELING_SYSTEM_PROMPT = (
+    "You are an AI assistant for the Golf Modeling Suite, a research-grade "
+    "biomechanics simulation platform.\n\n"
+    "Your role is to help users analyze golf swings using advanced physics "
+    "simulations across multiple engines (MuJoCo, Drake, Pinocchio).\n\n"
+    "Guidelines:\n"
+    "1. Use tools to perform analyses — never fabricate numerical results\n"
+    "2. Explain concepts at the user's expertise level\n"
+    "3. Validate scientific claims before presenting them\n"
+    "4. Guide users through workflows step by step\n"
+    "5. Acknowledge uncertainty and cite limitations\n"
+    "6. Be precise about physical units (SI: m, kg, s, rad, N, N·m)"
+)
+
+SYSTEM_PROMPTS: dict[str | None, str] = {
+    "upstream_drift": GOLF_MODELING_SYSTEM_PROMPT,
+    "tools": GENERIC_SYSTEM_PROMPT,
+    None: GENERIC_SYSTEM_PROMPT,
+    "": GENERIC_SYSTEM_PROMPT,
+}
+
+
+def get_prompt(app_context: str | None) -> str:
+    """Return the system prompt string for the given application context.
+
+    Falls back to the generic, brand-neutral prompt for unknown contexts.
+
+    Args:
+        app_context: Application context key (e.g., ``"upstream_drift"``).
+            ``None`` and ``""`` both return the generic prompt.
+
+    Returns:
+        System prompt string appropriate for the application context.
+    """
+    return SYSTEM_PROMPTS.get(app_context or "", GENERIC_SYSTEM_PROMPT)
+
+
 # ── Application context registry ────────────────────────────────────
 
 _APP_CONTEXTS: dict[str, dict[str, Any]] = {

@@ -37,6 +37,7 @@ from src.shared.python.ai.exceptions import (
     AIRateLimitError,
     AITimeoutError,
 )
+from src.shared.python.ai.system_prompts import get_prompt
 from src.shared.python.ai.types import (
     AgentChunk,
     AgentResponse,
@@ -431,7 +432,7 @@ class AnthropicAdapter(BaseAgentAdapter):
         return result
 
     def _build_system_message(self, context: ConversationContext) -> str:
-        """Build Anthropic-optimized system message.
+        """Build application-context-aware system message.
 
         Args:
             context: Current conversation context.
@@ -445,26 +446,13 @@ class AnthropicAdapter(BaseAgentAdapter):
             raise ValueError("context must be provided")
         expertise = context.user_expertise.name.lower()
         context_instructions = self.build_context_instruction_section(context)
+        app_context = context.metadata.get("app_context") if context.metadata else None
+        base_prompt = get_prompt(app_context if isinstance(app_context, str) else None)
 
         return (
-            f"You are Claude, an AI assistant for the Golf Modeling Suite, a "
-            f"research-grade biomechanics simulation platform for analyzing "
-            f"golf swings.\n\n"
+            f"{base_prompt}\n\n"
             f"Current user expertise level: {expertise}\n\n"
-            f"Your capabilities include:\n"
-            f"- Analyzing C3D motion capture data\n"
-            f"- Running physics simulations (MuJoCo, Drake, Pinocchio)\n"
-            f"- Computing inverse dynamics and joint torques\n"
-            f"- Performing drift-control decomposition\n"
-            f"- Generating visualizations and reports\n\n"
-            f"{context_instructions}\n\n"
-            f"Guidelines:\n"
-            f"1. Use tools to perform analyses - never fabricate numerical results\n"
-            f"2. Explain concepts at the {expertise} level\n"
-            f"3. Validate scientific claims before presenting them\n"
-            f"4. Guide users through workflows step by step\n"
-            f"5. Acknowledge uncertainty and cite limitations\n"
-            f"6. Be precise about physical units (SI: m, kg, s, rad, N, N·m)"
+            f"{context_instructions}"
         )
 
     def _parse_response(self, response: Any) -> AgentResponse:

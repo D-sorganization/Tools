@@ -22,6 +22,7 @@ from src.shared.python.ai.memory_manager import (
     build_memory_prompt_section,
     load_agents_md,
 )
+from src.shared.python.ai.system_prompts import get_prompt
 from src.shared.python.ai.types import (
     AgentChunk,
     AgentResponse,
@@ -234,6 +235,7 @@ class BaseAgentAdapter(ABC):
         tools: list[ToolDeclaration],
         expertise_level: str = "beginner",
         context: ConversationContext | None = None,
+        app_context: str | None = None,
     ) -> str:
         """Build a system prompt including tool context.
 
@@ -257,6 +259,7 @@ class BaseAgentAdapter(ABC):
             f"- {tool.name}: {tool.description}" for tool in tools
         )
         memory_section = self.build_context_instruction_section(context)
+        base_prompt = get_prompt(app_context)
 
         # Response style instructions (Tools #2750)
         style = (context.response_style if context else "standard").lower()
@@ -278,20 +281,10 @@ class BaseAgentAdapter(ABC):
             )
 
         return (
-            f"You are an AI assistant for the Golf Modeling Suite, a research-grade "
-            f"biomechanics simulation platform.\n\n"
-            f"Your role is to help users analyze golf swings using advanced physics "
-            f"simulations across multiple engines (MuJoCo, Drake, Pinocchio).\n\n"
-            f"User expertise level: {expertise_level}\n"
+            f"{base_prompt}\n\n"
             f"Response style: {style_instructions}\n\n"
             f"{memory_section}\n\n"
-            f"Available tools:\n{tool_descriptions}\n\n"
-            f"Guidelines:\n"
-            f"1. Always validate scientific claims before presenting them\n"
-            f"2. Explain concepts at the user's expertise level\n"
-            f"3. Use tools to perform analyses rather than making up results\n"
-            f"4. Cite sources and acknowledge uncertainty\n"
-            f"5. Guide users through workflows step by step"
+            f"Available tools:\n{tool_descriptions}"
         )
 
     def build_context_instruction_section(
