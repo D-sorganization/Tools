@@ -361,3 +361,30 @@ class TestChatDockWidget:
         assert "test assistant message" in text
 
         widget.close()
+
+    def test_get_thread_markdown_uses_real_newlines(self, qtbot):
+        """_get_thread_markdown must use real newlines (chr(10)), not literal \\n."""
+        from chat.chat_dock_widget import ChatDockWidget
+
+        ChatDockWidget._shared_session_id = None
+        widget = ChatDockWidget(app_name="test_app")
+        _track_widget(qtbot, widget)
+
+        widget._add_bubble("user", "Hello world")
+        widget._add_bubble("assistant", "Hi there")
+        widget._add_bubble("user", "How are you?")
+
+        markdown = widget._get_thread_markdown()
+
+        # Must NOT contain the literal backslash-n sequence
+        assert "\\n" not in markdown, "Found literal \\n — newlines are escaped"
+        # Must contain real newline characters
+        assert chr(10) in markdown, "No real newline (chr(10)) found in markdown output"
+        # Content must appear correctly separated
+        assert "**You**" in markdown
+        assert "**AI**" in markdown
+        assert "Hello world" in markdown
+        assert "Hi there" in markdown
+        assert "How are you?" in markdown
+
+        widget.close()
