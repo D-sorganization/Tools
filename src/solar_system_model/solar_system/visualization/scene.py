@@ -362,7 +362,7 @@ class SolarSystemScene(SceneEventMixin, SceneRenderMixin):
 
     def get_body_by_name(self, name: str) -> CelestialBody | None:
         """Retrieve a celestial body by its name."""
-        if not (name is not None):
+        if name is None:
             raise ValueError("name must be provided")
         if name == "Sun":
             return self.sun
@@ -379,7 +379,7 @@ class SolarSystemScene(SceneEventMixin, SceneRenderMixin):
 
     def select_body(self, body: CelestialBody) -> None:
         """Select a celestial body in the scene."""
-        if not (body is not None):
+        if body is None:
             raise ValueError("body must be provided")
         self.selected_body = body
         if self.renderer:
@@ -397,7 +397,7 @@ class SolarSystemScene(SceneEventMixin, SceneRenderMixin):
         departure_date: float | None = None,
     ) -> TransferTrajectory | None:
         """Plan a transfer trajectory between two celestial bodies."""
-        if not (origin_name is not None):
+        if origin_name is None:
             raise ValueError("origin_name must be provided")
         origin = self.get_body_by_name(origin_name)
         destination = self.get_body_by_name(destination_name)
@@ -423,7 +423,7 @@ class SolarSystemScene(SceneEventMixin, SceneRenderMixin):
         self, origin_name: str, destination_name: str
     ) -> dict[str, Any] | None:
         """Get a summary of a potential transfer between two bodies."""
-        if not (origin_name is not None):
+        if origin_name is None:
             raise ValueError("origin_name must be provided")
         origin = self.get_body_by_name(origin_name)
         destination = self.get_body_by_name(destination_name)
@@ -437,7 +437,7 @@ class SolarSystemScene(SceneEventMixin, SceneRenderMixin):
 
     def _on_date_picker_change(self, new_date: datetime) -> None:
         """Handle date changes from the date picker."""
-        if not (new_date is not None):
+        if new_date is None:
             raise ValueError("new_date must be provided")
         if new_date.tzinfo is None:
             new_date = new_date.replace(tzinfo=UTC)
@@ -477,7 +477,7 @@ class SolarSystemScene(SceneEventMixin, SceneRenderMixin):
 
     def _jump_time(self, days: float) -> None:
         """Jump time forward or backward by a number of days."""
-        if not (days is not None):
+        if days is None:
             raise ValueError("days must be provided")
         self.time_manager.advance_days(days)
         self._update_ui_date()
@@ -485,7 +485,7 @@ class SolarSystemScene(SceneEventMixin, SceneRenderMixin):
 
     def _jump_month(self, months: int) -> None:
         """Jump time forward or backward by a number of months."""
-        if not (months is not None):
+        if months is None:
             raise ValueError("months must be provided")
         current_dt = self.time_manager.current_time.datetime_utc
         target_day = current_dt.day
@@ -501,7 +501,7 @@ class SolarSystemScene(SceneEventMixin, SceneRenderMixin):
 
     def _handle_time_nav_action(self, action: str) -> None:
         """Handle time navigation panel button actions."""
-        if not (action is not None):
+        if action is None:
             raise ValueError("action must be provided")
         _TIME_NAV_DISPATCH = {
             "prev_day": lambda: self._jump_time(-1),

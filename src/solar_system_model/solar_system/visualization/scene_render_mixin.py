@@ -51,7 +51,7 @@ class SceneRenderMixin:
 
     def _render_stereo(self, renderer: Any, jd: float) -> None:
         """Render a stereo/VR split-screen frame."""
-        if not (jd is not None):
+        if jd is None:
             raise ValueError("jd must be provided")
         left_eye, right_eye = renderer.camera.stereo_states()
         half_width = renderer.settings.window_width // 2

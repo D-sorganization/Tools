@@ -194,7 +194,7 @@ class InertiaCalculator:
             # Manual values
             calc.compute({"ixx": 0.1, "iyy": 0.1, "izz": 0.05, "mass": 2.0})
         """
-        if not (source is not None):
+        if source is None:
             raise ValueError("source must be provided")
         mode = mode or self.default_mode
         density = density or self.default_density
@@ -252,7 +252,7 @@ class InertiaCalculator:
         Returns:
             InertiaResult
         """
-        if not (mesh_path is not None):
+        if mesh_path is None:
             raise ValueError("mesh_path must be provided")
         mode = (
             InertiaMode.MESH_SPECIFIED_MASS
@@ -400,7 +400,7 @@ class InertiaCalculator:
         mode: InertiaMode,
     ) -> InertiaResult:
         """Compute from mesh file using trimesh."""
-        if not (density is not None):
+        if density is None:
             raise ValueError("density must be provided")
         mesh_path = self._resolve_mesh_path(source)
         cache_key = f"{mesh_path}:{density}:{mass}"
@@ -436,7 +436,7 @@ class InertiaCalculator:
         self, mesh_path: Path, mode: InertiaMode, mass: float | None
     ) -> Any | None:
         """Load mesh from file, returning None on failure."""
-        if not (mesh_path is not None):
+        if mesh_path is None:
             raise ValueError("mesh_path must be provided")
         try:
             import trimesh
@@ -461,7 +461,7 @@ class InertiaCalculator:
         self, mesh: Any, mesh_path: Path, mode: InertiaMode, mass: float | None
     ) -> dict[str, Any] | None:
         """Extract inertia properties from mesh, returning None on failure."""
-        if not (mesh_path is not None):
+        if mesh_path is None:
             raise ValueError("mesh_path must be provided")
         is_watertight = mesh.is_watertight
         if not is_watertight:
@@ -489,7 +489,7 @@ class InertiaCalculator:
         source_path: str,
     ) -> InertiaResult:
         """Scale inertia based on mode and create result."""
-        if not (mesh_props is not None):
+        if mesh_props is None:
             raise ValueError("mesh_props must be provided")
         raw_inertia = mesh_props["raw_inertia"]
         volume = mesh_props["volume"]

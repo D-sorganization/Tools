@@ -89,7 +89,7 @@ class DataProcessorGUI(ctk.CTk):  # type: ignore[attr-defined]
 
     def _set_cursor_recursive(self, widget: Any, cursor: str) -> None:
         """Set cursor recursively for widget and all children."""
-        if not (cursor is not None):
+        if cursor is None:
             raise ValueError("cursor must be provided")
         try:
             widget.configure(cursor=cursor)
@@ -782,7 +782,7 @@ class DataProcessorGUI(ctk.CTk):  # type: ignore[attr-defined]
 
     def update_status(self, message: str) -> None:
         """Update status bar."""
-        if not (message is not None):
+        if message is None:
             raise ValueError("message must be provided")
         self.status_label.configure(text=message)
         logger.debug(f"Status: {message}")

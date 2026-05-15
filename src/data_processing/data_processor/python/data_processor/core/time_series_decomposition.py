@@ -132,7 +132,7 @@ class TimeSeriesDecomposer:
         Returns:
             SeasonalityDetectionResult with detected periods
         """
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         data = np.asarray(data, dtype=np.float64)
         n = len(data)
@@ -190,7 +190,7 @@ class TimeSeriesDecomposer:
         Returns:
             Trend component array
         """
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         data = np.asarray(data, dtype=np.float64)
 
@@ -233,7 +233,7 @@ class TimeSeriesDecomposer:
         Returns:
             Seasonal component array
         """
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         data = np.asarray(data, dtype=np.float64)
         n = len(data)
@@ -281,7 +281,7 @@ class TimeSeriesDecomposer:
         Returns:
             DecompositionResult with multiple seasonal components
         """
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         data = np.asarray(data, dtype=np.float64)
         n = len(data)
@@ -343,7 +343,7 @@ class TimeSeriesDecomposer:
         Returns:
             Dictionary with forecasted components and combined forecast
         """
-        if not (result is not None):
+        if result is None:
             raise ValueError("result must be provided")
         n = len(result.observed)
 
@@ -393,7 +393,7 @@ class TimeSeriesDecomposer:
         Returns:
             Dictionary with anomaly information
         """
-        if not (result is not None):
+        if result is None:
             raise ValueError("result must be provided")
         residuals = result.residual
         mean = np.nanmean(residuals)
@@ -425,7 +425,7 @@ class TimeSeriesDecomposer:
     def _stl_decompose(self, data: np.ndarray, period: int) -> DecompositionResult:
         """STL decomposition implementation."""
         # Initial trend using moving average
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         trend = moving_average(data, period)
 
@@ -463,7 +463,7 @@ class TimeSeriesDecomposer:
         model: SeasonalModel,
     ) -> DecompositionResult:
         """Classical decomposition."""
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         n = len(data)
 
@@ -517,7 +517,7 @@ class TimeSeriesDecomposer:
     def _ma_decompose(self, data: np.ndarray, period: int) -> DecompositionResult:
         """Moving average based decomposition."""
         # Trend
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         trend = moving_average(data, period)
 
@@ -543,7 +543,7 @@ class TimeSeriesDecomposer:
     def _lowess_decompose(self, data: np.ndarray, period: int) -> DecompositionResult:
         """LOWESS-based decomposition."""
         # Trend using LOWESS
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         trend = lowess_smooth(data, frac=0.3)
 
@@ -571,7 +571,7 @@ class TimeSeriesDecomposer:
     ) -> DecompositionResult:
         """Hodrick-Prescott filter decomposition."""
         # Trend using HP filter
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         trend = hp_filter(data, self.config.hp_lambda)
 
@@ -597,7 +597,7 @@ class TimeSeriesDecomposer:
     def _calculate_metrics(self, result: DecompositionResult) -> DecompositionResult:
         """Calculate quality metrics for decomposition."""
         # Variance of detrended data
-        if not (result is not None):
+        if result is None:
             raise ValueError("result must be provided")
         detrended_var = np.var(result.observed - result.trend)
         residual_var = np.var(result.residual)
@@ -645,7 +645,7 @@ def decompose_time_series(
         >>> result = decompose_time_series(data, period=25)
         >>> print(f"Trend strength: {result.trend_strength:.2f}")
     """
-    if not (data is not None):
+    if data is None:
         raise ValueError("data must be provided")
     method_map = {
         "stl": DecompositionMethod.STL,

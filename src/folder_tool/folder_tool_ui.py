@@ -106,7 +106,7 @@ class UICreationMixin:
 
     def _load_png_fallback(self, base_dir: str) -> None:
         """Loads PNG icon as fallback when ICO is not available."""
-        if not (base_dir is not None):
+        if base_dir is None:
             raise ValueError("base_dir must be provided")
         png_path = Path(base_dir) / "paper_plane_icon.png"
         if Path(png_path).exists():
@@ -212,7 +212,7 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the source widgets
         """
-        if not (parent is not None):
+        if parent is None:
             raise ValueError("parent must be provided")
         self.source_frame = ttk.LabelFrame(
             parent,
@@ -263,7 +263,7 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the destination widgets
         """
-        if not (parent is not None):
+        if parent is None:
             raise ValueError("parent must be provided")
         self.dest_frame = ttk.LabelFrame(
             parent,
@@ -289,7 +289,7 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the filtering widgets
         """
-        if not (parent is not None):
+        if parent is None:
             raise ValueError("parent must be provided")
         filter_frame = ttk.LabelFrame(
             parent,
@@ -333,7 +333,7 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the preprocessing widgets
         """
-        if not (parent is not None):
+        if parent is None:
             raise ValueError("parent must be provided")
         self.pre_process_frame = ttk.LabelFrame(
             parent,
@@ -359,7 +359,7 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the main operation widgets
         """
-        if not (parent is not None):
+        if parent is None:
             raise ValueError("parent must be provided")
         self.mode_frame = ttk.LabelFrame(
             parent,
@@ -418,7 +418,7 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the organization widgets
         """
-        if not (parent is not None):
+        if parent is None:
             raise ValueError("parent must be provided")
         org_frame = ttk.LabelFrame(
             parent,
@@ -444,7 +444,7 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the postprocessing widgets
         """
-        if not (parent is not None):
+        if parent is None:
             raise ValueError("parent must be provided")
         self.post_process_frame = ttk.LabelFrame(
             parent,
@@ -465,7 +465,7 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the output options widgets
         """
-        if not (parent is not None):
+        if parent is None:
             raise ValueError("parent must be provided")
         output_frame = ttk.LabelFrame(parent, text="8. Output Options", padding="10")
         output_frame.pack(fill=tk.X, pady=5)
@@ -482,7 +482,7 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the advanced options widgets
         """
-        if not (parent is not None):
+        if parent is None:
             raise ValueError("parent must be provided")
         advanced_frame = ttk.LabelFrame(
             parent,
@@ -508,7 +508,7 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the progress widgets
         """
-        if not (parent is not None):
+        if parent is None:
             raise ValueError("parent must be provided")
         progress_frame = ttk.LabelFrame(parent, text="Progress", padding="10")
         progress_frame.pack(fill=tk.X, pady=5)
@@ -530,7 +530,7 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the run button
         """
-        if not (parent is not None):
+        if parent is None:
             raise ValueError("parent must be provided")
         button_frame = ttk.Frame(parent)
         button_frame.pack(fill=tk.X, pady=(10, 5))

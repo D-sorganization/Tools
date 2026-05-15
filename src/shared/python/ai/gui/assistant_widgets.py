@@ -38,9 +38,9 @@ class MessageWidget(QFrame):
         timestamp: datetime | None = None,
         parent: QWidget | None = None,
     ) -> None:
-        if not (role is not None):
+        if role is None:
             raise ValueError("role must be provided")
-        if not (role is not None):
+        if role is None:
             raise ValueError("role must be provided")
         super().__init__(parent)
         self._role = role
@@ -143,18 +143,18 @@ class MessageWidget(QFrame):
 
     def append_content(self, text: str) -> None:
         """Append content to the message for streaming."""
-        if not (text is not None):
+        if text is None:
             raise ValueError("text must be provided")
-        if not (text is not None):
+        if text is None:
             raise ValueError("text must be provided")
         self._content += text
         self._content_label.setMarkdown(self._content)
 
     def set_content(self, text: str) -> None:
         """Set message content."""
-        if not (text is not None):
+        if text is None:
             raise ValueError("text must be provided")
-        if not (text is not None):
+        if text is None:
             raise ValueError("text must be provided")
         self._content = text
         self._content_label.setMarkdown(self._content)
@@ -178,9 +178,9 @@ class StreamWorker(QThread):
         context: ConversationContext,
         tools: list[Any],
     ) -> None:
-        if not (adapter is not None):
+        if adapter is None:
             raise ValueError("adapter must be provided")
-        if not (adapter is not None):
+        if adapter is None:
             raise ValueError("adapter must be provided")
         super().__init__()
         self._adapter = adapter

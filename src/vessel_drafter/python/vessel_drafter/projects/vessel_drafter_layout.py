@@ -58,7 +58,7 @@ def _color_from_hex(color_hex: str) -> Color:
 
 
 def _apply_style(shape: Any, label: str, color_hex: str) -> Any:
-    if not (label is not None):
+    if label is None:
         raise ValueError("label must be provided")
     shape.label = label
     shape.color = _color_from_hex(color_hex)
@@ -74,7 +74,7 @@ def _build_revolved_profile(
     label: str,
     color_hex: str,
 ) -> Any:
-    if not (half_profile is not None):
+    if half_profile is None:
         raise ValueError("half_profile must be provided")
     with BuildSketch(Plane.XZ) as sketch:
         with BuildLine():
@@ -115,7 +115,7 @@ def _build_electrode(
     placement: VesselElectrodePlacement,
     layout: VesselDrafterLayout,
 ) -> Any:
-    if not (placement is not None):
+    if placement is None:
         raise ValueError("placement must be provided")
     direction_x = cos(placement.angle_radians)
     direction_y = sin(placement.angle_radians)
@@ -148,7 +148,7 @@ def _build_side_port_cutter(
     port: VesselSidePort,
     layout: VesselDrafterLayout,
 ) -> Any:
-    if not (port is not None):
+    if port is None:
         raise ValueError("port must be provided")
     direction_x = cos(port.normalized_clock_angle_radians)
     direction_y = sin(port.normalized_clock_angle_radians)
@@ -174,7 +174,7 @@ def _build_lid_port_cutter(
     port: VesselLidPort,
     layout: VesselDrafterLayout,
 ) -> Any:
-    if not (port is not None):
+    if port is None:
         raise ValueError("port must be provided")
     direction_x = cos(port.normalized_clock_angle_radians)
     direction_y = sin(port.normalized_clock_angle_radians)

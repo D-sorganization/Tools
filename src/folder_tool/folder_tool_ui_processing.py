@@ -56,7 +56,7 @@ class UIProcessingMixin:
             tkinter.TclError: If Tkinter widget creation fails
             Exception: If dialog creation fails for other reasons
         """
-        if not (title is not None):
+        if title is None:
             raise ValueError("title must be provided")
         content = self._validate_dialog_inputs(title, content)
         logger.info(f"Creating text dialog: '{title}' with {len(content)} characters")
@@ -141,7 +141,7 @@ class UIProcessingMixin:
     @staticmethod
     def _create_text_area(dialog: tk.Toplevel, content: str) -> tk.Text:
         """Create the scrollable text area and insert content."""
-        if not (dialog is not None):
+        if dialog is None:
             raise ValueError("dialog must be provided")
         text_frame = ttk.Frame(dialog)
         text_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
@@ -181,7 +181,7 @@ class UIProcessingMixin:
     @staticmethod
     def _create_dialog_buttons(dialog: tk.Toplevel, content: str) -> ttk.Button:
         """Create Close and Copy All buttons. Returns close_button for focus."""
-        if not (dialog is not None):
+        if dialog is None:
             raise ValueError("dialog must be provided")
         button_frame = ttk.Frame(dialog)
         button_frame.pack(fill=tk.X, padx=10, pady=(0, 10))
@@ -209,7 +209,7 @@ class UIProcessingMixin:
         dialog: tk.Toplevel, dialog_width: int, dialog_height: int
     ) -> None:
         """Set focus, bind keys, and wait for dialog to close."""
-        if not (dialog is not None):
+        if dialog is None:
             raise ValueError("dialog must be provided")
         dialog.focus_set()
         dialog.bind("<Escape>", lambda event: dialog.destroy())
@@ -222,7 +222,7 @@ class UIProcessingMixin:
     @staticmethod
     def _show_fallback_messagebox(title: str, content: str) -> None:
         """Show a simple message box as fallback when dialog creation fails."""
-        if not (title is not None):
+        if title is None:
             raise ValueError("title must be provided")
         fallback_content = (
             content[:MAX_FALLBACK_CONTENT_SIZE] + "..."

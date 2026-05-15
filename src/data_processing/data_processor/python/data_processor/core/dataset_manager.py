@@ -135,7 +135,7 @@ class DatasetHistory:
     def add_version(self, version: DatasetVersion) -> None:
         """Add a new version, truncating any redo history."""
         # Remove any versions after current (truncate redo history)
-        if not (version is not None):
+        if version is None:
             raise ValueError("version must be provided")
         self.versions = self.versions[: self.current_index + 1]
         self.versions.append(version)
@@ -278,7 +278,7 @@ class DatasetManager:
         Returns:
             Dataset ID for the loaded dataset
         """
-        if not (df is not None):
+        if df is None:
             raise ValueError("df must be provided")
         require(not df.empty, "df must not be empty")
         require(
@@ -399,7 +399,7 @@ class DatasetManager:
 
     def get_dataset(self, dataset_id: str) -> DatasetVersion | None:
         """Get a specific dataset by ID."""
-        if not (dataset_id is not None):
+        if dataset_id is None:
             raise ValueError("dataset_id must be provided")
         history = self._datasets.get(dataset_id)
         return history.current if history else None
@@ -558,7 +558,7 @@ class DatasetManager:
 
     def _read_file(self, path: Path) -> pd.DataFrame:
         """Read data from various file formats."""
-        if not (path is not None):
+        if path is None:
             raise ValueError("path must be provided")
         suffix = path.suffix.lower()
 
@@ -580,7 +580,7 @@ class DatasetManager:
 
     def _write_file(self, df: pd.DataFrame, path: Path, format: str) -> None:
         """Write data to various file formats."""
-        if not (df is not None):
+        if df is None:
             raise ValueError("df must be provided")
         format = format.lower()
 

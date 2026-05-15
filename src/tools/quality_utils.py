@@ -81,7 +81,7 @@ MAGIC_NUMBERS: list[tuple[Pattern, str]] = [
 
 def is_legitimate_pass_context(lines: list[str], line_num: int) -> bool:
     """Check if a pass statement is in a legitimate context."""
-    if not (lines is not None):
+    if lines is None:
         raise ValueError("lines must be provided")
     require(isinstance(lines, list), "lines must be a list")
     require(isinstance(line_num, int), "line_num must be an integer")
@@ -153,7 +153,7 @@ def check_banned_patterns(
     filepath: Path,
 ) -> list[tuple[int, str, str]]:
     """Check for banned patterns in lines."""
-    if not (lines is not None):
+    if lines is None:
         raise ValueError("lines must be provided")
     require(isinstance(lines, list), "lines must be a list of strings")
     require(isinstance(filepath, Path), "filepath must be a Path")
@@ -245,7 +245,7 @@ def strip_comments_from_line(line: str) -> str:
 
 def check_magic_numbers(lines: list[str], filepath: Path) -> list[tuple[int, str, str]]:
     """Check for magic numbers in lines."""
-    if not (lines is not None):
+    if lines is None:
         raise ValueError("lines must be provided")
     require(isinstance(lines, list), "lines must be a list of strings")
     require(isinstance(filepath, Path), "filepath must be a Path")
@@ -269,7 +269,7 @@ def check_magic_numbers(lines: list[str], filepath: Path) -> list[tuple[int, str
 
 def check_ast_issues(content: str, filepath: Path) -> list[tuple[int, str, str]]:
     """Check AST for quality issues."""
-    if not (content is not None):
+    if content is None:
         raise ValueError("content must be provided")
     issues: list[tuple[int, str, str]] = []
     try:

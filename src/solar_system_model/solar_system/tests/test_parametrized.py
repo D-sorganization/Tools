@@ -47,9 +47,9 @@ def test_orbital_period_planets(
     a = semi_major_au * AU
     t = OrbitalMechanics.orbital_period(a, GM["Sun"])
     t_days = t / 86400
-    assert abs(t_days - expected_period_days) < tolerance, (
-        f"{planet_name}: expected ~{expected_period_days}d, got {t_days:.1f}d"
-    )
+    assert (
+        abs(t_days - expected_period_days) < tolerance
+    ), f"{planet_name}: expected ~{expected_period_days}d, got {t_days:.1f}d"
 
 
 @pytest.mark.parametrize(

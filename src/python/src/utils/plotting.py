@@ -147,7 +147,7 @@ def get_colorblind_safe_color(index: int, palette: str = "default") -> str:
     Returns:
         Hex color string
     """
-    if not (index is not None):
+    if index is None:
         raise ValueError("index must be provided")
     color_list = (
         COLORBLIND_SAFE_PALETTE_ALT if palette == "alt" else COLORBLIND_SAFE_PALETTE

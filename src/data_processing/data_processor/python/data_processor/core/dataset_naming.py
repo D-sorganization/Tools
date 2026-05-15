@@ -34,7 +34,7 @@ def generate_dataset_name(
     Returns:
         Generated dataset name (without extension)
     """
-    if not (base_name is not None):
+    if base_name is None:
         raise ValueError("base_name must be provided")
     parts = [base_name]
 
@@ -174,7 +174,7 @@ def generate_timestamped_name(
     Returns:
         Filename with timestamp
     """
-    if not (base_name is not None):
+    if base_name is None:
         raise ValueError("base_name must be provided")
     timestamp = datetime.now(timezone.utc).strftime(timestamp_format)
     name = f"{base_name}_{timestamp}"

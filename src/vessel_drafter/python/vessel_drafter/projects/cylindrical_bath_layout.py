@@ -43,7 +43,7 @@ def _build_radial_electrode(
     placement: RadialElectrodePlacement,
     layout: CylindricalBathLayout,
 ) -> Solid:
-    if not (placement is not None):
+    if placement is None:
         raise ValueError("placement must be provided")
     plane = Plane(
         origin=(

@@ -128,7 +128,7 @@ class _PerturbWorker(QObject):
         simulate_fn: Callable,
         extract_fn: Callable,
     ) -> None:
-        if not (base_coeffs is not None):
+        if base_coeffs is None:
             raise ValueError("base_coeffs must be provided")
         super().__init__()
         self._base_coeffs = base_coeffs
@@ -219,9 +219,9 @@ class PerturbationPanel(QWidget):
             Extracts {'tip_speed_final': float, 'tip_position_final': array}
             from a simulation result.
         """
-        if not (simulate_fn is not None):
+        if simulate_fn is None:
             raise ValueError("simulate_fn must not be None")
-        if not (extract_fn is not None):
+        if extract_fn is None:
             raise ValueError("extract_fn must not be None")
         self._simulate_fn = simulate_fn
         self._extract_fn = extract_fn
@@ -343,7 +343,11 @@ class PerturbationPanel(QWidget):
         fig = Figure(figsize=(4, 2.5), facecolor="#12121e")
         _tm = get_theme_manager()
         apply_plot_theme(fig, _tm.get_current_colors())
-        _tm.themeChanged.connect(lambda name: apply_plot_theme(fig, _tm.get_theme_colors(name) or _tm.get_current_colors()))
+        _tm.themeChanged.connect(
+            lambda name: apply_plot_theme(
+                fig, _tm.get_theme_colors(name) or _tm.get_current_colors()
+            )
+        )
         self._canvas = FigureCanvasQTAgg(fig)
         self._ax = fig.add_subplot(111)
         self._ax.set_facecolor("#1a1a2e")
@@ -360,9 +364,9 @@ class PerturbationPanel(QWidget):
     # ------------------------------------------------------------------
 
     def _on_run(self) -> None:
-        if not (self._simulate_fn is not None):
+        if self._simulate_fn is None:
             raise ValueError("simulate_fn not set")
-        if not (self._extract_fn is not None):
+        if self._extract_fn is None:
             raise ValueError("extract_fn not set")
 
         seed_val = self._seed_spin.value()
@@ -418,7 +422,7 @@ class PerturbationPanel(QWidget):
         self._status_label.setText("Cancelling…")
 
     def _on_progress(self, trial: int) -> None:
-        if not (trial is not None):
+        if trial is None:
             raise ValueError("trial must be provided")
         n = getattr(self, "_n_trials", 1)
         pct = int(100 * trial / max(n, 1))
@@ -426,7 +430,7 @@ class PerturbationPanel(QWidget):
         self._status_label.setText(f"Trial {trial} / {n}")
 
     def _on_finished(self, results: list) -> None:
-        if not (results is not None):
+        if results is None:
             raise ValueError("results must be provided")
         self._run_btn.setEnabled(True)
         self._cancel_btn.setEnabled(False)
@@ -440,7 +444,7 @@ class PerturbationPanel(QWidget):
         self._status_label.setText(f"Done — {summary['n_trials']} trials completed")
 
     def _on_error(self, msg: str) -> None:
-        if not (msg is not None):
+        if msg is None:
             raise ValueError("msg must be provided")
         self._run_btn.setEnabled(True)
         self._cancel_btn.setEnabled(False)
@@ -452,7 +456,7 @@ class PerturbationPanel(QWidget):
     # ------------------------------------------------------------------
 
     def _display_summary(self, summary: dict) -> None:
-        if not (summary is not None):
+        if summary is None:
             raise ValueError("summary must be provided")
         mean = summary["tip_speed_mean"]
         std = summary["tip_speed_std"]
@@ -472,7 +476,7 @@ class PerturbationPanel(QWidget):
             lbl.setText("—")
 
     def _update_histogram(self, speeds: list[float]) -> None:
-        if not (speeds is not None):
+        if speeds is None:
             raise ValueError("speeds must be provided")
         self._ax.clear()
         self._ax.set_facecolor("#1a1a2e")

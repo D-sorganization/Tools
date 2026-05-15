@@ -255,7 +255,7 @@ class SpectralAnalyzer:
         self, signal: np.ndarray, fs: float | None = None
     ) -> SpectralResult:
         """Compatibility wrapper for FFT computation."""
-        if not (signal is not None):
+        if signal is None:
             raise ValueError("signal must be provided")
         fs = fs or self.config.sampling_freq or 1.0
         freqs, power = self._compute_fft(signal, fs)
@@ -278,7 +278,7 @@ class SpectralAnalyzer:
         self, signal: np.ndarray, fs: float | None = None
     ) -> SpectralResult:
         """Compatibility wrapper for Welch computation."""
-        if not (signal is not None):
+        if signal is None:
             raise ValueError("signal must be provided")
         fs = fs or self.config.sampling_freq or 1.0
         freqs, power = self._compute_welch(signal, fs)
@@ -311,7 +311,7 @@ class SpectralAnalyzer:
         Returns:
             SpectrogramResult with 2D spectrogram
         """
-        if not (signal is not None):
+        if signal is None:
             raise ValueError("signal must be provided")
         signal = np.asarray(signal).flatten()
         fs = sampling_freq or self.config.sampling_freq or 1.0
@@ -371,7 +371,7 @@ class SpectralAnalyzer:
         Returns:
             CoherenceResult with coherence and phase
         """
-        if not (signal1 is not None):
+        if signal1 is None:
             raise ValueError("signal1 must be provided")
         signal1 = np.asarray(signal1).flatten()
         signal2 = np.asarray(signal2).flatten()
@@ -438,7 +438,7 @@ class SpectralAnalyzer:
         Returns:
             Dictionary of band_name -> power
         """
-        if not (result is not None):
+        if result is None:
             raise ValueError("result must be provided")
         band_powers = {}
 
@@ -460,7 +460,7 @@ class SpectralAnalyzer:
         fs: float,
     ) -> tuple[np.ndarray, np.ndarray]:
         """Compute FFT-based power spectrum."""
-        if not (signal is not None):
+        if signal is None:
             raise ValueError("signal must be provided")
         n = len(signal)
 
@@ -499,7 +499,7 @@ class SpectralAnalyzer:
         fs: float,
     ) -> tuple[np.ndarray, np.ndarray]:
         """Compute periodogram."""
-        if not (signal is not None):
+        if signal is None:
             raise ValueError("signal must be provided")
         window = self._get_window(len(signal))
 
@@ -521,7 +521,7 @@ class SpectralAnalyzer:
         fs: float,
     ) -> tuple[np.ndarray, np.ndarray]:
         """Compute Welch's method PSD estimate."""
-        if not (signal is not None):
+        if signal is None:
             raise ValueError("signal must be provided")
         n = len(signal)
         win_len = self.config.window_length or min(256, n // 4)
@@ -549,7 +549,7 @@ class SpectralAnalyzer:
         fs: float,
     ) -> tuple[np.ndarray, np.ndarray]:
         """Compute multitaper PSD estimate."""
-        if not (signal is not None):
+        if signal is None:
             raise ValueError("signal must be provided")
         n = len(signal)
         nfft = self.config.nfft or int(2 ** np.ceil(np.log2(n)))
@@ -588,7 +588,7 @@ class SpectralAnalyzer:
 
     def _get_window(self, length: int) -> np.ndarray:
         """Get window function."""
-        if not (length is not None):
+        if length is None:
             raise ValueError("length must be provided")
         win_type = self.config.window
 
@@ -617,7 +617,7 @@ class SpectralAnalyzer:
         psd: np.ndarray,
     ) -> tuple[np.ndarray, np.ndarray]:
         """Filter to specified frequency range."""
-        if not (freqs is not None):
+        if freqs is None:
             raise ValueError("freqs must be provided")
         mask = np.ones(len(freqs), dtype=bool)
 
@@ -635,7 +635,7 @@ class SpectralAnalyzer:
     ) -> np.ndarray:
         """Find peaks in PSD."""
         # Relative prominence threshold
-        if not (psd is not None):
+        if psd is None:
             raise ValueError("psd must be provided")
         height_threshold = np.max(psd) * prominence
 
@@ -667,7 +667,7 @@ def compute_psd(
     Returns:
         SpectralResult
     """
-    if not (df is not None):
+    if df is None:
         raise ValueError("df must be provided")
     config = SpectralConfig(
         method=SpectralMethod(method),
@@ -695,7 +695,7 @@ def plot_spectrum(
     Returns:
         Matplotlib figure
     """
-    if not (result is not None):
+    if result is None:
         raise ValueError("result must be provided")
     import matplotlib.pyplot as plt
 
@@ -750,7 +750,7 @@ def plot_spectrogram(
     Returns:
         Matplotlib figure
     """
-    if not (result is not None):
+    if result is None:
         raise ValueError("result must be provided")
     import matplotlib.pyplot as plt
 

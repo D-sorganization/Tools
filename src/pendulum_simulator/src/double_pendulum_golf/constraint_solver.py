@@ -224,7 +224,7 @@ def _constraint_acceleration_bias(
 
     This is the acceleration-level bias term from the constraint.
     """
-    if not (q is not None):
+    if q is None:
         raise ValueError("q must be provided")
     eps = 1e-7
     Phi_q_0 = constraint_jacobian(q, params)
@@ -299,7 +299,7 @@ def constraint_violation(state: State, params: GolferParams) -> float:
     -------
     float — ||Phi(q)||_2
     """
-    if not (state is not None):
+    if state is None:
         raise ValueError("state must be provided")
     q = state[:N_DOF]
     Phi = constraint_vector(q, params)
@@ -378,7 +378,7 @@ def project_velocity(
     -------
     qdot_projected : np.ndarray, shape (8,)
     """
-    if not (q is not None):
+    if q is None:
         raise ValueError("q must be provided")
     native_projection = _native_backend.golfer_project_velocity(q, qdot, params)
     if native_projection is not None:

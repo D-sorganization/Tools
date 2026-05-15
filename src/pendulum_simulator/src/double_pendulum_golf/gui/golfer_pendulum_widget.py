@@ -109,7 +109,7 @@ class GolferPendulumWidget(BasePendulumWidget):
 
         Pre: result is not None
         """
-        if not (result is not None):
+        if result is None:
             raise ValueError("GolferSimulationResult must not be None")
         self._result = result
         self._current_idx = 0
@@ -167,7 +167,7 @@ class GolferPendulumWidget(BasePendulumWidget):
         Rebuilds the trail from the precomputed club tip positions so
         scrubbing back and forth always shows a clean path.
         """
-        if not (idx is not None):
+        if idx is None:
             raise ValueError("idx must be provided")
         if self._result is None:
             return
@@ -197,7 +197,7 @@ class GolferPendulumWidget(BasePendulumWidget):
     # ------------------------------------------------------------------
 
     def paintEvent(self, event: object) -> None:
-        if not (event is not None):
+        if event is None:
             raise ValueError("event must be provided")
         self._pixels_per_meter = self._compute_base_scale() * self._zoom
 
@@ -276,7 +276,7 @@ class GolferPendulumWidget(BasePendulumWidget):
 
     def _draw_golfer(self, painter: QPainter) -> None:
         """Draw the full golfer topology."""
-        if not (self._result is not None):
+        if self._result is None:
             raise ValueError("DbC Blocked: Precondition failed.")
         pos = self._result.positions_at(self._current_idx)
 
@@ -381,7 +381,7 @@ class GolferPendulumWidget(BasePendulumWidget):
     # ------------------------------------------------------------------
 
     def _draw_force_vectors(self, painter: QPainter) -> None:
-        if not (painter is not None):
+        if painter is None:
             raise ValueError("painter must be provided")
         if self._result is None:
             return
@@ -450,7 +450,7 @@ class GolferPendulumWidget(BasePendulumWidget):
 
     def _draw_zero_torque_force_vectors(self, painter: QPainter) -> None:
         """Draw zero-torque (passive drift) force vectors at each joint (#1148)."""
-        if not (painter is not None):
+        if painter is None:
             raise ValueError("painter must be provided")
         if self._result is None or self._zero_torque_forces is None:
             return
@@ -523,7 +523,7 @@ class GolferPendulumWidget(BasePendulumWidget):
         Convention: clockwise = negative, counterclockwise = positive.
         Arc radius scales with torque magnitude.
         """
-        if not (painter is not None):
+        if painter is None:
             raise ValueError("painter must be provided")
         if self._result is None:
             return
@@ -593,7 +593,7 @@ class GolferPendulumWidget(BasePendulumWidget):
 
     def _draw_com(self, painter: QPainter) -> None:
         """Draw the combined center of mass of the golfer system."""
-        if not (painter is not None):
+        if painter is None:
             raise ValueError("painter must be provided")
         if self._result is None:
             return
@@ -655,7 +655,7 @@ class GolferPendulumWidget(BasePendulumWidget):
         Pre:  self._result is not None.
         Post: Ellipsoids drawn at each visible endpoint.
         """
-        if not (self._result is not None):
+        if self._result is None:
             raise ValueError("DbC Blocked: Precondition failed.")
         state = self._result.states[self._current_idx]
         params = self._result.params
@@ -787,7 +787,7 @@ class GolferPendulumWidget(BasePendulumWidget):
     # ------------------------------------------------------------------
 
     def _draw_info(self, painter: QPainter) -> None:
-        if not (self._result is not None):
+        if self._result is None:
             raise ValueError("DbC Blocked: Precondition failed.")
         t = self._result.t[self._current_idx]
         s = self._result.states[self._current_idx]
@@ -806,7 +806,7 @@ class GolferPendulumWidget(BasePendulumWidget):
             y += 15
 
     def _draw_placeholder(self, painter: QPainter) -> None:
-        if not (painter is not None):
+        if painter is None:
             raise ValueError("painter must be provided")
         painter.setPen(QColor(80, 80, 110))
         painter.setFont(QFont("Sans", 12))
