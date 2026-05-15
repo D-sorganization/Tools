@@ -4,11 +4,14 @@ from __future__ import annotations
 
 import csv
 import json
+import threading
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-import pandas as pd
+if TYPE_CHECKING:
+    import pandas as pd
 
 from .registry import WorkspaceRegistry, WorkspaceVariable
 
@@ -178,10 +181,14 @@ class DataExplorerService:
         return resolved
 
     def _load_delimited_preview(self, path: Path, format_name: str) -> pd.DataFrame:
+        import pandas as pd  # noqa: PLC0415 - lazy import
+
         separator = "\t" if format_name == "tsv" else ","
         return pd.read_csv(path, sep=separator, nrows=self.preview_rows)
 
     def _load_full_frame(self, path: Path, format_name: str) -> pd.DataFrame:
+        import pandas as pd  # noqa: PLC0415 - lazy import
+
         if format_name == "csv":
             return pd.read_csv(path)
         if format_name == "tsv":
@@ -215,6 +222,8 @@ def _format_name_for(path: Path) -> str:
 
 
 def _json_frame(path: Path) -> pd.DataFrame:
+    import pandas as pd  # noqa: PLC0415 - lazy import
+
     payload = json.loads(path.read_text(encoding="utf-8"))
     if isinstance(payload, list):
         return pd.DataFrame(payload)
@@ -260,14 +269,49 @@ def _stable_dtype_name(dtype: Any) -> str:
     return dtype_name
 
 
-def _count_delimited_rows(path: Path) -> int:
+_COUNT_DELIMITED_ROWS_PROGRESS_INTERVAL = 10_000
+
+
+def _count_delimited_rows(
+    path: Path,
+    *,
+    cancel_event: threading.Event | None = None,
+    progress_cb: Callable[[int], None] | None = None,
+) -> int:
+    """Count data rows in a delimited file, skipping the header row.
+
+    Preconditions:
+        path must be an existing readable file.
+
+    Args:
+        path: Path to the delimited (CSV/TSV) file.
+        cancel_event: Optional threading.Event; when set, iteration stops early
+            and returns the count reached so far.
+        progress_cb: Optional callback invoked with the running row count every
+            ``_COUNT_DELIMITED_ROWS_PROGRESS_INTERVAL`` rows.
+
+    Returns:
+        Number of data rows (header excluded), or the partial count if
+        cancelled before reaching the end of the file.
+    """
+    row_count = 0
     with path.open(encoding="utf-8", newline="") as handle:
         reader = csv.reader(handle)
-        row_count = sum(1 for _ in reader)
+        for row_count, _ in enumerate(reader, start=1):
+            if cancel_event is not None and cancel_event.is_set():
+                # Return partial count (subtract 1 for the header already counted)
+                return max(0, row_count - 1)
+            if (
+                progress_cb is not None
+                and row_count % _COUNT_DELIMITED_ROWS_PROGRESS_INTERVAL == 0
+            ):
+                progress_cb(row_count)
     return max(0, row_count - 1)
 
 
 def _normalize_cell(value: Any) -> Any:
+    import pandas as pd  # noqa: PLC0415 - lazy import
+
     try:
         if pd.isna(value):
             return None

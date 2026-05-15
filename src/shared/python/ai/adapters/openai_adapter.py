@@ -468,14 +468,15 @@ class OpenAIAdapter(BaseAgentAdapter):
                     )
                 )
 
-        # Extract usage
-        usage: dict[str, int] = {}
+        # Extract usage and normalize to canonical keys (issue #2763)
+        raw_usage: dict[str, int] = {}
         if response.usage:
-            usage = {
+            raw_usage = {
                 "prompt_tokens": response.usage.prompt_tokens,
                 "completion_tokens": response.usage.completion_tokens,
                 "total_tokens": response.usage.total_tokens,
             }
+        usage = self._normalize_token_counts(raw_usage)
 
         return AgentResponse(
             content=content,
@@ -489,5 +490,17 @@ class OpenAIAdapter(BaseAgentAdapter):
         )
 
     def _handle_error(self, error: Exception) -> AgentResponse:
-        """Handle OpenAI API errors."""
-        return super()._handle_error(error)
+        """Handle OpenAI API errors.
+
+        Delegates to :meth:`~BaseAgentAdapter._classify_error` for the
+        shared string-scan classification logic.
+
+        Args:
+            error: The exception that occurred.
+
+        Raises:
+            Appropriate AIError subclass.
+        """
+        raise self._classify_error(
+            error, provider="openai", timeout=self._timeout
+        ) from error

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import threading
 from pathlib import Path
 from typing import Any
 
@@ -11,9 +12,10 @@ from .data_explorer_service import (
     DataExplorerError,
     DataExplorerPreview,
     DataExplorerService,
+    _count_delimited_rows,
 )
 from .help_content import DEFAULT_SIDEBAR_TAB_HELP
-from .qt_compat import QtWidgets
+from .qt_compat import QtCore, QtWidgets, Signal
 from .settings import SidebarTabSettingsDescriptor, SidebarTabSettingsSchema
 
 DATA_EXPLORER_TAB_ID = "data_explorer"
@@ -37,6 +39,35 @@ def build_data_explorer_tab(sidebar: Any) -> QtWidgets.QWidget:
     return widget
 
 
+class _RowCountWorker(QtCore.QThread):
+    """Background worker that counts rows in a delimited file off the Qt main thread.
+
+    Emits ``progress`` with the current running count every 10 000 rows.
+    Emits ``finished`` with the final row count when done (or cancelled).
+    """
+
+    progress = Signal(int)
+    finished = Signal(int)
+
+    def __init__(
+        self,
+        path: Path,
+        cancel_event: threading.Event,
+        parent: QtCore.QObject | None = None,
+    ) -> None:
+        super().__init__(parent)
+        self._path = path
+        self._cancel_event = cancel_event
+
+    def run(self) -> None:
+        count = _count_delimited_rows(
+            self._path,
+            cancel_event=self._cancel_event,
+            progress_cb=self.progress.emit,
+        )
+        self.finished.emit(count)
+
+
 class SidekickDataExplorerWidget(QtWidgets.QWidget):
     """Small bounded data-file preview surface for Sidekick."""
 
@@ -45,6 +76,8 @@ class SidekickDataExplorerWidget(QtWidgets.QWidget):
         self.setObjectName("SidekickDataExplorerTab")
         self._sidebar = sidebar
         self._preview: DataExplorerPreview | None = None
+        self._row_count_worker: _RowCountWorker | None = None
+        self._cancel_event: threading.Event | None = None
         self._build_ui()
 
     def _build_ui(self) -> None:
@@ -84,6 +117,23 @@ class SidekickDataExplorerWidget(QtWidgets.QWidget):
             "Shows preview mode, schema size, and validation errors."
         )
         layout.addWidget(self._status)
+
+        # Progress bar and cancel button for large-file row counting
+        count_row = QtWidgets.QHBoxLayout()
+        self._progress_bar = QtWidgets.QProgressBar(self)
+        self._progress_bar.setObjectName("SidekickDataExplorerProgress")
+        self._progress_bar.setRange(0, 0)  # indeterminate by default
+        self._progress_bar.setToolTip("Row count progress for large files.")
+        self._progress_bar.setVisible(False)
+        count_row.addWidget(self._progress_bar, stretch=1)
+
+        self._cancel_button = QtWidgets.QPushButton("Cancel", self)
+        self._cancel_button.setObjectName("SidekickDataExplorerCancel")
+        self._cancel_button.setToolTip("Cancel the ongoing row count operation.")
+        self._cancel_button.clicked.connect(self._cancel_row_count)
+        self._cancel_button.setVisible(False)
+        count_row.addWidget(self._cancel_button)
+        layout.addLayout(count_row)
 
         self._preview_table = QtWidgets.QTableWidget(self)
         self._preview_table.setObjectName("SidekickDataExplorerPreviewTable")
@@ -145,11 +195,27 @@ class SidekickDataExplorerWidget(QtWidgets.QWidget):
         self._preview = preview
         self._variable_input.setText(Path(preview.source_path).stem + "_preview")
         self._populate_preview_table(preview)
-        row_count = preview.total_rows if preview.total_rows is not None else "unknown"
-        self._status.setText(
-            f"{preview.format.upper()} preview loaded: {row_count} rows, "
-            f"{preview.total_columns} columns ({preview.load_mode})."
-        )
+
+        if preview.load_mode == "sampled":
+            # Row count was done synchronously inside preview_file for small CSV;
+            # for large files the count is already available via preview.total_rows.
+            # Show it if available, otherwise start the async count.
+            if preview.total_rows is not None:
+                self._status.setText(
+                    f"{preview.format.upper()} preview loaded: "
+                    f"{preview.total_rows} rows, "
+                    f"{preview.total_columns} columns ({preview.load_mode})."
+                )
+            else:
+                self._start_row_count(Path(preview.source_path))
+        else:
+            row_count = (
+                preview.total_rows if preview.total_rows is not None else "unknown"
+            )
+            self._status.setText(
+                f"{preview.format.upper()} preview loaded: {row_count} rows, "
+                f"{preview.total_columns} columns ({preview.load_mode})."
+            )
 
     def export_preview(self) -> None:
         """Export the current preview selection to the shared workspace."""
@@ -190,6 +256,47 @@ class SidekickDataExplorerWidget(QtWidgets.QWidget):
             return
         self._sidebar.request_tool_launch("data_processor", payload)
         self._status.setText("Prepared Data Processor handoff request.")
+
+    def _start_row_count(self, path: Path) -> None:
+        """Start an async row-count worker and show the progress bar."""
+        self._cancel_row_count()  # stop any prior worker
+        self._cancel_event = threading.Event()
+        self._row_count_worker = _RowCountWorker(path, self._cancel_event, parent=self)
+        self._row_count_worker.progress.connect(self._on_row_count_progress)
+        self._row_count_worker.finished.connect(self._on_row_count_finished)
+        self._progress_bar.setVisible(True)
+        self._cancel_button.setVisible(True)
+        self._load_button.setEnabled(False)
+        self._status.setText("Counting rows…")
+        self._row_count_worker.start()
+
+    def _cancel_row_count(self) -> None:
+        """Signal the current worker to stop and hide the progress UI."""
+        if self._cancel_event is not None:
+            self._cancel_event.set()
+        if self._row_count_worker is not None:
+            self._row_count_worker.wait()
+            self._row_count_worker = None
+        self._cancel_event = None
+        self._progress_bar.setVisible(False)
+        self._cancel_button.setVisible(False)
+        self._load_button.setEnabled(True)
+
+    def _on_row_count_progress(self, count: int) -> None:
+        self._status.setText(f"Counting rows… {count:,} so far")
+
+    def _on_row_count_finished(self, count: int) -> None:
+        self._progress_bar.setVisible(False)
+        self._cancel_button.setVisible(False)
+        self._load_button.setEnabled(True)
+        self._row_count_worker = None
+        self._cancel_event = None
+        if self._preview is not None:
+            self._status.setText(
+                f"{self._preview.format.upper()} preview loaded: "
+                f"{count} rows, "
+                f"{self._preview.total_columns} columns ({self._preview.load_mode})."
+            )
 
     def _choose_file(self) -> None:
         filename, _filter = QtWidgets.QFileDialog.getOpenFileName(

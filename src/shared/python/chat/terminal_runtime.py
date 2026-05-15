@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import re
 import uuid
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
@@ -18,6 +19,14 @@ from .terminal_contracts import (
 
 _POWERSHELL_IDS = {"powershell", "pwsh"}
 _BASH_IDS = {"bash", "wsl"}
+
+# Keys matching this pattern are stripped from any env passed to child processes.
+# This prevents accidental credential leaks when a caller supplies a base_env
+# that was derived from (or still contains) the host process environment.
+_SENSITIVE_ENV_PATTERNS = re.compile(
+    r".*(API_KEY|TOKEN|SECRET|PASSWORD|CREDENTIAL).*",
+    re.IGNORECASE,
+)
 
 
 class TerminalRuntimeError(RuntimeError):
@@ -75,7 +84,43 @@ class TerminalSessionRuntime:
         self._allowed_roots = [
             root.expanduser().resolve() for root in (allowed_roots or [])
         ]
-        self._base_env = dict(base_env) if base_env is not None else dict(os.environ)
+
+        # Tools issue #2758: prevent leaking full host environment (including
+        # API keys) to spawned terminal sessions.
+        if base_env is not None:
+            # Strip any sensitive keys the caller may have included.
+            self._base_env = {
+                k: v
+                for k, v in base_env.items()
+                if not _SENSITIVE_ENV_PATTERNS.match(k)
+            }
+        else:
+            # Default to a minimal safe allowlist rather than inheriting the
+            # full parent environment.
+            safe_keys = {
+                "PATH",
+                "HOME",
+                "USERPROFILE",
+                "HOMEDRIVE",
+                "HOMEPATH",
+                "USER",
+                "USERNAME",
+                "LOGNAME",
+                "COMPUTERNAME",
+                "TERM",
+                "SHELL",
+                "LANG",
+                "LC_ALL",
+                "TEMP",
+                "TMP",
+                "TZ",
+                "SYSTEMROOT",
+                "SystemRoot",
+                "WINDIR",
+                "COMSPEC",
+                "PATHEXT",
+            }
+            self._base_env = {k: v for k, v in os.environ.items() if k in safe_keys}
         self._sessions: dict[str, _RuntimeSession] = {}
 
     def start(

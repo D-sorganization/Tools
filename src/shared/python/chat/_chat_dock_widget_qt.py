@@ -47,6 +47,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from ._theme_protocol import ThemeProviderProtocol, _DefaultDarkTheme
 from .chat_dock_widget import (
     _DEFAULT_SERVER,
     _read_shared_session_id,
@@ -59,15 +60,20 @@ from .terminal_providers import build_default_terminal_provider_registry
 logger = logging.getLogger(__name__)
 
 
-def _get_theme_colors() -> dict[str, str]:
-    """Get the current theme colors, falling back to defaults."""
-    try:
-        from theme.theme_manager import get_theme_manager
+def _get_theme_colors(
+    theme_provider: ThemeProviderProtocol | None = None,
+) -> dict[str, str]:
+    """Get the current theme colors from the injected provider.
 
-        colors: dict[str, str] = get_theme_manager().get_current_colors()
-        return colors
-    except ImportError:
-        return {}
+    Falls back to :class:`_DefaultDarkTheme` so the widget never depends
+    on ``theme.theme_manager`` being importable (Tools issue #2766).
+    """
+    provider: ThemeProviderProtocol = theme_provider or _DefaultDarkTheme()
+    try:
+        return provider.get_current_colors()
+    except Exception:  # noqa: BLE001 - defensive: a misbehaving provider
+        # must not crash the widget
+        return _DefaultDarkTheme().get_current_colors()
 
 
 class ChatMessageBubble(QFrame):
@@ -79,6 +85,7 @@ class ChatMessageBubble(QFrame):
         content: str,
         accent_color: str = "#FF8800",
         parent: QWidget | None = None,
+        theme_provider: ThemeProviderProtocol | None = None,
     ) -> None:
         if role is None:
             raise ValueError("role must be provided")
@@ -90,7 +97,7 @@ class ChatMessageBubble(QFrame):
         layout.setContentsMargins(6, 4, 6, 4)
         layout.setSpacing(2)
 
-        colors = _get_theme_colors()
+        colors = _get_theme_colors(theme_provider)
         text_primary = colors.get("text", "#e0e0e0")
         bg_alt = colors.get("group_bg", "#2d2d2d")
         bg_secondary = colors.get("input_bg", "#252526")
@@ -158,9 +165,31 @@ class ChatDockWidget(QDockWidget):
 
     Uses QWebSocket for real-time streaming. All instances share the same
     conversation session via a file-persisted session ID.
+
+    Args:
+        app_context: Name of the module/context this widget is embedded in.
+        app_name: Application identifier for session file storage.
+        server_url: WebSocket server base URL.
+        session_id: Explicit session ID (None = use shared or create new).
+        ws_path_template: WebSocket path template with ``{session_id}`` placeholder.
+        placeholder_text: Placeholder text for the input field.
+        accent_color: Primary accent color for styling.
+        auto_index_on_open: When True, send an ``index_codebase`` action on
+            connect so the chat backend rebuilds its codemap before the user
+            starts typing. Tools issue #2549 / PR #2567.
+        terminal_registry: Registry used to populate shell/provider dropdowns.
+        theme_provider: Object implementing ``get_current_colors()`` to drive
+            widget styling. Defaults to :class:`_DefaultDarkTheme` so the
+            widget is fully portable and does not require ``theme`` to be on
+            ``sys.path`` (Tools issue #2766). Pass an app-specific manager
+            (e.g. ``theme.theme_manager.get_theme_manager()``) to honor the
+            host application's theme.
+        parent: Parent widget.
     """
 
-    # Class-level session for in-process sharing
+    # Class-level session for in-process sharing. All reads/writes are
+    # serialized through ``_SHARED_SESSION_LOCK`` in ``chat_dock_widget``
+    # to prevent the multi-window race described in Tools issue #2753.
     _shared_session_id: str | None = None
 
     # Signals for external UI integration
@@ -179,6 +208,7 @@ class ChatDockWidget(QDockWidget):
         auto_index_on_open: bool = False,
         project_root: str | Path | None = None,
         terminal_registry: TerminalProviderRegistry | None = None,
+        theme_provider: ThemeProviderProtocol | None = None,
         parent: QWidget | None = None,
     ) -> None:
         if app_context is None:
@@ -196,6 +226,9 @@ class ChatDockWidget(QDockWidget):
         )
         self._terminal_registry = (
             terminal_registry or build_default_terminal_provider_registry()
+        )
+        self._theme_provider: ThemeProviderProtocol = (
+            theme_provider or _DefaultDarkTheme()
         )
         self._is_streaming = False
         self._current_bubble: ChatMessageBubble | None = None
@@ -219,7 +252,7 @@ class ChatDockWidget(QDockWidget):
         self._connect_on_show = True
 
     def _setup_ui(self) -> None:
-        colors = _get_theme_colors()
+        colors = _get_theme_colors(self._theme_provider)
         bg_primary = colors.get("bg", "#1e1e1e")
         bg_alt = colors.get("group_bg", "#2d2d2d")
         text_primary = colors.get("text", "#e0e0e0")
@@ -244,7 +277,9 @@ class ChatDockWidget(QDockWidget):
         self._action_copy_thread = self._tools_menu.addAction("Copy Entire Thread")
         self._action_export_thread = self._tools_menu.addAction("Export to Markdown...")
         self._action_condense_thread = self._tools_menu.addAction("Condense Thread")
-        self._action_request_review = self._tools_menu.addAction("Request Agent Review...")
+        self._action_request_review = self._tools_menu.addAction(
+            "Request Agent Review..."
+        )
         if self._action_copy_thread is not None:
             self._action_copy_thread.triggered.connect(self._copy_entire_thread)
         if self._action_export_thread is not None:
@@ -710,8 +745,15 @@ class ChatDockWidget(QDockWidget):
         """Add a message bubble to the scroll area."""
         if role is None:
             raise ValueError("role must be provided")
-        bubble = ChatMessageBubble(role, content, accent_color=self._accent_color)
-        self._message_layout.insertWidget(self._message_layout.count() - 1, bubble)
+        bubble = ChatMessageBubble(
+            role,
+            content,
+            accent_color=self._accent_color,
+            theme_provider=self._theme_provider,
+        )
+        # Insert before the stretch item at the end
+        count = self._message_layout.count()
+        self._message_layout.insertWidget(count - 1, bubble)
         self._scroll_to_bottom()
         return bubble
 
