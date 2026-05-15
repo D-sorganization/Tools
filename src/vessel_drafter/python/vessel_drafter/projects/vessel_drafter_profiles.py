@@ -169,7 +169,7 @@ def _offset_ellipse_point(
     theta_radians: float,
     top: bool,
 ) -> ProfilePoint:
-    if not (radius_in is not None):
+    if radius_in is None:
         raise ValueError("radius_in must be provided")
     base_x_in = radius_in * cos(theta_radians)
     axial_multiplier = 1.0 if top else -1.0

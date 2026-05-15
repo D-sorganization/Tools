@@ -93,7 +93,7 @@ class ArchiveMixin:
         Returns:
             (processed_files, processed_size, failed_files)
         """
-        if not (zipf is not None):
+        if zipf is None:
             raise ValueError("zipf must be provided")
         processed_files = 0
         processed_size = 0

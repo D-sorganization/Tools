@@ -1,3 +1,3 @@
-from .generator import ReportGenerator, InsightsProvider
+from .generator import InsightsProvider, ReportGenerator
 
 __all__ = ["ReportGenerator", "InsightsProvider"]

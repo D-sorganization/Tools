@@ -30,7 +30,7 @@ def export_vessel(
 
     Returns a mapping of format name to output path.
     """
-    if not (layout is not None):
+    if layout is None:
         raise ValueError("layout must be provided")
     from build123d import Compound  # lazy import — optional dep
 
@@ -108,7 +108,7 @@ def _write_manifest(
     output_path: Path,
     stem: str,
 ) -> Path:
-    if not (layout is not None):
+    if layout is None:
         raise ValueError("layout must be provided")
     report = build_material_metrics_report(layout)
     manifest = {

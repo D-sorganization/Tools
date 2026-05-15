@@ -55,14 +55,14 @@ class TripleSimulationResult(TrajectoryResultMixin):
         self._validate_trajectory(expected_state_width=6)
 
     def mass_matrix_at(self, idx: int) -> dict:
-        if not (idx is not None):
+        if idx is None:
             raise ValueError("idx must be provided")
         self._check_idx(idx)
         s = self.states[idx]
         return mass_matrix_components(s[1], s[2], self.params)
 
     def positions_at(self, idx: int) -> dict:
-        if not (idx is not None):
+        if idx is None:
             raise ValueError("idx must be provided")
         self._check_idx(idx)
         s = self.states[idx]
@@ -73,7 +73,7 @@ class TripleSimulationResult(TrajectoryResultMixin):
         return self.torque_func(self.t[idx])
 
     def accelerations_at(self, idx: int) -> np.ndarray:
-        if not (idx is not None):
+        if idx is None:
             raise ValueError("idx must be provided")
         self._check_idx(idx)
         state_dot = equations_of_motion(
@@ -82,28 +82,28 @@ class TripleSimulationResult(TrajectoryResultMixin):
         return state_dot[3:]
 
     def joint_forces_at(self, idx: int) -> dict:
-        if not (idx is not None):
+        if idx is None:
             raise ValueError("idx must be provided")
         self._check_idx(idx)
         qddot = self.accelerations_at(idx)
         return net_joint_forces(self.states[idx], qddot, self.params)
 
     def coriolis_at(self, idx: int) -> np.ndarray:
-        if not (idx is not None):
+        if idx is None:
             raise ValueError("idx must be provided")
         self._check_idx(idx)
         s = self.states[idx]
         return coriolis_vector(s[1], s[2], s[3], s[4], s[5], self.params)
 
     def gravity_at(self, idx: int) -> np.ndarray:
-        if not (idx is not None):
+        if idx is None:
             raise ValueError("idx must be provided")
         self._check_idx(idx)
         s = self.states[idx]
         return gravity_vector(s[0], s[1], s[2], self.params)
 
     def energy_at(self, idx: int) -> dict:
-        if not (idx is not None):
+        if idx is None:
             raise ValueError("idx must be provided")
         self._check_idx(idx)
         state = self.states[idx]
@@ -122,7 +122,7 @@ class TripleSimulationResult(TrajectoryResultMixin):
         -------
         np.ndarray, shape (3,)  [N·m]
         """
-        if not (idx is not None):
+        if idx is None:
             raise ValueError("idx must be provided")
         self._check_idx(idx)
         s = self.states[idx]
@@ -182,7 +182,7 @@ def run_simulation(
     effective_torque_limits = torque_limits if torque_limits is not None else clamp
 
     def ode_rhs(t: float, y: np.ndarray) -> np.ndarray:
-        if not (t is not None):
+        if t is None:
             raise ValueError("t must be provided")
         dydt = equations_of_motion(y, t, params, torque_func, effective_torque_limits)
         # Apply joint limit penalty torques if enabled (#1151)

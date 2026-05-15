@@ -82,7 +82,7 @@ class NeuralNetworkTrainer:
         Returns:
             Complete NetworkConfig
         """
-        if not (input_features is not None):
+        if input_features is None:
             raise ValueError("input_features must be provided")
         validated_layers = self._validate_create_config_inputs(
             input_features=input_features,
@@ -129,7 +129,7 @@ class NeuralNetworkTrainer:
         Returns:
             Dictionary with X_train, y_train, X_val, y_val, X_test, y_test
         """
-        if not (df is not None):
+        if df is None:
             raise ValueError("df must be provided")
         split_config = split_config or DataSplitConfig()
         feature_columns = self._validate_prepare_data_inputs(
@@ -188,7 +188,7 @@ class NeuralNetworkTrainer:
         task_type: str,
     ) -> list[LayerConfig]:
         """Build hidden + output layers for requested architecture."""
-        if not (network_type is not None):
+        if network_type is None:
             raise ValueError("network_type must be provided")
         layers: list[LayerConfig] = []
         if network_type == NetworkType.MLP:
@@ -236,7 +236,7 @@ class NeuralNetworkTrainer:
         dropout_rate: float,
     ) -> None:
         """Append recurrent/dropout blocks for LSTM/GRU configuration."""
-        if not (layers is not None):
+        if layers is None:
             raise ValueError("layers must be provided")
         layer_type = "lstm" if network_type == NetworkType.LSTM else "gru"
         for index, units in enumerate(hidden_layers):
@@ -339,7 +339,7 @@ class NeuralNetworkTrainer:
         self, X: np.ndarray, y: np.ndarray, split_config: DataSplitConfig
     ) -> tuple[np.ndarray, np.ndarray]:
         """Shuffle data using split config random seed when requested."""
-        if not (X is not None):
+        if X is None:
             raise ValueError("X must be provided")
         if not split_config.shuffle:
             return X, y
@@ -350,7 +350,7 @@ class NeuralNetworkTrainer:
         self, X: np.ndarray, y: np.ndarray, split_config: DataSplitConfig
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Split arrays into train/validation/test partitions."""
-        if not (X is not None):
+        if X is None:
             raise ValueError("X must be provided")
         n = len(X)
         n_train = int(n * split_config.train_ratio)
@@ -376,7 +376,7 @@ class NeuralNetworkTrainer:
         y_test: np.ndarray,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Normalize train/val/test arrays according to active config."""
-        if not (X_train is not None):
+        if X_train is None:
             raise ValueError("X_train must be provided")
         if self._config and self._config.normalize_inputs:
             X_train, X_val, X_test = self._normalize_features(X_train, X_val, X_test)
@@ -391,7 +391,7 @@ class NeuralNetworkTrainer:
         X_test: np.ndarray,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Normalize features using training statistics."""
-        if not (X_train is not None):
+        if X_train is None:
             raise ValueError("X_train must be provided")
         mean = np.mean(X_train, axis=0)
         std = np.std(X_train, axis=0)
@@ -413,7 +413,7 @@ class NeuralNetworkTrainer:
         y_test: np.ndarray,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Normalize targets using training statistics."""
-        if not (y_train is not None):
+        if y_train is None:
             raise ValueError("y_train must be provided")
         mean = np.mean(y_train, axis=0) if y_train.ndim > 1 else np.mean(y_train)
         std = np.std(y_train, axis=0) if y_train.ndim > 1 else np.std(y_train)
@@ -442,7 +442,7 @@ class NeuralNetworkTrainer:
         config: NetworkConfig,
     ) -> tuple[list[float], list[float], float, int, int, list, list]:
         """Execute mini-batch training with early stopping."""
-        if not (X_train is not None):
+        if X_train is None:
             raise ValueError("X_train must be provided")
         train_losses, val_losses, best_val_loss, best_epoch, patience_counter = (
             self._initialize_training_state()
@@ -493,7 +493,7 @@ class NeuralNetworkTrainer:
         config: NetworkConfig,
     ) -> tuple[float, list[np.ndarray | None], list[np.ndarray | None]]:
         """Run one training epoch and return average batch loss."""
-        if not (X_train is not None):
+        if X_train is None:
             raise ValueError("X_train must be provided")
         indices = np.random.permutation(len(X_train))
         batch_losses: list[float] = []
@@ -516,7 +516,7 @@ class NeuralNetworkTrainer:
         config: NetworkConfig,
     ) -> float:
         """Calculate validation loss for current model parameters."""
-        if not (X_val is not None):
+        if X_val is None:
             raise ValueError("X_val must be provided")
         activations = self._forward_pass(X_val, weights, biases, config)
         return self._mean_squared_error(activations[-1], y_val)
@@ -536,7 +536,7 @@ class NeuralNetworkTrainer:
         patience_counter: int,
     ) -> tuple[float, int, int]:
         """Update early-stopping state after a validation step."""
-        if not (val_loss is not None):
+        if val_loss is None:
             raise ValueError("val_loss must be provided")
         if val_loss < best_val_loss:
             return val_loss, epoch, 0
@@ -560,7 +560,7 @@ class NeuralNetworkTrainer:
         Returns:
             Tuple of (test_loss, predictions, actual_values)
         """
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         if "X_test" not in data or len(data["X_test"]) == 0:
             return None, None, None
@@ -633,7 +633,7 @@ class NeuralNetworkTrainer:
         self, data: dict[str, np.ndarray], config: NetworkConfig
     ) -> dict[str, Any]:
         """Run model training and return state needed for result construction."""
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         weights, biases = self._initialize_weights(config, data["X_train"].shape[1])
         start_time = time.time()
@@ -671,7 +671,7 @@ class NeuralNetworkTrainer:
         input_dim: int,
     ) -> tuple[list[np.ndarray | None], list[np.ndarray | None]]:
         """Initialize network weights using Xavier/He initialization."""
-        if not (config is not None):
+        if config is None:
             raise ValueError("config must be provided")
         weights: list[np.ndarray | None] = []
         biases: list[np.ndarray | None] = []
@@ -703,7 +703,7 @@ class NeuralNetworkTrainer:
         config: NetworkConfig,
     ) -> list[np.ndarray]:
         """Forward pass through the network."""
-        if not (X is not None):
+        if X is None:
             raise ValueError("X must be provided")
         activations = [X]
         current = X
@@ -734,7 +734,7 @@ class NeuralNetworkTrainer:
         config: NetworkConfig,
     ) -> list[tuple[np.ndarray | None, np.ndarray | None]]:
         """Backward pass to compute gradients."""
-        if not (activations is not None):
+        if activations is None:
             raise ValueError("activations must be provided")
         gradients: list[tuple[np.ndarray | None, np.ndarray | None]] = []
         m = len(y_true)
@@ -787,7 +787,7 @@ class NeuralNetworkTrainer:
         config: NetworkConfig,
     ) -> tuple[list[np.ndarray | None], list[np.ndarray | None]]:
         """Update weights using gradient descent."""
-        if not (weights is not None):
+        if weights is None:
             raise ValueError("weights must be provided")
         lr = config.learning_rate
 

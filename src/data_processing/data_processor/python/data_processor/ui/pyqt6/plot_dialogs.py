@@ -48,7 +48,7 @@ if PYQT6_AVAILABLE:
             df: pd.DataFrame,
             parent: QWidget | None = None,
         ) -> None:
-            if not (df is not None):
+            if df is None:
                 raise ValueError("df must be provided")
             super().__init__(parent)
             self.df = df
@@ -171,7 +171,7 @@ if PYQT6_AVAILABLE:
             df: pd.DataFrame,
             parent: QWidget | None = None,
         ) -> None:
-            if not (df is not None):
+            if df is None:
                 raise ValueError("df must be provided")
             super().__init__(parent)
             self.df = df
@@ -265,7 +265,7 @@ if PYQT6_AVAILABLE:
             signals: list[str],
             parent: QWidget | None = None,
         ) -> None:
-            if not (original_df is not None):
+            if original_df is None:
                 raise ValueError("original_df must be provided")
             super().__init__(parent)
             self.original_df = original_df

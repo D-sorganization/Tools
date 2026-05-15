@@ -94,7 +94,7 @@ class SceneEventMixin:
         Returns:
             False if should quit, True otherwise.
         """
-        if not (key is not None):
+        if key is None:
             raise ValueError("key must be provided")
         if key == K_ESCAPE:
             return False
@@ -202,7 +202,7 @@ class SceneEventMixin:
 
     def _select_planet_by_number(self, key: int) -> None:
         """Select a planet using the number key (1-9)."""
-        if not (key is not None):
+        if key is None:
             raise ValueError("key must be provided")
         planet_index = key - K_1
         if planet_index < len(PLANET_ORDER):
@@ -277,7 +277,7 @@ class SceneEventMixin:
 
     def _handle_ui_click(self, pos: tuple[int, int]) -> bool:
         """Handle clicks on UI overlays."""
-        if not (pos is not None):
+        if pos is None:
             raise ValueError("pos must be provided")
         x, y = pos
 

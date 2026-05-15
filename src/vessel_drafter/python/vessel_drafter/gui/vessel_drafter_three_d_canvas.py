@@ -48,7 +48,7 @@ class VesselDrafterThreeDCanvas(FigureCanvasQTAgg):
         scene: Vessel3DScene,
         view_options: Vessel3DViewOptions | None = None,
     ) -> None:
-        if not (scene is not None):
+        if scene is None:
             raise ValueError("scene must be provided")
         resolved_view_options = view_options or self._view_options
         self._prepare_view_state_for_draw(resolved_view_options)
@@ -88,7 +88,7 @@ class VesselDrafterThreeDCanvas(FigureCanvasQTAgg):
         self,
         view_options: Vessel3DViewOptions,
     ) -> None:
-        if not (view_options is not None):
+        if view_options is None:
             raise ValueError("view_options must be provided")
         if self._pending_view_state is not None:
             self._view_state = self._pending_view_state
@@ -111,7 +111,7 @@ class VesselDrafterThreeDCanvas(FigureCanvasQTAgg):
         scene: Vessel3DScene,
         view_options: Vessel3DViewOptions,
     ) -> None:
-        if not (scene is not None):
+        if scene is None:
             raise ValueError("scene must be provided")
         min_x, max_x, min_y, max_y, min_z, max_z = scene.bounds
         span_x = max(max_x - min_x, 1.0)

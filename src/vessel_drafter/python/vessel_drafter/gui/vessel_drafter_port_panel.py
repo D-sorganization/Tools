@@ -23,7 +23,7 @@ from shared.python.theme.integration import ThemedDialogMixin
 
 
 def make_double_spin(value: float, minimum: float, maximum: float) -> QDoubleSpinBox:
-    if not (value is not None):
+    if value is None:
         raise ValueError("value must be provided")
     spin = QDoubleSpinBox()
     spin.setRange(minimum, maximum)
@@ -43,7 +43,7 @@ class PortFieldSpec:
 
 class PortValueDialog(ThemedDialogMixin, QDialog):
     def __init__(self, title: str, fields: tuple[PortFieldSpec, ...], parent: QWidget):
-        if not (title is not None):
+        if title is None:
             raise ValueError("title must be provided")
         super().__init__(parent)
         self.setup_theme_support()
@@ -90,7 +90,7 @@ class PortTableSection(QGroupBox):
     data_changed: pyqtSignal = pyqtSignal()
 
     def __init__(self, title: str, headers: tuple[str, str, str]):
-        if not (title is not None):
+        if title is None:
             raise ValueError("title must be provided")
         super().__init__(title)
         self._table = QTableWidget(0, len(headers))
@@ -118,7 +118,7 @@ class PortTableSection(QGroupBox):
         root.addLayout(button_row)
 
     def append_row(self, values: tuple[float, float, float]) -> None:
-        if not (values is not None):
+        if values is None:
             raise ValueError("values must be provided")
         row_index = self._table.rowCount()
         self._table.insertRow(row_index)

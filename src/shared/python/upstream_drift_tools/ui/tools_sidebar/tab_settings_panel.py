@@ -76,7 +76,7 @@ def build_tab_settings_toolbar(sidebar: Any) -> QtWidgets.QToolBar:
     button.setToolTip("Active tab settings")
     button.clicked.connect(sidebar.open_active_tab_settings)
     toolbar.addWidget(button)
-    sidebar._settings_button = button
+    sidebar.register_settings_button_widget(button)
     return toolbar
 
 

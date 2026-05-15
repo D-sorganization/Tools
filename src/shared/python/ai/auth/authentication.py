@@ -281,7 +281,8 @@ class AuthManager:
         if not api_key:
             return False
 
-        # Generate user ID from API key hash (simplified - in production, verify with server)
+        # Generate user ID from API key hash (simplified - in production, verify
+        # with server)
         user_id = hashlib.sha256(api_key.encode()).hexdigest()[:16]
 
         self._current_user = UserProfile(

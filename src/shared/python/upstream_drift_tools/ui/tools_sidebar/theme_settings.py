@@ -146,7 +146,7 @@ def _coerce_theme_mode(value: Any) -> SidekickThemeMode:
             return value
 
         # When moving from StrEnum (Python 3.11+) to str, Enum (Python 3.10)
-        # str(enum_member) changes from "inherit_parent" to "SidekickThemeMode.INHERIT_PARENT"
+        # str(enum_member) changes from "inherit_parent" to a full class name
         val_str = str(value)
         if val_str.startswith("SidekickThemeMode."):
             val_str = val_str.split(".")[1].lower()
