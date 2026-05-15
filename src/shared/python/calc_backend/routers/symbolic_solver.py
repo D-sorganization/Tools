@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter
+from typing import Any
+
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 try:
@@ -154,9 +156,7 @@ def solve_equation(request: SymbolicSolveRequest) -> SymbolicSolveResponse:
 
 
 @router.post("/derivative", response_model=SymbolicDerivativeResponse)
-def compute_derivative(
-    request: SymbolicDerivativeRequest,
-) -> SymbolicDerivativeResponse:
+def compute_derivative(request: SymbolicDerivativeRequest) -> SymbolicDerivativeResponse:
     """Compute the symbolic derivative of an expression."""
     if not SYMPY_AVAILABLE:
         return SymbolicDerivativeResponse(
