@@ -6,6 +6,7 @@ from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from typing import Any, Protocol
 
+from calc_backend.contracts.symbolic import SymbolicWorkflow
 from calc_backend.symbolic import symbolic_workflows
 
 from .calculator_startup import (
@@ -216,11 +217,11 @@ def symbolic_calculator_workflow_metadata() -> tuple[dict[str, Any], ...]:
     )
 
 
-def _workflow_to_dict(workflow: Any) -> dict[str, Any]:
+def _workflow_to_dict(workflow: SymbolicWorkflow) -> dict[str, Any]:
     model_dump = getattr(workflow, "model_dump", None)
     if callable(model_dump):
-        return model_dump()
-    return workflow.dict()
+        return dict(model_dump())
+    return dict(workflow.dict())
 
 
 def set_calculator_startup_config(
