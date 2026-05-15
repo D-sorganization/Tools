@@ -223,7 +223,7 @@ def _linspace(x_min: float, x_max: float, points: int) -> list[float]:
 def _evaluate_expression(expression: str, x_value: float) -> float:
     namespace = {**_SAFE_EXPRESSION_NAMES, "x": x_value}
     try:
-        value = eval(  # noqa: S307 - restricted calculator expression namespace
+        value = eval(  # nosec B307 - restricted calculator expression namespace
             expression,
             {"__builtins__": {}},
             namespace,
