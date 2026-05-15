@@ -408,7 +408,7 @@ class ChatDockWidget(QDockWidget):
         self._screenshot_btn.clicked.connect(self._on_screenshot)
         input_row.addWidget(self._screenshot_btn)
 
-        self._mic_btn = QPushButton("🎤")
+        self._mic_btn = QPushButton("\U0001f3a4")
         self._mic_btn.setToolTip("Voice input (Ctrl+Shift+V)")
         self._mic_btn.setFixedWidth(28)
         self._mic_btn.setStyleSheet(
@@ -741,17 +741,16 @@ class ChatDockWidget(QDockWidget):
     def _on_mic_toggle(self) -> None:
         if self._voice_manager.is_recording:
             self._voice_manager.stop()
-            self._mic_btn.setText("🎤")
+            self._mic_btn.setText("\U0001f3a4")
             self._mic_btn.setToolTip("Voice input (Ctrl+Shift+V)")
         else:
             self._voice_manager.start()
-            if self._voice_manager.is_recording:
-                self._mic_btn.setText("🔴")
-                self._mic_btn.setToolTip("Recording… click to stop (Ctrl+Shift+V)")
-                self._status_label.setText("Listening…")
+            self._mic_btn.setText("[REC]")
+            self._mic_btn.setToolTip("Recording... click to stop (Ctrl+Shift+V)")
+            self._status_label.setText("Listening...")
 
     def _on_voice_transcription(self, text: str) -> None:
-        self._mic_btn.setText("🎤")
+        self._mic_btn.setText("\U0001f3a4")
         self._mic_btn.setToolTip("Voice input (Ctrl+Shift+V)")
         cursor = self._input_edit.textCursor()
         cursor.insertText(text)
@@ -759,7 +758,7 @@ class ChatDockWidget(QDockWidget):
         self._status_label.setText("Transcription complete")
 
     def _on_voice_error(self, message: str) -> None:
-        self._mic_btn.setText("🎤")
+        self._mic_btn.setText("\U0001f3a4")
         self._mic_btn.setToolTip("Voice input (Ctrl+Shift+V)")
         self._status_label.setText(f"Voice: {message}")
 

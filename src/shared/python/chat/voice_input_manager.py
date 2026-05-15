@@ -10,18 +10,21 @@ Tools issue #2744.
 from __future__ import annotations
 
 import logging
+import types
+from collections.abc import Callable
+from typing import Any
 
 from PyQt6.QtCore import QThread, pyqtSignal
 
 logger = logging.getLogger(__name__)
 
 try:
-    import speech_recognition as sr  # type: ignore[import-untyped]
+    import speech_recognition as sr
 
     _SR_AVAILABLE = True
 except ImportError:
     _SR_AVAILABLE = False
-    sr = None  # type: ignore[assignment]
+    sr: types.ModuleType | None = None
 
 
 class _ListenWorker(QThread):
@@ -30,7 +33,7 @@ class _ListenWorker(QThread):
     transcription_ready = pyqtSignal(str)
     recognition_error = pyqtSignal(str)
 
-    def __init__(self, recognizer: sr.Recognizer, source_kwargs: dict) -> None:  # type: ignore[name-defined]
+    def __init__(self, recognizer: Any, source_kwargs: dict) -> None:
         super().__init__()
         self._recognizer = recognizer
         self._source_kwargs = source_kwargs
@@ -77,32 +80,32 @@ class VoiceInputManager:
     Usage::
 
         manager = VoiceInputManager()
-        manager.transcription_ready.connect(my_slot)
-        manager.error_occurred.connect(my_error_slot)
+        manager.connect_transcription(my_slot)
+        manager.connect_error(my_error_slot)
         manager.start()   # begins listening
         # ...
         manager.stop()    # cancels if still listening
 
-    Signals are emitted on the Qt main thread via cross-thread signal/slot.
+    Callbacks are invoked on the Qt main thread via cross-thread signal/slot.
     When ``speech_recognition`` or ``pyaudio`` are unavailable the manager
-    emits ``error_occurred`` immediately on ``start()`` without raising.
+    calls error callbacks immediately on ``start()`` without raising.
     """
 
     def __init__(self, device_index: int | None = None) -> None:
         self._device_index = device_index
         self._worker: _ListenWorker | None = None
-        self._recognizer = sr.Recognizer() if _SR_AVAILABLE else None
-        self._transcription_ready_callbacks: list = []
-        self._error_occurred_callbacks: list = []
+        self._recognizer: Any = sr.Recognizer() if _SR_AVAILABLE else None
+        self._transcription_ready_callbacks: list[Callable[[str], None]] = []
+        self._error_occurred_callbacks: list[Callable[[str], None]] = []
 
     # ── Signal-like API ────────────────────────────────────────────────────
 
-    def connect_transcription(self, slot) -> None:  # type: ignore[type-arg]
-        """Register a callable to receive transcribed text (str)."""
+    def connect_transcription(self, slot: Callable[[str], None]) -> None:
+        """Register a callable to receive transcribed text."""
         self._transcription_ready_callbacks.append(slot)
 
-    def connect_error(self, slot) -> None:  # type: ignore[type-arg]
-        """Register a callable to receive error messages (str)."""
+    def connect_error(self, slot: Callable[[str], None]) -> None:
+        """Register a callable to receive error messages."""
         self._error_occurred_callbacks.append(slot)
 
     # ── Public API ─────────────────────────────────────────────────────────
@@ -127,7 +130,7 @@ class VoiceInputManager:
             )
             return
 
-        source_kwargs: dict = {}
+        source_kwargs: dict[str, Any] = {}
         if self._device_index is not None:
             source_kwargs["device_index"] = self._device_index
 
