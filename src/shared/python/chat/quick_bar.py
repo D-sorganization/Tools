@@ -24,64 +24,25 @@ import json
 import logging
 from typing import Any
 
+from ._quick_bar_theme import (
+    ThemeProviderProtocol,
+    _build_system_theme_provider,
+    _FallbackThemeProvider,
+    _resolve_colors,
+)
+
 logger = logging.getLogger(__name__)
 
+# Re-export so callers can do ``from chat.quick_bar import ThemeProviderProtocol``.
+__all__ = [
+    "ChatLauncherMixin",
+    "ChatQuickBar",
+    "ThemeProviderProtocol",
+    "_FallbackThemeProvider",
+    "_resolve_colors",
+]
 
-# ── Theme integration ───────────────────────────────────────────────
-
-_FALLBACK_COLORS: dict[str, str] = {
-    "bg": "#252526",
-    "group_bg": "#2d2d2d",
-    "border": "#3c3c3c",
-    "text": "#e0e0e0",
-    "text_secondary": "#888888",
-    "accent": "#FF8800",
-    "accent_hover": "#ffaa33",
-    "focus": "#4ec9b0",
-    "input_bg": "#2d2d2d",
-    "button_bg": "#3c3c3c",
-    "button_hover": "#4c4c4c",
-    "disabled_bg": "#555555",
-    "disabled_fg": "#888888",
-    "muted": "#666666",
-}
-
-
-def _get_quick_bar_colors() -> dict[str, str]:
-    """Resolve theme colors, falling back to defaults."""
-    try:
-        from theme.theme_manager import get_theme_manager
-
-        mgr = get_theme_manager()
-        colors = mgr.get_current_colors()
-        return {
-            "bg": colors.get("bg", _FALLBACK_COLORS["bg"]),
-            "group_bg": colors.get("group_bg", _FALLBACK_COLORS["group_bg"]),
-            "border": colors.get("border", _FALLBACK_COLORS["border"]),
-            "text": colors.get("text", _FALLBACK_COLORS["text"]),
-            "text_secondary": colors.get(
-                "text_secondary", _FALLBACK_COLORS["text_secondary"]
-            ),
-            "accent": colors.get("accent", _FALLBACK_COLORS["accent"]),
-            "accent_hover": colors.get(
-                "button_hover", _FALLBACK_COLORS["accent_hover"]
-            ),
-            "focus": colors.get("focus", _FALLBACK_COLORS["focus"]),
-            "input_bg": colors.get("input_bg", _FALLBACK_COLORS["input_bg"]),
-            "button_bg": colors.get("group_bg", _FALLBACK_COLORS["button_bg"]),
-            "button_hover": colors.get(
-                "button_hover", _FALLBACK_COLORS["button_hover"]
-            ),
-            "disabled_bg": _FALLBACK_COLORS["disabled_bg"],
-            "disabled_fg": _FALLBACK_COLORS["disabled_fg"],
-            "muted": colors.get("label", _FALLBACK_COLORS["muted"]),
-        }
-    except Exception:  # noqa: BLE001
-        logger.debug("Theme manager unavailable, using fallback colors")
-        return dict(_FALLBACK_COLORS)
-
-
-# ── Lazy Qt imports ─────────────────────────────────────────────────
+# -- Lazy Qt imports ---------------------------------------------------------
 
 try:
     from PyQt6.QtCore import Qt, QTimer, QUrl, pyqtSignal
@@ -124,6 +85,9 @@ class ChatQuickBar(QFrame if _QT_AVAILABLE else object):  # type: ignore[misc]
     Args:
         app_context: Application context (e.g., "gasification").
         server_url: Chat server WebSocket URL.
+        theme_provider: Optional theme provider implementing
+            :class:`ThemeProviderProtocol`. When *None* the widget tries the
+            installed theme manager and falls back to built-in dark defaults.
         parent: Parent widget.
     """
 
@@ -135,6 +99,7 @@ class ChatQuickBar(QFrame if _QT_AVAILABLE else object):  # type: ignore[misc]
         self,
         app_context: str = "assistant",
         server_url: str = "ws://127.0.0.1:8000",
+        theme_provider: ThemeProviderProtocol | None = None,
         parent: QWidget | None = None,
     ) -> None:
         _require_qt()
@@ -147,18 +112,27 @@ class ChatQuickBar(QFrame if _QT_AVAILABLE else object):  # type: ignore[misc]
         self._is_waiting = False
         self._response_buffer = ""
 
+        if theme_provider is None:
+            self._theme: ThemeProviderProtocol = _build_system_theme_provider()
+        else:
+            self._theme = theme_provider
+
         self._setup_ui()
         QTimer.singleShot(1000, self._connect_ws)
 
+    def _get_colors(self) -> dict[str, str]:
+        """Resolve theme colors via the stored provider."""
+        return _resolve_colors(self._theme)
+
     def _setup_ui(self) -> None:
         """Build the compact quick-bar UI."""
-        c = _get_quick_bar_colors()
+        c = self._get_colors()
         layout = QHBoxLayout(self)
         layout.setContentsMargins(4, 2, 4, 2)
         layout.setSpacing(4)
 
         # Robot icon label
-        icon_label = QLabel("🤖")
+        icon_label = QLabel("\U0001f916")
         icon_label.setStyleSheet("font-size: 14px;")
         layout.addWidget(icon_label)
 
@@ -227,7 +201,53 @@ class ChatQuickBar(QFrame if _QT_AVAILABLE else object):  # type: ignore[misc]
             f"}}"
         )
 
-    # ── WebSocket ────────────────────────────────────────────────────
+    def apply_theme(self) -> None:
+        """Re-apply the current theme to all child widgets.
+
+        Call this whenever the application theme changes so the quick-bar
+        stays in visual sync with the dock widget.
+        """
+        c = self._get_colors()
+
+        self._input.setStyleSheet(
+            f"QLineEdit {{"
+            f"  background-color: {c['input_bg']}; color: {c['text']};"
+            f"  border: 1px solid {c['border']}; border-radius: 4px;"
+            f"  font-size: 12px; padding: 4px 8px;"
+            f"}}"
+            f"QLineEdit:focus {{"
+            f"  border-color: {c['accent']};"
+            f"}}"
+        )
+        self._send_btn.setStyleSheet(
+            f"QPushButton {{"
+            f"  background-color: {c['accent']}; color: black;"
+            f"  border-radius: 4px; font-weight: bold;"
+            f"  font-size: 11px; padding: 4px;"
+            f"}}"
+            f"QPushButton:hover {{ background-color: {c['accent_hover']}; }}"
+            f"QPushButton:disabled {{"
+            f"  background-color: {c['disabled_bg']};"
+            f"  color: {c['disabled_fg']};"
+            f"}}"
+        )
+        self._expand_btn.setStyleSheet(
+            f"QPushButton {{"
+            f"  background-color: {c['button_bg']}; color: {c['text']};"
+            f"  border-radius: 4px; font-size: 10px; padding: 4px;"
+            f"}}"
+            f"QPushButton:hover {{ background-color: {c['button_hover']}; }}"
+        )
+        self._status.setStyleSheet(f"color: {c['muted']}; font-size: 10px;")
+        self.setStyleSheet(
+            f"ChatQuickBar {{"
+            f"  background-color: {c['bg']};"
+            f"  border: 1px solid {c['border']};"
+            f"  border-radius: 6px;"
+            f"}}"
+        )
+
+    # -- WebSocket -----------------------------------------------------------
 
     def _connect_ws(self) -> None:
         """Connect to the chat WebSocket."""
@@ -245,13 +265,13 @@ class ChatQuickBar(QFrame if _QT_AVAILABLE else object):  # type: ignore[misc]
 
     def _on_ws_connected(self) -> None:
         """Handle WebSocket connection."""
-        c = _get_quick_bar_colors()
+        c = self._get_colors()
         self._status.setStyleSheet(f"color: {c['focus']}; font-size: 10px;")
         self._status.setToolTip("Connected")
 
     def _on_ws_disconnected(self) -> None:
         """Handle WebSocket disconnection."""
-        c = _get_quick_bar_colors()
+        c = self._get_colors()
         self._status.setStyleSheet(f"color: {c['muted']}; font-size: 10px;")
         self._status.setToolTip("Disconnected")
         self._is_waiting = False
@@ -290,7 +310,7 @@ class ChatQuickBar(QFrame if _QT_AVAILABLE else object):  # type: ignore[misc]
             detail = data.get("detail", "Error")
             self._input.setPlaceholderText(f"Error: {detail}")
 
-    # ── Actions ──────────────────────────────────────────────────────
+    # -- Actions -------------------------------------------------------------
 
     def _on_send(self) -> None:
         """Send user query."""
@@ -321,7 +341,7 @@ class ChatQuickBar(QFrame if _QT_AVAILABLE else object):  # type: ignore[misc]
         self._input.selectAll()
 
 
-# ── Mixin for easy MainWindow integration ────────────────────────────
+# -- Mixin for easy MainWindow integration -----------------------------------
 
 
 class ChatLauncherMixin:
@@ -344,6 +364,7 @@ class ChatLauncherMixin:
         app_name: str = "shared",
         server_url: str = "ws://127.0.0.1:8000",
         auto_show_dock: bool = False,
+        theme_provider: ThemeProviderProtocol | None = None,
     ) -> None:
         """Initialize the chat integration.
 
@@ -355,6 +376,7 @@ class ChatLauncherMixin:
             app_name: Application name for session file path.
             server_url: Chat server WebSocket URL.
             auto_show_dock: If True, show dock widget on startup.
+            theme_provider: Optional theme provider for color resolution.
         """
         _require_qt()
 
@@ -365,6 +387,7 @@ class ChatLauncherMixin:
         self._chat_quick_bar = ChatQuickBar(
             app_context=app_context,
             server_url=server_url,
+            theme_provider=theme_provider,
         )
         self._chat_quick_bar.expand_requested.connect(
             lambda: self._toggle_chat_dock(app_context, app_name, server_url)
