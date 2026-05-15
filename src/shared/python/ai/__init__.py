@@ -1,14 +1,14 @@
 """AI Assistant Integration Layer for Golf Modeling Suite.
 
 This package provides an agent-agnostic AI assistant architecture that
-enables natural language interaction, guided workflows, and educational
-content delivery for users of all skill levels.
+enables natural language interaction and educational content delivery for
+users of all skill levels.
 
 Architecture:
     AgentInterfaceProtocol (AIP) <- Provider Adapters <- User's LLM
                 |
                 v
-    ToolRegistry + WorkflowEngine + EducationSystem
+    ToolRegistry + EducationSystem
                 |
                 v
     Scientific Validator (enforces physics consistency)
@@ -20,10 +20,14 @@ Design Principles:
     4. Scientific Integrity: AI never bypasses validation
     5. Privacy-First: API keys in OS keyring, no data to developers
 
+Note:
+    WorkflowEngine and workflow_definitions have been moved to
+    ``src.shared.python.ai.drafts`` (issue #2760 — Option C).  They are not
+    part of this public API until they are wired to a GUI entry point.
+
 Example:
-    >>> from shared.python.ai import ToolRegistry, WorkflowEngine, EducationSystem
+    >>> from shared.python.ai import ToolRegistry, EducationSystem
     >>> registry = ToolRegistry()
-    >>> engine = WorkflowEngine(registry)
     >>> edu = EducationSystem()
 """
 
@@ -68,23 +72,6 @@ if TYPE_CHECKING:
         ToolCall,
         ToolResult,
     )
-    from .workflow_definitions import (
-        create_c3d_import_workflow,
-        create_cross_engine_validation_workflow,
-        create_drift_control_decomposition_workflow,
-        create_first_analysis_workflow,
-        create_inverse_dynamics_workflow,
-    )
-    from .workflow_engine import (  # noqa: I001
-        RecoveryStrategy,
-        StepResult,
-        StepStatus,
-        ValidationResult,
-        Workflow,
-        WorkflowEngine,
-        WorkflowExecution,
-        WorkflowStep,
-    )
 
 
 # Mapping of exported name -> (module, attribute) for lazy resolution.
@@ -123,36 +110,6 @@ _LAZY: dict[str, tuple[str, str]] = {
     "ProviderCapability": (".types", "ProviderCapability"),
     "ToolCall": (".types", "ToolCall"),
     "ToolResult": (".types", "ToolResult"),
-    # workflow_definitions
-    "create_c3d_import_workflow": (
-        ".workflow_definitions",
-        "create_c3d_import_workflow",
-    ),
-    "create_cross_engine_validation_workflow": (
-        ".workflow_definitions",
-        "create_cross_engine_validation_workflow",
-    ),
-    "create_drift_control_decomposition_workflow": (
-        ".workflow_definitions",
-        "create_drift_control_decomposition_workflow",
-    ),
-    "create_first_analysis_workflow": (
-        ".workflow_definitions",
-        "create_first_analysis_workflow",
-    ),
-    "create_inverse_dynamics_workflow": (
-        ".workflow_definitions",
-        "create_inverse_dynamics_workflow",
-    ),
-    # workflow_engine
-    "RecoveryStrategy": (".workflow_engine", "RecoveryStrategy"),
-    "StepResult": (".workflow_engine", "StepResult"),
-    "StepStatus": (".workflow_engine", "StepStatus"),
-    "ValidationResult": (".workflow_engine", "ValidationResult"),
-    "Workflow": (".workflow_engine", "Workflow"),
-    "WorkflowEngine": (".workflow_engine", "WorkflowEngine"),
-    "WorkflowExecution": (".workflow_engine", "WorkflowExecution"),
-    "WorkflowStep": (".workflow_engine", "WorkflowStep"),
 }
 
 
@@ -187,20 +144,6 @@ __all__ = [
     "ToolParameter",
     "ToolRegistry",
     "get_global_registry",
-    # Workflow Engine
-    "RecoveryStrategy",
-    "StepResult",
-    "StepStatus",
-    "ValidationResult",
-    "Workflow",
-    "WorkflowEngine",
-    "WorkflowExecution",
-    "WorkflowStep",
-    "create_c3d_import_workflow",
-    "create_cross_engine_validation_workflow",
-    "create_drift_control_decomposition_workflow",
-    "create_first_analysis_workflow",
-    "create_inverse_dynamics_workflow",
     # Education
     "EducationSystem",
     "GlossaryEntry",

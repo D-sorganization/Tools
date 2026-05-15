@@ -18,12 +18,12 @@ Workflows defined here:
 
 from __future__ import annotations
 
-from src.shared.python.ai.types import ExpertiseLevel
-from src.shared.python.ai.workflow_engine import (
+from src.shared.python.ai.drafts.workflow_engine import (
     RecoveryStrategy,
     Workflow,
     WorkflowStep,
 )
+from src.shared.python.ai.types import ExpertiseLevel
 
 # ── First Analysis (beginner) ─────────────────────────────────────
 
