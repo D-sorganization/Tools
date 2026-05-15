@@ -227,6 +227,10 @@ class TestChatServiceDefaultMethods:
         result = await svc.request_review(session.session_id, "openai")
         assert result == session.session_id
 
+
+class TestChatServiceBackwardCompat:
+    """Non-async backward-compatibility assertion."""
+
     def test_minimal_subclass_instantiates_without_new_methods(self) -> None:
         """A subclass that ONLY implements stream_response must not crash."""
         svc = _TestChatService()
