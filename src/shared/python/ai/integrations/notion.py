@@ -9,13 +9,15 @@ from src.shared.python.ai.tool_registry import ToolCategory, get_global_registry
 
 logger = logging.getLogger(__name__)
 
-# Placeholder API token management
+# Reserved for Phase 2: store the token when set_notion_api_token() is called.
+# The tool functions below refuse unconditionally until Phase 2 implements the
+# real REST client — token presence is irrelevant until then.
 _NOTION_API_TOKEN: str | None = None
 
 
 def set_notion_api_token(token: str) -> None:
-    """Store the Notion API token in memory for session use."""
-    global _NOTION_API_TOKEN
+    """Store the Notion API token in memory for session use (Phase 2)."""
+    global _NOTION_API_TOKEN  # noqa: PLW0603
     _NOTION_API_TOKEN = token
 
 
@@ -38,15 +40,11 @@ def notion_push_report(
         markdown_content: The markdown body of the report.
         parent_page_id: The ID of the parent Notion page or database.
     """
-    if not _NOTION_API_TOKEN:
-        return {"error": "Notion API token is not configured."}
-
-    logger.info("Pushing report to Notion: %s", title)
-    return {
-        "success": True,
-        "message": f"Successfully pushed report '{title}' to Notion.",
-        "url": "https://notion.so/placeholder",
-    }
+    raise NotImplementedError(
+        "Notion integration is not yet implemented (Phase 2 of #2759). "
+        "Configure your Notion API token via settings, then implement the REST "
+        "client in src/shared/python/ai/integrations/notion.py."
+    )
 
 
 @registry.register(
@@ -60,16 +58,8 @@ def notion_read_knowledge_base(query: str) -> dict[str, Any]:
     Args:
         query: Search term for the knowledge base.
     """
-    if not _NOTION_API_TOKEN:
-        return {"error": "Notion API token is not configured."}
-
-    logger.info("Searching Notion KB for: %s", query)
-    return {
-        "success": True,
-        "articles": [
-            {
-                "title": f"Article about {query}",
-                "content": "This is placeholder content from Notion.",
-            }
-        ],
-    }
+    raise NotImplementedError(
+        "Notion integration is not yet implemented (Phase 2 of #2759). "
+        "Configure your Notion API token via settings, then implement the REST "
+        "client in src/shared/python/ai/integrations/notion.py."
+    )

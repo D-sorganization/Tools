@@ -9,13 +9,15 @@ from src.shared.python.ai.tool_registry import ToolCategory, get_global_registry
 
 logger = logging.getLogger(__name__)
 
-# Placeholder API token management
+# Reserved for Phase 2: store the token when set_linear_api_token() is called.
+# The tool functions below refuse unconditionally until Phase 2 implements the
+# real GraphQL client — token presence is irrelevant until then.
 _LINEAR_API_TOKEN: str | None = None
 
 
 def set_linear_api_token(token: str) -> None:
-    """Store the Linear API token in memory for session use."""
-    global _LINEAR_API_TOKEN
+    """Store the Linear API token in memory for session use (Phase 2)."""
+    global _LINEAR_API_TOKEN  # noqa: PLW0603
     _LINEAR_API_TOKEN = token
 
 
@@ -34,19 +36,11 @@ def linear_query_issues(query: str, status: str = "open") -> dict[str, Any]:
         query: The search term to find relevant issues.
         status: The status of issues to return (e.g. 'open', 'done').
     """
-    if not _LINEAR_API_TOKEN:
-        return {
-            "error": "Linear API token is not configured. Please provide it in settings."  # noqa: E501
-        }
-
-    logger.info("Querying Linear for '%s' with status '%s'", query, status)
-    # Placeholder for actual GraphQL API interaction
-    return {
-        "success": True,
-        "issues": [
-            {"id": "ENG-123", "title": f"Placeholder for {query}", "status": status}
-        ],
-    }
+    raise NotImplementedError(
+        "Linear integration is not yet implemented (Phase 2 of #2759). "
+        "Configure your Linear API token via settings, then implement the GraphQL "
+        "client in src/shared/python/ai/integrations/linear.py."
+    )
 
 
 @registry.register(
@@ -65,18 +59,8 @@ def linear_create_issue(
         description: Detailed description in Markdown.
         team_id: The team ID to create the issue under.
     """
-    if not _LINEAR_API_TOKEN:
-        return {
-            "error": "Linear API token is not configured. Please provide it in settings."  # noqa: E501
-        }
-
-    logger.info("Creating Linear issue: %s", title)
-    # Placeholder for actual GraphQL API interaction
-    return {
-        "success": True,
-        "issue": {
-            "id": "ENG-124",
-            "title": title,
-            "url": "https://linear.app/issue/ENG-124",
-        },
-    }
+    raise NotImplementedError(
+        "Linear integration is not yet implemented (Phase 2 of #2759). "
+        "Configure your Linear API token via settings, then implement the GraphQL "
+        "client in src/shared/python/ai/integrations/linear.py."
+    )
