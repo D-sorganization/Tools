@@ -241,10 +241,18 @@ class ChatDockWidget(QDockWidget):
         self._tools_btn = QPushButton("Tools")
         self._tools_btn.setToolTip("Chat tools and actions")
         self._tools_menu = QMenu(self)
-        self._tools_menu.addAction("Copy Entire Thread", self._copy_entire_thread)
-        self._tools_menu.addAction("Export to Markdown...", self._export_to_markdown)
-        self._tools_menu.addAction("Condense Thread", self._condense_thread)
-        self._tools_menu.addAction("Request Agent Review...", self._request_review)
+        self._action_copy_thread = self._tools_menu.addAction("Copy Entire Thread")
+        self._action_export_thread = self._tools_menu.addAction("Export to Markdown...")
+        self._action_condense_thread = self._tools_menu.addAction("Condense Thread")
+        self._action_request_review = self._tools_menu.addAction("Request Agent Review...")
+        if self._action_copy_thread is not None:
+            self._action_copy_thread.triggered.connect(self._copy_entire_thread)
+        if self._action_export_thread is not None:
+            self._action_export_thread.triggered.connect(self._export_to_markdown)
+        if self._action_condense_thread is not None:
+            self._action_condense_thread.triggered.connect(self._condense_thread)
+        if self._action_request_review is not None:
+            self._action_request_review.triggered.connect(self._request_review)
         self._tools_btn.setMenu(self._tools_menu)
         status_row.addWidget(self._tools_btn)
 
