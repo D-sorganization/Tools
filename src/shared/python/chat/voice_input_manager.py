@@ -145,7 +145,7 @@ class VoiceInputManager:
         if self._worker is not None:
             self._worker.request_stop()
             self._worker.quit()
-            self._worker.wait(msecs=500)
+            self._worker.wait(500)
             self._worker = None
 
     # ── Internal ───────────────────────────────────────────────────────────

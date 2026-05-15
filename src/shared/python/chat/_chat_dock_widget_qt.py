@@ -73,10 +73,12 @@ def _get_theme_colors(
     """
     provider: ThemeProviderProtocol = theme_provider or _DefaultDarkTheme()
     try:
-        return provider.get_current_colors()
+        colors: dict[str, str] = provider.get_current_colors()
+        return colors
     except Exception:  # noqa: BLE001 - defensive: a misbehaving provider
         # must not crash the widget
-        return _DefaultDarkTheme().get_current_colors()
+        colors = _DefaultDarkTheme().get_current_colors()
+        return colors
 
 
 class ChatMessageBubble(QFrame):
@@ -825,8 +827,10 @@ class ChatDockWidget(QDockWidget):
             raise ValueError("messages must be provided")
         while self._message_layout.count() > 1:
             item = self._message_layout.takeAt(0)
-            if item and item.widget():
-                item.widget().deleteLater()
+            if item:
+                widget = item.widget()
+                if widget is not None:
+                    widget.deleteLater()
         for msg in messages:
             role = msg.get("role", "user")
             content = msg.get("content", "")
