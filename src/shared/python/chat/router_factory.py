@@ -183,6 +183,28 @@ def create_chat_router(
                             {"type": "error", "detail": f"Skill error: {exc}"}
                         )
 
+                elif action == "request_review":
+                    provider = msg.get("provider")
+                    if not provider:
+                        await websocket.send_json(
+                            {"type": "error", "detail": "Missing provider"}
+                        )
+                        continue
+                    try:
+                        new_session_id = await chat_service.request_review(
+                            session_id, provider
+                        )
+                        await websocket.send_json(
+                            {
+                                "type": "review_started",
+                                "new_session_id": new_session_id,
+                            }
+                        )
+                    except Exception as exc:
+                        await websocket.send_json(
+                            {"type": "error", "detail": f"Review error: {exc}"}
+                        )
+
                 else:
                     await websocket.send_json(
                         {

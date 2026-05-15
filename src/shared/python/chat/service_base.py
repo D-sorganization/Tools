@@ -287,6 +287,19 @@ class ChatServiceBase(abc.ABC):
         """
         ...  # pragma: no cover
 
+    @abc.abstractmethod
+    async def request_review(self, session_id: str, provider: str) -> str:
+        """Request a multi-agent review of the current thread.
+
+        Args:
+            session_id: Target session.
+            provider: The LLM provider to use for the review.
+
+        Returns:
+            The session ID of the newly created review session.
+        """
+        ...  # pragma: no cover
+
     # ── Hooks for subclass customization ─────────────────────────────
 
     def _load_session(self, session_id: str) -> ChatSession | None:
