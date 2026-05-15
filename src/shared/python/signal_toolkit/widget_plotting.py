@@ -89,7 +89,7 @@ class PlottingMixin:
         title: str,
     ) -> None:
         """Update the secondary plot."""
-        if not (signal is not None):
+        if signal is None:
             raise ValueError("signal must be provided")
         self_w = cast("WidgetProtocol", self)
         self_w.canvas2.axes.clear()
@@ -119,7 +119,7 @@ class PlottingMixin:
 
         Renders magnitude (dB) on the secondary canvas.
         """
-        if not (frequencies is not None):
+        if frequencies is None:
             raise ValueError("frequencies must be provided")
         self_w = cast("WidgetProtocol", self)
         self_w.canvas2.axes.clear()
@@ -140,14 +140,14 @@ class PlottingMixin:
 
     def _log(self, message: str) -> None:
         """Log a message to the result text area."""
-        if not (message is not None):
+        if message is None:
             raise ValueError("message must be provided")
         self_w = cast("WidgetProtocol", self)
         self_w.result_text.append(message)
 
     def set_joints(self, joints: list[str]) -> None:
         """Set the list of available joints."""
-        if not (joints is not None):
+        if joints is None:
             raise ValueError("joints must be provided")
         self_w = cast("WidgetProtocol", self)
         self_w.joint_names = joints  # type: ignore[assignment]

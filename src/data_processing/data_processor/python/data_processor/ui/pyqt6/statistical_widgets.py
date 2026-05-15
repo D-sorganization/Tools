@@ -89,7 +89,7 @@ if PYQT6_AVAILABLE:
 
         def set_variables(self, variables: list[str]) -> None:
             """Set the available variables."""
-            if not (variables is not None):
+            if variables is None:
                 raise ValueError("variables must be provided")
             self.list_widget.clear()
             for var in variables:
@@ -187,7 +187,7 @@ if PYQT6_AVAILABLE:
 
         def set_dataframe(self, df: pd.DataFrame) -> None:
             """Set the DataFrame and update variable list."""
-            if not (df is not None):
+            if df is None:
                 raise ValueError("df must be provided")
             numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
             self.variable_selector.set_variables(numeric_cols)
@@ -356,7 +356,7 @@ if PYQT6_AVAILABLE:
 
         def set_dataframe(self, df: pd.DataFrame) -> None:
             """Set DataFrame and update variable combos."""
-            if not (df is not None):
+            if df is None:
                 raise ValueError("df must be provided")
             all_cols = list(df.columns)
             numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
@@ -405,7 +405,7 @@ if PYQT6_AVAILABLE:
 
         def display_results(self, report: str) -> None:
             """Display ANOVA results."""
-            if not (report is not None):
+            if report is None:
                 raise ValueError("report must be provided")
             self.results_text.setText(report)
 
@@ -487,7 +487,7 @@ if PYQT6_AVAILABLE:
 
         def set_dataframe(self, df: pd.DataFrame) -> None:
             """Set DataFrame and update variable lists."""
-            if not (df is not None):
+            if df is None:
                 raise ValueError("df must be provided")
             numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
             self.target_combo.clear()
@@ -509,7 +509,7 @@ if PYQT6_AVAILABLE:
 
         def display_results(self, result: Any, report: str) -> None:
             """Display regression results."""
-            if not (report is not None):
+            if report is None:
                 raise ValueError("report must be provided")
             self.summary_text.setText(report)
 

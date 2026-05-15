@@ -11,7 +11,7 @@ class ColumnSelectionDialog(ctk.CTkToplevel):
     """Simple dialog for column selection."""
 
     def __init__(self, parent: ctk.CTk, columns: list[str]) -> None:
-        if not (parent is not None):
+        if parent is None:
             raise ValueError("parent must be provided")
         super().__init__(parent)
         self.title("Select Columns")

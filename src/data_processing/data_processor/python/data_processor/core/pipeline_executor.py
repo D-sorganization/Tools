@@ -48,7 +48,7 @@ class PipelineExecutor:
         Returns:
             Processed DataFrame
         """
-        if not (pipeline is not None):
+        if pipeline is None:
             raise ValueError("pipeline must be provided")
         import pandas as pd
 
@@ -87,7 +87,7 @@ class PipelineExecutor:
 
     def _execute_step(self, df: pd.DataFrame, step: ProcessingStep) -> pd.DataFrame:
         """Execute a single processing step."""
-        if not (df is not None):
+        if df is None:
             raise ValueError("df must be provided")
         params = step.parameters
 

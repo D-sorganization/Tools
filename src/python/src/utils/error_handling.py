@@ -32,7 +32,7 @@ def handle_file_errors(
         Decorator function
     """
 
-    if not (log_error is not None):
+    if log_error is None:
         raise ValueError("log_error must be provided")
 
     def decorator(func: Callable[..., T]) -> Callable[..., T | None]:
@@ -91,7 +91,9 @@ def safe_execute(
     """
     try:
         return func(*args, **kwargs)
-    except Exception as e:  # noqa: BLE001 — intentional catch-all; safe_execute must not propagate
+    except (
+        Exception
+    ) as e:  # noqa: BLE001 — intentional catch-all; safe_execute must not propagate
         if log_error:
             logger.error(f"Error executing {func.__name__}: {e}")
         return default
@@ -139,7 +141,7 @@ def log_and_continue(
         Decorator function
     """
 
-    if not (error_message is not None):
+    if error_message is None:
         raise ValueError("error_message must be provided")
 
     def decorator(func: Callable[..., T]) -> Callable[..., T | None]:
@@ -172,7 +174,7 @@ def exit_on_error(
         Decorator function
     """
 
-    if not (error_message is not None):
+    if error_message is None:
         raise ValueError("error_message must be provided")
 
     def decorator(func: Callable[..., T]) -> Callable[..., T]:

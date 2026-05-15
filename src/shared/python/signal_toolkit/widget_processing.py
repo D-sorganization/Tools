@@ -454,7 +454,7 @@ class ProcessingMixin:
 
     def _update_tangent_position(self, value: int) -> None:
         """Update tangent line position from slider."""
-        if not (value is not None):
+        if value is None:
             raise ValueError("value must be provided")
         w = cast(WidgetProtocol, self)
         if w.current_signal is None:
@@ -817,7 +817,7 @@ class ProcessingMixin:
         Args:
             signal: Signal object to load.
         """
-        if not (signal is not None):
+        if signal is None:
             raise ValueError("signal must be provided")
         w = cast(WidgetProtocol, self)
         w.current_signal = signal

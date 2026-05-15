@@ -27,7 +27,7 @@ class EncryptionManager:
         Returns:
             32-byte encryption key
         """
-        if not (password is not None):
+        if password is None:
             raise ValueError("password must be provided")
         kdf = PBKDF2HMAC(
             algorithm=hashes.SHA256(),
@@ -48,7 +48,7 @@ class EncryptionManager:
         Returns:
             Encrypted data with salt prepended
         """
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         salt = os.urandom(16)
         key = EncryptionManager.derive_key(password, salt)
@@ -68,7 +68,7 @@ class EncryptionManager:
         Returns:
             Decrypted data
         """
-        if not (encrypted_data is not None):
+        if encrypted_data is None:
             raise ValueError("encrypted_data must be provided")
         salt = encrypted_data[:16]
         encrypted = encrypted_data[16:]

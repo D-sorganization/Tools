@@ -312,7 +312,7 @@ class UnitConverter:
 
     def get_units_for_category(self, category: str) -> list[str]:
         """Return all units available in a category."""
-        if not (category is not None):
+        if category is None:
             raise ValueError("category must be provided")
         if category == "temperature":
             return ["K", "C", "F", "R"]
@@ -331,7 +331,7 @@ class UnitConverter:
     def get_category(self, unit: str) -> str | None:
         """Determine which category a unit belongs to."""
         # Temperature (highest priority)
-        if not (unit is not None):
+        if unit is None:
             raise ValueError("unit must be provided")
         if unit.upper() in ("K", "C", "F", "R"):
             return "temperature"
@@ -433,7 +433,7 @@ class UnitConverter:
 
     def _convert_temperature(self, value: float, from_unit: str, to_unit: str) -> float:
         """Convert temperature units via Kelvin as intermediate."""
-        if not (value is not None):
+        if value is None:
             raise ValueError("value must be provided")
         fu = from_unit.upper()
         tu = to_unit.upper()
@@ -522,7 +522,7 @@ class UnitConverter:
                     m3_hr_std * (stp_temp / std_temp) * (std_pressure / stp_pressure)
                 )  # noqa: E501
         elif fu == "ACFM":
-            if not (temperature is not None and pressure is not None):
+            if temperature is None or pressure is None:
                 raise ValueError("DbC Blocked: Precondition failed.")
             scfm = value * (std_temp / temperature) * (pressure / std_pressure)
             m3_hr_std = scfm * SCFM_TO_CU_METER_PER_HOUR_AT_60F
@@ -548,7 +548,7 @@ class UnitConverter:
                 )  # noqa: E501
             return m3_hr_at_scfm / SCFM_TO_CU_METER_PER_HOUR_AT_60F
         elif tu == "ACFM":
-            if not (temperature is not None and pressure is not None):
+            if temperature is None or pressure is None:
                 raise ValueError("DbC Blocked: Precondition failed.")
             m3_hr_at_scfm = m3_hr_std
             if stp_temp != std_temp or stp_pressure != std_pressure:
@@ -624,7 +624,7 @@ class UnitConverter:
 
     def format_number(self, num: float) -> str:
         """Format a number for display, matching the PyQt6 style."""
-        if not (num is not None):
+        if num is None:
             raise ValueError("num must be provided")
         if math.isnan(num) or math.isinf(num):
             return str(num)

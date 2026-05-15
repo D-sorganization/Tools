@@ -219,7 +219,7 @@ class DataProcessorWidget(QWidget):
         self.progress_bar.setVisible(busy)
 
     def _update_table(self, df: pd.DataFrame) -> None:
-        if not (df is not None):
+        if df is None:
             raise ValueError("df must be provided")
         self.result_table.clear()
         # Show max 100 rows for preview

@@ -63,7 +63,7 @@ class GeminiTitleLLM:
             logger.error("google-generativeai package not installed")
 
     def extract_title(self, pdf_path: Path) -> TitleResult:
-        if not (pdf_path is not None):
+        if pdf_path is None:
             raise ValueError("pdf_path must be provided")
         if not self.genai or not self.model:
             return TitleResult(

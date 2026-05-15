@@ -250,7 +250,7 @@ class UnifiedLauncher(ThemedWindowMixin, ThemedWindowMixin, QMainWindow):
 
     def setup_category_tab(self, tab: QWidget, tools: list[dict[str, Any]]) -> bool:
         """Set up a tab for a category of tools."""
-        if not (tab is not None):
+        if tab is None:
             raise ValueError("tab must be provided")
         if not tools:
             return False
@@ -312,7 +312,7 @@ class UnifiedLauncher(ThemedWindowMixin, ThemedWindowMixin, QMainWindow):
 
     def launch_tool_wrapper(self, tool_info: dict[str, Any]) -> None:
         """Wrapper to launch tool in background thread with progress tracking."""
-        if not (tool_info is not None):
+        if tool_info is None:
             raise ValueError("tool_info must be provided")
         is_debug = self.debug_mode.isChecked()
         tool_name = tool_info.get("name", "Unknown Tool")

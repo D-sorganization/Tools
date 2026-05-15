@@ -111,7 +111,7 @@ class FolderProcessorApp(UICreationMixin, FileOperationsMixin, ProcessingMixin):
         Args:
             root_window: The root Tkinter window
         """
-        if not (root_window is not None):
+        if root_window is None:
             raise ValueError("root_window must be provided")
         self.root = root_window
         self.root.title("Folder Fix - Enhanced Folder Processor v2.0")
