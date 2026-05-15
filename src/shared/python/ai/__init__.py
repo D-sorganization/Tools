@@ -61,6 +61,7 @@ from src.shared.python.ai.types import (
     Message,
     ProviderCapabilities,
     ProviderCapability,
+    TokenUsage,
     ToolCall,
     ToolResult,
 )
@@ -91,6 +92,7 @@ __all__ = [
     "Message",
     "ProviderCapabilities",
     "ProviderCapability",
+    "TokenUsage",
     "ToolCall",
     "ToolResult",
     # Tool Registry
