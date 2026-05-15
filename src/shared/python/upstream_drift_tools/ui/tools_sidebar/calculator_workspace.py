@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ast
 import json
 from dataclasses import dataclass
 from pathlib import Path
@@ -102,7 +103,7 @@ class CalculatorWorkspaceFacade:
 
     def remove_local(self, name: str) -> bool:
         """Remove only the calculator-local value."""
-        return self._local_registry.remove(name)
+        return bool(self._local_registry.remove(name))
 
     def clear_local(self) -> None:
         """Clear only the calculator-local registry."""
@@ -232,7 +233,7 @@ class CalculatorWorkspaceController:
         self._registry.clear()
 
     def _payload(self) -> dict[str, Any]:
-        payload = self._registry.to_dict()
+        payload = dict(self._registry.to_dict())
         payload["version"] = CALCULATOR_WORKSPACE_FORMAT_VERSION
         payload["scope"] = self._scope
         return payload
@@ -327,11 +328,18 @@ def build_calculator_workspace_controls(
 
 def evaluate_calculator_expression(expression: str) -> tuple[Any, str]:
     """Evaluate a calculator expression and return workspace value plus preview."""
-    from web_applications.calculator.calculator import TI89Calculator
-
-    result = TI89Calculator().evaluate(expression).result
+    result = _evaluate_shared_calculator_expression(expression)
     workspace_value = workspace_value_for_calculator_result(result)
     return workspace_value, format_workspace_value_preview(workspace_value)
+
+
+def _evaluate_shared_calculator_expression(expression: str) -> Any:
+    stripped = expression.strip()
+    if stripped.startswith("Matrix(") and stripped.endswith(")"):
+        return ast.literal_eval(stripped.removeprefix("Matrix(")[:-1])
+    from shared.python.safe_eval import safe_eval_math
+
+    return safe_eval_math(stripped)
 
 
 def workspace_value_for_calculator_result(value: Any) -> Any:
