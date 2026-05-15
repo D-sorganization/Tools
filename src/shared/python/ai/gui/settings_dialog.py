@@ -16,6 +16,7 @@ Security:
 from __future__ import annotations
 
 import contextlib
+import os
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import TYPE_CHECKING, Any
@@ -66,6 +67,8 @@ KEY_STREAMING = "ai/streaming_enabled"
 KEY_RAG_ENABLED = "ai/rag_enabled"
 KEY_AUTO_INDEX_ON_OPEN = "ai/auto_index_on_open"
 KEY_ACCESS_MODE = "ai/access_mode"
+DEFAULT_CLINE_HOST = "http://localhost:3000"
+BITNET_ROOT_ENV = "BITNET_ROOT"
 
 
 class AIProvider(Enum):
@@ -465,34 +468,89 @@ class ProviderConfigWidget(QWidget):
             self._key_status = QLabel()
             layout.addWidget(self._key_status)
         else:
-            # Ollama host configuration
-            host_layout = QFormLayout()
-            self._host_input = QLineEdit(get_ollama_host())
-            host_layout.addRow("Ollama Host:", self._host_input)
-            layout.addLayout(host_layout)
-
-            # Test connection button
-            self._test_btn = QPushButton("Test Connection")
-            self._test_btn.clicked.connect(self._test_ollama_connection)
-            layout.addWidget(self._test_btn)
-
-            # Refresh models button
-            self._refresh_models_btn = QPushButton("🔄 Refresh Available Models")
-            self._refresh_models_btn.setToolTip(
-                "Fetch the list of installed models from your local Ollama instance"
-            )
-            self._refresh_models_btn.clicked.connect(self._refresh_ollama_models)
-            layout.addWidget(self._refresh_models_btn)
-
-            self._status_label = QLabel()
-            layout.addWidget(self._status_label)
-
-            # Model count display
-            self._model_count_label = QLabel()
-            self._model_count_label.setStyleSheet(Styles.TEXT_MUTED)
-            layout.addWidget(self._model_count_label)
+            self._setup_local_provider_ui(layout)
 
         layout.addStretch()
+
+    def _setup_local_provider_ui(self, layout: QVBoxLayout) -> None:
+        """Render controls for providers that do not need API keys."""
+        if self._provider == AIProvider.OLLAMA:
+            self._setup_ollama_ui(layout)
+            return
+        if self._provider == AIProvider.CLINE_CLI:
+            self._setup_cline_ui(layout)
+            return
+        if self._provider == AIProvider.BITNET:
+            self._setup_bitnet_ui(layout)
+            return
+        self._setup_cli_note(layout)
+
+    def _setup_ollama_ui(self, layout: QVBoxLayout) -> None:
+        """Render Ollama-specific host and model discovery controls."""
+        host_layout = QFormLayout()
+        self._host_input = QLineEdit(get_ollama_host())
+        host_layout.addRow("Ollama Host:", self._host_input)
+        layout.addLayout(host_layout)
+
+        self._test_btn = QPushButton("Test Connection")
+        self._test_btn.clicked.connect(self._test_ollama_connection)
+        layout.addWidget(self._test_btn)
+
+        self._refresh_models_btn = QPushButton("🔄 Refresh Available Models")
+        self._refresh_models_btn.setToolTip(
+            "Fetch the list of installed models from your local Ollama instance"
+        )
+        self._refresh_models_btn.clicked.connect(self._refresh_ollama_models)
+        layout.addWidget(self._refresh_models_btn)
+
+        self._status_label = QLabel()
+        layout.addWidget(self._status_label)
+
+        self._model_count_label = QLabel()
+        self._model_count_label.setStyleSheet(Styles.TEXT_MUTED)
+        layout.addWidget(self._model_count_label)
+
+    def _setup_cline_ui(self, layout: QVBoxLayout) -> None:
+        """Render Cline-specific endpoint controls."""
+        host_layout = QFormLayout()
+        self._host_input = QLineEdit(DEFAULT_CLINE_HOST)
+        host_layout.addRow("Cline Host:", self._host_input)
+        layout.addLayout(host_layout)
+
+        self._test_btn = QPushButton("Test Connection")
+        self._test_btn.clicked.connect(self._test_cline_connection)
+        layout.addWidget(self._test_btn)
+
+        self._status_label = QLabel()
+        layout.addWidget(self._status_label)
+
+    def _setup_bitnet_ui(self, layout: QVBoxLayout) -> None:
+        """Render BitNet-specific local installation hints."""
+        root_layout = QFormLayout()
+        self._bitnet_root_input = QLineEdit(os.environ.get(BITNET_ROOT_ENV, ""))
+        self._bitnet_root_input.setPlaceholderText(
+            "Optional path to the BitNet installation root"
+        )
+        root_layout.addRow("BitNet Root:", self._bitnet_root_input)
+        layout.addLayout(root_layout)
+
+        note = QLabel(
+            "Use the main model selector to choose a GGUF model. "
+            "Leave BitNet Root blank to rely on PATH or BITNET_ROOT."
+        )
+        note.setWordWrap(True)
+        note.setStyleSheet(Styles.TEXT_MUTED)
+        layout.addWidget(note)
+
+    def _setup_cli_note(self, layout: QVBoxLayout) -> None:
+        """Render honest no-op settings for CLI-backed providers."""
+        note = QLabel(
+            "This provider uses your installed CLI tooling and does not need "
+            "extra connection settings in this dialog."
+        )
+        note.setWordWrap(True)
+        note.setStyleSheet(Styles.TEXT_MUTED)
+        layout.addWidget(note)
 
     def _load_current_key(self) -> None:
         """Load current API key from keyring."""
@@ -582,6 +640,29 @@ class ProviderConfigWidget(QWidget):
             self._status_label.setText(f"✗ Error: {e}")
             self._status_label.setStyleSheet(Styles.COLOR_RED)
 
+    def _test_cline_connection(self) -> None:
+        """Test connection to the configured Cline endpoint."""
+        self._status_label.setText("Testing connection...")
+        self._status_label.setStyleSheet(Styles.COLOR_RESET)
+
+        try:
+            from src.shared.python.ai.adapters.cline_adapter import ClineAdapter
+
+            host = self._host_input.text().strip()
+            adapter = ClineAdapter(host=host)
+            success, message = adapter.validate_connection()
+
+            if success:
+                self._status_label.setText(f"✓ {message}")
+                self._status_label.setStyleSheet(Styles.COLOR_GREEN)
+            else:
+                self._status_label.setText(f"✗ {message}")
+                self._status_label.setStyleSheet(Styles.COLOR_RED)
+
+        except ImportError as e:
+            self._status_label.setText(f"✗ Error: {e}")
+            self._status_label.setStyleSheet(Styles.COLOR_RED)
+
     def showEvent(self, event: Any) -> None:
         """Refresh models automatically when the widget becomes visible."""
         super().showEvent(event)
@@ -626,8 +707,14 @@ class ProviderConfigWidget(QWidget):
 
     def get_host(self) -> str:
         """Get Ollama host if applicable."""
+        if self._provider == AIProvider.BITNET and hasattr(self, "_bitnet_root_input"):
+            return str(self._bitnet_root_input.text().strip())
         if hasattr(self, "_host_input"):
             return str(self._host_input.text().strip())
+        if self._provider == AIProvider.CLINE_CLI:
+            return DEFAULT_CLINE_HOST
+        if self._provider == AIProvider.BITNET:
+            return os.environ.get(BITNET_ROOT_ENV, "")
         return str(get_ollama_host())
 
 
