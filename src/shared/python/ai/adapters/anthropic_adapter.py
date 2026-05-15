@@ -491,13 +491,14 @@ class AnthropicAdapter(BaseAgentAdapter):
 
         content = "\n".join(content_parts)
 
-        # Extract usage
-        usage: dict[str, int] = {}
+        # Extract usage and normalize to canonical keys (issue #2763)
+        raw_usage: dict[str, int] = {}
         if hasattr(response, "usage"):
-            usage = {
+            raw_usage = {
                 "input_tokens": response.usage.input_tokens,
                 "output_tokens": response.usage.output_tokens,
             }
+        usage = self._normalize_token_counts(raw_usage)
 
         return AgentResponse(
             content=content,
@@ -511,5 +512,17 @@ class AnthropicAdapter(BaseAgentAdapter):
         )
 
     def _handle_error(self, error: Exception) -> AgentResponse:
-        """Handle Anthropic API errors."""
-        return super()._handle_error(error)
+        """Handle Anthropic API errors.
+
+        Delegates to :meth:`~BaseAgentAdapter._classify_error` for the
+        shared string-scan classification logic.
+
+        Args:
+            error: The exception that occurred.
+
+        Raises:
+            Appropriate AIError subclass.
+        """
+        raise self._classify_error(
+            error, provider="anthropic", timeout=self._timeout
+        ) from error

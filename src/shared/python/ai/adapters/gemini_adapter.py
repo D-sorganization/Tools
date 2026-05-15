@@ -188,15 +188,19 @@ class GeminiAdapter(BaseAgentAdapter):
             NotImplementedError: If ``tools`` is non-empty (see issue #2764).
         """
         self._reject_tools_if_present(tools)
+        # Canonical zero-usage: Gemini SDK (v0.3+) does not expose per-call
+        # token counts in a stable way, so we emit zeros rather than omitting
+        # the key (issue #2763).
+        canonical_usage = self._normalize_token_counts({})
         try:
             with _CONFIGURE_LOCK:
                 self._with_configured_sdk()
                 chat = self._build_chat_session(context)
                 response = chat.send_message(message)
-            return AgentResponse(content=response.text)
+            return AgentResponse(content=response.text, usage=canonical_usage)
         except (RuntimeError, ValueError, OSError) as e:
             logger.error(f"Gemini API error: {e}")
-            return AgentResponse(content=f"Error: {e}")
+            return AgentResponse(content=f"Error: {e}", usage=canonical_usage)
 
     def stream_response(
         self,
@@ -210,6 +214,10 @@ class GeminiAdapter(BaseAgentAdapter):
             NotImplementedError: If ``tools`` is non-empty (see issue #2764).
         """
         self._reject_tools_if_present(tools)
+        # Track whether we have emitted a final chunk so the guarantee below
+        # can synthesize one if the underlying generator finishes without one
+        # (issue #2763 — Gemini streaming finality fix).
+        emitted_final = False
         try:
             with _CONFIGURE_LOCK:
                 self._with_configured_sdk()
@@ -218,13 +226,22 @@ class GeminiAdapter(BaseAgentAdapter):
                     message, stream=True
                 )
 
+                index = 0
                 for chunk in response:
                     if chunk.text:
-                        yield AgentChunk(content=chunk.text)
+                        yield AgentChunk(
+                            content=chunk.text, is_final=False, index=index
+                        )
+                        index += 1
 
         except (RuntimeError, ValueError, OSError) as e:
             logger.error(f"Gemini streaming error: {e}")
-            yield AgentChunk(content=f"\n[Error: {e}]")
+            yield AgentChunk(content=f"\n[Error: {e}]", is_final=True)
+            emitted_final = True
+
+        # Guarantee: every stream MUST end with is_final=True (issue #2763).
+        if not emitted_final:
+            yield AgentChunk(content="", is_final=True)
 
     @property
     def capabilities(self) -> ProviderCapabilities:

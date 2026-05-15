@@ -12,6 +12,7 @@ from src.shared.python.ai.types import (
     ProviderCapabilities,
     ProviderCapability,
 )
+from src.shared.python.contracts import precondition
 
 logger = logging.getLogger(__name__)
 
@@ -69,7 +70,11 @@ class RustAgentAdapter(BaseAgentAdapter):
         """
         try:
             import ai_backend
-        except ImportError as exc:  # pragma: no cover - environment-specific
+        except ImportError as exc:
+            logger.warning(
+                "rust_adapter: ai_backend wheel not available; using pure-Python path. "
+                "See docs/development/rust_distribution.md"
+            )
             raise ImportError(_WHEEL_MISSING_HINT) from exc
 
         self.config = ai_backend.AIConfig(
@@ -204,20 +209,29 @@ class RustAgentAdapter(BaseAgentAdapter):
         """Retrieve semantic context using the Rust vector memory."""
         return [str(item) for item in self.rag.retrieve_context(prompt, top_k)]
 
+    @precondition(
+        lambda prompt: bool(prompt.strip()), "message must not be empty or blank"
+    )
     def send_message(
         self, prompt: str, context: ConversationContext, tools: list[ToolDeclaration]
     ) -> AgentResponse:
         """Send a message synchronously."""
         del tools
+        # Canonical zero-usage so callers always see the same keys (issue #2763).
+        canonical_usage = self._normalize_token_counts({})
         try:
             full_prompt = (
                 "\n".join([m.content for m in context.messages]) + f"\n{prompt}"
             )
             response = self.engine.generate_response(full_prompt)
-            return AgentResponse(content=str(response))
+            return AgentResponse(content=str(response), usage=canonical_usage)
         except Exception as e:
             logger.exception("Rust backend error")
-            return AgentResponse(content=f"Error: {e}", finish_reason="error")
+            return AgentResponse(
+                content=f"Error: {e}",
+                finish_reason="error",
+                usage=canonical_usage,
+            )
 
     def validate_connection(self) -> tuple[bool, str]:
         """Validate connection to the backend."""
