@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -416,9 +417,10 @@ def build_calculator_workspace_controls(
 
 def evaluate_calculator_expression(expression: str) -> tuple[Any, str]:
     """Evaluate a calculator expression and return workspace value plus preview."""
-    from web_applications.calculator.calculator import TI89Calculator
-
-    result = TI89Calculator().evaluate(expression).result
+    calculator_module = importlib.import_module(
+        "web_applications.calculator.calculator"
+    )
+    result = calculator_module.TI89Calculator().evaluate(expression).result
     workspace_value = workspace_value_for_calculator_result(result)
     return workspace_value, format_workspace_value_preview(workspace_value)
 
