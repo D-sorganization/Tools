@@ -8,8 +8,10 @@ from __future__ import annotations
 
 from .calculator_assist import (
     CALCULATOR_HELP,
+    SYMBOLIC_CALCULATOR_WORKFLOWS,
     CalculatorPredictiveText,
     StaticCalculatorPredictionProvider,
+    symbolic_calculator_workflow_metadata,
 )
 from .calculator_plotting import (
     CALCULATOR_PLOT_TAB_ID,
@@ -97,6 +99,7 @@ __all__ = [
     "DEFAULT_COMMAND_HISTORY_LIMIT",
     "CALCULATOR_HELP",
     "CALCULATOR_WORKSPACE_SCOPE",
+    "SYMBOLIC_CALCULATOR_WORKFLOWS",
     "GLOBAL_WORKSPACE_SCOPE",
     "CalculatorStartupConfig",
     "CalculatorStartupImport",
@@ -158,6 +161,7 @@ __all__ = [
     "install_tools_sidebar",
     "resolve_sidekick_theme",
     "sidekick_qss",
+    "symbolic_calculator_workflow_metadata",
     "validate_calculator_workspace_path",
     "validate_profile_name",
 ]

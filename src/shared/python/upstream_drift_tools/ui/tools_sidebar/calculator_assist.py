@@ -6,6 +6,8 @@ from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from typing import Any, Protocol
 
+from calc_backend.symbolic import symbolic_workflows
+
 from .calculator_startup import (
     CalculatorStartupConfig,
     calculator_startup_config_from_state_payload,
@@ -56,9 +58,12 @@ CALCULATOR_HELP = CalculatorHelpTopic(
         "Arrays and matrices can be built with Matrix([[1, 2], [3, 4]]).",
         "Plotting expressions should stay explicit, for example plot(sin(x)).",
         "Use solve(expression, symbol) for symbolic solving.",
-        "Use latex(expression) when a rendered formula string is needed.",
+        "Use latex(expression) when a rendered LaTeX formula string is needed.",
+        "Symbolic solving is bounded by expression length, symbol count, and timeout.",
     ),
 )
+
+SYMBOLIC_CALCULATOR_WORKFLOWS = symbolic_workflows()
 
 ALLOWED_CALCULATOR_COMMANDS = (
     "diff(",
@@ -202,6 +207,20 @@ def calculator_startup_config(sidebar: Any) -> CalculatorStartupConfig:
     return calculator_startup_config_from_state_payload(
         state.calculator_startup_imports
     )
+
+
+def symbolic_calculator_workflow_metadata() -> tuple[dict[str, Any], ...]:
+    """Return static guided symbolic workflow metadata for UI hosts."""
+    return tuple(
+        _workflow_to_dict(workflow) for workflow in SYMBOLIC_CALCULATOR_WORKFLOWS
+    )
+
+
+def _workflow_to_dict(workflow: Any) -> dict[str, Any]:
+    model_dump = getattr(workflow, "model_dump", None)
+    if callable(model_dump):
+        return model_dump()
+    return workflow.dict()
 
 
 def set_calculator_startup_config(

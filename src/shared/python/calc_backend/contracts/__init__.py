@@ -12,6 +12,12 @@ from .flow_rate import FlowRateConvertRequest, FlowRateConvertResponse
 from .ode_solver import ODESolverRequest, ODESolverResponse
 from .pressure_drop import PressureDropRequest, PressureDropResponse
 from .scrubber import ScrubberRequest, ScrubberResponse
+from .symbolic import (
+    SymbolicRenderRequest,
+    SymbolicRenderResponse,
+    SymbolicSolveRequest,
+    SymbolicSolveResponse,
+)
 from .syngas_water import SyngasWaterRequest, SyngasWaterResponse
 from .thermal_profile import ThermalProfileRequest, ThermalProfileResponse
 from .wgs_reactor import WGSReactorRequest, WGSReactorResponse
@@ -25,6 +31,10 @@ __all__ = [
     "BaghouseResponse",
     "ScrubberRequest",
     "ScrubberResponse",
+    "SymbolicRenderRequest",
+    "SymbolicRenderResponse",
+    "SymbolicSolveRequest",
+    "SymbolicSolveResponse",
     "FinancialRequest",
     "FinancialResponse",
     "AcidGasDewpointRequest",
