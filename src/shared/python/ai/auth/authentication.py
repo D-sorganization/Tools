@@ -19,6 +19,7 @@ Example:
 from __future__ import annotations
 
 import contextlib
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
@@ -420,7 +421,9 @@ class FeatureGate:
         return cls._auth
 
     @classmethod
-    def require(cls, feature: str):
+    def require(
+        cls, feature: str
+    ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
         """Decorator to require a feature for access.
 
         Args:
@@ -430,8 +433,8 @@ class FeatureGate:
             Decorator function.
         """
 
-        def decorator(func):
-            def wrapper(*args, **kwargs):
+        def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+            def wrapper(*args: Any, **kwargs: Any) -> Any:
                 auth = cls._get_auth()
                 if not auth.has_feature(feature):
                     raise PermissionError(
@@ -445,7 +448,9 @@ class FeatureGate:
         return decorator
 
     @classmethod
-    def require_tier(cls, tier: SubscriptionTier):
+    def require_tier(
+        cls, tier: SubscriptionTier
+    ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
         """Decorator to require a minimum subscription tier.
 
         Args:
@@ -455,8 +460,8 @@ class FeatureGate:
             Decorator function.
         """
 
-        def decorator(func):
-            def wrapper(*args, **kwargs):
+        def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+            def wrapper(*args: Any, **kwargs: Any) -> Any:
                 auth = cls._get_auth()
                 tier_order = {
                     SubscriptionTier.FREE: 0,
