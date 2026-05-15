@@ -235,6 +235,7 @@ class ConversationContext:
     session_id: str = field(default_factory=lambda: f"session_{uuid.uuid4().hex[:12]}")
     messages: list[Message] = field(default_factory=list)
     user_expertise: ExpertiseLevel = ExpertiseLevel.BEGINNER
+    response_style: str = "standard"
     active_workflow_id: str | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
 
@@ -351,6 +352,7 @@ class ConversationContext:
             "session_id": self.session_id,
             "messages": [m.to_dict() for m in self.messages],
             "user_expertise": self.user_expertise.name,
+            "response_style": self.response_style,
             "active_workflow_id": self.active_workflow_id,
             "metadata": self.metadata,
         }
@@ -415,6 +417,7 @@ class ConversationContext:
             session_id=data.get("session_id", ""),
             messages=messages,
             user_expertise=expertise,
+            response_style=data.get("response_style", "standard"),
             active_workflow_id=data.get("active_workflow_id"),
             metadata=data.get("metadata", {}),
         )
