@@ -23,6 +23,7 @@ Usage::
 from __future__ import annotations
 
 import json
+import logging
 from pathlib import Path
 from typing import Any
 
@@ -47,6 +48,8 @@ from PyQt6.QtWidgets import (
 
 from .terminal_contracts import TerminalProviderRegistry
 from .terminal_providers import build_default_terminal_provider_registry
+
+logger = logging.getLogger(__name__)
 
 
 def _get_theme_colors() -> dict[str, str]:
@@ -732,8 +735,12 @@ class ChatDockWidget(QDockWidget):
                     }
                 )
                 self._add_bubble("user", f"[Uploaded file: {path.name}]")
-            except Exception as e:
-                self._status_label.setText(f"Upload failed: {e}")
+            except (OSError, ValueError) as exc:
+                logger.warning("File upload failed for %s: %s", path.name, exc)
+                self._status_label.setText(f"Upload failed: {exc}")
+            except Exception:
+                logger.exception("Unexpected error uploading file %s", path.name)
+                self._status_label.setText("Upload failed: internal error")
 
     def _on_screenshot(self) -> None:
         """Capture application screenshot and send to server."""
