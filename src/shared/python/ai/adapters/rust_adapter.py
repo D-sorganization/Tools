@@ -113,22 +113,73 @@ class RustAgentAdapter(BaseAgentAdapter):
         eagerly drains the SSE stream and returns the ordered delta list.
         We re-emit each delta as an ``AgentChunk`` so callers that already
         iterate this iterator-of-chunks contract keep working. Truly-
-        incremental streaming across the PyO3 boundary is a follow-up.
+        incremental streaming across the PyO3 boundary is a follow-up
+        (tracked separately; see issue #2752).
+
+        .. warning::
+
+            **This call is BLOCKING.** The underlying Rust ``AIEngine``
+            uses a Tokio ``block_on`` to drain the SSE stream eagerly,
+            holding the GIL for the duration of the request. When invoked
+            from a Qt UI it MUST be called from a worker thread (e.g.
+            ``QThread`` or ``QRunnable``) — otherwise the event loop will
+            freeze for the full duration of the LLM response.
+
+            The canonical worker pattern lives in
+            ``src/shared/python/ai/gui/assistant_widgets.py`` (see
+            ``StreamWorker``); reuse it rather than reimplementing.
         """
         try:
             full_prompt = (
                 "\n".join([m.content for m in context.messages]) + f"\n{prompt}"
             )
 
+            # Move the blocking Rust call to a background thread to prevent
+            # blocking the Qt event loop if called from the main thread.
+            # Truly-incremental streaming across the PyO3 boundary is a follow-up.
+            import queue
+            import threading
+            import time
+
             try:
-                deltas = self.engine.stream_response(full_prompt)
-            except Exception:
+                from PyQt6.QtCore import QCoreApplication, QThread
+
+                app = QCoreApplication.instance()
+                is_gui_thread = app and (QThread.currentThread() == app.thread())
+            except ImportError:
+                app = None
+                is_gui_thread = False
+
+            result_queue: queue.Queue[Any] = queue.Queue()
+
+            def _fetch_deltas() -> None:
+                try:
+                    # The Rust backend exposes ``stream_response(prompt) -> list[str]``
+                    # that eagerly drains the SSE stream and returns the ordered
+                    # delta list.
+                    res = self.engine.stream_response(full_prompt)
+                    result_queue.put(res)
+                except Exception as exc:
+                    result_queue.put(exc)
+
+            fetch_thread = threading.Thread(target=_fetch_deltas, daemon=True)
+            fetch_thread.start()
+
+            # Wait for the thread to complete while keeping the UI responsive
+            while fetch_thread.is_alive() and result_queue.empty():
+                if is_gui_thread and app:
+                    app.processEvents()
+                time.sleep(0.01)
+
+            result = result_queue.get()
+            if isinstance(result, Exception):
                 # Fall back to the blocking single-shot path if streaming
                 # fails (e.g. provider does not support stream=true).
                 response = self.engine.generate_response(full_prompt)
                 yield AgentChunk(content=response, is_final=True)
                 return
 
+            deltas = result
             if not deltas:
                 yield AgentChunk(content="", is_final=True)
                 return
@@ -136,6 +187,11 @@ class RustAgentAdapter(BaseAgentAdapter):
             last_idx = len(deltas) - 1
             for idx, delta in enumerate(deltas):
                 yield AgentChunk(content=delta, is_final=(idx == last_idx))
+                # Yield control back to the event loop between chunks if we
+                # are on the GUI thread.
+                if is_gui_thread and app:
+                    app.processEvents()
+
         except Exception as e:
             logger.exception("Rust backend error")
             yield AgentChunk(content=f"Error: {e}", is_final=True)

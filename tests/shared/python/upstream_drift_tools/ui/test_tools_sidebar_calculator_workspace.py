@@ -15,6 +15,8 @@ from upstream_drift_tools.ui.tools_sidebar import (
     GlobalWorkspaceController,
     GlobalWorkspaceSettings,
     WorkspaceRegistry,
+    default_calculator_workspace_controller,
+    get_default_sidekick_dir,
     validate_calculator_workspace_path,
 )
 
@@ -264,3 +266,52 @@ def test_promote_local_variable_requires_explicit_overwrite() -> None:
     workspace.promote_to_global("result", overwrite=True)
 
     assert global_workspace.get("result") == 7
+
+
+# ---------------------------------------------------------------------------
+# Storage-dir injection tests (issue #2773)
+# ---------------------------------------------------------------------------
+
+
+def test_get_default_sidekick_dir_no_app_name() -> None:
+    """With no app_name, returns ~/.sidekick."""
+    result = get_default_sidekick_dir()
+    assert result == Path.home() / ".sidekick"
+
+
+def test_get_default_sidekick_dir_with_app_name() -> None:
+    """With app_name, returns ~/.{app_name}/sidekick."""
+    result = get_default_sidekick_dir("myapp")
+    assert result == Path.home() / ".myapp" / "sidekick"
+
+
+def test_get_default_sidekick_dir_upstream_drift_tools_compat() -> None:
+    """Calling with 'upstream_drift_tools' preserves the legacy path."""
+    result = get_default_sidekick_dir("upstream_drift_tools")
+    assert result == Path.home() / ".upstream_drift_tools" / "sidekick"
+
+
+def test_default_calculator_workspace_controller_no_args_uses_dot_sidekick() -> None:
+    """default_calculator_workspace_controller() with no storage_dir uses ~/.sidekick."""  # noqa: E501
+    registry = WorkspaceRegistry()
+    controller = default_calculator_workspace_controller(registry)
+    assert controller.settings.default_directory == Path.home() / ".sidekick"
+
+
+def test_default_calculator_workspace_controller_custom_storage_dir(
+    tmp_path: Path,
+) -> None:
+    """default_calculator_workspace_controller(storage_dir=...) uses the custom path."""
+    registry = WorkspaceRegistry()
+    controller = default_calculator_workspace_controller(registry, storage_dir=tmp_path)
+    assert controller.settings.default_directory == tmp_path
+
+
+def test_default_calculator_workspace_controller_custom_storage_dir_saves_there(
+    tmp_path: Path,
+) -> None:
+    """Controller with custom storage_dir actually writes to that directory."""
+    registry = WorkspaceRegistry({"x": 1})
+    controller = default_calculator_workspace_controller(registry, storage_dir=tmp_path)
+    saved = controller.save()
+    assert saved.parent == tmp_path

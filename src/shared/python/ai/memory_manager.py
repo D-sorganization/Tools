@@ -6,10 +6,12 @@ bundle that adapters may include in system prompts.
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import os
 import tempfile
+import threading
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -80,12 +82,30 @@ class MemoryManager:
         self.storage_dir = storage_dir
         self.storage_dir.mkdir(parents=True, exist_ok=True)
         self.memory_file = self.storage_dir / memory_file_name
+        # Reentrant lock guarding mutations to ``self._memory``. Memory state is
+        # consumed by both the UI thread (settings/prompt refresh) and the
+        # background indexer thread, so all reads/writes must be serialized.
+        self._lock: threading.RLock = threading.RLock()
+        # Separate lock serializing disk writes so that ``save`` can release
+        # ``self._lock`` before performing slow file I/O while still preventing
+        # two writers from racing on the on-disk file.
+        self._io_lock: threading.Lock = threading.Lock()
         self._memory = self._load_memory()
 
     @property
     def memory(self) -> dict[str, Any]:
-        """Return the normalized in-memory state."""
-        return self._memory
+        """Return a deep copy of the normalized in-memory state.
+
+        The copy is taken under the lock so callers receive a consistent
+        snapshot even while background threads mutate the underlying dict.
+        """
+        with self._lock:
+            return copy.deepcopy(self._memory)
+
+    def get_snapshot(self) -> dict[str, Any]:
+        """Return an atomic deep copy of the in-memory state."""
+        with self._lock:
+            return copy.deepcopy(self._memory)
 
     def _default_memory(self) -> dict[str, Any]:
         return {
@@ -131,17 +151,24 @@ class MemoryManager:
         return normalized
 
     def save(self) -> None:
-        """Persist memory using an atomic replace."""
-        payload = json.dumps(self._memory, indent=2, sort_keys=True) + "\n"
-        with tempfile.NamedTemporaryFile(
-            "w",
-            encoding="utf-8",
-            dir=self.storage_dir,
-            delete=False,
-        ) as handle:
-            handle.write(payload)
-            temp_name = handle.name
-        Path(temp_name).replace(self.memory_file)
+        """Persist memory using an atomic replace.
+
+        The in-memory state is serialized under the lock, but the actual file
+        write happens after releasing the lock so that slow disk I/O does not
+        block readers/writers on the dict.
+        """
+        with self._lock:
+            payload = json.dumps(self._memory, indent=2, sort_keys=True) + "\n"
+        with self._io_lock:
+            with tempfile.NamedTemporaryFile(
+                "w",
+                encoding="utf-8",
+                dir=self.storage_dir,
+                delete=False,
+            ) as handle:
+                handle.write(payload)
+                temp_name = handle.name
+            Path(temp_name).replace(self.memory_file)
 
     def set_preference(self, key: str, value: str) -> None:
         """Persist a user preference."""
@@ -149,7 +176,8 @@ class MemoryManager:
             raise ValueError("preference key must be non-empty")
         if not value.strip():
             raise ValueError("preference value must be non-empty")
-        self._memory.setdefault("preferences", {})[key.strip()] = value.strip()
+        with self._lock:
+            self._memory.setdefault("preferences", {})[key.strip()] = value.strip()
         self.save()
 
     def add_memory(self, candidate: MemoryCandidate) -> bool:
@@ -158,16 +186,17 @@ class MemoryManager:
         Returns:
             True when the memory was inserted.
         """
-        existing_hashes = {
-            item.get("source_hash")
-            for item in self._memory.setdefault("memories", [])
-            if isinstance(item, dict)
-        }
-        if candidate.source_hash in existing_hashes:
-            return False
+        with self._lock:
+            existing_hashes = {
+                item.get("source_hash")
+                for item in self._memory.setdefault("memories", [])
+                if isinstance(item, dict)
+            }
+            if candidate.source_hash in existing_hashes:
+                return False
 
-        self._memory["memories"].append(candidate.to_dict())
-        return True
+            self._memory["memories"].append(candidate.to_dict())
+            return True
 
     def digest_archived_contexts(
         self,
@@ -181,9 +210,10 @@ class MemoryManager:
                     inserted += 1
 
         if inserted:
-            self._memory["last_archive_digest_at"] = datetime.now(
-                UTC_TIMEZONE
-            ).isoformat()
+            with self._lock:
+                self._memory["last_archive_digest_at"] = datetime.now(
+                    UTC_TIMEZONE
+                ).isoformat()
             self.save()
         return inserted
 
@@ -193,14 +223,15 @@ class MemoryManager:
         max_items: int = DEFAULT_MAX_PROMPT_MEMORIES,
     ) -> dict[str, Any]:
         """Return a bounded memory payload safe for provider prompts."""
-        memories = self._memory.get("memories", [])
-        if not isinstance(memories, list):
-            memories = []
-        return {
-            "preferences": dict(self._memory.get("preferences", {})),
-            "memories": memories[-max_items:],
-            "last_archive_digest_at": self._memory.get("last_archive_digest_at"),
-        }
+        with self._lock:
+            memories = self._memory.get("memories", [])
+            if not isinstance(memories, list):
+                memories = []
+            return {
+                "preferences": dict(self._memory.get("preferences", {})),
+                "memories": list(memories[-max_items:]),
+                "last_archive_digest_at": self._memory.get("last_archive_digest_at"),
+            }
 
 
 def extract_memory_candidates(context: ConversationContext) -> list[MemoryCandidate]:

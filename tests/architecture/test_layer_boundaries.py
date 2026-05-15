@@ -412,6 +412,7 @@ class TestNoCrossCouplingInShared:
     # the sibling `theme` package (PR #896 — intentional coupling)
     ALLOWED_DEPS: dict[str, set[str]] = {
         "calc_backend": {"upstream_drift_tools"},
+        "chat": {"theme"},
         "plot_engine": {"plot_theme"},
         "model_generation": {"humanoid_character_builder"},
         "upstream_drift_tools": {"theme"},

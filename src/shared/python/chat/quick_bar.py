@@ -26,6 +26,61 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
+
+# ── Theme integration ───────────────────────────────────────────────
+
+_FALLBACK_COLORS: dict[str, str] = {
+    "bg": "#252526",
+    "group_bg": "#2d2d2d",
+    "border": "#3c3c3c",
+    "text": "#e0e0e0",
+    "text_secondary": "#888888",
+    "accent": "#FF8800",
+    "accent_hover": "#ffaa33",
+    "focus": "#4ec9b0",
+    "input_bg": "#2d2d2d",
+    "button_bg": "#3c3c3c",
+    "button_hover": "#4c4c4c",
+    "disabled_bg": "#555555",
+    "disabled_fg": "#888888",
+    "muted": "#666666",
+}
+
+
+def _get_quick_bar_colors() -> dict[str, str]:
+    """Resolve theme colors, falling back to defaults."""
+    try:
+        from theme.theme_manager import get_theme_manager
+
+        mgr = get_theme_manager()
+        colors = mgr.get_current_colors()
+        return {
+            "bg": colors.get("bg", _FALLBACK_COLORS["bg"]),
+            "group_bg": colors.get("group_bg", _FALLBACK_COLORS["group_bg"]),
+            "border": colors.get("border", _FALLBACK_COLORS["border"]),
+            "text": colors.get("text", _FALLBACK_COLORS["text"]),
+            "text_secondary": colors.get(
+                "text_secondary", _FALLBACK_COLORS["text_secondary"]
+            ),
+            "accent": colors.get("accent", _FALLBACK_COLORS["accent"]),
+            "accent_hover": colors.get(
+                "button_hover", _FALLBACK_COLORS["accent_hover"]
+            ),
+            "focus": colors.get("focus", _FALLBACK_COLORS["focus"]),
+            "input_bg": colors.get("input_bg", _FALLBACK_COLORS["input_bg"]),
+            "button_bg": colors.get("group_bg", _FALLBACK_COLORS["button_bg"]),
+            "button_hover": colors.get(
+                "button_hover", _FALLBACK_COLORS["button_hover"]
+            ),
+            "disabled_bg": _FALLBACK_COLORS["disabled_bg"],
+            "disabled_fg": _FALLBACK_COLORS["disabled_fg"],
+            "muted": colors.get("label", _FALLBACK_COLORS["muted"]),
+        }
+    except Exception:  # noqa: BLE001
+        logger.debug("Theme manager unavailable, using fallback colors")
+        return dict(_FALLBACK_COLORS)
+
+
 # ── Lazy Qt imports ─────────────────────────────────────────────────
 
 try:
@@ -97,6 +152,7 @@ class ChatQuickBar(QFrame if _QT_AVAILABLE else object):  # type: ignore[misc]
 
     def _setup_ui(self) -> None:
         """Build the compact quick-bar UI."""
+        c = _get_quick_bar_colors()
         layout = QHBoxLayout(self)
         layout.setContentsMargins(4, 2, 4, 2)
         layout.setSpacing(4)
@@ -111,14 +167,14 @@ class ChatQuickBar(QFrame if _QT_AVAILABLE else object):  # type: ignore[misc]
         self._input.setPlaceholderText("Ask AI...")
         self._input.setMinimumWidth(200)
         self._input.setStyleSheet(
-            "QLineEdit {"
-            "  background-color: #2d2d2d; color: #e0e0e0;"
-            "  border: 1px solid #555; border-radius: 4px;"
-            "  font-size: 12px; padding: 4px 8px;"
-            "}"
-            "QLineEdit:focus {"
-            "  border-color: #FF8800;"
-            "}"
+            f"QLineEdit {{"
+            f"  background-color: {c['input_bg']}; color: {c['text']};"
+            f"  border: 1px solid {c['border']}; border-radius: 4px;"
+            f"  font-size: 12px; padding: 4px 8px;"
+            f"}}"
+            f"QLineEdit:focus {{"
+            f"  border-color: {c['accent']};"
+            f"}}"
         )
         self._input.returnPressed.connect(self._on_send)
         layout.addWidget(self._input, stretch=1)
@@ -127,13 +183,16 @@ class ChatQuickBar(QFrame if _QT_AVAILABLE else object):  # type: ignore[misc]
         self._send_btn = QPushButton("Send")
         self._send_btn.setFixedWidth(50)
         self._send_btn.setStyleSheet(
-            "QPushButton {"
-            "  background-color: #FF8800; color: black;"
-            "  border-radius: 4px; font-weight: bold;"
-            "  font-size: 11px; padding: 4px;"
-            "}"
-            "QPushButton:hover { background-color: #ffaa33; }"
-            "QPushButton:disabled { background-color: #555; color: #888; }"
+            f"QPushButton {{"
+            f"  background-color: {c['accent']}; color: black;"
+            f"  border-radius: 4px; font-weight: bold;"
+            f"  font-size: 11px; padding: 4px;"
+            f"}}"
+            f"QPushButton:hover {{ background-color: {c['accent_hover']}; }}"
+            f"QPushButton:disabled {{"
+            f"  background-color: {c['disabled_bg']};"
+            f"  color: {c['disabled_fg']};"
+            f"}}"
         )
         self._send_btn.clicked.connect(self._on_send)
         layout.addWidget(self._send_btn)
@@ -143,11 +202,11 @@ class ChatQuickBar(QFrame if _QT_AVAILABLE else object):  # type: ignore[misc]
         self._expand_btn.setFixedWidth(28)
         self._expand_btn.setToolTip("Open full chat panel")
         self._expand_btn.setStyleSheet(
-            "QPushButton {"
-            "  background-color: #3c3c3c; color: #e0e0e0;"
-            "  border-radius: 4px; font-size: 10px; padding: 4px;"
-            "}"
-            "QPushButton:hover { background-color: #4c4c4c; }"
+            f"QPushButton {{"
+            f"  background-color: {c['button_bg']}; color: {c['text']};"
+            f"  border-radius: 4px; font-size: 10px; padding: 4px;"
+            f"}}"
+            f"QPushButton:hover {{ background-color: {c['button_hover']}; }}"
         )
         self._expand_btn.clicked.connect(self.expand_requested.emit)
         layout.addWidget(self._expand_btn)
@@ -156,16 +215,16 @@ class ChatQuickBar(QFrame if _QT_AVAILABLE else object):  # type: ignore[misc]
         self._status = QLabel("●")
         self._status.setFixedWidth(14)
         self._status.setToolTip("Disconnected")
-        self._status.setStyleSheet("color: #666; font-size: 10px;")
+        self._status.setStyleSheet(f"color: {c['muted']}; font-size: 10px;")
         layout.addWidget(self._status)
 
         # Frame styling
         self.setStyleSheet(
-            "ChatQuickBar {"
-            "  background-color: #252526;"
-            "  border: 1px solid #3c3c3c;"
-            "  border-radius: 6px;"
-            "}"
+            f"ChatQuickBar {{"
+            f"  background-color: {c['bg']};"
+            f"  border: 1px solid {c['border']};"
+            f"  border-radius: 6px;"
+            f"}}"
         )
 
     # ── WebSocket ────────────────────────────────────────────────────
@@ -186,12 +245,14 @@ class ChatQuickBar(QFrame if _QT_AVAILABLE else object):  # type: ignore[misc]
 
     def _on_ws_connected(self) -> None:
         """Handle WebSocket connection."""
-        self._status.setStyleSheet("color: #4ec9b0; font-size: 10px;")
+        c = _get_quick_bar_colors()
+        self._status.setStyleSheet(f"color: {c['focus']}; font-size: 10px;")
         self._status.setToolTip("Connected")
 
     def _on_ws_disconnected(self) -> None:
         """Handle WebSocket disconnection."""
-        self._status.setStyleSheet("color: #666; font-size: 10px;")
+        c = _get_quick_bar_colors()
+        self._status.setStyleSheet(f"color: {c['muted']}; font-size: 10px;")
         self._status.setToolTip("Disconnected")
         self._is_waiting = False
         self._send_btn.setEnabled(True)

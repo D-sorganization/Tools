@@ -15,12 +15,14 @@ resolver = "2"
 members = [
     "rust_core/tools-core",
     "rust_core/math-primitives",
+    "rust_core/ai_backend",
 ]
 
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
 rust-version = "1.70"
+authors = ["D-sorganization Contributors"]
 license = "MIT"
 repository = "https://github.com/D-sorganization/Tools"
 
