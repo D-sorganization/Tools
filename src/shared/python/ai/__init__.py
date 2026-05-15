@@ -8,10 +8,17 @@ Architecture:
     AgentInterfaceProtocol (AIP) <- Provider Adapters <- User's LLM
                 |
                 v
-    ToolRegistry + WorkflowEngine + EducationSystem
+    ToolRegistry + EducationSystem
                 |
                 v
     Scientific Validator (enforces physics consistency)
+
+Note:
+    The ``WorkflowEngine`` and canned workflow definitions used to live in
+    this package but were never wired into the GUI. They have been parked in
+    ``drafts/workflow_engine/`` pending an explicit wiring decision — see
+    issue #2760 and that directory's README for what full wiring would
+    require.
 
 Design Principles:
     1. Agent-Agnostic: Works with any LLM provider (OpenAI, Anthropic, Ollama)
@@ -21,9 +28,8 @@ Design Principles:
     5. Privacy-First: API keys in OS keyring, no data to developers
 
 Example:
-    >>> from shared.python.ai import ToolRegistry, WorkflowEngine, EducationSystem
+    >>> from shared.python.ai import ToolRegistry, EducationSystem
     >>> registry = ToolRegistry()
-    >>> engine = WorkflowEngine(registry)
     >>> edu = EducationSystem()
 """
 
@@ -68,23 +74,6 @@ if TYPE_CHECKING:
         ToolCall,
         ToolResult,
     )
-    from .workflow_definitions import (
-        create_c3d_import_workflow,
-        create_cross_engine_validation_workflow,
-        create_drift_control_decomposition_workflow,
-        create_first_analysis_workflow,
-        create_inverse_dynamics_workflow,
-    )
-    from .workflow_engine import (  # noqa: I001
-        RecoveryStrategy,
-        StepResult,
-        StepStatus,
-        ValidationResult,
-        Workflow,
-        WorkflowEngine,
-        WorkflowExecution,
-        WorkflowStep,
-    )
 
 
 # Mapping of exported name -> (module, attribute) for lazy resolution.
@@ -123,36 +112,6 @@ _LAZY: dict[str, tuple[str, str]] = {
     "ProviderCapability": (".types", "ProviderCapability"),
     "ToolCall": (".types", "ToolCall"),
     "ToolResult": (".types", "ToolResult"),
-    # workflow_definitions
-    "create_c3d_import_workflow": (
-        ".workflow_definitions",
-        "create_c3d_import_workflow",
-    ),
-    "create_cross_engine_validation_workflow": (
-        ".workflow_definitions",
-        "create_cross_engine_validation_workflow",
-    ),
-    "create_drift_control_decomposition_workflow": (
-        ".workflow_definitions",
-        "create_drift_control_decomposition_workflow",
-    ),
-    "create_first_analysis_workflow": (
-        ".workflow_definitions",
-        "create_first_analysis_workflow",
-    ),
-    "create_inverse_dynamics_workflow": (
-        ".workflow_definitions",
-        "create_inverse_dynamics_workflow",
-    ),
-    # workflow_engine
-    "RecoveryStrategy": (".workflow_engine", "RecoveryStrategy"),
-    "StepResult": (".workflow_engine", "StepResult"),
-    "StepStatus": (".workflow_engine", "StepStatus"),
-    "ValidationResult": (".workflow_engine", "ValidationResult"),
-    "Workflow": (".workflow_engine", "Workflow"),
-    "WorkflowEngine": (".workflow_engine", "WorkflowEngine"),
-    "WorkflowExecution": (".workflow_engine", "WorkflowExecution"),
-    "WorkflowStep": (".workflow_engine", "WorkflowStep"),
 }
 
 
@@ -187,20 +146,6 @@ __all__ = [
     "ToolParameter",
     "ToolRegistry",
     "get_global_registry",
-    # Workflow Engine
-    "RecoveryStrategy",
-    "StepResult",
-    "StepStatus",
-    "ValidationResult",
-    "Workflow",
-    "WorkflowEngine",
-    "WorkflowExecution",
-    "WorkflowStep",
-    "create_c3d_import_workflow",
-    "create_cross_engine_validation_workflow",
-    "create_drift_control_decomposition_workflow",
-    "create_first_analysis_workflow",
-    "create_inverse_dynamics_workflow",
     # Education
     "EducationSystem",
     "GlossaryEntry",
