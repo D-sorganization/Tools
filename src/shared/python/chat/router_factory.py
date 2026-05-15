@@ -145,6 +145,66 @@ def create_chat_router(
                 elif action == "terminal_events":
                     await _handle_terminal_events(websocket, msg)
 
+                elif action == "condense":
+                    try:
+                        await chat_service.condense_session(session_id)
+                        await websocket.send_json(
+                            {
+                                "type": "history",
+                                "messages": chat_service.get_session_history(
+                                    session_id
+                                ),
+                            }
+                        )
+                    except Exception as exc:
+                        await websocket.send_json(
+                            {"type": "error", "detail": f"Condense error: {exc}"}
+                        )
+
+                elif action == "skill_invoke":
+                    skill_id = msg.get("skill_id")
+                    if not skill_id:
+                        await websocket.send_json(
+                            {"type": "error", "detail": "Missing skill_id"}
+                        )
+                        continue
+                    try:
+                        await chat_service.execute_skill(session_id, skill_id)
+                        await websocket.send_json(
+                            {
+                                "type": "history",
+                                "messages": chat_service.get_session_history(
+                                    session_id
+                                ),
+                            }
+                        )
+                    except Exception as exc:
+                        await websocket.send_json(
+                            {"type": "error", "detail": f"Skill error: {exc}"}
+                        )
+
+                elif action == "request_review":
+                    provider = msg.get("provider")
+                    if not provider:
+                        await websocket.send_json(
+                            {"type": "error", "detail": "Missing provider"}
+                        )
+                        continue
+                    try:
+                        new_session_id = await chat_service.request_review(
+                            session_id, provider
+                        )
+                        await websocket.send_json(
+                            {
+                                "type": "review_started",
+                                "new_session_id": new_session_id,
+                            }
+                        )
+                    except Exception as exc:
+                        await websocket.send_json(
+                            {"type": "error", "detail": f"Review error: {exc}"}
+                        )
+
                 else:
                     await websocket.send_json(
                         {

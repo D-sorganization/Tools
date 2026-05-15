@@ -249,7 +249,16 @@ def _normalize_dtype(dtype: Any) -> str:
     if dtype_str in {"object", "string", "string[python]", "string[pyarrow]"}:
         return "object"
     # Normalize integer types
-    if dtype_str in {"int64", "int32", "int16", "int8", "uint64", "uint32", "uint16", "uint8"}:
+    if dtype_str in {
+        "int64",
+        "int32",
+        "int16",
+        "int8",
+        "uint64",
+        "uint32",
+        "uint16",
+        "uint8",
+    }:
         return "int"
     # Normalize float types
     if dtype_str in {"float64", "float32", "float16"}:
