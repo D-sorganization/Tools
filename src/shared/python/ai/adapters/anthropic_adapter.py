@@ -491,13 +491,14 @@ class AnthropicAdapter(BaseAgentAdapter):
 
         content = "\n".join(content_parts)
 
-        # Extract usage
-        usage: dict[str, int] = {}
+        # Extract usage and normalize to canonical keys (issue #2763)
+        raw_usage: dict[str, int] = {}
         if hasattr(response, "usage"):
-            usage = {
+            raw_usage = {
                 "input_tokens": response.usage.input_tokens,
                 "output_tokens": response.usage.output_tokens,
             }
+        usage = self._normalize_token_counts(raw_usage)
 
         return AgentResponse(
             content=content,

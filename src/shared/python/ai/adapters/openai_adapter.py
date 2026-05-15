@@ -468,14 +468,15 @@ class OpenAIAdapter(BaseAgentAdapter):
                     )
                 )
 
-        # Extract usage
-        usage: dict[str, int] = {}
+        # Extract usage and normalize to canonical keys (issue #2763)
+        raw_usage: dict[str, int] = {}
         if response.usage:
-            usage = {
+            raw_usage = {
                 "prompt_tokens": response.usage.prompt_tokens,
                 "completion_tokens": response.usage.completion_tokens,
                 "total_tokens": response.usage.total_tokens,
             }
+        usage = self._normalize_token_counts(raw_usage)
 
         return AgentResponse(
             content=content,
