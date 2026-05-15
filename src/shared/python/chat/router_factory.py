@@ -56,7 +56,7 @@ try:
         if _spec and _spec.loader:
             _mod = importlib.util.module_from_spec(_spec)
             sys.modules["ai.exceptions"] = _mod
-            _spec.loader.exec_module(_mod)  # type: ignore[union-attr]
+            _spec.loader.exec_module(_mod)
     AIProviderError: type[Exception] = sys.modules["ai.exceptions"].AIProviderError
 except Exception:  # noqa: BLE001
     # Graceful degradation: sentinel class that is never instantiated.
