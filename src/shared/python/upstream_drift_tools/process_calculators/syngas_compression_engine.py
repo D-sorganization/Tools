@@ -147,7 +147,7 @@ class SyngasCompressionEngine:
         composition: dict[str, float],
     ) -> dict[str, Any]:
         """Calculate mixture properties from component composition."""
-        if not (composition is not None):
+        if composition is None:
             raise ValueError("composition must be provided")
         mole_fractions = validate_gas_composition(composition, auto_normalize=True)
 
@@ -352,7 +352,7 @@ class SyngasCompressionEngine:
         compression_result: dict[str, Any],
     ) -> dict[str, Any]:
         """Analyze process conditions and potential concerns."""
-        if not (compression_result is not None):
+        if compression_result is None:
             raise ValueError("compression_result must be provided")
         concerns: list[str] = []
         warnings: list[str] = []

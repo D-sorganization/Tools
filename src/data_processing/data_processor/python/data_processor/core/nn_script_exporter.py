@@ -83,7 +83,7 @@ class NeuralNetworkScriptExporter:
         include_evaluation: bool = True,
     ) -> Path:
         """Export training script for a specific framework."""
-        if not (config is not None):
+        if config is None:
             raise ValueError("config must be provided")
         output_path = self._validate_script_output_path(output_path)
         validated_data_path = self._validate_data_path(data_path)
@@ -106,7 +106,7 @@ class NeuralNetworkScriptExporter:
         output_path: Path | str,
     ) -> Path:
         """Export network configuration to JSON."""
-        if not (config is not None):
+        if config is None:
             raise ValueError("config must be provided")
         output_path = self._validate_config_output_path(output_path)
         return export_config_file(config, output_path, self._normalization_params)
@@ -279,24 +279,24 @@ class NeuralNetworkScriptExporter:
 
     def _pytorch_activation(self, activation: ActivationFunction) -> str:
         """Convert activation to PyTorch module string."""
-        if not (activation is not None):
+        if activation is None:
             raise ValueError("activation must be provided")
         return pytorch_activation(activation)
 
     def _pytorch_optimizer(self, optimizer: Optimizer) -> str:
         """Convert optimizer to PyTorch optimizer string."""
-        if not (optimizer is not None):
+        if optimizer is None:
             raise ValueError("optimizer must be provided")
         return pytorch_optimizer(optimizer)
 
     def _pytorch_loss(self, loss: LossFunction) -> str:
         """Convert loss to PyTorch loss string."""
-        if not (loss is not None):
+        if loss is None:
             raise ValueError("loss must be provided")
         return pytorch_loss(loss)
 
     def _keras_loss(self, loss: LossFunction) -> str:
         """Convert loss to Keras loss string."""
-        if not (loss is not None):
+        if loss is None:
             raise ValueError("loss must be provided")
         return keras_loss(loss)

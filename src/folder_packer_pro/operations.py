@@ -142,7 +142,7 @@ class ScanPreviewMixin:
             files: List of (path, stat_result) tuples.
             base_path: Root path for relative path calculation.
         """
-        if not (files is not None):
+        if files is None:
             raise ValueError("files must be provided")
         from datetime import datetime as dt
 
@@ -220,7 +220,7 @@ class PackOperationMixin:
 
             def progress_callback(filename: str, current: int, total: int) -> None:
                 """Report pack progress to UI."""
-                if not (filename is not None):
+                if filename is None:
                     raise ValueError("filename must be provided")
                 progress = (current / total) * 100
                 self.root.after(  # type: ignore[attr-defined]
@@ -328,7 +328,7 @@ class UnpackOperationMixin:
 
             def progress_callback(filename: str, current: int, total: int) -> None:
                 """Report unpack progress to UI."""
-                if not (filename is not None):
+                if filename is None:
                     raise ValueError("filename must be provided")
                 progress = (current / total) * 100
                 self.root.after(  # type: ignore[attr-defined]

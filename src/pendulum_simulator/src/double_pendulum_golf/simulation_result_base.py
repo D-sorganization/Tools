@@ -55,7 +55,7 @@ class TrajectoryResultMixin:
         apply torque clamping (e.g. double-pendulum with TorqueClamp) must
         override this method.
         """
-        if not (idx is not None):
+        if idx is None:
             raise ValueError("idx must be provided")
         self._check_idx(idx)
         torque_func = getattr(self, "torque_func")

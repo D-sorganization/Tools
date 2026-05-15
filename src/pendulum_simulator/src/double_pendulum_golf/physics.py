@@ -191,7 +191,7 @@ def mass_matrix(phi: float, params: PendulumParams) -> np.ndarray:
 
 def mass_matrix_components(phi: float, params: PendulumParams) -> dict:
     """Return individual terms with physical labels."""
-    if not (phi is not None):
+    if phi is None:
         raise ValueError("phi must be provided")
     M = mass_matrix(phi, params)
     return {
@@ -308,7 +308,7 @@ def _hermite_penalty(
     float
         Non-negative penalty magnitude (caller applies sign based on limit side).
     """
-    if not (pen is not None):
+    if pen is None:
         raise ValueError("pen must be provided")
     blend = min(1.0, pen / transition)
     smooth = blend * blend * (3 - 2 * blend)
@@ -334,7 +334,7 @@ def joint_limit_torque(
 
     def _penalty(angle: float, vel: float, lo: float, hi: float) -> float:
         """Compute signed smoothstep penalty for a single DOF."""
-        if not (angle is not None):
+        if angle is None:
             raise ValueError("angle must be provided")
         if angle < lo:
             return _hermite_penalty(
@@ -550,7 +550,7 @@ def joint_velocities(state: State, params: PendulumParams) -> dict:
 
     Returns dict with 'wrist_speed', 'tip_speed', 'wrist_vel', 'tip_vel'.
     """
-    if not (state is not None):
+    if state is None:
         raise ValueError("state must be provided")
     theta1, phi, dtheta1, dphi = state
     abs_angle2 = theta1 + phi
@@ -579,7 +579,7 @@ def base_force(state: State, qddot: np.ndarray, params: PendulumParams) -> dict:
 
     Returns dict with 'fx', 'fy', 'magnitude'.
     """
-    if not (state is not None):
+    if state is None:
         raise ValueError("state must be provided")
     theta1, phi, dtheta1, dphi = state
     qdd1, qdd2 = qddot
@@ -638,7 +638,7 @@ def ztcf_accelerations(
     limits: JointLimits | None = None,
 ) -> np.ndarray:
     """Compute accelerations under zero driving torque."""
-    if not (state is not None):
+    if state is None:
         raise ValueError("state must be provided")
     theta1, phi, dtheta1, dphi = state
     M = mass_matrix(phi, params)
@@ -664,7 +664,7 @@ def control_vector(
 
     Returns dict with 'cvx', 'cvy', 'magnitude'.
     """
-    if not (state is not None):
+    if state is None:
         raise ValueError("state must be provided")
     qddot_ztcf = ztcf_accelerations(state, params, limits)
     f_actual = base_force(state, qddot_actual, params)
@@ -702,7 +702,7 @@ def linear_accelerations(
 
 def net_joint_forces(state: State, qddot: np.ndarray, params: PendulumParams) -> dict:
     """Compute net joint forces (proximal on distal) in world coordinates."""
-    if not (state is not None):
+    if state is None:
         raise ValueError("state must be provided")
     acc = linear_accelerations(state, qddot, params)
     g_vec = np.array([0.0, -params.g])
@@ -726,7 +726,7 @@ def net_joint_forces(state: State, qddot: np.ndarray, params: PendulumParams) ->
 
 def kinetic_energy(state: State, params: PendulumParams) -> float:
     """Compute total kinetic energy T = 0.5 * qdot^T M qdot."""
-    if not (state is not None):
+    if state is None:
         raise ValueError("state must be provided")
     from .physics_base import kinetic_energy_from_M
 
@@ -738,7 +738,7 @@ def kinetic_energy(state: State, params: PendulumParams) -> float:
 
 def potential_energy(state: State, params: PendulumParams) -> float:
     """Compute gravitational potential energy (zero at shoulder height)."""
-    if not (state is not None):
+    if state is None:
         raise ValueError("state must be provided")
     theta1, phi = state[0], state[1]
     me = _m2eff(params)
@@ -751,7 +751,7 @@ def potential_energy(state: State, params: PendulumParams) -> float:
 
 def total_energy(state: State, params: PendulumParams) -> float:
     """Total mechanical energy E = T + V."""
-    if not (state is not None):
+    if state is None:
         raise ValueError("state must be provided")
     from .physics_base import total_energy_from_parts
 

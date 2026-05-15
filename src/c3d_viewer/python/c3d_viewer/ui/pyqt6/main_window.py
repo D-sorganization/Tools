@@ -598,14 +598,14 @@ class C3DViewerWindow(ThemedWindowMixin, QMainWindow):
 
     def _update_marker_list(self, labels: list[str]) -> None:
         """Update the marker list widget."""
-        if not (labels is not None):
+        if labels is None:
             raise ValueError("labels must be provided")
         self.marker_list.clear()
         self.marker_list.addItems(labels)
 
     def _update_analog_table(self, labels: list[str], units: list[str]) -> None:
         """Update the analog channels table."""
-        if not (labels is not None):
+        if labels is None:
             raise ValueError("labels must be provided")
         self.analog_table.setRowCount(len(labels))
         for row, (label, unit) in enumerate(zip(labels, units, strict=True)):
@@ -686,7 +686,7 @@ class C3DViewerWindow(ThemedWindowMixin, QMainWindow):
 
     def _do_export(self, data_type: str) -> None:
         """Perform the export operation."""
-        if not (data_type is not None):
+        if data_type is None:
             raise ValueError("data_type must be provided")
         if self._current_file is None:
             self.export_status.setPlainText("No file loaded.")

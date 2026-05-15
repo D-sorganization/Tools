@@ -112,7 +112,7 @@ class HighPerformanceDataLoader:
 
     def __setstate__(self, state: dict[str, Any]) -> None:
         """Restore loader state after pickling."""
-        if not (state is not None):
+        if state is None:
             raise ValueError("state must be provided")
         self.__dict__.update(state)
         self._loading_lock = threading.Lock()
@@ -134,7 +134,7 @@ class HighPerformanceDataLoader:
         Returns:
             Tuple of (unique_signals_set, file_metadata_dict)
         """
-        if not (file_paths is not None):
+        if file_paths is None:
             raise ValueError("file_paths must be provided")
         if not file_paths:
             return set(), {}
@@ -169,7 +169,7 @@ class HighPerformanceDataLoader:
         cancel_flag: threading.Event | None = None,
     ) -> dict[str, FileMetadata]:
         """Collect file metadata in parallel."""
-        if not (file_paths is not None):
+        if file_paths is None:
             raise ValueError("file_paths must be provided")
         file_metadata = {}
 
@@ -218,7 +218,7 @@ class HighPerformanceDataLoader:
 
     def _get_file_metadata(self, file_path: str) -> FileMetadata | None:
         """Get metadata for a single file with caching."""
-        if not (file_path is not None):
+        if file_path is None:
             raise ValueError("file_path must be provided")
         if not Path(file_path).exists():
             return None
@@ -314,7 +314,7 @@ class HighPerformanceDataLoader:
 
     def _get_cached_metadata(self, file_path: str) -> FileMetadata | None:
         """Get cached metadata for a file (using secure JSON storage)."""
-        if not (file_path is not None):
+        if file_path is None:
             raise ValueError("file_path must be provided")
         try:
             cache_file = (
@@ -435,7 +435,7 @@ class HighPerformanceDataLoader:
             DataFrame with the data or None if error
         """
         # Check file size for security
-        if not (file_path is not None):
+        if file_path is None:
             raise ValueError("file_path must be provided")
         try:
             check_file_size(file_path)
@@ -552,7 +552,7 @@ class HighPerformanceDataLoader:
         Returns:
             Dictionary mapping file paths to DataFrames
         """
-        if not (file_paths is not None):
+        if file_paths is None:
             raise ValueError("file_paths must be provided")
         results = {}
 
@@ -641,7 +641,7 @@ def load_data_fast(
     **kwargs: Any,
 ) -> dict[str, pd.DataFrame]:
     """Fast data loading function."""
-    if not (file_paths is not None):
+    if file_paths is None:
         raise ValueError("file_paths must be provided")
     loader = HighPerformanceDataLoader()
     return loader.batch_load_files(file_paths, signals, **kwargs)

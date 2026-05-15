@@ -66,27 +66,16 @@ class BitnetAdapter(BaseAgentAdapter):
         return self._capabilities
 
     def _handle_error(self, error: Exception) -> AgentResponse:
-        """Classify BitNet subprocess errors into the AIProviderError hierarchy.
-
-        Overrides the base implementation to map subprocess-specific failures:
-        - FileNotFoundError (binary missing) → AIConnectionError
-        - CalledProcessError (non-zero exit) → AIProviderError
-        - All others → delegated to parent classify_ai_error
-
-        Args:
-            error: The raw exception from subprocess.
-
-        Raises:
-            AIConnectionError: When the llama-cli binary cannot be found.
-            AIProviderError: For all other BitNet process failures.
-        """
+        """Classify BitNet subprocess errors into the AIProviderError hierarchy."""
         if isinstance(error, FileNotFoundError):
             raise AIConnectionError(
-                f"Failed to run BitNet: {error}", provider="bitnet"
+                f"Failed to run BitNet: llama-cli not found at {self.llama_cli}",
+                provider="bitnet",
             ) from error
         if isinstance(error, subprocess.CalledProcessError):
             raise AIProviderError(
-                f"BitNet process failed: {error.stderr}", provider="bitnet"
+                f"BitNet process failed (code {error.returncode}): {error.stderr}",
+                provider="bitnet",
             ) from error
         return super()._handle_error(error)
 

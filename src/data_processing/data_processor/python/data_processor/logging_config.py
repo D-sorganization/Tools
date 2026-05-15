@@ -41,7 +41,7 @@ except ImportError:
 
     def get_logger(name: str, level: int = logging.INFO) -> logging.Logger:  # type: ignore[no-redef]
         """Get a configured logger (inline fallback)."""
-        if not (name is not None):
+        if name is None:
             raise ValueError("name must be provided")
         logger = logging.getLogger(name)
         if not logger.handlers:
