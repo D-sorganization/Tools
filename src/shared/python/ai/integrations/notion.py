@@ -324,5 +324,5 @@ def _extract_page_title(page: dict[str, Any]) -> str:
         if prop and isinstance(prop.get("title"), list):
             title_list = prop["title"]
             if title_list:
-                return title_list[0].get("plain_text", "")
+                return str(title_list[0].get("plain_text", ""))
     return ""
