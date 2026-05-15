@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 TerminalSessionState = Literal[
     "starting",
@@ -100,6 +100,8 @@ class TerminalAgentSessionRequest(BaseModel):
 
 class TerminalAgentSessionInfo(BaseModel):
     """Lifecycle state for a terminal-agent session."""
+
+    model_config = ConfigDict(frozen=True)
 
     session_id: str = Field(..., min_length=1)
     resolved_cwd: Path
