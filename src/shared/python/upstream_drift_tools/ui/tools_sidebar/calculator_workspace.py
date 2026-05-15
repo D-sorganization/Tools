@@ -103,7 +103,7 @@ class CalculatorWorkspaceFacade:
 
     def remove_local(self, name: str) -> bool:
         """Remove only the calculator-local value."""
-        return self._local_registry.remove(name)
+        return bool(self._local_registry.remove(name))
 
     def clear_local(self) -> None:
         """Clear only the calculator-local registry."""
@@ -233,7 +233,7 @@ class CalculatorWorkspaceController:
         self._registry.clear()
 
     def _payload(self) -> dict[str, Any]:
-        payload = self._registry.to_dict()
+        payload = dict(self._registry.to_dict())
         payload["version"] = CALCULATOR_WORKSPACE_FORMAT_VERSION
         payload["scope"] = self._scope
         return payload
