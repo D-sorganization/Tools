@@ -124,7 +124,7 @@ def iter_catalog() -> Iterable[StarEntry]:
 def equatorial_to_cartesian(ra_hours: float, dec_degrees: float) -> list[float]:
     """Convert right ascension/declination to a unit vector in J2000 frame."""
 
-    if not (ra_hours is not None):
+    if ra_hours is None:
         raise ValueError("ra_hours must be provided")
     ra_radians = math.radians(ra_hours * 15.0)
     dec_radians = math.radians(dec_degrees)

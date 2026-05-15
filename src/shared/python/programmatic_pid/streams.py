@@ -69,7 +69,7 @@ def add_stream(
         - If a label is present and *label_placer* is provided, label position
           is collision-checked.
     """
-    if not (stream is not None):
+    if stream is None:
         raise ValueError("stream must be provided")
     layer = stream.get("layer", "PROCESS")
     color = stream.get("color")

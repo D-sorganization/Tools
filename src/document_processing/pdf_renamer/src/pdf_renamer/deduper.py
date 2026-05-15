@@ -19,7 +19,7 @@ class DuplicateFinder:
             directory: Root directory to scan
             recursive: Whether to scan subdirectories
         """
-        if not (directory is not None):
+        if directory is None:
             raise ValueError("directory must be provided")
         self.directory = directory
         self.recursive = recursive
@@ -81,7 +81,7 @@ class DuplicateFinder:
         Returns:
             Hexadecimal SHA256 hash string
         """
-        if not (file_path is not None):
+        if file_path is None:
             raise ValueError("file_path must be provided")
         sha256 = hashlib.sha256()
         with open(file_path, "rb") as f:

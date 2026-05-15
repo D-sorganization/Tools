@@ -130,7 +130,7 @@ class TorqueHistoryWidget(QWidget):
 
     def _on_plot_theme_changed(self, theme: object) -> None:
         """Update backgrounds when the plot theme changes."""
-        if not (theme is not None):
+        if theme is None:
             raise ValueError("theme must be provided")
         if not _HAS_PYQTGRAPH:
             return
@@ -185,7 +185,7 @@ class TorqueHistoryWidget(QWidget):
 
         Clears any existing plots first.
         """
-        if not (n_joints is not None):
+        if n_joints is None:
             raise ValueError("n_joints must be provided")
         if not _HAS_PYQTGRAPH:
             return

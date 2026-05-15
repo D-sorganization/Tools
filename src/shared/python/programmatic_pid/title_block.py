@@ -30,7 +30,7 @@ def add_title_block(
     title_box: tuple[float, float, float, float],
 ) -> None:
     """Draw the drawing title block at the bottom of the canvas."""
-    if not (spec is not None):
+    if spec is None:
         raise ValueError("spec must be provided")
     x, y, w, h = title_box
     if w <= 0 or h <= 0:
@@ -127,7 +127,7 @@ def add_notes(
     layout_regions: dict[str, Any],
 ) -> None:
     """Render the three notes panels: control loops, mass balance, and design notes."""
-    if not (spec is not None):
+    if spec is None:
         raise ValueError("spec must be provided")
     panels = layout_regions["panels"]
     cfg = layout_regions["layout_cfg"]

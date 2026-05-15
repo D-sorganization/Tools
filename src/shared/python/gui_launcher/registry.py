@@ -126,7 +126,7 @@ class GUIRegistry:
         Returns:
             GUIRegistration or None if not found
         """
-        if not (tool_name is not None):
+        if tool_name is None:
             raise ValueError("tool_name must be provided")
         require(
             isinstance(tool_name, str) and bool(tool_name),
@@ -148,7 +148,7 @@ class GUIRegistry:
         Returns:
             LaunchConfig or None if not found
         """
-        if not (tool_name is not None):
+        if tool_name is None:
             raise ValueError("tool_name must be provided")
         require(
             isinstance(tool_name, str) and bool(tool_name),
@@ -192,7 +192,7 @@ class GUIRegistry:
         Returns:
             List of available GUIType values
         """
-        if not (tool_name is not None):
+        if tool_name is None:
             raise ValueError("tool_name must be provided")
         registration = self._registrations.get(tool_name)
         if registration:
@@ -229,7 +229,7 @@ def register_gui(
         gui_configs: Dictionary mapping GUIType to LaunchConfig
         **kwargs: Additional registration options
     """
-    if not (tool_name is not None):
+    if tool_name is None:
         raise ValueError("tool_name must be provided")
     registry = get_registry()
     registry.register(

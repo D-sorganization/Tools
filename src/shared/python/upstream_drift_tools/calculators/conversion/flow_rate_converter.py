@@ -229,7 +229,7 @@ def mass_to_molar(
         >>> n_dot = mass_to_molar(100, 'kg/h', 29.0, 'kmol/h')
         >>> logger.debug(f"{n_dot:.2f} kmol/h")
     """
-    if not (mass_flow is not None):
+    if mass_flow is None:
         raise ValueError("mass_flow must be provided")
     _require_finite(mass_flow, "mass_flow")
     _require_positive_finite(molecular_weight, "molecular_weight")
@@ -274,7 +274,7 @@ def molar_to_mass(
         >>> m_dot = molar_to_mass(10, 'kmol/h', 44.0, 'kg/h')
         >>> logger.debug(f"{m_dot:.1f} kg/h")
     """
-    if not (molar_flow is not None):
+    if molar_flow is None:
         raise ValueError("molar_flow must be provided")
     _require_finite(molar_flow, "molar_flow")
     _require_positive_finite(molecular_weight, "molecular_weight")
@@ -319,7 +319,7 @@ def volumetric_actual_to_mass(
         >>> m_dot = volumetric_actual_to_mass(1000, 'm3/h', 1.2, 'kg/h')
         >>> logger.debug(f"{m_dot:.1f} kg/h")
     """
-    if not (vol_flow is not None):
+    if vol_flow is None:
         raise ValueError("vol_flow must be provided")
     _require_finite(vol_flow, "vol_flow")
     _require_positive_finite(density, "density")
@@ -367,7 +367,7 @@ def mass_to_volumetric_actual(
         >>> Q = mass_to_volumetric_actual(100, 'kg/h', 1.2, 'm3/h')
         >>> logger.debug(f"{Q:.1f} m³/h")
     """
-    if not (mass_flow is not None):
+    if mass_flow is None:
         raise ValueError("mass_flow must be provided")
     _require_finite(mass_flow, "mass_flow")
     _require_positive_finite(density, "density")
@@ -426,7 +426,7 @@ def standard_volumetric_to_mass(
         - Nm³/h refers to "Normal" m³/h at 0°C, 1 atm
         - The standard parameter specifies which reference conditions to use
     """
-    if not (vol_flow_std is not None):
+    if vol_flow_std is None:
         raise ValueError("vol_flow_std must be provided")
     _require_finite(vol_flow_std, "vol_flow_std")
     _require_positive_finite(molecular_weight, "molecular_weight")
@@ -473,7 +473,7 @@ def mass_to_standard_volumetric(
         >>> Q_std = mass_to_standard_volumetric(100, 'kg/h', 16.0, 'STP', 'Nm3/h')
         >>> logger.debug(f"{Q_std:.1f} Nm³/h")
     """
-    if not (mass_flow is not None):
+    if mass_flow is None:
         raise ValueError("mass_flow must be provided")
     _require_finite(mass_flow, "mass_flow")
     _require_positive_finite(molecular_weight, "molecular_weight")
@@ -516,7 +516,7 @@ def scfm_to_acfm(
         >>> acfm = scfm_to_acfm(1000, 533, 5e5, 'SCFM')
         >>> logger.debug(f"{acfm:.0f} ACFM")
     """
-    if not (scfm is not None):
+    if scfm is None:
         raise ValueError("scfm must be provided")
     _require_finite(scfm, "scfm")
     _require_positive_finite(temperature, "temperature")
@@ -551,7 +551,7 @@ def acfm_to_scfm(
     Raises:
         ValueError: If temperature or pressure is not positive and finite.
     """
-    if not (acfm is not None):
+    if acfm is None:
         raise ValueError("acfm must be provided")
     _require_finite(acfm, "acfm")
     _require_positive_finite(temperature, "temperature")

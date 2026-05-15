@@ -94,7 +94,7 @@ class AsteroidJumperWindow(ThemedWindowMixin, QMainWindow):
 
     def _status_msg(self, msg: str) -> None:
         """Show a message in the status bar (null-safe)."""
-        if not (msg is not None):
+        if msg is None:
             raise ValueError("msg must be provided")
         sb = self.statusBar()
         if sb is not None:

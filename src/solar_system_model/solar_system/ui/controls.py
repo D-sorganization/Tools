@@ -177,7 +177,7 @@ class InputHandler:
             action: The action to listen for
             callback: Function to call when action is triggered
         """
-        if not (action is not None):
+        if action is None:
             raise ValueError("action must be provided")
         if action not in self._action_callbacks:
             self._action_callbacks[action] = []
@@ -243,7 +243,7 @@ class InputHandler:
         Returns:
             False if should quit
         """
-        if not (key is not None):
+        if key is None:
             raise ValueError("key must be provided")
         for binding in self._key_bindings:
             if binding.key == key and (
@@ -258,7 +258,7 @@ class InputHandler:
 
     def _handle_mouse_button_down(self, button: int, pos: tuple[int, int]) -> None:
         """Handle mouse button press."""
-        if not (button is not None):
+        if button is None:
             raise ValueError("button must be provided")
         self.mouse_state.position = pos
 
@@ -273,7 +273,7 @@ class InputHandler:
 
     def _handle_mouse_button_up(self, button: int, pos: tuple[int, int]) -> None:
         """Handle mouse button release."""
-        if not (button is not None):
+        if button is None:
             raise ValueError("button must be provided")
         self.mouse_state.position = pos
 
@@ -286,7 +286,7 @@ class InputHandler:
 
     def _handle_mouse_motion(self, pos: tuple[int, int], rel: tuple[int, int]) -> None:
         """Handle mouse movement."""
-        if not (pos is not None):
+        if pos is None:
             raise ValueError("pos must be provided")
         self.mouse_state.position = pos
         self.mouse_state.drag_delta = rel
@@ -298,7 +298,7 @@ class InputHandler:
 
     def _handle_mouse_wheel(self, delta: int) -> None:
         """Handle mouse wheel scroll."""
-        if not (delta is not None):
+        if delta is None:
             raise ValueError("delta must be provided")
         self.mouse_state.scroll_delta = delta
 

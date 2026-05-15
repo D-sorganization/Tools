@@ -72,7 +72,7 @@ class AnalysisMixin:
         Returns:
             (folder_files, folder_size, folder_errors)
         """
-        if not (folder is not None):
+        if folder is None:
             raise ValueError("folder must be provided")
         folder_files = 0
         folder_size = 0
@@ -131,7 +131,7 @@ class AnalysisMixin:
         num_folders: int,
     ) -> list[str]:
         """Build the summary section of the analysis report."""
-        if not (total_files is not None):
+        if total_files is None:
             raise ValueError("total_files must be provided")
         report: list[str] = [
             "",
@@ -258,7 +258,7 @@ class AnalysisMixin:
             ValueError: If file size inputs are invalid
             Exception: If extension filter validation fails
         """
-        if not (check_destination is not None):
+        if check_destination is None:
             raise ValueError("check_destination must be provided")
         from tkinter import messagebox
 

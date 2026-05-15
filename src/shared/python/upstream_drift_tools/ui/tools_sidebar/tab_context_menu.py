@@ -23,7 +23,7 @@ def _add_action(
 
 def build_tab_context_menu(sidebar: Any, tab_id: str) -> QtWidgets.QMenu:
     """Build the reusable context menu for one stable tab id."""
-    definition = sidebar._tab_definitions.get(tab_id)
+    definition = sidebar.get_tab_definition(tab_id)
 
     menu = QtWidgets.QMenu(sidebar)
 
@@ -39,8 +39,8 @@ def build_tab_context_menu(sidebar: Any, tab_id: str) -> QtWidgets.QMenu:
     if definition and definition.duplicate_enabled:
         _add_action(menu, "duplicate", lambda: sidebar.duplicate_tab(tab_id))
 
-    _add_action(menu, "rename", lambda: sidebar._prompt_rename_tab(tab_id))
-    if tab_id in sidebar._state.tab_display_names:
+    _add_action(menu, "rename", lambda: sidebar.prompt_rename_tab(tab_id))
+    if sidebar.has_custom_display_name(tab_id):
         _add_action(menu, "reset_name", lambda: sidebar.reset_tab_display_name(tab_id))
     if definition and definition.help_metadata:
         _add_action(menu, "help", lambda: sidebar.show_tab_help(tab_id))
@@ -59,9 +59,9 @@ def build_tab_context_menu(sidebar: Any, tab_id: str) -> QtWidgets.QMenu:
 def show_tab_context_menu(sidebar: Any, pos: Any) -> None:
     """Show the context menu for a Sidekick tab bar position."""
     index = sidebar.tabs.tabBar().tabAt(pos)
-    if index < 0 or index >= len(sidebar._tab_ids):
+    tab_id = sidebar.get_tab_id_at(index)
+    if tab_id is None:
         return
 
-    tab_id = sidebar._tab_ids[index]
     menu = build_tab_context_menu(sidebar, tab_id)
     menu.exec(sidebar.tabs.tabBar().mapToGlobal(pos))

@@ -41,7 +41,7 @@ class StateManager:
             base_directory: Base directory for saving states
 
         """
-        if not (base_directory is not None):
+        if base_directory is None:
             raise ValueError("base_directory must be provided")
         self.base_directory = Path(base_directory)
         self.states_dir = self.base_directory / "states"
@@ -440,7 +440,7 @@ class StateManager:
 
     def _sanitize_filename(self, filename: str) -> str:
         """Sanitize filename for filesystem compatibility"""
-        if not (filename is not None):
+        if filename is None:
             raise ValueError("filename must be provided")
         import re
 
@@ -466,7 +466,7 @@ class StateManager:
 
     def _state_exists(self, state_name: str) -> bool:
         """Check if a state already exists"""
-        if not (state_name is not None):
+        if state_name is None:
             raise ValueError("state_name must be provided")
         safe_name = self._sanitize_filename(state_name)
         state_file = self.states_dir / f"{safe_name}.json"
