@@ -212,7 +212,7 @@ class TestStreamResponseGenerator:
         # Setup mocks for PyQt environment
         mock_app = MagicMock()
         mock_thread = MagicMock()
-        
+
         # We need to mock sys.modules for PyQt6 since it might not be installed
         with MagicMock() as mock_pyqt:
             sys.modules["PyQt6"] = mock_pyqt
@@ -221,19 +221,135 @@ class TestStreamResponseGenerator:
             mock_pyqt.QtCore.QThread.currentThread.return_value = mock_thread
             mock_app.thread.return_value = mock_thread
 
-            # We need to make stream_response take some time so we can check if processEvents was called
+            # Make stream_response take some time so processEvents is called
             adapter.engine._stream_chunks = ["chunk1", "chunk2"]
             adapter.engine._stream_delay = 0.1
-            
+
             chunks = list(adapter.stream_response("test prompt", _make_context(), []))
-            
+
             assert len(chunks) == 2
             assert chunks[0].content == "chunk1"
             assert chunks[1].content == "chunk2"
-            
+
             # Verify processEvents was called at least once during wait
             assert mock_app.processEvents.called
-        
+
         # Cleanup mocked sys.modules
         del sys.modules["PyQt6"]
         del sys.modules["PyQt6.QtCore"]
+
+
+class TestSendMessage:
+    """Tests for RustAgentAdapter.send_message."""
+
+    @pytest.mark.unit
+    def test_send_message_returns_agent_response(
+        self, adapter: RustAgentAdapter
+    ) -> None:
+        """send_message returns an AgentResponse wrapping the engine output."""
+        from src.shared.python.ai.types import AgentResponse
+
+        adapter.engine.generate_response = MagicMock(return_value="engine output")
+        result = adapter.send_message("hi", _make_context(), [])
+
+        assert isinstance(result, AgentResponse)
+        assert result.content == "engine output"
+
+    @pytest.mark.unit
+    def test_send_message_combines_context_and_prompt(
+        self, adapter: RustAgentAdapter
+    ) -> None:
+        """Conversation messages are prepended to the prompt passed to the engine."""
+        from src.shared.python.ai.types import Message
+
+        ctx = ConversationContext(
+            messages=[Message(role="user", content="prior msg")],
+            user_expertise=ExpertiseLevel.INTERMEDIATE,
+        )
+        mock_engine = MagicMock()
+        mock_engine.generate_response.return_value = "resp"
+        adapter.engine = mock_engine
+
+        adapter.send_message("new msg", ctx, [])
+
+        call_arg = mock_engine.generate_response.call_args[0][0]
+        assert "prior msg" in call_arg
+        assert "new msg" in call_arg
+
+    @pytest.mark.unit
+    def test_send_message_engine_error_returns_error_response(
+        self, adapter: RustAgentAdapter
+    ) -> None:
+        """When the engine raises, send_message returns an error AgentResponse."""
+        adapter.engine.generate_response = MagicMock(
+            side_effect=RuntimeError("engine crashed")
+        )
+
+        result = adapter.send_message("hi", _make_context(), [])
+
+        assert "Error" in result.content
+        assert result.finish_reason == "error"
+
+
+class TestValidateConnection:
+    """Tests for RustAgentAdapter.validate_connection."""
+
+    @pytest.mark.unit
+    def test_always_returns_true(self, adapter: RustAgentAdapter) -> None:
+        """validate_connection always returns (True, msg) once __init__ succeeds."""
+        ok, msg = adapter.validate_connection()
+        assert ok is True
+        assert msg  # non-empty diagnostic
+
+
+class TestCapabilities:
+    """Tests for RustAgentAdapter.capabilities property."""
+
+    @pytest.mark.unit
+    def test_provider_name_is_rust(self, adapter: RustAgentAdapter) -> None:
+        assert adapter.capabilities.provider_name == "rust"
+
+    @pytest.mark.unit
+    def test_streaming_capability_present(self, adapter: RustAgentAdapter) -> None:
+        from src.shared.python.ai.types import ProviderCapability
+
+        assert ProviderCapability.STREAMING in adapter.capabilities.supported
+
+    @pytest.mark.unit
+    def test_model_name_reflects_config(self, adapter: RustAgentAdapter) -> None:
+        assert adapter.capabilities.model_name == "stub-model"
+
+
+class TestRagMethods:
+    """Tests for index_codebase and retrieve_context."""
+
+    @pytest.mark.unit
+    def test_index_codebase_returns_int(self, adapter: RustAgentAdapter) -> None:
+        result = adapter.index_codebase("/some/path")
+        assert isinstance(result, int)
+
+    @pytest.mark.unit
+    def test_retrieve_context_returns_list_of_strings(
+        self, adapter: RustAgentAdapter
+    ) -> None:
+        result = adapter.retrieve_context("some query", top_k=3)
+        assert isinstance(result, list)
+        assert all(isinstance(s, str) for s in result)
+
+
+class TestWheelMissingHint:
+    """Tests for the wheel-missing error message."""
+
+    @pytest.mark.unit
+    def test_wheel_missing_hint_mentions_maturin(self) -> None:
+        """The missing-wheel hint must tell the user how to build the extension."""
+        from src.shared.python.ai.adapters.rust_adapter import _WHEEL_MISSING_HINT
+
+        assert "maturin develop" in _WHEEL_MISSING_HINT
+
+    @pytest.mark.unit
+    def test_wheel_missing_hint_mentions_ai_backend(self) -> None:
+        """The hint references the ai_backend crate name."""
+        from src.shared.python.ai.adapters.rust_adapter import _WHEEL_MISSING_HINT
+
+        assert "ai_backend" in _WHEEL_MISSING_HINT
