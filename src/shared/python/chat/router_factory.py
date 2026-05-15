@@ -34,6 +34,7 @@ import importlib
 import importlib.util
 import logging
 import sys
+from datetime import UTC
 from pathlib import Path
 from typing import Any
 
@@ -287,13 +288,13 @@ def create_chat_router(
                 elif action == "refresh_models":
                     try:
                         models = await chat_service.refresh_models()
-                        from datetime import datetime, timezone
+                        from datetime import datetime
 
                         await websocket.send_json(
                             {
                                 "type": "model_list",
                                 "models": models,
-                                "refreshed_at": datetime.now(timezone.utc).isoformat(),
+                                "refreshed_at": datetime.now(UTC).isoformat(),
                             }
                         )
                     except (
@@ -326,12 +327,36 @@ def create_chat_router(
                         ConnectionError,
                         TimeoutError,
                     ) as exc:
-                        logger.warning("Indexing failed for root=%s: %s", root_path, exc)
+                        logger.warning(
+                            "Indexing failed for root=%s: %s", root_path, exc
+                        )
                         await websocket.send_json({"type": "error", "detail": str(exc)})
                     except Exception:
                         logger.exception("Unexpected error indexing root=%s", root_path)
                         await websocket.send_json(
                             {"type": "error", "detail": "Internal server error"}
+                        )
+
+                elif action == "skill_invoke":
+                    skill_id = msg.get("skill_id")
+                    if not skill_id:
+                        await websocket.send_json(
+                            {"type": "error", "detail": "Missing skill_id"}
+                        )
+                        continue
+                    try:
+                        await chat_service.execute_skill(session_id, skill_id)
+                        await websocket.send_json(
+                            {
+                                "type": "history",
+                                "messages": chat_service.get_session_history(
+                                    session_id
+                                ),
+                            }
+                        )
+                    except Exception as exc:
+                        await websocket.send_json(
+                            {"type": "error", "detail": f"Skill error: {exc}"}
                         )
 
                 else:
