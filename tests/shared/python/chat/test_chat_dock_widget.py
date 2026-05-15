@@ -334,6 +334,7 @@ class TestChatDockWidget:
         assert sent == [
             {
                 "action": "condense",
+                "app_context": "unknown",
             }
         ]
         assert "Condensing" in widget._status_label.text()
@@ -360,7 +361,6 @@ class TestChatDockWidget:
         assert "test assistant message" in text
 
         widget.close()
-
     def test_get_thread_markdown_uses_real_newlines(self, qtbot):
         """_get_thread_markdown must use real newlines (chr(10)), not literal \\n."""
         from chat.chat_dock_widget import ChatDockWidget
