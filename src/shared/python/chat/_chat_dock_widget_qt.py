@@ -578,7 +578,10 @@ class ChatDockWidget(QDockWidget):
         if self._terminal_session_id or self._terminal_start_pending:
             self._append_terminal_line("[terminal] session already active")
             return
-        if not self._shell_combo.currentData() or not self._provider_combo.currentData():
+        if (
+            not self._shell_combo.currentData()
+            or not self._provider_combo.currentData()
+        ):
             self._append_terminal_line("[terminal] select a shell and provider first")
             return
         self._terminal_start_pending = True
@@ -621,13 +624,17 @@ class ChatDockWidget(QDockWidget):
         )
 
     def _on_upload(self) -> None:
-        file_path, _ = QFileDialog.getOpenFileName(self, "Attach File", "", "All Files (*)")
+        file_path, _ = QFileDialog.getOpenFileName(
+            self, "Attach File", "", "All Files (*)"
+        )
         if file_path:
             path = Path(file_path)
             try:
                 data = path.read_bytes()
                 b64 = base64.b64encode(data).decode("ascii")
-                self._send_ws({"action": "file_upload", "filename": path.name, "content": b64})
+                self._send_ws(
+                    {"action": "file_upload", "filename": path.name, "content": b64}
+                )
                 self._add_bubble("user", f"[Uploaded file: {path.name}]")
             except (OSError, ValueError) as exc:
                 self._status_label.setText(f"Upload failed: {exc}")
@@ -639,12 +646,15 @@ class ChatDockWidget(QDockWidget):
         parent = self.parentWidget()
         pixmap = parent.grab() if parent else app.primaryScreen().grabWindow(0)
         from PyQt6.QtCore import QBuffer, QByteArray, QIODevice
+
         ba = QByteArray()
         buffer = QBuffer(ba)
         buffer.open(QIODevice.OpenModeFlag.WriteOnly)
         pixmap.save(buffer, "PNG")
         b64 = base64.b64encode(ba.data()).decode("ascii")
-        self._send_ws({"action": "file_upload", "filename": "screenshot.png", "content": b64})
+        self._send_ws(
+            {"action": "file_upload", "filename": "screenshot.png", "content": b64}
+        )
         self._add_bubble("user", "[Captured screenshot]")
 
     def _on_mode_changed(self) -> None:
@@ -655,7 +665,9 @@ class ChatDockWidget(QDockWidget):
         self._terminal_start_btn.setVisible(is_terminal)
         self._terminal_stop_btn.setVisible(is_terminal)
         self._sync_terminal_controls()
-        placeholder = "Type terminal input..." if is_terminal else self._placeholder_text
+        placeholder = (
+            "Type terminal input..." if is_terminal else self._placeholder_text
+        )
         self._input_edit.setPlaceholderText(placeholder)
 
     def _current_mode(self) -> str:
@@ -667,7 +679,12 @@ class ChatDockWidget(QDockWidget):
             return
         active = bool(self._terminal_session_id)
         pending = bool(self._terminal_start_pending)
-        startable = not active and not pending and bool(self._shell_combo.currentData()) and bool(self._provider_combo.currentData())
+        startable = (
+            not active
+            and not pending
+            and bool(self._shell_combo.currentData())
+            and bool(self._provider_combo.currentData())
+        )
         self._terminal_start_btn.setEnabled(startable)
         self._terminal_stop_btn.setEnabled(active)
         self._shell_combo.setEnabled(not active and not pending)
@@ -705,10 +722,14 @@ class ChatDockWidget(QDockWidget):
                 self._add_bubble(role, content)
 
     def _scroll_to_bottom(self) -> None:
-        QTimer.singleShot(10, lambda: (
-            scrollbar.setValue(scrollbar.maximum())
-            if (scrollbar := self._scroll_area.verticalScrollBar()) is not None else None
-        ))
+        QTimer.singleShot(
+            10,
+            lambda: (
+                scrollbar.setValue(scrollbar.maximum())
+                if (scrollbar := self._scroll_area.verticalScrollBar()) is not None
+                else None
+            ),
+        )
 
     def _get_thread_markdown(self) -> str:
         lines = []
@@ -730,8 +751,10 @@ class ChatDockWidget(QDockWidget):
 
     def _export_to_markdown(self) -> None:
         path, _ = QFileDialog.getSaveFileName(
-            self, "Export Chat Thread", str(self._project_root / "chat_export.md"),
-            "Markdown Files (*.md);;All Files (*)"
+            self,
+            "Export Chat Thread",
+            str(self._project_root / "chat_export.md"),
+            "Markdown Files (*.md);;All Files (*)",
         )
         if path:
             try:
