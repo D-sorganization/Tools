@@ -194,3 +194,190 @@ class TestStreamResponseExceptions:
             chunks = list(adapter.stream_response("hello", _make_context(), []))
 
         assert chunks[-1].is_final
+
+    def test_stream_response_yields_chunks_for_each_line(
+        self, adapter: BitnetAdapter
+    ) -> None:
+        """Each line of stdout becomes one AgentChunk, final chunk is empty."""
+        mock_process = MagicMock()
+        mock_process.stdout = iter(["Hello\n", " world\n", "!\n"])
+        mock_process.wait.return_value = 0
+
+        with patch("subprocess.Popen", return_value=mock_process):
+            chunks = list(adapter.stream_response("hi", _make_context(), []))
+
+        content_chunks = [c for c in chunks if not c.is_final]
+        assert len(content_chunks) == 3
+        assert chunks[-1].is_final is True
+        assert chunks[-1].content == ""
+
+
+# ---------------------------------------------------------------------------
+# Constructor / initialization
+# ---------------------------------------------------------------------------
+
+
+class TestInit:
+    """Tests for BitnetAdapter.__init__."""
+
+    @pytest.mark.unit
+    def test_default_model_name(self) -> None:
+        """Default model is bitnet-1.58b-q4_0.gguf when none is provided."""
+        adapter = BitnetAdapter()
+        assert adapter.model == "bitnet-1.58b-q4_0.gguf"
+
+    @pytest.mark.unit
+    def test_custom_model_and_root(self) -> None:
+        """Custom model and bitnet_root are stored verbatim."""
+        adapter = BitnetAdapter(model="my-model.gguf", bitnet_root="/opt/bitnet")
+        assert adapter.model == "my-model.gguf"
+        assert adapter.bitnet_root == "/opt/bitnet"
+
+    @pytest.mark.unit
+    def test_llama_cli_path_uses_bitnet_root(self) -> None:
+        """llama_cli path is joined from bitnet_root when root is set."""
+        adapter = BitnetAdapter(bitnet_root="/opt/bitnet")
+        assert adapter.llama_cli.startswith("/opt/bitnet")
+        assert "llama-cli" in adapter.llama_cli
+
+    @pytest.mark.unit
+    def test_llama_cli_falls_back_to_plain_binary(self) -> None:
+        """When bitnet_root is empty/unset, llama_cli defaults to 'llama-cli'."""
+        adapter = BitnetAdapter(bitnet_root="")
+        assert adapter.llama_cli == "llama-cli"
+
+    @pytest.mark.unit
+    def test_capabilities_provider_name_is_bitnet(self) -> None:
+        """capabilities.provider_name is always 'bitnet'."""
+        adapter = BitnetAdapter()
+        assert adapter.capabilities.provider_name == "bitnet"
+
+    @pytest.mark.unit
+    def test_capabilities_model_name_matches_init(self) -> None:
+        """capabilities.model_name reflects the model passed to __init__."""
+        adapter = BitnetAdapter(model="custom.gguf")
+        assert adapter.capabilities.model_name == "custom.gguf"
+
+
+# ---------------------------------------------------------------------------
+# validate_connection
+# ---------------------------------------------------------------------------
+
+
+class TestValidateConnection:
+    """Tests for BitnetAdapter.validate_connection."""
+
+    @pytest.mark.unit
+    def test_returns_true_when_executable_responds(
+        self, adapter: BitnetAdapter
+    ) -> None:
+        """validate_connection returns (True, msg) when llama-cli --help exits 0."""
+        mock_result = MagicMock()
+        mock_result.returncode = 0
+        mock_result.stdout = "usage: llama-cli"
+        mock_result.stderr = ""
+
+        with patch("subprocess.run", return_value=mock_result):
+            ok, msg = adapter.validate_connection()
+
+        assert ok is True
+        assert adapter.llama_cli in msg
+
+    @pytest.mark.unit
+    def test_returns_false_when_executable_missing(
+        self, adapter: BitnetAdapter
+    ) -> None:
+        """validate_connection returns (False, msg) when binary is not found."""
+        with patch("subprocess.run", side_effect=FileNotFoundError("no such file")):
+            ok, msg = adapter.validate_connection()
+
+        assert ok is False
+        assert msg  # non-empty diagnostic
+
+    @pytest.mark.unit
+    def test_returns_true_when_usage_in_stdout(self, adapter: BitnetAdapter) -> None:
+        """validate_connection returns True when 'usage' in stdout (non-zero exit)."""
+        mock_result = MagicMock()
+        mock_result.returncode = 1
+        mock_result.stdout = "usage: llama-cli [options]"
+        mock_result.stderr = ""
+
+        with patch("subprocess.run", return_value=mock_result):
+            ok, _ = adapter.validate_connection()
+
+        assert ok is True
+
+
+# ---------------------------------------------------------------------------
+# _format_prompt
+# ---------------------------------------------------------------------------
+
+
+class TestFormatPrompt:
+    """Tests for BitnetAdapter._format_prompt."""
+
+    @pytest.mark.unit
+    def test_appends_assistant_suffix(self, adapter: BitnetAdapter) -> None:
+        """Prompt always ends with 'Assistant:' ready for the model to continue."""
+
+        ctx = _make_context()
+        result = adapter._format_prompt(ctx, "What is 2+2?")
+        assert result.endswith("Assistant:")
+
+    @pytest.mark.unit
+    def test_includes_user_message(self, adapter: BitnetAdapter) -> None:
+        """The current user message appears in the formatted prompt."""
+        ctx = _make_context()
+        result = adapter._format_prompt(ctx, "unique-probe-msg")
+        assert "unique-probe-msg" in result
+
+    @pytest.mark.unit
+    def test_empty_context_still_works(self, adapter: BitnetAdapter) -> None:
+        """_format_prompt handles an empty context (no prior messages) gracefully."""
+        ctx = ConversationContext(
+            messages=[],
+            user_expertise=ExpertiseLevel.INTERMEDIATE,
+        )
+        result = adapter._format_prompt(ctx, "hello")
+        assert "hello" in result
+        assert "Assistant:" in result
+
+
+# ---------------------------------------------------------------------------
+# send_message success path
+# ---------------------------------------------------------------------------
+
+
+class TestSendMessageSuccess:
+    """Tests for the happy path of send_message."""
+
+    @pytest.mark.unit
+    def test_returns_agent_response_with_content(self, adapter: BitnetAdapter) -> None:
+        """send_message wraps stdout output in an AgentResponse."""
+        full_output = "User: hi\nAssistant: response text here"
+        mock_result = MagicMock()
+        mock_result.stdout = full_output
+        mock_result.stderr = ""
+        mock_result.returncode = 0
+
+        with patch("subprocess.run", return_value=mock_result):
+            response = adapter.send_message("hi", _make_context(), [])
+
+        from src.shared.python.ai.types import AgentResponse
+
+        assert isinstance(response, AgentResponse)
+        assert response.content  # non-empty after prompt strip
+
+    @pytest.mark.unit
+    def test_command_includes_model_flag(self, adapter: BitnetAdapter) -> None:
+        """subprocess.run is called with '-m <model>' in the command."""
+        mock_result = MagicMock()
+        mock_result.stdout = "result"
+        mock_result.stderr = ""
+
+        with patch("subprocess.run", return_value=mock_result) as mock_run:
+            adapter.send_message("hi", _make_context(), [])
+
+        call_args = mock_run.call_args[0][0]  # positional cmd list
+        assert "-m" in call_args
+        assert adapter.model in call_args

@@ -372,10 +372,22 @@ def _build_pyqt_chat_dock(sidebar: Any) -> QtWidgets.QWidget | None:
         logger.debug("PyQt chat dock unavailable for Sidekick: %s", exc)
         return None
 
+    # Tools issue #2766: chat dock no longer hard-imports theme.theme_manager.
+    # Inject the manager explicitly so existing visuals are preserved when
+    # the theme package is available; otherwise the dock falls back to its
+    # built-in dark theme.
+    theme_provider: Any = None
+    try:
+        theme_module = importlib.import_module("theme.theme_manager")
+        theme_provider = theme_module.get_theme_manager()
+    except Exception as exc:  # noqa: BLE001 - theme is optional at this layer
+        logger.debug("Theme manager unavailable for chat dock: %s", exc)
+
     dock = chat_module.ChatDockWidget(
         app_context="sidekick",
         app_name="sidekick",
         project_root=sidebar.project_root,
+        theme_provider=theme_provider,
         parent=sidebar,
     )
     dock.setObjectName(SIDEKICK_CHAT_RUNTIME_OBJECT_NAME)

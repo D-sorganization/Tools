@@ -1,0 +1,26 @@
+[package]
+name = "file_watcher"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[lib]
+name = "file_watcher"
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = []
+# Enables PyO3 bindings. Mirrors the `ai_backend` pattern: keeping pyo3 behind
+# an opt-in feature lets `cargo test --workspace` succeed without linking
+# libpython, while maturin builds the production wheel with `--features python`.
+python = ["dep:pyo3"]
+
+[dependencies]
+pyo3 = { workspace = true, optional = true }
+notify = "6"
+ignore = "0.4"
+crossbeam-channel = "0.5"
+
+[dev-dependencies]
+tempfile = "3"

@@ -32,6 +32,7 @@ on:
   workflow_run:
     workflows: ["CI Standard"]
     types: [completed]
+  workflow_dispatch:
 
 # SAFEGUARD: Maximum iterations to prevent infinite repair loops
 env:

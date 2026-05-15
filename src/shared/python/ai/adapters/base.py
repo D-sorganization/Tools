@@ -192,6 +192,55 @@ class BaseAgentAdapter(ABC):
         """
         ...
 
+    # ------------------------------------------------------------------ #
+    # Token-count normalization (issue #2763)                           #
+    # ------------------------------------------------------------------ #
+    @staticmethod
+    def _normalize_token_counts(raw_usage: dict[str, int]) -> dict[str, int]:
+        """Normalize provider-specific token-count keys to a canonical set.
+
+        Each provider uses different key names for the same concepts:
+        - Anthropic: ``input_tokens``, ``output_tokens``
+        - OpenAI / Ollama: ``prompt_tokens``, ``completion_tokens``, ``total_tokens``
+        - Cline: already uses ``input_tokens`` / ``output_tokens``
+        - BitNet / Rust: return ``{}``
+
+        This method maps all variants to the canonical keys so callers never
+        need to know which provider produced a response (issue #2763).
+
+        Args:
+            raw_usage: Raw usage dict from the provider.
+
+        Returns:
+            Dict with keys ``input_tokens``, ``output_tokens``,
+            ``total_tokens`` (all ``int``).  Missing source keys default to 0.
+            ``total_tokens`` is computed as ``input + output`` when not
+            present in the raw dict.
+        """
+        if not raw_usage:
+            return {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
+
+        # Resolve input tokens (Anthropic / Cline style vs. OpenAI / Ollama style)
+        input_tokens: int = raw_usage.get(
+            "input_tokens",
+            raw_usage.get("prompt_tokens", 0),
+        )
+        # Resolve output tokens
+        output_tokens: int = raw_usage.get(
+            "output_tokens",
+            raw_usage.get("completion_tokens", 0),
+        )
+        # Prefer an explicit total; fall back to sum
+        total_tokens: int = raw_usage.get(
+            "total_tokens",
+            input_tokens + output_tokens,
+        )
+        return {
+            "input_tokens": input_tokens,
+            "output_tokens": output_tokens,
+            "total_tokens": total_tokens,
+        }
+
     def format_messages_for_provider(
         self,
         context: ConversationContext,
@@ -335,54 +384,56 @@ class BaseAgentAdapter(ABC):
             ),
         )
 
-    def _classify_error(self, error: Exception) -> AIProviderError:
-        """Classify a provider error into a canonical AIError subclass.
+    def _classify_error(
+        self,
+        error: Exception,
+        provider: str,
+        timeout: float | None = None,
+    ) -> AIProviderError:
+        """Classify an exception into the canonical AI error hierarchy.
 
-        This helper deduplicates the error-mapping ladder across adapters
-        by analyzing the exception string for common failure patterns.
+        Performs a string-scan on the exception message to determine the
+        most specific ``AIProviderError`` subclass.  Adapters call this
+        instead of replicating the classification ladder themselves.
+
+        Pre-check typed provider exceptions *before* calling this helper
+        when the provider SDK exposes them (e.g. ``anthropic.RateLimitError``).
 
         Args:
-            error: The original exception from the provider client.
+            error: The original exception to classify.
+            provider: Provider name string embedded in the raised error
+                (e.g. ``"anthropic"``, ``"openai"``, ``"cline"``).
+            timeout: Timeout value [s] to embed in :class:`AITimeoutError`
+                when the error is classified as a timeout.
 
         Returns:
-            A canonical AIProviderError (or subclass).
+            An :class:`AIProviderError` (or subclass) instance.  Callers
+            should raise this with ``raise ... from error``.
         """
         err_str = str(error).lower()
-        provider = self.capabilities.provider_name
 
-        if "rate limit" in err_str or "429" in err_str:
+        if any(s in err_str for s in ("rate limit", "429", "too many requests")):
             return AIRateLimitError(
-                f"{provider.capitalize()} rate limit exceeded. Please wait and retry.",
+                f"{provider} rate limit exceeded. Please wait and retry.",
                 provider=provider,
             )
 
-        if "timeout" in err_str:
+        if any(s in err_str for s in ("timeout", "timed out")):
             return AITimeoutError(
-                f"{provider.capitalize()} request timed out.",
+                f"{provider} request timed out"
+                + (f" after {timeout}s" if timeout is not None else ""),
                 provider=provider,
+                timeout=timeout,
             )
 
-        if any(s in err_str for s in ("connection", "network", "unreachable")):
+        _conn_keywords = ("connection", "network", "refused", "unreachable")
+        if any(s in err_str for s in _conn_keywords):
             return AIConnectionError(
-                f"Cannot connect to {provider.capitalize()}. Check your network.",
+                f"Cannot connect to {provider}. Check your network.",
                 provider=provider,
             )
 
         return AIProviderError(
-            f"{provider.capitalize()} error: {error}",
+            f"{provider} error: {error}",
             provider=provider,
         )
-
-    def _handle_error(self, error: Exception) -> AgentResponse:
-        """Classify a provider error and raise the canonical AIError.
-
-        This provides a default implementation for adapters to use in
-        their catch blocks: ``return self._handle_error(e)``.
-
-        Args:
-            error: The original exception from the provider client.
-
-        Raises:
-            Appropriate AIError subclass.
-        """
-        raise self._classify_error(error) from error

@@ -14,7 +14,7 @@ import logging
 from typing import Any
 
 from . import design_tokens as theme
-from .qt_compat import QtCore, QtWidgets
+from .qt_compat import QtCore, QtWidgets, Signal
 
 logger = logging.getLogger(__name__)
 
@@ -35,8 +35,8 @@ def _gather_session_context(sidebar: Any) -> dict[str, Any]:
     variables: list[str] = []
     try:
         variables = [v.name for v in sidebar.registry.variables()]
-    except Exception:  # noqa: BLE001 - registry may not be ready
-        pass
+    except Exception as exc:  # noqa: BLE001 - registry may not be ready
+        logger.warning("Could not read workspace variables: %s", exc)
 
     project_root = str(getattr(sidebar, "project_root", "."))
 
@@ -82,9 +82,48 @@ def _format_local_report(context: dict[str, Any]) -> str:
         f"## Project\n{project_root}\n\n"
         f"## Workspace Variables\n{var_list}\n\n"
         "---\n"
-        "_Note: Connect an AI provider via ChatServiceBase for "
-        "agentic insights._\n"
     )
+
+
+class _ReportWorker(QtCore.QThread):
+    """Background worker that runs the async report generator in an isolated loop.
+
+    Using a dedicated ``QThread`` avoids mixing ``asyncio`` with the Qt event
+    loop and replaces the deprecated ``asyncio.get_event_loop()`` call.
+
+    Signals:
+        finished_with_report: Emitted with the completed report string on success.
+        failed: Emitted with the error message string on failure.
+    """
+
+    finished_with_report = Signal(object)
+    failed = Signal(str)
+
+    def __init__(
+        self,
+        generator: Any,
+        context: dict[str, Any],
+        parent: QtCore.QObject | None = None,
+    ) -> None:
+        if generator is None:
+            raise ValueError("generator must be provided")
+        super().__init__(parent)
+        self._generator = generator
+        self._context = context
+
+    def run(self) -> None:
+        """Execute the async generator in an isolated event loop."""
+        try:
+            loop = asyncio.new_event_loop()
+            try:
+                report = loop.run_until_complete(
+                    self._generator.generate_agentic_insights(self._context)
+                )
+                self.finished_with_report.emit(report)
+            finally:
+                loop.close()
+        except Exception as exc:  # noqa: BLE001 - surface all errors via signal
+            self.failed.emit(str(exc))
 
 
 class SidekickReportingWidget(QtWidgets.QWidget):
@@ -103,6 +142,7 @@ class SidekickReportingWidget(QtWidgets.QWidget):
         self.sidebar = sidebar
         self.setObjectName("SidekickReportingWidget")
         self._report_generator: Any | None = None
+        self._worker: _ReportWorker | None = None
         self._init_generator()
         self._build_ui()
 
@@ -161,7 +201,7 @@ class SidekickReportingWidget(QtWidgets.QWidget):
         context = _gather_session_context(self.sidebar)
 
         if self._report_generator is not None:
-            # Attempt async agentic report generation
+            # Attempt async agentic report generation via QThread worker
             self._run_async_report(context)
         else:
             # Synchronous local fallback
@@ -169,52 +209,45 @@ class SidekickReportingWidget(QtWidgets.QWidget):
             self._on_report_generated(report)
 
     def _run_async_report(self, context: dict[str, Any]) -> None:
-        """Schedule the async report generator on a background loop.
+        """Run the async report generator in a background QThread.
 
-        If the running event loop is not available (e.g. headless), the
-        method falls back to local report generation.
+        Creates a ``_ReportWorker``, connects its signals, and starts the
+        thread.  The worker uses an isolated ``asyncio`` event loop so it
+        never interferes with the Qt event loop.
 
         Args:
             context: Session context dictionary.
         """
-        try:
-            loop = asyncio.get_event_loop()
-            if loop.is_running():
-                assert self._report_generator is not None  # guarded by caller
-                future = asyncio.ensure_future(
-                    self._report_generator.generate_agentic_insights(context)
-                )
-                future.add_done_callback(
-                    lambda f: QtCore.QTimer.singleShot(
-                        0, lambda: self._handle_async_result(f)
-                    )
-                )
-                return
-        except RuntimeError:
-            pass
+        assert self._report_generator is not None  # guarded by caller
+        self._worker = _ReportWorker(
+            generator=self._report_generator, context=context, parent=self
+        )
+        self._worker.finished_with_report.connect(self._on_worker_report)
+        self._worker.failed.connect(self._on_report_failed)
+        self._worker.start()
 
-        # Fallback when no running event loop is available
-        report = _format_local_report(context)
-        self._on_report_generated(report)
-
-    def _handle_async_result(self, future: Any) -> None:
-        """Process the completed async report future.
+    def _on_worker_report(self, insights: Any) -> None:
+        """Handle successful agentic insights from the worker thread.
 
         Args:
-            future: The completed asyncio.Future.
+            insights: Raw insights object returned by the report generator.
         """
-        try:
-            insights = future.result()
-            context = _gather_session_context(self.sidebar)
-            report = _format_local_report(context)
-            report += f"\n## Agentic Insights\n{insights}\n"
-            self._on_report_generated(report)
-        except Exception as exc:  # noqa: BLE001
-            logger.error("Async report generation failed: %s", exc)
-            context = _gather_session_context(self.sidebar)
-            report = _format_local_report(context)
-            report += f"\n## Insights Error\n{exc}\n"
-            self._on_report_generated(report)
+        context = _gather_session_context(self.sidebar)
+        report = _format_local_report(context)
+        report += f"\n## Agentic Insights\n{insights}\n"
+        self._on_report_generated(report)
+
+    def _on_report_failed(self, error_message: str) -> None:
+        """Handle a failure reported by the background worker.
+
+        Args:
+            error_message: Human-readable description of the failure.
+        """
+        logger.error("Async report generation failed: %s", error_message)
+        context = _gather_session_context(self.sidebar)
+        report = _format_local_report(context)
+        report += f"\n## Insights Error\n{error_message}\n"
+        self._on_report_generated(report)
 
     def _on_report_generated(self, report: str) -> None:
         """Display the generated report in the preview area.
