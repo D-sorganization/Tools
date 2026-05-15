@@ -215,7 +215,7 @@ class UncertaintyQuantifier:
         Returns:
             BootstrapResult with confidence interval and distribution
         """
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         data = np.asarray(data, dtype=np.float64)
         n = len(data)
@@ -311,7 +311,7 @@ class UncertaintyQuantifier:
             ...      'y': ('uniform', {'low': 1, 'high': 3})}
             ... )
         """
-        if not (func is not None):
+        if func is None:
             raise ValueError("func must be provided")
         n_samples = self.config.n_monte_carlo
 
@@ -382,7 +382,7 @@ class UncertaintyQuantifier:
             Tuple of (result, uncertainty)
         """
         # Compute central value
-        if not (func is not None):
+        if func is None:
             raise ValueError("func must be provided")
         central = func(**values)
 
@@ -433,7 +433,7 @@ class UncertaintyQuantifier:
         Returns:
             SensitivityResult with sensitivity indices
         """
-        if not (func is not None):
+        if func is None:
             raise ValueError("func must be provided")
         n_samples = n_samples or self.config.n_monte_carlo // 10
         params = list(param_bounds.keys())
@@ -514,7 +514,7 @@ class UncertaintyQuantifier:
         Returns:
             PredictionInterval with predictions and intervals
         """
-        if not (X is not None):
+        if X is None:
             raise ValueError("X must be provided")
         X = np.asarray(X, dtype=np.float64)
         y = np.asarray(y, dtype=np.float64)
@@ -598,7 +598,7 @@ class UncertaintyQuantifier:
         Returns:
             ConfidenceInterval (credible interval)
         """
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         data = np.asarray(data, dtype=np.float64)
         n = len(data)
@@ -651,7 +651,7 @@ class UncertaintyQuantifier:
             ConfidenceInterval for transformed parameter
         """
         # Compute gradient
-        if not (func is not None):
+        if func is None:
             raise ValueError("func must be provided")
         gradient = np.zeros(len(param_names))
         step = self.config.delta_method_step
@@ -700,7 +700,7 @@ class UncertaintyQuantifier:
         alpha: float,
     ) -> tuple[float, float, float, float]:
         """Compute BCa confidence interval."""
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         n = len(data)
 
@@ -760,7 +760,7 @@ class UncertaintyQuantifier:
         alpha: float,
     ) -> tuple[float, float]:
         """Compute studentized bootstrap interval."""
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         n_bootstrap = len(bootstrap_stats)
 
@@ -827,7 +827,7 @@ class UncertaintyQuantifier:
         param_name: str,
     ) -> float:
         """Compute numerical partial derivative."""
-        if not (func is not None):
+        if func is None:
             raise ValueError("func must be provided")
         h = self.config.delta_method_step
 
@@ -849,7 +849,7 @@ class UncertaintyQuantifier:
     ) -> np.ndarray:
         """Generate Sobol-like samples (simplified quasi-random)."""
         # Use stratified sampling as approximation
-        if not (n is not None):
+        if n is None:
             raise ValueError("n must be provided")
         samples = np.zeros((n, d))
 
@@ -865,7 +865,7 @@ class UncertaintyQuantifier:
 
     def _skewness(self, data: np.ndarray) -> float:
         """Compute skewness."""
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         n = len(data)
         mean = np.mean(data)
@@ -878,7 +878,7 @@ class UncertaintyQuantifier:
 
     def _kurtosis(self, data: np.ndarray) -> float:
         """Compute excess kurtosis."""
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         mean = np.mean(data)
         std = np.std(data, ddof=1)
@@ -891,7 +891,7 @@ class UncertaintyQuantifier:
 
     def _normal_ppf(self, p: float) -> float:
         """Inverse standard normal CDF."""
-        if not (p is not None):
+        if p is None:
             raise ValueError("p must be provided")
         if p <= 0 or p >= 1:
             return 0.0
@@ -910,7 +910,7 @@ class UncertaintyQuantifier:
 
     def _t_ppf(self, p: float, df: int) -> float:
         """Inverse t-distribution CDF (approximation)."""
-        if not (p is not None):
+        if p is None:
             raise ValueError("p must be provided")
         if df > 30:
             return self._normal_ppf(p)
@@ -945,7 +945,7 @@ def bootstrap_confidence_interval(
         >>> result = bootstrap_confidence_interval(data)
         >>> print(f"CI: ({result.ci_lower:.3f}, {result.ci_upper:.3f})")
     """
-    if not (data is not None):
+    if data is None:
         raise ValueError("data must be provided")
     config = UncertaintyConfig(
         confidence_level=confidence_level,
@@ -974,7 +974,7 @@ def propagate_uncertainty(
         >>> def area(r): return np.pi * r**2
         >>> result, unc = propagate_uncertainty(area, {'r': 5.0}, {'r': 0.1})
     """
-    if not (func is not None):
+    if func is None:
         raise ValueError("func must be provided")
     uq = UncertaintyQuantifier()
     return uq.error_propagation(func, values, uncertainties)

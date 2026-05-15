@@ -151,7 +151,7 @@ def _build_default_placements(
     bath: BathDefaults,
     electrodes: ElectrodeDefaults,
 ) -> tuple[ElectrodePlacement, ...]:
-    if not (bath is not None):
+    if bath is None:
         raise ValueError("bath must be provided")
     spacing_m = bath.width_m * 0.6
     radius_m = spacing_m * 0.4

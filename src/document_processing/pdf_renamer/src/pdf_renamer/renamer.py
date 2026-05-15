@@ -21,7 +21,7 @@ class Renamer:
         self.style = style
 
     def generate_new_filename(self, author: str, title: str) -> str:
-        if not (author is not None):
+        if author is None:
             raise ValueError("author must be provided")
         last_name = get_last_name(author)
 
@@ -62,7 +62,7 @@ class Renamer:
         Returns:
             Success message if renamed, None if failed or skipped
         """
-        if not (original_path is not None):
+        if original_path is None:
             raise ValueError("original_path must be provided")
         if not original_path.exists():
             logger.error(f"File not found: {original_path}")

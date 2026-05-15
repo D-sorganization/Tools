@@ -175,7 +175,7 @@ if PYQT6_AVAILABLE:
 
         def set_dataframe(self, df: pd.DataFrame) -> None:
             """Set DataFrame and update variable combos."""
-            if not (df is not None):
+            if df is None:
                 raise ValueError("df must be provided")
             numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
             for combo in [self.x_combo, self.y_combo, self.z_combo]:
@@ -348,7 +348,7 @@ if PYQT6_AVAILABLE:
 
         def set_dataframe(self, df: pd.DataFrame) -> None:
             """Set DataFrame and update variable lists."""
-            if not (df is not None):
+            if df is None:
                 raise ValueError("df must be provided")
             numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
 
@@ -390,7 +390,7 @@ if PYQT6_AVAILABLE:
 
         def _request_export(self, framework: str) -> None:
             """Emit signal to export script."""
-            if not (framework is not None):
+            if framework is None:
                 raise ValueError("framework must be provided")
             config = self._get_config()
             config["framework"] = framework

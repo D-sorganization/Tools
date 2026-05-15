@@ -116,7 +116,7 @@ class IntegratedCSVProcessorApp(
 
         This implementation replaces the missing original method.
         """
-        if not (parent is not None):
+        if parent is None:
             raise ValueError("parent must be provided")
         frame = ctk.CTkFrame(parent)
         frame.grid_columnconfigure(0, weight=0)  # Left panel doesn't expand

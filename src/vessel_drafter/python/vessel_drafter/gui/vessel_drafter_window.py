@@ -194,7 +194,7 @@ class VesselDrafterWindow(ThemedWindowMixin, QMainWindow):
         self.preview_tabs.currentChanged.connect(self._handle_preview_tab_changed)
 
     def write_layout(self, layout: VesselDrafterLayout) -> None:
-        if not (layout is not None):
+        if layout is None:
             raise ValueError("layout must be provided")
         self._suppress_preview_updates = True
         self.inner_diameter_spin.setValue(layout.inner_diameter_in)
@@ -414,7 +414,7 @@ class VesselDrafterWindow(ThemedWindowMixin, QMainWindow):
         title: str,
         view: ZoomableGraphicsView,
     ) -> QWidget:
-        if not (title is not None):
+        if title is None:
             raise ValueError("title must be provided")
         title_label = QLabel(title)
         zoom_in_button = QPushButton("+")
@@ -518,7 +518,7 @@ class VesselDrafterWindow(ThemedWindowMixin, QMainWindow):
         return cast(QDoubleSpinBox, spin)
 
     def _update_three_d_preview(self, layout: VesselDrafterLayout) -> None:
-        if not (layout is not None):
+        if layout is None:
             raise ValueError("layout must be provided")
         view_options = self._read_three_d_view_options()
         self.three_d_canvas.draw_scene(
@@ -554,7 +554,7 @@ class VesselDrafterWindow(ThemedWindowMixin, QMainWindow):
             self._update_three_d_preview(layout)
 
     def _handle_section_cut_toggled(self, checked: bool) -> None:
-        if not (checked is not None):
+        if checked is None:
             raise ValueError("checked must be provided")
         self.section_cut_angle_spin.setEnabled(checked)
         self.three_d_canvas.queue_default_view(self._read_three_d_view_options())

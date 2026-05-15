@@ -27,7 +27,7 @@ class MaterialSummaryTable(QTableWidget):
             header.setStretchLastSection(True)
 
     def set_report(self, report: MaterialMetricsReport) -> None:
-        if not (report is not None):
+        if report is None:
             raise ValueError("report must be provided")
         self.setRowCount(0)
         for metric in report.component_metrics:
@@ -58,7 +58,7 @@ class MaterialSummaryTable(QTableWidget):
         self,
         values: tuple[str, str, str, str, str, str, str],
     ) -> None:
-        if not (values is not None):
+        if values is None:
             raise ValueError("values must be provided")
         row_index = self.rowCount()
         self.insertRow(row_index)

@@ -118,7 +118,7 @@ class FolderOperationsMixin:
         """Core logic to find and delete renamed duplicates in a single
         target folder.
         """
-        if not (target_folder is not None):
+        if target_folder is None:
             raise ValueError("target_folder must be provided")
         log = []
         deleted_count = 0

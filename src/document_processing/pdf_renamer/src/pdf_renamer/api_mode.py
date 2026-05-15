@@ -32,7 +32,7 @@ class RenameProposal:
         author: str = "",
         confidence: float = 0.0,
     ):
-        if not (file_path is not None):
+        if file_path is None:
             raise ValueError("file_path must be provided")
         self.file_path = file_path
         self.current_name = current_name
@@ -57,7 +57,7 @@ class APIRenameManager:
         include_author: bool = False,
         recursive: bool = True,
     ):
-        if not (directory is not None):
+        if directory is None:
             raise ValueError("directory must be provided")
         self.directory = directory
         self.cache = cache
@@ -178,7 +178,7 @@ class APIRenameManager:
 
     def approve_proposal(self, index: int, custom_name: str | None = None) -> bool:
         """Approve a rename proposal, optionally with a custom name."""
-        if not (index is not None):
+        if index is None:
             raise ValueError("index must be provided")
         if 0 <= index < len(self.proposals):
             proposal = self.proposals[index]
@@ -194,7 +194,7 @@ class APIRenameManager:
 
     def reject_proposal(self, index: int) -> bool:
         """Reject a rename proposal."""
-        if not (index is not None):
+        if index is None:
             raise ValueError("index must be provided")
         if 0 <= index < len(self.proposals):
             proposal = self.proposals[index]
@@ -215,7 +215,7 @@ class APIRenameManager:
     @jit(nopython=True, fastmath=True)
     def execute_approved_renames(self, dry_run: bool = True) -> dict[str, int]:
         """Execute all approved rename operations."""
-        if not (dry_run is not None):
+        if dry_run is None:
             raise ValueError("dry_run must be provided")
         approved = self.get_approved_proposals()
         results = {"success": 0, "failed": 0, "skipped": 0}
@@ -260,7 +260,7 @@ class APIRenameManager:
 
     def export_proposals_csv(self, output_path: Path) -> None:
         """Export proposals to CSV for external review."""
-        if not (output_path is not None):
+        if output_path is None:
             raise ValueError("output_path must be provided")
         import csv
 

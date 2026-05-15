@@ -38,7 +38,6 @@ from src.shared.python.ai.config import (
 from src.shared.python.ai.exceptions import (
     AIConnectionError,
     AIProviderError,
-    AITimeoutError,
 )
 from src.shared.python.ai.types import (
     AgentChunk,
@@ -167,9 +166,9 @@ class OllamaAdapter(BaseAgentAdapter):
             AITimeoutError: If request times out.
             AIProviderError: For other Ollama errors.
         """
-        if not (message is not None):
+        if message is None:
             raise ValueError("message must be provided")
-        if not (message is not None):
+        if message is None:
             raise ValueError("message must be provided")
         client = self._get_client()
 
@@ -192,26 +191,7 @@ class OllamaAdapter(BaseAgentAdapter):
             response.raise_for_status()
 
         except Exception as e:  # noqa: BLE001
-            # httpx is a lazy import; ConnectError and TimeoutException cannot be
-            # named in the except clause until the module is imported.
-            import httpx
-
-            if isinstance(e, httpx.ConnectError):
-                raise AIConnectionError(
-                    f"Cannot connect to Ollama at {self._host}. "
-                    "Is Ollama running? Start with: ollama serve",
-                    provider="ollama",
-                ) from e
-            if isinstance(e, httpx.TimeoutException):
-                raise AITimeoutError(
-                    f"Ollama request timed out after {self._timeout}s",
-                    provider="ollama",
-                    timeout=self._timeout,
-                ) from e
-            raise AIProviderError(
-                f"Ollama error: {e}",
-                provider="ollama",
-            ) from e
+            return self._handle_error(e)
 
         # Parse response
         data = response.json()
@@ -242,9 +222,9 @@ class OllamaAdapter(BaseAgentAdapter):
         Yields:
             AgentChunk instances as they arrive.
         """
-        if not (message is not None):
+        if message is None:
             raise ValueError("message must be provided")
-        if not (message is not None):
+        if message is None:
             raise ValueError("message must be provided")
         client = self._get_client()
         messages = self._format_messages(context, message, tools)
@@ -381,9 +361,9 @@ class OllamaAdapter(BaseAgentAdapter):
         Returns:
             List of message dicts for Ollama.
         """
-        if not (context is not None):
+        if context is None:
             raise ValueError("context must be provided")
-        if not (context is not None):
+        if context is None:
             raise ValueError("context must be provided")
         messages: list[dict[str, str]] = []
 
@@ -430,9 +410,9 @@ class OllamaAdapter(BaseAgentAdapter):
         Returns:
             Parsed AgentResponse.
         """
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         message = data.get("message", {})
         content = message.get("content", "")
@@ -525,8 +505,16 @@ class OllamaAdapter(BaseAgentAdapter):
                 response.raise_for_status()
                 return True
 
-        except ImportError as e:
-            raise AIProviderError(
-                f"Failed to pull model {model_name}: {e}",
+        except Exception as e:  # noqa: BLE001
+            self._handle_error(e)
+
+    def _handle_error(self, error: Exception) -> AgentResponse:
+        """Handle Ollama-specific errors before falling back to generic classifier."""
+        err_str = str(error).lower()
+        if "connection" in err_str or "unreachable" in err_str:
+            raise AIConnectionError(
+                f"Cannot connect to Ollama at {self._host}. "
+                "Is Ollama running? Start with: ollama serve",
                 provider="ollama",
-            ) from e
+            ) from error
+        return super()._handle_error(error)

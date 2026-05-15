@@ -31,7 +31,7 @@ class ODESolver:
         """
         import sympy as sp  # lazy import – avoids hang on Windows at module load
 
-        if not (derivatives is not None):
+        if derivatives is None:
             raise ValueError("derivatives must be provided")
         self.derivatives = derivatives
         self.parameters = parameters
@@ -68,7 +68,7 @@ class ODESolver:
         Returns:
             List of derivatives for each variable.
         """
-        if not (t is not None):
+        if t is None:
             raise ValueError("t must be provided")
         args = [t] + list(y) + [self.parameters[p] for p in self.parameters]
         return [func(*args) for func in self._functions]

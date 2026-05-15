@@ -38,7 +38,7 @@ class JsonFormatter(logging.Formatter):
 
     def format(self, record: logging.LogRecord) -> str:
         """Format log record as JSON."""
-        if not (record is not None):
+        if record is None:
             raise ValueError("record must be provided")
         payload: dict[str, Any] = {
             "level": record.levelname,
@@ -72,7 +72,7 @@ def get_logger(
     Returns:
         Configured logging.Logger instance.
     """
-    if not (level is not None):
+    if level is None:
         raise ValueError("level must be provided")
     if name is None:
         import inspect
@@ -120,7 +120,7 @@ def setup_logging(
         force: Override any existing configuration.
     """
     # Convert string level to int if needed
-    if not (level is not None):
+    if level is None:
         raise ValueError("level must be provided")
     if isinstance(level, str):
         level = getattr(logging, level.upper(), logging.INFO)
@@ -191,7 +191,7 @@ def init_default_logging(
     Returns:
         Root logger instance
     """
-    if not (level is not None):
+    if level is None:
         raise ValueError("level must be provided")
     root_logger = logging.getLogger()
     if not root_logger.handlers:
