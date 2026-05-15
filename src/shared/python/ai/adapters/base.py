@@ -240,23 +240,29 @@ class BaseAgentAdapter(ABC):
         tools: list[ToolDeclaration],
         expertise_level: str = "beginner",
         context: ConversationContext | None = None,
+        app_context: str = "assistant",
     ) -> str:
         """Build a system prompt including tool context.
 
-        This default implementation provides a basic system prompt.
-        Override for provider-specific or use-case-specific prompts.
+        This default implementation delegates the preamble to
+        :func:`src.shared.python.ai.system_prompts.build_system_prompt` so
+        that domain-specific branding is injected by the consuming
+        application rather than hardcoded here.  Callers that previously
+        relied on the default Golf-Modeling-Suite preamble should pass
+        ``app_context="upstream_drift"``.
 
         Args:
             tools: Available tools to describe.
             expertise_level: User's expertise level.
             context: Optional conversation context containing project and
                 prompt-memory metadata.
+            app_context: Registry key for the consuming application
+                (e.g. ``"upstream_drift"``, ``"gasification"``).  Defaults
+                to ``"assistant"`` which produces a brand-neutral preamble.
 
         Returns:
             System prompt string.
         """
-        if tools is None:
-            raise ValueError("tools must be provided")
         if tools is None:
             raise ValueError("tools must be provided")
         tool_descriptions = "\n".join(
@@ -283,22 +289,24 @@ class BaseAgentAdapter(ABC):
                 "where it helps the user act on the answer."
             )
 
-        return (
-            f"You are an AI assistant for the Golf Modeling Suite, a research-grade "
-            f"biomechanics simulation platform.\n\n"
-            f"Your role is to help users analyze golf swings using advanced physics "
-            f"simulations across multiple engines (MuJoCo, Drake, Pinocchio).\n\n"
-            f"User expertise level: {expertise_level}\n"
-            f"Response style: {style_instructions}\n\n"
-            f"{memory_section}\n\n"
-            f"Available tools:\n{tool_descriptions}\n\n"
-            f"Guidelines:\n"
-            f"1. Always validate scientific claims before presenting them\n"
-            f"2. Explain concepts at the user's expertise level\n"
-            f"3. Use tools to perform analyses rather than making up results\n"
-            f"4. Cite sources and acknowledge uncertainty\n"
-            f"5. Guide users through workflows step by step"
+        from src.shared.python.ai.system_prompts import (
+            build_system_prompt as _build_preamble,
         )
+
+        preamble = _build_preamble(
+            app_context=app_context,
+            expertise_level=expertise_level,
+        )
+
+        parts = [preamble]
+        if style_instructions:
+            parts.append(f"Response style: {style_instructions}")
+        if memory_section:
+            parts.append(memory_section)
+        if tool_descriptions:
+            parts.append(f"Available tools:\n{tool_descriptions}")
+
+        return "\n\n".join(parts)
 
     def build_context_instruction_section(
         self,

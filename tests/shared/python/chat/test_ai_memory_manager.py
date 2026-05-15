@@ -127,6 +127,45 @@ def test_base_adapter_uses_project_root_agents_and_prompt_memory(
     assert "Always keep work on PRs." in prompt
 
 
+def test_default_build_system_prompt_has_no_golf_branding() -> None:
+    """Default app_context must not emit Golf Modeling Suite branding (#2765)."""
+    prompt = _Adapter().build_system_prompt([])
+
+    assert "Golf" not in prompt
+    assert "golf" not in prompt
+    assert "MuJoCo" not in prompt
+    assert "Pinocchio" not in prompt
+    assert "Drake" not in prompt
+
+
+def test_upstream_drift_context_emits_golf_branding() -> None:
+    """app_context='upstream_drift' should still produce UpstreamDrift prompt (#2765)."""
+    prompt = _Adapter().build_system_prompt([], app_context="upstream_drift")
+
+    assert "UpstreamDrift" in prompt
+    assert "biomechanics" in prompt
+
+
+def test_gasification_context_does_not_emit_golf_branding() -> None:
+    """app_context='gasification' must not include golf-specific text (#2765)."""
+    prompt = _Adapter().build_system_prompt([], app_context="gasification")
+
+    assert "Golf" not in prompt
+    assert "golf" not in prompt
+    assert "thermodynamic" in prompt
+
+
+def test_build_system_prompt_includes_tool_descriptions() -> None:
+    """Tool list must be present in the returned prompt (#2765 backward compat)."""
+    from src.shared.python.ai.adapters.base import ToolDeclaration
+
+    tools = [ToolDeclaration(name="run_sim", description="Runs the simulation")]
+    prompt = _Adapter().build_system_prompt(tools)
+
+    assert "run_sim" in prompt
+    assert "Runs the simulation" in prompt
+
+
 def test_concurrent_mutations_are_consistent(tmp_path: Path) -> None:
     """MemoryManager must serialize mutations from multiple threads."""
     manager = MemoryManager(tmp_path)
