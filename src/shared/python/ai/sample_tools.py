@@ -37,7 +37,7 @@ def _get_education_system() -> EducationSystem:
         _education_holder["instance"] = EducationSystem()
 
     system = _education_holder["instance"]
-    if not (system is not None):  # Ensure it is not None for mypy
+    if system is None:  # Ensure it is not None for mypy
         raise ValueError("DbC Blocked: Precondition failed.")
     return system
 
@@ -259,9 +259,9 @@ def _register_inverse_dynamics_tool(registry: ToolRegistry) -> None:
         Returns:
             Simulation results summary.
         """
-        if not (file_path is not None):
+        if file_path is None:
             raise ValueError("file_path must be provided")
-        if not (file_path is not None):
+        if file_path is None:
             raise ValueError("file_path must be provided")
         valid_engines = ["mujoco", "drake", "pinocchio"]
         if engine.lower() not in valid_engines:
@@ -315,9 +315,9 @@ def _register_interpret_torques_tool(registry: ToolRegistry) -> None:
             Interpretation of torque values.
         """
         # Typical ranges for golf swing (approximate)
-        if not (shoulder_torque is not None):
+        if shoulder_torque is None:
             raise ValueError("shoulder_torque must be provided")
-        if not (shoulder_torque is not None):
+        if shoulder_torque is None:
             raise ValueError("shoulder_torque must be provided")
         ranges = {
             "shoulder": {"low": 40, "typical": 80, "high": 150, "unit": "N·m"},
@@ -327,9 +327,9 @@ def _register_interpret_torques_tool(registry: ToolRegistry) -> None:
 
         def classify(value: float, range_info: dict[str, Any]) -> str:
             """Classify a torque value relative to its typical range."""
-            if not (value is not None):
+            if value is None:
                 raise ValueError("value must be provided")
-            if not (value is not None):
+            if value is None:
                 raise ValueError("value must be provided")
             if value < range_info["low"]:
                 return "Below typical"
@@ -389,9 +389,9 @@ def _register_explain_concept_tool(registry: ToolRegistry) -> None:
         Returns:
             Explanation at appropriate level.
         """
-        if not (term is not None):
+        if term is None:
             raise ValueError("term must be provided")
-        if not (term is not None):
+        if term is None:
             raise ValueError("term must be provided")
         edu = _get_education_system()
 
