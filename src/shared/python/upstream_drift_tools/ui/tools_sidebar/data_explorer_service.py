@@ -271,11 +271,18 @@ def _column_summaries(frame: pd.DataFrame) -> list[DataExplorerColumnSummary]:
     return [
         DataExplorerColumnSummary(
             name=str(column),
-            dtype=_normalize_dtype(frame[column].dtype),
+            dtype=_stable_dtype_name(frame[column].dtype),
             missing_count=int(frame[column].isna().sum()),
         )
         for column in frame.columns
     ]
+
+
+def _stable_dtype_name(dtype: Any) -> str:
+    dtype_name = str(dtype)
+    if dtype_name in {"str", "string"}:
+        return "object"
+    return dtype_name
 
 
 def _count_delimited_rows(path: Path) -> int:
