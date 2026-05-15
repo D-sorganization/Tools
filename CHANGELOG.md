@@ -23,6 +23,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `src/shared/python/ai/workflow_engine.py` and
+  `src/shared/python/ai/workflow_definitions.py`: moved to
+  `drafts/workflow_engine/` (with a README documenting required wiring) —
+  the engine was fully implemented but never instantiated by any production
+  code path, so ~1.3k lines of dead code were leaving the production wheel.
+  Public exports (`WorkflowEngine`, `Workflow`, `WorkflowStep`,
+  `WorkflowExecution`, `RecoveryStrategy`, `StepStatus`, `StepResult`,
+  `ValidationResult`, and the `create_*_workflow` helpers) were removed
+  from `src.shared.python.ai`. `WorkflowError` remains in `exceptions.py`
+  (closes #2760).
 - `upstream_drift_tools.calculators.conversion.service`: extracted module-level
   `_clean_unit_string` with `@lru_cache(maxsize=512)`; repeated batch conversions
   now hit O(1) cache instead of re-running six `.replace()` calls per unit string
