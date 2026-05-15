@@ -132,6 +132,26 @@ class WorkspaceRegistry:
         """Return metadata snapshots for all variables."""
         return [self.describe(name) for name in self.list()]
 
+    def update_from(
+        self,
+        other: WorkspaceRegistry,
+        *,
+        replace: bool = False,
+    ) -> None:
+        """Merge another registry while preserving non-JSON metadata."""
+        if replace:
+            self.clear()
+        for name in other.list_names():
+            self._values[name] = other._values[name]
+            if name in other._repr_values:
+                self._repr_values[name] = other._repr_values[name]
+            else:
+                self._repr_values.pop(name, None)
+            if name in other._metadata_overrides:
+                self._metadata_overrides[name] = dict(other._metadata_overrides[name])
+            else:
+                self._metadata_overrides.pop(name, None)
+
     def to_dict(self) -> dict[str, Any]:
         """Return a JSON-safe payload suitable for persistence."""
         return {

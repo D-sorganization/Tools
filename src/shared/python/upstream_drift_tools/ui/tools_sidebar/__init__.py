@@ -32,6 +32,9 @@ from .calculator_workspace import (
     CalculatorWorkspaceFacade,
     CalculatorWorkspaceLoadResult,
     CalculatorWorkspaceSettings,
+    GlobalWorkspaceController,
+    GlobalWorkspaceSettings,
+    default_global_workspace_controller,
     validate_calculator_workspace_path,
 )
 from .command_history import (
@@ -111,6 +114,8 @@ __all__ = [
     "CalculatorWorkspaceFacade",
     "CalculatorWorkspaceLoadResult",
     "CalculatorWorkspaceSettings",
+    "GlobalWorkspaceController",
+    "GlobalWorkspaceSettings",
     "CommandHistoryController",
     "DefaultCommonLocationsProvider",
     "DEFAULT_SIDEBAR_TAB_HELP",
@@ -156,6 +161,7 @@ __all__ = [
     "WorkspaceVariable",
     "build_calculator_plot_spec",
     "create_tools_sidebar",
+    "default_global_workspace_controller",
     "default_calculator_startup_config",
     "install_tools_sidebar",
     "resolve_sidekick_theme",

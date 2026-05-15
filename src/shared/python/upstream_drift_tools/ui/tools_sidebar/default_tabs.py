@@ -202,8 +202,8 @@ def build_calculator_plot_tab(sidebar: Any) -> QtWidgets.QWidget:
             "Calculator plotting requires the PyQt6 UI backend.",
         )
     try:
-        from plot_engine.pyqt6_widget import PlotWidget
-        from plot_engine.specs import PlotSpec
+        plot_widget_module = importlib.import_module("plot_engine.pyqt6_widget")
+        plot_specs_module = importlib.import_module("plot_engine.specs")
     except Exception as exc:  # noqa: BLE001 - optional plot UI dependencies
         logger.debug("Calculator plot tab unavailable for Sidekick: %s", exc)
         return placeholder(
@@ -213,11 +213,11 @@ def build_calculator_plot_tab(sidebar: Any) -> QtWidgets.QWidget:
             "dependencies could not be loaded.",
         )
 
-    widget = PlotWidget(parent=sidebar)
+    widget = plot_widget_module.PlotWidget(parent=sidebar)
     widget.setObjectName("SidekickCalculatorPlotTab")
     widget.setToolTip(DEFAULT_SIDEBAR_TAB_HELP["calculator_plot"]["summary"])
     widget.set_spec(
-        PlotSpec(
+        plot_specs_module.PlotSpec(
             title="Calculator Plot",
             series=[],
         )
