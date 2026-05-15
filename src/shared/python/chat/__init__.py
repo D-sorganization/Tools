@@ -61,17 +61,17 @@ try:
     _PYDANTIC_AVAILABLE = True
 except ImportError:
     _PYDANTIC_AVAILABLE = False
-    ChatChunkResponse = None
-    ChatHistoryResponse = None
-    ChatIndexStatusResponse = None
-    ChatMessageRequest = None
-    ChatModelInfo = None
-    ChatModelListResponse = None
-    ChatSessionInfo = None
+    ChatChunkResponse = None  # type: ignore
+    ChatHistoryResponse = None  # type: ignore
+    ChatIndexStatusResponse = None  # type: ignore
+    ChatMessageRequest = None  # type: ignore
+    ChatModelInfo = None  # type: ignore
+    ChatModelListResponse = None  # type: ignore
+    ChatSessionInfo = None  # type: ignore
     DEFAULT_RESPONSE_STYLE = "standard"
     RESPONSE_STYLE_PROMPTS = {}
-    ResponseStyle = str
-    style_prompt = None
+    ResponseStyle = str  # type: ignore
+    style_prompt = None  # type: ignore
 
 _PYQT6_AVAILABLE = None
 
