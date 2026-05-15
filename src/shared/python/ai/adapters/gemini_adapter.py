@@ -40,7 +40,11 @@ import threading
 from collections.abc import Iterator, Sequence
 from typing import Any
 
-from src.shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
+from src.shared.python.ai.adapters.base import (
+    BaseAgentAdapter,
+    ToolDeclaration,
+    _ensure_final_chunk,
+)
 from src.shared.python.ai.types import (
     AgentChunk,
     AgentResponse,
@@ -208,12 +212,20 @@ class GeminiAdapter(BaseAgentAdapter):
         context: ConversationContext,
         tools: list[ToolDeclaration],
     ) -> Iterator[AgentChunk]:
-        """Stream response from Gemini.
+        """Stream response from Gemini with the final-chunk invariant (#2763).
 
         Raises:
             NotImplementedError: If ``tools`` is non-empty (see issue #2764).
         """
         self._reject_tools_if_present(tools)
+        return _ensure_final_chunk(self._stream_response_raw(message, context))
+
+    def _stream_response_raw(
+        self,
+        message: str,
+        context: ConversationContext,
+    ) -> Iterator[AgentChunk]:
+        """Raw Gemini streaming generator (pre-finality-wrapper)."""
         try:
             with _CONFIGURE_LOCK:
                 self._with_configured_sdk()

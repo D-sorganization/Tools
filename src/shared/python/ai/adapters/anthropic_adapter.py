@@ -23,7 +23,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from src.shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
+from src.shared.python.ai.adapters.base import (
+    BaseAgentAdapter,
+    ToolDeclaration,
+    _ensure_final_chunk,
+)
 from src.shared.python.ai.config import (
     DEFAULT_ANTHROPIC_MAX_TOKENS,
     DEFAULT_ANTHROPIC_MODEL,
@@ -192,7 +196,20 @@ class AnthropicAdapter(BaseAgentAdapter):
         context: ConversationContext,
         tools: list[ToolDeclaration],
     ) -> Iterator[AgentChunk]:
-        """Stream response from Anthropic.
+        """Stream response from Anthropic with the final-chunk invariant.
+
+        Wraps the raw provider stream through ``_ensure_final_chunk`` so
+        consumers always see exactly one terminator chunk (issue #2763).
+        """
+        return _ensure_final_chunk(self._stream_response_raw(message, context, tools))
+
+    def _stream_response_raw(
+        self,
+        message: str,
+        context: ConversationContext,
+        tools: list[ToolDeclaration],
+    ) -> Iterator[AgentChunk]:
+        """Raw Anthropic streaming generator (pre-finality-wrapper).
 
         Args:
             message: User message to process.

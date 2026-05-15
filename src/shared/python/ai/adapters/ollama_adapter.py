@@ -22,7 +22,11 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Any
 
-from src.shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
+from src.shared.python.ai.adapters.base import (
+    BaseAgentAdapter,
+    ToolDeclaration,
+    _ensure_final_chunk,
+)
 from src.shared.python.ai.config import (
     DEFAULT_OLLAMA_HOST,
     DEFAULT_OLLAMA_MODEL,
@@ -45,6 +49,7 @@ from src.shared.python.ai.types import (
     TokenUsage,
     ToolCall,
 )
+from src.shared.python.contracts import precondition
 from src.shared.python.logging_pkg.logging_config import get_logger
 
 if TYPE_CHECKING:
@@ -138,6 +143,9 @@ class OllamaAdapter(BaseAgentAdapter):
                 ) from e
         return self._client
 
+    @precondition(
+        lambda message: bool(message.strip()), "message must not be empty or blank"
+    )
     def send_message(
         self,
         message: str,
@@ -215,7 +223,16 @@ class OllamaAdapter(BaseAgentAdapter):
         context: ConversationContext,
         tools: list[ToolDeclaration],
     ) -> Iterator[AgentChunk]:
-        """Stream response chunks from Ollama.
+        """Stream response chunks from Ollama with the final-chunk invariant (#2763)."""
+        return _ensure_final_chunk(self._stream_response_raw(message, context, tools))
+
+    def _stream_response_raw(
+        self,
+        message: str,
+        context: ConversationContext,
+        tools: list[ToolDeclaration],
+    ) -> Iterator[AgentChunk]:
+        """Raw Ollama streaming generator (pre-finality-wrapper).
 
         Args:
             message: User message to process.

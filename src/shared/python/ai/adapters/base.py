@@ -10,13 +10,9 @@ modifying existing code.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections.abc import Iterator
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, cast
-
-from src.shared.python.logging_pkg.logging_config import get_logger
-
-if TYPE_CHECKING:
-    from collections.abc import Iterator
+from typing import Any, cast
 
 from src.shared.python.ai.memory_manager import (
     build_memory_prompt_section,
@@ -28,8 +24,46 @@ from src.shared.python.ai.types import (
     ConversationContext,
     ProviderCapabilities,
 )
+from src.shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
+
+
+def _ensure_final_chunk(stream: Iterator[AgentChunk]) -> Iterator[AgentChunk]:
+    """Yield from ``stream``, guaranteeing the last chunk has ``is_final=True``.
+
+    Provider streams disagree on terminator semantics: some emit a sentinel
+    chunk with ``is_final=True``, some set ``is_final`` on the last content
+    chunk, and some never set it at all (issue #2763). Wrap any raw stream
+    in this helper to enforce the cross-adapter contract that the consumer
+    will always see exactly one final chunk at the end.
+
+    If the upstream stream is empty, a single empty final chunk is yielded.
+    If the last upstream chunk already has ``is_final=True``, it is passed
+    through unchanged. Otherwise, its ``is_final`` flag is set to ``True``.
+
+    Args:
+        stream: Raw provider stream of :class:`AgentChunk`.
+
+    Yields:
+        Chunks from ``stream`` with the terminator invariant enforced.
+    """
+    last_chunk: AgentChunk | None = None
+    for chunk in stream:
+        if last_chunk is not None:
+            yield last_chunk
+        last_chunk = chunk
+    if last_chunk is None:
+        yield AgentChunk(content="", is_final=True)
+    elif last_chunk.is_final:
+        yield last_chunk
+    else:
+        yield AgentChunk(
+            content=last_chunk.content,
+            tool_call_delta=last_chunk.tool_call_delta,
+            is_final=True,
+            index=last_chunk.index,
+        )
 
 
 @dataclass
@@ -146,13 +180,18 @@ class BaseAgentAdapter(ABC):
         For providers that support streaming, this method yields
         response chunks as they arrive, enabling real-time UI updates.
 
+        Implementations MUST wrap their raw provider stream through
+        :func:`_ensure_final_chunk` so the consumer always sees exactly
+        one terminator chunk with ``is_final=True`` (issue #2763).
+
         Args:
             message: User message to process.
             context: Current conversation context with history.
             tools: List of tools available for this request.
 
         Yields:
-            Response chunks as they arrive from the provider.
+            Response chunks as they arrive from the provider, with the
+            final-chunk invariant enforced.
 
         Raises:
             AIProviderError: If provider communication fails.

@@ -4,7 +4,11 @@ import logging
 from collections.abc import Iterator
 from typing import Any
 
-from src.shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
+from src.shared.python.ai.adapters.base import (
+    BaseAgentAdapter,
+    ToolDeclaration,
+    _ensure_final_chunk,
+)
 from src.shared.python.ai.types import (
     AgentChunk,
     AgentResponse,
@@ -12,6 +16,7 @@ from src.shared.python.ai.types import (
     ProviderCapabilities,
     ProviderCapability,
 )
+from src.shared.python.contracts import precondition
 
 logger = logging.getLogger(__name__)
 
@@ -114,7 +119,30 @@ class RustAgentAdapter(BaseAgentAdapter):
         context: ConversationContext,
         tools: list[Any],
     ) -> Iterator[AgentChunk]:
-        """Stream the response using the Rust backend.
+        """Stream the response using the Rust backend (final-chunk wrapped, #2763).
+
+        .. warning::
+
+            **This call is BLOCKING.** The underlying Rust ``AIEngine``
+            uses a Tokio ``block_on`` to drain the SSE stream eagerly,
+            holding the GIL for the duration of the request. When invoked
+            from a Qt UI it MUST be called from a worker thread (e.g.
+            ``QThread`` or ``QRunnable``) — otherwise the event loop will
+            freeze for the full duration of the LLM response.
+
+            The canonical worker pattern lives in
+            ``src/shared/python/ai/gui/assistant_widgets.py`` (see
+            ``StreamWorker``); reuse it rather than reimplementing.
+        """
+        return _ensure_final_chunk(self._stream_response_raw(prompt, context, tools))
+
+    def _stream_response_raw(
+        self,
+        prompt: str,
+        context: ConversationContext,
+        tools: list[Any],
+    ) -> Iterator[AgentChunk]:
+        """Raw Rust-backend streaming generator (pre-finality-wrapper).
 
         The Rust backend exposes ``stream_response(prompt) -> list[str]`` that
         eagerly drains the SSE stream and returns the ordered delta list.
@@ -211,6 +239,9 @@ class RustAgentAdapter(BaseAgentAdapter):
         """Retrieve semantic context using the Rust vector memory."""
         return [str(item) for item in self.rag.retrieve_context(prompt, top_k)]
 
+    @precondition(
+        lambda prompt: bool(prompt.strip()), "prompt must not be empty or blank"
+    )
     def send_message(
         self, prompt: str, context: ConversationContext, tools: list[ToolDeclaration]
     ) -> AgentResponse:

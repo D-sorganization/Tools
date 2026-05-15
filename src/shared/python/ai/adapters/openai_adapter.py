@@ -23,7 +23,11 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Any
 
-from src.shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
+from src.shared.python.ai.adapters.base import (
+    BaseAgentAdapter,
+    ToolDeclaration,
+    _ensure_final_chunk,
+)
 from src.shared.python.ai.config import (
     DEFAULT_OPENAI_MAX_TOKENS,
     DEFAULT_OPENAI_MODEL,
@@ -204,7 +208,16 @@ class OpenAIAdapter(BaseAgentAdapter):
         context: ConversationContext,
         tools: list[ToolDeclaration],
     ) -> Iterator[AgentChunk]:
-        """Stream response from OpenAI.
+        """Stream response from OpenAI with the final-chunk invariant (#2763)."""
+        return _ensure_final_chunk(self._stream_response_raw(message, context, tools))
+
+    def _stream_response_raw(
+        self,
+        message: str,
+        context: ConversationContext,
+        tools: list[ToolDeclaration],
+    ) -> Iterator[AgentChunk]:
+        """Raw OpenAI streaming generator (pre-finality-wrapper).
 
         Args:
             message: User message to process.

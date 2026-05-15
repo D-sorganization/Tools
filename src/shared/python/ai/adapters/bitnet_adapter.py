@@ -11,7 +11,11 @@ import os
 import subprocess
 from collections.abc import Iterator
 
-from src.shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
+from src.shared.python.ai.adapters.base import (
+    BaseAgentAdapter,
+    ToolDeclaration,
+    _ensure_final_chunk,
+)
 from src.shared.python.ai.exceptions import AIConnectionError, AIProviderError
 from src.shared.python.ai.types import (
     AgentChunk,
@@ -20,6 +24,7 @@ from src.shared.python.ai.types import (
     ProviderCapabilities,
     ProviderCapability,
 )
+from src.shared.python.contracts import precondition
 from src.shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
@@ -128,6 +133,9 @@ class BitnetAdapter(BaseAgentAdapter):
         prompt += f"User: {message}\nAssistant:"
         return prompt
 
+    @precondition(
+        lambda message: bool(message.strip()), "message must not be empty or blank"
+    )
     def send_message(
         self,
         message: str,
@@ -171,7 +179,17 @@ class BitnetAdapter(BaseAgentAdapter):
         context: ConversationContext,
         tools: list[ToolDeclaration],
     ) -> Iterator[AgentChunk]:
-        """Stream the response using subprocess."""
+        """Stream the response using subprocess (with final-chunk invariant, #2763)."""
+        return _ensure_final_chunk(self._stream_response_raw(message, context, tools))
+
+    def _stream_response_raw(
+        self,
+        message: str,
+        context: ConversationContext,
+        tools: list[ToolDeclaration],
+    ) -> Iterator[AgentChunk]:
+        """Raw BitNet streaming generator (pre-finality-wrapper)."""
+        del tools
         prompt = self._format_prompt(context, message)
 
         cmd = [

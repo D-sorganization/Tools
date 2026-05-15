@@ -24,7 +24,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from src.shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
+from src.shared.python.ai.adapters.base import (
+    BaseAgentAdapter,
+    ToolDeclaration,
+    _ensure_final_chunk,
+)
 from src.shared.python.ai.exceptions import (
     AIConnectionError,
     AIProviderError,
@@ -39,6 +43,7 @@ from src.shared.python.ai.types import (
     TokenUsage,
     ToolCall,
 )
+from src.shared.python.contracts import precondition
 from src.shared.python.logging_pkg.logging_config import get_logger
 
 if TYPE_CHECKING:
@@ -104,6 +109,9 @@ class ClineAdapter(BaseAgentAdapter):
                 ) from e
         return self._client
 
+    @precondition(
+        lambda message: bool(message.strip()), "message must not be empty or blank"
+    )
     def send_message(
         self,
         message: str,
@@ -146,7 +154,16 @@ class ClineAdapter(BaseAgentAdapter):
         context: ConversationContext,
         tools: list[ToolDeclaration],
     ) -> Iterator[AgentChunk]:
-        """Stream response from Cline.
+        """Stream response from Cline with the final-chunk invariant (#2763)."""
+        return _ensure_final_chunk(self._stream_response_raw(message, context, tools))
+
+    def _stream_response_raw(
+        self,
+        message: str,
+        context: ConversationContext,
+        tools: list[ToolDeclaration],
+    ) -> Iterator[AgentChunk]:
+        """Raw Cline streaming generator (pre-finality-wrapper).
 
         Args:
             message: User message.
