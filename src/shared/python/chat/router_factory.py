@@ -56,7 +56,7 @@ try:
         if _spec and _spec.loader:
             _mod = importlib.util.module_from_spec(_spec)
             sys.modules["ai.exceptions"] = _mod
-            _spec.loader.exec_module(_mod)  # type: ignore[union-attr]
+            _spec.loader.exec_module(_mod)
     AIProviderError: type[Exception] = sys.modules["ai.exceptions"].AIProviderError
 except Exception:  # noqa: BLE001
     # Graceful degradation: sentinel class that is never instantiated.
@@ -297,6 +297,16 @@ def create_chat_router(
                                 "refreshed_at": datetime.now(UTC).isoformat(),
                             }
                         )
+                    except NotImplementedError as exc:
+                        logger.warning("refresh_models not implemented: %s", exc)
+                        await websocket.send_json(
+                            {
+                                "type": "error",
+                                "detail": (
+                                    "refresh_models not supported by this service"
+                                ),
+                            }
+                        )
                     except (
                         AIProviderError,
                         ValueError,
@@ -312,15 +322,26 @@ def create_chat_router(
                         )
 
                 elif action == "index_codebase":
-                    root_path = msg.get("root_path")
-                    if not root_path:
-                        await websocket.send_json(
-                            {"type": "error", "detail": "Missing root_path"}
-                        )
-                        continue
+                    # Tools issue #2751: the dock widget sends this action
+                    # without a root_path (it expects the server to use the
+                    # process cwd).  Fall back to os.getcwd() so the action
+                    # works out of the box.
+                    import os as _os
+
+                    root_path = msg.get("root_path") or _os.getcwd()
                     try:
                         status = await chat_service.index_codebase(root_path)
                         await websocket.send_json({"type": "index_status", **status})
+                    except NotImplementedError as exc:
+                        logger.warning("index_codebase not implemented: %s", exc)
+                        await websocket.send_json(
+                            {
+                                "type": "error",
+                                "detail": (
+                                    "index_codebase not supported by this service"
+                                ),
+                            }
+                        )
                     except (
                         AIProviderError,
                         ValueError,

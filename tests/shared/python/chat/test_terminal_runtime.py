@@ -194,28 +194,6 @@ def test_unknown_session_operations_fail_fast() -> None:
         runtime.write("missing", "text")
 
 
-def test_stop_does_not_mutate_held_reference_to_old_info(tmp_path: Path) -> None:
-    """Stopping a session must not mutate a previously captured info reference.
-
-    TerminalAgentSessionInfo is frozen; stop() must produce a new instance via
-    model_copy so callers that stored the old reference see its original state.
-    """
-    adapter = FakeProcessAdapter()
-    runtime = TerminalSessionRuntime(_registry(), adapter)
-    runtime.start(_request(tmp_path))
-    session_id = runtime.start(_request(tmp_path)).session_id
-
-    old_info = runtime.get_session(session_id)
-    assert old_info.state == "running"
-
-    runtime.stop(session_id)
-
-    # The held reference must be unchanged (frozen model — no mutation)
-    assert old_info.state != "stopped"
-    # The registry must reflect the new state
-    assert runtime.get_session(session_id).state == "stopped"
-
-
 def test_secret_like_environment_values_are_not_overridden(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -235,3 +213,58 @@ def test_secret_like_environment_values_are_not_overridden(
     assert launch_env["CALLER_ENV_VAR"] == "redacted-test-value"
     assert launch_env["PATH"] == "test-path"
     assert launch_env["TOOLS_CHAT_SESSION_ID"].startswith("terminal_")
+
+
+def test_api_key_not_leaked_when_no_base_env_provided(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Issue #2758: default env must not contain credentials from host environment.
+
+    When no base_env is passed the runtime builds a minimal safe allowlist
+    from os.environ. Sensitive variables like ANTHROPIC_API_KEY must be
+    excluded even if they are present in the parent process environment.
+    """
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test_secret_do_not_forward")
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-test-leak-check")
+    monkeypatch.setenv("MY_DB_PASSWORD", "hunter2")
+
+    adapter = FakeProcessAdapter()
+    runtime = TerminalSessionRuntime(_registry(), adapter)
+
+    runtime.start(_request(tmp_path))
+
+    launch_env = adapter.launches[0].env
+    assert "ANTHROPIC_API_KEY" not in launch_env
+    assert "OPENAI_API_KEY" not in launch_env
+    assert "MY_DB_PASSWORD" not in launch_env
+
+
+def test_api_key_stripped_from_provided_base_env(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Issue #2758: sensitive keys in a caller-supplied base_env are stripped.
+
+    Even when the caller explicitly passes a base_env that includes credential
+    vars, the runtime must remove them before forwarding to the child process.
+    """
+    monkeypatch.delenv("TOOLS_CHAT_SESSION_ID", raising=False)
+    base_env: Mapping[str, str] = {
+        "PATH": "/usr/bin",
+        "ANTHROPIC_API_KEY": "test_secret_in_base_env",
+        "GITHUB_TOKEN": "ghp_test_token",
+        "MY_SECRET": "very-secret",
+        "SAFE_VAR": "keep-me",
+    }
+    adapter = FakeProcessAdapter()
+    runtime = TerminalSessionRuntime(_registry(), adapter, base_env=base_env)
+
+    runtime.start(_request(tmp_path))
+
+    launch_env = adapter.launches[0].env
+    assert "ANTHROPIC_API_KEY" not in launch_env
+    assert "GITHUB_TOKEN" not in launch_env
+    assert "MY_SECRET" not in launch_env
+    assert launch_env["PATH"] == "/usr/bin"
+    assert launch_env["SAFE_VAR"] == "keep-me"

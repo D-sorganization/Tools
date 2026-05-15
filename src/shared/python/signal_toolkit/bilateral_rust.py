@@ -25,9 +25,13 @@ Tracked task: GH issue #2569.
 
 from __future__ import annotations
 
+import logging
+
 import numpy as np
 
 from .core import Signal
+
+logger = logging.getLogger(__name__)
 
 try:
     # `tools_core` exposes `signal` as a runtime PyO3 submodule (not a
@@ -39,6 +43,10 @@ try:
 except ImportError:  # pragma: no cover - exercised on machines without wheel
     _rust_signal = None  # type: ignore[assignment]
     _RUST_AVAILABLE = False
+    logger.warning(
+        "bilateral_rust: tools_core wheel not available; using pure-Python path. "
+        "See docs/development/rust_distribution.md"
+    )
 
 
 def apply_bilateral_filter_rust(

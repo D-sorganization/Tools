@@ -168,7 +168,7 @@ def build_workspace_tab(sidebar: Any) -> QtWidgets.QWidget:
 
 def refresh_workspace_list(sidebar: Any) -> None:
     """Refresh the workspace list widget from the sidebar registry."""
-    workspace_list = getattr(sidebar, "_workspace_list", None)
+    workspace_list = sidebar.workspace_list_widget()
     if workspace_list is None:
         return
     workspace_list.clear()

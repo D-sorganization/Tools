@@ -40,7 +40,7 @@ def build_tab_context_menu(sidebar: Any, tab_id: str) -> QtWidgets.QMenu:
         _add_action(menu, "duplicate", lambda: sidebar.duplicate_tab(tab_id))
 
     _add_action(menu, "rename", lambda: sidebar.prompt_rename_tab(tab_id))
-    if sidebar.has_custom_display_name(tab_id):
+    if sidebar.get_tab_display_name(tab_id) is not None:
         _add_action(menu, "reset_name", lambda: sidebar.reset_tab_display_name(tab_id))
     if definition and definition.help_metadata:
         _add_action(menu, "help", lambda: sidebar.show_tab_help(tab_id))

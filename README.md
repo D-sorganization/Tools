@@ -158,6 +158,26 @@ The easiest way to explore the available tools is via the unified launcher:
 python UnifiedToolsLauncher.py
 ```
 
+## Optional Rust Acceleration
+
+Several modules in this repository ship optional Rust extensions (built via
+[maturin](https://www.maturin.rs/)) that replace hot Python loops with compiled
+native code. The extensions are **not distributed as pre-built wheels today** — there
+is currently no maturin CI build job. When the wheel is absent the code falls back to
+pure-Python automatically and logs a `WARNING` so you know you are on the slow path.
+
+To build the extensions locally:
+
+```bash
+pip install maturin
+cd rust_core/tools-core && maturin develop --features python
+cd rust_core/ai_backend  && maturin develop --features python
+```
+
+For full details — what each crate contains, the missing CI workflow spec, and
+per-module performance numbers — see
+[docs/development/rust_distribution.md](docs/development/rust_distribution.md).
+
 ## 📖 Documentation
 
 Detailed documentation is available in the `docs/` directory:
