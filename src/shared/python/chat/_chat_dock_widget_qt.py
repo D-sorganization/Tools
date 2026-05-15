@@ -22,6 +22,7 @@ Usage::
 
 from __future__ import annotations
 
+import base64
 import json
 import logging
 from pathlib import Path
@@ -157,31 +158,13 @@ class ChatDockWidget(QDockWidget):
 
     Uses QWebSocket for real-time streaming. All instances share the same
     conversation session via a file-persisted session ID.
-
-    Args:
-        app_context: Name of the module/context this widget is embedded in.
-        app_name: Application identifier for session file storage.
-        server_url: WebSocket server base URL.
-        session_id: Explicit session ID (None = use shared or create new).
-        ws_path_template: WebSocket path template with ``{session_id}`` placeholder.
-        placeholder_text: Placeholder text for the input field.
-        accent_color: Primary accent color for styling.
-        auto_index_on_open: When True, send an ``index_codebase`` action on
-            connect so the chat backend rebuilds its codemap before the user
-            starts typing. Tools issue #2549 / PR #2567.
-        terminal_registry: Registry used to populate shell/provider dropdowns.
-        parent: Parent widget.
     """
 
     # Class-level session for in-process sharing
     _shared_session_id: str | None = None
 
-    # Tools issue #2547 / PR #2566: emit on each ``model_list`` server push
-    # so external UI (e.g. the AI settings dropdown) can repopulate itself.
+    # Signals for external UI integration
     models_refreshed = pyqtSignal(list)
-
-    # Tools issue #2549 / PR #2567: emit on each ``index_status`` server
-    # push so external UI can surface indexing progress / completion.
     index_status_changed = pyqtSignal(dict)
 
     def __init__(
@@ -233,9 +216,6 @@ class ChatDockWidget(QDockWidget):
             )
 
         self._setup_ui()
-        # Defer connection until the dock is actually shown so the parent
-        # window is guaranteed to have finished setup. Drives off showEvent
-        # rather than a hardcoded 500 ms delay (#2098).
         self._connect_on_show = True
 
     def _setup_ui(self) -> None:
@@ -261,20 +241,10 @@ class ChatDockWidget(QDockWidget):
         self._tools_btn = QPushButton("Tools")
         self._tools_btn.setToolTip("Chat tools and actions")
         self._tools_menu = QMenu(self)
-        self._action_copy_thread = self._tools_menu.addAction("Copy Entire Thread")
-        self._action_export_thread = self._tools_menu.addAction("Export to Markdown...")
-        self._action_condense_thread = self._tools_menu.addAction("Condense Thread")
-        self._action_review_thread = self._tools_menu.addAction(
-            "Request Agent Review..."
-        )
-        if self._action_copy_thread is not None:
-            self._action_copy_thread.triggered.connect(self._copy_entire_thread)
-        if self._action_export_thread is not None:
-            self._action_export_thread.triggered.connect(self._export_to_markdown)
-        if self._action_condense_thread is not None:
-            self._action_condense_thread.triggered.connect(self._condense_thread)
-        if self._action_review_thread is not None:
-            self._action_review_thread.triggered.connect(self._request_review)
+        self._tools_menu.addAction("Copy Entire Thread", self._copy_entire_thread)
+        self._tools_menu.addAction("Export to Markdown...", self._export_to_markdown)
+        self._tools_menu.addAction("Condense Thread", self._condense_thread)
+        self._tools_menu.addAction("Request Agent Review...", self._request_review)
         self._tools_btn.setMenu(self._tools_menu)
         status_row.addWidget(self._tools_btn)
 
@@ -430,33 +400,14 @@ class ChatDockWidget(QDockWidget):
     def _on_connected(self) -> None:
         self._status_label.setText("Connected")
         self._status_label.setStyleSheet("color: #3fb950; font-size: 10px;")
-        # Tools issue #2547 / PR #2566: ask the server for the current
-        # model list so subscribers (e.g. the AI settings dropdown) start
-        # with fresh data instead of whatever was cached at startup.
         self.refresh_models()
-        # Tools issue #2549 / PR #2567: kick off a codemap rebuild before
-        # the user starts typing if the embedder asked for it. Subscribers
-        # watch ``index_status_changed`` for progress / completion.
         if self._auto_index_on_open:
             self.index_codebase()
 
     def refresh_models(self) -> None:
-        """Ask the server for the current chat-model list.
-
-        Sends ``{"action": "refresh_models"}`` over the WebSocket. The
-        actual model dropdown should connect to ``models_refreshed`` to
-        receive the resulting payload (Tools issue #2547 / PR #2566).
-        """
         self._send_ws({"action": "refresh_models"})
 
     def index_codebase(self) -> None:
-        """Ask the server to (re)index the codebase.
-
-        Sends ``{"action": "index_codebase"}`` over the WebSocket. The
-        server is expected to push periodic ``index_status`` messages
-        which are forwarded via the ``index_status_changed`` signal
-        (Tools issue #2549 / PR #2567).
-        """
         self._send_ws({"action": "index_codebase"})
 
     def _on_disconnected(self) -> None:
@@ -464,7 +415,6 @@ class ChatDockWidget(QDockWidget):
         self._status_label.setStyleSheet("color: #f85149; font-size: 10px;")
         self._is_streaming = False
         self._send_btn.setEnabled(True)
-        # Auto-reconnect
         self._reconnect_timer.start(3000)
 
     def _on_message(self, raw: str) -> None:
@@ -482,7 +432,6 @@ class ChatDockWidget(QDockWidget):
             sid = data.get("session_id", "")
             ChatDockWidget._shared_session_id = sid
             _write_shared_session_id(sid, self._session_file)
-            # Request history to populate UI
             self._send_ws({"action": "history"})
 
         elif msg_type == "chunk":
@@ -509,17 +458,11 @@ class ChatDockWidget(QDockWidget):
             self._populate_history(data.get("messages", []))
 
         elif msg_type == "model_list":
-            # Tools issue #2547 / PR #2566. Forward server-pushed model
-            # lists to subscribers via the ``models_refreshed`` signal so
-            # external UI (e.g. the AI settings dropdown) can repopulate.
             models = data.get("models", [])
             if isinstance(models, list):
                 self.models_refreshed.emit(models)
 
         elif msg_type == "index_status":
-            # Tools issue #2549 / PR #2567. Forward server-pushed indexing
-            # progress to subscribers via ``index_status_changed`` and
-            # mirror state into the status label so the user can see it.
             self.index_status_changed.emit(dict(data))
             state = data.get("state")
             if state == "running":
@@ -589,19 +532,15 @@ class ChatDockWidget(QDockWidget):
         )
 
     def _handle_slash_command(self, text: str) -> None:
-        """Handle UI-driven slash commands like /lint or /tests."""
         parts = text.split()
         cmd = parts[0][1:].lower()
-
         self._input_edit.clear()
         self._add_bubble("user", text)
-
         self._is_streaming = True
         self._send_btn.setEnabled(False)
         self._current_bubble = self._add_bubble(
             "assistant", f"Starting workflow: {cmd}..."
         )
-
         self._send_ws(
             {
                 "action": "skill_invoke",
@@ -611,17 +550,14 @@ class ChatDockWidget(QDockWidget):
         )
 
     def _populate_shell_combo(self) -> None:
-        """Populate terminal shell choices from the provider registry."""
         self._shell_combo.clear()
         for shell in self._terminal_registry.shells():
             self._shell_combo.addItem(shell.display_name, shell.id)
 
     def _populate_provider_combo(self) -> None:
-        """Populate terminal providers compatible with the selected shell."""
         shell_id = str(self._shell_combo.currentData() or "")
         providers = self._terminal_registry.providers_for_shell(shell_id)
         current_provider = self._provider_combo.currentData()
-
         self._provider_combo.blockSignals(True)
         try:
             self._provider_combo.clear()
@@ -639,14 +575,10 @@ class ChatDockWidget(QDockWidget):
         self._populate_provider_combo()
 
     def _on_terminal_start(self) -> None:
-        """Start a terminal-agent session for the selected shell/provider."""
         if self._terminal_session_id or self._terminal_start_pending:
             self._append_terminal_line("[terminal] session already active")
             return
-        if (
-            not self._shell_combo.currentData()
-            or not self._provider_combo.currentData()
-        ):
+        if not self._shell_combo.currentData() or not self._provider_combo.currentData():
             self._append_terminal_line("[terminal] select a shell and provider first")
             return
         self._terminal_start_pending = True
@@ -664,7 +596,6 @@ class ChatDockWidget(QDockWidget):
         )
 
     def _on_terminal_stop(self) -> None:
-        """Stop the active terminal-agent session."""
         if not self._terminal_session_id:
             self._append_terminal_line("[terminal] start a session first")
             return
@@ -676,7 +607,6 @@ class ChatDockWidget(QDockWidget):
         )
 
     def _on_terminal_input(self, text: str) -> None:
-        """Send user input to the active terminal session."""
         if not self._terminal_session_id:
             self._append_terminal_line("[terminal] start a session first")
             return
@@ -691,65 +621,33 @@ class ChatDockWidget(QDockWidget):
         )
 
     def _on_upload(self) -> None:
-        """Prompt user to attach a file and send it to the server."""
-        import base64
-
-        from PyQt6.QtWidgets import QFileDialog
-
-        file_path, _ = QFileDialog.getOpenFileName(
-            self, "Attach File", "", "All Files (*)"
-        )
+        file_path, _ = QFileDialog.getOpenFileName(self, "Attach File", "", "All Files (*)")
         if file_path:
             path = Path(file_path)
             try:
                 data = path.read_bytes()
                 b64 = base64.b64encode(data).decode("ascii")
-                self._send_ws(
-                    {
-                        "action": "file_upload",
-                        "filename": path.name,
-                        "content": b64,
-                    }
-                )
+                self._send_ws({"action": "file_upload", "filename": path.name, "content": b64})
                 self._add_bubble("user", f"[Uploaded file: {path.name}]")
             except (OSError, ValueError) as exc:
-                logger.warning("File upload failed for %s: %s", path.name, exc)
                 self._status_label.setText(f"Upload failed: {exc}")
-            except Exception:
-                logger.exception("Unexpected error uploading file %s", path.name)
-                self._status_label.setText("Upload failed: internal error")
 
     def _on_screenshot(self) -> None:
-        """Capture application screenshot and send to server."""
-        import base64
-
-        from PyQt6.QtCore import QBuffer, QByteArray, QIODevice
-        from PyQt6.QtWidgets import QApplication
-
         app = QApplication.instance()
         if not app:
             return
-
         parent = self.parentWidget()
         pixmap = parent.grab() if parent else app.primaryScreen().grabWindow(0)
-
+        from PyQt6.QtCore import QBuffer, QByteArray, QIODevice
         ba = QByteArray()
         buffer = QBuffer(ba)
         buffer.open(QIODevice.OpenModeFlag.WriteOnly)
         pixmap.save(buffer, "PNG")
         b64 = base64.b64encode(ba.data()).decode("ascii")
-
-        self._send_ws(
-            {
-                "action": "file_upload",
-                "filename": "screenshot.png",
-                "content": b64,
-            }
-        )
+        self._send_ws({"action": "file_upload", "filename": "screenshot.png", "content": b64})
         self._add_bubble("user", "[Captured screenshot]")
 
     def _on_mode_changed(self) -> None:
-        """Switch between chat transcript and terminal output surfaces."""
         is_terminal = self._current_mode() == "terminal"
         self._content_stack.setCurrentIndex(1 if is_terminal else 0)
         self._shell_combo.setVisible(is_terminal)
@@ -757,9 +655,7 @@ class ChatDockWidget(QDockWidget):
         self._terminal_start_btn.setVisible(is_terminal)
         self._terminal_stop_btn.setVisible(is_terminal)
         self._sync_terminal_controls()
-        placeholder = (
-            "Type terminal input..." if is_terminal else self._placeholder_text
-        )
+        placeholder = "Type terminal input..." if is_terminal else self._placeholder_text
         self._input_edit.setPlaceholderText(placeholder)
 
     def _current_mode(self) -> str:
@@ -767,17 +663,11 @@ class ChatDockWidget(QDockWidget):
         return str(mode or "chat")
 
     def _sync_terminal_controls(self) -> None:
-        """Keep terminal lifecycle controls aligned with session state."""
         if not hasattr(self, "_terminal_start_btn"):
             return
         active = bool(self._terminal_session_id)
         pending = bool(self._terminal_start_pending)
-        startable = (
-            not active
-            and not pending
-            and bool(self._shell_combo.currentData())
-            and bool(self._provider_combo.currentData())
-        )
+        startable = not active and not pending and bool(self._shell_combo.currentData()) and bool(self._provider_combo.currentData())
         self._terminal_start_btn.setEnabled(startable)
         self._terminal_stop_btn.setEnabled(active)
         self._shell_combo.setEnabled(not active and not pending)
@@ -788,81 +678,86 @@ class ChatDockWidget(QDockWidget):
             self._terminal_output.appendPlainText(text)
 
     def _send_ws(self, payload: dict) -> None:
-        """Send JSON payload over WebSocket."""
         if self._socket and self._socket.isValid():
             self._socket.sendTextMessage(json.dumps(payload))
 
-    def _copy_entire_thread(self) -> None:
-        """Copy the entire chat history to the clipboard as plain text."""
-        clipboard = QApplication.clipboard()
-        if not clipboard:
-            return
-        lines = []
-        for i in range(self._message_layout.count()):
-            item = self._message_layout.itemAt(i)
-            widget = item.widget() if item else None
-            if isinstance(widget, ChatMessageBubble):
-                role = "User" if widget._role == "user" else "AI"
-                lines.append(f"{role}: {widget._content}")
-        clipboard.setText("\n\n".join(lines))
-        self._status_label.setText("Thread copied to clipboard")
-
-    def _get_thread_markdown(self) -> str:
-        """Return the current chat thread as a Markdown string."""
-        lines = [f"# Chat History - {self._app_context}\n"]
-        for i in range(self._message_layout.count()):
-            item = self._message_layout.itemAt(i)
-            widget = item.widget() if item else None
-            if isinstance(widget, ChatMessageBubble):
-                role = "### User" if widget._role == "user" else "### AI"
-                lines.append(f"{role}\n{widget._content}\n")
-        return "\n".join(lines)
-
-    def _export_to_markdown(self) -> None:
-        """Export the chat history to a Markdown file."""
-        file_path, _ = QFileDialog.getSaveFileName(
-            self, "Export Chat", "chat_history.md", "Markdown Files (*.md)"
-        )
-        if not file_path:
-            return
-        try:
-            Path(file_path).write_text(self._get_thread_markdown(), encoding="utf-8")
-            self._status_label.setText(f"Exported to {Path(file_path).name}")
-        except OSError as exc:
-            self._status_label.setText(f"Export failed: {exc}")
-
-    def _condense_thread(self) -> None:
-        """Trigger thread condensation (summarization) on the server."""
-        self._send_ws({"action": "condense"})
-        self._status_label.setText("Condensing thread...")
-
-    def _request_review(self) -> None:
-        """Request a multi-agent review of the current thread."""
-        # Simple default provider for now; could be made configurable
-        self._send_ws({"action": "request_review", "provider": "openai"})
-        self._status_label.setText("Review requested...")
-
-    def _scroll_to_bottom(self) -> None:
-        """Scroll message area to the latest content."""
-        QTimer.singleShot(10, lambda: self._scroll_area.verticalScrollBar().setValue(
-            self._scroll_area.verticalScrollBar().maximum()
-        ))
-
     def _add_bubble(self, role: str, content: str) -> ChatMessageBubble:
-        """Add a new message bubble to the layout."""
-        bubble = ChatMessageBubble(role, content, self._accent_color)
-        # Insert before the stretch at the bottom
+        """Add a message bubble to the scroll area."""
+        if not (role is not None):
+            raise ValueError("role must be provided")
+        bubble = ChatMessageBubble(role, content, accent_color=self._accent_color)
         self._message_layout.insertWidget(self._message_layout.count() - 1, bubble)
         self._scroll_to_bottom()
         return bubble
 
-    def _populate_history(self, messages: list[dict[str, Any]]) -> None:
-        """Clear and repopulate the UI with message history."""
-        # Clear existing bubbles (skip stretch)
+    def _populate_history(self, messages: list[dict]) -> None:
+        """Clear and rebuild message bubbles from history."""
+        if not (messages is not None):
+            raise ValueError("messages must be provided")
         while self._message_layout.count() > 1:
             item = self._message_layout.takeAt(0)
             if item and item.widget():
                 item.widget().deleteLater()
-        # Add historical messages
         for msg in messages:
-            self._add_bubble(msg.get("role", "unknown"), msg.get("content", ""))
+            role = msg.get("role", "user")
+            content = msg.get("content", "")
+            if role in ("user", "assistant"):
+                self._add_bubble(role, content)
+
+    def _scroll_to_bottom(self) -> None:
+        QTimer.singleShot(10, lambda: (
+            scrollbar.setValue(scrollbar.maximum())
+            if (scrollbar := self._scroll_area.verticalScrollBar()) is not None else None
+        ))
+
+    def _get_thread_markdown(self) -> str:
+        lines = []
+        for i in range(self._message_layout.count()):
+            item = self._message_layout.itemAt(i)
+            if item:
+                widget = item.widget()
+                if isinstance(widget, ChatMessageBubble):
+                    role_str = "You" if widget._role == "user" else "AI"
+                    lines.append(f"**{role_str}**:\n\n{widget._content}\n")
+        return "\n".join(lines)
+
+    def _copy_entire_thread(self) -> None:
+        clipboard = QApplication.clipboard()
+        if clipboard is not None:
+            clipboard.setText(self._get_thread_markdown())
+            self._status_label.setText("Thread copied to clipboard")
+            self._status_label.setStyleSheet("color: #3fb950; font-size: 10px;")
+
+    def _export_to_markdown(self) -> None:
+        path, _ = QFileDialog.getSaveFileName(
+            self, "Export Chat Thread", str(self._project_root / "chat_export.md"),
+            "Markdown Files (*.md);;All Files (*)"
+        )
+        if path:
+            try:
+                Path(path).write_text(self._get_thread_markdown(), encoding="utf-8")
+                self._status_label.setText("Exported successfully")
+                self._status_label.setStyleSheet("color: #3fb950; font-size: 10px;")
+            except OSError as exc:
+                self._status_label.setText(f"Export error: {exc}")
+                self._status_label.setStyleSheet("color: #f85149; font-size: 10px;")
+
+    def _condense_thread(self) -> None:
+        self._status_label.setText("Condensing thread...")
+        self._send_ws({"action": "condense", "app_context": self._app_context})
+
+    def _request_review(self) -> None:
+        self._status_label.setText("Review requested...")
+        self._send_ws({"action": "request_review", "provider": "openai"})
+
+    def showEvent(self, event: Any) -> None:
+        super().showEvent(event)
+        if getattr(self, "_connect_on_show", False):
+            self._connect_on_show = False
+            self._connect()
+
+    def closeEvent(self, event: Any) -> None:
+        self._reconnect_timer.stop()
+        if self._socket:
+            self._socket.close()
+        super().closeEvent(event)

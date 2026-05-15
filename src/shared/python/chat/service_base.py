@@ -336,6 +336,16 @@ class ChatServiceBase(abc.ABC):
         """
         ...  # pragma: no cover
 
+    @abc.abstractmethod
+    async def execute_skill(self, session_id: str, skill_id: str) -> None:
+        """Execute a predefined skill or workflow.
+
+        Args:
+            session_id: Target session.
+            skill_id: ID of the skill to execute.
+        """
+        ...  # pragma: no cover
+
     # ── Hooks for subclass customization ─────────────────────────────
 
     def _load_session(self, session_id: str) -> ChatSession | None:
