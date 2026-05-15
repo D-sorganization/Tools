@@ -387,3 +387,100 @@ class TestChatDockWidget:
         assert "How are you?" in markdown
 
         widget.close()
+
+    def test_custom_theme_provider_supplies_colors(self, qtbot):
+        """Tools issue #2766: an injected provider drives widget styling."""
+        from chat._theme_protocol import _DefaultDarkTheme
+        from chat.chat_dock_widget import ChatDockWidget
+
+        class DummyTheme:
+            def get_current_colors(self) -> dict[str, str]:
+                return {
+                    "bg": "#101010",
+                    "group_bg": "#202020",
+                    "input_bg": "#303030",
+                    "text": "#ff00ff",
+                    "text_secondary": "#abcdef",
+                    "border": "#123456",
+                    "button_hover": "#fedcba",
+                    "accent": "#00ff00",
+                }
+
+        ChatDockWidget._shared_session_id = None
+        widget = ChatDockWidget(app_name="test_app", theme_provider=DummyTheme())
+        _track_widget(qtbot, widget)
+        assert isinstance(widget._theme_provider, DummyTheme)
+        # Sanity: when a custom provider is given the default fallback is
+        # not used.
+        assert not isinstance(widget._theme_provider, _DefaultDarkTheme)
+        widget.close()
+
+
+class TestPortableThemeImport:
+    """Tools issue #2766: chat dock works without theme.theme_manager.
+
+    Verifies the chat package can be imported and ``_get_theme_colors``
+    works in a clean subprocess where the legacy ``theme`` package is
+    *not* on sys.path. The chat dock module imports PyQt6 at module
+    scope, so a Qt platform must be available in the subprocess — the
+    enclosing file already gates on this via ``pytest.importorskip``.
+    """
+
+    def test_import_without_theme_on_sys_path(self):
+        import subprocess
+        import sys
+        import textwrap
+
+        script = textwrap.dedent(
+            """
+            import sys
+
+            # Strip anything that would let `theme.theme_manager` import.
+            sys.modules.pop("theme", None)
+            sys.modules.pop("theme.theme_manager", None)
+
+            # Block future imports of the theme package outright.
+            import importlib.abc
+
+            class _BlockTheme(importlib.abc.MetaPathFinder):
+                def find_spec(self, name, path, target=None):
+                    if name == "theme" or name.startswith("theme."):
+                        raise ImportError(
+                            f"theme package intentionally blocked: {name}"
+                        )
+                    return None
+
+            sys.meta_path.insert(0, _BlockTheme())
+
+            # The chat package must import cleanly without `theme`.
+            from chat._theme_protocol import (  # noqa: F401
+                ThemeProviderProtocol,
+                _DefaultDarkTheme,
+            )
+            from chat import chat_dock_widget as cdw  # noqa: F401
+            from chat._chat_dock_widget_qt import _get_theme_colors
+
+            class DummyTheme:
+                def get_current_colors(self):
+                    return {"bg": "#abcdef", "text": "#012345"}
+
+            colors = _get_theme_colors(DummyTheme())
+            assert colors["bg"] == "#abcdef", colors
+            assert colors["text"] == "#012345", colors
+
+            # Default fallback must also work without `theme` importable.
+            defaults = _get_theme_colors(None)
+            assert defaults["bg"] == "#1e1e1e", defaults
+            print("OK")
+            """
+        )
+        result = subprocess.run(
+            [sys.executable, "-c", script],
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        assert result.returncode == 0, (
+            f"subprocess failed:\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
+        )
+        assert "OK" in result.stdout, result.stdout

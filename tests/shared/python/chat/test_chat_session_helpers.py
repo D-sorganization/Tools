@@ -70,3 +70,40 @@ class TestSessionFileHelpers:
         _write_shared_session_id("abc", path)
         assert path.exists()
         assert _read_shared_session_id(path) == "abc"
+
+    def test_concurrent_writes_are_atomic(self, tmp_path: Path) -> None:
+        """Tools issue #2753: concurrent writers must not corrupt the file.
+
+        Four threads race to write distinct session IDs to the same path.
+        With the module-level lock and atomic tmp+replace dance the file
+        must contain *exactly one* valid session ID at the end (no torn
+        writes, no exceptions, no empty file).
+        """
+        import threading
+
+        path = tmp_path / "shared_session.txt"
+        candidates = [f"sid{i}" for i in range(4)]
+        errors: list[BaseException] = []
+        barrier = threading.Barrier(len(candidates))
+
+        def writer(sid: str) -> None:
+            try:
+                barrier.wait(timeout=5.0)
+                _write_shared_session_id(sid, path)
+            except BaseException as exc:  # noqa: BLE001 - capture for assert
+                errors.append(exc)
+
+        threads = [threading.Thread(target=writer, args=(sid,)) for sid in candidates]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join(timeout=10.0)
+
+        assert errors == [], f"unexpected errors: {errors!r}"
+        assert path.exists(), "file should exist after concurrent writes"
+        # No leftover .tmp file after atomic replaces.
+        assert not (path.parent / f"{path.name}.tmp").exists()
+        final = path.read_text(encoding="utf-8")
+        assert final in candidates, (
+            f"expected exactly one of {candidates!r}, got {final!r}"
+        )
