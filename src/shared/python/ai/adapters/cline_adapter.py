@@ -26,9 +26,7 @@ from typing import TYPE_CHECKING, Any
 
 from src.shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
 from src.shared.python.ai.exceptions import (
-    AIConnectionError,
     AIProviderError,
-    AITimeoutError,
 )
 from src.shared.python.ai.types import (
     AgentChunk,
@@ -326,29 +324,15 @@ class ClineAdapter(BaseAgentAdapter):
     def _handle_error(self, error: Exception) -> AgentResponse:
         """Handle Cline errors.
 
+        Delegates to :meth:`~BaseAgentAdapter._classify_error` for the
+        shared string-scan classification logic.
+
         Args:
             error: The exception.
 
         Raises:
             Appropriate AIError subclass.
         """
-        error_str = str(error).lower()
-
-        if "timeout" in error_str:
-            raise AITimeoutError(
-                f"Cline request timed out after {self._timeout}s",
-                provider="cline",
-                timeout=self._timeout,
-            ) from error
-
-        if "connection" in error_str or "refused" in error_str:
-            raise AIConnectionError(
-                f"Cannot connect to Cline at {self._host}. "
-                "Ensure VS Code with Cline extension is running.",
-                provider="cline",
-            ) from error
-
-        raise AIProviderError(
-            f"Cline error: {error}",
-            provider="cline",
+        raise self._classify_error(
+            error, provider="cline", timeout=self._timeout
         ) from error

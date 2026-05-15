@@ -511,5 +511,17 @@ class AnthropicAdapter(BaseAgentAdapter):
         )
 
     def _handle_error(self, error: Exception) -> AgentResponse:
-        """Handle Anthropic API errors."""
-        return super()._handle_error(error)
+        """Handle Anthropic API errors.
+
+        Delegates to :meth:`~BaseAgentAdapter._classify_error` for the
+        shared string-scan classification logic.
+
+        Args:
+            error: The exception that occurred.
+
+        Raises:
+            Appropriate AIError subclass.
+        """
+        raise self._classify_error(
+            error, provider="anthropic", timeout=self._timeout
+        ) from error

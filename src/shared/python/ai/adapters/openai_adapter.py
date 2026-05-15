@@ -489,5 +489,17 @@ class OpenAIAdapter(BaseAgentAdapter):
         )
 
     def _handle_error(self, error: Exception) -> AgentResponse:
-        """Handle OpenAI API errors."""
-        return super()._handle_error(error)
+        """Handle OpenAI API errors.
+
+        Delegates to :meth:`~BaseAgentAdapter._classify_error` for the
+        shared string-scan classification logic.
+
+        Args:
+            error: The exception that occurred.
+
+        Raises:
+            Appropriate AIError subclass.
+        """
+        raise self._classify_error(
+            error, provider="openai", timeout=self._timeout
+        ) from error
