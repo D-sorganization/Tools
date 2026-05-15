@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import queue
 from collections.abc import Iterator
 from typing import Any
 
@@ -23,6 +24,59 @@ _WHEEL_MISSING_HINT = (
 )
 
 
+def _make_rust_stream_worker_class() -> type | None:
+    """Return _RustStreamWorker(QThread), or None when PyQt6 is absent.
+
+    The class is constructed lazily at call time so this module can be imported
+    in headless environments that lack a working PyQt6 installation.
+    """
+    try:
+        from PyQt6.QtCore import QThread, pyqtSignal
+    except ImportError:
+        return None
+
+    class _RustStreamWorker(QThread):
+        """Background worker that drains the Rust SSE stream off the main thread.
+
+        Moves ``engine.stream_response(prompt)`` — a blocking Tokio ``block_on``
+        call — onto a dedicated ``QThread`` so the Qt event loop is never stalled
+        (Tools #2752).
+
+        Signals:
+            chunk_received: Emitted for each delta string.
+            stream_finished: Emitted once after the last delta.
+            stream_error: Emitted with an error message on exception.
+        """
+
+        chunk_received: pyqtSignal = pyqtSignal(object)
+        stream_finished: pyqtSignal = pyqtSignal()
+        stream_error: pyqtSignal = pyqtSignal(str)
+
+        def __init__(self, engine: Any, full_prompt: str) -> None:
+            super().__init__()
+            self._engine = engine
+            self._full_prompt = full_prompt
+            self._stopped = False
+
+        def stop(self) -> None:
+            """Request the worker to stop emitting after the current chunk."""
+            self._stopped = True
+
+        def run(self) -> None:  # noqa: D401 — Qt override
+            """Invoke the blocking Rust call and emit per-chunk signals."""
+            try:
+                deltas = self._engine.stream_response(self._full_prompt)
+                for delta in deltas:
+                    if self._stopped:
+                        break
+                    self.chunk_received.emit(delta)
+                self.stream_finished.emit()
+            except Exception as exc:  # noqa: BLE001
+                self.stream_error.emit(str(exc))
+
+    return _RustStreamWorker
+
+
 class RustAgentAdapter(BaseAgentAdapter):
     """Adapter that delegates to the high-performance Rust AI backend.
 
@@ -32,6 +86,14 @@ class RustAgentAdapter(BaseAgentAdapter):
     ``pyproject.toml``); if the wheel isn't installed in the active
     environment we raise a clear ``ImportError`` rather than failing with a
     bare ``ModuleNotFoundError`` later in the call chain.
+
+    Threading model
+    ---------------
+    ``stream_response`` moves the blocking Rust call onto a ``_RustStreamWorker``
+    (a ``QThread`` subclass) so the Qt main thread's event loop is never stalled.
+    When PyQt6 is unavailable the implementation falls back to a plain
+    ``threading.Thread`` with the same queue-based handoff, preserving correct
+    behaviour in headless / non-GUI environments.
     """
 
     def __init__(
@@ -106,100 +168,133 @@ class RustAgentAdapter(BaseAgentAdapter):
                 ) from None
             self.rag = ai_backend.RagPipeline(self.memory, self.config)
 
+    # ------------------------------------------------------------------
+    # Streaming
+    # ------------------------------------------------------------------
+
     def stream_response(
         self,
         prompt: str,
         context: ConversationContext,
         tools: list[Any],
     ) -> Iterator[AgentChunk]:
-        """Stream the response using the Rust backend.
+        """Stream the response using the Rust backend off the Qt main thread.
 
-        The Rust backend exposes ``stream_response(prompt) -> list[str]`` that
-        eagerly drains the SSE stream and returns the ordered delta list.
-        We re-emit each delta as an ``AgentChunk`` so callers that already
-        iterate this iterator-of-chunks contract keep working. Truly-
-        incremental streaming across the PyO3 boundary is a follow-up
-        (tracked separately; see issue #2752).
+        Delegates the blocking ``engine.stream_response`` call to a
+        ``_RustStreamWorker`` (``QThread``) when PyQt6 is available, keeping the
+        Qt event loop responsive throughout (fixes Tools #2752 UI freeze).
+        Falls back to a daemon ``threading.Thread`` in headless environments.
 
-        .. warning::
-
-            **This call is BLOCKING.** The underlying Rust ``AIEngine``
-            uses a Tokio ``block_on`` to drain the SSE stream eagerly,
-            holding the GIL for the duration of the request. When invoked
-            from a Qt UI it MUST be called from a worker thread (e.g.
-            ``QThread`` or ``QRunnable``) — otherwise the event loop will
-            freeze for the full duration of the LLM response.
-
-            The canonical worker pattern lives in
-            ``src/shared/python/ai/gui/assistant_widgets.py`` (see
-            ``StreamWorker``); reuse it rather than reimplementing.
+        Cancel support: ``self._active_worker.stop()`` can be called from the
+        UI to halt emission after the current chunk.
         """
         try:
             full_prompt = (
                 "\n".join([m.content for m in context.messages]) + f"\n{prompt}"
             )
-
-            # Move the blocking Rust call to a background thread to prevent
-            # blocking the Qt event loop if called from the main thread.
-            # Truly-incremental streaming across the PyO3 boundary is a follow-up.
-            import queue
-            import threading
-            import time
-
-            try:
-                from PyQt6.QtCore import QCoreApplication, QThread
-
-                app = QCoreApplication.instance()
-                is_gui_thread = app and (QThread.currentThread() == app.thread())
-            except ImportError:
-                app = None
-                is_gui_thread = False
-
-            result_queue: queue.Queue[Any] = queue.Queue()
-
-            def _fetch_deltas() -> None:
-                try:
-                    # The Rust backend exposes ``stream_response(prompt) -> list[str]``
-                    # that eagerly drains the SSE stream and returns the ordered
-                    # delta list.
-                    res = self.engine.stream_response(full_prompt)
-                    result_queue.put(res)
-                except Exception as exc:
-                    result_queue.put(exc)
-
-            fetch_thread = threading.Thread(target=_fetch_deltas, daemon=True)
-            fetch_thread.start()
-
-            # Wait for the thread to complete while keeping the UI responsive
-            while fetch_thread.is_alive() and result_queue.empty():
-                if is_gui_thread and app:
-                    app.processEvents()
-                time.sleep(0.01)
-
-            result = result_queue.get()
-            if isinstance(result, Exception):
-                # Fall back to the blocking single-shot path if streaming
-                # fails (e.g. provider does not support stream=true).
-                response = self.engine.generate_response(full_prompt)
-                yield AgentChunk(content=response, is_final=True)
-                return
-
-            deltas = result
-            if not deltas:
-                yield AgentChunk(content="", is_final=True)
-                return
-
-            last_idx = len(deltas) - 1
-            for idx, delta in enumerate(deltas):
-                yield AgentChunk(content=delta, is_final=(idx == last_idx))
-                # Yield control back to the event loop between chunks if we
-                # are on the GUI thread.
-                if is_gui_thread and app:
-                    app.processEvents()
-
+            yield from self._stream_via_qthread(full_prompt)
         except Exception as e:
             logger.exception("Rust backend error")
             yield AgentChunk(content=f"Error: {e}", is_final=True)
+
+    def _stream_via_qthread(self, full_prompt: str) -> Iterator[AgentChunk]:
+        """Dispatch the blocking call off-thread and yield AgentChunk objects."""
+        result_queue: queue.Queue[Any] = queue.Queue()
+        worker_cls = _make_rust_stream_worker_class()
+        if worker_cls is not None:
+            yield from self._stream_with_worker(worker_cls, full_prompt, result_queue)
+            return
+        yield from self._stream_with_thread(full_prompt, result_queue)
+
+    def _stream_with_worker(
+        self,
+        worker_cls: type,
+        full_prompt: str,
+        result_queue: queue.Queue[Any],
+    ) -> Iterator[AgentChunk]:
+        """Stream via _RustStreamWorker(QThread); spin a QEventLoop until done."""
+        from PyQt6.QtCore import QEventLoop
+
+        chunk_buffer: list[str] = []
+        finished_flag: list[bool] = [False]
+        error_flag: list[str | None] = [None]
+
+        worker = worker_cls(self.engine, full_prompt)
+        self._active_worker = worker
+
+        worker.chunk_received.connect(chunk_buffer.append)
+        worker.stream_finished.connect(lambda: finished_flag.__setitem__(0, True))
+        worker.stream_error.connect(lambda msg: error_flag.__setitem__(0, msg))
+
+        loop = QEventLoop()
+        worker.stream_finished.connect(loop.quit)
+        worker.stream_error.connect(lambda _: loop.quit())
+        worker.start()
+
+        # Spin the event loop until the worker is done; keeps the Qt UI
+        # responsive (repaints, button clicks, etc.) while Rust blocks.
+        loop.exec()
+
+        if error_flag[0] is not None:
+            try:
+                response = self.engine.generate_response(full_prompt)
+                yield AgentChunk(content=response, is_final=True)
+            except Exception as exc:  # noqa: BLE001
+                logger.exception("Rust fallback error")
+                yield AgentChunk(content=f"Error: {exc}", is_final=True)
+            return
+
+        deltas = chunk_buffer
+        if not deltas:
+            yield AgentChunk(content="", is_final=True)
+            return
+
+        last_idx = len(deltas) - 1
+        for idx, delta in enumerate(deltas):
+            yield AgentChunk(content=delta, is_final=(idx == last_idx))
+
+    def _stream_with_thread(
+        self,
+        full_prompt: str,
+        result_queue: queue.Queue[Any],
+    ) -> Iterator[AgentChunk]:
+        """Stream via a plain daemon thread (headless / no PyQt6 fallback)."""
+        import threading
+        import time
+
+        def _fetch() -> None:
+            try:
+                result_queue.put(self.engine.stream_response(full_prompt))
+            except Exception as exc:  # noqa: BLE001
+                result_queue.put(exc)
+
+        t = threading.Thread(target=_fetch, daemon=True)
+        t.start()
+        while t.is_alive() and result_queue.empty():
+            time.sleep(0.01)
+
+        result = result_queue.get()
+        if isinstance(result, Exception):
+            try:
+                response = self.engine.generate_response(full_prompt)
+                yield AgentChunk(content=response, is_final=True)
+            except Exception as exc:  # noqa: BLE001
+                logger.exception("Rust fallback error")
+                yield AgentChunk(content=f"Error: {exc}", is_final=True)
+            return
+
+        deltas = result
+        if not deltas:
+            yield AgentChunk(content="", is_final=True)
+            return
+
+        last_idx = len(deltas) - 1
+        for idx, delta in enumerate(deltas):
+            yield AgentChunk(content=delta, is_final=(idx == last_idx))
+
+    # ------------------------------------------------------------------
+    # Other adapter methods
+    # ------------------------------------------------------------------
 
     def index_codebase(self, root_path: str) -> int:
         """Trigger the Rust-based RAG pipeline indexer."""
