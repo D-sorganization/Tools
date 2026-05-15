@@ -19,8 +19,6 @@ Example:
 from __future__ import annotations
 
 import contextlib
-import hashlib
-import secrets
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
@@ -277,33 +275,16 @@ class AuthManager:
 
         Returns:
             True if login successful, False otherwise.
+
+        Raises:
+            NotImplementedError: Always. Server-side API key verification is not
+                implemented. Do not use this method until a real verification
+                endpoint is configured.
         """
-        if not api_key:
-            return False
-
-        # Generate user ID from API key hash (simplified - in production, verify
-        # with server)
-        user_id = hashlib.sha256(api_key.encode()).hexdigest()[:16]
-
-        self._current_user = UserProfile(
-            user_id=user_id,
-            api_key=api_key,
-            subscription_tier=SubscriptionTier.PRO,  # Default to PRO for API key users
-            subscription_expires=datetime.now() + timedelta(days=365),
-            features_enabled=[],
+        raise NotImplementedError(
+            "Server-side API key verification is not implemented. "
+            "Do not use this method until a real verification endpoint is configured."
         )
-
-        # Create access token
-        self._access_token = AuthToken(
-            token=secrets.token_urlsafe(32),
-            token_type="access",
-            expires_at=datetime.now() + timedelta(hours=24),
-            scope=["chat", "tools", "models"],
-        )
-
-        self._save_credentials()
-        logger.info("Logged in with API key for user: %s", user_id)
-        return True
 
     def login_with_oauth(self, provider: str, auth_code: str) -> bool:
         """Login using OAuth provider.
@@ -315,21 +296,14 @@ class AuthManager:
         Returns:
             True if login successful, False otherwise.
 
-        Note:
-            This is a placeholder for OAuth implementation.
-            In production, exchange auth_code for tokens with the provider.
+        Raises:
+            NotImplementedError: Always. OAuth token exchange is not implemented.
+                Do not use this method until a real OAuth provider is configured.
         """
-        logger.info("OAuth login with provider: %s", provider)
-        # TODO(#5227): Implement OAuth token exchange
-        # For now, create a demo user
-        self._current_user = UserProfile(
-            user_id=f"oauth_{provider}_{secrets.token_hex(8)}",
-            email=f"user@{provider}.com",
-            subscription_tier=SubscriptionTier.FREE,
-            features_enabled=["ollama_chat", "basic_tools"],
+        raise NotImplementedError(
+            "OAuth token exchange is not implemented. "
+            "Do not use this method until a real OAuth provider is configured."
         )
-        self._save_credentials()
-        return True
 
     def logout(self) -> None:
         """Logout and clear credentials."""

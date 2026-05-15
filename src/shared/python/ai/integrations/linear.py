@@ -39,14 +39,9 @@ def linear_query_issues(query: str, status: str = "open") -> dict[str, Any]:
             "error": "Linear API token is not configured. Please provide it in settings."  # noqa: E501
         }
 
-    logger.info("Querying Linear for '%s' with status '%s'", query, status)
-    # Placeholder for actual GraphQL API interaction
-    return {
-        "success": True,
-        "issues": [
-            {"id": "ENG-123", "title": f"Placeholder for {query}", "status": status}
-        ],
-    }
+    raise NotImplementedError(
+        "Linear integration is not yet implemented. Real API calls are not made."
+    )
 
 
 @registry.register(
@@ -70,13 +65,6 @@ def linear_create_issue(
             "error": "Linear API token is not configured. Please provide it in settings."  # noqa: E501
         }
 
-    logger.info("Creating Linear issue: %s", title)
-    # Placeholder for actual GraphQL API interaction
-    return {
-        "success": True,
-        "issue": {
-            "id": "ENG-124",
-            "title": title,
-            "url": "https://linear.app/issue/ENG-124",
-        },
-    }
+    raise NotImplementedError(
+        "Linear integration is not yet implemented. Real API calls are not made."
+    )

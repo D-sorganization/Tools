@@ -41,12 +41,9 @@ def notion_push_report(
     if not _NOTION_API_TOKEN:
         return {"error": "Notion API token is not configured."}
 
-    logger.info("Pushing report to Notion: %s", title)
-    return {
-        "success": True,
-        "message": f"Successfully pushed report '{title}' to Notion.",
-        "url": "https://notion.so/placeholder",
-    }
+    raise NotImplementedError(
+        "Notion integration is not yet implemented. Real API calls are not made."
+    )
 
 
 @registry.register(
@@ -63,13 +60,6 @@ def notion_read_knowledge_base(query: str) -> dict[str, Any]:
     if not _NOTION_API_TOKEN:
         return {"error": "Notion API token is not configured."}
 
-    logger.info("Searching Notion KB for: %s", query)
-    return {
-        "success": True,
-        "articles": [
-            {
-                "title": f"Article about {query}",
-                "content": "This is placeholder content from Notion.",
-            }
-        ],
-    }
+    raise NotImplementedError(
+        "Notion integration is not yet implemented. Real API calls are not made."
+    )

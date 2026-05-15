@@ -41,9 +41,6 @@ def affine_sync_notes(
     if not _AFFINE_API_TOKEN:
         return {"error": "Affine API token is not configured."}
 
-    logger.info("Syncing note to Affine: %s", title)
-    return {
-        "success": True,
-        "message": f"Successfully synced note '{title}' to Affine.",
-        "url": "https://app.affine.pro/placeholder",
-    }
+    raise NotImplementedError(
+        "Affine integration is not yet implemented. Real API calls are not made."
+    )
