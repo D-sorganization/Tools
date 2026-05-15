@@ -483,7 +483,7 @@ class AcidGasDewpointCalculator:
         self, partial_pressures: dict[str, float], total_pressure_pa: float
     ) -> dict[str, float]:
         """Calculate dewpoints for each component in the mixture."""
-        if not (partial_pressures is not None):
+        if partial_pressures is None:
             raise ValueError("partial_pressures must be provided")
         dewpoints = {}
         for component, partial_pa in partial_pressures.items():
@@ -497,7 +497,7 @@ class AcidGasDewpointCalculator:
 
     def _assess_condensation_risk(self, margin: float) -> str:
         """Categorize condensation risk based on safety margin."""
-        if not (margin is not None):
+        if margin is None:
             raise ValueError("margin must be provided")
         if np.isnan(margin):
             return "Unknown"
@@ -630,7 +630,7 @@ class AcidGasDewpointCalculator:
         Returns:
             DataFrame with temperature and dewpoint data
         """
-        if not (pressure_bar is not None):
+        if pressure_bar is None:
             raise ValueError("pressure_bar must be provided")
         temperatures = np.linspace(temp_range[0], temp_range[1], num_points)
         results = []
@@ -700,7 +700,7 @@ def quick_dewpoint_calculation(
     Returns:
         Dictionary with key results
     """
-    if not (temperature_c is not None):
+    if temperature_c is None:
         raise ValueError("temperature_c must be provided")
     calc = AcidGasDewpointCalculator()
     composition = AcidGasComposition(
@@ -739,7 +739,7 @@ def estimate_condensation_risk(
     Returns:
         Risk assessment dictionary
     """
-    if not (temperature_c is not None):
+    if temperature_c is None:
         raise ValueError("temperature_c must be provided")
     calc = AcidGasDewpointCalculator()
     result = calc.calculate_dewpoint_mixture(
@@ -903,7 +903,7 @@ if GUI_AVAILABLE:
 
         def display_result(self, result: DewpointResult) -> None:
             """Format and display results in the UI."""
-            if not (result is not None):
+            if result is None:
                 raise ValueError("result must be provided")
             text = (
                 f"<b>Input:</b> T = {result.temperature_c:.2f} °C, "

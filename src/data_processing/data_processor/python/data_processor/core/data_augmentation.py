@@ -71,7 +71,7 @@ class DataAugmenter(NoiseMixin, TransformsMixin):
         Returns:
             AugmentationResult with augmented data
         """
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         data = np.asarray(data, dtype=np.float64)
         original_shape = data.shape
@@ -113,7 +113,7 @@ class DataAugmenter(NoiseMixin, TransformsMixin):
         self, data: np.ndarray, method: AugmentationMethod
     ) -> np.ndarray:
         """Apply a single augmentation method."""
-        if not (data is not None):
+        if data is None:
             raise ValueError("data must be provided")
         method_map = {
             AugmentationMethod.GAUSSIAN_NOISE: self.add_gaussian_noise,
@@ -146,7 +146,7 @@ class DataAugmenter(NoiseMixin, TransformsMixin):
 
     def _get_method_params(self, method: AugmentationMethod) -> dict[str, Any]:
         """Get parameters used for a method."""
-        if not (method is not None):
+        if method is None:
             raise ValueError("method must be provided")
         param_map: dict[AugmentationMethod, dict[str, Any]] = {
             AugmentationMethod.GAUSSIAN_NOISE: {"std": self.config.noise_std},
@@ -187,7 +187,7 @@ def augment_data(
         >>> result = augment_data(data, methods=['gaussian_noise', 'time_warp'])
         >>> print(f"Augmentation factor: {result.augmentation_factor:.1f}x")
     """
-    if not (data is not None):
+    if data is None:
         raise ValueError("data must be provided")
     if methods is None:
         method_enums = None

@@ -249,7 +249,7 @@ def to_si(value: float, category: UnitCategory, prefs: UnitPreferences) -> float
     Pre: value is finite.
     Post: result is in SI.
     """
-    if not (value is not None):
+    if value is None:
         raise ValueError("value must be provided")
     unit = prefs.get_unit(category)
     factor = _get_factor(category, unit)
@@ -262,7 +262,7 @@ def from_si(value: float, category: UnitCategory, prefs: UnitPreferences) -> flo
     Pre: value is finite.
     Post: result is in current display units.
     """
-    if not (value is not None):
+    if value is None:
         raise ValueError("value must be provided")
     unit = prefs.get_unit(category)
     factor = _get_factor(category, unit)

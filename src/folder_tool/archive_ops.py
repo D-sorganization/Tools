@@ -38,7 +38,7 @@ class ArchiveOperationsMixin:
             OSError: If file system operations fail
             Exception: If extraction process fails
         """
-        if not (archive_path is not None):
+        if archive_path is None:
             raise ValueError("archive_path must be provided")
         archive_path_obj, archive_size = self._validate_archive_input(archive_path)
 

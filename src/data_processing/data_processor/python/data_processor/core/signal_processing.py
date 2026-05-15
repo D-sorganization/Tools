@@ -106,7 +106,7 @@ def compute_r_squared(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     Returns:
         R-squared value.
     """
-    if not (y_true is not None):
+    if y_true is None:
         raise ValueError("y_true must be provided")
     require(len(y_true) == len(y_pred), "y_true and y_pred must have same length")
     require(len(y_true) >= 2, "need at least 2 data points", len(y_true))
@@ -143,7 +143,7 @@ def integrate_signals(
     Returns:
         DataFrame with new cumulative columns added (cumulative_{signal})
     """
-    if not (df is not None):
+    if df is None:
         raise ValueError("df must be provided")
     valid_methods = {m.value for m in IntegrationMethod}
     require(time_col in df.columns, f"time_col '{time_col}' not in DataFrame", time_col)
@@ -171,7 +171,7 @@ def integrate_signals(
 @jit(nopython=True, fastmath=True)
 def _compute_integral(signal_data: pd.Series, dt: pd.Series, method: str) -> np.ndarray:
     """Compute the cumulative integral of a signal."""
-    if not (signal_data is not None):
+    if signal_data is None:
         raise ValueError("signal_data must be provided")
     n = len(signal_data)
     cumulative = np.zeros(n)
@@ -236,7 +236,7 @@ def differentiate_signals(
     Returns:
         DataFrame with new derivative columns added ({signal}_d{order})
     """
-    if not (df is not None):
+    if df is None:
         raise ValueError("df must be provided")
     require(time_col in df.columns, f"time_col '{time_col}' not in DataFrame", time_col)
     valid_methods = {m.value for m in DifferentiationMethod}
@@ -275,7 +275,7 @@ def _spline_derivative(
     time_numeric: pd.Series, signal_data: pd.Series, order: int
 ) -> np.ndarray:
     """Compute derivative using spline interpolation (acausal)."""
-    if not (time_numeric is not None):
+    if time_numeric is None:
         raise ValueError("time_numeric must be provided")
     valid_mask = ~(np.isnan(signal_data) | np.isnan(time_numeric))
 
@@ -312,7 +312,7 @@ def _rolling_poly_derivative(
     delta_x: float,
 ) -> pd.Series:
     """Compute derivative using rolling polynomial fit (causal)."""
-    if not (series is not None):
+    if series is None:
         raise ValueError("series must be provided")
     if poly_order < deriv_order:
         return pd.Series(np.nan, index=series.index)
@@ -359,7 +359,7 @@ def resample_data(
     Returns:
         Resampled DataFrame
     """
-    if not (df is not None):
+    if df is None:
         raise ValueError("df must be provided")
     require(time_col in df.columns, f"time_col '{time_col}' not in DataFrame", time_col)
     valid_agg = {"mean", "sum", "first", "last"}
@@ -454,7 +454,7 @@ def apply_custom_variable(
     Raises:
         ValueError: If formula is invalid or uses unsafe operations
     """
-    if not (df is not None):
+    if df is None:
         raise ValueError("df must be provided")
     result = df.copy()
 
@@ -492,7 +492,7 @@ def _parse_formula(
     Converts [signal_name] syntax to plain variable names.
     Returns parsed formula and set of referenced signals.
     """
-    if not (formula is not None):
+    if formula is None:
         raise ValueError("formula must be provided")
     signal_pattern = r"\[([^\]]+)\]"
     signal_refs: set[str] = set()
@@ -512,7 +512,7 @@ def _parse_formula(
 
 def _validate_formula_security(formula: str, allowed_names: set[str]) -> None:
     """Validate that the formula only uses safe operations."""
-    if not (formula is not None):
+    if formula is None:
         raise ValueError("formula must be provided")
     try:
         tree = ast.parse(formula, mode="eval")
@@ -586,7 +586,7 @@ def calculate_trendline(
         Dictionary with trend parameters and R-squared value
     """
     # DbC preconditions
-    if not (df is not None):
+    if df is None:
         raise ValueError("df must be provided")
     require(
         x_col in df.columns, f"x_col '{x_col}' not found in DataFrame columns", x_col
@@ -630,7 +630,7 @@ def calculate_trendline(
 
 def _linear_trend(x: np.ndarray, y: np.ndarray) -> dict[str, Any]:
     """Calculate linear regression: y = mx + b."""
-    if not (x is not None):
+    if x is None:
         raise ValueError("x must be provided")
     coeffs = np.polyfit(x, y, 1)
     slope, intercept = coeffs
@@ -648,7 +648,7 @@ def _linear_trend(x: np.ndarray, y: np.ndarray) -> dict[str, Any]:
 
 def _polynomial_trend(x: np.ndarray, y: np.ndarray, degree: int) -> dict[str, Any]:
     """Calculate polynomial regression."""
-    if not (x is not None):
+    if x is None:
         raise ValueError("x must be provided")
     coeffs = np.polyfit(x, y, degree)
     y_pred = np.polyval(coeffs, x)
@@ -755,7 +755,7 @@ def trim_time_range(
     Returns:
         Trimmed DataFrame
     """
-    if not (df is not None):
+    if df is None:
         raise ValueError("df must be provided")
     require(time_col in df.columns, f"time_col '{time_col}' not in DataFrame", time_col)
 

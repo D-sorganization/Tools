@@ -30,7 +30,7 @@ def box_inertia(
     Returns:
         Dict with ixx, iyy, izz, ixy, ixz, iyz
     """
-    if not (mass is not None):
+    if mass is None:
         raise ValueError("mass must be provided")
     ixx = (mass / 12.0) * (size_y**2 + size_z**2)
     iyy = (mass / 12.0) * (size_x**2 + size_z**2)
@@ -67,7 +67,7 @@ def cylinder_inertia(
         Dict with ixx, iyy, izz, ixy, ixz, iyz
     """
     # Moment of inertia about the cylinder axis
-    if not (mass is not None):
+    if mass is None:
         raise ValueError("mass must be provided")
     i_axial = 0.5 * mass * radius**2
 
@@ -116,7 +116,7 @@ def sphere_inertia(mass: float, radius: float) -> dict[str, float]:
     Returns:
         Dict with ixx, iyy, izz, ixy, ixz, iyz
     """
-    if not (mass is not None):
+    if mass is None:
         raise ValueError("mass must be provided")
     i = (2.0 / 5.0) * mass * radius**2
 
@@ -152,7 +152,7 @@ def capsule_inertia(
         Dict with ixx, iyy, izz, ixy, ixz, iyz
     """
     # Volume calculations
-    if not (mass is not None):
+    if mass is None:
         raise ValueError("mass must be provided")
     v_cyl = math.pi * radius**2 * length
     v_sphere = (4.0 / 3.0) * math.pi * radius**3
@@ -235,7 +235,7 @@ def ellipsoid_inertia(
     Returns:
         Dict with ixx, iyy, izz, ixy, ixz, iyz
     """
-    if not (mass is not None):
+    if mass is None:
         raise ValueError("mass must be provided")
     ixx = (mass / 5.0) * (b**2 + c**2)
     iyy = (mass / 5.0) * (a**2 + c**2)
@@ -271,7 +271,7 @@ def hollow_cylinder_inertia(
     Returns:
         Dict with ixx, iyy, izz, ixy, ixz, iyz
     """
-    if not (mass is not None):
+    if mass is None:
         raise ValueError("mass must be provided")
     r1_sq = inner_radius**2
     r2_sq = outer_radius**2
@@ -329,7 +329,7 @@ def cone_inertia(
         Dict with ixx, iyy, izz, ixy, ixz, iyz
     """
     # Inertia about apex
-    if not (mass is not None):
+    if mass is None:
         raise ValueError("mass must be provided")
     i_axial = (3.0 / 10.0) * mass * radius**2
     i_perp = mass * ((3.0 / 20.0) * radius**2 + (3.0 / 5.0) * height**2)
@@ -379,7 +379,7 @@ def parallel_axis(
     Returns:
         Inertia about new point
     """
-    if not (inertia is not None):
+    if inertia is None:
         raise ValueError("inertia must be provided")
     dx, dy, dz = offset
     dx**2 + dy**2 + dz**2

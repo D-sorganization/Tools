@@ -49,7 +49,7 @@ class FolderToolMixin:
 
     def create_folder_tool_tab(self, parent_tab: ctk.CTkFrame) -> None:
         """Create the folder tool tab with integrated folder processor functionality."""
-        if not (parent_tab is not None):
+        if parent_tab is None:
             raise ValueError("parent_tab must be provided")
         parent_tab.grid_columnconfigure(0, weight=1)
         parent_tab.grid_rowconfigure(0, weight=1)
@@ -74,7 +74,7 @@ class FolderToolMixin:
 
     def _create_folder_source_section(self, parent) -> None:
         """Create the source folders section."""
-        if not (parent is not None):
+        if parent is None:
             raise ValueError("parent must be provided")
         source_frame = ctk.CTkFrame(parent)
         source_frame.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
@@ -117,7 +117,7 @@ class FolderToolMixin:
 
     def _create_folder_destination_section(self, parent: ctk.CTkFrame) -> None:
         """Create the destination folder section."""
-        if not (parent is not None):
+        if parent is None:
             raise ValueError("parent must be provided")
         dest_frame = ctk.CTkFrame(parent)
         dest_frame.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
@@ -143,7 +143,7 @@ class FolderToolMixin:
 
     def _create_folder_filtering_section(self, parent: ctk.CTkFrame) -> None:
         """Create the file filtering section."""
-        if not (parent is not None):
+        if parent is None:
             raise ValueError("parent must be provided")
         filter_frame = ctk.CTkFrame(parent)
         filter_frame.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
@@ -191,7 +191,7 @@ class FolderToolMixin:
 
     def _create_folder_operation_section(self, parent: ctk.CTkFrame) -> None:
         """Create the main operation section."""
-        if not (parent is not None):
+        if parent is None:
             raise ValueError("parent must be provided")
         operation_frame = ctk.CTkFrame(parent)
         operation_frame.grid(row=3, column=0, sticky="ew", padx=5, pady=5)
@@ -231,7 +231,7 @@ class FolderToolMixin:
 
     def _create_folder_organization_section(self, parent: ctk.CTkFrame) -> None:
         """Create the organization options section."""
-        if not (parent is not None):
+        if parent is None:
             raise ValueError("parent must be provided")
         org_frame = ctk.CTkFrame(parent)
         org_frame.grid(row=4, column=0, sticky="ew", padx=5, pady=5)
@@ -257,7 +257,7 @@ class FolderToolMixin:
 
     def _create_folder_output_section(self, parent: ctk.CTkFrame) -> None:
         """Create the output options section."""
-        if not (parent is not None):
+        if parent is None:
             raise ValueError("parent must be provided")
         output_frame = ctk.CTkFrame(parent)
         output_frame.grid(row=5, column=0, sticky="ew", padx=5, pady=5)
@@ -293,7 +293,7 @@ class FolderToolMixin:
 
     def _create_folder_progress_section(self, parent: ctk.CTkFrame) -> None:
         """Create the progress section."""
-        if not (parent is not None):
+        if parent is None:
             raise ValueError("parent must be provided")
         progress_frame = ctk.CTkFrame(parent)
         progress_frame.grid(row=6, column=0, sticky="ew", padx=5, pady=5)
@@ -316,7 +316,7 @@ class FolderToolMixin:
 
     def _create_folder_run_section(self, parent: ctk.CTkFrame) -> None:
         """Create the run button section."""
-        if not (parent is not None):
+        if parent is None:
             raise ValueError("parent must be provided")
         run_frame = ctk.CTkFrame(parent)
         run_frame.grid(row=7, column=0, sticky="ew", padx=5, pady=5)
@@ -636,7 +636,7 @@ class FolderToolMixin:
 
     def _folder_validate_file_filters(self, file_path: Path) -> bool:
         """Validate filters."""
-        if not (file_path is not None):
+        if file_path is None:
             raise ValueError("file_path must be provided")
         exts = self.folder_filter_extensions.get().strip().lower()
         if exts:
@@ -654,7 +654,7 @@ class FolderToolMixin:
 
     def _folder_get_organized_path(self, file_path: Path, dest_base: str) -> Path:
         """Get organized path."""
-        if not (file_path is not None):
+        if file_path is None:
             raise ValueError("file_path must be provided")
         dest = Path(dest_base)
         if self.folder_organize_by_type_var.get():
@@ -668,7 +668,7 @@ class FolderToolMixin:
 
     def _folder_get_unique_path(self, path: Path) -> Path:
         """Get unique path."""
-        if not (path is not None):
+        if path is None:
             raise ValueError("path must be provided")
         if not path.exists():
             return path

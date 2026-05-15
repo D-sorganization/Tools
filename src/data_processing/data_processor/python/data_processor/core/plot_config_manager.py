@@ -30,7 +30,7 @@ class PlotConfigManager:
             config_dir: Directory to store plot configs. Defaults to user's home.
             filename: Name of the config file.
         """
-        if not (filename is not None):
+        if filename is None:
             raise ValueError("filename must be provided")
         if config_dir is None:
             self.config_dir = Path.home() / ".data_processor"
@@ -89,7 +89,7 @@ class PlotConfigManager:
             }
         }
         """
-        if not (name is not None):
+        if name is None:
             raise ValueError("name must be provided")
         configs = self._load_all_configs()
 
@@ -128,7 +128,7 @@ class PlotConfigManager:
         Args:
             name: Name of the plot configuration to delete
         """
-        if not (name is not None):
+        if name is None:
             raise ValueError("name must be provided")
         configs = self._load_all_configs()
 
@@ -176,7 +176,7 @@ class PlotConfigManager:
             source_name: Name of the configuration to copy
             new_name: Name for the new configuration
         """
-        if not (source_name is not None):
+        if source_name is None:
             raise ValueError("source_name must be provided")
         config = self.load_plot_config(source_name)
         config["name"] = new_name
@@ -189,7 +189,7 @@ class PlotConfigManager:
             name: Name of the configuration to update
             updates: Dictionary of fields to update
         """
-        if not (name is not None):
+        if name is None:
             raise ValueError("name must be provided")
         config = self.load_plot_config(name)
         config.update(updates)
@@ -202,7 +202,7 @@ class PlotConfigManager:
             name: Name of the plot configuration
             export_path: Path to export to
         """
-        if not (name is not None):
+        if name is None:
             raise ValueError("name must be provided")
         config = self.load_plot_config(name)
         export_path = Path(export_path)
@@ -222,7 +222,7 @@ class PlotConfigManager:
         Returns:
             Name of the imported configuration
         """
-        if not (import_path is not None):
+        if import_path is None:
             raise ValueError("import_path must be provided")
         import_path = Path(import_path)
 
@@ -242,7 +242,7 @@ class PlotConfigManager:
         Returns:
             List of exported file paths
         """
-        if not (export_dir is not None):
+        if export_dir is None:
             raise ValueError("export_dir must be provided")
         export_dir = Path(export_dir)
         export_dir.mkdir(parents=True, exist_ok=True)

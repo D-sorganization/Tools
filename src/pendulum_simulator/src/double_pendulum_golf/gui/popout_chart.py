@@ -138,7 +138,7 @@ class PopOutChart:
 
         Returns (x_fit, y_fit) or None if no data.
         """
-        if not (degree is not None):
+        if degree is None:
             raise ValueError("degree must be provided")
         if self._x is None or self._y is None:
             return None
@@ -183,9 +183,10 @@ class PopOutChart:
         self._fig = Figure(figsize=(8, 5), dpi=100)
         self._ax = self._fig.add_subplot(111)
         ax = self._ax
-        
+
         from shared.python.theme.integration import get_theme_manager
         from shared.python.theme.matplotlib_style import apply_plot_theme
+
         apply_plot_theme(self._fig, get_theme_manager().get_current_colors())
 
         # Plot data
@@ -216,12 +217,15 @@ class PopOutChart:
         from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget
 
         from shared.python.theme.integration import ThemedWindowMixin
+
         class PopOutWindow(ThemedWindowMixin, QMainWindow):
             pass
-            
+
         self._window = PopOutWindow(self._parent)
         self._window.setup_theme_support()
-        self._window.setWindowFlags(self._window.windowFlags() | Qt.WindowType.FramelessWindowHint)
+        self._window.setWindowFlags(
+            self._window.windowFlags() | Qt.WindowType.FramelessWindowHint
+        )
         self._window.setWindowTitle(self._title)
         self._window.setMinimumSize(700, 450)
         self._window.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)

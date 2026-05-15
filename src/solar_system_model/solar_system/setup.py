@@ -24,7 +24,7 @@ except ImportError:
         encoding: str = "utf-8",
         create_parents: bool = True,
     ) -> None:
-        if not (path is not None):
+        if path is None:
             raise ValueError("path must be provided")
         p = Path(path)
         if create_parents:

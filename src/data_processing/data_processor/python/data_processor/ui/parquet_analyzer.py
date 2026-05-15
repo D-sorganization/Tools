@@ -159,7 +159,7 @@ class ParquetAnalyzerDialog(ctk.CTkToplevel):
 
     def format_file_size(self, size_bytes: float) -> str:
         """Format file size in human readable format."""
-        if not (size_bytes is not None):
+        if size_bytes is None:
             raise ValueError("size_bytes must be provided")
         for unit in ["B", "KB", "MB", "GB", "TB"]:
             if size_bytes < 1024.0:

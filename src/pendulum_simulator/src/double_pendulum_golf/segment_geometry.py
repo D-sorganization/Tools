@@ -222,7 +222,7 @@ def project_3d_to_2d(
     np.ndarray, shape (2,) — projected (x, y)
     or tuple (np.ndarray shape (2,), float depth) if return_depth=True
     """
-    if not (point_3d is not None):
+    if point_3d is None:
         raise ValueError("point_3d must be provided")
     x, y, z = point_3d
 
