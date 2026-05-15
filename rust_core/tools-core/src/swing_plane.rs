@@ -237,8 +237,7 @@ fn fit_plane(points: &[Vector3]) -> Result<(Vector3, Vector3), FspError> {
 
     // Jacobi eigensolver for symmetric 3×3 matrix.
     // Returns (eigenvalues [e0, e1, e2], eigenvectors columns [v0, v1, v2]).
-    let (eigenvalues, eigenvectors) =
-        jacobi3x3([c00, c01, c02, c11, c12, c22]);
+    let (eigenvalues, eigenvectors) = jacobi3x3([c00, c01, c02, c11, c12, c22]);
 
     // Plane normal = eigenvector with SMALLEST eigenvalue.
     let min_idx = if eigenvalues[0] <= eigenvalues[1] && eigenvalues[0] <= eigenvalues[2] {
@@ -293,11 +292,7 @@ fn fit_plane(points: &[Vector3]) -> Result<(Vector3, Vector3), FspError> {
 /// where column `i` of the eigenvector array is the eigenvector for `λi`.
 fn jacobi3x3(c: [f64; 6]) -> ([f64; 3], [[f64; 3]; 3]) {
     // Build full symmetric matrix.
-    let mut a = [
-        [c[0], c[1], c[2]],
-        [c[1], c[3], c[4]],
-        [c[2], c[4], c[5]],
-    ];
+    let mut a = [[c[0], c[1], c[2]], [c[1], c[3], c[4]], [c[2], c[4], c[5]]];
     // Accumulate rotations in eigenvector matrix (start at identity).
     let mut v = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]];
 
@@ -340,7 +335,13 @@ fn jacobi3x3(c: [f64; 6]) -> ([f64; 3], [[f64; 3]; 3]) {
         a[q][p] = 0.0;
 
         // Update remaining off-diagonal elements.
-        let r = if (p, q) == (0, 1) { 2 } else if (p, q) == (0, 2) { 1 } else { 0 };
+        let r = if (p, q) == (0, 1) {
+            2
+        } else if (p, q) == (0, 2) {
+            1
+        } else {
+            0
+        };
         let apr = a[p][r];
         let aqr = a[q][r];
         a[p][r] = cos_t * apr + sin_t * aqr;
@@ -453,9 +454,18 @@ mod tests {
         // Normal points straight up, so slope = atan2(|1|, 0) = 90°.
         // A horizontal plane has a vertical normal → slope = 90°.
         // "Slope relative to ground" = 90° for a flat swing plane.
-        let pts = vec![v(0.0, 0.0, 1.0), v(1.0, 0.0, 1.0), v(0.0, 1.0, 1.0), v(1.0, 1.0, 1.0)];
+        let pts = vec![
+            v(0.0, 0.0, 1.0),
+            v(1.0, 0.0, 1.0),
+            v(0.0, 1.0, 1.0),
+            v(1.0, 1.0, 1.0),
+        ];
         let params = compute_fsp_from_segment(&pts).unwrap();
-        assert!((params.slope_deg - 90.0).abs() < 0.5, "slope={}", params.slope_deg);
+        assert!(
+            (params.slope_deg - 90.0).abs() < 0.5,
+            "slope={}",
+            params.slope_deg
+        );
     }
 
     #[test]
@@ -483,7 +493,11 @@ mod tests {
             v(1.0, 1.0, 1.0),
         ];
         let params = compute_fsp_from_segment(&pts).unwrap();
-        assert!((params.slope_deg - 45.0).abs() < 1.0, "slope={}", params.slope_deg);
+        assert!(
+            (params.slope_deg - 45.0).abs() < 1.0,
+            "slope={}",
+            params.slope_deg
+        );
     }
 
     #[test]
@@ -500,13 +514,19 @@ mod tests {
             v(2.0, 0.0, 0.0),
             v(3.0, 0.0, 0.0),
         ];
-        assert_eq!(compute_fsp_from_segment(&pts), Err(FspError::CollinearPoints));
+        assert_eq!(
+            compute_fsp_from_segment(&pts),
+            Err(FspError::CollinearPoints)
+        );
     }
 
     #[test]
     fn test_nan_input() {
         let pts = vec![v(f64::NAN, 0.0, 0.0), v(1.0, 0.0, 0.0), v(0.0, 1.0, 0.0)];
-        assert_eq!(compute_fsp_from_segment(&pts), Err(FspError::NonFiniteInput));
+        assert_eq!(
+            compute_fsp_from_segment(&pts),
+            Err(FspError::NonFiniteInput)
+        );
     }
 
     // ── detect_phases ──────────────────────────────────────────────────────
@@ -547,7 +567,11 @@ mod tests {
     #[test]
     fn test_direction_on_target_line() {
         // Normal along Y (target line direction) → direction = 0°.
-        let normal = Vector3 { x: 0.0, y: 0.9, z: 0.436 }; // ~27° slope
+        let normal = Vector3 {
+            x: 0.0,
+            y: 0.9,
+            z: 0.436,
+        }; // ~27° slope
         let (_, direction) = normal_to_angles(normal);
         assert!(direction.abs() < 1.0, "direction={}", direction);
     }
@@ -555,8 +579,16 @@ mod tests {
     #[test]
     fn test_direction_right_of_target() {
         // Normal tilted right (+X component dominant in horizontal).
-        let normal = Vector3 { x: 0.7, y: 0.1, z: 0.7 };
+        let normal = Vector3 {
+            x: 0.7,
+            y: 0.1,
+            z: 0.7,
+        };
         let (_, direction) = normal_to_angles(normal);
-        assert!(direction > 0.0, "expected positive direction, got {}", direction);
+        assert!(
+            direction > 0.0,
+            "expected positive direction, got {}",
+            direction
+        );
     }
 }
