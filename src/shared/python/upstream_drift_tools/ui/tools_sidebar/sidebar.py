@@ -3,9 +3,16 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
-from . import design_tokens as theme
+from . import (
+    SIDEKICK_DOCK_OBJECT_NAME,
+    SIDEKICK_SIDEBAR_OBJECT_NAME,
+    SIDEKICK_TAB_BAR_OBJECT_NAME,
+    SIDEKICK_TABS_OBJECT_NAME,
+    SidekickDesignTokens,
+    sidekick_qss,
+)
 from .calculator_assist import calculator_context_preferences, calculator_state_fields
 from .default_tabs import (
     build_default_tab_definitions,
@@ -50,11 +57,11 @@ class UnifiedToolsSidebar(
         registry: WorkspaceRegistry | None = None,
         state: SidebarState | None = None,
         tab_definitions: list[SidebarTabDefinition] | None = None,
-        design_tokens: theme.SidekickDesignTokens | None = None,
+        design_tokens: SidekickDesignTokens | None = None,
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
         super().__init__(parent)
-        self.setObjectName(theme.SIDEKICK_SIDEBAR_OBJECT_NAME)
+        self.setObjectName(SIDEKICK_SIDEBAR_OBJECT_NAME)
         self.registry = registry or WorkspaceRegistry()
         self._state = state or SidebarState()
         self._design_tokens = resolve_sidekick_theme(
@@ -75,8 +82,8 @@ class UnifiedToolsSidebar(
         self._project_root = Path(project_root or Path.cwd()).expanduser().resolve()
 
         self.tabs = QtWidgets.QTabWidget(self)
-        self.tabs.setObjectName(theme.SIDEKICK_TABS_OBJECT_NAME)
-        self.tabs.tabBar().setObjectName(theme.SIDEKICK_TAB_BAR_OBJECT_NAME)
+        self.tabs.setObjectName(SIDEKICK_TABS_OBJECT_NAME)
+        self.tabs.tabBar().setObjectName(SIDEKICK_TAB_BAR_OBJECT_NAME)
         self.tabs.setMovable(True)
         self.tabs.currentChanged.connect(self._emit_context)
         self.tabs.tabBar().tabMoved.connect(self._sync_tab_order_from_widget)
@@ -91,7 +98,7 @@ class UnifiedToolsSidebar(
             self._show_tab_context_menu
         )
 
-        self.setStyleSheet(theme.sidekick_qss(self._design_tokens))
+        self.setStyleSheet(sidekick_qss(self._design_tokens))
 
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -282,7 +289,7 @@ class UnifiedToolsSidebar(
             self.apply_state(SidebarState.load_json(state_path))
 
         dock = QtWidgets.QDockWidget(title, main_window)
-        dock.setObjectName(theme.SIDEKICK_DOCK_OBJECT_NAME)
+        dock.setObjectName(SIDEKICK_DOCK_OBJECT_NAME)
         dock.setFeatures(all_sidebar_dock_features())
         dock.setWidget(self)
         dock.setFloating(self._state.floating)
@@ -370,15 +377,15 @@ class UnifiedToolsSidebar(
         refresh_workspace_list(self)
         self._emit_context()
 
-    def set_design_tokens(self, design_tokens: theme.SidekickDesignTokens) -> None:
+    def set_design_tokens(self, design_tokens: SidekickDesignTokens) -> None:
         """Apply a new Sidekick token set to this sidebar."""
         self._design_tokens = design_tokens
-        self.setStyleSheet(theme.sidekick_qss(self._design_tokens))
+        self.setStyleSheet(sidekick_qss(self._design_tokens))
         self._emit_context()
 
     def set_theme(self, theme_name: str) -> None:
         """Apply a shared fleet theme by name to this sidebar."""
-        self.set_design_tokens(theme.SidekickDesignTokens.from_shared_theme(theme_name))
+        self.set_design_tokens(SidekickDesignTokens.from_shared_theme(theme_name))
 
     def set_project_root(self, project_root: str | Path) -> None:
         self._project_root = Path(project_root).expanduser().resolve()
@@ -386,7 +393,10 @@ class UnifiedToolsSidebar(
         self._emit_context()
 
     def _default_tab_definitions(self) -> list[SidebarTabDefinition]:
-        return build_default_tab_definitions(self, SidebarTabDefinition)
+        return cast(
+            list[SidebarTabDefinition],
+            build_default_tab_definitions(self, SidebarTabDefinition),
+        )
 
     def _add_defined_tab(self, definition: SidebarTabDefinition) -> None:
         widget = definition.factory(self)
