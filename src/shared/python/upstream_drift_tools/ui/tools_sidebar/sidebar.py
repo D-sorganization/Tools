@@ -474,4 +474,5 @@ class UnifiedToolsSidebar(
         for tab_id in self._tab_definitions:
             self._refresh_tab_display_name(tab_id)
 
+
 SidekickSidebar = UnifiedToolsSidebar
