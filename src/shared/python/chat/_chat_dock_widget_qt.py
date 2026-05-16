@@ -123,7 +123,9 @@ class ChatMessageBubble(QFrame):
         header_row.addStretch()
 
         self._copy_btn = QPushButton("Copy")
-        self._copy_btn.setToolTip("Copy message to clipboard")
+        self._copy_btn.setToolTip(
+            "Copy message to clipboard. Use the dropdown to pick mode."
+        )
         self._copy_btn.setCursor(Qt.CursorShape.PointingHandCursor)
         self._copy_btn.setStyleSheet(
             "QPushButton { background-color: transparent; "
@@ -131,7 +133,22 @@ class ChatMessageBubble(QFrame):
             "border: none; font-size: 10px; padding: 0px; }"
             f"QPushButton:hover {{ color: {colors.get('text', '#e0e0e0')}; }}"
         )
-        self._copy_btn.clicked.connect(self._copy_to_clipboard)
+        # Tools issue #2735: per-message copy mode dropdown.
+        copy_menu = QMenu(self)
+        for label, mode in (
+            ("Raw text", "raw_text"),
+            ("Markdown", "markdown"),
+            ("Code only", "code_only"),
+            ("JSON", "json"),
+        ):
+            act = copy_menu.addAction(label)
+            if act is not None:
+                act.triggered.connect(
+                    lambda _checked=False, m=mode: self._copy_to_clipboard(m)
+                )
+        self._copy_btn.setMenu(copy_menu)
+        # Direct click defaults to raw_text via the menu's first action.
+        self._copy_btn.clicked.connect(lambda: self._copy_to_clipboard("raw_text"))
         header_row.addWidget(self._copy_btn)
 
         layout.addLayout(header_row)
@@ -162,10 +179,30 @@ class ChatMessageBubble(QFrame):
         self._content += text
         self._content_label.setText(self._content)
 
-    def _copy_to_clipboard(self) -> None:
-        clipboard = QApplication.clipboard()
-        if clipboard is not None:
-            clipboard.setText(self._content)
+    def _copy_to_clipboard(self, mode: str = "raw_text") -> None:
+        """Copy this bubble's content via the shared ``MessageClipboardCopier``.
+
+        Tools issue #2735. The copier is constructed lazily because it
+        pulls in :class:`QApplication` and is only meaningful when a Qt
+        application is running.
+        """
+        from .export import MessageClipboardCopier
+        from .service_base import ChatMessage
+
+        try:
+            copier = MessageClipboardCopier.from_qt_application()
+        except RuntimeError:
+            # Fall back to direct clipboard call when no QApplication exists.
+            clipboard = QApplication.clipboard()
+            if clipboard is not None:
+                clipboard.setText(self._content)
+            return
+        msg = ChatMessage(role=self._role, content=self._content)
+        try:
+            copier.copy_message(msg, mode)  # type: ignore[arg-type]
+        except ValueError:
+            # Unknown mode -- fall back to raw_text.
+            copier.copy_message(msg, "raw_text")
 
 
 class ChatDockWidget(QDockWidget):
@@ -331,21 +368,84 @@ class ChatDockWidget(QDockWidget):
         self._tools_btn.setToolTip("Chat tools and actions")
         self._tools_menu = QMenu(self)
         self._action_copy_thread = self._tools_menu.addAction("Copy Entire Thread")
-        self._action_export_thread = self._tools_menu.addAction("Export to Markdown...")
-        self._action_condense_thread = self._tools_menu.addAction("Condense Thread")
+        # Tools issue #2735: Export submenu (Markdown / Text / HTML).
+        export_menu = self._tools_menu.addMenu("Export Thread")
+        self._action_export_markdown = (
+            export_menu.addAction("Markdown...") if export_menu is not None else None
+        )
+        self._action_export_text = (
+            export_menu.addAction("Plain Text...") if export_menu is not None else None
+        )
+        self._action_export_html = (
+            export_menu.addAction("HTML...") if export_menu is not None else None
+        )
+        # Tools issue #2736: Condense submenu with strategy picker.
+        condense_menu = self._tools_menu.addMenu("Condense Thread")
+        self._action_condense_keep_recent = (
+            condense_menu.addAction("Keep recent...")
+            if condense_menu is not None
+            else None
+        )
+        self._action_condense_semantic = (
+            condense_menu.addAction("Semantic summary...")
+            if condense_menu is not None
+            else None
+        )
+        self._action_condense_pinned = (
+            condense_menu.addAction("Pinned anchor...")
+            if condense_menu is not None
+            else None
+        )
+        # Backwards-compat alias kept by Tools issue #2872 history-browser
+        # tests that introspect ``_action_export_thread``.
+        self._action_export_thread = self._action_export_markdown
+        self._action_condense_thread = self._action_condense_keep_recent
         self._action_request_review = self._tools_menu.addAction(
             "Request Agent Review..."
         )
         if self._action_copy_thread is not None:
             self._action_copy_thread.triggered.connect(self._copy_entire_thread)
-        if self._action_export_thread is not None:
-            self._action_export_thread.triggered.connect(self._export_to_markdown)
-        if self._action_condense_thread is not None:
-            self._action_condense_thread.triggered.connect(self._condense_thread)
+        if self._action_export_markdown is not None:
+            self._action_export_markdown.triggered.connect(
+                lambda: self._export_thread("markdown", "Markdown Files (*.md)", ".md")
+            )
+        if self._action_export_text is not None:
+            self._action_export_text.triggered.connect(
+                lambda: self._export_thread("text", "Text Files (*.txt)", ".txt")
+            )
+        if self._action_export_html is not None:
+            self._action_export_html.triggered.connect(
+                lambda: self._export_thread("html", "HTML Files (*.html)", ".html")
+            )
+        if self._action_condense_keep_recent is not None:
+            self._action_condense_keep_recent.triggered.connect(
+                lambda: self._run_condense_local("keep_recent")
+            )
+        if self._action_condense_semantic is not None:
+            self._action_condense_semantic.triggered.connect(
+                lambda: self._run_condense_local("semantic_summary")
+            )
+        if self._action_condense_pinned is not None:
+            self._action_condense_pinned.triggered.connect(
+                lambda: self._run_condense_local("pinned_anchor")
+            )
         if self._action_request_review is not None:
             self._action_request_review.triggered.connect(self._request_review)
         self._tools_btn.setMenu(self._tools_menu)
         status_row.addWidget(self._tools_btn)
+
+        # Tools issue #2736: token-budget indicator + condense-now button.
+        self._token_indicator = QLabel("0 tok")
+        self._token_indicator.setToolTip(
+            "Approximate token count for the current thread. "
+            "When it exceeds the auto-condense threshold the thread will "
+            "be condensed automatically."
+        )
+        self._token_indicator.setStyleSheet(
+            f"color: {text_secondary}; font-size: 10px;"
+        )
+        status_row.addWidget(self._token_indicator)
+        self._auto_condense_threshold = 8000
 
         self._close_btn = QPushButton("Close")
         self._close_btn.setToolTip("Close chat")
@@ -1362,24 +1462,134 @@ class ChatDockWidget(QDockWidget):
             self._status_label.setStyleSheet("color: #3fb950; font-size: 10px;")
 
     def _export_to_markdown(self) -> None:
+        """Backwards-compat shim retained for older history-browser code paths."""
+        self._export_thread("markdown", "Markdown Files (*.md)", ".md")
+
+    def _export_thread(self, fmt: str, file_filter: str, suffix: str) -> None:
+        """Run an export via the shared ``chat.export`` package.
+
+        Tools issue #2735.
+        """
+        from .export import (
+            ChatExportRequest,
+            HtmlExporter,
+            MarkdownExporter,
+            TextExporter,
+        )
+
         path, _ = QFileDialog.getSaveFileName(
             self,
             "Export Chat Thread",
-            str(self._project_root / "chat_export.md"),
-            "Markdown Files (*.md);;All Files (*)",
+            str(self._project_root / f"chat_export{suffix}"),
+            f"{file_filter};;All Files (*)",
         )
-        if path:
-            try:
-                Path(path).write_text(self._get_thread_markdown(), encoding="utf-8")
-                self._status_label.setText("Exported successfully")
-                self._status_label.setStyleSheet("color: #3fb950; font-size: 10px;")
-            except OSError as exc:
-                self._status_label.setText(f"Export error: {exc}")
-                self._status_label.setStyleSheet("color: #f85149; font-size: 10px;")
+        if not path:
+            return
+        session = self._build_session_snapshot()
+        if session is None or session.message_count == 0:
+            self._status_label.setText("Nothing to export")
+            self._status_label.setStyleSheet("color: #f85149; font-size: 10px;")
+            return
+        request = ChatExportRequest(
+            session_id=session.session_id,
+            format=fmt,  # type: ignore[arg-type]
+            output_path=path,
+            include_metadata=True,
+            redact_secrets=True,
+        )
+        try:
+            if fmt == "markdown":
+                result = MarkdownExporter().export(session, request)
+            elif fmt == "text":
+                result = TextExporter().export(session, request)
+            elif fmt == "html":
+                result = HtmlExporter().export(session, request)
+            else:
+                raise ValueError(f"Unknown export format {fmt!r}")
+            self._status_label.setText(
+                f"Exported {result.message_count} messages ({result.byte_count} B)"
+            )
+            self._status_label.setStyleSheet("color: #3fb950; font-size: 10px;")
+        except (OSError, ValueError) as exc:
+            self._status_label.setText(f"Export error: {exc}")
+            self._status_label.setStyleSheet("color: #f85149; font-size: 10px;")
 
     def _condense_thread(self) -> None:
+        """Legacy server-side condense; retained for back-compat."""
         self._status_label.setText("Condensing thread...")
         self._send_ws({"action": "condense", "app_context": self._app_context})
+
+    def _build_session_snapshot(self) -> Any:
+        """Materialise the visible thread as a :class:`ChatSession`.
+
+        Reads bubbles from the message layout (single source of truth) so
+        exporters consume the public :class:`ChatSession` surface only --
+        no reaching into private storage (Law of Demeter).
+        """
+        from .service_base import ChatSession
+
+        session = ChatSession(session_id=self._get_shared_session_id() or "session")
+        for i in range(self._message_layout.count()):
+            item = self._message_layout.itemAt(i)
+            if item is None:
+                continue
+            widget = item.widget()
+            if isinstance(widget, ChatMessageBubble):
+                session.add_message(widget._role, widget._content)
+        return session
+
+    def _run_condense_local(self, strategy: str) -> None:
+        """Run condensation locally via the shared ``chat.condensation`` package.
+
+        Tools issue #2736. The condenser is pure and immutable -- it does
+        not mutate the visible bubbles; the result is reported in the
+        status bar and used to refresh the token indicator.
+        """
+        from .condensation import CondensationRequest, Condenser
+
+        session = self._build_session_snapshot()
+        if session is None or session.message_count == 0:
+            self._status_label.setText("Nothing to condense")
+            self._status_label.setStyleSheet("color: #f85149; font-size: 10px;")
+            return
+        try:
+            request = CondensationRequest(
+                session_id=session.session_id,
+                strategy=strategy,  # type: ignore[arg-type]
+                keep_last_n=max(1, min(10, session.message_count)),
+            )
+            result = Condenser().condense(session, request)
+        except ValueError as exc:
+            self._status_label.setText(f"Condense error: {exc}")
+            self._status_label.setStyleSheet("color: #f85149; font-size: 10px;")
+            return
+        self._status_label.setText(
+            f"Condense [{strategy}]: {result.original_message_count} -> "
+            f"{result.condensed_message_count} msgs, "
+            f"~{result.removed_tokens_estimate} tok saved"
+        )
+        self._status_label.setStyleSheet("color: #3fb950; font-size: 10px;")
+        self._refresh_token_indicator()
+
+    def _refresh_token_indicator(self) -> None:
+        """Recompute the token-count indicator label."""
+        from .condensation import estimate_tokens
+
+        if not hasattr(self, "_token_indicator"):
+            return
+        total = 0
+        for i in range(self._message_layout.count()):
+            item = self._message_layout.itemAt(i)
+            if item is None:
+                continue
+            widget = item.widget()
+            if isinstance(widget, ChatMessageBubble):
+                total += estimate_tokens(widget._content)
+        self._token_indicator.setText(f"{total} tok")
+        if total > self._auto_condense_threshold:
+            self._token_indicator.setStyleSheet("color: #f85149; font-size: 10px;")
+        else:
+            self._token_indicator.setStyleSheet("color: #8b949e; font-size: 10px;")
 
     def _request_review(self) -> None:
         self._status_label.setText("Review requested...")
