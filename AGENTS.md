@@ -714,3 +714,32 @@ These rules govern *how* you engage with a task before and during implementation
 This repository's specification is defined in `SPEC.md` at the repo root.
 Read SPEC.md before making any changes. Update it when your changes
 affect documented functionality, features, or architecture.
+
+
+## Closing issues — non-negotiable rule
+
+NEVER close a feature or bug issue without one of:
+
+1. A merged PR that implements the acceptance criteria (use `Closes #N` in the PR body or title), OR
+2. An explicit `wontfix`, `roadmap`, `duplicate`, `invalid`, or `not-planned` label.
+
+The **Verify-Issue-Closure** workflow will automatically reopen any issue closed without evidence. Do not work around it.
+
+When implementing an issue:
+- Write or update tests FIRST (TDD: red → green → refactor)
+- Add Design-by-Contract preconditions/postconditions where it clarifies invariants
+- Respect Law of Demeter — don’t reach through three layers
+- Don’t duplicate code (DRY)
+- Run tests locally before pushing
+- If you can’t fully implement, leave the issue open and post a status comment
+
+### How to close issues properly
+
+| Method | Example |
+|--------|---------|
+| Closing keyword in PR body | `Closes #1234` or `Fixes #5678` |
+| Closing keyword in PR title | `fix: resolve login crash (#1234)` |
+| Exempt label | Apply `wontfix`, `roadmap`, `duplicate`, `invalid`, or `not-planned` |
+| Bot + auto-generated label | Only for auto-generated issues closed by bots |
+
+The workflow checks the PR timeline for cross-referenced merged PRs with closing keywords. If none are found and no exempt label is present, the issue is reopened with an explanatory comment.
