@@ -26,7 +26,7 @@ from typing import TYPE_CHECKING, Any
 
 # matplotlib and scipy imported lazily to prevent Windows hang at module load
 import numpy as np
-from upstream_drift_tools.utils.state_manager import safe_read_json
+from sidekick.utils.state_manager import safe_read_json
 
 from shared.python.theme.integration import get_theme_manager
 from shared.python.theme.matplotlib_style import apply_plot_theme
