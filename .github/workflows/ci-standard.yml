@@ -95,8 +95,8 @@ jobs:
       - name: Install System Dependencies
         run: |
           set -o pipefail
-          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock && sudo apt-get -o DPkg::Lock::Timeout=300 update --fix-missing
-          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done;  sudo apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6 xvfb
+          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock && sudo env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=300 update --fix-missing
+          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done;  sudo env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6 xvfb
 
       - name: Install Dependencies
         # Force-reinstall sortedcontainers (and hypothesis) before anything
@@ -329,8 +329,8 @@ jobs:
       - name: Install System Dependencies
         run: |
           set -o pipefail
-          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock && sudo apt-get -o DPkg::Lock::Timeout=300 update --fix-missing
-          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done;  sudo apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
+          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock && sudo env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=300 update --fix-missing
+          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done;  sudo env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
 
       - name: Install Dependencies
         # See quality-gate Install Dependencies for the rationale — the shared
@@ -349,7 +349,7 @@ jobs:
           # The shared self-hosted runner cache has produced mixed NumPy/SciPy
           # binary installs on individual Python minors. Reinstall the compiled
           # numerical stack without cache before importing provider contracts.
-          python -m pip install --upgrade --force-reinstall --no-cache-dir "numpy>=2.0.1" "scipy>=1.13.1"
+          python -m pip install --upgrade --force-reinstall --no-cache-dir "numpy>=2.0.1" "scipy>=1.13.1,<1.17"
           python -m pip install fastapi
           python -m pip install httpx pytest-cov pytest-xdist pytest-benchmark
 
