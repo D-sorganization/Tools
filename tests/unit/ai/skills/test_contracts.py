@@ -11,7 +11,6 @@ from shared.python.ai.skills.contracts import (
     SkillResult,
 )
 
-
 pytestmark = pytest.mark.unit
 
 

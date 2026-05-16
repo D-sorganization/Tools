@@ -16,7 +16,6 @@ from shared.python.ai.skills.contracts import (
 )
 from shared.python.ai.skills.errors import SkillNotFoundError
 
-
 pytestmark = pytest.mark.unit
 
 

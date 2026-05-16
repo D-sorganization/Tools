@@ -23,7 +23,6 @@ from shared.python.ai.skills.errors import (
     SkillTimeoutError,
 )
 
-
 pytestmark = pytest.mark.unit
 
 
@@ -134,9 +133,7 @@ class TestSkillRunner:
     async def test_precondition_failure_returns_structured_result(self) -> None:
         runner = _build_runner(_OkSkill)
         result = await runner.run(
-            SkillInvocation(
-                skill_id="t.ok", args={"x": "not-int"}, request_id="r3"
-            )
+            SkillInvocation(skill_id="t.ok", args={"x": "not-int"}, request_id="r3")
         )
         assert result.success is False
         assert result.error is not None
@@ -173,9 +170,7 @@ class TestSkillRunner:
     async def test_raises_directly_when_skill_id_unknown(self) -> None:
         runner = _build_runner(_OkSkill)
         with pytest.raises(SkillNotFoundError):
-            await runner.run(
-                SkillInvocation(skill_id="nope", args={}, request_id="r6")
-            )
+            await runner.run(SkillInvocation(skill_id="nope", args={}, request_id="r6"))
 
     async def test_precondition_error_type_can_be_raised(self) -> None:
         # SkillPreconditionError exists and is the runner-internal raise type.

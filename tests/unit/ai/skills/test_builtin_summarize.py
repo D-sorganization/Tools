@@ -11,7 +11,6 @@ from shared.python.ai.skills.builtin.summarize import (
 )
 from shared.python.ai.skills.contracts import SkillInvocation
 
-
 pytestmark = pytest.mark.unit
 
 
@@ -26,7 +25,7 @@ async def test_summarize_skill_with_stub_llm() -> None:
     result = await runner.run(
         SkillInvocation(
             skill_id=SummarizeSkill.descriptor.id,
-            args={"text": "Hello world. This is a test passage that needs summarising."},
+            args={"text": "Hello world. A test passage that needs summarising."},
             request_id="sum-1",
         )
     )

@@ -8,7 +8,6 @@ from shared.python.ai.skills import SkillRegistry, SkillRunner
 from shared.python.ai.skills.builtin.echo import EchoSkill
 from shared.python.ai.skills.contracts import SkillInvocation
 
-
 pytestmark = pytest.mark.unit
 
 
