@@ -16,7 +16,7 @@ try:
     SYMPY_AVAILABLE = True
 except ImportError:
     SYMPY_AVAILABLE = False
-    sp = None  # type: ignore[assignment]
+    sp = None
 
 
 router = APIRouter(prefix="/api/calc/symbolic", tags=["symbolic-solver"])
