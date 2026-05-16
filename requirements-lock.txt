@@ -7,7 +7,7 @@
 # Core Scientific Computing
 numpy==2.4.4
 pandas==3.0.2
-scipy==1.16.0
+scipy==1.17.1
 matplotlib==3.10.9
 sympy==1.14.0
 
