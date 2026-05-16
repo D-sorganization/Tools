@@ -47,6 +47,7 @@ import os
 import sys
 import threading
 import traceback
+from collections.abc import Iterator
 from typing import Any
 
 import numpy as np
@@ -70,16 +71,18 @@ _CPU_HARD_LIMIT_S = 10
 # Virtual memory ceiling: 512 MiB
 _MEM_LIMIT_BYTES = 512 * 1024 * 1024
 
-if _HAS_RESOURCE and _resource is not None:
+if sys.platform != "win32" and _HAS_RESOURCE and _resource is not None:
     try:
         _resource.setrlimit(
             _resource.RLIMIT_CPU, (_CPU_SOFT_LIMIT_S, _CPU_HARD_LIMIT_S)
         )
-    except (ValueError, _resource.error):
+    except (ValueError, getattr(_resource, "error", Exception)):
         pass
     try:
-        _resource.setrlimit(_resource.RLIMIT_AS, (_MEM_LIMIT_BYTES, _MEM_LIMIT_BYTES))
-    except (ValueError, _resource.error):
+        _resource.setrlimit(
+            getattr(_resource, "RLIMIT_AS", 0), (_MEM_LIMIT_BYTES, _MEM_LIMIT_BYTES)
+        )
+    except (ValueError, getattr(_resource, "error", Exception)):
         pass
 
 # ---------------------------------------------------------------------------
@@ -382,7 +385,7 @@ class ConsoleEnvironment:
     # ------------------------------------------------------------------
 
     @contextlib.contextmanager
-    def _timeout_context(self):  # type: ignore[return]
+    def _timeout_context(self) -> Iterator[None]:
         """Context manager that enforces ``_max_execution_time``.
 
         On Linux/macOS uses ``signal.alarm`` (only valid on the main thread).
