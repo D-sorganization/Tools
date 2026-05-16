@@ -5,16 +5,54 @@ from __future__ import annotations
 import builtins
 import contextlib
 import json
+import logging
 import math
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 JSONScalar = str | int | float | bool | None
 JSONValue = JSONScalar | list["JSONValue"] | dict[str, "JSONValue"]
 PREVIEW_MAX_ROWS = 3
 PREVIEW_MAX_COLUMNS = 4
 PREVIEW_MAX_CHARS = 120
+
+_logger = logging.getLogger(__name__)
+
+WorkspaceEvent = Literal["set", "remove"]
+WorkspaceCallback = Callable[[WorkspaceEvent, str], None]
+
+
+class Subscription:
+    """Handle returned by :meth:`WorkspaceRegistry.subscribe`."""
+
+    __slots__ = ("_registry", "_callback", "_active")
+
+    def __init__(
+        self,
+        registry: WorkspaceRegistry,
+        callback: WorkspaceCallback,
+    ) -> None:
+        self._registry = registry
+        self._callback = callback
+        self._active = True
+
+    def unsubscribe(self) -> None:
+        """Detach the callback. Idempotent."""
+        if not self._active:
+            return
+        self._active = False
+        # LOD: registry exposes private remove for its own subscriptions.
+        self._registry._detach_subscription(self)  # noqa: SLF001
+
+    @property
+    def callback(self) -> WorkspaceCallback:
+        return self._callback
+
+    @property
+    def active(self) -> bool:
+        return self._active
 
 
 @dataclass(frozen=True)
@@ -66,6 +104,9 @@ class WorkspaceRegistry:
         self._values: dict[str, Any] = {}
         self._repr_values: dict[str, str] = {}
         self._metadata_overrides: dict[str, dict[str, Any]] = {}
+        self._subscriptions: list[Subscription] = []
+        self._notifying: bool = False
+        self._pending_events: list[tuple[WorkspaceEvent, str]] = []
         if initial:
             for name, value in initial.items():
                 self.set(name, value)
@@ -80,7 +121,9 @@ class WorkspaceRegistry:
             self._repr_values.pop(name, None)
         else:
             self._repr_values[name] = repr(value)
-        return self.describe(name)
+        snapshot = self.describe(name)
+        self._notify("set", name)
+        return snapshot
 
     def get(self, name: str, default: Any = None) -> Any:
         """Return a variable value or ``default`` when absent."""
@@ -92,13 +135,65 @@ class WorkspaceRegistry:
         self._values.pop(name, None)
         self._repr_values.pop(name, None)
         self._metadata_overrides.pop(name, None)
+        if existed:
+            self._notify("remove", name)
         return existed
 
     def clear(self) -> None:
         """Remove all variables."""
+        names = list(self._values)
         self._values.clear()
         self._repr_values.clear()
         self._metadata_overrides.clear()
+        for name in names:
+            self._notify("remove", name)
+
+    def subscribe(self, callback: WorkspaceCallback) -> Subscription:
+        """Register ``callback`` for ``set``/``remove`` events.
+
+        Args:
+            callback: A two-argument callable ``(event, name)``.
+
+        Returns:
+            A :class:`Subscription` exposing ``unsubscribe()``.
+
+        Raises:
+            TypeError: If ``callback`` is ``None`` or not callable.
+        """
+        if callback is None:
+            raise TypeError("callback must not be None")
+        if not callable(callback):
+            raise TypeError("callback must be callable")
+        subscription = Subscription(self, callback)
+        self._subscriptions.append(subscription)
+        return subscription
+
+    def _detach_subscription(self, subscription: Subscription) -> None:
+        with contextlib.suppress(ValueError):
+            self._subscriptions.remove(subscription)
+
+    def _notify(self, event: WorkspaceEvent, name: str) -> None:
+        # Re-entrant set() during a callback queues; outer loop drains.
+        self._pending_events.append((event, name))
+        if self._notifying:
+            return
+        self._notifying = True
+        try:
+            while self._pending_events:
+                queued_event, queued_name = self._pending_events.pop(0)
+                for subscription in tuple(self._subscriptions):
+                    if not subscription.active:
+                        continue
+                    try:
+                        subscription.callback(queued_event, queued_name)
+                    except Exception:  # noqa: BLE001 - subscribers must not break notify
+                        _logger.exception(
+                            "Workspace subscriber raised on %s '%s'",
+                            queued_event,
+                            queued_name,
+                        )
+        finally:
+            self._notifying = False
 
     def list(self) -> builtins.list[str]:
         """Return registered variable names in stable sorted order."""

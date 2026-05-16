@@ -11,6 +11,7 @@ from .calculator_startup import default_calculator_startup_config
 from .theme_settings import SidekickThemeSettings
 
 VALID_DOCK_AREAS = {"left", "right"}
+VALID_LAYOUT_MODES = {"sidebar", "matlab_home"}
 
 
 @dataclass(slots=True)
@@ -23,6 +24,7 @@ class SidebarState:
     width: int = 360
     height: int = 720
     active_tab: str = "files"
+    layout_mode: str = "sidebar"
     tab_order: list[str] = field(default_factory=list)
     default_visible_tabs: list[str] = field(default_factory=list)
     default_hidden_tabs: list[str] = field(default_factory=list)
@@ -41,6 +43,8 @@ class SidebarState:
     def __post_init__(self) -> None:
         if self.dock_area not in VALID_DOCK_AREAS:
             self.dock_area = "right"
+        if self.layout_mode not in VALID_LAYOUT_MODES:
+            self.layout_mode = "sidebar"
         self.width = max(240, int(self.width))
         self.height = max(240, int(self.height))
         if not self.active_tab:
@@ -75,6 +79,7 @@ class SidebarState:
             width=int(payload.get("width", 360)),
             height=int(payload.get("height", 720)),
             active_tab=str(payload.get("active_tab", "files")),
+            layout_mode=str(payload.get("layout_mode", "sidebar")),
             tab_order=_string_list(payload.get("tab_order")),
             default_visible_tabs=_string_list(payload.get("default_visible_tabs")),
             default_hidden_tabs=_string_list(payload.get("default_hidden_tabs")),
