@@ -33,7 +33,6 @@ def test_widget_shows_cwd_label(qt_app, tmp_path: Path) -> None:  # noqa: ANN001
     from upstream_drift_tools.ui.tools_sidebar.os_terminal import (
         SidekickOsTerminalWidget,
     )
-
     from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
 
     widget = SidekickOsTerminalWidget(

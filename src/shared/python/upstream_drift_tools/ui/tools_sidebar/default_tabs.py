@@ -24,6 +24,7 @@ from .runtime_tabs import (
     build_calculator_tab,
     build_chat_tab,
     build_notes_tab,
+    build_python_repl_tab,
     build_terminal_tab,
 )
 
@@ -67,6 +68,13 @@ def build_default_tab_definitions(
             build_terminal_tab,
             duplicate_enabled=True,
             help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP["terminal"]),
+        ),
+        tab_definition(
+            "python_repl",
+            "Python REPL",
+            build_python_repl_tab,
+            duplicate_enabled=True,
+            help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP["python_repl"]),
         ),
         tab_definition(
             "calculator",

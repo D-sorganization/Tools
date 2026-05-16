@@ -26,7 +26,10 @@ def fallback_backend():  # noqa: ANN201
 
     # Run a minimal Python loop that echoes lines back: cross-platform and
     # avoids requiring an interactive shell on the CI runner.
-    code = "import sys\nfor line in sys.stdin: sys.stdout.write(line); sys.stdout.flush()\n"
+    code = (
+        "import sys\n"
+        "for line in sys.stdin: sys.stdout.write(line); sys.stdout.flush()\n"
+    )
     backend = SubprocessFallbackBackend(
         command=(sys.executable, "-u", "-c", code), cwd=None
     )
