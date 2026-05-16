@@ -275,6 +275,14 @@ class ChatDockWidget(QDockWidget):
         self._is_streaming = False
         self._current_bubble: ChatMessageBubble | None = None
         self._terminal_session_id: str | None = None
+        # Tools issue #2871: mid-thread provider/model/thinking state.
+        # ``_message_history`` is the same object that ``switch_provider``
+        # promises to preserve. Bubbles render from this list and the
+        # widget never reassigns it after creation.
+        self._message_history: list[dict[str, Any]] = []
+        self._current_provider: str = "ollama"
+        self._current_model: str = "llama3"
+        self._current_thinking_level: str = "none"
         self._voice_manager = VoiceInputManager()
         self._terminal_start_pending = False
         self._socket: QWebSocket | None = None
@@ -341,6 +349,12 @@ class ChatDockWidget(QDockWidget):
         layout.addLayout(status_row)
 
         mode_row = QHBoxLayout()
+
+        # Tools issue #2871: Provider / Model / Thinking dropdowns.
+        # Built first so the chat-mode header reads
+        # ``[provider] [model] [thinking] [mode] [terminal controls...]``.
+        self._build_ai_dropdowns(mode_row)
+
         self._mode_combo = QComboBox()
         self._mode_combo.addItem("Chat", "chat")
         self._mode_combo.addItem("Terminal", "terminal")
@@ -806,6 +820,271 @@ class ChatDockWidget(QDockWidget):
             self._add_bubble("assistant", f"Plot request failed: {exc}")
             return
         self._add_bubble("assistant", "Plot request submitted.")
+
+    # ── AI Provider/Model/Thinking dropdowns (Tools issue #2871) ────
+
+    _AI_VALID_THINKING_NAMES: frozenset[str] = frozenset(
+        {"none", "low", "medium", "high"}
+    )
+    _AI_VALID_FIELDS: frozenset[str] = frozenset({"provider", "model", "thinking"})
+    _AI_DEFAULT_PROVIDERS: tuple[tuple[str, str], ...] = (
+        ("Ollama", "ollama"),
+        ("OpenAI", "openai"),
+        ("Anthropic", "anthropic"),
+        ("Gemini", "gemini"),
+        ("Cline", "cline"),
+    )
+
+    @staticmethod
+    def _build_header_combobox(
+        *,
+        label: str,
+        items: list[tuple[str, str]],
+    ) -> QComboBox:
+        """Build a header combo box used by the AI Provider/Model/Thinking row.
+
+        DRY helper used for all three header dropdowns (issue #2871).
+
+        Args:
+            label: Short label (e.g. ``"provider"``) used to drive the
+                combo's tool-tip; must be non-empty / non-whitespace.
+            items: Sequence of ``(display_text, user_data)`` pairs;
+                must be non-empty.
+
+        Raises:
+            ValueError: If ``label`` is empty/whitespace or ``items`` is empty.
+        """
+        if not isinstance(label, str) or not label.strip():
+            raise ValueError("_build_header_combobox: label must be non-empty")
+        if not items:
+            raise ValueError("_build_header_combobox: items must be non-empty")
+        combo = QComboBox()
+        for display, data in items:
+            combo.addItem(display, data)
+        combo.setToolTip(f"Select AI {label}")
+        return combo
+
+    def _build_ai_dropdowns(self, mode_row: QHBoxLayout) -> None:
+        """Construct + wire the three AI header dropdowns.
+
+        Side-effect only: instantiates ``_ai_provider_combo``,
+        ``_ai_model_combo``, ``_ai_thinking_combo`` and inserts them
+        into ``mode_row`` left-to-right.
+        """
+        self._ai_provider_combo = self._build_header_combobox(
+            label="provider",
+            items=list(self._AI_DEFAULT_PROVIDERS),
+        )
+        mode_row.addWidget(self._ai_provider_combo)
+
+        # Models + thinking start with placeholders; refresh fills them.
+        self._ai_model_combo = self._build_header_combobox(
+            label="model",
+            items=[("(default)", "default")],
+        )
+        mode_row.addWidget(self._ai_model_combo)
+
+        self._ai_thinking_combo = self._build_header_combobox(
+            label="thinking",
+            items=[("Off", "none")],
+        )
+        mode_row.addWidget(self._ai_thinking_combo)
+
+        # Wire change signals through the single router for DRY.
+        self._ai_provider_combo.currentIndexChanged.connect(
+            lambda _: self._on_ai_combo_changed("provider")
+        )
+        self._ai_model_combo.currentIndexChanged.connect(
+            lambda _: self._on_ai_combo_changed("model")
+        )
+        self._ai_thinking_combo.currentIndexChanged.connect(
+            lambda _: self._on_ai_combo_changed("thinking")
+        )
+        # Initial population.
+        self._refresh_ai_model_combo()
+        self._refresh_ai_thinking_combo()
+        self._sync_ai_dropdowns()
+
+    def _combo_for_field(self, field: str) -> QComboBox:
+        """Return the combo backing one of the three AI fields."""
+        if field == "provider":
+            return self._ai_provider_combo
+        if field == "model":
+            return self._ai_model_combo
+        if field == "thinking":
+            return self._ai_thinking_combo
+        raise ValueError(
+            f"_combo_for_field: unknown field {field!r}; expected one of "
+            f"{sorted(self._AI_VALID_FIELDS)!r}"
+        )
+
+    def _on_ai_combo_changed(self, field: str) -> None:
+        """Translate a combo signal into a routed change call."""
+        combo = self._combo_for_field(field)
+        value = combo.currentData()
+        if not isinstance(value, str) or not value.strip():
+            return
+        self._apply_settings_change(field, value)
+
+    def _apply_settings_change(self, field: str, value: str) -> None:
+        """Single change router for the three AI header dropdowns.
+
+        DbC (issue #2871):
+            Pre: ``field`` is exactly one of ``"provider"``, ``"model"``,
+                 or ``"thinking"`` (case-sensitive).
+            Pre: ``value`` is a non-empty / non-whitespace string.
+            Post: dependent combos are refreshed; settings are persisted
+                  via ``_persist_ai_settings``.
+        """
+        if field not in self._AI_VALID_FIELDS:
+            raise ValueError(
+                f"_apply_settings_change: unknown field {field!r}; expected "
+                f"one of {sorted(self._AI_VALID_FIELDS)!r}"
+            )
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError(
+                f"_apply_settings_change: value for {field!r} must be non-empty"
+            )
+        value = value.strip()
+        if field == "provider":
+            self._current_provider = value
+            self._refresh_ai_model_combo()
+            self._refresh_ai_thinking_combo()
+        elif field == "model":
+            self._current_model = value
+            self._refresh_ai_thinking_combo()
+        else:  # field == "thinking"
+            self._current_thinking_level = value
+        self._persist_ai_settings()
+
+    def _refresh_ai_model_combo(self) -> None:
+        """Repopulate the model combo for the currently selected provider."""
+        try:
+            adapter = self._get_active_ai_adapter()
+            models = adapter.list_models() if adapter is not None else []
+        except Exception:  # noqa: BLE001 - any adapter failure → empty list
+            logger.debug("_refresh_ai_model_combo: adapter probe failed", exc_info=True)
+            models = []
+        items = [(name, name) for name in models] or [("(default)", "default")]
+        self._ai_model_combo.blockSignals(True)
+        try:
+            self._ai_model_combo.clear()
+            for display, data in items:
+                self._ai_model_combo.addItem(display, data)
+        finally:
+            self._ai_model_combo.blockSignals(False)
+
+    def _refresh_ai_thinking_combo(self) -> None:
+        """Repopulate the thinking combo for the currently selected adapter."""
+        try:
+            adapter = self._get_active_ai_adapter()
+            caps = adapter.thinking_capabilities() if adapter is not None else None
+        except Exception:  # noqa: BLE001 - any adapter failure → none only
+            logger.debug(
+                "_refresh_ai_thinking_combo: adapter probe failed", exc_info=True
+            )
+            caps = None
+        if caps is None:
+            items = [("Off", "none")]
+        else:
+            items = [(level.label, level.name) for level in caps.levels]
+        self._ai_thinking_combo.blockSignals(True)
+        try:
+            self._ai_thinking_combo.clear()
+            for display, data in items:
+                self._ai_thinking_combo.addItem(display, data)
+        finally:
+            self._ai_thinking_combo.blockSignals(False)
+
+    def _sync_ai_dropdowns(self) -> None:
+        """Push current state into the three combos with signals blocked."""
+        for combo, value in (
+            (self._ai_provider_combo, self._current_provider),
+            (self._ai_model_combo, self._current_model),
+            (self._ai_thinking_combo, self._current_thinking_level),
+        ):
+            combo.blockSignals(True)
+            try:
+                idx = combo.findData(value)
+                if idx >= 0:
+                    combo.setCurrentIndex(idx)
+            finally:
+                combo.blockSignals(False)
+
+    def _get_active_ai_adapter(self) -> Any | None:
+        """Return the adapter for ``_current_provider`` or ``None``.
+
+        Adapter construction failures are non-fatal here (offline mode,
+        missing API key, etc.) — callers fall back to a static catalogue.
+        """
+        try:
+            from src.shared.python.ai.adapters.factory import AdapterFactory
+
+            return AdapterFactory.create(self._current_provider)
+        except Exception:  # noqa: BLE001 - missing credentials are normal
+            return None
+
+    def _persist_ai_settings(self) -> None:
+        """Persist the current AI selections to a QSettings store.
+
+        The default implementation is a no-op stub so the routing tests
+        can simply ``MagicMock`` this method.  Hosts that want real
+        persistence override it.
+        """
+        return
+
+    def switch_provider(
+        self,
+        name: str,
+        model: str,
+        thinking_level: str,
+    ) -> None:
+        """Switch AI provider / model / thinking-level mid-thread.
+
+        DbC (Tools issue #2871):
+            Pre: ``name`` is a non-empty / non-whitespace string after
+                 ``.strip()``.
+            Pre: ``model`` is a non-empty / non-whitespace string after
+                 ``.strip()``.
+            Pre: ``thinking_level`` ∈ {``"none"``, ``"low"``, ``"medium"``,
+                 ``"high"``} after ``.strip()``.
+            Post: ``self._current_provider``, ``self._current_model``,
+                  ``self._current_thinking_level`` reflect the request.
+            Post: ``self._message_history`` is the same list object and
+                  same contents as before the call (history-immutability
+                  invariant).
+        """
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError("switch_provider: name must be non-empty")
+        if not isinstance(model, str) or not model.strip():
+            raise ValueError("switch_provider: model must be non-empty")
+        if not isinstance(thinking_level, str):
+            raise ValueError("switch_provider: thinking_level must be a string")
+        normalized_level = thinking_level.strip()
+        if normalized_level not in self._AI_VALID_THINKING_NAMES:
+            raise ValueError(
+                f"switch_provider: thinking_level {thinking_level!r} not in "
+                f"{sorted(self._AI_VALID_THINKING_NAMES)!r}"
+            )
+        # Capture invariant target — same list object, same contents.
+        history_before = self._message_history
+        snapshot_before = list(history_before)
+
+        self._current_provider = name.strip()
+        self._current_model = model.strip()
+        self._current_thinking_level = normalized_level
+
+        # Re-sync visible dropdowns when present.
+        if hasattr(self, "_ai_provider_combo") and self._ai_provider_combo is not None:
+            self._sync_ai_dropdowns()
+
+        # Invariant check (cheap; cost is the snapshot comparison).
+        assert self._message_history is history_before, (
+            "switch_provider invariant: _message_history must remain the same list"
+        )
+        assert self._message_history == snapshot_before, (
+            "switch_provider invariant: _message_history contents must not change"
+        )
 
     def _populate_shell_combo(self) -> None:
         self._shell_combo.clear()

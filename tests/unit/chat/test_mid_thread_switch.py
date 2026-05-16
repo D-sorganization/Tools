@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 
@@ -26,17 +25,45 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 pytest.importorskip("PyQt6")
-from PyQt6.QtWidgets import QApplication, QComboBox, QDockWidget  # noqa: E402
+from PyQt6.QtWidgets import QApplication, QComboBox  # noqa: E402
 
 _app = QApplication.instance() or QApplication(sys.argv[:1])
 
 
-def _make_widget_with_history():  # type: ignore[no-untyped-def]
-    """Make a ChatDockWidget with a primed message history."""
-    from chat._chat_dock_widget_qt import ChatDockWidget
+def _load_in_tree_chat_module():  # type: ignore[no-untyped-def]
+    """Load ``_chat_dock_widget_qt`` from the in-tree source (see
+    test_dock_widget_dropdowns.py for the rationale)."""
+    import importlib
+    import importlib.util
 
-    with patch.object(QDockWidget, "__init__", return_value=None):
-        widget = ChatDockWidget.__new__(ChatDockWidget)
+    tree_root = Path(__file__).resolve().parents[3] / "src" / "shared" / "python"
+    src_path = tree_root / "chat" / "_chat_dock_widget_qt.py"
+
+    sys.path.insert(0, str(tree_root))
+    for _name in list(sys.modules):
+        if _name == "chat" or _name.startswith("chat."):
+            del sys.modules[_name]
+    importlib.invalidate_caches()
+    chat_mod = importlib.import_module("chat")
+    chat_mod.__path__ = [str(tree_root / "chat")]
+    spec = importlib.util.spec_from_file_location("chat._chat_dock_widget_qt", src_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"could not build spec for {src_path}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules["chat._chat_dock_widget_qt"] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def _make_widget_with_history():  # type: ignore[no-untyped-def]
+    """Make a ChatDockWidget stand-in with a primed message history."""
+    module = _load_in_tree_chat_module()
+    ChatDockWidget = module.ChatDockWidget
+
+    namespace = dict(ChatDockWidget.__dict__)
+    namespace["__init__"] = lambda self: None
+    stand_in_cls = type("ChatDockWidgetStandIn", (object,), namespace)
+    widget = stand_in_cls()
 
     widget._ai_provider_combo = QComboBox()
     widget._ai_provider_combo.addItem("Ollama", "ollama")

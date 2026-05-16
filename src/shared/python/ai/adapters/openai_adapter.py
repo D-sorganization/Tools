@@ -296,6 +296,55 @@ class OpenAIAdapter(BaseAgentAdapter):
             provider_name="openai",
         )
 
+    # ------------------------------------------------------------------ #
+    # Tools issue #2871: provider catalogue + reasoning capabilities
+    # ------------------------------------------------------------------ #
+
+    _STATIC_MODELS: tuple[str, ...] = (
+        "gpt-4-turbo",
+        "gpt-4o",
+        "gpt-4o-mini",
+        "gpt-4",
+        "gpt-3.5-turbo",
+        "o1-preview",
+        "o1-mini",
+        "o3-mini",
+    )
+
+    def list_models(self) -> list[str]:
+        """Return OpenAI model ids; falls back to a static catalogue."""
+        try:
+            client = self._get_client()
+            response = client.models.list()
+            data = getattr(response, "data", None) or []
+            ids = [
+                getattr(entry, "id", None)
+                for entry in data
+                if getattr(entry, "id", None)
+            ]
+            ids = [str(model_id) for model_id in ids if str(model_id).strip()]
+            if ids:
+                return ids
+        except Exception:  # noqa: BLE001 - any provider failure → fallback
+            logger.debug(
+                "OpenAI list_models live probe failed; using static catalogue",
+                exc_info=True,
+            )
+        return list(self._STATIC_MODELS)
+
+    def thinking_capabilities(self) -> Any:
+        """Return reasoning-budget levels for the current OpenAI model."""
+        from src.shared.python.chat.models import (
+            make_full_thinking_capabilities,
+            make_none_only_capabilities,
+        )
+
+        model = (self._model or "").lower()
+        # o1 / o3 reasoning series support reasoning effort levels.
+        if model.startswith(("o1", "o3")):
+            return make_full_thinking_capabilities(provider="openai")
+        return make_none_only_capabilities(provider="openai")
+
     def validate_connection(self) -> tuple[bool, str]:
         """Test connection to OpenAI.
 
