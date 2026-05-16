@@ -36,6 +36,11 @@ def theme_manager(mock_qsettings: MagicMock, tmp_path: Path) -> ThemeManager:
     ):
         manager = ThemeManager()
     yield manager
+    # Remove any custom themes written to disk so they don't contaminate
+    # subsequent test runs on the same runner (user_themes.json persists
+    # across ThemeManager.reset_instance() because that only clears the
+    # in-memory singleton, not the backing file).
+    manager._get_custom_theme_path().unlink(missing_ok=True)
     ThemeManager.reset_instance()
 
 
