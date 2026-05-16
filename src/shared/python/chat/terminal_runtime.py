@@ -92,6 +92,7 @@ def _build_default_session_env() -> dict[str, str]:
         if k in _SESSION_ENV_ALLOWLIST and not _is_sensitive(k)
     }
 
+
 class TerminalRuntimeError(RuntimeError):
     """Raised when a terminal session lifecycle operation is invalid."""
 

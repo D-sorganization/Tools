@@ -26,8 +26,10 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 
-
-_logging_config_stub = sys.modules.setdefault("src.shared.python.logging_pkg.logging_config", types.ModuleType("src.shared.python.logging_pkg.logging_config"))
+_logging_config_stub = sys.modules.setdefault(
+    "src.shared.python.logging_pkg.logging_config",
+    types.ModuleType("src.shared.python.logging_pkg.logging_config"),
+)
 _logging_config_stub.get_logger = logging.getLogger  # type: ignore[attr-defined]
 
 from src.shared.python.ai.auth.authentication import (  # noqa: E402
