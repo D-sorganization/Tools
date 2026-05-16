@@ -13,6 +13,7 @@ pub mod math;
 pub mod reactor;
 pub mod rrt;
 pub mod signal;
+pub mod swing_plane;
 pub mod thermodynamics;
 // Re-export primary types
 pub use math::{clamp, lerp, GRAVITY, R_GAS};

@@ -1,0 +1,9 @@
+[advisories]
+# rustls-webpki 0.101.7 (transitive via reqwest 0.11 → rustls 0.21).
+# Fixing requires reqwest 0.12 which is a breaking API change; tracked in
+# issue #2862. Ignore until that upgrade lands.
+ignore = [
+    "RUSTSEC-2026-0098",  # Name constraints for URI names
+    "RUSTSEC-2026-0099",  # Name constraints for wildcard names
+    "RUSTSEC-2026-0104",  # Reachable panic in CRL parsing
+]
