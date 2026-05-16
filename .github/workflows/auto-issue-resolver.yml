@@ -535,6 +535,27 @@ jobs:
               labels: ['auto-generated', 'automated-fix', issue.severity.toLowerCase()]
             });
 
+            // Persist PR number for downstream verification step
+            const fs = require('fs');
+            fs.appendFileSync(process.env.GITHUB_ENV, `CREATED_PR_NUM=${pr.data.number}\n`);
+
+      - name: Anti-phantom-merge verification on created PR
+        if: steps.commit.outputs.has_changes == 'true' && env.CREATED_PR_NUM != ''
+        uses: ./.github/actions/verify-issue-resolution
+        continue-on-error: true
+        with:
+          pr_number: ${{ env.CREATED_PR_NUM }}
+          issue_number: ${{ matrix.issue.number }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Label PR if verification failed
+        if: steps.commit.outputs.has_changes == 'true' && env.CREATED_PR_NUM != '' && failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr edit "$CREATED_PR_NUM" --add-label "jules-verification-failed" || true
+          gh pr comment "$CREATED_PR_NUM" --body "Auto Issue Resolver flagged this PR as a likely phantom merge. The verification gate refused to approve closure of issue #${{ matrix.issue.number }} based on this diff. See workflow logs for details." || true
+
   summary:
     name: Generate Summary Report
     needs: [pick-runner, analyze-issues, resolve-issues]
