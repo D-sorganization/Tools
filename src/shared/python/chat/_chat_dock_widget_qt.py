@@ -697,7 +697,7 @@ class ChatDockWidget(QDockWidget):
             if not isinstance(info, WorkspaceVariableInfo):
                 # Defensive: tolerate raw dicts/objects that look like
                 # the dataclass without crashing the chat.
-                continue  # type: ignore[unreachable]
+                continue
             shape_str = (
                 ", ".join(str(dim) for dim in info.shape)
                 if info.shape is not None
