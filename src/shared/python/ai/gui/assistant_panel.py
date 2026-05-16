@@ -55,6 +55,10 @@ from src.shared.python.ai.gui.settings_dialog import (
 from src.shared.python.ai.mcp.gui import McpStatusIndicator
 from src.shared.python.ai.memory_manager import MemoryManager
 from src.shared.python.ai.rag.simple_rag import SimpleRAGStore
+from src.shared.python.ai.thread_condensation import (
+    condense_thread,
+    estimate_token_count,
+)
 from src.shared.python.ai.tool_registry import get_global_registry
 from src.shared.python.ai.tools.codemap_tools import register_codemap_tools
 from src.shared.python.ai.tools.file_ops import register_file_tools
@@ -108,6 +112,11 @@ class AIAssistantPanel(QWidget):
         self._rag_enabled = True
         self._auto_index_on_open = False
         self._project_root = project_root or _discover_project_root(Path.cwd())
+
+        # --- Thread condensation state ------------------------------------
+        # Raw history is kept separately so the user can undo condensation.
+        self._raw_history: list[Any] = []  # original Message objects before condense
+        self._is_condensed: bool = False
 
         # --- Tools / RAG / memory ----------------------------------------
         self._tools_registry = get_global_registry()
@@ -209,6 +218,8 @@ class AIAssistantPanel(QWidget):
         h.access_mode_changed.connect(self._on_access_mode_changed)
         h.new_chat_requested.connect(self._on_new_chat)
         h.peer_review_requested.connect(self._on_peer_review_requested)
+        h.condense_requested.connect(self._on_condense_thread)
+        h.show_full_history_requested.connect(self._on_show_full_history)
         h.settings_requested.connect(self._show_settings)
         h.close_requested.connect(self.close_requested.emit)
         h.copy_thread_requested.connect(self._on_copy_thread)
@@ -485,6 +496,7 @@ class AIAssistantPanel(QWidget):
                 self._current_assistant_message.get_content()
             )
             self._save_history()
+        self._update_token_count_display()
         self._current_assistant_message = None
         self._disconnect_worker()
 
@@ -604,13 +616,91 @@ class AIAssistantPanel(QWidget):
         )
 
     # ------------------------------------------------------------------
+    # Thread condensation
+    # ------------------------------------------------------------------
+    def _on_condense_thread(self) -> None:
+        """Condense the active conversation into a summary block."""
+        if not self._adapter:
+            self._add_system_message("Cannot condense: no AI provider configured.")
+            return
+
+        messages = list(self._context.messages)
+        if not messages:
+            self._add_system_message("Nothing to condense yet.")
+            return
+
+        self._set_status("Condensing thread...")
+        try:
+            summary, active = condense_thread(messages, self._adapter)
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("Thread condensation failed: %s", exc)
+            self._set_status("Condense failed")
+            self._add_system_message(f"Condensation failed: {exc}")
+            return
+
+        # Preserve raw history for undo
+        self._raw_history = messages
+        self._is_condensed = True
+
+        # Replace active context with [summary_message, *recent_tail]
+        self._context.messages.clear()
+        self._context.messages.append(summary.to_message())
+        for msg in active[1:]:
+            self._context.messages.append(msg)
+
+        self._save_history()
+
+        # Refresh display
+        self._messages.clear_messages()
+        self._add_system_message(
+            f"Thread condensed. {len(self._raw_history)} message(s) "
+            f"summarised into a summary block. Use 'Full History' to undo."
+        )
+        self._messages.restore_from_context(self._context)
+
+        token_count = estimate_token_count(self._context.messages)
+        self._header.set_token_count(token_count)
+        self._header.set_condensed_mode(True)
+        self._set_status("Ready")
+
+    def _on_show_full_history(self) -> None:
+        """Restore the full raw conversation history (undo condensation)."""
+        if not self._raw_history:
+            return
+
+        self._context.messages.clear()
+        for msg in self._raw_history:
+            self._context.messages.append(msg)
+
+        self._raw_history = []
+        self._is_condensed = False
+
+        self._save_history()
+        self._messages.clear_messages()
+        self._messages.restore_from_context(self._context)
+
+        token_count = estimate_token_count(self._context.messages)
+        self._header.set_token_count(token_count)
+        self._header.set_condensed_mode(False)
+        self._set_status("Full history restored")
+
+    def _update_token_count_display(self) -> None:
+        """Refresh the token count label in the toolbar."""
+        count = estimate_token_count(self._context.messages)
+        self._header.set_token_count(count)
+
+    # ------------------------------------------------------------------
     # New chat
     # ------------------------------------------------------------------
     def _on_new_chat(self) -> None:
         self._messages.clear_messages()
         self._context = ConversationContext()
+        self._raw_history = []
+        self._is_condensed = False
         self._refresh_prompt_memory()
         self._save_history()
+        self._header.set_token_count(0)
+        self._header.set_condensed_mode(False)
         self._add_system_message("🔄 New chat started. How can I help you?")
 
     # ------------------------------------------------------------------
