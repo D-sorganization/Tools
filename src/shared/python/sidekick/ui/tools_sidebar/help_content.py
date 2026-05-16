@@ -181,6 +181,19 @@ DEFAULT_SIDEBAR_TAB_HELP: dict[str, dict[str, str]] = {
         ),
         source="upstream_drift_tools.ui.tools_sidebar.reporting_tab",
     ),
+    "jupyter": _tab_help(
+        "Jupyter",
+        "Read-only viewer for Jupyter notebooks (.ipynb) — Phase 1 of the "
+        "Sidekick Jupyter integration.",
+        tips=(
+            "Markdown, code, and text outputs render in-place; rich outputs "
+            "(images, HTML) appear as Phase 2 placeholders.",
+            "When nbformat is not installed the tab shows an actionable "
+            "install hint with a copy-to-clipboard button.",
+        ),
+        examples=("pip install '.[jupyter]'",),
+        source="upstream_drift_tools.ui.tools_sidebar.jupyter_tab",
+    ),
 }
 
 

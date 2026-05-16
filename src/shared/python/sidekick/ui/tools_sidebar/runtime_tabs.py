@@ -183,6 +183,165 @@ def build_notes_tab(sidebar: Any) -> QtWidgets.QWidget:
     return widget
 
 
+class PythonReplWidget(QtWidgets.QWidget):
+    """Reusable Python REPL bound to a :class:`WorkspaceRegistry`.
+
+    DRY: this is the single Python execution surface — both the Terminal tab
+    and the MATLAB-home command window embed an instance of this widget.
+
+    Args:
+        registry: Workspace registry holding shared variables. Required.
+        set_variable: Callback ``(name, value)`` used to export user
+            assignments back to the host registry. Required.
+        object_name: Qt object name; defaults to a stable widget id.
+        parent: Optional Qt parent.
+
+    Raises:
+        TypeError: If ``registry`` or ``set_variable`` is missing or wrong type.
+    """
+
+    def __init__(
+        self,
+        *,
+        registry: WorkspaceRegistry,
+        set_variable: SetVariable,
+        object_name: str = SIDEKICK_PYTHON_REPL_OBJECT_NAME,
+        parent: QtWidgets.QWidget | None = None,
+    ) -> None:
+        if registry is None:
+            raise TypeError("registry must be provided")
+        if not isinstance(registry, WorkspaceRegistry):
+            raise TypeError("registry must be a WorkspaceRegistry")
+        if set_variable is None:
+            raise TypeError("set_variable must be provided")
+        if not callable(set_variable):
+            raise TypeError("set_variable must be callable")
+        super().__init__(parent)
+        self.setObjectName(object_name)
+        self._registry = registry
+        self._set_variable = set_variable
+        self._namespace: dict[str, Any] = {}
+        self._history: list[str] = []
+        self._load_workspace_namespace()
+        _preload_scientific_namespace(self._namespace)
+        self._build_ui()
+
+    def _build_ui(self) -> None:
+        layout = QtWidgets.QVBoxLayout(self)
+        layout.setContentsMargins(8, 8, 8, 8)
+        layout.setSpacing(8)
+
+        self._input = QtWidgets.QPlainTextEdit(self)
+        self._input.setObjectName("SidekickPythonReplInput")
+        self._input.setPlaceholderText("result = np.array([1, 2, 3]).sum()")
+        self._input.setToolTip(
+            "Enter Python code that can read and write shared workspace variables."
+        )
+        layout.addWidget(self._input, stretch=2)
+
+        self._run_button = QtWidgets.QPushButton("Run", self)
+        self._run_button.setObjectName("SidekickPythonReplRun")
+        self._run_button.setToolTip(
+            "Execute the current script and export assigned variables."
+        )
+        self._run_button.clicked.connect(self._on_run_clicked)
+        layout.addWidget(self._run_button)
+
+        self._output = QtWidgets.QPlainTextEdit(self)
+        self._output.setObjectName("SidekickPythonReplOutput")
+        self._output.setReadOnly(True)
+        self._output.setToolTip("Shows stdout, stderr, and execution errors.")
+        layout.addWidget(self._output, stretch=3)
+
+    def _on_run_clicked(self) -> None:
+        self.execute(self._input.toPlainText())
+
+    def execute(self, script: str) -> None:
+        """Execute ``script`` against the shared namespace.
+
+        Stores assigned names in the registry, records the command in history,
+        and pipes stdout/stderr/exception to the output pane. Never raises.
+        """
+        if not isinstance(script, str):
+            raise TypeError("script must be a str")
+        if not script.strip():
+            self._append_output("No code to run.")
+            return
+        self._history.append(script.strip())
+        stdout = io.StringIO()
+        stderr = io.StringIO()
+        exception: Exception | None = None
+        last_result: Any = _SENTINEL
+        compiled_exec = None
+        compiled_eval = None
+        try:
+            with contextlib.suppress(SyntaxError):
+                compiled_eval = compile(script, "<sidekick-repl>", "eval")
+            if compiled_eval is None:
+                compiled_exec = compile(script, "<sidekick-repl>", "exec")
+        except Exception as exc:  # noqa: BLE001 - report compile errors
+            exception = exc
+
+        if exception is None:
+            try:
+                with (
+                    contextlib.redirect_stdout(stdout),
+                    contextlib.redirect_stderr(stderr),
+                ):
+                    if compiled_eval is not None:
+                        last_result = eval(  # noqa: S307  # nosec B307
+                            compiled_eval, self._namespace, self._namespace
+                        )
+                    else:
+                        exec(  # noqa: S102  # nosec B102
+                            compiled_exec, self._namespace, self._namespace
+                        )
+            except Exception as exc:  # noqa: BLE001 - REPL reports user errors
+                logger.debug("Sidekick REPL execution failed: %s", exc)
+                exception = exc
+
+        if exception is None:
+            self._sync_namespace_to_registry()
+            output = _format_terminal_output(stdout, stderr, None)
+            if last_result is not _SENTINEL and last_result is not None:
+                output = (
+                    f"{repr(last_result)}\n{output}" if output else repr(last_result)
+                )
+            self._append_output(output)
+        else:
+            self._append_output(_format_terminal_output(stdout, stderr, exception))
+
+    def output_text(self) -> str:
+        """Return the current output pane text."""
+        return self._output.toPlainText()
+
+    def history(self) -> tuple[str, ...]:
+        """Return submitted scripts in oldest-to-newest order."""
+        return tuple(self._history)
+
+    def apply_theme(self, terminal_theme: theme.SidekickTerminalTheme) -> None:
+        """Apply REPL-scoped colors. Single-token theme handoff (LOD)."""
+        if terminal_theme is None:
+            raise TypeError("terminal_theme must be provided")
+        self.setStyleSheet(terminal_theme.qss(self.objectName()))
+
+    def _load_workspace_namespace(self) -> None:
+        for name in self._registry.list_names():
+            self._namespace[name] = self._registry.get(name)
+
+    def _sync_namespace_to_registry(self) -> None:
+        for name, value in _exportable_values(self._namespace).items():
+            self._set_variable(name, value)
+
+    def _append_output(self, text: str) -> None:
+        existing = self._output.toPlainText().strip()
+        combined = f"{existing}\n{text}" if existing else text
+        self._output.setPlainText(combined.strip())
+
+
+_SENTINEL = object()
+
+
 class SidekickPythonReplWidget(QtWidgets.QWidget):
     """Small Python execution surface sharing values with Workspace.
 
@@ -192,6 +351,10 @@ class SidekickPythonReplWidget(QtWidgets.QWidget):
     :mod:`upstream_drift_tools.ui.tools_sidebar.os_terminal`) provides the
     real PTY-backed shell. Object name, child widget object names, and
     tooltips are preserved so existing styling and tests continue to work.
+
+    Kept as a thin shell so existing tests and Terminal-tab plumbing
+    (theming, object-name lookup) continue to work. All REPL behaviour
+    lives in :class:`PythonReplWidget` (DRY).
     """
 
     def __init__(
@@ -208,74 +371,35 @@ class SidekickPythonReplWidget(QtWidgets.QWidget):
             raise ValueError("set_variable must be provided")
         super().__init__(parent)
         self.setObjectName(SIDEKICK_TERMINAL_OBJECT_NAME)
+        self._terminal_theme = terminal_theme or theme.SidekickTerminalTheme.inherited()
+        self._repl = PythonReplWidget(
+            registry=registry,
+            set_variable=set_variable,
+            parent=self,
+        )
+        # Preserve legacy attribute names that hosts/tests inspect.
         self._registry = registry
         self._set_variable = set_variable
-        self._terminal_theme = terminal_theme or theme.SidekickTerminalTheme.inherited()
-        self._namespace: dict[str, Any] = {}
-        self._load_workspace_namespace()
-        _preload_scientific_namespace(self._namespace)
-        self._build_ui()
+        self._namespace = self._repl._namespace  # noqa: SLF001 - intentional alias
+        layout = QtWidgets.QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(self._repl)
+        # Expose the historic input/output/run object names by re-tagging the
+        # nested widgets so existing findChild() queries keep working.
+        self._repl._input.setObjectName(  # noqa: SLF001
+            "SidekickTerminalInput"
+        )
+        self._repl._output.setObjectName(  # noqa: SLF001
+            "SidekickTerminalOutput"
+        )
+        self._repl._run_button.setObjectName(  # noqa: SLF001
+            "SidekickTerminalRun"
+        )
         self.apply_terminal_theme(self._terminal_theme)
 
-    def _build_ui(self) -> None:
-        layout = QtWidgets.QVBoxLayout(self)
-        layout.setContentsMargins(8, 8, 8, 8)
-        layout.setSpacing(8)
-
-        self._input = QtWidgets.QPlainTextEdit(self)
-        self._input.setObjectName("SidekickTerminalInput")
-        self._input.setPlaceholderText("result = np.array([1, 2, 3]).sum()")
-        self._input.setToolTip(
-            "Enter Python code that can read and write shared workspace variables."
-        )
-        layout.addWidget(self._input, stretch=2)
-
-        self._run_button = QtWidgets.QPushButton("Run", self)
-        self._run_button.setObjectName("SidekickTerminalRun")
-        self._run_button.setToolTip(
-            "Execute the current terminal script and export assigned variables."
-        )
-        self._run_button.clicked.connect(self.execute_script)
-        layout.addWidget(self._run_button)
-
-        self._output = QtWidgets.QPlainTextEdit(self)
-        self._output.setObjectName("SidekickTerminalOutput")
-        self._output.setReadOnly(True)
-        self._output.setToolTip("Shows terminal stdout, stderr, and execution errors.")
-        layout.addWidget(self._output, stretch=3)
-
     def execute_script(self) -> None:
-        """Execute the current script and export user variables."""
-        script = self._input.toPlainText()
-        if not script.strip():
-            self._append_output("No code to run.")
-            return
-        stdout = io.StringIO()
-        stderr = io.StringIO()
-        try:
-            compiled = compile(script, "<sidekick-terminal>", "exec")
-            with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
-                exec(compiled, self._namespace, self._namespace)  # noqa: S102  # nosec B102
-        except Exception as exc:  # noqa: BLE001 - terminal reports user code errors
-            logger.debug("Sidekick terminal execution failed: %s", exc)
-            self._append_output(_format_terminal_output(stdout, stderr, exc))
-            return
-
-        self._sync_namespace_to_registry()
-        self._append_output(_format_terminal_output(stdout, stderr, None))
-
-    def _load_workspace_namespace(self) -> None:
-        for name in self._registry.list_names():
-            self._namespace[name] = self._registry.get(name)
-
-    def _sync_namespace_to_registry(self) -> None:
-        for name, value in _exportable_values(self._namespace).items():
-            self._set_variable(name, value)
-
-    def _append_output(self, text: str) -> None:
-        existing = self._output.toPlainText().strip()
-        combined = f"{existing}\n{text}" if existing else text
-        self._output.setPlainText(combined.strip())
+        """Execute the current script and export user variables (legacy API)."""
+        self._repl.execute(self._repl._input.toPlainText())  # noqa: SLF001
 
     def apply_terminal_theme(self, terminal_theme: theme.SidekickTerminalTheme) -> None:
         """Apply terminal-scoped colors without changing global Sidekick QSS."""

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from enum import StrEnum
 from pathlib import Path
 from typing import Any, cast
 
@@ -15,6 +16,7 @@ from . import (
 )
 from .calculator_assist import calculator_context_preferences, calculator_state_fields
 from .default_tabs import (
+    WorkspaceTableWidget,
     build_default_tab_definitions,
     refresh_workspace_list,
     set_project_explorer_root,
@@ -22,6 +24,7 @@ from .default_tabs import (
 from .help_content import render_help_markdown
 from .qt_compat import QtCore, QtWidgets, Signal, all_sidebar_dock_features, dock_area
 from .registry import WorkspaceRegistry
+from .runtime_tabs import PythonReplWidget
 from .state import SidebarState
 from .state_profile_actions import StateProfileMixin
 from .tab_context_menu import show_tab_context_menu
@@ -36,6 +39,72 @@ from .tab_visibility import (
     without_default_tab_visibility,
 )
 from .theme_settings import resolve_sidekick_theme
+
+
+class LayoutMode(StrEnum):
+    """Sidebar layout strategies.
+
+    ``SIDEBAR`` is the classic dockable tab strip; ``MATLAB_HOME`` is a
+    two-pane layout (command window + workspace inspector) modelled on the
+    MATLAB Home tab.
+    """
+
+    SIDEBAR = "sidebar"
+    MATLAB_HOME = "matlab_home"
+
+
+class MatlabHomeWidget(QtWidgets.QWidget):
+    """Two-pane MATLAB-home layout: command window + workspace inspector.
+
+    Both panes are bound to the host sidebar's :class:`WorkspaceRegistry`
+    so assignments made in the command window appear immediately in the
+    workspace table (LOD: only the registry reference is shared; no reach
+    into theme tokens or sidebar internals).
+
+    Args:
+        sidebar: Host sidebar exposing ``registry`` and ``set_context_variable``.
+        parent: Optional Qt parent.
+
+    Raises:
+        TypeError: If ``sidebar`` is ``None``.
+    """
+
+    def __init__(
+        self,
+        *,
+        sidebar: UnifiedToolsSidebar,
+        parent: QtWidgets.QWidget | None = None,
+    ) -> None:
+        if sidebar is None:
+            raise TypeError("sidebar must be provided")
+        super().__init__(parent)
+        self.setObjectName("SidekickMatlabHomeWidget")
+        self._sidebar = sidebar
+        self._workspace = WorkspaceTableWidget(registry=sidebar.registry, parent=self)
+        self._command_window = PythonReplWidget(
+            registry=sidebar.registry,
+            set_variable=sidebar.set_context_variable,
+            parent=self,
+        )
+
+        splitter = QtWidgets.QSplitter(QtCore.Qt.Orientation.Horizontal, self)
+        splitter.setObjectName("SidekickMatlabHomeSplitter")
+        splitter.addWidget(self._command_window)
+        splitter.addWidget(self._workspace)
+        splitter.setStretchFactor(0, 3)
+        splitter.setStretchFactor(1, 2)
+
+        layout = QtWidgets.QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(splitter)
+
+    def command_window_widget(self) -> PythonReplWidget:
+        """Return the embedded Python REPL command window."""
+        return self._command_window
+
+    def workspace_widget(self) -> WorkspaceTableWidget:
+        """Return the embedded MATLAB-style workspace table."""
+        return self._workspace
 
 
 class UnifiedToolsSidebar(
@@ -78,8 +147,10 @@ class UnifiedToolsSidebar(
         self._help_dialog: QtWidgets.QDialog | None = None
         self._settings_dialog: QtWidgets.QDialog | None = None
         self._workspace_list: QtWidgets.QListWidget | None = None
+        self._workspace_table: QtWidgets.QWidget | None = None
         self._settings_button: QtWidgets.QToolButton | None = None
         self._project_root = Path(project_root or Path.cwd()).expanduser().resolve()
+        self._layout_mode = _coerce_layout_mode(self._state.layout_mode)
 
         self.tabs = QtWidgets.QTabWidget(self)
         self.tabs.setObjectName(SIDEKICK_TABS_OBJECT_NAME)
@@ -187,6 +258,35 @@ class UnifiedToolsSidebar(
     def workspace_list_widget(self) -> QtWidgets.QListWidget | None:
         """Return the registered workspace list widget, or *None*."""
         return getattr(self, "_workspace_list", None)
+
+    def register_workspace_table_widget(self, widget: QtWidgets.QWidget) -> None:
+        """Register the MATLAB-style workspace table widget."""
+        self._workspace_table = widget
+
+    def workspace_table_widget(self) -> QtWidgets.QWidget | None:
+        """Return the registered workspace table widget, or *None*."""
+        return getattr(self, "_workspace_table", None)
+
+    def layout_mode(self) -> LayoutMode:
+        """Return the currently active sidebar layout strategy."""
+        return self._layout_mode
+
+    def set_layout_mode(self, mode: LayoutMode | str) -> None:
+        """Switch between the classic sidebar and MATLAB-home layout.
+
+        Persists the choice on ``_state.layout_mode`` so it is captured by
+        :meth:`snapshot_state` and survives a host restart.
+
+        Raises:
+            TypeError: If ``mode`` is ``None`` or not a ``LayoutMode`` value.
+            ValueError: If ``mode`` is an unknown string.
+        """
+        if mode is None:
+            raise TypeError("mode must not be None")
+        resolved = _coerce_layout_mode(mode)
+        self._layout_mode = resolved
+        self._state.layout_mode = resolved.value
+        self._emit_context()
 
     def register_settings_button(self, button: QtWidgets.QToolButton) -> None:
         """Register the settings toolbar button for enabled-state management."""
@@ -324,6 +424,7 @@ class UnifiedToolsSidebar(
             width=width,
             height=height,
             active_tab=self.active_tab_id(),
+            layout_mode=self._layout_mode.value,
             minimized=self._state.minimized,
             tab_order=self.visible_tab_ids(),
             hidden_tabs=self.hidden_tab_ids(),
@@ -344,6 +445,7 @@ class UnifiedToolsSidebar(
 
     def apply_state(self, state: SidebarState) -> None:
         self._state = state
+        self._layout_mode = _coerce_layout_mode(state.layout_mode)
         self.resize(state.width, state.height)
         self._apply_tab_state(state)
         self.set_minimized(state.minimized)
@@ -486,3 +588,17 @@ class UnifiedToolsSidebar(
 
 
 SidekickSidebar = UnifiedToolsSidebar
+
+
+def _coerce_layout_mode(value: LayoutMode | str | None) -> LayoutMode:
+    """Coerce ``value`` to a :class:`LayoutMode`, defaulting to SIDEBAR."""
+    if value is None:
+        return LayoutMode.SIDEBAR
+    if isinstance(value, LayoutMode):
+        return value
+    if not isinstance(value, str):
+        raise TypeError("layout mode must be a LayoutMode or str")
+    try:
+        return LayoutMode(value)
+    except ValueError as exc:
+        raise ValueError(f"unknown layout mode: {value!r}") from exc
