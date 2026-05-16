@@ -212,3 +212,4 @@ src/data_processing/data_processor/python/data_processor/core/undo_redo.py
 src/shared/python/upstream_drift_tools/process_calculators/pressure_drop_calculator/utils/fitting_loss_coefficients.py
 src/shared/python/upstream_drift_tools/ui/tools_sidebar/runtime_tabs.py
 src/shared/python/ai/adapters/github_cli_provider.py
+src/shared/python/ai/mcp/notebooklm_server.py
