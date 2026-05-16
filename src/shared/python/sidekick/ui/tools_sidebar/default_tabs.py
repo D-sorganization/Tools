@@ -17,6 +17,7 @@ from .data_explorer_tab import (
 )
 from .data_processor_tab import DATA_PROCESSOR_TAB_ID, build_data_processor_tab
 from .help_content import DEFAULT_SIDEBAR_TAB_HELP
+from .jupyter_tab import JUPYTER_TAB_ID
 from .project_file_explorer import ProjectFileExplorer
 from .qt_compat import QT_API, QtWidgets
 from .reporting_tab import build_reporting_tab
@@ -141,6 +142,13 @@ def build_default_tab_definitions(
             build_reporting_tab,
             duplicate_enabled=False,
             help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP["reporting"]),
+        ),
+        tab_definition(
+            JUPYTER_TAB_ID,
+            "Jupyter",
+            build_jupyter_tab,
+            visible=False,
+            help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP[JUPYTER_TAB_ID]),
         ),
     ]
 
@@ -293,6 +301,32 @@ def build_function_generator_tab(sidebar: Any) -> QtWidgets.QWidget:
         )
     widget.setObjectName(theme.SIDEKICK_FUNCTION_GENERATOR_OBJECT_NAME)
     widget.setToolTip(DEFAULT_SIDEBAR_TAB_HELP[FUNCTION_GENERATOR_TAB_ID]["summary"])
+    return widget
+
+
+def build_jupyter_tab(sidebar: Any) -> QtWidgets.QWidget:
+    """Build the Sidekick Jupyter notebook tab.
+
+    The factory is unconditionally registered so the tab is always
+    discoverable. When the optional ``nbformat`` dependency is missing,
+    the factory returns :class:`JupyterUnavailableWidget` which shows
+    an actionable install hint. When the dependency is present the
+    tab opens an empty :class:`JupyterNotebookWidget`; loading a
+    specific notebook into the tab is wired in Phase 3 (#2877).
+    """
+    from .jupyter_tab import (
+        JupyterNotebookWidget,
+        JupyterTabAvailability,
+        JupyterUnavailableWidget,
+        NotebookDocument,
+    )
+
+    available, install_hint = JupyterTabAvailability.check()
+    if not available:
+        widget = JupyterUnavailableWidget(install_hint=install_hint, parent=sidebar)
+    else:
+        widget = JupyterNotebookWidget(document=NotebookDocument(), parent=sidebar)
+    widget.setToolTip(DEFAULT_SIDEBAR_TAB_HELP[JUPYTER_TAB_ID]["summary"])
     return widget
 
 
