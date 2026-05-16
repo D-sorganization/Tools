@@ -71,6 +71,11 @@ _CLI_AGENT_DESCRIPTORS: tuple[tuple[str, str, str], ...] = (
     ("codex", "Codex CLI", "codex"),
     ("cline-cli", "Cline", "cline"),
     ("gemini-cli", "Gemini CLI", "gemini"),
+    # Tools #2899 — GitHub CLI as a chat-level agent provider. Complementary
+    # to the GitHub MCP server (Tools #2897): MCP exposes structured tool
+    # calls, while this provider lets the chat talk to ``gh`` as if it were
+    # an agent (raw shell-style invocations from natural-language intent).
+    ("github-cli", "GitHub CLI", "gh"),
 )
 
 
