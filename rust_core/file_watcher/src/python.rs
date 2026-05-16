@@ -43,7 +43,7 @@ impl From<ChangeEvent> for PyChangeEvent {
 #[pymethods]
 impl PyChangeEvent {
     fn __repr__(&self) -> String {
-        format!("ChangeEvent(path={!r}, kind={!r})", self.path, self.kind)
+        format!("ChangeEvent(path={:?}, kind={:?})", self.path, self.kind)
     }
 }
 
