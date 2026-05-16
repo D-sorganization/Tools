@@ -26,8 +26,9 @@ import base64
 import json
 import logging
 import threading
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from PyQt6.QtCore import Qt, QTimer, QUrl, pyqtSignal
 from PyQt6.QtGui import QKeySequence, QShortcut
@@ -50,6 +51,7 @@ from PyQt6.QtWidgets import (
 )
 
 from ._theme_protocol import ThemeProviderProtocol, _DefaultDarkTheme
+from ._workspace_protocol import WorkspaceContextProtocol, WorkspaceVariableInfo
 from .chat_dock_widget import (
     _DEFAULT_SERVER,
     _read_shared_session_id,
@@ -73,12 +75,10 @@ def _get_theme_colors(
     """
     provider: ThemeProviderProtocol = theme_provider or _DefaultDarkTheme()
     try:
-        colors: dict[str, str] = provider.get_current_colors()
-        return colors
+        return cast(dict[str, str], provider.get_current_colors())
     except Exception:  # noqa: BLE001 - defensive: a misbehaving provider
         # must not crash the widget
-        colors = _DefaultDarkTheme().get_current_colors()
-        return colors
+        return cast(dict[str, str], _DefaultDarkTheme().get_current_colors())
 
 
 class ChatMessageBubble(QFrame):
@@ -189,6 +189,21 @@ class ChatDockWidget(QDockWidget):
             ``sys.path`` (Tools issue #2766). Pass an app-specific manager
             (e.g. ``theme.theme_manager.get_theme_manager()``) to honor the
             host application's theme.
+        workspace_provider: Optional bridge to a host calculation workspace
+            (Tools issue #2849). When supplied, the dock injects a short
+            ``workspace_context`` field into outbound chat payloads and
+            enables the ``/ws.read`` and ``/ws.write`` slash commands.
+            When ``None`` (the default), the dock behaves exactly as it
+            did before #2849 — no workspace context, no extra slash
+            commands.
+        plot_request_sink: Optional callable that receives a plot spec from
+            the chat. When supplied, the ``/plot`` slash command parses
+            its JSON argument and forwards it to this sink. The chat
+            module intentionally treats the spec as ``Any`` to avoid a
+            hard dependency on the upstream plotting package; hosts
+            typically pass a function that wraps the JSON dict into a
+            :class:`upstream_drift_tools.ui.tools_sidebar.calculator_plotting.CalculatorPlotRequest`
+            and routes it to their plot tab.
         parent: Parent widget.
     """
 
@@ -227,6 +242,8 @@ class ChatDockWidget(QDockWidget):
         project_root: str | Path | None = None,
         terminal_registry: TerminalProviderRegistry | None = None,
         theme_provider: ThemeProviderProtocol | None = None,
+        workspace_provider: WorkspaceContextProtocol | None = None,
+        plot_request_sink: Callable[[Any], None] | None = None,
         parent: QWidget | None = None,
     ) -> None:
         if app_context is None:
@@ -248,6 +265,11 @@ class ChatDockWidget(QDockWidget):
         self._theme_provider: ThemeProviderProtocol = (
             theme_provider or _DefaultDarkTheme()
         )
+        # Tools issue #2849: optional bridge into a host calculation
+        # workspace + plot tab. Both default to None so the standalone
+        # chat continues to work without any host wiring.
+        self._workspace_provider: WorkspaceContextProtocol | None = workspace_provider
+        self._plot_request_sink: Callable[[Any], None] | None = plot_request_sink
         self._is_streaming = False
         self._current_bubble: ChatMessageBubble | None = None
         self._terminal_session_id: str | None = None
@@ -606,17 +628,33 @@ class ChatDockWidget(QDockWidget):
         self._send_btn.setEnabled(False)
         self._current_bubble = self._add_bubble("assistant", "")
 
-        self._send_ws(
-            {
-                "action": "send",
-                "message": text,
-                "app_context": self._app_context,
-            }
-        )
+        payload: dict[str, Any] = {
+            "action": "send",
+            "message": text,
+            "app_context": self._app_context,
+        }
+        workspace_context = self._build_workspace_context_block()
+        if workspace_context:
+            payload["workspace_context"] = workspace_context
+        self._send_ws(payload)
 
     def _handle_slash_command(self, text: str) -> None:
-        parts = text.split()
+        if text is None:
+            raise ValueError("text must be provided")
+        parts = text.split(maxsplit=1)
         cmd = parts[0][1:].lower()
+        arg = parts[1] if len(parts) > 1 else ""
+
+        # Tools issue #2849: workspace + plot bridge commands route
+        # locally to the injected host adapters without touching the
+        # WebSocket. Unwired hosts (no provider/sink) get a polite
+        # "not available" reply instead of a silent no-op.
+        if cmd in {"ws.read", "ws.write", "plot"}:
+            self._input_edit.clear()
+            self._add_bubble("user", text)
+            self._dispatch_workspace_command(cmd, arg)
+            return
+
         self._input_edit.clear()
         self._add_bubble("user", text)
         self._is_streaming = True
@@ -631,6 +669,141 @@ class ChatDockWidget(QDockWidget):
                 "app_context": self._app_context,
             }
         )
+
+    # ── Workspace bridge (Tools issue #2849) ─────────────────────────
+
+    def _build_workspace_context_block(self) -> str:
+        """Return a bounded system-prompt fragment listing workspace vars.
+
+        Returns an empty string when no provider is wired so the dock's
+        outbound payload stays byte-for-byte identical to the pre-#2849
+        shape for standalone use.
+        """
+        provider = self._workspace_provider
+        if provider is None:
+            return ""
+        try:
+            variables = provider.describe()
+        except Exception:  # noqa: BLE001 - host adapter must not crash chat
+            logger.exception("workspace provider describe() failed")
+            return ""
+        if not variables:
+            return ""
+
+        lines = ["Available workspace variables:"]
+        for info in variables:
+            if not isinstance(info, WorkspaceVariableInfo):
+                # Defensive: tolerate raw dicts/objects that look like
+                # the dataclass without crashing the chat.
+                continue  # type: ignore[unreachable]
+            shape_str = (
+                ", ".join(str(dim) for dim in info.shape)
+                if info.shape is not None
+                else "scalar"
+            )
+            lines.append(
+                f"- {info.name}: {info.dtype}, shape ({shape_str}), "
+                f'preview="{info.preview}"'
+            )
+        return "\n".join(lines)
+
+    def _dispatch_workspace_command(self, cmd: str, arg: str) -> None:
+        """Route ``/ws.read``, ``/ws.write`` and ``/plot`` slash commands."""
+        if cmd == "ws.read":
+            self._handle_ws_read(arg)
+            return
+        if cmd == "ws.write":
+            self._handle_ws_write(arg)
+            return
+        if cmd == "plot":
+            self._handle_plot(arg)
+            return
+        # Unreachable because _handle_slash_command pre-filters; raise so
+        # accidental future call sites surface loudly during dev.
+        raise ValueError(f"unknown workspace command: {cmd}")
+
+    def _handle_ws_read(self, arg: str) -> None:
+        name = arg.strip()
+        if not name:
+            self._add_bubble("assistant", "Usage: /ws.read NAME")
+            return
+        provider = self._workspace_provider
+        if provider is None:
+            self._add_bubble(
+                "assistant",
+                "Workspace bridge not available in this chat.",
+            )
+            return
+        try:
+            value = provider.read(name)
+        except KeyError:
+            self._add_bubble("assistant", f"Workspace variable not found: {name}")
+            return
+        except Exception as exc:  # noqa: BLE001 - host adapter errors
+            logger.exception("workspace read failed for %s", name)
+            self._add_bubble("assistant", f"Workspace read failed: {exc}")
+            return
+        preview = repr(value)
+        if len(preview) > 200:
+            preview = preview[:197] + "..."
+        self._add_bubble("assistant", f"{name} = {preview}")
+
+    def _handle_ws_write(self, arg: str) -> None:
+        parts = arg.split(maxsplit=1)
+        if len(parts) != 2:
+            self._add_bubble("assistant", "Usage: /ws.write NAME JSON_VALUE")
+            return
+        name, raw_value = parts[0].strip(), parts[1].strip()
+        if not name:
+            self._add_bubble("assistant", "Usage: /ws.write NAME JSON_VALUE")
+            return
+        provider = self._workspace_provider
+        if provider is None:
+            self._add_bubble(
+                "assistant",
+                "Workspace bridge not available in this chat.",
+            )
+            return
+        try:
+            value = json.loads(raw_value)
+        except (json.JSONDecodeError, TypeError) as exc:
+            self._add_bubble("assistant", f"Could not parse JSON value: {exc}")
+            return
+        try:
+            provider.write(name, value)
+        except TypeError as exc:
+            self._add_bubble("assistant", f"Workspace write rejected: {exc}")
+            return
+        except Exception as exc:  # noqa: BLE001 - host adapter errors
+            logger.exception("workspace write failed for %s", name)
+            self._add_bubble("assistant", f"Workspace write failed: {exc}")
+            return
+        self._add_bubble("assistant", f"Wrote workspace variable: {name}")
+
+    def _handle_plot(self, arg: str) -> None:
+        spec_text = arg.strip()
+        if not spec_text:
+            self._add_bubble("assistant", "Usage: /plot {json plot spec}")
+            return
+        sink = self._plot_request_sink
+        if sink is None:
+            self._add_bubble(
+                "assistant",
+                "Plot tab not available in this chat.",
+            )
+            return
+        try:
+            spec = json.loads(spec_text)
+        except (json.JSONDecodeError, TypeError) as exc:
+            self._add_bubble("assistant", f"Could not parse plot spec JSON: {exc}")
+            return
+        try:
+            sink(spec)
+        except Exception as exc:  # noqa: BLE001 - host adapter errors
+            logger.exception("plot request sink failed")
+            self._add_bubble("assistant", f"Plot request failed: {exc}")
+            return
+        self._add_bubble("assistant", "Plot request submitted.")
 
     def _populate_shell_combo(self) -> None:
         self._shell_combo.clear()
@@ -727,7 +900,10 @@ class ChatDockWidget(QDockWidget):
         if not app:
             return
         parent = self.parentWidget()
-        pixmap = parent.grab() if parent else app.primaryScreen().grabWindow(0)
+        screen = cast("QApplication", app).primaryScreen()
+        if not screen:
+            return
+        pixmap = parent.grab() if parent else screen.grabWindow(0)
         from PyQt6.QtCore import QBuffer, QByteArray, QIODevice
 
         ba = QByteArray()
@@ -828,9 +1004,9 @@ class ChatDockWidget(QDockWidget):
         while self._message_layout.count() > 1:
             item = self._message_layout.takeAt(0)
             if item:
-                widget = item.widget()
-                if widget is not None:
-                    widget.deleteLater()
+                w = item.widget()
+                if w:
+                    w.deleteLater()
         for msg in messages:
             role = msg.get("role", "user")
             content = msg.get("content", "")
