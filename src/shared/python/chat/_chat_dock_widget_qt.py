@@ -75,12 +75,10 @@ def _get_theme_colors(
     """
     provider: ThemeProviderProtocol = theme_provider or _DefaultDarkTheme()
     try:
-        colors: dict[str, str] = provider.get_current_colors()
-        return colors
+        return cast(dict[str, str], provider.get_current_colors())
     except Exception:  # noqa: BLE001 - defensive: a misbehaving provider
         # must not crash the widget
-        colors = _DefaultDarkTheme().get_current_colors()
-        return colors
+        return cast(dict[str, str], _DefaultDarkTheme().get_current_colors())
 
 
 class ChatMessageBubble(QFrame):
@@ -905,7 +903,7 @@ class ChatDockWidget(QDockWidget):
         screen = cast("QApplication", app).primaryScreen()
         if not screen:
             return
-        pixmap = parent.grab() if parent else screen.grabWindow(0)  # type: ignore[arg-type]
+        pixmap = parent.grab() if parent else screen.grabWindow(0)
         from PyQt6.QtCore import QBuffer, QByteArray, QIODevice
 
         ba = QByteArray()
