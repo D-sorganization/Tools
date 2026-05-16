@@ -130,7 +130,7 @@ def build_default_tab_definitions(
             "Reporting",
             build_reporting_tab,
             duplicate_enabled=False,
-            help_metadata={"summary": "Agentic reporting and summarization."},
+            help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP["reporting"]),
         ),
     ]
 

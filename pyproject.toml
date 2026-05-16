@@ -190,6 +190,7 @@ exclude = [
 # Ruff configuration lives in ruff.toml (authoritative). [tool.ruff] and
 # [tool.black] sections removed to eliminate conflicting duplicate config.
 [tool.pytest.ini_options]
+qt_api = "pyqt6"
 testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]

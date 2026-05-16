@@ -156,6 +156,15 @@ DEFAULT_SIDEBAR_TAB_HELP: dict[str, dict[str, str]] = {
             "restore points.",
         ),
     ),
+    "reporting": _tab_help(
+        "Reporting",
+        "Agentic reporting and summarization.",
+        tips=(
+            "Generate comprehensive session reports with workspace context",
+            "and chat history.",
+        ),
+        source="upstream_drift_tools.ui.tools_sidebar.reporting_tab",
+    ),
 }
 
 
