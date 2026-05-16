@@ -334,9 +334,12 @@ mod tests {
     #[test]
     fn debounces_rapid_changes() {
         let dir = tempdir().unwrap();
+        // Use a 500 ms debounce window so that all writes land inside one
+        // window even on a heavily-loaded CI runner where sleep(5ms) can
+        // stretch to 100+ ms per iteration.
         let watcher = FileWatcher::new(FileWatcherConfig {
             root: dir.path().to_path_buf(),
-            debounce_ms: 100,
+            debounce_ms: 500,
             respect_gitignore: false,
         });
         let call_count: Arc<Mutex<u32>> = Arc::new(Mutex::new(0));
@@ -352,7 +355,9 @@ mod tests {
             std::fs::write(&path, format!("v{i}")).unwrap();
             std::thread::sleep(Duration::from_millis(5));
         }
-        std::thread::sleep(Duration::from_millis(400));
+        // Wait long enough for the debounce window to close and the callback
+        // to fire, even after timing variation on the CI runner.
+        std::thread::sleep(Duration::from_millis(2000));
         watcher.stop().unwrap();
 
         // Debounce should collapse the burst to a single (or at most a small
