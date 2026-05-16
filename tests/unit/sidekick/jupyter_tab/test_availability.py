@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-import builtins
+import sys
 from unittest.mock import patch
 
 import pytest
@@ -25,15 +25,17 @@ def test_check_returns_true_when_nbformat_is_importable() -> None:
 
 
 def test_check_returns_install_hint_when_nbformat_missing() -> None:
-    real_import = builtins.__import__
-
-    def fake_import(name: str, *args: object, **kwargs: object) -> object:
-        if name == "nbformat" or name.startswith("nbformat."):
-            raise ImportError("No module named 'nbformat'")
-        return real_import(name, *args, **kwargs)
-
-    with patch("builtins.__import__", side_effect=fake_import):
-        available, message = JupyterTabAvailability.check()
+    # Force a re-import attempt and make it fail to simulate missing dep.
+    removed = {
+        name: sys.modules.pop(name)
+        for name in list(sys.modules)
+        if name == "nbformat" or name.startswith("nbformat.")
+    }
+    try:
+        with patch.dict(sys.modules, {"nbformat": None}):
+            available, message = JupyterTabAvailability.check()
+    finally:
+        sys.modules.update(removed)
     assert available is False
     assert "pip install" in message
     assert "jupyter" in message

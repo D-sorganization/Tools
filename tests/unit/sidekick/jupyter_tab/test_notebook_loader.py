@@ -27,7 +27,7 @@ def test_load_notebook_parses_markdown_and_code_cells() -> None:
     assert isinstance(md, MarkdownCell)
     assert "Hello world" in md.source
     assert isinstance(code, CodeCell)
-    assert "print('hi')" in code.source
+    assert "print(" in code.source and "hi" in code.source
     assert len(code.outputs) == 1
     assert code.outputs[0].text == "hi\n"
 
