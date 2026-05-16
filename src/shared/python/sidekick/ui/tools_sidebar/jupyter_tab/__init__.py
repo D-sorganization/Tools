@@ -1,8 +1,12 @@
-"""Sidekick Jupyter notebook tab — Phase 1 read-only viewer (Tools #2875).
+"""Sidekick Jupyter notebook tab — Phase 1 read-only viewer + Phase 2 session model.
 
-Phase 1 scope: render an ``.ipynb`` notebook inside the Sidekick tab as
-a read-only document with markdown, code, and raw cells. Execution
-(Phase 2 — #2876) and persistence (Phase 3 — #2877) come later.
+Phase 1 (Tools #2875): render an ``.ipynb`` notebook inside the Sidekick tab
+as a read-only document with markdown, code, and raw cells.
+
+Phase 2 (Tools #2876): session model with path validation and secure
+persistence via :class:`NotebookSessionModel` and
+:class:`NotebookSessionManager`.  :class:`SidekickNotebookWidget` is the
+session-aware widget wrapper introduced in Phase 2.
 """
 
 from .availability import JupyterTabAvailability
@@ -15,6 +19,8 @@ from .notebook_model import (
     NotebookDocument,
     RawCell,
 )
+from .notebook_session import NotebookSessionManager, NotebookSessionModel
+from .sidekick_notebook_widget import SidekickNotebookWidget
 from .unavailable_widget import JupyterUnavailableWidget
 from .widget import JupyterNotebookWidget
 
@@ -31,6 +37,9 @@ __all__ = [
     "NotebookCell",
     "NotebookDocument",
     "NotebookLoadError",
+    "NotebookSessionManager",
+    "NotebookSessionModel",
     "RawCell",
+    "SidekickNotebookWidget",
     "load_notebook",
 ]
