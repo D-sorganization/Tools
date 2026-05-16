@@ -305,7 +305,7 @@ omit = [
 # Coverage floor — raised to 60% per issue #2474 (production readiness).
 # Previous ratchet plan (issue #2406) targeted 60% as Phase 3 / v1.3;
 # issue #2474 accelerates this directly as the repo-wide gate.
-fail_under = 10
+fail_under = 25
 show_missing = true
 skip_empty = true
 exclude_lines = [
@@ -322,7 +322,20 @@ output = "coverage.json"
 [tool.mypy]
 python_version = "3.11"  # Matches pyproject requires-python and ruff target-version
 files = ["src"]
-mypy_path = "src"
+mypy_path = [
+    "src",
+    "src/python/src",
+    "src/shared/python",
+    "src/tools",
+    "src/web_applications",
+    "src/data_processing/data_processor/python",
+    "src/solar_system_model",
+    "src/scientific_modeling/solar_system_model",
+    "src/scientific_modeling/rrt_path_planner/python/src",
+    "src/media_processing/video_processor/python",
+    "src/pendulum_simulator/src",
+    "src/folder_tool",
+]
 ignore_missing_imports = true
 check_untyped_defs = true
 disallow_untyped_defs = false
