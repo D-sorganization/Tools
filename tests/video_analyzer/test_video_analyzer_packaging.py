@@ -38,5 +38,5 @@ from video_analyzer.analyzer import SwingAnalyzer
 def test_video_path_valid_precondition() -> None:
     analyzer = SwingAnalyzer()
     assert analyzer._video_path_valid("test.mp4") is True
-    assert analyzer._video_path_valid("") is True
+    assert analyzer._video_path_valid("") is False
     assert analyzer._video_path_valid(None) is False
