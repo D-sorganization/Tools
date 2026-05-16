@@ -144,9 +144,7 @@ def test_create_notebook_rejects_empty_title() -> None:
 
 
 def test_create_notebook_rejects_non_list_sources() -> None:
-    response = _call_tool(
-        "create_notebook", {"title": "X", "sources": "not-a-list"}
-    )
+    response = _call_tool("create_notebook", {"title": "X", "sources": "not-a-list"})
     assert "error" in response
 
 
@@ -170,9 +168,10 @@ def test_add_source_rejects_path_traversal() -> None:
         {"notebook_id": "nb-1", "source_url_or_path": "../../../etc/passwd"},
     )
     assert "error" in response
-    assert "traversal" in response["error"]["message"].lower() or "reject" in response[
-        "error"
-    ]["message"].lower()
+    assert (
+        "traversal" in response["error"]["message"].lower()
+        or "reject" in response["error"]["message"].lower()
+    )
 
 
 def test_add_source_rejects_empty_notebook_id() -> None:
@@ -227,9 +226,7 @@ def test_follow_citation_returns_source() -> None:
 
 
 def test_follow_citation_requires_citation_id() -> None:
-    response = _call_tool(
-        "follow_citation", {"notebook_id": "nb-1", "citation_id": ""}
-    )
+    response = _call_tool("follow_citation", {"notebook_id": "nb-1", "citation_id": ""})
     assert "error" in response
 
 
@@ -332,9 +329,7 @@ def test_unknown_tool_returns_minus32000() -> None:
         ("attach_to_chat", {"notebook_id": "n"}),
     ],
 )
-def test_phase2_tool_dispatch_happy_paths(
-    tool_name: str, args: dict[str, Any]
-) -> None:
+def test_phase2_tool_dispatch_happy_paths(tool_name: str, args: dict[str, Any]) -> None:
     response = _call_tool(tool_name, args)
     assert "result" in response, f"{tool_name} failed: {response}"
 
