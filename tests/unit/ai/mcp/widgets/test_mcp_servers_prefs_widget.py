@@ -138,13 +138,11 @@ class TestMcpServersPrefsWidgetImport:
         tmp_config_path: Path,
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
+        from src.shared.python.ai.mcp.widgets import mcp_servers_prefs_widget as mod
+
         widget = McpServersPrefsWidget(config_path=tmp_config_path)
         # Force the discover hook to return an empty list.
-        monkeypatch.setattr(
-            "src.shared.python.ai.mcp.widgets.mcp_servers_prefs_widget"
-            "._discover_claude_desktop_servers",
-            lambda: [],
-        )
+        monkeypatch.setattr(mod, "_discover_claude_desktop_servers", lambda: [])
         imported = widget.import_from_claude_desktop()
         assert imported == 0
         assert widget.server_count == 0
@@ -155,16 +153,14 @@ class TestMcpServersPrefsWidgetImport:
         tmp_config_path: Path,
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
+        from src.shared.python.ai.mcp.widgets import mcp_servers_prefs_widget as mod
+
         widget = McpServersPrefsWidget(config_path=tmp_config_path)
         servers = [
             McpServerConfig(name="cd-srv-1", command="echo"),
             McpServerConfig(name="cd-srv-2", command="echo"),
         ]
-        monkeypatch.setattr(
-            "src.shared.python.ai.mcp.widgets.mcp_servers_prefs_widget"
-            "._discover_claude_desktop_servers",
-            lambda: servers,
-        )
+        monkeypatch.setattr(mod, "_discover_claude_desktop_servers", lambda: servers)
         imported = widget.import_from_claude_desktop()
         assert imported == 2
         assert widget.server_count == 2
@@ -175,17 +171,15 @@ class TestMcpServersPrefsWidgetImport:
         tmp_config_path: Path,
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
+        from src.shared.python.ai.mcp.widgets import mcp_servers_prefs_widget as mod
+
         widget = McpServersPrefsWidget(config_path=tmp_config_path)
         widget.add_server(McpServerConfig(name="cd-srv-1", command="echo"))
         servers = [
             McpServerConfig(name="cd-srv-1", command="echo"),
             McpServerConfig(name="cd-srv-2", command="echo"),
         ]
-        monkeypatch.setattr(
-            "src.shared.python.ai.mcp.widgets.mcp_servers_prefs_widget"
-            "._discover_claude_desktop_servers",
-            lambda: servers,
-        )
+        monkeypatch.setattr(mod, "_discover_claude_desktop_servers", lambda: servers)
         imported = widget.import_from_claude_desktop()
         # Only cd-srv-2 is new.
         assert imported == 1
