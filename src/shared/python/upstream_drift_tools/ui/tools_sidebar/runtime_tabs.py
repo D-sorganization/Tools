@@ -442,12 +442,14 @@ class _SidebarWorkspaceAdapter:
         not need to import from the chat package at module-import time;
         the chat dock duck-types against the actual values returned.
         """
-        from chat._workspace_protocol import WorkspaceVariableInfo
+        _WorkspaceVariableInfo = importlib.import_module(
+            "chat._workspace_protocol"
+        ).WorkspaceVariableInfo
 
         items: list[Any] = []
         for variable in self._registry.variables():
             items.append(
-                WorkspaceVariableInfo(
+                _WorkspaceVariableInfo(
                     name=variable.name,
                     dtype=variable.dtype or variable.type_name,
                     shape=tuple(variable.shape) if variable.shape else None,
