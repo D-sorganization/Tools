@@ -54,6 +54,8 @@ class PanelHeaderController(QFrame):
     peer_review_requested = pyqtSignal()
     settings_requested = pyqtSignal()
     close_requested = pyqtSignal()
+    copy_thread_requested = pyqtSignal()
+    save_thread_requested = pyqtSignal()
 
     def __init__(self, initial_settings: AISettings, parent: Any = None) -> None:
         super().__init__(parent)
@@ -128,6 +130,16 @@ class PanelHeaderController(QFrame):
         )
         self.auto_index_checkbox.toggled.connect(self.auto_index_toggled.emit)
         layout.addWidget(self.auto_index_checkbox)
+
+        copy_thread_btn = QPushButton("Copy Thread")
+        copy_thread_btn.setToolTip("Copy full conversation to clipboard")
+        copy_thread_btn.clicked.connect(self.copy_thread_requested.emit)
+        layout.addWidget(copy_thread_btn)
+
+        save_thread_btn = QPushButton("Save as Markdown")
+        save_thread_btn.setToolTip("Save conversation to a .md file")
+        save_thread_btn.clicked.connect(self.save_thread_requested.emit)
+        layout.addWidget(save_thread_btn)
 
         new_chat_btn = QPushButton("New Chat")
         new_chat_btn.clicked.connect(self.new_chat_requested.emit)

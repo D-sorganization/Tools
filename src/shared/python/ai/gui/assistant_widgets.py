@@ -14,6 +14,7 @@ from PyQt6.QtWidgets import (
     QPlainTextEdit,
     QSizePolicy,
     QTextEdit,
+    QToolButton,
     QVBoxLayout,
     QWidget,
 )
@@ -66,6 +67,16 @@ class MessageWidget(QFrame):
         time_label = QLabel(self._timestamp.strftime("%H:%M"))
         time_label.setStyleSheet(Styles.TEXT_MUTED)
         header.addWidget(time_label)
+
+        self._copy_btn = QToolButton()
+        self._copy_btn.setText("Copy")
+        self._copy_btn.setToolTip("Copy message to clipboard")
+        self._copy_btn.setStyleSheet(
+            "QToolButton { color: #aaaaaa; border: none; padding: 2px 4px; }"
+            "QToolButton:hover { color: #ffffff; }"
+        )
+        self._copy_btn.clicked.connect(self._on_copy_clicked)
+        header.addWidget(self._copy_btn)
 
         layout.addLayout(header)
 
@@ -162,6 +173,17 @@ class MessageWidget(QFrame):
     def get_content(self) -> str:
         """Get current content."""
         return self._content
+
+    def _on_copy_clicked(self) -> None:
+        """Copy this message's raw text to the system clipboard."""
+        from src.shared.python.ai.gui.chat_export import copy_message_to_clipboard
+
+        copy_message_to_clipboard(self._content)
+        original = self._copy_btn.text()
+        self._copy_btn.setText("Copied!")
+        from PyQt6.QtCore import QTimer
+
+        QTimer.singleShot(1500, lambda: self._copy_btn.setText(original))
 
 
 class StreamWorker(QThread):
