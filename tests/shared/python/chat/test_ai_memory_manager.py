@@ -139,7 +139,9 @@ def test_default_build_system_prompt_has_no_golf_branding() -> None:
 
 
 def test_upstream_drift_context_emits_golf_branding() -> None:
-    """app_context='upstream_drift' should still produce UpstreamDrift prompt (#2765)."""
+    """
+    app_context='upstream_drift' should still produce UpstreamDrift prompt (#2765).
+    """
     prompt = _Adapter().build_system_prompt([], app_context="upstream_drift")
 
     assert "UpstreamDrift" in prompt

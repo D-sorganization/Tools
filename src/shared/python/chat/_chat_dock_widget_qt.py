@@ -28,7 +28,7 @@ import logging
 import threading
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from PyQt6.QtCore import Qt, QTimer, QUrl, pyqtSignal
 from PyQt6.QtGui import QKeySequence, QShortcut
@@ -697,7 +697,7 @@ class ChatDockWidget(QDockWidget):
             if not isinstance(info, WorkspaceVariableInfo):
                 # Defensive: tolerate raw dicts/objects that look like
                 # the dataclass without crashing the chat.
-                continue
+                continue  # type: ignore[unreachable]
             shape_str = (
                 ", ".join(str(dim) for dim in info.shape)
                 if info.shape is not None
@@ -902,7 +902,10 @@ class ChatDockWidget(QDockWidget):
         if not app:
             return
         parent = self.parentWidget()
-        pixmap = parent.grab() if parent else app.primaryScreen().grabWindow(0)
+        screen = cast("QApplication", app).primaryScreen()
+        if not screen:
+            return
+        pixmap = parent.grab() if parent else screen.grabWindow(0)  # type: ignore[arg-type]
         from PyQt6.QtCore import QBuffer, QByteArray, QIODevice
 
         ba = QByteArray()
@@ -1003,9 +1006,9 @@ class ChatDockWidget(QDockWidget):
         while self._message_layout.count() > 1:
             item = self._message_layout.takeAt(0)
             if item:
-                widget = item.widget()
-                if widget is not None:
-                    widget.deleteLater()
+                w = item.widget()
+                if w:
+                    w.deleteLater()
         for msg in messages:
             role = msg.get("role", "user")
             content = msg.get("content", "")
