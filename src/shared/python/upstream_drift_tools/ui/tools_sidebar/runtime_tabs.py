@@ -160,9 +160,7 @@ class SidekickTerminalWidget(QtWidgets.QWidget):
         try:
             compiled = compile(script, "<sidekick-terminal>", "exec")
             with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
-                exec(
-                    compiled, self._namespace, self._namespace
-                )  # noqa: S102  # nosec B102
+                exec(compiled, self._namespace, self._namespace)  # noqa: S102  # nosec B102
         except Exception as exc:  # noqa: BLE001 - terminal reports user code errors
             logger.debug("Sidekick terminal execution failed: %s", exc)
             self._append_output(_format_terminal_output(stdout, stderr, exc))

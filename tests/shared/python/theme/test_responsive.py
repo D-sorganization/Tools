@@ -87,8 +87,7 @@ def test_form_layout_uses_wrapping_growth_policy(qapp: QApplication) -> None:
 
     assert layout.rowWrapPolicy() == QFormLayout.RowWrapPolicy.WrapLongRows
     assert (
-        layout.fieldGrowthPolicy()
-        == QFormLayout.FieldGrowthPolicy.ExpandingFieldsGrow
+        layout.fieldGrowthPolicy() == QFormLayout.FieldGrowthPolicy.ExpandingFieldsGrow
     )
 
 

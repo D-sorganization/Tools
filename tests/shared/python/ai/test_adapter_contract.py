@@ -43,15 +43,17 @@ _PACKAGE_STUBS: list[tuple[str, str | None]] = [
 for _mod_name, _rel_path in _PACKAGE_STUBS:
     if _mod_name not in sys.modules:
         import types
+
         _stub = types.ModuleType(_mod_name)
         if _rel_path is not None:
             _stub.__path__ = [str(ROOT / _rel_path)]
         sys.modules[_mod_name] = _stub
 
 
-
-
-_logging_config_stub = sys.modules.setdefault("src.shared.python.logging_pkg.logging_config", types.ModuleType("src.shared.python.logging_pkg.logging_config"))
+_logging_config_stub = sys.modules.setdefault(
+    "src.shared.python.logging_pkg.logging_config",
+    types.ModuleType("src.shared.python.logging_pkg.logging_config"),
+)
 _logging_config_stub.get_logger = logging.getLogger  # type: ignore[attr-defined]
 _logging_config_stub.setup_logging = lambda *a, **kw: None  # type: ignore[attr-defined]
 
