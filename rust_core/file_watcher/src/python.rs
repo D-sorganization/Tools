@@ -82,7 +82,7 @@ impl PyFileWatcher {
         let cb_slot = self.callback.clone();
         self.inner.on_change(move |events| {
             Python::with_gil(|py| {
-                let Some(cb) = cb_slot.lock().unwrap().clone() else {
+                let Some(cb) = cb_slot.lock().unwrap().as_ref().map(|c| c.clone_ref(py)) else {
                     return;
                 };
                 let py_events: Vec<PyChangeEvent> =
