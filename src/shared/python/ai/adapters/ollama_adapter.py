@@ -277,6 +277,49 @@ class OllamaAdapter(BaseAgentAdapter):
             provider_name="ollama",
         )
 
+    # ------------------------------------------------------------------ #
+    # Tools issue #2871: provider catalogue + reasoning capabilities
+    # ------------------------------------------------------------------ #
+
+    _STATIC_MODELS: tuple[str, ...] = (
+        "llama3.1:8b",
+        "llama3.1:70b",
+        "llama3:8b",
+        "mistral:7b",
+        "qwen2:7b",
+        "phi3:medium",
+    )
+
+    def list_models(self) -> list[str]:
+        """Return Ollama model ids; falls back to a static catalogue."""
+        try:
+            client = self._get_client()
+            response = client.get(f"{self._host}/api/tags")
+            response.raise_for_status()
+            payload = response.json()
+            models = payload.get("models") if isinstance(payload, dict) else None
+            if isinstance(models, list):
+                names = [
+                    str(entry.get("name"))
+                    for entry in models
+                    if isinstance(entry, dict) and entry.get("name")
+                ]
+                names = [name for name in names if name.strip()]
+                if names:
+                    return names
+        except Exception:  # noqa: BLE001 - any failure → static catalogue
+            logger.debug(
+                "Ollama list_models live probe failed; using static catalogue",
+                exc_info=True,
+            )
+        return list(self._STATIC_MODELS)
+
+    def thinking_capabilities(self) -> Any:
+        """Ollama models do not currently expose reasoning budgets."""
+        from src.shared.python.chat.models import make_none_only_capabilities
+
+        return make_none_only_capabilities(provider="ollama")
+
     def validate_connection(self) -> tuple[bool, str]:
         """Test connection to local Ollama.
 
