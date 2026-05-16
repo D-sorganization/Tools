@@ -122,7 +122,9 @@ def test_sidekick_calculator_terminal_and_notes_runtime_flow(tmp_path: Path) -> 
         "local gain = [1, 2, 3]",
     )
 
-    assert sidebar.set_active_tab("terminal") is True
+    # UpstreamDrift #5617: the Python REPL now lives on the ``python_repl`` tab
+    # id; the ``terminal`` tab hosts the new OS-level shell.
+    assert sidebar.set_active_tab("python_repl") is True
     terminal = sidebar.tabs.currentWidget()
     script = terminal.findChild(QtWidgets.QPlainTextEdit, "SidekickTerminalInput")
     run = terminal.findChild(QtWidgets.QPushButton, "SidekickTerminalRun")
@@ -220,7 +222,9 @@ def test_sidekick_terminal_and_notes_controls_have_tooltips(tmp_path: Path) -> N
     _ = app
     sidebar = UnifiedToolsSidebar(project_root=tmp_path)
 
-    assert sidebar.set_active_tab("terminal") is True
+    # UpstreamDrift #5617: the Python REPL controls live on the
+    # ``python_repl`` tab id after the OS-terminal split.
+    assert sidebar.set_active_tab("python_repl") is True
     terminal = sidebar.tabs.currentWidget()
     terminal_widgets = (
         terminal.findChild(QtWidgets.QPlainTextEdit, "SidekickTerminalInput"),
