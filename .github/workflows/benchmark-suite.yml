@@ -20,7 +20,7 @@ on:
 
 concurrency:
   group: benchmarks-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 defaults:
   run:
