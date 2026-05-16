@@ -57,6 +57,7 @@ python3 -m pytest -m dwsim                        # DWSIM integration tests
 `benchmark`, `scientific`, `live_simulation`, `headless_safe`, `requires_gl`, `parity`
 
 Key markers:
+
 - `contract` — API surface tests that downstream repos depend on. Breaking a contract test means you broke UpstreamDrift or Gasification_Model.
 - `dwsim` — requires DWSIM integration environment
 - `e2e` — full pipeline tests across module boundaries
@@ -95,9 +96,9 @@ All workspace-level dependency pins apply (see `[workspace.dependencies]`).
 
 ### Feature flags
 
-| Feature | Purpose |
-|---|---|
-| `python` | Activates PyO3 `extension-module` linkage required for maturin builds. Must be enabled when building a wheel. |
+| Feature            | Purpose                                                                                                          |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| `python`           | Activates PyO3 `extension-module` linkage required for maturin builds. Must be enabled when building a wheel.    |
 | `local-embeddings` | Opt-in ONNX-based local embeddings via `ort` + `tokenizers`. Requires a system ONNX Runtime library (see below). |
 
 ### Building a wheel locally
