@@ -1,5 +1,6 @@
 """Tests for the ThemeManager class."""
 
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -20,14 +21,26 @@ def mock_qsettings() -> MagicMock:
 
 
 @pytest.fixture
-def theme_manager(mock_qsettings: MagicMock) -> ThemeManager:
-    """Create a ThemeManager with mocked settings."""
+def theme_manager(mock_qsettings: MagicMock, tmp_path: Path) -> ThemeManager:
+    """Create a ThemeManager with mocked settings and isolated theme storage."""
     ThemeManager.reset_instance()
-    with patch(
-        "shared.python.theme.theme_manager.QSettings", return_value=mock_qsettings
+    with (
+        patch(
+            "shared.python.theme.theme_manager.QSettings", return_value=mock_qsettings
+        ),
+        patch.object(
+            ThemeManager,
+            "_get_custom_theme_path",
+            return_value=tmp_path / "user_themes.json",
+        ),
     ):
         manager = ThemeManager()
     yield manager
+    # Remove any custom themes written to disk so they don't contaminate
+    # subsequent test runs on the same runner (user_themes.json persists
+    # across ThemeManager.reset_instance() because that only clears the
+    # in-memory singleton, not the backing file).
+    manager._get_custom_theme_path().unlink(missing_ok=True)
     ThemeManager.reset_instance()
 
 

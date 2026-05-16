@@ -16,6 +16,9 @@ Usage::
     )
     main_window.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, dock)
 """
+# mypy: disable-error-code="unused-ignore"
+# The optional-pydantic import block below uses type: ignore comments that are
+# redundant when mypy runs with --follow-imports=skip (CI) but required locally.
 
 from typing import Any
 
@@ -70,8 +73,8 @@ except ImportError:
     ChatSessionInfo = None  # type: ignore[assignment, misc]
     DEFAULT_RESPONSE_STYLE = "standard"
     RESPONSE_STYLE_PROMPTS = {}
-    ResponseStyle = str  # type: ignore[misc]
-    style_prompt = None  # type: ignore[assignment]
+    ResponseStyle = str  # type: ignore[assignment, misc]
+    style_prompt = None  # type: ignore[assignment, misc]
 
 _PYQT6_AVAILABLE = None
 
@@ -81,6 +84,10 @@ def __getattr__(name: str) -> Any:
         from . import chat_dock_widget
 
         return getattr(chat_dock_widget, name)
+    if name == "VoiceInputManager":
+        from .voice_input_manager import VoiceInputManager
+
+        return VoiceInputManager
     if name == "create_chat_router":
         from .router_factory import create_chat_router
 
@@ -91,6 +98,7 @@ def __getattr__(name: str) -> Any:
 __all__ = [
     "ChatDockWidget",
     "ChatMessageBubble",
+    "VoiceInputManager",
     "ChatMessageRequest",
     "ChatChunkResponse",
     "ChatSessionInfo",

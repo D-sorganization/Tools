@@ -30,6 +30,7 @@ from pathlib import Path
 from typing import Any
 
 from PyQt6.QtCore import Qt, QTimer, QUrl, pyqtSignal
+from PyQt6.QtGui import QKeySequence, QShortcut
 from PyQt6.QtWebSockets import QWebSocket
 from PyQt6.QtWidgets import (
     QApplication,
@@ -57,6 +58,7 @@ from .chat_dock_widget import (
 )
 from .terminal_contracts import TerminalProviderRegistry
 from .terminal_providers import build_default_terminal_provider_registry
+from .voice_input_manager import VoiceInputManager
 
 logger = logging.getLogger(__name__)
 
@@ -71,10 +73,12 @@ def _get_theme_colors(
     """
     provider: ThemeProviderProtocol = theme_provider or _DefaultDarkTheme()
     try:
-        return provider.get_current_colors()
+        colors: dict[str, str] = provider.get_current_colors()
+        return colors
     except Exception:  # noqa: BLE001 - defensive: a misbehaving provider
         # must not crash the widget
-        return _DefaultDarkTheme().get_current_colors()
+        colors = _DefaultDarkTheme().get_current_colors()
+        return colors
 
 
 class ChatMessageBubble(QFrame):
@@ -247,6 +251,7 @@ class ChatDockWidget(QDockWidget):
         self._is_streaming = False
         self._current_bubble: ChatMessageBubble | None = None
         self._terminal_session_id: str | None = None
+        self._voice_manager = VoiceInputManager()
         self._terminal_start_pending = False
         self._socket: QWebSocket | None = None
         self._session_file = _session_file_path(app_name)
@@ -405,6 +410,19 @@ class ChatDockWidget(QDockWidget):
         self._screenshot_btn.clicked.connect(self._on_screenshot)
         input_row.addWidget(self._screenshot_btn)
 
+        self._mic_btn = QPushButton("\U0001f3a4")
+        self._mic_btn.setToolTip("Voice input (Ctrl+Shift+V)")
+        self._mic_btn.setFixedWidth(28)
+        self._mic_btn.setStyleSheet(
+            "QPushButton {"
+            f"  background-color: {bg_alt}; color: {text_primary};"
+            "  border-radius: 4px; padding: 4px;"
+            "}"
+            f"QPushButton:hover {{ background-color: {border}; }}"
+        )
+        self._mic_btn.clicked.connect(self._on_mic_toggle)
+        input_row.addWidget(self._mic_btn)
+
         self._send_btn = QPushButton("Send")
         self._send_btn.setFixedWidth(55)
         self._send_btn.setStyleSheet(
@@ -434,6 +452,14 @@ class ChatDockWidget(QDockWidget):
             f"QScrollArea {{ background-color: {bg_primary}; border: none; }}"
         )
         self._message_container.setStyleSheet(f"background-color: {bg_primary};")
+
+        # Keyboard shortcut for voice input
+        shortcut = QShortcut(QKeySequence("Ctrl+Shift+V"), self)
+        shortcut.activated.connect(self._on_mic_toggle)
+
+        # Wire voice manager callbacks
+        self._voice_manager.connect_transcription(self._on_voice_transcription)
+        self._voice_manager.connect_error(self._on_voice_error)
 
     # ── WebSocket connection ─────────────────────────────────────────
 
@@ -714,6 +740,30 @@ class ChatDockWidget(QDockWidget):
         )
         self._add_bubble("user", "[Captured screenshot]")
 
+    def _on_mic_toggle(self) -> None:
+        if self._voice_manager.is_recording:
+            self._voice_manager.stop()
+            self._mic_btn.setText("\U0001f3a4")
+            self._mic_btn.setToolTip("Voice input (Ctrl+Shift+V)")
+        else:
+            self._voice_manager.start()
+            self._mic_btn.setText("[REC]")
+            self._mic_btn.setToolTip("Recording... click to stop (Ctrl+Shift+V)")
+            self._status_label.setText("Listening...")
+
+    def _on_voice_transcription(self, text: str) -> None:
+        self._mic_btn.setText("\U0001f3a4")
+        self._mic_btn.setToolTip("Voice input (Ctrl+Shift+V)")
+        cursor = self._input_edit.textCursor()
+        cursor.insertText(text)
+        self._input_edit.setTextCursor(cursor)
+        self._status_label.setText("Transcription complete")
+
+    def _on_voice_error(self, message: str) -> None:
+        self._mic_btn.setText("\U0001f3a4")
+        self._mic_btn.setToolTip("Voice input (Ctrl+Shift+V)")
+        self._status_label.setText(f"Voice: {message}")
+
     def _on_mode_changed(self) -> None:
         is_terminal = self._current_mode() == "terminal"
         self._content_stack.setCurrentIndex(1 if is_terminal else 0)
@@ -777,8 +827,10 @@ class ChatDockWidget(QDockWidget):
             raise ValueError("messages must be provided")
         while self._message_layout.count() > 1:
             item = self._message_layout.takeAt(0)
-            if item and item.widget():
-                item.widget().deleteLater()
+            if item:
+                widget = item.widget()
+                if widget is not None:
+                    widget.deleteLater()
         for msg in messages:
             role = msg.get("role", "user")
             content = msg.get("content", "")
