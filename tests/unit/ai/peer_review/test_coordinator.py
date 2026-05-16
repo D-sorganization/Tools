@@ -82,14 +82,10 @@ class TestReviewCoordinator:
     async def test_happy_path_all_approve(self) -> None:
         registry = ReviewerRegistry()
         registry.register(
-            _ScriptedReviewer(
-                descriptor=_desc("c", "critic", []), verdict="approve"
-            )
+            _ScriptedReviewer(descriptor=_desc("c", "critic", []), verdict="approve")
         )
         registry.register(
-            _ScriptedReviewer(
-                descriptor=_desc("a", "advocate", []), verdict="approve"
-            )
+            _ScriptedReviewer(descriptor=_desc("a", "advocate", []), verdict="approve")
         )
         registry.register(
             _ScriptedReviewer(
@@ -141,9 +137,7 @@ class TestReviewCoordinator:
         registry = ReviewerRegistry()
         # Only one reviewer registered → below minimum panel size of 2
         registry.register(
-            _ScriptedReviewer(
-                descriptor=_desc("c", "critic", []), verdict="approve"
-            )
+            _ScriptedReviewer(descriptor=_desc("c", "critic", []), verdict="approve")
         )
         coord = ReviewCoordinator(registry=registry, min_panel_size=2)
         with pytest.raises(InsufficientPanelError):
@@ -179,14 +173,10 @@ class TestReviewCoordinator:
     async def test_audit_trail_contains_lifecycle_events(self) -> None:
         registry = ReviewerRegistry()
         registry.register(
-            _ScriptedReviewer(
-                descriptor=_desc("c", "critic", []), verdict="approve"
-            )
+            _ScriptedReviewer(descriptor=_desc("c", "critic", []), verdict="approve")
         )
         registry.register(
-            _ScriptedReviewer(
-                descriptor=_desc("a", "advocate", []), verdict="approve"
-            )
+            _ScriptedReviewer(descriptor=_desc("a", "advocate", []), verdict="approve")
         )
         coord = ReviewCoordinator(registry=registry)
         result = await coord.run_review(_request(), _subject())
@@ -197,14 +187,10 @@ class TestReviewCoordinator:
     async def test_empty_criteria_precondition(self) -> None:
         registry = ReviewerRegistry()
         registry.register(
-            _ScriptedReviewer(
-                descriptor=_desc("c", "critic", []), verdict="approve"
-            )
+            _ScriptedReviewer(descriptor=_desc("c", "critic", []), verdict="approve")
         )
         registry.register(
-            _ScriptedReviewer(
-                descriptor=_desc("a", "advocate", []), verdict="approve"
-            )
+            _ScriptedReviewer(descriptor=_desc("a", "advocate", []), verdict="approve")
         )
         coord = ReviewCoordinator(registry=registry)
         # ReviewRequest.criteria_set is enforced non-empty by Pydantic; if we
