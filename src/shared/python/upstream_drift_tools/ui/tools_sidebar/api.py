@@ -11,7 +11,8 @@ from typing import Any
 from .design_tokens import SidekickDesignTokens
 from .qt_compat import QtWidgets
 from .registry import WorkspaceRegistry
-from .sidebar import SidebarTabDefinition, UnifiedToolsSidebar
+from .tab_definition import SidebarTabDefinition
+from .sidebar import UnifiedToolsSidebar
 from .state import SidebarState
 
 logger = logging.getLogger(__name__)

@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping
-from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any
 
@@ -17,11 +15,12 @@ from .default_tabs import (
 from .help_content import render_help_markdown
 from .qt_compat import QtCore, QtWidgets, Signal, all_sidebar_dock_features, dock_area
 from .registry import WorkspaceRegistry
-from .settings import SidebarTabSettingsDescriptor
 from .state import SidebarState
 from .state_profile_actions import StateProfileMixin
 from .tab_context_menu import show_tab_context_menu
+from .tab_definition import SidebarTabDefinition
 from .tab_display_names import TabDisplayNameMixin
+from .tab_popout import TabPopoutMixin
 from .tab_settings_panel import TabSettingsMixin, build_tab_settings_toolbar
 from .tab_visibility import (
     initially_visible_tab_ids,
@@ -32,25 +31,12 @@ from .tab_visibility import (
 from .theme_settings import resolve_sidekick_theme
 
 
-@dataclass(frozen=True)
-class SidebarTabDefinition:
-    """Configurable Sidekick tab contract."""
-
-    tab_id: str
-    title: str
-    factory: Callable[[UnifiedToolsSidebar], QtWidgets.QWidget]
-    visible: bool = True
-    popout_enabled: bool = True
-    duplicate_enabled: bool = False
-    help_metadata: Mapping[str, str] = field(default_factory=dict)
-    settings: SidebarTabSettingsDescriptor | None = None
-
-
 class UnifiedToolsSidebar(
     QtWidgets.QWidget,
     TabDisplayNameMixin,
     TabSettingsMixin,
     StateProfileMixin,
+    TabPopoutMixin,
 ):
     """Tabbed sidebar that can be installed as a tear-off dock widget."""
 
@@ -180,7 +166,8 @@ class UnifiedToolsSidebar(
 
     def get_tab_display_name(self, tab_id: str) -> str | None:
         """Return the persisted custom display name for ``tab_id``, or *None*."""
-        return self._state.tab_display_names.get(tab_id)
+        result: str | None = self._state.tab_display_names.get(tab_id)
+        return result
 
     def prompt_rename_tab(self, tab_id: str) -> None:
         """Open an input dialog so the user can rename ``tab_id``."""
@@ -281,69 +268,6 @@ class UnifiedToolsSidebar(
                 host.addDockWidget(dock_area(area), self._dock_widget)
         self._emit_context()
         return True
-
-    def pop_out_tab(self, tab_id: str) -> QtWidgets.QMainWindow | None:
-        """Move one visible tab into a standalone utility window."""
-        definition = self._tab_definitions.get(tab_id)
-        if (
-            definition is None
-            or not definition.popout_enabled
-            or tab_id not in self._tab_ids
-        ):
-            return None
-        index = self._tab_ids.index(tab_id)
-        widget = self.tabs.widget(index)
-        self.tabs.removeTab(index)
-        self._tab_ids.pop(index)
-        self._tab_widgets.pop(tab_id, None)
-
-        window = QtWidgets.QMainWindow(self)
-        window.setObjectName(f"SidekickPopout_{tab_id}")
-        window.setWindowTitle(f"Sidekick - {self.tab_display_name(tab_id)}")
-        window.setCentralWidget(widget)
-        window.resize(max(self._state.width, 360), max(self._state.height, 360))
-        window.closeEvent = self._redock_close_event(tab_id, window)
-        self._popout_windows[tab_id] = window
-        window.show()
-        self._emit_context()
-        return window
-
-    def redock_tab(self, tab_id: str) -> bool:
-        """Return a popped-out tab to the sidebar."""
-        window = self._popout_windows.pop(tab_id, None)
-        if window is None:
-            return tab_id in self._tab_ids
-        widget = window.centralWidget()
-        window.setCentralWidget(None)
-        window.hide()
-        self._tab_ids.append(tab_id)
-        self._tab_widgets[tab_id] = widget
-        self.tabs.addTab(widget, self.tab_display_name(tab_id))
-        self.set_active_tab(tab_id)
-        self._sync_tab_order_from_widget()
-        self._emit_context()
-        return True
-
-    def duplicate_tab(self, tab_id: str) -> str | None:
-        """Create a second docked instance of a duplicable tab."""
-        definition = self._tab_definitions.get(tab_id)
-        if definition is None or not definition.duplicate_enabled:
-            return None
-        count = self._duplicate_counts.get(tab_id, 0) + 1
-        self._duplicate_counts[tab_id] = count
-        duplicate_id = f"{tab_id}#{count}"
-        duplicate = replace(
-            definition,
-            tab_id=duplicate_id,
-            title=f"{definition.title} {count + 1}",
-        )
-        self._tab_definitions[duplicate_id] = duplicate
-        self._configure_tab_settings()
-        self._add_defined_tab(duplicate)
-        self.set_active_tab(duplicate_id)
-        self._sync_tab_order_from_widget()
-        self._emit_context()
-        return duplicate_id
 
     def install_as_dock(
         self,
@@ -549,18 +473,5 @@ class UnifiedToolsSidebar(
             self.move_tab(tab_id, index)
         for tab_id in self._tab_definitions:
             self._refresh_tab_display_name(tab_id)
-
-    def _redock_close_event(
-        self,
-        tab_id: str,
-        window: QtWidgets.QMainWindow,
-    ) -> Callable[[Any], None]:
-        def _handle_close(event: Any) -> None:
-            self.redock_tab(tab_id)
-            event.ignore()
-            window.hide()
-
-        return _handle_close
-
 
 SidekickSidebar = UnifiedToolsSidebar
