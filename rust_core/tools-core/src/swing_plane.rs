@@ -350,11 +350,11 @@ fn jacobi3x3(c: [f64; 6]) -> ([f64; 3], [[f64; 3]; 3]) {
         a[r][q] = a[q][r];
 
         // Update eigenvector columns.
-        for i in 0..3 {
-            let vip = v[i][p];
-            let viq = v[i][q];
-            v[i][p] = cos_t * vip + sin_t * viq;
-            v[i][q] = -sin_t * vip + cos_t * viq;
+        for row in &mut v {
+            let vip = row[p];
+            let viq = row[q];
+            row[p] = cos_t * vip + sin_t * viq;
+            row[q] = -sin_t * vip + cos_t * viq;
         }
     }
 
