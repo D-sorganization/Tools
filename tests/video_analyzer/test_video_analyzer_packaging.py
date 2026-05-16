@@ -30,3 +30,13 @@ def test_video_analyzer_extra_declares_runtime_video_dependencies() -> None:
 
     assert any(dep.startswith("opencv-python") for dep in video_deps)
     assert any(dep.startswith("mediapipe") for dep in video_deps)
+
+
+from video_analyzer.analyzer import SwingAnalyzer
+
+
+def test_video_path_valid_precondition() -> None:
+    analyzer = SwingAnalyzer()
+    assert analyzer._video_path_valid("test.mp4") is True
+    assert analyzer._video_path_valid("") is True
+    assert analyzer._video_path_valid(None) is False
