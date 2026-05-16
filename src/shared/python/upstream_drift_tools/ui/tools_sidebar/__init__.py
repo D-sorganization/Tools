@@ -179,11 +179,14 @@ def __getattr__(name: str) -> object:
     if name in {
         "UnifiedToolsSidebar",
         "SidekickSidebar",
-        "SidebarTabDefinition",
     }:
         from . import sidebar
 
         return getattr(sidebar, name)
+    if name == "SidebarTabDefinition":
+        from .tab_definition import SidebarTabDefinition
+
+        return SidebarTabDefinition
     if name in {
         "ToolsSidebarInstallResult",
         "create_tools_sidebar",
