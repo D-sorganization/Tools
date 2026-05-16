@@ -21,6 +21,7 @@ from .default_tabs import (
     refresh_workspace_list,
     set_project_explorer_root,
 )
+from .dock_title_bar import SidekickDockTitleBar
 from .help_content import render_help_markdown
 from .qt_compat import QtCore, QtWidgets, Signal, all_sidebar_dock_features, dock_area
 from .registry import WorkspaceRegistry
@@ -138,7 +139,11 @@ class UnifiedToolsSidebar(
             settings=self._state.theme_settings,
         )
         self._dock_widget: QtWidgets.QDockWidget | None = None
+        self._title_bar: SidekickDockTitleBar | None = None
+        self._is_collapsed: bool = False
         self._expanded_width = self._state.width
+        # Per-tab last pop-out positions (issue #2881)
+        self._popout_positions: dict[str, tuple[int, int]] = {}
         self._tab_ids: list[str] = []
         self._tab_definitions: dict[str, SidebarTabDefinition] = {}
         self._tab_widgets: dict[str, QtWidgets.QWidget] = {}
@@ -190,9 +195,112 @@ class UnifiedToolsSidebar(
         return self._dock_widget
 
     @property
+    def dock(self) -> QtWidgets.QDockWidget | None:
+        """Alias for :attr:`dock_widget` — preferred by UI tests."""
+        return self._dock_widget
+
+    @property
     def project_root(self) -> Path:
         """Return the current project root used by runtime tabs."""
         return self._project_root
+
+    # ── Dock chrome helpers (issue #2881) ─────────────────────────────────────
+
+    def dock_title_widget(self) -> SidekickDockTitleBar | None:
+        """Return the custom title-bar widget installed on the dock.
+
+        Returns ``None`` if the dock has not been installed yet (i.e.
+        :meth:`install_as_dock` has not been called).
+        """
+        return self._title_bar
+
+    def is_collapsed(self) -> bool:
+        """Return ``True`` when the sidebar is in collapsed (icon-strip) mode."""
+        return self._is_collapsed
+
+    def toggle_collapsed(self) -> None:
+        """Toggle between collapsed (icon-strip) and expanded states.
+
+        In the collapsed state the sidebar shrinks to a narrow icon strip
+        (``≤ 56 px``) and the tab content is hidden.  Calling this method
+        again restores the previous expanded width.
+        """
+        if self._is_collapsed:
+            # Expand
+            self._is_collapsed = False
+            self.tabs.setVisible(True)
+            self.setMaximumWidth(16777215)
+            self.resize(max(self._expanded_width, 240), self.height())
+        else:
+            # Collapse
+            self._is_collapsed = True
+            self._expanded_width = max(self.width(), self._expanded_width)
+            self.tabs.setVisible(False)
+            self.setMaximumWidth(56)
+        self._emit_context()
+
+    def toggle_visibility(self) -> None:
+        """Toggle the dock's visibility (Ctrl+B shortcut handler).
+
+        Hides the dock when visible, shows it when hidden.
+
+        Pre: dock has been installed via :meth:`install_as_dock`.
+        Post: ``self.dock.isVisible()`` is the negation of the pre-call value.
+        """
+        if self._dock_widget is None:
+            return
+        if self._dock_widget.isVisible():
+            self._dock_widget.hide()
+        else:
+            self._dock_widget.show()
+
+    def register_shortcuts(self, main_window: QtWidgets.QMainWindow) -> None:
+        """Wire Ctrl+B and Ctrl+Shift+B shortcuts onto ``main_window``.
+
+        Args:
+            main_window: The host main window that will receive the key events.
+
+        Keyboard bindings registered:
+            - ``Ctrl+B`` → :meth:`toggle_visibility`
+            - ``Ctrl+Shift+B`` → :meth:`toggle_collapsed`
+        """
+        try:
+            from PyQt6.QtGui import (  # type: ignore[attr-defined]
+                QKeySequence,
+                QShortcut,
+            )
+        except ImportError:
+            try:
+                from PyQt5.QtGui import QKeySequence  # type: ignore[no-redef]
+                from PyQt5.QtWidgets import QShortcut  # type: ignore[no-redef]
+            except ImportError:
+                return  # Qt not available — gracefully skip shortcut registration
+
+        sc_toggle = QShortcut(QKeySequence("Ctrl+B"), main_window)
+        sc_toggle.activated.connect(self.toggle_visibility)  # type: ignore[union-attr]
+
+        sc_collapse = QShortcut(QKeySequence("Ctrl+Shift+B"), main_window)
+        sc_collapse.activated.connect(self.toggle_collapsed)  # type: ignore[union-attr]
+
+    def re_dock(self, tab_id: str) -> bool:
+        """Re-dock a tab that is currently in a floating pop-out window.
+
+        Args:
+            tab_id: The stable tab identifier to re-dock.
+
+        Returns:
+            ``True`` on success.
+
+        Raises:
+            RuntimeError: If ``tab_id`` is not currently floating (DbC
+                precondition — the tab must be in a pop-out window).
+        """
+        if tab_id not in self._popout_windows:
+            raise RuntimeError(
+                f"re_dock precondition failed: tab '{tab_id}' is not floating. "
+                "Only floating tabs can be re-docked."
+            )
+        return self.redock_tab(tab_id)
 
     def add_tab(self, tab_id: str, title: str, widget: QtWidgets.QWidget) -> None:
         """Add a tab with a stable persistence id."""
@@ -384,7 +492,12 @@ class UnifiedToolsSidebar(
         title: str = "Tools",
         state_path: str | Path | None = None,
     ) -> QtWidgets.QDockWidget:
-        """Install this sidebar into ``main_window`` as a QDockWidget."""
+        """Install this sidebar into ``main_window`` as a QDockWidget.
+
+        Replaces the default QDockWidget title bar with a custom
+        :class:`~.dock_title_bar.SidekickDockTitleBar` that exposes
+        close (×) and collapse (—) buttons per issue #2881.
+        """
         if state_path is not None:
             self.apply_state(SidebarState.load_json(state_path))
 
@@ -396,6 +509,16 @@ class UnifiedToolsSidebar(
         dock.resize(self._state.width, self._state.height)
         main_window.addDockWidget(dock_area(area or self._state.dock_area), dock)
         self._dock_widget = dock
+
+        # Install custom title bar (issue #2881)
+        self._title_bar = SidekickDockTitleBar(
+            title,
+            on_close=self.toggle_visibility,
+            on_collapse=self.toggle_collapsed,
+            parent=dock,
+        )
+        dock.setTitleBarWidget(self._title_bar)
+
         self._emit_context()
         return dock
 
