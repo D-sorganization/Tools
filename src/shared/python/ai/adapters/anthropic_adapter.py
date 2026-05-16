@@ -266,6 +266,54 @@ class AnthropicAdapter(BaseAgentAdapter):
             provider_name="anthropic",
         )
 
+    # ------------------------------------------------------------------ #
+    # Tools issue #2871: provider catalogue + reasoning capabilities
+    # ------------------------------------------------------------------ #
+
+    # Static fallback catalogue used when the live API is unreachable.
+    _STATIC_MODELS: tuple[str, ...] = (
+        "claude-3-5-sonnet-20240620",
+        "claude-3-opus-20240229",
+        "claude-3-sonnet-20240229",
+        "claude-3-haiku-20240307",
+    )
+
+    def list_models(self) -> list[str]:
+        """Return Anthropic model ids; falls back to a static catalogue."""
+        try:
+            client = self._get_client()
+            response = client.models.list()
+            data = getattr(response, "data", None) or []
+            ids = [
+                getattr(entry, "id", None)
+                for entry in data
+                if getattr(entry, "id", None)
+            ]
+            ids = [str(model_id) for model_id in ids if str(model_id).strip()]
+            if ids:
+                return ids
+        except Exception:  # noqa: BLE001 - any provider failure → fallback
+            logger.debug(
+                "Anthropic list_models live probe failed; using static catalogue",
+                exc_info=True,
+            )
+        return list(self._STATIC_MODELS)
+
+    def thinking_capabilities(self) -> Any:
+        """Return reasoning-budget levels for the current Anthropic model."""
+        # Local imports to avoid the chat package depending on adapters at
+        # module-import time.
+        from src.shared.python.chat.models import (
+            make_full_thinking_capabilities,
+            make_none_only_capabilities,
+        )
+
+        model = (self._model or "").lower()
+        # Claude 3.5/3 Sonnet + Opus support extended thinking budgets.
+        if "sonnet" in model or "opus" in model:
+            return make_full_thinking_capabilities(provider="anthropic")
+        return make_none_only_capabilities(provider="anthropic")
+
     def validate_connection(self) -> tuple[bool, str]:
         """Test connection to Anthropic.
 

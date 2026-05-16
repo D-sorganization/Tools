@@ -58,6 +58,7 @@ from .chat_dock_widget import (
     _session_file_path,
     _write_shared_session_id,
 )
+from .cli_provider_availability import list_available_cli_providers
 from .terminal_contracts import TerminalProviderRegistry
 from .terminal_providers import build_default_terminal_provider_registry
 from .voice_input_manager import VoiceInputManager
@@ -75,10 +76,12 @@ def _get_theme_colors(
     """
     provider: ThemeProviderProtocol = theme_provider or _DefaultDarkTheme()
     try:
-        return cast(dict[str, str], provider.get_current_colors())
+        colors: dict[str, str] = provider.get_current_colors()
+        return colors
     except Exception:  # noqa: BLE001 - defensive: a misbehaving provider
         # must not crash the widget
-        return cast(dict[str, str], _DefaultDarkTheme().get_current_colors())
+        colors = _DefaultDarkTheme().get_current_colors()
+        return colors
 
 
 class ChatMessageBubble(QFrame):
@@ -273,10 +276,22 @@ class ChatDockWidget(QDockWidget):
         self._is_streaming = False
         self._current_bubble: ChatMessageBubble | None = None
         self._terminal_session_id: str | None = None
+        # Tools issue #2871: mid-thread provider/model/thinking state.
+        # ``_message_history`` is the same object that ``switch_provider``
+        # promises to preserve. Bubbles render from this list and the
+        # widget never reassigns it after creation.
+        self._message_history: list[dict[str, Any]] = []
+        self._current_provider: str = "ollama"
+        self._current_model: str = "llama3"
+        self._current_thinking_level: str = "none"
         self._voice_manager = VoiceInputManager()
         self._terminal_start_pending = False
         self._socket: QWebSocket | None = None
         self._session_file = _session_file_path(app_name)
+        # Tools issue #2872: conversation-management state.
+        self._loaded_context_sessions: list[str] = []
+        self._session_manager: Any | None = None
+        self._breadcrumb_widget: Any | None = None
         self._reconnect_timer = QTimer(self)
         self._reconnect_timer.setSingleShot(True)
         self._reconnect_timer.timeout.connect(self._connect)
@@ -339,6 +354,12 @@ class ChatDockWidget(QDockWidget):
         layout.addLayout(status_row)
 
         mode_row = QHBoxLayout()
+
+        # Tools issue #2871: Provider / Model / Thinking dropdowns.
+        # Built first so the chat-mode header reads
+        # ``[provider] [model] [thinking] [mode] [terminal controls...]``.
+        self._build_ai_dropdowns(mode_row)
+
         self._mode_combo = QComboBox()
         self._mode_combo.addItem("Chat", "chat")
         self._mode_combo.addItem("Terminal", "terminal")
@@ -655,6 +676,14 @@ class ChatDockWidget(QDockWidget):
             self._dispatch_workspace_command(cmd, arg)
             return
 
+        # Tools issue #2872: /use-session loads prior conversation(s) as
+        # context. Resolves either by id or by case-insensitive title.
+        if cmd == "use-session":
+            self._input_edit.clear()
+            self._add_bubble("user", text)
+            self._handle_use_session(arg.strip())
+            return
+
         self._input_edit.clear()
         self._add_bubble("user", text)
         self._is_streaming = True
@@ -695,7 +724,7 @@ class ChatDockWidget(QDockWidget):
             if not isinstance(info, WorkspaceVariableInfo):
                 # Defensive: tolerate raw dicts/objects that look like
                 # the dataclass without crashing the chat.
-                continue  # type: ignore[unreachable]
+                continue
             shape_str = (
                 ", ".join(str(dim) for dim in info.shape)
                 if info.shape is not None
@@ -804,6 +833,297 @@ class ChatDockWidget(QDockWidget):
             self._add_bubble("assistant", f"Plot request failed: {exc}")
             return
         self._add_bubble("assistant", "Plot request submitted.")
+
+    # ── AI Provider/Model/Thinking dropdowns (Tools issue #2871) ────
+
+    _AI_VALID_THINKING_NAMES: frozenset[str] = frozenset(
+        {"none", "low", "medium", "high"}
+    )
+    _AI_VALID_FIELDS: frozenset[str] = frozenset({"provider", "model", "thinking"})
+    _AI_DEFAULT_PROVIDERS: tuple[tuple[str, str], ...] = (
+        ("Ollama", "ollama"),
+        ("OpenAI", "openai"),
+        ("Anthropic", "anthropic"),
+        ("Gemini", "gemini"),
+        ("Cline", "cline"),
+    )
+
+    @staticmethod
+    def _build_header_combobox(
+        *,
+        label: str,
+        items: list[tuple[str, str]],
+    ) -> QComboBox:
+        """Build a header combo box used by the AI Provider/Model/Thinking row.
+
+        DRY helper used for all three header dropdowns (issue #2871).
+
+        Args:
+            label: Short label (e.g. ``"provider"``) used to drive the
+                combo's tool-tip; must be non-empty / non-whitespace.
+            items: Sequence of ``(display_text, user_data)`` pairs;
+                must be non-empty.
+
+        Raises:
+            ValueError: If ``label`` is empty/whitespace or ``items`` is empty.
+        """
+        if not isinstance(label, str) or not label.strip():
+            raise ValueError("_build_header_combobox: label must be non-empty")
+        if not items:
+            raise ValueError("_build_header_combobox: items must be non-empty")
+        combo = QComboBox()
+        for display, data in items:
+            combo.addItem(display, data)
+        combo.setToolTip(f"Select AI {label}")
+        return combo
+
+    @staticmethod
+    def _build_available_cli_provider_items() -> list[tuple[str, str]]:
+        """Return ``(display_name, provider_id)`` pairs for installed CLI agents.
+
+        Probes the local ``PATH`` via :func:`shutil.which` through
+        :func:`~cli_provider_availability.list_available_cli_providers`.
+        Only CLI agents whose binary is found are included so the dropdown
+        never shows unavailable entries.
+
+        Returns:
+            A list of ``(display_name, provider_id)`` tuples, empty when
+            no CLI agents are installed.
+        """
+        return [
+            (entry.display_name, entry.provider_id)
+            for entry in list_available_cli_providers()
+        ]
+
+    def _build_ai_dropdowns(self, mode_row: QHBoxLayout) -> None:
+        """Construct + wire the three AI header dropdowns.
+
+        Side-effect only: instantiates ``_ai_provider_combo``,
+        ``_ai_model_combo``, ``_ai_thinking_combo`` and inserts them
+        into ``mode_row`` left-to-right.
+
+        CLI agent providers (Claude CLI, Codex CLI, Cline) are probed via
+        :func:`~_build_available_cli_provider_items` and appended to the
+        provider combo after the API providers so they are always visible
+        when the binary is installed (Tools issue UpstreamDrift#5622).
+        """
+        api_items = list(self._AI_DEFAULT_PROVIDERS)
+        cli_items = self._build_available_cli_provider_items()
+        all_provider_items = api_items + cli_items
+        self._ai_provider_combo = self._build_header_combobox(
+            label="provider",
+            items=all_provider_items,
+        )
+        mode_row.addWidget(self._ai_provider_combo)
+
+        # Models + thinking start with placeholders; refresh fills them.
+        self._ai_model_combo = self._build_header_combobox(
+            label="model",
+            items=[("(default)", "default")],
+        )
+        mode_row.addWidget(self._ai_model_combo)
+
+        self._ai_thinking_combo = self._build_header_combobox(
+            label="thinking",
+            items=[("Off", "none")],
+        )
+        mode_row.addWidget(self._ai_thinking_combo)
+
+        # Wire change signals through the single router for DRY.
+        self._ai_provider_combo.currentIndexChanged.connect(
+            lambda _: self._on_ai_combo_changed("provider")
+        )
+        self._ai_model_combo.currentIndexChanged.connect(
+            lambda _: self._on_ai_combo_changed("model")
+        )
+        self._ai_thinking_combo.currentIndexChanged.connect(
+            lambda _: self._on_ai_combo_changed("thinking")
+        )
+        # Initial population.
+        self._refresh_ai_model_combo()
+        self._refresh_ai_thinking_combo()
+        self._sync_ai_dropdowns()
+
+    def _combo_for_field(self, field: str) -> QComboBox:
+        """Return the combo backing one of the three AI fields."""
+        if field == "provider":
+            return self._ai_provider_combo
+        if field == "model":
+            return self._ai_model_combo
+        if field == "thinking":
+            return self._ai_thinking_combo
+        raise ValueError(
+            f"_combo_for_field: unknown field {field!r}; expected one of "
+            f"{sorted(self._AI_VALID_FIELDS)!r}"
+        )
+
+    def _on_ai_combo_changed(self, field: str) -> None:
+        """Translate a combo signal into a routed change call."""
+        combo = self._combo_for_field(field)
+        value = combo.currentData()
+        if not isinstance(value, str) or not value.strip():
+            return
+        self._apply_settings_change(field, value)
+
+    def _apply_settings_change(self, field: str, value: str) -> None:
+        """Single change router for the three AI header dropdowns.
+
+        DbC (issue #2871):
+            Pre: ``field`` is exactly one of ``"provider"``, ``"model"``,
+                 or ``"thinking"`` (case-sensitive).
+            Pre: ``value`` is a non-empty / non-whitespace string.
+            Post: dependent combos are refreshed; settings are persisted
+                  via ``_persist_ai_settings``.
+        """
+        if field not in self._AI_VALID_FIELDS:
+            raise ValueError(
+                f"_apply_settings_change: unknown field {field!r}; expected "
+                f"one of {sorted(self._AI_VALID_FIELDS)!r}"
+            )
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError(
+                f"_apply_settings_change: value for {field!r} must be non-empty"
+            )
+        value = value.strip()
+        if field == "provider":
+            self._current_provider = value
+            self._refresh_ai_model_combo()
+            self._refresh_ai_thinking_combo()
+        elif field == "model":
+            self._current_model = value
+            self._refresh_ai_thinking_combo()
+        else:  # field == "thinking"
+            self._current_thinking_level = value
+        self._persist_ai_settings()
+
+    def _refresh_ai_model_combo(self) -> None:
+        """Repopulate the model combo for the currently selected provider."""
+        try:
+            adapter = self._get_active_ai_adapter()
+            models = adapter.list_models() if adapter is not None else []
+        except Exception:  # noqa: BLE001 - any adapter failure → empty list
+            logger.debug("_refresh_ai_model_combo: adapter probe failed", exc_info=True)
+            models = []
+        items = [(name, name) for name in models] or [("(default)", "default")]
+        self._ai_model_combo.blockSignals(True)
+        try:
+            self._ai_model_combo.clear()
+            for display, data in items:
+                self._ai_model_combo.addItem(display, data)
+        finally:
+            self._ai_model_combo.blockSignals(False)
+
+    def _refresh_ai_thinking_combo(self) -> None:
+        """Repopulate the thinking combo for the currently selected adapter."""
+        try:
+            adapter = self._get_active_ai_adapter()
+            caps = adapter.thinking_capabilities() if adapter is not None else None
+        except Exception:  # noqa: BLE001 - any adapter failure → none only
+            logger.debug(
+                "_refresh_ai_thinking_combo: adapter probe failed", exc_info=True
+            )
+            caps = None
+        if caps is None:
+            items = [("Off", "none")]
+        else:
+            items = [(level.label, level.name) for level in caps.levels]
+        self._ai_thinking_combo.blockSignals(True)
+        try:
+            self._ai_thinking_combo.clear()
+            for display, data in items:
+                self._ai_thinking_combo.addItem(display, data)
+        finally:
+            self._ai_thinking_combo.blockSignals(False)
+
+    def _sync_ai_dropdowns(self) -> None:
+        """Push current state into the three combos with signals blocked."""
+        for combo, value in (
+            (self._ai_provider_combo, self._current_provider),
+            (self._ai_model_combo, self._current_model),
+            (self._ai_thinking_combo, self._current_thinking_level),
+        ):
+            combo.blockSignals(True)
+            try:
+                idx = combo.findData(value)
+                if idx >= 0:
+                    combo.setCurrentIndex(idx)
+            finally:
+                combo.blockSignals(False)
+
+    def _get_active_ai_adapter(self) -> Any | None:
+        """Return the adapter for ``_current_provider`` or ``None``.
+
+        Adapter construction failures are non-fatal here (offline mode,
+        missing API key, etc.) — callers fall back to a static catalogue.
+        """
+        try:
+            from src.shared.python.ai.adapters.factory import AdapterFactory
+
+            return AdapterFactory.create(self._current_provider)
+        except Exception:  # noqa: BLE001 - missing credentials are normal
+            return None
+
+    def _persist_ai_settings(self) -> None:
+        """Persist the current AI selections to a QSettings store.
+
+        The default implementation is a no-op stub so the routing tests
+        can simply ``MagicMock`` this method.  Hosts that want real
+        persistence override it.
+        """
+        return
+
+    def switch_provider(
+        self,
+        name: str,
+        model: str,
+        thinking_level: str,
+    ) -> None:
+        """Switch AI provider / model / thinking-level mid-thread.
+
+        DbC (Tools issue #2871):
+            Pre: ``name`` is a non-empty / non-whitespace string after
+                 ``.strip()``.
+            Pre: ``model`` is a non-empty / non-whitespace string after
+                 ``.strip()``.
+            Pre: ``thinking_level`` ∈ {``"none"``, ``"low"``, ``"medium"``,
+                 ``"high"``} after ``.strip()``.
+            Post: ``self._current_provider``, ``self._current_model``,
+                  ``self._current_thinking_level`` reflect the request.
+            Post: ``self._message_history`` is the same list object and
+                  same contents as before the call (history-immutability
+                  invariant).
+        """
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError("switch_provider: name must be non-empty")
+        if not isinstance(model, str) or not model.strip():
+            raise ValueError("switch_provider: model must be non-empty")
+        if not isinstance(thinking_level, str):
+            raise ValueError("switch_provider: thinking_level must be a string")
+        normalized_level = thinking_level.strip()
+        if normalized_level not in self._AI_VALID_THINKING_NAMES:
+            raise ValueError(
+                f"switch_provider: thinking_level {thinking_level!r} not in "
+                f"{sorted(self._AI_VALID_THINKING_NAMES)!r}"
+            )
+        # Capture invariant target — same list object, same contents.
+        history_before = self._message_history
+        snapshot_before = list(history_before)
+
+        self._current_provider = name.strip()
+        self._current_model = model.strip()
+        self._current_thinking_level = normalized_level
+
+        # Re-sync visible dropdowns when present.
+        if hasattr(self, "_ai_provider_combo") and self._ai_provider_combo is not None:
+            self._sync_ai_dropdowns()
+
+        # Invariant check (cheap; cost is the snapshot comparison).
+        assert self._message_history is history_before, (
+            "switch_provider invariant: _message_history must remain the same list"
+        )
+        assert self._message_history == snapshot_before, (
+            "switch_provider invariant: _message_history contents must not change"
+        )
 
     def _populate_shell_combo(self) -> None:
         self._shell_combo.clear()
@@ -1076,3 +1396,224 @@ class ChatDockWidget(QDockWidget):
         if self._socket:
             self._socket.close()
         super().closeEvent(event)
+
+    # ── Tools issue #2872: conversation-management helpers ──────────
+
+    def _resolve_use_session_target(self, target: str) -> str | None:
+        """Resolve a ``/use-session`` argument to a session id.
+
+        Accepts either an exact session id or a case-insensitive title
+        match. Returns ``None`` when no session matches.
+
+        Args:
+            target: The slash-command argument. Must not be empty.
+
+        Pre:
+            ``self._session_manager`` exposes ``list_sessions``.
+        Post:
+            Returned id (when non-``None``) appears in the manager's
+            session list.
+        """
+        if not target:
+            return None
+        # Use __dict__ rather than getattr because Qt's metaclass throws
+        # RuntimeError when accessed on objects whose C++ super-class was not
+        # initialised (e.g. tests that build the dock via __new__).
+        manager = self.__dict__.get("_session_manager")
+        if manager is None:
+            return None
+        sessions = list(manager.list_sessions())
+        # Exact id match first.
+        for info in sessions:
+            if info.get("id") == target:
+                return target
+        # Case-insensitive title match.
+        needle = target.casefold()
+        for info in sessions:
+            title = str(info.get("title", "")).casefold()
+            if title == needle:
+                return info.get("id")
+        return None
+
+    def _handle_use_session(self, target: str) -> None:
+        """React to the ``/use-session <id-or-title>`` slash command."""
+        sid = self._resolve_use_session_target(target)
+        if sid is None:
+            self._add_bubble(
+                "assistant",
+                f"No matching session for '{target}'.",
+            )
+            return
+        self._add_context_session(sid)
+
+    def _add_context_session(self, session_id: str) -> None:
+        """Append ``session_id`` to the breadcrumb context list.
+
+        Args:
+            session_id: Session to load. Duplicates are ignored.
+
+        Pre:
+            ``session_id`` exists in the session manager.
+        Post:
+            ``session_id in self._loaded_context_sessions`` is ``True``.
+        """
+        if not session_id:
+            raise ValueError("session_id must be provided")
+        # Use __dict__ to avoid Qt metaclass RuntimeError in headless tests.
+        loaded = self.__dict__.get("_loaded_context_sessions", [])
+        if session_id in loaded:
+            return
+        loaded.append(session_id)
+        self.__dict__["_loaded_context_sessions"] = loaded
+        self._refresh_breadcrumb()
+
+    def _remove_context_session(self, session_id: str) -> None:
+        """Remove ``session_id`` from the breadcrumb context list."""
+        loaded = self.__dict__.get("_loaded_context_sessions", [])
+        if session_id in loaded:
+            loaded.remove(session_id)
+            self.__dict__["_loaded_context_sessions"] = loaded
+            self._refresh_breadcrumb()
+
+    def breadcrumb_labels(self) -> list[str]:
+        """Return the human-readable titles for the loaded context sessions.
+
+        Used by tests + the breadcrumb strip renderer. LOD-compliant —
+        callers do not need to inspect the session manager themselves.
+        """
+        # Use __dict__ to avoid Qt metaclass RuntimeError in headless tests.
+        manager = self.__dict__.get("_session_manager")
+        if manager is None:
+            return []
+        info_by_id = {info.get("id"): info for info in manager.list_sessions()}
+        labels: list[str] = []
+        for sid in self.__dict__.get("_loaded_context_sessions", []):
+            info = info_by_id.get(sid)
+            if info is None:
+                labels.append(sid)
+            else:
+                labels.append(str(info.get("title") or sid))
+        return labels
+
+    def _refresh_breadcrumb(self) -> None:
+        """Re-render the breadcrumb strip after a context-list mutation.
+
+        Real implementation lives on the live widget; tests bypass UI by
+        instantiating the dock via ``__new__``, so the no-op fallback is
+        intentional and harmless.
+        """
+        # Use __dict__ rather than getattr because Qt's metaclass throws
+        # RuntimeError when attributes are read on objects whose C++
+        # super-class was not initialised (e.g. tests that build the dock
+        # via __new__ to avoid spinning up a display server).
+        widget = self.__dict__.get("_breadcrumb_widget")
+        if widget is None:
+            return
+        try:
+            widget.set_labels(self.breadcrumb_labels())
+        except Exception:  # noqa: BLE001 - host UI failures must not break logic
+            logger.exception("breadcrumb refresh failed")
+
+
+# ── Tools issue #2872: HistorySidebar with search + restore + export ──
+
+
+class HistorySidebar(QWidget):
+    """Sidebar listing active + archived sessions with search/export.
+
+    The widget talks only to a :class:`ChatSessionManager` (Law of
+    Demeter — no direct ``session.context.metadata`` access).
+
+    Attributes:
+        _manager: Session manager used for every persistence call.
+        _active_ids: Ordered list of active session ids currently shown.
+        _archived_ids: Ordered list of archived session ids currently shown.
+    """
+
+    def __init__(
+        self,
+        manager: Any,
+        parent: QWidget | None = None,
+    ) -> None:
+        if manager is None:  # DbC precondition
+            raise ValueError("manager must be provided")
+        super().__init__(parent)
+        self._manager = manager
+        self._active_ids: list[str] = []
+        self._archived_ids: list[str] = []
+        self._refresh_data()
+
+    def _refresh_data(self) -> None:
+        """Reload the active/archived id lists from the manager."""
+        self._active_ids = []
+        self._archived_ids = []
+        for info in self._manager.list_sessions():
+            sid = info.get("id")
+            if sid is None:
+                continue
+            try:
+                archived = self._manager.is_archived(sid)
+            except KeyError:
+                continue
+            if archived:
+                self._archived_ids.append(sid)
+            else:
+                self._active_ids.append(sid)
+
+    def set_search_query(self, query: str) -> None:
+        """Apply a search query and re-bucket results.
+
+        Args:
+            query: Substring query (case-insensitive). Empty string
+                clears the filter.
+
+        Pre:
+            ``query`` is a string (may be empty).
+        Post:
+            ``self._active_ids`` and ``self._archived_ids`` reflect the
+            current filter state.
+        """
+        if query is None:
+            raise ValueError("query must be provided")
+        if not query.strip():
+            self._refresh_data()
+            return
+        hits = self._manager.search_sessions(query)
+        self._active_ids = []
+        self._archived_ids = []
+        for info in hits:
+            sid = info.get("id")
+            if sid is None:
+                continue
+            if info.get("archived"):
+                self._archived_ids.append(sid)
+            else:
+                self._active_ids.append(sid)
+
+    def _on_restore_clicked(self, session_id: str) -> None:
+        """Restore an archived session via the manager (LOD-clean)."""
+        self._manager.unarchive_session(session_id)
+        self._refresh_data()
+
+    def _on_export_clicked(self, session_id: str, fmt: str) -> None:
+        """Export ``session_id`` as ``fmt`` to a user-selected file."""
+        if fmt not in ("markdown", "json"):
+            raise ValueError(f"Unsupported export format: {fmt!r}")
+        suffix = "md" if fmt == "markdown" else "json"
+        path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Export Session",
+            f"{session_id}.{suffix}",
+            (
+                "Markdown Files (*.md);;All Files (*)"
+                if fmt == "markdown"
+                else "JSON Files (*.json);;All Files (*)"
+            ),
+        )
+        if not path:
+            return
+        try:
+            payload = self._manager.export_session(session_id, fmt)
+            Path(path).write_text(payload, encoding="utf-8")
+        except (OSError, KeyError, ValueError):
+            logger.exception("export of session %s failed", session_id)

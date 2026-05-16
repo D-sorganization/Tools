@@ -86,9 +86,9 @@ jobs:
     # Grant write only at this job level — branch creation, fix pushes, PR
     # creation, and issue updates all happen here. pick-runner needs no write.
     permissions:
-      contents: write      # create jules/issue-* branch and push fixes
+      contents: write # create jules/issue-* branch and push fixes
       pull-requests: write # open PR for each resolved issue
-      issues: write        # transition issue status to "In Review"
+      issues: write # transition issue status to "In Review"
     steps:
       - uses: actions/checkout@v6
         with:
@@ -290,5 +290,21 @@ jobs:
             # Post-processing: Remove reviewers to reduce noise
             if [ -n "$PR_NUM" ]; then
                gh pr edit "$PR_NUM" --remove-reviewer "dieterolson" || true
+               echo "PR_NUM=$PR_NUM" >> "$GITHUB_ENV"
             fi
           fi
+
+      - name: Anti-phantom-merge verification on resolver PR
+        if: env.PR_NUM != ''
+        uses: ./.github/actions/verify-issue-resolution
+        continue-on-error: true
+        with:
+          pr_number: ${{ env.PR_NUM }}
+          github_token: ${{ secrets.RUNNER_CHECK_TOKEN }}
+
+      - name: Label PR if verification failed
+        if: env.PR_NUM != '' && failure()
+        env:
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
+        run: |
+          gh pr edit "$PR_NUM" --add-label "jules-verification-failed" || true

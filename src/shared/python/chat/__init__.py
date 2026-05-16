@@ -22,6 +22,10 @@ Usage::
 
 from typing import Any
 
+from .cli_provider_availability import (
+    CliProviderEntry,
+    list_available_cli_providers,
+)
 from .service_base import ChatMessage, ChatServiceBase, ChatSession
 from .terminal_contracts import (
     TerminalAgentEvent,
@@ -130,4 +134,6 @@ __all__ = [
     "TerminalProcessAdapter",
     "TerminalRuntimeError",
     "TerminalSessionRuntime",
+    "CliProviderEntry",
+    "list_available_cli_providers",
 ]

@@ -346,3 +346,27 @@ class RustAgentAdapter(BaseAgentAdapter):
             model_name=str(self.config.model),
             provider_name="rust",
         )
+
+    # ------------------------------------------------------------------ #
+    # Tools issue #2871: provider catalogue + reasoning capabilities
+    # ------------------------------------------------------------------ #
+
+    _STATIC_MODELS: tuple[str, ...] = (
+        "gpt-4-turbo",
+        "gpt-4o",
+        "gpt-3.5-turbo",
+    )
+
+    def list_models(self) -> list[str]:
+        """Return Rust-adapter model catalogue; configured model is always present."""
+        configured = str(getattr(self.config, "model", "") or "")
+        models = list(self._STATIC_MODELS)
+        if configured and configured not in models:
+            models.insert(0, configured)
+        return models
+
+    def thinking_capabilities(self):  # type: ignore[no-untyped-def]
+        """Rust adapter does not currently surface reasoning budgets."""
+        from src.shared.python.chat.models import make_none_only_capabilities
+
+        return make_none_only_capabilities(provider="rust")
