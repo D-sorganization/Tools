@@ -63,6 +63,22 @@ DEFAULT_SIDEBAR_TAB_HELP: dict[str, dict[str, str]] = {
     ),
     "terminal": _tab_help(
         "Terminal",
+        "Launch a real interactive OS shell (bash, zsh, pwsh, powershell, cmd, "
+        "or a WSL distro) backed by a PTY.",
+        tips=(
+            "The shell selector switches between every discovered shell.",
+            "Install the optional ``terminal`` extra (pywinpty on Windows, "
+            "ptyprocess elsewhere) for full interactive features.",
+            "The live cwd label tracks the shell via OSC 7 escapes.",
+        ),
+        examples=(
+            "ls",
+            "git status",
+            "python --version",
+        ),
+    ),
+    "python_repl": _tab_help(
+        "Python REPL",
         "Run bounded Python snippets against the shared workspace registry.",
         tips=(
             "Assignments export new values back into the shared workspace.",
