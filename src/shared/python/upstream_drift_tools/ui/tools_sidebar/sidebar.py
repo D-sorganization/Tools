@@ -112,7 +112,11 @@ class UnifiedToolsSidebar(
         layout.addWidget(build_tab_settings_toolbar(self))
         layout.addWidget(self.tabs)
 
-        self.configure_tabs(tab_definitions or self._default_tab_definitions())
+        self.configure_tabs(
+            tab_definitions
+            if tab_definitions is not None
+            else self._default_tab_definitions()
+        )
 
         self.apply_state(self._state)
 
@@ -421,7 +425,7 @@ class UnifiedToolsSidebar(
         index = int(self.tabs.currentIndex())
         if 0 <= index < len(self._tab_ids):
             return self._tab_ids[index]
-        return self._tab_ids[0]
+        return self._tab_ids[0] if self._tab_ids else ""
 
     def set_active_tab(self, tab_id: str) -> bool:
         if tab_id not in self._tab_ids:

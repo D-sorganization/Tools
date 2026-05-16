@@ -730,7 +730,13 @@ class ChatDockWidget(QDockWidget):
         from PyQt6.QtGui import QGuiApplication
 
         screen = QGuiApplication.primaryScreen()
-        pixmap = parent.grab() if parent else (screen.grabWindow(0) if screen else None)  # type: ignore[arg-type]
+        from typing import Any, cast
+
+        pixmap = (
+            parent.grab()
+            if parent
+            else (screen.grabWindow(cast(Any, 0)) if screen else None)
+        )
         if not pixmap:
             return
         from PyQt6.QtCore import QBuffer, QByteArray, QIODevice

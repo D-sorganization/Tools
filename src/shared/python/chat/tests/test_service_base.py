@@ -165,7 +165,7 @@ class TestChatServiceBase:
 
     def test_ttl_eviction(self) -> None:
         svc = _TestChatService()
-        svc.SESSION_TTL_SECONDS = 0  # Immediate expiry
+        svc.SESSION_TTL_SECONDS = -1  # Immediate expiry regardless of time resolution
         session = svc.get_or_create_session(None)
         sid = session.session_id
         # Creating a new session triggers cleanup
