@@ -51,6 +51,7 @@ class PanelHeaderController(QFrame):
     access_mode_changed = pyqtSignal(object)  # ChatAccessMode
     auto_index_toggled = pyqtSignal(bool)
     new_chat_requested = pyqtSignal()
+    peer_review_requested = pyqtSignal()
     settings_requested = pyqtSignal()
     close_requested = pyqtSignal()
 
@@ -131,6 +132,14 @@ class PanelHeaderController(QFrame):
         new_chat_btn = QPushButton("New Chat")
         new_chat_btn.clicked.connect(self.new_chat_requested.emit)
         layout.addWidget(new_chat_btn)
+
+        peer_review_btn = QPushButton("🔍 Peer Review")
+        peer_review_btn.setObjectName("peerReviewBtn")
+        peer_review_btn.setToolTip(
+            "Request a second AI agent to critically review this conversation"
+        )
+        peer_review_btn.clicked.connect(self.peer_review_requested.emit)
+        layout.addWidget(peer_review_btn)
 
         settings_btn = QPushButton("⚙️")
         settings_btn.setToolTip("Settings")

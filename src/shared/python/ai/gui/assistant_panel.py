@@ -204,6 +204,7 @@ class AIAssistantPanel(QWidget):
         h.mode_changed.connect(self._on_header_mode_changed)
         h.access_mode_changed.connect(self._on_access_mode_changed)
         h.new_chat_requested.connect(self._on_new_chat)
+        h.peer_review_requested.connect(self._on_peer_review_requested)
         h.settings_requested.connect(self._show_settings)
         h.close_requested.connect(self.close_requested.emit)
 
@@ -561,6 +562,39 @@ class AIAssistantPanel(QWidget):
         self._refresh_prompt_memory()
         self._add_system_message(
             f"Memory sync complete. Added {inserted} archived preference(s)."
+        )
+
+    # ------------------------------------------------------------------
+    # Peer review
+    # ------------------------------------------------------------------
+    def _on_peer_review_requested(self) -> None:
+        """Open the peer-review config dialog and launch a reviewer chat tab."""
+        from src.shared.python.ai.peer_review.gui import PeerReviewConfigDialog
+        from src.shared.python.ai.peer_review.prompts import PEER_REVIEW_SYSTEM_PROMPT
+        from src.shared.python.ai.peer_review.transcript import format_transcript
+
+        dialog = PeerReviewConfigDialog(self)
+        if dialog.exec() != dialog.DialogCode.Accepted:
+            return
+
+        provider_name, model = dialog.get_config()
+        transcript = format_transcript(
+            [{"role": m.role, "content": m.content} for m in self._context.messages]
+        )
+
+        reviewer_panel = AIAssistantPanel(parent=None)
+        reviewer_panel.setWindowTitle(f"Peer Review — {provider_name} / {model}")
+
+        injected_prompt = (
+            f"{PEER_REVIEW_SYSTEM_PROMPT}\n\n"
+            f"The conversation to review follows.\n\n{transcript}"
+        )
+        reviewer_panel._add_system_message(injected_prompt)
+        reviewer_panel.show()
+        logger.info(
+            "Peer review panel opened with provider=%s model=%s",
+            provider_name,
+            model,
         )
 
     # ------------------------------------------------------------------

@@ -42,7 +42,9 @@ from .errors import (
     PeerReviewError,
     ReviewerTimeoutError,
 )
+from .prompts import PEER_REVIEW_SYSTEM_PROMPT
 from .registry import ReviewerRegistry
+from .transcript import format_transcript
 
 __all__ = [
     # Contracts
@@ -73,4 +75,8 @@ __all__ = [
     "ReviewerTimeoutError",
     # Chat
     "request_peer_review",
+    # Transcript
+    "format_transcript",
+    # Prompts
+    "PEER_REVIEW_SYSTEM_PROMPT",
 ]
