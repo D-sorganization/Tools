@@ -19,6 +19,11 @@ from __future__ import annotations
 
 from src.shared.python.ai.mcp.client import McpClient
 from src.shared.python.ai.mcp.config_loader import load_mcp_servers
+from src.shared.python.ai.mcp.config_writer import (
+    McpServersFile,
+    read,
+    write,
+)
 from src.shared.python.ai.mcp.contracts import (
     McpResourceDescriptor,
     McpServerConfig,
@@ -32,7 +37,10 @@ __all__ = [
     "McpClientPool",
     "McpResourceDescriptor",
     "McpServerConfig",
+    "McpServersFile",
     "McpToolDescriptor",
     "McpTransport",
     "load_mcp_servers",
+    "read",
+    "write",
 ]
