@@ -122,6 +122,13 @@ codemap = [
 codemap-mcp = [
     "mcp>=1.0.0",
 ]
+# Sidekick Jupyter notebook tab (Tools #2875 Phase 1 / #2876 Phase 2).
+# Phase 1 only needs nbformat; nbclient is bundled here so a single
+# install enables Phase 2 execution once #2876 lands.
+jupyter = [
+    "nbformat>=5.10",
+    "nbclient>=0.10",
+]
 # Video analyzer migration package.
 video-analyzer = [
     "opencv-python>=4.8.0",
