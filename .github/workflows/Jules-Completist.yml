@@ -33,9 +33,9 @@ jobs:
     runs-on: ubuntu-latest
     # Grant write only at this job level.
     permissions:
-      contents: write      # push completist fixes to jules/completist-* branch
+      contents: write # push completist fixes to jules/completist-* branch
       pull-requests: write # open PR for completist fixes
-      issues: write        # create tracking issues for incomplete items
+      issues: write # create tracking issues for incomplete items
     steps:
       - uses: actions/checkout@v6
 
@@ -51,6 +51,36 @@ jobs:
           mkdir -p .jules/completist_data
           grep -rn "TODO\|FIXME\|XXX" --include="*.py" --include="*.md" . \
             --exclude-dir=".git" > .jules/completist_data/todo_markers.txt 2>/dev/null || true
+
+      - name: Collect verification-failed issue numbers (skip-list)
+        # Build a list of closed issue numbers that are linked to PRs flagged
+        # jules-verification-failed. The Completist must NOT recreate / reopen
+        # these issues — doing so produces the close-and-reopen notification spam
+        # loop the user explicitly asked us to break.
+        id: skip_list
+        env:
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
+        run: |
+          set -euo pipefail
+          SKIP_LIST=""
+          PRS=$(gh pr list --state all --label jules-verification-failed \
+            --json number,title,body --limit 200 2>/dev/null || echo "[]")
+          while IFS= read -r pr_json; do
+            [ -z "$pr_json" ] && continue
+            BODY=$(echo "$pr_json" | jq -r '.body // ""')
+            TITLE=$(echo "$pr_json" | jq -r '.title // ""')
+            ISSUES=$(printf '%s\n%s\n' "$TITLE" "$BODY" \
+              | grep -oiE '(fixes|closes|resolves)[[:space:]]*#[0-9]+' \
+              | grep -oE '[0-9]+' || true)
+            for issue_num in $ISSUES; do
+              SKIP_LIST="$SKIP_LIST $issue_num"
+            done
+          done < <(echo "$PRS" | jq -c '.[]')
+          SKIP_LIST=$(echo "$SKIP_LIST" | tr ' ' '\n' | sort -u | tr '\n' ',' | sed 's/,$//')
+          echo "skip_list=$SKIP_LIST" >> "$GITHUB_OUTPUT"
+          echo "Completist will skip these issues: ${SKIP_LIST:-<none>}"
+          mkdir -p .jules/completist_data
+          echo "$SKIP_LIST" > .jules/completist_data/skip_list.txt
 
       - name: Analyze
         env:
@@ -77,7 +107,8 @@ jobs:
           exit 0
           fi
 
-          PROMPT="Audit .jules/completist_data/ for incomplete work. Create docs/assessments/completist/ report. DO NOT modify code."
+          SKIP_LIST="${{ steps.skip_list.outputs.skip_list }}"
+          PROMPT="Audit .jules/completist_data/ for incomplete work. Create docs/assessments/completist/ report. DO NOT modify code. DO NOT recreate or reopen any of these issue numbers (they are flagged jules-verification-failed and must remain in their current state for human investigation): ${SKIP_LIST:-<none>}. If you find work matching one of these skipped issues, post a single summary comment on the linked PR instead of reopening the issue."
 
           echo "Creating Jules session..."
           REQUEST_JSON=$(jq -n \
