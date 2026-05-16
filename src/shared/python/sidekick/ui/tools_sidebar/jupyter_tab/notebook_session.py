@@ -22,6 +22,7 @@ import logging
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +47,7 @@ class NotebookSessionModel:
     workspace_root: Path
     kernel_env: str | None
     last_saved: datetime | None = field(default=None)
+    _kernel_env_vars: dict[str, Any] = field(default_factory=dict, repr=False)
 
     def validate_path(self) -> None:
         """DbC: raise ValueError if *notebook_path* is outside *workspace_root*.
@@ -63,6 +65,30 @@ class NotebookSessionModel:
         # matches (a file directly at the root is valid).
         if not resolved.is_relative_to(root):
             raise ValueError(f"Path {resolved} is outside workspace root {root}")
+
+    def set_kernel_environment(self, env_vars: dict[str, Any]) -> None:
+        """Store kernel environment variables for injection into the kernel.
+
+        These variables are injected by :class:`WorkspaceBridge` before the
+        kernel is launched.  This method simply stores the dict; no kernel
+        communication happens here.
+
+        Args:
+            env_vars: Mapping of variable name to JSON-serializable value.
+                Must be a dict.
+
+        Raises:
+            TypeError: If *env_vars* is not a dict.
+        """
+        if not isinstance(env_vars, dict):
+            raise TypeError(f"env_vars must be a dict, got {type(env_vars).__name__}")
+        self._kernel_env_vars = dict(env_vars)
+        logger.debug("Kernel environment updated: %d variable(s)", len(env_vars))
+
+    @property
+    def kernel_env_vars(self) -> dict[str, Any]:
+        """Return a copy of the kernel environment variables dict."""
+        return dict(self._kernel_env_vars)
 
 
 class NotebookSessionManager:
