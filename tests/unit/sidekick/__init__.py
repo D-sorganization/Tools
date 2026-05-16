@@ -1,1 +1,1 @@
-"""Sidekick MATLAB-style workspace tests (UpstreamDrift #5616)."""
+"""Sidekick tests."""

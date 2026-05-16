@@ -34,8 +34,11 @@ logger = logging.getLogger(__name__)
 
 SIDEKICK_CHAT_RUNTIME_OBJECT_NAME = "SidekickChatRuntimeTab"
 SIDEKICK_CHAT_STATUS_OBJECT_NAME = "SidekickChatStatusTab"
+# UpstreamDrift #5617: this object name is retained for backward compatibility
+# with downstream tests and styling. The widget is now SidekickPythonReplWidget;
+# the new OS terminal uses SIDEKICK_OS_TERMINAL_OBJECT_NAME (os_terminal module).
 SIDEKICK_TERMINAL_OBJECT_NAME = "SidekickTerminalTab"
-SIDEKICK_PYTHON_REPL_OBJECT_NAME = "SidekickPythonReplWidget"
+SIDEKICK_PYTHON_REPL_OBJECT_NAME = SIDEKICK_TERMINAL_OBJECT_NAME
 SIDEKICK_NOTES_OBJECT_NAME = "SidekickNotesTab"
 
 _DEFAULT_CHAT_ACCENT_COLOR = "#FF8800"
@@ -117,8 +120,33 @@ def build_chat_tab(sidebar: Any) -> QtWidgets.QWidget:
 
 
 def build_terminal_tab(sidebar: Any) -> QtWidgets.QWidget:
-    """Build an embedded Python terminal tab bound to the workspace registry."""
-    widget = SidekickTerminalWidget(
+    """Build the OS-level terminal tab (UpstreamDrift #5617).
+
+    The widget launches a real interactive shell (bash, zsh, pwsh,
+    powershell, cmd, or a WSL distro) backed by a PTY when ``ptyprocess``
+    or ``pywinpty`` is installed, and falls back to plain subprocess
+    pipes otherwise.
+    """
+    # Local import keeps the heavy os_terminal module out of the import path
+    # for headless hosts that don't reach this code path.
+    from .os_terminal import SidekickOsTerminalWidget
+
+    widget = SidekickOsTerminalWidget(
+        project_root=sidebar.project_root,
+        parent=sidebar,
+    )
+    widget.setToolTip(DEFAULT_SIDEBAR_TAB_HELP["terminal"]["summary"])
+    return widget
+
+
+def build_python_repl_tab(sidebar: Any) -> QtWidgets.QWidget:
+    """Build the Python REPL tab (UpstreamDrift #5617).
+
+    This is the widget formerly named ``SidekickTerminalWidget``. It runs
+    bounded Python snippets against the shared workspace registry; see
+    :class:`SidekickPythonReplWidget`.
+    """
+    widget = SidekickPythonReplWidget(
         registry=sidebar.registry,
         set_variable=sidebar.set_context_variable,
         terminal_theme=theme.SidekickTerminalTheme.inherited(
@@ -126,7 +154,7 @@ def build_terminal_tab(sidebar: Any) -> QtWidgets.QWidget:
         ),
         parent=sidebar,
     )
-    widget.setToolTip(DEFAULT_SIDEBAR_TAB_HELP["terminal"]["summary"])
+    widget.setToolTip(DEFAULT_SIDEBAR_TAB_HELP["python_repl"]["summary"])
     return widget
 
 
@@ -314,8 +342,15 @@ class PythonReplWidget(QtWidgets.QWidget):
 _SENTINEL = object()
 
 
-class SidekickTerminalWidget(QtWidgets.QWidget):
-    """Terminal-tab wrapper hosting the shared :class:`PythonReplWidget`.
+class SidekickPythonReplWidget(QtWidgets.QWidget):
+    """Small Python execution surface sharing values with Workspace.
+
+    UpstreamDrift #5617: renamed from ``SidekickTerminalWidget``. The name
+    is more honest — this widget runs a bounded Python REPL, not an OS
+    shell. The new ``SidekickOsTerminalWidget`` (in
+    :mod:`upstream_drift_tools.ui.tools_sidebar.os_terminal`) provides the
+    real PTY-backed shell. Object name, child widget object names, and
+    tooltips are preserved so existing styling and tests continue to work.
 
     Kept as a thin shell so existing tests and Terminal-tab plumbing
     (theming, object-name lookup) continue to work. All REPL behaviour
