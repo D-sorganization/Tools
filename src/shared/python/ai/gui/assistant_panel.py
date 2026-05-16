@@ -48,6 +48,7 @@ from src.shared.python.ai.gui.settings_dialog import (
     AISettingsDialog,
     provider_display_name,
 )
+from src.shared.python.ai.mcp.gui import McpStatusIndicator
 from src.shared.python.ai.memory_manager import MemoryManager
 from src.shared.python.ai.rag.simple_rag import SimpleRAGStore
 from src.shared.python.ai.tool_registry import get_global_registry
@@ -109,6 +110,7 @@ class AIAssistantPanel(QWidget):
         self._rag_store = SimpleRAGStore()
         self._memory_manager = MemoryManager()
         self._refresh_prompt_memory()
+        self._mcp_pool: Any = None  # McpClientPool — wired in after setup
 
         # --- Session manager + history ----------------------------------
         self._session_manager = ChatSessionManager()
@@ -282,6 +284,10 @@ class AIAssistantPanel(QWidget):
         main_splitter.setStretchFactor(1, 1)
         layout.addWidget(main_splitter)
 
+        # MCP connection status indicator — lives at the bottom of the panel.
+        self._mcp_indicator = McpStatusIndicator()
+        layout.addWidget(self._mcp_indicator)
+
         self._add_system_message(
             "👋 Welcome to the shared Tools AI Assistant!\n\n"
             "I can help you:\n"
@@ -437,6 +443,9 @@ class AIAssistantPanel(QWidget):
             )
             return
         self._refresh_prompt_memory()
+        # Refresh MCP tool list before each prompt so newly connected servers
+        # are picked up without restarting the panel.
+        self._refresh_mcp_status()
         self._set_status("Thinking...")
         self._input_container.set_busy(True)
         tools = self._build_tool_declarations()
@@ -590,6 +599,31 @@ class AIAssistantPanel(QWidget):
     # ------------------------------------------------------------------
     # Adapter / settings
     # ------------------------------------------------------------------
+    def set_mcp_pool(self, pool: Any) -> None:
+        """Attach an ``McpClientPool`` and refresh the MCP status indicator.
+
+        The panel does not own the pool lifecycle (start/stop). Callers start
+        the pool before calling this and stop it on shutdown.
+
+        Args:
+            pool: A started ``McpClientPool`` instance.
+        """
+        self._mcp_pool = pool
+        self._refresh_mcp_status()
+
+    def _refresh_mcp_status(self) -> None:
+        """Query the pool for connected-server count and update the indicator."""
+        if self._mcp_pool is None:
+            self._mcp_indicator.update_status(connected_count=0, total_count=0)
+            return
+        server_names = getattr(self._mcp_pool, "server_names", [])
+        total = len(server_names)
+        clients = getattr(self._mcp_pool, "_clients", {})
+        connected = sum(
+            1 for c in clients.values() if getattr(c, "is_connected", False)
+        )
+        self._mcp_indicator.update_status(connected_count=connected, total_count=total)
+
     def set_adapter(self, adapter: BaseAgentAdapter) -> None:
         if adapter is None:
             raise ValueError("adapter must be provided")
