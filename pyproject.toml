@@ -88,6 +88,13 @@ theme = [
 pid = [
     "ezdxf[draw]>=1.4.3",
 ]
+# Real OS terminal for the Sidekick OS Terminal tab (UpstreamDrift #5617).
+# Picks the platform-appropriate PTY library; falls back to plain subprocess
+# pipes when neither is installed.
+terminal = [
+    "pywinpty>=2.0; platform_system == 'Windows'",
+    "ptyprocess; platform_system != 'Windows'",
+]
 
 # CAD geometry export (build123d pulls in its own matplotlib and PyQt6)
 cad = [
