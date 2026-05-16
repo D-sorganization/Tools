@@ -1,20 +1,36 @@
-"""
-UpstreamDrift Shared Tools Library
-==================================
+"""Deprecated alias for the sidekick package.
 
-Shared components for Gasification Model and UpstreamDrift (Golf Suite).
+The runtime code lives at ``sidekick.*``. This shim re-exports every
+public symbol so existing ``from upstream_drift_tools.X import Y``
+imports continue to work during the migration window. A
+``DeprecationWarning`` is emitted on first import.
 
-Subpackages (import by domain):
-    calculators           - Calculation engines (conversion, electrical, mechanical, thermo)
-    data_processing       - DataProcessorEngine, readers/writers, typed exceptions
-    lab                   - Laboratory tools (bio/C3D reader)
-    process_calculators   - Standalone process engineering calculators
-    theme                 - Fleet-wide color theme system (13+ themes, PyQt6 integration)
-    ui                    - PyQt6 widgets, themes, managers, mixins
-    utils                 - Logging, paths, state management, physical constants
+Downstream consumers should migrate to ``sidekick`` at their own pace.
+This shim will be removed in a future major release (tracked by a
+separate issue).
 """
 
-from .protocols import (
+# isort: skip_file
+import sys
+import warnings
+
+warnings.warn(
+    "upstream_drift_tools is deprecated and will be removed in a future release. "
+    "Import from sidekick instead.",
+    DeprecationWarning,
+    stacklevel=2,
+)
+
+# Import the canonical package so all its submodules are registered.
+import sidekick  # noqa: E402
+import sidekick.calculators as calculators  # noqa: E402, F401
+import sidekick.data_processing as data_processing  # noqa: E402, F401
+import sidekick.lab as lab  # noqa: E402, F401
+import sidekick.process_calculators as process_calculators  # noqa: E402, F401
+import sidekick.theme as theme  # noqa: E402, F401
+import sidekick.ui as ui  # noqa: E402, F401
+import sidekick.utils as utils  # noqa: E402, F401
+from sidekick import (  # noqa: E402, F401
     CalculationResult,
     Calculator,
     DataTransformer,
@@ -25,7 +41,17 @@ from .protocols import (
     ValidationResult,
 )
 
-__version__ = "0.1.0"
+# Mirror every sidekick.* module already in sys.modules under the old name.
+# This makes `import upstream_drift_tools.X` and
+# `from upstream_drift_tools.X import Y` resolve to the canonical objects.
+_PREFIX = "sidekick."
+_OLD_PREFIX = "upstream_drift_tools."
+for _name, _mod in list(sys.modules.items()):
+    if _name.startswith(_PREFIX):
+        _alias = _OLD_PREFIX + _name[len(_PREFIX) :]
+        sys.modules.setdefault(_alias, _mod)
+
+__version__ = sidekick.__version__
 
 __all__ = [
     # Protocols

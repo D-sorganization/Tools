@@ -58,6 +58,7 @@ from .chat_dock_widget import (
     _session_file_path,
     _write_shared_session_id,
 )
+from .cli_provider_availability import list_available_cli_providers
 from .terminal_contracts import TerminalProviderRegistry
 from .terminal_providers import build_default_terminal_provider_registry
 from .voice_input_manager import VoiceInputManager
@@ -876,16 +877,42 @@ class ChatDockWidget(QDockWidget):
         combo.setToolTip(f"Select AI {label}")
         return combo
 
+    @staticmethod
+    def _build_available_cli_provider_items() -> list[tuple[str, str]]:
+        """Return ``(display_name, provider_id)`` pairs for installed CLI agents.
+
+        Probes the local ``PATH`` via :func:`shutil.which` through
+        :func:`~cli_provider_availability.list_available_cli_providers`.
+        Only CLI agents whose binary is found are included so the dropdown
+        never shows unavailable entries.
+
+        Returns:
+            A list of ``(display_name, provider_id)`` tuples, empty when
+            no CLI agents are installed.
+        """
+        return [
+            (entry.display_name, entry.provider_id)
+            for entry in list_available_cli_providers()
+        ]
+
     def _build_ai_dropdowns(self, mode_row: QHBoxLayout) -> None:
         """Construct + wire the three AI header dropdowns.
 
         Side-effect only: instantiates ``_ai_provider_combo``,
         ``_ai_model_combo``, ``_ai_thinking_combo`` and inserts them
         into ``mode_row`` left-to-right.
+
+        CLI agent providers (Claude CLI, Codex CLI, Cline) are probed via
+        :func:`~_build_available_cli_provider_items` and appended to the
+        provider combo after the API providers so they are always visible
+        when the binary is installed (Tools issue UpstreamDrift#5622).
         """
+        api_items = list(self._AI_DEFAULT_PROVIDERS)
+        cli_items = self._build_available_cli_provider_items()
+        all_provider_items = api_items + cli_items
         self._ai_provider_combo = self._build_header_combobox(
             label="provider",
-            items=list(self._AI_DEFAULT_PROVIDERS),
+            items=all_provider_items,
         )
         mode_row.addWidget(self._ai_provider_combo)
 
