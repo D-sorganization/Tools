@@ -1,8 +1,12 @@
-"""SidekickNotebookWidget — Phase 2 session-aware notebook wrapper.
+"""SidekickNotebookWidget — Phase 2 + Phase 3 session-aware notebook wrapper.
 
-Wraps :class:`~.notebook_session.NotebookSessionModel` so that the Sidekick
-tab always validates notebook paths before accepting them and exposes a clean
-session API for Phase 2 (Tools #2876).
+Phase 2 (Tools #2876): wraps :class:`~.notebook_session.NotebookSessionModel`
+so that the Sidekick tab always validates notebook paths before accepting them
+and exposes a clean session API.
+
+Phase 3 (Tools #2877): accepts an optional :class:`~.workspace_bridge.WorkspaceBridge`
+and calls :meth:`~.workspace_bridge.WorkspaceBridge.apply_to_kernel_environment`
+when :meth:`update_workspace` is called.
 
 This module deliberately avoids Qt imports so that it can be unit-tested in a
 headless environment.  The actual Qt rendering is delegated to
@@ -14,8 +18,10 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
+from typing import Any
 
 from .notebook_session import NotebookSessionModel
+from .workspace_bridge import WorkspaceBridge
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +33,11 @@ class SidekickNotebookWidget:
     which notebook is open, the active virtual environment, and when the
     session was last persisted.
 
+    An optional :class:`~.workspace_bridge.WorkspaceBridge` may be supplied
+    at construction time.  When present, :meth:`update_workspace` passes the
+    workspace dict through the bridge so that selected variables are injected
+    into the kernel environment.
+
     The widget does NOT hold the full notebook JSON — it holds only a path
     reference validated against ``_workspace_root``.
 
@@ -37,17 +48,32 @@ class SidekickNotebookWidget:
         widget.set_kernel_environment("venv311")
         meta = widget.session_metadata  # dict for UI display
 
+        # Phase 3 — inject workspace vars:
+        bridge = WorkspaceBridge(widget._session)
+        widget2 = SidekickNotebookWidget(
+            workspace_root=Path("/project"),
+            workspace_bridge=bridge,
+        )
+        widget2.update_workspace({"x": 42, "df": my_dataframe})
+
     Attributes:
         _workspace_root: Directory that all notebook paths must be contained
-            within.  Set by the constructor (or directly by tests via
-            ``__new__``).
+            within.  Set by the constructor.
         _session: The current :class:`~.notebook_session.NotebookSessionModel`,
             or ``None`` if no notebook has been opened yet.
+        _workspace_bridge: The :class:`~.workspace_bridge.WorkspaceBridge`
+            used to push workspace variables into the kernel, or ``None``.
     """
 
-    def __init__(self, workspace_root: Path | str) -> None:
+    def __init__(
+        self,
+        workspace_root: Path | str,
+        *,
+        workspace_bridge: WorkspaceBridge | None = None,
+    ) -> None:
         self._workspace_root: Path = Path(workspace_root)
         self._session: NotebookSessionModel | None = None
+        self._workspace_bridge: WorkspaceBridge | None = workspace_bridge
 
     # ------------------------------------------------------------------
     # Public API (Phase 1 compat + Phase 2 extensions)
@@ -94,6 +120,21 @@ class SidekickNotebookWidget:
                 "Call open_notebook() first."
             )
         self._session.kernel_env = env
+
+    def update_workspace(self, workspace: dict[str, Any]) -> None:
+        """Push workspace variables through the bridge into the kernel environment.
+
+        If no :class:`~.workspace_bridge.WorkspaceBridge` was provided at
+        construction this is a no-op; no exception is raised.
+
+        Args:
+            workspace: A ``{name: value}`` mapping of Sidekick workspace
+                variables to export.
+        """
+        if self._workspace_bridge is None:
+            logger.debug("update_workspace called but no workspace bridge is set")
+            return
+        self._workspace_bridge.apply_to_kernel_environment(workspace)
 
     @property
     def session_metadata(self) -> dict[str, object]:
