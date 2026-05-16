@@ -2,12 +2,17 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping
-from dataclasses import dataclass, field, replace
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
-from . import design_tokens as theme
+from . import (
+    SIDEKICK_DOCK_OBJECT_NAME,
+    SIDEKICK_SIDEBAR_OBJECT_NAME,
+    SIDEKICK_TAB_BAR_OBJECT_NAME,
+    SIDEKICK_TABS_OBJECT_NAME,
+    SidekickDesignTokens,
+    sidekick_qss,
+)
 from .calculator_assist import calculator_context_preferences, calculator_state_fields
 from .default_tabs import (
     build_default_tab_definitions,
@@ -17,11 +22,12 @@ from .default_tabs import (
 from .help_content import render_help_markdown
 from .qt_compat import QtCore, QtWidgets, Signal, all_sidebar_dock_features, dock_area
 from .registry import WorkspaceRegistry
-from .settings import SidebarTabSettingsDescriptor
 from .state import SidebarState
 from .state_profile_actions import StateProfileMixin
 from .tab_context_menu import show_tab_context_menu
+from .tab_definition import SidebarTabDefinition
 from .tab_display_names import TabDisplayNameMixin
+from .tab_popout import TabPopoutMixin
 from .tab_settings_panel import TabSettingsMixin, build_tab_settings_toolbar
 from .tab_visibility import (
     initially_visible_tab_ids,
@@ -32,25 +38,12 @@ from .tab_visibility import (
 from .theme_settings import resolve_sidekick_theme
 
 
-@dataclass(frozen=True)
-class SidebarTabDefinition:
-    """Configurable Sidekick tab contract."""
-
-    tab_id: str
-    title: str
-    factory: Callable[[UnifiedToolsSidebar], QtWidgets.QWidget]
-    visible: bool = True
-    popout_enabled: bool = True
-    duplicate_enabled: bool = False
-    help_metadata: Mapping[str, str] = field(default_factory=dict)
-    settings: SidebarTabSettingsDescriptor | None = None
-
-
 class UnifiedToolsSidebar(
     QtWidgets.QWidget,
     TabDisplayNameMixin,
     TabSettingsMixin,
     StateProfileMixin,
+    TabPopoutMixin,
 ):
     """Tabbed sidebar that can be installed as a tear-off dock widget."""
 
@@ -64,11 +57,11 @@ class UnifiedToolsSidebar(
         registry: WorkspaceRegistry | None = None,
         state: SidebarState | None = None,
         tab_definitions: list[SidebarTabDefinition] | None = None,
-        design_tokens: theme.SidekickDesignTokens | None = None,
+        design_tokens: SidekickDesignTokens | None = None,
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
         super().__init__(parent)
-        self.setObjectName(theme.SIDEKICK_SIDEBAR_OBJECT_NAME)
+        self.setObjectName(SIDEKICK_SIDEBAR_OBJECT_NAME)
         self.registry = registry or WorkspaceRegistry()
         self._state = state or SidebarState()
         self._design_tokens = resolve_sidekick_theme(
@@ -89,8 +82,8 @@ class UnifiedToolsSidebar(
         self._project_root = Path(project_root or Path.cwd()).expanduser().resolve()
 
         self.tabs = QtWidgets.QTabWidget(self)
-        self.tabs.setObjectName(theme.SIDEKICK_TABS_OBJECT_NAME)
-        self.tabs.tabBar().setObjectName(theme.SIDEKICK_TAB_BAR_OBJECT_NAME)
+        self.tabs.setObjectName(SIDEKICK_TABS_OBJECT_NAME)
+        self.tabs.tabBar().setObjectName(SIDEKICK_TAB_BAR_OBJECT_NAME)
         self.tabs.setMovable(True)
         self.tabs.currentChanged.connect(self._emit_context)
         self.tabs.tabBar().tabMoved.connect(self._sync_tab_order_from_widget)
@@ -105,14 +98,18 @@ class UnifiedToolsSidebar(
             self._show_tab_context_menu
         )
 
-        self.setStyleSheet(theme.sidekick_qss(self._design_tokens))
+        self.setStyleSheet(sidekick_qss(self._design_tokens))
 
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(build_tab_settings_toolbar(self))
         layout.addWidget(self.tabs)
 
-        self.configure_tabs(tab_definitions or self._default_tab_definitions())
+        self.configure_tabs(
+            tab_definitions
+            if tab_definitions is not None
+            else self._default_tab_definitions()
+        )
 
         self.apply_state(self._state)
 
@@ -176,7 +173,8 @@ class UnifiedToolsSidebar(
 
     def get_tab_display_name(self, tab_id: str) -> str | None:
         """Return the persisted custom display name for ``tab_id``, or *None*."""
-        return self._state.tab_display_names.get(tab_id)
+        result: str | None = self._state.tab_display_names.get(tab_id)
+        return result
 
     def prompt_rename_tab(self, tab_id: str) -> None:
         """Open an input dialog so the user can rename ``tab_id``."""
@@ -278,69 +276,6 @@ class UnifiedToolsSidebar(
         self._emit_context()
         return True
 
-    def pop_out_tab(self, tab_id: str) -> QtWidgets.QMainWindow | None:
-        """Move one visible tab into a standalone utility window."""
-        definition = self._tab_definitions.get(tab_id)
-        if (
-            definition is None
-            or not definition.popout_enabled
-            or tab_id not in self._tab_ids
-        ):
-            return None
-        index = self._tab_ids.index(tab_id)
-        widget = self.tabs.widget(index)
-        self.tabs.removeTab(index)
-        self._tab_ids.pop(index)
-        self._tab_widgets.pop(tab_id, None)
-
-        window = QtWidgets.QMainWindow(self)
-        window.setObjectName(f"SidekickPopout_{tab_id}")
-        window.setWindowTitle(f"Sidekick - {self.tab_display_name(tab_id)}")
-        window.setCentralWidget(widget)
-        window.resize(max(self._state.width, 360), max(self._state.height, 360))
-        window.closeEvent = self._redock_close_event(tab_id, window)
-        self._popout_windows[tab_id] = window
-        window.show()
-        self._emit_context()
-        return window
-
-    def redock_tab(self, tab_id: str) -> bool:
-        """Return a popped-out tab to the sidebar."""
-        window = self._popout_windows.pop(tab_id, None)
-        if window is None:
-            return tab_id in self._tab_ids
-        widget = window.centralWidget()
-        window.setCentralWidget(None)
-        window.hide()
-        self._tab_ids.append(tab_id)
-        self._tab_widgets[tab_id] = widget
-        self.tabs.addTab(widget, self.tab_display_name(tab_id))
-        self.set_active_tab(tab_id)
-        self._sync_tab_order_from_widget()
-        self._emit_context()
-        return True
-
-    def duplicate_tab(self, tab_id: str) -> str | None:
-        """Create a second docked instance of a duplicable tab."""
-        definition = self._tab_definitions.get(tab_id)
-        if definition is None or not definition.duplicate_enabled:
-            return None
-        count = self._duplicate_counts.get(tab_id, 0) + 1
-        self._duplicate_counts[tab_id] = count
-        duplicate_id = f"{tab_id}#{count}"
-        duplicate = replace(
-            definition,
-            tab_id=duplicate_id,
-            title=f"{definition.title} {count + 1}",
-        )
-        self._tab_definitions[duplicate_id] = duplicate
-        self._configure_tab_settings()
-        self._add_defined_tab(duplicate)
-        self.set_active_tab(duplicate_id)
-        self._sync_tab_order_from_widget()
-        self._emit_context()
-        return duplicate_id
-
     def install_as_dock(
         self,
         main_window: QtWidgets.QMainWindow,
@@ -354,7 +289,7 @@ class UnifiedToolsSidebar(
             self.apply_state(SidebarState.load_json(state_path))
 
         dock = QtWidgets.QDockWidget(title, main_window)
-        dock.setObjectName(theme.SIDEKICK_DOCK_OBJECT_NAME)
+        dock.setObjectName(SIDEKICK_DOCK_OBJECT_NAME)
         dock.setFeatures(all_sidebar_dock_features())
         dock.setWidget(self)
         dock.setFloating(self._state.floating)
@@ -421,7 +356,7 @@ class UnifiedToolsSidebar(
         index = int(self.tabs.currentIndex())
         if 0 <= index < len(self._tab_ids):
             return self._tab_ids[index]
-        return self._tab_ids[0]
+        return self._tab_ids[0] if self._tab_ids else ""
 
     def set_active_tab(self, tab_id: str) -> bool:
         if tab_id not in self._tab_ids:
@@ -442,15 +377,15 @@ class UnifiedToolsSidebar(
         refresh_workspace_list(self)
         self._emit_context()
 
-    def set_design_tokens(self, design_tokens: theme.SidekickDesignTokens) -> None:
+    def set_design_tokens(self, design_tokens: SidekickDesignTokens) -> None:
         """Apply a new Sidekick token set to this sidebar."""
         self._design_tokens = design_tokens
-        self.setStyleSheet(theme.sidekick_qss(self._design_tokens))
+        self.setStyleSheet(sidekick_qss(self._design_tokens))
         self._emit_context()
 
     def set_theme(self, theme_name: str) -> None:
         """Apply a shared fleet theme by name to this sidebar."""
-        self.set_design_tokens(theme.SidekickDesignTokens.from_shared_theme(theme_name))
+        self.set_design_tokens(SidekickDesignTokens.from_shared_theme(theme_name))
 
     def set_project_root(self, project_root: str | Path) -> None:
         self._project_root = Path(project_root).expanduser().resolve()
@@ -458,7 +393,10 @@ class UnifiedToolsSidebar(
         self._emit_context()
 
     def _default_tab_definitions(self) -> list[SidebarTabDefinition]:
-        return build_default_tab_definitions(self, SidebarTabDefinition)
+        return cast(
+            list[SidebarTabDefinition],
+            build_default_tab_definitions(self, SidebarTabDefinition),
+        )
 
     def _add_defined_tab(self, definition: SidebarTabDefinition) -> None:
         widget = definition.factory(self)
@@ -545,18 +483,6 @@ class UnifiedToolsSidebar(
             self.move_tab(tab_id, index)
         for tab_id in self._tab_definitions:
             self._refresh_tab_display_name(tab_id)
-
-    def _redock_close_event(
-        self,
-        tab_id: str,
-        window: QtWidgets.QMainWindow,
-    ) -> Callable[[Any], None]:
-        def _handle_close(event: Any) -> None:
-            self.redock_tab(tab_id)
-            event.ignore()
-            window.hide()
-
-        return _handle_close
 
 
 SidekickSidebar = UnifiedToolsSidebar
