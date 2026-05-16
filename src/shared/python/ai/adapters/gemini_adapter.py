@@ -265,6 +265,34 @@ class GeminiAdapter(BaseAgentAdapter):
             provider_name="google",
         )
 
+    # ------------------------------------------------------------------ #
+    # Tools issue #2871: provider catalogue + reasoning capabilities
+    # ------------------------------------------------------------------ #
+
+    _STATIC_MODELS: tuple[str, ...] = (
+        "gemini-pro",
+        "gemini-1.5-pro",
+        "gemini-1.5-flash",
+        "gemini-1.0-pro",
+    )
+
+    def list_models(self) -> list[str]:
+        """Return Gemini model ids; falls back to a static catalogue.
+
+        The ``google-generativeai`` SDK exposes ``genai.list_models()``
+        which performs a network call.  Since Gemini's process-global
+        state makes that call expensive and unstable in unit tests, we
+        prefer the static catalogue and never raise.
+        """
+        # Network probe intentionally skipped — see docstring.
+        return list(self._STATIC_MODELS)
+
+    def thinking_capabilities(self) -> Any:
+        """Gemini does not currently expose user-controllable thinking budgets."""
+        from src.shared.python.chat.models import make_none_only_capabilities
+
+        return make_none_only_capabilities(provider="google")
+
     def validate_connection(self) -> tuple[bool, str]:
         """Validate Gemini connection."""
         try:

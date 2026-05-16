@@ -225,6 +225,22 @@ class ClineAdapter(BaseAgentAdapter):
             provider_name="cline",
         )
 
+    # ------------------------------------------------------------------ #
+    # Tools issue #2871: provider catalogue + reasoning capabilities
+    # ------------------------------------------------------------------ #
+
+    _STATIC_MODELS: tuple[str, ...] = ("cline",)
+
+    def list_models(self) -> list[str]:
+        """Cline acts as a single virtual model; always a one-entry list."""
+        return list(self._STATIC_MODELS)
+
+    def thinking_capabilities(self) -> Any:
+        """Cline forwards reasoning to its backend; expose only 'none' here."""
+        from src.shared.python.chat.models import make_none_only_capabilities
+
+        return make_none_only_capabilities(provider="cline")
+
     def validate_connection(self) -> tuple[bool, str]:
         """Test connection to Cline server.
 
