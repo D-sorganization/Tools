@@ -1,11 +1,11 @@
 """Flow rate conversion utilities — re-export from canonical location.
 
 This module re-exports all public symbols from
-``upstream_drift_tools.calculators.conversion.flow_rate_converter``
+``sidekick.calculators.conversion.flow_rate_converter``
 to maintain backward compatibility with internal imports.
 """
 
-from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
+from sidekick.calculators.conversion.flow_rate_converter import (
     MASS_FLOW_CONVERSIONS,
     MOLAR_FLOW_CONVERSIONS,
     STANDARD_CONDITIONS,
