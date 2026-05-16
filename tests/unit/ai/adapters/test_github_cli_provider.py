@@ -80,7 +80,6 @@ from src.shared.python.chat.cli_provider_availability import (  # noqa: E402
     list_available_cli_providers,
 )
 
-
 # ---------------------------------------------------------------------------
 # Descriptor registration
 # ---------------------------------------------------------------------------
@@ -388,14 +387,16 @@ class TestSendMessageWithContext:
     def test_send_message_error_path_surfaces_diagnostic(self) -> None:
         provider = GitHubCliProvider()
         ctx = ConversationContext()
+
+        def _fake_run(cmd, *a, **kw):
+            # auth check succeeds; gh issue list fails with 401
+            if "auth" in cmd:
+                return _make_completed(stdout="Logged in")
+            return _make_completed(stderr="HTTP 401: Bad credentials", returncode=1)
+
         with (
             patch("shutil.which", return_value="/usr/bin/gh"),
-            patch(
-                "subprocess.run",
-                return_value=_make_completed(
-                    stderr="HTTP 401: Bad credentials", returncode=1
-                ),
-            ),
+            patch("subprocess.run", side_effect=_fake_run),
         ):
             resp = provider.send_message("list my issues", ctx, [])
         assert "401" in resp.content or "credentials" in resp.content.lower()
