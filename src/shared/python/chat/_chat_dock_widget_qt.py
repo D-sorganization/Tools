@@ -279,6 +279,10 @@ class ChatDockWidget(QDockWidget):
         self._terminal_start_pending = False
         self._socket: QWebSocket | None = None
         self._session_file = _session_file_path(app_name)
+        # Tools issue #2872: conversation-management state.
+        self._loaded_context_sessions: list[str] = []
+        self._session_manager: Any | None = None
+        self._breadcrumb_widget: Any | None = None
         self._reconnect_timer = QTimer(self)
         self._reconnect_timer.setSingleShot(True)
         self._reconnect_timer.timeout.connect(self._connect)
@@ -655,6 +659,14 @@ class ChatDockWidget(QDockWidget):
             self._input_edit.clear()
             self._add_bubble("user", text)
             self._dispatch_workspace_command(cmd, arg)
+            return
+
+        # Tools issue #2872: /use-session loads prior conversation(s) as
+        # context. Resolves either by id or by case-insensitive title.
+        if cmd == "use-session":
+            self._input_edit.clear()
+            self._add_bubble("user", text)
+            self._handle_use_session(arg.strip())
             return
 
         self._input_edit.clear()
@@ -1078,3 +1090,215 @@ class ChatDockWidget(QDockWidget):
         if self._socket:
             self._socket.close()
         super().closeEvent(event)
+
+    # ── Tools issue #2872: conversation-management helpers ──────────
+
+    def _resolve_use_session_target(self, target: str) -> str | None:
+        """Resolve a ``/use-session`` argument to a session id.
+
+        Accepts either an exact session id or a case-insensitive title
+        match. Returns ``None`` when no session matches.
+
+        Args:
+            target: The slash-command argument. Must not be empty.
+
+        Pre:
+            ``self._session_manager`` exposes ``list_sessions``.
+        Post:
+            Returned id (when non-``None``) appears in the manager's
+            session list.
+        """
+        if not target:
+            return None
+        manager = getattr(self, "_session_manager", None)
+        if manager is None:
+            return None
+        sessions = list(manager.list_sessions())
+        # Exact id match first.
+        for info in sessions:
+            if info.get("id") == target:
+                return target
+        # Case-insensitive title match.
+        needle = target.casefold()
+        for info in sessions:
+            title = str(info.get("title", "")).casefold()
+            if title == needle:
+                return info.get("id")
+        return None
+
+    def _handle_use_session(self, target: str) -> None:
+        """React to the ``/use-session <id-or-title>`` slash command."""
+        sid = self._resolve_use_session_target(target)
+        if sid is None:
+            self._add_bubble(
+                "assistant",
+                f"No matching session for '{target}'.",
+            )
+            return
+        self._add_context_session(sid)
+
+    def _add_context_session(self, session_id: str) -> None:
+        """Append ``session_id`` to the breadcrumb context list.
+
+        Args:
+            session_id: Session to load. Duplicates are ignored.
+
+        Pre:
+            ``session_id`` exists in the session manager.
+        Post:
+            ``session_id in self._loaded_context_sessions`` is ``True``.
+        """
+        if not session_id:
+            raise ValueError("session_id must be provided")
+        if session_id in self._loaded_context_sessions:
+            return
+        self._loaded_context_sessions.append(session_id)
+        self._refresh_breadcrumb()
+
+    def _remove_context_session(self, session_id: str) -> None:
+        """Remove ``session_id`` from the breadcrumb context list."""
+        if session_id in self._loaded_context_sessions:
+            self._loaded_context_sessions.remove(session_id)
+            self._refresh_breadcrumb()
+
+    def breadcrumb_labels(self) -> list[str]:
+        """Return the human-readable titles for the loaded context sessions.
+
+        Used by tests + the breadcrumb strip renderer. LOD-compliant —
+        callers do not need to inspect the session manager themselves.
+        """
+        manager = getattr(self, "_session_manager", None)
+        if manager is None:
+            return []
+        info_by_id = {info.get("id"): info for info in manager.list_sessions()}
+        labels: list[str] = []
+        for sid in self._loaded_context_sessions:
+            info = info_by_id.get(sid)
+            if info is None:
+                labels.append(sid)
+            else:
+                labels.append(str(info.get("title") or sid))
+        return labels
+
+    def _refresh_breadcrumb(self) -> None:
+        """Re-render the breadcrumb strip after a context-list mutation.
+
+        Real implementation lives on the live widget; tests bypass UI by
+        instantiating the dock via ``__new__``, so the no-op fallback is
+        intentional and harmless.
+        """
+        # Use __dict__ rather than getattr because Qt's metaclass throws
+        # RuntimeError when attributes are read on objects whose C++
+        # super-class was not initialised (e.g. tests that build the dock
+        # via __new__ to avoid spinning up a display server).
+        widget = self.__dict__.get("_breadcrumb_widget")
+        if widget is None:
+            return
+        try:
+            widget.set_labels(self.breadcrumb_labels())
+        except Exception:  # noqa: BLE001 - host UI failures must not break logic
+            logger.exception("breadcrumb refresh failed")
+
+
+# ── Tools issue #2872: HistorySidebar with search + restore + export ──
+
+
+class HistorySidebar(QWidget):
+    """Sidebar listing active + archived sessions with search/export.
+
+    The widget talks only to a :class:`ChatSessionManager` (Law of
+    Demeter — no direct ``session.context.metadata`` access).
+
+    Attributes:
+        _manager: Session manager used for every persistence call.
+        _active_ids: Ordered list of active session ids currently shown.
+        _archived_ids: Ordered list of archived session ids currently shown.
+    """
+
+    def __init__(
+        self,
+        manager: Any,
+        parent: QWidget | None = None,
+    ) -> None:
+        if manager is None:  # DbC precondition
+            raise ValueError("manager must be provided")
+        super().__init__(parent)
+        self._manager = manager
+        self._active_ids: list[str] = []
+        self._archived_ids: list[str] = []
+        self._refresh_data()
+
+    def _refresh_data(self) -> None:
+        """Reload the active/archived id lists from the manager."""
+        self._active_ids = []
+        self._archived_ids = []
+        for info in self._manager.list_sessions():
+            sid = info.get("id")
+            if sid is None:
+                continue
+            try:
+                archived = self._manager.is_archived(sid)
+            except KeyError:
+                continue
+            if archived:
+                self._archived_ids.append(sid)
+            else:
+                self._active_ids.append(sid)
+
+    def set_search_query(self, query: str) -> None:
+        """Apply a search query and re-bucket results.
+
+        Args:
+            query: Substring query (case-insensitive). Empty string
+                clears the filter.
+
+        Pre:
+            ``query`` is a string (may be empty).
+        Post:
+            ``self._active_ids`` and ``self._archived_ids`` reflect the
+            current filter state.
+        """
+        if query is None:
+            raise ValueError("query must be provided")
+        if not query.strip():
+            self._refresh_data()
+            return
+        hits = self._manager.search_sessions(query)
+        self._active_ids = []
+        self._archived_ids = []
+        for info in hits:
+            sid = info.get("id")
+            if sid is None:
+                continue
+            if info.get("archived"):
+                self._archived_ids.append(sid)
+            else:
+                self._active_ids.append(sid)
+
+    def _on_restore_clicked(self, session_id: str) -> None:
+        """Restore an archived session via the manager (LOD-clean)."""
+        self._manager.unarchive_session(session_id)
+        self._refresh_data()
+
+    def _on_export_clicked(self, session_id: str, fmt: str) -> None:
+        """Export ``session_id`` as ``fmt`` to a user-selected file."""
+        if fmt not in ("markdown", "json"):
+            raise ValueError(f"Unsupported export format: {fmt!r}")
+        suffix = "md" if fmt == "markdown" else "json"
+        path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Export Session",
+            f"{session_id}.{suffix}",
+            (
+                "Markdown Files (*.md);;All Files (*)"
+                if fmt == "markdown"
+                else "JSON Files (*.json);;All Files (*)"
+            ),
+        )
+        if not path:
+            return
+        try:
+            payload = self._manager.export_session(session_id, fmt)
+            Path(path).write_text(payload, encoding="utf-8")
+        except (OSError, KeyError, ValueError):
+            logger.exception("export of session %s failed", session_id)
