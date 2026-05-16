@@ -1,0 +1,3 @@
+## 2024-05-24 - Array Pre-allocation over map
+**Learning:** When optimizing high-frequency event handlers in JavaScript/TypeScript (e.g., pose detection over multiple video frames), replacing array iterators like `.map()` with standard `for` loops and pre-allocating arrays eliminates continuous callback allocation and minimizes garbage collection overhead. (Note: Only applies to large arrays or high-frequency loops; tiny arrays provide zero measurable performance benefit, and shouldn't be touched per project guidelines).
+**Action:** Always prefer standard `for` loops over iterators for large arrays inside high-frequency execution pathways to eliminate callback allocation and GC pauses.
