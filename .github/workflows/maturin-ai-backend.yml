@@ -1,0 +1,175 @@
+# Maturin CI — ai_backend Python wheels
+#
+# Builds and publishes Python extension wheels for the `ai_backend` Rust crate
+# across all supported platforms and Python versions.
+#
+# Triggered on:
+#   - push to main (when ai_backend sources change)
+#   - pull_request touching ai_backend sources
+#   - workflow_dispatch (manual trigger / release)
+#
+# Acceptance criteria (issue #2870):
+#   1. Matrix: os × [ubuntu-latest, windows-latest, macos-latest]
+#   2. Python versions: 3.10, 3.11, 3.12, 3.13
+#   3. maturin build --release --features python
+#   4. Upload wheel artifacts per platform/python combination
+
+name: Maturin — ai_backend Wheels
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "rust_core/ai_backend/**"
+      - "Cargo.toml"
+      - "rust-toolchain.toml"
+  pull_request:
+    paths:
+      - "rust_core/ai_backend/**"
+      - "Cargo.toml"
+      - "rust-toolchain.toml"
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: "Publish wheels to PyPI after build"
+        required: false
+        default: "false"
+
+concurrency:
+  group: maturin-ai-backend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-wheels:
+    name: Build wheel (${{ matrix.os }}, Python ${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Cache Cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            rust_core/ai_backend/target
+          key: maturin-${{ matrix.os }}-py${{ matrix.python-version }}-${{ hashFiles('rust_core/ai_backend/Cargo.toml', 'Cargo.toml') }}
+          restore-keys: |
+            maturin-${{ matrix.os }}-py${{ matrix.python-version }}-
+            maturin-${{ matrix.os }}-
+
+      - name: Install maturin
+        run: pip install maturin
+
+      - name: Clippy — ai_backend (python feature)
+        working-directory: rust_core/ai_backend
+        run: cargo clippy --features python -- -D warnings
+
+      - name: Build wheel
+        working-directory: rust_core/ai_backend
+        run: |
+          maturin build \
+            --release \
+            --features python \
+            --out ../../dist/${{ matrix.os }}/py${{ matrix.python-version }}
+
+      - name: Smoke-test wheel import
+        shell: bash
+        run: |
+          WHEEL=$(ls dist/${{ matrix.os }}/py${{ matrix.python-version }}/*.whl | head -1)
+          pip install "$WHEEL"
+          python -c "import ai_backend; print('ai_backend import OK:', dir(ai_backend))"
+
+      - name: Upload wheel artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheel-${{ matrix.os }}-py${{ matrix.python-version }}
+          path: dist/${{ matrix.os }}/py${{ matrix.python-version }}/*.whl
+          retention-days: 14
+
+  # ── Optional: build with local-embeddings feature (Linux only, heavy) ────────
+  build-local-embeddings:
+    name: Build wheel with local-embeddings (Linux)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    # Only on workflow_dispatch to keep PR feedback fast
+    if: github.event_name == 'workflow_dispatch'
+
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install maturin
+        run: pip install maturin
+
+      - name: Install ONNX Runtime (sets ORT_DYLIB_PATH)
+        run: |
+          pip install onnxruntime
+          ORT_LIB=$(python -c "import onnxruntime, pathlib; print(next(pathlib.Path(onnxruntime.__file__).parent.rglob('libonnxruntime*.so*'), ''))")
+          echo "ORT_DYLIB_PATH=$ORT_LIB" >> $GITHUB_ENV
+          echo "Located onnxruntime shared library: $ORT_LIB"
+
+      - name: Build wheel (local-embeddings)
+        working-directory: rust_core/ai_backend
+        run: |
+          maturin build \
+            --release \
+            --features "python,local-embeddings" \
+            --out ../../dist/local-embeddings/py${{ matrix.python-version }}
+
+      - name: Upload wheel artifact (local-embeddings)
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheel-local-embeddings-ubuntu-py${{ matrix.python-version }}
+          path: dist/local-embeddings/py${{ matrix.python-version }}/*.whl
+          retention-days: 14
+
+  # ── Summary ───────────────────────────────────────────────────────────────────
+  summary:
+    name: Wheel build summary
+    needs: build-wheels
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Report results
+        run: |
+          echo "## Maturin ai_backend Wheel Build" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Platform | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| ubuntu-latest | ${{ needs.build-wheels.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| windows-latest | ${{ needs.build-wheels.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| macos-latest | ${{ needs.build-wheels.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Python versions: 3.10, 3.11, 3.12, 3.13" >> $GITHUB_STEP_SUMMARY
