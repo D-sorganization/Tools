@@ -165,6 +165,15 @@ DEFAULT_SIDEBAR_TAB_HELP: dict[str, dict[str, str]] = {
         ),
         source="upstream_drift_tools.ui.tools_sidebar.reporting_tab",
     ),
+    "notebook": _tab_help(
+        "Notebook",
+        "Open and interact with Jupyter notebooks when jupyter_client is installed.",
+        tips=(
+            "When Jupyter is not installed the tab shows an actionable install prompt.",
+            "Notebook path and kernel environment are tracked per tab instance.",
+        ),
+        source="upstream_drift_tools.ui.tools_sidebar.notebook_tab",
+    ),
 }
 
 
