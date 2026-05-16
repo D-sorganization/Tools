@@ -40,6 +40,10 @@ from src.shared.python.ai.gui._message_display import MessageDisplayController
 from src.shared.python.ai.gui._panel_header import PanelHeaderController
 from src.shared.python.ai.gui._panel_tools import register_panel_tools
 from src.shared.python.ai.gui.assistant_widgets import MessageWidget, StreamWorker
+from src.shared.python.ai.gui.chat_export import (
+    copy_thread_to_clipboard,
+    save_thread_as_markdown,
+)
 from src.shared.python.ai.gui.history_sidebar import ChatHistorySidebar
 from src.shared.python.ai.gui.session_manager import ChatSessionManager
 from src.shared.python.ai.gui.settings_dialog import (
@@ -206,6 +210,8 @@ class AIAssistantPanel(QWidget):
         h.new_chat_requested.connect(self._on_new_chat)
         h.settings_requested.connect(self._show_settings)
         h.close_requested.connect(self.close_requested.emit)
+        h.copy_thread_requested.connect(self._on_copy_thread)
+        h.save_thread_requested.connect(self._on_save_thread)
 
         self._adapter_mgr.adapter_changed.connect(self._on_adapter_changed)
         self._adapter_mgr.system_message.connect(self._add_system_message)
@@ -572,6 +578,19 @@ class AIAssistantPanel(QWidget):
         self._refresh_prompt_memory()
         self._save_history()
         self._add_system_message("🔄 New chat started. How can I help you?")
+
+    # ------------------------------------------------------------------
+    # Export / copy handlers
+    # ------------------------------------------------------------------
+    def _on_copy_thread(self) -> None:
+        """Copy the full conversation thread to the system clipboard."""
+        copy_thread_to_clipboard(self._context.messages)
+        n = len(self._context.messages)
+        logger.info("Thread copied to clipboard (%d messages)", n)
+
+    def _on_save_thread(self) -> None:
+        """Prompt the user for a file path and save the thread as markdown."""
+        save_thread_as_markdown(self._context.messages, parent=self)
 
     # ------------------------------------------------------------------
     # Tool declarations
