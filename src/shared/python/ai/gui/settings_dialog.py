@@ -84,6 +84,7 @@ from src.shared.python.ai.gui._provider_registry_data import (
 )
 from src.shared.python.ai.gui._providers_tab import ProvidersTab
 from src.shared.python.ai.gui._rag_tab import RagTab
+from src.shared.python.ai.mcp.gui import McpServersTab
 from src.shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
@@ -201,6 +202,9 @@ class AISettingsDialog(QDialog):
         self._rag_tab = RagTab()
         self._rag_tab.rebuild_index_requested.connect(self.rebuild_index_requested)
         tabs.addTab(self._rag_tab, "Knowledge Base")
+
+        self._mcp_tab = McpServersTab()
+        tabs.addTab(self._mcp_tab, "MCP Servers")
 
         layout.addWidget(tabs)
 
