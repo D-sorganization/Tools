@@ -82,6 +82,81 @@ Key markers:
 - **No upstream fleet dependencies.** Tools is a leaf dependency.
 - When modifying public APIs: open Issues in UpstreamDrift and Gasification_Model tracking the migration. Link them in your PR description.
 
+## Rust Crates and Maturin (ai_backend)
+
+The `rust_core/ai_backend/` crate provides Python bindings via
+[PyO3](https://pyo3.rs) and is built into a wheel using
+[maturin](https://www.maturin.rs).
+
+### Workspace membership
+
+`ai_backend` is listed in the root `Cargo.toml` workspace `members` list.
+All workspace-level dependency pins apply (see `[workspace.dependencies]`).
+
+### Feature flags
+
+| Feature | Purpose |
+|---|---|
+| `python` | Activates PyO3 `extension-module` linkage required for maturin builds. Must be enabled when building a wheel. |
+| `local-embeddings` | Opt-in ONNX-based local embeddings via `ort` + `tokenizers`. Requires a system ONNX Runtime library (see below). |
+
+### Building a wheel locally
+
+```bash
+# Install maturin
+pip install maturin
+
+# Build wheel (python bindings only — no local embeddings)
+cd rust_core/ai_backend
+maturin build --release --features python
+
+# Build wheel with local embeddings enabled
+maturin build --release --features "python,local-embeddings"
+
+# Install the built wheel into the active venv
+pip install ../../target/wheels/*.whl
+```
+
+### ORT_DYLIB_PATH — required for local-embeddings
+
+The `local-embeddings` feature uses `ort` (ONNX Runtime Rust bindings) in
+`load-dynamic` mode. This means the native `onnxruntime` shared library is
+**not bundled** at compile time. You must point `ort` at a system-installed
+copy at runtime via the `ORT_DYLIB_PATH` environment variable.
+
+```bash
+# Example (Linux/macOS) — use the onnxruntime installed by pip
+ORT_LIB=$(python -c "import onnxruntime, pathlib; \
+  print(next(pathlib.Path(onnxruntime.__file__).parent.rglob('libonnxruntime*.so*'), ''))")
+export ORT_DYLIB_PATH="$ORT_LIB"
+
+# Example (Windows) — find onnxruntime.dll
+$OrtLib = (python -c "import onnxruntime, pathlib; print(next(pathlib.Path(onnxruntime.__file__).parent.rglob('onnxruntime*.dll'), ''))")
+$env:ORT_DYLIB_PATH = $OrtLib
+```
+
+If `ORT_DYLIB_PATH` is not set the `ai_backend` module will raise an
+`OrtError` on first use of any embedding API.
+
+**Do NOT set `ORT_LIB_DIR` or rely on the `download-binaries` ort feature** —
+those paths are disabled in this project (see comment in
+`rust_core/ai_backend/Cargo.toml`).
+
+### CI — Maturin Wheel Build
+
+The workflow `.github/workflows/maturin-ai-backend.yml` builds wheels for:
+
+- **Platforms:** `ubuntu-latest`, `windows-latest`, `macos-latest`
+- **Python versions:** 3.10, 3.11, 3.12, 3.13
+- **Features:** `python` (standard) and optionally `python,local-embeddings`
+  (manual dispatch only, Linux only due to build time)
+
+The workflow triggers on push/PR to `main` whenever files under
+`rust_core/ai_backend/**` or `Cargo.toml` change.
+
+Each built wheel is uploaded as a GitHub Actions artifact
+(`wheel-<os>-py<version>`) with a 14-day retention window.
+
 ## Slash Commands
 
 - `/gaai-deliver` — Run Delivery Loop for next ready backlog item

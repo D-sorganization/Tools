@@ -1389,7 +1389,10 @@ class ChatDockWidget(QDockWidget):
         """
         if not target:
             return None
-        manager = getattr(self, "_session_manager", None)
+        # Use __dict__ rather than getattr because Qt's metaclass throws
+        # RuntimeError when accessed on objects whose C++ super-class was not
+        # initialised (e.g. tests that build the dock via __new__).
+        manager = self.__dict__.get("_session_manager")
         if manager is None:
             return None
         sessions = list(manager.list_sessions())
@@ -1429,15 +1432,20 @@ class ChatDockWidget(QDockWidget):
         """
         if not session_id:
             raise ValueError("session_id must be provided")
-        if session_id in self._loaded_context_sessions:
+        # Use __dict__ to avoid Qt metaclass RuntimeError in headless tests.
+        loaded = self.__dict__.get("_loaded_context_sessions", [])
+        if session_id in loaded:
             return
-        self._loaded_context_sessions.append(session_id)
+        loaded.append(session_id)
+        self.__dict__["_loaded_context_sessions"] = loaded
         self._refresh_breadcrumb()
 
     def _remove_context_session(self, session_id: str) -> None:
         """Remove ``session_id`` from the breadcrumb context list."""
-        if session_id in self._loaded_context_sessions:
-            self._loaded_context_sessions.remove(session_id)
+        loaded = self.__dict__.get("_loaded_context_sessions", [])
+        if session_id in loaded:
+            loaded.remove(session_id)
+            self.__dict__["_loaded_context_sessions"] = loaded
             self._refresh_breadcrumb()
 
     def breadcrumb_labels(self) -> list[str]:
@@ -1446,12 +1454,13 @@ class ChatDockWidget(QDockWidget):
         Used by tests + the breadcrumb strip renderer. LOD-compliant —
         callers do not need to inspect the session manager themselves.
         """
-        manager = getattr(self, "_session_manager", None)
+        # Use __dict__ to avoid Qt metaclass RuntimeError in headless tests.
+        manager = self.__dict__.get("_session_manager")
         if manager is None:
             return []
         info_by_id = {info.get("id"): info for info in manager.list_sessions()}
         labels: list[str] = []
-        for sid in self._loaded_context_sessions:
+        for sid in self.__dict__.get("_loaded_context_sessions", []):
             info = info_by_id.get(sid)
             if info is None:
                 labels.append(sid)
