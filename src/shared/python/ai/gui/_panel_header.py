@@ -52,6 +52,8 @@ class PanelHeaderController(QFrame):
     auto_index_toggled = pyqtSignal(bool)
     new_chat_requested = pyqtSignal()
     peer_review_requested = pyqtSignal()
+    condense_requested = pyqtSignal()
+    show_full_history_requested = pyqtSignal()
     settings_requested = pyqtSignal()
     close_requested = pyqtSignal()
     copy_thread_requested = pyqtSignal()
@@ -141,6 +143,31 @@ class PanelHeaderController(QFrame):
         save_thread_btn.clicked.connect(self.save_thread_requested.emit)
         layout.addWidget(save_thread_btn)
 
+        self.token_count_label = QLabel("~0 tokens")
+        self.token_count_label.setObjectName("aiTokenCountLabel")
+        self.token_count_label.setToolTip(
+            "Estimated token count for the current active thread."
+        )
+        layout.addWidget(self.token_count_label)
+
+        self.condense_btn = QPushButton("Condense")
+        self.condense_btn.setObjectName("aiCondenseBtn")
+        self.condense_btn.setToolTip(
+            "Summarise earlier messages to free context space. "
+            "Raw history is preserved for undo."
+        )
+        self.condense_btn.clicked.connect(self.condense_requested.emit)
+        layout.addWidget(self.condense_btn)
+
+        self.show_history_btn = QPushButton("Full History")
+        self.show_history_btn.setObjectName("aiShowHistoryBtn")
+        self.show_history_btn.setToolTip(
+            "Toggle between condensed and full message history."
+        )
+        self.show_history_btn.setVisible(False)
+        self.show_history_btn.clicked.connect(self.show_full_history_requested.emit)
+        layout.addWidget(self.show_history_btn)
+
         new_chat_btn = QPushButton("New Chat")
         new_chat_btn.clicked.connect(self.new_chat_requested.emit)
         layout.addWidget(new_chat_btn)
@@ -197,6 +224,22 @@ class PanelHeaderController(QFrame):
                 self.access_mode_combo.setCurrentIndex(i)
                 self.access_mode_combo.blockSignals(False)
                 return
+
+    def set_token_count(self, count: int) -> None:
+        """Update the estimated token count display in the toolbar.
+
+        Args:
+            count: Estimated token count for the active thread.
+        """
+        self.token_count_label.setText(f"~{count:,} tokens")
+
+    def set_condensed_mode(self, condensed: bool) -> None:
+        """Show or hide the 'Full History' toggle button.
+
+        Args:
+            condensed: True when the thread is in condensed state.
+        """
+        self.show_history_btn.setVisible(condensed)
 
     def set_auto_index_checked(self, checked: bool) -> None:
         self.auto_index_checkbox.blockSignals(True)
