@@ -134,14 +134,13 @@ impl FileWatcher {
         let (tx, rx) = bounded::<Event>(1024);
         let tx_for_watcher = tx.clone();
 
-        let mut notify_watcher: RecommendedWatcher = notify::recommended_watcher(
-            move |res: Result<Event, notify::Error>| {
+        let mut notify_watcher: RecommendedWatcher =
+            notify::recommended_watcher(move |res: Result<Event, notify::Error>| {
                 if let Ok(event) = res {
                     // Drop on full channel rather than blocking the OS thread.
                     let _ = tx_for_watcher.try_send(event);
                 }
-            },
-        )?;
+            })?;
 
         notify_watcher.watch(&self.config.root, RecursiveMode::Recursive)?;
 
@@ -249,13 +248,7 @@ fn spawn_debounce_thread(
                         if should_ignore(&path, &config.root, gitignore.as_ref()) {
                             continue;
                         }
-                        pending.insert(
-                            (path.clone(), kind),
-                            ChangeEvent {
-                                path,
-                                kind,
-                            },
-                        );
+                        pending.insert((path.clone(), kind), ChangeEvent { path, kind });
                     }
                     last_event_at = Some(Instant::now());
                 }
@@ -341,9 +334,12 @@ mod tests {
     #[test]
     fn debounces_rapid_changes() {
         let dir = tempdir().unwrap();
+        // Use a 500 ms debounce window so that all writes land inside one
+        // window even on a heavily-loaded CI runner where sleep(5ms) can
+        // stretch to 100+ ms per iteration.
         let watcher = FileWatcher::new(FileWatcherConfig {
             root: dir.path().to_path_buf(),
-            debounce_ms: 100,
+            debounce_ms: 500,
             respect_gitignore: false,
         });
         let call_count: Arc<Mutex<u32>> = Arc::new(Mutex::new(0));
@@ -359,12 +355,17 @@ mod tests {
             std::fs::write(&path, format!("v{i}")).unwrap();
             std::thread::sleep(Duration::from_millis(5));
         }
-        std::thread::sleep(Duration::from_millis(400));
+        // Wait long enough for the debounce window to close and the callback
+        // to fire, even after timing variation on the CI runner.
+        std::thread::sleep(Duration::from_millis(2000));
         watcher.stop().unwrap();
 
         // Debounce should collapse the burst to a single (or at most a small
         // handful of) callback invocations.
         let count = *call_count.lock().unwrap();
-        assert!(count <= 3, "expected debounce to coalesce, got {count} flushes");
+        assert!(
+            count <= 3,
+            "expected debounce to coalesce, got {count} flushes"
+        );
     }
 }

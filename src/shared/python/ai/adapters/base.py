@@ -193,6 +193,40 @@ class BaseAgentAdapter(ABC):
         ...
 
     # ------------------------------------------------------------------ #
+    # Provider catalogue surface for the shared chat dock dropdowns
+    # (Tools issue #2871).
+    #
+    # Concrete adapters MUST override these and SHOULD do so without
+    # performing a blocking network call when the local catalogue is
+    # sufficient. The default implementations raise NotImplementedError
+    # so a forgotten override is loud.
+    # ------------------------------------------------------------------ #
+    @abstractmethod
+    def list_models(self) -> list[str]:
+        """Return a non-empty list of model ids known to this adapter.
+
+        Implementations may probe a live API but MUST fall back to a
+        static catalogue when the API is unreachable so unit tests and
+        offline environments can always populate the model dropdown.
+
+        Returns:
+            List of model identifiers; always non-empty.
+        """
+        ...
+
+    @abstractmethod
+    def thinking_capabilities(self) -> Any:
+        """Return the :class:`ThinkingCapabilities` for the current model.
+
+        Returns:
+            ``ThinkingCapabilities`` describing supported reasoning
+            levels. Adapters whose models do not support reasoning return
+            a capability bundle with only the ``"none"`` level so the
+            shared chat dropdown always has at least one entry.
+        """
+        ...
+
+    # ------------------------------------------------------------------ #
     # Token-count normalization (issue #2763)                           #
     # ------------------------------------------------------------------ #
     @staticmethod

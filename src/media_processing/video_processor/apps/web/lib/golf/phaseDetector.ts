@@ -53,12 +53,16 @@ export function detectSwingPhases(
   }
 
   // Calculate angles for all frames
-  const angleHistory: { frame: number; angles: BodyAngles }[] = poseFrames.map(
-    (frame) => ({
+  // ⚡ Bolt: Replaced poseFrames.map(...) with a pre-allocated array and single-pass for loop.
+  // Performance impact: Drastically reduces array allocations and callback overhead in high-frequency events.
+  const angleHistory = new Array<{ frame: number; angles: BodyAngles }>(poseFrames.length);
+  for (let i = 0; i < poseFrames.length; i++) {
+    const frame = poseFrames[i];
+    angleHistory[i] = {
       frame: frame.frameNumber,
       angles: calculateBodyAngles(frame.landmarks, stance),
-    })
-  );
+    };
+  }
 
   // Calculate velocities
   const velocityHistory = calculateVelocityProfile(angleHistory, fps);

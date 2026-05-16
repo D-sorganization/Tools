@@ -66,6 +66,29 @@ class BitnetAdapter(BaseAgentAdapter):
     def capabilities(self) -> ProviderCapabilities:
         return self._capabilities
 
+    # ------------------------------------------------------------------ #
+    # Tools issue #2871: provider catalogue + reasoning capabilities
+    # ------------------------------------------------------------------ #
+
+    _STATIC_MODELS: tuple[str, ...] = (
+        "bitnet-1.58b-q4_0.gguf",
+        "bitnet-2b-q4_0.gguf",
+        "bitnet-3b-q4_0.gguf",
+    )
+
+    def list_models(self) -> list[str]:
+        """Return BitNet model catalogue; configured model is always included."""
+        models = list(self._STATIC_MODELS)
+        if self.model and self.model not in models:
+            models.insert(0, self.model)
+        return models
+
+    def thinking_capabilities(self):  # type: ignore[no-untyped-def]
+        """BitNet local models do not expose reasoning budgets."""
+        from src.shared.python.chat.models import make_none_only_capabilities
+
+        return make_none_only_capabilities(provider="bitnet")
+
     def _handle_error(self, error: Exception) -> AgentResponse:
         """Classify BitNet subprocess errors into the AIProviderError hierarchy."""
         if isinstance(error, FileNotFoundError):

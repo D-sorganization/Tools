@@ -865,3 +865,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 - **Performance**: Pre-allocated objects and arrays for the Runge-Kutta 4 (RK4) integration loop in `ODESolverCalculator.tsx` to eliminate thousands of memory allocations per step and reduce severe garbage collection pauses during large ODE simulations.
 - **Performance**: Refactored dynamically compiled expressions inside the hot RK4 numerical integration loop to avoid the spread operator (`...args`) and array allocation. Parameters are now passed as a single array and statically destructured within the function body itself.
+
+### Version 1.1.139
+
+- **Performance**: Optimized `detectSwingPhases` inside `src/media_processing/video_processor/apps/web/lib/golf/phaseDetector.ts` by replacing `poseFrames.map(...)` with a standard single-pass `for` loop and a pre-allocated array. This reduces continuous callback allocation and limits garbage collection pauses in hot paths when analyzing multiple video frames.

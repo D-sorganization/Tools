@@ -6,7 +6,7 @@ import importlib
 import logging
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any
+from typing import Any, TypeVar
 
 from . import design_tokens as theme
 from .calculator_plotting import CALCULATOR_PLOT_TAB_ID
@@ -27,9 +27,11 @@ from .runtime_tabs import (
     build_terminal_tab,
 )
 
+T = TypeVar("T")
+
 logger = logging.getLogger(__name__)
 
-TabDefinitionFactory = Callable[..., Any]
+TabDefinitionFactory = Callable[..., T]
 ROTATION_CONVERTER_TAB_ID = "rotation_converter"
 FUNCTION_GENERATOR_TAB_ID = "function_generator"
 
@@ -37,7 +39,7 @@ FUNCTION_GENERATOR_TAB_ID = "function_generator"
 def build_default_tab_definitions(
     sidebar: Any,
     tab_definition: TabDefinitionFactory,
-) -> list[Any]:
+) -> list[T]:
     """Return the standard Sidekick tabs for a host sidebar."""
     return [
         tab_definition(
@@ -130,7 +132,7 @@ def build_default_tab_definitions(
             "Reporting",
             build_reporting_tab,
             duplicate_enabled=False,
-            help_metadata={"summary": "Agentic reporting and summarization."},
+            help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP["reporting"]),
         ),
     ]
 

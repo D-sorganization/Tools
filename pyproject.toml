@@ -32,7 +32,7 @@ dependencies = [
 [project.optional-dependencies]
 # Full installation with all features
 all = [
-    "scipy>=1.10.0,<1.17",
+    "scipy>=1.10.0,<1.18",
     "pandas>=2.0.0",
     "matplotlib>=3.7.0",
     "trimesh>=4.0.0",
@@ -43,17 +43,17 @@ all = [
 # URDF/Model generation only
 urdf = [
     "trimesh>=4.0.0",
-    "scipy>=1.10.0,<1.17",
+    "scipy>=1.10.0,<1.18",
 ]
 # Signal processing
 signal = [
-    "scipy>=1.10.0,<1.17",
+    "scipy>=1.10.0,<1.18",
     "matplotlib>=3.7.0",
     "sympy>=1.12",
 ]
 # Process calculators
 process = [
-    "scipy>=1.10.0,<1.17",
+    "scipy>=1.10.0,<1.18",
     "pandas>=2.0.0",
     "matplotlib>=3.7.0",
 ]
@@ -72,6 +72,12 @@ chat = [
     "pydantic>=2.0.0",
     "fastapi>=0.100.0",
     "PyQt6>=6.5.0",
+]
+# Voice-to-text addon for ChatDockWidget (Tools issue #2744).
+# Install with: pip install "tools[chat-voice]"
+chat-voice = [
+    "SpeechRecognition>=3.10.0",
+    "PyAudio>=0.2.13",
 ]
 # Fleet-wide theme system (PyQt6 required for full features;
 # color utilities work without Qt). See issue #551
@@ -184,6 +190,7 @@ exclude = [
 # Ruff configuration lives in ruff.toml (authoritative). [tool.ruff] and
 # [tool.black] sections removed to eliminate conflicting duplicate config.
 [tool.pytest.ini_options]
+qt_api = "pyqt6"
 testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]
@@ -298,7 +305,7 @@ omit = [
 # Coverage floor — raised to 60% per issue #2474 (production readiness).
 # Previous ratchet plan (issue #2406) targeted 60% as Phase 3 / v1.3;
 # issue #2474 accelerates this directly as the repo-wide gate.
-fail_under = 10
+fail_under = 25
 show_missing = true
 skip_empty = true
 exclude_lines = [
@@ -315,7 +322,20 @@ output = "coverage.json"
 [tool.mypy]
 python_version = "3.11"  # Matches pyproject requires-python and ruff target-version
 files = ["src"]
-mypy_path = "src"
+mypy_path = [
+    "src",
+    "src/python/src",
+    "src/shared/python",
+    "src/tools",
+    "src/web_applications",
+    "src/data_processing/data_processor/python",
+    "src/solar_system_model",
+    "src/scientific_modeling/solar_system_model",
+    "src/scientific_modeling/rrt_path_planner/python/src",
+    "src/media_processing/video_processor/python",
+    "src/pendulum_simulator/src",
+    "src/folder_tool",
+]
 ignore_missing_imports = true
 check_untyped_defs = true
 disallow_untyped_defs = false
