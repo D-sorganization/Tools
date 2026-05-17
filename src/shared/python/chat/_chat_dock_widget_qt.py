@@ -403,6 +403,10 @@ class ChatDockWidget(QDockWidget):
         self._action_request_review = self._tools_menu.addAction(
             "Request Agent Review..."
         )
+        # Tools issue #2688: memory management UI access point.
+        self._action_manage_memory = self._tools_menu.addAction("Manage Memory...")
+        if self._action_manage_memory is not None:
+            self._action_manage_memory.triggered.connect(self.open_memory_panel)
         if self._action_copy_thread is not None:
             self._action_copy_thread.triggered.connect(self._copy_entire_thread)
         if self._action_export_markdown is not None:
@@ -635,6 +639,47 @@ class ChatDockWidget(QDockWidget):
 
     def index_codebase(self) -> None:
         self._send_ws({"action": "index_codebase"})
+
+    def open_memory_panel(self) -> None:
+        """Open the Sidekick memory management panel (Tools issue #2688).
+
+        The panel reads from and writes to a :class:`MemoryManager`
+        instance bound to this chat session. We lazy-import both the
+        manager and the panel so that the chat dock continues to load
+        even on hosts where the AI package is not available.
+
+        Pre: Qt application is running.
+        Post: A modeless ``MemoryPanel`` window is shown (or focused).
+        """
+        from .memory_panel import MemoryPanel
+
+        existing = self.__dict__.get("_memory_panel_window")
+        if existing is not None:
+            try:
+                existing.show()
+                existing.raise_()
+                existing.activateWindow()
+                return
+            except RuntimeError:
+                # Widget was deleted under us — fall through to recreate.
+                self._memory_panel_window = None
+
+        try:
+            from src.shared.python.ai.memory_manager import MemoryManager
+        except ImportError:
+            logger.warning("Memory panel unavailable: ai.memory_manager not importable")
+            return
+
+        manager = self.__dict__.get("_memory_manager")
+        if manager is None:
+            manager = MemoryManager()
+            self._memory_manager = manager
+
+        panel = MemoryPanel(manager=manager)
+        panel.setWindowTitle("Sidekick Memory")
+        panel.resize(520, 480)
+        panel.show()
+        self._memory_panel_window = panel
 
     def _on_disconnected(self) -> None:
         self._status_label.setText("Disconnected - retrying in 3s...")
