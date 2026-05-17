@@ -57,6 +57,7 @@ jobs:
               ;;
           esac
   check-mention:
+    timeout-minutes: 30
     needs: pick-runner
     runs-on: d-sorg-fleet
     outputs:
@@ -77,6 +78,7 @@ jobs:
           fi
 
   fix-issue:
+    timeout-minutes: 30
     needs: [pick-runner, check-mention]
     if: needs.check-mention.outputs.should_run == 'true' && !github.event.issue.pull_request
     runs-on: d-sorg-fleet

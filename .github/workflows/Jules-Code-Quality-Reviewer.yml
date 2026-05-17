@@ -37,6 +37,7 @@ permissions:
 
 jobs:
   review:
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     # Grant write only at this job level — report commits and issue creation
     # happen here. No write needed for runner selection.

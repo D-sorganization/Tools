@@ -75,6 +75,7 @@ jobs:
               ;;
           esac
   determine-assessment:
+    timeout-minutes: 30
     needs: pick-runner
     name: Determine Assessment Type
     runs-on: d-sorg-fleet
@@ -114,6 +115,7 @@ jobs:
           echo "📄 Prompt File: $PROMPT_FILE"
 
   run-assessment:
+    timeout-minutes: 30
     name: Run Assessment ${{ needs.determine-assessment.outputs.assessment }}
     needs: [pick-runner, determine-assessment]
     runs-on: d-sorg-fleet

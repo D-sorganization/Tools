@@ -59,6 +59,7 @@ jobs:
               ;;
           esac
   check-superseded:
+    timeout-minutes: 30
     needs: pick-runner
     name: Check for Superseded Jules PRs
     runs-on: ${{ needs.pick-runner.outputs.runner }}

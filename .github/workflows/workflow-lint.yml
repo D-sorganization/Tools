@@ -59,6 +59,7 @@ jobs:
               ;;
           esac
   lint-workflows:
+    timeout-minutes: 30
     needs: pick-runner
     runs-on: ${{ needs.pick-runner.outputs.runner }}
 

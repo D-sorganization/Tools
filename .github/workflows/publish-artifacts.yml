@@ -59,6 +59,7 @@ jobs:
               ;;
           esac
   build-python-wheel:
+    timeout-minutes: 30
     needs: pick-runner
     name: Build Python Wheel
     runs-on: d-sorg-fleet
@@ -91,6 +92,7 @@ jobs:
           retention-days: 30
 
   build-wasm-package:
+    timeout-minutes: 30
     needs: pick-runner
     name: Build WASM/NPM Package
     runs-on: d-sorg-fleet
@@ -120,6 +122,7 @@ jobs:
           retention-days: 30
 
   publish-pypi:
+    timeout-minutes: 30
     name: Publish to PyPI
     needs: [pick-runner, build-python-wheel]
     runs-on: d-sorg-fleet
@@ -153,6 +156,7 @@ jobs:
           fi
 
   publish-npm:
+    timeout-minutes: 30
     name: Publish to NPM
     needs: [pick-runner, build-wasm-package]
     runs-on: d-sorg-fleet
@@ -187,6 +191,7 @@ jobs:
           fi
 
   publish-summary:
+    timeout-minutes: 30
     name: Publish Summary
     needs: [pick-runner, build-python-wheel, build-wasm-package]
     runs-on: d-sorg-fleet

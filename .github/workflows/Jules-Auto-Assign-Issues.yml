@@ -52,6 +52,7 @@ jobs:
               ;;
           esac
   auto-assign:
+    timeout-minutes: 30
     needs: pick-runner
     runs-on: d-sorg-fleet
     # CHANGED: Only trigger for automated issues or explicit jules-triage label

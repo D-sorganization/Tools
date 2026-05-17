@@ -71,6 +71,7 @@ jobs:
               ;;
           esac
   auto-refactor:
+    timeout-minutes: 30
     needs: pick-runner
     runs-on: d-sorg-fleet
     # Grant write only at this job level — branch creation, fix pushes, and PR

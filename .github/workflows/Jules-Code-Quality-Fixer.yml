@@ -83,6 +83,7 @@ jobs:
               ;;
           esac
   fix-issues:
+    timeout-minutes: 30
     needs: pick-runner
     runs-on: d-sorg-fleet
     # Grant write only at this job level — branch creation, fix pushes, PR
