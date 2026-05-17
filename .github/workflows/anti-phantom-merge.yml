@@ -225,7 +225,7 @@ jobs:
                 fi
               done
               if [ -z "$MATCH" ]; then
-                paths_summary=$(echo "$ISSUE_PATHS" | head -5 | sed 's/^/    /')
+                paths_summary=$(echo "$ISSUE_PATHS" | sed -n '1,5s/^/    /p')
                 fail "3 (closes-issue path mismatch)" "PR closes issue #$n, but the diff touches **none** of the paths referenced in that issue's body:
           \`\`\`
           $paths_summary
