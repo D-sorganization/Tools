@@ -22,6 +22,58 @@ logger = logging.getLogger(__name__)
 _MARGINS = getattr(theme, "SIDEBAR_LAYOUT_MARGINS", (8, 8, 8, 8))
 _SPACING = getattr(theme, "SIDEBAR_LAYOUT_SPACING", 8)
 
+# Sub-tabs whose runtime state belongs in a session report.  The UI label
+# on the Reporting tab promises that the report aggregates "workspace
+# context, chat interactions, and terminal history" — these IDs cover that
+# promise plus the calculator and data-processor surfaces that share the
+# same sidebar.  A widget is only included when it exposes a public
+# ``get_context_snapshot()`` method that returns a JSON-serializable dict.
+_SNAPSHOTTABLE_SUBTAB_IDS: tuple[str, ...] = (
+    "chat",
+    "terminal",
+    "calculator",
+    "data_processor",
+)
+
+
+def _gather_subtab_snapshots(sidebar: Any) -> dict[str, Any]:
+    """Collect ``get_context_snapshot()`` payloads from known sub-tabs.
+
+    The method is opt-in: a sub-tab is only included when its widget
+    exposes a callable ``get_context_snapshot`` attribute.  Missing tabs
+    and snapshot exceptions are swallowed so that an unhealthy sub-tab
+    cannot block the rest of the report.
+
+    Args:
+        sidebar: The parent ``UnifiedToolsSidebar`` instance.  Must expose
+            ``_tab_widgets`` (a ``dict[str, QWidget]``); sidebars without
+            the attribute return an empty mapping.
+
+    Returns:
+        Mapping of tab id to snapshot dict.  Tabs without a snapshot
+        method, or whose snapshot raises, are omitted entirely (no
+        ``None`` pollution).
+    """
+    tab_widgets = getattr(sidebar, "_tab_widgets", None)
+    if not isinstance(tab_widgets, dict):
+        return {}
+
+    snapshots: dict[str, Any] = {}
+    for tab_id in _SNAPSHOTTABLE_SUBTAB_IDS:
+        widget = tab_widgets.get(tab_id)
+        if widget is None:
+            continue
+        snapshot_fn = getattr(widget, "get_context_snapshot", None)
+        if not callable(snapshot_fn):
+            continue
+        try:
+            snapshot = snapshot_fn()
+        except Exception as exc:  # noqa: BLE001 - per-tab fault isolation
+            logger.warning("Sub-tab %r get_context_snapshot raised: %s", tab_id, exc)
+            continue
+        snapshots[tab_id] = snapshot
+    return snapshots
+
 
 def _gather_session_context(sidebar: Any) -> dict[str, Any]:
     """Collect workspace state that the report generator can summarize.
@@ -30,7 +82,11 @@ def _gather_session_context(sidebar: Any) -> dict[str, Any]:
         sidebar: The parent ``UnifiedToolsSidebar`` instance.
 
     Returns:
-        Dictionary of context data for report generation.
+        Dictionary of context data for report generation.  Always
+        contains ``workspace_variables`` and ``project_root``; sub-tab
+        snapshots (``chat``, ``terminal``, ``calculator``,
+        ``data_processor``) are merged in when the corresponding widget
+        exposes a ``get_context_snapshot()`` method.
     """
     variables: list[str] = []
     try:
@@ -40,10 +96,12 @@ def _gather_session_context(sidebar: Any) -> dict[str, Any]:
 
     project_root = str(getattr(sidebar, "project_root", "."))
 
-    return {
+    context: dict[str, Any] = {
         "workspace_variables": variables,
         "project_root": project_root,
     }
+    context.update(_gather_subtab_snapshots(sidebar))
+    return context
 
 
 def _try_import_report_generator() -> Any | None:
