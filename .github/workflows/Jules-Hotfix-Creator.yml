@@ -127,15 +127,20 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           cache: npm
+          node-version: "24"
+
         if: steps.jules.outputs.enabled == 'true'
-        with: { node-version: "24" }
+
       - run: npm install -g @google/jules
+
         if: steps.jules.outputs.enabled == 'true'
       - run: jules auth --token ${{ secrets.JULES_API_KEY }}
+
         if: steps.jules.outputs.enabled == 'true'
 
       - name: Create Hotfix Branch
         id: hotfix
+
         if: steps.jules.outputs.enabled == 'true'
         env:
           GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
@@ -150,6 +155,7 @@ jobs:
           echo "branch=$HOTFIX_BRANCH" >> $GITHUB_OUTPUT
 
       - name: Fetch CI Logs & Auto-Fix
+
         if: steps.jules.outputs.enabled == 'true'
         env:
           GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
@@ -175,6 +181,7 @@ jobs:
           jules task fix --branch "$HOTFIX_BRANCH" --prompt "$PROMPT"
 
       - name: Create Urgent PR
+
         if: steps.jules.outputs.enabled == 'true'
         env:
           GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
