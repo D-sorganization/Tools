@@ -1,3 +1,0 @@
-perf(ode_solver): Pre-allocate results array to eliminate reallocation overhead
-
-Also updates `.secrets.baseline` to include missing detections in GitHub workflows and `_adapter_lifecycle.py` to fix the `detect-secrets` CI check, and updates `SPEC.md` to pass the freshness check. (Re-triggered due to transient runner error)
