@@ -2,6 +2,9 @@ name: Code Metrics
 
 # Informational code quality metrics - never fails CI
 # Reports complexity (radon) and duplication (jscpd) metrics
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 on:
   # COST OPTIMIZATION: Removed pull_request and push triggers to reduce CI costs

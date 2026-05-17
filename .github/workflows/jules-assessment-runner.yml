@@ -32,7 +32,7 @@ on:
 # Prevent multiple assessment runs simultaneously
 concurrency:
   group: assessment-runner
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────

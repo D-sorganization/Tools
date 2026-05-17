@@ -17,6 +17,9 @@ name: Jules Comprehensive Assessment
 # │  • Scheduled (0 8 * * 0,4) or manual dispatch — not triggered on push     │
 # │  • Report commit scoped to docs/assessments/ path only                   │
 # └─────────────────────────────────────────────────────────────────────────────┘
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 on:
   schedule:

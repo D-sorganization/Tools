@@ -67,7 +67,7 @@ permissions:
 # Prevent multiple remediation runs simultaneously
 concurrency:
   group: jules-assessment-remediator
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 env:
   MAX_ISSUES_PER_RUN: 10

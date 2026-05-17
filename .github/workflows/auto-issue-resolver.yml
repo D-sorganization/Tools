@@ -63,7 +63,7 @@ on:
 
 concurrency:
   group: auto-issue-resolver
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────

@@ -17,6 +17,9 @@ name: Jules Archivist
 # │  • Only targets branches matching "jules/" prefix — other branches ignored │
 # │  • Gracefully skips on API rate-limit errors                               │
 # └─────────────────────────────────────────────────────────────────────────────┘
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 on:
   workflow_call:
