@@ -1149,7 +1149,7 @@ class ChatDockWidget(QDockWidget):
         except Exception:  # noqa: BLE001 - any adapter failure → empty list
             logger.debug("_refresh_ai_model_combo: adapter probe failed", exc_info=True)
             models = []
-        items = [(name, name) for name in models] or [("(default)", "default")]
+        items = [(getattr(m, "name", str(m)), getattr(m, "name", str(m))) for m in models] or [("(default)", "default")]
         self._ai_model_combo.blockSignals(True)
         try:
             self._ai_model_combo.clear()
@@ -1171,7 +1171,7 @@ class ChatDockWidget(QDockWidget):
         if caps is None:
             items = [("Off", "none")]
         else:
-            items = [(level.label, level.name) for level in caps.levels]
+            items = [(getattr(level, "label", str(level)), getattr(level, "name", str(level))) for level in getattr(caps, "available_levels", getattr(caps, "levels", []))]
         self._ai_thinking_combo.blockSignals(True)
         try:
             self._ai_thinking_combo.clear()
