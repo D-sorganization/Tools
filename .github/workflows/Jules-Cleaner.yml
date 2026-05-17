@@ -45,6 +45,7 @@ jobs:
               ;;
           esac
   cleanup:
+    timeout-minutes: 30
     needs: pick-runner
     if: github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'jules:consolidation')
     runs-on: d-sorg-fleet

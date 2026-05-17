@@ -20,12 +20,24 @@ on:
       - "src/data_processing/data_processor/web/**"
       - "src/rotation_converter/web/**"
       - ".github/workflows/tauri-build.yml"
+      - "src-tauri/**"
+      - "**/Cargo.toml"
+      - "**/Cargo.lock"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "package-lock.json"
   pull_request:
     paths:
       - "src/function_generator/web/**"
       - "src/data_processing/data_processor/web/**"
       - "src/rotation_converter/web/**"
       - ".github/workflows/tauri-build.yml"
+      - "src-tauri/**"
+      - "**/Cargo.toml"
+      - "**/Cargo.lock"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "package-lock.json"
   release:
     types: [published]
   workflow_dispatch:

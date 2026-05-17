@@ -157,6 +157,7 @@ jobs:
 
   # ── Summary ───────────────────────────────────────────────────────────────────
   summary:
+    timeout-minutes: 60
     name: Wheel build summary
     needs: build-wheels
     runs-on: ubuntu-latest

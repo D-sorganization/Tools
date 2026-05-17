@@ -30,6 +30,7 @@ permissions:
 
 jobs:
   audit:
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     # Grant write only at this job level.
     permissions:

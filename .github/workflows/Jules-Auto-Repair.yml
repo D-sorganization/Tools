@@ -109,6 +109,7 @@ jobs:
               ;;
           esac
   intelligent-repair:
+    timeout-minutes: 30
     needs: pick-runner
     runs-on: d-sorg-fleet
     # Grant write only at this job level — this is the only job that pushes commits

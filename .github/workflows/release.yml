@@ -3,6 +3,9 @@ name: Release Automation
 on:
   push:
     branches: [main]
+    paths:
+      - "pyproject.toml"
+      - ".github/workflows/release.yml"
   workflow_dispatch:
     inputs:
       force_bump:
@@ -25,6 +28,7 @@ permissions:
 jobs:
   # ── 1. Determine if this commit warrants a release ────────────────────
   analyse-commits:
+    timeout-minutes: 60
     name: Analyse Commits
     runs-on: d-sorg-fleet
     outputs:
@@ -133,6 +137,7 @@ jobs:
 
   # ── 2. Validate: tests + quality gates ──────────────────────────────
   validate:
+    timeout-minutes: 60
     name: Validate
     runs-on: d-sorg-fleet
     needs: analyse-commits
@@ -163,6 +168,7 @@ jobs:
 
   # ── 3. Bump version in pyproject.toml + VERSION file ────────────────
   bump-version:
+    timeout-minutes: 60
     name: Bump Version
     runs-on: d-sorg-fleet
     needs: [analyse-commits, validate]
@@ -262,6 +268,7 @@ jobs:
 
   # ── 4. Create GitHub Release ─────────────────────────────────────────
   github-release:
+    timeout-minutes: 60
     name: GitHub Release
     runs-on: d-sorg-fleet
     needs: [analyse-commits, bump-version]

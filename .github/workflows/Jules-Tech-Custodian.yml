@@ -43,6 +43,7 @@ jobs:
               ;;
           esac
   refactor-worst-file:
+    timeout-minutes: 30
     needs: pick-runner
     runs-on: d-sorg-fleet
     permissions:

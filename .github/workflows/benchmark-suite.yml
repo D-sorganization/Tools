@@ -9,6 +9,9 @@ on:
       - ".github/workflows/benchmark-suite.yml"
       - "pyproject.toml"
       - ".benchmarks/**"
+      - "src/**/*.py"
+      - "rust_core/**"
+      - "benchmarks/**"
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
@@ -16,6 +19,9 @@ on:
       - "tests/benchmarks/**"
       - ".github/workflows/benchmark-suite.yml"
       - "pyproject.toml"
+      - "src/**/*.py"
+      - "rust_core/**"
+      - "benchmarks/**"
   workflow_dispatch:
 
 concurrency:

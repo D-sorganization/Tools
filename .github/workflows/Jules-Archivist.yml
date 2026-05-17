@@ -66,6 +66,7 @@ jobs:
               ;;
           esac
   archive-tasks:
+    timeout-minutes: 30
     needs: pick-runner
     runs-on: ${{ needs.pick-runner.outputs.runner }}
     # Grant write only at this job level — branch deletion requires contents: write.

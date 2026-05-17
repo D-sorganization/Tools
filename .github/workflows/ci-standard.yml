@@ -301,6 +301,7 @@ jobs:
           fi
 
   tests:
+    timeout-minutes: 30
     needs: [pick-runner, quality-gate]
     runs-on: d-sorg-fleet
     strategy:
