@@ -191,6 +191,10 @@ class UnifiedToolsSidebar(
 
         self.apply_state(self._state)
 
+    def minimumSizeHint(self) -> QtCore.QSize:
+        """Override minimumSizeHint to allow aggressive resizing of the sidebar."""
+        return QtCore.QSize(100, 0)
+
     @property
     def dock_widget(self) -> QtWidgets.QDockWidget | None:
         """Return the installed dock widget, if any."""
