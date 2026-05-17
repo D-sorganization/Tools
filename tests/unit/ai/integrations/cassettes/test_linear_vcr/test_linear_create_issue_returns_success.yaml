@@ -1,0 +1,20 @@
+interactions:
+- request:
+    body: '{"query": "\nmutation CreateIssue($input: IssueCreateInput!) {\n  issueCreate(input: $input) {\n    success\n    issue {\n      id\n      title\n      url\n    }\n  }\n}\n", "variables": {"input": {"title": "Sample issue from VCR replay", "description": "Body content used in cassette.", "teamId": "team_synthetic_id"}}}'
+    headers:
+      authorization:
+      - REDACTED
+      content-type:
+      - application/json
+    method: POST
+    uri: https://api.linear.app/graphql
+  response:
+    body:
+      string: '{"data":{"issueCreate":{"success":true,"issue":{"id":"issue_synth_new_001","title":"Sample issue from VCR replay","url":"https://linear.app/synthetic/issue/SYN-99"}}}}'
+    headers:
+      content-type:
+      - application/json
+    status:
+      code: 200
+      message: OK
+version: 1
