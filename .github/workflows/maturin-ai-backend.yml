@@ -109,7 +109,7 @@ jobs:
   # ── Optional: build with local-embeddings feature (Linux only, heavy) ────────
   build-local-embeddings:
     name: Build wheel with local-embeddings (Linux)
-    runs-on: ubuntu-latest
+    runs-on: d-sorg-fleet
     timeout-minutes: 45
     # Only on workflow_dispatch to keep PR feedback fast
     if: github.event_name == 'workflow_dispatch'
@@ -160,7 +160,7 @@ jobs:
     timeout-minutes: 60
     name: Wheel build summary
     needs: build-wheels
-    runs-on: ubuntu-latest
+    runs-on: d-sorg-fleet
     if: always()
     steps:
       - name: Report results
