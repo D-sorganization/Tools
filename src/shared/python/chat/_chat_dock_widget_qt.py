@@ -466,17 +466,23 @@ class ChatDockWidget(QDockWidget):
         self._build_ai_dropdowns(mode_row)
 
         self._mode_combo = QComboBox()
+        self._mode_combo.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
+        self._mode_combo.setMinimumWidth(50)
         self._mode_combo.addItem("Chat", "chat")
         self._mode_combo.addItem("Terminal", "terminal")
         self._mode_combo.currentIndexChanged.connect(self._on_mode_changed)
         mode_row.addWidget(self._mode_combo)
 
         self._shell_combo = QComboBox()
+        self._shell_combo.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
+        self._shell_combo.setMinimumWidth(50)
         self._populate_shell_combo()
         self._shell_combo.currentIndexChanged.connect(self._on_terminal_shell_changed)
         mode_row.addWidget(self._shell_combo)
 
         self._provider_combo = QComboBox()
+        self._provider_combo.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
+        self._provider_combo.setMinimumWidth(50)
         self._populate_provider_combo()
         mode_row.addWidget(self._provider_combo)
 
@@ -1023,6 +1029,8 @@ class ChatDockWidget(QDockWidget):
         if not items:
             raise ValueError("_build_header_combobox: items must be non-empty")
         combo = QComboBox()
+        combo.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
+        combo.setMinimumWidth(50)
         for display, data in items:
             combo.addItem(display, data)
         combo.setToolTip(f"Select AI {label}")
