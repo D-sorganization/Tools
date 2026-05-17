@@ -9,7 +9,9 @@ assignees: ''
 
 **Severity**: <!-- LOW / MEDIUM / HIGH / CRITICAL -->
 **Component**: <!-- e.g. Pendulum Simulator, C3D Reader, URDF Generator -->
-**File(s)**: <!-- e.g. src/shared/python/... -->
+## File Paths
+<!-- MUST BE CANONICAL PATHS. Use exact src/... or tests/... paths. Do not use aspirational or descriptive names (e.g., 'notes_tab.py'). Provide a bulleted list of files the implementation must touch. -->
+- 
 
 ## Description
 <!-- Clear description of the feature -->
