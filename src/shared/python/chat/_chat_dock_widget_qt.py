@@ -452,10 +452,6 @@ class ChatDockWidget(QDockWidget):
         status_row.addWidget(self._token_indicator)
         self._auto_condense_threshold = 8000
 
-        self._close_btn = QPushButton("Close")
-        self._close_btn.setToolTip("Close chat")
-        self._close_btn.clicked.connect(self.close)
-        status_row.addWidget(self._close_btn)
         layout.addLayout(status_row)
 
         mode_row = QHBoxLayout()
@@ -494,7 +490,6 @@ class ChatDockWidget(QDockWidget):
         self._terminal_stop_btn.clicked.connect(self._on_terminal_stop)
         mode_row.addWidget(self._terminal_stop_btn)
 
-        layout.addLayout(mode_row)
 
         # Message scroll area
         self._scroll_area = QScrollArea()
@@ -527,7 +522,9 @@ class ChatDockWidget(QDockWidget):
         # Input row
         input_row = QHBoxLayout()
         self._input_edit = QPlainTextEdit()
-        self._input_edit.setMaximumHeight(50)
+        self._input_edit.setMinimumHeight(60)
+        self._input_edit.setMaximumHeight(150)
+        self._input_edit.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.MinimumExpanding)
         self._input_edit.setPlaceholderText(self._placeholder_text)
         self._input_edit.setStyleSheet(
             "QPlainTextEdit {"
@@ -536,9 +533,10 @@ class ChatDockWidget(QDockWidget):
             "  font-size: 12px; padding: 4px;"
             "}"
         )
-        input_row.addWidget(self._input_edit, stretch=1)
+        layout.addWidget(self._input_edit)
+        input_row.addStretch()
 
-        self._upload_btn = QPushButton("📎")
+        self._upload_btn = QPushButton("⨁")
         self._upload_btn.setToolTip("Upload file")
         self._upload_btn.setFixedWidth(28)
         self._upload_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
@@ -552,7 +550,7 @@ class ChatDockWidget(QDockWidget):
         self._upload_btn.clicked.connect(self._on_upload)
         input_row.addWidget(self._upload_btn)
 
-        self._screenshot_btn = QPushButton("📸")
+        self._screenshot_btn = QPushButton("⛶")
         self._screenshot_btn.setToolTip("Capture screenshot")
         self._screenshot_btn.setFixedWidth(28)
         self._screenshot_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
@@ -566,7 +564,7 @@ class ChatDockWidget(QDockWidget):
         self._screenshot_btn.clicked.connect(self._on_screenshot)
         input_row.addWidget(self._screenshot_btn)
 
-        self._mic_btn = QPushButton("\U0001f3a4")
+        self._mic_btn = QPushButton("🎙")
         self._mic_btn.setToolTip("Voice input (Ctrl+Shift+V)")
         self._mic_btn.setFixedWidth(28)
         self._mic_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
@@ -596,6 +594,7 @@ class ChatDockWidget(QDockWidget):
         input_row.addWidget(self._send_btn)
 
         layout.addLayout(input_row)
+        layout.addLayout(mode_row)
         self.setWidget(container)
         self._on_mode_changed()
 
