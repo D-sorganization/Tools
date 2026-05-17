@@ -1,0 +1,20 @@
+interactions:
+- request:
+    body: '{"query": "\nquery Issues($filter: IssueFilter) {\n  issues(filter: $filter) {\n    nodes {\n      id\n      title\n      description\n      state { name }\n      assignee { name }\n      priority\n      url\n    }\n  }\n}\n", "variables": {"filter": {"title": {"containsIgnoreCase": "no-matches-xyz"}}}}'
+    headers:
+      authorization:
+      - REDACTED
+      content-type:
+      - application/json
+    method: POST
+    uri: https://api.linear.app/graphql
+  response:
+    body:
+      string: '{"data":{"issues":{"nodes":[]}}}'
+    headers:
+      content-type:
+      - application/json
+    status:
+      code: 200
+      message: OK
+version: 1
