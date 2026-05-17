@@ -48,7 +48,7 @@ class TabSettingsMixin:
         factory = definition.settings.widget_factory
         content = factory(self, tab_id) if factory is not None else None
         self._settings_dialog = build_tab_settings_dialog(self, tab_id, content)
-        self._settings_dialog.show()
+        self._settings_dialog.exec()
         return True
 
     def _refresh_settings_button(self, *_args: Any) -> None:

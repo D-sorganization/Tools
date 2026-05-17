@@ -85,6 +85,9 @@ class ProjectFileExplorer(QtWidgets.QWidget):
         self._up_button.clicked.connect(self._go_up)
         self._common_locations.itemActivated.connect(self._go_to_common_location)
 
+        self._quick_access_label = QtWidgets.QLabel("Quick Access", self)
+        self._quick_access_label.setStyleSheet("font-weight: bold; margin-bottom: 4px;")
+        
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         nav_layout = QtWidgets.QHBoxLayout()
@@ -93,10 +96,20 @@ class ProjectFileExplorer(QtWidgets.QWidget):
         nav_layout.addWidget(self._up_button)
         nav_layout.addWidget(self._location_label, 1)
         layout.addLayout(nav_layout)
-        content_layout = QtWidgets.QHBoxLayout()
-        content_layout.addWidget(self._common_locations)
-        content_layout.addWidget(self._tree, 1)
-        layout.addLayout(content_layout)
+        
+        content_layout = QtWidgets.QSplitter(QtCore.Qt.Orientation.Vertical, self)
+        
+        top_widget = QtWidgets.QWidget()
+        top_layout = QtWidgets.QVBoxLayout(top_widget)
+        top_layout.setContentsMargins(0, 0, 0, 0)
+        top_layout.addWidget(self._quick_access_label)
+        top_layout.addWidget(self._common_locations)
+        
+        content_layout.addWidget(top_widget)
+        content_layout.addWidget(self._tree)
+        content_layout.setStretchFactor(0, 1)
+        content_layout.setStretchFactor(1, 3)
+        layout.addWidget(content_layout)
 
         self.set_project_root(project_root or Path.cwd())
 
@@ -171,14 +184,27 @@ class ProjectFileExplorer(QtWidgets.QWidget):
         self, index: QtCore.QModelIndex
     ) -> QtWidgets.QMenu | None:
         path = self._path_for_index(index)
-        if path is None or not self._can_open_file(path):
+        if path is None:
             return None
 
         menu = QtWidgets.QMenu(self)
-        menu.addAction("Open with Default Program").triggered.connect(
-            lambda: self._open_with_default_program(index)
-        )
+        if path.is_dir():
+            menu.addAction("Add to Quick Access").triggered.connect(
+                lambda: self._add_to_quick_access(path)
+            )
+        if self._can_open_file(path):
+            menu.addAction("Open with Default Program").triggered.connect(
+                lambda: self._open_with_default_program(index)
+            )
+        
+        if menu.isEmpty():
+            return None
         return menu
+
+    def _add_to_quick_access(self, path: Path) -> None:
+        item = QtWidgets.QListWidgetItem(path.name)
+        item.setData(_user_role(), str(path))
+        self._common_locations.addItem(item)
 
     def _open_with_default_program(self, index: QtCore.QModelIndex) -> None:
         path = self._path_for_index(index)

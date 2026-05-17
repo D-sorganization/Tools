@@ -375,7 +375,9 @@ QTabBar#{SIDEKICK_TAB_BAR_OBJECT_NAME}::tab {{
 QTabBar#{SIDEKICK_TAB_BAR_OBJECT_NAME}::tab:selected {{
     background: {value("color.surface")};
     border-color: {value("color.border.strong")};
-    border-bottom: 1px solid {value("color.surface")};
+    border-bottom-color: {value("color.surface")};
+    margin-bottom: -1px;
+    padding-bottom: {value("space.2")}; /* Keep height consistent */
     color: {value("color.text")};
 }}
 
