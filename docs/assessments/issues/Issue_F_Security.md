@@ -4,13 +4,13 @@ labels: jules:assessment, needs-attention
 
 # Issue: Low Score in Security
 
-## Grade: 4.0/10
+## Grade: 2.0/10
 
 ## Problem
 The assessment for **Security** returned a score below the acceptable threshold of 5.0.
 
 ## Justification
-Eval usage: 3
+Eval usage: 4
 
 ## Action Items
 1. Review the generated assessment in `docs/assessments/Assessment_F_Security.md`.

@@ -1,17 +1,16 @@
 {
-  "timestamp": "2026-05-17T03:42:16.122618",
-  "repository": "Tools",
+  "timestamp": "2026-05-17T10:45:09.358580",
+  "repository": "app",
   "files_analyzed": 2103,
   "issues": [
     {
       "principle": "DRY",
       "severity": "MAJOR",
       "title": "Duplicate code block",
-      "description": "Found in 3 locations",
+      "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/setup_dev.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/folder_packer_pro/build_exe.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/folder_tool_pro/build_exe.py"
+        "/app/launch.py",
+        "/app/scripts/migrate_csv_to_parquet.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -19,11 +18,10 @@
       "principle": "DRY",
       "severity": "MAJOR",
       "title": "Duplicate code block",
-      "description": "Found in 3 locations",
+      "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/setup_dev.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/folder_packer_pro/build_exe.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/folder_tool_pro/build_exe.py"
+        "/app/UnifiedToolsLauncher.py",
+        "/app/launch.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -31,13 +29,10 @@
       "principle": "DRY",
       "severity": "MAJOR",
       "title": "Duplicate code block",
-      "description": "Found in 7 locations",
+      "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/scripts/fleet_autofix_patcher.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/scripts/fleet_safety_patcher.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/scripts/mypy_autofix_agent.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/setup_dev.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/folder_packer_pro/build_exe.py"
+        "/app/UnifiedToolsLauncher.py",
+        "/app/launch.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -45,13 +40,32 @@
       "principle": "DRY",
       "severity": "MAJOR",
       "title": "Duplicate code block",
-      "description": "Found in 5 locations",
+      "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/scripts/mypy_autofix_agent.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/setup_dev.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/folder_packer_pro/build_exe.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/folder_tool_pro/build_exe.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/tools/mypy_autofix_agent.py"
+        "/app/UnifiedToolsLauncher.py",
+        "/app/launch.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/app/UnifiedToolsLauncher.py",
+        "/app/launch.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/app/UnifiedToolsLauncher.py",
+        "/app/launch.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -61,11 +75,11 @@
       "title": "Duplicate code block",
       "description": "Found in 25 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/c3d_viewer/launch_pyqt6.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/data_processing/data_processor/launch_pyqt6.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/data_processing/data_processor/launch_web.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/financial_calculator/launch_pyqt6.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/c3d_viewer/launch_pyqt6.py",
+        "/app/src/data_processing/data_processor/launch_pyqt6.py",
+        "/app/src/data_processing/data_processor/launch_web.py",
+        "/app/src/financial_calculator/launch_pyqt6.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -75,11 +89,11 @@
       "title": "Duplicate code block",
       "description": "Found in 19 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/c3d_viewer/launch_pyqt6.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/data_processing/data_processor/launch_pyqt6.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/financial_calculator/launch_pyqt6.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/flow_rate_converter/launch_pyqt6.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/c3d_viewer/launch_pyqt6.py",
+        "/app/src/data_processing/data_processor/launch_pyqt6.py",
+        "/app/src/financial_calculator/launch_pyqt6.py",
+        "/app/src/flow_rate_converter/launch_pyqt6.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -89,8 +103,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/signal_processing_studio/python/signal_processing_studio/main_window.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/signal_processing_studio/python/signal_processing_studio/main_window.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -100,8 +114,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/signal_processing_studio/python/signal_processing_studio/main_window.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/signal_processing_studio/python/signal_processing_studio/main_window.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -111,8 +125,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/signal_processing_studio/python/signal_processing_studio/main_window.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/signal_processing_studio/python/signal_processing_studio/main_window.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -122,8 +136,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/ai/peer_review/gui.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/ai/peer_review/gui.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -133,8 +147,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/ai/peer_review/gui.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/ai/peer_review/gui.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -144,10 +158,10 @@
       "title": "Duplicate code block",
       "description": "Found in 4 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/ai/gui/settings_dialog.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/ai/peer_review/gui.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/ai/gui/settings_dialog.py",
+        "/app/src/shared/python/ai/peer_review/gui.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -157,10 +171,10 @@
       "title": "Duplicate code block",
       "description": "Found in 4 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/ai/gui/settings_dialog.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/ai/peer_review/gui.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/ai/gui/settings_dialog.py",
+        "/app/src/shared/python/ai/peer_review/gui.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -170,10 +184,10 @@
       "title": "Duplicate code block",
       "description": "Found in 4 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/ai/gui/settings_dialog.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/ai/peer_review/gui.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/ai/gui/settings_dialog.py",
+        "/app/src/shared/python/ai/peer_review/gui.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -183,10 +197,10 @@
       "title": "Duplicate code block",
       "description": "Found in 4 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/ai/gui/settings_dialog.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/ai/peer_review/gui.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/ai/gui/settings_dialog.py",
+        "/app/src/shared/python/ai/peer_review/gui.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -196,10 +210,10 @@
       "title": "Duplicate code block",
       "description": "Found in 4 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/ai/gui/settings_dialog.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/ai/peer_review/gui.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/ai/gui/settings_dialog.py",
+        "/app/src/shared/python/ai/peer_review/gui.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -209,10 +223,10 @@
       "title": "Duplicate code block",
       "description": "Found in 4 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/ai/gui/settings_dialog.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/ai/peer_review/gui.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/ai/gui/settings_dialog.py",
+        "/app/src/shared/python/ai/peer_review/gui.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -222,8 +236,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -233,8 +247,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -244,8 +258,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -255,8 +269,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -266,10 +280,10 @@
       "title": "Duplicate code block",
       "description": "Found in 4 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/function_generator/python/function_generator/ui/pyqt6/main_window.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/pressure_drop_calculator/python/pressure_drop_calculator/ui/pyqt6/main_window.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/function_generator/python/function_generator/ui/pyqt6/main_window.py",
+        "/app/src/pressure_drop_calculator/python/pressure_drop_calculator/ui/pyqt6/main_window.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -279,8 +293,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -290,8 +304,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -301,8 +315,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -312,8 +326,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -323,8 +337,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -334,8 +348,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -345,8 +359,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -356,8 +370,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -367,8 +381,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -378,8 +392,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -389,8 +403,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -400,8 +414,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -411,8 +425,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -422,9 +436,9 @@
       "title": "Duplicate code block",
       "description": "Found in 3 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/python/src/help/help_system.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/python/src/help/help_system.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -434,9 +448,9 @@
       "title": "Duplicate code block",
       "description": "Found in 3 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/python/src/help/help_system.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/python/src/help/help_system.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -446,9 +460,9 @@
       "title": "Duplicate code block",
       "description": "Found in 3 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/python/src/help/help_system.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/python/src/help/help_system.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -458,8 +472,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -469,8 +483,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -480,9 +494,9 @@
       "title": "Duplicate code block",
       "description": "Found in 3 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/asteroid_jumper/app.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/asteroid_jumper/app.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -492,8 +506,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -503,8 +517,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -514,8 +528,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -525,8 +539,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -536,8 +550,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -547,8 +561,8 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
     },
@@ -558,44 +572,10 @@
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+        "/app/launch_signal_toolkit.py",
+        "/app/src/shared/python/signal_toolkit/widget.py"
       ],
       "recommendation": "Refactor into shared utility"
-    },
-    {
-      "principle": "DRY",
-      "severity": "MAJOR",
-      "title": "Duplicate code block",
-      "description": "Found in 3 locations",
-      "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/function_generator/python/function_generator/ui/pyqt6/main_window.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
-      ],
-      "recommendation": "Refactor into shared utility"
-    },
-    {
-      "principle": "DRY",
-      "severity": "MAJOR",
-      "title": "Duplicate code block",
-      "description": "Found in 3 locations",
-      "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/launch_signal_toolkit.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/function_generator/python/function_generator/ui/pyqt6/main_window.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
-      ],
-      "recommendation": "Refactor into shared utility"
-    },
-    {
-      "principle": "ORTHOGONALITY",
-      "severity": "MAJOR",
-      "title": "God function: test_sidekick_calculator_terminal_and_notes_runtime_flow",
-      "description": "Length 103 > 50 lines",
-      "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/tests/shared/python/sidekick/ui/test_tools_sidebar_runtime_tabs.py"
-      ],
-      "recommendation": "Split function"
     },
     {
       "principle": "ORTHOGONALITY",
@@ -603,147 +583,7 @@
       "title": "God function: calculate_grades",
       "description": "Length 55 > 50 lines",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/scripts/generate_comprehensive_assessment.py"
-      ],
-      "recommendation": "Split function"
-    },
-    {
-      "principle": "ORTHOGONALITY",
-      "severity": "MAJOR",
-      "title": "God function: setup_widgets",
-      "description": "Length 56 > 50 lines",
-      "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/Chaotic_Pendulum/chaotic_pendulum/renderer.py"
-      ],
-      "recommendation": "Split function"
-    },
-    {
-      "principle": "ORTHOGONALITY",
-      "severity": "MAJOR",
-      "title": "God function: _create_parameters_tab",
-      "description": "Length 66 > 50 lines",
-      "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/multi_param_analysis/python/multi_param_analysis/ui/pyqt6/main_window.py"
-      ],
-      "recommendation": "Split function"
-    },
-    {
-      "principle": "ORTHOGONALITY",
-      "severity": "MAJOR",
-      "title": "God function: _create_primitive_tab",
-      "description": "Length 51 > 50 lines",
-      "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/inertia_calculator/python/inertia_calculator/ui/pyqt6/main_window.py"
-      ],
-      "recommendation": "Split function"
-    },
-    {
-      "principle": "ORTHOGONALITY",
-      "severity": "MAJOR",
-      "title": "God function: _create_manual_tab",
-      "description": "Length 60 > 50 lines",
-      "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/inertia_calculator/python/inertia_calculator/ui/pyqt6/main_window.py"
-      ],
-      "recommendation": "Split function"
-    },
-    {
-      "principle": "ORTHOGONALITY",
-      "severity": "MAJOR",
-      "title": "God function: _build_ui",
-      "description": "Length 57 > 50 lines",
-      "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/rotation_converter/ui/pyqt6/screw_visualiser_tab.py"
-      ],
-      "recommendation": "Split function"
-    },
-    {
-      "principle": "ORTHOGONALITY",
-      "severity": "MAJOR",
-      "title": "God function: _build_ui",
-      "description": "Length 54 > 50 lines",
-      "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/rotation_converter/ui/pyqt6/rotation_tab.py"
-      ],
-      "recommendation": "Split function"
-    },
-    {
-      "principle": "ORTHOGONALITY",
-      "severity": "MAJOR",
-      "title": "God function: _build_ui",
-      "description": "Length 58 > 50 lines",
-      "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/rotation_converter/ui/pyqt6/main_window.py"
-      ],
-      "recommendation": "Split function"
-    },
-    {
-      "principle": "ORTHOGONALITY",
-      "severity": "MAJOR",
-      "title": "God function: _create_body_params_tab",
-      "description": "Length 72 > 50 lines",
-      "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/humanoid_builder_gui/python/humanoid_builder_gui/ui/pyqt6/main_window.py"
-      ],
-      "recommendation": "Split function"
-    },
-    {
-      "principle": "ORTHOGONALITY",
-      "severity": "MAJOR",
-      "title": "God function: _create_adam_settings_tab",
-      "description": "Length 67 > 50 lines",
-      "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/optimizer_gui/python/optimizer_gui/ui/pyqt6/main_window.py"
-      ],
-      "recommendation": "Split function"
-    },
-    {
-      "principle": "ORTHOGONALITY",
-      "severity": "MAJOR",
-      "title": "God function: _create_input_panel",
-      "description": "Length 51 > 50 lines",
-      "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/steam_engine_calculator/python/steam_engine_calculator/ui/pyqt6/main_window.py"
-      ],
-      "recommendation": "Split function"
-    },
-    {
-      "principle": "ORTHOGONALITY",
-      "severity": "MAJOR",
-      "title": "God function: _setup_ui",
-      "description": "Length 54 > 50 lines",
-      "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/data_processing/data_processor/python/data_processor/ui/pyqt6/statistical_widgets.py"
-      ],
-      "recommendation": "Split function"
-    },
-    {
-      "principle": "ORTHOGONALITY",
-      "severity": "MAJOR",
-      "title": "God function: _create_menu_bar",
-      "description": "Length 54 > 50 lines",
-      "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window.py"
-      ],
-      "recommendation": "Split function"
-    },
-    {
-      "principle": "ORTHOGONALITY",
-      "severity": "MAJOR",
-      "title": "God function: _create_advanced_tab",
-      "description": "Length 67 > 50 lines",
-      "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window_tabs.py"
-      ],
-      "recommendation": "Split function"
-    },
-    {
-      "principle": "ORTHOGONALITY",
-      "severity": "MAJOR",
-      "title": "God function: _create_plot_config_tab",
-      "description": "Length 64 > 50 lines",
-      "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window_tabs.py"
+        "/app/scripts/generate_comprehensive_assessment.py"
       ],
       "recommendation": "Split function"
     },
@@ -753,17 +593,57 @@
       "title": "God function: __init__",
       "description": "Length 105 > 50 lines",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/lower_body_model/launch_pyqt6.py"
+        "/app/src/lower_body_model/launch_pyqt6.py"
       ],
       "recommendation": "Split function"
     },
     {
       "principle": "ORTHOGONALITY",
       "severity": "MAJOR",
-      "title": "God function: create_api_tab",
-      "description": "Length 56 > 50 lines",
+      "title": "God function: _create_body_params_tab",
+      "description": "Length 72 > 50 lines",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/document_processing/pdf_renamer/src/pdf_renamer/gui.py"
+        "/app/src/humanoid_builder_gui/python/humanoid_builder_gui/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_adam_settings_tab",
+      "description": "Length 67 > 50 lines",
+      "files": [
+        "/app/src/optimizer_gui/python/optimizer_gui/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_advanced_tab",
+      "description": "Length 67 > 50 lines",
+      "files": [
+        "/app/src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window_tabs.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_plot_config_tab",
+      "description": "Length 64 > 50 lines",
+      "files": [
+        "/app/src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window_tabs.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_menu_bar",
+      "description": "Length 54 > 50 lines",
+      "files": [
+        "/app/src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window.py"
       ],
       "recommendation": "Split function"
     },
@@ -771,39 +651,9 @@
       "principle": "ORTHOGONALITY",
       "severity": "MAJOR",
       "title": "God function: _setup_ui",
-      "description": "Length 128 > 50 lines",
-      "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/chat/_chat_dock_widget_qt.py"
-      ],
-      "recommendation": "Split function"
-    },
-    {
-      "principle": "ORTHOGONALITY",
-      "severity": "MAJOR",
-      "title": "God function: _create_left_panel",
-      "description": "Length 52 > 50 lines",
-      "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget_ui.py"
-      ],
-      "recommendation": "Split function"
-    },
-    {
-      "principle": "ORTHOGONALITY",
-      "severity": "MAJOR",
-      "title": "God function: _create_generation_tab",
       "description": "Length 54 > 50 lines",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget_ui.py"
-      ],
-      "recommendation": "Split function"
-    },
-    {
-      "principle": "ORTHOGONALITY",
-      "severity": "MAJOR",
-      "title": "God function: _create_calculus_tab",
-      "description": "Length 59 > 50 lines",
-      "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/signal_toolkit/widget_ui.py"
+        "/app/src/data_processing/data_processor/python/data_processor/ui/pyqt6/statistical_widgets.py"
       ],
       "recommendation": "Split function"
     },
@@ -811,59 +661,39 @@
       "principle": "ORTHOGONALITY",
       "severity": "MAJOR",
       "title": "God function: _build_ui",
-      "description": "Length 68 > 50 lines",
+      "description": "Length 54 > 50 lines",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/sidekick/ui/tools_sidebar/data_explorer_tab.py"
+        "/app/src/pendulum_simulator/src/double_pendulum_golf/gui/diagnostics.py"
       ],
       "recommendation": "Split function"
     },
     {
       "principle": "ORTHOGONALITY",
       "severity": "MAJOR",
-      "title": "God function: _build_ui",
+      "title": "God function: _create_primitive_tab",
       "description": "Length 51 > 50 lines",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/sidekick/ui/tools_sidebar/runtime_tabs.py"
+        "/app/src/inertia_calculator/python/inertia_calculator/ui/pyqt6/main_window.py"
       ],
       "recommendation": "Split function"
     },
     {
       "principle": "ORTHOGONALITY",
       "severity": "MAJOR",
-      "title": "God function: create_input_tab",
-      "description": "Length 58 > 50 lines",
+      "title": "God function: _create_manual_tab",
+      "description": "Length 60 > 50 lines",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/sidekick/process_calculators/wgs_reactor_calculator.py"
+        "/app/src/inertia_calculator/python/inertia_calculator/ui/pyqt6/main_window.py"
       ],
       "recommendation": "Split function"
     },
     {
       "principle": "ORTHOGONALITY",
       "severity": "MAJOR",
-      "title": "God function: _setup_ui",
-      "description": "Length 54 > 50 lines",
+      "title": "God function: _create_parameters_tab",
+      "description": "Length 66 > 50 lines",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/sidekick/process_calculators/psa_package/psa_gui.py"
-      ],
-      "recommendation": "Split function"
-    },
-    {
-      "principle": "ORTHOGONALITY",
-      "severity": "MAJOR",
-      "title": "God function: _setup_ui",
-      "description": "Length 54 > 50 lines",
-      "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/sidekick/process_calculators/psa_package/ui/results_panel.py"
-      ],
-      "recommendation": "Split function"
-    },
-    {
-      "principle": "ORTHOGONALITY",
-      "severity": "MAJOR",
-      "title": "God function: _setup_ui",
-      "description": "Length 55 > 50 lines",
-      "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/theme/dialogs/theme_manager_dialog.py"
+        "/app/src/multi_param_analysis/python/multi_param_analysis/ui/pyqt6/main_window.py"
       ],
       "recommendation": "Split function"
     },
@@ -873,7 +703,7 @@
       "title": "God function: _init_ui",
       "description": "Length 72 > 50 lines",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/function_generator/python/function_generator/ui/pyqt6/main_window.py"
+        "/app/src/function_generator/python/function_generator/ui/pyqt6/main_window.py"
       ],
       "recommendation": "Split function"
     },
@@ -883,7 +713,117 @@
       "title": "God function: _create_parameter_widgets",
       "description": "Length 74 > 50 lines",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/function_generator/python/function_generator/ui/pyqt6/main_window.py"
+        "/app/src/function_generator/python/function_generator/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _setup_ui",
+      "description": "Length 128 > 50 lines",
+      "files": [
+        "/app/src/shared/python/chat/_chat_dock_widget_qt.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_left_panel",
+      "description": "Length 52 > 50 lines",
+      "files": [
+        "/app/src/shared/python/signal_toolkit/widget_ui.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_generation_tab",
+      "description": "Length 54 > 50 lines",
+      "files": [
+        "/app/src/shared/python/signal_toolkit/widget_ui.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_calculus_tab",
+      "description": "Length 59 > 50 lines",
+      "files": [
+        "/app/src/shared/python/signal_toolkit/widget_ui.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _setup_ui",
+      "description": "Length 55 > 50 lines",
+      "files": [
+        "/app/src/shared/python/theme/dialogs/theme_manager_dialog.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: create_input_tab",
+      "description": "Length 58 > 50 lines",
+      "files": [
+        "/app/src/shared/python/sidekick/process_calculators/wgs_reactor_calculator.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _setup_ui",
+      "description": "Length 54 > 50 lines",
+      "files": [
+        "/app/src/shared/python/sidekick/process_calculators/psa_package/psa_gui.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _setup_ui",
+      "description": "Length 54 > 50 lines",
+      "files": [
+        "/app/src/shared/python/sidekick/process_calculators/psa_package/ui/results_panel.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _build_ui",
+      "description": "Length 68 > 50 lines",
+      "files": [
+        "/app/src/shared/python/sidekick/ui/tools_sidebar/data_explorer_tab.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _build_ui",
+      "description": "Length 51 > 50 lines",
+      "files": [
+        "/app/src/shared/python/sidekick/ui/tools_sidebar/runtime_tabs.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_input_panel",
+      "description": "Length 51 > 50 lines",
+      "files": [
+        "/app/src/steam_engine_calculator/python/steam_engine_calculator/ui/pyqt6/main_window.py"
       ],
       "recommendation": "Split function"
     },
@@ -893,7 +833,37 @@
       "title": "God function: _create_body_params_tab",
       "description": "Length 54 > 50 lines",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/urdf_builder_gui/python/urdf_builder_gui/ui/pyqt6/main_window.py"
+        "/app/src/urdf_builder_gui/python/urdf_builder_gui/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: create_api_tab",
+      "description": "Length 56 > 50 lines",
+      "files": [
+        "/app/src/document_processing/pdf_renamer/src/pdf_renamer/gui.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _build_ui",
+      "description": "Length 58 > 50 lines",
+      "files": [
+        "/app/src/rotation_converter/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _build_ui",
+      "description": "Length 57 > 50 lines",
+      "files": [
+        "/app/src/rotation_converter/ui/pyqt6/screw_visualiser_tab.py"
       ],
       "recommendation": "Split function"
     },
@@ -903,7 +873,27 @@
       "title": "God function: _build_ui",
       "description": "Length 54 > 50 lines",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/pendulum_simulator/src/double_pendulum_golf/gui/diagnostics.py"
+        "/app/src/rotation_converter/ui/pyqt6/rotation_tab.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: setup_widgets",
+      "description": "Length 56 > 50 lines",
+      "files": [
+        "/app/Chaotic_Pendulum/chaotic_pendulum/renderer.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: test_sidekick_calculator_terminal_and_notes_runtime_flow",
+      "description": "Length 103 > 50 lines",
+      "files": [
+        "/app/tests/shared/python/sidekick/ui/test_tools_sidebar_runtime_tabs.py"
       ],
       "recommendation": "Split function"
     },
@@ -913,7 +903,7 @@
       "title": "Hardcoded API Key",
       "description": "Secrets in code",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/tests/unit/chat/test_adapter_capabilities.py"
+        "/app/src/shared/python/ai/gui/_adapter_lifecycle.py"
       ],
       "recommendation": "Use env vars"
     },
@@ -923,7 +913,7 @@
       "title": "Hardcoded API Key",
       "description": "Secrets in code",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/tests/shared/python/ai/test_adapter_contract.py"
+        "/app/src/shared/python/ai/tests/test_adapter_factory.py"
       ],
       "recommendation": "Use env vars"
     },
@@ -933,7 +923,7 @@
       "title": "Hardcoded API Key",
       "description": "Secrets in code",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/tests/shared/python/ai/test_rust_adapter_extended.py"
+        "/app/tests/shared/python/ai/test_rust_adapter.py"
       ],
       "recommendation": "Use env vars"
     },
@@ -943,7 +933,7 @@
       "title": "Hardcoded API Key",
       "description": "Secrets in code",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/tests/shared/python/ai/test_classify_error.py"
+        "/app/tests/shared/python/ai/test_adapter_contract.py"
       ],
       "recommendation": "Use env vars"
     },
@@ -953,7 +943,7 @@
       "title": "Hardcoded API Key",
       "description": "Secrets in code",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/tests/shared/python/ai/test_rust_adapter.py"
+        "/app/tests/shared/python/ai/test_classify_error.py"
       ],
       "recommendation": "Use env vars"
     },
@@ -963,7 +953,7 @@
       "title": "Hardcoded API Key",
       "description": "Secrets in code",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/tests/shared/python/ai/test_rust_adapter_fallback.py"
+        "/app/tests/shared/python/ai/test_rust_adapter_fallback.py"
       ],
       "recommendation": "Use env vars"
     },
@@ -973,7 +963,7 @@
       "title": "Hardcoded API Key",
       "description": "Secrets in code",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/ai/tests/test_adapter_factory.py"
+        "/app/tests/shared/python/ai/test_rust_adapter_extended.py"
       ],
       "recommendation": "Use env vars"
     },
@@ -983,7 +973,7 @@
       "title": "Hardcoded API Key",
       "description": "Secrets in code",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/shared/python/ai/gui/_adapter_lifecycle.py"
+        "/app/tests/unit/chat/test_adapter_capabilities.py"
       ],
       "recommendation": "Use env vars"
     },
@@ -993,11 +983,11 @@
       "title": "High TRACKED_TASK count (123)",
       "description": "Accumulated technical debt",
       "files": [
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/scripts/generate_assessments.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/scripts/pragmatic_programmer_review.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/scripts/analyze_completist_data.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/scripts/legacy_tools/code_quality_check.py",
-        "/home/dieterolson/actions-runners/runner-2/_work/Tools/Tools/src/c3d_viewer/python/c3d_viewer/ui/pyqt6/main_window.py"
+        "/app/scripts/analyze_completist_data.py",
+        "/app/scripts/pragmatic_programmer_review.py",
+        "/app/scripts/generate_assessments.py",
+        "/app/src/folder_tool/folder_tool_ui.py",
+        "/app/src/asteroid_jumper/main_window.py"
       ],
       "recommendation": "Review TODOs"
     }
