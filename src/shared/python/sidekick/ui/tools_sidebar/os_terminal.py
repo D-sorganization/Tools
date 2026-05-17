@@ -407,6 +407,27 @@ def strip_ansi(data: bytes) -> bytes:
 # ---------------------------------------------------------------------------
 
 
+class ShellDiscoveryThread(QtCore.QThread):
+    """Thread for running shell discovery asynchronously to avoid UI freezing."""
+    discovered = QtCore.pyqtSignal(list)
+
+    def __init__(
+        self,
+        shells_override: Sequence[ShellDescriptor] | None = None,
+        parent: QtCore.QObject | None = None,
+    ) -> None:
+        super().__init__(parent)
+        self.shells_override = shells_override
+
+    def run(self) -> None:
+        try:
+            res = list(self.shells_override or discover_shells())
+            self.discovered.emit(res)
+        except Exception as e:
+            logger.error("Failed to discover shells asynchronously: %s", e)
+            self.discovered.emit([])
+
+
 class SidekickOsTerminalWidget(QtWidgets.QWidget):
     """OS-level terminal tab backed by a PTY (or pipe fallback)."""
 
@@ -424,16 +445,34 @@ class SidekickOsTerminalWidget(QtWidgets.QWidget):
         self.setObjectName(SIDEKICK_OS_TERMINAL_OBJECT_NAME)
 
         self._project_root = Path(project_root)
-        self._shells: list[ShellDescriptor] = list(shells or discover_shells())
         self._backend: TerminalBackend | None = None
         self._install_hint: str | None = None
         self._current_shell: ShellDescriptor | None = None
+        self._autostart: bool = autostart
 
-        self._build_ui()
+        if shells is not None:
+            self._shells = list(shells)
+            self._build_ui()
+            self._populate_shell_selector()
+            self._on_cwd_changed(self._project_root)
+            if autostart and self._shells:
+                self._start_backend(self._shells[0])
+        else:
+            self._shells = []
+            self._build_ui()
+            self._populate_shell_selector()
+            self._on_cwd_changed(self._project_root)
+            
+            # Asynchronous shell discovery to prevent UI freezing on startup (e.g. slow WSL discovery)
+            self._discovery_thread = ShellDiscoveryThread(None, self)
+            self._discovery_thread.discovered.connect(self._on_shells_discovered)
+            self._discovery_thread.start()
+
+    def _on_shells_discovered(self, shells: list[ShellDescriptor]) -> None:
+        """Callback for when shells are discovered asynchronously."""
+        self._shells = shells
         self._populate_shell_selector()
-        self._on_cwd_changed(self._project_root)
-
-        if autostart and self._shells:
+        if self._autostart and self._shells and self._backend is None:
             self._start_backend(self._shells[0])
 
     # -- UI construction ----------------------------------------------------
