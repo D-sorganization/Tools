@@ -344,7 +344,9 @@ class OllamaAdapter(BaseAgentAdapter):
 
         Verifies:
         1. Ollama server is running
-        2. Configured model is available
+        2. Configured model is available; if not, auto-fall back to the first
+           locally-installed model so chat keeps working when saved settings
+           reference a model that has been removed.
 
         Returns:
             Tuple of (success, diagnostic_message).
@@ -372,8 +374,22 @@ class OllamaAdapter(BaseAgentAdapter):
                     return False, (
                         f"No models installed. Pull one with: ollama pull {self._model}"
                     )
-                return False, (
-                    f"Model '{self._model}' not found. "
+                # Saved-settings model no longer exists locally. Prefer a real
+                # (non-:cloud) model so chat stays offline-capable; fall back to
+                # whatever is listed first if none qualify.
+                fallback = next(
+                    (m for m in model_names if not m.endswith(":cloud")),
+                    model_names[0],
+                )
+                logger.warning(
+                    "Configured Ollama model '%s' not installed; "
+                    "auto-falling back to '%s'. Update saved settings to dismiss.",
+                    self._model,
+                    fallback,
+                )
+                self._model = fallback
+                return True, (
+                    f"Configured model not installed; using '{fallback}' instead. "
                     f"Available: {', '.join(model_names[:5])}"
                 )
 
