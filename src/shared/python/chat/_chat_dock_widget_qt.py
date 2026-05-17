@@ -437,7 +437,6 @@ class ChatDockWidget(QDockWidget):
         if self._action_request_review is not None:
             self._action_request_review.triggered.connect(self._request_review)
         self._tools_btn.setMenu(self._tools_menu)
-        status_row.addWidget(self._tools_btn)
 
         # Tools issue #2736: token-budget indicator + condense-now button.
         self._token_indicator = QLabel("0 tok")
@@ -536,7 +535,7 @@ class ChatDockWidget(QDockWidget):
         layout.addWidget(self._input_edit)
         input_row.addStretch()
 
-        self._upload_btn = QPushButton("⨁")
+        self._upload_btn = QPushButton("+")
         self._upload_btn.setToolTip("Upload file")
         self._upload_btn.setFixedWidth(28)
         self._upload_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
@@ -592,6 +591,34 @@ class ChatDockWidget(QDockWidget):
         )
         self._send_btn.clicked.connect(self._on_send)
         input_row.addWidget(self._send_btn)
+        self._steer_btn = QPushButton("Steer")
+        self._steer_btn.setToolTip("Queue message")
+        self._steer_btn.setFixedWidth(50)
+        self._steer_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
+        self._steer_btn.setStyleSheet(self._send_btn.styleSheet())
+        self._steer_btn.clicked.connect(self._on_steer)
+        input_row.addWidget(self._steer_btn)
+
+        self._stop_agent_btn = QPushButton("Stop")
+        self._stop_agent_btn.setToolTip("Stop response")
+        self._stop_agent_btn.setFixedWidth(50)
+        self._stop_agent_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
+        self._stop_agent_btn.setStyleSheet(self._send_btn.styleSheet())
+        self._stop_agent_btn.clicked.connect(self._on_stop_agent)
+        input_row.addWidget(self._stop_agent_btn)
+
+        self._agent_mode_combo = QComboBox()
+        self._agent_mode_combo.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
+        self._agent_mode_combo.addItem("Agent", "agent")
+        self._agent_mode_combo.addItem("Plan", "plan")
+        self._agent_mode_combo.addItem("Ask", "ask")
+        input_row.addWidget(self._agent_mode_combo)
+
+        self._tools_btn.setFixedWidth(50)
+        self._tools_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
+        self._tools_btn.setStyleSheet("QPushButton { background-color: " + self._accent_color + "; color: black; border-radius: 4px; font-weight: bold; padding: 4px; }")
+        input_row.addWidget(self._tools_btn)
+
 
         layout.addLayout(input_row)
         layout.addLayout(mode_row)
@@ -784,6 +811,19 @@ class ChatDockWidget(QDockWidget):
             self._status_label.setText("Terminal input sent")
 
     # ── UI actions ───────────────────────────────────────────────────
+
+    def _on_steer(self) -> None:
+        text = self._input_edit.toPlainText().strip()
+        if not text: return
+        # Queue message
+        if not hasattr(self, '_queued_messages'): self._queued_messages = []
+        self._queued_messages.append(text)
+        self._input_edit.clear()
+
+    def _on_stop_agent(self) -> None:
+        logger.info('Agent response stopped by user')
+        if hasattr(self, '_chat_client') and hasattr(self._chat_client, 'cancel_current_stream'):
+            self._chat_client.cancel_current_stream()
 
     def _on_send(self) -> None:
         text = self._input_edit.toPlainText().strip()
