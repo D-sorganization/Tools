@@ -111,11 +111,21 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: "24"
+          cache: "npm"
+          cache-dependency-path: ${{ matrix.path }}/package-lock.json
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
+
+      # Cache cargo registry/git + matrix-app target/ dir. Per-app workspace
+      # key prevents cross-contamination between the three Tauri sub-apps.
+      - name: Cache Rust target (check)
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ${{ matrix.path }}/src-tauri -> target
+          key: ${{ matrix.app }}-check
 
       - name: Install Linux dependencies
         run: |
@@ -176,11 +186,21 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: "24"
+          cache: "npm"
+          cache-dependency-path: ${{ matrix.app.path }}/package-lock.json
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.platform.target }}
+
+      # Per-(app, target) Rust cache. Tauri release builds compile ~400 crates;
+      # warm cache typically reduces build time by 60-70%.
+      - name: Cache Rust target (build)
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ${{ matrix.app.path }}/src-tauri -> target
+          key: ${{ matrix.app.name }}-${{ matrix.platform.target }}-release
 
       - name: Install Linux dependencies
         if: matrix.platform.os == 'd-sorg-fleet'
