@@ -122,6 +122,8 @@ jobs:
           fi
 
       - uses: actions/setup-node@v6
+        with:
+          cache: npm
         if: steps.jules.outputs.enabled == 'true'
         with: { node-version: "24" }
       - run: npm install -g @google/jules

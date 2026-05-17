@@ -81,7 +81,9 @@ jobs:
         with:
           fetch-depth: 0
       - uses: actions/setup-python@v6
-        with: { python-version: "3.12" }
+        with:
+          python-version: "3.12"
+          cache: pip
 
       - name: Reject Raw Merge Conflict Markers
         run: |
@@ -317,6 +319,7 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
+          cache: pip
 
       - name: Reject Raw Merge Conflict Markers
         run: |
@@ -526,11 +529,22 @@ jobs:
         with:
           components: rustfmt, clippy
 
+      - name: Cache cargo registry, git, and target
+        if: steps.rust-changes.outputs.has_changes == 'true'
+        uses: Swatinem/rust-cache@v2
+        with:
+          # Per-OS key implied by Swatinem/rust-cache (it includes runner.os).
+          # Job-scope shared-key keeps this cache independent from
+          # maturin-ai-backend and cross-repo-rust-integration caches.
+          shared-key: ci-standard-rust-quality-gate
+          cache-on-failure: true
+
       - name: Set up Python for wheel checks
         if: steps.rust-changes.outputs.has_changes == 'true'
         uses: actions/setup-python@v6
         with:
           python-version: "3.11"
+          cache: pip
 
       - name: Format Check (rustfmt)
         if: steps.rust-changes.outputs.has_changes == 'true'
