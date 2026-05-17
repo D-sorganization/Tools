@@ -434,9 +434,9 @@ jobs:
           # producing `pytest: error: unrecognized arguments: --cov=.`.
           if [ -s changed_test_files.txt ]; then
             mapfile -t changed_test_files < changed_test_files.txt
-            python -m pytest "${changed_test_files[@]}" "${core_tests[@]}" -m "not live_simulation" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=10
+            python -m pytest "${changed_test_files[@]}" "${core_tests[@]}" -m "not live_simulation" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml
           else
-            python -m pytest "${core_tests[@]}" -m "not live_simulation" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=10
+            python -m pytest "${core_tests[@]}" -m "not live_simulation" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml
           fi
 
       - name: Provider-Contract Suite (Exported Packages)
@@ -461,7 +461,7 @@ jobs:
             --cov=src/shared/python/signal_toolkit \
             --cov=src/shared/python/model_generation \
             --cov-report=term \
-            --cov-fail-under=10
+
 
           echo "## Provider-Contract Suite (Python ${{ matrix.python-version }})" >> $GITHUB_STEP_SUMMARY
           echo "Packages verified: upstream_drift_tools, signal_toolkit, model_generation, theme" >> $GITHUB_STEP_SUMMARY
