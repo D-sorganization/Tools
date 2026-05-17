@@ -15,7 +15,6 @@ from types import SimpleNamespace
 from typing import Any
 
 import pytest
-
 from sidekick.ui.tools_sidebar.reporting_tab import _gather_session_context
 
 
