@@ -31,8 +31,31 @@ from src.shared.python.logging_pkg.logging_config import get_logger
 logger = get_logger(__name__)
 
 # Provider resolution order (local-first)
-_LOCAL_FIRST_ORDER = ("ollama", "bitnet", "cline", "openai", "anthropic", "gemini")
-_CLOUD_FIRST_ORDER = ("openai", "anthropic", "gemini", "ollama", "bitnet", "cline")
+# `claude_code` and `codex_cli` are LOCAL-shaped: they invoke a CLI on the
+# host machine. They appear before cloud providers in local-first ordering,
+# but after the truly-local (no network) options like Ollama and BitNet —
+# the CLIs still hit the cloud underneath, just without exposing API keys
+# to the application.
+_LOCAL_FIRST_ORDER = (
+    "ollama",
+    "bitnet",
+    "claude_code",
+    "codex_cli",
+    "cline",
+    "openai",
+    "anthropic",
+    "gemini",
+)
+_CLOUD_FIRST_ORDER = (
+    "openai",
+    "anthropic",
+    "gemini",
+    "claude_code",
+    "codex_cli",
+    "ollama",
+    "bitnet",
+    "cline",
+)
 
 # Type alias for the cache key tuple: (provider, api_key, model, host, timeout)
 _CacheKey = tuple[str, str | None, str | None, str | None, float | None]
@@ -78,7 +101,17 @@ class AdapterFactory:
     }
 
     _SUPPORTED_PROVIDERS = frozenset(
-        {"ollama", "bitnet", "openai", "codex", "anthropic", "gemini", "cline"}
+        {
+            "ollama",
+            "bitnet",
+            "openai",
+            "codex",  # historical alias for OpenAI; kept for back-compat
+            "codex_cli",  # the @openai/codex CLI agent (distinct from OpenAI API)
+            "anthropic",
+            "claude_code",  # the Claude Code CLI agent (distinct from Anthropic API)
+            "gemini",
+            "cline",
+        }
     )
 
     @classmethod
@@ -146,8 +179,26 @@ class AdapterFactory:
             # Bitnet uses 'host' param as bitnet_root in this context if provided
             adapter = BitnetAdapter(model=model, bitnet_root=host)
 
+        elif provider == "claude_code":
+            from src.shared.python.ai.adapters.claude_code_adapter import (
+                ClaudeCodeAdapter,
+            )
+
+            # `host` is reused here as an explicit binary path override —
+            # the CLI's "host" is its own filesystem path, not a URL.
+            adapter = ClaudeCodeAdapter(binary=host, model=model, timeout=timeout)
+
+        elif provider == "codex_cli":
+            from src.shared.python.ai.adapters.codex_cli_adapter import (
+                CodexCliAdapter,
+            )
+
+            # `host` reused as explicit binary path override (see claude_code above).
+            adapter = CodexCliAdapter(binary=host, model=model, timeout=timeout)
+
         else:
-            # "codex" is an alias for OpenAI
+            # Historical "codex" alias resolves to OpenAI API.
+            # The new `@openai/codex` CLI agent uses provider="codex_cli" instead.
             lookup_key = "openai" if provider == "codex" else provider
 
             # Cloud adapters — DRY key resolution

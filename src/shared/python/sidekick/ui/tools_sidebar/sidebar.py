@@ -161,8 +161,12 @@ class UnifiedToolsSidebar(
         self.tabs.setObjectName(SIDEKICK_TABS_OBJECT_NAME)
         self.tabs.tabBar().setObjectName(SIDEKICK_TAB_BAR_OBJECT_NAME)
         self.tabs.setMovable(True)
+        # Never elide tab labels: when the user-visible name is the only way
+        # to tell tabs apart, truncation is worse than overflow. Scroll
+        # buttons (enabled below) keep all tabs reachable when the bar runs
+        # out of horizontal space.
+        self.tabs.tabBar().setElideMode(QtCore.Qt.TextElideMode.ElideNone)
         self.tabs.setUsesScrollButtons(True)
-        self.tabs.tabBar().setElideMode(QtCore.Qt.TextElideMode.ElideRight)
         self.tabs.currentChanged.connect(self._emit_context)
         self.tabs.tabBar().tabMoved.connect(self._sync_tab_order_from_widget)
 
