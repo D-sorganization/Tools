@@ -48,6 +48,7 @@ from PyQt6.QtWidgets import (
     QStackedWidget,
     QVBoxLayout,
     QWidget,
+    QSizePolicy,
 )
 
 from ._theme_protocol import ThemeProviderProtocol, _DefaultDarkTheme
@@ -534,6 +535,7 @@ class ChatDockWidget(QDockWidget):
         self._upload_btn = QPushButton("📎")
         self._upload_btn.setToolTip("Upload file")
         self._upload_btn.setFixedWidth(28)
+        self._upload_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
         self._upload_btn.setStyleSheet(
             "QPushButton {"
             f"  background-color: {bg_alt}; color: {text_primary};"
@@ -547,6 +549,7 @@ class ChatDockWidget(QDockWidget):
         self._screenshot_btn = QPushButton("📸")
         self._screenshot_btn.setToolTip("Capture screenshot")
         self._screenshot_btn.setFixedWidth(28)
+        self._screenshot_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
         self._screenshot_btn.setStyleSheet(
             "QPushButton {"
             f"  background-color: {bg_alt}; color: {text_primary};"
@@ -560,6 +563,7 @@ class ChatDockWidget(QDockWidget):
         self._mic_btn = QPushButton("\U0001f3a4")
         self._mic_btn.setToolTip("Voice input (Ctrl+Shift+V)")
         self._mic_btn.setFixedWidth(28)
+        self._mic_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
         self._mic_btn.setStyleSheet(
             "QPushButton {"
             f"  background-color: {bg_alt}; color: {text_primary};"
@@ -571,7 +575,9 @@ class ChatDockWidget(QDockWidget):
         input_row.addWidget(self._mic_btn)
 
         self._send_btn = QPushButton("Send")
+        self._send_btn.setToolTip("Send message")
         self._send_btn.setFixedWidth(55)
+        self._send_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
         self._send_btn.setStyleSheet(
             "QPushButton {"
             f"  background-color: {self._accent_color}; color: black;"
