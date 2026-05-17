@@ -462,7 +462,7 @@ class ChatDockWidget(QDockWidget):
 
         self._mode_combo = QComboBox()
         self._mode_combo.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
-        self._mode_combo.setMinimumWidth(50)
+        self._mode_combo.setMinimumWidth(0)
         self._mode_combo.addItem("Chat", "chat")
         self._mode_combo.addItem("Terminal", "terminal")
         self._mode_combo.currentIndexChanged.connect(self._on_mode_changed)
@@ -470,14 +470,14 @@ class ChatDockWidget(QDockWidget):
 
         self._shell_combo = QComboBox()
         self._shell_combo.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
-        self._shell_combo.setMinimumWidth(50)
+        self._shell_combo.setMinimumWidth(0)
         self._populate_shell_combo()
         self._shell_combo.currentIndexChanged.connect(self._on_terminal_shell_changed)
         mode_row.addWidget(self._shell_combo)
 
         self._provider_combo = QComboBox()
         self._provider_combo.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
-        self._provider_combo.setMinimumWidth(50)
+        self._provider_combo.setMinimumWidth(0)
         self._populate_provider_combo()
         mode_row.addWidget(self._provider_combo)
 
@@ -533,7 +533,18 @@ class ChatDockWidget(QDockWidget):
             "}"
         )
         layout.addWidget(self._input_edit)
-        input_row.addStretch()
+
+        # Tools on the far left
+        self._tools_btn.setFixedWidth(50)
+        self._tools_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
+        self._tools_btn.setStyleSheet(
+            "QPushButton {"
+            f"  background-color: {bg_alt}; color: {text_primary};"
+            "  border-radius: 4px; padding: 4px;"
+            "}"
+            f"QPushButton:hover {{ background-color: {border}; }}"
+        )
+        input_row.addWidget(self._tools_btn)
 
         self._upload_btn = QPushButton("+")
         self._upload_btn.setToolTip("Upload file")
@@ -563,7 +574,7 @@ class ChatDockWidget(QDockWidget):
         self._screenshot_btn.clicked.connect(self._on_screenshot)
         input_row.addWidget(self._screenshot_btn)
 
-        self._mic_btn = QPushButton("🎙")
+        self._mic_btn = QPushButton("🎤")
         self._mic_btn.setToolTip("Voice input (Ctrl+Shift+V)")
         self._mic_btn.setFixedWidth(28)
         self._mic_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
@@ -577,6 +588,16 @@ class ChatDockWidget(QDockWidget):
         self._mic_btn.clicked.connect(self._on_mic_toggle)
         input_row.addWidget(self._mic_btn)
 
+        input_row.addStretch()
+
+        self._agent_mode_combo = QComboBox()
+        self._agent_mode_combo.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
+        self._agent_mode_combo.addItem("Agent", "agent")
+        self._agent_mode_combo.addItem("Plan", "plan")
+        self._agent_mode_combo.addItem("Ask", "ask")
+        input_row.addWidget(self._agent_mode_combo)
+
+        # Send, Steer, Stop on the right side
         self._send_btn = QPushButton("Send")
         self._send_btn.setToolTip("Send message")
         self._send_btn.setFixedWidth(55)
@@ -591,6 +612,7 @@ class ChatDockWidget(QDockWidget):
         )
         self._send_btn.clicked.connect(self._on_send)
         input_row.addWidget(self._send_btn)
+
         self._steer_btn = QPushButton("Steer")
         self._steer_btn.setToolTip("Queue message")
         self._steer_btn.setFixedWidth(50)
@@ -606,18 +628,6 @@ class ChatDockWidget(QDockWidget):
         self._stop_agent_btn.setStyleSheet(self._send_btn.styleSheet())
         self._stop_agent_btn.clicked.connect(self._on_stop_agent)
         input_row.addWidget(self._stop_agent_btn)
-
-        self._agent_mode_combo = QComboBox()
-        self._agent_mode_combo.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
-        self._agent_mode_combo.addItem("Agent", "agent")
-        self._agent_mode_combo.addItem("Plan", "plan")
-        self._agent_mode_combo.addItem("Ask", "ask")
-        input_row.addWidget(self._agent_mode_combo)
-
-        self._tools_btn.setFixedWidth(50)
-        self._tools_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
-        self._tools_btn.setStyleSheet("QPushButton { background-color: " + self._accent_color + "; color: black; border-radius: 4px; font-weight: bold; padding: 4px; }")
-        input_row.addWidget(self._tools_btn)
 
 
         layout.addLayout(input_row)
@@ -1069,7 +1079,7 @@ class ChatDockWidget(QDockWidget):
             raise ValueError("_build_header_combobox: items must be non-empty")
         combo = QComboBox()
         combo.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
-        combo.setMinimumWidth(50)
+        combo.setMinimumWidth(0)
         for display, data in items:
             combo.addItem(display, data)
         combo.setToolTip(f"Select AI {label}")
