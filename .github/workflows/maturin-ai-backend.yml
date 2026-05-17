@@ -42,13 +42,16 @@ concurrency:
 jobs:
   build-wheels:
     name: Build wheel (${{ matrix.os }}, Python ${{ matrix.python-version }})
-    runs-on: ${{ matrix.os }}
+    runs-on: d-sorg-fleet
     timeout-minutes: 30
 
+    # Windows and macOS dropped 2026-05-17 — no fleet equivalent yet, and the
+    # org policy (Runner_Dashboard#641) forbids hosted fallback. Restoring
+    # Windows + macOS wheel builds is tracked in #643 / #642 respectively.
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest]
         python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
