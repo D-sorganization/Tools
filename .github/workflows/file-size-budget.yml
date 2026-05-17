@@ -21,7 +21,7 @@ concurrency:
 
 jobs:
   file-size-budget:
-    runs-on: ubuntu-latest
+    runs-on: d-sorg-fleet
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v6

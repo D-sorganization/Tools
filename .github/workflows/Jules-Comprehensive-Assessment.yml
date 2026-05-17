@@ -34,7 +34,7 @@ jobs:
   comprehensive-assessment:
     timeout-minutes: 30
     name: Comprehensive Assessment & Audit
-    runs-on: ubuntu-latest
+    runs-on: d-sorg-fleet
     # Grant write only at this job level.
     permissions:
       contents: write  # commit assessment report to docs/assessments/

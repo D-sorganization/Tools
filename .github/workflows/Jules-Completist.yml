@@ -34,7 +34,7 @@ permissions:
 jobs:
   audit:
     timeout-minutes: 20
-    runs-on: ubuntu-latest
+    runs-on: d-sorg-fleet
     # Grant write only at this job level.
     permissions:
       contents: write # push completist fixes to jules/completist-* branch

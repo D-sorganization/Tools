@@ -75,7 +75,7 @@ env:
 
 jobs:
   remediate:
-    runs-on: ubuntu-latest
+    runs-on: d-sorg-fleet
     timeout-minutes: 45
     # Grant write only at this job level — remediation creates branches, pushes
     # fixes, opens PRs, and closes resolved issues.

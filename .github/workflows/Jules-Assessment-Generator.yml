@@ -35,7 +35,7 @@ permissions:
 jobs:
   generate-assessments:
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: d-sorg-fleet
     # Grant write only at this job level — assessment commits and issue creation
     # happen here.
     permissions:
