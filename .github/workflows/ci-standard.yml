@@ -305,7 +305,11 @@ jobs:
 
   tests:
     timeout-minutes: 30
-    needs: [pick-runner, quality-gate]
+    # Parallelized: tests do not consume any quality-gate outputs (quality-gate
+    # declares no `outputs:` block, and no step in this job references
+    # `needs.quality-gate.*`). Fanning out after pick-runner removes the
+    # inter-job queue wait between quality-gate completion and tests start.
+    needs: [pick-runner]
     runs-on: d-sorg-fleet
     strategy:
       matrix:
