@@ -100,6 +100,18 @@ class SidekickDataExplorerWidget(QtWidgets.QWidget):
         browse.clicked.connect(self._choose_file)
         path_row.addWidget(browse)
 
+        self._show_files = QtWidgets.QPushButton("Show in Files Tab", self)
+        self._show_files.setObjectName("SidekickDataExplorerShowFiles")
+        self._show_files.setToolTip("Show this file in the sidebar's Files tab.")
+        self._show_files.clicked.connect(self._show_in_files_tab)
+        path_row.addWidget(self._show_files)
+
+        self._show_os = QtWidgets.QPushButton("Show in OS Explorer", self)
+        self._show_os.setObjectName("SidekickDataExplorerShowOS")
+        self._show_os.setToolTip("Open this file's folder in the OS explorer.")
+        self._show_os.clicked.connect(self._show_in_os_explorer)
+        path_row.addWidget(self._show_os)
+
         self._load_button = QtWidgets.QPushButton("Load Preview", self)
         self._load_button.setObjectName("SidekickDataExplorerLoad")
         self._load_button.setToolTip("Preview the file using bounded Sidekick limits.")
@@ -307,6 +319,26 @@ class SidekickDataExplorerWidget(QtWidgets.QWidget):
         )
         if filename:
             self._path_input.setText(filename)
+
+    def _show_in_files_tab(self) -> None:
+        from .qt_compat import QtCore
+        path = self._path_input.text().strip()
+        if not path:
+            return
+        if hasattr(self._sidebar, "set_tab_visible"):
+            self._sidebar.set_tab_visible("files", True)
+            self._sidebar.setCurrentTab("files")
+
+    def _show_in_os_explorer(self) -> None:
+        from .qt_compat import QtGui, QtCore
+        path = self._path_input.text().strip()
+        if not path:
+            return
+        full_path = Path(path)
+        if not full_path.is_absolute():
+            full_path = self._sidebar.project_root / path
+        if full_path.exists():
+            QtGui.QDesktopServices.openUrl(QtCore.QUrl.fromLocalFile(str(full_path.parent)))
 
     def _populate_preview_table(self, preview: DataExplorerPreview) -> None:
         self._preview_table.setColumnCount(len(preview.columns))

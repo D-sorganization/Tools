@@ -351,7 +351,7 @@ def build_unit_converter_tab(sidebar: Any) -> QtWidgets.QWidget:
     if QT_API != "PyQt6":
         return placeholder(sidebar, "Unit converter")
     try:
-        from upstream_drift_tools.ui.widgets.unit_converter_widget import (
+        from ..widgets.unit_converter_widget import (
             UnitConverterWidget,
         )
     except Exception as exc:  # noqa: BLE001 - optional GUI widget
