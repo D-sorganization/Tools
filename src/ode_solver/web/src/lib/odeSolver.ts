@@ -134,7 +134,8 @@ export function solveODESystem(
   }
 
   const dt = (tEnd - tStart) / (numPoints - 1)
-  const results: ODEResultPoint[] = []
+  // ⚡ Bolt Optimization: Pre-allocate results array to eliminate continuous memory allocation overhead
+  const results = new Array<ODEResultPoint>(numPoints)
   const paramValues = paramNames.map(p => parameters[p])
   const numVars = varNames.length
   const stateArr = new Array<number>(numVars)
@@ -177,7 +178,7 @@ export function solveODESystem(
     for (let j = 0; j < numVars; j++) {
       point[varNames[j]] = stateArr[j]
     }
-    results.push(point)
+    results[i] = point
 
     if (i < numPoints - 1) {
       computeDerivativesArr(t, stateArr, k1)
