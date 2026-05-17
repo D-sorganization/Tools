@@ -19,7 +19,7 @@ pytest-benchmark==5.2.3
 ruff==0.15.13
 mypy==2.1.0
 bandit==1.9.4
-types-PyYAML==6.0.12.20260508
+types-PyYAML==6.0.12.20260510
 types-requests==2.33.0.20260513
 
 # GUI & Desktop Applications
