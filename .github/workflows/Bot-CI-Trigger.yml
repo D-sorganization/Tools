@@ -34,7 +34,7 @@ permissions:
 
 concurrency:
   group: bot-ci-trigger-${{ github.event.pull_request.number || github.run_id }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   # ── Dispatcher: require a local self-hosted runner and fail closed ──────────────────

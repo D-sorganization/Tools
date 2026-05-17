@@ -17,6 +17,9 @@ name: Jules Code Quality Reviewer (Worker)
 # │  • Scheduled/dispatched only via Control Tower                             │
 # │  • Report commit is scoped to docs/assessments/ path                     │
 # └─────────────────────────────────────────────────────────────────────────────┘
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 on:
   workflow_call:

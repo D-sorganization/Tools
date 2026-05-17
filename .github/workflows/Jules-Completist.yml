@@ -17,6 +17,9 @@ name: Jules Completist (Incomplete Implementation Auditor)
 # │  • Scheduled (0 8 * * 0,4) or dispatched via Control Tower                │
 # │  • Issues are created for review before any code changes are merged        │
 # └─────────────────────────────────────────────────────────────────────────────┘
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 on:
   workflow_call:

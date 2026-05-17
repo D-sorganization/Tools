@@ -29,6 +29,9 @@ name: Jules Auto-Repair (Worker)
 # 2. Iterates until CI passes or max attempts reached
 # 3. Uses Jules AI for complex fixes (type errors, test failures, logic issues)
 # 4. Proper concurrency controls to prevent loops
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 on:
   workflow_call:

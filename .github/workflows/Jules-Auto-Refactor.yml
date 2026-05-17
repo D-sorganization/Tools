@@ -21,6 +21,9 @@ name: Jules Auto-Refactor (Worker)
 # Replaces Jules-Tech-Custodian workflow
 # Finds files with the most linting issues and auto-fixes them
 # Creates a PR with the automated improvements
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 on:
   workflow_call:

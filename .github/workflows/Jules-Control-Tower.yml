@@ -41,7 +41,7 @@ env:
 
 concurrency:
   group: jules-control-tower-${{ github.repository }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 # Least-privilege: this orchestrator only reads; write grants live in workers.
 permissions:

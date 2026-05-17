@@ -11,6 +11,9 @@ name: Nightly Full-Repo Quality
 # Violation counts are reported in GITHUB_STEP_SUMMARY for trend tracking.
 #
 # Resolves: https://github.com/D-sorganization/Tools/issues/1697
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 on:
   schedule:

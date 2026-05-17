@@ -40,7 +40,7 @@ permissions:
 
 concurrency:
   group: jules-code-quality-fixer-${{ github.repository }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
