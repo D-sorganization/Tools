@@ -132,6 +132,29 @@ class TabPopoutMixin:
         self._emit_context()
         return True
 
+    def re_dock(self, tab_id: str) -> bool:
+        """Redock *tab_id* with a precondition check that the tab is floating.
+
+        This is the DbC-enforced variant of :meth:`redock_tab`.  Unlike
+        ``redock_tab``, which silently succeeds when the tab is already docked,
+        ``re_dock`` raises :class:`RuntimeError` when called on a tab that has
+        not been popped out.
+
+        Args:
+            tab_id: Stable tab identifier to redock.
+
+        Returns:
+            ``True`` when the tab has been successfully returned to the sidebar.
+
+        Raises:
+            RuntimeError: If *tab_id* is not currently floating (popped out).
+        """
+        if tab_id not in self._popout_windows:
+            raise RuntimeError(
+                f"re_dock precondition failed: tab {tab_id!r} is not floating"
+            )
+        return self.redock_tab(tab_id)
+
     def duplicate_tab(self, tab_id: str) -> str | None:
         definition = self._tab_definitions.get(tab_id)
         if definition is None or not definition.duplicate_enabled:
