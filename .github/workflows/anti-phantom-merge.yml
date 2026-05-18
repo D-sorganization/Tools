@@ -186,7 +186,7 @@ jobs:
 
           # -------- Rule 2 — feature claim vs no implementation --------
           claim_re='^feat[:\(]|Implement|System|Engine|Framework'
-          if echo "$PR_TITLE" | grep -E -q "$claim_re"; then
+          if echo "$PR_TITLE" | grep -E "$claim_re" > /dev/null; then
             IMPL_FILES=$(echo "$CHANGED_FILES" | grep -E '^(src|rust_core|api)/' || true)
             if [ -z "$IMPL_FILES" ] && [ "$NUM_CHANGED" -gt 0 ]; then
               fail "2 (feature claim, no implementation)" "PR title \`$PR_TITLE\` claims a feature/system/engine/framework, but the diff touches **no files under \`src/\`, \`rust_core/\`, or \`api/\`**. Either retitle the PR to reflect the actual scope (e.g. \`docs:\`, \`chore:\`, \`test:\`) or add the implementation."
@@ -213,19 +213,19 @@ jobs:
               echo "$ISSUE_PATHS" | sed 's/^/    /'
               MATCH=""
               for p in $ISSUE_PATHS; do
-                if echo "$CHANGED_FILES" | grep -qF "$p"; then
+                if echo "$CHANGED_FILES" | grep -F "$p" > /dev/null; then
                   MATCH="$p"
                   break
                 fi
                 # Also try directory-prefix match if the issue lists a file but the PR touches the dir
                 dir=$(dirname "$p")
-                if [ "$dir" != "." ] && [ "$dir" != "/" ] && echo "$CHANGED_FILES" | grep -q "^$dir/"; then
+                if [ "$dir" != "." ] && [ "$dir" != "/" ] && echo "$CHANGED_FILES" | grep "^$dir/" > /dev/null; then
                   MATCH="$dir"
                   break
                 fi
               done
               if [ -z "$MATCH" ]; then
-                paths_summary=$(echo "$ISSUE_PATHS" | head -5 | sed 's/^/    /')
+                paths_summary=$(echo "$ISSUE_PATHS" | sed -n '1,5s/^/    /p')
                 fail "3 (closes-issue path mismatch)" "PR closes issue #$n, but the diff touches **none** of the paths referenced in that issue's body:
           \`\`\`
           $paths_summary
@@ -238,12 +238,12 @@ jobs:
           # -------- Rule 4 — bot-only commits --------
           COMMITS=$(git log --format='%H|%an|%s' "$MERGE_BASE..$HEAD_SHA" || true)
           if [ -n "$COMMITS" ]; then
-            LAST_LINE=$(echo "$COMMITS" | head -1)
+            LAST_LINE=$(echo "$COMMITS" | sed -n '1p')
             LAST_AUTHOR=$(echo "$LAST_LINE" | cut -d'|' -f2)
             LAST_SUBJECT=$(echo "$LAST_LINE" | cut -d'|' -f3-)
             AUTHOR_COMMITS=$(echo "$COMMITS" | grep -v '|github-actions\[bot\]|' || true)
             if [ "$LAST_AUTHOR" = "github-actions[bot]" ] && \
-               echo "$LAST_SUBJECT" | grep -q "^Merge branch 'main'" && \
+               echo "$LAST_SUBJECT" | grep "^Merge branch 'main'" > /dev/null && \
                [ -z "$AUTHOR_COMMITS" ]; then
               fail "4 (bot-only commits)" "The only commits between this branch and \`main\` are auto-merge-bot commits (\`Merge branch 'main'\` by \`github-actions[bot]\`). The branch appears to have been absorbed into main via a sibling PR — there is no original work left to merge. Close this PR."
             fi
