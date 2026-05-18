@@ -42,17 +42,18 @@ def ensure_paths(repo_root: Path | str | None = None) -> Path:
     Returns:
         The resolved repository root path.
     """
+    resolved_root: Path
     if repo_root is None:
         from sidekick.utils.paths import get_repo_root
 
-        repo_root = get_repo_root()
+        resolved_root = Path(get_repo_root()).resolve()
     else:
-        repo_root = Path(repo_root).resolve()
+        resolved_root = Path(repo_root).resolve()
 
     standard_paths = [
-        repo_root / "src" / "shared" / "python",
-        repo_root / "src",
-        repo_root / "src" / "python" / "src",
+        resolved_root / "src" / "shared" / "python",
+        resolved_root / "src",
+        resolved_root / "src" / "python" / "src",
     ]
 
     for path in standard_paths:
@@ -60,4 +61,4 @@ def ensure_paths(repo_root: Path | str | None = None) -> Path:
         if path.exists() and path_str not in sys.path:
             sys.path.insert(0, path_str)
 
-    return repo_root
+    return resolved_root
