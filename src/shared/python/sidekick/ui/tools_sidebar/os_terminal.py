@@ -505,7 +505,8 @@ class SidekickOsTerminalWidget(QtWidgets.QWidget):
             self._populate_shell_selector()
             self._on_cwd_changed(self._project_root)
 
-            # Asynchronous shell discovery to prevent UI freezing on startup (e.g. slow WSL discovery)
+            # Async shell discovery prevents UI freezing on startup
+            # (slow WSL discovery was the original symptom).
             self._discovery_thread = ShellDiscoveryThread(None, self)
             self._discovery_thread.discovered.connect(self._on_shells_discovered)
             self._discovery_thread.start()

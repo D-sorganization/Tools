@@ -321,7 +321,6 @@ class SidekickDataExplorerWidget(QtWidgets.QWidget):
             self._path_input.setText(filename)
 
     def _show_in_files_tab(self) -> None:
-        from .qt_compat import QtCore
         path = self._path_input.text().strip()
         if not path:
             return
@@ -330,7 +329,8 @@ class SidekickDataExplorerWidget(QtWidgets.QWidget):
             self._sidebar.setCurrentTab("files")
 
     def _show_in_os_explorer(self) -> None:
-        from .qt_compat import QtGui, QtCore
+        from .qt_compat import QtCore, QtGui
+
         path = self._path_input.text().strip()
         if not path:
             return
@@ -338,7 +338,9 @@ class SidekickDataExplorerWidget(QtWidgets.QWidget):
         if not full_path.is_absolute():
             full_path = self._sidebar.project_root / path
         if full_path.exists():
-            QtGui.QDesktopServices.openUrl(QtCore.QUrl.fromLocalFile(str(full_path.parent)))
+            QtGui.QDesktopServices.openUrl(
+                QtCore.QUrl.fromLocalFile(str(full_path.parent))
+            )
 
     def _populate_preview_table(self, preview: DataExplorerPreview) -> None:
         self._preview_table.setColumnCount(len(preview.columns))

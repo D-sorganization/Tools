@@ -77,17 +77,19 @@ def build_tab_settings_toolbar(sidebar: Any) -> QtWidgets.QToolBar:
     button.clicked.connect(sidebar.open_active_tab_settings)
     toolbar.addWidget(button)
     sidebar.register_settings_button(button)
-    
+
     spacer = QtWidgets.QWidget()
-    spacer.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Preferred)
+    spacer.setSizePolicy(
+        QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Preferred
+    )
     toolbar.addWidget(spacer)
-    
+
     close_btn = QtWidgets.QToolButton(toolbar)
     close_btn.setText("×")
     close_btn.setToolTip("Close Sidekick")
     close_btn.clicked.connect(lambda: sidebar.setVisible(False))
     toolbar.addWidget(close_btn)
-    
+
     return toolbar
 
 

@@ -87,7 +87,7 @@ class ProjectFileExplorer(QtWidgets.QWidget):
 
         self._quick_access_label = QtWidgets.QLabel("Quick Access", self)
         self._quick_access_label.setStyleSheet("font-weight: bold; margin-bottom: 4px;")
-        
+
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         nav_layout = QtWidgets.QHBoxLayout()
@@ -96,15 +96,15 @@ class ProjectFileExplorer(QtWidgets.QWidget):
         nav_layout.addWidget(self._up_button)
         nav_layout.addWidget(self._location_label, 1)
         layout.addLayout(nav_layout)
-        
+
         content_layout = QtWidgets.QSplitter(QtCore.Qt.Orientation.Vertical, self)
-        
+
         top_widget = QtWidgets.QWidget()
         top_layout = QtWidgets.QVBoxLayout(top_widget)
         top_layout.setContentsMargins(0, 0, 0, 0)
         top_layout.addWidget(self._quick_access_label)
         top_layout.addWidget(self._common_locations)
-        
+
         content_layout.addWidget(top_widget)
         content_layout.addWidget(self._tree)
         content_layout.setStretchFactor(0, 1)
@@ -196,7 +196,7 @@ class ProjectFileExplorer(QtWidgets.QWidget):
             menu.addAction("Open with Default Program").triggered.connect(
                 lambda: self._open_with_default_program(index)
             )
-        
+
         if menu.isEmpty():
             return None
         return menu

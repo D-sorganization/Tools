@@ -45,10 +45,10 @@ from PyQt6.QtWidgets import (
     QPlainTextEdit,
     QPushButton,
     QScrollArea,
+    QSizePolicy,
     QStackedWidget,
     QVBoxLayout,
     QWidget,
-    QSizePolicy,
 )
 
 from ._theme_protocol import ThemeProviderProtocol, _DefaultDarkTheme
@@ -461,7 +461,9 @@ class ChatDockWidget(QDockWidget):
         self._build_ai_dropdowns(mode_row)
 
         self._mode_combo = QComboBox()
-        self._mode_combo.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
+        self._mode_combo.setSizePolicy(
+            QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed
+        )
         self._mode_combo.setMinimumWidth(0)
         self._mode_combo.addItem("Chat", "chat")
         self._mode_combo.addItem("Terminal", "terminal")
@@ -469,14 +471,18 @@ class ChatDockWidget(QDockWidget):
         mode_row.addWidget(self._mode_combo)
 
         self._shell_combo = QComboBox()
-        self._shell_combo.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
+        self._shell_combo.setSizePolicy(
+            QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed
+        )
         self._shell_combo.setMinimumWidth(0)
         self._populate_shell_combo()
         self._shell_combo.currentIndexChanged.connect(self._on_terminal_shell_changed)
         mode_row.addWidget(self._shell_combo)
 
         self._provider_combo = QComboBox()
-        self._provider_combo.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
+        self._provider_combo.setSizePolicy(
+            QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed
+        )
         self._provider_combo.setMinimumWidth(0)
         self._populate_provider_combo()
         mode_row.addWidget(self._provider_combo)
@@ -488,7 +494,6 @@ class ChatDockWidget(QDockWidget):
         self._terminal_stop_btn = QPushButton("Stop")
         self._terminal_stop_btn.clicked.connect(self._on_terminal_stop)
         mode_row.addWidget(self._terminal_stop_btn)
-
 
         # Message scroll area
         self._scroll_area = QScrollArea()
@@ -523,7 +528,9 @@ class ChatDockWidget(QDockWidget):
         self._input_edit = QPlainTextEdit()
         self._input_edit.setMinimumHeight(60)
         self._input_edit.setMaximumHeight(150)
-        self._input_edit.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.MinimumExpanding)
+        self._input_edit.setSizePolicy(
+            QSizePolicy.Policy.Ignored, QSizePolicy.Policy.MinimumExpanding
+        )
         self._input_edit.setPlaceholderText(self._placeholder_text)
         self._input_edit.setStyleSheet(
             "QPlainTextEdit {"
@@ -536,7 +543,9 @@ class ChatDockWidget(QDockWidget):
 
         # Tools on the far left
         self._tools_btn.setFixedWidth(50)
-        self._tools_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
+        self._tools_btn.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
         self._tools_btn.setStyleSheet(
             "QPushButton {"
             f"  background-color: {bg_alt}; color: {text_primary};"
@@ -549,7 +558,9 @@ class ChatDockWidget(QDockWidget):
         self._upload_btn = QPushButton("+")
         self._upload_btn.setToolTip("Upload file")
         self._upload_btn.setFixedWidth(28)
-        self._upload_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
+        self._upload_btn.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
         self._upload_btn.setStyleSheet(
             "QPushButton {"
             f"  background-color: {bg_alt}; color: {text_primary};"
@@ -563,7 +574,9 @@ class ChatDockWidget(QDockWidget):
         self._screenshot_btn = QPushButton("⛶")
         self._screenshot_btn.setToolTip("Capture screenshot")
         self._screenshot_btn.setFixedWidth(28)
-        self._screenshot_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
+        self._screenshot_btn.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
         self._screenshot_btn.setStyleSheet(
             "QPushButton {"
             f"  background-color: {bg_alt}; color: {text_primary};"
@@ -577,7 +590,9 @@ class ChatDockWidget(QDockWidget):
         self._mic_btn = QPushButton("🎤")
         self._mic_btn.setToolTip("Voice input (Ctrl+Shift+V)")
         self._mic_btn.setFixedWidth(28)
-        self._mic_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
+        self._mic_btn.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
         self._mic_btn.setStyleSheet(
             "QPushButton {"
             f"  background-color: {bg_alt}; color: {text_primary};"
@@ -591,7 +606,9 @@ class ChatDockWidget(QDockWidget):
         input_row.addStretch()
 
         self._agent_mode_combo = QComboBox()
-        self._agent_mode_combo.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
+        self._agent_mode_combo.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
         self._agent_mode_combo.addItem("Agent", "agent")
         self._agent_mode_combo.addItem("Plan", "plan")
         self._agent_mode_combo.addItem("Ask", "ask")
@@ -601,7 +618,9 @@ class ChatDockWidget(QDockWidget):
         self._send_btn = QPushButton("Send")
         self._send_btn.setToolTip("Send message")
         self._send_btn.setFixedWidth(55)
-        self._send_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
+        self._send_btn.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
         self._send_btn.setStyleSheet(
             "QPushButton {"
             f"  background-color: {self._accent_color}; color: black;"
@@ -616,7 +635,9 @@ class ChatDockWidget(QDockWidget):
         self._steer_btn = QPushButton("Steer")
         self._steer_btn.setToolTip("Queue message")
         self._steer_btn.setFixedWidth(50)
-        self._steer_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
+        self._steer_btn.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
         self._steer_btn.setStyleSheet(self._send_btn.styleSheet())
         self._steer_btn.clicked.connect(self._on_steer)
         input_row.addWidget(self._steer_btn)
@@ -624,11 +645,12 @@ class ChatDockWidget(QDockWidget):
         self._stop_agent_btn = QPushButton("Stop")
         self._stop_agent_btn.setToolTip("Stop response")
         self._stop_agent_btn.setFixedWidth(50)
-        self._stop_agent_btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
+        self._stop_agent_btn.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
         self._stop_agent_btn.setStyleSheet(self._send_btn.styleSheet())
         self._stop_agent_btn.clicked.connect(self._on_stop_agent)
         input_row.addWidget(self._stop_agent_btn)
-
 
         layout.addLayout(input_row)
         layout.addLayout(mode_row)
@@ -824,15 +846,19 @@ class ChatDockWidget(QDockWidget):
 
     def _on_steer(self) -> None:
         text = self._input_edit.toPlainText().strip()
-        if not text: return
+        if not text:
+            return
         # Queue message
-        if not hasattr(self, '_queued_messages'): self._queued_messages = []
+        if not hasattr(self, "_queued_messages"):
+            self._queued_messages = []
         self._queued_messages.append(text)
         self._input_edit.clear()
 
     def _on_stop_agent(self) -> None:
-        logger.info('Agent response stopped by user')
-        if hasattr(self, '_chat_client') and hasattr(self._chat_client, 'cancel_current_stream'):
+        logger.info("Agent response stopped by user")
+        if hasattr(self, "_chat_client") and hasattr(
+            self._chat_client, "cancel_current_stream"
+        ):
             self._chat_client.cancel_current_stream()
 
     def _on_send(self) -> None:
@@ -1214,8 +1240,14 @@ class ChatDockWidget(QDockWidget):
             models = []
         items = []
         for m in models:
-            display = str(getattr(m, "display_name", None) or getattr(m, "name", str(m)))
-            data = str(getattr(m, "id", None) or getattr(m, "model_id", None) or getattr(m, "name", str(m)))
+            display = str(
+                getattr(m, "display_name", None) or getattr(m, "name", str(m))
+            )
+            data = str(
+                getattr(m, "id", None)
+                or getattr(m, "model_id", None)
+                or getattr(m, "name", str(m))
+            )
             items.append((display, data))
         if not items:
             items = [("(default)", "default")]
@@ -1240,7 +1272,15 @@ class ChatDockWidget(QDockWidget):
         if caps is None:
             items = [("Off", "none")]
         else:
-            items = [(getattr(level, "label", str(level)), getattr(level, "name", str(level))) for level in getattr(caps, "available_levels", getattr(caps, "levels", []))]
+            items = [
+                (
+                    getattr(level, "label", str(level)),
+                    getattr(level, "name", str(level)),
+                )
+                for level in getattr(
+                    caps, "available_levels", getattr(caps, "levels", [])
+                )
+            ]
         self._ai_thinking_combo.blockSignals(True)
         try:
             self._ai_thinking_combo.clear()
