@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for Function Generator GUI.
 
 Tests the PyQt6 GUI launcher and its integration with the SignalGenerator engine.

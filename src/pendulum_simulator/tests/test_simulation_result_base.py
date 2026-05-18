@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for the TrajectoryResultMixin in simulation_result_base.py.
 
 Covers:

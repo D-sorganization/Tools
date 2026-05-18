@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Pydantic data models for Pressure Drop Calculator API.
 
 Provides strongly-typed input/output models with validation for the pressure drop

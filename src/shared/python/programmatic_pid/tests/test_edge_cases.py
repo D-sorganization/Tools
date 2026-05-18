@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Additional tests to hit edge cases in programmatic_pid.geometry and validation."""
 
 from __future__ import annotations

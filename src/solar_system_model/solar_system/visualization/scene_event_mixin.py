@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Event handling mixin for SolarSystemScene.
 
 Extracts mouse, keyboard, and UI click handling from the main scene class

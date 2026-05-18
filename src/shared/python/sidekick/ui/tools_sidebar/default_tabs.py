@@ -52,6 +52,12 @@ def build_default_tab_definitions(
     """Return the standard Sidekick tabs for a host sidebar."""
     return [
         tab_definition(
+            "chat",
+            "Chat",
+            build_chat_tab,
+            help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP["chat"]),
+        ),
+        tab_definition(
             "files",
             "Files",
             build_file_explorer_tab,
@@ -63,12 +69,6 @@ def build_default_tab_definitions(
             "Workspace",
             build_workspace_tab,
             help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP["workspace"]),
-        ),
-        tab_definition(
-            "chat",
-            "Chat",
-            build_chat_tab,
-            help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP["chat"]),
         ),
         tab_definition(
             "terminal",
@@ -351,7 +351,7 @@ def build_unit_converter_tab(sidebar: Any) -> QtWidgets.QWidget:
     if QT_API != "PyQt6":
         return placeholder(sidebar, "Unit converter")
     try:
-        from upstream_drift_tools.ui.widgets.unit_converter_widget import (
+        from ..widgets.unit_converter_widget import (
             UnitConverterWidget,
         )
     except Exception as exc:  # noqa: BLE001 - optional GUI widget

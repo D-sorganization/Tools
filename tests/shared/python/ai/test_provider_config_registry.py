@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for ProviderConfigRegistry (Tools #2762)."""
 
 from __future__ import annotations

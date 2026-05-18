@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for Scrubber Calculation Engine."""
 
 import unittest

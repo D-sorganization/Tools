@@ -31,8 +31,33 @@ from src.shared.python.logging_pkg.logging_config import get_logger
 logger = get_logger(__name__)
 
 # Provider resolution order (local-first)
-_LOCAL_FIRST_ORDER = ("ollama", "bitnet", "cline", "openai", "anthropic", "gemini")
-_CLOUD_FIRST_ORDER = ("openai", "anthropic", "gemini", "ollama", "bitnet", "cline")
+# `claude_code`, `codex_cli`, and `gemini_cli` are LOCAL-shaped: they invoke a
+# CLI on the host machine. They appear before cloud providers in local-first
+# ordering, but after the truly-local (no network) options like Ollama and
+# BitNet — the CLIs still hit the cloud underneath, just without exposing
+# API keys to the application.
+_LOCAL_FIRST_ORDER = (
+    "ollama",
+    "bitnet",
+    "claude_code",
+    "codex_cli",
+    "gemini_cli",
+    "cline",
+    "openai",
+    "anthropic",
+    "gemini",
+)
+_CLOUD_FIRST_ORDER = (
+    "openai",
+    "anthropic",
+    "gemini",
+    "claude_code",
+    "codex_cli",
+    "gemini_cli",
+    "ollama",
+    "bitnet",
+    "cline",
+)
 
 # Type alias for the cache key tuple: (provider, api_key, model, host, timeout)
 _CacheKey = tuple[str, str | None, str | None, str | None, float | None]
@@ -78,7 +103,18 @@ class AdapterFactory:
     }
 
     _SUPPORTED_PROVIDERS = frozenset(
-        {"ollama", "bitnet", "openai", "codex", "anthropic", "gemini", "cline"}
+        {
+            "ollama",
+            "bitnet",
+            "openai",
+            "codex",  # historical alias for OpenAI; kept for back-compat
+            "codex_cli",  # the @openai/codex CLI agent (distinct from OpenAI API)
+            "anthropic",
+            "claude_code",  # the Claude Code CLI agent (distinct from Anthropic API)
+            "gemini",
+            "gemini_cli",  # the @google/gemini-cli CLI agent (distinct from Gemini API)
+            "cline",
+        }
     )
 
     @classmethod
@@ -146,8 +182,34 @@ class AdapterFactory:
             # Bitnet uses 'host' param as bitnet_root in this context if provided
             adapter = BitnetAdapter(model=model, bitnet_root=host)
 
+        elif provider == "claude_code":
+            from src.shared.python.ai.adapters.claude_code_adapter import (
+                ClaudeCodeAdapter,
+            )
+
+            # `host` is reused here as an explicit binary path override —
+            # the CLI's "host" is its own filesystem path, not a URL.
+            adapter = ClaudeCodeAdapter(binary=host, model=model, timeout=timeout)
+
+        elif provider == "codex_cli":
+            from src.shared.python.ai.adapters.codex_cli_adapter import (
+                CodexCliAdapter,
+            )
+
+            # `host` reused as explicit binary path override (see claude_code above).
+            adapter = CodexCliAdapter(binary=host, model=model, timeout=timeout)
+
+        elif provider == "gemini_cli":
+            from src.shared.python.ai.adapters.gemini_cli_adapter import (
+                GeminiCliAdapter,
+            )
+
+            # `host` reused as explicit binary path override (see claude_code above).
+            adapter = GeminiCliAdapter(binary=host, model=model, timeout=timeout)
+
         else:
-            # "codex" is an alias for OpenAI
+            # Historical "codex" alias resolves to OpenAI API.
+            # The new `@openai/codex` CLI agent uses provider="codex_cli" instead.
             lookup_key = "openai" if provider == "codex" else provider
 
             # Cloud adapters — DRY key resolution
@@ -202,10 +264,15 @@ class AdapterFactory:
         module = importlib.import_module(module_path)
         adapter_cls = getattr(module, class_name)
 
-        # Gemini adapter doesn't accept timeout
+        # `adapter_cls` is loaded dynamically via getattr() so mypy sees it
+        # as Any. The annotated local rebinds the return to the contract this
+        # method declares, which is more honest than a bare `# type: ignore`.
+        # Gemini adapter doesn't accept timeout.
         if provider == "gemini":
-            return adapter_cls(api_key=key, model=model)  # type: ignore[no-any-return]
-        return adapter_cls(api_key=key, model=model, timeout=timeout)  # type: ignore[no-any-return]
+            adapter: BaseAgentAdapter = adapter_cls(api_key=key, model=model)
+            return adapter
+        adapter = adapter_cls(api_key=key, model=model, timeout=timeout)
+        return adapter
 
     @classmethod
     def get_best_available(
@@ -281,31 +348,42 @@ class AdapterFactory:
 
     @classmethod
     def _resolve_api_key(cls, provider: str) -> str | None:
-        """Resolve API key from CredentialManager then env vars."""
+        """Resolve API key from CredentialManager then env vars.
+
+        Returns the API key as a string, or None when no credential is
+        available. Cross-module helpers below (``get_*_api_key``,
+        ``CredentialManager.get_api_key``) all return ``str | None``, but
+        CI runs mypy with ``--follow-imports=skip`` which strips that
+        signature to ``Any``. Local annotations restore the contract.
+        """
         # Try CredentialManager first
         try:
             from chat.credentials import CredentialManager
 
             mgr = CredentialManager()
-            key = mgr.get_api_key(provider)
+            key: str | None = mgr.get_api_key(provider)
             if key:
-                return key  # type: ignore[no-any-return]
+                return key
         except (ImportError, ValueError):
             pass
 
         # Fall back to config module
+        env_key: str | None
         if provider == "openai":
             from src.shared.python.ai.config import get_openai_api_key
 
-            return get_openai_api_key()
+            env_key = get_openai_api_key()
+            return env_key
         if provider == "anthropic":
             from src.shared.python.ai.config import get_anthropic_api_key
 
-            return get_anthropic_api_key()
+            env_key = get_anthropic_api_key()
+            return env_key
         if provider == "gemini":
             from src.shared.python.ai.config import get_gemini_api_key
 
-            return get_gemini_api_key()
+            env_key = get_gemini_api_key()
+            return env_key
 
         return None
 

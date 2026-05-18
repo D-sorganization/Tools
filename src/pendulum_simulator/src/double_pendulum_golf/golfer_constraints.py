@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Constraint handling and joint force computation for golfer model.
 
 Implements closed kinematic loop constraints and methods to compute

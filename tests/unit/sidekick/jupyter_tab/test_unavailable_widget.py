@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for the unavailable-state placeholder widget."""
 
 from __future__ import annotations

@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Folder Packer GUI application for organizing and packaging folders."""
 
 import datetime

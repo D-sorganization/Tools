@@ -18,7 +18,7 @@ from __future__ import annotations
 import contextlib
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any
 
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt, pyqtSignal
@@ -46,10 +46,11 @@ from src.shared.python.ai.gui.chat_export import (
 )
 from src.shared.python.ai.gui.history_sidebar import ChatHistorySidebar
 from src.shared.python.ai.gui.session_manager import ChatSessionManager
-from src.shared.python.ai.gui.settings_dialog import (
+
+if TYPE_CHECKING:
+    from src.shared.python.ai._settings_model import AISettings
+from src.shared.python.ai.gui._provider_registry_data import (
     AIProvider,
-    AISettings,
-    AISettingsDialog,
     provider_display_name,
 )
 from src.shared.python.ai.mcp.gui import McpStatusIndicator
@@ -107,6 +108,8 @@ class AIAssistantPanel(QWidget):
         self._adapter: BaseAgentAdapter | None = None
         self._current_worker: StreamWorker | None = None
         self._current_assistant_message: MessageWidget | None = None
+        from src.shared.python.ai._settings_model import AISettings
+
         self._current_settings = AISettings.load()
         self._access_mode = ChatAccessMode.NO_REPO_ACCESS
         self._rag_enabled = True
@@ -374,6 +377,8 @@ class AIAssistantPanel(QWidget):
 
     def _auto_load_settings(self) -> None:
         try:
+            from src.shared.python.ai._settings_model import AISettings
+
             settings = AISettings.load()
         except ImportError as exc:
             logger.warning("Failed to auto-load AI settings: %s", exc)
@@ -728,15 +733,12 @@ class AIAssistantPanel(QWidget):
         return "openai"
 
     def _build_tool_declarations(self) -> list[dict[str, Any]]:
-        return cast(
-            list[dict[str, Any]],
-            tool_declarations_for_access_mode(
-                self._tools_registry,
-                self._access_mode,
-                provider_format=self._provider_tool_format(),
-                rag_enabled=self._rag_enabled,
-                max_expertise=self._context.user_expertise.value,
-            ),
+        return tool_declarations_for_access_mode(
+            self._tools_registry,
+            self._access_mode,
+            provider_format=self._provider_tool_format(),
+            rag_enabled=self._rag_enabled,
+            max_expertise=self._context.user_expertise.value,
         )
 
     # ------------------------------------------------------------------
@@ -829,6 +831,8 @@ class AIAssistantPanel(QWidget):
         self._adapter_mgr.build(settings)
 
     def _show_settings(self) -> None:
+        from src.shared.python.ai.gui.settings_dialog import AISettingsDialog
+
         dialog = AISettingsDialog(self)
         dialog.settings_changed.connect(self.apply_settings)
         if hasattr(dialog, "rebuild_index_requested"):

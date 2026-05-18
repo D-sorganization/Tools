@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for jacobians.py and jacobians_golfer.py.
 
 Covers:

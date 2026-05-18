@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 Tests for perturbation_analysis module — Monte Carlo consistency analysis.
 

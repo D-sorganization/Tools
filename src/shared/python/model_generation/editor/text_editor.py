@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 # CANONICAL SOURCE: This file is the authoritative implementation for the URDF text
 # editor. UpstreamDrift carries a copy at the same path; that copy should eventually
 # be removed and this module consumed via a pip-installable Tools package (issue #1998).

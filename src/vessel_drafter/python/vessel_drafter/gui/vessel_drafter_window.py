@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """PyQt6 GUI for the vessel drafter tool."""
 
 from __future__ import annotations

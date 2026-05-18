@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for ``JupyterNotebookWidget``."""
 
 from __future__ import annotations

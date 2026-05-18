@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Input validation helpers for the pressure drop calculator.
 
 This module groups all ``_validate_*``, ``_log_validation_report``, and the

@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Gap-fill tests for physics_triple.py — covers remaining uncovered lines.
 
 Lines 410-412: equations_of_motion with torque_limits (clamp_torque_ndof path)

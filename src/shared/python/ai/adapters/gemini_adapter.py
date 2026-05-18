@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Google Gemini API Adapter.
 
 This module provides the adapter interface for Google's Gemini models

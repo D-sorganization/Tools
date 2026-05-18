@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for golfer_kinematics.py — forward kinematics for golfer upper-body model.
 
 Covers:

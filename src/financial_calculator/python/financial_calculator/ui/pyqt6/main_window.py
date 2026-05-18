@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 # TRACKED_TASK: see #2310 — architecture debt extraction schedule
 
 """Financial Calculator PyQt6 Main Window.

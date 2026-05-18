@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """TDD tests for MCP GUI integration — status indicator and settings tab.
 
 These tests run headless (no display server required) and exercise:

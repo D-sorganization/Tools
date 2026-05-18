@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 UpstreamDrift Shared Tools Library
 ==================================

@@ -2,20 +2,50 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from .qt_compat import QtCore, QtWidgets
 from .settings import SidebarTabSettingsStore
+
+if TYPE_CHECKING:
+    from .state import SidebarState
+    from .tab_definition import SidebarTabDefinition
 
 SIDEKICK_TAB_SETTINGS_BUTTON_OBJECT_NAME = "SidekickActiveTabSettings"
 
 
 class TabSettingsMixin:
-    """Methods that keep tab settings out of the main sidebar controller."""
+    """Methods that keep tab settings out of the main sidebar controller.
 
+    Designed to be mixed into ``UnifiedToolsSidebar``, which supplies the
+    annotations below as real instance attributes. Declaring them here at
+    class level gives mypy enough information to resolve the chained method
+    calls (``self._settings_store.settings_for(...)``) without resorting to
+    blanket ``# type: ignore`` headers.
+    """
+
+    # Attributes supplied by the host class (UnifiedToolsSidebar)
     _settings_store: SidebarTabSettingsStore
     _settings_dialog: QtWidgets.QDialog | None
     _settings_button: QtWidgets.QToolButton
+    _tab_definitions: dict[str, SidebarTabDefinition]
+    _tab_ids: list[str]
+    _state: SidebarState
+
+    # Methods supplied by the host class
+    def _emit_context(self) -> None:  # pragma: no cover - host provides
+        raise NotImplementedError
+
+    def active_tab_id(self) -> str:  # pragma: no cover - host provides
+        raise NotImplementedError
+
+    def tab_display_name(self, tab_id: str) -> str:  # pragma: no cover
+        raise NotImplementedError
+
+    def register_settings_button(  # pragma: no cover - host provides
+        self, button: QtWidgets.QToolButton
+    ) -> None:
+        raise NotImplementedError
 
     def _configure_tab_settings(self) -> None:
         self._settings_store = SidebarTabSettingsStore(
@@ -26,7 +56,13 @@ class TabSettingsMixin:
 
     def tab_settings(self, tab_id: str) -> dict[str, Any]:
         """Return materialized settings for one tab instance."""
-        return self._settings_store.settings_for(tab_id)
+        # Explicit local annotation: CI runs mypy with --follow-imports=skip,
+        # so the imported SidebarTabSettingsStore.settings_for() return type
+        # is seen as Any. The store IS declared as returning dict[str, Any]
+        # in settings.py:91; this annotation documents that contract at the
+        # call site so the boundary stays clear.
+        result: dict[str, Any] = self._settings_store.settings_for(tab_id)
+        return result
 
     def update_tab_settings(
         self,
@@ -34,7 +70,9 @@ class TabSettingsMixin:
         values: dict[str, Any],
     ) -> dict[str, Any]:
         """Persist settings for a known tab instance."""
-        updated = self._settings_store.update_settings(tab_id, values)
+        updated: dict[str, Any] = self._settings_store.update_settings(
+            tab_id, values
+        )
         self._state.tab_settings = self._settings_store.raw_settings()
         self._emit_context()
         return updated
@@ -48,7 +86,7 @@ class TabSettingsMixin:
         factory = definition.settings.widget_factory
         content = factory(self, tab_id) if factory is not None else None
         self._settings_dialog = build_tab_settings_dialog(self, tab_id, content)
-        self._settings_dialog.show()
+        self._settings_dialog.exec()
         return True
 
     def _refresh_settings_button(self, *_args: Any) -> None:
@@ -62,7 +100,10 @@ class TabSettingsMixin:
         self._settings_button.setEnabled(enabled)
 
     def _tab_settings_payload(self) -> dict[str, dict[str, Any]]:
-        return self._settings_store.materialized_settings()
+        payload: dict[str, dict[str, Any]] = (
+            self._settings_store.materialized_settings()
+        )
+        return payload
 
 
 def build_tab_settings_toolbar(sidebar: Any) -> QtWidgets.QToolBar:
@@ -77,6 +118,19 @@ def build_tab_settings_toolbar(sidebar: Any) -> QtWidgets.QToolBar:
     button.clicked.connect(sidebar.open_active_tab_settings)
     toolbar.addWidget(button)
     sidebar.register_settings_button(button)
+
+    spacer = QtWidgets.QWidget()
+    spacer.setSizePolicy(
+        QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Preferred
+    )
+    toolbar.addWidget(spacer)
+
+    close_btn = QtWidgets.QToolButton(toolbar)
+    close_btn.setText("×")
+    close_btn.setToolTip("Close Sidekick")
+    close_btn.clicked.connect(lambda: sidebar.setVisible(False))
+    toolbar.addWidget(close_btn)
+
     return toolbar
 
 

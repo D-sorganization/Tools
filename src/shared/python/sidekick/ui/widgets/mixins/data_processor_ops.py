@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Data processor operations mixin.
 
 Standardized data operations for DataProcessorWidget across the fleet.

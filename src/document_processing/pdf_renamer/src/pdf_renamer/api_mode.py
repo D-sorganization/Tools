@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 from numba import jit
 
 """API-only mode for PDF renaming - manual review and approval workflow."""

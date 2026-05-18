@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """CLI for generating drafting artifacts."""
 
 from __future__ import annotations

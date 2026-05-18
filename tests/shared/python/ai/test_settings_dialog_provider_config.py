@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Regression tests for provider-specific settings widgets."""
 
 from __future__ import annotations

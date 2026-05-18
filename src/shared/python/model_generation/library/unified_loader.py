@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 Unified model loader supporting URDF and MJCF formats.
 

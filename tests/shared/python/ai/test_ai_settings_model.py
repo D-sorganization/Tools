@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for the headless AISettings dataclass round-trip (Tools #2762)."""
 
 from __future__ import annotations

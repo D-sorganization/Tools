@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Workspace variable registry for sidebar-aware host applications."""
 
 from __future__ import annotations

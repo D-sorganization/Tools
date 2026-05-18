@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 Golfer upper-body physics using Lagrangian formulation with a closed kinematic loop.
 

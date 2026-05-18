@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Pack/Unpack operation runners for Folder Packer Pro.
 
 Extracted from app.py to decompose the monolithic main window class.

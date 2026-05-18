@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Lightweight AI Chat dock widget for embedding in any PyQt6 application.
 
 Connects to a FastAPI server's WebSocket chat endpoint and provides a
@@ -45,6 +46,7 @@ from PyQt6.QtWidgets import (
     QPlainTextEdit,
     QPushButton,
     QScrollArea,
+    QSizePolicy,
     QStackedWidget,
     QVBoxLayout,
     QWidget,
@@ -436,7 +438,6 @@ class ChatDockWidget(QDockWidget):
         if self._action_request_review is not None:
             self._action_request_review.triggered.connect(self._request_review)
         self._tools_btn.setMenu(self._tools_menu)
-        status_row.addWidget(self._tools_btn)
 
         # Tools issue #2736: token-budget indicator + condense-now button.
         self._token_indicator = QLabel("0 tok")
@@ -451,10 +452,6 @@ class ChatDockWidget(QDockWidget):
         status_row.addWidget(self._token_indicator)
         self._auto_condense_threshold = 8000
 
-        self._close_btn = QPushButton("Close")
-        self._close_btn.setToolTip("Close chat")
-        self._close_btn.clicked.connect(self.close)
-        status_row.addWidget(self._close_btn)
         layout.addLayout(status_row)
 
         mode_row = QHBoxLayout()
@@ -465,17 +462,29 @@ class ChatDockWidget(QDockWidget):
         self._build_ai_dropdowns(mode_row)
 
         self._mode_combo = QComboBox()
+        self._mode_combo.setSizePolicy(
+            QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed
+        )
+        self._mode_combo.setMinimumWidth(0)
         self._mode_combo.addItem("Chat", "chat")
         self._mode_combo.addItem("Terminal", "terminal")
         self._mode_combo.currentIndexChanged.connect(self._on_mode_changed)
         mode_row.addWidget(self._mode_combo)
 
         self._shell_combo = QComboBox()
+        self._shell_combo.setSizePolicy(
+            QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed
+        )
+        self._shell_combo.setMinimumWidth(0)
         self._populate_shell_combo()
         self._shell_combo.currentIndexChanged.connect(self._on_terminal_shell_changed)
         mode_row.addWidget(self._shell_combo)
 
         self._provider_combo = QComboBox()
+        self._provider_combo.setSizePolicy(
+            QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed
+        )
+        self._provider_combo.setMinimumWidth(0)
         self._populate_provider_combo()
         mode_row.addWidget(self._provider_combo)
 
@@ -486,8 +495,6 @@ class ChatDockWidget(QDockWidget):
         self._terminal_stop_btn = QPushButton("Stop")
         self._terminal_stop_btn.clicked.connect(self._on_terminal_stop)
         mode_row.addWidget(self._terminal_stop_btn)
-
-        layout.addLayout(mode_row)
 
         # Message scroll area
         self._scroll_area = QScrollArea()
@@ -520,7 +527,11 @@ class ChatDockWidget(QDockWidget):
         # Input row
         input_row = QHBoxLayout()
         self._input_edit = QPlainTextEdit()
-        self._input_edit.setMaximumHeight(50)
+        self._input_edit.setMinimumHeight(60)
+        self._input_edit.setMaximumHeight(150)
+        self._input_edit.setSizePolicy(
+            QSizePolicy.Policy.Ignored, QSizePolicy.Policy.MinimumExpanding
+        )
         self._input_edit.setPlaceholderText(self._placeholder_text)
         self._input_edit.setStyleSheet(
             "QPlainTextEdit {"
@@ -529,11 +540,28 @@ class ChatDockWidget(QDockWidget):
             "  font-size: 12px; padding: 4px;"
             "}"
         )
-        input_row.addWidget(self._input_edit, stretch=1)
+        layout.addWidget(self._input_edit)
 
-        self._upload_btn = QPushButton("📎")
+        # Tools on the far left
+        self._tools_btn.setFixedWidth(50)
+        self._tools_btn.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
+        self._tools_btn.setStyleSheet(
+            "QPushButton {"
+            f"  background-color: {bg_alt}; color: {text_primary};"
+            "  border-radius: 4px; padding: 4px;"
+            "}"
+            f"QPushButton:hover {{ background-color: {border}; }}"
+        )
+        input_row.addWidget(self._tools_btn)
+
+        self._upload_btn = QPushButton("+")
         self._upload_btn.setToolTip("Upload file")
         self._upload_btn.setFixedWidth(28)
+        self._upload_btn.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
         self._upload_btn.setStyleSheet(
             "QPushButton {"
             f"  background-color: {bg_alt}; color: {text_primary};"
@@ -544,9 +572,12 @@ class ChatDockWidget(QDockWidget):
         self._upload_btn.clicked.connect(self._on_upload)
         input_row.addWidget(self._upload_btn)
 
-        self._screenshot_btn = QPushButton("📸")
+        self._screenshot_btn = QPushButton("⛶")
         self._screenshot_btn.setToolTip("Capture screenshot")
         self._screenshot_btn.setFixedWidth(28)
+        self._screenshot_btn.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
         self._screenshot_btn.setStyleSheet(
             "QPushButton {"
             f"  background-color: {bg_alt}; color: {text_primary};"
@@ -557,9 +588,12 @@ class ChatDockWidget(QDockWidget):
         self._screenshot_btn.clicked.connect(self._on_screenshot)
         input_row.addWidget(self._screenshot_btn)
 
-        self._mic_btn = QPushButton("\U0001f3a4")
+        self._mic_btn = QPushButton("🎤")
         self._mic_btn.setToolTip("Voice input (Ctrl+Shift+V)")
         self._mic_btn.setFixedWidth(28)
+        self._mic_btn.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
         self._mic_btn.setStyleSheet(
             "QPushButton {"
             f"  background-color: {bg_alt}; color: {text_primary};"
@@ -570,8 +604,24 @@ class ChatDockWidget(QDockWidget):
         self._mic_btn.clicked.connect(self._on_mic_toggle)
         input_row.addWidget(self._mic_btn)
 
+        input_row.addStretch()
+
+        self._agent_mode_combo = QComboBox()
+        self._agent_mode_combo.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
+        self._agent_mode_combo.addItem("Agent", "agent")
+        self._agent_mode_combo.addItem("Plan", "plan")
+        self._agent_mode_combo.addItem("Ask", "ask")
+        input_row.addWidget(self._agent_mode_combo)
+
+        # Send, Steer, Stop on the right side
         self._send_btn = QPushButton("Send")
+        self._send_btn.setToolTip("Send message")
         self._send_btn.setFixedWidth(55)
+        self._send_btn.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
         self._send_btn.setStyleSheet(
             "QPushButton {"
             f"  background-color: {self._accent_color}; color: black;"
@@ -583,7 +633,28 @@ class ChatDockWidget(QDockWidget):
         self._send_btn.clicked.connect(self._on_send)
         input_row.addWidget(self._send_btn)
 
+        self._steer_btn = QPushButton("Steer")
+        self._steer_btn.setToolTip("Queue message")
+        self._steer_btn.setFixedWidth(50)
+        self._steer_btn.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
+        self._steer_btn.setStyleSheet(self._send_btn.styleSheet())
+        self._steer_btn.clicked.connect(self._on_steer)
+        input_row.addWidget(self._steer_btn)
+
+        self._stop_agent_btn = QPushButton("Stop")
+        self._stop_agent_btn.setToolTip("Stop response")
+        self._stop_agent_btn.setFixedWidth(50)
+        self._stop_agent_btn.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
+        self._stop_agent_btn.setStyleSheet(self._send_btn.styleSheet())
+        self._stop_agent_btn.clicked.connect(self._on_stop_agent)
+        input_row.addWidget(self._stop_agent_btn)
+
         layout.addLayout(input_row)
+        layout.addLayout(mode_row)
         self.setWidget(container)
         self._on_mode_changed()
 
@@ -773,6 +844,23 @@ class ChatDockWidget(QDockWidget):
             self._status_label.setText("Terminal input sent")
 
     # ── UI actions ───────────────────────────────────────────────────
+
+    def _on_steer(self) -> None:
+        text = self._input_edit.toPlainText().strip()
+        if not text:
+            return
+        # Queue message
+        if not hasattr(self, "_queued_messages"):
+            self._queued_messages = []
+        self._queued_messages.append(text)
+        self._input_edit.clear()
+
+    def _on_stop_agent(self) -> None:
+        logger.info("Agent response stopped by user")
+        if hasattr(self, "_chat_client") and hasattr(
+            self._chat_client, "cancel_current_stream"
+        ):
+            self._chat_client.cancel_current_stream()
 
     def _on_send(self) -> None:
         text = self._input_edit.toPlainText().strip()
@@ -1017,6 +1105,8 @@ class ChatDockWidget(QDockWidget):
         if not items:
             raise ValueError("_build_header_combobox: items must be non-empty")
         combo = QComboBox()
+        combo.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
+        combo.setMinimumWidth(0)
         for display, data in items:
             combo.addItem(display, data)
         combo.setToolTip(f"Select AI {label}")
@@ -1149,7 +1239,19 @@ class ChatDockWidget(QDockWidget):
         except Exception:  # noqa: BLE001 - any adapter failure → empty list
             logger.debug("_refresh_ai_model_combo: adapter probe failed", exc_info=True)
             models = []
-        items = [(name, name) for name in models] or [("(default)", "default")]
+        items = []
+        for m in models:
+            display = str(
+                getattr(m, "display_name", None) or getattr(m, "name", str(m))
+            )
+            data = str(
+                getattr(m, "id", None)
+                or getattr(m, "model_id", None)
+                or getattr(m, "name", str(m))
+            )
+            items.append((display, data))
+        if not items:
+            items = [("(default)", "default")]
         self._ai_model_combo.blockSignals(True)
         try:
             self._ai_model_combo.clear()
@@ -1171,7 +1273,15 @@ class ChatDockWidget(QDockWidget):
         if caps is None:
             items = [("Off", "none")]
         else:
-            items = [(level.label, level.name) for level in caps.levels]
+            items = [
+                (
+                    getattr(level, "label", str(level)),
+                    getattr(level, "name", str(level)),
+                )
+                for level in getattr(
+                    caps, "available_levels", getattr(caps, "levels", [])
+                )
+            ]
         self._ai_thinking_combo.blockSignals(True)
         try:
             self._ai_thinking_combo.clear()

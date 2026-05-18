@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for psa_webapp.py."""
 
 from __future__ import annotations

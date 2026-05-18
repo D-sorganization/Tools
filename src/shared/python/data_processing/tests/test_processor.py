@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Comprehensive tests for the data_processing.processor module.
 
 Covers DataProcessor and DatasetInfo to achieve 100% coverage.

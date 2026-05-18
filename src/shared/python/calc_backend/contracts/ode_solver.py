@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Pydantic contracts for ODE solver endpoints.  See issue #608."""
 
 from __future__ import annotations

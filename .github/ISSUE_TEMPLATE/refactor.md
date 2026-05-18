@@ -8,9 +8,7 @@ assignees: ''
 ---
 
 **Component**: <!-- e.g. Pendulum Simulator, C3D Reader, URDF Generator -->
-## File Paths
-<!-- MUST BE CANONICAL PATHS. Use exact src/... or tests/... paths. Do not use aspirational or descriptive names (e.g., 'notes_tab.py'). Provide a bulleted list of files the implementation must touch. -->
-- 
+**File(s)**: <!-- e.g. src/shared/python/... -->
 **Principle**: <!-- DRY / DbC / SRP / SOLID / other -->
 
 ## Description

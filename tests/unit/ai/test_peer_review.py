@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """TDD tests for Agent Peer Review GUI system (Tools #2738).
 
 Covers:

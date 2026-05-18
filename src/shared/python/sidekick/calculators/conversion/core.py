@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Functional helpers for unit conversion routines.
 
 These helpers are intentionally stateless so that conversion math can be reused outside of

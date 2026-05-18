@@ -357,23 +357,27 @@ QListWidget#{SIDEKICK_WORKSPACE_LIST_OBJECT_NAME}:focus {{
 
 QTabWidget#{SIDEKICK_TABS_OBJECT_NAME}::pane {{
     border: 0;
+    border-top: 1px solid {value("color.border.strong")};
     background: {value("color.surface")};
 }}
 
 QTabBar#{SIDEKICK_TAB_BAR_OBJECT_NAME}::tab {{
     background: {value("color.surface.raised")};
     border: 1px solid {value("color.border")};
-    border-bottom: 0;
-    border-top-left-radius: {value("radius.control")};
-    border-top-right-radius: {value("radius.control")};
+    border-bottom: 1px solid {value("color.border.strong")};
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
     color: {value("color.text.muted")};
-    margin-right: {value("space.1")};
+    margin-right: 0px;
     padding: {value("space.2")} {value("space.3")};
 }}
 
 QTabBar#{SIDEKICK_TAB_BAR_OBJECT_NAME}::tab:selected {{
     background: {value("color.surface")};
     border-color: {value("color.border.strong")};
+    border-bottom-color: {value("color.surface")};
+    margin-bottom: -1px;
+    padding-bottom: {value("space.2")}; /* Keep height consistent */
     color: {value("color.text")};
 }}
 

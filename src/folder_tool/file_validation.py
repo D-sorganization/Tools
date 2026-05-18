@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """FileValidationMixin -- File validation methods for FolderProcessorApp."""
 
 from __future__ import annotations

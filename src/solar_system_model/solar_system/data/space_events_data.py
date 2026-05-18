@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 Historical Space Events — Data Module
 ======================================

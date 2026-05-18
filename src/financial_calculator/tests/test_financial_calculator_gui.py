@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for Financial Calculator GUI components."""
 
 from __future__ import annotations

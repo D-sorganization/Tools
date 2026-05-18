@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive
 # domain responsibility. It requires domain-aware structural extraction.

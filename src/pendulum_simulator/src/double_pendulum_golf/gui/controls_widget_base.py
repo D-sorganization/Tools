@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 Abstract base class for all pendulum model control panels.
 

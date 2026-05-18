@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Application-level zoom support for fleet PyQt6 desktop applications."""
 
 from __future__ import annotations

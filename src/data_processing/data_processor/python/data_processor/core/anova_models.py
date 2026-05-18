@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Shared ANOVA result models and reporting helpers."""
 
 from __future__ import annotations

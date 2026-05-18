@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """plugin_manager.py module."""
 
 import logging

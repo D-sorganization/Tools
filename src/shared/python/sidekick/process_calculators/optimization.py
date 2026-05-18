@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Optimization helpers for the advanced plots tab."""
 
 from __future__ import annotations

@@ -107,6 +107,9 @@ class PosixPtyBackend(_BackendBase):
     ) -> None:
         super().__init__(command=tuple(command), cwd=cwd)
         self._proc: object | None = None
+        self._buffer = bytearray()
+        self._lock = threading.Lock()
+        self._reader: threading.Thread | None = None
 
     def start(self) -> None:
         from ptyprocess import PtyProcess  # type: ignore[import-not-found]
@@ -118,6 +121,27 @@ class PosixPtyBackend(_BackendBase):
             env=os.environ.copy(),
         )
         self.is_running = True
+        self._reader = threading.Thread(target=self._pump_stdout, daemon=True)
+        self._reader.start()
+
+    def _pump_stdout(self) -> None:
+        proc = self._proc
+        if proc is None:
+            return
+        try:
+            while self.is_running:
+                try:
+                    chunk = proc.read(4096)  # type: ignore[attr-defined]
+                    if not chunk:
+                        continue
+                    with self._lock:
+                        self._buffer.extend(chunk)
+                except EOFError:
+                    break
+        except Exception as exc:  # noqa: BLE001
+            logger.debug("PosixPtyBackend read thread error: %s", exc)
+        finally:
+            self.is_running = False
 
     def write(self, data: bytes) -> None:
         self._check_writeable(data)
@@ -126,15 +150,12 @@ class PosixPtyBackend(_BackendBase):
         assert proc is not None  # noqa: S101 - guarded by _ensure_running
         proc.write(data)  # type: ignore[attr-defined]
 
-    def read(self, timeout: float = 0.0) -> bytes:  # noqa: ARG002 - ptyprocess polls
+    def read(self, timeout: float = 0.0) -> bytes:  # noqa: ARG002
         self._ensure_running()
-        proc = self._proc
-        assert proc is not None  # noqa: S101 - guarded by _ensure_running
-        try:
-            return bytes(proc.read(4096))  # type: ignore[attr-defined]
-        except EOFError:
-            self.is_running = False
-            return b""
+        with self._lock:
+            data = bytes(self._buffer)
+            self._buffer.clear()
+        return data
 
     def terminate(self) -> None:
         if self._proc is None:
@@ -166,6 +187,9 @@ class WindowsPtyBackend(_BackendBase):
     ) -> None:
         super().__init__(command=tuple(command), cwd=cwd)
         self._proc: object | None = None
+        self._buffer = bytearray()
+        self._lock = threading.Lock()
+        self._reader: threading.Thread | None = None
 
     def start(self) -> None:
         from winpty import PtyProcess  # type: ignore[import-not-found]
@@ -175,6 +199,29 @@ class WindowsPtyBackend(_BackendBase):
         cmdline = subprocess.list2cmdline(list(self.command))
         self._proc = PtyProcess.spawn(cmdline, cwd=cwd_value)
         self.is_running = True
+        self._reader = threading.Thread(target=self._pump_stdout, daemon=True)
+        self._reader.start()
+
+    def _pump_stdout(self) -> None:
+        proc = self._proc
+        if proc is None:
+            return
+        try:
+            while self.is_running:
+                try:
+                    chunk = proc.read(4096)  # type: ignore[attr-defined]
+                    if not chunk:
+                        continue
+                    if isinstance(chunk, str):
+                        chunk = chunk.encode("utf-8", errors="replace")
+                    with self._lock:
+                        self._buffer.extend(chunk)
+                except EOFError:
+                    break
+        except Exception as exc:  # noqa: BLE001
+            logger.debug("WindowsPtyBackend read thread error: %s", exc)
+        finally:
+            self.is_running = False
 
     def write(self, data: bytes) -> None:
         self._check_writeable(data)
@@ -184,18 +231,12 @@ class WindowsPtyBackend(_BackendBase):
         # pywinpty's write accepts ``str`` only; decode best-effort.
         proc.write(data.decode("utf-8", errors="replace"))  # type: ignore[attr-defined]
 
-    def read(self, timeout: float = 0.0) -> bytes:  # noqa: ARG002 - pywinpty polls
+    def read(self, timeout: float = 0.0) -> bytes:  # noqa: ARG002
         self._ensure_running()
-        proc = self._proc
-        assert proc is not None  # noqa: S101 - guarded by _ensure_running
-        try:
-            chunk = proc.read(4096)  # type: ignore[attr-defined]
-        except EOFError:
-            self.is_running = False
-            return b""
-        if isinstance(chunk, str):
-            return chunk.encode("utf-8", errors="replace")
-        return bytes(chunk) if chunk else b""
+        with self._lock:
+            data = bytes(self._buffer)
+            self._buffer.clear()
+        return data
 
     def terminate(self) -> None:
         if self._proc is None:
@@ -407,6 +448,28 @@ def strip_ansi(data: bytes) -> bytes:
 # ---------------------------------------------------------------------------
 
 
+class ShellDiscoveryThread(QtCore.QThread):
+    """Thread for running shell discovery asynchronously to avoid UI freezing."""
+
+    discovered = QtCore.pyqtSignal(list)
+
+    def __init__(
+        self,
+        shells_override: Sequence[ShellDescriptor] | None = None,
+        parent: QtCore.QObject | None = None,
+    ) -> None:
+        super().__init__(parent)
+        self.shells_override = shells_override
+
+    def run(self) -> None:
+        try:
+            res = list(self.shells_override or discover_shells())
+            self.discovered.emit(res)
+        except Exception as e:
+            logger.error("Failed to discover shells asynchronously: %s", e)
+            self.discovered.emit([])
+
+
 class SidekickOsTerminalWidget(QtWidgets.QWidget):
     """OS-level terminal tab backed by a PTY (or pipe fallback)."""
 
@@ -424,16 +487,35 @@ class SidekickOsTerminalWidget(QtWidgets.QWidget):
         self.setObjectName(SIDEKICK_OS_TERMINAL_OBJECT_NAME)
 
         self._project_root = Path(project_root)
-        self._shells: list[ShellDescriptor] = list(shells or discover_shells())
         self._backend: TerminalBackend | None = None
         self._install_hint: str | None = None
         self._current_shell: ShellDescriptor | None = None
+        self._autostart: bool = autostart
 
-        self._build_ui()
+        if shells is not None:
+            self._shells = list(shells)
+            self._build_ui()
+            self._populate_shell_selector()
+            self._on_cwd_changed(self._project_root)
+            if autostart and self._shells:
+                self._start_backend(self._shells[0])
+        else:
+            self._shells = []
+            self._build_ui()
+            self._populate_shell_selector()
+            self._on_cwd_changed(self._project_root)
+
+            # Async shell discovery prevents UI freezing on startup
+            # (slow WSL discovery was the original symptom).
+            self._discovery_thread = ShellDiscoveryThread(None, self)
+            self._discovery_thread.discovered.connect(self._on_shells_discovered)
+            self._discovery_thread.start()
+
+    def _on_shells_discovered(self, shells: list[ShellDescriptor]) -> None:
+        """Callback for when shells are discovered asynchronously."""
+        self._shells = shells
         self._populate_shell_selector()
-        self._on_cwd_changed(self._project_root)
-
-        if autostart and self._shells:
+        if self._autostart and self._shells and self._backend is None:
             self._start_backend(self._shells[0])
 
     # -- UI construction ----------------------------------------------------

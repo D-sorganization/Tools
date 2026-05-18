@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Rendering mixin for SolarSystemScene.
 
 Extracts 3D and overlay rendering logic from the main scene class

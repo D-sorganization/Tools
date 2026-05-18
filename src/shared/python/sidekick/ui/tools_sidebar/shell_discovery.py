@@ -55,8 +55,8 @@ _POSIX_CANDIDATES: tuple[str, ...] = ("bash", "zsh", "fish", "sh")
 
 # Candidate Windows shells, in preference order.
 _WINDOWS_CANDIDATES: tuple[tuple[str, str], ...] = (
-    ("pwsh", "PowerShell 7"),
     ("powershell", "Windows PowerShell"),
+    ("pwsh", "PowerShell 7"),
     ("cmd", "Command Prompt"),
 )
 

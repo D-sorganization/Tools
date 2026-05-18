@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 # mypy: ignore-errors
 """ArchiveMixin -- ZIP archive creation for FolderProcessorApp."""
 

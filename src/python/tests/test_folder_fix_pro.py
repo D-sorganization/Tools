@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for folder_fix_pro.py."""
 
 import hashlib

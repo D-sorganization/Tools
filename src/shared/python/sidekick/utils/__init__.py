@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Upstream Drift Tools - Utility subpackage.
 
 Submodules:

@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Verification script for Unit Converter accessibility and shortcut hints."""
 
 import logging

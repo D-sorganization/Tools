@@ -197,15 +197,6 @@ on touched files).
 8. **Merge method:** squash-merge.  The squash commit message is the PR title
    (Conventional Commits format).
 
-### Issue Closure & File Path Policy
-
-To prevent the "phantom-close" pattern (where issues are closed without verifiable implementation), our issue templates include a mandatory `## File Paths` section.
-
-When opening a PR that closes an issue:
-1. Ensure the linked issue lists the canonical `src/...` or `tests/...` file paths expected to be modified.
-2. The PR **must** include modifications to at least one of the listed paths. A CI check (`check_pr_closes_path_match`) enforces this rule before merge.
-3. If an issue should be closed without code changes, label it `wontfix`, `duplicate`, `invalid`, or `not-planned` instead of opening a PR.
-
 ### PR Description Template
 
 ```markdown

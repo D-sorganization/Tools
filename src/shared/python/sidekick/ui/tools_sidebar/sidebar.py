@@ -161,6 +161,12 @@ class UnifiedToolsSidebar(
         self.tabs.setObjectName(SIDEKICK_TABS_OBJECT_NAME)
         self.tabs.tabBar().setObjectName(SIDEKICK_TAB_BAR_OBJECT_NAME)
         self.tabs.setMovable(True)
+        # Never elide tab labels: when the user-visible name is the only way
+        # to tell tabs apart, truncation is worse than overflow. Scroll
+        # buttons (enabled below) keep all tabs reachable when the bar runs
+        # out of horizontal space.
+        self.tabs.tabBar().setElideMode(QtCore.Qt.TextElideMode.ElideNone)
+        self.tabs.setUsesScrollButtons(True)
         self.tabs.currentChanged.connect(self._emit_context)
         self.tabs.tabBar().tabMoved.connect(self._sync_tab_order_from_widget)
 
@@ -188,6 +194,10 @@ class UnifiedToolsSidebar(
         )
 
         self.apply_state(self._state)
+
+    def minimumSizeHint(self) -> QtCore.QSize:
+        """Override minimumSizeHint to allow aggressive resizing of the sidebar."""
+        return QtCore.QSize(100, 0)
 
     @property
     def dock_widget(self) -> QtWidgets.QDockWidget | None:
@@ -230,7 +240,7 @@ class UnifiedToolsSidebar(
             self._is_collapsed = False
             self.tabs.setVisible(True)
             self.setMaximumWidth(16777215)
-            self.resize(max(self._expanded_width, 240), self.height())
+            self._apply_expanded_width()
         else:
             # Collapse
             self._is_collapsed = True
@@ -238,6 +248,21 @@ class UnifiedToolsSidebar(
             self.tabs.setVisible(False)
             self.setMaximumWidth(56)
         self._emit_context()
+
+    def _apply_expanded_width(self) -> None:
+        target = max(self._expanded_width, 240)
+        parent = self.parent()
+        if isinstance(parent, QtWidgets.QSplitter):
+            sizes = parent.sizes()
+            idx = parent.indexOf(self)
+            if idx != -1 and sum(sizes) > 0:
+                diff = target - sizes[idx]
+                sizes[idx] = target
+                if idx > 0:
+                    sizes[idx - 1] = max(0, sizes[idx - 1] - diff)
+                parent.setSizes(sizes)
+                return
+        self.resize(target, self.height())
 
     def toggle_visibility(self) -> None:
         """Toggle the dock's visibility (Ctrl+B shortcut handler).
@@ -469,7 +494,7 @@ class UnifiedToolsSidebar(
         else:
             self.tabs.setVisible(True)
             self.setMaximumWidth(16777215)
-            self.resize(max(self._expanded_width, 240), self.height())
+            self._apply_expanded_width()
         self._emit_context()
 
     def set_dock_area(self, area: str) -> bool:

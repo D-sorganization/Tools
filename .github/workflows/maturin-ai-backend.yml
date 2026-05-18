@@ -9,7 +9,7 @@
 #   - workflow_dispatch (manual trigger / release)
 #
 # Acceptance criteria (issue #2870):
-#   1. Matrix: os × [ubuntu-latest, windows-latest, macos-latest]
+#   1. Matrix: os × [d-sorg-fleet]
 #   2. Python versions: 3.10, 3.11, 3.12, 3.13
 #   3. maturin build --release --features python
 #   4. Upload wheel artifacts per platform/python combination
@@ -48,7 +48,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [d-sorg-fleet]
         python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
@@ -169,8 +169,6 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Platform | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|----------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| ubuntu-latest | ${{ needs.build-wheels.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| windows-latest | ${{ needs.build-wheels.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| macos-latest | ${{ needs.build-wheels.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| d-sorg-fleet | ${{ needs.build-wheels.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Python versions: 3.10, 3.11, 3.12, 3.13" >> $GITHUB_STEP_SUMMARY

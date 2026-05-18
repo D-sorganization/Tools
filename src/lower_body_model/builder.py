@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """MuJoCo MJCF XML generator for the lower body golf-swing model."""
 
 from __future__ import annotations

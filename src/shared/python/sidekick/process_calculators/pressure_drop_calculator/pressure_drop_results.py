@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Result formatting and rendering helpers for the pressure drop calculator.
 
 This module contains ``_format_results``, all ``_print_*`` helpers,

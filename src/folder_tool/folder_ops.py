@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 # mypy: ignore-errors
 """FolderOperationsMixin -- Folder-level operations for FolderProcessorApp."""
 

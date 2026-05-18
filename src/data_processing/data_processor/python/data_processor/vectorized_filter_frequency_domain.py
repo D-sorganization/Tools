@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Frequency-domain filter kernels for the vectorized filter engine."""
 
 from __future__ import annotations

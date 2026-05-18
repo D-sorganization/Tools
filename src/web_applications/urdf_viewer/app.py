@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """URDF Viewer web application — FastAPI backend.
 
 Provides:

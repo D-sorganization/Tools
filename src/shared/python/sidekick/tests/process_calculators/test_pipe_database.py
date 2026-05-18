@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for pipe_database.py — get_roughness, get_pipe_spec, etc.
 
 Targets: 29% → 100% coverage.

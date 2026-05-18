@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for SidekickNotebookWidget — Phase 2 session integration.
 
 Phase 2 (Tools #2876) RED tests.  These verify that the widget layer

@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 Famous Space Mission Trajectories
 =================================

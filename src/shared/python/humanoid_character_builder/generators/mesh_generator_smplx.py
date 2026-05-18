@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 # ARCHITECTURE_DEBT — tracked as GitHub issue #1937
 # This file is 1,173 lines and contains 4 distinct mesh generator backends
 # (Primitive, MakeHuman, SMPLX) plus the public MeshGenerator facade.

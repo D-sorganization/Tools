@@ -57,6 +57,28 @@ OLLAMA_DEFAULT_MODEL = DEFAULT_OLLAMA_MODEL
 OLLAMA_DEFAULT_TIMEOUT = DEFAULT_OLLAMA_TIMEOUT
 
 
+def _normalize_host(host: str) -> str:
+    """Coerce a user-provided Ollama host into a usable URL.
+
+    The settings dialog and legacy configs sometimes store the host without a
+    scheme (e.g. ``"0.0.0.0:11434"``, ``"localhost:11434"``). httpx requires a
+    scheme and will raise ``UnsupportedProtocol`` otherwise, which surfaces in
+    the chat UI as a generic connection failure. Defensive prepending of
+    ``http://`` (the only protocol Ollama serves on by default) makes the
+    adapter tolerant of these inputs.
+
+    ``0.0.0.0`` is rewritten to ``127.0.0.1`` because it is a wildcard
+    *listen* address, not a routable client address, and httpx will fail to
+    connect to it on Windows.
+    """
+    if not host:
+        return DEFAULT_OLLAMA_HOST
+    host = host.strip().rstrip("/")
+    if not host.startswith(("http://", "https://")):
+        host = f"http://{host}"
+    return host.replace("://0.0.0.0", "://127.0.0.1")
+
+
 class OllamaAdapter(BaseAgentAdapter):
     """Adapter for local Ollama LLM inference.
 
@@ -102,7 +124,7 @@ class OllamaAdapter(BaseAgentAdapter):
             model: Model name to use. Uses OLLAMA_MODEL env var or default.
             timeout: Request timeout [s]. Uses OLLAMA_TIMEOUT env var or default.
         """
-        self._host = (host or get_ollama_host()).rstrip("/")
+        self._host = _normalize_host(host or get_ollama_host())
         self._model = model or get_ollama_model()
         self._timeout = timeout if timeout is not None else get_ollama_timeout()
         self._client: Any = None  # Lazy-loaded httpx client
@@ -243,12 +265,9 @@ class OllamaAdapter(BaseAgentAdapter):
                     )
                     index += 1
 
-        except (ValueError, KeyError, json.JSONDecodeError) as e:
+        except Exception as e:
             logger.error("Ollama streaming error: %s", e)
-            raise AIProviderError(
-                f"Ollama streaming error: {e}",
-                provider="ollama",
-            ) from e
+            self._handle_error(e)
 
     @property
     def capabilities(self) -> ProviderCapabilities:
@@ -294,7 +313,7 @@ class OllamaAdapter(BaseAgentAdapter):
         """Return Ollama model ids; falls back to a static catalogue."""
         try:
             client = self._get_client()
-            response = client.get(f"{self._host}/api/tags")
+            response = client.get(f"{self._host}/api/tags", timeout=1.0)
             response.raise_for_status()
             payload = response.json()
             models = payload.get("models") if isinstance(payload, dict) else None
@@ -325,7 +344,9 @@ class OllamaAdapter(BaseAgentAdapter):
 
         Verifies:
         1. Ollama server is running
-        2. Configured model is available
+        2. Configured model is available; if not, auto-fall back to the first
+           locally-installed model so chat keeps working when saved settings
+           reference a model that has been removed.
 
         Returns:
             Tuple of (success, diagnostic_message).
@@ -334,7 +355,7 @@ class OllamaAdapter(BaseAgentAdapter):
             client = self._get_client()
 
             # Check if Ollama is running
-            response = client.get(f"{self._host}/api/tags")
+            response = client.get(f"{self._host}/api/tags", timeout=1.0)
 
             if response.status_code != 200:
                 return False, f"Ollama returned status {response.status_code}"
@@ -353,8 +374,22 @@ class OllamaAdapter(BaseAgentAdapter):
                     return False, (
                         f"No models installed. Pull one with: ollama pull {self._model}"
                     )
-                return False, (
-                    f"Model '{self._model}' not found. "
+                # Saved-settings model no longer exists locally. Prefer a real
+                # (non-:cloud) model so chat stays offline-capable; fall back to
+                # whatever is listed first if none qualify.
+                fallback = next(
+                    (m for m in model_names if not m.endswith(":cloud")),
+                    model_names[0],
+                )
+                logger.warning(
+                    "Configured Ollama model '%s' not installed; "
+                    "auto-falling back to '%s'. Update saved settings to dismiss.",
+                    self._model,
+                    fallback,
+                )
+                self._model = fallback
+                return True, (
+                    f"Configured model not installed; using '{fallback}' instead. "
                     f"Available: {', '.join(model_names[:5])}"
                 )
 
@@ -492,7 +527,7 @@ class OllamaAdapter(BaseAgentAdapter):
         """
         try:
             client = self._get_client()
-            response = client.get(f"{self._host}/api/tags")
+            response = client.get(f"{self._host}/api/tags", timeout=1.0)
             response.raise_for_status()
 
             data = response.json()

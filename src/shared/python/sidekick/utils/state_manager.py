@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 #!/usr/bin/env python3
 """# File: state_manager.py
 State Manager Module

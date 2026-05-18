@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for build_exe.py module."""
 
 import subprocess

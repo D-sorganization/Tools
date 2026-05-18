@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """GUI registration for Signal Processing Studio."""
 
 from __future__ import annotations

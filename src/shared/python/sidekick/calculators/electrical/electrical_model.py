@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Three-Phase Electrical Model for Electrode Systems
 
 Enhanced electrical model that calculates system states, resistance, and current

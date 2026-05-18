@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for ``notebook_loader``."""
 
 from __future__ import annotations

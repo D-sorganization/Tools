@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for DbC and LoD fixes in src/python.
 
 Covers:

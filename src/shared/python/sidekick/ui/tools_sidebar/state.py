@@ -23,7 +23,7 @@ class SidebarState:
     minimized: bool = False
     width: int = 360
     height: int = 720
-    active_tab: str = "files"
+    active_tab: str = "chat"
     layout_mode: str = "sidebar"
     tab_order: list[str] = field(default_factory=list)
     default_visible_tabs: list[str] = field(default_factory=list)
@@ -48,7 +48,7 @@ class SidebarState:
         self.width = max(240, int(self.width))
         self.height = max(240, int(self.height))
         if not self.active_tab:
-            self.active_tab = "files"
+            self.active_tab = "chat"
         self.tab_order = _dedupe_strings(self.tab_order)
         self.default_visible_tabs = _dedupe_strings(self.default_visible_tabs)
         self.default_hidden_tabs = _dedupe_strings(self.default_hidden_tabs)
@@ -78,7 +78,7 @@ class SidebarState:
             minimized=bool(payload.get("minimized", False)),
             width=int(payload.get("width", 360)),
             height=int(payload.get("height", 720)),
-            active_tab=str(payload.get("active_tab", "files")),
+            active_tab=str(payload.get("active_tab", "chat")),
             layout_mode=str(payload.get("layout_mode", "sidebar")),
             tab_order=_string_list(payload.get("tab_order")),
             default_visible_tabs=_string_list(payload.get("default_visible_tabs")),
@@ -164,7 +164,14 @@ def _tab_settings_mapping(value: Any) -> dict[str, dict[str, Any]]:
 
 def _startup_imports_payload(value: Any) -> list[dict[str, Any]]:
     if value is None:
-        return default_calculator_startup_config().to_list()
+        # Explicit local annotation: CI runs mypy with --follow-imports=skip,
+        # so the cross-module return from default_calculator_startup_config()
+        # is seen as Any. The function is declared as returning a config that
+        # exposes ``to_list() -> list[dict[str, Any]]`` in calculator_startup.
+        defaults: list[dict[str, Any]] = (
+            default_calculator_startup_config().to_list()
+        )
+        return defaults
     if not isinstance(value, list):
         return []
     return [dict(item) for item in value if isinstance(item, dict)]

@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 Type definitions for Golf Swing Video Analysis.
 

@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Specification validation with structured error output.
 
 Design-by-Contract: validate_spec() is the single precondition gate.

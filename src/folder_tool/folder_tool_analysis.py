@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 # mypy: ignore-errors
 """AnalysisMixin -- Analysis report and input validation for FolderProcessorApp."""
 

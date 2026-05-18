@@ -14,9 +14,7 @@ class SymbolicSolveResponse(BaseModel):
     """Response model for symbolic equation solving."""
 
     solutions: list[str] = Field(default_factory=list)
-    latex_solutions: list[str] = Field(default_factory=list)
     raw_result: str | None = None
-    latex: str | None = None
     available: bool = Field(default=False)
     error: str | None = None
 
@@ -32,7 +30,6 @@ class SymbolicDerivativeResponse(BaseModel):
     """Response model for symbolic differentiation."""
 
     derivative: str | None = None
-    latex: str | None = None
     available: bool = Field(default=False)
     error: str | None = None
 
@@ -47,7 +44,6 @@ class SymbolicSimplifyResponse(BaseModel):
     """Response model for symbolic simplification."""
 
     simplified: str | None = None
-    latex: str | None = None
     available: bool = Field(default=False)
     error: str | None = None
 
