@@ -95,9 +95,9 @@ def validate_consumer(consumer_repo: str) -> None:
     Precondition: consumer_repo is a non-empty string.
     Postcondition: no exception means the repo is safe to target.
     """
-    assert isinstance(consumer_repo, str) and consumer_repo, (
-        "consumer_repo must be a non-empty string"
-    )
+    assert (
+        isinstance(consumer_repo, str) and consumer_repo
+    ), "consumer_repo must be a non-empty string"
     if consumer_repo not in CONSUMER_REPOS:
         raise ValueError(
             f"Unknown consumer repo {consumer_repo!r}.  Allowed: {CONSUMER_REPOS}"

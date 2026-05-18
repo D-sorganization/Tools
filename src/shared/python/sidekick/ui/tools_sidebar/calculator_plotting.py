@@ -47,7 +47,7 @@ _SAFE_EXPRESSION_NAMES: Mapping[str, Any] = {
 }
 
 
-class CalculatorPlotSource(str, Enum):
+class CalculatorPlotSource(str, enum.Enum):
     """Supported calculator plot request sources."""
 
     WORKSPACE_XY = "workspace_xy"

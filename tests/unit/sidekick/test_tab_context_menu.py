@@ -158,9 +158,9 @@ def test_context_menu_has_minimize_action(tmp_path: Path) -> None:
     sidebar, tab_id, win, _ = _make_sidebar_with_popout_tab(tmp_path)
     menu = build_tab_context_menu(sidebar, tab_id)
     action_texts = {a.text() for a in menu.actions() if a.text()}
-    assert "Minimize Sidebar" in action_texts, (
-        f"Expected 'Minimize Sidebar' in {action_texts}"
-    )
+    assert (
+        "Minimize Sidebar" in action_texts
+    ), f"Expected 'Minimize Sidebar' in {action_texts}"
 
 
 # ---------------------------------------------------------------------------

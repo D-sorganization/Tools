@@ -94,7 +94,10 @@ def test_sidekick_calculator_terminal_and_notes_runtime_flow(tmp_path: Path) -> 
     matrix_result = calculator._registry.describe("calculator_result")  # noqa: SLF001
     assert result.text() == "[[1, 2], [3, 4]]"
     assert sidebar.registry.get("calculator_result") is None
-    assert calculator._registry.get("calculator_result") == [[1, 2], [3, 4]]  # noqa: SLF001
+    assert calculator._registry.get("calculator_result") == [
+        [1, 2],
+        [3, 4],
+    ]  # noqa: SLF001
     assert matrix_result.shape == (2, 2)
     assert matrix_result.size == 4
 

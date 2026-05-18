@@ -41,7 +41,9 @@ def fallback_backend():  # noqa: ANN201
         backend.terminate()
 
 
-def test_fallback_backend_starts_and_reports_running(fallback_backend) -> None:  # noqa: ANN001
+def test_fallback_backend_starts_and_reports_running(
+    fallback_backend,
+) -> None:  # noqa: ANN001
     """``is_running`` is True once a child process has been spawned."""
     assert fallback_backend.is_running is True
 
@@ -86,7 +88,9 @@ def test_backend_read_requires_running_process() -> None:
         backend.read(timeout=0.1)
 
 
-def test_fallback_backend_terminate_kills_process(fallback_backend) -> None:  # noqa: ANN001
+def test_fallback_backend_terminate_kills_process(
+    fallback_backend,
+) -> None:  # noqa: ANN001
     """``terminate`` flips ``is_running`` to ``False``."""
     fallback_backend.terminate()
     # Allow the process supervisor a brief moment to reap.
@@ -97,7 +101,9 @@ def test_fallback_backend_terminate_kills_process(fallback_backend) -> None:  # 
     assert fallback_backend.is_running is False
 
 
-def test_resize_does_not_raise_on_fallback_backend(fallback_backend) -> None:  # noqa: ANN001
+def test_resize_does_not_raise_on_fallback_backend(
+    fallback_backend,
+) -> None:  # noqa: ANN001
     """``resize`` is a no-op on the fallback backend (still satisfies protocol)."""
     fallback_backend.resize(rows=24, cols=80)
 

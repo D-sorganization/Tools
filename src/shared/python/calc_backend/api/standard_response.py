@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 T = TypeVar("T")
 
 
-class ErrorCode(str, Enum):
+class ErrorCode(str, enum.Enum):
     """Standard error codes for API responses."""
 
     INVALID_INPUT = "INVALID_INPUT"

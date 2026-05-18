@@ -155,6 +155,6 @@ def test_integration_tool_raises_not_implemented(fn, kwargs):
         fn(**kwargs)
 
     # The error message must mention the issue number so users know where to look.
-    assert "#2759" in str(exc_info.value), (
-        f"{fn.__name__} NotImplementedError message must reference issue #2759"
-    )
+    assert "#2759" in str(
+        exc_info.value
+    ), f"{fn.__name__} NotImplementedError message must reference issue #2759"

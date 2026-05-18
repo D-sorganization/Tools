@@ -20,7 +20,7 @@ MAX_FONT_SIZE_PX = 24
 MAX_FONT_FAMILY_LENGTH = 64
 
 
-class SidekickThemeMode(str, Enum):
+class SidekickThemeMode(str, enum.Enum):
     """Constrained Sidekick theme resolution modes."""
 
     INHERIT_PARENT = "inherit_parent"

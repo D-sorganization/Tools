@@ -38,7 +38,7 @@ from uuid import uuid4
 logger = logging.getLogger(__name__)
 
 
-class ErrorCode(str, Enum):
+class ErrorCode(str, enum.Enum):
     """Standard error codes for API responses.
 
     These codes categorize different types of errors that can occur during

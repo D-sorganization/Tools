@@ -19,7 +19,7 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 
-class CheckStatus(str, Enum):
+class CheckStatus(str, enum.Enum):
     """Health check status enum."""
 
     OK = "ok"
