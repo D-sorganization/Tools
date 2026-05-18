@@ -112,7 +112,7 @@ def test_redock_closes_floating_window(tmp_path):
 def test_redock_tab_precondition_not_floating_raises(tmp_path):
     UnifiedToolsSidebar, SidebarTabDefinition, QtWidgets = _get_classes()
 
-    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
     win = QtWidgets.QMainWindow()
     tab_def = SidebarTabDefinition(
         tab_id="test_tab2",

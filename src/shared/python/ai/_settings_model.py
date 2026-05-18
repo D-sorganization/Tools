@@ -11,6 +11,7 @@ round-trips in tests that don't want to touch QSettings at all.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Any, cast
 
 from src.shared.python.ai.access_policy import ChatAccessMode, coerce_access_mode
 from src.shared.python.ai.config import (
@@ -133,7 +134,7 @@ class AISettings:
             streaming_enabled=bool(data.get("streaming_enabled", True)),
             rag_enabled=bool(data.get("rag_enabled", True)),
             auto_index_on_open=bool(data.get("auto_index_on_open", False)),
-            access_mode=coerce_access_mode(data.get("access_mode")),
+            access_mode=coerce_access_mode(cast(Any, data.get("access_mode"))),
         )
 
     # ------------------------------------------------------------------ #

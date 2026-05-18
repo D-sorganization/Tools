@@ -21,14 +21,14 @@ from PyQt6.QtWidgets import (
 )
 
 from src.shared.python.ai.access_policy import ChatAccessMode
-from src.shared.python.ai.gui.settings_dialog import (
+from src.shared.python.ai.gui._provider_registry_data import (
     AIProvider,
     populate_model_combo,
     populate_provider_combo,
 )
 
 if TYPE_CHECKING:
-    from src.shared.python.ai.gui.settings_dialog import AISettings
+    from src.shared.python.ai._settings_model import AISettings
 
 
 _CHAT_MODES = (
@@ -285,8 +285,7 @@ class PanelHeaderController(QFrame):
         text_muted = colors["text_muted"]
         border = colors["border"]
         accent = colors["accent"]
-        self.setStyleSheet(
-            f"""
+        self.setStyleSheet(f"""
             QFrame {{
                 background-color: {bg_alt};
                 padding: 10px;
@@ -306,8 +305,7 @@ class PanelHeaderController(QFrame):
                 color: #ffffff;
                 border-color: {accent};
             }}
-            """
-        )
+            """)
         combo_qss = f"""
             QComboBox {{
                 background-color: {bg_primary};
