@@ -1,5 +1,3 @@
-# mypy: ignore-errors
-# TRACKED_TASK: tighten typing in this file (Qt protocol typing follow-up to PR #2965).
 """Unified dockable tools sidebar for Qt host applications."""
 
 from __future__ import annotations

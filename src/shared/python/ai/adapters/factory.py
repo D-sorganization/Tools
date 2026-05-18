@@ -1,5 +1,3 @@
-# mypy: ignore-errors
-# TRACKED_TASK: tighten typing in this file (Qt protocol typing follow-up to PR #2965).
 """Unified adapter factory for AI provider resolution.
 
 Provides a single entry point to discover, instantiate, and health-check
@@ -266,10 +264,15 @@ class AdapterFactory:
         module = importlib.import_module(module_path)
         adapter_cls = getattr(module, class_name)
 
-        # Gemini adapter doesn't accept timeout
+        # `adapter_cls` is loaded dynamically via getattr() so mypy sees it
+        # as Any. The annotated local rebinds the return to the contract this
+        # method declares, which is more honest than a bare `# type: ignore`.
+        # Gemini adapter doesn't accept timeout.
         if provider == "gemini":
-            return adapter_cls(api_key=key, model=model)  # type: ignore[no-any-return]
-        return adapter_cls(api_key=key, model=model, timeout=timeout)  # type: ignore[no-any-return]
+            adapter: BaseAgentAdapter = adapter_cls(api_key=key, model=model)
+            return adapter
+        adapter = adapter_cls(api_key=key, model=model, timeout=timeout)
+        return adapter
 
     @classmethod
     def get_best_available(
@@ -345,31 +348,42 @@ class AdapterFactory:
 
     @classmethod
     def _resolve_api_key(cls, provider: str) -> str | None:
-        """Resolve API key from CredentialManager then env vars."""
+        """Resolve API key from CredentialManager then env vars.
+
+        Returns the API key as a string, or None when no credential is
+        available. Cross-module helpers below (``get_*_api_key``,
+        ``CredentialManager.get_api_key``) all return ``str | None``, but
+        CI runs mypy with ``--follow-imports=skip`` which strips that
+        signature to ``Any``. Local annotations restore the contract.
+        """
         # Try CredentialManager first
         try:
             from chat.credentials import CredentialManager
 
             mgr = CredentialManager()
-            key = mgr.get_api_key(provider)
+            key: str | None = mgr.get_api_key(provider)
             if key:
-                return key  # type: ignore[no-any-return]
+                return key
         except (ImportError, ValueError):
             pass
 
         # Fall back to config module
+        env_key: str | None
         if provider == "openai":
             from src.shared.python.ai.config import get_openai_api_key
 
-            return get_openai_api_key()
+            env_key = get_openai_api_key()
+            return env_key
         if provider == "anthropic":
             from src.shared.python.ai.config import get_anthropic_api_key
 
-            return get_anthropic_api_key()
+            env_key = get_anthropic_api_key()
+            return env_key
         if provider == "gemini":
             from src.shared.python.ai.config import get_gemini_api_key
 
-            return get_gemini_api_key()
+            env_key = get_gemini_api_key()
+            return env_key
 
         return None
 

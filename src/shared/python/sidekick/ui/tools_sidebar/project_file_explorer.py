@@ -1,5 +1,3 @@
-# mypy: ignore-errors
-# TRACKED_TASK: tighten typing in this file (Qt protocol typing follow-up to PR #2965).
 """Project-scoped file explorer widget for the unified tools sidebar."""
 
 from __future__ import annotations
