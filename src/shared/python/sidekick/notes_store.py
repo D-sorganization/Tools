@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
+from typing import cast
 
 from notes.card_store import NoteCardStore
 from notes.models import DEFAULT_NOTE_COLOR, NoteCard
@@ -136,7 +137,7 @@ class SidekickNotesStore:
         Returns:
             List of :class:`~notes.models.NoteCard` objects.
         """
-        return self._store.list_notes()
+        return cast(list[NoteCard], self._store.list_notes())
 
     def load_note(self, note_id: str) -> NoteCard | None:
         """Load one note by ID, or ``None`` if it does not exist.

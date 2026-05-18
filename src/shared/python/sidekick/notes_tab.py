@@ -80,9 +80,9 @@ def _render_markdown(text: str) -> str:
         HTML string, or escaped plain text when mistune is unavailable.
     """
     if _MISTUNE_AVAILABLE:
-        # mistune.create_markdown returns a callable
+        # mistune.create_markdown returns a callable; cast to str for mypy
         md = mistune.create_markdown(plugins=["strikethrough", "table"])
-        return md(text)
+        return str(md(text))
     # Minimal plain-text fallback
     return f"<pre>{text}</pre>"
 
@@ -329,8 +329,10 @@ class NotesTab(QWidget):
         # Clear existing cards
         while self._card_layout.count():
             item = self._card_layout.takeAt(0)
-            if item and item.widget():
-                item.widget().deleteLater()
+            if item:
+                widget = item.widget()
+                if widget is not None:
+                    widget.deleteLater()
 
         cards = self._store.list_notes()
         for card in cards:
