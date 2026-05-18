@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Unit tests for RustAgentAdapter.stream_response generator behavior.
 
 Issue #2752: the underlying Rust ``AIEngine.stream_response`` is blocking

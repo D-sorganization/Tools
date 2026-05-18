@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for the simulation module.
 
 Focuses on integration accuracy, energy conservation (for

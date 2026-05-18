@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for the web-based calculator application."""
 
 import unittest

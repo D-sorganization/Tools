@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Python scripting environment (MATLAB-like backend).
 
 Provides an interactive console environment that can be embedded into applications

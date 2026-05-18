@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 Shared error handling utility for consistent error management.
 

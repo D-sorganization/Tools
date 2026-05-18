@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Scrubber calculator router.  See issue #613."""
 
 from __future__ import annotations

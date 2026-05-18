@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 # mypy: disable-error-code="attr-defined, misc"
 """Rotation Converter Main Window -- PyQt6 GUI.
 

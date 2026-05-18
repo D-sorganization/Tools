@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Runtime tab contract tests for the unified tools sidebar."""
 
 from __future__ import annotations

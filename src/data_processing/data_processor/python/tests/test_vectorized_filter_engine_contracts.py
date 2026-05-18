@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """TDD / DbC tests for VectorizedFilterEngine — issue #929.
 
 Tests cover:

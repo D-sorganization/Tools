@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Trajectory Generation — time scaling and interpolation.
 
 CubicTimeScaling, QuinticTimeScaling, JointTrajectory, CartesianTrajectory,

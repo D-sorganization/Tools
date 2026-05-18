@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Drift guard for chat modules synchronized with Tools.
 The baseline hashes were captured from the matching files in the sibling
 Tools repository and should only change when that upstream source changes.

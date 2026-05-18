@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Gap-fill tests for physics.py — covers remaining uncovered lines.
 
 Lines 400, 404: joint_limit_torque_ndof angle below lo / above hi

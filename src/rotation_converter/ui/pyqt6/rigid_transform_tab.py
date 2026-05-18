@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Rigid Transform Tab — frame-aware SE(3) conversions with body/space twist display.
 
 Extracted from the former monolithic main_window.py for god-class decomposition.

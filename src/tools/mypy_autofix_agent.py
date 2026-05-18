@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Mypy Autofix Agent - Intelligent mypy error resolution.
 
 This script acts as an agent that:

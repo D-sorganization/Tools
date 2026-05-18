@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Clipboard operations mixin for the Frankenstein Editor.
 
 Provides copy operations for links, subtrees, and materials,

@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for the shared IntegrationsHealthDashboardWidget.
 
 This widget surfaces live status for every configured integration

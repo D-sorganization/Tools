@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for the physics module.
 
 Organized by property being tested, following TDD principles:

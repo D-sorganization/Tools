@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Test bootstrap for tests/unit/chat (Tools issue #2871).
 
 The shared :mod:`chat` package is shipped via an editable install in the

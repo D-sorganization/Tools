@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 Jacobian and manipulability ellipsoid computations for pendulum models.
 

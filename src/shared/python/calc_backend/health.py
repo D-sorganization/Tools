@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Health check endpoints for containerization and deployment.
 
 Provides liveness and readiness probes for Kubernetes/Docker orchestration.

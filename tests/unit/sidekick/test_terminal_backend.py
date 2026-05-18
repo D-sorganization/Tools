@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for the PTY-backed terminal backend protocol (UpstreamDrift #5617)."""
 
 from __future__ import annotations

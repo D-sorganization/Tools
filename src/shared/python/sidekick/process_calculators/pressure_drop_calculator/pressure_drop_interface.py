@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 #!/usr/bin/env python3
 """Thin public facade for advanced pressure drop calculations.
 

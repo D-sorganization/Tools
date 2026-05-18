@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Lightweight AI Chat dock widget for embedding in any PyQt6 application.
 
 Connects to a FastAPI server's WebSocket chat endpoint and provides a

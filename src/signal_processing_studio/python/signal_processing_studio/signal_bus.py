@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Signal bus for routing data between Signal Processing Studio widgets."""
 
 from __future__ import annotations

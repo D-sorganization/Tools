@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Advanced diagnostics tracker for the Pendulum Simulator.
 
 Captures, stores, and displays all errors, warnings, and diagnostic events

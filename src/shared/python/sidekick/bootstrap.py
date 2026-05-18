@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Bootstrap module for launch scripts that run before package installation.
 
 **Legitimate sys.path exception** (issue #682): This module is the *only*

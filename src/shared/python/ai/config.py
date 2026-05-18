@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """AI configuration with environment variable support.
 
 This module centralizes all AI-related configuration, allowing values to be

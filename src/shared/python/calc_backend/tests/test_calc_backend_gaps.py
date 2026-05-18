@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Targeted coverage tests for remaining calc_backend gaps.
 
 Covers first-party code only:

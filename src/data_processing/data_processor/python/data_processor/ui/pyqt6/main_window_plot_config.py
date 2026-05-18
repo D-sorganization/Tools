@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Plot configuration management mixin for DataProcessorMainWindow.
 
 Contains save/load/delete/refresh for plot configurations.

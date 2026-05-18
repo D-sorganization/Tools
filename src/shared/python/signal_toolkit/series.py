@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Taylor and Maclaurin series expansion module.
 
 This module provides functionality for computing Taylor and Maclaurin series

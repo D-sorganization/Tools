@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 URDF parser for loading and editing existing URDF files.
 

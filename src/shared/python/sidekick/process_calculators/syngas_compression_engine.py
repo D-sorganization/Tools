@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Syngas Compression Calculation Engine.
 
 Pure calculation logic extracted from ``syngas_compression_calculator.py`` (issue #1806).

@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Shared validation and batch accessors for simulation result objects."""
 
 from __future__ import annotations

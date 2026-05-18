@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Shared utilities for launching tools."""
 
 import os

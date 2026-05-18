@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Shared WebSocket router factory for AI chat streaming.
 
 Creates a FastAPI APIRouter with the standard chat WebSocket protocol

@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for ``WorkspaceBridge`` — Phase 3 (Tools #2877).
 
 WorkspaceBridge filters Sidekick workspace variables and injects them

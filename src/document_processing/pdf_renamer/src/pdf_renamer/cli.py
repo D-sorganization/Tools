@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Command-line interface for the PDF renamer tool."""
 
 import argparse

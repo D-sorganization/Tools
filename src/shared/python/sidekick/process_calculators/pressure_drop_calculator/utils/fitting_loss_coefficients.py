@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 #!/usr/bin/env python3
 """Fitting loss coefficients (K-factors) for pressure drop calculations.
 

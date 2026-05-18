@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 from typing import Any
 
 from upstream_drift_tools.process_calculators.wgs_reactor_calculator import (

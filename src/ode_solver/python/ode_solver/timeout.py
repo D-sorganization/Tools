@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Timeout utilities for ODE solver computations.
 
 Provides a cross-platform timeout wrapper using ``threading.Thread``

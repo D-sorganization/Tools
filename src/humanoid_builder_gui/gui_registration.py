@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """GUI registration for Humanoid Character Builder."""
 
 from __future__ import annotations

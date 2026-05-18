@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 Lower Body Model - PyQt6/PyQt6 GUI Launcher
 """

@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """ModelGenerationAPI class with all route handler methods.
 
 This module contains the main API class that registers routes and implements

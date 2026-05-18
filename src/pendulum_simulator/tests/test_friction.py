@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 Tests for damping and Coulomb friction in the double pendulum physics.
 

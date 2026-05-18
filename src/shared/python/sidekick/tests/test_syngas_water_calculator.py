@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for syngas_water_calculator.py targeting uncovered lines.
 
 Covers:

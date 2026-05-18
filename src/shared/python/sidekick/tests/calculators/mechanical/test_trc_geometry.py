@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Comprehensive tests for upstream_drift_tools.calculators.mechanical.trc_geometry.
 
 Covers:

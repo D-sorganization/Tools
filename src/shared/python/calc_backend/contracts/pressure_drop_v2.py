@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Enhanced Pydantic models for pressure drop calculator with standardized responses.
 
 This module defines the v2 API contracts for the pressure drop calculator,

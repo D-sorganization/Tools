@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Unit + live tests for GeminiCliAdapter.
 
 Two layers of coverage — same pattern as ``test_claude_code_adapter.py``:

@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for syngas_compression_calculator.py — SyngasCompressionEngine.
 
 Targets: 15% → ~60%+ coverage (excludes Qt UI widget, only tests pure engine).

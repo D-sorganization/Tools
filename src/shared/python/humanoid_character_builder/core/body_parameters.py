@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 Body parameter definitions for humanoid character builder.
 

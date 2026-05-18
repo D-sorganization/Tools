@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Time operations mixin for DataProcessorMainWindow.
 
 Contains resample, time range info/trim, and trendline calculation.

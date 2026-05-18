@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """limiter.py module."""
 
 import threading

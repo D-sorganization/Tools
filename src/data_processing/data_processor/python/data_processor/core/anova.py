@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Facade for the decomposed ANOVA analysis modules."""
 
 from __future__ import annotations

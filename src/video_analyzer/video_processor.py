@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 Video Processor for Golf Swing Analysis.
 

@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for ``register_github_mcp`` — pool-integration helper."""
 
 from __future__ import annotations

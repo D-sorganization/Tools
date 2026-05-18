@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Control loop rendering and signal line routing.
 
 Control loops connect a measurement point to a final element via

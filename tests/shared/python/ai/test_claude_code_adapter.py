@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Unit + live tests for ClaudeCodeAdapter.
 
 Two layers of coverage so the adapter stays wired up:

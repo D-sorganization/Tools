@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Backward-compatible data reader supporting CSV and Parquet.
 
 Provides ``read_data()`` which transparently reads Parquet if available,

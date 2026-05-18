@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Integration tests for the golfer simulation engine.
 
 Verifies that the constrained ODE integration produces physically

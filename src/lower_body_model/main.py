@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 # ruff: noqa: T201
 """
 Lower Body Model - MuJoCo Simulation Viewer

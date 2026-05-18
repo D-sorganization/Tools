@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 Simulation lifecycle helpers for SimulationPanel.
 

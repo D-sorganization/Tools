@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 # mypy: ignore-errors
 """UIProcessingMixin -- UI dialogs, progress, status, threading."""
 

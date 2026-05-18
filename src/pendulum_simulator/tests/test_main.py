@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 from typing import Any
 
 """Tests for __main__.py and gui.__init__.py in double_pendulum_golf.

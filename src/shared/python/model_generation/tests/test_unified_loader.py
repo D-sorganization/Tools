@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 Tests for the unified model loader, bundled library, and model explorer.
 

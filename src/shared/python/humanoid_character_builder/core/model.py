@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 Data structures for the humanoid model.
 

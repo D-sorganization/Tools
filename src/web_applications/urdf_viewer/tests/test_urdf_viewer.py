@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for URDF Viewer web application API.
 
 Uses FastAPI TestClient (via httpx) for integration testing of all endpoints.

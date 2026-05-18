@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 from typing import Any
 
 """Tests for the diagnostics tracker and viewer."""

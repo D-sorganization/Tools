@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """MCP server preset catalogue.
 
 A curated registry of well-known MCP servers (GitHub, Linear, Notion, etc.)

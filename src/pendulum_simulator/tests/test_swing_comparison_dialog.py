@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 Unit tests for SwingComparisonDialog and PerturbationPanel.set_preset_source().
 

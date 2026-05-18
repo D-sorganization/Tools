@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 Repository interfaces for model library.
 

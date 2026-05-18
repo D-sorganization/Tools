@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for pure-math upstream_drift_tools modules to reach 100% coverage.
 
 Targets (all stateless/pure-logic, no external dependencies):

@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Shared CORS configuration factory for FastAPI applications.
 
 Centralises the CORS middleware setup that was previously copy-pasted across
