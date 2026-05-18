@@ -76,7 +76,7 @@ STYLE_BTN_FUNCGEN = (
     "QPushButton:hover{background:#32326a;}"
 )
 
-STYLE_COMBO = "background:#2a2a38;color:#e0e0f0;border:1px solid #505068;border-radius:3px;padding:4px;"
+STYLE_COMBO = "background:#2a2a38;color:#e0e0f0;border:1px solid #505068;border-radius:3px;padding:4px;"  # noqa: E501
 
 
 class ControlsWidgetBase(QWidget):

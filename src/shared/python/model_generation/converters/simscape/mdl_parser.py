@@ -258,9 +258,9 @@ class MDLParser:
         "sm_lib/Joints/Gimbal Joint": SimscapeBlockType.GIMBAL_JOINT,
         "sm_lib/Joints/Bushing Joint": SimscapeBlockType.BUSHING_JOINT,
         "sm_lib/Joints/6-DOF Joint": SimscapeBlockType.SIX_DOF_JOINT,
-        "sm_lib/Frames and Transforms/Rigid Transform": SimscapeBlockType.RIGID_TRANSFORM,
+        "sm_lib/Frames and Transforms/Rigid Transform": SimscapeBlockType.RIGID_TRANSFORM,  # noqa: E501
         "sm_lib/Frames and Transforms/World Frame": SimscapeBlockType.WORLD_FRAME,
-        "sm_lib/Frames and Transforms/Reference Frame": SimscapeBlockType.REFERENCE_FRAME,
+        "sm_lib/Frames and Transforms/Reference Frame": SimscapeBlockType.REFERENCE_FRAME,  # noqa: E501
         "sm_lib/Utilities/Mechanism Configuration": SimscapeBlockType.MECHANISM_CONFIG,
         "sm_lib/Utilities/Solver Configuration": SimscapeBlockType.SOLVER_CONFIG,
         "simulink/Ports & Subsystems/Subsystem": SimscapeBlockType.SUBSYSTEM,

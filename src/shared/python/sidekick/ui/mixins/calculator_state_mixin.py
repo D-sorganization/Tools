@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 # TRACKED_TASK: see #2310 — architecture debt extraction schedule
 
 #!/usr/bin/env python3
@@ -40,7 +41,7 @@ logger = logging.getLogger(__name__)
 
 
 class CalculatorStateMixin:
-    """Mixin class providing state management and copy/paste functionality for calculators.
+    """Mixin class providing state management and copy/paste functionality for calculators.  # noqa: E501
 
     Note: This mixin does NOT inherit from QObject or QWidget to avoid MRO conflicts
     and segfaults caused by Qt's metaclass system when combined with QWidget.

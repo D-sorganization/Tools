@@ -31,7 +31,7 @@ class DatImportMixin:
         """Preview DAT file contents."""
         filename = self.dat_file_edit.text()  # type: ignore[attr-defined]
         if not filename:
-            QMessageBox.warning(self, "No File", "Please select a DAT file first.")  # type: ignore[arg-type]
+            QMessageBox.warning(self, "No File", "Please select a DAT file first.")  # type: ignore[arg-type]  # noqa: E501
             return
 
         try:
@@ -43,13 +43,13 @@ class DatImportMixin:
 
         except (PermissionError, OSError) as e:
             logger.error("DAT preview error: %s", e, exc_info=True)
-            QMessageBox.critical(self, "Error", f"Failed to preview file:\n{e}")  # type: ignore[arg-type]
+            QMessageBox.critical(self, "Error", f"Failed to preview file:\n{e}")  # type: ignore[arg-type]  # noqa: E501
 
     def _import_dat_file(self) -> None:
         """Import DAT file as data."""
         filename = self.dat_file_edit.text()  # type: ignore[attr-defined]
         if not filename:
-            QMessageBox.warning(self, "No File", "Please select a DAT file first.")  # type: ignore[arg-type]
+            QMessageBox.warning(self, "No File", "Please select a DAT file first.")  # type: ignore[arg-type]  # noqa: E501
             return
 
         try:
@@ -59,21 +59,21 @@ class DatImportMixin:
                 "\t",
             )
 
-            self.status_bar.set_status("Importing DAT file...")  # type: ignore[attr-defined]
+            self.status_bar.set_status("Importing DAT file...")  # type: ignore[attr-defined]  # noqa: E501
 
             from data_processor.core.dat_importer import read_dat_file
 
             self.current_data = read_dat_file(filename, delimiter=delimiter)
 
             if self.current_data is not None:
-                self.available_signals = self.data_loader.get_numeric_signals(  # type: ignore[attr-defined]
+                self.available_signals = self.data_loader.get_numeric_signals(  # type: ignore[attr-defined]  # noqa: E501
                     self.current_data
                 )
 
                 self._update_data_info()  # type: ignore[attr-defined]
-                self.signal_list.set_signals(self.available_signals)  # type: ignore[attr-defined]
-                self.preview_widget.update_preview(self.current_data)  # type: ignore[attr-defined]
-                self.analysis_panel.set_dataframe(self.current_data)  # type: ignore[attr-defined]
+                self.signal_list.set_signals(self.available_signals)  # type: ignore[attr-defined]  # noqa: E501
+                self.preview_widget.update_preview(self.current_data)  # type: ignore[attr-defined]  # noqa: E501
+                self.analysis_panel.set_dataframe(self.current_data)  # type: ignore[attr-defined]  # noqa: E501
 
                 self.status_bar.set_status(  # type: ignore[attr-defined]
                     f"Imported DAT file: {len(self.current_data)} rows"
@@ -88,13 +88,13 @@ class DatImportMixin:
 
         except (RuntimeError, AttributeError) as e:
             logger.error("DAT import error: %s", e, exc_info=True)
-            QMessageBox.critical(self, "Error", f"Failed to import DAT file:\n{e}")  # type: ignore[arg-type]
+            QMessageBox.critical(self, "Error", f"Failed to import DAT file:\n{e}")  # type: ignore[arg-type]  # noqa: E501
 
     def _convert_dat_to_csv(self) -> None:
         """Convert DAT file to CSV."""
         dat_filename = self.dat_file_edit.text()  # type: ignore[attr-defined]
         if not dat_filename:
-            QMessageBox.warning(self, "No File", "Please select a DAT file first.")  # type: ignore[arg-type]
+            QMessageBox.warning(self, "No File", "Please select a DAT file first.")  # type: ignore[arg-type]  # noqa: E501
             return
 
         default_name = Path(dat_filename).stem + ".csv"
@@ -108,13 +108,13 @@ class DatImportMixin:
             return
 
         try:
-            self.status_bar.set_status("Converting DAT to CSV...")  # type: ignore[attr-defined]
+            self.status_bar.set_status("Converting DAT to CSV...")  # type: ignore[attr-defined]  # noqa: E501
 
             from data_processor.core.dat_importer import export_dat_to_csv
 
             output_path = export_dat_to_csv(dat_filename, output_filename)
 
-            self.status_bar.set_status("DAT converted to CSV")  # type: ignore[attr-defined]
+            self.status_bar.set_status("DAT converted to CSV")  # type: ignore[attr-defined]  # noqa: E501
             QMessageBox.information(
                 self,  # type: ignore[arg-type]
                 "Success",
@@ -123,4 +123,4 @@ class DatImportMixin:
 
         except (RuntimeError, AttributeError) as e:
             logger.error("DAT conversion error: %s", e, exc_info=True)
-            QMessageBox.critical(self, "Error", f"Failed to convert DAT file:\n{e}")  # type: ignore[arg-type]
+            QMessageBox.critical(self, "Error", f"Failed to convert DAT file:\n{e}")  # type: ignore[arg-type]  # noqa: E501

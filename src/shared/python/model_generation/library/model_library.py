@@ -687,7 +687,7 @@ class ModelLibrary:
                                             model_format=fmt,
                                             source=RepositorySource.GITHUB,
                                             source_url=sub_item["download_url"],
-                                            source_path=f"{owner}/{repo}/{subpath}/{item['name']}",
+                                            source_path=f"{owner}/{repo}/{subpath}/{item['name']}",  # noqa: E501
                                             is_cached=False,
                                             is_read_only=True,
                                         )

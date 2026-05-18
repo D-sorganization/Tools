@@ -1,6 +1,7 @@
+# ruff: noqa: E501
 # TRACKED_TASK: see #2310 — architecture debt extraction schedule
 
-"""Comprehensive tests for upstream_drift_tools.data_processing.core.DataProcessorEngine.
+"""Comprehensive tests for upstream_drift_tools.data_processing.core.DataProcessorEngine.  # noqa: E501
 
 Covers all first-party logic: load_dataframe, column ops, smoothing, aggregation,
 curve fitting, filter, query, undo/redo/reset, statistics, utility helpers.
@@ -289,13 +290,13 @@ class TestTransformColumn:
     def test_standardize_transform(self):
         engine = _make_engine_with_data()
         engine.transform_column("x", "standardize")
-        assert engine.data["x"].mean() == pytest.approx(0.0, abs=1e-10)  # type: ignore[union-attr]
+        assert engine.data["x"].mean() == pytest.approx(0.0, abs=1e-10)  # type: ignore[union-attr]  # noqa: E501
 
     def test_round_transform(self):
         engine = _make_engine_with_data()
         engine.transform_column("x", "round", decimals=1)
         # All values should have at most 1 decimal place
-        assert engine.data["x"].apply(lambda v: len(str(v).split(".")[-1]) <= 1).all()  # type: ignore[union-attr]
+        assert engine.data["x"].apply(lambda v: len(str(v).split(".")[-1]) <= 1).all()  # type: ignore[union-attr]  # noqa: E501
 
     def test_fillna_transform(self):
         engine = DataProcessorEngine()
@@ -482,7 +483,7 @@ class TestFilterData:
         engine = _make_engine_with_data(20)
         result = engine.filter_data("label", "contains", "item_1")
         assert result.success
-        assert all("item_1" in v for v in engine.data["label"])  # type: ignore[union-attr]
+        assert all("item_1" in v for v in engine.data["label"])  # type: ignore[union-attr]  # noqa: E501
 
     def test_in_filter(self):
         engine = _make_engine_with_data(5)

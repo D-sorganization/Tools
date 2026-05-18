@@ -772,7 +772,7 @@ class LODGenerator:
 
         original = lod_result.levels[0]
 
-        # Estimate bytes per vertex (3 floats * 4 bytes) + per face (3 indices * 4 bytes)
+        # Estimate bytes per vertex (3 floats * 4 bytes) + per face (3 indices * 4 bytes)  # noqa: E501
         bytes_per_vertex = 12
         bytes_per_face = 12
 

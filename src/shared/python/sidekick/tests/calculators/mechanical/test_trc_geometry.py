@@ -53,7 +53,7 @@ class TestLayerConfig:
         assert lc.top_section_name == "Custom"
 
     def test_numeric_coercion(self) -> None:
-        lc = LayerConfig(name="Shell", thickness="2", density="100", color="grey")  # type: ignore[arg-type]
+        lc = LayerConfig(name="Shell", thickness="2", density="100", color="grey")  # type: ignore[arg-type]  # noqa: E501
         assert isinstance(lc.thickness, float)
         assert isinstance(lc.density, float)
 

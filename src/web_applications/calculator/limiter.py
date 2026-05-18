@@ -9,7 +9,7 @@ class RateLimiter:
     Thread-safe fixed-window rate limiter.
 
     Tracks requests per key (e.g., IP address) within a time window.
-    Uses a fixed window algorithm: request counts are reset at the beginning of each time window.
+    Uses a fixed window algorithm: request counts are reset at the beginning of each time window.  # noqa: E501
 
     .. warning::
         This limiter is **single-process only**. State is stored in-memory and is

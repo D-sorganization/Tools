@@ -57,7 +57,7 @@ STYLE_GROUP = (
 )
 STYLE_EDIT = (
     f"background: #1e1e30; color: #e0e0f0; border: 1px solid #404060;"
-    f"border-radius: 3px; padding: 2px 5px; font-family: monospace; font-size: {FONT_EDIT}px;"
+    f"border-radius: 3px; padding: 2px 5px; font-family: monospace; font-size: {FONT_EDIT}px;"  # noqa: E501
 )
 STYLE_LABEL = f"color: #9090b0; font-size: {FONT_BODY}px;"
 STYLE_SPIN = (
@@ -71,7 +71,7 @@ STYLE_CHECK = (
     f"QCheckBox::indicator:checked {{ background: #5060a0; border-color: #7080c0; }}"
 )
 STYLE_SLIDER = (
-    "QSlider::groove:horizontal { background: #252540; height: 6px; border-radius: 3px; }"
+    "QSlider::groove:horizontal { background: #252540; height: 6px; border-radius: 3px; }"  # noqa: E501
     "QSlider::sub-page:horizontal { background: #5060a0; border-radius: 3px; }"
     "QSlider::handle:horizontal { background: #8090d0; width: 14px;"
     "margin: -5px 0; border-radius: 7px; border: 1px solid #6070b0; }"
@@ -85,7 +85,7 @@ STYLE_BTN = (
 )
 STYLE_BTN_IMPORT = (
     f"QPushButton {{ background: #1e4a2a; color: #a0e8b0; border: 1px solid #285a38;"
-    f"border-radius: 5px; padding: 7px 14px; font-weight: bold; font-size: {FONT_BTN}px; }}"
+    f"border-radius: 5px; padding: 7px 14px; font-weight: bold; font-size: {FONT_BTN}px; }}"  # noqa: E501
     f"QPushButton:hover {{ background: #286038; }}"
     f"QPushButton:pressed {{ background: #153820; }}"
 )

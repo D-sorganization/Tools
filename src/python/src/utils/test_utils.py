@@ -249,7 +249,7 @@ class AssertionHelpers:
         except exception_type as e:
             if not re.search(message_pattern, str(e)):
                 raise AssertionError(
-                    f"Exception message '{e}' does not match pattern '{message_pattern}'"
+                    f"Exception message '{e}' does not match pattern '{message_pattern}'"  # noqa: E501
                 ) from e
             return e
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
@@ -696,7 +696,7 @@ def skip_if_no_module(module_name: str, reason: str | None = None) -> Callable[[
             return func
         except ImportError:
             skip_reason = reason or f"Module '{module_name}' not available"
-            return pytest.mark.skip(reason=skip_reason)(func)  # type: ignore[no-any-return]
+            return pytest.mark.skip(reason=skip_reason)(func)  # type: ignore[no-any-return]  # noqa: E501
 
     return decorator
 
@@ -755,7 +755,7 @@ def parametrize_with_edge_cases(
     all_values = base_values + generate_edge_case_data(data_type)
 
     def decorator(func: F) -> F:
-        return pytest.mark.parametrize(param_name, all_values)(func)  # type: ignore[no-any-return]
+        return pytest.mark.parametrize(param_name, all_values)(func)  # type: ignore[no-any-return]  # noqa: E501
 
     return decorator
 
@@ -872,7 +872,7 @@ def fixture_factory(
 
     def decorator(func: Callable[..., T]) -> Any:
         # Note: pytest.fixture returns a FixtureFunctionMarker, not just the callable
-        return pytest.fixture(scope=scope, autouse=autouse)(func)  # type: ignore[call-overload]
+        return pytest.fixture(scope=scope, autouse=autouse)(func)  # type: ignore[call-overload]  # noqa: E501
 
     return decorator
 

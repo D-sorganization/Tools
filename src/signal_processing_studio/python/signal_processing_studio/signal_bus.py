@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class SignalBus(QObject):
-    """Routes signals between Function Generator, Signal Toolkit, and Polynomial Generator."""
+    """Routes signals between Function Generator, Signal Toolkit, and Polynomial Generator."""  # noqa: E501
 
     signal_routed = pyqtSignal(str)  # status message
 

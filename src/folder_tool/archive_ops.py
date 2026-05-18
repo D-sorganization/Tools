@@ -43,7 +43,7 @@ class ArchiveOperationsMixin:
         archive_path_obj, archive_size = self._validate_archive_input(archive_path)
 
         # Generate unique extraction directory
-        extract_dir = self._get_unique_path(os.path.splitext(archive_path)[0])  # type: ignore[attr-defined]
+        extract_dir = self._get_unique_path(os.path.splitext(archive_path)[0])  # type: ignore[attr-defined]  # noqa: E501
         extract_dir_obj = Path(extract_dir)
 
         try:

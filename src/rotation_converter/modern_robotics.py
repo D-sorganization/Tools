@@ -1345,7 +1345,7 @@ def ForwardDynamics(thetalist, dthetalist, taulist, g, Ftip, Mlist, Glist, Slist
 
 
 def EulerStep(thetalist, dthetalist, ddthetalist, dt):
-    """Compute the joint angles and velocities at the next timestep using            from here
+    """Compute the joint angles and velocities at the next timestep using            from here  # noqa: E501
     first order Euler integration
 
     :param thetalist: n-vector of joint variables
@@ -1451,7 +1451,7 @@ def InverseDynamicsTrajectory(
         try:
             import matplotlib.pyplot as plt
         except ImportError:
-            _logger.warning('The result will not be plotted due to a lack of package matplotlib')
+            _logger.warning('The result will not be plotted due to a lack of package matplotlib')  # noqa: E501
         else:
             plt.plot(timestamp, Tau1, label = "Tau1")
             plt.plot(timestamp, Tau2, label = "Tau2")
@@ -1570,7 +1570,7 @@ def ForwardDynamicsTrajectory(
             try:
                 import matplotlib.pyplot as plt
         except ImportError:
-            _logger.warning('The result will not be plotted due to a lack of package matplotlib')
+            _logger.warning('The result will not be plotted due to a lack of package matplotlib')  # noqa: E501
         else:
             plt.plot(timestamp, theta1, label = "Theta1")
             plt.plot(timestamp, theta2, label = "Theta2")

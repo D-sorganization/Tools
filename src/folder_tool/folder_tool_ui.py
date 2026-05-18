@@ -29,7 +29,7 @@ class UICreationMixin:
                 base_dir = getattr(
                     sys,
                     "_MEIPASS",
-                    Path(os.path.abspath(__file__).parent),  # type: ignore[attr-defined]
+                    Path(os.path.abspath(__file__).parent),  # type: ignore[attr-defined]  # noqa: E501
                 )
             else:
                 # Running as script
@@ -53,7 +53,7 @@ class UICreationMixin:
         """Sets the Windows app user model ID for taskbar grouping."""
         try:
             if sys.platform == "win32":
-                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(  # type: ignore[attr-defined]
+                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(  # type: ignore[attr-defined]  # noqa: E501
                     "FolderFix.Tool.2.0",
                 )
                 logger.info("Set Windows App User Model ID for taskbar grouping")
@@ -71,7 +71,7 @@ class UICreationMixin:
         try:
             from PIL import Image, ImageTk
 
-            # Pillow 9.1+ uses Image.Resampling.LANCZOS; older versions use Image.LANCZOS
+            # Pillow 9.1+ uses Image.Resampling.LANCZOS; older versions use Image.LANCZOS  # noqa: E501
             _lanczos = getattr(Image, "Resampling", Image).LANCZOS
 
             # Load the ICO file which now has multiple sizes
@@ -112,7 +112,7 @@ class UICreationMixin:
         if Path(png_path).exists():
             from PIL import Image, ImageTk
 
-            # Pillow 9.1+ uses Image.Resampling.LANCZOS; older versions use Image.LANCZOS
+            # Pillow 9.1+ uses Image.Resampling.LANCZOS; older versions use Image.LANCZOS  # noqa: E501
             _lanczos = getattr(Image, "Resampling", Image).LANCZOS
 
             try:
@@ -144,7 +144,7 @@ class UICreationMixin:
         """Creates a scrollable main interface."""
         # Create canvas and scrollbar
         canvas = tk.Canvas(self.root)  # type: ignore[attr-defined]
-        scrollbar = ttk.Scrollbar(self.root, orient="vertical", command=canvas.yview)  # type: ignore[attr-defined]
+        scrollbar = ttk.Scrollbar(self.root, orient="vertical", command=canvas.yview)  # type: ignore[attr-defined]  # noqa: E501
         scrollable_frame = ttk.Frame(canvas)
 
         scrollable_frame.bind(
@@ -304,7 +304,7 @@ class UICreationMixin:
         ttk.Label(ext_frame, text="Include only extensions (comma-separated):").pack(
             side=tk.LEFT,
         )
-        ttk.Entry(ext_frame, textvariable=self.filter_extensions, width=30).pack(  # type: ignore[attr-defined]
+        ttk.Entry(ext_frame, textvariable=self.filter_extensions, width=30).pack(  # type: ignore[attr-defined]  # noqa: E501
             side=tk.RIGHT,
         )
         ttk.Label(
@@ -317,12 +317,12 @@ class UICreationMixin:
         size_frame = ttk.Frame(filter_frame)
         size_frame.pack(fill=tk.X, pady=5)
         ttk.Label(size_frame, text="Min size (MB):").pack(side=tk.LEFT)
-        ttk.Entry(size_frame, textvariable=self.min_file_size, width=10).pack(  # type: ignore[attr-defined]
+        ttk.Entry(size_frame, textvariable=self.min_file_size, width=10).pack(  # type: ignore[attr-defined]  # noqa: E501
             side=tk.LEFT,
             padx=5,
         )
         ttk.Label(size_frame, text="Max size (MB):").pack(side=tk.LEFT, padx=(10, 0))
-        ttk.Entry(size_frame, textvariable=self.max_file_size, width=10).pack(  # type: ignore[attr-defined]
+        ttk.Entry(size_frame, textvariable=self.max_file_size, width=10).pack(  # type: ignore[attr-defined]  # noqa: E501
             side=tk.LEFT,
             padx=5,
         )
@@ -521,7 +521,7 @@ class UICreationMixin:
         )
         self.progress_bar.pack(fill=tk.X, pady=2)
 
-        self.status_label = ttk.Label(progress_frame, textvariable=self.status_var)  # type: ignore[attr-defined]
+        self.status_label = ttk.Label(progress_frame, textvariable=self.status_var)  # type: ignore[attr-defined]  # noqa: E501
         self.status_label.pack(anchor=tk.W)
 
     def create_run_button(self, parent: tk.Widget) -> None:
@@ -682,7 +682,7 @@ class UICreationMixin:
 
             # Confirm removal
             if len(selected_indices) == 1:
-                folder_name = Path(self.source_folders[selected_indices[0]]).name  # type: ignore[attr-defined]
+                folder_name = Path(self.source_folders[selected_indices[0]]).name  # type: ignore[attr-defined]  # noqa: E501
                 confirm = messagebox.askyesno(
                     "Confirm Removal",
                     f"Remove folder '{folder_name}' from source list?",
@@ -697,7 +697,7 @@ class UICreationMixin:
             if confirm:
                 # Remove in reverse order to maintain indices
                 for i in sorted(selected_indices, reverse=True):
-                    removed_folder = self.source_folders.pop(i)  # type: ignore[attr-defined]
+                    removed_folder = self.source_folders.pop(i)  # type: ignore[attr-defined]  # noqa: E501
                     self.source_listbox.delete(i)
                     logger.info("Removed source folder: %s", removed_folder)
 

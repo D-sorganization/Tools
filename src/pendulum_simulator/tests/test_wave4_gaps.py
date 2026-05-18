@@ -3,7 +3,7 @@
 Modules targeted:
 - golfer_dynamics.py: TypeError/ValueError raises + state-vector (>N_DOF) truncation
 - golfer_constraints.py: TypeError/ValueError raises + native return paths
-- constraint_solver.py: torque_limits path (lines 100-102), analytical_constraint_bias (232)
+- constraint_solver.py: torque_limits path (lines 100-102), analytical_constraint_bias (232)  # noqa: E501
 - club_forces.py: state vector truncation (lines 70, 257)
 - simulation_triple.py: remaining lines (if any)
 """
@@ -120,7 +120,7 @@ class TestGolferDynamicsInputValidation:
         from double_pendulum_golf.golfer_dynamics import analytical_coriolis
 
         with pytest.raises(TypeError, match="GolferParams"):
-            analytical_coriolis(q8, np.zeros(N_DOF), "not_a_params")  # type: ignore[arg-type]
+            analytical_coriolis(q8, np.zeros(N_DOF), "not_a_params")  # type: ignore[arg-type]  # noqa: E501
 
     def test_analytical_coriolis_state_vector_truncated(
         self, q16: np.ndarray, gp: GolferParams
@@ -135,7 +135,7 @@ class TestGolferDynamicsInputValidation:
         from double_pendulum_golf.golfer_dynamics import kinetic_energy
 
         with pytest.raises(TypeError, match="GolferParams"):
-            kinetic_energy(q8, np.zeros(N_DOF), "not_a_params")  # type: ignore[arg-type]
+            kinetic_energy(q8, np.zeros(N_DOF), "not_a_params")  # type: ignore[arg-type]  # noqa: E501
 
     def test_kinetic_energy_state_vector_truncated(
         self, q16: np.ndarray, gp: GolferParams

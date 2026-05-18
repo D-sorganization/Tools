@@ -93,7 +93,10 @@ def test_sidekick_calculator_terminal_and_notes_runtime_flow(tmp_path: Path) -> 
     matrix_result = calculator._registry.describe("calculator_result")  # noqa: SLF001
     assert result.text() == "[[1, 2], [3, 4]]"
     assert sidebar.registry.get("calculator_result") is None
-    assert calculator._registry.get("calculator_result") == [[1, 2], [3, 4]]  # noqa: SLF001
+    assert calculator._registry.get("calculator_result") == [
+        [1, 2],
+        [3, 4],
+    ]  # noqa: SLF001
     assert matrix_result.shape == (2, 2)
     assert matrix_result.size == 4
 
@@ -446,7 +449,7 @@ def test_chat_dock_forwards_sidebar_params(
 
     # Force the theme.theme_manager import path to return our fake provider.
     fake_theme_module = types.ModuleType("theme.theme_manager")
-    fake_theme_module.get_theme_manager = lambda: sidebar_theme  # type: ignore[attr-defined]
+    fake_theme_module.get_theme_manager = lambda: sidebar_theme  # type: ignore[attr-defined]  # noqa: E501
     monkeypatch.setitem(sys.modules, "theme.theme_manager", fake_theme_module)
     theme_pkg = sys.modules.get("theme")
     if theme_pkg is None:

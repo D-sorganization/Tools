@@ -345,7 +345,7 @@ class _OptimizerWorker(QObject):
                 "speed": -state.best_fitness,
                 "history": history,
                 "success": state.best_fitness < float("inf"),
-                "message": f"CMA-ES: {state.generation} generations, σ={state.sigma:.4f}",
+                "message": f"CMA-ES: {state.generation} generations, σ={state.sigma:.4f}",  # noqa: E501
                 "method": "CMA-ES",
                 "generations": state.generation,
                 "final_sigma": state.sigma,
@@ -578,7 +578,7 @@ class OptimizationWidget(QWidget):
         return config
 
     def _build_ui_options_group(self) -> QGroupBox:
-        """Build the 'Options' group with warm-start / constraint / native checkboxes."""
+        """Build the 'Options' group with warm-start / constraint / native checkboxes."""  # noqa: E501
         opts = QGroupBox("Options")
         opts_lay = QVBoxLayout(opts)
         opts_lay.setContentsMargins(4, 14, 4, 4)

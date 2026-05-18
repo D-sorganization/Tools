@@ -319,7 +319,7 @@ class HighPerformanceDataLoader:
         try:
             cache_file = (
                 self.cache_dir
-                / f"{hashlib.md5(file_path.encode(), usedforsecurity=False).hexdigest()}.json"
+                / f"{hashlib.md5(file_path.encode(), usedforsecurity=False).hexdigest()}.json"  # noqa: E501
             )
             if cache_file.exists():
                 data = safe_read_json(cache_file, default=None)

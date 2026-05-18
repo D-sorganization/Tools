@@ -275,7 +275,7 @@ class GitHubRepository(Repository):
 
             for item in contents:
                 if item["type"] == "file" and item["name"].endswith(".urdf"):
-                    raw_url = f"{self.RAW_BASE}/{self._owner}/{self._repo}/{self._branch}/{item['path']}"
+                    raw_url = f"{self.RAW_BASE}/{self._owner}/{self._repo}/{self._branch}/{item['path']}"  # noqa: E501
                     models.append(
                         RepositoryModel(
                             name=item["name"][:-5],
@@ -346,7 +346,7 @@ class GitHubRepository(Repository):
                 if item["type"] == "file":
                     raw_url = (
                         item.get("download_url")
-                        or f"{self.RAW_BASE}/{self._owner}/{self._repo}/{self._branch}/{item['path']}"
+                        or f"{self.RAW_BASE}/{self._owner}/{self._repo}/{self._branch}/{item['path']}"  # noqa: E501
                     )
                     mesh_base = local_mesh_dir.resolve()
                     local_file = (local_mesh_dir / item["name"]).resolve()
@@ -420,7 +420,7 @@ class GitHubRepository(Repository):
             raise ValueError(f"Archive member name is invalid: {member_name}")
         if ":" in first_segment:
             raise ValueError(
-                f"Archive member has unsupported Windows/URL-style prefix: {member_name}"
+                f"Archive member has unsupported Windows/URL-style prefix: {member_name}"  # noqa: E501
             )
 
         if ".." in normalized_path.parts:

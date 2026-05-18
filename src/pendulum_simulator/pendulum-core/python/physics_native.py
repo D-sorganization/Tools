@@ -129,7 +129,7 @@ class DoublePendulum:
         g: float = 9.81,
         m_clubhead: float = 0.0,
     ):
-        # Validation delegated to DoublePendulumParams (raises TypeError/ValueError on bad input)
+        # Validation delegated to DoublePendulumParams (raises TypeError/ValueError on bad input)  # noqa: E501
         self.params = DoublePendulumParams(
             m1=m1, m2=m2, l1=l1, l2=l2, g=g, m_clubhead=m_clubhead
         )
@@ -230,7 +230,7 @@ class DoublePendulum:
             raise ValueError(f"q must have shape (2,), got {q.shape}")
         if self.use_native:
             try:
-                return pendulum_core.py_double_forward_kinematics(  # type: ignore[no-any-return]
+                return pendulum_core.py_double_forward_kinematics(  # type: ignore[no-any-return]  # noqa: E501
                     q.tolist(), self.params.to_rust()
                 )
             except (RuntimeError, AttributeError, TypeError) as e:
@@ -389,7 +389,7 @@ class Golfer:
         grip_left: float,
         g: float = 9.81,
     ):
-        # Validation delegated to GolferParams (raises TypeError/ValueError on bad input)
+        # Validation delegated to GolferParams (raises TypeError/ValueError on bad input)  # noqa: E501
         self.params = GolferParams(
             l_hub=l_hub,
             m_hub=m_hub,
@@ -426,7 +426,7 @@ class Golfer:
                 return np.array(result, dtype=np.float64)
             except (RuntimeError, AttributeError, TypeError) as e:
                 logger.warning(
-                    "Rust golfer mass_matrix call failed (%s), falling back to NumPy: %s",
+                    "Rust golfer mass_matrix call failed (%s), falling back to NumPy: %s",  # noqa: E501
                     type(e).__name__,
                     e,
                 )
@@ -480,7 +480,7 @@ class Golfer:
 
         # Golfer NumPy fallback is not implemented (see module docstring / GH#1736).
         raise NotImplementedError(
-            "Golfer forward kinematics has no NumPy fallback — native library required. "
+            "Golfer forward kinematics has no NumPy fallback — native library required. "  # noqa: E501
             "See GitHub issue #1736."
         )
 
@@ -518,7 +518,7 @@ class Golfer:
 
         # Golfer NumPy fallback is not implemented (see module docstring / GH#1736).
         raise NotImplementedError(
-            "Golfer constraint Jacobian has no NumPy fallback — native library required. "
+            "Golfer constraint Jacobian has no NumPy fallback — native library required. "  # noqa: E501
             "See GitHub issue #1736."
         )
 

@@ -382,7 +382,7 @@ def create_chat_router(
     @router.get("/chat/sessions")
     async def list_sessions(request: Request) -> list[dict[str, Any]]:
         """List all active chat sessions."""
-        return request.app.state.chat_service.list_sessions()  # type: ignore[no-any-return]
+        return request.app.state.chat_service.list_sessions()  # type: ignore[no-any-return]  # noqa: E501
 
     @router.get("/chat/sessions/{session_id}/history")
     async def get_history(request: Request, session_id: str) -> dict[str, Any]:

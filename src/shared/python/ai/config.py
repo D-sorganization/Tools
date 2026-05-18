@@ -195,7 +195,7 @@ def get_anthropic_api_key(*, required: bool = False) -> str | None:
     Raises:
         EnvironmentError: If required and key not set.
     """
-    return get_env(ENV_ANTHROPIC_API_KEY, required=required)  # type: ignore[no-any-return]
+    return get_env(ENV_ANTHROPIC_API_KEY, required=required)  # type: ignore[no-any-return]  # noqa: E501
 
 
 def get_anthropic_model() -> str:

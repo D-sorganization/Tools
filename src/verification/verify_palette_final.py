@@ -1,4 +1,4 @@
-"""Final verification script for Unit Converter accessibility attributes and keyboard shortcuts."""
+"""Final verification script for Unit Converter accessibility attributes and keyboard shortcuts."""  # noqa: E501
 
 import logging
 import os
@@ -17,7 +17,7 @@ def run() -> None:
 
         # Load the local HTML file
         cwd = os.getcwd()
-        file_path = f"file://{cwd}/src/web_applications/unit_converter/unit-converter-app/index.html"
+        file_path = f"file://{cwd}/src/web_applications/unit_converter/unit-converter-app/index.html"  # noqa: E501
         logger.info(f"Loading: {file_path}")
         page.goto(file_path)
 

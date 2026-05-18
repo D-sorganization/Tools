@@ -62,8 +62,8 @@ body {
     padding: 20px 28px;
     max-width: 800px;
 }
-h1 { color: #6fa8dc; font-size: 22px; border-bottom: 2px solid #3a5a8c; padding-bottom: 8px; margin-top: 28px; }
-h2 { color: #6fa8dc; font-size: 18px; margin-top: 24px; border-bottom: 1px solid #303050; padding-bottom: 4px; }
+h1 { color: #6fa8dc; font-size: 22px; border-bottom: 2px solid #3a5a8c; padding-bottom: 8px; margin-top: 28px; }  # noqa: E501
+h2 { color: #6fa8dc; font-size: 18px; margin-top: 24px; border-bottom: 1px solid #303050; padding-bottom: 4px; }  # noqa: E501
 h3 { color: #7db8ec; font-size: 15px; margin-top: 18px; }
 .eq {
     background: #12121e;
@@ -239,10 +239,10 @@ kinematic loop (left arm + right arm + shared club).  The mass matrix is
 <div class="eq">
 <span class="matrix">
       ┌                                              ┐
-M  =  │  M<sub>hub</sub>    M<sub>hub,R</sub>   M<sub>hub,L</sub>   M<sub>hub,club</sub>  │
+M  =  │  M<sub>hub</sub>    M<sub>hub,R</sub>   M<sub>hub,L</sub>   M<sub>hub,club</sub>  │  # noqa: E501
       │  M<sub>hub,R</sub>ᵀ  M<sub>R</sub>      0           M<sub>R,club</sub>   │
       │  M<sub>hub,L</sub>ᵀ  0           M<sub>L</sub>      M<sub>L,club</sub>   │
-      │  M<sub>hub,club</sub>ᵀ M<sub>R,club</sub>ᵀ M<sub>L,club</sub>ᵀ M<sub>club</sub>     │
+      │  M<sub>hub,club</sub>ᵀ M<sub>R,club</sub>ᵀ M<sub>L,club</sub>ᵀ M<sub>club</sub>     │  # noqa: E501
       └                                              ┘
 </span>
 </div>
@@ -277,7 +277,7 @@ d/dt (∂L/∂q̇ᵢ) − ∂L/∂qᵢ = τᵢ + τ<sub>friction,i</sub> + τ<su
 </div>
 <p>This yields the standard manipulator equation:</p>
 <div class="eq">
-M(q) · q̈ = τ<sub>drive</sub> + τ<sub>friction</sub> + τ<sub>limits</sub> − C(q, q̇) − G(q)
+M(q) · q̈ = τ<sub>drive</sub> + τ<sub>friction</sub> + τ<sub>limits</sub> − C(q, q̇) − G(q)  # noqa: E501
 </div>
 
 <h2>2. Individual Terms</h2>
@@ -537,7 +537,7 @@ D = M⁻¹  (Double and Triple Pendulums)
 <h3>3.2 Golfer Model (8-DOF)</h3>
 <p>
 The golfer upper-body model uses 8 generalized coordinates
-<span class="eq-inline">q = [θ<sub>hub</sub>, θ<sub>R,shoulder</sub>, φ<sub>R,wrist</sub>,
+<span class="eq-inline">q = [θ<sub>hub</sub>, θ<sub>R,shoulder</sub>, φ<sub>R,wrist</sub>,  # noqa: E501
 θ<sub>L,shoulder</sub>, φ<sub>L,wrist</sub>, θ<sub>club,lead</sub>,
 θ<sub>club,trail</sub>, θ<sub>club,roll</sub>]ᵀ</span>
 with 4 holonomic constraints enforcing that both hands grip the club.
@@ -664,9 +664,9 @@ zero external load:
 T = (J M⁺ Jᵀ)⁻¹ J M⁺
 </div>
 <table class="params">
-<tr><td>J</td><td>Jacobian matrix (m × n), maps joint velocities to endpoint velocity</td></tr>
+<tr><td>J</td><td>Jacobian matrix (m × n), maps joint velocities to endpoint velocity</td></tr>  # noqa: E501
 <tr><td>M⁺</td><td>Moore-Penrose pseudoinverse of the mass matrix</td></tr>
-<tr><td>T</td><td>ZTCF transfer matrix (m × n), maps joint torques to endpoint forces</td></tr>
+<tr><td>T</td><td>ZTCF transfer matrix (m × n), maps joint torques to endpoint forces</td></tr>  # noqa: E501
 </table>
 
 <h2>4. Physical Interpretation</h2>

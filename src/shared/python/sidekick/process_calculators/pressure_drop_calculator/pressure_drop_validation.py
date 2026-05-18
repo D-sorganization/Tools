@@ -75,7 +75,7 @@ def _validate_flow_params(
             similar = [u for u in all_units if flow_unit.lower() in u.lower()]
             errors.append(
                 f"Unknown flow_unit '{flow_unit}'. "
-                f"Did you mean: {', '.join(similar[:5]) if similar else 'see list_flow_units()'}"
+                f"Did you mean: {', '.join(similar[:5]) if similar else 'see list_flow_units()'}"  # noqa: E501
             )
 
 
@@ -101,7 +101,7 @@ def _validate_conditions(
             errors.append(f"temperature must be positive (Kelvin), got {temperature}")
         elif temperature < 200:
             warnings.append(
-                f"Low temperature ({temperature}K). Did you mean Celsius? Use temperature_unit='C'"
+                f"Low temperature ({temperature}K). Did you mean Celsius? Use temperature_unit='C'"  # noqa: E501
             )
         elif temperature > 2000:
             warnings.append(
@@ -122,7 +122,7 @@ def _validate_composition_and_fittings(
         total = sum(gas_composition.values())
         if not (0.99 <= total <= 1.01):
             warnings.append(
-                f"Gas composition sums to {total:.4f}, expected ~1.0. Will be auto-normalized."
+                f"Gas composition sums to {total:.4f}, expected ~1.0. Will be auto-normalized."  # noqa: E501
             )
 
         unknown = [c for c in gas_composition.keys() if c not in GAS_DATABASE]
@@ -139,7 +139,7 @@ def _validate_composition_and_fittings(
                 similar = [f for f in FITTING_K_FACTORS.keys() if fitting_type in f]
                 warnings.append(
                     f"Fitting[{i}] type '{fitting_type}' not in database. "
-                    f"Similar: {', '.join(similar[:3]) if similar else 'see list_fittings()'}"
+                    f"Similar: {', '.join(similar[:3]) if similar else 'see list_fittings()'}"  # noqa: E501
                 )
 
 

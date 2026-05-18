@@ -267,11 +267,11 @@ class TestTripleFrictionTorqueVector:
             assert np.isclose(
                 abs(tf[0]),
                 frictional_params.mu1,
-            ), f"Expected |tau_f1|={frictional_params.mu1}, got {abs(tf[0])} at speed={speed}"
+            ), f"Expected |tau_f1|={frictional_params.mu1}, got {abs(tf[0])} at speed={speed}"  # noqa: E501
             assert np.isclose(
                 abs(tf[2]),
                 frictional_params.mu3,
-            ), f"Expected |tau_f3|={frictional_params.mu3}, got {abs(tf[2])} at speed={speed}"
+            ), f"Expected |tau_f3|={frictional_params.mu3}, got {abs(tf[2])} at speed={speed}"  # noqa: E501
 
     def test_coulomb_zero_at_rest(
         self,

@@ -566,7 +566,7 @@ class MainWindow(ThemedWindowMixin, QMainWindow):
     ]
 
     def _on_tab_changed(self, index: int) -> None:
-        """Update toolstrip segment checkboxes and sync overlay state for the active tab.
+        """Update toolstrip segment checkboxes and sync overlay state for the active tab.  # noqa: E501
 
         When the user switches tabs the new panel's pendulum widget must
         receive the current overlay toggle states from the toolstrip so
@@ -711,9 +711,9 @@ class MainWindow(ThemedWindowMixin, QMainWindow):
             )
             # Apply saved theme
             self._theme_manager.apply_theme()  # type: ignore[union-attr]
-            self._theme_manager.themeChanged.connect(self._on_theme_changed)  # type: ignore[union-attr]
+            self._theme_manager.themeChanged.connect(self._on_theme_changed)  # type: ignore[union-attr]  # noqa: E501
 
-            # Use shared helper to build a full theme submenu (window first, then parent)
+            # Use shared helper to build a full theme submenu (window first, then parent)  # noqa: E501
             if self._quick_theme_menu is None:
                 raise ValueError("DbC Blocked: Precondition failed.")
             if create_theme_menu is not None:

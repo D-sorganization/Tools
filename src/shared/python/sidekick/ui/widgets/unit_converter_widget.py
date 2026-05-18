@@ -466,7 +466,7 @@ class UnitConverterWidget(BaseCalculatorWindow):
         return None
 
     def _get_row_by_index(self, index: int) -> ConversionRow | None:
-        """Get the ConversionRow object associated with a widget index (0-2: recent, 3-5: saved)."""
+        """Get the ConversionRow object associated with a widget index."""
         if index is None:
             raise ValueError("index must be provided")
         recent = self.recent_conversions

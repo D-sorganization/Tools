@@ -25,7 +25,7 @@ class GeminiTitleLLM:
             )
             if not key:
                 logger.warning(
-                    "API key not found. Checked: GEMINI_API_KEY, GOOGLE_API_KEY in environment variables, "
+                    "API key not found. Checked: GEMINI_API_KEY, GOOGLE_API_KEY in environment variables, "  # noqa: E501
                     ".env files in project/tools/home directories"
                 )
                 self.model = None

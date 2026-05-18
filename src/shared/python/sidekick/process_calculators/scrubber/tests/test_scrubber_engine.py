@@ -71,7 +71,7 @@ class TestScrubberEngine(unittest.TestCase):
             **{**self.standard_inputs.__dict__, "gas_flow_kg_hr": 0}
         )
         # Should probably return zero or handle gracefully.
-        # In current implementation, it might produce results but they should be small/zero.
+        # In current implementation, it might produce results but they should be small/zero.  # noqa: E501
         results = ScrubberEngine.calculate(zero_inputs)
         self.assertEqual(results.column_diameter_m, 0.0)
         self.assertEqual(results.packed_height_m, 0.0)

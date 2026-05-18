@@ -87,7 +87,7 @@ def test_results_panel_initialization(dummy_qapp):
 
 
 @patch(
-    "upstream_drift_tools.process_calculators.psa_package.psa_gui.calculate_o2_safety_analysis"
+    "upstream_drift_tools.process_calculators.psa_package.psa_gui.calculate_o2_safety_analysis"  # noqa: E501
 )
 @patch(
     "upstream_drift_tools.process_calculators.psa_package.psa_gui.calculate_sensitivity"
@@ -184,20 +184,20 @@ def test_psa_main_window_initialization(mock_show, mock_msg_box, dummy_qapp):
 
         # Test notebook launches
         with patch(
-            "upstream_drift_tools.process_calculators.psa_package.psa_gui.subprocess.Popen"
+            "upstream_drift_tools.process_calculators.psa_package.psa_gui.subprocess.Popen"  # noqa: E501
         ) as mock_popen:
             with patch(
-                "upstream_drift_tools.process_calculators.psa_package.psa_gui.os.path.exists",
+                "upstream_drift_tools.process_calculators.psa_package.psa_gui.os.path.exists",  # noqa: E501
                 return_value=True,
             ):
                 window._launch_jupyter()
                 assert mock_popen.called
 
         with patch(
-            "upstream_drift_tools.process_calculators.psa_package.psa_gui.subprocess.Popen"
+            "upstream_drift_tools.process_calculators.psa_package.psa_gui.subprocess.Popen"  # noqa: E501
         ) as mock_popen2:
             with patch(
-                "upstream_drift_tools.process_calculators.psa_package.psa_gui.os.path.exists",
+                "upstream_drift_tools.process_calculators.psa_package.psa_gui.os.path.exists",  # noqa: E501
                 return_value=True,
             ):
                 window._launch_webapp()
@@ -205,7 +205,7 @@ def test_psa_main_window_initialization(mock_show, mock_msg_box, dummy_qapp):
 
         # Test Colab launch
         with patch(
-            "upstream_drift_tools.process_calculators.psa_package.psa_gui.webbrowser.open"
+            "upstream_drift_tools.process_calculators.psa_package.psa_gui.webbrowser.open"  # noqa: E501
         ) as mock_web:
             window._launch_colab()
             assert not mock_web.called

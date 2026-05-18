@@ -250,7 +250,7 @@ class ControlPanel(ThemedWindowMixin, QMainWindow):
                 logging.info(f"  {k}: {v:.4f}")
 
     def update_ui_state(self) -> None:
-        """Runs on the main PyQt thread just to synchronize UI and check exit conditions."""
+        """Runs on the main PyQt thread just to synchronize UI and check exit conditions."""  # noqa: E501
         if not self.viewer.is_running():
             QApplication.quit()
             return
@@ -274,7 +274,7 @@ class ControlPanel(ThemedWindowMixin, QMainWindow):
                 diag = self.sim.compute_diagnostics()
                 if not diag["is_diverged"]:
                     grf = diag.get("grf", {})
-                    grf_text = f"GRF Z | R: {grf.get('right_z', 0):.1f} N | L: {grf.get('left_z', 0):.1f} N"
+                    grf_text = f"GRF Z | R: {grf.get('right_z', 0):.1f} N | L: {grf.get('left_z', 0):.1f} N"  # noqa: E501
 
                     t_text = "\n".join(
                         [
@@ -287,7 +287,7 @@ class ControlPanel(ThemedWindowMixin, QMainWindow):
                         t_text = "  None Active"
 
                     text = (
-                        f"Time: {diag['time_sec']:.2f} s | Frames: {diag['history_frames']}\n"
+                        f"Time: {diag['time_sec']:.2f} s | Frames: {diag['history_frames']}\n"  # noqa: E501
                         f"Z Height: {diag['pelvis_z_m']:.3f} m\n"
                         f"R. Knee: {diag['r_knee_deg']:.1f} deg\n"
                         f"Tracking Err: {diag['max_tracking_err_deg']:.1f} deg\n"

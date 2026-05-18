@@ -210,7 +210,7 @@ class VideoProcessor:
         self._cap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)  # type: ignore[union-attr]
 
         for frame_num in range(start_frame, end, step):
-            self._cap.set(cv2.CAP_PROP_POS_FRAMES, frame_num)  # type: ignore[union-attr]
+            self._cap.set(cv2.CAP_PROP_POS_FRAMES, frame_num)  # type: ignore[union-attr]  # noqa: E501
             ret, frame = self._cap.read()  # type: ignore[union-attr]
 
             if not ret:
@@ -261,7 +261,7 @@ class VideoProcessor:
             for i, (frame, frame_num, timestamp) in enumerate(
                 self.iterate_frames(start_frame, end_frame, step)
             ):
-                pose = estimator.process_frame(frame, frame_num, timestamp)  # type: ignore[union-attr]
+                pose = estimator.process_frame(frame, frame_num, timestamp)  # type: ignore[union-attr]  # noqa: E501
 
                 if pose and pose.confidence >= min_confidence:
                     poses.append(pose)

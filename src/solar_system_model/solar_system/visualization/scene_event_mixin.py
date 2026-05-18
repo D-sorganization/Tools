@@ -121,7 +121,7 @@ class SceneEventMixin:
         elif key == K_t:
             self._handle_trajectory_plan()
         elif key == K_PERIOD:
-            if self.educational_panel and self.educational_panel.visible:  # type: ignore[attr-defined]
+            if self.educational_panel and self.educational_panel.visible:  # type: ignore[attr-defined]  # noqa: E501
                 self.educational_panel.cycle_fact()  # type: ignore[attr-defined]
         elif key == K_0:
             if self.sun:  # type: ignore[attr-defined]
@@ -136,7 +136,7 @@ class SceneEventMixin:
         if key == K_d and self.date_picker:  # type: ignore[attr-defined]
             self.date_picker.toggle()  # type: ignore[attr-defined]
             if self.date_picker.visible:  # type: ignore[attr-defined]
-                self.date_picker.set_date(self.time_manager.current_time.datetime_utc)  # type: ignore[attr-defined]
+                self.date_picker.set_date(self.time_manager.current_time.datetime_utc)  # type: ignore[attr-defined]  # noqa: E501
                 self._mark_immersion_task("navigate_time")  # type: ignore[attr-defined]
         elif key == K_n and self.time_nav_panel:  # type: ignore[attr-defined]
             self.time_nav_panel.toggle()  # type: ignore[attr-defined]
@@ -144,7 +144,7 @@ class SceneEventMixin:
         elif key == K_e and self.historical_events:  # type: ignore[attr-defined]
             self.historical_events.toggle()  # type: ignore[attr-defined]
             if self.historical_events.visible:  # type: ignore[attr-defined]
-                self._mark_immersion_task("historical_events")  # type: ignore[attr-defined]
+                self._mark_immersion_task("historical_events")  # type: ignore[attr-defined]  # noqa: E501
 
     def _handle_time_jump(self, key: int) -> None:
         """Jump forward/backward by 1 day or 1 month."""
@@ -160,22 +160,22 @@ class SceneEventMixin:
     def _handle_view_toggle(self, key: int) -> None:
         """Toggle visibility / overlay options."""
         if key == K_o:
-            self.view_state.show_orbits = not self.view_state.show_orbits  # type: ignore[attr-defined]
-            self.renderer.settings.show_orbits = self.view_state.show_orbits  # type: ignore[attr-defined]
+            self.view_state.show_orbits = not self.view_state.show_orbits  # type: ignore[attr-defined]  # noqa: E501
+            self.renderer.settings.show_orbits = self.view_state.show_orbits  # type: ignore[attr-defined]  # noqa: E501
             self._mark_immersion_task("toggle_overlays")  # type: ignore[attr-defined]
         elif key == K_l:
-            self.view_state.show_labels = not self.view_state.show_labels  # type: ignore[attr-defined]
-            self.renderer.settings.show_labels = self.view_state.show_labels  # type: ignore[attr-defined]
+            self.view_state.show_labels = not self.view_state.show_labels  # type: ignore[attr-defined]  # noqa: E501
+            self.renderer.settings.show_labels = self.view_state.show_labels  # type: ignore[attr-defined]  # noqa: E501
             self._mark_immersion_task("toggle_overlays")  # type: ignore[attr-defined]
         elif key == K_i:
-            self.view_state.show_info_panel = not self.view_state.show_info_panel  # type: ignore[attr-defined]
+            self.view_state.show_info_panel = not self.view_state.show_info_panel  # type: ignore[attr-defined]  # noqa: E501
         elif key == K_g:
-            self.renderer.settings.show_grid = not self.renderer.settings.show_grid  # type: ignore[attr-defined]
+            self.renderer.settings.show_grid = not self.renderer.settings.show_grid  # type: ignore[attr-defined]  # noqa: E501
             self._mark_immersion_task("toggle_overlays")  # type: ignore[attr-defined]
         elif key == K_h:
-            self.view_state.show_help = not self.view_state.show_help  # type: ignore[attr-defined]
+            self.view_state.show_help = not self.view_state.show_help  # type: ignore[attr-defined]  # noqa: E501
         elif key == K_v:
-            self.settings.stereo_view = not self.settings.stereo_view  # type: ignore[attr-defined]
+            self.settings.stereo_view = not self.settings.stereo_view  # type: ignore[attr-defined]  # noqa: E501
         elif key == K_c:
             self._cycle_camera_mode()  # type: ignore[attr-defined]
         elif key == K_f:
@@ -184,7 +184,7 @@ class SceneEventMixin:
             if self.immersion_checklist:  # type: ignore[attr-defined]
                 self.immersion_checklist.toggle()  # type: ignore[attr-defined]
             self.view_state.show_immersion_checklist = (  # type: ignore[attr-defined]
-                not self.view_state.show_immersion_checklist  # type: ignore[attr-defined]
+                not self.view_state.show_immersion_checklist  # type: ignore[attr-defined]  # noqa: E501
             )
 
     def _handle_trajectory_plan(self) -> None:
@@ -234,17 +234,17 @@ class SceneEventMixin:
             buttons = pygame.mouse.get_pressed()
             mode = "Orbit"
             if self.unified_controls:  # type: ignore[attr-defined]
-                mode = self.unified_controls.get_current_mode()  # type: ignore[attr-defined]
+                mode = self.unified_controls.get_current_mode()  # type: ignore[attr-defined]  # noqa: E501
             elif self.nav_mode_panel:  # type: ignore[attr-defined]
-                mode = self.nav_mode_panel.get_current_mode()  # type: ignore[attr-defined]
+                mode = self.nav_mode_panel.get_current_mode()  # type: ignore[attr-defined]  # noqa: E501
 
             if buttons[0]:  # Left button - depends on mode
                 if mode == "Orbit":
-                    self.renderer.camera.orbit(-rel[0], -rel[1])  # type: ignore[attr-defined]
+                    self.renderer.camera.orbit(-rel[0], -rel[1])  # type: ignore[attr-defined]  # noqa: E501
                 elif mode == "Pan":
-                    self.renderer.camera.pan(-rel[0], rel[1])  # type: ignore[attr-defined]
+                    self.renderer.camera.pan(-rel[0], rel[1])  # type: ignore[attr-defined]  # noqa: E501
                 elif mode == "Zoom":
-                    self.renderer.camera.zoom(rel[1] * 0.5)  # type: ignore[attr-defined]
+                    self.renderer.camera.zoom(rel[1] * 0.5)  # type: ignore[attr-defined]  # noqa: E501
             elif buttons[2]:  # Right button - pan camera
                 self.renderer.camera.pan(-rel[0], rel[1])  # type: ignore[attr-defined]
 
@@ -255,7 +255,7 @@ class SceneEventMixin:
             return
         mode = "Orbit"
         if self.unified_controls:  # type: ignore[attr-defined]
-            mode = self.unified_controls.get_current_mode()  # type: ignore[attr-defined]
+            mode = self.unified_controls.get_current_mode()  # type: ignore[attr-defined]  # noqa: E501
         elif self.nav_mode_panel:  # type: ignore[attr-defined]
             mode = self.nav_mode_panel.get_current_mode()  # type: ignore[attr-defined]
 
@@ -266,12 +266,12 @@ class SceneEventMixin:
             aspect = width / height
             ndc_x = (mx / width) * 2.0 - 1.0
             ndc_y = -((my / height) * 2.0 - 1.0)
-            self.renderer.camera.zoom_at(y_offset, (ndc_x, ndc_y), aspect)  # type: ignore[attr-defined]
+            self.renderer.camera.zoom_at(y_offset, (ndc_x, ndc_y), aspect)  # type: ignore[attr-defined]  # noqa: E501
         elif mode == "Pan":
             width = self.renderer.settings.window_width  # type: ignore[attr-defined]
             height = self.renderer.settings.window_height  # type: ignore[attr-defined]
             aspect = width / height
-            self.renderer.camera.zoom_at(y_offset, (0, 0), aspect)  # type: ignore[attr-defined]
+            self.renderer.camera.zoom_at(y_offset, (0, 0), aspect)  # type: ignore[attr-defined]  # noqa: E501
 
         self._mark_immersion_task("toggle_overlays")  # type: ignore[attr-defined]
 
@@ -313,16 +313,16 @@ class SceneEventMixin:
             return False
 
         rel_x, rel_y = x - sx, y - sy
-        action = self.sidebar_panel.handle_click(rel_x, rel_y)  # type: ignore[attr-defined]
+        action = self.sidebar_panel.handle_click(rel_x, rel_y)  # type: ignore[attr-defined]  # noqa: E501
         if action == "tab_changed":
             return True
 
-        current_tab = self.sidebar_panel.tabs[self.sidebar_panel.current_tab_index]  # type: ignore[attr-defined]
+        current_tab = self.sidebar_panel.tabs[self.sidebar_panel.current_tab_index]  # type: ignore[attr-defined]  # noqa: E501
         if current_tab.content_renderer_key == "planets":
             list_start_y = 75
             if rel_y > list_start_y:
                 idx = (rel_y - list_start_y) // 25
-                bodies = ["Sun"] + [p for p in PLANET_ORDER if p in self.planets]  # type: ignore[attr-defined]
+                bodies = ["Sun"] + [p for p in PLANET_ORDER if p in self.planets]  # type: ignore[attr-defined]  # noqa: E501
                 if 0 <= idx < len(bodies):
                     name = bodies[idx]
                     body = self.get_body_by_name(name)  # type: ignore[attr-defined]
@@ -340,13 +340,13 @@ class SceneEventMixin:
                     data = FAMOUS_MISSIONS[name]
                     launch_str = data.get("launch_date", "")
                     if launch_str:
-                        launch_dt = datetime.strptime(launch_str, "%Y-%m-%d")  # type: ignore[arg-type]
-                        self.time_manager.set_datetime(launch_dt)  # type: ignore[attr-defined]
+                        launch_dt = datetime.strptime(launch_str, "%Y-%m-%d")  # type: ignore[arg-type]  # noqa: E501
+                        self.time_manager.set_datetime(launch_dt)  # type: ignore[attr-defined]  # noqa: E501
                         self._action_message = f"Simulating {name} launch..."
 
                     # Focus on spacecraft if available
                     if name in self.spacecraft:  # type: ignore[attr-defined]
-                        self.select_body(self.spacecraft[name])  # type: ignore[attr-defined]
+                        self.select_body(self.spacecraft[name])  # type: ignore[attr-defined]  # noqa: E501
                         self._focus_on_selected()  # type: ignore[attr-defined]
         return True
 
@@ -372,8 +372,8 @@ class SceneEventMixin:
         # A. Navigation Modes (Left)
         if 20 <= rel_x <= 350 and 20 <= rel_y <= 80:
             idx = (rel_x - 20) // 80
-            if 0 <= idx < len(self.unified_controls.modes):  # type: ignore[attr-defined]
-                self.unified_controls.set_mode(self.unified_controls.modes[idx])  # type: ignore[attr-defined]
+            if 0 <= idx < len(self.unified_controls.modes):  # type: ignore[attr-defined]  # noqa: E501
+                self.unified_controls.set_mode(self.unified_controls.modes[idx])  # type: ignore[attr-defined]  # noqa: E501
             return True
 
         # B. Buttons (Left, below modes)
@@ -397,8 +397,8 @@ class SceneEventMixin:
                 row = (rel_y - start_y) // 30
                 col = 0 if (rel_x - set_x) < 160 else 1
                 idx = row * 2 + col
-                if idx < len(self.unified_controls.checkboxes):  # type: ignore[attr-defined]
-                    action = self.unified_controls.toggle_checkbox(int(idx))  # type: ignore[attr-defined]
+                if idx < len(self.unified_controls.checkboxes):  # type: ignore[attr-defined]  # noqa: E501
+                    action = self.unified_controls.toggle_checkbox(int(idx))  # type: ignore[attr-defined]  # noqa: E501
                     if action:
                         self._handle_setting_action(action)
             return True
@@ -412,21 +412,21 @@ class SceneEventMixin:
             action: The action identifier string.
         """
         if action == "toggle_orbits":
-            self.view_state.show_orbits = not self.view_state.show_orbits  # type: ignore[attr-defined]
+            self.view_state.show_orbits = not self.view_state.show_orbits  # type: ignore[attr-defined]  # noqa: E501
         elif action == "toggle_labels":
-            self.view_state.show_labels = not self.view_state.show_labels  # type: ignore[attr-defined]
+            self.view_state.show_labels = not self.view_state.show_labels  # type: ignore[attr-defined]  # noqa: E501
             if self.renderer:  # type: ignore[attr-defined]
-                self.renderer.settings.show_labels = self.view_state.show_labels  # type: ignore[attr-defined]
+                self.renderer.settings.show_labels = self.view_state.show_labels  # type: ignore[attr-defined]  # noqa: E501
         elif action == "toggle_grid":
             if self.renderer:  # type: ignore[attr-defined]
-                self.renderer.settings.show_grid = not self.renderer.settings.show_grid  # type: ignore[attr-defined]
+                self.renderer.settings.show_grid = not self.renderer.settings.show_grid  # type: ignore[attr-defined]  # noqa: E501
         elif action == "toggle_stereo":
-            self.settings.stereo_view = not self.settings.stereo_view  # type: ignore[attr-defined]
+            self.settings.stereo_view = not self.settings.stereo_view  # type: ignore[attr-defined]  # noqa: E501
         elif action == "toggle_inner":
-            self.view_state.show_inner_planets = not self.view_state.show_inner_planets  # type: ignore[attr-defined]
+            self.view_state.show_inner_planets = not self.view_state.show_inner_planets  # type: ignore[attr-defined]  # noqa: E501
         elif action == "toggle_outer":
-            self.view_state.show_outer_planets = not self.view_state.show_outer_planets  # type: ignore[attr-defined]
+            self.view_state.show_outer_planets = not self.view_state.show_outer_planets  # type: ignore[attr-defined]  # noqa: E501
         elif action == "toggle_dwarf":
-            self.view_state.show_dwarf_planets = not self.view_state.show_dwarf_planets  # type: ignore[attr-defined]
+            self.view_state.show_dwarf_planets = not self.view_state.show_dwarf_planets  # type: ignore[attr-defined]  # noqa: E501
         elif action == "toggle_moons":
-            self.view_state.show_minor_bodies = not self.view_state.show_minor_bodies  # type: ignore[attr-defined]
+            self.view_state.show_minor_bodies = not self.view_state.show_minor_bodies  # type: ignore[attr-defined]  # noqa: E501

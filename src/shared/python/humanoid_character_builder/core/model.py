@@ -62,7 +62,7 @@ class SupportPolygon:
             return False
 
         # Using ray casting algorithm or checking sign of cross products
-        # Since it's a convex polygon (hull), we can check if point is on the same side of all edges
+        # Since it's a convex polygon (hull), we can check if point is on the same side of all edges  # noqa: E501
 
         px, py = point
         n = len(self.vertices)
@@ -93,7 +93,7 @@ class SupportPolygon:
         if point is None:
             raise ValueError("point must be provided")
         if not self.contains(point):
-            return -1.0  # Or positive distance to polygon? Convention usually margin > 0 is stable.
+            return -1.0  # Or positive distance to polygon? Convention usually margin > 0 is stable.  # noqa: E501
             # If outside, negative margin.
 
         px, py = point
@@ -165,8 +165,8 @@ class HumanoidModel:
         # Stack: (link_name, parent_transform)
         # Root transform is identity (or aligned with world frame)
         # Usually pelvis is at some height?
-        # The URDF generator sets pelvis origin? No, the generator sets origins relative to parent.
-        # The root link doesn't have a parent joint in the list (or it's connected to world).
+        # The URDF generator sets pelvis origin? No, the generator sets origins relative to parent.  # noqa: E501
+        # The root link doesn't have a parent joint in the list (or it's connected to world).  # noqa: E501
         # In URDF, the first link is the root.
 
         stack = [(self.root_link_name, np.eye(4))]

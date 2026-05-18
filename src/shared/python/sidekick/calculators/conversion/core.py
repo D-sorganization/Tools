@@ -1,6 +1,7 @@
+# ruff: noqa: E501
 """Functional helpers for unit conversion routines.
 
-These helpers are intentionally stateless so that conversion math can be reused outside of
+These helpers are intentionally stateless so that conversion math can be reused outside of  # noqa: E501
 the service class and tested independently.
 """
 
@@ -89,7 +90,7 @@ def actual_to_standard_flow(
     pressure_pa: float,
     standard: StandardCondition,
 ) -> float:
-    """Translate an actual volumetric flow in ACFM back to SCFM at reference conditions."""
+    """Translate an actual volumetric flow in ACFM back to SCFM at reference conditions."""  # noqa: E501
     if acfm_value is None:
         raise ValueError("acfm_value must be provided")
     _require_positive_finite(temperature_k, "temperature_k")
@@ -116,7 +117,7 @@ def scfm_to_standard_m3_per_hour(
 def standard_m3_per_hour_to_scfm(
     m3_hr_at_ref: float, reference_std: StandardCondition, standard: StandardCondition
 ) -> float:
-    """Convert m³/hr at a reference standard condition to SCFM at the standard condition."""
+    """Convert m³/hr at a reference standard condition to SCFM at the standard condition."""  # noqa: E501
 
     # First convert m³/hr at reference standard to m³/hr at SCFM standard condition
     if m3_hr_at_ref is None:

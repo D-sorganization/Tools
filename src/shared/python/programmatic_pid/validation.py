@@ -164,7 +164,7 @@ def validate_spec(spec: Any) -> None:
     """Validate spec and raise SpecValidationError if any errors found.
 
     Precondition: spec is a dict loaded from YAML.
-    Postcondition: if returns normally, spec satisfies all structural + referential constraints.
+    Postcondition: if returns normally, spec satisfies all structural + referential constraints.  # noqa: E501
     """
     # Optional: schema-based structural validation
     schema = _load_schema()

@@ -88,7 +88,7 @@ else:
         PYQT_AVAILABLE = True
     except ImportError:
         PYQT_AVAILABLE = False
-        # Mock/dummy classes to prevent NameError in type hints or unused imports if needed
+        # Mock/dummy classes to prevent NameError in type hints or unused imports if needed  # noqa: E501
         QWidget = object
         QTimer = object
 
@@ -115,7 +115,7 @@ else:
 
 # Try to import species database; provide fallback for standalone use
 try:
-    from integrated_process_simulator.calculators.thermodynamic_properties.species_database import (
+    from integrated_process_simulator.calculators.thermodynamic_properties.species_database import (  # noqa: E501
         DEFAULT_DATABASE_PATH,
         get_species_database,
     )
@@ -668,7 +668,7 @@ if BASE_CALCULATOR_AVAILABLE:
                     f"Pressure: {self.pressure.value():.1f} bar\n\n",
                     "Performance:\n",
                     f"  CO Conversion: {equilibrium['conversion']:.2f}%\n",
-                    f"  Equilibrium Constant: {equilibrium['equilibrium_constant']:.2f}\n",
+                    f"  Equilibrium Constant: {equilibrium['equilibrium_constant']:.2f}\n",  # noqa: E501
                     f"  H2/CO Ratio: {equilibrium['h2_co_ratio']:.2f}\n",
                     f"  Heat Released: {equilibrium['heat_released']:.2f} kJ/mol\n\n",
                     "Product Composition:\n",

@@ -363,7 +363,7 @@ class TestNoiseGeneratorElseFallback:
         from unittest.mock import MagicMock
 
         gen = NoiseGenerator(seed=0)
-        # A MagicMock is not equal to any NoiseType member, so all if/elif branches skip.
+        # A MagicMock is not equal to any NoiseType member, so all if/elif branches skip.  # noqa: E501
         # We give it a .value attribute so Signal construction doesn't crash.
         fake_noise = MagicMock()
         fake_noise.value = "unknown"

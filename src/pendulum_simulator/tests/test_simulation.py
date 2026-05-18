@@ -129,7 +129,7 @@ class TestSimulationBasics:
                 n_coeffs_per_joint=5,
             )
             assert mock_sim.called
-            # The result should be interpolated to dt=0.1, so length is 10 (from 0.0 to 0.9)
+            # The result should be interpolated to dt=0.1, so length is 10 (from 0.0 to 0.9)  # noqa: E501
             assert len(result.t) == 10
             assert np.isclose(result.t[1] - result.t[0], 0.1)
 

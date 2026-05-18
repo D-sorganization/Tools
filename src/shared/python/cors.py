@@ -48,7 +48,7 @@ def _validate_origin(origin: str) -> None:
         raise ValueError("Origin cannot be empty")
 
     # Simple regex: scheme://host:port, where host can be IP or domain
-    pattern = r"^https?://([a-zA-Z0-9.-]+|[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})(:[0-9]+)?$"
+    pattern = r"^https?://([a-zA-Z0-9.-]+|[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})(:[0-9]+)?$"  # noqa: E501
     if not re.match(pattern, origin):
         raise ValueError(
             f"Origin '{origin}' is malformed. Expected scheme://host[:port]"

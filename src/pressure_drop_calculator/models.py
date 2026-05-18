@@ -21,13 +21,13 @@ class PressureDropInput(BaseModel):
         mass_flow_rate_kg_s: Mass flow rate in kg/s. Must be positive.
         inlet_pressure_pa: Inlet pressure (absolute) in Pascals. Must be positive.
         inlet_temperature_k: Inlet temperature in Kelvin. Must be positive.
-        pipe_roughness_m: Absolute pipe roughness in meters. Defaults to 0.000045 m (drawn tubing).
-        elevation_change_m: Elevation change in meters (positive = upward). Defaults to 0.
-        gas_composition: Dictionary of gas component names to mole fractions. Must sum to 1.0.
+        pipe_roughness_m: Absolute pipe roughness in meters. Defaults to 0.000045 m (drawn tubing).  # noqa: E501
+        elevation_change_m: Elevation change in meters (positive = upward). Defaults to 0.  # noqa: E501
+        gas_composition: Dictionary of gas component names to mole fractions. Must sum to 1.0.  # noqa: E501
             Defaults to air (N2: 0.79, O2: 0.21).
         friction_method: Friction factor correlation method. One of "colebrook",
             "churchill", "swamee-jain". Defaults to "colebrook".
-        apply_compressibility: Whether to apply compressible flow corrections. Defaults to True.
+        apply_compressibility: Whether to apply compressible flow corrections. Defaults to True.  # noqa: E501
     """  # noqa: E501
 
     pipe_diameter_m: float = Field(
@@ -88,18 +88,18 @@ class PressureDropOutput(BaseModel):
         pressure_drop_bar: Total pressure drop in bar (1 bar = 100000 Pa).
         pressure_drop_psi: Total pressure drop in psi (1 psi = 6894.76 Pa).
         friction_pressure_drop_pa: Pressure drop due to friction alone (Pa).
-        acceleration_pressure_drop_pa: Pressure drop due to flow acceleration/deceleration (Pa).
+        acceleration_pressure_drop_pa: Pressure drop due to flow acceleration/deceleration (Pa).  # noqa: E501
         elevation_pressure_drop_pa: Pressure drop due to elevation change (Pa).
         inlet_velocity_m_s: Inlet velocity in m/s.
         outlet_velocity_m_s: Outlet velocity in m/s.
         reynolds_number: Reynolds number at inlet conditions (dimensionless).
         friction_factor: Darcy friction factor at inlet conditions (dimensionless).
         outlet_pressure_pa: Outlet pressure (absolute) in Pascals.
-        outlet_temperature_k: Outlet temperature in Kelvin (accounting for expansion/compression).
+        outlet_temperature_k: Outlet temperature in Kelvin (accounting for expansion/compression).  # noqa: E501
         average_density_kg_m3: Average gas density along the pipe (kg/m³).
         mach_number: Mach number at outlet (for compressible flow analysis).
         compressibility_factor: Compressibility factor (Z) used in calculations.
-        calculation_method: Method used for friction factor ("colebrook", "churchill", etc.).
+        calculation_method: Method used for friction factor ("colebrook", "churchill", etc.).  # noqa: E501
     """  # noqa: E501
 
     pressure_drop_pa: float = Field(..., ge=0, description="Total pressure drop in Pa")

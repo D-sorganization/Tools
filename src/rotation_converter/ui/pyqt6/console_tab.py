@@ -47,7 +47,7 @@ class CommandConsoleTab(QWidget):
         # Initial greeting
         self._print_output("Python Interactive Console (Rotation Converter)")
         self._print_output(
-            "Loaded functions: mr.*, Rotation, RigidTransform, np.*, math.*, pd.*, scipy.*"
+            "Loaded functions: mr.*, Rotation, RigidTransform, np.*, math.*, pd.*, scipy.*"  # noqa: E501
         )
         self._print_output("Type 'help(func)' or 'help(mr)' for documentation.\n")
 
@@ -161,8 +161,8 @@ class CommandConsoleTab(QWidget):
         cursor.movePosition(QTextCursor.MoveOperation.End)
 
         fmt = QTextCharFormat()
-        # To handle theme changes properly without hardcoding, we can check basic Qt palette
-        # But since we use fixed dark/light colours elsewhere, we match the fleet dark theme.
+        # To handle theme changes properly without hardcoding, we can check basic Qt palette  # noqa: E501
+        # But since we use fixed dark/light colours elsewhere, we match the fleet dark theme.  # noqa: E501
         if is_error:
             fmt.setForeground(QColor("#f38ba8"))
         elif is_input:

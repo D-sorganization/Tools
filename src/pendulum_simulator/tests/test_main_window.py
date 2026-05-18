@@ -250,7 +250,7 @@ def test_theme_manager_methods(qapp, monkeypatch) -> Any:
     )
     monkeypatch.setattr("double_pendulum_golf.gui.main_window._THEME_AVAILABLE", True)
 
-    # Inject ThemeManagerDialog onto the module directly because it might not be imported!
+    # Inject ThemeManagerDialog onto the module directly because it might not be imported!  # noqa: E501
     import double_pendulum_golf.gui.main_window as mw
 
     mw.ThemeManagerDialog = mock_dialog
@@ -278,7 +278,7 @@ def test_ui_interactions(qapp) -> Any:
 
     # Toggle analysis dock
     w._toggle_analysis_dock(True)
-    # The dock may not return isVisible()=True if main window is hidden, check check property or effect
+    # The dock may not return isVisible()=True if main window is hidden, check check property or effect  # noqa: E501
     assert hasattr(w, "_analysis_dock")
 
     # Apply dark theme

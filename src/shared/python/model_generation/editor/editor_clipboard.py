@@ -24,7 +24,7 @@ class ClipboardMixin:
 
     Expects the host class to provide:
     - self._models: dict[str, ParsedModel]
-    - self._clipboard: list[tuple[ComponentType, list[Link], list[Joint], dict[str, Material]]]
+    - self._clipboard: list[tuple[ComponentType, list[Link], list[Joint], dict[str, Material]]]  # noqa: E501
     - self.get_connecting_joint(model_id, link_name) -> Joint | None
     """
 
@@ -137,7 +137,7 @@ class ClipboardMixin:
 
         self._clipboard = [(ComponentType.SUBTREE, links, joints, materials)]
         logger.info(
-            f"Copied subtree '{root_link}' ({len(links)} links, {len(joints)} joints) to clipboard"
+            f"Copied subtree '{root_link}' ({len(links)} links, {len(joints)} joints) to clipboard"  # noqa: E501
         )
         return True
 

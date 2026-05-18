@@ -267,8 +267,8 @@ class VesselDrafterWindow(ThemedWindowMixin, QMainWindow):
             steel_thickness_in=self.steel_spin.value(),
             electrode_count=self.electrode_count_spin.value(),
             electrode_diameter_in=self.electrode_diameter_spin.value(),
-            electrode_insertion_into_inner_circle_in=self.electrode_insertion_spin.value(),
-            electrode_extension_past_inner_circle_in=self.electrode_extension_spin.value(),
+            electrode_insertion_into_inner_circle_in=self.electrode_insertion_spin.value(),  # noqa: E501
+            electrode_extension_past_inner_circle_in=self.electrode_extension_spin.value(),  # noqa: E501
             side_ports=tuple(
                 VesselSidePort(
                     clock_angle_degrees=angle,
@@ -336,7 +336,7 @@ class VesselDrafterWindow(ThemedWindowMixin, QMainWindow):
             self,
             "Export Vessel",
             "vessel_drafter",
-            "STEP Files (*.step *.stp);;STL Files (*.stl);;BREP Files (*.brep);;GLTF Files (*.gltf *.glb);;All Files (*)",
+            "STEP Files (*.step *.stp);;STL Files (*.stl);;BREP Files (*.brep);;GLTF Files (*.gltf *.glb);;All Files (*)",  # noqa: E501
         )
         if not file_path:
             return

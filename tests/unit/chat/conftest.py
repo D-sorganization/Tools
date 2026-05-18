@@ -33,14 +33,14 @@ if _chat_mod is not None:
     _existing_path = list(getattr(_chat_mod, "__path__", []))
     if _WORKTREE_CHAT_DIR not in _existing_path:
         try:
-            _chat_mod.__path__ = [_WORKTREE_CHAT_DIR] + _existing_path  # type: ignore[assignment]
+            _chat_mod.__path__ = [_WORKTREE_CHAT_DIR] + _existing_path  # type: ignore[assignment]  # noqa: E501
         except (AttributeError, TypeError):
             pass
     elif _existing_path[0] != _WORKTREE_CHAT_DIR:
         # Already present but not first — move it to front.
         _existing_path.remove(_WORKTREE_CHAT_DIR)
         try:
-            _chat_mod.__path__ = [_WORKTREE_CHAT_DIR] + _existing_path  # type: ignore[assignment]
+            _chat_mod.__path__ = [_WORKTREE_CHAT_DIR] + _existing_path  # type: ignore[assignment]  # noqa: E501
         except (AttributeError, TypeError):
             pass
 

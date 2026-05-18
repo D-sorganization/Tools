@@ -141,7 +141,7 @@ class TestFunctionGeneratorGUI:
     def test_widget_creation(self, mock_qt_app) -> None:
         """Test that the widget can be created."""
         try:
-            from function_generator.python.function_generator.ui.pyqt6.main_window import (
+            from function_generator.python.function_generator.ui.pyqt6.main_window import (  # noqa: E501
                 FunctionGeneratorWidget,
             )
 
@@ -173,7 +173,7 @@ class TestFunctionGeneratorDbC:
         import numpy as np
 
         try:
-            from function_generator.python.function_generator.ui.pyqt6.main_window import (
+            from function_generator.python.function_generator.ui.pyqt6.main_window import (  # noqa: E501
                 FunctionGeneratorWidget,
             )
         except ImportError as e:
@@ -197,7 +197,7 @@ class TestFunctionGeneratorDbC:
     def test_build_waveform_rejects_non_array_t(self) -> None:
         """_build_waveform raises TypeError when t is not a numpy ndarray."""
         try:
-            from function_generator.python.function_generator.ui.pyqt6.main_window import (
+            from function_generator.python.function_generator.ui.pyqt6.main_window import (  # noqa: E501
                 FunctionGeneratorWidget,
             )
         except ImportError as e:
@@ -220,7 +220,7 @@ class TestFunctionGeneratorDbC:
     def test_init_rejects_non_bool_use_builtin_theme(self) -> None:
         """__init__ raises TypeError when use_builtin_theme is not bool."""
         try:
-            from function_generator.python.function_generator.ui.pyqt6.main_window import (
+            from function_generator.python.function_generator.ui.pyqt6.main_window import (  # noqa: E501
                 FunctionGeneratorWidget,
             )
         except ImportError as e:

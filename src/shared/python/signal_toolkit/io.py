@@ -495,8 +495,8 @@ class SignalLoader:
         """Load signal(s) from a file with automatic format detection.
 
         Supported formats:
-            - ``.csv``, ``.txt``, ``.tsv`` -- delimited text (via ``SignalImporter.from_csv``)
-            - ``.json`` -- JSON with ``time``/``values`` keys (via ``SignalImporter.from_json``)
+            - ``.csv``, ``.txt``, ``.tsv`` -- delimited text (via ``SignalImporter.from_csv``)  # noqa: E501
+            - ``.json`` -- JSON with ``time``/``values`` keys (via ``SignalImporter.from_json``)  # noqa: E501
             - ``.npz`` -- NumPy compressed archive (via ``SignalImporter.from_npz``)
             - ``.npy`` -- single NumPy array (1-D assumes uniform sampling,
               2-D assumes column 0 is time)

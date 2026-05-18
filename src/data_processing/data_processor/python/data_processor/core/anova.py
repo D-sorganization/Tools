@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 
 
 class ANOVAAnalyzer:
-    """Facade over the decomposed one-way, two-way, and repeated-measures ANOVA helpers."""
+    """Facade over the decomposed one-way, two-way, and repeated-measures ANOVA helpers."""  # noqa: E501
 
     def __init__(self, alpha: float = 0.05) -> None:
         self.alpha = alpha

@@ -473,7 +473,7 @@ class TestJacobianHelpers:
             assert jnp.allclose(J[:, col], 0.0), f"DOF {col} should be zero"
 
     def test_helpers_agree_with_full_jacobians_rh(self) -> None:
-        """_right_arm_base_jacobian matches rh entry from analytical_fk_jacobians_jax."""
+        """_right_arm_base_jacobian matches rh entry from analytical_fk_jacobians_jax."""  # noqa: E501
         q = jnp.array([0.3, 0.1, -0.2, 0.0, 0.1, -0.1, 0.0, 0.5])
         full = analytical_fk_jacobians_jax(q, _PARAMS_JAX)
         J_expected = full["rh"]

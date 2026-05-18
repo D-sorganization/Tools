@@ -167,21 +167,21 @@ class TestMcpStatusIndicator:
 
         return McpStatusIndicator
 
-    def test_indicator_shows_disconnected_by_default(self, qtbot: Any) -> None:  # type: ignore[name-defined]
+    def test_indicator_shows_disconnected_by_default(self, qtbot: Any) -> None:  # type: ignore[name-defined]  # noqa: E501
         McpStatusIndicator = self._get_indicator_class()
         widget = McpStatusIndicator()
         qtbot.addWidget(widget)
         assert widget.server_count == 0
         assert "disconnected" in widget.status_text.lower() or widget.server_count == 0
 
-    def test_indicator_updates_on_pool_refresh(self, qtbot: Any) -> None:  # type: ignore[name-defined]
+    def test_indicator_updates_on_pool_refresh(self, qtbot: Any) -> None:  # type: ignore[name-defined]  # noqa: E501
         McpStatusIndicator = self._get_indicator_class()
         widget = McpStatusIndicator()
         qtbot.addWidget(widget)
         widget.update_status(connected_count=2, total_count=3)
         assert widget.server_count == 2
 
-    def test_indicator_accessible_text(self, qtbot: Any) -> None:  # type: ignore[name-defined]
+    def test_indicator_accessible_text(self, qtbot: Any) -> None:  # type: ignore[name-defined]  # noqa: E501
         McpStatusIndicator = self._get_indicator_class()
         widget = McpStatusIndicator()
         qtbot.addWidget(widget)
@@ -227,7 +227,7 @@ class TestMcpServersTab:
         tab.remove_server("notebooklm")
         assert tab.server_count == 0
 
-    def test_get_configs_returns_all_servers(self, qtbot: Any) -> None:  # type: ignore[name-defined]
+    def test_get_configs_returns_all_servers(self, qtbot: Any) -> None:  # type: ignore[name-defined]  # noqa: E501
         McpServersTab = self._get_tab_class()
         tab = McpServersTab()
         qtbot.addWidget(tab)

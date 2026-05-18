@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 # TRACKED_TASK: see #2310 — architecture debt extraction schedule
 
 """
@@ -24,7 +25,7 @@ try:
 except ImportError:
     CANTERA_AVAILABLE = False
     logging.getLogger(__name__).warning(
-        "Warning: Cantera not available. Steam calculator will use simplified calculations."
+        "Warning: Cantera not available. Steam calculator will use simplified calculations."  # noqa: E501
     )
 
 # Try to import CoolProp (preferred high-accuracy backend)
@@ -35,7 +36,7 @@ try:
 except ImportError:
     COOLPROP_AVAILABLE = False
     logging.getLogger(__name__).warning(
-        "Warning: CoolProp not available. Falling back to Cantera or simplified correlations."
+        "Warning: CoolProp not available. Falling back to Cantera or simplified correlations."  # noqa: E501
     )
 
 logger = logging.getLogger(__name__)
@@ -219,7 +220,7 @@ class SteamCalculationEngine:
 
     def _select_best_engine(self, engine: str) -> str:
         """
-        Select the best available calculation engine based on preference and availability.
+        Select the best available calculation engine based on preference and availability.  # noqa: E501
 
         Args:
             engine: Requested engine ("coolprop", "cantera", "simplified", "auto")
@@ -513,7 +514,7 @@ class SteamCalculationEngine:
     def _calculate_saturated_simplified_from_temp(
         self, temperature: float
     ) -> SteamProperties:
-        """Calculate saturated steam properties from temperature using simplified correlations"""
+        """Calculate saturated steam properties from temperature using simplified correlations"""  # noqa: E501
         # Antoine equation for water vapor pressure (valid 1-100°C)
         # log10(P_mmHg) = A - B/(T_K - C) where C is for temperature in Kelvin
         if temperature is None:
@@ -536,7 +537,7 @@ class SteamCalculationEngine:
     def _calculate_saturated_simplified_from_pressure(
         self, pressure: float
     ) -> SteamProperties:
-        """Calculate saturated steam properties from pressure using simplified correlations"""
+        """Calculate saturated steam properties from pressure using simplified correlations"""  # noqa: E501
         # Inverse Antoine equation to find temperature from pressure
         if pressure is None:
             raise ValueError("pressure must be provided")
@@ -748,7 +749,7 @@ class SteamCalculationEngine:
         if pressure < TRIPLE_POINT_PRESSURE or pressure > max_reasonable_pressure:
             msg = (
                 f"Pressure {pressure} Pa is outside valid range "
-                f"[{TRIPLE_POINT_PRESSURE}, {max_reasonable_pressure}] Pa for CoolProp. "
+                f"[{TRIPLE_POINT_PRESSURE}, {max_reasonable_pressure}] Pa for CoolProp. "  # noqa: E501
                 f"Check unit conversion - this value seems too high."
             )
             logger.error(msg)

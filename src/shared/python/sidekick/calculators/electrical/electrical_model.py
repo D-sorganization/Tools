@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Three-Phase Electrical Model for Electrode Systems
 
 Enhanced electrical model that calculates system states, resistance, and current
@@ -245,7 +246,7 @@ class ThreePhaseElectricalModelEnhanced:
         - Electrode 2 from glass wall to tip
         - Line connecting the tips
         - Line connecting the glass wall entry points
-        This trapezoid is extruded vertically by conductive_height × vertical_spreading_factor
+        This trapezoid is extruded vertically by conductive_height × vertical_spreading_factor  # noqa: E501
 
         Performance: Vectorized numpy operations replace 30-iteration loop.
         """

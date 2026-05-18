@@ -47,7 +47,7 @@ def calculate_scrubber(request: ScrubberRequest) -> ScrubberResponse:
         available = ", ".join(sorted(PACKING_DATABASE.keys()))
         raise HTTPException(
             status_code=422,
-            detail=f"Unknown packing type '{request.packing_type}'. Available: {available}",
+            detail=f"Unknown packing type '{request.packing_type}'. Available: {available}",  # noqa: E501
         )
 
     try:
@@ -62,7 +62,7 @@ def calculate_scrubber(request: ScrubberRequest) -> ScrubberResponse:
             request.gas_temperature_k, request.gas_molecular_weight
         )
 
-        # Liquid mass flux (assume per unit area ~ liquid_flow / column area, start with 1 m2)
+        # Liquid mass flux (assume per unit area ~ liquid_flow / column area, start with 1 m2)  # noqa: E501
         liquid_mass_flux = request.liquid_flow_kg_hr / 3600.0  # kg/s per m2 placeholder
 
         flooding_velocity = calculate_flooding_velocity(

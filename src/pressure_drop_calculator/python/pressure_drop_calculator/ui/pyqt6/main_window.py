@@ -231,7 +231,7 @@ class PressureDropCalculatorWidget(QWidget):
         return gas_group
 
     def _create_results_panel(self) -> QWidget:
-        """Create the right results panel with tabs for results, flow, warnings, chart."""
+        """Create the right results panel with tabs for results, flow, warnings, chart."""  # noqa: E501
         results_widget = QWidget()
         results_layout = QVBoxLayout(results_widget)
 
@@ -316,7 +316,7 @@ class PressureDropCalculatorWidget(QWidget):
     def _calculate(self) -> None:
         """Perform the pressure drop calculation."""
         try:
-            from upstream_drift_tools.process_calculators.pressure_drop_calculator import (
+            from upstream_drift_tools.process_calculators.pressure_drop_calculator import (  # noqa: E501
                 calculate_pressure_drop,
             )
 

@@ -131,7 +131,7 @@ class TestCalculatorDbCPreconditions(unittest.TestCase):
     def test_solve_differential_equation_non_string_raises_type_error(self) -> None:
         """solve_differential_equation() raises TypeError for non-string equation."""
         with self.assertRaises(TypeError):
-            self.calculator.solve_differential_equation(42, "f")  # type: ignore[arg-type]
+            self.calculator.solve_differential_equation(42, "f")  # type: ignore[arg-type]  # noqa: E501
 
     def test_matrix_exponential_none_raises_type_error(self) -> None:
         """matrix_exponential() raises TypeError when matrix is None."""

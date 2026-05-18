@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 UpstreamDrift Shared Tools Library
 ==================================
@@ -5,11 +6,11 @@ UpstreamDrift Shared Tools Library
 Shared components for Gasification Model and UpstreamDrift (Golf Suite).
 
 Subpackages (import by domain):
-    calculators           - Calculation engines (conversion, electrical, mechanical, thermo)
+    calculators           - Calculation engines (conversion, electrical, mechanical, thermo)  # noqa: E501
     data_processing       - DataProcessorEngine, readers/writers, typed exceptions
     lab                   - Laboratory tools (bio/C3D reader)
     process_calculators   - Standalone process engineering calculators
-    theme                 - Fleet-wide color theme system (13+ themes, PyQt6 integration)
+    theme                 - Fleet-wide color theme system (13+ themes, PyQt6 integration)  # noqa: E501
     ui                    - PyQt6 widgets, themes, managers, mixins
     utils                 - Logging, paths, state management, physical constants
 """

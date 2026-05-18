@@ -43,8 +43,8 @@ _env_stub = sys.modules.setdefault(
     "src.shared.python.config.environment",
     types.ModuleType("src.shared.python.config.environment"),
 )
-_env_stub.get_env = lambda key, default=None, required=False: default  # type: ignore[attr-defined]
-_env_stub.get_env_float = lambda key, default=0.0: float(default)  # type: ignore[attr-defined]
+_env_stub.get_env = lambda key, default=None, required=False: default  # type: ignore[attr-defined]  # noqa: E501
+_env_stub.get_env_float = lambda key, default=0.0: float(default)  # type: ignore[attr-defined]  # noqa: E501
 
 from PyQt6.QtWidgets import QLabel, QWidget  # noqa: E402
 

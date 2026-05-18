@@ -46,4 +46,4 @@ class TestLimiter(unittest.TestCase):
 
     def test_independent_keys(self) -> None:
         """Test that limits are tracked independently for different keys."""
-        # This test would require mocking get_remote_address or using a different strategy
+        # This test would require mocking get_remote_address or using a different strategy  # noqa: E501

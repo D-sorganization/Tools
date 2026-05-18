@@ -114,19 +114,19 @@ def test_get_flammability_status():
 @patch("upstream_drift_tools.process_calculators.psa_package.psa_webapp.px.imshow")
 @patch("upstream_drift_tools.process_calculators.psa_package.psa_webapp.go.Figure")
 @patch(
-    "upstream_drift_tools.process_calculators.psa_package.psa_webapp._render_data_tables_tab"
+    "upstream_drift_tools.process_calculators.psa_package.psa_webapp._render_data_tables_tab"  # noqa: E501
 )
 @patch(
-    "upstream_drift_tools.process_calculators.psa_package.psa_webapp._render_o2_safety_tab"
+    "upstream_drift_tools.process_calculators.psa_package.psa_webapp._render_o2_safety_tab"  # noqa: E501
 )
 @patch(
-    "upstream_drift_tools.process_calculators.psa_package.psa_webapp._render_sensitivity_tab"
+    "upstream_drift_tools.process_calculators.psa_package.psa_webapp._render_sensitivity_tab"  # noqa: E501
 )
 @patch(
-    "upstream_drift_tools.process_calculators.psa_package.psa_webapp._render_results_tab"
+    "upstream_drift_tools.process_calculators.psa_package.psa_webapp._render_results_tab"  # noqa: E501
 )
 @patch(
-    "upstream_drift_tools.process_calculators.psa_package.psa_webapp._render_key_metrics"
+    "upstream_drift_tools.process_calculators.psa_package.psa_webapp._render_key_metrics"  # noqa: E501
 )
 @patch(
     "upstream_drift_tools.process_calculators.psa_package.psa_webapp._render_sidebar"

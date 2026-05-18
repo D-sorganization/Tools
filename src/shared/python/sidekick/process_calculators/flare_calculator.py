@@ -36,7 +36,7 @@ from .constants import (
     SECONDS_PER_HOUR,
 )
 
-# Standard Gas Properties (Molecular Weight [g/mol], Heating Value [kJ/kg], Cp [kJ/kg-K])
+# Standard Gas Properties (Molecular Weight [g/mol], Heating Value [kJ/kg], Cp [kJ/kg-K])  # noqa: E501
 GAS_PROPERTIES: Final[dict[str, dict[str, float]]] = {
     "H2": {"mw": 2.016, "hv": 119930, "cp": 14.3},
     "CO": {"mw": 28.01, "hv": 10100, "cp": 1.04},

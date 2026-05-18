@@ -12,7 +12,7 @@ class SyngasWaterRequest(BaseModel):
     pressure_bar: float = Field(..., gt=0, le=500, description="System pressure [bar]")
     composition_key: str = Field(
         default="typical_syngas",
-        description="Composition preset key: typical_syngas, biomass_syngas, coal_syngas, natural_gas_reforming",
+        description="Composition preset key: typical_syngas, biomass_syngas, coal_syngas, natural_gas_reforming",  # noqa: E501
     )
     method: str = Field(
         default="auto",

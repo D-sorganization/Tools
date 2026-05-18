@@ -28,7 +28,7 @@ class TrajectoryResultMixin:
             raise ValueError("states row count must match the number of time samples")
         if not (self.states.shape[1] == expected_state_width):
             raise ValueError(
-                f"states must have width {expected_state_width}, got {self.states.shape[1]}"
+                f"states must have width {expected_state_width}, got {self.states.shape[1]}"  # noqa: E501
             )
         if not (np.all(np.isfinite(self.t))):
             raise ValueError("Time vector must be finite")
@@ -60,7 +60,7 @@ class TrajectoryResultMixin:
         self._check_idx(idx)
         torque_func = getattr(self, "torque_func")
         tau_drive = np.array(torque_func(self.t[idx]))
-        tau_friction: np.ndarray = self.friction_torques_at(idx)  # type: ignore[attr-defined]
+        tau_friction: np.ndarray = self.friction_torques_at(idx)  # type: ignore[attr-defined]  # noqa: E501
         return np.asarray(tau_drive + tau_friction)
 
     def all_positions(self) -> list[Any]:

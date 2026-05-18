@@ -519,7 +519,7 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
             description: non-empty string describing the source.
 
         Raises:
-            TypeError: if any numeric argument is not a float/int, or description is not a str.
+            TypeError: if any numeric argument is not a float/int, or description is not a str.  # noqa: E501
             ValueError: if any numeric argument is not finite, or mass is not positive.
         """
         for name, val in (

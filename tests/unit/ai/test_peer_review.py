@@ -243,8 +243,8 @@ def _stub_config_deps() -> None:
     # stub config.environment
     _cfg_env = types.ModuleType("src.shared.python.config")
     _cfg_env_sub = types.ModuleType("src.shared.python.config.environment")
-    _cfg_env_sub.get_env = lambda name, default=None: default  # type: ignore[attr-defined]
-    _cfg_env_sub.get_env_float = lambda name, default=0.0: default  # type: ignore[attr-defined]
+    _cfg_env_sub.get_env = lambda name, default=None: default  # type: ignore[attr-defined]  # noqa: E501
+    _cfg_env_sub.get_env_float = lambda name, default=0.0: default  # type: ignore[attr-defined]  # noqa: E501
     sys.modules.setdefault("src.shared.python.config", _cfg_env)
     sys.modules.setdefault("src.shared.python.config.environment", _cfg_env_sub)
 

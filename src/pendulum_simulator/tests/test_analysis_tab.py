@@ -20,7 +20,7 @@ import double_pendulum_golf.gui.analysis_tab as at
 
 
 class TestMakeDetEvaluator:
-    """_make_det_evaluator must return the determinant of the matrix returned by matrix_fn."""
+    """_make_det_evaluator must return the determinant of the matrix returned by matrix_fn."""  # noqa: E501
 
     def test_det_of_identity(self) -> None:
         """det(I_2) = 1.0."""
@@ -48,7 +48,7 @@ class TestMakeDetEvaluator:
 
 
 class TestMakeCondEvaluator:
-    """_make_cond_evaluator must return the condition number of the matrix returned by matrix_fn."""
+    """_make_cond_evaluator must return the condition number of the matrix returned by matrix_fn."""  # noqa: E501
 
     def test_cond_of_identity(self) -> None:
         """cond(I_2) = 1.0."""

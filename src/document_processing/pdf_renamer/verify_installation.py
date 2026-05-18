@@ -112,11 +112,11 @@ def main() -> None:
         logger.info("  - CLI: python -m src.pdf_renamer.cli /path/to/pdfs --dry-run")
         if not llm_ok:
             logger.info(
-                f"\n{YELLOW}Note:{RESET} AI features require google-generativeai (optional)"
+                f"\n{YELLOW}Note:{RESET} AI features require google-generativeai (optional)"  # noqa: E501
             )
         if not gemini_key and llm_ok:
             logger.info(
-                f"{YELLOW}Note:{RESET} Set GEMINI_API_KEY environment variable to enable AI"
+                f"{YELLOW}Note:{RESET} Set GEMINI_API_KEY environment variable to enable AI"  # noqa: E501
             )
     else:
         logger.error(f"\n{RED}{BOLD}[FAILED] Some dependencies are missing!{RESET}")

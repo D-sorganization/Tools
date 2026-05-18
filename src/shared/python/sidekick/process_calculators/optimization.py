@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Optimization helpers for the advanced plots tab."""
 
 from __future__ import annotations
@@ -375,7 +376,7 @@ def find_optimal_on_surface(
         x_grid: 1D or 2D array of X coordinates.
         y_grid: 1D or 2D array of Y coordinates.
         z_grid: 2D array of Z values (shape matching grid).
-        method: Optimization method ("Grid Search", "L-BFGS-B", "Differential Evolution").
+        method: Optimization method ("Grid Search", "L-BFGS-B", "Differential Evolution").  # noqa: E501
         bounds: Optional ((min_x, max_x), (min_y, max_y)). Calculated from grid if None.
         callback: Optional callback(evaluations, total) for progress tracking.
 

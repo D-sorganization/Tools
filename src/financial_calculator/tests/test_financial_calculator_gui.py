@@ -291,7 +291,7 @@ class TestFinancialCalculatorMainWindowDbC:
         )
 
         with pytest.raises(TypeError, match="parent must be a QWidget or None"):
-            FinancialCalculatorMainWindow(parent="not_a_widget")  # type: ignore[arg-type]
+            FinancialCalculatorMainWindow(parent="not_a_widget")  # type: ignore[arg-type]  # noqa: E501
 
     def test_update_results_rejects_wrong_type(self, app):
         """_update_results raises TypeError if results is not FinancialDesign."""

@@ -144,7 +144,7 @@ def test_quick_functions() -> None:
     from unittest.mock import patch
 
     with patch(
-        "upstream_drift_tools.process_calculators.syngas_water_calculator.SyngasWaterCalculator.calculate_water_content"
+        "upstream_drift_tools.process_calculators.syngas_water_calculator.SyngasWaterCalculator.calculate_water_content"  # noqa: E501
     ) as mock_calc:
         content_res = WaterContentResult(
             temperature_c=25.0,

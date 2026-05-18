@@ -383,7 +383,7 @@ class LowerBodySimulator:
     def apply_hip_rotation_target(
         self, time_sec: float | None = None
     ) -> dict[str, float]:
-        """Apply the configured hip target to both hip sockets without per-side duplication."""
+        """Apply the configured hip target to both hip sockets without per-side duplication."""  # noqa: E501
         if self.hip_rotation_target is None:
             raise ValueError("No hip rotation target configured")
 
@@ -403,9 +403,9 @@ class LowerBodySimulator:
     def compute_zero_torque_counterfactual(self) -> dict[str, np.ndarray]:
         """
         Compute Zero Torque Counterfactual (ZTCF).
-        Calculates the accelerations or forces that would occur if no torques were applied,
+        Calculates the accelerations or forces that would occur if no torques were applied,  # noqa: E501
         but maintaining the current kinematic state.
-        In MuJoCo, this is essentially inverse dynamics with zero target acceleration (to find gravity/Coriolis),
+        In MuJoCo, this is essentially inverse dynamics with zero target acceleration (to find gravity/Coriolis),  # noqa: E501
         or forward dynamics with zero control to find resulting acceleration.
         We return both for analytical purposes.
         """
@@ -577,7 +577,7 @@ class LowerBodySimulator:
         self.data.qfrc_applied[:] = 0.0
         mujoco.mj_forward(self.model, self.data)
 
-        # Free joint accelerations are the first 6 elements of qacc (3 linear, 3 angular)
+        # Free joint accelerations are the first 6 elements of qacc (3 linear, 3 angular)  # noqa: E501
         qacc_base = self.data.qacc[:6].copy()
 
         # 2. Perturbed acceleration
@@ -694,7 +694,7 @@ class LowerBodySimulator:
         return False
 
     def step(self) -> None:
-        """Advance the simulation by one timestep, applying polynomial controls and basic stability."""
+        """Advance the simulation by one timestep, applying polynomial controls and basic stability."""  # noqa: E501
         t = self.data.time
         if self.hip_rotation_target is not None:
             self.apply_hip_rotation_target(t)

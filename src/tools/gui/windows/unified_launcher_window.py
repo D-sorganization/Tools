@@ -158,7 +158,7 @@ class UnifiedLauncher(ThemedWindowMixin, ThemedWindowMixin, QMainWindow):
                 "Warning: No tools configuration found (tools.json missing or invalid)."
             )
             no_tools = QLabel(
-                "No tools configuration found.\nPlease ensure tools.json exists in the repository root."
+                "No tools configuration found.\nPlease ensure tools.json exists in the repository root."  # noqa: E501
             )
             no_tools.setAlignment(Qt.AlignmentFlag.AlignCenter)
             tabs.addTab(no_tools, "Error")
@@ -303,7 +303,7 @@ class UnifiedLauncher(ThemedWindowMixin, ThemedWindowMixin, QMainWindow):
                     color = "#388E3C"  # Green
 
                 self.log_area.append(
-                    f'<span style="color:#888">[{timestamp}]</span> <span style="color:{color}">{safe_msg}</span>'
+                    f'<span style="color:#888">[{timestamp}]</span> <span style="color:{color}">{safe_msg}</span>'  # noqa: E501
                 )
 
         self.timer = QTimer()

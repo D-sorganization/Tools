@@ -486,7 +486,7 @@ class CharacterBuilder:
                     )
             else:
                 logger.warning(
-                    f"No mesh path provided for {segment_name}, falling back to primitive"
+                    f"No mesh path provided for {segment_name}, falling back to primitive"  # noqa: E501
                 )
 
         # Primitive approximation

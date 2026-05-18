@@ -86,7 +86,7 @@ class TestDiagnosticsTracker:
 
     def test_load_history_handles_corrupt_lines(self, tmp_path) -> Any:
         diag_file = tmp_path / "diagnostics.jsonl"
-        content = 'not json\n{"timestamp": "1", "severity": "info", "category": "ok", "message": "m"}\n'
+        content = 'not json\n{"timestamp": "1", "severity": "info", "category": "ok", "message": "m"}\n'  # noqa: E501
         diag_file.write_text(content, encoding="utf-8")
 
         with patch("double_pendulum_golf.gui.diagnostics._DIAG_FILE", diag_file):
@@ -161,7 +161,7 @@ class TestDiagnosticsViewer:
 
 class TestExceptionHook:
     def test_hook_records_event(self, temp_tracker) -> Any:
-        # Patch sys.excepthook before calling _install_exception_hook so it wraps our mock
+        # Patch sys.excepthook before calling _install_exception_hook so it wraps our mock  # noqa: E501
         with patch("sys.excepthook", MagicMock()) as mock_orig_hook:
             temp_tracker._install_exception_hook()
 
@@ -216,7 +216,7 @@ class TestDiagnosticsGaps:
     def test_caller_source_empty(self) -> Any:
         import double_pendulum_golf.gui.diagnostics as diag
 
-        # Requesting a depth much larger than the stack will exhaust frames and hit `return ""`
+        # Requesting a depth much larger than the stack will exhaust frames and hit `return ""`  # noqa: E501
         assert diag.DiagnosticsTracker._caller_source(depth=9999) == ""
 
     def test_viewer_bad_timestamp(self, temp_tracker, qtbot) -> Any:

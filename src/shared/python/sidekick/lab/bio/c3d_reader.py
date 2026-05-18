@@ -36,11 +36,11 @@ try:
     from contracts import ensure, require
 except ImportError:  # pragma: no cover
 
-    def require(condition: bool, message: str, value: Any = None) -> None:  # type: ignore[misc]
+    def require(condition: bool, message: str, value: Any = None) -> None:  # type: ignore[misc]  # noqa: E501
         if not condition:
             raise ValueError(f"[DbC pre-condition] {message} (got: {value!r})")
 
-    def ensure(condition: bool, message: str, value: Any = None) -> None:  # type: ignore[misc]
+    def ensure(condition: bool, message: str, value: Any = None) -> None:  # type: ignore[misc]  # noqa: E501
         if not condition:
             raise ValueError(f"[DbC post-condition] {message} (got: {value!r})")
 

@@ -35,7 +35,7 @@ class TestEquationsOfMotionWithTorqueLimits:
     def test_with_torque_limits_clamps(
         self, params: TriplePendulumParams, zero_torque
     ) -> None:
-        """Passing torque_limits clamps huge torques and still produces finite derivatives."""
+        """Passing torque_limits clamps huge torques and still produces finite derivatives."""  # noqa: E501
         state = np.array([0.1, 0.05, -0.05, 0.0, 0.0, 0.0])
         limits = np.array([0.001, 0.001, 0.001])  # tiny limits
 

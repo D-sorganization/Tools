@@ -166,7 +166,7 @@ class TestConstraintViolationPostcondition:
             v = constraint_violation(sim_result.states[i], _GOLFER_PARAMS)
             assert (
                 v < abort_tol
-            ), f"Constraint violation {v:.3e} at step {i} exceeds abort threshold {abort_tol:.3e}"
+            ), f"Constraint violation {v:.3e} at step {i} exceeds abort threshold {abort_tol:.3e}"  # noqa: E501
 
     def test_violation_finite_at_all_steps(
         self, sim_result: GolferSimulationResult

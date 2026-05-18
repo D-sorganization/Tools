@@ -550,9 +550,15 @@ class DataProcessorWidget(DataProcessorOpsMixin, BaseCalculatorWidget):
         cs = self.engine.get_statistics().get(col)
         if not cs:
             return
-        h = f"<b>{cs.name}</b> ({cs.dtype})<br>Count: {cs.count}<br>Nulls: {cs.null_count}<br>Unique: {cs.unique_count}"
+        h = (
+            f"<b>{cs.name}</b> ({cs.dtype})<br>Count: {cs.count}<br>"
+            f"Nulls: {cs.null_count}<br>Unique: {cs.unique_count}"
+        )
         if cs.mean is not None:
-            h += f"<br><br>Mean: {cs.mean:.4f}<br>Std: {cs.std:.4f}<br>Min: {cs.min_val}<br>Max: {cs.max_val}"
+            h += (
+                f"<br><br>Mean: {cs.mean:.4f}<br>Std: {cs.std:.4f}<br>"
+                + f"Min: {cs.min_val}<br>Max: {cs.max_val}"
+            )
         self.stats_text.setHtml(h)
 
     def _show_table_context_menu(self, pos: QPoint) -> None:

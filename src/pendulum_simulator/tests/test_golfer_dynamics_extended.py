@@ -286,7 +286,7 @@ class TestAnalyticalMassMatrix:
         for _ in range(5):
             q = rng.uniform(-np.pi / 4, np.pi / 4, N_DOF)
             with patch(
-                "double_pendulum_golf.golfer_dynamics._native_backend.golfer_mass_matrix",
+                "double_pendulum_golf.golfer_dynamics._native_backend.golfer_mass_matrix",  # noqa: E501
                 return_value=None,
             ):
                 M = analytical_mass_matrix(q, params)
@@ -331,7 +331,7 @@ class TestAnalyticalMassMatrix:
 class TestAnalyticalGravityVector:
     def test_shape(self, params: GolferParams, zero_q: np.ndarray) -> None:
         with patch(
-            "double_pendulum_golf.golfer_dynamics._native_backend.golfer_gravity_vector",
+            "double_pendulum_golf.golfer_dynamics._native_backend.golfer_gravity_vector",  # noqa: E501
             return_value=None,
         ):
             G = analytical_gravity_vector(zero_q, params)
@@ -339,7 +339,7 @@ class TestAnalyticalGravityVector:
 
     def test_finite(self, params: GolferParams, zero_q: np.ndarray) -> None:
         with patch(
-            "double_pendulum_golf.golfer_dynamics._native_backend.golfer_gravity_vector",
+            "double_pendulum_golf.golfer_dynamics._native_backend.golfer_gravity_vector",  # noqa: E501
             return_value=None,
         ):
             G = analytical_gravity_vector(zero_q, params)
@@ -349,7 +349,7 @@ class TestAnalyticalGravityVector:
         q = np.zeros(N_DOF)
         q[0] = np.pi / 3
         with patch(
-            "double_pendulum_golf.golfer_dynamics._native_backend.golfer_gravity_vector",
+            "double_pendulum_golf.golfer_dynamics._native_backend.golfer_gravity_vector",  # noqa: E501
             return_value=None,
         ):
             G = analytical_gravity_vector(q, params)
@@ -358,7 +358,7 @@ class TestAnalyticalGravityVector:
     def test_extended_q_truncated(self, params: GolferParams) -> None:
         q_ext = np.zeros(2 * N_DOF)
         with patch(
-            "double_pendulum_golf.golfer_dynamics._native_backend.golfer_gravity_vector",
+            "double_pendulum_golf.golfer_dynamics._native_backend.golfer_gravity_vector",  # noqa: E501
             return_value=None,
         ):
             G_ext = analytical_gravity_vector(q_ext, params)
@@ -368,7 +368,7 @@ class TestAnalyticalGravityVector:
     def test_native_bypass(self, params: GolferParams, zero_q: np.ndarray) -> None:
         fake_G = np.ones(N_DOF)
         with patch(
-            "double_pendulum_golf.golfer_dynamics._native_backend.golfer_gravity_vector",
+            "double_pendulum_golf.golfer_dynamics._native_backend.golfer_gravity_vector",  # noqa: E501
             return_value=fake_G,
         ):
             G = analytical_gravity_vector(zero_q, params)

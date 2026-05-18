@@ -134,7 +134,7 @@ class TestFrictionTorqueVector:
             )
             assert np.isclose(
                 abs(tf[0]), frictional_params.mu1
-            ), f"Expected |tau_f1|={frictional_params.mu1}, got {abs(tf[0])} at speed={speed}"
+            ), f"Expected |tau_f1|={frictional_params.mu1}, got {abs(tf[0])} at speed={speed}"  # noqa: E501
 
     def test_coulomb_zero_at_rest(self, frictional_params: PendulumParams) -> None:
         """np.sign(0) == 0, so Coulomb friction is zero when stationary."""

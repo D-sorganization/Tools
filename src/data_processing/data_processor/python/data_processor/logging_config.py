@@ -22,7 +22,7 @@ try:
     )
 except ImportError:
     # Local fallback implementations
-    DEFAULT_FORMAT: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"  # type: ignore[no-redef]
+    DEFAULT_FORMAT: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"  # type: ignore[no-redef]  # noqa: E501
 
     class JsonFormatter(logging.Formatter):  # type: ignore[no-redef]
         """JSON log formatter (inline fallback)."""
@@ -39,7 +39,7 @@ except ImportError:
                 }
             )
 
-    def get_logger(name: str, level: int = logging.INFO) -> logging.Logger:  # type: ignore[no-redef]
+    def get_logger(name: str, level: int = logging.INFO) -> logging.Logger:  # type: ignore[no-redef]  # noqa: E501
         """Get a configured logger (inline fallback)."""
         if name is None:
             raise ValueError("name must be provided")
@@ -51,7 +51,7 @@ except ImportError:
         logger.setLevel(level)
         return logger
 
-    def init_default_logging(level: int = logging.INFO) -> None:  # type: ignore[no-redef]
+    def init_default_logging(level: int = logging.INFO) -> None:  # type: ignore[no-redef]  # noqa: E501
         """Initialize default logging (inline fallback)."""
         logging.basicConfig(level=level, format=DEFAULT_FORMAT)
 

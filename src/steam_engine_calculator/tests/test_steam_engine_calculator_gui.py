@@ -38,7 +38,7 @@ class TestSteamEngineCalculatorMainWindow:
                 "upstream_drift_tools": MagicMock(),
                 "upstream_drift_tools.ui": MagicMock(),
                 "upstream_drift_tools.ui.widgets": MagicMock(),
-                "upstream_drift_tools.ui.widgets.base_calculator_widget": mock_base_module,
+                "upstream_drift_tools.ui.widgets.base_calculator_widget": mock_base_module,  # noqa: E501
                 "shared": MagicMock(),
                 "shared.python": MagicMock(),
                 "shared.python.theme": MagicMock(),
@@ -329,7 +329,7 @@ class TestSteamEngineCalculatorDbCLoD:
                 "upstream_drift_tools": MagicMock(),
                 "upstream_drift_tools.ui": MagicMock(),
                 "upstream_drift_tools.ui.widgets": MagicMock(),
-                "upstream_drift_tools.ui.widgets.base_calculator_widget": mock_base_module,
+                "upstream_drift_tools.ui.widgets.base_calculator_widget": mock_base_module,  # noqa: E501
                 "shared": MagicMock(),
                 "shared.python": MagicMock(),
                 "shared.python.theme": MagicMock(),

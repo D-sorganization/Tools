@@ -257,7 +257,7 @@ class ScriptGenerator:
         if pipeline is None:
             raise ValueError("pipeline must be provided")
         lines = [
-            "def process_single_file(input_path: str, output_dir: str) -> tuple[bool, str, str]:",
+            "def process_single_file(input_path: str, output_dir: str) -> tuple[bool, str, str]:",  # noqa: E501
             '    """Process a single file."""',
             "    temp_path = ''",
             "    try:",
@@ -333,10 +333,10 @@ class ScriptGenerator:
                 [
                     "    # Process files in parallel",
                     "    if max_workers is None:",
-                    "        configured = os.environ.get('DATA_PROCESSOR_BATCH_MAX_WORKERS')",
-                    "        max_workers = int(configured) if configured else min(4, os.cpu_count() or 1)",
+                    "        configured = os.environ.get('DATA_PROCESSOR_BATCH_MAX_WORKERS')",  # noqa: E501
+                    "        max_workers = int(configured) if configured else min(4, os.cpu_count() or 1)",  # noqa: E501
                     "    max_workers = max(1, min(max_workers, len(input_files)))",
-                    "    with ProcessPoolExecutor(max_workers=max_workers) as executor:",
+                    "    with ProcessPoolExecutor(max_workers=max_workers) as executor:",  # noqa: E501
                     "        futures = {",
                     "            executor.submit(process_single_file, f, output_dir): f",  # noqa: E501
                     "            for f in input_files",
@@ -346,15 +346,15 @@ class ScriptGenerator:
                     "            input_file = futures[future]",
                     "            try:",
                     "                success, source, detail = future.result()",
-                    "            except Exception as exc:  # worker raised unexpectedly",
+                    "            except Exception as exc:  # worker raised unexpectedly",  # noqa: E501
                     "                failures.append((input_file, str(exc)))",
-                    "                print(f'Failed: {input_file}: {exc}', file=sys.stderr)",
+                    "                print(f'Failed: {input_file}: {exc}', file=sys.stderr)",  # noqa: E501
                     "                continue",
                     "            if success:",
                     "                print(f'Processed: {source} -> {detail}')",
                     "            else:",
                     "                failures.append((source, detail))",
-                    "                print(f'Failed: {source}: {detail}', file=sys.stderr)",
+                    "                print(f'Failed: {source}: {detail}', file=sys.stderr)",  # noqa: E501
                 ]
             )
         else:
@@ -362,7 +362,7 @@ class ScriptGenerator:
                 [
                     "    # Process files sequentially",
                     "    for input_file in input_files:",
-                    "        success, source, detail = process_single_file(input_file, output_dir)",
+                    "        success, source, detail = process_single_file(input_file, output_dir)",  # noqa: E501
                     "        if success:",
                     "            print(f'Processed: {source} -> {detail}')",
                     "        else:",

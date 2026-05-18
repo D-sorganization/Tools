@@ -248,7 +248,7 @@ class TestReferenceFrameConversionRequestValidator:
         assert req.operation == "homogeneous_transform"
 
     def test_so3_maps_no_source_raises(self):
-        """so3_so3_maps requires exactly one so3_vector, so3_matrix, or rotation_matrix."""
+        """so3_so3_maps requires exactly one so3_vector, so3_matrix, or rotation_matrix."""  # noqa: E501
         from calc_backend.contracts.rotation_converter import (
             ReferenceFrameConversionRequest,
         )
@@ -497,7 +497,7 @@ class TestScrubberErrorPaths:
         # calculate_gas_density is locally imported inside the function;
         # patch it from the source module to trigger the except path.
         with patch(
-            "upstream_drift_tools.process_calculators.scrubber_calculator.calculate_gas_density",
+            "upstream_drift_tools.process_calculators.scrubber_calculator.calculate_gas_density",  # noqa: E501
             side_effect=ValueError("density fail"),
         ):
             with pytest.raises(HTTPException) as exc_info:

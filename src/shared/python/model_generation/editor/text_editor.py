@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import logging
 import re
-import xml.etree.ElementTree as ET  # nosec B405 — type annotations + ParseError only; parsing uses defusedxml
+import xml.etree.ElementTree as ET  # nosec B405 — type annotations + ParseError only; parsing uses defusedxml  # noqa: E501
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime  # used by EditorVersion dataclass
@@ -91,7 +91,7 @@ class DiffResult:
         """Get a summary of changes."""
         if not self.has_changes:
             return "No changes"
-        return f"{self.additions} additions, {self.deletions} deletions in {len(self.hunks)} hunks"
+        return f"{self.additions} additions, {self.deletions} deletions in {len(self.hunks)} hunks"  # noqa: E501
 
 
 @dataclass

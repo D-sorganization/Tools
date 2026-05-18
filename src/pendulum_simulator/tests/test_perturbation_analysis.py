@@ -240,7 +240,7 @@ class TestPerturbTorqueCoeffsDbC:
     """Design-by-Contract checks on perturb_torque_coeffs."""
 
     def test_invalid_noise_type_rejected_at_public_boundary(self):
-        """Invalid noise_type must raise AssertionError at function entry, not deep inside."""
+        """Invalid noise_type must raise AssertionError at function entry, not deep inside."""  # noqa: E501
         coeffs = [[1.0, 2.0], [3.0, 4.0]]
         with pytest.raises((ValueError, TypeError), match="noise_type"):
             perturb_torque_coeffs(coeffs, noise_amplitude=0.1, noise_type="red")

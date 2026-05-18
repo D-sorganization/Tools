@@ -187,7 +187,7 @@ def generate_asteroid_field(
         )
         size = float(generator.uniform(0.02, 0.08))
         color = tuple(float(v) for v in generator.uniform(0.45, 1.0, size=3))
-        obstacle = Obstacle(obstacle_type, position, size, color)  # type: ignore[arg-type]
+        obstacle = Obstacle(obstacle_type, position, size, color)  # type: ignore[arg-type]  # noqa: E501
 
         if all(
             distance_to_obstacle_surface(point, obstacle) >= clearance

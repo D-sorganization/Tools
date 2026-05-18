@@ -560,11 +560,11 @@ class MultiParamAnalysisWindow(ThemedWindowMixin, QMainWindow):
             )
         if not isinstance(param1_values, np.ndarray):
             raise TypeError(
-                f"param1_values must be a numpy ndarray, got {type(param1_values).__name__}"
+                f"param1_values must be a numpy ndarray, got {type(param1_values).__name__}"  # noqa: E501
             )
         if not isinstance(param2_values, np.ndarray):
             raise TypeError(
-                f"param2_values must be a numpy ndarray, got {type(param2_values).__name__}"
+                f"param2_values must be a numpy ndarray, got {type(param2_values).__name__}"  # noqa: E501
             )
 
         demo_func = self.demo_func_combo.currentText()
@@ -645,11 +645,11 @@ class MultiParamAnalysisWindow(ThemedWindowMixin, QMainWindow):
         """
         if not isinstance(param1_values, np.ndarray):
             raise TypeError(
-                f"param1_values must be a numpy ndarray, got {type(param1_values).__name__}"
+                f"param1_values must be a numpy ndarray, got {type(param1_values).__name__}"  # noqa: E501
             )
         if not isinstance(param2_values, np.ndarray):
             raise TypeError(
-                f"param2_values must be a numpy ndarray, got {type(param2_values).__name__}"
+                f"param2_values must be a numpy ndarray, got {type(param2_values).__name__}"  # noqa: E501
             )
         if not isinstance(Z, np.ndarray):
             raise TypeError(f"Z must be a numpy ndarray, got {type(Z).__name__}")
@@ -706,11 +706,11 @@ class MultiParamAnalysisWindow(ThemedWindowMixin, QMainWindow):
         """
         if not isinstance(param1_values, np.ndarray):
             raise TypeError(
-                f"param1_values must be a numpy ndarray, got {type(param1_values).__name__}"
+                f"param1_values must be a numpy ndarray, got {type(param1_values).__name__}"  # noqa: E501
             )
         if not isinstance(param2_values, np.ndarray):
             raise TypeError(
-                f"param2_values must be a numpy ndarray, got {type(param2_values).__name__}"
+                f"param2_values must be a numpy ndarray, got {type(param2_values).__name__}"  # noqa: E501
             )
         if not isinstance(Z, np.ndarray):
             raise TypeError(f"Z must be a numpy ndarray, got {type(Z).__name__}")
@@ -723,10 +723,10 @@ class MultiParamAnalysisWindow(ThemedWindowMixin, QMainWindow):
             f"Grid: {len(param1_values)} x {len(param2_values)} = {Z.size} points"
         )
         lines.append(
-            f"\n{self.param1_combo.currentText()}: {param1_values[0]:.2f} to {param1_values[-1]:.2f}"
+            f"\n{self.param1_combo.currentText()}: {param1_values[0]:.2f} to {param1_values[-1]:.2f}"  # noqa: E501
         )
         lines.append(
-            f"{self.param2_combo.currentText()}: {param2_values[0]:.3f} to {param2_values[-1]:.3f}"
+            f"{self.param2_combo.currentText()}: {param2_values[0]:.3f} to {param2_values[-1]:.3f}"  # noqa: E501
         )
 
         lines.append("\nOutput Grid (sample):")

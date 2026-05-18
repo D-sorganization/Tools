@@ -46,12 +46,12 @@ class TestPhysicsValidator:
         inertia_mat[0, 1] = 0.5  # Asymmetric
         mock_link.inertia.ixx = inertia_mat[0, 0]
         # InertiaResult.as_matrix constructs symmetric from stored values
-        # So it's hard to make InertiaResult asymmetric unless I mock .as_matrix or subclass
+        # So it's hard to make InertiaResult asymmetric unless I mock .as_matrix or subclass  # noqa: E501
 
-        # But wait, InertiaResult.as_matrix() uses ixy, ixz, iyz to fill off-diagonals symmetrically.
-        # So GeneratedLink.inertia is essentially always symmetric by construction if it comes from InertiaResult.
-        # But if the user manually constructed a matrix or populated it incorrectly (if it was a raw matrix).
-        # Since the code checks `link.inertia.as_matrix()`, and `InertiaResult` enforces symmetry, this check might pass vacuously unless `InertiaResult` is mocked to return garbage.
+        # But wait, InertiaResult.as_matrix() uses ixy, ixz, iyz to fill off-diagonals symmetrically.  # noqa: E501
+        # So GeneratedLink.inertia is essentially always symmetric by construction if it comes from InertiaResult.  # noqa: E501
+        # But if the user manually constructed a matrix or populated it incorrectly (if it was a raw matrix).  # noqa: E501
+        # Since the code checks `link.inertia.as_matrix()`, and `InertiaResult` enforces symmetry, this check might pass vacuously unless `InertiaResult` is mocked to return garbage.  # noqa: E501
 
         # Let's skip asymmetry test or mock as_matrix
 
@@ -180,7 +180,7 @@ class TestPhysicsValidator:
 
         model = HumanoidModel(links, [j1], root_link_name="pelvis")
 
-        # Pelvis local COM is (10,0,0). Pelvis global (root) is identity. So Global COM approx (10,0,0).
+        # Pelvis local COM is (10,0,0). Pelvis global (root) is identity. So Global COM approx (10,0,0).  # noqa: E501
         # Foot global: Pelvis(I) * T_j1((0,0,-1)) = (0,0,-1).
         # Foot is at (0,0,-1).
         # Support polygon around (0,0).
@@ -213,8 +213,8 @@ class TestPhysicsValidator:
         # Not connected
         links = {"link1": link1, "link2": link2}
 
-        # HumanoidModel expects a tree. If disconnected, only root and its children are traversed.
-        # Need to connect them to something or make one child of another (but then adjacent skipping applies).
+        # HumanoidModel expects a tree. If disconnected, only root and its children are traversed.  # noqa: E501
+        # Need to connect them to something or make one child of another (but then adjacent skipping applies).  # noqa: E501
         # I'll make a root "world" and connect both to it.
 
         root = GeneratedLink(

@@ -57,7 +57,7 @@ class TestMassMatrixPositiveDefinite:
 
 
 class TestMassMatrixCouplingMaximum:
-    """Off-diagonal coupling |M12| should be maximized when segments are aligned (phi=0)."""
+    """Off-diagonal coupling |M12| should be maximized when segments are aligned (phi=0)."""  # noqa: E501
 
     def test_coupling_maximized_at_alignment(
         self, default_params: PendulumParams
@@ -67,7 +67,7 @@ class TestMassMatrixCouplingMaximum:
             M12 = abs(mass_matrix(phi, default_params)[0, 1])
             assert (
                 M12 <= M12_at_zero + 1e-10
-            ), f"|M12| at phi={phi:.2f} ({M12:.4f}) exceeds value at phi=0 ({M12_at_zero:.4f})"
+            ), f"|M12| at phi={phi:.2f} ({M12:.4f}) exceeds value at phi=0 ({M12_at_zero:.4f})"  # noqa: E501
 
 
 class TestMassMatrixDiagonalConstant:

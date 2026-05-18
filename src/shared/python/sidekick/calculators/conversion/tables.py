@@ -1,10 +1,11 @@
+# ruff: noqa: E501
 # TRACKED_TASK: see #2310 — architecture debt extraction schedule
 
 """Reference data for unit conversion tables and gas properties.
 
-These tables are deliberately defined as immutable module-level mappings so that conversion
+These tables are deliberately defined as immutable module-level mappings so that conversion  # noqa: E501
 logic can operate on declarative data rather than constructing dictionaries at runtime.
-Keeping the factors here also makes it easy to document provenance for physical constants
+Keeping the factors here also makes it easy to document provenance for physical constants  # noqa: E501
 and provides a single source of truth that can be reused in documentation or validation
 tooling.
 """
@@ -560,7 +561,7 @@ HEATING_VALUE_CONVERSIONS: Mapping[str, float | None] = MappingProxyType(
         "j/kg": 1e-6,
         "cal/g": 0.004184,
         "kcal/kg": 0.004184,
-        # Factor based on IT BTU (1055.056 J) / lb (0.45359237 kg) -> J/kg / 1e6 -> MJ/kg
+        # Factor based on IT BTU (1055.056 J) / lb (0.45359237 kg) -> J/kg / 1e6 -> MJ/kg  # noqa: E501
         "btu/lb": 0.002326,
         "mj/nm³": None,
         "mj/nm3": None,

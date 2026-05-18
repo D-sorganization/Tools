@@ -349,14 +349,14 @@ class BodyParameters:
             errors.append("height_m must be positive")
         if self.height_m < HEIGHT_RANGE_M[0] or self.height_m > HEIGHT_RANGE_M[1]:
             errors.append(
-                f"height_m should be between {HEIGHT_RANGE_M[0]} and {HEIGHT_RANGE_M[1]} meters"
+                f"height_m should be between {HEIGHT_RANGE_M[0]} and {HEIGHT_RANGE_M[1]} meters"  # noqa: E501
             )
 
         if self.mass_kg <= 0:
             errors.append("mass_kg must be positive")
         if self.mass_kg < MASS_RANGE_KG[0] or self.mass_kg > MASS_RANGE_KG[1]:
             errors.append(
-                f"mass_kg should be between {MASS_RANGE_KG[0]:.0f} and {MASS_RANGE_KG[1]:.0f} kg"
+                f"mass_kg should be between {MASS_RANGE_KG[0]:.0f} and {MASS_RANGE_KG[1]:.0f} kg"  # noqa: E501
             )
 
         for field_name, (min_value, max_value) in ALL_FACTOR_BOUNDS.items():
@@ -367,7 +367,7 @@ class BodyParameters:
             if value > max_value:
                 if field_name in NORMALIZED_FACTOR_BOUNDS:
                     errors.append(
-                        f"{field_name} should be between {min_value:.1f} and {max_value:.1f}"
+                        f"{field_name} should be between {min_value:.1f} and {max_value:.1f}"  # noqa: E501
                     )
                 else:
                     errors.append(
@@ -382,7 +382,7 @@ class BodyParameters:
             raise PreconditionError("height_m must be positive", self.height_m)
         if self.height_m < HEIGHT_RANGE_M[0] or self.height_m > HEIGHT_RANGE_M[1]:
             raise PreconditionError(
-                f"height_m must be in [{HEIGHT_RANGE_M[0]}, {HEIGHT_RANGE_M[1]}] meters",
+                f"height_m must be in [{HEIGHT_RANGE_M[0]}, {HEIGHT_RANGE_M[1]}] meters",  # noqa: E501
                 self.height_m,
             )
 
@@ -390,7 +390,7 @@ class BodyParameters:
             raise PreconditionError("mass_kg must be positive", self.mass_kg)
         if self.mass_kg < MASS_RANGE_KG[0] or self.mass_kg > MASS_RANGE_KG[1]:
             raise PreconditionError(
-                f"mass_kg must be in [{MASS_RANGE_KG[0]:.0f}, {MASS_RANGE_KG[1]:.0f}] kg",
+                f"mass_kg must be in [{MASS_RANGE_KG[0]:.0f}, {MASS_RANGE_KG[1]:.0f}] kg",  # noqa: E501
                 self.mass_kg,
             )
 

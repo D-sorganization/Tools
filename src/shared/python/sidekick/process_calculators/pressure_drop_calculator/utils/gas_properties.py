@@ -326,7 +326,7 @@ def calculate_speed_of_sound(
     speed_of_sound = math.sqrt(gamma * R_specific * temperature)
 
     logger.debug(
-        f"Speed of sound = {speed_of_sound:.1f} m/s (γ = {gamma:.3f}, T = {temperature:.0f} K)"
+        f"Speed of sound = {speed_of_sound:.1f} m/s (γ = {gamma:.3f}, T = {temperature:.0f} K)"  # noqa: E501
     )
     return speed_of_sound
 
@@ -705,7 +705,7 @@ def _wilke_mixing_rule(
             continue
         M_i = component_data[comp_i]["M"]
         mu_i = component_data[comp_i]["mu"]
-        # OPTIMIZATION_TARGET: Migrate computationally bound loop to PyO3/Rust Core natively
+        # OPTIMIZATION_TARGET: Migrate computationally bound loop to PyO3/Rust Core natively  # noqa: E501
 
         for j, comp_j in enumerate(components):
             if comp_j not in component_data:
@@ -929,7 +929,7 @@ if __name__ == "__main__":
     logger.info(f"  Molecular Weight: {props['molecular_weight']:.2f} kg/kmol")
     logger.info(f"  Density: {props['density']:.4f} kg/m³")
     logger.info(
-        f"  Viscosity: {props['viscosity']:.6e} Pa·s ({props['viscosity'] * 1e6:.2f} µPa·s)"
+        f"  Viscosity: {props['viscosity']:.6e} Pa·s ({props['viscosity'] * 1e6:.2f} µPa·s)"  # noqa: E501
     )
     logger.info(f"  Z-factor: {props['compressibility_factor']:.4f}")
 

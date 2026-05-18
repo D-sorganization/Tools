@@ -159,7 +159,7 @@ class URDFWriter:
             lines.extend(self._write_geometry(link.visual_geometry, level + 2))
             if link.visual_material:
                 lines.append(
-                    f'{indent3}<material name="{self._escape(link.visual_material.name)}"/>'
+                    f'{indent3}<material name="{self._escape(link.visual_material.name)}"/>'  # noqa: E501
                 )
             lines.append(f"{indent2}</visual>")
 
@@ -168,9 +168,9 @@ class URDFWriter:
             lines.append(f"{indent2}<collision>")
             lines.append(
                 f'{indent3}<origin xyz="{link.collision_origin.xyz[0]:.6g} '
-                f'{link.collision_origin.xyz[1]:.6g} {link.collision_origin.xyz[2]:.6g}" '
+                f'{link.collision_origin.xyz[1]:.6g} {link.collision_origin.xyz[2]:.6g}" '  # noqa: E501
                 f'rpy="{link.collision_origin.rpy[0]:.6g} '
-                f'{link.collision_origin.rpy[1]:.6g} {link.collision_origin.rpy[2]:.6g}"/>'
+                f'{link.collision_origin.rpy[1]:.6g} {link.collision_origin.rpy[2]:.6g}"/>'  # noqa: E501
             )
             lines.extend(self._write_geometry(link.collision_geometry, level + 2))
             lines.append(f"{indent2}</collision>")
@@ -551,11 +551,11 @@ class URDFWriter:
                 )
             if joint.parent not in link_names:
                 raise ValueError(
-                    f"Joint '{joint.name}' references unknown parent link '{joint.parent}'"
+                    f"Joint '{joint.name}' references unknown parent link '{joint.parent}'"  # noqa: E501
                 )
             if joint.child not in link_names:
                 raise ValueError(
-                    f"Joint '{joint.name}' references unknown child link '{joint.child}'"
+                    f"Joint '{joint.name}' references unknown child link '{joint.child}'"  # noqa: E501
                 )
 
         children_set = {joint.child for joint in joints}
@@ -615,7 +615,7 @@ class URDFWriter:
                 axis = default_axis
             if len(axis) != 3:
                 raise ValueError(
-                    f"Joint '{joint_name}' has invalid composite axis at DOF {index + 1}"
+                    f"Joint '{joint_name}' has invalid composite axis at DOF {index + 1}"  # noqa: E501
                 )
             normalized.append((float(axis[0]), float(axis[1]), float(axis[2])))
 
@@ -650,7 +650,7 @@ class URDFWriter:
             candidate = normalized[len("package://") :]
             if not candidate or candidate.startswith("/"):
                 raise ValueError(
-                    f"Mesh filename '{mesh_filename}' must reference a package-relative asset"
+                    f"Mesh filename '{mesh_filename}' must reference a package-relative asset"  # noqa: E501
                 )
         else:
             if "://" in normalized:

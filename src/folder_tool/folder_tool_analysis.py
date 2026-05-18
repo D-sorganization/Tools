@@ -41,7 +41,7 @@ class AnalysisMixin:
             raise ValueError("No source folders to analyze")
         if not isinstance(self.source_folders, list):  # type: ignore[attr-defined]
             raise ValueError(
-                f"Source folders must be a list, got {type(self.source_folders)}",  # type: ignore[attr-defined]
+                f"Source folders must be a list, got {type(self.source_folders)}",  # type: ignore[attr-defined]  # noqa: E501
             )
 
         valid = []
@@ -275,7 +275,7 @@ class AnalysisMixin:
             if not self.dest_folder:  # type: ignore[attr-defined]
                 messagebox.showerror("Error", "Please select a destination folder.")
                 return False
-            if any(src == self.dest_folder for src in self.source_folders):  # type: ignore[attr-defined]
+            if any(src == self.dest_folder for src in self.source_folders):  # type: ignore[attr-defined]  # noqa: E501
                 messagebox.showerror(
                     "Error",
                     "The destination folder cannot be a source folder.",
@@ -328,20 +328,20 @@ class AnalysisMixin:
 
         # Check source folders
         validation_results["source_folders_exist"] = (
-            all(Path(folder).exists() for folder in self.source_folders)  # type: ignore[attr-defined]
+            all(Path(folder).exists() for folder in self.source_folders)  # type: ignore[attr-defined]  # noqa: E501
             if self.source_folders  # type: ignore[attr-defined]
             else True
         )
 
         validation_results["source_folders_readable"] = (
-            all(os.access(folder, os.R_OK) for folder in self.source_folders)  # type: ignore[attr-defined]
+            all(os.access(folder, os.R_OK) for folder in self.source_folders)  # type: ignore[attr-defined]  # noqa: E501
             if self.source_folders  # type: ignore[attr-defined]
             else True
         )
 
         # Check destination folder
         if self.dest_folder:  # type: ignore[attr-defined]
-            validation_results["destination_exists"] = Path(self.dest_folder).exists()  # type: ignore[attr-defined]
+            validation_results["destination_exists"] = Path(self.dest_folder).exists()  # type: ignore[attr-defined]  # noqa: E501
             validation_results["destination_writable"] = os.access(
                 self.dest_folder,  # type: ignore[attr-defined]
                 os.W_OK,
@@ -356,8 +356,8 @@ class AnalysisMixin:
 
         # Check file size inputs
         try:
-            min_size = float(self.min_file_size.get() or 0)  # type: ignore[attr-defined]
-            max_size = float(self.max_file_size.get() or MAX_FILE_SIZE_MB)  # type: ignore[attr-defined]
+            min_size = float(self.min_file_size.get() or 0)  # type: ignore[attr-defined]  # noqa: E501
+            max_size = float(self.max_file_size.get() or MAX_FILE_SIZE_MB)  # type: ignore[attr-defined]  # noqa: E501
             validation_results["size_inputs_valid"] = (
                 0 <= min_size <= MAX_FILE_SIZE_MB
                 and 0 <= max_size <= MAX_FILE_SIZE_MB

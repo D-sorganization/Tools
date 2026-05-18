@@ -91,7 +91,7 @@ def _build_dynamics_entries() -> dict[str, GlossaryEntry]:
                     "at each joint."
                 ),
                 ExpertiseLevel.ADVANCED: (
-                    "The solution of τ = M(q)q̈ + C(q,q̇)q̇ + g(q) for joint torques τ, "
+                    "The solution of τ = M(q)q̈ + C(q,q̇)q̇ + g(q) for joint torques τ, "  # noqa: E501
                     "given measured generalized coordinates q and their derivatives. "
                     "Requires accurate segment inertial properties."
                 ),

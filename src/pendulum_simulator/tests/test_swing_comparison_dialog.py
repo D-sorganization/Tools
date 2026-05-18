@@ -87,11 +87,11 @@ class TestSetPresetSource:
 
     def test_rejects_non_callable_names_fn(self, panel) -> None:
         with pytest.raises((ValueError, TypeError)):
-            panel.set_preset_source("not_callable", lambda name: [])  # type: ignore[arg-type]
+            panel.set_preset_source("not_callable", lambda name: [])  # type: ignore[arg-type]  # noqa: E501
 
     def test_rejects_non_callable_coeffs_fn(self, panel) -> None:
         with pytest.raises((ValueError, TypeError)):
-            panel.set_preset_source(lambda: [], "not_callable")  # type: ignore[arg-type]
+            panel.set_preset_source(lambda: [], "not_callable")  # type: ignore[arg-type]  # noqa: E501
 
     def test_stores_preset_fns(self, panel) -> None:
         def names_fn() -> list[str]:

@@ -314,7 +314,7 @@ class FolderPackerGUI:
             if success_count == total_count:
                 messagebox.showinfo(
                     "Success",
-                    f"All {success_count} folders packed successfully to:\n{output_path}",
+                    f"All {success_count} folders packed successfully to:\n{output_path}",  # noqa: E501
                 )
             else:
                 messagebox.showwarning(

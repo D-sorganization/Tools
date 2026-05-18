@@ -224,7 +224,7 @@ class TestCompositeJointExpansion:
         urdf = generator.generate(params)
         root = ET.fromstring(urdf)
 
-        # Should find gimbal type if not expanded (though standard URDF parsers might fail)
+        # Should find gimbal type if not expanded (though standard URDF parsers might fail)  # noqa: E501
         # Our generator maps GIMBAL to 'fixed' if not expanded?
         # Let's check the map_joint_type logic.
         # "revolute" if not expanded? Wait, _map_joint_type handles standard types.

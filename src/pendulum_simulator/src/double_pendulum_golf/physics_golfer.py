@@ -200,7 +200,7 @@ N_DOF = 8
 N_CONSTRAINTS = 4
 
 
-# Backward compatibility re-exports removed to prevent cyclic import (Issue TDD resolution)
+# Backward compatibility re-exports removed to prevent cyclic import (Issue TDD resolution)  # noqa: E501
 # Restored via lazy __getattr__ below to avoid circular imports while
 # maintaining API compatibility for existing callers.
 

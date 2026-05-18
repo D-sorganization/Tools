@@ -169,7 +169,7 @@ class FolderProcessorApp(UICreationMixin, FileOperationsMixin, ProcessingMixin):
 
     def export_constants_documentation(self, output_path: str) -> bool:
         """Export constants docs — delegates to module-level function."""
-        return export_constants_documentation(output_path)  # type: ignore[no-any-return]
+        return export_constants_documentation(output_path)  # type: ignore[no-any-return]  # noqa: E501
 
 
 if __name__ == "__main__":

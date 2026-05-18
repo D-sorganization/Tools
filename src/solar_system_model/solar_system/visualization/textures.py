@@ -43,7 +43,7 @@ TEXTURE_MANIFEST: dict[str, str] = {
     "Uranus": "https://www.solarsystemscope.com/textures/download/2k_uranus.jpg",
     "Neptune": "https://www.solarsystemscope.com/textures/download/2k_neptune.jpg",
     "Sun": "https://www.solarsystemscope.com/textures/download/2k_sun.jpg",
-    "Pluto": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Pluto_in_True_Color_-_High_Res.jpg/1024px-Pluto_in_True_Color_-_High_Res.jpg",
+    "Pluto": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Pluto_in_True_Color_-_High_Res.jpg/1024px-Pluto_in_True_Color_-_High_Res.jpg",  # noqa: E501
 }
 
 

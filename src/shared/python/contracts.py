@@ -99,7 +99,7 @@ def set_contract_level(level: ContractLevel) -> None:
     # Update module-level aliases so existing references see the new values
     current_module = sys.modules[__name__]
     current_module.DBC_LEVEL = level  # type: ignore[attr-defined]
-    current_module.CONTRACTS_ENABLED = level != ContractLevel.OFF  # type: ignore[attr-defined]
+    current_module.CONTRACTS_ENABLED = level != ContractLevel.OFF  # type: ignore[attr-defined]  # noqa: E501
     logger.info("Contract enforcement level set to %s", level.value)
 
 

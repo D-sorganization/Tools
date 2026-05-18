@@ -11,14 +11,14 @@ from web_applications.calculator.calculator import TI89Calculator
 class TestDeepRecursion:
     def test_deep_expression_validation(self) -> None:
         """
-        Test that _validate_expression_tree handles deep expressions without RecursionError.
+        Test that _validate_expression_tree handles deep expressions without RecursionError.  # noqa: E501
         """
         # Create a deep expression manually to bypass parse_expr recursion limits
         # if we were to parse a string.
         x = sp.Symbol("x")
         deep_expr = x
         # Python's default recursion limit is usually 1000.
-        # We go deeper to ensure we rely on iteration (if implemented) or crash (if recursive).
+        # We go deeper to ensure we rely on iteration (if implemented) or crash (if recursive).  # noqa: E501
         depth = 2000
 
         original_limit = sys.getrecursionlimit()
@@ -27,11 +27,11 @@ class TestDeepRecursion:
         sys.setrecursionlimit(max(original_limit, depth + 1000))
         try:
             for _ in range(depth):
-                # Use evaluate=False to avoid recursive property checks during construction
+                # Use evaluate=False to avoid recursive property checks during construction  # noqa: E501
                 deep_expr = sp.sin(deep_expr, evaluate=False)
 
             # Now test validation
-            # We enforce a standard limit (1000) to simulate standard environment constraint
+            # We enforce a standard limit (1000) to simulate standard environment constraint  # noqa: E501
             sys.setrecursionlimit(1000)
 
             try:

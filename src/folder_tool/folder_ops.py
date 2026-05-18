@@ -30,7 +30,7 @@ class FolderOperationsMixin:
         skipped_count = 0
         failed_count = 0
 
-        Path(self.dest_folder).mkdir(parents=True, exist_ok=True)  # type: ignore[attr-defined]
+        Path(self.dest_folder).mkdir(parents=True, exist_ok=True)  # type: ignore[attr-defined]  # noqa: E501
 
         # Count total files for progress tracking
         total_files = 0
@@ -52,20 +52,20 @@ class FolderOperationsMixin:
                     source_path = Path(root) / file
 
                     # Apply filters
-                    if not self.validate_file_filters(source_path):  # type: ignore[attr-defined]
+                    if not self.validate_file_filters(source_path):  # type: ignore[attr-defined]  # noqa: E501
                         skipped_count += 1
                         processed_files += 1
                         continue
 
                     # Get organized destination path
-                    dest_path = self.get_organized_path(source_path, self.dest_folder)  # type: ignore[attr-defined]
+                    dest_path = self.get_organized_path(source_path, self.dest_folder)  # type: ignore[attr-defined]  # noqa: E501
                     dest_dir = Path(dest_path).parent
 
                     # Create destination directory if needed
                     Path(dest_dir).mkdir(parents=True, exist_ok=True)
 
                     # Handle naming conflicts
-                    final_dest_path = self._get_unique_path(dest_path)  # type: ignore[attr-defined]
+                    final_dest_path = self._get_unique_path(dest_path)  # type: ignore[attr-defined]  # noqa: E501
                     if final_dest_path != dest_path:
                         log.append(
                             f"Renamed: '{file}' to '{Path(final_dest_path).name}'",
@@ -73,8 +73,8 @@ class FolderOperationsMixin:
                         renamed_count += 1
 
                     try:
-                        if not self.preview_mode_var.get():  # type: ignore[attr-defined]
-                            if self._safe_copy_file(source_path, final_dest_path):  # type: ignore[attr-defined]
+                        if not self.preview_mode_var.get():  # type: ignore[attr-defined]  # noqa: E501
+                            if self._safe_copy_file(source_path, final_dest_path):  # type: ignore[attr-defined]  # noqa: E501
                                 file_count += 1
                             else:
                                 failed_count += 1
@@ -164,11 +164,11 @@ class FolderOperationsMixin:
                     for file_path in files:
                         if file_path != file_to_keep:
                             try:
-                                if not self.preview_mode_var.get():  # type: ignore[attr-defined]
+                                if not self.preview_mode_var.get():  # type: ignore[attr-defined]  # noqa: E501
                                     Path(file_path).unlink()
                                 mode_str = (
                                     "WOULD DELETE"
-                                    if self.preview_mode_var.get()  # type: ignore[attr-defined]
+                                    if self.preview_mode_var.get()  # type: ignore[attr-defined]  # noqa: E501
                                     else "DEL"
                                 )
                                 log.append(
@@ -183,8 +183,8 @@ class FolderOperationsMixin:
 
         summary = [
             f"Deduplication "
-            f"{'preview' if self.preview_mode_var.get() else 'complete'}.",  # type: ignore[attr-defined]
-            f"{'Would delete' if self.preview_mode_var.get() else 'Deleted'} a total "  # type: ignore[attr-defined]
+            f"{'preview' if self.preview_mode_var.get() else 'complete'}.",  # type: ignore[attr-defined]  # noqa: E501
+            f"{'Would delete' if self.preview_mode_var.get() else 'Deleted'} a total "  # type: ignore[attr-defined]  # noqa: E501
             f"of {deleted_count} files.",
             *log[:MAX_LOG_ENTRIES],
         ]
@@ -240,28 +240,28 @@ class FolderOperationsMixin:
                     source_path = Path(root) / file
 
                     # Apply filters
-                    if not self.validate_file_filters(source_path):  # type: ignore[attr-defined]
+                    if not self.validate_file_filters(source_path):  # type: ignore[attr-defined]  # noqa: E501
                         skipped_count += 1
                         processed_files += 1
                         continue
 
                     # Get organized destination path (flattened to root)
-                    dest_path = self.get_organized_path(source_path, self.dest_folder)  # type: ignore[attr-defined]
+                    dest_path = self.get_organized_path(source_path, self.dest_folder)  # type: ignore[attr-defined]  # noqa: E501
                     dest_dir = Path(dest_path).parent
 
                     # Create destination directory if needed
                     os.makedirs(dest_dir, exist_ok=True)
 
                     # Handle naming conflicts
-                    final_dest_path = self._get_unique_path(dest_path)  # type: ignore[attr-defined]
+                    final_dest_path = self._get_unique_path(dest_path)  # type: ignore[attr-defined]  # noqa: E501
                     if final_dest_path != dest_path:
                         log.append(
                             f"Renamed: '{file}' to '{Path(final_dest_path).name}'",
                         )
 
                     try:
-                        if not self.preview_mode_var.get():  # type: ignore[attr-defined]
-                            if self._safe_copy_file(source_path, final_dest_path):  # type: ignore[attr-defined]
+                        if not self.preview_mode_var.get():  # type: ignore[attr-defined]  # noqa: E501
+                            if self._safe_copy_file(source_path, final_dest_path):  # type: ignore[attr-defined]  # noqa: E501
                                 moved_count += 1
                             else:
                                 failed_count += 1
@@ -325,17 +325,17 @@ class FolderOperationsMixin:
             Tuple of (files_copied, files_failed)
         """
         assert source_file_path is not None, "source_file_path must be provided"
-        if not self.validate_file_filters(source_file_path):  # type: ignore[attr-defined]
+        if not self.validate_file_filters(source_file_path):  # type: ignore[attr-defined]  # noqa: E501
             return 0, 0
 
         dest_file_path = Path(dest_path) / file
-        final_dest_path = self._get_unique_path(dest_file_path)  # type: ignore[attr-defined]
+        final_dest_path = self._get_unique_path(dest_file_path)  # type: ignore[attr-defined]  # noqa: E501
         if final_dest_path != dest_file_path:
             log.append(f"Renamed: '{file}' to '{Path(final_dest_path).name}'")
 
         try:
             if not self.preview_mode_var.get():  # type: ignore[attr-defined]
-                if self._safe_copy_file(source_file_path, final_dest_path):  # type: ignore[attr-defined]
+                if self._safe_copy_file(source_file_path, final_dest_path):  # type: ignore[attr-defined]  # noqa: E501
                     return 1, 0
                 else:
                     log.append(f"FAILED to copy '{file}' after retries")
@@ -368,7 +368,7 @@ class FolderOperationsMixin:
                 break
 
             src_name = Path(src).name
-            dest_src_path = Path(self.dest_folder) / src_name  # type: ignore[attr-defined]
+            dest_src_path = Path(self.dest_folder) / src_name  # type: ignore[attr-defined]  # noqa: E501
 
             for root, dirs, files in os.walk(src):
                 if self.cancel_operation:  # type: ignore[attr-defined]

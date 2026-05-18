@@ -10,7 +10,7 @@ class ODESolverRequest(BaseModel):
 
     derivatives: dict[str, str] = Field(
         ...,
-        description="Variable name to derivative expression mapping, e.g. {'y': '-k*y'}",
+        description="Variable name to derivative expression mapping, e.g. {'y': '-k*y'}",  # noqa: E501
     )
     parameters: dict[str, float] = Field(
         default_factory=dict,

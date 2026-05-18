@@ -377,14 +377,14 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
         button_layout = QHBoxLayout()
         self.start_btn = QPushButton("🚀 Start Processing")
         self.start_btn.setStyleSheet(
-            "background-color: #27ae60; color: white; padding: 12px; font-size: 14px; font-weight: bold; border-radius: 5px;"
+            "background-color: #27ae60; color: white; padding: 12px; font-size: 14px; font-weight: bold; border-radius: 5px;"  # noqa: E501
         )
         self.start_btn.clicked.connect(self.start_processing)
         button_layout.addWidget(self.start_btn)
 
         self.cancel_btn = QPushButton("⏹️ Cancel")
         self.cancel_btn.setStyleSheet(
-            "background-color: #e74c3c; color: white; padding: 12px; font-size: 14px; font-weight: bold; border-radius: 5px;"
+            "background-color: #e74c3c; color: white; padding: 12px; font-size: 14px; font-weight: bold; border-radius: 5px;"  # noqa: E501
         )
         self.cancel_btn.setEnabled(False)
         self.cancel_btn.clicked.connect(self.cancel_processing)
@@ -432,7 +432,7 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
 
         # Info label
         info_label = QLabel(
-            "🤖 API-Only Mode: Generate rename proposals using AI, then review and approve manually."
+            "🤖 API-Only Mode: Generate rename proposals using AI, then review and approve manually."  # noqa: E501
         )
         info_label.setStyleSheet(
             "background: #e8f4fd; padding: 10px; border-radius: 5px; color: #2c3e50;"
@@ -476,7 +476,7 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
         api_button_layout = QHBoxLayout()
         self.generate_btn = QPushButton("🔍 Generate Proposals")
         self.generate_btn.setStyleSheet(
-            "background-color: #3498db; color: white; padding: 10px; font-size: 14px; font-weight: bold; border-radius: 5px;"
+            "background-color: #3498db; color: white; padding: 10px; font-size: 14px; font-weight: bold; border-radius: 5px;"  # noqa: E501
         )
         self.generate_btn.clicked.connect(self.generate_proposals)
         api_button_layout.addWidget(self.generate_btn)
@@ -571,7 +571,7 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
         save_layout = QHBoxLayout()
         self.save_prefs_btn = QPushButton("💾 Save Preferences")
         self.save_prefs_btn.setStyleSheet(
-            "background-color: #27ae60; color: white; padding: 10px; font-size: 14px; font-weight: bold; border-radius: 5px;"
+            "background-color: #27ae60; color: white; padding: 10px; font-size: 14px; font-weight: bold; border-radius: 5px;"  # noqa: E501
         )
         self.save_prefs_btn.clicked.connect(self.save_preferences)
         save_layout.addWidget(self.save_prefs_btn)
@@ -795,7 +795,7 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
             QMessageBox.information(
                 self,
                 "Proposals Generated",
-                f"Generated {len(proposals)} rename proposals. Review and approve them below.",
+                f"Generated {len(proposals)} rename proposals. Review and approve them below.",  # noqa: E501
             )
 
         except (PermissionError, OSError) as e:
@@ -885,7 +885,7 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
         reply = QMessageBox.question(
             self,
             "Execute Renames",
-            f"Execute {len(approved)} approved rename operations?\n\nThis will actually rename the files.",
+            f"Execute {len(approved)} approved rename operations?\n\nThis will actually rename the files.",  # noqa: E501
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
 

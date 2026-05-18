@@ -171,7 +171,7 @@ class TestStreamResponseGenerator:
         This is the regression scenario from #2752: callers must wrap this
         in a worker thread, but the generator itself must still behave.
         """
-        adapter.engine._stream_chunks = ["c1", "c2", "c3", "c4", "c5"]  # type: ignore[attr-defined]
+        adapter.engine._stream_chunks = ["c1", "c2", "c3", "c4", "c5"]  # type: ignore[attr-defined]  # noqa: E501
         adapter.engine._stream_delay = 2.0  # type: ignore[attr-defined]
 
         start = time.monotonic()

@@ -27,7 +27,7 @@ from PyQt6.QtWidgets import (
 )
 from upstream_drift_tools.ui.widgets.base_calculator_widget import BaseCalculatorWindow
 
-# LoD: extract repeated Qt enum chains to named constants (avoids obj.prop.subprop chains)
+# LoD: extract repeated Qt enum chains to named constants (avoids obj.prop.subprop chains)  # noqa: E501
 _ALIGN_CENTER = Qt.AlignmentFlag.AlignCenter
 _EXPANDING = QSizePolicy.Policy.Expanding
 _FIXED = QSizePolicy.Policy.Fixed
@@ -475,7 +475,7 @@ class FlowRateConverterWindow(BaseCalculatorWindow):
     def _convert_mass(self) -> None:
         """Perform mass flow rate conversion."""
         try:
-            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
+            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (  # noqa: E501
                 mass_to_mass,
             )
 
@@ -493,7 +493,7 @@ class FlowRateConverterWindow(BaseCalculatorWindow):
     def _convert_molar(self) -> None:
         """Perform molar flow rate conversion."""
         try:
-            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
+            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (  # noqa: E501
                 molar_to_molar,
             )
 
@@ -513,7 +513,7 @@ class FlowRateConverterWindow(BaseCalculatorWindow):
     def _convert_volumetric(self) -> None:
         """Perform volumetric flow rate conversion."""
         try:
-            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
+            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (  # noqa: E501
                 VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S,
             )
 

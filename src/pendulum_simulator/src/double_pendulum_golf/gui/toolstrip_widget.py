@@ -1,7 +1,7 @@
 """
 ToolStrip — persistent header bar with stacked overlay controls.
 
-Row 1 (Actions):   Title | Run  Reset  ▶Play | Speed | [frame slider] | Frame# | ⤢ Reset View
+Row 1 (Actions):   Title | Run  Reset  ▶Play | Speed | [frame slider] | Frame# | ⤢ Reset View  # noqa: E501
 Row 2 (Overlays):  Stacked vertical overlay controls (Force/Mobility/Force Ell each with
                    checkbox + scale slider) | ☑ Zero-τ | ☑ COM | Status
 
@@ -152,7 +152,7 @@ _SEP_H_STYLE = "QFrame{color:#2a2a50;border:none;max-height:1px;}"
 _LABEL = "color:#606080;font-size:12px;"
 _VAL_LBL = "color:#8080b0;font-size:12px;font-family:monospace;min-width:32px;"
 _FRAME_LBL = "color:#6060a0;font-size:12px;font-family:monospace;"
-_TITLE = "color:#9090c8;font-size:14px;font-weight:bold;letter-spacing:1px;padding-right:4px;"
+_TITLE = "color:#9090c8;font-size:14px;font-weight:bold;letter-spacing:1px;padding-right:4px;"  # noqa: E501
 _OVERLAY_SECTION = (
     "QFrame#overlay_section {"
     "background: #12122a;"
@@ -359,7 +359,7 @@ class ToolStrip(QWidget):
         self.cmb_model.addItems(["Double Pendulum", "Triple Pendulum", "Upper Body"])
         self.cmb_model.setToolTip("Switch between pendulum models")
         self.cmb_model.setStyleSheet(
-            "QComboBox { background: #303050; color: #c0c0d8; border: 1px solid #505070;"
+            "QComboBox { background: #303050; color: #c0c0d8; border: 1px solid #505070;"  # noqa: E501
             "  border-radius: 3px; padding: 2px 6px; font-size: 11px; }"
             "QComboBox::drop-down { border: none; }"
             "QComboBox QAbstractItemView { background: #252540; color: #c0c0d8;"
@@ -480,7 +480,7 @@ class ToolStrip(QWidget):
         self.btn_popout = QPushButton("∿ Pop-Out Chart")
         self.btn_popout.setStyleSheet(_BTN_SMALL)
         self.btn_popout.setToolTip(
-            "Pop out current simulation data as a\ndetachable chart with regression fitting"
+            "Pop out current simulation data as a\ndetachable chart with regression fitting"  # noqa: E501
         )
         self.btn_popout.clicked.connect(self.popout_chart_requested.emit)
         fit_button_to_text(self.btn_popout)
@@ -504,7 +504,7 @@ class ToolStrip(QWidget):
         layout.addWidget(self.btn_diagnostics)
 
     def _build_row1(self, layout: QHBoxLayout) -> None:
-        """Actions row: Title | Run Reset Play | Speed | [frame slider] | Frame# | Reset View"""
+        """Actions row: Title | Run Reset Play | Speed | [frame slider] | Frame# | Reset View"""  # noqa: E501
         if layout is None:
             raise ValueError("layout must be provided")
         self._build_action_buttons_group(layout)
@@ -766,7 +766,7 @@ class ToolStrip(QWidget):
         ``self._sld_tilt``, and ``self._lbl_tilt``.
         """
         _sld_style_base = (
-            "QSlider::groove:horizontal{height:4px;background:#252540;border-radius:2px;}"
+            "QSlider::groove:horizontal{height:4px;background:#252540;border-radius:2px;}"  # noqa: E501
             "QSlider::handle:horizontal{width:10px;margin:-3px 0;border-radius:5px;}"
         )
         # Rotation controls (#1146)
@@ -823,7 +823,7 @@ class ToolStrip(QWidget):
     def _build_extra_toggles_col(self) -> QVBoxLayout:
         """Build the extra toggles column: physics toggles and rotation sliders.
 
-        Returns a QVBoxLayout containing: Zero-tau, CoM, Torque Vectors, Moment of Force,
+        Returns a QVBoxLayout containing: Zero-tau, CoM, Torque Vectors, Moment of Force,  # noqa: E501
         Sum of Moments, 3D Segments checkboxes, and Azimuth/Tilt rotation sliders.
         """
         extra_col = QVBoxLayout()
@@ -974,9 +974,9 @@ class ToolStrip(QWidget):
                 chk.setChecked(True)
                 chk.setStyleSheet(
                     "QCheckBox{color:#707090;font-size:10px;spacing:2px;}"
-                    "QCheckBox::indicator{width:11px;height:11px;border:1px solid #404060;"
+                    "QCheckBox::indicator{width:11px;height:11px;border:1px solid #404060;"  # noqa: E501
                     "border-radius:2px;background:#1a1a2a;}"
-                    "QCheckBox::indicator:checked{background:#303068;border-color:#5050a0;}"
+                    "QCheckBox::indicator:checked{background:#303068;border-color:#5050a0;}"  # noqa: E501
                 )
                 chk.toggled.connect(self._on_segment_toggled)
                 seg_layout.addWidget(chk)

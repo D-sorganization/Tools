@@ -340,7 +340,7 @@ class TestElectrodeAdvancementCalculator:
     """Cover all lines of electrode_advancement_calculator.py."""
 
     def test_init_default_consumption_rate(self):
-        from upstream_drift_tools.process_calculators.electrode_advancement_calculator import (
+        from upstream_drift_tools.process_calculators.electrode_advancement_calculator import (  # noqa: E501
             ElectrodeAdvancementCalculator,
         )
 
@@ -348,7 +348,7 @@ class TestElectrodeAdvancementCalculator:
         assert calc.consumption_rate == pytest.approx(0.5)
 
     def test_calculate_consumption_basic(self):
-        from upstream_drift_tools.process_calculators.electrode_advancement_calculator import (
+        from upstream_drift_tools.process_calculators.electrode_advancement_calculator import (  # noqa: E501
             ElectrodeAdvancementCalculator,
         )
 
@@ -358,7 +358,7 @@ class TestElectrodeAdvancementCalculator:
         assert result == pytest.approx(10.0)
 
     def test_calculate_consumption_zero_time(self):
-        from upstream_drift_tools.process_calculators.electrode_advancement_calculator import (
+        from upstream_drift_tools.process_calculators.electrode_advancement_calculator import (  # noqa: E501
             ElectrodeAdvancementCalculator,
         )
 
@@ -375,7 +375,7 @@ class TestWaterVaporPressureCalculator:
     """Cover the wrapper around SyngasWaterCalculator."""
 
     def test_calculate_vapor_pressure_basic(self):
-        from upstream_drift_tools.process_calculators.water_vapor_pressure_calculator import (
+        from upstream_drift_tools.process_calculators.water_vapor_pressure_calculator import (  # noqa: E501
             WaterVaporPressureCalculator,
         )
 
@@ -385,7 +385,7 @@ class TestWaterVaporPressureCalculator:
         assert pressure_pa == pytest.approx(3169.0, rel=0.1)
 
     def test_calculate_vapor_pressure_at_100c(self):
-        from upstream_drift_tools.process_calculators.water_vapor_pressure_calculator import (
+        from upstream_drift_tools.process_calculators.water_vapor_pressure_calculator import (  # noqa: E501
             WaterVaporPressureCalculator,
         )
 
@@ -395,7 +395,7 @@ class TestWaterVaporPressureCalculator:
         assert pressure_pa == pytest.approx(101325.0, rel=0.15)
 
     def test_calculate_vapor_pressure_with_method(self):
-        from upstream_drift_tools.process_calculators.water_vapor_pressure_calculator import (
+        from upstream_drift_tools.process_calculators.water_vapor_pressure_calculator import (  # noqa: E501
             WaterVaporPressureCalculator,
         )
 

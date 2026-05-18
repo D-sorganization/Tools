@@ -7,7 +7,7 @@ from typing import Any
 GUI_INFO = {
     "name": "Humanoid Character Builder",
     "tool_name": "humanoid_builder_gui",
-    "description": "Build parametric humanoid characters with anthropometric calculations",
+    "description": "Build parametric humanoid characters with anthropometric calculations",  # noqa: E501
     "category": "Robotics",
     "icon": "person",
     "pyqt6": {

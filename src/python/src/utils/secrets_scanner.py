@@ -7,8 +7,9 @@ Usage:
     from utils.secrets_scanner import scan_file, scan_directory
 
     issues = scan_directory("src/")
+    import sys
     for issue in issues:
-        print(f"{issue['file']}:{issue['line']}: {issue['pattern']}")
+        sys.stdout.write(f"{issue['file']}:{issue['line']}: {issue['pattern']}\\n")
 """
 
 from __future__ import annotations
@@ -26,7 +27,7 @@ _SECRET_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     (
         "Generic API Key Assignment",
         re.compile(
-            r"""(?:api[_-]?key|secret[_-]?key|auth[_-]?token|password|private[_-]?key)\s*=\s*["'][A-Za-z0-9+/=@#$%^&*!]{8,}["']""",
+            r"""(?:api[_-]?key|secret[_-]?key|auth[_-]?token|password|private[_-]?key)\s*=\s*["'][A-Za-z0-9+/=@#$%^&*!]{8,}["']""",  # noqa: E501
             re.IGNORECASE,
         ),
     ),

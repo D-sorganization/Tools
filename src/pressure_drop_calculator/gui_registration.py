@@ -11,7 +11,7 @@ GUI_INFO = {
     "category": "Process Simulation",
     "icon": "pipe",
     "pyqt6": {
-        "module": "pressure_drop_calculator.python.pressure_drop_calculator.ui.pyqt6.main_window",
+        "module": "pressure_drop_calculator.python.pressure_drop_calculator.ui.pyqt6.main_window",  # noqa: E501
         "class": "PressureDropCalculatorWidget",
         "dependencies": ["PyQt6", "matplotlib"],
         "settings_app": "PressureDropCalculator",

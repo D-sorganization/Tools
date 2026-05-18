@@ -75,11 +75,11 @@ class _SimulationLifecycleMixin:
         except (AssertionError, Exception) as e:
             logger.warning("Parameter build failed: %s", e, exc_info=True)
             get_tracker().record_exception("simulation", e, context="Parameter build")
-            QMessageBox.warning(self, "Parameter Error", str(e))  # type: ignore[arg-type]
+            QMessageBox.warning(self, "Parameter Error", str(e))  # type: ignore[arg-type]  # noqa: E501
             return
 
         if p["t_end"] <= 0:
-            QMessageBox.warning(self, "Input Error", "Duration must be positive")  # type: ignore[arg-type]
+            QMessageBox.warning(self, "Input Error", "Duration must be positive")  # type: ignore[arg-type]  # noqa: E501
             return
 
         try:

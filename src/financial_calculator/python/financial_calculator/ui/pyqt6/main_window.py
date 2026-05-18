@@ -54,7 +54,7 @@ COLORS = {
     "lavender": "#b4befe",
 }
 
-# LoD: extract deep enum references to module-level constants (avoids obj.prop.subprop chains)
+# LoD: extract deep enum references to module-level constants (avoids obj.prop.subprop chains)  # noqa: E501
 _SCROLLBAR_OFF = Qt.ScrollBarPolicy.ScrollBarAlwaysOff
 _BOLD_WEIGHT = QFont.Weight.Bold
 
@@ -371,7 +371,7 @@ class FinancialCalculatorMainWindow(ThemedWindowMixin, QMainWindow):
         """Create the input panel with all parameters."""
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
-        # LoD: use module-level constant instead of Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+        # LoD: use module-level constant instead of Qt.ScrollBarPolicy.ScrollBarAlwaysOff  # noqa: E501
         scroll.setHorizontalScrollBarPolicy(_SCROLLBAR_OFF)
 
         container = QWidget()

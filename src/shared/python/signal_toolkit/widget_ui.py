@@ -891,7 +891,7 @@ class UISetupMixin:
         layout = QVBoxLayout(panel)
 
         # Main plot canvas
-        self.canvas = MplCanvas(self, width=8, height=5, dpi=100)  # type: ignore[arg-type]
+        self.canvas = MplCanvas(self, width=8, height=5, dpi=100)  # type: ignore[arg-type]  # noqa: E501
         self.canvas.setup_dark_theme()
 
         # Toolbar
@@ -902,7 +902,7 @@ class UISetupMixin:
         layout.addWidget(self.canvas, 1)
 
         # Secondary plot for derivative/integral
-        self.canvas2 = MplCanvas(self, width=8, height=3, dpi=100)  # type: ignore[arg-type]
+        self.canvas2 = MplCanvas(self, width=8, height=3, dpi=100)  # type: ignore[arg-type]  # noqa: E501
         self.canvas2.setup_dark_theme()
         layout.addWidget(self.canvas2)
 
@@ -914,46 +914,46 @@ class UISetupMixin:
         self.signal_type_combo.currentIndexChanged.connect(
             self.param_stack.setCurrentIndex
         )
-        self.generate_btn.clicked.connect(self._generate_signal)  # type: ignore[attr-defined]
+        self.generate_btn.clicked.connect(self._generate_signal)  # type: ignore[attr-defined]  # noqa: E501
 
         # Fitting
         self.fit_btn.clicked.connect(self._fit_function)  # type: ignore[attr-defined]
         self.auto_fit_btn.clicked.connect(self._auto_fit)  # type: ignore[attr-defined]
 
         # Limits
-        self.apply_sat_btn.clicked.connect(self._apply_saturation)  # type: ignore[attr-defined]
-        self.sat_preview_check.stateChanged.connect(self._update_saturation_preview)  # type: ignore[attr-defined]
+        self.apply_sat_btn.clicked.connect(self._apply_saturation)  # type: ignore[attr-defined]  # noqa: E501
+        self.sat_preview_check.stateChanged.connect(self._update_saturation_preview)  # type: ignore[attr-defined]  # noqa: E501
 
         # Calculus
-        self.show_derivative_btn.clicked.connect(self._show_derivative)  # type: ignore[attr-defined]
-        self.show_integral_btn.clicked.connect(self._show_integral)  # type: ignore[attr-defined]
-        self.tangent_slider.valueChanged.connect(self._update_tangent_position)  # type: ignore[attr-defined]
-        self.show_tangent_check.stateChanged.connect(self._toggle_tangent)  # type: ignore[attr-defined]
-        self.int_lower_slider.valueChanged.connect(self._update_integral_bounds)  # type: ignore[attr-defined]
-        self.int_upper_slider.valueChanged.connect(self._update_integral_bounds)  # type: ignore[attr-defined]
+        self.show_derivative_btn.clicked.connect(self._show_derivative)  # type: ignore[attr-defined]  # noqa: E501
+        self.show_integral_btn.clicked.connect(self._show_integral)  # type: ignore[attr-defined]  # noqa: E501
+        self.tangent_slider.valueChanged.connect(self._update_tangent_position)  # type: ignore[attr-defined]  # noqa: E501
+        self.show_tangent_check.stateChanged.connect(self._toggle_tangent)  # type: ignore[attr-defined]  # noqa: E501
+        self.int_lower_slider.valueChanged.connect(self._update_integral_bounds)  # type: ignore[attr-defined]  # noqa: E501
+        self.int_upper_slider.valueChanged.connect(self._update_integral_bounds)  # type: ignore[attr-defined]  # noqa: E501
 
         # Filters
-        self.apply_filter_btn.clicked.connect(self._apply_filter)  # type: ignore[attr-defined]
-        self.show_freq_response_btn.clicked.connect(self._show_frequency_response)  # type: ignore[attr-defined]
+        self.apply_filter_btn.clicked.connect(self._apply_filter)  # type: ignore[attr-defined]  # noqa: E501
+        self.show_freq_response_btn.clicked.connect(self._show_frequency_response)  # type: ignore[attr-defined]  # noqa: E501
 
         # Noise
-        self.add_noise_btn.clicked.connect(self._add_noise)  # type: ignore[attr-defined]
-        self.reset_signal_btn.clicked.connect(self._reset_signal)  # type: ignore[attr-defined]
+        self.add_noise_btn.clicked.connect(self._add_noise)  # type: ignore[attr-defined]  # noqa: E501
+        self.reset_signal_btn.clicked.connect(self._reset_signal)  # type: ignore[attr-defined]  # noqa: E501
 
         # Series
-        self.compute_series_btn.clicked.connect(self._compute_series)  # type: ignore[attr-defined]
+        self.compute_series_btn.clicked.connect(self._compute_series)  # type: ignore[attr-defined]  # noqa: E501
 
         # Import
         self.browse_btn.clicked.connect(self._browse_file)  # type: ignore[attr-defined]
-        self.import_btn.clicked.connect(self._import_signal)  # type: ignore[attr-defined]
+        self.import_btn.clicked.connect(self._import_signal)  # type: ignore[attr-defined]  # noqa: E501
 
         # Output
-        self.apply_btn.clicked.connect(self._apply_to_joint)  # type: ignore[attr-defined]
-        self.export_btn.clicked.connect(self._export_signal)  # type: ignore[attr-defined]
+        self.apply_btn.clicked.connect(self._apply_to_joint)  # type: ignore[attr-defined]  # noqa: E501
+        self.export_btn.clicked.connect(self._export_signal)  # type: ignore[attr-defined]  # noqa: E501
 
         # Undo / Redo
         self.undo_btn.clicked.connect(self.undo)  # type: ignore[attr-defined]
         self.redo_btn.clicked.connect(self.redo)  # type: ignore[attr-defined]
 
         # Calculus export
-        self.export_calculus_btn.clicked.connect(self._export_calculus_result)  # type: ignore[attr-defined]
+        self.export_calculus_btn.clicked.connect(self._export_calculus_result)  # type: ignore[attr-defined]  # noqa: E501

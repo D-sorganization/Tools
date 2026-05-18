@@ -167,7 +167,7 @@ class ColorFieldEditor(QWidget):
         brightness = (LUMA_RED * r) + (LUMA_GREEN * g) + (LUMA_BLUE * b)
         text_colour = "#000000" if brightness > BRIGHTNESS_THRESHOLD else "#ffffff"
         self.pick_button.setStyleSheet(
-            f"background-color: {hex_colour}; color: {text_colour}; border: 1px solid #6c757d;"
+            f"background-color: {hex_colour}; color: {text_colour}; border: 1px solid #6c757d;"  # noqa: E501
         )
 
 

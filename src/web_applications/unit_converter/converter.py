@@ -603,7 +603,7 @@ class UnitConverter:
             else:
                 raise ValueError(f"Conversion from {from_unit} not implemented")
         else:
-            mj_per_kg = value * float(HEATING_VALUE_FACTORS[from_unit])  # type: ignore[arg-type]
+            mj_per_kg = value * float(HEATING_VALUE_FACTORS[from_unit])  # type: ignore[arg-type]  # noqa: E501
 
         # Convert from MJ/kg to target
         if HEATING_VALUE_FACTORS[to_unit] is None:
@@ -620,7 +620,7 @@ class UnitConverter:
             else:
                 raise ValueError(f"Conversion to {to_unit} not implemented")
         else:
-            return mj_per_kg / float(HEATING_VALUE_FACTORS[to_unit])  # type: ignore[arg-type]
+            return mj_per_kg / float(HEATING_VALUE_FACTORS[to_unit])  # type: ignore[arg-type]  # noqa: E501
 
     def format_number(self, num: float) -> str:
         """Format a number for display, matching the PyQt6 style."""

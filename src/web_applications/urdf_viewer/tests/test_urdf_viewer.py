@@ -41,7 +41,7 @@ class TestStaticRoutes:
 class TestModelsAPI:
     """Test model CRUD endpoints."""
 
-    def test_list_models_returns_list(self, client) -> None:  # type: ignore[no-untyped-def]
+    def test_list_models_returns_list(self, client) -> None:  # type: ignore[no-untyped-def]  # noqa: E501
         """GET /api/models should return a list."""
         response = client.get("/api/models")
         assert response.status_code == 200
@@ -49,7 +49,7 @@ class TestModelsAPI:
         assert "models" in data
         assert isinstance(data["models"], list)
 
-    def test_get_nonexistent_model_returns_404(self, client) -> None:  # type: ignore[no-untyped-def]
+    def test_get_nonexistent_model_returns_404(self, client) -> None:  # type: ignore[no-untyped-def]  # noqa: E501
         """GET /api/models/nonexistent.urdf should return 404."""
         response = client.get("/api/models/nonexistent.urdf")
         assert response.status_code == 404
@@ -58,7 +58,7 @@ class TestModelsAPI:
 class TestGenerateAPI:
     """Test URDF generation endpoint."""
 
-    def test_generate_default_returns_xml(self, client) -> None:  # type: ignore[no-untyped-def]
+    def test_generate_default_returns_xml(self, client) -> None:  # type: ignore[no-untyped-def]  # noqa: E501
         """POST /api/generate with defaults should return valid XML."""
         response = client.post("/api/generate", json={})
         assert response.status_code == 200
@@ -66,7 +66,7 @@ class TestGenerateAPI:
         assert response.text.startswith("<?xml")
         assert "<robot" in response.text
 
-    def test_generate_custom_params(self, client) -> None:  # type: ignore[no-untyped-def]
+    def test_generate_custom_params(self, client) -> None:  # type: ignore[no-untyped-def]  # noqa: E501
         """POST /api/generate with custom params should succeed."""
         response = client.post(
             "/api/generate",
@@ -81,7 +81,7 @@ class TestGenerateAPI:
         assert response.status_code == 200
         assert "test_robot" in response.text
 
-    def test_generate_all_templates(self, client) -> None:  # type: ignore[no-untyped-def]
+    def test_generate_all_templates(self, client) -> None:  # type: ignore[no-untyped-def]  # noqa: E501
         """All templates should generate valid URDF."""
         templates_response = client.get("/api/templates")
         templates = templates_response.json()["templates"]
@@ -94,7 +94,7 @@ class TestGenerateAPI:
             assert response.status_code == 200, f"Template '{template}' failed"
             assert "<robot" in response.text, f"Template '{template}' has no <robot>"
 
-    def test_generate_invalid_height_rejected(self, client) -> None:  # type: ignore[no-untyped-def]
+    def test_generate_invalid_height_rejected(self, client) -> None:  # type: ignore[no-untyped-def]  # noqa: E501
         """Negative height should be rejected by Pydantic validation."""
         response = client.post("/api/generate", json={"height_m": -1.0})
         assert response.status_code == 422
@@ -111,7 +111,7 @@ class TestPreviewAPI:
         assert "preview" in data
         assert "Model Structure Preview" in data["preview"]
 
-    def test_preview_contains_params(self, client) -> None:  # type: ignore[no-untyped-def]
+    def test_preview_contains_params(self, client) -> None:  # type: ignore[no-untyped-def]  # noqa: E501
         """Preview should reflect the requested parameters."""
         response = client.post(
             "/api/preview",
@@ -144,7 +144,7 @@ class TestPathSafety:
         # Should either 404 or 400, but NOT serve the file
         assert response.status_code in (400, 403, 404)
 
-    def test_upload_rejects_traversal_filename(self, client) -> None:  # type: ignore[no-untyped-def]
+    def test_upload_rejects_traversal_filename(self, client) -> None:  # type: ignore[no-untyped-def]  # noqa: E501
         """Upload should reject traversal filenames."""
         response = client.post(
             "/api/upload",
@@ -152,7 +152,7 @@ class TestPathSafety:
         )
         assert response.status_code == 400
 
-    def test_upload_rejects_path_separators(self, client) -> None:  # type: ignore[no-untyped-def]
+    def test_upload_rejects_path_separators(self, client) -> None:  # type: ignore[no-untyped-def]  # noqa: E501
         """Upload should reject filename paths with separators."""
         response = client.post(
             "/api/upload",

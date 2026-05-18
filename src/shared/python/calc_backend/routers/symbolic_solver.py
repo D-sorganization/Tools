@@ -117,7 +117,7 @@ def solve_equation(request: SymbolicSolveRequest) -> SymbolicSolveResponse:
     if not SYMPY_AVAILABLE:
         return SymbolicSolveResponse(
             available=False,
-            error="SymPy is not available. Install with: pip install sympy"
+            error="SymPy is not available. Install with: pip install sympy",
         )
 
     try:
@@ -169,7 +169,7 @@ def compute_derivative(
     if not SYMPY_AVAILABLE:
         return SymbolicDerivativeResponse(
             available=False,
-            error="SymPy is not available. Install with: pip install sympy"
+            error="SymPy is not available. Install with: pip install sympy",
         )
 
     try:
@@ -181,8 +181,7 @@ def compute_derivative(
         derivative = sp.diff(expr, variable)
 
         return SymbolicDerivativeResponse(
-            derivative=str(derivative),
-            latex=sp.latex(derivative)
+            derivative=str(derivative), latex=sp.latex(derivative)
         )
     except Exception as e:  # noqa: BLE001 - user-facing error message
         return SymbolicDerivativeResponse(error=f"Failed to compute derivative: {e!s}")
@@ -194,7 +193,7 @@ def simplify_expression(request: SymbolicSimplifyRequest) -> SymbolicSimplifyRes
     if not SYMPY_AVAILABLE:
         return SymbolicSimplifyResponse(
             available=False,
-            error="SymPy is not available. Install with: pip install sympy"
+            error="SymPy is not available. Install with: pip install sympy",
         )
 
     try:
@@ -205,8 +204,7 @@ def simplify_expression(request: SymbolicSimplifyRequest) -> SymbolicSimplifyRes
         simplified = sp.simplify(expr)
 
         return SymbolicSimplifyResponse(
-            simplified=str(simplified),
-            latex=sp.latex(simplified)
+            simplified=str(simplified), latex=sp.latex(simplified)
         )
     except Exception as e:  # noqa: BLE001 - user-facing error message
         return SymbolicSimplifyResponse(error=f"Failed to simplify expression: {e!s}")

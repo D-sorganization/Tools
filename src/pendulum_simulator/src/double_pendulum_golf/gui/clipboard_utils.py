@@ -23,7 +23,7 @@ def matrix_to_tsv(data: np.ndarray) -> str:
     """Convert a 2D numpy array to tab-separated text for clipboard.
 
     Pre: data.ndim == 2
-    Post: returned string has data.shape[0] lines, each with data.shape[1] tab-separated values.
+    Post: returned string has data.shape[0] lines, each with data.shape[1] tab-separated values.  # noqa: E501
     """
     if not (data.ndim == 2):
         raise ValueError(f"Expected 2D array, got {data.ndim}D")

@@ -471,15 +471,15 @@ class FolderToolMixin:
             elif mode == "analyze":
                 self._folder_analyze_operation()
 
-            self.after(0, lambda: self.folder_status_var.set("Processing complete"))  # type: ignore[attr-defined]
-            self.after(0, lambda: self.folder_progress_bar.set(1.0))  # type: ignore[attr-defined]
-            self.after(0, lambda: self.folder_run_button.configure(state="normal"))  # type: ignore[attr-defined]
-            self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))  # type: ignore[attr-defined]
+            self.after(0, lambda: self.folder_status_var.set("Processing complete"))  # type: ignore[attr-defined]  # noqa: E501
+            self.after(0, lambda: self.folder_progress_bar.set(1.0))  # type: ignore[attr-defined]  # noqa: E501
+            self.after(0, lambda: self.folder_run_button.configure(state="normal"))  # type: ignore[attr-defined]  # noqa: E501
+            self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))  # type: ignore[attr-defined]  # noqa: E501
         except (OSError, PermissionError, ValueError) as exc:
             msg = f"Error: {exc}"
-            self.after(0, lambda m=msg: self.folder_status_var.set(m))  # type: ignore[attr-defined]
-            self.after(0, lambda: self.folder_run_button.configure(state="normal"))  # type: ignore[attr-defined]
-            self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))  # type: ignore[attr-defined]
+            self.after(0, lambda m=msg: self.folder_status_var.set(m))  # type: ignore[attr-defined]  # noqa: E501
+            self.after(0, lambda: self.folder_run_button.configure(state="normal"))  # type: ignore[attr-defined]  # noqa: E501
+            self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))  # type: ignore[attr-defined]  # noqa: E501
 
     def _folder_combine_operation(self) -> None:
         """Combine operation - copy all files from source folders to destination."""
@@ -494,7 +494,7 @@ class FolderToolMixin:
 
             total_files = len(all_file_paths)
             if total_files == 0:
-                self.after(0, lambda: self.folder_status_var.set("No files found"))  # type: ignore[attr-defined]
+                self.after(0, lambda: self.folder_status_var.set("No files found"))  # type: ignore[attr-defined]  # noqa: E501
                 return
 
             processed_files = 0
@@ -623,7 +623,7 @@ class FolderToolMixin:
         for p, sz in largest:
             report += f"{p.name}: {sz / 1e6:.2f} MB\n"
 
-        self.after(0, lambda: self._show_folder_analysis_report(report))  # type: ignore[attr-defined]
+        self.after(0, lambda: self._show_folder_analysis_report(report))  # type: ignore[attr-defined]  # noqa: E501
 
     def _show_folder_analysis_report(self, text: str) -> None:
         """Show report."""

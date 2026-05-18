@@ -55,7 +55,7 @@ def test_engine_load_data_none() -> None:
     from unittest.mock import patch
 
     with patch(
-        "upstream_drift_tools.process_calculators.wgs_reactor_calculator.safe_read_json",
+        "upstream_drift_tools.process_calculators.wgs_reactor_calculator.safe_read_json",  # noqa: E501
         return_value={},
     ):
         engine._load_data(None)
@@ -81,7 +81,7 @@ def test_equilibrium_composition_zero_total() -> None:
 
 
 def test_minimal_species_db_fallback() -> None:
-    # Need to manipulate the module attributes to test the fallback DB if it wasn't defined
+    # Need to manipulate the module attributes to test the fallback DB if it wasn't defined  # noqa: E501
     import importlib
     import sys
 
@@ -90,7 +90,7 @@ def test_minimal_species_db_fallback() -> None:
     # Temporarily mock the db import out
     original_modules = dict(sys.modules)
     sys.modules[
-        "integrated_process_simulator.calculators.thermodynamic_properties.species_database"
+        "integrated_process_simulator.calculators.thermodynamic_properties.species_database"  # noqa: E501
     ] = None
 
     try:

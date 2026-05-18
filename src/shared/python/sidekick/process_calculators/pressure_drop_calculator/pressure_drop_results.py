@@ -83,7 +83,7 @@ def _print_summary_section(results: dict[str, Any]) -> None:
     logger.info("├" + "─" * 78 + "┤")
     logger.info(
         f"│  Total Pressure Drop:  {results['pressure_drop_bar']:10.4f} bar  "
-        f"│  {results['pressure_drop_psi']:10.4f} psi  │  {results['pressure_drop_kpa']:10.2f} kPa  │"
+        f"│  {results['pressure_drop_psi']:10.4f} psi  │  {results['pressure_drop_kpa']:10.2f} kPa  │"  # noqa: E501
     )
     logger.info(
         f"│  Outlet Pressure:      {results['outlet_pressure_bar']:10.4f} bar  "
@@ -112,14 +112,14 @@ def _print_breakdown_section(results: dict[str, Any]) -> None:
     elevation_pct = safe_percent(results["elevation_loss_pa"], dp_total)
 
     logger.info(
-        f"│  Friction (pipe wall)                │ {results['friction_loss_bar']:17.6f} │ {friction_pct:15.1f}% │"
+        f"│  Friction (pipe wall)                │ {results['friction_loss_bar']:17.6f} │ {friction_pct:15.1f}% │"  # noqa: E501
     )
     logger.info(
-        f"│  Fittings & valves                   │ {results['fitting_loss_bar']:17.6f} │ {fitting_pct:15.1f}% │"
+        f"│  Fittings & valves                   │ {results['fitting_loss_bar']:17.6f} │ {fitting_pct:15.1f}% │"  # noqa: E501
     )
     if abs(results["elevation_loss_pa"]) > 0.1:
         logger.info(
-            f"│  Elevation change                    │ {results['elevation_loss_pa'] / 1e5:17.6f} │ {elevation_pct:15.1f}% │"
+            f"│  Elevation change                    │ {results['elevation_loss_pa'] / 1e5:17.6f} │ {elevation_pct:15.1f}% │"  # noqa: E501
         )
     logger.info("└" + "─" * 38 + "┴" + "─" * 19 + "┴" + "─" * 19 + "┘")
 
@@ -130,13 +130,13 @@ def _print_flow_and_gas_sections(results: dict[str, Any]) -> None:
     logger.info("│" + " FLOW CHARACTERISTICS ".center(78) + "│")
     logger.info("├" + "─" * 38 + "┬" + "─" * 39 + "┤")
     logger.info(
-        f"│  Flow Velocity:     {results['flow_velocity_m_s']:10.2f} m/s   │  {results['flow_velocity_ft_s']:10.2f} ft/s                  │"
+        f"│  Flow Velocity:     {results['flow_velocity_m_s']:10.2f} m/s   │  {results['flow_velocity_ft_s']:10.2f} ft/s                  │"  # noqa: E501
     )
     logger.info(
-        f"│  Reynolds Number:   {results['reynolds_number']:10.0f}        │  Flow Regime: {results['flow_regime']:18s}   │"
+        f"│  Reynolds Number:   {results['reynolds_number']:10.0f}        │  Flow Regime: {results['flow_regime']:18s}   │"  # noqa: E501
     )
     logger.info(
-        f"│  Mach Number:       {results['mach_number']:10.4f}        │  Friction Factor: {results['friction_factor']:14.6f}   │"
+        f"│  Mach Number:       {results['mach_number']:10.4f}        │  Friction Factor: {results['friction_factor']:14.6f}   │"  # noqa: E501
     )
     logger.info("└" + "─" * 38 + "┴" + "─" * 39 + "┘")
 
@@ -144,10 +144,10 @@ def _print_flow_and_gas_sections(results: dict[str, Any]) -> None:
     logger.info("│" + " GAS PROPERTIES ".center(78) + "│")
     logger.info("├" + "─" * 38 + "┬" + "─" * 39 + "┤")
     logger.info(
-        f"│  Density:           {results['density_kg_m3']:10.4f} kg/m³  │  Molecular Weight: {results['molecular_weight']:12.2f} kg/kmol│"
+        f"│  Density:           {results['density_kg_m3']:10.4f} kg/m³  │  Molecular Weight: {results['molecular_weight']:12.2f} kg/kmol│"  # noqa: E501
     )
     logger.info(
-        f"│  Viscosity:         {results['viscosity_pa_s'] * 1e6:10.4f} µPa·s  │  Compressibility (Z): {results['compressibility_factor']:10.4f}     │"
+        f"│  Viscosity:         {results['viscosity_pa_s'] * 1e6:10.4f} µPa·s  │  Compressibility (Z): {results['compressibility_factor']:10.4f}     │"  # noqa: E501
     )
     logger.info("└" + "─" * 38 + "┴" + "─" * 39 + "┘")
 
@@ -167,10 +167,10 @@ def _print_safety_section(results: dict[str, Any]) -> None:
         erosion_status = "❌ DANGER"
 
     logger.info(
-        f"│  Erosional Velocity: {results['erosional_velocity_m_s']:9.2f} m/s   │  Status: {erosion_status:26s}  │"
+        f"│  Erosional Velocity: {results['erosional_velocity_m_s']:9.2f} m/s   │  Status: {erosion_status:26s}  │"  # noqa: E501
     )
     logger.info(
-        f"│  Erosion Ratio:      {erosion_ratio:9.1f} %     │  (Velocity/Erosional limit)         │"
+        f"│  Erosion Ratio:      {erosion_ratio:9.1f} %     │  (Velocity/Erosional limit)         │"  # noqa: E501
     )
     logger.info("└" + "─" * 38 + "┴" + "─" * 39 + "┘")
 
@@ -243,7 +243,7 @@ def _generate_recommendations(results: dict[str, Any]) -> list[str]:
     )
     if dp_ratio > 0.20:
         recommendations.append(
-            f"High pressure drop ({dp_ratio * 100:.0f}% of inlet). Consider: larger pipe diameter, "
+            f"High pressure drop ({dp_ratio * 100:.0f}% of inlet). Consider: larger pipe diameter, "  # noqa: E501
             "shorter pipe run, or fewer fittings."
         )
 
@@ -256,7 +256,7 @@ def _generate_recommendations(results: dict[str, Any]) -> list[str]:
         )
     elif erosion_ratio > 0.5:
         recommendations.append(
-            "Velocity is 50-80% of erosional limit. Monitor pipe condition and consider "
+            "Velocity is 50-80% of erosional limit. Monitor pipe condition and consider "  # noqa: E501
             "velocity reduction for longer service life."
         )
 
@@ -270,21 +270,21 @@ def _generate_recommendations(results: dict[str, Any]) -> list[str]:
     # High Mach number
     if results["mach_number"] > 0.3:
         recommendations.append(
-            f"High Mach number ({results['mach_number']:.3f}). Compressibility effects significant. "
+            f"High Mach number ({results['mach_number']:.3f}). Compressibility effects significant. "  # noqa: E501
             "Verify calculations and consider acoustic vibration analysis."
         )
 
     # Low Reynolds number
     if results["reynolds_number"] < 4000:
         recommendations.append(
-            f"Low Reynolds number ({results['reynolds_number']:.0f}). Flow may be transitional "
+            f"Low Reynolds number ({results['reynolds_number']:.0f}). Flow may be transitional "  # noqa: E501
             "or laminar - friction factor has higher uncertainty in this regime."
         )
 
     # Very high Reynolds number
     if results["reynolds_number"] > 1e7:
         recommendations.append(
-            f"Very high Reynolds number ({results['reynolds_number']:.0e}). Ensure turbulent flow "
+            f"Very high Reynolds number ({results['reynolds_number']:.0e}). Ensure turbulent flow "  # noqa: E501
             "correlations are valid. Consider CFD analysis for critical applications."
         )
 

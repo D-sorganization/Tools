@@ -145,7 +145,7 @@ def test_apply_to_kernel_environment_calls_session_model(
     # Patch set_kernel_environment on the session model (it's a dataclass,
     # so we attach a mock method directly for this test).
     received: list[dict] = []
-    session_model.set_kernel_environment = lambda env: received.append(env)  # type: ignore[method-assign]
+    session_model.set_kernel_environment = lambda env: received.append(env)  # type: ignore[method-assign]  # noqa: E501
 
     bridge.apply_to_kernel_environment({"x": 1, "fn": lambda: None})
 
@@ -160,7 +160,7 @@ def test_apply_to_kernel_environment_empty_workspace(
     bridge = WorkspaceBridge(session_model)
 
     received: list[dict] = []
-    session_model.set_kernel_environment = lambda env: received.append(env)  # type: ignore[method-assign]
+    session_model.set_kernel_environment = lambda env: received.append(env)  # type: ignore[method-assign]  # noqa: E501
 
     bridge.apply_to_kernel_environment({})
     assert received == [{}]

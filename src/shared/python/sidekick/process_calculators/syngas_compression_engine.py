@@ -1,7 +1,7 @@
 """Syngas Compression Calculation Engine.
 
-Pure calculation logic extracted from ``syngas_compression_calculator.py`` (issue #1806).
-No GUI dependencies — can be used headlessly for batch calculations, testing, or API serving.
+Pure calculation logic extracted from ``syngas_compression_calculator.py`` (issue #1806).  # noqa: E501
+No GUI dependencies — can be used headlessly for batch calculations, testing, or API serving.  # noqa: E501
 
 Classes
 -------
@@ -43,7 +43,7 @@ try:
     )
 except ImportError:
 
-    def validate_gas_composition(comp: dict, auto_normalize: bool = False) -> dict:  # type: ignore[misc]
+    def validate_gas_composition(comp: dict, auto_normalize: bool = False) -> dict:  # type: ignore[misc]  # noqa: E501
         """Simple validation and normalization fallback."""
         if not comp:
             raise ValueError("Empty composition")

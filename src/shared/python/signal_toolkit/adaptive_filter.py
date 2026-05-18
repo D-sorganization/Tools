@@ -74,7 +74,7 @@ class AdaptiveFilter:
 
             x_arr = _np.asarray(x, dtype=np.float64)
             d_arr = _np.asarray(d, dtype=np.float64)
-            y_arr, e_arr = _rust_lms(x_arr, d_arr, order=order, step_size=step_size)  # type: ignore[call-arg]
+            y_arr, e_arr = _rust_lms(x_arr, d_arr, order=order, step_size=step_size)  # type: ignore[call-arg]  # noqa: E501
             y: np.ndarray = np.asarray(y_arr, dtype=np.float64)
             e: np.ndarray = np.asarray(e_arr, dtype=np.float64)
         else:

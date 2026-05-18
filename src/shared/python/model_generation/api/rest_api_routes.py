@@ -287,7 +287,7 @@ class ModelGenerationAPI:
             {
                 "name": "Model Generation API",
                 "version": "1.0.0",
-                "description": "REST API for URDF generation, conversion, and manipulation",
+                "description": "REST API for URDF generation, conversion, and manipulation",  # noqa: E501
                 "endpoints": [
                     {
                         "method": r.method.value,
@@ -657,7 +657,7 @@ class ModelGenerationAPI:
                     "iyz": inertia.iyz,
                 },
                 "is_positive_definite": inertia.is_positive_definite(),
-                "satisfies_triangle_inequality": inertia.satisfies_triangle_inequality(),
+                "satisfies_triangle_inequality": inertia.satisfies_triangle_inequality(),  # noqa: E501
             }
         )
 

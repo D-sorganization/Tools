@@ -202,7 +202,7 @@ class TestRepository:
                     "name": "safe_mesh.stl",
                     "path": "meshes/safe_mesh.stl",
                     "download_url": (
-                        "https://raw.githubusercontent.com/owner/repo/main/meshes/safe_mesh.stl"
+                        "https://raw.githubusercontent.com/owner/repo/main/meshes/safe_mesh.stl"  # noqa: E501
                     ),
                 },
                 {

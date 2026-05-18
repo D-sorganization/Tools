@@ -7,7 +7,7 @@ from typing import Any
 GUI_INFO = {
     "name": "Function Generator",
     "tool_name": "function_generator",
-    "description": "Generate and visualize various waveforms (sine, square, triangle, etc.)",
+    "description": "Generate and visualize various waveforms (sine, square, triangle, etc.)",  # noqa: E501
     "category": "Signal Processing",
     "icon": "wave",
     "pyqt6": {

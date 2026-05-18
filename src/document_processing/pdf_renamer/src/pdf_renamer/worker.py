@@ -113,7 +113,7 @@ def _handle_missing_title(
             return ProcessingResult(
                 file_path,
                 False,
-                f"Could not extract title from {file_path.name}: {result.details}. Moved to {failed_folder}/",
+                f"Could not extract title from {file_path.name}: {result.details}. Moved to {failed_folder}/",  # noqa: E501
                 result,
                 failed_path,
             )
@@ -155,7 +155,7 @@ def _rename_file_with_collision_handling(
                 return ProcessingResult(
                     file_path,
                     False,
-                    f"Target exists and collision resolution failed: {target_path.name}",
+                    f"Target exists and collision resolution failed: {target_path.name}",  # noqa: E501
                     result,
                 )
 

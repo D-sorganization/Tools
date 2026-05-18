@@ -157,7 +157,7 @@ def test_painting(qapp, monkeypatch) -> Any:
     del res.joint_forces_at
     w._draw_force_vectors(painter, {})
 
-    # torques_at Exception branch cover for _draw_torque_vectors and _draw_moment_of_force
+    # torques_at Exception branch cover for _draw_torque_vectors and _draw_moment_of_force  # noqa: E501
     res.torques_at.side_effect = AttributeError("test error")
     w._draw_torque_vectors(painter)
     w._draw_moment_of_force(painter)

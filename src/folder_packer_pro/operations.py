@@ -52,7 +52,7 @@ class ScanPreviewMixin:
                 self.exclude_patterns,  # type: ignore[attr-defined]
                 self.include_git_var.get(),  # type: ignore[attr-defined]
             )
-            self.root.after(0, lambda: self._display_stats(stats))  # type: ignore[attr-defined]
+            self.root.after(0, lambda: self._display_stats(stats))  # type: ignore[attr-defined]  # noqa: E501
 
         threading.Thread(target=scan, daemon=True).start()
 
@@ -89,7 +89,7 @@ class ScanPreviewMixin:
 
     def _update_preview_tree(self) -> None:
         """Update preview tree with files to be packed."""
-        self.preview_tree.delete(*self.preview_tree.get_children())  # type: ignore[attr-defined]
+        self.preview_tree.delete(*self.preview_tree.get_children())  # type: ignore[attr-defined]  # noqa: E501
 
         if not self.pack_source_entry.get():  # type: ignore[attr-defined]
             return
@@ -129,7 +129,7 @@ class ScanPreviewMixin:
                 if len(files) >= 500:
                     break
 
-            self.root.after(0, lambda: self._populate_tree(files, source_path))  # type: ignore[attr-defined]
+            self.root.after(0, lambda: self._populate_tree(files, source_path))  # type: ignore[attr-defined]  # noqa: E501
 
         threading.Thread(target=scan, daemon=True).start()
 
@@ -199,10 +199,10 @@ class PackOperationMixin:
     def _run_pack(self) -> None:
         """Run pack operation in background."""
         try:
-            source_path = Path(self.pack_source_entry.get())  # type: ignore[attr-defined]
-            output_path = Path(self.pack_output_entry.get())  # type: ignore[attr-defined]
+            source_path = Path(self.pack_source_entry.get())  # type: ignore[attr-defined]  # noqa: E501
+            output_path = Path(self.pack_output_entry.get())  # type: ignore[attr-defined]  # noqa: E501
 
-            self._update_pack_status("Collecting files...")  # type: ignore[attr-defined]
+            self._update_pack_status("Collecting files...")  # type: ignore[attr-defined]  # noqa: E501
 
             files_to_pack = collect_files(
                 source_path,
@@ -212,11 +212,11 @@ class PackOperationMixin:
             )
 
             if self.cancel_operation:
-                self._log_message("Pack operation cancelled", "warning")  # type: ignore[attr-defined]
+                self._log_message("Pack operation cancelled", "warning")  # type: ignore[attr-defined]  # noqa: E501
                 return
 
             total_files = len(files_to_pack)
-            self._log_message(f"Packing {total_files} files...", "info")  # type: ignore[attr-defined]
+            self._log_message(f"Packing {total_files} files...", "info")  # type: ignore[attr-defined]  # noqa: E501
 
             def progress_callback(filename: str, current: int, total: int) -> None:
                 """Report pack progress to UI."""
@@ -225,9 +225,9 @@ class PackOperationMixin:
                 progress = (current / total) * 100
                 self.root.after(  # type: ignore[attr-defined]
                     0,
-                    lambda p=progress: self.pack_progress_var.set(float(p)),  # type: ignore[attr-defined]
+                    lambda p=progress: self.pack_progress_var.set(float(p)),  # type: ignore[attr-defined]  # noqa: E501
                 )
-                self._update_pack_status(f"Packing {filename} ({current}/{total})")  # type: ignore[attr-defined]
+                self._update_pack_status(f"Packing {filename} ({current}/{total})")  # type: ignore[attr-defined]  # noqa: E501
 
             result = pack_files(
                 source_path=source_path,
@@ -236,9 +236,9 @@ class PackOperationMixin:
                 compression=self.compression_var.get(),  # type: ignore[attr-defined]
                 encrypt=self.encrypt_var.get(),  # type: ignore[attr-defined]
                 password=(
-                    self.pack_password_entry.get() if self.encrypt_var.get() else ""  # type: ignore[attr-defined]
+                    self.pack_password_entry.get() if self.encrypt_var.get() else ""  # type: ignore[attr-defined]  # noqa: E501
                 ),
-                create_manifest=self.create_manifest_var.get(),  # type: ignore[attr-defined]
+                create_manifest=self.create_manifest_var.get(),  # type: ignore[attr-defined]  # noqa: E501
                 progress_callback=progress_callback,
                 cancel_check=lambda: self.cancel_operation,
             )
@@ -264,7 +264,7 @@ class PackOperationMixin:
                     ),
                 )
             else:
-                self._log_message(f"Pack operation failed: {result.error}", "error")  # type: ignore[attr-defined]
+                self._log_message(f"Pack operation failed: {result.error}", "error")  # type: ignore[attr-defined]  # noqa: E501
                 error_msg = result.error or "Unknown error"
                 self.root.after(  # type: ignore[attr-defined]
                     0,
@@ -275,7 +275,7 @@ class PackOperationMixin:
 
         except (PermissionError, OSError) as e:
             logger.exception("Pack operation failed")
-            self._log_message(f"Pack operation failed: {e}", "error")  # type: ignore[attr-defined]
+            self._log_message(f"Pack operation failed: {e}", "error")  # type: ignore[attr-defined]  # noqa: E501
             error_msg = str(e)
             self.root.after(  # type: ignore[attr-defined]
                 0,
@@ -321,10 +321,10 @@ class UnpackOperationMixin:
     def _run_unpack(self) -> None:
         """Run unpack operation in background."""
         try:
-            package_path = Path(self.unpack_source_entry.get())  # type: ignore[attr-defined]
+            package_path = Path(self.unpack_source_entry.get())  # type: ignore[attr-defined]  # noqa: E501
             dest_path = Path(self.unpack_dest_entry.get())  # type: ignore[attr-defined]
 
-            self._update_unpack_status("Reading package...")  # type: ignore[attr-defined]
+            self._update_unpack_status("Reading package...")  # type: ignore[attr-defined]  # noqa: E501
 
             def progress_callback(filename: str, current: int, total: int) -> None:
                 """Report unpack progress to UI."""
@@ -333,16 +333,16 @@ class UnpackOperationMixin:
                 progress = (current / total) * 100
                 self.root.after(  # type: ignore[attr-defined]
                     0,
-                    lambda p=progress: self.unpack_progress_var.set(float(p)),  # type: ignore[attr-defined]
+                    lambda p=progress: self.unpack_progress_var.set(float(p)),  # type: ignore[attr-defined]  # noqa: E501
                 )
-                self._update_unpack_status(f"Extracting {filename} ({current}/{total})")  # type: ignore[attr-defined]
+                self._update_unpack_status(f"Extracting {filename} ({current}/{total})")  # type: ignore[attr-defined]  # noqa: E501
 
             result = unpack_files(
                 package_path=package_path,
                 dest_path=dest_path,
                 encrypted=self.encrypted_var.get(),  # type: ignore[attr-defined]
                 password=(
-                    self.unpack_password_entry.get() if self.encrypted_var.get() else ""  # type: ignore[attr-defined]
+                    self.unpack_password_entry.get() if self.encrypted_var.get() else ""  # type: ignore[attr-defined]  # noqa: E501
                 ),
                 progress_callback=progress_callback,
                 cancel_check=lambda: self.cancel_operation,
@@ -366,7 +366,7 @@ class UnpackOperationMixin:
                     ),
                 )
             else:
-                self._log_message(f"Unpack operation failed: {result.error}", "error")  # type: ignore[attr-defined]
+                self._log_message(f"Unpack operation failed: {result.error}", "error")  # type: ignore[attr-defined]  # noqa: E501
                 error_msg = result.error or "Unknown error"
                 self.root.after(  # type: ignore[attr-defined]
                     0,
@@ -377,7 +377,7 @@ class UnpackOperationMixin:
 
         except (PermissionError, OSError) as e:
             logger.exception("Unpack operation failed")
-            self._log_message(f"Unpack operation failed: {e}", "error")  # type: ignore[attr-defined]
+            self._log_message(f"Unpack operation failed: {e}", "error")  # type: ignore[attr-defined]  # noqa: E501
             error_msg = str(e)
             self.root.after(  # type: ignore[attr-defined]
                 0,
@@ -397,7 +397,7 @@ class UnpackOperationMixin:
         try:
             info = inspect_package(Path(package_path))
 
-            self.package_info_text.configure(state="normal")  # type: ignore[attr-defined]
+            self.package_info_text.configure(state="normal")  # type: ignore[attr-defined]  # noqa: E501
             self.package_info_text.delete("1.0", "end")  # type: ignore[attr-defined]
 
             output = "Package Information\n\n"
@@ -412,7 +412,7 @@ class UnpackOperationMixin:
                 output += f"Compression: {metadata.get('compression', 'Unknown')}\n"
 
             self.package_info_text.insert("1.0", output)  # type: ignore[attr-defined]
-            self.package_info_text.configure(state="disabled")  # type: ignore[attr-defined]
+            self.package_info_text.configure(state="disabled")  # type: ignore[attr-defined]  # noqa: E501
 
         except (
             OSError,

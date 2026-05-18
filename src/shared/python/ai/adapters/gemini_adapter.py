@@ -119,7 +119,7 @@ class GeminiAdapter(BaseAgentAdapter):
             self._client: Any | None = _GenaiClient(api_key=self._api_key)
             # On modern SDKs the Client owns the model factory. We keep a
             # bound model handle for parity with the legacy path.
-            self._model = self._client.models.get(self._model_name)  # type: ignore[attr-defined]
+            self._model = self._client.models.get(self._model_name)  # type: ignore[attr-defined]  # noqa: E501
         else:
             # Legacy fallback: re-apply configure() under a lock before each
             # request (see ``_with_configured_sdk``). We still construct the

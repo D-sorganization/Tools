@@ -162,7 +162,7 @@ class AnalysisTab:
         return group_2d
 
     def _build_3d_controls_group(self) -> Any:
-        """Build the 3D surface plot control group (X/Y/Z axes, grid points, plot button)."""
+        """Build the 3D surface plot control group (X/Y/Z axes, grid points, plot button)."""  # noqa: E501
         from PyQt6.QtWidgets import (
             QComboBox,
             QGroupBox,

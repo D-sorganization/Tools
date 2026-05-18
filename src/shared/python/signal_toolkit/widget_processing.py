@@ -286,7 +286,7 @@ class ProcessingMixin:
             w._update_plot(fitted_signal=result.fitted_signal)
 
         except (KeyError, ValueError, TypeError) as e:
-            QMessageBox.warning(self, "Fit Error", f"Failed to fit: {e}")  # type: ignore[arg-type]
+            QMessageBox.warning(self, "Fit Error", f"Failed to fit: {e}")  # type: ignore[arg-type]  # noqa: E501
 
     def _auto_fit(self) -> None:
         """Automatically find the best fit."""
@@ -307,7 +307,7 @@ class ProcessingMixin:
             w._update_plot(fitted_signal=result.fitted_signal)
 
         except (ValueError, TypeError, RuntimeError) as e:
-            QMessageBox.warning(self, "Auto-fit Error", f"Failed: {e}")  # type: ignore[arg-type]
+            QMessageBox.warning(self, "Auto-fit Error", f"Failed: {e}")  # type: ignore[arg-type]  # noqa: E501
 
     # ------------------------------------------------------------------
     # Limits / Saturation
@@ -450,7 +450,7 @@ class ProcessingMixin:
                     SignalExporter.to_csv(signal_to_export, path)
                 w._log(f"Exported calculus result to {Path(path).name}")
             except (PermissionError, OSError) as e:
-                QMessageBox.warning(self, "Export Error", f"Failed: {e}")  # type: ignore[arg-type]
+                QMessageBox.warning(self, "Export Error", f"Failed: {e}")  # type: ignore[arg-type]  # noqa: E501
 
     def _update_tangent_position(self, value: int) -> None:
         """Update tangent line position from slider."""
@@ -537,7 +537,7 @@ class ProcessingMixin:
             )
 
         except (ValueError, TypeError) as e:
-            QMessageBox.warning(self, "Series Error", f"Failed: {e}")  # type: ignore[arg-type]
+            QMessageBox.warning(self, "Series Error", f"Failed: {e}")  # type: ignore[arg-type]  # noqa: E501
 
     # ------------------------------------------------------------------
     # Filters
@@ -765,7 +765,7 @@ class ProcessingMixin:
             w._log(f"Imported signal from {Path(path).name}")
 
         except (PermissionError, OSError) as e:
-            QMessageBox.warning(self, "Import Error", f"Failed: {e}")  # type: ignore[arg-type]
+            QMessageBox.warning(self, "Import Error", f"Failed: {e}")  # type: ignore[arg-type]  # noqa: E501
 
     def _apply_to_joint(self) -> None:
         """Apply signal to selected joint."""
@@ -806,7 +806,7 @@ class ProcessingMixin:
                     SignalExporter.to_csv(w.current_signal, path)
                 w._log(f"Exported to {Path(path).name}")
             except (PermissionError, OSError) as e:
-                QMessageBox.warning(self, "Export Error", f"Failed: {e}")  # type: ignore[arg-type]
+                QMessageBox.warning(self, "Export Error", f"Failed: {e}")  # type: ignore[arg-type]  # noqa: E501
 
     def load_external_signal(self, signal: Signal) -> None:
         """Load a signal from an external source.

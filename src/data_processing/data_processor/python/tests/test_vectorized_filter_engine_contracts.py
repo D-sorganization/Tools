@@ -93,7 +93,7 @@ class TestApplyFilterBatchContracts:
 
     def test_rejects_non_dict_params(self, engine) -> None:
         with pytest.raises((PreconditionError, ValueError, TypeError)):
-            engine.apply_filter_batch(_make_df(), "Moving Average", None)  # type: ignore[arg-type]
+            engine.apply_filter_batch(_make_df(), "Moving Average", None)  # type: ignore[arg-type]  # noqa: E501
 
     def test_unknown_filter_type_returns_original(self, engine) -> None:
         df = _make_df()
@@ -141,9 +141,9 @@ class TestFilterOutputShapes:
     ) -> None:
         df = _make_df(n=300)
         result = engine.apply_filter_batch(df, filter_type, params)
-        assert list(result.columns) == list(df.columns), (
-            f"{filter_type}: columns changed"
-        )
+        assert list(result.columns) == list(
+            df.columns
+        ), f"{filter_type}: columns changed"
 
     @pytest.mark.parametrize("filter_type,params", FILTER_TYPES)
     def test_output_row_count_preserved(
@@ -151,9 +151,9 @@ class TestFilterOutputShapes:
     ) -> None:
         df = _make_df(n=300)
         result = engine.apply_filter_batch(df, filter_type, params)
-        assert len(result) == len(df), (
-            f"{filter_type}: row count changed {len(result)} != {len(df)}"
-        )
+        assert len(result) == len(
+            df
+        ), f"{filter_type}: row count changed {len(result)} != {len(df)}"
 
 
 class TestMovingAverageCorrectness:
@@ -209,9 +209,9 @@ class TestNaNPreservation:
         nan_after = result["x"].index[result["x"].isna()]
         # All original NaN positions should still be NaN
         for idx in nan_idx:
-            assert idx in nan_after, (
-                f"{filter_type}: NaN at index {idx} was filled unexpectedly"
-            )
+            assert (
+                idx in nan_after
+            ), f"{filter_type}: NaN at index {idx} was filled unexpectedly"
 
 
 class TestParallelVsSequentialConsistency:

@@ -9,7 +9,7 @@ Usage
     from .diagnostics import DiagnosticsTracker, get_tracker
 
     tracker = get_tracker()
-    tracker.record("simulation_error", "ODE solver diverged at t=0.42", severity="error")
+    tracker.record("simulation_error", "ODE solver diverged at t=0.42", severity="error")  # noqa: E501
 
     # Open the diagnostics viewer from the menu bar:
     tracker.show_viewer(parent_widget)

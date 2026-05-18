@@ -194,7 +194,7 @@ class TestJacobianTripleAnalytic:
         assert np.isclose(J[1, 0], 0.0)
 
     def test_phi2_only_affects_tip(self, L3: tuple[float, float, float]) -> None:
-        """phi2 should affect J_tip's third column but NOT wrist1 or wrist2's third column."""
+        """phi2 should affect J_tip's third column but NOT wrist1 or wrist2's third column."""  # noqa: E501
         L1, L2, L3_ = L3
         for phi2 in [0.0, 0.5, -0.7]:
             jacs = jacobian_triple(0.3, 0.2, phi2, L1, L2, L3_)

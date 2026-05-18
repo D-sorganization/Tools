@@ -35,7 +35,7 @@ def process_file(
     dry_run: bool,
     style: str,
 ) -> None:
-    """Extract the title from *file_path* and rename it, using cache and optional LLM."""
+    """Extract the title from *file_path* and rename it, using cache and optional LLM."""  # noqa: E501
     try:
         # 1. Hash
         file_hash = sha256_file(file_path)

@@ -97,7 +97,7 @@ class TestURDFContracts:
         generator = HumanoidURDFGenerator()
         params = BodyParameters()
 
-        # Mock internal methods to avoid actual computation (which might fail due to defaults)
+        # Mock internal methods to avoid actual computation (which might fail due to defaults)  # noqa: E501
         # and mock _build_urdf_xml to return invalid XML to trigger the postcondition
         with (
             patch.object(HumanoidURDFGenerator, "_generate_link"),

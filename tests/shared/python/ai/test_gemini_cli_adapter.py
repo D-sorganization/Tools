@@ -58,8 +58,8 @@ _env_stub = sys.modules.get("src.shared.python.config.environment")
 if not isinstance(_env_stub, types.ModuleType):
     _env_stub = types.ModuleType("src.shared.python.config.environment")
     sys.modules["src.shared.python.config.environment"] = _env_stub
-_env_stub.get_env = lambda key, default=None, required=False: default  # type: ignore[attr-defined]
-_env_stub.get_env_float = lambda key, default=0.0: float(default)  # type: ignore[attr-defined]
+_env_stub.get_env = lambda key, default=None, required=False: default  # type: ignore[attr-defined]  # noqa: E501
+_env_stub.get_env_float = lambda key, default=0.0: float(default)  # type: ignore[attr-defined]  # noqa: E501
 
 
 from src.shared.python.ai.adapters.gemini_cli_adapter import (  # noqa: E402

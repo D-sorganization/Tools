@@ -1,5 +1,5 @@
 """
-Double pendulum golf swing physics using Lagrangian formulation with relative coordinates.
+Double pendulum golf swing physics using Lagrangian formulation with relative coordinates.  # noqa: E501
 
 Model: 2-segment pendulum (arms + shaft) with clubhead point mass at tip.
 
@@ -285,7 +285,7 @@ def friction_torque_vector(
 def _hermite_penalty(
     pen: float, vel: float, transition: float, stiffness: float, damping: float
 ) -> float:
-    """Hermite smoothstep penalty magnitude for a single DOF at penetration depth ``pen``.
+    """Hermite smoothstep penalty magnitude for a single DOF at penetration depth ``pen``.  # noqa: E501
 
     The smoothstep ramps from 0 (at pen=0) to 1 (at pen>=transition), providing
     a C1-continuous blend from the free region into the full penalty region.
@@ -301,7 +301,7 @@ def _hermite_penalty(
     stiffness : float
         Spring constant (N·m/rad).
     damping : float
-        Damping coefficient (N·m·s/rad); acts only when velocity pushes further into limit.
+        Damping coefficient (N·m·s/rad); acts only when velocity pushes further into limit.  # noqa: E501
 
     Returns
     -------

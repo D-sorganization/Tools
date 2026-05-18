@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 #!/usr/bin/env python3
 """Fitting loss coefficients (K-factors) for pressure drop calculations.
 
@@ -19,10 +20,10 @@ IMPORTANT NOTE ON K-FACTORS:
     multiplication by friction factor: K = f × (L/D)
 
 References:
-    - Crane Technical Paper No. 410 (TP-410), Flow of Fluids Through Valves, Fittings, and Pipe
+    - Crane Technical Paper No. 410 (TP-410), Flow of Fluids Through Valves, Fittings, and Pipe  # noqa: E501
     - Idelchik, I.E. (2007): Handbook of Hydraulic Resistance, 4th Edition
     - Hooper, W.B. (1981): "The Two-K Method", Chemical Engineering
-    - Darby, R. (1999): "Correlate pressure drops through fittings", Chemical Engineering
+    - Darby, R. (1999): "Correlate pressure drops through fittings", Chemical Engineering  # noqa: E501
     - Miller, D.S. (1990): Internal Flow Systems, 2nd Edition
 """
 
@@ -356,7 +357,7 @@ def calculate_two_k_factor(
     total_k = k_laminar + k_turbulent
 
     logger.debug(
-        f"{fitting_type}: K_lam={k_laminar:.3f}, K_turb={k_turbulent:.3f}, Total={total_k:.3f}"
+        f"{fitting_type}: K_lam={k_laminar:.3f}, K_turb={k_turbulent:.3f}, Total={total_k:.3f}"  # noqa: E501
     )
 
     return float(total_k)

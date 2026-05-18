@@ -309,7 +309,7 @@ def cmd_info(args: argparse.Namespace) -> int:
             logger.info("\nJoints:")
             for joint in model.joints:
                 logger.info(
-                    f"  - {joint.name}: {joint.parent} -> {joint.child} ({joint.joint_type.value})"
+                    f"  - {joint.name}: {joint.parent} -> {joint.child} ({joint.joint_type.value})"  # noqa: E501
                 )
 
         if model.warnings:

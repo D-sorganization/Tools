@@ -269,7 +269,7 @@ class AdapterFactory:
         # Gemini adapter doesn't accept timeout
         if provider == "gemini":
             return adapter_cls(api_key=key, model=model)  # type: ignore[no-any-return]
-        return adapter_cls(api_key=key, model=model, timeout=timeout)  # type: ignore[no-any-return]
+        return adapter_cls(api_key=key, model=model, timeout=timeout)  # type: ignore[no-any-return]  # noqa: E501
 
     @classmethod
     def get_best_available(

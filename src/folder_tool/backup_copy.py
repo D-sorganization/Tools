@@ -101,7 +101,7 @@ class BackupCopyMixin:
         Returns:
             Path to backup directory if successful [str], None if failed.
         """
-        valid_folders = self._validated_source_folders(self.source_folders)  # type: ignore[attr-defined]
+        valid_folders = self._validated_source_folders(self.source_folders)  # type: ignore[attr-defined]  # noqa: E501
 
         timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         try:

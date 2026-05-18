@@ -161,7 +161,7 @@ def format_anova_report(result: OneWayANOVAResult | TwoWayANOVAResult) -> str:
         lines.append("Group Statistics:")
         lines.extend(
             [
-                f"  {name}: M = {result.group_means[name]:.4f}, SD = {result.group_stds[name]:.4f}, n = {result.group_counts[name]}"
+                f"  {name}: M = {result.group_means[name]:.4f}, SD = {result.group_stds[name]:.4f}, n = {result.group_counts[name]}"  # noqa: E501
                 for name in result.group_means
             ]
         )
@@ -174,7 +174,7 @@ def format_anova_report(result: OneWayANOVAResult | TwoWayANOVAResult) -> str:
                 significance = "*" if comparison.significant else ""
                 lines.append(
                     f"  {comparison.group1} vs {comparison.group2}: "
-                    f"Δ = {comparison.mean_diff:.4f}, p = {comparison.p_adjusted:.4f} {significance}"
+                    f"Δ = {comparison.mean_diff:.4f}, p = {comparison.p_adjusted:.4f} {significance}"  # noqa: E501
                 )
 
     elif isinstance(result, TwoWayANOVAResult):

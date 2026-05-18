@@ -16,7 +16,7 @@ Safeguards:
 - Tracks all changes for auditability
 
 Usage:
-    python scripts/mypy_autofix_agent.py [--max-fixes N] [--max-files N] [--dry-run] [--verbose]
+    python scripts/mypy_autofix_agent.py [--max-fixes N] [--max-files N] [--dry-run] [--verbose]  # noqa: E501
 """  # noqa: E501
 
 from __future__ import annotations

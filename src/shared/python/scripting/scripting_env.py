@@ -404,13 +404,13 @@ class ConsoleEnvironment:
             def _handler(signum: int, frame: object) -> None:  # noqa: ARG001
                 raise TimeoutError(f"Execution exceeded {timeout} s CPU time limit")
 
-            old_handler = _signal.signal(_signal.SIGALRM, _handler)  # type: ignore[attr-defined]
+            old_handler = _signal.signal(_signal.SIGALRM, _handler)  # type: ignore[attr-defined]  # noqa: E501
             _signal.alarm(timeout)  # type: ignore[attr-defined]
             try:
                 yield
             finally:
                 _signal.alarm(0)  # type: ignore[attr-defined]
-                _signal.signal(_signal.SIGALRM, old_handler)  # type: ignore[attr-defined]
+                _signal.signal(_signal.SIGALRM, old_handler)  # type: ignore[attr-defined]  # noqa: E501
         else:
             # Windows / non-main-thread path — daemon thread fires KI.
             caller_id = threading.get_ident()

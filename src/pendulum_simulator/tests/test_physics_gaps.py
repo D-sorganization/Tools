@@ -104,7 +104,7 @@ class TestEquationsOfMotionBranches:
         assert np.all(np.isfinite(state_dot))
 
     def test_with_limits_applies_penalty(self, params: PendulumParams) -> None:
-        """Using JointLimits with angle beyond limit should return finite derivatives."""
+        """Using JointLimits with angle beyond limit should return finite derivatives."""  # noqa: E501
         limits = JointLimits(
             phi_min=-0.01,
             phi_max=0.01,

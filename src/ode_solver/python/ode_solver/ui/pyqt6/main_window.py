@@ -332,7 +332,7 @@ class ODESolverWindow(ThemedWindowMixin, QMainWindow):
         layout.addWidget(QLabel("Derivatives (var: expression):"), 0, 0, 1, 2)
         self.derivatives_edit = QTextEdit()
         self.derivatives_edit.setPlaceholderText(
-            "Enter derivatives, one per line:\ny: -k*y\nExample: variable_name: expression"
+            "Enter derivatives, one per line:\ny: -k*y\nExample: variable_name: expression"  # noqa: E501
         )
         self.derivatives_edit.setMaximumHeight(80)
         layout.addWidget(self.derivatives_edit, 1, 0, 1, 2)
@@ -341,7 +341,7 @@ class ODESolverWindow(ThemedWindowMixin, QMainWindow):
         layout.addWidget(QLabel("Parameters (name: value):"), 2, 0, 1, 2)
         self.parameters_edit = QTextEdit()
         self.parameters_edit.setPlaceholderText(
-            "Enter parameters, one per line:\nk: 0.1\nExample: param_name: numerical_value"
+            "Enter parameters, one per line:\nk: 0.1\nExample: param_name: numerical_value"  # noqa: E501
         )
         self.parameters_edit.setMaximumHeight(80)
         layout.addWidget(self.parameters_edit, 3, 0, 1, 2)
@@ -350,7 +350,7 @@ class ODESolverWindow(ThemedWindowMixin, QMainWindow):
         layout.addWidget(QLabel("Initial Conditions (var: value):"), 4, 0, 1, 2)
         self.initial_edit = QTextEdit()
         self.initial_edit.setPlaceholderText(
-            "Enter initial values, one per line:\ny: 100\nMust match derivative variables"
+            "Enter initial values, one per line:\ny: 100\nMust match derivative variables"  # noqa: E501
         )
         self.initial_edit.setMaximumHeight(80)
         layout.addWidget(self.initial_edit, 5, 0, 1, 2)
@@ -551,7 +551,7 @@ class ODESolverWindow(ThemedWindowMixin, QMainWindow):
             results.append("\nSolution Summary:")
             results.extend(
                 [
-                    f"  {var}: min={np.min(solution.y[idx]):.4f}, max={np.max(solution.y[idx]):.4f}"
+                    f"  {var}: min={np.min(solution.y[idx]):.4f}, max={np.max(solution.y[idx]):.4f}"  # noqa: E501
                     for (idx, var) in enumerate(derivatives.keys())
                 ]
             )
@@ -581,7 +581,7 @@ class ODESolverWindow(ThemedWindowMixin, QMainWindow):
         except SolverTimeoutError as e:
             _log.warning("Solver timed out: %s", e)
             self.results_text.setPlainText(
-                f"Timeout: {e}\n\nTry reducing the time span or simplifying the ODE system."
+                f"Timeout: {e}\n\nTry reducing the time span or simplifying the ODE system."  # noqa: E501
             )
             self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['yellow']};")
         except ImportError as e:

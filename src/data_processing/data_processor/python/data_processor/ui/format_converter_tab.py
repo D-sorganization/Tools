@@ -712,8 +712,8 @@ class FormatConverterMixin:
         timestamp = datetime.now(timezone.utc).strftime("%H:%M:%S")
         log_message = f"[{timestamp}] {message}\n"
         # self.after would be available on the class mixing in this one (ctk.CTkFrame)
-        self.after(0, lambda: self.converter_log_text.insert("end", log_message))  # type: ignore[attr-defined]
-        self.after(0, lambda: self.converter_log_text.see("end"))  # type: ignore[attr-defined]
+        self.after(0, lambda: self.converter_log_text.insert("end", log_message))  # type: ignore[attr-defined]  # noqa: E501
+        self.after(0, lambda: self.converter_log_text.see("end"))  # type: ignore[attr-defined]  # noqa: E501
 
     def converter_clear_log(self) -> None:
         """Clear the conversion log."""

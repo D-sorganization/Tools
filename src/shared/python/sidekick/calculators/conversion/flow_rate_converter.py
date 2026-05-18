@@ -245,7 +245,7 @@ def mass_to_molar(
     result = mol_per_s / MOLAR_FLOW_CONVERSIONS[molar_unit]
 
     logger.debug(
-        f"Mass to molar: {mass_flow} {mass_unit} = {result:.6f} {molar_unit} (MW={molecular_weight})"
+        f"Mass to molar: {mass_flow} {mass_unit} = {result:.6f} {molar_unit} (MW={molecular_weight})"  # noqa: E501
     )
     return result
 
@@ -290,7 +290,7 @@ def molar_to_mass(
     result = kg_per_s / MASS_FLOW_CONVERSIONS[mass_unit]
 
     logger.debug(
-        f"Molar to mass: {molar_flow} {molar_unit} = {result:.6f} {mass_unit} (MW={molecular_weight})"
+        f"Molar to mass: {molar_flow} {molar_unit} = {result:.6f} {mass_unit} (MW={molecular_weight})"  # noqa: E501
     )
     return result
 
@@ -338,7 +338,7 @@ def volumetric_actual_to_mass(
     result = kg_per_s / MASS_FLOW_CONVERSIONS[mass_unit]
 
     logger.debug(
-        f"Volumetric to mass: {vol_flow} {vol_unit} = {result:.6f} {mass_unit} (ρ={density})"
+        f"Volumetric to mass: {vol_flow} {vol_unit} = {result:.6f} {mass_unit} (ρ={density})"  # noqa: E501
     )
     return result
 
@@ -386,7 +386,7 @@ def mass_to_volumetric_actual(
     result = m3_per_s / VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S[vol_unit]
 
     logger.debug(
-        f"Mass to volumetric: {mass_flow} {mass_unit} = {result:.6f} {vol_unit} (ρ={density})"
+        f"Mass to volumetric: {mass_flow} {mass_unit} = {result:.6f} {vol_unit} (ρ={density})"  # noqa: E501
     )
     return result
 
@@ -438,7 +438,7 @@ def standard_volumetric_to_mass(
     result = _from_kg_per_s(kg_per_s, mass_unit)
 
     logger.debug(
-        f"Std volumetric to mass: {vol_flow_std} {vol_unit} @ {standard} = {result:.6f} {mass_unit}"
+        f"Std volumetric to mass: {vol_flow_std} {vol_unit} @ {standard} = {result:.6f} {mass_unit}"  # noqa: E501
     )
 
     return result
@@ -486,7 +486,7 @@ def mass_to_standard_volumetric(
     result = m3_per_s_std / _volume_unit_to_m3_per_s(vol_unit)
 
     logger.debug(
-        f"Mass to std volumetric: {mass_flow} {mass_unit} = {result:.6f} {vol_unit} @ {standard}"
+        f"Mass to std volumetric: {mass_flow} {mass_unit} = {result:.6f} {vol_unit} @ {standard}"  # noqa: E501
     )
 
     return result
@@ -527,7 +527,7 @@ def scfm_to_acfm(
     acfm = scfm * (temperature / T_std) * (P_std / pressure)
 
     logger.debug(
-        f"SCFM to ACFM: {scfm} SCFM = {acfm:.2f} ACFM @ T={temperature}K, P={pressure / 1e5:.1f}bar"
+        f"SCFM to ACFM: {scfm} SCFM = {acfm:.2f} ACFM @ T={temperature}K, P={pressure / 1e5:.1f}bar"  # noqa: E501
     )
     return acfm
 
@@ -562,7 +562,7 @@ def acfm_to_scfm(
     scfm = acfm * (T_std / temperature) * (pressure / P_std)
 
     logger.debug(
-        f"ACFM to SCFM: {acfm} ACFM = {scfm:.2f} SCFM @ T={temperature}K, P={pressure / 1e5:.1f}bar"
+        f"ACFM to SCFM: {acfm} ACFM = {scfm:.2f} SCFM @ T={temperature}K, P={pressure / 1e5:.1f}bar"  # noqa: E501
     )
     return scfm
 

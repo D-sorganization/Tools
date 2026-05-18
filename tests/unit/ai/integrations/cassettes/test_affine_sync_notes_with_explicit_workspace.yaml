@@ -1,0 +1,20 @@
+interactions:
+  - request:
+      body: '{"query": "\nmutation CreatePage($workspaceId: String!) {\n  createDoc(workspaceId: $workspaceId) {\n    id\n  }\n}\n", "variables": {"workspaceId": "ws-synthetic-1"}}'
+      headers:
+        authorization:
+          - REDACTED
+        content-type:
+          - application/json
+      method: POST
+      uri: https://app.affine.pro/graphql
+    response:
+      body:
+        string: '{"data":{"createDoc":{"id":"doc-synth-explicit-001"}}}'
+      headers:
+        content-type:
+          - application/json
+      status:
+        code: 200
+        message: OK
+version: 1

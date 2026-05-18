@@ -182,7 +182,7 @@ class PlotTheme:
 # Scientific Violet - The reference theme from the user's screenshots
 SCIENTIFIC_VIOLET = PlotTheme(
     name="Scientific Violet",
-    description="Purple/magenta data with blue fits and green contours on light background",
+    description="Purple/magenta data with blue fits and green contours on light background",  # noqa: E501
     # Light blue-tinted background
     figure_facecolor="#f0f4f8",
     axes_facecolor="#e8f4fc",

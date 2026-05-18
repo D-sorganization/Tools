@@ -18,7 +18,7 @@ def run() -> None:
         # Load the local HTML file
         # We need absolute path
         cwd = os.getcwd()
-        file_path = f"file://{cwd}/src/web_applications/unit_converter/unit-converter-app/index.html"
+        file_path = f"file://{cwd}/src/web_applications/unit_converter/unit-converter-app/index.html"  # noqa: E501
         logger.info(f"Loading: {file_path}")
         page.goto(file_path)
 

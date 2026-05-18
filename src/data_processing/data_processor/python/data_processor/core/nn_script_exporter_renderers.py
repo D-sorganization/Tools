@@ -146,7 +146,7 @@ def pytorch_data_loading(config: NetworkConfig, data_path: str | None) -> list[s
         f"val_size = int(len(X) * {config.validation_split})",
         "",
         "X_train, y_train = X[:train_size], y[:train_size]",
-        "X_val, y_val = X[train_size:train_size+val_size], y[train_size:train_size+val_size]",
+        "X_val, y_val = X[train_size:train_size+val_size], y[train_size:train_size+val_size]",  # noqa: E501
         "X_test, y_test = X[train_size+val_size:], y[train_size+val_size:]",
         "",
     ]
@@ -157,9 +157,9 @@ def pytorch_data_loading(config: NetworkConfig, data_path: str | None) -> list[s
     lines.extend(
         [
             "# Create DataLoaders",
-            "train_dataset = TensorDataset(torch.FloatTensor(X_train), torch.FloatTensor(y_train))",
-            "val_dataset = TensorDataset(torch.FloatTensor(X_val), torch.FloatTensor(y_val))",
-            f"train_loader = DataLoader(train_dataset, batch_size={config.batch_size}, shuffle=True)",
+            "train_dataset = TensorDataset(torch.FloatTensor(X_train), torch.FloatTensor(y_train))",  # noqa: E501
+            "val_dataset = TensorDataset(torch.FloatTensor(X_val), torch.FloatTensor(y_val))",  # noqa: E501
+            f"train_loader = DataLoader(train_dataset, batch_size={config.batch_size}, shuffle=True)",  # noqa: E501
             f"val_loader = DataLoader(val_dataset, batch_size={config.batch_size})",
             "",
         ]
@@ -196,7 +196,7 @@ def pytorch_training_setup(
     return [
         "# Training Setup",
         "device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')",
-        f"model = NeuralNetwork(input_size={config.input_features}, output_size={config.output_features}).to(device)",
+        f"model = NeuralNetwork(input_size={config.input_features}, output_size={config.output_features}).to(device)",  # noqa: E501
         f"optimizer = {optimizer_name}(model.parameters(), lr={config.learning_rate})",
         f"criterion = {loss_name}()",
         "",
@@ -234,7 +234,7 @@ def pytorch_training_loop(config: NetworkConfig) -> list[str]:
         "            val_loss += criterion(outputs, y_batch).item()",
         "",
         "    val_loss /= len(val_loader)",
-        "    print(f'Epoch {epoch+1}: Train Loss = {train_loss/len(train_loader):.4f}, Val Loss = {val_loss:.4f}')",
+        "    print(f'Epoch {epoch+1}: Train Loss = {train_loss/len(train_loader):.4f}, Val Loss = {val_loss:.4f}')",  # noqa: E501
         "",
         "    # Early stopping check",
         "    if val_loss < best_val_loss:",
@@ -319,7 +319,7 @@ def tensorflow_model_definition(config: NetworkConfig) -> list[str]:
     for layer in config.layers[:-1]:
         if layer.layer_type == "dense":
             lines.append(
-                f"        layers.Dense({layer.units}, activation='{layer.activation.value}'),"
+                f"        layers.Dense({layer.units}, activation='{layer.activation.value}'),"  # noqa: E501
             )
         elif layer.layer_type == "dropout":
             lines.append(f"        layers.Dropout({layer.dropout_rate}),")
@@ -327,7 +327,7 @@ def tensorflow_model_definition(config: NetworkConfig) -> list[str]:
     output_layer = config.layers[-1]
     lines.extend(
         [
-            f"        layers.Dense(output_size, activation='{output_layer.activation.value}'),",
+            f"        layers.Dense(output_size, activation='{output_layer.activation.value}'),",  # noqa: E501
             "    ])",
             "    return model",
             "",
@@ -353,7 +353,7 @@ def tensorflow_data_loading(config: NetworkConfig, data_path: str | None) -> lis
         f"val_size = int(len(X) * {config.validation_split})",
         "",
         "X_train, y_train = X[:train_size], y[:train_size]",
-        "X_val, y_val = X[train_size:train_size+val_size], y[train_size:train_size+val_size]",
+        "X_val, y_val = X[train_size:train_size+val_size], y[train_size:train_size+val_size]",  # noqa: E501
         "X_test, y_test = X[train_size+val_size:], y[train_size+val_size:]",
         "",
     ]

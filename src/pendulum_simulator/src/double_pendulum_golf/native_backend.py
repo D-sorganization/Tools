@@ -604,7 +604,7 @@ def golfer_constrained_dynamics(
         TypeError,
     ) as exc:  # pragma: no cover - exercised when extension exists
         logger.debug(
-            "golfer_constrained_dynamics: Rust call failed (%s), falling back to Python",
+            "golfer_constrained_dynamics: Rust call failed (%s), falling back to Python",  # noqa: E501
             type(exc).__name__,
         )
         _warn_once("golfer_constrained_dynamics", exc)
@@ -638,7 +638,7 @@ def golfer_project_to_constraints(
         TypeError,
     ) as exc:  # pragma: no cover - exercised when extension exists
         logger.debug(
-            "golfer_project_to_constraints: Rust call failed (%s), falling back to Python",
+            "golfer_project_to_constraints: Rust call failed (%s), falling back to Python",  # noqa: E501
             type(exc).__name__,
         )
         _warn_once("golfer_project_to_constraints", exc)

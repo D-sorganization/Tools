@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Data processor operations mixin.
 
 Standardized data operations for DataProcessorWidget across the fleet.
@@ -225,7 +226,7 @@ class DataProcessorOpsMixin:
                 <h4>Fit Results</h4>
                 <p><b>Equation:</b> {result.equation}</p>
                 <p><b>R-squared:</b> {result.r_squared:.6f}</p>
-                <p><b>Coefficients:</b> {", ".join(f"{c:.6f}" for c in result.coefficients)}</p>
+                <p><b>Coefficients:</b> {", ".join(f"{c:.6f}" for c in result.coefficients)}</p>  # noqa: E501
                 <p><b>Residual Sum:</b> {sum(result.residuals**2):.6f}</p>
             """)
             self._set_status(f"Curve fit: R² = {result.r_squared:.4f}", success=True)

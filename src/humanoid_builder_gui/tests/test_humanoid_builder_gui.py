@@ -319,7 +319,7 @@ class TestLoDAliases:
             source = inspect.getsource(mw)
             # Find all 3-level Qt enum accesses: Qt.Xxx.Yyy or QFoo.Bar.Baz
             pattern = re.compile(
-                r"(?<![_A-Z])(Qt\.\w+\.\w+|QSizePolicy\.Policy\.\w+|QHeaderView\.ResizeMode\.\w+)"
+                r"(?<![_A-Z])(Qt\.\w+\.\w+|QSizePolicy\.Policy\.\w+|QHeaderView\.ResizeMode\.\w+)"  # noqa: E501
             )
             matches = pattern.findall(source)
             # Only the alias definitions should match (7 lines)

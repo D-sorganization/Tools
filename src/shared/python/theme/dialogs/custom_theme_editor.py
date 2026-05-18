@@ -425,7 +425,7 @@ class CustomThemeEditor(QDialog):
             QMessageBox.warning(
                 self,
                 "Name Conflict",
-                f"'{name}' conflicts with a built-in theme. Please choose a different name.",
+                f"'{name}' conflicts with a built-in theme. Please choose a different name.",  # noqa: E501
             )
             return False
 

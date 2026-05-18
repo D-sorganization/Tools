@@ -117,7 +117,7 @@ class TestTaylorSeriesContract:
 
         expansion = SeriesExpansion()
         with pytest.raises(TypeError):
-            expansion.taylor_series("not a function", center=0, n_terms=5)  # type: ignore[arg-type]
+            expansion.taylor_series("not a function", center=0, n_terms=5)  # type: ignore[arg-type]  # noqa: E501
 
     def test_rejects_non_positive_n_terms(self) -> None:
         """Precondition: Rejects non-positive n_terms."""

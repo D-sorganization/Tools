@@ -330,7 +330,7 @@ class TestApplyFilter:
             dp.apply_filter("moving_average", columns=["nonexistent_col"])
 
     def test_filter_fallback_without_scipy(self, dp: DataProcessor):
-        """When scipy is unavailable, fallback to rolling mean covers remaining branch."""
+        """When scipy is unavailable, fallback to rolling mean covers remaining branch."""  # noqa: E501
         with patch(
             "data_processing.processor.DataProcessor._apply_filter_with_scipy",
             side_effect=ImportError("no scipy"),
@@ -403,7 +403,7 @@ class TestApplyFormula:
             dp.apply_formula("result", expression)
 
     def test_apply_formula_numexpr_unavailable_raises(self, dp: DataProcessor):
-        """If numexpr is not installed, eval must raise rather than silently fall back."""
+        """If numexpr is not installed, eval must raise rather than silently fall back."""  # noqa: E501
         with patch(
             "pandas.DataFrame.eval",
             side_effect=ImportError("numexpr not installed"),

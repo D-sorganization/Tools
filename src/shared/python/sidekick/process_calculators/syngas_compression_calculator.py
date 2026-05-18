@@ -224,7 +224,7 @@ if HAS_PYQT:
     # Handle dynamic base class based on availability
     BaseClass = BaseCalculatorWidget if BASE_CALCULATOR_AVAILABLE else QWidget
 
-    class SyngasCompressionCalculatorWidget(BaseClass):  # type: ignore[valid-type, misc]
+    class SyngasCompressionCalculatorWidget(BaseClass):  # type: ignore[valid-type, misc]  # noqa: E501
         """Main syngas compression calculator widget"""
 
         calculation_finished = pyqtSignal(dict)

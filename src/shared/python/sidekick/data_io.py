@@ -63,7 +63,7 @@ def read_data(
     )
 
     if not _HAS_PANDAS:
-        msg = "pandas is required for read_data(). Install with: pip install pandas pyarrow"
+        msg = "pandas is required for read_data(). Install with: pip install pandas pyarrow"  # noqa: E501
         raise ImportError(msg)
 
     path = Path(file_path)

@@ -84,7 +84,7 @@ class APIRenameManager:
                 if proposal:
                     self.proposals.append(proposal)
                     logger.info(
-                        f"Generated proposal: {proposal.current_name} -> {proposal.proposed_name}"
+                        f"Generated proposal: {proposal.current_name} -> {proposal.proposed_name}"  # noqa: E501
                     )
                 else:
                     logger.warning(f"Could not generate proposal for: {pdf_file.name}")
@@ -125,7 +125,7 @@ class APIRenameManager:
                     model=model_name,
                 )
                 logger.info(
-                    f"[API] {file_path.name} -> {result.title} ({result.confidence:.2f})"
+                    f"[API] {file_path.name} -> {result.title} ({result.confidence:.2f})"  # noqa: E501
                 )
 
             if not result.title:
@@ -187,7 +187,7 @@ class APIRenameManager:
             if custom_name:
                 proposal.custom_name = custom_name
             logger.info(
-                f"Approved: {proposal.current_name} -> {custom_name or proposal.proposed_name}"
+                f"Approved: {proposal.current_name} -> {custom_name or proposal.proposed_name}"  # noqa: E501
             )
             return True
         return False
@@ -242,7 +242,7 @@ class APIRenameManager:
 
                 if dry_run:
                     logger.info(
-                        f"[DRY RUN] Would rename: {proposal.current_name} -> {target_path.name}"
+                        f"[DRY RUN] Would rename: {proposal.current_name} -> {target_path.name}"  # noqa: E501
                     )
                     results["success"] += 1
                 else:

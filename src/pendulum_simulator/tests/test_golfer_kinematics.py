@@ -248,7 +248,7 @@ class TestForwardKinematics:
     def _fk(self, q: np.ndarray, p: GolferParams) -> dict:
         """Call FK with native backend mocked to return None (force Python path)."""
         with patch(
-            "double_pendulum_golf.golfer_kinematics._native_backend.golfer_forward_kinematics",
+            "double_pendulum_golf.golfer_kinematics._native_backend.golfer_forward_kinematics",  # noqa: E501
             return_value=None,
         ):
             return forward_kinematics(q, p)
@@ -378,7 +378,7 @@ class TestForwardKinematics:
         """If native backend returns a valid dict, FK should return it directly."""
         mock_positions = {"hub": (0.1, 0.2), "origin": (0.0, 0.0)}
         with patch(
-            "double_pendulum_golf.golfer_kinematics._native_backend.golfer_forward_kinematics",
+            "double_pendulum_golf.golfer_kinematics._native_backend.golfer_forward_kinematics",  # noqa: E501
             return_value=mock_positions,
         ):
             result = forward_kinematics(np.zeros(N_DOF), sym_params)

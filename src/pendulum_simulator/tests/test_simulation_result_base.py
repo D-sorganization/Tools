@@ -254,7 +254,7 @@ class TestBatchAccessors:
         """total_torques uses torque_func + friction_torques_at.
 
         Note: torques_at() and total_torques_at() are separate paths.
-        total_torques_at() calls torque_func (returns zeros by default) + friction (zeros).
+        total_torques_at() calls torque_func (returns zeros by default) + friction (zeros).  # noqa: E501
         all_total_torques() calls total_torques_at() for each step.
         """
         total = result.all_total_torques()

@@ -114,7 +114,7 @@ def constrained_eom_jax(
     gamma = _constraint_acceleration_bias_jax(q, qdot, params)
 
     # Baumgarte RHS
-    rhs_constraint = -gamma - 2.0 * alpha * Phi_dot - beta**2 * Phi  # type: ignore[operator]
+    rhs_constraint = -gamma - 2.0 * alpha * Phi_dot - beta**2 * Phi  # type: ignore[operator]  # noqa: E501
 
     # Assemble KKT system
     n = N_DOF

@@ -281,7 +281,7 @@ Adam-based optimization for multi-parameter systems.
     # -------------------------------------------------------------------------
     "process_calculators": """# Process Engineering Calculators
 
-The repository includes 24 specialized process engineering calculators for industrial applications. All calculators feature:
+The repository includes 24 specialized process engineering calculators for industrial applications. All calculators feature:  # noqa: E501
 - PyQt6 GUI with theme support
 - Web interface option (React/Tauri)
 - Shared calculation engines from `upstream_drift_tools`
@@ -700,11 +700,11 @@ Batch rename PDF files based on content or metadata.
 
 TOOLTIPS: dict[str, str] = {
     # General
-    "temperature": "Temperature in specified units. Common ranges: -40 to 1500 C for process applications.",
+    "temperature": "Temperature in specified units. Common ranges: -40 to 1500 C for process applications.",  # noqa: E501
     "pressure": "Pressure in specified units. Absolute pressure unless noted as gauge.",
-    "flow_rate": "Volumetric or mass flow rate. Ensure consistent units with other inputs.",
+    "flow_rate": "Volumetric or mass flow rate. Ensure consistent units with other inputs.",  # noqa: E501
     # Gas composition
-    "gas_composition": "Mole fractions or percentages. Components should sum to 100% (or 1.0 for fractions).",
+    "gas_composition": "Mole fractions or percentages. Components should sum to 100% (or 1.0 for fractions).",  # noqa: E501
     "h2_content": "Hydrogen content. Typical syngas: 20-60%",
     "co_content": "Carbon monoxide content. Typical syngas: 10-40%",
     "h2o_content": "Water vapor content. Important for dewpoint calculations.",
@@ -721,13 +721,13 @@ TOOLTIPS: dict[str, str] = {
     "capex": "Capital expenditure - total project cost.",
     "opex": "Operating expenditure - annual operating costs.",
     "depreciation": "Annual depreciation charge for tax purposes.",
-    "discount_rate": "Rate used for NPV calculations. Typically 8-15% for industrial projects.",
+    "discount_rate": "Rate used for NPV calculations. Typically 8-15% for industrial projects.",  # noqa: E501
     # Signal processing
     "sampling_rate": "Samples per second (Hz). Must satisfy Nyquist criterion.",
-    "cutoff_frequency": "Filter cutoff frequency. Must be less than half the sampling rate.",
-    "filter_order": "Number of poles in the filter. Higher = sharper cutoff but more latency.",
+    "cutoff_frequency": "Filter cutoff frequency. Must be less than half the sampling rate.",  # noqa: E501
+    "filter_order": "Number of poles in the filter. Higher = sharper cutoff but more latency.",  # noqa: E501
     # Robotics
-    "inertia_tensor": "3x3 symmetric positive definite matrix. Diagonal elements are moments of inertia.",
+    "inertia_tensor": "3x3 symmetric positive definite matrix. Diagonal elements are moments of inertia.",  # noqa: E501
     "joint_limits": "Min and max joint angles in radians (or meters for prismatic).",
     "link_mass": "Mass of the link in kilograms.",
 }

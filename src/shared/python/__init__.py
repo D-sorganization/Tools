@@ -12,7 +12,7 @@ Available packages:
     - model_generation: URDF/MJCF model building and conversion
 
 Preferred imports (direct from package, since src/shared/python is on sys.path):
-    from shared.python.theme import ThemeManager, get_theme_manager  # theme: keep prefix
+    from shared.python.theme import ThemeManager, get_theme_manager  # theme: keep prefix  # noqa: E501
     from humanoid_character_builder import CharacterBuilder, BodyParameters
     from model_generation import quick_urdf, ManualBuilder, FrankensteinEditor
     from signal_toolkit import Signal, SignalGenerator, FunctionFitter

@@ -290,14 +290,14 @@ class TestDbCEnforcement:
         )
 
     def test_calculate_sensitivity_rejects_non_ndarray_param1_values(self):
-        """_calculate_sensitivity raises TypeError when param1_values is not a ndarray."""
+        """_calculate_sensitivity raises TypeError when param1_values is not a ndarray."""  # noqa: E501
         arr = np.linspace(0, 1, 3)
         Z = np.ones((3, 3))
         with pytest.raises(TypeError, match="param1_values must be a numpy ndarray"):
             _check_ndarray_triple([1, 2, 3], arr, Z)
 
     def test_calculate_sensitivity_rejects_non_ndarray_param2_values(self):
-        """_calculate_sensitivity raises TypeError when param2_values is not a ndarray."""
+        """_calculate_sensitivity raises TypeError when param2_values is not a ndarray."""  # noqa: E501
         arr = np.linspace(0, 1, 3)
         Z = np.ones((3, 3))
         with pytest.raises(TypeError, match="param2_values must be a numpy ndarray"):

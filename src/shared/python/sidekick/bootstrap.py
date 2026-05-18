@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Bootstrap module for launch scripts that run before package installation.
 
 **Legitimate sys.path exception** (issue #682): This module is the *only*
@@ -12,7 +13,7 @@ Usage in launch_pyqt6.py scripts::
     from pathlib import Path
     # One-time bootstrap: find repo root and add standard paths
     _root = Path(__file__).resolve().parents[2]  # adjust depth to reach repo root
-    exec((_root / "src" / "shared" / "python" / "upstream_drift_tools" / "bootstrap.py").read_text())
+    exec((_root / "src" / "shared" / "python" / "upstream_drift_tools" / "bootstrap.py").read_text())  # noqa: E501
 
 Or more explicitly::
 

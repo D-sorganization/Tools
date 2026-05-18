@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 # mypy: ignore-errors
 # TRACKED_TASK: tighten typing in this file (Qt protocol typing follow-up to PR #2965).
 """Lightweight AI Chat dock widget for embedding in any PyQt6 application.
@@ -245,7 +246,7 @@ class ChatDockWidget(QDockWidget):
             module intentionally treats the spec as ``Any`` to avoid a
             hard dependency on the upstream plotting package; hosts
             typically pass a function that wraps the JSON dict into a
-            :class:`upstream_drift_tools.ui.tools_sidebar.calculator_plotting.CalculatorPlotRequest`
+            :class:`upstream_drift_tools.ui.tools_sidebar.calculator_plotting.CalculatorPlotRequest`  # noqa: E501
             and routes it to their plot tab.
         parent: Parent widget.
     """

@@ -628,7 +628,7 @@ def _make_triple_objective_factory(
                     torque_limits=clamp,
                     limits=limits,
                 )
-                vels = result.joint_velocities_at(result.n_steps - 1)  # type: ignore[attr-defined]
+                vels = result.joint_velocities_at(result.n_steps - 1)  # type: ignore[attr-defined]  # noqa: E501
                 tip_v = vels.get("tip", (0, 0))
                 speed = float(np.hypot(tip_v[0], tip_v[1]))
                 return -speed
@@ -855,7 +855,7 @@ def _make_golfer_objective_fn(
                 torque_limits=clamp,
                 limits=limits,
             )
-            vels = result.joint_velocities_at(result.n_steps - 1)  # type: ignore[attr-defined]
+            vels = result.joint_velocities_at(result.n_steps - 1)  # type: ignore[attr-defined]  # noqa: E501
             tip_v = vels.get("club_tip", (0, 0))
             speed = float(np.hypot(tip_v[0], tip_v[1]))
             return -speed

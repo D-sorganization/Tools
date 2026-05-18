@@ -213,7 +213,7 @@ def _load_main_window_module():
 
 
 class TestDisplayResultsDbC:
-    """DbC tests for _display_results precondition enforcement (AC: DbC violations fixed)."""
+    """DbC tests for _display_results precondition enforcement (AC: DbC violations fixed)."""  # noqa: E501
 
     def test_display_results_raises_type_error_for_non_numeric(self):
         """_display_results raises TypeError when non-numeric value passed for ixx."""
@@ -262,7 +262,7 @@ class TestDisplayResultsDbC:
 
 
 class TestValidateInertiaDbC:
-    """DbC tests for _validate_inertia precondition enforcement (AC: DbC violations fixed)."""
+    """DbC tests for _validate_inertia precondition enforcement (AC: DbC violations fixed)."""  # noqa: E501
 
     def test_validate_inertia_raises_type_error_for_string(self):
         """_validate_inertia raises TypeError for non-numeric ixx."""

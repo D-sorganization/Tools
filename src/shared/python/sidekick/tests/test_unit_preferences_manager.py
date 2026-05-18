@@ -88,7 +88,7 @@ def test_get_si_unit() -> Any:
 
 
 @patch(
-    "upstream_drift_tools.ui.managers.unit_preferences_manager.UnitPreferencesManager.converter"
+    "upstream_drift_tools.ui.managers.unit_preferences_manager.UnitPreferencesManager.converter"  # noqa: E501
 )
 def test_convert_to_si(mock_converter, qapp) -> Any:
     manager = UnitPreferencesManager()
@@ -107,7 +107,7 @@ def test_convert_to_si(mock_converter, qapp) -> Any:
 
 
 @patch(
-    "upstream_drift_tools.ui.managers.unit_preferences_manager.UnitPreferencesManager.converter"
+    "upstream_drift_tools.ui.managers.unit_preferences_manager.UnitPreferencesManager.converter"  # noqa: E501
 )
 def test_convert_from_si(mock_converter, qapp) -> Any:
     manager = UnitPreferencesManager()
@@ -124,7 +124,7 @@ def test_convert_from_si(mock_converter, qapp) -> Any:
 
 
 @patch(
-    "upstream_drift_tools.ui.managers.unit_preferences_manager.UnitPreferencesManager.converter"
+    "upstream_drift_tools.ui.managers.unit_preferences_manager.UnitPreferencesManager.converter"  # noqa: E501
 )
 def test_convert_error_handling(mock_converter, qapp) -> Any:
     manager = UnitPreferencesManager()

@@ -83,10 +83,10 @@ class TestGolferPendulumMoments:
             golfer_pendulum_moments(sample_positions, sample_forces, (1.0, 2.0), None)
 
     def test_zero_torques_yield_nonzero_moments(self, sample_positions, sample_forces):
-        """With nonzero forces, moments of force should be nonzero even with zero applied."""
+        """With nonzero forces, moments of force should be nonzero even with zero applied."""  # noqa: E501
         torques = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
         result = golfer_pendulum_moments(sample_positions, sample_forces, torques, None)
-        # At least some moments should be nonzero (forces are not parallel to lever arms)
+        # At least some moments should be nonzero (forces are not parallel to lever arms)  # noqa: E501
         moment_values = [result[f"{j}_moment_of_force"] for j in ["hub", "rs", "re"]]
         assert any(abs(m) > 1e-6 for m in moment_values)
 

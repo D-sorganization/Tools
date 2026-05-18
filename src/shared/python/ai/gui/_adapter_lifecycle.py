@@ -7,11 +7,14 @@ adapter (or ``None``) so the panel can install it; emits a
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from PyQt6.QtCore import QObject, pyqtSignal
 
-from src.shared.python.ai.gui.settings_dialog import AIProvider, AISettings
+if TYPE_CHECKING:
+    from src.shared.python.ai._settings_model import AISettings
+
+from src.shared.python.ai.gui._provider_registry_data import AIProvider
 from src.shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
@@ -33,6 +36,8 @@ class AdapterLifecycleManager(QObject):
     # ------------------------------------------------------------------
     def auto_load(self) -> AISettings | None:
         """Reload settings from disk and rebuild the adapter."""
+        from src.shared.python.ai._settings_model import AISettings
+
         try:
             settings = AISettings.load()
         except ImportError as exc:

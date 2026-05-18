@@ -26,7 +26,7 @@ class RotationConverterRequest(BaseModel):
     )
     euler_convention: str = Field(
         default="xyz",
-        description="Euler angle convention (e.g., 'xyz', 'zyx'). Needed if type == 'euler', and used for output.",
+        description="Euler angle convention (e.g., 'xyz', 'zyx'). Needed if type == 'euler', and used for output.",  # noqa: E501
     )
 
 
@@ -73,11 +73,11 @@ class ReferenceFrameConversionRequest(BaseModel):
     )
     rotation_matrix: list[list[float]] | None = Field(
         default=None,
-        description="3x3 rotation matrix input for SE(3) construction or SO(3) log map.",
+        description="3x3 rotation matrix input for SE(3) construction or SO(3) log map.",  # noqa: E501
     )
     translation: list[float] | None = Field(
         default=None,
-        description="3-vector translation used when constructing a homogeneous transform.",
+        description="3-vector translation used when constructing a homogeneous transform.",  # noqa: E501
     )
     so3_vector: list[float] | None = Field(
         default=None,

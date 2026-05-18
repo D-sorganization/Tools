@@ -40,8 +40,8 @@ def _fix_sidekick_import():
 
 def _get_sidebar_class():
     _fix_sidekick_import()
-    from sidekick.ui.tools_sidebar.sidebar import UnifiedToolsSidebar
     from PyQt6 import QtWidgets
+    from sidekick.ui.tools_sidebar.sidebar import UnifiedToolsSidebar
 
     return UnifiedToolsSidebar, QtWidgets
 
@@ -82,10 +82,9 @@ def test_ctrl_b_twice_restores_visibility(tmp_path):
 
 def test_ctrl_b_shortcut_is_registered(tmp_path):
     """Ctrl+B shortcut is wired to toggle_visibility on the main window."""
-    from PyQt6.QtGui import QKeySequence
 
     sidebar, win, _ = _make_sidebar(tmp_path)
-    shortcuts = win.findChildren(type(None).__class__, "")
+    _ = win.findChildren(type(None).__class__, "")
     # Verify register_shortcuts created QShortcut objects bound to Ctrl+B
     from PyQt6.QtGui import QShortcut
 
@@ -128,8 +127,8 @@ def test_ctrl_shift_b_shortcut_is_registered(tmp_path):
 def test_esc_in_chat_input_does_not_hide_dock(tmp_path):
     """Pressing Escape in a plain text edit must leave the dock visible."""
     from PyQt6 import QtCore
-    from PyQt6.QtWidgets import QPlainTextEdit
     from PyQt6.QtTest import QTest
+    from PyQt6.QtWidgets import QPlainTextEdit
 
     sidebar, win, _ = _make_sidebar(tmp_path)
     # Create a simple chat-input-like widget and add it to the sidebar

@@ -152,7 +152,7 @@ class TestReversedHubStandoff:
 
             assert np.allclose(
                 jacs["hub"], J_hub_num, atol=1e-4
-            ), f"Hub Jacobian mismatch:\nAnalytical:\n{jacs['hub']}\nNumerical:\n{J_hub_num}"
+            ), f"Hub Jacobian mismatch:\nAnalytical:\n{jacs['hub']}\nNumerical:\n{J_hub_num}"  # noqa: E501
 
     def test_all_analytical_jacobians_match_numerical(
         self, golfer_params: GolferParams

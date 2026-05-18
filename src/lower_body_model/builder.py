@@ -54,24 +54,24 @@ def build_lower_body_xml(
         <option gravity="0 0 -9.81" timestep="0.005"/>
         <size njmax="500" nconmax="100"/>
         <asset>
-            <material name="matplane" reflectance="0.3" specular="1" shininess="1" rgba="0.8 0.9 0.8 1"/>
+            <material name="matplane" reflectance="0.3" specular="1" shininess="1" rgba="0.8 0.9 0.8 1"/>  # noqa: E501
             <material name="matgeom" rgba="0.8 0.6 0.4 1"/>
             <material name="matfoot" rgba="0.2 0.2 0.2 1"/>
         </asset>
 
         <worldbody>
-            <light directional="true" diffuse=".8 .8 .8" specular=".2 .2 .2" pos="0 0 5" dir="0 0 -1"/>
-            <geom name="floor" type="plane" pos="0 0 0" size="10 10 0.1" material="matplane" condim="3"/>
+            <light directional="true" diffuse=".8 .8 .8" specular=".2 .2 .2" pos="0 0 5" dir="0 0 -1"/>  # noqa: E501
+            <geom name="floor" type="plane" pos="0 0 0" size="10 10 0.1" material="matplane" condim="3"/>  # noqa: E501
 
             <body name="pelvis" pos="0 0 {pelvis_z}">
                 <freejoint name="root"/>
 {pelvis_geoms}
 
                 <!-- RIGHT LEG -->
-{_build_leg_xml("r", hip_offset, thigh_length, calf_length, thigh_mass, calf_mass, foot_mass)}
+{_build_leg_xml("r", hip_offset, thigh_length, calf_length, thigh_mass, calf_mass, foot_mass)}  # noqa: E501
 
                 <!-- LEFT LEG -->
-{_build_leg_xml("l", hip_offset, thigh_length, calf_length, thigh_mass, calf_mass, foot_mass)}
+{_build_leg_xml("l", hip_offset, thigh_length, calf_length, thigh_mass, calf_mass, foot_mass)}  # noqa: E501
             </body>
         </worldbody>
 
@@ -118,19 +118,19 @@ def _build_leg_xml(
         raise ValueError(f"side must be 'r' or 'l', got {side!r}")
     y_sign = "-" if side == "r" else ""
     return (
-        f'                <body name="{side}_thigh" pos="0 {y_sign}{hip_offset} -0.05">\n'
-        f'                    <joint name="{side}_hip_x" type="hinge" axis="1 0 0" range="-90 90"/>\n'
-        f'                    <joint name="{side}_hip_y" type="hinge" axis="0 1 0" range="-90 90"/>\n'
-        f'                    <joint name="{side}_hip_z" type="hinge" axis="0 0 1" range="-90 90"/>\n'
-        f'                    <geom type="ellipsoid" size="0.08 0.08 {thigh_length / 2}" pos="0 0 -{thigh_length / 2}" mass="{thigh_mass}" material="matgeom"/>\n'
+        f'                <body name="{side}_thigh" pos="0 {y_sign}{hip_offset} -0.05">\n'  # noqa: E501
+        f'                    <joint name="{side}_hip_x" type="hinge" axis="1 0 0" range="-90 90"/>\n'  # noqa: E501
+        f'                    <joint name="{side}_hip_y" type="hinge" axis="0 1 0" range="-90 90"/>\n'  # noqa: E501
+        f'                    <joint name="{side}_hip_z" type="hinge" axis="0 0 1" range="-90 90"/>\n'  # noqa: E501
+        f'                    <geom type="ellipsoid" size="0.08 0.08 {thigh_length / 2}" pos="0 0 -{thigh_length / 2}" mass="{thigh_mass}" material="matgeom"/>\n'  # noqa: E501
         f'                    <body name="{side}_calf" pos="0 0 -{thigh_length}">\n'
-        f'                        <joint name="{side}_knee" type="hinge" axis="0 1 0" range="0 150"/>\n'
-        f'                        <geom type="ellipsoid" size="0.06 0.06 {calf_length / 2}" pos="0 0 -{calf_length / 2}" mass="{calf_mass}" material="matgeom"/>\n'
+        f'                        <joint name="{side}_knee" type="hinge" axis="0 1 0" range="0 150"/>\n'  # noqa: E501
+        f'                        <geom type="ellipsoid" size="0.06 0.06 {calf_length / 2}" pos="0 0 -{calf_length / 2}" mass="{calf_mass}" material="matgeom"/>\n'  # noqa: E501
         f'                        <body name="{side}_foot" pos="0 0 -{calf_length}">\n'
-        f'                            <joint name="{side}_ankle_x" type="hinge" axis="1 0 0" range="-60 60"/>\n'
-        f'                            <joint name="{side}_ankle_y" type="hinge" axis="0 1 0" range="-60 60"/>\n'
-        f'                            <geom name="{side}_foot_geom" type="ellipsoid" size="0.13 0.05 0.04" pos="0.06 0 -0.04" mass="{foot_mass}" material="matfoot" condim="3"/>\n'
-        f'                            <site name="{side}_foot_center" type="sphere" size="0.01" pos="0.06 0 -0.04" rgba="1 0 0 1"/>\n'
+        f'                            <joint name="{side}_ankle_x" type="hinge" axis="1 0 0" range="-60 60"/>\n'  # noqa: E501
+        f'                            <joint name="{side}_ankle_y" type="hinge" axis="0 1 0" range="-60 60"/>\n'  # noqa: E501
+        f'                            <geom name="{side}_foot_geom" type="ellipsoid" size="0.13 0.05 0.04" pos="0.06 0 -0.04" mass="{foot_mass}" material="matfoot" condim="3"/>\n'  # noqa: E501
+        f'                            <site name="{side}_foot_center" type="sphere" size="0.01" pos="0.06 0 -0.04" rgba="1 0 0 1"/>\n'  # noqa: E501
         f"                        </body>\n"
         f"                    </body>\n"
         f"                </body>"

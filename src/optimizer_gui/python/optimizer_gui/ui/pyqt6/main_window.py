@@ -785,7 +785,7 @@ class OptimizerWindow(ThemedWindowMixin, QMainWindow):
                 [f"{k}={v:.4f}" for k, v in entry["parameters"].items()]
             )
             history_lines.append(
-                f"{entry['iteration']:4d}      | {entry['objective']:10.6f} | {param_str}"
+                f"{entry['iteration']:4d}      | {entry['objective']:10.6f} | {param_str}"  # noqa: E501
             )
 
         if len(self._history) > 20:

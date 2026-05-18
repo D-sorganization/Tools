@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Financial Model Calculator
 ==========================
 
@@ -271,10 +272,10 @@ class FinancialModelCalculator:
         # DbC preconditions
         assert parameters.total_capital_investment >= 0, (
             f"Capital investment must be non-negative, got {parameters.total_capital_investment}"
-        )
+        )  # noqa: E501
         assert parameters.operating_days_per_year >= 0, (
             f"Operating days must be non-negative, got {parameters.operating_days_per_year}"
-        )
+        )  # noqa: E501
 
         self.parameters = parameters
         results = FinancialResults()

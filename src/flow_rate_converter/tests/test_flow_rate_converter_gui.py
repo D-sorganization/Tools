@@ -59,7 +59,7 @@ class TestFlowRateConverterLoDConstants:
         assert "_FIXED" in top_level_names, "Missing _FIXED constant in main_window"
 
     def test_no_bare_qt_alignment_flag_chain_in_source(self):
-        """Verify source file has no bare Qt.AlignmentFlag.AlignCenter except in constants."""
+        """Verify source file has no bare Qt.AlignmentFlag.AlignCenter except in constants."""  # noqa: E501
         import ast
         import pathlib
 
@@ -90,12 +90,12 @@ class TestFlowRateConverterLoDConstants:
 
         # Only the constant definition line should have this chain
         assert len(chains_found) <= 1, (
-            f"LoD violation: Qt.AlignmentFlag.AlignCenter found at lines {chains_found}; "
+            f"LoD violation: Qt.AlignmentFlag.AlignCenter found at lines {chains_found}; "  # noqa: E501
             "only the constant definition should use this chain"
         )
 
     def test_no_bare_qsizepolicy_expanding_chain_in_source(self):
-        """Verify source has no bare QSizePolicy.Policy.Expanding except in constant def."""
+        """Verify source has no bare QSizePolicy.Policy.Expanding except in constant def."""  # noqa: E501
         import ast
         import pathlib
 
@@ -123,7 +123,7 @@ class TestFlowRateConverterLoDConstants:
                 chains_found.append(node.lineno)
 
         assert len(chains_found) <= 1, (
-            f"LoD violation: QSizePolicy.Policy.Expanding found at lines {chains_found}; "
+            f"LoD violation: QSizePolicy.Policy.Expanding found at lines {chains_found}; "  # noqa: E501
             "only the constant definition should use this chain"
         )
 
@@ -206,7 +206,7 @@ class TestFlowRateConverterEngineIntegration:
     def test_mass_converter_import(self) -> Any:
         """Test that mass flow converter can be imported."""
         try:
-            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
+            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (  # noqa: E501
                 mass_to_mass,
             )
 
@@ -217,7 +217,7 @@ class TestFlowRateConverterEngineIntegration:
     def test_molar_converter_import(self) -> Any:
         """Test that molar flow converter can be imported."""
         try:
-            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
+            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (  # noqa: E501
                 molar_to_molar,
             )
 
@@ -228,7 +228,7 @@ class TestFlowRateConverterEngineIntegration:
     def test_volumetric_conversions_import(self) -> Any:
         """Test that volumetric conversions can be imported."""
         try:
-            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
+            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (  # noqa: E501
                 VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S,
             )
 
@@ -240,7 +240,7 @@ class TestFlowRateConverterEngineIntegration:
     def test_mass_conversion_kg_to_lb(self) -> Any:
         """Test mass flow conversion from kg/h to lb/h."""
         try:
-            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
+            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (  # noqa: E501
                 mass_to_mass,
             )
 
@@ -253,7 +253,7 @@ class TestFlowRateConverterEngineIntegration:
     def test_molar_conversion_kmol_to_lbmol(self) -> Any:
         """Test molar flow conversion from kmol/h to lbmol/h."""
         try:
-            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
+            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (  # noqa: E501
                 molar_to_molar,
             )
 
@@ -266,7 +266,7 @@ class TestFlowRateConverterEngineIntegration:
     def test_volumetric_conversion_m3_to_cfm(self) -> Any:
         """Test volumetric flow conversion from m3/h to CFM."""
         try:
-            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
+            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (  # noqa: E501
                 VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S,
             )
 
@@ -291,7 +291,7 @@ class TestFlowRateConverterUnits:
     def test_mass_flow_units_defined(self) -> Any:
         """Test that mass flow units are defined."""
         try:
-            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
+            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (  # noqa: E501
                 MASS_FLOW_CONVERSIONS,
             )
 
@@ -304,7 +304,7 @@ class TestFlowRateConverterUnits:
     def test_molar_flow_units_defined(self) -> Any:
         """Test that molar flow units are defined."""
         try:
-            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
+            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (  # noqa: E501
                 MOLAR_FLOW_CONVERSIONS,
             )
 
@@ -317,7 +317,7 @@ class TestFlowRateConverterUnits:
     def test_volumetric_flow_units_defined(self) -> Any:
         """Test that volumetric flow units are defined."""
         try:
-            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
+            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (  # noqa: E501
                 VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S,
             )
 

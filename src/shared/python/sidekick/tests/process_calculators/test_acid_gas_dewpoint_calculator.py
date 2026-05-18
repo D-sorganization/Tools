@@ -204,7 +204,7 @@ def test_estimate_condensation_risk_branches() -> None:
     mock_res.limiting_component = "H2O"
 
     with patch(
-        "upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator.AcidGasDewpointCalculator.calculate_dewpoint_mixture",
+        "upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator.AcidGasDewpointCalculator.calculate_dewpoint_mixture",  # noqa: E501
         return_value=mock_res,
     ):
         mock_res.dewpoint_margin_c = np.nan
@@ -269,7 +269,7 @@ class TestAcidGasDewpointWidget:
 
     @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
     def test_widget_initialization(self, qtbot) -> Any:
-        from upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator import (
+        from upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator import (  # noqa: E501
             AcidGasDewpointCalculatorWidget,
         )
 
@@ -281,7 +281,7 @@ class TestAcidGasDewpointWidget:
 
     @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
     def test_widget_calculate(self, qtbot) -> Any:
-        from upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator import (
+        from upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator import (  # noqa: E501
             AcidGasComposition,
             AcidGasDewpointCalculatorWidget,
             DewpointResult,
@@ -326,7 +326,7 @@ class TestAcidGasDewpointWidget:
 
     @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
     def test_widget_calculate_error(self, qtbot) -> Any:
-        from upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator import (
+        from upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator import (  # noqa: E501
             AcidGasDewpointCalculatorWidget,
         )
 
@@ -345,7 +345,7 @@ class TestAcidGasDewpointWidget:
     @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
     def test_widget_close_event(self, qtbot) -> Any:
         from PyQt6.QtGui import QCloseEvent
-        from upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator import (
+        from upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator import (  # noqa: E501
             AcidGasDewpointCalculatorWidget,
         )
 

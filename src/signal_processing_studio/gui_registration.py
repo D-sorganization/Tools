@@ -7,7 +7,7 @@ from typing import Any
 GUI_INFO = {
     "name": "Signal Processing Studio",
     "tool_name": "signal_processing_studio",
-    "description": "Unified signal processing: waveform generation, analysis, filtering, curve fitting",
+    "description": "Unified signal processing: waveform generation, analysis, filtering, curve fitting",  # noqa: E501
     "category": "Signal Processing",
     "icon": "signal",
     "pyqt6": {

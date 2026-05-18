@@ -69,7 +69,7 @@ def test_register_raises_when_no_token_anywhere() -> None:
 
 def test_register_custom_name_propagates() -> None:
     pool = _FakePool(started=True)
-    register_github_mcp(pool, token="ghp_x", name="github-work")  # type: ignore[arg-type]
+    register_github_mcp(pool, token="ghp_x", name="github-work")  # type: ignore[arg-type]  # noqa: E501
     cfg = pool.add_server.call_args.args[0]
     assert cfg.name == "github-work"
 

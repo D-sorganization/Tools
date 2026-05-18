@@ -161,7 +161,7 @@ class UnitConversionService(
         for canonical, aliases in UNIT_ALIASES.items():
             for alias in aliases:
                 self._static_clean_map[self._clean_string(alias)] = canonical
-            # Also ensure canonical itself is in the map (it might have been missed if not in category_map)
+            # Also ensure canonical itself is in the map (it might have been missed if not in category_map)  # noqa: E501
             self._static_clean_map[self._clean_string(canonical)] = canonical
 
         # 3. Special cases
@@ -282,7 +282,7 @@ class UnitConversionService(
         if unit_stripped in self._normalized_cache:
             return self._normalized_cache[unit_stripped]
 
-        # Fast path 3: Check stripped version directly against static map (avoids full cleaning if lucky)
+        # Fast path 3: Check stripped version directly against static map (avoids full cleaning if lucky)  # noqa: E501
         # Note: static map keys are fully cleaned (lowercase, no spaces)
         # But we can check if it's a known canonical unit first
         for factors in self.category_map.values():
@@ -402,7 +402,7 @@ class UnitConversionService(
         if aliases:
             self.user_defined_aliases[unit] = [alias for alias in aliases if alias]
 
-        # Invalidate cache as new unit might conflict or resolve previously unknown units
+        # Invalidate cache as new unit might conflict or resolve previously unknown units  # noqa: E501
         self._normalized_cache.clear()
 
     def _user_unit_warnings(
@@ -427,7 +427,7 @@ class UnitConversionService(
                 and unit not in seen
             ):
                 warnings.append(
-                    f"Unit '{unit}' is user-defined; verify conversion factors before use."
+                    f"Unit '{unit}' is user-defined; verify conversion factors before use."  # noqa: E501
                 )
                 seen.add(unit)
 

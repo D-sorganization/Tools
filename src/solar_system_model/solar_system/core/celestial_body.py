@@ -682,7 +682,7 @@ class Spacecraft(CelestialBody):
             self._build_trajectory_arrays()
 
     def _build_trajectory_arrays(self) -> None:
-        """Build numpy arrays from trajectory for interpolation using optimized allocation."""
+        """Build numpy arrays from trajectory for interpolation using optimized allocation."""  # noqa: E501
         if not self.trajectory:
             return
 

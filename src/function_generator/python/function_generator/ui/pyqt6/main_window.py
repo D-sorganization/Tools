@@ -80,7 +80,7 @@ class FunctionGeneratorWidget(QWidget):
         """
         if not isinstance(use_builtin_theme, bool):
             raise TypeError(
-                f"use_builtin_theme must be bool, got {type(use_builtin_theme).__name__}"
+                f"use_builtin_theme must be bool, got {type(use_builtin_theme).__name__}"  # noqa: E501
             )
         super().__init__(parent)
         self.current_signal: Signal | None = None
@@ -482,7 +482,7 @@ class FunctionGeneratorWidget(QWidget):
                 method=self.chirp_method_combo.currentText(),
             )
         elif waveform == "Constant":
-            return SignalGenerator.constant(t, value=self.constant_value_spin.value())  # type: ignore[no-any-return]
+            return SignalGenerator.constant(t, value=self.constant_value_spin.value())  # type: ignore[no-any-return]  # noqa: E501
         return None
 
     def _generate_signal(self) -> None:

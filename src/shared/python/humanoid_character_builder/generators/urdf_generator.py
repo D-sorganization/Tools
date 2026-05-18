@@ -635,8 +635,8 @@ class HumanoidURDFGenerator:
         ET.SubElement(
             inertial,
             "origin",
-            xyz=f"{link.origin_xyz[0]:.6f} {link.origin_xyz[1]:.6f} {link.origin_xyz[2]:.6f}",
-            rpy=f"{link.origin_rpy[0]:.6f} {link.origin_rpy[1]:.6f} {link.origin_rpy[2]:.6f}",
+            xyz=f"{link.origin_xyz[0]:.6f} {link.origin_xyz[1]:.6f} {link.origin_xyz[2]:.6f}",  # noqa: E501
+            rpy=f"{link.origin_rpy[0]:.6f} {link.origin_rpy[1]:.6f} {link.origin_rpy[2]:.6f}",  # noqa: E501
         )
         ET.SubElement(inertial, "mass", value=f"{link.mass:.6f}")
 
@@ -707,8 +707,8 @@ class HumanoidURDFGenerator:
         ET.SubElement(
             joint_elem,
             "origin",
-            xyz=f"{joint.origin_xyz[0]:.6f} {joint.origin_xyz[1]:.6f} {joint.origin_xyz[2]:.6f}",
-            rpy=f"{joint.origin_rpy[0]:.6f} {joint.origin_rpy[1]:.6f} {joint.origin_rpy[2]:.6f}",
+            xyz=f"{joint.origin_xyz[0]:.6f} {joint.origin_xyz[1]:.6f} {joint.origin_xyz[2]:.6f}",  # noqa: E501
+            rpy=f"{joint.origin_rpy[0]:.6f} {joint.origin_rpy[1]:.6f} {joint.origin_rpy[2]:.6f}",  # noqa: E501
         )
 
         if joint.joint_type != "fixed":

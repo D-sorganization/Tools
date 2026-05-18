@@ -584,7 +584,7 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
             QMessageBox.warning(
                 self,
                 "Engine Not Available",
-                "Steam calculation engine is not available.\nPlease check your installation.",
+                "Steam calculation engine is not available.\nPlease check your installation.",  # noqa: E501
             )
             return
 

@@ -282,14 +282,14 @@ class UIProcessingMixin:
         size_mb = total_size / (1024 * 1024)
         info_text = (
             f"Total: {total_files} files, {size_mb:.1f} MB "
-            f"({accessible_folders}/{len(self.source_folders)} folders accessible)"  # type: ignore[attr-defined]
+            f"({accessible_folders}/{len(self.source_folders)} folders accessible)"  # type: ignore[attr-defined]  # noqa: E501
         )
 
         # Set color based on accessibility
         if accessible_folders < len(self.source_folders):  # type: ignore[attr-defined]
-            self.source_info_label.config(text=info_text, foreground="orange")  # type: ignore[attr-defined]
+            self.source_info_label.config(text=info_text, foreground="orange")  # type: ignore[attr-defined]  # noqa: E501
         else:
-            self.source_info_label.config(text=info_text, foreground="blue")  # type: ignore[attr-defined]
+            self.source_info_label.config(text=info_text, foreground="blue")  # type: ignore[attr-defined]  # noqa: E501
 
     def run_processing_threaded(self) -> None:
         """Runs the processing in a separate thread to keep UI responsive."""
@@ -302,7 +302,7 @@ class UIProcessingMixin:
             try:
                 self.run_processing()  # type: ignore[attr-defined]
             finally:
-                self.root.after(0, self.processing_complete)  # type: ignore[attr-defined]
+                self.root.after(0, self.processing_complete)  # type: ignore[attr-defined]  # noqa: E501
 
         thread = threading.Thread(target=processing_thread, daemon=True)
         thread.start()
@@ -329,7 +329,7 @@ class UIProcessingMixin:
         try:
             # Validate progress value
             if not isinstance(value, int | float):
-                logger.warning(f"Invalid progress value type: {type(value)}")  # type: ignore[unreachable]
+                logger.warning(f"Invalid progress value type: {type(value)}")  # type: ignore[unreachable]  # noqa: E501
                 return
             # Clamp progress value to valid range
             clamped_value = max(0, min(100, float(value)))

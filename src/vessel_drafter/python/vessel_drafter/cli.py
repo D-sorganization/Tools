@@ -23,12 +23,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     export_parser.add_argument(
         "--output",
-        default="generated/electrode_advisor_default/electrode_advisor_default_layout.step",
+        default="generated/electrode_advisor_default/electrode_advisor_default_layout.step",  # noqa: E501
         help="STEP output path.",
     )
     export_parser.add_argument(
         "--manifest",
-        default="generated/electrode_advisor_default/electrode_advisor_default_layout.json",
+        default="generated/electrode_advisor_default/electrode_advisor_default_layout.json",  # noqa: E501
         help="JSON manifest output path.",
     )
 

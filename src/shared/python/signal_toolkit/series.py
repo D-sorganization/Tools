@@ -267,7 +267,7 @@ class SeriesExpansion:
 
             # Check for divergence (error growing)
             if prev_approx is not None and (
-                abs(approx) > 1e15 or np.isnan(approx) or np.isinf(approx)  # type: ignore[operator]
+                abs(approx) > 1e15 or np.isnan(approx) or np.isinf(approx)  # type: ignore[operator]  # noqa: E501
             ):
                 return {
                     "convergent": False,

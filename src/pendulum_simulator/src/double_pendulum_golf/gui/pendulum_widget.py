@@ -180,7 +180,7 @@ class PendulumWidget(BasePendulumWidget):
         for state in result.states:
             try:
                 if state.shape[0] >= 6:
-                    forces.append(zero_torque_joint_forces_triple(state, params))  # type: ignore[arg-type]
+                    forces.append(zero_torque_joint_forces_triple(state, params))  # type: ignore[arg-type]  # noqa: E501
                 else:
                     forces.append(zero_torque_joint_forces_double(state, params))
             except (ValueError, RuntimeError, ArithmeticError) as exc:
@@ -647,9 +647,9 @@ class PendulumWidget(BasePendulumWidget):
 
         try:
             if state.shape[0] >= 6:
-                moments = triple_pendulum_moments(pos, forces, tuple(torques), params)  # type: ignore[arg-type]
+                moments = triple_pendulum_moments(pos, forces, tuple(torques), params)  # type: ignore[arg-type]  # noqa: E501
             else:
-                moments = double_pendulum_moments(pos, forces, tuple(torques), params)  # type: ignore[arg-type]
+                moments = double_pendulum_moments(pos, forces, tuple(torques), params)  # type: ignore[arg-type]  # noqa: E501
         except (ValueError, KeyError, TypeError, AssertionError) as exc:
             logger.debug("Moment computation failed: %s", exc)
             return

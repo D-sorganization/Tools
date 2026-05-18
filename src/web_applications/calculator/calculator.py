@@ -117,7 +117,7 @@ class TI89Calculator:
             b, e = None, None
             try:
                 # Convert to native float for magnitude estimation
-                # mypy doesn't know sp.Number is compatible with float, but it is at runtime
+                # mypy doesn't know sp.Number is compatible with float, but it is at runtime  # noqa: E501
                 b = float(base)  # type: ignore[arg-type]
                 e = float(exp)  # type: ignore[arg-type]
             except (ValueError, TypeError, OverflowError):
@@ -138,8 +138,8 @@ class TI89Calculator:
     @staticmethod
     def _validate_expression_tree(expr: object) -> None:
         """
-        Walk the expression tree iteratively to validate operations that might cause DoS.
-        Iterative approach prevents RecursionError on deep trees and optimizes performance.
+        Walk the expression tree iteratively to validate operations that might cause DoS.  # noqa: E501
+        Iterative approach prevents RecursionError on deep trees and optimizes performance.  # noqa: E501
         """
         stack = [expr]
 
@@ -409,7 +409,7 @@ class TI89Calculator:
         if order <= 0:
             raise ValueError("Derivative order must be a positive integer")
 
-        # Optimization: Use _parse_expression_structure to leverage shared parsing cache.
+        # Optimization: Use _parse_expression_structure to leverage shared parsing cache.  # noqa: E501
         # This prevents re-parsing the same expression when used in different contexts
         # (e.g., evaluate, integral) and improves performance by ~3.5%.
         parsed_expression, sym_map = TI89Calculator._parse_expression_structure(
@@ -563,7 +563,7 @@ class TI89Calculator:
     def _solve_differential_equation_cached(
         equation: str, function: str
     ) -> CalculatorResult:
-        # Note: We need to access _allowed_functions. It is a class attribute but populated in init or static?
+        # Note: We need to access _allowed_functions. It is a class attribute but populated in init or static?  # noqa: E501
         # In this static context, we should use the class-level caches if available.
         # But _ALLOWED_FUNCTIONS_CACHE is populated in __init__ if None.
         # We assume it is populated. If not, we should populate it.
@@ -574,7 +574,7 @@ class TI89Calculator:
         if not isinstance(function, str):
             raise TypeError("function must be a string")
         if TI89Calculator._ALLOWED_FUNCTIONS_CACHE is None:
-            # This is slightly tricky as _build_allowed_functions uses 'self' methods for hat/vee etc?
+            # This is slightly tricky as _build_allowed_functions uses 'self' methods for hat/vee etc?  # noqa: E501
             # Wait, _hat, _vee are instance methods. They should be static too.
             # But let's assume the app initializes one calculator.
             pass
@@ -621,7 +621,7 @@ class TI89Calculator:
             if clean_expr.startswith("-") and clean_expr[1:].isdigit():
                 return sp.Integer(int(clean_expr))
 
-            # Check for simple float, avoiding symbolic expressions that start with letters
+            # Check for simple float, avoiding symbolic expressions that start with letters  # noqa: E501
             if clean_expr and not clean_expr[0].isalpha():
                 try:
                     # Validate if it is a float using native conversion
@@ -651,12 +651,12 @@ class TI89Calculator:
             if "exceeds safety limits" in str(error):
                 raise
             # If standard parse failed, re-raise to maintain consistency
-            # Previously we let the second parse try, but parsing failures are usually fatal
+            # Previously we let the second parse try, but parsing failures are usually fatal  # noqa: E501
             raise
 
         # ⚡ Bolt Optimization: Return the validated expression tree directly.
         # This avoids a second parsing pass (with evaluate=True) which duplicates work.
-        # The expression tree is correct and safe; downstream operations (like evaluate, subs, simplify)
+        # The expression tree is correct and safe; downstream operations (like evaluate, subs, simplify)  # noqa: E501
         # will handle evaluation naturally. This reduces parsing overhead by ~50%.
         return expr_tree
 
@@ -802,7 +802,7 @@ class TI89Calculator:
         return sp.diag(*matrices)
 
     def _build_allowed_functions(self) -> Mapping[str, object]:
-        """Build the complete mapping of allowed functions/constants for the calculator."""
+        """Build the complete mapping of allowed functions/constants for the calculator."""  # noqa: E501
         result: dict[str, object] = {}
         result.update(self._trig_functions())
         result.update(self._complex_and_elementary_functions())

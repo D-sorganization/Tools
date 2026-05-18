@@ -138,7 +138,7 @@ class TestJacobianDouble:
         assert result["tip"].shape == (2, 2)
 
     def test_wrist_independent_of_phi(self) -> None:
-        """Wrist Jacobian should have zero in second column (phi doesn't affect wrist)."""
+        """Wrist Jacobian should have zero in second column (phi doesn't affect wrist)."""  # noqa: E501
         result = jacobian_double(0.5, 0.2, L1=0.6, L2=1.0)
         assert result["wrist"][0, 1] == pytest.approx(0.0)
         assert result["wrist"][1, 1] == pytest.approx(0.0)

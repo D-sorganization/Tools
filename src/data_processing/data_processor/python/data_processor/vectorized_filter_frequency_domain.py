@@ -87,7 +87,7 @@ def apply_fft_filter_vectorized(
             sample_rate = calculate_sampling_rate(signal)
             if sample_rate is None:
                 logger(
-                    "Warning: Cannot determine sample rate, using normalized frequencies"
+                    "Warning: Cannot determine sample rate, using normalized frequencies"  # noqa: E501
                 )
                 freq_unit = "normalized"
 

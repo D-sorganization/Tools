@@ -62,10 +62,10 @@ class CalculationPayload:
 def create_app() -> Flask:
     app = Flask(__name__, static_folder="static", template_folder="templates")
     # Security: Trust one layer of proxy for X-Forwarded-For and X-Forwarded-Proto
-    # This ensures correct IP resolution and HTTPS detection behind a reverse proxy (e.g. Nginx, ALB).
+    # This ensures correct IP resolution and HTTPS detection behind a reverse proxy (e.g. Nginx, ALB).  # noqa: E501
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
     calculator = TI89Calculator()
-    # Rate limit: 100 req/60s per IP per worker (in-memory — not shared across workers, see issue #2289)
+    # Rate limit: 100 req/60s per IP per worker (in-memory — not shared across workers, see issue #2289)  # noqa: E501
     app.limiter = RateLimiter(limit=100, window=60)  # type: ignore[attr-defined]
 
     workers = int(os.environ.get("WEB_CONCURRENCY", "1"))
@@ -232,7 +232,7 @@ def _validate_security(value: str | None) -> None:
     for pattern in dangerous_patterns:
         if pattern in value_lower:
             raise ValueError(
-                f"Security violation: Expression contains forbidden pattern '{pattern}'."
+                f"Security violation: Expression contains forbidden pattern '{pattern}'."  # noqa: E501
             )
 
 
@@ -482,7 +482,7 @@ def _sympify_value(
             return sp.Integer(int(clean_value))
 
         # Check for simple float, avoiding symbolic expressions that start with letters
-        # This heuristic prevents overhead for inputs like "x", "sin(x)" which fail float conversion
+        # This heuristic prevents overhead for inputs like "x", "sin(x)" which fail float conversion  # noqa: E501
         if clean_value and not clean_value[0].isalpha():
             try:
                 # Validate if it is a float using native conversion

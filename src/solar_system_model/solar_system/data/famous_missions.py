@@ -332,7 +332,7 @@ def get_galileo_trajectory() -> list[StateVector]:
 FAMOUS_MISSIONS = {
     "Voyager 1": MissionProfile(
         get_trajectory=get_voyager1_trajectory,
-        description="Explored Jupiter and Saturn before becoming the first spacecraft to enter interstellar space.",
+        description="Explored Jupiter and Saturn before becoming the first spacecraft to enter interstellar space.",  # noqa: E501
         launch_date="1977-09-05",
         destinations=("Jupiter", "Saturn", "Interstellar Space"),
         science_highlights=(
@@ -344,7 +344,7 @@ FAMOUS_MISSIONS = {
     ),
     "Voyager 2": MissionProfile(
         get_trajectory=get_voyager2_trajectory,
-        description="Only spacecraft to visit Uranus and Neptune, enabled by a once-in-176-year planetary alignment.",
+        description="Only spacecraft to visit Uranus and Neptune, enabled by a once-in-176-year planetary alignment.",  # noqa: E501
         launch_date="1977-08-20",
         destinations=("Jupiter", "Saturn", "Uranus", "Neptune"),
         science_highlights=(
@@ -356,7 +356,7 @@ FAMOUS_MISSIONS = {
     ),
     "Apollo 11": MissionProfile(
         get_trajectory=get_apollo11_trajectory,
-        description="First crewed lunar landing mission, proving translunar navigation and human surface operations.",
+        description="First crewed lunar landing mission, proving translunar navigation and human surface operations.",  # noqa: E501
         launch_date="1969-07-16",
         destinations=("Earth orbit", "Moon", "Earth"),
         science_highlights=(
@@ -368,7 +368,7 @@ FAMOUS_MISSIONS = {
     ),
     "Cassini-Huygens": MissionProfile(
         get_trajectory=get_cassini_trajectory,
-        description="Long-lived Saturn system flagship that also delivered the Huygens probe to Titan.",
+        description="Long-lived Saturn system flagship that also delivered the Huygens probe to Titan.",  # noqa: E501
         launch_date="1997-10-15",
         destinations=("Venus", "Earth", "Jupiter", "Saturn", "Titan"),
         science_highlights=(
@@ -380,7 +380,7 @@ FAMOUS_MISSIONS = {
     ),
     "New Horizons": MissionProfile(
         get_trajectory=get_new_horizons_trajectory,
-        description="First reconnaissance mission to Pluto, later extended into the Kuiper Belt.",
+        description="First reconnaissance mission to Pluto, later extended into the Kuiper Belt.",  # noqa: E501
         launch_date="2006-01-19",
         destinations=("Jupiter", "Pluto", "Arrokoth"),
         science_highlights=(
@@ -392,7 +392,7 @@ FAMOUS_MISSIONS = {
     ),
     "Curiosity": MissionProfile(
         get_trajectory=get_curiosity_trajectory,
-        description="Mars Science Laboratory rover mission aimed at assessing past Martian habitability.",
+        description="Mars Science Laboratory rover mission aimed at assessing past Martian habitability.",  # noqa: E501
         launch_date="2011-11-26",
         destinations=("Earth", "Mars"),
         science_highlights=(
@@ -404,7 +404,7 @@ FAMOUS_MISSIONS = {
     ),
     "Pioneer 10": MissionProfile(
         get_trajectory=get_pioneer10_trajectory,
-        description="Trailblazing Jupiter flyby mission and the first spacecraft through the main asteroid belt.",
+        description="Trailblazing Jupiter flyby mission and the first spacecraft through the main asteroid belt.",  # noqa: E501
         launch_date="1972-03-03",
         destinations=("Asteroid Belt", "Jupiter", "Outer Solar System"),
         science_highlights=(
@@ -416,7 +416,7 @@ FAMOUS_MISSIONS = {
     ),
     "Mariner 2": MissionProfile(
         get_trajectory=get_mariner2_trajectory,
-        description="First successful interplanetary probe and first planetary flyby, returning decisive Venus data.",
+        description="First successful interplanetary probe and first planetary flyby, returning decisive Venus data.",  # noqa: E501
         launch_date="1962-08-27",
         destinations=("Venus",),
         science_highlights=(
@@ -428,7 +428,7 @@ FAMOUS_MISSIONS = {
     ),
     "Mariner 10": MissionProfile(
         get_trajectory=get_mariner10_trajectory,
-        description="First gravity-assist mission and first spacecraft to visit Mercury.",
+        description="First gravity-assist mission and first spacecraft to visit Mercury.",  # noqa: E501
         launch_date="1973-11-03",
         destinations=("Venus", "Mercury"),
         science_highlights=(
@@ -440,7 +440,7 @@ FAMOUS_MISSIONS = {
     ),
     "Galileo": MissionProfile(
         get_trajectory=get_galileo_trajectory,
-        description="Jupiter flagship mission using inner-solar-system gravity assists to reach the Jovian system.",
+        description="Jupiter flagship mission using inner-solar-system gravity assists to reach the Jovian system.",  # noqa: E501
         launch_date="1989-10-18",
         destinations=("Venus", "Earth", "Jupiter"),
         science_highlights=(

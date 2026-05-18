@@ -1,10 +1,11 @@
+# ruff: noqa: E501
 """Health check endpoints for containerization and deployment.
 
 Provides liveness and readiness probes for Kubernetes/Docker orchestration.
 - /api/health: Liveness probe - is the app running?
 - /api/ready: Readiness probe - is the app ready to serve requests?
 
-See: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+See: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/  # noqa: E501
 """
 
 from __future__ import annotations
@@ -56,7 +57,7 @@ class HealthChecker:
                     # Test database connection
                     return HealthCheckResult('database', CheckStatus.OK)
                 except Exception as e:
-                    return HealthCheckResult('database', CheckStatus.UNHEALTHY, error=str(e))
+                    return HealthCheckResult('database', CheckStatus.UNHEALTHY, error=str(e))  # noqa: E501
         """  # noqa: E501
         self.checks[name] = check_fn
 

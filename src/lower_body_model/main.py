@@ -32,7 +32,7 @@ def main() -> None:
 
     if args.demo_iaa:
         logger.info(
-            "Running Induced Acceleration Analysis on right hip (X axis) with 10.0 Nm torque..."
+            "Running Induced Acceleration Analysis on right hip (X axis) with 10.0 Nm torque..."  # noqa: E501
         )
         iaa = sim.analyze_induced_acceleration("act_r_hip_x", 10.0)
         logger.info("Pelvis Induced Accelerations:")

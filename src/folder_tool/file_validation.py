@@ -49,7 +49,7 @@ class FileValidationMixin:
             file_size_mb = file_size_bytes / (1024 * 1024)
 
             # Validate minimum size
-            min_size_mb = float(self.min_file_size.get() or 0)  # type: ignore[attr-defined]
+            min_size_mb = float(self.min_file_size.get() or 0)  # type: ignore[attr-defined]  # noqa: E501
             if min_size_mb < 0:
                 min_size_mb = 0  # Reset invalid negative values
                 self.min_file_size.set("0")  # type: ignore[attr-defined]
@@ -57,20 +57,20 @@ class FileValidationMixin:
                 return False
 
             # Validate maximum size
-            max_size_str = self.max_file_size.get().strip()  # type: ignore[attr-defined]
+            max_size_str = self.max_file_size.get().strip()  # type: ignore[attr-defined]  # noqa: E501
             if max_size_str:
                 try:
                     max_size_mb = float(max_size_str)
                     if max_size_mb < 0:
                         max_size_mb = MAX_FILE_SIZE_MB  # Reset invalid negative values
-                        self.max_file_size.set(str(MAX_FILE_SIZE_MB))  # type: ignore[attr-defined]
+                        self.max_file_size.set(str(MAX_FILE_SIZE_MB))  # type: ignore[attr-defined]  # noqa: E501
                     if file_size_mb > max_size_mb:
                         return False
 
                     # Validate against absolute maximum
                     if max_size_mb > MAX_FILE_SIZE_MB:
                         max_size_mb = MAX_FILE_SIZE_MB
-                        self.max_file_size.set(str(MAX_FILE_SIZE_MB))  # type: ignore[attr-defined]
+                        self.max_file_size.set(str(MAX_FILE_SIZE_MB))  # type: ignore[attr-defined]  # noqa: E501
                         return False
                 except ValueError:
                     # Invalid input, reset to empty
@@ -90,7 +90,7 @@ class FileValidationMixin:
         """
         try:
             # Validate minimum size
-            min_size_str = self.min_file_size.get().strip()  # type: ignore[attr-defined]
+            min_size_str = self.min_file_size.get().strip()  # type: ignore[attr-defined]  # noqa: E501
             if min_size_str:
                 min_size_mb = float(min_size_str)
                 if min_size_mb < 0:
@@ -110,7 +110,7 @@ class FileValidationMixin:
                     return False
 
             # Validate maximum size
-            max_size_str = self.max_file_size.get().strip()  # type: ignore[attr-defined]
+            max_size_str = self.max_file_size.get().strip()  # type: ignore[attr-defined]  # noqa: E501
             if max_size_str:
                 max_size_mb = float(max_size_str)
                 if max_size_mb < 0:
@@ -119,7 +119,7 @@ class FileValidationMixin:
                         f"Maximum file size cannot be negative. Setting to "
                         f"{MAX_FILE_SIZE_MB} MB.",
                     )
-                    self.max_file_size.set(str(MAX_FILE_SIZE_MB))  # type: ignore[attr-defined]
+                    self.max_file_size.set(str(MAX_FILE_SIZE_MB))  # type: ignore[attr-defined]  # noqa: E501
                     return False
                 if max_size_mb > MAX_FILE_SIZE_MB:
                     messagebox.showwarning(
@@ -127,7 +127,7 @@ class FileValidationMixin:
                         f"Maximum file size cannot exceed {MAX_FILE_SIZE_MB} MB. "
                         f"Setting to {MAX_FILE_SIZE_MB} MB.",
                     )
-                    self.max_file_size.set(str(MAX_FILE_SIZE_MB))  # type: ignore[attr-defined]
+                    self.max_file_size.set(str(MAX_FILE_SIZE_MB))  # type: ignore[attr-defined]  # noqa: E501
                     return False
 
                 # Check if min > max

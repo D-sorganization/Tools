@@ -155,7 +155,7 @@ def test_save_restore_input_states(qapp) -> None:
     assert states["spin1"] == "42"
     assert states["line1"] == "hello"
     assert states["combo1"] == "B"
-    # QCheckBox has .text() which returns whatever its label is (empty string by default)
+    # QCheckBox has .text() which returns whatever its label is (empty string by default)  # noqa: E501
     assert states["check1"] == ""
 
     # Reset
@@ -167,7 +167,7 @@ def test_save_restore_input_states(qapp) -> None:
     calc.restore_input_states(states)
     assert spin.value() == 42
     assert line.text() == "hello"
-    # check gets restored with string "", which evaluates to boolean False or similar (bool("") -> False)
+    # check gets restored with string "", which evaluates to boolean False or similar (bool("") -> False)  # noqa: E501
     assert check.isChecked() is False
 
 

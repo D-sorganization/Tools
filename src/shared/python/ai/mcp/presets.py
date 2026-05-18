@@ -231,7 +231,7 @@ _SEQUENTIAL_THINKING = _build_stdio_preset(
     args=["-y", "@modelcontextprotocol/server-sequential-thinking"],
     category="thinking",
     docs_url=(
-        "https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking"
+        "https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking"  # noqa: E501
     ),
 )
 
@@ -244,7 +244,7 @@ _BRAVE_SEARCH = _build_stdio_preset(
     env={"BRAVE_API_KEY": "${BRAVE_API_KEY}"},
     required_env=("BRAVE_API_KEY",),
     category="search",
-    docs_url="https://github.com/modelcontextprotocol/servers/tree/main/src/brave-search",
+    docs_url="https://github.com/modelcontextprotocol/servers/tree/main/src/brave-search",  # noqa: E501
     homepage_url="https://brave.com/search/api/",
 )
 

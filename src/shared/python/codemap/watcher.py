@@ -100,7 +100,7 @@ def run(repo_root: str | None = None, *, debounce: float = DEBOUNCE_S) -> int:
             try:
                 if abs_p.exists():
                     stats = indexer_mod.RebuildStats()
-                    indexer_mod._process_file(abs_p, rel, repo, conn, stats)  # type: ignore[attr-defined]
+                    indexer_mod._process_file(abs_p, rel, repo, conn, stats)  # type: ignore[attr-defined]  # noqa: E501
                 else:
                     conn.execute("DELETE FROM symbols WHERE path = ?", (rel,))
                     conn.execute("DELETE FROM files WHERE path = ?", (rel,))

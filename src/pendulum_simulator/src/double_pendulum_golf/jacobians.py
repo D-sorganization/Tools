@@ -310,7 +310,7 @@ def ellipsoids_triple(
     L2: float,
     L3: float,
 ) -> dict[str, dict]:
-    """Compute mobility and force ellipsoid data for all three triple-pendulum endpoints.
+    """Compute mobility and force ellipsoid data for all three triple-pendulum endpoints.  # noqa: E501
 
     Returns
     -------

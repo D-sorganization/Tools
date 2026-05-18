@@ -44,7 +44,7 @@ class ModificationMixin:
 
     def get_connecting_joint(self, model_id: str, link_name: str) -> Joint | None: ...
 
-    def copy_subtree(self, model_id: str, root_link: str) -> bool: ...  # type: ignore[empty-body]
+    def copy_subtree(self, model_id: str, root_link: str) -> bool: ...  # type: ignore[empty-body]  # noqa: E501
 
     def _generate_unique_name(
         self, base_name: str, existing_names: set[str]

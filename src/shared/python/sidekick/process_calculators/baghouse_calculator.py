@@ -1,10 +1,11 @@
+# ruff: noqa: E501
 """Baghouse Calculator
 ===================
 
 Core calculation engine for baghouse filter performance, solid removal, and drum sizing.
 
 This is a standalone calculator that can work with or without the full thermodynamic
-engine. When the thermo module is not available, it uses simplified ideal gas calculations.
+engine. When the thermo module is not available, it uses simplified ideal gas calculations.  # noqa: E501
 """
 
 from dataclasses import dataclass

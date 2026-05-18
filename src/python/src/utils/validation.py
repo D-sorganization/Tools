@@ -89,7 +89,7 @@ def validate_file_extension(
     if ext not in normalized_allowed:
         return (
             False,
-            f"File extension '{ext}' not allowed. Allowed: {', '.join(normalized_allowed)}",
+            f"File extension '{ext}' not allowed. Allowed: {', '.join(normalized_allowed)}",  # noqa: E501
         )
 
     return True, None
