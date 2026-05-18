@@ -174,8 +174,9 @@ jobs:
             target: x86_64-unknown-linux-gnu
           - os: [self-hosted, Windows]
             target: x86_64-pc-windows-msvc
-          - os: [self-hosted, macOS]
-            target: x86_64-apple-darwin
+          # macOS leg removed: org has no `[self-hosted, macOS]` runners. Jobs
+          # with this label queued indefinitely. Re-add when macOS runner
+          # capacity is provisioned and macOS becomes an active deliverable.
 
     runs-on: ${{ matrix.platform.os }}
     timeout-minutes: 30
