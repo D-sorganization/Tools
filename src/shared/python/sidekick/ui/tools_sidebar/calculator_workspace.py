@@ -122,8 +122,45 @@ class CalculatorWorkspaceFacade:
         return bool(self._local_registry.remove(name))
 
     def clear_local(self) -> None:
-        """Clear only the calculator-local registry."""
+        """Clear only the calculator-local registry.
+
+        Postcondition: local workspace is empty; global workspace is unaffected.
+        Satisfies: WorkspaceContract.clear_local.
+        """
         self._local_registry.clear()
+
+    # ------------------------------------------------------------------
+    # WorkspaceContract Protocol surface
+    # These thin aliases exist so that CalculatorWorkspaceFacade satisfies
+    # the WorkspaceContract structural Protocol without coupling callers to
+    # the older set_local/get/list_names naming convention.
+    # ------------------------------------------------------------------
+
+    def set_variable(self, name: str, value: Any) -> WorkspaceVariable:
+        """Store *value* under *name* in the calculator-local workspace.
+
+        Precondition: ``name`` is a non-empty string.
+        Postcondition: variable is retrievable via :meth:`get_variable`.
+        Satisfies: WorkspaceContract.set_variable.
+        """
+        return self.set_local(name, value)
+
+    def get_variable(self, name: str, default: Any = None) -> Any:
+        """Return the locally stored *name*, or *default* if absent.
+
+        Precondition: ``name`` is a non-empty string.
+        Postcondition: returns stored value or *default*; does not raise.
+        Satisfies: WorkspaceContract.get_variable.
+        """
+        return self.get(name, default)
+
+    def list_variable_names(self) -> list[str]:
+        """Return calculator-local variable names in sorted order.
+
+        Postcondition: returns a sorted list; empty list when workspace is empty.
+        Satisfies: WorkspaceContract.list_variable_names.
+        """
+        return self._local_registry.list_names()
 
     def describe(
         self,
