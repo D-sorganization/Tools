@@ -29,6 +29,7 @@ from src.shared.python.ai.adapters.claude_code_adapter import ClaudeCodeAdapter
 from src.shared.python.ai.adapters.cline_adapter import ClineAdapter
 from src.shared.python.ai.adapters.codex_cli_adapter import CodexCliAdapter
 from src.shared.python.ai.adapters.factory import AdapterFactory
+from src.shared.python.ai.adapters.gemini_cli_adapter import GeminiCliAdapter
 from src.shared.python.ai.adapters.ollama_adapter import OllamaAdapter
 from src.shared.python.ai.adapters.openai_adapter import OpenAIAdapter
 
@@ -39,6 +40,7 @@ __all__ = [
     "ClaudeCodeAdapter",
     "ClineAdapter",
     "CodexCliAdapter",
+    "GeminiCliAdapter",
     "OllamaAdapter",
     "OpenAIAdapter",
     "ToolDeclaration",

@@ -31,16 +31,17 @@ from src.shared.python.logging_pkg.logging_config import get_logger
 logger = get_logger(__name__)
 
 # Provider resolution order (local-first)
-# `claude_code` and `codex_cli` are LOCAL-shaped: they invoke a CLI on the
-# host machine. They appear before cloud providers in local-first ordering,
-# but after the truly-local (no network) options like Ollama and BitNet —
-# the CLIs still hit the cloud underneath, just without exposing API keys
-# to the application.
+# `claude_code`, `codex_cli`, and `gemini_cli` are LOCAL-shaped: they invoke a
+# CLI on the host machine. They appear before cloud providers in local-first
+# ordering, but after the truly-local (no network) options like Ollama and
+# BitNet — the CLIs still hit the cloud underneath, just without exposing
+# API keys to the application.
 _LOCAL_FIRST_ORDER = (
     "ollama",
     "bitnet",
     "claude_code",
     "codex_cli",
+    "gemini_cli",
     "cline",
     "openai",
     "anthropic",
@@ -52,6 +53,7 @@ _CLOUD_FIRST_ORDER = (
     "gemini",
     "claude_code",
     "codex_cli",
+    "gemini_cli",
     "ollama",
     "bitnet",
     "cline",
@@ -110,6 +112,7 @@ class AdapterFactory:
             "anthropic",
             "claude_code",  # the Claude Code CLI agent (distinct from Anthropic API)
             "gemini",
+            "gemini_cli",  # the @google/gemini-cli CLI agent (distinct from Gemini API)
             "cline",
         }
     )
@@ -195,6 +198,14 @@ class AdapterFactory:
 
             # `host` reused as explicit binary path override (see claude_code above).
             adapter = CodexCliAdapter(binary=host, model=model, timeout=timeout)
+
+        elif provider == "gemini_cli":
+            from src.shared.python.ai.adapters.gemini_cli_adapter import (
+                GeminiCliAdapter,
+            )
+
+            # `host` reused as explicit binary path override (see claude_code above).
+            adapter = GeminiCliAdapter(binary=host, model=model, timeout=timeout)
 
         else:
             # Historical "codex" alias resolves to OpenAI API.
