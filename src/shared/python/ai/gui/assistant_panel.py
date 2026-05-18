@@ -18,7 +18,7 @@ from __future__ import annotations
 import contextlib
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any
 
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt, pyqtSignal
@@ -733,15 +733,12 @@ class AIAssistantPanel(QWidget):
         return "openai"
 
     def _build_tool_declarations(self) -> list[dict[str, Any]]:
-        return cast(
-            list[dict[str, Any]],
-            tool_declarations_for_access_mode(
-                self._tools_registry,
-                self._access_mode,
-                provider_format=self._provider_tool_format(),
-                rag_enabled=self._rag_enabled,
-                max_expertise=self._context.user_expertise.value,
-            ),
+        return tool_declarations_for_access_mode(
+            self._tools_registry,
+            self._access_mode,
+            provider_format=self._provider_tool_format(),
+            rag_enabled=self._rag_enabled,
+            max_expertise=self._context.user_expertise.value,
         )
 
     # ------------------------------------------------------------------
