@@ -271,9 +271,7 @@ class CodexCliAdapter(BaseAgentAdapter):
         binary is reported with a user-friendly hint.
         """
         if self.binary is None:
-            return False, (
-                "Codex CLI not found. Install: npm install -g @openai/codex"
-            )
+            return False, ("Codex CLI not found. Install: npm install -g @openai/codex")
         try:
             result = subprocess.run(
                 [self.binary, "--version"],
@@ -293,7 +291,8 @@ class CodexCliAdapter(BaseAgentAdapter):
                 f"Codex --version exited {result.returncode}: "
                 f"{(result.stderr or '').strip()[:200]}"
             )
-        version = (result.stdout or "").strip().splitlines()[0] if result.stdout else "?"
+        stdout_lines = (result.stdout or "").strip().splitlines()
+        version = stdout_lines[0] if stdout_lines else "?"
         return True, f"Codex CLI available: {version}"
 
     # ------------------------------------------------------------------ #

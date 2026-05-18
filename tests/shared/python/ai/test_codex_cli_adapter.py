@@ -77,7 +77,6 @@ from src.shared.python.ai.exceptions import (  # noqa: E402
 )
 from src.shared.python.ai.types import ConversationContext  # noqa: E402
 
-
 # ─── Unit tests (always run) ──────────────────────────────────────────
 
 
@@ -163,9 +162,7 @@ class TestCodexCliAdapter:
             patch("subprocess.run", return_value=fake) as mock_run,
         ):
             adapter = CodexCliAdapter(model="gpt-5-mini")
-            response = adapter.send_message(
-                "ping", ConversationContext(), tools=[]
-            )
+            response = adapter.send_message("ping", ConversationContext(), tools=[])
             assert response.content == "PONG"
             args, _ = mock_run.call_args
             argv = args[0]
@@ -226,9 +223,7 @@ class TestCodexCliAdapter:
             return_value=None,
         ):
             with pytest.raises(AIConnectionError, match="not found"):
-                CodexCliAdapter().send_message(
-                    "hi", ConversationContext(), tools=[]
-                )
+                CodexCliAdapter().send_message("hi", ConversationContext(), tools=[])
 
     def test_send_message_maps_timeout(self) -> None:
         with (
@@ -256,9 +251,7 @@ class TestCodexCliAdapter:
             patch("subprocess.run", return_value=fake),
         ):
             with pytest.raises(AIProviderError, match="not authenticated"):
-                CodexCliAdapter().send_message(
-                    "hi", ConversationContext(), tools=[]
-                )
+                CodexCliAdapter().send_message("hi", ConversationContext(), tools=[])
 
     def test_send_message_rejects_empty_message(self) -> None:
         with patch(
@@ -266,9 +259,7 @@ class TestCodexCliAdapter:
             return_value="/bin/codex",
         ):
             with pytest.raises(ValueError):
-                CodexCliAdapter().send_message(
-                    "", ConversationContext(), tools=[]
-                )
+                CodexCliAdapter().send_message("", ConversationContext(), tools=[])
 
 
 # ─── Live integration tests (skip when CLI missing) ────────────────────

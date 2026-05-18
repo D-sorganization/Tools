@@ -74,7 +74,6 @@ from src.shared.python.ai.exceptions import (  # noqa: E402
 )
 from src.shared.python.ai.types import ConversationContext  # noqa: E402
 
-
 # ─── Unit tests (always run) ──────────────────────────────────────────
 
 

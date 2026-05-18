@@ -4,11 +4,10 @@ Wraps the ``claude`` CLI binary (Claude Code agent) as a chat provider. The
 CLI handles its own authentication via OAuth keychain or ``ANTHROPIC_API_KEY``;
 this adapter only spawns it and parses output.
 
-Distinct from :class:`~src.shared.python.ai.adapters.anthropic_adapter.AnthropicAdapter`,
-which talks directly to the Anthropic REST API and requires an API key in the
-process environment. The CLI adapter is the right choice when the user has
-``claude`` installed and logged in but does not want to expose an API key to
-the application.
+Distinct from the ``AnthropicAdapter`` which talks directly to the Anthropic
+REST API and requires an API key in the process environment. The CLI adapter
+is the right choice when the user has ``claude`` installed and logged in but
+does not want to expose an API key to the application.
 
 Requirements:
     - ``claude`` CLI on ``PATH`` (or a known install location).
@@ -300,7 +299,9 @@ class ClaudeCodeAdapter(BaseAgentAdapter):
                 f"Claude Code --version exited {result.returncode}: "
                 f"{(result.stderr or '').strip()[:200]}"
             )
-        version = (result.stdout or "").strip().splitlines()[0] if result.stdout else "?"
+        version = (
+            (result.stdout or "").strip().splitlines()[0] if result.stdout else "?"
+        )
         return True, f"Claude Code CLI available: {version}"
 
     # ------------------------------------------------------------------ #
