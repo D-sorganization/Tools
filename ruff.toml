@@ -77,9 +77,11 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "src/shared/python/codemap/mcp_server.py" = ["T201"]
 # Data processing script generator creates print() statements in generated code output
 # (not executed by the module itself, but produced as string output)
-"src/data_processing/data_processor/python/data_processor/core/script_generator.py" = ["T201"]
+# E501 suppressed: long embedded code template strings that cannot be wrapped.
+"src/data_processing/data_processor/python/data_processor/core/script_generator.py" = ["T201", "E501"]
 # Neural network script exporter creates print() statements in generated training scripts
-"src/data_processing/data_processor/python/data_processor/core/nn_script_exporter_renderers.py" = ["T201"]
+# E501 suppressed: long embedded code template strings that cannot be wrapped.
+"src/data_processing/data_processor/python/data_processor/core/nn_script_exporter_renderers.py" = ["T201", "E501"]
 # Jupyter notebooks use print() for output display - this is intentional and correct.
 # E501 suppressed: notebook cells contain long f-strings and markdown that cannot
 # be wrapped without breaking execution or rendering.
@@ -191,6 +193,49 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "src/shared/python/upstream_drift_tools/ui/widgets/mixins/data_processor_ops.py" = ["E501"]
 "src/shared/python/upstream_drift_tools/ui/widgets/unit_converter_widget.py" = ["E501"]
 "src/shared/python/upstream_drift_tools/utils/__init__.py" = ["E501"]
+# sidekick package mirrors upstream_drift_tools — same long-line exemptions apply.
+# Box-drawing characters in log tables, long f-string expressions, and embedded
+# code templates cannot be wrapped without breaking output formatting. See issue #2944.
+"src/shared/python/sidekick/__init__.py" = ["E501"]
+"src/shared/python/sidekick/bootstrap.py" = ["E501"]
+"src/shared/python/sidekick/calculators/conversion/core.py" = ["E501"]
+"src/shared/python/sidekick/calculators/conversion/flow_rate_converter.py" = ["E501"]
+"src/shared/python/sidekick/calculators/conversion/service.py" = ["E501"]
+"src/shared/python/sidekick/calculators/conversion/tables.py" = ["E501"]
+"src/shared/python/sidekick/calculators/electrical/electrical_model.py" = ["E501"]
+"src/shared/python/sidekick/calculators/thermo/steam_engine.py" = ["E501"]
+"src/shared/python/sidekick/data_io.py" = ["E501"]
+"src/shared/python/sidekick/process_calculators/baghouse_calculator.py" = ["E501"]
+"src/shared/python/sidekick/process_calculators/financial_calculator.py" = ["E501"]
+"src/shared/python/sidekick/process_calculators/flare_calculator.py" = ["E501"]
+"src/shared/python/sidekick/process_calculators/optimization.py" = ["E501"]
+"src/shared/python/sidekick/process_calculators/pressure_drop_calculator/pressure_drop_interface.py" = ["E501"]
+"src/shared/python/sidekick/process_calculators/pressure_drop_calculator/pressure_drop_results.py" = ["E501"]
+"src/shared/python/sidekick/process_calculators/pressure_drop_calculator/pressure_drop_validation.py" = ["E501"]
+"src/shared/python/sidekick/process_calculators/pressure_drop_calculator/utils/fitting_loss_coefficients.py" = ["E501"]
+"src/shared/python/sidekick/process_calculators/pressure_drop_calculator/utils/gas_properties.py" = ["E501"]
+"src/shared/python/sidekick/process_calculators/psa_package/ui/main_window.py" = ["E501"]
+"src/shared/python/sidekick/process_calculators/scrubber/tests/test_scrubber_engine.py" = ["E501"]
+"src/shared/python/sidekick/process_calculators/wgs_reactor_calculator.py" = ["E501"]
+"src/shared/python/sidekick/tests/process_calculators/test_acid_gas_dewpoint_calculator.py" = ["E501"]
+"src/shared/python/sidekick/tests/process_calculators/test_pipe_database.py" = ["E501"]
+"src/shared/python/sidekick/tests/process_calculators/test_pressure_drop_interface.py" = ["E501"]
+"src/shared/python/sidekick/tests/process_calculators/test_wgs_reactor_calculator.py" = ["E501"]
+"src/shared/python/sidekick/tests/test_calculator_state_mixin.py" = ["E501"]
+"src/shared/python/sidekick/tests/test_data_processor_engine.py" = ["E501"]
+"src/shared/python/sidekick/tests/test_pure_calc_modules.py" = ["E501"]
+"src/shared/python/sidekick/ui/mixins/calculator_state_mixin.py" = ["E501"]
+"src/shared/python/sidekick/ui/widgets/data_processor_widget.py" = ["E501"]
+"src/shared/python/sidekick/ui/widgets/mixins/data_processor_ops.py" = ["E501"]
+"src/shared/python/sidekick/ui/widgets/unit_converter_widget.py" = ["E501"]
+"src/shared/python/sidekick/utils/__init__.py" = ["E501"]
+# data_processing: long embedded code strings in templates and generated scripts.
+"src/data_processing/data_processor/python/data_processor/core/anova.py" = ["E501"]
+"src/data_processing/data_processor/python/data_processor/core/anova_models.py" = ["E501"]
+"src/data_processing/data_processor/python/data_processor/high_performance_loader.py" = ["E501"]
+"src/data_processing/data_processor/python/data_processor/vectorized_filter_frequency_domain.py" = ["E501"]
+# folder_tool: long path strings and UI labels that cannot be wrapped.
+"src/folder_tool/folder_tool_ui.py" = ["E501"]
 "src/signal_processing_studio/gui_registration.py" = ["E501"]
 "src/signal_processing_studio/python/signal_processing_studio/signal_bus.py" = ["E501"]
 "src/solar_system_model/solar_system/core/celestial_body.py" = ["E501"]
