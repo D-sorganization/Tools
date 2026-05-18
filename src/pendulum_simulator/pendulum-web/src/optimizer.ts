@@ -181,8 +181,14 @@ function nelderMead(
         const secondWorst = simplex[n - 1];
         const best = simplex[0];
 
+        // ⚡ Bolt Optimization: Replace .map() calls with pre-allocated arrays and standard for-loops
+        // to eliminate continuous callback allocation and garbage collection overhead in the tight loop.
+
         // Reflection
-        const reflected = centroid.map((c, j) => c + alpha * (c - worst.x[j]));
+        const reflected = new Array(n);
+        for (let j = 0; j < n; j++) {
+            reflected[j] = centroid[j] + alpha * (centroid[j] - worst.x[j]);
+        }
         const fReflected = f(reflected);
 
         if (fReflected < secondWorst.cost && fReflected >= best.cost) {
@@ -192,7 +198,10 @@ function nelderMead(
 
         // Expansion
         if (fReflected < best.cost) {
-            const expanded = centroid.map((c, j) => c + gamma * (reflected[j] - c));
+            const expanded = new Array(n);
+            for (let j = 0; j < n; j++) {
+                expanded[j] = centroid[j] + gamma * (reflected[j] - centroid[j]);
+            }
             const fExpanded = f(expanded);
             simplex[n] = fExpanded < fReflected
                 ? { x: expanded, cost: fExpanded }
@@ -201,7 +210,10 @@ function nelderMead(
         }
 
         // Contraction
-        const contracted = centroid.map((c, j) => c + rho * (worst.x[j] - c));
+        const contracted = new Array(n);
+        for (let j = 0; j < n; j++) {
+            contracted[j] = centroid[j] + rho * (worst.x[j] - centroid[j]);
+        }
         const fContracted = f(contracted);
         if (fContracted < worst.cost) {
             simplex[n] = { x: contracted, cost: fContracted };
@@ -210,7 +222,11 @@ function nelderMead(
 
         // Shrink
         for (let i = 1; i <= n; i++) {
-            simplex[i].x = simplex[i].x.map((v, j) => best.x[j] + sigma * (v - best.x[j]));
+            const newX = new Array(n);
+            for (let j = 0; j < n; j++) {
+                newX[j] = best.x[j] + sigma * (simplex[i].x[j] - best.x[j]);
+            }
+            simplex[i].x = newX;
             simplex[i].cost = f(simplex[i].x);
         }
     }
