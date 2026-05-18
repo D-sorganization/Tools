@@ -43,7 +43,7 @@ def ensure_paths(repo_root: Path | str | None = None) -> Path:
         The resolved repository root path.
     """
     if repo_root is None:
-        from upstream_drift_tools.utils.paths import get_repo_root
+        from sidekick.utils.paths import get_repo_root
 
         repo_root = get_repo_root()
     else:
