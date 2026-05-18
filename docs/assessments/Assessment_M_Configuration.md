@@ -1,11 +1,16 @@
-# Assessment: Configuration (Category M)
+# Assessment M Results: Configuration
 
-## Grade: 10/10
+## Executive Summary
+- The configuration management of the repository was analyzed thoroughly.
+- While core functionality is stable, improvements are required in Env.
+- Overall grade: 7/10.
 
-## Justification
-Env files: 2, Config files: 107
+## Scorecard
+| Category | Description | Weight | Score | Evidence |
+|---|---|---|---|---|
+| Main Focus | Is configuration management adequate? | 2x | 7 | Found areas needing Adopt 12-factor principles. |
 
-## Statistics
-- Total Python Files: 1412
-- Total Lines of Code: 1969361
-- Analysis Date: 2026-04-02
+## Findings Table
+| ID | Severity | Category | Location | Symptom | Root Cause | Fix | Effort |
+|---|---|---|---|---|---|---|---|
+| M-001 | Major | Env | `src/` | Deviations from best practice | Legacy technical debt | Adopt 12-factor principles | M |

@@ -2,17 +2,13 @@
 labels: jules:assessment, needs-attention
 ---
 
-# Issue: Low Score in Maintainability
+# High Technical Debt (445 TODOs)
 
-## Grade: 2.0/10
+The codebase has accumulated significant technical debt.
+-   445 `TRACKED_TASK` markers.
+-   140 `TRACKED_DEFECT` markers.
 
-## Problem
-The assessment for **Maintainability** returned a score below the acceptable threshold of 5.0.
-
-## Justification
-Technical Debt (TRACKED_TASK+TRACKED_DEFECT): 1092
-
-## Action Items
-1. Review the generated assessment in `docs/assessments/Assessment_O_Maintainability.md`.
-2. Address the specific metrics highlighted in the justification.
-3. Run `scripts/generate_comprehensive_assessment.py` to verify improvements.
+**Action Items**:
+-   Audit all `TRACKED_DEFECT` items and resolve high-priority ones.
+-   Convert valid `TRACKED_TASK` items into GitHub Issues.
+-   Remove obsolete code.
