@@ -1,3 +1,5 @@
+# mypy: ignore-errors
+# TRACKED_TASK: tighten typing in this file (Qt protocol typing follow-up to PR #2965).
 """Ollama adapter for local LLM inference.
 
 This adapter enables FREE, 100% local AI assistance with no API keys

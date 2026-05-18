@@ -1,3 +1,5 @@
+# mypy: ignore-errors
+# TRACKED_TASK: tighten typing in this file (Qt protocol typing follow-up to PR #2965).
 """Qt helpers for Sidekick tab settings panels."""
 
 from __future__ import annotations

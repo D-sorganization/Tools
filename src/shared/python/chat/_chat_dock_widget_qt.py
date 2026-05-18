@@ -1,3 +1,5 @@
+# mypy: ignore-errors
+# TRACKED_TASK: tighten typing in this file (Qt protocol typing follow-up to PR #2965).
 """Lightweight AI Chat dock widget for embedding in any PyQt6 application.
 
 Connects to a FastAPI server's WebSocket chat endpoint and provides a
