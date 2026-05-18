@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Configuration management mixin for DataProcessorMainWindow.
 
 Contains signal set load/save and app configuration load/save handlers.

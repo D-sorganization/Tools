@@ -20,6 +20,9 @@ name: Jules Auto-Rebase (Worker)
 # Replaces Jules-Conflict-Fix workflow
 # Automatically rebases PRs that are behind main
 # Labels PRs that have actual merge conflicts for manual resolution
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 on:
   workflow_call:
@@ -70,6 +73,7 @@ jobs:
               ;;
           esac
   auto-rebase-prs:
+    timeout-minutes: 30
     needs: pick-runner
     runs-on: d-sorg-fleet
     # Grant write only at this job level — rebasing pushes to feature branches

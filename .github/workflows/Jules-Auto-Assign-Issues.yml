@@ -3,6 +3,9 @@ name: Jules Auto-Assign Issues
 # Automatically comments @jules on new issues to trigger the fix workflow
 # IMPORTANT: Only triggers for AUTOMATED issues, NOT manually created ones
 # To manually request Jules help, add the 'jules-triage' label to an issue
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 on:
   issues:
@@ -52,6 +55,7 @@ jobs:
               ;;
           esac
   auto-assign:
+    timeout-minutes: 30
     needs: pick-runner
     runs-on: d-sorg-fleet
     # CHANGED: Only trigger for automated issues or explicit jules-triage label

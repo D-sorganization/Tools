@@ -23,7 +23,7 @@ permissions:
 
 concurrency:
   group: jules-pr-cleanup-${{ github.repository }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
@@ -66,6 +66,7 @@ jobs:
               ;;
           esac
   cleanup:
+    timeout-minutes: 30
     needs: pick-runner
     name: Cleanup Stale Jules PRs
     runs-on: d-sorg-fleet
@@ -146,6 +147,16 @@ jobs:
             if [ "$DRY_RUN" = "true" ]; then
               echo "[DRY RUN] Would close PR #$PR_NUM: $PR_TITLE"
             else
+              # Anti-phantom-merge gate: skip PRs flagged jules-verification-failed
+              # so the diagnostic remains visible to the user.
+              has_failed_label=$(gh pr view "$PR_NUM" --json labels \
+                --jq '[.labels[].name] | contains(["jules-verification-failed"])' \
+                2>/dev/null || echo "false")
+              if [ "$has_failed_label" = "true" ]; then
+                echo "Skipping PR #$PR_NUM: jules-verification-failed label present."
+                continue
+              fi
+
               echo "Closing PR #$PR_NUM: $PR_TITLE"
 
               # Create comment body in temp file to avoid YAML parsing issues

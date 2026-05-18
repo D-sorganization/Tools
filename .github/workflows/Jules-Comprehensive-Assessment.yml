@@ -17,6 +17,9 @@ name: Jules Comprehensive Assessment
 # │  • Scheduled (0 8 * * 0,4) or manual dispatch — not triggered on push     │
 # │  • Report commit scoped to docs/assessments/ path only                   │
 # └─────────────────────────────────────────────────────────────────────────────┘
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 on:
   schedule:
@@ -29,8 +32,9 @@ permissions:
 
 jobs:
   comprehensive-assessment:
+    timeout-minutes: 30
     name: Comprehensive Assessment & Audit
-    runs-on: ubuntu-latest
+    runs-on: d-sorg-fleet
     # Grant write only at this job level.
     permissions:
       contents: write  # commit assessment report to docs/assessments/
@@ -49,11 +53,13 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.11"
+          cache: pip
 
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
           node-version: "24"
+          cache: npm
 
       - name: Install Dependencies
         run: |

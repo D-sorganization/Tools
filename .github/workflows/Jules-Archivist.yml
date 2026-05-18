@@ -17,6 +17,9 @@ name: Jules Archivist
 # │  • Only targets branches matching "jules/" prefix — other branches ignored │
 # │  • Gracefully skips on API rate-limit errors                               │
 # └─────────────────────────────────────────────────────────────────────────────┘
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 on:
   workflow_call:
@@ -66,6 +69,7 @@ jobs:
               ;;
           esac
   archive-tasks:
+    timeout-minutes: 30
     needs: pick-runner
     runs-on: ${{ needs.pick-runner.outputs.runner }}
     # Grant write only at this job level — branch deletion requires contents: write.

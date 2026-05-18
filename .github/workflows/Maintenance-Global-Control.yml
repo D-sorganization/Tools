@@ -1,4 +1,7 @@
 name: Maintenance Global Control
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 on:
   workflow_dispatch:
@@ -57,6 +60,7 @@ jobs:
               ;;
           esac
   control:
+    timeout-minutes: 30
     needs: pick-runner
     runs-on: d-sorg-fleet
     permissions:

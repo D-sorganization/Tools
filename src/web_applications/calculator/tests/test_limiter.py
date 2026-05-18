@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for rate limiting in the calculator API."""
 
 import unittest

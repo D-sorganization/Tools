@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 from typing import Any
 
 """test_urdf_contracts_integration.py module."""

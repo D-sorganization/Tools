@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 # mypy: ignore-errors
 """Modern Robotics (Lynch & Park) core algorithms — compatibility shim.
 

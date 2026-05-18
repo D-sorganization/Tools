@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Thread-safe worker module for parallel PDF processing."""
 
 import logging

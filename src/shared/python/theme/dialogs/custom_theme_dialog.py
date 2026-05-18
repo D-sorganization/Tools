@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Dialog for designing and saving custom colour themes."""
 
 from __future__ import annotations

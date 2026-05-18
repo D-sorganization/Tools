@@ -41,7 +41,7 @@ env:
 
 concurrency:
   group: jules-control-tower-${{ github.repository }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 # Least-privilege: this orchestrator only reads; write grants live in workers.
 permissions:
@@ -90,6 +90,7 @@ jobs:
               ;;
           esac
   triage:
+    timeout-minutes: 30
     needs: pick-runner
     runs-on: ${{ needs.pick-runner.outputs.runner }}
     # Removed global actor check to allow scheduled runs even if file modified by bot

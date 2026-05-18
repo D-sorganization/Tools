@@ -6,7 +6,7 @@
 
 # Core Scientific Computing
 numpy==2.4.5
-pandas==3.0.2
+pandas==3.0.3
 scipy==1.17.1
 matplotlib==3.10.9
 sympy==1.14.0
@@ -17,9 +17,9 @@ pytest-cov==7.1.0
 pytest-timeout==2.4.0
 pytest-benchmark==5.2.3
 ruff==0.15.13
-mypy==2.0.0
+mypy==2.1.0
 bandit==1.9.4
-types-PyYAML==6.0.12.20260508
+types-PyYAML==6.0.12.20260510
 types-requests==2.33.0.20260513
 
 # GUI & Desktop Applications

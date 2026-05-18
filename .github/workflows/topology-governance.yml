@@ -1,4 +1,7 @@
 name: Topology Governance
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 on:
   pull_request:
@@ -62,6 +65,7 @@ jobs:
               ;;
           esac
   topology-check:
+    timeout-minutes: 30
     needs: pick-runner
     runs-on: d-sorg-fleet
     steps:
@@ -69,5 +73,6 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+          cache: pip
       - name: Validate topology policy
         run: python3 scripts/check_repo_topology.py

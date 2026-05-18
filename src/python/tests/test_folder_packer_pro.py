@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for folder_packer_pro package.
 
 Tests for the decomposed folder_packer_pro modules:

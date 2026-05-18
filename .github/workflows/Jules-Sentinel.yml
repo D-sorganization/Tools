@@ -35,7 +35,7 @@ permissions:
 # HARDENING: Prevent concurrent runs
 concurrency:
   group: jules-sentinel-${{ github.repository }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
@@ -78,6 +78,7 @@ jobs:
               ;;
           esac
   security-audit:
+    timeout-minutes: 20
     needs: pick-runner
     runs-on: d-sorg-fleet
     # Grant write only at this job level.

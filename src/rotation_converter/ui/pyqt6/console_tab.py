@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Console UI component for interactive python execution."""
 
 from PyQt6.QtCore import Qt

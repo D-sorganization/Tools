@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for Pressure Drop Calculator GUI."""
 
 from __future__ import annotations

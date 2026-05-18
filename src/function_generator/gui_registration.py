@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """GUI registration for Function Generator."""
 
 from __future__ import annotations

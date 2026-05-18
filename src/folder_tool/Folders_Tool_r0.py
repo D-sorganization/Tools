@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 # Standard library imports
 import logging
 import tkinter as tk

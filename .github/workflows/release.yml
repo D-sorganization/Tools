@@ -3,6 +3,9 @@ name: Release Automation
 on:
   push:
     branches: [main]
+    paths:
+      - "pyproject.toml"
+      - ".github/workflows/release.yml"
   workflow_dispatch:
     inputs:
       force_bump:
@@ -25,6 +28,7 @@ permissions:
 jobs:
   # ── 1. Determine if this commit warrants a release ────────────────────
   analyse-commits:
+    timeout-minutes: 60
     name: Analyse Commits
     runs-on: d-sorg-fleet
     outputs:
@@ -133,6 +137,7 @@ jobs:
 
   # ── 2. Validate: tests + quality gates ──────────────────────────────
   validate:
+    timeout-minutes: 60
     name: Validate
     runs-on: d-sorg-fleet
     needs: analyse-commits
@@ -143,7 +148,18 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-          cache: pip
+
+      # Explicit cache: the built-in `cache: pip` on setup-python only checks
+      # default lockfile locations. Hash both pyproject.toml and requirements*
+      # so editable+dev installs benefit from wheel cache reuse.
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-release-${{ runner.os }}-py3.12-${{ hashFiles('pyproject.toml', 'requirements*.txt') }}
+          restore-keys: |
+            pip-release-${{ runner.os }}-py3.12-
+            pip-release-${{ runner.os }}-
 
       - name: Install dependencies
         run: |
@@ -163,6 +179,7 @@ jobs:
 
   # ── 3. Bump version in pyproject.toml + VERSION file ────────────────
   bump-version:
+    timeout-minutes: 60
     name: Bump Version
     runs-on: d-sorg-fleet
     needs: [analyse-commits, validate]
@@ -262,6 +279,7 @@ jobs:
 
   # ── 4. Create GitHub Release ─────────────────────────────────────────
   github-release:
+    timeout-minutes: 60
     name: GitHub Release
     runs-on: d-sorg-fleet
     needs: [analyse-commits, bump-version]

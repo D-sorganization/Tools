@@ -1,4 +1,7 @@
 name: Publish Artifacts
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
 
 on:
   release:
@@ -59,6 +62,7 @@ jobs:
               ;;
           esac
   build-python-wheel:
+    timeout-minutes: 30
     needs: pick-runner
     name: Build Python Wheel
     runs-on: d-sorg-fleet
@@ -72,6 +76,7 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.11"
+          cache: pip
 
       - name: Install Maturin
         run: pip install maturin
@@ -91,6 +96,7 @@ jobs:
           retention-days: 30
 
   build-wasm-package:
+    timeout-minutes: 30
     needs: pick-runner
     name: Build WASM/NPM Package
     runs-on: d-sorg-fleet
@@ -120,6 +126,7 @@ jobs:
           retention-days: 30
 
   publish-pypi:
+    timeout-minutes: 30
     name: Publish to PyPI
     needs: [pick-runner, build-python-wheel]
     runs-on: d-sorg-fleet
@@ -153,6 +160,7 @@ jobs:
           fi
 
   publish-npm:
+    timeout-minutes: 30
     name: Publish to NPM
     needs: [pick-runner, build-wasm-package]
     runs-on: d-sorg-fleet
@@ -171,6 +179,7 @@ jobs:
         with:
           node-version: "24"
           registry-url: "https://registry.npmjs.org"
+          cache: npm
 
       - name: Publish to NPM
         env:
@@ -187,6 +196,7 @@ jobs:
           fi
 
   publish-summary:
+    timeout-minutes: 30
     name: Publish Summary
     needs: [pick-runner, build-python-wheel, build-wasm-package]
     runs-on: d-sorg-fleet

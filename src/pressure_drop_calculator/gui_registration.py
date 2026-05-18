@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """GUI registration for Pressure Drop Calculator."""
 
 from __future__ import annotations

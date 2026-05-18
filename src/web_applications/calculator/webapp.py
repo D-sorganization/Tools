@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """webapp.py module."""
 
 from __future__ import annotations

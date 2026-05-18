@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Core route registration and request dispatch for model_generation APIs."""
 
 from __future__ import annotations

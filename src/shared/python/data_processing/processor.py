@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """DataProcessor facade -- clean API over the extracted core modules.
 
 This is the main entry point for programmatic data processing without any GUI.

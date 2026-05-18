@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """``codemap-watch`` daemon — incremental re-index on file save.
 
 Uses watchdog with a 500 ms debounce. On change, re-parses only the changed

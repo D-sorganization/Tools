@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Lightweight AI Chat dock widget for embedding in any PyQt6 application.
 
 Connects to a FastAPI server's WebSocket chat endpoint and provides a
@@ -45,6 +46,7 @@ from PyQt6.QtWidgets import (
     QPlainTextEdit,
     QPushButton,
     QScrollArea,
+    QSizePolicy,
     QStackedWidget,
     QVBoxLayout,
     QWidget,
@@ -58,6 +60,7 @@ from .chat_dock_widget import (
     _session_file_path,
     _write_shared_session_id,
 )
+from .cli_provider_availability import list_available_cli_providers
 from .terminal_contracts import TerminalProviderRegistry
 from .terminal_providers import build_default_terminal_provider_registry
 from .voice_input_manager import VoiceInputManager
@@ -122,7 +125,9 @@ class ChatMessageBubble(QFrame):
         header_row.addStretch()
 
         self._copy_btn = QPushButton("Copy")
-        self._copy_btn.setToolTip("Copy message to clipboard")
+        self._copy_btn.setToolTip(
+            "Copy message to clipboard. Use the dropdown to pick mode."
+        )
         self._copy_btn.setCursor(Qt.CursorShape.PointingHandCursor)
         self._copy_btn.setStyleSheet(
             "QPushButton { background-color: transparent; "
@@ -130,7 +135,22 @@ class ChatMessageBubble(QFrame):
             "border: none; font-size: 10px; padding: 0px; }"
             f"QPushButton:hover {{ color: {colors.get('text', '#e0e0e0')}; }}"
         )
-        self._copy_btn.clicked.connect(self._copy_to_clipboard)
+        # Tools issue #2735: per-message copy mode dropdown.
+        copy_menu = QMenu(self)
+        for label, mode in (
+            ("Raw text", "raw_text"),
+            ("Markdown", "markdown"),
+            ("Code only", "code_only"),
+            ("JSON", "json"),
+        ):
+            act = copy_menu.addAction(label)
+            if act is not None:
+                act.triggered.connect(
+                    lambda _checked=False, m=mode: self._copy_to_clipboard(m)
+                )
+        self._copy_btn.setMenu(copy_menu)
+        # Direct click defaults to raw_text via the menu's first action.
+        self._copy_btn.clicked.connect(lambda: self._copy_to_clipboard("raw_text"))
         header_row.addWidget(self._copy_btn)
 
         layout.addLayout(header_row)
@@ -161,10 +181,30 @@ class ChatMessageBubble(QFrame):
         self._content += text
         self._content_label.setText(self._content)
 
-    def _copy_to_clipboard(self) -> None:
-        clipboard = QApplication.clipboard()
-        if clipboard is not None:
-            clipboard.setText(self._content)
+    def _copy_to_clipboard(self, mode: str = "raw_text") -> None:
+        """Copy this bubble's content via the shared ``MessageClipboardCopier``.
+
+        Tools issue #2735. The copier is constructed lazily because it
+        pulls in :class:`QApplication` and is only meaningful when a Qt
+        application is running.
+        """
+        from .export import MessageClipboardCopier
+        from .service_base import ChatMessage
+
+        try:
+            copier = MessageClipboardCopier.from_qt_application()
+        except RuntimeError:
+            # Fall back to direct clipboard call when no QApplication exists.
+            clipboard = QApplication.clipboard()
+            if clipboard is not None:
+                clipboard.setText(self._content)
+            return
+        msg = ChatMessage(role=self._role, content=self._content)
+        try:
+            copier.copy_message(msg, mode)  # type: ignore[arg-type]
+        except ValueError:
+            # Unknown mode -- fall back to raw_text.
+            copier.copy_message(msg, "raw_text")
 
 
 class ChatDockWidget(QDockWidget):
@@ -330,26 +370,88 @@ class ChatDockWidget(QDockWidget):
         self._tools_btn.setToolTip("Chat tools and actions")
         self._tools_menu = QMenu(self)
         self._action_copy_thread = self._tools_menu.addAction("Copy Entire Thread")
-        self._action_export_thread = self._tools_menu.addAction("Export to Markdown...")
-        self._action_condense_thread = self._tools_menu.addAction("Condense Thread")
+        # Tools issue #2735: Export submenu (Markdown / Text / HTML).
+        export_menu = self._tools_menu.addMenu("Export Thread")
+        self._action_export_markdown = (
+            export_menu.addAction("Markdown...") if export_menu is not None else None
+        )
+        self._action_export_text = (
+            export_menu.addAction("Plain Text...") if export_menu is not None else None
+        )
+        self._action_export_html = (
+            export_menu.addAction("HTML...") if export_menu is not None else None
+        )
+        # Tools issue #2736: Condense submenu with strategy picker.
+        condense_menu = self._tools_menu.addMenu("Condense Thread")
+        self._action_condense_keep_recent = (
+            condense_menu.addAction("Keep recent...")
+            if condense_menu is not None
+            else None
+        )
+        self._action_condense_semantic = (
+            condense_menu.addAction("Semantic summary...")
+            if condense_menu is not None
+            else None
+        )
+        self._action_condense_pinned = (
+            condense_menu.addAction("Pinned anchor...")
+            if condense_menu is not None
+            else None
+        )
+        # Backwards-compat alias kept by Tools issue #2872 history-browser
+        # tests that introspect ``_action_export_thread``.
+        self._action_export_thread = self._action_export_markdown
+        self._action_condense_thread = self._action_condense_keep_recent
         self._action_request_review = self._tools_menu.addAction(
             "Request Agent Review..."
         )
+        # Tools issue #2688: memory management UI access point.
+        self._action_manage_memory = self._tools_menu.addAction("Manage Memory...")
+        if self._action_manage_memory is not None:
+            self._action_manage_memory.triggered.connect(self.open_memory_panel)
         if self._action_copy_thread is not None:
             self._action_copy_thread.triggered.connect(self._copy_entire_thread)
-        if self._action_export_thread is not None:
-            self._action_export_thread.triggered.connect(self._export_to_markdown)
-        if self._action_condense_thread is not None:
-            self._action_condense_thread.triggered.connect(self._condense_thread)
+        if self._action_export_markdown is not None:
+            self._action_export_markdown.triggered.connect(
+                lambda: self._export_thread("markdown", "Markdown Files (*.md)", ".md")
+            )
+        if self._action_export_text is not None:
+            self._action_export_text.triggered.connect(
+                lambda: self._export_thread("text", "Text Files (*.txt)", ".txt")
+            )
+        if self._action_export_html is not None:
+            self._action_export_html.triggered.connect(
+                lambda: self._export_thread("html", "HTML Files (*.html)", ".html")
+            )
+        if self._action_condense_keep_recent is not None:
+            self._action_condense_keep_recent.triggered.connect(
+                lambda: self._run_condense_local("keep_recent")
+            )
+        if self._action_condense_semantic is not None:
+            self._action_condense_semantic.triggered.connect(
+                lambda: self._run_condense_local("semantic_summary")
+            )
+        if self._action_condense_pinned is not None:
+            self._action_condense_pinned.triggered.connect(
+                lambda: self._run_condense_local("pinned_anchor")
+            )
         if self._action_request_review is not None:
             self._action_request_review.triggered.connect(self._request_review)
         self._tools_btn.setMenu(self._tools_menu)
-        status_row.addWidget(self._tools_btn)
 
-        self._close_btn = QPushButton("Close")
-        self._close_btn.setToolTip("Close chat")
-        self._close_btn.clicked.connect(self.close)
-        status_row.addWidget(self._close_btn)
+        # Tools issue #2736: token-budget indicator + condense-now button.
+        self._token_indicator = QLabel("0 tok")
+        self._token_indicator.setToolTip(
+            "Approximate token count for the current thread. "
+            "When it exceeds the auto-condense threshold the thread will "
+            "be condensed automatically."
+        )
+        self._token_indicator.setStyleSheet(
+            f"color: {text_secondary}; font-size: 10px;"
+        )
+        status_row.addWidget(self._token_indicator)
+        self._auto_condense_threshold = 8000
+
         layout.addLayout(status_row)
 
         mode_row = QHBoxLayout()
@@ -360,17 +462,29 @@ class ChatDockWidget(QDockWidget):
         self._build_ai_dropdowns(mode_row)
 
         self._mode_combo = QComboBox()
+        self._mode_combo.setSizePolicy(
+            QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed
+        )
+        self._mode_combo.setMinimumWidth(0)
         self._mode_combo.addItem("Chat", "chat")
         self._mode_combo.addItem("Terminal", "terminal")
         self._mode_combo.currentIndexChanged.connect(self._on_mode_changed)
         mode_row.addWidget(self._mode_combo)
 
         self._shell_combo = QComboBox()
+        self._shell_combo.setSizePolicy(
+            QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed
+        )
+        self._shell_combo.setMinimumWidth(0)
         self._populate_shell_combo()
         self._shell_combo.currentIndexChanged.connect(self._on_terminal_shell_changed)
         mode_row.addWidget(self._shell_combo)
 
         self._provider_combo = QComboBox()
+        self._provider_combo.setSizePolicy(
+            QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed
+        )
+        self._provider_combo.setMinimumWidth(0)
         self._populate_provider_combo()
         mode_row.addWidget(self._provider_combo)
 
@@ -381,8 +495,6 @@ class ChatDockWidget(QDockWidget):
         self._terminal_stop_btn = QPushButton("Stop")
         self._terminal_stop_btn.clicked.connect(self._on_terminal_stop)
         mode_row.addWidget(self._terminal_stop_btn)
-
-        layout.addLayout(mode_row)
 
         # Message scroll area
         self._scroll_area = QScrollArea()
@@ -415,7 +527,11 @@ class ChatDockWidget(QDockWidget):
         # Input row
         input_row = QHBoxLayout()
         self._input_edit = QPlainTextEdit()
-        self._input_edit.setMaximumHeight(50)
+        self._input_edit.setMinimumHeight(60)
+        self._input_edit.setMaximumHeight(150)
+        self._input_edit.setSizePolicy(
+            QSizePolicy.Policy.Ignored, QSizePolicy.Policy.MinimumExpanding
+        )
         self._input_edit.setPlaceholderText(self._placeholder_text)
         self._input_edit.setStyleSheet(
             "QPlainTextEdit {"
@@ -424,11 +540,28 @@ class ChatDockWidget(QDockWidget):
             "  font-size: 12px; padding: 4px;"
             "}"
         )
-        input_row.addWidget(self._input_edit, stretch=1)
+        layout.addWidget(self._input_edit)
 
-        self._upload_btn = QPushButton("📎")
+        # Tools on the far left
+        self._tools_btn.setFixedWidth(50)
+        self._tools_btn.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
+        self._tools_btn.setStyleSheet(
+            "QPushButton {"
+            f"  background-color: {bg_alt}; color: {text_primary};"
+            "  border-radius: 4px; padding: 4px;"
+            "}"
+            f"QPushButton:hover {{ background-color: {border}; }}"
+        )
+        input_row.addWidget(self._tools_btn)
+
+        self._upload_btn = QPushButton("+")
         self._upload_btn.setToolTip("Upload file")
         self._upload_btn.setFixedWidth(28)
+        self._upload_btn.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
         self._upload_btn.setStyleSheet(
             "QPushButton {"
             f"  background-color: {bg_alt}; color: {text_primary};"
@@ -439,9 +572,12 @@ class ChatDockWidget(QDockWidget):
         self._upload_btn.clicked.connect(self._on_upload)
         input_row.addWidget(self._upload_btn)
 
-        self._screenshot_btn = QPushButton("📸")
+        self._screenshot_btn = QPushButton("⛶")
         self._screenshot_btn.setToolTip("Capture screenshot")
         self._screenshot_btn.setFixedWidth(28)
+        self._screenshot_btn.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
         self._screenshot_btn.setStyleSheet(
             "QPushButton {"
             f"  background-color: {bg_alt}; color: {text_primary};"
@@ -452,9 +588,12 @@ class ChatDockWidget(QDockWidget):
         self._screenshot_btn.clicked.connect(self._on_screenshot)
         input_row.addWidget(self._screenshot_btn)
 
-        self._mic_btn = QPushButton("\U0001f3a4")
+        self._mic_btn = QPushButton("🎤")
         self._mic_btn.setToolTip("Voice input (Ctrl+Shift+V)")
         self._mic_btn.setFixedWidth(28)
+        self._mic_btn.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
         self._mic_btn.setStyleSheet(
             "QPushButton {"
             f"  background-color: {bg_alt}; color: {text_primary};"
@@ -465,8 +604,24 @@ class ChatDockWidget(QDockWidget):
         self._mic_btn.clicked.connect(self._on_mic_toggle)
         input_row.addWidget(self._mic_btn)
 
+        input_row.addStretch()
+
+        self._agent_mode_combo = QComboBox()
+        self._agent_mode_combo.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
+        self._agent_mode_combo.addItem("Agent", "agent")
+        self._agent_mode_combo.addItem("Plan", "plan")
+        self._agent_mode_combo.addItem("Ask", "ask")
+        input_row.addWidget(self._agent_mode_combo)
+
+        # Send, Steer, Stop on the right side
         self._send_btn = QPushButton("Send")
+        self._send_btn.setToolTip("Send message")
         self._send_btn.setFixedWidth(55)
+        self._send_btn.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
         self._send_btn.setStyleSheet(
             "QPushButton {"
             f"  background-color: {self._accent_color}; color: black;"
@@ -478,7 +633,28 @@ class ChatDockWidget(QDockWidget):
         self._send_btn.clicked.connect(self._on_send)
         input_row.addWidget(self._send_btn)
 
+        self._steer_btn = QPushButton("Steer")
+        self._steer_btn.setToolTip("Queue message")
+        self._steer_btn.setFixedWidth(50)
+        self._steer_btn.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
+        self._steer_btn.setStyleSheet(self._send_btn.styleSheet())
+        self._steer_btn.clicked.connect(self._on_steer)
+        input_row.addWidget(self._steer_btn)
+
+        self._stop_agent_btn = QPushButton("Stop")
+        self._stop_agent_btn.setToolTip("Stop response")
+        self._stop_agent_btn.setFixedWidth(50)
+        self._stop_agent_btn.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding
+        )
+        self._stop_agent_btn.setStyleSheet(self._send_btn.styleSheet())
+        self._stop_agent_btn.clicked.connect(self._on_stop_agent)
+        input_row.addWidget(self._stop_agent_btn)
+
         layout.addLayout(input_row)
+        layout.addLayout(mode_row)
         self.setWidget(container)
         self._on_mode_changed()
 
@@ -534,6 +710,47 @@ class ChatDockWidget(QDockWidget):
 
     def index_codebase(self) -> None:
         self._send_ws({"action": "index_codebase"})
+
+    def open_memory_panel(self) -> None:
+        """Open the Sidekick memory management panel (Tools issue #2688).
+
+        The panel reads from and writes to a :class:`MemoryManager`
+        instance bound to this chat session. We lazy-import both the
+        manager and the panel so that the chat dock continues to load
+        even on hosts where the AI package is not available.
+
+        Pre: Qt application is running.
+        Post: A modeless ``MemoryPanel`` window is shown (or focused).
+        """
+        from .memory_panel import MemoryPanel
+
+        existing = self.__dict__.get("_memory_panel_window")
+        if existing is not None:
+            try:
+                existing.show()
+                existing.raise_()
+                existing.activateWindow()
+                return
+            except RuntimeError:
+                # Widget was deleted under us — fall through to recreate.
+                self._memory_panel_window = None
+
+        try:
+            from src.shared.python.ai.memory_manager import MemoryManager
+        except ImportError:
+            logger.warning("Memory panel unavailable: ai.memory_manager not importable")
+            return
+
+        manager = self.__dict__.get("_memory_manager")
+        if manager is None:
+            manager = MemoryManager()
+            self._memory_manager = manager
+
+        panel = MemoryPanel(manager=manager)
+        panel.setWindowTitle("Sidekick Memory")
+        panel.resize(520, 480)
+        panel.show()
+        self._memory_panel_window = panel
 
     def _on_disconnected(self) -> None:
         self._status_label.setText("Disconnected - retrying in 3s...")
@@ -627,6 +844,23 @@ class ChatDockWidget(QDockWidget):
             self._status_label.setText("Terminal input sent")
 
     # ── UI actions ───────────────────────────────────────────────────
+
+    def _on_steer(self) -> None:
+        text = self._input_edit.toPlainText().strip()
+        if not text:
+            return
+        # Queue message
+        if not hasattr(self, "_queued_messages"):
+            self._queued_messages = []
+        self._queued_messages.append(text)
+        self._input_edit.clear()
+
+    def _on_stop_agent(self) -> None:
+        logger.info("Agent response stopped by user")
+        if hasattr(self, "_chat_client") and hasattr(
+            self._chat_client, "cancel_current_stream"
+        ):
+            self._chat_client.cancel_current_stream()
 
     def _on_send(self) -> None:
         text = self._input_edit.toPlainText().strip()
@@ -871,10 +1105,30 @@ class ChatDockWidget(QDockWidget):
         if not items:
             raise ValueError("_build_header_combobox: items must be non-empty")
         combo = QComboBox()
+        combo.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
+        combo.setMinimumWidth(0)
         for display, data in items:
             combo.addItem(display, data)
         combo.setToolTip(f"Select AI {label}")
         return combo
+
+    @staticmethod
+    def _build_available_cli_provider_items() -> list[tuple[str, str]]:
+        """Return ``(display_name, provider_id)`` pairs for installed CLI agents.
+
+        Probes the local ``PATH`` via :func:`shutil.which` through
+        :func:`~cli_provider_availability.list_available_cli_providers`.
+        Only CLI agents whose binary is found are included so the dropdown
+        never shows unavailable entries.
+
+        Returns:
+            A list of ``(display_name, provider_id)`` tuples, empty when
+            no CLI agents are installed.
+        """
+        return [
+            (entry.display_name, entry.provider_id)
+            for entry in list_available_cli_providers()
+        ]
 
     def _build_ai_dropdowns(self, mode_row: QHBoxLayout) -> None:
         """Construct + wire the three AI header dropdowns.
@@ -882,10 +1136,18 @@ class ChatDockWidget(QDockWidget):
         Side-effect only: instantiates ``_ai_provider_combo``,
         ``_ai_model_combo``, ``_ai_thinking_combo`` and inserts them
         into ``mode_row`` left-to-right.
+
+        CLI agent providers (Claude CLI, Codex CLI, Cline) are probed via
+        :func:`~_build_available_cli_provider_items` and appended to the
+        provider combo after the API providers so they are always visible
+        when the binary is installed (Tools issue UpstreamDrift#5622).
         """
+        api_items = list(self._AI_DEFAULT_PROVIDERS)
+        cli_items = self._build_available_cli_provider_items()
+        all_provider_items = api_items + cli_items
         self._ai_provider_combo = self._build_header_combobox(
             label="provider",
-            items=list(self._AI_DEFAULT_PROVIDERS),
+            items=all_provider_items,
         )
         mode_row.addWidget(self._ai_provider_combo)
 
@@ -977,7 +1239,19 @@ class ChatDockWidget(QDockWidget):
         except Exception:  # noqa: BLE001 - any adapter failure → empty list
             logger.debug("_refresh_ai_model_combo: adapter probe failed", exc_info=True)
             models = []
-        items = [(name, name) for name in models] or [("(default)", "default")]
+        items = []
+        for m in models:
+            display = str(
+                getattr(m, "display_name", None) or getattr(m, "name", str(m))
+            )
+            data = str(
+                getattr(m, "id", None)
+                or getattr(m, "model_id", None)
+                or getattr(m, "name", str(m))
+            )
+            items.append((display, data))
+        if not items:
+            items = [("(default)", "default")]
         self._ai_model_combo.blockSignals(True)
         try:
             self._ai_model_combo.clear()
@@ -999,7 +1273,15 @@ class ChatDockWidget(QDockWidget):
         if caps is None:
             items = [("Off", "none")]
         else:
-            items = [(level.label, level.name) for level in caps.levels]
+            items = [
+                (
+                    getattr(level, "label", str(level)),
+                    getattr(level, "name", str(level)),
+                )
+                for level in getattr(
+                    caps, "available_levels", getattr(caps, "levels", [])
+                )
+            ]
         self._ai_thinking_combo.blockSignals(True)
         try:
             self._ai_thinking_combo.clear()
@@ -1335,24 +1617,134 @@ class ChatDockWidget(QDockWidget):
             self._status_label.setStyleSheet("color: #3fb950; font-size: 10px;")
 
     def _export_to_markdown(self) -> None:
+        """Backwards-compat shim retained for older history-browser code paths."""
+        self._export_thread("markdown", "Markdown Files (*.md)", ".md")
+
+    def _export_thread(self, fmt: str, file_filter: str, suffix: str) -> None:
+        """Run an export via the shared ``chat.export`` package.
+
+        Tools issue #2735.
+        """
+        from .export import (
+            ChatExportRequest,
+            HtmlExporter,
+            MarkdownExporter,
+            TextExporter,
+        )
+
         path, _ = QFileDialog.getSaveFileName(
             self,
             "Export Chat Thread",
-            str(self._project_root / "chat_export.md"),
-            "Markdown Files (*.md);;All Files (*)",
+            str(self._project_root / f"chat_export{suffix}"),
+            f"{file_filter};;All Files (*)",
         )
-        if path:
-            try:
-                Path(path).write_text(self._get_thread_markdown(), encoding="utf-8")
-                self._status_label.setText("Exported successfully")
-                self._status_label.setStyleSheet("color: #3fb950; font-size: 10px;")
-            except OSError as exc:
-                self._status_label.setText(f"Export error: {exc}")
-                self._status_label.setStyleSheet("color: #f85149; font-size: 10px;")
+        if not path:
+            return
+        session = self._build_session_snapshot()
+        if session is None or session.message_count == 0:
+            self._status_label.setText("Nothing to export")
+            self._status_label.setStyleSheet("color: #f85149; font-size: 10px;")
+            return
+        request = ChatExportRequest(
+            session_id=session.session_id,
+            format=fmt,  # type: ignore[arg-type]
+            output_path=path,
+            include_metadata=True,
+            redact_secrets=True,
+        )
+        try:
+            if fmt == "markdown":
+                result = MarkdownExporter().export(session, request)
+            elif fmt == "text":
+                result = TextExporter().export(session, request)
+            elif fmt == "html":
+                result = HtmlExporter().export(session, request)
+            else:
+                raise ValueError(f"Unknown export format {fmt!r}")
+            self._status_label.setText(
+                f"Exported {result.message_count} messages ({result.byte_count} B)"
+            )
+            self._status_label.setStyleSheet("color: #3fb950; font-size: 10px;")
+        except (OSError, ValueError) as exc:
+            self._status_label.setText(f"Export error: {exc}")
+            self._status_label.setStyleSheet("color: #f85149; font-size: 10px;")
 
     def _condense_thread(self) -> None:
+        """Legacy server-side condense; retained for back-compat."""
         self._status_label.setText("Condensing thread...")
         self._send_ws({"action": "condense", "app_context": self._app_context})
+
+    def _build_session_snapshot(self) -> Any:
+        """Materialise the visible thread as a :class:`ChatSession`.
+
+        Reads bubbles from the message layout (single source of truth) so
+        exporters consume the public :class:`ChatSession` surface only --
+        no reaching into private storage (Law of Demeter).
+        """
+        from .service_base import ChatSession
+
+        session = ChatSession(session_id=self._get_shared_session_id() or "session")
+        for i in range(self._message_layout.count()):
+            item = self._message_layout.itemAt(i)
+            if item is None:
+                continue
+            widget = item.widget()
+            if isinstance(widget, ChatMessageBubble):
+                session.add_message(widget._role, widget._content)
+        return session
+
+    def _run_condense_local(self, strategy: str) -> None:
+        """Run condensation locally via the shared ``chat.condensation`` package.
+
+        Tools issue #2736. The condenser is pure and immutable -- it does
+        not mutate the visible bubbles; the result is reported in the
+        status bar and used to refresh the token indicator.
+        """
+        from .condensation import CondensationRequest, Condenser
+
+        session = self._build_session_snapshot()
+        if session is None or session.message_count == 0:
+            self._status_label.setText("Nothing to condense")
+            self._status_label.setStyleSheet("color: #f85149; font-size: 10px;")
+            return
+        try:
+            request = CondensationRequest(
+                session_id=session.session_id,
+                strategy=strategy,  # type: ignore[arg-type]
+                keep_last_n=max(1, min(10, session.message_count)),
+            )
+            result = Condenser().condense(session, request)
+        except ValueError as exc:
+            self._status_label.setText(f"Condense error: {exc}")
+            self._status_label.setStyleSheet("color: #f85149; font-size: 10px;")
+            return
+        self._status_label.setText(
+            f"Condense [{strategy}]: {result.original_message_count} -> "
+            f"{result.condensed_message_count} msgs, "
+            f"~{result.removed_tokens_estimate} tok saved"
+        )
+        self._status_label.setStyleSheet("color: #3fb950; font-size: 10px;")
+        self._refresh_token_indicator()
+
+    def _refresh_token_indicator(self) -> None:
+        """Recompute the token-count indicator label."""
+        from .condensation import estimate_tokens
+
+        if not hasattr(self, "_token_indicator"):
+            return
+        total = 0
+        for i in range(self._message_layout.count()):
+            item = self._message_layout.itemAt(i)
+            if item is None:
+                continue
+            widget = item.widget()
+            if isinstance(widget, ChatMessageBubble):
+                total += estimate_tokens(widget._content)
+        self._token_indicator.setText(f"{total} tok")
+        if total > self._auto_condense_threshold:
+            self._token_indicator.setStyleSheet("color: #f85149; font-size: 10px;")
+        else:
+            self._token_indicator.setStyleSheet("color: #8b949e; font-size: 10px;")
 
     def _request_review(self) -> None:
         self._status_label.setText("Review requested...")
@@ -1389,7 +1781,10 @@ class ChatDockWidget(QDockWidget):
         """
         if not target:
             return None
-        manager = getattr(self, "_session_manager", None)
+        # Use __dict__ rather than getattr because Qt's metaclass throws
+        # RuntimeError when accessed on objects whose C++ super-class was not
+        # initialised (e.g. tests that build the dock via __new__).
+        manager = self.__dict__.get("_session_manager")
         if manager is None:
             return None
         sessions = list(manager.list_sessions())
@@ -1429,15 +1824,20 @@ class ChatDockWidget(QDockWidget):
         """
         if not session_id:
             raise ValueError("session_id must be provided")
-        if session_id in self._loaded_context_sessions:
+        # Use __dict__ to avoid Qt metaclass RuntimeError in headless tests.
+        loaded = self.__dict__.get("_loaded_context_sessions", [])
+        if session_id in loaded:
             return
-        self._loaded_context_sessions.append(session_id)
+        loaded.append(session_id)
+        self.__dict__["_loaded_context_sessions"] = loaded
         self._refresh_breadcrumb()
 
     def _remove_context_session(self, session_id: str) -> None:
         """Remove ``session_id`` from the breadcrumb context list."""
-        if session_id in self._loaded_context_sessions:
-            self._loaded_context_sessions.remove(session_id)
+        loaded = self.__dict__.get("_loaded_context_sessions", [])
+        if session_id in loaded:
+            loaded.remove(session_id)
+            self.__dict__["_loaded_context_sessions"] = loaded
             self._refresh_breadcrumb()
 
     def breadcrumb_labels(self) -> list[str]:
@@ -1446,12 +1846,13 @@ class ChatDockWidget(QDockWidget):
         Used by tests + the breadcrumb strip renderer. LOD-compliant —
         callers do not need to inspect the session manager themselves.
         """
-        manager = getattr(self, "_session_manager", None)
+        # Use __dict__ to avoid Qt metaclass RuntimeError in headless tests.
+        manager = self.__dict__.get("_session_manager")
         if manager is None:
             return []
         info_by_id = {info.get("id"): info for info in manager.list_sessions()}
         labels: list[str] = []
-        for sid in self._loaded_context_sessions:
+        for sid in self.__dict__.get("_loaded_context_sessions", []):
             info = info_by_id.get(sid)
             if info is None:
                 labels.append(sid)

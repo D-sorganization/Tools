@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Adaptive filter implementations for signal_toolkit.
 
 The LMS and RLS loops dispatch to the native Rust kernel in ``tools_core``

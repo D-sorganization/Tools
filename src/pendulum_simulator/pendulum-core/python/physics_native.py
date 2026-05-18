@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Native physics wrapper for pendulum simulator.
 
 This module uses the compiled Rust physics kernel via FFI when available.

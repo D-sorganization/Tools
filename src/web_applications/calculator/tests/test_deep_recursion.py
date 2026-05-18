@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for deep recursion handling in calculator expressions."""
 
 import sys

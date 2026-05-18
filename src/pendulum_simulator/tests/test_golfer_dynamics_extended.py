@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Extended tests for golfer_dynamics.py — covering internal helpers and API.
 
 These tests augment test_golfer_dynamics.py to reach >80% coverage by

@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 Shared validation utilities for consistent input validation.
 

@@ -17,6 +17,9 @@ name: Jules Code Quality Reviewer (Worker)
 # │  • Scheduled/dispatched only via Control Tower                             │
 # │  • Report commit is scoped to docs/assessments/ path                     │
 # └─────────────────────────────────────────────────────────────────────────────┘
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 on:
   workflow_call:
@@ -37,7 +40,8 @@ permissions:
 
 jobs:
   review:
-    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    runs-on: d-sorg-fleet
     # Grant write only at this job level — report commits and issue creation
     # happen here. No write needed for runner selection.
     permissions:
@@ -51,10 +55,12 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
+          cache: pip
 
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
+          cache: npm
 
       - name: Install
         run: npm install -g @google/jules

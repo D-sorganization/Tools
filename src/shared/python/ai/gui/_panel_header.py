@@ -21,14 +21,14 @@ from PyQt6.QtWidgets import (
 )
 
 from src.shared.python.ai.access_policy import ChatAccessMode
-from src.shared.python.ai.gui.settings_dialog import (
+from src.shared.python.ai.gui._provider_registry_data import (
     AIProvider,
     populate_model_combo,
     populate_provider_combo,
 )
 
 if TYPE_CHECKING:
-    from src.shared.python.ai.gui.settings_dialog import AISettings
+    from src.shared.python.ai._settings_model import AISettings
 
 
 _CHAT_MODES = (
@@ -51,8 +51,13 @@ class PanelHeaderController(QFrame):
     access_mode_changed = pyqtSignal(object)  # ChatAccessMode
     auto_index_toggled = pyqtSignal(bool)
     new_chat_requested = pyqtSignal()
+    peer_review_requested = pyqtSignal()
+    condense_requested = pyqtSignal()
+    show_full_history_requested = pyqtSignal()
     settings_requested = pyqtSignal()
     close_requested = pyqtSignal()
+    copy_thread_requested = pyqtSignal()
+    save_thread_requested = pyqtSignal()
 
     def __init__(self, initial_settings: AISettings, parent: Any = None) -> None:
         super().__init__(parent)
@@ -128,9 +133,52 @@ class PanelHeaderController(QFrame):
         self.auto_index_checkbox.toggled.connect(self.auto_index_toggled.emit)
         layout.addWidget(self.auto_index_checkbox)
 
+        copy_thread_btn = QPushButton("Copy Thread")
+        copy_thread_btn.setToolTip("Copy full conversation to clipboard")
+        copy_thread_btn.clicked.connect(self.copy_thread_requested.emit)
+        layout.addWidget(copy_thread_btn)
+
+        save_thread_btn = QPushButton("Save as Markdown")
+        save_thread_btn.setToolTip("Save conversation to a .md file")
+        save_thread_btn.clicked.connect(self.save_thread_requested.emit)
+        layout.addWidget(save_thread_btn)
+
+        self.token_count_label = QLabel("~0 tokens")
+        self.token_count_label.setObjectName("aiTokenCountLabel")
+        self.token_count_label.setToolTip(
+            "Estimated token count for the current active thread."
+        )
+        layout.addWidget(self.token_count_label)
+
+        self.condense_btn = QPushButton("Condense")
+        self.condense_btn.setObjectName("aiCondenseBtn")
+        self.condense_btn.setToolTip(
+            "Summarise earlier messages to free context space. "
+            "Raw history is preserved for undo."
+        )
+        self.condense_btn.clicked.connect(self.condense_requested.emit)
+        layout.addWidget(self.condense_btn)
+
+        self.show_history_btn = QPushButton("Full History")
+        self.show_history_btn.setObjectName("aiShowHistoryBtn")
+        self.show_history_btn.setToolTip(
+            "Toggle between condensed and full message history."
+        )
+        self.show_history_btn.setVisible(False)
+        self.show_history_btn.clicked.connect(self.show_full_history_requested.emit)
+        layout.addWidget(self.show_history_btn)
+
         new_chat_btn = QPushButton("New Chat")
         new_chat_btn.clicked.connect(self.new_chat_requested.emit)
         layout.addWidget(new_chat_btn)
+
+        peer_review_btn = QPushButton("🔍 Peer Review")
+        peer_review_btn.setObjectName("peerReviewBtn")
+        peer_review_btn.setToolTip(
+            "Request a second AI agent to critically review this conversation"
+        )
+        peer_review_btn.clicked.connect(self.peer_review_requested.emit)
+        layout.addWidget(peer_review_btn)
 
         settings_btn = QPushButton("⚙️")
         settings_btn.setToolTip("Settings")
@@ -177,6 +225,22 @@ class PanelHeaderController(QFrame):
                 self.access_mode_combo.blockSignals(False)
                 return
 
+    def set_token_count(self, count: int) -> None:
+        """Update the estimated token count display in the toolbar.
+
+        Args:
+            count: Estimated token count for the active thread.
+        """
+        self.token_count_label.setText(f"~{count:,} tokens")
+
+    def set_condensed_mode(self, condensed: bool) -> None:
+        """Show or hide the 'Full History' toggle button.
+
+        Args:
+            condensed: True when the thread is in condensed state.
+        """
+        self.show_history_btn.setVisible(condensed)
+
     def set_auto_index_checked(self, checked: bool) -> None:
         self.auto_index_checkbox.blockSignals(True)
         self.auto_index_checkbox.setChecked(checked)
@@ -221,8 +285,7 @@ class PanelHeaderController(QFrame):
         text_muted = colors["text_muted"]
         border = colors["border"]
         accent = colors["accent"]
-        self.setStyleSheet(
-            f"""
+        self.setStyleSheet(f"""
             QFrame {{
                 background-color: {bg_alt};
                 padding: 10px;
@@ -242,8 +305,7 @@ class PanelHeaderController(QFrame):
                 color: #ffffff;
                 border-color: {accent};
             }}
-            """
-        )
+            """)
         combo_qss = f"""
             QComboBox {{
                 background-color: {bg_primary};

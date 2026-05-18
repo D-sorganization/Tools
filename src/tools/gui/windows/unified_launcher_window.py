@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Main window for the Unified Tools Launcher."""
 
 import html

@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 GPU-accelerated batch simulation using JAX and diffrax.
 

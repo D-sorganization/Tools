@@ -15,7 +15,7 @@ import math
 import uuid
 from collections.abc import Callable
 from datetime import datetime
-from typing import cast
+from typing import Any, cast
 
 from contracts import precondition
 
@@ -94,13 +94,15 @@ class SwingAnalyzer:
         self.min_confidence = min_confidence
         self.smoothing_window = smoothing_window
 
-    @precondition(
-        lambda self,
-        video_path,
-        stance=StanceDirection.UNKNOWN,
-        progress_callback=None: (video_path is not None and len(video_path) > 0),
-        "Video path must be a non-empty string",
-    )
+    def _video_path_valid(
+        self,
+        video_path: str,
+        stance: StanceDirection = StanceDirection.UNKNOWN,
+        progress_callback: Any = None,
+    ) -> bool:
+        return video_path is not None and len(video_path) > 0
+
+    @precondition(_video_path_valid, "Video path must be a non-empty string")
     def analyze_video(
         self,
         video_path: str,

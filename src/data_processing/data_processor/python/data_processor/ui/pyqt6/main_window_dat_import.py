@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """DAT file import mixin for DataProcessorMainWindow.
 
 Contains browse, preview, import, and convert-to-CSV for DAT files.

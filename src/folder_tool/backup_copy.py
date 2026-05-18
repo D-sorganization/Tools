@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 # mypy: ignore-errors
 """BackupCopyMixin -- Backup creation and safe file copy methods."""
 

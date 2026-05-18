@@ -1,4 +1,8 @@
 name: Jules Tech Debt Custodian
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 on:
   workflow_call:
 
@@ -43,6 +47,7 @@ jobs:
               ;;
           esac
   refactor-worst-file:
+    timeout-minutes: 30
     needs: pick-runner
     runs-on: d-sorg-fleet
     permissions:
@@ -52,9 +57,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
-        with: { python-version: "3.11" }
+        with:
+          python-version: "3.11"
+          cache: pip
       - uses: actions/setup-node@v6
-        with: { node-version: "24" }
+        with:
+          node-version: "24"
+          cache: npm
       - run: |
           npm install -g @google/jules
           pip install ruff==0.14.10

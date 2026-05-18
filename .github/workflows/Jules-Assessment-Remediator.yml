@@ -67,7 +67,7 @@ permissions:
 # Prevent multiple remediation runs simultaneously
 concurrency:
   group: jules-assessment-remediator
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 env:
   MAX_ISSUES_PER_RUN: 10
@@ -75,7 +75,7 @@ env:
 
 jobs:
   remediate:
-    runs-on: ubuntu-latest
+    runs-on: d-sorg-fleet
     timeout-minutes: 45
     # Grant write only at this job level — remediation creates branches, pushes
     # fixes, opens PRs, and closes resolved issues.
@@ -94,6 +94,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: "24"
+          cache: npm
 
       - name: Install Jules
         run: |
@@ -104,6 +105,7 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+          cache: pip
 
       - name: Install Python Dependencies
         run: |

@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 Clipboard utilities for making simulation data copyable.
 

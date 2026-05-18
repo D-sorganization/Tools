@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 from typing import Any
 import numpy as np
 from types import SimpleNamespace

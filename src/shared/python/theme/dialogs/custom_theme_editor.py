@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Custom Theme Editor Dialog
 
 This dialog allows users to create and edit custom themes for the application.

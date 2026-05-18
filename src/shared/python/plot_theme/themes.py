@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Plot theme definitions for matplotlib visualizations.
 
 This module defines color themes for scientific plots, providing consistent

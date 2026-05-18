@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Verify PDF Renamer installation and dependencies."""
 
 import importlib

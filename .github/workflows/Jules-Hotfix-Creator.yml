@@ -21,6 +21,9 @@ name: Jules Hotfix-Creator (Worker)
 
 # Triggers when CI fails on protected branches (main/master)
 # Creates a hotfix branch, triggers Auto-Repair, and opens urgent PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 on:
   workflow_call:
@@ -77,6 +80,7 @@ jobs:
               ;;
           esac
   create-hotfix:
+    timeout-minutes: 30
     needs: pick-runner
     runs-on: d-sorg-fleet
     # Grant write only at this job level — hotfix branch creation and PR opening
@@ -121,15 +125,22 @@ jobs:
           fi
 
       - uses: actions/setup-node@v6
+        with:
+          cache: npm
+          node-version: "24"
+
         if: steps.jules.outputs.enabled == 'true'
-        with: { node-version: "24" }
+
       - run: npm install -g @google/jules
+
         if: steps.jules.outputs.enabled == 'true'
       - run: jules auth --token ${{ secrets.JULES_API_KEY }}
+
         if: steps.jules.outputs.enabled == 'true'
 
       - name: Create Hotfix Branch
         id: hotfix
+
         if: steps.jules.outputs.enabled == 'true'
         env:
           GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
@@ -144,6 +155,7 @@ jobs:
           echo "branch=$HOTFIX_BRANCH" >> $GITHUB_OUTPUT
 
       - name: Fetch CI Logs & Auto-Fix
+
         if: steps.jules.outputs.enabled == 'true'
         env:
           GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
@@ -169,6 +181,7 @@ jobs:
           jules task fix --branch "$HOTFIX_BRANCH" --prompt "$PROMPT"
 
       - name: Create Urgent PR
+
         if: steps.jules.outputs.enabled == 'true'
         env:
           GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}

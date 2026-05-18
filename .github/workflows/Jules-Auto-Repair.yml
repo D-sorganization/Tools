@@ -29,6 +29,9 @@ name: Jules Auto-Repair (Worker)
 # 2. Iterates until CI passes or max attempts reached
 # 3. Uses Jules AI for complex fixes (type errors, test failures, logic issues)
 # 4. Proper concurrency controls to prevent loops
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 on:
   workflow_call:
@@ -109,6 +112,7 @@ jobs:
               ;;
           esac
   intelligent-repair:
+    timeout-minutes: 30
     needs: pick-runner
     runs-on: d-sorg-fleet
     # Grant write only at this job level — this is the only job that pushes commits
@@ -200,6 +204,7 @@ jobs:
         if: steps.branch.outputs.skip != 'true' && steps.limits.outputs.exceeded != 'true'
         with:
           python-version: "3.11"
+          cache: pip
 
       - name: Install Tools
         if: steps.branch.outputs.skip != 'true' && steps.limits.outputs.exceeded != 'true'

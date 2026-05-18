@@ -18,7 +18,7 @@ from __future__ import annotations
 import contextlib
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any
 
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt, pyqtSignal
@@ -40,16 +40,26 @@ from src.shared.python.ai.gui._message_display import MessageDisplayController
 from src.shared.python.ai.gui._panel_header import PanelHeaderController
 from src.shared.python.ai.gui._panel_tools import register_panel_tools
 from src.shared.python.ai.gui.assistant_widgets import MessageWidget, StreamWorker
+from src.shared.python.ai.gui.chat_export import (
+    copy_thread_to_clipboard,
+    save_thread_as_markdown,
+)
 from src.shared.python.ai.gui.history_sidebar import ChatHistorySidebar
 from src.shared.python.ai.gui.session_manager import ChatSessionManager
-from src.shared.python.ai.gui.settings_dialog import (
+
+if TYPE_CHECKING:
+    from src.shared.python.ai._settings_model import AISettings
+from src.shared.python.ai.gui._provider_registry_data import (
     AIProvider,
-    AISettings,
-    AISettingsDialog,
     provider_display_name,
 )
+from src.shared.python.ai.mcp.gui import McpStatusIndicator
 from src.shared.python.ai.memory_manager import MemoryManager
 from src.shared.python.ai.rag.simple_rag import SimpleRAGStore
+from src.shared.python.ai.thread_condensation import (
+    condense_thread,
+    estimate_token_count,
+)
 from src.shared.python.ai.tool_registry import get_global_registry
 from src.shared.python.ai.tools.codemap_tools import register_codemap_tools
 from src.shared.python.ai.tools.file_ops import register_file_tools
@@ -98,17 +108,25 @@ class AIAssistantPanel(QWidget):
         self._adapter: BaseAgentAdapter | None = None
         self._current_worker: StreamWorker | None = None
         self._current_assistant_message: MessageWidget | None = None
+        from src.shared.python.ai._settings_model import AISettings
+
         self._current_settings = AISettings.load()
         self._access_mode = ChatAccessMode.NO_REPO_ACCESS
         self._rag_enabled = True
         self._auto_index_on_open = False
         self._project_root = project_root or _discover_project_root(Path.cwd())
 
+        # --- Thread condensation state ------------------------------------
+        # Raw history is kept separately so the user can undo condensation.
+        self._raw_history: list[Any] = []  # original Message objects before condense
+        self._is_condensed: bool = False
+
         # --- Tools / RAG / memory ----------------------------------------
         self._tools_registry = get_global_registry()
         self._rag_store = SimpleRAGStore()
         self._memory_manager = MemoryManager()
         self._refresh_prompt_memory()
+        self._mcp_pool: Any = None  # McpClientPool — wired in after setup
 
         # --- Session manager + history ----------------------------------
         self._session_manager = ChatSessionManager()
@@ -202,8 +220,13 @@ class AIAssistantPanel(QWidget):
         h.mode_changed.connect(self._on_header_mode_changed)
         h.access_mode_changed.connect(self._on_access_mode_changed)
         h.new_chat_requested.connect(self._on_new_chat)
+        h.peer_review_requested.connect(self._on_peer_review_requested)
+        h.condense_requested.connect(self._on_condense_thread)
+        h.show_full_history_requested.connect(self._on_show_full_history)
         h.settings_requested.connect(self._show_settings)
         h.close_requested.connect(self.close_requested.emit)
+        h.copy_thread_requested.connect(self._on_copy_thread)
+        h.save_thread_requested.connect(self._on_save_thread)
 
         self._adapter_mgr.adapter_changed.connect(self._on_adapter_changed)
         self._adapter_mgr.system_message.connect(self._add_system_message)
@@ -282,6 +305,10 @@ class AIAssistantPanel(QWidget):
         main_splitter.setStretchFactor(1, 1)
         layout.addWidget(main_splitter)
 
+        # MCP connection status indicator — lives at the bottom of the panel.
+        self._mcp_indicator = McpStatusIndicator()
+        layout.addWidget(self._mcp_indicator)
+
         self._add_system_message(
             "👋 Welcome to the shared Tools AI Assistant!\n\n"
             "I can help you:\n"
@@ -350,6 +377,8 @@ class AIAssistantPanel(QWidget):
 
     def _auto_load_settings(self) -> None:
         try:
+            from src.shared.python.ai._settings_model import AISettings
+
             settings = AISettings.load()
         except ImportError as exc:
             logger.warning("Failed to auto-load AI settings: %s", exc)
@@ -437,6 +466,9 @@ class AIAssistantPanel(QWidget):
             )
             return
         self._refresh_prompt_memory()
+        # Refresh MCP tool list before each prompt so newly connected servers
+        # are picked up without restarting the panel.
+        self._refresh_mcp_status()
         self._set_status("Thinking...")
         self._input_container.set_busy(True)
         tools = self._build_tool_declarations()
@@ -469,6 +501,7 @@ class AIAssistantPanel(QWidget):
                 self._current_assistant_message.get_content()
             )
             self._save_history()
+        self._update_token_count_display()
         self._current_assistant_message = None
         self._disconnect_worker()
 
@@ -555,14 +588,138 @@ class AIAssistantPanel(QWidget):
         )
 
     # ------------------------------------------------------------------
+    # Peer review
+    # ------------------------------------------------------------------
+    def _on_peer_review_requested(self) -> None:
+        """Open the peer-review config dialog and launch a reviewer chat tab."""
+        from src.shared.python.ai.peer_review.gui import PeerReviewConfigDialog
+        from src.shared.python.ai.peer_review.prompts import PEER_REVIEW_SYSTEM_PROMPT
+        from src.shared.python.ai.peer_review.transcript import format_transcript
+
+        dialog = PeerReviewConfigDialog(self)
+        if dialog.exec() != dialog.DialogCode.Accepted:
+            return
+
+        provider_name, model = dialog.get_config()
+        transcript = format_transcript(
+            [{"role": m.role, "content": m.content} for m in self._context.messages]
+        )
+
+        reviewer_panel = AIAssistantPanel(parent=None)
+        reviewer_panel.setWindowTitle(f"Peer Review — {provider_name} / {model}")
+
+        injected_prompt = (
+            f"{PEER_REVIEW_SYSTEM_PROMPT}\n\n"
+            f"The conversation to review follows.\n\n{transcript}"
+        )
+        reviewer_panel._add_system_message(injected_prompt)
+        reviewer_panel.show()
+        logger.info(
+            "Peer review panel opened with provider=%s model=%s",
+            provider_name,
+            model,
+        )
+
+    # ------------------------------------------------------------------
+    # Thread condensation
+    # ------------------------------------------------------------------
+    def _on_condense_thread(self) -> None:
+        """Condense the active conversation into a summary block."""
+        if not self._adapter:
+            self._add_system_message("Cannot condense: no AI provider configured.")
+            return
+
+        messages = list(self._context.messages)
+        if not messages:
+            self._add_system_message("Nothing to condense yet.")
+            return
+
+        self._set_status("Condensing thread...")
+        try:
+            summary, active = condense_thread(messages, self._adapter)
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("Thread condensation failed: %s", exc)
+            self._set_status("Condense failed")
+            self._add_system_message(f"Condensation failed: {exc}")
+            return
+
+        # Preserve raw history for undo
+        self._raw_history = messages
+        self._is_condensed = True
+
+        # Replace active context with [summary_message, *recent_tail]
+        self._context.messages.clear()
+        self._context.messages.append(summary.to_message())
+        for msg in active[1:]:
+            self._context.messages.append(msg)
+
+        self._save_history()
+
+        # Refresh display
+        self._messages.clear_messages()
+        self._add_system_message(
+            f"Thread condensed. {len(self._raw_history)} message(s) "
+            f"summarised into a summary block. Use 'Full History' to undo."
+        )
+        self._messages.restore_from_context(self._context)
+
+        token_count = estimate_token_count(self._context.messages)
+        self._header.set_token_count(token_count)
+        self._header.set_condensed_mode(True)
+        self._set_status("Ready")
+
+    def _on_show_full_history(self) -> None:
+        """Restore the full raw conversation history (undo condensation)."""
+        if not self._raw_history:
+            return
+
+        self._context.messages.clear()
+        for msg in self._raw_history:
+            self._context.messages.append(msg)
+
+        self._raw_history = []
+        self._is_condensed = False
+
+        self._save_history()
+        self._messages.clear_messages()
+        self._messages.restore_from_context(self._context)
+
+        token_count = estimate_token_count(self._context.messages)
+        self._header.set_token_count(token_count)
+        self._header.set_condensed_mode(False)
+        self._set_status("Full history restored")
+
+    def _update_token_count_display(self) -> None:
+        """Refresh the token count label in the toolbar."""
+        count = estimate_token_count(self._context.messages)
+        self._header.set_token_count(count)
+
+    # ------------------------------------------------------------------
     # New chat
     # ------------------------------------------------------------------
     def _on_new_chat(self) -> None:
         self._messages.clear_messages()
         self._context = ConversationContext()
+        self._raw_history = []
+        self._is_condensed = False
         self._refresh_prompt_memory()
         self._save_history()
+        self._header.set_token_count(0)
+        self._header.set_condensed_mode(False)
         self._add_system_message("🔄 New chat started. How can I help you?")
+
+    # ------------------------------------------------------------------
+    # Export / copy handlers
+    # ------------------------------------------------------------------
+    def _on_copy_thread(self) -> None:
+        """Copy the full conversation thread to the system clipboard."""
+        copy_thread_to_clipboard(self._context.messages)
+        n = len(self._context.messages)
+        logger.info("Thread copied to clipboard (%d messages)", n)
+
+    def _on_save_thread(self) -> None:
+        """Prompt the user for a file path and save the thread as markdown."""
+        save_thread_as_markdown(self._context.messages, parent=self)
 
     # ------------------------------------------------------------------
     # Tool declarations
@@ -576,20 +733,42 @@ class AIAssistantPanel(QWidget):
         return "openai"
 
     def _build_tool_declarations(self) -> list[dict[str, Any]]:
-        return cast(
-            list[dict[str, Any]],
-            tool_declarations_for_access_mode(
-                self._tools_registry,
-                self._access_mode,
-                provider_format=self._provider_tool_format(),
-                rag_enabled=self._rag_enabled,
-                max_expertise=self._context.user_expertise.value,
-            ),
+        return tool_declarations_for_access_mode(
+            self._tools_registry,
+            self._access_mode,
+            provider_format=self._provider_tool_format(),
+            rag_enabled=self._rag_enabled,
+            max_expertise=self._context.user_expertise.value,
         )
 
     # ------------------------------------------------------------------
     # Adapter / settings
     # ------------------------------------------------------------------
+    def set_mcp_pool(self, pool: Any) -> None:
+        """Attach an ``McpClientPool`` and refresh the MCP status indicator.
+
+        The panel does not own the pool lifecycle (start/stop). Callers start
+        the pool before calling this and stop it on shutdown.
+
+        Args:
+            pool: A started ``McpClientPool`` instance.
+        """
+        self._mcp_pool = pool
+        self._refresh_mcp_status()
+
+    def _refresh_mcp_status(self) -> None:
+        """Query the pool for connected-server count and update the indicator."""
+        if self._mcp_pool is None:
+            self._mcp_indicator.update_status(connected_count=0, total_count=0)
+            return
+        server_names = getattr(self._mcp_pool, "server_names", [])
+        total = len(server_names)
+        clients = getattr(self._mcp_pool, "_clients", {})
+        connected = sum(
+            1 for c in clients.values() if getattr(c, "is_connected", False)
+        )
+        self._mcp_indicator.update_status(connected_count=connected, total_count=total)
+
     def set_adapter(self, adapter: BaseAgentAdapter) -> None:
         if adapter is None:
             raise ValueError("adapter must be provided")
@@ -652,6 +831,8 @@ class AIAssistantPanel(QWidget):
         self._adapter_mgr.build(settings)
 
     def _show_settings(self) -> None:
+        from src.shared.python.ai.gui.settings_dialog import AISettingsDialog
+
         dialog = AISettingsDialog(self)
         dialog.settings_changed.connect(self.apply_settings)
         if hasattr(dialog, "rebuild_index_requested"):

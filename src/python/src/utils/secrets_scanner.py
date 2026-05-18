@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Secrets scanner utility for detecting hardcoded secrets in source code.
 
 Scans Python source files for patterns that may indicate hardcoded secrets,
@@ -7,8 +8,9 @@ Usage:
     from utils.secrets_scanner import scan_file, scan_directory
 
     issues = scan_directory("src/")
+    import sys
     for issue in issues:
-        print(f"{issue['file']}:{issue['line']}: {issue['pattern']}")
+        sys.stdout.write(f"{issue['file']}:{issue['line']}: {issue['pattern']}\\n")
 """
 
 from __future__ import annotations

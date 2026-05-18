@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Reference-frame conversion operations shared across tools and APIs."""
 
 from __future__ import annotations

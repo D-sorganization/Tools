@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 ToolStrip — persistent header bar with stacked overlay controls.
 

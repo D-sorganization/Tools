@@ -1,4 +1,7 @@
 name: Jules Test Generator (Worker)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 on:
   workflow_call:
@@ -44,6 +47,7 @@ jobs:
               ;;
           esac
   generate-tests:
+    timeout-minutes: 30
     needs: pick-runner
     runs-on: d-sorg-fleet
     steps:
@@ -67,7 +71,9 @@ jobs:
           echo "files=$FILES_FLAT" >> $GITHUB_OUTPUT
 
       - uses: actions/setup-node@v6
-        with: { node-version: "24" }
+        with:
+          node-version: "24"
+          cache: npm
       - run: npm install -g @google/jules
 
       - name: Generate Tests

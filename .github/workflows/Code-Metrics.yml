@@ -2,6 +2,9 @@ name: Code Metrics
 
 # Informational code quality metrics - never fails CI
 # Reports complexity (radon) and duplication (jscpd) metrics
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 on:
   # COST OPTIMIZATION: Removed pull_request and push triggers to reduce CI costs
@@ -52,6 +55,7 @@ jobs:
               ;;
           esac
   complexity-metrics:
+    timeout-minutes: 30
     needs: pick-runner
     name: Complexity Analysis (radon)
     runs-on: d-sorg-fleet
@@ -62,6 +66,7 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.11"
+          cache: pip
 
       - name: Install radon
         run: pip install radon
@@ -131,6 +136,7 @@ jobs:
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
   duplication-metrics:
+    timeout-minutes: 30
     needs: pick-runner
     name: Duplication Analysis (jscpd)
     runs-on: d-sorg-fleet
@@ -141,6 +147,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: "24"
+          cache: npm
 
       - name: Install jscpd
         run: npm install -g jscpd@4.0.0
@@ -212,6 +219,7 @@ jobs:
           fi
 
   summary:
+    timeout-minutes: 30
     name: Metrics Summary
     needs: [pick-runner, complexity-metrics, duplication-metrics]
     if: always()

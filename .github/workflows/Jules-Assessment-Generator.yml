@@ -17,6 +17,9 @@ name: Jules Assessment Generator (Worker)
 # │  • Scheduled/dispatched only via Control Tower — not triggered on push     │
 # │  • Commits are limited to docs/assessments/ path                          │
 # └─────────────────────────────────────────────────────────────────────────────┘
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 on:
   workflow_call:
@@ -31,7 +34,8 @@ permissions:
 
 jobs:
   generate-assessments:
-    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    runs-on: d-sorg-fleet
     # Grant write only at this job level — assessment commits and issue creation
     # happen here.
     permissions:
@@ -45,10 +49,12 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
+          cache: pip
 
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
+          cache: npm
 
       - name: Install Dependencies
         run: |

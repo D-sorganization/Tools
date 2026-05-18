@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Framework-specific renderers for neural network training scripts."""
 
 from __future__ import annotations

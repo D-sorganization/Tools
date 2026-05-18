@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Wave 4 gap-fill tests covering remaining uncovered lines.
 
 Modules targeted:

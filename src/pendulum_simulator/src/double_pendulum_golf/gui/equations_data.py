@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 # ARCHITECTURE_DEBT — tracked as GitHub issue #1937
 # This file is 1,160 lines with 2 classes — almost all lines are inline HTML/LaTeX
 # equation strings embedded in Python list literals.

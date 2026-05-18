@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for pendulum simulator UI enhancements (PR #1114).
 
 Covers issues #1097, #1100-#1102, #1103, #1104, #1108-#1110, #1111, #1113.

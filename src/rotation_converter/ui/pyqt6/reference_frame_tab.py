@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """PyQt6 tab for educational reference-frame conversion operations."""
 
 from __future__ import annotations

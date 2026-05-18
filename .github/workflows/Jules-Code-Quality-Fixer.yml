@@ -40,7 +40,7 @@ permissions:
 
 concurrency:
   group: jules-code-quality-fixer-${{ github.repository }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
@@ -83,6 +83,7 @@ jobs:
               ;;
           esac
   fix-issues:
+    timeout-minutes: 30
     needs: pick-runner
     runs-on: d-sorg-fleet
     # Grant write only at this job level — branch creation, fix pushes, PR
@@ -99,10 +100,12 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
+          cache: pip
 
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
+          cache: npm
 
       - name: Install Dependencies
         run: |

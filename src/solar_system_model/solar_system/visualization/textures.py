@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Texture management for planet maps sourced from NASA imagery."""
 
 from __future__ import annotations

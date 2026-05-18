@@ -21,6 +21,9 @@ name: Jules Auto-Refactor (Worker)
 # Replaces Jules-Tech-Custodian workflow
 # Finds files with the most linting issues and auto-fixes them
 # Creates a PR with the automated improvements
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 on:
   workflow_call:
@@ -71,6 +74,7 @@ jobs:
               ;;
           esac
   auto-refactor:
+    timeout-minutes: 30
     needs: pick-runner
     runs-on: d-sorg-fleet
     # Grant write only at this job level — branch creation, fix pushes, and PR
@@ -89,6 +93,7 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.11"
+          cache: pip
 
       - name: Install Tools
         run: |

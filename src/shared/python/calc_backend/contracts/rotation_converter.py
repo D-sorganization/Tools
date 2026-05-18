@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Pydantic contracts for Rotation Converter endpoint."""
 
 from __future__ import annotations

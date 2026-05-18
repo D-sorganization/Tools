@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Tests for api.py — covers LoD-fixed endpoints in GH1474.
 
 Tests validate that cancel_job and start_processing endpoints correctly

@@ -1,4 +1,9 @@
 name: Auto-Update PRs
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches: ["master", "main"]
@@ -49,6 +54,7 @@ jobs:
               ;;
           esac
   update-prs:
+    timeout-minutes: 30
     needs: pick-runner
     runs-on: ${{ needs.pick-runner.outputs.runner }}
     steps:

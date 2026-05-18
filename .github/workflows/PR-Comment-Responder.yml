@@ -18,7 +18,7 @@ permissions:
 # Prevent concurrent runs from corrupting the queue file
 concurrency:
   group: pr-comment-collector-${{ github.repository }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
@@ -61,6 +61,7 @@ jobs:
               ;;
           esac
   collect-comment:
+    timeout-minutes: 30
     needs: pick-runner
     # Only run on PR comments (not issue comments)
     if: |

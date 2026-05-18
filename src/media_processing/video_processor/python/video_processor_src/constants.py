@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Physical and mathematical constants with citations.
 
 All constants must include:

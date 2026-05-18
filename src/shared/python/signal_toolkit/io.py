@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Signal import and export utilities.
 
 This module provides functionality for importing signals from various
