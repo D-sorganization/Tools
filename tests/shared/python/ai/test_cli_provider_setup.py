@@ -66,7 +66,7 @@ class TestCatalogue:
         )
 
     @pytest.mark.parametrize(
-        "provider", list({"claude_code", "codex_cli", "gemini_cli", "cline"})
+        "provider", ["claude_code", "codex_cli", "gemini_cli", "cline"]
     )
     def test_each_spec_has_required_fields(self, provider: str) -> None:
         spec = CLI_PROVIDERS[provider]
