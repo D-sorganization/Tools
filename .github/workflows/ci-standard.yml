@@ -386,8 +386,9 @@ jobs:
 
           git diff --name-only "$BASE_SHA" HEAD -- 'tests/test_*.py' 'tests/**/test_*.py' 'tests/**/*test.py' 'src/**/tests/test_*.py' 'src/**/tests/**/*test.py' > changed_test_files.txt || echo "No previous commit found (initial commit?)"
           git diff --name-only "$BASE_SHA" HEAD -- '*.py' > changed_python_files.txt || echo "No previous commit found (initial commit?)"
+          grep -E '^src/.*\.py$' changed_python_files.txt > changed_python_source_files.txt || true
 
-          if [ "${{ github.event_name }}" = "pull_request" ] && [ ! -s changed_test_files.txt ] && [ ! -s changed_python_files.txt ]; then
+          if [ "${{ github.event_name }}" = "pull_request" ] && [ ! -s changed_python_source_files.txt ]; then
             coverage_gate_required=false
           fi
 
@@ -432,11 +433,16 @@ jobs:
           # user (~/.local) while the `pytest` console script's shebang
           # points at a different Python that does not load that user-site,
           # producing `pytest: error: unrecognized arguments: --cov=.`.
+          pytest_args=(-m "not live_simulation" --import-mode=importlib)
+          if [ "${{ steps.coverage_inputs.outputs.coverage_gate_required }}" = "true" ]; then
+            pytest_args+=(--cov=. --cov-report=xml:coverage.xml)
+          fi
+
           if [ -s changed_test_files.txt ]; then
             mapfile -t changed_test_files < changed_test_files.txt
-            python -m pytest "${changed_test_files[@]}" "${core_tests[@]}" -m "not live_simulation" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml
+            python -m pytest "${changed_test_files[@]}" "${core_tests[@]}" "${pytest_args[@]}"
           else
-            python -m pytest "${core_tests[@]}" -m "not live_simulation" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml
+            python -m pytest "${core_tests[@]}" "${pytest_args[@]}"
           fi
 
       - name: Provider-Contract Suite (Exported Packages)
@@ -485,7 +491,7 @@ jobs:
           if [ "${{ steps.coverage_inputs.outputs.coverage_gate_required }}" = "true" ]; then
             echo "Coverage policy gate enforced via scripts/check_coverage_policy.py (minimum + non-regression)." >> $GITHUB_STEP_SUMMARY
           else
-            echo "Coverage policy gate skipped because this change touched no Python source or Python tests." >> $GITHUB_STEP_SUMMARY
+            echo "Coverage policy gate skipped because this change touched no coverage-tracked Python source." >> $GITHUB_STEP_SUMMARY
           fi
 
   # ── Rust Quality Gate ─────────────────────────────────────────────────────
