@@ -19,6 +19,10 @@ class DataProcessorRustError(RuntimeError):
     """Raised when the Rust data engine rejects or cannot complete a request."""
 
 
+_SUPPORTED_INPUT_SUFFIXES = {".csv"}
+_SUPPORTED_OUTPUT_FORMATS = {"csv"}
+
+
 @dataclass(frozen=True)
 class DatasetMetadata:
     """Metadata returned by the native bulk-data inspect operation."""
@@ -69,9 +73,13 @@ class RustBulkDataEngine:
         """Construct the engine using the current repository layout."""
         return cls(repo_root=repo_root)
 
+    def is_available(self) -> bool:
+        """Return whether this process can invoke the native engine."""
+        return self.executable is not None or self._cargo is not None
+
     def inspect(self, path: Path | str) -> DatasetMetadata:
         """Inspect a supported dataset without loading it into pandas."""
-        payload = self._run(["inspect", str(_require_path(path))])
+        payload = self._run(["inspect", str(_require_supported_input_path(path))])
         return DatasetMetadata(
             format=str(payload["format"]),
             row_count=int(payload["row_count"]),
@@ -89,7 +97,7 @@ class RustBulkDataEngine:
         """Return a small preview from a supported dataset."""
         if rows <= 0:
             raise ValueError("rows must be greater than zero")
-        args = ["preview", str(_require_path(path)), "--rows", str(rows)]
+        args = ["preview", str(_require_supported_input_path(path)), "--rows", str(rows)]
         if columns:
             args.extend(["--columns", ",".join(columns)])
         payload = self._run(args)
@@ -111,9 +119,11 @@ class RustBulkDataEngine:
         columns: list[str] | None = None,
     ) -> ConversionReport:
         """Convert a supported dataset using the native streaming engine."""
+        input_path = _require_supported_input_path(input_path)
+        output_format = _require_supported_output_format(output_format)
         args = [
             "convert",
-            str(_require_path(input_path)),
+            str(input_path),
             str(Path(output_path)),
             "--format",
             output_format,
@@ -184,6 +194,22 @@ def _require_path(path: Path | str) -> Path:
     if not str(resolved):
         raise ValueError("path must be non-empty")
     return resolved
+
+
+def _require_supported_input_path(path: Path | str) -> Path:
+    resolved = _require_path(path)
+    if resolved.suffix.lower() not in _SUPPORTED_INPUT_SUFFIXES:
+        raise DataProcessorRustError(
+            f"Unsupported format: {resolved.suffix or '<none>'}"
+        )
+    return resolved
+
+
+def _require_supported_output_format(output_format: str) -> str:
+    normalized = output_format.strip().lower()
+    if normalized not in _SUPPORTED_OUTPUT_FORMATS:
+        raise DataProcessorRustError(f"Unsupported output format: {output_format}")
+    return normalized
 
 
 def _find_repo_root() -> Path:

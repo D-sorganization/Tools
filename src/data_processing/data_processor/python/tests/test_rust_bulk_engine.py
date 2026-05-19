@@ -30,7 +30,12 @@ def _write_csv(path: Path) -> None:
 
 @pytest.fixture()
 def engine() -> RustBulkDataEngine:
-    return RustBulkDataEngine.from_repo_root()
+    rust_engine = RustBulkDataEngine.from_repo_root()
+    if not rust_engine.is_available():
+        pytest.skip(
+            "Rust data engine executable was not found and cargo is unavailable"
+        )
+    return rust_engine
 
 
 def test_rust_engine_inspects_csv_without_pandas(
@@ -88,11 +93,12 @@ def test_rust_engine_converts_selected_columns(
     ]
 
 
-def test_rust_engine_rejects_unsupported_formats(
-    engine: RustBulkDataEngine, tmp_path: Path
+def test_rust_engine_rejects_unsupported_formats_before_process_start(
+    tmp_path: Path,
 ) -> None:
     xlsx_path = tmp_path / "sample.xlsx"
     xlsx_path.write_bytes(b"not a workbook")
+    engine = RustBulkDataEngine(repo_root=tmp_path)
 
     with pytest.raises(DataProcessorRustError, match="Unsupported format"):
         engine.inspect(xlsx_path)
