@@ -1,0 +1,63 @@
+{
+  "meta": {
+    "issue": "#2989",
+    "phase": 1,
+    "description": "Baseline Python/pandas I/O before Rust/Polars engine",
+    "units": {
+      "csv_schema_preview_ms": "milliseconds (median of repeats)",
+      "csv_full_load_ms": "milliseconds (median of repeats)",
+      "parquet_full_load_ms": "milliseconds (median of repeats)",
+      "filter_export_ms": "milliseconds (median of repeats)",
+      "memory_peak_csv_mib": "MiB peak (tracemalloc)",
+      "ui_latency_schema_scan_ms": "milliseconds (median of repeats, nrows=0 header read)"
+    },
+    "repeats": 3,
+    "scales_rows": [
+      100000,
+      500000,
+      1000000,
+      5000000
+    ],
+    "num_signals": 8,
+    "python_version": "3.14.3",
+    "pandas_version": "2.3.3",
+    "numpy_version": "2.4.3",
+    "platform": "Windows-11-10.0.26200-SP0"
+  },
+  "csv_schema_preview_ms": {
+    "100000": 3.672,
+    "500000": 3.769,
+    "1000000": 4.067,
+    "5000000": 3.588
+  },
+  "csv_full_load_ms": {
+    "100000": 144.379,
+    "500000": 704.992,
+    "1000000": 1420.403,
+    "5000000": 6485.653
+  },
+  "parquet_full_load_ms": {
+    "100000": 7.963,
+    "500000": 30.682,
+    "1000000": 50.102,
+    "5000000": 227.799
+  },
+  "filter_export_ms": {
+    "100000": 70.357,
+    "500000": 359.652,
+    "1000000": 736.09,
+    "5000000": 3631.515
+  },
+  "memory_peak_csv_mib": {
+    "100000": 13.88,
+    "500000": 68.81,
+    "1000000": 137.48,
+    "5000000": 686.8
+  },
+  "ui_latency_schema_scan_ms": {
+    "100000": 3.574,
+    "500000": 3.197,
+    "1000000": 3.365,
+    "5000000": 3.51
+  }
+}
