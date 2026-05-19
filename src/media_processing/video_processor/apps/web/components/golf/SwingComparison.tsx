@@ -252,10 +252,11 @@ export default function SwingComparisonComponent({
                   {overlayMode === 'overlay' && (
                     <div className="bg-gray-50 rounded-lg p-4 space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label htmlFor="synced-frame" className="block text-sm font-medium text-gray-700 mb-2">
                           Frame: {syncedFrame}
                         </label>
                         <input
+                          id="synced-frame"
                           type="range"
                           min="0"
                           max={Math.max(
@@ -268,10 +269,11 @@ export default function SwingComparisonComponent({
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label htmlFor="comparison-opacity" className="block text-sm font-medium text-gray-700 mb-2">
                           Comparison Opacity: {Math.round(overlayOpacity * 100)}%
                         </label>
                         <input
+                          id="comparison-opacity"
                           type="range"
                           min="0"
                           max="1"

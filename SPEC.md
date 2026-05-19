@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST UPDATED: 2026-05-12
+  LAST UPDATED: 2026-05-18
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.182                                    |
+| **Spec Version**        | 1.1.183                                    |
 | **Last Spec Update**    | 2026-05-17                                 |
 
 ## 2. Purpose & Mission
@@ -603,7 +603,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-05-17 | 1.1.182 | Pre-allocated the `results` array in the `solveODESystem` hot RK4 integration loop (`src/ode_solver/web/src/lib/odeSolver.ts`) to eliminate continuous memory reallocation overhead and garbage collection pauses during large numerical simulations.                                                                                                                                                                                                                                                                                                                      |
+| 2026-05-18 | 1.1.185 | Added `htmlFor` and `id` mapping to range inputs in `SwingComparison.tsx` (`src/media_processing/video_processor/apps/web`) to improve screen reader accessibility. |
+| 2026-05-18 | 1.1.184 | Optimized Nelder-Mead optimization loop in pendulum simulator by replacing map and slice with pre-allocated arrays and standard for loops to minimize GC pauses. |
+| 2026-05-17 | 1.1.183 | Pre-allocated the `results` array in the `solveODESystem` hot RK4 integration loop (`src/ode_solver/web/src/lib/odeSolver.ts`) to eliminate continuous memory reallocation overhead and garbage collection pauses during large numerical simulations.                                                                                                                                                                                                                                                                                                                      |
 | 2026-05-15 | 1.1.181 | Split AI settings local-provider configuration widgets so Ollama keeps its host/model discovery controls, Cline shows its own endpoint test UI, BitNet shows an installation-root hint tied to the main model selector, and CLI-backed providers no longer render misleading Ollama-specific fields; added focused PyQt6 regression coverage for the provider-specific widget contracts.                                                                                                                                                                            |
 | 2026-05-15 | 1.1.179 | Added a markdown-backed shared notes card store with stable path-safe IDs, metadata round trips, validated note and board colors, reversible markdown-card recycling/restoration, legacy `project.notes.txt` migration, import-safe backend coverage, and a lightweight Sidekick Notes color-control contract that reuses the shared store.                                                                                                                                                                                                                         |
 | 2026-05-15 | 1.1.178 | Added an optional Sidekick Function Generator tab with import-safe PyQt6 launcher integration, shared default-tab/help metadata, design-token aliases, and focused sidebar regression coverage.                                                                                                                                                                                                                                                                                                                                                                     |
@@ -870,3 +872,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 ### Version 1.1.139
 
 - **Performance**: Optimized `detectSwingPhases` inside `src/media_processing/video_processor/apps/web/lib/golf/phaseDetector.ts` by replacing `poseFrames.map(...)` with a standard single-pass `for` loop and a pre-allocated array. This reduces continuous callback allocation and limits garbage collection pauses in hot paths when analyzing multiple video frames.
+
+### Version 1.1.183
+- **Performance**: In high-frequency algorithmic optimization loops (like Nelder-Mead iterations), replaced array manipulation operations such as `.map()` and `.slice()` with pre-allocated arrays and standard `for` loops in `src/pendulum_simulator/pendulum-web/src/optimizer.ts` to eliminate continuous array creation and avoid significant garbage collection overhead.

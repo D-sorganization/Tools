@@ -6,8 +6,10 @@ New code should use src/python/src/utils/logging_utils.py
 
 import warnings
 
-# Import from shared utility
-from ..utils.logging_utils import (
+# Import from shared utility. This module is kept importable as top-level
+# ``logger_utils`` for legacy callers that still have ``src/python/src`` on
+# PYTHONPATH.
+from utils.logging_utils import (
     DEFAULT_FORMAT,
     DEFAULT_SEED,
     SIMPLE_FORMAT,

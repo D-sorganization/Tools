@@ -1,0 +1,22 @@
+[package]
+name = "data-processor-core"
+description = "Native streaming data-plane engine for the Data Processor"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lib]
+crate-type = ["rlib"]
+
+[[bin]]
+name = "data-processor-core"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+csv = "1"
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = "2"
+
