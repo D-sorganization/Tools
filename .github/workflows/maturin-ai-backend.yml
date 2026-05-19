@@ -44,6 +44,10 @@ jobs:
     name: Build wheel (${{ matrix.os }}, Python ${{ matrix.python-version }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
+    env:
+      CARGO_HOME: ${{ github.workspace }}/.cargo-home
+      CARGO_INCREMENTAL: "0"
+      CARGO_TERM_COLOR: always
 
     strategy:
       fail-fast: false
@@ -69,10 +73,10 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ~/.cargo/registry
-            ~/.cargo/git
+            .cargo-home/registry
+            .cargo-home/git
             rust_core/ai_backend/target
-          key: maturin-${{ matrix.os }}-py${{ matrix.python-version }}-${{ hashFiles('rust_core/ai_backend/Cargo.toml', 'Cargo.toml') }}
+          key: maturin-${{ matrix.os }}-py${{ matrix.python-version }}-${{ hashFiles('rust_core/ai_backend/Cargo.toml', 'Cargo.toml', 'rust-toolchain.toml') }}
           restore-keys: |
             maturin-${{ matrix.os }}-py${{ matrix.python-version }}-
             maturin-${{ matrix.os }}-
@@ -111,6 +115,10 @@ jobs:
     name: Build wheel with local-embeddings (Linux)
     runs-on: d-sorg-fleet
     timeout-minutes: 45
+    env:
+      CARGO_HOME: ${{ github.workspace }}/.cargo-home
+      CARGO_INCREMENTAL: "0"
+      CARGO_TERM_COLOR: always
     # Only on workflow_dispatch to keep PR feedback fast
     if: github.event_name == 'workflow_dispatch'
 
