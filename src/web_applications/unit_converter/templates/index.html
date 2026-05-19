@@ -21,13 +21,7 @@
             {% for theme in themes %}
             <option
               value="{{ theme.name }}"
-              {%
-              if
-              theme.name=""
-              ="default_theme"
-              %}selected{%
-              endif
-              %}
+              {% if theme.name == default_theme %}selected{% endif %}
             >
               {{ theme.name }}
             </option>

@@ -4,7 +4,7 @@ Styles for this component are managed by the fleet-wide theme system.
 See ``shared.python.theme.stylesheets.generate_stylesheet`` for the
 ToolCard QSS rules.  Each sub-widget is identified by its object name
 (e.g. ``#launchButton``, ``#toolCardTitle``) so the theme engine can
-apply colours consistently across Light, Dark, Monokai, etc. themes.
+apply colours consistently across Light, Dark, Neon Warm Dark, etc. themes.
 """
 
 from collections.abc import Callable

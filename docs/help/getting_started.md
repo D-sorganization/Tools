@@ -86,8 +86,8 @@ Shows the repository root path for reference.
 The launcher supports multiple color themes. Access the Theme menu to switch between:
 
 - Light and Dark themes
-- Editor themes (Monokai, Dracula, One Dark)
-- Office themes (MS Word, MS Excel)
+- Editor themes (Neon Warm Dark, Vampire Dark, Frost Dark)
+- Office themes (Office Blue, Office Green)
 - Custom themes
 
 ## Getting Help
