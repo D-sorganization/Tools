@@ -1,3 +1,6 @@
+// ── Bulk-I/O engine module (Phase 2 of issue #2989) ─────────────────────────
+pub mod engine;
+
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
