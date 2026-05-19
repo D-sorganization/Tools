@@ -16,7 +16,6 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Callable, Iterable
-from dataclasses import asdict
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -55,8 +54,16 @@ from data_processor.constants import TIME_COLUMN_KEYWORDS  # noqa: E402
 from data_processor.contracts import (  # noqa: E402
     require,
 )
+from data_processor.core.native_bulk_data import (  # noqa: E402
+    convert_dataset as _convert_native_dataset,
+)
+from data_processor.core.native_bulk_data import (
+    inspect_dataset as _inspect_native_dataset,
+)
+from data_processor.core.native_bulk_data import (
+    preview_dataset as _preview_native_dataset,
+)
 from data_processor.rust_engine import (  # noqa: E402
-    DataProcessorRustError,
     RustBulkDataEngine,
 )
 from data_processor.security_utils import validate_and_check_file  # noqa: E402
@@ -158,21 +165,8 @@ class DataLoader:
             return None
 
     def inspect_dataset(self, file_path: str) -> dict[str, Any]:
-        """Inspect a dataset through the native streaming engine.
-
-        **Pre-conditions** (DbC):
-          - ``file_path`` must be a non-empty string.
-
-        This method is the UI/service boundary for fast metadata reads. It
-        intentionally returns a plain dictionary so PyQt, CLI, and future Tauri
-        callers do not depend on Rust command details.
-        """
-        require(
-            isinstance(file_path, str) and bool(file_path.strip()),
-            "file_path must be a non-empty string",
-            file_path,
-        )
-        return asdict(self._get_rust_engine().inspect(file_path))
+        """Inspect a dataset through the native streaming engine."""
+        return _inspect_native_dataset(self, file_path)
 
     def preview_dataset(
         self,
@@ -180,24 +174,8 @@ class DataLoader:
         rows: int = 100,
         columns: list[str] | None = None,
     ) -> pd.DataFrame:
-        """Preview a dataset through the native streaming engine.
-
-        **Pre-conditions** (DbC):
-          - ``file_path`` must be a non-empty string.
-          - ``rows`` must be greater than zero.
-        """
-        require(
-            isinstance(file_path, str) and bool(file_path.strip()),
-            "file_path must be a non-empty string",
-            file_path,
-        )
-        require(rows > 0, "rows must be greater than zero", rows)
-        preview = self._get_rust_engine().preview(
-            file_path,
-            rows=rows,
-            columns=columns,
-        )
-        return pd.DataFrame(preview.rows, columns=preview.columns)
+        """Preview a dataset through the native streaming engine."""
+        return _preview_native_dataset(self, file_path, rows=rows, columns=columns)
 
     def convert_dataset(
         self,
@@ -208,33 +186,13 @@ class DataLoader:
         columns: list[str] | None = None,
     ) -> dict[str, Any]:
         """Convert a dataset through the native streaming engine."""
-        require(
-            isinstance(input_path, str) and bool(input_path.strip()),
-            "input_path must be a non-empty string",
-            input_path,
-        )
-        require(
-            isinstance(output_path, str) and bool(output_path.strip()),
-            "output_path must be a non-empty string",
-            output_path,
-        )
-        report = self._get_rust_engine().convert(
+        return _convert_native_dataset(
+            self,
             input_path,
             output_path,
             output_format=output_format,
             columns=columns,
         )
-        return asdict(report)
-
-    def _get_rust_engine(self) -> RustBulkDataEngine:
-        """Return the native engine, lazily constructing it for production use."""
-        if self._rust_engine is None:
-            try:
-                self._rust_engine = RustBulkDataEngine.from_repo_root()
-            except DataProcessorRustError:
-                logger.exception("Rust bulk data engine is unavailable")
-                raise
-        return self._rust_engine
 
     def load_multiple_files(
         self,

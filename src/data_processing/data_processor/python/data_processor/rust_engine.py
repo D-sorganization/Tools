@@ -209,4 +209,3 @@ def _find_executable(repo_root: Path) -> Path | None:
         repo_root / "target" / "debug" / exe_name,
     ]
     return next((candidate for candidate in candidates if candidate.is_file()), None)
-

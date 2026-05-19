@@ -33,7 +33,9 @@ def engine() -> RustBulkDataEngine:
     return RustBulkDataEngine.from_repo_root()
 
 
-def test_rust_engine_inspects_csv_without_pandas(engine: RustBulkDataEngine, tmp_path: Path) -> None:
+def test_rust_engine_inspects_csv_without_pandas(
+    engine: RustBulkDataEngine, tmp_path: Path
+) -> None:
     csv_path = tmp_path / "sample.csv"
     _write_csv(csv_path)
 
@@ -45,7 +47,9 @@ def test_rust_engine_inspects_csv_without_pandas(engine: RustBulkDataEngine, tmp
     assert metadata.byte_size > 0
 
 
-def test_rust_engine_previews_selected_columns(engine: RustBulkDataEngine, tmp_path: Path) -> None:
+def test_rust_engine_previews_selected_columns(
+    engine: RustBulkDataEngine, tmp_path: Path
+) -> None:
     csv_path = tmp_path / "sample.csv"
     _write_csv(csv_path)
 
@@ -59,7 +63,9 @@ def test_rust_engine_previews_selected_columns(engine: RustBulkDataEngine, tmp_p
     assert preview.rows_returned == 2
 
 
-def test_rust_engine_converts_selected_columns(engine: RustBulkDataEngine, tmp_path: Path) -> None:
+def test_rust_engine_converts_selected_columns(
+    engine: RustBulkDataEngine, tmp_path: Path
+) -> None:
     csv_path = tmp_path / "sample.csv"
     output_path = tmp_path / "selected.csv"
     _write_csv(csv_path)
