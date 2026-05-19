@@ -112,7 +112,7 @@ jobs:
         with:
           node-version: "24"
           cache: "npm"
-          cache-dependency-path: ${{ matrix.path }}/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
@@ -188,7 +188,7 @@ jobs:
         with:
           node-version: "24"
           cache: "npm"
-          cache-dependency-path: ${{ matrix.app.path }}/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable

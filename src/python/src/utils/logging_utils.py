@@ -5,32 +5,54 @@ This module provides standardized logging configuration, following DRY principle
 and consolidating duplicate logging setup code.
 """
 
+import importlib
 import json
 import logging
+import os
 import random
 import sys
 from pathlib import Path
+from types import ModuleType
 from typing import Any
 
-# Try optional imports
-try:
-    import numpy as np
-
-    NUMPY_AVAILABLE = True
-except ImportError:
-    NUMPY_AVAILABLE = False
-
-try:
-    import torch
-
-    TORCH_AVAILABLE = True
-except (ImportError, OSError):
-    TORCH_AVAILABLE = False
+TORCH_AVAILABLE = False
+NUMPY_AVAILABLE = False
 
 # Constants
 DEFAULT_SEED: int = 42  # Standard reproducibility seed
 DEFAULT_FORMAT: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 SIMPLE_FORMAT: str = "%(levelname)s: %(message)s"
+
+
+def _load_torch() -> ModuleType | None:
+    """Return PyTorch when already loaded or explicitly enabled."""
+    global TORCH_AVAILABLE
+    loaded_torch = sys.modules.get("torch")
+    if isinstance(loaded_torch, ModuleType):
+        TORCH_AVAILABLE = True
+        return loaded_torch
+    if os.environ.get("TOOLS_ENABLE_TORCH_SEEDING") != "1":
+        TORCH_AVAILABLE = False
+        return None
+    try:
+        torch = importlib.import_module("torch")
+    except (ImportError, OSError):
+        TORCH_AVAILABLE = False
+        return None
+    TORCH_AVAILABLE = True
+    return torch
+
+
+def _load_numpy() -> ModuleType | None:
+    """Load NumPy only for code paths that explicitly need it."""
+    global NUMPY_AVAILABLE
+    try:
+        numpy = importlib.import_module("numpy")
+    except ImportError:
+        NUMPY_AVAILABLE = False
+        return None
+    NUMPY_AVAILABLE = True
+    return numpy
 
 
 class JsonFormatter(logging.Formatter):
@@ -165,16 +187,19 @@ def set_seeds(seed: int = DEFAULT_SEED) -> None:
 
     random.seed(seed)
 
-    if NUMPY_AVAILABLE:
-        np.random.seed(seed)
+    numpy_module = _load_numpy()
+    if numpy_module is not None:
+        numpy_module.random.seed(seed)
+    else:
+        logger.warning("NumPy is unavailable; skipping NumPy seed setup")
 
-    if TORCH_AVAILABLE:
-        torch.manual_seed(seed)
-        if torch.cuda.is_available():
-            torch.cuda.manual_seed_all(seed)
-            torch.cuda.manual_seed(seed)
+    torch_module = _load_torch()
+    if torch_module is not None:
+        torch_module.manual_seed(seed)
+        if torch_module.cuda.is_available():
+            torch_module.cuda.manual_seed_all(seed)
+            torch_module.cuda.manual_seed(seed)
 
-    logger = get_logger(__name__)
     logger.info("Random seeds set to: %d", seed)
 
 
