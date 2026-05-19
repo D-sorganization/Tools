@@ -5,3 +5,6 @@
 ## 2024-05-27 - Optimizing Map and Slice in Hot Loops
 **Learning:** In optimization loops like Nelder-Mead (e.g. `src/pendulum_simulator/pendulum-web/src/optimizer.ts`), the repeated use of array prototype methods like `.map()` and `.slice()` inside algorithmic iterations causes severe garbage collection pauses due to intermediate array allocations and closure creation. Standard `for` loops combined with pre-allocated arrays (e.g. `new Array(size)`) avoid these overheads and can execute over 2-3x faster.
 **Action:** When working on numerical optimizers or simulation inner loops in JS/TS, manually rewrite `.map()`, `.reduce()`, and `.slice()` into explicit `for` loops with pre-allocated arrays.
+## 2024-05-30 - Downsampling Overheads in React Memos
+**Learning:** In high-frequency rendering components (like React chart wrappers), downsampling massive streams of state data via chained array iterators (e.g., `indices.map()`) inside `useMemo` hooks causes severe framerate drops. The intermediate array creations for every trace during chart updates trigger massive O(N) memory allocations and garbage collection pauses.
+**Action:** When extracting data subsets for visualizations, use explicit `for` loops combined with pre-allocated arrays (e.g. `new Array(len)`) to dramatically reduce memory allocation and eliminate iterator callback overhead.
