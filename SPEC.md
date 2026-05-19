@@ -875,5 +875,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ### Version 1.1.183
 - **Performance**: In high-frequency algorithmic optimization loops (like Nelder-Mead iterations), replaced array manipulation operations such as `.map()` and `.slice()` with pre-allocated arrays and standard `for` loops in `src/pendulum_simulator/pendulum-web/src/optimizer.ts` to eliminate continuous array creation and avoid significant garbage collection overhead.
+
 ### Version 1.1.184
 - **Performance**: In `src/pendulum_simulator/pendulum-web/src/components/AnalysisPlots.tsx`, optimized chart downsampling by replacing multiple instances of `indices.map()` with pre-allocated arrays and explicit `for` loops inside `useMemo` hooks. This drastically reduces array allocation and garbage collection overhead during high-frequency component rendering.
+
+### Version 1.1.185
+- **Security**: Fixed a command injection vulnerability in `cli_tools.py`'s `ShellTool._is_command_allowed` by parsing the command with `shlex.split` and blocking shell operators instead of using a naive `.startswith()` string check.
