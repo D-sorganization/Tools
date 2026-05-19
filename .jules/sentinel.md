@@ -1,4 +1,4 @@
 ## 2024-05-19 - [CRITICAL] Fix command injection in ShellTool
 **Vulnerability:** ShellTool's `_is_command_allowed` function used naive string prefix checking (`command.startswith()`) and passed the command to `subprocess.run(..., shell=True)` (implicitly via `["-c", command]`). This allowed command chaining (e.g. `ls; rm -rf /`).
-**Learning:** Naive prefix checking is never sufficient for security-sensitive command authorization, particularly when executed using a shell or pseudo-shell. Attackers can trivially bypass the check using command injection techniques like `;`, `&&`, `|`, and `$()`.
+**Learning:** Naive prefix checking is never sufficient for security-sensitive command authorization, particularly when executed using a shell or pseudo-shell. Attackers can trivially bypass the check using command injection techniques like `;`, `&&`, `|`, `&`, and `$()`.
 **Prevention:** Always parse command strings strictly using `shlex.split`, verify individual tokens, and explicitly block shell operators to prevent execution of unauthenticated or malicious commands when executing commands via a shell interpreter.
