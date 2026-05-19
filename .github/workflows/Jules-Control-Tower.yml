@@ -229,6 +229,11 @@ jobs:
   call-repair:
     needs: triage
     if: needs.triage.outputs.target == 'auto-repair'
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
+      checks: read
     uses: ./.github/workflows/Jules-Auto-Repair.yml
     with:
       run_id: ${{ format('{0}', github.event.workflow_run.id) }}
@@ -238,6 +243,9 @@ jobs:
   call-hotfix-creator:
     needs: triage
     if: needs.triage.outputs.target == 'hotfix-creator'
+    permissions:
+      contents: write
+      pull-requests: write
     uses: ./.github/workflows/Jules-Hotfix-Creator.yml
     with:
       run_id: ${{ format('{0}', github.event.workflow_run.id) }}
@@ -247,6 +255,9 @@ jobs:
   call-scribe:
     needs: triage
     if: needs.triage.outputs.target == 'doc-scribe'
+    permissions:
+      contents: write
+      pull-requests: write
     uses: ./.github/workflows/Jules-Documentation-Scribe.yml
     secrets: inherit
 
@@ -259,35 +270,55 @@ jobs:
   call-auto-refactor:
     needs: triage
     if: needs.triage.outputs.target == 'auto-refactor'
+    permissions:
+      contents: write
+      pull-requests: write
     uses: ./.github/workflows/Jules-Auto-Refactor.yml
     secrets: inherit
 
   call-auto-rebase:
     needs: triage
     if: needs.triage.outputs.target == 'auto-rebase'
+    permissions:
+      contents: write
+      pull-requests: write
     uses: ./.github/workflows/Jules-Auto-Rebase.yml
     secrets: inherit
 
   call-archivist:
     needs: triage
     if: needs.triage.outputs.target == 'archivist'
+    permissions:
+      contents: write
     uses: ./.github/workflows/Jules-Archivist.yml
     secrets: inherit
 
   call-sentinel:
     needs: triage
     if: needs.triage.outputs.target == 'sentinel'
+    permissions:
+      contents: write
+      issues: write
+      security-events: write
     uses: ./.github/workflows/Jules-Sentinel.yml
     secrets: inherit
 
   call-issue-resolver:
     needs: triage
     if: needs.triage.outputs.target == 'issue-resolver'
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
     uses: ./.github/workflows/Jules-Issue-Resolver.yml
     secrets: inherit
 
   call-documentation-auditor:
     needs: triage
     if: needs.triage.outputs.target == 'documentation-auditor'
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
     uses: ./.github/workflows/Jules-Documentation-Auditor.yml
     secrets: inherit
