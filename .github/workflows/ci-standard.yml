@@ -101,7 +101,24 @@ jobs:
         # repair the cache, which breaks `pip-audit` (via cyclonedx) and any
         # hypothesis-using pytest run (see PR #2054 / #2056 quality-gate
         # failures; mirrors UpstreamDrift ci-standard.yml fix).
+        # Also clean corrupted packages with missing RECORD files (numpy, scipy issues - fixes PR #2995).
         run: |
+          # Clean corrupted distributions (missing RECORD files, '~' prefix entries)
+          SITE_PACKAGES=$(python3 -c "import site; print(site.getsitepackages()[0])")
+          echo "Cleaning corrupted packages from: $SITE_PACKAGES"
+          find "$SITE_PACKAGES" -maxdepth 1 -type d -name "*~" -exec rm -rf {} \; 2>/dev/null || true
+
+          # Remove entries with missing RECORD files (corrupted dist-info)
+          for pkg_info in "$SITE_PACKAGES"/*.dist-info; do
+            if [ -d "$pkg_info" ] && [ ! -f "$pkg_info/RECORD" ]; then
+              pkg_name=$(basename "$pkg_info" .dist-info)
+              echo "Removing corrupted package: $pkg_name (missing RECORD file)"
+              rm -rf "$pkg_info"
+              # Also try to remove the corresponding package directory
+              rm -rf "$SITE_PACKAGES/${pkg_name%-*}" 2>/dev/null || true
+            fi
+          done
+
           python -m ensurepip --upgrade
           python -m pip install --upgrade pip setuptools
           python -m pip install --ignore-installed --no-deps wheel
@@ -262,7 +279,24 @@ jobs:
         # See quality-gate Install Dependencies for the rationale — the shared
         # toolcache can carry a stale `sortedcontainers` that makes hypothesis
         # fail during pytest_terminal_summary.
+        # Also clean corrupted packages with missing RECORD files (numpy, scipy issues - fixes PR #2995).
         run: |
+          # Clean corrupted distributions (missing RECORD files, '~' prefix entries)
+          SITE_PACKAGES=$(python3 -c "import site; print(site.getsitepackages()[0])")
+          echo "Cleaning corrupted packages from: $SITE_PACKAGES"
+          find "$SITE_PACKAGES" -maxdepth 1 -type d -name "*~" -exec rm -rf {} \; 2>/dev/null || true
+
+          # Remove entries with missing RECORD files (corrupted dist-info)
+          for pkg_info in "$SITE_PACKAGES"/*.dist-info; do
+            if [ -d "$pkg_info" ] && [ ! -f "$pkg_info/RECORD" ]; then
+              pkg_name=$(basename "$pkg_info" .dist-info)
+              echo "Removing corrupted package: $pkg_name (missing RECORD file)"
+              rm -rf "$pkg_info"
+              # Also try to remove the corresponding package directory
+              rm -rf "$SITE_PACKAGES/${pkg_name%-*}" 2>/dev/null || true
+            fi
+          done
+
           python -m ensurepip --upgrade
           python -m pip install --upgrade pip setuptools
           python -m pip install --ignore-installed --no-deps wheel
@@ -270,6 +304,28 @@ jobs:
           python -m pip install -r requirements.txt
           python -m pip install fastapi
           python -m pip install httpx pytest-cov pytest-xdist pytest-benchmark
+
+      - name: Verify pip can install packages
+        run: |
+          # Verify numpy and scipy are properly installed with RECORD files
+          python3 -c "
+          import site
+          import os
+          site_packages = site.getsitepackages()[0]
+          for pkg in ['numpy', 'scipy']:
+              dist_info_pattern = f'{pkg}-*.dist-info'
+              from glob import glob
+              matches = glob(os.path.join(site_packages, dist_info_pattern))
+              if matches:
+                  record_file = os.path.join(matches[0], 'RECORD')
+                  if os.path.exists(record_file):
+                      print(f'✓ {pkg} RECORD file present')
+                  else:
+                      raise RuntimeError(f'{pkg} RECORD file missing!')
+              else:
+                  print(f'! {pkg} not installed yet')
+          print('✓ Installation readiness verified')
+          "
 
       - name: Configure Qt for headless CI
         run: |
