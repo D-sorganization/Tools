@@ -97,7 +97,12 @@ class RustBulkDataEngine:
         """Return a small preview from a supported dataset."""
         if rows <= 0:
             raise ValueError("rows must be greater than zero")
-        args = ["preview", str(_require_supported_input_path(path)), "--rows", str(rows)]
+        args = [
+            "preview",
+            str(_require_supported_input_path(path)),
+            "--rows",
+            str(rows),
+        ]
         if columns:
             args.extend(["--columns", ",".join(columns)])
         payload = self._run(args)
