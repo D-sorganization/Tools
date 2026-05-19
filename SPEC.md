@@ -881,3 +881,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ### Version 1.1.185
 - **Security**: Fixed a command injection vulnerability in `cli_tools.py`'s `ShellTool._is_command_allowed` by parsing the command with `shlex.split` and blocking shell operators instead of using a naive `.startswith()` string check.
+
+### Version 1.1.186
+- **Performance**: In `src/media_processing/video_processor/apps/web/lib/golf/phaseDetector.ts`, replaced `.reduce()` with a standard `for` loop in `calculatePhaseConfidence` to eliminate callback allocation and GC overhead in high-frequency phase detection paths.
