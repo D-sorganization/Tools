@@ -16,8 +16,9 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Callable, Iterable
+from dataclasses import asdict
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import pandas as pd
@@ -54,10 +55,14 @@ from data_processor.constants import TIME_COLUMN_KEYWORDS  # noqa: E402
 from data_processor.contracts import (  # noqa: E402
     require,
 )
-from data_processor.high_performance_loader import (  # noqa: E402
-    HighPerformanceDataLoader,
+from data_processor.rust_engine import (  # noqa: E402
+    DataProcessorRustError,
+    RustBulkDataEngine,
 )
 from data_processor.security_utils import validate_and_check_file  # noqa: E402
+
+if TYPE_CHECKING:
+    from data_processor.high_performance_loader import HighPerformanceDataLoader
 
 logger = logging.getLogger(__name__)
 
@@ -69,20 +74,33 @@ class DataLoader:
 
     hp_loader: HighPerformanceDataLoader | None
 
-    def __init__(self, use_high_performance: bool = True) -> None:
+    def __init__(
+        self,
+        use_high_performance: bool = True,
+        rust_engine: RustBulkDataEngine | None = None,
+    ) -> None:
         """Initialize the data loader.
 
         Args:
             use_high_performance: Whether to use high-performance parallel loading
+            rust_engine: Optional native bulk-data engine. Inject in tests or
+                provide for UI hosts that want explicit engine lifecycle control.
         """
         if use_high_performance is None:
             raise ValueError("use_high_performance must be provided")
         self.use_high_performance = use_high_performance
+        self._rust_engine = rust_engine
         if use_high_performance:
-            self.hp_loader = HighPerformanceDataLoader()
+            self.hp_loader = self._create_high_performance_loader()
         else:
             self.hp_loader = None
         self.logger = logger
+
+    def _create_high_performance_loader(self) -> HighPerformanceDataLoader:
+        """Create the optional high-performance loader only when requested."""
+        from data_processor.high_performance_loader import HighPerformanceDataLoader
+
+        return HighPerformanceDataLoader()
 
     def load_csv_file(
         self,
@@ -138,6 +156,85 @@ class DataLoader:
         except (OSError, ValueError, KeyError) as e:
             logger.error(f"Error loading {file_path}: {e}", exc_info=True)
             return None
+
+    def inspect_dataset(self, file_path: str) -> dict[str, Any]:
+        """Inspect a dataset through the native streaming engine.
+
+        **Pre-conditions** (DbC):
+          - ``file_path`` must be a non-empty string.
+
+        This method is the UI/service boundary for fast metadata reads. It
+        intentionally returns a plain dictionary so PyQt, CLI, and future Tauri
+        callers do not depend on Rust command details.
+        """
+        require(
+            isinstance(file_path, str) and bool(file_path.strip()),
+            "file_path must be a non-empty string",
+            file_path,
+        )
+        return asdict(self._get_rust_engine().inspect(file_path))
+
+    def preview_dataset(
+        self,
+        file_path: str,
+        rows: int = 100,
+        columns: list[str] | None = None,
+    ) -> pd.DataFrame:
+        """Preview a dataset through the native streaming engine.
+
+        **Pre-conditions** (DbC):
+          - ``file_path`` must be a non-empty string.
+          - ``rows`` must be greater than zero.
+        """
+        require(
+            isinstance(file_path, str) and bool(file_path.strip()),
+            "file_path must be a non-empty string",
+            file_path,
+        )
+        require(rows > 0, "rows must be greater than zero", rows)
+        preview = self._get_rust_engine().preview(
+            file_path,
+            rows=rows,
+            columns=columns,
+        )
+        return pd.DataFrame(preview.rows, columns=preview.columns)
+
+    def convert_dataset(
+        self,
+        input_path: str,
+        output_path: str,
+        *,
+        output_format: str = "csv",
+        columns: list[str] | None = None,
+    ) -> dict[str, Any]:
+        """Convert a dataset through the native streaming engine."""
+        require(
+            isinstance(input_path, str) and bool(input_path.strip()),
+            "input_path must be a non-empty string",
+            input_path,
+        )
+        require(
+            isinstance(output_path, str) and bool(output_path.strip()),
+            "output_path must be a non-empty string",
+            output_path,
+        )
+        report = self._get_rust_engine().convert(
+            input_path,
+            output_path,
+            output_format=output_format,
+            columns=columns,
+        )
+        return asdict(report)
+
+    def _get_rust_engine(self) -> RustBulkDataEngine:
+        """Return the native engine, lazily constructing it for production use."""
+        if self._rust_engine is None:
+            try:
+                self._rust_engine = RustBulkDataEngine.from_repo_root()
+            except DataProcessorRustError:
+                logger.exception("Rust bulk data engine is unavailable")
+                raise
+        return self._rust_engine
 
     def load_multiple_files(
         self,
