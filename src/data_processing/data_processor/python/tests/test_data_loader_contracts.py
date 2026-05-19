@@ -160,6 +160,15 @@ class TestDetectSignalsContracts:
         signals = loader.detect_signals([path])
         assert isinstance(signals, set)
 
+    def test_returns_column_names_from_csv(self, tmp_path) -> None:
+        p = tmp_path / "signals.csv"
+        p.write_text("time,pressure,temperature\n1,101.3,25.0\n2,101.5,25.1\n")
+        loader = DataLoader(use_high_performance=False)
+        signals = loader.detect_signals([str(p)])
+        assert "time" in signals
+        assert "pressure" in signals
+        assert "temperature" in signals
+
 
 # ── combine_dataframes pre-conditions ────────────────────────────────────────
 
