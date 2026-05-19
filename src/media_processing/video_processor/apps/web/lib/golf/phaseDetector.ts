@@ -506,8 +506,12 @@ function calculatePhaseConfidence(
   }
 
   // Factor in pose confidence
-  const avgPoseConfidence =
-    poseFrames.reduce((sum, f) => sum + f.confidence, 0) / poseFrames.length;
+  // ⚡ Bolt: Replaced poseFrames.reduce with a standard for loop to eliminate callback allocation overhead in high-frequency path
+  let sumConfidence = 0;
+  for (let i = 0; i < poseFrames.length; i++) {
+    sumConfidence += poseFrames[i].confidence;
+  }
+  const avgPoseConfidence = sumConfidence / poseFrames.length;
 
   return (confidence / weights) * avgPoseConfidence;
 }

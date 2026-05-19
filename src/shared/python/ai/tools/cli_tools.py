@@ -11,6 +11,7 @@ Example:
 
 from __future__ import annotations
 
+import shlex
 import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -325,12 +326,31 @@ class ShellTool(CLIToolBase):
         """
         # Dangerous commands are never allowed
         dangerous = ["rm", "sudo", "chmod", "chown", "curl", "wget", "ssh"]
-        for d in dangerous:
-            if command.startswith(d + " ") or command == d:
+
+        # Prevent shell injection by blocking command separators/operators
+        shell_operators = ["&&", "||", ";", "|", ">", "<", "$", "`", "\n", "&"]
+        if any(op in command for op in shell_operators):
+            return False
+
+        try:
+            tokens = shlex.split(command)
+            if not tokens:
                 return False
 
-        # Check against allowlist
-        return any(command.startswith(allowed) for allowed in self._allowed_commands)
+            # Verify the first token is in the allowlist
+            base_cmd = tokens[0]
+            if base_cmd not in self._allowed_commands:
+                return False
+
+            # Verify no token is a dangerous command
+            for token in tokens:
+                if token in dangerous:
+                    return False
+
+            return True
+        except ValueError:
+            # e.g., missing closing quote
+            return False
 
     def execute(self, command: str, timeout: int = 60) -> CLIExecutionResult:
         """Execute a shell command.

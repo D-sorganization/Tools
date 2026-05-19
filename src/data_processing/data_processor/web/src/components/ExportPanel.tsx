@@ -79,6 +79,7 @@ export const ExportPanel = memo(function ExportPanel({ data, fileName, disabled 
                 key={option.value}
                 onClick={() => setExportFormat(option.value)}
                 disabled={disabled}
+                aria-pressed={exportFormat === option.value}
                 className={`
                   flex flex-col items-center gap-1 p-3 rounded-lg border transition-colors
                   ${
