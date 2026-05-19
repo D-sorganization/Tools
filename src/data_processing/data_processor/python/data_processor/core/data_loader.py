@@ -298,7 +298,7 @@ class DataLoader:
             try:
                 # Read just the header
                 df_header = safe_read_csv(file_path, nrows=0)
-                if df_header is not None and not df_header.empty:
+                if df_header is not None and len(df_header.columns) > 0:
                     all_signals.update(df_header.columns)
 
                 if progress_callback:
