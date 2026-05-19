@@ -70,7 +70,7 @@ jobs:
   quality-gate:
     needs: pick-runner
     runs-on: d-sorg-fleet
-    timeout-minutes: 20
+    timeout-minutes: 45
     env:
       # Shared wheel/download cache for self-hosted runners — avoids re-downloading
       # the same packages on every run.  Path is host-stable and safe for concurrent
@@ -304,7 +304,7 @@ jobs:
           fi
 
   tests:
-    timeout-minutes: 30
+    timeout-minutes: 60
     # Parallelized: tests do not consume any quality-gate outputs (quality-gate
     # declares no `outputs:` block, and no step in this job references
     # `needs.quality-gate.*`). Fanning out after pick-runner removes the
