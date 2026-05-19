@@ -28,7 +28,7 @@ import bump_vendor_pin as bvp  # noqa: E402  (import after sys.path modification
 
 CONSUMER_REPOS = ["D-sorganization/UpstreamDrift", "D-sorganization/Gasification_Model"]
 SAMPLE_TAG = "v1.2.3"
-SAMPLE_SHA = "c7bf6bd5ba534b33"
+SAMPLE_SHA = "0" * 40
 
 
 # ---------------------------------------------------------------------------
