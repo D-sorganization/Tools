@@ -22,6 +22,8 @@ import threading
 from pathlib import Path
 from typing import Any
 
+from .qt_diagnostics import ChatQtDiagnostic, diagnose_chat_qt_runtime
+
 _DEFAULT_SERVER = "ws://127.0.0.1:8000"
 _QT_EXPORTS = {"ChatDockWidget", "ChatMessageBubble"}
 
@@ -29,6 +31,15 @@ _QT_EXPORTS = {"ChatDockWidget", "ChatMessageBubble"}
 # file across threads. The lock guards both the in-memory holder and the
 # atomic tmp+replace dance used by ``_write_shared_session_id``.
 _SHARED_SESSION_LOCK = threading.Lock()
+
+
+class ChatQtUnavailableError(ImportError):
+    """Raised when the optional PyQt6 chat dock runtime is unavailable."""
+
+    def __init__(self, diagnostic: ChatQtDiagnostic) -> None:
+        detail = f": {diagnostic.detail}" if diagnostic.detail else ""
+        super().__init__(f"PyQt6 chat dock unavailable ({diagnostic.reason}){detail}")
+        self.diagnostic = diagnostic
 
 
 def _session_file_path(app_name: str) -> Path:
@@ -71,9 +82,27 @@ def _write_shared_session_id(session_id: str, path: Path) -> None:
 
 
 def _load_qt_module() -> Any:
-    from . import _chat_dock_widget_qt
+    diagnostic = diagnose_chat_qt_runtime()
+    if not diagnostic.available:
+        raise ChatQtUnavailableError(diagnostic)
+
+    try:
+        from . import _chat_dock_widget_qt
+    except ImportError as exc:
+        raise ChatQtUnavailableError(
+            ChatQtDiagnostic(
+                available=False,
+                reason="import_failed",
+                detail=str(exc),
+            )
+        ) from exc
 
     return _chat_dock_widget_qt
+
+
+def chat_qt_runtime_diagnostic() -> dict[str, str | bool]:
+    """Return an import-safe diagnostic for the optional Qt chat dock."""
+    return diagnose_chat_qt_runtime().to_dict()
 
 
 def __getattr__(name: str) -> Any:
@@ -85,7 +114,9 @@ def __getattr__(name: str) -> Any:
 __all__ = [
     "ChatDockWidget",
     "ChatMessageBubble",
+    "ChatQtUnavailableError",
     "_DEFAULT_SERVER",
+    "chat_qt_runtime_diagnostic",
     "_session_file_path",
     "_read_shared_session_id",
     "_write_shared_session_id",

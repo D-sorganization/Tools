@@ -614,6 +614,20 @@ class UnifiedToolsSidebar(
         self.tabs.setCurrentIndex(self._tab_ids.index(tab_id))
         return True
 
+    def open_tab(self, tab_id: str) -> bool:
+        """Show and focus a configured tab by stable launcher-facing id.
+
+        Hosts can call this from menus without knowing whether a tab starts
+        hidden. ``os_terminal`` is accepted as a compatibility alias for the
+        shared ``terminal`` tab id used by Sidekick.
+        """
+        resolved = {"os_terminal": "terminal"}.get(tab_id, tab_id)
+        if resolved not in self._tab_definitions:
+            return False
+        if resolved not in self._tab_ids and not self.set_tab_visible(resolved, True):
+            return False
+        return self.set_active_tab(resolved)
+
     def set_context_variable(self, name: str, value: Any) -> None:
         self.registry.set(name, value)
         self.refresh_workspace()
