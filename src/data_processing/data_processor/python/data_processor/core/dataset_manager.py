@@ -571,7 +571,10 @@ class DatasetManager:
         elif suffix == ".json":
             return pd.read_json(path)
         elif suffix in (".h5", ".hdf5"):
-            return pd.read_hdf(path)
+            res = pd.read_hdf(path)
+            if isinstance(res, pd.Series):
+                return res.to_frame()
+            return res
         elif suffix == ".feather":
             return pd.read_feather(path)
         else:

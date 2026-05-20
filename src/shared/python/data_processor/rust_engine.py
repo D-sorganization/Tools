@@ -37,7 +37,7 @@ _RUST_AVAILABLE = False
 _rust_mod = None
 
 try:
-    import data_processor_core as _rust_mod  # type: ignore[import-not-found]
+    import data_processor_core as _rust_mod
 
     _RUST_AVAILABLE = True
     logger.debug("data_processor_core native extension loaded")
@@ -336,7 +336,7 @@ def scan_batch(
 
     # ── pandas fallback ──────────────────────────────────────────────────────
     if fmt == "csv":
-        reader: Generator[pd.DataFrame, None, None] = pd.read_csv(  # type: ignore[assignment]
+        reader: Generator[pd.DataFrame, None, None] = pd.read_csv(
             p, chunksize=batch_size
         )
         for chunk in reader:

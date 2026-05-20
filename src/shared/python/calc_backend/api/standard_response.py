@@ -124,8 +124,16 @@ class StandardResponse(BaseModel, Generic[T]):
     error: ErrorDetail | None = Field(default=None, description="Error details")
     metadata: ResponseMetadata = Field(description="Response metadata")
 
-    def model_validate(self, obj: Any) -> StandardResponse[T]:
-        """Override to support Generic type parameter."""
+    @classmethod
+    def model_validate(
+        cls,
+        obj: Any,
+        *,
+        strict: bool | None = None,
+        from_attributes: bool | None = None,
+        context: Any | None = None,
+    ) -> StandardResponse[T]:
+        """Validate an object against this model. parameter."""
         return super().model_validate(obj)
 
 

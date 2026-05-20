@@ -9,6 +9,7 @@ from __future__ import annotations
 import logging
 import threading
 from dataclasses import dataclass, field
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +52,7 @@ LANG_MODULES: dict[str, tuple[str, str]] = {
 }
 
 
-def get_parser(lang_id: str):
+def get_parser(lang_id: str) -> Any:
     """Return a cached tree-sitter Parser for ``lang_id`` or None."""
     with _LOCK:
         if lang_id in _PARSER_CACHE:
@@ -98,18 +99,18 @@ def to_bytes(source: str | bytes) -> bytes:
     return source.encode("utf-8", errors="replace")
 
 
-def text_of(node, source: bytes) -> str:
+def text_of(node: Any, source: bytes) -> str:
     return source[node.start_byte : node.end_byte].decode("utf-8", errors="replace")
 
 
-def first_child(node, type_name: str):
+def first_child(node: Any, type_name: str) -> Any:
     for c in node.children:
         if c.type == type_name:
             return c
     return None
 
 
-def line_range(node) -> tuple[int, int]:
+def line_range(node: Any) -> tuple[int, int]:
     return node.start_point[0] + 1, node.end_point[0] + 1
 
 

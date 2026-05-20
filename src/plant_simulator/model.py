@@ -1,3 +1,5 @@
+from typing import cast
+
 import torch
 import torch.nn as nn
 
@@ -36,4 +38,4 @@ class PlantSimulatorLSTM(nn.Module):
 
         # Predict the next state
         out = self.fc(last_out)
-        return out
+        return cast(torch.Tensor, out)

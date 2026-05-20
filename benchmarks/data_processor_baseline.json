@@ -12,12 +12,7 @@
       "ui_latency_schema_scan_ms": "milliseconds (median of repeats, nrows=0 header read)"
     },
     "repeats": 3,
-    "scales_rows": [
-      100000,
-      500000,
-      1000000,
-      5000000
-    ],
+    "scales_rows": [100000, 500000, 1000000, 5000000],
     "num_signals": 8,
     "python_version": "3.14.3",
     "pandas_version": "2.3.3",

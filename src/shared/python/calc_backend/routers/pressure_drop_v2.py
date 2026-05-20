@@ -12,7 +12,7 @@ See issue #2411 - API Standardization Foundation.
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, cast
 
 from calc_backend.api import ErrorCode, StandardResponseBuilder
 from calc_backend.contracts.pressure_drop_v2 import (
@@ -141,7 +141,7 @@ def calculate_pressure_drop(
         density_kg_m3=result.density,
         viscosity_pa_s=result.viscosity,
     )
-    return builder.success(data=data)
+    return cast(dict[str, Any], builder.success(data=data))
 
 
 @router.post("/validate", response_model=dict[str, Any])
@@ -173,10 +173,13 @@ def validate_request(request: PressureDropRequestV2) -> dict[str, Any]:
     builder = StandardResponseBuilder()
 
     # If we got here, Pydantic validation passed
-    return builder.success(
-        data={
-            "valid": True,
-            "errors": [],
-            "summary": "Request is valid. Ready for calculation.",
-        }
+    return cast(
+        dict[str, Any],
+        builder.success(
+            data={
+                "valid": True,
+                "errors": [],
+                "summary": "Request is valid. Ready for calculation.",
+            }
+        ),
     )

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from ._ts_common import (
     ParsedSymbol,
     ParseResult,
@@ -13,7 +15,7 @@ from ._ts_common import (
 )
 
 
-def _walk(node, source: bytes, prefix: str, out: list[ParsedSymbol]) -> None:
+def _walk(node: Any, source: bytes, prefix: str, out: list[ParsedSymbol]) -> None:
     for child in node.children:
         t = child.type
         if t == "function_item":
@@ -75,7 +77,7 @@ def _walk(node, source: bytes, prefix: str, out: list[ParsedSymbol]) -> None:
                 _walk(body, source, sub_prefix, out)
 
 
-def _imports(root, source: bytes) -> list[str]:
+def _imports(root: Any, source: bytes) -> list[str]:
     out: list[str] = []
     for c in root.children:
         if c.type == "use_declaration":

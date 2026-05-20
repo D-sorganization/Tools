@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from ._ts_common import (
     ParsedSymbol,
     ParseResult,
@@ -13,7 +15,7 @@ from ._ts_common import (
 )
 
 
-def _walk(node, source: bytes, out: list[ParsedSymbol]) -> None:
+def _walk(node: Any, source: bytes, out: list[ParsedSymbol]) -> None:
     for c in node.children:
         if c.type in ("atx_heading", "setext_heading"):
             text_node = first_child(c, "inline") or first_child(c, "heading_content")

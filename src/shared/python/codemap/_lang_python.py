@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from ._ts_common import (
     ParsedSymbol,
     ParseResult,
@@ -13,7 +15,7 @@ from ._ts_common import (
 )
 
 
-def _docstring(body_node, source: bytes) -> str:
+def _docstring(body_node: Any, source: bytes) -> str:
     if body_node is None:
         return ""
     for c in body_node.children:
@@ -32,7 +34,7 @@ def _docstring(body_node, source: bytes) -> str:
     return ""
 
 
-def _signature(def_node, source: bytes) -> str:
+def _signature(def_node: Any, source: bytes) -> str:
     end = def_node.start_byte
     for c in def_node.children:
         if c.type == ":":
@@ -42,7 +44,7 @@ def _signature(def_node, source: bytes) -> str:
     return sig.splitlines()[0].strip()
 
 
-def _collect_calls(node, source: bytes, out: list[str]) -> None:
+def _collect_calls(node: Any, source: bytes, out: list[str]) -> None:
     if node.type == "call":
         func = first_child(node, "attribute") or first_child(node, "identifier")
         if func is None and node.children:
@@ -53,7 +55,7 @@ def _collect_calls(node, source: bytes, out: list[str]) -> None:
         _collect_calls(c, source, out)
 
 
-def _walk(node, source: bytes, prefix: str, out: list[ParsedSymbol]) -> None:
+def _walk(node: Any, source: bytes, prefix: str, out: list[ParsedSymbol]) -> None:
     for child in node.children:
         if child.type == "decorated_definition":
             inner = child.children[-1] if child.children else None
@@ -65,7 +67,7 @@ def _walk(node, source: bytes, prefix: str, out: list[ParsedSymbol]) -> None:
             _walk(child, source, prefix, out)
 
 
-def _walk_def(node, source: bytes, prefix: str, out: list[ParsedSymbol]) -> None:
+def _walk_def(node: Any, source: bytes, prefix: str, out: list[ParsedSymbol]) -> None:
     name_node = first_child(node, "identifier")
     if name_node is None:
         return
@@ -105,7 +107,7 @@ def _walk_def(node, source: bytes, prefix: str, out: list[ParsedSymbol]) -> None
             _walk(body, source, qualified, out)
 
 
-def _imports(root, source: bytes) -> list[str]:
+def _imports(root: Any, source: bytes) -> list[str]:
     out: list[str] = []
     for c in root.children:
         if c.type == "import_statement":
