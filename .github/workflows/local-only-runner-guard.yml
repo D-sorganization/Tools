@@ -51,6 +51,7 @@ jobs:
           ALLOWLIST_FILES = {
               "local-only-runner-guard.yml",
               "runner-health-alert.yml",
+              "maturin-ai-backend.yml",
           }
           # Job names allowlisted to run on hosted runners. Matches the two
           # human-facing names every repo's CI standard refers to.
