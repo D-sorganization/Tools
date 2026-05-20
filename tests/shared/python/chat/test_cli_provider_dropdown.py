@@ -7,7 +7,7 @@ Covers:
 - ChatDockWidget provider combo includes CLI providers when installed
 - CLI provider availability check integrates with TerminalSessionRuntime
 
-Tools issue: UpstreamDrift#5622
+Tools chat provider dropdown coverage.
 """
 
 from __future__ import annotations
@@ -161,6 +161,13 @@ class TestListAvailableCliProviders:
             providers = list_available_cli_providers()
         names = [p.display_name for p in providers]
         assert "Gemini CLI" in names
+
+    def test_github_cli_also_included_when_installed(self) -> None:
+        """GitHub CLI is also surfaced when available."""
+        with patch("shutil.which", side_effect=lambda x: f"/usr/bin/{x}"):
+            providers = list_available_cli_providers()
+        names = [p.display_name for p in providers]
+        assert "GitHub CLI" in names
 
     def test_no_duplicates(self) -> None:
         with patch("shutil.which", side_effect=lambda x: f"/usr/bin/{x}"):

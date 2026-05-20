@@ -3,7 +3,7 @@
 This module exposes :func:`list_available_cli_providers`, which probes the
 local ``PATH`` via :func:`shutil.which` and returns only the CLI providers
 whose binary is actually installed.  The result is intended to populate the
-Sidekick chat header provider dropdown (Tools issue UpstreamDrift#5622).
+Sidekick chat header provider dropdown owned by Tools.
 
 The probe is intentionally lightweight — it does *not* run the binary or
 validate authentication.  Use the existing ``terminal_providers`` probe
@@ -97,8 +97,10 @@ def list_available_cli_providers() -> list[CliProviderEntry]:
             list_available_cli_providers,
         )
 
-        for entry in list_available_cli_providers():
-            print(entry.display_name, "->", entry.binary_path)
+        rows = [
+            f"{entry.display_name} -> {entry.binary_path}"
+            for entry in list_available_cli_providers()
+        ]
     """
     available: list[CliProviderEntry] = []
     for provider_id, display_name, executable in _CLI_AGENT_DESCRIPTORS:

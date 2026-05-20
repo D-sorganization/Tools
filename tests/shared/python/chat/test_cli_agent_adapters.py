@@ -3,7 +3,7 @@
 Covers the TerminalSessionRuntime integration for CLI provider selection
 in the ChatDockWidget, plus DbC negative cases for empty messages.
 
-Tools issue: UpstreamDrift#5622
+Tools chat provider dropdown coverage.
 """
 
 from __future__ import annotations
@@ -190,9 +190,15 @@ class TestDefaultRegistryCliProviders:
         assert provider.display_name == "Cline CLI"
         assert provider.executable == "cline"
 
+    def test_github_cli_provider_in_registry(self) -> None:
+        registry = build_default_terminal_provider_registry()
+        provider = registry.get_provider("github-cli")
+        assert provider.display_name == "GitHub CLI"
+        assert provider.executable == "gh"
+
     def test_all_cli_providers_support_bash_shell(self) -> None:
         registry = build_default_terminal_provider_registry()
-        for pid in ("claude-code", "codex", "cline-cli"):
+        for pid in ("claude-code", "codex", "cline-cli", "github-cli"):
             provider = registry.get_provider(pid)
             assert "bash" in provider.supported_shells, f"{pid} should support bash"
 
@@ -203,6 +209,7 @@ class TestDefaultRegistryCliProviders:
         assert "claude-code" in ids
         assert "codex" in ids
         assert "cline-cli" in ids
+        assert "github-cli" in ids
 
 
 # ─────────────────────────────────────────────────────────────────────────────
