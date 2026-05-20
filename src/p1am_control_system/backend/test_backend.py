@@ -1,10 +1,13 @@
 import csv
 import io
+import os
 from collections.abc import Generator
 from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+
+os.environ["PLC_DRIVER"] = "modbus"
 from fastapi.testclient import TestClient
 from main import app, get_session, modbus_manager
 from models import InterlockConfig, PIDConfig, RoutingConfig, TagLog
@@ -44,7 +47,12 @@ def sample_routing_config() -> RoutingConfig:
         PIDConfig(pv_tag_id=1, cv_tag_id=2, setpoint=50.0, kp=1.0, ki=0.5, kd=0.1)
         for _ in range(4)
     ]
-    interlocks = [InterlockConfig(high_limit=95.0, low_limit=10.0) for _ in range(32)]
+    interlocks = [
+        InterlockConfig(
+            hihi_limit=105.0, high_limit=95.0, low_limit=10.0, lolo_limit=5.0
+        )
+        for _ in range(32)
+    ]
     return RoutingConfig(
         input_routing=[0, 1, 2, 3, 4, 5],
         output_routing=[10, 11],
@@ -56,7 +64,7 @@ def sample_routing_config() -> RoutingConfig:
 @pytest.mark.asyncio
 async def test_get_routing_disconnected() -> None:
     """Ensure GET /api/routing falls back to simulated config when the PLC client is disconnected."""
-    with patch.object(modbus_manager, "connected", False):
+    with patch.object(modbus_manager, "_connected", False):
         response = client.get("/api/routing")
         assert response.status_code == 200
         data = response.json()
@@ -91,11 +99,13 @@ async def test_get_routing_success() -> None:
     mock_pid.isError.return_value = False
     mock_pid.registers = dummy_pid_regs
 
-    # Create dummy registers for interlocks (32 tags * 4 registers = 128 registers)
+    # Create dummy registers for interlocks (32 tags * 8 registers = 256 registers)
     dummy_interlock_regs = []
     for _ in range(32):
-        dummy_interlock_regs.extend([0, 16256])  # high limit = 100.0 (dummy)
-        dummy_interlock_regs.extend([0, 16256])  # low limit = 0.0 (dummy)
+        dummy_interlock_regs.extend([0, 16256])  # lolo limit
+        dummy_interlock_regs.extend([0, 16256])  # low limit
+        dummy_interlock_regs.extend([0, 16256])  # high limit
+        dummy_interlock_regs.extend([0, 16256])  # hihi limit
 
     mock_interlock = MagicMock()
     mock_interlock.isError.return_value = False
@@ -111,7 +121,7 @@ async def test_get_routing_success() -> None:
     ]
 
     with (
-        patch.object(modbus_manager, "connected", True),
+        patch.object(modbus_manager, "_connected", True),
         patch.object(modbus_manager, "client", MagicMock()) as mock_client,
     ):
         mock_client.read_holding_registers = async_read_mock
@@ -134,7 +144,7 @@ async def test_update_routing_success(
     mock_save_flash = AsyncMock(return_value=True)
 
     with (
-        patch.object(modbus_manager, "connected", True),
+        patch.object(modbus_manager, "_connected", True),
         patch.object(modbus_manager, "write_routing", mock_write_routing),
         patch.object(modbus_manager, "save_to_flash", mock_save_flash),
     ):
@@ -152,7 +162,7 @@ async def test_estop_trigger() -> None:
     mock_estop = AsyncMock(return_value=True)
 
     with (
-        patch.object(modbus_manager, "connected", True),
+        patch.object(modbus_manager, "_connected", True),
         patch.object(modbus_manager, "trigger_estop", mock_estop),
     ):
         response = client.post("/api/estop")
@@ -232,7 +242,7 @@ async def test_write_tag_success() -> None:
     mock_write_tag = AsyncMock(return_value=True)
 
     with (
-        patch.object(modbus_manager, "connected", True),
+        patch.object(modbus_manager, "_connected", True),
         patch.object(modbus_manager, "write_tag", mock_write_tag),
     ):
         response = client.post("/api/tags/5", json={"value": 42.5})
@@ -250,7 +260,7 @@ def test_write_tag_invalid_id() -> None:
 
 def test_write_tag_disconnected() -> None:
     """Verify manual override writes to simulated tags if the PLC is offline."""
-    with patch.object(modbus_manager, "connected", False):
+    with patch.object(modbus_manager, "_connected", False):
         response = client.post("/api/tags/3", json={"value": 12.0})
         assert response.status_code == 200
         assert "forced simulated tag" in response.json()["message"]

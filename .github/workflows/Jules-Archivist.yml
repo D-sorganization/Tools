@@ -75,7 +75,7 @@ jobs:
     # Grant write only at this job level — branch deletion requires contents: write.
     # pick-runner needs no write access.
     permissions:
-      contents: write  # delete merged jules/* branches
+      contents: write # delete merged jules/* branches
     steps:
       - name: Checkout
         uses: actions/checkout@v6

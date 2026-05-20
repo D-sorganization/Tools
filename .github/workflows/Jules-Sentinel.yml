@@ -84,9 +84,9 @@ jobs:
     # Grant write only at this job level.
     # Note: pull-requests: write intentionally omitted — Sentinel is read-only audit.
     permissions:
-      contents: write          # commit .jules/sentinel.md journal to main
-      issues: write            # open tracking issues for HIGH/MEDIUM findings
-      security-events: write   # upload SARIF to GitHub code-scanning
+      contents: write # commit .jules/sentinel.md journal to main
+      issues: write # open tracking issues for HIGH/MEDIUM findings
+      security-events: write # upload SARIF to GitHub code-scanning
     steps:
       - uses: actions/checkout@v6
         with:

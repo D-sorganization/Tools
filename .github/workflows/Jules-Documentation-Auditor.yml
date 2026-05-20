@@ -81,9 +81,9 @@ jobs:
     # Grant write only at this job level — doc branch creation, PR opening, and
     # issue creation happen here. pick-runner needs no write access.
     permissions:
-      contents: write      # create docs/audit-* branch and push docstring additions
+      contents: write # create docs/audit-* branch and push docstring additions
       pull-requests: write # open PR for documentation improvements
-      issues: write        # create issues for documentation gaps
+      issues: write # create issues for documentation gaps
 
     steps:
       - name: Checkout Code

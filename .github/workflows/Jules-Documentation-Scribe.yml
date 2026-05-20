@@ -78,7 +78,7 @@ jobs:
     # Grant write only at this job level — branch creation, Jules dispatch, and
     # PR creation all happen here. pick-runner needs no write access.
     permissions:
-      contents: write      # create docs/update-* branch and push Jules changes
+      contents: write # create docs/update-* branch and push Jules changes
       pull-requests: write # open the docstring-update PR
 
     steps:

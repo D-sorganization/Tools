@@ -39,7 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          fetch-depth: 0  # Full history required to walk commits since last tag
+          fetch-depth: 0 # Full history required to walk commits since last tag
 
       - name: Read current version
         id: current

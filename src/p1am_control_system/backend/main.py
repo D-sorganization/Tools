@@ -3,7 +3,6 @@ import csv
 import io
 import logging
 import math
-import os
 import time
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -22,30 +21,34 @@ from fastapi import (
 )
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, StreamingResponse
-from modbus_client import AsyncModbusManager, registers_to_float
 from models import (
     AlicatGasPayload,
     AlicatMFCState,
     AlicatSetpointPayload,
+    EventLog,
     InterlockConfig,
     PIDConfig,
     PIDTuningStepPayload,
     RoutingConfig,
     TagLog,
 )
+from plc_factory import PLCFactory
 from pydantic import BaseModel
 from pydantic import Field as PydanticField
+from simulator_client import SimulatedPLCClient
 from sqlmodel import Session, col, select
+from tools_core import scada
+
+AlarmEngine = scada.AlarmEngine
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("dcs_backend.main")
 
-PLC_HOST = os.getenv("PLC_IP", "192.168.1.100")
-PLC_PORT = int(os.getenv("PLC_PORT", "502"))
-
-# Instantiate global Modbus manager
-modbus_manager = AsyncModbusManager(host=PLC_HOST, port=PLC_PORT)
+# Instantiate active PLC client and backup simulator for offline fallback
+plc_client = PLCFactory.create_client()
+modbus_manager = plc_client  # Compatibility alias
+backup_simulator = SimulatedPLCClient()
 
 
 # WebSocket Connection Manager
@@ -71,7 +74,6 @@ class ConnectionManager:
                 await connection.send_json(message)
             except Exception as e:
                 logger.warning(f"Error broadcasting to WebSocket client: {e}")
-                # Stale connection cleanup is handled on disconnect/exceptions
 
 
 ws_manager = ConnectionManager()
@@ -107,9 +109,7 @@ alicat_manager.add_device(
     )
 )
 
-
-# Simulated PLC and Process Dynamics Configuration (DbC and LOD principles applied)
-simulated_tags: list[float] = [0.0] * 32
+latest_tags: list[float] = [0.0] * 32
 active_config: RoutingConfig = RoutingConfig(
     input_routing=[0, 1, 2, 3, 4, 5],
     output_routing=[10, 11],
@@ -119,39 +119,56 @@ active_config: RoutingConfig = RoutingConfig(
         PIDConfig(pv_tag_id=5, cv_tag_id=6, setpoint=40.0, kp=2.0, ki=0.8, kd=0.2),
         PIDConfig(pv_tag_id=7, cv_tag_id=8, setpoint=60.0, kp=0.5, ki=0.1, kd=0.01),
     ],
-    interlocks=[InterlockConfig(high_limit=95.0, low_limit=5.0) for _ in range(32)],
+    interlocks=[
+        InterlockConfig(
+            lolo_limit=0.0,
+            low_limit=5.0,
+            high_limit=95.0,
+            hihi_limit=100.0,
+        )
+        for _ in range(32)
+    ],
 )
 
-# Plant simulation parameters (FOPDT: First Order Plus Dead Time)
-fopdt_gain: list[float] = [1.5, 0.8, 1.2, 2.0]
-fopdt_tau: list[float] = [5.0, 3.0, 7.0, 4.0]
-fopdt_delay: list[float] = [1.2, 0.6, 1.8, 1.0]
 
-# History buffer of CVs for dead time simulation (at 10Hz, 1 step = 100ms)
-cv_history: dict[int, list[float]] = {i: [0.0] * 40 for i in range(4)}
+def build_alarm_engine(config: RoutingConfig) -> AlarmEngine:
+    """Builds the tools-core Rust AlarmEngine from the active RoutingConfig."""
+    limits_dict = {}
+    for i, interlock in enumerate(config.interlocks):
+        limits_dict[str(i)] = {
+            "lolo": interlock.lolo_limit,
+            "low": interlock.low_limit,
+            "high": interlock.high_limit,
+            "hihi": interlock.hihi_limit,
+        }
+    return AlarmEngine(limits_dict)
 
-# PID Integrals and prev errors for simulated closed-loop control
-pid_integrals: list[float] = [0.0] * 4
-pid_prev_errors: list[float] = [0.0] * 4
+
+# Global Alarm Engine
+alarm_engine = build_alarm_engine(active_config)
 
 # PID Tuning sessions state
 tuning_sessions: dict[int, dict[str, Any]] = {}
 
+# Bind references
+plc_client.tuning_sessions = tuning_sessions
+backup_simulator.tuning_sessions = tuning_sessions
+plc_client.active_config = active_config
+backup_simulator.active_config = active_config
+
 
 async def modbus_connect_background() -> None:
-    """Periodically attempts to connect to Modbus PLC in background without blocking polling loop."""
-    logger.info("Starting background Modbus connection task...")
+    """Periodically attempts to connect to PLC in background without blocking polling loop."""
+    logger.info("Starting background PLC connection task...")
     while not shutdown_event.is_set():
-        if not modbus_manager.connected:
+        if not plc_client.connected:
             try:
                 # Do a non-blocking attempt to connect
-                client = modbus_manager._get_client()
-                connected = await client.connect()
+                connected = await plc_client.connect()
                 if connected:
-                    modbus_manager.connected = True
-                    logger.info("Connected to Modbus PLC successfully in background.")
+                    logger.info("Connected to PLC successfully in background.")
             except Exception as e:
-                logger.debug(f"Background Modbus connect attempt failed: {e}")
+                logger.debug(f"Background PLC connect attempt failed: {e}")
         await asyncio.sleep(5.0)
 
 
@@ -160,74 +177,21 @@ async def poll_plc_loop() -> None:
 
     Saves data to DB and streams updates to WS.
     """
-    import random
-
     logger.info("Starting background PLC polling loop...")
     while not shutdown_event.is_set():
         try:
             tags = None
-            if modbus_manager.connected:
-                tags = await modbus_manager.read_tags()
+            if plc_client.connected:
+                tags = await plc_client.read_tags()
 
             if tags is None:
-                # Modbus offline: run simulation step
-                for i in range(4):
-                    pid_cfg = active_config.pids[i]
-                    pv_id = pid_cfg.pv_tag_id
-                    cv_id = pid_cfg.cv_tag_id
+                # Fallback to simulation step
+                tags = await backup_simulator.read_tags()
 
-                    # Check if loop is in active tuning mode
-                    in_tuning = i in tuning_sessions
-
-                    if not in_tuning:
-                        # Closed-loop PID control simulation
-                        err = pid_cfg.setpoint - simulated_tags[pv_id]
-                        pid_integrals[i] = max(
-                            -100.0, min(100.0, pid_integrals[i] + err * 0.1)
-                        )
-                        deriv = (err - pid_prev_errors[i]) / 0.1
-                        pid_prev_errors[i] = err
-
-                        cv_val = (
-                            pid_cfg.kp * err
-                            + pid_cfg.ki * pid_integrals[i]
-                            + pid_cfg.kd * deriv
-                        )
-                        cv_val = max(0.0, min(100.0, cv_val))
-                        simulated_tags[cv_id] = cv_val
-
-                    # Update FOPDT plant dynamics
-                    cv_history[i].append(simulated_tags[cv_id])
-                    if len(cv_history[i]) > 40:
-                        cv_history[i].pop(0)
-
-                    delay_steps = int(fopdt_delay[i] / 0.1)
-                    idx = max(0, len(cv_history[i]) - 1 - delay_steps)
-                    delayed_cv = cv_history[i][idx]
-
-                    noise = random.uniform(-0.05, 0.05)
-                    y_prev = simulated_tags[pv_id]
-                    dy = (fopdt_gain[i] * delayed_cv - y_prev) * (0.1 / fopdt_tau[i])
-                    simulated_tags[pv_id] = max(0.0, y_prev + dy + noise)
-
-                    # Record tuning session history
-                    if in_tuning:
-                        session = tuning_sessions[i]
-                        time_offset = time.time() - session["start_time"]
-                        session["history"].append(
-                            (time_offset, simulated_tags[cv_id], simulated_tags[pv_id])
-                        )
-
-                # Set E-stop status and CPU Temp/Cycle Time simulation
-                simulated_tags[0] = 1.0  # Normal safety state
-                simulated_tags[9] = round(
-                    35.5 + random.uniform(-0.2, 0.2), 1
-                )  # CPU Temperature
-                simulated_tags[10] = round(
-                    0.12 + random.uniform(-0.01, 0.01), 3
-                )  # Cycle time
-
-                tags = simulated_tags
+            # Update latest tags
+            if tags is not None:
+                for idx, val in enumerate(tags):
+                    latest_tags[idx] = val
 
             # Pack WebSocket message payload containing tags and alicats data
             tag_list = tags if tags is not None else []
@@ -235,18 +199,38 @@ async def poll_plc_loop() -> None:
             await ws_manager.broadcast(payload)
 
             if tags is not None:
-                # Log tags to SQLite database.
-                db_session = next(get_session())
+                db_session = None
                 try:
+                    db_session = next(get_session())
+                    # Log tags
                     for tag_id, value in enumerate(tags):
                         log_entry = TagLog(tag_id=tag_id, value=value)
                         db_session.add(log_entry)
+
+                        # Process Alarms
+                        events = alarm_engine.update_tag(str(tag_id), value)
+                        for ev in events:
+                            cur_state = str(ev["current_state"]).split(".")[-1]
+                            sev = 0
+                            if cur_state in ["Low", "High"]:
+                                sev = 1
+                            elif cur_state in ["LoLo", "HiHi"]:
+                                sev = 2
+                            event_log = EventLog(
+                                event_type="ALARM",
+                                description=f"Tag {tag_id} crossed limit. State: {cur_state} Value: {value}",
+                                severity=sev,
+                            )
+                            db_session.add(event_log)
+
                     db_session.commit()
                 except Exception as db_err:
-                    db_session.rollback()
-                    logger.error(f"Error logging tag states to database: {db_err}")
+                    if db_session:
+                        db_session.rollback()
+                    logger.error(f"Error logging tags/alarms: {db_err}")
                 finally:
-                    db_session.close()
+                    if db_session:
+                        db_session.close()
 
         except Exception as loop_err:
             logger.error(f"Unexpected error in PLC polling loop: {loop_err}")
@@ -259,7 +243,7 @@ async def poll_plc_loop() -> None:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    # Startup: initialize database and start Modbus polling thread & Alicat manager
+    # Startup: initialize database and start PLC polling thread & Alicat manager
     init_db()
     shutdown_event.clear()
     alicat_manager.start()
@@ -271,7 +255,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     await connect_task
     await polling_task
     await alicat_manager.stop()
-    await modbus_manager.disconnect()
+    await plc_client.disconnect()
 
 
 app = FastAPI(
@@ -373,107 +357,19 @@ async def root_info() -> str:
 
 @app.get("/api/routing", response_model=RoutingConfig)
 async def get_routing() -> RoutingConfig:
-    """Read the active routing and PID parameters directly from PLC registers.
+    """Read the active routing and PID parameters from the PLC.
 
     Returns:
         RoutingConfig: The current routing parameters from the PLC.
     """
-    if not modbus_manager.connected:
-        return active_config
-
-    # Acquire lock for atomic read of routing block
-    async with modbus_manager.lock:
-        try:
-            # 1. Read input routing (Registers 100-105)
-            input_resp = await modbus_manager._get_client().read_holding_registers(
-                address=100, count=6
-            )
-            if input_resp.isError():
-                raise HTTPException(
-                    status_code=500, detail="Failed to read input routing."
-                )
-
-            # 2. Read output routing (Registers 110-111)
-            output_resp = await modbus_manager._get_client().read_holding_registers(
-                address=110, count=2
-            )
-            if output_resp.isError():
-                raise HTTPException(
-                    status_code=500, detail="Failed to read output routing."
-                )
-
-            # 3. Read PID Config (Registers 200-239)
-            pid_resp = await modbus_manager._get_client().read_holding_registers(
-                address=200, count=40
-            )
-            if pid_resp.isError():
-                raise HTTPException(
-                    status_code=500, detail="Failed to read PID configurations."
-                )
-
-            pids = []
-            for i in range(4):
-                base = i * 10
-                pv = pid_resp.registers[base]
-                cv = pid_resp.registers[base + 1]
-                sp = registers_to_float(
-                    pid_resp.registers[base + 2], pid_resp.registers[base + 3]
-                )
-                kp = registers_to_float(
-                    pid_resp.registers[base + 4], pid_resp.registers[base + 5]
-                )
-                ki = registers_to_float(
-                    pid_resp.registers[base + 6], pid_resp.registers[base + 7]
-                )
-                kd = registers_to_float(
-                    pid_resp.registers[base + 8], pid_resp.registers[base + 9]
-                )
-                pids.append(
-                    PIDConfig(
-                        pv_tag_id=pv,
-                        cv_tag_id=cv,
-                        setpoint=sp,
-                        kp=kp,
-                        ki=ki,
-                        kd=kd,
-                    )
-                )
-
-            # 4. Read Interlocks (Registers 300-427)
-            interlock_resp = await modbus_manager._get_client().read_holding_registers(
-                address=300, count=128
-            )
-            if interlock_resp.isError():
-                raise HTTPException(
-                    status_code=500, detail="Failed to read interlocks."
-                )
-
-            interlocks = []
-            for i in range(32):
-                base = i * 4
-                high = registers_to_float(
-                    interlock_resp.registers[base],
-                    interlock_resp.registers[base + 1],
-                )
-                low = registers_to_float(
-                    interlock_resp.registers[base + 2],
-                    interlock_resp.registers[base + 3],
-                )
-                interlocks.append(InterlockConfig(high_limit=high, low_limit=low))
-
-            return RoutingConfig(
-                input_routing=input_resp.registers,
-                output_routing=output_resp.registers,
-                pids=pids,
-                interlocks=interlocks,
-            )
-
-        except Exception as e:
-            logger.error(f"Error fetching routing matrix: {e}")
-            raise HTTPException(
-                status_code=500,
-                detail=f"Error reading routing configuration: {str(e)}",
-            ) from e
+    config = await plc_client.read_routing()
+    if config is None:
+        config = await backup_simulator.read_routing()
+    if config is None:
+        raise HTTPException(
+            status_code=500, detail="Failed to read routing configuration."
+        )
+    return config
 
 
 @app.post("/api/routing")
@@ -488,23 +384,28 @@ async def update_routing(config: RoutingConfig) -> dict[str, str]:
     """
     global active_config
     active_config = config
+    plc_client.active_config = config
+    backup_simulator.active_config = config
 
-    if not modbus_manager.connected:
+    if not plc_client.connected:
+        await backup_simulator.write_routing(config)
         return {
             "status": "success",
             "message": "Configuration successfully applied to simulated PLC.",
         }
 
-    # 1. Write the new configurations to Modbus holding registers
-    success = await modbus_manager.write_routing(config)
+    success = await plc_client.write_routing(config)
+    await backup_simulator.write_routing(config)
+
     if not success:
         raise HTTPException(
             status_code=500,
             detail="Failed to write routing parameters to PLC registers.",
         )
 
-    # 2. Toggle 'Save to Flash' Modbus Coil (Coil 0)
-    save_success = await modbus_manager.save_to_flash()
+    save_success = await plc_client.save_to_flash()
+    await backup_simulator.save_to_flash()
+
     if not save_success:
         raise HTTPException(
             status_code=500,
@@ -522,15 +423,17 @@ async def update_routing(config: RoutingConfig) -> dict[str, str]:
 @app.post("/api/estop")
 async def trigger_estop() -> dict[str, str]:
     """Immediate safety shutdown command, zeroing all tag variables."""
-    global simulated_tags
-    if not modbus_manager.connected:
-        simulated_tags = [0.0] * 32
+    global latest_tags
+    if not plc_client.connected:
+        await backup_simulator.trigger_estop()
+        latest_tags = [0.0] * 32
         return {
             "status": "success",
             "message": "Simulated E-stop triggered. All simulated tag values zeroed.",
         }
 
-    success = await modbus_manager.trigger_estop()
+    success = await plc_client.trigger_estop()
+    await backup_simulator.trigger_estop()
     if not success:
         raise HTTPException(
             status_code=500,
@@ -608,21 +511,24 @@ async def write_tag_value(tag_id: int, payload: TagWritePayload) -> dict[str, st
             detail="Tag ID must be between 0 and 31.",
         )
 
-    global simulated_tags
-    if not modbus_manager.connected:
-        simulated_tags[tag_id] = payload.value
+    global latest_tags
+    if not plc_client.connected:
+        await backup_simulator.write_tag(tag_id, payload.value)
+        latest_tags[tag_id] = payload.value
         return {
             "status": "success",
             "message": f"Successfully forced simulated tag {tag_id} to {payload.value}.",
         }
 
-    success = await modbus_manager.write_tag(tag_id, payload.value)
+    success = await plc_client.write_tag(tag_id, payload.value)
+    await backup_simulator.write_tag(tag_id, payload.value)
     if not success:
         raise HTTPException(
             status_code=500,
             detail=f"Failed to write value {payload.value} to tag {tag_id}.",
         )
 
+    latest_tags[tag_id] = payload.value
     return {
         "status": "success",
         "message": f"Successfully wrote {payload.value} to tag {tag_id}.",
@@ -639,8 +545,8 @@ async def start_pid_tuning(pid_index: int) -> dict[str, str]:
 
     pv_id = active_config.pids[pid_index].pv_tag_id
     cv_id = active_config.pids[pid_index].cv_tag_id
-    current_pv = simulated_tags[pv_id]
-    current_cv = simulated_tags[cv_id]
+    current_pv = latest_tags[pv_id]
+    current_cv = latest_tags[cv_id]
 
     tuning_sessions[pid_index] = {
         "start_time": time.time(),
@@ -674,10 +580,13 @@ async def step_pid_tuning(
 
     session["step_triggered"] = True
     session["step_time"] = time.time() - session["start_time"]
-    session["initial_cv"] = simulated_tags[cv_id]
+    session["initial_cv"] = latest_tags[cv_id]
     session["final_cv"] = payload.step_value
 
-    simulated_tags[cv_id] = payload.step_value
+    await plc_client.write_tag(cv_id, payload.step_value)
+    await backup_simulator.write_tag(cv_id, payload.step_value)
+    latest_tags[cv_id] = payload.step_value
+
     logger.info(
         f"Tuning step triggered on loop {pid_index}: CV set to {payload.step_value}"
     )
@@ -975,3 +884,59 @@ async def stream_websocket(websocket: WebSocket) -> None:
     except Exception as e:
         logger.error(f"WebSocket connection exception: {e}")
         ws_manager.disconnect(websocket)
+
+
+@app.get("/api/alarms/active")
+async def get_active_alarms() -> list[dict[str, Any]]:
+    """Retrieve all active, unacknowledged alarms."""
+    active = []
+    for tag_id, state in alarm_engine.tag_states.items():
+        state_str = str(state).split(".")[-1]
+        if state_str != "Normal" and not alarm_engine.tag_acknowledged.get(
+            tag_id, False
+        ):
+            active.append(
+                {
+                    "tag_id": tag_id,
+                    "state": state_str,
+                    "value": alarm_engine.tag_values.get(tag_id, 0.0),
+                }
+            )
+    return active
+
+
+@app.post("/api/alarms/{tag_id}/acknowledge")
+async def acknowledge_alarm(tag_id: str) -> dict[str, str]:
+    """Acknowledge an active alarm."""
+    try:
+        success = alarm_engine.acknowledge_alarm(tag_id, "Operator")
+
+        # Log to db
+        db_session = next(get_session())
+        log_entry = EventLog(
+            event_type="ACKNOWLEDGE",
+            description=f"Alarm on Tag {tag_id} acknowledged by Operator.",
+            severity=0,
+        )
+        db_session.add(log_entry)
+        db_session.commit()
+        db_session.close()
+
+        if success:
+            return {
+                "status": "success",
+                "message": f"Alarm on tag {tag_id} acknowledged.",
+            }
+        return {"status": "ignored", "message": "No unacknowledged alarm for this tag."}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
+
+
+@app.get("/api/events")
+async def get_events(
+    limit: int = 100,
+    db: Session = Depends(get_session),  # noqa: B008
+) -> list[EventLog]:
+    """Retrieve event history."""
+    stmt = select(EventLog).order_by(col(EventLog.timestamp).desc()).limit(limit)
+    return list(db.exec(stmt).all())

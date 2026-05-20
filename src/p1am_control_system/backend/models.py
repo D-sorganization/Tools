@@ -17,6 +17,19 @@ class TagLog(SQLModel, table=True):
     )
 
 
+class EventLog(SQLModel, table=True):
+    """SQLModel representing an event or alarm log in the database."""
+
+    id: int | None = Field(default=None, primary_key=True)
+    event_type: str = Field(index=True)  # ALARM, SYSTEM, ACKNOWLEDGE
+    description: str
+    severity: int = Field(default=0)  # 0: Normal, 1: High/Low, 2: HiHi/LoLo
+    timestamp: datetime = Field(
+        default_factory=datetime.utcnow,
+        index=True,
+    )
+
+
 class PIDConfig(BaseModel):
     """Pydantic model validating a PID loop configuration."""
 
@@ -29,10 +42,12 @@ class PIDConfig(BaseModel):
 
 
 class InterlockConfig(BaseModel):
-    """Pydantic model validating high/low limits for a tag."""
+    """Pydantic model validating 4-tier limits for a tag."""
 
-    high_limit: float
+    lolo_limit: float
     low_limit: float
+    high_limit: float
+    hihi_limit: float
 
 
 class RoutingConfig(BaseModel):

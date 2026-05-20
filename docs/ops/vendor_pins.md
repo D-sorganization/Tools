@@ -6,19 +6,19 @@ This document describes how shared Tools code is pinned in consumer repositories
 ## Why vendor pinning exists
 
 The Tools repository exports reusable Python modules (e.g. shared theme engine,
-plot theme, shared contracts) that are consumed by downstream repos.  Rather
+plot theme, shared contracts) that are consumed by downstream repos. Rather
 than publishing a PyPI package for every change, the downstream repos vendor a
-snapshot at a fixed git SHA.  This gives consumers:
+snapshot at a fixed git SHA. This gives consumers:
 
 - A reproducible build that does not break when Tools main advances
 - An explicit paper trail of when an upgrade happened and why
 
 ## Pin locations
 
-| Consumer | Pin location |
-|----------|-------------|
-| UpstreamDrift | `src/shared/python/` (git subtree / submodule SHA) |
-| Gasification_Model | `vendor/ud-tools/` (git subtree / submodule SHA) |
+| Consumer           | Pin location                                       |
+| ------------------ | -------------------------------------------------- |
+| UpstreamDrift      | `src/shared/python/` (git subtree / submodule SHA) |
+| Gasification_Model | `vendor/ud-tools/` (git subtree / submodule SHA)   |
 
 ## Bump cadence
 
@@ -26,12 +26,12 @@ Bumps are triggered **per release tag** — every time a new git tag is pushed t
 the Tools repository a bump PR is opened in each consumer repo automatically
 (see Automation below).
 
-There is no time-based schedule (weekly, monthly, etc.).  Tags should be pushed
+There is no time-based schedule (weekly, monthly, etc.). Tags should be pushed
 deliberately, after integration testing confirms the shared code is stable.
 
 ## Automation
 
-`scripts/bump_vendor_pin.py` is the authoritative helper script.  It:
+`scripts/bump_vendor_pin.py` is the authoritative helper script. It:
 
 1. Resolves the latest (or a given) Tools release tag.
 2. Resolves the commit SHA for that tag.
@@ -56,9 +56,9 @@ python scripts/bump_vendor_pin.py --tag v1.2.3 --consumers D-sorganization/Upstr
 ### CI/workflow integration
 
 A GitHub Actions workflow that calls this script on every new tag push is
-described in the acceptance criteria for issue #2948.  The workflow file
+described in the acceptance criteria for issue #2948. The workflow file
 **must not** be added without explicit user permission (per repository memory
-rules).  When that permission is granted, the workflow should:
+rules). When that permission is granted, the workflow should:
 
 1. Trigger on `push` events filtered to `tags: ['v*.*.*']`
 2. Call `python scripts/bump_vendor_pin.py --tag $GITHUB_REF_NAME`
@@ -66,13 +66,13 @@ rules).  When that permission is granted, the workflow should:
 
 ## PR lifecycle in consumer repos
 
-| State | Meaning | Action |
-|-------|---------|--------|
-| Open, CI green | Bump is safe | Reviewer merges |
-| Open, CI red | Smoke tests fail in consumer | Leave open; add a comment explaining the blocker |
-| Closed (not merged) | Rejected intentionally | Comment must explain why |
+| State               | Meaning                      | Action                                           |
+| ------------------- | ---------------------------- | ------------------------------------------------ |
+| Open, CI green      | Bump is safe                 | Reviewer merges                                  |
+| Open, CI red        | Smoke tests fail in consumer | Leave open; add a comment explaining the blocker |
+| Closed (not merged) | Rejected intentionally       | Comment must explain why                         |
 
-**Do NOT auto-close bump PRs when smoke tests fail.**  The PR acts as a
+**Do NOT auto-close bump PRs when smoke tests fail.** The PR acts as a
 visible blocker until the compatibility issue is resolved.
 
 ## Manual bump procedure
@@ -94,7 +94,7 @@ git subtree pull --prefix=vendor/ud-tools \
 ## Verification
 
 After a bump PR merges, verify the consumer's smoke-test suite still passes
-end-to-end.  If new failures appear, file an issue against Tools or the
+end-to-end. If new failures appear, file an issue against Tools or the
 consumer repo and link it to the bump PR.
 
 ## Related references

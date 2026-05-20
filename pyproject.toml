@@ -40,6 +40,10 @@ all = [
     "PyQt6>=6.5.0",
     "sympy>=1.12",
 ]
+# AI and simulation models
+ai = [
+    "torch>=2.0.0",
+]
 # URDF/Model generation only
 urdf = [
     "trimesh>=4.0.0",

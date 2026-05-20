@@ -65,9 +65,22 @@ export interface AlicatMFCState {
   pressure: number;
   temperature: number;
   max_flow: number;
-  connection_type: string;
   port_or_ip: string | null;
   connection_state: string;
+}
+
+export interface EventLogEntry {
+  id: number;
+  event_type: string;
+  description: string;
+  severity: number;
+  timestamp: string;
+}
+
+export interface ActiveAlarm {
+  tag_id: string;
+  state: string;
+  value: number;
 }
 
 type InspectorState =
@@ -90,6 +103,11 @@ export const App: React.FC = () => {
     type: "success" | "error" | "info";
   } | null>(null);
 
+  // Alarms and Events State
+  const [eventsHistory, setEventsHistory] = useState<EventLogEntry[]>([]);
+  const [activeAlarms, setActiveAlarms] = useState<ActiveAlarm[]>([]);
+  const [showAlarmsDropdown, setShowAlarmsDropdown] = useState<boolean>(false);
+
   // Tab Navigation and Visibility State
   const [activeTab, setActiveTab] = useState<string>("trends");
   const [visibleTabs, setVisibleTabs] = useState<{
@@ -97,11 +115,13 @@ export const App: React.FC = () => {
     controllers: boolean;
     routing: boolean;
     tuning: boolean;
+    events: boolean;
   }>({
     trends: true,
     controllers: true,
     routing: true,
     tuning: true,
+    events: true,
   });
 
   // PID Tuning State
@@ -330,7 +350,36 @@ export const App: React.FC = () => {
         setAlicats(data);
       }
     } catch (err) {
-      console.error("Error fetching Alicat controllers state:", err);
+      console.error(err);
+    }
+  };
+
+  const fetchAlarmsAndEvents = async () => {
+    try {
+      const [alarmsRes, eventsRes] = await Promise.all([
+        fetch("/api/alarms/active"),
+        fetch("/api/events?limit=50")
+      ]);
+      if (alarmsRes.ok) {
+        setActiveAlarms(await alarmsRes.json());
+      }
+      if (eventsRes.ok) {
+        setEventsHistory(await eventsRes.json());
+      }
+    } catch (err) {
+      console.error("Failed to fetch alarms and events", err);
+    }
+  };
+
+  const handleAcknowledgeAlarm = async (tagId: string) => {
+    try {
+      const res = await fetch(`/api/alarms/${tagId}/acknowledge`, { method: "POST" });
+      if (res.ok) {
+        triggerNotification(`Alarm on Tag ${tagId} acknowledged`, "success");
+        fetchAlarmsAndEvents();
+      }
+    } catch (err) {
+      triggerNotification("Failed to acknowledge alarm", "error");
     }
   };
 
@@ -770,6 +819,26 @@ export const App: React.FC = () => {
                 Tuning & MPC
               </button>
             )}
+            {visibleTabs.events && (
+              <button
+                type="button"
+                className={`tab-btn ${activeTab === "events" ? "active" : ""}`}
+                onClick={() => setActiveTab("events")}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: activeTab === "events" ? "var(--color-warning)" : "var(--text-secondary)",
+                  padding: "0.5rem 1rem",
+                  fontSize: "0.85rem",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  borderBottom: activeTab === "events" ? "2px solid var(--color-warning)" : "2px solid transparent",
+                  transition: "all var(--transition-fast)",
+                }}
+              >
+                Events & Alarms
+              </button>
+            )}
           </div>
 
           {/* Render Tab Contents */}
@@ -992,6 +1061,72 @@ export const App: React.FC = () => {
               </div>
               <div style={{ marginTop: "0.75rem" }}>
                 <RoutingMatrix config={config} onUpdate={setConfig} tagValues={tagValues} />
+              </div>
+            </div>
+          )}
+
+          {activeTab === "events" && visibleTabs.events && (
+            <div className="glass-panel">
+              <div className="panel-header">
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <ShieldAlert size={16} color="var(--color-warning)" />
+                  <span>Events & Alarms History</span>
+                </div>
+              </div>
+              <div style={{ marginTop: "0.75rem", overflowX: "auto" }}>
+                <table style={{ width: "100%", textAlign: "left", fontSize: "0.85rem", borderCollapse: "collapse" }}>
+                  <thead>
+                    <tr style={{ borderBottom: "1px solid var(--panel-border)", color: "var(--text-secondary)" }}>
+                      <th style={{ padding: "0.5rem" }}>Timestamp</th>
+                      <th style={{ padding: "0.5rem" }}>Type</th>
+                      <th style={{ padding: "0.5rem" }}>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {eventsHistory.length === 0 ? (
+                      <tr>
+                        <td colSpan={3} style={{ padding: "1rem", textAlign: "center", color: "var(--text-muted)" }}>
+                          Event history will appear here.
+                        </td>
+                      </tr>
+                    ) : (
+                      eventsHistory.map((evt) => (
+                        <tr key={evt.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                          <td style={{ padding: "0.5rem", whiteSpace: "nowrap" }}>
+                            {new Date(evt.timestamp).toLocaleString()}
+                          </td>
+                          <td style={{ padding: "0.5rem" }}>
+                            <span
+                              style={{
+                                padding: "0.1rem 0.3rem",
+                                borderRadius: "3px",
+                                fontSize: "0.7rem",
+                                fontWeight: "bold",
+                                backgroundColor:
+                                  evt.event_type === "ALARM"
+                                    ? evt.severity === 2
+                                      ? "rgba(239, 68, 68, 0.15)"
+                                      : "rgba(245, 158, 11, 0.15)"
+                                    : "rgba(56, 189, 248, 0.15)",
+                                color:
+                                  evt.event_type === "ALARM"
+                                    ? evt.severity === 2
+                                      ? "var(--color-error)"
+                                      : "var(--color-warning)"
+                                    : "var(--accent-cyan)",
+                              }}
+                            >
+                              {evt.event_type}
+                            </span>
+                          </td>
+                          <td style={{ padding: "0.5rem", width: "100%" }}>
+                            {evt.description}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
@@ -1696,6 +1831,15 @@ export const App: React.FC = () => {
                       onChange={() => handleTabVisibilityToggle("tuning")}
                     />
                     <span>Tuning & MPC Groundwork</span>
+                  </label>
+
+                  <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8rem", cursor: "pointer" }}>
+                    <input
+                      type="checkbox"
+                      checked={visibleTabs.events}
+                      onChange={() => handleTabVisibilityToggle("events")}
+                    />
+                    <span>Alarms & Event Log</span>
                   </label>
                 </div>
 

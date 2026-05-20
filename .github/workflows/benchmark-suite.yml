@@ -6,7 +6,7 @@ on:
   # ran ~50min per PR — much of that time was pip install. Moving to a nightly
   # cadence + on-demand dispatch retains the data without blocking developers.
   schedule:
-    - cron: '0 6 * * *'  # daily 06:00 UTC
+    - cron: "0 6 * * *" # daily 06:00 UTC
   workflow_dispatch:
   # Keep main-branch push trigger (path-filtered) so benchmark trendlines
   # update immediately when benchmarked code lands in main.

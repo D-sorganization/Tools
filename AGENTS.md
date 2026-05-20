@@ -685,8 +685,7 @@ for k in ['core', 'graphql']:
 "
 ```
 
-<!-- END FLEET-MANAGED: network-api-hygiene -->
----
+## <!-- END FLEET-MANAGED: network-api-hygiene -->
 
 <!-- BEGIN FLEET-MANAGED: reasoning-engagement -->
 
@@ -706,8 +705,7 @@ These rules govern _how_ you engage with a task before and during implementation
 
 **The diff test:** every line in your final diff should answer "this is here because the user asked for X." If you cannot answer that for a given line, remove it.
 
-<!-- END FLEET-MANAGED: reasoning-engagement -->
----
+## <!-- END FLEET-MANAGED: reasoning-engagement -->
 
 <!-- BEGIN FLEET-MANAGED: repo-context-codemap -->
 
@@ -724,15 +722,13 @@ Use repo-local context before broad exploration:
 - Do not commit `.codemap/` or `.codemap/index.db`. Codemap indexes are cache/artifact data and must stay ignored.
 - To audit local fleet posture, run `python -m scripts.codemap_context_inventory --root .. --format markdown` from `Repository_Management`. This is a local, network-free inventory; it is not a substitute for repo-specific validation.
 
-<!-- END FLEET-MANAGED: repo-context-codemap -->
----
+## <!-- END FLEET-MANAGED: repo-context-codemap -->
 
 ## Specification
 
 This repository's specification is defined in `SPEC.md` at the repo root.
 Read SPEC.md before making any changes. Update it when your changes
 affect documented functionality, features, or architecture.
-
 
 ## Closing issues — non-negotiable rule
 
@@ -744,6 +740,7 @@ NEVER close a feature or bug issue without one of:
 The **Verify-Issue-Closure** workflow will automatically reopen any issue closed without evidence. Do not work around it.
 
 When implementing an issue:
+
 - Write or update tests FIRST (TDD: red → green → refactor)
 - Add Design-by-Contract preconditions/postconditions where it clarifies invariants
 - Respect Law of Demeter — don’t reach through three layers
@@ -753,11 +750,11 @@ When implementing an issue:
 
 ### How to close issues properly
 
-| Method | Example |
-|--------|---------|
-| Closing keyword in PR body | `Closes #1234` or `Fixes #5678` |
-| Closing keyword in PR title | `fix: resolve login crash (#1234)` |
-| Exempt label | Apply `wontfix`, `roadmap`, `duplicate`, `invalid`, or `not-planned` |
-| Bot + auto-generated label | Only for auto-generated issues closed by bots |
+| Method                      | Example                                                              |
+| --------------------------- | -------------------------------------------------------------------- |
+| Closing keyword in PR body  | `Closes #1234` or `Fixes #5678`                                      |
+| Closing keyword in PR title | `fix: resolve login crash (#1234)`                                   |
+| Exempt label                | Apply `wontfix`, `roadmap`, `duplicate`, `invalid`, or `not-planned` |
+| Bot + auto-generated label  | Only for auto-generated issues closed by bots                        |
 
 The workflow checks the PR timeline for cross-referenced merged PRs with closing keywords. If none are found and no exempt label is present, the issue is reopened with an explanatory comment.
