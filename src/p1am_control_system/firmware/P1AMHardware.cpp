@@ -11,11 +11,9 @@ void P1AMHardware::Begin() {
 }
 
 void P1AMHardware::Update() {
-  // Synchronize base controller with module updates.
-  // In typical loops, we wait until the base is ready to scan.
-  while (!P1.isReady()) {
-    delay(1);
-  }
+  // The P1AM library blocks internally on backplane SPI during reads/writes,
+  // so no explicit scan-ready wait is needed. Kept as an override hook so the
+  // HardwareInterface contract (and MockHardware test counters) stay symmetric.
 }
 
 float P1AMHardware::ReadThermocouple(int channel) {

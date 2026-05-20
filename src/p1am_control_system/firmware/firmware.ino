@@ -165,8 +165,15 @@ void setup() {
 }
 
 void loop() {
-  // Listen for Modbus TCP clients
-  modbusServer.accept();
+  // Listen for new Modbus TCP client connections (non-blocking).
+  // ArduinoModbus's ModbusTCPServer::accept(Client&) takes ownership of the
+  // session; poll() services it on every loop pass without blocking the 10 Hz
+  // scan cycle below. This is the official ArduinoModbus TCP idiom but with
+  // the while(client.connected()) blocking loop omitted so control keeps running.
+  EthernetClient newClient = ethServer.available();
+  if (newClient) {
+    modbusServer.accept(newClient);
+  }
   modbusServer.poll();
 
   // Trigger Save to Flash coil check
