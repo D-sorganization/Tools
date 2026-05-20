@@ -9,10 +9,9 @@ Provides functions for:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
-from typing import cast, Any
 
 # Optional DBF support
 try:

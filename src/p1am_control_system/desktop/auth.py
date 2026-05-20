@@ -8,7 +8,7 @@ from __future__ import annotations
 import hashlib
 import hmac
 import os
-from enum import Enum
+from enum import StrEnum
 
 try:
     from dotenv import load_dotenv
@@ -18,7 +18,7 @@ except ImportError:
     pass
 
 
-class Role(str, Enum):
+class Role(StrEnum):
     """Available user roles in the system."""
 
     OPERATOR = "Operator"

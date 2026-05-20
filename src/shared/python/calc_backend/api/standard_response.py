@@ -13,7 +13,7 @@ import logging
 import time
 import uuid
 from datetime import UTC
-from enum import Enum
+from enum import StrEnum
 from typing import Any, Generic, TypeVar
 
 from pydantic import BaseModel, Field
@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 T = TypeVar("T")
 
 
-class ErrorCode(str, Enum):
+class ErrorCode(StrEnum):
     """Standard error codes for API responses."""
 
     INVALID_INPUT = "INVALID_INPUT"

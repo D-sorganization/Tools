@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 from types import MappingProxyType
 from typing import Any
 
@@ -20,7 +20,7 @@ MAX_FONT_SIZE_PX = 24
 MAX_FONT_FAMILY_LENGTH = 64
 
 
-class SidekickThemeMode(str, Enum):
+class SidekickThemeMode(StrEnum):
     """Constrained Sidekick theme resolution modes."""
 
     INHERIT_PARENT = "inherit_parent"
