@@ -3603,6 +3603,7 @@ chat = [
     { name = "fastapi" },
     { name = "pydantic" },
     { name = "pyqt6" },
+    { name = "python-multipart" },
 ]
 chat-voice = [
     { name = "pyaudio" },
@@ -3717,6 +3718,7 @@ requires-dist = [
     { name = "pytest-timeout", marker = "extra == 'dev'", specifier = ">=2.0.0" },
     { name = "pytest-vcr", marker = "extra == 'dev'", specifier = ">=1.0.0" },
     { name = "pytest-xdist", marker = "extra == 'dev'", specifier = ">=3.0.0" },
+    { name = "python-multipart", marker = "extra == 'chat'", specifier = ">=0.0.7" },
     { name = "pythonnet", marker = "extra == 'dwsim'", specifier = ">=3.0.0" },
     { name = "pywinpty", marker = "sys_platform == 'win32' and extra == 'terminal'", specifier = ">=2.0" },
     { name = "pyyaml", specifier = ">=6.0" },

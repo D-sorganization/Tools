@@ -108,11 +108,11 @@ class AsyncModbusManager(BasePLCClient):
                 self._connected = False
                 logger.info("Disconnected from PLC.")
 
-    async def read_tags(self) -> list[float] | None:
+    async def read_tags(self) -> dict[str, float] | None:
         """Read 32 float tags from the PLC starting at tag_value_registers_address.
 
         Returns:
-            list[float]: Mapped tag values if successful, None otherwise.
+            dict[str, float]: Mapped tag values if successful, None otherwise.
         """
         async with self.lock:
             if not self._connected:
@@ -129,11 +129,11 @@ class AsyncModbusManager(BasePLCClient):
                     self._connected = False
                     return None
 
-                tags = []
+                tags = {}
                 for i in range(32):
                     low = response.registers[i * 2]
                     high = response.registers[i * 2 + 1]
-                    tags.append(registers_to_float(low, high))
+                    tags[f"TAG_{i}"] = registers_to_float(low, high)
                 return tags
             except (ModbusException, Exception) as e:
                 logger.error(f"Exception during tag read: {e}")
@@ -192,8 +192,8 @@ class AsyncModbusManager(BasePLCClient):
                     )
                     pids.append(
                         PIDConfig(
-                            pv_tag_id=pv,
-                            cv_tag_id=cv,
+                            pv_tag=f"TAG_{pv}",
+                            cv_tag=f"TAG_{cv}",
                             setpoint=sp,
                             kp=kp,
                             ki=ki,
@@ -209,7 +209,7 @@ class AsyncModbusManager(BasePLCClient):
                     logger.error(f"Error reading interlocks: {interlock_resp}")
                     return None
 
-                interlocks = []
+                interlocks = {}
                 for i in range(32):
                     base = i * 8
                     lolo = registers_to_float(
@@ -228,18 +228,16 @@ class AsyncModbusManager(BasePLCClient):
                         interlock_resp.registers[base + 6],
                         interlock_resp.registers[base + 7],
                     )
-                    interlocks.append(
-                        InterlockConfig(
-                            lolo_limit=lolo,
-                            low_limit=low,
-                            high_limit=high,
-                            hihi_limit=hihi,
-                        )
+                    interlocks[f"TAG_{i}"] = InterlockConfig(
+                        lolo_limit=lolo,
+                        low_limit=low,
+                        high_limit=high,
+                        hihi_limit=hihi,
                     )
 
                 return RoutingConfig(
-                    input_routing=input_resp.registers,
-                    output_routing=output_resp.registers,
+                    input_routing=[f"TAG_{r}" for r in input_resp.registers],
+                    output_routing=[f"TAG_{r}" for r in output_resp.registers],
                     pids=pids,
                     interlocks=interlocks,
                 )
@@ -259,17 +257,22 @@ class AsyncModbusManager(BasePLCClient):
             bool: True if writing succeeded, False otherwise.
         """
         async with self.lock:
-            if not self._connected:
-                logger.error("Cannot write routing: Modbus client disconnected.")
-                return False
-
             try:
                 client = self._get_client()
+
+                def _to_idx(t: str) -> int:
+                    try:
+                        return int(t.split("_")[1])
+                    except (IndexError, ValueError):
+                        return 0
+
+                input_vals = [_to_idx(x) for x in config.input_routing]
+                output_vals = [_to_idx(x) for x in config.output_routing]
 
                 # 1. Write Input routing
                 resp = await client.write_registers(
                     address=self.input_routing_address,
-                    values=config.input_routing,
+                    values=input_vals,
                 )
                 if resp.isError():
                     logger.error(f"Error writing input routing: {resp}")
@@ -278,7 +281,7 @@ class AsyncModbusManager(BasePLCClient):
                 # 2. Write Output routing
                 resp = await client.write_registers(
                     address=self.output_routing_address,
-                    values=config.output_routing,
+                    values=output_vals,
                 )
                 if resp.isError():
                     logger.error(f"Error writing output routing: {resp}")
@@ -287,8 +290,8 @@ class AsyncModbusManager(BasePLCClient):
                 # 3. Write PID Config
                 pid_regs = []
                 for pid in config.pids:
-                    pid_regs.append(pid.pv_tag_id)
-                    pid_regs.append(pid.cv_tag_id)
+                    pid_regs.append(_to_idx(pid.pv_tag))
+                    pid_regs.append(_to_idx(pid.cv_tag))
                     pid_regs.extend(float_to_registers(pid.setpoint))
                     pid_regs.extend(float_to_registers(pid.kp))
                     pid_regs.extend(float_to_registers(pid.ki))
@@ -304,7 +307,17 @@ class AsyncModbusManager(BasePLCClient):
 
                 # 4. Write Interlock Config
                 interlock_regs = []
-                for interlock in config.interlocks:
+                for i in range(32):
+                    tag_name = f"TAG_{i}"
+                    interlock = config.interlocks.get(
+                        tag_name,
+                        InterlockConfig(
+                            lolo_limit=0.0,
+                            low_limit=5.0,
+                            high_limit=95.0,
+                            hihi_limit=100.0,
+                        ),
+                    )
                     interlock_regs.extend(float_to_registers(interlock.lolo_limit))
                     interlock_regs.extend(float_to_registers(interlock.low_limit))
                     interlock_regs.extend(float_to_registers(interlock.high_limit))
@@ -376,13 +389,33 @@ class AsyncModbusManager(BasePLCClient):
                 self._connected = False
                 return False
 
-    async def write_tag(self, tag_id: int, value: float) -> bool:
+    async def write_tag(self, tag_name: str, value: float) -> bool:
         """Write a 32-bit float directly to a tag register.
 
-        Holding registers starts at tag_id * 2.
+        Supports dynamic tags by name or fallback to 'TAG_idx' format.
         """
-        if not (0 <= tag_id < 32):
-            logger.error(f"Invalid tag_id for manual write: {tag_id}")
+        tag_idx: int | None = None
+        if tag_name.startswith("TAG_"):
+            try:
+                tag_idx = int(tag_name.split("_")[1])
+            except (ValueError, IndexError):
+                pass
+
+        # Fallback register address or dynamically look up
+        # from active_config if possible
+        address = None
+
+        if tag_idx is not None and (0 <= tag_idx < 32):
+            address = tag_idx * 2
+        elif hasattr(self, "tag_map") and tag_name in self.tag_map:
+            tag_def = self.tag_map[tag_name]
+            if tag_def.register_type == "V" and tag_def.register_num is not None:
+                address = tag_def.register_num
+
+        if address is None:
+            logger.error(
+                f"Invalid tag name or no mapped register for write: {tag_name}"
+            )
             return False
 
         async with self.lock:
@@ -391,15 +424,19 @@ class AsyncModbusManager(BasePLCClient):
             try:
                 regs = float_to_registers(value)
                 resp = await self._get_client().write_registers(
-                    address=tag_id * 2,
+                    address=address,
                     values=regs,
                 )
                 if resp.isError():
-                    logger.error(f"Error writing to tag {tag_id} registers: {resp}")
+                    logger.error(
+                        f"Error writing to tag {tag_name} at register {address}: {resp}"
+                    )
                     return False
-                logger.info(f"Directly wrote {value} to tag {tag_id} registers.")
+                logger.info(
+                    f"Directly wrote {value} to tag {tag_name} at register {address}."
+                )
                 return True
             except (ModbusException, Exception) as e:
-                logger.error(f"Exception during direct tag write: {e}")
+                logger.error(f"Exception during direct tag write for {tag_name}: {e}")
                 self._connected = False
                 return False
