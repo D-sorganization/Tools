@@ -334,6 +334,7 @@ class ChatDockWidget(QDockWidget):
         self._reconnect_timer = QTimer(self)
         self._reconnect_timer.setSingleShot(True)
         self._reconnect_timer.timeout.connect(self._connect)
+        self._intentional_disconnect = False
 
         # Resolve session ID: explicit > class-level > file > "new"
         if session_id:
@@ -683,6 +684,7 @@ class ChatDockWidget(QDockWidget):
 
     def _connect(self) -> None:
         """Establish WebSocket connection to the chat server."""
+        self._intentional_disconnect = False
         if self._socket is not None:
             self._socket.close()
             self._socket.deleteLater()
@@ -753,10 +755,14 @@ class ChatDockWidget(QDockWidget):
         self._memory_panel_window = panel
 
     def _on_disconnected(self) -> None:
-        self._status_label.setText("Disconnected - retrying in 3s...")
-        self._status_label.setStyleSheet("color: #f85149; font-size: 10px;")
         self._is_streaming = False
         self._send_btn.setEnabled(True)
+        if getattr(self, "_intentional_disconnect", False):
+            self._status_label.setText("Disconnected")
+            self._status_label.setStyleSheet("color: #888888; font-size: 10px;")
+            return
+        self._status_label.setText("Disconnected - retrying in 3s...")
+        self._status_label.setStyleSheet("color: #f85149; font-size: 10px;")
         self._reconnect_timer.start(3000)
 
     def _on_message(self, raw: str) -> None:
@@ -1757,6 +1763,7 @@ class ChatDockWidget(QDockWidget):
             self._connect()
 
     def closeEvent(self, event: Any) -> None:
+        self._intentional_disconnect = True
         self._reconnect_timer.stop()
         if self._socket:
             self._socket.close()
