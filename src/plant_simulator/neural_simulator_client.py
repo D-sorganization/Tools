@@ -72,7 +72,7 @@ class NeuralSimulatorClient(BasePLCClient):
         )
 
         self.sequence_length = sequence_length
-        self.history = []
+        self.history: list[list[float]] = []
 
         # Load the PyTorch Model
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

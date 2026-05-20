@@ -39,7 +39,7 @@ from simulator_client import SimulatedPLCClient
 from sqlmodel import Session, col, select
 from tools_core import scada
 
-AlarmEngine = scada.AlarmEngine
+AlarmEngine: Any = scada.AlarmEngine
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

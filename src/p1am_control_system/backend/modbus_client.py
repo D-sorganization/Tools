@@ -98,7 +98,7 @@ class AsyncModbusManager(BasePLCClient):
             await asyncio.sleep(backoff)
             backoff = min(backoff * 2.0, max_backoff)
 
-        return False
+        return False  # type: ignore[unreachable]
 
     async def disconnect(self) -> None:
         """Disconnect from the PLC."""

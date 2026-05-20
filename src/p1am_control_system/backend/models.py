@@ -5,7 +5,7 @@ from pydantic import Field as PydanticField
 from sqlmodel import Field, SQLModel
 
 
-class TagLog(SQLModel, table=True):
+class TagLog(SQLModel, table=True):  # type: ignore
     """SQLModel representing a logged tag state in the database."""
 
     id: int | None = Field(default=None, primary_key=True)
@@ -17,7 +17,7 @@ class TagLog(SQLModel, table=True):
     )
 
 
-class EventLog(SQLModel, table=True):
+class EventLog(SQLModel, table=True):  # type: ignore
     """SQLModel representing an event or alarm log in the database."""
 
     id: int | None = Field(default=None, primary_key=True)
