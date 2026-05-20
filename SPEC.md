@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST UPDATED: 2026-05-18
+  LAST UPDATED: 2026-05-20
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.184                                    |
-| **Last Spec Update**    | 2026-05-17                                 |
+| **Spec Version**        | 1.1.188                                    |
+| **Last Spec Update**    | 2026-05-20                                 |
 
 ## 2. Purpose & Mission
 
@@ -888,3 +888,16 @@ Active development with stable core, continuous tool expansion, and web API in p
 ### Version 1.1.186
 
 - **Performance**: In `src/media_processing/video_processor/apps/web/lib/golf/phaseDetector.ts`, replaced `.reduce()` with a standard `for` loop in `calculatePhaseConfidence` to eliminate callback allocation and GC overhead in high-frequency phase detection paths.
+
+### Version 1.1.187
+
+- **UX**: Add accessible toggle states and toast feedback for copy actions in `calculator/static/app.js` and `calculator/templates/index.html`.
+
+### Version 1.1.188
+
+- **Security**: Fixed an information leakage vulnerability in `src/web_applications/health_checks.py`. API endpoints (`/api/health` and `/api/ready`) no longer expose raw exception strings (`str(e)`) in their JSON responses. They now return safe, generic error messages while preserving full traceback details in the backend logs using `logger.exception()`.
+
+## 9. Changelog
+
+- **2026-05-20**: Add accessible toggle states and toast feedback for copy actions in `calculator/static/app.js` and `calculator/templates/index.html`.
+- **2026-05-20**: Harden health-check API responses to return generic client-facing errors while logging exception details server-side.

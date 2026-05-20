@@ -59,10 +59,14 @@ function setMode(mode) {
   currentMode = mode;
   activeModeLabel.textContent = MODE_LABELS[mode] ?? mode.toUpperCase();
   document.querySelectorAll(".mode-button").forEach((button) => {
-    button.classList.toggle("active", button.dataset.mode === mode);
+    const isActive = button.dataset.mode === mode;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-pressed", isActive ? "true" : "false");
   });
   document.querySelectorAll(".soft-key").forEach((button) => {
-    button.classList.toggle("active", button.dataset.mode === mode);
+    const isActive = button.dataset.mode === mode;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-pressed", isActive ? "true" : "false");
   });
 }
 
@@ -227,11 +231,9 @@ async function copyToClipboard(text, label) {
   if (!text) return;
   try {
     await navigator.clipboard.writeText(text);
-    resultText.dataset.copied = label;
-    setTimeout(() => delete resultText.dataset.copied, 1200);
+    showToast(label, 'success');
   } catch (error) {
-    resultText.dataset.copied = "Clipboard unavailable";
-    setTimeout(() => delete resultText.dataset.copied, 1200);
+    showToast("Clipboard unavailable", 'error');
   }
 }
 
