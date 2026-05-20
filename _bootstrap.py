@@ -46,14 +46,24 @@ def bootstrap(caller_file: str) -> Path:
     if not caller_file:
         raise ValueError("caller_file must not be an empty string")
     caller = Path(caller_file).resolve()
-    # Walk up until we find pyproject.toml (repo root marker)
+    # Walk up until we find the repository root
+    # (must contain pyproject.toml and src/shared/python)
     repo_root = caller.parent
     for _ in range(10):
-        if (repo_root / "pyproject.toml").exists():
+        if (repo_root / "pyproject.toml").exists() and (
+            repo_root / "src" / "shared" / "python"
+        ).exists():
             break
         repo_root = repo_root.parent
     else:
+        # Fallback to standard check if the shared path doesn't exist
         repo_root = caller.parent
+        for _ in range(10):
+            if (repo_root / "pyproject.toml").exists():
+                break
+            repo_root = repo_root.parent
+        else:
+            repo_root = caller.parent
 
     shared_python = repo_root / "src" / "shared" / "python"
     if shared_python.exists() and str(shared_python) not in sys.path:

@@ -344,7 +344,44 @@ class UnifiedToolsSidebar(
             definition.tab_id: definition for definition in definitions
         }
         self._configure_tab_settings()
-        visible_defaults = initially_visible_tab_ids(definitions, self._state)
+
+        # Load visibility overrides from QSettings if available
+        settings = QtCore.QSettings()
+        saved_visible = settings.value("sidekick_visible_tabs", None)
+        if saved_visible is not None:
+            if isinstance(saved_visible, list):
+                visible_defaults = {
+                    str(tid)
+                    for tid in saved_visible
+                    if str(tid) in self._tab_definitions
+                }
+            elif isinstance(saved_visible, str):
+                import json
+
+                try:
+                    loaded = json.loads(saved_visible)
+                    if isinstance(loaded, list):
+                        visible_defaults = {
+                            str(tid)
+                            for tid in loaded
+                            if str(tid) in self._tab_definitions
+                        }
+                    else:
+                        visible_defaults = initially_visible_tab_ids(
+                            definitions, self._state
+                        )
+                except Exception:
+                    visible_defaults = initially_visible_tab_ids(
+                        definitions, self._state
+                    )
+            else:
+                visible_defaults = initially_visible_tab_ids(definitions, self._state)
+        else:
+            visible_defaults = initially_visible_tab_ids(definitions, self._state)
+
+        if not visible_defaults:
+            visible_defaults = initially_visible_tab_ids(definitions, self._state)
+
         for definition in definitions:
             if definition.tab_id in visible_defaults:
                 self._add_defined_tab(definition)
@@ -448,6 +485,11 @@ class UnifiedToolsSidebar(
             self._add_defined_tab(definition)
             self._sync_tab_order_from_widget()
             self._emit_context()
+
+            # Save the new set of visible tab IDs to QSettings
+            settings = QtCore.QSettings()
+            settings.setValue("sidekick_visible_tabs", list(self._tab_ids))
+
             return True
 
         if tab_id not in self._tab_ids:
@@ -463,6 +505,11 @@ class UnifiedToolsSidebar(
             widget.setParent(None)
             widget.deleteLater()
         self._emit_context()
+
+        # Save the new set of visible tab IDs to QSettings
+        settings = QtCore.QSettings()
+        settings.setValue("sidekick_visible_tabs", list(self._tab_ids))
+
         return True
 
     def set_default_tab_visible(self, tab_id: str, visible: bool) -> bool:
@@ -733,6 +780,10 @@ class UnifiedToolsSidebar(
             self._tab_ids = ordered
         self._refresh_settings_button()
         self._emit_context()
+
+        # Save the new set/order of visible tab IDs to QSettings
+        settings = QtCore.QSettings()
+        settings.setValue("sidekick_visible_tabs", list(self._tab_ids))
 
     def _apply_tab_state(self, state: SidebarState) -> None:
         self._state = sanitize_tab_state(state, self._tab_definitions)

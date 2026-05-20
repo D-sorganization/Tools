@@ -51,6 +51,11 @@ def build_tab_context_menu(sidebar: Any, tab_id: str) -> QtWidgets.QMenu:
 
     menu.addSeparator()
 
+    configure_action = menu.addAction("Configure Tabs...")
+    configure_action.triggered.connect(sidebar.open_configure_tabs)
+
+    menu.addSeparator()
+
     _add_action(menu, "minimize", lambda: sidebar.set_minimized(True))
 
     return menu
