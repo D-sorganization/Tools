@@ -237,3 +237,69 @@ class TestQtRuntimeDiagnostics:
 
         assert exc_info.value.diagnostic.reason == "import_failed"
         assert "broken QtCore" in str(exc_info.value)
+
+
+class _FakeLabel:
+    def __init__(self) -> None:
+        self.text = ""
+        self.stylesheet = ""
+
+    def setText(self, text: str) -> None:
+        self.text = text
+
+    def setStyleSheet(self, stylesheet: str) -> None:
+        self.stylesheet = stylesheet
+
+
+class _FakeButton:
+    def __init__(self) -> None:
+        self.enabled: bool | None = None
+
+    def setEnabled(self, enabled: bool) -> None:
+        self.enabled = enabled
+
+
+class _FakeTimer:
+    def __init__(self) -> None:
+        self.started_ms: int | None = None
+
+    def start(self, ms: int) -> None:
+        self.started_ms = ms
+
+
+class TestChatDockDisconnectLifecycle:
+    def test_disconnected_during_close_does_not_start_reconnect_timer(self) -> None:
+        qt_module = pytest.importorskip("chat._chat_dock_widget_qt")
+        timer = _FakeTimer()
+        widget = SimpleNamespace(
+            _is_closing=True,
+            _is_streaming=True,
+            _send_btn=_FakeButton(),
+            _reconnect_timer=timer,
+            _status_label=_FakeLabel(),
+        )
+
+        qt_module.ChatDockWidget._on_disconnected(widget)
+
+        assert widget._is_streaming is False
+        assert widget._send_btn.enabled is True
+        assert timer.started_ms is None
+        assert widget._status_label.text == ""
+
+    def test_unexpected_disconnect_keeps_existing_reconnect_behavior(self) -> None:
+        qt_module = pytest.importorskip("chat._chat_dock_widget_qt")
+        timer = _FakeTimer()
+        widget = SimpleNamespace(
+            _is_closing=False,
+            _is_streaming=True,
+            _send_btn=_FakeButton(),
+            _reconnect_timer=timer,
+            _status_label=_FakeLabel(),
+        )
+
+        qt_module.ChatDockWidget._on_disconnected(widget)
+
+        assert widget._is_streaming is False
+        assert widget._send_btn.enabled is True
+        assert timer.started_ms == 3000
+        assert widget._status_label.text == "Disconnected - retrying in 3s..."

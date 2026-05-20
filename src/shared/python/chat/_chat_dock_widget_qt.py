@@ -784,6 +784,10 @@ class ChatDockWidget(QDockWidget):
         self._memory_panel_window = panel
 
     def _on_disconnected(self) -> None:
+        if bool(getattr(self, "_is_closing", False)):
+            self._is_streaming = False
+            self._send_btn.setEnabled(True)
+            return
         self._status_label.setText("Disconnected - retrying in 3s...")
         self._status_label.setStyleSheet("color: #f85149; font-size: 10px;")
         self._is_streaming = False
@@ -1788,6 +1792,7 @@ class ChatDockWidget(QDockWidget):
             self._connect()
 
     def closeEvent(self, event: Any) -> None:
+        self._is_closing = True
         self._reconnect_timer.stop()
         if self._socket:
             self._socket.close()
