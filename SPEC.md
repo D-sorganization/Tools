@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.191                                    |
+| **Spec Version**        | 1.1.192                                    |
 | **Last Spec Update**    | 2026-05-20                                 |
 
 ## 2. Purpose & Mission
@@ -86,6 +86,9 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Shared chat dock terminal lifecycle controls disable duplicate starts,
   enable Stop only for active sessions, and lock shell/provider choices while
   a terminal session is pending or active
+- Shared chat dock shutdown treats intentional widget close as terminal for
+  WebSocket reconnects so launcher-hosted Sidekick chat surfaces do not revive
+  after close while unexpected disconnects still retry
 - Sidekick tabs declare versioned per-tab settings schemas and persist
   materialized settings by stable tab or duplicate instance id behind the
   selected-tab settings action
@@ -620,8 +623,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-05-20 | 1.1.190 | Added shared Sidekick/chat launcher integration contracts: `ChatServiceBase.condense_to_memory()` now persists explicit memory candidates through the shared memory manager, `UnifiedToolsSidebar.open_tab()` focuses visible and hidden tabs with `os_terminal` compatibility, ChatDockWidget exposes readiness diagnostics, and Qt chat imports gained subprocess-backed PyQt6 runtime diagnostics with focused regression coverage.                                                                                                                              |
+| 2026-05-20 | 1.1.192 | Fixed shared Sidekick chat dock shutdown so an intentional widget close suppresses the WebSocket reconnect timer while unexpected disconnects retain the existing retry path; added focused regression coverage for both lifecycle branches.                                                                                                                                                                                                                                                                                                                        |
 | 2026-05-20 | 1.1.191 | Hardened Sidekick test-health coverage so the Jupyter tab availability positive path simulates an importable optional `nbformat` module without requiring the package in the base environment, while the missing-dependency negative path remains covered. Marked the Sidekick dock close-affordance Qt tests as serial/offscreen and skipped them inside Windows xdist workers so the serial lane keeps coverage without crashing parallel workers.                                                                                                                |
+| 2026-05-20 | 1.1.190 | Added shared Sidekick/chat launcher integration contracts: `ChatServiceBase.condense_to_memory()` now persists explicit memory candidates through the shared memory manager, `UnifiedToolsSidebar.open_tab()` focuses visible and hidden tabs with `os_terminal` compatibility, ChatDockWidget exposes readiness diagnostics, and Qt chat imports gained subprocess-backed PyQt6 runtime diagnostics with focused regression coverage.                                                                                                                              |
 | 2026-05-18 | 1.1.185 | Added `htmlFor` and `id` mapping to range inputs in `SwingComparison.tsx` (`src/media_processing/video_processor/apps/web`) to improve screen reader accessibility.                                                                                                                                                                                                                                                                                                                                                                                                 |
 | 2026-05-18 | 1.1.184 | Optimized Nelder-Mead optimization loop in pendulum simulator by replacing map and slice with pre-allocated arrays and standard for loops to minimize GC pauses.                                                                                                                                                                                                                                                                                                                                                                                                    |
 | 2026-05-17 | 1.1.183 | Pre-allocated the `results` array in the `solveODESystem` hot RK4 integration loop (`src/ode_solver/web/src/lib/odeSolver.ts`) to eliminate continuous memory reallocation overhead and garbage collection pauses during large numerical simulations.                                                                                                                                                                                                                                                                                                               |
@@ -922,6 +926,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 9. Changelog
 
+- **2026-05-20**: Suppress shared chat dock WebSocket reconnect scheduling during intentional widget close while retaining reconnects for unexpected disconnects.
 - **2026-05-20**: Add accessible toggle states and toast feedback for copy actions in `calculator/static/app.js` and `calculator/templates/index.html`.
 - **2026-05-20**: Harden health-check API responses to return generic client-facing errors while logging exception details server-side.
 - **2026-05-20**: Restore shared logging and environment helper modules required by AI adapter and chat service connection imports.
