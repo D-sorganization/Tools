@@ -287,6 +287,8 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "tests/test_review_fixes_2026_03_09.py" = ["E501"]
 "tests/verification/test_verification_lod.py" = ["E501"]
 "tests/vessel_drafter/test_dbc_lod.py" = ["E501"]
+"src/p1am_control_system/backend/main.py" = ["E501"]
+"src/p1am_control_system/backend/test_backend.py" = ["E501"]
 
 [lint.isort]
 # Tells Ruff how to group your own code vs. libraries

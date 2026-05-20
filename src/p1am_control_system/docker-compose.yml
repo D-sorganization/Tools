@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: dcs_scada_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - PLC_HOST=192.168.1.177
+      - PLC_PORT=502
+    volumes:
+      - dcs_db_data:/app
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: dcs_scada_frontend
+    ports:
+      - "3002:3002"
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  dcs_db_data:
+    driver: local
