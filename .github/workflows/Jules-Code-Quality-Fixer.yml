@@ -89,9 +89,9 @@ jobs:
     # Grant write only at this job level — branch creation, fix pushes, PR
     # creation, and issue updates all happen here. pick-runner needs no write.
     permissions:
-      contents: write      # create jules/cq-fix-* branch and push fixes
+      contents: write # create jules/cq-fix-* branch and push fixes
       pull-requests: write # open PR for each quality fix
-      issues: write        # update related issue status
+      issues: write # update related issue status
     steps:
       - uses: actions/checkout@v6
         with:

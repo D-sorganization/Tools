@@ -8,6 +8,8 @@ pub mod atmosphere;
 pub mod ball_flight;
 #[cfg(feature = "python")]
 pub mod electrode_advisor;
+#[cfg(feature = "python")]
+pub mod scada;
 pub mod engineering;
 pub mod math;
 pub mod reactor;
@@ -155,6 +157,18 @@ fn tools_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     let electrode_mod = PyModule::new(m.py(), "electrode_advisor")?;
     electrode_advisor::py_bindings::register_module(&electrode_mod)?;
     m.add_submodule(&electrode_mod)?;
+
+    // Register SCADA classes and functions
+    let scada_mod = PyModule::new(m.py(), "scada")?;
+    scada_mod.add_class::<scada::AlarmState>()?;
+    scada_mod.add_class::<scada::TagLimits>()?;
+    scada_mod.add_class::<scada::AlarmEngine>()?;
+    scada_mod.add_class::<scada::InterlockMatrix>()?;
+    scada_mod.add_class::<scada::GasificationSimulator>()?;
+    scada_mod.add_function(wrap_pyfunction!(scada::py_moving_average, &scada_mod)?)?;
+    scada_mod.add_function(wrap_pyfunction!(scada::py_exponential_smoothing, &scada_mod)?)?;
+    scada_mod.add_function(wrap_pyfunction!(scada::py_savitzky_golay, &scada_mod)?)?;
+    m.add_submodule(&scada_mod)?;
 
     Ok(())
 }

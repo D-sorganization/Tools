@@ -45,8 +45,8 @@ jobs:
     # Grant write only at this job level — report commits and issue creation
     # happen here. No write needed for runner selection.
     permissions:
-      contents: write  # commit quality review report to docs/assessments/
-      issues: write    # open tracking issues for findings
+      contents: write # commit quality review report to docs/assessments/
+      issues: write # open tracking issues for findings
     steps:
       - uses: actions/checkout@v6
         with:

@@ -80,9 +80,9 @@ jobs:
     # Grant write only at this job level — remediation creates branches, pushes
     # fixes, opens PRs, and closes resolved issues.
     permissions:
-      contents: write      # create remediation branch and push fixes
+      contents: write # create remediation branch and push fixes
       pull-requests: write # open PR with automated fixes
-      issues: write        # close issues that are resolved by the fixes
+      issues: write # close issues that are resolved by the fixes
 
     steps:
       - name: Checkout Code

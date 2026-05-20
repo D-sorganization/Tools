@@ -19,6 +19,7 @@ import subprocess
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 from . import db as db_mod
 from . import parsers as parsers_mod
@@ -33,9 +34,9 @@ logger = logging.getLogger(__name__)
 
 def _hash_bytes(data: bytes) -> str:
     try:
-        import blake3  # type: ignore[import-not-found]
+        import blake3
 
-        return blake3.blake3(data).hexdigest()
+        return str(blake3.blake3(data).hexdigest())
     except Exception:
         return hashlib.blake2b(data, digest_size=16).hexdigest()
 
@@ -69,10 +70,10 @@ _DEFAULT_SKIP_DIRS = {
 }
 
 
-def _load_gitignore(repo_root: Path):
+def _load_gitignore(repo_root: Path) -> Any:
     """Return a callable ``is_ignored(rel_path) -> bool``."""
     try:
-        import pathspec  # type: ignore[import-not-found]
+        import pathspec
     except Exception:
         pathspec = None
 
@@ -87,7 +88,7 @@ def _load_gitignore(repo_root: Path):
         spec = pathspec.PathSpec.from_lines("gitwildmatch", patterns)
 
         def _ignored(rel: str) -> bool:
-            return spec.match_file(rel)
+            return bool(spec.match_file(rel))
 
         return _ignored
 
@@ -108,7 +109,7 @@ def _load_gitignore(repo_root: Path):
     return _ignored_simple
 
 
-def _walk(repo_root: Path):
+def _walk(repo_root: Path) -> Any:
     """Yield ``(abs_path, rel_path)`` for every supported source file."""
     is_ignored = _load_gitignore(repo_root)
     for dirpath, dirnames, filenames in os.walk(repo_root):
@@ -200,7 +201,7 @@ def _process_file(
     abs_path: Path,
     rel: str,
     repo_root: Path,
-    conn,
+    conn: Any,
     stats: RebuildStats,
 ) -> None:
     data = _read_bytes(abs_path)

@@ -8,10 +8,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
-      "files": [
-        "/app/launch.py",
-        "/app/scripts/migrate_csv_to_parquet.py"
-      ],
+      "files": ["/app/launch.py", "/app/scripts/migrate_csv_to_parquet.py"],
       "recommendation": "Refactor into shared utility"
     },
     {
@@ -19,10 +16,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
-      "files": [
-        "/app/UnifiedToolsLauncher.py",
-        "/app/launch.py"
-      ],
+      "files": ["/app/UnifiedToolsLauncher.py", "/app/launch.py"],
       "recommendation": "Refactor into shared utility"
     },
     {
@@ -30,10 +24,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
-      "files": [
-        "/app/UnifiedToolsLauncher.py",
-        "/app/launch.py"
-      ],
+      "files": ["/app/UnifiedToolsLauncher.py", "/app/launch.py"],
       "recommendation": "Refactor into shared utility"
     },
     {
@@ -41,10 +32,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
-      "files": [
-        "/app/UnifiedToolsLauncher.py",
-        "/app/launch.py"
-      ],
+      "files": ["/app/UnifiedToolsLauncher.py", "/app/launch.py"],
       "recommendation": "Refactor into shared utility"
     },
     {
@@ -52,10 +40,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
-      "files": [
-        "/app/UnifiedToolsLauncher.py",
-        "/app/launch.py"
-      ],
+      "files": ["/app/UnifiedToolsLauncher.py", "/app/launch.py"],
       "recommendation": "Refactor into shared utility"
     },
     {
@@ -63,10 +48,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block",
       "description": "Found in 2 locations",
-      "files": [
-        "/app/UnifiedToolsLauncher.py",
-        "/app/launch.py"
-      ],
+      "files": ["/app/UnifiedToolsLauncher.py", "/app/launch.py"],
       "recommendation": "Refactor into shared utility"
     },
     {
@@ -582,9 +564,7 @@
       "severity": "MAJOR",
       "title": "God function: calculate_grades",
       "description": "Length 55 > 50 lines",
-      "files": [
-        "/app/scripts/generate_comprehensive_assessment.py"
-      ],
+      "files": ["/app/scripts/generate_comprehensive_assessment.py"],
       "recommendation": "Split function"
     },
     {
@@ -592,9 +572,7 @@
       "severity": "MAJOR",
       "title": "God function: __init__",
       "description": "Length 105 > 50 lines",
-      "files": [
-        "/app/src/lower_body_model/launch_pyqt6.py"
-      ],
+      "files": ["/app/src/lower_body_model/launch_pyqt6.py"],
       "recommendation": "Split function"
     },
     {
@@ -722,9 +700,7 @@
       "severity": "MAJOR",
       "title": "God function: _setup_ui",
       "description": "Length 128 > 50 lines",
-      "files": [
-        "/app/src/shared/python/chat/_chat_dock_widget_qt.py"
-      ],
+      "files": ["/app/src/shared/python/chat/_chat_dock_widget_qt.py"],
       "recommendation": "Split function"
     },
     {
@@ -732,9 +708,7 @@
       "severity": "MAJOR",
       "title": "God function: _create_left_panel",
       "description": "Length 52 > 50 lines",
-      "files": [
-        "/app/src/shared/python/signal_toolkit/widget_ui.py"
-      ],
+      "files": ["/app/src/shared/python/signal_toolkit/widget_ui.py"],
       "recommendation": "Split function"
     },
     {
@@ -742,9 +716,7 @@
       "severity": "MAJOR",
       "title": "God function: _create_generation_tab",
       "description": "Length 54 > 50 lines",
-      "files": [
-        "/app/src/shared/python/signal_toolkit/widget_ui.py"
-      ],
+      "files": ["/app/src/shared/python/signal_toolkit/widget_ui.py"],
       "recommendation": "Split function"
     },
     {
@@ -752,9 +724,7 @@
       "severity": "MAJOR",
       "title": "God function: _create_calculus_tab",
       "description": "Length 59 > 50 lines",
-      "files": [
-        "/app/src/shared/python/signal_toolkit/widget_ui.py"
-      ],
+      "files": ["/app/src/shared/python/signal_toolkit/widget_ui.py"],
       "recommendation": "Split function"
     },
     {
@@ -762,9 +732,7 @@
       "severity": "MAJOR",
       "title": "God function: _setup_ui",
       "description": "Length 55 > 50 lines",
-      "files": [
-        "/app/src/shared/python/theme/dialogs/theme_manager_dialog.py"
-      ],
+      "files": ["/app/src/shared/python/theme/dialogs/theme_manager_dialog.py"],
       "recommendation": "Split function"
     },
     {
@@ -852,9 +820,7 @@
       "severity": "MAJOR",
       "title": "God function: _build_ui",
       "description": "Length 58 > 50 lines",
-      "files": [
-        "/app/src/rotation_converter/ui/pyqt6/main_window.py"
-      ],
+      "files": ["/app/src/rotation_converter/ui/pyqt6/main_window.py"],
       "recommendation": "Split function"
     },
     {
@@ -862,9 +828,7 @@
       "severity": "MAJOR",
       "title": "God function: _build_ui",
       "description": "Length 57 > 50 lines",
-      "files": [
-        "/app/src/rotation_converter/ui/pyqt6/screw_visualiser_tab.py"
-      ],
+      "files": ["/app/src/rotation_converter/ui/pyqt6/screw_visualiser_tab.py"],
       "recommendation": "Split function"
     },
     {
@@ -872,9 +836,7 @@
       "severity": "MAJOR",
       "title": "God function: _build_ui",
       "description": "Length 54 > 50 lines",
-      "files": [
-        "/app/src/rotation_converter/ui/pyqt6/rotation_tab.py"
-      ],
+      "files": ["/app/src/rotation_converter/ui/pyqt6/rotation_tab.py"],
       "recommendation": "Split function"
     },
     {
@@ -882,9 +844,7 @@
       "severity": "MAJOR",
       "title": "God function: setup_widgets",
       "description": "Length 56 > 50 lines",
-      "files": [
-        "/app/Chaotic_Pendulum/chaotic_pendulum/renderer.py"
-      ],
+      "files": ["/app/Chaotic_Pendulum/chaotic_pendulum/renderer.py"],
       "recommendation": "Split function"
     },
     {
@@ -902,9 +862,7 @@
       "severity": "MAJOR",
       "title": "Hardcoded API Key",
       "description": "Secrets in code",
-      "files": [
-        "/app/src/shared/python/ai/gui/_adapter_lifecycle.py"
-      ],
+      "files": ["/app/src/shared/python/ai/gui/_adapter_lifecycle.py"],
       "recommendation": "Use env vars"
     },
     {
@@ -912,9 +870,7 @@
       "severity": "MAJOR",
       "title": "Hardcoded API Key",
       "description": "Secrets in code",
-      "files": [
-        "/app/src/shared/python/ai/tests/test_adapter_factory.py"
-      ],
+      "files": ["/app/src/shared/python/ai/tests/test_adapter_factory.py"],
       "recommendation": "Use env vars"
     },
     {
@@ -922,9 +878,7 @@
       "severity": "MAJOR",
       "title": "Hardcoded API Key",
       "description": "Secrets in code",
-      "files": [
-        "/app/tests/shared/python/ai/test_rust_adapter.py"
-      ],
+      "files": ["/app/tests/shared/python/ai/test_rust_adapter.py"],
       "recommendation": "Use env vars"
     },
     {
@@ -932,9 +886,7 @@
       "severity": "MAJOR",
       "title": "Hardcoded API Key",
       "description": "Secrets in code",
-      "files": [
-        "/app/tests/shared/python/ai/test_adapter_contract.py"
-      ],
+      "files": ["/app/tests/shared/python/ai/test_adapter_contract.py"],
       "recommendation": "Use env vars"
     },
     {
@@ -942,9 +894,7 @@
       "severity": "MAJOR",
       "title": "Hardcoded API Key",
       "description": "Secrets in code",
-      "files": [
-        "/app/tests/shared/python/ai/test_classify_error.py"
-      ],
+      "files": ["/app/tests/shared/python/ai/test_classify_error.py"],
       "recommendation": "Use env vars"
     },
     {
@@ -952,9 +902,7 @@
       "severity": "MAJOR",
       "title": "Hardcoded API Key",
       "description": "Secrets in code",
-      "files": [
-        "/app/tests/shared/python/ai/test_rust_adapter_fallback.py"
-      ],
+      "files": ["/app/tests/shared/python/ai/test_rust_adapter_fallback.py"],
       "recommendation": "Use env vars"
     },
     {
@@ -962,9 +910,7 @@
       "severity": "MAJOR",
       "title": "Hardcoded API Key",
       "description": "Secrets in code",
-      "files": [
-        "/app/tests/shared/python/ai/test_rust_adapter_extended.py"
-      ],
+      "files": ["/app/tests/shared/python/ai/test_rust_adapter_extended.py"],
       "recommendation": "Use env vars"
     },
     {
@@ -972,9 +918,7 @@
       "severity": "MAJOR",
       "title": "Hardcoded API Key",
       "description": "Secrets in code",
-      "files": [
-        "/app/tests/unit/chat/test_adapter_capabilities.py"
-      ],
+      "files": ["/app/tests/unit/chat/test_adapter_capabilities.py"],
       "recommendation": "Use env vars"
     },
     {

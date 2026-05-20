@@ -39,8 +39,8 @@ jobs:
     # Grant write only at this job level — assessment commits and issue creation
     # happen here.
     permissions:
-      contents: write  # commit assessment reports to docs/assessments/
-      issues: write    # open tracking issues for findings
+      contents: write # commit assessment reports to docs/assessments/
+      issues: write # open tracking issues for findings
     steps:
       - uses: actions/checkout@v6
         with:

@@ -79,7 +79,7 @@ jobs:
     # Grant write only at this job level — rebasing pushes to feature branches
     # and may add labels. pick-runner needs no write access.
     permissions:
-      contents: write      # force-push rebased feature branch
+      contents: write # force-push rebased feature branch
       pull-requests: write # apply labels to conflicted PRs
     steps:
       - name: Checkout

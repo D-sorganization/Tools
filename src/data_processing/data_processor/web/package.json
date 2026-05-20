@@ -1,48 +1,48 @@
 {
-    "name":  "data-processor-web",
-    "version":  "1.0.0",
-    "private":  true,
-    "scripts":  {
-                    "dev":  "vite",
-                    "build":  "tsc \u0026\u0026 vite build",
-                    "preview":  "vite preview",
-                    "lint":  "eslint src --ext .ts,.tsx",
-                    "type-check":  "tsc --noEmit",
-                    "tauri:dev":  "tauri dev",
-                    "tauri:build":  "tauri build"
-                },
-    "dependencies":  {
-                         "@tauri-apps/api":  "latest",
-                         "lucide-react":  "^0.263.1",
-                         "papaparse":  "^5.4.1",
-                         "plotly.js":  "^2.35.0",
-                         "react":  "^18.2.0",
-                         "react-dom":  "^18.2.0",
-                         "react-plotly.js":  "^2.6.0",
-                         "recharts":  "^3.8.0"
-                     },
-    "devDependencies":  {
-                            "@tauri-apps/cli":  "latest",
-                            "@types/node":  "^20.8.0",
-                            "@types/papaparse":  "^5.3.10",
-                            "@types/react":  "^18.2.0",
-                            "@types/react-dom":  "^18.2.0",
-                            "@vitejs/plugin-react":  "^5.2.0",
-                            "autoprefixer":  "^10.4.16",
-                            "eslint":  "^8.50.0",
-                            "eslint-plugin-react":  "^7.33.2",
-                            "eslint-plugin-react-hooks":  "^4.6.0",
-                            "postcss":  "^8.5.14",
-                            "tailwindcss":  "^3.3.3",
-                            "typescript":  "^5.2.2",
-                            "vite":  "^7.3.2"
-                        },
-    "overrides":  {
-                      "vite":  "^7.3.2",
-                      "picomatch":  "^4.0.4",
-                      "flatted":  "^3.4.2",
-                      "lodash":  "^4.18.1",
-                      "next":  "latest",
-                      "brace-expansion":  "^2.0.2"
-                  }
+  "name": "data-processor-web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint src --ext .ts,.tsx",
+    "type-check": "tsc --noEmit",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "latest",
+    "lucide-react": "^0.263.1",
+    "papaparse": "^5.4.1",
+    "plotly.js": "^2.35.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-plotly.js": "^2.6.0",
+    "recharts": "^3.8.0"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "latest",
+    "@types/node": "^20.8.0",
+    "@types/papaparse": "^5.3.10",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8.50.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "postcss": "^8.5.14",
+    "tailwindcss": "^3.3.3",
+    "typescript": "^5.2.2",
+    "vite": "^7.3.2"
+  },
+  "overrides": {
+    "vite": "^7.3.2",
+    "picomatch": "^4.0.4",
+    "flatted": "^3.4.2",
+    "lodash": "^4.18.1",
+    "next": "latest",
+    "brace-expansion": "^2.0.2"
+  }
 }

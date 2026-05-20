@@ -37,8 +37,8 @@ jobs:
     runs-on: d-sorg-fleet
     # Grant write only at this job level.
     permissions:
-      contents: write  # commit assessment report to docs/assessments/
-      issues: write    # open tracking issues for below-threshold criteria
+      contents: write # commit assessment report to docs/assessments/
+      issues: write # open tracking issues for below-threshold criteria
     steps:
       - name: Checkout
         uses: actions/checkout@v6

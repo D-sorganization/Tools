@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
+from typing import cast, Any
 
 # Optional DBF support
 try:
@@ -46,12 +47,15 @@ def read_dat_file(
     if not file_path.exists():
         raise FileNotFoundError(f"DAT file not found: {file_path}")
 
-    return pd.read_csv(
-        file_path,
-        sep=delimiter,
-        encoding=encoding,
-        low_memory=False,
-        **kwargs,
+    return cast(
+        pd.DataFrame,
+        pd.read_csv(
+            file_path,
+            sep=delimiter,
+            encoding=encoding,
+            low_memory=False,
+            **kwargs,
+        ),
     )
 
 
@@ -89,11 +93,11 @@ def read_dbf_tags(file_path: str | Path) -> list[str]:
 
     for col in tag_columns:
         if col in df.columns:
-            return df[col].dropna().astype(str).tolist()
+            return cast(list[str], df[col].dropna().astype(str).tolist())
 
     # If no known column found, return all values from first column
     if len(df.columns) > 0:
-        return df.iloc[:, 0].dropna().astype(str).tolist()
+        return cast(list[str], df.iloc[:, 0].dropna().astype(str).tolist())
 
     return []
 

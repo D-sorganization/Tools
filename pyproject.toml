@@ -40,6 +40,10 @@ all = [
     "PyQt6>=6.5.0",
     "sympy>=1.12",
 ]
+# AI and simulation models
+ai = [
+    "torch>=2.0.0",
+]
 # URDF/Model generation only
 urdf = [
     "trimesh>=4.0.0",
@@ -141,7 +145,7 @@ dev = [
     "pytest-xdist>=3.0.0",
     "pytest-timeout>=2.0.0",
     "pytest-benchmark>=4.0.0",
-    "pytest-recording>=0.13.0",
+    "pytest-vcr>=1.0.0",
     "vcrpy>=6.0.0",
     "ruff>=0.1.0",
     "mypy>=1.0.0",

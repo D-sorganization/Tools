@@ -118,7 +118,7 @@ jobs:
     # Grant write only at this job level — this is the only job that pushes commits
     # or comments on PRs. pick-runner needs no write access.
     permissions:
-      contents: write      # push repair commits to the target branch
+      contents: write # push repair commits to the target branch
       pull-requests: write # post repair-status comment on the associated PR
     # Prevent multiple repairs on same branch simultaneously
     concurrency:

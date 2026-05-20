@@ -80,7 +80,7 @@ jobs:
     # Grant write only at this job level — branch creation, fix pushes, and PR
     # opening happen here. pick-runner needs no write access.
     permissions:
-      contents: write      # create jules/auto-refactor-* branch and push fixes
+      contents: write # create jules/auto-refactor-* branch and push fixes
       pull-requests: write # open PR with automated refactor improvements
     steps:
       - name: Checkout

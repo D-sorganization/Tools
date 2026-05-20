@@ -86,7 +86,7 @@ jobs:
     # Grant write only at this job level — hotfix branch creation and PR opening
     # happen here. The pick-runner job needs no write access.
     permissions:
-      contents: write      # create and push hotfix/* branch
+      contents: write # create and push hotfix/* branch
       pull-requests: write # open the urgent PR for human review
     steps:
       - name: Validate failed branch
