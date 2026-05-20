@@ -4,7 +4,7 @@ This module provides a unified color theme system for all PyQt6 GUI applications
 across the D-sorganization repository fleet.
 
 Features:
-- 12+ built-in themes (Light, Dark, Monokai, Dracula, One Dark, etc.)
+- 12+ built-in themes (Light, Dark, Neon Warm Dark, Vampire Dark, Frost Dark, etc.)
 - Custom theme support with persistence
 - Theme inheritance for docked applications
 - Qt stylesheet generation

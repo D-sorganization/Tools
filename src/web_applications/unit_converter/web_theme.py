@@ -47,7 +47,7 @@ def get_theme_by_name(name: str) -> dict | None:
     """Look up a theme by its display name.
 
     Args:
-        name: Display name (e.g., "Dark", "Dracula", "One Dark")
+        name: Display name (e.g., "Dark", "Vampire Dark", "Frost Dark")
 
     Returns:
         Theme dict with 'name', 'colors', 'semantic', 'isDark', or None

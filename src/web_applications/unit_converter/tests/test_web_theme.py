@@ -120,7 +120,7 @@ class TestAllThemesAsCss:
         css = all_themes_as_css()
         assert '[data-theme="Dark"]' in css
         assert '[data-theme="Light"]' in css
-        assert '[data-theme="Dracula"]' in css
+        assert '[data-theme="Vampire Dark"]' in css
 
 
 class TestGetThemesForApi:

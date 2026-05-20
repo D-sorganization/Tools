@@ -6,7 +6,7 @@
       "border": "#ced4da",
       "text": "#212529",
       "text_secondary": "#495057",
-      "label": "#6c757d",
+      "label": "#666e76",
       "focus": "#80bdff",
       "input_bg": "#ffffff",
       "accent": "#5a8fc4",
@@ -120,12 +120,12 @@
       "selection_bg": "#388e3c",
       "selection_text": "#ffffff"
     },
-    "monokai": {
+    "neon-warm-dark": {
       "bg": "#272822",
       "group_bg": "#3e3d32",
       "border": "#75715e",
       "text": "#f8f8f2",
-      "text_secondary": "#ae81ff",
+      "text_secondary": "#be98ff",
       "label": "#e6db74",
       "focus": "#a6e22e",
       "input_bg": "#171814",
@@ -140,11 +140,11 @@
       "error": "#f92672",
       "info": "#66d9ef",
       "link": "#66d9ef",
-      "link_hover": "#ae81ff",
+      "link_hover": "#be98ff",
       "selection_bg": "#49483e",
       "selection_text": "#f8f8f2"
     },
-    "dracula": {
+    "vampire-dark": {
       "bg": "#282a36",
       "group_bg": "#343746",
       "border": "#6272a4",
@@ -168,7 +168,7 @@
       "selection_bg": "#44475a",
       "selection_text": "#f8f8f2"
     },
-    "one-dark": {
+    "frost-dark": {
       "bg": "#282c34",
       "group_bg": "#30363f",
       "border": "#5c6370",
@@ -192,7 +192,7 @@
       "selection_bg": "#3e4451",
       "selection_text": "#abb2bf"
     },
-    "gitpod-dark": {
+    "teal-dark": {
       "bg": "#0d1117",
       "group_bg": "#161b22",
       "border": "#30363d",
@@ -216,7 +216,7 @@
       "selection_bg": "#ff9a3c30",
       "selection_text": "#e6edf3"
     },
-    "ms-word": {
+    "office-blue": {
       "bg": "#ffffff",
       "group_bg": "#f3f3f3",
       "border": "#d1d1d1",
@@ -240,7 +240,7 @@
       "selection_bg": "#2b579a",
       "selection_text": "#ffffff"
     },
-    "ms-excel": {
+    "office-green": {
       "bg": "#ffffff",
       "group_bg": "#f3f3f3",
       "border": "#d1d1d1",
@@ -264,7 +264,7 @@
       "selection_bg": "#217346",
       "selection_text": "#ffffff"
     },
-    "legal-pad": {
+    "sandstone-yellow": {
       "bg": "#ffffc0",
       "group_bg": "#fff8a8",
       "border": "#d4c97a",
