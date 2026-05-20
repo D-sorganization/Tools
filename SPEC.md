@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.184                                    |
+| **Spec Version**        | 1.1.187                                    |
 | **Last Spec Update**    | 2026-05-17                                 |
 
 ## 2. Purpose & Mission
@@ -888,3 +888,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 ### Version 1.1.186
 
 - **Performance**: In `src/media_processing/video_processor/apps/web/lib/golf/phaseDetector.ts`, replaced `.reduce()` with a standard `for` loop in `calculatePhaseConfidence` to eliminate callback allocation and GC overhead in high-frequency phase detection paths.
+### Version 1.1.187
+
+- **Security**: Fixed an information leakage vulnerability in `src/web_applications/health_checks.py`. API endpoints (`/api/health` and `/api/ready`) no longer expose raw exception strings (`str(e)`) in their JSON responses. They now return safe, generic error messages while preserving full traceback details in the backend logs using `logger.exception()`.
