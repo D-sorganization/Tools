@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Renamed all proprietary color themes to generic names (Vampire Dark, Abyssal
+  Blue, Midnight Teal, Silver Mist, Slate Gray) to avoid third-party trademark
+  conflicts. Theme behaviour is unchanged.
+
 ### Added
 
 - `docs/performance.md`: performance optimisation guide documenting LRU-cache
