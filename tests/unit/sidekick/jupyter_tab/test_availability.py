@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import sys
 from collections.abc import Generator
-from unittest.mock import patch
+from types import ModuleType
 
 import pytest
 from upstream_drift_tools.ui.tools_sidebar.jupyter_tab.availability import (
@@ -20,11 +20,11 @@ def _reset_cache() -> Generator[None, None, None]:
 
 
 def test_check_returns_true_when_nbformat_is_importable() -> None:
-    with patch("importlib.import_module") as mock_import:
+    with pytest.MonkeyPatch.context() as monkeypatch:
+        monkeypatch.setitem(sys.modules, "nbformat", ModuleType("nbformat"))
         available, message = JupyterTabAvailability.check()
-        assert available is True
-        assert message == ""
-        mock_import.assert_called_once_with("nbformat")
+    assert available is True
+    assert message == ""
 
 
 def test_check_returns_install_hint_when_nbformat_missing() -> None:
@@ -35,7 +35,8 @@ def test_check_returns_install_hint_when_nbformat_missing() -> None:
         if name == "nbformat" or name.startswith("nbformat.")
     }
     try:
-        with patch.dict(sys.modules, {"nbformat": None}):
+        with pytest.MonkeyPatch.context() as monkeypatch:
+            monkeypatch.setitem(sys.modules, "nbformat", None)
             available, message = JupyterTabAvailability.check()
     finally:
         sys.modules.update(removed)
