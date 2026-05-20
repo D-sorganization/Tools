@@ -67,8 +67,12 @@ def get_readiness_status() -> dict[str, Any]:
             "flask": flask.__version__,
             "numpy": numpy.__version__,
         }
-    except ImportError as e:
-        checks["packages"] = {"healthy": False, "error": str(e)}
+    except ImportError:
+        logger.exception("Failed to import required packages")
+        checks["packages"] = {
+            "healthy": False,
+            "error": "Required packages failed to import",
+        }
 
     # Disk space check (simplified)
     try:
@@ -80,8 +84,9 @@ def get_readiness_status() -> dict[str, Any]:
             "free_mb": free // (1024 * 1024),
             "free_pct": (free / total * 100) if total > 0 else 0,
         }
-    except Exception as e:
-        checks["disk"] = {"healthy": False, "error": str(e)}
+    except Exception:
+        logger.exception("Failed to check disk usage")
+        checks["disk"] = {"healthy": False, "error": "Disk check failed"}
 
     # Memory usage check (simplified)
     try:
@@ -96,8 +101,9 @@ def get_readiness_status() -> dict[str, Any]:
     except ImportError:
         # psutil not available, skip check
         checks["memory"] = {"healthy": True, "skipped": "psutil not installed"}
-    except Exception as e:
-        checks["memory"] = {"healthy": False, "error": str(e)}
+    except Exception:
+        logger.exception("Failed to check memory usage")
+        checks["memory"] = {"healthy": False, "error": "Memory check failed"}
 
     # Determine overall readiness
     ready = all(check.get("healthy", True) for check in checks.values())
@@ -132,9 +138,17 @@ def register_health_endpoints(app: Any) -> None:
         try:
             status = get_health_status()
             return jsonify(status), 200
-        except Exception as e:
+        except Exception:
             logger.exception("Health check failed")
-            return jsonify({"status": "error", "error": str(e)}), 503
+            return (
+                jsonify(
+                    {
+                        "status": "error",
+                        "error": "An internal error occurred during health check.",
+                    }
+                ),
+                503,
+            )
 
     @app.get("/api/ready")
     def ready() -> tuple[dict[str, Any], int]:
@@ -148,6 +162,14 @@ def register_health_endpoints(app: Any) -> None:
             status = get_readiness_status()
             status_code = 200 if status["ready"] else 503
             return jsonify(status), status_code
-        except Exception as e:
+        except Exception:
             logger.exception("Readiness check failed")
-            return jsonify({"status": "error", "error": str(e)}), 503
+            return (
+                jsonify(
+                    {
+                        "status": "error",
+                        "error": "An internal error occurred during readiness check.",
+                    }
+                ),
+                503,
+            )

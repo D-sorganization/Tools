@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.187                                    |
+| **Spec Version**        | 1.1.188                                    |
 | **Last Spec Update**    | 2026-05-20                                 |
 
 ## 2. Purpose & Mission
@@ -893,6 +893,11 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 - **UX**: Add accessible toggle states and toast feedback for copy actions in `calculator/static/app.js` and `calculator/templates/index.html`.
 
+### Version 1.1.188
+
+- **Security**: Fixed an information leakage vulnerability in `src/web_applications/health_checks.py`. API endpoints (`/api/health` and `/api/ready`) no longer expose raw exception strings (`str(e)`) in their JSON responses. They now return safe, generic error messages while preserving full traceback details in the backend logs using `logger.exception()`.
+
 ## 9. Changelog
 
 - **2026-05-20**: Add accessible toggle states and toast feedback for copy actions in `calculator/static/app.js` and `calculator/templates/index.html`.
+- **2026-05-20**: Harden health-check API responses to return generic client-facing errors while logging exception details server-side.
