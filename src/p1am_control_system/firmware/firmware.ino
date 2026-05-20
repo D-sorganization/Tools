@@ -120,28 +120,66 @@ void SyncDCSToModbus() {
 
 void setup() {
   Serial.begin(115200);
+  // Wait up to 5s for serial monitor to attach so we don't miss boot messages.
+  // Note: USB CDC `if (Serial)` only blocks while a host is opening the port,
+  // so this still proceeds promptly when no monitor is connected.
+  unsigned long serialWaitStart = millis();
+  while (!Serial && (millis() - serialWaitStart) < 5000) {
+    delay(10);
+  }
+  Serial.println();
+  Serial.println(F("=== P1AM SCADA firmware boot ==="));
 
-  // Initialize Ethernet
+  // Initialize Ethernet. The P1AM-ETH shield wires the W5500 chip-select to
+  // pin 5 (this matches the library default on SAMD, but we set it explicitly
+  // so the dependency is visible and survives a library default change).
+  Ethernet.init(5);
+  Serial.println(F("[eth] calling Ethernet.begin()..."));
   Ethernet.begin(mac, ip);
+  Serial.print(F("[eth] hardwareStatus="));
+  Serial.println(Ethernet.hardwareStatus());
+  Serial.print(F("[eth] linkStatus="));
+  Serial.println(Ethernet.linkStatus());
+  Serial.print(F("[eth] localIP="));
+  Serial.println(Ethernet.localIP());
   
   // Wait for Link connection
   delay(1000);
 
-  // Initialize hardware wrapper
+  // Start Modbus TCP server FIRST -- before any I/O / flash init that might
+  // hang. Ensures port 502 is reachable from SCADA even if the backplane scan
+  // or flash load below takes a long time or wedges entirely.
+  Serial.println(F("[mb] starting Modbus TCP server on port 502..."));
+  ethServer.begin();
+  if (!modbusServer.begin()) {
+    Serial.println(F("[mb] FATAL: modbusServer.begin() failed -- halting"));
+    while (1) {
+      delay(1000); // Halt if Modbus fails to start
+    }
+  }
+  modbusServer.configureCoils(0, 10);
+  modbusServer.configureHoldingRegisters(0, 500);
+  Serial.println(F("[mb] Modbus TCP server started"));
+
+  // Initialize hardware wrapper (backplane scan + Inhibit pin setup)
+  Serial.println(F("[hw] calling P1AMHardware::Begin()..."));
   hw.Begin();
+  Serial.println(F("[hw] hardware init complete"));
 
   // Load saved NVRAM configuration
+  Serial.println(F("[storage] loading saved config from flash..."));
   float temp_high[SignalBroker::kNumTags];
   float temp_low[SignalBroker::kNumTags];
-  
+
   bool loaded = storage.Load(broker, pids, temp_high, temp_low);
   if (loaded) {
+    Serial.println(F("[storage] valid config loaded"));
     for (int i = 0; i < SignalBroker::kNumTags; ++i) {
       interlock.SetHighLimit(i, temp_high[i]);
       interlock.SetLowLimit(i, temp_low[i]);
     }
   } else {
-    // Apply standard default values to prevent immediate trip
+    Serial.println(F("[storage] no valid config -- using defaults"));
     broker.Reset();
     interlock.Reset();
     for (int i = 0; i < 4; ++i) {
@@ -149,19 +187,9 @@ void setup() {
     }
   }
 
-  // Start Modbus TCP server
-  if (!modbusServer.begin()) {
-    while (1) {
-      delay(1000); // Halt if Modbus fails to start
-    }
-  }
-
-  // Configure Modbus registers
-  modbusServer.configureCoils(0, 10);
-  modbusServer.configureHoldingRegisters(0, 500);
-
   // Write loaded configuration values to Modbus registers
   SyncDCSToModbus();
+  Serial.println(F("[setup] complete -- entering control loop"));
 }
 
 void loop() {
@@ -188,13 +216,19 @@ void loop() {
     modbusServer.coilWrite(0, 0); // Clear trigger
   }
 
-  // Sync any updates sent via SCADA
-  SyncModbusToDCS();
-
-  // 10Hz control loop logic
+  // 10Hz control + config-sync logic. SyncModbusToDCS() reads ~180 holding
+  // registers and unpacks IEEE-754 floats; calling it every loop iteration
+  // (which on SAMD21 can be 50k+ Hz) starves USB CDC servicing and creates
+  // contention with modbusServer.poll() on the same internal state. Gating to
+  // 10 Hz brings load to a level the SAMD21 USB stack and Modbus library
+  // can both keep up with, while still being more than fast enough to honor
+  // SCADA-pushed configuration changes between control scans.
   unsigned long now = millis();
   if (now - lastScanTime >= kScanIntervalMs) {
     lastScanTime = now;
+
+    // Pull any config changes pushed from SCADA
+    SyncModbusToDCS();
 
     // Scan cycle
     hw.Update();
@@ -205,7 +239,7 @@ void loop() {
       pids[i].Compute(broker, 0.1f); // dt = 100ms = 0.1s
     }
 
-    // Safety interlocks check (handles forcing outputs to 0 and driving physical outputs)
+    // Safety interlocks check (forces outputs to 0 + drives physical outputs)
     interlock.Evaluate(broker, hw);
 
     // Publish tag values to Modbus holding registers (0 to 63)
