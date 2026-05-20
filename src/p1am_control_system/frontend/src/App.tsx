@@ -1,8 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { RoutingMatrix } from "./components/RoutingMatrix";
 import { TrendChart } from "./components/TrendChart";
+import { AlarmsHeader } from "./components/AlarmsHeader";
+import { EStopButton } from "./components/EStopButton";
+import { InterlocksPanel } from "./components/InterlocksPanel";
+import { EventLogView } from "./components/EventLogView";
+import { ProjectImporter } from "./components/ProjectImporter";
+import { LadderExplorer } from "./components/LadderExplorer";
+import { PlantHierarchy } from "./components/PlantHierarchy";
 import {
-  AlertOctagon,
   Activity,
   Sliders,
   Shuffle,
@@ -27,8 +33,10 @@ export interface PIDConfig {
 }
 
 export interface InterlockConfig {
-  high_limit: number;
+  lolo_limit: number;
   low_limit: number;
+  high_limit: number;
+  hihi_limit: number;
 }
 
 export interface RoutingConfig {
@@ -50,8 +58,10 @@ const DEFAULT_CONFIG: RoutingConfig = {
     kd: 0.0,
   })),
   interlocks: Array.from({ length: 32 }).map(() => ({
-    high_limit: 100.0,
-    low_limit: 0.0,
+    lolo_limit: 0.0,
+    low_limit: 5.0,
+    high_limit: 95.0,
+    hihi_limit: 100.0,
   })),
 };
 
@@ -81,11 +91,15 @@ export interface ActiveAlarm {
   tag_id: string;
   state: string;
   value: number;
+  severity: number;
+  acknowledged: boolean;
+  timestamp: string;
 }
 
 type InspectorState =
   | { type: "none" }
   | { type: "tag"; tagId: number }
+  | { type: "custom_tag"; tagName: string }
   | { type: "pid"; index: number }
   | { type: "routing" }
   | { type: "alicat"; deviceId: string }
@@ -106,7 +120,7 @@ export const App: React.FC = () => {
   // Alarms and Events State
   const [eventsHistory, setEventsHistory] = useState<EventLogEntry[]>([]);
   const [activeAlarms, setActiveAlarms] = useState<ActiveAlarm[]>([]);
-  const [showAlarmsDropdown, setShowAlarmsDropdown] = useState<boolean>(false);
+  const [eStopActive, setEStopActive] = useState<boolean>(false);
 
   // Tab Navigation and Visibility State
   const [activeTab, setActiveTab] = useState<string>("trends");
@@ -116,12 +130,16 @@ export const App: React.FC = () => {
     routing: boolean;
     tuning: boolean;
     events: boolean;
+    ladder: boolean;
+    hierarchy: boolean;
   }>({
     trends: true,
     controllers: true,
     routing: true,
     tuning: true,
     events: true,
+    ladder: true,
+    hierarchy: true,
   });
 
   // PID Tuning State
@@ -164,6 +182,39 @@ export const App: React.FC = () => {
 
   // Alicat MFC form states
   const [alicatSetpointVal, setAlicatSetpointVal] = useState<string>("");
+
+  // Large-scale plant tags state
+  const [tagsDict, setTagsDict] = useState<Record<string, number>>({});
+  const [allTags, setAllTags] = useState<any[]>([]);
+
+  const fetchAllTags = async () => {
+    try {
+      const res = await fetch("/api/project/ladder-explorer");
+      if (res.ok) {
+        const data = await res.json();
+        setAllTags(data);
+      }
+    } catch (e) {
+      console.error("Failed to fetch all tags", e);
+    }
+  };
+
+  const handleSelectTag = (name: string) => {
+    if (name.startsWith("TAG_")) {
+      const id = parseInt(name.substring(4), 10);
+      if (!isNaN(id) && id >= 0 && id < 32) {
+        setInspectorView({ type: "tag", tagId: id });
+        const val = tagValues[id] ?? 0.0;
+        setOverrideVal(val.toFixed(2));
+        setShowOverrideConfirm(false);
+        return;
+      }
+    }
+    setInspectorView({ type: "custom_tag", tagName: name });
+    const val = tagsDict[name] ?? 0.0;
+    setOverrideVal(val.toFixed(2));
+    setShowOverrideConfirm(false);
+  };
 
   useEffect(() => {
     if (inspectorView.type === "alicat") {
@@ -213,7 +264,60 @@ export const App: React.FC = () => {
       const res = await fetch("/api/routing");
       if (res.ok) {
         const data = await res.json();
-        setConfig(data);
+        
+        // Helper to convert TAG_x to x (number)
+        const toInt = (t: string | number | undefined | null): number => {
+          if (t === undefined || t === null) return 0;
+          if (typeof t === "number") return t;
+          if (typeof t === "string" && t.startsWith("TAG_")) {
+            const parsed = parseInt(t.substring(4), 10);
+            return isNaN(parsed) ? 0 : parsed;
+          }
+          return 0;
+        };
+
+        const mappedConfig: RoutingConfig = {
+          input_routing: Array.isArray(data.input_routing) 
+            ? data.input_routing.map(toInt) 
+            : [],
+          output_routing: Array.isArray(data.output_routing) 
+            ? data.output_routing.map(toInt) 
+            : [],
+          pids: Array.isArray(data.pids) 
+            ? data.pids.map((p: any) => ({
+                pv_tag_id: toInt(p.pv_tag),
+                cv_tag_id: toInt(p.cv_tag),
+                setpoint: typeof p.setpoint === "number" ? p.setpoint : 0,
+                kp: typeof p.kp === "number" ? p.kp : 0,
+                ki: typeof p.ki === "number" ? p.ki : 0,
+                kd: typeof p.kd === "number" ? p.kd : 0,
+              }))
+            : [],
+          interlocks: (() => {
+            const mappedInts: InterlockConfig[] = Array.from({ length: 32 }).map(() => ({
+              lolo_limit: 0.0,
+              low_limit: 5.0,
+              high_limit: 95.0,
+              hihi_limit: 100.0,
+            }));
+            if (data.interlocks && typeof data.interlocks === "object") {
+              for (let i = 0; i < 32; i++) {
+                const key = `TAG_${i}`;
+                if (data.interlocks[key]) {
+                  mappedInts[i] = {
+                    lolo_limit: data.interlocks[key].lolo_limit ?? 0.0,
+                    low_limit: data.interlocks[key].low_limit ?? 5.0,
+                    high_limit: data.interlocks[key].high_limit ?? 95.0,
+                    hihi_limit: data.interlocks[key].hihi_limit ?? 100.0,
+                  };
+                }
+              }
+            }
+            return mappedInts;
+          })(),
+        };
+
+        setConfig(mappedConfig);
         triggerNotification("Loaded active PLC configuration.", "success");
       } else {
         triggerNotification("Failed to fetch routing configuration from PLC.", "error");
@@ -227,10 +331,30 @@ export const App: React.FC = () => {
   const handleDeploy = async () => {
     setDeploying(true);
     try {
+      const payload = {
+        input_routing: config.input_routing.map((idx) => `TAG_${idx}`),
+        output_routing: config.output_routing.map((idx) => `TAG_${idx}`),
+        pids: config.pids.map((p) => ({
+          pv_tag: `TAG_${p.pv_tag_id}`,
+          cv_tag: `TAG_${p.cv_tag_id}`,
+          setpoint: p.setpoint,
+          kp: p.kp,
+          ki: p.ki,
+          kd: p.kd,
+        })),
+        interlocks: (() => {
+          const dict: Record<string, InterlockConfig> = {};
+          config.interlocks.forEach((intVal, i) => {
+            dict[`TAG_${i}`] = intVal;
+          });
+          return dict;
+        })(),
+      };
+
       const res = await fetch("/api/routing", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(config),
+        body: JSON.stringify(payload),
       });
       if (res.ok) {
         triggerNotification(
@@ -266,7 +390,7 @@ export const App: React.FC = () => {
   };
 
   // Execute direct tag value force override
-  const executeOverride = async (tagId: number) => {
+  const executeOverride = async (tagId: number | string) => {
     const parsed = parseFloat(overrideVal);
     if (isNaN(parsed)) {
       triggerNotification("Invalid numeric value.", "error");
@@ -526,6 +650,7 @@ export const App: React.FC = () => {
   useEffect(() => {
     fetchConfig();
     fetchAlicats();
+    fetchAllTags();
 
     const connectWebSocket = () => {
       const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
@@ -555,8 +680,17 @@ export const App: React.FC = () => {
                 return updated;
               });
             }
+            if (data.tags_dict && typeof data.tags_dict === "object") {
+              setTagsDict(data.tags_dict);
+            }
             if (Array.isArray(data.alicats)) {
               setAlicats(data.alicats);
+            }
+            if (data.active_alarms) {
+              setActiveAlarms(Object.values(data.active_alarms));
+            }
+            if (typeof data.e_stop_active === "boolean") {
+              setEStopActive(data.e_stop_active);
             }
           } else {
             // Fallback for simple legacy tag arrays
@@ -715,23 +849,27 @@ export const App: React.FC = () => {
             <Settings size={14} />
           </button>
 
-          {/* E-Stop Button - Solid, flat, no shadows or blinking animations */}
-          <button
-            type="button"
-            onClick={handleEStop}
-            className="btn btn-estop"
-            style={{
-              padding: "0.5rem 1.25rem",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.4rem",
+          <EStopButton
+            eStopActive={eStopActive}
+            onTriggerEStop={handleEStop}
+            onClearEStop={async () => {
+              await fetch("/api/estop/clear", { method: "POST" });
+              setEStopActive(false);
             }}
-          >
-            <AlertOctagon size={16} />
-            EMERGENCY ESTOP
-          </button>
+          />
         </div>
       </header>
+
+      <AlarmsHeader 
+        activeAlarms={activeAlarms} 
+        onAcknowledgeAll={async () => {
+          for (const a of activeAlarms) {
+            if (!a.acknowledged) {
+              await handleAcknowledgeAlarm(a.tag_id);
+            }
+          }
+        }} 
+      />
 
       {/* Main Two-Column Master-Detail Layout */}
       <div className="main-layout-grid">
@@ -837,6 +975,46 @@ export const App: React.FC = () => {
                 }}
               >
                 Events & Alarms
+              </button>
+            )}
+            {visibleTabs.ladder && (
+              <button
+                type="button"
+                className={`tab-btn ${activeTab === "ladder" ? "active" : ""}`}
+                onClick={() => setActiveTab("ladder")}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: activeTab === "ladder" ? "var(--accent-magenta)" : "var(--text-secondary)",
+                  padding: "0.5rem 1rem",
+                  fontSize: "0.85rem",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  borderBottom: activeTab === "ladder" ? "2px solid var(--accent-magenta)" : "2px solid transparent",
+                  transition: "all var(--transition-fast)",
+                }}
+              >
+                Ladder Explorer
+              </button>
+            )}
+            {visibleTabs.hierarchy && (
+              <button
+                type="button"
+                className={`tab-btn ${activeTab === "hierarchy" ? "active" : ""}`}
+                onClick={() => setActiveTab("hierarchy")}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: activeTab === "hierarchy" ? "var(--accent-cyan)" : "var(--text-secondary)",
+                  padding: "0.5rem 1rem",
+                  fontSize: "0.85rem",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  borderBottom: activeTab === "hierarchy" ? "2px solid var(--accent-cyan)" : "2px solid transparent",
+                  transition: "all var(--transition-fast)",
+                }}
+              >
+                Plant Hierarchy
               </button>
             )}
           </div>
@@ -1044,90 +1222,37 @@ export const App: React.FC = () => {
           )}
 
           {activeTab === "routing" && visibleTabs.routing && (
-            <div
-              className="glass-panel"
-              onClick={() => setInspectorView({ type: "routing" })}
-              title="Click to open Routing Matrix Editor"
-            >
-              <div className="panel-header" style={{ borderBottom: "none", marginBottom: 0, paddingBottom: 0 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                  <Shuffle size={16} color="var(--accent-cyan)" />
-                  <span>Signal Routing Matrix</span>
+            <div style={{ display: "flex", gap: "1rem", flexDirection: "column" }}>
+              <div
+                className="glass-panel"
+                onClick={() => setInspectorView({ type: "routing" })}
+                title="Click to open Routing Matrix Editor"
+              >
+                <div className="panel-header" style={{ borderBottom: "none", marginBottom: 0, paddingBottom: 0 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <Shuffle size={16} color="var(--accent-cyan)" />
+                    <span>Signal Routing Matrix</span>
+                  </div>
                 </div>
-                <span className="tooltip-container">
-                  <Info size={14} color="var(--text-muted)" />
-                  <span className="tooltip-text">Configure routing patches linking hardware channels to registers. Click down on any patch row.</span>
-                </span>
+                <div style={{ marginTop: "0.75rem" }}>
+                  <RoutingMatrix config={config} onUpdate={setConfig} tagValues={tagValues} />
+                </div>
               </div>
-              <div style={{ marginTop: "0.75rem" }}>
-                <RoutingMatrix config={config} onUpdate={setConfig} tagValues={tagValues} />
+
+              <div className="glass-panel h-96">
+                <InterlocksPanel
+                  interlocks={config.interlocks}
+                  onChange={handleInterlockChange}
+                  onDeploy={handleDeploy}
+                  deploying={deploying}
+                />
               </div>
             </div>
           )}
 
           {activeTab === "events" && visibleTabs.events && (
-            <div className="glass-panel">
-              <div className="panel-header">
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                  <ShieldAlert size={16} color="var(--color-warning)" />
-                  <span>Events & Alarms History</span>
-                </div>
-              </div>
-              <div style={{ marginTop: "0.75rem", overflowX: "auto" }}>
-                <table style={{ width: "100%", textAlign: "left", fontSize: "0.85rem", borderCollapse: "collapse" }}>
-                  <thead>
-                    <tr style={{ borderBottom: "1px solid var(--panel-border)", color: "var(--text-secondary)" }}>
-                      <th style={{ padding: "0.5rem" }}>Timestamp</th>
-                      <th style={{ padding: "0.5rem" }}>Type</th>
-                      <th style={{ padding: "0.5rem" }}>Description</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {eventsHistory.length === 0 ? (
-                      <tr>
-                        <td colSpan={3} style={{ padding: "1rem", textAlign: "center", color: "var(--text-muted)" }}>
-                          Event history will appear here.
-                        </td>
-                      </tr>
-                    ) : (
-                      eventsHistory.map((evt) => (
-                        <tr key={evt.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-                          <td style={{ padding: "0.5rem", whiteSpace: "nowrap" }}>
-                            {new Date(evt.timestamp).toLocaleString()}
-                          </td>
-                          <td style={{ padding: "0.5rem" }}>
-                            <span
-                              style={{
-                                padding: "0.1rem 0.3rem",
-                                borderRadius: "3px",
-                                fontSize: "0.7rem",
-                                fontWeight: "bold",
-                                backgroundColor:
-                                  evt.event_type === "ALARM"
-                                    ? evt.severity === 2
-                                      ? "rgba(239, 68, 68, 0.15)"
-                                      : "rgba(245, 158, 11, 0.15)"
-                                    : "rgba(56, 189, 248, 0.15)",
-                                color:
-                                  evt.event_type === "ALARM"
-                                    ? evt.severity === 2
-                                      ? "var(--color-error)"
-                                      : "var(--color-warning)"
-                                    : "var(--accent-cyan)",
-                              }}
-                            >
-                              {evt.event_type}
-                            </span>
-                          </td>
-                          <td style={{ padding: "0.5rem", width: "100%" }}>
-                            {evt.description}
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
+            <div className="glass-panel h-96">
+              <EventLogView events={eventsHistory} />
             </div>
           )}
 
@@ -1420,6 +1545,29 @@ export const App: React.FC = () => {
               </div>
             </div>
           )}
+
+          {activeTab === "ladder" && visibleTabs.ladder && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+              <ProjectImporter
+                onImportSuccess={() => {
+                  fetchAllTags();
+                  fetchConfig();
+                }}
+                triggerNotification={triggerNotification}
+              />
+              <LadderExplorer
+                onSelectTag={handleSelectTag}
+                triggerNotification={triggerNotification}
+              />
+            </div>
+          )}
+
+          {activeTab === "hierarchy" && visibleTabs.hierarchy && (
+            <PlantHierarchy
+              onSelectTag={handleSelectTag}
+              triggerNotification={triggerNotification}
+            />
+          )}
         </div>
 
         {/* Right Column (Sticky Inspector Sidebar Panel) */}
@@ -1546,114 +1694,163 @@ export const App: React.FC = () => {
               </div>
             )}
 
-            {/* Tag register editor */}
-            {inspectorView.type === "tag" && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                <div>
-                  <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--accent-cyan)", textTransform: "uppercase" }}>
-                    Tag Register #{inspectorView.tagId}
-                  </h3>
-                  <div style={{ display: "flex", justifyContent: "space-between", background: "var(--input-bg)", padding: "0.5rem", borderRadius: "4px", marginTop: "0.5rem", border: "1px solid var(--panel-border)" }}>
-                    <span style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>Current Value:</span>
-                    <span className="mono-text" style={{ fontSize: "0.9rem", fontWeight: 700, color: "var(--accent-cyan)" }}>
-                      {tagValues[inspectorView.tagId]?.toFixed(2) ?? "0.00"}
-                    </span>
-                  </div>
-                </div>
+            {/* Tag register editor (Unified for both legacy tag index and custom named tags) */}
+            {(inspectorView.type === "tag" || inspectorView.type === "custom_tag") && (() => {
+              const isCustom = inspectorView.type === "custom_tag";
+              const tagName = isCustom ? inspectorView.tagName : `TAG_${inspectorView.tagId}`;
+              const tagInfo = allTags.find((t) => t.name === tagName);
+              
+              // Get current value
+              const currentVal = isCustom
+                ? (tagsDict[tagName] ?? 0.0)
+                : (tagValues[inspectorView.tagId] ?? 0.0);
+              
+              // Check if writable (legacy tags are Read/Write, custom tags lookup from registry)
+              const rwMode = tagInfo ? tagInfo.rw_mode : "Read/Write";
+              const isWritable = rwMode === "Read/Write" || rwMode === "Read-Write";
 
-                {/* Section 1: Manual Value Override (Write Force) */}
-                <div style={{ borderTop: "1px solid var(--panel-border)", paddingTop: "0.75rem" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", marginBottom: "0.5rem" }}>
-                    <ShieldAlert size={14} color="var(--color-warning)" />
-                    <span style={{ fontSize: "0.8rem", fontWeight: 700, textTransform: "uppercase" }}>Manual Force Override</span>
-                  </div>
-                  <div className="input-group">
-                    <label className="input-label">Override Force Value</label>
-                    <input
-                      type="number"
-                      step="0.1"
-                      className="form-input"
-                      value={overrideVal}
-                      onChange={(e) => setOverrideVal(e.target.value)}
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setShowOverrideConfirm(true)}
-                    className="btn"
-                    style={{ width: "100%", color: "var(--color-warning)", borderColor: "var(--color-warning)", padding: "0.45rem", fontSize: "0.8rem" }}
-                  >
-                    Force Register Write
-                  </button>
-
-                  {showOverrideConfirm && (
-                    <div style={{ background: "rgba(239, 68, 68, 0.1)", border: "1px solid var(--color-error)", borderRadius: "4px", padding: "0.6rem", marginTop: "0.5rem" }}>
-                      <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--color-error)", marginBottom: "0.25rem" }}>Confirm Direct Write</div>
-                      <p style={{ fontSize: "0.7rem", color: "var(--text-secondary)", marginBottom: "0.6rem" }}>
-                        Forcing Tag {inspectorView.tagId} to {overrideVal} will overwrite normal logic. Continue?
+              return (
+                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                  <div>
+                    <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--accent-cyan)", textTransform: "uppercase" }}>
+                      Tag Inspector
+                    </h3>
+                    <div style={{ fontSize: "0.8rem", color: "var(--text-primary)", fontWeight: 700, marginTop: "0.25rem" }} className="mono-text">
+                      {tagName}
+                    </div>
+                    {tagInfo && tagInfo.description && (
+                      <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.25rem", lineHeight: 1.4 }}>
+                        {tagInfo.description}
                       </p>
-                      <div style={{ display: "flex", gap: "0.4rem" }}>
-                        <button
-                          type="button"
-                          onClick={() => executeOverride(inspectorView.tagId)}
-                          className="btn"
-                          style={{ background: "var(--color-error)", border: "none", color: "#ffffff", padding: "0.2rem 0.5rem", fontSize: "0.75rem" }}
-                        >
-                          Confirm
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setShowOverrideConfirm(false)}
-                          className="btn"
-                          style={{ padding: "0.2rem 0.5rem", fontSize: "0.75rem" }}
-                        >
-                          Cancel
-                        </button>
+                    )}
+                    <div style={{ display: "flex", justifyContent: "space-between", background: "var(--input-bg)", padding: "0.5rem", borderRadius: "4px", marginTop: "0.5rem", border: "1px solid var(--panel-border)" }}>
+                      <span style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>Current Value:</span>
+                      <span className="mono-text" style={{ fontSize: "0.9rem", fontWeight: 700, color: "var(--accent-cyan)" }}>
+                        {currentVal.toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {tagInfo && (
+                    <div style={{ fontSize: "0.75rem", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem", background: "rgba(255,255,255,0.01)", padding: "0.5rem", borderRadius: "4px", border: "1px solid var(--panel-border)" }}>
+                      <div>
+                        <span style={{ color: "var(--text-muted)" }}>Reg Type:</span>{" "}
+                        <strong style={{ color: "var(--text-secondary)" }}>{tagInfo.register_type || "None"}</strong>
+                      </div>
+                      <div>
+                        <span style={{ color: "var(--text-muted)" }}>Reg Num:</span>{" "}
+                        <strong style={{ color: "var(--text-secondary)" }}>{tagInfo.register_num ?? "None"}</strong>
+                      </div>
+                      <div>
+                        <span style={{ color: "var(--text-muted)" }}>Format:</span>{" "}
+                        <strong style={{ color: "var(--text-secondary)" }}>{tagInfo.data_format || "None"}</strong>
+                      </div>
+                      <div>
+                        <span style={{ color: "var(--text-muted)" }}>RW Mode:</span>{" "}
+                        <strong style={{ color: "var(--text-secondary)" }}>{tagInfo.rw_mode}</strong>
                       </div>
                     </div>
                   )}
-                </div>
 
-                {/* Section 2: Safety Interlocks Boundaries */}
-                <div style={{ borderTop: "1px solid var(--panel-border)", paddingTop: "0.75rem" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", marginBottom: "0.5rem" }}>
-                    <Sliders size={14} color="var(--accent-purple)" />
-                    <span style={{ fontSize: "0.8rem", fontWeight: 700, textTransform: "uppercase" }}>Safety Limits Interlocks</span>
-                  </div>
-                  <div className="input-group">
-                    <label className="input-label">High Trip Limit (Alarm High)</label>
-                    <input
-                      type="number"
-                      step="0.5"
-                      className="form-input"
-                      value={config.interlocks[inspectorView.tagId]?.high_limit ?? 100.0}
-                      onChange={(e) => handleInterlockChange(inspectorView.tagId, "high_limit", Number(e.target.value))}
-                    />
-                  </div>
-                  <div className="input-group">
-                    <label className="input-label">Low Trip Limit (Alarm Low)</label>
-                    <input
-                      type="number"
-                      step="0.5"
-                      className="form-input"
-                      value={config.interlocks[inspectorView.tagId]?.low_limit ?? 0.0}
-                      onChange={(e) => handleInterlockChange(inspectorView.tagId, "low_limit", Number(e.target.value))}
-                    />
-                  </div>
-                </div>
+                  {/* Section 1: Manual Value Override (Write Force) */}
+                  {isWritable && (
+                    <div style={{ borderTop: "1px solid var(--panel-border)", paddingTop: "0.75rem" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", marginBottom: "0.5rem" }}>
+                        <ShieldAlert size={14} color="var(--color-warning)" />
+                        <span style={{ fontSize: "0.8rem", fontWeight: 700, textTransform: "uppercase" }}>Manual Force Override</span>
+                      </div>
+                      <div className="input-group">
+                        <label className="input-label">Override Force Value</label>
+                        <input
+                          type="number"
+                          step="0.1"
+                          className="form-input"
+                          value={overrideVal}
+                          onChange={(e) => setOverrideVal(e.target.value)}
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setShowOverrideConfirm(true)}
+                        className="btn"
+                        style={{ width: "100%", color: "var(--color-warning)", borderColor: "var(--color-warning)", padding: "0.45rem", fontSize: "0.8rem" }}
+                      >
+                        Force Register Write
+                      </button>
 
-                {/* Apply Panel Changes */}
-                <button
-                  type="button"
-                  onClick={handleDeploy}
-                  disabled={deploying}
-                  className="btn btn-primary"
-                  style={{ width: "100%", padding: "0.5rem", fontSize: "0.85rem", marginTop: "0.5rem" }}
-                >
-                  {deploying ? "Deploying Configuration..." : "Commit Safety Limits"}
-                </button>
-              </div>
-            )}
+                      {showOverrideConfirm && (
+                        <div style={{ background: "rgba(239, 68, 68, 0.1)", border: "1px solid var(--color-error)", borderRadius: "4px", padding: "0.6rem", marginTop: "0.5rem" }}>
+                          <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--color-error)", marginBottom: "0.25rem" }}>Confirm Direct Write</div>
+                          <p style={{ fontSize: "0.7rem", color: "var(--text-secondary)", marginBottom: "0.6rem" }}>
+                            Forcing Tag {tagName} to {overrideVal} will overwrite normal logic. Continue?
+                          </p>
+                          <div style={{ display: "flex", gap: "0.4rem" }}>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const idToSubmit = isCustom ? tagName : inspectorView.tagId;
+                                executeOverride(idToSubmit);
+                              }}
+                              className="btn"
+                              style={{ background: "var(--color-error)", border: "none", color: "#ffffff", padding: "0.2rem 0.5rem", fontSize: "0.75rem" }}
+                            >
+                              Confirm
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setShowOverrideConfirm(false)}
+                              className="btn"
+                              style={{ padding: "0.2rem 0.5rem", fontSize: "0.75rem" }}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Section 2: Safety Interlocks Boundaries (Only for legacy tags currently, or if tag is in config.interlocks) */}
+                  {!isCustom && (
+                    <div style={{ borderTop: "1px solid var(--panel-border)", paddingTop: "0.75rem" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", marginBottom: "0.5rem" }}>
+                        <Sliders size={14} color="var(--accent-purple)" />
+                        <span style={{ fontSize: "0.8rem", fontWeight: 700, textTransform: "uppercase" }}>Safety Limits Interlocks</span>
+                      </div>
+                      <div className="input-group">
+                        <label className="input-label">High Trip Limit (Alarm High)</label>
+                        <input
+                          type="number"
+                          step="0.5"
+                          className="form-input"
+                          value={config.interlocks[inspectorView.tagId]?.high_limit ?? 100.0}
+                          onChange={(e) => handleInterlockChange(inspectorView.tagId, "high_limit", Number(e.target.value))}
+                        />
+                      </div>
+                      <div className="input-group">
+                        <label className="input-label">Low Trip Limit (Alarm Low)</label>
+                        <input
+                          type="number"
+                          step="0.5"
+                          className="form-input"
+                          value={config.interlocks[inspectorView.tagId]?.low_limit ?? 0.0}
+                          onChange={(e) => handleInterlockChange(inspectorView.tagId, "low_limit", Number(e.target.value))}
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleDeploy}
+                        disabled={deploying}
+                        className="btn btn-primary"
+                        style={{ width: "100%", padding: "0.5rem", fontSize: "0.85rem", marginTop: "0.5rem" }}
+                      >
+                        {deploying ? "Deploying Configuration..." : "Commit Safety Limits"}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
             {/* PID Loop Tune editor */}
             {inspectorView.type === "pid" && (
@@ -1840,6 +2037,24 @@ export const App: React.FC = () => {
                       onChange={() => handleTabVisibilityToggle("events")}
                     />
                     <span>Alarms & Event Log</span>
+                  </label>
+
+                  <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8rem", cursor: "pointer" }}>
+                    <input
+                      type="checkbox"
+                      checked={visibleTabs.ladder}
+                      onChange={() => handleTabVisibilityToggle("ladder")}
+                    />
+                    <span>Ladder Explorer</span>
+                  </label>
+
+                  <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8rem", cursor: "pointer" }}>
+                    <input
+                      type="checkbox"
+                      checked={visibleTabs.hierarchy}
+                      onChange={() => handleTabVisibilityToggle("hierarchy")}
+                    />
+                    <span>Plant Hierarchy</span>
                   </label>
                 </div>
 

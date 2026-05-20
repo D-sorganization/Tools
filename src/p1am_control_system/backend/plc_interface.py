@@ -1,6 +1,6 @@
 import abc
 import asyncio
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 if TYPE_CHECKING:
     from models import RoutingConfig
@@ -15,6 +15,7 @@ class BasePLCClient(abc.ABC):
     def __init__(self) -> None:
         self.lock = asyncio.Lock()
         self.tuning_sessions: dict[int, dict] = {}
+        self.active_config: Any = None
 
     @property
     @abc.abstractmethod
@@ -37,11 +38,12 @@ class BasePLCClient(abc.ABC):
         pass
 
     @abc.abstractmethod
-    async def read_tags(self) -> list[float] | None:
-        """Read all SCADA tags (typically 32 floats) from the PLC.
+    async def read_tags(self) -> dict[str, float] | None:
+        """Read all SCADA tags from the PLC.
 
         Returns:
-            Optional[list[float]]: The tag values if successful, or None on error.
+            Optional[dict[str, float]]: The tag values mapped by name
+            if successful, or None on error.
         """
         pass
 
@@ -85,11 +87,11 @@ class BasePLCClient(abc.ABC):
         pass
 
     @abc.abstractmethod
-    async def write_tag(self, tag_id: int, value: float) -> bool:
+    async def write_tag(self, tag_name: str, value: float) -> bool:
         """Directly write or override a tag value on the PLC.
 
         Args:
-            tag_id: The logical ID of the tag.
+            tag_name: The logical name of the tag.
             value: The float value to write.
 
         Returns:

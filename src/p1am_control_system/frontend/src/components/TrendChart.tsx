@@ -64,6 +64,36 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
     setIsPaused(false);
     setZoomLevel(1.0);
     setScrollOffset(0);
+    setSmoothingMode("none");
+    setSmoothedData(null);
+  };
+
+  const [smoothingMode, setSmoothingMode] = useState<string>("none");
+  const [smoothedData, setSmoothedData] = useState<{ [tagId: number]: number[] } | null>(null);
+
+  const fetchSmoothedData = async () => {
+    if (smoothingMode === "none" || selectedTags.length === 0) return;
+    setIsPaused(true);
+    
+    const end = new Date();
+    const start = new Date(end.getTime() - duration * 1000);
+    const startIso = start.toISOString();
+    const endIso = end.toISOString();
+
+    const newSmoothedData: { [tagId: number]: number[] } = {};
+    
+    for (const tagId of selectedTags) {
+      try {
+        const res = await fetch(`/api/trends?tag_id=${tagId}&start_time=${encodeURIComponent(startIso)}&end_time=${encodeURIComponent(endIso)}&smoothing=${smoothingMode}`);
+        if (res.ok) {
+          const data = await res.json();
+          newSmoothedData[tagId] = data.values;
+        }
+      } catch (e) {
+        console.error("Failed to fetch smoothed data for tag", tagId);
+      }
+    }
+    setSmoothedData(newSmoothedData);
   };
 
   // Dimensions of SVG canvas
@@ -81,10 +111,16 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
   let minVal = 0;
   let maxVal = 100;
 
-  if (activeHistory.length > 0 && selectedTags.length > 0) {
-    const activeValues = activeHistory.flatMap((sample) =>
-      selectedTags.map((tagId) => sample[tagId] ?? 0)
-    );
+  if (selectedTags.length > 0) {
+    let activeValues: number[] = [];
+    if (smoothedData) {
+      activeValues = Object.values(smoothedData).flat();
+    } else if (activeHistory.length > 0) {
+      activeValues = activeHistory.flatMap((sample) =>
+        selectedTags.map((tagId) => sample[tagId] ?? 0)
+      );
+    }
+
     if (activeValues.length > 0) {
       const realMin = Math.min(...activeValues);
       const realMax = Math.max(...activeValues);
@@ -261,6 +297,31 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
           >
             <ZoomOut size={12} />
           </button>
+        </div>
+
+        {/* Server-Side Smoothing */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
+          <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Smoothing</span>
+          <select 
+            value={smoothingMode}
+            onChange={(e) => setSmoothingMode(e.target.value)}
+            className="form-input"
+            style={{ padding: "0.15rem 0.4rem", fontSize: "0.75rem", height: "auto" }}
+          >
+            <option value="none">None</option>
+            <option value="moving_average">Moving Avg</option>
+            <option value="exponential_smoothing">Exp Smooth</option>
+          </select>
+          {smoothingMode !== "none" && (
+            <button
+              type="button"
+              onClick={fetchSmoothedData}
+              className="btn btn-primary"
+              style={{ padding: "0.15rem 0.5rem", fontSize: "0.75rem" }}
+            >
+              Apply
+            </button>
+          )}
         </div>
 
         {/* Snapshot Download Buttons */}
@@ -490,7 +551,8 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
             {/* Paths for active tag series */}
             {selectedTags.map((tagId, activeIdx) => {
               const color = LINE_COLORS[activeIdx % LINE_COLORS.length];
-              const totalPoints = activeHistory.length;
+              const useSmoothed = smoothedData && smoothedData[tagId] && smoothedData[tagId].length > 0;
+              const totalPoints = useSmoothed ? smoothedData[tagId].length : activeHistory.length;
 
               if (totalPoints < 2) return null;
 
@@ -498,16 +560,28 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
               let pathD = "";
               let areaD = `M ${paddingLeft} ${paddingTop + chartHeight} `;
 
-              activeHistory.forEach((sample, sampleIdx) => {
-                const val = sample[tagId] ?? 0;
-                const { x, y } = getCoordinates(sampleIdx, val, totalPoints);
-                if (sampleIdx === 0) {
-                  pathD += `M ${x} ${y} `;
-                } else {
-                  pathD += `L ${x} ${y} `;
-                }
-                areaD += `L ${x} ${y} `;
-              });
+              if (useSmoothed) {
+                smoothedData[tagId].forEach((val, sampleIdx) => {
+                  const { x, y } = getCoordinates(sampleIdx, val, totalPoints);
+                  if (sampleIdx === 0) {
+                    pathD += `M ${x} ${y} `;
+                  } else {
+                    pathD += `L ${x} ${y} `;
+                  }
+                  areaD += `L ${x} ${y} `;
+                });
+              } else {
+                activeHistory.forEach((sample, sampleIdx) => {
+                  const val = sample[tagId] ?? 0;
+                  const { x, y } = getCoordinates(sampleIdx, val, totalPoints);
+                  if (sampleIdx === 0) {
+                    pathD += `M ${x} ${y} `;
+                  } else {
+                    pathD += `L ${x} ${y} `;
+                  }
+                  areaD += `L ${x} ${y} `;
+                });
+              }
 
               // Close the area path
               const lastX = paddingLeft + chartWidth;

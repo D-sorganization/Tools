@@ -42,20 +42,20 @@ def setup_db() -> Generator[None, None, None]:
 
 @pytest.fixture
 def sample_routing_config() -> RoutingConfig:
-    """Fixture providing a valid 32-channel routing config."""
+    """Fixture providing a valid dynamic routing config."""
     pids = [
-        PIDConfig(pv_tag_id=1, cv_tag_id=2, setpoint=50.0, kp=1.0, ki=0.5, kd=0.1)
+        PIDConfig(pv_tag="TAG_1", cv_tag="TAG_2", setpoint=50.0, kp=1.0, ki=0.5, kd=0.1)
         for _ in range(4)
     ]
-    interlocks = [
-        InterlockConfig(
+    interlocks = {
+        f"TAG_{i}": InterlockConfig(
             hihi_limit=105.0, high_limit=95.0, low_limit=10.0, lolo_limit=5.0
         )
-        for _ in range(32)
-    ]
+        for i in range(32)
+    }
     return RoutingConfig(
-        input_routing=[0, 1, 2, 3, 4, 5],
-        output_routing=[10, 11],
+        input_routing=[f"TAG_{i}" for i in range(6)],
+        output_routing=["TAG_10", "TAG_11"],
         pids=pids,
         interlocks=interlocks,
     )
@@ -129,8 +129,15 @@ async def test_get_routing_success() -> None:
         response = client.get("/api/routing")
         assert response.status_code == 200
         data = response.json()
-        assert data["input_routing"] == [10, 11, 12, 13, 14, 15]
-        assert data["output_routing"] == [20, 21]
+        assert data["input_routing"] == [
+            "TAG_10",
+            "TAG_11",
+            "TAG_12",
+            "TAG_13",
+            "TAG_14",
+            "TAG_15",
+        ]
+        assert data["output_routing"] == ["TAG_20", "TAG_21"]
         assert len(data["pids"]) == 4
         assert len(data["interlocks"]) == 32
 
@@ -180,17 +187,17 @@ def test_export_data() -> None:
 
     # Add mock data
     log1 = TagLog(
-        tag_id=2,
+        tag_name="TAG_2",
         value=35.5,
         timestamp=datetime(2026, 5, 20, 12, 0, 0, tzinfo=UTC),
     )
     log2 = TagLog(
-        tag_id=2,
+        tag_name="TAG_2",
         value=36.0,
         timestamp=datetime(2026, 5, 20, 12, 5, 0, tzinfo=UTC),
     )
     log3 = TagLog(
-        tag_id=5,
+        tag_name="TAG_5",
         value=78.2,
         timestamp=datetime(2026, 5, 20, 12, 2, 0, tzinfo=UTC),
     )
@@ -216,13 +223,13 @@ def test_export_data() -> None:
 
     # 1 Header row + 3 Data rows
     assert len(rows) == 4
-    assert rows[0] == ["Timestamp", "Tag ID", "Value"]
+    assert rows[0] == ["Timestamp", "Tag Name", "Value"]
     # Sorted by timestamp asc
-    assert rows[1][1] == "2"
+    assert rows[1][1] == "TAG_2"
     assert rows[1][2] == "35.5"
-    assert rows[2][1] == "5"
+    assert rows[2][1] == "TAG_5"
     assert rows[2][2] == "78.2"
-    assert rows[3][1] == "2"
+    assert rows[3][1] == "TAG_2"
     assert rows[3][2] == "36.0"
 
 
@@ -248,7 +255,7 @@ async def test_write_tag_success() -> None:
         response = client.post("/api/tags/5", json={"value": 42.5})
         assert response.status_code == 200
         assert "Successfully wrote 42.5" in response.json()["message"]
-        mock_write_tag.assert_called_once_with(5, 42.5)
+        mock_write_tag.assert_called_once_with("TAG_5", 42.5)
 
 
 def test_write_tag_invalid_id() -> None:
@@ -361,3 +368,73 @@ def test_mpc_simulation() -> None:
     assert len(data["time"]) == 50
     assert len(data["pid"]["pv"]) == 50
     assert len(data["mpc"]["pv"]) == 50
+
+
+def test_project_import_and_hierarchy() -> None:
+    """Test importing a project zip file, building hierarchy and retrieving it."""
+    import io
+    import zipfile
+
+    # 1. Create a dummy zip file in memory
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, "a", zipfile.ZIP_DEFLATED) as zip_file:
+        tagl_content = """{
+            "tags": [
+                {
+                    "name": "Line1_Boiler_Reactor_Temp",
+                    "type": "Real",
+                    "description": "Reactor Core Temp",
+                    "external_availability": "Enabled"
+                },
+                {
+                    "name": "Line1_Boiler_Reactor_Valve",
+                    "type": "Boolean",
+                    "description": "Inlet Valve Control",
+                    "external_availability": "Enabled"
+                }
+            ]
+        }"""
+        sdv_content = "Line1_Boiler_Reactor_Temp\tANY\tY:102:B\t2\tANY\t2.5\nLine1_Boiler_Reactor_Valve\tANY\tC:50:LB\t2\tANY\t1.0\n"
+
+        zip_file.writestr("tagl.json", tagl_content.encode("utf-16"))
+        zip_file.writestr("plc_driver_map.SDV", sdv_content.encode("utf-16"))
+
+    zip_buffer.seek(0)
+
+    # 2. Upload the zip
+    response = client.post(
+        "/api/project/import",
+        files={"file": ("project.zip", zip_buffer, "application/zip")},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "success"
+    assert data["tags_imported"] == 2
+    assert data["mapped_registers"] == 2
+
+    # 3. Query the ladder-explorer endpoint
+    response = client.get("/api/project/ladder-explorer")
+    assert response.status_code == 200
+    explorer_data = response.json()
+    assert len(explorer_data) == 2
+    temp_tag = next(
+        t for t in explorer_data if t["name"] == "Line1_Boiler_Reactor_Temp"
+    )
+    assert temp_tag["register_type"] == "Y"
+    assert temp_tag["register_num"] == 102
+    assert temp_tag["scale_factor"] == 2.5
+    assert temp_tag["area"] == "Line1"
+    assert temp_tag["unit"] == "Boiler"
+    assert temp_tag["equipment"] == "Reactor"
+
+    # 4. Query the plant hierarchy layout endpoint
+    response = client.get("/api/plant")
+    assert response.status_code == 200
+    plant_data = response.json()
+    assert "Line1" in plant_data["areas"]
+    assert "Boiler" in plant_data["areas"]["Line1"]["units"]
+    assert "Reactor" in plant_data["areas"]["Line1"]["units"]["Boiler"]["equipment"]
+    reactor_tags = plant_data["areas"]["Line1"]["units"]["Boiler"]["equipment"][
+        "Reactor"
+    ]["tags"]
+    assert "Line1_Boiler_Reactor_Temp" in reactor_tags
