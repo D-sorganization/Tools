@@ -7,7 +7,6 @@ allowing the codebase to run on Python 3.10 (Ubuntu 22.04 default).
 
 import logging
 import sys
-from enum import Enum
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +44,7 @@ if sys.version_info >= (3, 11):  # noqa: UP036
     StrEnum = _StrEnum
 else:
 
-    class StrEnum(str, Enum):
+    class StrEnum(_StrEnum):
         """
         Enum where members are also (and must be) strings.
         Backport for Python < 3.11.

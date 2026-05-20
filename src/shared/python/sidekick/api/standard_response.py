@@ -31,14 +31,14 @@ from __future__ import annotations
 
 import logging
 from dataclasses import asdict, dataclass
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 from uuid import uuid4
 
 logger = logging.getLogger(__name__)
 
 
-class ErrorCode(str, Enum):
+class ErrorCode(StrEnum):
     """Standard error codes for API responses.
 
     These codes categorize different types of errors that can occur during
