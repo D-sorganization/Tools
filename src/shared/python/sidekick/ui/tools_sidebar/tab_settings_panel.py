@@ -87,6 +87,11 @@ class TabSettingsMixin:
         self._settings_dialog.exec()
         return True
 
+    def open_configure_tabs(self) -> None:
+        """Open the Configure Tabs dialog."""
+        dialog = ConfigureTabsDialog(self)
+        dialog.exec()
+
     def _refresh_settings_button(self, *_args: Any) -> None:
         if not hasattr(self, "_settings_button"):
             return
@@ -104,11 +109,70 @@ class TabSettingsMixin:
         return payload
 
 
+class ConfigureTabsDialog(QtWidgets.QDialog):
+    """Dialog allowing the user to select which tabs are visible."""
+
+    def __init__(self, sidebar: Any, parent: QtWidgets.QWidget | None = None) -> None:
+        super().__init__(parent or sidebar)
+        self.setWindowTitle("Configure Tabs")
+        self.setObjectName("SidekickConfigureTabsDialog")
+        self.sidebar = sidebar
+        self._init_ui()
+
+    def _init_ui(self) -> None:
+        layout = QtWidgets.QVBoxLayout(self)
+
+        label = QtWidgets.QLabel("Select which tabs to display in the sidebar:", self)
+        layout.addWidget(label)
+
+        self.checkboxes = {}
+        definitions = self.sidebar._tab_definitions
+        visible_ids = self.sidebar.visible_tab_ids()
+
+        scroll = QtWidgets.QScrollArea(self)
+        scroll.setWidgetResizable(True)
+        scroll_content = QtWidgets.QWidget(scroll)
+        scroll_layout = QtWidgets.QVBoxLayout(scroll_content)
+
+        for tab_id, definition in definitions.items():
+            cb = QtWidgets.QCheckBox(definition.title, scroll_content)
+            cb.setChecked(tab_id in visible_ids)
+            cb.toggled.connect(
+                lambda checked, tid=tab_id, checkbox=cb: self._on_toggle(
+                    tid, checked, checkbox
+                )
+            )
+            scroll_layout.addWidget(cb)
+            self.checkboxes[tab_id] = cb
+
+        scroll_layout.addStretch(1)
+        scroll.setWidget(scroll_content)
+        layout.addWidget(scroll)
+
+        btn_box = QtWidgets.QDialogButtonBox(
+            QtWidgets.QDialogButtonBox.StandardButton.Ok,
+            QtCore.Qt.Orientation.Horizontal,
+            self,
+        )
+        btn_box.accepted.connect(self.accept)
+        layout.addWidget(btn_box)
+
+    def _on_toggle(
+        self, tab_id: str, checked: bool, checkbox: QtWidgets.QCheckBox
+    ) -> None:
+        success = self.sidebar.set_tab_visible(tab_id, checked)
+        if not success:
+            checkbox.blockSignals(True)
+            checkbox.setChecked(not checked)
+            checkbox.blockSignals(False)
+
+
 def build_tab_settings_toolbar(sidebar: Any) -> QtWidgets.QToolBar:
     """Build the compact selected-tab settings action surface."""
     toolbar = QtWidgets.QToolBar(sidebar)
     toolbar.setObjectName("SidekickSettingsToolbar")
     toolbar.setIconSize(QtCore.QSize(16, 16))
+
     button = QtWidgets.QToolButton(toolbar)
     button.setObjectName(SIDEKICK_TAB_SETTINGS_BUTTON_OBJECT_NAME)
     button.setText("⚙")
@@ -116,6 +180,13 @@ def build_tab_settings_toolbar(sidebar: Any) -> QtWidgets.QToolBar:
     button.clicked.connect(sidebar.open_active_tab_settings)
     toolbar.addWidget(button)
     sidebar.register_settings_button(button)
+
+    config_button = QtWidgets.QToolButton(toolbar)
+    config_button.setObjectName("SidekickConfigureTabsButton")
+    config_button.setText("☰")
+    config_button.setToolTip("Configure visible tabs")
+    config_button.clicked.connect(sidebar.open_configure_tabs)
+    toolbar.addWidget(config_button)
 
     spacer = QtWidgets.QWidget()
     spacer.setSizePolicy(
