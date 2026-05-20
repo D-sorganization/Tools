@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -23,7 +24,7 @@ _SHARED = Path(__file__).resolve().parents[3] / "src" / "shared" / "python"
 _TEST_PKG = Path(__file__).resolve().parent  # tests/unit/sidekick/
 
 
-def _fix_sidekick_import():
+def _fix_sidekick_import() -> None:
     """Remove test-package shadow and ensure production sidekick is loaded.
 
     The ``tests/unit/sidekick/`` directory is a pytest test package whose name
@@ -43,15 +44,15 @@ def _fix_sidekick_import():
     # Only evict the top-level 'sidekick' if it points to the test directory.
     test_dir = str(_TEST_PKG)
     top_mod = sys.modules.get("sidekick")
-    if (
-        top_mod is not None
-        and getattr(top_mod, "__file__", None) is not None
-        and test_dir in str(Path(top_mod.__file__).resolve().parent)
-    ):
-        del sys.modules["sidekick"]
+    if top_mod is not None:
+        top_mod_file = getattr(top_mod, "__file__", None)
+        if top_mod_file is not None and test_dir in str(
+            Path(top_mod_file).resolve().parent
+        ):
+            del sys.modules["sidekick"]
 
 
-def _get_classes():
+def _get_classes() -> tuple[Any, Any]:
     """Return production (UnifiedToolsSidebar, QtWidgets)."""
     _fix_sidekick_import()
     from PyQt6 import QtWidgets
@@ -60,11 +61,12 @@ def _get_classes():
     return UnifiedToolsSidebar, QtWidgets
 
 
-def _make_sidebar(tmp_path):
+def _make_sidebar(tmp_path: Path, qtbot: Any) -> tuple[Any, Any, Any]:
     """Create a minimal sidebar with a QMainWindow parent for dock install."""
     UnifiedToolsSidebar, QtWidgets = _get_classes()
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
     win = QtWidgets.QMainWindow()
+    qtbot.addWidget(win)
     sidebar = UnifiedToolsSidebar(project_root=tmp_path, parent=win)
     sidebar.install_as_dock(win, title="Sidekick")
     return sidebar, win, app
@@ -73,33 +75,33 @@ def _make_sidebar(tmp_path):
 # ── Title-bar widget presence ─────────────────────────────────────────────────
 
 
-def test_dock_title_widget_is_not_none(tmp_path):
-    sidebar, win, _ = _make_sidebar(tmp_path)
+def test_dock_title_widget_is_not_none(tmp_path: Path, qtbot: Any) -> None:
+    sidebar, win, _ = _make_sidebar(tmp_path, qtbot)
     assert sidebar.dock_title_widget() is not None
 
 
-def test_dock_title_bar_has_close_button(tmp_path):
+def test_dock_title_bar_has_close_button(tmp_path: Path, qtbot: Any) -> None:
     from PyQt6.QtWidgets import QPushButton
 
-    sidebar, win, _ = _make_sidebar(tmp_path)
+    sidebar, win, _ = _make_sidebar(tmp_path, qtbot)
     close_btn = sidebar.dock_title_widget().findChild(QPushButton, "sidekick-close")
     assert close_btn is not None
 
 
-def test_dock_title_bar_has_collapse_button(tmp_path):
+def test_dock_title_bar_has_collapse_button(tmp_path: Path, qtbot: Any) -> None:
     from PyQt6.QtWidgets import QPushButton
 
-    sidebar, win, _ = _make_sidebar(tmp_path)
+    sidebar, win, _ = _make_sidebar(tmp_path, qtbot)
     collapse_btn = sidebar.dock_title_widget().findChild(
         QPushButton, "sidekick-collapse"
     )
     assert collapse_btn is not None
 
 
-def test_close_button_tooltip_mentions_ctrl_b(tmp_path):
+def test_close_button_tooltip_mentions_ctrl_b(tmp_path: Path, qtbot: Any) -> None:
     from PyQt6.QtWidgets import QPushButton
 
-    sidebar, win, _ = _make_sidebar(tmp_path)
+    sidebar, win, _ = _make_sidebar(tmp_path, qtbot)
     close_btn = sidebar.dock_title_widget().findChild(QPushButton, "sidekick-close")
     assert close_btn is not None
     assert "Ctrl+B" in close_btn.toolTip()
@@ -108,10 +110,10 @@ def test_close_button_tooltip_mentions_ctrl_b(tmp_path):
 # ── Close behaviour ───────────────────────────────────────────────────────────
 
 
-def test_dock_close_button_hides_dock(tmp_path):
+def test_dock_close_button_hides_dock(tmp_path: Path, qtbot: Any) -> None:
     from PyQt6.QtWidgets import QPushButton
 
-    sidebar, win, _ = _make_sidebar(tmp_path)
+    sidebar, win, _ = _make_sidebar(tmp_path, qtbot)
     win.show()
     assert sidebar.dock is not None
     close_btn = sidebar.dock_title_widget().findChild(QPushButton, "sidekick-close")
@@ -123,21 +125,21 @@ def test_dock_close_button_hides_dock(tmp_path):
 # ── Collapse / expand ─────────────────────────────────────────────────────────
 
 
-def test_is_collapsed_false_by_default(tmp_path):
-    sidebar, win, _ = _make_sidebar(tmp_path)
+def test_is_collapsed_false_by_default(tmp_path: Path, qtbot: Any) -> None:
+    sidebar, win, _ = _make_sidebar(tmp_path, qtbot)
     assert sidebar.is_collapsed() is False
 
 
-def test_toggle_collapsed_collapses_to_icon_strip(tmp_path):
-    sidebar, win, _ = _make_sidebar(tmp_path)
+def test_toggle_collapsed_collapses_to_icon_strip(tmp_path: Path, qtbot: Any) -> None:
+    sidebar, win, _ = _make_sidebar(tmp_path, qtbot)
     win.show()
     sidebar.toggle_collapsed()
     assert sidebar.is_collapsed() is True
     assert sidebar.width() < 80
 
 
-def test_toggle_collapsed_restores_width(tmp_path):
-    sidebar, win, _ = _make_sidebar(tmp_path)
+def test_toggle_collapsed_restores_width(tmp_path: Path, qtbot: Any) -> None:
+    sidebar, win, _ = _make_sidebar(tmp_path, qtbot)
     win.show()
     sidebar.resize(320, 600)
     sidebar.toggle_collapsed()
@@ -146,10 +148,10 @@ def test_toggle_collapsed_restores_width(tmp_path):
     assert sidebar.width() >= 200  # tolerance: restored to at least 200
 
 
-def test_collapse_button_click_toggles_collapsed(tmp_path):
+def test_collapse_button_click_toggles_collapsed(tmp_path: Path, qtbot: Any) -> None:
     from PyQt6.QtWidgets import QPushButton
 
-    sidebar, win, _ = _make_sidebar(tmp_path)
+    sidebar, win, _ = _make_sidebar(tmp_path, qtbot)
     win.show()
     collapse_btn = sidebar.dock_title_widget().findChild(
         QPushButton, "sidekick-collapse"
@@ -162,16 +164,16 @@ def test_collapse_button_click_toggles_collapsed(tmp_path):
 # ── toggle_visibility (Ctrl+B) ────────────────────────────────────────────────
 
 
-def test_toggle_visibility_hides_dock(tmp_path):
-    sidebar, win, _ = _make_sidebar(tmp_path)
+def test_toggle_visibility_hides_dock(tmp_path: Path, qtbot: Any) -> None:
+    sidebar, win, _ = _make_sidebar(tmp_path, qtbot)
     win.show()
     assert sidebar.dock.isVisible()
     sidebar.toggle_visibility()
     assert sidebar.dock.isVisible() is False
 
 
-def test_toggle_visibility_shows_dock(tmp_path):
-    sidebar, win, _ = _make_sidebar(tmp_path)
+def test_toggle_visibility_shows_dock(tmp_path: Path, qtbot: Any) -> None:
+    sidebar, win, _ = _make_sidebar(tmp_path, qtbot)
     win.show()
     sidebar.toggle_visibility()  # hide
     sidebar.toggle_visibility()  # show again
