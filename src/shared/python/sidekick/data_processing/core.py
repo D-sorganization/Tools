@@ -276,7 +276,7 @@ class DataProcessorEngine(BaseCalculationEngine):
         try:
             self.data[name] = _eval_with_optional_numexpr(self.data, expression)
             if dtype:
-                self.data[name] = self.data[name].astype(dtype)  # type: ignore[call-overload]
+                self.data[name] = self.data[name].astype(dtype)
             return ProcessingResult(
                 success=True, message=f"Added '{name}'", data=self.data
             )
