@@ -47,13 +47,16 @@ def read_dat_file(
     if not file_path.exists():
         raise FileNotFoundError(f"DAT file not found: {file_path}")
 
-    return cast(pd.DataFrame, pd.read_csv(
-        file_path,
-        sep=delimiter,
-        encoding=encoding,
-        low_memory=False,
-        **kwargs,
-    ))
+    return cast(
+        pd.DataFrame,
+        pd.read_csv(
+            file_path,
+            sep=delimiter,
+            encoding=encoding,
+            low_memory=False,
+            **kwargs,
+        ),
+    )
 
 
 def read_dbf_tags(file_path: str | Path) -> list[str]:

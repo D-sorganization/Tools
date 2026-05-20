@@ -544,13 +544,13 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
             "lh_coeffs": parse_coeffs(self.inp_tau_lh, "LH torque"),
             "t_end": parse_float(self.inp_tend, "Duration"),
             "gravity_on": True,  # Gravity always on (#1209)
-            "b_hub": parse_float(self.inp_b_hub, "b_hub"),
-            "b_rs": parse_float(self.inp_b_rs, "b_rs"),
-            "b_re": parse_float(self.inp_b_re, "b_re"),
-            "b_rh": parse_float(self.inp_b_rh, "b_rh"),
-            "b_ls": parse_float(self.inp_b_ls, "b_ls"),
-            "b_le": parse_float(self.inp_b_le, "b_le"),
-            "b_lh": parse_float(self.inp_b_lh, "b_lh"),
+            "b_hub": parse_float(self.inp_b_hub, "b_hub"),  # type: ignore[attr-defined]
+            "b_rs": parse_float(self.inp_b_rs, "b_rs"),  # type: ignore[attr-defined]
+            "b_re": parse_float(self.inp_b_re, "b_re"),  # type: ignore[attr-defined]
+            "b_rh": parse_float(self.inp_b_rh, "b_rh"),  # type: ignore[attr-defined]
+            "b_ls": parse_float(self.inp_b_ls, "b_ls"),  # type: ignore[attr-defined]
+            "b_le": parse_float(self.inp_b_le, "b_le"),  # type: ignore[attr-defined]
+            "b_lh": parse_float(self.inp_b_lh, "b_lh"),  # type: ignore[attr-defined]
             "L_rscap": parse_float(self.inp_L_rscap, "L_rscap"),
             "L_lscap": parse_float(self.inp_L_lscap, "L_lscap"),
             "m_rscap": parse_float(self.inp_m_rscap, "m_rscap"),

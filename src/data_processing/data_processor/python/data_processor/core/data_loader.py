@@ -41,7 +41,7 @@ except ImportError:
         if not path.exists():
             return default if default is not None else pd.DataFrame()
         try:
-            return pd.read_csv(path, **kwargs)
+            return pd.read_csv(path, **kwargs)  # type: ignore[no-any-return]
         except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             return default if default is not None else pd.DataFrame()
 
@@ -158,7 +158,7 @@ class DataLoader:
                 return None
 
             logger.info(f"Loaded {len(df)} rows, {len(df.columns)} columns")
-            return df
+            return df  # type: ignore[no-any-return]
 
         except (OSError, ValueError, KeyError) as e:
             logger.error(f"Error loading {file_path}: {e}", exc_info=True)
@@ -166,7 +166,7 @@ class DataLoader:
 
     def inspect_dataset(self, file_path: str) -> dict[str, Any]:
         """Inspect a dataset through the native streaming engine."""
-        return _inspect_native_dataset(self, file_path)
+        return _inspect_native_dataset(self, file_path)  # type: ignore[no-any-return]
 
     def preview_dataset(
         self,
@@ -175,7 +175,7 @@ class DataLoader:
         columns: list[str] | None = None,
     ) -> pd.DataFrame:
         """Preview a dataset through the native streaming engine."""
-        return _preview_native_dataset(self, file_path, rows=rows, columns=columns)
+        return _preview_native_dataset(self, file_path, rows=rows, columns=columns)  # type: ignore[no-any-return]
 
     def convert_dataset(
         self,
@@ -186,7 +186,7 @@ class DataLoader:
         columns: list[str] | None = None,
     ) -> dict[str, Any]:
         """Convert a dataset through the native streaming engine."""
-        return _convert_native_dataset(
+        return _convert_native_dataset(  # type: ignore[no-any-return]
             self,
             input_path,
             output_path,
@@ -258,7 +258,7 @@ class DataLoader:
             logger.warning("No dataframes to combine, returning empty DataFrame")
             return pd.DataFrame()
 
-        return results
+        return results  # type: ignore[no-any-return]
 
     def detect_signals(
         self,
@@ -290,7 +290,7 @@ class DataLoader:
                 file_paths,
                 progress_callback=progress_callback,
             )
-            return signals
+            return signals  # type: ignore[no-any-return]
 
         # Sequential signal detection
         all_signals = set()
@@ -342,10 +342,10 @@ class DataLoader:
             df[time_column] = pd.to_datetime(df[time_column])
             df = df.set_index(time_column)
             logger.info(f"Converted {time_column} to DatetimeIndex")
-            return df
+            return df  # type: ignore[no-any-return]
         except (KeyError, ValueError, TypeError) as e:
             logger.error(f"Error converting time column: {e}", exc_info=True)
-            return df
+            return df  # type: ignore[no-any-return]
 
     def get_numeric_signals(self, df: pd.DataFrame) -> list[str]:
         """Get list of numeric signal names."""
@@ -390,14 +390,14 @@ class DataLoader:
 
         for df in dfs[1:]:
             if on_column:
-                result = pd.merge(result, df, on=on_column, how=how)
+                result = pd.merge(result, df, on=on_column, how=how)  # type: ignore[arg-type]
             else:
                 result = pd.merge(
                     result,
                     df,
                     left_index=True,
                     right_index=True,
-                    how=how,
+                    how=how,  # type: ignore[arg-type]
                 )
 
         logger.info(
@@ -416,7 +416,7 @@ class DataLoader:
             raise ValueError("df must be provided")
         if not isinstance(df.index, pd.DatetimeIndex):
             logger.error("DataFrame must have DatetimeIndex for time filtering")
-            return df
+            return df  # type: ignore[no-any-return]
 
         try:
             t_start = pd.to_datetime(start_time).time()
@@ -433,7 +433,7 @@ class DataLoader:
             return filtered
         except (KeyError, ValueError, TypeError) as e:
             logger.error(f"Error filtering: {e}", exc_info=True)
-            return df
+            return df  # type: ignore[no-any-return]
 
     def save_dataframe(
         self,
@@ -490,7 +490,7 @@ class DataLoader:
 def load_csv_files(file_paths: list[str]) -> dict[str, pd.DataFrame]:
     """Load multiple CSV files."""
     loader = DataLoader()
-    return loader.load_multiple_files(file_paths)
+    return loader.load_multiple_files(file_paths)  # type: ignore[return-value]
 
 
 def detect_signals_from_files(file_paths: list[str]) -> set[str]:

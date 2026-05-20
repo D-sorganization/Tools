@@ -201,7 +201,7 @@ def _process_file(
     abs_path: Path,
     rel: str,
     repo_root: Path,
-    conn,
+    conn: Any,
     stats: RebuildStats,
 ) -> None:
     data = _read_bytes(abs_path)

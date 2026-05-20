@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -47,9 +47,9 @@ def _eval_with_optional_numexpr(df: pd.DataFrame, expression: str) -> pd.Series:
         raise
 
     try:
-        return df.eval(expression, engine="numexpr")
+        return cast(pd.Series, df.eval(expression, engine="numexpr"))
     except ImportError:
-        return df.eval(expression, engine="python")
+        return cast(pd.Series, df.eval(expression, engine="python"))
 
 
 class DataFormat(Enum):
@@ -276,7 +276,7 @@ class DataProcessorEngine(BaseCalculationEngine):
         try:
             self.data[name] = _eval_with_optional_numexpr(self.data, expression)
             if dtype:
-                self.data[name] = self.data[name].astype(dtype)
+                self.data[name] = self.data[name].astype(dtype)  # type: ignore[call-overload]
             return ProcessingResult(
                 success=True, message=f"Added '{name}'", data=self.data
             )

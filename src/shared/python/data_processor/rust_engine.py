@@ -26,6 +26,7 @@ import os
 from collections.abc import Generator, Iterator, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any, cast
 
 import pandas as pd
 
@@ -37,7 +38,9 @@ _RUST_AVAILABLE = False
 _rust_mod = None
 
 try:
-    import data_processor_core as _rust_mod
+    import data_processor_core as _rust_mod_lib
+
+    _rust_mod = _rust_mod_lib
 
     _RUST_AVAILABLE = True
     logger.debug("data_processor_core native extension loaded")
@@ -157,7 +160,7 @@ def inspect(path: str | os.PathLike[str]) -> SchemaInfo:
     fmt = _detect_format(p)
 
     if _RUST_AVAILABLE:
-        raw: dict = _rust_mod.py_inspect(p)  # type: ignore[attr-defined]
+        raw: dict = cast(Any, _rust_mod).py_inspect(p)
         return SchemaInfo(
             columns=raw["columns"],
             column_types=raw["column_types"],
@@ -218,7 +221,7 @@ def preview(
         raise ValueError("nrows must be greater than zero")
 
     if _RUST_AVAILABLE:
-        rows: list[dict] = _rust_mod.py_preview(  # type: ignore[attr-defined]
+        rows: list[dict] = cast(Any, _rust_mod).py_preview(
             p, nrows, list(columns) if columns is not None else None
         )
         return pd.DataFrame(rows, columns=list(columns) if columns else None)
@@ -259,7 +262,7 @@ def convert(
     _validate_output_format(format)
 
     if _RUST_AVAILABLE:
-        raw: dict = _rust_mod.py_convert(p_src, p_dst, format)  # type: ignore[attr-defined]
+        raw: dict = cast(Any, _rust_mod).py_convert(p_src, p_dst, format)
         return ConversionReport(
             source=raw["source"],
             destination=raw["destination"],
@@ -327,7 +330,7 @@ def scan_batch(
         # Phase 2: Rust scan_batch raises NotImplementedError — fall through to
         # the pandas fallback so CI can run contract tests without Phase 3.
         try:
-            _rust_mod.py_scan_batch(  # type: ignore[attr-defined]
+            cast(Any, _rust_mod).py_scan_batch(
                 p, batch_size, list(columns) if columns is not None else None
             )
             return
@@ -390,7 +393,7 @@ def filter_export(
     if _RUST_AVAILABLE:
         try:
             return int(
-                _rust_mod.py_filter_export(  # type: ignore[attr-defined]
+                cast(Any, _rust_mod).py_filter_export(
                     p,
                     p_dst,
                     predicate,

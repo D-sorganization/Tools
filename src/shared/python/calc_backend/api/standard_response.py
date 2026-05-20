@@ -130,8 +130,11 @@ class StandardResponse(BaseModel, Generic[T]):
         obj: Any,
         *,
         strict: bool | None = None,
+        extra: Any = None,
         from_attributes: bool | None = None,
         context: Any | None = None,
+        by_alias: bool | None = None,
+        by_name: bool | None = None,
     ) -> StandardResponse[T]:
         """Validate an object against this model. parameter."""
         return super().model_validate(obj)
