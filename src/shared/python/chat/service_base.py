@@ -78,6 +78,27 @@ class ChatSession:
         return len(self.messages)
 
 
+def _conversation_context_from_session(session: ChatSession) -> Any:
+    """Convert a shared chat session to the AI memory-manager context shape."""
+    try:
+        from src.shared.python.ai.types import ConversationContext
+    except ImportError:
+        from ai.types import ConversationContext  # type: ignore[no-redef]
+
+    context = ConversationContext(
+        session_id=session.session_id,
+        metadata=dict(session.metadata),
+    )
+    for message in session.messages:
+        context.add_message(
+            message.role,
+            message.content,
+            tool_call_id=message.tool_call_id,
+            metadata=dict(message.metadata),
+        )
+    return context
+
+
 # ── Service Base ─────────────────────────────────────────────────────
 
 
@@ -279,6 +300,73 @@ class ChatServiceBase(abc.ABC):
             "condense_session not implemented for %s; override in subclass",
             type(self).__name__,
         )
+
+    def condense_to_memory(
+        self,
+        conversation_ids: list[str],
+        *,
+        memory_manager: Any | None = None,
+    ) -> dict[str, Any]:
+        """Extract explicit user memories from selected chat sessions.
+
+        This is the synchronous shared API used by launcher history panels.
+        It bridges :class:`ChatServiceBase` sessions into the shared
+        ``MemoryManager.digest_archived_contexts`` contract and returns a
+        structured result instead of forcing downstream launchers to ship
+        deterministic stub responses when the API is absent.
+
+        Args:
+            conversation_ids: Session IDs to inspect.
+            memory_manager: Optional injected manager for tests or hosts that
+                store ``user_memory.json`` outside the default Tools profile.
+
+        Returns:
+            Dict containing ``status``, ``requested``, ``processed``,
+            ``inserted``, ``missing``, and ``memory_path``.
+
+        Raises:
+            TypeError: If ``conversation_ids`` is not a list of strings.
+            ValueError: If any session id is blank.
+        """
+        if not isinstance(conversation_ids, list):
+            raise TypeError("conversation_ids must be a list of strings")
+        if not all(isinstance(item, str) for item in conversation_ids):
+            raise TypeError("conversation_ids must be a list of strings")
+
+        normalized_ids = [item.strip() for item in conversation_ids]
+        if any(not item for item in normalized_ids):
+            raise ValueError("conversation_ids must contain non-empty strings")
+
+        contexts = []
+        missing: list[str] = []
+        with self._lock:
+            for session_id in normalized_ids:
+                session = self._sessions.get(session_id)
+                if session is None:
+                    session = self._load_session(session_id)
+                if session is None:
+                    missing.append(session_id)
+                    continue
+                contexts.append(_conversation_context_from_session(session))
+
+        if memory_manager is None:
+            try:
+                from src.shared.python.ai.memory_manager import MemoryManager
+            except ImportError:
+                from ai.memory_manager import MemoryManager  # type: ignore[no-redef]
+
+            memory_manager = MemoryManager()
+
+        inserted = memory_manager.digest_archived_contexts(contexts)
+        memory_file = getattr(memory_manager, "memory_file", None)
+        return {
+            "status": "ok" if contexts else "empty",
+            "requested": len(normalized_ids),
+            "processed": len(contexts),
+            "inserted": inserted,
+            "missing": missing,
+            "memory_path": str(memory_file) if memory_file is not None else "",
+        }
 
     async def execute_skill(self, session_id: str, skill_id: str) -> None:
         """Execute a predefined skill or workflow.

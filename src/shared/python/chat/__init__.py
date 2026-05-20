@@ -26,6 +26,7 @@ from .cli_provider_availability import (
     CliProviderEntry,
     list_available_cli_providers,
 )
+from .qt_diagnostics import ChatQtDiagnostic, diagnose_chat_qt_runtime
 from .service_base import ChatMessage, ChatServiceBase, ChatSession
 from .terminal_contracts import (
     TerminalAgentEvent,
@@ -136,4 +137,6 @@ __all__ = [
     "TerminalSessionRuntime",
     "CliProviderEntry",
     "list_available_cli_providers",
+    "ChatQtDiagnostic",
+    "diagnose_chat_qt_runtime",
 ]

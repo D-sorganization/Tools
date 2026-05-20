@@ -698,6 +698,37 @@ class ChatDockWidget(QDockWidget):
         self._status_label.setText("Connecting...")
         self._socket.open(url)
 
+    def connection_diagnostics(self) -> dict[str, Any]:
+        """Return host-readable WebSocket readiness diagnostics.
+
+        Launchers can call this before focusing or enabling the chat tab to
+        distinguish "chat dock exists" from "background API is connected".
+        """
+        socket = self._socket
+        state = "not_started"
+        error = ""
+        if socket is not None:
+            try:
+                raw_state = socket.state()
+                state = getattr(raw_state, "name", str(raw_state))
+            except RuntimeError as exc:
+                state = "deleted"
+                error = str(exc)
+            else:
+                try:
+                    error = socket.errorString()
+                except RuntimeError as exc:
+                    error = str(exc)
+        return {
+            "ready": state == "ConnectedState",
+            "server_url": self._server_url,
+            "ws_path_template": self._ws_path_template,
+            "session_id": ChatDockWidget._get_shared_session_id(),
+            "socket_state": state,
+            "error": error,
+            "connect_on_show": bool(getattr(self, "_connect_on_show", False)),
+        }
+
     def _on_connected(self) -> None:
         self._status_label.setText("Connected")
         self._status_label.setStyleSheet("color: #3fb950; font-size: 10px;")

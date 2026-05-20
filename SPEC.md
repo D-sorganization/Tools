@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.189                                    |
+| **Spec Version**        | 1.1.190                                    |
 | **Last Spec Update**    | 2026-05-20                                 |
 
 ## 2. Purpose & Mission
@@ -69,6 +69,12 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   resolves project-root `AGENTS.md` instructions, and can extract explicit
   user preferences from archived conversations without treating archives as
   model training data
+- Shared chat services expose a launcher-facing `condense_to_memory` API that
+  writes explicit user memory candidates through the shared memory manager and
+  reports processed, missing, and inserted conversation counts
+- Shared chat Qt dock imports expose subprocess-backed PyQt6 runtime
+  diagnostics so hosts and tests can report broken Qt DLL/runtime installs
+  without crashing the importing process
 - Project-scoped terminal-agent runtime coordination for shared chat provider
   processes
 - Shared chat WebSocket terminal-session actions for start/input/resize/events
@@ -145,6 +151,9 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Sidekick can lazily expose the Function Generator as an optional tab,
   launch the PyQt6 generator through an import-safe wrapper, and provide
   compact help/design-token metadata for downstream sidebar hosts
+- Sidekick sidebar instances expose `open_tab(tab_id)` for downstream launcher
+  menu routing, including compatibility for the `os_terminal` launcher id and
+  hidden-tab materialization before focus
 - Data-driven shared chat terminal-provider descriptors for Claude Code, Codex,
   Cline CLI, and Gemini CLI, including probe command metadata with diagnostic
   redaction helpers
@@ -606,6 +615,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-20 | 1.1.190 | Added shared Sidekick/chat launcher integration contracts: `ChatServiceBase.condense_to_memory()` now persists explicit memory candidates through the shared memory manager, `UnifiedToolsSidebar.open_tab()` focuses visible and hidden tabs with `os_terminal` compatibility, ChatDockWidget exposes readiness diagnostics, and Qt chat imports gained subprocess-backed PyQt6 runtime diagnostics with focused regression coverage.                                                                                                                              |
 | 2026-05-18 | 1.1.185 | Added `htmlFor` and `id` mapping to range inputs in `SwingComparison.tsx` (`src/media_processing/video_processor/apps/web`) to improve screen reader accessibility.                                                                                                                                                                                                                                                                                                                                                                                                 |
 | 2026-05-18 | 1.1.184 | Optimized Nelder-Mead optimization loop in pendulum simulator by replacing map and slice with pre-allocated arrays and standard for loops to minimize GC pauses.                                                                                                                                                                                                                                                                                                                                                                                                    |
 | 2026-05-17 | 1.1.183 | Pre-allocated the `results` array in the `solveODESystem` hot RK4 integration loop (`src/ode_solver/web/src/lib/odeSolver.ts`) to eliminate continuous memory reallocation overhead and garbage collection pauses during large numerical simulations.                                                                                                                                                                                                                                                                                                               |

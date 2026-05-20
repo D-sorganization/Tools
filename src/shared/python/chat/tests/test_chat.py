@@ -14,6 +14,7 @@ available; pure function tests need no Qt at all.
 from __future__ import annotations
 
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
 import pytest
@@ -196,3 +197,43 @@ class TestSessionFileFunctions:
         _write_shared_session_id("roundtrip-id-999", f)
         result = _read_shared_session_id(f)
         assert result == "roundtrip-id-999"
+
+
+class TestQtRuntimeDiagnostics:
+    def test_qt_runtime_diagnostic_reports_probe_failure(self, monkeypatch):
+        from chat import qt_diagnostics
+
+        def fake_run(*_args, **_kwargs):
+            return SimpleNamespace(
+                returncode=1,
+                stderr="ImportError: DLL load failed while importing QtCore",
+                stdout="",
+            )
+
+        monkeypatch.setattr(qt_diagnostics.subprocess, "run", fake_run)
+
+        diagnostic = qt_diagnostics.diagnose_chat_qt_runtime()
+
+        assert diagnostic.available is False
+        assert diagnostic.reason == "import_failed"
+        assert "QtCore" in diagnostic.detail
+
+    def test_lazy_chat_dock_loader_raises_structured_qt_error(self, monkeypatch):
+        from chat import chat_dock_widget
+        from chat.qt_diagnostics import ChatQtDiagnostic
+
+        monkeypatch.setattr(
+            chat_dock_widget,
+            "diagnose_chat_qt_runtime",
+            lambda: ChatQtDiagnostic(
+                available=False,
+                reason="import_failed",
+                detail="broken QtCore",
+            ),
+        )
+
+        with pytest.raises(chat_dock_widget.ChatQtUnavailableError) as exc_info:
+            _ = chat_dock_widget.ChatDockWidget
+
+        assert exc_info.value.diagnostic.reason == "import_failed"
+        assert "broken QtCore" in str(exc_info.value)

@@ -211,6 +211,28 @@ def test_sidekick_tab_context_menu_exposes_help_text(tmp_path: Path) -> None:
     assert actions["Close"].statusTip()
 
 
+def test_sidekick_open_tab_supports_launcher_facing_ids(tmp_path: Path) -> None:
+    try:
+        from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
+    except ImportError:
+        pytest.skip("Qt widgets unavailable")
+
+    from upstream_drift_tools.ui.tools_sidebar import UnifiedToolsSidebar
+
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    _ = app
+    sidebar = UnifiedToolsSidebar(project_root=tmp_path)
+
+    assert sidebar.open_tab("os_terminal") is True
+    assert sidebar.active_tab_id() == "terminal"
+    assert sidebar.open_tab("workspace") is True
+    assert sidebar.active_tab_id() == "workspace"
+    assert sidebar.open_tab("jupyter") is True
+    assert sidebar.active_tab_id() == "jupyter"
+    assert "jupyter" in sidebar.visible_tab_ids()
+    assert sidebar.open_tab("missing") is False
+
+
 def test_sidekick_terminal_and_notes_controls_have_tooltips(tmp_path: Path) -> None:
     try:
         from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
