@@ -19,7 +19,7 @@ struct InterlockConfigData {
 };
 
 struct ConfigStruct {
-  int magic;  // Signature validation (e.g., 0xDCS1)
+  int magic;  // Signature validation (e.g., 0xDC51)
   int input_routing[SignalBroker::kNumInputs];
   int output_routing[SignalBroker::kNumOutputs];
   PIDConfigData pids[4];
@@ -28,7 +28,7 @@ struct ConfigStruct {
 
 class StorageManager {
  public:
-  static const int kMagic = 0xDCS1;
+  static const int kMagic = 0xDC51;
 
   StorageManager();
 
