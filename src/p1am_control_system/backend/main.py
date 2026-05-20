@@ -10,12 +10,14 @@ from datetime import UTC, datetime
 from typing import Any
 
 from alicat_manager import AlicatManager, AlicatMFC
-from database import get_session, init_db
+from database import engine, get_session, init_db
 from fastapi import (
     Depends,
     FastAPI,
+    File,
     HTTPException,
     Query,
+    UploadFile,
     WebSocket,
     WebSocketDisconnect,
 )
@@ -29,9 +31,14 @@ from models import (
     InterlockConfig,
     PIDConfig,
     PIDTuningStepPayload,
+    PlantArea,
+    PlantEquipment,
+    PlantUnit,
     RoutingConfig,
+    TagDefinitionDb,
     TagLog,
 )
+from plant_model import TagDefinition
 from plc_factory import PLCFactory
 from pydantic import BaseModel
 from pydantic import Field as PydanticField
@@ -39,7 +46,9 @@ from simulator_client import SimulatedPLCClient
 from sqlmodel import Session, col, select
 from tools_core import scada
 
-AlarmEngine: Any = scada.AlarmEngine
+AlarmEngine = scada.AlarmEngine
+exponential_smoothing = scada.exponential_smoothing
+moving_average = scada.moving_average
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -109,33 +118,66 @@ alicat_manager.add_device(
     )
 )
 
-latest_tags: list[float] = [0.0] * 32
+latest_tags: dict[str, float] = {f"TAG_{i}": 0.0 for i in range(32)}
 active_config: RoutingConfig = RoutingConfig(
-    input_routing=[0, 1, 2, 3, 4, 5],
-    output_routing=[10, 11],
+    input_routing=[f"TAG_{i}" for i in range(6)],
+    output_routing=["TAG_10", "TAG_11"],
     pids=[
-        PIDConfig(pv_tag_id=1, cv_tag_id=2, setpoint=50.0, kp=1.0, ki=0.5, kd=0.1),
-        PIDConfig(pv_tag_id=3, cv_tag_id=4, setpoint=30.0, kp=1.5, ki=0.2, kd=0.05),
-        PIDConfig(pv_tag_id=5, cv_tag_id=6, setpoint=40.0, kp=2.0, ki=0.8, kd=0.2),
-        PIDConfig(pv_tag_id=7, cv_tag_id=8, setpoint=60.0, kp=0.5, ki=0.1, kd=0.01),
+        PIDConfig(
+            pv_tag="TAG_1", cv_tag="TAG_2", setpoint=50.0, kp=1.0, ki=0.5, kd=0.1
+        ),
+        PIDConfig(
+            pv_tag="TAG_3", cv_tag="TAG_4", setpoint=30.0, kp=1.5, ki=0.2, kd=0.05
+        ),
+        PIDConfig(
+            pv_tag="TAG_5", cv_tag="TAG_6", setpoint=40.0, kp=2.0, ki=0.8, kd=0.2
+        ),
+        PIDConfig(
+            pv_tag="TAG_7", cv_tag="TAG_8", setpoint=60.0, kp=0.5, ki=0.1, kd=0.01
+        ),
     ],
-    interlocks=[
-        InterlockConfig(
+    interlocks={
+        f"TAG_{i}": InterlockConfig(
             lolo_limit=0.0,
             low_limit=5.0,
             high_limit=95.0,
             hihi_limit=100.0,
         )
-        for _ in range(32)
-    ],
+        for i in range(32)
+    },
 )
 
 
-def build_alarm_engine(config: RoutingConfig) -> AlarmEngine:
+def load_tags_into_plc_clients(session: Session) -> None:
+    """Loads all tag definitions from the database and registers them with the PLC clients."""
+    tag_defs = session.exec(select(TagDefinitionDb)).all()
+    if not tag_defs:
+        return
+
+    # Build the tag definition mapping
+    tag_map = {}
+    for td in tag_defs:
+        tag_map[td.name] = TagDefinition(
+            name=td.name,
+            tag_type=td.tag_type,
+            description=td.description,
+            rw_mode=td.rw_mode,
+            register_type=td.register_type,
+            register_num=td.register_num,
+            data_format=td.data_format,
+            scale_factor=td.scale_factor,
+        )
+
+    # Set them on clients
+    plc_client.tag_map = tag_map
+    backup_simulator.tag_map = tag_map
+
+
+def build_alarm_engine(config: RoutingConfig) -> Any:
     """Builds the tools-core Rust AlarmEngine from the active RoutingConfig."""
     limits_dict = {}
-    for i, interlock in enumerate(config.interlocks):
-        limits_dict[str(i)] = {
+    for tag_name, interlock in config.interlocks.items():
+        limits_dict[tag_name] = {
             "lolo": interlock.lolo_limit,
             "low": interlock.low_limit,
             "high": interlock.high_limit,
@@ -146,6 +188,10 @@ def build_alarm_engine(config: RoutingConfig) -> AlarmEngine:
 
 # Global Alarm Engine
 alarm_engine = build_alarm_engine(active_config)
+
+# Active alarms tracking
+active_alarms: dict[str, dict[str, Any]] = {}
+e_stop_active: bool = False
 
 # PID Tuning sessions state
 tuning_sessions: dict[int, dict[str, Any]] = {}
@@ -190,12 +236,22 @@ async def poll_plc_loop() -> None:
 
             # Update latest tags
             if tags is not None:
-                for idx, val in enumerate(tags):
-                    latest_tags[idx] = val
+                for key, val in tags.items():
+                    latest_tags[key] = val
 
             # Pack WebSocket message payload containing tags and alicats data
-            tag_list = tags if tags is not None else []
-            payload = {"tags": tag_list, "alicats": alicat_manager.get_devices_data()}
+            tag_list = (
+                [tags.get(f"TAG_{i}", 0.0) for i in range(32)]
+                if tags is not None
+                else []
+            )
+            payload = {
+                "tags": tag_list,
+                "tags_dict": tags if tags is not None else {},
+                "alicats": alicat_manager.get_devices_data(),
+                "active_alarms": active_alarms,
+                "e_stop_active": e_stop_active,
+            }
             await ws_manager.broadcast(payload)
 
             if tags is not None:
@@ -203,12 +259,12 @@ async def poll_plc_loop() -> None:
                 try:
                     db_session = next(get_session())
                     # Log tags
-                    for tag_id, value in enumerate(tags):
-                        log_entry = TagLog(tag_id=tag_id, value=value)
+                    for tag_name, value in tags.items():
+                        log_entry = TagLog(tag_name=tag_name, value=value)
                         db_session.add(log_entry)
 
                         # Process Alarms
-                        events = alarm_engine.update_tag(str(tag_id), value)
+                        events = alarm_engine.update_tag(tag_name, value)
                         for ev in events:
                             cur_state = str(ev["current_state"]).split(".")[-1]
                             sev = 0
@@ -216,9 +272,26 @@ async def poll_plc_loop() -> None:
                                 sev = 1
                             elif cur_state in ["LoLo", "HiHi"]:
                                 sev = 2
+                            tag_str = tag_name
+                            if cur_state == "Normal":
+                                if tag_str in active_alarms:
+                                    if active_alarms[tag_str]["acknowledged"]:
+                                        del active_alarms[tag_str]
+                                    else:
+                                        active_alarms[tag_str]["state"] = "Normal"
+                            else:
+                                active_alarms[tag_str] = {
+                                    "tag_id": tag_name,
+                                    "tag_name": tag_name,
+                                    "state": cur_state,
+                                    "severity": sev,
+                                    "acknowledged": False,
+                                    "timestamp": datetime.now(UTC).isoformat(),
+                                }
+
                             event_log = EventLog(
                                 event_type="ALARM",
-                                description=f"Tag {tag_id} crossed limit. State: {cur_state} Value: {value}",
+                                description=f"Tag {tag_name} crossed limit. State: {cur_state} Value: {value}",
                                 severity=sev,
                             )
                             db_session.add(event_log)
@@ -245,6 +318,8 @@ async def poll_plc_loop() -> None:
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # Startup: initialize database and start PLC polling thread & Alicat manager
     init_db()
+    with Session(engine) as session:
+        load_tags_into_plc_clients(session)
     shutdown_event.clear()
     alicat_manager.start()
     connect_task = asyncio.create_task(modbus_connect_background())
@@ -423,32 +498,154 @@ async def update_routing(config: RoutingConfig) -> dict[str, str]:
 @app.post("/api/estop")
 async def trigger_estop() -> dict[str, str]:
     """Immediate safety shutdown command, zeroing all tag variables."""
-    global latest_tags
+    global latest_tags, e_stop_active
+    e_stop_active = True
     if not plc_client.connected:
         await backup_simulator.trigger_estop()
-        latest_tags = [0.0] * 32
+        latest_tags = {f"TAG_{i}": 0.0 for i in range(32)}
         return {
             "status": "success",
             "message": "Simulated E-stop triggered. All simulated tag values zeroed.",
         }
 
-    success = await plc_client.trigger_estop()
+    await plc_client.trigger_estop()
     await backup_simulator.trigger_estop()
-    if not success:
-        raise HTTPException(
-            status_code=500,
-            detail="Failed to transmit emergency stop command to PLC.",
-        )
+    return {"status": "success", "message": "Hardware E-stop triggered."}
 
-    return {
-        "status": "success",
-        "message": ("E-stop triggered successfully. All PLC outputs driven to 0."),
-    }
+
+@app.post("/api/estop/clear")
+async def clear_estop() -> dict[str, str]:
+    """Clear the E-stop state."""
+    global e_stop_active
+    e_stop_active = False
+    return {"status": "success", "message": "E-Stop cleared."}
+
+
+@app.get("/api/alarms/active")
+async def get_active_alarms() -> list[dict[str, Any]]:
+    """Get all currently active or unacknowledged alarms."""
+    return list(active_alarms.values())
+
+
+@app.post("/api/alarms/{tag_id}/acknowledge")
+async def acknowledge_alarm(
+    tag_id: str,
+    db: Session = Depends(get_session),  # noqa: B008
+) -> dict[str, str]:
+    """Acknowledge a specific active alarm."""
+    if tag_id in active_alarms:
+        active_alarms[tag_id]["acknowledged"] = True
+
+        # Log the acknowledgment
+        try:
+            event_log = EventLog(
+                event_type="ACKNOWLEDGE",
+                description=f"Alarm on Tag {tag_id} acknowledged by user.",
+                severity=0,
+            )
+            db.add(event_log)
+            db.commit()
+        except Exception as e:
+            logger.error(f"Failed to log acknowledgment: {e}")
+            db.rollback()
+
+        # If it returned to normal already, we can remove it now
+        if active_alarms[tag_id]["state"] == "Normal":
+            del active_alarms[tag_id]
+
+        return {"status": "success", "message": f"Alarm {tag_id} acknowledged."}
+    return {"status": "ignored", "message": f"Alarm {tag_id} not found."}
+
+
+class EventLogPayload(BaseModel):
+    event_type: str
+    description: str
+
+
+@app.post("/api/events")
+async def log_user_event(
+    payload: EventLogPayload,
+    db: Session = Depends(get_session),  # noqa: B008
+) -> dict[str, str]:
+    """Log a user action or system event."""
+    try:
+        event_log = EventLog(
+            event_type=payload.event_type,
+            description=payload.description,
+            severity=0,
+        )
+        db.add(event_log)
+        db.commit()
+        return {"status": "success"}
+    except Exception as e:
+        logger.error(f"Failed to log user event: {e}")
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Failed to log event.") from e
+
+
+@app.get("/api/events")
+async def get_events(
+    limit: int = 100,
+    offset: int = 0,
+    db: Session = Depends(get_session),  # noqa: B008
+) -> list[EventLog]:
+    """Fetch paginated historical event logs."""
+    statement = (
+        select(EventLog)
+        .order_by(col(EventLog.timestamp).desc())
+        .offset(offset)
+        .limit(limit)
+    )
+    results = db.exec(statement).all()
+    return list(results)
+
+
+@app.get("/api/trends")
+async def get_trends(
+    tag_id: str,
+    start_time: str,
+    end_time: str,
+    smoothing: str = "none",
+    window_size: int = 5,
+    alpha: float = 0.2,
+    db: Session = Depends(get_session),  # noqa: B008
+) -> dict[str, Any]:
+    """Fetch historical trends for a tag, optionally applying server-side smoothing."""
+    try:
+        start_dt = datetime.fromisoformat(start_time.replace("Z", "+00:00"))
+        end_dt = datetime.fromisoformat(end_time.replace("Z", "+00:00"))
+    except ValueError as val_err:
+        raise HTTPException(
+            status_code=400, detail=f"Invalid date format: {val_err}"
+        ) from val_err
+
+    tag_name = tag_id
+    if tag_id.isdigit():
+        tag_name = f"TAG_{tag_id}"
+
+    statement = (
+        select(TagLog)
+        .where(col(TagLog.tag_name) == tag_name)
+        .where(col(TagLog.timestamp) >= start_dt)
+        .where(col(TagLog.timestamp) <= end_dt)
+        .order_by(col(TagLog.timestamp).asc())
+    )
+    results = db.exec(statement).all()
+
+    timestamps = [r.timestamp.isoformat() for r in results]
+    values = [float(r.value) for r in results]
+
+    if smoothing == "moving_average" and values:
+        values = moving_average(values, window_size)
+    elif smoothing == "exponential_smoothing" and values:
+        values = exponential_smoothing(values, alpha)
+
+    return {"timestamps": timestamps, "values": values}
 
 
 @app.get("/api/export")
 async def export_data(
-    tag_ids: str = Query(..., description="Comma-separated list of Tag IDs"),
+    tag_ids: str = Query(..., description="Comma-separated list of Tag IDs or Names"),
     start_time: str = Query(..., description="Start date ISO string"),
     end_time: str = Query(..., description="End date ISO string"),
     db: Session = Depends(get_session),  # noqa: B008
@@ -459,7 +656,15 @@ async def export_data(
         StreamingResponse: Streaming CSV data.
     """
     try:
-        parsed_tag_ids = [int(tid.strip()) for tid in tag_ids.split(",") if tid.strip()]
+        parsed_tag_names = []
+        for tid in tag_ids.split(","):
+            tid = tid.strip()
+            if not tid:
+                continue
+            if tid.isdigit():
+                parsed_tag_names.append(f"TAG_{tid}")
+            else:
+                parsed_tag_names.append(tid)
         start_dt = datetime.fromisoformat(start_time.replace("Z", "+00:00"))
         end_dt = datetime.fromisoformat(end_time.replace("Z", "+00:00"))
     except ValueError as val_err:
@@ -471,7 +676,7 @@ async def export_data(
     # Query time-series logs
     statement = (
         select(TagLog)
-        .where(col(TagLog.tag_id).in_(parsed_tag_ids))
+        .where(col(TagLog.tag_name).in_(parsed_tag_names))
         .where(col(TagLog.timestamp) >= start_dt)
         .where(col(TagLog.timestamp) <= end_dt)
         .order_by(col(TagLog.timestamp).asc())
@@ -481,10 +686,10 @@ async def export_data(
     # Generate CSV in memory stream
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(["Timestamp", "Tag ID", "Value"])
+    writer.writerow(["Timestamp", "Tag Name", "Value"])
 
     for row in results:
-        writer.writerow([row.timestamp.isoformat(), row.tag_id, row.value])
+        writer.writerow([row.timestamp.isoformat(), row.tag_name, row.value])
 
     output.seek(0)
     response = StreamingResponse(
@@ -503,35 +708,44 @@ class TagWritePayload(BaseModel):
 
 
 @app.post("/api/tags/{tag_id}")
-async def write_tag_value(tag_id: int, payload: TagWritePayload) -> dict[str, str]:
+async def write_tag_value(tag_id: str, payload: TagWritePayload) -> dict[str, str]:
     """Manually force/write a 32-bit float value directly to a tag register."""
-    if not (0 <= tag_id < 32):
-        raise HTTPException(
-            status_code=400,
-            detail="Tag ID must be between 0 and 31.",
-        )
-
     global latest_tags
+    tag_name = tag_id
+    if tag_id.isdigit():
+        val_id = int(tag_id)
+        if not (0 <= val_id < 32):
+            raise HTTPException(
+                status_code=400,
+                detail="Tag ID must be between 0 and 31.",
+            )
+        tag_name = f"TAG_{tag_id}"
+
     if not plc_client.connected:
-        await backup_simulator.write_tag(tag_id, payload.value)
-        latest_tags[tag_id] = payload.value
+        success = await backup_simulator.write_tag(tag_name, payload.value)
+        if not success:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Tag '{tag_name}' not found in simulator registry.",
+            )
+        latest_tags[tag_name] = payload.value
         return {
             "status": "success",
-            "message": f"Successfully forced simulated tag {tag_id} to {payload.value}.",
+            "message": f"Successfully forced simulated tag {tag_name} to {payload.value}.",
         }
 
-    success = await plc_client.write_tag(tag_id, payload.value)
-    await backup_simulator.write_tag(tag_id, payload.value)
+    success = await plc_client.write_tag(tag_name, payload.value)
+    await backup_simulator.write_tag(tag_name, payload.value)
     if not success:
         raise HTTPException(
-            status_code=500,
-            detail=f"Failed to write value {payload.value} to tag {tag_id}.",
+            status_code=400,
+            detail=f"Failed to write value {payload.value} to tag {tag_name}.",
         )
 
-    latest_tags[tag_id] = payload.value
+    latest_tags[tag_name] = payload.value
     return {
         "status": "success",
-        "message": f"Successfully wrote {payload.value} to tag {tag_id}.",
+        "message": f"Successfully wrote {payload.value} to tag {tag_name}.",
     }
 
 
@@ -543,10 +757,10 @@ async def start_pid_tuning(pid_index: int) -> dict[str, str]:
             status_code=400, detail="PID index must be between 0 and 3."
         )
 
-    pv_id = active_config.pids[pid_index].pv_tag_id
-    cv_id = active_config.pids[pid_index].cv_tag_id
-    current_pv = latest_tags[pv_id]
-    current_cv = latest_tags[cv_id]
+    pv_tag = active_config.pids[pid_index].pv_tag
+    cv_tag = active_config.pids[pid_index].cv_tag
+    current_pv = latest_tags[pv_tag]
+    current_cv = latest_tags[cv_tag]
 
     tuning_sessions[pid_index] = {
         "start_time": time.time(),
@@ -576,16 +790,16 @@ async def step_pid_tuning(
         )
 
     session = tuning_sessions[pid_index]
-    cv_id = active_config.pids[pid_index].cv_tag_id
+    cv_tag = active_config.pids[pid_index].cv_tag
 
     session["step_triggered"] = True
     session["step_time"] = time.time() - session["start_time"]
-    session["initial_cv"] = latest_tags[cv_id]
+    session["initial_cv"] = latest_tags[cv_tag]
     session["final_cv"] = payload.step_value
 
-    await plc_client.write_tag(cv_id, payload.step_value)
-    await backup_simulator.write_tag(cv_id, payload.step_value)
-    latest_tags[cv_id] = payload.step_value
+    await plc_client.write_tag(cv_tag, payload.step_value)
+    await backup_simulator.write_tag(cv_tag, payload.step_value)
+    latest_tags[cv_tag] = payload.step_value
 
     logger.info(
         f"Tuning step triggered on loop {pid_index}: CV set to {payload.step_value}"
@@ -886,57 +1100,277 @@ async def stream_websocket(websocket: WebSocket) -> None:
         ws_manager.disconnect(websocket)
 
 
-@app.get("/api/alarms/active")
-async def get_active_alarms() -> list[dict[str, Any]]:
-    """Retrieve all active, unacknowledged alarms."""
-    active = []
-    for tag_id, state in alarm_engine.tag_states.items():
-        state_str = str(state).split(".")[-1]
-        if state_str != "Normal" and not alarm_engine.tag_acknowledged.get(
-            tag_id, False
-        ):
-            active.append(
-                {
-                    "tag_id": tag_id,
-                    "state": state_str,
-                    "value": alarm_engine.tag_values.get(tag_id, 0.0),
-                }
-            )
-    return active
-
-
-@app.post("/api/alarms/{tag_id}/acknowledge")
-async def acknowledge_alarm(tag_id: str) -> dict[str, str]:
-    """Acknowledge an active alarm."""
-    try:
-        success = alarm_engine.acknowledge_alarm(tag_id, "Operator")
-
-        # Log to db
-        db_session = next(get_session())
-        log_entry = EventLog(
-            event_type="ACKNOWLEDGE",
-            description=f"Alarm on Tag {tag_id} acknowledged by Operator.",
-            severity=0,
-        )
-        db_session.add(log_entry)
-        db_session.commit()
-        db_session.close()
-
-        if success:
-            return {
-                "status": "success",
-                "message": f"Alarm on tag {tag_id} acknowledged.",
-            }
-        return {"status": "ignored", "message": "No unacknowledged alarm for this tag."}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e)) from e
-
-
-@app.get("/api/events")
-async def get_events(
-    limit: int = 100,
+@app.post("/api/project/import")
+async def import_project(
+    file: UploadFile = File(...),  # noqa: B008
     db: Session = Depends(get_session),  # noqa: B008
-) -> list[EventLog]:
-    """Retrieve event history."""
-    stmt = select(EventLog).order_by(col(EventLog.timestamp).desc()).limit(limit)
-    return list(db.exec(stmt).all())
+) -> dict[str, Any]:
+    """Upload and ingest a zip file containing tagl.json and PLC driver mapping (.SDV files)."""
+    import tempfile
+    import zipfile
+    from pathlib import Path
+
+    from parsers.indusoft_parser import parse_indusoft_tags
+    from parsers.plc_map_parser import parse_plc_map
+
+    if not file.filename or not file.filename.endswith(".zip"):
+        raise HTTPException(status_code=400, detail="Only ZIP files are supported.")
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_path = Path(temp_dir)
+        zip_file_path = temp_path / "uploaded.zip"
+
+        # Save uploaded file
+        with open(zip_file_path, "wb") as f:
+            content = await file.read()
+            f.write(content)
+
+        # Extract zip file
+        try:
+            with zipfile.ZipFile(zip_file_path, "r") as zip_ref:
+                zip_ref.extractall(temp_path)
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Invalid ZIP file: {e}") from e
+
+        # Locate tagl.json
+        tag_json_path = None
+        for p in temp_path.rglob("*"):
+            if p.name.lower() == "tagl.json":
+                tag_json_path = p
+                break
+
+        if not tag_json_path:
+            raise HTTPException(
+                status_code=400,
+                detail="Could not find 'tagl.json' in the uploaded ZIP file.",
+            )
+
+        # Ingest tags
+        try:
+            tags = parse_indusoft_tags(tag_json_path)
+        except Exception as e:
+            raise HTTPException(
+                status_code=500, detail=f"Failed to parse tags: {e}"
+            ) from e
+
+        # Locate .SDV files (PLC maps)
+        plc_map = {}
+        for p in temp_path.rglob("*.SDV"):
+            try:
+                # Merge multiple SDV mappings if they exist
+                plc_map.update(parse_plc_map(p))
+            except Exception as e:
+                logger.warning(f"Failed to parse PLC map file {p.name}: {e}")
+
+        # Merge mappings
+        mapped_count = 0
+        for tag in tags:
+            if tag.name in plc_map:
+                m = plc_map[tag.name]
+                tag.register_type = m.get("register_type")
+                tag.register_num = m.get("register_num")
+                tag.data_format = m.get("data_format")
+                if m.get("rw_mode"):
+                    tag.rw_mode = m.get("rw_mode")
+                if m.get("scale_factor") is not None:
+                    tag.scale_factor = m.get("scale_factor")
+                mapped_count += 1
+
+        # Clear existing plant hierarchy tables
+        try:
+            for row in db.exec(select(TagDefinitionDb)).all():
+                db.delete(row)
+            for row in db.exec(select(PlantEquipment)).all():
+                db.delete(row)
+            for row in db.exec(select(PlantUnit)).all():
+                db.delete(row)
+            for row in db.exec(select(PlantArea)).all():
+                db.delete(row)
+            db.commit()
+        except Exception as e:
+            db.rollback()
+            raise HTTPException(
+                status_code=500, detail=f"Database clear failed: {e}"
+            ) from e
+
+        # Group tags and save to DB
+        areas: dict[str, PlantArea] = {}
+        units: dict[str, PlantUnit] = {}
+        equipments: dict[str, PlantEquipment] = {}
+
+        try:
+            for tag in tags:
+                # Deduce area/unit/equipment name from tag hierarchy
+                parts = tag.name.split("_")
+                if len(parts) >= 4:
+                    area_name = parts[0]
+                    unit_name = parts[1]
+                    equip_name = parts[2]
+                else:
+                    # Alternative dot notation
+                    parts_dot = tag.name.split(".")
+                    if len(parts_dot) >= 4:
+                        area_name = parts_dot[0]
+                        unit_name = parts_dot[1]
+                        equip_name = parts_dot[2]
+                    else:
+                        area_name = "Default Area"
+                        unit_name = "Default Unit"
+                        equip_name = "Default Equipment"
+
+                # Create Area
+                if area_name not in areas:
+                    area = PlantArea(name=area_name)
+                    db.add(area)
+                    db.commit()
+                    db.refresh(area)
+                    areas[area_name] = area
+                area = areas[area_name]
+
+                # Create Unit
+                unit_key = f"{area_name}:{unit_name}"
+                if unit_key not in units:
+                    unit = PlantUnit(name=unit_name, area_id=area.id)
+                    db.add(unit)
+                    db.commit()
+                    db.refresh(unit)
+                    units[unit_key] = unit
+                unit = units[unit_key]
+
+                # Create Equipment
+                equip_key = f"{unit_key}:{equip_name}"
+                if equip_key not in equipments:
+                    equip = PlantEquipment(name=equip_name, unit_id=unit.id)
+                    db.add(equip)
+                    db.commit()
+                    db.refresh(equip)
+                    equipments[equip_key] = equip
+                equip = equipments[equip_key]
+
+                # Create TagDefinitionDb
+                tag_db = TagDefinitionDb(
+                    name=tag.name,
+                    tag_type=tag.tag_type,
+                    description=tag.description,
+                    rw_mode=tag.rw_mode,
+                    register_type=tag.register_type,
+                    register_num=tag.register_num,
+                    data_format=tag.data_format,
+                    scale_factor=tag.scale_factor,
+                    equipment_id=equip.id,
+                )
+                db.add(tag_db)
+
+            db.commit()
+        except Exception as e:
+            db.rollback()
+            raise HTTPException(
+                status_code=500, detail=f"Database save failed: {e}"
+            ) from e
+
+        # Re-load tags into the active PLC clients so simulation/reading picks them up!
+        load_tags_into_plc_clients(db)
+
+        return {
+            "status": "success",
+            "tags_imported": len(tags),
+            "mapped_registers": mapped_count,
+            "areas_created": list(areas.keys()),
+            "units_created": [u.name for u in units.values()],
+            "equipment_created": [e.name for e in equipments.values()],
+        }
+
+
+@app.get("/api/project/ladder-explorer")
+async def get_ladder_explorer(
+    db: Session = Depends(get_session),  # noqa: B008
+) -> list[dict[str, Any]]:
+    """Retrieve all tag definitions with their PLC register mappings for exploration."""
+    tags = db.exec(select(TagDefinitionDb)).all()
+    results = []
+    for t in tags:
+        # Load parent equipment, unit, area names
+        equip = db.get(PlantEquipment, t.equipment_id) if t.equipment_id else None
+        unit = db.get(PlantUnit, equip.unit_id) if equip else None
+        area = db.get(PlantArea, unit.area_id) if unit else None
+
+        results.append(
+            {
+                "name": t.name,
+                "tag_type": t.tag_type,
+                "description": t.description,
+                "rw_mode": t.rw_mode,
+                "register_type": t.register_type,
+                "register_num": t.register_num,
+                "data_format": t.data_format,
+                "scale_factor": t.scale_factor,
+                "equipment": equip.name if equip else "",
+                "unit": unit.name if unit else "",
+                "area": area.name if area else "",
+            }
+        )
+    return results
+
+
+@app.get("/api/plant")
+async def get_plant_hierarchy_api(
+    db: Session = Depends(get_session),  # noqa: B008
+) -> dict[str, Any]:
+    """Retrieve the physical plant layout and tag tree hierarchical structure."""
+    areas = db.exec(select(PlantArea)).all()
+    units = db.exec(select(PlantUnit)).all()
+    equips = db.exec(select(PlantEquipment)).all()
+    tags = db.exec(select(TagDefinitionDb)).all()
+
+    # Build tree
+    tree: dict[str, Any] = {"name": "Plant", "areas": {}}
+
+    # Index elements
+    area_dict = {a.id: {"name": a.name, "units": {}} for a in areas}
+    unit_dict = {
+        u.id: {"name": u.name, "equipment": {}, "area_id": u.area_id} for u in units
+    }
+    equip_dict = {
+        e.id: {"name": e.name, "tags": {}, "unit_id": e.unit_id} for e in equips
+    }
+
+    # Map tags to equipment
+    for t in tags:
+        if t.equipment_id in equip_dict:
+            equip_dict[t.equipment_id]["tags"][t.name] = {
+                "name": t.name,
+                "tag_type": t.tag_type,
+                "description": t.description,
+                "rw_mode": t.rw_mode,
+                "register_type": t.register_type,
+                "register_num": t.register_num,
+                "data_format": t.data_format,
+                "scale_factor": t.scale_factor,
+            }
+
+    # Map equipment to units
+    for eq_data in equip_dict.values():
+        u_id = eq_data["unit_id"]
+        if u_id in unit_dict:
+            unit_dict[u_id]["equipment"][eq_data["name"]] = {
+                "name": eq_data["name"],
+                "tags": eq_data["tags"],
+            }
+
+    # Map units to areas
+    for u_data in unit_dict.values():
+        a_id = u_data["area_id"]
+        if a_id in area_dict:
+            area_dict[a_id]["units"][u_data["name"]] = {
+                "name": u_data["name"],
+                "equipment": u_data["equipment"],
+            }
+
+    # Map areas to root
+    for a_data in area_dict.values():
+        tree["areas"][a_data["name"]] = {
+            "name": a_data["name"],
+            "units": a_data["units"],
+        }
+
+    return tree

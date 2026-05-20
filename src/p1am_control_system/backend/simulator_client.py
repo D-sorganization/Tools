@@ -17,55 +17,55 @@ class SimulatedPLCClient(BasePLCClient):
         self._connected = True
 
         # Standard simulated tag storage
-        self.simulated_tags: list[float] = [0.0] * 32
+        self.simulated_tags: dict[str, float] = {f"TAG_{i}": 0.0 for i in range(32)}
 
         # Active configuration state
         self.active_config = RoutingConfig(
-            input_routing=[0, 1, 2, 3, 4, 5],
-            output_routing=[10, 11],
+            input_routing=[f"TAG_{i}" for i in range(6)],
+            output_routing=["TAG_10", "TAG_11"],
             pids=[
                 PIDConfig(
-                    pv_tag_id=1,
-                    cv_tag_id=2,
+                    pv_tag="TAG_1",
+                    cv_tag="TAG_2",
                     setpoint=50.0,
                     kp=1.0,
                     ki=0.5,
                     kd=0.1,
                 ),
                 PIDConfig(
-                    pv_tag_id=3,
-                    cv_tag_id=4,
+                    pv_tag="TAG_3",
+                    cv_tag="TAG_4",
                     setpoint=30.0,
                     kp=1.5,
                     ki=0.2,
                     kd=0.05,
                 ),
                 PIDConfig(
-                    pv_tag_id=5,
-                    cv_tag_id=6,
+                    pv_tag="TAG_5",
+                    cv_tag="TAG_6",
                     setpoint=40.0,
                     kp=2.0,
                     ki=0.8,
                     kd=0.2,
                 ),
                 PIDConfig(
-                    pv_tag_id=7,
-                    cv_tag_id=8,
+                    pv_tag="TAG_7",
+                    cv_tag="TAG_8",
                     setpoint=60.0,
                     kp=0.5,
                     ki=0.1,
                     kd=0.01,
                 ),
             ],
-            interlocks=[
-                InterlockConfig(
+            interlocks={
+                f"TAG_{i}": InterlockConfig(
                     lolo_limit=0.0,
                     low_limit=5.0,
                     high_limit=95.0,
                     hihi_limit=100.0,
                 )
-                for _ in range(32)
-            ],
+                for i in range(32)
+            },
         )
 
         # Plant simulation parameters (FOPDT: First Order Plus Dead Time)
@@ -91,23 +91,41 @@ class SimulatedPLCClient(BasePLCClient):
     async def disconnect(self) -> None:
         self._connected = False
 
-    async def read_tags(self) -> list[float] | None:
+    async def read_tags(self) -> dict[str, float] | None:
         """Perform a single step of the plant simulation and return the tags."""
         async with self.lock:
             if not self._connected:
                 return None
 
+            # Simulate custom tags if dynamic tag map is loaded
+            if hasattr(self, "tag_map") and self.tag_map:
+                for tag_name in self.tag_map:
+                    if tag_name not in self.simulated_tags:
+                        self.simulated_tags[tag_name] = 0.0
+                    else:
+                        # Exclude main loop tags from the simple random walk
+                        is_loop_tag = any(
+                            tag_name in [pid.pv_tag, pid.cv_tag]
+                            for pid in self.active_config.pids
+                        )
+                        exclude_tags = ["TAG_0", "TAG_9", "TAG_10"]
+                        if tag_name not in exclude_tags and not is_loop_tag:
+                            val = self.simulated_tags[tag_name] + random.uniform(
+                                -0.1, 0.1
+                            )
+                            self.simulated_tags[tag_name] = round(max(0.0, val), 2)
+
             for i in range(4):
                 pid_cfg = self.active_config.pids[i]
-                pv_id = pid_cfg.pv_tag_id
-                cv_id = pid_cfg.cv_tag_id
+                pv_tag = pid_cfg.pv_tag
+                cv_tag = pid_cfg.cv_tag
 
                 # Check if loop is in active tuning mode
                 in_tuning = i in self.tuning_sessions
 
                 if not in_tuning:
                     # Closed-loop PID control simulation
-                    err = pid_cfg.setpoint - self.simulated_tags[pv_id]
+                    err = pid_cfg.setpoint - self.simulated_tags.get(pv_tag, 0.0)
                     self.pid_integrals[i] = max(
                         -100.0, min(100.0, self.pid_integrals[i] + err * 0.1)
                     )
@@ -120,10 +138,10 @@ class SimulatedPLCClient(BasePLCClient):
                         + pid_cfg.kd * deriv
                     )
                     cv_val = max(0.0, min(100.0, cv_val))
-                    self.simulated_tags[cv_id] = cv_val
+                    self.simulated_tags[cv_tag] = cv_val
 
                 # Update FOPDT plant dynamics
-                self.cv_history[i].append(self.simulated_tags[cv_id])
+                self.cv_history[i].append(self.simulated_tags.get(cv_tag, 0.0))
                 if len(self.cv_history[i]) > 40:
                     self.cv_history[i].pop(0)
 
@@ -132,11 +150,11 @@ class SimulatedPLCClient(BasePLCClient):
                 delayed_cv = self.cv_history[i][idx]
 
                 noise = random.uniform(-0.05, 0.05)
-                y_prev = self.simulated_tags[pv_id]
+                y_prev = self.simulated_tags.get(pv_tag, 0.0)
                 dy = (self.fopdt_gain[i] * delayed_cv - y_prev) * (
                     0.1 / self.fopdt_tau[i]
                 )
-                self.simulated_tags[pv_id] = max(0.0, y_prev + dy + noise)
+                self.simulated_tags[pv_tag] = max(0.0, y_prev + dy + noise)
 
                 # Record tuning session history
                 if in_tuning:
@@ -145,21 +163,20 @@ class SimulatedPLCClient(BasePLCClient):
                     session["history"].append(
                         (
                             time_offset,
-                            self.simulated_tags[cv_id],
-                            self.simulated_tags[pv_id],
+                            self.simulated_tags.get(cv_tag, 0.0),
+                            self.simulated_tags.get(pv_tag, 0.0),
                         )
                     )
-
             # Set E-stop status and CPU Temp/Cycle Time simulation
-            self.simulated_tags[0] = 1.0  # Normal safety state
-            self.simulated_tags[9] = round(
+            self.simulated_tags["TAG_0"] = 1.0  # Normal safety state
+            self.simulated_tags["TAG_9"] = round(
                 35.5 + random.uniform(-0.2, 0.2), 1
             )  # CPU Temperature
-            self.simulated_tags[10] = round(
+            self.simulated_tags["TAG_10"] = round(
                 0.12 + random.uniform(-0.01, 0.01), 3
             )  # Cycle time
 
-            return list(self.simulated_tags)
+            return dict(self.simulated_tags)
 
     async def read_routing(self) -> Optional["RoutingConfig"]:
         async with self.lock:
@@ -175,12 +192,12 @@ class SimulatedPLCClient(BasePLCClient):
 
     async def trigger_estop(self) -> bool:
         async with self.lock:
-            self.simulated_tags = [0.0] * 32
+            self.simulated_tags = {f"TAG_{i}": 0.0 for i in range(32)}
             return True
 
-    async def write_tag(self, tag_id: int, value: float) -> bool:
+    async def write_tag(self, tag_name: str, value: float) -> bool:
         async with self.lock:
-            if 0 <= tag_id < len(self.simulated_tags):
-                self.simulated_tags[tag_id] = value
+            if tag_name in self.simulated_tags:
+                self.simulated_tags[tag_name] = value
                 return True
             return False

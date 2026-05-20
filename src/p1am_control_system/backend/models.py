@@ -1,15 +1,14 @@
 from datetime import datetime
 
 from pydantic import BaseModel
-from pydantic import Field as PydanticField
 from sqlmodel import Field, SQLModel
 
 
-class TagLog(SQLModel, table=True):  # type: ignore
+class TagLog(SQLModel, table=True):
     """SQLModel representing a logged tag state in the database."""
 
     id: int | None = Field(default=None, primary_key=True)
-    tag_id: int = Field(index=True)
+    tag_name: str = Field(index=True)
     value: float
     timestamp: datetime = Field(
         default_factory=datetime.utcnow,
@@ -17,7 +16,45 @@ class TagLog(SQLModel, table=True):  # type: ignore
     )
 
 
-class EventLog(SQLModel, table=True):  # type: ignore
+class PlantArea(SQLModel, table=True):
+    """SQLModel representing a physical plant area."""
+
+    id: int | None = Field(default=None, primary_key=True)
+    name: str = Field(index=True, unique=True)
+
+
+class PlantUnit(SQLModel, table=True):
+    """SQLModel representing a plant unit within an area."""
+
+    id: int | None = Field(default=None, primary_key=True)
+    name: str = Field(index=True)
+    area_id: int = Field(foreign_key="plantarea.id")
+
+
+class PlantEquipment(SQLModel, table=True):
+    """SQLModel representing an equipment module within a unit."""
+
+    id: int | None = Field(default=None, primary_key=True)
+    name: str = Field(index=True)
+    unit_id: int = Field(foreign_key="plantunit.id")
+
+
+class TagDefinitionDb(SQLModel, table=True):
+    """SQLModel representing a DB-backed tag definition."""
+
+    id: int | None = Field(default=None, primary_key=True)
+    name: str = Field(index=True, unique=True)
+    tag_type: str
+    description: str = Field(default="")
+    rw_mode: str = Field(default="Read-only")
+    register_type: str | None = Field(default=None)
+    register_num: int | None = Field(default=None)
+    data_format: str | None = Field(default=None)
+    scale_factor: float | None = Field(default=None)
+    equipment_id: int | None = Field(default=None, foreign_key="plantequipment.id")
+
+
+class EventLog(SQLModel, table=True):
     """SQLModel representing an event or alarm log in the database."""
 
     id: int | None = Field(default=None, primary_key=True)
@@ -33,8 +70,8 @@ class EventLog(SQLModel, table=True):  # type: ignore
 class PIDConfig(BaseModel):
     """Pydantic model validating a PID loop configuration."""
 
-    pv_tag_id: int = PydanticField(..., ge=0, le=255)
-    cv_tag_id: int = PydanticField(..., ge=0, le=255)
+    pv_tag: str
+    cv_tag: str
     setpoint: float
     kp: float
     ki: float
@@ -53,10 +90,10 @@ class InterlockConfig(BaseModel):
 class RoutingConfig(BaseModel):
     """Pydantic model validating the complete DCS config routing matrix."""
 
-    input_routing: list[int] = PydanticField(..., min_length=6, max_length=6)
-    output_routing: list[int] = PydanticField(..., min_length=2, max_length=2)
-    pids: list[PIDConfig] = PydanticField(..., min_length=4, max_length=4)
-    interlocks: list[InterlockConfig] = PydanticField(..., min_length=32, max_length=32)
+    input_routing: list[str]
+    output_routing: list[str]
+    pids: list[PIDConfig]
+    interlocks: dict[str, InterlockConfig]
 
 
 class PIDTuningStepPayload(BaseModel):

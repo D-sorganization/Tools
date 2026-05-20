@@ -76,6 +76,7 @@ chat = [
     "pydantic>=2.0.0",
     "fastapi>=0.100.0",
     "PyQt6>=6.5.0",
+    "python-multipart>=0.0.7",
 ]
 # Voice-to-text addon for ChatDockWidget (Tools issue #2744).
 # Install with: pip install "tools[chat-voice]"

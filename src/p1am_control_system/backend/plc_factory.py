@@ -1,7 +1,6 @@
 import logging
 import os
 
-from modbus_client import AsyncModbusManager
 from plc_interface import BasePLCClient
 from simulator_client import SimulatedPLCClient
 
@@ -21,21 +20,17 @@ class PLCFactory:
         driver = os.getenv("PLC_DRIVER", "simulated").lower()
 
         if driver == "p1am":
-            from modbus_client import ModbusPLCClient
+            from modbus_client import AsyncModbusManager
 
-            return ModbusPLCClient()
+            return AsyncModbusManager(host="192.168.1.100")
         elif driver == "neural":
-            import pathlib
-            import sys
-
             # Add src to sys.path to allow importing plant_simulator
-            src_dir = str(pathlib.Path(__file__).resolve().parents[3])
-            if src_dir not in sys.path:
-                sys.path.append(src_dir)
             from plant_simulator.neural_simulator_client import NeuralSimulatorClient
 
             return NeuralSimulatorClient()
         elif driver == "modbus":
+            from modbus_client import AsyncModbusManager
+
             host = os.getenv("PLC_IP", "192.168.1.100")
             try:
                 port = int(os.getenv("PLC_PORT", "502"))
