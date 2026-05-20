@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.188                                    |
+| **Spec Version**        | 1.1.189                                    |
 | **Last Spec Update**    | 2026-05-20                                 |
 
 ## 2. Purpose & Mission
@@ -148,6 +148,9 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Data-driven shared chat terminal-provider descriptors for Claude Code, Codex,
   Cline CLI, and Gemini CLI, including probe command metadata with diagnostic
   redaction helpers
+- Shared source-tree logging and environment helpers keep AI adapter and chat
+  service imports self-contained for downstream consumers that install or
+  vendor only the shared Tools modules
 - Plugin system for extending functionality
 
 No repo is required to use Tools, but it provides optional high-value integrations.
@@ -897,7 +900,12 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 - **Security**: Fixed an information leakage vulnerability in `src/web_applications/health_checks.py`. API endpoints (`/api/health` and `/api/ready`) no longer expose raw exception strings (`str(e)`) in their JSON responses. They now return safe, generic error messages while preserving full traceback details in the backend logs using `logger.exception()`.
 
+### Version 1.1.189
+
+- **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
+
 ## 9. Changelog
 
 - **2026-05-20**: Add accessible toggle states and toast feedback for copy actions in `calculator/static/app.js` and `calculator/templates/index.html`.
 - **2026-05-20**: Harden health-check API responses to return generic client-facing errors while logging exception details server-side.
+- **2026-05-20**: Restore shared logging and environment helper modules required by AI adapter and chat service connection imports.
