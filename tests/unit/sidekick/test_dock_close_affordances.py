@@ -12,11 +12,22 @@ production code.
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 from typing import Any
 
 import pytest
+
+os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+
+pytestmark = pytest.mark.serial
+
+if sys.platform == "win32" and os.environ.get("PYTEST_XDIST_WORKER"):
+    pytest.skip(
+        "Qt dock close-affordance tests run serially on Windows.",
+        allow_module_level=True,
+    )
 
 pytest.importorskip("PyQt6")
 
