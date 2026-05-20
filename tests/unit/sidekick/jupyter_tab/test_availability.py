@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import sys
+from collections.abc import Generator
 from unittest.mock import patch
 
 import pytest
@@ -12,16 +13,18 @@ from upstream_drift_tools.ui.tools_sidebar.jupyter_tab.availability import (
 
 
 @pytest.fixture(autouse=True)
-def _reset_cache() -> None:
+def _reset_cache() -> Generator[None, None, None]:
     JupyterTabAvailability.reset_cache()
     yield
     JupyterTabAvailability.reset_cache()
 
 
 def test_check_returns_true_when_nbformat_is_importable() -> None:
-    available, message = JupyterTabAvailability.check()
-    assert available is True
-    assert message == ""
+    with patch("importlib.import_module") as mock_import:
+        available, message = JupyterTabAvailability.check()
+        assert available is True
+        assert message == ""
+        mock_import.assert_called_once_with("nbformat")
 
 
 def test_check_returns_install_hint_when_nbformat_missing() -> None:
