@@ -1175,7 +1175,7 @@ class ChatDockWidget(QDockWidget):
         CLI agent providers (Claude CLI, Codex CLI, Cline) are probed via
         :func:`~_build_available_cli_provider_items` and appended to the
         provider combo after the API providers so they are always visible
-        when the binary is installed (Tools issue UpstreamDrift#5622).
+        when the binary is installed for the Tools chat provider dropdown.
         """
         api_items = list(self._AI_DEFAULT_PROVIDERS)
         cli_items = self._build_available_cli_provider_items()

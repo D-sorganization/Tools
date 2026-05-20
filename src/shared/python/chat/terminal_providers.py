@@ -108,6 +108,13 @@ _PROVIDER_DEFINITIONS: Final = (
         executable="gemini",
         supported_shells=_SUPPORTED_SHELL_IDS,
     ),
+    _ProviderDefinition(
+        id="github-cli",
+        display_name="GitHub CLI",
+        executable="gh",
+        supported_shells=_SUPPORTED_SHELL_IDS,
+        auth_probe_args=("auth", "status"),
+    ),
 )
 
 
