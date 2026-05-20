@@ -17,7 +17,7 @@ from __future__ import annotations
 import logging
 from collections.abc import Callable, Iterable
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import pandas as pd
@@ -54,10 +54,22 @@ from data_processor.constants import TIME_COLUMN_KEYWORDS  # noqa: E402
 from data_processor.contracts import (  # noqa: E402
     require,
 )
-from data_processor.high_performance_loader import (  # noqa: E402
-    HighPerformanceDataLoader,
+from data_processor.core.native_bulk_data import (  # noqa: E402
+    convert_dataset as _convert_native_dataset,
+)
+from data_processor.core.native_bulk_data import (
+    inspect_dataset as _inspect_native_dataset,
+)
+from data_processor.core.native_bulk_data import (
+    preview_dataset as _preview_native_dataset,
+)
+from data_processor.rust_engine import (  # noqa: E402
+    RustBulkDataEngine,
 )
 from data_processor.security_utils import validate_and_check_file  # noqa: E402
+
+if TYPE_CHECKING:
+    from data_processor.high_performance_loader import HighPerformanceDataLoader
 
 logger = logging.getLogger(__name__)
 
@@ -69,20 +81,33 @@ class DataLoader:
 
     hp_loader: HighPerformanceDataLoader | None
 
-    def __init__(self, use_high_performance: bool = True) -> None:
+    def __init__(
+        self,
+        use_high_performance: bool = True,
+        rust_engine: RustBulkDataEngine | None = None,
+    ) -> None:
         """Initialize the data loader.
 
         Args:
             use_high_performance: Whether to use high-performance parallel loading
+            rust_engine: Optional native bulk-data engine. Inject in tests or
+                provide for UI hosts that want explicit engine lifecycle control.
         """
         if use_high_performance is None:
             raise ValueError("use_high_performance must be provided")
         self.use_high_performance = use_high_performance
+        self._rust_engine = rust_engine
         if use_high_performance:
-            self.hp_loader = HighPerformanceDataLoader()
+            self.hp_loader = self._create_high_performance_loader()
         else:
             self.hp_loader = None
         self.logger = logger
+
+    def _create_high_performance_loader(self) -> HighPerformanceDataLoader:
+        """Create the optional high-performance loader only when requested."""
+        from data_processor.high_performance_loader import HighPerformanceDataLoader
+
+        return HighPerformanceDataLoader()
 
     def load_csv_file(
         self,
@@ -138,6 +163,36 @@ class DataLoader:
         except (OSError, ValueError, KeyError) as e:
             logger.error(f"Error loading {file_path}: {e}", exc_info=True)
             return None
+
+    def inspect_dataset(self, file_path: str) -> dict[str, Any]:
+        """Inspect a dataset through the native streaming engine."""
+        return _inspect_native_dataset(self, file_path)
+
+    def preview_dataset(
+        self,
+        file_path: str,
+        rows: int = 100,
+        columns: list[str] | None = None,
+    ) -> pd.DataFrame:
+        """Preview a dataset through the native streaming engine."""
+        return _preview_native_dataset(self, file_path, rows=rows, columns=columns)
+
+    def convert_dataset(
+        self,
+        input_path: str,
+        output_path: str,
+        *,
+        output_format: str = "csv",
+        columns: list[str] | None = None,
+    ) -> dict[str, Any]:
+        """Convert a dataset through the native streaming engine."""
+        return _convert_native_dataset(
+            self,
+            input_path,
+            output_path,
+            output_format=output_format,
+            columns=columns,
+        )
 
     def load_multiple_files(
         self,
@@ -243,7 +298,7 @@ class DataLoader:
             try:
                 # Read just the header
                 df_header = safe_read_csv(file_path, nrows=0)
-                if df_header is not None and not df_header.empty:
+                if df_header is not None and len(df_header.columns) > 0:
                     all_signals.update(df_header.columns)
 
                 if progress_callback:

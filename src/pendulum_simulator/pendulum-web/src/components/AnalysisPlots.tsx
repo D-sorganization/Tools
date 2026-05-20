@@ -81,92 +81,121 @@ export const AnalysisPlots: React.FC<AnalysisPlotsProps> = ({ result, units, det
     const indices = useMemo(() => sampleIndices(t.length, stride), [t.length, stride]);
 
     // ── Angle data ──────────────────────────────────────────────────────
-    const angleData = useMemo(() =>
-        indices.map(i => ({
-            t: +t[i].toFixed(3),
-            'Arms (θ₁)': +(states[i][0] * 180 / Math.PI).toFixed(2),
-            'Shaft (φ)': +(states[i][1] * 180 / Math.PI).toFixed(2),
-        })),
-        [t, states, indices],
-    );
+    const angleData = useMemo(() => {
+        // ⚡ Bolt Optimization: Use explicit for loops with pre-allocated arrays instead of indices.map()
+        // to eliminate continuous callback allocation and significantly reduce garbage collection pauses in chart updates.
+        const len = indices.length;
+        const res = new Array(len);
+        for (let j = 0; j < len; j++) {
+            const i = indices[j];
+            res[j] = {
+                t: +t[i].toFixed(3),
+                'Arms (θ₁)': +(states[i][0] * 180 / Math.PI).toFixed(2),
+                'Shaft (φ)': +(states[i][1] * 180 / Math.PI).toFixed(2),
+            };
+        }
+        return res;
+    }, [t, states, indices]);
 
     // ── Angular velocity data ───────────────────────────────────────────
-    const angVelData = useMemo(() =>
-        indices.map(i => ({
-            t: +t[i].toFixed(3),
-            'Arms ω': +angularSpeedFromSI(states[i][2], units.angularSpeed).toFixed(2),
-            'Shaft ω': +angularSpeedFromSI(states[i][2] + states[i][3], units.angularSpeed).toFixed(2),
-            'Wrist rel ω': +angularSpeedFromSI(states[i][3], units.angularSpeed).toFixed(2),
-        })),
-        [t, states, indices, units.angularSpeed],
-    );
+    const angVelData = useMemo(() => {
+        const len = indices.length;
+        const res = new Array(len);
+        for (let j = 0; j < len; j++) {
+            const i = indices[j];
+            res[j] = {
+                t: +t[i].toFixed(3),
+                'Arms ω': +angularSpeedFromSI(states[i][2], units.angularSpeed).toFixed(2),
+                'Shaft ω': +angularSpeedFromSI(states[i][2] + states[i][3], units.angularSpeed).toFixed(2),
+                'Wrist rel ω': +angularSpeedFromSI(states[i][3], units.angularSpeed).toFixed(2),
+            };
+        }
+        return res;
+    }, [t, states, indices, units.angularSpeed]);
 
     // ── Linear speed data ───────────────────────────────────────────────
-    const linearSpeedData = useMemo(() =>
-        indices.map(i => {
+    const linearSpeedData = useMemo(() => {
+        const len = indices.length;
+        const res = new Array(len);
+        for (let j = 0; j < len; j++) {
+            const i = indices[j];
             const jv = jointVelocities(states[i], params);
-            return {
+            res[j] = {
                 t: +t[i].toFixed(3),
                 'Wrist': +speedFromSI(jv.wristSpeed, units.speed).toFixed(2),
                 'Tip': +speedFromSI(jv.tipSpeed, units.speed).toFixed(2),
             };
-        }),
-        [t, states, params, indices, units.speed],
-    );
+        }
+        return res;
+    }, [t, states, params, indices, units.speed]);
 
     // ── Energy data ─────────────────────────────────────────────────────
-    const energyData = useMemo(() =>
-        indices.map(i => ({
-            t: +t[i].toFixed(3),
-            KE: +energyFromSI(kineticEnergy(states[i], params), units.energy).toFixed(4),
-            PE: +energyFromSI(potentialEnergy(states[i], params), units.energy).toFixed(4),
-            Total: +energyFromSI(totalEnergy(states[i], params), units.energy).toFixed(4),
-        })),
-        [t, states, params, indices, units.energy],
-    );
+    const energyData = useMemo(() => {
+        const len = indices.length;
+        const res = new Array(len);
+        for (let j = 0; j < len; j++) {
+            const i = indices[j];
+            res[j] = {
+                t: +t[i].toFixed(3),
+                KE: +energyFromSI(kineticEnergy(states[i], params), units.energy).toFixed(4),
+                PE: +energyFromSI(potentialEnergy(states[i], params), units.energy).toFixed(4),
+                Total: +energyFromSI(totalEnergy(states[i], params), units.energy).toFixed(4),
+            };
+        }
+        return res;
+    }, [t, states, params, indices, units.energy]);
 
     // ── Friction torque data ────────────────────────────────────────────
-    const torqueData = useMemo(() =>
-        indices.map(i => {
+    const torqueData = useMemo(() => {
+        const len = indices.length;
+        const res = new Array(len);
+        for (let j = 0; j < len; j++) {
+            const i = indices[j];
             const [tf1, tf2] = frictionTorqueVector(states[i][2], states[i][3], params);
-            return {
+            res[j] = {
                 t: +t[i].toFixed(3),
                 'Shoulder fric': +torqueFromSI(tf1, units.torque).toFixed(4),
                 'Wrist fric': +torqueFromSI(tf2, units.torque).toFixed(4),
             };
-        }),
-        [t, states, params, indices, units.torque],
-    );
+        }
+        return res;
+    }, [t, states, params, indices, units.torque]);
 
     // ── Base force data ─────────────────────────────────────────────────
-    const baseForceData = useMemo(() =>
-        indices.map(i => {
+    const baseForceData = useMemo(() => {
+        const len = indices.length;
+        const res = new Array(len);
+        for (let j = 0; j < len; j++) {
+            const i = indices[j];
             const qdd = computeAccelerations(states[i], t[i], params, torqueFunc, limits, clamp);
             const bf = baseForce(states[i], qdd, params);
-            return {
+            res[j] = {
                 t: +t[i].toFixed(3),
                 'Fx': +forceFromSI(bf.fx, units.force).toFixed(2),
                 'Fy': +forceFromSI(bf.fy, units.force).toFixed(2),
                 '|F|': +forceFromSI(bf.magnitude, units.force).toFixed(2),
             };
-        }),
-        [t, states, params, torqueFunc, limits, clamp, indices, units.force],
-    );
+        }
+        return res;
+    }, [t, states, params, torqueFunc, limits, clamp, indices, units.force]);
 
     // ── Control vector data ─────────────────────────────────────────────
-    const controlVectorData = useMemo(() =>
-        indices.map(i => {
+    const controlVectorData = useMemo(() => {
+        const len = indices.length;
+        const res = new Array(len);
+        for (let j = 0; j < len; j++) {
+            const i = indices[j];
             const qdd = computeAccelerations(states[i], t[i], params, torqueFunc, limits, clamp);
             const cv = controlVector(states[i], qdd, params, limits);
-            return {
+            res[j] = {
                 t: +t[i].toFixed(3),
                 'CVx': +forceFromSI(cv.cvx, units.force).toFixed(2),
                 'CVy': +forceFromSI(cv.cvy, units.force).toFixed(2),
                 '|CV|': +forceFromSI(cv.magnitude, units.force).toFixed(2),
             };
-        }),
-        [t, states, params, torqueFunc, limits, clamp, indices, units.force],
-    );
+        }
+        return res;
+    }, [t, states, params, torqueFunc, limits, clamp, indices, units.force]);
 
     // If detail mode, show just one plot in full height
     if (detailPlot) {

@@ -10,6 +10,11 @@ These tests follow the Test-Driven Development pattern used across the fleet:
 
 from __future__ import annotations
 
+import os
+import subprocess
+import sys
+from pathlib import Path
+
 import pandas as pd
 import pytest
 
@@ -17,6 +22,7 @@ import pytest
 # conftest.py ensures data_processor is on sys.path via utils.path_helpers.
 from data_processor.contracts import PreconditionError
 from data_processor.core.data_loader import DataLoader, load_csv_files
+from data_processor.rust_engine import ConversionReport, DatasetMetadata, PreviewTable
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -41,6 +47,31 @@ class TestDataLoaderInit:
         loader = DataLoader(use_high_performance=False)
         assert loader.use_high_performance is False
         assert loader.hp_loader is None
+
+    def test_low_performance_import_does_not_load_optional_native_stack(self) -> None:
+        package_root = Path(__file__).resolve().parents[1]
+        env = os.environ.copy()
+        env["PYTHONPATH"] = os.pathsep.join(
+            [str(package_root), env.get("PYTHONPATH", "")]
+        )
+        script = (
+            "import sys; "
+            "from data_processor.core.data_loader import DataLoader; "
+            "DataLoader(use_high_performance=False); "
+            "raise SystemExit("
+            "'data_processor.high_performance_loader' in sys.modules"
+            ")"
+        )
+
+        result = subprocess.run(
+            [sys.executable, "-c", script],
+            capture_output=True,
+            env=env,
+            text=True,
+            timeout=15,
+        )
+
+        assert result.returncode == 0, result.stderr
 
 
 # ── load_csv_file pre-conditions ──────────────────────────────────────────────
@@ -129,6 +160,15 @@ class TestDetectSignalsContracts:
         signals = loader.detect_signals([path])
         assert isinstance(signals, set)
 
+    def test_returns_column_names_from_csv(self, tmp_path) -> None:
+        p = tmp_path / "signals.csv"
+        p.write_text("time,pressure,temperature\n1,101.3,25.0\n2,101.5,25.1\n")
+        loader = DataLoader(use_high_performance=False)
+        signals = loader.detect_signals([str(p)])
+        assert "time" in signals
+        assert "pressure" in signals
+        assert "temperature" in signals
+
 
 # ── combine_dataframes pre-conditions ────────────────────────────────────────
 
@@ -184,6 +224,74 @@ class TestSaveDataFrameContracts:
         success = loader.save_dataframe(df, path, format_type="csv")
         assert success is True
         assert (tmp_path / "output.csv").exists()
+
+
+# ── native bulk engine boundary ───────────────────────────────────────────────
+
+
+class FakeRustEngine:
+    def inspect(self, path):
+        return DatasetMetadata(
+            format="csv",
+            row_count=2,
+            columns=["time", "A"],
+            byte_size=24,
+        )
+
+    def preview(self, path, *, rows=100, columns=None):
+        return PreviewTable(
+            columns=columns or ["time", "A"],
+            rows=[{"time": "1", "A": "1.0"}, {"time": "2", "A": "3.0"}],
+            rows_returned=2,
+        )
+
+    def convert(self, input_path, output_path, *, output_format="csv", columns=None):
+        return ConversionReport(
+            input=str(input_path),
+            output=str(output_path),
+            output_format=output_format,
+            rows_read=2,
+            rows_written=2,
+            columns=columns or ["time", "A"],
+            bytes_written=18,
+        )
+
+
+class TestNativeBulkEngineBoundary:
+    def test_inspect_dataset_uses_injected_rust_engine(self, tmp_path) -> None:
+        loader = DataLoader(use_high_performance=False, rust_engine=FakeRustEngine())
+        path = _dummy_csv(tmp_path)
+
+        metadata = loader.inspect_dataset(path)
+
+        assert metadata["format"] == "csv"
+        assert metadata["row_count"] == 2
+        assert metadata["columns"] == ["time", "A"]
+
+    def test_preview_dataset_returns_dataframe_from_rust_engine(self, tmp_path) -> None:
+        loader = DataLoader(use_high_performance=False, rust_engine=FakeRustEngine())
+        path = _dummy_csv(tmp_path)
+
+        preview = loader.preview_dataset(path, rows=2, columns=["A"])
+
+        assert list(preview.columns) == ["A"]
+        assert preview.to_dict(orient="records") == [{"A": "1.0"}, {"A": "3.0"}]
+
+    def test_convert_dataset_returns_report_from_rust_engine(self, tmp_path) -> None:
+        loader = DataLoader(use_high_performance=False, rust_engine=FakeRustEngine())
+        input_path = _dummy_csv(tmp_path)
+        output_path = tmp_path / "out.csv"
+
+        report = loader.convert_dataset(
+            input_path,
+            str(output_path),
+            output_format="csv",
+            columns=["time", "A"],
+        )
+
+        assert report["rows_read"] == 2
+        assert report["rows_written"] == 2
+        assert report["columns"] == ["time", "A"]
 
 
 # ── Convenience functions ─────────────────────────────────────────────────────

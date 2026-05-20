@@ -7,7 +7,8 @@
                     "dev":  "vite",
                     "build":  "tsc \u0026\u0026 vite build",
                     "preview":  "vite preview",
-                    "lint":  "eslint . --ext ts,tsx"
+                    "lint":  "eslint . --ext ts,tsx",
+                    "type-check": "tsc"
                 },
     "dependencies":  {
                          "react":  "^18.2.0",

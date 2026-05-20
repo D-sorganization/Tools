@@ -33,6 +33,6 @@ class TestLoggerUtils:
         # ModuleNotFoundError (raised when None is in sys.modules) inherits from
         # ImportError
         with patch.dict(sys.modules, {"numpy": None}):
-            with patch("logger_utils.logger") as mock_logger:
+            with patch("utils.logging_utils.logger") as mock_logger:
                 set_seeds()
                 mock_logger.warning.assert_called_once()
