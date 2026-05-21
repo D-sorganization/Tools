@@ -176,12 +176,34 @@ class ChatHistorySidebar(QWidget):
         self, session_manager: ChatSessionManager, parent: QWidget | None = None
     ) -> None:
         super().__init__(parent)
+        self._collapsed: bool = False
         self._manager = session_manager
         self._manager.sessions_updated.connect(self.refresh_lists)
         self.refresh_theme()
         self._setup_ui()
         self.refresh_theme()
         self.refresh_lists()
+
+    @property
+    def collapsed(self) -> bool:
+        """Return whether the sidebar is in compact/collapsed mode."""
+        return self._collapsed
+
+    def set_collapsed(self, collapsed: bool) -> None:
+        """Switch between full and collapsed state.
+
+        Hides the main UI components when collapsed.
+        """
+        self._collapsed = collapsed
+        self._header.setVisible(not collapsed)
+        self._tabs.setVisible(not collapsed)
+        self.updateGeometry()
+
+    def minimumSizeHint(self) -> QSize:
+        """Override minimumSizeHint to allow compact sizes when collapsed."""
+        if self._collapsed:
+            return QSize(56, 0)
+        return QSize(320, 0)
 
     def refresh_theme(self) -> None:
         """Dynamically update colors based on the current theme."""

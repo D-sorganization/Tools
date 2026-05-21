@@ -9,7 +9,7 @@ import threading
 import types
 from collections.abc import Iterator
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 ROOT = Path(__file__).resolve().parents[4]
 if str(ROOT) not in sys.path:
@@ -247,3 +247,9 @@ class _Adapter(BaseAgentAdapter):
 
     def validate_connection(self) -> tuple[bool, str]:
         return True, "ok"
+
+    def list_models(self) -> list[str]:
+        return ["test"]
+
+    def thinking_capabilities(self) -> Any:
+        return None
