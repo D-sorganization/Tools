@@ -1,5 +1,27 @@
 #include "SignalBroker.h"
-#include <cassert>
+#include <cmath>
+
+namespace {
+
+bool IsValidTagId(int tag_id) {
+  return tag_id >= 0 && tag_id < SignalBroker::kNumTags;
+}
+
+bool IsValidRoutingTagId(int tag_id) {
+  return tag_id == SignalBroker::kUnmappedTag || IsValidTagId(tag_id);
+}
+
+float ClampTagValue(float value) {
+  if (!std::isfinite(value) || value < 0.0f) {
+    return 0.0f;
+  }
+  if (value > 100.0f) {
+    return 100.0f;
+  }
+  return value;
+}
+
+}  // namespace
 
 SignalBroker::SignalBroker() {
   Reset();
@@ -18,58 +40,54 @@ void SignalBroker::Reset() {
 }
 
 float SignalBroker::GetTag(int tag_id) const {
-  // DbC Precondition: tag_id must be within valid range
-  assert(tag_id >= 0 && tag_id < kNumTags);
+  if (!IsValidTagId(tag_id)) {
+    return 0.0f;
+  }
 
-  float val = tags_[tag_id];
-
-  // DbC Postcondition: returned value must be within [0.0, 100.0]
-  assert(val >= 0.0f && val <= 100.0f);
-  return val;
+  return ClampTagValue(tags_[tag_id]);
 }
 
 void SignalBroker::SetTag(int tag_id, float value) {
-  // DbC Precondition: tag_id must be within valid range
-  assert(tag_id >= 0 && tag_id < kNumTags);
-
-  // Clamp value to standardized range [0.0, 100.0]
-  if (value < 0.0f) {
-    value = 0.0f;
-  } else if (value > 100.0f) {
-    value = 100.0f;
+  if (!IsValidTagId(tag_id)) {
+    return;
   }
 
-  tags_[tag_id] = value;
-
-  // DbC Postcondition: stored value is within [0.0, 100.0]
-  assert(tags_[tag_id] >= 0.0f && tags_[tag_id] <= 100.0f);
+  tags_[tag_id] = ClampTagValue(value);
 }
 
 void SignalBroker::SetInputRouting(int channel, int tag_id) {
-  // DbC Precondition: channel and tag_id must be within valid range
-  assert(channel >= 0 && channel < kNumInputs);
-  assert(tag_id == kUnmappedTag || (tag_id >= 0 && tag_id < kNumTags));
+  if (channel < 0 || channel >= kNumInputs) {
+    return;
+  }
+  if (!IsValidRoutingTagId(tag_id)) {
+    tag_id = kUnmappedTag;
+  }
 
   input_routing_[channel] = tag_id;
 }
 
 int SignalBroker::GetInputRouting(int channel) const {
-  // DbC Precondition: channel must be within valid range
-  assert(channel >= 0 && channel < kNumInputs);
+  if (channel < 0 || channel >= kNumInputs) {
+    return kUnmappedTag;
+  }
   return input_routing_[channel];
 }
 
 void SignalBroker::SetOutputRouting(int channel, int tag_id) {
-  // DbC Precondition: channel and tag_id must be within valid range
-  assert(channel >= 0 && channel < kNumOutputs);
-  assert(tag_id == kUnmappedTag || (tag_id >= 0 && tag_id < kNumTags));
+  if (channel < 0 || channel >= kNumOutputs) {
+    return;
+  }
+  if (!IsValidRoutingTagId(tag_id)) {
+    tag_id = kUnmappedTag;
+  }
 
   output_routing_[channel] = tag_id;
 }
 
 int SignalBroker::GetOutputRouting(int channel) const {
-  // DbC Precondition: channel must be within valid range
-  assert(channel >= 0 && channel < kNumOutputs);
+  if (channel < 0 || channel >= kNumOutputs) {
+    return kUnmappedTag;
+  }
   return output_routing_[channel];
 }
 

@@ -1,6 +1,7 @@
 #include "P1AMHardware.h"
 #include <Arduino.h>
 #include <P1AM.h>
+#include <cmath>
 
 P1AMHardware::P1AMHardware() {}
 
@@ -39,7 +40,7 @@ void P1AMHardware::WriteAnalogOutput(int channel, float value) {
   if (channel < 0 || channel >= 2) {
     return;
   }
-  if (value < 0.0f) {
+  if (!std::isfinite(value) || value < 0.0f) {
     value = 0.0f;
   } else if (value > 100.0f) {
     value = 100.0f;

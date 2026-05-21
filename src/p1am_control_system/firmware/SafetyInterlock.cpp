@@ -1,5 +1,13 @@
 #include "SafetyInterlock.h"
-#include <cassert>
+#include <cmath>
+
+namespace {
+
+bool IsValidTagId(int tag_id) {
+  return tag_id >= 0 && tag_id < SignalBroker::kNumTags;
+}
+
+}  // namespace
 
 SafetyInterlock::SafetyInterlock() {
   Reset();
@@ -51,22 +59,36 @@ void SafetyInterlock::Evaluate(SignalBroker& broker, HardwareInterface& hw) {
 }
 
 float SafetyInterlock::GetHighLimit(int tag_id) const {
-  assert(tag_id >= 0 && tag_id < SignalBroker::kNumTags);
+  if (!IsValidTagId(tag_id)) {
+    return 99999.0f;
+  }
   return high_limits_[tag_id];
 }
 
 void SafetyInterlock::SetHighLimit(int tag_id, float val) {
-  assert(tag_id >= 0 && tag_id < SignalBroker::kNumTags);
+  if (!IsValidTagId(tag_id)) {
+    return;
+  }
+  if (!std::isfinite(val)) {
+    val = 99999.0f;
+  }
   high_limits_[tag_id] = val;
 }
 
 float SafetyInterlock::GetLowLimit(int tag_id) const {
-  assert(tag_id >= 0 && tag_id < SignalBroker::kNumTags);
+  if (!IsValidTagId(tag_id)) {
+    return -99999.0f;
+  }
   return low_limits_[tag_id];
 }
 
 void SafetyInterlock::SetLowLimit(int tag_id, float val) {
-  assert(tag_id >= 0 && tag_id < SignalBroker::kNumTags);
+  if (!IsValidTagId(tag_id)) {
+    return;
+  }
+  if (!std::isfinite(val)) {
+    val = -99999.0f;
+  }
   low_limits_[tag_id] = val;
 }
 

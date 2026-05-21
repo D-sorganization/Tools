@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cassert>
 #include <cmath>
+#include <limits>
 #include "MockHardware.h"
 #include "SignalBroker.h"
 #include "PIDController.h"
@@ -193,12 +194,76 @@ void TestStorageManager() {
   std::cout << "TestStorageManager PASSED!" << std::endl;
 }
 
+void TestSoftFailRuntimeContracts() {
+  std::cout << "Running TestSoftFailRuntimeContracts..." << std::endl;
+  MockHardware hw;
+  SignalBroker broker;
+  PIDController pid;
+  SafetyInterlock interlock;
+  const float nan = std::numeric_limits<float>::quiet_NaN();
+
+  // Invalid SCADA/flash routes must fail closed instead of aborting firmware.
+  broker.SetInputRouting(0, 999);
+  broker.SetOutputRouting(0, -12);
+  assert(broker.GetInputRouting(0) == SignalBroker::kUnmappedTag);
+  assert(broker.GetOutputRouting(0) == SignalBroker::kUnmappedTag);
+  assert(broker.GetInputRouting(-1) == SignalBroker::kUnmappedTag);
+  assert(broker.GetOutputRouting(99) == SignalBroker::kUnmappedTag);
+
+  // Bad hardware samples must not store NaN or trip DbC abort paths.
+  broker.SetTag(1, nan);
+  broker.SetTag(2, -10.0f);
+  broker.SetTag(3, 140.0f);
+  broker.SetTag(999, 50.0f);
+  assert(FloatEquals(broker.GetTag(1), 0.0f));
+  assert(FloatEquals(broker.GetTag(2), 0.0f));
+  assert(FloatEquals(broker.GetTag(3), 100.0f));
+  assert(FloatEquals(broker.GetTag(999), 0.0f));
+
+  hw.SetThermocouple(0, nan);
+  broker.SetInputRouting(0, 4);
+  broker.ReadHardwareInputs(hw);
+  assert(FloatEquals(broker.GetTag(4), 0.0f));
+
+  // Invalid PID configuration or scan timing skips/normalizes safely.
+  pid.SetPvTagId(999);
+  pid.SetCvTagId(-8);
+  assert(pid.GetPvTagId() == SignalBroker::kUnmappedTag);
+  assert(pid.GetCvTagId() == SignalBroker::kUnmappedTag);
+  pid.SetPvTagId(5);
+  pid.SetCvTagId(6);
+  pid.SetSetpoint(nan);
+  pid.SetKp(nan);
+  pid.SetKi(nan);
+  pid.SetKd(nan);
+  assert(FloatEquals(pid.GetSetpoint(), 0.0f));
+  assert(FloatEquals(pid.GetKp(), 0.0f));
+  assert(FloatEquals(pid.GetKi(), 0.0f));
+  assert(FloatEquals(pid.GetKd(), 0.0f));
+  broker.SetTag(6, 42.0f);
+  pid.Compute(broker, 0.0f);
+  assert(FloatEquals(broker.GetTag(6), 42.0f));
+  pid.Compute(broker, nan);
+  assert(FloatEquals(broker.GetTag(6), 42.0f));
+
+  // Invalid interlock limits should not force the controller into an abort path.
+  interlock.SetHighLimit(999, 1.0f);
+  interlock.SetLowLimit(-1, 1.0f);
+  interlock.SetHighLimit(0, nan);
+  interlock.SetLowLimit(0, nan);
+  assert(FloatEquals(interlock.GetHighLimit(0), 99999.0f));
+  assert(FloatEquals(interlock.GetLowLimit(0), -99999.0f));
+
+  std::cout << "TestSoftFailRuntimeContracts PASSED!" << std::endl;
+}
+
 int main() {
   std::cout << "=== DCS CORE FIRMWARE TDD TEST RUNNER ===" << std::endl;
   TestSignalBroker();
   TestPIDController();
   TestSafetyInterlock();
   TestStorageManager();
+  TestSoftFailRuntimeContracts();
   std::cout << "All C++ Core Firmware Tests Passed Successfully!" << std::endl;
   return 0;
 }
