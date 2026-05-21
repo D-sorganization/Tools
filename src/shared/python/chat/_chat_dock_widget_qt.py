@@ -31,7 +31,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any, cast
 
-from PyQt6.QtCore import Qt, QTimer, QUrl, pyqtSignal
+from PyQt6.QtCore import QSize, Qt, QTimer, QUrl, pyqtSignal
 from PyQt6.QtGui import QKeySequence, QShortcut
 from PyQt6.QtWebSockets import QWebSocket
 from PyQt6.QtWidgets import (
@@ -343,8 +343,66 @@ class ChatDockWidget(QDockWidget):
                 _read_shared_session_id(self._session_file)
             )
 
+        self._collapsed: bool = False
         self._setup_ui()
         self._connect_on_show = True
+
+    @property
+    def collapsed(self) -> bool:
+        """Return whether the chat dock is collapsed."""
+        return self._collapsed
+
+    def set_collapsed(self, collapsed: bool) -> None:
+        """Switch between full and collapsed state, hiding the main UI components when collapsed."""
+        self._collapsed = collapsed
+
+        widgets_to_hide = [
+            self._status_label,
+            self._tools_btn,
+            self._token_indicator,
+            self._ai_provider_combo,
+            self._ai_model_combo,
+            self._ai_thinking_combo,
+            self._mode_combo,
+            self._content_stack,
+            self._input_edit,
+            self._upload_btn,
+            self._screenshot_btn,
+            self._mic_btn,
+            self._agent_mode_combo,
+            self._send_btn,
+            self._steer_btn,
+            self._stop_agent_btn,
+        ]
+
+        terminal_widgets = [
+            self._shell_combo,
+            self._provider_combo,
+            self._terminal_start_btn,
+            self._terminal_stop_btn,
+        ]
+
+        if collapsed:
+            for w in widgets_to_hide + terminal_widgets:
+                if w is not None:
+                    w.setVisible(False)
+        else:
+            for w in widgets_to_hide:
+                if w is not None:
+                    w.setVisible(True)
+            # Restore terminal widgets based on current mode
+            is_terminal = self._current_mode() == "terminal"
+            for w in terminal_widgets:
+                if w is not None:
+                    w.setVisible(is_terminal)
+
+        self.updateGeometry()
+
+    def minimumSizeHint(self) -> QSize:
+        """Override minimumSizeHint to allow compact sizes when collapsed."""
+        if self._collapsed:
+            return QSize(56, 0)
+        return QSize(320, 0)
 
     def _setup_ui(self) -> None:
         colors = _get_theme_colors(self._theme_provider)
