@@ -16,6 +16,7 @@ Comprehensive responsive design improvements implemented across the Data Process
 **File:** `src/data_processing/data_processor/web/index.html`
 
 Added comprehensive mobile meta tags:
+
 ```html
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="mobile-web-app-capable" content="yes" />
@@ -24,6 +25,7 @@ Added comprehensive mobile meta tags:
 ```
 
 **Status:** ✅ All viewport meta tags properly configured
+
 - Responsive viewport with cover fit for notch support
 - Mobile web app capability enabled
 - iOS standalone app support enabled
@@ -32,25 +34,28 @@ Added comprehensive mobile meta tags:
 ### 2. Responsive Layout - Sidebar (✅ COMPLETED)
 
 **Files:**
+
 - `src/App.tsx` (main layout refactor)
 - `src/index.css` (existing touch target classes)
 
 **Key Changes:**
 
 #### Breakpoint Strategy:
+
 - **Mobile (<768px):** Hamburger menu + drawer sidebar
 - **Tablet (768px-1023px):** Desktop sidebar visible in normal layout
 - **Desktop (>=1024px):** Three-column grid layout
 
 #### Sidebar Implementation:
+
 ```tsx
 // Left Sidebar - Responsive: Mobile hamburger drawer, tablet/desktop visible
 <aside
   className={`${
     isMobile
-      ? `fixed top-20 left-0 bottom-0 z-40 bg-dark-800 border-r border-dark-700 
-         overflow-y-auto transition-transform duration-300 
-         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
+      ? `fixed top-20 left-0 bottom-0 z-40 bg-dark-800 border-r border-dark-700
+         overflow-y-auto transition-transform duration-300
+         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
          w-80 max-w-[90vw]`
       : 'col-span-3 hidden md:block'
   } space-y-4`}
@@ -58,18 +63,21 @@ Added comprehensive mobile meta tags:
 ```
 
 #### Main Content Area:
+
 ```tsx
 // Main Content Area - Responsive: Full width on mobile, centered on desktop
 <div className="col-span-12 lg:col-span-6 space-y-4 md:space-y-6 min-h-0 flex-1 lg:flex-auto">
 ```
 
 #### Right Sidebar (Desktop Only):
+
 ```tsx
 // Right Sidebar - Hidden on mobile and tablet, visible on desktop
 <aside className="col-span-3 hidden lg:block space-y-4">
 ```
 
 **Features:**
+
 - ✅ Hamburger menu button with Menu/X icons from lucide-react
 - ✅ Drawer animation with transform and duration-300
 - ✅ Mobile overlay dismissal
@@ -81,40 +89,44 @@ Added comprehensive mobile meta tags:
 **File:** `src/components/PlotView.tsx`
 
 #### Responsive Height Calculation:
+
 ```tsx
 // Adjust height for mobile devices: reduce on very small screens
 const displayHeight = responsiveHeight && isMobile ? Math.max(250, height - 100) : height;
 ```
 
 #### Dynamic Layout Adjustments:
+
 - **Mobile:** Reduced margins (t: 25, r: 8, b: 25, l: 35)
 - **Desktop:** Standard margins (t: 40, r: 20, b: 40, l: 60)
 - **Legend:** Horizontal layout on mobile, vertical on desktop
 - **Mode Bar:** Hidden on mobile to save screen space
 
 #### ResizeObserver Implementation:
+
 ```tsx
 // Track viewport changes for responsive behavior
 useEffect(() => {
   const handleResize = () => {
     setIsMobile(window.innerWidth < 768);
   };
-  
+
   handleResize();
   const resizeObserver = new ResizeObserver(handleResize);
   if (containerRef.current) {
     resizeObserver.observe(containerRef.current);
   }
-  
-  window.addEventListener('resize', handleResize);
+
+  window.addEventListener("resize", handleResize);
   return () => {
     resizeObserver.disconnect();
-    window.removeEventListener('resize', handleResize);
+    window.removeEventListener("resize", handleResize);
   };
 }, []);
 ```
 
 **Responsive Configuration:**
+
 ```tsx
 config={{
   responsive: true,
@@ -127,6 +139,7 @@ config={{
 ```
 
 **Status:** ✅ Charts fully responsive with:
+
 - ✅ ResizeObserver for container-aware sizing
 - ✅ Responsive margins and legend positioning
 - ✅ Reduced height on mobile to avoid excessive scrolling
@@ -150,6 +163,7 @@ All interactive elements already configured with minimum touch targets:
 ```
 
 **Implemented Touch Targets:**
+
 - ✅ All buttons: `min-h-[48px] min-w-[48px]`
 - ✅ Tab controls: `min-h-[48px]`
 - ✅ Mobile hamburger: explicit `min-h-[48px] min-w-[48px]`
@@ -167,7 +181,7 @@ Main content tabs now adapt to screen size:
 <div className="flex flex-wrap border-b border-dark-700 gap-1 sm:gap-0">
   <button
     onClick={() => setActiveTab('chart')}
-    className={`tab min-h-[48px] flex items-center gap-2 transition-colors 
+    className={`tab min-h-[48px] flex items-center gap-2 transition-colors
                 flex-1 sm:flex-none ${activeTab === 'chart' ? 'tab-active' : ''}`}
   >
     <BarChart3 className="w-4 h-4 flex-shrink-0" />
@@ -177,6 +191,7 @@ Main content tabs now adapt to screen size:
 ```
 
 **Features:**
+
 - ✅ Full-width tab buttons on mobile (flex-1)
 - ✅ Icon-only labels on very small screens
 - ✅ Text labels on tablet and up
@@ -185,16 +200,19 @@ Main content tabs now adapt to screen size:
 ### 6. Additional Improvements
 
 #### Grid System Refactor:
+
 - Changed main container from `flex flex-col md:grid` to `flex flex-col lg:grid`
 - Three-column grid only applies at lg breakpoint (1024px+)
 - Mobile and tablet use single-column stacked layout
 
 #### Responsive Padding:
+
 - Header: `px-4 md:px-6`
 - Main area: `p-4 md:p-6`
 - Proper spacing at all breakpoints
 
 #### Footer Optimization:
+
 ```tsx
 <footer className="bg-dark-800 border-t border-dark-700 px-4 md:px-6 py-4 mt-8">
   <div className="text-center text-xs md:text-sm text-dark-500">
@@ -208,6 +226,7 @@ Main content tabs now adapt to screen size:
 ### Viewport Breakpoints to Test
 
 #### [ ] 375px - Small Mobile (iPhone SE)
+
 - [ ] Hamburger menu visible and functional
 - [ ] Sidebar drawer slides from left
 - [ ] Charts display with reduced height (min 250px)
@@ -217,6 +236,7 @@ Main content tabs now adapt to screen size:
 - [ ] Icons properly sized and visible
 
 #### [ ] 768px - Tablet (iPad)
+
 - [ ] Sidebar visible by default (no hamburger needed)
 - [ ] Main content full width with sidebar
 - [ ] Right sidebar hidden
@@ -225,6 +245,7 @@ Main content tabs now adapt to screen size:
 - [ ] Touch targets maintained
 
 #### [ ] 1024px - Desktop (Laptop)
+
 - [ ] Three-column grid layout active
 - [ ] Left sidebar (3 cols)
 - [ ] Main content (6 cols)
@@ -236,6 +257,7 @@ Main content tabs now adapt to screen size:
 ### Chrome DevTools Testing Steps
 
 1. **Open Data Processor Web App**
+
    ```bash
    npm run dev
    # or
@@ -245,6 +267,7 @@ Main content tabs now adapt to screen size:
 2. **Open Chrome DevTools** (F12)
 
 3. **Test Responsive Design:**
+
    - Click "Toggle Device Toolbar" (Ctrl+Shift+M)
    - Select device: "iPhone SE" (375px)
    - Test sidebar toggle, chart rendering, tab interaction
@@ -254,6 +277,7 @@ Main content tabs now adapt to screen size:
    - Verify three-column layout
 
 4. **Lighthouse Mobile Audit:**
+
    - Open DevTools → Lighthouse
    - Select "Mobile" mode
    - Run audit
@@ -276,6 +300,7 @@ Main content tabs now adapt to screen size:
 **Target:** Score >= 80 on mobile
 
 Expected improvements:
+
 - Core Web Vitals optimized for mobile
 - Touch targets properly sized
 - Viewport correctly configured
@@ -285,7 +310,9 @@ Expected improvements:
 ## Files Modified
 
 ### Core Application Files:
+
 1. **src/App.tsx**
+
    - Added responsive grid: `flex flex-col lg:grid lg:grid-cols-12`
    - Sidebar toggle with hamburger menu
    - Responsive tab layout with flex-wrap
@@ -293,6 +320,7 @@ Expected improvements:
    - Notification system integration
 
 2. **src/components/PlotView.tsx**
+
    - Added ResizeObserver for container-aware sizing
    - Responsive height calculation
    - Mobile-specific margin and legend positioning
@@ -300,12 +328,14 @@ Expected improvements:
    - Min height enforcement (250px on mobile)
 
 3. **src/components/FilterPanel.tsx**
+
    - Added parameter validation
    - Error state display with visual feedback
    - Type safety improvements
    - Better UX for parameter input
 
 4. **index.html**
+
    - Enhanced viewport meta tag with `viewport-fit=cover`
    - Mobile web app capability
    - iOS standalone app support
@@ -315,6 +345,7 @@ Expected improvements:
    - Removed problematic `ignoreDeprecations` flag
 
 ### Configuration Files:
+
 - Tailwind configuration remains unchanged (already comprehensive)
 - CSS classes optimized for responsive design
 - All button/tab classes already had min-height constraints
@@ -322,20 +353,24 @@ Expected improvements:
 ## Design Principles Applied
 
 1. **Mobile-First Approach**
+
    - Base styles work on mobile
    - Desktop enhancements with `md:` and `lg:` prefixes
 
 2. **Progressive Enhancement**
+
    - Works on baseline mobile
    - Enhanced features on larger screens
 
 3. **Accessibility (A11y)**
+
    - Touch targets >= 44px (WCAG guideline)
    - All interactive elements clearly labeled
    - Proper color contrast maintained
    - Keyboard navigation support
 
 4. **Performance**
+
    - Conditional rendering (right sidebar on desktop only)
    - ResizeObserver for efficient resize handling
    - Reduced chart complexity on mobile
@@ -383,15 +418,15 @@ Expected improvements:
 
 ## Summary of Changes
 
-| Component | Change Type | Impact | Status |
-|-----------|------------|--------|--------|
-| App.tsx | Grid refactor | Layout responsive at lg: breakpoint | ✅ |
-| PlotView.tsx | ResizeObserver | Charts adapt to viewport | ✅ |
-| PlotView.tsx | Height calculation | Mobile charts optimized | ✅ |
-| PlotView.tsx | Legend positioning | Mobile horizontal layout | ✅ |
-| FilterPanel.tsx | Validation | Parameter input UX | ✅ |
-| index.html | Meta tags | Viewport + app capabilities | ✅ |
-| Touch targets | Already present | 48px minimum maintained | ✅ |
+| Component       | Change Type        | Impact                              | Status |
+| --------------- | ------------------ | ----------------------------------- | ------ |
+| App.tsx         | Grid refactor      | Layout responsive at lg: breakpoint | ✅     |
+| PlotView.tsx    | ResizeObserver     | Charts adapt to viewport            | ✅     |
+| PlotView.tsx    | Height calculation | Mobile charts optimized             | ✅     |
+| PlotView.tsx    | Legend positioning | Mobile horizontal layout            | ✅     |
+| FilterPanel.tsx | Validation         | Parameter input UX                  | ✅     |
+| index.html      | Meta tags          | Viewport + app capabilities         | ✅     |
+| Touch targets   | Already present    | 48px minimum maintained             | ✅     |
 
 ## Verification Commands
 
@@ -432,6 +467,7 @@ npm run dev
 ---
 
 **Notes for QA/Testing:**
+
 - Use Chrome DevTools Device Emulation to test breakpoints
 - Run Lighthouse audit to verify performance score
 - Test on actual mobile devices if available (iOS Safari, Chrome Mobile)

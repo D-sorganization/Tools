@@ -3,6 +3,7 @@
 ## Build & Run
 
 ### Development
+
 ```bash
 # Build
 docker build -f Dockerfile.dev -t tools:dev .
@@ -16,6 +17,7 @@ docker run -it -v $(pwd):/workspace -p 5000:5000 \
 ```
 
 ### Production
+
 ```bash
 # Build
 docker build -f Dockerfile.prod -t tools:prod .
@@ -28,6 +30,7 @@ docker run -p 5000:5000 \
 ```
 
 ### docker-compose
+
 ```bash
 # Start all services
 docker-compose up
@@ -65,6 +68,7 @@ curl -s http://localhost:5000/api/ready | python3 -m json.tool
 ## Common Tasks
 
 ### Run Tests
+
 ```bash
 # Inside container
 docker-compose exec tools pytest tests/test_health_checks.py -v
@@ -75,6 +79,7 @@ docker run --rm -v $(pwd):/workspace tools:dev \
 ```
 
 ### Format/Lint Code
+
 ```bash
 # Inside container
 docker-compose exec tools python3 -m ruff format src/
@@ -85,6 +90,7 @@ docker-compose exec tools python3 -m mypy src/
 ```
 
 ### Execute Python
+
 ```bash
 # Interactive shell
 docker run -it tools:prod python3
@@ -94,6 +100,7 @@ docker run --rm tools:prod python3 -c "import flask; print(flask.__version__)"
 ```
 
 ### View Logs
+
 ```bash
 # Follow logs
 docker logs -f <container-id>
@@ -110,6 +117,7 @@ docker logs -t <container-id>
 ## Image Info
 
 ### Size Check
+
 ```bash
 # Development image
 docker image inspect tools:dev --format='{{.Size}}' | awk '{print $1/1024/1024/1024 " GB"}'
@@ -122,12 +130,14 @@ docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}" | grep tools
 ```
 
 ### Layers
+
 ```bash
 docker history tools:dev
 docker history tools:prod
 ```
 
 ### Inspect
+
 ```bash
 docker inspect tools:dev
 docker inspect <container-id>
@@ -156,6 +166,7 @@ docker system prune -a --volumes
 ## Troubleshooting
 
 ### Build fails
+
 ```bash
 # Check build output
 docker build --no-cache -f Dockerfile.dev -t tools:dev .
@@ -165,6 +176,7 @@ DOCKER_BUILDKIT=1 docker build --progress=plain -f Dockerfile.dev -t tools:dev .
 ```
 
 ### Container exits
+
 ```bash
 # Check logs
 docker logs <container-id>
@@ -174,6 +186,7 @@ docker run -it tools:prod /bin/bash
 ```
 
 ### Port in use
+
 ```bash
 # Find process
 lsof -i :5000
@@ -183,6 +196,7 @@ docker run -p 5001:5000 tools:prod
 ```
 
 ### Volume mount issues
+
 ```bash
 # Check mount
 docker inspect <container-id> | grep -A 10 "Mounts"
@@ -205,6 +219,7 @@ ls -la /home/user/Tools
 ## Environment Variables
 
 ### Development
+
 ```
 FLASK_ENV=development
 FLASK_DEBUG=1
@@ -213,6 +228,7 @@ FLASK_APP=web_applications.calculator.webapp
 ```
 
 ### Production
+
 ```
 FLASK_ENV=production
 SECRET_KEY=<openssl rand -hex 32>
@@ -225,6 +241,7 @@ REDIS_URL=redis://redis:6379/0
 ## Health Check Endpoints
 
 ### /api/health (200 OK)
+
 ```json
 {
   "status": "ok",
@@ -235,15 +252,16 @@ REDIS_URL=redis://redis:6379/0
 ```
 
 ### /api/ready (200 OK or 503)
+
 ```json
 {
   "status": "ready",
   "ready": true,
   "checks": {
-    "python": {"healthy": true, "version": "3.11"},
-    "packages": {"healthy": true, "flask": "3.0.0"},
-    "disk": {"healthy": true, "free_mb": 5000},
-    "memory": {"healthy": true, "usage_mb": 123}
+    "python": { "healthy": true, "version": "3.11" },
+    "packages": { "healthy": true, "flask": "3.0.0" },
+    "disk": { "healthy": true, "free_mb": 5000 },
+    "memory": { "healthy": true, "usage_mb": 123 }
   }
 }
 ```
@@ -251,4 +269,3 @@ REDIS_URL=redis://redis:6379/0
 ---
 
 **Created**: 2026-04-30 | **Phase**: 3.1 | **Status**: Complete
-

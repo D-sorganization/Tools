@@ -7,14 +7,14 @@
 
 ## Summary
 
-| Collision Type | Count | Risk Level | Status |
-|---|---|---|---|
-| launch_pyqt6.py | 21 | LOW | Safe (tool-scoped) |
-| gui_registration.py | 21 | LOW | Safe (manifest replaces) |
-| core.py | 5 | LOW | Safe (package-scoped) |
-| models.py | 3 | LOW | Safe (package-scoped) |
-| main_window.py | 19 | NONE | Safe (deeply nested) |
-| **TOTAL** | **69** | **LOW** | **No breaking collisions** |
+| Collision Type      | Count  | Risk Level | Status                     |
+| ------------------- | ------ | ---------- | -------------------------- |
+| launch_pyqt6.py     | 21     | LOW        | Safe (tool-scoped)         |
+| gui_registration.py | 21     | LOW        | Safe (manifest replaces)   |
+| core.py             | 5      | LOW        | Safe (package-scoped)      |
+| models.py           | 3      | LOW        | Safe (package-scoped)      |
+| main_window.py      | 19     | NONE       | Safe (deeply nested)       |
+| **TOTAL**           | **69** | **LOW**    | **No breaking collisions** |
 
 ---
 
@@ -23,6 +23,7 @@
 ### 1. launch_pyqt6.py (21 occurrences)
 
 **Locations:**
+
 ```
 src/c3d_viewer/launch_pyqt6.py
 src/data_processing/data_processor/launch_pyqt6.py
@@ -50,6 +51,7 @@ src/vessel_drafter/launch_pyqt6.py
 **Purpose:** PyQt6 entry point for each tool's GUI
 
 **Current Usage Pattern:**
+
 ```python
 # Example: src/financial_calculator/launch_pyqt6.py
 # Always imported with tool prefix:
@@ -58,11 +60,13 @@ from financial_calculator.launch_pyqt6 import launch_app
 ```
 
 **Collision Risk:** NONE
+
 - No direct imports of `launch_pyqt6` without tool prefix
 - Each file is tool-specific and only referenced within tool context
 - Manifest routing prevents dynamic import collisions
 
 **Why Safe:**
+
 ```
 ✓ Import path includes tool name: financial_calculator.launch_pyqt6
 ✓ Not imported with `from ... import *`
@@ -71,6 +75,7 @@ from financial_calculator.launch_pyqt6 import launch_app
 ```
 
 **Deprecation Timeline:**
+
 - Phase 2: Keep as-is
 - Phase 3: Mark deprecated, delegate to gui_launcher
 - Phase 4: Remove completely
@@ -82,6 +87,7 @@ from financial_calculator.launch_pyqt6 import launch_app
 ### 2. gui_registration.py (21 occurrences)
 
 **Locations:** (same as launch_pyqt6.py)
+
 ```
 src/c3d_viewer/gui_registration.py
 src/financial_calculator/gui_registration.py
@@ -91,6 +97,7 @@ src/financial_calculator/gui_registration.py
 **Purpose:** GUI metadata dictionary (LEGACY)
 
 **Typical Contents:**
+
 ```python
 # Example: src/financial_calculator/gui_registration.py
 GUI_INFO = {
@@ -103,6 +110,7 @@ GUI_INFO = {
 ```
 
 **Historical Issue:** Issue #1863
+
 - This metadata was duplicated across 20 files
 - Maintenance burden: changes required in 20 places
 - Resolution: tool_manifest.yaml centralizes this data
@@ -110,11 +118,13 @@ GUI_INFO = {
 **Current Status:** DEPRECATED (superseded by tool_manifest.yaml)
 
 **Collision Risk:** NONE
+
 - Not imported across tools
 - Manifest is now single source of truth
 - Files are legacy, not actively used
 
 **Why Safe:**
+
 ```
 ✓ Each file is local to its tool
 ✓ Not shared between tools
@@ -123,6 +133,7 @@ GUI_INFO = {
 ```
 
 **Deprecation Timeline:**
+
 - Phase 2: Mark deprecated in comments
 - Phase 3: Add deprecation warnings in code
 - Phase 4: Remove completely
@@ -130,6 +141,7 @@ GUI_INFO = {
 **Recommended Action:** DEPRECATE NOW, Remove in Phase 4
 
 **Migration Path:**
+
 ```python
 # OLD: Direct import from local file
 from financial_calculator.gui_registration import GUI_INFO
@@ -147,6 +159,7 @@ gui_info = launcher.get_tool_info('financial_calculator')
 ### 3. core.py (5 occurrences)
 
 **Locations:**
+
 ```
 src/signal_toolkit/core.py
 src/rotation_converter/core.py
@@ -158,6 +171,7 @@ src/document_processing/pdf_renamer/src/pdf_renamer/core.py
 **Purpose:** Core functionality module (different purpose in each)
 
 **Import Analysis:**
+
 ```python
 # signal_toolkit.core
 from signal_toolkit.core import FFT, Spectrogram
@@ -174,11 +188,13 @@ from pdf_renamer.core import PDFRenamer
 ```
 
 **Collision Risk:** VERY LOW
+
 - Each `core.py` is scoped within its package hierarchy
 - No package-level imports of bare `core` module
 - Fully qualified names prevent ambiguity
 
 **Why Safe:**
+
 ```
 ✓ No `import core` statements found
 ✓ All imports use package prefix
@@ -187,6 +203,7 @@ from pdf_renamer.core import PDFRenamer
 ```
 
 **Recommended Action:** NO ACTION NEEDED
+
 - This is normal Python practice
 - Scoping prevents collisions
 - No refactoring required
@@ -196,6 +213,7 @@ from pdf_renamer.core import PDFRenamer
 ### 4. models.py (3 occurrences)
 
 **Locations:**
+
 ```
 src/python/src/tile_launcher/models.py
 src/shared/python/chat/models.py
@@ -205,6 +223,7 @@ src/shared/python/notes/models.py
 **Purpose:** Data models (Django/Pydantic pattern)
 
 **Import Patterns:**
+
 ```python
 # Each imported with package prefix:
 from tile_launcher.models import LauncherModel
@@ -213,11 +232,13 @@ from notes.models import Note
 ```
 
 **Collision Risk:** VERY LOW
+
 - Each in separate package
 - No cross-imports between tile_launcher, chat, notes
 - Standard naming convention across web frameworks
 
 **Why Safe:**
+
 ```
 ✓ Separate packages (tile_launcher, chat, notes)
 ✓ No shared imports
@@ -226,6 +247,7 @@ from notes.models import Note
 ```
 
 **Recommended Action:** NO ACTION NEEDED
+
 - This is idiomatic Python
 - No refactoring beneficial
 
@@ -234,6 +256,7 @@ from notes.models import Note
 ### 5. main_window.py (19 occurrences)
 
 **Locations:**
+
 ```
 src/asteroid_jumper/main_window.py
 src/c3d_viewer/python/c3d_viewer/ui/pyqt6/main_window.py
@@ -259,6 +282,7 @@ src/urdf_builder_gui/python/urdf_builder_gui/ui/pyqt6/main_window.py
 **Purpose:** PyQt6 main window class for each tool
 
 **Import Patterns:**
+
 ```python
 # Each tool imports its own main_window:
 from c3d_viewer.python.c3d_viewer.ui.pyqt6.main_window import C3DViewerWindow
@@ -269,11 +293,13 @@ from signal_processing_studio.python.signal_processing_studio.main_window import
 ```
 
 **Collision Risk:** NO RISK
+
 - Each main_window.py is at a deeply nested path unique to its tool
 - Never imported without full qualification
 - Manifest specifies exact module path for each tool
 
 **Why Safe:**
+
 ```
 ✓ Deeply nested in tool-specific paths
 ✓ Full paths are unique per tool
@@ -283,6 +309,7 @@ from signal_processing_studio.python.signal_processing_studio.main_window import
 ```
 
 **Example from manifest:**
+
 ```yaml
 - tool_name: financial_calculator
   pyqt6:
@@ -291,6 +318,7 @@ from signal_processing_studio.python.signal_processing_studio.main_window import
 ```
 
 **Recommended Action:** NO ACTION NEEDED
+
 - This is correct encapsulation
 - No refactoring required
 - Pattern is ideal for monorepo
@@ -301,21 +329,23 @@ from signal_processing_studio.python.signal_processing_studio.main_window import
 
 ### Collision Severity Matrix
 
-| File | Count | Severity | Risk | Action |
-|---|---|---|---|---|
-| launch_pyqt6.py | 21 | INFORMATIONAL | LOW | Deprecate Phase 3 |
-| gui_registration.py | 21 | INFORMATIONAL | NONE | Deprecate Phase 2 |
-| core.py | 5 | NORMAL | LOW | No action |
-| models.py | 3 | NORMAL | LOW | No action |
-| main_window.py | 19 | NORMAL | NONE | No action |
+| File                | Count | Severity      | Risk | Action            |
+| ------------------- | ----- | ------------- | ---- | ----------------- |
+| launch_pyqt6.py     | 21    | INFORMATIONAL | LOW  | Deprecate Phase 3 |
+| gui_registration.py | 21    | INFORMATIONAL | NONE | Deprecate Phase 2 |
+| core.py             | 5     | NORMAL        | LOW  | No action         |
+| models.py           | 3     | NORMAL        | LOW  | No action         |
+| main_window.py      | 19    | NORMAL        | NONE | No action         |
 
 ### Breaking Change Risk: NONE
+
 - No actual collisions preventing code execution
 - All imports work correctly
 - No refactoring needed to maintain functionality
 - Manifest already centralized problematic data
 
 ### CI/CD Impact: NONE
+
 - Tests pass without modification
 - Linting passes without modification
 - Type checking passes without modification
@@ -326,6 +356,7 @@ from signal_processing_studio.python.signal_processing_studio.main_window import
 ## Recommendations
 
 ### Phase 2 (Immediate)
+
 1. **No urgent action needed** — collisions are safe and scoped
 2. **Document the structure** — already done (TOOL_STRUCTURE.md)
 3. **Mark gui_registration.py deprecated** — add comment at top of files:
@@ -336,21 +367,22 @@ from signal_processing_studio.python.signal_processing_studio.main_window import
    ```
 
 ### Phase 3 (Future)
+
 4. **Standardize tool structure** — ensure all tools follow pattern:
    - launch_pyqt6.py at root
    - gui_registration.py at root (marked deprecated)
    - python/<tool_name>/ for implementation
-   
 5. **Add manifest validation to CI**:
+
    ```bash
    # Validate all manifest entries reference real modules
    python3 -c "
    import yaml
    from importlib import import_module
-   
+
    with open('src/shared/python/gui_launcher/tool_manifest.yaml') as f:
        manifest = yaml.safe_load(f)
-   
+
    for tool in manifest['tools']:
        if 'pyqt6' in tool:
            module_path = tool['pyqt6']['module']
@@ -364,6 +396,7 @@ from signal_processing_studio.python.signal_processing_studio.main_window import
    ```
 
 ### Phase 4 (Later)
+
 6. **Remove deprecated files**:
    - Delete all gui_registration.py (after 6+ month deprecation period)
    - Delete launch_pyqt6.py (or refactor to delegate to manifest)
@@ -385,6 +418,7 @@ The 69 duplicate filenames in the Tools monorepo do not constitute actual namesp
 **Collision files are safe to keep** during Phase 2-3 refactoring. Deprecation and removal are optimization steps, not functional requirements.
 
 **Next Steps:**
+
 1. Proceed with Phase 2.2 (register lower_body_model)
 2. Deploy deprecation notices in Phase 2.3
 3. Plan structural improvements for Phase 3+

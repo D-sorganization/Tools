@@ -5,6 +5,7 @@
 This document describes the Phase 1 implementation of comprehensive test coverage measurement and ratcheting for the Tools monorepo.
 
 **Current Status:**
+
 - Coverage configuration: ✓ Complete
 - CI integration: ✓ Integrated into `ci-standard.yml`
 - Baseline established: ✓ 6.25% (core test suite)
@@ -45,6 +46,7 @@ python3 scripts/measure_coverage.py \
 Located at repository root.
 
 **Key settings:**
+
 - `source = src` — Measure only code in `src/` directory
 - `branch = true` — Measure both line and branch coverage
 - `parallel = true` — Support parallel test execution
@@ -52,6 +54,7 @@ Located at repository root.
 - `output = coverage.xml` — Machine-readable format for CI
 
 **Omissions (excluded from coverage):**
+
 - `*/tests/*`, `*/test_*.py` — Test code itself
 - `src/data_processing/`, `src/document_processing/`, etc. — Legacy directories
 - `conftest.py`, `setup.py` — Infrastructure files
@@ -80,6 +83,7 @@ See `.coveragerc` for full list of excluded patterns.
 ```
 
 **Thresholds explained:**
+
 - **minimum_total_percent** (25%): Total repository coverage must stay above 25%
 - **max_total_drop_percent** (2%): If baseline is 6%, PR cannot drop below 4%
 - **tracked_packages**: Per-package minimums (higher confidence modules)
@@ -88,6 +92,7 @@ See `.coveragerc` for full list of excluded patterns.
 ### `config/coverage_baseline.json` — Current Baseline
 
 Current baseline (established 2026-04-30):
+
 ```json
 {
   "total_percent": 6.25,
@@ -114,6 +119,7 @@ Full snapshot of module-level coverage at baseline, for tracking and reporting.
 **Steps:**
 
 1. **Run Tests with Coverage** — Uses pytest-cov to generate `coverage.xml`
+
    ```bash
    python -m pytest "${core_tests[@]}" \
      --cov=src \
@@ -122,6 +128,7 @@ Full snapshot of module-level coverage at baseline, for tracking and reporting.
    ```
 
 2. **Coverage Policy Gate** — Compares XML to baseline
+
    ```bash
    python3 scripts/check_coverage_policy.py \
      --coverage-file coverage.xml \
@@ -141,11 +148,13 @@ Full snapshot of module-level coverage at baseline, for tracking and reporting.
 ### How to Interpret CI Failures
 
 **Check the logs:**
+
 1. Look for "Coverage policy evaluation" section in CI logs
 2. Check which packages/thresholds failed
-3. Review the "coverage_trend_*.json" artifacts in CI
+3. Review the "coverage*trend*\*.json" artifacts in CI
 
 **Common failures:**
+
 - `total coverage X% below minimum 25%` → Increase test coverage
 - `total coverage X% regressed beyond allowed drop` → Tests passing but coverage decreased
 - `package ... coverage X% below threshold Y%` → Module-specific coverage shortfall
@@ -159,6 +168,7 @@ Full snapshot of module-level coverage at baseline, for tracking and reporting.
 Compare current coverage against baseline and policy thresholds.
 
 **Usage:**
+
 ```bash
 python3 scripts/measure_coverage.py \
   --coverage-file coverage.xml \
@@ -168,6 +178,7 @@ python3 scripts/measure_coverage.py \
 ```
 
 **Output:**
+
 - `coverage_reports/coverage_report.json` — Detailed policy evaluation
 
 ### `scripts/run_coverage.sh`
@@ -175,11 +186,13 @@ python3 scripts/measure_coverage.py \
 End-to-end coverage measurement with HTML report generation.
 
 **Usage:**
+
 ```bash
 ./scripts/run_coverage.sh [--baseline-comparison]
 ```
 
 **Output:**
+
 - `htmlcov/index.html` — Interactive coverage report (open in browser)
 - `coverage.xml` — CI-readable format
 - `coverage.json` — JSON metrics
@@ -199,15 +212,15 @@ End-to-end coverage measurement with HTML report generation.
 
 **Top modules by coverage:**
 
-| Module | Coverage | Status |
-|--------|----------|--------|
-| src/shared/python/safe_eval.py | 100.0% | ✓ Complete |
-| src/shared/python/contracts.py | 78.95% | ✓ Strong |
-| src/shared/python/notes | 49.3% | ✓ Tracked |
-| src/shared/python/gui_launcher | 44.49% | → Target 80% (Phase 2) |
-| src/shared/python/upstream_drift_tools | 23.2% | → Target 80% (Phase 2) |
-| src/rotation_converter | 10.17% | → Target 80% (Phase 2) |
-| src/pressure_drop_calculator | Not yet measured | → Target 80% (Phase 2) |
+| Module                                 | Coverage         | Status                 |
+| -------------------------------------- | ---------------- | ---------------------- |
+| src/shared/python/safe_eval.py         | 100.0%           | ✓ Complete             |
+| src/shared/python/contracts.py         | 78.95%           | ✓ Strong               |
+| src/shared/python/notes                | 49.3%            | ✓ Tracked              |
+| src/shared/python/gui_launcher         | 44.49%           | → Target 80% (Phase 2) |
+| src/shared/python/upstream_drift_tools | 23.2%            | → Target 80% (Phase 2) |
+| src/rotation_converter                 | 10.17%           | → Target 80% (Phase 2) |
+| src/pressure_drop_calculator           | Not yet measured | → Target 80% (Phase 2) |
 
 ### Phase 1 Targets (Current)
 
@@ -231,6 +244,7 @@ These modules should reach **80% coverage** priority:
 ### Running Tests
 
 **For coverage-aware testing:**
+
 ```bash
 # Run with coverage measurement
 python3 -m pytest tests/ --cov=src --cov-report=html
@@ -245,6 +259,7 @@ python3 -m pytest tests/ --cov=src --cov-fail-under=0
 ### Improving Coverage
 
 **General strategies:**
+
 1. **Identify untested code:** Open `htmlcov/index.html`, look for red lines
 2. **Add test cases:** Write tests for uncovered paths
 3. **Run locally first:** `./scripts/run_coverage.sh` to see impact before PR
@@ -253,11 +268,13 @@ python3 -m pytest tests/ --cov=src --cov-fail-under=0
 ### Baseline Updates
 
 **When to update baseline:**
+
 - After intentional test expansion (0.5%+ increase)
 - As part of planned coverage ratcheting (Phase 2+)
 - **NOT** for every small fluctuation
 
 **How to update:**
+
 ```bash
 # After improving coverage
 python3 -m pytest tests/ --cov=src --cov-report=json:coverage.json
@@ -282,6 +299,7 @@ Phase 1 establishes the foundation. Future phases will:
 ### Coverage.xml Not Generated
 
 **Check:**
+
 1. Verify pytest-cov installed: `pip install pytest-cov`
 2. Verify coverage command: `python3 -m pytest --cov=src --cov-report=xml`
 3. Check `.coveragerc` exists and is readable
@@ -289,18 +307,21 @@ Phase 1 establishes the foundation. Future phases will:
 ### Coverage Lower Than Expected
 
 **Common causes:**
+
 1. Tests not importing modules under measurement
 2. Conditional imports not exercised
 3. GUI/Qt code skipped in headless CI
 
 **Solutions:**
+
 1. Verify test paths in `pythonpath` config (pyproject.toml)
 2. Check `QT_QPA_PLATFORM=offscreen` is set (for headless tests)
-3. Add test_*.py files to `pythonpath` if needed
+3. Add test\_\*.py files to `pythonpath` if needed
 
 ### Policy Gate Failing
 
 Run locally to debug:
+
 ```bash
 python3 scripts/measure_coverage.py --coverage-file coverage.xml
 ```
@@ -324,6 +345,7 @@ Check `coverage_reports/coverage_report.json` for details.
 - ✓ `COVERAGE_SETUP.md` — This documentation
 
 **Related existing files:**
+
 - `scripts/check_coverage_policy.py` — Existing policy validation (reused)
 - `scripts/check_coverage_gates.py` — Existing gate enforcement (reused)
 

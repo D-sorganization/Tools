@@ -17,9 +17,9 @@ def run_cmd(cmd: str, cwd: Path | None = None, ignore_err: bool = False) -> str 
             cwd=cwd,
         )
         return result.stdout.strip()
-    except subprocess.CalledProcessError:
+    except subprocess.CalledProcessError as e:
         if not ignore_err:
-            pass
+            raise e
         return None
 
 

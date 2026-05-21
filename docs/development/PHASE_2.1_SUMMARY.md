@@ -12,6 +12,7 @@
 ## What Was Done
 
 ### 1. Comprehensive Accessibility Audit
+
 - Reviewed entire Data Processor web app codebase
 - Analyzed 15+ components and 5000+ LOC
 - Tested color contrast ratios for all text/background combinations
@@ -22,19 +23,23 @@
 ### 2. Deliverables Created
 
 **Documentation (4 files):**
+
 1. **ACCESSIBILITY_AUDIT_PHASE2.1.md** (500+ lines)
+
    - Detailed findings for all 4 categories
    - Component-by-component breakdown
    - WCAG criterion mapping
    - Implementation roadmap
 
 2. **ACCESSIBILITY_FIXES_CHECKLIST.md** (400+ lines)
+
    - Line-by-line code changes needed
    - P0 (critical) and P1 (high) priority fixes
    - Exact file locations and line numbers
    - Before/after code examples
 
 3. **COLOR_CONTRAST_REFERENCE.md** (300+ lines)
+
    - Complete contrast ratio analysis
    - Testing tools and instructions
    - Quick-reference tables
@@ -53,25 +58,27 @@
 
 ### Color Contrast: CRITICAL FAILURES
 
-| Element | Current | Required | Status |
-|---------|---------|----------|--------|
-| dark-400 text on dark-800 | 2.8:1 | 4.5:1 | ✗ FAIL |
-| dark-500 icons on dark-800 | 2.1:1 | 4.5:1 | ✗ FAIL |
-| Placeholders on dark-800 | 2.8:1 | 4.5:1 | ✗ FAIL |
-| Labels on dark-800 | 8.1:1* | 4.5:1 | ✓ OK |
-| Blue buttons | 4.8:1+ | 4.5:1 | ✓ OK |
+| Element                    | Current | Required | Status |
+| -------------------------- | ------- | -------- | ------ |
+| dark-400 text on dark-800  | 2.8:1   | 4.5:1    | ✗ FAIL |
+| dark-500 icons on dark-800 | 2.1:1   | 4.5:1    | ✗ FAIL |
+| Placeholders on dark-800   | 2.8:1   | 4.5:1    | ✗ FAIL |
+| Labels on dark-800         | 8.1:1\* | 4.5:1    | ✓ OK   |
+| Blue buttons               | 4.8:1+  | 4.5:1    | ✓ OK   |
 
-*Note: Labels currently use dark-300, which is sufficient. Main issues are with dark-400/dark-500 colors used for inactive tabs, placeholders, and icons.
+\*Note: Labels currently use dark-300, which is sufficient. Main issues are with dark-400/dark-500 colors used for inactive tabs, placeholders, and icons.
 
 ### Keyboard Navigation: INCOMPLETE
 
 **Working:**
+
 - ✓ Tab key reaches all buttons, inputs, selects
 - ✓ Native select supports arrow keys
 - ✓ Enter key activates buttons
 - ✓ FileUpload has keyboard support (Enter/Space)
 
 **Missing:**
+
 - ✗ Mobile sidebar focus trap (critical)
 - ✗ Escape key closes sidebar
 - ✗ ARIA tab panel roles
@@ -81,11 +88,13 @@
 ### Focus Indicators: INCONSISTENT
 
 **Present:**
+
 - ✓ SignalList buttons have focus-visible
 - ✓ FileUpload has focus-visible
 - ✓ Blue-500 focus ring on dark-800 (4.8:1 contrast - adequate)
 
 **Missing:**
+
 - ✗ All tab buttons (12+ instances)
 - ✗ Form input focus-visible (uses focus instead)
 - ✗ Some icon buttons
@@ -93,11 +102,13 @@
 ### ARIA Labels: LARGELY MISSING
 
 **Present:**
+
 - ✓ FileUpload: role="button", aria-label
 - ✓ Sidebar toggle: aria-label
 - ✓ Error message: role="alert"
 
 **Missing:**
+
 - ✗ Tab panel roles (15+ instances)
 - ✗ Icon-only button labels (5+ instances)
 - ✗ Input label htmlFor associations (20+ instances)
@@ -109,11 +120,14 @@
 ## Implementation Effort Estimate
 
 ### Phase 2.1 (This phase - Audit): ✓ COMPLETE
+
 - **Time:** 8 hours
 - **Output:** Comprehensive audit + 4 detailed guides
 
 ### Phase 2.1 Fixes (Next - Code Changes):
+
 - **P0 Critical (4.5 hours):**
+
   1. CSS color changes (15 min)
   2. Focus-visible on all tabs (30 min)
   3. Escape key handler for mobile (20 min)
@@ -123,6 +137,7 @@
   7. Input label htmlFor attributes (1.5 hours)
 
 - **Testing (1.5 hours):**
+
   - Full keyboard navigation test
   - Focus indicator verification
   - Color contrast spot-check
@@ -143,55 +158,62 @@
 ### The 80/20: These 4 changes fix most issues
 
 1. **CSS Changes (15 min)** - `/src/index.css`
+
    ```css
    /* Change 1: Update focus-visible styles */
    .input { focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500; }
    .select { focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500; }
    .tab { focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500; }
-   
+
    /* Change 2: Fix placeholder contrast */
    .input { placeholder-dark-200 } /* was dark-400 */
    .select { placeholder-dark-200 } /* was dark-400 */
-   
+
    /* Change 3: Fix inactive tab contrast */
    /* In App.tsx: text-dark-300 instead of text-dark-400 */
-   
+
    /* Change 4: Fix icon visibility */
    /* In FileUpload.tsx: text-dark-200 instead of text-dark-500 */
    ```
+
    **Impact:** Fixes ~80% of color contrast issues
 
 2. **Tab Focus-Visible (30 min)** - `/src/App.tsx`
+
    - Add `focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded` to all 12 tab buttons
    - 4 places: left tabs, right tabs, main tabs, repeat
-   **Impact:** Fixes all focus indicator issues
+     **Impact:** Fixes all focus indicator issues
 
 3. **Tab Panel ARIA Roles (1 hour)** - `/src/App.tsx`
+
    - Add `role="tablist"` to tab container
    - Add `role="tab"`, `aria-selected`, `aria-controls` to each tab button
    - Add `role="tabpanel"`, `aria-labelledby` to panel content
    - 3 places: left, right, main content tabs
-   **Impact:** Makes tabbed interface accessible to screen readers
+     **Impact:** Makes tabbed interface accessible to screen readers
 
 4. **Icon Button Labels (20 min)** - `/src/components/SignalList.tsx`
    - Change `title="..."` to `aria-label="..."`
    - 4-5 icon buttons
-   **Impact:** Screen reader users know button purpose
+     **Impact:** Screen reader users know button purpose
 
 ---
 
 ## Files That Need Changes
 
 ### Must Change
+
 - `/src/data_processing/data_processor/web/src/index.css` (CSS classes)
 - `/src/data_processing/data_processor/web/src/App.tsx` (focus + ARIA)
 - `/src/data_processing/data_processor/web/src/components/FileUpload.tsx` (icon color)
 
 ### Should Change
+
 - `/src/data_processing/data_processor/web/src/components/FilterPanel.tsx` (focus-visible + htmlFor)
 - `/src/data_processing/data_processor/web/src/components/SignalList.tsx` (aria-labels + roles)
 
 ### Nice to Have
+
 - `/src/data_processing/data_processor/web/src/components/TimeRangePanel.tsx`
 - `/src/data_processing/data_processor/web/src/components/AdvancedPanel.tsx`
 - `/src/data_processing/data_processor/web/src/components/PlotView.tsx`
@@ -201,6 +223,7 @@
 ## WCAG 2.1 Coverage
 
 ### Criteria Currently FAILING
+
 - 1.4.3 Contrast (Minimum) - Some text/background combos
 - 1.4.11 Non-text Contrast - Icon colors
 - 2.1.1 Keyboard - Mobile sidebar focus trap
@@ -210,9 +233,11 @@
 - 4.1.3 Status Messages - Missing live regions
 
 ### Criteria That Will PASS After Fixes
+
 - ✓ All of the above (fully WCAG 2.1 AA compliant)
 
 ### Currently PASSING
+
 - ✓ 3.2.1 On Focus (no unexpected focus behavior)
 - ✓ 2.4.1 Bypass Blocks (header structure good)
 - ✓ 1.3.1 Info and Relationships (semantic HTML good)
@@ -222,18 +247,21 @@
 ## Risk Assessment
 
 ### Low Risk
+
 - CSS-only changes (color, ring-2, ring-blue-500)
 - ARIA attribute additions (no behavior change)
-- HTML5 semantic attributes (htmlFor, role, aria-*)
+- HTML5 semantic attributes (htmlFor, role, aria-\*)
 - Focus-visible classes (standard Tailwind)
 
 ### No Breaking Changes
+
 - All existing functionality preserved
 - No component structure changes
 - No API changes
 - Visual design intact
 
 ### Testing Required
+
 - Keyboard navigation: 1 hour
 - Color contrast spot-check: 30 min
 - Cross-browser: 30 min
@@ -279,6 +307,7 @@
 ## Compliance Roadmap
 
 **Phase 2.1 (THIS PHASE):** Foundation
+
 - Color contrast audit and critical fixes
 - Focus indicator audit and standardization
 - ARIA label/role audit and critical additions
@@ -286,6 +315,7 @@
 - Expected result: ~70% WCAG 2.1 AA compliance
 
 **Phase 2.2 (Next):** Refinement
+
 - Input error handling and validation accessibility
 - Advanced ARIA live regions
 - Chart/visualization accessibility
@@ -294,6 +324,7 @@
 - Expected result: ~95% WCAG 2.1 AA compliance
 
 **Phase 2.3:** Excellence
+
 - Internationalization for accessibility
 - High contrast mode support
 - Reduced motion support

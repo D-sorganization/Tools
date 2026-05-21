@@ -138,10 +138,10 @@ The compose file excludes large/cache directories from live sync:
 
 ```yaml
 volumes:
-  - .:/workspace                    # Mount entire project
-  - /workspace/.git                 # Exclude .git
-  - /workspace/.pytest_cache        # Exclude pytest cache
-  - /workspace/.ruff_cache          # Exclude ruff cache
+  - .:/workspace # Mount entire project
+  - /workspace/.git # Exclude .git
+  - /workspace/.pytest_cache # Exclude pytest cache
+  - /workspace/.ruff_cache # Exclude ruff cache
 ```
 
 This ensures fast live reload while avoiding sync overhead.
@@ -323,39 +323,39 @@ The `/api/ready` endpoint checks:
 
 ### Dockerfile.dev
 
-| Component | Details |
-|-----------|---------|
-| Base Image | `python:3.11-slim` |
-| User | `devuser` (non-root) |
-| Entrypoint | `python3` |
-| Size | ~2GB |
-| Build Time | ~3-5 minutes (first build) |
-| Volumes | `/workspace` (project root) |
-| Ports | 5000 (Flask), 5432 (Postgres), 6379 (Redis) |
-| Use Cases | Development, testing, debugging |
+| Component  | Details                                     |
+| ---------- | ------------------------------------------- |
+| Base Image | `python:3.11-slim`                          |
+| User       | `devuser` (non-root)                        |
+| Entrypoint | `python3`                                   |
+| Size       | ~2GB                                        |
+| Build Time | ~3-5 minutes (first build)                  |
+| Volumes    | `/workspace` (project root)                 |
+| Ports      | 5000 (Flask), 5432 (Postgres), 6379 (Redis) |
+| Use Cases  | Development, testing, debugging             |
 
 ### Dockerfile.prod
 
-| Component | Details |
-|-----------|---------|
-| Base Image | `python:3.11-slim` (multi-stage) |
-| User | `appuser` (non-root) |
-| Entrypoint | `flask run --host=0.0.0.0` |
-| Size | < 500MB |
-| Build Time | ~2-3 minutes |
-| Volumes | Read-only (no mount necessary) |
-| Ports | 5000 (Flask) |
+| Component    | Details                            |
+| ------------ | ---------------------------------- |
+| Base Image   | `python:3.11-slim` (multi-stage)   |
+| User         | `appuser` (non-root)               |
+| Entrypoint   | `flask run --host=0.0.0.0`         |
+| Size         | < 500MB                            |
+| Build Time   | ~2-3 minutes                       |
+| Volumes      | Read-only (no mount necessary)     |
+| Ports        | 5000 (Flask)                       |
 | Health Check | Built-in (30s interval, 3 retries) |
-| Use Cases | Production, staging, CI/CD |
+| Use Cases    | Production, staging, CI/CD         |
 
 ### docker-compose.yml
 
-| Service | Image | Purpose |
-|---------|-------|---------|
-| `tools` | Dockerfile.dev | Main application with live reload |
-| `postgres` | postgres:16-alpine | Database (optional, pre-configured) |
-| `redis` | redis:7-alpine | Cache (optional, pre-configured) |
-| `tests` | Dockerfile.dev | Run test suite (optional, profile=tests) |
+| Service    | Image              | Purpose                                  |
+| ---------- | ------------------ | ---------------------------------------- |
+| `tools`    | Dockerfile.dev     | Main application with live reload        |
+| `postgres` | postgres:16-alpine | Database (optional, pre-configured)      |
+| `redis`    | redis:7-alpine     | Cache (optional, pre-configured)         |
+| `tests`    | Dockerfile.dev     | Run test suite (optional, profile=tests) |
 
 ---
 
@@ -575,4 +575,3 @@ docker run -v $(pwd):/workspace -v rsync_cache:/workspace/.rsync tools:dev
 - [ ] Security scanning (Trivy, Grype)
 - [ ] Performance benchmarking (image size, startup time)
 - [ ] ARM64 support (for Apple Silicon, AWS Graviton)
-

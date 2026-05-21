@@ -15,9 +15,11 @@ This folder contains the complete Phase 2.1 accessibility audit for the Data Pro
 ## Document Quick Guide
 
 ### 1. START HERE: PHASE_2.1_SUMMARY.md
+
 **Purpose:** Executive overview for managers, leads, and quick reference  
 **Read Time:** 10-15 minutes  
 **Contains:**
+
 - What was done in Phase 2.1
 - Critical findings summary
 - Implementation effort estimates
@@ -26,6 +28,7 @@ This folder contains the complete Phase 2.1 accessibility audit for the Data Pro
 - Compliance roadmap (Phases 2.1 → 2.3)
 
 **Best for:**
+
 - Getting overview of accessibility issues
 - Understanding scope and effort
 - Planning implementation timeline
@@ -34,9 +37,11 @@ This folder contains the complete Phase 2.1 accessibility audit for the Data Pro
 ---
 
 ### 2. MAIN AUDIT: ACCESSIBILITY_AUDIT_PHASE2.1.md
+
 **Purpose:** Comprehensive technical audit report  
 **Read Time:** 30-45 minutes  
 **Contains:**
+
 - Detailed color contrast analysis (with ratio tables)
 - Keyboard navigation audit (current state vs. required)
 - Focus indicators assessment
@@ -47,12 +52,14 @@ This folder contains the complete Phase 2.1 accessibility audit for the Data Pro
 - Known constraints and deliverables
 
 **Best for:**
+
 - Understanding all accessibility issues in depth
 - Understanding the "why" behind each fix
 - Reference during code review
 - Presenting findings to stakeholders
 
 **Key Sections:**
+
 - Section 1: Color Contrast Audit (100+ rows)
 - Section 2: Keyboard Navigation (with checklist)
 - Section 3: Focus Indicators (before/after)
@@ -63,9 +70,11 @@ This folder contains the complete Phase 2.1 accessibility audit for the Data Pro
 ---
 
 ### 3. IMPLEMENTATION GUIDE: ACCESSIBILITY_FIXES_CHECKLIST.md
+
 **Purpose:** Step-by-step code changes needed  
 **Read Time:** 20-30 minutes while coding  
 **Contains:**
+
 - Line-by-line code changes
 - Exact file paths and line numbers
 - Before/after code examples
@@ -76,12 +85,14 @@ This folder contains the complete Phase 2.1 accessibility audit for the Data Pro
 - References to WCAG standards
 
 **Best for:**
+
 - Developers implementing fixes
 - Code review validation
 - Ensuring no fixes are missed
 - Understanding WHY each fix is needed
 
 **How to Use:**
+
 1. Open while coding
 2. Follow P0 fixes first (CRITICAL section)
 3. Use line numbers to locate code
@@ -89,6 +100,7 @@ This folder contains the complete Phase 2.1 accessibility audit for the Data Pro
 5. Check off as completed
 
 **Sections:**
+
 - Critical Fixes (P0) - 2.5 hours
   - CSS color changes (15 min)
   - Input focus fixes (varies by change)
@@ -102,9 +114,11 @@ This folder contains the complete Phase 2.1 accessibility audit for the Data Pro
 ---
 
 ### 4. CONTRAST REFERENCE: COLOR_CONTRAST_REFERENCE.md
+
 **Purpose:** Color palette and contrast quick reference  
 **Read Time:** 10-15 minutes  
 **Contains:**
+
 - WCAG 2.1 contrast requirements (4.5:1, 3:1)
 - Complete dark theme color palette with hex values
 - Contrast ratio table (what works, what fails)
@@ -113,12 +127,14 @@ This folder contains the complete Phase 2.1 accessibility audit for the Data Pro
 - Component-specific color usage guide
 
 **Best for:**
+
 - Verifying contrast is correct
 - Understanding which colors can be used where
 - Debugging contrast issues
 - Testing with Chrome DevTools
 
 **Use Case Examples:**
+
 - "Can I use dark-400 text on dark-800?" → No (2.8:1 fails)
 - "What color should I use for inactive tabs?" → dark-300 (8.1:1)
 - "How do I test contrast?" → Chrome DevTools color picker
@@ -126,9 +142,11 @@ This folder contains the complete Phase 2.1 accessibility audit for the Data Pro
 ---
 
 ### 5. TEST PLAN: ACCESSIBILITY_TEST_PLAN.md
+
 **Purpose:** Manual testing procedures for accessibility  
 **Read Time:** 20-30 minutes for first review, 2-3 hours for full testing  
 **Contains:**
+
 - 11 comprehensive test suites
 - Pre-testing setup instructions
 - Keyboard navigation tests (desktop + mobile)
@@ -143,12 +161,14 @@ This folder contains the complete Phase 2.1 accessibility audit for the Data Pro
 - Test report template
 
 **Best for:**
+
 - QA and testers
 - Developers doing their own verification
 - Final validation before merge
 - Documentation of test results
 
 **Test Suites:**
+
 1. Keyboard Navigation (Full App) - 30 min
 2. Keyboard Navigation (Mobile) - 20 min
 3. Focus Indicators Visibility - 30 min
@@ -170,16 +190,19 @@ This folder contains the complete Phase 2.1 accessibility audit for the Data Pro
 ### Scenario 1: "I'm a developer, where do I start?"
 
 1. Read: **PHASE_2.1_SUMMARY.md** (10 min)
+
    - Understand scope and priority
    - Get list of files to modify
 
 2. Use: **ACCESSIBILITY_FIXES_CHECKLIST.md** (while coding)
+
    - Open side-by-side with your IDE
    - Follow P0 fixes in order
    - Use line numbers to navigate
    - Copy/paste code examples
 
 3. Reference: **COLOR_CONTRAST_REFERENCE.md** (when in doubt)
+
    - Is this color dark enough?
    - Can I use placeholder-dark-400? No → use dark-200
    - What's the contrast ratio for dark-500? 2.1:1 (FAIL)
@@ -196,9 +219,11 @@ This folder contains the complete Phase 2.1 accessibility audit for the Data Pro
 ### Scenario 2: "I'm a QA tester, how do I verify?"
 
 1. Read: **PHASE_2.1_SUMMARY.md** (10 min)
+
    - Understand what was fixed
 
 2. Use: **ACCESSIBILITY_TEST_PLAN.md** (while testing)
+
    - Follow test suites in order
    - Record any issues in template
    - Screenshot failures
@@ -212,6 +237,7 @@ This folder contains the complete Phase 2.1 accessibility audit for the Data Pro
 ### Scenario 3: "I'm a manager, what's the status?"
 
 1. Read: **PHASE_2.1_SUMMARY.md** (10 min)
+
    - Entire phase overview
    - Effort estimate
    - Risk assessment
@@ -227,6 +253,7 @@ This folder contains the complete Phase 2.1 accessibility audit for the Data Pro
 ### Scenario 4: "We need to know exact findings for compliance report"
 
 1. Read: **ACCESSIBILITY_AUDIT_PHASE2.1.md**
+
    - Section 1: Color Contrast Audit
    - Section 4: ARIA Labels & Live Regions Audit
    - Section 9: WCAG 2.1 Criterion Mapping
@@ -241,29 +268,35 @@ This folder contains the complete Phase 2.1 accessibility audit for the Data Pro
 ## Critical Path to Implementation
 
 ### Day 1: CSS & High-Impact Changes (4 hours)
+
 Using: **ACCESSIBILITY_FIXES_CHECKLIST.md** - CRITICAL FIXES section
 
 1. **CSS Changes (15 min)** - `/src/index.css`
+
    - Focus-visible on .input, .select, .tab
    - Placeholder color dark-400 → dark-200
    - Lines: 36-46, 74-79
 
 2. **Icon Color Fix (5 min)** - `/src/components/FileUpload.tsx`
+
    - text-dark-500 → text-dark-200
    - Line 94
 
 3. **Tab Button Styling (30 min)** - `/src/App.tsx`
+
    - Add focus-visible to 12 tab buttons
    - Change text-dark-400 → text-dark-300 for inactive
    - Lines: 363-392, 445-460, 490-522
 
 4. **ARIA Tab Roles (1 hour)** - `/src/App.tsx`
+
    - Add role="tablist" to containers
    - Add role="tab", aria-selected, aria-controls to buttons
    - Add role="tabpanel", aria-labelledby to content
    - Same line ranges as above
 
 5. **Icon Button Labels (20 min)** - `/src/components/SignalList.tsx`
+
    - title="..." → aria-label="..."
    - Lines: 125-137
 
@@ -274,6 +307,7 @@ Using: **ACCESSIBILITY_FIXES_CHECKLIST.md** - CRITICAL FIXES section
    - Quick browser check
 
 ### Day 2: Secondary Fixes (2-3 hours)
+
 Using: **ACCESSIBILITY_FIXES_CHECKLIST.md** - HIGH PRIORITY section
 
 1. Input label htmlFor attributes (1.5 hours)
@@ -285,6 +319,7 @@ Using: **ACCESSIBILITY_FIXES_CHECKLIST.md** - HIGH PRIORITY section
 ## File Locations
 
 All Phase 2.1 documents are in the repository root:
+
 ```
 /home/user/Tools/
 ├── PHASE_2.1_SUMMARY.md                    (THIS IS THE INDEX FILE)
@@ -296,6 +331,7 @@ All Phase 2.1 documents are in the repository root:
 ```
 
 Components to modify are in:
+
 ```
 /home/user/Tools/src/data_processing/data_processor/web/
 ├── src/
@@ -315,22 +351,26 @@ Components to modify are in:
 ## Key Findings At-a-Glance
 
 ### Colors (CRITICAL - 15 min to fix)
+
 - ✗ dark-400 text = 2.8:1 contrast (need 4.5:1) - Used in inactive tabs, placeholders
 - ✗ dark-500 icons = 2.1:1 contrast (need 4.5:1) - Upload/Search icons
 - ✓ dark-300 text = 8.1:1 contrast (PASS) - Use instead of dark-400
 
 ### Keyboard (HIGH - 1.5 hours to fix)
+
 - ✓ Tab navigation works
 - ✗ Escape closes sidebar - NOT IMPLEMENTED
 - ✗ Tab panels have no ARIA roles - 15+ instances
 - ✗ Roving tabindex for signal list - 100+ items = 100+ tabs
 
 ### Focus (HIGH - 1 hour to fix)
+
 - ✗ Tab buttons missing focus-visible - 12 instances
 - ✗ Form inputs using focus instead of focus-visible
 - ✓ FileUpload has focus-visible already
 
 ### ARIA (CRITICAL - 1.5 hours to fix)
+
 - ✗ Icon buttons missing aria-labels - 5 instances
 - ✗ Input labels missing htmlFor - 20+ instances
 - ✗ Tab panels missing roles - 15+ instances
@@ -341,6 +381,7 @@ Components to modify are in:
 ## Success Metrics
 
 After Phase 2.1 fixes:
+
 - [ ] All interactive elements reachable by Tab key
 - [ ] All interactive elements have visible focus indicator
 - [ ] All text meets 4.5:1 contrast (or 3:1 for large text)
@@ -366,14 +407,14 @@ After Phase 2.1 fixes:
 
 ## Document Statistics
 
-| Document | Size | Lines | Read Time | Use Time |
-|----------|------|-------|-----------|----------|
-| PHASE_2.1_SUMMARY.md | 9.9K | 280 | 10-15 min | Reference |
-| ACCESSIBILITY_AUDIT_PHASE2.1.md | 24K | 650 | 30-45 min | Reference |
-| ACCESSIBILITY_FIXES_CHECKLIST.md | 14K | 380 | 20-30 min | 4-5 hours |
-| COLOR_CONTRAST_REFERENCE.md | 17K | 480 | 10-15 min | Troubleshooting |
-| ACCESSIBILITY_TEST_PLAN.md | 17K | 600 | 20-30 min | 2-4 hours |
-| **TOTAL** | **82K** | **2390** | **2-3 hours** | **6-14 hours** |
+| Document                         | Size    | Lines    | Read Time     | Use Time        |
+| -------------------------------- | ------- | -------- | ------------- | --------------- |
+| PHASE_2.1_SUMMARY.md             | 9.9K    | 280      | 10-15 min     | Reference       |
+| ACCESSIBILITY_AUDIT_PHASE2.1.md  | 24K     | 650      | 30-45 min     | Reference       |
+| ACCESSIBILITY_FIXES_CHECKLIST.md | 14K     | 380      | 20-30 min     | 4-5 hours       |
+| COLOR_CONTRAST_REFERENCE.md      | 17K     | 480      | 10-15 min     | Troubleshooting |
+| ACCESSIBILITY_TEST_PLAN.md       | 17K     | 600      | 20-30 min     | 2-4 hours       |
+| **TOTAL**                        | **82K** | **2390** | **2-3 hours** | **6-14 hours**  |
 
 ---
 
