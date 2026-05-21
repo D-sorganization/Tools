@@ -55,8 +55,8 @@ _env_stub = sys.modules.get("src.shared.python.config.environment")
 if not isinstance(_env_stub, types.ModuleType):
     _env_stub = types.ModuleType("src.shared.python.config.environment")
     sys.modules["src.shared.python.config.environment"] = _env_stub
-_env_stub.get_env = lambda key, default=None, required=False: default
-_env_stub.get_env_float = lambda key, default=0.0: float(default)
+_env_stub.get_env = lambda key, default=None, required=False: default  # type: ignore[attr-defined]
+_env_stub.get_env_float = lambda key, default=0.0: float(default)  # type: ignore[attr-defined]
 
 from src.shared.python.ai.adapters.ollama_adapter import OllamaAdapter  # noqa: E402
 from src.shared.python.ai.exceptions import (  # noqa: E402
@@ -504,8 +504,11 @@ class TestValidateConnection:
         assert "test-model" in msg
 
     @pytest.mark.unit
-    def test_returns_false_when_model_not_found(self, adapter: OllamaAdapter) -> None:
-        """validate_connection returns (False, msg) when model is absent."""
+    def test_falls_back_when_model_absent(self, adapter: OllamaAdapter) -> None:
+        """validate_connection returns True and falls back to first available
+
+        model when configured model is absent.
+        """
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json.return_value = {
@@ -518,8 +521,9 @@ class TestValidateConnection:
 
         ok, msg = adapter.validate_connection()
 
-        assert ok is False
-        assert "not found" in msg.lower() or "available" in msg.lower()
+        assert ok is True
+        assert adapter._model == "mistral:latest"
+        assert "using 'mistral:latest'" in msg.lower()
 
     @pytest.mark.unit
     def test_returns_false_when_no_models_installed(

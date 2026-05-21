@@ -18,6 +18,7 @@ import sys
 import time
 import types
 from pathlib import Path
+from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
@@ -148,7 +149,7 @@ class TestStreamResponseGenerator:
     def test_yields_one_chunk_per_delta(self, adapter: RustAgentAdapter) -> None:
         """Five deltas from the backend produce five AgentChunks in order."""
         chunks_in = ["Hel", "lo, ", "wor", "ld", "!"]
-        adapter.engine._stream_chunks = chunks_in  # type: ignore[attr-defined]
+        adapter.engine._stream_chunks = chunks_in
 
         out = list(adapter.stream_response("hi", _make_context(), []))
 
@@ -157,7 +158,7 @@ class TestStreamResponseGenerator:
 
     def test_only_last_chunk_is_final(self, adapter: RustAgentAdapter) -> None:
         """is_final is True only on the terminal chunk."""
-        adapter.engine._stream_chunks = ["a", "b", "c"]  # type: ignore[attr-defined]
+        adapter.engine._stream_chunks = ["a", "b", "c"]
 
         out = list(adapter.stream_response("hi", _make_context(), []))
 
@@ -172,8 +173,8 @@ class TestStreamResponseGenerator:
         This is the regression scenario from #2752: callers must wrap this
         in a worker thread, but the generator itself must still behave.
         """
-        adapter.engine._stream_chunks = ["c1", "c2", "c3", "c4", "c5"]  # type: ignore[attr-defined]
-        adapter.engine._stream_delay = 2.0  # type: ignore[attr-defined]
+        adapter.engine._stream_chunks = ["c1", "c2", "c3", "c4", "c5"]
+        adapter.engine._stream_delay = 2.0
 
         start = time.monotonic()
         out = list(adapter.stream_response("hi", _make_context(), []))
@@ -189,7 +190,7 @@ class TestStreamResponseGenerator:
         self, adapter: RustAgentAdapter
     ) -> None:
         """An empty backend response yields one final empty chunk."""
-        adapter.engine._stream_chunks = []  # type: ignore[attr-defined]
+        adapter.engine._stream_chunks = []
 
         out = list(adapter.stream_response("hi", _make_context(), []))
 
@@ -226,12 +227,59 @@ class TestStreamResponseGenerator:
         mock_app = MagicMock()
         mock_thread = MagicMock()
 
+        class MockBoundSignal:
+            def __init__(self) -> None:
+                self.slots: list[Any] = []
+
+            def connect(self, slot: Any) -> None:
+                self.slots.append(slot)
+
+            def emit(self, *args: Any) -> None:
+                for slot in self.slots:
+                    slot(*args)
+
+        class MockSignal:
+            def __init__(self, *args: Any, **kwargs: Any) -> None:
+                pass
+
+            def __get__(self, instance: Any, owner: Any) -> MockBoundSignal:
+                if instance is None:
+                    return self  # type: ignore[return-value]
+                attr_name = f"_signal_{id(self)}"
+                if not hasattr(instance, attr_name):
+                    setattr(instance, attr_name, MockBoundSignal())
+                return getattr(instance, attr_name)  # type: ignore[no-any-return]
+
+        class MockQThread:
+            def __init__(self, *args: Any, **kwargs: Any) -> None:
+                pass
+
+            def start(self) -> None:
+                self.run()  # type: ignore[attr-defined]
+
+            @classmethod
+            def currentThread(cls) -> Any:
+                return mock_thread
+
+        class MockEventLoop:
+            def __init__(self, *args: Any, **kwargs: Any) -> None:
+                pass
+
+            def exec(self) -> int:
+                mock_app.processEvents()
+                return 0
+
+            def quit(self) -> None:
+                pass
+
         # We need to mock sys.modules for PyQt6 since it might not be installed
         with MagicMock() as mock_pyqt:
             sys.modules["PyQt6"] = mock_pyqt
             sys.modules["PyQt6.QtCore"] = mock_pyqt.QtCore
             mock_pyqt.QtCore.QCoreApplication.instance.return_value = mock_app
-            mock_pyqt.QtCore.QThread.currentThread.return_value = mock_thread
+            mock_pyqt.QtCore.QThread = MockQThread
+            mock_pyqt.QtCore.pyqtSignal = MockSignal
+            mock_pyqt.QtCore.QEventLoop = MockEventLoop
             mock_app.thread.return_value = mock_thread
 
             # Make stream_response take some time so processEvents is called

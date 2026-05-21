@@ -13,6 +13,7 @@ Refractory vessel design tool with STEP, STL, BREP, and GLTF export.
 ## Quick Start
 
 ### PyQt6 GUI
+
 ```bash
 python src/vessel_drafter/launch_pyqt6.py
 ```
@@ -34,3 +35,7 @@ python src/vessel_drafter/launch_pyqt6.py
 
 - Web surface not yet implemented.
 - CLI surface not yet implemented.
+
+## Related Documentation
+
+- [Glass Models Documentation](../../../Tools_Private_Agent_Wave3_Testing/docs/glass_model/api_reference.md)
