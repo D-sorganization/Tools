@@ -2,6 +2,12 @@
 #include <Arduino.h>
 #include <P1AM.h>
 
+// Note: facts-engineering/P1AM#31 documents an SPI bus-sharing issue between
+// the P1AM library and Ethernet. The proven mitigation is to (a) call P1.init
+// FIRST (before Ethernet.begin), and (b) apply the SPI bus reset workaround
+// in setup() after Ethernet.begin. The probe sketch firmware_probe.ino
+// validates this pattern works without per-call SPI transactions.
+
 P1AMHardware::P1AMHardware() {}
 
 void P1AMHardware::Begin() {
@@ -10,14 +16,9 @@ void P1AMHardware::Begin() {
   digitalWrite(kPinInhibit, LOW);
 }
 
-void P1AMHardware::Update() {
-  // The P1AM library blocks internally on backplane SPI during reads/writes,
-  // so no explicit scan-ready wait is needed. Kept as an override hook so the
-  // HardwareInterface contract (and MockHardware test counters) stay symmetric.
-}
+void P1AMHardware::Update() {}
 
 float P1AMHardware::ReadThermocouple(int channel) {
-  // Preconditions: channel must be between 0 and 3
   if (channel < 0 || channel >= 4) {
     return 0.0f;
   }
@@ -25,17 +26,13 @@ float P1AMHardware::ReadThermocouple(int channel) {
 }
 
 float P1AMHardware::ReadAnalogInput(int channel) {
-  // Preconditions: channel must be between 0 and 1
   if (channel < 0 || channel >= 2) {
     return 0.0f;
   }
-  // readAnalog on P1AM-100 returns floating point representations or raw counts
-  // depending on scaling. We assume standard percentage scaling of 0.0f to 100.0f.
   return P1.readAnalog(kSlotAna, channel);
 }
 
 void P1AMHardware::WriteAnalogOutput(int channel, float value) {
-  // Preconditions: channel between 0 and 1, value between 0.0 and 100.0
   if (channel < 0 || channel >= 2) {
     return;
   }
