@@ -230,7 +230,7 @@ jobs:
           fi
 
       - name: Minimum Test Contract Check
-        run: python3 scripts/check_minimum_test_contract.py
+        run: python scripts/check_minimum_test_contract.py
 
       - name: Security Scan (bandit)
         run: |
@@ -298,7 +298,7 @@ jobs:
           fi
 
           if [ -n "$CHANGED_SRC" ]; then
-            python3 scripts/check_module_size_budget.py --max-lines 1200 --include src
+            python scripts/check_module_size_budget.py --max-lines 1200 --include src
           else
             echo "No src Python changes detected; module size budget check skipped."
           fi
@@ -475,7 +475,7 @@ jobs:
 
       - name: Coverage Policy Gate
         if: steps.coverage_inputs.outputs.coverage_gate_required == 'true'
-        run: python3 scripts/check_coverage_policy.py --coverage-file coverage.xml --policy-file config/coverage_policy.json --baseline-file config/coverage_baseline.json --output-json coverage_trend_${{ matrix.python-version }}.json
+        run: python scripts/check_coverage_policy.py --coverage-file coverage.xml --policy-file config/coverage_policy.json --baseline-file config/coverage_baseline.json --output-json coverage_trend_${{ matrix.python-version }}.json
 
       - name: Upload Coverage Trend
         if: steps.coverage_inputs.outputs.coverage_gate_required == 'true'
@@ -586,7 +586,7 @@ jobs:
       - name: Build Python Wheel (Maturin)
         if: steps.rust-changes.outputs.has_changes == 'true'
         run: |
-          PYTHON_BIN="$(command -v python || command -v python3)"
+          PYTHON_BIN="$(command -v python || command -v python)"
           "$PYTHON_BIN" -m pip install maturin
           cd rust_core/tools-core
           "$PYTHON_BIN" -m maturin build --release
@@ -594,7 +594,7 @@ jobs:
       - name: Verify Python Wheel
         if: steps.rust-changes.outputs.has_changes == 'true'
         run: |
-          PYTHON_BIN="$(command -v python || command -v python3)"
+          PYTHON_BIN="$(command -v python || command -v python)"
           "$PYTHON_BIN" -m pip install target/wheels/*.whl --force-reinstall
           "$PYTHON_BIN" -c "import tools_core; v = tools_core.Vector3(1.0, 2.0, 3.0); assert v.magnitude() > 0; print('tools_core wheel verified')"
 
@@ -643,3 +643,17 @@ jobs:
           echo "- ✅ cargo audit: no known vulnerabilities" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ maturin build: Python wheel built" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ wasm-pack build: WASM + NPM package produced" >> $GITHUB_STEP_SUMMARY
+
+  ci-complete:
+    name: CI Complete
+    needs: [pick-runner, quality-gate, rust-quality-gate, tests]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Verify all jobs succeeded
+        run: |
+          if [ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" = "true" ]; then
+            echo "One or more required jobs failed or were cancelled."
+            exit 1
+          fi
+          echo "All jobs completed successfully."

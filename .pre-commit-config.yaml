@@ -178,7 +178,7 @@ repos:
       - id: pytest-unit
         name: "pytest (unit tests)"
         stages: [pre-push]
-        entry: python3 -m pytest tests/unit -x -q --tb=short -m "not slow and not integration"
+        entry: python -m pytest tests/unit -x -q --tb=short -m "not slow and not integration"
         language: system
         pass_filenames: false
         # Only run if Python files changed
@@ -189,7 +189,7 @@ repos:
 # =============================================================================
 
 default_language_version:
-  python: python3.11 # Matches pyproject requires-python and ruff target-version
+  python: python # Matches pyproject requires-python and ruff target-version
 
 # Files to always exclude from all hooks
 exclude: |
