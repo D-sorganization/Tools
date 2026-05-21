@@ -1,5 +1,9 @@
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -O2
+FIRMWARE_SRC_DIR = ../../../src/p1am_control_system/firmware
+CXXFLAGS += -I$(FIRMWARE_SRC_DIR)
+vpath %.cpp $(FIRMWARE_SRC_DIR)
+vpath %.h $(FIRMWARE_SRC_DIR)
 
 SRCS = test_dcs.cpp SignalBroker.cpp PIDController.cpp SafetyInterlock.cpp StorageManager.cpp
 OBJS = $(SRCS:.cpp=.o)
