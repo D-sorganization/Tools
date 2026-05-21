@@ -120,28 +120,62 @@ void SyncDCSToModbus() {
 
 void setup() {
   Serial.begin(115200);
+  // Wait up to 5s for serial monitor to attach so we don't miss boot messages.
+  // Note: USB CDC `if (Serial)` only blocks while a host is opening the port,
+  // so this still proceeds promptly when no monitor is connected.
+  unsigned long serialWaitStart = millis();
+  while (!Serial && (millis() - serialWaitStart) < 5000) {
+    delay(10);
+  }
+  Serial.println();
+  Serial.println(F("=== P1AM SCADA firmware boot ==="));
 
-  // Initialize Ethernet
-  Ethernet.begin(mac, ip);
-  
-  // Wait for Link connection
-  delay(1000);
-
-  // Initialize hardware wrapper
+  // P1AM backplane init FIRST. The P1AM library shares the SAMD21 SPI bus
+  // with the W5500 Ethernet chip but doesn't use SPI.beginTransaction
+  // internally; the proven workaround (per facts-engineering/P1AM#31) is to
+  // initialize P1AM before Ethernet.
+  Serial.println(F("[hw] P1AMHardware::Begin (backplane init)..."));
   hw.Begin();
+  Serial.println(F("[hw] hardware init complete"));
 
-  // Load saved NVRAM configuration
+  // Initialize Ethernet. The P1AM-ETH shield wires W5500 CS to pin 5.
+  Ethernet.init(5);
+  Serial.println(F("[eth] calling Ethernet.begin()..."));
+  Ethernet.begin(mac, ip);
+  Serial.print(F("[eth] hardwareStatus="));
+  Serial.println(Ethernet.hardwareStatus());
+  Serial.print(F("[eth] linkStatus="));
+  Serial.println(Ethernet.linkStatus());
+  Serial.print(F("[eth] localIP="));
+  Serial.println(Ethernet.localIP());
+
+  // Start Modbus TCP server. Done early so port 502 is reachable from SCADA
+  // even if later init takes a long time.
+  Serial.println(F("[mb] starting Modbus TCP server on port 502..."));
+  ethServer.begin();
+  if (!modbusServer.begin()) {
+    Serial.println(F("[mb] FATAL: modbusServer.begin() failed -- halting"));
+    while (1) {
+      delay(1000); // Halt if Modbus fails to start
+    }
+  }
+  modbusServer.configureCoils(0, 10);
+  modbusServer.configureHoldingRegisters(0, 500);
+  Serial.println(F("[mb] Modbus TCP server started"));
+
+  // Load saved NVRAM configuration; fall back to defaults on first boot.
+  Serial.println(F("[storage] loading saved config from flash..."));
   float temp_high[SignalBroker::kNumTags];
   float temp_low[SignalBroker::kNumTags];
-  
   bool loaded = storage.Load(broker, pids, temp_high, temp_low);
   if (loaded) {
+    Serial.println(F("[storage] valid config loaded"));
     for (int i = 0; i < SignalBroker::kNumTags; ++i) {
       interlock.SetHighLimit(i, temp_high[i]);
       interlock.SetLowLimit(i, temp_low[i]);
     }
   } else {
-    // Apply standard default values to prevent immediate trip
+    Serial.println(F("[storage] no valid config -- using defaults"));
     broker.Reset();
     interlock.Reset();
     for (int i = 0; i < 4; ++i) {
@@ -149,34 +183,20 @@ void setup() {
     }
   }
 
-  // Start Modbus TCP server
-  if (!modbusServer.begin()) {
-    while (1) {
-      delay(1000); // Halt if Modbus fails to start
-    }
-  }
-
-  // Configure Modbus registers
-  modbusServer.configureCoils(0, 10);
-  modbusServer.configureHoldingRegisters(0, 500);
-
-  // Write loaded configuration values to Modbus registers
+  // Publish current config to Modbus registers.
   SyncDCSToModbus();
+  Serial.println(F("[setup] complete -- entering control loop"));
 }
 
 void loop() {
   // Listen for new Modbus TCP client connections (non-blocking).
-  // ArduinoModbus's ModbusTCPServer::accept(Client&) takes ownership of the
-  // session; poll() services it on every loop pass without blocking the 10 Hz
-  // scan cycle below. This is the official ArduinoModbus TCP idiom but with
-  // the while(client.connected()) blocking loop omitted so control keeps running.
   EthernetClient newClient = ethServer.available();
   if (newClient) {
     modbusServer.accept(newClient);
   }
   modbusServer.poll();
 
-  // Trigger Save to Flash coil check
+  // Save-to-flash trigger
   if (modbusServer.coilRead(0) == 1) {
     float temp_high[SignalBroker::kNumTags];
     float temp_low[SignalBroker::kNumTags];
@@ -185,30 +205,22 @@ void loop() {
       temp_low[i] = interlock.GetLowLimit(i);
     }
     storage.Save(broker, pids, temp_high, temp_low);
-    modbusServer.coilWrite(0, 0); // Clear trigger
+    modbusServer.coilWrite(0, 0);
   }
 
-  // Sync any updates sent via SCADA
-  SyncModbusToDCS();
-
-  // 10Hz control loop logic
+  // 10 Hz control + config-sync cycle. SyncModbusToDCS is gated to this
+  // timer so the SAMD21 USB CDC and Modbus library aren't starved.
   unsigned long now = millis();
   if (now - lastScanTime >= kScanIntervalMs) {
     lastScanTime = now;
 
-    // Scan cycle
+    SyncModbusToDCS();
     hw.Update();
     broker.ReadHardwareInputs(hw);
-
-    // Compute PID controllers
     for (int i = 0; i < 4; ++i) {
-      pids[i].Compute(broker, 0.1f); // dt = 100ms = 0.1s
+      pids[i].Compute(broker, 0.1f);
     }
-
-    // Safety interlocks check (handles forcing outputs to 0 and driving physical outputs)
     interlock.Evaluate(broker, hw);
-
-    // Publish tag values to Modbus holding registers (0 to 63)
     for (int i = 0; i < SignalBroker::kNumTags; ++i) {
       WriteFloatToModbus(i * 2, broker.GetTag(i));
     }
