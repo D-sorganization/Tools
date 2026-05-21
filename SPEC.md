@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.193                                    |
-| **Last Spec Update**    | 2026-05-20                                 |
+| **Spec Version**        | 1.1.194                                    |
+| **Last Spec Update**    | 2026-05-21                                 |
 
 ## 2. Purpose & Mission
 
@@ -89,6 +89,9 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Shared chat dock shutdown treats intentional widget close as terminal for
   WebSocket reconnects so launcher-hosted Sidekick chat surfaces do not revive
   after close while unexpected disconnects still retry
+- P1AM SCADA firmware control-loop contracts fail closed on corrupt SCADA or
+  flash routing, non-finite process values, invalid PID timing, and non-finite
+  analog outputs instead of invoking runtime `assert()` abort paths on the PLC
 - Sidekick tabs declare versioned per-tab settings schemas and persist
   materialized settings by stable tab or duplicate instance id behind the
   selected-tab settings action

@@ -1,5 +1,18 @@
 #include "PIDController.h"
-#include <cassert>
+#include <cmath>
+
+namespace {
+
+bool IsValidRoutingTagId(int tag_id) {
+  return tag_id == SignalBroker::kUnmappedTag ||
+         (tag_id >= 0 && tag_id < SignalBroker::kNumTags);
+}
+
+float FiniteOrZero(float value) {
+  return std::isfinite(value) ? value : 0.0f;
+}
+
+}  // namespace
 
 PIDController::PIDController() {
   Reset();
@@ -19,8 +32,9 @@ void PIDController::Reset() {
 }
 
 void PIDController::Compute(SignalBroker& broker, float dt) {
-  // DbC Precondition: dt must be positive
-  assert(dt > 0.0f);
+  if (!std::isfinite(dt) || dt <= 0.0f) {
+    return;
+  }
 
   if (pv_tag_id_ == SignalBroker::kUnmappedTag ||
       cv_tag_id_ == SignalBroker::kUnmappedTag) {
@@ -79,7 +93,9 @@ int PIDController::GetPvTagId() const {
 }
 
 void PIDController::SetPvTagId(int tag_id) {
-  assert(tag_id == SignalBroker::kUnmappedTag || (tag_id >= 0 && tag_id < SignalBroker::kNumTags));
+  if (!IsValidRoutingTagId(tag_id)) {
+    tag_id = SignalBroker::kUnmappedTag;
+  }
   pv_tag_id_ = tag_id;
 }
 
@@ -88,7 +104,9 @@ int PIDController::GetCvTagId() const {
 }
 
 void PIDController::SetCvTagId(int tag_id) {
-  assert(tag_id == SignalBroker::kUnmappedTag || (tag_id >= 0 && tag_id < SignalBroker::kNumTags));
+  if (!IsValidRoutingTagId(tag_id)) {
+    tag_id = SignalBroker::kUnmappedTag;
+  }
   cv_tag_id_ = tag_id;
 }
 
@@ -97,7 +115,7 @@ float PIDController::GetSetpoint() const {
 }
 
 void PIDController::SetSetpoint(float setpoint) {
-  setpoint_ = setpoint;
+  setpoint_ = FiniteOrZero(setpoint);
 }
 
 float PIDController::GetKp() const {
@@ -105,7 +123,7 @@ float PIDController::GetKp() const {
 }
 
 void PIDController::SetKp(float kp) {
-  kp_ = kp;
+  kp_ = FiniteOrZero(kp);
 }
 
 float PIDController::GetKi() const {
@@ -113,7 +131,7 @@ float PIDController::GetKi() const {
 }
 
 void PIDController::SetKi(float ki) {
-  ki_ = ki;
+  ki_ = FiniteOrZero(ki);
 }
 
 float PIDController::GetKd() const {
@@ -121,5 +139,5 @@ float PIDController::GetKd() const {
 }
 
 void PIDController::SetKd(float kd) {
-  kd_ = kd;
+  kd_ = FiniteOrZero(kd);
 }
