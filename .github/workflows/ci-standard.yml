@@ -647,12 +647,12 @@ jobs:
   ci-complete:
     name: CI Complete
     needs: [pick-runner, quality-gate, rust-quality-gate, tests]
-    runs-on: ubuntu-latest
+    runs-on: d-sorg-fleet
     if: always()
     steps:
       - name: Verify all jobs succeeded
         run: |
-          if [ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" = "true" ]; then
+          if [ "${{ contains(needs.*.result, 'failure') ||                     contains(needs.*.result, 'cancelled') }}" = "true" ]; then
             echo "One or more required jobs failed or were cancelled."
             exit 1
           fi
