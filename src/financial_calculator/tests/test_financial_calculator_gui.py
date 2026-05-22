@@ -12,7 +12,7 @@ class TestFinancialCalculatorEngine:
     @pytest.fixture
     def engine(self):
         """Create engine instance."""
-        from upstream_drift_tools.process_calculators.financial_calculator import (
+        from sidekick.process_calculators.financial_calculator import (
             FinancialModelCalculator,
         )
 
@@ -26,7 +26,7 @@ class TestFinancialCalculatorEngine:
 
     def test_calculate_with_default_params(self, engine):
         """Test calculation with default (zero) parameters."""
-        from upstream_drift_tools.process_calculators.financial_calculator import (
+        from sidekick.process_calculators.financial_calculator import (
             FinancialParameters,
         )
 
@@ -38,7 +38,7 @@ class TestFinancialCalculatorEngine:
 
     def test_calculate_with_typical_values(self, engine):
         """Test calculation with typical plant values."""
-        from upstream_drift_tools.process_calculators.financial_calculator import (
+        from sidekick.process_calculators.financial_calculator import (
             FinancialParameters,
         )
 
@@ -72,7 +72,7 @@ class TestFinancialCalculatorEngine:
 
     def test_yearly_projections(self, engine):
         """Test multi-year projection generation."""
-        from upstream_drift_tools.process_calculators.financial_calculator import (
+        from sidekick.process_calculators.financial_calculator import (
             FinancialParameters,
         )
 

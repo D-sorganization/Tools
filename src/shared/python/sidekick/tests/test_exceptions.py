@@ -7,7 +7,7 @@ custom formatting.
 from __future__ import annotations
 
 import pytest
-from upstream_drift_tools.data_processing.exceptions import (
+from sidekick.data_processing.exceptions import (
     ColumnNotFoundError,
     DataNotLoadedError,
     DataProcessingError,

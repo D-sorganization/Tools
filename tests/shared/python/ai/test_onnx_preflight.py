@@ -7,49 +7,11 @@ check raises a clear RuntimeError so users get actionable guidance.
 
 from __future__ import annotations
 
-import logging
-import sys
-import types
-from pathlib import Path
-
 import pytest
-
-# ---------------------------------------------------------------------------
-# Bootstrap: make src.shared.python.ai importable without the full app env
-# ---------------------------------------------------------------------------
-
-ROOT = Path(__file__).resolve().parents[4]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-
-_PACKAGE_STUBS: list[tuple[str, str | None]] = [
-    ("src", "src"),
-    ("src.shared", "src/shared"),
-    ("src.shared.python", "src/shared/python"),
-    ("src.shared.python.config", "src/shared/python/config"),
-    ("src.shared.python.ai", "src/shared/python/ai"),
-    ("src.shared.python.ai.adapters", "src/shared/python/ai/adapters"),
-]
-for _mod_name, _rel_path in _PACKAGE_STUBS:
-    if _mod_name not in sys.modules:
-        import types
-
-        _stub = types.ModuleType(_mod_name)
-        if _rel_path is not None:
-            _stub.__path__ = [str(ROOT / _rel_path)]
-        sys.modules[_mod_name] = _stub
-
-
-_logging_config_stub = sys.modules.setdefault(
-    "src.shared.python.logging_pkg.logging_config",
-    types.ModuleType("src.shared.python.logging_pkg.logging_config"),
-)
-_logging_config_stub.get_logger = logging.getLogger  # type: ignore[attr-defined]
 
 # ---------------------------------------------------------------------------
 # Import the module under test
 # ---------------------------------------------------------------------------
-
 from src.shared.python.ai._onnx_preflight import (  # noqa: E402
     _ENV_VAR,
     _SETUP_GUIDE,

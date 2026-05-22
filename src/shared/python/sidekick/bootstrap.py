@@ -17,7 +17,7 @@ Usage in launch_pyqt6.py scripts::
 
 Or more explicitly::
 
-    from upstream_drift_tools.bootstrap import ensure_paths
+    from sidekick.bootstrap import ensure_paths
     ensure_paths()
 
 This module exists as a transition mechanism. Once all imports use the installed

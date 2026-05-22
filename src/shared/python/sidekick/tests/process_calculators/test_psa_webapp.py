@@ -14,7 +14,7 @@ sys.modules["pandas"] = MagicMock()
 
 import numpy as np
 import pytest
-from upstream_drift_tools.process_calculators.psa_package.psa_webapp import (
+from sidekick.process_calculators.psa_package.psa_webapp import (
     DEFAULT_COMPONENTS,
     PSAResults,
     StreamCompositions,

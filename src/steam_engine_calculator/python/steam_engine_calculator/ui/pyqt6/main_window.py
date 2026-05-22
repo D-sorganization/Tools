@@ -31,10 +31,10 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from upstream_drift_tools.ui.widgets.base_calculator_widget import BaseCalculatorWindow
+from sidekick.ui.widgets.base_calculator_widget import BaseCalculatorWindow
 
 if TYPE_CHECKING:
-    from upstream_drift_tools.calculators.thermo.steam_engine import SteamProperties
+    from sidekick.calculators.thermo.steam_engine import SteamProperties
 
 # Catppuccin Mocha color palette
 COLORS = {
@@ -158,7 +158,7 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
     def _init_engine(self) -> None:
         """Initialize the calculation engine."""
         try:
-            from upstream_drift_tools.calculators.thermo.steam_engine import (
+            from sidekick.calculators.thermo.steam_engine import (
                 SteamCalculationEngine,
             )
 
@@ -533,7 +533,7 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
         """Update engine availability status."""
         status_parts = []
         try:
-            from upstream_drift_tools.calculators.thermo.steam_engine import (
+            from sidekick.calculators.thermo.steam_engine import (
                 CANTERA_AVAILABLE,
                 COOLPROP_AVAILABLE,
             )

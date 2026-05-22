@@ -30,7 +30,7 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from upstream_drift_tools.ui.widgets.base_calculator_widget import BaseCalculatorWindow
+from sidekick.ui.widgets.base_calculator_widget import BaseCalculatorWindow
 
 # Catppuccin Mocha color palette
 CATPPUCCIN_MOCHA = {

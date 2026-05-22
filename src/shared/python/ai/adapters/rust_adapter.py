@@ -31,8 +31,11 @@ def _make_rust_stream_worker_class() -> type | None:
     in headless environments that lack a working PyQt6 installation.
     """
     try:
-        from PyQt6.QtCore import QThread, pyqtSignal
+        from PyQt6.QtCore import QCoreApplication, QThread, pyqtSignal
     except ImportError:
+        return None
+
+    if QCoreApplication.instance() is None:
         return None
 
     class _RustStreamWorker(QThread):
@@ -180,9 +183,10 @@ class RustAgentAdapter(BaseAgentAdapter):
     ) -> Iterator[AgentChunk]:
         """Stream the response using the Rust backend off the Qt main thread.
 
-        Delegates the blocking ``engine.stream_response`` call to a
-        ``_RustStreamWorker`` (``QThread``) when PyQt6 is available, keeping the
-        Qt event loop responsive throughout (fixes Tools #2752 UI freeze).
+        BLOCKING: Delegates the blocking ``engine.stream_response`` call to a
+        background worker thread (``_RustStreamWorker``, subclass of ``QThread``)
+        when PyQt6 is available, keeping the Qt event loop responsive throughout
+        (fixes Tools #2752 UI freeze).
         Falls back to a daemon ``threading.Thread`` in headless environments.
 
         Cancel support: ``self._active_worker.stop()`` can be called from the

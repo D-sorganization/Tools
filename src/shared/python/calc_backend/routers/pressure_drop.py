@@ -13,12 +13,12 @@ import time
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
-from upstream_drift_tools.api import (
+from sidekick.api import (
     ErrorCode,
     ErrorDetail,
     StandardResponse,
 )
-from upstream_drift_tools.process_calculators.pressure_drop_calculator import (
+from sidekick.process_calculators.pressure_drop_calculator import (
     PressureDropCalculator,
     PressureDropResult,
 )

@@ -18,7 +18,7 @@ from unittest.mock import patch
 import numpy as np
 import pandas as pd
 import pytest
-from upstream_drift_tools.data_processing.core import (
+from sidekick.data_processing.core import (
     AggregationType,
     ColumnStats,
     DataFormat,
@@ -27,7 +27,7 @@ from upstream_drift_tools.data_processing.core import (
     FitType,
     ProcessingResult,
 )
-from upstream_drift_tools.data_processing.exceptions import (
+from sidekick.data_processing.exceptions import (
     ColumnNotFoundError,
     DataNotLoadedError,
     FileIOError,

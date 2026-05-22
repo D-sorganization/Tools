@@ -7,48 +7,10 @@ prematurely as ``completed``.
 
 from __future__ import annotations
 
-import logging
 import os
-import sys
-import types
 from pathlib import Path
 
 import pytest
-
-# ---------------------------------------------------------------------------
-# Bootstrap: follow the pattern used in tests/shared/python/ai/
-# test_adapter_contract.py to make ``src.shared.python.*`` imports resolve
-# without requiring real ``__init__.py`` files on each ancestor.
-# ---------------------------------------------------------------------------
-
-ROOT = Path(__file__).resolve().parents[4]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-
-_PACKAGE_STUBS: list[tuple[str, str | None]] = [
-    ("src", "src"),
-    ("src.shared", "src/shared"),
-    ("src.shared.python", "src/shared/python"),
-    ("src.shared.python.ai", "src/shared/python/ai"),
-    ("src.shared.python.ai.integrations", "src/shared/python/ai/integrations"),
-]
-for _mod_name, _rel_path in _PACKAGE_STUBS:
-    if _mod_name not in sys.modules:
-        _stub = types.ModuleType(_mod_name)
-        if _rel_path is not None:
-            _stub.__path__ = [str(ROOT / _rel_path)]
-        sys.modules[_mod_name] = _stub
-
-_logging_config_stub = sys.modules.setdefault(
-    "src.shared.python.logging_pkg",
-    types.ModuleType("src.shared.python.logging_pkg"),
-)
-_logging_config_stub = sys.modules.setdefault(
-    "src.shared.python.logging_pkg.logging_config",
-    types.ModuleType("src.shared.python.logging_pkg.logging_config"),
-)
-_logging_config_stub.get_logger = logging.getLogger  # type: ignore[attr-defined]
-_logging_config_stub.setup_logging = lambda *a, **kw: None  # type: ignore[attr-defined]
 
 from src.shared.python.ai.integrations import obsidian  # noqa: E402
 from src.shared.python.ai.integrations.obsidian import (  # noqa: E402

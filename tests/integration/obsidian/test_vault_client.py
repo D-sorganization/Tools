@@ -14,64 +14,14 @@ Cross-references: #2834, #2896, #2759, #2938
 
 from __future__ import annotations
 
-import logging
 import os
-import sys
-import types
 from pathlib import Path
 
 import pytest
 
 # ---------------------------------------------------------------------------
-# Bootstrap: add the repo root to sys.path so that ``src.*`` imports resolve,
-# and stub out heavy transitive dependencies that the integration modules pull
-# in via tool_registry (logging_pkg, exceptions, types).
-# Mirrors the pattern used in tests/shared/python/ai/test_integrations_phase_1.py
-# ---------------------------------------------------------------------------
-
-ROOT = Path(__file__).resolve().parents[3]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-
-_PACKAGE_STUBS: list[tuple[str, str | None]] = [
-    ("src", "src"),
-    ("src.shared", "src/shared"),
-    ("src.shared.python", "src/shared/python"),
-    ("src.shared.python.config", "src/shared/python/config"),
-    ("src.shared.python.ai", "src/shared/python/ai"),
-    ("src.shared.python.ai.adapters", "src/shared/python/ai/adapters"),
-]
-for _mod_name, _rel_path in _PACKAGE_STUBS:
-    if _mod_name not in sys.modules:
-        _stub = types.ModuleType(_mod_name)
-        if _rel_path is not None:
-            _stub.__path__ = [str(ROOT / _rel_path)]
-        sys.modules[_mod_name] = _stub
-
-# Stub logging_pkg so tool_registry can import get_logger without extra deps.
-_logging_config_stub = sys.modules.setdefault(
-    "src.shared.python.logging_pkg.logging_config",
-    types.ModuleType("src.shared.python.logging_pkg.logging_config"),
-)
-_logging_config_stub.get_logger = logging.getLogger  # type: ignore[attr-defined]
-_logging_config_stub.setup_logging = lambda *a, **kw: None  # type: ignore[attr-defined]
-
-# Stub logging_pkg parent so submodule lookup succeeds.
-_logging_pkg_stub = sys.modules.setdefault(
-    "src.shared.python.logging_pkg",
-    types.ModuleType("src.shared.python.logging_pkg"),
-)
-
-# Stub httpx so integration modules that import it do not fail on missing dep.
-if "httpx" not in sys.modules:
-    _httpx_stub = types.ModuleType("httpx")
-    _httpx_stub.AsyncClient = object  # type: ignore[attr-defined]
-    sys.modules["httpx"] = _httpx_stub
-
-# ---------------------------------------------------------------------------
 # Module-level import (must succeed for all tests in this file to run)
 # ---------------------------------------------------------------------------
-
 from src.shared.python.ai.integrations import obsidian as _obsidian_mod  # noqa: E402
 
 obsidian_read_note = _obsidian_mod.obsidian_read_note

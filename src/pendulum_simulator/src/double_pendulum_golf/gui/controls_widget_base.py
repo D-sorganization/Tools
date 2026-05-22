@@ -470,7 +470,7 @@ class ControlsWidgetBase(QWidget):
         from .controls_utils import parse_float
 
         try:
-            from upstream_drift_tools.ui.widgets.unit_aware_input import (
+            from sidekick.ui.widgets.unit_aware_input import (
                 UnitAwareInput as _UAI,
             )
 

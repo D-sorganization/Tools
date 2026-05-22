@@ -32,7 +32,7 @@ from .controls_utils import (
 from .controls_widget_base import ControlsWidgetBase
 
 if _HAS_UAI:
-    from upstream_drift_tools.ui.widgets.unit_aware_input import UnitAwareInput
+    from sidekick.ui.widgets.unit_aware_input import UnitAwareInput
 
 
 class ControlsWidgetGolfer(ControlsWidgetBase):

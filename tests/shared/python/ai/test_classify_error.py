@@ -11,61 +11,7 @@ Verifies that:
 
 from __future__ import annotations
 
-import logging
-import sys
-import types
-from pathlib import Path
-
 import pytest
-
-# ---------------------------------------------------------------------------
-# Bootstrap: ensure the repo root is on sys.path and stub minimal packages so
-# that importing the adapters works in a plain pytest run.
-# ---------------------------------------------------------------------------
-
-ROOT = Path(__file__).resolve().parents[4]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-
-_PACKAGE_STUBS: list[tuple[str, str | None]] = [
-    ("src", "src"),
-    ("src.shared", "src/shared"),
-    ("src.shared.python", "src/shared/python"),
-    ("src.shared.python.config", "src/shared/python/config"),
-    ("src.shared.python.ai", "src/shared/python/ai"),
-    ("src.shared.python.ai.adapters", "src/shared/python/ai/adapters"),
-]
-for _mod_name, _rel_path in _PACKAGE_STUBS:
-    if _mod_name not in sys.modules:
-        import types
-
-        _stub = types.ModuleType(_mod_name)
-        if _rel_path is not None:
-            _stub.__path__ = [str(ROOT / _rel_path)]
-        sys.modules[_mod_name] = _stub
-
-
-_log_cfg = sys.modules.get("src.shared.python.logging_pkg.logging_config")
-if not isinstance(_log_cfg, types.ModuleType):
-    _log_cfg = types.ModuleType("src.shared.python.logging_pkg.logging_config")
-    sys.modules["src.shared.python.logging_pkg.logging_config"] = _log_cfg
-_log_cfg.get_logger = logging.getLogger  # type: ignore[attr-defined]
-
-
-# Stub ai.config so adapters can import without a real environment.
-_env_stub = sys.modules.get("src.shared.python.config.environment")
-if not isinstance(_env_stub, types.ModuleType):
-    _env_stub = types.ModuleType("src.shared.python.config.environment")
-    sys.modules["src.shared.python.config.environment"] = _env_stub
-_env_stub.get_env = lambda key, default=None, required=False: default
-_env_stub.get_env_float = lambda key, default=0.0: float(default)
-
-# Stub memory_manager
-if "src.shared.python.ai.memory_manager" not in sys.modules:
-    _mm = types.ModuleType("src.shared.python.ai.memory_manager")
-    _mm.build_memory_prompt_section = lambda **_kw: ""  # type: ignore[attr-defined]
-    _mm.load_agents_md = lambda *_a: None  # type: ignore[attr-defined]
-    sys.modules["src.shared.python.ai.memory_manager"] = _mm
 
 # Now the real imports can succeed.
 from src.shared.python.ai.adapters.anthropic_adapter import (  # noqa: E402
