@@ -32,9 +32,11 @@ def parse_indusoft_tags(json_path: Path) -> list[TagDefinition]:
                 name=t.get("name", "Unknown"),
                 tag_type=tag_type,
                 description=t.get("description", ""),
-                rw_mode="Read/Write"
-                if t.get("external_availability") == "Enabled"
-                else "Read-only",
+                rw_mode=(
+                    "Read/Write"
+                    if t.get("external_availability") == "Enabled"
+                    else "Read-only"
+                ),
             )
         )
     return tags

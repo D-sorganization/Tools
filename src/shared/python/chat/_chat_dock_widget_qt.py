@@ -201,7 +201,7 @@ class ChatMessageBubble(QFrame):
             return
         msg = ChatMessage(role=self._role, content=self._content)
         try:
-            copier.copy_message(msg, mode)  # type: ignore[arg-type]
+            copier.copy_message(msg, mode)
         except ValueError:
             # Unknown mode -- fall back to raw_text.
             copier.copy_message(msg, "raw_text")
@@ -1056,7 +1056,7 @@ class ChatDockWidget(QDockWidget):
             if not isinstance(info, WorkspaceVariableInfo):
                 # Defensive: tolerate raw dicts/objects that look like
                 # the dataclass without crashing the chat.
-                continue  # type: ignore[unreachable]
+                continue
             shape_str = (
                 ", ".join(str(dim) for dim in info.shape)
                 if info.shape is not None
@@ -1472,12 +1472,12 @@ class ChatDockWidget(QDockWidget):
             self._sync_ai_dropdowns()
 
         # Invariant check (cheap; cost is the snapshot comparison).
-        assert self._message_history is history_before, (
-            "switch_provider invariant: _message_history must remain the same list"
-        )
-        assert self._message_history == snapshot_before, (
-            "switch_provider invariant: _message_history contents must not change"
-        )
+        assert (
+            self._message_history is history_before
+        ), "switch_provider invariant: _message_history must remain the same list"
+        assert (
+            self._message_history == snapshot_before
+        ), "switch_provider invariant: _message_history contents must not change"
 
     def _populate_shell_combo(self) -> None:
         self._shell_combo.clear()
@@ -1577,7 +1577,7 @@ class ChatDockWidget(QDockWidget):
         screen = cast("QApplication", app).primaryScreen()
         if not screen:
             return
-        pixmap = parent.grab() if parent else screen.grabWindow(0)  # type: ignore[arg-type]
+        pixmap = parent.grab() if parent else screen.grabWindow(0)
         from PyQt6.QtCore import QBuffer, QByteArray, QIODevice
 
         ba = QByteArray()
@@ -1746,7 +1746,7 @@ class ChatDockWidget(QDockWidget):
             return
         request = ChatExportRequest(
             session_id=session.session_id,
-            format=fmt,  # type: ignore[arg-type]
+            format=fmt,
             output_path=path,
             include_metadata=True,
             redact_secrets=True,
@@ -1809,7 +1809,7 @@ class ChatDockWidget(QDockWidget):
         try:
             request = CondensationRequest(
                 session_id=session.session_id,
-                strategy=strategy,  # type: ignore[arg-type]
+                strategy=strategy,
                 keep_last_n=max(1, min(10, session.message_count)),
             )
             result = Condenser().condense(session, request)

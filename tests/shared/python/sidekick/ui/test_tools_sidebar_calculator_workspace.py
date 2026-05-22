@@ -124,7 +124,8 @@ class TestCalculatorWorkspaceIsolation:
         global_registry: WorkspaceRegistry,
     ) -> None:
         """Precondition: 'global_result' is in the global registry only.
-        Postcondition: get_variable (local-only mode) returns default, not the global value."""
+        Postcondition: get_variable (local-only mode) returns default, not the global value.
+        """
         global_registry.set("global_result", 100)
         sentinel = object()
         result = calculator_facade.get_variable("global_result", sentinel)

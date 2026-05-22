@@ -370,7 +370,9 @@ class TestDELTAClubDecomposition:
         # So F = m*0 - m*(0, -g) = (0, m*g)
         # Net force should be +(m_rh + m_lh)*g in the y direction
         net_fy = result["net_force"][1]
-        expected_fy = (default_params.m_r_fore + default_params.m_l_fore) * default_params.g
+        expected_fy = (
+            default_params.m_r_fore + default_params.m_l_fore
+        ) * default_params.g
         assert net_fy == pytest.approx(expected_fy, rel=0.01)
 
 
@@ -431,16 +433,22 @@ class TestDecompositionDbc:
         from double_pendulum_golf.club_forces import delta_club_decomposition
 
         with pytest.raises(TypeError, match="state must be a numpy ndarray"):
-            delta_club_decomposition(state=list(range(16)), tau=np.zeros(8), p=default_params)
+            delta_club_decomposition(
+                state=list(range(16)), tau=np.zeros(8), p=default_params
+            )
 
     def test_delta_tau_wrong_type(self, default_params):
         from double_pendulum_golf.club_forces import delta_club_decomposition
 
         with pytest.raises(TypeError, match="tau must be a numpy ndarray"):
-            delta_club_decomposition(state=np.zeros(16), tau=[0.0] * 8, p=default_params)
+            delta_club_decomposition(
+                state=np.zeros(16), tau=[0.0] * 8, p=default_params
+            )
 
     def test_delta_tau_wrong_shape(self, default_params):
         from double_pendulum_golf.club_forces import delta_club_decomposition
 
         with pytest.raises(ValueError, match="tau must have shape"):
-            delta_club_decomposition(state=np.zeros(16), tau=np.zeros(4), p=default_params)
+            delta_club_decomposition(
+                state=np.zeros(16), tau=np.zeros(4), p=default_params
+            )

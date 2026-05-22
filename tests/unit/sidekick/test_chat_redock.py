@@ -106,9 +106,9 @@ def test_chat_popout_window_has_redock_button(qtbot) -> None:  # type: ignore[no
     )
     qtbot.addWidget(win)
     redock_btn = win.findChild(QPushButton, _REDOCK_BUTTON_OBJECT_NAME)
-    assert redock_btn is not None, (
-        f"Expected QPushButton with objectName {_REDOCK_BUTTON_OBJECT_NAME!r}"
-    )
+    assert (
+        redock_btn is not None
+    ), f"Expected QPushButton with objectName {_REDOCK_BUTTON_OBJECT_NAME!r}"
 
 
 def test_chat_popout_window_redock_invokes_callback(qtbot) -> None:  # type: ignore[no-untyped-def]

@@ -72,7 +72,7 @@ def _normalize_host(host: str) -> str:
     connect to it on Windows.
     """
     if not host:
-        return DEFAULT_OLLAMA_HOST
+        return str(DEFAULT_OLLAMA_HOST)
     host = host.strip().rstrip("/")
     if not host.startswith(("http://", "https://")):
         host = f"http://{host}"

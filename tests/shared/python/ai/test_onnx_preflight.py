@@ -117,9 +117,9 @@ class TestCheckOrtLoadableInvalidPath:
         with pytest.raises(RuntimeError) as exc_info:
             check_ort_loadable()
 
-        assert exc_info.value.__cause__ is not None, (
-            "RuntimeError should chain the underlying OSError"
-        )
+        assert (
+            exc_info.value.__cause__ is not None
+        ), "RuntimeError should chain the underlying OSError"
 
     def test_raises_for_nonexistent_explicit_path(self) -> None:
         """Explicit dylib_path argument is used instead of env var."""

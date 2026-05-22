@@ -49,8 +49,9 @@ class WrappedCanonicalLoader:
         if self.canonical_spec.name in sys.modules:
             return sys.modules[self.canonical_spec.name]
 
-        if hasattr(self.canonical_spec.loader, "create_module"):
-            module = self.canonical_spec.loader.create_module(self.canonical_spec)
+        loader = self.canonical_spec.loader
+        if loader is not None and hasattr(loader, "create_module"):
+            module = loader.create_module(self.canonical_spec)
         else:
             module = None
 

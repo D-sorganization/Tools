@@ -119,7 +119,9 @@ class TestPerturbationConfig:
         assert cfg.seed is None
 
     def test_custom(self):
-        cfg = PerturbationConfig(n_trials=50, noise_type="pink", noise_amplitude=0.2, seed=42)
+        cfg = PerturbationConfig(
+            n_trials=50, noise_type="pink", noise_amplitude=0.2, seed=42
+        )
         assert cfg.n_trials == 50
         assert cfg.noise_type == "pink"
 
@@ -199,7 +201,9 @@ class TestBatchPerturbAndSimulate:
                 "tip_position_final": np.array([1.0, -0.5]),
             }
 
-        results = batch_perturb_and_simulate(base_coeffs, config, simulate_fn, extract_fn)
+        results = batch_perturb_and_simulate(
+            base_coeffs, config, simulate_fn, extract_fn
+        )
         assert len(results) == 5
 
     def test_handles_failures_gracefully(self):
@@ -222,7 +226,9 @@ class TestBatchPerturbAndSimulate:
                 "tip_position_final": np.array([0.0, 0.0]),
             }
 
-        results = batch_perturb_and_simulate(base_coeffs, config, simulate_fn, extract_fn)
+        results = batch_perturb_and_simulate(
+            base_coeffs, config, simulate_fn, extract_fn
+        )
         assert len(results) == 2  # 3 trials, 1 failed
 
 
@@ -277,7 +283,9 @@ class TestPerturbedSimulationFiniteOutputs:
                 "tip_position_final": np.array([0.5, -0.3]),
             }
 
-        results = batch_perturb_and_simulate(base_coeffs, config, simulate_fn, extract_fn)
+        results = batch_perturb_and_simulate(
+            base_coeffs, config, simulate_fn, extract_fn
+        )
         assert len(results) > 0
         for r in results:
             assert np.isfinite(r["tip_speed_final"]), f"Non-finite tip_speed: {r}"

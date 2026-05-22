@@ -120,7 +120,9 @@ class TestHubPosition:
         assert x == pytest.approx(-sym_params.L_hub, abs=1e-10)
         assert abs(y) < 1e-10
 
-    def test_hub_distance_from_origin_equals_L_hub(self, sym_params: GolferParams) -> None:
+    def test_hub_distance_from_origin_equals_L_hub(
+        self, sym_params: GolferParams
+    ) -> None:
         """Distance |hub| must equal L_hub for all angles."""
         for theta in np.linspace(-np.pi, np.pi, 20):
             x, y = _hub_position(theta, sym_params)
@@ -141,7 +143,9 @@ class TestHubPosition:
 
 
 class TestShoulderPosition:
-    def test_distance_from_hub_equals_d_shoulder(self, sym_params: GolferParams) -> None:
+    def test_distance_from_hub_equals_d_shoulder(
+        self, sym_params: GolferParams
+    ) -> None:
         hub = (0.0, sym_params.L_hub)
         for d in [0.15, 0.20, 0.25]:
             rs = _shoulder_position(hub, 0.0, d, +1.0)
@@ -274,9 +278,9 @@ class TestForwardKinematics:
             q = rng.uniform(-np.pi / 2, np.pi / 2, N_DOF)
             pos = self._fk(q, sym_params)
             for key, (x, y) in pos.items():
-                assert np.isfinite(x) and np.isfinite(y), (
-                    f"Non-finite position for joint {key!r}: ({x}, {y})"
-                )
+                assert np.isfinite(x) and np.isfinite(
+                    y
+                ), f"Non-finite position for joint {key!r}: ({x}, {y})"
 
     def test_origin_always_zero(self, sym_params: GolferParams) -> None:
         for q in [np.zeros(N_DOF), np.ones(N_DOF) * 0.3]:
@@ -355,7 +359,9 @@ class TestForwardKinematics:
             assert pos_ext[key][0] == pytest.approx(pos_short[key][0], abs=1e-10)
             assert pos_ext[key][1] == pytest.approx(pos_short[key][1], abs=1e-10)
 
-    def test_scapula_keys_present_when_nonzero(self, scapula_params: GolferParams) -> None:
+    def test_scapula_keys_present_when_nonzero(
+        self, scapula_params: GolferParams
+    ) -> None:
         """When L_rscap > 0, 'rscap' and 'lscap' should appear in the result."""
         q = np.zeros(N_DOF)
         pos = self._fk(q, scapula_params)

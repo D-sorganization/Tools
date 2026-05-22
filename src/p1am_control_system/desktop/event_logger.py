@@ -59,8 +59,7 @@ class EventLogger:
         """Create the event logs table if it does not already exist."""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            cursor.execute(
-                """
+            cursor.execute("""
                 CREATE TABLE IF NOT EXISTS event_logs (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     timestamp TEXT NOT NULL,
@@ -70,8 +69,7 @@ class EventLogger:
                     description TEXT NOT NULL,
                     details TEXT
                 )
-                """
-            )
+                """)
             conn.commit()
 
     def log_event(

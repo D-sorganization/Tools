@@ -125,25 +125,33 @@ class TestFrictionTorqueVector:
         expected_tau_f1 = -damped_params.b1 * dtheta1
         assert np.isclose(tf[0], expected_tau_f1)
 
-    def test_coulomb_has_constant_magnitude(self, frictional_params: PendulumParams) -> None:
+    def test_coulomb_has_constant_magnitude(
+        self, frictional_params: PendulumParams
+    ) -> None:
         """Coulomb friction magnitude is mu regardless of velocity magnitude."""
         for speed in [0.1, 1.0, 10.0, 100.0]:
-            tf = friction_torque_vector(dtheta1=speed, dphi=speed, params=frictional_params)
-            assert np.isclose(abs(tf[0]), frictional_params.mu1), (
-                f"Expected |tau_f1|={frictional_params.mu1}, got {abs(tf[0])} at speed={speed}"
+            tf = friction_torque_vector(
+                dtheta1=speed, dphi=speed, params=frictional_params
             )
+            assert np.isclose(
+                abs(tf[0]), frictional_params.mu1
+            ), f"Expected |tau_f1|={frictional_params.mu1}, got {abs(tf[0])} at speed={speed}"
 
     def test_coulomb_zero_at_rest(self, frictional_params: PendulumParams) -> None:
         """np.sign(0) == 0, so Coulomb friction is zero when stationary."""
         tf = friction_torque_vector(dtheta1=0.0, dphi=0.0, params=frictional_params)
         assert np.allclose(tf, [0.0, 0.0])
 
-    def test_combined_friction_superposition(self, combined_params: PendulumParams) -> None:
+    def test_combined_friction_superposition(
+        self, combined_params: PendulumParams
+    ) -> None:
         """Combined damping+friction = viscous + Coulomb separately."""
         dtheta1, dphi = 1.5, -0.8
         tf = friction_torque_vector(dtheta1, dphi, combined_params)
 
-        expected_1 = -combined_params.b1 * dtheta1 - combined_params.mu1 * np.sign(dtheta1)
+        expected_1 = -combined_params.b1 * dtheta1 - combined_params.mu1 * np.sign(
+            dtheta1
+        )
         expected_2 = -combined_params.b2 * dphi - combined_params.mu2 * np.sign(dphi)
         assert np.isclose(tf[0], expected_1)
         assert np.isclose(tf[1], expected_2)
@@ -182,9 +190,9 @@ class TestEquationsOfMotionWithDissipation:
         e_start = total_energy(result.states[0], base_params)
         e_end = total_energy(result.states[-1], base_params)
         # Allow ~1% drift from numerical integration
-        assert abs(e_end - e_start) / max(abs(e_start), 1e-9) < 0.01, (
-            f"Energy drift too large: {e_start:.4f} → {e_end:.4f}"
-        )
+        assert (
+            abs(e_end - e_start) / max(abs(e_start), 1e-9) < 0.01
+        ), f"Energy drift too large: {e_start:.4f} → {e_end:.4f}"
 
     def test_damped_pendulum_loses_energy(self, damped_params: PendulumParams) -> None:
         """With viscous damping, total energy must decrease over time."""
@@ -203,9 +211,9 @@ class TestEquationsOfMotionWithDissipation:
 
         e_start = total_energy(result.states[0], damped_params)
         e_end = total_energy(result.states[-1], damped_params)
-        assert e_end < e_start, (
-            f"Damped pendulum energy should decrease: {e_start:.4f} → {e_end:.4f}"
-        )
+        assert (
+            e_end < e_start
+        ), f"Damped pendulum energy should decrease: {e_start:.4f} → {e_end:.4f}"
 
     def test_friction_does_not_blow_up(self, combined_params: PendulumParams) -> None:
         """Simulation with both friction types must remain numerically stable."""
@@ -221,9 +229,9 @@ class TestEquationsOfMotionWithDissipation:
         )
 
         assert result.n_steps >= 2
-        assert all(np.isfinite(result.states.flatten())), (
-            "Simulation with combined friction/damping produced non-finite states"
-        )
+        assert all(
+            np.isfinite(result.states.flatten())
+        ), "Simulation with combined friction/damping produced non-finite states"
 
 
 # ---------------------------------------------------------------------------
@@ -259,7 +267,9 @@ class TestSimulationResultFrictionAccessors:
         total = friction_result.total_torques_at(idx)
         assert np.allclose(total, drive + friction)
 
-    def test_no_dissipation_zero_friction_torques(self, base_params: PendulumParams) -> None:
+    def test_no_dissipation_zero_friction_torques(
+        self, base_params: PendulumParams
+    ) -> None:
         state0 = np.array([np.radians(45), 0.0, 1.0, 0.0])
         result = run_simulation(
             params=base_params,
@@ -270,6 +280,6 @@ class TestSimulationResultFrictionAccessors:
         )
         for i in range(0, result.n_steps, 20):
             tf = result.friction_torques_at(i)
-            assert np.allclose(tf, [0.0, 0.0]), (
-                f"Expected zero friction torques at step {i}, got {tf}"
-            )
+            assert np.allclose(
+                tf, [0.0, 0.0]
+            ), f"Expected zero friction torques at step {i}, got {tf}"

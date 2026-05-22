@@ -68,7 +68,9 @@ def moment_of_force(
     """
     if joint_position is None:
         raise ValueError("joint_position must be provided")
-    r = np.asarray(distal_com_position, dtype=float) - np.asarray(joint_position, dtype=float)
+    r = np.asarray(distal_com_position, dtype=float) - np.asarray(
+        joint_position, dtype=float
+    )
     return cross_2d(r, np.asarray(net_force, dtype=float))
 
 
@@ -139,7 +141,9 @@ def double_pendulum_moments(
 
     # Shoulder: moment about arm COM
     m_shoulder = moment_of_force(shoulder, arm_com, f_shoulder)
-    total_shoulder = total_moment_at_joint(applied_torques[0], shoulder, arm_com, f_shoulder)
+    total_shoulder = total_moment_at_joint(
+        applied_torques[0], shoulder, arm_com, f_shoulder
+    )
 
     # Wrist: moment about shaft COM
     m_wrist = moment_of_force(wrist, shaft_com, f_wrist)

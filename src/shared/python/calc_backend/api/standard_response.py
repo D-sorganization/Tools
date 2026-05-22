@@ -12,7 +12,7 @@ from __future__ import annotations
 import logging
 import time
 import uuid
-from typing import Any, Generic, TypeVar
+from typing import Any, Generic, TypeVar, cast
 
 from compatibility import UTC, StrEnum
 from pydantic import BaseModel, Field
@@ -136,7 +136,7 @@ class StandardResponse(BaseModel, Generic[T]):
         by_name: bool | None = None,
     ) -> StandardResponse[T]:
         """Validate an object against this model. parameter."""
-        return super().model_validate(obj)
+        return cast("StandardResponse[T]", super().model_validate(obj))
 
 
 class StandardResponseBuilder:

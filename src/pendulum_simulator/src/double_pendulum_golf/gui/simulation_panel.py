@@ -270,7 +270,9 @@ class SimulationPanel(QWidget):
             self.controls.force_scale_changed.connect(self.pendulum.set_force_scale)
 
         # Wire real-time rotation controls (#1146)
-        if hasattr(self.controls, "tilt_changed") and hasattr(self.pendulum, "set_tilt_angle"):
+        if hasattr(self.controls, "tilt_changed") and hasattr(
+            self.pendulum, "set_tilt_angle"
+        ):
             self.controls.tilt_changed.connect(self.pendulum.set_tilt_angle)
         if hasattr(self.controls, "azimuth_changed") and hasattr(
             self.pendulum, "set_view_azimuth"
@@ -306,7 +308,9 @@ class SimulationPanel(QWidget):
             p = self.controls.get_params()
         except ValueError as e:
             logger.warning("Parameter validation failed: %s", e)
-            get_tracker().record_exception("simulation", e, context="Parameter validation")
+            get_tracker().record_exception(
+                "simulation", e, context="Parameter validation"
+            )
             QMessageBox.warning(self, "Input Error", str(e))
             return
 
@@ -327,7 +331,9 @@ class SimulationPanel(QWidget):
             torque_func = self._torque_builder(p)
         except (ValueError, TypeError, KeyError) as e:
             logger.warning("State/torque build failed: %s", e, exc_info=True)
-            get_tracker().record_exception("simulation", e, context="State/torque build")
+            get_tracker().record_exception(
+                "simulation", e, context="State/torque build"
+            )
             QMessageBox.warning(self, "Build Error", str(e))
             return
 
@@ -646,7 +652,9 @@ class SimulationPanel(QWidget):
             # Triple: split into 3 groups (shoulder, elbow, wrist)
             n_third = len(coeffs) // 3
             self.controls.inp_tau_shoulder.set_value(_fmt_coeffs(coeffs[:n_third]))
-            self.controls.inp_tau_elbow.set_value(_fmt_coeffs(coeffs[n_third : 2 * n_third]))
+            self.controls.inp_tau_elbow.set_value(
+                _fmt_coeffs(coeffs[n_third : 2 * n_third])
+            )
             self.controls.inp_tau_wrist.set_value(_fmt_coeffs(coeffs[2 * n_third :]))
             logger.info("Applied triple pendulum optimizer coefficients")
 
