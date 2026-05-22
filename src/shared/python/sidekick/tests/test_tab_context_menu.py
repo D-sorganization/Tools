@@ -25,7 +25,7 @@ class MockTabBar(QTabBar):
     def tabAt(self, pos: QPoint) -> int:
         return self._tab_at_val
 
-    def mapToGlobal(self, pos: QPoint) -> QPoint:
+    def mapToGlobal(self, pos: QPoint) -> QPoint:  # type: ignore[override]
         return self._map_to_global_val
 
 

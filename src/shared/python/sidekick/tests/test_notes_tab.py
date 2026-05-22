@@ -24,10 +24,29 @@ from sidekick.notes_tab import (
 def test_render_markdown() -> None:
     """Test mistune markdown rendering fallback and plugin config."""
     # Test with mistune forced to True and False
-    with patch("sidekick.notes_tab._MISTUNE_AVAILABLE", True):
-        res = _render_markdown("~~strike~~")
-        # should render html
-        assert "<del>" in res or "<p>" in res or "strike" in res
+    import sidekick.notes_tab
+
+    if not hasattr(sidekick.notes_tab, "mistune"):
+        # mistune wasn't imported successfully. Mock it.
+        mock_mistune = MagicMock()
+        mock_md = MagicMock(return_value="mocked_html")
+        mock_mistune.create_markdown.return_value = mock_md
+        with (
+            patch("sidekick.notes_tab._MISTUNE_AVAILABLE", True),
+            patch("sidekick.notes_tab.mistune", mock_mistune, create=True),
+        ):
+            res = _render_markdown("~~strike~~")
+            assert res == "mocked_html"
+            mock_mistune.create_markdown.assert_called_once_with(
+                plugins=["strikethrough", "table"]
+            )
+            mock_md.assert_called_once_with("~~strike~~")
+    else:
+        # mistune is actually available, so we test it for real
+        with patch("sidekick.notes_tab._MISTUNE_AVAILABLE", True):
+            res = _render_markdown("~~strike~~")
+            # should render html
+            assert "<del>" in res or "<p>" in res or "strike" in res
 
     with patch("sidekick.notes_tab._MISTUNE_AVAILABLE", False):
         res = _render_markdown("~~strike~~")

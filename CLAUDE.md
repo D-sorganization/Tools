@@ -50,6 +50,7 @@ python3 -m pytest -m dwsim                        # DWSIM integration tests
 6. pytest with **10% coverage minimum**, must not regress on touched files
 7. No `print()` in `src/` — use logging
 8. No TODO/FIXME unless tied to a tracked GitHub issue
+9. **Sidekick Per-File Coverage:** Every sidekick module under `src/shared/python/sidekick/` (specifically the six target modules: `latex_renderer.py`, `notes_store.py`, `notes_tab.py`, `selected_tab_panel.py`, `tab_context_menu.py`, `symbolic_engine.py` plus any modified sidekick files) must maintain at least **50% per-file coverage**.
 
 ## Test Markers (13 Total)
 
