@@ -560,9 +560,9 @@ class CalculatorStateMixin:
             if isinstance(widget, QTableWidget):
                 return self.get_table_text(widget)
             if isinstance(widget, QTextEdit):
-                return widget.toPlainText()
+                return str(widget.toPlainText())  # Qt stubs return Any
             if isinstance(widget, QLabel):
-                return widget.text()
+                return str(widget.text())  # Qt stubs return Any
             if hasattr(widget, "text"):
                 return str(widget.text())
             if hasattr(widget, "toPlainText"):
