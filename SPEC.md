@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST UPDATED: 2026-05-20
+  LAST UPDATED: 2026-05-22
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -933,6 +933,11 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 9. Changelog
 
+### Version 1.1.190
+
+- **Performance**: In `src/ode_solver/web/src/components/ODESolverCalculator.tsx`, wrapped `varNames` computation and summary cards rendering in `useMemo`, and replaced `.filter()` with a single-pass `for` loop to prevent O(N) recalculations of array keys and summary min/max loops on every React render.
+
+- **2026-05-22**: Memoize summary statistics calculation and variable names in ODESolverCalculator.
 - **2026-05-20**: Suppress shared chat dock WebSocket reconnect scheduling during intentional widget close while retaining reconnects for unexpected disconnects.
 - **2026-05-20**: Add accessible toggle states and toast feedback for copy actions in `calculator/static/app.js` and `calculator/templates/index.html`.
 - **2026-05-20**: Harden health-check API responses to return generic client-facing errors while logging exception details server-side.
