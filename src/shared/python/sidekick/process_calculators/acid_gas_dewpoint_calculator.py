@@ -100,6 +100,8 @@ try:
     GUI_AVAILABLE = True
 except ImportError:
     GUI_AVAILABLE = False
+    if not TYPE_CHECKING:
+        QWidget = object
 
 # Import BaseCalculatorWidget for state management
 try:

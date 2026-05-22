@@ -49,7 +49,10 @@ try:
     )
 except ImportError:
 
-    def validate_gas_composition(comp: dict, auto_normalize: bool = False) -> dict:
+    def validate_gas_composition(
+        comp: dict[str, float],
+        auto_normalize: bool = False,
+    ) -> dict[str, float]:
         """Simple validation and normalization fallback."""
         if not comp:
             raise ValueError("Empty composition")
@@ -95,7 +98,7 @@ except ImportError:
         def get_species(self, species: str) -> _SpeciesData | None:
             return _SPECIES_TABLE.get(species)
 
-    def get_species_database() -> Any:
+    def get_species_database() -> _MinimalSpeciesDB:
         return _MinimalSpeciesDB()
 
 
