@@ -84,7 +84,7 @@ try:
     GUI_AVAILABLE = True
 except ImportError:
     GUI_AVAILABLE = False
-    QWidget = object  # type: ignore[assignment,misc]
+    QWidget = object
 
 # Import BaseCalculatorWidget for state management
 try:

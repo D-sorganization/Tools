@@ -70,14 +70,17 @@ try:
     HAS_PYQT = True
 except ImportError:
     HAS_PYQT = False
-    QWidget = object  # type: ignore[assignment,misc]
-    QThread = object  # type: ignore[assignment,misc]
+    QWidget = object
+    QThread = object
 
-    def pyqtSignal(*args, **kwargs):
+    def pyqtSignal(*args: Any, **kwargs: Any) -> None:
         return None
 
-    def pyqtSlot(*args, **kwargs):
-        return lambda f: f
+    def pyqtSlot(*args: Any, **kwargs: Any) -> Any:
+        def decorator(func: Any) -> Any:
+            return func
+
+        return decorator
 
 
 try:
@@ -104,20 +107,20 @@ def _setup_matplotlib_backend() -> None:
             mpl.use("Agg")
 
 
-def _get_figure_canvas_class() -> type:
+def _get_figure_canvas_class() -> type[Any]:
     """Lazily load FigureCanvas to prevent matplotlib backend hang at import."""
     try:
         from matplotlib.backends.backend_qtagg import (
             FigureCanvasQTAgg as FigureCanvas,
         )
 
-        return FigureCanvas
+        return cast(type[Any], FigureCanvas)
     except ImportError:
-        from matplotlib.backends.backend_agg import (  # type: ignore[assignment]
+        from matplotlib.backends.backend_agg import (
             FigureCanvasAgg as FigureCanvas,
         )
 
-        return FigureCanvas
+        return cast(type[Any], FigureCanvas)
 
 
 if TYPE_CHECKING:
@@ -128,17 +131,23 @@ if TYPE_CHECKING:
 
 
 # Import BaseCalculatorWidget for state management
+BaseCalculatorWidget: type[Any]
 try:
-    from ..ui.widgets.base_calculator_widget import BaseCalculatorWidget
+    from ..ui.widgets.base_calculator_widget import (
+        BaseCalculatorWidget as _ImportedBaseCalculatorWidget,
+    )
 
+    BaseCalculatorWidget = _ImportedBaseCalculatorWidget
     BASE_CALCULATOR_AVAILABLE = True
 except ImportError:
     BASE_CALCULATOR_AVAILABLE = False
 
     # Fallback to QWidget if BaseCalculatorWidget is not available
-    class BaseCalculatorWidget(QWidget):  # type: ignore[attr-defined]
+    class _FallbackBaseCalculatorWidget(QWidget):
         def __init__(self, *args: Any, **kwargs: Any) -> None:
             QWidget.__init__(self, *args, **kwargs)
+
+    BaseCalculatorWidget = _FallbackBaseCalculatorWidget
 
 
 # Import species database with fallback
