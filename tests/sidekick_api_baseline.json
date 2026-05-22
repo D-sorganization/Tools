@@ -1,0 +1,651 @@
+{
+  "bootstrap.py": {
+    "__all__": ["ensure_paths"],
+    "symbols": {
+      "ensure_paths": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "repo_root",
+              "annotation": "Path | str | None",
+              "default": "None",
+              "kind": "arg"
+            }
+          ],
+          "returns": "Path"
+        }
+      }
+    }
+  },
+  "latex_renderer.py": {
+    "__all__": [
+      "LatexRenderError",
+      "is_latex_ready",
+      "is_qt_available",
+      "render_expr_label",
+      "render_latex_label"
+    ],
+    "symbols": {
+      "LatexRenderError": {
+        "type": "class",
+        "info": {
+          "bases": ["RuntimeError"],
+          "methods": {}
+        }
+      },
+      "is_latex_ready": {
+        "type": "function",
+        "signature": {
+          "args": [],
+          "returns": "bool"
+        }
+      },
+      "is_qt_available": {
+        "type": "function",
+        "signature": {
+          "args": [],
+          "returns": "bool"
+        }
+      },
+      "render_expr_label": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "expr_str",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "parent",
+              "annotation": "Any",
+              "default": "None",
+              "kind": "kwonlyarg"
+            }
+          ],
+          "returns": "Any"
+        }
+      },
+      "render_latex_label": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "latex_str",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "parent",
+              "annotation": "Any",
+              "default": "None",
+              "kind": "kwonlyarg"
+            }
+          ],
+          "returns": "Any"
+        }
+      }
+    }
+  },
+  "notes_store.py": {
+    "__all__": ["SidekickNotesStore"],
+    "symbols": {
+      "SidekickNotesStore": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "project_root",
+                  "annotation": "Path | str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "create_note": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "title",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "body",
+                  "annotation": "str",
+                  "default": "''",
+                  "kind": "arg"
+                },
+                {
+                  "name": "color",
+                  "annotation": "str",
+                  "default": "DEFAULT_NOTE_COLOR",
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "NoteCard"
+            },
+            "update_note": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "note_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "title",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "body",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "color",
+                  "annotation": "str",
+                  "default": "DEFAULT_NOTE_COLOR",
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "NoteCard"
+            },
+            "list_notes": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "list[NoteCard]"
+            },
+            "load_note": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "note_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "NoteCard | None"
+            },
+            "delete_note": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "note_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            }
+          }
+        }
+      }
+    }
+  },
+  "notes_tab.py": {
+    "__all__": ["NotesTab"],
+    "symbols": {
+      "NotesTab": {
+        "type": "class",
+        "info": {
+          "bases": ["QWidget"],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "project_root",
+                  "annotation": "Path | str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "parent",
+                  "annotation": "QWidget | None",
+                  "default": "None",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "refresh": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "note_ids": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "list[str]"
+            }
+          }
+        }
+      }
+    }
+  },
+  "selected_tab_panel.py": {
+    "__all__": [
+      "SIDEKICK_TAB_SETTINGS_BUTTON_OBJECT_NAME",
+      "TabSettingsMixin",
+      "build_tab_settings_dialog",
+      "build_tab_settings_toolbar"
+    ],
+    "symbols": {
+      "SIDEKICK_TAB_SETTINGS_BUTTON_OBJECT_NAME": {
+        "type": "variable"
+      },
+      "TabSettingsMixin": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "active_tab_id": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "tab_display_name": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "tab_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "register_settings_button": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "button",
+                  "annotation": "QtWidgets.QToolButton",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "tab_settings": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "tab_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "update_tab_settings": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "tab_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "values",
+                  "annotation": "dict[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "open_active_tab_settings": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            },
+            "open_configure_tabs": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      },
+      "build_tab_settings_dialog": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "sidebar",
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "tab_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "content",
+              "annotation": "QtWidgets.QWidget | None",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "QtWidgets.QDialog"
+        }
+      },
+      "build_tab_settings_toolbar": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "sidebar",
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "QtWidgets.QToolBar"
+        }
+      }
+    }
+  },
+  "symbolic_engine.py": {
+    "__all__": [
+      "SymbolicEngineError",
+      "is_sympy_available",
+      "symbolic_diff",
+      "symbolic_expand",
+      "symbolic_integrate",
+      "symbolic_simplify",
+      "symbolic_solve",
+      "symbolic_to_latex"
+    ],
+    "symbols": {
+      "SymbolicEngineError": {
+        "type": "class",
+        "info": {
+          "bases": ["RuntimeError"],
+          "methods": {}
+        }
+      },
+      "is_sympy_available": {
+        "type": "function",
+        "signature": {
+          "args": [],
+          "returns": "bool"
+        }
+      },
+      "symbolic_diff": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "expr_str",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "symbol",
+              "annotation": "str",
+              "default": "'x'",
+              "kind": "arg"
+            },
+            {
+              "name": "order",
+              "annotation": "int",
+              "default": "1",
+              "kind": "arg"
+            }
+          ],
+          "returns": "str"
+        }
+      },
+      "symbolic_expand": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "expr_str",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "str"
+        }
+      },
+      "symbolic_integrate": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "expr_str",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "symbol",
+              "annotation": "str",
+              "default": "'x'",
+              "kind": "arg"
+            },
+            {
+              "name": "lower",
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "kwonlyarg"
+            },
+            {
+              "name": "upper",
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "kwonlyarg"
+            }
+          ],
+          "returns": "str"
+        }
+      },
+      "symbolic_simplify": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "expr_str",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "str"
+        }
+      },
+      "symbolic_solve": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "expr_str",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "symbol",
+              "annotation": "str",
+              "default": "'x'",
+              "kind": "arg"
+            }
+          ],
+          "returns": "list[str]"
+        }
+      },
+      "symbolic_to_latex": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "expr_str",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "str"
+        }
+      }
+    }
+  },
+  "tab_context_menu.py": {
+    "__all__": ["build_tab_context_menu", "show_tab_context_menu"],
+    "symbols": {
+      "build_tab_context_menu": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "sidebar",
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "tab_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "QtWidgets.QMenu"
+        }
+      },
+      "show_tab_context_menu": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "sidebar",
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "pos",
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "None"
+        }
+      }
+    }
+  }
+}
