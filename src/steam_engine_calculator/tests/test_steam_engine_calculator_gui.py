@@ -25,7 +25,7 @@ class TestSteamEngineCalculatorMainWindow:
         import types
 
         mock_base_module = types.ModuleType(
-            "upstream_drift_tools.ui.widgets.base_calculator_widget"
+            "sidekick.ui.widgets.base_calculator_widget"
         )
         mock_base_module.BaseCalculatorWindow = MagicMock
 
@@ -40,6 +40,10 @@ class TestSteamEngineCalculatorMainWindow:
                 "upstream_drift_tools.ui": MagicMock(),
                 "upstream_drift_tools.ui.widgets": MagicMock(),
                 "upstream_drift_tools.ui.widgets.base_calculator_widget": mock_base_module,
+                "sidekick": MagicMock(),
+                "sidekick.ui": MagicMock(),
+                "sidekick.ui.widgets": MagicMock(),
+                "sidekick.ui.widgets.base_calculator_widget": mock_base_module,
                 "shared": MagicMock(),
                 "shared.python": MagicMock(),
                 "shared.python.theme": MagicMock(),
@@ -316,7 +320,7 @@ class TestSteamEngineCalculatorDbCLoD:
 
         # Patch base class to avoid Qt dependency
         mock_base_module = types.ModuleType(
-            "upstream_drift_tools.ui.widgets.base_calculator_widget"
+            "sidekick.ui.widgets.base_calculator_widget"
         )
         mock_base_module.BaseCalculatorWindow = MagicMock
 
@@ -331,6 +335,10 @@ class TestSteamEngineCalculatorDbCLoD:
                 "upstream_drift_tools.ui": MagicMock(),
                 "upstream_drift_tools.ui.widgets": MagicMock(),
                 "upstream_drift_tools.ui.widgets.base_calculator_widget": mock_base_module,
+                "sidekick": MagicMock(),
+                "sidekick.ui": MagicMock(),
+                "sidekick.ui.widgets": MagicMock(),
+                "sidekick.ui.widgets.base_calculator_widget": mock_base_module,
                 "shared": MagicMock(),
                 "shared.python": MagicMock(),
                 "shared.python.theme": MagicMock(),

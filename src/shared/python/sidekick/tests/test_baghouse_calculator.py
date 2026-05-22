@@ -294,7 +294,7 @@ class TestBaghouseCalculate:
     def test_negative_gas_flow_raises(self):
         """Line 351: gas_flow <= 0 → AssertionError."""
         calc = _calc()
-        with pytest.raises(AssertionError, match="Gas flow must be positive"):
+        with pytest.raises(AssertionError, match="gas_flow_kg_s must be positive"):
             calc.calculate(
                 gas_flow_kg_s=-1.0,
                 inlet_temp_k=700.0,
@@ -314,7 +314,7 @@ class TestBaghouseCalculate:
         """Lines 354-359: efficiency > 1 → AssertionError."""
         calc = _calc()
         with pytest.raises(
-            AssertionError, match="Carbon removal efficiency must be 0-1"
+            AssertionError, match="carbon_removal_efficiency must be in"
         ):
             calc.calculate(
                 gas_flow_kg_s=1.0,

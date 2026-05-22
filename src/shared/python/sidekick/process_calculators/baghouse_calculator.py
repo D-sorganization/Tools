@@ -366,7 +366,11 @@ class BaghouseCalculator:
         )
         require_positive(drum_volume_m3, "drum_volume_m3")
         require_positive(solid_density_kg_m3, "solid_density_kg_m3")
-        require_positive(bag_area_ft2, "bag_area_ft2")
+        require(
+            bag_area_ft2 >= 0,
+            "bag_area_ft2 must be non-negative",
+            bag_area_ft2,
+        )
 
         outlet_temp_c, flow_acfm, flow_scfm = self._calculate_outlet_thermal(
             gas_flow_kg_s,

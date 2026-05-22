@@ -85,12 +85,13 @@ class TestPressureDrop:
         r = client.post("/api/calc/pressure-drop", json=self._payload())
         assert r.status_code == 200
         body = r.json()
-        assert body["pressure_drop_pa"] >= 0
-        assert body["reynolds_number"] > 4000  # turbulent
-        assert body["flow_regime"] == "Turbulent"
-        assert body["friction_factor"] > 0
-        assert body["velocity_m_s"] > 0
-        assert body["density_kg_m3"] > 0
+        data = body.get("data", body)  # unwrap StandardResponse if present
+        assert data["pressure_drop_pa"] >= 0
+        assert data["reynolds_number"] > 4000  # turbulent
+        assert data["flow_regime"] == "Turbulent"
+        assert data["friction_factor"] > 0
+        assert data["velocity_m_s"] > 0
+        assert data["density_kg_m3"] > 0
 
     def test_laminar_flow(self, client: TestClient) -> Any:
         # Very small flow rate → laminar
@@ -100,7 +101,8 @@ class TestPressureDrop:
         )
         assert r.status_code == 200
         body = r.json()
-        assert body["flow_regime"] == "Laminar"
+        data = body.get("data", body)  # unwrap StandardResponse if present
+        assert data["flow_regime"] == "Laminar"
 
     def test_transitional_flow(self, client: TestClient) -> Any:
         # Re ≈ 2300-4000 → transitional
@@ -110,12 +112,14 @@ class TestPressureDrop:
         )
         assert r.status_code == 200
         body = r.json()
+        data = body.get("data", body)  # unwrap StandardResponse if present
         # Could be laminar or transitional depending on exact Re; just check shape.
-        assert body["flow_regime"] in {"Laminar", "Transitional", "Turbulent"}
+        assert data["flow_regime"] in {"Laminar", "Transitional", "Turbulent"}
 
     def test_response_contains_all_fields(self, client: TestClient) -> Any:
         r = client.post("/api/calc/pressure-drop", json=self._payload())
         body = r.json()
+        data = body.get("data", body)  # unwrap StandardResponse if present
         required = {
             "pressure_drop_pa",
             "reynolds_number",
@@ -125,7 +129,7 @@ class TestPressureDrop:
             "density_kg_m3",
             "viscosity_pa_s",
         }
-        assert required <= body.keys()
+        assert required <= data.keys()
 
     def test_invalid_payload_missing_field(self, client: TestClient) -> Any:
         payload = self._payload()
@@ -148,6 +152,7 @@ class TestPressureDrop:
         r = client.post("/api/calc/pressure-drop", json=payload)
         assert r.status_code == 200
         body = r.json()
+        data = body.get("data", body)  # unwrap StandardResponse if present
 
         calculator = PressureDropCalculator()
         direct = calculator.calculate_pressure_drop(
@@ -161,18 +166,18 @@ class TestPressureDrop:
         )
 
         assert (
-            pytest.approx(body["pressure_drop_pa"], rel=1e-9) == direct.pressure_drop_pa
+            pytest.approx(data["pressure_drop_pa"], rel=1e-9) == direct.pressure_drop_pa
         )
         assert (
-            pytest.approx(body["reynolds_number"], rel=1e-9) == direct.reynolds_number
+            pytest.approx(data["reynolds_number"], rel=1e-9) == direct.reynolds_number
         )
         assert (
-            pytest.approx(body["friction_factor"], rel=1e-9) == direct.friction_factor
+            pytest.approx(data["friction_factor"], rel=1e-9) == direct.friction_factor
         )
-        assert pytest.approx(body["velocity_m_s"], rel=1e-9) == direct.velocity
-        assert body["flow_regime"] == direct.flow_regime
-        assert pytest.approx(body["density_kg_m3"], rel=1e-9) == direct.density
-        assert pytest.approx(body["viscosity_pa_s"], rel=1e-9) == direct.viscosity
+        assert pytest.approx(data["velocity_m_s"], rel=1e-9) == direct.velocity
+        assert data["flow_regime"] == direct.flow_regime
+        assert pytest.approx(data["density_kg_m3"], rel=1e-9) == direct.density
+        assert pytest.approx(data["viscosity_pa_s"], rel=1e-9) == direct.viscosity
 
 
 # ──────────────────────────────────────────────────────────────────────────────

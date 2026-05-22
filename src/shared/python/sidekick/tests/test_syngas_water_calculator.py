@@ -217,7 +217,7 @@ class TestConvenienceFunctions:
         )
 
         with patch(
-            "upstream_drift_tools.process_calculators.syngas_water_calculator.SyngasWaterCalculator.calculate_water_content",
+            "sidekick.process_calculators.syngas_water_calculator.SyngasWaterCalculator.calculate_water_content",
             return_value=mock_result,
         ):
             result = estimate_condensation_risk(20.0, 1.0)
