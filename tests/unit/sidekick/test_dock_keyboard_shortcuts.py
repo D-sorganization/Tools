@@ -8,10 +8,19 @@ Import strategy: uses the same sidekick-shadow eviction as
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
 import pytest
+
+pytestmark = pytest.mark.serial
+
+if sys.platform == "win32" and os.environ.get("PYTEST_XDIST_WORKER"):
+    pytest.skip(
+        "Qt dock keyboard shortcut tests run serially on Windows.",
+        allow_module_level=True,
+    )
 
 pytest.importorskip("PyQt6")
 
@@ -46,10 +55,11 @@ def _get_sidebar_class():
     return UnifiedToolsSidebar, QtWidgets
 
 
-def _make_sidebar(tmp_path):
+def _make_sidebar(tmp_path, qtbot):
     UnifiedToolsSidebar, QtWidgets = _get_sidebar_class()
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
     win = QtWidgets.QMainWindow()
+    qtbot.addWidget(win)
     sidebar = UnifiedToolsSidebar(project_root=tmp_path, parent=win)
     sidebar.install_as_dock(win, title="Sidekick")
     sidebar.register_shortcuts(win)
@@ -65,25 +75,25 @@ def _make_sidebar(tmp_path):
 # *logic* wired to the shortcut.
 
 
-def test_ctrl_b_toggles_dock_visibility(tmp_path):
-    sidebar, win, _ = _make_sidebar(tmp_path)
+def test_ctrl_b_toggles_dock_visibility(tmp_path, qtbot):
+    sidebar, win, _ = _make_sidebar(tmp_path, qtbot)
     was_visible = sidebar.dock.isVisible()
     sidebar.toggle_visibility()  # Ctrl+B calls this
     assert sidebar.dock.isVisible() != was_visible
 
 
-def test_ctrl_b_twice_restores_visibility(tmp_path):
-    sidebar, win, _ = _make_sidebar(tmp_path)
+def test_ctrl_b_twice_restores_visibility(tmp_path, qtbot):
+    sidebar, win, _ = _make_sidebar(tmp_path, qtbot)
     was_visible = sidebar.dock.isVisible()
     sidebar.toggle_visibility()
     sidebar.toggle_visibility()
     assert sidebar.dock.isVisible() == was_visible
 
 
-def test_ctrl_b_shortcut_is_registered(tmp_path):
+def test_ctrl_b_shortcut_is_registered(tmp_path, qtbot):
     """Ctrl+B shortcut is wired to toggle_visibility on the main window."""
 
-    sidebar, win, _ = _make_sidebar(tmp_path)
+    sidebar, win, _ = _make_sidebar(tmp_path, qtbot)
     win.findChildren(type(None).__class__, "")
     # Verify register_shortcuts created QShortcut objects bound to Ctrl+B
     from PyQt6.QtGui import QShortcut
@@ -96,26 +106,26 @@ def test_ctrl_b_shortcut_is_registered(tmp_path):
 # ── Ctrl+Shift+B — toggle collapse ──────────────────────────────────────────
 
 
-def test_ctrl_shift_b_toggles_collapse(tmp_path):
-    sidebar, win, _ = _make_sidebar(tmp_path)
+def test_ctrl_shift_b_toggles_collapse(tmp_path, qtbot):
+    sidebar, win, _ = _make_sidebar(tmp_path, qtbot)
     was_collapsed = sidebar.is_collapsed()
     sidebar.toggle_collapsed()  # Ctrl+Shift+B calls this
     assert sidebar.is_collapsed() != was_collapsed
 
 
-def test_ctrl_shift_b_twice_restores_collapsed(tmp_path):
-    sidebar, win, _ = _make_sidebar(tmp_path)
+def test_ctrl_shift_b_twice_restores_collapsed(tmp_path, qtbot):
+    sidebar, win, _ = _make_sidebar(tmp_path, qtbot)
     was_collapsed = sidebar.is_collapsed()
     sidebar.toggle_collapsed()
     sidebar.toggle_collapsed()
     assert sidebar.is_collapsed() == was_collapsed
 
 
-def test_ctrl_shift_b_shortcut_is_registered(tmp_path):
+def test_ctrl_shift_b_shortcut_is_registered(tmp_path, qtbot):
     """Ctrl+Shift+B shortcut is wired to toggle_collapsed on the main window."""
     from PyQt6.QtGui import QShortcut
 
-    sidebar, win, _ = _make_sidebar(tmp_path)
+    sidebar, win, _ = _make_sidebar(tmp_path, qtbot)
     all_shortcuts = win.findChildren(QShortcut)
     sequences = [sc.key().toString() for sc in all_shortcuts]
     assert "Ctrl+Shift+B" in sequences
@@ -124,13 +134,13 @@ def test_ctrl_shift_b_shortcut_is_registered(tmp_path):
 # ── Esc in chat-input must not hide dock ────────────────────────────────────
 
 
-def test_esc_in_chat_input_does_not_hide_dock(tmp_path):
+def test_esc_in_chat_input_does_not_hide_dock(tmp_path, qtbot):
     """Pressing Escape in a plain text edit must leave the dock visible."""
     from PyQt6 import QtCore
     from PyQt6.QtTest import QTest
     from PyQt6.QtWidgets import QPlainTextEdit
 
-    sidebar, win, _ = _make_sidebar(tmp_path)
+    sidebar, win, _ = _make_sidebar(tmp_path, qtbot)
     # Create a simple chat-input-like widget and add it to the sidebar
     chat_input = QPlainTextEdit(sidebar)
     chat_input.setObjectName("sidekick-chat-input")

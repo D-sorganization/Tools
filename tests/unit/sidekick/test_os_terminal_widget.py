@@ -2,9 +2,19 @@
 
 from __future__ import annotations
 
+import os
+import sys
 from pathlib import Path
 
 import pytest
+
+pytestmark = pytest.mark.serial
+
+if sys.platform == "win32" and os.environ.get("PYTEST_XDIST_WORKER"):
+    pytest.skip(
+        "Qt terminal widget tests run serially on Windows.",
+        allow_module_level=True,
+    )
 
 
 @pytest.fixture
@@ -28,7 +38,7 @@ def _make_descriptor(identifier: str = "bash"):  # noqa: ANN202
     )
 
 
-def test_widget_shows_cwd_label(qt_app, tmp_path: Path) -> None:  # noqa: ANN001
+def test_widget_shows_cwd_label(qt_app, tmp_path: Path, qtbot) -> None:  # noqa: ANN001
     """The widget exposes a cwd label initialised to the starting directory."""
     from upstream_drift_tools.ui.tools_sidebar.os_terminal import (
         SidekickOsTerminalWidget,
@@ -40,6 +50,7 @@ def test_widget_shows_cwd_label(qt_app, tmp_path: Path) -> None:  # noqa: ANN001
         shells=[_make_descriptor("bash")],
         autostart=False,
     )
+    qtbot.addWidget(widget)
     label = widget.findChild(QtWidgets.QLabel, "SidekickOsTerminalCwd")
     assert label is not None
     assert str(tmp_path) in label.text()
@@ -48,6 +59,7 @@ def test_widget_shows_cwd_label(qt_app, tmp_path: Path) -> None:  # noqa: ANN001
 def test_widget_shell_dropdown_lists_discovered_shells(
     qt_app,  # noqa: ANN001
     tmp_path: Path,
+    qtbot,
 ) -> None:
     """The shell selector exposes every discovered descriptor."""
     from upstream_drift_tools.ui.tools_sidebar.os_terminal import (
@@ -61,6 +73,7 @@ def test_widget_shell_dropdown_lists_discovered_shells(
         shells=shells,
         autostart=False,
     )
+    qtbot.addWidget(widget)
     combo = widget.findChild(QtWidgets.QComboBox, "SidekickOsTerminalShellSelector")
     assert combo is not None
     items = [combo.itemText(i) for i in range(combo.count())]
@@ -68,7 +81,7 @@ def test_widget_shell_dropdown_lists_discovered_shells(
     assert "zsh" in items
 
 
-def test_widget_updates_cwd_on_osc7(qt_app, tmp_path: Path) -> None:  # noqa: ANN001
+def test_widget_updates_cwd_on_osc7(qt_app, tmp_path: Path, qtbot) -> None:  # noqa: ANN001
     """OSC 7 sequences update the live cwd label via a single slot."""
     from upstream_drift_tools.ui.tools_sidebar.os_terminal import (
         SidekickOsTerminalWidget,
@@ -80,6 +93,7 @@ def test_widget_updates_cwd_on_osc7(qt_app, tmp_path: Path) -> None:  # noqa: AN
         shells=[_make_descriptor("bash")],
         autostart=False,
     )
+    qtbot.addWidget(widget)
     other = tmp_path / "subdir"
     other.mkdir()
 
@@ -94,6 +108,7 @@ def test_widget_shows_install_hint_when_no_backend_available(
     qt_app,  # noqa: ANN001
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
+    qtbot,
 ) -> None:
     """When PTY libraries are missing the widget shows a labelled fallback."""
     from upstream_drift_tools.ui.tools_sidebar import os_terminal
@@ -110,6 +125,7 @@ def test_widget_shows_install_hint_when_no_backend_available(
         shells=[_make_descriptor("bash")],
         autostart=True,
     )
+    qtbot.addWidget(widget)
 
     from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
 
@@ -122,6 +138,7 @@ def test_widget_switching_shell_terminates_previous(
     qt_app,  # noqa: ANN001
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
+    qtbot,
 ) -> None:
     """Selecting a different shell stops the current backend before starting."""
     from upstream_drift_tools.ui.tools_sidebar import os_terminal
@@ -166,6 +183,7 @@ def test_widget_switching_shell_terminates_previous(
         shells=shells,
         autostart=True,
     )
+    qtbot.addWidget(widget)
     assert started == ["/usr/bin/bash"]
 
     widget.switch_shell("zsh")
@@ -177,6 +195,7 @@ def test_widget_resets_cwd_on_shell_switch(
     qt_app,  # noqa: ANN001
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
+    qtbot,
 ) -> None:
     """Switching shells resets the cwd label to the project root."""
     from upstream_drift_tools.ui.tools_sidebar import os_terminal
@@ -214,6 +233,7 @@ def test_widget_resets_cwd_on_shell_switch(
         shells=shells,
         autostart=True,
     )
+    qtbot.addWidget(widget)
 
     # Simulate a cwd change away from the project root.
     other = tmp_path / "child"

@@ -8,9 +8,19 @@ terminal claims the original ``terminal`` tab id.
 
 from __future__ import annotations
 
+import os
+import sys
 from pathlib import Path
 
 import pytest
+
+pytestmark = pytest.mark.serial
+
+if sys.platform == "win32" and os.environ.get("PYTEST_XDIST_WORKER"):
+    pytest.skip(
+        "Qt renamed REPL tests run serially on Windows.",
+        allow_module_level=True,
+    )
 
 
 def test_python_repl_widget_is_renamed_export() -> None:
@@ -22,7 +32,7 @@ def test_python_repl_widget_is_renamed_export() -> None:
     assert SidekickPythonReplWidget.__name__ == "SidekickPythonReplWidget"
 
 
-def test_python_repl_widget_evaluates_python(tmp_path: Path) -> None:
+def test_python_repl_widget_evaluates_python(tmp_path: Path, qtbot) -> None:
     """The renamed widget still evaluates Python and exports variables."""
     try:
         from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
@@ -34,6 +44,7 @@ def test_python_repl_widget_evaluates_python(tmp_path: Path) -> None:
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
     _ = app
     sidebar = UnifiedToolsSidebar(project_root=tmp_path)
+    qtbot.addWidget(sidebar)
 
     assert sidebar.set_active_tab("python_repl") is True
     repl = sidebar.tabs.currentWidget()
@@ -51,7 +62,7 @@ def test_python_repl_widget_evaluates_python(tmp_path: Path) -> None:
     assert sidebar.registry.get("answer") == 42
 
 
-def test_terminal_tab_id_now_hosts_os_terminal(tmp_path: Path) -> None:
+def test_terminal_tab_id_now_hosts_os_terminal(tmp_path: Path, qtbot) -> None:
     """The ``terminal`` tab id now hosts the new OS terminal widget."""
     try:
         from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
@@ -63,6 +74,7 @@ def test_terminal_tab_id_now_hosts_os_terminal(tmp_path: Path) -> None:
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
     _ = app
     sidebar = UnifiedToolsSidebar(project_root=tmp_path)
+    qtbot.addWidget(sidebar)
 
     assert sidebar.set_active_tab("terminal") is True
     terminal = sidebar.tabs.currentWidget()

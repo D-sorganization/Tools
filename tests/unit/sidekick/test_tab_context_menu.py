@@ -12,12 +12,19 @@ TDD: these tests verify the acceptance criteria from issue #2929.
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
 import pytest
 
-pytestmark = pytest.mark.unit
+pytestmark = pytest.mark.serial
+
+if sys.platform == "win32" and os.environ.get("PYTEST_XDIST_WORKER"):
+    pytest.skip(
+        "Qt tab context menu tests run serially on Windows.",
+        allow_module_level=True,
+    )
 
 pytest.importorskip("PyQt6")
 
@@ -79,7 +86,7 @@ def test_selected_tab_panel_module_exists() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _make_sidebar_with_popout_tab(tmp_path: Path):  # type: ignore[return]
+def _make_sidebar_with_popout_tab(tmp_path: Path, qtbot):  # type: ignore[return]
     """Return (sidebar, tab_id, win, app) for a sidebar with one popout-capable tab."""
     _fix_sidekick_import()
     from PyQt6 import QtWidgets
@@ -88,6 +95,7 @@ def _make_sidebar_with_popout_tab(tmp_path: Path):  # type: ignore[return]
 
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
     win = QtWidgets.QMainWindow()
+    qtbot.addWidget(win)
     tab_def = SidebarTabDefinition(
         tab_id="ctx_test_tab",
         title="CtxTest",
@@ -105,58 +113,63 @@ def _make_sidebar_with_popout_tab(tmp_path: Path):  # type: ignore[return]
     return sidebar, "ctx_test_tab", win, app
 
 
-def test_context_menu_has_rename_action(tmp_path: Path) -> None:
+def test_context_menu_has_rename_action(tmp_path: Path, qtbot) -> None:
     """Context menu for a tab includes a Rename action."""
     _fix_sidekick_import()
     from sidekick.ui.tools_sidebar.tab_context_menu import build_tab_context_menu
 
-    sidebar, tab_id, win, _ = _make_sidebar_with_popout_tab(tmp_path)
+    sidebar, tab_id, win, _ = _make_sidebar_with_popout_tab(tmp_path, qtbot)
     menu = build_tab_context_menu(sidebar, tab_id)
+    qtbot.addWidget(menu)
     action_texts = {a.text() for a in menu.actions() if a.text()}
     assert "Rename" in action_texts, f"Expected 'Rename' in {action_texts}"
 
 
-def test_context_menu_has_close_action(tmp_path: Path) -> None:
+def test_context_menu_has_close_action(tmp_path: Path, qtbot) -> None:
     """Context menu for a tab includes a Close action."""
     _fix_sidekick_import()
     from sidekick.ui.tools_sidebar.tab_context_menu import build_tab_context_menu
 
-    sidebar, tab_id, win, _ = _make_sidebar_with_popout_tab(tmp_path)
+    sidebar, tab_id, win, _ = _make_sidebar_with_popout_tab(tmp_path, qtbot)
     menu = build_tab_context_menu(sidebar, tab_id)
+    qtbot.addWidget(menu)
     action_texts = {a.text() for a in menu.actions() if a.text()}
     assert "Close" in action_texts, f"Expected 'Close' in {action_texts}"
 
 
-def test_context_menu_has_pop_out_action(tmp_path: Path) -> None:
+def test_context_menu_has_pop_out_action(tmp_path: Path, qtbot) -> None:
     """Context menu for a popout-enabled tab includes a Pop Out action."""
     _fix_sidekick_import()
     from sidekick.ui.tools_sidebar.tab_context_menu import build_tab_context_menu
 
-    sidebar, tab_id, win, _ = _make_sidebar_with_popout_tab(tmp_path)
+    sidebar, tab_id, win, _ = _make_sidebar_with_popout_tab(tmp_path, qtbot)
     menu = build_tab_context_menu(sidebar, tab_id)
+    qtbot.addWidget(menu)
     action_texts = {a.text() for a in menu.actions() if a.text()}
     # Pop Out is the "redock" affordance for popping tabs out
     assert "Pop Out" in action_texts, f"Expected 'Pop Out' in {action_texts}"
 
 
-def test_context_menu_has_duplicate_action(tmp_path: Path) -> None:
+def test_context_menu_has_duplicate_action(tmp_path: Path, qtbot) -> None:
     """Context menu for a duplicate-enabled tab includes a Duplicate action."""
     _fix_sidekick_import()
     from sidekick.ui.tools_sidebar.tab_context_menu import build_tab_context_menu
 
-    sidebar, tab_id, win, _ = _make_sidebar_with_popout_tab(tmp_path)
+    sidebar, tab_id, win, _ = _make_sidebar_with_popout_tab(tmp_path, qtbot)
     menu = build_tab_context_menu(sidebar, tab_id)
+    qtbot.addWidget(menu)
     action_texts = {a.text() for a in menu.actions() if a.text()}
     assert "Duplicate" in action_texts, f"Expected 'Duplicate' in {action_texts}"
 
 
-def test_context_menu_has_minimize_action(tmp_path: Path) -> None:
+def test_context_menu_has_minimize_action(tmp_path: Path, qtbot) -> None:
     """Context menu includes a Minimize Sidebar action."""
     _fix_sidekick_import()
     from sidekick.ui.tools_sidebar.tab_context_menu import build_tab_context_menu
 
-    sidebar, tab_id, win, _ = _make_sidebar_with_popout_tab(tmp_path)
+    sidebar, tab_id, win, _ = _make_sidebar_with_popout_tab(tmp_path, qtbot)
     menu = build_tab_context_menu(sidebar, tab_id)
+    qtbot.addWidget(menu)
     action_texts = {a.text() for a in menu.actions() if a.text()}
     assert "Minimize Sidebar" in action_texts, (
         f"Expected 'Minimize Sidebar' in {action_texts}"
@@ -168,7 +181,7 @@ def test_context_menu_has_minimize_action(tmp_path: Path) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_sidebar_has_settings_gear_button(tmp_path: Path) -> None:
+def test_sidebar_has_settings_gear_button(tmp_path: Path, qtbot) -> None:
     """Sidebar toolbar exposes a gear settings button with the expected objectName."""
     _fix_sidekick_import()
     from PyQt6.QtWidgets import QToolButton
@@ -176,7 +189,7 @@ def test_sidebar_has_settings_gear_button(tmp_path: Path) -> None:
         SIDEKICK_TAB_SETTINGS_BUTTON_OBJECT_NAME,
     )
 
-    sidebar, tab_id, win, _ = _make_sidebar_with_popout_tab(tmp_path)
+    sidebar, tab_id, win, _ = _make_sidebar_with_popout_tab(tmp_path, qtbot)
     btn_name = SIDEKICK_TAB_SETTINGS_BUTTON_OBJECT_NAME
     gear_btn = sidebar.findChild(QToolButton, btn_name)
     assert gear_btn is not None, f"Expected QToolButton with objectName {btn_name!r}"

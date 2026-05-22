@@ -9,18 +9,23 @@ Tests cover:
 - Markdown rendering (basic CommonMark)
 """
 
-from __future__ import annotations
-
+import os
 import sys
 from pathlib import Path
 
 import pytest
 
+pytestmark = pytest.mark.serial
+
+if sys.platform == "win32" and os.environ.get("PYTEST_XDIST_WORKER"):
+    pytest.skip(
+        "Qt notes tab tests run serially on Windows.",
+        allow_module_level=True,
+    )
+
 SHARED = Path(__file__).resolve().parents[4] / "src" / "shared" / "python"
 if str(SHARED) not in sys.path:
     sys.path.insert(0, str(SHARED))
-
-pytestmark = pytest.mark.unit
 
 # ---------------------------------------------------------------------------
 # SidekickNotesStore — pure-Python tests (no Qt required)
