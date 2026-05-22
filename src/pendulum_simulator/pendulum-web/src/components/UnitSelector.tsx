@@ -2,7 +2,7 @@
  * Reusable unit selector dropdown (DRY).
  * Renders a compact dropdown for selecting units on any quantity.
  */
-import React from 'react';
+import React, { useId } from 'react';
 
 interface UnitSelectorProps<T extends string> {
     label: string;
@@ -14,10 +14,12 @@ interface UnitSelectorProps<T extends string> {
 export function UnitSelector<T extends string>({
     label, value, options, onChange,
 }: UnitSelectorProps<T>): React.ReactElement {
+    const id = useId();
     return (
         <div className="unit-row">
-            <span className="unit-label">{label}</span>
+            <label className="unit-label" htmlFor={id}>{label}</label>
             <select
+                id={id}
                 className="unit-select"
                 value={value}
                 onChange={e => onChange(e.target.value as T)}
