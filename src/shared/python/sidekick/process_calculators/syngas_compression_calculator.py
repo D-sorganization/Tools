@@ -45,6 +45,28 @@ from .syngas_compression_engine import (  # noqa: F401
 # matplotlib is imported lazily inside methods to prevent Windows hang
 
 # Try PyQt6 imports - these are optional for core calculations
+if TYPE_CHECKING:
+    from PyQt6.QtCore import QThread, QTimer, pyqtSignal, pyqtSlot
+    from PyQt6.QtWidgets import (
+        QCheckBox,
+        QComboBox,
+        QDoubleSpinBox,
+        QFormLayout,
+        QGridLayout,
+        QGroupBox,
+        QHeaderView,
+        QLabel,
+        QMessageBox,
+        QPushButton,
+        QScrollArea,
+        QSplitter,
+        QTableWidget,
+        QTabWidget,
+        QTextEdit,
+        QVBoxLayout,
+        QWidget,
+    )
+
 try:
     from PyQt6.QtCore import QThread, QTimer, pyqtSignal, pyqtSlot
     from PyQt6.QtWidgets import (
@@ -70,14 +92,14 @@ try:
     HAS_PYQT = True
 except ImportError:
     HAS_PYQT = False
-    QWidget = object  # type: ignore[assignment,misc]
-    QThread = object  # type: ignore[assignment,misc]
 
-    def pyqtSignal(*args: object, **kwargs: object) -> Any:  # type: ignore[no-redef]
-        return None
+    if not TYPE_CHECKING:
 
-    def pyqtSlot(*args: object, **kwargs: object) -> Any:  # type: ignore[misc]
-        return lambda f: f
+        def pyqtSignal(*args: object, **kwargs: object) -> Any:
+            return None
+
+        def pyqtSlot(*args: object, **kwargs: object) -> Any:
+            return lambda f: f
 
 
 try:
@@ -104,7 +126,7 @@ def _setup_matplotlib_backend() -> None:
             mpl.use("Agg")
 
 
-def _get_figure_canvas_class() -> type:
+def _get_figure_canvas_class() -> "type[Any]":
     """Lazily load FigureCanvas to prevent matplotlib backend hang at import."""
     try:
         from matplotlib.backends.backend_qtagg import (
