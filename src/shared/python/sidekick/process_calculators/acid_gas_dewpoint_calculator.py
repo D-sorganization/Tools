@@ -39,7 +39,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import pandas as pd
@@ -65,6 +65,22 @@ except ImportError:  # pragma: no cover - optional dependency
     COOLPROP_AVAILABLE = False
 
 # Try to import PyQt6 for GUI, but make it optional
+if TYPE_CHECKING:
+    from PyQt6.QtCore import QTimer, pyqtSignal
+    from PyQt6.QtGui import QFont
+    from PyQt6.QtWidgets import (
+        QDoubleSpinBox,
+        QGridLayout,
+        QGroupBox,
+        QLabel,
+        QPushButton,
+        QSplitter,
+        QTableWidget,
+        QTextEdit,
+        QVBoxLayout,
+        QWidget,
+    )
+
 try:
     from PyQt6.QtCore import QTimer, pyqtSignal
     from PyQt6.QtGui import QFont
@@ -84,7 +100,6 @@ try:
     GUI_AVAILABLE = True
 except ImportError:
     GUI_AVAILABLE = False
-    QWidget = object  # type: ignore[assignment,misc]
 
 # Import BaseCalculatorWidget for state management
 try:
