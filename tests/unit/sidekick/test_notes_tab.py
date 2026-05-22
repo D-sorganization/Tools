@@ -641,9 +641,7 @@ def test_notes_tab_on_change_color_invalid(
 
 
 @pytest.mark.gui
-def test_notes_tab_on_change_color_not_found(
-    tmp_path: Path, qtbot: Any
-) -> None:
+def test_notes_tab_on_change_color_not_found(tmp_path: Path, qtbot: Any) -> None:
     """_on_change_color returns early if the note does not exist."""
     pytest.importorskip("PyQt6")
     from sidekick.notes_tab import NotesTab

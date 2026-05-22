@@ -34,9 +34,7 @@ def _fix_sidekick_import() -> None:
     top_mod = sys.modules.get("sidekick")
     if top_mod is not None:
         file_path = getattr(top_mod, "__file__", None)
-        if file_path is not None and test_dir in str(
-            Path(file_path).resolve().parent
-        ):
+        if file_path is not None and test_dir in str(Path(file_path).resolve().parent):
             del sys.modules["sidekick"]
 
 
