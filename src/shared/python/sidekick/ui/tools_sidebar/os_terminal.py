@@ -1,3 +1,4 @@
+# mypy: warn-unused-ignores=False
 """Sidekick OS-level terminal widget (UpstreamDrift #5617).
 
 This module provides a PTY-backed terminal surface for the Sidekick
@@ -35,7 +36,7 @@ from typing import Protocol
 from .qt_compat import QtCore, QtWidgets
 from .shell_discovery import ShellDescriptor, discover_shells
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 SIDEKICK_OS_TERMINAL_OBJECT_NAME = "SidekickOsTerminalTab"
 
@@ -139,7 +140,7 @@ class PosixPtyBackend(_BackendBase):
                 except EOFError:
                     break
         except Exception as exc:  # noqa: BLE001
-            logger.debug("PosixPtyBackend read thread error: %s", exc)
+            _logger.debug("PosixPtyBackend read thread error: %s", exc)
         finally:
             self.is_running = False
 
@@ -164,7 +165,7 @@ class PosixPtyBackend(_BackendBase):
         try:
             self._proc.terminate(force=True)  # type: ignore[attr-defined]
         except Exception as exc:  # noqa: BLE001 - terminate is best-effort
-            logger.debug("PosixPtyBackend terminate failed: %s", exc)
+            _logger.debug("PosixPtyBackend terminate failed: %s", exc)
         self.is_running = False
 
     def resize(self, rows: int, cols: int) -> None:
@@ -173,7 +174,7 @@ class PosixPtyBackend(_BackendBase):
         try:
             self._proc.setwinsize(rows, cols)  # type: ignore[attr-defined]
         except Exception as exc:  # noqa: BLE001 - resize is cosmetic
-            logger.debug("PosixPtyBackend resize failed: %s", exc)
+            _logger.debug("PosixPtyBackend resize failed: %s", exc)
 
 
 class WindowsPtyBackend(_BackendBase):
@@ -219,7 +220,7 @@ class WindowsPtyBackend(_BackendBase):
                 except EOFError:
                     break
         except Exception as exc:  # noqa: BLE001
-            logger.debug("WindowsPtyBackend read thread error: %s", exc)
+            _logger.debug("WindowsPtyBackend read thread error: %s", exc)
         finally:
             self.is_running = False
 
@@ -245,7 +246,7 @@ class WindowsPtyBackend(_BackendBase):
         try:
             self._proc.terminate()  # type: ignore[attr-defined]
         except Exception as exc:  # noqa: BLE001 - terminate is best-effort
-            logger.debug("WindowsPtyBackend terminate failed: %s", exc)
+            _logger.debug("WindowsPtyBackend terminate failed: %s", exc)
         self.is_running = False
 
     def resize(self, rows: int, cols: int) -> None:
@@ -254,7 +255,7 @@ class WindowsPtyBackend(_BackendBase):
         try:
             self._proc.setwinsize(rows, cols)  # type: ignore[attr-defined]
         except Exception as exc:  # noqa: BLE001 - resize is cosmetic
-            logger.debug("WindowsPtyBackend resize failed: %s", exc)
+            _logger.debug("WindowsPtyBackend resize failed: %s", exc)
 
 
 class SubprocessFallbackBackend(_BackendBase):
@@ -304,7 +305,7 @@ class SubprocessFallbackBackend(_BackendBase):
                 with self._lock:
                     self._buffer.extend(chunk)
         except Exception as exc:  # noqa: BLE001 - reader thread guards
-            logger.debug("SubprocessFallbackBackend read thread error: %s", exc)
+            _logger.debug("SubprocessFallbackBackend read thread error: %s", exc)
         finally:
             self.is_running = False
 
@@ -337,7 +338,7 @@ class SubprocessFallbackBackend(_BackendBase):
         except subprocess.TimeoutExpired:
             proc.kill()
         except Exception as exc:  # noqa: BLE001 - terminate is best-effort
-            logger.debug("SubprocessFallbackBackend terminate failed: %s", exc)
+            _logger.debug("SubprocessFallbackBackend terminate failed: %s", exc)
         self.is_running = False
 
     def resize(self, rows: int, cols: int) -> None:  # noqa: ARG002 - no-op for pipes
@@ -371,14 +372,14 @@ def select_backend(
 
             return PosixPtyBackend(command=command, cwd=cwd), None
         except ImportError:
-            logger.debug("ptyprocess unavailable; falling back to subprocess pipes.")
+            _logger.debug("ptyprocess unavailable; falling back to subprocess pipes.")
     elif system == "Windows":
         try:
             import winpty  # type: ignore[import-not-found]  # noqa: F401
 
             return WindowsPtyBackend(command=command, cwd=cwd), None
         except ImportError:
-            logger.debug("pywinpty unavailable; falling back to subprocess pipes.")
+            _logger.debug("pywinpty unavailable; falling back to subprocess pipes.")
 
     try:
         return (
@@ -386,7 +387,7 @@ def select_backend(
             _install_hint(system),
         )
     except Exception as exc:  # noqa: BLE001 - bottom of the stack
-        logger.debug("SubprocessFallbackBackend construction failed: %s", exc)
+        _logger.debug("SubprocessFallbackBackend construction failed: %s", exc)
         return None, _install_hint(system)
 
 
@@ -466,7 +467,7 @@ class ShellDiscoveryThread(QtCore.QThread):
             res = list(self.shells_override or discover_shells())
             self.discovered.emit(res)
         except Exception as e:
-            logger.error("Failed to discover shells asynchronously: %s", e)
+            _logger.error("Failed to discover shells asynchronously: %s", e)
             self.discovered.emit([])
 
 
@@ -602,7 +603,7 @@ class SidekickOsTerminalWidget(QtWidgets.QWidget):
         try:
             backend.start()
         except Exception as exc:  # noqa: BLE001 - degrade to install hint
-            logger.debug("OS terminal backend failed to start: %s", exc)
+            _logger.debug("OS terminal backend failed to start: %s", exc)
             self._backend = None
             self._install_hint_label.setText(
                 f"Failed to start {shell.label}: {exc}. {self._install_hint or ''}"
@@ -637,7 +638,7 @@ class SidekickOsTerminalWidget(QtWidgets.QWidget):
         try:
             backend.terminate()
         except Exception as exc:  # noqa: BLE001 - terminate is best-effort
-            logger.debug("OS terminal teardown failed: %s", exc)
+            _logger.debug("OS terminal teardown failed: %s", exc)
 
     # -- IO routing ---------------------------------------------------------
 
@@ -652,7 +653,7 @@ class SidekickOsTerminalWidget(QtWidgets.QWidget):
         try:
             self._backend.write(payload)
         except Exception as exc:  # noqa: BLE001 - shell may exit
-            logger.debug("OS terminal write failed: %s", exc)
+            _logger.debug("OS terminal write failed: %s", exc)
 
     def _poll_backend(self) -> None:
         if self._backend is None or not self._backend.is_running:
@@ -661,7 +662,7 @@ class SidekickOsTerminalWidget(QtWidgets.QWidget):
         try:
             data = self._backend.read(timeout=0.0)
         except Exception as exc:  # noqa: BLE001 - poll degrades gracefully
-            logger.debug("OS terminal read failed: %s", exc)
+            _logger.debug("OS terminal read failed: %s", exc)
             return
         if data:
             self._handle_output(data)

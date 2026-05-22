@@ -70,7 +70,7 @@ jobs:
   quality-gate:
     needs: pick-runner
     runs-on: d-sorg-fleet
-    timeout-minutes: 45
+    timeout-minutes: 20
     env:
       # Shared wheel/download cache for self-hosted runners — avoids re-downloading
       # the same packages on every run.  Path is host-stable and safe for concurrent
@@ -304,7 +304,7 @@ jobs:
           fi
 
   tests:
-    timeout-minutes: 60
+    timeout-minutes: 30
     # Parallelized: tests do not consume any quality-gate outputs (quality-gate
     # declares no `outputs:` block, and no step in this job references
     # `needs.quality-gate.*`). Fanning out after pick-runner removes the
@@ -436,13 +436,16 @@ jobs:
           # user (~/.local) while the `pytest` console script's shebang
           # points at a different Python that does not load that user-site,
           # producing `pytest: error: unrecognized arguments: --cov=.`.
-          # Keep coverage policy inputs stable. Changed tests still run below,
-          # but do not mutate the baseline-oriented coverage.xml.
-          python -m pytest "${core_tests[@]}" -m "not live_simulation" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=0
+          pytest_args=(-m "not live_simulation" --import-mode=importlib)
+          if [ "${{ steps.coverage_inputs.outputs.coverage_gate_required }}" = "true" ]; then
+            pytest_args+=(--cov=. --cov-report=xml:coverage.xml)
+          fi
 
           if [ -s changed_test_files.txt ]; then
             mapfile -t changed_test_files < changed_test_files.txt
-            python -m pytest "${changed_test_files[@]}" -m "not live_simulation" --import-mode=importlib
+            python -m pytest "${changed_test_files[@]}" "${core_tests[@]}" "${pytest_args[@]}"
+          else
+            python -m pytest "${core_tests[@]}" "${pytest_args[@]}"
           fi
 
       - name: Provider-Contract Suite (Exported Packages)

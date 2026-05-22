@@ -12,6 +12,10 @@ from PyQt6.QtWidgets import (
 
 from ..psa_model import PSAResults, get_flammability_status
 
+__all__ = [
+    "ResultsPanel",
+]
+
 
 class ResultsPanel(QWidget):
     """Panel for displaying calculation results."""

@@ -10,6 +10,14 @@ from pathlib import Path
 
 from .state import SidebarState
 
+__all__ = [
+    "CLEAR_SIDEKICK_DATA_CONFIRMATION",
+    "CLEAR_SIDEKICK_DATA_WARNING",
+    "SidekickStateProfileResult",
+    "SidekickStateProfileStore",
+    "validate_profile_name",
+]
+
 CLEAR_SIDEKICK_DATA_CONFIRMATION = "clear-sidekick-data"
 CLEAR_SIDEKICK_DATA_WARNING = (
     "Clearing Sidekick data removes saved state profiles and cannot be undone."

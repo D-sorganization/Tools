@@ -343,6 +343,8 @@ class ChatDockWidget(QDockWidget):
                 _read_shared_session_id(self._session_file)
             )
 
+        self._intentional_disconnect = False
+        self._is_closing = False
         self._collapsed: bool = False
         self._setup_ui()
         self._connect_on_show = True
@@ -741,6 +743,8 @@ class ChatDockWidget(QDockWidget):
 
     def _connect(self) -> None:
         """Establish WebSocket connection to the chat server."""
+        self._intentional_disconnect = False
+        self._is_closing = False
         if self._socket is not None:
             self._socket.close()
             self._socket.deleteLater()
@@ -842,7 +846,9 @@ class ChatDockWidget(QDockWidget):
         self._memory_panel_window = panel
 
     def _on_disconnected(self) -> None:
-        if bool(getattr(self, "_is_closing", False)):
+        if bool(getattr(self, "_intentional_disconnect", False)) or bool(
+            getattr(self, "_is_closing", False)
+        ):
             self._is_streaming = False
             self._send_btn.setEnabled(True)
             return
@@ -1050,7 +1056,7 @@ class ChatDockWidget(QDockWidget):
             if not isinstance(info, WorkspaceVariableInfo):
                 # Defensive: tolerate raw dicts/objects that look like
                 # the dataclass without crashing the chat.
-                continue
+                continue  # type: ignore[unreachable]
             shape_str = (
                 ", ".join(str(dim) for dim in info.shape)
                 if info.shape is not None
@@ -1571,7 +1577,7 @@ class ChatDockWidget(QDockWidget):
         screen = cast("QApplication", app).primaryScreen()
         if not screen:
             return
-        pixmap = parent.grab() if parent else screen.grabWindow(0)
+        pixmap = parent.grab() if parent else screen.grabWindow(0)  # type: ignore[arg-type]
         from PyQt6.QtCore import QBuffer, QByteArray, QIODevice
 
         ba = QByteArray()
@@ -1850,6 +1856,7 @@ class ChatDockWidget(QDockWidget):
             self._connect()
 
     def closeEvent(self, event: Any) -> None:
+        self._intentional_disconnect = True
         self._is_closing = True
         self._reconnect_timer.stop()
         if self._socket:
@@ -1891,7 +1898,7 @@ class ChatDockWidget(QDockWidget):
         for info in sessions:
             title = str(info.get("title", "")).casefold()
             if title == needle:
-                return info.get("id")
+                return cast(str | None, info.get("id"))
         return None
 
     def _handle_use_session(self, target: str) -> None:

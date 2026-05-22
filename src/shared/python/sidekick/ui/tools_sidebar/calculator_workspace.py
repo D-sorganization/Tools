@@ -19,6 +19,24 @@ from .workspace_persistence import (
     validate_calculator_workspace_path,  # noqa: F401 - re-exported API
 )
 
+__all__ = [
+    "CALCULATOR_WORKSPACE_SCOPE",
+    "CalculatorWorkspaceActions",
+    "CalculatorWorkspaceController",
+    "CalculatorWorkspaceFacade",
+    "CalculatorWorkspaceLoadResult",
+    "CalculatorWorkspaceSettings",
+    "GLOBAL_WORKSPACE_SCOPE",
+    "GlobalWorkspaceController",
+    "GlobalWorkspaceSettings",
+    "build_calculator_workspace_controls",
+    "default_calculator_workspace_controller",
+    "default_global_workspace_controller",
+    "evaluate_calculator_expression",
+    "get_default_sidekick_dir",
+    "workspace_value_for_calculator_result",
+]
+
 CALCULATOR_WORKSPACE_SCOPE = "calculator"
 GLOBAL_WORKSPACE_SCOPE = "global"
 

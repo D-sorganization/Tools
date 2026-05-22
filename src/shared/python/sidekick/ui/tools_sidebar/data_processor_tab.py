@@ -12,7 +12,16 @@ from .help_content import DEFAULT_SIDEBAR_TAB_HELP
 from .qt_compat import QtWidgets
 from .registry import WorkspaceRegistry, WorkspaceVariable
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "DATA_PROCESSOR_TAB_ID",
+    "DEFAULT_DATA_PROCESSOR_VARIABLE_NAME",
+    "DataProcessorTabError",
+    "SidekickDataProcessorTab",
+    "build_data_processor_tab",
+    "export_data_processor_frame",
+]
+
+_logger = logging.getLogger(__name__)
 
 DATA_PROCESSOR_TAB_ID = "data_processor"
 DEFAULT_DATA_PROCESSOR_VARIABLE_NAME = "data_processor_result"
@@ -27,7 +36,7 @@ def build_data_processor_tab(sidebar: Any) -> QtWidgets.QWidget:
     try:
         widget = SidekickDataProcessorTab(sidebar)
     except Exception as exc:  # noqa: BLE001 - optional runtime surface
-        logger.debug("Data Processor unavailable for Sidekick: %s", exc)
+        _logger.debug("Data Processor unavailable for Sidekick: %s", exc)
         return _placeholder(
             sidebar,
             "Data Processor",

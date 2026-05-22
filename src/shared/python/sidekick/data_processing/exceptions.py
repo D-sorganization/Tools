@@ -50,12 +50,12 @@ class UnsupportedOperationError(DataProcessingError):
 
 
 __all__ = [
-    "DataProcessingError",
-    "DataNotLoadedError",
     "ColumnNotFoundError",
+    "DataNotLoadedError",
+    "DataProcessingError",
     "FileIOError",
-    "TransformationError",
     "FilterError",
     "FitError",
+    "TransformationError",
     "UnsupportedOperationError",
 ]

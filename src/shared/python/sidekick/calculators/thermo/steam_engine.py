@@ -17,6 +17,55 @@ from typing import Any
 
 import numpy as np
 
+__all__ = [
+    "ANTOINE_A",
+    "ANTOINE_B",
+    "ANTOINE_C_CELSIUS",
+    "ANTOINE_C_KELVIN",
+    "BOILING_TEMPERATURE_WATER",
+    "BUCK_A",
+    "BUCK_B",
+    "BUCK_C",
+    "BUCK_D",
+    "CELSIUS_TO_FAHRENHEIT_SCALE",
+    "CRITICAL_PRESSURE_WATER",
+    "CRITICAL_TEMPERATURE_WATER",
+    "DEFAULT_DEW_POINT_TEMPERATURE_CELSIUS",
+    "DEFAULT_QUALITY",
+    "FAHRENHEIT_TO_CELSIUS_OFFSET",
+    "FAHRENHEIT_TO_CELSIUS_SCALE",
+    "FALLBACK_ATMOSPHERIC_PRESSURE",
+    "FALLBACK_BOILING_TEMPERATURE",
+    "KELVIN_TO_CELSIUS_OFFSET",
+    "KPA_TO_PA_FACTOR",
+    "LIQUID_WATER_PRESSURE_THRESHOLD",
+    "LIQUID_WATER_SPECIFIC_HEAT",
+    "MAX_TEMPERATURE_UI_K",
+    "MBAR_TO_KPA_FACTOR",
+    "MIN_TEMPERATURE_UI_K",
+    "MMHG_TO_PASCAL_FACTOR",
+    "NEWTON_RAPHSON_DERIVATIVE_TOLERANCE",
+    "NEWTON_RAPHSON_MAX_ITERATIONS",
+    "NEWTON_RAPHSON_STEP_SIZE",
+    "NEWTON_RAPHSON_TOLERANCE",
+    "PASCAL_TO_MMHG_FACTOR",
+    "SATURATED_FROM_PRESSURE_STATE",
+    "SATURATED_FROM_TEMP_STATE",
+    "SPECIFIC_GAS_CONSTANT_WATER",
+    "STANDARD_ATMOSPHERIC_PRESSURE",
+    "SUPERHEATED_STATE",
+    "SteamCalculationEngine",
+    "SteamProperties",
+    "TRIPLE_POINT_PRESSURE",
+    "TRIPLE_POINT_TEMPERATURE",
+    "VAPOR_ENTHALPY_REFERENCE",
+    "VAPOR_ENTHALPY_SLOPE",
+    "VAPOR_ENTROPY_REFERENCE",
+    "VAPOR_ENTROPY_SLOPE",
+    "VAPOR_SPECIFIC_HEAT_CP",
+    "VAPOR_SPECIFIC_HEAT_CV",
+]
+
 # Try to import Cantera
 try:
     import cantera as ct
@@ -39,7 +88,7 @@ except ImportError:
         "Warning: CoolProp not available. Falling back to Cantera or simplified correlations."
     )
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 # Water properties constants
 STANDARD_ATMOSPHERIC_PRESSURE: float = 101325.0  # [Pa] Standard atmospheric pressure
@@ -213,9 +262,9 @@ class SteamCalculationEngine:
         try:
             self.water = ct.Water()
             self.initialized = True
-            logger.info("Steam calculation engine initialized successfully")
+            _logger.info("Steam calculation engine initialized successfully")
         except (RuntimeError, ValueError, OSError) as e:
-            logger.exception("Failed to initialize Cantera water: %s", e)
+            _logger.exception("Failed to initialize Cantera water: %s", e)
             self.initialized = False
 
     def _select_best_engine(self, engine: str) -> str:
@@ -246,7 +295,7 @@ class SteamCalculationEngine:
             return "simplified"
 
         # Fallback to best available if requested engine not available
-        logger.warning(
+        _logger.warning(
             "Requested engine '%s' not available, falling back to auto-selection",
             engine,
         )
@@ -282,7 +331,7 @@ class SteamCalculationEngine:
                 result = self._calculate_simplified_properties(temperature, pressure)
 
         except (RuntimeError, ValueError, TypeError) as e:
-            logger.exception("Steam calculation failed: %s", e)
+            _logger.exception("Steam calculation failed: %s", e)
             result = self._calculate_simplified_properties(temperature, pressure)
 
         # DbC postcondition: enthalpy and entropy should be finite
@@ -306,7 +355,7 @@ class SteamCalculationEngine:
             return self._calculate_saturated_simplified_from_temp(temperature)
 
         except (RuntimeError, ValueError, TypeError) as e:
-            logger.exception(
+            _logger.exception(
                 "Saturated steam calculation from temperature failed: %s", e
             )
             return self._calculate_saturated_simplified_from_temp(temperature)
@@ -327,7 +376,7 @@ class SteamCalculationEngine:
             return self._calculate_saturated_simplified_from_pressure(pressure)
 
         except (RuntimeError, ValueError, TypeError) as e:
-            logger.exception("Saturated steam calculation from pressure failed: %s", e)
+            _logger.exception("Saturated steam calculation from pressure failed: %s", e)
             return self._calculate_saturated_simplified_from_pressure(pressure)
 
     def calculate_water_vapor_pressure(
@@ -345,7 +394,7 @@ class SteamCalculationEngine:
                 return self._iapws_equation(temperature)
             return self._buck_equation(temperature)  # Default to Buck
         except (RuntimeError, ValueError, TypeError) as e:
-            logger.exception("Water vapor pressure calculation failed: %s", e)
+            _logger.exception("Water vapor pressure calculation failed: %s", e)
             return self._antoine_equation(temperature)  # Fallback
 
     def _antoine_equation(self, temperature_c: float) -> float:
@@ -434,7 +483,7 @@ class SteamCalculationEngine:
             return T_guess
 
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
-            logger.exception("Dew point calculation failed: %s", e)
+            _logger.exception("Dew point calculation failed: %s", e)
             return DEFAULT_DEW_POINT_TEMPERATURE_CELSIUS
 
     def _calculate_saturated_coolprop_from_temp(
@@ -449,7 +498,7 @@ class SteamCalculationEngine:
             return self._calculate_coolprop_properties(temperature, pressure)
 
         except (RuntimeError, ValueError, TypeError) as e:
-            logger.exception(
+            _logger.exception(
                 "CoolProp saturated calculation from temperature failed: %s", e
             )
             return self._calculate_saturated_simplified_from_temp(temperature)
@@ -466,7 +515,7 @@ class SteamCalculationEngine:
             return self._calculate_coolprop_properties(temperature, pressure)
 
         except (RuntimeError, ValueError, TypeError) as e:
-            logger.exception(
+            _logger.exception(
                 "CoolProp saturated calculation from pressure failed: %s", e
             )
             return self._calculate_saturated_simplified_from_pressure(pressure)
@@ -486,7 +535,7 @@ class SteamCalculationEngine:
             return self._calculate_cantera_properties(temperature, pressure)
 
         except (RuntimeError, ValueError, TypeError) as e:
-            logger.exception(
+            _logger.exception(
                 "Cantera saturated calculation from temperature failed: %s", e
             )
             return self._calculate_saturated_simplified_from_temp(temperature)
@@ -506,7 +555,7 @@ class SteamCalculationEngine:
             return self._calculate_cantera_properties(temperature, pressure)
 
         except (RuntimeError, ValueError, TypeError) as e:
-            logger.exception(
+            _logger.exception(
                 "Cantera saturated calculation from pressure failed: %s", e
             )
             return self._calculate_saturated_simplified_from_pressure(pressure)
@@ -570,7 +619,7 @@ class SteamCalculationEngine:
             pressure_mmhg = 10**log_p_mmhg
             return pressure_mmhg * MMHG_TO_PASCAL_FACTOR
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
-            logger.exception("Saturation pressure calculation failed: %s", e)
+            _logger.exception("Saturation pressure calculation failed: %s", e)
             return FALLBACK_ATMOSPHERIC_PRESSURE
 
     def get_saturation_temperature(self, pressure: float) -> float:
@@ -584,7 +633,7 @@ class SteamCalculationEngine:
             log_p = np.log10(pressure_mmhg)
             return float(ANTOINE_B / (ANTOINE_A - log_p) + ANTOINE_C_KELVIN)
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
-            logger.exception("Saturation temperature calculation failed: %s", e)
+            _logger.exception("Saturation temperature calculation failed: %s", e)
             return FALLBACK_BOILING_TEMPERATURE
 
     def _calculate_cantera_properties(
@@ -661,7 +710,7 @@ class SteamCalculationEngine:
             )
 
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
-            logger.exception("Cantera steam calculation failed: %s", e)
+            _logger.exception("Cantera steam calculation failed: %s", e)
             return self._calculate_simplified_properties(temperature, pressure)
 
     def _calculate_coolprop_properties(
@@ -728,7 +777,7 @@ class SteamCalculationEngine:
                 **derived,
             )
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
-            logger.exception("CoolProp steam calculation failed: %s", e)
+            _logger.exception("CoolProp steam calculation failed: %s", e)
             return self._calculate_simplified_properties(temperature, pressure)
 
     @staticmethod
@@ -742,7 +791,7 @@ class SteamCalculationEngine:
                 f"Temperature {temperature} K is outside valid range "
                 f"[{TRIPLE_POINT_TEMPERATURE}, 1000] K for CoolProp"
             )
-            logger.error(msg)
+            _logger.error(msg)
             raise ValueError(msg)
 
         max_reasonable_pressure: float = 100e6
@@ -752,7 +801,7 @@ class SteamCalculationEngine:
                 f"[{TRIPLE_POINT_PRESSURE}, {max_reasonable_pressure}] Pa for CoolProp. "
                 f"Check unit conversion - this value seems too high."
             )
-            logger.error(msg)
+            _logger.error(msg)
             raise ValueError(msg)
 
     @staticmethod
@@ -888,7 +937,7 @@ class SteamCalculationEngine:
             )
 
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
-            logger.exception("Simplified calculation failed: %s", e)
+            _logger.exception("Simplified calculation failed: %s", e)
             # Return empty/zero properties on catastrophic failure
             return SteamProperties(
                 temperature=temperature,

@@ -305,10 +305,9 @@ class TestStreamResponseGenerator:
         # We need to mock sys.modules for PyQt6 since it might not be installed
         with MagicMock() as mock_pyqt:
             mock_pyqt.QtCore.QCoreApplication.instance.return_value = mock_app
-            mock_pyqt.QtCore.QThread = _FakeQThread
-            mock_pyqt.QtCore.QThread.currentThread.return_value = mock_thread
-            mock_pyqt.QtCore.pyqtSignal = _FakeSignalDescriptor
-            mock_pyqt.QtCore.QEventLoop = _FakeQEventLoop
+            mock_pyqt.QtCore.QThread = MockQThread
+            mock_pyqt.QtCore.pyqtSignal = MockSignal
+            mock_pyqt.QtCore.QEventLoop = MockEventLoop
             mock_app.thread.return_value = mock_thread
 
             sys.modules["PyQt6"] = mock_pyqt

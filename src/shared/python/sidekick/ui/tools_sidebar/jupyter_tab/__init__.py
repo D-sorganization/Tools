@@ -33,9 +33,9 @@ from .workspace_bridge import WorkspaceBridge
 JUPYTER_TAB_ID = "jupyter"
 
 __all__ = [
-    "JUPYTER_TAB_ID",
     "CellOutput",
     "CodeCell",
+    "JUPYTER_TAB_ID",
     "JupyterNotebookWidget",
     "JupyterTabAvailability",
     "JupyterUnavailableWidget",

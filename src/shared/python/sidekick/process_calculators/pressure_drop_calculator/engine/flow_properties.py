@@ -19,7 +19,17 @@ from ...constants import (
 from ..models.pressure_drop_data_models import FlowProperties, PressureDropInputs
 from ..utils.gas_properties import calculate_gas_properties
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "GRAVITY",
+    "PI",
+    "calculate_elevation_pressure_drop",
+    "calculate_erosional_velocity",
+    "calculate_flow_properties",
+    "calculate_frictional_pressure_drop",
+    "classify_flow_regime",
+]
+
+_logger = logging.getLogger(__name__)
 
 GRAVITY = STANDARD_GRAVITY
 PI = math.pi
@@ -80,13 +90,13 @@ def calculate_flow_properties(inputs: PressureDropInputs) -> FlowProperties:
             f"Mach number out of physical range, got {flow_props.mach_number}"
         )
 
-    logger.info("Flow properties calculated:")
-    logger.info("  Velocity: %.2f m/s", velocity)
-    logger.info("  Reynolds: %.0f", reynolds_number)
-    logger.info("  Mach: %.4f", mach_number)
-    logger.info("  Density: %.4f kg/m³", density)
-    logger.info("  γ (Cp/Cv): %.3f", heat_capacity_ratio)
-    logger.info("  Speed of sound: %.1f m/s", speed_of_sound)
+    _logger.info("Flow properties calculated:")
+    _logger.info("  Velocity: %.2f m/s", velocity)
+    _logger.info("  Reynolds: %.0f", reynolds_number)
+    _logger.info("  Mach: %.4f", mach_number)
+    _logger.info("  Density: %.4f kg/m³", density)
+    _logger.info("  γ (Cp/Cv): %.3f", heat_capacity_ratio)
+    _logger.info("  Speed of sound: %.1f m/s", speed_of_sound)
     return flow_props
 
 
@@ -123,7 +133,7 @@ def calculate_frictional_pressure_drop(
     if not (dp_friction >= 0):
         raise ValueError(f"Pressure drop must be non-negative, got {dp_friction}")
 
-    logger.debug(
+    _logger.debug(
         "Darcy-Weisbach: f=%.6f, L/D=%.1f, ΔP=%.1f Pa",
         friction_factor,
         length / diameter,
@@ -137,7 +147,7 @@ def calculate_elevation_pressure_drop(density: float, elevation_change: float) -
     if density is None:
         raise ValueError("density must be provided")
     dp_elevation = density * GRAVITY * elevation_change
-    logger.debug("Elevation: Δh=%.1fm, ΔP=%.1f Pa", elevation_change, dp_elevation)
+    _logger.debug("Elevation: Δh=%.1fm, ΔP=%.1f Pa", elevation_change, dp_elevation)
     return float(dp_elevation)
 
 
@@ -156,7 +166,7 @@ def calculate_erosional_velocity(
 
     velocity_erosion = coefficient / math.sqrt(density * KG_M3_TO_LB_FT3)
     velocity_erosion_si = velocity_erosion * FT_S_TO_M_S
-    logger.debug(
+    _logger.debug(
         "Erosional velocity: %.2f m/s (C=%s)", velocity_erosion_si, coefficient
     )
     return velocity_erosion_si

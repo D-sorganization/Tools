@@ -1,6 +1,11 @@
-"""Unit/integration tests for sidekick tab context menu.
+"""Tests for sidekick tab right-click context menu (issues #3032, #2929).
 
-Verifies issues #2929 and #3032.
+Verifies that:
+1. tab_context_menu.py exists at the stable top-level path.
+2. The context menu registers rename, close, duplicate (pop_out), and
+   the settings gear panel (selected_tab_panel.py).
+3. The gear settings button is present in the sidebar.
+4. selected_tab_panel.py exports the expected symbols.
 """
 
 from __future__ import annotations
@@ -9,6 +14,7 @@ import importlib
 import os
 import sys
 from pathlib import Path
+from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
@@ -47,16 +53,17 @@ def _fix_sidekick_import() -> None:
 
 
 @pytest.fixture(scope="module")
-def tcm():  # type: ignore[no-untyped-def]
+def tcm() -> Any:
     """Import and return the tab_context_menu facade module."""
     _fix_sidekick_import()
     return importlib.import_module("sidekick.tab_context_menu")
 
 
 @pytest.fixture()
-def live_sidebar(tmp_path: Path, qtbot):  # type: ignore[no-untyped-def]
+def live_sidebar(tmp_path: Path, qtbot: Any) -> Any:
     """Return a real sidebar so menu-construction failures stay test-visible."""
     _fix_sidekick_import()
+    # Ensure application exists
     from PyQt6 import QtWidgets
     from sidekick.ui.tools_sidebar.sidebar import UnifiedToolsSidebar
 
@@ -97,28 +104,23 @@ def test_selected_tab_panel_module_exists() -> None:
     assert SIDEKICK_TAB_SETTINGS_BUTTON_OBJECT_NAME == "SidekickActiveTabSettings"
 
 
-# ---------------------------------------------------------------------------
-# Facade tests
-# ---------------------------------------------------------------------------
-
-
-def test_tab_context_menu_all(tcm) -> None:  # type: ignore[no-untyped-def]
+def test_tab_context_menu_all(tcm: Any) -> None:
     """Facade exports exactly build_tab_context_menu and show_tab_context_menu."""
     assert set(tcm.__all__) == {"build_tab_context_menu", "show_tab_context_menu"}
 
 
-def test_build_tab_context_menu_is_callable(tcm) -> None:  # type: ignore[no-untyped-def]
+def test_build_tab_context_menu_is_callable(tcm: Any) -> None:
     """build_tab_context_menu is a callable."""
     assert callable(tcm.build_tab_context_menu)
 
 
-def test_show_tab_context_menu_is_callable(tcm) -> None:  # type: ignore[no-untyped-def]
+def test_show_tab_context_menu_is_callable(tcm: Any) -> None:
     """show_tab_context_menu is a callable."""
     assert callable(tcm.show_tab_context_menu)
 
 
 @pytest.mark.gui
-def test_show_tab_context_menu_no_tab_id_returns(tcm, qtbot) -> None:  # type: ignore[no-untyped-def]
+def test_show_tab_context_menu_no_tab_id_returns(tcm: Any, qtbot: Any) -> None:
     """show_tab_context_menu returns early if get_tab_id_at returns None."""
     sidebar = MagicMock()
     sidebar.get_tab_id_at.return_value = None
@@ -131,9 +133,9 @@ def test_show_tab_context_menu_no_tab_id_returns(tcm, qtbot) -> None:  # type: i
 
 @pytest.mark.gui
 def test_build_tab_context_menu_returns_qmenu(
-    tcm,
-    live_sidebar,
-) -> None:  # type: ignore[no-untyped-def]
+    tcm: Any,
+    live_sidebar: Any,
+) -> None:
     """build_tab_context_menu returns a QMenu."""
     from PyQt6.QtWidgets import QMenu
 
@@ -143,9 +145,9 @@ def test_build_tab_context_menu_returns_qmenu(
 
 @pytest.mark.gui
 def test_build_tab_context_menu_close_action_present(
-    tcm,
-    live_sidebar,
-) -> None:  # type: ignore[no-untyped-def]
+    tcm: Any,
+    live_sidebar: Any,
+) -> None:
     """build_tab_context_menu always includes a Close action."""
     menu = tcm.build_tab_context_menu(live_sidebar, "calculator")
     action_titles = [
@@ -161,7 +163,9 @@ def test_build_tab_context_menu_close_action_present(
 # ---------------------------------------------------------------------------
 
 
-def _make_sidebar_with_popout_tab(tmp_path: Path, qtbot):  # type: ignore[return]
+def _make_sidebar_with_popout_tab(
+    tmp_path: Path, qtbot: Any
+) -> tuple[Any, str, Any, Any]:
     """Return (sidebar, tab_id, win, app) for a sidebar with one popout-capable tab."""
     _fix_sidekick_import()
     from PyQt6 import QtWidgets
@@ -188,7 +192,7 @@ def _make_sidebar_with_popout_tab(tmp_path: Path, qtbot):  # type: ignore[return
     return sidebar, "ctx_test_tab", win, app
 
 
-def test_context_menu_has_rename_action(tmp_path: Path, qtbot) -> None:
+def test_context_menu_has_rename_action(tmp_path: Path, qtbot: Any) -> None:
     """Context menu for a tab includes a Rename action."""
     _fix_sidekick_import()
     from sidekick.ui.tools_sidebar.tab_context_menu import build_tab_context_menu
@@ -200,7 +204,7 @@ def test_context_menu_has_rename_action(tmp_path: Path, qtbot) -> None:
     assert "Rename" in action_texts, f"Expected 'Rename' in {action_texts}"
 
 
-def test_context_menu_has_close_action(tmp_path: Path, qtbot) -> None:
+def test_context_menu_has_close_action(tmp_path: Path, qtbot: Any) -> None:
     """Context menu for a tab includes a Close action."""
     _fix_sidekick_import()
     from sidekick.ui.tools_sidebar.tab_context_menu import build_tab_context_menu
@@ -212,7 +216,7 @@ def test_context_menu_has_close_action(tmp_path: Path, qtbot) -> None:
     assert "Close" in action_texts, f"Expected 'Close' in {action_texts}"
 
 
-def test_context_menu_has_pop_out_action(tmp_path: Path, qtbot) -> None:
+def test_context_menu_has_pop_out_action(tmp_path: Path, qtbot: Any) -> None:
     """Context menu for a popout-enabled tab includes a Pop Out action."""
     _fix_sidekick_import()
     from sidekick.ui.tools_sidebar.tab_context_menu import build_tab_context_menu
@@ -224,7 +228,7 @@ def test_context_menu_has_pop_out_action(tmp_path: Path, qtbot) -> None:
     assert "Pop Out" in action_texts, f"Expected 'Pop Out' in {action_texts}"
 
 
-def test_context_menu_has_duplicate_action(tmp_path: Path, qtbot) -> None:
+def test_context_menu_has_duplicate_action(tmp_path: Path, qtbot: Any) -> None:
     """Context menu for a duplicate-enabled tab includes a Duplicate action."""
     _fix_sidekick_import()
     from sidekick.ui.tools_sidebar.tab_context_menu import build_tab_context_menu
@@ -236,7 +240,7 @@ def test_context_menu_has_duplicate_action(tmp_path: Path, qtbot) -> None:
     assert "Duplicate" in action_texts, f"Expected 'Duplicate' in {action_texts}"
 
 
-def test_context_menu_has_minimize_action(tmp_path: Path, qtbot) -> None:
+def test_context_menu_has_minimize_action(tmp_path: Path, qtbot: Any) -> None:
     """Context menu includes a Minimize Sidebar action."""
     _fix_sidekick_import()
     from sidekick.ui.tools_sidebar.tab_context_menu import build_tab_context_menu
@@ -255,7 +259,7 @@ def test_context_menu_has_minimize_action(tmp_path: Path, qtbot) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_sidebar_has_settings_gear_button(tmp_path: Path, qtbot) -> None:
+def test_sidebar_has_settings_gear_button(tmp_path: Path, qtbot: Any) -> None:
     """Sidebar toolbar exposes a gear settings button with the expected objectName."""
     _fix_sidekick_import()
     from PyQt6.QtWidgets import QToolButton

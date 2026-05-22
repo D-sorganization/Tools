@@ -19,6 +19,11 @@ from collections.abc import Callable
 
 from .qt_compat import QtWidgets
 
+__all__ = [
+    "SidekickDockTitleBar",
+    "make_redock_button",
+]
+
 
 def _make_dock_chrome_button(
     icon_name: str,

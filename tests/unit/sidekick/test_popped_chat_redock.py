@@ -62,7 +62,7 @@ def _make_sidebar_with_popout_tab(
     """Return (sidebar, tab_id, floating_window, win, app)."""
     UnifiedToolsSidebar, SidebarTabDefinition, QtWidgets = _get_classes()
 
-    app = qt_app or QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
     win = QtWidgets.QMainWindow()
     qtbot.addWidget(win)
     tab_def = SidebarTabDefinition(

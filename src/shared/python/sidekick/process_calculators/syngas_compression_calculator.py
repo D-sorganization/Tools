@@ -42,6 +42,11 @@ from .syngas_compression_engine import (  # noqa: F401
     SyngasCompressionEngine,
 )
 
+__all__ = [
+    "CompressionCalculationWorker",
+    "create_syngas_compression_calculator",
+]
+
 # matplotlib is imported lazily inside methods to prevent Windows hang
 
 # Try PyQt6 imports - these are optional for core calculations

@@ -8,6 +8,11 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+__all__ = [
+    "CommandHistoryController",
+    "DEFAULT_COMMAND_HISTORY_LIMIT",
+]
+
 DEFAULT_COMMAND_HISTORY_LIMIT = 50
 
 

@@ -17,6 +17,15 @@ from ...utils.unit_constants import (
 )
 from .tables import StandardCondition
 
+__all__ = [
+    "actual_to_standard_flow",
+    "convert_temperature",
+    "convert_via_table",
+    "scfm_to_standard_m3_per_hour",
+    "standard_m3_per_hour_to_scfm",
+    "standard_to_actual_flow",
+]
+
 
 def _require_positive_finite(value: float, name: str) -> None:
     """Validate physical scalar inputs used in flow conversions."""

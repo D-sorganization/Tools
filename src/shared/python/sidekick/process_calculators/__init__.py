@@ -61,7 +61,7 @@ if TYPE_CHECKING:
     )
     from .wgs_reactor_calculator import WGSReactorEngine as WGSReactorEngineType
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 # Track import errors for optional modules
 _import_errors: list[str] = []
@@ -76,29 +76,29 @@ except ImportError as e:
     ScrubberCalculator = None
 
 # Pre-declare with type annotations to avoid no-redef errors in except branches
-SyngasWaterCalculator: type[SyngasWaterCalculatorType] | None = None
-WaterVaporPressureCalculator: type[WaterVaporPressureCalculatorType] | None = None
+SyngasWaterCalculator: type[SyngasWaterCalculatorType] | None
+WaterVaporPressureCalculator: type[WaterVaporPressureCalculatorType] | None
 try:
-    from .syngas_water_calculator import (
-        SyngasWaterCalculator as SyngasWaterCalculator,
-    )
+    from .syngas_water_calculator import SyngasWaterCalculator
     from .water_vapor_pressure_calculator import (
-        WaterVaporPressureCalculator as WaterVaporPressureCalculator,
+        WaterVaporPressureCalculator,
     )
 except ImportError as e:
     _import_errors.append(f"Water calculators not available: {e}")
+    SyngasWaterCalculator = None
+    WaterVaporPressureCalculator = None
 
 # Pre-declare with type annotations to avoid no-redef errors in except branches
-WGSReactorCalculator: type[WGSReactorEngineType] | None = None
-WGSReactorEngine: type[WGSReactorEngineType] | None = None
+WGSReactorCalculator: type[WGSReactorEngineType] | None
+WGSReactorEngine: type[WGSReactorEngineType] | None
 try:
-    from .wgs_reactor_calculator import (
-        WGSReactorEngine as WGSReactorEngine,
-    )
+    from .wgs_reactor_calculator import WGSReactorEngine
 
     WGSReactorCalculator = WGSReactorEngine  # Alias
 except ImportError as e:
     _import_errors.append(f"WGSReactorCalculator not available: {e}")
+    WGSReactorEngine = None
+    WGSReactorCalculator = None
 
 # Pre-declare callable aliases to avoid assignment type errors in except branches
 Optimizer: Callable[..., Any] | None = None
@@ -140,46 +140,44 @@ except ImportError as e:
     _import_errors.append(f"SyngasCompressionCalculator not available: {e}")
 
 # Modular packages — pre-declare to avoid no-redef in except branch
-PressureDropCalculator: type[PressureDropCalculatorType] | None = None
+PressureDropCalculator: type[PressureDropCalculatorType] | None
 try:
     from .pressure_drop_calculator import (
-        PressureDropCalculator as PressureDropCalculator,
+        PressureDropCalculator,
     )
 except ImportError as e:
     _import_errors.append(f"PressureDropCalculator not available: {e}")
+    PressureDropCalculator = None
 
 # Log any import errors that occurred
 for error in _import_errors:
-    logger.debug(error)
+    _logger.debug(error)
 
 __all__ = [
-    # Always available
+    "ATOL_ZERO",
     "AcidGasDewpointCalculator",
-    "FlareCalculator",
-    "FlareDesign",
+    "AdamOptimizer",
     "BaghouseCalculator",
     "BaghouseResult",
     "ElectrodeAdvancementCalculator",
     "FinancialCalculator",
+    "FlareCalculator",
+    "FlareDesign",
+    "MultiParameterAnalysis",
     "ODESolver",
-    "fit_heating_parameters",
-    "predict_temperature_profile",
-    # Constants
-    "R_UNIVERSAL",
+    "Optimizer",
+    "PressureDropCalculator",
     "R_GAS_J_MOL_K",
+    "R_UNIVERSAL",
     "STANDARD_GRAVITY",
-    "ATOL_ZERO",
-    "celsius_to_kelvin",
-    "kelvin_to_celsius",
-    # Conditionally available
     "ScrubberCalculator",
+    "SyngasCompressionCalculator",
     "SyngasWaterCalculator",
-    "WaterVaporPressureCalculator",
     "WGSReactorCalculator",
     "WGSReactorEngine",
-    "Optimizer",
-    "AdamOptimizer",
-    "MultiParameterAnalysis",
-    "SyngasCompressionCalculator",
-    "PressureDropCalculator",
+    "WaterVaporPressureCalculator",
+    "celsius_to_kelvin",
+    "fit_heating_parameters",
+    "kelvin_to_celsius",
+    "predict_temperature_profile",
 ]

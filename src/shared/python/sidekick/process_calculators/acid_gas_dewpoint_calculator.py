@@ -136,7 +136,16 @@ from .constants import (
     MMHG_TO_PA_CONV,
 )
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "ACID_GAS_PRESETS",
+    "AcidGasComposition",
+    "AcidGasDewpointCalculator",
+    "DewpointResult",
+    "estimate_condensation_risk",
+    "quick_dewpoint_calculation",
+]
+
+_logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -407,7 +416,7 @@ class AcidGasDewpointCalculator:
                 chem = Chemical(name, T=T)
                 return float(chem.Psat)
             except ImportError as e:  # pragma: no cover - fallback
-                logger.warning("Thermo vapor pressure failed: %s; using Antoine", e)
+                _logger.warning("Thermo vapor pressure failed: %s; using Antoine", e)
                 return self.calculate_vapor_pressure(
                     temperature_c, component, "antoine"
                 )
@@ -425,7 +434,7 @@ class AcidGasDewpointCalculator:
                 OverflowError,
                 TypeError,
             ) as e:  # pragma: no cover - fallback
-                logger.warning("CoolProp vapor pressure failed: %s; using Antoine", e)
+                _logger.warning("CoolProp vapor pressure failed: %s; using Antoine", e)
                 return self.calculate_vapor_pressure(
                     temperature_c, component, "antoine"
                 )

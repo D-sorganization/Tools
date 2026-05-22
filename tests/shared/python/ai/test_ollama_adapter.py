@@ -460,10 +460,11 @@ class TestValidateConnection:
         assert "test-model" in msg
 
     @pytest.mark.unit
-    def test_returns_true_with_fallback_when_model_not_found(
-        self, adapter: OllamaAdapter
-    ) -> None:
-        """validate_connection returns True with fallback if model is absent."""
+    def test_falls_back_when_model_absent(self, adapter: OllamaAdapter) -> None:
+        """validate_connection returns True and falls back to first available
+
+        model when configured model is absent.
+        """
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json.return_value = {
@@ -478,7 +479,7 @@ class TestValidateConnection:
 
         assert ok is True
         assert adapter._model == "mistral:latest"
-        assert "configured model not installed" in msg.lower() or "using" in msg.lower()
+        assert "using 'mistral:latest'" in msg.lower()
 
     @pytest.mark.unit
     def test_returns_false_when_no_models_installed(

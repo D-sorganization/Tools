@@ -9,7 +9,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 
 def evaluate_output(
@@ -55,7 +55,7 @@ def evaluate_output(
     try:
         result = engine.calculate(**params)
     except (TypeError, ValueError, ZeroDivisionError, OverflowError) as exc:
-        logger.warning("Engine calculation failed: %s", exc)
+        _logger.warning("Engine calculation failed: %s", exc)
         return 0.0, {}, {}
 
     if not isinstance(result, dict):
@@ -69,4 +69,6 @@ def evaluate_output(
     return output_value, state, composition
 
 
-__all__ = ["evaluate_output"]
+__all__ = [
+    "evaluate_output",
+]

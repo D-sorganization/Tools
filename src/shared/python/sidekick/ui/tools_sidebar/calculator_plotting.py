@@ -16,6 +16,14 @@ from compatibility import StrEnum
 
 from .registry import WorkspaceRegistry
 
+__all__ = [
+    "CALCULATOR_PLOT_TAB_ID",
+    "CalculatorPlotRequest",
+    "CalculatorPlotSource",
+    "CalculatorPlotTabConfig",
+    "build_calculator_plot_spec",
+]
+
 CALCULATOR_PLOT_TAB_ID = "calculator_plot"
 
 _DEFAULT_MAX_POINTS = 1000

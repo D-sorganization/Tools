@@ -26,7 +26,27 @@ from ....utils.unit_constants import (  # noqa: E402
 )
 from ...constants import DEFAULT_GAMMA_DIATOMIC, GAMMA_UPPER_BOUND  # noqa: E402
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "ComponentProperties",
+    "GAS_DATABASE",
+    "R_UNIVERSAL",
+    "SUTHERLAND_CONSTANTS",
+    "calculate_compressibility_factor",
+    "calculate_gas_properties",
+    "calculate_heat_capacity_ratio",
+    "calculate_ideal_gas_cp",
+    "calculate_ideal_gas_density",
+    "calculate_mixture_cp",
+    "calculate_mixture_molecular_weight",
+    "calculate_mixture_viscosity_simple",
+    "calculate_mixture_viscosity_wilke",
+    "calculate_pure_gas_viscosity_lucas",
+    "calculate_pure_gas_viscosity_sutherland",
+    "calculate_real_gas_density",
+    "calculate_speed_of_sound",
+]
+
+_logger = logging.getLogger(__name__)
 
 
 # ============================================================================
@@ -203,7 +223,7 @@ def calculate_ideal_gas_cp(component: str, temperature: float) -> float:
     if component is None:
         raise ValueError("component must be provided")
     if component not in GAS_DATABASE:
-        logger.warning(f"Component '{component}' not in database, using Air Cp")
+        _logger.warning(f"Component '{component}' not in database, using Air Cp")
         component = "Air"
 
     props = GAS_DATABASE[component]
@@ -235,12 +255,12 @@ def calculate_mixture_cp(composition: dict[str, float], temperature: float) -> f
 
     for component, mole_frac in composition.items():
         if component not in GAS_DATABASE:
-            logger.warning(f"Component '{component}' not in database, skipping Cp")
+            _logger.warning(f"Component '{component}' not in database, skipping Cp")
             continue
         cp_i = calculate_ideal_gas_cp(component, temperature)
         cp_mix += mole_frac * cp_i
 
-    logger.debug(f"Mixture Cp = {cp_mix:.2f} J/(mol·K) at T = {temperature:.0f} K")
+    _logger.debug(f"Mixture Cp = {cp_mix:.2f} J/(mol·K) at T = {temperature:.0f} K")
     return cp_mix
 
 
@@ -275,7 +295,7 @@ def calculate_heat_capacity_ratio(
     cp_mix = calculate_mixture_cp(composition, temperature)
 
     if cp_mix <= R_GAS:
-        logger.error(f"Invalid Cp = {cp_mix:.2f}, must be > R = {R_GAS:.2f}")
+        _logger.error(f"Invalid Cp = {cp_mix:.2f}, must be > R = {R_GAS:.2f}")
         return float(DEFAULT_GAMMA_DIATOMIC)  # Default for diatomic gases
 
     cv_mix = cp_mix - R_GAS
@@ -283,12 +303,12 @@ def calculate_heat_capacity_ratio(
 
     # Physical bounds check
     if gamma < 1.0 or gamma > GAMMA_UPPER_BOUND:
-        logger.warning(
+        _logger.warning(
             f"Calculated gamma = {gamma:.3f} outside physical bounds [1.0, 1.7]"
         )
         gamma = max(1.0, min(gamma, GAMMA_UPPER_BOUND))
 
-    logger.debug(
+    _logger.debug(
         f"Heat capacity ratio γ = {gamma:.4f} (Cp = {cp_mix:.1f}, Cv = {cv_mix:.1f})"
     )
     return float(gamma)
@@ -326,7 +346,7 @@ def calculate_speed_of_sound(
 
     speed_of_sound = math.sqrt(gamma * R_specific * temperature)
 
-    logger.debug(
+    _logger.debug(
         f"Speed of sound = {speed_of_sound:.1f} m/s (γ = {gamma:.3f}, T = {temperature:.0f} K)"
     )
     return speed_of_sound
@@ -351,16 +371,16 @@ def calculate_mixture_molecular_weight(composition: dict[str, float]) -> float:
     Example:
         >>> comp = {'H2': 0.3, 'CO': 0.4, 'CO2': 0.3}
         >>> mw = calculate_mixture_molecular_weight(comp)
-        >>> logger.debug(f"MW = {mw:.2f} kg/kmol")
+        >>> _logger.debug(f"MW = {mw:.2f} kg/kmol")
     """
     mw_mix = 0.0
     for component, mole_frac in composition.items():
         if component not in GAS_DATABASE:
-            logger.warning(f"Component '{component}' not in database, skipping")
+            _logger.warning(f"Component '{component}' not in database, skipping")
             continue
         mw_mix += mole_frac * GAS_DATABASE[component].molecular_weight
 
-    logger.debug(f"Mixture MW = {mw_mix:.3f} kg/kmol")
+    _logger.debug(f"Mixture MW = {mw_mix:.3f} kg/kmol")
     return mw_mix
 
 
@@ -385,7 +405,7 @@ def calculate_ideal_gas_density(
     if molecular_weight is None:
         raise ValueError("molecular_weight must be provided")
     density = (pressure * molecular_weight) / (R_UNIVERSAL * temperature)
-    logger.debug(f"Ideal gas density = {density:.4f} kg/m³")
+    _logger.debug(f"Ideal gas density = {density:.4f} kg/m³")
     return float(density)
 
 
@@ -412,7 +432,7 @@ def calculate_compressibility_factor(
     Example:
         >>> comp = {'CH4': 0.9, 'CO2': 0.1}
         >>> z = calculate_compressibility_factor(comp, 300, 50e5)
-        >>> logger.debug(f"Z = {z:.4f}")
+        >>> _logger.debug(f"Z = {z:.4f}")
     """
     # Calculate pseudocritical properties using Kay's rule
     if composition is None:
@@ -452,7 +472,7 @@ def calculate_compressibility_factor(
     # Physical bounds
     Z = max(0.1, min(Z, 1.5))
 
-    logger.debug(f"Z-factor calculation: T_r={T_r:.3f}, P_r={P_r:.3f}, Z={Z:.4f}")
+    _logger.debug(f"Z-factor calculation: T_r={T_r:.3f}, P_r={P_r:.3f}, Z={Z:.4f}")
     return float(Z)
 
 
@@ -477,7 +497,7 @@ def calculate_real_gas_density(
     density = (pressure * molecular_weight) / (
         compressibility * R_UNIVERSAL * temperature
     )
-    logger.debug(f"Real gas density = {density:.4f} kg/m³ (Z = {compressibility:.4f})")
+    _logger.debug(f"Real gas density = {density:.4f} kg/m³ (Z = {compressibility:.4f})")
     return float(density)
 
 
@@ -653,7 +673,7 @@ def _compute_pure_viscosities(
     pure_viscosities: dict[str, float] = {}
     for component in composition.keys():
         if component not in GAS_DATABASE:
-            logger.warning(f"Component '{component}' not found, using air properties")
+            _logger.warning(f"Component '{component}' not found, using air properties")
             pure_viscosities[component] = float(
                 calculate_pure_gas_viscosity_sutherland(temperature)
             )
@@ -780,13 +800,13 @@ def calculate_mixture_viscosity_wilke(
     Example:
         >>> comp = {'H2': 0.3, 'CO': 0.3, 'N2': 0.4}
         >>> mu = calculate_mixture_viscosity_wilke(comp, 800, 1e5)
-        >>> logger.debug(f"Viscosity = {mu:.6f} Pa·s = {mu*1e6:.2f} µPa·s")
+        >>> _logger.debug(f"Viscosity = {mu:.6f} Pa·s = {mu*1e6:.2f} µPa·s")
     """
     if composition is None:
         raise ValueError("composition must be provided")
     pure_viscosities = _compute_pure_viscosities(composition, temperature, pressure)
     mu_mix = _wilke_mixing_rule(composition, pure_viscosities)
-    logger.debug(f"Mixture viscosity = {mu_mix:.6e} Pa·s = {mu_mix * 1e6:.3f} µPa·s")
+    _logger.debug(f"Mixture viscosity = {mu_mix:.6e} Pa·s = {mu_mix * 1e6:.3f} µPa·s")
     return mu_mix
 
 
@@ -816,7 +836,7 @@ def calculate_mixture_viscosity_simple(
             )
             mu_mix += mole_frac * mu_i
         else:
-            logger.warning(f"No Sutherland data for {component}, using air properties")
+            _logger.warning(f"No Sutherland data for {component}, using air properties")
             mu_mix += mole_frac * calculate_pure_gas_viscosity_sutherland(temperature)
 
     return mu_mix
@@ -854,8 +874,8 @@ def calculate_gas_properties(
     Example:
         >>> comp = {'H2': 0.25, 'CO': 0.35, 'CO2': 0.15, 'N2': 0.25}
         >>> props = calculate_gas_properties(comp, 700, 5e5)
-        >>> logger.debug(f"Density: {props['density']:.3f} kg/m³")
-        >>> logger.debug(f"Gamma: {props['heat_capacity_ratio']:.3f}")
+        >>> _logger.debug(f"Density: {props['density']:.3f} kg/m³")
+        >>> _logger.debug(f"Gamma: {props['heat_capacity_ratio']:.3f}")
     """
     # Molecular weight
     if composition is None:
@@ -890,13 +910,13 @@ def calculate_gas_properties(
         "cp": cp,
     }
 
-    logger.info(f"Gas properties at T={temperature}K, P={pressure / 1e5:.1f}bar:")
-    logger.info(f"  MW = {mw:.2f} kg/kmol")
-    logger.info(f"  ρ = {density:.4f} kg/m³")
-    logger.info(f"  μ = {viscosity:.6e} Pa·s")
-    logger.info(f"  Z = {Z:.4f}")
-    logger.info(f"  γ = {gamma:.4f}")
-    logger.info(f"  a = {speed_of_sound:.1f} m/s")
+    _logger.info(f"Gas properties at T={temperature}K, P={pressure / 1e5:.1f}bar:")
+    _logger.info(f"  MW = {mw:.2f} kg/kmol")
+    _logger.info(f"  ρ = {density:.4f} kg/m³")
+    _logger.info(f"  μ = {viscosity:.6e} Pa·s")
+    _logger.info(f"  Z = {Z:.4f}")
+    _logger.info(f"  γ = {gamma:.4f}")
+    _logger.info(f"  a = {speed_of_sound:.1f} m/s")
 
     return properties
 
@@ -905,13 +925,13 @@ if __name__ == "__main__":
     # Demonstration
     logging.basicConfig(level=logging.INFO)
 
-    logger.info("\n" + "=" * 80)
-    logger.info("GAS MIXTURE PROPERTY CALCULATOR - EXAMPLES")
-    logger.info("=" * 80)
+    _logger.info("\n" + "=" * 80)
+    _logger.info("GAS MIXTURE PROPERTY CALCULATOR - EXAMPLES")
+    _logger.info("=" * 80)
 
     # Example 1: Syngas composition
-    logger.info("\nExample 1: Syngas from coal gasification")
-    logger.info("-" * 80)
+    _logger.info("\nExample 1: Syngas from coal gasification")
+    _logger.info("-" * 80)
     syngas = {
         "H2": 0.30,
         "CO": 0.40,
@@ -923,24 +943,24 @@ if __name__ == "__main__":
     P = 25e5  # Pa (25 bar)
 
     props = calculate_gas_properties(syngas, T, P)
-    logger.info(f"\nComposition: {syngas}")
-    logger.info(f"Temperature: {T} K ({T - 273.15:.0f}°C)")
-    logger.info(f"Pressure: {P / 1e5:.1f} bar")
-    logger.info("\nCalculated Properties:")
-    logger.info(f"  Molecular Weight: {props['molecular_weight']:.2f} kg/kmol")
-    logger.info(f"  Density: {props['density']:.4f} kg/m³")
-    logger.info(
+    _logger.info(f"\nComposition: {syngas}")
+    _logger.info(f"Temperature: {T} K ({T - 273.15:.0f}°C)")
+    _logger.info(f"Pressure: {P / 1e5:.1f} bar")
+    _logger.info("\nCalculated Properties:")
+    _logger.info(f"  Molecular Weight: {props['molecular_weight']:.2f} kg/kmol")
+    _logger.info(f"  Density: {props['density']:.4f} kg/m³")
+    _logger.info(
         f"  Viscosity: {props['viscosity']:.6e} Pa·s ({props['viscosity'] * 1e6:.2f} µPa·s)"
     )
-    logger.info(f"  Z-factor: {props['compressibility_factor']:.4f}")
+    _logger.info(f"  Z-factor: {props['compressibility_factor']:.4f}")
 
     # Example 2: Air at different conditions
-    logger.info("\n\nExample 2: Air at various temperatures")
-    logger.info("-" * 80)
+    _logger.info("\n\nExample 2: Air at various temperatures")
+    _logger.info("-" * 80)
     air = {"Air": 1.0}
     for temp in [300, 500, 800, 1200]:
         props_air = calculate_gas_properties(air, temp, 1e5, use_compressibility=False)
-        logger.info(
+        _logger.info(
             f"T = {temp}K: ρ = {props_air['density']:.4f} kg/m³, "
             f"μ = {props_air['viscosity'] * 1e6:.2f} µPa·s"
         )

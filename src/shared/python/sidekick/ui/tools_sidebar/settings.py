@@ -8,6 +8,13 @@ from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
+__all__ = [
+    "SidebarTabSettingsDescriptor",
+    "SidebarTabSettingsSchema",
+    "SidebarTabSettingsStore",
+    "TabSettingsDefinition",
+]
+
 
 class TabSettingsDefinition(Protocol):
     """Minimal tab definition contract needed by settings storage."""

@@ -33,7 +33,7 @@ from .exceptions import (
 )
 from .io import DataReader, DataWriter
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 UTC = timezone.utc  # noqa: UP017 - Python 3.10 lacks datetime.UTC.
 
 
@@ -678,11 +678,11 @@ class DataProcessorEngine(BaseCalculationEngine):
 
 
 __all__ = [
-    "DataProcessorEngine",
-    "ProcessingResult",
     "AggregationType",
-    "FitType",
-    "DataFormat",
-    "FitResult",
     "ColumnStats",
+    "DataFormat",
+    "DataProcessorEngine",
+    "FitResult",
+    "FitType",
+    "ProcessingResult",
 ]

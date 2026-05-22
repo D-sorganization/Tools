@@ -20,6 +20,15 @@ from typing import Any
 import pytest
 
 
+def pytest_addoption(parser: pytest.Parser) -> None:
+    parser.addoption(
+        "--regenerate-api-baseline",
+        action="store_true",
+        default=False,
+        help="Regenerate tests/sidekick_api_baseline.json with the current public API.",
+    )
+
+
 class AliasLoader:
     """A dummy loader that returns an already-loaded module to prevent re-execution."""
 
@@ -308,12 +317,3 @@ def pytest_ignore_collect(collection_path: Path, config: pytest.Config) -> bool 
         return True
 
     return None
-
-
-def pytest_addoption(parser: pytest.Parser) -> None:
-    parser.addoption(
-        "--regenerate-api-baseline",
-        action="store_true",
-        default=False,
-        help="Regenerate tests/sidekick_api_baseline.json with the current public API.",
-    )

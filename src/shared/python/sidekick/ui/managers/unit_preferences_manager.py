@@ -19,7 +19,7 @@ if TYPE_CHECKING:
         UnitConversionService,
     )
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 
 @dataclass

@@ -18,9 +18,12 @@ import numpy as np
 
 from .analysis_utils import evaluate_output
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
-__all__ = ["run_multi_parameter_analysis", "run_multi_parameter_analysis_parallel"]
+__all__ = [
+    "run_multi_parameter_analysis",
+    "run_multi_parameter_analysis_parallel",
+]
 
 
 def _evaluate_single_point(
@@ -125,7 +128,7 @@ def run_multi_parameter_analysis_parallel(
                 results[i, j] = output
             except (KeyError, ValueError, TypeError) as e:
                 # Log error but continue with other calculations
-                logger.error(f"Error in parallel calculation: {e}")
+                _logger.error(f"Error in parallel calculation: {e}")
                 # Default to zero for failed calculations
                 continue
 

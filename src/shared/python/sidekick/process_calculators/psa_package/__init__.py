@@ -21,8 +21,8 @@ from .psa_model import (
 )
 
 __all__ = [
-    "DEFAULT_COMPONENTS",
     "ComponentData",
+    "DEFAULT_COMPONENTS",
     "PSAModel",
     "PSAResults",
     "StreamCompositions",

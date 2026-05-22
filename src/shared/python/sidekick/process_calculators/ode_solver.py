@@ -7,6 +7,10 @@ from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
+__all__ = [
+    "ODESolver",
+]
+
 if TYPE_CHECKING:
     import scipy.integrate
 

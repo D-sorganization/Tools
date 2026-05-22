@@ -13,6 +13,10 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
+__all__ = [
+    "ElectrodeConfig",
+]
+
 # Note: Removed PyQt6 dependency to make this a pure logic/data module.
 # Colors can be handled by the UI layer or stored as hex strings/tuples here.
 

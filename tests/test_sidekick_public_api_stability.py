@@ -17,19 +17,29 @@ import pytest
 
 log = logging.getLogger(__name__)
 
+import os
+
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SIDEKICK_ROOT = REPO_ROOT / "src" / "shared" / "python" / "sidekick"
 BASELINE_PATH = REPO_ROOT / "tests" / "sidekick_api_baseline.json"
 
-TEST_FILES = [
-    "bootstrap.py",
-    "latex_renderer.py",
-    "notes_store.py",
-    "notes_tab.py",
-    "selected_tab_panel.py",
-    "symbolic_engine.py",
-    "tab_context_menu.py",
-]
+
+def _find_all_sidekick_modules() -> list[str]:
+    test_files = []
+    for root, _dirs, files in os.walk(SIDEKICK_ROOT):
+        # Skip tests directories under sidekick
+        parts = Path(root).relative_to(SIDEKICK_ROOT).parts
+        if "tests" in parts or "__pycache__" in parts:
+            continue
+        for f in files:
+            if f.endswith(".py"):
+                full_path = Path(root) / f
+                rel_path = full_path.relative_to(SIDEKICK_ROOT)
+                test_files.append(rel_path.as_posix())
+    return sorted(test_files)
+
+
+TEST_FILES = _find_all_sidekick_modules()
 
 
 def resolve_module_file(module_name: str) -> Path | None:
@@ -143,8 +153,9 @@ def extract_signature_from_function(
         annotation = ast.unparse(arg.annotation) if arg.annotation else None
 
         default_val = None
-        if node.args.kw_defaults[i] is not None:
-            default_val = ast.unparse(node.args.kw_defaults[i])
+        kw_default = node.args.kw_defaults[i]
+        if kw_default is not None:
+            default_val = ast.unparse(kw_default)
 
         args_info.append(
             {
@@ -209,18 +220,18 @@ def extract_module_api(file_path: Path) -> dict[str, Any]:
     for symbol in all_symbols:
         res = get_ast_node_for_symbol(module_ast, symbol, file_path)
         if res:
-            node, resolved_path = res
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            sym_node, resolved_path = res
+            if isinstance(sym_node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 api_info[symbol] = {
                     "type": "function",
-                    "signature": extract_signature_from_function(node),
+                    "signature": extract_signature_from_function(sym_node),
                 }
-            elif isinstance(node, ast.ClassDef):
+            elif isinstance(sym_node, ast.ClassDef):
                 api_info[symbol] = {
                     "type": "class",
-                    "info": extract_class_info(node, resolved_path),
+                    "info": extract_class_info(sym_node, resolved_path),
                 }
-            elif isinstance(node, (ast.Assign, ast.AnnAssign)):
+            elif isinstance(sym_node, (ast.Assign, ast.AnnAssign)):
                 api_info[symbol] = {"type": "variable"}
         else:
             api_info[symbol] = {"type": "unknown"}

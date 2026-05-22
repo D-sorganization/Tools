@@ -37,6 +37,11 @@ from .constants import (
 )
 from .syngas_water_calculator import SyngasWaterCalculator
 
+__all__ = [
+    "CompressionStage",
+    "SyngasCompressionEngine",
+]
+
 # Validation utility — graceful fallback for standalone use
 try:
     from integrated_process_simulator.utilities.validation import (

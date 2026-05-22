@@ -8,6 +8,13 @@ from typing import Any
 
 from .registry import WorkspaceRegistry, WorkspaceVariable
 
+__all__ = [
+    "CALCULATOR_WORKSPACE_FORMAT_VERSION",
+    "load_workspace_registry",
+    "save_workspace_registry",
+    "validate_calculator_workspace_path",
+]
+
 CALCULATOR_WORKSPACE_FORMAT_VERSION = 1
 
 

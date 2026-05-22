@@ -33,8 +33,6 @@ def _make_rust_stream_worker_class() -> type | None:
     try:
         from PyQt6.QtCore import QCoreApplication, QThread, pyqtSignal
 
-        if QCoreApplication.instance() is None:
-            return None
     except ImportError:
         return None
 

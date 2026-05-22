@@ -37,28 +37,24 @@ from .pipe_database import (
 )
 
 __all__ = [
-    # Fitting coefficients
-    "get_fitting_k_factor",
-    "get_multiple_fittings_k",
-    "calculate_two_k_factor",
-    "list_available_fittings",
-    # Flow rate conversion
-    "convert_flow_rate_to_mass",
-    "mass_to_mass",
-    "molar_to_mass",
-    "scfm_to_acfm",
-    "acfm_to_scfm",
+    "GAS_DATABASE",
+    "MATERIAL_ROUGHNESS",
     "STANDARD_CONDITIONS",
-    # Gas properties
+    "acfm_to_scfm",
     "calculate_gas_properties",
     "calculate_mixture_molecular_weight",
     "calculate_mixture_viscosity_wilke",
-    "GAS_DATABASE",
-    # Pipe database
+    "calculate_two_k_factor",
+    "convert_flow_rate_to_mass",
+    "create_custom_pipe",
+    "get_fitting_k_factor",
+    "get_multiple_fittings_k",
     "get_pipe_spec",
     "get_roughness",
+    "list_available_fittings",
     "list_available_sizes",
     "list_schedules_for_size",
-    "create_custom_pipe",
-    "MATERIAL_ROUGHNESS",
+    "mass_to_mass",
+    "molar_to_mass",
+    "scfm_to_acfm",
 ]

@@ -20,6 +20,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+# ---------------------------------------------------------------------------
 # Now import adapter modules.
 # ---------------------------------------------------------------------------
 from src.shared.python.ai.adapters.base import BaseAgentAdapter  # noqa: E402

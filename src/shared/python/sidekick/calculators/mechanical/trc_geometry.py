@@ -16,6 +16,14 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass, field
 
+__all__ = [
+    "LayerConfig",
+    "LayerResult",
+    "TRCGeometryEngine",
+    "VesselDimensions",
+    "VesselGeometryResult",
+]
+
 # Pre-computed constants for performance
 _PI = math.pi
 _PI_OVER_3 = math.pi / 3.0

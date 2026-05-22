@@ -16,7 +16,11 @@ from typing import Any
 
 import numpy as np
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "GlassPropertiesInterface",
+]
+
+_logger = logging.getLogger(__name__)
 
 # Performance constants
 _CACHE_MAX_SIZE = 1000  # Maximum cache entries before LRU eviction
@@ -101,7 +105,9 @@ class GlassPropertiesInterface:
                     power_density,
                 )
             except (ValueError, TypeError, ArithmeticError) as e:
-                logger.warning(f"External calculator failed: {e}. Using default model.")
+                _logger.warning(
+                    f"External calculator failed: {e}. Using default model."
+                )
                 conductivity = self._default_conductivity_model(
                     temperature_celsius,
                     power_density,
@@ -119,7 +125,7 @@ class GlassPropertiesInterface:
         while len(self._temperature_dependent_data) > self._cache_max_size:
             self._temperature_dependent_data.popitem(last=False)
 
-        return conductivity
+        return float(conductivity)
 
     def set_external_calculator(self, calculator: Callable) -> None:
         """Set external calculator function"""

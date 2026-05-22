@@ -13,6 +13,20 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal
 
+__all__ = [
+    "JSONScalar",
+    "JSONValue",
+    "PREVIEW_MAX_CHARS",
+    "PREVIEW_MAX_COLUMNS",
+    "PREVIEW_MAX_ROWS",
+    "Subscription",
+    "WorkspaceCallback",
+    "WorkspaceEvent",
+    "WorkspaceRegistry",
+    "WorkspaceVariable",
+    "format_workspace_value_preview",
+]
+
 JSONScalar = str | int | float | bool | None
 JSONValue = JSONScalar | list["JSONValue"] | dict[str, "JSONValue"]
 PREVIEW_MAX_ROWS = 3

@@ -9,6 +9,12 @@
 // in setup() after Ethernet.begin. The probe sketch firmware_probe.ino
 // validates this pattern works without per-call SPI transactions.
 
+// Note: facts-engineering/P1AM#31 documents an SPI bus-sharing issue between
+// the P1AM library and Ethernet. The proven mitigation is to (a) call P1.init
+// FIRST (before Ethernet.begin), and (b) apply the SPI bus reset workaround
+// in setup() after Ethernet.begin. The probe sketch firmware_probe.ino
+// validates this pattern works without per-call SPI transactions.
+
 P1AMHardware::P1AMHardware() {}
 
 void P1AMHardware::Begin() {

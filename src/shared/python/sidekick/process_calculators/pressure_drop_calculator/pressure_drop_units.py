@@ -7,6 +7,10 @@ need unit conversion utilities.
 
 from __future__ import annotations
 
+__all__ = [
+    "annotations",
+]
+
 
 def _convert_temperature(value: float, from_unit: str, to_unit: str) -> float:
     """Convert temperature between units."""

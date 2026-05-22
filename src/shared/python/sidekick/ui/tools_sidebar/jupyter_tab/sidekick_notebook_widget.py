@@ -23,7 +23,11 @@ from typing import Any
 from .notebook_session import NotebookSessionModel
 from .workspace_bridge import WorkspaceBridge
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "SidekickNotebookWidget",
+]
+
+_logger = logging.getLogger(__name__)
 
 
 class SidekickNotebookWidget:
@@ -102,7 +106,7 @@ class SidekickNotebookWidget:
         )
         model.validate_path()  # DbC — raises ValueError on traversal
         self._session = model
-        logger.debug("Notebook session opened: %s", notebook_path)
+        _logger.debug("Notebook session opened: %s", notebook_path)
 
     def set_kernel_environment(self, env: str | None) -> None:
         """Set the virtual-environment name for the active kernel.
@@ -132,7 +136,7 @@ class SidekickNotebookWidget:
                 variables to export.
         """
         if self._workspace_bridge is None:
-            logger.debug("update_workspace called but no workspace bridge is set")
+            _logger.debug("update_workspace called but no workspace bridge is set")
             return
         self._workspace_bridge.apply_to_kernel_environment(workspace)
 

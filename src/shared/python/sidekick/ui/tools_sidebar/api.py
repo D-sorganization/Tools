@@ -15,7 +15,13 @@ from .sidebar import UnifiedToolsSidebar
 from .state import SidebarState
 from .tab_definition import SidebarTabDefinition
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "ToolsSidebarInstallResult",
+    "create_tools_sidebar",
+    "install_tools_sidebar",
+]
+
+_logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -58,7 +64,7 @@ def create_tools_sidebar(
         try:
             sidebar.set_context_variable("host_context", context_provider())
         except Exception as exc:  # noqa: BLE001 - host context is optional
-            logger.debug("Tools sidebar context provider failed: %s", exc)
+            _logger.debug("Tools sidebar context provider failed: %s", exc)
     return sidebar
 
 

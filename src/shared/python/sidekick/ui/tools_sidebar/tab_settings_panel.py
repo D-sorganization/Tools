@@ -2,10 +2,18 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 from .qt_compat import QtCore, QtWidgets
 from .settings import SidebarTabSettingsStore
+
+__all__ = [
+    "ConfigureTabsDialog",
+    "SIDEKICK_TAB_SETTINGS_BUTTON_OBJECT_NAME",
+    "TabSettingsMixin",
+    "build_tab_settings_dialog",
+    "build_tab_settings_toolbar",
+]
 
 if TYPE_CHECKING:
     from .state import SidebarState
@@ -49,7 +57,7 @@ class TabSettingsMixin:
 
     def _configure_tab_settings(self) -> None:
         self._settings_store = SidebarTabSettingsStore(
-            self._tab_definitions.values(),
+            cast(Any, self._tab_definitions.values()),
             self._state,
         )
         self._refresh_settings_button()
