@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -266,3 +267,414 @@ def test_notes_tab_persistence_across_session_restart(tmp_path: Path, qtbot) -> 
 
     card_widget = tab2.findChild(QWidget, f"NoteCard_{card.note_id}")
     assert card_widget is not None
+
+
+@pytest.mark.gui
+def test_note_edit_dialog_new(qtbot) -> None:  # type: ignore[no-untyped-def]
+    """_NoteEditDialog has default values when created without a card."""
+    pytest.importorskip("PyQt6")
+    from sidekick.notes_tab import _NoteEditDialog
+
+    dlg = _NoteEditDialog()
+    qtbot.addWidget(dlg)
+    assert dlg.windowTitle() == "New Note"
+    assert dlg.title_text == ""
+    assert dlg.body_text == ""
+    assert dlg.color.startswith("#")
+
+
+@pytest.mark.gui
+def test_note_edit_dialog_edit(qtbot) -> None:  # type: ignore[no-untyped-def]
+    """_NoteEditDialog populates edit widgets when initialized with a card."""
+    pytest.importorskip("PyQt6")
+    from notes.models import NoteCard
+    from sidekick.notes_tab import _NoteEditDialog
+
+    card = NoteCard(
+        note_id="123", title="Old Title", markdown_body="Old Body", color="#123456"
+    )
+    dlg = _NoteEditDialog(card=card)
+    qtbot.addWidget(dlg)
+    assert dlg.windowTitle() == "Edit Note"
+    assert dlg.title_text == "Old Title"
+    assert dlg.body_text == "Old Body"
+    assert dlg.color == "#123456"
+
+
+@pytest.mark.gui
+def test_note_edit_dialog_pick_color(qtbot, monkeypatch: pytest.MonkeyPatch) -> None:  # type: ignore[no-untyped-def]
+    """_pick_color updates the selected color when a valid color is chosen."""
+    pytest.importorskip("PyQt6")
+    from PyQt6.QtGui import QColor
+    from PyQt6.QtWidgets import QColorDialog
+    from sidekick.notes_tab import _NoteEditDialog
+
+    dlg = _NoteEditDialog()
+    qtbot.addWidget(dlg)
+
+    mock_color = QColor("#ff0000")
+    monkeypatch.setattr(QColorDialog, "getColor", lambda *args, **kwargs: mock_color)
+
+    dlg._pick_color()
+    assert dlg.color == "#ff0000"
+
+
+@pytest.mark.gui
+def test_note_edit_dialog_pick_color_invalid(
+    qtbot: Any, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """_pick_color retains the previous color if color selection is cancelled."""
+    pytest.importorskip("PyQt6")
+    from PyQt6.QtGui import QColor
+    from PyQt6.QtWidgets import QColorDialog
+    from sidekick.notes_tab import _NoteEditDialog
+
+    dlg = _NoteEditDialog()
+    qtbot.addWidget(dlg)
+    initial_color = dlg.color
+
+    mock_color = QColor()
+    monkeypatch.setattr(QColorDialog, "getColor", lambda *args, **kwargs: mock_color)
+
+    dlg._pick_color()
+    assert dlg.color == initial_color
+
+
+@pytest.mark.gui
+def test_notes_tab_on_new_note_accepted(
+    tmp_path: Path, qtbot: Any, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """_on_new_note creates a note and refreshes when dialog is accepted."""
+    pytest.importorskip("PyQt6")
+    from PyQt6.QtWidgets import QDialog
+    from sidekick.notes_tab import NotesTab
+
+    tab = NotesTab(project_root=tmp_path)
+    qtbot.addWidget(tab)
+
+    class MockDialog:
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            pass
+
+        def exec(self) -> int:
+            return QDialog.DialogCode.Accepted
+
+        @property
+        def title_text(self) -> str:
+            return "New Title"
+
+        @property
+        def body_text(self) -> str:
+            return "New Body"
+
+        @property
+        def color(self) -> str:
+            return "#ffffff"
+
+    monkeypatch.setattr("sidekick.notes_tab._NoteEditDialog", MockDialog)
+
+    signal_received = False
+
+    def handle_changed() -> None:
+        nonlocal signal_received
+        signal_received = True
+
+    tab.notes_changed.connect(handle_changed)
+
+    tab._on_new_note()
+
+    assert signal_received
+    assert len(tab.note_ids()) == 1
+
+
+@pytest.mark.gui
+def test_notes_tab_on_new_note_rejected(
+    tmp_path: Path, qtbot: Any, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """_on_new_note does not create a note when dialog is rejected."""
+    pytest.importorskip("PyQt6")
+    from PyQt6.QtWidgets import QDialog
+    from sidekick.notes_tab import NotesTab
+
+    tab = NotesTab(project_root=tmp_path)
+    qtbot.addWidget(tab)
+
+    class MockDialog:
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            pass
+
+        def exec(self) -> int:
+            return QDialog.DialogCode.Rejected
+
+        @property
+        def title_text(self) -> str:
+            return "New Title"
+
+        @property
+        def body_text(self) -> str:
+            return "New Body"
+
+        @property
+        def color(self) -> str:
+            return "#ffffff"
+
+    monkeypatch.setattr("sidekick.notes_tab._NoteEditDialog", MockDialog)
+
+    tab._on_new_note()
+    assert len(tab.note_ids()) == 0
+
+
+@pytest.mark.gui
+def test_notes_tab_on_new_note_empty_title(
+    tmp_path: Path, qtbot: Any, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """_on_new_note does not create a note when dialog has empty title."""
+    pytest.importorskip("PyQt6")
+    from PyQt6.QtWidgets import QDialog
+    from sidekick.notes_tab import NotesTab
+
+    tab = NotesTab(project_root=tmp_path)
+    qtbot.addWidget(tab)
+
+    class MockDialog:
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            pass
+
+        def exec(self) -> int:
+            return QDialog.DialogCode.Accepted
+
+        @property
+        def title_text(self) -> str:
+            return ""
+
+        @property
+        def body_text(self) -> str:
+            return "New Body"
+
+        @property
+        def color(self) -> str:
+            return "#ffffff"
+
+    monkeypatch.setattr("sidekick.notes_tab._NoteEditDialog", MockDialog)
+
+    tab._on_new_note()
+    assert len(tab.note_ids()) == 0
+
+
+@pytest.mark.gui
+def test_notes_tab_on_edit_note_accepted(
+    tmp_path: Path, qtbot: Any, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """_on_edit_note updates the note and refreshes when edit dialog is accepted."""
+    pytest.importorskip("PyQt6")
+    from PyQt6.QtWidgets import QDialog
+    from sidekick.notes_store import SidekickNotesStore
+    from sidekick.notes_tab import NotesTab
+
+    store = SidekickNotesStore(tmp_path)
+    card = store.create_note("Original Title", "Original Body", color="#111111")
+
+    tab = NotesTab(project_root=tmp_path)
+    qtbot.addWidget(tab)
+
+    class MockDialog:
+        def __init__(self, card: Any = None, parent: Any = None) -> None:
+            assert card is not None
+            assert card.note_id == note_id_expected
+
+        def exec(self) -> int:
+            return QDialog.DialogCode.Accepted
+
+        @property
+        def title_text(self) -> str:
+            return "Edited Title"
+
+        @property
+        def body_text(self) -> str:
+            return "Edited Body"
+
+        @property
+        def color(self) -> str:
+            return "#222222"
+
+    note_id_expected = card.note_id
+    monkeypatch.setattr("sidekick.notes_tab._NoteEditDialog", MockDialog)
+
+    signal_received = False
+
+    def handle_changed() -> None:
+        nonlocal signal_received
+        signal_received = True
+
+    tab.notes_changed.connect(handle_changed)
+
+    tab._on_edit_note(card.note_id)
+
+    assert signal_received
+    notes = store.list_notes()
+    assert len(notes) == 1
+    assert notes[0].title == "Edited Title"
+    assert notes[0].markdown_body == "Edited Body"
+    assert notes[0].color == "#222222"
+
+
+@pytest.mark.gui
+def test_notes_tab_on_edit_note_not_found(
+    tmp_path: Path, qtbot: Any, caplog: pytest.LogCaptureFixture
+) -> None:
+    """_on_edit_note logs a warning when the target note does not exist."""
+    pytest.importorskip("PyQt6")
+    from sidekick.notes_tab import NotesTab
+
+    tab = NotesTab(project_root=tmp_path)
+    qtbot.addWidget(tab)
+
+    with caplog.at_level("WARNING"):
+        tab._on_edit_note("missing-note-id")
+
+    assert "Cannot edit: note" in caplog.text
+
+
+@pytest.mark.gui
+def test_notes_tab_on_delete_note(tmp_path: Path, qtbot: Any) -> None:
+    """_on_delete_note deletes note, refreshes, and emits signal."""
+    pytest.importorskip("PyQt6")
+    from sidekick.notes_store import SidekickNotesStore
+    from sidekick.notes_tab import NotesTab
+
+    store = SidekickNotesStore(tmp_path)
+    card = store.create_note("To Delete", "Body")
+
+    tab = NotesTab(project_root=tmp_path)
+    qtbot.addWidget(tab)
+    assert len(tab.note_ids()) == 1
+
+    signal_received = False
+
+    def handle_changed() -> None:
+        nonlocal signal_received
+        signal_received = True
+
+    tab.notes_changed.connect(handle_changed)
+
+    tab._on_delete_note(card.note_id)
+
+    assert signal_received
+    assert len(tab.note_ids()) == 0
+
+
+@pytest.mark.gui
+def test_notes_tab_on_delete_note_not_found(
+    tmp_path: Path, qtbot: Any, caplog: pytest.LogCaptureFixture
+) -> None:
+    """_on_delete_note logs a warning when the note to delete does not exist."""
+    pytest.importorskip("PyQt6")
+    from sidekick.notes_tab import NotesTab
+
+    tab = NotesTab(project_root=tmp_path)
+    qtbot.addWidget(tab)
+
+    with caplog.at_level("WARNING"):
+        tab._on_delete_note("missing-note-id")
+
+    assert "Cannot delete: note" in caplog.text
+
+
+@pytest.mark.gui
+def test_notes_tab_on_change_color_accepted(
+    tmp_path: Path, qtbot: Any, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """_on_change_color updates note's color when valid color is picked."""
+    pytest.importorskip("PyQt6")
+    from PyQt6.QtGui import QColor
+    from PyQt6.QtWidgets import QColorDialog
+    from sidekick.notes_store import SidekickNotesStore
+    from sidekick.notes_tab import NotesTab
+
+    store = SidekickNotesStore(tmp_path)
+    card = store.create_note("Title", "Body", color="#111111")
+
+    tab = NotesTab(project_root=tmp_path)
+    qtbot.addWidget(tab)
+
+    mock_color = QColor("#333333")
+    monkeypatch.setattr(QColorDialog, "getColor", lambda *args, **kwargs: mock_color)
+
+    signal_received = False
+
+    def handle_changed() -> None:
+        nonlocal signal_received
+        signal_received = True
+
+    tab.notes_changed.connect(handle_changed)
+
+    tab._on_change_color(card.note_id)
+
+    assert signal_received
+    notes = store.list_notes()
+    assert notes[0].color == "#333333"
+
+
+@pytest.mark.gui
+def test_notes_tab_on_change_color_invalid(
+    tmp_path: Path, qtbot: Any, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """_on_change_color ignores color updates when color is invalid."""
+    pytest.importorskip("PyQt6")
+    from PyQt6.QtGui import QColor
+    from PyQt6.QtWidgets import QColorDialog
+    from sidekick.notes_store import SidekickNotesStore
+    from sidekick.notes_tab import NotesTab
+
+    store = SidekickNotesStore(tmp_path)
+    card = store.create_note("Title", "Body", color="#111111")
+
+    tab = NotesTab(project_root=tmp_path)
+    qtbot.addWidget(tab)
+
+    mock_color = QColor()
+    monkeypatch.setattr(QColorDialog, "getColor", lambda *args, **kwargs: mock_color)
+
+    tab._on_change_color(card.note_id)
+    notes = store.list_notes()
+    assert notes[0].color == "#111111"
+
+
+@pytest.mark.gui
+def test_notes_tab_on_change_color_not_found(
+    tmp_path: Path, qtbot: Any
+) -> None:
+    """_on_change_color returns early if the note does not exist."""
+    pytest.importorskip("PyQt6")
+    from sidekick.notes_tab import NotesTab
+
+    tab = NotesTab(project_root=tmp_path)
+    qtbot.addWidget(tab)
+
+    tab._on_change_color("missing-note-id")
+
+
+def test_render_markdown_with_mistune_mocked(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """_render_markdown calls mistune.create_markdown when mistune is available."""
+    import sidekick.notes_tab as nt_module
+
+    monkeypatch.setattr(nt_module, "_MISTUNE_AVAILABLE", True)
+
+    class MockMarkdown:
+        def __init__(self, plugins: Any = None) -> None:
+            pass
+
+        def __call__(self, text: str) -> str:
+            return f"MOCKED HTML: {text}"
+
+    class MockMistune:
+        @staticmethod
+        def create_markdown(plugins: Any = None) -> MockMarkdown:
+            return MockMarkdown(plugins)
+
+    monkeypatch.setattr(nt_module, "mistune", MockMistune, raising=False)
+
+    result = nt_module._render_markdown("hello")
+    assert "MOCKED HTML: hello" in result
