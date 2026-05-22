@@ -3,3 +3,5 @@
 Subpackages:
     bio: Biomechanics data readers (C3D motion capture format)
 """
+
+__all__: list[str] = []
