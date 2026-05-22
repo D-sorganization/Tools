@@ -61,7 +61,7 @@ jobs:
         id: check
         shell: bash
         env:
-          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }} # pragma: no-secret
           LOCAL_MODE: ${{ vars.LOCAL_RUNNER_MODE }}
         run: |
           MODE="${LOCAL_MODE:-local}"
@@ -103,7 +103,7 @@ jobs:
         if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'failure'
         shell: bash
         env:
-          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }} # pragma: no-secret
           MAX_REPAIR_LIMIT: ${{ env.MAX_REPAIR_ITERATIONS }}
         run: |
           echo "Checking repair iteration limits..."
