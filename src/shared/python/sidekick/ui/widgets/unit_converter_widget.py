@@ -14,9 +14,10 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import UTC, datetime, timezone
+from datetime import datetime, timezone
 from typing import Any, cast
 
+from compatibility import UTC
 from PyQt6.QtCore import (
     QObject,
     QSettings,

@@ -12,10 +12,9 @@ from __future__ import annotations
 import logging
 import time
 import uuid
-from datetime import UTC
-from enum import StrEnum
 from typing import Any, Generic, TypeVar
 
+from compatibility import UTC, StrEnum
 from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)

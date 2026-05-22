@@ -16,9 +16,9 @@ rather than at connect/call time.
 
 from __future__ import annotations
 
-from enum import StrEnum
 from typing import Any
 
+from compatibility import StrEnum
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 

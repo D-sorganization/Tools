@@ -12,9 +12,11 @@ from __future__ import annotations
 import json
 import logging
 import shutil
-from datetime import UTC, datetime, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+from compatibility import UTC
 
 # Use canonical file I/O utilities instead of reimplementing them
 from utils.file_utils import safe_read_json, safe_write_json

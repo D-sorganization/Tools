@@ -48,6 +48,11 @@ for _mod_name, _rel_path in _PACKAGE_STUBS:
         if _rel_path is not None:
             _stub.__path__ = [str(ROOT / _rel_path)]
         sys.modules[_mod_name] = _stub
+    if "." in _mod_name:
+        _parent_name, _child_name = _mod_name.rsplit(".", 1)
+        _parent = sys.modules.get(_parent_name)
+        if isinstance(_parent, types.ModuleType):
+            setattr(_parent, _child_name, sys.modules[_mod_name])
 
 
 _logging_config_stub = sys.modules.setdefault(
@@ -61,8 +66,8 @@ _env_stub = sys.modules.get("src.shared.python.config.environment")
 if not isinstance(_env_stub, types.ModuleType):
     _env_stub = types.ModuleType("src.shared.python.config.environment")
     sys.modules["src.shared.python.config.environment"] = _env_stub
-_env_stub.get_env = lambda key, default=None, required=False: default
-_env_stub.get_env_float = lambda key, default=0.0: float(default)
+_env_stub.get_env = lambda key, default=None, required=False: default  # type: ignore[attr-defined]
+_env_stub.get_env_float = lambda key, default=0.0: float(default)  # type: ignore[attr-defined]
 
 
 # ---------------------------------------------------------------------------
@@ -294,6 +299,18 @@ def _make_gemini_adapter() -> BaseAgentAdapter:
             adapter = GeminiAdapter(api_key="test-key")
             adapter._model = model_instance
     return adapter
+
+
+@pytest.fixture(autouse=True)
+def qapp():  # type: ignore[no-untyped-def]
+    """Ensure a QApplication is initialized for QEventLoop signal delivery."""
+    try:
+        from PyQt6.QtWidgets import QApplication
+    except ImportError:
+        yield None
+        return
+    app = QApplication.instance() or QApplication([])
+    yield app
 
 
 # ---------------------------------------------------------------------------

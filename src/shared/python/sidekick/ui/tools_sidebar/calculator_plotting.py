@@ -10,8 +10,9 @@ import importlib
 import math
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
-from enum import StrEnum
 from typing import Any
+
+from compatibility import StrEnum
 
 from .registry import WorkspaceRegistry
 

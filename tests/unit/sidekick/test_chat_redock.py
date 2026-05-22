@@ -24,8 +24,9 @@ pytestmark = pytest.mark.unit
 pytest.importorskip("PyQt6")
 
 _SHARED = Path(__file__).resolve().parents[3] / "src" / "shared" / "python"
-if str(_SHARED) not in sys.path:
-    sys.path.insert(0, str(_SHARED))
+if str(_SHARED) in sys.path:
+    sys.path.remove(str(_SHARED))
+sys.path.insert(0, str(_SHARED))
 
 
 # ---------------------------------------------------------------------------

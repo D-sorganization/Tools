@@ -15,8 +15,9 @@ from __future__ import annotations
 import os
 import time
 from dataclasses import dataclass
-from enum import StrEnum
 from typing import Any, Protocol
+
+from compatibility import StrEnum
 
 __all__ = [
     "IntegrationStatus",
