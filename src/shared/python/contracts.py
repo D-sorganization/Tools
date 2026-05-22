@@ -159,7 +159,7 @@ class InvariantError(ContractViolationError):
         super().__init__("invariant", message, value)
 
 
-class PreconditionEvaluationError(ContractViolationError):
+class PreconditionEvaluationError(PreconditionError):
     """Raised when a precondition cannot be evaluated due to an error in the condition itself."""  # noqa: E501
 
     def __init__(self, message: str, underlying_error: Exception) -> None:
@@ -170,14 +170,12 @@ class PreconditionEvaluationError(ContractViolationError):
                 f"underlying_error must be Exception, got {type(underlying_error)}"
             )
         self.underlying_error = underlying_error
-        super().__init__("pre-condition-evaluation", message, None)
-
-    def __cause__(self) -> Exception:  # type: ignore[override]
-        """Return the underlying exception that caused the evaluation failure."""
-        return self.underlying_error
+        super().__init__(message, None)
+        self.condition_type = "pre-condition-evaluation"
+        self.__cause__ = underlying_error
 
 
-class PostconditionEvaluationError(ContractViolationError):
+class PostconditionEvaluationError(PostconditionError):
     """Raised when a postcondition cannot be evaluated due to an error in the condition itself."""  # noqa: E501
 
     def __init__(self, message: str, underlying_error: Exception) -> None:
@@ -188,11 +186,9 @@ class PostconditionEvaluationError(ContractViolationError):
                 f"underlying_error must be Exception, got {type(underlying_error)}"
             )
         self.underlying_error = underlying_error
-        super().__init__("post-condition-evaluation", message, None)
-
-    def __cause__(self) -> Exception:  # type: ignore[override]
-        """Return the underlying exception that caused the evaluation failure."""
-        return self.underlying_error
+        super().__init__(message, None)
+        self.condition_type = "post-condition-evaluation"
+        self.__cause__ = underlying_error
 
 
 # ─── Core Contract Primitives ─────────────────────────────────
@@ -326,7 +322,13 @@ def precondition(
 
         @functools.wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
-            result = _evaluate_precondition(condition, func, args, kwargs)
+            try:
+                result = _evaluate_precondition(condition, func, args, kwargs)
+            except PreconditionEvaluationError as exc:
+                if _current_contract_level() == ContractLevel.ENFORCE:
+                    raise
+                _handle_violation("pre-condition-evaluation", exc.message)
+                result = True
 
             if not result:
                 _handle_violation("pre-condition", message)
@@ -362,10 +364,14 @@ def postcondition(
             try:
                 check = condition(result)
             except Exception as exc:
-                raise PostconditionEvaluationError(
+                eval_exc = PostconditionEvaluationError(
                     f"Failed to evaluate postcondition for {func.__qualname__}: {exc!r}",  # noqa: E501
                     exc,
-                ) from exc
+                )
+                if _current_contract_level() == ContractLevel.ENFORCE:
+                    raise eval_exc from exc
+                _handle_violation("post-condition-evaluation", eval_exc.message)
+                check = True
 
             if not check:
                 _handle_violation("post-condition", message, result)
