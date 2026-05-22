@@ -109,14 +109,13 @@ def test_build_tab_settings_toolbar_returns_qtoolbar(stp, qtbot) -> None:  # typ
 
     from PyQt6.QtWidgets import QToolBar, QWidget
 
-    parent = QWidget()
-    qtbot.addWidget(parent)
+    class FakeSidebar(QWidget):
+        open_active_tab_settings = MagicMock()
+        open_configure_tabs = MagicMock()
+        register_settings_button = MagicMock()
 
-    sidebar = MagicMock()
-    sidebar.open_active_tab_settings = MagicMock()
-    sidebar.open_configure_tabs = MagicMock()
-    sidebar.setVisible = MagicMock()
-    sidebar.register_settings_button = MagicMock()
+    sidebar = FakeSidebar()
+    qtbot.addWidget(sidebar)
 
     toolbar = stp.build_tab_settings_toolbar(sidebar)
     qtbot.addWidget(toolbar)
@@ -131,11 +130,13 @@ def test_build_tab_settings_toolbar_object_name(stp, qtbot) -> None:  # type: ig
 
     from PyQt6.QtWidgets import QWidget
 
-    parent = QWidget()
-    qtbot.addWidget(parent)
+    class FakeSidebar(QWidget):
+        open_active_tab_settings = MagicMock()
+        open_configure_tabs = MagicMock()
+        register_settings_button = MagicMock()
 
-    sidebar = MagicMock()
-    sidebar.register_settings_button = MagicMock()
+    sidebar = FakeSidebar()
+    qtbot.addWidget(sidebar)
 
     toolbar = stp.build_tab_settings_toolbar(sidebar)
     qtbot.addWidget(toolbar)
@@ -150,18 +151,23 @@ def test_build_tab_settings_toolbar_has_settings_button(stp, qtbot) -> None:  # 
 
     from PyQt6.QtWidgets import QToolButton, QWidget
 
-    parent = QWidget()
-    qtbot.addWidget(parent)
+    captured: list[QToolButton] = []
 
-    sidebar = MagicMock()
-    sidebar.register_settings_button = MagicMock()
+    class FakeSidebar(QWidget):
+        open_active_tab_settings = MagicMock()
+        open_configure_tabs = MagicMock()
+
+        def register_settings_button(self, btn: QToolButton) -> None:  # type: ignore[override]
+            captured.append(btn)
+
+    sidebar = FakeSidebar()
+    qtbot.addWidget(sidebar)
 
     toolbar = stp.build_tab_settings_toolbar(sidebar)
     qtbot.addWidget(toolbar)
 
-    # Verify that register_settings_button was called with a QToolButton
-    assert sidebar.register_settings_button.called
-    btn = sidebar.register_settings_button.call_args[0][0]
+    assert len(captured) == 1
+    btn = captured[0]
     assert isinstance(btn, QToolButton)
     assert btn.objectName() == stp.SIDEKICK_TAB_SETTINGS_BUTTON_OBJECT_NAME
 
@@ -170,17 +176,19 @@ def test_build_tab_settings_toolbar_has_settings_button(stp, qtbot) -> None:  # 
 def test_build_tab_settings_dialog_no_content(stp, qtbot) -> None:  # type: ignore[no-untyped-def]
     """Dialog shows a label when no custom content widget is provided."""
     pytest.importorskip("PyQt6")
-    from unittest.mock import MagicMock
-
     from PyQt6.QtWidgets import QDialog, QWidget
 
-    parent = QWidget()
-    qtbot.addWidget(parent)
-
     tab_id = "calc"
-    sidebar = MagicMock()
-    sidebar.tab_display_name.return_value = "Calculator"
-    sidebar.tab_settings.return_value = {"values": {"key": "val"}}
+
+    class FakeSidebar(QWidget):
+        def tab_display_name(self, tid: str) -> str:  # noqa: ARG002
+            return "Calculator"
+
+        def tab_settings(self, tid: str) -> dict:  # noqa: ARG002
+            return {"values": {"key": "val"}}
+
+    sidebar = FakeSidebar()
+    qtbot.addWidget(sidebar)
 
     dialog = stp.build_tab_settings_dialog(sidebar, tab_id, content=None)
     qtbot.addWidget(dialog)
@@ -193,16 +201,16 @@ def test_build_tab_settings_dialog_no_content(stp, qtbot) -> None:  # type: igno
 def test_build_tab_settings_dialog_with_content(stp, qtbot) -> None:  # type: ignore[no-untyped-def]
     """build_tab_settings_dialog embeds a provided content widget."""
     pytest.importorskip("PyQt6")
-    from unittest.mock import MagicMock
-
     from PyQt6.QtWidgets import QDialog, QLabel, QWidget
 
-    parent = QWidget()
-    qtbot.addWidget(parent)
-
     tab_id = "notes"
-    sidebar = MagicMock()
-    sidebar.tab_display_name.return_value = "Notes"
+
+    class FakeSidebar(QWidget):
+        def tab_display_name(self, tid: str) -> str:  # noqa: ARG002
+            return "Notes"
+
+    sidebar = FakeSidebar()
+    qtbot.addWidget(sidebar)
 
     content_widget = QLabel("Custom content")
     qtbot.addWidget(content_widget)
