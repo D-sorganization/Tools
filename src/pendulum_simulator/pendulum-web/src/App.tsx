@@ -387,6 +387,7 @@ export default function App() {
               <button
                 key={m}
                 onClick={() => { setModelType(m); setResult(null); setPlaying(false); }}
+                aria-pressed={modelType === m}
                 style={{
                   padding: '8px 16px',
                   backgroundColor: modelType === m ? '#0066cc' : '#333',
@@ -482,6 +483,7 @@ export default function App() {
                     id="btn-play-pause"
                     className="btn btn-secondary"
                     onClick={() => setPlaying(p => !p)}
+                    aria-label={playing ? "Pause simulation" : "Play simulation"}
                   >
                     {playing ? 'Pause' : 'Play'}
                   </button>
@@ -562,7 +564,7 @@ export default function App() {
               <div className="panel-section">
                 <button id="btn-run" className="btn btn-primary" onClick={runSimTriple}>Run Simulation</button>
                 {result && (
-                  <button id="btn-play-pause" className="btn btn-secondary" onClick={() => setPlaying(p => !p)}>
+                  <button id="btn-play-pause" className="btn btn-secondary" onClick={() => setPlaying(p => !p)} aria-label={playing ? "Pause simulation" : "Play simulation"}>
                     {playing ? 'Pause' : 'Play'}
                   </button>
                 )}
@@ -615,7 +617,7 @@ export default function App() {
               <div className="panel-section">
                 <button id="btn-run-golfer" className="btn btn-primary" onClick={runSimGolfer}>Run Simulation</button>
                 {result && (
-                  <button id="btn-play-pause-golfer" className="btn btn-secondary" onClick={() => setPlaying(p => !p)}>
+                  <button id="btn-play-pause-golfer" className="btn btn-secondary" onClick={() => setPlaying(p => !p)} aria-label={playing ? "Pause simulation" : "Play simulation"}>
                     {playing ? 'Pause' : 'Play'}
                   </button>
                 )}
