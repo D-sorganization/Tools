@@ -126,20 +126,16 @@ def _setup_matplotlib_backend() -> None:
             mpl.use("Agg")
 
 
-def _get_figure_canvas_class() -> "type[Any]":
+def _get_figure_canvas_class() -> Any:
     """Lazily load FigureCanvas to prevent matplotlib backend hang at import."""
     try:
-        from matplotlib.backends.backend_qtagg import (
-            FigureCanvasQTAgg as FigureCanvas,
-        )
+        from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 
-        return FigureCanvas
+        return FigureCanvasQTAgg
     except ImportError:
-        from matplotlib.backends.backend_agg import (  # type: ignore[assignment]
-            FigureCanvasAgg as FigureCanvas,
-        )
+        from matplotlib.backends.backend_agg import FigureCanvasAgg
 
-        return FigureCanvas
+        return FigureCanvasAgg
 
 
 if TYPE_CHECKING:
