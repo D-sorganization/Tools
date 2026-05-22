@@ -257,13 +257,57 @@ class TestStreamResponseGenerator:
         orig_pyqt = sys.modules.get("PyQt6")
         orig_pyqt_qtcore = sys.modules.get("PyQt6.QtCore")
 
+        class MockBoundSignal:
+            def __init__(self) -> None:
+                self.slots: list[Any] = []
+
+            def connect(self, slot: Any) -> None:
+                self.slots.append(slot)
+
+            def emit(self, *args: Any) -> None:
+                for slot in self.slots:
+                    slot(*args)
+
+        class MockSignal:
+            def __init__(self, *args: Any, **kwargs: Any) -> None:
+                pass
+
+            def __get__(self, instance: Any, owner: Any) -> MockBoundSignal:
+                if instance is None:
+                    return self  # type: ignore[return-value]
+                attr_name = f"_signal_{id(self)}"
+                if not hasattr(instance, attr_name):
+                    setattr(instance, attr_name, MockBoundSignal())
+                return getattr(instance, attr_name)  # type: ignore[no-any-return]
+
+        class MockQThread:
+            def __init__(self, *args: Any, **kwargs: Any) -> None:
+                pass
+
+            def start(self) -> None:
+                self.run()  # type: ignore[attr-defined]
+
+            @classmethod
+            def currentThread(cls) -> Any:
+                return mock_thread
+
+        class MockEventLoop:
+            def __init__(self, *args: Any, **kwargs: Any) -> None:
+                pass
+
+            def exec(self) -> int:
+                mock_app.processEvents()
+                return 0
+
+            def quit(self) -> None:
+                pass
+
         # We need to mock sys.modules for PyQt6 since it might not be installed
         with MagicMock() as mock_pyqt:
             mock_pyqt.QtCore.QCoreApplication.instance.return_value = mock_app
-            mock_pyqt.QtCore.QThread = _FakeQThread
-            mock_pyqt.QtCore.QThread.currentThread.return_value = mock_thread
-            mock_pyqt.QtCore.pyqtSignal = _FakeSignalDescriptor
-            mock_pyqt.QtCore.QEventLoop = _FakeQEventLoop
+            mock_pyqt.QtCore.QThread = MockQThread
+            mock_pyqt.QtCore.pyqtSignal = MockSignal
+            mock_pyqt.QtCore.QEventLoop = MockEventLoop
             mock_app.thread.return_value = mock_thread
 
             sys.modules["PyQt6"] = mock_pyqt

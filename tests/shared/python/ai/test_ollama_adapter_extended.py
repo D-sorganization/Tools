@@ -237,8 +237,11 @@ class TestValidateConnection:
         assert ok is False
         assert "No models" in msg or "ollama pull" in msg
 
-    def test_fallback_when_model_not_in_list(self, adapter: OllamaAdapter) -> None:
-        """Falls back to first model and returns True when configured is missing."""
+    def test_falls_back_when_model_not_in_list(self, adapter: OllamaAdapter) -> None:
+        """validate_connection returns True and falls back to first available
+
+        model when configured model is absent.
+        """
         fake_body = {"models": [{"name": "mistral"}, {"name": "codellama"}]}
         mock_client = MagicMock()
         mock_client.get.return_value = _make_mock_response(fake_body)
@@ -248,6 +251,7 @@ class TestValidateConnection:
 
         assert ok is True
         assert adapter._model == "mistral"
+        assert "using 'mistral'" in msg.lower()
 
     def test_failure_on_connect_error(self, adapter: OllamaAdapter) -> None:
         """Returns (False, message) when Ollama server is unreachable."""

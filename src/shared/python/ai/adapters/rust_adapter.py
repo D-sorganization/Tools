@@ -25,13 +25,14 @@ _WHEEL_MISSING_HINT = (
 
 
 def _make_rust_stream_worker_class() -> type | None:
-    """Return _RustStreamWorker(QThread), or None when PyQt6 is absent.
+    """Return _RustStreamWorker(QThread), or None when PyQt6 is absent or uninitialized.
 
     The class is constructed lazily at call time so this module can be imported
     in headless environments that lack a working PyQt6 installation.
     """
     try:
         from PyQt6.QtCore import QCoreApplication, QThread, pyqtSignal
+
     except ImportError:
         return None
 
