@@ -146,12 +146,12 @@ def main() -> int:
 
     pytest_rc, json_path = run_pytest_with_coverage(html=args.html)
     if pytest_rc != 0:
-        log.warning("pytest exited with code %d (tests may have failed)", pytest_rc)
+        log.error("pytest exited with code %d", pytest_rc)
 
     coverage_data = load_coverage_json(json_path)
     passed = check_thresholds(coverage_data)
 
-    return 0 if passed else 1
+    return 0 if passed and pytest_rc == 0 else 1
 
 
 if __name__ == "__main__":

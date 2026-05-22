@@ -7,6 +7,7 @@ are skipped when PyQt6 is not installed.
 
 from __future__ import annotations
 
+import importlib
 import sys
 from pathlib import Path
 from unittest.mock import MagicMock
@@ -20,22 +21,25 @@ if str(SHARED) not in sys.path:
     sys.path.insert(0, str(SHARED))
 
 
-# ---------------------------------------------------------------------------
-# Module-level import
-# ---------------------------------------------------------------------------
-
-
 @pytest.fixture(scope="module")
 def tcm():  # type: ignore[no-untyped-def]
     """Import and return the tab_context_menu facade module."""
-    import importlib
-
     return importlib.import_module("sidekick.tab_context_menu")
 
 
-# ---------------------------------------------------------------------------
-# Public API surface
-# ---------------------------------------------------------------------------
+@pytest.fixture()
+def live_sidebar(tmp_path: Path, qtbot):  # type: ignore[no-untyped-def]
+    """Return a real sidebar so menu-construction failures stay test-visible."""
+    pytest.importorskip("PyQt6")
+
+    from sidekick.ui.tools_sidebar.qt_compat import QtWidgets
+    from sidekick.ui.tools_sidebar.sidebar import UnifiedToolsSidebar
+
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    _ = app
+    sidebar = UnifiedToolsSidebar(project_root=tmp_path)
+    qtbot.addWidget(sidebar)
+    return sidebar
 
 
 def test_tab_context_menu_all(tcm) -> None:  # type: ignore[no-untyped-def]
@@ -53,11 +57,6 @@ def test_show_tab_context_menu_is_callable(tcm) -> None:  # type: ignore[no-unty
     assert callable(tcm.show_tab_context_menu)
 
 
-# ---------------------------------------------------------------------------
-# show_tab_context_menu — no Qt (early-return path)
-# ---------------------------------------------------------------------------
-
-
 @pytest.mark.gui
 def test_show_tab_context_menu_no_tab_id_returns(tcm, qtbot) -> None:  # type: ignore[no-untyped-def]
     """show_tab_context_menu returns early if get_tab_id_at returns None."""
@@ -72,59 +71,28 @@ def test_show_tab_context_menu_no_tab_id_returns(tcm, qtbot) -> None:  # type: i
     assert result is None
 
 
-# ---------------------------------------------------------------------------
-# build_tab_context_menu — Qt needed
-# ---------------------------------------------------------------------------
-
-
 @pytest.mark.gui
-def test_build_tab_context_menu_returns_qmenu(tcm, qtbot) -> None:  # type: ignore[no-untyped-def]
+def test_build_tab_context_menu_returns_qmenu(
+    tcm,
+    live_sidebar,
+) -> None:  # type: ignore[no-untyped-def]
     """build_tab_context_menu returns a QMenu."""
-    pytest.importorskip("PyQt6")
-    from PyQt6.QtWidgets import QMenu, QWidget
+    from PyQt6.QtWidgets import QMenu
 
-    tab_id = "test_tab"
-    parent = QWidget()
-    qtbot.addWidget(parent)
-
-    definition = MagicMock()
-    definition.popout_enabled = True
-    definition.duplicate_enabled = True
-    definition.help_metadata = None
-
-    sidebar = MagicMock()
-    sidebar.get_tab_definition.return_value = definition
-    sidebar.get_tab_display_name.return_value = "Test Tab"
-
-    try:
-        menu = tcm.build_tab_context_menu(sidebar, tab_id)
-        assert isinstance(menu, QMenu)
-    except Exception:
-        pytest.skip("Menu construction requires sidebar mock compatibility")
+    menu = tcm.build_tab_context_menu(live_sidebar, "calculator")
+    assert isinstance(menu, QMenu)
 
 
 @pytest.mark.gui
-def test_build_tab_context_menu_close_action_present(tcm, qtbot) -> None:  # type: ignore[no-untyped-def]
+def test_build_tab_context_menu_close_action_present(
+    tcm,
+    live_sidebar,
+) -> None:  # type: ignore[no-untyped-def]
     """build_tab_context_menu always includes a Close action."""
-    pytest.importorskip("PyQt6")
-    from PyQt6.QtWidgets import QWidget
-
-    tab_id = "my_tab"
-    parent = QWidget()
-    qtbot.addWidget(parent)
-
-    definition = MagicMock()
-    definition.popout_enabled = False
-    definition.duplicate_enabled = False
-    definition.help_metadata = None
-
-    sidebar = MagicMock()
-    sidebar.get_tab_definition.return_value = definition
-    sidebar.get_tab_display_name.return_value = None
-
-    try:
-        menu = tcm.build_tab_context_menu(sidebar, tab_id)
-        action_titles = [a.text() for a in menu.actions() if not a.isSeparator()]
-        assert any("Close" in t or "close" in t.lower() for t in action_titles)
-    except Exception:
-        pytest.skip("Menu construction requires sidebar mock compatibility")
+    menu = tcm.build_tab_context_menu(live_sidebar, "calculator")
+    action_titles = [
+        action.text().replace("&", "")
+        for action in menu.actions()
+        if not action.isSeparator()
+    ]
+    assert "Close" in action_titles
