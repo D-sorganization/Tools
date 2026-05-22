@@ -105,44 +105,48 @@ class TestFinancialCalculatorMainWindow:
             app = QApplication([])
         yield app
 
-    def test_main_window_creation(self, app):
+    def test_main_window_creation(self, app, qtbot):
         """Test that main window can be created."""
         from financial_calculator.ui.pyqt6.main_window import (
             FinancialCalculatorMainWindow,
         )
 
         window = FinancialCalculatorMainWindow()
+        qtbot.addWidget(window)
         assert window is not None
         assert window.windowTitle() == "Financial Calculator"
 
-    def test_main_window_has_engine(self, app):
+    def test_main_window_has_engine(self, app, qtbot):
         """Test that main window has calculation engine."""
         from financial_calculator.ui.pyqt6.main_window import (
             FinancialCalculatorMainWindow,
         )
 
         window = FinancialCalculatorMainWindow()
+        qtbot.addWidget(window)
         assert window.engine is not None
 
-    def test_main_window_has_input_fields(self, app):
+    def test_main_window_has_input_fields(self, app, qtbot):
         """Test that main window has required input fields."""
         from financial_calculator.ui.pyqt6.main_window import (
             FinancialCalculatorMainWindow,
         )
 
         window = FinancialCalculatorMainWindow()
+        qtbot.addWidget(window)
         # Check for key input fields
         assert hasattr(window, "plant_capacity_input")
         assert hasattr(window, "operating_days_input")
         assert hasattr(window, "product_price_input")
 
-    def test_calculate_button_exists(self, app):
+    def test_calculate_button_exists(self, app, qtbot):
         """Test that calculate button exists."""
         from financial_calculator.ui.pyqt6.main_window import (
             FinancialCalculatorMainWindow,
         )
 
         window = FinancialCalculatorMainWindow()
+        qtbot.addWidget(window)
         assert hasattr(window, "calculate_btn")
 
 
@@ -294,23 +298,25 @@ class TestFinancialCalculatorMainWindowDbC:
         with pytest.raises(TypeError, match="parent must be a QWidget or None"):
             FinancialCalculatorMainWindow(parent="not_a_widget")  # type: ignore[arg-type]
 
-    def test_update_results_rejects_wrong_type(self, app):
+    def test_update_results_rejects_wrong_type(self, app, qtbot):
         """_update_results raises TypeError if results is not FinancialDesign."""
         from financial_calculator.ui.pyqt6.main_window import (
             FinancialCalculatorMainWindow,
         )
 
         window = FinancialCalculatorMainWindow()
+        qtbot.addWidget(window)
         with pytest.raises(TypeError, match="results must be a FinancialDesign"):
             window._update_results("not_a_design")  # type: ignore[arg-type]
 
-    def test_update_projections_rejects_wrong_type(self, app):
+    def test_update_projections_rejects_wrong_type(self, app, qtbot):
         """_update_projections raises TypeError if projections is not a list."""
         from financial_calculator.ui.pyqt6.main_window import (
             FinancialCalculatorMainWindow,
         )
 
         window = FinancialCalculatorMainWindow()
+        qtbot.addWidget(window)
         with pytest.raises(TypeError, match="projections must be a list"):
             window._update_projections("not_a_list")  # type: ignore[arg-type]
 
