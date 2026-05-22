@@ -190,6 +190,8 @@ src/shared/python/upstream_drift_tools/tests/calculators/conversion/test_convers
 src/shared/python/upstream_drift_tools/tests/process_calculators/test_psa_model.py
 src/shared/python/upstream_drift_tools/tests/test_data_processor_engine.py
 src/shared/python/upstream_drift_tools/ui/mixins/calculator_state_mixin.py
+src/shared/python/sidekick/ui/widgets/unit_converter_widget.py
+src/shared/python/sidekick/utils/state_manager.py
 src/shared/python/upstream_drift_tools/ui/tools_sidebar/runtime_tabs.py
 src/shared/python/upstream_drift_tools/ui/widgets/data_processor_widget.py
 src/shared/python/upstream_drift_tools/ui/widgets/unit_converter_widget.py
