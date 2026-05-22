@@ -1,4 +1,4 @@
-from typing import Any
+from __future__ import annotations
 
 """
 Model Explorer GUI for browsing, loading, and previewing URDF/MJCF models.
@@ -6,11 +6,9 @@ Model Explorer GUI for browsing, loading, and previewing URDF/MJCF models.
 Provides a visual interface for the model library with display controls.
 """
 
-from __future__ import annotations  # noqa: E402, F404
+from typing import TYPE_CHECKING, Any
 
-from typing import TYPE_CHECKING  # noqa: E402
-
-from model_generation.explorer.display_config import DISPLAY_OPTIONS  # noqa: E402
+from model_generation.explorer.display_config import DISPLAY_OPTIONS
 
 if TYPE_CHECKING:
     from model_generation.explorer.model_explorer import ModelExplorerWindow
