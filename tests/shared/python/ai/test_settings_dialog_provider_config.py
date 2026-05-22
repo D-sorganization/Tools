@@ -3,12 +3,12 @@
 
 from __future__ import annotations
 
-from PyQt6.QtWidgets import QLabel, QPushButton
+from PyQt6.QtWidgets import QLabel, QPushButton, QWidget
 
 from src.shared.python.ai.gui.settings_dialog import AIProvider, ProviderConfigWidget
 
 
-def _label_texts(widget: ProviderConfigWidget) -> set[str]:
+def _label_texts(widget: QWidget) -> set[str]:
     return {
         label.text()
         for label in widget.findChildren(QLabel)
@@ -16,7 +16,7 @@ def _label_texts(widget: ProviderConfigWidget) -> set[str]:
     }
 
 
-def _button_texts(widget: ProviderConfigWidget) -> set[str]:
+def _button_texts(widget: QWidget) -> set[str]:
     return {
         button.text()
         for button in widget.findChildren(QPushButton)
@@ -24,7 +24,10 @@ def _button_texts(widget: ProviderConfigWidget) -> set[str]:
     }
 
 
-def test_ollama_provider_config_shows_ollama_controls(qapp) -> None:
+from typing import Any
+
+
+def test_ollama_provider_config_shows_ollama_controls(qapp: Any) -> None:
     widget = ProviderConfigWidget(AIProvider.OLLAMA)
 
     assert "Ollama Host:" in _label_texts(widget)
@@ -32,7 +35,7 @@ def test_ollama_provider_config_shows_ollama_controls(qapp) -> None:
     widget.close()
 
 
-def test_cline_provider_config_uses_cline_specific_controls(qapp) -> None:
+def test_cline_provider_config_uses_cline_specific_controls(qapp: Any) -> None:
     widget = ProviderConfigWidget(AIProvider.CLINE_CLI)
 
     labels = _label_texts(widget)
@@ -45,7 +48,7 @@ def test_cline_provider_config_uses_cline_specific_controls(qapp) -> None:
     widget.close()
 
 
-def test_bitnet_provider_config_uses_bitnet_specific_controls(qapp) -> None:
+def test_bitnet_provider_config_uses_bitnet_specific_controls(qapp: Any) -> None:
     widget = ProviderConfigWidget(AIProvider.BITNET)
 
     labels = _label_texts(widget)

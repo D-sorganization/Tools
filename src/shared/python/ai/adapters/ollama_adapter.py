@@ -575,6 +575,7 @@ class OllamaAdapter(BaseAgentAdapter):
 
         except Exception as e:  # noqa: BLE001
             self._handle_error(e)
+            return False
 
     def _handle_error(self, error: Exception) -> AgentResponse:
         """Handle Ollama-specific errors before falling back to generic classifier."""

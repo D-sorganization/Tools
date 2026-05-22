@@ -291,7 +291,7 @@ class UnifiedToolsSidebar(
             - ``Ctrl+Shift+B`` → :meth:`toggle_collapsed`
         """
         try:
-            from PyQt6.QtGui import (  # type: ignore[attr-defined]
+            from PyQt6.QtGui import (
                 QKeySequence,
                 QShortcut,
             )
@@ -303,10 +303,10 @@ class UnifiedToolsSidebar(
                 return  # Qt not available — gracefully skip shortcut registration
 
         sc_toggle = QShortcut(QKeySequence("Ctrl+B"), main_window)
-        sc_toggle.activated.connect(self.toggle_visibility)  # type: ignore[union-attr]
+        sc_toggle.activated.connect(self.toggle_visibility)
 
         sc_collapse = QShortcut(QKeySequence("Ctrl+Shift+B"), main_window)
-        sc_collapse.activated.connect(self.toggle_collapsed)  # type: ignore[union-attr]
+        sc_collapse.activated.connect(self.toggle_collapsed)
 
     def re_dock(self, tab_id: str) -> bool:
         """Re-dock a tab that is currently in a floating pop-out window.
@@ -807,7 +807,7 @@ SidekickSidebar = UnifiedToolsSidebar
 def _coerce_layout_mode(value: LayoutMode | str | None) -> LayoutMode:
     """Coerce ``value`` to a :class:`LayoutMode`, defaulting to SIDEBAR."""
     if value is None:
-        return LayoutMode.SIDEBAR
+        return LayoutMode.SIDEBAR  # type: ignore[return-value]
     if isinstance(value, LayoutMode):
         return value
     if not isinstance(value, str):

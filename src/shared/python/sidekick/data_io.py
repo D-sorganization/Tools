@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
+from typing import Any
 
 from contracts import require
 
@@ -38,7 +39,7 @@ def read_data(
     file_path: str | Path,
     *,
     prefer_parquet: bool = True,
-    **kwargs,
+    **kwargs: Any,
 ) -> pd.DataFrame:
     """Read a data file, preferring Parquet over CSV when available.
 
@@ -103,7 +104,7 @@ def write_data(
     file_path: str | Path,
     *,
     also_csv: bool = False,
-    **kwargs,
+    **kwargs: Any,
 ) -> Path:
     """Write a DataFrame to Parquet (default) or CSV.
 

@@ -26,6 +26,7 @@ import pytest
 from src.shared.python.ai.mcp.contracts import (  # noqa: E402
     McpServerConfig,
     McpToolDescriptor,
+    McpTransport,
 )
 from src.shared.python.ai.mcp.pool import _serialize_tool_for_provider  # noqa: E402
 
@@ -119,26 +120,26 @@ class TestMcpStatusIndicator:
     def _get_indicator_class(self) -> Any:
         """Import McpStatusIndicator lazily so non-Qt envs can skip."""
         from src.shared.python.ai.mcp.gui import (
-            McpStatusIndicator,  # type: ignore[import]
+            McpStatusIndicator,
         )
 
         return McpStatusIndicator
 
-    def test_indicator_shows_disconnected_by_default(self, qtbot: Any) -> None:  # type: ignore[name-defined]
+    def test_indicator_shows_disconnected_by_default(self, qtbot: Any) -> None:
         McpStatusIndicator = self._get_indicator_class()
         widget = McpStatusIndicator()
         qtbot.addWidget(widget)
         assert widget.server_count == 0
         assert "disconnected" in widget.status_text.lower() or widget.server_count == 0
 
-    def test_indicator_updates_on_pool_refresh(self, qtbot: Any) -> None:  # type: ignore[name-defined]
+    def test_indicator_updates_on_pool_refresh(self, qtbot: Any) -> None:
         McpStatusIndicator = self._get_indicator_class()
         widget = McpStatusIndicator()
         qtbot.addWidget(widget)
         widget.update_status(connected_count=2, total_count=3)
         assert widget.server_count == 2
 
-    def test_indicator_accessible_text(self, qtbot: Any) -> None:  # type: ignore[name-defined]
+    def test_indicator_accessible_text(self, qtbot: Any) -> None:
         McpStatusIndicator = self._get_indicator_class()
         widget = McpStatusIndicator()
         qtbot.addWidget(widget)
@@ -157,40 +158,44 @@ class TestMcpServersTab:
     """McpServersTab allows adding/removing MCP server configs."""
 
     def _get_tab_class(self) -> Any:
-        from src.shared.python.ai.mcp.gui import McpServersTab  # type: ignore[import]
+        from src.shared.python.ai.mcp.gui import McpServersTab
 
         return McpServersTab
 
-    def test_tab_starts_empty(self, qtbot: Any) -> None:  # type: ignore[name-defined]
+    def test_tab_starts_empty(self, qtbot: Any) -> None:
         McpServersTab = self._get_tab_class()
         tab = McpServersTab()
         qtbot.addWidget(tab)
         assert tab.server_count == 0
 
-    def test_add_stdio_server(self, qtbot: Any) -> None:  # type: ignore[name-defined]
+    def test_add_stdio_server(self, qtbot: Any) -> None:
         McpServersTab = self._get_tab_class()
         tab = McpServersTab()
         qtbot.addWidget(tab)
-        cfg = McpServerConfig(name="notebooklm", transport="stdio", command="uvx")
+        cfg = McpServerConfig(
+            name="notebooklm", transport=McpTransport.STDIO, command="uvx"
+        )
         tab.add_server(cfg)
         assert tab.server_count == 1
 
-    def test_remove_server(self, qtbot: Any) -> None:  # type: ignore[name-defined]
+    def test_remove_server(self, qtbot: Any) -> None:
         McpServersTab = self._get_tab_class()
         tab = McpServersTab()
         qtbot.addWidget(tab)
-        cfg = McpServerConfig(name="notebooklm", transport="stdio", command="uvx")
+        cfg = McpServerConfig(
+            name="notebooklm", transport=McpTransport.STDIO, command="uvx"
+        )
         tab.add_server(cfg)
         tab.remove_server("notebooklm")
         assert tab.server_count == 0
 
-    def test_get_configs_returns_all_servers(self, qtbot: Any) -> None:  # type: ignore[name-defined]
+    def test_get_configs_returns_all_servers(self, qtbot: Any) -> None:
         McpServersTab = self._get_tab_class()
         tab = McpServersTab()
         qtbot.addWidget(tab)
-        cfg1 = McpServerConfig(name="nb", transport="stdio", command="uvx")
+        cfg1 = McpServerConfig(name="nb", transport=McpTransport.STDIO, command="uvx")
         cfg2 = McpServerConfig(
-            name="remote", transport="http", url="https://example.com/mcp"
+            name="remote", transport=McpTransport.HTTP, url="https://example.com/mcp"
         )
         tab.add_server(cfg1)
         tab.add_server(cfg2)

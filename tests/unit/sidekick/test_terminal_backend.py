@@ -6,6 +6,8 @@ from __future__ import annotations
 import platform
 import sys
 import time
+from collections.abc import Generator
+from typing import Any
 
 import pytest
 
@@ -19,7 +21,7 @@ def _is_posix() -> bool:
 
 
 @pytest.fixture
-def fallback_backend():  # noqa: ANN201
+def fallback_backend() -> Generator[Any, None, None]:
     """Yield a :class:`SubprocessFallbackBackend` running ``python -u``."""
     from upstream_drift_tools.ui.tools_sidebar.os_terminal import (
         SubprocessFallbackBackend,
@@ -41,12 +43,12 @@ def fallback_backend():  # noqa: ANN201
         backend.terminate()
 
 
-def test_fallback_backend_starts_and_reports_running(fallback_backend) -> None:  # noqa: ANN001
+def test_fallback_backend_starts_and_reports_running(fallback_backend: Any) -> None:
     """``is_running`` is True once a child process has been spawned."""
     assert fallback_backend.is_running is True
 
 
-def test_fallback_backend_round_trip(fallback_backend) -> None:  # noqa: ANN001
+def test_fallback_backend_round_trip(fallback_backend: Any) -> None:
     """Writing bytes and reading produces the echoed payload."""
     fallback_backend.write(b"hello\n")
 
@@ -86,7 +88,7 @@ def test_backend_read_requires_running_process() -> None:
         backend.read(timeout=0.1)
 
 
-def test_fallback_backend_terminate_kills_process(fallback_backend) -> None:  # noqa: ANN001
+def test_fallback_backend_terminate_kills_process(fallback_backend: Any) -> None:
     """``terminate`` flips ``is_running`` to ``False``."""
     fallback_backend.terminate()
     # Allow the process supervisor a brief moment to reap.
@@ -97,7 +99,7 @@ def test_fallback_backend_terminate_kills_process(fallback_backend) -> None:  # 
     assert fallback_backend.is_running is False
 
 
-def test_resize_does_not_raise_on_fallback_backend(fallback_backend) -> None:  # noqa: ANN001
+def test_resize_does_not_raise_on_fallback_backend(fallback_backend: Any) -> None:
     """``resize`` is a no-op on the fallback backend (still satisfies protocol)."""
     fallback_backend.resize(rows=24, cols=80)
 
@@ -118,6 +120,7 @@ def test_posix_pty_backend_round_trip_if_available() -> None:  # pragma: no cove
             seen += backend.read(timeout=0.1)
             if b"hello" in seen:
                 break
+            time.sleep(0.1)
         assert b"hello" in seen
     finally:
         backend.terminate()
@@ -139,6 +142,7 @@ def test_windows_pty_backend_round_trip_if_available() -> None:  # pragma: no co
             seen += backend.read(timeout=0.1)
             if b"hello" in seen:
                 break
+            time.sleep(0.1)
         assert b"hello" in seen
     finally:
         backend.terminate()

@@ -73,10 +73,10 @@ except ImportError:
     QWidget = object  # type: ignore[assignment,misc]
     QThread = object  # type: ignore[assignment,misc]
 
-    def pyqtSignal(*args, **kwargs):
+    def pyqtSignal(*args: Any, **kwargs: Any) -> Any:  # type: ignore[no-redef]
         return None
 
-    def pyqtSlot(*args, **kwargs):
+    def pyqtSlot(*args: Any, **kwargs: Any) -> Any:  # type: ignore[misc]
         return lambda f: f
 
 
@@ -136,7 +136,7 @@ except ImportError:
     BASE_CALCULATOR_AVAILABLE = False
 
     # Fallback to QWidget if BaseCalculatorWidget is not available
-    class BaseCalculatorWidget(QWidget):  # type: ignore[attr-defined]
+    class BaseCalculatorWidget(QWidget):  # type: ignore[no-redef]
         def __init__(self, *args: Any, **kwargs: Any) -> None:
             QWidget.__init__(self, *args, **kwargs)
 

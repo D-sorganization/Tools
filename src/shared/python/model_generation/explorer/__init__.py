@@ -17,7 +17,7 @@ def get_explorer_window() -> type[ModelExplorerWindow]:
     """Lazy import of ModelExplorerWindow to avoid PyQt6 dependency at import time."""
     from model_generation.explorer.model_explorer import ModelExplorerWindow
 
-    return ModelExplorerWindow
+    return ModelExplorerWindow  # type: ignore[no-any-return]
 
 
 __all__ = ["DISPLAY_OPTIONS", "get_explorer_window"]

@@ -1056,7 +1056,7 @@ class ChatDockWidget(QDockWidget):
             if not isinstance(info, WorkspaceVariableInfo):
                 # Defensive: tolerate raw dicts/objects that look like
                 # the dataclass without crashing the chat.
-                continue
+                continue  # type: ignore[unreachable]
             shape_str = (
                 ", ".join(str(dim) for dim in info.shape)
                 if info.shape is not None
@@ -1577,7 +1577,7 @@ class ChatDockWidget(QDockWidget):
         screen = cast("QApplication", app).primaryScreen()
         if not screen:
             return
-        pixmap = parent.grab() if parent else screen.grabWindow(0)
+        pixmap = parent.grab() if parent else screen.grabWindow(0)  # type: ignore[arg-type]
         from PyQt6.QtCore import QBuffer, QByteArray, QIODevice
 
         ba = QByteArray()
@@ -1898,7 +1898,7 @@ class ChatDockWidget(QDockWidget):
         for info in sessions:
             title = str(info.get("title", "")).casefold()
             if title == needle:
-                return info.get("id")
+                return cast(str | None, info.get("id"))
         return None
 
     def _handle_use_session(self, target: str) -> None:
