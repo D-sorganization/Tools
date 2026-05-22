@@ -27,7 +27,6 @@ from __future__ import annotations
 
 from shared.python.theme.integration import get_theme_manager
 from shared.python.theme.matplotlib_style import apply_plot_theme
-from numba import jit
 
 import logging
 from typing import TYPE_CHECKING, Any
@@ -320,12 +319,8 @@ class AnalysisTab:
         from ..data_extractor import extract_series
 
         try:
-            x_vals, x_desc, x_unit = extract_series(
-                self._result, x_key, self._model_type
-            )
-            y_vals, y_desc, y_unit = extract_series(
-                self._result, y_key, self._model_type
-            )
+            x_vals, x_desc, x_unit = extract_series(self._result, x_key, self._model_type)
+            y_vals, y_desc, y_unit = extract_series(self._result, y_key, self._model_type)
         except (KeyError, AttributeError) as exc:
             logger.error("Failed to extract series: %s", exc)
             return
@@ -515,9 +510,7 @@ class AnalysisTab:
         if z_key == "potential_energy":
 
             def _eval(angles: dict) -> float:
-                state = np.array(
-                    [angles.get("theta1", 0.0), angles.get("phi", 0.0), 0.0, 0.0]
-                )
+                state = np.array([angles.get("theta1", 0.0), angles.get("phi", 0.0), 0.0, 0.0])
                 return potential_energy(state, params)
 
             return _eval

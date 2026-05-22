@@ -910,9 +910,7 @@ describe("VideoProcessor", () => {
     it("should throw error for invalid range", async () => {
       const mockVideo = await loadMockVideo();
 
-      await expect(processor.trim(mockVideo, 5, 1)).rejects.toThrow(
-        "Start time must be before end time",
-      );
+      await expect(processor.trim(mockVideo, 5, 1)).rejects.toThrow("Start time must be before end time");
     });
   });
 });

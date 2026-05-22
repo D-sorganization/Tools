@@ -1,9 +1,11 @@
 # Epic: Chat Conversation Management & UI/UX Parity
 
 ## Overview
+
 This epic tracks the stabilization, integration, and UI/UX modernization of the AI Chat interface across the D-sorganization fleet (Tools, UpstreamDrift, Gasification_Model). With the AI backend successfully migrated to Rust for enhanced performance, the frontend PyQt6 GUI must maintain strict parity, ensuring beautiful glassmorphic themes, functional settings, and proper categorization of tools and models in the launcher.
 
 ## Tasks
+
 - [x] **Restore Chat UI Styling:** Restore the modernized, theme-aware chat panel that was inadvertently overwritten during the Rust backend squash merge (PR #2589).
 - [x] **Fix Theme Inheritance:** Update `AIAssistantPanel` and `MessageWidget` to correctly extract theme colors from the updated `ThemeManager` dictionary output.
 - [x] **Correct Initialization Order:** Fix crashes in `history_sidebar.py` caused by premature `_theme_colors` access.
@@ -16,6 +18,7 @@ This epic tracks the stabilization, integration, and UI/UX modernization of the 
 - [ ] **Cross-Repo Re-Audit:** Review and reopen any prematurely closed chat-related issues in Gasification_Model and UpstreamDrift to ensure complete fleet parity.
 
 ## Associated Repositories
+
 - Tools
 - UpstreamDrift
 - Gasification_Model

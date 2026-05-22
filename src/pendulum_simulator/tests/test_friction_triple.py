@@ -295,9 +295,7 @@ class TestTripleFrictionTorqueVector:
         dtheta1, dphi1, dphi2 = 1.5, -0.8, 0.3
         tf = friction_torque_vector(dtheta1, dphi1, dphi2, combined_params)
 
-        expected_1 = -combined_params.b1 * dtheta1 - combined_params.mu1 * np.sign(
-            dtheta1
-        )
+        expected_1 = -combined_params.b1 * dtheta1 - combined_params.mu1 * np.sign(dtheta1)
         expected_2 = -combined_params.b2 * dphi1 - combined_params.mu2 * np.sign(dphi1)
         expected_3 = -combined_params.b3 * dphi2 - combined_params.mu3 * np.sign(dphi2)
         assert np.isclose(tf[0], expected_1)
@@ -347,9 +345,9 @@ class TestTripleEOMWithDissipation:
         e_start = total_energy(result.states[0], base_params)
         e_end = total_energy(result.states[-1], base_params)
         # Allow ~2% drift for chaotic triple pendulum
-        assert (
-            abs(e_end - e_start) / max(abs(e_start), 1e-9) < 0.02
-        ), f"Energy drift too large: {e_start:.4f} → {e_end:.4f}"
+        assert abs(e_end - e_start) / max(abs(e_start), 1e-9) < 0.02, (
+            f"Energy drift too large: {e_start:.4f} → {e_end:.4f}"
+        )
 
     def test_damped_pendulum_loses_energy(
         self,
@@ -371,18 +369,16 @@ class TestTripleEOMWithDissipation:
 
         e_start = total_energy(result.states[0], damped_params)
         e_end = total_energy(result.states[-1], damped_params)
-        assert (
-            e_end < e_start
-        ), f"Damped pendulum energy should decrease: {e_start:.4f} → {e_end:.4f}"
+        assert e_end < e_start, (
+            f"Damped pendulum energy should decrease: {e_start:.4f} → {e_end:.4f}"
+        )
 
     def test_friction_does_not_blow_up(
         self,
         combined_params: TriplePendulumParams,
     ) -> None:
         """Simulation with both friction types must remain numerically stable."""
-        state0 = np.array(
-            [np.radians(90), np.radians(-45), np.radians(30), 0.0, 0.0, 0.0]
-        )
+        state0 = np.array([np.radians(90), np.radians(-45), np.radians(30), 0.0, 0.0, 0.0])
         torque_func = make_polynomial_torque([-15.0, 5.0], [0.0], [0.0])
 
         result = run_simulation(
@@ -394,9 +390,9 @@ class TestTripleEOMWithDissipation:
         )
 
         assert result.n_steps >= 2
-        assert all(
-            np.isfinite(result.states.flatten())
-        ), "Simulation with combined friction/damping produced non-finite states"
+        assert all(np.isfinite(result.states.flatten())), (
+            "Simulation with combined friction/damping produced non-finite states"
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -476,9 +472,7 @@ class TestMassMatrixCorrectness:
     def equal_params(self) -> TriplePendulumParams:
         return TriplePendulumParams(m1=1.0, m2=1.0, m3=1.0, L1=1.0, L2=1.0, L3=1.0)
 
-    def test_symmetric_at_random_angles(
-        self, equal_params: TriplePendulumParams
-    ) -> None:
+    def test_symmetric_at_random_angles(self, equal_params: TriplePendulumParams) -> None:
         rng = np.random.default_rng(42)
         for _ in range(20):
             phi1, phi2 = rng.uniform(-np.pi, np.pi, size=2)
@@ -493,9 +487,7 @@ class TestMassMatrixCorrectness:
             phi1, phi2 = rng.uniform(-np.pi, np.pi, size=2)
             M = mass_matrix(phi1, phi2, equal_params)
             eigvals = np.linalg.eigvalsh(M)
-            assert all(
-                eigvals > 0
-            ), f"Not positive definite at phi1={phi1}, phi2={phi2}"
+            assert all(eigvals > 0), f"Not positive definite at phi1={phi1}, phi2={phi2}"
 
     def test_aligned_configuration_known_value(self) -> None:
         """When phi1=phi2=0 (all segments aligned), M has a known closed form."""
@@ -558,11 +550,9 @@ class TestEnergyConservation:
             rtol=1e-10,
             atol=1e-12,
         )
-        energies = [
-            total_energy(result.states[i], params) for i in range(result.n_steps)
-        ]
+        energies = [total_energy(result.states[i], params) for i in range(result.n_steps)]
         e0 = energies[0]
         max_drift = max(abs(e - e0) for e in energies)
-        assert (
-            max_drift < 1e-6
-        ), f"Energy drift {max_drift:.2e} exceeds 1e-6 for state0={state0}"
+        assert max_drift < 1e-6, (
+            f"Energy drift {max_drift:.2e} exceeds 1e-6 for state0={state0}"
+        )

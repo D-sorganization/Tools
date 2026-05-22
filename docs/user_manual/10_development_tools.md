@@ -71,18 +71,18 @@ Code quality scanning utilities used by CI/CD pipelines and pre-commit hooks to 
 
 ### 10.4.2 Scan Patterns
 
-| Category    | Pattern                     | Description              |
-| ----------- | --------------------------- | ------------------------ |
-| Placeholder | `TRACKED_TASK`                      | TRACKED_TASK comment found       |
-| Placeholder | `TRACKED_DEFECT`                     | TRACKED_DEFECT comment found      |
-| Placeholder | `^\s*\.\.\.\s*$`            | Ellipsis placeholder     |
-| Placeholder | `NotImplementedError`       | Unimplemented function   |
-| Placeholder | `raise NotImplementedError` | Explicitly unimplemented |
-| Placeholder | `pass` (in function)        | Empty function body      |
-| Security    | `eval(`                     | Unsafe eval usage        |
-| Security    | `exec(`                     | Unsafe exec usage        |
-| Security    | `__import__`                | Dynamic import           |
-| Quality     | `print(` (in library code)  | Debug print left in code |
+| Category    | Pattern                     | Description                  |
+| ----------- | --------------------------- | ---------------------------- |
+| Placeholder | `TRACKED_TASK`              | TRACKED_TASK comment found   |
+| Placeholder | `TRACKED_DEFECT`            | TRACKED_DEFECT comment found |
+| Placeholder | `^\s*\.\.\.\s*$`            | Ellipsis placeholder         |
+| Placeholder | `NotImplementedError`       | Unimplemented function       |
+| Placeholder | `raise NotImplementedError` | Explicitly unimplemented     |
+| Placeholder | `pass` (in function)        | Empty function body          |
+| Security    | `eval(`                     | Unsafe eval usage            |
+| Security    | `exec(`                     | Unsafe exec usage            |
+| Security    | `__import__`                | Dynamic import               |
+| Quality     | `print(` (in library code)  | Debug print left in code     |
 
 ### 10.4.3 CI Integration
 

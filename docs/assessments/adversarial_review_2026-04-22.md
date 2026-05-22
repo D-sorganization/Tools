@@ -66,6 +66,7 @@ resulting in `NaN` across the entire column — silently, with no error or warni
 failure.
 
 **Fix**: Guard against zero-range columns:
+
 ```python
 range_val = col.max() - col.min()
 if range_val == 0:
@@ -201,7 +202,7 @@ would handle both the size limit and O(1) eviction automatically.
 // math.rs
 pub const R_GAS: f64 = 8.31446;
 
-// engineering.rs  
+// engineering.rs
 pub const R_UNIVERSAL: f64 = 8.314_462_618_153_24;
 ```
 
@@ -251,51 +252,51 @@ unexpected behavior from malformed operator strings.
 
 ## Positive Findings (No Action Required)
 
-| Area | Assessment |
-|------|-----------|
-| `safe_eval.py` | Strong AST validation; blocks attribute access, import, function defs |
-| `subprocess` usage | No `shell=True` anywhere in `src/` |
-| `pickle` | No `pickle.load()` found |
-| `launch_utils.py` | Path sanitization prevents directory traversal |
-| Rust `unsafe` | Zero `unsafe` blocks in entire Rust codebase |
-| Rust tests | Comprehensive unit tests for engineering, atmosphere, math modules |
-| DbC framework | Well-structured with decorator + function-call + mixin patterns |
-| `datetime.utcnow()` | Not used anywhere (clean) |
+| Area                | Assessment                                                            |
+| ------------------- | --------------------------------------------------------------------- |
+| `safe_eval.py`      | Strong AST validation; blocks attribute access, import, function defs |
+| `subprocess` usage  | No `shell=True` anywhere in `src/`                                    |
+| `pickle`            | No `pickle.load()` found                                              |
+| `launch_utils.py`   | Path sanitization prevents directory traversal                        |
+| Rust `unsafe`       | Zero `unsafe` blocks in entire Rust codebase                          |
+| Rust tests          | Comprehensive unit tests for engineering, atmosphere, math modules    |
+| DbC framework       | Well-structured with decorator + function-call + mixin patterns       |
+| `datetime.utcnow()` | Not used anywhere (clean)                                             |
 
 ---
 
 ## Summary Table
 
-| # | Severity | Component | Description |
-|---|----------|-----------|-------------|
-| 1 | 🟡 MEDIUM | `contracts.py` | Stale module-level DBC_LEVEL bypasses runtime toggling |
-| 2 | 🟡 MEDIUM | `data_processing/core.py` | Normalize division by zero on constant columns |
-| 3 | 🟡 MEDIUM | `data_processing/core.py` | Standardize division by zero on zero-variance columns |
-| 4 | 🟡 MEDIUM | `safe_eval.py` | Unnecessary `ast.Starred` in allowed node types |
-| 5 | 🟡 MEDIUM | `atmosphere.rs` | No validation for negative altitudes |
-| 6 | 🟡 MEDIUM | `engineering.rs` + `math.rs` | `debug_assert!` contracts stripped in release |
-| 7 | 🟢 LOW | `data_processing/core.py` | Naive `datetime.now()` in timestamps |
-| 8 | 🟢 LOW | `data_processing/processor.py` | Hardcoded `fs=1000` in Butterworth filter |
-| 9 | 🟢 LOW | `data_processing/core.py` | O(n) list pop for undo eviction |
-| 10 | 🟢 LOW | `math.rs` vs `engineering.rs` | R_GAS precision discrepancy |
-| 11 | 🟢 LOW | `scripting_env.py` | User lib path not validated |
-| 12 | 🟢 LOW | `data_processing/core.py` | filter_data operator injection |
+| #   | Severity  | Component                      | Description                                            |
+| --- | --------- | ------------------------------ | ------------------------------------------------------ |
+| 1   | 🟡 MEDIUM | `contracts.py`                 | Stale module-level DBC_LEVEL bypasses runtime toggling |
+| 2   | 🟡 MEDIUM | `data_processing/core.py`      | Normalize division by zero on constant columns         |
+| 3   | 🟡 MEDIUM | `data_processing/core.py`      | Standardize division by zero on zero-variance columns  |
+| 4   | 🟡 MEDIUM | `safe_eval.py`                 | Unnecessary `ast.Starred` in allowed node types        |
+| 5   | 🟡 MEDIUM | `atmosphere.rs`                | No validation for negative altitudes                   |
+| 6   | 🟡 MEDIUM | `engineering.rs` + `math.rs`   | `debug_assert!` contracts stripped in release          |
+| 7   | 🟢 LOW    | `data_processing/core.py`      | Naive `datetime.now()` in timestamps                   |
+| 8   | 🟢 LOW    | `data_processing/processor.py` | Hardcoded `fs=1000` in Butterworth filter              |
+| 9   | 🟢 LOW    | `data_processing/core.py`      | O(n) list pop for undo eviction                        |
+| 10  | 🟢 LOW    | `math.rs` vs `engineering.rs`  | R_GAS precision discrepancy                            |
+| 11  | 🟢 LOW    | `scripting_env.py`             | User lib path not validated                            |
+| 12  | 🟢 LOW    | `data_processing/core.py`      | filter_data operator injection                         |
 
 ---
 
 ## Remediation Status
 
-| # | Issue | Status | Commit |
-|---|-------|--------|--------|
-| 1 | [#2217](https://github.com/D-sorganization/Tools/issues/2217) | ✅ FIXED | `afb7dfae` — reads `_ContractState.level` directly |
-| 2 | [#2218](https://github.com/D-sorganization/Tools/issues/2218) | ✅ FIXED | `afb7dfae` — raises `TransformationError` on constant columns |
-| 3 | [#2218](https://github.com/D-sorganization/Tools/issues/2218) | ✅ FIXED | `afb7dfae` — raises `TransformationError` on zero-variance |
-| 4 | [#2219](https://github.com/D-sorganization/Tools/issues/2219) | ✅ FIXED | `afb7dfae` — removed `ast.Starred` from allowed nodes |
-| 5 | [#2220](https://github.com/D-sorganization/Tools/issues/2220) | 🔴 OPEN | Requires design decision: clamp vs reject |
-| 6 | [#2221](https://github.com/D-sorganization/Tools/issues/2221) | 🔴 OPEN | Requires fleet-wide policy on debug_assert vs assert |
-| 7 | — | 🟡 DEFERRED | Low risk; needs timezone policy decision |
-| 8 | [#2222](https://github.com/D-sorganization/Tools/issues/2222) | ✅ FIXED | `afb7dfae` — `sample_rate` parameter added |
-| 9 | — | 🟡 DEFERRED | O(n) at n=50 is negligible; improvement optional |
-| 10 | [#2223](https://github.com/D-sorganization/Tools/issues/2223) | ✅ FIXED | `afb7dfae` — `R_GAS` unified to full CODATA precision |
-| 11 | — | 🟡 DEFERRED | GUI-only path; no network exposure |
-| 12 | [#2224](https://github.com/D-sorganization/Tools/issues/2224) | ✅ FIXED | `afb7dfae` — operator whitelist validation added |
+| #   | Issue                                                         | Status      | Commit                                                        |
+| --- | ------------------------------------------------------------- | ----------- | ------------------------------------------------------------- |
+| 1   | [#2217](https://github.com/D-sorganization/Tools/issues/2217) | ✅ FIXED    | `afb7dfae` — reads `_ContractState.level` directly            |
+| 2   | [#2218](https://github.com/D-sorganization/Tools/issues/2218) | ✅ FIXED    | `afb7dfae` — raises `TransformationError` on constant columns |
+| 3   | [#2218](https://github.com/D-sorganization/Tools/issues/2218) | ✅ FIXED    | `afb7dfae` — raises `TransformationError` on zero-variance    |
+| 4   | [#2219](https://github.com/D-sorganization/Tools/issues/2219) | ✅ FIXED    | `afb7dfae` — removed `ast.Starred` from allowed nodes         |
+| 5   | [#2220](https://github.com/D-sorganization/Tools/issues/2220) | 🔴 OPEN     | Requires design decision: clamp vs reject                     |
+| 6   | [#2221](https://github.com/D-sorganization/Tools/issues/2221) | 🔴 OPEN     | Requires fleet-wide policy on debug_assert vs assert          |
+| 7   | —                                                             | 🟡 DEFERRED | Low risk; needs timezone policy decision                      |
+| 8   | [#2222](https://github.com/D-sorganization/Tools/issues/2222) | ✅ FIXED    | `afb7dfae` — `sample_rate` parameter added                    |
+| 9   | —                                                             | 🟡 DEFERRED | O(n) at n=50 is negligible; improvement optional              |
+| 10  | [#2223](https://github.com/D-sorganization/Tools/issues/2223) | ✅ FIXED    | `afb7dfae` — `R_GAS` unified to full CODATA precision         |
+| 11  | —                                                             | 🟡 DEFERRED | GUI-only path; no network exposure                            |
+| 12  | [#2224](https://github.com/D-sorganization/Tools/issues/2224) | ✅ FIXED    | `afb7dfae` — operator whitelist validation added              |

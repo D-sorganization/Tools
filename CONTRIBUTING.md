@@ -26,11 +26,11 @@ standards, the testing pipeline, and the pull-request process.
 
 ## Prerequisites
 
-| Tool | Minimum version | Notes |
-|---|---|---|
-| Python | 3.11 | 3.12 recommended |
-| Git | 2.38 | LFS support required |
-| `make` | any | optional; see `Makefile` |
+| Tool   | Minimum version | Notes                    |
+| ------ | --------------- | ------------------------ |
+| Python | 3.11            | 3.12 recommended         |
+| Git    | 2.38            | LFS support required     |
+| `make` | any             | optional; see `Makefile` |
 
 ---
 
@@ -83,14 +83,14 @@ for the per-tool layout convention.
 
 All standards are **enforced by CI** — a PR cannot merge if any check fails.
 
-| Rule | Command | Rationale |
-|---|---|---|
-| Format: Ruff (88 chars) | `ruff format .` | Single canonical formatter |
-| Lint: Ruff | `ruff check .` | Replaces flake8 + isort |
-| Type hints on new code | `mypy --config-file mypy.ini src/` | Advisory; see `mypy.ini` |
-| No `print()` in `src/` | CI grep | Use `logging` instead |
-| No `TODO`/`FIXME` without issue ref | CI grep | Traceability |
-| DbC on public APIs | — | `TypeError` for type errors, `ValueError` for range errors |
+| Rule                                | Command                            | Rationale                                                  |
+| ----------------------------------- | ---------------------------------- | ---------------------------------------------------------- |
+| Format: Ruff (88 chars)             | `ruff format .`                    | Single canonical formatter                                 |
+| Lint: Ruff                          | `ruff check .`                     | Replaces flake8 + isort                                    |
+| Type hints on new code              | `mypy --config-file mypy.ini src/` | Advisory; see `mypy.ini`                                   |
+| No `print()` in `src/`              | CI grep                            | Use `logging` instead                                      |
+| No `TODO`/`FIXME` without issue ref | CI grep                            | Traceability                                               |
+| DbC on public APIs                  | —                                  | `TypeError` for type errors, `ValueError` for range errors |
 
 **Commit messages** follow [Conventional Commits](https://www.conventionalcommits.org/):
 
@@ -104,17 +104,17 @@ docs(contributing): expand PR process section
 
 ## Testing
 
-The project uses **pytest** with 13 custom markers.  The most important ones:
+The project uses **pytest** with 13 custom markers. The most important ones:
 
-| Marker | When to use |
-|---|---|
-| `unit` | Fast, isolated, no I/O |
-| `integration` | Cross-module or file-system I/O |
-| `contract` | Guards the public API surface that downstream repos depend on |
-| `e2e` | Full pipeline tests |
-| `slow` | Tests that take > 5 s |
+| Marker        | When to use                                                   |
+| ------------- | ------------------------------------------------------------- |
+| `unit`        | Fast, isolated, no I/O                                        |
+| `integration` | Cross-module or file-system I/O                               |
+| `contract`    | Guards the public API surface that downstream repos depend on |
+| `e2e`         | Full pipeline tests                                           |
+| `slow`        | Tests that take > 5 s                                         |
 
-**Rule:** every new public function needs at least one `unit` test.  If it is
+**Rule:** every new public function needs at least one `unit` test. If it is
 part of the shared API consumed by UpstreamDrift or Gasification_Model, add a
 `contract` test too.
 
@@ -133,7 +133,7 @@ python -m pytest -n auto --timeout=60
 ```
 
 Coverage minimum is **40 %** (enforced by CI; see `pyproject.toml`
-`[tool.coverage.report]`).  Do not weaken existing tests or add `@pytest.mark.skip`
+`[tool.coverage.report]`). Do not weaken existing tests or add `@pytest.mark.skip`
 to pass CI — fix the underlying issue.
 
 ---
@@ -167,52 +167,59 @@ on touched files).
 ## Pull Request Process
 
 1. **Branch** from `main`:
+
    ```bash
    git checkout main && git pull
    git checkout -b fix/my-change
    ```
 
-2. **Implement** the smallest correct change.  Do not refactor unrelated code
+2. **Implement** the smallest correct change. Do not refactor unrelated code
    in the same PR.
 
-3. **Add tests** for new paths.  Do not modify existing tests to pass — fix the
+3. **Add tests** for new paths. Do not modify existing tests to pass — fix the
    implementation.
 
 4. **Run the quality gate** (see above).
 
 5. **Open the PR** targeting `main`:
+
    ```bash
    gh pr create --title "fix(scope): concise description" \
      --body "Fixes #<issue>"
    ```
 
-6. **CI must go green** before merge.  If a check fails:
+6. **CI must go green** before merge. If a check fails:
+
    - Read the annotation in the GitHub UI.
    - Push a fix commit (do not force-push to `main`).
    - Do not add `# noqa` or `# type: ignore` to silence a real error.
 
 7. **Review:** PRs need at least one approving review from a code owner before
-   merge.  Draft PRs are welcome for early feedback.
+   merge. Draft PRs are welcome for early feedback.
 
-8. **Merge method:** squash-merge.  The squash commit message is the PR title
+8. **Merge method:** squash-merge. The squash commit message is the PR title
    (Conventional Commits format).
 
 ### PR Description Template
 
 ```markdown
 ## Summary
+
 One paragraph: what changed and why.
 
 ## Changes
+
 - Added X to Y
 - Fixed Z in W
 
 ## Verification
+
 - [ ] `ruff format . && ruff check .` — zero violations
 - [ ] `python -m pytest -m "unit or integration" -q` — all pass
 - [ ] Manual smoke test: …
 
 ## Out of scope
+
 - …
 
 Fixes #<issue>
@@ -224,12 +231,12 @@ Fixes #<issue>
 
 **Never commit secrets, API keys, passwords, tokens, or credentials.**
 
-| Pattern | Safe alternative |
-|---|---|
-| `API_KEY = "abc123"` | `os.getenv("API_KEY")` |
-| Credentials in test fixtures | `OWASP-TEST-API-KEY-SERVICE-EXAMPLE` |
-| Secrets in `.env` | `.env` is in `.gitignore`; provide `.env.example` |
-| GUI credentials | OS keyring via `keyring` library |
+| Pattern                      | Safe alternative                                  |
+| ---------------------------- | ------------------------------------------------- |
+| `API_KEY = "abc123"`         | `os.getenv("API_KEY")`                            |
+| Credentials in test fixtures | `OWASP-TEST-API-KEY-SERVICE-EXAMPLE`              |
+| Secrets in `.env`            | `.env` is in `.gitignore`; provide `.env.example` |
+| GUI credentials              | OS keyring via `keyring` library                  |
 
 Scan before committing:
 
@@ -269,6 +276,6 @@ A failing contract test means a downstream repo would break.
 
 ## Security Reporting
 
-Do not open a public GitHub issue for a vulnerability.  Use the process
+Do not open a public GitHub issue for a vulnerability. Use the process
 documented in `SECURITY.md` (private disclosure via GitHub's security advisory
 flow).

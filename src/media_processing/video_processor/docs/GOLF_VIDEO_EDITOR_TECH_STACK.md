@@ -173,20 +173,13 @@ const golfKeyPoints = {
 ```typescript
 interface PendulumModel {
   // Segments: neck base → left shoulder → left elbow → left wrist → club end
-  segments: [
-    { name: "upperArm"; length: number; mass: number },
-    { name: "forearm"; length: number; mass: number },
-    { name: "club"; length: number; mass: number },
-  ];
+  segments: [{ name: "upperArm"; length: number; mass: number }, { name: "forearm"; length: number; mass: number }, { name: "club"; length: number; mass: number }];
   joints: [{ type: "revolute"; position: Vector2D; limits: [min, max] }];
   constraints: PhysicsConstraints;
 }
 
 // Fit model to detected landmarks
-function fitPendulumToLandmarks(
-  landmarks: MediaPipeLandmarks,
-  initialModel: PendulumModel,
-): FittedModel {
+function fitPendulumToLandmarks(landmarks: MediaPipeLandmarks, initialModel: PendulumModel): FittedModel {
   // Optimization algorithm to minimize error between
   // model predictions and actual detected positions
   // Use gradient descent or particle swarm optimization
@@ -657,10 +650,7 @@ class GolfSwingPendulum implements PendulumFitter {
     return new FittedModel(optimized);
   }
 
-  private optimizeParameters(
-    trajectories: Trajectory[],
-    initial: Parameters,
-  ): OptimizedParameters {
+  private optimizeParameters(trajectories: Trajectory[], initial: Parameters): OptimizedParameters {
     // Use TensorFlow.js optimizer or custom gradient descent
     const optimizer = tf.train.adam(0.01);
 
@@ -695,10 +685,7 @@ interface VideoSegment {
 
 // AI-powered automatic segmentation
 class SwingSegmenter {
-  async segmentSwing(
-    video: Video,
-    poses: MediaPipePose[],
-  ): Promise<VideoSegment[]> {
+  async segmentSwing(video: Video, poses: MediaPipePose[]): Promise<VideoSegment[]> {
     // Detect key events in swing
     const events = this.detectSwingEvents(poses);
 

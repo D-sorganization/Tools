@@ -24,7 +24,7 @@ Gasification_Model, it belongs in `src/shared/python/` — not here.
 All modules in this directory must follow these conventions:
 
 1. **Type hints** on every public function and class. Use `from __future__
-   import annotations` and prefer `collections.abc` types.
+import annotations` and prefer `collections.abc` types.
 2. **Design by Contract (DbC).** Every public function validates its inputs
    and raises `TypeError` for wrong types and `ValueError` for out-of-range
    values. Document preconditions in the docstring.

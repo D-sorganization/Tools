@@ -32,6 +32,7 @@ Automated scan using `src/python/src/utils/secrets_scanner.py` against the full 
 tree returned **0 non-false-positive findings**.
 
 Key patterns checked:
+
 - AWS Access Key (`AKIA…`)
 - GitHub Tokens (`ghp_…`)
 - OpenAI keys (`sk-…`)
@@ -54,7 +55,7 @@ Pickle support was explicitly **disabled** in both data-access modules:
 
 - `src/data_processing/data_processor/python/data_processor/file_utils.py` —
   `DataReader.read_file` raises `ValueError("Pickle format is disabled for security
-  reasons (CWE-502).")` when `format_type="pickle"` is requested.
+reasons (CWE-502).")` when `format_type="pickle"` is requested.
 - `src/shared/python/upstream_drift_tools/data_processing/io.py` — identical
   guard in `DataReader.read_file` and `DataWriter.write_file`.
 
@@ -74,7 +75,7 @@ introduced in earlier versions does not apply.
 **Result: LOW RISK**
 
 File I/O in the data-processing and document-processing modules accepts
-user-supplied paths via CLI arguments or GUI file-chooser dialogs.  No
+user-supplied paths via CLI arguments or GUI file-chooser dialogs. No
 `..`-stripping or canonical-path enforcement was observed, but:
 
 - The tools run locally (not exposed as a network service).
@@ -93,7 +94,7 @@ allowed base directory before opening.
 
 The `src/python/src/utils/` tree contains several debug helpers
 (`debug_helpers.py`, `debug_memory.py`, `debug_profiling.py`, `debug_tracing.py`)
-that are not imported by any production code path in `src/`.  These files expand
+that are not imported by any production code path in `src/`. These files expand
 the attack surface (additional import hooks, potential for unvetted third-party
 calls if a developer adds one) but pose no immediate risk because they are never
 loaded at runtime.
@@ -110,34 +111,34 @@ or gate them behind `if __debug__:` blocks.
 All core dependencies specify minimum versions that post-date their known CVE
 disclosures:
 
-| Package | Minimum pinned | Notes |
-|---|---|---|
-| `numpy` | `>=2.0.1` | CVE-2021-41495 fixed in 1.21.0; 2.x not affected |
-| `PyYAML` | `>=6.0` | CVE-2017-18342 fixed in 5.1; 6.x not affected |
-| `defusedxml` | `>=0.7.0` | Designed for safe XML parsing; no open CVEs |
-| `scipy` | `>=1.13.1` | No relevant open CVEs in this range |
-| `pandas` | `>=2.2.2` | No relevant open CVEs in this range |
-| `flask` | `>=3.0.0` | CVE-2023-30861 fixed in 2.3.2; 3.x not affected |
-| `Jinja2` | `>=3.1.4` | CVE-2024-22195 fixed in 3.1.3; 3.1.4+ not affected |
+| Package      | Minimum pinned | Notes                                              |
+| ------------ | -------------- | -------------------------------------------------- |
+| `numpy`      | `>=2.0.1`      | CVE-2021-41495 fixed in 1.21.0; 2.x not affected   |
+| `PyYAML`     | `>=6.0`        | CVE-2017-18342 fixed in 5.1; 6.x not affected      |
+| `defusedxml` | `>=0.7.0`      | Designed for safe XML parsing; no open CVEs        |
+| `scipy`      | `>=1.13.1`     | No relevant open CVEs in this range                |
+| `pandas`     | `>=2.2.2`      | No relevant open CVEs in this range                |
+| `flask`      | `>=3.0.0`      | CVE-2023-30861 fixed in 2.3.2; 3.x not affected    |
+| `Jinja2`     | `>=3.1.4`      | CVE-2024-22195 fixed in 3.1.3; 3.1.4+ not affected |
 
 The `requirements-lock.txt` file pins exact transitive versions for
-reproducible installs.  Re-run `pip install -r requirements.txt && pip freeze >
+reproducible installs. Re-run `pip install -r requirements.txt && pip freeze >
 requirements-lock.txt` after any dependency upgrade to refresh the lock.
 
 ---
 
 ## Existing Security Controls (Previously Implemented)
 
-| Control | File / Location | Issue |
-|---|---|---|
-| `shell=True` removed from `subprocess` calls | `UnifiedToolsLauncher.py`, `Launcher.py` | #2407 |
-| Pickle disabled (CWE-502) | `file_utils.py`, `io.py` | #2407 |
-| `safe_eval` sandboxed expression evaluator | `src/shared/python/safe_eval.py` | #2407 |
-| Secrets scanner utility | `src/python/src/utils/secrets_scanner.py` | #2407 |
-| OWASP-safe test credential naming convention | `SECRETS_MANAGEMENT.md` | #2356 |
-| OS keyring for interactive API-key storage | `pdf_renamer/config.py` | #2356 |
-| `detect-secrets` baseline committed | `.secrets.baseline` | #2407 |
-| `defusedxml` for XML parsing | `pyproject.toml` | #2407 |
+| Control                                      | File / Location                           | Issue |
+| -------------------------------------------- | ----------------------------------------- | ----- |
+| `shell=True` removed from `subprocess` calls | `UnifiedToolsLauncher.py`, `Launcher.py`  | #2407 |
+| Pickle disabled (CWE-502)                    | `file_utils.py`, `io.py`                  | #2407 |
+| `safe_eval` sandboxed expression evaluator   | `src/shared/python/safe_eval.py`          | #2407 |
+| Secrets scanner utility                      | `src/python/src/utils/secrets_scanner.py` | #2407 |
+| OWASP-safe test credential naming convention | `SECRETS_MANAGEMENT.md`                   | #2356 |
+| OS keyring for interactive API-key storage   | `pdf_renamer/config.py`                   | #2356 |
+| `detect-secrets` baseline committed          | `.secrets.baseline`                       | #2407 |
+| `defusedxml` for XML parsing                 | `pyproject.toml`                          | #2407 |
 
 ---
 
@@ -157,6 +158,6 @@ requirements-lock.txt` after any dependency upgrade to refresh the lock.
 
 ---
 
-*This report was generated by automated analysis.  For a full adversarial review
+_This report was generated by automated analysis. For a full adversarial review
 with manual exploitation testing, see `ADVERSARIAL_REVIEW_COMPLETE.md` and the
-`docs/assessments/` archive.*
+`docs/assessments/` archive._

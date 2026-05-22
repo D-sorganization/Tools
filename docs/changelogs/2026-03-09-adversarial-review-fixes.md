@@ -6,21 +6,21 @@ Implemented 12 quick-win fixes identified during a comprehensive adversarial cod
 
 ## Files Modified
 
-| File | Changes |
-|------|---------|
-| `upstream_drift_tools/lab/bio/c3d_reader.py` | Bounds check on point channels, DRY unit conversion, export path hardening, DbC contracts, CSV sanitisation |
-| `model_generation/builders/urdf_writer.py` | Graph validation, material collision detection, mesh path traversal warning |
-| `humanoid_character_builder/core/body_parameters.py` | `validate_strict()` method, extended `validate()` factor checks |
-| `humanoid_character_builder/generators/urdf_generator.py` | Pre-generation validation, permission error handling |
-| `model_generation/converters/mjcf_converter.py` | Capsule fromto bounds check, zero-length fallback |
+| File                                                      | Changes                                                                                                     |
+| --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `upstream_drift_tools/lab/bio/c3d_reader.py`              | Bounds check on point channels, DRY unit conversion, export path hardening, DbC contracts, CSV sanitisation |
+| `model_generation/builders/urdf_writer.py`                | Graph validation, material collision detection, mesh path traversal warning                                 |
+| `humanoid_character_builder/core/body_parameters.py`      | `validate_strict()` method, extended `validate()` factor checks                                             |
+| `humanoid_character_builder/generators/urdf_generator.py` | Pre-generation validation, permission error handling                                                        |
+| `model_generation/converters/mjcf_converter.py`           | Capsule fromto bounds check, zero-length fallback                                                           |
 
 ## Files Created
 
-| File | Purpose |
-|------|---------|
-| `tests/test_review_fixes_2026_03_09.py` | 24-test regression suite for all review fixes |
-| `docs/reviews/adversarial-review-2026-03-09.md` | Detailed review documentation |
-| `Adversarial_Code_Review_UpstreamDrift_Tools_2026-03-09.docx` | Full issue catalogue with severity ratings |
+| File                                                          | Purpose                                       |
+| ------------------------------------------------------------- | --------------------------------------------- |
+| `tests/test_review_fixes_2026_03_09.py`                       | 24-test regression suite for all review fixes |
+| `docs/reviews/adversarial-review-2026-03-09.md`               | Detailed review documentation                 |
+| `Adversarial_Code_Review_UpstreamDrift_Tools_2026-03-09.docx` | Full issue catalogue with severity ratings    |
 
 ## Review Reference Codes
 

@@ -28,8 +28,8 @@ on strings that rarely change.
 ### Fix
 
 Extracted a module-level `_clean_unit_string(text: str) -> str` function
-decorated with `@lru_cache(maxsize=512)`.  The instance method `_clean_string`
-now delegates to this cached function.  The existing per-instance
+decorated with `@lru_cache(maxsize=512)`. The instance method `_clean_string`
+now delegates to this cached function. The existing per-instance
 `_normalized_cache` dict continues to operate for full unit-name resolution;
 this cache sits one level deeper, on raw string normalisation.
 
@@ -37,7 +37,7 @@ this cache sits one level deeper, on raw string normalisation.
 
 In a batch conversion scenario (1 000 calls converting the same pair of unit
 strings), the six-replace chain runs **once** instead of 1 000 times for each
-unique string.  Benchmarks on the `convert` hot-path show ~15–25 % wall-time
+unique string. Benchmarks on the `convert` hot-path show ~15–25 % wall-time
 reduction for repeated same-unit conversions.
 
 ---
@@ -56,7 +56,7 @@ while keeping the syngas mix constant).
 ### Fix
 
 Extracted `_mixture_mw_cp(fractions: tuple[tuple[str, float], ...])` decorated
-with `@lru_cache(maxsize=256)`.  The `calculate` method now:
+with `@lru_cache(maxsize=256)`. The `calculate` method now:
 
 1. Normalises the composition dict.
 2. Converts it to a sorted, hashable `tuple` of `(species, fraction)` pairs
@@ -66,7 +66,7 @@ with `@lru_cache(maxsize=256)`.  The `calculate` method now:
 ### Expected Gain
 
 Simulation loops sweeping 500 temperature points at fixed composition compute
-MW and Cp **once** instead of 500 times.  The remaining per-call work
+MW and Cp **once** instead of 500 times. The remaining per-call work
 (ideal-gas law, enthalpy, entropy, Gibbs) is unavoidably T/P-dependent and
 unchanged.
 
@@ -79,14 +79,14 @@ unchanged.
 ### Problem
 
 `from scipy.interpolate import griddata` appeared at the top of `contour.py`,
-meaning scipy was imported whenever *any* code imported the plot engine — even
+meaning scipy was imported whenever _any_ code imported the plot engine — even
 callers that only needed `correlation_matrix`, which has no scipy dependency.
 scipy's import chain weighs ~20 MB and takes ~300 ms on a cold interpreter.
 
 ### Fix
 
 Moved `from scipy.interpolate import griddata` inside the `scatter_to_grid`
-function body.  Python caches module imports in `sys.modules`, so the cost is
+function body. Python caches module imports in `sys.modules`, so the cost is
 paid at most once per interpreter session, and only when `scatter_to_grid` is
 actually called.
 
@@ -119,11 +119,11 @@ print(timeit.timeit(stmt2, setup=setup2, number=500))
 
 ## Future Opportunities
 
-| Area | Suggestion | Effort |
-|---|---|---|
-| `rotation_transforms.rotation` | Pre-compute rotation matrices for common quaternions with `@lru_cache` on `from_euler` | Low |
-| `signal_toolkit.filters` | Vectorise the zero-phase filter coefficient construction with `np.vectorize` | Medium |
-| `financial_calculator` | Replace year loop with `np.cumprod` for inflation escalation | Medium |
-| `pressure_drop_calculator` | Expose Colebrook iteration as `@numba.jit` function | High |
+| Area                           | Suggestion                                                                             | Effort |
+| ------------------------------ | -------------------------------------------------------------------------------------- | ------ |
+| `rotation_transforms.rotation` | Pre-compute rotation matrices for common quaternions with `@lru_cache` on `from_euler` | Low    |
+| `signal_toolkit.filters`       | Vectorise the zero-phase filter coefficient construction with `np.vectorize`           | Medium |
+| `financial_calculator`         | Replace year loop with `np.cumprod` for inflation escalation                           | Medium |
+| `pressure_drop_calculator`     | Expose Colebrook iteration as `@numba.jit` function                                    | High   |
 
 See issue #2413 for the full performance tracking backlog.

@@ -224,12 +224,7 @@ import { ThemedApp, CalculatorLayout, PlotlyPlot } from "@shared/components";
 
 function FlareCalculator() {
   const [results, calculate] = useCalculation("/api/flare/calculate");
-  return (
-    <CalculatorLayout
-      inputs={<FlareInputs onSubmit={calculate} />}
-      results={<PlotlyPlot spec={results.plotSpec} />}
-    />
-  );
+  return <CalculatorLayout inputs={<FlareInputs onSubmit={calculate} />} results={<PlotlyPlot spec={results.plotSpec} />} />;
 }
 ```
 

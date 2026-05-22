@@ -88,9 +88,7 @@ def get_model(name: str) -> ModelConfig:
     Raises: KeyError if not found.
     """
     if name not in _registry:
-        raise KeyError(
-            f"Model {name!r} not registered. Available: {list(_registry.keys())}"
-        )
+        raise KeyError(f"Model {name!r} not registered. Available: {list(_registry.keys())}")
     return _registry[name]
 
 

@@ -29,13 +29,13 @@ Place this file in the tool's root directory (e.g. `src/my_tool/tool_manifest.js
 
 **Fields:**
 
-| Field | Required | Type | Default | Description |
-|-------|----------|------|---------|-------------|
-| `name` | Yes | string | — | Display name shown in the launcher |
-| `path` | No | string | auto-detected | Relative path to the tool's entry point. Omit to let the system scan for `*.py` files |
-| `type` | No | string | `"python"` | Tool type: `python`, `matlab`, `web`, `browser`, `bat` |
-| `description` | No | string | `""` | Short description shown in the launcher tooltip |
-| `category` | No | string | `"Development Tools"` | Category for grouping tools in the launcher UI |
+| Field         | Required | Type   | Default               | Description                                                                           |
+| ------------- | -------- | ------ | --------------------- | ------------------------------------------------------------------------------------- |
+| `name`        | Yes      | string | —                     | Display name shown in the launcher                                                    |
+| `path`        | No       | string | auto-detected         | Relative path to the tool's entry point. Omit to let the system scan for `*.py` files |
+| `type`        | No       | string | `"python"`            | Tool type: `python`, `matlab`, `web`, `browser`, `bat`                                |
+| `description` | No       | string | `""`                  | Short description shown in the launcher tooltip                                       |
+| `category`    | No       | string | `"Development Tools"` | Category for grouping tools in the launcher UI                                        |
 
 ### `tools.json` (centralized registry)
 
@@ -56,12 +56,12 @@ The root `tools.json` groups tools by category. Each entry has:
 
 **Fields:**
 
-| Field | Required | Type | Description |
-|-------|----------|------|-------------|
-| `name` | Yes | string | Display name |
-| `path` | Yes | string | Path relative to repo root |
-| `type` | Yes | string | `python`, `matlab`, `web`, `browser`, `bat` |
-| `desc` | No | string | Short description |
+| Field  | Required | Type   | Description                                 |
+| ------ | -------- | ------ | ------------------------------------------- |
+| `name` | Yes      | string | Display name                                |
+| `path` | Yes      | string | Path relative to repo root                  |
+| `type` | Yes      | string | `python`, `matlab`, `web`, `browser`, `bat` |
+| `desc` | No       | string | Short description                           |
 
 ---
 
@@ -105,6 +105,7 @@ def get_gui_info() -> dict[str, Any]:
 ```
 
 **Key requirements:**
+
 - The `get_gui_info()` function is the only public API the launcher calls
 - `tool_name` must be unique across all tools (the launcher uses it as a key)
 - `pyqt6.module` must be importable after `pip install -e .` or `python3 _bootstrap.py`
@@ -311,14 +312,14 @@ python3 -m pytest tests/my_tool/ -v -m "unit or contract"
 
 ## Automatic Discovery vs Manual Registration
 
-| Aspect | `tool_manifest.json` | `tools.json` |
-|--------|---------------------|--------------|
-| Location | Per-tool directory | Repo root |
-| Ordering | Not guaranteed | Explicit |
-| Maintenance | Zero (self-describing) | Manual update required |
-| Discovery | Automatic at startup | Loaded once at startup |
-| Duplicates | Deduplicated (tools.json wins) | Authoritative |
-| Use case | New tools, rapid iteration | Stable tools needing ordered position |
+| Aspect      | `tool_manifest.json`           | `tools.json`                          |
+| ----------- | ------------------------------ | ------------------------------------- |
+| Location    | Per-tool directory             | Repo root                             |
+| Ordering    | Not guaranteed                 | Explicit                              |
+| Maintenance | Zero (self-describing)         | Manual update required                |
+| Discovery   | Automatic at startup           | Loaded once at startup                |
+| Duplicates  | Deduplicated (tools.json wins) | Authoritative                         |
+| Use case    | New tools, rapid iteration     | Stable tools needing ordered position |
 
 **Recommendation:** Use `tool_manifest.json` for new tools. Add to `tools.json` only
 if you need to control ordering or the tool is part of a stable public API.
@@ -355,6 +356,7 @@ logger.exception("Tool crashed: %s", e)
 ```
 
 Run with `PYTHONPATH` set to see full tracebacks:
+
 ```bash
 PYTHONPATH=src:src/shared/python python3 src/my_tool/launch_pyqt6.py
 ```

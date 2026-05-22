@@ -17,18 +17,18 @@ This guide provides detailed procedures for testing accessibility across Aurora 
 
 ### Critical WCAG Criteria for Web Apps
 
-| Criterion | Level | Requirement |
-|-----------|-------|-------------|
-| 1.4.3 Contrast (Minimum) | AA | 4.5:1 for text, 3:1 for large text |
-| 1.4.11 Non-text Contrast | AA | 3:1 for UI components and borders |
-| 2.1.1 Keyboard | A | All functionality keyboard accessible |
-| 2.1.2 No Keyboard Trap | A | Focus not trapped, escape available |
-| 2.4.3 Focus Order | A | Logical tab order |
-| 2.4.7 Focus Visible | AA | Visible keyboard focus indicator |
-| 3.2.1 On Focus | A | No unexpected context changes on focus |
-| 3.3.1 Error Identification | A | Errors identified clearly |
-| 4.1.2 Name, Role, Value | A | All UI components have accessible name/role |
-| 4.1.3 Status Messages | AA | Status messages announced to screen readers |
+| Criterion                  | Level | Requirement                                 |
+| -------------------------- | ----- | ------------------------------------------- |
+| 1.4.3 Contrast (Minimum)   | AA    | 4.5:1 for text, 3:1 for large text          |
+| 1.4.11 Non-text Contrast   | AA    | 3:1 for UI components and borders           |
+| 2.1.1 Keyboard             | A     | All functionality keyboard accessible       |
+| 2.1.2 No Keyboard Trap     | A     | Focus not trapped, escape available         |
+| 2.4.3 Focus Order          | A     | Logical tab order                           |
+| 2.4.7 Focus Visible        | AA    | Visible keyboard focus indicator            |
+| 3.2.1 On Focus             | A     | No unexpected context changes on focus      |
+| 3.3.1 Error Identification | A     | Errors identified clearly                   |
+| 4.1.2 Name, Role, Value    | A     | All UI components have accessible name/role |
+| 4.1.3 Status Messages      | AA    | Status messages announced to screen readers |
 
 ---
 
@@ -37,12 +37,14 @@ This guide provides detailed procedures for testing accessibility across Aurora 
 ### 2.1 Browser Extension Setup
 
 #### Chrome/Edge
+
 1. Visit [Axe DevTools Chrome Extension](https://chrome.google.com/webstore)
 2. Search "axe DevTools"
 3. Click "Add to Chrome"
 4. Extension appears in DevTools
 
 #### Firefox
+
 1. Visit [Firefox Add-ons](https://addons.mozilla.org/)
 2. Search "axe DevTools"
 3. Click "Add to Firefox"
@@ -50,6 +52,7 @@ This guide provides detailed procedures for testing accessibility across Aurora 
 ### 2.2 Running Automated Scans
 
 **Procedure:**
+
 1. Open application in browser
 2. Open DevTools (F12)
 3. Click "axe DevTools" panel
@@ -58,6 +61,7 @@ This guide provides detailed procedures for testing accessibility across Aurora 
 6. Review violations and review items
 
 **Screenshot Example:**
+
 ```
 [axe DevTools results showing:
 - 0 Violations (critical)
@@ -67,26 +71,30 @@ This guide provides detailed procedures for testing accessibility across Aurora 
 
 ### 2.3 Expected Results
 
-| Scan | Expected Violations | Max Allowed |
-|------|-------------------|------------|
-| Calculator | 0 | 0 |
-| Unit Converter | 0 | 0 |
-| URDF Viewer | 0 | 0 |
+| Scan           | Expected Violations | Max Allowed |
+| -------------- | ------------------- | ----------- |
+| Calculator     | 0                   | 0           |
+| Unit Converter | 0                   | 0           |
+| URDF Viewer    | 0                   | 0           |
 
 **Log Violations Found:**
+
 ```markdown
 ### Axe Violations Found [Date]
 
 **Calculator:**
+
 - [ ] Violation: [Name]
   - Element: [selector]
   - Fix: [Action needed]
   - Status: Fixed / Pending
 
 **Unit Converter:**
+
 - [ ] [List violations]
 
 **URDF Viewer:**
+
 - [ ] [List violations]
 ```
 
@@ -97,11 +105,13 @@ This guide provides detailed procedures for testing accessibility across Aurora 
 ### 3.1 Contrast Ratio Requirements
 
 **Text:**
+
 - **Normal text:** 4.5:1 minimum (WCAG AA)
 - **Large text (18pt+):** 3:1 minimum
 - **Bold text (14pt+):** 3:1 minimum
 
 **UI Components:**
+
 - **Borders, dividers, focus indicators:** 3:1 minimum
 - **Background-on-background:** 3:1 minimum
 
@@ -132,6 +142,7 @@ This guide provides detailed procedures for testing accessibility across Aurora 
 ### 3.3 Critical Color Pairs to Test
 
 **Calculator:**
+
 ```
 White text (#f5f7fa) on dark shell (#1f2a3a)
 ✓ Ratio: 10.2:1 (PASS)
@@ -144,6 +155,7 @@ Accent (#8bd3f7) on dark (#1f2a3a)
 ```
 
 **Unit Converter:**
+
 - Test all text colors on backgrounds
 - Verify error state colors (red on white/light bg)
 - Verify focus indicator on all button states
@@ -155,12 +167,14 @@ Accent (#8bd3f7) on dark (#1f2a3a)
 ### 4.1 Tab Order Audit
 
 **Procedure:**
+
 1. Open page
 2. Press `Tab` key repeatedly
 3. Document focus path
 4. Verify logical order
 
 **Expected Tab Order - Calculator:**
+
 ```
 1. Expression input
 2. Variable input
@@ -181,12 +195,14 @@ Accent (#8bd3f7) on dark (#1f2a3a)
 ### 4.2 Keyboard Shortcut Testing
 
 **Calculator Tests:**
+
 - [ ] `Enter` executes calculation
 - [ ] `Escape` clears form (if implemented)
 - [ ] Arrow keys control cursor position
 - [ ] Number keys insert into expression (if implemented)
 
 **Unit Converter Tests:**
+
 - [ ] `Tab` navigates between controls
 - [ ] `Enter` confirms selections
 - [ ] Arrow keys work in dropdown menus
@@ -198,25 +214,21 @@ Accent (#8bd3f7) on dark (#1f2a3a)
 
 ```javascript
 // Script to detect potential keyboard traps
-const focusableElements = Array.from(
-  document.querySelectorAll(
-    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-  )
-);
+const focusableElements = Array.from(document.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'));
 
-console.log('Total focusable elements:', focusableElements.length);
+console.log("Total focusable elements:", focusableElements.length);
 
 // Simulate tab order
 focusableElements.forEach((el, i) => {
-  el.addEventListener('focus', () => {
-    console.log(`Focused: ${i} - ${el.getAttribute('aria-label') || el.type || el.textContent?.slice(0, 20)}`);
+  el.addEventListener("focus", () => {
+    console.log(`Focused: ${i} - ${el.getAttribute("aria-label") || el.type || el.textContent?.slice(0, 20)}`);
   });
 });
 
 // Test escape key
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    console.log('Escape caught at:', document.activeElement);
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    console.log("Escape caught at:", document.activeElement);
   }
 });
 ```
@@ -227,20 +239,22 @@ document.addEventListener('keydown', (e) => {
 
 ### 5.1 Screen Readers to Test
 
-| OS | Screen Reader | Setup |
-|----|---|---|
-| macOS | VoiceOver | Cmd+F5 |
-| Windows | NVDA | Download from [NVDA Project](https://www.nvaccess.org/) |
-| Windows | JAWS | Commercial (trial available) |
-| iPhone | VoiceOver | Settings → Accessibility → VoiceOver |
-| Android | TalkBack | Settings → Accessibility → TalkBack |
+| OS      | Screen Reader | Setup                                                   |
+| ------- | ------------- | ------------------------------------------------------- |
+| macOS   | VoiceOver     | Cmd+F5                                                  |
+| Windows | NVDA          | Download from [NVDA Project](https://www.nvaccess.org/) |
+| Windows | JAWS          | Commercial (trial available)                            |
+| iPhone  | VoiceOver     | Settings → Accessibility → VoiceOver                    |
+| Android | TalkBack      | Settings → Accessibility → TalkBack                     |
 
 ### 5.2 VoiceOver Testing (macOS)
 
 **Enable VoiceOver:**
+
 - Press Cmd+F5 to toggle
 
 **Navigation Commands:**
+
 - `VO+Right Arrow` - Move to next item
 - `VO+Left Arrow` - Move to previous item
 - `VO+Down Arrow` - Move into group
@@ -249,12 +263,14 @@ document.addEventListener('keydown', (e) => {
 - `VO+U` - Open rotor (navigation menu)
 
 **Test Procedure:**
+
 1. Enable VoiceOver
 2. Navigate through entire page using arrow keys
 3. Record what VoiceOver announces
 4. Verify announcements match visual content
 
 **Expected Announcements - Calculator:**
+
 ```
 "Aurora CAS Calculator, application"
 [Navigate to status bar]
@@ -275,10 +291,12 @@ document.addEventListener('keydown', (e) => {
 ### 5.3 NVDA Testing (Windows)
 
 **Enable NVDA:**
+
 - Download and install from [nvaccess.org](https://www.nvaccess.org/)
 - Launch application
 
 **Key Bindings:**
+
 - `Down Arrow` - Next line/item
 - `Up Arrow` - Previous line/item
 - `Tab` - Next focusable element
@@ -313,6 +331,7 @@ document.addEventListener('keydown', (e) => {
 ### 6.1 Required ARIA Attributes
 
 **Input Labels:**
+
 ```html
 <!-- Correct -->
 <label for="expression">Expression</label>
@@ -323,6 +342,7 @@ document.addEventListener('keydown', (e) => {
 ```
 
 **Icon Buttons (no visible text):**
+
 ```html
 <!-- Correct -->
 <button aria-label="Copy result">📋</button>
@@ -332,17 +352,17 @@ document.addEventListener('keydown', (e) => {
 ```
 
 **Live Regions (status messages):**
+
 ```html
 <!-- Correct -->
-<div id="result" aria-live="polite" aria-atomic="true">
-  Ready.
-</div>
+<div id="result" aria-live="polite" aria-atomic="true">Ready.</div>
 
 <!-- Wrong - not announced -->
 <div id="result">Ready.</div>
 ```
 
 **Form Errors:**
+
 ```html
 <!-- Correct -->
 <input id="expr" aria-invalid="true" aria-describedby="error-1" />
@@ -370,22 +390,22 @@ document.addEventListener('keydown', (e) => {
 const issues = [];
 
 // Check for buttons with aria-labels
-document.querySelectorAll('button').forEach(btn => {
-  if (!btn.getAttribute('aria-label') && !btn.textContent?.trim()) {
+document.querySelectorAll("button").forEach((btn) => {
+  if (!btn.getAttribute("aria-label") && !btn.textContent?.trim()) {
     issues.push(`Button without label: ${btn.outerHTML.slice(0, 80)}`);
   }
 });
 
 // Check for inputs with labels
-document.querySelectorAll('input:not([type="hidden"])').forEach(input => {
+document.querySelectorAll('input:not([type="hidden"])').forEach((input) => {
   const label = document.querySelector(`label[for="${input.id}"]`);
-  if (!label && !input.getAttribute('aria-label')) {
+  if (!label && !input.getAttribute("aria-label")) {
     issues.push(`Input without label: ${input.id || input.type}`);
   }
 });
 
 // Check heading hierarchy
-const headings = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6'));
+const headings = Array.from(document.querySelectorAll("h1, h2, h3, h4, h5, h6"));
 let lastLevel = 0;
 headings.forEach((h, i) => {
   const level = parseInt(h.tagName[1]);
@@ -395,8 +415,8 @@ headings.forEach((h, i) => {
   lastLevel = level;
 });
 
-console.log('Issues found:', issues.length);
-issues.forEach(issue => console.log('  -', issue));
+console.log("Issues found:", issues.length);
+issues.forEach((issue) => console.log("  -", issue));
 ```
 
 ---
@@ -406,12 +426,14 @@ issues.forEach(issue => console.log('  -', issue));
 ### 7.1 Focus Indicator Visibility
 
 **Requirements:**
+
 - Outline: 2px solid with high contrast color
 - Outline offset: 2px (doesn't overlap content)
 - Color contrast: ≥3:1 against background
 - Always visible on keyboard navigation
 
 **Test Procedure:**
+
 1. Use keyboard only (no mouse)
 2. Tab through all elements
 3. Verify focus indicator visible on:
@@ -421,10 +443,11 @@ issues.forEach(issue => console.log('  -', issue));
    - Custom interactive elements
 
 **CSS Example:**
+
 ```css
 *:focus-visible {
-  outline: 2px solid #8bd3f7;      /* cyan, high contrast */
-  outline-offset: 2px;              /* space from element */
+  outline: 2px solid #8bd3f7; /* cyan, high contrast */
+  outline-offset: 2px; /* space from element */
 }
 
 button:focus-visible {
@@ -444,32 +467,36 @@ input:focus-visible {
 ```javascript
 // Monitor focus changes
 let focusPath = [];
-document.addEventListener('focus', (e) => {
-  focusPath.push(e.target.getAttribute('aria-label') || e.target.type);
-}, true);
+document.addEventListener(
+  "focus",
+  (e) => {
+    focusPath.push(e.target.getAttribute("aria-label") || e.target.type);
+  },
+  true,
+);
 
 // After tabbing through page:
-console.log('Focus path:', focusPath);
-console.log('Unique elements:', new Set(focusPath).size);
+console.log("Focus path:", focusPath);
+console.log("Unique elements:", new Set(focusPath).size);
 ```
 
 ### 7.3 Visible Focus Order
 
 **Procedure:**
+
 1. Open DevTools Console
 2. Run this script:
+
 ```javascript
 // Highlight all focusable elements in order
-const focusable = document.querySelectorAll(
-  'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-);
+const focusable = document.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
 
 focusable.forEach((el, i) => {
   el.style.outline = `3px solid hsl(${(i / focusable.length) * 360}, 100%, 50%)`;
-  el.setAttribute('data-focus-order', i);
+  el.setAttribute("data-focus-order", i);
 });
 
-console.log('Total focusable elements:', focusable.length);
+console.log("Total focusable elements:", focusable.length);
 ```
 
 ---
@@ -479,26 +506,27 @@ console.log('Total focusable elements:', focusable.length);
 ### 8.1 Error Announcement Requirements
 
 **Errors Must Be:**
+
 1. **Visible** - Displayed on screen
 2. **Associated** - Linked to form field via `aria-describedby`
 3. **Announced** - Announced to screen reader
 4. **Clear** - Explain the problem and how to fix it
 
 **Example - Bad:**
+
 ```html
-<input id="expr">
-<span style="color: red;">Invalid</span>
+<input id="expr" /> <span style="color: red;">Invalid</span>
 ```
+
 → Error not associated with input
 → Screen reader can't link them
 
 **Example - Good:**
+
 ```html
-<input id="expr" aria-invalid="true" aria-describedby="expr-error">
-<span id="expr-error" role="alert">
-  Error: Unmatched parentheses in expression
-</span>
+<input id="expr" aria-invalid="true" aria-describedby="expr-error" /> <span id="expr-error" role="alert"> Error: Unmatched parentheses in expression </span>
 ```
+
 → Error linked via `aria-describedby`
 → `role="alert"` triggers announcement
 → Clear message with guidance
@@ -506,12 +534,14 @@ console.log('Total focusable elements:', focusable.length);
 ### 8.2 Test Error Scenarios
 
 **Calculator:**
+
 - [ ] Unmatched parentheses: Error announced immediately
 - [ ] Invalid variable: Field marked `aria-invalid="true"`
 - [ ] Empty required field: Error message displayed
 - [ ] Each error announced once to screen reader
 
 **Unit Converter:**
+
 - [ ] Non-numeric input → Error toast/message
 - [ ] Field marked with error styling
 - [ ] Error announced to screen reader
@@ -523,20 +553,22 @@ console.log('Total focusable elements:', focusable.length);
 ### 9.1 Mobile Accessibility
 
 **Touch Targets:**
+
 - Minimum: 44×44px (Apple iOS HIG)
 - Minimum: 48×48px (Material Design)
 - Spacing: 8px minimum between targets
 
 **Test at 375px Viewport:**
+
 ```javascript
 // Check touch target sizes
-document.querySelectorAll('button, input, [role="button"]').forEach(el => {
+document.querySelectorAll('button, input, [role="button"]').forEach((el) => {
   const rect = el.getBoundingClientRect();
   const width = rect.width;
   const height = rect.height;
-  
+
   if (width < 44 || height < 44) {
-    console.log(`SMALL: ${width}×${height}px -`, el.getAttribute('aria-label'));
+    console.log(`SMALL: ${width}×${height}px -`, el.getAttribute("aria-label"));
   }
 });
 ```
@@ -544,12 +576,14 @@ document.querySelectorAll('button, input, [role="button"]').forEach(el => {
 ### 9.2 Zoom & Scale
 
 **Test:**
+
 - [ ] Page works at 200% zoom
 - [ ] Text remains readable when zoomed
 - [ ] No content hidden when zoomed
 - [ ] Horizontal scroll minimal (if any)
 
 **CSS:**
+
 ```css
 /* Allow user to zoom */
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
@@ -573,6 +607,7 @@ document.querySelectorAll('button, input, [role="button"]').forEach(el => {
 **Applications Tested:** Calculator, Unit Converter, URDF Viewer
 
 ## Executive Summary
+
 - **Overall Status:** PASS / FAIL
 - **WCAG Level:** AA
 - **Critical Issues:** [Number]
@@ -581,22 +616,26 @@ document.querySelectorAll('button, input, [role="button"]').forEach(el => {
 ## Test Results by Category
 
 ### 1. Automated Axe Scan
+
 - **Calculator:** 0 violations ✓
 - **Unit Converter:** 0 violations ✓
 - **URDF Viewer:** 0 violations ✓
 
 ### 2. Color Contrast
+
 - **Text Contrast:** PASS ✓
   - Verified: white on dark, dark on light
 - **UI Component Contrast:** PASS ✓
 
 ### 3. Keyboard Navigation
+
 - **Tab Order:** PASS ✓
 - **Keyboard Shortcuts:** PASS ✓
 - **Focus Indicators:** PASS ✓
 - **No Keyboard Traps:** PASS ✓
 
 ### 4. Screen Reader (VoiceOver macOS)
+
 - **Calculator:** PASS ✓
   - All elements announced correctly
   - Logical reading order
@@ -604,12 +643,14 @@ document.querySelectorAll('button, input, [role="button"]').forEach(el => {
 - **URDF Viewer:** PASS ✓
 
 ### 5. ARIA & Semantic HTML
+
 - **Form Labels:** PASS ✓
 - **Button Names:** PASS ✓
 - **Live Regions:** PASS ✓
 - **Heading Hierarchy:** PASS ✓
 
 ### 6. Mobile Accessibility (375px)
+
 - **Touch Targets:** PASS ✓
   - All buttons ≥44×44px
 - **Viewport Meta Tag:** PASS ✓
@@ -617,6 +658,7 @@ document.querySelectorAll('button, input, [role="button"]').forEach(el => {
 - **Focus Indicators:** PASS ✓
 
 ### 7. Error Handling
+
 - **Error Announcements:** PASS ✓
 - **Error Association:** PASS ✓
 - **Clear Messages:** PASS ✓
@@ -624,21 +666,24 @@ document.querySelectorAll('button, input, [role="button"]').forEach(el => {
 ## Issues Found & Fixed
 
 ### Critical Issues
+
 None
 
 ### Recommendations
+
 - [If any improvements noted]
 
 ## Sign-off
 
-| Role | Name | Date |
-|------|------|------|
-| QA Lead | __________ | __________ |
-| Developer | __________ | __________ |
+| Role      | Name             | Date             |
+| --------- | ---------------- | ---------------- |
+| QA Lead   | \***\*\_\_\*\*** | \***\*\_\_\*\*** |
+| Developer | \***\*\_\_\*\*** | \***\*\_\_\*\*** |
 
 ---
 
 **Attachments:**
+
 - Axe DevTools scan results
 - VoiceOver navigation video
 - Focus indicator screenshots
@@ -659,6 +704,7 @@ npx @axe-core/reporter-html results.json > report.html
 ### 11.1 Pre-Commit Checks
 
 **Create `.husky/pre-commit`:**
+
 ```bash
 #!/bin/bash
 
@@ -674,6 +720,7 @@ echo "✓ Accessibility checks passed"
 ### 11.2 CI/CD Integration
 
 **GitHub Actions Workflow:**
+
 ```yaml
 name: Accessibility
 
@@ -684,16 +731,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Install dependencies
         run: npm install axe-core @axe-core/puppeteer
-      
+
       - name: Run accessibility tests
         run: npm run test:a11y
-      
+
       - name: Generate report
         run: npm run a11y:report
-      
+
       - name: Upload results
         uses: actions/upload-artifact@v3
         with:
@@ -706,17 +753,20 @@ jobs:
 ## Part 12: Accessibility Resources
 
 ### Official Standards
+
 - [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
 - [ARIA Authoring Practices Guide](https://www.w3.org/WAI/ARIA/apg/)
 - [WAI: Web Content Accessibility](https://www.w3.org/WAI/)
 
 ### Tools
+
 - [Axe DevTools](https://www.deque.com/axe/devtools/)
 - [WAVE Browser Extension](https://wave.webaim.org/extension/)
 - [Lighthouse](https://developers.google.com/web/tools/lighthouse)
 - [NVDA Screen Reader](https://www.nvaccess.org/)
 
 ### Learning Resources
+
 - [WebAIM Articles](https://webaim.org/articles/)
 - [A11ycasts by Google Chrome](https://www.youtube.com/playlist?list=PLNYkxOF6rcICWx0C9Xc-RgEzwLvsPccay2)
 - [Inclusive Components](https://inclusive-components.design/)

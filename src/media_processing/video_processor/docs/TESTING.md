@@ -141,9 +141,7 @@ describe("useVideoFrame", () => {
       duration: 10.0,
     }) as HTMLVideoElement;
 
-    const { result } = renderHook(() =>
-      useVideoFrame({ videoElement: mockVideo, fps: 30 }),
-    );
+    const { result } = renderHook(() => useVideoFrame({ videoElement: mockVideo, fps: 30 }));
 
     expect(result.current.getCurrentFrame()).toBe(30);
   });

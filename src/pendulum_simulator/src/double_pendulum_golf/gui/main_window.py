@@ -256,9 +256,7 @@ class MainWindow(ThemedWindowMixin, QMainWindow):
         Returns the resulting (clamped) offset.
         """
         try:
-            current = int(
-                QSettings(_SETTINGS_ORG, _SETTINGS_APP).value("font_zoom_pt", 0)
-            )
+            current = int(QSettings(_SETTINGS_ORG, _SETTINGS_APP).value("font_zoom_pt", 0))
         except (TypeError, ValueError):
             current = 0
         return cls._apply_offset_to_app_font(current + int(delta_steps))
@@ -442,9 +440,7 @@ class MainWindow(ThemedWindowMixin, QMainWindow):
         widget = panel.pendulum_widget
         new_state = not widget._3d_mode
         widget.set_3d_mode(new_state)
-        self.statusBar().showMessage(
-            f"3D mode {'enabled' if new_state else 'disabled'}", 2000
-        )
+        self.statusBar().showMessage(f"3D mode {'enabled' if new_state else 'disabled'}", 2000)
 
     def _on_shortcut_toggle_forces(self) -> None:
         """F key: toggle force vector display."""
@@ -452,9 +448,7 @@ class MainWindow(ThemedWindowMixin, QMainWindow):
         widget = panel.pendulum_widget
         new_state = not widget._show_forces
         widget.set_show_forces(new_state)
-        self.statusBar().showMessage(
-            f"Forces {'shown' if new_state else 'hidden'}", 2000
-        )
+        self.statusBar().showMessage(f"Forces {'shown' if new_state else 'hidden'}", 2000)
 
     def _on_shortcut_toggle_gravity(self) -> None:
         """G key: toggle gravity display indicator."""
@@ -523,9 +517,7 @@ class MainWindow(ThemedWindowMixin, QMainWindow):
         for idx, panel in enumerate(self._panels):
             model_type = model_map[idx]
 
-            def _on_finished(
-                _p: SimulationPanel = panel, _mt: str = model_type
-            ) -> None:
+            def _on_finished(_p: SimulationPanel = panel, _mt: str = model_type) -> None:
                 result = _p._result
                 if result is not None:
                     self._analysis_tab.set_result(result, model_type=_mt)
@@ -732,11 +724,7 @@ class MainWindow(ThemedWindowMixin, QMainWindow):
         self.status.showMessage(f"Theme changed to: {name}", 3000)
 
     def _open_theme_manager(self) -> None:
-        if (
-            not _THEME_AVAILABLE
-            or self._theme_manager is None
-            or ThemeManagerDialog is None
-        ):
+        if not _THEME_AVAILABLE or self._theme_manager is None or ThemeManagerDialog is None:
             from PyQt6.QtWidgets import QMessageBox
 
             QMessageBox.information(

@@ -6,7 +6,6 @@
 #   - Only Discovery may add items; only Delivery may update status
 
 items:
-
   - id: GH1601
     title: "type: 739 type: ignore comments + legacy directories excluded from mypy"
     priority: medium
@@ -640,8 +639,7 @@ items:
     pr_url: "https://github.com/D-sorganization/Tools_Private/pull/21"
     pr_number: 21
     pr_status: "open"
-    cost_usd: "2.4874
-2.5269"
+    cost_usd: 2.4874
     github_issue: 1463
     artefact: .gaai/project/contexts/artefacts/stories/GH1463.story.md
     dependencies: []

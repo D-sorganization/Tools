@@ -167,15 +167,7 @@ await ffmpeg.load();
 
 // Trim video
 ffmpeg.FS("writeFile", "input.mp4", await fetchFile(videoFile));
-await ffmpeg.run(
-  "-i",
-  "input.mp4",
-  "-ss",
-  "00:00:01",
-  "-to",
-  "00:00:05",
-  "output.mp4",
-);
+await ffmpeg.run("-i", "input.mp4", "-ss", "00:00:01", "-to", "00:00:05", "output.mp4");
 const data = ffmpeg.FS("readFile", "output.mp4");
 ```
 

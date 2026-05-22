@@ -60,7 +60,7 @@ python UnifiedToolsLauncher.py
 ```
 
 A Qt6 window opens with all tools grouped by category (Data Processing,
-Engineering Drafting, Scientific Modeling, …).  Click any tile to launch
+Engineering Drafting, Scientific Modeling, …). Click any tile to launch
 the corresponding tool.
 
 ---
@@ -71,20 +71,20 @@ the corresponding tool.
 python -m pytest tests/ -m unit -q --tb=short
 ```
 
-All unit tests should pass.  Integration and e2e tests require optional
+All unit tests should pass. Integration and e2e tests require optional
 dependencies (`scipy`, `PyQt6`, etc.) already installed by `.[all]`.
 
 ---
 
 ## Next steps
 
-| Goal | Where to look |
-|---|---|
-| Contribute a change | [CONTRIBUTING.md](../CONTRIBUTING.md) |
-| Build a new tool | [docs/BUILD_A_TOOL.md](BUILD_A_TOOL.md) |
+| Goal                        | Where to look                                             |
+| --------------------------- | --------------------------------------------------------- |
+| Contribute a change         | [CONTRIBUTING.md](../CONTRIBUTING.md)                     |
+| Build a new tool            | [docs/BUILD_A_TOOL.md](BUILD_A_TOOL.md)                   |
 | Understand the architecture | [docs/ARCHITECTURE_OVERVIEW.md](ARCHITECTURE_OVERVIEW.md) |
-| Performance notes | [docs/performance.md](performance.md) |
-| Security audit | [docs/security-audit.md](security-audit.md) |
-| Full API reference | [docs/tutorials/](tutorials/) |
+| Performance notes           | [docs/performance.md](performance.md)                     |
+| Security audit              | [docs/security-audit.md](security-audit.md)               |
+| Full API reference          | [docs/tutorials/](tutorials/)                             |
 
 For troubleshooting, see the [QUICKSTART.md](../QUICKSTART.md) at the repo root.

@@ -1,4 +1,4 @@
-  # PR Instructions: Pendulum Simulator Comprehensive Review & Fixes
+# PR Instructions: Pendulum Simulator Comprehensive Review & Fixes
 
 ## Pre-Flight: Fix Stale Git State
 
@@ -45,6 +45,7 @@ All changes are under `src/pendulum_simulator/`. Stage them in logical groups.
 **Files:**
 
 - `src/pendulum_simulator/src/double_pendulum_golf/physics_triple.py`
+
   - Added `b1`, `b2`, `b3` (viscous damping) and `mu1`, `mu2`, `mu3` (Coulomb friction) fields to `TriplePendulumParams` dataclass with DbC assertions (`>= 0`)
   - Added `friction_torque_vector(params, qdot)` function: `τ_friction_i = -b_i * qdot_i - mu_i * sign(qdot_i)`
   - Updated `equations_of_motion()` to include friction: `rhs = tau + tau_friction - C - G`
@@ -65,6 +66,7 @@ git add src/pendulum_simulator/src/double_pendulum_golf/simulation_triple.py
 **Files:**
 
 - `src/pendulum_simulator/src/double_pendulum_golf/physics.py`
+
   - Modernized imports: `from __future__ import annotations`, `from collections.abc import Callable`, native `tuple[...]` instead of `typing.Tuple`
   - Added DbC postconditions to `gravity_vector()`, `coriolis_vector()`, `friction_torque_vector()`
 
@@ -95,6 +97,7 @@ git add src/pendulum_simulator/src/double_pendulum_golf/gui/controls_widget_trip
 **Files:**
 
 - `src/pendulum_simulator/src/double_pendulum_golf/gui/controls_utils.py`
+
   - Added `STYLE_BTN` and `STYLE_BTN_IMPORT` shared constants
 
 - `src/pendulum_simulator/src/double_pendulum_golf/gui/function_generator_dialog.py`
@@ -113,6 +116,7 @@ git add src/pendulum_simulator/src/double_pendulum_golf/gui/function_generator_d
 **Files:**
 
 - `src/pendulum_simulator/src/double_pendulum_golf/gui/main_window.py`
+
   - Fixed fragile `Path(__file__).parents[7]` → robust upward-walking directory search
   - Added PlotThemeManager import and "Plot Theme" submenu in View menu
   - Triple pendulum params builder already wired for dissipation (b1-b3, mu1-mu3)
@@ -308,19 +312,19 @@ This is expected when the shared theme packages aren't on PYTHONPATH. All theme 
 
 ## Summary of All Changes
 
-| Priority | Category | Description | Status |
-|----------|----------|-------------|--------|
-| P0 | Parity | Triple pendulum friction model | ✅ Done |
-| P0 | Parity | Triple dissipation UI controls | ✅ Done |
-| P0 | Parity | Function Generator for triple | ✅ Done |
-| P0 | Parity | Elbow torque import button | ✅ Done |
-| P0 | Testing | Triple friction test suite (22 tests) | ✅ Done |
-| P1 | DRY | Consolidate style constants | ✅ Done |
-| P1 | DbC | Postconditions on physics functions | ✅ Done |
-| P1 | Quality | Modern Python imports | ✅ Done |
-| P1 | Quality | Robust shared import paths | ✅ Done |
-| P1 | Theme | PlotThemeManager in torque history | ✅ Done |
-| P1 | Theme | Plot Theme menu in main window | ✅ Done |
-| P2 | Theme | Replace _PENDULUM_DARK_STYLE entirely | Future PR |
-| P2 | Parity | Web version (TypeScript/React) updates | Future PR |
-| P3 | Testing | GUI widget integration tests | Future PR |
+| Priority | Category | Description                            | Status    |
+| -------- | -------- | -------------------------------------- | --------- |
+| P0       | Parity   | Triple pendulum friction model         | ✅ Done   |
+| P0       | Parity   | Triple dissipation UI controls         | ✅ Done   |
+| P0       | Parity   | Function Generator for triple          | ✅ Done   |
+| P0       | Parity   | Elbow torque import button             | ✅ Done   |
+| P0       | Testing  | Triple friction test suite (22 tests)  | ✅ Done   |
+| P1       | DRY      | Consolidate style constants            | ✅ Done   |
+| P1       | DbC      | Postconditions on physics functions    | ✅ Done   |
+| P1       | Quality  | Modern Python imports                  | ✅ Done   |
+| P1       | Quality  | Robust shared import paths             | ✅ Done   |
+| P1       | Theme    | PlotThemeManager in torque history     | ✅ Done   |
+| P1       | Theme    | Plot Theme menu in main window         | ✅ Done   |
+| P2       | Theme    | Replace \_PENDULUM_DARK_STYLE entirely | Future PR |
+| P2       | Parity   | Web version (TypeScript/React) updates | Future PR |
+| P3       | Testing  | GUI widget integration tests           | Future PR |

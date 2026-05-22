@@ -118,9 +118,7 @@ class TestGolferNativeConstraintDynamicsSupported:
 
         assert golfer_native_constraint_dynamics_supported(golfer_params) is True
 
-    def test_with_nonzero_b_hub_returns_false(
-        self, golfer_params: GolferParams
-    ) -> None:
+    def test_with_nonzero_b_hub_returns_false(self, golfer_params: GolferParams) -> None:
         from double_pendulum_golf.native_backend import (
             golfer_native_constraint_dynamics_supported,
         )

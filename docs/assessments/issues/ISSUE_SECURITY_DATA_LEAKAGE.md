@@ -1,7 +1,6 @@
 ---
 title: "Security: Remove sensitive .msg files from repository"
-labels:
-  ["jules:assessment,needs-attention", "security", "urgent", "data-leakage"]
+labels: ["jules:assessment,needs-attention", "security", "urgent", "data-leakage"]
 assignees: []
 ---
 

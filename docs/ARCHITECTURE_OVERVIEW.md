@@ -2,7 +2,7 @@
 
 **Version:** 2.0  
 **Last Updated:** April 2026  
-**Status:** Production  
+**Status:** Production
 
 ---
 
@@ -57,45 +57,45 @@ graph TB
     subgraph "User Interface"
         Launcher["UnifiedToolsLauncher.py<br/>(PyQt6 GUI)"]
     end
-    
+
     subgraph "Core Infrastructure"
         PM["PluginManager<br/>(src/python/src/core/)"]
         Config["Configuration<br/>(YAML/JSON)"]
         Logger["Logging System<br/>(unified across tools)"]
     end
-    
+
     subgraph "Tool Implementations"
         PyTools["Python Tools<br/>(src/tools/)"]
         WebTools["Web Applications<br/>(HTML/JS)"]
         MatlabTools["MATLAB Tools<br/>(.m files)"]
     end
-    
+
     subgraph "Shared Libraries"
         Calcs["Process Calculators<br/>(src/shared/python/)"]
         Signal["Signal Processing<br/>(Digital Filters)"]
         Utils["Common Utilities<br/>(Constants, Conversions)"]
     end
-    
+
     subgraph "Testing & Quality"
         UnitTests["Unit Tests<br/>(pytest)"]
         ContractTests["Contract Tests<br/>(API surface)"]
         Integration["Integration Tests<br/>(cross-tool)"]
     end
-    
+
     Launcher -->|Discovers| PM
     PM -->|Reads| Config
     PM -->|Loads| PyTools
     PM -->|Loads| WebTools
     PM -->|Loads| MatlabTools
-    
+
     PyTools -->|Imports| Calcs
     PyTools -->|Imports| Signal
     PyTools -->|Imports| Utils
-    
+
     Launcher -->|Uses| Logger
     PM -->|Uses| Logger
     PyTools -->|Uses| Logger
-    
+
     UnitTests -->|Tests| PyTools
     ContractTests -->|Tests| Calcs
     Integration -->|Tests| PyTools
@@ -116,13 +116,13 @@ sequenceDiagram
     participant Tool as Tool Module
     participant Lib as Shared Library
     participant Result as Result Window
-    
+
     User->>Launcher: Start launcher
     Launcher->>PM: Load tools
     PM->>PM: Scan tool_manifest.json files
     PM->>PM: Build tool registry
     Launcher->>Launcher: Render tool list by category
-    
+
     User->>Launcher: Click "Launch Tool"
     Launcher->>PM: Get tool entry point
     PM->>Tool: Import and instantiate
@@ -260,12 +260,12 @@ return validated_tools
 
 The repository supports four tool execution types:
 
-| Type | Execution | Example | Entry Point |
-|------|-----------|---------|-------------|
-| **python** | Subprocess with Python | PyQt6 GUI tool | `def main()` function |
-| **web** | Browser via Flask/Node | HTML/JS dashboard | `app.run()` or npm server |
-| **matlab** | MATLAB engine or file | `.m` script | Executable `.m` file |
-| **bat** / **cmd** | Windows batch / shell | Utility script | Executable script |
+| Type              | Execution              | Example           | Entry Point               |
+| ----------------- | ---------------------- | ----------------- | ------------------------- |
+| **python**        | Subprocess with Python | PyQt6 GUI tool    | `def main()` function     |
+| **web**           | Browser via Flask/Node | HTML/JS dashboard | `app.run()` or npm server |
+| **matlab**        | MATLAB engine or file  | `.m` script       | Executable `.m` file      |
+| **bat** / **cmd** | Windows batch / shell  | Utility script    | Executable script         |
 
 ### Python Tool Example
 
@@ -278,7 +278,7 @@ class MyToolWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.init_ui()
-    
+
     def init_ui(self):
         self.setWindowTitle("My Tool")
         # ... layout ...
@@ -457,16 +457,16 @@ See [CLAUDE.md](../CLAUDE.md) for full governance.
 
 ### Core Dependencies
 
-| Package | Purpose | Version |
-|---------|---------|---------|
-| **PyQt6** | GUI framework | ≥6.6.0 |
-| **pytest** | Testing framework | ≥8.2.0 |
-| **ruff** | Linting & formatting | Latest |
-| **mypy** | Type checking | Latest |
-| **numpy** | Numerical computing | Latest |
-| **scipy** | Scientific functions | Latest |
-| **pandas** | Data processing | Latest |
-| **matplotlib** | Plotting | Latest |
+| Package        | Purpose              | Version |
+| -------------- | -------------------- | ------- |
+| **PyQt6**      | GUI framework        | ≥6.6.0  |
+| **pytest**     | Testing framework    | ≥8.2.0  |
+| **ruff**       | Linting & formatting | Latest  |
+| **mypy**       | Type checking        | Latest  |
+| **numpy**      | Numerical computing  | Latest  |
+| **scipy**      | Scientific functions | Latest  |
+| **pandas**     | Data processing      | Latest  |
+| **matplotlib** | Plotting             | Latest  |
 
 ### Development Dependencies
 
@@ -614,6 +614,7 @@ python -m pytest tests/ -m contract -v
 ```
 
 Review the test failure and either:
+
 1. Revert the breaking change, OR
 2. Bump the version and coordinate PRs in downstream repos
 
@@ -673,4 +674,4 @@ This architecture enables the Tools repo to serve as a **shared library** for th
 **Document Status:**  
 Created: April 2026  
 Last Updated: April 2026  
-Maintainer: Development Team  
+Maintainer: Development Team

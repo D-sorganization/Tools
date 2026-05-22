@@ -3,11 +3,11 @@
 Tools is a Python library — it does not ship as a standalone service.
 However, containerised images are provided for three use-cases:
 
-| Image | Dockerfile | Purpose |
-|---|---|---|
-| `tools:latest` | `Dockerfile` | Run any Tools-based script in a reproducible environment |
-| `tools:dev` | `Dockerfile.dev` | Live development with auto-reload and dev extras |
-| `tools:prod` | `Dockerfile.prod` | Minimal production image for web application deployments |
+| Image          | Dockerfile        | Purpose                                                  |
+| -------------- | ----------------- | -------------------------------------------------------- |
+| `tools:latest` | `Dockerfile`      | Run any Tools-based script in a reproducible environment |
+| `tools:dev`    | `Dockerfile.dev`  | Live development with auto-reload and dev extras         |
+| `tools:prod`   | `Dockerfile.prod` | Minimal production image for web application deployments |
 
 ---
 
@@ -68,12 +68,12 @@ with live code reload, plus optional PostgreSQL and Redis sidecars.
 
 ## Environment variables
 
-| Variable | Default | Description |
-|---|---|---|
-| `FLASK_APP` | — | Flask application path, e.g. `web_applications.calculator.webapp` |
-| `FLASK_ENV` | `production` | `development` enables auto-reload |
-| `WEB_CONCURRENCY` | `1` | Number of Gunicorn/Flask workers |
-| `SECRET_KEY` | — | Required in production; set a strong random value |
+| Variable          | Default      | Description                                                       |
+| ----------------- | ------------ | ----------------------------------------------------------------- |
+| `FLASK_APP`       | —            | Flask application path, e.g. `web_applications.calculator.webapp` |
+| `FLASK_ENV`       | `production` | `development` enables auto-reload                                 |
+| `WEB_CONCURRENCY` | `1`          | Number of Gunicorn/Flask workers                                  |
+| `SECRET_KEY`      | —            | Required in production; set a strong random value                 |
 
 ---
 

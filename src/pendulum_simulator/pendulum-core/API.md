@@ -5,6 +5,7 @@ Complete API documentation for the Rust physics kernel.
 ## Types Module
 
 ### `DoublePendulumParams`
+
 ```rust
 pub struct DoublePendulumParams {
     pub m1: f64,           // Arm mass (kg)
@@ -18,9 +19,11 @@ pub struct DoublePendulumParams {
 ```
 
 **Methods:**
+
 - `validate() -> Result<(), String>` - Check parameter validity
 
 ### `TriplePendulumParams`
+
 ```rust
 pub struct TriplePendulumParams {
     pub masses: [f64; 3],  // m₁, m₂, m₃
@@ -31,6 +34,7 @@ pub struct TriplePendulumParams {
 ```
 
 ### `GolferParams`
+
 ```rust
 pub struct GolferParams {
     // Hub
@@ -62,6 +66,7 @@ pub struct GolferParams {
 ```
 
 ### `DoubleFKResult`
+
 ```rust
 pub struct DoubleFKResult {
     pub wrist: (f64, f64),     // x, y position
@@ -72,6 +77,7 @@ pub struct DoubleFKResult {
 ```
 
 ### `TripleFKResult`
+
 ```rust
 pub struct TripleFKResult {
     pub joint1: (f64, f64),    // End of segment 1
@@ -82,6 +88,7 @@ pub struct TripleFKResult {
 ```
 
 ### `GolferFKResult`
+
 ```rust
 pub struct GolferFKResult {
     pub hub: (f64, f64),
@@ -98,6 +105,7 @@ pub struct GolferFKResult {
 ```
 
 ### `Vec2`
+
 ```rust
 pub struct Vec2 {
     pub x: f64,
@@ -106,6 +114,7 @@ pub struct Vec2 {
 ```
 
 **Methods:**
+
 - `new(x: f64, y: f64) -> Self`
 - `from_polar(r: f64, theta: f64) -> Self` - Create from polar coords
 - `dot(self, other: Self) -> f64`
@@ -117,35 +126,44 @@ pub struct Vec2 {
 ## Double Pendulum Module
 
 ### Mass Matrix
+
 ```rust
 pub fn mass_matrix(q: &[f64; 2], params: &DoublePendulumParams) -> SMatrix<f64, 2, 2>
 ```
+
 Computes M(q) such that the kinetic energy is KE = (1/2) qᵀ M(q) q̇.
 
 **Example:**
+
 ```rust
 let q = [0.1, 0.2];  // [θ₁, φ]
 let M = double::mass_matrix(&q, &params);
 ```
 
 ### Coriolis Vector
+
 ```rust
 pub fn coriolis(q: &[f64; 2], qdot: &[f64; 2], params: &DoublePendulumParams) -> SVector<f64, 2>
 ```
+
 Computes C(q, q̇) containing centrifugal and Coriolis terms.
 
 ### Gravity Vector
+
 ```rust
 pub fn gravity_vector(q: &[f64; 2], params: &DoublePendulumParams) -> SVector<f64, 2>
 ```
+
 Computes G(q) = -∂PE/∂q.
 
 ### Forward Kinematics
+
 ```rust
 pub fn forward_kinematics(q: &[f64; 2], params: &DoublePendulumParams) -> DoubleFKResult
 ```
 
 ### Jacobians
+
 ```rust
 pub fn jacobian_wrist(q: &[f64; 2], params: &DoublePendulumParams) -> SMatrix<f64, 2, 2>
 pub fn jacobian_club_tip(q: &[f64; 2], params: &DoublePendulumParams) -> SMatrix<f64, 2, 2>
@@ -161,13 +179,16 @@ All return appropriate nalgebra types (3×3 matrices, 3D vectors, 2×3 Jacobians
 ## Golfer Module (8-DOF)
 
 ### Analytical FK Jacobians
+
 ```rust
 pub fn analytical_fk_jacobians(
     q: &[f64; 8],
     params: &GolferParams,
 ) -> HashMap<String, SMatrix<f64, 2, 8>>
 ```
+
 Returns a map with keys:
+
 - `"hub"`, `"r_shoulder"`, `"r_elbow"`, `"r_wrist"`
 - `"l_shoulder"`, `"l_elbow"`, `"l_wrist"`
 - `"club_com"`, `"club_tip"`
@@ -175,41 +196,51 @@ Returns a map with keys:
 Each value is a 2×8 Jacobian matrix.
 
 **Example:**
+
 ```rust
 let jacs = golfer::analytical_fk_jacobians(&q, &params);
 let j_club_tip = jacs.get("club_tip").unwrap();  // 2×8 matrix
 ```
 
 ### Mass Matrix
+
 ```rust
 pub fn mass_matrix(q: &[f64; 8], params: &GolferParams) -> SMatrix<f64, 8, 8>
 ```
+
 Computed via M = Σᵢ mᵢ Jᵢᵀ Jᵢ using analytical Jacobians.
 
 ### Coriolis Vector
+
 ```rust
 pub fn coriolis(q: &[f64; 8], qdot: &[f64; 8], params: &GolferParams) -> SVector<f64, 8>
 ```
+
 Uses finite-difference approximation of dM/dt.
 
 ### Gravity Vector
+
 ```rust
 pub fn gravity_vector(q: &[f64; 8], params: &GolferParams) -> SVector<f64, 8>
 ```
+
 Computed as G_i = -Σⱼ mⱼ g ∂yⱼ/∂qᵢ.
 
 ### Forward Kinematics
+
 ```rust
 pub fn forward_kinematics(q: &[f64; 8], params: &GolferParams) -> GolferFKResult
 ```
 
 ### Constraints
+
 ```rust
 pub fn constraint_vector(q: &[f64; 8], params: &GolferParams) -> SVector<f64, 4>
 pub fn constraint_jacobian(q: &[f64; 8], params: &GolferParams) -> SMatrix<f64, 4, 8>
 ```
 
 **Constraints:**
+
 1. Right hand x = Left hand x
 2. Right hand y = Left hand y
 3. Left hand on club shaft (x component)
@@ -218,6 +249,7 @@ pub fn constraint_jacobian(q: &[f64; 8], params: &GolferParams) -> SMatrix<f64, 
 ## Constraint Solver Module
 
 ### Baumgarte Gains
+
 ```rust
 pub struct BaumgarteGains {
     pub alpha: f64,  // Velocity error correction gain (typical: 10)
@@ -226,9 +258,11 @@ pub struct BaumgarteGains {
 ```
 
 **Method:**
+
 - `default() -> Self` - Returns (alpha=10, beta=10)
 
 ### Constraint Acceleration Bias
+
 ```rust
 pub fn constraint_acceleration_bias(
     q: &[f64; 8],
@@ -236,9 +270,11 @@ pub fn constraint_acceleration_bias(
     params: &GolferParams,
 ) -> SVector<f64, 4>
 ```
+
 Computes γ = -dJ/dt · q̇ - d²Φ/dq² term.
 
 ### Constrained Accelerations (KKT Solver)
+
 ```rust
 pub fn constrained_accelerations(
     q: &[f64; 8],
@@ -252,12 +288,14 @@ pub fn constrained_accelerations(
 **Returns:** (accelerations, Lagrange multipliers)
 
 **System solved:**
+
 ```
 M(q) a + C(q,q̇) + G(q) = τ + Jᵀ λ
 J(q) a + γ(q,q̇) + α J q̇ + β Φ(q) = 0
 ```
 
 ### Constraint Projection
+
 ```rust
 pub fn project_to_constraints(
     q: &[f64; 8],
@@ -266,6 +304,7 @@ pub fn project_to_constraints(
     tol: f64,
 ) -> [f64; 8]
 ```
+
 Newton projection to satisfy Φ(q) = 0.
 
 ```rust
@@ -275,11 +314,13 @@ pub fn project_velocity(
     params: &GolferParams,
 ) -> [f64; 8]
 ```
+
 Minimum-norm velocity correction: J q̇ = -dJ/dt q̇.
 
 ## Integrator Module
 
 ### RK45 Configuration
+
 ```rust
 pub struct RK45Config {
     pub h0: f64,         // Initial step size
@@ -292,9 +333,11 @@ pub struct RK45Config {
 ```
 
 **Method:**
+
 - `default() -> Self` - h0=0.01, h_min=1e-6, h_max=0.1, rtol=1e-6, atol=1e-9
 
 ### Generic Integration
+
 ```rust
 pub fn integrate_rk45<F, const N: usize>(
     f: F,
@@ -310,6 +353,7 @@ where
 **RHS function signature:** `f(t, y) -> dy/dt`
 
 ### Specialized Integrators
+
 ```rust
 pub fn integrate_double_pendulum<F>(
     f: F,
@@ -328,6 +372,7 @@ where
 Similarly for `integrate_triple_pendulum` (6 state) and `integrate_golfer` (16 state).
 
 ### Integration Step Result
+
 ```rust
 pub struct IntegrationStep<const N: usize> {
     pub t: f64,         // Time at this step
@@ -337,6 +382,7 @@ pub struct IntegrationStep<const N: usize> {
 ```
 
 **Example:**
+
 ```rust
 let steps = integrate_double_pendulum(
     |t, q, qdot| {
@@ -361,6 +407,7 @@ for step in steps {
 ## Python Bindings (PyO3)
 
 ### Classes
+
 ```python
 class PyDoublePendulumParams:
     def __init__(self, m1, m2, l1, l2, g, friction1, friction2) -> None: ...
@@ -377,6 +424,7 @@ class PyGolferParams:
 ```
 
 ### Functions
+
 ```python
 def py_double_mass_matrix(q: List[float], params: PyDoublePendulumParams) -> List[List[float]]: ...
 def py_double_gravity_vector(q: List[float], params: PyDoublePendulumParams) -> List[float]: ...

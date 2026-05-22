@@ -125,9 +125,9 @@ class TestTabLabelsRenderable:
             assert stripped, f"Empty label: {label!r}"
             first = stripped[0]
             # First non-space char must be non-ASCII (a symbol/icon)
-            assert (
-                not first.isascii()
-            ), f"Label {label!r} should start with a symbol prefix, not {first!r}"
+            assert not first.isascii(), (
+                f"Label {label!r} should start with a symbol prefix, not {first!r}"
+            )
 
 
 # ──────────────────────────────────────────────────────────────────────

@@ -3,7 +3,7 @@
 # Usage: docker-compose up
 # Services: tools (main app), postgres (optional), redis (optional)
 
-version: '3.9'
+version: "3.9"
 
 services:
   # Main Tools Application (Flask)
@@ -112,7 +112,7 @@ services:
     networks:
       - tools-network
     profiles:
-      - tests  # Run with: docker-compose --profile tests up
+      - tests # Run with: docker-compose --profile tests up
 
 volumes:
   postgres_data:

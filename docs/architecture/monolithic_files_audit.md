@@ -23,28 +23,28 @@ model, etc.).
 
 ## Top 20 Oversized Python Files
 
-| LOC  | Path                                                                                                                         | Bucket       |
-| ---- | ---------------------------------------------------------------------------------------------------------------------------- | ------------ |
-| 1104 | `src/pendulum_simulator/src/double_pendulum_golf/gui/equations_data.py`                                                       | defer (>1k)  |
-| 1060 | `src/shared/python/model_generation/api/rest_api_routes.py`                                                                   | defer (>1k)  |
-| 1055 | `src/data_processing/data_processor/python/data_processor/core/cross_correlation.py`                                          | defer (>1k)  |
-| 1051 | `src/shared/python/calc_backend/tests/test_calc_backend.py`                                                                   | defer (>1k)  |
-| 1045 | `src/solar_system_model/solar_system/ui/widgets.py`                                                                           | defer (>1k)  |
-| 1038 | `src/shared/python/model_generation/editor/text_editor.py`                                                                    | defer (>1k)  |
-| 1005 | `src/data_processing/data_processor/python/data_processor/core/state_space.py`                                                | defer (>1k)  |
-| 997  | `src/data_processing/data_processor/python/data_processor/core/uncertainty_quantification.py`                                 | split-later  |
-| 978  | `src/document_processing/pdf_renamer/src/pdf_renamer/gui.py`                                                                  | UI — defer   |
-| 972  | `src/python/src/help/help_system.py`                                                                                          | split-later  |
-| 965  | `src/solar_system_model/solar_system/visualization/renderer.py`                                                               | UI — defer   |
-| 961  | `src/shared/python/signal_toolkit/widget_ui.py`                                                                               | UI — defer   |
-| 947  | `src/shared/python/upstream_drift_tools/process_calculators/pressure_drop_calculator/utils/gas_properties.py`                 | split-later  |
-| 939  | `src/pendulum_simulator/src/double_pendulum_golf/gui/simulation_panel.py`                                                     | UI — defer   |
-| 928  | `src/shared/python/upstream_drift_tools/process_calculators/acid_gas_dewpoint_calculator.py`                                  | physics-core |
-| 926  | `src/pendulum_simulator/src/double_pendulum_golf/gui/pendulum_widget.py`                                                      | UI — defer   |
-| 921  | `src/solar_system_model/solar_system/data/historical_events.py`                                                               | **split ✔**   |
-| 919  | `src/rrt_path_planner/python/src/star_wars_rrt.py`                                                                            | split-later  |
-| 919  | `src/pendulum_simulator/src/double_pendulum_golf/gui/panel_builders.py`                                                       | UI — defer   |
-| 917  | `src/shared/python/upstream_drift_tools/lab/bio/c3d_reader.py`                                                                | split-later  |
+| LOC  | Path                                                                                                          | Bucket       |
+| ---- | ------------------------------------------------------------------------------------------------------------- | ------------ |
+| 1104 | `src/pendulum_simulator/src/double_pendulum_golf/gui/equations_data.py`                                       | defer (>1k)  |
+| 1060 | `src/shared/python/model_generation/api/rest_api_routes.py`                                                   | defer (>1k)  |
+| 1055 | `src/data_processing/data_processor/python/data_processor/core/cross_correlation.py`                          | defer (>1k)  |
+| 1051 | `src/shared/python/calc_backend/tests/test_calc_backend.py`                                                   | defer (>1k)  |
+| 1045 | `src/solar_system_model/solar_system/ui/widgets.py`                                                           | defer (>1k)  |
+| 1038 | `src/shared/python/model_generation/editor/text_editor.py`                                                    | defer (>1k)  |
+| 1005 | `src/data_processing/data_processor/python/data_processor/core/state_space.py`                                | defer (>1k)  |
+| 997  | `src/data_processing/data_processor/python/data_processor/core/uncertainty_quantification.py`                 | split-later  |
+| 978  | `src/document_processing/pdf_renamer/src/pdf_renamer/gui.py`                                                  | UI — defer   |
+| 972  | `src/python/src/help/help_system.py`                                                                          | split-later  |
+| 965  | `src/solar_system_model/solar_system/visualization/renderer.py`                                               | UI — defer   |
+| 961  | `src/shared/python/signal_toolkit/widget_ui.py`                                                               | UI — defer   |
+| 947  | `src/shared/python/upstream_drift_tools/process_calculators/pressure_drop_calculator/utils/gas_properties.py` | split-later  |
+| 939  | `src/pendulum_simulator/src/double_pendulum_golf/gui/simulation_panel.py`                                     | UI — defer   |
+| 928  | `src/shared/python/upstream_drift_tools/process_calculators/acid_gas_dewpoint_calculator.py`                  | physics-core |
+| 926  | `src/pendulum_simulator/src/double_pendulum_golf/gui/pendulum_widget.py`                                      | UI — defer   |
+| 921  | `src/solar_system_model/solar_system/data/historical_events.py`                                               | **split ✔** |
+| 919  | `src/rrt_path_planner/python/src/star_wars_rrt.py`                                                            | split-later  |
+| 919  | `src/pendulum_simulator/src/double_pendulum_golf/gui/panel_builders.py`                                       | UI — defer   |
+| 917  | `src/shared/python/upstream_drift_tools/lab/bio/c3d_reader.py`                                                | split-later  |
 
 ## Proposed Responsibility Splits (non-UI, non-core-physics, <1000 LOC)
 
@@ -54,17 +54,17 @@ The table below only includes modules where a safe seam exists between
 or tightly coupled physics solvers are deferred to sprints with domain
 reviewers present.
 
-| File                                                                 | LOC  | Suggested seam                                                                                          |
-| -------------------------------------------------------------------- | ---- | ------------------------------------------------------------------------------------------------------- |
-| `solar_system/data/historical_events.py`                             | 921  | ✅ **done this wave** — data → `space_events_data.py`; queries stay in `historical_events.py`.            |
-| `python/src/help/help_system.py`                                     | 972  | Extract the static help content table into `help_content_<topic>.py` modules behind a registry.         |
-| `process_calculators/pressure_drop_calculator/utils/gas_properties.py` | 947 | Separate gas-property **tables/constants** from the **mixing-rule functions**.                          |
-| `rrt_path_planner/python/src/star_wars_rrt.py`                       | 919  | Extract map/obstacle fixtures into a data module; keep the RRT algorithm class focused.                 |
-| `upstream_drift_tools/lab/bio/c3d_reader.py`                         | 917  | Split file-format parsing (header/parameters/frames) into three cooperating modules behind a facade.    |
-| `data_processor/core/uncertainty_quantification.py`                  | 997  | Split MC sampling, Bayesian updating, and sensitivity analysis into three files under a subpackage.     |
-| `process_calculators/acid_gas_dewpoint_calculator.py`                | 928  | Extract Antoine/virial coefficient tables to a constants module before touching the solver.             |
-| `help/help_content.py`                                               | 837  | Already topic-tagged; trivially splittable by topic into a `help_content/` package.                     |
-| `shared/python/humanoid_character_builder/core/segment_definitions.py` | 759 | Segment *data* vs. segment *validation/lookup*.                                                         |
+| File                                                                   | LOC | Suggested seam                                                                                       |
+| ---------------------------------------------------------------------- | --- | ---------------------------------------------------------------------------------------------------- |
+| `solar_system/data/historical_events.py`                               | 921 | ✅ **done this wave** — data → `space_events_data.py`; queries stay in `historical_events.py`.       |
+| `python/src/help/help_system.py`                                       | 972 | Extract the static help content table into `help_content_<topic>.py` modules behind a registry.      |
+| `process_calculators/pressure_drop_calculator/utils/gas_properties.py` | 947 | Separate gas-property **tables/constants** from the **mixing-rule functions**.                       |
+| `rrt_path_planner/python/src/star_wars_rrt.py`                         | 919 | Extract map/obstacle fixtures into a data module; keep the RRT algorithm class focused.              |
+| `upstream_drift_tools/lab/bio/c3d_reader.py`                           | 917 | Split file-format parsing (header/parameters/frames) into three cooperating modules behind a facade. |
+| `data_processor/core/uncertainty_quantification.py`                    | 997 | Split MC sampling, Bayesian updating, and sensitivity analysis into three files under a subpackage.  |
+| `process_calculators/acid_gas_dewpoint_calculator.py`                  | 928 | Extract Antoine/virial coefficient tables to a constants module before touching the solver.          |
+| `help/help_content.py`                                                 | 837 | Already topic-tagged; trivially splittable by topic into a `help_content/` package.                  |
+| `shared/python/humanoid_character_builder/core/segment_definitions.py` | 759 | Segment _data_ vs. segment _validation/lookup_.                                                      |
 
 ## Categorisation of All Files >500 LOC
 
