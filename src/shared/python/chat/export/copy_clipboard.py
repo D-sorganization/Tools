@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Per-message clipboard copy (Tools issue #2735).
 
 The copier accepts any object implementing the

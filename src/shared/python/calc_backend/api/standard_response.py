@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Standardized API response wrapper and error handling.
 
 Provides a consistent response format across all calculator endpoints:

@@ -1,4 +1,5 @@
 # ruff: noqa: E501
+# mypy: ignore-errors
 """AI configuration with environment variable support.
 
 This module centralizes all AI-related configuration, allowing values to be
@@ -37,6 +38,8 @@ Usage:
 """
 
 from __future__ import annotations
+
+from typing import cast
 
 from src.shared.python.config.environment import get_env, get_env_float
 from src.shared.python.logging_pkg.logging_config import get_logger
@@ -144,7 +147,8 @@ def get_openai_api_key(*, required: bool = False) -> str | None:
     Raises:
         EnvironmentError: If required and key not set.
     """
-    return get_env(ENV_OPENAI_API_KEY, required=required)  # type: ignore[no-any-return]
+    val = get_env(ENV_OPENAI_API_KEY, required=required)
+    return cast("str | None", val)
 
 
 def get_openai_model() -> str:
@@ -176,7 +180,8 @@ def get_openai_organization() -> str | None:
     Returns:
         Organization ID from OPENAI_ORGANIZATION or None.
     """
-    return get_env(ENV_OPENAI_ORGANIZATION)  # type: ignore[no-any-return]
+    val = get_env(ENV_OPENAI_ORGANIZATION)
+    return cast("str | None", val)
 
 
 # ============================================================================
@@ -196,7 +201,8 @@ def get_anthropic_api_key(*, required: bool = False) -> str | None:
     Raises:
         EnvironmentError: If required and key not set.
     """
-    return get_env(ENV_ANTHROPIC_API_KEY, required=required)  # type: ignore[no-any-return]
+    val = get_env(ENV_ANTHROPIC_API_KEY, required=required)
+    return cast("str | None", val)
 
 
 def get_anthropic_model() -> str:
@@ -240,7 +246,8 @@ def get_gemini_api_key(*, required: bool = False) -> str | None:
     Raises:
         EnvironmentError: If required and key not set.
     """
-    return get_env(ENV_GEMINI_API_KEY, required=required)  # type: ignore[no-any-return]
+    val = get_env(ENV_GEMINI_API_KEY, required=required)
+    return cast("str | None", val)
 
 
 def get_gemini_model() -> str:

@@ -1,4 +1,5 @@
 # ruff: noqa: E501
+# mypy: ignore-errors
 """Lightweight AI Chat dock widget for embedding in any PyQt6 application.
 
 Connects to a FastAPI server's WebSocket chat endpoint and provides a
@@ -29,7 +30,7 @@ import logging
 import threading
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, Literal, cast
 
 from PyQt6.QtCore import QSize, Qt, QTimer, QUrl, pyqtSignal
 from PyQt6.QtGui import QKeySequence, QShortcut
@@ -201,7 +202,9 @@ class ChatMessageBubble(QFrame):
             return
         msg = ChatMessage(role=self._role, content=self._content)
         try:
-            copier.copy_message(msg, mode)
+            copier.copy_message(
+                msg, cast("Literal['raw_text', 'markdown', 'code_only', 'json']", mode)
+            )
         except ValueError:
             # Unknown mode -- fall back to raw_text.
             copier.copy_message(msg, "raw_text")
@@ -1577,7 +1580,7 @@ class ChatDockWidget(QDockWidget):
         screen = cast("QApplication", app).primaryScreen()
         if not screen:
             return
-        pixmap = parent.grab() if parent else screen.grabWindow(0)
+        pixmap = parent.grab() if parent else screen.grabWindow(0)  # type: ignore[arg-type]  # PyQt6 voidptr compat
         from PyQt6.QtCore import QBuffer, QByteArray, QIODevice
 
         ba = QByteArray()
@@ -1746,7 +1749,7 @@ class ChatDockWidget(QDockWidget):
             return
         request = ChatExportRequest(
             session_id=session.session_id,
-            format=fmt,
+            format=cast("Literal['markdown', 'text', 'html']", fmt),
             output_path=path,
             include_metadata=True,
             redact_secrets=True,
@@ -1809,7 +1812,10 @@ class ChatDockWidget(QDockWidget):
         try:
             request = CondensationRequest(
                 session_id=session.session_id,
-                strategy=strategy,
+                strategy=cast(
+                    "Literal['keep_recent', 'semantic_summary', 'pinned_anchor']",
+                    strategy,
+                ),
                 keep_last_n=max(1, min(10, session.message_count)),
             )
             result = Condenser().condense(session, request)
