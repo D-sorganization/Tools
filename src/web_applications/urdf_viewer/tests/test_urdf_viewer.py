@@ -15,9 +15,7 @@ import pytest
 # (CI may lack python-multipart, cors deps, etc.)
 try:
     from app import app
-except (
-    Exception
-) as _exc:  # noqa: BLE001 — CI may lack optional deps; skip entire module
+except Exception as _exc:  # noqa: BLE001 — CI may lack optional deps; skip entire module
     pytest.skip(
         f"Skipping urdf_viewer tests — app import failed: {_exc}",
         allow_module_level=True,

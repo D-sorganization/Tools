@@ -27,9 +27,9 @@ class TestCatalogue:
     def test_all_cli_providers_covered(self) -> None:
         """Every CLI-shaped provider must have an install/auth card."""
         expected = {"claude_code", "codex_cli", "gemini_cli", "cline"}
-        assert expected.issubset(
-            CLI_PROVIDERS.keys()
-        ), f"Missing CLI providers: {expected - set(CLI_PROVIDERS.keys())}"
+        assert expected.issubset(CLI_PROVIDERS.keys()), (
+            f"Missing CLI providers: {expected - set(CLI_PROVIDERS.keys())}"
+        )
 
     @pytest.mark.parametrize(
         "provider", ["claude_code", "codex_cli", "gemini_cli", "cline"]
@@ -38,12 +38,12 @@ class TestCatalogue:
         spec = CLI_PROVIDERS[provider]
         assert spec.display_name, f"{provider}: empty display_name"
         assert spec.install_command, f"{provider}: empty install_command"
-        assert spec.install_url.startswith(
-            ("http://", "https://")
-        ), f"{provider}: install_url not a URL: {spec.install_url!r}"
-        assert (
-            len(spec.auth_instructions) > 20
-        ), f"{provider}: auth_instructions too short to be useful"
+        assert spec.install_url.startswith(("http://", "https://")), (
+            f"{provider}: install_url not a URL: {spec.install_url!r}"
+        )
+        assert len(spec.auth_instructions) > 20, (
+            f"{provider}: auth_instructions too short to be useful"
+        )
 
 
 class TestStatusProbe:
