@@ -25,13 +25,16 @@ _WHEEL_MISSING_HINT = (
 
 
 def _make_rust_stream_worker_class() -> type | None:
-    """Return _RustStreamWorker(QThread), or None when PyQt6 is absent.
+    """Return _RustStreamWorker(QThread), or None when PyQt6 is absent or uninitialized.
 
     The class is constructed lazily at call time so this module can be imported
     in headless environments that lack a working PyQt6 installation.
     """
     try:
         from PyQt6.QtCore import QCoreApplication, QThread, pyqtSignal
+
+        if QCoreApplication.instance() is None:
+            return None
     except ImportError:
         return None
 
@@ -183,10 +186,13 @@ class RustAgentAdapter(BaseAgentAdapter):
     ) -> Iterator[AgentChunk]:
         """Stream the response using the Rust backend off the Qt main thread.
 
-        BLOCKING: Delegates the blocking ``engine.stream_response`` call to a
-        background worker thread (``_RustStreamWorker``, subclass of ``QThread``)
-        when PyQt6 is available, keeping the Qt event loop responsive throughout
-        (fixes Tools #2752 UI freeze).
+        .. warning::
+            **This call is BLOCKING.** Callers should wrap this invocation
+            in a worker thread.
+
+        Delegates the blocking ``engine.stream_response`` call to a
+        ``_RustStreamWorker`` (``QThread``) when PyQt6 is available, keeping the
+        Qt event loop responsive throughout (fixes Tools #2752 UI freeze).
         Falls back to a daemon ``threading.Thread`` in headless environments.
 
         Cancel support: ``self._active_worker.stop()`` can be called from the
