@@ -10,7 +10,7 @@ a git submodule or direct path manipulation.
 
 Usage::
 
-    from upstream_drift_tools.theme import (
+    from sidekick.theme import (
         BUILTIN_THEMES,
         THEME_COLOR_KEYS,
         ThemeManager,

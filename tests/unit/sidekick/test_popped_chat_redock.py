@@ -9,11 +9,20 @@ Import strategy: uses the same sidekick-shadow eviction as
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 from typing import Any
 
 import pytest
+
+pytestmark = pytest.mark.serial
+
+if sys.platform == "win32" and os.environ.get("PYTEST_XDIST_WORKER"):
+    pytest.skip(
+        "Qt popped chat redock tests run serially on Windows.",
+        allow_module_level=True,
+    )
 
 pytest.importorskip("PyQt6")
 
@@ -48,12 +57,12 @@ def _get_classes() -> tuple[Any, Any, Any]:
 
 
 def _make_sidebar_with_popout_tab(
-    tmp_path: Path, qtbot: Any
+    tmp_path: Path, qtbot: Any, qt_app: Any = None
 ) -> tuple[Any, str, Any, Any, Any]:
     """Return (sidebar, tab_id, floating_window, win, app)."""
     UnifiedToolsSidebar, SidebarTabDefinition, QtWidgets = _get_classes()
 
-    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    app = qt_app or QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
     win = QtWidgets.QMainWindow()
     qtbot.addWidget(win)
     tab_def = SidebarTabDefinition(
@@ -78,11 +87,12 @@ def _make_sidebar_with_popout_tab(
 # ── Re-dock button presence ───────────────────────────────────────────────────
 
 
-def test_popped_chat_has_redock_button(tmp_path: Path, qtbot: Any) -> None:
+def test_popped_chat_has_redock_button(tmp_path: Path, qtbot: Any, qt_app: Any) -> None:
     from PyQt6.QtWidgets import QPushButton
 
-    res = _make_sidebar_with_popout_tab(tmp_path, qtbot)
-    sidebar, tab_id, floating_win, win, _ = res
+    sidebar, tab_id, floating_win, win, _ = _make_sidebar_with_popout_tab(
+        tmp_path, qtbot, qt_app
+    )
     assert floating_win is not None
     redock_btn = floating_win.findChild(QPushButton, "sidekick-redock")
     assert redock_btn is not None
@@ -91,22 +101,24 @@ def test_popped_chat_has_redock_button(tmp_path: Path, qtbot: Any) -> None:
 # ── Re-dock behaviour ─────────────────────────────────────────────────────────
 
 
-def test_redock_returns_tab_to_sidebar(tmp_path: Path, qtbot: Any) -> None:
+def test_redock_returns_tab_to_sidebar(tmp_path: Path, qtbot: Any, qt_app: Any) -> None:
     from PyQt6.QtWidgets import QPushButton
 
-    res = _make_sidebar_with_popout_tab(tmp_path, qtbot)
-    sidebar, tab_id, floating_win, win, _ = res
+    sidebar, tab_id, floating_win, win, _ = _make_sidebar_with_popout_tab(
+        tmp_path, qtbot, qt_app
+    )
     redock_btn = floating_win.findChild(QPushButton, "sidekick-redock")
     assert redock_btn is not None
     redock_btn.click()
     assert tab_id in sidebar.visible_tab_ids()
 
 
-def test_redock_closes_floating_window(tmp_path: Path, qtbot: Any) -> None:
+def test_redock_closes_floating_window(tmp_path: Path, qtbot: Any, qt_app: Any) -> None:
     from PyQt6.QtWidgets import QPushButton
 
-    res = _make_sidebar_with_popout_tab(tmp_path, qtbot)
-    sidebar, tab_id, floating_win, win, _ = res
+    sidebar, tab_id, floating_win, win, _ = _make_sidebar_with_popout_tab(
+        tmp_path, qtbot, qt_app
+    )
     redock_btn = floating_win.findChild(QPushButton, "sidekick-redock")
     assert redock_btn is not None
     redock_btn.click()
@@ -117,11 +129,10 @@ def test_redock_closes_floating_window(tmp_path: Path, qtbot: Any) -> None:
 
 
 def test_redock_tab_precondition_not_floating_raises(
-    tmp_path: Path, qtbot: Any
+    tmp_path: Path, qtbot: Any, qt_app: Any
 ) -> None:
     UnifiedToolsSidebar, SidebarTabDefinition, QtWidgets = _get_classes()
 
-    QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
     win = QtWidgets.QMainWindow()
     qtbot.addWidget(win)
     tab_def = SidebarTabDefinition(
@@ -144,8 +155,10 @@ def test_redock_tab_precondition_not_floating_raises(
 # ── Last pop-out position memory ─────────────────────────────────────────────
 
 
-def test_repop_remembers_last_position(tmp_path: Path, qtbot: Any) -> None:
-    sidebar, tab_id, win1, win, _ = _make_sidebar_with_popout_tab(tmp_path, qtbot)
+def test_repop_remembers_last_position(tmp_path: Path, qtbot: Any, qt_app: Any) -> None:
+    sidebar, tab_id, win1, win, _ = _make_sidebar_with_popout_tab(
+        tmp_path, qtbot, qt_app
+    )
     # Move the window to a specific position before redocking
     win1.move(400, 300)
     pos1 = win1.pos()

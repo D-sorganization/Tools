@@ -18,7 +18,7 @@ from PyQt6.QtWidgets import (
     QTextEdit,
     QWidget,
 )
-from upstream_drift_tools.ui.mixins.calculator_state_mixin import CalculatorStateMixin
+from sidekick.ui.mixins.calculator_state_mixin import CalculatorStateMixin
 
 
 class MockCalculator(QWidget, CalculatorStateMixin):

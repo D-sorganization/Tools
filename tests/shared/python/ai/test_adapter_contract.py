@@ -13,67 +13,15 @@ or installed binaries.
 
 from __future__ import annotations
 
-import logging
 import sys
-import types
 from collections.abc import Iterator
-from pathlib import Path
 from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-# ---------------------------------------------------------------------------
-# Bootstrap: follow the same pattern as the other test files in this directory
-# to ensure src.shared.python.* imports resolve correctly.
-# ---------------------------------------------------------------------------
-
-ROOT = Path(__file__).resolve().parents[4]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-
-_PACKAGE_STUBS: list[tuple[str, str | None]] = [
-    ("src", "src"),
-    ("src.shared", "src/shared"),
-    ("src.shared.python", "src/shared/python"),
-    ("src.shared.python.config", "src/shared/python/config"),
-    ("src.shared.python.ai", "src/shared/python/ai"),
-    ("src.shared.python.ai.adapters", "src/shared/python/ai/adapters"),
-]
-for _mod_name, _rel_path in _PACKAGE_STUBS:
-    if _mod_name not in sys.modules:
-        import types
-
-        _stub = types.ModuleType(_mod_name)
-        if _rel_path is not None:
-            _stub.__path__ = [str(ROOT / _rel_path)]
-        sys.modules[_mod_name] = _stub
-    if "." in _mod_name:
-        _parent_name, _child_name = _mod_name.rsplit(".", 1)
-        _parent = sys.modules.get(_parent_name)
-        if isinstance(_parent, types.ModuleType):
-            setattr(_parent, _child_name, sys.modules[_mod_name])
-
-
-_logging_config_stub = sys.modules.setdefault(
-    "src.shared.python.logging_pkg.logging_config",
-    types.ModuleType("src.shared.python.logging_pkg.logging_config"),
-)
-_logging_config_stub.get_logger = logging.getLogger  # type: ignore[attr-defined]
-_logging_config_stub.setup_logging = lambda *a, **kw: None  # type: ignore[attr-defined]
-
-_env_stub = sys.modules.get("src.shared.python.config.environment")
-if not isinstance(_env_stub, types.ModuleType):
-    _env_stub = types.ModuleType("src.shared.python.config.environment")
-    sys.modules["src.shared.python.config.environment"] = _env_stub
-_env_stub.get_env = lambda key, default=None, required=False: default  # type: ignore[attr-defined]
-_env_stub.get_env_float = lambda key, default=0.0: float(default)  # type: ignore[attr-defined]
-
-
-# ---------------------------------------------------------------------------
 # Now import adapter modules.
 # ---------------------------------------------------------------------------
-
 from src.shared.python.ai.adapters.base import BaseAgentAdapter  # noqa: E402
 from src.shared.python.ai.types import (  # noqa: E402
     AgentChunk,

@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any
 
 try:
-    from upstream_drift_tools.utils.paths import get_repo_root
+    from sidekick.utils.paths import get_repo_root
 except ImportError:
     try:
         from tools.launch_utils import get_repo_root

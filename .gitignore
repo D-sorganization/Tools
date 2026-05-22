@@ -183,3 +183,24 @@ certs/
 # Local-only artifacts
 .secrets.baseline.windows_backup
 memory.db
+
+# Debug/log files (tracked files removed in repo hygiene cleanup)
+log.txt
+log4.txt
+ci_log.txt
+out.txt
+out2.txt
+fail.txt
+failed.txt
+pytest_output.txt
+mypy_errors*.txt
+coverage_baseline.*
+coverage_test.*
+pressure_err*.txt
+c2847*.txt
+c2848*.txt
+c2852*.txt
+collect_all.txt
+failed2848.txt
+failed2852.txt
+=2.0.0

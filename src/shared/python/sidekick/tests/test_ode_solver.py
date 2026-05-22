@@ -20,7 +20,7 @@ class TestODESolver:
     """Full coverage of ODESolver class."""
 
     def _make_solver(self):
-        from upstream_drift_tools.process_calculators.ode_solver import ODESolver
+        from sidekick.process_calculators.ode_solver import ODESolver
 
         # Simple linear ODE: dT/dt = -k*(T - T_env)
         derivs = {"T": "k*(T_env - T)"}
@@ -66,7 +66,7 @@ class TestODESolver:
 
     def test_two_variable_system(self):
         """SHO: dx/dt = v, dv/dt = -x."""
-        from upstream_drift_tools.process_calculators.ode_solver import ODESolver
+        from sidekick.process_calculators.ode_solver import ODESolver
 
         derivs = {"x": "v", "v": "-x"}
         params: dict[str, float] = {}

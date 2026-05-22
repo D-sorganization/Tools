@@ -12,45 +12,10 @@ These tests are deliberately Qt-instance-free: they bypass
 from __future__ import annotations
 
 import json
-import logging
-import sys
-import types
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
-
-# ---------------------------------------------------------------------------
-# Bootstrap: mirror tests/unit/chat/test_adapter_capabilities.py so the
-# ``src.shared.python.*`` import path resolves even when tests run from the
-# Tools root without an editable install. Required because
-# ``memory_manager.py`` imports ``src.shared.python.logging_pkg.logging_config``
-# which has no real on-disk module.
-# ---------------------------------------------------------------------------
-
-ROOT = Path(__file__).resolve().parents[3]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-
-_PACKAGE_STUBS: list[tuple[str, str | None]] = [
-    ("src", "src"),
-    ("src.shared", "src/shared"),
-    ("src.shared.python", "src/shared/python"),
-    ("src.shared.python.ai", "src/shared/python/ai"),
-]
-for _mod_name, _rel_path in _PACKAGE_STUBS:
-    if _mod_name not in sys.modules:
-        _stub = types.ModuleType(_mod_name)
-        if _rel_path is not None:
-            _stub.__path__ = [str(ROOT / _rel_path)]
-        sys.modules[_mod_name] = _stub
-
-_logging_config_stub = sys.modules.setdefault(
-    "src.shared.python.logging_pkg.logging_config",
-    types.ModuleType("src.shared.python.logging_pkg.logging_config"),
-)
-_logging_config_stub.get_logger = logging.getLogger  # type: ignore[attr-defined]
-_logging_config_stub.setup_logging = lambda *a, **kw: None  # type: ignore[attr-defined]
 
 pytest.importorskip("PyQt6.QtWidgets")
 
@@ -60,7 +25,7 @@ pytest.importorskip("PyQt6.QtWidgets")
 
 def _build_panel(tmp_path: Path):
     """Construct a MemoryPanel bound to a real on-disk MemoryManager."""
-    from chat.memory_panel import MemoryPanel  # noqa: WPS433 - local import
+    from chat.memory_panel import MemoryPanel
     from src.shared.python.ai.memory_manager import MemoryManager
 
     manager = MemoryManager(storage_dir=tmp_path)

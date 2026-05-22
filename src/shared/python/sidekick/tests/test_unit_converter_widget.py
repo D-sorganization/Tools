@@ -5,8 +5,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from PyQt6.QtCore import QSettings
-from upstream_drift_tools.calculators.conversion.service import ConversionResult
-from upstream_drift_tools.ui.widgets.unit_converter_widget import (
+from sidekick.calculators.conversion.service import ConversionResult
+from sidekick.ui.widgets.unit_converter_widget import (
     CaseInsensitiveCompleter,
     ConversionRow,
     UnitConverterWidget,

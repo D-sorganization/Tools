@@ -13,109 +13,124 @@ imports cleanly under a plain pytest run.
 
 from __future__ import annotations
 
-import logging
 import sys
 import time
 import types
-from pathlib import Path
 from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
 
-# ---------------------------------------------------------------------------
-# Bootstrap: stub the broken src.shared.python.ai __init__ and logging_pkg
-# ---------------------------------------------------------------------------
 
-ROOT = Path(__file__).resolve().parents[4]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
+class _FakeSignal:
+    """A minimal mock for pyqtSignal."""
 
-_PACKAGE_STUBS: list[tuple[str, str | None]] = [
-    ("src", "src"),
-    ("src.shared", "src/shared"),
-    ("src.shared.python", "src/shared/python"),
-    ("src.shared.python.config", "src/shared/python/config"),
-    ("src.shared.python.ai", "src/shared/python/ai"),
-    ("src.shared.python.ai.adapters", "src/shared/python/ai/adapters"),
-]
-for _mod_name, _rel_path in _PACKAGE_STUBS:
-    if _mod_name not in sys.modules:
-        import types
+    def __init__(self, *args: object, **kwargs: object) -> None:
+        self.callbacks: list[Any] = []
 
-        _stub = types.ModuleType(_mod_name)
-        if _rel_path is not None:
-            _stub.__path__ = [str(ROOT / _rel_path)]
-        sys.modules[_mod_name] = _stub
+    def connect(self, callback: Any) -> None:
+        self.callbacks.append(callback)
+
+    def emit(self, *args: Any) -> None:
+        for callback in self.callbacks:
+            callback(*args)
 
 
-_logging_config_stub = sys.modules.get("src.shared.python.logging_pkg.logging_config")
-if not isinstance(_logging_config_stub, types.ModuleType):
-    _logging_config_stub = types.ModuleType(
-        "src.shared.python.logging_pkg.logging_config"
-    )
-    sys.modules["src.shared.python.logging_pkg.logging_config"] = _logging_config_stub
-_logging_config_stub.get_logger = logging.getLogger  # type: ignore[attr-defined]
+class _FakeSignalDescriptor:
+    """A descriptor representing pyqtSignal on class level."""
+
+    def __init__(self, *types: Any) -> None:
+        self.types = types
+
+    def __get__(self, instance: Any, owner: Any) -> Any:
+        if instance is None:
+            return self
+        name = f"_fake_signal_{id(self)}"
+        if not hasattr(instance, name):
+            setattr(instance, name, _FakeSignal())
+        return getattr(instance, name)
 
 
-# ---------------------------------------------------------------------------
-# Stub the ai_backend extension before importing the adapter so the import
-# guard in __init__ doesn't bail out.
-# ---------------------------------------------------------------------------
+class _FakeQThread:
+    """A minimal mock for QThread."""
+
+    currentThread: Any = MagicMock()
+
+    def __init__(self, *args: object, **kwargs: object) -> None:
+        pass
+
+    def start(self) -> None:
+        self.run()
+
+
+class _FakeQEventLoop:
+    """A minimal mock for QEventLoop."""
+
+    def exec(self) -> None:
+        from PyQt6.QtCore import QCoreApplication
+
+        app = QCoreApplication.instance()
+        if app is not None:
+            app.processEvents()
+
+    def quit(self) -> None:
+        pass
+
+
+class _StubAIConfig:
+    def __init__(self, *args: object, **kwargs: object) -> None:
+        self.model = "stub-model"
+
+
+class _StubAIEngine:
+    def __init__(self, _config: object) -> None:
+        self._response = "default-response"
+        self._stream_chunks: list[str] = []
+        self._stream_delay: float = 0.0
+
+    def generate_response(self, _prompt: str) -> str:
+        return self._response
+
+    def stream_response(self, _prompt: str) -> list[str]:
+        if self._stream_delay:
+            time.sleep(self._stream_delay)
+        return list(self._stream_chunks)
+
+
+class _StubMemoryManager:
+    def __init__(self, _path: str) -> None:
+        self.initialized = False
+
+    def initialize(self) -> None:
+        self.initialized = True
+
+
+class _StubRagPipeline:
+    def __init__(self, *_args: object, **_kwargs: object) -> None:
+        self._indexed_path: str = ""
+        self._context: list[str] = []
+
+    def index_codebase(self, root: str) -> int:
+        self._indexed_path = root
+        return len(root)
+
+    def retrieve_context(self, _prompt: str, top_k: int) -> list[str]:
+        return self._context[:top_k]
 
 
 def _install_ai_backend_stub() -> types.ModuleType:
     """Install a minimal ai_backend stub module suitable for unit testing."""
-    import time
-
     stub = types.ModuleType("ai_backend")
-
-    class _AIConfig:
-        def __init__(self, *args: object, **kwargs: object) -> None:
-            self.model = "stub-model"
-
-    class _AIEngine:
-        def __init__(self, _config: object) -> None:
-            self._response = "default-response"
-            self._stream_chunks: list[str] = []
-            self._stream_delay: float = 0.0
-
-        def generate_response(self, _prompt: str) -> str:
-            return self._response
-
-        def stream_response(self, _prompt: str) -> list[str]:
-            if self._stream_delay:
-                time.sleep(self._stream_delay)
-            return list(self._stream_chunks)
-
-    class _MemoryManager:
-        def __init__(self, _path: str) -> None:
-            self.initialized = False
-
-        def initialize(self) -> None:
-            self.initialized = True
-
-    class _RagPipeline:
-        def __init__(self, *_args: object, **_kwargs: object) -> None:
-            self._indexed_path: str = ""
-            self._context: list[str] = []
-
-        def index_codebase(self, root: str) -> int:
-            self._indexed_path = root
-            return len(root)
-
-        def retrieve_context(self, _prompt: str, top_k: int) -> list[str]:
-            return self._context[:top_k]
-
-    stub.AIConfig = _AIConfig  # type: ignore[attr-defined]
-    stub.AIEngine = _AIEngine  # type: ignore[attr-defined]
-    stub.MemoryManager = _MemoryManager  # type: ignore[attr-defined]
-    stub.RagPipeline = _RagPipeline  # type: ignore[attr-defined]
+    stub.AIConfig = _StubAIConfig  # type: ignore[attr-defined]
+    stub.AIEngine = _StubAIEngine  # type: ignore[attr-defined]
+    stub.MemoryManager = _StubMemoryManager  # type: ignore[attr-defined]
+    stub.RagPipeline = _StubRagPipeline  # type: ignore[attr-defined]
     sys.modules["ai_backend"] = stub
     return stub
 
 
 _install_ai_backend_stub()
+
 
 from src.shared.python.ai.adapters.rust_adapter import (  # noqa: E402
     RustAgentAdapter,
@@ -244,14 +259,15 @@ class TestStreamResponseGenerator:
 
         # We need to mock sys.modules for PyQt6 since it might not be installed
         with MagicMock() as mock_pyqt:
+            mock_pyqt.QtCore.QCoreApplication.instance.return_value = mock_app
+            mock_pyqt.QtCore.QThread = _FakeQThread
+            mock_pyqt.QtCore.QThread.currentThread.return_value = mock_thread
+            mock_pyqt.QtCore.pyqtSignal = _FakeSignalDescriptor
+            mock_pyqt.QtCore.QEventLoop = _FakeQEventLoop
+            mock_app.thread.return_value = mock_thread
+
             sys.modules["PyQt6"] = mock_pyqt
             sys.modules["PyQt6.QtCore"] = mock_pyqt.QtCore
-            mock_pyqt.QtCore.QCoreApplication.instance.return_value = mock_app
-            mock_pyqt.QtCore.QThread = _MockQThread
-            mock_pyqt.QtCore.currentThread.return_value = mock_thread
-            mock_pyqt.QtCore.pyqtSignal = _MockSignal
-            mock_pyqt.QtCore.QEventLoop = _MockEventLoop
-            mock_app.thread.return_value = mock_thread
 
             adapter.engine._stream_chunks = ["chunk1", "chunk2"]
             adapter.engine._stream_delay = 0.1

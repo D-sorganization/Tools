@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from upstream_drift_tools.ui.mixins.base_calculator_mixin import BaseCalculatorMixin
+from sidekick.ui.mixins.base_calculator_mixin import BaseCalculatorMixin
 
 
 class MockCalculator(BaseCalculatorMixin):

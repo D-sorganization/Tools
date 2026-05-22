@@ -476,7 +476,7 @@ class ODESolverWindow(ThemedWindowMixin, QMainWindow):
         ``_SOLVER_TIMEOUT_S`` seconds.
         """
         try:
-            from upstream_drift_tools.process_calculators.ode_solver import (
+            from sidekick.process_calculators.ode_solver import (
                 ODESolver,
             )
 

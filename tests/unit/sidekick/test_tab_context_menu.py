@@ -1,38 +1,63 @@
-"""Unit tests for sidekick.tab_context_menu (issues #3032, #2929).
+"""Unit/integration tests for sidekick tab context menu.
 
-The facade module re-exports from sidekick.ui.tools_sidebar.tab_context_menu.
-Tests exercise the public API via the facade import path.  Qt-backed tests
-are skipped when PyQt6 is not installed.
+Verifies issues #2929 and #3032.
 """
 
 from __future__ import annotations
 
 import importlib
+import os
 import sys
 from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
 
-pytestmark = pytest.mark.unit
+pytestmark = pytest.mark.serial
 
-SHARED = Path(__file__).resolve().parents[4] / "src" / "shared" / "python"
-if str(SHARED) not in sys.path:
-    sys.path.insert(0, str(SHARED))
+if sys.platform == "win32" and os.environ.get("PYTEST_XDIST_WORKER"):
+    pytest.skip(
+        "Qt tab context menu tests run serially on Windows.",
+        allow_module_level=True,
+    )
+
+pytest.importorskip("PyQt6")
+
+_SHARED = Path(__file__).resolve().parents[3] / "src" / "shared" / "python"
+_TEST_PKG = Path(__file__).resolve().parent  # tests/unit/sidekick/
+
+
+def _fix_sidekick_import() -> None:
+    """Ensure the production sidekick package is loaded (not the test shadow)."""
+    shared_str = str(_SHARED)
+    if shared_str not in sys.path:
+        sys.path.insert(0, shared_str)
+    else:
+        sys.path.remove(shared_str)
+        sys.path.insert(0, shared_str)
+
+    test_dir = str(_TEST_PKG)
+    top_mod = sys.modules.get("sidekick")
+    if (
+        top_mod is not None
+        and getattr(top_mod, "__file__", None) is not None
+        and test_dir in str(Path(top_mod.__file__).resolve().parent)
+    ):
+        del sys.modules["sidekick"]
 
 
 @pytest.fixture(scope="module")
 def tcm():  # type: ignore[no-untyped-def]
     """Import and return the tab_context_menu facade module."""
+    _fix_sidekick_import()
     return importlib.import_module("sidekick.tab_context_menu")
 
 
 @pytest.fixture()
 def live_sidebar(tmp_path: Path, qtbot):  # type: ignore[no-untyped-def]
     """Return a real sidebar so menu-construction failures stay test-visible."""
-    pytest.importorskip("PyQt6")
-
-    from sidekick.ui.tools_sidebar.qt_compat import QtWidgets
+    _fix_sidekick_import()
+    from PyQt6 import QtWidgets
     from sidekick.ui.tools_sidebar.sidebar import UnifiedToolsSidebar
 
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
@@ -40,6 +65,41 @@ def live_sidebar(tmp_path: Path, qtbot):  # type: ignore[no-untyped-def]
     sidebar = UnifiedToolsSidebar(project_root=tmp_path)
     qtbot.addWidget(sidebar)
     return sidebar
+
+
+# ---------------------------------------------------------------------------
+# Module-level smoke: confirm top-level re-exports are importable
+# ---------------------------------------------------------------------------
+
+
+def test_tab_context_menu_module_exists() -> None:
+    """sidekick.tab_context_menu is importable at the stable top-level path."""
+    _fix_sidekick_import()
+    from sidekick.tab_context_menu import (  # noqa: F401
+        build_tab_context_menu,
+        show_tab_context_menu,
+    )
+
+    assert callable(build_tab_context_menu)
+    assert callable(show_tab_context_menu)
+
+
+def test_selected_tab_panel_module_exists() -> None:
+    """sidekick.selected_tab_panel is importable at the stable top-level path."""
+    _fix_sidekick_import()
+    from sidekick.selected_tab_panel import (  # noqa: F401
+        SIDEKICK_TAB_SETTINGS_BUTTON_OBJECT_NAME,
+        TabSettingsMixin,
+        build_tab_settings_dialog,
+        build_tab_settings_toolbar,
+    )
+
+    assert SIDEKICK_TAB_SETTINGS_BUTTON_OBJECT_NAME == "SidekickActiveTabSettings"
+
+
+# ---------------------------------------------------------------------------
+# Facade tests
+# ---------------------------------------------------------------------------
 
 
 def test_tab_context_menu_all(tcm) -> None:  # type: ignore[no-untyped-def]
@@ -60,8 +120,6 @@ def test_show_tab_context_menu_is_callable(tcm) -> None:  # type: ignore[no-unty
 @pytest.mark.gui
 def test_show_tab_context_menu_no_tab_id_returns(tcm, qtbot) -> None:  # type: ignore[no-untyped-def]
     """show_tab_context_menu returns early if get_tab_id_at returns None."""
-    pytest.importorskip("PyQt6")
-
     sidebar = MagicMock()
     sidebar.get_tab_id_at.return_value = None
     sidebar.tabs.tabBar.return_value.tabAt.return_value = -1
@@ -96,3 +154,116 @@ def test_build_tab_context_menu_close_action_present(
         if not action.isSeparator()
     ]
     assert "Close" in action_titles
+
+
+# ---------------------------------------------------------------------------
+# Context menu action set verification (no display needed)
+# ---------------------------------------------------------------------------
+
+
+def _make_sidebar_with_popout_tab(tmp_path: Path, qtbot):  # type: ignore[return]
+    """Return (sidebar, tab_id, win, app) for a sidebar with one popout-capable tab."""
+    _fix_sidekick_import()
+    from PyQt6 import QtWidgets
+    from sidekick.ui.tools_sidebar.sidebar import UnifiedToolsSidebar
+    from sidekick.ui.tools_sidebar.tab_definition import SidebarTabDefinition
+
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    win = QtWidgets.QMainWindow()
+    qtbot.addWidget(win)
+    tab_def = SidebarTabDefinition(
+        tab_id="ctx_test_tab",
+        title="CtxTest",
+        factory=lambda _sb: QtWidgets.QLabel("hello"),
+        popout_enabled=True,
+        duplicate_enabled=True,
+    )
+    sidebar = UnifiedToolsSidebar(
+        project_root=tmp_path,
+        tab_definitions=[tab_def],
+        parent=win,
+    )
+    sidebar.install_as_dock(win, title="Sidekick")
+    win.show()
+    return sidebar, "ctx_test_tab", win, app
+
+
+def test_context_menu_has_rename_action(tmp_path: Path, qtbot) -> None:
+    """Context menu for a tab includes a Rename action."""
+    _fix_sidekick_import()
+    from sidekick.ui.tools_sidebar.tab_context_menu import build_tab_context_menu
+
+    sidebar, tab_id, win, _ = _make_sidebar_with_popout_tab(tmp_path, qtbot)
+    menu = build_tab_context_menu(sidebar, tab_id)
+    qtbot.addWidget(menu)
+    action_texts = {a.text() for a in menu.actions() if a.text()}
+    assert "Rename" in action_texts, f"Expected 'Rename' in {action_texts}"
+
+
+def test_context_menu_has_close_action(tmp_path: Path, qtbot) -> None:
+    """Context menu for a tab includes a Close action."""
+    _fix_sidekick_import()
+    from sidekick.ui.tools_sidebar.tab_context_menu import build_tab_context_menu
+
+    sidebar, tab_id, win, _ = _make_sidebar_with_popout_tab(tmp_path, qtbot)
+    menu = build_tab_context_menu(sidebar, tab_id)
+    qtbot.addWidget(menu)
+    action_texts = {a.text() for a in menu.actions() if a.text()}
+    assert "Close" in action_texts, f"Expected 'Close' in {action_texts}"
+
+
+def test_context_menu_has_pop_out_action(tmp_path: Path, qtbot) -> None:
+    """Context menu for a popout-enabled tab includes a Pop Out action."""
+    _fix_sidekick_import()
+    from sidekick.ui.tools_sidebar.tab_context_menu import build_tab_context_menu
+
+    sidebar, tab_id, win, _ = _make_sidebar_with_popout_tab(tmp_path, qtbot)
+    menu = build_tab_context_menu(sidebar, tab_id)
+    qtbot.addWidget(menu)
+    action_texts = {a.text() for a in menu.actions() if a.text()}
+    assert "Pop Out" in action_texts, f"Expected 'Pop Out' in {action_texts}"
+
+
+def test_context_menu_has_duplicate_action(tmp_path: Path, qtbot) -> None:
+    """Context menu for a duplicate-enabled tab includes a Duplicate action."""
+    _fix_sidekick_import()
+    from sidekick.ui.tools_sidebar.tab_context_menu import build_tab_context_menu
+
+    sidebar, tab_id, win, _ = _make_sidebar_with_popout_tab(tmp_path, qtbot)
+    menu = build_tab_context_menu(sidebar, tab_id)
+    qtbot.addWidget(menu)
+    action_texts = {a.text() for a in menu.actions() if a.text()}
+    assert "Duplicate" in action_texts, f"Expected 'Duplicate' in {action_texts}"
+
+
+def test_context_menu_has_minimize_action(tmp_path: Path, qtbot) -> None:
+    """Context menu includes a Minimize Sidebar action."""
+    _fix_sidekick_import()
+    from sidekick.ui.tools_sidebar.tab_context_menu import build_tab_context_menu
+
+    sidebar, tab_id, win, _ = _make_sidebar_with_popout_tab(tmp_path, qtbot)
+    menu = build_tab_context_menu(sidebar, tab_id)
+    qtbot.addWidget(menu)
+    action_texts = {a.text() for a in menu.actions() if a.text()}
+    assert "Minimize Sidebar" in action_texts, (
+        f"Expected 'Minimize Sidebar' in {action_texts}"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Selected-tab gear panel — settings button
+# ---------------------------------------------------------------------------
+
+
+def test_sidebar_has_settings_gear_button(tmp_path: Path, qtbot) -> None:
+    """Sidebar toolbar exposes a gear settings button with the expected objectName."""
+    _fix_sidekick_import()
+    from PyQt6.QtWidgets import QToolButton
+    from sidekick.selected_tab_panel import (
+        SIDEKICK_TAB_SETTINGS_BUTTON_OBJECT_NAME,
+    )
+
+    sidebar, tab_id, win, _ = _make_sidebar_with_popout_tab(tmp_path, qtbot)
+    btn_name = SIDEKICK_TAB_SETTINGS_BUTTON_OBJECT_NAME
+    gear_btn = sidebar.findChild(QToolButton, btn_name)
+    assert gear_btn is not None, f"Expected QToolButton with objectName {btn_name!r}"

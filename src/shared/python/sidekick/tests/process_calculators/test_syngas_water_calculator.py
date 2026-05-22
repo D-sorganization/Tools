@@ -1,14 +1,14 @@
 # ruff: noqa: E501
 import numpy as np
 import pytest
-from upstream_drift_tools.process_calculators.syngas_water_calculator import (
+from sidekick.process_calculators.syngas_water_calculator import (
     SyngasComposition,
     SyngasWaterCalculator,
     WaterContentResult,
     estimate_condensation_risk,
     quick_water_content,
 )
-from upstream_drift_tools.process_calculators.water_vapor_pressure_calculator import (
+from sidekick.process_calculators.water_vapor_pressure_calculator import (
     WaterVaporPressureCalculator,
 )
 

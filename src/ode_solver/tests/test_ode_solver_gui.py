@@ -67,7 +67,7 @@ class TestODESolverEngineIntegration:
     def test_solver_class_import(self) -> Any:
         """Test that ODESolver class can be imported."""
         try:
-            from upstream_drift_tools.process_calculators.ode_solver import (
+            from sidekick.process_calculators.ode_solver import (
                 ODESolver,
             )
 
@@ -79,7 +79,7 @@ class TestODESolverEngineIntegration:
         """Test solving a simple exponential decay ODE."""
         try:
             import numpy as np
-            from upstream_drift_tools.process_calculators.ode_solver import (
+            from sidekick.process_calculators.ode_solver import (
                 ODESolver,
             )
 
@@ -102,7 +102,7 @@ class TestODESolverEngineIntegration:
         """Test solving a two-variable ODE system."""
         try:
             import numpy as np
-            from upstream_drift_tools.process_calculators.ode_solver import (
+            from sidekick.process_calculators.ode_solver import (
                 ODESolver,
             )
 

@@ -252,4 +252,9 @@ class _Adapter(BaseAgentAdapter):
         return ["test"]
 
     def thinking_capabilities(self) -> Any:
-        return None
+        from src.shared.python.chat.models import ThinkingCapabilities, ThinkingLevel
+
+        return ThinkingCapabilities(
+            supported_levels=frozenset({ThinkingLevel.NONE}),
+            default_level=ThinkingLevel.NONE,
+        )
