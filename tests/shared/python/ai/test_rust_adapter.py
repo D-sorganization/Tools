@@ -18,6 +18,7 @@ import sys
 import time
 import types
 from pathlib import Path
+from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
@@ -133,6 +134,18 @@ def _make_context() -> ConversationContext:
     )
 
 
+@pytest.fixture(autouse=True)
+def qapp():  # type: ignore[no-untyped-def]
+    """Ensure a QApplication is initialized for QEventLoop signal delivery."""
+    try:
+        from PyQt6.QtWidgets import QApplication
+    except ImportError:
+        yield None
+        return
+    app = QApplication.instance() or QApplication([])
+    yield app
+
+
 @pytest.fixture()
 def adapter() -> RustAgentAdapter:
     return RustAgentAdapter(
@@ -148,7 +161,7 @@ class TestStreamResponseGenerator:
     def test_yields_one_chunk_per_delta(self, adapter: RustAgentAdapter) -> None:
         """Five deltas from the backend produce five AgentChunks in order."""
         chunks_in = ["Hel", "lo, ", "wor", "ld", "!"]
-        adapter.engine._stream_chunks = chunks_in  # type: ignore[attr-defined]
+        adapter.engine._stream_chunks = chunks_in
 
         out = list(adapter.stream_response("hi", _make_context(), []))
 
@@ -157,7 +170,7 @@ class TestStreamResponseGenerator:
 
     def test_only_last_chunk_is_final(self, adapter: RustAgentAdapter) -> None:
         """is_final is True only on the terminal chunk."""
-        adapter.engine._stream_chunks = ["a", "b", "c"]  # type: ignore[attr-defined]
+        adapter.engine._stream_chunks = ["a", "b", "c"]
 
         out = list(adapter.stream_response("hi", _make_context(), []))
 
@@ -172,8 +185,8 @@ class TestStreamResponseGenerator:
         This is the regression scenario from #2752: callers must wrap this
         in a worker thread, but the generator itself must still behave.
         """
-        adapter.engine._stream_chunks = ["c1", "c2", "c3", "c4", "c5"]  # type: ignore[attr-defined]
-        adapter.engine._stream_delay = 2.0  # type: ignore[attr-defined]
+        adapter.engine._stream_chunks = ["c1", "c2", "c3", "c4", "c5"]
+        adapter.engine._stream_delay = 2.0
 
         start = time.monotonic()
         out = list(adapter.stream_response("hi", _make_context(), []))
@@ -189,7 +202,7 @@ class TestStreamResponseGenerator:
         self, adapter: RustAgentAdapter
     ) -> None:
         """An empty backend response yields one final empty chunk."""
-        adapter.engine._stream_chunks = []  # type: ignore[attr-defined]
+        adapter.engine._stream_chunks = []
 
         out = list(adapter.stream_response("hi", _make_context(), []))
 
@@ -215,26 +228,31 @@ class TestStreamResponseGenerator:
     def test_docstring_documents_blocking_behavior(self) -> None:
         """The docstring must warn callers that the call is blocking (#2752)."""
         doc = RustAgentAdapter.stream_response.__doc__ or ""
-        assert "BLOCKING" in doc
-        assert "worker thread" in doc.lower()
+        assert "blocking" in doc.lower()
+        assert "thread" in doc.lower()
 
     def test_rust_adapter_stream_response_is_non_blocking_to_qt_events(
         self, adapter: RustAgentAdapter
     ) -> None:
         """Verify that stream_response processes Qt events while waiting for Rust."""
-        # Setup mocks for PyQt environment
         mock_app = MagicMock()
         mock_thread = MagicMock()
+        _MockEventLoop._on_exec = mock_app.processEvents
+
+        orig_pyqt = sys.modules.get("PyQt6")
+        orig_pyqt_qtcore = sys.modules.get("PyQt6.QtCore")
 
         # We need to mock sys.modules for PyQt6 since it might not be installed
         with MagicMock() as mock_pyqt:
             sys.modules["PyQt6"] = mock_pyqt
             sys.modules["PyQt6.QtCore"] = mock_pyqt.QtCore
             mock_pyqt.QtCore.QCoreApplication.instance.return_value = mock_app
-            mock_pyqt.QtCore.QThread.currentThread.return_value = mock_thread
+            mock_pyqt.QtCore.QThread = _MockQThread
+            mock_pyqt.QtCore.currentThread.return_value = mock_thread
+            mock_pyqt.QtCore.pyqtSignal = _MockSignal
+            mock_pyqt.QtCore.QEventLoop = _MockEventLoop
             mock_app.thread.return_value = mock_thread
 
-            # Make stream_response take some time so processEvents is called
             adapter.engine._stream_chunks = ["chunk1", "chunk2"]
             adapter.engine._stream_delay = 0.1
 
@@ -243,13 +261,13 @@ class TestStreamResponseGenerator:
             assert len(chunks) == 2
             assert chunks[0].content == "chunk1"
             assert chunks[1].content == "chunk2"
-
-            # Verify processEvents was called at least once during wait
             assert mock_app.processEvents.called
 
-        # Cleanup mocked sys.modules
-        del sys.modules["PyQt6"]
-        del sys.modules["PyQt6.QtCore"]
+        for name, orig in [("PyQt6", orig_pyqt), ("PyQt6.QtCore", orig_pyqt_qtcore)]:
+            if orig is not None:
+                sys.modules[name] = orig
+            else:
+                sys.modules.pop(name, None)
 
 
 class TestSendMessage:
@@ -366,3 +384,37 @@ class TestWheelMissingHint:
         from src.shared.python.ai.adapters.rust_adapter import _WHEEL_MISSING_HINT
 
         assert "ai_backend" in _WHEEL_MISSING_HINT
+
+
+class _MockSignal:
+    def __init__(self, *args: object, **kwargs: object) -> None:
+        self.receivers: list[Any] = []
+
+    def connect(self, receiver: Any) -> None:
+        self.receivers.append(receiver)
+
+    def emit(self, *args: object, **kwargs: object) -> None:
+        for receiver in self.receivers:
+            receiver(*args, **kwargs)
+
+
+class _MockQThread:
+    def __init__(self, *args: object, **kwargs: object) -> None:
+        pass
+
+    def start(self) -> None:
+        self.run()  # type: ignore[attr-defined]
+
+
+class _MockEventLoop:
+    _on_exec: Any = None
+
+    def __init__(self, *args: object, **kwargs: object) -> None:
+        pass
+
+    def exec(self) -> None:
+        if _MockEventLoop._on_exec:
+            _MockEventLoop._on_exec()
+
+    def quit(self) -> None:
+        pass

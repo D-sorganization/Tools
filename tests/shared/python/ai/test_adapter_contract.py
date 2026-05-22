@@ -61,8 +61,8 @@ _env_stub = sys.modules.get("src.shared.python.config.environment")
 if not isinstance(_env_stub, types.ModuleType):
     _env_stub = types.ModuleType("src.shared.python.config.environment")
     sys.modules["src.shared.python.config.environment"] = _env_stub
-_env_stub.get_env = lambda key, default=None, required=False: default
-_env_stub.get_env_float = lambda key, default=0.0: float(default)
+_env_stub.get_env = lambda key, default=None, required=False: default  # type: ignore[attr-defined]
+_env_stub.get_env_float = lambda key, default=0.0: float(default)  # type: ignore[attr-defined]
 
 
 # ---------------------------------------------------------------------------
@@ -294,6 +294,18 @@ def _make_gemini_adapter() -> BaseAgentAdapter:
             adapter = GeminiAdapter(api_key="test-key")
             adapter._model = model_instance
     return adapter
+
+
+@pytest.fixture(autouse=True)
+def qapp():  # type: ignore[no-untyped-def]
+    """Ensure a QApplication is initialized for QEventLoop signal delivery."""
+    try:
+        from PyQt6.QtWidgets import QApplication
+    except ImportError:
+        yield None
+        return
+    app = QApplication.instance() or QApplication([])
+    yield app
 
 
 # ---------------------------------------------------------------------------

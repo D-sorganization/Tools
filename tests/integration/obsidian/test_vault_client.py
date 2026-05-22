@@ -18,6 +18,7 @@ import logging
 import os
 import sys
 import types
+from collections.abc import Generator
 from pathlib import Path
 
 import pytest
@@ -63,10 +64,13 @@ _logging_pkg_stub = sys.modules.setdefault(
 )
 
 # Stub httpx so integration modules that import it do not fail on missing dep.
-if "httpx" not in sys.modules:
-    _httpx_stub = types.ModuleType("httpx")
-    _httpx_stub.AsyncClient = object  # type: ignore[attr-defined]
-    sys.modules["httpx"] = _httpx_stub
+try:
+    import httpx  # noqa: F401
+except ImportError:
+    if "httpx" not in sys.modules:
+        _httpx_stub = types.ModuleType("httpx")
+        _httpx_stub.AsyncClient = object  # type: ignore[attr-defined]
+        sys.modules["httpx"] = _httpx_stub
 
 # ---------------------------------------------------------------------------
 # Module-level import (must succeed for all tests in this file to run)
@@ -88,7 +92,7 @@ ObsidianPathError = _obsidian_mod.ObsidianPathError
 
 
 @pytest.fixture()
-def temp_vault(tmp_path: Path) -> Path:
+def temp_vault(tmp_path: Path) -> Generator[Path, None, None]:
     """Create a temporary directory that acts as an Obsidian vault.
 
     Populates the vault with a few starter notes so every test has a
