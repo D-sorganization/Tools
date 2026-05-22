@@ -5,7 +5,10 @@ from typing import Any
 
 import numpy as np
 
-__all__ = ["fit_heating_parameters", "predict_temperature_profile"]
+__all__ = [
+    "fit_heating_parameters",
+    "predict_temperature_profile",
+]
 
 
 def _heating_ode(

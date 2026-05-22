@@ -7,6 +7,11 @@ from typing import Any
 from .help_content import SIDEBAR_CONTEXT_ACTIONS
 from .qt_compat import QtWidgets
 
+__all__ = [
+    "build_tab_context_menu",
+    "show_tab_context_menu",
+]
+
 
 def _add_action(
     menu: QtWidgets.QMenu,

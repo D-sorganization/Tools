@@ -8,6 +8,14 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol
 
+__all__ = [
+    "CommonLocation",
+    "CommonLocationsProvider",
+    "DefaultCommonLocationsProvider",
+    "FileNavigationController",
+    "FileNavigationState",
+]
+
 
 @dataclass(frozen=True)
 class CommonLocation:

@@ -15,6 +15,16 @@ if TYPE_CHECKING:
 
 from .registry import WorkspaceRegistry, WorkspaceVariable
 
+__all__ = [
+    "DEFAULT_DATA_EXPLORER_MAX_FILE_SIZE_BYTES",
+    "DEFAULT_DATA_EXPLORER_PREVIEW_ROWS",
+    "DataExplorerColumnSummary",
+    "DataExplorerError",
+    "DataExplorerPreview",
+    "DataExplorerService",
+    "SUPPORTED_DATA_EXPLORER_SUFFIXES",
+]
+
 DEFAULT_DATA_EXPLORER_PREVIEW_ROWS = 20
 DEFAULT_DATA_EXPLORER_MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024
 SUPPORTED_DATA_EXPLORER_SUFFIXES = {

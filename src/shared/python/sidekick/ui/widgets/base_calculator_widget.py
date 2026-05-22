@@ -11,7 +11,12 @@ from shared.python.theme.integration import ThemedWindowMixin
 
 from ..mixins.base_calculator_mixin import BaseCalculatorMixin
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "BaseCalculatorWidget",
+    "BaseCalculatorWindow",
+]
+
+_logger = logging.getLogger(__name__)
 
 
 class BaseCalculatorWidget(QWidget, BaseCalculatorMixin):

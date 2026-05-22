@@ -10,6 +10,12 @@ from typing import Any
 from .calculator_startup import default_calculator_startup_config
 from .theme_settings import SidekickThemeSettings
 
+__all__ = [
+    "SidebarState",
+    "VALID_DOCK_AREAS",
+    "VALID_LAYOUT_MODES",
+]
+
 VALID_DOCK_AREAS = {"left", "right"}
 VALID_LAYOUT_MODES = {"sidebar", "matlab_home"}
 

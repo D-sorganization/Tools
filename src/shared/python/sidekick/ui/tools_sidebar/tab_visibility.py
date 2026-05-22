@@ -8,6 +8,15 @@ from typing import Protocol
 
 from .state import SidebarState
 
+__all__ = [
+    "TabDefinitionLike",
+    "available_tab_ids",
+    "initially_visible_tab_ids",
+    "sanitize_tab_state",
+    "with_default_tab_visibility",
+    "without_default_tab_visibility",
+]
+
 
 class TabDefinitionLike(Protocol):
     """Minimal tab definition contract needed by visibility helpers."""

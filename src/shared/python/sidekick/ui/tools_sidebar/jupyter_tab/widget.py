@@ -21,6 +21,10 @@ from .notebook_model import (
     RawCell,
 )
 
+__all__ = [
+    "JupyterNotebookWidget",
+]
+
 _PLACEHOLDER_RICH_OUTPUT = "[Phase 2: image output]"
 
 

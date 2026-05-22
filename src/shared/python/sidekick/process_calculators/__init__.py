@@ -61,7 +61,7 @@ if TYPE_CHECKING:
     )
     from .wgs_reactor_calculator import WGSReactorEngine as WGSReactorEngineType
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 # Track import errors for optional modules
 _import_errors: list[str] = []
@@ -151,36 +151,33 @@ except ImportError as e:
 
 # Log any import errors that occurred
 for error in _import_errors:
-    logger.debug(error)
+    _logger.debug(error)
 
 __all__ = [
-    # Always available
+    "ATOL_ZERO",
     "AcidGasDewpointCalculator",
-    "FlareCalculator",
-    "FlareDesign",
+    "AdamOptimizer",
     "BaghouseCalculator",
     "BaghouseResult",
     "ElectrodeAdvancementCalculator",
     "FinancialCalculator",
+    "FlareCalculator",
+    "FlareDesign",
+    "MultiParameterAnalysis",
     "ODESolver",
-    "fit_heating_parameters",
-    "predict_temperature_profile",
-    # Constants
-    "R_UNIVERSAL",
+    "Optimizer",
+    "PressureDropCalculator",
     "R_GAS_J_MOL_K",
+    "R_UNIVERSAL",
     "STANDARD_GRAVITY",
-    "ATOL_ZERO",
-    "celsius_to_kelvin",
-    "kelvin_to_celsius",
-    # Conditionally available
     "ScrubberCalculator",
+    "SyngasCompressionCalculator",
     "SyngasWaterCalculator",
-    "WaterVaporPressureCalculator",
     "WGSReactorCalculator",
     "WGSReactorEngine",
-    "Optimizer",
-    "AdamOptimizer",
-    "MultiParameterAnalysis",
-    "SyngasCompressionCalculator",
-    "PressureDropCalculator",
+    "WaterVaporPressureCalculator",
+    "celsius_to_kelvin",
+    "fit_heating_parameters",
+    "kelvin_to_celsius",
+    "predict_temperature_profile",
 ]

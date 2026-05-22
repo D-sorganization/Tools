@@ -62,7 +62,11 @@ from ._friction_factors import (  # noqa: F401
     select_friction_factor_method,
 )
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "PressureDropCalculationEngine",
+]
+
+_logger = logging.getLogger(__name__)
 
 
 # ============================================================================
@@ -75,7 +79,7 @@ class PressureDropCalculationEngine:
 
     def __init__(self) -> None:
         """Initialize the calculation engine."""
-        logger.info("PressureDropCalculationEngine initialized")
+        _logger.info("PressureDropCalculationEngine initialized")
 
     # ------------------------------------------------------------------
     # Private helpers
@@ -140,7 +144,7 @@ class PressureDropCalculationEngine:
         pressure_ratio_initial = dp_incompressible / inputs.inlet_pressure
 
         if inputs.compressibility_correction and pressure_ratio_initial > 0.05:
-            logger.info(
+            _logger.info(
                 f"Applying compressible flow correction "
                 f"(dP/P = {pressure_ratio_initial * 100:.1f}%)"
             )
@@ -159,7 +163,7 @@ class PressureDropCalculationEngine:
             dp_acceleration = max(total_dp - dp_incompressible, 0.0)
 
             if abs(total_dp - dp_incompressible) > 100:
-                logger.info(
+                _logger.info(
                     f"Compressibility effect: "
                     f"dP_incomp={dp_incompressible:.0f} Pa, "
                     f"dP_comp={total_dp:.0f} Pa "
@@ -171,7 +175,7 @@ class PressureDropCalculationEngine:
             outlet_pressure = inputs.inlet_pressure - total_dp
 
         if outlet_pressure < 0:
-            logger.error(
+            _logger.error(
                 f"Calculated negative outlet pressure: {outlet_pressure:.1f} Pa"
             )
             warnings_list.append(
@@ -239,22 +243,22 @@ class PressureDropCalculationEngine:
             warnings=warnings_list,
         )
 
-        logger.info("=" * 80)
-        logger.info("RESULTS SUMMARY")
-        logger.info("=" * 80)
-        logger.info(
+        _logger.info("=" * 80)
+        _logger.info("RESULTS SUMMARY")
+        _logger.info("=" * 80)
+        _logger.info(
             f"Total pressure drop: {total_dp / 1e5:.4f} bar ({total_dp:.1f} Pa)"
         )
-        logger.info(
+        _logger.info(
             f"  Friction: {dp_friction:.1f} Pa ({dp_friction / total_dp * 100:.1f}%)"
         )
-        logger.info(
+        _logger.info(
             f"  Fittings: {dp_fittings:.1f} Pa ({dp_fittings / total_dp * 100:.1f}%)"
         )
-        logger.info(f"  Elevation: {dp_elevation:.1f} Pa")
-        logger.info(f"Outlet pressure: {outlet_pressure / 1e5:.4f} bar")
-        logger.info(f"Erosion ratio: {erosion_ratio * 100:.1f}%")
-        logger.info("=" * 80)
+        _logger.info(f"  Elevation: {dp_elevation:.1f} Pa")
+        _logger.info(f"Outlet pressure: {outlet_pressure / 1e5:.4f} bar")
+        _logger.info(f"Erosion ratio: {erosion_ratio * 100:.1f}%")
+        _logger.info("=" * 80)
 
         return results
 
@@ -276,17 +280,17 @@ class PressureDropCalculationEngine:
         """
         is_valid, error_msg = inputs.validate()
         if not is_valid:
-            logger.error(f"Input validation failed: {error_msg}")
+            _logger.error(f"Input validation failed: {error_msg}")
             raise ValueError(f"Invalid inputs: {error_msg}")
 
-        logger.info("=" * 80)
-        logger.info("PRESSURE DROP CALCULATION")
-        logger.info("=" * 80)
+        _logger.info("=" * 80)
+        _logger.info("PRESSURE DROP CALCULATION")
+        _logger.info("=" * 80)
 
         # Step 1: Flow properties & regime
         flow_props = calculate_flow_properties(inputs)
         flow_regime = classify_flow_regime(flow_props.reynolds_number)
-        logger.info(
+        _logger.info(
             f"Flow regime: {flow_regime} (Re = {flow_props.reynolds_number:.0f})"
         )
 
@@ -297,7 +301,7 @@ class PressureDropCalculationEngine:
             flow_props.reynolds_number,
             relative_roughness,
         )
-        logger.info(
+        _logger.info(
             f"Friction factor ({inputs.friction_method}): f = {friction_factor:.6f}"
         )
 

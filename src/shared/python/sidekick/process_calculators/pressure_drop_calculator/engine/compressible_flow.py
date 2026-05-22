@@ -7,7 +7,14 @@ import math
 
 from ....utils.unit_constants import R_UNIVERSAL_KMOL
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "PI",
+    "R_UNIVERSAL",
+    "calculate_compressible_flow_correction",
+    "calculate_expansion_factor",
+]
+
+_logger = logging.getLogger(__name__)
 
 PI = math.pi
 R_UNIVERSAL = R_UNIVERSAL_KMOL
@@ -33,14 +40,14 @@ def _iterate_compressible_pressure(
         p2_squared = p1**2 - rhs
 
         if p2_squared <= 0:
-            logger.warning(
+            _logger.warning(
                 "Compressible flow calculation indicates choked flow condition"
             )
             return p2, True
 
         p2 = math.sqrt(p2_squared)
         if abs(p2 - p2_old) < tolerance:
-            logger.debug("Compressible flow converged in %s iterations", iteration + 1)
+            _logger.debug("Compressible flow converged in %s iterations", iteration + 1)
             break
 
     return p2, False
@@ -95,7 +102,7 @@ def calculate_compressible_flow_correction(
     else:
         expansion_factor = 1.0
 
-    logger.debug(
+    _logger.debug(
         "Compressible flow correction: ΔP_incomp=%.0f Pa, ΔP_comp=%.0f Pa, Y=%.3f",
         inlet_pressure - outlet_pressure,
         corrected_dp,

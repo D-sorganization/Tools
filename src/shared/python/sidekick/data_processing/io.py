@@ -169,4 +169,8 @@ class FileFormatDetector:
         return list(cls._FORMAT_MAP.keys())
 
 
-__all__ = ["DataReader", "DataWriter", "FileFormatDetector"]
+__all__ = [
+    "DataReader",
+    "DataWriter",
+    "FileFormatDetector",
+]

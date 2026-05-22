@@ -43,7 +43,15 @@ from PyQt6.QtWidgets import (
 from ...calculators.conversion.service import UnitConversionService, get_service
 from .base_calculator_widget import BaseCalculatorWindow
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "CaseInsensitiveCompleter",
+    "ConversionRow",
+    "TypedConverterWidget",
+    "UnitConverterWidget",
+    "create_unit_converter",
+]
+
+_logger = logging.getLogger(__name__)
 
 
 class ConversionRow:
@@ -428,7 +436,7 @@ class UnitConverterWidget(BaseCalculatorWindow):
             conv.update_last_used()
 
         except (ValueError, KeyError, ZeroDivisionError, ArithmeticError) as e:
-            logger.debug("Conversion error: %s", e)
+            _logger.debug("Conversion error: %s", e)
 
     def _swap_values(self, index: int) -> None:
         if index is None:

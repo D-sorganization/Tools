@@ -18,6 +18,13 @@ from .help_content import DEFAULT_SIDEBAR_TAB_HELP
 from .qt_compat import QtCore, QtWidgets, Signal
 from .settings import SidebarTabSettingsDescriptor, SidebarTabSettingsSchema
 
+__all__ = [
+    "DATA_EXPLORER_TAB_ID",
+    "DATA_EXPLORER_TAB_SETTINGS",
+    "SidekickDataExplorerWidget",
+    "build_data_explorer_tab",
+]
+
 DATA_EXPLORER_TAB_ID = "data_explorer"
 DATA_EXPLORER_TAB_SETTINGS = SidebarTabSettingsDescriptor(
     schema=SidebarTabSettingsSchema(

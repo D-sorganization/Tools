@@ -22,7 +22,16 @@ from ...constants import (
     SWAMEE_JAIN_COEFF,
 )
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "friction_factor_churchill",
+    "friction_factor_colebrook",
+    "friction_factor_haaland",
+    "friction_factor_laminar",
+    "friction_factor_swamee_jain",
+    "select_friction_factor_method",
+]
+
+_logger = logging.getLogger(__name__)
 
 
 def friction_factor_laminar(reynolds_number: float) -> float:
@@ -40,7 +49,7 @@ def friction_factor_laminar(reynolds_number: float) -> float:
         Hagen, G. (1839), Poiseuille, J. (1840): Laminar flow in pipes
     """
     if reynolds_number <= 0:
-        logger.error("Reynolds number must be positive")
+        _logger.error("Reynolds number must be positive")
         return FRICTION_FACTOR_DEFAULT_LAMINAR
 
     result = LAMINAR_FRICTION_CONSTANT / reynolds_number
@@ -97,12 +106,12 @@ def friction_factor_colebrook(
         f_new = 0.25 / (math.log10(term1 + term2) ** 2)
 
         if abs(f_new - f_old) < tolerance:
-            logger.debug(f"Colebrook converged in {i + 1} iterations: f = {f_new:.6f}")
+            _logger.debug(f"Colebrook converged in {i + 1} iterations: f = {f_new:.6f}")
             return f_new
 
         f = f_new
 
-    logger.warning(f"Colebrook did not converge in {max_iterations} iterations")
+    _logger.warning(f"Colebrook did not converge in {max_iterations} iterations")
     return f
 
 
@@ -141,7 +150,7 @@ def friction_factor_swamee_jain(
 
     f = 0.25 / (math.log10(term1 + term2) ** 2)
 
-    logger.debug(
+    _logger.debug(
         f"Swamee-Jain: Re={reynolds_number:.0f}, "
         f"eps/D={relative_roughness:.6f}, f={f:.6f}"
     )
@@ -192,7 +201,7 @@ def friction_factor_churchill(
 
     f = 8.0 * ((term2 + term3) ** (1.0 / 12.0))
 
-    logger.debug(f"Churchill: Re={Re:.0f}, eps/D={relative_roughness:.6f}, f={f:.6f}")
+    _logger.debug(f"Churchill: Re={Re:.0f}, eps/D={relative_roughness:.6f}, f={f:.6f}")
     return float(f)
 
 

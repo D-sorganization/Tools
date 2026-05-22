@@ -25,7 +25,17 @@ from .utils.pipe_database import (
     list_schedules_for_size,
 )
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "compare_friction_methods",
+    "list_fittings",
+    "list_flow_units",
+    "list_gas_components",
+    "list_materials",
+    "list_pipe_sizes",
+    "show_help",
+]
+
+_logger = logging.getLogger(__name__)
 
 
 def show_help() -> None:
@@ -58,7 +68,7 @@ def show_help() -> None:
 ║                                                                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 """
-    logger.info(help_text)
+    _logger.info(help_text)
 
 
 def list_gas_components() -> dict[str, dict[str, Any]]:

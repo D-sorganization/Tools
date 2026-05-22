@@ -11,7 +11,11 @@ from typing import Any
 
 from .calculator_state_mixin import CalculatorStateMixin
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "BaseCalculatorMixin",
+]
+
+_logger = logging.getLogger(__name__)
 
 
 class BaseCalculatorMixin(CalculatorStateMixin):

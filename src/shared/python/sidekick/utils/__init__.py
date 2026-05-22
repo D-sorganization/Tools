@@ -26,3 +26,5 @@ location is listed first; the other copy is kept for backward compat.
 
 New code should always import from the canonical location.
 """
+
+__all__: list[str] = []

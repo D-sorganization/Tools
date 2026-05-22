@@ -42,6 +42,13 @@ from .tab_visibility import (
 )
 from .theme_settings import resolve_sidekick_theme
 
+__all__ = [
+    "LayoutMode",
+    "MatlabHomeWidget",
+    "SidekickSidebar",
+    "UnifiedToolsSidebar",
+]
+
 
 class LayoutMode(StrEnum):
     """Sidebar layout strategies.

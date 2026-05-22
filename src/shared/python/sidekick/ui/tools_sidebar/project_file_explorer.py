@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import os
-import sys
 from pathlib import Path
 from typing import Protocol
 
@@ -16,6 +15,12 @@ from .file_navigation import (
     FileNavigationController,
 )
 from .qt_compat import FileSystemModel, QtCore, QtWidgets, Signal
+
+__all__ = [
+    "DefaultProgramLauncher",
+    "ProjectFileExplorer",
+    "WindowsDefaultProgramLauncher",
+]
 
 
 class DefaultProgramLauncher(Protocol):
@@ -30,11 +35,12 @@ class WindowsDefaultProgramLauncher:
 
     def open_file(self, path: Path) -> None:
         """Open ``path`` with the Windows default application."""
-        if sys.platform != "win32":
+        if hasattr(os, "startfile"):
+            os.startfile(str(path))
+        else:
             raise RuntimeError(
                 "Opening with the default program is unavailable on this platform."
             )
-        os.startfile(str(path))  # type: ignore[attr-defined]
 
 
 class ProjectFileExplorer(QtWidgets.QWidget):
@@ -248,5 +254,5 @@ def _custom_context_menu_policy() -> QtCore.Qt.ContextMenuPolicy:
 def _user_role() -> int:
     item_data_role = getattr(QtCore.Qt, "ItemDataRole", None)
     if item_data_role is not None:
-        return item_data_role.UserRole
-    return QtCore.Qt.UserRole
+        return int(item_data_role.UserRole)
+    return int(QtCore.Qt.UserRole)

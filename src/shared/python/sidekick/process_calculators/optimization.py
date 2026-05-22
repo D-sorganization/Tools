@@ -11,6 +11,14 @@ import numpy as np
 
 from .analysis_utils import evaluate_output
 
+__all__ = [
+    "OPTIMIZATION_PENALTY_VALUE",
+    "OptimizationHistoryEntry",
+    "OptimizationResults",
+    "find_optimal_on_surface",
+    "run_adam_optimization",
+]
+
 
 @dataclass
 class OptimizationHistoryEntry:

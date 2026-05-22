@@ -6,6 +6,10 @@ Wrapper for water vapor pressure calculations for backward compatibility.
 
 from .syngas_water_calculator import SyngasWaterCalculator
 
+__all__ = [
+    "WaterVaporPressureCalculator",
+]
+
 
 class WaterVaporPressureCalculator:
     """Calculates water vapor pressure using various methods."""

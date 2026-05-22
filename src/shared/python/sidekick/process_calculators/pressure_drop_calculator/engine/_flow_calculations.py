@@ -36,7 +36,21 @@ from ..utils.fitting_loss_coefficients import (
 )
 from ..utils.gas_properties import calculate_gas_properties
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "GRAVITY",
+    "PI",
+    "R_UNIVERSAL",
+    "calculate_compressible_flow_correction",
+    "calculate_elevation_pressure_drop",
+    "calculate_erosional_velocity",
+    "calculate_expansion_factor",
+    "calculate_fitting_pressure_drop",
+    "calculate_flow_properties",
+    "calculate_frictional_pressure_drop",
+    "classify_flow_regime",
+]
+
+_logger = logging.getLogger(__name__)
 
 GRAVITY = STANDARD_GRAVITY  # m/s²
 R_UNIVERSAL = R_UNIVERSAL_KMOL  # J/(kmol·K)
@@ -122,13 +136,13 @@ def calculate_flow_properties(inputs: PressureDropInputs) -> FlowProperties:
             f"Mach number out of physical range, got {flow_props.mach_number}"
         )
 
-    logger.info("Flow properties calculated:")
-    logger.info(f"  Velocity: {velocity:.2f} m/s")
-    logger.info(f"  Reynolds: {reynolds_number:.0f}")
-    logger.info(f"  Mach: {mach_number:.4f}")
-    logger.info(f"  Density: {density:.4f} kg/m3")
-    logger.info(f"  gamma (Cp/Cv): {heat_capacity_ratio:.3f}")
-    logger.info(f"  Speed of sound: {speed_of_sound:.1f} m/s")
+    _logger.info("Flow properties calculated:")
+    _logger.info(f"  Velocity: {velocity:.2f} m/s")
+    _logger.info(f"  Reynolds: {reynolds_number:.0f}")
+    _logger.info(f"  Mach: {mach_number:.4f}")
+    _logger.info(f"  Density: {density:.4f} kg/m3")
+    _logger.info(f"  gamma (Cp/Cv): {heat_capacity_ratio:.3f}")
+    _logger.info(f"  Speed of sound: {speed_of_sound:.1f} m/s")
 
     return flow_props
 
@@ -196,7 +210,7 @@ def calculate_frictional_pressure_drop(
     if not (dp_friction >= 0):
         raise ValueError(f"Pressure drop must be non-negative, got {dp_friction}")
 
-    logger.debug(
+    _logger.debug(
         f"Darcy-Weisbach: f={friction_factor:.6f}, "
         f"L/D={length / diameter:.1f}, dP={dp_friction:.1f} Pa"
     )
@@ -239,18 +253,18 @@ def calculate_fitting_pressure_drop(
             k_factor = calculate_two_k_factor(
                 fitting_type_2k, reynolds_number, diameter_inches
             )
-            logger.debug(
+            _logger.debug(
                 f"Using Two-K method for {fitting.fitting_type}: K = {k_factor:.3f}"
             )
         except (ValueError, KeyError):
             try:
                 k_factor = get_fitting_k_factor(fitting.fitting_type)
-                logger.debug(
+                _logger.debug(
                     f"Using standard K for {fitting.fitting_type}: K = {k_factor:.3f}"
                 )
             except ValueError:
                 k_factor = fitting.k_factor
-                logger.warning(
+                _logger.warning(
                     f"Using provided K-factor for {fitting.fitting_type}: "
                     f"K = {k_factor:.3f}"
                 )
@@ -259,7 +273,7 @@ def calculate_fitting_pressure_drop(
 
     dp_fitting = total_k * velocity_head
 
-    logger.info(f"Fitting losses: Total K = {total_k:.1f}, dP = {dp_fitting:.1f} Pa")
+    _logger.info(f"Fitting losses: Total K = {total_k:.1f}, dP = {dp_fitting:.1f} Pa")
     return dp_fitting
 
 
@@ -284,7 +298,7 @@ def calculate_elevation_pressure_drop(density: float, elevation_change: float) -
         raise ValueError("density must be provided")
     dp_elevation = density * GRAVITY * elevation_change
 
-    logger.debug(f"Elevation: dh={elevation_change:.1f}m, dP={dp_elevation:.1f} Pa")
+    _logger.debug(f"Elevation: dh={elevation_change:.1f}m, dP={dp_elevation:.1f} Pa")
     return float(dp_elevation)
 
 
@@ -324,7 +338,7 @@ def _iterate_compressible_pressure(
         P2_squared = P1**2 - rhs
 
         if P2_squared <= 0:
-            logger.warning(
+            _logger.warning(
                 "Compressible flow calculation indicates choked flow condition"
             )
             return P2, True
@@ -332,7 +346,7 @@ def _iterate_compressible_pressure(
         P2 = math.sqrt(P2_squared)
 
         if abs(P2 - P2_old) < tolerance:
-            logger.debug(f"Compressible flow converged in {iteration + 1} iterations")
+            _logger.debug(f"Compressible flow converged in {iteration + 1} iterations")
             break
 
     return P2, False
@@ -415,7 +429,7 @@ def calculate_compressible_flow_correction(
     else:
         expansion_factor = 1.0
 
-    logger.debug(
+    _logger.debug(
         f"Compressible flow correction: "
         f"dP_incomp={inlet_pressure - outlet_pressure:.0f} Pa, "
         f"dP_comp={corrected_dp:.0f} Pa, Y={expansion_factor:.3f}"
@@ -516,5 +530,5 @@ def calculate_erosional_velocity(
     V_erosion = C / math.sqrt(density * KG_M3_TO_LB_FT3)
     V_erosion_si = V_erosion * FT_S_TO_M_S
 
-    logger.debug(f"Erosional velocity: {V_erosion_si:.2f} m/s (C={C})")
+    _logger.debug(f"Erosional velocity: {V_erosion_si:.2f} m/s (C={C})")
     return V_erosion_si

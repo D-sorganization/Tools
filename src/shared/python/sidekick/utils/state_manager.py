@@ -22,7 +22,7 @@ from compatibility import UTC
 from utils.file_utils import safe_read_json, safe_write_json
 
 # Setup logging
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 
 class StateManager:
@@ -70,7 +70,7 @@ class StateManager:
         # Load protected states list
         self._load_protected_states()
 
-        logger.info(
+        _logger.info(
             "StateManager initialized with base directory: %s",
             self.base_directory,
         )
@@ -95,7 +95,7 @@ class StateManager:
         """Save list of protected states to file"""
         protected_file = self.base_directory / "protected_states.json"
         if not safe_write_json(protected_file, list(self.protected_states)):
-            logger.warning("Could not save protected states")
+            _logger.warning("Could not save protected states")
 
     def save_state(
         self,
@@ -138,11 +138,11 @@ class StateManager:
                 self.protected_states.add(state_name)
                 self._save_protected_states()
 
-            logger.info("State '%s' saved successfully", state_name)
+            _logger.info("State '%s' saved successfully", state_name)
             return True
 
         except (PermissionError, OSError):
-            logger.exception("Error saving state '%s'", state_name)
+            _logger.exception("Error saving state '%s'", state_name)
             return False
 
     def load_state(self, state_name: str) -> dict[str, Any] | None:
@@ -152,7 +152,7 @@ class StateManager:
             state_file = self.states_dir / f"{safe_name}.json"
 
             if not state_file.exists():
-                logger.warning("State file not found: %s", state_name)
+                _logger.warning("State file not found: %s", state_name)
                 return None
 
             with open(state_file) as f:
@@ -160,16 +160,16 @@ class StateManager:
 
             # Validate state structure
             if not self._validate_state(full_state):
-                logger.error("Invalid state structure: %s", state_name)
+                _logger.error("Invalid state structure: %s", state_name)
                 return None
 
-            logger.info("State '%s' loaded successfully", state_name)
+            _logger.info("State '%s' loaded successfully", state_name)
             from typing import cast
 
             return cast(dict[str, Any], full_state["data"])
 
         except (PermissionError, OSError):
-            logger.exception("Error loading state '%s'", state_name)
+            _logger.exception("Error loading state '%s'", state_name)
             return None
 
     def delete_state(self, state_name: str, force: bool = False) -> bool:
@@ -177,14 +177,14 @@ class StateManager:
         try:
             # Check if state is protected
             if state_name in self.protected_states and not force:
-                logger.warning("Cannot delete protected state: %s", state_name)
+                _logger.warning("Cannot delete protected state: %s", state_name)
                 return False
 
             safe_name = self._sanitize_filename(state_name)
             state_file = self.states_dir / f"{safe_name}.json"
 
             if not state_file.exists():
-                logger.warning("State file not found: %s", state_name)
+                _logger.warning("State file not found: %s", state_name)
                 return False
 
             # Create backup before deletion
@@ -200,11 +200,11 @@ class StateManager:
             self.protected_states.discard(state_name)
             self._save_protected_states()
 
-            logger.info("State '%s' deleted successfully", state_name)
+            _logger.info("State '%s' deleted successfully", state_name)
             return True
 
         except (PermissionError, OSError):
-            logger.exception("Error deleting state '%s'", state_name)
+            _logger.exception("Error deleting state '%s'", state_name)
             return False
 
     def list_states(self) -> list[dict[str, Any]]:
@@ -246,7 +246,7 @@ class StateManager:
                                 },
                             )
                     except (PermissionError, OSError) as e:
-                        logger.warning(
+                        _logger.warning(
                             "Could not read state file %s: %s", state_file, e
                         )
                         continue
@@ -262,7 +262,7 @@ class StateManager:
             return states.copy()
 
         except (PermissionError, OSError) as e:
-            logger.exception("Error listing states: %s", e)
+            _logger.exception("Error listing states: %s", e)
             return []
 
     def _invalidate_states_cache(self) -> None:
@@ -289,11 +289,11 @@ class StateManager:
                 with open(state_file, "w") as f:
                     json.dump(full_state, f, indent=2, default=self._json_serializer)
 
-            logger.info("State '%s' protected from deletion", state_name)
+            _logger.info("State '%s' protected from deletion", state_name)
             return True
 
         except (PermissionError, OSError):
-            logger.exception("Error protecting state '%s'", state_name)
+            _logger.exception("Error protecting state '%s'", state_name)
             return False
 
     def unprotect_state(self, state_name: str) -> bool:
@@ -315,11 +315,11 @@ class StateManager:
                 with open(state_file, "w") as f:
                     json.dump(full_state, f, indent=2, default=self._json_serializer)
 
-            logger.info("State '%s' unprotected", state_name)
+            _logger.info("State '%s' unprotected", state_name)
             return True
 
         except (PermissionError, OSError):
-            logger.exception("Error unprotecting state '%s'", state_name)
+            _logger.exception("Error unprotecting state '%s'", state_name)
             return False
 
     def export_state(
@@ -352,11 +352,11 @@ class StateManager:
             with open(final_export_path, "w") as f:
                 json.dump(export_data, f, indent=2, default=self._json_serializer)
 
-            logger.info("State '%s' exported to %s", state_name, final_export_path)
+            _logger.info("State '%s' exported to %s", state_name, final_export_path)
             return str(final_export_path)
 
         except (PermissionError, OSError):
-            logger.exception("Error exporting state '%s'", state_name)
+            _logger.exception("Error exporting state '%s'", state_name)
             return None
 
     def import_state(self, import_path: str, new_name: str | None = None) -> bool:
@@ -365,7 +365,7 @@ class StateManager:
             import_path_obj = Path(import_path)
 
             if not import_path_obj.exists():
-                logger.error("Import file not found: %s", import_path_obj)
+                _logger.error("Import file not found: %s", import_path_obj)
                 return False
 
             with open(import_path_obj) as f:
@@ -374,7 +374,7 @@ class StateManager:
             # Validate export data
             required_keys = ["calculator_version", "state_name", "state_data"]
             if not all(key in export_data for key in required_keys):
-                logger.error("Invalid export file format")
+                _logger.error("Invalid export file format")
                 return False
 
             # Use new name if provided, otherwise use original name
@@ -382,7 +382,7 @@ class StateManager:
 
             # Check if state already exists
             if self._state_exists(state_name):
-                logger.warning("State '%s' already exists", state_name)
+                _logger.warning("State '%s' already exists", state_name)
                 return False
 
             # Save the imported state
@@ -393,12 +393,12 @@ class StateManager:
             )
 
             if success:
-                logger.info("State imported successfully as '%s'", state_name)
+                _logger.info("State imported successfully as '%s'", state_name)
 
             return success
 
         except (PermissionError, OSError):
-            logger.exception("Error importing state from '%s'", import_path)
+            _logger.exception("Error importing state from '%s'", import_path)
             return False
 
     def save_session(self, session_data: dict[str, Any]) -> bool:
@@ -415,11 +415,11 @@ class StateManager:
                 json.dump(session_info, f, indent=2, default=self._json_serializer)
 
             self.current_session = session_data
-            logger.debug("Session data saved")
+            _logger.debug("Session data saved")
             return True
 
         except (PermissionError, OSError) as e:
-            logger.exception("Error saving session: %s", e)
+            _logger.exception("Error saving session: %s", e)
             return False
 
     def load_session(self) -> dict[str, Any] | None:
@@ -434,11 +434,11 @@ class StateManager:
                 session_info = json.load(f)
 
             self.current_session = session_info.get("data", {})
-            logger.debug("Session data loaded")
+            _logger.debug("Session data loaded")
             return self.current_session
 
         except (PermissionError, OSError) as e:
-            logger.exception("Error loading session: %s", e)
+            _logger.exception("Error loading session: %s", e)
             return None
 
     def _sanitize_filename(self, filename: str) -> str:
@@ -483,10 +483,10 @@ class StateManager:
             backup_path = self.backups_dir / backup_name
 
             shutil.copy2(state_file, backup_path)
-            logger.debug("Backup created: %s", backup_path)
+            _logger.debug("Backup created: %s", backup_path)
 
         except (PermissionError, OSError) as e:
-            logger.warning("Could not create backup: %s", e)
+            _logger.warning("Could not create backup: %s", e)
 
     def _json_serializer(self, obj: Any) -> Any:
         """Custom JSON serializer for datetime and other objects"""
@@ -510,10 +510,10 @@ class StateManager:
             for backup_file in self.backups_dir.glob("*.backup"):
                 if backup_file.stat().st_mtime < cutoff_date:
                     backup_file.unlink()
-                    logger.debug("Removed old backup: %s", backup_file)
+                    _logger.debug("Removed old backup: %s", backup_file)
 
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
-            logger.exception("Error cleaning up backups: %s", e)
+            _logger.exception("Error cleaning up backups: %s", e)
 
 
 class _StateManagerHolder:
@@ -540,4 +540,8 @@ def get_state_manager(base_directory: str = "saved_states") -> StateManager:
     return _StateManagerHolder.instance
 
 
-__all__ = ["StateManager", "get_state_manager", "state_manager"]
+__all__ = [
+    "StateManager",
+    "get_state_manager",
+    "state_manager",
+]

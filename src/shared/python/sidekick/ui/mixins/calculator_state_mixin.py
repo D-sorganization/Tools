@@ -37,7 +37,11 @@ from PyQt6.QtWidgets import (
 # CHANGED: Import from shared library utils
 from ...utils.state_manager import state_manager
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "CalculatorStateMixin",
+]
+
+_logger = logging.getLogger(__name__)
 
 
 class CalculatorStateMixin:
@@ -471,7 +475,7 @@ class CalculatorStateMixin:
             if success:
                 self.last_save_time = datetime.now(timezone.utc)  # noqa: UP017
                 self.unsaved_changes = False
-                logger.info("✓ Calculator state saved: %s", state_name)
+                _logger.info("✓ Calculator state saved: %s", state_name)
 
             return bool(success)
 
@@ -498,7 +502,7 @@ class CalculatorStateMixin:
 
             if state_data:
                 self.set_calculator_state(state_data)
-                logger.info("✓ Calculator state loaded: %s", state_name)
+                _logger.info("✓ Calculator state loaded: %s", state_name)
 
             return state_data
 
@@ -547,9 +551,9 @@ class CalculatorStateMixin:
             if all_text:
                 combined_text = "\n\n".join(all_text)
                 self.copy_to_clipboard(combined_text)
-                logger.info("✓ All results copied to clipboard")
+                _logger.info("✓ All results copied to clipboard")
             else:
-                logger.debug("No copyable results available")
+                _logger.debug("No copyable results available")
 
         except (KeyError, ValueError, TypeError):
             pass

@@ -24,7 +24,7 @@ from ..managers.unit_preferences_manager import (
     get_unit_preferences_manager,
 )
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 
 class UnitAwareInput(QWidget):
@@ -248,4 +248,7 @@ class UnitAwareDisplay(QWidget):
         self._update_display()
 
 
-__all__ = ["UnitAwareInput", "UnitAwareDisplay"]
+__all__ = [
+    "UnitAwareDisplay",
+    "UnitAwareInput",
+]

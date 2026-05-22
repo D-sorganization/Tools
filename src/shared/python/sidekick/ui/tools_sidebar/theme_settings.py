@@ -16,6 +16,16 @@ from .design_tokens import (
     _normalize_token_values,
 )
 
+__all__ = [
+    "MAX_FONT_FAMILY_LENGTH",
+    "MAX_FONT_SIZE_PX",
+    "MIN_FONT_SIZE_PX",
+    "SidekickFontSettings",
+    "SidekickThemeMode",
+    "SidekickThemeSettings",
+    "resolve_sidekick_theme",
+]
+
 MIN_FONT_SIZE_PX = 9
 MAX_FONT_SIZE_PX = 24
 MAX_FONT_FAMILY_LENGTH = 64

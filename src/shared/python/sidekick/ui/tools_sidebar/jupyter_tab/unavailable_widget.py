@@ -4,6 +4,10 @@ from __future__ import annotations
 
 from ..qt_compat import QtCore, QtWidgets
 
+__all__ = [
+    "JupyterUnavailableWidget",
+]
+
 
 class JupyterUnavailableWidget(QtWidgets.QWidget):
     """Compact placeholder explaining how to install the Jupyter extras.

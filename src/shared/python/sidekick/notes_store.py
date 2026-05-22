@@ -20,7 +20,7 @@ from typing import cast
 from notes.card_store import NoteCardStore
 from notes.models import DEFAULT_NOTE_COLOR, NoteCard
 
-log = logging.getLogger(__name__)
+_log = logging.getLogger(__name__)
 
 _NOTES_SUBDIR = ".sidekick_notes"
 
@@ -55,7 +55,7 @@ class SidekickNotesStore:
             project_dir=self._root,
             notes_dirname=_NOTES_SUBDIR,
         )
-        log.debug("SidekickNotesStore initialized at %s", self._root)
+        _log.debug("SidekickNotesStore initialized at %s", self._root)
 
     # ------------------------------------------------------------------
     # Public API (thin delegation to NoteCardStore)
@@ -87,7 +87,7 @@ class SidekickNotesStore:
         if not title.strip():
             raise ValueError("title must not be empty")
         card = self._store.create_note(title=title, markdown_body=body, color=color)
-        log.debug("Created note %r (color=%r)", card.note_id, card.color)
+        _log.debug("Created note %r (color=%r)", card.note_id, card.color)
         return card
 
     def update_note(
@@ -128,7 +128,7 @@ class SidekickNotesStore:
             markdown_body=body,
             color=color,
         )
-        log.debug("Updated note %r", note_id)
+        _log.debug("Updated note %r", note_id)
         return card
 
     def list_notes(self) -> list[NoteCard]:
@@ -177,10 +177,12 @@ class SidekickNotesStore:
             raise ValueError("note_id must not be empty")
         try:
             self._store.delete_note(note_id, reason="user_delete")
-            log.debug("Deleted note %r", note_id)
+            _log.debug("Deleted note %r", note_id)
             return True
         except FileNotFoundError:
             return False
 
 
-__all__ = ["SidekickNotesStore"]
+__all__ = [
+    "SidekickNotesStore",
+]

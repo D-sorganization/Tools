@@ -17,6 +17,11 @@ from PyQt6.QtWidgets import (
 
 from ..psa_model import DEFAULT_COMPONENTS, ComponentData
 
+__all__ = [
+    "InputPanel",
+    "create_slider",
+]
+
 
 def create_slider(
     min_value: int,
