@@ -145,6 +145,9 @@ src/shared/python/plot_engine/matplotlib_renderer.py
 src/shared/python/plot_theme/tests/test_plot_theme.py
 src/shared/python/plot_theme/themes.py
 src/shared/python/programmatic_pid/cli.py
+src/shared/python/sidekick/tests/calculators/conversion/test_conversion_service.py
+src/shared/python/sidekick/tests/process_calculators/test_psa_model.py
+src/shared/python/sidekick/tests/test_data_processor_engine.py
 src/shared/python/sidekick/ui/tools_sidebar/os_terminal.py
 src/shared/python/sidekick/ui/tools_sidebar/sidebar.py
 src/shared/python/signal_toolkit/calculus.py
