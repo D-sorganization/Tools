@@ -9,12 +9,15 @@ container, integration, and deployment checks to GitHub Actions.
 from __future__ import annotations
 
 import argparse
+import logging
 import os
 import re
 import shutil
 import subprocess
 from collections.abc import Iterable, Sequence
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 ROOT = Path.cwd()
 DEFAULT_MAX_BYTES = 1_000_000
@@ -120,9 +123,10 @@ def fail_or_warn(title: str, failures: list[str], warn_only: bool) -> int:
     if not failures:
         return 0
     label = "WARNING" if warn_only else "ERROR"
-    print(f"{label}: {title}")
+    log_fn = logger.warning if warn_only else logger.error
+    log_fn("%s: %s", label, title)
     for failure in failures:
-        print(f"  - {failure}")
+        log_fn("  - %s", failure)
     return 0 if warn_only else 1
 
 
@@ -340,7 +344,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     for check in dict.fromkeys(selected):
         status |= CHECKS[check](args)
     if status == 0:
-        print("Fleet hook checks passed.")
+        logger.info("Fleet hook checks passed.")
     return status
 
 
