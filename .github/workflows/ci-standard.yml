@@ -390,7 +390,7 @@ jobs:
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             if [ ! -s changed_test_files.txt ] && [ ! -s changed_python_files.txt ]; then
               coverage_gate_required=false
-            elif ! grep -q -E '^src/shared/python/(notes|upstream_drift_tools)/' changed_python_files.txt; then
+            elif ! grep -q -E '^src/shared/python/(notes|upstream_drift_tools|sidekick)/' changed_python_files.txt; then
               coverage_gate_required=false
             fi
           fi
@@ -427,6 +427,13 @@ jobs:
             "tests/shared/python/gui_launcher/test_registry.py"
             # Notes model coverage (keeps total coverage above 25% floor)
             "tests/shared/python/notes/test_models.py"
+            # Sidekick unit tests
+            "src/shared/python/sidekick/tests/test_latex_renderer.py"
+            "src/shared/python/sidekick/tests/test_notes_store.py"
+            "src/shared/python/sidekick/tests/test_notes_tab.py"
+            "src/shared/python/sidekick/tests/test_selected_tab_panel.py"
+            "src/shared/python/sidekick/tests/test_symbolic_engine.py"
+            "src/shared/python/sidekick/tests/test_tab_context_menu.py"
           )
           # Use `python -m pytest` rather than the `pytest` console script so
           # the active Python interpreter resolves pytest-cov (and other pip
@@ -480,6 +487,10 @@ jobs:
       - name: Coverage Policy Gate
         if: steps.coverage_inputs.outputs.coverage_gate_required == 'true'
         run: python3 scripts/check_coverage_policy.py --coverage-file coverage.xml --policy-file config/coverage_policy.json --baseline-file config/coverage_baseline.json --output-json coverage_trend_${{ matrix.python-version }}.json
+
+      - name: Sidekick Per-File Coverage Gate
+        if: steps.coverage_inputs.outputs.coverage_gate_required == 'true'
+        run: python3 scripts/check_sidekick_coverage.py --coverage-file coverage.xml --changed-files changed_python_files.txt
 
       - name: Upload Coverage Trend
         if: steps.coverage_inputs.outputs.coverage_gate_required == 'true'

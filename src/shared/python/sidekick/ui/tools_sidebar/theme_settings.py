@@ -83,7 +83,7 @@ class SidekickThemeSettings:
         font = (
             self.font
             if isinstance(self.font, SidekickFontSettings)
-            else SidekickFontSettings.from_dict(self.font)
+            else SidekickFontSettings.from_dict(self.font)  # type: ignore[arg-type]
         )
         object.__setattr__(self, "mode", mode)
         object.__setattr__(self, "colors", MappingProxyType(colors))

@@ -4,7 +4,7 @@ from matplotlib.backends.backend_qtagg import (
     FigureCanvasQTAgg as FigureCanvas,
 )
 from matplotlib.backends.backend_qtagg import (
-    NavigationToolbar2QT as NavigationToolbar,
+    NavigationToolbar2QT as NavigationToolbar,  # type: ignore[attr-defined]
 )
 from matplotlib.figure import Figure
 from PyQt6.QtWidgets import (
