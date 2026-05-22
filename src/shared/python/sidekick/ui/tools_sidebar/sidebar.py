@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-from enum import StrEnum
 from pathlib import Path
 from typing import Any, cast
+
+from compatibility import StrEnum
 
 from . import (
     SIDEKICK_DOCK_OBJECT_NAME,

@@ -20,9 +20,11 @@ import hashlib
 import json
 import logging
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import datetime
 from pathlib import Path
 from typing import Any
+
+from compatibility import UTC
 
 logger = logging.getLogger(__name__)
 

@@ -31,9 +31,10 @@ from __future__ import annotations
 
 import logging
 from dataclasses import asdict, dataclass
-from enum import StrEnum
 from typing import Any
 from uuid import uuid4
+
+from compatibility import StrEnum
 
 logger = logging.getLogger(__name__)
 
