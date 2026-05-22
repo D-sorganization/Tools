@@ -83,7 +83,7 @@ class AdapterLifecycleManager(QObject):
             from src.shared.python.ai.adapters.rust_adapter import RustAgentAdapter
 
             adapter = RustAgentAdapter(
-                api_key="ollama",
+                api_key="ollama",  # pragma: no-secret
                 base_url=settings.ollama_host,
                 model=settings.model,
                 chat_path="/v1/chat/completions",

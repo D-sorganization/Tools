@@ -20,7 +20,7 @@ from __future__ import annotations
 from datetime import timezone
 
 import pytest
-from upstream_drift_tools.process_calculators.syngas_water_calculator import (
+from sidekick.process_calculators.syngas_water_calculator import (
     SyngasComposition,
     SyngasWaterCalculator,
     estimate_condensation_risk,
@@ -188,7 +188,7 @@ class TestConvenienceFunctions:
         from datetime import datetime
         from unittest.mock import patch
 
-        from upstream_drift_tools.process_calculators.syngas_water_calculator import (
+        from sidekick.process_calculators.syngas_water_calculator import (
             WaterContentResult,
         )
 

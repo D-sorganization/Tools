@@ -5,6 +5,8 @@ from __future__ import annotations
 import tomllib
 from pathlib import Path
 
+import pytest
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
@@ -32,10 +34,10 @@ def test_video_analyzer_extra_declares_runtime_video_dependencies() -> None:
     assert any(dep.startswith("mediapipe") for dep in video_deps)
 
 
-from video_analyzer.analyzer import SwingAnalyzer
-
-
 def test_video_path_valid_precondition() -> None:
+    pytest.importorskip("cv2")
+    from video_analyzer.analyzer import SwingAnalyzer
+
     analyzer = SwingAnalyzer()
     assert analyzer._video_path_valid("test.mp4") is True
     assert analyzer._video_path_valid("") is False

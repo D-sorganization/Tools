@@ -144,7 +144,7 @@ class TestSteamEngineCalculatorIntegration:
     def test_engine_import(self) -> Any:
         """Test that calculation engine can be imported."""
         try:
-            from upstream_drift_tools.calculators.thermo.steam_engine import (
+            from sidekick.calculators.thermo.steam_engine import (
                 SteamCalculationEngine,
                 SteamProperties,
             )
@@ -157,7 +157,7 @@ class TestSteamEngineCalculatorIntegration:
     def test_engine_calculation_tp_mode(self) -> Any:
         """Test T-P mode calculation through engine."""
         try:
-            from upstream_drift_tools.calculators.thermo.steam_engine import (
+            from sidekick.calculators.thermo.steam_engine import (
                 SteamCalculationEngine,
             )
 
@@ -178,7 +178,7 @@ class TestSteamEngineCalculatorIntegration:
     def test_engine_saturated_from_temp(self) -> Any:
         """Test saturated properties from temperature."""
         try:
-            from upstream_drift_tools.calculators.thermo.steam_engine import (
+            from sidekick.calculators.thermo.steam_engine import (
                 SteamCalculationEngine,
             )
 
@@ -198,7 +198,7 @@ class TestSteamEngineCalculatorIntegration:
     def test_engine_saturated_from_pressure(self) -> Any:
         """Test saturated properties from pressure."""
         try:
-            from upstream_drift_tools.calculators.thermo.steam_engine import (
+            from sidekick.calculators.thermo.steam_engine import (
                 SteamCalculationEngine,
             )
 

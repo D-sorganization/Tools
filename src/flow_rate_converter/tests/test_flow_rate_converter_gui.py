@@ -207,7 +207,7 @@ class TestFlowRateConverterEngineIntegration:
     def test_mass_converter_import(self) -> Any:
         """Test that mass flow converter can be imported."""
         try:
-            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
+            from sidekick.calculators.conversion.flow_rate_converter import (
                 mass_to_mass,
             )
 
@@ -218,7 +218,7 @@ class TestFlowRateConverterEngineIntegration:
     def test_molar_converter_import(self) -> Any:
         """Test that molar flow converter can be imported."""
         try:
-            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
+            from sidekick.calculators.conversion.flow_rate_converter import (
                 molar_to_molar,
             )
 
@@ -229,7 +229,7 @@ class TestFlowRateConverterEngineIntegration:
     def test_volumetric_conversions_import(self) -> Any:
         """Test that volumetric conversions can be imported."""
         try:
-            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
+            from sidekick.calculators.conversion.flow_rate_converter import (
                 VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S,
             )
 
@@ -241,7 +241,7 @@ class TestFlowRateConverterEngineIntegration:
     def test_mass_conversion_kg_to_lb(self) -> Any:
         """Test mass flow conversion from kg/h to lb/h."""
         try:
-            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
+            from sidekick.calculators.conversion.flow_rate_converter import (
                 mass_to_mass,
             )
 
@@ -254,7 +254,7 @@ class TestFlowRateConverterEngineIntegration:
     def test_molar_conversion_kmol_to_lbmol(self) -> Any:
         """Test molar flow conversion from kmol/h to lbmol/h."""
         try:
-            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
+            from sidekick.calculators.conversion.flow_rate_converter import (
                 molar_to_molar,
             )
 
@@ -267,7 +267,7 @@ class TestFlowRateConverterEngineIntegration:
     def test_volumetric_conversion_m3_to_cfm(self) -> Any:
         """Test volumetric flow conversion from m3/h to CFM."""
         try:
-            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
+            from sidekick.calculators.conversion.flow_rate_converter import (
                 VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S,
             )
 
@@ -292,7 +292,7 @@ class TestFlowRateConverterUnits:
     def test_mass_flow_units_defined(self) -> Any:
         """Test that mass flow units are defined."""
         try:
-            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
+            from sidekick.calculators.conversion.flow_rate_converter import (
                 MASS_FLOW_CONVERSIONS,
             )
 
@@ -305,7 +305,7 @@ class TestFlowRateConverterUnits:
     def test_molar_flow_units_defined(self) -> Any:
         """Test that molar flow units are defined."""
         try:
-            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
+            from sidekick.calculators.conversion.flow_rate_converter import (
                 MOLAR_FLOW_CONVERSIONS,
             )
 
@@ -318,7 +318,7 @@ class TestFlowRateConverterUnits:
     def test_volumetric_flow_units_defined(self) -> Any:
         """Test that volumetric flow units are defined."""
         try:
-            from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
+            from sidekick.calculators.conversion.flow_rate_converter import (
                 VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S,
             )
 

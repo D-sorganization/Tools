@@ -8,11 +8,20 @@ Import strategy: uses the same sidekick-shadow eviction as
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 from typing import Any
 
 import pytest
+
+pytestmark = pytest.mark.serial
+
+if sys.platform == "win32" and os.environ.get("PYTEST_XDIST_WORKER"):
+    pytest.skip(
+        "Qt dock keyboard shortcut tests run serially on Windows.",
+        allow_module_level=True,
+    )
 
 pytest.importorskip("PyQt6")
 

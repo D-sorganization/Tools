@@ -7,7 +7,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from PyQt6.QtCore import QSettings
-from upstream_drift_tools.ui.managers.unit_preferences_manager import (
+from sidekick.ui.managers.unit_preferences_manager import (
     UnitPreferencesManager,
     _PreferencesHolder,
     get_unit_preferences_manager,

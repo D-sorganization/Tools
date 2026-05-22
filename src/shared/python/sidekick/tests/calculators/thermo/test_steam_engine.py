@@ -1,6 +1,6 @@
 from unittest.mock import patch
 
-from upstream_drift_tools.calculators.thermo.steam_engine import (
+from sidekick.calculators.thermo.steam_engine import (
     SteamCalculationEngine,
     SteamProperties,
 )

@@ -7,7 +7,7 @@ from unittest.mock import MagicMock, patch
 
 # Bootstrap for test discovery
 _REPO_ROOT = Path(__file__).resolve().parents[5]
-from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
+from sidekick.bootstrap import ensure_paths  # noqa: E402
 
 ensure_paths(_REPO_ROOT)
 

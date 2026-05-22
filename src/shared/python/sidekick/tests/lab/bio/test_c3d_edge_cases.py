@@ -16,7 +16,7 @@ from unittest.mock import patch
 
 import numpy as np
 import pytest
-from upstream_drift_tools.lab.bio.c3d_reader import (
+from sidekick.lab.bio.c3d_reader import (
     C3DDataReader,
     C3DEvent,
     C3DMetadata,

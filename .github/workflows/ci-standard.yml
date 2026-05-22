@@ -384,8 +384,8 @@ jobs:
             BASE_SHA="HEAD~1"
           fi
 
-          git diff --name-only "$BASE_SHA" HEAD -- 'tests/test_*.py' 'tests/**/test_*.py' 'tests/**/*test.py' 'src/**/tests/test_*.py' 'src/**/tests/**/*test.py' > changed_test_files.txt || echo "No previous commit found (initial commit?)"
-          git diff --name-only "$BASE_SHA" HEAD -- '*.py' > changed_python_files.txt || echo "No previous commit found (initial commit?)"
+          git diff --diff-filter=ACMRT --name-only "$BASE_SHA" HEAD -- 'tests/test_*.py' 'tests/**/test_*.py' 'tests/**/*test.py' 'src/**/tests/test_*.py' 'src/**/tests/**/*test.py' > changed_test_files.txt || echo "No previous commit found (initial commit?)"
+          git diff --diff-filter=ACMRT --name-only "$BASE_SHA" HEAD -- '*.py' > changed_python_files.txt || echo "No previous commit found (initial commit?)"
 
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             if [ ! -s changed_test_files.txt ] && [ ! -s changed_python_files.txt ]; then

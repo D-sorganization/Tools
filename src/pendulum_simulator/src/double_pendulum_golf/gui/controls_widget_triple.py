@@ -29,7 +29,7 @@ from .controls_widget_base import ControlsWidgetBase
 from .torque_preview_widget import TorquePreviewWidget
 
 if _HAS_UAI:
-    from upstream_drift_tools.ui.widgets.unit_aware_input import UnitAwareInput
+    from sidekick.ui.widgets.unit_aware_input import UnitAwareInput
 
 
 class ControlsWidgetTriple(ControlsWidgetBase):

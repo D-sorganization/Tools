@@ -9,11 +9,20 @@ Import strategy: uses the same sidekick-shadow eviction as
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 from typing import Any
 
 import pytest
+
+pytestmark = pytest.mark.serial
+
+if sys.platform == "win32" and os.environ.get("PYTEST_XDIST_WORKER"):
+    pytest.skip(
+        "Qt popped chat redock tests run serially on Windows.",
+        allow_module_level=True,
+    )
 
 pytest.importorskip("PyQt6")
 
@@ -121,7 +130,6 @@ def test_redock_tab_precondition_not_floating_raises(
 ) -> None:
     UnifiedToolsSidebar, SidebarTabDefinition, QtWidgets = _get_classes()
 
-    QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
     win = QtWidgets.QMainWindow()
     qtbot.addWidget(win)
     tab_def = SidebarTabDefinition(

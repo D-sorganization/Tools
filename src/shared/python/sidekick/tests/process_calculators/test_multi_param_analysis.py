@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pytest
-from upstream_drift_tools.process_calculators.multi_param_analysis import (
+from sidekick.process_calculators.multi_param_analysis import (
     _evaluate_single_point,
     run_multi_parameter_analysis,
     run_multi_parameter_analysis_parallel,
