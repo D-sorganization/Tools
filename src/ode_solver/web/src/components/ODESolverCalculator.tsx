@@ -9,7 +9,7 @@
  * See issue #608.
  */
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import {
   LineChart,
   Line,
@@ -103,9 +103,42 @@ export function ODESolverCalculator() {
     }
   }, [derivativesText, parametersText, initialText, tStart, tEnd, numPoints, parseKeyValue])
 
-  const varNames = results && results.length > 0
-    ? Object.keys(results[0]).filter((k) => k !== 'time')
-    : []
+  const varNames = useMemo(() => {
+    if (!results || results.length === 0) return []
+    const keys = Object.keys(results[0])
+    const names = []
+    for (let i = 0; i < keys.length; i++) {
+      if (keys[i] !== 'time') names.push(keys[i])
+    }
+    return names
+  }, [results])
+
+  const summaryCards = useMemo(() => {
+    if (!results || results.length === 0) return null
+    return varNames.map((varName, idx) => {
+      // ⚡ Bolt Optimization: Replace map and spread min/max with single-pass loop
+      // Prevents "Maximum call stack size exceeded" on large datasets
+      let min = Infinity;
+      let max = -Infinity;
+      for (let i = 0; i < results.length; i++) {
+        const val = results[i][varName];
+        if (val < min) min = val;
+        if (val > max) max = val;
+      }
+      const final = results[results.length - 1]?.[varName];
+      return (
+        <div key={varName} className="bg-slate-800 rounded-lg p-4">
+          <p className="text-slate-400 text-sm" style={{ color: LINE_COLORS[idx % LINE_COLORS.length] }}>
+            {varName}
+          </p>
+          <p className="text-xl font-bold text-white">{final.toFixed(4)}</p>
+          <p className="text-xs text-slate-500">
+            [{min.toFixed(2)} .. {max.toFixed(2)}]
+          </p>
+        </div>
+      )
+    })
+  }, [varNames, results])
 
   return (
     <div className="max-w-5xl mx-auto p-6">
@@ -237,29 +270,7 @@ export function ODESolverCalculator() {
             <>
               {/* Summary Cards */}
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {varNames.map((varName, idx) => {
-                  // ⚡ Bolt Optimization: Replace map and spread min/max with single-pass loop
-                  // Prevents "Maximum call stack size exceeded" on large datasets
-                  let min = Infinity;
-                  let max = -Infinity;
-                  for (let i = 0; i < results.length; i++) {
-                    const val = results[i][varName];
-                    if (val < min) min = val;
-                    if (val > max) max = val;
-                  }
-                  const final = results[results.length - 1]?.[varName];
-                  return (
-                    <div key={varName} className="bg-slate-800 rounded-lg p-4">
-                      <p className="text-slate-400 text-sm" style={{ color: LINE_COLORS[idx % LINE_COLORS.length] }}>
-                        {varName}
-                      </p>
-                      <p className="text-xl font-bold text-white">{final.toFixed(4)}</p>
-                      <p className="text-xs text-slate-500">
-                        [{min.toFixed(2)} .. {max.toFixed(2)}]
-                      </p>
-                    </div>
-                  )
-                })}
+                {summaryCards}
               </div>
 
               {/* Solution Chart */}

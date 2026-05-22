@@ -13,3 +13,6 @@
 ## 2026-05-19 - Replace .reduce() with for loops in high-frequency confidence calculation
 **Learning:** When calculating aggregates over large arrays (like video pose frames) in high-frequency paths, using `.reduce()` creates unnecessary callback allocation and GC overhead. A standard `for` loop is faster and avoids memory pressure.
 **Action:** Always replace `.reduce()` with standard `for` loops when computing sums or averages over large datasets in hot paths.
+## 2024-05-30 - Memoizing Render-Blocking O(N) Array Operations in React
+**Learning:** In React components that manage high-frequency inputs (e.g. text areas for calculator expressions) alongside large arrays of data (e.g. an array of 10k generated data points), rendering unmemoized array loops like `.map()` combined with local `min`/`max` loops blocks the main thread. This leads to severe lag when typing in the input fields, as React re-evaluates the large data arrays on every keystroke.
+**Action:** Always wrap heavy O(N) loops that aggregate state data (such as finding `min`/`max` limits across large solution arrays for summary cards) in a `useMemo` block, with dependency arrays scoped strictly to the generated result data.
