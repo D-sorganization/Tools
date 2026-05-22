@@ -4,7 +4,7 @@ from matplotlib.backends.backend_qtagg import (
     FigureCanvasQTAgg as FigureCanvas,
 )
 from matplotlib.backends.backend_qtagg import (
-    NavigationToolbar2QT as NavigationToolbar,  # type: ignore[attr-defined]
+    NavigationToolbar2QT as NavigationToolbar,
 )
 from matplotlib.figure import Figure
 from PyQt6.QtWidgets import (
@@ -288,6 +288,8 @@ class SensitivityPlotWidget(QWidget):
             components=self._components,
         )
 
+        S2: np.ndarray
+        PROD: np.ndarray
         S2, PROD = np.meshgrid(s2_range, prod_range, indexing="ij")
 
         ax = self.canvas.fig.add_subplot(111, projection="3d")
@@ -312,6 +314,8 @@ class SensitivityPlotWidget(QWidget):
             components=self._components,
         )
 
+        S2: np.ndarray
+        PROD: np.ndarray
         S2, PROD = np.meshgrid(s2_range, prod_range, indexing="ij")
 
         ax = self.canvas.fig.add_subplot(111)

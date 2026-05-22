@@ -189,7 +189,7 @@ class PSAModel:
         )
 
         def calc_composition(flow_array: NDArray[np.float64]) -> NDArray[np.float64]:
-            total = np.sum(flow_array)
+            total: float = float(np.sum(flow_array))
             if total == 0:
                 return np.zeros(n_components, dtype=np.float64)
             return flow_array / total * 100.0

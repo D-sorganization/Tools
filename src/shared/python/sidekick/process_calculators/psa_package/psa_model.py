@@ -234,7 +234,7 @@ class PSAModel:
             raise ValueError("component_names must be provided")
 
         def calc_composition(flow_array: NDArray[np.float64]) -> NDArray[np.float64]:
-            total = np.sum(flow_array)
+            total: float = float(np.sum(flow_array))
             if total == 0:
                 return np.zeros(n_components, dtype=np.float64)
             return flow_array / total * 100.0
@@ -360,10 +360,10 @@ def calculate_sensitivity(
     n_tail = len(_s2_tail)
     n_prod = len(_prod_recycle)
 
-    h2_recovery = np.zeros((n_tail, n_prod), dtype=np.float64)
-    h2_purity = np.zeros((n_tail, n_prod), dtype=np.float64)
-    net_product = np.zeros((n_tail, n_prod), dtype=np.float64)
-    s2_tail_o2 = np.zeros((n_tail, n_prod), dtype=np.float64)
+    h2_recovery: NDArray[np.float64] = np.zeros((n_tail, n_prod), dtype=np.float64)
+    h2_purity: NDArray[np.float64] = np.zeros((n_tail, n_prod), dtype=np.float64)
+    net_product: NDArray[np.float64] = np.zeros((n_tail, n_prod), dtype=np.float64)
+    s2_tail_o2: NDArray[np.float64] = np.zeros((n_tail, n_prod), dtype=np.float64)
 
     for i, r_tail in enumerate(_s2_tail):
         for j, r_prod in enumerate(_prod_recycle):
@@ -423,7 +423,7 @@ def calculate_o2_safety_analysis(
     n_inlet = len(_inlet_o2_pcts)
     n_removal = len(_stage1_o2_removal_range)
 
-    s2_tail_o2 = np.zeros((n_removal, n_inlet), dtype=np.float64)
+    s2_tail_o2: NDArray[np.float64] = np.zeros((n_removal, n_inlet), dtype=np.float64)
 
     for i, s1_removal in enumerate(_stage1_o2_removal_range):
         for j, inlet_o2 in enumerate(_inlet_o2_pcts):

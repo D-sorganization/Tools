@@ -249,7 +249,9 @@ class C3DDataReader:
             coordinates[too_noisy, :] = np.nan
 
         current_marker_count = len(sorted_labels)
-        frame_indices = np.repeat(np.arange(metadata.frame_count), current_marker_count)
+        frame_indices: np.ndarray = np.repeat(
+            np.arange(metadata.frame_count), current_marker_count
+        )
         marker_names = np.tile(sorted_labels, metadata.frame_count)
 
         data: dict[str, Any] = {
@@ -295,8 +297,8 @@ class C3DDataReader:
         if coordinates.size == 0:
             return
 
-        min_pos = np.nanmin(coordinates)
-        max_pos = np.nanmax(coordinates)
+        min_pos: float = float(np.nanmin(coordinates))
+        max_pos: float = float(np.nanmax(coordinates))
 
         if np.isnan(min_pos) or np.isnan(max_pos):
             _logger.warning(
