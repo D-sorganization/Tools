@@ -36,7 +36,14 @@ from uuid import uuid4
 
 from compatibility import StrEnum
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "ErrorCode",
+    "ErrorDetail",
+    "ResponseMetadata",
+    "StandardResponse",
+]
+
+_logger = logging.getLogger(__name__)
 
 
 class ErrorCode(StrEnum):

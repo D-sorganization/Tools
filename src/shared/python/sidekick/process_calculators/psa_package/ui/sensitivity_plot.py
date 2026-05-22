@@ -4,7 +4,7 @@ from matplotlib.backends.backend_qtagg import (
     FigureCanvasQTAgg as FigureCanvas,
 )
 from matplotlib.backends.backend_qtagg import (
-    NavigationToolbar2QT as NavigationToolbar,
+    NavigationToolbar2QT as NavigationToolbar,  # type: ignore[attr-defined]
 )
 from matplotlib.figure import Figure
 from PyQt6.QtWidgets import (
@@ -25,6 +25,11 @@ from ..psa_model import (
     calculate_o2_safety_analysis,
     calculate_sensitivity,
 )
+
+__all__ = [
+    "MplCanvas",
+    "SensitivityPlotWidget",
+]
 
 matplotlib.use("QtAgg")
 
@@ -286,12 +291,12 @@ class SensitivityPlotWidget(QWidget):
         S2, PROD = np.meshgrid(s2_range, prod_range, indexing="ij")
 
         ax = self.canvas.fig.add_subplot(111, projection="3d")
-        surf = ax.plot_surface(  # type: ignore[attr-defined]
+        surf = ax.plot_surface(
             S2 * 100, PROD * 100, sensitivity["h2_recovery"], cmap="viridis", alpha=0.8
         )
         ax.set_xlabel("S2 Tail Recycle (%)")
         ax.set_ylabel("Product Recycle (%)")
-        ax.set_zlabel("H2 Recovery (%)")  # type: ignore[attr-defined]
+        ax.set_zlabel("H2 Recovery (%)")
         ax.set_title("H2 Recovery Surface")
         self.canvas.fig.colorbar(surf, ax=ax, shrink=0.5, label="H2 Recovery (%)")
 

@@ -18,6 +18,11 @@ from .notebook_model import (
     RawCell,
 )
 
+__all__ = [
+    "NotebookLoadError",
+    "load_notebook",
+]
+
 
 class NotebookLoadError(RuntimeError):
     """Raised when a notebook cannot be parsed into a NotebookDocument."""

@@ -25,7 +25,7 @@ from typing import Any
 
 from contracts import require
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 try:
     import pandas as pd
@@ -79,7 +79,7 @@ def read_data(
     if prefer_parquet and path.suffix.lower() == ".csv":
         parquet_path = path.with_suffix(".parquet")
         if parquet_path.exists():
-            logger.debug("Reading Parquet sibling: %s", parquet_path)
+            _logger.debug("Reading Parquet sibling: %s", parquet_path)
             return pd.read_parquet(parquet_path, **kwargs)
 
     # Read the file directly based on extension
@@ -152,4 +152,7 @@ def write_data(
     return path
 
 
-__all__ = ["read_data", "write_data"]
+__all__ = [
+    "read_data",
+    "write_data",
+]

@@ -16,7 +16,26 @@ References:
 import logging
 import math
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "MASS_FLOW_CONVERSIONS",
+    "MOLAR_FLOW_CONVERSIONS",
+    "R_UNIVERSAL",
+    "STANDARD_CONDITIONS",
+    "VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S",
+    "acfm_to_scfm",
+    "convert_flow_rate_to_mass",
+    "mass_to_mass",
+    "mass_to_molar",
+    "mass_to_standard_volumetric",
+    "mass_to_volumetric_actual",
+    "molar_to_mass",
+    "molar_to_molar",
+    "scfm_to_acfm",
+    "standard_volumetric_to_mass",
+    "volumetric_actual_to_mass",
+]
+
+_logger = logging.getLogger(__name__)
 
 
 # ============================================================================
@@ -156,7 +175,7 @@ def mass_to_mass(value: float, from_unit: str, to_unit: str) -> float:
 
     Example:
         >>> flow_lbhr = mass_to_mass(1000, 'kg/h', 'lb/hr')
-        >>> logger.debug(f"{flow_lbhr:.1f} lb/hr")
+        >>> _logger.debug(f"{flow_lbhr:.1f} lb/hr")
     """
     if not math.isfinite(value):
         raise ValueError(f"value must be finite, got {value}")
@@ -169,7 +188,7 @@ def mass_to_mass(value: float, from_unit: str, to_unit: str) -> float:
     kg_per_s = value * MASS_FLOW_CONVERSIONS[from_unit]
     result = kg_per_s / MASS_FLOW_CONVERSIONS[to_unit]
 
-    logger.debug(f"Mass flow: {value} {from_unit} = {result:.6f} {to_unit}")
+    _logger.debug(f"Mass flow: {value} {from_unit} = {result:.6f} {to_unit}")
     return result
 
 
@@ -189,7 +208,7 @@ def molar_to_molar(value: float, from_unit: str, to_unit: str) -> float:
 
     Example:
         >>> flow_kmol = molar_to_molar(100, 'lbmol/hr', 'kmol/h')
-        >>> logger.debug(f"{flow_kmol:.2f} kmol/h")
+        >>> _logger.debug(f"{flow_kmol:.2f} kmol/h")
     """
     if not math.isfinite(value):
         raise ValueError(f"value must be finite, got {value}")
@@ -202,7 +221,7 @@ def molar_to_molar(value: float, from_unit: str, to_unit: str) -> float:
     mol_per_s = value * MOLAR_FLOW_CONVERSIONS[from_unit]
     result = mol_per_s / MOLAR_FLOW_CONVERSIONS[to_unit]
 
-    logger.debug(f"Molar flow: {value} {from_unit} = {result:.6f} {to_unit}")
+    _logger.debug(f"Molar flow: {value} {from_unit} = {result:.6f} {to_unit}")
     return result
 
 
@@ -228,7 +247,7 @@ def mass_to_molar(
     Example:
         >>> # 100 kg/h of air (MW = 29 kg/kmol)
         >>> n_dot = mass_to_molar(100, 'kg/h', 29.0, 'kmol/h')
-        >>> logger.debug(f"{n_dot:.2f} kmol/h")
+        >>> _logger.debug(f"{n_dot:.2f} kmol/h")
     """
     if mass_flow is None:
         raise ValueError("mass_flow must be provided")
@@ -245,7 +264,7 @@ def mass_to_molar(
     # Convert to target unit
     result = mol_per_s / MOLAR_FLOW_CONVERSIONS[molar_unit]
 
-    logger.debug(
+    _logger.debug(
         f"Mass to molar: {mass_flow} {mass_unit} = {result:.6f} {molar_unit} (MW={molecular_weight})"
     )
     return result
@@ -273,7 +292,7 @@ def molar_to_mass(
     Example:
         >>> # 10 kmol/h of CO2 (MW = 44 kg/kmol)
         >>> m_dot = molar_to_mass(10, 'kmol/h', 44.0, 'kg/h')
-        >>> logger.debug(f"{m_dot:.1f} kg/h")
+        >>> _logger.debug(f"{m_dot:.1f} kg/h")
     """
     if molar_flow is None:
         raise ValueError("molar_flow must be provided")
@@ -290,7 +309,7 @@ def molar_to_mass(
     # Convert to target unit
     result = kg_per_s / MASS_FLOW_CONVERSIONS[mass_unit]
 
-    logger.debug(
+    _logger.debug(
         f"Molar to mass: {molar_flow} {molar_unit} = {result:.6f} {mass_unit} (MW={molecular_weight})"
     )
     return result
@@ -318,7 +337,7 @@ def volumetric_actual_to_mass(
     Example:
         >>> # 1000 m³/h at ρ = 1.2 kg/m³
         >>> m_dot = volumetric_actual_to_mass(1000, 'm3/h', 1.2, 'kg/h')
-        >>> logger.debug(f"{m_dot:.1f} kg/h")
+        >>> _logger.debug(f"{m_dot:.1f} kg/h")
     """
     if vol_flow is None:
         raise ValueError("vol_flow must be provided")
@@ -338,7 +357,7 @@ def volumetric_actual_to_mass(
     # Convert to target unit
     result = kg_per_s / MASS_FLOW_CONVERSIONS[mass_unit]
 
-    logger.debug(
+    _logger.debug(
         f"Volumetric to mass: {vol_flow} {vol_unit} = {result:.6f} {mass_unit} (ρ={density})"
     )
     return result
@@ -366,7 +385,7 @@ def mass_to_volumetric_actual(
     Example:
         >>> # 100 kg/h at ρ = 1.2 kg/m³
         >>> Q = mass_to_volumetric_actual(100, 'kg/h', 1.2, 'm3/h')
-        >>> logger.debug(f"{Q:.1f} m³/h")
+        >>> _logger.debug(f"{Q:.1f} m³/h")
     """
     if mass_flow is None:
         raise ValueError("mass_flow must be provided")
@@ -386,7 +405,7 @@ def mass_to_volumetric_actual(
     # Convert to target unit
     result = m3_per_s / VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S[vol_unit]
 
-    logger.debug(
+    _logger.debug(
         f"Mass to volumetric: {mass_flow} {mass_unit} = {result:.6f} {vol_unit} (ρ={density})"
     )
     return result
@@ -417,7 +436,7 @@ def standard_volumetric_to_mass(
     Example:
         >>> # 1000 SCFM of air (MW = 29 kg/kmol)
         >>> m_dot = standard_volumetric_to_mass(1000, 'ft3/min', 29.0, 'SCFM', 'lb/hr')
-        >>> logger.debug(f"{m_dot:.1f} lb/hr")
+        >>> _logger.debug(f"{m_dot:.1f} lb/hr")
 
     Raises:
         ValueError: If inputs are not valid.
@@ -438,7 +457,7 @@ def standard_volumetric_to_mass(
     kg_per_s = _standard_density(P_std, molecular_weight, T_std) * m3_per_s_std
     result = _from_kg_per_s(kg_per_s, mass_unit)
 
-    logger.debug(
+    _logger.debug(
         f"Std volumetric to mass: {vol_flow_std} {vol_unit} @ {standard} = {result:.6f} {mass_unit}"
     )
 
@@ -472,7 +491,7 @@ def mass_to_standard_volumetric(
     Example:
         >>> # 100 kg/h of CH4 (MW = 16 kg/kmol)
         >>> Q_std = mass_to_standard_volumetric(100, 'kg/h', 16.0, 'STP', 'Nm3/h')
-        >>> logger.debug(f"{Q_std:.1f} Nm³/h")
+        >>> _logger.debug(f"{Q_std:.1f} Nm³/h")
     """
     if mass_flow is None:
         raise ValueError("mass_flow must be provided")
@@ -486,7 +505,7 @@ def mass_to_standard_volumetric(
     m3_per_s_std = kg_per_s / rho_std
     result = m3_per_s_std / _volume_unit_to_m3_per_s(vol_unit)
 
-    logger.debug(
+    _logger.debug(
         f"Mass to std volumetric: {mass_flow} {mass_unit} = {result:.6f} {vol_unit} @ {standard}"
     )
 
@@ -515,7 +534,7 @@ def scfm_to_acfm(
     Example:
         >>> # 1000 SCFM at 500°F (533 K) and 5 bar
         >>> acfm = scfm_to_acfm(1000, 533, 5e5, 'SCFM')
-        >>> logger.debug(f"{acfm:.0f} ACFM")
+        >>> _logger.debug(f"{acfm:.0f} ACFM")
     """
     if scfm is None:
         raise ValueError("scfm must be provided")
@@ -527,7 +546,7 @@ def scfm_to_acfm(
 
     acfm = scfm * (temperature / T_std) * (P_std / pressure)
 
-    logger.debug(
+    _logger.debug(
         f"SCFM to ACFM: {scfm} SCFM = {acfm:.2f} ACFM @ T={temperature}K, P={pressure / 1e5:.1f}bar"
     )
     return acfm
@@ -562,7 +581,7 @@ def acfm_to_scfm(
 
     scfm = acfm * (T_std / temperature) * (pressure / P_std)
 
-    logger.debug(
+    _logger.debug(
         f"ACFM to SCFM: {acfm} ACFM = {scfm:.2f} SCFM @ T={temperature}K, P={pressure / 1e5:.1f}bar"
     )
     return scfm
@@ -599,7 +618,7 @@ def convert_flow_rate_to_mass(
     Example:
         >>> # Convert 1000 SCFM to kg/s for air
         >>> m_dot = convert_flow_rate_to_mass(1000, 'SCFM', 29.0, standard='SCFM')
-        >>> logger.debug(f"{m_dot:.3f} kg/s")
+        >>> _logger.debug(f"{m_dot:.3f} kg/s")
     """
     _require_finite(value, "value")
     if from_unit in MASS_FLOW_CONVERSIONS:
@@ -649,46 +668,46 @@ if __name__ == "__main__":
     # Demonstration
     logging.basicConfig(level=logging.INFO)
 
-    logger.info("\n" + "=" * 80)
-    logger.info("FLOW RATE CONVERSION EXAMPLES")
-    logger.info("=" * 80)
+    _logger.info("\n" + "=" * 80)
+    _logger.info("FLOW RATE CONVERSION EXAMPLES")
+    _logger.info("=" * 80)
 
     # Example 1: Mass flow conversions
-    logger.info("\nExample 1: Mass flow rate conversions")
-    logger.info("-" * 80)
+    _logger.info("\nExample 1: Mass flow rate conversions")
+    _logger.info("-" * 80)
     mass_kg_h: float = 1000.0  # kg/h
     mass_lb_hr = mass_to_mass(mass_kg_h, "kg/h", "lb/hr")
-    logger.info(f"{mass_kg_h} kg/h = {mass_lb_hr:.1f} lb/hr")
+    _logger.info(f"{mass_kg_h} kg/h = {mass_lb_hr:.1f} lb/hr")
 
     # Example 2: Molar to mass
-    logger.info("\nExample 2: Molar to mass flow rate")
-    logger.info("-" * 80)
+    _logger.info("\nExample 2: Molar to mass flow rate")
+    _logger.info("-" * 80)
     molar_kmol_h = 10  # kmol/h
     MW_air = 29.0  # kg/kmol
     mass_kg_h = molar_to_mass(molar_kmol_h, "kmol/h", MW_air, "kg/h")
-    logger.info(f"{molar_kmol_h} kmol/h of air (MW={MW_air}) = {mass_kg_h:.1f} kg/h")
+    _logger.info(f"{molar_kmol_h} kmol/h of air (MW={MW_air}) = {mass_kg_h:.1f} kg/h")
 
     # Example 3: SCFM to mass flow
-    logger.info("\nExample 3: SCFM to mass flow rate")
-    logger.info("-" * 80)
+    _logger.info("\nExample 3: SCFM to mass flow rate")
+    _logger.info("-" * 80)
     scfm = 1000  # SCFM
     mass_lb_hr = standard_volumetric_to_mass(scfm, "ft3/min", MW_air, "SCFM", "lb/hr")
     mass_kg_s = standard_volumetric_to_mass(scfm, "ft3/min", MW_air, "SCFM", "kg/s")
-    logger.info(f"{scfm} SCFM of air = {mass_lb_hr:.1f} lb/hr = {mass_kg_s:.3f} kg/s")
+    _logger.info(f"{scfm} SCFM of air = {mass_lb_hr:.1f} lb/hr = {mass_kg_s:.3f} kg/s")
 
     # Example 4: SCFM to ACFM
-    logger.info("\nExample 4: SCFM to ACFM conversion")
-    logger.info("-" * 80)
+    _logger.info("\nExample 4: SCFM to ACFM conversion")
+    _logger.info("-" * 80)
     T_actual = 800  # K (~527°C)
     P_actual = 5e5  # Pa (5 bar)
     acfm = scfm_to_acfm(scfm, T_actual, P_actual, "SCFM")
-    logger.info(
+    _logger.info(
         f"{scfm} SCFM @ {T_actual}K, {P_actual / 1e5:.0f} bar = {acfm:.0f} ACFM"
     )
 
     # Example 5: Universal converter
-    logger.info("\nExample 5: Universal converter")
-    logger.info("-" * 80)
+    _logger.info("\nExample 5: Universal converter")
+    _logger.info("-" * 80)
     inputs = [
         (1000, "kg/h", 29.0),
         (100, "lbmol/hr", 29.0),
@@ -696,4 +715,4 @@ if __name__ == "__main__":
     ]
     for val, unit, mw in inputs:
         mass_kg_s = convert_flow_rate_to_mass(val, unit, mw)
-        logger.info(f"{val} {unit} = {mass_kg_s:.3f} kg/s")
+        _logger.info(f"{val} {unit} = {mass_kg_s:.3f} kg/s")

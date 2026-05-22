@@ -6,6 +6,13 @@ from dataclasses import dataclass
 
 from .calculator_assist import CALCULATOR_HELP
 
+__all__ = [
+    "DEFAULT_SIDEBAR_TAB_HELP",
+    "SIDEBAR_CONTEXT_ACTIONS",
+    "SidebarActionMetadata",
+    "render_help_markdown",
+]
+
 
 @dataclass(frozen=True)
 class SidebarActionMetadata:

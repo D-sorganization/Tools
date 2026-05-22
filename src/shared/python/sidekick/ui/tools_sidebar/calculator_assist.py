@@ -13,6 +13,24 @@ from .calculator_startup import (
 from .registry import WorkspaceVariable
 from .state import SidebarState
 
+__all__ = [
+    "ALLOWED_CALCULATOR_COMMANDS",
+    "CALCULATOR_HELP",
+    "CALCULATOR_TAB_ID",
+    "CalculatorHelpTopic",
+    "CalculatorPredictionProvider",
+    "CalculatorPredictiveText",
+    "CalculatorSuggestion",
+    "SCIENTIFIC_DEPENDENCY_ALIASES",
+    "StaticCalculatorPredictionProvider",
+    "calculator_context_preferences",
+    "calculator_predictive_text_enabled",
+    "calculator_startup_config",
+    "calculator_state_fields",
+    "set_calculator_predictive_text_enabled",
+    "set_calculator_startup_config",
+]
+
 CALCULATOR_TAB_ID = "calculator"
 
 

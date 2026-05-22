@@ -24,9 +24,9 @@ from utils.logging_utils import (
 __all__ = [
     "DEFAULT_FORMAT",
     "DEFAULT_SEED",
-    "SIMPLE_FORMAT",
     "JsonFormatter",
     "LogExecutionTime",
+    "SIMPLE_FORMAT",
     "get_logger",
     "init_default_logging",
     "log_execution_time",

@@ -19,6 +19,11 @@ from .calculator_workspace import (
 )
 from .registry import WorkspaceRegistry
 
+__all__ = [
+    "WorkspaceCommandExecutor",
+    "WorkspaceCommandResult",
+]
+
 _ASSIGNMENT_RE = re.compile(
     r"^(local|global)\s+([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.+)$",
     re.IGNORECASE,

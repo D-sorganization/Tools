@@ -16,7 +16,12 @@ from typing import Any
 from . import design_tokens as theme
 from .qt_compat import QtCore, QtWidgets, Signal
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "SidekickReportingWidget",
+    "build_reporting_tab",
+]
+
+_logger = logging.getLogger(__name__)
 
 # Layout defaults from the design-token system
 _MARGINS = getattr(theme, "SIDEBAR_LAYOUT_MARGINS", (8, 8, 8, 8))
@@ -69,7 +74,7 @@ def _gather_subtab_snapshots(sidebar: Any) -> dict[str, Any]:
         try:
             snapshot = snapshot_fn()
         except Exception as exc:  # noqa: BLE001 - per-tab fault isolation
-            logger.warning("Sub-tab %r get_context_snapshot raised: %s", tab_id, exc)
+            _logger.warning("Sub-tab %r get_context_snapshot raised: %s", tab_id, exc)
             continue
         snapshots[tab_id] = snapshot
     return snapshots
@@ -92,7 +97,7 @@ def _gather_session_context(sidebar: Any) -> dict[str, Any]:
     try:
         variables = [v.name for v in sidebar.registry.variables()]
     except Exception as exc:  # noqa: BLE001 - registry may not be ready
-        logger.warning("Could not read workspace variables: %s", exc)
+        _logger.warning("Could not read workspace variables: %s", exc)
 
     project_root = str(getattr(sidebar, "project_root", "."))
 
@@ -116,7 +121,7 @@ def _try_import_report_generator() -> Any | None:
 
         return ReportGenerator
     except Exception:  # noqa: BLE001 - optional dependency
-        logger.debug("reporting.generator is not available; using local fallback")
+        _logger.debug("reporting.generator is not available; using local fallback")
         return None
 
 
@@ -213,7 +218,7 @@ class SidekickReportingWidget(QtWidgets.QWidget):
             try:
                 self._report_generator = gen_cls()
             except Exception:  # noqa: BLE001
-                logger.debug("ReportGenerator instantiation failed")
+                _logger.debug("ReportGenerator instantiation failed")
 
     def _build_ui(self) -> None:
         layout = QtWidgets.QVBoxLayout(self)
@@ -301,7 +306,7 @@ class SidekickReportingWidget(QtWidgets.QWidget):
         Args:
             error_message: Human-readable description of the failure.
         """
-        logger.error("Async report generation failed: %s", error_message)
+        _logger.error("Async report generation failed: %s", error_message)
         context = _gather_session_context(self.sidebar)
         report = _format_local_report(context)
         report += f"\n## Insights Error\n{error_message}\n"
@@ -329,9 +334,9 @@ class SidekickReportingWidget(QtWidgets.QWidget):
             try:
                 with open(path, "w", encoding="utf-8") as f:
                     f.write(self._report_preview.toPlainText())
-                logger.info("Report saved to %s", path)
+                _logger.info("Report saved to %s", path)
             except Exception as exc:  # noqa: BLE001
-                logger.error("Failed to save report: %s", exc)
+                _logger.error("Failed to save report: %s", exc)
 
 
 def build_reporting_tab(sidebar: Any) -> QtWidgets.QWidget:

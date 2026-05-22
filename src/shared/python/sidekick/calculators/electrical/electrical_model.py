@@ -15,7 +15,11 @@ import numpy as np  # noqa: E402
 from .config import ElectrodeConfig  # noqa: E402
 from .glass_interface import GlassPropertiesInterface  # noqa: E402
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "ThreePhaseElectricalModelEnhanced",
+]
+
+_logger = logging.getLogger(__name__)
 
 
 class ThreePhaseElectricalModelEnhanced:

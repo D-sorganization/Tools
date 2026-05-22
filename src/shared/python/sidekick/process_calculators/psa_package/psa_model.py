@@ -24,7 +24,19 @@ from typing import TypedDict
 import numpy as np
 from numpy.typing import NDArray
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "ComponentData",
+    "DEFAULT_COMPONENTS",
+    "PSAModel",
+    "PSAResults",
+    "StreamCompositions",
+    "StreamFlows",
+    "calculate_o2_safety_analysis",
+    "calculate_sensitivity",
+    "get_flammability_status",
+]
+
+_logger = logging.getLogger(__name__)
 
 
 class ComponentData(TypedDict):
@@ -478,7 +490,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     model = PSAModel()
     results = model.calculate()
-    logger.info(f"H2 Recovery: {results.h2_recovery_pct:.2f}%")
-    logger.info(f"H2 Purity: {results.h2_purity_pct:.5f}%")
-    logger.info(f"Net Product: {results.total_net_product_scfm:.2f} SCFM")
-    logger.info(f"Mass Balance Error: {results.mass_balance_error:.2e}")
+    _logger.info(f"H2 Recovery: {results.h2_recovery_pct:.2f}%")
+    _logger.info(f"H2 Purity: {results.h2_purity_pct:.5f}%")
+    _logger.info(f"Net Product: {results.total_net_product_scfm:.2f} SCFM")
+    _logger.info(f"Mass Balance Error: {results.mass_balance_error:.2e}")

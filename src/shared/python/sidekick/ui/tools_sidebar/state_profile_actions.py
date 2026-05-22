@@ -3,12 +3,25 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 from .state_profiles import SidekickStateProfileResult, SidekickStateProfileStore
+
+__all__ = [
+    "StateProfileMixin",
+]
 
 
 class StateProfileMixin:
     """Mixin for profile persistence actions."""
+
+    _state: Any
+
+    def snapshot_state(self) -> Any:
+        raise NotImplementedError
+
+    def apply_state(self, state: Any) -> None:
+        raise NotImplementedError
 
     def save_state_profile(
         self,

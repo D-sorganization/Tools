@@ -3,6 +3,11 @@
 from dataclasses import dataclass, field
 from typing import Any
 
+__all__ = [
+    "ScrubberInputs",
+    "ScrubberResults",
+]
+
 
 @dataclass(frozen=True)
 class ScrubberInputs:

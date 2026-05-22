@@ -7,6 +7,11 @@ across the Scrubber Calculator and WGS Reactor main windows.
 
 from __future__ import annotations
 
+__all__ = [
+    "COLORS",
+    "get_stylesheet",
+]
+
 # Catppuccin Mocha palette
 # https://github.com/catppuccin/catppuccin
 COLORS: dict[str, str] = {

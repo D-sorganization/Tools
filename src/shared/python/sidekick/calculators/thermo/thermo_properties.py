@@ -18,7 +18,15 @@ import math
 from dataclasses import dataclass
 from functools import lru_cache
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "MOLAR_CP_298",
+    "MOLECULAR_WEIGHTS",
+    "R_GAS",
+    "ThermoPropertiesCalculator",
+    "ThermoResult",
+]
+
+_logger = logging.getLogger(__name__)
 
 # Molecular weights (g/mol)
 MOLECULAR_WEIGHTS: dict[str, float] = {
@@ -116,7 +124,7 @@ class ThermoPropertiesCalculator:
             pressure_kpa=101.325,
             composition={"N2": 79, "O2": 21},
         )
-        logger.info(result.density_kg_m3)
+        _logger.info(result.density_kg_m3)
     """
 
     def calculate(

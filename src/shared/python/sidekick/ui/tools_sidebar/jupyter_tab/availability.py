@@ -10,6 +10,10 @@ from __future__ import annotations
 import importlib
 import threading
 
+__all__ = [
+    "JupyterTabAvailability",
+]
+
 _INSTALL_HINT = (
     "Jupyter support is not installed.\n"
     "Install with: pip install '.[jupyter]'\n"

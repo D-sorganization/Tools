@@ -23,6 +23,10 @@ from __future__ import annotations
 
 from typing import Any, Protocol, runtime_checkable
 
+__all__ = [
+    "WorkspaceContract",
+]
+
 
 @runtime_checkable
 class WorkspaceContract(Protocol):

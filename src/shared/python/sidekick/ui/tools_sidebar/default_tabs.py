@@ -31,6 +31,27 @@ from .runtime_tabs import (
     build_terminal_tab,
 )
 
+__all__ = [
+    "FUNCTION_GENERATOR_TAB_ID",
+    "QtGui_QStandardItem",
+    "QtGui_QStandardItemModel",
+    "ROTATION_CONVERTER_TAB_ID",
+    "TabDefinitionFactory",
+    "WORKSPACE_TABLE_COLUMNS",
+    "WorkspaceTableWidget",
+    "build_calculator_plot_tab",
+    "build_default_tab_definitions",
+    "build_file_explorer_tab",
+    "build_function_generator_tab",
+    "build_jupyter_tab",
+    "build_rotation_converter_tab",
+    "build_unit_converter_tab",
+    "build_workspace_tab",
+    "placeholder",
+    "refresh_workspace_list",
+    "set_project_explorer_root",
+]
+
 QtGui_QStandardItemModel = QtGui.QStandardItemModel
 QtGui_QStandardItem = QtGui.QStandardItem
 
@@ -38,7 +59,7 @@ WORKSPACE_TABLE_COLUMNS: tuple[str, ...] = ("Name", "Type", "Size", "Preview")
 
 T = TypeVar("T")
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 TabDefinitionFactory = Callable[..., T]
 ROTATION_CONVERTER_TAB_ID = "rotation_converter"
@@ -308,7 +329,7 @@ class WorkspaceTableWidget(QtWidgets.QWidget):
         if name_item is not None:
             self.inspect_requested.emit(name_item.text())
 
-    def deleteLater(self) -> None:  # type: ignore[override]
+    def deleteLater(self) -> None:
         with contextlib.suppress(Exception):
             self._subscription.unsubscribe()
         super().deleteLater()
@@ -355,7 +376,7 @@ def build_unit_converter_tab(sidebar: Any) -> QtWidgets.QWidget:
             UnitConverterWidget,
         )
     except Exception as exc:  # noqa: BLE001 - optional GUI widget
-        logger.debug("Unit converter unavailable for Sidekick: %s", exc)
+        _logger.debug("Unit converter unavailable for Sidekick: %s", exc)
         return placeholder(sidebar, "Unit converter")
     widget = UnitConverterWidget(sidebar)
     widget.setToolTip(DEFAULT_SIDEBAR_TAB_HELP["units"]["summary"])
@@ -374,7 +395,7 @@ def build_calculator_plot_tab(sidebar: Any) -> QtWidgets.QWidget:
         plot_widget_module = importlib.import_module("plot_engine.pyqt6_widget")
         plot_specs_module = importlib.import_module("plot_engine.specs")
     except Exception as exc:  # noqa: BLE001 - optional plot UI dependencies
-        logger.debug("Calculator plot tab unavailable for Sidekick: %s", exc)
+        _logger.debug("Calculator plot tab unavailable for Sidekick: %s", exc)
         return placeholder(
             sidebar,
             "Calculator Plot",
@@ -407,7 +428,7 @@ def build_rotation_converter_tab(sidebar: Any) -> QtWidgets.QWidget:
         window_type = module.RotationConverterMainWindow
         widget = window_type(sidebar)
     except Exception as exc:  # noqa: BLE001 - optional GUI surface
-        logger.debug("Rotation converter unavailable for Sidekick: %s", exc)
+        _logger.debug("Rotation converter unavailable for Sidekick: %s", exc)
         return placeholder(
             sidebar,
             "Rotation Converter",
@@ -435,7 +456,7 @@ def build_function_generator_tab(sidebar: Any) -> QtWidgets.QWidget:
         widget_type = getattr(module, pyqt_info["class"])
         widget = widget_type(sidebar, use_builtin_theme=False)
     except Exception as exc:  # noqa: BLE001 - optional GUI surface
-        logger.debug("Function Generator unavailable for Sidekick: %s", exc)
+        _logger.debug("Function Generator unavailable for Sidekick: %s", exc)
         return placeholder(
             sidebar,
             "Function Generator",

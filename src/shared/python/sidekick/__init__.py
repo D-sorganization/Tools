@@ -29,18 +29,14 @@ from .protocols import (
 __version__ = "0.1.0"
 
 __all__ = [
-    # Protocols
+    "CalculationResult",
     "Calculator",
     "DataTransformer",
+    "InputValidator",
     "ProcessCalculator",
     "StateSerializable",
     "UnitConverter",
-    # Data classes
-    "CalculationResult",
     "ValidationResult",
-    # Validation
-    "InputValidator",
-    # Subpackages (explicit for discovery)
     "calculators",
     "data_processing",
     "lab",

@@ -16,7 +16,17 @@ import logging
 
 from ..models.pressure_drop_data_models import PipeSpecification
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "MATERIAL_ROUGHNESS",
+    "STEEL_PIPE_DIMENSIONS",
+    "create_custom_pipe",
+    "get_pipe_spec",
+    "get_roughness",
+    "list_available_sizes",
+    "list_schedules_for_size",
+]
+
+_logger = logging.getLogger(__name__)
 
 # ============================================================================
 # MATERIAL ROUGHNESS VALUES
@@ -307,7 +317,7 @@ def get_pipe_spec(
 
     Example:
         >>> spec = get_pipe_spec("4", "40")
-        >>> logger.debug(spec.inner_diameter)  # mm
+        >>> _logger.debug(spec.inner_diameter)  # mm
         102.26
     """
     key = (nominal_size, schedule)

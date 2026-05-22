@@ -27,7 +27,18 @@ from .tables import (
 )
 from .tar_concentration_mixin import TarConcentrationConversionMixin
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "ConversionResult",
+    "IncompatibleUnitsError",
+    "InvalidValueError",
+    "UnitConversionError",
+    "UnitConversionService",
+    "UnknownUnitError",
+    "convert",
+    "get_service",
+]
+
+_logger = logging.getLogger(__name__)
 
 
 @lru_cache(maxsize=512)
@@ -100,7 +111,7 @@ class UnitConversionService(
         self._normalized_cache: dict[str, str] = {}
         self._static_clean_map: dict[str, str] = {}
         self._init_tables()
-        logger.info("UnitConversionService initialised")
+        _logger.info("UnitConversionService initialised")
 
     def _clean_string(self, text: str) -> str:
         """Normalize unit strings for consistent matching.

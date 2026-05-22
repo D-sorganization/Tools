@@ -18,7 +18,7 @@ import shutil
 import subprocess
 from dataclasses import dataclass
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -134,10 +134,10 @@ def _run_text_command(args: list[str]) -> str | None:
             timeout=5.0,
         )
     except (OSError, subprocess.SubprocessError) as exc:
-        logger.debug("shell discovery command failed: %s (%s)", args, exc)
+        _logger.debug("shell discovery command failed: %s (%s)", args, exc)
         return None
     if completed.returncode != 0:
-        logger.debug("shell discovery command non-zero: %s", args)
+        _logger.debug("shell discovery command non-zero: %s", args)
         return None
     raw = completed.stdout or b""
     for encoding in ("utf-16-le", "utf-8"):

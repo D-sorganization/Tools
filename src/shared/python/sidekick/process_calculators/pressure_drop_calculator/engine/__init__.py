@@ -6,4 +6,6 @@ calculations in piping systems carrying combustion and gasification gases.
 
 from .pressure_drop_calculation_engine import PressureDropCalculationEngine
 
-__all__ = ["PressureDropCalculationEngine"]
+__all__ = [
+    "PressureDropCalculationEngine",
+]

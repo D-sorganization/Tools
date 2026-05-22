@@ -29,7 +29,9 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-__all__ = ["ensure_paths"]
+__all__ = [
+    "ensure_paths",
+]
 
 
 def ensure_paths(repo_root: Path | str | None = None) -> Path:
