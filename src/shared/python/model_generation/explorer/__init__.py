@@ -1,10 +1,9 @@
-from __future__ import annotations
-
-"""
-Model Explorer GUI for browsing, loading, and previewing URDF/MJCF models.
+"""Model Explorer GUI for browsing, loading, and previewing URDF/MJCF models.
 
 Provides a visual interface for the model library with display controls.
 """
+
+from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 

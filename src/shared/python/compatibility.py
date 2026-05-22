@@ -12,7 +12,7 @@ if sys.version_info >= (3, 11):  # noqa: UP036
 else:
     UTC = timezone.utc  # noqa: UP017
 
-    class StrEnum(str, Enum):
+    class StrEnum(str, Enum):  # noqa: UP042
         """Backport of :class:`enum.StrEnum` for Python 3.10."""
 
         def __str__(self) -> str:
