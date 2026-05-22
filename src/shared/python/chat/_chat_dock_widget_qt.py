@@ -343,6 +343,8 @@ class ChatDockWidget(QDockWidget):
                 _read_shared_session_id(self._session_file)
             )
 
+        self._intentional_disconnect = False
+        self._is_closing = False
         self._collapsed: bool = False
         self._setup_ui()
         self._connect_on_show = True
@@ -741,6 +743,8 @@ class ChatDockWidget(QDockWidget):
 
     def _connect(self) -> None:
         """Establish WebSocket connection to the chat server."""
+        self._intentional_disconnect = False
+        self._is_closing = False
         if self._socket is not None:
             self._socket.close()
             self._socket.deleteLater()
@@ -842,7 +846,9 @@ class ChatDockWidget(QDockWidget):
         self._memory_panel_window = panel
 
     def _on_disconnected(self) -> None:
-        if bool(getattr(self, "_is_closing", False)):
+        if bool(getattr(self, "_intentional_disconnect", False)) or bool(
+            getattr(self, "_is_closing", False)
+        ):
             self._is_streaming = False
             self._send_btn.setEnabled(True)
             return
@@ -1850,6 +1856,7 @@ class ChatDockWidget(QDockWidget):
             self._connect()
 
     def closeEvent(self, event: Any) -> None:
+        self._intentional_disconnect = True
         self._is_closing = True
         self._reconnect_timer.stop()
         if self._socket:
