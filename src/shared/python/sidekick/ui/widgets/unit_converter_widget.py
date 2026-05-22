@@ -207,10 +207,7 @@ class UnitConverterWidget(BaseCalculatorWindow):
             )
             if from_category:
                 all_units_by_category = self.converter.get_supported_units()
-                return cast(
-                    list[str],
-                    all_units_by_category.get(from_category, self.all_units),
-                )
+                return all_units_by_category.get(from_category, self.all_units)
         except (RuntimeError, AttributeError, TypeError):
             pass
 
@@ -526,7 +523,7 @@ class UnitConverterWidget(BaseCalculatorWindow):
         cw = self.centralWidget()
         if cw:
             cw.deleteLater()
-        existing_central = cast(QWidget | None, getattr(self, "central_widget", None))
+        existing_central: QWidget | None = getattr(self, "central_widget", None)
         if existing_central is not None:
             existing_central.setFocus()
         self.central_widget = QWidget()

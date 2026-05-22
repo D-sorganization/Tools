@@ -171,7 +171,7 @@ class UnitAwareInput(QWidget):
 
     def value(self) -> float:
         """Get current value in display units."""
-        return self._value_input.value()
+        return float(self._value_input.value())  # Qt stubs return Any
 
     def value_si(self) -> float:
         """Get current value in SI units."""
