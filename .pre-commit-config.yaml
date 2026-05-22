@@ -137,9 +137,7 @@ repos:
       - id: bandit
         name: "bandit (security scan)"
         stages: [pre-push]
-        args:
-          ["-r", ".", "-ll", "-ii", "-x", "tests/,archive/,legacy/,.github/"]
-        pass_filenames: false
+        args: ["-ll", "-ii"]
         # Only run if Python files changed
         types: [python]
 

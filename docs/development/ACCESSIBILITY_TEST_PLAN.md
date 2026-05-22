@@ -650,8 +650,8 @@ Test focus trap and modal keyboard behavior.
 - [ ] At least 2 browsers tested
 - [ ] Screen reader basic check done (optional)
 
-**Tester Name:** **\*\***\_\_\_**\*\***  
-**Date:** **\*\***\_\_\_**\*\***  
+**Tester Name:** **\*\***\_\_\_**\*\***
+**Date:** **\*\***\_\_\_**\*\***
 **Overall Status:** ✓ PASS / ✗ FAIL / ~ PARTIAL
 
 ---

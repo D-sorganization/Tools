@@ -82,6 +82,10 @@ def changed_files() -> list[str]:
     files = set(staged_files())
     files.update(_git_files(["diff", "--name-only", "--diff-filter=ACMR", "HEAD"]))
     if not files:
+        files.update(_git_files(["diff", "--name-only", "--diff-filter=ACMR", "@{upstream}..HEAD"]))
+    if not files:
+        files.update(_git_files(["diff", "--name-only", "--diff-filter=ACMR", "origin/main...HEAD"]))
+    if not files:
         files.update(_git_files(["ls-files"]))
     return sorted(files)
 
