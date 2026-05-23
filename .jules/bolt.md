@@ -19,3 +19,6 @@
 ## 2024-05-23 - In-place Mutation for Integration Loops
 **Learning:** In tight numerical integration loops (like RK4), instantiating and returning new state array objects per step causes severe garbage collection pauses and frame drops, even if the loops themselves are manually unrolled.
 **Action:** Use an out-parameter pattern where pre-allocated state objects and argument arrays are instantiated once outside the loop and mutated continuously.
+## 2024-05-23 - SVG Chart Data Overload
+**Learning:** Passing raw, high-resolution arrays (>1000 points) directly to React charting libraries like Recharts creates massive DOM/SVG nodes, causing severe main thread blocking and unresponsive UI.
+**Action:** Always downsample large result arrays via `useMemo` with single-pass loops and pre-allocated arrays (e.g. `new Array(len)`) to a visual maximum (~500 points) before passing them to charting components.

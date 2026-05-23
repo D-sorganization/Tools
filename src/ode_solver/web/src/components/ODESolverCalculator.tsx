@@ -140,6 +140,31 @@ export function ODESolverCalculator() {
     })
   }, [varNames, results])
 
+  const chartData = useMemo(() => {
+    if (!results || results.length === 0) return [];
+
+    // ⚡ Bolt Optimization: Downsample large datasets for Recharts to prevent main thread blocking
+    // Recharts renders DOM/SVG elements per data point. >1000 points causes severe UI lag.
+    const MAX_CHART_POINTS = 500;
+    if (results.length <= MAX_CHART_POINTS) return results;
+
+    const step = Math.ceil(results.length / MAX_CHART_POINTS);
+    const len = Math.ceil(results.length / step);
+    const includeLast = (results.length - 1) % step !== 0;
+    const finalLen = includeLast ? len + 1 : len;
+
+    // Use pre-allocated array and single-pass loop
+    const downsampled = new Array(finalLen);
+    let index = 0;
+    for (let i = 0; i < results.length; i += step) {
+      downsampled[index++] = results[i];
+    }
+    if (includeLast) {
+      downsampled[index] = results[results.length - 1];
+    }
+    return downsampled;
+  }, [results]);
+
   return (
     <div className="max-w-5xl mx-auto p-6">
       <h1 className="text-2xl font-bold text-blue-400 mb-6">
@@ -278,7 +303,7 @@ export function ODESolverCalculator() {
                 <h2 className="text-lg font-semibold text-white mb-4">Solution</h2>
                 <div className="h-72">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={results}>
+                    <LineChart data={chartData}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
                       <XAxis
                         dataKey="time"
@@ -317,7 +342,7 @@ export function ODESolverCalculator() {
                   </h2>
                   <div className="h-72">
                     <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={results}>
+                      <LineChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
                         <XAxis
                           dataKey={varNames[0]}
