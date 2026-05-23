@@ -244,7 +244,7 @@ timeout_method = "thread"
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 # Default lane excludes heavy + offline-only-violating selections per §2.
-addopts = "-ra -v --strict-markers --strict-config --tb=short --color=yes --durations=20 --benchmark-disable -n auto --dist loadscope -m \"not slow and not live_simulation and not e2e and not requires_network\" -p no:xvfb -p no:recording"
+addopts = "-ra -v --strict-markers --strict-config --tb=short --color=yes --durations=20 --benchmark-disable -n auto --dist loadscope -m \"not slow and not live_simulation and not e2e and not requires_network\" -p no:xvfb -p no:recording -p no:pytest_recording"
 console_output_style = "progress"
 norecursedirs = [
     "replicants",
