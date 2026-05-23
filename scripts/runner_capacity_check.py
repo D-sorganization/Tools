@@ -248,18 +248,18 @@ def calculate_needed_runners(
     Returns:
         :class:`CapacityRecommendation` with suggested runner count.
     """
-    assert isinstance(queue_depth, int) and queue_depth >= 0, (
-        f"queue_depth must be a non-negative int, got {queue_depth!r}"
-    )
-    assert isinstance(current_runners, int) and current_runners > 0, (
-        f"current_runners must be a positive int, got {current_runners!r}"
-    )
-    assert isinstance(target_wait_sec, int) and target_wait_sec > 0, (
-        f"target_wait_sec must be a positive int, got {target_wait_sec!r}"
-    )
-    assert isinstance(avg_job_sec, int) and avg_job_sec > 0, (
-        f"avg_job_sec must be a positive int, got {avg_job_sec!r}"
-    )
+    assert (
+        isinstance(queue_depth, int) and queue_depth >= 0
+    ), f"queue_depth must be a non-negative int, got {queue_depth!r}"
+    assert (
+        isinstance(current_runners, int) and current_runners > 0
+    ), f"current_runners must be a positive int, got {current_runners!r}"
+    assert (
+        isinstance(target_wait_sec, int) and target_wait_sec > 0
+    ), f"target_wait_sec must be a positive int, got {target_wait_sec!r}"
+    assert (
+        isinstance(avg_job_sec, int) and avg_job_sec > 0
+    ), f"avg_job_sec must be a positive int, got {avg_job_sec!r}"
 
     if queue_depth == 0:
         return CapacityRecommendation(
@@ -341,16 +341,16 @@ def check_and_alert(
         Advisory string: one of ``"OK"``, ``"WARN: ..."``, or ``"ALERT: ..."``.
     """
     assert isinstance(token, str) and token, "token must be a non-empty string"
-    assert isinstance(current_runners, int) and current_runners > 0, (
-        f"current_runners must be a positive int, got {current_runners!r}"
-    )
+    assert (
+        isinstance(current_runners, int) and current_runners > 0
+    ), f"current_runners must be a positive int, got {current_runners!r}"
     assert isinstance(org, str) and org, "org must be a non-empty string"
-    assert isinstance(alert_threshold, int) and alert_threshold > 0, (
-        f"alert_threshold must be a positive int, got {alert_threshold!r}"
-    )
-    assert isinstance(target_wait_sec, int) and target_wait_sec > 0, (
-        f"target_wait_sec must be a positive int, got {target_wait_sec!r}"
-    )
+    assert (
+        isinstance(alert_threshold, int) and alert_threshold > 0
+    ), f"alert_threshold must be a positive int, got {alert_threshold!r}"
+    assert (
+        isinstance(target_wait_sec, int) and target_wait_sec > 0
+    ), f"target_wait_sec must be a positive int, got {target_wait_sec!r}"
 
     queue_depth = get_queue_depth(token=token, org=org)
     rec = calculate_needed_runners(

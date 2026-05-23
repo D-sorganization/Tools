@@ -65,9 +65,9 @@ def test_worker_runs_off_main_thread(qtbot: Any, sample_df: pd.DataFrame) -> Non
 
     assert results == [{"ok": True, "rows": 100}]
     assert trainer.train_thread is not None
-    assert trainer.train_thread != main_thread_id, (
-        "train() ran on the Qt main thread — UI would freeze"
-    )
+    assert (
+        trainer.train_thread != main_thread_id
+    ), "train() ran on the Qt main thread — UI would freeze"
 
 
 def test_worker_ui_stays_responsive(qtbot: Any, sample_df: pd.DataFrame) -> None:
