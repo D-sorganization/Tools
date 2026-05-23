@@ -50,12 +50,21 @@ jobs:
       - name: Clean up broken editable pth files
         run: |
           echo "Finding and removing broken editable .pth files on Brick-1..."
-          if [ -d /opt/hostedtoolcache ]; then
-            find -L /opt/hostedtoolcache -name "*__editable__*.pth" -print
-            find -L /opt/hostedtoolcache -name "*__editable__*.pth" -delete || echo "delete failed"
-          else
-            echo "/opt/hostedtoolcache does not exist."
-          fi
+          python3 -S -c "
+          import glob, os
+          patterns = [
+              '/opt/hostedtoolcache/Python/*/x64/lib/python*/site-packages/*__editable__*.pth',
+              '/home/dieterolson/actions-runners/.shared-tool-cache/Python/*/x64/lib/python*/site-packages/*__editable__*.pth'
+          ]
+          for pat in patterns:
+              for p in glob.glob(pat):
+                  print('Found:', p)
+                  try:
+                      os.remove(p)
+                      print('Deleted successfully:', p)
+                  except Exception as e:
+                      print('Error deleting:', p, e)
+          "
 
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
