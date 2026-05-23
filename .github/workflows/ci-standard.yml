@@ -28,6 +28,25 @@ defaults:
     shell: bash
 
 jobs:
+  fix-brick-toolcache:
+    runs-on: d-sorg-fleet-2core
+    timeout-minutes: 5
+    steps:
+      - name: Create symlink
+        run: |
+          echo "Attempting to create symlink on Brick-1..."
+          if [ -L /opt/hostedtoolcache ]; then
+            echo "/opt/hostedtoolcache is already a symlink."
+            ls -la /opt/hostedtoolcache
+          elif [ -d /opt/hostedtoolcache ]; then
+            echo "/opt/hostedtoolcache is a directory."
+            ls -la /opt/hostedtoolcache
+          else
+            echo "/opt/hostedtoolcache does not exist. Creating..."
+            sudo ln -s /home/dieterolson/actions-runners/.shared-tool-cache /opt/hostedtoolcache || echo "sudo failed"
+            ls -la /opt/hostedtoolcache || echo "ls failed"
+          fi
+
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
     runs-on: d-sorg-fleet
