@@ -317,4 +317,4 @@ class GeminiAdapter(BaseAgentAdapter):
             role = "user" if msg.role == "user" else "model"
             history.append({"role": role, "parts": [msg.content]})
 
-        return self._model.start_chat(history=history)  # type: ignore[arg-type]
+        return self._model.start_chat(history=history)
