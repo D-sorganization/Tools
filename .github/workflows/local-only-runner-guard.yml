@@ -16,6 +16,10 @@ on:
       - ".github/workflows/**"
   workflow_dispatch:
 
+concurrency:
+  group: local-only-runner-guard-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
