@@ -51,12 +51,12 @@ class TestFlowRateConverterLoDConstants:
                     if isinstance(target, ast.Name):
                         top_level_names.add(target.id)
 
-        assert "_ALIGN_CENTER" in top_level_names, (
-            "Missing _ALIGN_CENTER constant in main_window"
-        )
-        assert "_EXPANDING" in top_level_names, (
-            "Missing _EXPANDING constant in main_window"
-        )
+        assert (
+            "_ALIGN_CENTER" in top_level_names
+        ), "Missing _ALIGN_CENTER constant in main_window"
+        assert (
+            "_EXPANDING" in top_level_names
+        ), "Missing _EXPANDING constant in main_window"
         assert "_FIXED" in top_level_names, "Missing _FIXED constant in main_window"
 
     def test_no_bare_qt_alignment_flag_chain_in_source(self):

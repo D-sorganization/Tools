@@ -142,7 +142,9 @@ class ApplicationZoomController(QObject):
         """Reset application zoom to the configured default."""
         self.set_zoom_percent(self._config.default_percent)
 
-    def eventFilter(self, obj: QObject | None, event: QEvent | None) -> bool:  # noqa: N802
+    def eventFilter(
+        self, obj: QObject | None, event: QEvent | None
+    ) -> bool:  # noqa: N802
         """Handle Ctrl+wheel and Ctrl+shortcut app zoom events."""
         if event is None:
             return False

@@ -93,9 +93,9 @@ def test_sidekick_package_exists() -> None:
         f"sidekick package directory missing: {SIDEKICK_SRC}. "
         "The Phase 2 rename has not been executed."
     )
-    assert (SIDEKICK_SRC / "__init__.py").is_file(), (
-        f"sidekick/__init__.py missing — package is incomplete: {SIDEKICK_SRC}"
-    )
+    assert (
+        SIDEKICK_SRC / "__init__.py"
+    ).is_file(), f"sidekick/__init__.py missing — package is incomplete: {SIDEKICK_SRC}"
 
 
 @pytest.mark.unit
@@ -105,7 +105,9 @@ def test_deprecation_shim_exists() -> None:
         f"Deprecation shim directory missing: {SHIM_DIR}. "
         "Create it with a DeprecationWarning on import."
     )
-    assert (SHIM_DIR / "__init__.py").is_file(), (
+    assert (
+        SHIM_DIR / "__init__.py"
+    ).is_file(), (
         f"upstream_drift_tools/__init__.py missing — shim is not a package: {SHIM_DIR}"
     )
 
@@ -251,6 +253,6 @@ def test_canonical_package_importable() -> None:
     import sidekick  # noqa: F401
 
     assert sidekick is not None
-    assert hasattr(sidekick, "__version__"), (
-        "sidekick package must expose __version__ for downstream compatibility"
-    )
+    assert hasattr(
+        sidekick, "__version__"
+    ), "sidekick package must expose __version__ for downstream compatibility"

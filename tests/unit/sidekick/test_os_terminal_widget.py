@@ -81,7 +81,9 @@ def test_widget_shell_dropdown_lists_discovered_shells(
     assert "zsh" in items
 
 
-def test_widget_updates_cwd_on_osc7(qt_app, tmp_path: Path, qtbot) -> None:  # noqa: ANN001
+def test_widget_updates_cwd_on_osc7(
+    qt_app, tmp_path: Path, qtbot
+) -> None:  # noqa: ANN001
     """OSC 7 sequences update the live cwd label via a single slot."""
     from upstream_drift_tools.ui.tools_sidebar.os_terminal import (
         SidekickOsTerminalWidget,

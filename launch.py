@@ -146,7 +146,9 @@ def launch_tool(tool_identifier: str) -> int:
     gui_configs = registration.gui_configs
     config = gui_configs.get(GUIType.PYQT6)
     if config is None:
-        print(f"Tool '{registration.display_name}' has no PyQt6 configuration.")  # noqa: T201
+        print(
+            f"Tool '{registration.display_name}' has no PyQt6 configuration."
+        )  # noqa: T201
         return 1
 
     display_name = registration.display_name
