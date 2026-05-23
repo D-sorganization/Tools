@@ -272,12 +272,13 @@ function solve3x3(M: number[][], rhs: [number, number, number]): [number, number
  * Pre:  state has 6 finite elements.
  * Post: state_dot has 6 finite elements.
  */
-export function equationsOfMotion3(
+export function equationsOfMotion3Mut(
     state: StateTriple,
     t: number,
     p: TripleParams,
     torqueFunc: TorqueFuncTriple,
-): StateTriple {
+    outDot: StateTriple,
+): void {
     state.forEach((v, i) => assertFinite(v, `state[${i}]`));
 
     const q: [number, number, number] = [state[0], state[1], state[2]];
@@ -297,8 +298,24 @@ export function equationsOfMotion3(
     ];
 
     const [qdd1, qdd2, qdd3] = solve3x3(M, rhs);
-    const dot: StateTriple = [qdot[0], qdot[1], qdot[2], qdd1, qdd2, qdd3];
-    dot.forEach((v, i) => assertFinite(v, `state_dot[${i}]`));
+
+    outDot[0] = qdot[0];
+    outDot[1] = qdot[1];
+    outDot[2] = qdot[2];
+    outDot[3] = qdd1;
+    outDot[4] = qdd2;
+    outDot[5] = qdd3;
+    outDot.forEach((v, i) => assertFinite(v, `state_dot[${i}]`));
+}
+
+export function equationsOfMotion3(
+    state: StateTriple,
+    t: number,
+    p: TripleParams,
+    torqueFunc: TorqueFuncTriple,
+): StateTriple {
+    const dot: StateTriple = [0, 0, 0, 0, 0, 0];
+    equationsOfMotion3Mut(state, t, p, torqueFunc, dot);
     return dot;
 }
 
@@ -338,38 +355,32 @@ export function forwardKinematics3(
 
 // ── RK4 integrator ────────────────────────────────────────────────────────────
 
-function rk4Step3(
+function rk4Step3Mut(
     state: StateTriple,
     t: number,
     dt: number,
     p: TripleParams,
     tf: TorqueFuncTriple,
-): StateTriple {
-    const f = (s: StateTriple, ti: number): StateTriple => equationsOfMotion3(s, ti, p, tf);
+    k1: StateTriple,
+    k2: StateTriple,
+    k3: StateTriple,
+    k4: StateTriple,
+    tmp: StateTriple
+): void {
+    equationsOfMotion3Mut(state, t, p, tf, k1);
 
-    // ⚡ Bolt Optimization: Replaced a.map() with a pre-allocated array and manual for-loop.
-    // Performance impact: Drastically reduces GC pauses by eliminating callback allocation and array creation overhead in high-frequency integration steps.
-    const add = (a: StateTriple, b: StateTriple, scale: number): StateTriple => {
-        const len = a.length;
-        const out = new Array<number>(len);
-        for (let i = 0; i < len; i++) {
-            out[i] = a[i] + b[i] * scale;
-        }
-        return out as StateTriple;
-    };
+    for (let i = 0; i < 6; i++) tmp[i] = state[i] + (dt / 2) * k1[i];
+    equationsOfMotion3Mut(tmp, t + dt / 2, p, tf, k2);
 
-    const k1 = f(state, t);
-    const k2 = f(add(state, k1, dt / 2), t + dt / 2);
-    const k3 = f(add(state, k2, dt / 2), t + dt / 2);
-    const k4 = f(add(state, k3, dt), t + dt);
+    for (let i = 0; i < 6; i++) tmp[i] = state[i] + (dt / 2) * k2[i];
+    equationsOfMotion3Mut(tmp, t + dt / 2, p, tf, k3);
 
-    // ⚡ Bolt Optimization: Replaced state.map() with a pre-allocated array and manual for-loop.
-    const len = state.length;
-    const nextState = new Array<number>(len);
-    for (let i = 0; i < len; i++) {
-        nextState[i] = state[i] + (dt / 6) * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]);
+    for (let i = 0; i < 6; i++) tmp[i] = state[i] + dt * k3[i];
+    equationsOfMotion3Mut(tmp, t + dt, p, tf, k4);
+
+    for (let i = 0; i < 6; i++) {
+        state[i] = state[i] + (dt / 6) * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]);
     }
-    return nextState as StateTriple;
 }
 
 // ── Simulation ────────────────────────────────────────────────────────────────
@@ -400,13 +411,20 @@ export function runSimulation3(
 
     const t: number[] = [];
     const states: StateTriple[] = [];
-    let state: StateTriple = [...initialState] as StateTriple;
+    const state: StateTriple = [...initialState] as StateTriple;
     let time = 0;
+
+    // ⚡ Bolt Optimization: Pre-allocate buffers for RK4 to eliminate GC pauses
+    const k1 = [0, 0, 0, 0, 0, 0] as StateTriple;
+    const k2 = [0, 0, 0, 0, 0, 0] as StateTriple;
+    const k3 = [0, 0, 0, 0, 0, 0] as StateTriple;
+    const k4 = [0, 0, 0, 0, 0, 0] as StateTriple;
+    const tmp = [0, 0, 0, 0, 0, 0] as StateTriple;
 
     while (time <= tEnd + 1e-10) {
         t.push(time);
         states.push([...state] as StateTriple);
-        state = rk4Step3(state, time, dt, params, torqueFunc);
+        rk4Step3Mut(state, time, dt, params, torqueFunc, k1, k2, k3, k4, tmp);
         time += dt;
     }
 

@@ -16,3 +16,6 @@
 ## 2024-05-30 - Memoizing Render-Blocking O(N) Array Operations in React
 **Learning:** In React components that manage high-frequency inputs (e.g. text areas for calculator expressions) alongside large arrays of data (e.g. an array of 10k generated data points), rendering unmemoized array loops like `.map()` combined with local `min`/`max` loops blocks the main thread. This leads to severe lag when typing in the input fields, as React re-evaluates the large data arrays on every keystroke.
 **Action:** Always wrap heavy O(N) loops that aggregate state data (such as finding `min`/`max` limits across large solution arrays for summary cards) in a `useMemo` block, with dependency arrays scoped strictly to the generated result data.
+## 2024-05-23 - In-place Mutation for Integration Loops
+**Learning:** In tight numerical integration loops (like RK4), instantiating and returning new state array objects per step causes severe garbage collection pauses and frame drops, even if the loops themselves are manually unrolled.
+**Action:** Use an out-parameter pattern where pre-allocated state objects and argument arrays are instantiated once outside the loop and mutated continuously.
