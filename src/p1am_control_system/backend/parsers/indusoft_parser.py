@@ -8,7 +8,7 @@ except (ImportError, ValueError):
     from pathlib import Path
 
     sys.path.append(str(Path(__file__).parent.parent))
-    from plant_model import TagDefinition  # type: ignore[no-redef]
+    from plant_model import TagDefinition  # type: ignore[no-redef, unused-ignore]
 
 
 def parse_indusoft_tags(json_path: Path) -> list[TagDefinition]:
