@@ -94,9 +94,9 @@ def test_create_different_configs_returns_different_instances() -> None:
         adapter_a = AdapterFactory.create("ollama", model="llama3")
         adapter_b = AdapterFactory.create("ollama", model="mistral")
 
-    assert (
-        adapter_a is not adapter_b
-    ), "Different model configurations must produce distinct adapter instances."
+    assert adapter_a is not adapter_b, (
+        "Different model configurations must produce distinct adapter instances."
+    )
 
 
 def test_create_different_hosts_returns_different_instances() -> None:
@@ -111,9 +111,9 @@ def test_create_different_hosts_returns_different_instances() -> None:
         adapter_a = AdapterFactory.create("ollama", host="http://host-a:11434")
         adapter_b = AdapterFactory.create("ollama", host="http://host-b:11434")
 
-    assert (
-        adapter_a is not adapter_b
-    ), "Different host configurations must produce distinct adapter instances."
+    assert adapter_a is not adapter_b, (
+        "Different host configurations must produce distinct adapter instances."
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -134,9 +134,9 @@ def test_clear_cache_causes_fresh_construction() -> None:
         AdapterFactory.clear_cache()
         second = AdapterFactory.create("ollama", model="llama3")
 
-    assert (
-        first is not second
-    ), "After clear_cache(), create() must construct a fresh adapter instance."
+    assert first is not second, (
+        "After clear_cache(), create() must construct a fresh adapter instance."
+    )
 
 
 def test_clear_cache_empties_internal_dict() -> None:
@@ -149,9 +149,9 @@ def test_clear_cache_empties_internal_dict() -> None:
     ):
         AdapterFactory.create("ollama")
 
-    assert (
-        len(AdapterFactory._cache) == 1
-    ), "Cache should have one entry after create()."
+    assert len(AdapterFactory._cache) == 1, (
+        "Cache should have one entry after create()."
+    )
     AdapterFactory.clear_cache()
     assert len(AdapterFactory._cache) == 0, "Cache should be empty after clear_cache()."
 
@@ -171,6 +171,6 @@ def test_constructor_called_once_for_repeated_create() -> None:
         AdapterFactory.create("ollama", model="llama3")
         AdapterFactory.create("ollama", model="llama3")
 
-    assert (
-        mock_cls.call_count == 1
-    ), f"OllamaAdapter constructor should be called once, got {mock_cls.call_count}."
+    assert mock_cls.call_count == 1, (
+        f"OllamaAdapter constructor should be called once, got {mock_cls.call_count}."
+    )

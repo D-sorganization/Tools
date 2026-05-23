@@ -90,9 +90,9 @@ def test_phase2_confirmation_tools_have_metadata() -> None:
     tools_by_name = {tool["name"]: tool for tool in response["result"]["tools"]}
     for needs_confirm in ("generate_audio_overview", "attach_to_chat"):
         meta = tools_by_name[needs_confirm].get("metadata") or {}
-        assert (
-            meta.get("requires_confirmation") is True
-        ), f"{needs_confirm} must declare requires_confirmation=True"
+        assert meta.get("requires_confirmation") is True, (
+            f"{needs_confirm} must declare requires_confirmation=True"
+        )
 
 
 # ---------------------------------------------------------------------------
