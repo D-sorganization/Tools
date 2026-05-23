@@ -223,12 +223,13 @@ function solve2x2(M: [number, number, number, number], rhs: [number, number]): [
  * Pre:  state has 4 finite elements.
  * Post: state_dot has 4 finite elements.
  */
-export function equationsOfMotion(
+export function equationsOfMotionMut(
     state: State, t: number, p: PendulumParams,
     torqueFunc: TorqueFunc,
+    outDot: State,
     limits?: JointLimits,
     clamp?: TorqueClamp,
-): State {
+): void {
     state.forEach((v, i) => assertFinite(v, `state[${i}]`));
     const [theta1, phi, dtheta1, dphi] = state;
     const M = massMatrix(phi, p);
@@ -236,26 +237,34 @@ export function equationsOfMotion(
     const G = gravityVector(theta1, phi, p);
     let [tau1, tau2] = torqueFunc(t);
 
-    // Apply torque clamping
-    if (clamp) {
-        [tau1, tau2] = clampTorque([tau1, tau2], clamp);
-    }
+    if (clamp) [tau1, tau2] = clampTorque([tau1, tau2], clamp);
 
     const [tf1, tf2] = frictionTorqueVector(dtheta1, dphi, p);
 
-    // Joint limit penalty
     let jl1 = 0, jl2 = 0;
-    if (limits) {
-        [jl1, jl2] = jointLimitTorque(phi, dphi, limits);
-    }
+    if (limits) [jl1, jl2] = jointLimitTorque(phi, dphi, limits);
 
     const rhs: [number, number] = [
         tau1 + tf1 + jl1 - C[0] - G[0],
         tau2 + tf2 + jl2 - C[1] - G[1],
     ];
     const [qdd1, qdd2] = solve2x2(M, rhs);
-    const dot: State = [dtheta1, dphi, qdd1, qdd2];
-    dot.forEach((v, i) => assertFinite(v, `state_dot[${i}]`));
+
+    outDot[0] = dtheta1;
+    outDot[1] = dphi;
+    outDot[2] = qdd1;
+    outDot[3] = qdd2;
+    outDot.forEach((v, i) => assertFinite(v, `state_dot[${i}]`));
+}
+
+export function equationsOfMotion(
+    state: State, t: number, p: PendulumParams,
+    torqueFunc: TorqueFunc,
+    limits?: JointLimits,
+    clamp?: TorqueClamp,
+): State {
+    const dot: State = [0, 0, 0, 0];
+    equationsOfMotionMut(state, t, p, torqueFunc, dot, limits, clamp);
     return dot;
 }
 
@@ -451,36 +460,26 @@ export function makePolynomialTorque(
 
 // ── RK4 integrator ────────────────────────────────────────────────────────────
 
-/** Classic 4th-order Runge-Kutta step. */
-function rk4Step(
+/** Classic 4th-order Runge-Kutta step with out-parameters to prevent GC pauses. */
+function rk4StepMut(
     state: State, t: number, dt: number, p: PendulumParams,
-    tf: TorqueFunc, limits?: JointLimits, clamp?: TorqueClamp,
-): State {
-    const f = (s: State, ti: number): State => equationsOfMotion(s, ti, p, tf, limits, clamp);
+    tf: TorqueFunc, limits: JointLimits | undefined, clamp: TorqueClamp | undefined,
+    k1: State, k2: State, k3: State, k4: State, tmp: State
+): void {
+    equationsOfMotionMut(state, t, p, tf, k1, limits, clamp);
 
-    // ⚡ Bolt Optimization: Replaced a.map() with a pre-allocated array and manual for-loop.
-    // Performance impact: Drastically reduces GC pauses by eliminating callback allocation and array creation overhead in high-frequency integration steps.
-    const add = (a: State, b: State, scale: number): State => {
-        const len = a.length;
-        const out = new Array<number>(len);
-        for (let i = 0; i < len; i++) {
-            out[i] = a[i] + b[i] * scale;
-        }
-        return out as State;
-    };
+    for (let i = 0; i < 4; i++) tmp[i] = state[i] + (dt / 2) * k1[i];
+    equationsOfMotionMut(tmp, t + dt / 2, p, tf, k2, limits, clamp);
 
-    const k1 = f(state, t);
-    const k2 = f(add(state, k1, dt / 2), t + dt / 2);
-    const k3 = f(add(state, k2, dt / 2), t + dt / 2);
-    const k4 = f(add(state, k3, dt), t + dt);
+    for (let i = 0; i < 4; i++) tmp[i] = state[i] + (dt / 2) * k2[i];
+    equationsOfMotionMut(tmp, t + dt / 2, p, tf, k3, limits, clamp);
 
-    // ⚡ Bolt Optimization: Replaced state.map() with a pre-allocated array and manual for-loop.
-    const len = state.length;
-    const nextState = new Array<number>(len);
-    for (let i = 0; i < len; i++) {
-        nextState[i] = state[i] + (dt / 6) * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]);
+    for (let i = 0; i < 4; i++) tmp[i] = state[i] + dt * k3[i];
+    equationsOfMotionMut(tmp, t + dt, p, tf, k4, limits, clamp);
+
+    for (let i = 0; i < 4; i++) {
+        state[i] = state[i] + (dt / 6) * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]);
     }
-    return nextState as State;
 }
 
 // ── Simulation ────────────────────────────────────────────────────────────────
@@ -515,13 +514,20 @@ export function runSimulation(
 
     const t: number[] = [];
     const states: State[] = [];
-    let state: State = [...initialState] as State;
+    const state: State = [...initialState] as State;
     let time = 0;
+
+    // ⚡ Bolt Optimization: Pre-allocate buffers for RK4 to eliminate GC pauses
+    const k1 = [0, 0, 0, 0] as State;
+    const k2 = [0, 0, 0, 0] as State;
+    const k3 = [0, 0, 0, 0] as State;
+    const k4 = [0, 0, 0, 0] as State;
+    const tmp = [0, 0, 0, 0] as State;
 
     while (time <= tEnd + 1e-10) {
         t.push(time);
         states.push([...state] as State);
-        state = rk4Step(state, time, dt, params, torqueFunc, limits, clamp);
+        rk4StepMut(state, time, dt, params, torqueFunc, limits, clamp, k1, k2, k3, k4, tmp);
         time += dt;
     }
 
