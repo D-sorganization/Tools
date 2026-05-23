@@ -10,15 +10,15 @@
 
 Six independent reviews were conducted in parallel, each targeting a distinct quality dimension:
 
-| Review Dimension | Findings | Critical | High | Medium | Low |
-|---|---:|---:|---:|---:|---:|
-| Security (injection, traversal, deserialization, TLS, CORS) | 20 | 3 | 5 | 7 | 5 |
-| Error handling & robustness (exceptions, resources, threading) | 28 | 6 | 10 | 8 | 4 |
-| Architecture (DRY, LOD, manifests, stubs, print() in src/) | 10 | 1 | 3 | 4 | 2 |
-| Test coverage & quality (markers, assertions, contract tests) | 14 | 0 | 3 | 5 | 6 |
-| Dependency & config hygiene (versions, lockfile, pytest, mypy) | 28 | 0 | 9 | 13 | 6 |
-| Qt/GUI implementation & documentation integrity | 37 | 0 | 7 | 15 | 15 |
-| **TOTAL** | **137** | **10** | **37** | **52** | **38** |
+| Review Dimension                                               | Findings | Critical |   High | Medium |    Low |
+| -------------------------------------------------------------- | -------: | -------: | -----: | -----: | -----: |
+| Security (injection, traversal, deserialization, TLS, CORS)    |       20 |        3 |      5 |      7 |      5 |
+| Error handling & robustness (exceptions, resources, threading) |       28 |        6 |     10 |      8 |      4 |
+| Architecture (DRY, LOD, manifests, stubs, print() in src/)     |       10 |        1 |      3 |      4 |      2 |
+| Test coverage & quality (markers, assertions, contract tests)  |       14 |        0 |      3 |      5 |      6 |
+| Dependency & config hygiene (versions, lockfile, pytest, mypy) |       28 |        0 |      9 |     13 |      6 |
+| Qt/GUI implementation & documentation integrity                |       37 |        0 |      7 |     15 |     15 |
+| **TOTAL**                                                      |  **137** |   **10** | **37** | **52** | **38** |
 
 GitHub issues were grouped by theme into **24 actionable tickets** to avoid noise while preserving traceability — each ticket contains the specific `file:line` evidence from the agent reports.
 
@@ -35,43 +35,53 @@ Agents were instructed to skip test-only issues unless the test demonstrated a p
 ## Critical Findings (P0 — fix before next release)
 
 ### SEC-C1: Zip-slip in GitHub repository archive extraction
+
 `src/shared/python/model_generation/library/repository.py:332` — `zf.extractall(destination)` without member validation. A crafted archive containing `../../../etc/passwd`-style entries achieves arbitrary file write under the Tools process UID.
 **Fix:** Validate each member or use `tarfile.extractall(filter='data')` on Python ≥ 3.12; for zipfile, iterate `infolist()` and reject paths with `..` or absolute components before extraction.
 
 ### SEC-C2: Flask `debug=True` in WSGI entry point
+
 `src/web_applications/unit_converter/wsgi.py:8` — Werkzeug debugger is reachable in production. Exception on any request exposes interactive Python console (RCE given cookie or PIN bypass).
 **Fix:** `app.run(debug=os.environ.get('FLASK_DEBUG') == '1')` and deploy behind gunicorn/uvicorn, not `app.run()`.
 
 ### SEC-C3: Unsafe pickle deserialization from user-selected files
+
 `src/data_processing/data_processor/python/data_processor/file_utils.py:76` — `pd.read_pickle(file_path)` on user-supplied paths. Pickle executes arbitrary bytecode on load.
 Also affects `src/shared/python/upstream_drift_tools/data_processing/io.py:61`.
 **Fix:** Remove pickle from the accepted format list; require Parquet/HDF5/CSV. If pickle must be supported, gate behind an explicit opt-in flag with a warning.
 
 ### ARCH-C1: Cross-boundary import in shared calc_backend
+
 `src/shared/python/calc_backend/routers/rotation_converter.py:20,40` imports directly from the `rotation_converter` tool package. CLAUDE.md § LOD explicitly forbids modules importing across package boundaries.
 **Fix:** Extract rotation primitives to `src/shared/python/rotation_transforms/`; both the tool and `calc_backend` import from the shared module.
 
 ### ROB-C1: Silent swallow of mesh-download failures
+
 `src/shared/python/model_generation/library/repository.py:316-317` — `except (PermissionError, OSError): pass` in `_download_meshes()`. Models load with missing geometry and caller cannot tell.
 **Fix:** Log at WARNING with the exception, and record the failed mesh in a `warnings` field on the returned model so callers can react.
 
 ### ROB-C2: Temp-file leak on every archive download
+
 `src/shared/python/model_generation/library/repository.py:328-338` — `NamedTemporaryFile(..., delete=False)` without `try/finally: unlink(missing_ok=True)`.
 **Fix:** Use a context manager with `delete=True`, or wrap in `try/finally`.
 
 ### ROB-C3: Subprocess zombies in tool launcher
+
 `src/tools/launch_utils.py:147-178` — `Popen()` without `wait()`, `poll()`, or context manager; stdout/stderr drained by daemon threads that never reap. Parent exit leaves zombies. Also lines 224, 267, 310, 368, 370 call `xdg-open` fire-and-forget.
 **Fix:** Use `subprocess.run()` where possible; for long-running launches retain the handle and call `.wait()` from a reaping thread.
 
 ### ROB-C4: `convert_to_urdf` / `convert_to_mjcf` swallow all errors to `None`
+
 `src/shared/python/model_generation/library/unified_loader.py:407-421` — Returns `None` on OSError, ValueError, KeyError. Callers cannot distinguish "unsupported conversion" from "disk full" from "bad input".
 **Fix:** Raise typed exceptions (`ConversionError`, `UnsupportedFormatError`) with `from exc` chaining; preserve `None` return only if a legitimate "not applicable" case exists.
 
 ### ROB-C5: `LocalRepository.download_model` returns `None` on all failures
+
 `src/shared/python/model_generation/library/repository.py:373-377` — Same problem as above for local disk.
 **Fix:** Raise `FileNotFoundError`, `PermissionError`, `shutil.SameFileError` with original context.
 
 ### ROB-C6: Threaded data-processor jobs silently crash the daemon
+
 `src/data_processing/data_processor/python/data_processor/ui/folder_tool_tab.py:433`, `format_converter_tab.py:479-490` — Background threads raise unhandled exceptions; UI state never resets.
 **Fix:** Move to `QThread` with a typed `error` signal; re-enable the "Run" button in a `finally` on the UI thread.
 
@@ -152,34 +162,34 @@ Grouped into themed tickets; full evidence retained in per-agent reports. Highli
 
 Findings were filed as 26 GitHub issues on `d-sorganization/tools`. Each ticket contains the specific `file:line` evidence; this document is the master reference.
 
-| # | GitHub | Severity | Title |
-|---|---|---|---|
-| 1 | [#2077](https://github.com/D-sorganization/Tools/issues/2077) | CRITICAL | Zip-slip in GitHub archive extraction |
-| 2 | [#2078](https://github.com/D-sorganization/Tools/issues/2078) | CRITICAL | Flask `debug=True` in production WSGI |
-| 3 | [#2079](https://github.com/D-sorganization/Tools/issues/2079) | CRITICAL | Unsafe `pd.read_pickle` on user-selected files |
-| 4 | [#2080](https://github.com/D-sorganization/Tools/issues/2080) | CRITICAL | Cross-boundary import: `calc_backend` → `rotation_converter` |
-| 5 | [#2081](https://github.com/D-sorganization/Tools/issues/2081) | CRITICAL | Silent exception swallowing + temp-file leak in model repository |
-| 6 | [#2082](https://github.com/D-sorganization/Tools/issues/2082) | CRITICAL | Subprocess zombies in tool launcher |
-| 7 | [#2083](https://github.com/D-sorganization/Tools/issues/2083) | CRITICAL | `convert_to_urdf` / `convert_to_mjcf` / `download_model` return `None` on all failures |
-| 8 | [#2084](https://github.com/D-sorganization/Tools/issues/2084) | CRITICAL | Unhandled exceptions in background Qt threads silently crash daemon |
-| 9 | [#2085](https://github.com/D-sorganization/Tools/issues/2085) | HIGH | Path traversal and SSRF in GitHub / mesh / URDF importers |
-| 10 | [#2086](https://github.com/D-sorganization/Tools/issues/2086) | HIGH | Plaintext API-key storage + CORS wildcard misconfiguration |
-| 11 | [#2087](https://github.com/D-sorganization/Tools/issues/2087) | HIGH | `assert` used for runtime validation (stripped with `-O`) |
-| 12 | [#2088](https://github.com/D-sorganization/Tools/issues/2088) | HIGH | Overbroad `except Exception` clauses swallow errors without logging |
-| 13 | [#2089](https://github.com/D-sorganization/Tools/issues/2089) | HIGH | `QMessageBox` / `QFileDialog` calls inside shared library code |
-| 14 | [#2090](https://github.com/D-sorganization/Tools/issues/2090) | HIGH | Data Processor blocks UI thread on file I/O and analysis |
-| 15 | [#2091](https://github.com/D-sorganization/Tools/issues/2091) | HIGH | Orphaned tools not in manifests + inconsistent module layout |
-| 16 | [#2092](https://github.com/D-sorganization/Tools/issues/2092) | HIGH | GUI logic embedded in `launch_pyqt6.py` (lower_body_model) |
-| 17 | [#2093](https://github.com/D-sorganization/Tools/issues/2093) | HIGH | Python-version and lint/type tool-version drift across configs |
-| 18 | [#2094](https://github.com/D-sorganization/Tools/issues/2094) | HIGH | Dependency manifest drift: pyproject ↔ requirements ↔ lock |
-| 19 | [#2095](https://github.com/D-sorganization/Tools/issues/2095) | HIGH | 15 of 29 manifest tools have zero tests |
-| 20 | [#2096](https://github.com/D-sorganization/Tools/issues/2096) | HIGH | `pytest.ini` missing 5 required markers + contract-test gap |
-| 21 | [#2097](https://github.com/D-sorganization/Tools/issues/2097) | HIGH | SPEC.md / README.md / TOOLS_INDEX.md drift |
-| 22 | [#2098](https://github.com/D-sorganization/Tools/issues/2098) | MEDIUM | `QTimer.singleShot` init races and lambda signal hygiene |
-| 23 | [#2099](https://github.com/D-sorganization/Tools/issues/2099) | MEDIUM | Package hygiene: missing `__init__.py`, `__all__`, stale modules |
-| 24 | [#2100](https://github.com/D-sorganization/Tools/issues/2100) | MEDIUM | Stale top-level artifacts (logs, trigger files, empty markers) |
-| 25 | [#2101](https://github.com/D-sorganization/Tools/issues/2101) | MEDIUM | pytest config fragmented across pytest.ini and pyproject.toml |
-| 26 | [#2102](https://github.com/D-sorganization/Tools/issues/2102) | MEDIUM | Tests with no assertions or trivially-true assertions |
+| #   | GitHub                                                        | Severity | Title                                                                                  |
+| --- | ------------------------------------------------------------- | -------- | -------------------------------------------------------------------------------------- |
+| 1   | [#2077](https://github.com/D-sorganization/Tools/issues/2077) | CRITICAL | Zip-slip in GitHub archive extraction                                                  |
+| 2   | [#2078](https://github.com/D-sorganization/Tools/issues/2078) | CRITICAL | Flask `debug=True` in production WSGI                                                  |
+| 3   | [#2079](https://github.com/D-sorganization/Tools/issues/2079) | CRITICAL | Unsafe `pd.read_pickle` on user-selected files                                         |
+| 4   | [#2080](https://github.com/D-sorganization/Tools/issues/2080) | CRITICAL | Cross-boundary import: `calc_backend` → `rotation_converter`                           |
+| 5   | [#2081](https://github.com/D-sorganization/Tools/issues/2081) | CRITICAL | Silent exception swallowing + temp-file leak in model repository                       |
+| 6   | [#2082](https://github.com/D-sorganization/Tools/issues/2082) | CRITICAL | Subprocess zombies in tool launcher                                                    |
+| 7   | [#2083](https://github.com/D-sorganization/Tools/issues/2083) | CRITICAL | `convert_to_urdf` / `convert_to_mjcf` / `download_model` return `None` on all failures |
+| 8   | [#2084](https://github.com/D-sorganization/Tools/issues/2084) | CRITICAL | Unhandled exceptions in background Qt threads silently crash daemon                    |
+| 9   | [#2085](https://github.com/D-sorganization/Tools/issues/2085) | HIGH     | Path traversal and SSRF in GitHub / mesh / URDF importers                              |
+| 10  | [#2086](https://github.com/D-sorganization/Tools/issues/2086) | HIGH     | Plaintext API-key storage + CORS wildcard misconfiguration                             |
+| 11  | [#2087](https://github.com/D-sorganization/Tools/issues/2087) | HIGH     | `assert` used for runtime validation (stripped with `-O`)                              |
+| 12  | [#2088](https://github.com/D-sorganization/Tools/issues/2088) | HIGH     | Overbroad `except Exception` clauses swallow errors without logging                    |
+| 13  | [#2089](https://github.com/D-sorganization/Tools/issues/2089) | HIGH     | `QMessageBox` / `QFileDialog` calls inside shared library code                         |
+| 14  | [#2090](https://github.com/D-sorganization/Tools/issues/2090) | HIGH     | Data Processor blocks UI thread on file I/O and analysis                               |
+| 15  | [#2091](https://github.com/D-sorganization/Tools/issues/2091) | HIGH     | Orphaned tools not in manifests + inconsistent module layout                           |
+| 16  | [#2092](https://github.com/D-sorganization/Tools/issues/2092) | HIGH     | GUI logic embedded in `launch_pyqt6.py` (lower_body_model)                             |
+| 17  | [#2093](https://github.com/D-sorganization/Tools/issues/2093) | HIGH     | Python-version and lint/type tool-version drift across configs                         |
+| 18  | [#2094](https://github.com/D-sorganization/Tools/issues/2094) | HIGH     | Dependency manifest drift: pyproject ↔ requirements ↔ lock                           |
+| 19  | [#2095](https://github.com/D-sorganization/Tools/issues/2095) | HIGH     | 15 of 29 manifest tools have zero tests                                                |
+| 20  | [#2096](https://github.com/D-sorganization/Tools/issues/2096) | HIGH     | `pytest.ini` missing 5 required markers + contract-test gap                            |
+| 21  | [#2097](https://github.com/D-sorganization/Tools/issues/2097) | HIGH     | SPEC.md / README.md / TOOLS_INDEX.md drift                                             |
+| 22  | [#2098](https://github.com/D-sorganization/Tools/issues/2098) | MEDIUM   | `QTimer.singleShot` init races and lambda signal hygiene                               |
+| 23  | [#2099](https://github.com/D-sorganization/Tools/issues/2099) | MEDIUM   | Package hygiene: missing `__init__.py`, `__all__`, stale modules                       |
+| 24  | [#2100](https://github.com/D-sorganization/Tools/issues/2100) | MEDIUM   | Stale top-level artifacts (logs, trigger files, empty markers)                         |
+| 25  | [#2101](https://github.com/D-sorganization/Tools/issues/2101) | MEDIUM   | pytest config fragmented across pytest.ini and pyproject.toml                          |
+| 26  | [#2102](https://github.com/D-sorganization/Tools/issues/2102) | MEDIUM   | Tests with no assertions or trivially-true assertions                                  |
 
 ## Recommended Remediation Sequence
 

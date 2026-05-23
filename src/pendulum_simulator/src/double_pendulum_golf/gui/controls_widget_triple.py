@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """
 Control panel widget for triple pendulum inputs.
 
@@ -29,7 +30,7 @@ from .controls_widget_base import ControlsWidgetBase
 from .torque_preview_widget import TorquePreviewWidget
 
 if _HAS_UAI:
-    from upstream_drift_tools.ui.widgets.unit_aware_input import UnitAwareInput
+    from sidekick.ui.widgets.unit_aware_input import UnitAwareInput
 
 
 class ControlsWidgetTriple(ControlsWidgetBase):
@@ -371,12 +372,24 @@ class ControlsWidgetTriple(ControlsWidgetBase):
         L1 = self._uai_or_parse(self.inp_L1, "L1")
         L2 = self._uai_or_parse(self.inp_L2, "L2")
         L3 = self._uai_or_parse(self.inp_L3, "L3")
-        b1 = require_non_negative(parse_float(getattr(self, 'inp_b1', None), "b1"), "b1")
-        b2 = require_non_negative(parse_float(getattr(self, 'inp_b2', None), "b2"), "b2")
-        b3 = require_non_negative(parse_float(getattr(self, 'inp_b3', None), "b3"), "b3")
-        mu1 = require_non_negative(parse_float(getattr(self, 'inp_mu1', None), "μ1"), "μ1")
-        mu2 = require_non_negative(parse_float(getattr(self, 'inp_mu2', None), "μ2"), "μ2")
-        mu3 = require_non_negative(parse_float(getattr(self, 'inp_mu3', None), "μ3"), "μ3")
+        b1 = require_non_negative(
+            parse_float(getattr(self, "inp_b1", None), "b1"), "b1"
+        )
+        b2 = require_non_negative(
+            parse_float(getattr(self, "inp_b2", None), "b2"), "b2"
+        )
+        b3 = require_non_negative(
+            parse_float(getattr(self, "inp_b3", None), "b3"), "b3"
+        )
+        mu1 = require_non_negative(
+            parse_float(getattr(self, "inp_mu1", None), "μ1"), "μ1"
+        )
+        mu2 = require_non_negative(
+            parse_float(getattr(self, "inp_mu2", None), "μ2"), "μ2"
+        )
+        mu3 = require_non_negative(
+            parse_float(getattr(self, "inp_mu3", None), "μ3"), "μ3"
+        )
         require_positive(m1, "m1")
         require_positive(m2, "m2")
         require_positive(m3, "m3")

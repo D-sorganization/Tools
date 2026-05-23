@@ -34,18 +34,18 @@ from .ui import (
     create_slider,
 )
 
-__all__ = (
+__all__ = [
     "InputPanel",
-    "ResultsPanel",
-    "SensitivityPlotWidget",
+    "MplCanvas",
     "PFDWidget",
     "PSAMainWindow",
+    "ResultsPanel",
+    "SensitivityPlotWidget",
     "create_slider",
-    "MplCanvas",
     "main",
-)
+]
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 
 def create_slider(  # noqa: F811

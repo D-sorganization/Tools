@@ -19,7 +19,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-log = logging.getLogger(__name__)
+_log = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Optional imports — module is always importable even without Qt / SymPy.
@@ -74,7 +74,7 @@ def _expr_to_latex(expr_str: str) -> str:
         )
     try:
         expr = _sympify(expr_str, evaluate=True)
-        return _sympy_latex(expr)
+        return str(_sympy_latex(expr))
     except Exception as exc:
         raise LatexRenderError(f"Cannot render {expr_str!r} to LaTeX: {exc}") from exc
 
@@ -159,7 +159,7 @@ def render_latex_label(
     display_text = f"$  {latex_str}  $"
     label = _make_label_widget(display_text, monospace=True, parent=parent)
     label.setToolTip(f"LaTeX: {latex_str}")
-    log.debug("render_latex_label(%r)", latex_str)
+    _log.debug("render_latex_label(%r)", latex_str)
     return label
 
 

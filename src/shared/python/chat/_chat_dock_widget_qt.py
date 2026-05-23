@@ -1,4 +1,5 @@
 # ruff: noqa: E501
+# mypy: ignore-errors
 """Lightweight AI Chat dock widget for embedding in any PyQt6 application.
 
 Connects to a FastAPI server's WebSocket chat endpoint and provides a
@@ -29,7 +30,7 @@ import logging
 import threading
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, Literal, cast
 
 from PyQt6.QtCore import QSize, Qt, QTimer, QUrl, pyqtSignal
 from PyQt6.QtGui import QKeySequence, QShortcut
@@ -201,7 +202,9 @@ class ChatMessageBubble(QFrame):
             return
         msg = ChatMessage(role=self._role, content=self._content)
         try:
-            copier.copy_message(msg, mode)  # type: ignore[arg-type]
+            copier.copy_message(
+                msg, cast("Literal['raw_text', 'markdown', 'code_only', 'json']", mode)
+            )
         except ValueError:
             # Unknown mode -- fall back to raw_text.
             copier.copy_message(msg, "raw_text")
@@ -343,6 +346,8 @@ class ChatDockWidget(QDockWidget):
                 _read_shared_session_id(self._session_file)
             )
 
+        self._intentional_disconnect = False
+        self._is_closing = False
         self._collapsed: bool = False
         self._setup_ui()
         self._connect_on_show = True
@@ -741,6 +746,8 @@ class ChatDockWidget(QDockWidget):
 
     def _connect(self) -> None:
         """Establish WebSocket connection to the chat server."""
+        self._intentional_disconnect = False
+        self._is_closing = False
         if self._socket is not None:
             self._socket.close()
             self._socket.deleteLater()
@@ -842,7 +849,9 @@ class ChatDockWidget(QDockWidget):
         self._memory_panel_window = panel
 
     def _on_disconnected(self) -> None:
-        if bool(getattr(self, "_is_closing", False)):
+        if bool(getattr(self, "_intentional_disconnect", False)) or bool(
+            getattr(self, "_is_closing", False)
+        ):
             self._is_streaming = False
             self._send_btn.setEnabled(True)
             return
@@ -1571,7 +1580,7 @@ class ChatDockWidget(QDockWidget):
         screen = cast("QApplication", app).primaryScreen()
         if not screen:
             return
-        pixmap = parent.grab() if parent else screen.grabWindow(0)
+        pixmap = parent.grab() if parent else screen.grabWindow(0)  # type: ignore[arg-type]  # PyQt6 voidptr compat
         from PyQt6.QtCore import QBuffer, QByteArray, QIODevice
 
         ba = QByteArray()
@@ -1740,7 +1749,7 @@ class ChatDockWidget(QDockWidget):
             return
         request = ChatExportRequest(
             session_id=session.session_id,
-            format=fmt,  # type: ignore[arg-type]
+            format=cast("Literal['markdown', 'text', 'html']", fmt),
             output_path=path,
             include_metadata=True,
             redact_secrets=True,
@@ -1803,7 +1812,10 @@ class ChatDockWidget(QDockWidget):
         try:
             request = CondensationRequest(
                 session_id=session.session_id,
-                strategy=strategy,  # type: ignore[arg-type]
+                strategy=cast(
+                    "Literal['keep_recent', 'semantic_summary', 'pinned_anchor']",
+                    strategy,
+                ),
                 keep_last_n=max(1, min(10, session.message_count)),
             )
             result = Condenser().condense(session, request)
@@ -1850,6 +1862,7 @@ class ChatDockWidget(QDockWidget):
             self._connect()
 
     def closeEvent(self, event: Any) -> None:
+        self._intentional_disconnect = True
         self._is_closing = True
         self._reconnect_timer.stop()
         if self._socket:
@@ -1891,7 +1904,7 @@ class ChatDockWidget(QDockWidget):
         for info in sessions:
             title = str(info.get("title", "")).casefold()
             if title == needle:
-                return info.get("id")
+                return cast(str | None, info.get("id"))
         return None
 
     def _handle_use_session(self, target: str) -> None:

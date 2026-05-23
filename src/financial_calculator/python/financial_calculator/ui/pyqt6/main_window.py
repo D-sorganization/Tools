@@ -168,7 +168,7 @@ class FinancialCalculatorEngine:
 
     def __init__(self) -> None:
         """Initialize the engine."""
-        from upstream_drift_tools.process_calculators.financial_calculator import (
+        from sidekick.process_calculators.financial_calculator import (
             FinancialModelCalculator,
             FinancialParameters,
         )
@@ -349,9 +349,12 @@ class FinancialCalculatorMainWindow(ThemedWindowMixin, QMainWindow):
         """Set up the user interface."""
         # Menu bar with Notes toggle — break into named intermediates (LoD)
         menu_bar = self.menuBar()
-        view_menu = menu_bar.addMenu("&View")
-        notes_action = view_menu.addAction("Toggle &Notes")
-        notes_action.triggered.connect(self._toggle_notes)
+        if menu_bar is not None:
+            view_menu = menu_bar.addMenu("&View")
+            if view_menu is not None:
+                notes_action = view_menu.addAction("Toggle &Notes")
+                if notes_action is not None:
+                    notes_action.triggered.connect(self._toggle_notes)
 
         central = QWidget()
         self.setCentralWidget(central)

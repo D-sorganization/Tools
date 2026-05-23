@@ -31,11 +31,19 @@ from __future__ import annotations
 
 import logging
 from dataclasses import asdict, dataclass
-from enum import StrEnum
 from typing import Any
 from uuid import uuid4
 
-logger = logging.getLogger(__name__)
+from compatibility import StrEnum
+
+__all__ = [
+    "ErrorCode",
+    "ErrorDetail",
+    "ResponseMetadata",
+    "StandardResponse",
+]
+
+_logger = logging.getLogger(__name__)
 
 
 class ErrorCode(StrEnum):
@@ -145,7 +153,7 @@ class StandardResponse:
 
         self.status = status
         self.data = data
-        self.error = error
+        self.error = error  # type: ignore[method-assign, assignment]
         self.metadata = metadata or ResponseMetadata(
             request_id=str(uuid4()),
             processing_time_ms=0.0,
@@ -242,7 +250,7 @@ class StandardResponse:
         result = {
             "status": self.status,
             "data": self.data,
-            "error": self.error.to_dict() if self.error else None,
+            "error": self.error.to_dict() if self.error else None,  # type: ignore[attr-defined, truthy-function]
             "metadata": self.metadata.to_dict(),
         }
         return result

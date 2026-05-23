@@ -10,15 +10,15 @@ from __future__ import annotations
 
 import logging
 import time
-from typing import Any
+from typing import Any, cast
 
 from fastapi import APIRouter, HTTPException
-from upstream_drift_tools.api import (
+from sidekick.api import (
     ErrorCode,
     ErrorDetail,
     StandardResponse,
 )
-from upstream_drift_tools.process_calculators.pressure_drop_calculator import (
+from sidekick.process_calculators.pressure_drop_calculator import (
     PressureDropCalculator,
     PressureDropResult,
 )
@@ -130,4 +130,4 @@ def calculate_pressure_drop(
         data=response_data,
         processing_time_ms=processing_time_ms,
     )
-    return response.to_dict()
+    return cast(dict[str, Any], response.to_dict())

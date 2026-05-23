@@ -9,6 +9,10 @@ from typing import Any
 from .dock_title_bar import make_redock_button
 from .qt_compat import QtWidgets
 
+__all__ = [
+    "TabPopoutMixin",
+]
+
 
 class TabPopoutMixin:
     """Mixin for popping out, redocking, and duplicating sidebar tabs."""

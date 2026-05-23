@@ -27,7 +27,6 @@ from __future__ import annotations
 
 from shared.python.theme.integration import get_theme_manager
 from shared.python.theme.matplotlib_style import apply_plot_theme
-from numba import jit
 
 import logging
 from typing import TYPE_CHECKING, Any

@@ -21,9 +21,11 @@ from __future__ import annotations
 
 import logging
 import os
-from datetime import UTC, datetime
+from datetime import datetime
 from pathlib import Path
 from typing import Any
+
+from compatibility import UTC
 
 from src.shared.python.ai.tool_registry import ToolCategory, get_global_registry
 

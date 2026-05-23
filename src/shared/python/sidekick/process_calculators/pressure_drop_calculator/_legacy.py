@@ -20,6 +20,13 @@ from typing import Final
 
 from sidekick.utils.unit_constants import R_UNIVERSAL
 
+__all__ = [
+    "PIPE_DIMENSIONS_SCH40",
+    "PressureDropCalculator",
+    "PressureDropResult",
+    "ROUGHNESS_VALUES",
+]
+
 # Standard Pipe Dimensions (Schedule 40) - Inner Diameter in meters
 PIPE_DIMENSIONS_SCH40: Final[dict[str, float]] = {
     '1/2"': 0.01575,

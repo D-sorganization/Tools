@@ -7,7 +7,7 @@ validate_temperature, validate_pressure, validate_composition.
 from __future__ import annotations
 
 import pytest
-from upstream_drift_tools.protocols import InputValidator
+from sidekick.protocols import InputValidator
 
 
 class TestRequirePositive:

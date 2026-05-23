@@ -11,6 +11,7 @@ This document outlines the responsive design principles, implementation decision
 ### 1.1 Mobile-First Approach
 
 All applications follow mobile-first responsive design:
+
 1. **Base styles** target 375px (small mobile)
 2. **Breakpoints** expand layout for larger screens
 3. **Flexible layouts** use CSS Grid and Flexbox
@@ -18,17 +19,18 @@ All applications follow mobile-first responsive design:
 
 ### 1.2 Viewport Targets
 
-| Device | Viewport | Priority | Usage |
-|--------|----------|----------|-------|
-| iPhone SE, 5S | 375px | Critical | ~45% mobile users |
-| iPhone 12-14 | 390px | Critical | ~35% mobile users |
-| iPad Mini | 768px | Important | Tablet users |
-| iPad Pro | 1024px | Important | Tablet/landscape |
-| Desktop | 1920px | Reference | Development |
+| Device        | Viewport | Priority  | Usage             |
+| ------------- | -------- | --------- | ----------------- |
+| iPhone SE, 5S | 375px    | Critical  | ~45% mobile users |
+| iPhone 12-14  | 390px    | Critical  | ~35% mobile users |
+| iPad Mini     | 768px    | Important | Tablet users      |
+| iPad Pro      | 1024px   | Important | Tablet/landscape  |
+| Desktop       | 1920px   | Reference | Development       |
 
 ### 1.3 Touch-First Interaction
 
 **Requirements:**
+
 - All interactive elements ≥44×44px
 - 8px minimum spacing between targets
 - No hover-only actions (mobile has no hover)
@@ -45,6 +47,7 @@ All applications follow mobile-first responsive design:
 **CSS File:** `/calculator/static/style.css` (457 lines)
 
 **Responsive Structure:**
+
 ```css
 .calculator-shell {
   width: min(760px, 100%);
@@ -55,6 +58,7 @@ All applications follow mobile-first responsive design:
 ```
 
 **Strengths:**
+
 - ✓ Uses `min()` for responsive width (760px max, 100% on mobile)
 - ✓ Grid layout with proper row spacing
 - ✓ Proper viewport meta tag
@@ -62,11 +66,16 @@ All applications follow mobile-first responsive design:
 - ✓ Media query for mobile (<640px)
 
 **Current Breakpoints:**
+
 ```css
 @media (max-width: 640px) {
   /* Mobile adjustments */
-  .io-grid { grid-template-columns: 1fr; }
-  .bounds-row { grid-template-columns: 1fr; }
+  .io-grid {
+    grid-template-columns: 1fr;
+  }
+  .bounds-row {
+    grid-template-columns: 1fr;
+  }
 }
 ```
 
@@ -75,12 +84,14 @@ All applications follow mobile-first responsive design:
 **Phase 2.2 Tasks for Calculator:**
 
 1. **[IN PROGRESS] Layout Testing**
+
    - [ ] Test at 375px - Verify no horizontal scroll
    - [ ] Test at 768px - Verify multi-column layout
    - [ ] Test at 1024px - Verify full desktop layout
    - [ ] Validate against checklist items 1.1-1.3
 
 2. **[TODO] Touch Target Sizing**
+
    - [ ] Keypad buttons: Verify ≥44×44px
    - [ ] Function strip: Verify ≥44×44px height
    - [ ] Mode buttons: Verify ≥44×44px
@@ -89,12 +100,14 @@ All applications follow mobile-first responsive design:
    - [ ] Spacing between elements: ≥8px
 
 3. **[TODO] Mobile Optimizations**
+
    - [ ] Test with device orientation change (landscape/portrait)
    - [ ] Test with on-screen keyboard visible
    - [ ] Verify scroll behavior doesn't interfere with input
    - [ ] Test touch edit panel on actual device
 
 4. **[TODO] Error Handling**
+
    - [ ] Implement Toast component if not present
    - [ ] Connect validation errors to Toast
    - [ ] Test error announcements on screen reader
@@ -123,11 +136,13 @@ All applications follow mobile-first responsive design:
 #### Current Implementation Status
 
 **Files:**
+
 - `unit-converter-app/index.html` (20KB)
 - `unit-converter-app/styles.css` (23KB)
 - `unit-converter-app/app.js` (33KB)
 
 **Current Features:**
+
 - ✓ 16+ conversion categories
 - ✓ 100+ units with conversion factors
 - ✓ Offline PWA support
@@ -136,6 +151,7 @@ All applications follow mobile-first responsive design:
 - ✓ Error message display (error-message div)
 
 **Responsive Implementation:**
+
 - Uses CSS Grid for layout
 - Category dropdown with full-width support
 - From/To unit selectors stack vertically on mobile
@@ -145,12 +161,14 @@ All applications follow mobile-first responsive design:
 **Phase 2.2 Tasks for Unit Converter:**
 
 1. **[TODO] Responsive Testing**
+
    - [ ] Test 375px - Dropdowns accessible, inputs full-width
    - [ ] Test 768px - Multi-column layout works
    - [ ] Test 1024px - Efficient use of space
    - [ ] Verify category dropdown opens without overflow
 
 2. **[TODO] Touch Target Sizing**
+
    - [ ] Category selector: ≥44px tall
    - [ ] Unit dropdowns: ≥44px tall
    - [ ] Custom units button: ≥44×44px
@@ -158,12 +176,14 @@ All applications follow mobile-first responsive design:
    - [ ] Input fields: ≥44px tall
 
 3. **[TODO] Keyboard Accessibility**
+
    - [ ] Tab order: Category → From → To → Input → Buttons
    - [ ] Arrow keys work in dropdowns
    - [ ] Enter triggers conversion
    - [ ] No keyboard traps
 
 4. **[TODO] Error Toast Implementation**
+
    - [ ] Current: error-message div with `style.display`
    - [ ] New: Toast component for better UX
    - [ ] Test invalid input scenarios
@@ -181,10 +201,12 @@ All applications follow mobile-first responsive design:
 #### Current Implementation Status
 
 **Files:**
+
 - `urdf_viewer/app.py` (FastAPI backend)
 - `urdf_viewer/` (React frontend)
 
 **Current Features:**
+
 - 3D model visualization (Three.js)
 - File upload support
 - Model rotation/zoom/pan
@@ -194,18 +216,21 @@ All applications follow mobile-first responsive design:
 **Phase 2.2 Tasks for URDF Viewer:**
 
 1. **[TODO] Responsive 3D Viewport**
+
    - [ ] Canvas resizes on window resize
    - [ ] Implement ResizeObserver pattern
    - [ ] 375px - Viewport usable but compact
    - [ ] 768px+ - Full feature display
 
 2. **[TODO] Touch Interactions**
+
    - [ ] Touch zoom (pinch)
    - [ ] Touch pan (drag)
    - [ ] Touch rotate (two-finger rotate)
    - [ ] No hover-only controls
 
 3. **[TODO] File Upload Mobile**
+
    - [ ] Upload input ≥44×44px
    - [ ] Accept drag-and-drop
    - [ ] Accept native file picker
@@ -226,6 +251,7 @@ All applications follow mobile-first responsive design:
 **Status:** Chrome 105+, Safari 16+, Firefox in progress
 
 If using container queries:
+
 ```css
 @container (min-width: 600px) {
   .layout-adaptive {
@@ -238,49 +264,62 @@ If using container queries:
 ### 3.2 Media Queries (Current Approach)
 
 **Current Pattern Used:**
+
 ```css
 /* Mobile first */
-.layout { grid-template-columns: 1fr; }
+.layout {
+  grid-template-columns: 1fr;
+}
 
 /* Tablet and up */
 @media (min-width: 768px) {
-  .layout { grid-template-columns: 1fr 1fr; }
+  .layout {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 /* Desktop and up */
 @media (min-width: 1024px) {
-  .layout { grid-template-columns: 1fr 1fr 1fr; }
+  .layout {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
 }
 ```
 
 ### 3.3 Flexible Component Sizing
 
 **Anti-pattern:**
+
 ```css
 /* BAD: Fixed width, won't work on mobile */
-.button { width: 200px; }
+.button {
+  width: 200px;
+}
 ```
 
 **Good pattern:**
+
 ```css
 /* GOOD: Responsive sizing */
-.button { 
-  min-width: 44px;           /* Touch target minimum */
-  padding: 12px 16px;        /* Scales with text */
-  width: 100%;               /* Fill available space */
-  max-width: 500px;          /* Cap for readability */
+.button {
+  min-width: 44px; /* Touch target minimum */
+  padding: 12px 16px; /* Scales with text */
+  width: 100%; /* Fill available space */
+  max-width: 500px; /* Cap for readability */
 }
 ```
 
 ### 3.4 Viewport Units (Use with Caution)
 
 **Avoid:**
+
 ```css
 /* Can cause issues with mobile URL bar */
 height: 100vh;
 ```
 
 **Better:**
+
 ```css
 /* Works better on mobile */
 height: 100%;
@@ -296,12 +335,14 @@ flex-direction: column;
 ### 4.1 Chrome DevTools
 
 **Steps:**
+
 1. Press Ctrl+Shift+M (Cmd+Shift+M on Mac)
 2. Select device from dropdown
 3. Or enter custom dimensions
 4. Check responsive behavior
 
 **Recommended Devices to Test:**
+
 - iPhone SE (375×812)
 - iPhone 14 (390×844)
 - iPad Mini (768×1024)
@@ -310,6 +351,7 @@ flex-direction: column;
 ### 4.2 Firefox Responsive Design Mode
 
 **Steps:**
+
 1. Press Ctrl+Shift+M
 2. Click device selector
 3. Choose from presets or enter custom
@@ -318,6 +360,7 @@ flex-direction: column;
 ### 4.3 Safari Responsive Design Mode
 
 **Steps:**
+
 1. Menu: Develop → Enter Responsive Design Mode
 2. Select device or custom
 3. Test
@@ -325,6 +368,7 @@ flex-direction: column;
 ### 4.4 Real Device Testing (Important!)
 
 **Why Real Devices Matter:**
+
 - Different pixel densities
 - Different browser implementations
 - Real touch feedback
@@ -332,6 +376,7 @@ flex-direction: column;
 - Device-specific features (notch, home bar)
 
 **Testing Procedure:**
+
 1. Deploy to localhost or test server
 2. Connect device to same WiFi
 3. Navigate to `http://[your-ip]:5000` (or port)
@@ -348,6 +393,7 @@ flex-direction: column;
 **Current Status:** Check each app
 
 **To Verify:**
+
 - [ ] Images use responsive `<picture>` or `srcset`
 - [ ] No oversized images for mobile
 - [ ] WebP format with JPEG fallback
@@ -356,6 +402,7 @@ flex-direction: column;
 ### 5.2 CSS & JavaScript
 
 **Best Practices:**
+
 - Minify CSS/JS in production
 - Remove unused CSS (PurgeCSS/Tailwind)
 - Defer non-critical JavaScript
@@ -366,6 +413,7 @@ flex-direction: column;
 **Current Status:** Test with Chrome DevTools throttling
 
 **Test Procedure:**
+
 1. Open DevTools → Network tab
 2. Set throttling: "Fast 3G"
 3. Hard refresh (Ctrl+Shift+R)
@@ -375,6 +423,7 @@ flex-direction: column;
    - Cumulative Layout Shift (CLS)
 
 **Targets:**
+
 - FCP < 1.8s
 - LCP < 2.5s
 - CLS < 0.1
@@ -383,28 +432,30 @@ flex-direction: column;
 
 ## Part 6: Browser Compatibility Matrix
 
-| Feature | Chrome | Firefox | Safari | Edge |
-|---------|--------|---------|--------|------|
-| CSS Grid | ✓ | ✓ | ✓ | ✓ |
-| Flexbox | ✓ | ✓ | ✓ | ✓ |
-| Media Queries | ✓ | ✓ | ✓ | ✓ |
-| :focus-visible | ✓ | ✓ | ✓ | ✓ |
-| ResizeObserver | ✓ | ✓ | ✓ | ✓ |
-| IntersectionObserver | ✓ | ✓ | ✓ | ✓ |
-| PWA Support | ✓ | ✓ | ✓ | ✓ |
-| Service Worker | ✓ | ✓ | ✓ | ✓ |
+| Feature              | Chrome | Firefox | Safari | Edge |
+| -------------------- | ------ | ------- | ------ | ---- |
+| CSS Grid             | ✓      | ✓       | ✓      | ✓    |
+| Flexbox              | ✓      | ✓       | ✓      | ✓    |
+| Media Queries        | ✓      | ✓       | ✓      | ✓    |
+| :focus-visible       | ✓      | ✓       | ✓      | ✓    |
+| ResizeObserver       | ✓      | ✓       | ✓      | ✓    |
+| IntersectionObserver | ✓      | ✓       | ✓      | ✓    |
+| PWA Support          | ✓      | ✓       | ✓      | ✓    |
+| Service Worker       | ✓      | ✓       | ✓      | ✓    |
 
 ---
 
 ## Part 7: Implementation Checklist
 
 ### Pre-Testing
+
 - [ ] All responsive CSS reviewed
 - [ ] Media query breakpoints documented
 - [ ] Touch target sizes verified
 - [ ] Viewport meta tag correct
 
 ### Mobile Testing (375px)
+
 - [ ] No horizontal scroll
 - [ ] All content accessible
 - [ ] Touch targets ≥44px
@@ -412,36 +463,42 @@ flex-direction: column;
 - [ ] Forms usable
 
 ### Tablet Testing (768px)
+
 - [ ] Multi-column layouts work
 - [ ] Touch targets still appropriate
 - [ ] Orientation changes handled
 - [ ] No awkward spacing
 
 ### Desktop Testing (1920px)
+
 - [ ] Uses space efficiently
 - [ ] Not too wide (readability)
 - [ ] Responsive typography
 - [ ] No text-width issues
 
 ### Accessibility Testing
+
 - [ ] Keyboard navigation works
 - [ ] Focus indicators visible
 - [ ] Screen reader announcements correct
 - [ ] Color contrast sufficient
 
 ### Performance Testing
+
 - [ ] Fast 3G: FCP < 1.8s
 - [ ] Fast 3G: LCP < 2.5s
 - [ ] CLS < 0.1
 - [ ] No layout shifts
 
 ### Browser Testing
+
 - [ ] Chrome/Chromium
 - [ ] Firefox
 - [ ] Safari
 - [ ] Edge
 
 ### Real Device Testing
+
 - [ ] iOS (iPhone/iPad)
 - [ ] Android (Phone/Tablet)
 - [ ] Orientation changes
@@ -456,12 +513,15 @@ flex-direction: column;
 **Cause:** Fixed width element > viewport
 
 **Solution:**
+
 ```css
 /* Before */
-.container { width: 800px; }
+.container {
+  width: 800px;
+}
 
 /* After */
-.container { 
+.container {
   width: 100%;
   max-width: 800px;
   padding: 0 16px;
@@ -473,12 +533,15 @@ flex-direction: column;
 **Cause:** Fixed font size < 12px
 
 **Solution:**
+
 ```css
 /* Before */
-body { font-size: 10px; }
+body {
+  font-size: 10px;
+}
 
 /* After */
-body { 
+body {
   font-size: clamp(14px, 3vw, 16px);
 }
 ```
@@ -488,9 +551,12 @@ body {
 **Cause:** Insufficient padding/height
 
 **Solution:**
+
 ```css
 /* Before */
-button { padding: 2px 4px; }
+button {
+  padding: 2px 4px;
+}
 
 /* After */
 button {
@@ -505,9 +571,10 @@ button {
 **Cause:** Scrollbar width changes
 
 **Solution:**
+
 ```css
 html {
-  overflow-y: scroll;  /* Always show scrollbar space */
+  overflow-y: scroll; /* Always show scrollbar space */
 }
 ```
 
@@ -516,8 +583,9 @@ html {
 **Cause:** 300ms delay for double-tap
 
 **Solution:**
+
 ```html
-<meta name="viewport" content="width=device-width, touch-action=manipulation">
+<meta name="viewport" content="width=device-width, touch-action=manipulation" />
 ```
 
 ---
@@ -529,23 +597,27 @@ html {
 For each application, capture:
 
 **At 375px (Mobile):**
+
 - Default state
 - With focus on first input
 - With error message
 - After performing primary action
 
 **At 768px (Tablet):**
+
 - Default state
 - Multi-column layout (if applicable)
 - Dropdowns opened
 - Dark mode (if applicable)
 
 **At 1024px (Desktop):**
+
 - Full layout
 - Multiple columns
 - All features visible
 
 **Save as:**
+
 ```
 /test_results/screenshots/[date]/
   ├── calculator-375px-default.png
@@ -563,14 +635,14 @@ For each application, capture:
 
 ### Responsible Parties
 
-| Phase | Owner | Status |
-|-------|-------|--------|
-| Design Review | Design Lead | [ ] |
-| Development | Frontend Dev | [ ] |
-| QA Testing | QA Lead | [ ] |
-| Accessibility | A11y Specialist | [ ] |
-| Performance | DevOps/Frontend | [ ] |
-| Deployment | Tech Lead | [ ] |
+| Phase         | Owner           | Status |
+| ------------- | --------------- | ------ |
+| Design Review | Design Lead     | [ ]    |
+| Development   | Frontend Dev    | [ ]    |
+| QA Testing    | QA Lead         | [ ]    |
+| Accessibility | A11y Specialist | [ ]    |
+| Performance   | DevOps/Frontend | [ ]    |
+| Deployment    | Tech Lead       | [ ]    |
 
 ---
 

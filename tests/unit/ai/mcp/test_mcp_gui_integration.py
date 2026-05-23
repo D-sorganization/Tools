@@ -16,53 +16,9 @@ unit suite stays green in CI environments without a display.
 
 from __future__ import annotations
 
-import sys
-import types
-from pathlib import Path
 from typing import Any
 
 import pytest
-
-# ---------------------------------------------------------------------------
-# Path bootstrap (mirrors the conftest.py in this directory)
-# ---------------------------------------------------------------------------
-_REPO_ROOT = Path(__file__).resolve().parents[4]
-if str(_REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(_REPO_ROOT))
-
-_PACKAGE_STUBS: list[tuple[str, str]] = [
-    ("src", "src"),
-    ("src.shared", "src/shared"),
-    ("src.shared.python", "src/shared/python"),
-    ("src.shared.python.ai", "src/shared/python/ai"),
-    ("src.shared.python.ai.mcp", "src/shared/python/ai/mcp"),
-]
-for _mod_name, _rel_path in _PACKAGE_STUBS:
-    existing = sys.modules.get(_mod_name)
-    target = str(_REPO_ROOT / _rel_path)
-    if existing is None:
-        stub = types.ModuleType(_mod_name)
-        stub.__path__ = [target]  # type: ignore[attr-defined]
-        sys.modules[_mod_name] = stub
-    else:
-        existing_path = list(getattr(existing, "__path__", []) or [])
-        if target not in existing_path:
-            existing_path.insert(0, target)
-            existing.__path__ = existing_path  # type: ignore[attr-defined]
-
-import logging as _logging  # noqa: E402
-
-_logging_pkg = sys.modules.setdefault(
-    "src.shared.python.logging_pkg",
-    types.ModuleType("src.shared.python.logging_pkg"),
-)
-_logging_cfg_name = "src.shared.python.logging_pkg.logging_config"
-_logging_cfg = sys.modules.get(_logging_cfg_name)
-if _logging_cfg is None:
-    _logging_cfg = types.ModuleType(_logging_cfg_name)
-    sys.modules[_logging_cfg_name] = _logging_cfg
-_logging_cfg.get_logger = _logging.getLogger  # type: ignore[attr-defined]
-_logging_cfg.setup_logging = lambda *_a, **_kw: None  # type: ignore[attr-defined]
 
 # ---------------------------------------------------------------------------
 # Now we can import MCP contracts and pool helpers (no Qt needed)
@@ -70,6 +26,7 @@ _logging_cfg.setup_logging = lambda *_a, **_kw: None  # type: ignore[attr-define
 from src.shared.python.ai.mcp.contracts import (  # noqa: E402
     McpServerConfig,
     McpToolDescriptor,
+    McpTransport,
 )
 from src.shared.python.ai.mcp.pool import _serialize_tool_for_provider  # noqa: E402
 
@@ -163,26 +120,26 @@ class TestMcpStatusIndicator:
     def _get_indicator_class(self) -> Any:
         """Import McpStatusIndicator lazily so non-Qt envs can skip."""
         from src.shared.python.ai.mcp.gui import (
-            McpStatusIndicator,  # type: ignore[import]
+            McpStatusIndicator,
         )
 
         return McpStatusIndicator
 
-    def test_indicator_shows_disconnected_by_default(self, qtbot: Any) -> None:  # type: ignore[name-defined]
+    def test_indicator_shows_disconnected_by_default(self, qtbot: Any) -> None:
         McpStatusIndicator = self._get_indicator_class()
         widget = McpStatusIndicator()
         qtbot.addWidget(widget)
         assert widget.server_count == 0
         assert "disconnected" in widget.status_text.lower() or widget.server_count == 0
 
-    def test_indicator_updates_on_pool_refresh(self, qtbot: Any) -> None:  # type: ignore[name-defined]
+    def test_indicator_updates_on_pool_refresh(self, qtbot: Any) -> None:
         McpStatusIndicator = self._get_indicator_class()
         widget = McpStatusIndicator()
         qtbot.addWidget(widget)
         widget.update_status(connected_count=2, total_count=3)
         assert widget.server_count == 2
 
-    def test_indicator_accessible_text(self, qtbot: Any) -> None:  # type: ignore[name-defined]
+    def test_indicator_accessible_text(self, qtbot: Any) -> None:
         McpStatusIndicator = self._get_indicator_class()
         widget = McpStatusIndicator()
         qtbot.addWidget(widget)
@@ -201,40 +158,44 @@ class TestMcpServersTab:
     """McpServersTab allows adding/removing MCP server configs."""
 
     def _get_tab_class(self) -> Any:
-        from src.shared.python.ai.mcp.gui import McpServersTab  # type: ignore[import]
+        from src.shared.python.ai.mcp.gui import McpServersTab
 
         return McpServersTab
 
-    def test_tab_starts_empty(self, qtbot: Any) -> None:  # type: ignore[name-defined]
+    def test_tab_starts_empty(self, qtbot: Any) -> None:
         McpServersTab = self._get_tab_class()
         tab = McpServersTab()
         qtbot.addWidget(tab)
         assert tab.server_count == 0
 
-    def test_add_stdio_server(self, qtbot: Any) -> None:  # type: ignore[name-defined]
+    def test_add_stdio_server(self, qtbot: Any) -> None:
         McpServersTab = self._get_tab_class()
         tab = McpServersTab()
         qtbot.addWidget(tab)
-        cfg = McpServerConfig(name="notebooklm", transport="stdio", command="uvx")
+        cfg = McpServerConfig(
+            name="notebooklm", transport=McpTransport.STDIO, command="uvx"
+        )
         tab.add_server(cfg)
         assert tab.server_count == 1
 
-    def test_remove_server(self, qtbot: Any) -> None:  # type: ignore[name-defined]
+    def test_remove_server(self, qtbot: Any) -> None:
         McpServersTab = self._get_tab_class()
         tab = McpServersTab()
         qtbot.addWidget(tab)
-        cfg = McpServerConfig(name="notebooklm", transport="stdio", command="uvx")
+        cfg = McpServerConfig(
+            name="notebooklm", transport=McpTransport.STDIO, command="uvx"
+        )
         tab.add_server(cfg)
         tab.remove_server("notebooklm")
         assert tab.server_count == 0
 
-    def test_get_configs_returns_all_servers(self, qtbot: Any) -> None:  # type: ignore[name-defined]
+    def test_get_configs_returns_all_servers(self, qtbot: Any) -> None:
         McpServersTab = self._get_tab_class()
         tab = McpServersTab()
         qtbot.addWidget(tab)
-        cfg1 = McpServerConfig(name="nb", transport="stdio", command="uvx")
+        cfg1 = McpServerConfig(name="nb", transport=McpTransport.STDIO, command="uvx")
         cfg2 = McpServerConfig(
-            name="remote", transport="http", url="https://example.com/mcp"
+            name="remote", transport=McpTransport.HTTP, url="https://example.com/mcp"
         )
         tab.add_server(cfg1)
         tab.add_server(cfg2)

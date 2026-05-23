@@ -52,6 +52,7 @@ line-ending = "auto"
 Line length is 88 characters (matches historical Black default).
 
 CI runs two separate Ruff steps:
+
 1. `ruff check .` — linting (zero violations required).
 2. `ruff format --check .` — formatting (zero diffs required).
 

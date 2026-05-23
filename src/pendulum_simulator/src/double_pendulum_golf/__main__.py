@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Entry point for running the application.
 
 Usage:

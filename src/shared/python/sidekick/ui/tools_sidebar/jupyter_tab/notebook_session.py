@@ -20,11 +20,18 @@ import hashlib
 import json
 import logging
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-logger = logging.getLogger(__name__)
+from compatibility import UTC
+
+__all__ = [
+    "NotebookSessionManager",
+    "NotebookSessionModel",
+]
+
+_logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -83,7 +90,7 @@ class NotebookSessionModel:
         if not isinstance(env_vars, dict):
             raise TypeError(f"env_vars must be a dict, got {type(env_vars).__name__}")
         self._kernel_env_vars = dict(env_vars)
-        logger.debug("Kernel environment updated: %d variable(s)", len(env_vars))
+        _logger.debug("Kernel environment updated: %d variable(s)", len(env_vars))
 
     @property
     def kernel_env_vars(self) -> dict[str, Any]:
@@ -152,7 +159,7 @@ class NotebookSessionManager:
         session_file = self._sessions_dir / f"{sid}.json"
         session_file.write_text(json.dumps(payload, indent=2), encoding="utf-8")
         model.last_saved = now
-        logger.debug("Session %s saved to %s", sid, session_file)
+        _logger.debug("Session %s saved to %s", sid, session_file)
         return sid
 
     def load_session(
@@ -206,7 +213,7 @@ class NotebookSessionManager:
             try:
                 last_saved = datetime.fromisoformat(data["last_saved"])
             except ValueError:
-                logger.warning("Could not parse last_saved: %s", data["last_saved"])
+                _logger.warning("Could not parse last_saved: %s", data["last_saved"])
 
         model = NotebookSessionModel(
             notebook_path=notebook_path,

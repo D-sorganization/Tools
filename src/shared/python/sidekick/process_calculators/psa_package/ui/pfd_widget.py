@@ -8,6 +8,10 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+__all__ = [
+    "PFDWidget",
+]
+
 
 class PFDWidget(QWidget):
     """Widget for displaying the Process Flow Diagram."""

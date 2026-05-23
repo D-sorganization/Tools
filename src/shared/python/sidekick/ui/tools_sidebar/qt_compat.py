@@ -51,11 +51,11 @@ else:  # pragma: no cover - depends on local optional deps
     raise ImportError("No supported Qt binding found for tools sidebar")
 
 __all__ = [
+    "FileSystemModel",
     "QT_API",
     "QtCore",
     "QtGui",
     "QtWidgets",
-    "FileSystemModel",
     "Signal",
     "all_sidebar_dock_features",
     "dock_area",

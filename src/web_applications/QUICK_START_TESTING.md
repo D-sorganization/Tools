@@ -11,6 +11,7 @@ This is your entry point for Phase 2.2 Frontend Polish & Integration testing. Co
 ### 1. Verify Test Documents Are Available
 
 Check that these files exist in `/web_applications/`:
+
 - ✓ MOBILE_TESTING_CHECKLIST.md
 - ✓ TESTING_INTEGRATION_GUIDE.md
 - ✓ ACCESSIBILITY_TESTING_GUIDE.md
@@ -22,6 +23,7 @@ If any are missing, create them first.
 ### 2. Set Up Test Environment
 
 **Create test results directory:**
+
 ```bash
 cd /home/user/Tools/src/web_applications
 mkdir -p test_results/{reports,screenshots,axe-results}
@@ -32,6 +34,7 @@ touch TESTING_LOG.md
 ### 3. Start Development Servers
 
 **Terminal 1 - Aurora Calculator:**
+
 ```bash
 cd /home/user/Tools/src/web_applications/calculator
 flask --app webapp run
@@ -39,6 +42,7 @@ flask --app webapp run
 ```
 
 **Terminal 2 - Unit Converter:**
+
 ```bash
 cd /home/user/Tools/src/web_applications/unit_converter/unit-converter-app
 python -m http.server 8000
@@ -46,6 +50,7 @@ python -m http.server 8000
 ```
 
 **Terminal 3 - URDF Viewer (if testing):**
+
 ```bash
 cd /home/user/Tools/src/web_applications/urdf_viewer
 uvicorn app:app --reload
@@ -55,6 +60,7 @@ uvicorn app:app --reload
 ### 4. Prepare Browser DevTools
 
 **Chrome/Edge:**
+
 1. Open each application in a browser tab
 2. Press `Ctrl+Shift+M` (Cmd+Shift+M on Mac) to enable mobile simulation
 3. Install Axe DevTools extension:
@@ -62,6 +68,7 @@ uvicorn app:app --reload
    - Click "Add to Chrome"
 
 **Firefox:**
+
 1. Install Axe DevTools:
    - Firefox Add-ons → Search "axe DevTools"
    - Click "Add to Firefox"
@@ -122,6 +129,7 @@ uvicorn app:app --reload
 4. Verify it's announced to screen reader (if testing)
 
 **Test Cases:**
+
 - **Calculator:** Unmatched parentheses `((1+2)`
 - **Unit Converter:** Non-numeric input `abc`
 - **URDF Viewer:** Invalid file upload
@@ -138,43 +146,51 @@ uvicorn app:app --reload
 ## Testing Command Reference
 
 ### Run Mobile Test (375px)
+
 ```javascript
 // Paste in DevTools Console
-const shell = document.querySelector('.calculator-shell');
-console.log('Width:', shell.offsetWidth);
-console.log('Has horizontal scroll:', document.documentElement.scrollWidth > document.documentElement.clientWidth);
+const shell = document.querySelector(".calculator-shell");
+console.log("Width:", shell.offsetWidth);
+console.log("Has horizontal scroll:", document.documentElement.scrollWidth > document.documentElement.clientWidth);
 ```
 
 ### Run Accessibility Check
+
 ```javascript
 // Check for unlabeled buttons
 const unlabeled = [];
-document.querySelectorAll('button').forEach(btn => {
-  if (!btn.getAttribute('aria-label') && !btn.textContent?.trim()) {
+document.querySelectorAll("button").forEach((btn) => {
+  if (!btn.getAttribute("aria-label") && !btn.textContent?.trim()) {
     unlabeled.push(btn);
   }
 });
-console.log('Unlabeled buttons:', unlabeled.length, unlabeled);
+console.log("Unlabeled buttons:", unlabeled.length, unlabeled);
 ```
 
 ### Check Touch Target Sizes
+
 ```javascript
 // Find buttons smaller than 44x44px
-document.querySelectorAll('button').forEach(btn => {
+document.querySelectorAll("button").forEach((btn) => {
   const w = btn.offsetWidth;
   const h = btn.offsetHeight;
   if (w < 44 || h < 44) {
-    console.log(`SMALL: ${w}x${h}px`, btn.getAttribute('aria-label'));
+    console.log(`SMALL: ${w}x${h}px`, btn.getAttribute("aria-label"));
   }
 });
 ```
 
 ### Monitor Focus
+
 ```javascript
 // Log all focus events
-document.addEventListener('focus', (e) => {
-  console.log('Focused:', e.target.getAttribute('aria-label') || e.target.type || e.target.textContent?.slice(0, 20));
-}, true);
+document.addEventListener(
+  "focus",
+  (e) => {
+    console.log("Focused:", e.target.getAttribute("aria-label") || e.target.type || e.target.textContent?.slice(0, 20));
+  },
+  true,
+);
 ```
 
 ---
@@ -192,34 +208,38 @@ Create a file: `test_results/reports/[app]-report-[date].md`
 
 ## Results Summary
 
-| Category | Status | Issues |
-|----------|--------|--------|
-| Responsive (375px) | PASS/FAIL | 0 |
-| Responsive (768px) | PASS/FAIL | 0 |
-| Responsive (1024px) | PASS/FAIL | 0 |
+| Category            | Status    | Issues       |
+| ------------------- | --------- | ------------ |
+| Responsive (375px)  | PASS/FAIL | 0            |
+| Responsive (768px)  | PASS/FAIL | 0            |
+| Responsive (1024px) | PASS/FAIL | 0            |
 | Accessibility (Axe) | PASS/FAIL | 0 violations |
-| Keyboard Navigation | PASS/FAIL | 0 traps |
-| Touch Targets | PASS/FAIL | 0 < 44px |
-| Error Handling | PASS/FAIL | 0 missing |
+| Keyboard Navigation | PASS/FAIL | 0 traps      |
+| Touch Targets       | PASS/FAIL | 0 < 44px     |
+| Error Handling      | PASS/FAIL | 0 missing    |
 
 ## Details
 
 ### Responsive Testing
+
 - 375px: [Details]
 - 768px: [Details]
 - 1024px: [Details]
 
 ### Accessibility
+
 - Axe violations: 0
 - Critical issues: None
 - Focus indicators: Visible on all elements
 - Keyboard: All elements reachable
 
 ### Issues Found
+
 1. [Issue 1 - if any]
 2. [Issue 2 - if any]
 
 ## Screenshots
+
 - [app]-375px.png
 - [app]-768px.png
 - [app]-1024px.png
@@ -227,7 +247,7 @@ Create a file: `test_results/reports/[app]-report-[date].md`
 
 ## Overall Status: PASS / FAIL
 
-**Sign-off:** _________________ Date: _______
+**Sign-off:** **\*\*\*\***\_**\*\*\*\*** Date: **\_\_\_**
 ```
 
 ---
@@ -235,34 +255,44 @@ Create a file: `test_results/reports/[app]-report-[date].md`
 ## Troubleshooting
 
 ### Issue: DevTools Mobile View Doesn't Match Real Device
+
 **Solution:** Test on actual device using same WiFi network
+
 - Find your IP: `ipconfig getifaddr en0` (Mac) or `ipconfig` (Windows)
 - Visit: `http://[your-ip]:5000`
 
 ### Issue: Font Too Small on Mobile
+
 **Check:** Is font size ≥12px?
+
 ```javascript
-window.getComputedStyle(document.body).fontSize
+window.getComputedStyle(document.body).fontSize;
 ```
 
 ### Issue: Buttons Hard to Tap
+
 **Check:** Are buttons ≥44×44px?
+
 ```javascript
-document.querySelectorAll('button').forEach(btn => {
-  console.log(btn.offsetWidth, 'x', btn.offsetHeight);
+document.querySelectorAll("button").forEach((btn) => {
+  console.log(btn.offsetWidth, "x", btn.offsetHeight);
 });
 ```
 
 ### Issue: Horizontal Scroll on Mobile
+
 **Check:** Is page width = viewport width?
+
 ```javascript
-document.documentElement.scrollWidth <= document.documentElement.clientWidth
+document.documentElement.scrollWidth <= document.documentElement.clientWidth;
 ```
 
 ### Issue: Focus Outline Not Visible
+
 **Check:** CSS for `:focus-visible`
+
 ```javascript
-window.getComputedStyle(document.activeElement, ':focus-visible').outline
+window.getComputedStyle(document.activeElement, ":focus-visible").outline;
 ```
 
 ---
@@ -270,6 +300,7 @@ window.getComputedStyle(document.activeElement, ':focus-visible').outline
 ## Tool Checklist
 
 Before starting, ensure you have:
+
 - [ ] Chrome/Chromium browser with Axe extension
 - [ ] Firefox browser with Axe extension (optional)
 - [ ] Mobile device (iPhone/Android) connected to WiFi
@@ -282,12 +313,14 @@ Before starting, ensure you have:
 ## Critical Paths (Must Complete)
 
 ### Minimum Testing (4 hours)
+
 1. ✓ Responsive test at 375px only
 2. ✓ Axe accessibility scan
 3. ✓ Keyboard tab test
 4. ✓ Error message test
 
 ### Full Testing (8 hours)
+
 1. ✓ Responsive test all viewports (375, 768, 1024px)
 2. ✓ Axe accessibility scan + fixes
 3. ✓ Keyboard navigation + focus test
@@ -310,6 +343,7 @@ Before starting, ensure you have:
 ## Support & Questions
 
 For detailed guidance, see:
+
 - **Mobile Layout Issues:** RESPONSIVE_DESIGN_DECISIONS.md
 - **Accessibility Details:** ACCESSIBILITY_TESTING_GUIDE.md
 - **Integration Procedures:** TESTING_INTEGRATION_GUIDE.md
@@ -319,14 +353,14 @@ For detailed guidance, see:
 
 ## Estimated Time Breakdown
 
-| Task | Time | Status |
-|------|------|--------|
-| Setup (servers, tools) | 15 min | [  ] |
-| Calculator Testing | 1.5 hrs | [  ] |
-| Unit Converter Testing | 1.5 hrs | [  ] |
-| URDF Viewer Testing | 1 hr | [  ] |
-| Documentation | 1 hr | [  ] |
-| **Total** | **5.5 hrs** | |
+| Task                   | Time        | Status |
+| ---------------------- | ----------- | ------ |
+| Setup (servers, tools) | 15 min      | [ ]    |
+| Calculator Testing     | 1.5 hrs     | [ ]    |
+| Unit Converter Testing | 1.5 hrs     | [ ]    |
+| URDF Viewer Testing    | 1 hr        | [ ]    |
+| Documentation          | 1 hr        | [ ]    |
+| **Total**              | **5.5 hrs** |        |
 
 ---
 

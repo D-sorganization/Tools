@@ -32,21 +32,31 @@ import pandas as pd
 
 from ...utils.logging import get_logger, log_execution_time
 
+__all__ = [
+    "BIOMECHANICAL_MARKER_MAX_M",
+    "BIOMECHANICAL_MARKER_MIN_M",
+    "C3DDataReader",
+    "C3DEvent",
+    "C3DMapping",
+    "C3DMetadata",
+    "SCHEMA_VERSION",
+]
+
 # DbC imports — graceful fallback if contracts not available
 try:
     from contracts import ensure, require
 except ImportError:  # pragma: no cover
 
-    def require(condition: bool, message: str, value: Any = None) -> None:  # type: ignore[misc]
+    def require(condition: bool, message: str, value: Any = None) -> None:
         if not condition:
             raise ValueError(f"[DbC pre-condition] {message} (got: {value!r})")
 
-    def ensure(condition: bool, message: str, value: Any = None) -> None:  # type: ignore[misc]
+    def ensure(condition: bool, message: str, value: Any = None) -> None:
         if not condition:
             raise ValueError(f"[DbC post-condition] {message} (got: {value!r})")
 
 
-logger = get_logger(__name__)
+_logger = get_logger(__name__)
 
 # Supported export formats (whitelist for security)
 _SUPPORTED_EXPORT_FORMATS = frozenset({"csv", "json", "npz"})
@@ -227,7 +237,7 @@ class C3DDataReader:
         if points.shape[0] >= 4:
             residuals = points[3, :, :].T.reshape(-1)
         else:
-            logger.warning(
+            _logger.warning(
                 "C3D point data has only %d channels (expected 4+). "
                 "Residual data unavailable; filling with NaN.",
                 points.shape[0],
@@ -239,7 +249,9 @@ class C3DDataReader:
             coordinates[too_noisy, :] = np.nan
 
         current_marker_count = len(sorted_labels)
-        frame_indices = np.repeat(np.arange(metadata.frame_count), current_marker_count)
+        frame_indices: np.ndarray = np.repeat(
+            np.arange(metadata.frame_count), current_marker_count
+        )
         marker_names = np.tile(sorted_labels, metadata.frame_count)
 
         data: dict[str, Any] = {
@@ -255,7 +267,7 @@ class C3DDataReader:
             if metadata.frame_rate > 0:
                 data["time"] = frame_indices / metadata.frame_rate
             else:
-                logger.warning(
+                _logger.warning(
                     "Frame rate is 0. Time column will be omitted "
                     "despite include_time=True."
                 )
@@ -263,7 +275,7 @@ class C3DDataReader:
         dataframe = pd.DataFrame(data)
         dataframe = dataframe.reset_index(drop=True)
 
-        logger.info(
+        _logger.info(
             "Loaded %s frames for %s markers from %s",
             metadata.frame_count,
             current_marker_count,
@@ -285,11 +297,11 @@ class C3DDataReader:
         if coordinates.size == 0:
             return
 
-        min_pos = np.nanmin(coordinates)
-        max_pos = np.nanmax(coordinates)
+        min_pos: float = float(np.nanmin(coordinates))
+        max_pos: float = float(np.nanmax(coordinates))
 
         if np.isnan(min_pos) or np.isnan(max_pos):
-            logger.warning(
+            _logger.warning(
                 "All marker coordinates are NaN or non-finite; skipping unit "
                 "range validation (Guideline P1). Verify upstream data quality "
                 "and missing-data handling."
@@ -297,7 +309,7 @@ class C3DDataReader:
             return
 
         if min_pos < BIOMECHANICAL_MARKER_MIN_M:
-            logger.warning(
+            _logger.warning(
                 "⚠️ Suspiciously small marker positions detected (< 1mm). "
                 f"Min position: {min_pos:.6f}m. "
                 f"Source units: {source_units}, target: "
@@ -307,7 +319,7 @@ class C3DDataReader:
             )
 
         if max_pos > BIOMECHANICAL_MARKER_MAX_M:
-            logger.error(
+            _logger.error(
                 "❌ Unrealistic marker positions detected (> 10m). "
                 f"Max position: {max_pos:.2f}m. "
                 f"Source units: {source_units}, target: "
@@ -535,7 +547,7 @@ class C3DDataReader:
         plate_channels = self.get_force_plate_channels()
 
         if not plate_channels:
-            logger.warning(
+            _logger.warning(
                 "No force plate channels detected in C3D file. "
                 "Expected channels like Fx1, Fy1, Fz1, Mx1, My1, Mz1."
             )
@@ -588,7 +600,7 @@ class C3DDataReader:
         if include_time and analog_rate:
             result.insert(1, "time", result["sample"] / analog_rate)
 
-        logger.info(
+        _logger.info(
             "Extracted force plate data for %d plates, %d samples from %s",
             len(plate_channels),
             len(result),
@@ -626,7 +638,7 @@ class C3DDataReader:
             raise ValueError("plate_num must be provided")
         missing_keys = required_keys - set(channels.keys())
         if missing_keys:
-            logger.warning(
+            _logger.warning(
                 f"Force plate {plate_num} missing channels: {missing_keys}. Skipping."
             )
             return None

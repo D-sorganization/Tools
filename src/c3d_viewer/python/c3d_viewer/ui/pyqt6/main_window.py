@@ -236,9 +236,12 @@ class C3DViewerWindow(ThemedWindowMixin, QMainWindow):
 
         # Menu bar with Notes toggle
         menu_bar = self.menuBar()
-        view_menu = menu_bar.addMenu("&View")
-        notes_action = view_menu.addAction("Toggle &Notes")
-        notes_action.triggered.connect(self._toggle_notes)
+        if menu_bar is not None:
+            view_menu = menu_bar.addMenu("&View")
+            if view_menu is not None:
+                notes_action = view_menu.addAction("Toggle &Notes")
+                if notes_action is not None:
+                    notes_action.triggered.connect(self._toggle_notes)
 
         # Central widget with scroll area
         scroll_area = QScrollArea()
@@ -503,7 +506,7 @@ class C3DViewerWindow(ThemedWindowMixin, QMainWindow):
 
     def _load_c3d_data(self) -> None:
         """Load actual C3D data using the reader."""
-        from upstream_drift_tools.lab.bio.c3d_reader import C3DDataReader
+        from sidekick.lab.bio.c3d_reader import C3DDataReader
 
         reader = C3DDataReader(self._current_file)
         metadata = reader.get_metadata()
@@ -637,7 +640,7 @@ class C3DViewerWindow(ThemedWindowMixin, QMainWindow):
             return
 
         try:
-            from upstream_drift_tools.lab.bio.c3d_reader import C3DDataReader
+            from sidekick.lab.bio.c3d_reader import C3DDataReader
 
             reader = C3DDataReader(self._current_file)
             plate_count = reader.get_force_plate_count()
@@ -707,7 +710,7 @@ class C3DViewerWindow(ThemedWindowMixin, QMainWindow):
             return
 
         try:
-            from upstream_drift_tools.lab.bio.c3d_reader import C3DDataReader
+            from sidekick.lab.bio.c3d_reader import C3DDataReader
 
             reader = C3DDataReader(self._current_file)
 

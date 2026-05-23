@@ -39,7 +39,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import pandas as pd
@@ -65,6 +65,22 @@ except ImportError:  # pragma: no cover - optional dependency
     COOLPROP_AVAILABLE = False
 
 # Try to import PyQt6 for GUI, but make it optional
+if TYPE_CHECKING:
+    from PyQt6.QtCore import QTimer, pyqtSignal
+    from PyQt6.QtGui import QFont
+    from PyQt6.QtWidgets import (
+        QDoubleSpinBox,
+        QGridLayout,
+        QGroupBox,
+        QLabel,
+        QPushButton,
+        QSplitter,
+        QTableWidget,
+        QTextEdit,
+        QVBoxLayout,
+        QWidget,
+    )
+
 try:
     from PyQt6.QtCore import QTimer, pyqtSignal
     from PyQt6.QtGui import QFont
@@ -84,7 +100,8 @@ try:
     GUI_AVAILABLE = True
 except ImportError:
     GUI_AVAILABLE = False
-    QWidget = object  # type: ignore[assignment,misc]
+    if not TYPE_CHECKING:
+        QWidget = object
 
 # Import BaseCalculatorWidget for state management
 try:
@@ -121,7 +138,16 @@ from .constants import (
     MMHG_TO_PA_CONV,
 )
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "ACID_GAS_PRESETS",
+    "AcidGasComposition",
+    "AcidGasDewpointCalculator",
+    "DewpointResult",
+    "estimate_condensation_risk",
+    "quick_dewpoint_calculation",
+]
+
+_logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -392,7 +418,7 @@ class AcidGasDewpointCalculator:
                 chem = Chemical(name, T=T)
                 return float(chem.Psat)
             except ImportError as e:  # pragma: no cover - fallback
-                logger.warning("Thermo vapor pressure failed: %s; using Antoine", e)
+                _logger.warning("Thermo vapor pressure failed: %s; using Antoine", e)
                 return self.calculate_vapor_pressure(
                     temperature_c, component, "antoine"
                 )
@@ -410,7 +436,7 @@ class AcidGasDewpointCalculator:
                 OverflowError,
                 TypeError,
             ) as e:  # pragma: no cover - fallback
-                logger.warning("CoolProp vapor pressure failed: %s; using Antoine", e)
+                _logger.warning("CoolProp vapor pressure failed: %s; using Antoine", e)
                 return self.calculate_vapor_pressure(
                     temperature_c, component, "antoine"
                 )

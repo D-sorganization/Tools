@@ -19,14 +19,17 @@ When writing tests that require credential-like strings, use the following namin
 ### Prefixes
 
 - **API Keys**: `OWASP-TEST-API-KEY-{SERVICE}-EXAMPLE`
+
   - Example: `OWASP-TEST-API-KEY-OPENAI-EXAMPLE`
   - Example: `OWASP-TEST-API-KEY-GITHUB-EXAMPLE`
 
 - **Authentication Tokens**: `OWASP-TEST-TOKEN-{SERVICE}-EXAMPLE`
+
   - Example: `OWASP-TEST-TOKEN-GITHUB-EXAMPLE`
   - Example: `OWASP-TEST-TOKEN-SAFE-FOR-TESTING-ONLY`
 
 - **Passwords**: `OWASP-TEST-PASSWORD-{SERVICE}-EXAMPLE`
+
   - Example: `OWASP-TEST-PASSWORD-DB-EXAMPLE`
 
 - **Secrets/Secret Keys**: `OWASP-TEST-SECRET-KEY-SAFE-FOR-TESTING-ONLY`
@@ -82,13 +85,14 @@ def test_api_call(tmp_path):
 
 All new optional-service credentials **must** use the `TOOLS_*` prefix (issue #2407):
 
-| Canonical Name            | Purpose                                     | Legacy name (still accepted) |
-| ------------------------- | ------------------------------------------- | ----------------------------- |
-| `TOOLS_GITHUB_TOKEN`      | GitHub API; raises rate limit 60→5000/hr    | `GITHUB_TOKEN`               |
-| `TOOLS_GEMINI_API_KEY`    | Gemini AI for PDF renaming                  | `GEMINI_API_KEY`, `GOOGLE_API_KEY` |
-| `TOOLS_MATLAB_PATH`       | Full path to `matlab` executable            | (none)                        |
+| Canonical Name         | Purpose                                  | Legacy name (still accepted)       |
+| ---------------------- | ---------------------------------------- | ---------------------------------- |
+| `TOOLS_GITHUB_TOKEN`   | GitHub API; raises rate limit 60→5000/hr | `GITHUB_TOKEN`                     |
+| `TOOLS_GEMINI_API_KEY` | Gemini AI for PDF renaming               | `GEMINI_API_KEY`, `GOOGLE_API_KEY` |
+| `TOOLS_MATLAB_PATH`    | Full path to `matlab` executable         | (none)                             |
 
 The `TOOLS_` prefix:
+
 - Namespaces all Tools variables to avoid collisions with system or third-party env vars
 - Makes it clear in shell environment dumps which variables belong to this project
 - Enables future tooling to validate/warn on missing service variables at startup

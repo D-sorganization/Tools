@@ -12,20 +12,26 @@ TDD: these tests drove the implementation of chat_popout_window.py and
 the re_dock precondition on tab_popout.py.
 """
 
-from __future__ import annotations
-
+import os
 import sys
 from pathlib import Path
 
 import pytest
 
-pytestmark = pytest.mark.unit
+pytestmark = pytest.mark.serial
+
+if sys.platform == "win32" and os.environ.get("PYTEST_XDIST_WORKER"):
+    pytest.skip(
+        "Qt Chat redock tests run serially on Windows.",
+        allow_module_level=True,
+    )
 
 pytest.importorskip("PyQt6")
 
 _SHARED = Path(__file__).resolve().parents[3] / "src" / "shared" / "python"
-if str(_SHARED) not in sys.path:
-    sys.path.insert(0, str(_SHARED))
+if str(_SHARED) in sys.path:
+    sys.path.remove(str(_SHARED))
+sys.path.insert(0, str(_SHARED))
 
 
 # ---------------------------------------------------------------------------
@@ -207,7 +213,7 @@ def _fix_sidekick_import() -> None:
         del sys.modules["sidekick"]
 
 
-def test_duplicate_tab_creates_independent_session(tmp_path: Path) -> None:
+def test_duplicate_tab_creates_independent_session(tmp_path: Path, qtbot) -> None:
     """Duplicating a tab creates a new independent tab_id (different from original)."""
     _fix_sidekick_import()
     from PyQt6 import QtWidgets
@@ -216,6 +222,7 @@ def test_duplicate_tab_creates_independent_session(tmp_path: Path) -> None:
 
     QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
     win = QtWidgets.QMainWindow()
+    qtbot.addWidget(win)
     tab_def = SidebarTabDefinition(
         tab_id="chat_tab",
         title="Chat",

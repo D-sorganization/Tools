@@ -18,4 +18,3 @@ Defining `__cause__` as a method here overrides Python’s special exception-cha
 [View on GitHub](https://github.com/D-sorganization/Tools/pull/2319#discussion_r3139994161)
 
 ---
-

@@ -8,7 +8,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from PyQt6.QtWidgets import QApplication
-from upstream_drift_tools.process_calculators.psa_package.psa_gui import (
+from sidekick.process_calculators.psa_package.psa_gui import (
     InputPanel,
     PFDWidget,
     PSAMainWindow,

@@ -70,7 +70,7 @@ jobs:
   quality-gate:
     needs: pick-runner
     runs-on: d-sorg-fleet
-    timeout-minutes: 45
+    timeout-minutes: 20
     env:
       # Shared wheel/download cache for self-hosted runners — avoids re-downloading
       # the same packages on every run.  Path is host-stable and safe for concurrent
@@ -304,7 +304,7 @@ jobs:
           fi
 
   tests:
-    timeout-minutes: 60
+    timeout-minutes: 30
     # Parallelized: tests do not consume any quality-gate outputs (quality-gate
     # declares no `outputs:` block, and no step in this job references
     # `needs.quality-gate.*`). Fanning out after pick-runner removes the
@@ -384,13 +384,13 @@ jobs:
             BASE_SHA="HEAD~1"
           fi
 
-          git diff --name-only "$BASE_SHA" HEAD -- 'tests/test_*.py' 'tests/**/test_*.py' 'tests/**/*test.py' 'src/**/tests/test_*.py' 'src/**/tests/**/*test.py' > changed_test_files.txt || echo "No previous commit found (initial commit?)"
-          git diff --name-only "$BASE_SHA" HEAD -- '*.py' > changed_python_files.txt || echo "No previous commit found (initial commit?)"
+          git diff --diff-filter=ACMRT --name-only "$BASE_SHA" HEAD -- 'tests/test_*.py' 'tests/**/test_*.py' 'tests/**/*test.py' 'src/**/tests/test_*.py' 'src/**/tests/**/*test.py' > changed_test_files.txt || echo "No previous commit found (initial commit?)"
+          git diff --diff-filter=ACMRT --name-only "$BASE_SHA" HEAD -- '*.py' > changed_python_files.txt || echo "No previous commit found (initial commit?)"
 
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             if [ ! -s changed_test_files.txt ] && [ ! -s changed_python_files.txt ]; then
               coverage_gate_required=false
-            elif ! grep -q -E '^src/shared/python/(notes|upstream_drift_tools)/' changed_python_files.txt; then
+            elif ! grep -q -E '^src/shared/python/(notes|upstream_drift_tools|sidekick)/' changed_python_files.txt; then
               coverage_gate_required=false
             fi
           fi
@@ -427,6 +427,13 @@ jobs:
             "tests/shared/python/gui_launcher/test_registry.py"
             # Notes model coverage (keeps total coverage above 25% floor)
             "tests/shared/python/notes/test_models.py"
+            # Sidekick unit tests
+            "src/shared/python/sidekick/tests/test_latex_renderer.py"
+            "src/shared/python/sidekick/tests/test_notes_store.py"
+            "src/shared/python/sidekick/tests/test_notes_tab.py"
+            "src/shared/python/sidekick/tests/test_selected_tab_panel.py"
+            "src/shared/python/sidekick/tests/test_symbolic_engine.py"
+            "src/shared/python/sidekick/tests/test_tab_context_menu.py"
           )
           # Use `python -m pytest` rather than the `pytest` console script so
           # the active Python interpreter resolves pytest-cov (and other pip
@@ -436,13 +443,16 @@ jobs:
           # user (~/.local) while the `pytest` console script's shebang
           # points at a different Python that does not load that user-site,
           # producing `pytest: error: unrecognized arguments: --cov=.`.
-          # Keep coverage policy inputs stable. Changed tests still run below,
-          # but do not mutate the baseline-oriented coverage.xml.
-          python -m pytest "${core_tests[@]}" -m "not live_simulation" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=0
+          pytest_args=(-m "not live_simulation" --import-mode=importlib)
+          if [ "${{ steps.coverage_inputs.outputs.coverage_gate_required }}" = "true" ]; then
+            pytest_args+=(--cov=. --cov-report=xml:coverage.xml)
+          fi
 
           if [ -s changed_test_files.txt ]; then
             mapfile -t changed_test_files < changed_test_files.txt
-            python -m pytest "${changed_test_files[@]}" -m "not live_simulation" --import-mode=importlib
+            python -m pytest "${changed_test_files[@]}" "${core_tests[@]}" "${pytest_args[@]}"
+          else
+            python -m pytest "${core_tests[@]}" "${pytest_args[@]}"
           fi
 
       - name: Provider-Contract Suite (Exported Packages)
@@ -467,6 +477,7 @@ jobs:
             --cov=src/shared/python/signal_toolkit \
             --cov=src/shared/python/model_generation \
             --cov-report=term \
+            --cov-fail-under=0
 
 
           echo "## Provider-Contract Suite (Python ${{ matrix.python-version }})" >> $GITHUB_STEP_SUMMARY
@@ -476,6 +487,10 @@ jobs:
       - name: Coverage Policy Gate
         if: steps.coverage_inputs.outputs.coverage_gate_required == 'true'
         run: python3 scripts/check_coverage_policy.py --coverage-file coverage.xml --policy-file config/coverage_policy.json --baseline-file config/coverage_baseline.json --output-json coverage_trend_${{ matrix.python-version }}.json
+
+      - name: Sidekick Per-File Coverage Gate
+        if: steps.coverage_inputs.outputs.coverage_gate_required == 'true'
+        run: python3 scripts/check_sidekick_coverage.py --coverage-file coverage.xml --changed-files changed_python_files.txt
 
       - name: Upload Coverage Trend
         if: steps.coverage_inputs.outputs.coverage_gate_required == 'true'

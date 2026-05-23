@@ -26,11 +26,8 @@ Ensure all domain-specific terms used in i18n translations are documented in the
   "locales_path": "locales/",
   "glossary_path": "domains/i18n/glossary.md",
   "languages": ["en", "fr", "de", "es"],
-  "domain_terms": [
-    "lead", "prospect", "expert", "milestone", "direct link",
-    "spending limit", "flag", "qualification rate", "trust score"
-  ],
-  "analysis_mode": "comprehensive",  // or "quick" (just check coverage)
+  "domain_terms": ["lead", "prospect", "expert", "milestone", "direct link", "spending limit", "flag", "qualification rate", "trust score"],
+  "analysis_mode": "comprehensive", // or "quick" (just check coverage)
   "output_format": "json"
 }
 ```
@@ -40,7 +37,7 @@ Ensure all domain-specific terms used in i18n translations are documented in the
 ```json
 {
   "glossary_summary": {
-    "status": "NEEDS_UPDATE",         // UP_TO_DATE, NEEDS_UPDATE, CRITICAL_GAPS
+    "status": "NEEDS_UPDATE", // UP_TO_DATE, NEEDS_UPDATE, CRITICAL_GAPS
     "glossary_terms": 28,
     "translations_found": 26,
     "missing_translations": 2,
@@ -67,7 +64,7 @@ Ensure all domain-specific terms used in i18n translations are documented in the
         },
         "fr": {
           "usage_count": 11,
-          "variants": ["prospect", "prospects", "Leads"],  // ❌ "Leads" is variant
+          "variants": ["prospect", "prospects", "Leads"], // ❌ "Leads" is variant
           "consistent": false,
           "inconsistent_instances": [
             {
@@ -90,10 +87,7 @@ Ensure all domain-specific terms used in i18n translations are documented in the
           "consistent": true
         }
       },
-      "recommendations": [
-        "Fix FR usage: change 'Leads' to 'prospect' in dashboard.leads.header",
-        "Update glossary note: explain EN 'lead' vs FR 'prospect' distinction"
-      ]
+      "recommendations": ["Fix FR usage: change 'Leads' to 'prospect' in dashboard.leads.header", "Update glossary note: explain EN 'lead' vs FR 'prospect' distinction"]
     },
     {
       "term": "milestone",
@@ -117,9 +111,9 @@ Ensure all domain-specific terms used in i18n translations are documented in the
       "status": "MISSING_TRANSLATION",
       "glossary": {
         "en": "qualification rate",
-        "fr": null,                   // ❌ missing
-        "de": null,                   // ❌ missing
-        "es": null                    // ❌ missing
+        "fr": null, // ❌ missing
+        "de": null, // ❌ missing
+        "es": null // ❌ missing
       },
       "actual_usage": {
         "en": { "usage_count": 5, "variants": ["qualification rate", "qualification_rate"], "consistent": true },
@@ -127,11 +121,7 @@ Ensure all domain-specific terms used in i18n translations are documented in the
         "de": { "usage_count": 4, "variants": ["Qualifizierungsquote"], "consistent": true },
         "es": { "usage_count": 4, "variants": ["tasa de calificación"], "consistent": true }
       },
-      "recommendations": [
-        "Add FR translation to glossary: 'taux de qualification'",
-        "Add DE translation to glossary: 'Qualifizierungsquote'",
-        "Add ES translation to glossary: 'tasa de calificación'"
-      ]
+      "recommendations": ["Add FR translation to glossary: 'taux de qualification'", "Add DE translation to glossary: 'Qualifizierungsquote'", "Add ES translation to glossary: 'tasa de calificación'"]
     }
   ],
   "discovered_terms": [
@@ -180,7 +170,7 @@ Ensure all domain-specific terms used in i18n translations are documented in the
     ]
   },
   "statistics": {
-    "glossary_coverage": "92.8%",     // terms in glossary / discovered terms
+    "glossary_coverage": "92.8%", // terms in glossary / discovered terms
     "translation_coverage": {
       "fr": "100%",
       "de": "92.8%",
@@ -229,14 +219,7 @@ Ensure all domain-specific terms used in i18n translations are documented in the
       }
     ]
   },
-  "recommendations": [
-    "Update glossary with 'free mode' (new term from E12S16)",
-    "Fix FR inconsistency: change 'Mes Leads' → 'Mes prospects' in dashboard.leads.header",
-    "Complete glossary translations for 'qualification_rate' (FR, DE, ES already used, just not in glossary)",
-    "Consider using i18next pluralization plugin for robust lead/leads handling",
-    "Review ES variant: 'límite de gasto' vs 'límite de gastos' (use consistently)",
-    "Remove deprecated term 'matchable' from glossary (replaced by 'profil visible')"
-  ]
+  "recommendations": ["Update glossary with 'free mode' (new term from E12S16)", "Fix FR inconsistency: change 'Mes Leads' → 'Mes prospects' in dashboard.leads.header", "Complete glossary translations for 'qualification_rate' (FR, DE, ES already used, just not in glossary)", "Consider using i18next pluralization plugin for robust lead/leads handling", "Review ES variant: 'límite de gasto' vs 'límite de gastos' (use consistently)", "Remove deprecated term 'matchable' from glossary (replaced by 'profil visible')"]
 }
 ```
 
@@ -260,6 +243,7 @@ locales/fr/dashboard.json should use "prospect", not "Leads" or "client"
 Different languages handle pluralization differently. Options:
 
 **Option A: Manual (current MVP approach)**
+
 ```json
 {
   "leads.singular": "1 lead",
@@ -268,6 +252,7 @@ Different languages handle pluralization differently. Options:
 ```
 
 **Option B: i18next-plural (recommended post-MVP)**
+
 ```json
 {
   "lead_one": "1 lead",
@@ -326,17 +311,17 @@ Canonical format (Markdown with YAML table):
 
 ## Domain Terms
 
-| Term | EN | FR | DE | ES | Context | Notes | Variants |
-|---|---|---|---|---|---|---|---|
-| dashboard | dashboard | tableau de bord | Dashboard | panel | Navigation | Main overview screen | dashboard, dashboards |
+| Term      | EN        | FR                | DE             | ES                 | Context      | Notes                        | Variants              |
+| --------- | --------- | ----------------- | -------------- | ------------------ | ------------ | ---------------------------- | --------------------- |
+| dashboard | dashboard | tableau de bord   | Dashboard      | panel              | Navigation   | Main overview screen         | dashboard, dashboards |
 | workspace | workspace | espace de travail | Arbeitsbereich | espacio de trabajo | Multi-tenant | Container for projects/users | workspace, workspaces |
-| plan | plan | forfait | Tarif | plan | Billing | Subscription tier name | plan, plans |
+| plan      | plan      | forfait           | Tarif          | plan               | Billing      | Subscription tier name       | plan, plans           |
 
 ## Deprecation Log
 
-| Deprecated | Replaced By | Deprecation Date | Removal Date |
-|---|---|---|---|
-| matchable | profil visible | 2026-03-02 | 2026-06-02 |
+| Deprecated | Replaced By    | Deprecation Date | Removal Date |
+| ---------- | -------------- | ---------------- | ------------ |
+| matchable  | profil visible | 2026-03-02       | 2026-06-02   |
 ```
 
 ---
@@ -354,6 +339,7 @@ Canonical format (Markdown with YAML table):
 ## Notes for Delivery Agent
 
 This skill is **audit + proposal only**. Delivery Agent must:
+
 1. Run this skill (generates report + proposals)
 2. Review "glossary_update_proposal" section
 3. Manually update `domains/i18n/glossary.md` (or use glossary editor UI post-MVP)

@@ -6,6 +6,10 @@ from typing import Any
 
 from .qt_compat import QtWidgets
 
+__all__ = [
+    "TabDisplayNameMixin",
+]
+
 
 class TabDisplayNameMixin:
     """Mixin for stable tab ids with persisted user-facing display names."""
@@ -47,7 +51,7 @@ class TabDisplayNameMixin:
         self._emit_context()
 
     def _tab_display_name(self, tab_id: str, default_title: str) -> str:
-        return self._state.tab_display_names.get(tab_id, default_title)
+        return str(self._state.tab_display_names.get(tab_id, default_title))
 
     def _refresh_tab_display_name(self, tab_id: str) -> None:
         definition = self._tab_definitions.get(tab_id)

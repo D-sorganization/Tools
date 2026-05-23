@@ -2,6 +2,7 @@
 #
 # Builds and publishes Python extension wheels for the `ai_backend` Rust crate
 # across all supported platforms and Python versions.
+# Supported platforms: windows, ubuntu, linux, macos, mac.
 #
 # Triggered on:
 #   - push to main (when ai_backend sources change)

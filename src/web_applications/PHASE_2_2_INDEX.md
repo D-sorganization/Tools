@@ -14,9 +14,11 @@
 All documents are ready for immediate use. Below is a guide to each.
 
 ### 1. QUICK_START_TESTING.md (333 lines) ← START HERE
+
 **Purpose:** Entry point for testers. Contains 5-minute setup and quick testing procedures.
 
 **What You'll Find:**
+
 - 5-minute environment setup
 - Quick testing checklist (main phases)
 - Testing command reference (copy-paste JavaScript)
@@ -27,6 +29,7 @@ All documents are ready for immediate use. Below is a guide to each.
 **Best For:** First-time testers, quick reference during testing
 
 **Key Sections:**
+
 ```
 ├── 5-Minute Setup
 ├── Testing Checklist (Quick Version)
@@ -39,9 +42,11 @@ All documents are ready for immediate use. Below is a guide to each.
 ---
 
 ### 2. MOBILE_TESTING_CHECKLIST.md (610 lines)
+
 **Purpose:** Comprehensive mobile testing procedures at three viewports (375px, 768px, 1024px).
 
 **What You'll Find:**
+
 - Test environments and DevTools setup
 - Layout integrity tests (375px mobile)
 - Tab order and keyboard navigation (all viewports)
@@ -59,6 +64,7 @@ All documents are ready for immediate use. Below is a guide to each.
 **Best For:** Detailed mobile testing, comprehensive checklist
 
 **Test Viewports Covered:**
+
 - 375px (iPhone SE, 5, 5S) - Primary mobile
 - 768px (iPad Mini) - Tablet portrait
 - 1024px (iPad Pro) - Tablet landscape
@@ -67,9 +73,11 @@ All documents are ready for immediate use. Below is a guide to each.
 ---
 
 ### 3. ACCESSIBILITY_TESTING_GUIDE.md (726 lines)
+
 **Purpose:** Complete WCAG 2.1 Level AA compliance testing and implementation.
 
 **What You'll Find:**
+
 - WCAG 2.1 Level AA principles overview
 - Automated testing with Axe DevTools (setup + procedures)
 - Color contrast testing (4.5:1 minimum)
@@ -86,6 +94,7 @@ All documents are ready for immediate use. Below is a guide to each.
 **Best For:** Accessibility compliance, screen reader testing
 
 **Tools Covered:**
+
 - Axe DevTools (automated)
 - WebAIM Contrast Checker (manual)
 - NVDA (Windows screen reader)
@@ -96,9 +105,11 @@ All documents are ready for immediate use. Below is a guide to each.
 ---
 
 ### 4. TESTING_INTEGRATION_GUIDE.md (730 lines)
+
 **Purpose:** Integration testing procedures across all applications and browsers.
 
 **What You'll Find:**
+
 - Part 1: Responsive Design Testing (all viewports, all apps)
 - Part 2: Accessibility Testing (ARIA, semantic HTML, keyboard)
 - Part 3: Error Handling Integration (Toast component, test cases)
@@ -113,6 +124,7 @@ All documents are ready for immediate use. Below is a guide to each.
 **Best For:** Coordinating tests across apps, integration testing, deployment
 
 **Coverage:**
+
 - All three applications (Calculator, Unit Converter, URDF Viewer)
 - All browsers (Chrome, Firefox, Safari, Edge)
 - All viewports (375px through 1920px)
@@ -121,9 +133,11 @@ All documents are ready for immediate use. Below is a guide to each.
 ---
 
 ### 5. RESPONSIVE_DESIGN_DECISIONS.md (587 lines)
+
 **Purpose:** Reference guide for responsive design principles and implementation decisions.
 
 **What You'll Find:**
+
 - Mobile-first design principles
 - Viewport targets and priorities
 - Touch-first interaction requirements
@@ -140,6 +154,7 @@ All documents are ready for immediate use. Below is a guide to each.
 **Best For:** Understanding design decisions, debugging layout issues
 
 **Key Content:**
+
 - Current CSS structure for each app
 - Responsive patterns to follow
 - Common anti-patterns to avoid
@@ -149,9 +164,11 @@ All documents are ready for immediate use. Below is a guide to each.
 ---
 
 ### 6. PHASE_2_2_IMPLEMENTATION_STATUS.md (530 lines)
+
 **Purpose:** Comprehensive status tracking and task breakdown for Phase 2.2.
 
 **What You'll Find:**
+
 - Deliverables checklist (4 main documents)
 - Application-specific implementation status
 - Task breakdown for each app (Calculator, Unit Converter, URDF Viewer)
@@ -166,16 +183,15 @@ All documents are ready for immediate use. Below is a guide to each.
 **Best For:** Project planning, status tracking, task assignment
 
 **Applications Covered:**
+
 1. **Aurora CAS Calculator**
    - Current state assessment
    - 4 sprint tasks (Responsive, A11y, Error Handling, Testing)
    - Files to modify
-   
 2. **Unit Converter**
    - Current state assessment
    - 4 sprint tasks
    - Files to modify
-   
 3. **URDF Viewer**
    - Current state assessment
    - 4 sprint tasks
@@ -186,30 +202,35 @@ All documents are ready for immediate use. Below is a guide to each.
 ## How to Use These Documents
 
 ### Scenario 1: Starting Phase 2.2 (You Are Here)
+
 1. **Read:** QUICK_START_TESTING.md (5-10 minutes)
 2. **Setup:** Follow 5-minute setup section
 3. **Start Testing:** Begin with MOBILE_TESTING_CHECKLIST.md
 4. **Reference:** Use TESTING_INTEGRATION_GUIDE.md for detailed procedures
 
 ### Scenario 2: Testing Specific Application
+
 1. **Reference:** Check PHASE_2_2_IMPLEMENTATION_STATUS.md for specific app tasks
 2. **Mobile:** Use MOBILE_TESTING_CHECKLIST.md for layout validation
 3. **A11y:** Use ACCESSIBILITY_TESTING_GUIDE.md for compliance
 4. **Integration:** Use TESTING_INTEGRATION_GUIDE.md for test scenarios
 
 ### Scenario 3: Debugging Layout Issues
+
 1. **Reference:** RESPONSIVE_DESIGN_DECISIONS.md for current CSS
 2. **Check:** Is element using responsive units (%, min(), max(), clamp())?
 3. **Test:** Use DevTools to inspect computed styles
 4. **Common Issues:** See "Common Issues & Solutions" section
 
 ### Scenario 4: Implementing Toast Component
+
 1. **Reference:** TESTING_INTEGRATION_GUIDE.md → Part 3.1 "Toast Component Implementation"
 2. **Copy:** Code examples for HTML, JS, and CSS
 3. **Test:** Use MOBILE_TESTING_CHECKLIST.md → Section 5 "Toast Component Integration"
 4. **Verify:** Error scenarios in PHASE_2_2_IMPLEMENTATION_STATUS.md
 
 ### Scenario 5: Accessibility Audit Failure
+
 1. **Check:** Run Axe DevTools scan (ACCESSIBILITY_TESTING_GUIDE.md → Part 2)
 2. **Violations:** Review specific violations reported
 3. **Fix:** See ACCESSIBILITY_TESTING_GUIDE.md → Relevant section (ARIA, contrast, etc.)
@@ -243,24 +264,28 @@ QUICK_START_TESTING.md (Entry Point)
 ## Key Metrics & Targets
 
 ### Responsive Design
+
 - ✓ Zero horizontal scroll at any viewport
 - ✓ All text ≥12px (readable without zoom)
 - ✓ Touch targets ≥44×44px
 - ✓ Spacing ≥8px between interactive elements
 
 ### Accessibility
+
 - ✓ Axe DevTools: 0 violations per app
 - ✓ WCAG AA Color Contrast: 100% compliance
 - ✓ Keyboard Navigation: All elements reachable via Tab
 - ✓ Focus Indicators: Visible on all interactive elements
 
 ### Error Handling
+
 - ✓ All validation errors trigger Toast
 - ✓ Errors announced to screen reader
 - ✓ Input data preserved after error
 - ✓ Clear, actionable error messages
 
 ### Performance
+
 - ✓ FCP (First Contentful Paint) < 1.8s (3G)
 - ✓ LCP (Largest Contentful Paint) < 2.5s
 - ✓ CLS (Cumulative Layout Shift) < 0.1
@@ -271,6 +296,7 @@ QUICK_START_TESTING.md (Entry Point)
 ## Files & Locations Reference
 
 ### Web Applications
+
 ```
 /home/user/Tools/src/web_applications/
 ├── calculator/
@@ -292,6 +318,7 @@ QUICK_START_TESTING.md (Entry Point)
 ```
 
 ### Test Documentation
+
 ```
 /home/user/Tools/src/web_applications/
 ├── QUICK_START_TESTING.md (8.1KB) ← Entry point
@@ -304,6 +331,7 @@ QUICK_START_TESTING.md (Entry Point)
 ```
 
 ### Test Results (To Be Created)
+
 ```
 test_results/
 ├── reports/
@@ -327,7 +355,9 @@ test_results/
 ## Testing Timeline
 
 ### Day 1: Responsive & Core Testing
+
 - **Morning (4 hours):**
+
   - Setup test environments
   - Aurora Calculator responsive testing (375px, 768px, 1024px)
   - Unit Converter responsive testing
@@ -340,7 +370,9 @@ test_results/
   - Documentation and screenshots
 
 ### Day 2: Finalization & Sign-off
+
 - **Morning:**
+
   - Real device testing (iOS/Android)
   - Screen reader testing (if available)
   - Fix any blockers
@@ -356,6 +388,7 @@ test_results/
 ## Success Criteria (In Priority Order)
 
 ### Critical (Blockers - Must Pass)
+
 - [ ] Responsive tests pass at 375px, 768px, 1024px
 - [ ] Axe DevTools: 0 violations per application
 - [ ] WCAG AA color contrast: 100% compliance
@@ -363,6 +396,7 @@ test_results/
 - [ ] Toast component implemented and working
 
 ### Important (Should Pass)
+
 - [ ] All screenshots documented
 - [ ] Real device testing completed
 - [ ] Screen reader testing passed
@@ -370,6 +404,7 @@ test_results/
 - [ ] Performance metrics within targets
 
 ### Enhancement (Nice to Have)
+
 - [ ] Automated A11y testing in CI/CD
 - [ ] Performance monitoring setup
 - [ ] Additional browser compatibility testing
@@ -380,6 +415,7 @@ test_results/
 ## Quick Command Reference
 
 ### Start Development Servers
+
 ```bash
 # Calculator
 cd calculator && flask --app webapp run
@@ -392,6 +428,7 @@ cd urdf_viewer && uvicorn app:app --reload
 ```
 
 ### Create Test Result Files
+
 ```bash
 mkdir -p test_results/{reports,screenshots,axe-results}
 cd test_results
@@ -399,19 +436,19 @@ touch TESTING_LOG.md
 ```
 
 ### Check Responsive Layout
+
 ```javascript
 // Run in DevTools Console
-console.log('Width:', document.documentElement.clientWidth);
-console.log('Has h-scroll:', document.documentElement.scrollWidth > document.documentElement.clientWidth);
+console.log("Width:", document.documentElement.clientWidth);
+console.log("Has h-scroll:", document.documentElement.scrollWidth > document.documentElement.clientWidth);
 ```
 
 ### List All Focusable Elements
+
 ```javascript
-const focusable = document.querySelectorAll(
-  'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-);
-console.log('Total focusable:', focusable.length);
-focusable.forEach((el, i) => console.log(i, el.getAttribute('aria-label')));
+const focusable = document.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+console.log("Total focusable:", focusable.length);
+focusable.forEach((el, i) => console.log(i, el.getAttribute("aria-label")));
 ```
 
 ---
@@ -419,22 +456,30 @@ focusable.forEach((el, i) => console.log(i, el.getAttribute('aria-label')));
 ## Known Issues & Workarounds
 
 ### Issue: Mobile View Differs from Real Device
+
 **Workaround:** Test on actual device using same WiFi network
+
 - Get IP: `ipconfig getifaddr en0` (Mac)
 - Visit: `http://[IP]:5000`
 
 ### Issue: Screen Reader Not Available
+
 **Workaround:** Use NVDA (free) on Windows or VoiceOver on Mac
+
 - NVDA: https://www.nvaccess.org/
 - VoiceOver: Cmd+F5 on Mac
 
 ### Issue: Can't Focus on Element
+
 **Check:** Is element a `<button>` or `<div role="button">`?
+
 - All interactive elements must be in tab order
 - Use proper semantic HTML: `<button>`, `<input>`, `<a>`
 
 ### Issue: Error Toast Not Appearing
+
 **Check:** Is toast container in HTML with id="toast-container"?
+
 - Verify: `document.getElementById('toast-container')` returns element
 - Check console for errors when showing toast
 
@@ -443,16 +488,19 @@ focusable.forEach((el, i) => console.log(i, el.getAttribute('aria-label')));
 ## Resources & References
 
 ### Official Standards
+
 - [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
 - [ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/)
 - [MDN Web Docs](https://developer.mozilla.org/)
 
 ### Tools
+
 - [Axe DevTools](https://www.deque.com/axe/devtools/)
 - [NVDA Screen Reader](https://www.nvaccess.org/)
 - [Chrome DevTools](https://developer.chrome.com/docs/devtools/)
 
 ### Learning
+
 - [Web Accessibility by Google](https://www.youtube.com/@WebAccessibilityByGoogle)
 - [Inclusive Components](https://inclusive-components.design/)
 - [A11ycasts](https://www.youtube.com/playlist?list=PLNYkxOF6rcICWx0C9Xc-RgEzwLvsPccay2)
@@ -462,11 +510,13 @@ focusable.forEach((el, i) => console.log(i, el.getAttribute('aria-label')));
 ## Communication & Support
 
 ### During Testing
+
 - **Blockers:** Log immediately in TESTING_LOG.md
 - **Questions:** Refer to relevant section in test guide
 - **Issues Found:** Document with screenshot and steps to reproduce
 
 ### After Testing
+
 - **Report Location:** test_results/reports/[app]-report-[date].md
 - **Screenshots:** test_results/screenshots/[date]/[filename].png
 - **Summary:** Update PHASE_2_2_IMPLEMENTATION_STATUS.md
@@ -484,8 +534,8 @@ Before declaring Phase 2.2 complete:
 - [ ] Screenshots captured and organized
 - [ ] Test reports compiled
 - [ ] No critical blockers remaining
-- [ ] QA Lead sign-off: _________ Date: _______
-- [ ] Tech Lead sign-off: _________ Date: _______
+- [ ] QA Lead sign-off: \***\*\_\*\*** Date: **\_\_\_**
+- [ ] Tech Lead sign-off: \***\*\_\*\*** Date: **\_\_\_**
 
 ---
 
@@ -501,15 +551,15 @@ Before declaring Phase 2.2 complete:
 
 ## Document Metadata
 
-| Document | Lines | Created | Last Updated | Status |
-|----------|-------|---------|--------------|--------|
-| QUICK_START_TESTING.md | 333 | 2026-04-30 | 2026-04-30 | ✓ Complete |
-| MOBILE_TESTING_CHECKLIST.md | 610 | 2026-04-30 | 2026-04-30 | ✓ Complete |
-| ACCESSIBILITY_TESTING_GUIDE.md | 726 | 2026-04-30 | 2026-04-30 | ✓ Complete |
-| TESTING_INTEGRATION_GUIDE.md | 730 | 2026-04-30 | 2026-04-30 | ✓ Complete |
-| RESPONSIVE_DESIGN_DECISIONS.md | 587 | 2026-04-30 | 2026-04-30 | ✓ Complete |
-| PHASE_2_2_IMPLEMENTATION_STATUS.md | 530 | 2026-04-30 | 2026-04-30 | ✓ Complete |
-| PHASE_2_2_INDEX.md | ~500 | 2026-04-30 | 2026-04-30 | ✓ Complete |
+| Document                           | Lines | Created    | Last Updated | Status     |
+| ---------------------------------- | ----- | ---------- | ------------ | ---------- |
+| QUICK_START_TESTING.md             | 333   | 2026-04-30 | 2026-04-30   | ✓ Complete |
+| MOBILE_TESTING_CHECKLIST.md        | 610   | 2026-04-30 | 2026-04-30   | ✓ Complete |
+| ACCESSIBILITY_TESTING_GUIDE.md     | 726   | 2026-04-30 | 2026-04-30   | ✓ Complete |
+| TESTING_INTEGRATION_GUIDE.md       | 730   | 2026-04-30 | 2026-04-30   | ✓ Complete |
+| RESPONSIVE_DESIGN_DECISIONS.md     | 587   | 2026-04-30 | 2026-04-30   | ✓ Complete |
+| PHASE_2_2_IMPLEMENTATION_STATUS.md | 530   | 2026-04-30 | 2026-04-30   | ✓ Complete |
+| PHASE_2_2_INDEX.md                 | ~500  | 2026-04-30 | 2026-04-30   | ✓ Complete |
 
 **Total Documentation:** 3,921+ lines
 **Total File Size:** ~90 KB
@@ -521,6 +571,7 @@ Before declaring Phase 2.2 complete:
 You now have comprehensive, ready-to-use testing documentation for Phase 2.2. All guides are cross-referenced and designed to work together.
 
 **To Get Started:**
+
 1. Read QUICK_START_TESTING.md (5 minutes)
 2. Follow 5-minute setup section
 3. Begin with MOBILE_TESTING_CHECKLIST.md
@@ -530,4 +581,4 @@ You now have comprehensive, ready-to-use testing documentation for Phase 2.2. Al
 
 ---
 
-*End of Phase 2.2 Index*
+_End of Phase 2.2 Index_

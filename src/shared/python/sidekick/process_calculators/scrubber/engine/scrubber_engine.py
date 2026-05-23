@@ -18,7 +18,11 @@ from ...scrubber_calculator import (  # noqa: E402
 )
 from ..models.scrubber_models import ScrubberInputs, ScrubberResults  # noqa: E402
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "ScrubberEngine",
+]
+
+_logger = logging.getLogger(__name__)
 
 
 class ScrubberEngine:

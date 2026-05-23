@@ -8,7 +8,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from upstream_drift_tools.utils.paths import get_repo_root
+from sidekick.utils.paths import get_repo_root
 
 
 class TestGetRepoRoot:

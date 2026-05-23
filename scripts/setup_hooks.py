@@ -12,14 +12,17 @@ Usage:
     python scripts/setup_hooks.py
 """
 
+import logging
 import subprocess
 import sys
 from pathlib import Path
 
+logger = logging.getLogger(__name__)
+
 
 def run_command(cmd: list[str], check: bool = True) -> subprocess.CompletedProcess:
     """Run a command and return the result."""
-    print(f"  Running: {' '.join(cmd)}")
+    logger.info(f"  Running: {' '.join(cmd)}")
     return subprocess.run(cmd, check=check, capture_output=True, text=True)
 
 
@@ -34,97 +37,101 @@ def check_pre_commit_installed() -> bool:
 
 def install_pre_commit() -> None:
     """Install pre-commit via pip."""
-    print("\n[1/4] Installing pre-commit...")
+    logger.info("\n[1/4] Installing pre-commit...")
     if check_pre_commit_installed():
-        print("  pre-commit is already installed")
+        logger.info("  pre-commit is already installed")
     else:
         run_command([sys.executable, "-m", "pip", "install", "pre-commit"])
-        print("  pre-commit installed successfully")
+        logger.info("  pre-commit installed successfully")
 
 
 def install_hooks() -> None:
     """Install pre-commit hooks."""
-    print("\n[2/4] Installing pre-commit hooks...")
+    logger.info("\n[2/4] Installing pre-commit hooks...")
     run_command(["pre-commit", "install"])
-    print("  pre-commit hooks installed")
+    logger.info("  pre-commit hooks installed")
 
 
 def install_push_hooks() -> None:
     """Install pre-push hooks."""
-    print("\n[3/4] Installing pre-push hooks...")
+    logger.info("\n[3/4] Installing pre-push hooks...")
     run_command(["pre-commit", "install", "--hook-type", "pre-push"])
-    print("  pre-push hooks installed")
+    logger.info("  pre-push hooks installed")
 
 
 def install_dev_dependencies() -> None:
     """Install development dependencies for hooks."""
-    print("\n[4/4] Installing hook dependencies...")
+    logger.info("\n[4/4] Installing hook dependencies...")
     deps = [
         "ruff>=0.14.0",
-        "black>=26.0.0",
         "mypy>=1.13.0",
         "bandit>=1.7.0",
+        "pip-audit>=2.7.0",
         "types-requests",
         "types-PyYAML",
         "pydantic",
     ]
     run_command([sys.executable, "-m", "pip", "install"] + deps)
-    print("  Dependencies installed")
+    logger.info("  Dependencies installed")
 
 
 def verify_installation() -> None:
     """Verify hooks are installed correctly."""
-    print("\n" + "=" * 60)
-    print("VERIFICATION")
-    print("=" * 60)
+    logger.info("\n" + "=" * 60)
+    logger.info("VERIFICATION")
+    logger.info("=" * 60)
 
     git_hooks_dir = Path(".git/hooks")
     pre_commit_hook = git_hooks_dir / "pre-commit"
     pre_push_hook = git_hooks_dir / "pre-push"
 
     if pre_commit_hook.exists():
-        print(f"  [OK] pre-commit hook: {pre_commit_hook}")
+        logger.info(f"  [OK] pre-commit hook: {pre_commit_hook}")
     else:
-        print(f"  [MISSING] pre-commit hook: {pre_commit_hook}")
+        logger.info(f"  [MISSING] pre-commit hook: {pre_commit_hook}")
 
     if pre_push_hook.exists():
-        print(f"  [OK] pre-push hook: {pre_push_hook}")
+        logger.info(f"  [OK] pre-push hook: {pre_push_hook}")
     else:
-        print(f"  [MISSING] pre-push hook: {pre_push_hook}")
+        logger.info(f"  [MISSING] pre-push hook: {pre_push_hook}")
 
 
 def print_summary() -> None:
     """Print usage summary."""
-    print("\n" + "=" * 60)
-    print("HOOK SUMMARY")
-    print("=" * 60)
-    print("""
+    logger.info("\n" + "=" * 60)
+    logger.info("HOOK SUMMARY")
+    logger.info("=" * 60)
+    logger.info("""
 PRE-COMMIT (runs on every commit, <15 seconds):
   - ruff (lint + auto-fix)
-  - black (format)
   - no-wildcard-imports
+  - staged/diff secret scan
+  - fleet fast guardrails (file size, SPEC/ADR drift, workflow inventory)
   - quality-check (no TODOs/FIXMEs)
   - no-debug-statements
   - no-print-in-src
   - prettier (yaml/json/md)
 
-PRE-PUSH (runs before push, ~60 seconds):
+PRE-PUSH (runs before push, target <3 minutes):
   - mypy (type check)
   - bandit (security scan)
+  - pip-audit (bounded Python dependency audit)
   - pytest (unit tests)
+  - fleet pre-push guardrails
 
 MANUAL COMMANDS:
   pre-commit run --all-files      # Run all pre-commit hooks
   pre-commit run --hook-stage pre-push  # Run pre-push hooks manually
+  make ci-local                   # Optional broad local confidence target
   pre-commit autoupdate           # Update hook versions
 """)
 
 
 def main() -> None:
     """Main entry point."""
-    print("=" * 60)
-    print("INSTALLING GIT HOOKS")
-    print("=" * 60)
+    logger.info("=" * 60)
+    logger.info("INSTALLING GIT HOOKS")
+    logger.info("=" * 60)
 
     try:
         install_pre_commit()
@@ -133,16 +140,16 @@ def main() -> None:
         install_dev_dependencies()
         verify_installation()
         print_summary()
-        print("\n[SUCCESS] All hooks installed successfully!")
-        print("Your commits will now be checked locally before reaching CI.")
+        logger.info("\n[SUCCESS] All hooks installed successfully!")
+        logger.info("Your commits will now be checked locally before reaching CI.")
 
     except subprocess.CalledProcessError as e:
-        print(f"\n[ERROR] Command failed: {e}")
-        print(f"  stdout: {e.stdout}")
-        print(f"  stderr: {e.stderr}")
+        logger.info(f"\n[ERROR] Command failed: {e}")
+        logger.info(f"  stdout: {e.stdout}")
+        logger.info(f"  stderr: {e.stderr}")
         sys.exit(1)
-    except Exception as e:  # noqa: BLE001
-        print(f"\n[ERROR] Unexpected error: {e}")
+    except OSError as e:
+        logger.info(f"\n[ERROR] Unexpected error: {e}")
         sys.exit(1)
 
 

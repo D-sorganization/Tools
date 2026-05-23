@@ -1,1 +1,71 @@
-[{"url":"https://api.github.com/repos/D-sorganization/Tools/pulls/comments/3139994161","pull_request_review_id":4173056446,"id":3139994161,"node_id":"PRRC_kwDOPQ5sz867KIIx","diff_hunk":"@@ -149,6 +149,38 @@ def __init__(self, message: str, value: Any = None) -> None:\n         super().__init__(\"invariant\", message, value)\n \n \n+class PreconditionEvaluationError(ContractViolationError):\n+    \"\"\"Raised when a precondition cannot be evaluated due to an error in the condition itself.\"\"\"\n+\n+    def __init__(self, message: str, underlying_error: Exception) -> None:\n+        if not (message is not None):\n+            raise ValueError(\"message must be provided\")\n+        if not (isinstance(underlying_error, Exception)):\n+            raise TypeError(f\"underlying_error must be Exception, got {type(underlying_error)}\")\n+        self.underlying_error = underlying_error\n+        super().__init__(\"pre-condition-evaluation\", message, None)\n+\n+    def __cause__(self) -> Exception:  # type: ignore[override]\n+        \"\"\"Return the underlying exception that caused the evaluation failure.\"\"\"\n+        return self.underlying_error","path":"src/shared/python/contracts.py","commit_id":"de4123f14cb67be5052212260dcf5bf263f79e74","original_commit_id":"7fd81667e6d6ab008af21fe895016cc64cc5da25","user":{"login":"chatgpt-codex-connector[bot]","id":199175422,"node_id":"BOT_kgDOC98s_g","avatar_url":"https://avatars.githubusercontent.com/in/1144995?v=4","gravatar_id":"","url":"https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D","html_url":"https://github.com/apps/chatgpt-codex-connector","followers_url":"https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/followers","following_url":"https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/following{/other_user}","gists_url":"https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/gists{/gist_id}","starred_url":"https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/subscriptions","organizations_url":"https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/orgs","repos_url":"https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/repos","events_url":"https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/events{/privacy}","received_events_url":"https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/received_events","type":"Bot","user_view_type":"public","site_admin":false},"body":"**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Remove __cause__ method override on custom exceptions**\n\nDefining `__cause__` as a method here overrides Python’s special exception-chaining attribute with a bound method, so when this exception is logged or formatted (`traceback.print_exc()`, error middleware, etc.) traceback handling can crash with `AttributeError` instead of showing the original failure. This is reproducible when `PreconditionEvaluationError` is raised via `raise ... from exc` (and the same pattern appears in `PostconditionEvaluationError`), which means contract evaluation errors can break error reporting in production paths.\n\nUseful? React with 👍 / 👎.","created_at":"2026-04-24T19:56:54Z","updated_at":"2026-04-24T19:56:54Z","html_url":"https://github.com/D-sorganization/Tools/pull/2319#discussion_r3139994161","pull_request_url":"https://api.github.com/repos/D-sorganization/Tools/pulls/2319","_links":{"self":{"href":"https://api.github.com/repos/D-sorganization/Tools/pulls/comments/3139994161"},"html":{"href":"https://github.com/D-sorganization/Tools/pull/2319#discussion_r3139994161"},"pull_request":{"href":"https://api.github.com/repos/D-sorganization/Tools/pulls/2319"}},"reactions":{"url":"https://api.github.com/repos/D-sorganization/Tools/pulls/comments/3139994161/reactions","total_count":0,"+1":0,"-1":0,"laugh":0,"hooray":0,"confused":0,"heart":0,"rocket":0,"eyes":0},"start_line":176,"original_start_line":163,"start_side":"RIGHT","line":178,"original_line":165,"side":"RIGHT","author_association":"NONE","original_position":17,"position":19,"subject_type":"line"}]
+[
+  {
+    "url": "https://api.github.com/repos/D-sorganization/Tools/pulls/comments/3139994161",
+    "pull_request_review_id": 4173056446,
+    "id": 3139994161,
+    "node_id": "PRRC_kwDOPQ5sz867KIIx",
+    "diff_hunk": "@@ -149,6 +149,38 @@ def __init__(self, message: str, value: Any = None) -> None:\n         super().__init__(\"invariant\", message, value)\n \n \n+class PreconditionEvaluationError(ContractViolationError):\n+    \"\"\"Raised when a precondition cannot be evaluated due to an error in the condition itself.\"\"\"\n+\n+    def __init__(self, message: str, underlying_error: Exception) -> None:\n+        if not (message is not None):\n+            raise ValueError(\"message must be provided\")\n+        if not (isinstance(underlying_error, Exception)):\n+            raise TypeError(f\"underlying_error must be Exception, got {type(underlying_error)}\")\n+        self.underlying_error = underlying_error\n+        super().__init__(\"pre-condition-evaluation\", message, None)\n+\n+    def __cause__(self) -> Exception:  # type: ignore[override]\n+        \"\"\"Return the underlying exception that caused the evaluation failure.\"\"\"\n+        return self.underlying_error",
+    "path": "src/shared/python/contracts.py",
+    "commit_id": "de4123f14cb67be5052212260dcf5bf263f79e74",
+    "original_commit_id": "7fd81667e6d6ab008af21fe895016cc64cc5da25",
+    "user": {
+      "login": "chatgpt-codex-connector[bot]",
+      "id": 199175422,
+      "node_id": "BOT_kgDOC98s_g",
+      "avatar_url": "https://avatars.githubusercontent.com/in/1144995?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D",
+      "html_url": "https://github.com/apps/chatgpt-codex-connector",
+      "followers_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/followers",
+      "following_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/subscriptions",
+      "organizations_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/orgs",
+      "repos_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/repos",
+      "events_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/received_events",
+      "type": "Bot",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Remove __cause__ method override on custom exceptions**\n\nDefining `__cause__` as a method here overrides Python’s special exception-chaining attribute with a bound method, so when this exception is logged or formatted (`traceback.print_exc()`, error middleware, etc.) traceback handling can crash with `AttributeError` instead of showing the original failure. This is reproducible when `PreconditionEvaluationError` is raised via `raise ... from exc` (and the same pattern appears in `PostconditionEvaluationError`), which means contract evaluation errors can break error reporting in production paths.\n\nUseful? React with 👍 / 👎.",
+    "created_at": "2026-04-24T19:56:54Z",
+    "updated_at": "2026-04-24T19:56:54Z",
+    "html_url": "https://github.com/D-sorganization/Tools/pull/2319#discussion_r3139994161",
+    "pull_request_url": "https://api.github.com/repos/D-sorganization/Tools/pulls/2319",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/D-sorganization/Tools/pulls/comments/3139994161"
+      },
+      "html": {
+        "href": "https://github.com/D-sorganization/Tools/pull/2319#discussion_r3139994161"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/D-sorganization/Tools/pulls/2319"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/D-sorganization/Tools/pulls/comments/3139994161/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 176,
+    "original_start_line": 163,
+    "start_side": "RIGHT",
+    "line": 178,
+    "original_line": 165,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 17,
+    "position": 19,
+    "subject_type": "line"
+  }
+]

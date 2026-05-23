@@ -12,7 +12,6 @@ when a QApplication cannot be created.
 
 from __future__ import annotations
 
-import importlib.util
 import logging
 import sys
 import types
@@ -65,13 +64,20 @@ pytest.importorskip("PyQt6.QtCore", reason="PyQt6 required")
 
 
 def _load_module(name: str, rel_path: str):
-    full = ROOT / "src" / "shared" / "python" / rel_path
-    spec = importlib.util.spec_from_file_location(name, full)
-    assert spec is not None and spec.loader is not None
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[name] = module
-    spec.loader.exec_module(module)
-    return module
+    if name in sys.modules:
+        return sys.modules[name]
+    try:
+        import importlib
+
+        return importlib.import_module(name)
+    except Exception:
+        full = ROOT / "src" / "shared" / "python" / rel_path
+        spec = importlib.util.spec_from_file_location(name, full)
+        assert spec is not None and spec.loader is not None
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[name] = module
+        spec.loader.exec_module(module)
+        return module
 
 
 _types_mod = _load_module("src.shared.python.ai.types", "ai/types.py")

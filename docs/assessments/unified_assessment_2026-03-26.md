@@ -9,11 +9,12 @@
 
 ## Executive Summary
 
-| Overall Grade | Score (0-10) | A-F Grade | Trend  |
-| ------------- | ------------ | --------- | ------ |
-| **Overall**   | 7.15         | B-        | ➡️     |
+| Overall Grade | Score (0-10) | A-F Grade | Trend |
+| ------------- | ------------ | --------- | ----- |
+| **Overall**   | 7.15         | B-        | ➡️    |
 
 **Codebase Size:**
+
 - Source Lines: 48,356 across 769 files (non-test)
 - Test Lines: 104,564 across 568 files (61,482 in src/tests + 43,082 in tests/)
 - Test-to-Source Ratio: 216% (excellent)
@@ -21,6 +22,7 @@
 - 46 top-level tool directories under `src/`
 
 **Pendulum Simulator Component:**
+
 - Source Lines: 25,440 across ~50 files
 - Test Lines: 21,199 across 93 files
 - Test-to-Source Ratio: 83% (adequate for physics simulation code)
@@ -31,7 +33,7 @@
 
 ## Category I: Code Craftsmanship (A-O: F/K/O)
 
-*Pragmatic Principles: DRY, Orthogonality, Broken Windows, Law of Demeter*
+_Pragmatic Principles: DRY, Orthogonality, Broken Windows, Law of Demeter_
 
 **Category Grade:** C+
 
@@ -90,18 +92,18 @@
 
 **Score:** 5.5 / 10.0
 
-| File | Lines | Functions | Recommendation |
-| ---- | ----- | --------- | -------------- |
-| `rotation_converter/modern_robotics.py` | 2,074 | ~80 | Split into kinematics, dynamics, trajectory modules |
-| `pressure_drop_interface.py` | 1,309 | ~30 | Split into UI, validators, formatters |
-| `rotation_converter/ui/pyqt6/main_window.py` | 1,228 | ~40 | Extract tab widgets into separate files |
-| `pressure_drop_calculation_engine.py` | 1,182 | ~25 | Split by calculation stage |
-| `model_generation/api/rest_api.py` | 1,182 | ~35 | Split routes into routers |
-| `syngas_compression_calculator.py` | 1,172 | ~20 | Split GUI from engine |
-| `equations_popup.py` (pendulum) | 1,160 | ~25 | Extract equation groups into modules |
-| `humanoid_character_builder/mesh_generator.py` | 1,145 | ~20 | Split by body part generation |
-| `data_processor/vectorized_filter_engine.py` | 1,096 | ~15 | Extract filter types into submodules |
-| `model_generation/editor/text_editor.py` | 1,027 | ~20 | Split editor from syntax highlighting |
+| File                                           | Lines | Functions | Recommendation                                      |
+| ---------------------------------------------- | ----- | --------- | --------------------------------------------------- |
+| `rotation_converter/modern_robotics.py`        | 2,074 | ~80       | Split into kinematics, dynamics, trajectory modules |
+| `pressure_drop_interface.py`                   | 1,309 | ~30       | Split into UI, validators, formatters               |
+| `rotation_converter/ui/pyqt6/main_window.py`   | 1,228 | ~40       | Extract tab widgets into separate files             |
+| `pressure_drop_calculation_engine.py`          | 1,182 | ~25       | Split by calculation stage                          |
+| `model_generation/api/rest_api.py`             | 1,182 | ~35       | Split routes into routers                           |
+| `syngas_compression_calculator.py`             | 1,172 | ~20       | Split GUI from engine                               |
+| `equations_popup.py` (pendulum)                | 1,160 | ~25       | Extract equation groups into modules                |
+| `humanoid_character_builder/mesh_generator.py` | 1,145 | ~20       | Split by body part generation                       |
+| `data_processor/vectorized_filter_engine.py`   | 1,096 | ~15       | Extract filter types into submodules                |
+| `model_generation/editor/text_editor.py`       | 1,027 | ~20       | Split editor from syntax highlighting               |
 
 **Threshold:** Files >400 lines are flagged. Files >800 lines are critical.
 
@@ -118,27 +120,27 @@
 
 **Score:** 6.0 / 10.0
 
-| Metric                          | Count      | Threshold | Severity |
-| ------------------------------- | ---------- | --------- | -------- |
-| Functions >50 lines             | 755        | 0         | 🔴       |
-| Functions >30 lines             | 1,820      | <=5%      | 🔴       |
-| Functions with >4 parameters    | 496        | 0         | 🔴       |
-| Average function length (lines) | ~7.6       | <=20      | 🟢       |
-| Total functions (non-test)      | 6,365      | --        | --       |
+| Metric                          | Count | Threshold | Severity |
+| ------------------------------- | ----- | --------- | -------- |
+| Functions >50 lines             | 755   | 0         | 🔴       |
+| Functions >30 lines             | 1,820 | <=5%      | 🔴       |
+| Functions with >4 parameters    | 496   | 0         | 🔴       |
+| Average function length (lines) | ~7.6  | <=20      | 🟢       |
+| Total functions (non-test)      | 6,365 | --        | --       |
 
 **>30 lines as percentage:** 28.6% (threshold: <=5%) -- significantly over target.
 
 **Worst Offenders:**
 
-| Function | File | Lines | Params | Action |
-| -------- | ---- | ----- | ------ | ------ |
-| `to_rcparams` | plot_theme/themes.py | 425 | -- | Data-driven dict, acceptable |
-| `pa_to_psi` | constants.py | 349 | -- | Conversion table, acceptable |
-| `_get_default_segment` | anthropometry.py | 315 | -- | Data table, could externalize |
-| `_load_chart_colors_from_json` | colors.py | 291 | -- | Parsing logic, decompose |
-| `generate_controls_sheet` | programmatic_pid/cli.py | 240 | -- | Decompose into sub-generators |
-| `_build_overlay_section` | toolstrip_widget.py | 232 | -- | Extract overlay builders |
-| `SimulateControl` | modern_robotics.py | 225 | -- | Reference implementation |
+| Function                       | File                    | Lines | Params | Action                        |
+| ------------------------------ | ----------------------- | ----- | ------ | ----------------------------- |
+| `to_rcparams`                  | plot_theme/themes.py    | 425   | --     | Data-driven dict, acceptable  |
+| `pa_to_psi`                    | constants.py            | 349   | --     | Conversion table, acceptable  |
+| `_get_default_segment`         | anthropometry.py        | 315   | --     | Data table, could externalize |
+| `_load_chart_colors_from_json` | colors.py               | 291   | --     | Parsing logic, decompose      |
+| `generate_controls_sheet`      | programmatic_pid/cli.py | 240   | --     | Decompose into sub-generators |
+| `_build_overlay_section`       | toolstrip_widget.py     | 232   | --     | Extract overlay builders      |
+| `SimulateControl`              | modern_robotics.py      | 225   | --     | Reference implementation      |
 
 **Pendulum-Specific:** 106 functions >50 lines, 13 functions >100 lines. The GUI layer accounts for most of them.
 
@@ -148,14 +150,14 @@
 
 **Score:** 6.5 / 10.0
 
-| Function | File | Lines | Responsibilities | Severity |
-| -------- | ---- | ----- | ---------------- | -------- |
-| `_build_overlay_section` | toolstrip_widget.py | 232 | UI layout + state wiring + event binding | 🔴 |
-| `generate_controls_sheet` | cli.py | 240 | Data extraction + formatting + file I/O | 🔴 |
-| `_build_row1` | toolstrip_widget.py | 168 | Widget creation + layout + signal binding | 🟡 |
-| `analytical_fk_jacobians_jax` | physics_golfer_jax.py | 157 | FK + Jacobian computation combined | 🟡 |
-| `_build_ui` | optimization_widget.py | 142 | Full UI construction in one method | 🟡 |
-| `_cmaes_step` | optimization_widget.py | 129 | Algorithm step + UI update + result tracking | 🟡 |
+| Function                      | File                   | Lines | Responsibilities                             | Severity |
+| ----------------------------- | ---------------------- | ----- | -------------------------------------------- | -------- |
+| `_build_overlay_section`      | toolstrip_widget.py    | 232   | UI layout + state wiring + event binding     | 🔴       |
+| `generate_controls_sheet`     | cli.py                 | 240   | Data extraction + formatting + file I/O      | 🔴       |
+| `_build_row1`                 | toolstrip_widget.py    | 168   | Widget creation + layout + signal binding    | 🟡       |
+| `analytical_fk_jacobians_jax` | physics_golfer_jax.py  | 157   | FK + Jacobian computation combined           | 🟡       |
+| `_build_ui`                   | optimization_widget.py | 142   | Full UI construction in one method           | 🟡       |
+| `_cmaes_step`                 | optimization_widget.py | 129   | Algorithm step + UI update + result tracking | 🟡       |
 
 **Definition:** Any function that does >2 distinct things OR exceeds 80 lines.
 
@@ -223,7 +225,7 @@ Total god functions (>80 lines, multi-responsibility): ~35 across the repo, ~13 
 
 ## Category II: Robustness & Error Handling (A-O: D)
 
-*Pragmatic: "Crash early; handle errors gracefully; Design by Contract"*
+_Pragmatic: "Crash early; handle errors gracefully; Design by Contract"_
 
 **Category Grade:** B+
 
@@ -271,7 +273,7 @@ Total god functions (>80 lines, multi-responsibility): ~35 across the repo, ~13 
 
 ## Category III: Testing & Validation (A-O: C)
 
-*Pragmatic: "Test early, test often, test automatically"*
+_Pragmatic: "Test early, test often, test automatically"_
 
 **Category Grade:** A-
 
@@ -279,13 +281,13 @@ Total god functions (>80 lines, multi-responsibility): ~35 across the repo, ~13 
 
 **Score:** 8.5 / 10.0
 
-| Metric                   | Value   | Severity |
-| ------------------------ | ------- | -------- |
-| Test coverage %          | >10% CI minimum, ~60% estimated | 🟡 |
-| Test-to-code ratio       | 216% (overall), 83% (pendulum) | 🟢 |
-| Tests for edge cases     | Good, parametrize used | 🟢 |
-| Mocking/stubbing quality | Strong (patch.object pattern) | 🟢 |
-| Tests run in CI          | Yes | 🟢 |
+| Metric                   | Value                           | Severity |
+| ------------------------ | ------------------------------- | -------- |
+| Test coverage %          | >10% CI minimum, ~60% estimated | 🟡       |
+| Test-to-code ratio       | 216% (overall), 83% (pendulum)  | 🟢       |
+| Tests for edge cases     | Good, parametrize used          | 🟢       |
+| Mocking/stubbing quality | Strong (patch.object pattern)   | 🟢       |
+| Tests run in CI          | Yes                             | 🟢       |
 
 **Findings:**
 
@@ -299,7 +301,7 @@ Total god functions (>80 lines, multi-responsibility): ~35 across the repo, ~13 
 
 ## Category IV: Documentation & Domain Language (A-O: B)
 
-*Pragmatic: "It's all writing", "Domain Languages"*
+_Pragmatic: "It's all writing", "Domain Languages"_
 
 **Category Grade:** B
 
@@ -307,15 +309,16 @@ Total god functions (>80 lines, multi-responsibility): ~35 across the repo, ~13 
 
 **Score:** 7.0 / 10.0
 
-| Metric                                             | Count            | Severity |
-| -------------------------------------------------- | ---------------- | -------- |
-| Functions without docstrings                       | 2,595 / 6,365 (40.8%) | 🟡 |
-| Classes without docstrings                         | 87 / 997 (8.7%) | 🟢       |
-| Stale/inaccurate comments                          | ~5               | 🟢       |
-| Over-commented code (comments stating the obvious) | ~10              | 🟢       |
-| Missing "why" comments on complex logic            | ~30              | 🟡       |
+| Metric                                             | Count                 | Severity |
+| -------------------------------------------------- | --------------------- | -------- |
+| Functions without docstrings                       | 2,595 / 6,365 (40.8%) | 🟡       |
+| Classes without docstrings                         | 87 / 997 (8.7%)       | 🟢       |
+| Stale/inaccurate comments                          | ~5                    | 🟢       |
+| Over-commented code (comments stating the obvious) | ~10                   | 🟢       |
+| Missing "why" comments on complex logic            | ~30                   | 🟡       |
 
 **Pendulum-Specific:**
+
 - Functions with docstrings: 389/827 (47.0%) -- below repo average
 - Classes with docstrings: 64/65 (98.5%) -- excellent
 
@@ -332,7 +335,7 @@ Total god functions (>80 lines, multi-responsibility): ~35 across the repo, ~13 
 
 ## Category V: Project Organization (A-O: A)
 
-*Is the repository predictably structured for both humans and agents?*
+_Is the repository predictably structured for both humans and agents?_
 
 **Category Grade:** B+
 
@@ -340,14 +343,14 @@ Total god functions (>80 lines, multi-responsibility): ~35 across the repo, ~13 
 
 **Score:** 8.0 / 10.0
 
-| Metric                            | Status | Severity |
-| --------------------------------- | ------ | -------- |
-| Standard `src/` layout            | Yes    | 🟢       |
-| `tests/` directory present        | Yes (dual: src/*/tests/ + tests/) | 🟢 |
-| `docs/` directory organized       | Yes    | 🟢       |
-| Root clutter (non-standard files) | Low    | 🟢       |
-| `__init__.py` files present       | Yes    | 🟢       |
-| Consistent module naming          | Mostly | 🟡       |
+| Metric                            | Status                             | Severity |
+| --------------------------------- | ---------------------------------- | -------- |
+| Standard `src/` layout            | Yes                                | 🟢       |
+| `tests/` directory present        | Yes (dual: src/\*/tests/ + tests/) | 🟢       |
+| `docs/` directory organized       | Yes                                | 🟢       |
+| Root clutter (non-standard files) | Low                                | 🟢       |
+| `__init__.py` files present       | Yes                                | 🟢       |
+| Consistent module naming          | Mostly                             | 🟡       |
 
 **Findings:**
 
@@ -363,14 +366,14 @@ Total god functions (>80 lines, multi-responsibility): ~35 across the repo, ~13 
 
 **Score:** 7.5 / 10.0
 
-| Metric                                              | Count | Severity |
-| --------------------------------------------------- | ----- | -------- |
-| `TODO` / `FIXME` / `HACK` / `XXX` markers          | 7     | 🟢       |
-| `NotImplementedError` stubs                          | 6     | 🟢       |
-| Dead code (unreachable/unused)                       | ~10   | 🟡       |
-| Deprecated library usage                             | 0     | 🟢       |
-| Legacy compatibility shims                           | ~3    | 🟢       |
-| `sys.path` hacks                                     | 40    | 🔴       |
+| Metric                                    | Count | Severity |
+| ----------------------------------------- | ----- | -------- |
+| `TODO` / `FIXME` / `HACK` / `XXX` markers | 7     | 🟢       |
+| `NotImplementedError` stubs               | 6     | 🟢       |
+| Dead code (unreachable/unused)            | ~10   | 🟡       |
+| Deprecated library usage                  | 0     | 🟢       |
+| Legacy compatibility shims                | ~3    | 🟢       |
+| `sys.path` hacks                          | 40    | 🔴       |
 
 **Findings:**
 
@@ -402,7 +405,7 @@ Total god functions (>80 lines, multi-responsibility): ~35 across the repo, ~13 
 
 ## Category VI: Reversibility & Changeability (A-O: M)
 
-*Pragmatic: "There are no final decisions"*
+_Pragmatic: "There are no final decisions"_
 
 **Category Grade:** B
 
@@ -410,13 +413,13 @@ Total god functions (>80 lines, multi-responsibility): ~35 across the repo, ~13 
 
 **Score:** 7.0 / 10.0
 
-| Metric                            | Status    | Severity |
-| --------------------------------- | --------- | -------- |
-| Hard-coded file paths             | ~5        | 🟡       |
-| Hard-coded DB/API endpoints       | ~2        | 🟢       |
-| Framework lock-in (non-swappable) | PyQt6     | 🟡       |
-| Configuration externalized        | Partial   | 🟡       |
-| Dependency injection used         | Moderate  | 🟡       |
+| Metric                            | Status   | Severity |
+| --------------------------------- | -------- | -------- |
+| Hard-coded file paths             | ~5       | 🟡       |
+| Hard-coded DB/API endpoints       | ~2       | 🟢       |
+| Framework lock-in (non-swappable) | PyQt6    | 🟡       |
+| Configuration externalized        | Partial  | 🟡       |
+| Dependency injection used         | Moderate | 🟡       |
 
 **Findings:**
 
@@ -451,12 +454,12 @@ Total god functions (>80 lines, multi-responsibility): ~35 across the repo, ~13 
 
 **Score:** 8.0 / 10.0
 
-| Metric                                | Count | Severity |
-| ------------------------------------- | ----- | -------- |
-| Utility functions usable cross-repo   | 257 files in shared/ | 🟢 |
-| Functions with hard-coded assumptions | ~30   | 🟡       |
-| Generic vs. project-specific ratio    | ~60/40 | 🟢      |
-| Shared library usage (e.g., ud-tools) | Active | 🟢      |
+| Metric                                | Count                | Severity |
+| ------------------------------------- | -------------------- | -------- |
+| Utility functions usable cross-repo   | 257 files in shared/ | 🟢       |
+| Functions with hard-coded assumptions | ~30                  | 🟡       |
+| Generic vs. project-specific ratio    | ~60/40               | 🟢       |
+| Shared library usage (e.g., ud-tools) | Active               | 🟢       |
 
 **Findings:**
 
@@ -469,7 +472,7 @@ Total god functions (>80 lines, multi-responsibility): ~35 across the repo, ~13 
 
 ## Category VII: Performance & Scalability (A-O: E/N)
 
-*Efficiency of the computational paths*
+_Efficiency of the computational paths_
 
 **Category Grade:** B
 
@@ -503,14 +506,14 @@ Total god functions (>80 lines, multi-responsibility): ~35 across the repo, ~13 
 
 #### 19d. Acceleration & Caching
 
-| Optimization                                            | Status    | Severity |
-| ------------------------------------------------------- | --------- | -------- |
-| Precomputation of invariant values outside loops        | Good      | 🟢       |
-| Use of `@functools.lru_cache` for repeated computations | Moderate  | 🟡       |
-| Sparse matrix usage where applicable                    | N/A       | --       |
-| Avoiding unnecessary copies (`np.copy` vs. views)       | Good      | 🟢       |
-| Use of `numba.jit`, Cython, or Rust FFI for hot loops   | JAX used  | 🟢       |
-| Batch I/O instead of record-by-record                   | Good      | 🟢       |
+| Optimization                                            | Status   | Severity |
+| ------------------------------------------------------- | -------- | -------- |
+| Precomputation of invariant values outside loops        | Good     | 🟢       |
+| Use of `@functools.lru_cache` for repeated computations | Moderate | 🟡       |
+| Sparse matrix usage where applicable                    | N/A      | --       |
+| Avoiding unnecessary copies (`np.copy` vs. views)       | Good     | 🟢       |
+| Use of `numba.jit`, Cython, or Rust FFI for hot loops   | JAX used | 🟢       |
+| Batch I/O instead of record-by-record                   | Good     | 🟢       |
 
 **Findings:**
 
@@ -523,7 +526,7 @@ Total god functions (>80 lines, multi-responsibility): ~35 across the repo, ~13 
 
 ## Category VIII: Dependencies & Security (A-O: F/G)
 
-*Safe, deterministic execution environments*
+_Safe, deterministic execution environments_
 
 **Category Grade:** B
 
@@ -531,15 +534,15 @@ Total god functions (>80 lines, multi-responsibility): ~35 across the repo, ~13 
 
 **Score:** 7.0 / 10.0
 
-| Metric                                    | Count | Severity |
-| ----------------------------------------- | ----- | -------- |
-| `eval()` / `exec()` usage                 | 2 (mitigated) | 🟡 |
-| `shell=True` in subprocess calls          | 0     | 🟢       |
-| `xml.etree` instead of `defusedxml`       | 7     | 🟡       |
-| Unsanitized user input in SQL/commands     | 0     | 🟢       |
-| Hard-coded secrets/credentials             | 0     | 🟢       |
-| CORS wildcard (`*`) in production          | 0     | 🟢       |
-| `pickle` deserialization of untrusted data | 0     | 🟢       |
+| Metric                                     | Count         | Severity |
+| ------------------------------------------ | ------------- | -------- |
+| `eval()` / `exec()` usage                  | 2 (mitigated) | 🟡       |
+| `shell=True` in subprocess calls           | 0             | 🟢       |
+| `xml.etree` instead of `defusedxml`        | 7             | 🟡       |
+| Unsanitized user input in SQL/commands     | 0             | 🟢       |
+| Hard-coded secrets/credentials             | 0             | 🟢       |
+| CORS wildcard (`*`) in production          | 0             | 🟢       |
+| `pickle` deserialization of untrusted data | 0             | 🟢       |
 
 **Findings:**
 
@@ -555,13 +558,13 @@ Total god functions (>80 lines, multi-responsibility): ~35 across the repo, ~13 
 
 **Score:** 7.5 / 10.0
 
-| Metric                         | Status          | Severity |
-| ------------------------------ | --------------- | -------- |
-| Locked dependencies            | Yes (requirements-lock.txt) | 🟢 |
-| Static scanning (Bandit, etc.) | Yes (CI)        | 🟢       |
-| Outdated packages              | ~5              | 🟡       |
-| License compliance checked     | Not explicit    | 🟡       |
-| Minimal dependency footprint   | Moderate        | 🟡       |
+| Metric                         | Status                      | Severity |
+| ------------------------------ | --------------------------- | -------- |
+| Locked dependencies            | Yes (requirements-lock.txt) | 🟢       |
+| Static scanning (Bandit, etc.) | Yes (CI)                    | 🟢       |
+| Outdated packages              | ~5                          | 🟡       |
+| License compliance checked     | Not explicit                | 🟡       |
+| Minimal dependency footprint   | Moderate                    | 🟡       |
 
 **Findings:**
 
@@ -575,7 +578,7 @@ Total god functions (>80 lines, multi-responsibility): ~35 across the repo, ~13 
 
 ## Category IX: Automation & Operations (A-O: H/I/J)
 
-*Pragmatic: "Automate everything"*
+_Pragmatic: "Automate everything"_
 
 **Category Grade:** B+
 
@@ -583,15 +586,15 @@ Total god functions (>80 lines, multi-responsibility): ~35 across the repo, ~13 
 
 **Score:** 7.5 / 10.0
 
-| Metric                            | Status | Severity |
-| --------------------------------- | ------ | -------- |
-| CI pipeline exists and passes     | Yes    | 🟢       |
-| Pre-commit hooks configured       | Yes    | 🟢       |
-| Automated linting (ruff/black)    | Yes (ruff) | 🟢  |
-| Type enforcement (mypy)           | Yes (delta) | 🟢  |
-| Automated test execution          | Yes    | 🟢       |
-| Dockerfile / containerization     | Yes (pendulum_simulator) | 🟡 |
-| Deployment automation             | Partial | 🟡      |
+| Metric                         | Status                   | Severity |
+| ------------------------------ | ------------------------ | -------- |
+| CI pipeline exists and passes  | Yes                      | 🟢       |
+| Pre-commit hooks configured    | Yes                      | 🟢       |
+| Automated linting (ruff/black) | Yes (ruff)               | 🟢       |
+| Type enforcement (mypy)        | Yes (delta)              | 🟢       |
+| Automated test execution       | Yes                      | 🟢       |
+| Dockerfile / containerization  | Yes (pendulum_simulator) | 🟡       |
+| Deployment automation          | Partial                  | 🟡       |
 
 **Findings:**
 
@@ -606,7 +609,7 @@ Total god functions (>80 lines, multi-responsibility): ~35 across the repo, ~13 
 
 ## Category X: Parity & Maintenance (A-O: L)
 
-*Keeping the house in order*
+_Keeping the house in order_
 
 **Category Grade:** C+
 
@@ -614,15 +617,15 @@ Total god functions (>80 lines, multi-responsibility): ~35 across the repo, ~13 
 
 **Score:** 6.5 / 10.0
 
-| Metric                        | Status          | Severity |
-| ----------------------------- | --------------- | -------- |
-| AGENTS.md / CLAUDE.md current | Yes             | 🟢       |
-| CI/CD pipeline passing        | Yes             | 🟢       |
-| Dependencies pinned & current | Mostly          | 🟡       |
-| Stale branches                | 161 remote      | 🔴       |
-| Open issues triaged           | 147 open        | 🔴       |
-| README accurate               | Partially       | 🟡       |
-| `print()` vs `logging`        | 0 print / 2014 logging | 🟢 |
+| Metric                        | Status                 | Severity |
+| ----------------------------- | ---------------------- | -------- |
+| AGENTS.md / CLAUDE.md current | Yes                    | 🟢       |
+| CI/CD pipeline passing        | Yes                    | 🟢       |
+| Dependencies pinned & current | Mostly                 | 🟡       |
+| Stale branches                | 161 remote             | 🔴       |
+| Open issues triaged           | 147 open               | 🔴       |
+| README accurate               | Partially              | 🟡       |
+| `print()` vs `logging`        | 0 print / 2014 logging | 🟢       |
 
 **Findings:**
 
@@ -636,7 +639,7 @@ Total god functions (>80 lines, multi-responsibility): ~35 across the repo, ~13 
 
 ## Category XI: Agentic Usability (A-O: P) — NEW
 
-*Is this codebase designed to be read, maintained, and operated by an AI Agent?*
+_Is this codebase designed to be read, maintained, and operated by an AI Agent?_
 
 **Category Grade:** B+
 
@@ -644,15 +647,15 @@ Total god functions (>80 lines, multi-responsibility): ~35 across the repo, ~13 
 
 **Score:** 8.0 / 10.0
 
-| Metric                                          | Status  | Severity |
-| ----------------------------------------------- | ------- | -------- |
-| `CLAUDE.md` or `AGENTS.md` with clear boundaries| Yes     | 🟢       |
-| Pure functions mapped for LLM-based fuzzing      | Partial | 🟡       |
-| Explicit `logging` (not `print`) for telemetry   | Yes (0 print, 2014 logging) | 🟢 |
-| Structural decoupling (fits LLM context windows)  | Moderate (43 files >800 lines) | 🟡 |
-| Deterministic test suite (no flaky tests)         | Mostly  | 🟢       |
-| Self-documenting code (minimal implicit knowledge)| Good    | 🟢       |
-| Config-driven behavior (no hidden env deps)       | Mostly  | 🟢       |
+| Metric                                             | Status                         | Severity |
+| -------------------------------------------------- | ------------------------------ | -------- |
+| `CLAUDE.md` or `AGENTS.md` with clear boundaries   | Yes                            | 🟢       |
+| Pure functions mapped for LLM-based fuzzing        | Partial                        | 🟡       |
+| Explicit `logging` (not `print`) for telemetry     | Yes (0 print, 2014 logging)    | 🟢       |
+| Structural decoupling (fits LLM context windows)   | Moderate (43 files >800 lines) | 🟡       |
+| Deterministic test suite (no flaky tests)          | Mostly                         | 🟢       |
+| Self-documenting code (minimal implicit knowledge) | Good                           | 🟢       |
+| Config-driven behavior (no hidden env deps)        | Mostly                         | 🟢       |
 
 **Findings:**
 
@@ -666,49 +669,49 @@ Total god functions (>80 lines, multi-responsibility): ~35 across the repo, ~13 
 
 ## Summary Scorecard
 
-| #       | Criterion                | Score   | Priority |
-| ------- | ------------------------ | ------- | -------- |
-| 1       | DRY                      | 7.0/10  | 🟡       |
-| 2       | Orthogonality            | 6.5/10  | 🔴       |
-| 3       | Monolithic Files         | 5.5/10  | 🔴       |
-| 4       | Function Length           | 6.0/10  | 🔴       |
-| 5       | God Functions            | 6.5/10  | 🟡       |
-| 6       | Law of Demeter           | 7.5/10  | 🟢       |
-| 7       | Name Quality             | 8.0/10  | 🟢       |
-| 8       | Magic Numbers            | 7.5/10  | 🟢       |
-| 9       | Design by Contract       | 8.5/10  | 🟢       |
-| 10      | Error Handling           | 7.5/10  | 🟢       |
-| 11      | TDD                      | 8.5/10  | 🟢       |
-| 12      | Comment Quality          | 7.0/10  | 🟡       |
-| 13      | Project Structure        | 8.0/10  | 🟢       |
-| 14      | Deprecated Code          | 7.5/10  | 🟡       |
-| 15      | Cleanup                  | 7.5/10  | 🟡       |
-| 16      | Reversibility            | 7.0/10  | 🟡       |
-| 17      | Changeability            | 7.0/10  | 🟡       |
-| 18      | Reusability              | 8.0/10  | 🟢       |
-| 19      | Calculation Optimization | 7.5/10  | 🟢       |
-| 20      | Security                 | 7.0/10  | 🟡       |
-| 21      | Dependencies             | 7.5/10  | 🟢       |
-| 22      | CI/CD & Automation       | 7.5/10  | 🟢       |
-| 23      | Parity / Maintenance     | 6.5/10  | 🔴       |
-| 24      | Agentic Usability        | 8.0/10  | 🟢       |
-| **AVG** | **Overall**              | **7.15/10** |      |
+| #       | Criterion                | Score       | Priority |
+| ------- | ------------------------ | ----------- | -------- |
+| 1       | DRY                      | 7.0/10      | 🟡       |
+| 2       | Orthogonality            | 6.5/10      | 🔴       |
+| 3       | Monolithic Files         | 5.5/10      | 🔴       |
+| 4       | Function Length          | 6.0/10      | 🔴       |
+| 5       | God Functions            | 6.5/10      | 🟡       |
+| 6       | Law of Demeter           | 7.5/10      | 🟢       |
+| 7       | Name Quality             | 8.0/10      | 🟢       |
+| 8       | Magic Numbers            | 7.5/10      | 🟢       |
+| 9       | Design by Contract       | 8.5/10      | 🟢       |
+| 10      | Error Handling           | 7.5/10      | 🟢       |
+| 11      | TDD                      | 8.5/10      | 🟢       |
+| 12      | Comment Quality          | 7.0/10      | 🟡       |
+| 13      | Project Structure        | 8.0/10      | 🟢       |
+| 14      | Deprecated Code          | 7.5/10      | 🟡       |
+| 15      | Cleanup                  | 7.5/10      | 🟡       |
+| 16      | Reversibility            | 7.0/10      | 🟡       |
+| 17      | Changeability            | 7.0/10      | 🟡       |
+| 18      | Reusability              | 8.0/10      | 🟢       |
+| 19      | Calculation Optimization | 7.5/10      | 🟢       |
+| 20      | Security                 | 7.0/10      | 🟡       |
+| 21      | Dependencies             | 7.5/10      | 🟢       |
+| 22      | CI/CD & Automation       | 7.5/10      | 🟢       |
+| 23      | Parity / Maintenance     | 6.5/10      | 🔴       |
+| 24      | Agentic Usability        | 8.0/10      | 🟢       |
+| **AVG** | **Overall**              | **7.15/10** |          |
 
 ### Category Summary (A-F Grades)
 
-| Category | Grade | Key Issues |
-| -------- | ----- | ---------- |
-| I. Code Craftsmanship | C+ | 156 files >500 lines, 755 functions >50 lines, 496 functions with >4 params |
-| II. Robustness & Error Handling | B+ | Strong DbC (51% precondition coverage), 32 broad exceptions (all annotated) |
-| III. Testing & Validation | A- | 216% test-to-code ratio, 568 test files, 13 markers, CI-enforced |
-| IV. Documentation & Domain Language | B | 59.2% function docstrings, 91.3% class docstrings |
-| V. Project Organization | B+ | Clean src/ layout, 46 tools, shared library, but 40 sys.path hacks |
-| VI. Reversibility & Changeability | B | Protocol interfaces, config modules, but monolithic files limit changeability |
-| VII. Performance & Scalability | B | JAX acceleration in pendulum, NumPy vectorization, good memory practices |
-| VIII. Dependencies & Security | B | No eval/shell/CORS issues, but 7 xml.etree usages remain |
-| IX. Automation & Operations | B+ | 56 CI workflows (bloated), strong linting/testing automation |
-| X. Parity & Maintenance | C+ | 161 stale branches, 147 open issues, but 0 print() and active CLAUDE.md |
-| XI. Agentic Usability | B+ | CLAUDE.md + GAAI, but large files hurt LLM context efficiency |
+| Category                            | Grade | Key Issues                                                                    |
+| ----------------------------------- | ----- | ----------------------------------------------------------------------------- |
+| I. Code Craftsmanship               | C+    | 156 files >500 lines, 755 functions >50 lines, 496 functions with >4 params   |
+| II. Robustness & Error Handling     | B+    | Strong DbC (51% precondition coverage), 32 broad exceptions (all annotated)   |
+| III. Testing & Validation           | A-    | 216% test-to-code ratio, 568 test files, 13 markers, CI-enforced              |
+| IV. Documentation & Domain Language | B     | 59.2% function docstrings, 91.3% class docstrings                             |
+| V. Project Organization             | B+    | Clean src/ layout, 46 tools, shared library, but 40 sys.path hacks            |
+| VI. Reversibility & Changeability   | B     | Protocol interfaces, config modules, but monolithic files limit changeability |
+| VII. Performance & Scalability      | B     | JAX acceleration in pendulum, NumPy vectorization, good memory practices      |
+| VIII. Dependencies & Security       | B     | No eval/shell/CORS issues, but 7 xml.etree usages remain                      |
+| IX. Automation & Operations         | B+    | 56 CI workflows (bloated), strong linting/testing automation                  |
+| X. Parity & Maintenance             | C+    | 161 stale branches, 147 open issues, but 0 print() and active CLAUDE.md       |
+| XI. Agentic Usability               | B+    | CLAUDE.md + GAAI, but large files hurt LLM context efficiency                 |
 
 ---
 
@@ -717,6 +720,7 @@ Total god functions (>80 lines, multi-responsibility): ~35 across the repo, ~13 
 The pendulum_simulator is the largest single tool in the monorepo (25,440 source lines, 93 test files).
 
 ### Strengths
+
 - **Physics separation:** Core physics (`physics.py`, `golfer_dynamics.py`, `constraint_solver.py`) is cleanly separated from GUI
 - **JAX acceleration:** `physics_golfer_jax.py` uses JAX for performance-critical FK/Jacobian computation
 - **Constants discipline:** Dedicated `constants.py` replaces former magic numbers (28+ locations consolidated)
@@ -726,6 +730,7 @@ The pendulum_simulator is the largest single tool in the monorepo (25,440 source
 - **Class docstrings:** 98.5% coverage
 
 ### Weaknesses
+
 - **Monolithic GUI files:** 19 files >500 lines, 6 files >800 lines. `equations_popup.py` (1,160), `simulation_panel.py` (947), `pendulum_widget.py` (915)
 - **Function bloat:** 106 functions >50 lines, 13 functions >100 lines. `_build_overlay_section` (232 lines) is the worst
 - **Function docstrings:** Only 47.0% coverage (below repo average of 59.2%)
@@ -736,18 +741,18 @@ The pendulum_simulator is the largest single tool in the monorepo (25,440 source
 
 ## Priority Remediation Targets (Stone Soup Strategy)
 
-| Priority | Issue / Violation | Pragmatic Heuristic | Criterion | Required Action |
-|----------|-------------------|---------------------|-----------|-----------------|
-| P0 | 161 stale remote branches | Broken Windows | #23 | `git push origin --delete` for branches with no open PRs |
-| P0 | 147 open issues untriaged | Broken Windows | #23 | Triage: close stale, label active, prioritize |
-| P1 | 43 files >800 lines | Orthogonality | #3 | Decompose top 10 largest files (start with pendulum GUI) |
-| P1 | 40 sys.path hacks | Broken Windows | #14 | Replace with proper package imports via pyproject.toml |
-| P1 | 59 functions >100 lines | God Functions | #5 | Decompose top 20 longest functions |
-| P2 | 7 xml.etree usages | Security | #20 | Migrate to defusedxml for XML parsing |
-| P2 | 496 functions with >4 params | Function Signatures | #4 | Introduce dataclasses/TypedDict for parameter groups |
-| P2 | 40.8% functions missing docstrings | Documentation | #12 | Add docstrings to all public functions |
-| P3 | 56 CI workflows | Automation | #22 | Consolidate Jules bot workflows |
-| P3 | Duplicate urdf_builder_gui/theme.py | DRY | #1 | Consolidate to single location |
+| Priority | Issue / Violation                   | Pragmatic Heuristic | Criterion | Required Action                                          |
+| -------- | ----------------------------------- | ------------------- | --------- | -------------------------------------------------------- |
+| P0       | 161 stale remote branches           | Broken Windows      | #23       | `git push origin --delete` for branches with no open PRs |
+| P0       | 147 open issues untriaged           | Broken Windows      | #23       | Triage: close stale, label active, prioritize            |
+| P1       | 43 files >800 lines                 | Orthogonality       | #3        | Decompose top 10 largest files (start with pendulum GUI) |
+| P1       | 40 sys.path hacks                   | Broken Windows      | #14       | Replace with proper package imports via pyproject.toml   |
+| P1       | 59 functions >100 lines             | God Functions       | #5        | Decompose top 20 longest functions                       |
+| P2       | 7 xml.etree usages                  | Security            | #20       | Migrate to defusedxml for XML parsing                    |
+| P2       | 496 functions with >4 params        | Function Signatures | #4        | Introduce dataclasses/TypedDict for parameter groups     |
+| P2       | 40.8% functions missing docstrings  | Documentation       | #12       | Add docstrings to all public functions                   |
+| P3       | 56 CI workflows                     | Automation          | #22       | Consolidate Jules bot workflows                          |
+| P3       | Duplicate urdf_builder_gui/theme.py | DRY                 | #1        | Consolidate to single location                           |
 
 ---
 
@@ -788,57 +793,57 @@ This template unifies the following assessment frameworks:
 
 ### A-O Architecture Assessment Mapping
 
-| A-O | Category | Unified Criteria |
-| --- | -------- | ---------------- |
-| A | Code Structure | #13 Project Structure |
-| B | Documentation | #12 Comment Quality |
-| C | Testing | #11 TDD |
-| D | Error Handling | #9 DbC, #10 Error Handling |
-| E | Performance | #19 Calculation Optimization |
-| F | Security | #20 Security |
-| G | Dependencies | #21 Dependencies |
-| H | CI/CD | #22 CI/CD & Automation |
-| I | Code Style | #7 Name Quality, #8 Magic Numbers |
-| J | API Design | #4 Function Length & Signatures |
-| K | Data Handling | #1 DRY, #6 Law of Demeter |
-| L | Logging | #23 Parity / Maintenance |
-| M | Configuration | #16 Reversibility, #17 Changeability |
-| N | Scalability | #19 Calculation Optimization |
-| O | Maintainability | #2 Orthogonality, #3 Monolithic Files |
-| P | Agentic Usability | #24 Agentic Usability |
+| A-O | Category          | Unified Criteria                      |
+| --- | ----------------- | ------------------------------------- |
+| A   | Code Structure    | #13 Project Structure                 |
+| B   | Documentation     | #12 Comment Quality                   |
+| C   | Testing           | #11 TDD                               |
+| D   | Error Handling    | #9 DbC, #10 Error Handling            |
+| E   | Performance       | #19 Calculation Optimization          |
+| F   | Security          | #20 Security                          |
+| G   | Dependencies      | #21 Dependencies                      |
+| H   | CI/CD             | #22 CI/CD & Automation                |
+| I   | Code Style        | #7 Name Quality, #8 Magic Numbers     |
+| J   | API Design        | #4 Function Length & Signatures       |
+| K   | Data Handling     | #1 DRY, #6 Law of Demeter             |
+| L   | Logging           | #23 Parity / Maintenance              |
+| M   | Configuration     | #16 Reversibility, #17 Changeability  |
+| N   | Scalability       | #19 Calculation Optimization          |
+| O   | Maintainability   | #2 Orthogonality, #3 Monolithic Files |
+| P   | Agentic Usability | #24 Agentic Usability                 |
 
 ### Pragmatic Programmer Principle Mapping
 
-| Principle | Unified Criteria |
-| --------- | ---------------- |
-| DRY | #1 DRY |
-| Orthogonality | #2 Orthogonality |
-| Reversibility | #16 Reversibility |
-| Broken Windows | #14 Deprecated Code, #15 Cleanup |
-| Design by Contract | #9 DbC |
-| Test Early, Test Often | #11 TDD |
-| Domain Languages | #12 Comment Quality |
-| Automate Everything | #22 CI/CD & Automation |
-| Crash Early | #10 Error Handling |
-| It's All Writing | #12 Comment Quality |
-| Tracer Bullets | #11 TDD (edge cases) |
-| Stone Soup | Priority Remediation Targets |
+| Principle              | Unified Criteria                 |
+| ---------------------- | -------------------------------- |
+| DRY                    | #1 DRY                           |
+| Orthogonality          | #2 Orthogonality                 |
+| Reversibility          | #16 Reversibility                |
+| Broken Windows         | #14 Deprecated Code, #15 Cleanup |
+| Design by Contract     | #9 DbC                           |
+| Test Early, Test Often | #11 TDD                          |
+| Domain Languages       | #12 Comment Quality              |
+| Automate Everything    | #22 CI/CD & Automation           |
+| Crash Early            | #10 Error Handling               |
+| It's All Writing       | #12 Comment Quality              |
+| Tracer Bullets         | #11 TDD (edge cases)             |
+| Stone Soup             | Priority Remediation Targets     |
 
 ---
 
 ## Historical Comparison
 
-| Metric | v6.0 (2026-02-19) | v7.0 (2026-03-26) | Delta |
-| ------ | ------------------ | ------------------ | ----- |
-| Overall Score | 7.13/10 | 7.15/10 | +0.02 |
-| Source Lines | ~45K | 48,356 | +3K |
-| Test Files | ~500 | 568 | +68 |
-| Functions >100 lines | 34 | 59 | +25 (growth) |
-| Files >500 lines | ~130 | 156 | +26 (growth) |
-| Broad exceptions | ~30 | 32 | +2 |
-| print() in src | 0 | 0 | Stable |
-| sys.path hacks | ~35 | 40 | +5 |
-| Open issues | 12 | 147 | +135 (bot accumulation) |
+| Metric               | v6.0 (2026-02-19) | v7.0 (2026-03-26) | Delta                   |
+| -------------------- | ----------------- | ----------------- | ----------------------- |
+| Overall Score        | 7.13/10           | 7.15/10           | +0.02                   |
+| Source Lines         | ~45K              | 48,356            | +3K                     |
+| Test Files           | ~500              | 568               | +68                     |
+| Functions >100 lines | 34                | 59                | +25 (growth)            |
+| Files >500 lines     | ~130              | 156               | +26 (growth)            |
+| Broad exceptions     | ~30               | 32                | +2                      |
+| print() in src       | 0                 | 0                 | Stable                  |
+| sys.path hacks       | ~35               | 40                | +5                      |
+| Open issues          | 12                | 147               | +135 (bot accumulation) |
 
 **Trend analysis:** The codebase has grown by ~3K lines and gained 68 test files, maintaining the strong test-to-code ratio. However, structural metrics have regressed: functions >100 lines increased from 34 to 59, and files >500 lines grew from ~130 to 156. The 135-issue increase is primarily from automated bot workflows creating issues faster than they are resolved. The core quality discipline (zero print, annotated exceptions, strong DbC) remains solid.
 

@@ -50,6 +50,15 @@ from .constants import (  # noqa: E402
     WATER_VAPOR_D,
 )
 
+__all__ = [
+    "SYNGAS_PRESETS",
+    "SyngasComposition",
+    "SyngasWaterCalculator",
+    "WaterContentResult",
+    "estimate_condensation_risk",
+    "quick_water_content",
+]
+
 # Maximum exponent for safe float64 exp() calls.  math.exp(709) is finite
 # but math.exp(710) overflows.  We use 700 as a conservative upper bound.
 _EXP_MAX_ARG: float = 700.0
@@ -75,7 +84,7 @@ def _safe_exp(x: float) -> float:
     return float(math.exp(clamped))
 
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -279,7 +288,7 @@ class SyngasWaterCalculator:
         # Fast interpolation table for vapor pressure
         self._init_vapor_pressure_table()
 
-        logger.info("SyngasWaterCalculator initialized")
+        _logger.info("SyngasWaterCalculator initialized")
 
     def calculate_vapor_pressure(
         self, temperature_c: float, method: str = "buck"
@@ -410,7 +419,7 @@ class SyngasWaterCalculator:
                 P_sat = self._iapws_equation(T - 273.15)
                 P_sat_range.append(P_sat)
             except (ValueError, OverflowError) as vapor_pressure_error:
-                logger.debug(
+                _logger.debug(
                     "Skipping vapor pressure calculation at %s K: %s",
                     T,
                     vapor_pressure_error,

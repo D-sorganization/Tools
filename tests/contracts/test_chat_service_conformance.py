@@ -155,7 +155,7 @@ class ConformanceTestMixin:
         async def _run() -> None:
             await self.service.condense_session(session.session_id)
 
-        asyncio.get_event_loop().run_until_complete(_run())
+        asyncio.run(_run())
 
     def test_execute_skill_does_not_raise(self) -> None:
         """Precondition: session exists.
@@ -165,7 +165,7 @@ class ConformanceTestMixin:
         async def _run() -> None:
             await self.service.execute_skill(session.session_id, "test-skill")
 
-        asyncio.get_event_loop().run_until_complete(_run())
+        asyncio.run(_run())
 
     def test_request_review_returns_session_id(self) -> None:
         """Precondition: session exists.
@@ -175,7 +175,7 @@ class ConformanceTestMixin:
         async def _run() -> str:
             return await self.service.request_review(session.session_id, "claude")
 
-        result = asyncio.get_event_loop().run_until_complete(_run())
+        result = asyncio.run(_run())
         assert isinstance(result, str)
         assert len(result) > 0
 
@@ -267,7 +267,7 @@ class TestChatServiceBaseContract:
             await svc.refresh_models()
 
         with pytest.raises(NotImplementedError):
-            asyncio.get_event_loop().run_until_complete(_run())
+            asyncio.run(_run())
 
     def test_index_codebase_raises_not_implemented(self) -> None:
         """Precondition: concrete subclass that does not override index_codebase.
@@ -284,7 +284,7 @@ class TestChatServiceBaseContract:
             await svc.index_codebase("/some/path")
 
         with pytest.raises(NotImplementedError):
-            asyncio.get_event_loop().run_until_complete(_run())
+            asyncio.run(_run())
 
 
 # ---------------------------------------------------------------------------

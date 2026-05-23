@@ -9,7 +9,7 @@ from __future__ import annotations
 from unittest.mock import MagicMock, patch
 
 import pytest
-from upstream_drift_tools.process_calculators.syngas_compression_calculator import (
+from sidekick.process_calculators.syngas_compression_calculator import (
     HAS_PYQT,
     CompressionCalculationWorker,
     CompressionStage,
@@ -272,7 +272,7 @@ class TestWorkerAndWidget:
     @pytest.fixture(autouse=True)
     def patch_state(self, monkeypatch):
         try:
-            from upstream_drift_tools.ui.mixins.calculator_state_mixin import (
+            from sidekick.ui.mixins.calculator_state_mixin import (
                 CalculatorStateMixin,
             )
 

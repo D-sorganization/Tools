@@ -9,7 +9,7 @@ import numpy as np
 import pytest
 
 # Adjust import path if needed based on where pytest is running from
-from upstream_drift_tools.lab.bio.c3d_reader import C3DDataReader
+from sidekick.lab.bio.c3d_reader import C3DDataReader
 
 
 class TestC3DDataReader:

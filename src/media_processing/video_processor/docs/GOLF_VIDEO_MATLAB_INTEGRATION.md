@@ -273,14 +273,10 @@ const MATLAB_API_URL = process.env.MATLAB_API_URL || "http://localhost:8080";
 
 export async function analyzeSwingWithMATLAB(poseData: any) {
   try {
-    const response = await axios.post(
-      `${MATLAB_API_URL}/api/matlab/pendulum`,
-      poseData,
-      {
-        headers: { "Content-Type": "application/json" },
-        timeout: 30000, // 30 seconds
-      },
-    );
+    const response = await axios.post(`${MATLAB_API_URL}/api/matlab/pendulum`, poseData, {
+      headers: { "Content-Type": "application/json" },
+      timeout: 30000, // 30 seconds
+    });
 
     return response.data;
   } catch (error) {
@@ -484,9 +480,7 @@ export interface MATLABResults {
   timestamp: string;
 }
 
-export async function loadMATLABResults(
-  jsonPath: string,
-): Promise<MATLABResults> {
+export async function loadMATLABResults(jsonPath: string): Promise<MATLABResults> {
   const response = await fetch(jsonPath);
   return await response.json();
 }

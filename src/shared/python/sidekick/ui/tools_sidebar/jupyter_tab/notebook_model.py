@@ -12,6 +12,15 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Literal
 
+__all__ = [
+    "CellOutput",
+    "CodeCell",
+    "MarkdownCell",
+    "NotebookCell",
+    "NotebookDocument",
+    "RawCell",
+]
+
 
 @dataclass(frozen=True, slots=True)
 class CellOutput:

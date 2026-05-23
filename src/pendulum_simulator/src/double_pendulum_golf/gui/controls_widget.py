@@ -22,7 +22,6 @@ from PyQt6.QtWidgets import (
     QGroupBox,
     QHBoxLayout,
     QLabel,
-    QLineEdit,
     QVBoxLayout,
     QWidget,
 )
@@ -30,7 +29,6 @@ from PyQt6.QtWidgets import (
 from .controls_utils import (
     HAS_UNIT_AWARE_INPUT as _HAS_UAI,
     STYLE_CHECK,
-    STYLE_EDIT,
     STYLE_GROUP,
     STYLE_LABEL,
     LabeledInput,
@@ -46,7 +44,7 @@ from .controls_widget_base import ControlsWidgetBase
 from .torque_preview_widget import TorquePreviewWidget
 
 if _HAS_UAI:
-    from upstream_drift_tools.ui.widgets.unit_aware_input import UnitAwareInput
+    from sidekick.ui.widgets.unit_aware_input import UnitAwareInput
 
 
 # ---------------------------------------------------------------------------

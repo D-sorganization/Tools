@@ -23,6 +23,10 @@ from .pfd_widget import PFDWidget
 from .results_panel import ResultsPanel
 from .sensitivity_plot import SensitivityPlotWidget
 
+__all__ = [
+    "PSAMainWindow",
+]
+
 
 class PSAMainWindow(ThemedWindowMixin, QMainWindow):
     """Main window for PSA analysis application."""

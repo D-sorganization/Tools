@@ -14,13 +14,22 @@ from ...constants import (
     SWAMEE_JAIN_COEFF,
 )
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "friction_factor_churchill",
+    "friction_factor_colebrook",
+    "friction_factor_haaland",
+    "friction_factor_laminar",
+    "friction_factor_swamee_jain",
+    "select_friction_factor_method",
+]
+
+_logger = logging.getLogger(__name__)
 
 
 def friction_factor_laminar(reynolds_number: float) -> float:
     """Calculate friction factor for laminar flow (Re < 2300)."""
     if reynolds_number <= 0:
-        logger.error("Reynolds number must be positive")
+        _logger.error("Reynolds number must be positive")
         return FRICTION_FACTOR_DEFAULT_LAMINAR
 
     result = LAMINAR_FRICTION_CONSTANT / reynolds_number
@@ -48,7 +57,7 @@ def friction_factor_colebrook(
         term2 = 2.51 / (reynolds_number * math.sqrt(f))
         f_new = 0.25 / (math.log10(term1 + term2) ** 2)
         if abs(f_new - f_old) < tolerance:
-            logger.debug(
+            _logger.debug(
                 "Colebrook converged in %s iterations: f = %.6f",
                 iteration + 1,
                 f_new,
@@ -56,7 +65,7 @@ def friction_factor_colebrook(
             return f_new
         f = f_new
 
-    logger.warning("Colebrook did not converge in %s iterations", max_iterations)
+    _logger.warning("Colebrook did not converge in %s iterations", max_iterations)
     return f
 
 
@@ -72,7 +81,7 @@ def friction_factor_swamee_jain(
     term1 = relative_roughness / COLEBROOK_ROUGHNESS_COEFF
     term2 = SWAMEE_JAIN_COEFF / (reynolds_number**0.9)
     f = 0.25 / (math.log10(term1 + term2) ** 2)
-    logger.debug(
+    _logger.debug(
         "Swamee-Jain: Re=%.0f, ε/D=%.6f, f=%.6f",
         reynolds_number,
         relative_roughness,
@@ -96,7 +105,7 @@ def friction_factor_churchill(
     term2 = (8.0 / reynolds_number) ** 12
     term3 = 1.0 / ((a_term + b_term) ** 1.5)
     f = 8.0 * ((term2 + term3) ** (1.0 / 12.0))
-    logger.debug(
+    _logger.debug(
         "Churchill: Re=%.0f, ε/D=%.6f, f=%.6f",
         reynolds_number,
         relative_roughness,

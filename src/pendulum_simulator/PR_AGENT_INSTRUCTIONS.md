@@ -161,6 +161,7 @@ cd pendulum-core && cargo check && cargo test
 The agent should read each file and verify:
 
 1. **BasePendulumWidget (`base_pendulum_widget.py`)**
+
    - Has all 5 abstract methods: `_get_total_length`, `_draw_model`,
      `_draw_info`, `_draw_placeholder`, `_has_result`
    - Contains zoom/pan mouse handlers with `_zoom` clamped to `[0.1, 20.0]`
@@ -172,18 +173,21 @@ The agent should read each file and verify:
    - `_draw_tilt_plane()` short-circuits when `abs(tilt_angle) < 1e-4`
 
 2. **PendulumWidget (`pendulum_widget.py`)**
+
    - Inherits from `BasePendulumWidget`, NOT `QWidget`
    - Implements all 5 abstract methods
    - `_draw_force_vectors` includes `* self._force_scale` in scale calc
    - Does NOT duplicate zoom/pan/grid/trail code from base class
 
 3. **GolferPendulumWidget (`golfer_pendulum_widget.py`)**
+
    - Inherits from `BasePendulumWidget`, NOT `QWidget`
    - Implements all 5 abstract methods
    - Overrides `_shoulder_y_fraction()` returning `0.30`
    - Does NOT import from `pendulum_widget` for trail/grid
 
 4. **MainWindow (`main_window.py`)**
+
    - `_on_tab_changed()` syncs these to the active panel's widget:
      forces, zero-torque, mob ellipsoids, force ellipsoids, COM,
      force scale, mob scale, force_ell scale, visible segments
@@ -192,15 +196,18 @@ The agent should read each file and verify:
    - Import uses `_find_sibling_package()`, not raw sys.path loop
 
 5. **SimulationPanel (`simulation_panel.py`)**
+
    - `_on_speed_change` has `assert speed > 0`
    - `_on_sim_done` has `assert result is not None` and attribute checks
    - `_advance_frame` has `assert self._playback_speed > 0`
 
 6. **Controls widgets** (all three variants)
+
    - `set_slider_range(max_val)` has `assert max_val >= 0`
    - `set_slider_value(val)` has `assert 0 <= val <= self.slider.maximum()`
 
 7. **Matrix widgets** (both variants)
+
    - `set_simulation(result)` has `assert result is not None` and
      `assert result.n_steps >= 1`
 
@@ -239,12 +246,12 @@ except AssertionError:
 
 Confirm the PR description references these issues and the fixes are present:
 
-| Issue | Fix location | What to verify |
-|-------|-------------|----------------|
-| #1041 | DRY base class extraction | `base_pendulum_widget.py` exists, both widgets inherit from it |
-| #1097 | Fractional frame accumulator | `_advance_frame` uses `_anim_frac` |
-| #1100-#1102 | Segment visibility | `_visible_segments` in base class, synced in `_on_tab_changed` |
-| #1113 | Tilt plane | `_draw_tilt_plane()` in base class, called in paintEvent |
-| #1115 | Real-time playback | `frames_per_tick` uses `_sim_dt` |
-| #1116 | Catmull-Rom trails | `_catmull_rom_smooth()` in base class |
-| #1118 | View azimuth | `_view_azimuth` in base class, used in `_world_to_pixel` |
+| Issue       | Fix location                 | What to verify                                                 |
+| ----------- | ---------------------------- | -------------------------------------------------------------- |
+| #1041       | DRY base class extraction    | `base_pendulum_widget.py` exists, both widgets inherit from it |
+| #1097       | Fractional frame accumulator | `_advance_frame` uses `_anim_frac`                             |
+| #1100-#1102 | Segment visibility           | `_visible_segments` in base class, synced in `_on_tab_changed` |
+| #1113       | Tilt plane                   | `_draw_tilt_plane()` in base class, called in paintEvent       |
+| #1115       | Real-time playback           | `frames_per_tick` uses `_sim_dt`                               |
+| #1116       | Catmull-Rom trails           | `_catmull_rom_smooth()` in base class                          |
+| #1118       | View azimuth                 | `_view_azimuth` in base class, used in `_world_to_pixel`       |

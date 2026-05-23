@@ -47,6 +47,7 @@ The review covered:
 **Problem:** Public methods lacked input validation contracts.
 
 **Fix:** Added `require()` calls (with graceful fallback if the contracts module is absent) to:
+
 - `__init__` — rejects empty file paths
 - `force_plate_dataframe` — rejects `plate_number < 1`
 
@@ -65,6 +66,7 @@ The review covered:
 **Problem:** `URDFWriter.write()` accepted any list of links and joints without checking that they form a valid tree. Cyclic or disconnected graphs produced invalid URDF.
 
 **Fix:** Added `_validate_graph()` which:
+
 - Builds a child-set from joints and identifies root links (links that are never a child)
 - Raises `ValueError` if no root exists (cycle detected)
 - Logs a warning if multiple roots exist
@@ -99,6 +101,7 @@ Called at the start of `write()`.
 **Problem:** `BodyParameters` had soft validation (`validate()` returns warnings) but no hard enforcement. Physics engines could receive impossible values like negative height or mass.
 
 **Fix:** Added `validate_strict()` which raises `ValueError` immediately on:
+
 - `height_m` outside [0.3, 3.5] m
 - `mass_kg` outside [1, 700] kg
 - Any proportion factor negative or > 5.0
@@ -118,6 +121,7 @@ Also extended `validate()` to cover `neck_length_factor`, `hand_scale_factor`, a
 **Problem:** `_parse_mjcf_geom()` split the `fromto` attribute and indexed elements 0–5 without checking the count. Files with malformed `fromto` (e.g., only 3 values) caused `IndexError`. Zero-length capsules (identical endpoints) caused division-by-zero when computing length.
 
 **Fix:**
+
 - Added value-count check (requires ≥ 6 values)
 - Added zero-length detection (falls back to sphere geometry)
 - Logs warnings for both edge cases
@@ -126,19 +130,19 @@ Also extended `validate()` to cover `neck_length_factor`, `hand_scale_factor`, a
 
 ## Test Summary
 
-| Suite | Tests | Status |
-|-------|-------|--------|
-| C3D Bounds Checking | 2 | ✅ Pass |
-| C3D Export Path Validation | 2 | ✅ Pass |
-| C3D DbC Integration | 2 | ✅ Pass |
-| C3D Metadata Sanitisation | 1 | ✅ Pass |
-| C3D Unit Scale DRY | 4 | ✅ Pass |
-| URDF Graph Validation | 2 | ✅ Pass |
-| URDF XML Escaping | 1 | ✅ Pass |
-| URDF Material Collision | 1 | ✅ Pass |
-| Body Parameters Strict | 6 | ✅ Pass |
-| MJCF Capsule Parsing | 3 | ✅ Pass |
-| **Total** | **24** | **24/24 ✅** |
+| Suite                      | Tests  | Status       |
+| -------------------------- | ------ | ------------ |
+| C3D Bounds Checking        | 2      | ✅ Pass      |
+| C3D Export Path Validation | 2      | ✅ Pass      |
+| C3D DbC Integration        | 2      | ✅ Pass      |
+| C3D Metadata Sanitisation  | 1      | ✅ Pass      |
+| C3D Unit Scale DRY         | 4      | ✅ Pass      |
+| URDF Graph Validation      | 2      | ✅ Pass      |
+| URDF XML Escaping          | 1      | ✅ Pass      |
+| URDF Material Collision    | 1      | ✅ Pass      |
+| Body Parameters Strict     | 6      | ✅ Pass      |
+| MJCF Capsule Parsing       | 3      | ✅ Pass      |
+| **Total**                  | **24** | **24/24 ✅** |
 
 ## Remaining Work (IDE Agent Tasks)
 

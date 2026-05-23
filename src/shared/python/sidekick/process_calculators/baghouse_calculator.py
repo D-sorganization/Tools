@@ -42,6 +42,11 @@ from .constants import (
     STP_TEMPERATURE_K,
 )
 
+__all__ = [
+    "BaghouseCalculator",
+    "BaghouseResult",
+]
+
 # Try to import thermo module, use simplified calculations if not available
 try:
     from tools.thermo import (

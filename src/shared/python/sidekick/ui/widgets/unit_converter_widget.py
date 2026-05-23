@@ -14,9 +14,10 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import UTC, datetime, timezone
+from datetime import datetime, timezone
 from typing import Any, cast
 
+from compatibility import UTC
 from PyQt6.QtCore import (
     QObject,
     QSettings,
@@ -42,7 +43,15 @@ from PyQt6.QtWidgets import (
 from ...calculators.conversion.service import UnitConversionService, get_service
 from .base_calculator_widget import BaseCalculatorWindow
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "CaseInsensitiveCompleter",
+    "ConversionRow",
+    "TypedConverterWidget",
+    "UnitConverterWidget",
+    "create_unit_converter",
+]
+
+_logger = logging.getLogger(__name__)
 
 
 class ConversionRow:
@@ -206,10 +215,7 @@ class UnitConverterWidget(BaseCalculatorWindow):
             )
             if from_category:
                 all_units_by_category = self.converter.get_supported_units()
-                return cast(
-                    list[str],
-                    all_units_by_category.get(from_category, self.all_units),
-                )
+                return all_units_by_category.get(from_category, self.all_units)
         except (RuntimeError, AttributeError, TypeError):
             pass
 
@@ -430,7 +436,7 @@ class UnitConverterWidget(BaseCalculatorWindow):
             conv.update_last_used()
 
         except (ValueError, KeyError, ZeroDivisionError, ArithmeticError) as e:
-            logger.debug("Conversion error: %s", e)
+            _logger.debug("Conversion error: %s", e)
 
     def _swap_values(self, index: int) -> None:
         if index is None:
@@ -525,7 +531,7 @@ class UnitConverterWidget(BaseCalculatorWindow):
         cw = self.centralWidget()
         if cw:
             cw.deleteLater()
-        existing_central = cast(QWidget | None, getattr(self, "central_widget", None))
+        existing_central: QWidget | None = getattr(self, "central_widget", None)
         if existing_central is not None:
             existing_central.setFocus()
         self.central_widget = QWidget()

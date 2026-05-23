@@ -17,10 +17,14 @@ from .core import (
 )
 from .tables import GAS_DATABASE, StandardCondition
 
+__all__ = [
+    "GasFlowConversionMixin",
+]
+
 if TYPE_CHECKING:
     pass
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 
 class GasFlowConversionMixin:

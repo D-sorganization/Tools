@@ -45,6 +45,11 @@ from .constants import (
     WGS_TYPICAL_GHSV,
 )
 
+__all__ = [
+    "WGSReactorEngine",
+    "create_wgs_reactor_calculator",
+]
+
 if TYPE_CHECKING:
     from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
     from matplotlib.figure import Figure
@@ -220,7 +225,7 @@ except ImportError:
 
         BASE_CALCULATOR_AVAILABLE = True
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 
 class WGSReactorEngine:
@@ -239,7 +244,7 @@ class WGSReactorEngine:
     def _load_data(self, data_file: str | None) -> None:
         """Load catalyst and other relevant data from a JSON file."""
         if data_file is None:
-            logger.debug("No data file specified, using empty catalyst data")
+            _logger.debug("No data file specified, using empty catalyst data")
             return
         data = safe_read_json(data_file, default={})
         self.catalysts = data.get("catalysts", {})
@@ -729,7 +734,7 @@ if BASE_CALCULATOR_AVAILABLE:
             ax.set_ylabel("Composition (mol%)")
             ax.set_title("WGS Reactor: Inlet vs Outlet Composition")
             ax.set_xticks(x)
-            ax.set_xticklabels(species)
+            getattr(ax, "set_xticklabels")(species)  # noqa: B009
             ax.legend()
             ax.grid(True, alpha=0.3, axis="y")
 

@@ -16,7 +16,11 @@ from typing import Any
 
 from .notebook_session import NotebookSessionModel
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "WorkspaceBridge",
+]
+
+_logger = logging.getLogger(__name__)
 
 
 class WorkspaceBridge:
@@ -73,7 +77,7 @@ class WorkspaceBridge:
             if _is_json_serializable(value):
                 result[name] = value
             else:
-                logger.debug(
+                _logger.debug(
                     "Skipping non-serializable variable %r (%s)",
                     name,
                     type(value).__name__,
@@ -97,7 +101,7 @@ class WorkspaceBridge:
         """
         exported = self.export_variables(workspace)
         self._session_model.set_kernel_environment(exported)
-        logger.debug("Applied %d variable(s) to kernel environment", len(exported))
+        _logger.debug("Applied %d variable(s) to kernel environment", len(exported))
 
 
 # ---------------------------------------------------------------------------

@@ -77,29 +77,43 @@ def test_shim_and_canonical_are_same_object() -> None:
     )
 
 
+import re
+
+
+def _find_import_violations(root_path: Path, exclude_dir_name: str = None) -> list[str]:
+    """Find import statements referencing the old name in .py files."""
+    pattern = re.compile(r"^\s*(import upstream_drift_tools|from upstream_drift_tools)")
+    violations = []
+    for py_file in root_path.rglob("*.py"):
+        if exclude_dir_name and exclude_dir_name in py_file.parts:
+            continue
+        try:
+            with open(py_file, encoding="utf-8", errors="ignore") as f:
+                for line_idx, line in enumerate(f, 1):
+                    if pattern.match(line):
+                        rel_path = py_file.relative_to(root_path)
+                        violations.append(f"{rel_path}:{line_idx}:{line.strip()}")
+        except Exception:
+            pass
+    return violations
+
+
 @pytest.mark.unit
 @pytest.mark.xfail(reason="TDD pending")
 def test_no_upstream_drift_tools_imports_in_sidekick_source() -> None:
-    """Sidekick package must not import from upstream_drift_tools."""
+    """The sidekick package itself must not import from upstream_drift_tools.
+
+    Ensures no circular imports via the shim.
+    """
     sidekick_src = WORKTREE_ROOT / "src" / "shared" / "python" / "sidekick"
     if not sidekick_src.exists():
         pytest.fail(
             "sidekick package directory does not exist yet: Implement the rename first."
         )
-
-    hits = []
-    for file in sidekick_src.rglob("*.py"):
-        with open(file, encoding="utf-8") as f:
-            for i, line in enumerate(f):
-                line = line.strip()
-                if line.startswith("import upstream_drift_tools") or line.startswith(
-                    "from upstream_drift_tools"
-                ):
-                    hits.append(f"{file.relative_to(WORKTREE_ROOT)}:{i + 1}: {line}")
-
-    assert not hits, (
-        "Found upstream_drift_tools import statements inside sidekick/ "
-        "source (would be circular via shim):\n" + "\n".join(hits)
+    violations = _find_import_violations(sidekick_src)
+    assert not violations, (
+        "Found upstream_drift_tools import statements inside sidekick/ source:\n"
+        + "\n".join(violations)
     )
 
 
@@ -108,19 +122,10 @@ def test_no_upstream_drift_tools_imports_in_sidekick_source() -> None:
 def test_no_upstream_drift_tools_in_tools_src_except_shim() -> None:
     """Only the shim package directory may use old-name import statements."""
     src_root = WORKTREE_ROOT / "src"
-    hits = []
-    for file in src_root.rglob("*.py"):
-        if "upstream_drift_tools" in file.parts:
-            continue
-        with open(file, encoding="utf-8") as f:
-            for i, line in enumerate(f):
-                line = line.strip()
-                if line.startswith("import upstream_drift_tools") or line.startswith(
-                    "from upstream_drift_tools"
-                ):
-                    hits.append(f"{file.relative_to(WORKTREE_ROOT)}:{i + 1}: {line}")
-
-    assert not hits, (
-        "Found old 'upstream_drift_tools' import statements in src/ outside "
-        "the shim directory:\n" + "\n".join(hits)
+    violations = _find_import_violations(
+        src_root, exclude_dir_name="upstream_drift_tools"
+    )
+    assert not violations, (
+        "Found old 'upstream_drift_tools' import statements in src/ "
+        "outside shim directory:\n" + "\n".join(violations)
     )

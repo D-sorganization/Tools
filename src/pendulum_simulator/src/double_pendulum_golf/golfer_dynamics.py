@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Dynamics (mass matrix, Coriolis, gravity, energy) for golfer model.
 
 Uses Lagrangian formulation with analytical Jacobian-based computation

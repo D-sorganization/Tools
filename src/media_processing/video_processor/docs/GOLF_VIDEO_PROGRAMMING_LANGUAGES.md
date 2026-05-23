@@ -79,10 +79,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
     const video = await prisma.video.create({
       data: {
@@ -111,23 +108,11 @@ import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 
 const ffmpeg = createFFmpeg({ log: true });
 
-async function trimVideo(
-  videoFile: File,
-  startTime: number,
-  endTime: number,
-): Promise<Blob> {
+async function trimVideo(videoFile: File, startTime: number, endTime: number): Promise<Blob> {
   await ffmpeg.load();
   ffmpeg.FS("writeFile", "input.mp4", await fetchFile(videoFile));
 
-  await ffmpeg.run(
-    "-i",
-    "input.mp4",
-    "-ss",
-    startTime.toString(),
-    "-to",
-    endTime.toString(),
-    "output.mp4",
-  );
+  await ffmpeg.run("-i", "input.mp4", "-ss", startTime.toString(), "-to", endTime.toString(), "output.mp4");
 
   const data = ffmpeg.FS("readFile", "output.mp4");
   return new Blob([data.buffer], { type: "video/mp4" });

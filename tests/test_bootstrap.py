@@ -1,0 +1,45 @@
+import sys
+
+import pytest
+
+from _bootstrap import bootstrap
+
+
+def test_bootstrap_invalid_args():
+    with pytest.raises(TypeError):
+        bootstrap(123)  # type: ignore
+    with pytest.raises(ValueError):
+        bootstrap("")
+
+
+def test_bootstrap_resolves_paths(tmp_path):
+    # Setup dummy directory structure to mock a repo
+    repo_dir = tmp_path / "dummy_repo"
+    repo_dir.mkdir()
+
+    # Create marker file
+    (repo_dir / "pyproject.toml").touch()
+
+    # Create caller file under a subdirectory
+    sub_dir = repo_dir / "src" / "tools"
+    sub_dir.mkdir(parents=True)
+    caller_file = sub_dir / "launcher.py"
+    caller_file.touch()
+
+    # Create dummy shared directory
+    shared_dir = repo_dir / "src" / "shared" / "python"
+    shared_dir.mkdir(parents=True)
+
+    # Backup sys.path
+    original_path = list(sys.path)
+    try:
+        resolved_root = bootstrap(str(caller_file))
+        assert resolved_root.resolve() == repo_dir.resolve()
+
+        # Verify sys.path updates
+        assert str(shared_dir.resolve()) in sys.path
+        assert str(repo_dir.resolve()) in sys.path
+        assert str((repo_dir / "src").resolve()) in sys.path
+    finally:
+        # Restore sys.path
+        sys.path = original_path

@@ -46,7 +46,7 @@ GAS COMPONENTS:
 from __future__ import annotations
 
 import logging
-from typing import Any, cast
+from typing import Any
 
 from .engine.pressure_drop_calculation_engine import (
     PressureDropCalculationEngine,
@@ -105,7 +105,7 @@ from .utils.pipe_database import (
     list_schedules_for_size,
 )
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 
 # ============================================================================
@@ -143,7 +143,7 @@ def show_help() -> None:
 \u2551                                                                              \u2551
 \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d
 """
-    logger.info(help_text)
+    _logger.info(help_text)
 
 
 def list_gas_components() -> dict[str, dict[str, Any]]:
@@ -153,24 +153,24 @@ def list_gas_components() -> dict[str, dict[str, Any]]:
         Dictionary of gas components with MW, Tc, Pc, and acentric factor
     """
     components = {}
-    logger.info(
+    _logger.info(
         "\n\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557"
     )
-    logger.info(
+    _logger.info(
         "\u2551                    AVAILABLE GAS COMPONENTS                        \u2551"
     )
-    logger.info(
+    _logger.info(
         "\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2566\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2566\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2566\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2566\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563"
     )
-    logger.info(
+    _logger.info(
         "\u2551 Component   \u2551  MW       \u2551   Tc (K) \u2551  Pc (bar) \u2551 Acentric Factor  \u2551"
     )
-    logger.info(
+    _logger.info(
         "\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256c\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256c\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256c\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256c\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563"
     )
 
     for name, props in sorted(GAS_DATABASE.items()):
-        logger.info(
+        _logger.info(
             f"\u2551 {name:11s} \u2551 {props.molecular_weight:9.3f} \u2551 {props.critical_temp:8.1f} \u2551"
             f" {props.critical_pressure / 1e5:9.2f} \u2551 {props.acentric_factor:16.3f} \u2551"
         )
@@ -181,7 +181,7 @@ def list_gas_components() -> dict[str, dict[str, Any]]:
             "acentric_factor": props.acentric_factor,
         }
 
-    logger.info(
+    _logger.info(
         "\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2569\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2569\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2569\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2569\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d"
     )
     return components
@@ -196,19 +196,19 @@ def list_fittings(category: str | None = None) -> dict[str, float]:
     Returns:
         Dictionary of fitting types and K-factors
     """
-    logger.info(
+    _logger.info(
         "\n\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557"
     )
-    logger.info(
+    _logger.info(
         "\u2551                    AVAILABLE FITTINGS (K-factors)                  \u2551"
     )
-    logger.info(
+    _logger.info(
         "\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2566\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2566\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563"
     )
-    logger.info(
+    _logger.info(
         "\u2551 Fitting Type                             \u2551 K-factor\u2551  Category    \u2551"
     )
-    logger.info(
+    _logger.info(
         "\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256c\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256c\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563"
     )
 
@@ -235,9 +235,11 @@ def list_fittings(category: str | None = None) -> dict[str, float]:
 
         result[fitting_type] = k_factor
         name = fitting_type.replace("_", " ").title()
-        logger.info(f"\u2551 {name:40s} \u2551 {k_factor:7.2f} \u2551 {cat:12s} \u2551")
+        _logger.info(
+            f"\u2551 {name:40s} \u2551 {k_factor:7.2f} \u2551 {cat:12s} \u2551"
+        )
 
-    logger.info(
+    _logger.info(
         "\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2569\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2569\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d"
     )
     return result
@@ -252,13 +254,13 @@ def list_pipe_sizes() -> dict[str, list[str]]:
     sizes = list_available_sizes()
     result = {}
 
-    logger.info(
+    _logger.info(
         "\n\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557"
     )
-    logger.info(
+    _logger.info(
         "\u2551                    AVAILABLE PIPE SIZES (ASME B36.10M)             \u2551"
     )
-    logger.info(
+    _logger.info(
         "\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563"
     )
 
@@ -266,9 +268,9 @@ def list_pipe_sizes() -> dict[str, list[str]]:
         schedules = list_schedules_for_size(size)
         result[size] = schedules
         sch_str = ", ".join(schedules)
-        logger.info(f"\u2551 NPS {size:5s} : {sch_str:56s}\u2551")
+        _logger.info(f"\u2551 NPS {size:5s} : {sch_str:56s}\u2551")
 
-    logger.info(
+    _logger.info(
         "\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d"
     )
     return result
@@ -280,54 +282,54 @@ def list_flow_units() -> dict[str, list[str]]:
     Returns:
         Dictionary of unit categories and available units
     """
-    logger.info(
+    _logger.info(
         "\n\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557"
     )
-    logger.info(
+    _logger.info(
         "\u2551                    AVAILABLE FLOW RATE UNITS                       \u2551"
     )
-    logger.info(
+    _logger.info(
         "\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563"
     )
-    logger.info(
+    _logger.info(
         "\u2551 MASS FLOW UNITS:                                                   \u2551"
     )
     mass_units = list(MASS_FLOW_CONVERSIONS.keys())
-    logger.info(f"\u2551   {', '.join(mass_units):63s}\u2551")
+    _logger.info(f"\u2551   {', '.join(mass_units):63s}\u2551")
 
-    logger.info(
+    _logger.info(
         "\u2551                                                                    \u2551"
     )
-    logger.info(
+    _logger.info(
         "\u2551 MOLAR FLOW UNITS:                                                  \u2551"
     )
     molar_units = list(MOLAR_FLOW_CONVERSIONS.keys())
-    logger.info(f"\u2551   {', '.join(molar_units):63s}\u2551")
+    _logger.info(f"\u2551   {', '.join(molar_units):63s}\u2551")
 
-    logger.info(
+    _logger.info(
         "\u2551                                                                    \u2551"
     )
-    logger.info(
+    _logger.info(
         "\u2551 VOLUMETRIC FLOW UNITS:                                             \u2551"
     )
     vol_units = list(VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S.keys())
     vol_str = ", ".join(vol_units)
     while len(vol_str) > 63:
         idx = vol_str[:63].rfind(",")
-        logger.info(f"\u2551   {vol_str[: idx + 1]:63s}\u2551")
+        _logger.info(f"\u2551   {vol_str[: idx + 1]:63s}\u2551")
         vol_str = vol_str[idx + 2 :]
-    logger.info(f"\u2551   {vol_str:63s}\u2551")
+    _logger.info(f"\u2551   {vol_str:63s}\u2551")
 
-    logger.info(
+    _logger.info(
         "\u2551                                                                    \u2551"
     )
-    logger.info(
+    _logger.info(
         "\u2551 STANDARD CONDITIONS FOR VOLUMETRIC FLOWS:                          \u2551"
     )
     for name, (T, P, desc) in STANDARD_CONDITIONS.items():
-        logger.info(f"\u2551   {name:6s}: T={T:.2f}K, P={P:.0f}Pa - {desc:34s}\u2551")
+        _logger.info(f"\u2551   {name:6s}: T={T:.2f}K, P={P:.0f}Pa - {desc:34s}\u2551")
 
-    logger.info(
+    _logger.info(
         "\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d"
     )
 
@@ -345,19 +347,19 @@ def list_materials() -> dict[str, dict[str, float]]:
     Returns:
         Dictionary of materials with roughness values
     """
-    logger.info(
+    _logger.info(
         "\n\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557"
     )
-    logger.info(
+    _logger.info(
         "\u2551                    PIPE MATERIAL ROUGHNESS VALUES                  \u2551"
     )
-    logger.info(
+    _logger.info(
         "\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2566\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2566\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563"
     )
-    logger.info(
+    _logger.info(
         "\u2551 Material                          \u2551  \u03b5 (mm)     \u2551  \u03b5 (m)           \u2551"
     )
-    logger.info(
+    _logger.info(
         "\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256c\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256c\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563"
     )
 
@@ -369,11 +371,11 @@ def list_materials() -> dict[str, dict[str, float]]:
             "roughness_mm": roughness_mm,
             "roughness_m": roughness_mm / 1000,
         }
-        logger.info(
+        _logger.info(
             f"\u2551 {material:33s} \u2551 {roughness_mm:11.4f} \u2551 {roughness_mm / 1000:16.6f} \u2551"
         )
 
-    logger.info(
+    _logger.info(
         "\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2569\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2569\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d"
     )
     return result
@@ -416,10 +418,10 @@ def compare_friction_methods(
         regime = "Transitional"
     else:
         regime = "Turbulent"
-    logger.info(f"\nFlow regime: {regime}")
+    _logger.info(f"\nFlow regime: {regime}")
 
     if reynolds_number < 4000:
-        logger.info("Note: For transitional flow, Churchill method is recommended.")
+        _logger.info("Note: For transitional flow, Churchill method is recommended.")
 
     return results
 
@@ -449,7 +451,7 @@ def _resolve_pipe_geometry(
             )
         pipe_spec = get_pipe_spec(pipe_size, pipe_schedule, pipe_material)
         pipe_diameter = pipe_spec.get_id_meters()
-        logger.info(
+        _logger.info(
             f'Using {pipe_size}" Schedule {pipe_schedule}: ID = {pipe_diameter * 1000:.2f} mm'
         )
 
@@ -478,7 +480,7 @@ def _resolve_gas_and_flow(
     assert flow_rate is not None, "flow_rate must be provided"
     if gas_composition is None:
         gas_composition = {"Air": 1.0}
-        logger.info("Using default gas composition: Air")
+        _logger.info("Using default gas composition: Air")
 
     composition = GasComposition(components=gas_composition)
     composition.normalize()
@@ -505,7 +507,7 @@ def _resolve_gas_and_flow(
             standard=standard_condition,
         )
 
-    logger.info(f"Mass flow rate: {mass_flow_kg_s:.4f} kg/s ({flow_rate} {flow_unit})")
+    _logger.info(f"Mass flow rate: {mass_flow_kg_s:.4f} kg/s ({flow_rate} {flow_unit})")
     return composition, mass_flow_kg_s
 
 
@@ -654,7 +656,7 @@ def calculate_pressure_drop(
     )
     engine = PressureDropCalculationEngine()
     results = engine.calculate(inputs)
-    return cast(dict[str, Any], _format_results(results))
+    return _format_results(results)
 
 
 def calculate_pressure_drop_custom_gas(
@@ -810,17 +812,17 @@ def main() -> None:
 
 
 __all__ = [
-    "show_help",
-    "list_gas_components",
-    "list_fittings",
-    "list_pipe_sizes",
-    "list_flow_units",
-    "list_materials",
-    "compare_friction_methods",
-    "validate_inputs",
     "calculate_pressure_drop",
     "calculate_pressure_drop_custom_gas",
     "calculate_pressure_drop_syngas",
-    "print_results",
+    "compare_friction_methods",
+    "list_fittings",
+    "list_flow_units",
+    "list_gas_components",
+    "list_materials",
+    "list_pipe_sizes",
     "main",
+    "print_results",
+    "show_help",
+    "validate_inputs",
 ]

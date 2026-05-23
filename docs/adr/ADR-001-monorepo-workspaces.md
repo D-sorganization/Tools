@@ -9,7 +9,7 @@
 
 The Tools repository contains multiple independent web applications
 (scientific calculators, simulators, media processors) each with its own
-npm package.  Previously there was no root package.json, preventing
+npm package. Previously there was no root package.json, preventing
 workspace-aware commands like `npm test --workspaces` and making CI
 matrix generation manual.
 
@@ -31,7 +31,7 @@ flowchart TD
 ## Decision
 
 Add a root `package.json` with `workspaces` array enumerating all npm
-packages under `src/`.  Mark the root as `"private": true` to prevent
+packages under `src/`. Mark the root as `"private": true` to prevent
 accidental publishing of an umbrella package.
 
 ## Alternatives Considered

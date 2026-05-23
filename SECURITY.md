@@ -44,6 +44,7 @@ This section addresses minimizing secret-keyword exposure and preventing hardcod
 ### Critical Rules
 
 **NEVER commit to the repository:**
+
 - API keys (OpenAI, Google, AWS, GitHub, Stripe, etc.)
 - Database credentials or connection strings with passwords
 - Private encryption keys or SSH keys
@@ -51,7 +52,7 @@ This section addresses minimizing secret-keyword exposure and preventing hardcod
 - AWS/Azure/GCP service account credentials
 - Any other sensitive credentials or secrets
 
-###  Best Practices
+### Best Practices
 
 #### 1. Use Environment Variables
 
@@ -87,6 +88,7 @@ DATABASE_URL=postgresql://user:password@localhost/dbname
 ```
 
 Examples in this repo:
+
 - `.env.example` — Flask/calculator app secrets
 - `src/document_processing/pdf_renamer/.env.example` — Gemini API key
 
@@ -109,6 +111,7 @@ Example: `src/document_processing/pdf_renamer/config.py` demonstrates this patte
 #### 4. Exclude Config Files
 
 The `.gitignore` excludes:
+
 - `.env*` files (all environment variable files)
 - `*.key`, `*.pem` (certificates and keys)
 - `secrets/` directories
@@ -126,6 +129,7 @@ python3 -m src.python.src.utils.secrets_scanner src/
 ```
 
 This detects patterns matching:
+
 - AWS keys: `AKIA` prefix
 - GitHub tokens: `ghp_` prefix
 - OpenAI keys: `sk-` prefix
@@ -142,14 +146,16 @@ During code review, verify:
 4. **Logging**: Never log secrets
 5. **Exceptions**: Don't expose secrets in error messages
 
-###  Examples from This Repository
+### Examples from This Repository
 
 **PDF Renamer** (`src/document_processing/pdf_renamer/`):
+
 - Demonstrates priority-ordered secret retrieval: environment → OS keyring → none
 - Uses interactive setup to store credentials securely
 - See `config.py` for the pattern
 
 **Folder Packer Pro** (`src/folder_packer_pro/`):
+
 - User-provided passwords (never hardcoded)
 - Uses PBKDF2 + AES-256 for encryption
 - Passwords stay in memory only during operations

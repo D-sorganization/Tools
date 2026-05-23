@@ -17,51 +17,10 @@ behavior introduced in PR #2750; this file covers the remaining surface:
 from __future__ import annotations
 
 import json
-import sys
-import types
 from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
-
-# ---------------------------------------------------------------------------
-# Bootstrap: mirror the approach in test_ollama_adapter.py
-# ---------------------------------------------------------------------------
-
-ROOT = __import__("pathlib").Path(__file__).resolve().parents[4]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-
-_PACKAGE_STUBS: list[tuple[str, str | None]] = [
-    ("src", "src"),
-    ("src.shared", "src/shared"),
-    ("src.shared.python", "src/shared/python"),
-    ("src.shared.python.config", "src/shared/python/config"),
-    ("src.shared.python.ai", "src/shared/python/ai"),
-    ("src.shared.python.ai.adapters", "src/shared/python/ai/adapters"),
-]
-for _mod_name, _rel_path in _PACKAGE_STUBS:
-    if _mod_name not in sys.modules:
-        import types
-
-        _stub = types.ModuleType(_mod_name)
-        if _rel_path is not None:
-            _stub.__path__ = [str(ROOT / _rel_path)]
-        sys.modules[_mod_name] = _stub
-
-
-_logging_config_stub = sys.modules.setdefault(
-    "src.shared.python.logging_pkg.logging_config",
-    types.ModuleType("src.shared.python.logging_pkg.logging_config"),
-)
-_logging_config_stub.get_logger = MagicMock()  # type: ignore[attr-defined]
-
-_env_stub = sys.modules.get("src.shared.python.config.environment")
-if not isinstance(_env_stub, types.ModuleType):
-    _env_stub = types.ModuleType("src.shared.python.config.environment")
-    sys.modules["src.shared.python.config.environment"] = _env_stub
-_env_stub.get_env = lambda key, default=None, required=False: default
-_env_stub.get_env_float = lambda key, default=0.0: float(default)
 
 from src.shared.python.ai.adapters.ollama_adapter import OllamaAdapter  # noqa: E402
 from src.shared.python.ai.exceptions import (  # noqa: E402
@@ -278,8 +237,11 @@ class TestValidateConnection:
         assert ok is False
         assert "No models" in msg or "ollama pull" in msg
 
-    def test_failure_when_model_not_in_list(self, adapter: OllamaAdapter) -> None:
-        """Returns (False, message) when model is not among available models."""
+    def test_falls_back_when_model_not_in_list(self, adapter: OllamaAdapter) -> None:
+        """validate_connection returns True and falls back to first available
+
+        model when configured model is absent.
+        """
         fake_body = {"models": [{"name": "mistral"}, {"name": "codellama"}]}
         mock_client = MagicMock()
         mock_client.get.return_value = _make_mock_response(fake_body)
@@ -287,8 +249,9 @@ class TestValidateConnection:
 
         ok, msg = adapter.validate_connection()
 
-        assert ok is False
-        assert "llama3.1" in msg or "not found" in msg
+        assert ok is True
+        assert adapter._model == "mistral"
+        assert "using 'mistral'" in msg.lower()
 
     def test_failure_on_connect_error(self, adapter: OllamaAdapter) -> None:
         """Returns (False, message) when Ollama server is unreachable."""

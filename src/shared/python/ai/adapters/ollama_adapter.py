@@ -72,7 +72,7 @@ def _normalize_host(host: str) -> str:
     connect to it on Windows.
     """
     if not host:
-        return DEFAULT_OLLAMA_HOST
+        return str(DEFAULT_OLLAMA_HOST)
     host = host.strip().rstrip("/")
     if not host.startswith(("http://", "https://")):
         host = f"http://{host}"
@@ -575,6 +575,7 @@ class OllamaAdapter(BaseAgentAdapter):
 
         except Exception as e:  # noqa: BLE001
             self._handle_error(e)
+            return False
 
     def _handle_error(self, error: Exception) -> AgentResponse:
         """Handle Ollama-specific errors before falling back to generic classifier."""

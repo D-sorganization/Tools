@@ -29,8 +29,8 @@ sys.modules.setdefault("src.shared.python.ai.adapters", adapters_pkg)
 
 logging_pkg = types.ModuleType("src.shared.python.logging_pkg")
 logging_config = types.ModuleType("src.shared.python.logging_pkg.logging_config")
-logging_config.get_logger = logging.getLogger
-logging_config.setup_logging = lambda *args, **kwargs: None
+logging_config.get_logger = logging.getLogger  # type: ignore[attr-defined]
+logging_config.setup_logging = lambda *args, **kwargs: None  # type: ignore[attr-defined]
 sys.modules.setdefault("src.shared.python.logging_pkg", logging_pkg)
 sys.modules.setdefault("src.shared.python.logging_pkg.logging_config", logging_config)
 
@@ -252,4 +252,9 @@ class _Adapter(BaseAgentAdapter):
         return ["test"]
 
     def thinking_capabilities(self) -> Any:
-        return None
+        from src.shared.python.chat.models import ThinkingCapabilities, ThinkingLevel
+
+        return ThinkingCapabilities(
+            supported_levels=frozenset({ThinkingLevel.NONE}),
+            default_level=ThinkingLevel.NONE,
+        )

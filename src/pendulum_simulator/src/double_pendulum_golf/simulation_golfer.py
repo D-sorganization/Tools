@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 # ruff: noqa: E501
 """
 Simulation engine for the golfer upper-body model.

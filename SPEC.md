@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST UPDATED: 2026-05-20
+  LAST UPDATED: 2026-05-22
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.194                                    |
-| **Last Spec Update**    | 2026-05-21                                 |
+| **Spec Version**        | 1.1.199                                    |
+| **Last Spec Update**    | 2026-05-22                                 |
 
 ## 2. Purpose & Mission
 
@@ -626,6 +626,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-22 | 1.1.199 | Fixed mypy TYPE_CHECKING import guards in sidekick process calculators (syngas_compression_calculator, acid_gas_dewpoint_calculator, pressure_drop_interface, syngas_compression_engine) and calculator_state_mixin to use `if TYPE_CHECKING:` conditional imports for optional PyQt6/matplotlib dependencies, eliminating incompatible-assignment and no-redef errors across Qt-installed and Qt-absent environments.                                                                                                                                              |
+| 2026-05-22 | 1.1.198 | Tightened local hook behavior for consolidated task branches so pre-push fleet guardrails inspect the unpushed commit range before falling back to the full repository, and changed the Bandit pre-push hook to scan the Python files selected by pre-commit instead of re-scanning existing repository-wide baseline debt.                                                                                                                                                                                                                                         |
+| 2026-05-21 | 1.1.195 | Resolved shared AI/chat unit-test failures by tightening Rust adapter optional-backend behavior, removing obsolete phase-one integration coverage, and updating Ollama, Rust adapter, and AI memory manager tests to use deterministic mocks for terminal-provider and event-loop contracts.                                                                                                                                                                                                                                                                        |
 | 2026-05-20 | 1.1.192 | Fixed shared Sidekick chat dock shutdown so an intentional widget close suppresses the WebSocket reconnect timer while unexpected disconnects retain the existing retry path; added focused regression coverage for both lifecycle branches.                                                                                                                                                                                                                                                                                                                        |
 | 2026-05-20 | 1.1.191 | Hardened Sidekick test-health coverage so the Jupyter tab availability positive path simulates an importable optional `nbformat` module without requiring the package in the base environment, while the missing-dependency negative path remains covered. Marked the Sidekick dock close-affordance Qt tests as serial/offscreen and skipped them inside Windows xdist workers so the serial lane keeps coverage without crashing parallel workers.                                                                                                                |
 | 2026-05-20 | 1.1.190 | Added shared Sidekick/chat launcher integration contracts: `ChatServiceBase.condense_to_memory()` now persists explicit memory candidates through the shared memory manager, `UnifiedToolsSidebar.open_tab()` focuses visible and hidden tabs with `os_terminal` compatibility, ChatDockWidget exposes readiness diagnostics, and Qt chat imports gained subprocess-backed PyQt6 runtime diagnostics with focused regression coverage.                                                                                                                              |
@@ -816,6 +819,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-05-12 | 1.1.138 | Hardened CI test-matrix dependency setup against stale self-hosted runner NumPy/SciPy binary caches and routed provider-contract tests through the active Python interpreter.                                                                                                                                                                                                                                                                                                                                                                                       |
 | 2026-05-12 | 1.1.137 | Corrected the coverage policy gate to ratchet from the committed total-coverage baseline until the repository reaches the configured 60% target, while preserving package thresholds and regression checks.                                                                                                                                                                                                                                                                                                                                                         |
 | 2026-05-12 | 1.1.136 | Resolved type-checking errors by properly implementing abstract methods (send_message, validate_connection, capabilities) for RustAgentAdapter, and fixed GUI theme and categorization issues in UpstreamDrift chat functionality.                                                                                                                                                                                                                                                                                                                                  |
+| 2026-05-19 | 1.1.184 | Replaced `.reduce()` with a standard `for` loop in `calculatePhaseConfidence` to eliminate callback allocation and garbage collection overhead during high-frequency pose frame confidence calculations in the video processor.                                                                                                                                                                                                                                                                                                                                     |
 | 2026-05-20 | 1.1.193 | Clarified shared chat provider dropdown ownership by removing stale UpstreamDrift issue references from Tools-owned source and tests, and synchronized the GitHub CLI provider descriptor with the default terminal registry (#3020).                                                                                                                                                                                                                                                                                                                               |
 
 ---
@@ -907,6 +911,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 ### Version 1.1.184
 
 - **Performance**: In `src/pendulum_simulator/pendulum-web/src/components/AnalysisPlots.tsx`, optimized chart downsampling by replacing multiple instances of `indices.map()` with pre-allocated arrays and explicit `for` loops inside `useMemo` hooks. This drastically reduces array allocation and garbage collection overhead during high-frequency component rendering.
+- **Performance**: Replaced `.reduce()` with a standard `for` loop in `calculatePhaseConfidence` inside `src/media_processing/video_processor/apps/web/lib/golf/phaseDetector.ts` to eliminate callback allocation and garbage collection overhead during high-frequency pose frame confidence calculations.
 
 ### Version 1.1.185
 
@@ -930,6 +935,12 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 9. Changelog
 
+### Version 1.1.190
+
+- **Performance**: In `src/ode_solver/web/src/components/ODESolverCalculator.tsx`, wrapped `varNames` computation and summary cards rendering in `useMemo`, and replaced `.filter()` with a single-pass `for` loop to prevent O(N) recalculations of array keys and summary min/max loops on every React render.
+
+- **2026-05-22**: Memoize summary statistics calculation and variable names in ODESolverCalculator.
+- **2026-05-22**: Keep the model explorer package initializer lint-clean by preserving the module docstring before future imports.
 - **2026-05-20**: Suppress shared chat dock WebSocket reconnect scheduling during intentional widget close while retaining reconnects for unexpected disconnects.
 - **2026-05-20**: Add accessible toggle states and toast feedback for copy actions in `calculator/static/app.js` and `calculator/templates/index.html`.
 - **2026-05-20**: Harden health-check API responses to return generic client-facing errors while logging exception details server-side.

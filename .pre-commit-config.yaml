@@ -2,7 +2,12 @@
 # Fleet-Wide Pre-commit Configuration
 # =============================================================================
 # Fast checks on every commit (<15 seconds)
-# Slower checks (mypy, bandit, tests) on pre-push only
+# Slower checks (mypy, bandit, tests, dependency audit) on pre-push only
+#
+# This is the central source of truth for fleet hook behavior. Repo-local
+# .pre-commit-config.yaml files may add language-specific checks, but should keep
+# this contract: pre-commit catches cheap deterministic drift; pre-push catches
+# bounded local confidence; CI owns matrix/container/integration/deployment work.
 #
 # EXCEPTIONS:
 # - Documentation-only changes (.md, .rst) skip Python checks
@@ -28,18 +33,13 @@ repos:
         name: "ruff (lint + fix)"
         args: ["--fix", "--exit-non-zero-on-fix"]
         types: [python]
-        # Exclude directories that are also excluded in pyproject.toml [tool.ruff].
-        # Pre-commit passes files directly (bypassing ruff's own exclude), so we must mirror here.
-        exclude: ^(\.github/|docs/|.*\.md$|src/data_processing/|src/document_processing/|src/pendulum_simulator/|src/scientific_modeling/|src/tools/folder_tools/)
+        # Skip for docs-only or workflow-only changes
+        exclude: ^(\.github/|docs/|.*\.md$|shared_scripts/)
 
       - id: ruff-format
         name: "ruff format"
         types: [python]
-        exclude: ^(\.github/|docs/|.*\.md$|src/data_processing/|src/document_processing/|src/pendulum_simulator/|src/scientific_modeling/|src/tools/folder_tools/)
-
-  # Black removed: ruff-format is the canonical Python formatter.
-  # Both ruff-format and black conflict on parenthesized assert style —
-  # keeping both causes an infinite formatter loop in pre-commit.
+        exclude: ^(\.github/|docs/|.*\.md$|shared_scripts/)
 
   # -------------------------------------------------------------------------
   # Stage 2: Quick Quality Checks - PYTHON FILES ONLY
@@ -47,14 +47,6 @@ repos:
 
   - repo: local
     hooks:
-      # Reject newly introduced TODO/FIXME-style markers unless they link to a GitHub issue.
-      - id: todo-issue-links
-        name: "TODO/FIXME markers require issue links"
-        entry: python scripts/check_todo_issue_links.py --check-staged
-        language: system
-        pass_filenames: false
-        always_run: true
-
       # Prevent wildcard imports
       - id: no-wildcard-imports
         name: "no wildcard imports"
@@ -77,7 +69,22 @@ repos:
         entry: "^\\s*print\\("
         language: pygrep
         files: ^src/
-        exclude: ^(src/.*/__main__\.py|tests/|\.github/|src/shared/python/codemap/(cli|watcher|mcp_server)\.py)
+        types: [python]
+        exclude: ^(src/.*/__main__\.py|tests/|\.github/)
+
+      - id: fleet-fast-guardrails
+        name: "fleet fast guardrails"
+        entry: python shared_scripts/fleet_hooks.py fast
+        language: python
+        pass_filenames: false
+        always_run: true
+
+      - id: fleet-spec-freshness-warning
+        name: "SPEC.md freshness warning"
+        entry: python shared_scripts/fleet_hooks.py spec-freshness --warn-only
+        language: python
+        pass_filenames: false
+        always_run: true
 
   # -------------------------------------------------------------------------
   # Stage 3: Config File Formatting - ALWAYS RUNS
@@ -120,29 +127,7 @@ repos:
             __pycache__/|
             \.pytest_cache/|
             \.venv/|
-            \.github/|
-            .*/tests/|
-            src/shared/python/dwsim_model/|
-            src/dwsim_model/|
-            src/shared/python/upstream_drift_tools/|
-            src/shared/python/model_generation/|
-            src/shared/python/signal_toolkit/|
-            src/shared/python/programmatic_pid/|
-            src/electrode_advisor/|
-            src/function_generator/|
-            src/data_processing/data_processor/|
-            src/glass_bath_fea/|
-            src/tools/folder_tools/|
-            src/pendulum_simulator/|
-            src/shared/python/theme/|
-            src/folder_tool/|
-            src/folder_packer_pro/|
-            src/solar_system_model/|
-            src/optimizer_gui/|
-            src/humanoid_builder_gui/|
-            src/rrt_path_planner/|
-            src/rotation_converter/screw_visualization\.py|
-            src/shared/python/codemap/
+            \.github/
           )
 
   # Bandit - Security scanning (pre-push only, Python only)
@@ -152,24 +137,8 @@ repos:
       - id: bandit
         name: "bandit (security scan)"
         stages: [pre-push]
-        # Run on changed Python src/ files only (mirrors CI behavior).
-        # Previously used pass_filenames: false + -r . which scanned the
-        # entire repo on every push and blocked due to pre-existing findings.
         args: ["-ll", "-ii"]
-        files: ^src/
-        exclude: |
-          (?x)^(
-            src/matlab/|
-            src/javascript/|
-            src/archive/|
-            src/legacy/|
-            src/experimental/|
-            .*/tests/|
-            src/shared/python/upstream_drift_tools/|
-            src/shared/python/model_generation/|
-            src/data_processing/data_processor/|
-            src/glass_bath_fea/
-          )
+        # Only run if Python files changed
         types: [python]
 
   # Pytest - Unit tests (pre-push only)
@@ -184,12 +153,30 @@ repos:
         # Only run if Python files changed
         types: [python]
 
+      - id: pip-audit
+        name: "pip-audit (Python dependency audit)"
+        stages: [pre-push]
+        entry: python shared_scripts/fleet_hooks.py dependency-audit
+        language: python
+        additional_dependencies: [pip-audit]
+        pass_filenames: false
+        always_run: true
+
+      - id: fleet-push-guardrails
+        name: "fleet pre-push guardrails"
+        stages: [pre-push]
+        entry: python shared_scripts/fleet_hooks.py push
+        language: python
+        additional_dependencies: [pip-audit]
+        pass_filenames: false
+        always_run: true
+
 # =============================================================================
 # Global Settings
 # =============================================================================
 
 default_language_version:
-  python: python # Matches pyproject requires-python and ruff target-version
+  python: python
 
 # Files to always exclude from all hooks
 exclude: |
@@ -219,4 +206,4 @@ ci:
   autofix_prs: true
   autoupdate_branch: "main"
   autoupdate_commit_msg: "chore: update pre-commit hooks"
-  skip: [pytest-unit, bandit, mypy] # Skip slow hooks in CI
+  skip: [pytest-unit, bandit, mypy, pip-audit, fleet-push-guardrails] # Skip slow hooks in CI

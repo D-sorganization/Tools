@@ -10,7 +10,7 @@ a git submodule or direct path manipulation.
 
 Usage::
 
-    from upstream_drift_tools.theme import (
+    from sidekick.theme import (
         BUILTIN_THEMES,
         THEME_COLOR_KEYS,
         ThemeManager,
@@ -26,7 +26,7 @@ import logging
 import sys
 from pathlib import Path
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 # Ensure the shared.python.theme sibling package is importable.
 # When installed via pip (editable or not), setuptools already
@@ -61,7 +61,7 @@ try:
     _THEME_AVAILABLE = True
 
 except ImportError as exc:
-    logger.warning("Failed to import theme module: %s", exc)
+    _logger.warning("Failed to import theme module: %s", exc)
     _THEME_AVAILABLE = False
 
 # PyQt6-dependent re-exports
@@ -93,36 +93,30 @@ else:
     _PYQT6_AVAILABLE = False
 
 __all__ = [
-    # Core data (no PyQt6 needed)
     "BUILTIN_THEMES",
-    "THEME_COLOR_KEYS",
-    # Color utilities
-    "get_matplotlib_colors",
-    "get_rgba",
-    "is_dark_theme",
-    "is_valid_hex_color",
-    "normalise_hex_color",
-    # Stylesheet generation
-    "generate_minimal_stylesheet",
-    "generate_stylesheet",
-    # Protocols
-    "StylesheetGenerator",
-    "ThemeProvider",
-    "ThemeSwitcher",
-    # PyQt6-dependent (may be None)
-    "ThemeManager",
-    "get_theme_manager",
-    "ThemedWindowMixin",
-    "apply_theme_to_window",
-    "create_theme_menu",
-    "setup_themed_app",
-    "get_qcolor",
-    # Dialogs
     "ColorFieldEditor",
     "ColorPickerButton",
     "CustomThemeDialog",
     "CustomThemeEditor",
+    "StylesheetGenerator",
+    "THEME_COLOR_KEYS",
     "ThemeListItem",
+    "ThemeManager",
     "ThemeManagerDialog",
     "ThemePreviewWidget",
+    "ThemeProvider",
+    "ThemeSwitcher",
+    "ThemedWindowMixin",
+    "apply_theme_to_window",
+    "create_theme_menu",
+    "generate_minimal_stylesheet",
+    "generate_stylesheet",
+    "get_matplotlib_colors",
+    "get_qcolor",
+    "get_rgba",
+    "get_theme_manager",
+    "is_dark_theme",
+    "is_valid_hex_color",
+    "normalise_hex_color",
+    "setup_themed_app",
 ]

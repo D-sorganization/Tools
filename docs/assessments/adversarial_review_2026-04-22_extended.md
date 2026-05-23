@@ -144,47 +144,48 @@ uninformative `ZeroDivisionError` instead of clear `ValueError`.
 
 ## Positive Findings (No Action Required)
 
-| Area | Assessment |
-|------|-----------|
-| `safe_eval.py` | AST-hardened evaluator with `__builtins__: {}` sandbox |
-| `scripting_env.py` exec/eval | Controlled, documented, `nosec` annotated, GUI-only |
-| `defusedxml` usage | All production XML parsers use `defusedxml.ElementTree` |
-| `cors.py` | Centralized CORS config, no wildcard origins |
-| `contracts.py` | DbC framework consistently applied |
-| `signal_toolkit` | No broad exception catches, clean arithmetic |
-| `programmatic_pid` | Clean DXF rendering, no injection vectors |
-| `calc_backend/app.py` | No `shell=True`, proper CORS configuration |
-| `bootstrap.py` | Documented single-use sys.path mutation |
-| `upstream_drift_tools` | Pydantic validation on all REST contracts |
-| Process constants | CODATA-sourced from centralized `unit_constants.py` |
-| Security headers | REST API applies CSP, X-Frame-Options, HSTS |
+| Area                         | Assessment                                              |
+| ---------------------------- | ------------------------------------------------------- |
+| `safe_eval.py`               | AST-hardened evaluator with `__builtins__: {}` sandbox  |
+| `scripting_env.py` exec/eval | Controlled, documented, `nosec` annotated, GUI-only     |
+| `defusedxml` usage           | All production XML parsers use `defusedxml.ElementTree` |
+| `cors.py`                    | Centralized CORS config, no wildcard origins            |
+| `contracts.py`               | DbC framework consistently applied                      |
+| `signal_toolkit`             | No broad exception catches, clean arithmetic            |
+| `programmatic_pid`           | Clean DXF rendering, no injection vectors               |
+| `calc_backend/app.py`        | No `shell=True`, proper CORS configuration              |
+| `bootstrap.py`               | Documented single-use sys.path mutation                 |
+| `upstream_drift_tools`       | Pydantic validation on all REST contracts               |
+| Process constants            | CODATA-sourced from centralized `unit_constants.py`     |
+| Security headers             | REST API applies CSP, X-Frame-Options, HSTS             |
 
 ---
 
 ## Combined Summary Table (All Findings)
 
 ### Original Audit (Findings 1-12, already remediated)
+
 See [adversarial_review_2026-04-22.md](adversarial_review_2026-04-22.md)
 
 ### Extended Audit (Findings 13-21, this document)
 
-| # | Severity | Component | Description |
-|---|----------|-----------|-------------|
-| 13 | 🟡 MEDIUM | `rotation_converter.py` | Broad `except Exception` in 3 API handlers |
-| 14 | 🟢 LOW | 14 locations | `datetime.now()` without timezone |
-| 15 | 🟢 LOW | `unified_loader.py` | Broad exception in conversion methods |
-| 16 | 🟡 MEDIUM | `scripting_env.py` | Broad exception on user library load |
-| 17 | 🟢 LOW | `processor.py` + `core.py` | `DataFrame.eval()` without explicit engine |
-| 18 | 🟢 LOW | `test_urdf_roundtrip.py` | Standard ElementTree in test (not defusedxml) |
-| 19 | 🟡 MEDIUM | `rest_api_routes.py` | Info leakage + temp file leak |
-| 20 | 🟢 LOW | `ode_solver.py` | RK4 div-by-zero at num_points=1 |
-| 21 | 🟢 LOW | `signal_toolkit/core.py` | Zero-frequency div-by-zero in generators |
+| #   | Severity  | Component                  | Description                                   |
+| --- | --------- | -------------------------- | --------------------------------------------- |
+| 13  | 🟡 MEDIUM | `rotation_converter.py`    | Broad `except Exception` in 3 API handlers    |
+| 14  | 🟢 LOW    | 14 locations               | `datetime.now()` without timezone             |
+| 15  | 🟢 LOW    | `unified_loader.py`        | Broad exception in conversion methods         |
+| 16  | 🟡 MEDIUM | `scripting_env.py`         | Broad exception on user library load          |
+| 17  | 🟢 LOW    | `processor.py` + `core.py` | `DataFrame.eval()` without explicit engine    |
+| 18  | 🟢 LOW    | `test_urdf_roundtrip.py`   | Standard ElementTree in test (not defusedxml) |
+| 19  | 🟡 MEDIUM | `rest_api_routes.py`       | Info leakage + temp file leak                 |
+| 20  | 🟢 LOW    | `ode_solver.py`            | RK4 div-by-zero at num_points=1               |
+| 21  | 🟢 LOW    | `signal_toolkit/core.py`   | Zero-frequency div-by-zero in generators      |
 
 ### Totals
 
-| Severity | Count |
-|----------|-------|
-| 🔴 HIGH | 0 |
-| 🟡 MEDIUM | 3 |
-| 🟢 LOW | 6 |
+| Severity  | Count |
+| --------- | ----- |
+| 🔴 HIGH   | 0     |
+| 🟡 MEDIUM | 3     |
+| 🟢 LOW    | 6     |
 | **Total** | **9** |

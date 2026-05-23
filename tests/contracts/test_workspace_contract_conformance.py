@@ -146,7 +146,8 @@ class TestWorkspaceContractIsolation:
         global_registry: WorkspaceRegistry,
     ) -> None:
         """Precondition: two facades share the same global registry but distinct local registries.
-        Postcondition: setting a local variable in one facade is invisible to the other."""
+        Postcondition: setting a local variable in one facade is invisible to the other.
+        """
         local_a = WorkspaceRegistry()
         local_b = WorkspaceRegistry()
         facade_a = CalculatorWorkspaceFacade(

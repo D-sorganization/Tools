@@ -9,6 +9,7 @@ This tutorial walks you through building a complete tool from scratch. We'll cre
 ## What We're Building
 
 A Temperature Converter tool that:
+
 - Converts between Celsius, Fahrenheit, and Kelvin
 - Has a Python CLI
 - Has a PyQt6 GUI window
@@ -52,7 +53,7 @@ Create `src/tools/temperature_converter/converter.py`:
 
 class TemperatureConverter:
     """Convert between Celsius, Fahrenheit, and Kelvin.
-    
+
     All conversions are performed with standard physics formulas.
     Input validation raises TypeError for non-numeric values and
     ValueError for invalid Kelvin values (must be >= 0).
@@ -61,13 +62,13 @@ class TemperatureConverter:
     @staticmethod
     def celsius_to_fahrenheit(celsius: float) -> float:
         """Convert Celsius to Fahrenheit.
-        
+
         Args:
             celsius: Temperature in Celsius
-            
+
         Returns:
             Temperature in Fahrenheit
-            
+
         Raises:
             TypeError: If celsius is not a number
         """
@@ -78,13 +79,13 @@ class TemperatureConverter:
     @staticmethod
     def fahrenheit_to_celsius(fahrenheit: float) -> float:
         """Convert Fahrenheit to Celsius.
-        
+
         Args:
             fahrenheit: Temperature in Fahrenheit
-            
+
         Returns:
             Temperature in Celsius
-            
+
         Raises:
             TypeError: If fahrenheit is not a number
         """
@@ -95,13 +96,13 @@ class TemperatureConverter:
     @staticmethod
     def celsius_to_kelvin(celsius: float) -> float:
         """Convert Celsius to Kelvin.
-        
+
         Args:
             celsius: Temperature in Celsius
-            
+
         Returns:
             Temperature in Kelvin (>= 0)
-            
+
         Raises:
             TypeError: If celsius is not a number
             ValueError: If result would be < 0 Kelvin
@@ -116,13 +117,13 @@ class TemperatureConverter:
     @staticmethod
     def kelvin_to_celsius(kelvin: float) -> float:
         """Convert Kelvin to Celsius.
-        
+
         Args:
             kelvin: Temperature in Kelvin (must be >= 0)
-            
+
         Returns:
             Temperature in Celsius
-            
+
         Raises:
             TypeError: If kelvin is not a number
             ValueError: If kelvin < 0
@@ -136,13 +137,13 @@ class TemperatureConverter:
     @staticmethod
     def fahrenheit_to_kelvin(fahrenheit: float) -> float:
         """Convert Fahrenheit to Kelvin.
-        
+
         Args:
             fahrenheit: Temperature in Fahrenheit
-            
+
         Returns:
             Temperature in Kelvin (>= 0)
-            
+
         Raises:
             TypeError: If fahrenheit is not a number
             ValueError: If result would be < 0 Kelvin
@@ -155,13 +156,13 @@ class TemperatureConverter:
     @staticmethod
     def kelvin_to_fahrenheit(kelvin: float) -> float:
         """Convert Kelvin to Fahrenheit.
-        
+
         Args:
             kelvin: Temperature in Kelvin (must be >= 0)
-            
+
         Returns:
             Temperature in Fahrenheit
-            
+
         Raises:
             TypeError: If kelvin is not a number
             ValueError: If kelvin < 0
@@ -319,6 +320,7 @@ Create `src/tools/temperature_converter/tool_manifest.json`:
 ```
 
 **What each field means:**
+
 - `name`: Display name in the launcher
 - `description`: Short description shown in tool list
 - `type`: `python`, `matlab`, or `web`
@@ -478,7 +480,7 @@ class TestTemperatureConverterAPI:
     def test_round_trip_conversion(self):
         """Test that round-trip conversions are accurate."""
         original = 25.0
-        
+
         # Celsius -> Fahrenheit -> Celsius
         fahrenheit = TemperatureConverter.celsius_to_fahrenheit(original)
         back_to_celsius = TemperatureConverter.fahrenheit_to_celsius(fahrenheit)
@@ -494,7 +496,7 @@ class TestTemperatureConverterAPI:
 
 Create `src/tools/temperature_converter/README.md`:
 
-```markdown
+````markdown
 # Temperature Converter Tool
 
 A simple utility for converting temperatures between Celsius, Fahrenheit, and Kelvin.
@@ -513,6 +515,7 @@ A simple utility for converting temperatures between Celsius, Fahrenheit, and Ke
 ```bash
 python src/tools/temperature_converter/temperature_gui.py
 ```
+````
 
 Or launch from the UnifiedToolsLauncher:
 
@@ -576,7 +579,8 @@ All methods are static and follow the pattern `{source_unit}_to_{target_unit}(va
 - `converter.py`: Core conversion logic (no dependencies)
 - `temperature_gui.py`: PyQt6 GUI wrapper
 - `tool_manifest.json`: Tool registration for auto-discovery
-```
+
+````
 
 ## Step 8: Verify and Test
 
@@ -594,9 +598,10 @@ python -m pytest tests/temperature_converter/test_converter_contract.py -m contr
 
 # Check coverage
 python -m pytest tests/temperature_converter/ --cov=src.tools.temperature_converter
-```
+````
 
 **Expected output:**
+
 ```
 test_converter.py::TestCelsiusToFahrenheit::test_freezing_point PASSED
 test_converter.py::TestCelsiusToFahrenheit::test_boiling_point PASSED
@@ -649,6 +654,7 @@ git push origin feature/temperature-converter
 ```
 
 Then open a Pull Request on GitHub. CI will:
+
 1. Run linting and formatting checks
 2. Run all tests (including your contract tests)
 3. Verify code coverage
@@ -677,6 +683,7 @@ Before submitting your PR, verify:
 **Cause**: Manifest not found or path incorrect
 
 **Solution**:
+
 ```bash
 # Check manifest exists
 ls -la src/tools/temperature_converter/tool_manifest.json
@@ -693,6 +700,7 @@ python -c "from pathlib import Path; print(Path('src/tools/temperature_converter
 **Cause**: PyQt6 import error or wrong entry point
 
 **Solution**:
+
 ```bash
 # Test direct import
 python -c "from src.tools.temperature_converter.temperature_gui import TemperatureConverterGUI; print('OK')"
@@ -706,6 +714,7 @@ python src/tools/temperature_converter/temperature_gui.py
 **Cause**: Not running from repo root or venv not activated
 
 **Solution**:
+
 ```bash
 # Verify location
 pwd  # Should end with /Tools

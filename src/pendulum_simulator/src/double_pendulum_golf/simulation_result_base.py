@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 # ruff: noqa: E501
 """Shared validation and batch accessors for simulation result objects."""
 

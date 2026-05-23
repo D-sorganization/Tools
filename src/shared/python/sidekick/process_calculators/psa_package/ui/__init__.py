@@ -4,12 +4,12 @@ from .pfd_widget import PFDWidget
 from .results_panel import ResultsPanel
 from .sensitivity_plot import MplCanvas, SensitivityPlotWidget
 
-__all__ = (
+__all__ = [
     "InputPanel",
-    "create_slider",
-    "ResultsPanel",
-    "SensitivityPlotWidget",
     "MplCanvas",
     "PFDWidget",
     "PSAMainWindow",
-)
+    "ResultsPanel",
+    "SensitivityPlotWidget",
+    "create_slider",
+]

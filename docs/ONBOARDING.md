@@ -21,11 +21,13 @@ git lfs version
 ### Installing Prerequisites
 
 **Python 3.10+:**
+
 - **Ubuntu/Debian**: `sudo apt install python3.12 python3.12-venv`
 - **macOS**: `brew install python@3.12`
 - **Windows**: Download from [python.org](https://www.python.org/downloads/)
 
 **Git LFS:**
+
 ```bash
 # Ubuntu/Debian
 sudo apt install git-lfs
@@ -117,6 +119,7 @@ You should see a PyQt6 window with multiple tabs (Data Processing, Scientific Mo
 4. For web tools, your browser opens
 
 **Common Issues:**
+
 - **MATLAB tools fail silently**: MATLAB not installed or not in PATH. See "Troubleshooting" below.
 - **Tool doesn't appear**: Update tools.json or use auto-discovery manifest. See "Adding Tools" section.
 
@@ -167,6 +170,7 @@ python -m mypy . --config-file mypy.ini
 ```
 
 **Pre-commit hooks:**
+
 ```bash
 # Install hooks to run checks before each commit
 bash scripts/setup_precommit.sh
@@ -203,17 +207,17 @@ Tools/
 
 ## Key Files to Know
 
-| File | Purpose |
-|------|---------|
-| `CLAUDE.md` | **Governance**: CI requirements, coding standards, shared library constraints |
-| `README.md` | Repository overview and basic troubleshooting |
-| `QUICKSTART.md` | Quick reference for common tasks |
-| `requirements.txt` | Core Python dependencies |
-| `pyproject.toml` | Package metadata (name, version, entry points) |
-| `tools.json` | Registry of available tools (centralized, explicit ordering) |
-| `src/<tool>/tool_manifest.json` | Per-tool auto-discovery manifest |
-| `src/<tool>/gui_registration.py` | PyQt6 launcher metadata for a tool |
-| `docs/architecture/PLUGIN_SYSTEM.md` | Full plugin system reference |
+| File                                 | Purpose                                                                       |
+| ------------------------------------ | ----------------------------------------------------------------------------- |
+| `CLAUDE.md`                          | **Governance**: CI requirements, coding standards, shared library constraints |
+| `README.md`                          | Repository overview and basic troubleshooting                                 |
+| `QUICKSTART.md`                      | Quick reference for common tasks                                              |
+| `requirements.txt`                   | Core Python dependencies                                                      |
+| `pyproject.toml`                     | Package metadata (name, version, entry points)                                |
+| `tools.json`                         | Registry of available tools (centralized, explicit ordering)                  |
+| `src/<tool>/tool_manifest.json`      | Per-tool auto-discovery manifest                                              |
+| `src/<tool>/gui_registration.py`     | PyQt6 launcher metadata for a tool                                            |
+| `docs/architecture/PLUGIN_SYSTEM.md` | Full plugin system reference                                                  |
 
 ## Plugin System and Tool Registration
 
@@ -271,6 +275,7 @@ Follow the naming convention: `feature/short-description`.
 ### 2. Edit Code
 
 Make your changes in the appropriate module:
+
 - **Plugin system**: `src/python/src/core/`
 - **Shared utilities**: `src/python/src/utils/`
 - **New tool**: `src/tools/my_tool/` (see BUILD_A_TOOL.md)
@@ -304,6 +309,7 @@ git push origin feature/my-feature
 ### 6. Open a Pull Request
 
 Go to GitHub and create a PR. CI will:
+
 1. Run linting checks (Ruff)
 2. Run formatting checks
 3. Run the full test suite (Python 3.10, 3.11, 3.12)
@@ -321,6 +327,7 @@ All must pass before merge.
 **Cause**: You're on Python 3.9 or 3.10 (some features need 3.11+).
 
 **Solution**:
+
 ```bash
 # Check your Python version
 python --version
@@ -339,6 +346,7 @@ python --version
 **Error**: `ModuleNotFoundError: No module named 'PyQt6'`
 
 **Solution**:
+
 ```bash
 pip install --upgrade PyQt6>=6.6.0
 ```
@@ -348,6 +356,7 @@ pip install --upgrade PyQt6>=6.6.0
 **Cause**: Display/GUI environment issue (common in headless/SSH sessions).
 
 **Solution**:
+
 ```bash
 # If running remotely, use X11 forwarding:
 ssh -X user@host  # Then run the launcher
@@ -364,6 +373,7 @@ export QT_QPA_PLATFORM=offscreen
 **Cause**: MATLAB not installed or not in system PATH.
 
 **Solution**:
+
 ```bash
 # Check if MATLAB is installed
 which matlab  # Should show path to MATLAB binary
@@ -384,6 +394,7 @@ matlab -batch "version"
 **Error**: `pytest: No module named 'pytest'`
 
 **Solution**:
+
 ```bash
 pip install pytest>=8.2.0
 ```
@@ -393,6 +404,7 @@ pip install pytest>=8.2.0
 **Cause**: Not in repo root or venv not activated.
 
 **Solution**:
+
 ```bash
 # Verify you're in the repo root
 pwd  # Should end with /Tools
@@ -410,6 +422,7 @@ venv\Scripts\activate      # Windows
 **Error**: Large files show as text placeholders (e.g., `version https://git-lfs.github.com/spec/v1`)
 
 **Solution**:
+
 ```bash
 # Install Git LFS
 git lfs install
@@ -428,6 +441,7 @@ git lfs ls-files  # Shows tracked files
 **Cause**: Code fails linting or formatting checks.
 
 **Solution**:
+
 ```bash
 # Auto-fix what you can
 python -m ruff check --fix .
@@ -458,16 +472,16 @@ git commit -m "Your message"
 
 ## Quick Reference
 
-| Task | Command |
-|------|---------|
-| Activate venv | `source venv/bin/activate` |
-| Install deps | `python -m pip install -r requirements.txt` |
-| Run launcher | `python UnifiedToolsLauncher.py` |
-| Run tests | `python -m pytest` |
-| Check style | `python -m ruff check .` |
-| Auto-format | `python -m ruff format .` |
-| Create branch | `git checkout -b feature/name` |
-| Run one test | `python -m pytest tests/file.py::test_name -v` |
+| Task          | Command                                        |
+| ------------- | ---------------------------------------------- |
+| Activate venv | `source venv/bin/activate`                     |
+| Install deps  | `python -m pip install -r requirements.txt`    |
+| Run launcher  | `python UnifiedToolsLauncher.py`               |
+| Run tests     | `python -m pytest`                             |
+| Check style   | `python -m ruff check .`                       |
+| Auto-format   | `python -m ruff format .`                      |
+| Create branch | `git checkout -b feature/name`                 |
+| Run one test  | `python -m pytest tests/file.py::test_name -v` |
 
 ## Tips for Success
 

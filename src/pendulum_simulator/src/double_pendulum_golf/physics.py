@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 # ruff: noqa: E501
 """
 Double pendulum golf swing physics using Lagrangian formulation with relative coordinates.

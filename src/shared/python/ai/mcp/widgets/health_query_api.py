@@ -15,8 +15,7 @@ from __future__ import annotations
 import os
 import time
 from dataclasses import dataclass
-from enum import StrEnum
-from typing import Any, Protocol
+from typing import Any, Protocol, cast
 
 __all__ = [
     "IntegrationStatus",
@@ -24,6 +23,9 @@ __all__ = [
     "list_all_integrations",
     "query_integration_status",
 ]
+
+
+from enum import StrEnum
 
 
 class IntegrationStatusLevel(StrEnum):
@@ -257,7 +259,7 @@ def query_integration_status(integration_id: str) -> IntegrationStatus:
             level=IntegrationStatusLevel.UNCONFIGURED,
             message="no probe registered",
         )
-    return probe()
+    return cast(IntegrationStatus, probe())
 
 
 def list_all_integrations(*, mcp_pool: _Pool | None = None) -> list[IntegrationStatus]:

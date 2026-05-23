@@ -54,7 +54,7 @@ from ...data_processing.core import (
 from .base_calculator_widget import BaseCalculatorWidget
 from .mixins.data_processor_ops import DataProcessorOpsMixin
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 
 class DataProcessorWidget(DataProcessorOpsMixin, BaseCalculatorWidget):
@@ -602,4 +602,6 @@ class DataProcessorWidget(DataProcessorOpsMixin, BaseCalculatorWidget):
         QTimer.singleShot(5000, lambda: self.status_label.setText("Ready"))
 
 
-__all__ = ["DataProcessorWidget"]
+__all__ = [
+    "DataProcessorWidget",
+]

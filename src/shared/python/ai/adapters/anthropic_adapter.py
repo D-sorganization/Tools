@@ -289,9 +289,9 @@ class AnthropicAdapter(BaseAgentAdapter):
                 for entry in data
                 if getattr(entry, "id", None)
             ]
-            ids = [str(model_id) for model_id in ids if str(model_id).strip()]
-            if ids:
-                return ids
+            str_ids = [str(model_id) for model_id in ids if str(model_id).strip()]
+            if str_ids:
+                return str_ids
         except Exception:  # noqa: BLE001 - any provider failure → fallback
             logger.debug(
                 "Anthropic list_models live probe failed; using static catalogue",

@@ -11,7 +11,7 @@ import types
 from collections.abc import Callable
 from functools import partial
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from . import design_tokens as theme
 from .calculator_assist import (
@@ -30,7 +30,24 @@ from .help_content import DEFAULT_SIDEBAR_TAB_HELP
 from .qt_compat import QT_API, QtCore, QtWidgets
 from .registry import WorkspaceRegistry
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "PythonReplWidget",
+    "SIDEKICK_CHAT_RUNTIME_OBJECT_NAME",
+    "SIDEKICK_CHAT_STATUS_OBJECT_NAME",
+    "SIDEKICK_NOTES_OBJECT_NAME",
+    "SIDEKICK_PYTHON_REPL_OBJECT_NAME",
+    "SIDEKICK_TERMINAL_OBJECT_NAME",
+    "SetVariable",
+    "SidekickNotesWidget",
+    "SidekickPythonReplWidget",
+    "build_calculator_tab",
+    "build_chat_tab",
+    "build_notes_tab",
+    "build_python_repl_tab",
+    "build_terminal_tab",
+]
+
+_logger = logging.getLogger(__name__)
 
 SIDEKICK_CHAT_RUNTIME_OBJECT_NAME = "SidekickChatRuntimeTab"
 SIDEKICK_CHAT_STATUS_OBJECT_NAME = "SidekickChatStatusTab"
@@ -70,7 +87,7 @@ def _resolve_accent_color(theme_provider: Any) -> str:
                 if isinstance(accent, str) and accent:
                     return accent
     except Exception as exc:  # noqa: BLE001 - optional theme surface
-        logger.debug("theme_provider.get_current_colors() failed: %s", exc)
+        _logger.debug("theme_provider.get_current_colors() failed: %s", exc)
 
     # Token-style providers occasionally expose tokens().accent or accent_color().
     try:
@@ -81,7 +98,7 @@ def _resolve_accent_color(theme_provider: Any) -> str:
             if isinstance(accent, str) and accent:
                 return accent
     except Exception as exc:  # noqa: BLE001 - optional theme surface
-        logger.debug("theme_provider.tokens() failed: %s", exc)
+        _logger.debug("theme_provider.tokens() failed: %s", exc)
 
     try:
         accent_attr = getattr(theme_provider, "accent_color", None)
@@ -92,7 +109,7 @@ def _resolve_accent_color(theme_provider: Any) -> str:
         elif isinstance(accent_attr, str) and accent_attr:
             return accent_attr
     except Exception as exc:  # noqa: BLE001 - optional theme surface
-        logger.debug("theme_provider.accent_color failed: %s", exc)
+        _logger.debug("theme_provider.accent_color failed: %s", exc)
 
     return _DEFAULT_CHAT_ACCENT_COLOR
 
@@ -293,11 +310,12 @@ class PythonReplWidget(QtWidgets.QWidget):
                             compiled_eval, self._namespace, self._namespace
                         )
                     else:
+                        assert compiled_exec is not None
                         exec(  # noqa: S102  # nosec B102
                             compiled_exec, self._namespace, self._namespace
                         )
             except Exception as exc:  # noqa: BLE001 - REPL reports user errors
-                logger.debug("Sidekick REPL execution failed: %s", exc)
+                _logger.debug("Sidekick REPL execution failed: %s", exc)
                 exception = exc
 
         if exception is None:
@@ -313,7 +331,7 @@ class PythonReplWidget(QtWidgets.QWidget):
 
     def output_text(self) -> str:
         """Return the current output pane text."""
-        return self._output.toPlainText()
+        return str(self._output.toPlainText())
 
     def history(self) -> tuple[str, ...]:
         """Return submitted scripts in oldest-to-newest order."""
@@ -386,15 +404,9 @@ class SidekickPythonReplWidget(QtWidgets.QWidget):
         layout.addWidget(self._repl)
         # Expose the historic input/output/run object names by re-tagging the
         # nested widgets so existing findChild() queries keep working.
-        self._repl._input.setObjectName(  # noqa: SLF001
-            "SidekickTerminalInput"
-        )
-        self._repl._output.setObjectName(  # noqa: SLF001
-            "SidekickTerminalOutput"
-        )
-        self._repl._run_button.setObjectName(  # noqa: SLF001
-            "SidekickTerminalRun"
-        )
+        self._repl._input.setObjectName("SidekickTerminalInput")  # noqa: SLF001
+        self._repl._output.setObjectName("SidekickTerminalOutput")  # noqa: SLF001
+        self._repl._run_button.setObjectName("SidekickTerminalRun")  # noqa: SLF001
         self.apply_terminal_theme(self._terminal_theme)
 
     def execute_script(self) -> None:
@@ -659,18 +671,18 @@ def _build_sidebar_plot_request_sink(sidebar: Any) -> Callable[[Any], None] | No
             build_calculator_plot_spec,
         )
     except Exception as exc:  # noqa: BLE001 - optional plot dependency
-        logger.debug("Calculator plot module unavailable for chat: %s", exc)
+        _logger.debug("Calculator plot module unavailable for chat: %s", exc)
         return None
 
     registry = getattr(sidebar, "registry", None)
     if registry is None:
-        logger.debug("Sidebar has no registry; chat plot sink disabled.")
+        _logger.debug("Sidebar has no registry; chat plot sink disabled.")
         return None
 
     set_tab_visible = getattr(sidebar, "set_tab_visible", None)
     tab_widgets = getattr(sidebar, "_tab_widgets", None)
     if not callable(set_tab_visible) or tab_widgets is None:
-        logger.debug("Sidebar lacks tab APIs; chat plot sink disabled.")
+        _logger.debug("Sidebar lacks tab APIs; chat plot sink disabled.")
         return None
 
     def _coerce_request(spec: Any) -> Any:
@@ -678,9 +690,23 @@ def _build_sidebar_plot_request_sink(sidebar: Any) -> Callable[[Any], None] | No
             return spec
         if not isinstance(spec, dict):
             raise TypeError("plot spec must be a dict or CalculatorPlotRequest")
-        source = spec.get("source")
-        if isinstance(source, str):
-            source = CalculatorPlotSource(source)
+        source_val = spec.get("source")
+        source: CalculatorPlotSource
+        if isinstance(source_val, CalculatorPlotSource):
+            source = source_val
+        elif isinstance(source_val, str):
+            try:
+                source = CalculatorPlotSource(source_val)
+            except ValueError:
+                source = cast(
+                    CalculatorPlotSource,
+                    CalculatorPlotSource.WORKSPACE_RESULT,
+                )
+        else:
+            source = cast(
+                CalculatorPlotSource,
+                CalculatorPlotSource.WORKSPACE_RESULT,
+            )
         config_data = spec.get("config")
         config = (
             CalculatorPlotTabConfig(**config_data)
@@ -709,11 +735,11 @@ def _build_sidebar_plot_request_sink(sidebar: Any) -> Callable[[Any], None] | No
             set_tab_visible(CALCULATOR_PLOT_TAB_ID, True)
         widget = tab_widgets.get(CALCULATOR_PLOT_TAB_ID)
         if widget is None:
-            logger.warning("Calculator Plot tab not available; dropping plot request.")
+            _logger.warning("Calculator Plot tab not available; dropping plot request.")
             return
         set_spec = getattr(widget, "set_spec", None)
         if not callable(set_spec):
-            logger.warning(
+            _logger.warning(
                 "Calculator Plot tab does not implement set_spec; "
                 "dropping plot request."
             )
@@ -727,7 +753,7 @@ def _build_pyqt_chat_dock(sidebar: Any) -> QtWidgets.QWidget | None:
     try:
         chat_module = importlib.import_module("chat.chat_dock_widget")
     except Exception as exc:  # noqa: BLE001 - optional chat dependency
-        logger.debug("PyQt chat dock unavailable for Sidekick: %s", exc)
+        _logger.debug("PyQt chat dock unavailable for Sidekick: %s", exc)
         # Tools issue #2851: stash the import error so the fallback tab can
         # render a useful diagnostic and retry the import on demand.
         with contextlib.suppress(Exception):
@@ -743,7 +769,7 @@ def _build_pyqt_chat_dock(sidebar: Any) -> QtWidgets.QWidget | None:
         theme_module = importlib.import_module("theme.theme_manager")
         theme_provider = theme_module.get_theme_manager()
     except Exception as exc:  # noqa: BLE001 - theme is optional at this layer
-        logger.debug("Theme manager unavailable for chat dock: %s", exc)
+        _logger.debug("Theme manager unavailable for chat dock: %s", exc)
 
     # Tools issue #2849: wire optional workspace + plot bridges. Any
     # failure here degrades gracefully — the chat dock continues to work
@@ -756,7 +782,7 @@ def _build_pyqt_chat_dock(sidebar: Any) -> QtWidgets.QWidget | None:
             workspace_provider = _SidebarWorkspaceAdapter(registry)
         plot_request_sink = _build_sidebar_plot_request_sink(sidebar)
     except Exception as exc:  # noqa: BLE001 - bridge is best-effort
-        logger.debug("Sidekick workspace bridge unavailable for chat: %s", exc)
+        _logger.debug("Sidekick workspace bridge unavailable for chat: %s", exc)
         workspace_provider = None
         plot_request_sink = None
 
@@ -864,7 +890,7 @@ def _monospace_font() -> Any | None:
         font.setFamily("monospace")
         return font
     except Exception as exc:  # noqa: BLE001 - font tweak is cosmetic only
-        logger.debug("Monospace font unavailable for chat status tab: %s", exc)
+        _logger.debug("Monospace font unavailable for chat status tab: %s", exc)
         return None
 
 
@@ -886,7 +912,9 @@ def _retry_chat_dock(
     if not replaced:
         # If we cannot swap (e.g. sidebar lacks the helper), leave the
         # fallback in place but record success so users can re-open the tab.
-        logger.debug("Chat dock rebuilt but sidebar tab swap failed; leaving fallback.")
+        _logger.debug(
+            "Chat dock rebuilt but sidebar tab swap failed; leaving fallback."
+        )
         dock.deleteLater()
 
 
@@ -901,7 +929,7 @@ def _replace_sidebar_tab_widget(
         try:
             return bool(replace(old_widget, new_widget))
         except Exception as exc:  # noqa: BLE001 - sidebar-defined helper
-            logger.debug("sidebar.replace_tab_widget failed: %s", exc)
+            _logger.debug("sidebar.replace_tab_widget failed: %s", exc)
             return False
 
     tabs = getattr(sidebar, "tabs", None)

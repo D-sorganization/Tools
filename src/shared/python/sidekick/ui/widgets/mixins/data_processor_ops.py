@@ -11,6 +11,10 @@ from typing import TYPE_CHECKING, Any, cast
 
 from PyQt6.QtWidgets import QMessageBox, QWidget
 
+__all__ = [
+    "DataProcessorOpsMixin",
+]
+
 if TYPE_CHECKING:
     from PyQt6.QtWidgets import (
         QComboBox,
@@ -20,7 +24,7 @@ if TYPE_CHECKING:
         QTextEdit,
     )
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 
 class DataProcessorOpsMixin:

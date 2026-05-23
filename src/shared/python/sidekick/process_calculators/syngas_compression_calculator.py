@@ -42,9 +42,36 @@ from .syngas_compression_engine import (  # noqa: F401
     SyngasCompressionEngine,
 )
 
+__all__ = [
+    "CompressionCalculationWorker",
+    "create_syngas_compression_calculator",
+]
+
 # matplotlib is imported lazily inside methods to prevent Windows hang
 
 # Try PyQt6 imports - these are optional for core calculations
+if TYPE_CHECKING:
+    from PyQt6.QtCore import QThread, QTimer, pyqtSignal, pyqtSlot
+    from PyQt6.QtWidgets import (
+        QCheckBox,
+        QComboBox,
+        QDoubleSpinBox,
+        QFormLayout,
+        QGridLayout,
+        QGroupBox,
+        QHeaderView,
+        QLabel,
+        QMessageBox,
+        QPushButton,
+        QScrollArea,
+        QSplitter,
+        QTableWidget,
+        QTabWidget,
+        QTextEdit,
+        QVBoxLayout,
+        QWidget,
+    )
+
 try:
     from PyQt6.QtCore import QThread, QTimer, pyqtSignal, pyqtSlot
     from PyQt6.QtWidgets import (
@@ -70,14 +97,16 @@ try:
     HAS_PYQT = True
 except ImportError:
     HAS_PYQT = False
-    QWidget = object  # type: ignore[assignment,misc]
-    QThread = object  # type: ignore[assignment,misc]
 
-    def pyqtSignal(*args, **kwargs):
-        return None
+    if not TYPE_CHECKING:
+        QWidget = object
+        QThread = object
 
-    def pyqtSlot(*args, **kwargs):
-        return lambda f: f
+        def pyqtSignal(*args: object, **kwargs: object) -> Any:
+            return None
+
+        def pyqtSlot(*args: object, **kwargs: object) -> Any:
+            return lambda f: f
 
 
 try:
@@ -104,20 +133,16 @@ def _setup_matplotlib_backend() -> None:
             mpl.use("Agg")
 
 
-def _get_figure_canvas_class() -> type:
+def _get_figure_canvas_class() -> type[Any]:
     """Lazily load FigureCanvas to prevent matplotlib backend hang at import."""
     try:
-        from matplotlib.backends.backend_qtagg import (
-            FigureCanvasQTAgg as FigureCanvas,
-        )
+        from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 
-        return FigureCanvas
+        return cast(type[Any], FigureCanvasQTAgg)
     except ImportError:
-        from matplotlib.backends.backend_agg import (  # type: ignore[assignment]
-            FigureCanvasAgg as FigureCanvas,
-        )
+        from matplotlib.backends.backend_agg import FigureCanvasAgg
 
-        return FigureCanvas
+        return cast(type[Any], FigureCanvasAgg)
 
 
 if TYPE_CHECKING:
@@ -128,17 +153,23 @@ if TYPE_CHECKING:
 
 
 # Import BaseCalculatorWidget for state management
+BaseCalculatorWidget: type[Any]
 try:
-    from ..ui.widgets.base_calculator_widget import BaseCalculatorWidget
+    from ..ui.widgets.base_calculator_widget import (
+        BaseCalculatorWidget as _ImportedBaseCalculatorWidget,
+    )
 
+    BaseCalculatorWidget = _ImportedBaseCalculatorWidget
     BASE_CALCULATOR_AVAILABLE = True
 except ImportError:
     BASE_CALCULATOR_AVAILABLE = False
 
     # Fallback to QWidget if BaseCalculatorWidget is not available
-    class BaseCalculatorWidget(QWidget):  # type: ignore[attr-defined]
+    class _FallbackBaseCalculatorWidget(QWidget):
         def __init__(self, *args: Any, **kwargs: Any) -> None:
             QWidget.__init__(self, *args, **kwargs)
+
+    BaseCalculatorWidget = _FallbackBaseCalculatorWidget
 
 
 # Import species database with fallback

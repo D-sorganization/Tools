@@ -8,6 +8,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
+__all__ = [
+    "get_repo_root",
+]
+
 _REPO_ROOT_MARKERS = (".git", "pyproject.toml", "tools.json")
 _MAX_SEARCH_DEPTH = 10
 

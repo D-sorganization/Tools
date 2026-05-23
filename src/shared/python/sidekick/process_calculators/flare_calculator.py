@@ -37,6 +37,12 @@ from .constants import (
     SECONDS_PER_HOUR,
 )
 
+__all__ = [
+    "FlareCalculator",
+    "FlareDesign",
+    "GAS_PROPERTIES",
+]
+
 # Standard Gas Properties (Molecular Weight [g/mol], Heating Value [kJ/kg], Cp [kJ/kg-K])
 GAS_PROPERTIES: Final[dict[str, dict[str, float]]] = {
     "H2": {"mw": 2.016, "hv": 119930, "cp": 14.3},

@@ -9,6 +9,10 @@ from typing import TYPE_CHECKING
 from .qt_compat import QtWidgets
 from .settings import SidebarTabSettingsDescriptor
 
+__all__ = [
+    "SidebarTabDefinition",
+]
+
 if TYPE_CHECKING:
     from .sidebar import UnifiedToolsSidebar
 

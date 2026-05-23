@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """
 Monte Carlo perturbation analysis for swing consistency evaluation.
 

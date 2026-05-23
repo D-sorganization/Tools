@@ -19,6 +19,17 @@ import plotly.graph_objects as go
 import streamlit as st
 from numpy.typing import NDArray
 
+__all__ = [
+    "ComponentData",
+    "DEFAULT_COMPONENTS",
+    "PSAModel",
+    "PSAResults",
+    "StreamCompositions",
+    "StreamFlows",
+    "get_flammability_status",
+    "main",
+]
+
 # ============== PSA Model (embedded for standalone operation) ==============
 
 
@@ -178,7 +189,7 @@ class PSAModel:
         )
 
         def calc_composition(flow_array: NDArray[np.float64]) -> NDArray[np.float64]:
-            total = np.sum(flow_array)
+            total: float = float(np.sum(flow_array))
             if total == 0:
                 return np.zeros(n_components, dtype=np.float64)
             return flow_array / total * 100.0

@@ -1,9 +1,11 @@
 # Lower Body Model Specification
 
 ## 1. Overview
+
 The **Lower Body Model** is a 3D biomechanical simulation of a golfer's lower body. Currently deployed natively in Python with the MuJoCo physics engine, it aims to accurately model lower extremity kinematics and dynamics for swing optimization, Counterfactual analysis, and Induced Acceleration Analysis (IAA).
 
 ## 2. Architecture & Design Principles
+
 - **DRY (Don't Repeat Yourself)**: The MuJoCo XML is constructed dynamically by `builder.py`. Both legs and both actuator blocks share a single source of truth: `_build_leg_xml(side, ...)` returns the bilateral thigh/calf/foot chain for one side and `_build_leg_actuators_xml(side)` returns the six motors for that side. The pelvis composite uses `_pelvis_anatomical_geoms(hip_offset, pelvis_mass)`.
 - **LOD (Law of Demeter)**: Components interact precisely through restricted interfaces. `main.py` interfaces with `LowerBodySimulator`, and only `LowerBodySimulator` manipulates `mujoco.MjData` and `mujoco.MjModel`. All MuJoCo id lookups (`mj_name2id`) are cached in `_cache_indices` at construction; hot-path methods (`step`, `compute_diagnostics`, `inverse_kinematics`, `analyze_induced_acceleration`) read from the cache rather than reaching into MuJoCo's reflective API.
 - **TDD (Test-Driven Development)**: Comprehensive coverage validates ZTCF calculation outputs, inverse kinematics stability, valid polynomial joint drivers, and mass-integrity matching inside XML generation.

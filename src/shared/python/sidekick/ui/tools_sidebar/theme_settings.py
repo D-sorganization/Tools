@@ -4,9 +4,10 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass, field
-from enum import StrEnum
 from types import MappingProxyType
 from typing import Any
+
+from compatibility import StrEnum
 
 from .design_tokens import (
     _HEX_COLOR_RE,
@@ -14,6 +15,16 @@ from .design_tokens import (
     SidekickDesignTokens,
     _normalize_token_values,
 )
+
+__all__ = [
+    "MAX_FONT_FAMILY_LENGTH",
+    "MAX_FONT_SIZE_PX",
+    "MIN_FONT_SIZE_PX",
+    "SidekickFontSettings",
+    "SidekickThemeMode",
+    "SidekickThemeSettings",
+    "resolve_sidekick_theme",
+]
 
 MIN_FONT_SIZE_PX = 9
 MAX_FONT_SIZE_PX = 24
@@ -62,7 +73,7 @@ class SidekickFontSettings:
 class SidekickThemeSettings:
     """Serializable Sidekick theme settings stored with sidebar state."""
 
-    mode: SidekickThemeMode = SidekickThemeMode.INHERIT_PARENT
+    mode: SidekickThemeMode = SidekickThemeMode.INHERIT_PARENT  # type: ignore[assignment]
     colors: Mapping[str, str] = field(default_factory=dict)
     font: SidekickFontSettings = field(default_factory=SidekickFontSettings)
 
@@ -88,7 +99,7 @@ class SidekickThemeSettings:
     ) -> SidekickThemeSettings:
         """Create custom theme settings with validated color and font payloads."""
         return cls(
-            mode=SidekickThemeMode.CUSTOM,
+            mode=SidekickThemeMode.CUSTOM,  # type: ignore[arg-type]
             colors=colors or {},
             font=SidekickFontSettings(family=font_family, size_px=font_size_px),
         )

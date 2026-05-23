@@ -24,7 +24,7 @@ from ..managers.unit_preferences_manager import (
     get_unit_preferences_manager,
 )
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 
 class UnitAwareInput(QWidget):
@@ -171,7 +171,7 @@ class UnitAwareInput(QWidget):
 
     def value(self) -> float:
         """Get current value in display units."""
-        return self._value_input.value()
+        return float(self._value_input.value())  # Qt stubs return Any
 
     def value_si(self) -> float:
         """Get current value in SI units."""
@@ -248,4 +248,7 @@ class UnitAwareDisplay(QWidget):
         self._update_display()
 
 
-__all__ = ["UnitAwareInput", "UnitAwareDisplay"]
+__all__ = [
+    "UnitAwareDisplay",
+    "UnitAwareInput",
+]

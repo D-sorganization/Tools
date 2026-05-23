@@ -29,7 +29,15 @@ from .qt_compat import QtCore, QtWidgets
 from .registry import WorkspaceRegistry
 from .workspace_commands import WorkspaceCommandExecutor
 
-logger = logging.getLogger(__name__)
+__all__ = [
+    "RefreshWorkspace",
+    "SIDEKICK_CALCULATOR_OBJECT_NAME",
+    "SetPredictiveTextEnabled",
+    "SetVariable",
+    "SidekickCalculatorWidget",
+]
+
+_logger = logging.getLogger(__name__)
 
 SIDEKICK_CALCULATOR_OBJECT_NAME = "SidekickCalculatorTab"
 _CALCULATOR_RESULT_NAME = "calculator_result"
@@ -219,7 +227,7 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
         try:
             workspace_value, text = evaluate_calculator_expression(expression)
         except Exception as exc:  # noqa: BLE001 - user-facing calculator errors
-            logger.debug("Sidekick calculator evaluation failed: %s", exc)
+            _logger.debug("Sidekick calculator evaluation failed: %s", exc)
             self._result.setText(f"Error: {exc}")
             return
 
@@ -237,7 +245,7 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
             normalized = self._workspace_command_history.submit(command)
             result = self._workspace_command_executor.execute(normalized)
         except Exception as exc:  # noqa: BLE001 - user-facing command errors
-            logger.debug("Sidekick workspace command failed: %s", exc)
+            _logger.debug("Sidekick workspace command failed: %s", exc)
             self._result.setText(f"Workspace command failed: {exc}")
             return
 
@@ -261,7 +269,7 @@ class SidekickCalculatorWidget(QtWidgets.QWidget):
                 if preview is not None:
                     self._workspace_command_input.setText(preview)
                 return True
-        return super().eventFilter(watched, event)
+        return bool(super().eventFilter(watched, event))
 
     def _refresh_predictive_suggestions(self, prefix: str) -> None:
         self._completer_model.setStringList(list(self.suggestions_for(prefix)))
@@ -287,12 +295,12 @@ def _case_insensitive_flag() -> Any:
 def _is_key_press(event: Any) -> bool:
     event_type = getattr(QtCore.QEvent, "Type", None)
     if event_type is not None:
-        return event.type() == event_type.KeyPress
-    return event.type() == QtCore.QEvent.KeyPress
+        return bool(event.type() == event_type.KeyPress)
+    return bool(event.type() == QtCore.QEvent.KeyPress)
 
 
 def _matches_key(event: Any, key_name: str) -> bool:
     key_enum = getattr(QtCore.Qt, "Key", None)
     if key_enum is not None:
-        return event.key() == getattr(key_enum, key_name)
-    return event.key() == getattr(QtCore.Qt, key_name)
+        return bool(event.key() == getattr(key_enum, key_name))
+    return bool(event.key() == getattr(QtCore.Qt, key_name))
