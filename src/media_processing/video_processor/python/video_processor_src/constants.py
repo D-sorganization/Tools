@@ -14,9 +14,7 @@ import math
 
 # Mathematical constants
 PI: float = math.pi  # [dimensionless] Ratio of circumference to diameter
-E: float = (
-    2.718281828459045  # [dimensionless] Euler's number, base of natural logarithm  # noqa: E501
-)
+E: float = 2.718281828459045  # [dimensionless] Euler's number, base of natural logarithm  # noqa: E501
 
 # Physical constants - SI units
 GRAVITY_M_S2: float = 9.80665  # [m/s²] Standard gravity, ISO 80000-3:2006
