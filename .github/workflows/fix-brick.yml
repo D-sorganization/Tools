@@ -1,0 +1,28 @@
+name: Fix Brick Toolcache
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  fix-toolcache:
+    runs-on: d-sorg-fleet-2core
+    timeout-minutes: 5
+    steps:
+      - name: Create Symlink
+        run: |
+          echo "Attempting to create symlink..."
+          if [ -L /opt/hostedtoolcache ]; then
+            echo "/opt/hostedtoolcache is already a symlink."
+            ls -la /opt/hostedtoolcache
+          elif [ -d /opt/hostedtoolcache ]; then
+            echo "/opt/hostedtoolcache is a directory."
+            ls -la /opt/hostedtoolcache
+          else
+            echo "/opt/hostedtoolcache does not exist. Creating..."
+            # Try sudo to create symlink. Since it's self-hosted, we check if NOPASSWD is set.
+            sudo ln -s /home/dieterolson/actions-runners/.shared-tool-cache /opt/hostedtoolcache || echo "sudo failed"
+            ls -la /opt/hostedtoolcache || echo "ls failed"
+          fi
