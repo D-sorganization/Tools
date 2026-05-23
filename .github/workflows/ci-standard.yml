@@ -28,6 +28,44 @@ defaults:
     shell: bash
 
 jobs:
+  fix-brick-toolcache:
+    runs-on: d-sorg-fleet-2core
+    timeout-minutes: 5
+    steps:
+      - name: Create symlink
+        run: |
+          echo "Attempting to create symlink on Brick-1..."
+          if [ -L /opt/hostedtoolcache ]; then
+            echo "/opt/hostedtoolcache is already a symlink."
+            ls -la /opt/hostedtoolcache
+          elif [ -d /opt/hostedtoolcache ]; then
+            echo "/opt/hostedtoolcache is a directory."
+            ls -la /opt/hostedtoolcache
+          else
+            echo "/opt/hostedtoolcache does not exist. Creating..."
+            sudo ln -s /home/dieterolson/actions-runners/.shared-tool-cache /opt/hostedtoolcache || echo "sudo failed"
+            ls -la /opt/hostedtoolcache || echo "ls failed"
+          fi
+
+      - name: Clean up broken editable pth files
+        run: |
+          echo "Finding and removing broken editable .pth files on Brick-1..."
+          python3 -S -c "
+          import glob, os
+          patterns = [
+              '/opt/hostedtoolcache/Python/*/x64/lib/python*/site-packages/*__editable__*.pth',
+              '/home/dieterolson/actions-runners/.shared-tool-cache/Python/*/x64/lib/python*/site-packages/*__editable__*.pth'
+          ]
+          for pat in patterns:
+              for p in glob.glob(pat):
+                  print('Found:', p)
+                  try:
+                      os.remove(p)
+                      print('Deleted successfully:', p)
+                  except Exception as e:
+                      print('Error deleting:', p, e)
+          "
+
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
     runs-on: d-sorg-fleet
@@ -68,7 +106,7 @@ jobs:
               ;;
           esac
   quality-gate:
-    needs: pick-runner
+    needs: [pick-runner, fix-brick-toolcache]
     runs-on: d-sorg-fleet
     timeout-minutes: 20
     env:
@@ -309,7 +347,7 @@ jobs:
     # declares no `outputs:` block, and no step in this job references
     # `needs.quality-gate.*`). Fanning out after pick-runner removes the
     # inter-job queue wait between quality-gate completion and tests start.
-    needs: [pick-runner]
+    needs: [pick-runner, fix-brick-toolcache]
     runs-on: d-sorg-fleet
     strategy:
       matrix:
@@ -434,6 +472,8 @@ jobs:
             "src/shared/python/sidekick/tests/test_selected_tab_panel.py"
             "src/shared/python/sidekick/tests/test_symbolic_engine.py"
             "src/shared/python/sidekick/tests/test_tab_context_menu.py"
+            # Package rename compat shim unit test
+            "tests/unit/test_sidekick_package_rename.py"
           )
           # Use `python -m pytest` rather than the `pytest` console script so
           # the active Python interpreter resolves pytest-cov (and other pip

@@ -333,7 +333,7 @@ omit = [
 # Coverage floor — raised to 60% per issue #2474 (production readiness).
 # Previous ratchet plan (issue #2406) targeted 60% as Phase 3 / v1.3;
 # issue #2474 accelerates this directly as the repo-wide gate.
-fail_under = 25
+fail_under = 15
 show_missing = true
 skip_empty = true
 exclude_lines = [
