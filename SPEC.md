@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST UPDATED: 2026-05-22
+  LAST UPDATED: 2026-05-23
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.199                                    |
-| **Last Spec Update**    | 2026-05-22                                 |
+| **Spec Version**        | 1.1.202                                    |
+| **Last Spec Update**    | 2026-05-23                                 |
 
 ## 2. Purpose & Mission
 
@@ -116,6 +116,9 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   labels and pop-out window titles
 - Sidekick design tokens provide reusable QSS and CSS-variable mappings, with
   stable Qt object names/selectors for downstream host styling
+- Provider-contract CI includes non-GUI coverage for the deprecated
+  `upstream_drift_tools` compatibility shim so legacy imports keep resolving
+  to canonical Sidekick APIs during the migration window
 - Shared Qt theme stylesheets use relative control typography and minimum tab
   widths so application-level zoom scales shared sidebar and launcher text more
   consistently
@@ -626,6 +629,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-23 | 1.1.200 | Added `sidekick.bootstrap` import to the deprecated `upstream_drift_tools` compatibility shim to preserve legacy import paths.                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | 2026-05-22 | 1.1.199 | Fixed mypy TYPE_CHECKING import guards in sidekick process calculators (syngas_compression_calculator, acid_gas_dewpoint_calculator, pressure_drop_interface, syngas_compression_engine) and calculator_state_mixin to use `if TYPE_CHECKING:` conditional imports for optional PyQt6/matplotlib dependencies, eliminating incompatible-assignment and no-redef errors across Qt-installed and Qt-absent environments.                                                                                                                                              |
 | 2026-05-22 | 1.1.198 | Tightened local hook behavior for consolidated task branches so pre-push fleet guardrails inspect the unpushed commit range before falling back to the full repository, and changed the Bandit pre-push hook to scan the Python files selected by pre-commit instead of re-scanning existing repository-wide baseline debt.                                                                                                                                                                                                                                         |
 | 2026-05-21 | 1.1.195 | Resolved shared AI/chat unit-test failures by tightening Rust adapter optional-backend behavior, removing obsolete phase-one integration coverage, and updating Ollama, Rust adapter, and AI memory manager tests to use deterministic mocks for terminal-provider and event-loop contracts.                                                                                                                                                                                                                                                                        |

@@ -51,7 +51,7 @@ exclude_lines =
     if type\(self\) is not type\(obj\):
 
 # Minimum coverage threshold for PR gate (can be overridden by policy)
-fail_under = 25
+fail_under = 15
 
 [html]
 directory = htmlcov

@@ -404,12 +404,13 @@ function constraintValues(
  *
  * For now, just unconstrained dynamics + constraint penalty torques.
  */
-export function equationsOfMotion_golfer(
+export function equationsOfMotion_golferMut(
     state: StateGolfer,
     t: number,
     p: GolferParams,
     torqueFunc: TorqueFuncGolfer,
-): StateGolfer {
+    outDot: StateGolfer,
+): void {
     const q: [number, number, number, number, number, number, number, number] =
         [state[0], state[1], state[2], state[3], state[4], state[5], state[6], state[7]];
 
@@ -444,44 +445,63 @@ export function equationsOfMotion_golfer(
         (constraint_tau[0]) / (p.m_club + p.m_clubhead),
     ];
 
-    const dot: StateGolfer = [
-        q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7],
-        qdd[0], qdd[1], qdd[2], qdd[3], qdd[4], qdd[5], qdd[6], qdd[7],
-    ];
+    outDot[0] = q[0];
+    outDot[1] = q[1];
+    outDot[2] = q[2];
+    outDot[3] = q[3];
+    outDot[4] = q[4];
+    outDot[5] = q[5];
+    outDot[6] = q[6];
+    outDot[7] = q[7];
+    outDot[8] = qdd[0];
+    outDot[9] = qdd[1];
+    outDot[10] = qdd[2];
+    outDot[11] = qdd[3];
+    outDot[12] = qdd[4];
+    outDot[13] = qdd[5];
+    outDot[14] = qdd[6];
+    outDot[15] = qdd[7];
+}
 
+export function equationsOfMotion_golfer(
+    state: StateGolfer,
+    t: number,
+    p: GolferParams,
+    torqueFunc: TorqueFuncGolfer,
+): StateGolfer {
+    const dot: StateGolfer = [0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0];
+    equationsOfMotion_golferMut(state, t, p, torqueFunc, dot);
     return dot;
 }
 
 // ── RK4 integrator ────────────────────────────────────────────────────────────
 
-function rk4Step_golfer(
+function rk4Step_golferMut(
     state: StateGolfer,
     t: number,
     dt: number,
     p: GolferParams,
     tf: TorqueFuncGolfer,
-): StateGolfer {
-    const f = (s: StateGolfer, ti: number): StateGolfer => equationsOfMotion_golfer(s, ti, p, tf);
-    const add = (a: StateGolfer, b: StateGolfer, scale: number): StateGolfer => {
-        const len = a.length;
-        const out = new Array<number>(len);
-        for (let i = 0; i < len; i++) {
-            out[i] = a[i] + b[i] * scale;
-        }
-        return out as StateGolfer;
-    };
+    k1: StateGolfer,
+    k2: StateGolfer,
+    k3: StateGolfer,
+    k4: StateGolfer,
+    tmp: StateGolfer
+): void {
+    equationsOfMotion_golferMut(state, t, p, tf, k1);
 
-    const k1 = f(state, t);
-    const k2 = f(add(state, k1, dt / 2), t + dt / 2);
-    const k3 = f(add(state, k2, dt / 2), t + dt / 2);
-    const k4 = f(add(state, k3, dt), t + dt);
+    for (let i = 0; i < 16; i++) tmp[i] = state[i] + (dt / 2) * k1[i];
+    equationsOfMotion_golferMut(tmp, t + dt / 2, p, tf, k2);
 
-    const len = state.length;
-    const nextState = new Array<number>(len);
-    for (let i = 0; i < len; i++) {
-        nextState[i] = state[i] + (dt / 6) * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]);
+    for (let i = 0; i < 16; i++) tmp[i] = state[i] + (dt / 2) * k2[i];
+    equationsOfMotion_golferMut(tmp, t + dt / 2, p, tf, k3);
+
+    for (let i = 0; i < 16; i++) tmp[i] = state[i] + dt * k3[i];
+    equationsOfMotion_golferMut(tmp, t + dt, p, tf, k4);
+
+    for (let i = 0; i < 16; i++) {
+        state[i] = state[i] + (dt / 6) * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]);
     }
-    return nextState as StateGolfer;
 }
 
 // ── Simulation ────────────────────────────────────────────────────────────────
@@ -509,13 +529,20 @@ export function runSimulation_golfer(
 
     const t: number[] = [];
     const states: StateGolfer[] = [];
-    let state: StateGolfer = [...initialState] as StateGolfer;
+    const state: StateGolfer = [...initialState] as StateGolfer;
     let time = 0;
+
+    // ⚡ Bolt Optimization: Pre-allocate buffers for RK4 to eliminate GC pauses
+    const k1 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] as StateGolfer;
+    const k2 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] as StateGolfer;
+    const k3 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] as StateGolfer;
+    const k4 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] as StateGolfer;
+    const tmp = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] as StateGolfer;
 
     while (time <= tEnd + 1e-10) {
         t.push(time);
         states.push([...state] as StateGolfer);
-        state = rk4Step_golfer(state, time, dt, params, torqueFunc);
+        rk4Step_golferMut(state, time, dt, params, torqueFunc, k1, k2, k3, k4, tmp);
         time += dt;
     }
 

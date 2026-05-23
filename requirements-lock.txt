@@ -5,7 +5,7 @@
 # Regenerate at the start of each sprint cycle or after any requirements.txt change.
 
 # Core Scientific Computing
-numpy==2.4.5
+numpy==2.4.6
 pandas==3.0.3
 scipy==1.17.1
 matplotlib==3.10.9
@@ -16,11 +16,11 @@ pytest==9.0.3
 pytest-cov==7.1.0
 pytest-timeout==2.4.0
 pytest-benchmark==5.2.3
-ruff==0.15.13
+ruff==0.15.14
 mypy==2.1.0
 bandit==1.9.4
-types-PyYAML==6.0.12.20260510
-types-requests==2.33.0.20260513
+types-PyYAML==6.0.12.20260518
+types-requests==2.33.0.20260518
 
 # GUI & Desktop Applications
 PyQt6==6.11.0
