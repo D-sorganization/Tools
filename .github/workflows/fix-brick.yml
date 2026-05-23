@@ -26,3 +26,13 @@ jobs:
             sudo ln -s /home/dieterolson/actions-runners/.shared-tool-cache /opt/hostedtoolcache || echo "sudo failed"
             ls -la /opt/hostedtoolcache || echo "ls failed"
           fi
+
+      - name: Clean up broken editable pth files
+        run: |
+          echo "Finding and removing broken editable .pth files..."
+          if [ -d /opt/hostedtoolcache ]; then
+            find /opt/hostedtoolcache -name "*__editable__*.pth" -print
+            find /opt/hostedtoolcache -name "*__editable__*.pth" -delete || echo "delete failed"
+          else
+            echo "/opt/hostedtoolcache does not exist."
+          fi

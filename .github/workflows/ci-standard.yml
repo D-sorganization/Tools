@@ -47,6 +47,16 @@ jobs:
             ls -la /opt/hostedtoolcache || echo "ls failed"
           fi
 
+      - name: Clean up broken editable pth files
+        run: |
+          echo "Finding and removing broken editable .pth files on Brick-1..."
+          if [ -d /opt/hostedtoolcache ]; then
+            find /opt/hostedtoolcache -name "*__editable__*.pth" -print
+            find /opt/hostedtoolcache -name "*__editable__*.pth" -delete || echo "delete failed"
+          else
+            echo "/opt/hostedtoolcache does not exist."
+          fi
+
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
     runs-on: d-sorg-fleet
@@ -87,7 +97,7 @@ jobs:
               ;;
           esac
   quality-gate:
-    needs: pick-runner
+    needs: [pick-runner, fix-brick-toolcache]
     runs-on: d-sorg-fleet
     timeout-minutes: 20
     env:
@@ -328,7 +338,7 @@ jobs:
     # declares no `outputs:` block, and no step in this job references
     # `needs.quality-gate.*`). Fanning out after pick-runner removes the
     # inter-job queue wait between quality-gate completion and tests start.
-    needs: [pick-runner]
+    needs: [pick-runner, fix-brick-toolcache]
     runs-on: d-sorg-fleet
     strategy:
       matrix:
