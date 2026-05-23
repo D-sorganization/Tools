@@ -16,3 +16,7 @@
 ## 2024-05-30 - Memoizing Render-Blocking O(N) Array Operations in React
 **Learning:** In React components that manage high-frequency inputs (e.g. text areas for calculator expressions) alongside large arrays of data (e.g. an array of 10k generated data points), rendering unmemoized array loops like `.map()` combined with local `min`/`max` loops blocks the main thread. This leads to severe lag when typing in the input fields, as React re-evaluates the large data arrays on every keystroke.
 **Action:** Always wrap heavy O(N) loops that aggregate state data (such as finding `min`/`max` limits across large solution arrays for summary cards) in a `useMemo` block, with dependency arrays scoped strictly to the generated result data.
+
+## 2024-05-23 - SVG Chart Data Overload
+**Learning:** Passing raw, high-resolution arrays (>1000 points) directly to React charting libraries like Recharts creates massive DOM/SVG nodes, causing severe main thread blocking and unresponsive UI.
+**Action:** Always downsample large result arrays via `useMemo` with single-pass loops and pre-allocated arrays (e.g. `new Array(len)`) to a visual maximum (~500 points) before passing them to charting components.
