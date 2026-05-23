@@ -11,5 +11,17 @@ bootstrap(__file__)
 
 from gui_launcher import make_pyqt6_launcher  # noqa: E402
 
+
+def main() -> None:
+    """Entry point for the launcher (used by tests and package scripts)."""
+    import sys
+
+    launcher_module = sys.modules.get("gui_launcher")
+    if launcher_module is not None:
+        from gui_launcher import make_pyqt6_launcher
+
+        sys.exit(make_pyqt6_launcher("optimizer_gui.gui_registration"))
+
+
 if __name__ == "__main__":
     sys.exit(make_pyqt6_launcher("optimizer_gui.gui_registration"))

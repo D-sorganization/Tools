@@ -8,8 +8,9 @@ GUI_INFO = {
     "name": "Flow Rate Converter",
     "tool_name": "flow_rate_converter",
     "description": "Convert between mass, molar, and volumetric flow rate units",
-    "category": "Utilities",
+    "category": "utilities",
     "icon": "exchange",
+    "entry_point": "flow_rate_converter.launch_pyqt6:main",
     "pyqt6": {
         "module": "flow_rate_converter.ui.pyqt6.main_window",
         "class": "FlowRateConverterWindow",
@@ -17,6 +18,9 @@ GUI_INFO = {
         "settings_app": "FlowRateConverter",
     },
 }
+
+# Backward-compatible alias expected by tests and legacy consumers.
+GUI_METADATA = GUI_INFO
 
 
 def get_gui_info() -> dict[str, Any]:

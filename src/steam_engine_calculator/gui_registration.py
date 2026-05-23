@@ -8,8 +8,9 @@ GUI_INFO = {
     "name": "Steam Engine Calculator",
     "tool_name": "steam_engine_calculator",
     "description": "Calculate thermodynamic properties of steam/water",
-    "category": "Thermodynamics",
+    "category": "thermodynamics",
     "icon": "steam",
+    "entry_point": "steam_engine_calculator.launch_pyqt6:main",
     "pyqt6": {
         "module": "steam_engine_calculator.ui.pyqt6.main_window",
         "class": "SteamEngineCalculatorWindow",
@@ -17,6 +18,9 @@ GUI_INFO = {
         "settings_app": "SteamEngineCalculator",
     },
 }
+
+# Backward-compatible alias expected by tests and legacy consumers.
+GUI_METADATA = GUI_INFO
 
 
 def get_gui_info() -> dict[str, Any]:

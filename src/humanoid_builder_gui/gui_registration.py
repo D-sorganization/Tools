@@ -9,8 +9,9 @@ GUI_INFO = {
     "name": "Humanoid Character Builder",
     "tool_name": "humanoid_builder_gui",
     "description": "Build parametric humanoid characters with anthropometric calculations",
-    "category": "Robotics",
+    "category": "robotics",
     "icon": "person",
+    "entry_point": "humanoid_builder_gui.launch_pyqt6:main",
     "pyqt6": {
         "module": "humanoid_builder_gui.ui.pyqt6.main_window",
         "class": "HumanoidBuilderWindow",
@@ -18,6 +19,9 @@ GUI_INFO = {
         "settings_app": "HumanoidBuilder",
     },
 }
+
+# Backward-compatible alias expected by tests and legacy consumers.
+GUI_METADATA = GUI_INFO
 
 
 def get_gui_info() -> dict[str, Any]:

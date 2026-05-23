@@ -8,8 +8,9 @@ GUI_INFO = {
     "name": "Multi-Parameter Analysis",
     "tool_name": "multi_param_analysis",
     "description": "Run multi-parameter sensitivity analysis with grid evaluation",
-    "category": "Analysis",
+    "category": "analysis",
     "icon": "grid",
+    "entry_point": "multi_param_analysis.launch_pyqt6:main",
     "pyqt6": {
         "module": "multi_param_analysis.ui.pyqt6.main_window",
         "class": "MultiParamAnalysisWindow",
@@ -17,6 +18,9 @@ GUI_INFO = {
         "settings_app": "MultiParamAnalysis",
     },
 }
+
+# Backward-compatible alias expected by tests and legacy consumers.
+GUI_METADATA = GUI_INFO
 
 
 def get_gui_info() -> dict[str, Any]:
