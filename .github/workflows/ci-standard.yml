@@ -51,8 +51,8 @@ jobs:
         run: |
           echo "Finding and removing broken editable .pth files on Brick-1..."
           if [ -d /opt/hostedtoolcache ]; then
-            find /opt/hostedtoolcache -name "*__editable__*.pth" -print
-            find /opt/hostedtoolcache -name "*__editable__*.pth" -delete || echo "delete failed"
+            find -L /opt/hostedtoolcache -name "*__editable__*.pth" -print
+            find -L /opt/hostedtoolcache -name "*__editable__*.pth" -delete || echo "delete failed"
           else
             echo "/opt/hostedtoolcache does not exist."
           fi
