@@ -453,6 +453,8 @@ jobs:
             "src/shared/python/sidekick/tests/test_selected_tab_panel.py"
             "src/shared/python/sidekick/tests/test_symbolic_engine.py"
             "src/shared/python/sidekick/tests/test_tab_context_menu.py"
+            # Package rename compat shim unit test
+            "tests/unit/test_sidekick_package_rename.py"
           )
           # Use `python -m pytest` rather than the `pytest` console script so
           # the active Python interpreter resolves pytest-cov (and other pip
