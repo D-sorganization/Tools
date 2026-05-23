@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.200                                    |
+| **Spec Version**        | 1.1.201                                    |
 | **Last Spec Update**    | 2026-05-23                                 |
 
 ## 2. Purpose & Mission
@@ -116,6 +116,9 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   labels and pop-out window titles
 - Sidekick design tokens provide reusable QSS and CSS-variable mappings, with
   stable Qt object names/selectors for downstream host styling
+- Provider-contract CI includes non-GUI coverage for the deprecated
+  `upstream_drift_tools` compatibility shim so legacy imports keep resolving
+  to canonical Sidekick APIs during the migration window
 - Shared Qt theme stylesheets use relative control typography and minimum tab
   widths so application-level zoom scales shared sidebar and launcher text more
   consistently
