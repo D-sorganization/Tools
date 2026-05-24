@@ -28,7 +28,7 @@
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
 | **Spec Version**        | 1.1.204                                    |
-| **Last Spec Update**    | 2026-05-23                                 |
+| **Last Spec Update**    | 2026-05-24                                 |
 
 ## 2. Purpose & Mission
 
@@ -944,6 +944,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Performance**: In `src/ode_solver/web/src/components/ODESolverCalculator.tsx`, extracted the entire `resultsPanel` (containing heavy Recharts and data table elements) into a `useMemo` block to prevent the entire SVG tree from re-rendering synchronously on every keystroke in the textarea, eliminating severe UI input lag.
 
 ### Version 1.1.190
+
+- **2026-05-24**: Add `spellcheck="false"`, `autocorrect="off"`, and `autocapitalize="none"` to math inputs in calculator to improve UX, and add `role="img"` to battery icon span.
 
 - **Performance**: In `src/ode_solver/web/src/components/ODESolverCalculator.tsx`, wrapped `varNames` computation and summary cards rendering in `useMemo`, and replaced `.filter()` with a single-pass `for` loop to prevent O(N) recalculations of array keys and summary min/max loops on every React render.
 
