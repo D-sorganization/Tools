@@ -950,3 +950,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **2026-05-20**: Harden health-check API responses to return generic client-facing errors while logging exception details server-side.
 - **2026-05-20**: Restore shared logging and environment helper modules required by AI adapter and chat service connection imports.
 - **2026-05-20**: Clarify shared chat provider dropdown ownership by removing stale UpstreamDrift issue references from Tools-owned source and tests, and synchronize the GitHub CLI provider descriptor with the default terminal registry (#3020).
+
+### Version 1.1.191
+
+- **Performance**: In `src/p1am_control_system/frontend/src/components/LadderExplorer.tsx`, replaced chained `.map().filter()` calls with a single-pass loop and memoized the results using `useMemo`. Also memoized `filteredTags` using a `for` loop to prevent intermediate array allocations and reduce garbage collection pauses during React renders.
