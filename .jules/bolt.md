@@ -21,6 +21,12 @@
 **Action:** Use an out-parameter pattern where pre-allocated state objects and argument arrays are instantiated once outside the loop and mutated continuously.
 ## 2024-05-23 - SVG Chart Data Overload
 **Learning:** Passing raw, high-resolution arrays (>1000 points) directly to React charting libraries like Recharts creates massive DOM/SVG nodes, causing severe main thread blocking and unresponsive UI.
-**Action:** Always downsample large result arrays via `useMemo` with single-pass loops and pre-allocated arrays (e.g. `new Array(len)`) to a visual maximum (~500 points) before passing them to charting components.## 2025-02-14 - Unmemoized Charts block UI
+**Action:** Always downsample large result arrays via `useMemo` with single-pass loops and pre-allocated arrays (e.g. `new Array(len)`) to a visual maximum (~500 points) before passing them to charting components.
+
+## 2025-02-14 - Unmemoized Charts block UI
 **Learning:** Unmemoized Recharts components wrapped alongside frequent input controls (like textareas) will cause severe input lag because the entire DOM/SVG tree re-renders on every keystroke.
 **Action:** Always extract heavy data-visualization JSX into `useMemo` or `React.memo` when they sit adjacent to fast-updating inputs in the same component tree.
+
+## 2024-05-18 - Replacing chained array methods with single-pass loops
+**Learning:** Chained array methods like `.map().filter()` or `.filter().map()` inside React `useMemo` hooks create multiple intermediate arrays. In hot paths or when processing large datasets, this causes severe garbage collection pauses and frame drops due to continuous memory allocation overhead.
+**Action:** Replace chained array methods with standard `for` loops and pre-allocate arrays when possible (e.g. `new Array(len)`) to prevent intermediate allocations and improve UI responsiveness.
