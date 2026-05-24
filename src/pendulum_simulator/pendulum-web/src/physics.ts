@@ -146,7 +146,7 @@ function gravityVector(theta1: number, phi: number,
 export function frictionTorqueVector(dtheta1: number, dphi: number,
     p: PendulumParams): [number, number] {
     assertFinite(dtheta1, 'dtheta1'); assertFinite(dphi, 'dphi');
-    const sign = (v: number) => (v > 0 ? 1 : v < 0 ? -1 : 0);
+    const sign = Math.sign;
     return [
         -p.b1 * dtheta1 - p.mu1 * sign(dtheta1),
         -p.b2 * dphi - p.mu2 * sign(dphi),
