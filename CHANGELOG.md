@@ -98,6 +98,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - pytest configuration for multi-project testing
 - Ruff and Black for code formatting
 - MyPy for type checking
-## [1.1.204] - 2024-06-13
-### Changed
-- Replaced custom inline closure function `sign` with native `Math.sign` in `src/pendulum_simulator/pendulum-web/src/physics.ts` to optimize `frictionTorqueVector` and the tight integration loop `equationsOfMotionMut` in the pendulum solver, reducing RK4 inner loop latency.
