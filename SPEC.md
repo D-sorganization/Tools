@@ -946,7 +946,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 ### Version 1.1.190
 
 - **Performance**: In `src/ode_solver/web/src/components/ODESolverCalculator.tsx`, wrapped `varNames` computation and summary cards rendering in `useMemo`, and replaced `.filter()` with a single-pass `for` loop to prevent O(N) recalculations of array keys and summary min/max loops on every React render.
-- **Performance**: In `src/ode_solver/web/src/components/ODESolverCalculator.tsx`, memoized the heavy results panel containing Recharts visualizations, summary cards, and the sample data table so fast-updating ODE input fields no longer force expensive chart and table re-renders on every keystroke.
 
 - **2026-05-22**: Memoize summary statistics calculation and variable names in ODESolverCalculator.
 - **2026-05-22**: Keep the model explorer package initializer lint-clean by preserving the module docstring before future imports.
