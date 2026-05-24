@@ -22,11 +22,9 @@
 ## 2024-05-23 - SVG Chart Data Overload
 **Learning:** Passing raw, high-resolution arrays (>1000 points) directly to React charting libraries like Recharts creates massive DOM/SVG nodes, causing severe main thread blocking and unresponsive UI.
 **Action:** Always downsample large result arrays via `useMemo` with single-pass loops and pre-allocated arrays (e.g. `new Array(len)`) to a visual maximum (~500 points) before passing them to charting components.
-
 ## 2024-06-13 - Inline closure overhead in numerical integrations
 **Learning:** In tight numerical integration loops (like RK4 solvers), defining an inline closure function (e.g., `const sign = (v) => ...`) allocates memory and causes significant overhead, slowing down the solver dramatically compared to referencing a native function.
 **Action:** Replace inline utility closures with native functions (like `Math.sign`) when called continuously in high-frequency loops.
-
-## 2024-05-18 - Replacing chained array methods with single-pass loops
-**Learning:** Chained array methods like `.map().filter()` or `.filter().map()` inside React `useMemo` hooks create multiple intermediate arrays. In hot paths or when processing large datasets, this causes severe garbage collection pauses and frame drops due to continuous memory allocation overhead.
-**Action:** Replace chained array methods with standard `for` loops and pre-allocate arrays when possible (e.g. `new Array(len)`) to prevent intermediate allocations and improve UI responsiveness.
+## 2024-06-14 - Pytest-qt in CI
+**Learning:** Running PyQt tests in CI or headless environments using `pytest-qt` fails with a fatal abort if a display server is not available.
+**Action:** Always set the environment variable `QT_QPA_PLATFORM=offscreen` when running PyQt6 tests.

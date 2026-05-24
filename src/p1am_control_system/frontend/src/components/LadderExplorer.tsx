@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { Search, Cpu, Eye } from "lucide-react";
 
 export interface LadderTagInfo {
@@ -51,40 +51,23 @@ export const LadderExplorer: React.FC<LadderExplorerProps> = ({
     fetchTags();
   }, []);
 
-  // ⚡ Bolt Optimization: Memoize and replace chained .map().filter() with single-pass loops to prevent intermediate array allocations and GC overhead on every render
-  const { areas, regTypes } = useMemo(() => {
-    const areaSet = new Set<string>();
-    const regTypeSet = new Set<string>();
-    for (let i = 0; i < tags.length; i++) {
-      const t = tags[i];
-      if (t.area) areaSet.add(t.area);
-      if (t.register_type) regTypeSet.add(t.register_type);
-    }
-    return {
-      areas: ["All", ...Array.from(areaSet)],
-      regTypes: ["All", ...Array.from(regTypeSet)]
-    };
-  }, [tags]);
+  const areas = ["All", ...Array.from(new Set(tags.map((t) => t.area).filter(Boolean)))];
+  const regTypes = [
+    "All",
+    ...Array.from(new Set(tags.map((t) => t.register_type).filter(Boolean))),
+  ];
 
-  const filteredTags = useMemo(() => {
-    const searchLower = search.toLowerCase();
-    const result = [];
-    for (let i = 0; i < tags.length; i++) {
-      const t = tags[i];
-      const matchesSearch =
-        t.name.toLowerCase().includes(searchLower) ||
-        t.description.toLowerCase().includes(searchLower) ||
-        (t.register_num !== null && String(t.register_num).includes(search));
+  const filteredTags = tags.filter((t) => {
+    const matchesSearch =
+      t.name.toLowerCase().includes(search.toLowerCase()) ||
+      t.description.toLowerCase().includes(search.toLowerCase()) ||
+      (t.register_num !== null && String(t.register_num).includes(search));
 
-      const matchesArea = selectedArea === "All" || t.area === selectedArea;
-      const matchesRegType = selectedRegType === "All" || t.register_type === selectedRegType;
+    const matchesArea = selectedArea === "All" || t.area === selectedArea;
+    const matchesRegType = selectedRegType === "All" || t.register_type === selectedRegType;
 
-      if (matchesSearch && matchesArea && matchesRegType) {
-        result.push(t);
-      }
-    }
-    return result;
-  }, [tags, search, selectedArea, selectedRegType]);
+    return matchesSearch && matchesArea && matchesRegType;
+  });
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
