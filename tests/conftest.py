@@ -1,16 +1,17 @@
 """Shared pytest configuration for entire Tools repo."""
 
 import importlib.util
-import os
 import sys
 import types
 import warnings
+from collections.abc import Sequence
 from importlib.abc import Loader, MetaPathFinder
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Any
 
 import pytest
+
 
 class AliasLoader(Loader):
     """A loader that simply returns an existing module object."""
