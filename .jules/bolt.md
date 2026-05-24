@@ -22,3 +22,6 @@
 ## 2024-05-23 - SVG Chart Data Overload
 **Learning:** Passing raw, high-resolution arrays (>1000 points) directly to React charting libraries like Recharts creates massive DOM/SVG nodes, causing severe main thread blocking and unresponsive UI.
 **Action:** Always downsample large result arrays via `useMemo` with single-pass loops and pre-allocated arrays (e.g. `new Array(len)`) to a visual maximum (~500 points) before passing them to charting components.
+## 2024-06-13 - Inline closure overhead in numerical integrations
+**Learning:** In tight numerical integration loops (like RK4 solvers), defining an inline closure function (e.g., `const sign = (v) => ...`) allocates memory and causes significant overhead, slowing down the solver dramatically compared to referencing a native function.
+**Action:** Replace inline utility closures with native functions (like `Math.sign`) when called continuously in high-frequency loops.
