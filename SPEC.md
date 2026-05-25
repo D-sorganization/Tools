@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.204                                    |
-| **Last Spec Update**    | 2026-05-24                                 |
+| **Spec Version**        | 1.1.205                                    |
+| **Last Spec Update**    | 2026-05-31                                 |
 
 ## 2. Purpose & Mission
 
@@ -939,7 +939,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 9. Changelog
 
-### Version 1.1.190
+### Version 1.1.191
 
 - **2026-05-24**: Add `spellcheck="false"`, `autocorrect="off"`, and `autocapitalize="none"` to math inputs in calculator to improve UX, and add `role="img"` to battery icon span.
 
@@ -952,3 +952,4 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **2026-05-20**: Harden health-check API responses to return generic client-facing errors while logging exception details server-side.
 - **2026-05-20**: Restore shared logging and environment helper modules required by AI adapter and chat service connection imports.
 - **2026-05-20**: Clarify shared chat provider dropdown ownership by removing stale UpstreamDrift issue references from Tools-owned source and tests, and synchronize the GitHub CLI provider descriptor with the default terminal registry (#3020).
+- **Performance**: Refactored `AlarmsHeader.tsx` to use a single-pass loop instead of chained `.filter()` and `.reduce()` to improve UI performance and reduce garbage collection overhead.
