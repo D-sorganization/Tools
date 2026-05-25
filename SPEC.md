@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST UPDATED: 2026-05-23
+  LAST UPDATED: 2026-05-25
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.204                                    |
+| **Spec Version**        | 1.1.205                                    |
 | **Last Spec Update**    | 2026-05-23                                 |
 
 ## 2. Purpose & Mission
