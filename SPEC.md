@@ -28,7 +28,7 @@
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
 | **Spec Version**        | 1.1.205                                    |
-| **Last Spec Update**    | 2026-05-23                                 |
+| **Last Spec Update**    | 2026-05-25                                 |
 
 ## 2. Purpose & Mission
 
@@ -939,9 +939,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 9. Changelog
 
-### Version 1.1.204
+### Version 1.1.205
 
 - **Performance**: In `src/ode_solver/web/src/components/ODESolverCalculator.tsx`, extracted the entire `resultsPanel` (containing heavy Recharts and data table elements) into a `useMemo` block to prevent the entire SVG tree from re-rendering synchronously on every keystroke in the textarea, eliminating severe UI input lag.
+- **Performance**: Refactored `AlarmsHeader.tsx` to use a single-pass loop instead of chained `.filter()` and `.reduce()` to improve UI performance and reduce garbage collection overhead.
 
 ### Version 1.1.190
 
