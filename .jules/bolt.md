@@ -30,3 +30,7 @@
 ## 2024-05-18 - Replacing chained array methods with single-pass loops
 **Learning:** Chained array methods like `.map().filter()` or `.filter().map()` inside React `useMemo` hooks create multiple intermediate arrays. In hot paths or when processing large datasets, this causes severe garbage collection pauses and frame drops due to continuous memory allocation overhead.
 **Action:** Replace chained array methods with standard `for` loops and pre-allocate arrays when possible (e.g. `new Array(len)`) to prevent intermediate allocations and improve UI responsiveness.
+
+## 2024-05-31 - Replacing .filter() and .reduce() with single-pass loops in React UI components
+**Learning:** In React components that summarize array states (like finding active alarm counts and maximum severity), chaining `.filter()` and `.reduce()` triggers unnecessary intermediate array allocations on every render.
+**Action:** Use a single-pass `for` loop to compute multiple aggregates simultaneously and eliminate array callback overhead in UI components.
