@@ -943,6 +943,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 - **Performance**: In `src/ode_solver/web/src/components/ODESolverCalculator.tsx`, extracted the entire `resultsPanel` (containing heavy Recharts and data table elements) into a `useMemo` block to prevent the entire SVG tree from re-rendering synchronously on every keystroke in the textarea, eliminating severe UI input lag.
 - **Performance**: Refactored `AlarmsHeader.tsx` to use a single-pass loop instead of chained `.filter()` and `.reduce()` to improve UI performance and reduce garbage collection overhead.
+- **UX**: Add `spellCheck={false}`, `autoCorrect="off"`, and `autoCapitalize="none"` to math inputs in `ODESolverCalculator` to improve mobile formula entry.
 
 ### Version 1.1.190
 
