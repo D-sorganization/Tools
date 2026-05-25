@@ -294,11 +294,9 @@ def pytest_ignore_collect(collection_path: Path, config: pytest.Config) -> bool 
             return None
         return True
 
-
 try:
-    import pytest
     from PyQt6.QtWidgets import QApplication
-
+    import pytest
     @pytest.fixture(scope="session")
     def qapp():
         app = QApplication.instance()

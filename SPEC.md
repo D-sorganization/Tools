@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST UPDATED: 2026-05-25
+  LAST UPDATED: 2026-05-23
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.205                                    |
-| **Last Spec Update**    | 2026-05-25                                 |
+| **Spec Version**        | 1.1.204                                    |
+| **Last Spec Update**    | 2026-05-23                                 |
 
 ## 2. Purpose & Mission
 
@@ -939,11 +939,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 9. Changelog
 
-### Version 1.1.205
+### Version 1.1.204
 
 - **Performance**: In `src/ode_solver/web/src/components/ODESolverCalculator.tsx`, extracted the entire `resultsPanel` (containing heavy Recharts and data table elements) into a `useMemo` block to prevent the entire SVG tree from re-rendering synchronously on every keystroke in the textarea, eliminating severe UI input lag.
-- **Performance**: Refactored `AlarmsHeader.tsx` to use a single-pass loop instead of chained `.filter()` and `.reduce()` to improve UI performance and reduce garbage collection overhead.
-- **UX**: Add `spellCheck={false}`, `autoCorrect="off"`, and `autoCapitalize="none"` to math inputs in `ODESolverCalculator` to improve mobile formula entry.
 
 ### Version 1.1.190
 
