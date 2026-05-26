@@ -55,7 +55,6 @@ def _resolve_default_server() -> str:
     return "ws://127.0.0.1:8000"
 
 
-_DEFAULT_SERVER = _resolve_default_server()
 _QT_EXPORTS = {"ChatDockWidget", "ChatMessageBubble"}
 
 # Tools issue #2753: serialize all reads/writes of the shared session ID
@@ -133,8 +132,12 @@ def _load_qt_module() -> Any:
 
 def chat_qt_runtime_diagnostic() -> dict[str, str | bool]:
     """Return an import-safe diagnostic for the optional Qt chat dock."""
-    result: dict[str, str | bool] = diagnose_chat_qt_runtime().to_dict()
-    return result
+    diagnostic = diagnose_chat_qt_runtime()
+    return {
+        "available": diagnostic.available,
+        "reason": diagnostic.reason,
+        "detail": diagnostic.detail,
+    }
 
 
 def __getattr__(name: str) -> Any:
@@ -147,9 +150,9 @@ __all__ = [
     "ChatDockWidget",
     "ChatMessageBubble",
     "ChatQtUnavailableError",
-    "_DEFAULT_SERVER",
     "chat_qt_runtime_diagnostic",
     "_session_file_path",
     "_read_shared_session_id",
     "_write_shared_session_id",
+    "_resolve_default_server",
 ]

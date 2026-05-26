@@ -69,8 +69,8 @@ from ._theme_protocol import ThemeProviderProtocol, _DefaultDarkTheme
 from ._thinking_indicator import ThinkingIndicator
 from ._workspace_protocol import WorkspaceContextProtocol
 from .chat_dock_widget import (
-    _DEFAULT_SERVER,
     _read_shared_session_id,
+    _resolve_default_server,
     _session_file_path,
     _write_shared_session_id,
 )
@@ -129,7 +129,7 @@ class ChatDockWidget(QDockWidget):
         self,
         app_context: str = "unknown",
         app_name: str = "shared_chat",
-        server_url: str = _DEFAULT_SERVER,
+        server_url: str | None = None,
         session_id: str | None = None,
         ws_path_template: str = "/api/ws/chat/{session_id}",
         placeholder_text: str = "Ask a question...",
@@ -147,7 +147,8 @@ class ChatDockWidget(QDockWidget):
         super().__init__("AI Chat", parent)
         self._app_context = app_context
         self._app_name = app_name
-        self._server_url = server_url.rstrip("/")
+        resolved_server_url = server_url or _resolve_default_server()
+        self._server_url = resolved_server_url.rstrip("/")
         self._ws_path_template = ws_path_template
         self._accent_color = accent_color
         self._placeholder_text = placeholder_text
@@ -598,9 +599,6 @@ class ChatDockWidget(QDockWidget):
         if not text:
             return
         self._input_edit.clear()
-        if not self._is_streaming:
-            self._submit_or_queue(text)
-            return
         self._queued_messages.append(text)
         self._update_queue_affordance()
 

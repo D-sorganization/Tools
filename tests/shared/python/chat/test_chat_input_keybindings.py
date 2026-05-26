@@ -161,6 +161,17 @@ def test_multiple_enters_while_busy_accumulate() -> None:
     assert widget.queued_messages() == ["steer-a", "steer-b"]
 
 
+def test_steer_button_stays_queue_only_while_idle() -> None:
+    widget = _make_widget()
+    widget._input_edit.setPlainText("steer-only")
+
+    widget._on_steer()
+
+    assert not widget._send_ws.called
+    assert widget.queued_messages() == ["steer-only"]
+    assert widget._input_edit.toPlainText() == ""
+
+
 # ── 5. Queue flushes in order on 'complete' ──────────────────────────
 
 

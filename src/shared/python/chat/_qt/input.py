@@ -9,7 +9,7 @@ the repo's 1500-line budget.
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import Any
+from typing import Any, cast
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QPlainTextEdit
@@ -55,4 +55,4 @@ def install_enter_submit(
         original_handler(event)
 
     # Bind the new handler onto the instance.
-    edit.keyPressEvent = handler  # type: ignore[method-assign,assignment]
+    cast(Any, edit).keyPressEvent = handler
