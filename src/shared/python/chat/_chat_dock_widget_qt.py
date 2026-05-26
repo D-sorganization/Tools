@@ -54,6 +54,7 @@ from PyQt6.QtWidgets import (
 )
 
 from ._theme_protocol import ThemeProviderProtocol, _DefaultDarkTheme
+from ._thinking_indicator import ThinkingIndicator
 from ._workspace_protocol import WorkspaceContextProtocol, WorkspaceVariableInfo
 from .chat_dock_widget import (
     _DEFAULT_SERVER,
@@ -357,6 +358,77 @@ class ChatDockWidget(QDockWidget):
         """Return whether the chat dock is collapsed."""
         return self._collapsed
 
+    @property
+    def thinking_indicator(self) -> ThinkingIndicator:
+        """Return the dock's shared "AI is thinking" indicator widget.
+
+        The dock builds exactly one indicator and parks it between the
+        message stack and the input row. Callers must not reach through the
+        widget hierarchy to find it — this property is the canonical handle.
+        """
+        return self._thinking_indicator
+
+    @property
+    def input_state(self) -> Literal["idle", "sending", "awaiting"]:
+        """Canonical signal for the chat input/agent state.
+
+        * ``"idle"`` — no active streaming response.
+        * ``"sending"`` — request dispatched but no chunk received yet.
+        * ``"awaiting"`` — at least one chunk has been received and the
+          stream is still open.
+
+        Derived from :attr:`_is_streaming` plus whether the current
+        assistant bubble has accumulated any content. Single source of
+        truth: nothing else mutates a separate state machine.
+        """
+        if not getattr(self, "_is_streaming", False):
+            return "idle"
+        bubble = getattr(self, "_current_bubble", None)
+        if bubble is not None:
+            content = getattr(bubble, "_content", "")
+            if content:
+                return "awaiting"
+        return "sending"
+
+    def _enter_thinking_state(self) -> None:
+        """Transition the dock into the "agent is thinking" state.
+
+        Pre: Qt application is running and the indicator widget exists.
+        Post: ``_is_streaming`` is ``True`` and the indicator is animating.
+
+        Idempotent — safe to call across a queue flush where the indicator
+        is already on. This is the single hand-off point used by both the
+        regular send path and the slash-command path so the wiring stays DRY.
+        """
+        self._is_streaming = True
+        try:
+            self._send_btn.setEnabled(False)
+        except AttributeError:
+            # Button may not be wired in trimmed-down test harnesses.
+            pass
+        try:
+            self._thinking_indicator.start()
+        except AttributeError:
+            # Indicator widget not yet constructed (very early init / tests
+            # that bypass _setup_ui) — silently skip.
+            pass
+
+    def _exit_thinking_state(self) -> None:
+        """Transition the dock back to ``idle`` and stop the indicator.
+
+        Idempotent — multiple terminal chunks (``complete``/``error``) and
+        the disconnect handler all converge here without ill effect.
+        """
+        self._is_streaming = False
+        try:
+            self._send_btn.setEnabled(True)
+        except AttributeError:
+            pass
+        try:
+            self._thinking_indicator.stop()
+        except AttributeError:
+            pass
+
     def set_collapsed(self, collapsed: bool) -> None:
         """Switch between full and collapsed state, hiding the main UI components when collapsed."""
         self._collapsed = collapsed
@@ -586,6 +658,17 @@ class ChatDockWidget(QDockWidget):
         self._content_stack.addWidget(self._scroll_area)
         self._content_stack.addWidget(self._terminal_output)
         layout.addWidget(self._content_stack, stretch=1)
+
+        # Thinking indicator — animated "Sidekick is thinking ●●●" pulser.
+        # Placed between the message stack and the input row so it sits
+        # immediately above whatever the user is typing, making the active
+        # state immediately discoverable.
+        self._thinking_indicator = ThinkingIndicator(
+            parent=self,
+            theme_provider=self._theme_provider,
+            accent_color=self._accent_color,
+        )
+        layout.addWidget(self._thinking_indicator)
 
         # Input row
         input_row = QHBoxLayout()
@@ -852,13 +935,11 @@ class ChatDockWidget(QDockWidget):
         if bool(getattr(self, "_intentional_disconnect", False)) or bool(
             getattr(self, "_is_closing", False)
         ):
-            self._is_streaming = False
-            self._send_btn.setEnabled(True)
+            self._exit_thinking_state()
             return
         self._status_label.setText("Disconnected - retrying in 3s...")
         self._status_label.setStyleSheet("color: #f85149; font-size: 10px;")
-        self._is_streaming = False
-        self._send_btn.setEnabled(True)
+        self._exit_thinking_state()
         self._reconnect_timer.start(3000)
 
     def _on_message(self, raw: str) -> None:
@@ -885,8 +966,7 @@ class ChatDockWidget(QDockWidget):
                 self._scroll_to_bottom()
 
         elif msg_type == "complete":
-            self._is_streaming = False
-            self._send_btn.setEnabled(True)
+            self._exit_thinking_state()
             self._current_bubble = None
             sid = data.get("session_id")
             if sid:
@@ -923,8 +1003,7 @@ class ChatDockWidget(QDockWidget):
         elif msg_type == "error":
             detail = data.get("detail", "Unknown error")
             self._status_label.setText(f"Error: {detail}")
-            self._is_streaming = False
-            self._send_btn.setEnabled(True)
+            self._exit_thinking_state()
 
         elif msg_type == "terminal_session":
             session = data.get("session", {})
@@ -980,8 +1059,7 @@ class ChatDockWidget(QDockWidget):
         self._input_edit.clear()
         self._add_bubble("user", text)
 
-        self._is_streaming = True
-        self._send_btn.setEnabled(False)
+        self._enter_thinking_state()
         self._current_bubble = self._add_bubble("assistant", "")
 
         payload: dict[str, Any] = {
@@ -1021,8 +1099,7 @@ class ChatDockWidget(QDockWidget):
 
         self._input_edit.clear()
         self._add_bubble("user", text)
-        self._is_streaming = True
-        self._send_btn.setEnabled(False)
+        self._enter_thinking_state()
         self._current_bubble = self._add_bubble(
             "assistant", f"Starting workflow: {cmd}..."
         )
@@ -1865,6 +1942,12 @@ class ChatDockWidget(QDockWidget):
         self._intentional_disconnect = True
         self._is_closing = True
         self._reconnect_timer.stop()
+        # Stop the thinking indicator's animation timer so Qt does not leak
+        # a running QTimer past the widget's destruction.
+        try:
+            self._thinking_indicator.stop()
+        except (AttributeError, RuntimeError):
+            pass
         if self._socket:
             self._socket.close()
         super().closeEvent(event)
