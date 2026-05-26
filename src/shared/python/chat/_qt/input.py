@@ -55,4 +55,4 @@ def install_enter_submit(
         original_handler(event)
 
     # Bind the new handler onto the instance.
-    edit.keyPressEvent = handler  # type: ignore[method-assign]
+    edit.keyPressEvent = handler  # type: ignore[method-assign,assignment]

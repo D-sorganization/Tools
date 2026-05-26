@@ -133,7 +133,8 @@ def _load_qt_module() -> Any:
 
 def chat_qt_runtime_diagnostic() -> dict[str, str | bool]:
     """Return an import-safe diagnostic for the optional Qt chat dock."""
-    return diagnose_chat_qt_runtime().to_dict()
+    result: dict[str, str | bool] = diagnose_chat_qt_runtime().to_dict()
+    return result
 
 
 def __getattr__(name: str) -> Any:
