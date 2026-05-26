@@ -30,3 +30,6 @@
 ## 2024-05-18 - Replacing chained array methods with single-pass loops
 **Learning:** Chained array methods like `.map().filter()` or `.filter().map()` inside React `useMemo` hooks create multiple intermediate arrays. In hot paths or when processing large datasets, this causes severe garbage collection pauses and frame drops due to continuous memory allocation overhead.
 **Action:** Replace chained array methods with standard `for` loops and pre-allocate arrays when possible (e.g. `new Array(len)`) to prevent intermediate allocations and improve UI responsiveness.
+## 2024-05-28 - In-place Mutation in Optimization Loops
+**Learning:** In high-frequency algorithmic optimization loops (like Nelder-Mead iterations), re-allocating working arrays inside the loop causes severe garbage collection pauses. Simply replacing array iterators or `slice()` with `new Array()` inside the hot path does not fix the underlying object allocation issue.
+**Action:** Always pre-allocate working arrays outside the main optimization loop and reuse them via in-place mutation to entirely eliminate continuous garbage collection overhead.
