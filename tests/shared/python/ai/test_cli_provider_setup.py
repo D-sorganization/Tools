@@ -59,7 +59,7 @@ class TestStatusProbe:
     def test_probe_exception_treated_as_not_installed(self) -> None:
         """A buggy probe must not crash the chat UI."""
         with patch.dict(
-            "src.shared.python.ai.adapters.cli_provider_setup.CLI_PROVIDERS",
+            CLI_PROVIDERS,
             {
                 "_broken": MagicMock(
                     provider="_broken",
@@ -79,7 +79,7 @@ class TestStatusProbe:
 
     def test_probe_returning_path_marks_installed(self) -> None:
         with patch.dict(
-            "src.shared.python.ai.adapters.cli_provider_setup.CLI_PROVIDERS",
+            CLI_PROVIDERS,
             {
                 "_test": MagicMock(
                     provider="_test",
