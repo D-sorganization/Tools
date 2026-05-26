@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.205                                    |
+| **Spec Version**        | 1.1.206                                    |
 | **Last Spec Update**    | 2026-05-26                                 |
 
 ## 2. Purpose & Mission
@@ -942,6 +942,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 ### Version 1.1.205
 
 - 2026-05-26: Optimized Nelder-Mead loop in `optimizer.ts` to mutate pre-allocated arrays in-place to avoid GC overhead.
+- 2026-05-26: Folded chat keybinding and Ollama latency work into the consolidated Tools PR, including the typed Enter-submit helper cleanup required by the pre-push mypy gate.
 
 ### Version 1.1.204
 
