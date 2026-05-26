@@ -943,6 +943,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 - 2026-05-26: Optimized Nelder-Mead loop in `optimizer.ts` to mutate pre-allocated arrays in-place to avoid GC overhead.
 - 2026-05-26: Folded chat keybinding and Ollama latency work into the consolidated Tools PR, including the typed Enter-submit helper cleanup required by the pre-push mypy gate.
+- 2026-05-26: Folded the shared chat dock thinking indicator into the consolidated Tools PR while preserving the queue-aware send flow.
 
 ### Version 1.1.204
 
