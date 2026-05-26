@@ -11,6 +11,7 @@ Supported Providers:
     - Google Gemini — API
     - Claude Code CLI — local CLI agent (`claude` binary)
     - OpenAI Codex CLI — local CLI agent (`codex` binary)
+    - Google Antigravity CLI — local CLI agent (`agy` binary)
     - Custom endpoints (via BaseAgentAdapter)
 
 Each adapter implements the BaseAgentAdapter protocol, ensuring consistent
@@ -23,6 +24,7 @@ Example:
     ...     response = adapter.send_message("Hello", context, tools)
 """
 
+from src.shared.python.ai.adapters.agy_cli_adapter import AgyCliAdapter
 from src.shared.python.ai.adapters.anthropic_adapter import AnthropicAdapter
 from src.shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
 from src.shared.python.ai.adapters.claude_code_adapter import ClaudeCodeAdapter
@@ -35,6 +37,7 @@ from src.shared.python.ai.adapters.openai_adapter import OpenAIAdapter
 
 __all__ = [
     "AdapterFactory",
+    "AgyCliAdapter",
     "AnthropicAdapter",
     "BaseAgentAdapter",
     "ClaudeCodeAdapter",

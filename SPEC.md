@@ -164,8 +164,8 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   menu routing, including compatibility for the `os_terminal` launcher id and
   hidden-tab materialization before focus
 - Data-driven shared chat terminal-provider descriptors for Claude Code, Codex,
-  Cline CLI, Gemini CLI, and GitHub CLI, including probe command metadata with
-  diagnostic redaction helpers
+  Cline CLI, Gemini CLI, Antigravity CLI (`agy`), and GitHub CLI, including
+  probe command metadata with diagnostic redaction helpers
 - Shared source-tree logging and environment helpers keep AI adapter and chat
   service imports self-contained for downstream consumers that install or
   vendor only the shared Tools modules

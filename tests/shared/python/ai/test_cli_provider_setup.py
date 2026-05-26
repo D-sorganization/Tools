@@ -26,13 +26,14 @@ from src.shared.python.ai.adapters.cli_provider_setup import (  # noqa: E402
 class TestCatalogue:
     def test_all_cli_providers_covered(self) -> None:
         """Every CLI-shaped provider must have an install/auth card."""
-        expected = {"claude_code", "codex_cli", "gemini_cli", "cline"}
+        expected = {"claude_code", "codex_cli", "gemini_cli", "agy_cli", "cline"}
         assert expected.issubset(CLI_PROVIDERS.keys()), (
             f"Missing CLI providers: {expected - set(CLI_PROVIDERS.keys())}"
         )
 
     @pytest.mark.parametrize(
-        "provider", ["claude_code", "codex_cli", "gemini_cli", "cline"]
+        "provider",
+        ["claude_code", "codex_cli", "gemini_cli", "agy_cli", "cline"],
     )
     def test_each_spec_has_required_fields(self, provider: str) -> None:
         spec = CLI_PROVIDERS[provider]
