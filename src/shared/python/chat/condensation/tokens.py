@@ -22,8 +22,7 @@ def _get_tiktoken_encoder() -> object | None:
     except ImportError:
         return None
     try:
-        encoder: object = tiktoken.get_encoding("cl100k_base")
-        return encoder
+        return tiktoken.get_encoding("cl100k_base")
     except (ValueError, RuntimeError):
         return None
 

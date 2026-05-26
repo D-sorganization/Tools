@@ -291,7 +291,7 @@ class MemoryPanel(QWidget):
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
                 QMessageBox.StandardButton.No,
             )
-            return bool(reply == QMessageBox.StandardButton.Yes)
+            return reply == QMessageBox.StandardButton.Yes
 
         self.clear_all(confirm=_ask)
 

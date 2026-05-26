@@ -71,9 +71,6 @@ _CLI_AGENT_DESCRIPTORS: tuple[tuple[str, str, str], ...] = (
     ("codex", "Codex CLI", "codex"),
     ("cline-cli", "Cline", "cline"),
     ("gemini-cli", "Gemini CLI", "gemini"),
-    # Google Antigravity CLI — successor to gemini-cli. Added because
-    # Google has signaled gemini-cli is being phased out.
-    ("agy-cli", "Antigravity CLI", "agy"),
     # Tools #2899 — GitHub CLI as a chat-level agent provider. Complementary
     # to the GitHub MCP server (Tools #2897): MCP exposes structured tool
     # calls, while this provider lets the chat talk to ``gh`` as if it were

@@ -109,12 +109,6 @@ _PROVIDER_DEFINITIONS: Final = (
         supported_shells=_SUPPORTED_SHELL_IDS,
     ),
     _ProviderDefinition(
-        id="agy-cli",
-        display_name="Antigravity CLI",
-        executable="agy",
-        supported_shells=_SUPPORTED_SHELL_IDS,
-    ),
-    _ProviderDefinition(
         id="github-cli",
         display_name="GitHub CLI",
         executable="gh",

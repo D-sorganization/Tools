@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.206                                    |
-| **Last Spec Update**    | 2026-05-26                                 |
+| **Spec Version**        | 1.1.204                                    |
+| **Last Spec Update**    | 2026-05-23                                 |
 
 ## 2. Purpose & Mission
 
@@ -164,8 +164,8 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   menu routing, including compatibility for the `os_terminal` launcher id and
   hidden-tab materialization before focus
 - Data-driven shared chat terminal-provider descriptors for Claude Code, Codex,
-  Cline CLI, Gemini CLI, Antigravity CLI (`agy`), and GitHub CLI, including
-  probe command metadata with diagnostic redaction helpers
+  Cline CLI, Gemini CLI, and GitHub CLI, including probe command metadata with
+  diagnostic redaction helpers
 - Shared source-tree logging and environment helpers keep AI adapter and chat
   service imports self-contained for downstream consumers that install or
   vendor only the shared Tools modules
@@ -939,12 +939,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 9. Changelog
 
-### Version 1.1.205
-
-- 2026-05-26: Optimized Nelder-Mead loop in `optimizer.ts` to mutate pre-allocated arrays in-place to avoid GC overhead.
-- 2026-05-26: Folded chat keybinding and Ollama latency work into the consolidated Tools PR, including the typed Enter-submit helper cleanup required by the pre-push mypy gate.
-- 2026-05-26: Folded the shared chat dock thinking indicator into the consolidated Tools PR while preserving the queue-aware send flow.
-
 ### Version 1.1.204
 
 - **Performance**: In `src/ode_solver/web/src/components/ODESolverCalculator.tsx`, extracted the entire `resultsPanel` (containing heavy Recharts and data table elements) into a `useMemo` block to prevent the entire SVG tree from re-rendering synchronously on every keystroke in the textarea, eliminating severe UI input lag.
@@ -960,4 +954,3 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **2026-05-20**: Harden health-check API responses to return generic client-facing errors while logging exception details server-side.
 - **2026-05-20**: Restore shared logging and environment helper modules required by AI adapter and chat service connection imports.
 - **2026-05-20**: Clarify shared chat provider dropdown ownership by removing stale UpstreamDrift issue references from Tools-owned source and tests, and synchronize the GitHub CLI provider descriptor with the default terminal registry (#3020).
-- **2026-05-25**: Add Google Antigravity CLI (`agy`) as a chat provider alongside claude-code, codex, and gemini-cli; tighten three pre-existing mypy issues in `chat/condensation/tokens.py`, `chat/models.py`, and `chat/memory_panel.py` so the pre-push gate stays green.

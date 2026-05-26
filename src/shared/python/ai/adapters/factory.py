@@ -41,7 +41,6 @@ _LOCAL_FIRST_ORDER = (
     "bitnet",
     "claude_code",
     "codex_cli",
-    "agy_cli",
     "gemini_cli",
     "cline",
     "openai",
@@ -54,7 +53,6 @@ _CLOUD_FIRST_ORDER = (
     "gemini",
     "claude_code",
     "codex_cli",
-    "agy_cli",
     "gemini_cli",
     "ollama",
     "bitnet",
@@ -115,7 +113,6 @@ class AdapterFactory:
             "claude_code",  # the Claude Code CLI agent (distinct from Anthropic API)
             "gemini",
             "gemini_cli",  # the @google/gemini-cli CLI agent (distinct from Gemini API)
-            "agy_cli",  # Google Antigravity CLI agent (successor to gemini-cli)
             "cline",
         }
     )
@@ -209,14 +206,6 @@ class AdapterFactory:
 
             # `host` reused as explicit binary path override (see claude_code above).
             adapter = GeminiCliAdapter(binary=host, model=model, timeout=timeout)
-
-        elif provider == "agy_cli":
-            from src.shared.python.ai.adapters.agy_cli_adapter import (
-                AgyCliAdapter,
-            )
-
-            # `host` reused as explicit binary path override (see claude_code above).
-            adapter = AgyCliAdapter(binary=host, model=model, timeout=timeout)
 
         else:
             # Historical "codex" alias resolves to OpenAI API.

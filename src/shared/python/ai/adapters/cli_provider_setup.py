@@ -115,15 +115,6 @@ def _probe_gemini_cli() -> tuple[str | None, str | None]:
     return binary, _safe_version(binary, ["--version"])
 
 
-def _probe_agy_cli() -> tuple[str | None, str | None]:
-    from src.shared.python.ai.adapters.agy_cli_adapter import _resolve_binary
-
-    binary = _resolve_binary()
-    if binary is None:
-        return None, None
-    return binary, _safe_version(binary, ["--version"])
-
-
 def _probe_cline() -> tuple[str | None, str | None]:
     # Cline is currently shipped as a VS Code extension, not a CLI. We
     # still expose a setup card so the user sees "install the Cline
@@ -197,21 +188,6 @@ CLI_PROVIDERS: dict[str, _CliProviderSpec] = {
         ),
         auth_command="gemini",
         probe=_probe_gemini_cli,
-    ),
-    "agy_cli": _CliProviderSpec(
-        provider="agy_cli",
-        display_name="Google Antigravity CLI",
-        install_command="npm install -g @google/antigravity-cli",
-        install_url="https://antigravity.google.com/",
-        auth_instructions=(
-            "Run `agy` once in a terminal. The CLI walks through an OAuth "
-            "login (Google account) or you can set GEMINI_API_KEY / "
-            "GOOGLE_API_KEY before launching. Antigravity is Google's "
-            "successor to the gemini-cli; prefer this provider going "
-            "forward."
-        ),
-        auth_command="agy",
-        probe=_probe_agy_cli,
     ),
     "cline": _CliProviderSpec(
         provider="cline",
