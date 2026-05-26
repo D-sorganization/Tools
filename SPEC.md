@@ -952,3 +952,4 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **2026-05-20**: Harden health-check API responses to return generic client-facing errors while logging exception details server-side.
 - **2026-05-20**: Restore shared logging and environment helper modules required by AI adapter and chat service connection imports.
 - **2026-05-20**: Clarify shared chat provider dropdown ownership by removing stale UpstreamDrift issue references from Tools-owned source and tests, and synchronize the GitHub CLI provider descriptor with the default terminal registry (#3020).
+- **2026-05-25**: Add Google Antigravity CLI (`agy`) as a chat provider alongside claude-code, codex, and gemini-cli; tighten three pre-existing mypy issues in `chat/condensation/tokens.py`, `chat/models.py`, and `chat/memory_panel.py` so the pre-push gate stays green.

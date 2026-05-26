@@ -8,7 +8,7 @@ integrates the shared chat system.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Literal
+from typing import Literal, cast
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -173,7 +173,9 @@ def style_prompt(style: ResponseStyle | str | None) -> str:
     Unknown / ``None`` values fall back to ``DEFAULT_RESPONSE_STYLE``.
     """
     if style in RESPONSE_STYLE_PROMPTS:
-        return RESPONSE_STYLE_PROMPTS[style]
+        # mypy can't narrow `str | None` to ResponseStyle from the `in` check;
+        # cast via the dict's own typed keys.
+        return RESPONSE_STYLE_PROMPTS[cast("ResponseStyle", style)]
     return RESPONSE_STYLE_PROMPTS[DEFAULT_RESPONSE_STYLE]
 
 
