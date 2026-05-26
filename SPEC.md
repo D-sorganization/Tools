@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.204                                    |
-| **Last Spec Update**    | 2026-05-24                                 |
+| **Spec Version**        | 1.1.205                                    |
+| **Last Spec Update**    | 2026-05-26                                 |
 
 ## 2. Purpose & Mission
 
@@ -939,6 +939,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 9. Changelog
 
+- 2026-05-26: Optimized Nelder-Mead loop in `optimizer.ts` to mutate pre-allocated arrays in-place to avoid GC overhead.
 ### Version 1.1.190
 
 - **2026-05-24**: Add `spellcheck="false"`, `autocorrect="off"`, and `autocapitalize="none"` to math inputs in calculator to improve UX, and add `role="img"` to battery icon span.
