@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.204                                    |
-| **Last Spec Update**    | 2026-05-23                                 |
+| **Spec Version**        | 1.1.205                                    |
+| **Last Spec Update**    | 2026-05-26                                 |
 
 ## 2. Purpose & Mission
 
@@ -938,6 +938,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.205
+
+- 2026-05-26: Optimized Nelder-Mead loop in `optimizer.ts` to mutate pre-allocated arrays in-place to avoid GC overhead.
 
 ### Version 1.1.204
 
