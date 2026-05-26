@@ -164,8 +164,8 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   menu routing, including compatibility for the `os_terminal` launcher id and
   hidden-tab materialization before focus
 - Data-driven shared chat terminal-provider descriptors for Claude Code, Codex,
-  Cline CLI, Gemini CLI, and GitHub CLI, including probe command metadata with
-  diagnostic redaction helpers
+  Cline CLI, Gemini CLI, Antigravity CLI (`agy`), and GitHub CLI, including
+  probe command metadata with diagnostic redaction helpers
 - Shared source-tree logging and environment helpers keep AI adapter and chat
   service imports self-contained for downstream consumers that install or
   vendor only the shared Tools modules
@@ -954,3 +954,4 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **2026-05-20**: Harden health-check API responses to return generic client-facing errors while logging exception details server-side.
 - **2026-05-20**: Restore shared logging and environment helper modules required by AI adapter and chat service connection imports.
 - **2026-05-20**: Clarify shared chat provider dropdown ownership by removing stale UpstreamDrift issue references from Tools-owned source and tests, and synchronize the GitHub CLI provider descriptor with the default terminal registry (#3020).
+- **2026-05-25**: Add Google Antigravity CLI (`agy`) as a chat provider alongside claude-code, codex, and gemini-cli; tighten three pre-existing mypy issues in `chat/condensation/tokens.py`, `chat/models.py`, and `chat/memory_panel.py` so the pre-push gate stays green.
