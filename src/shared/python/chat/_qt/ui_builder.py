@@ -31,6 +31,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from .._thinking_indicator import ThinkingIndicator
 from .input import install_enter_submit
 from .styling import get_theme_colors
 
@@ -208,6 +209,17 @@ def build_chat_dock_ui(dock: Any) -> None:
     dock._content_stack.addWidget(dock._scroll_area)
     dock._content_stack.addWidget(dock._terminal_output)
     layout.addWidget(dock._content_stack, stretch=1)
+
+    # Thinking indicator — animated "Sidekick is thinking ●●●" pulser.
+    # Placed between the message stack and the input row so it sits
+    # immediately above whatever the user is typing, making the active
+    # state immediately discoverable.
+    dock._thinking_indicator = ThinkingIndicator(
+        parent=dock,
+        theme_provider=dock._theme_provider,
+        accent_color=dock._accent_color,
+    )
+    layout.addWidget(dock._thinking_indicator)
 
     # Input row
     input_row = QHBoxLayout()
