@@ -17,8 +17,10 @@ void SafetyInterlock::Reset() {
   tripped_ = false;
   // Initialize limits to broad ranges that won't trip by default
   for (int i = 0; i < SignalBroker::kNumTags; ++i) {
-    high_limits_[i] = 99999.0f;  // Effectively disabled
-    low_limits_[i] = -99999.0f;  // Effectively disabled
+    lolo_limits_[i] = -99999.0f;
+    low_limits_[i] = -99999.0f;
+    high_limits_[i] = 99999.0f;
+    hihi_limits_[i] = 99999.0f;
   }
 }
 
@@ -58,21 +60,21 @@ void SafetyInterlock::Evaluate(SignalBroker& broker, HardwareInterface& hw) {
   }
 }
 
-float SafetyInterlock::GetHighLimit(int tag_id) const {
+float SafetyInterlock::GetLoloLimit(int tag_id) const {
   if (!IsValidTagId(tag_id)) {
-    return 99999.0f;
+    return -99999.0f;
   }
-  return high_limits_[tag_id];
+  return lolo_limits_[tag_id];
 }
 
-void SafetyInterlock::SetHighLimit(int tag_id, float val) {
+void SafetyInterlock::SetLoloLimit(int tag_id, float val) {
   if (!IsValidTagId(tag_id)) {
     return;
   }
   if (!std::isfinite(val)) {
-    val = 99999.0f;
+    val = -99999.0f;
   }
-  high_limits_[tag_id] = val;
+  lolo_limits_[tag_id] = val;
 }
 
 float SafetyInterlock::GetLowLimit(int tag_id) const {
@@ -90,6 +92,40 @@ void SafetyInterlock::SetLowLimit(int tag_id, float val) {
     val = -99999.0f;
   }
   low_limits_[tag_id] = val;
+}
+
+float SafetyInterlock::GetHighLimit(int tag_id) const {
+  if (!IsValidTagId(tag_id)) {
+    return 99999.0f;
+  }
+  return high_limits_[tag_id];
+}
+
+void SafetyInterlock::SetHighLimit(int tag_id, float val) {
+  if (!IsValidTagId(tag_id)) {
+    return;
+  }
+  if (!std::isfinite(val)) {
+    val = 99999.0f;
+  }
+  high_limits_[tag_id] = val;
+}
+
+float SafetyInterlock::GetHihiLimit(int tag_id) const {
+  if (!IsValidTagId(tag_id)) {
+    return 99999.0f;
+  }
+  return hihi_limits_[tag_id];
+}
+
+void SafetyInterlock::SetHihiLimit(int tag_id, float val) {
+  if (!IsValidTagId(tag_id)) {
+    return;
+  }
+  if (!std::isfinite(val)) {
+    val = 99999.0f;
+  }
+  hihi_limits_[tag_id] = val;
 }
 
 bool SafetyInterlock::IsTripped() const {
