@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.207                                    |
+| **Spec Version**        | 1.1.208                                    |
 | **Last Spec Update**    | 2026-05-26                                 |
 
 ## 2. Purpose & Mission
@@ -939,6 +939,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.208
+
+- 2026-05-27: Optimized object allocations in `themeApi.ts` and `themeDefinitions.ts` by replacing `Object.fromEntries(Object.entries().map())` chains with single-pass loops to reduce memory allocation overhead on startup.
 
 ### Version 1.1.206
 

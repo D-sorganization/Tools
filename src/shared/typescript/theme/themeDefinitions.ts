@@ -114,18 +114,16 @@ function transformTheme(
 }
 
 /** All built-in theme presets, loaded from themes.json */
-export const THEME_PRESETS: Record<ThemeId, ThemeColors> = Object.fromEntries(
-  Object.entries(themesData.themes).map(([id, def]) => [id, transformTheme(def)]),
-) as Record<ThemeId, ThemeColors>;
-
+export const THEME_PRESETS: Record<ThemeId, ThemeColors> = {} as Record<ThemeId, ThemeColors>;
 /** Theme metadata (category, isDark) */
-export const THEME_METADATA: Record<ThemeId, { category: string; isDark: boolean }> =
-  Object.fromEntries(
-    Object.entries(themesData.themes).map(([id, def]) => [
-      id,
-      { category: def.category, isDark: def.isDark },
-    ]),
-  ) as Record<ThemeId, { category: string; isDark: boolean }>;
+export const THEME_METADATA: Record<ThemeId, { category: string; isDark: boolean }> = {} as Record<ThemeId, { category: string; isDark: boolean }>;
+
+// ⚡ Bolt Optimization: Replace multiple Object.fromEntries(Object.entries().map()) calls with a single-pass loop
+for (const id of Object.keys(themesData.themes) as ThemeId[]) {
+  const def = themesData.themes[id as keyof typeof themesData.themes];
+  THEME_PRESETS[id] = transformTheme(def);
+  THEME_METADATA[id] = { category: def.category, isDark: def.isDark };
+}
 
 /** Chart colors for data visualization */
 export const CHART_COLORS: string[] = themesData.chartColors;

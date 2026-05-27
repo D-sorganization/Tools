@@ -24,3 +24,7 @@
 **Action:** Always downsample large result arrays via `useMemo` with single-pass loops and pre-allocated arrays (e.g. `new Array(len)`) to a visual maximum (~500 points) before passing them to charting components.## 2025-02-14 - Unmemoized Charts block UI
 **Learning:** Unmemoized Recharts components wrapped alongside frequent input controls (like textareas) will cause severe input lag because the entire DOM/SVG tree re-renders on every keystroke.
 **Action:** Always extract heavy data-visualization JSX into `useMemo` or `React.memo` when they sit adjacent to fast-updating inputs in the same component tree.
+
+## 2024-06-10 - Eliminate Map/FromEntries overhead for object creation
+**Learning:** Initializing objects with `Object.fromEntries(Object.entries(obj).map(...))` allocates intermediate arrays for entries, map results, and internal fromEntries representations.
+**Action:** Always replace chained `Object.entries(obj).map()` object initializations with a pre-allocated empty object and a single-pass `for (const key of Object.keys(obj))` loop.
