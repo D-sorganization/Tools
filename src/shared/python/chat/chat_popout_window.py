@@ -30,6 +30,7 @@ log = logging.getLogger(__name__)
 try:
     from PyQt6.QtCore import Qt
     from PyQt6.QtWidgets import (
+        QDockWidget,
         QMainWindow,
         QPushButton,
         QToolBar,
@@ -39,6 +40,7 @@ try:
     _QT_AVAILABLE = True
 except ImportError:
     _QT_AVAILABLE = False
+    QDockWidget = None  # type: ignore[assignment,misc]
 
 _REDOCK_BUTTON_OBJECT_NAME = "ChatRedockButton"
 
@@ -85,7 +87,27 @@ class ChatPopoutWindow(QMainWindow):
 
         self.setObjectName("ChatPopoutWindow")
         self.setWindowTitle(title)
-        self.setCentralWidget(chat_widget)
+
+        # If we were handed a QDockWidget, host its inner content widget
+        # rather than the dock itself. Putting a QDockWidget into
+        # QMainWindow.setCentralWidget produces an empty window because the
+        # dock's title-bar chrome and child reparenting fight the main-window
+        # layout. Extracting the dock's inner widget keeps the bubble list,
+        # input row, and combos visible in the floating window.
+        self._source_dock: QDockWidget | None = None
+        content_widget: QWidget = chat_widget
+        if QDockWidget is not None and isinstance(chat_widget, QDockWidget):
+            inner = chat_widget.widget()
+            if inner is None:
+                raise ValueError(
+                    "chat_widget is a QDockWidget with no inner widget set"
+                )
+            self._source_dock = chat_widget
+            # Detach the inner widget from the dock so we can reparent it.
+            chat_widget.setWidget(None)
+            content_widget = inner
+        self._content_widget = content_widget
+        self.setCentralWidget(content_widget)
 
         # ── Re-dock toolbar ──────────────────────────────────────────────
         toolbar = QToolBar("Chat", self)
@@ -113,6 +135,11 @@ class ChatPopoutWindow(QMainWindow):
         """The chat session ID preserved from the original dock widget."""
         return self._session_id
 
+    @property
+    def content_widget(self) -> QWidget:
+        """The reparented inner content widget shown in the popout."""
+        return self._content_widget
+
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
@@ -120,9 +147,10 @@ class ChatPopoutWindow(QMainWindow):
     def redock(self) -> None:
         """Invoke the re-dock callback and hide this floating window.
 
-        The host is responsible for re-embedding the chat widget into its
-        original dock.  This method hides (not closes) the window so the
-        Qt widget tree is preserved for possible re-use.
+        Before invoking the callback we return the inner content widget to
+        its source ``QDockWidget`` (when one was extracted in ``__init__``)
+        so the host's reparent-back logic can be a simple no-op. The host
+        callback is still invoked so dock visibility can be restored.
 
         Raises:
             RuntimeError: If the re-dock callback raises.
@@ -130,6 +158,12 @@ class ChatPopoutWindow(QMainWindow):
         log.debug(
             "ChatPopoutWindow.redock() called for session_id=%r", self._session_id
         )
+        if self._source_dock is not None:
+            # Take the content back from the QMainWindow's central area
+            # before re-attaching it to the source dock, otherwise Qt will
+            # warn about the widget having two parents.
+            self.takeCentralWidget()
+            self._source_dock.setWidget(self._content_widget)
         self._redock_callback()
         self.hide()
 
