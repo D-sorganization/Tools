@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.210                                    |
+| **Spec Version**        | 1.1.212                                    |
 | **Last Spec Update**    | 2026-05-27                                 |
 
 ## 2. Purpose & Mission
@@ -940,6 +940,11 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.212
+
+- 2026-05-27: fix(p1am) — extend interlock contract to 4 limits (lolo/low/high/hihi) in SafetyInterlock to align with host. Chunk Modbus client read/write routing into 64-register packets to satisfy pymodbus's request size caps.
+- 2026-05-27: chore(ci) — use `sudo rm -rf` in Python tool cache cleanup to ensure complete removal of corrupted files, and add cleanup step to topology-governance, detect-secrets, and cross-repo integration workflows.
 
 ### Version 1.1.208
 

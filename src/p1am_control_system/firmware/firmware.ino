@@ -83,14 +83,19 @@ void SyncModbusToDCS() {
     if (kd != pids[i].GetKd()) pids[i].SetKd(kd);
   }
 
-  // 4. Sync Safety Interlock limits (Registers 300-427)
+  // 4. Sync Safety Interlock limits (Registers 300-555, 8 regs / tag).
+  // Layout per tag: [lolo, low, high, hihi], each as 2-register IEEE-754 float.
   for (int i = 0; i < SignalBroker::kNumTags; ++i) {
-    int baseReg = 300 + i * 4;
-    float highLim = ReadFloatFromModbus(baseReg);
+    int baseReg = 300 + i * 8;
+    float loloLim = ReadFloatFromModbus(baseReg);
     float lowLim = ReadFloatFromModbus(baseReg + 2);
+    float highLim = ReadFloatFromModbus(baseReg + 4);
+    float hihiLim = ReadFloatFromModbus(baseReg + 6);
 
-    if (highLim != interlock.GetHighLimit(i)) interlock.SetHighLimit(i, highLim);
+    if (loloLim != interlock.GetLoloLimit(i)) interlock.SetLoloLimit(i, loloLim);
     if (lowLim != interlock.GetLowLimit(i)) interlock.SetLowLimit(i, lowLim);
+    if (highLim != interlock.GetHighLimit(i)) interlock.SetHighLimit(i, highLim);
+    if (hihiLim != interlock.GetHihiLimit(i)) interlock.SetHihiLimit(i, hihiLim);
   }
 }
 
@@ -112,9 +117,11 @@ void SyncDCSToModbus() {
     WriteFloatToModbus(baseReg + 8, pids[i].GetKd());
   }
   for (int i = 0; i < SignalBroker::kNumTags; ++i) {
-    int baseReg = 300 + i * 4;
-    WriteFloatToModbus(baseReg, interlock.GetHighLimit(i));
+    int baseReg = 300 + i * 8;
+    WriteFloatToModbus(baseReg, interlock.GetLoloLimit(i));
     WriteFloatToModbus(baseReg + 2, interlock.GetLowLimit(i));
+    WriteFloatToModbus(baseReg + 4, interlock.GetHighLimit(i));
+    WriteFloatToModbus(baseReg + 6, interlock.GetHihiLimit(i));
   }
 }
 
@@ -160,19 +167,26 @@ void setup() {
     }
   }
   modbusServer.configureCoils(0, 10);
-  modbusServer.configureHoldingRegisters(0, 500);
+  // Holding-register window: tag values (0..63), input routing (100..105),
+  // output routing (110..111), PID config (200..239), 4-limit interlocks
+  // (300..555 = 32 tags x 8 regs). Bump end to 560 with margin.
+  modbusServer.configureHoldingRegisters(0, 560);
   Serial.println(F("[mb] Modbus TCP server started"));
 
   // Load saved NVRAM configuration; fall back to defaults on first boot.
   Serial.println(F("[storage] loading saved config from flash..."));
-  float temp_high[SignalBroker::kNumTags];
+  float temp_lolo[SignalBroker::kNumTags];
   float temp_low[SignalBroker::kNumTags];
-  bool loaded = storage.Load(broker, pids, temp_high, temp_low);
+  float temp_high[SignalBroker::kNumTags];
+  float temp_hihi[SignalBroker::kNumTags];
+  bool loaded = storage.Load(broker, pids, temp_lolo, temp_low, temp_high, temp_hihi);
   if (loaded) {
     Serial.println(F("[storage] valid config loaded"));
     for (int i = 0; i < SignalBroker::kNumTags; ++i) {
-      interlock.SetHighLimit(i, temp_high[i]);
+      interlock.SetLoloLimit(i, temp_lolo[i]);
       interlock.SetLowLimit(i, temp_low[i]);
+      interlock.SetHighLimit(i, temp_high[i]);
+      interlock.SetHihiLimit(i, temp_hihi[i]);
     }
   } else {
     Serial.println(F("[storage] no valid config -- using defaults"));
@@ -198,13 +212,17 @@ void loop() {
 
   // Save-to-flash trigger
   if (modbusServer.coilRead(0) == 1) {
-    float temp_high[SignalBroker::kNumTags];
+    float temp_lolo[SignalBroker::kNumTags];
     float temp_low[SignalBroker::kNumTags];
+    float temp_high[SignalBroker::kNumTags];
+    float temp_hihi[SignalBroker::kNumTags];
     for (int i = 0; i < SignalBroker::kNumTags; ++i) {
-      temp_high[i] = interlock.GetHighLimit(i);
+      temp_lolo[i] = interlock.GetLoloLimit(i);
       temp_low[i] = interlock.GetLowLimit(i);
+      temp_high[i] = interlock.GetHighLimit(i);
+      temp_hihi[i] = interlock.GetHihiLimit(i);
     }
-    storage.Save(broker, pids, temp_high, temp_low);
+    storage.Save(broker, pids, temp_lolo, temp_low, temp_high, temp_hihi);
     modbusServer.coilWrite(0, 0);
   }
 
