@@ -106,6 +106,7 @@ class TestRestoreButton:
             return_value=None,
         ):
             sidebar = HistorySidebar.__new__(HistorySidebar)
+            sidebar.refresh_lists = MagicMock()
             sidebar._manager = manager
             sidebar._active_ids = []
             sidebar._archived_ids = ["archived-id"]

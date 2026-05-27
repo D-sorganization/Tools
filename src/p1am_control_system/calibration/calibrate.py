@@ -47,7 +47,7 @@ def _float_to_regs(value: float) -> list[int]:
 
 
 def _regs_to_float(lo: int, hi: int) -> float:
-    return struct.unpack("<f", struct.pack("<HH", lo, hi))[0]
+    return float(struct.unpack("<f", struct.pack("<HH", lo, hi))[0])
 
 
 def _percent_to_ma(percent: float) -> float:

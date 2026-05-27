@@ -173,7 +173,7 @@ def style_prompt(style: ResponseStyle | str | None) -> str:
     Unknown / ``None`` values fall back to ``DEFAULT_RESPONSE_STYLE``.
     """
     if style in RESPONSE_STYLE_PROMPTS:
-        return RESPONSE_STYLE_PROMPTS[style]
+        return RESPONSE_STYLE_PROMPTS[style]  # type: ignore[index]
     return RESPONSE_STYLE_PROMPTS[DEFAULT_RESPONSE_STYLE]
 
 

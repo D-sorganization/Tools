@@ -16,22 +16,22 @@ the reference source for input calibration in a loopback.
 
 ## Hardware in scope
 
-| Slot | Module | Channels | Purpose |
-|------|----------------|----------|---------|
-| 2 | P1-4ADL2DAL-1 | AI 0, AI 1 | 4-20 mA analog inputs |
-| 2 | P1-4ADL2DAL-1 | AO 0, AO 1 | 4-20 mA analog outputs |
+| Slot | Module        | Channels   | Purpose                |
+| ---- | ------------- | ---------- | ---------------------- |
+| 2    | P1-4ADL2DAL-1 | AI 0, AI 1 | 4-20 mA analog inputs  |
+| 2    | P1-4ADL2DAL-1 | AO 0, AO 1 | 4-20 mA analog outputs |
 
 External per analog leg: one signal conditioner upstream (4-20 mA → 0-5 V) and
 one downstream (0-5 V → 4-20 mA), each with zero and span pots.
 
 ## Tag assignments used in this procedure
 
-| Tag | Role |
-|-----|------|
-| TAG_10 | drives AO ch 0 (via PID 0 pass-through) |
-| TAG_11 | drives AO ch 1 (via PID 1 pass-through) |
-| TAG_12 | reads AI ch 0 |
-| TAG_13 | reads AI ch 1 |
+| Tag            | Role                                                   |
+| -------------- | ------------------------------------------------------ |
+| TAG_10         | drives AO ch 0 (via PID 0 pass-through)                |
+| TAG_11         | drives AO ch 1 (via PID 1 pass-through)                |
+| TAG_12         | reads AI ch 0                                          |
+| TAG_13         | reads AI ch 1                                          |
 | TAG_30, TAG_31 | reserved as unrouted PV tags for the pass-through PIDs |
 
 PID 0 and PID 1 are repurposed during calibration as pass-through drivers for
@@ -53,13 +53,13 @@ Properly calibrated signal conditioner output (4-20 mA → 0-5 V):
 V = 0 + 0.05 × percent
 ```
 
-| Percent | AO mA | Cond Out V |
-|--------:|------:|-----------:|
-| 0       | 4.000 | 0.000      |
-| 25      | 8.000 | 1.250      |
-| 50      | 12.000 | 2.500     |
-| 75      | 16.000 | 3.750     |
-| 100     | 20.000 | 5.000     |
+| Percent |  AO mA | Cond Out V |
+| ------: | -----: | ---------: |
+|       0 |  4.000 |      0.000 |
+|      25 |  8.000 |      1.250 |
+|      50 | 12.000 |      2.500 |
+|      75 | 16.000 |      3.750 |
+|     100 | 20.000 |      5.000 |
 
 ## Tolerance
 
@@ -112,6 +112,7 @@ python calibrate.py status
 ```
 
 `setup` configures:
+
 - Output routing: AO 0 ← TAG_10, AO 1 ← TAG_11
 - Input routing: AI 0 → TAG_12, AI 1 → TAG_13
 - PID 0: pv=TAG_30 (unused), cv=TAG_10, kp=1, ki=kd=0, sp=0 → pass-through for AO 0
@@ -131,31 +132,37 @@ PLC AO0- ───────────────────────�
 ```
 
 2.1 Drive 0% (target 4 mA, 0 V):
+
 ```
 python calibrate.py ao --channel 0 --percent 0
 ```
+
 - DMM (current): expect 4.000 mA ± 0.16 mA. Record: `____.____ mA`
 - DMM2 (voltage at conditioner output): expect 0.000 V ± 0.05 V. Record: `____.____ V`
 - If V is off: turn the **zero** pot on Sig Cond #0 until V = 0.000 V.
 
-2.2 Drive 100% (target 20 mA, 5 V):
+  2.2 Drive 100% (target 20 mA, 5 V):
+
 ```
 python calibrate.py ao --channel 0 --percent 100
 ```
+
 - DMM: 20.000 mA ± 0.16 mA. Record.
 - DMM2: 5.000 V ± 0.05 V.
 - Turn the **span** pot until V = 5.000 V.
 
-2.3 Iterate. Zero and span interact — adjusting span shifts the zero point
-slightly and vice versa. Repeat 2.1 and 2.2 alternately until both endpoints
-are within tolerance in the same pass. Typically 2-3 iterations.
+  2.3 Iterate. Zero and span interact — adjusting span shifts the zero point
+  slightly and vice versa. Repeat 2.1 and 2.2 alternately until both endpoints
+  are within tolerance in the same pass. Typically 2-3 iterations.
 
-2.4 Linearity spot-check:
+  2.4 Linearity spot-check:
+
 ```
 python calibrate.py ao --channel 0 --percent 25
 python calibrate.py ao --channel 0 --percent 50
 python calibrate.py ao --channel 0 --percent 75
 ```
+
 Verify against the reference table. Any point off by more than ±1% indicates
 either a nonlinear DAC, a damaged conditioner, or wiring trouble.
 
@@ -174,26 +181,30 @@ Sig Cond #0 Out ─[jumper]─→ Sig Cond In #0 In
 ```
 
 4.1 Drive 0% from the calibrated AO 0:
+
 ```
 python calibrate.py ao --channel 0 --percent 0
 python calibrate.py ai --channel 0
 ```
+
 - DMM at AI loop: 4.000 mA ± 0.16 mA. (Should be correct from Step 2; if
   not, the input-side signal conditioner is the suspect.)
 - `ai` command output: expect TAG_12 = 0.0% ± 1%.
 - If TAG_12 reads outside tolerance: adjust the **zero** pot on Sig Cond In #0.
 
-4.2 Drive 100%:
+  4.2 Drive 100%:
+
 ```
 python calibrate.py ao --channel 0 --percent 100
 python calibrate.py ai --channel 0
 ```
+
 - DMM: 20.000 mA. TAG_12: 100.0% ± 1%.
 - Adjust the **span** pot on Sig Cond In #0.
 
-4.3 Iterate until both endpoints are in spec.
+  4.3 Iterate until both endpoints are in spec.
 
-4.4 Linearity check at 25/50/75.
+  4.4 Linearity check at 25/50/75.
 
 ### Step 5 — Calibrate AI ch 1 (loopback)
 
@@ -215,11 +226,13 @@ calibration record.
 ### Step 7 — Persist and verify
 
 7.1 Save the routing and PID configuration to PLC flash:
+
 ```
 python calibrate.py save
 ```
 
 7.2 Power-cycle the PLC. Reconnect and check that routing survived:
+
 ```
 python calibrate.py status
 ```
@@ -228,6 +241,7 @@ python calibrate.py status
 the power cycle to confirm the calibration is stable across reboot.
 
 7.4 Record the calibration data in your engineering log:
+
 - Date and operator
 - Pot positions on all four signal conditioners (mark them on the
   conditioner enclosure if possible)
@@ -250,14 +264,14 @@ PIDs, the FastAPI backend) can drive the AOs.
 
 ## Troubleshooting
 
-| Symptom | Likely cause |
-|---|---|
-| `ao` runs but DMM shows 0 mA | Loop power supply off, or AO+/AO- swapped, or the conditioner's loop input isn't powered |
-| AO stuck at 4 mA (0%) regardless of `--percent` | Output routing not set — re-run `setup`. Or interlock tripped — check `status` |
-| V at conditioner output never changes | Wrong pot being turned, or input mA is not actually changing — verify with DMM in series first |
-| AI reads 0% with known good 4-20 mA input | Input routing not set — re-run `setup`. Or wrong AI channel wired |
-| Tag value oscillates | A PID besides 0/1 has pv or cv pointing at the same tag — check with `status` |
-| `setup` fails to write a register | Modbus connection dropped — run `ping 192.168.1.100`, then retry |
+| Symptom                                         | Likely cause                                                                                   |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `ao` runs but DMM shows 0 mA                    | Loop power supply off, or AO+/AO- swapped, or the conditioner's loop input isn't powered       |
+| AO stuck at 4 mA (0%) regardless of `--percent` | Output routing not set — re-run `setup`. Or interlock tripped — check `status`                 |
+| V at conditioner output never changes           | Wrong pot being turned, or input mA is not actually changing — verify with DMM in series first |
+| AI reads 0% with known good 4-20 mA input       | Input routing not set — re-run `setup`. Or wrong AI channel wired                              |
+| Tag value oscillates                            | A PID besides 0/1 has pv or cv pointing at the same tag — check with `status`                  |
+| `setup` fails to write a register               | Modbus connection dropped — run `ping 192.168.1.100`, then retry                               |
 
 ## Appendix — Raw Modbus reference
 
