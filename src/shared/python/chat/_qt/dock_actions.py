@@ -133,9 +133,7 @@ def pop_out(dock: Any) -> ChatPopoutWindow | None:
 
     from .. import _chat_dock_widget_qt as _dock_mod
 
-    session_id = (
-        _dock_mod.ChatDockWidget._get_shared_session_id() or "new"
-    )
+    session_id = _dock_mod.ChatDockWidget._get_shared_session_id() or "new"
 
     def _redock() -> None:
         dock._popout_window = None
