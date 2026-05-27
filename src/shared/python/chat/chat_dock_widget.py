@@ -18,13 +18,43 @@ into place, which is an atomic rename on POSIX and Win32.
 
 from __future__ import annotations
 
+import os
 import threading
 from pathlib import Path
 from typing import Any
 
 from .qt_diagnostics import ChatQtDiagnostic, diagnose_chat_qt_runtime
 
-_DEFAULT_SERVER = "ws://127.0.0.1:8000"
+
+def _resolve_default_server() -> str:
+    """Compute the WS URL the chat dock should connect to.
+
+    Honours, in order, ``GOLF_API_PORT`` / ``API_PORT`` / ``GOLF_PORT`` so a
+    host app (the UpstreamDrift desktop launcher, the Gasification_Model
+    process simulator, etc.) that probes a free port and exports those vars
+    before spawning its background API server stays in lock-step with this
+    client default. Falls back to the historical ``ws://127.0.0.1:8000``
+    when nothing is set. Override entirely via ``UD_CHAT_WS_URL`` for
+    non-standard hosts.
+
+    DbC postcondition: the returned URL is a ``ws://`` or ``wss://`` string.
+    """
+    explicit = os.environ.get("UD_CHAT_WS_URL")
+    if explicit:
+        return explicit
+    for env_name in ("GOLF_API_PORT", "API_PORT", "GOLF_PORT"):
+        raw = os.environ.get(env_name)
+        if not raw:
+            continue
+        try:
+            port = int(raw)
+        except ValueError:
+            continue
+        if 1 <= port <= 65535:
+            return f"ws://127.0.0.1:{port}"
+    return "ws://127.0.0.1:8000"
+
+
 _QT_EXPORTS = {"ChatDockWidget", "ChatMessageBubble"}
 
 # Tools issue #2753: serialize all reads/writes of the shared session ID
@@ -102,7 +132,12 @@ def _load_qt_module() -> Any:
 
 def chat_qt_runtime_diagnostic() -> dict[str, str | bool]:
     """Return an import-safe diagnostic for the optional Qt chat dock."""
-    return diagnose_chat_qt_runtime().to_dict()
+    diagnostic = diagnose_chat_qt_runtime()
+    return {
+        "available": diagnostic.available,
+        "reason": diagnostic.reason,
+        "detail": diagnostic.detail,
+    }
 
 
 def __getattr__(name: str) -> Any:
@@ -115,9 +150,9 @@ __all__ = [
     "ChatDockWidget",
     "ChatMessageBubble",
     "ChatQtUnavailableError",
-    "_DEFAULT_SERVER",
     "chat_qt_runtime_diagnostic",
     "_session_file_path",
     "_read_shared_session_id",
     "_write_shared_session_id",
+    "_resolve_default_server",
 ]
