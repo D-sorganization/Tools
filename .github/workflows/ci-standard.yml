@@ -129,13 +129,26 @@ jobs:
         # Defensive prepass: actions/setup-python uses ``rmdir`` to delete
         # cached Python directories before installing, which fails when
         # the cache contains read-only or stubborn files (e.g. test/certdata
-        # symlinks). ``rm -rf`` succeeds where ``rmdir`` fails. Both shared
-        # tool-cache paths used by the d-sorg-fleet runners are cleaned.
+        # symlinks). ``rm -rf`` succeeds where ``rmdir`` fails. We check and
+        # clean only broken/incomplete 3.12 installations to prevent race conditions.
         run: |
           for cache_root in /home/dieterolson/actions-runners/.shared-tool-cache /home/dieterolson/actions-runners-nvme/.shared-tool-cache; do
             if [ -d "$cache_root/Python" ]; then
-              echo "Cleaning $cache_root/Python (pre-setup-python)"
-              rm -rf "$cache_root/Python" || true
+              echo "Checking $cache_root/Python for stale 3.12 installations..."
+              for version_dir in "$cache_root/Python"/3.12.*; do
+                if [ -d "$version_dir" ]; then
+                  for arch_dir in "$version_dir"/*; do
+                    if [ -d "$arch_dir" ]; then
+                      if [ ! -x "$arch_dir/bin/python" ] && [ ! -x "$arch_dir/bin/python3" ]; then
+                        echo "Directory $arch_dir is incomplete or broken. Cleaning..."
+                        rm -rf "$arch_dir" || true
+                      else
+                        echo "Directory $arch_dir is healthy."
+                      fi
+                    fi
+                  done
+                fi
+              done
             fi
           done
       - uses: actions/setup-python@v6
@@ -384,12 +397,26 @@ jobs:
       - name: Force-clean stale Python tool cache (NVMe runners)
         # See quality-gate job for rationale: ``actions/setup-python`` uses
         # ``rmdir`` and fails on read-only items left behind (test/certdata
-        # etc.). ``rm -rf`` succeeds.
+        # etc.). ``rm -rf`` succeeds. We check and clean only the broken/incomplete
+        # matrix python-version directory to prevent race conditions.
         run: |
           for cache_root in /home/dieterolson/actions-runners/.shared-tool-cache /home/dieterolson/actions-runners-nvme/.shared-tool-cache; do
             if [ -d "$cache_root/Python" ]; then
-              echo "Cleaning $cache_root/Python (pre-setup-python)"
-              rm -rf "$cache_root/Python" || true
+              echo "Checking $cache_root/Python for stale ${{ matrix.python-version }} installations..."
+              for version_dir in "$cache_root/Python"/${{ matrix.python-version }}.*; do
+                if [ -d "$version_dir" ]; then
+                  for arch_dir in "$version_dir"/*; do
+                    if [ -d "$arch_dir" ]; then
+                      if [ ! -x "$arch_dir/bin/python" ] && [ ! -x "$arch_dir/bin/python3" ]; then
+                        echo "Directory $arch_dir is incomplete or broken. Cleaning..."
+                        rm -rf "$arch_dir" || true
+                      else
+                        echo "Directory $arch_dir is healthy."
+                      fi
+                    fi
+                  done
+                fi
+              done
             fi
           done
       - uses: actions/setup-python@v6
