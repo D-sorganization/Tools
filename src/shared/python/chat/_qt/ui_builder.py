@@ -33,6 +33,7 @@ from PyQt6.QtWidgets import (
 
 from .._thinking_indicator import ThinkingIndicator
 from .input import install_enter_submit
+from .queue_panel import QueuePanel
 from .styling import get_theme_colors
 
 if TYPE_CHECKING:
@@ -221,6 +222,13 @@ def build_chat_dock_ui(dock: Any) -> None:
     )
     layout.addWidget(dock._thinking_indicator)
 
+    # Inline preview of the busy-state message queue. Hidden when the
+    # queue is empty; surfaces each queued steering message with its own
+    # steer-to-front button.
+    dock._queue_panel = QueuePanel(parent=dock)
+    dock._queue_panel.steer_requested.connect(dock.steer_to_front)
+    layout.addWidget(dock._queue_panel)
+
     # Input row
     input_row = QHBoxLayout()
     dock._input_edit = QPlainTextEdit()
@@ -313,6 +321,16 @@ def build_chat_dock_ui(dock: Any) -> None:
     layout.addLayout(mode_row)
     dock.setWidget(container)
     dock._on_mode_changed()
+    # Apply the idle Send-button style so the initial colour matches the
+    # state machine (green "Send"). Subsequent recomputes follow the
+    # streaming / queue / stop-timer state inputs.
+    try:
+        dock._recompute_send_button_state()
+    except AttributeError:
+        # ``_recompute_send_button_state`` is defined on ChatDockWidget;
+        # the guard keeps the builder usable in trimmed test fixtures
+        # that pass a non-dock object.
+        pass
 
     # Dock widget styling
     dock.setStyleSheet(
