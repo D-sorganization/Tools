@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, memo } from 'react';
+import { useState, useCallback, useMemo, memo, useId } from 'react';
 import { Filter, Play, RotateCcw, AlertCircle } from 'lucide-react';
 import type { FilterConfig, FilterType, FilterParameters } from '../types';
 
@@ -42,6 +42,7 @@ const DEFAULT_PARAMETERS: FilterParameters = {
 // cascades when parent (App.tsx) UI state changes (like switching tabs).
 // Performance impact: Eliminates UI stuttering during tab navigation.
 export const FilterPanel = memo(function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
+  const baseId = useId();
   const [filterType, setFilterType] = useState<FilterType>('Moving Average');
   const [parameters, setParameters] = useState<FilterParameters>(DEFAULT_PARAMETERS);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
@@ -110,10 +111,13 @@ export const FilterPanel = memo(function FilterPanel({ onApply, onReset, disable
   // Helper to render input field with validation error display
   const renderInput = useCallback((label: string, paramKey: keyof FilterParameters, min: number, max: number, step: number = 1) => {
     const error = validationErrors[paramKey];
+    const inputId = `${baseId}-${paramKey}`;
+    const errorId = `${inputId}-error`;
     return (
       <div>
-        <label className="label">{label}</label>
+        <label htmlFor={inputId} className="label">{label}</label>
         <input
+          id={inputId}
           type="number"
           className={`input ${error ? 'border-red-500 focus:ring-red-500' : ''}`}
           value={parameters[paramKey] ?? 0}
@@ -121,16 +125,18 @@ export const FilterPanel = memo(function FilterPanel({ onApply, onReset, disable
           min={min}
           max={max}
           step={step}
+          aria-invalid={!!error}
+          aria-describedby={error ? errorId : undefined}
         />
         {error && (
-          <p className="text-xs text-red-400 mt-1 flex items-center gap-1">
+          <p id={errorId} className="text-xs text-red-400 mt-1 flex items-center gap-1">
             <AlertCircle className="w-3 h-3" />
             {error}
           </p>
         )}
       </div>
     );
-  }, [parameters, validationErrors, handleParamChange]);
+  }, [parameters, validationErrors, handleParamChange, baseId]);
 
   const parameterInputs = useMemo(() => {
     switch (filterType) {
@@ -217,8 +223,9 @@ export const FilterPanel = memo(function FilterPanel({ onApply, onReset, disable
       </div>
       <div className="card-body space-y-4">
         <div>
-          <label className="label">Filter Type</label>
+          <label htmlFor={`${baseId}-filter-type`} className="label">Filter Type</label>
           <select
+            id={`${baseId}-filter-type`}
             className="select"
             value={filterType}
             onChange={(e) => setFilterType(e.target.value as FilterType)}
