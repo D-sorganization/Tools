@@ -15,6 +15,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from types import SimpleNamespace
+from typing import Any
 from unittest.mock import patch
 
 import pytest
@@ -303,3 +304,188 @@ class TestChatDockDisconnectLifecycle:
         assert widget._send_btn.enabled is True
         assert timer.started_ms == 3000
         assert widget._status_label.text == "Disconnected - retrying in 3s..."
+
+
+class TestChatDockControls:
+    def test_on_new_chat_clicked(self) -> None:
+        qt_module = pytest.importorskip("chat._chat_dock_widget_qt")
+        sent_messages: list[dict[str, Any]] = []
+        widget = SimpleNamespace(_send_ws=lambda msg: sent_messages.append(msg))
+        qt_module.ChatDockWidget._on_new_chat_clicked(widget)
+        assert sent_messages == [{"action": "new_session"}]
+
+    def test_on_toggle_history(self) -> None:
+        qt_module = pytest.importorskip("chat._chat_dock_widget_qt")
+
+        class FakeSidebar:
+            def __init__(self) -> None:
+                self._visible = False
+                self.refreshed = False
+
+            def isVisible(self) -> bool:
+                return self._visible
+
+            def setVisible(self, visible: bool) -> None:
+                self._visible = visible
+
+            def refresh_lists(self) -> None:
+                self.refreshed = True
+
+        sidebar = FakeSidebar()
+        widget = SimpleNamespace(_history_sidebar=sidebar)
+        # Toggle: False -> True
+        qt_module.ChatDockWidget._on_toggle_history(widget)
+        assert sidebar._visible is True
+        assert sidebar.refreshed is True
+
+        # Toggle: True -> False
+        sidebar.refreshed = False
+        qt_module.ChatDockWidget._on_toggle_history(widget)
+        assert sidebar._visible is False
+        assert sidebar.refreshed is False  # Only refreshes when visible
+
+    def test_session_created_message_handling(self) -> None:
+        qt_module = pytest.importorskip("chat._chat_dock_widget_qt")
+
+        class FakeLayoutItem:
+            def __init__(self, widget: Any) -> None:
+                self._widget = widget
+
+            def widget(self) -> Any:
+                return self._widget
+
+        class FakeWidget:
+            def __init__(self) -> None:
+                self.deleted = False
+
+            def deleteLater(self) -> None:
+                self.deleted = True
+
+        class FakeLayout:
+            def __init__(self) -> None:
+                # The first item (idx 0) and second item (idx 1) will be removed
+                # because the layout count has to remain > 1.
+                self.items = [
+                    FakeLayoutItem(FakeWidget()),
+                    FakeLayoutItem(FakeWidget()),
+                    FakeLayoutItem(FakeWidget()),
+                ]
+
+            def count(self) -> int:
+                return len(self.items)
+
+            def takeAt(self, idx: int) -> Any:
+                return self.items.pop(idx)
+
+        class FakeSidebar:
+            def __init__(self) -> None:
+                self.refreshed = False
+
+            def refresh_lists(self) -> None:
+                self.refreshed = True
+
+        layout = FakeLayout()
+        sidebar = FakeSidebar()
+        bubbles: list[tuple[str, str]] = []
+
+        widget = SimpleNamespace(
+            _session_file=Path("dummy_session.txt"),
+            _message_layout=layout,
+            _message_history=["some", "old", "messages"],
+            _add_bubble=lambda role, text: bubbles.append((role, text)),
+            _history_sidebar=sidebar,
+        )
+
+        with (
+            patch.object(
+                qt_module.ChatDockWidget, "_set_shared_session_id"
+            ) as mock_set_id,
+            patch(
+                "chat._chat_dock_widget_qt._write_shared_session_id"
+            ) as mock_write_id,
+        ):
+            raw_msg = '{"type": "session_created", "session_id": "new-session-xyz"}'
+            qt_module.ChatDockWidget._on_message(widget, raw_msg)
+
+            mock_set_id.assert_called_once_with("new-session-xyz")
+            mock_write_id.assert_called_once_with(
+                "new-session-xyz", widget._session_file
+            )
+
+        assert layout.count() == 1
+        assert widget._message_history == []
+        assert bubbles == [("assistant", "Hello! How can I help you today?")]
+        assert sidebar.refreshed is True
+
+    def test_load_session(self) -> None:
+        qt_module = pytest.importorskip("chat._chat_dock_widget_qt")
+
+        class FakeLayoutItem:
+            def __init__(self, widget: Any) -> None:
+                self._widget = widget
+
+            def widget(self) -> Any:
+                return self._widget
+
+        class FakeWidget:
+            def __init__(self) -> None:
+                self.deleted = False
+
+            def deleteLater(self) -> None:
+                self.deleted = True
+
+        class FakeLayout:
+            def __init__(self) -> None:
+                self.items = [
+                    FakeLayoutItem(FakeWidget()),
+                    FakeLayoutItem(FakeWidget()),
+                ]
+
+            def count(self) -> int:
+                return len(self.items)
+
+            def takeAt(self, idx: int) -> Any:
+                return self.items.pop(idx)
+
+        class FakeSidebar:
+            def __init__(self) -> None:
+                self.refreshed = False
+
+            def refresh_lists(self) -> None:
+                self.refreshed = True
+
+        layout = FakeLayout()
+        sidebar = FakeSidebar()
+        connected = False
+
+        def mock_connect() -> None:
+            nonlocal connected
+            connected = True
+
+        widget = SimpleNamespace(
+            _session_file=Path("dummy_session.txt"),
+            _message_layout=layout,
+            _message_history=["some", "old", "messages"],
+            _connect=mock_connect,
+            _history_sidebar=sidebar,
+        )
+
+        with (
+            patch.object(
+                qt_module.ChatDockWidget, "_set_shared_session_id"
+            ) as mock_set_id,
+            patch(
+                "chat._chat_dock_widget_qt._write_shared_session_id"
+            ) as mock_write_id,
+        ):
+            qt_module.ChatDockWidget.load_session(widget, "loaded-session-123")
+
+            mock_set_id.assert_called_once_with("loaded-session-123")
+            mock_write_id.assert_called_once_with(
+                "loaded-session-123", widget._session_file
+            )
+
+        assert layout.count() == 1
+        assert widget._message_history == []
+        assert connected is True
+        assert sidebar.refreshed is True
