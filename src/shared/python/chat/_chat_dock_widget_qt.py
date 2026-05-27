@@ -52,6 +52,7 @@ from PyQt6.QtWidgets import (
 )
 
 from ._qt import ai_dropdowns as _ai
+from ._qt import dock_actions as _dock_actions
 from ._qt import exports as _exports
 from ._qt import sessions as _sessions
 from ._qt import workspace as _ws
@@ -717,6 +718,15 @@ class ChatDockWidget(QDockWidget):
             self._update_queue_affordance()
             return
 
+        # If the user selected a CLI / terminal-style provider in the AI
+        # dropdown but is still in regular "Chat" mode, route the message
+        # through the terminal subprocess path. The previous WS ``send``
+        # path produced no visible response because the chat router on the
+        # server has no chat-completion adapter for those providers.
+        if self._is_cli_provider(self._current_provider):
+            self._send_via_terminal_provider(stripped)
+            return
+
         self._add_bubble("user", stripped)
         self._enter_thinking_state()
         self._current_bubble = self._add_bubble("assistant", "")
@@ -913,6 +923,54 @@ class ChatDockWidget(QDockWidget):
     ) -> None:
         """Switch AI provider / model / thinking-level mid-thread."""
         _ai.switch_provider(self, name, model, thinking_level)
+
+    # ── Header chrome actions (pop-out, new chat, clear chat) ──────
+
+    def _is_cli_provider(self, provider_id: str) -> bool:
+        """Return ``True`` if the given provider id is a CLI/terminal one."""
+        return _dock_actions.is_cli_provider(provider_id)
+
+    def _send_via_terminal_provider(self, text: str) -> None:
+        """Route a chat message through the terminal-subprocess flow."""
+        _dock_actions.send_via_terminal_provider(self, text)
+
+    def _set_model_combo_loading(self) -> None:
+        """Show an italic "Loading models..." placeholder in the model combo."""
+        _dock_actions.set_model_combo_loading(self)
+
+    def pop_out(self) -> Any:
+        """Pop the chat dock's inner content into a floating window.
+
+        DbC:
+            Pre: ``_setup_ui`` has run (``self.widget()`` is the inner
+                 container built by :func:`build_chat_dock_ui`).
+            Post: returns a ``ChatPopoutWindow`` whose ``content_widget``
+                  is the dock's former inner widget.
+        """
+        return _dock_actions.pop_out(self)
+
+    def new_chat(self) -> None:
+        """Start a fresh server-side chat session and clear the visible UI.
+
+        DbC:
+            Post: ``self._queued_messages == []`` and
+                  ``self.input_state == "idle"``.
+        """
+        _dock_actions.new_chat(self)
+
+    def _confirm_clear_chat(self) -> bool:
+        """Modal Yes/No confirmation for :meth:`clear_chat`."""
+        return _dock_actions.confirm_clear_chat(self)
+
+    def clear_chat(self) -> None:
+        """Clear visible bubbles after confirmation; server session preserved.
+
+        DbC:
+            Post: if the user accepts the confirmation, the bubble layout
+                  has zero non-sentinel widgets. The shared session id
+                  is never mutated.
+        """
+        _dock_actions.clear_chat(self)
 
     # ── Terminal mode ───────────────────────────────────────────────
 

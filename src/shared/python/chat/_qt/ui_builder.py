@@ -134,6 +134,41 @@ def build_chat_dock_ui(dock: Any) -> None:
         dock._action_request_review.triggered.connect(dock._request_review)
     dock._tools_btn.setMenu(dock._tools_menu)
 
+    # Header chrome action buttons: New chat, Clear chat, Pop out.
+    # Placed between the status label and the token indicator so they
+    # share the same row but stay out of the way of the message area.
+    from .dock_actions import make_chrome_button
+
+    dock._new_chat_btn = make_chrome_button(
+        text="➕",  # heavy plus sign
+        tooltip="Start new chat (resets server-side session)",
+        bg=bg_alt,
+        fg=text_primary,
+        border_hover=border,
+        on_clicked=dock.new_chat,
+    )
+    status_row.addWidget(dock._new_chat_btn)
+
+    dock._clear_chat_btn = make_chrome_button(
+        text="\U0001f9f9",  # broom
+        tooltip="Clear visible messages (server-side session preserved)",
+        bg=bg_alt,
+        fg=text_primary,
+        border_hover=border,
+        on_clicked=dock.clear_chat,
+    )
+    status_row.addWidget(dock._clear_chat_btn)
+
+    dock._popout_btn = make_chrome_button(
+        text="↗",  # north-east arrow
+        tooltip="Pop chat out into a floating window",
+        bg=bg_alt,
+        fg=text_primary,
+        border_hover=border,
+        on_clicked=dock.pop_out,
+    )
+    status_row.addWidget(dock._popout_btn)
+
     # Token-budget indicator + condense-now button.
     dock._token_indicator = QLabel("0 tok")
     dock._token_indicator.setToolTip(

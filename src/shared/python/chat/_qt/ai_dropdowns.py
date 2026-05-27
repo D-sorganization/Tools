@@ -217,7 +217,24 @@ def apply_settings_change(dock: Any, field: str, value: str) -> None:
     value = value.strip()
     if field == "provider":
         dock._current_provider = value
+        # Show a "Loading models..." placeholder + disable the combo so
+        # the user cannot pick a stale model mid-refresh. The helper is
+        # a no-op on dock objects that do not own the model combo yet
+        # (very early init / trimmed test fixtures).
+        if hasattr(dock, "_set_model_combo_loading"):
+            try:
+                dock._set_model_combo_loading()
+            except Exception:  # noqa: BLE001
+                logger.debug(
+                    "apply_settings_change: model-loading placeholder failed",
+                    exc_info=True,
+                )
         dock._refresh_ai_model_combo()
+        # Re-enable the combo after the refresh repopulates it.
+        try:
+            dock._ai_model_combo.setEnabled(True)
+        except AttributeError:
+            pass
         dock._refresh_ai_thinking_combo()
     elif field == "model":
         dock._current_model = value
