@@ -85,6 +85,31 @@ jobs:
                       print('Error deleting:', p, e)
           "
 
+      - name: Force-clean stale Python tool cache
+        run: |
+          for cache_root in /opt/runner-tool-cache /home/dieterolson/actions-runners/.shared-tool-cache; do
+            if [ -d "$cache_root/Python" ]; then
+              echo "Checking $cache_root/Python for stale 3.12 installations..."
+              for version_dir in "$cache_root/Python"/3.12.*; do
+                if [ -d "$version_dir" ]; then
+                  for arch_dir in "$version_dir"/*; do
+                    if [ -d "$arch_dir" ]; then
+                      if [ ! -x "$arch_dir/bin/python" ] && [ ! -x "$arch_dir/bin/python3" ]; then
+                        echo "Directory $arch_dir is incomplete or broken. Cleaning..."
+                        sudo rm -rf "$arch_dir" || rm -rf "$arch_dir" || true
+                      elif ! "$arch_dir/bin/python" -c "import zlib" >/dev/null 2>&1; then
+                        echo "Directory $arch_dir is corrupt (zlib import failed). Cleaning..."
+                        sudo rm -rf "$arch_dir" || rm -rf "$arch_dir" || true
+                      else
+                        echo "Directory $arch_dir is healthy."
+                      fi
+                    fi
+                  done
+                fi
+              done
+            fi
+          done
+
       - name: Set up Python
         uses: actions/setup-python@v6
         with:

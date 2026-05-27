@@ -141,7 +141,10 @@ jobs:
                     if [ -d "$arch_dir" ]; then
                       if [ ! -x "$arch_dir/bin/python" ] && [ ! -x "$arch_dir/bin/python3" ]; then
                         echo "Directory $arch_dir is incomplete or broken. Cleaning..."
-                        rm -rf "$arch_dir" || true
+                        sudo rm -rf "$arch_dir" || rm -rf "$arch_dir" || true
+                      elif ! "$arch_dir/bin/python" -c "import zlib" >/dev/null 2>&1; then
+                        echo "Directory $arch_dir is corrupt (zlib import failed). Cleaning..."
+                        sudo rm -rf "$arch_dir" || rm -rf "$arch_dir" || true
                       else
                         echo "Directory $arch_dir is healthy."
                       fi
@@ -409,7 +412,10 @@ jobs:
                     if [ -d "$arch_dir" ]; then
                       if [ ! -x "$arch_dir/bin/python" ] && [ ! -x "$arch_dir/bin/python3" ]; then
                         echo "Directory $arch_dir is incomplete or broken. Cleaning..."
-                        rm -rf "$arch_dir" || true
+                        sudo rm -rf "$arch_dir" || rm -rf "$arch_dir" || true
+                      elif ! "$arch_dir/bin/python" -c "import zlib" >/dev/null 2>&1; then
+                        echo "Directory $arch_dir is corrupt (zlib import failed). Cleaning..."
+                        sudo rm -rf "$arch_dir" || rm -rf "$arch_dir" || true
                       else
                         echo "Directory $arch_dir is healthy."
                       fi
