@@ -106,7 +106,14 @@ jobs:
               ;;
           esac
   quality-gate:
-    needs: [pick-runner, fix-brick-toolcache]
+    # ``fix-brick-toolcache`` is intentionally NOT in ``needs:``: it's a
+    # one-time symlink prep that persists across runs on the brick, and
+    # blocking on it means the entire branch-protection ``quality-gate``
+    # required check stalls whenever the self-hosted fleet is offline
+    # for that specific job. ``actions/setup-python`` works without the
+    # symlink (re-downloads Python on cache miss), so the gating cost
+    # was paying for a hard dependency we can tolerate as a soft one.
+    needs: [pick-runner]
     runs-on: d-sorg-fleet
     timeout-minutes: 20
     env:
@@ -347,7 +354,9 @@ jobs:
     # declares no `outputs:` block, and no step in this job references
     # `needs.quality-gate.*`). Fanning out after pick-runner removes the
     # inter-job queue wait between quality-gate completion and tests start.
-    needs: [pick-runner, fix-brick-toolcache]
+    # ``fix-brick-toolcache`` removed from ``needs:`` — see ``quality-gate``
+    # job comment for rationale (soft dependency, symlink persists).
+    needs: [pick-runner]
     runs-on: d-sorg-fleet
     strategy:
       matrix:
