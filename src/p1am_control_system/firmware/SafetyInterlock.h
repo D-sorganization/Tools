@@ -15,19 +15,29 @@ class SafetyInterlock {
   // Precondition: broker is a valid reference, hw is a valid reference
   void Evaluate(SignalBroker& broker, HardwareInterface& hw);
 
-  // Getters/Setters for limits
-  float GetHighLimit(int tag_id) const;
-  void SetHighLimit(int tag_id, float val);
+  // Four-limit accessors: lolo/low/high/hihi.
+  // Only low/high trip Evaluate(); lolo/hihi are stored for host visibility
+  // and reserved for future alarm-vs-trip semantics.
+  float GetLoloLimit(int tag_id) const;
+  void SetLoloLimit(int tag_id, float val);
 
   float GetLowLimit(int tag_id) const;
   void SetLowLimit(int tag_id, float val);
+
+  float GetHighLimit(int tag_id) const;
+  void SetHighLimit(int tag_id, float val);
+
+  float GetHihiLimit(int tag_id) const;
+  void SetHihiLimit(int tag_id, float val);
 
   bool IsTripped() const;
   void ClearTrip();
 
  private:
-  float high_limits_[SignalBroker::kNumTags];
+  float lolo_limits_[SignalBroker::kNumTags];
   float low_limits_[SignalBroker::kNumTags];
+  float high_limits_[SignalBroker::kNumTags];
+  float hihi_limits_[SignalBroker::kNumTags];
   bool tripped_;
 };
 

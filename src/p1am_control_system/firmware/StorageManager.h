@@ -14,12 +14,14 @@ struct PIDConfigData {
 };
 
 struct InterlockConfigData {
-  float high_limit;
+  float lolo_limit;
   float low_limit;
+  float high_limit;
+  float hihi_limit;
 };
 
 struct ConfigStruct {
-  int magic;  // Signature validation (e.g., 0xDC51)
+  int magic;  // Signature validation (kMagic).
   int input_routing[SignalBroker::kNumInputs];
   int output_routing[SignalBroker::kNumOutputs];
   PIDConfigData pids[4];
@@ -28,23 +30,31 @@ struct ConfigStruct {
 
 class StorageManager {
  public:
-  static const int kMagic = 0xDC51;
+  // Bumped from 0xDC51 when InterlockConfigData grew from 2 to 4 limits.
+  // Configs written by older firmware are silently rejected and the unit
+  // boots with defaults instead of garbling the new wider struct.
+  static const int kMagic = 0xDC52;
 
   StorageManager();
 
   // Save active configuration to non-volatile storage.
-  // Precondition: pids contains 4 controllers, interlock_high and interlock_low contain 32 limits
+  // Precondition: pids contains 4 controllers; each interlock_* buffer
+  // contains kNumTags floats laid out as lolo / low / high / hihi.
   bool Save(const SignalBroker& broker,
             const PIDController* pids,
+            const float* interlock_lolo,
+            const float* interlock_low,
             const float* interlock_high,
-            const float* interlock_low);
+            const float* interlock_hihi);
 
   // Load configuration from non-volatile storage.
   // Returns true if a valid config was loaded, false if no config existed.
   bool Load(SignalBroker& broker,
             PIDController* pids,
+            float* interlock_lolo,
+            float* interlock_low,
             float* interlock_high,
-            float* interlock_low);
+            float* interlock_hihi);
 
   // Clear stored configuration.
   void Clear();
