@@ -201,32 +201,36 @@ class AsyncModbusManager(BasePLCClient):
                         )
                     )
 
-                # 4. Read Interlocks
-                interlock_resp = await client.read_holding_registers(
-                    address=self.interlock_config_address, count=256
-                )
-                if interlock_resp.isError():
-                    logger.error(f"Error reading interlocks: {interlock_resp}")
-                    return None
+                # 4. Read Interlocks (4 limits x 32 tags = 256 regs total,
+                # chunked under pymodbus's 125-reg single-request cap; chunk
+                # size of 64 keeps every chunk tag-aligned at 8 tags x 8 regs).
+                interlock_regs: list[int] = []
+                for offset in (0, 64, 128, 192):
+                    chunk_resp = await client.read_holding_registers(
+                        address=self.interlock_config_address + offset,
+                        count=64,
+                    )
+                    if chunk_resp.isError():
+                        logger.error(
+                            f"Error reading interlocks (chunk +{offset}): {chunk_resp}"
+                        )
+                        return None
+                    interlock_regs.extend(chunk_resp.registers)
 
                 interlocks = {}
                 for i in range(32):
                     base = i * 8
                     lolo = registers_to_float(
-                        interlock_resp.registers[base],
-                        interlock_resp.registers[base + 1],
+                        interlock_regs[base], interlock_regs[base + 1]
                     )
                     low = registers_to_float(
-                        interlock_resp.registers[base + 2],
-                        interlock_resp.registers[base + 3],
+                        interlock_regs[base + 2], interlock_regs[base + 3]
                     )
                     high = registers_to_float(
-                        interlock_resp.registers[base + 4],
-                        interlock_resp.registers[base + 5],
+                        interlock_regs[base + 4], interlock_regs[base + 5]
                     )
                     hihi = registers_to_float(
-                        interlock_resp.registers[base + 6],
-                        interlock_resp.registers[base + 7],
+                        interlock_regs[base + 6], interlock_regs[base + 7]
                     )
                     interlocks[f"TAG_{i}"] = InterlockConfig(
                         lolo_limit=lolo,
@@ -323,13 +327,19 @@ class AsyncModbusManager(BasePLCClient):
                     interlock_regs.extend(float_to_registers(interlock.high_limit))
                     interlock_regs.extend(float_to_registers(interlock.hihi_limit))
 
-                resp = await client.write_registers(
-                    address=self.interlock_config_address,
-                    values=interlock_regs,
-                )
-                if resp.isError():
-                    logger.error(f"Error writing interlock configs: {resp}")
-                    return False
+                # write_multiple_registers (0x10) is capped at 123 regs per
+                # request, so chunk the 256-reg interlock block into 4 writes
+                # of 64 regs (tag-aligned).
+                for offset in (0, 64, 128, 192):
+                    resp = await client.write_registers(
+                        address=self.interlock_config_address + offset,
+                        values=interlock_regs[offset : offset + 64],
+                    )
+                    if resp.isError():
+                        logger.error(
+                            f"Error writing interlock configs (chunk +{offset}): {resp}"
+                        )
+                        return False
 
                 logger.info(
                     "Successfully wrote all routing configs to Modbus registers."

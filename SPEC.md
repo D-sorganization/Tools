@@ -944,6 +944,11 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 9. Changelog
 
+### Version 1.1.212
+
+- 2026-05-27: fix(p1am) — extend interlock contract to 4 limits (lolo/low/high/hihi) in SafetyInterlock to align with host. Chunk Modbus client read/write routing into 64-register packets to satisfy pymodbus's request size caps.
+- 2026-05-27: chore(ci) — use `sudo rm -rf` in Python tool cache cleanup to ensure complete removal of corrupted files, and add cleanup step to topology-governance, detect-secrets, and cross-repo integration workflows.
+
 ### Version 1.1.208
 
 - 2026-05-27: Optimized object allocations in `themeApi.ts` and `themeDefinitions.ts` by replacing `Object.fromEntries(Object.entries().map())` chains with single-pass loops to reduce memory allocation overhead on startup.
