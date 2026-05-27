@@ -59,8 +59,6 @@ def is_cli_provider(provider_id: str) -> bool:
         Pre: ``provider_id`` is a string.
         Post: returns a bool; never raises for unknown ids.
     """
-    if not isinstance(provider_id, str):
-        return False
     return provider_id in CLI_PROVIDER_IDS
 
 
@@ -136,7 +134,7 @@ def pop_out(dock: Any) -> ChatPopoutWindow | None:
     from .. import _chat_dock_widget_qt as _dock_mod
 
     session_id = (
-        _dock_mod.ChatDockWidget._get_shared_session_id() or "new"  # type: ignore[attr-defined]
+        _dock_mod.ChatDockWidget._get_shared_session_id() or "new"
     )
 
     def _redock() -> None:
@@ -328,6 +326,5 @@ def _pick_default_shell(dock: Any) -> str:
     for s in shells:
         plats = getattr(s, "platforms", None) or []
         if plat in plats:
-            return s.id
-    # Fallback to the first registered shell.
-    return shells[0].id
+            return str(s.id)
+    return str(shells[0].id)
