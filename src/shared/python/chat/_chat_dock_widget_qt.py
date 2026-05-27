@@ -1098,8 +1098,34 @@ class ChatDockWidget(QDockWidget):
         if self._socket and self._socket.isValid():
             self._socket.sendTextMessage(json.dumps(payload))
 
+    def _format_agent_label(self) -> str:
+        """Return the human-readable label for the current AI agent.
+
+        Format: ``Agent (<model>)`` when the active model name is known,
+        falling back to ``Agent (<provider>)`` when only the provider id
+        is set, and finally to plain ``Agent`` when neither is populated.
+        Centralised here so the bubble factory, header chrome, and any
+        future call sites (e.g. status pill, tooltips) share one source
+        of truth — DRY.
+
+        DbC postcondition: returned string is non-empty.
+        """
+        model = (self._current_model or "").strip()
+        provider = (self._current_provider or "").strip()
+        if model:
+            return f"Agent ({model})"
+        if provider:
+            return f"Agent ({provider})"
+        return "Agent"
+
     def _add_bubble(self, role: str, content: str) -> ChatMessageBubble:
-        """Add a message bubble to the scroll area."""
+        """Add a message bubble to the scroll area.
+
+        Assistant bubbles get an ``"Agent (<model>)"`` label sourced from
+        the active provider/model state so users can tell which model
+        produced each turn (e.g. ``Agent (llama3.1:8b)``,
+        ``Agent (gpt-4o)``). User bubbles always show ``"You"``.
+        """
         if role is None:
             raise ValueError("role must be provided")
         bubble = ChatMessageBubble(
@@ -1107,6 +1133,7 @@ class ChatDockWidget(QDockWidget):
             content,
             accent_color=self._accent_color,
             theme_provider=self._theme_provider,
+            agent_label=self._format_agent_label() if role != "user" else None,
         )
         count = self._message_layout.count()
         self._message_layout.insertWidget(count - 1, bubble)

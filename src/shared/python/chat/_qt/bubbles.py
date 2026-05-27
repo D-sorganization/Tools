@@ -38,7 +38,25 @@ class ChatMessageBubble(QFrame):
         accent_color: str = "#FF8800",
         parent: QWidget | None = None,
         theme_provider: ThemeProviderProtocol | None = None,
+        agent_label: str | None = None,
     ) -> None:
+        """Construct a chat-message bubble.
+
+        Args:
+            role: ``"user"`` or any other value (treated as assistant).
+            content: Initial markdown / plain-text body.
+            accent_color: Accent for the user role label.
+            parent: Optional Qt parent.
+            theme_provider: Theme colours source.
+            agent_label: Optional override for the assistant-side role
+                label. Typical caller passes ``"Agent (llama3.1:8b)"``
+                or ``"Agent (gpt-4o)"`` so users see which model produced
+                a given turn. Falls back to ``"Agent"`` when ``None``.
+
+        DbC precondition: ``role`` is a non-None string.
+        DbC postcondition: ``self._role_label.text()`` reflects the
+            computed label so call sites and tests can assert it.
+        """
         if role is None:
             raise ValueError("role must be provided")
         super().__init__(parent)
@@ -54,11 +72,20 @@ class ChatMessageBubble(QFrame):
         bg_alt = colors.get("group_bg", "#2d2d2d")
         bg_secondary = colors.get("input_bg", "#252526")
 
-        # Role label
+        # Role label — show the agent's model name when available so users
+        # can tell which provider produced each turn. Format: ``Agent (model_name)``;
+        # falls back to plain ``Agent`` when the caller didn't supply a model.
         user_style = f"font-size: 10px; font-weight: bold; color: {accent_color};"
         ai_color = colors.get("accent", "#58a6ff")
         ai_style = f"font-size: 10px; font-weight: bold; color: {ai_color};"
-        role_label = QLabel("You" if role == "user" else "AI")
+        if role == "user":
+            label_text = "You"
+        elif agent_label:
+            label_text = agent_label
+        else:
+            label_text = "Agent"
+        role_label = QLabel(label_text)
+        self._role_label = role_label
         role_label.setStyleSheet(user_style if role == "user" else ai_style)
 
         header_row = QHBoxLayout()
