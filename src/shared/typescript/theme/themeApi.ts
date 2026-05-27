@@ -46,9 +46,11 @@ const SNAKE_TO_CAMEL: Record<string, string> = {
 };
 
 /** Camel-to-snake case key mapping */
-const CAMEL_TO_SNAKE: Record<string, string> = Object.fromEntries(
-  Object.entries(SNAKE_TO_CAMEL).map(([k, v]) => [v, k])
-);
+const CAMEL_TO_SNAKE: Record<string, string> = {};
+// ⚡ Bolt Optimization: Replace Object.entries().map() with single-pass loop to eliminate array allocation overhead
+for (const key of Object.keys(SNAKE_TO_CAMEL)) {
+  CAMEL_TO_SNAKE[SNAKE_TO_CAMEL[key]] = key;
+}
 
 /** Transform API (snake_case) colors to TypeScript (camelCase) */
 function apiColorsToTs(colors: Record<string, string>): Record<string, string> {
