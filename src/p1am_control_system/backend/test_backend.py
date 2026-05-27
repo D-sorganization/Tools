@@ -99,7 +99,8 @@ async def test_get_routing_success() -> None:
     mock_pid.isError.return_value = False
     mock_pid.registers = dummy_pid_regs
 
-    # Create dummy registers for interlocks (32 tags * 8 registers = 256 registers)
+    # Create dummy registers for interlocks (32 tags * 8 registers = 256 registers).
+    # read_routing chunks this into four 64-register reads so we mock the same.
     dummy_interlock_regs = []
     for _ in range(32):
         dummy_interlock_regs.extend([0, 16256])  # lolo limit
@@ -107,9 +108,12 @@ async def test_get_routing_success() -> None:
         dummy_interlock_regs.extend([0, 16256])  # high limit
         dummy_interlock_regs.extend([0, 16256])  # hihi limit
 
-    mock_interlock = MagicMock()
-    mock_interlock.isError.return_value = False
-    mock_interlock.registers = dummy_interlock_regs
+    mock_interlock_chunks = []
+    for offset in (0, 64, 128, 192):
+        chunk = MagicMock()
+        chunk.isError.return_value = False
+        chunk.registers = dummy_interlock_regs[offset : offset + 64]
+        mock_interlock_chunks.append(chunk)
 
     # Create AsyncMock to mock client holding register reads
     async_read_mock = AsyncMock()
@@ -117,7 +121,7 @@ async def test_get_routing_success() -> None:
         mock_input,
         mock_output,
         mock_pid,
-        mock_interlock,
+        *mock_interlock_chunks,
     ]
 
     with (

@@ -16,8 +16,10 @@ StorageManager::StorageManager() {}
 
 bool StorageManager::Save(const SignalBroker& broker,
                           const PIDController* pids,
+                          const float* interlock_lolo,
+                          const float* interlock_low,
                           const float* interlock_high,
-                          const float* interlock_low) {
+                          const float* interlock_hihi) {
   ConfigStruct config;
   config.magic = kMagic;
 
@@ -39,10 +41,12 @@ bool StorageManager::Save(const SignalBroker& broker,
     config.pids[i].kd = pids[i].GetKd();
   }
 
-  // 3. Save Interlock limits
+  // 3. Save Interlock limits (four-limit model: lolo / low / high / hihi)
   for (int i = 0; i < SignalBroker::kNumTags; ++i) {
-    config.interlocks[i].high_limit = interlock_high[i];
+    config.interlocks[i].lolo_limit = interlock_lolo[i];
     config.interlocks[i].low_limit = interlock_low[i];
+    config.interlocks[i].high_limit = interlock_high[i];
+    config.interlocks[i].hihi_limit = interlock_hihi[i];
   }
 
 #ifdef ARDUINO
@@ -60,8 +64,10 @@ bool StorageManager::Save(const SignalBroker& broker,
 
 bool StorageManager::Load(SignalBroker& broker,
                           PIDController* pids,
+                          float* interlock_lolo,
+                          float* interlock_low,
                           float* interlock_high,
-                          float* interlock_low) {
+                          float* interlock_hihi) {
   ConfigStruct config;
 
 #ifdef ARDUINO
@@ -101,10 +107,12 @@ bool StorageManager::Load(SignalBroker& broker,
     pids[i].SetKd(config.pids[i].kd);
   }
 
-  // 3. Load interlocks
+  // 3. Load interlocks (four-limit model: lolo / low / high / hihi)
   for (int i = 0; i < SignalBroker::kNumTags; ++i) {
-    interlock_high[i] = config.interlocks[i].high_limit;
+    interlock_lolo[i] = config.interlocks[i].lolo_limit;
     interlock_low[i] = config.interlocks[i].low_limit;
+    interlock_high[i] = config.interlocks[i].high_limit;
+    interlock_hihi[i] = config.interlocks[i].hihi_limit;
   }
 
   return true;
