@@ -1,18 +1,11 @@
-"""Repository-level pytest hooks for cross-tree test discovery and import redirection.
-
-This module installs a custom import hook (RobustImportRedirector) to solve
-the duplicate module loading problem (e.g., ai.types vs src.shared.python.ai.types),
-which breaks class and enum identity comparisons (isinstance/is).
-"""
-
-from __future__ import annotations
+"""Shared pytest configuration for entire Tools repo."""
 
 import importlib.util
 import sys
 import types
 import warnings
 from collections.abc import Sequence
-from importlib.abc import MetaPathFinder
+from importlib.abc import Loader, MetaPathFinder
 from importlib.machinery import ModuleSpec
 from pathlib import Path
 from typing import Any
@@ -20,39 +13,24 @@ from typing import Any
 import pytest
 
 
-def pytest_addoption(parser: pytest.Parser) -> None:
-    parser.addoption(
-        "--regenerate-api-baseline",
-        action="store_true",
-        default=False,
-        help="Regenerate tests/sidekick_api_baseline.json with the current public API.",
-    )
-
-
-class AliasLoader:
-    """A dummy loader that returns an already-loaded module to prevent re-execution."""
+class AliasLoader(Loader):
+    """A loader that simply returns an existing module object."""
 
     def __init__(self, module: types.ModuleType) -> None:
-        """Initialize the AliasLoader with an existing module."""
         self.module = module
 
-    def create_module(self, spec: ModuleSpec) -> types.ModuleType | None:
-        """Return the pre-existing module."""
+    def create_module(self, spec: ModuleSpec) -> types.ModuleType:
         return self.module
 
     def exec_module(self, module: types.ModuleType) -> None:
-        """Do nothing on module execution."""
         pass
 
 
-class WrappedCanonicalLoader:
-    """A loader that wraps a canonical loader.
-
-    Populates all aliases upon execution.
-    """
+class WrappedCanonicalLoader(Loader):
+    """A loader that delegates to the canonical loader and sets aliases."""
 
     def __init__(self, canonical_spec: ModuleSpec, aliases: list[str]) -> None:
-        """Initialize the loader with the canonical spec and its aliases."""
+        """Initialize with the canonical spec and its aliases."""
         self.canonical_spec = canonical_spec
         self.aliases = aliases
 
@@ -316,4 +294,16 @@ def pytest_ignore_collect(collection_path: Path, config: pytest.Config) -> bool 
             return None
         return True
 
-    return None
+
+try:
+    import pytest
+    from PyQt6.QtWidgets import QApplication
+
+    @pytest.fixture(scope="session")
+    def qapp():
+        app = QApplication.instance()
+        if app is None:
+            app = QApplication(sys.argv)
+        yield app
+except ImportError:
+    pass

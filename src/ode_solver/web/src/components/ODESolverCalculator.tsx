@@ -165,6 +165,143 @@ export function ODESolverCalculator() {
     return downsampled;
   }, [results]);
 
+  // ⚡ Bolt Optimization: Memoize the entire results panel (heavy charts & tables).
+  // Without this, the entire DOM/SVG tree re-renders on every keystroke in the textarea,
+  // causing severe input lag.
+  const resultsPanel = useMemo(() => {
+    if (!results || results.length === 0) {
+      return (
+        <div className="bg-slate-800 rounded-lg p-8 text-center">
+          <p className="text-slate-400">
+            Select a preset or define a custom ODE system and click "Solve ODE System" to see results.
+          </p>
+        </div>
+      )
+    }
+
+    return (
+      <>
+        {/* Summary Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {summaryCards}
+        </div>
+
+        {/* Solution Chart */}
+        <div className="bg-slate-800 rounded-lg p-4">
+          <h2 className="text-lg font-semibold text-white mb-4">Solution</h2>
+          <div className="h-72">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
+                <XAxis
+                  dataKey="time"
+                  stroke="#94a3b8"
+                  label={{ value: 'Time', position: 'bottom', fill: '#94a3b8', offset: -5 }}
+                />
+                <YAxis stroke="#94a3b8" />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569' }}
+                  labelStyle={{ color: '#f1f5f9' }}
+                  formatter={(value: number, name: string) => [value.toFixed(4), name]}
+                  labelFormatter={(label) => `t = ${Number(label).toFixed(3)}`}
+                />
+                <Legend />
+                {varNames.map((varName, idx) => (
+                  <Line
+                    key={varName}
+                    type="monotone"
+                    dataKey={varName}
+                    stroke={LINE_COLORS[idx % LINE_COLORS.length]}
+                    strokeWidth={2}
+                    dot={false}
+                    name={varName}
+                  />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Phase Portrait (for 2-variable systems) */}
+        {varNames.length === 2 && (
+          <div className="bg-slate-800 rounded-lg p-4">
+            <h2 className="text-lg font-semibold text-white mb-4">
+              Phase Portrait ({varNames[0]} vs {varNames[1]})
+            </h2>
+            <div className="h-72">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
+                  <XAxis
+                    dataKey={varNames[0]}
+                    type="number"
+                    stroke="#94a3b8"
+                    label={{ value: varNames[0], position: 'bottom', fill: '#94a3b8', offset: -5 }}
+                  />
+                  <YAxis
+                    dataKey={varNames[1]}
+                    type="number"
+                    stroke="#94a3b8"
+                    label={{ value: varNames[1], angle: -90, position: 'insideLeft', fill: '#94a3b8' }}
+                  />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569' }}
+                    labelStyle={{ color: '#f1f5f9' }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey={varNames[1]}
+                    stroke="#8b5cf6"
+                    strokeWidth={2}
+                    dot={false}
+                    name="Trajectory"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
+        {/* Data Table */}
+        <div className="bg-slate-800 rounded-lg p-4">
+          <h2 className="text-lg font-semibold text-white mb-4">Sample Data Points</h2>
+          <div className="overflow-x-auto max-h-64">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-slate-700">
+                  <th className="py-2 px-3 text-slate-300">Time</th>
+                  {varNames.map((v) => (
+                    <th key={v} className="py-2 px-3 text-slate-300">{v}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {(() => {
+                  // ⚡ Bolt Optimization: Replace .filter().map() chains with a single-pass loop.
+                  // This prevents creating intermediate arrays and limits iterations to O(N/step).
+                  const step = Math.max(1, Math.floor(results.length / 15));
+                  const rows = [];
+                  for (let i = 0; i < results.length; i += step) {
+                    const row = results[i];
+                    rows.push(
+                      <tr key={i} className="border-b border-slate-700/50">
+                        <td className="py-1 px-3 text-white">{row.time.toFixed(3)}</td>
+                        {varNames.map((v) => (
+                          <td key={v} className="py-1 px-3 text-white">{row[v].toFixed(6)}</td>
+                        ))}
+                      </tr>
+                    );
+                  }
+                  return rows;
+                })()}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </>
+    )
+  }, [results, summaryCards, chartData, varNames])
+
   return (
     <div className="max-w-5xl mx-auto p-6">
       <h1 className="text-2xl font-bold text-blue-400 mb-6">
@@ -291,133 +428,7 @@ export function ODESolverCalculator() {
 
         {/* Results Panel */}
         <div className="lg:col-span-2 space-y-4">
-          {results && results.length > 0 ? (
-            <>
-              {/* Summary Cards */}
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {summaryCards}
-              </div>
-
-              {/* Solution Chart */}
-              <div className="bg-slate-800 rounded-lg p-4">
-                <h2 className="text-lg font-semibold text-white mb-4">Solution</h2>
-                <div className="h-72">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={chartData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
-                      <XAxis
-                        dataKey="time"
-                        stroke="#94a3b8"
-                        label={{ value: 'Time', position: 'bottom', fill: '#94a3b8', offset: -5 }}
-                      />
-                      <YAxis stroke="#94a3b8" />
-                      <Tooltip
-                        contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569' }}
-                        labelStyle={{ color: '#f1f5f9' }}
-                        formatter={(value: number, name: string) => [value.toFixed(4), name]}
-                        labelFormatter={(label) => `t = ${Number(label).toFixed(3)}`}
-                      />
-                      <Legend />
-                      {varNames.map((varName, idx) => (
-                        <Line
-                          key={varName}
-                          type="monotone"
-                          dataKey={varName}
-                          stroke={LINE_COLORS[idx % LINE_COLORS.length]}
-                          strokeWidth={2}
-                          dot={false}
-                          name={varName}
-                        />
-                      ))}
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-
-              {/* Phase Portrait (for 2-variable systems) */}
-              {varNames.length === 2 && (
-                <div className="bg-slate-800 rounded-lg p-4">
-                  <h2 className="text-lg font-semibold text-white mb-4">
-                    Phase Portrait ({varNames[0]} vs {varNames[1]})
-                  </h2>
-                  <div className="h-72">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={chartData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
-                        <XAxis
-                          dataKey={varNames[0]}
-                          type="number"
-                          stroke="#94a3b8"
-                          label={{ value: varNames[0], position: 'bottom', fill: '#94a3b8', offset: -5 }}
-                        />
-                        <YAxis
-                          dataKey={varNames[1]}
-                          type="number"
-                          stroke="#94a3b8"
-                          label={{ value: varNames[1], angle: -90, position: 'insideLeft', fill: '#94a3b8' }}
-                        />
-                        <Tooltip
-                          contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569' }}
-                          labelStyle={{ color: '#f1f5f9' }}
-                        />
-                        <Line
-                          type="monotone"
-                          dataKey={varNames[1]}
-                          stroke="#8b5cf6"
-                          strokeWidth={2}
-                          dot={false}
-                          name="Trajectory"
-                        />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-              )}
-
-              {/* Data Table */}
-              <div className="bg-slate-800 rounded-lg p-4">
-                <h2 className="text-lg font-semibold text-white mb-4">Sample Data Points</h2>
-                <div className="overflow-x-auto max-h-64">
-                  <table className="w-full text-left text-sm">
-                    <thead>
-                      <tr className="border-b border-slate-700">
-                        <th className="py-2 px-3 text-slate-300">Time</th>
-                        {varNames.map((v) => (
-                          <th key={v} className="py-2 px-3 text-slate-300">{v}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {(() => {
-                        // ⚡ Bolt Optimization: Replace .filter().map() chains with a single-pass loop.
-                        // This prevents creating intermediate arrays and limits iterations to O(N/step).
-                        const step = Math.max(1, Math.floor(results.length / 15));
-                        const rows = [];
-                        for (let i = 0; i < results.length; i += step) {
-                          const row = results[i];
-                          rows.push(
-                            <tr key={i} className="border-b border-slate-700/50">
-                              <td className="py-1 px-3 text-white">{row.time.toFixed(3)}</td>
-                              {varNames.map((v) => (
-                                <td key={v} className="py-1 px-3 text-white">{row[v].toFixed(6)}</td>
-                              ))}
-                            </tr>
-                          );
-                        }
-                        return rows;
-                      })()}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="bg-slate-800 rounded-lg p-8 text-center">
-              <p className="text-slate-400">
-                Select a preset or define a custom ODE system and click "Solve ODE System" to see results.
-              </p>
-            </div>
-          )}
+          {resultsPanel}
         </div>
       </div>
     </div>

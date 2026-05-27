@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.205                                    |
-| **Last Spec Update**    | 2026-05-26                                 |
+| **Spec Version**        | 1.1.204                                    |
+| **Last Spec Update**    | 2026-05-23                                 |
 
 ## 2. Purpose & Mission
 
@@ -630,6 +630,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 2026-05-23 | 1.1.200 | Added `sidekick.bootstrap` import to the deprecated `upstream_drift_tools` compatibility shim to preserve legacy import paths.                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| 2026-05-26 | 1.1.200 | Kept the optional session-scoped PyQt `qapp` pytest fixture in `tests/conftest.py` ruff-compliant by normalizing the guarded local import block, so PR-local test harness changes stop tripping the CI quality gate on import-order formatting alone.                                                                                                                                                                                                                                                                                                               |
 | 2026-05-22 | 1.1.199 | Fixed mypy TYPE_CHECKING import guards in sidekick process calculators (syngas_compression_calculator, acid_gas_dewpoint_calculator, pressure_drop_interface, syngas_compression_engine) and calculator_state_mixin to use `if TYPE_CHECKING:` conditional imports for optional PyQt6/matplotlib dependencies, eliminating incompatible-assignment and no-redef errors across Qt-installed and Qt-absent environments.                                                                                                                                              |
 | 2026-05-22 | 1.1.198 | Tightened local hook behavior for consolidated task branches so pre-push fleet guardrails inspect the unpushed commit range before falling back to the full repository, and changed the Bandit pre-push hook to scan the Python files selected by pre-commit instead of re-scanning existing repository-wide baseline debt.                                                                                                                                                                                                                                         |
 | 2026-05-21 | 1.1.195 | Resolved shared AI/chat unit-test failures by tightening Rust adapter optional-backend behavior, removing obsolete phase-one integration coverage, and updating Ollama, Rust adapter, and AI memory manager tests to use deterministic mocks for terminal-provider and event-loop contracts.                                                                                                                                                                                                                                                                        |
@@ -939,10 +940,11 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 9. Changelog
 
-- 2026-05-26: Optimized Nelder-Mead loop in `optimizer.ts` to mutate pre-allocated arrays in-place to avoid GC overhead.
-### Version 1.1.190
+### Version 1.1.204
 
-- **2026-05-24**: Add `spellcheck="false"`, `autocorrect="off"`, and `autocapitalize="none"` to math inputs in calculator to improve UX, and add `role="img"` to battery icon span.
+- **Performance**: In `src/ode_solver/web/src/components/ODESolverCalculator.tsx`, extracted the entire `resultsPanel` (containing heavy Recharts and data table elements) into a `useMemo` block to prevent the entire SVG tree from re-rendering synchronously on every keystroke in the textarea, eliminating severe UI input lag.
+
+### Version 1.1.190
 
 - **Performance**: In `src/ode_solver/web/src/components/ODESolverCalculator.tsx`, wrapped `varNames` computation and summary cards rendering in `useMemo`, and replaced `.filter()` with a single-pass `for` loop to prevent O(N) recalculations of array keys and summary min/max loops on every React render.
 
