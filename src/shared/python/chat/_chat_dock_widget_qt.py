@@ -40,6 +40,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
+from ai.gui.session_manager import ChatSessionManager
 from PyQt6.QtCore import QSize, QTimer, QUrl, pyqtSignal
 from PyQt6.QtWebSockets import QWebSocket
 from PyQt6.QtWidgets import (
@@ -203,7 +204,9 @@ class ChatDockWidget(QDockWidget):
         self._session_file = _session_file_path(app_name)
         # Tools issue #2872: conversation-management state.
         self._loaded_context_sessions: list[str] = []
-        self._session_manager: Any | None = None
+        self._session_manager = ChatSessionManager(
+            storage_dir=Path.home() / f".{self._app_name}" / "chat_sessions"
+        )
         self._breadcrumb_widget: Any | None = None
         self._reconnect_timer = QTimer(self)
         self._reconnect_timer.setSingleShot(True)
@@ -375,11 +378,21 @@ class ChatDockWidget(QDockWidget):
         if bool(getattr(self, "_intentional_disconnect", False)) or bool(
             getattr(self, "_is_closing", False)
         ):
-            self._exit_thinking_state()
+            if hasattr(self, "_exit_thinking_state"):
+                self._exit_thinking_state()
+            else:
+                self._is_streaming = False
+                if hasattr(self, "_send_btn") and self._send_btn is not None:
+                    self._send_btn.setEnabled(True)
             return
         self._status_label.setText("Disconnected - retrying in 3s...")
         self._status_label.setStyleSheet("color: #f85149; font-size: 10px;")
-        self._exit_thinking_state()
+        if hasattr(self, "_exit_thinking_state"):
+            self._exit_thinking_state()
+        else:
+            self._is_streaming = False
+            if hasattr(self, "_send_btn") and self._send_btn is not None:
+                self._send_btn.setEnabled(True)
         self._reconnect_timer.start(3000)
 
     def _on_message(self, raw: str) -> None:
@@ -434,6 +447,16 @@ class ChatDockWidget(QDockWidget):
             sid = data.get("session_id", "")
             ChatDockWidget._set_shared_session_id(sid)
             _write_shared_session_id(sid, self._session_file)
+            while self._message_layout.count() > 1:
+                item = self._message_layout.takeAt(0)
+                if item:
+                    w = item.widget()
+                    if w:
+                        w.deleteLater()
+            self._message_history = []
+            self._add_bubble("assistant", "Hello! How can I help you today?")
+            if hasattr(self, "_history_sidebar") and self._history_sidebar is not None:
+                self._history_sidebar.refresh_lists()
 
         elif msg_type == "history":
             self._populate_history(data.get("messages", []))
@@ -1252,3 +1275,34 @@ class ChatDockWidget(QDockWidget):
 
     def _refresh_breadcrumb(self) -> None:
         _sessions.refresh_breadcrumb(self)
+
+    def _on_new_chat_clicked(self) -> None:
+        """Handle 'New Chat' click by requesting a new session via WebSocket."""
+        self._send_ws({"action": "new_session"})
+
+    def _on_toggle_history(self) -> None:
+        """Toggle history sidebar pane visibility."""
+        if hasattr(self, "_history_sidebar") and self._history_sidebar is not None:
+            visible = not self._history_sidebar.isVisible()
+            self._history_sidebar.setVisible(visible)
+            if visible:
+                self._history_sidebar.refresh_lists()
+
+    def load_session(self, session_id: str) -> None:
+        """Load an existing chat session by ID and reconnect the WebSocket."""
+        if not session_id:
+            return
+        ChatDockWidget._set_shared_session_id(session_id)
+        _write_shared_session_id(session_id, self._session_file)
+
+        while self._message_layout.count() > 1:
+            item = self._message_layout.takeAt(0)
+            if item:
+                w = item.widget()
+                if w:
+                    w.deleteLater()
+
+        self._message_history = []
+        self._connect()
+        if hasattr(self, "_history_sidebar") and self._history_sidebar is not None:
+            self._history_sidebar.refresh_lists()
