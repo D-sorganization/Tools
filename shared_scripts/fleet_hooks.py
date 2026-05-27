@@ -82,6 +82,25 @@ def staged_files() -> list[str]:
 
 
 def changed_files() -> list[str]:
+    """Return files changed in the current event scope.
+
+    Scope, in priority order:
+
+    1. Staged (``git diff --cached``) — pre-commit.
+    2. Working-tree diff vs ``HEAD`` (``git diff HEAD``) — pre-commit when
+       the user did ``git add -p`` and left some changes unstaged.
+    3. ``@{upstream}..HEAD`` — pre-push when the tracking ref is set.
+    4. ``origin/main...HEAD`` — pre-push fallback when no upstream is set.
+
+    Returns an empty list when no scope is detectable (clean tree, no
+    upstream, etc.). Callers must treat empty as "nothing to check".
+
+    The historical ``ls-files`` fallback that scanned the entire working
+    tree was the leading cause of agents reaching for ``--no-verify``:
+    it surfaced pre-existing grandfathered violations on every clean
+    commit. It is intentionally removed — if your diff is empty, the
+    hook is a no-op.
+    """
     files = set(staged_files())
     files.update(_git_files(["diff", "--name-only", "--diff-filter=ACMR", "HEAD"]))
     if not files:
@@ -96,8 +115,6 @@ def changed_files() -> list[str]:
                 ["diff", "--name-only", "--diff-filter=ACMR", "origin/main...HEAD"]
             )
         )
-    if not files:
-        files.update(_git_files(["ls-files"]))
     return sorted(files)
 
 
