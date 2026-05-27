@@ -26,12 +26,14 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QScrollArea,
     QSizePolicy,
+    QSplitter,
     QStackedWidget,
     QVBoxLayout,
     QWidget,
 )
 
 from .._thinking_indicator import ThinkingIndicator
+from .history_sidebar import HistorySidebar
 from .input import install_enter_submit
 from .queue_panel import QueuePanel
 from .styling import get_theme_colors
@@ -145,7 +147,48 @@ def build_chat_dock_ui(dock: Any) -> None:
     status_row.addWidget(dock._token_indicator)
     dock._auto_condense_threshold = 8000
 
+    # New Chat and History buttons
+    dock._new_chat_btn = QPushButton("New Chat")
+    dock._new_chat_btn.setToolTip("Start a new chat conversation")
+    dock._new_chat_btn.setStyleSheet(
+        "QPushButton {"
+        f"  background-color: {bg_alt}; color: {text_primary};"
+        "  border-radius: 4px; padding: 2px 6px; font-size: 11px;"
+        "}"
+        f"QPushButton:hover {{ background-color: {border}; }}"
+    )
+    dock._new_chat_btn.clicked.connect(dock._on_new_chat_clicked)
+    status_row.addWidget(dock._new_chat_btn)
+
+    dock._toggle_history_btn = QPushButton("History")
+    dock._toggle_history_btn.setToolTip("Toggle conversation history sidebar")
+    dock._toggle_history_btn.setStyleSheet(
+        "QPushButton {"
+        f"  background-color: {bg_alt}; color: {text_primary};"
+        "  border-radius: 4px; padding: 2px 6px; font-size: 11px;"
+        "}"
+        f"QPushButton:hover {{ background-color: {border}; }}"
+    )
+    dock._toggle_history_btn.clicked.connect(dock._on_toggle_history)
+    status_row.addWidget(dock._toggle_history_btn)
+
     layout.addLayout(status_row)
+
+    # QSplitter wrapping HistorySidebar and the main chat pane
+    dock._splitter = QSplitter(Qt.Orientation.Horizontal)
+    dock._splitter.setHandleWidth(1)
+
+    dock._history_sidebar = HistorySidebar(dock._session_manager, parent=dock)
+    dock._history_sidebar.setVisible(False)
+    dock._splitter.addWidget(dock._history_sidebar)
+
+    chat_pane = QWidget()
+    chat_layout = QVBoxLayout(chat_pane)
+    chat_layout.setContentsMargins(0, 0, 0, 0)
+    chat_layout.setSpacing(4)
+    dock._splitter.addWidget(chat_pane)
+
+    layout.addWidget(dock._splitter, stretch=1)
 
     mode_row = QHBoxLayout()
     dock._build_ai_dropdowns(mode_row)
@@ -209,7 +252,7 @@ def build_chat_dock_ui(dock: Any) -> None:
     dock._content_stack = QStackedWidget()
     dock._content_stack.addWidget(dock._scroll_area)
     dock._content_stack.addWidget(dock._terminal_output)
-    layout.addWidget(dock._content_stack, stretch=1)
+    chat_layout.addWidget(dock._content_stack, stretch=1)
 
     # Thinking indicator — animated "Sidekick is thinking ●●●" pulser.
     # Placed between the message stack and the input row so it sits
@@ -220,14 +263,14 @@ def build_chat_dock_ui(dock: Any) -> None:
         theme_provider=dock._theme_provider,
         accent_color=dock._accent_color,
     )
-    layout.addWidget(dock._thinking_indicator)
+    chat_layout.addWidget(dock._thinking_indicator)
 
     # Inline preview of the busy-state message queue. Hidden when the
     # queue is empty; surfaces each queued steering message with its own
     # steer-to-front button.
     dock._queue_panel = QueuePanel(parent=dock)
     dock._queue_panel.steer_requested.connect(dock.steer_to_front)
-    layout.addWidget(dock._queue_panel)
+    chat_layout.addWidget(dock._queue_panel)
 
     # Input row
     input_row = QHBoxLayout()
@@ -246,7 +289,7 @@ def build_chat_dock_ui(dock: Any) -> None:
         "  font-size: 12px; padding: 4px;"
         "}"
     )
-    layout.addWidget(dock._input_edit)
+    chat_layout.addWidget(dock._input_edit)
 
     # Tools on the far left
     dock._tools_btn.setFixedWidth(50)
@@ -317,8 +360,8 @@ def build_chat_dock_ui(dock: Any) -> None:
     )
     input_row.addWidget(dock._stop_agent_btn)
 
-    layout.addLayout(input_row)
-    layout.addLayout(mode_row)
+    chat_layout.addLayout(input_row)
+    chat_layout.addLayout(mode_row)
     dock.setWidget(container)
     dock._on_mode_changed()
     # Apply the idle Send-button style so the initial colour matches the

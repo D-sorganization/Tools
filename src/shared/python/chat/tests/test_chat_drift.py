@@ -18,10 +18,10 @@ REPO_ROOT = Path(__file__).resolve().parents[5 if "tests" in __file__ else 4]
 # in UpstreamDrift is a lazy import shim; the canonical Tools content lives in
 # ``_chat_dock_widget_qt.py``.
 TOOLS_BASELINE_HASHES: dict[str, str] = {
-    "src/shared/python/chat/_chat_dock_widget_qt.py": "0eda7f900e8f9d5ff4683e431e9ac47e5431db48caea76a79f1f00dff0cbc5d7",  # noqa: E501
-    "src/shared/python/chat/models.py": "8ff4829e80e68c5480d170c584b8f6c36ed0b4dc9d69f5f070d99b00e230e9df",  # noqa: E501
+    "src/shared/python/chat/_chat_dock_widget_qt.py": "80bf8ce8c1f099e429ea3d7f878172fde53199d4b51779bdf5fdc3e76866b2f3",  # noqa: E501
+    "src/shared/python/chat/models.py": "41030e0ba254ae6d3e04dbe9d154cc930fbb7e72fbc648bdacc9b2b8893384c7",  # noqa: E501
     "src/shared/python/chat/tests/__init__.py": "5a0bba6299ce217de8cbfc2e20a354ccf479e8d45152f69ad2543d9183d07812",  # noqa: E501
-    "src/shared/python/chat/tests/test_chat.py": "e7ed8d44073b8fe2015aa006218d6c1b717b52e057e51f5985a78e6177254c30",  # noqa: E501
+    "src/shared/python/chat/tests/test_chat.py": "90ee6b94e6e8cc0eade4a5067bc2d9dec86d7cd0c02181adeff17761b56f03f6",  # noqa: E501
 }
 
 
