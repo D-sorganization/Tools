@@ -28,7 +28,7 @@
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
 | **Spec Version**        | 1.1.208                                    |
-| **Last Spec Update**    | 2026-05-26                                 |
+| **Last Spec Update**    | 2026-05-27                                 |
 
 ## 2. Purpose & Mission
 
@@ -943,6 +943,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 ### Version 1.1.208
 
 - 2026-05-27: Optimized object allocations in `themeApi.ts` and `themeDefinitions.ts` by replacing `Object.fromEntries(Object.entries().map())` chains with single-pass loops to reduce memory allocation overhead on startup.
+- 2026-05-27: feat(FilterPanel) — Added `useId` to dynamically generate linked IDs for form labels, select dropdowns, and inputs in `FilterPanel.tsx` via `htmlFor`, improving screen reader navigation. Also added `aria-invalid` and `aria-describedby` to announce validation error states clearly.
 
 ### Version 1.1.206
 
