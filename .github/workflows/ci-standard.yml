@@ -125,6 +125,19 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+      - name: Force-clean stale Python tool cache (NVMe runners)
+        # Defensive prepass: actions/setup-python uses ``rmdir`` to delete
+        # cached Python directories before installing, which fails when
+        # the cache contains read-only or stubborn files (e.g. test/certdata
+        # symlinks). ``rm -rf`` succeeds where ``rmdir`` fails. Both shared
+        # tool-cache paths used by the d-sorg-fleet runners are cleaned.
+        run: |
+          for cache_root in /home/dieterolson/actions-runners/.shared-tool-cache /home/dieterolson/actions-runners-nvme/.shared-tool-cache; do
+            if [ -d "$cache_root/Python" ]; then
+              echo "Cleaning $cache_root/Python (pre-setup-python)"
+              rm -rf "$cache_root/Python" || true
+            fi
+          done
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -368,6 +381,17 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+      - name: Force-clean stale Python tool cache (NVMe runners)
+        # See quality-gate job for rationale: ``actions/setup-python`` uses
+        # ``rmdir`` and fails on read-only items left behind (test/certdata
+        # etc.). ``rm -rf`` succeeds.
+        run: |
+          for cache_root in /home/dieterolson/actions-runners/.shared-tool-cache /home/dieterolson/actions-runners-nvme/.shared-tool-cache; do
+            if [ -d "$cache_root/Python" ]; then
+              echo "Cleaning $cache_root/Python (pre-setup-python)"
+              rm -rf "$cache_root/Python" || true
+            fi
+          done
       - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
