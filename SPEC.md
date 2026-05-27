@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.208                                    |
+| **Spec Version**        | 1.1.209                                    |
 | **Last Spec Update**    | 2026-05-27                                 |
 
 ## 2. Purpose & Mission
@@ -940,6 +940,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.209
+
+- 2026-05-27: Consolidate open PRs (#3076, #3078, #3079) including Hook bypass policy documentation, P1AM analog I/O calibration procedure, and Sidekick Chat controls/history.
 
 ### Version 1.1.208
 
