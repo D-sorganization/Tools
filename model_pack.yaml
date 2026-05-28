@@ -23,7 +23,7 @@ models:
     launcher:
       category: "tool"
       logo: "video_analyzer.svg"
-      status: "external"
+      status: "ready"
       web_route: "/tools/video-analyzer"
 
   - id: "video_processor"
@@ -44,7 +44,7 @@ models:
     launcher:
       category: "tool"
       logo: "video_analyzer.svg"
-      status: "external"
+      status: "ready"
       web_route: "/tools/video-processor"
 
   - id: "data_explorer"
@@ -65,7 +65,7 @@ models:
     launcher:
       category: "tool"
       logo: "data_explorer.svg"
-      status: "external"
+      status: "ready"
       web_route: "/tools/data-explorer"
 
   - id: "data_processor"
@@ -89,5 +89,5 @@ models:
     launcher:
       category: "tool"
       logo: "data_explorer.svg"
-      status: "external"
+      status: "ready"
       web_route: "/tools/data-processor"
