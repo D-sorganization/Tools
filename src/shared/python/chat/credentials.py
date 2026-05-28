@@ -144,7 +144,7 @@ class CredentialManager:
             try:
                 username = f"{self._service_name}_{provider}"
                 key = kr.get_password(self._service_name, username)
-                if key:
+                if isinstance(key, str):
                     return key
             except Exception:  # noqa: BLE001
                 logger.debug(
@@ -156,7 +156,7 @@ class CredentialManager:
         env_var = _ENV_KEY_MAP.get(provider)
         if env_var:
             key = os.environ.get(env_var)
-            if key:
+            if isinstance(key, str):
                 logger.debug("Using env var %s for provider %s", env_var, provider)
                 return key
 

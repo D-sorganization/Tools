@@ -61,12 +61,15 @@ def _build_system_theme_provider() -> ThemeProviderProtocol:
 
         def get_colors(self) -> dict[str, str]:
             try:
-                from theme.theme_manager import (  # type: ignore[import-not-found]
+                from theme.theme_manager import (  # type: ignore[import-not-found, unused-ignore]
                     get_theme_manager,
                 )
 
                 mgr = get_theme_manager()
-                return mgr.get_current_colors()
+                colors = mgr.get_current_colors()
+                if isinstance(colors, dict):
+                    return {str(k): str(v) for k, v in colors.items()}
+                return {}
             except Exception:  # noqa: BLE001
                 logger.debug("Theme manager unavailable, using fallback colors")
                 return {}
