@@ -614,11 +614,19 @@ export const AnalyticsSuite = memo(function AnalyticsSuite({ data, signals, sele
   return (
     <div className="space-y-4">
       {/* Tab Selector */}
-      <div className="flex border-b border-dark-700 text-sm">
+      <div
+        className="flex border-b border-dark-700 text-sm"
+        role="tablist"
+        aria-label="Analytics tools"
+      >
         {(['correlation', 'pca', 'regression'] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
+            role="tab"
+            aria-selected={tab === t}
+            aria-controls={`panel-${t}`}
+            id={`tab-${t}`}
             className={`px-4 py-2 capitalize ${
               tab === t
                 ? 'border-b-2 border-blue-500 text-blue-400'
@@ -632,7 +640,12 @@ export const AnalyticsSuite = memo(function AnalyticsSuite({ data, signals, sele
 
       {/* --- Correlation Matrix --- */}
       {tab === 'correlation' && correlation && (
-        <div className="card">
+        <div
+          className="card"
+          role="tabpanel"
+          id="panel-correlation"
+          aria-labelledby="tab-correlation"
+        >
           <div className="card-header">Correlation Matrix</div>
           <div className="card-body overflow-x-auto">
             <table className="text-xs w-full">
@@ -674,7 +687,12 @@ export const AnalyticsSuite = memo(function AnalyticsSuite({ data, signals, sele
 
       {/* --- PCA --- */}
       {tab === 'pca' && pca && (
-        <div className="space-y-4">
+        <div
+          className="space-y-4"
+          role="tabpanel"
+          id="panel-pca"
+          aria-labelledby="tab-pca"
+        >
           {/* Scree Plot */}
           <div className="card">
             <div className="card-header">Scree Plot (Variance Explained)</div>
@@ -762,7 +780,12 @@ export const AnalyticsSuite = memo(function AnalyticsSuite({ data, signals, sele
 
       {/* --- Regression --- */}
       {tab === 'regression' && (
-        <div className="space-y-4">
+        <div
+          className="space-y-4"
+          role="tabpanel"
+          id="panel-regression"
+          aria-labelledby="tab-regression"
+        >
           {/* Controls */}
           <div className="card">
             <div className="card-header">Regression Setup</div>
