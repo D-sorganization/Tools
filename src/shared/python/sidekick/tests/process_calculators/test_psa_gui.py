@@ -88,10 +88,10 @@ def test_results_panel_initialization(dummy_qapp):
 
 
 @patch(
-    "upstream_drift_tools.process_calculators.psa_package.psa_gui.calculate_o2_safety_analysis"
+    "upstream_drift_tools.process_calculators.psa_package.ui.sensitivity_plot.calculate_o2_safety_analysis"
 )
 @patch(
-    "upstream_drift_tools.process_calculators.psa_package.psa_gui.calculate_sensitivity"
+    "upstream_drift_tools.process_calculators.psa_package.ui.sensitivity_plot.calculate_sensitivity"
 )
 def test_sensitivity_plot_widget(mock_calc_sens, mock_calc_o2, dummy_qapp):
     """Test the sensitivity plot widget."""
@@ -124,12 +124,14 @@ def test_sensitivity_plot_widget(mock_calc_sens, mock_calc_o2, dummy_qapp):
         widget._update_plot()
 
 
-@patch("upstream_drift_tools.process_calculators.psa_package.psa_gui.QMessageBox")
+@patch(
+    "upstream_drift_tools.process_calculators.psa_package.ui.main_window.QMessageBox"
+)
 @patch("PyQt6.QtWidgets.QMainWindow.show")
 def test_psa_main_window_initialization(mock_show, mock_msg_box, dummy_qapp):
     """Test PSA main window initialization."""
     with patch(
-        "upstream_drift_tools.process_calculators.psa_package.psa_gui.PSAModel"
+        "upstream_drift_tools.process_calculators.psa_package.ui.main_window.PSAModel"
     ) as mock_model:
         mock_results = MagicMock()
         mock_results.h2_recovery_pct = 85.5
@@ -185,20 +187,20 @@ def test_psa_main_window_initialization(mock_show, mock_msg_box, dummy_qapp):
 
         # Test notebook launches
         with patch(
-            "upstream_drift_tools.process_calculators.psa_package.psa_gui.subprocess.Popen"
+            "upstream_drift_tools.process_calculators.psa_package.ui.main_window.subprocess.Popen"
         ) as mock_popen:
             with patch(
-                "upstream_drift_tools.process_calculators.psa_package.psa_gui.os.path.exists",
+                "upstream_drift_tools.process_calculators.psa_package.ui.main_window.os.path.exists",
                 return_value=True,
             ):
                 window._launch_jupyter()
                 assert mock_popen.called
 
         with patch(
-            "upstream_drift_tools.process_calculators.psa_package.psa_gui.subprocess.Popen"
+            "upstream_drift_tools.process_calculators.psa_package.ui.main_window.subprocess.Popen"
         ) as mock_popen2:
             with patch(
-                "upstream_drift_tools.process_calculators.psa_package.psa_gui.os.path.exists",
+                "upstream_drift_tools.process_calculators.psa_package.ui.main_window.os.path.exists",
                 return_value=True,
             ):
                 window._launch_webapp()
@@ -206,7 +208,7 @@ def test_psa_main_window_initialization(mock_show, mock_msg_box, dummy_qapp):
 
         # Test Colab launch
         with patch(
-            "upstream_drift_tools.process_calculators.psa_package.psa_gui.webbrowser.open"
+            "upstream_drift_tools.process_calculators.psa_package.ui.main_window.webbrowser.open"
         ) as mock_web:
             window._launch_colab()
             assert not mock_web.called

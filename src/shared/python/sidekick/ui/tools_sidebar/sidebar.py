@@ -378,7 +378,7 @@ class UnifiedToolsSidebar(
                         visible_defaults = initially_visible_tab_ids(
                             definitions, self._state
                         )
-                except Exception:
+                except (json.JSONDecodeError, TypeError, ValueError):
                     visible_defaults = initially_visible_tab_ids(
                         definitions, self._state
                     )
