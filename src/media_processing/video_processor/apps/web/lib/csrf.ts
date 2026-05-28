@@ -59,12 +59,22 @@ export function validateCsrfToken(request: Request): boolean {
     return false;
   }
 
-  const cookies = Object.fromEntries(
-    cookieHeader.split(';').map((cookie) => {
-      const [key, ...valueParts] = cookie.trim().split('=');
-      return [key, valueParts.join('=')];
-    })
-  );
+  // ⚡ Bolt Optimization: Replace chained .map() and Object.fromEntries() with a single-pass loop
+  // Performance impact: Avoids intermediate array allocations during high-frequency request validation
+  const cookies: Record<string, string> = {};
+  const cookieParts = cookieHeader.split(';');
+  for (let i = 0; i < cookieParts.length; i++) {
+    const cookie = cookieParts[i].trim();
+    if (!cookie) continue;
+    const splitIdx = cookie.indexOf('=');
+    if (splitIdx === -1) {
+      cookies[cookie] = '';
+    } else {
+      const key = cookie.slice(0, splitIdx).trim();
+      const value = cookie.slice(splitIdx + 1).trim();
+      cookies[key] = value;
+    }
+  }
 
   const cookieToken = cookies[CSRF_COOKIE_NAME];
   if (!cookieToken) {
