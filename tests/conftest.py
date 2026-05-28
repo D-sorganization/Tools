@@ -307,3 +307,12 @@ try:
         yield app
 except ImportError:
     pass
+
+
+def pytest_addoption(parser: pytest.Parser) -> None:
+    parser.addoption(
+        "--regenerate-api-baseline",
+        action="store_true",
+        default=False,
+        help="Regenerate Sidekick API stability baseline json file",
+    )
