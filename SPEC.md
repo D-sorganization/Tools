@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.214                                    |
-| **Last Spec Update**    | 2026-05-28                                 |
+| **Spec Version**        | 1.1.215                                    |
+| **Last Spec Update**    | 2026-05-29                                 |
 
 ## 2. Purpose & Mission
 
@@ -629,6 +629,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-29 | 1.1.215 | Hardened the Sidekick C3D reader to validate the header magic byte before invoking ezc3d, so mislabeled or truncated files raise a typed `ValueError` instead of surfacing parser internals; added focused regression coverage for invalid headers and updated C3D reader tests to use temp files with valid magic bytes.                                                                                                                                                                                                                                           |
 | 2026-05-27 | 1.1.214 | Fixed HistorySidebar initialization, updated theme manager colors, and synchronized Tools baseline hashes.                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | 2026-05-27 | 1.1.210 | Added P1AM analog I/O calibration helper script and interactive Modbus CLI procedure documentation.                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | 2026-05-27 | 1.1.209 | Simplified HistorySidebar implementation to reduce lines of code under 500 lines to satisfy the file size budget check constraint.                                                                                                                                                                                                                                                                                                                                                                                                                                  |
@@ -943,6 +944,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.215
+
+- 2026-05-29: fix(sidekick) — validate C3D header magic bytes before handing files to ezc3d, returning a clear `ValueError` for truncated or mislabeled files and covering the pre-parser failure path with focused tests.
 
 ### Version 1.1.212
 
