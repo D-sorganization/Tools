@@ -344,9 +344,6 @@ export function ODESolverCalculator() {
                   onChange={(e) => setDerivativesText(e.target.value)}
                   rows={3}
                   placeholder="y: -k*y"
-                spellCheck={false}
-                autoCorrect="off"
-                autoCapitalize="none"
                   className="w-full bg-slate-700 text-white rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus:outline-none font-mono text-sm"
                 />
               </div>
@@ -359,9 +356,6 @@ export function ODESolverCalculator() {
                   onChange={(e) => setParametersText(e.target.value)}
                   rows={3}
                   placeholder="k: 0.1"
-                spellCheck={false}
-                autoCorrect="off"
-                autoCapitalize="none"
                   className="w-full bg-slate-700 text-white rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus:outline-none font-mono text-sm"
                 />
               </div>
@@ -374,9 +368,6 @@ export function ODESolverCalculator() {
                   onChange={(e) => setInitialText(e.target.value)}
                   rows={3}
                   placeholder="y: 100"
-                spellCheck={false}
-                autoCorrect="off"
-                autoCapitalize="none"
                   className="w-full bg-slate-700 text-white rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus:outline-none font-mono text-sm"
                 />
               </div>
