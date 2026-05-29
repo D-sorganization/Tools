@@ -592,7 +592,7 @@ jobs:
 
       - name: Coverage Policy Gate
         if: steps.coverage_inputs.outputs.coverage_gate_required == 'true'
-        run: python3 scripts/check_coverage_policy.py --coverage-file coverage.xml --policy-file config/coverage_policy.json --baseline-file config/coverage_baseline.json --output-json coverage_trend_${{ matrix.python-version }}.json
+        run: python3 scripts/check_coverage_policy.py --coverage-file coverage.xml --policy-file config/coverage_policy.json --baseline-file config/coverage_baseline.json --output-json coverage_trend_${{ matrix.python-version }}.json --changed-files changed_python_files.txt
 
       - name: Sidekick Per-File Coverage Gate
         if: steps.coverage_inputs.outputs.coverage_gate_required == 'true'
