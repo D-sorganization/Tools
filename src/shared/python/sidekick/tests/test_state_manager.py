@@ -136,7 +136,7 @@ def test_json_serializer(manager) -> Any:
     assert res == str(p)
 
     class Dummy:
-        pass
+        attr: str = ""
 
     d = Dummy()
     d.attr = "val"
