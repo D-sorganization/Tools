@@ -247,7 +247,12 @@ def test_sidekick_public_api_stability(pytestconfig: pytest.Config) -> None:
         assert path.is_file(), f"Missing public sidekick module file: {filename}"
         current_api[filename] = extract_module_api(path)
 
-    regenerate = pytestconfig.getoption("--regenerate-api-baseline")
+    try:
+        regenerate = pytestconfig.getoption("--regenerate-api-baseline")
+    except ValueError:
+        # Option not registered (e.g. run from a sub-rootdir whose conftest
+        # does not define it); default to comparison mode rather than erroring.
+        regenerate = False
     if regenerate:
         with open(BASELINE_PATH, "w", encoding="utf-8") as f:
             json.dump(current_api, f, indent=2)

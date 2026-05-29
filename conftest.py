@@ -280,6 +280,23 @@ def _path_is_within(candidate: Path, parent: Path) -> bool:
     return True
 
 
+def pytest_addoption(parser: pytest.Parser) -> None:
+    """Register repo-level custom CLI options.
+
+    ``--regenerate-api-baseline`` is consumed by
+    ``tests/test_sidekick_public_api_stability.py`` to rewrite the recorded
+    public-API baseline. Registering it here (rather than in a test-local
+    conftest) ensures the option is always available regardless of which
+    directory pytest is invoked from.
+    """
+    parser.addoption(
+        "--regenerate-api-baseline",
+        action="store_true",
+        default=False,
+        help="Rewrite tests/sidekick_api_baseline.json from the current API.",
+    )
+
+
 def pytest_ignore_collect(collection_path: Path, config: pytest.Config) -> bool | None:
     """Avoid double-collecting embedded suites that are bridged into ``tests/``.
 
