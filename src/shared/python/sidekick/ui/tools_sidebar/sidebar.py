@@ -304,8 +304,8 @@ class UnifiedToolsSidebar(
             )
         except ImportError:
             try:
-                from PyQt5.QtGui import QKeySequence  # type: ignore[no-redef]
-                from PyQt5.QtWidgets import QShortcut  # type: ignore[no-redef]
+                from PyQt5.QtGui import QKeySequence  # type: ignore[assignment]
+                from PyQt5.QtWidgets import QShortcut  # type: ignore[assignment]
             except ImportError:
                 return  # Qt not available — gracefully skip shortcut registration
 

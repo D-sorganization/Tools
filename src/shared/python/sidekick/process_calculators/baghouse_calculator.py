@@ -51,10 +51,10 @@ __all__ = [
 # not import from the downstream ``tools`` application package (that would
 # invert the dependency direction); the thermo-backed path is therefore
 # unavailable here and ideal-gas approximations are used instead.
-HAS_THERMO = False
-FlowUnit = None
-GasStream = None
-ThermodynamicCalculator = None
+HAS_THERMO: bool = False
+FlowUnit: Any = None
+GasStream: Any = None
+ThermodynamicCalculator: Any = None
 
 
 def convert(value: float, from_unit: str, to_unit: str) -> float:
