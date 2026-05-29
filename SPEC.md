@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.215                                    |
-| **Last Spec Update**    | 2026-06-03                                 |
+| **Spec Version**        | 1.1.214                                    |
+| **Last Spec Update**    | 2026-05-28                                 |
 
 ## 2. Purpose & Mission
 
@@ -629,7 +629,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-06-03 | 1.1.215 | Added `spellCheck={false}`, `autoCorrect="off"`, and `autoCapitalize="none"` to textareas in `ODESolverCalculator` to prevent native mobile OS text formatting from interfering with math formulas.                                                                                                                                                                                                                                                                 |
 | 2026-05-27 | 1.1.214 | Fixed HistorySidebar initialization, updated theme manager colors, and synchronized Tools baseline hashes.                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | 2026-05-27 | 1.1.210 | Added P1AM analog I/O calibration helper script and interactive Modbus CLI procedure documentation.                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | 2026-05-27 | 1.1.209 | Simplified HistorySidebar implementation to reduce lines of code under 500 lines to satisfy the file size budget check constraint.                                                                                                                                                                                                                                                                                                                                                                                                                                  |
@@ -959,6 +958,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 - 2026-05-26: feat(chat) — restored shared chat dock keybindings (Enter→submit, Shift+Enter→newline, busy-queue with steering), port-aware default WS URL (`UD_CHAT_WS_URL` / `GOLF_API_PORT` env), Ollama latency tuning (`keep_alive: "30m"`, `num_ctx: 4096`, native `tools` field), `_chat_dock_widget_qt.py` refactored into `_qt/` submodules (2091→1049 lines), and the animated "AI is thinking" indicator.
 - 2026-05-26: Chat dock resolves its default WebSocket URL per-instance, keeps the Steer action queue-only, and preserves typed import-safe runtime diagnostics for the optional Qt chat surface.
+
+### Version 1.1.205
+
+- 2026-05-31: Pre-allocated arrays outside of the Nelder-Mead loop and mutated them in place in `src/pendulum_simulator/pendulum-web/src/optimizer.ts` to reduce garbage collection overhead during algorithm iteration.
 
 ### Version 1.1.204
 
