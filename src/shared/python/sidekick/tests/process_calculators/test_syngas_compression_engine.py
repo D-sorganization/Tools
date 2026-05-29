@@ -315,12 +315,11 @@ class TestWorkerAndWidget:
 
     @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
     def test_widget_initialization(self, qtbot):
-        with patch(
-            "upstream_drift_tools.process_calculators.syngas_compression_calculator.QTimer.singleShot"
-        ) as mock_timer:
-            widget = SyngasCompressionCalculatorWidget()
-            assert widget.engine is not None
-            mock_timer.assert_called()
+        # init_ui() runs synchronously and no longer schedules a deferred
+        # QTimer (see #2098); the timer-deferred refresh is covered by
+        # test_widget_show_event instead.
+        widget = SyngasCompressionCalculatorWidget()
+        assert widget.engine is not None
 
     @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
     def test_widget_show_event(self, qtbot):

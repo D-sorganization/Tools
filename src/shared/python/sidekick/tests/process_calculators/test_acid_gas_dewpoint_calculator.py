@@ -67,10 +67,12 @@ def test_calculate_dewpoint_mixture_invalid(
     dewpoint_calc: AcidGasDewpointCalculator,
 ) -> None:
     comp = AcidGasComposition(h2o=0.1)
-    with pytest.raises(ValueError, match="pressure_bar must be > 0"):
+    with pytest.raises(AssertionError, match="pressure_bar must be positive"):
         dewpoint_calc.calculate_dewpoint_mixture(150.0, -1.0, comp)
 
-    with pytest.raises(ValueError, match="temperature must yield a positive Kelvin"):
+    with pytest.raises(
+        AssertionError, match="temperature must yield a positive Kelvin"
+    ):
         dewpoint_calc.calculate_dewpoint_mixture(-300.0, 10.0, comp)
 
 

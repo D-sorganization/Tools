@@ -31,11 +31,13 @@ _logger = logging.getLogger(__name__)
 # Ensure the shared.python.theme sibling package is importable.
 # When installed via pip (editable or not), setuptools already
 # includes the search paths. We only add the path as a fallback
-# when the import would otherwise fail.
+# when the import would otherwise fail. Defined unconditionally so the
+# fallback search path is always introspectable, even when ``theme`` is
+# already importable and the fallback branch never runs.
+_shared_python_dir = str(Path(__file__).resolve().parent.parent.parent)
 try:
     import theme  # noqa: F401
 except ImportError:
-    _shared_python_dir = str(Path(__file__).resolve().parent.parent.parent)
     if _shared_python_dir not in sys.path:
         sys.path.insert(0, _shared_python_dir)
 

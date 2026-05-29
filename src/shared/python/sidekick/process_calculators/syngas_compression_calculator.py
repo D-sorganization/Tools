@@ -145,9 +145,6 @@ def _get_figure_canvas_class() -> type[Any]:
         return cast(type[Any], FigureCanvasAgg)
 
 
-if TYPE_CHECKING:
-    from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
-
 # Import existing syngas water content utility
 # ruff: noqa: E402
 
@@ -542,7 +539,7 @@ if HAS_PYQT:
                     self.figure, _tm.get_theme_colors(name) or _tm.get_current_colors()
                 )
             )
-            self.canvas = FigureCanvas(self.figure)
+            self.canvas = _get_figure_canvas_class()(self.figure)
             layout.addWidget(self.canvas)
 
             plots_widget.setLayout(layout)

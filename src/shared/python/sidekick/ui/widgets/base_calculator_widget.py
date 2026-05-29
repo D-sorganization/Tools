@@ -7,6 +7,7 @@ from typing import Any
 
 from PyQt6.QtWidgets import QMainWindow, QMessageBox, QVBoxLayout, QWidget
 
+from shared.python.contracts import require
 from shared.python.theme.integration import ThemedWindowMixin
 
 from ..mixins.base_calculator_mixin import BaseCalculatorMixin
@@ -49,8 +50,11 @@ class BaseCalculatorWindow(ThemedWindowMixin, QMainWindow, BaseCalculatorMixin):
         min_size: tuple[int, int] = (1000, 700),
         parent: QWidget | None = None,
     ) -> None:
-        if calculator_name is None:
-            raise ValueError("calculator_name must be provided")
+        require(
+            calculator_name is not None,
+            "calculator_name must be provided",
+            calculator_name,
+        )
         QMainWindow.__init__(self, parent)
         BaseCalculatorMixin.__init__(self, calculator_name)
 

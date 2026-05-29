@@ -11,6 +11,7 @@ from __future__ import annotations
 import logging
 import multiprocessing as mp
 from concurrent.futures import ProcessPoolExecutor, as_completed
+from concurrent.futures.process import BrokenProcessPool
 from functools import partial
 from typing import Any
 
@@ -117,20 +118,32 @@ def run_multi_parameter_analysis_parallel(
         output_variable=output_variable,
     )
 
-    with ProcessPoolExecutor(max_workers=max_workers) as executor:
-        # Submit all tasks
-        futures = [executor.submit(eval_func, i, j, p1, p2) for i, j, p1, p2 in tasks]
+    try:
+        with ProcessPoolExecutor(max_workers=max_workers) as executor:
+            # Submit all tasks
+            futures = [
+                executor.submit(eval_func, i, j, p1, p2) for i, j, p1, p2 in tasks
+            ]
 
-        # Collect results as they complete
-        for future in as_completed(futures):
-            try:
-                i, j, output = future.result()
-                results[i, j] = output
-            except (KeyError, ValueError, TypeError) as e:
-                # Log error but continue with other calculations
-                _logger.error(f"Error in parallel calculation: {e}")
-                # Default to zero for failed calculations
-                continue
+            # Collect results as they complete
+            for future in as_completed(futures):
+                try:
+                    i, j, output = future.result()
+                    results[i, j] = output
+                except (KeyError, ValueError, TypeError) as e:
+                    # Log error but continue with other calculations
+                    _logger.error(f"Error in parallel calculation: {e}")
+                    # Default to zero for failed calculations
+                    continue
+    except BrokenProcessPool:
+        # Worker processes could not be started (e.g. the package is not
+        # importable in the spawned interpreter, or the sandbox forbids
+        # subprocesses). Degrade gracefully to serial evaluation, which yields
+        # identical results at lower throughput rather than failing the sweep.
+        _logger.warning("Process pool unavailable; falling back to serial evaluation.")
+        return run_multi_parameter_analysis(
+            engine, analysis_params, manual_hhv, param1_values, param2_values
+        )
 
     return {
         "param1_values": param1_values,
