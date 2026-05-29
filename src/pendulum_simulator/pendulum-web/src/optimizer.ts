@@ -156,13 +156,6 @@ function nelderMead(
     let iter = 0;
     let converged = false;
 
-    // ⚡ Bolt Optimization: Pre-allocate working arrays outside the main loop
-    // to eliminate continuous garbage collection overhead during algorithm iteration.
-    const centroid = new Array<number>(n);
-    const reflected = new Array<number>(n);
-    const expanded = new Array<number>(n);
-    const contracted = new Array<number>(n);
-
     for (; iter < maxIter; iter++) {
         sortSimplex();
 
@@ -179,7 +172,7 @@ function nelderMead(
         }
 
         // Centroid of all except worst
-        centroid.fill(0);
+        const centroid = new Array(n).fill(0);
         for (let i = 0; i < n; i++) {
             for (let j = 0; j < n; j++) {
                 centroid[j] += simplex[i].x[j];
@@ -195,41 +188,44 @@ function nelderMead(
         // to eliminate continuous callback allocation and garbage collection overhead in the tight loop.
 
         // Reflection
+        const reflected = new Array(n);
         for (let j = 0; j < n; j++) {
             reflected[j] = centroid[j] + alpha * (centroid[j] - worst.x[j]);
         }
         const fReflected = f(reflected);
 
         if (fReflected < secondWorst.cost && fReflected >= best.cost) {
-            simplex[n] = { x: [...reflected], cost: fReflected };
+            simplex[n] = { x: reflected, cost: fReflected };
             continue;
         }
 
         // Expansion
         if (fReflected < best.cost) {
+            const expanded = new Array(n);
             for (let j = 0; j < n; j++) {
                 expanded[j] = centroid[j] + gamma * (reflected[j] - centroid[j]);
             }
             const fExpanded = f(expanded);
             simplex[n] = fExpanded < fReflected
-                ? { x: [...expanded], cost: fExpanded }
-                : { x: [...reflected], cost: fReflected };
+                ? { x: expanded, cost: fExpanded }
+                : { x: reflected, cost: fReflected };
             continue;
         }
 
         // Contraction
+        const contracted = new Array(n);
         for (let j = 0; j < n; j++) {
             contracted[j] = centroid[j] + rho * (worst.x[j] - centroid[j]);
         }
         const fContracted = f(contracted);
         if (fContracted < worst.cost) {
-            simplex[n] = { x: [...contracted], cost: fContracted };
+            simplex[n] = { x: contracted, cost: fContracted };
             continue;
         }
 
         // Shrink
         for (let i = 1; i <= n; i++) {
-            const newX = new Array<number>(n);
+            const newX = new Array(n);
             for (let j = 0; j < n; j++) {
                 newX[j] = best.x[j] + sigma * (simplex[i].x[j] - best.x[j]);
             }

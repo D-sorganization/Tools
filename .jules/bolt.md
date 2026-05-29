@@ -28,6 +28,3 @@
 ## 2024-06-10 - Eliminate Map/FromEntries overhead for object creation
 **Learning:** Initializing objects with `Object.fromEntries(Object.entries(obj).map(...))` allocates intermediate arrays for entries, map results, and internal fromEntries representations.
 **Action:** Always replace chained `Object.entries(obj).map()` object initializations with a pre-allocated empty object and a single-pass `for (const key of Object.keys(obj))` loop.
-## 2024-05-31 - Array Pre-allocation in Nelder-Mead Loops
-**Learning:** In optimization loops like Nelder-Mead, dynamically allocating arrays in every iteration for reflections, expansions, and contractions causes severe garbage collection pauses due to intermediate array allocations inside the tight loop.
-**Action:** Always pre-allocate working arrays outside the main iteration loop and mutate them in-place to drastically improve iteration speed and reduce GC overhead. When adding the mutated array to a data structure, use the spread operator (e.g. `[...array]`) to copy it by value.
