@@ -1232,7 +1232,7 @@ class AIAssistantPanel(QWidget):
                     chat_path="/v1/chat/completions",
                     embed_path="/v1/embeddings",
                 )
-                self._add_system_message("🚀 Using high-performance Rust AI backend.")
+                self._add_system_message("Using high-performance Rust AI backend.")
             except ImportError:
                 from src.shared.python.ai.adapters.ollama_adapter import OllamaAdapter
 

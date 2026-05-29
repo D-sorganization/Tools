@@ -322,7 +322,7 @@ class UnifiedLauncher(ThemedWindowMixin, ThemedWindowMixin, QMainWindow):
 
         def run_launch() -> None:
             try:
-                self.log(f"🚀 Launching: {tool_name}...")
+                self.log(f"Launching: {tool_name}...")
                 launch_tool(
                     tool_info=tool_info,
                     repo_root=self.repo_root,

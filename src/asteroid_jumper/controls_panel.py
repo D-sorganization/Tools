@@ -150,7 +150,7 @@ class ControlsPanel(QWidget):
         group = QGroupBox("Simulation")
         vbox = QVBoxLayout(group)
 
-        self._jump_btn = QPushButton("🚀  JUMP!")
+        self._jump_btn = QPushButton("JUMP!")
         self._jump_btn.setFixedHeight(40)
         font = QFont()
         font.setBold(True)

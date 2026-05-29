@@ -4,7 +4,6 @@
 
 from __future__ import annotations
 
-from shared.python.theme.integration import ThemedWindowMixin
 import logging
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -36,6 +35,8 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+
+from shared.python.theme.integration import ThemedWindowMixin
 
 from .api_mode import APIRenameManager, RenameProposal
 from .cache import ResultCache
@@ -281,7 +282,7 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
         main_layout = QVBoxLayout(central_widget)
 
         # Header
-        header_label = QLabel("📄 PDF Renamer Pro")
+        header_label = QLabel("PDF Renamer Pro")
         header_font = QFont("Arial", 20, QFont.Weight.Bold)
         header_label.setFont(header_font)
         header_label.setStyleSheet(
@@ -301,7 +302,7 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
 
     def _create_directory_selection_group(self) -> QGroupBox:
         """Create the directory selection group box."""
-        dir_group = QGroupBox("📁 Directory Selection")
+        dir_group = QGroupBox("Directory Selection")
         dir_layout = QHBoxLayout()
         self.dir_input = QLineEdit()
         self.dir_input.setPlaceholderText("Select directory containing PDF files...")
@@ -314,7 +315,7 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
 
     def _create_processing_settings_group(self) -> QGroupBox:
         """Create the processing settings group box."""
-        settings_group = QGroupBox("⚙️ Processing Settings")
+        settings_group = QGroupBox("Processing Settings")
         settings_layout = QVBoxLayout()
 
         # Naming style row
@@ -332,14 +333,14 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
 
         # Options Row 1
         options_layout = QHBoxLayout()
-        self.dry_run_check = QCheckBox("🔍 Dry Run (Preview only)")
+        self.dry_run_check = QCheckBox("Dry Run (Preview only)")
         self.dry_run_check.setChecked(True)
         options_layout.addWidget(self.dry_run_check)
-        self.delete_dups_check = QCheckBox("🗑️ Delete Duplicates")
+        self.delete_dups_check = QCheckBox("Delete Duplicates")
         options_layout.addWidget(self.delete_dups_check)
-        self.use_llm_check = QCheckBox("🤖 Use AI (Gemini)")
+        self.use_llm_check = QCheckBox("Use AI (Gemini)")
         options_layout.addWidget(self.use_llm_check)
-        self.recursive_check = QCheckBox("📂 Include Subfolders")
+        self.recursive_check = QCheckBox("Include Subfolders")
         self.recursive_check.setChecked(True)
         options_layout.addWidget(self.recursive_check)
         options_layout.addStretch()
@@ -347,9 +348,9 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
 
         # Options Row 2
         options_layout2 = QHBoxLayout()
-        self.include_author_check = QCheckBox("👤 Include Author (Author - Title.pdf)")
+        self.include_author_check = QCheckBox("Include Author (Author - Title.pdf)")
         options_layout2.addWidget(self.include_author_check)
-        self.move_failed_check = QCheckBox("📁 Move Failed Files to Subfolder")
+        self.move_failed_check = QCheckBox("Move Failed Files to Subfolder")
         self.move_failed_check.setChecked(True)
         options_layout2.addWidget(self.move_failed_check)
         options_layout2.addStretch()
@@ -375,14 +376,14 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
     def _create_batch_control_buttons(self) -> QHBoxLayout:
         """Create the start/cancel button row."""
         button_layout = QHBoxLayout()
-        self.start_btn = QPushButton("🚀 Start Processing")
+        self.start_btn = QPushButton("Start Processing")
         self.start_btn.setStyleSheet(
             "background-color: #27ae60; color: white; padding: 12px; font-size: 14px; font-weight: bold; border-radius: 5px;"
         )
         self.start_btn.clicked.connect(self.start_processing)
         button_layout.addWidget(self.start_btn)
 
-        self.cancel_btn = QPushButton("⏹️ Cancel")
+        self.cancel_btn = QPushButton("Cancel")
         self.cancel_btn.setStyleSheet(
             "background-color: #e74c3c; color: white; padding: 12px; font-size: 14px; font-weight: bold; border-radius: 5px;"
         )
@@ -402,7 +403,7 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
         layout.addWidget(self._create_processing_settings_group())
 
         # Progress
-        progress_group = QGroupBox("📊 Progress")
+        progress_group = QGroupBox("Progress")
         progress_layout = QVBoxLayout()
         self.progress_bar = QProgressBar()
         progress_layout.addWidget(self.progress_bar)
@@ -414,7 +415,7 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
         layout.addLayout(self._create_batch_control_buttons())
 
         # Log output
-        log_group = QGroupBox("📋 Execution Log")
+        log_group = QGroupBox("Execution Log")
         log_layout = QVBoxLayout()
         self.log_output = QTextEdit()
         self.log_output.setReadOnly(True)
@@ -423,7 +424,7 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
         log_group.setLayout(log_layout)
         layout.addWidget(log_group)
 
-        self.tab_widget.addTab(batch_widget, "🔄 Batch Processing")
+        self.tab_widget.addTab(batch_widget, "Batch Processing")
 
     def create_api_tab(self) -> None:
         """Create the API-only processing tab."""
@@ -432,7 +433,7 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
 
         # Info label
         info_label = QLabel(
-            "🤖 API-Only Mode: Generate rename proposals using AI, then review and approve manually."
+            "API-Only Mode: Generate rename proposals using AI, then review and approve manually."
         )
         info_label.setStyleSheet(
             "background: #e8f4fd; padding: 10px; border-radius: 5px; color: #2c3e50;"
@@ -440,7 +441,7 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
         layout.addWidget(info_label)
 
         # Directory and settings
-        dir_group = QGroupBox("📁 Directory & Settings")
+        dir_group = QGroupBox("Directory & Settings")
         dir_layout = QVBoxLayout()
 
         # Directory selection
@@ -474,19 +475,19 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
 
         # Control buttons
         api_button_layout = QHBoxLayout()
-        self.generate_btn = QPushButton("🔍 Generate Proposals")
+        self.generate_btn = QPushButton("Generate Proposals")
         self.generate_btn.setStyleSheet(
             "background-color: #3498db; color: white; padding: 10px; font-size: 14px; font-weight: bold; border-radius: 5px;"
         )
         self.generate_btn.clicked.connect(self.generate_proposals)
         api_button_layout.addWidget(self.generate_btn)
 
-        self.export_btn = QPushButton("📤 Export CSV")
+        self.export_btn = QPushButton("Export CSV")
         self.export_btn.setEnabled(False)
         self.export_btn.clicked.connect(self.export_proposals)
         api_button_layout.addWidget(self.export_btn)
 
-        self.execute_btn = QPushButton("✅ Execute Approved")
+        self.execute_btn = QPushButton("Execute Approved")
         self.execute_btn.setEnabled(False)
         self.execute_btn.clicked.connect(self.execute_approved)
         api_button_layout.addWidget(self.execute_btn)
@@ -495,7 +496,7 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
         layout.addLayout(api_button_layout)
 
         # Proposals table
-        table_group = QGroupBox("📋 Rename Proposals")
+        table_group = QGroupBox("Rename Proposals")
         table_layout = QVBoxLayout()
         self.proposals_table = QTableWidget()
         self.proposals_table.setColumnCount(6)
@@ -516,7 +517,7 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
         table_group.setLayout(table_layout)
         layout.addWidget(table_group)
 
-        self.tab_widget.addTab(api_widget, "🤖 API Mode")
+        self.tab_widget.addTab(api_widget, "API Mode")
 
     def create_settings_tab(self) -> None:
         """Create the settings and preferences tab."""
@@ -524,7 +525,7 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
         layout = QVBoxLayout(settings_widget)
 
         # Preferences group
-        prefs_group = QGroupBox("🔧 User Preferences")
+        prefs_group = QGroupBox("User Preferences")
         prefs_layout = QVBoxLayout()
 
         # Remember settings
@@ -544,7 +545,7 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
         layout.addWidget(prefs_group)
 
         # API Configuration
-        api_group = QGroupBox("🔑 API Configuration")
+        api_group = QGroupBox("API Configuration")
         api_layout = QVBoxLayout()
 
         api_info = QLabel(
@@ -554,11 +555,11 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
         api_layout.addWidget(api_info)
 
         api_button_layout = QHBoxLayout()
-        self.setup_api_btn = QPushButton("🔧 Setup API Key")
+        self.setup_api_btn = QPushButton("Setup API Key")
         self.setup_api_btn.clicked.connect(self.setup_api_key)
         api_button_layout.addWidget(self.setup_api_btn)
 
-        self.test_api_btn = QPushButton("🧪 Test API Key")
+        self.test_api_btn = QPushButton("Test API Key")
         self.test_api_btn.clicked.connect(self.test_api_key)
         api_button_layout.addWidget(self.test_api_btn)
         api_button_layout.addStretch()
@@ -569,7 +570,7 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
 
         # Save preferences button
         save_layout = QHBoxLayout()
-        self.save_prefs_btn = QPushButton("💾 Save Preferences")
+        self.save_prefs_btn = QPushButton("Save Preferences")
         self.save_prefs_btn.setStyleSheet(
             "background-color: #27ae60; color: white; padding: 10px; font-size: 14px; font-weight: bold; border-radius: 5px;"
         )
@@ -579,7 +580,7 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
         layout.addLayout(save_layout)
 
         layout.addStretch()
-        self.tab_widget.addTab(settings_widget, "⚙️ Settings")
+        self.tab_widget.addTab(settings_widget, "Settings")
 
     def load_preferences(self) -> None:
         """Load user preferences into the GUI."""
@@ -800,7 +801,7 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
 
         except (PermissionError, OSError) as e:
             self.generate_btn.setEnabled(True)
-            self.generate_btn.setText("🔍 Generate Proposals")
+            self.generate_btn.setText("Generate Proposals")
             QMessageBox.critical(self, "Error", f"Failed to generate proposals: {e}")
             logger.error(f"Error generating proposals: {e}")
 
@@ -826,28 +827,28 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
             self.proposals_table.setItem(i, 3, status_item)
 
             # Approve button
-            approve_btn = QPushButton("✅ Approve")
+            approve_btn = QPushButton("Approve")
             approve_btn.clicked.connect(
                 lambda checked, idx=i: self.approve_proposal(idx)
             )
             self.proposals_table.setCellWidget(i, 4, approve_btn)
 
             # Reject button
-            reject_btn = QPushButton("❌ Reject")
+            reject_btn = QPushButton("Reject")
             reject_btn.clicked.connect(lambda checked, idx=i: self.reject_proposal(idx))
             self.proposals_table.setCellWidget(i, 5, reject_btn)
 
     def approve_proposal(self, index: int) -> None:
         """Approve a proposal."""
         if self.api_manager and self.api_manager.approve_proposal(index):
-            status_item = QTableWidgetItem("✅ Approved")
+            status_item = QTableWidgetItem("Approved")
             status_item.setBackground(Qt.GlobalColor.green)
             self.proposals_table.setItem(index, 3, status_item)
 
     def reject_proposal(self, index: int) -> None:
         """Reject a proposal."""
         if self.api_manager and self.api_manager.reject_proposal(index):
-            status_item = QTableWidgetItem("❌ Rejected")
+            status_item = QTableWidgetItem("Rejected")
             status_item.setBackground(Qt.GlobalColor.red)
             self.proposals_table.setItem(index, 3, status_item)
 
@@ -896,16 +897,16 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
                     self,
                     "Execution Complete",
                     f"Rename operations completed:\n"
-                    f"✅ Success: {results['success']}\n"
-                    f"❌ Failed: {results['failed']}\n"
-                    f"⏭️ Skipped: {results['skipped']}",
+                    f"Success: {results['success']}\n"
+                    f"Failed: {results['failed']}\n"
+                    f"Skipped: {results['skipped']}",
                 )
 
                 # Refresh the table to show completed operations
                 for i in range(self.proposals_table.rowCount()):
                     status_item = self.proposals_table.item(i, 3)
-                    if status_item and status_item.text() == "✅ Approved":
-                        status_item.setText("✅ Completed")
+                    if status_item and status_item.text() == "Approved":
+                        status_item.setText("Completed")
 
             except (KeyError, ValueError, TypeError) as e:
                 QMessageBox.critical(
@@ -945,16 +946,16 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
             llm = GeminiTitleLLM()
             if llm.genai:
                 QMessageBox.information(
-                    self, "API Key Test", "✅ API key is working correctly!"
+                    self, "API Key Test", "API key is working correctly!"
                 )
             else:
                 QMessageBox.warning(
                     self,
                     "API Key Test",
-                    "❌ API key test failed. Please check your configuration.",
+                    "API key test failed. Please check your configuration.",
                 )
         except (KeyError, ValueError, TypeError) as e:
-            QMessageBox.critical(self, "API Key Test", f"❌ API key test failed: {e}")
+            QMessageBox.critical(self, "API Key Test", f"API key test failed: {e}")
 
 
 def main() -> None:
