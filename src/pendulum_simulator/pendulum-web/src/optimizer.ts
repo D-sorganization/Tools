@@ -64,10 +64,13 @@ export interface OptimizerResult {
 function evaluateCost(
     coeffs: number[],
     config: OptimizerConfig,
+    coeffsShoulder: number[],
+    coeffsWrist: number[],
 ): number {
     const nShoulder = config.shoulderDegree + 1;
-    const coeffsShoulder = coeffs.slice(0, nShoulder);
-    const coeffsWrist = coeffs.slice(nShoulder);
+    const nWrist = coeffs.length - nShoulder;
+    for (let i = 0; i < nShoulder; i++) coeffsShoulder[i] = coeffs[i];
+    for (let i = 0; i < nWrist; i++) coeffsWrist[i] = coeffs[nShoulder + i];
 
     let torqueFunc: TorqueFunc;
     try {
@@ -281,12 +284,16 @@ export function optimizeTorqueProfile(
         for (let i = 1; i < nWrist; i++) x0.push(0);
     }
 
-    const objective = (coeffs: number[]) => evaluateCost(coeffs, config);
+    const evalShoulder = new Array(nShoulder);
+    const evalWrist = new Array(nWrist);
+    const objective = (coeffs: number[]) => evaluateCost(coeffs, config, evalShoulder, evalWrist);
 
     const progressAdapter = onProgress
         ? (iter: number, bestCost: number, bestX: number[]) => {
-            const coeffsShoulder = bestX.slice(0, nShoulder);
-            const coeffsWrist = bestX.slice(nShoulder);
+            const coeffsShoulder = new Array(nShoulder);
+            for (let i = 0; i < nShoulder; i++) coeffsShoulder[i] = bestX[i];
+            const coeffsWrist = new Array(nWrist);
+            for (let i = 0; i < nWrist; i++) coeffsWrist[i] = bestX[nShoulder + i];
             onProgress({
                 iteration: iter,
                 maxIterations: config.maxIterations,
@@ -302,8 +309,10 @@ export function optimizeTorqueProfile(
         objective, x0, config.maxIterations, config.tolerance, progressAdapter,
     );
 
-    const coeffsShoulder = result.x.slice(0, nShoulder);
-    const coeffsWrist = result.x.slice(nShoulder);
+    const coeffsShoulder = new Array(nShoulder);
+    for (let i = 0; i < nShoulder; i++) coeffsShoulder[i] = result.x[i];
+    const coeffsWrist = new Array(nWrist);
+    for (let i = 0; i < nWrist; i++) coeffsWrist[i] = result.x[nShoulder + i];
 
     return {
         coeffsShoulder,
