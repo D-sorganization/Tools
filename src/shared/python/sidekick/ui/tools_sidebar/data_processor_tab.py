@@ -179,8 +179,10 @@ class SidekickDataProcessorTab(QtWidgets.QWidget):
 
 
 def _build_data_processor_widget(parent: QtWidgets.QWidget) -> QtWidgets.QWidget:
+    # Resolve relative to this package so the import is independent of which
+    # top-level alias (sidekick / upstream_drift_tools) the consumer uses.
     module = importlib.import_module(
-        "upstream_drift_tools.ui.widgets.data_processor_widget"
+        "..widgets.data_processor_widget", package=__package__
     )
     widget_class = module.DataProcessorWidget
     return widget_class(parent)

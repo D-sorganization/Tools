@@ -240,3 +240,18 @@ def test_delete_state_permission_error(manager) -> Any:
     manager.save_state("del_err", {"a": 1})
     with patch("pathlib.Path.unlink", side_effect=PermissionError):
         assert manager.delete_state("del_err") is False
+
+
+def test_json_helpers_are_package_local() -> None:
+    """Guard against test/prod divergence: the JSON helpers must be defined in
+    the sidekick package itself, not imported from a sibling ``utils`` tree that
+    only exists on the pytest ``sys.path`` (pyproject pythonpath: src/python/src).
+    Importing from there silently breaks every BaseCalculatorWidget at runtime.
+    """
+    from sidekick.utils import state_manager as sm
+
+    for helper in (sm.safe_read_json, sm.safe_write_json):
+        assert helper.__module__.endswith("sidekick.utils.state_manager"), (
+            f"{helper.__name__} is defined in {helper.__module__!r}; it must be "
+            "package-local so state_manager imports without the test sys.path."
+        )

@@ -16,13 +16,55 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from compatibility import UTC
-
-# Use canonical file I/O utilities instead of reimplementing them
-from utils.file_utils import safe_read_json, safe_write_json
-
 # Setup logging
 _logger = logging.getLogger(__name__)
+
+# ``state_manager`` is part of the shared ``sidekick`` library and must import
+# cleanly wherever the package is importable. It therefore keeps its JSON I/O
+# helpers self-contained rather than depending on a sibling ``utils`` tree that
+# is only present on the test ``sys.path``.
+
+
+def safe_read_json(file_path: Path | str, default: Any = None) -> Any:
+    """Read JSON from ``file_path``, returning ``default`` on any failure."""
+    if file_path is None:
+        raise ValueError("file_path must be provided")
+    path = Path(file_path)
+    if not path.exists():
+        return default
+    try:
+        with open(path, encoding="utf-8") as handle:
+            return json.load(handle)
+    except json.JSONDecodeError as exc:
+        _logger.error("Invalid JSON in %s: %s", path, exc)
+        return default
+    except (PermissionError, OSError) as exc:
+        _logger.error("Error reading JSON file %s: %s", path, exc)
+        return default
+
+
+def safe_write_json(
+    file_path: Path | str,
+    data: Any,
+    indent: int = 2,
+    create_parents: bool = True,
+) -> bool:
+    """Write ``data`` as JSON to ``file_path``; return ``True`` on success."""
+    if file_path is None:
+        raise ValueError("file_path must be provided")
+    path = Path(file_path)
+    try:
+        if create_parents:
+            path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "w", encoding="utf-8") as handle:
+            json.dump(data, handle, indent=indent, ensure_ascii=False)
+        return True
+    except TypeError as exc:
+        _logger.error("Data not JSON serializable for %s: %s", path, exc)
+        return False
+    except (PermissionError, OSError) as exc:
+        _logger.error("Error writing JSON file %s: %s", path, exc)
+        return False
 
 
 class StateManager:
@@ -335,7 +377,7 @@ class StateManager:
 
             if export_path is None:
                 safe_name = self._sanitize_filename(state_name)
-                timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")  # noqa: UP017
+                timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")  # noqa: UP017
                 export_filename = f"{safe_name}_{timestamp}.cestate"
                 final_export_path = self.exports_dir / export_filename
             else:
@@ -478,7 +520,7 @@ class StateManager:
     def _create_backup(self, state_file: Path) -> None:
         """Create backup of existing state file"""
         try:
-            timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")  # noqa: UP017
+            timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")  # noqa: UP017
             backup_name = f"{state_file.stem}_{timestamp}.backup"
             backup_path = self.backups_dir / backup_name
 
