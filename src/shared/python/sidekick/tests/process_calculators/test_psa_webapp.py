@@ -3,14 +3,23 @@
 
 from __future__ import annotations
 
+import importlib.util
 import sys
 from unittest.mock import MagicMock, patch
 
-sys.modules["streamlit"] = MagicMock()
-sys.modules["plotly"] = MagicMock()
-sys.modules["plotly.express"] = MagicMock()
-sys.modules["plotly.graph_objects"] = MagicMock()
-sys.modules["pandas"] = MagicMock()
+# Stub optional UI/plotting dependencies that are not installed in the test
+# environment so psa_webapp (a Streamlit app) can be imported. CRITICAL: only
+# stub a module that is genuinely absent. Stubbing an installed dependency such
+# as ``pandas`` here permanently replaces it in ``sys.modules`` for the rest of
+# the session and silently breaks every later test that uses real pandas
+# (it was the root cause of ~46 cross-file failures; see #3096).
+for _optional_dep in ("streamlit", "plotly", "plotly.express", "plotly.graph_objects"):
+    try:
+        _present = importlib.util.find_spec(_optional_dep) is not None
+    except ModuleNotFoundError:
+        _present = False
+    if not _present:
+        sys.modules.setdefault(_optional_dep, MagicMock())
 
 import numpy as np
 import pytest

@@ -20,19 +20,19 @@ def test_base_calculator_mixin_init_default() -> Any:
     assert isinstance(calc._splitters, list)
     assert isinstance(calc._copyable_widgets, list)
     assert isinstance(calc._state, dict)
-    assert (
-        calc._logger.name
-        == "upstream_drift_tools.ui.mixins.base_calculator_mixin.MockCalculator"
-    )
+    # The top-level package alias differs by import path (upstream_drift_tools
+    # vs sidekick vs src.shared.python.sidekick all alias the same module), so
+    # assert on the stable module-suffix rather than a brittle absolute prefix.
+    assert calc._logger.name.endswith("ui.mixins.base_calculator_mixin.MockCalculator")
 
 
 def test_base_calculator_mixin_init_with_name() -> Any:
     calc = MockCalculator("CustomName")
     assert calc.calculator_name == "CustomName"
-    assert (
-        calc._logger.name
-        == "upstream_drift_tools.ui.mixins.base_calculator_mixin.MockCalculator"
-    )
+    # The top-level package alias differs by import path (upstream_drift_tools
+    # vs sidekick vs src.shared.python.sidekick all alias the same module), so
+    # assert on the stable module-suffix rather than a brittle absolute prefix.
+    assert calc._logger.name.endswith("ui.mixins.base_calculator_mixin.MockCalculator")
 
 
 def test_base_calculator_mixin_existing_attrs() -> Any:

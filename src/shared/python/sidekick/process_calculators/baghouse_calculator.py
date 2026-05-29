@@ -47,30 +47,24 @@ __all__ = [
     "BaghouseResult",
 ]
 
-# Try to import thermo module, use simplified calculations if not available
-try:
-    from tools.thermo import (
-        FlowUnit,
-        GasStream,
-        ThermodynamicCalculator,
-    )
-    from tools.unit_converter import convert
+# This shared-library calculator runs in standalone (simplified) mode. It must
+# not import from the downstream ``tools`` application package (that would
+# invert the dependency direction); the thermo-backed path is therefore
+# unavailable here and ideal-gas approximations are used instead.
+HAS_THERMO = False
+FlowUnit = None
+GasStream = None
+ThermodynamicCalculator = None
 
-    HAS_THERMO = True
-except ImportError:
-    HAS_THERMO = False
-    FlowUnit = None
-    GasStream = None
-    ThermodynamicCalculator = None
 
-    def convert(value: float, from_unit: str, to_unit: str) -> float:
-        """Simple temperature conversion fallback."""
-        assert value is not None, "value must be provided"
-        if from_unit == "K" and to_unit == "C":
-            return float(value - CELSIUS_TO_KELVIN_OFFSET)
-        elif from_unit == "C" and to_unit == "K":
-            return float(value + CELSIUS_TO_KELVIN_OFFSET)
-        return value
+def convert(value: float, from_unit: str, to_unit: str) -> float:
+    """Simple temperature conversion fallback."""
+    assert value is not None, "value must be provided"
+    if from_unit == "K" and to_unit == "C":
+        return float(value - CELSIUS_TO_KELVIN_OFFSET)
+    elif from_unit == "C" and to_unit == "K":
+        return float(value + CELSIUS_TO_KELVIN_OFFSET)
+    return value
 
 
 @dataclass
@@ -371,7 +365,9 @@ class BaghouseCalculator:
         )
         require_positive(drum_volume_m3, "drum_volume_m3")
         require_positive(solid_density_kg_m3, "solid_density_kg_m3")
-        require_positive(bag_area_ft2, "bag_area_ft2")
+        # bag_area_ft2 == 0 is a valid degenerate case: the air-to-cloth ratio
+        # computation below explicitly returns 0.0 when there is no bag area, so
+        # it must not be constrained to strictly positive here.
 
         outlet_temp_c, flow_acfm, flow_scfm = self._calculate_outlet_thermal(
             gas_flow_kg_s,

@@ -292,9 +292,9 @@ class TestBaghouseCalculate:
         assert result.ash_stream_composition["ash_fraction"] == 0.0
 
     def test_negative_gas_flow_raises(self):
-        """Line 351: gas_flow <= 0 → AssertionError."""
+        """gas_flow <= 0 violates the DbC precondition."""
         calc = _calc()
-        with pytest.raises(AssertionError, match="Gas flow must be positive"):
+        with pytest.raises(AssertionError, match="gas_flow_kg_s must be positive"):
             calc.calculate(
                 gas_flow_kg_s=-1.0,
                 inlet_temp_k=700.0,
@@ -311,10 +311,10 @@ class TestBaghouseCalculate:
             )
 
     def test_efficiency_out_of_range_raises(self):
-        """Lines 354-359: efficiency > 1 → AssertionError."""
+        """efficiency > 1 violates the DbC precondition."""
         calc = _calc()
         with pytest.raises(
-            AssertionError, match="Carbon removal efficiency must be 0-1"
+            AssertionError, match=r"carbon_removal_efficiency must be in \[0, 1\]"
         ):
             calc.calculate(
                 gas_flow_kg_s=1.0,
