@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.221                                    |
+| **Spec Version**        | 1.1.222                                    |
 | **Last Spec Update**    | 2026-05-30                                 |
 
 ## 2. Purpose & Mission
@@ -946,6 +946,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.222
+
+- 2026-05-31: perf(p1am frontend, #3126) — optimize array aggregations in `AlarmsHeader.tsx` by replacing chained `.filter()` and `.reduce()` operations with a single-pass `for` loop, eliminating intermediate array allocations and minimizing garbage collection overhead during high-frequency alarm updates.
 
 ### Version 1.1.221
 
