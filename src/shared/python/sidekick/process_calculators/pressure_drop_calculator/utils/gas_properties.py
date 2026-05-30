@@ -449,6 +449,16 @@ def calculate_compressibility_factor(
         P_pc += mole_frac * props.critical_pressure
         omega_mix += mole_frac * props.acentric_factor
 
+    # Guard against a composition with no recognised components: T_pc/P_pc
+    # would remain 0 and the reduced-property division would raise
+    # ZeroDivisionError. Fall back to the ideal-gas value (issue #3103 F7).
+    if T_pc <= 0 or P_pc <= 0:
+        _logger.warning(
+            "No components of the composition are in GAS_DATABASE; "
+            "returning ideal-gas compressibility Z=1.0"
+        )
+        return 1.0
+
     # Reduced properties
     T_r = temperature / T_pc  # Reduced temperature
     P_r = pressure / P_pc  # Reduced pressure

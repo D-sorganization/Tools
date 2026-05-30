@@ -2119,6 +2119,23 @@
                 }
               ],
               "returns": "dict[str, list[str]]"
+            },
+            "get_compatible_units": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "unit",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "list[str]"
             }
           }
         }
@@ -30594,7 +30611,7 @@
         }
       },
       "state_manager": {
-        "type": "variable"
+        "type": "unknown"
       }
     }
   },

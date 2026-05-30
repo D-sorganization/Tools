@@ -294,13 +294,16 @@ class UnitConversionService(
         if unit_stripped in self._normalized_cache:
             return self._normalized_cache[unit_stripped]
 
-        # Fast path 3: Check stripped version directly against static map (avoids full cleaning if lucky)
-        # Note: static map keys are fully cleaned (lowercase, no spaces)
-        # But we can check if it's a known canonical unit first
-        for factors in self.category_map.values():
-            if unit_stripped in factors:
-                self._normalized_cache[unit] = unit_stripped
-                return unit_stripped
+        # Fast path 3: exact canonical unit (O(1) — the cleaned form of every
+        # canonical unit is precomputed into ``_static_clean_map`` in
+        # ``_init_tables``, so the old per-category linear scan is redundant).
+        cleaned_stripped = self._clean_string(unit_stripped)
+        if (
+            cleaned_stripped in self._static_clean_map
+            and self._static_clean_map[cleaned_stripped] == unit_stripped
+        ):
+            self._normalized_cache[unit] = unit_stripped
+            return unit_stripped
 
         if unit_stripped.upper() in {"K", "C", "F", "R"}:
             res = unit_stripped.upper()
@@ -308,7 +311,7 @@ class UnitConversionService(
             return res
 
         # Slow path: clean the string and lookup
-        cleaned = self._clean_string(unit_stripped)
+        cleaned = cleaned_stripped
 
         # Check static map (O(1))
         if cleaned in self._static_clean_map:
@@ -326,8 +329,11 @@ class UnitConversionService(
                     self._normalized_cache[unit] = canonical
                     return canonical
 
-        # If not found, return original stripped
-        return unit_stripped
+        # Genuinely unresolved: signal failure rather than silently returning
+        # the input unchanged (issue #3101 F7). Callers / ``_get_category``
+        # advertise ``UnknownUnitError``.
+        msg = f"Unknown or unrecognized unit: {unit!r}"
+        raise UnknownUnitError(msg)
 
     def _get_category(self, unit: str) -> str | None:
         """Get the category for a given unit."""
@@ -547,6 +553,25 @@ class UnitConversionService(
             u for units in self.performance_units.values() for u in units
         ]
         return result
+
+    def get_compatible_units(self, unit: str) -> list[str]:
+        """Return all units convertible with ``unit`` (same category).
+
+        Public façade so UI widgets need not reach into the private
+        ``_normalize_unit``/``_get_category`` helpers (issue #3102 F9).
+        Returns an empty list when the unit cannot be resolved.
+        """
+        if unit is None:
+            raise ValueError("unit must be provided")
+        if not unit:
+            return []
+        try:
+            category = self._get_category(self._normalize_unit(unit))
+        except UnknownUnitError:
+            return []
+        if not category:
+            return []
+        return self.get_supported_units(category).get(category, [])
 
 
 class _ServiceHolder:

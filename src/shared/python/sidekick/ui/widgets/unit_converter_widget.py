@@ -209,14 +209,10 @@ class UnitConverterWidget(BaseCalculatorWindow):
             return self.all_units
 
         try:
-            # Type ignore since _get_category and _normalize_unit might be internal
-            from_category = self.converter._get_category(
-                self.converter._normalize_unit(from_unit)
-            )
-            if from_category:
-                all_units_by_category = self.converter.get_supported_units()
-                return all_units_by_category.get(from_category, self.all_units)
-        except (RuntimeError, AttributeError, TypeError):
+            compatible = self.converter.get_compatible_units(from_unit)
+            if compatible:
+                return compatible
+        except (RuntimeError, AttributeError, TypeError, ValueError):
             pass
 
         return self.all_units
@@ -487,10 +483,11 @@ class UnitConverterWidget(BaseCalculatorWindow):
     def _save_conversion(self, index: int) -> None:
         if index is None:
             raise ValueError("index must be provided")
-        if index >= len(self.rows):
-            return
-        conv = self.rows[index]
-        if conv.is_saved:
+        # Resolve through the widget-index mapping (0-2 recent, 3-5 saved)
+        # rather than indexing the flat ``self.rows`` directly, which collided
+        # the two index spaces and mutated the wrong row (#3102 F3).
+        conv = self._get_row_by_index(index)
+        if conv is None or conv.is_saved:
             return
         saved = [r for r in self.rows if r.is_saved]
         if len(saved) >= 3:
@@ -502,9 +499,10 @@ class UnitConverterWidget(BaseCalculatorWindow):
     def _delete_saved_conversion(self, index: int) -> None:
         if index is None:
             raise ValueError("index must be provided")
-        if index >= len(self.rows):
+        conv = self._get_row_by_index(index)
+        if conv is None:
             return
-        self.rows[index].is_saved = False
+        conv.is_saved = False
         self._rebuild_ui_and_save()
 
     def _rebuild_ui_and_save(self) -> None:

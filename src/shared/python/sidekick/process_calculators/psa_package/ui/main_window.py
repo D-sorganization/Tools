@@ -237,8 +237,13 @@ class PSAMainWindow(ThemedWindowMixin, QMainWindow):
         self._calculate()
 
     def _on_tab_change(self, index: int) -> None:
-        """Handle tab changes - pre-calculate plots when switching to sensitivity tab."""
-        if index == 1:  # Sensitivity Analysis tab
+        """Pre-calculate plots when switching to the sensitivity tab.
+
+        Resolve the tab position dynamically (issue #3105 F2) — the previous
+        hard-coded ``index == 1`` silently broke the trigger if tabs were
+        reordered.
+        """
+        if index == self.tab_widget.indexOf(self.sensitivity_widget):
             self.sensitivity_widget._update_plot()
 
     def _calculate(self) -> None:

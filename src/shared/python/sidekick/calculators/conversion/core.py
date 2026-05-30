@@ -43,6 +43,10 @@ def convert_via_table(
         raise ValueError("value must be provided")
     if from_unit == to_unit:
         return value
+    if from_unit not in table:
+        raise ValueError(f"Unknown source unit: {from_unit}")
+    if to_unit not in table:
+        raise ValueError(f"Unknown target unit: {to_unit}")
     base_value = value * table[from_unit]
     return base_value / table[to_unit]
 
@@ -52,6 +56,9 @@ def convert_temperature(value: float, from_unit: str, to_unit: str) -> float:
 
     if from_unit == to_unit:
         return value
+
+    if not math.isfinite(value):
+        raise ValueError(f"temperature value must be finite, got {value}")
 
     if from_unit == "K":
         kelvin = value

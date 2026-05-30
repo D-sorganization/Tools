@@ -370,7 +370,13 @@ class AcidGasDewpointCalculator:
             msg = f"Unknown component: {component}"
             raise ValueError(msg)
 
-        T = temperature_c + CELSIUS_TO_KELVIN_OFFSET  # Convert to Kelvin
+        # Absolute temperature in Kelvin — used only by the ``thermo`` and
+        # ``coolprop`` branches below. The Antoine / extended-Antoine branches
+        # deliberately use ``temperature_c`` because this calculator's A/B/C
+        # coefficients follow the °C convention (issue #3103 F10 — do NOT
+        # "fix" the apparent mismatch by substituting T here; that introduces
+        # a ~273 K error).
+        T = temperature_c + CELSIUS_TO_KELVIN_OFFSET
 
         if method == "antoine":
             A, B, C = (
@@ -379,7 +385,7 @@ class AcidGasDewpointCalculator:
                 self.antoine_constants[component]["C"],
             )
 
-            # Antoine equation: log10(P) = A - B/(C + T)
+            # Antoine equation (°C convention): log10(P) = A - B/(C + t_°C)
             log_p = A - B / (C + temperature_c)
             p_mmhg = 10**log_p
             return float(p_mmhg * MMHG_TO_PA_CONV)  # Convert mmHg to Pa

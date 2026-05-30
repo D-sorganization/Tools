@@ -16,7 +16,6 @@ import math
 from ...constants import (
     CHURCHILL_B_COEFF,
     COLEBROOK_ROUGHNESS_COEFF,
-    FRICTION_FACTOR_DEFAULT_LAMINAR,
     LAMINAR_FRICTION_CONSTANT,
     RE_LAMINAR_UPPER,
     SWAMEE_JAIN_COEFF,
@@ -49,8 +48,10 @@ def friction_factor_laminar(reynolds_number: float) -> float:
         Hagen, G. (1839), Poiseuille, J. (1840): Laminar flow in pipes
     """
     if reynolds_number <= 0:
-        _logger.error("Reynolds number must be positive")
-        return FRICTION_FACTOR_DEFAULT_LAMINAR
+        # Raise rather than silently returning a default (issue #3103 F6):
+        # colebrook/swamee-jain delegate here for Re < 2300, so a negative Re
+        # would otherwise yield 0.064 with no error and a wrong ΔP.
+        raise ValueError(f"Reynolds number must be positive, got {reynolds_number}")
 
     result = LAMINAR_FRICTION_CONSTANT / reynolds_number
     if not (result > 0):

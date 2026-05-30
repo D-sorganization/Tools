@@ -36,7 +36,6 @@ from .constants import (
     CELSIUS_TO_KELVIN_OFFSET,
     KJ_HR_TO_KW,
     R_GAS_J_MOL_K,
-    STANDARD_STATE_PRESSURE_PA,
     WGS_CATALYST_VOLUME_FRACTION,
     WGS_DELTA_H,
     WGS_DELTA_S,
@@ -256,6 +255,11 @@ class WGSReactorEngine:
 
         if temperature is None:
             raise ValueError("temperature must be provided")
+        # Van't Hoff diverges/overflows for non-positive absolute temperature
+        # (the GUI passes °C+273.15, so e.g. −300 °C arrives negative here).
+        # Require a positive Kelvin temperature (issue #3103 F8).
+        if not (temperature > 0):
+            raise ValueError(f"temperature must be positive (K), got {temperature}")
         delta_H = WGS_DELTA_H  # J/mol
         delta_S = WGS_DELTA_S  # J/(mol·K)
 
@@ -325,6 +329,51 @@ class WGSReactorEngine:
             "heat_released": heat_released,
         }
 
+    @staticmethod
+    def _solve_extent_from_k(
+        k_eq: float,
+        n_CO_0: float,
+        n_H2O_0: float,
+        n_CO2_0: float,
+        n_H2_0: float,
+    ) -> float:
+        """Solve the reaction extent x directly from the equilibrium constant.
+
+        WGS (CO + H2O ⇌ CO2 + H2) has Δn = 0, so total moles are conserved and
+        the total-pressure / total-mole terms cancel from the mole-fraction
+        equilibrium expression, leaving::
+
+            K = (n_CO2_0 + x)(n_H2_0 + x) / ((n_CO_0 - x)(n_H2O_0 - x))
+
+        which is a quadratic in x. Solving it directly keeps the reported K and
+        the solved composition self-consistent (issue #3103 F3), unlike the old
+        Gibbs minimisation whose extent never referenced K.
+        """
+        # (K - 1) x^2 - K (n_CO_0 + n_H2O_0) x + ... = 0
+        # Expand both sides:
+        #   (n_CO2_0 + x)(n_H2_0 + x) = K (n_CO_0 - x)(n_H2O_0 - x)
+        a = k_eq - 1.0
+        b = -(k_eq * (n_CO_0 + n_H2O_0) + (n_CO2_0 + n_H2_0))
+        c = k_eq * n_CO_0 * n_H2O_0 - n_CO2_0 * n_H2_0
+
+        x_max = min(n_CO_0, n_H2O_0)
+        if abs(a) < 1e-12:
+            # Linear case (K == 1): bx + c = 0.
+            x = -c / b if abs(b) > 1e-30 else 0.0
+        else:
+            disc = b * b - 4.0 * a * c
+            if disc < 0:
+                disc = 0.0
+            sqrt_disc = math.sqrt(disc)
+            root1 = (-b + sqrt_disc) / (2.0 * a)
+            root2 = (-b - sqrt_disc) / (2.0 * a)
+            # Pick the physically valid root in [0, x_max].
+            candidates = [r for r in (root1, root2) if -1e-9 <= r <= x_max + 1e-9]
+            x = candidates[0] if candidates else min(max(root1, 0.0), x_max)
+
+        # Clamp into the physical window.
+        return float(min(max(x, 0.0), x_max))
+
     def calculate_equilibrium_composition(
         self,
         inlet_composition: dict[str, float],
@@ -332,11 +381,18 @@ class WGSReactorEngine:
         pressure: float,
         steam_ratio: float = 2.0,
     ) -> dict[str, Any]:
-        """Calculate equilibrium composition for WGS reaction
-        using Gibbs free energy minimization."""
+        """Calculate equilibrium composition for the WGS reaction.
+
+        The extent of reaction is solved directly from the Van't Hoff
+        equilibrium constant so the reported ``equilibrium_constant`` and the
+        returned composition are always self-consistent (issue #3103 F3).
+        ``pressure`` is retained for API compatibility; it does not affect the
+        result because the reaction is mole-conserving.
+        """
 
         if inlet_composition is None:
             raise ValueError("inlet_composition must be provided")
+        del pressure  # mole-conserving reaction: pressure cancels.
         n_CO_0, n_H2O_0, n_CO2_0, n_H2_0, n_total_0 = self._prepare_initial_moles(
             inlet_composition, steam_ratio
         )
@@ -352,76 +408,7 @@ class WGSReactorEngine:
                 "heat_released": 0.0,
             }
 
-        # Gibbs free energy of formation at reaction temperature
-        def get_g_f(species_name: str) -> float:
-            species = self.species_db.get_species(species_name)
-            if not species:
-                return 0
-            return float(
-                species.formation_enthalpy * 1000
-                - temperature * species.formation_entropy
-            )
-
-        g_f_CO = get_g_f("CO")
-        g_f_H2O = get_g_f("H2O_g")
-        g_f_CO2 = get_g_f("CO2")
-        g_f_H2 = get_g_f("H2")
-
-        # Objective function — closure over local state
-        def total_gibbs_energy(x: Any) -> float:
-            extent = x[0] if hasattr(x, "__len__") else x
-
-            n_CO = n_CO_0 - extent
-            n_H2O = n_H2O_0 - extent
-            n_CO2 = n_CO2_0 + extent
-            n_H2 = n_H2_0 + extent
-            n_total = n_total_0
-
-            if n_total > 1e-10:
-                y_CO = n_CO / n_total
-                y_H2O = n_H2O / n_total
-                y_CO2 = n_CO2 / n_total
-                y_H2 = n_H2 / n_total
-            else:
-                y_CO = y_H2O = y_CO2 = y_H2 = 0.0
-
-            pressure_pa = pressure * STANDARD_STATE_PRESSURE_PA
-            p_CO = y_CO * pressure_pa
-            p_H2O = y_H2O * pressure_pa
-            p_CO2 = y_CO2 * pressure_pa
-            p_H2 = y_H2 * pressure_pa
-
-            P_std = STANDARD_STATE_PRESSURE_PA
-
-            g_CO = (
-                g_f_CO + self.R * temperature * math.log(p_CO / P_std)
-                if p_CO > 0
-                else 0
-            )
-            g_H2O = (
-                g_f_H2O + self.R * temperature * math.log(p_H2O / P_std)
-                if p_H2O > 0
-                else 0
-            )
-            g_CO2 = (
-                g_f_CO2 + self.R * temperature * math.log(p_CO2 / P_std)
-                if p_CO2 > 0
-                else 0
-            )
-            g_H2 = (
-                g_f_H2 + self.R * temperature * math.log(p_H2 / P_std)
-                if p_H2 > 0
-                else 0
-            )
-
-            return float(n_CO * g_CO + n_H2O * g_H2O + n_CO2 * g_CO2 + n_H2 * g_H2)
-
-        x_initial = 0.5 * min(n_CO_0, n_H2O_0)
-        bounds = [(0, min(n_CO_0, n_H2O_0))]
-        from scipy.optimize import minimize  # lazy import
-
-        result = minimize(total_gibbs_energy, x_initial, bounds=bounds)
-        x_eq = result.x[0]
+        x_eq = self._solve_extent_from_k(K_eq, n_CO_0, n_H2O_0, n_CO2_0, n_H2_0)
 
         return self._assemble_equilibrium_results(
             x_eq, n_CO_0, n_H2O_0, n_CO2_0, n_H2_0, K_eq
