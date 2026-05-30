@@ -20209,6 +20209,122 @@
       }
     }
   },
+  "ui/tools_sidebar/appearance.py": {
+    "__all__": [
+      "DEFAULT_DARK_PANEL_APPEARANCE",
+      "DEFAULT_LIGHT_PANEL_APPEARANCE",
+      "MAX_BORDER_RADIUS",
+      "MAX_BORDER_WIDTH",
+      "PanelAppearance",
+      "coerce_appearance",
+      "is_hex_color",
+      "panel_qss"
+    ],
+    "symbols": {
+      "DEFAULT_DARK_PANEL_APPEARANCE": {
+        "type": "variable"
+      },
+      "DEFAULT_LIGHT_PANEL_APPEARANCE": {
+        "type": "variable"
+      },
+      "MAX_BORDER_RADIUS": {
+        "type": "variable"
+      },
+      "MAX_BORDER_WIDTH": {
+        "type": "variable"
+      },
+      "PanelAppearance": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "to_dict": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "with_overrides": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "overrides",
+                  "annotation": "Any",
+                  "default": null,
+                  "kind": "kwarg"
+                }
+              ],
+              "returns": "PanelAppearance"
+            }
+          }
+        }
+      },
+      "coerce_appearance": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "values",
+              "annotation": "Mapping[str, Any] | None",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "base",
+              "annotation": "PanelAppearance",
+              "default": "DEFAULT_DARK_PANEL_APPEARANCE",
+              "kind": "arg"
+            }
+          ],
+          "returns": "PanelAppearance"
+        }
+      },
+      "is_hex_color": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "value",
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "bool"
+        }
+      },
+      "panel_qss": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "object_name",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "appearance",
+              "annotation": "PanelAppearance",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "str"
+        }
+      }
+    }
+  },
   "ui/tools_sidebar/calculator_assist.py": {
     "__all__": [
       "ALLOWED_CALCULATOR_COMMANDS",
@@ -20769,9 +20885,11 @@
       "CalculatorStartupResult",
       "CalculatorStartupWarning",
       "DEFAULT_CALCULATOR_STARTUP_IMPORTS",
+      "DEFAULT_REPL_STARTUP_IMPORTS",
       "apply_calculator_startup_imports",
       "calculator_startup_config_from_state_payload",
-      "default_calculator_startup_config"
+      "default_calculator_startup_config",
+      "default_repl_startup_config"
     ],
     "symbols": {
       "CalculatorStartupConfig": {
@@ -20874,6 +20992,9 @@
       "DEFAULT_CALCULATOR_STARTUP_IMPORTS": {
         "type": "variable"
       },
+      "DEFAULT_REPL_STARTUP_IMPORTS": {
+        "type": "variable"
+      },
       "apply_calculator_startup_imports": {
         "type": "function",
         "signature": {
@@ -20909,6 +21030,13 @@
         }
       },
       "default_calculator_startup_config": {
+        "type": "function",
+        "signature": {
+          "args": [],
+          "returns": "CalculatorStartupConfig"
+        }
+      },
+      "default_repl_startup_config": {
         "type": "function",
         "signature": {
           "args": [],
@@ -21780,6 +21908,181 @@
       }
     }
   },
+  "ui/tools_sidebar/chat_settings.py": {
+    "__all__": [
+      "CHAT_AGENT_MODES",
+      "CHAT_PROVIDERS",
+      "CHAT_SETTINGS_SCHEMA_VERSION",
+      "CHAT_TAB_ID",
+      "CHAT_TAB_SETTINGS",
+      "CHAT_TAB_SETTINGS_DEFAULTS",
+      "CHAT_THINKING_LEVELS",
+      "ChatSettingsPanel",
+      "apply_chat_settings_to_dock",
+      "build_chat_settings_panel",
+      "chat_settings_defaults",
+      "coerce_chat_settings",
+      "credential_status"
+    ],
+    "symbols": {
+      "CHAT_AGENT_MODES": {
+        "type": "variable"
+      },
+      "CHAT_PROVIDERS": {
+        "type": "variable"
+      },
+      "CHAT_SETTINGS_SCHEMA_VERSION": {
+        "type": "variable"
+      },
+      "CHAT_TAB_ID": {
+        "type": "variable"
+      },
+      "CHAT_TAB_SETTINGS": {
+        "type": "variable"
+      },
+      "CHAT_TAB_SETTINGS_DEFAULTS": {
+        "type": "variable"
+      },
+      "CHAT_THINKING_LEVELS": {
+        "type": "variable"
+      },
+      "ChatSettingsPanel": {
+        "type": "class",
+        "info": {
+          "bases": ["QtWidgets.QWidget"],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "sidebar",
+                  "annotation": "Any",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "tab_id",
+                  "annotation": "str",
+                  "default": "CHAT_TAB_ID",
+                  "kind": "arg"
+                },
+                {
+                  "name": "credential_manager",
+                  "annotation": "Any | None",
+                  "default": "None",
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "parent",
+                  "annotation": "QtWidgets.QWidget | None",
+                  "default": "None",
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "None"
+            },
+            "collect": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        }
+      },
+      "apply_chat_settings_to_dock": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "dock",
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "values",
+              "annotation": "Mapping[str, Any]",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "bool"
+        }
+      },
+      "build_chat_settings_panel": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "sidebar",
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "tab_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "QtWidgets.QWidget"
+        }
+      },
+      "chat_settings_defaults": {
+        "type": "function",
+        "signature": {
+          "args": [],
+          "returns": "dict[str, Any]"
+        }
+      },
+      "coerce_chat_settings": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "values",
+              "annotation": "Mapping[str, Any] | None",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "dict[str, Any]"
+        }
+      },
+      "credential_status": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "manager",
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "providers",
+              "annotation": "tuple[str, ...]",
+              "default": "CHAT_PROVIDERS",
+              "kind": "arg"
+            }
+          ],
+          "returns": "dict[str, bool]"
+        }
+      }
+    }
+  },
   "ui/tools_sidebar/command_history.py": {
     "__all__": ["CommandHistoryController", "DEFAULT_COMMAND_HISTORY_LIMIT"],
     "symbols": {
@@ -22333,6 +22636,34 @@
                 }
               ],
               "returns": "None"
+            },
+            "apply_appearance": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "appearance",
+                  "annotation": "PanelAppearance",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "appearance": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "PanelAppearance"
             },
             "column_headers": {
               "args": [
@@ -24340,6 +24671,34 @@
               ],
               "returns": "None"
             },
+            "apply_appearance": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "appearance",
+                  "annotation": "PanelAppearance",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "appearance": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "PanelAppearance"
+            },
             "switch_shell": {
               "args": [
                 {
@@ -25365,6 +25724,227 @@
       }
     }
   },
+  "ui/tools_sidebar/runtime_tab_settings.py": {
+    "__all__": [
+      "PYTHON_REPL_TAB_ID",
+      "PYTHON_REPL_TAB_SETTINGS",
+      "TERMINAL_TAB_ID",
+      "TERMINAL_TAB_SETTINGS",
+      "WORKSPACE_TAB_ID",
+      "WORKSPACE_TAB_SETTINGS",
+      "AppearanceSettingsPanel",
+      "PythonReplSettingsPanel",
+      "apply_appearance_to_tab",
+      "build_python_repl_settings_panel",
+      "build_terminal_settings_panel",
+      "build_workspace_settings_panel",
+      "parse_startup_rows"
+    ],
+    "symbols": {
+      "PYTHON_REPL_TAB_ID": {
+        "type": "variable"
+      },
+      "PYTHON_REPL_TAB_SETTINGS": {
+        "type": "variable"
+      },
+      "TERMINAL_TAB_ID": {
+        "type": "variable"
+      },
+      "TERMINAL_TAB_SETTINGS": {
+        "type": "variable"
+      },
+      "WORKSPACE_TAB_ID": {
+        "type": "variable"
+      },
+      "WORKSPACE_TAB_SETTINGS": {
+        "type": "variable"
+      },
+      "AppearanceSettingsPanel": {
+        "type": "class",
+        "info": {
+          "bases": ["QtWidgets.QWidget"],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "sidebar",
+                  "annotation": "Any",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "tab_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "base_appearance",
+                  "annotation": "PanelAppearance",
+                  "default": "DEFAULT_DARK_PANEL_APPEARANCE",
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "parent",
+                  "annotation": "QtWidgets.QWidget | None",
+                  "default": "None",
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "None"
+            },
+            "collect": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "PanelAppearance"
+            }
+          }
+        }
+      },
+      "PythonReplSettingsPanel": {
+        "type": "class",
+        "info": {
+          "bases": ["AppearanceSettingsPanel"],
+          "methods": {
+            "package_rows": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "list[tuple[str, str, bool]]"
+            },
+            "collect_startup_config": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CalculatorStartupConfig"
+            }
+          }
+        }
+      },
+      "apply_appearance_to_tab": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "sidebar",
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "tab_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "appearance",
+              "annotation": "PanelAppearance",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "bool"
+        }
+      },
+      "build_python_repl_settings_panel": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "sidebar",
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "tab_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "QtWidgets.QWidget"
+        }
+      },
+      "build_terminal_settings_panel": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "sidebar",
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "tab_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "QtWidgets.QWidget"
+        }
+      },
+      "build_workspace_settings_panel": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "sidebar",
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "tab_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "QtWidgets.QWidget"
+        }
+      },
+      "parse_startup_rows": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "rows",
+              "annotation": "Sequence[tuple[str, str, bool]]",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "CalculatorStartupConfig"
+        }
+      }
+    }
+  },
   "ui/tools_sidebar/runtime_tabs.py": {
     "__all__": [
       "PythonReplWidget",
@@ -25412,6 +25992,18 @@
                   "name": "object_name",
                   "annotation": "str",
                   "default": "SIDEKICK_PYTHON_REPL_OBJECT_NAME",
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "startup_config",
+                  "annotation": "CalculatorStartupConfig | None",
+                  "default": "None",
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "appearance",
+                  "annotation": "PanelAppearance | None",
+                  "default": "None",
                   "kind": "kwonlyarg"
                 },
                 {
@@ -25478,6 +26070,62 @@
                 }
               ],
               "returns": "None"
+            },
+            "apply_appearance": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "appearance",
+                  "annotation": "PanelAppearance",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "appearance": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "PanelAppearance"
+            },
+            "startup_config": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CalculatorStartupConfig"
+            },
+            "apply_startup_config": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "config",
+                  "annotation": "CalculatorStartupConfig",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CalculatorStartupResult"
             }
           }
         }
@@ -25613,6 +26261,18 @@
                   "kind": "kwonlyarg"
                 },
                 {
+                  "name": "startup_config",
+                  "annotation": "CalculatorStartupConfig | None",
+                  "default": "None",
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "appearance",
+                  "annotation": "PanelAppearance | None",
+                  "default": "None",
+                  "kind": "kwonlyarg"
+                },
+                {
                   "name": "parent",
                   "annotation": "QtWidgets.QWidget | None",
                   "default": "None",
@@ -25648,6 +26308,62 @@
                 }
               ],
               "returns": "None"
+            },
+            "apply_appearance": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "appearance",
+                  "annotation": "PanelAppearance",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "appearance": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "PanelAppearance"
+            },
+            "startup_config": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CalculatorStartupConfig"
+            },
+            "apply_startup_config": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "config",
+                  "annotation": "CalculatorStartupConfig",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CalculatorStartupResult"
             }
           }
         }
@@ -26346,6 +27062,34 @@
               "returns": "None"
             },
             "workspace_table_widget": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "QtWidgets.QWidget | None"
+            },
+            "tab_widget": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "tab_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "QtWidgets.QWidget | None"
+            },
+            "chat_dock_widget": {
               "args": [
                 {
                   "name": "self",

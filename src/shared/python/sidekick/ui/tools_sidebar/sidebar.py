@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 from compatibility import StrEnum
 
@@ -24,7 +24,14 @@ from .default_tabs import (
 )
 from .dock_title_bar import SidekickDockTitleBar
 from .help_content import render_help_markdown
-from .qt_compat import QtCore, QtWidgets, Signal, all_sidebar_dock_features, dock_area
+from .qt_compat import (
+    QtCore,
+    QtGui,
+    QtWidgets,
+    Signal,
+    all_sidebar_dock_features,
+    dock_area,
+)
 from .registry import WorkspaceRegistry
 from .runtime_tabs import PythonReplWidget
 from .state import SidebarState
@@ -297,22 +304,20 @@ class UnifiedToolsSidebar(
             - ``Ctrl+B`` → :meth:`toggle_visibility`
             - ``Ctrl+Shift+B`` → :meth:`toggle_collapsed`
         """
-        try:
-            from PyQt6.QtGui import (
-                QKeySequence,
-                QShortcut,
-            )
-        except ImportError:
-            try:
-                from PyQt5.QtGui import QKeySequence  # type: ignore[no-redef]
-                from PyQt5.QtWidgets import QShortcut  # type: ignore[no-redef]
-            except ImportError:
-                return  # Qt not available — gracefully skip shortcut registration
+        # Resolve via the already-selected Qt binding (qt_compat) rather than a
+        # PyQt6/PyQt5 import fork: QShortcut lives in QtGui on PyQt6 and in
+        # QtWidgets on PyQt5, so check both. Avoids dual-import redefinition
+        # and the brittle ``# type: ignore`` churn that came with it.
+        qshortcut = getattr(QtGui, "QShortcut", None) or getattr(
+            QtWidgets, "QShortcut", None
+        )
+        if qshortcut is None:
+            return  # Qt not available — gracefully skip shortcut registration
 
-        sc_toggle = QShortcut(QKeySequence("Ctrl+B"), main_window)
+        sc_toggle = qshortcut(QtGui.QKeySequence("Ctrl+B"), main_window)
         sc_toggle.activated.connect(self.toggle_visibility)
 
-        sc_collapse = QShortcut(QKeySequence("Ctrl+Shift+B"), main_window)
+        sc_collapse = qshortcut(QtGui.QKeySequence("Ctrl+Shift+B"), main_window)
         sc_collapse.activated.connect(self.toggle_collapsed)
 
     def re_dock(self, tab_id: str) -> bool:
@@ -333,7 +338,7 @@ class UnifiedToolsSidebar(
                 f"re_dock precondition failed: tab '{tab_id}' is not floating. "
                 "Only floating tabs can be re-docked."
             )
-        return self.redock_tab(tab_id)
+        return bool(self.redock_tab(tab_id))
 
     def add_tab(self, tab_id: str, title: str, widget: QtWidgets.QWidget) -> None:
         """Add a tab with a stable persistence id."""
@@ -444,6 +449,19 @@ class UnifiedToolsSidebar(
     def workspace_table_widget(self) -> QtWidgets.QWidget | None:
         """Return the registered workspace table widget, or *None*."""
         return getattr(self, "_workspace_table", None)
+
+    def tab_widget(self, tab_id: str) -> QtWidgets.QWidget | None:
+        """Return the live widget for ``tab_id``, or *None* if not built.
+
+        Narrow accessor so collaborators (settings panels) can apply
+        settings to a running tab without reaching into ``_tab_widgets``
+        directly (Law of Demeter).
+        """
+        return self._tab_widgets.get(tab_id)
+
+    def chat_dock_widget(self) -> QtWidgets.QWidget | None:
+        """Return the live Chat tab widget, or *None* if not built."""
+        return self.tab_widget("chat")
 
     def layout_mode(self) -> LayoutMode:
         """Return the currently active sidebar layout strategy."""
@@ -712,10 +730,13 @@ class UnifiedToolsSidebar(
         self._emit_context()
 
     def _default_tab_definitions(self) -> list[SidebarTabDefinition]:
-        return cast(
-            list[SidebarTabDefinition],
-            build_default_tab_definitions(self, SidebarTabDefinition),
+        # Annotated local rather than cast(): keeps mypy happy whether
+        # default_tabs is analysed (cast would be redundant) or skipped
+        # via --follow-imports=skip (the annotation absorbs the Any return).
+        definitions: list[SidebarTabDefinition] = build_default_tab_definitions(
+            self, SidebarTabDefinition
         )
+        return definitions
 
     def _add_defined_tab(self, definition: SidebarTabDefinition) -> None:
         widget = definition.factory(self)

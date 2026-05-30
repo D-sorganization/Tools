@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.214                                    |
-| **Last Spec Update**    | 2026-05-28                                 |
+| **Spec Version**        | 1.1.216                                    |
+| **Last Spec Update**    | 2026-05-29                                 |
 
 ## 2. Purpose & Mission
 
@@ -943,6 +943,11 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.216
+
+- 2026-05-29: chore(sidekick) — type-gate hardening surfaced by the changed-file CI mypy run: `register_shortcuts` now resolves `QShortcut`/`QKeySequence` through the active `qt_compat` binding instead of a PyQt6/PyQt5 dual-import fork, `_default_tab_definitions` returns an annotated local rather than `cast()`, and `SidekickThemeSettings.__post_init__` widens the persisted-`font` branch through `Any` so the runtime-dict reconstruction type-checks. Clears pre-existing `no-redef`/`unused-ignore`/`redundant-cast`/`no-any-return`/`arg-type` findings on `sidebar.py` and `theme_settings.py`.
+- 2026-05-29: feat(sidekick) — wired working ⚙ settings into the Chat, Terminal, Python REPL, and Workspace tabs (previously the gear was disabled on every tab except Data Explorer). New shared `appearance.py` (`PanelAppearance` value object + `panel_qss` generator) gives the terminal/REPL/workspace always-on visible borders and user-adjustable colours; the Workspace now shows an empty-state hint instead of blank white space and the REPL gained input/output labels. `chat_settings.py` adds provider/model/reasoning/agent-mode/auto-condense config plus keyring-backed API-key management. `runtime_tab_settings.py` adds per-tab appearance panels (native colour pickers) and a configurable preloaded scientific-package bundle (numpy/scipy/pandas/matplotlib/sympy) for the Python REPL, reusing the validated `CalculatorStartupConfig`. Added narrow `UnifiedToolsSidebar.tab_widget(tab_id)` accessor for live application (LOD). 130+ new tests; sidekick API stability baseline regenerated (purely additive).
 
 ### Version 1.1.212
 
