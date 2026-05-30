@@ -240,7 +240,7 @@ QHeaderView::section {{
     padding: 4px;
     font-weight: bold;
 }}
-QTextEdit {{
+QTextEdit, QTextBrowser {{
     background: {BG_DARKEST};
     color: #a0c0e0;
     border: 1px solid {BORDER_DEFAULT};

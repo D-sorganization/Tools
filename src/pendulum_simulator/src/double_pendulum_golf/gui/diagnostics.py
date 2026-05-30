@@ -46,10 +46,11 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QTableWidget,
     QTableWidgetItem,
-    QTextEdit,
     QVBoxLayout,
     QWidget,
 )
+
+from shared.python.ui import HoverCopyTextBrowser
 
 from .theme import SEVERITY_COLORS, STYLE_DIAGNOSTICS_DIALOG
 
@@ -347,7 +348,7 @@ class DiagnosticsViewer(ThemedDialogMixin, QDialog):
         details_label.setStyleSheet("color: #808090; font-size: 11px;")
         layout.addWidget(details_label)
 
-        self._details = QTextEdit()
+        self._details = HoverCopyTextBrowser()
         self._details.setReadOnly(True)
         self._details.setMinimumHeight(120)
         layout.addWidget(self._details, stretch=1)
@@ -402,13 +403,9 @@ class DiagnosticsViewer(ThemedDialogMixin, QDialog):
 
         error_count = self._tracker.error_count
         total = len(self._tracker.events)
-        self._count_label.setText(
-            f"{total} events total • {error_count} errors/critical"
-        )
+        self._count_label.setText(f"{total} events total • {error_count} errors/critical")
 
-    def _on_row_selected(
-        self, row: int, _col: int, _prev_row: int, _prev_col: int
-    ) -> None:
+    def _on_row_selected(self, row: int, _col: int, _prev_row: int, _prev_col: int) -> None:
         """Show details for the selected event."""
         # Events are displayed newest-first (reversed)
         if 0 <= row < len(self._displayed_events):
