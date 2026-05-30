@@ -241,6 +241,72 @@ def build_notes_tab(sidebar: Any) -> QtWidgets.QWidget:
     return widget
 
 
+class _ReplWorker(QtCore.QThread):
+    """Execute a Python script off the GUI thread (F6).
+
+    Emits ``finished(output)`` on the GUI thread when the script
+    completes so PythonReplWidget can safely update its output pane.
+    The worker does NOT hold a reference to the widget; all UI updates
+    go through the signal.
+    """
+
+    finished = QtCore.pyqtSignal(str)
+
+    def __init__(
+        self,
+        script: str,
+        namespace: dict[str, Any],
+        parent: QtCore.QObject | None = None,
+    ) -> None:
+        super().__init__(parent)
+        self._script = script
+        self._namespace = namespace
+
+    def run(self) -> None:  # noqa: ANN201 - Qt override
+        """Run the user script and emit ``finished`` with formatted output."""
+        stdout = io.StringIO()
+        stderr = io.StringIO()
+        exception: Exception | None = None
+        last_result: Any = _SENTINEL
+        compiled_exec = None
+        compiled_eval = None
+        try:
+            with contextlib.suppress(SyntaxError):
+                compiled_eval = compile(self._script, "<sidekick-repl>", "eval")
+            if compiled_eval is None:
+                compiled_exec = compile(self._script, "<sidekick-repl>", "exec")
+        except Exception as exc:  # noqa: BLE001 - report compile errors
+            exception = exc
+
+        if exception is None:
+            try:
+                with (
+                    contextlib.redirect_stdout(stdout),
+                    contextlib.redirect_stderr(stderr),
+                ):
+                    if compiled_eval is not None:
+                        last_result = eval(  # noqa: S307  # nosec B307
+                            compiled_eval, self._namespace, self._namespace
+                        )
+                    else:
+                        assert compiled_exec is not None
+                        exec(  # noqa: S102  # nosec B102
+                            compiled_exec, self._namespace, self._namespace
+                        )
+            except Exception as exc:  # noqa: BLE001 - REPL reports user errors
+                _logger.debug("Sidekick REPL execution failed: %s", exc)
+                exception = exc
+
+        output = _format_terminal_output(stdout, stderr, exception)
+        if (
+            exception is None
+            and last_result is not _SENTINEL
+            and last_result is not None
+        ):
+            output = f"{repr(last_result)}\n{output}" if output else repr(last_result)
+        self.finished.emit(output)
+
+
 class PythonReplWidget(QtWidgets.QWidget):
     """Reusable Python REPL bound to a :class:`WorkspaceRegistry`.
 
@@ -311,13 +377,34 @@ class PythonReplWidget(QtWidgets.QWidget):
         )
         layout.addWidget(self._input, stretch=2)
 
+        # F6: run-row — Run + Cancel buttons side-by-side.
+        run_row = QtWidgets.QHBoxLayout()
+        run_row.setSpacing(6)
+
         self._run_button = QtWidgets.QPushButton("Run", self)
         self._run_button.setObjectName("SidekickPythonReplRun")
         self._run_button.setToolTip(
             "Execute the current script and export assigned variables."
         )
         self._run_button.clicked.connect(self._on_run_clicked)
-        layout.addWidget(self._run_button)
+        run_row.addWidget(self._run_button)
+
+        self._cancel_button = QtWidgets.QPushButton("Cancel", self)
+        self._cancel_button.setObjectName("SidekickPythonReplCancel")
+        self._cancel_button.setToolTip(
+            "Attempt to interrupt a long-running script (best-effort)."
+        )
+        self._cancel_button.setEnabled(False)
+        self._cancel_button.setVisible(False)
+        self._cancel_button.clicked.connect(self._on_cancel_clicked)
+        run_row.addWidget(self._cancel_button)
+
+        layout.addLayout(run_row)
+
+        self._status_label = QtWidgets.QLabel("", self)
+        self._status_label.setObjectName("SidekickPythonReplStatus")
+        self._status_label.setVisible(False)
+        layout.addWidget(self._status_label)
 
         self._output_label = QtWidgets.QLabel("Output", self)
         self._output_label.setObjectName("SidekickPythonReplOutputLabel")
@@ -330,64 +417,73 @@ class PythonReplWidget(QtWidgets.QWidget):
         self._output.setToolTip("Shows stdout, stderr, and execution errors.")
         layout.addWidget(self._output, stretch=3)
 
+        # F6: worker thread reference (None when idle).
+        self._worker: _ReplWorker | None = None
+
     def _on_run_clicked(self) -> None:
         self.execute(self._input.toPlainText())
 
     def execute(self, script: str) -> None:
         """Execute ``script`` against the shared namespace.
 
-        Stores assigned names in the registry, records the command in history,
-        and pipes stdout/stderr/exception to the output pane. Never raises.
+        Runs the script on a background QThread (F6) so the GUI stays
+        responsive during long computations. The Run button is disabled and
+        a 'Running…' label is shown while the worker is active; a Cancel
+        button allows the user to terminate the worker thread (best-effort).
+
+        Args:
+            script: Python source to execute.  Must be a ``str``.
+
+        Raises:
+            TypeError: If ``script`` is not a ``str``.
         """
         if not isinstance(script, str):
             raise TypeError("script must be a str")
         if not script.strip():
             self._append_output("No code to run.")
             return
+
+        # Prevent re-entrant execution.
+        if self._worker is not None and self._worker.isRunning():
+            _logger.debug(
+                "REPL execution already in progress; ignoring re-entrant call"
+            )
+            return
+
         self._history.append(script.strip())
-        stdout = io.StringIO()
-        stderr = io.StringIO()
-        exception: Exception | None = None
-        last_result: Any = _SENTINEL
-        compiled_exec = None
-        compiled_eval = None
-        try:
-            with contextlib.suppress(SyntaxError):
-                compiled_eval = compile(script, "<sidekick-repl>", "eval")
-            if compiled_eval is None:
-                compiled_exec = compile(script, "<sidekick-repl>", "exec")
-        except Exception as exc:  # noqa: BLE001 - report compile errors
-            exception = exc
+        self._set_running(True)
 
-        if exception is None:
-            try:
-                with (
-                    contextlib.redirect_stdout(stdout),
-                    contextlib.redirect_stderr(stderr),
-                ):
-                    if compiled_eval is not None:
-                        last_result = eval(  # noqa: S307  # nosec B307
-                            compiled_eval, self._namespace, self._namespace
-                        )
-                    else:
-                        assert compiled_exec is not None
-                        exec(  # noqa: S102  # nosec B102
-                            compiled_exec, self._namespace, self._namespace
-                        )
-            except Exception as exc:  # noqa: BLE001 - REPL reports user errors
-                _logger.debug("Sidekick REPL execution failed: %s", exc)
-                exception = exc
+        # Snapshot the namespace into the worker so the GUI thread and
+        # the worker thread never share a mutable reference at the same time.
+        self._worker = _ReplWorker(script, self._namespace, parent=self)
+        self._worker.finished.connect(self._on_execution_finished)
+        self._worker.start()
 
-        if exception is None:
-            self._sync_namespace_to_registry()
-            output = _format_terminal_output(stdout, stderr, None)
-            if last_result is not _SENTINEL and last_result is not None:
-                output = (
-                    f"{repr(last_result)}\n{output}" if output else repr(last_result)
-                )
-            self._append_output(output)
-        else:
-            self._append_output(_format_terminal_output(stdout, stderr, exception))
+    def _set_running(self, running: bool) -> None:
+        """Toggle Run/Cancel controls and the 'Running…' status label (F6)."""
+        self._run_button.setEnabled(not running)
+        self._cancel_button.setEnabled(running)
+        self._cancel_button.setVisible(running)
+        self._status_label.setText("Running\u2026" if running else "")
+        self._status_label.setVisible(running)
+
+    def _on_cancel_clicked(self) -> None:
+        """Best-effort cancel: terminate the worker thread (F6)."""
+        if self._worker is not None and self._worker.isRunning():
+            self._worker.terminate()
+            self._worker.wait(500)
+            self._append_output("[Cancelled]")
+        self._set_running(False)
+
+    def _on_execution_finished(self, output: str) -> None:
+        """Slot called on the GUI thread when the worker emits ``finished`` (F6)."""
+        # Sync namespace changes made by the worker back into self._namespace
+        # so the workspace registry and subsequent executions share the updates.
+        if self._worker is not None:
+            self._namespace.update(self._worker._namespace)  # noqa: SLF001
+        self._sync_namespace_to_registry()
+        self._set_running(False)
+        self._append_output(output)
 
     def output_text(self) -> str:
         """Return the current output pane text."""

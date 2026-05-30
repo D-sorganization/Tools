@@ -248,19 +248,76 @@ class WorkspaceRegistry:
         *,
         replace: bool = False,
     ) -> None:
-        """Merge another registry while preserving non-JSON metadata."""
+        """Merge another registry, validating every entry and notifying subscribers.
+
+        JSON-safe values are merged via :meth:`set` so that name validation,
+        value validation, and all subscriber callbacks fire normally.
+        Repr-only values (non-JSON-safe objects loaded from a saved state) are
+        merged via :meth:`_set_repr_entry`, which validates the name and emits
+        the ``set`` event without calling :func:`_validate_supported_value` on
+        the raw repr string.
+
+        Args:
+            other: Source registry to merge from.
+            replace: When ``True``, clear this registry before merging so the
+                result mirrors ``other`` exactly.
+
+        Raises:
+            ValueError: If any variable name in ``other`` is invalid.
+        """
         if replace:
             self.clear()
         for name in other.list_names():
-            self._values[name] = other._values[name]
-            if name in other._repr_values:
-                self._repr_values[name] = other._repr_values[name]
+            if name in other._repr_values:  # noqa: SLF001 - same-class access
+                # Repr-only path: value is stored as a display string; delegate
+                # to the controlled helper so events still fire.
+                self._set_repr_entry(
+                    name,
+                    other._values[name],  # noqa: SLF001
+                    other._repr_values[name],  # noqa: SLF001
+                    other._metadata_overrides.get(name),  # noqa: SLF001
+                )
             else:
-                self._repr_values.pop(name, None)
-            if name in other._metadata_overrides:
-                self._metadata_overrides[name] = dict(other._metadata_overrides[name])
-            else:
-                self._metadata_overrides.pop(name, None)
+                # JSON-safe path: run full public validation + event dispatch.
+                self.set(name, other._values[name])  # noqa: SLF001
+                # Preserve any metadata overrides from the source (e.g. shape
+                # hints for arrays that have been serialised and reloaded).
+                override = other._metadata_overrides.get(name)  # noqa: SLF001
+                if override is not None:
+                    self._metadata_overrides[name] = dict(override)
+                else:
+                    self._metadata_overrides.pop(name, None)
+
+    def _set_repr_entry(
+        self,
+        name: str,
+        value: Any,
+        repr_value: str,
+        metadata_override: dict[str, Any] | None,
+    ) -> None:
+        """Store a repr-only variable, validate the name, and notify subscribers.
+
+        This is the controlled private path for non-JSON-safe values whose
+        live Python object is unavailable (e.g., values loaded from persisted
+        state). Unlike direct dict mutation, it runs name validation and fires
+        the ``set`` event so all subscribers stay in sync.
+
+        Args:
+            name: Variable name (must be non-empty and non-whitespace-only).
+            value: Raw value to store (often the repr string itself for loaded
+                state; may be an actual object for non-JSON-serialisable types).
+            repr_value: Human-readable representation stored for display.
+            metadata_override: Optional shape/dtype/size/preview dict; copied
+                shallowly to prevent external mutation.
+        """
+        self._validate_name(name)
+        self._values[name] = value
+        self._repr_values[name] = repr_value
+        if metadata_override is not None:
+            self._metadata_overrides[name] = dict(metadata_override)
+        else:
+            self._metadata_overrides.pop(name, None)
+        self._notify("set", name)
 
     def to_dict(self) -> dict[str, Any]:
         """Return a JSON-safe payload suitable for persistence."""
@@ -287,9 +344,12 @@ class WorkspaceRegistry:
                 registry.set(name, entry.get("value"))
             else:
                 repr_value = str(entry.get("repr", ""))
-                registry._values[name] = repr_value
-                registry._repr_values[name] = repr_value
-                registry._metadata_overrides[name] = _metadata_from_entry(entry)
+                registry._set_repr_entry(
+                    name,
+                    repr_value,
+                    repr_value,
+                    _metadata_from_entry(entry),
+                )
         return registry
 
     def export_environment(self, prefix: str = "UD_VAR_") -> dict[str, str]:

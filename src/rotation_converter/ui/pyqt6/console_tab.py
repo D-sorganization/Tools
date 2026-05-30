@@ -9,7 +9,6 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QPushButton,
     QSplitter,
-    QTextBrowser,
     QTextEdit,
     QVBoxLayout,
     QWidget,
@@ -19,6 +18,7 @@ from rotation_converter import modern_robotics as mr
 from rotation_converter.converter import Rotation
 from rotation_converter.rigid_transform import RigidTransform
 from shared.python.scripting.scripting_env import ConsoleEnvironment
+from shared.python.ui import HoverCopyTextBrowser
 
 
 class CommandConsoleTab(QWidget):
@@ -61,7 +61,7 @@ class CommandConsoleTab(QWidget):
         left_widget = QWidget()
         left_layout = QVBoxLayout(left_widget)
 
-        self._output = QTextBrowser()
+        self._output = HoverCopyTextBrowser()
         font = QFont("Courier")
         font.setStyleHint(QFont.StyleHint.Monospace)
         self._output.setFont(font)
