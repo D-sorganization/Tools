@@ -6,6 +6,9 @@ concurrency:
 on:
   workflow_dispatch:
 
+env:
+  AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
+
 jobs:
   run-heavy-tests:
     name: Heavy Integration Tests

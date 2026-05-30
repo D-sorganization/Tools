@@ -30,6 +30,9 @@ on:
 permissions:
   contents: read
 
+env:
+  AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
+
 jobs:
   comprehensive-assessment:
     timeout-minutes: 30

@@ -27,6 +27,9 @@ defaults:
   run:
     shell: bash
 
+env:
+  AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
+
 jobs:
   fix-brick-toolcache:
     runs-on: d-sorg-fleet-2core

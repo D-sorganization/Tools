@@ -40,6 +40,9 @@ concurrency:
   group: maturin-ai-backend-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
+
 jobs:
   build-wheels:
     name: Build wheel (${{ matrix.os }}, Python ${{ matrix.python-version }})

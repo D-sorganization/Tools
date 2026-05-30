@@ -24,6 +24,9 @@ on:
 permissions:
   contents: read
 
+env:
+  AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
+
 jobs:
   full-repo-quality:
     name: Full-Repo Quality Audit

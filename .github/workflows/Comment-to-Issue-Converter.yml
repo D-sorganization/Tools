@@ -27,6 +27,7 @@ concurrency:
   group: comment-to-issue-${{ github.repository }}
   cancel-in-progress: true
 env:
+  AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
   MAX_ISSUES_PER_RUN: 5
 
 defaults:

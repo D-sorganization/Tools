@@ -25,6 +25,9 @@ permissions:
   contents: write
   pull-requests: write
 
+env:
+  AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
+
 jobs:
   # ── 1. Determine if this commit warrants a release ────────────────────
   analyse-commits:

@@ -18,6 +18,9 @@ concurrency:
   group: perf-regression-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
+
 jobs:
   benchmark:
     runs-on: d-sorg-fleet

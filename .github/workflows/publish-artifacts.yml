@@ -21,6 +21,9 @@ permissions:
   contents: read
   id-token: write # Required for PyPI trusted publishing
 
+env:
+  AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
+
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:

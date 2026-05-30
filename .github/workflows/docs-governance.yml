@@ -16,6 +16,9 @@ on:
       - "scripts/check_docs_governance.py"
       - ".github/workflows/docs-governance.yml"
 
+env:
+  AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
+
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:

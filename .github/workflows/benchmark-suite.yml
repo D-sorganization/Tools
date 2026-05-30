@@ -30,6 +30,9 @@ defaults:
   run:
     shell: bash
 
+env:
+  AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
+
 jobs:
   benchmark-foundation:
     name: Benchmark Suite (pytest-benchmark)
