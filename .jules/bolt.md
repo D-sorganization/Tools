@@ -31,3 +31,7 @@
 ## 2024-06-25 - Avoid array iteration chaining for simple counts
 **Learning:** When calculating aggregates (like counts or finding a maximum) over an array, using chained `.filter().length` and `.reduce()` operations creates unnecessary intermediate array allocations and executes multiple passes over the dataset, leading to increased garbage collection overhead in React components.
 **Action:** Replace chained `.filter()` and `.reduce()` with a single-pass `for` loop to compute all needed aggregates simultaneously, especially in frequently re-rendered UI components.
+
+## 2025-02-14 - Optimize repetitive array filters
+**Learning:** Chained `.filter()` and `.reduce()` operations in high frequency code paths, like iterating through frames/phases during swing analysis, create unnecessary overhead due to memory allocation and callback invocation.
+**Action:** Always replace chained `.filter()`/`.reduce()` iterations in tight algorithmic paths with a single-pass `for` loop, eliminating array allocations and garbage collection pressure.
