@@ -4,9 +4,10 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any, TypedDict
+
+import defusedxml.ElementTree as ET
 
 
 class CoverageStats(TypedDict):
