@@ -21,6 +21,13 @@ jobs:
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 5
     steps:
+      - name: Kill zombie Python processes
+        run: |
+          echo "Killing zombie python processes..."
+          pkill -9 -f python || echo "no python processes found"
+          pkill -9 -f python3 || echo "no python3 processes found"
+          sleep 2
+
       - name: Create Symlink
         run: |
           echo "Attempting to create symlink..."
