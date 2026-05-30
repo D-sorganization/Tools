@@ -630,7 +630,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
-| 2026-05-30 | 1.1.230 | Fix CI failures on PR #3123: re-export _QS_ORG/_QS_APP/_QS_VISIBLE_TABS_KEY from sidebar, fix apply_state _dock_widget AttributeError (now uses _dock_chrome.dock_widget), add waitUntil to MockQtBot, fix F6 isVisible→isHidden for headless tests, fix F10 duplicate-pin test to use subdirectory, add runtime_tabs.py and registry.py to monolith baseline, bump SPEC version. |
+| 2026-05-30 | 1.1.230 | Fix CI failures on PR #3123: re-export \_QS_ORG/\_QS_APP/\_QS_VISIBLE_TABS_KEY from sidebar, fix apply_state \_dock_widget AttributeError (now uses \_dock_chrome.dock_widget), add waitUntil to MockQtBot, fix F6 isVisible→isHidden for headless tests, fix F10 duplicate-pin test to use subdirectory, add runtime_tabs.py and registry.py to monolith baseline, bump SPEC version. |
 | 2026-05-30 | 1.1.229 | chore: remove stale type-ignore suppression comments in data_explorer_service, project_file_explorer, runtime_tabs; add explicit bool() cast on eventFilter return in os_terminal to satisfy mypy no-any-return. |
 | 2026-05-30 | 1.1.228 | F4: Patched TabCollection.replace() to correctly update internal id mapping when swapping widgets; fixes stale id→widget reference after atomic swap. |
 | 2026-05-30 | 1.1.227 | F4: Decomposed UnifiedToolsSidebar god class. Extracted TabCollection (id↔widget↔order bookkeeping), DockChromeController (collapse/minimize/dock-area/title-bar/shortcuts), and VisibilityPersistence (project-root-scoped QSettings read/write). Sidebar is now a thin coordinator that delegates to these three collaborators. Backward-compatible shims (\_tab_ids/\_tab_widgets/\_tab_definitions) preserved for mixins. Added test_sidekick_f4_collaborators.py with tests for all three. |
@@ -954,6 +954,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.230
+
+- 2026-05-30: fix(sidekick): PyQt test worker crash fix and Module Size budget baseline adjustment (#3104, #3115)
 
 ### Version 1.1.221
 

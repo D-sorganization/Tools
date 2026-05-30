@@ -177,7 +177,7 @@ class TestDockChromeController:
             initial_state=state,
         )
 
-    def test_raises_on_none_sidebar(self) -> None:
+    def test_raises_on_none_sidebar(self, qtbot: Any) -> None:
         """DockChromeController must raise TypeError when sidebar_widget is None."""
         try:
             from upstream_drift_tools.ui.tools_sidebar.dock_chrome import (
@@ -188,10 +188,13 @@ class TestDockChromeController:
         except ImportError:
             pytest.skip("sidekick unavailable")
 
+        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+        tabs_w = QtWidgets.QTabWidget()
+        qtbot.addWidget(tabs_w)
         with pytest.raises(TypeError, match="sidebar_widget"):
             DockChromeController(
                 sidebar_widget=None,  # type: ignore[arg-type]
-                tabs_widget=QtWidgets.QTabWidget(),
+                tabs_widget=tabs_w,
                 initial_state=SidebarState(),
             )
 
