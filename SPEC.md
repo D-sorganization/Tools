@@ -951,6 +951,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ### Version 1.1.212
 
+- 2026-05-29: chore(ci) — scope coverage policy package thresholds to tracked packages changed in the PR while preserving total coverage and Sidekick-specific coverage gates.
+- 2026-05-29: fix(sidekick) — make the standard response API import its shared StrEnum helper via the repo package path while preserving top-level Sidekick compatibility (#3106).
 - 2026-05-27: fix(p1am) — extend interlock contract to 4 limits (lolo/low/high/hihi) in SafetyInterlock to align with host. Chunk Modbus client read/write routing into 64-register packets to satisfy pymodbus's request size caps.
 - 2026-05-27: chore(ci) — use `sudo rm -rf` in Python tool cache cleanup to ensure complete removal of corrupted files, and add cleanup step to topology-governance, detect-secrets, and cross-repo integration workflows.
 
