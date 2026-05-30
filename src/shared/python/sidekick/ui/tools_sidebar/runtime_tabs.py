@@ -470,7 +470,7 @@ class PythonReplWidget(QtWidgets.QWidget):
     def _on_cancel_clicked(self) -> None:
         """Best-effort cancel: terminate the worker thread (F6)."""
         if self._worker is not None and self._worker.isRunning():
-            self._worker.terminate()  # type: ignore[misc]
+            self._worker.terminate()
             self._worker.wait(500)
             self._append_output("[Cancelled]")
         self._set_running(False)

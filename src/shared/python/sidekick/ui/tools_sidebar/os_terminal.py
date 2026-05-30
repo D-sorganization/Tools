@@ -766,7 +766,7 @@ class SidekickOsTerminalWidget(QtWidgets.QWidget):
                     self._navigate_history(direction=-1)
                     return True
 
-        return super().eventFilter(obj, event)
+        return bool(super().eventFilter(obj, event))
 
     def _navigate_history(self, *, direction: int) -> None:
         """Move through command history. direction=1 goes older, -1 goes newer."""

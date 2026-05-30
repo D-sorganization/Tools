@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| 1.1.228                 |
+| 1.1.229                 |
 | **Last Spec Update**    | 2026-05-30                                 |
 
 ## 2. Purpose & Mission
@@ -630,6 +630,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-05-30 | 1.1.229 | chore: remove stale type-ignore suppression comments in data_explorer_service, project_file_explorer, runtime_tabs; add explicit bool() cast on eventFilter return in os_terminal to satisfy mypy no-any-return. |
 | 2026-05-30 | 1.1.228 | F4: Patched TabCollection.replace() to correctly update internal id mapping when swapping widgets; fixes stale id→widget reference after atomic swap. |
 | 2026-05-30 | 1.1.227 | F4: Decomposed UnifiedToolsSidebar god class. Extracted TabCollection (id↔widget↔order bookkeeping), DockChromeController (collapse/minimize/dock-area/title-bar/shortcuts), and VisibilityPersistence (project-root-scoped QSettings read/write). Sidebar is now a thin coordinator that delegates to these three collaborators. Backward-compatible shims (\_tab_ids/\_tab_widgets/\_tab_definitions) preserved for mixins. Added test_sidekick_f4_collaborators.py with tests for all three. |
 | 2026-05-30 | 1.1.226 | F6: PythonReplWidget now executes user scripts on a background QThread (\_ReplWorker) so the GUI stays responsive. Added \_cancel_button (best-effort terminate), \_status_label ('Running...'), \_set_running() toggle helper, and \_on_execution_finished() slot that syncs the namespace back to the registry on completion. |

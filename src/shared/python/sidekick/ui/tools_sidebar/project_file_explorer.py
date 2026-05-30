@@ -133,7 +133,7 @@ class ProjectFileExplorer(QtWidgets.QWidget):
     def _restore_quick_access(self) -> None:
         """Restore quick-access pins from QSettings on startup."""
         settings = QtCore.QSettings(_QS_ORG, _QS_APP)
-        pins: list[str] = settings.value(  # type: ignore[call-overload]
+        pins: list[str] = settings.value(
             self._quick_access_settings_key(), [], type=list
         )
         for raw_path in pins:

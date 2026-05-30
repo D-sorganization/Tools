@@ -368,9 +368,9 @@ def resolve_columns(
     if missing:
         msg = f"{error_msg_prefix}{missing}"
         try:
-            raise error_cls(error_code, msg)  # type: ignore[call-arg]
+            raise error_cls(error_code, msg)
         except TypeError:
-            raise error_cls(msg) from None  # type: ignore[call-arg]
+            raise error_cls(msg) from None
     return normalized
 
 
