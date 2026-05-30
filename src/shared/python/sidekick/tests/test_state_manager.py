@@ -150,8 +150,8 @@ def test_load_state_invalid_format(manager, tmp_path) -> Any:
     with open(file_path, "w") as f:
         f.write("not valid json")
 
-    with pytest.raises(json.JSONDecodeError):
-        manager.load_state("invalid")
+    loaded = manager.load_state("invalid")
+    assert loaded is None
 
     # Valid JSON but missing schema struct
     with open(file_path, "w") as f:
