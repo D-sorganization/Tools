@@ -39,8 +39,6 @@ concurrency:
 jobs:
   # ── Dispatcher: require a local self-hosted runner and fail closed ──────────────────
   pick-runner:
-    env:
-      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
@@ -54,8 +52,6 @@ jobs:
           echo "Routing to self-hosted fleet runner."
 
   check-and-trigger:
-    env:
-      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     timeout-minutes: 30
     runs-on: ${{ needs.pick-runner.outputs.runner }}
     needs: pick-runner

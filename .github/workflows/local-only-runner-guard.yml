@@ -25,8 +25,6 @@ permissions:
 
 jobs:
   reject-hosted-runner-routing:
-    env:
-      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     name: Reject hosted runner routing
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -34,6 +32,8 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Set up Python
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         uses: actions/setup-python@v6
         with:
           python-version: "3.12"

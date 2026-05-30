@@ -35,8 +35,6 @@ defaults:
 
 jobs:
   pick-runner:
-    env:
-      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     name: pick-runner
     runs-on: d-sorg-fleet
     timeout-minutes: 3
@@ -64,8 +62,6 @@ jobs:
           } >> "$GITHUB_OUTPUT"
           echo "Selected d-sorg-fleet (self-hosted-fleet)"
   process-comments:
-    env:
-      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     timeout-minutes: 30
     needs: pick-runner
     runs-on: d-sorg-fleet
@@ -83,6 +79,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: actions/setup-python@v6
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         with:
           python-version: "3.11"
           cache: pip

@@ -41,8 +41,6 @@ concurrency:
 
 jobs:
   verify:
-    env:
-      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     timeout-minutes: 30
     name: Verify Diff Substance
     runs-on: d-sorg-fleet

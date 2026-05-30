@@ -35,8 +35,6 @@ defaults:
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    env:
-      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
@@ -75,8 +73,6 @@ jobs:
               ;;
           esac
   spec-freshness:
-    env:
-      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     needs: pick-runner
     name: Verify SPEC.md freshness
     runs-on: d-sorg-fleet

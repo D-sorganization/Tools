@@ -34,8 +34,6 @@ permissions:
 
 jobs:
   generate-assessments:
-    env:
-      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     timeout-minutes: 30
     runs-on: d-sorg-fleet
     # Grant write only at this job level — assessment commits and issue creation
@@ -49,6 +47,8 @@ jobs:
           fetch-depth: 0
 
       - uses: actions/setup-python@v6
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         with:
           python-version: "3.11"
           cache: pip

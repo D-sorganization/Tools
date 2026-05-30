@@ -68,8 +68,6 @@ concurrency:
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    env:
-      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
@@ -108,8 +106,6 @@ jobs:
               ;;
           esac
   analyze-issues:
-    env:
-      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     timeout-minutes: 30
     needs: pick-runner
     name: Analyze and Prioritize Issues
@@ -125,6 +121,8 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Python
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -277,8 +275,6 @@ jobs:
           path: prioritized_issues.json
 
   resolve-issues:
-    env:
-      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     timeout-minutes: 30
     name: Resolve Issue #${{ matrix.issue.number }}
     needs: [pick-runner, analyze-issues]
@@ -298,6 +294,8 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Python
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -571,8 +569,6 @@ jobs:
           gh pr comment "$CREATED_PR_NUM" --body "Auto Issue Resolver flagged this PR as a likely phantom merge. The verification gate refused to approve closure of issue #${{ matrix.issue.number }} based on this diff. See workflow logs for details." || true
 
   summary:
-    env:
-      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     timeout-minutes: 30
     name: Generate Summary Report
     needs: [pick-runner, analyze-issues, resolve-issues]

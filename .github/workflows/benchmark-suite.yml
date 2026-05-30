@@ -32,8 +32,6 @@ defaults:
 
 jobs:
   benchmark-foundation:
-    env:
-      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     name: Benchmark Suite (pytest-benchmark)
     runs-on: d-sorg-fleet
     timeout-minutes: 30
@@ -45,6 +43,8 @@ jobs:
           fetch-depth: 0 # Full history for comparison
 
       - name: Set up Python
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         uses: actions/setup-python@v6
         with:
           python-version: "3.11"
@@ -187,8 +187,6 @@ jobs:
           echo "Benchmark suite completed with status: ${{ job.status }}"
 
   benchmark-validation:
-    env:
-      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     name: Benchmark SLA Validation
     runs-on: d-sorg-fleet
     timeout-minutes: 10

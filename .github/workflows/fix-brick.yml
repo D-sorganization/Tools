@@ -8,8 +8,6 @@ concurrency:
 
 jobs:
   fix-toolcache:
-    env:
-      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     runs-on: d-sorg-fleet-2core
     timeout-minutes: 5
     steps:

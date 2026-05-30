@@ -26,8 +26,6 @@ permissions:
 
 jobs:
   full-repo-quality:
-    env:
-      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     name: Full-Repo Quality Audit
     runs-on: d-sorg-fleet
     timeout-minutes: 30
@@ -39,6 +37,8 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Python
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         uses: actions/setup-python@v6
         with:
           python-version: "3.12"
