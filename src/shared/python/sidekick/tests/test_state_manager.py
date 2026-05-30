@@ -13,13 +13,13 @@ from sidekick.utils.state_manager import (
 
 
 @pytest.fixture
-def manager(tmp_path) -> Any:
+def manager(tmp_path: Path) -> StateManager:
     # Use tmp_path to isolate states for testing
     mgr = StateManager(base_directory=str(tmp_path))
     return mgr
 
 
-def test_initialization(manager, tmp_path) -> Any:
+def test_initialization(manager: StateManager, tmp_path: Path) -> Any:
     assert manager.base_directory == tmp_path
     assert manager.states_dir.exists()
     assert manager.sessions_dir.exists()
@@ -28,7 +28,7 @@ def test_initialization(manager, tmp_path) -> Any:
     assert manager.protected_states == set()
 
 
-def test_protect_unprotect_state(manager) -> Any:
+def test_protect_unprotect_state(manager: StateManager) -> Any:
     # Protect a state that doesn't exist yet
     manager.protect_state("test_state")
     assert "test_state" in manager.protected_states
@@ -37,7 +37,7 @@ def test_protect_unprotect_state(manager) -> Any:
     assert "test_state" not in manager.protected_states
 
 
-def test_save_load_state(manager) -> Any:
+def test_save_load_state(manager: StateManager) -> Any:
     state_data = {"key": "value", "num": 42}
     success = manager.save_state("test_save", state_data, description="test desc")
     assert success is True
@@ -46,7 +46,7 @@ def test_save_load_state(manager) -> Any:
     assert loaded == state_data
 
 
-def test_save_state_with_protection(manager) -> Any:
+def test_save_state_with_protection(manager: StateManager) -> Any:
     state_data = {"foo": "bar"}
     manager.save_state("protected_state", state_data, protected=True)
     assert "protected_state" in manager.protected_states
@@ -60,13 +60,13 @@ def test_save_state_with_protection(manager) -> Any:
     assert deleted is True
 
 
-def test_delete_state(manager) -> Any:
+def test_delete_state(manager: StateManager) -> Any:
     manager.save_state("to_delete", {"a": 1})
     assert manager.delete_state("to_delete") is True
     assert manager.load_state("to_delete") is None
 
 
-def test_list_states(manager) -> Any:
+def test_list_states(manager: StateManager) -> Any:
     manager.save_state("state1", {"1": 1})
     manager.save_state("state2", {"2": 2})
 
@@ -77,7 +77,7 @@ def test_list_states(manager) -> Any:
     assert "state2" in names
 
 
-def test_export_import_state(manager, tmp_path) -> Any:
+def test_export_import_state(manager: StateManager, tmp_path: Path) -> Any:
     manager.save_state("export_me", {"data": "yes"})
 
     export_path = tmp_path / "export.json"
@@ -98,7 +98,7 @@ def test_export_import_state(manager, tmp_path) -> Any:
     assert success is False  # already exists
 
 
-def test_save_load_session(manager) -> Any:
+def test_save_load_session(manager: StateManager) -> Any:
     session_data = {"current_tab": 2}
     manager.save_session(session_data)
 
@@ -106,7 +106,7 @@ def test_save_load_session(manager) -> Any:
     assert loaded == session_data
 
 
-def test_cleanup_backups(manager, tmp_path) -> Any:
+def test_cleanup_backups(manager: StateManager, tmp_path: Path) -> Any:
     manager.save_state("old_state", {"old": 1})
     # Save it again to trigger a backup
     manager.save_state("old_state", {"new": 2})
@@ -124,7 +124,7 @@ def test_cleanup_backups(manager, tmp_path) -> Any:
     assert len(list(manager.backups_dir.glob("*.backup"))) == 0
 
 
-def test_json_serializer(manager) -> Any:
+def test_json_serializer(manager: StateManager) -> Any:
     from pathlib import Path
 
     dt = datetime(2023, 1, 1, 12, 0, 0)
@@ -136,15 +136,14 @@ def test_json_serializer(manager) -> Any:
     assert res == str(p)
 
     class Dummy:
-        pass
+        attr: str = "val"
 
     d = Dummy()
-    d.attr = "val"
     res = manager._json_serializer(d)
     assert res == {"attr": "val"}
 
 
-def test_load_state_invalid_format(manager, tmp_path) -> Any:
+def test_load_state_invalid_format(manager: StateManager, tmp_path: Path) -> Any:
     # Create invalid state file
     file_path = manager.states_dir / "invalid.json"
     with open(file_path, "w") as f:
@@ -161,7 +160,7 @@ def test_load_state_invalid_format(manager, tmp_path) -> Any:
     assert loaded is None
 
 
-def test_permission_error_save_load(manager) -> Any:
+def test_permission_error_save_load(manager: StateManager) -> Any:
     # Mock open to raise PermissionError
     with patch("builtins.open", side_effect=PermissionError):
         # Save
@@ -187,7 +186,7 @@ def test_permission_error_save_load(manager) -> Any:
             assert manager.load_session() is None
 
 
-def test_singleton_get_state_manager(tmp_path) -> Any:
+def test_singleton_get_state_manager(tmp_path: Path) -> Any:
     _StateManagerHolder.instance = None
     mgr1 = get_state_manager(str(tmp_path))
     mgr2 = get_state_manager(str(tmp_path))
@@ -196,11 +195,11 @@ def test_singleton_get_state_manager(tmp_path) -> Any:
     _StateManagerHolder.instance = None
 
 
-def test_delete_state_not_found(manager) -> Any:
+def test_delete_state_not_found(manager: StateManager) -> Any:
     assert manager.delete_state("does_not_exist") is False
 
 
-def test_protect_state_existing(manager) -> Any:
+def test_protect_state_existing(manager: StateManager) -> Any:
     manager.save_state("exists", {"a": 1})
 
     # Actually protect it (writes to metadata)
@@ -214,7 +213,7 @@ def test_protect_state_existing(manager) -> Any:
     assert "exists" not in manager.protected_states
 
 
-def test_list_states_errors_and_cache(manager, tmp_path) -> Any:
+def test_list_states_errors_and_cache(manager: StateManager, tmp_path: Path) -> Any:
     manager.save_state("s1", {"b": 2})
 
     # Add a non-json file to the dir
@@ -229,14 +228,14 @@ def test_list_states_errors_and_cache(manager, tmp_path) -> Any:
     assert states == states2
 
 
-def test_unprotect_permission_error(manager) -> Any:
+def test_unprotect_permission_error(manager: StateManager) -> Any:
     manager.save_state("some", {"a": 1})
     with patch("builtins.open", side_effect=PermissionError):
         assert manager.protect_state("some") is False
         assert manager.unprotect_state("some") is False
 
 
-def test_delete_state_permission_error(manager) -> Any:
+def test_delete_state_permission_error(manager: StateManager) -> Any:
     manager.save_state("del_err", {"a": 1})
     with patch("pathlib.Path.unlink", side_effect=PermissionError):
         assert manager.delete_state("del_err") is False

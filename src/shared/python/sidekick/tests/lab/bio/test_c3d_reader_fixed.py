@@ -96,3 +96,10 @@ class TestC3DDataReader:
         assert "channel" in df.columns
         assert "value" in df.columns
         assert set(df["channel"].unique()) == {"Analog1", "Analog2"}
+
+    def test_invalid_c3d_header(self, tmp_path: Path) -> Any:
+        invalid_path = tmp_path / "invalid.c3d"
+        invalid_path.write_bytes(b"\x02\x00")
+        reader = C3DDataReader(invalid_path)
+        with pytest.raises(ValueError, match="Not a valid C3D file"):
+            reader.get_metadata()

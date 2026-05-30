@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.216                                    |
-| **Last Spec Update**    | 2026-05-31                                 |
+| **Spec Version**        | 1.1.217                                    |
+| **Last Spec Update**    | 2026-05-30                                 |
 
 ## 2. Purpose & Mission
 
@@ -950,6 +950,11 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.217
+
+- 2026-05-30: feat(sidekick) — consolidated Sidekick quality and cleanup issues (#3106). Replaced global instantiation of `state_manager` with lazy-loading module `__getattr__` wrapper and deprecation warning to prevent eager directory creation on import. Added support for native matplotlib rendering of LaTeX formulas to crisp QPixmaps in `latex_renderer.py`, falling back to monospace text on missing dependencies. Added type annotations to state manager tests.
+- 2026-05-30: fix(sidekick) — validate C3D header magic bytes in `c3d_reader.py` and package-relative standard response import fixes.
 
 ### Version 1.1.216
 
