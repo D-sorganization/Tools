@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     import pandas as pd
 
+from ._column_utils import _resolve_columns
 from .registry import WorkspaceRegistry, WorkspaceVariable
 
 __all__ = [
@@ -340,16 +341,14 @@ def _resolve_selected_columns(
     selected_columns: list[str] | None,
 ) -> list[str]:
     available = [column.name for column in preview.columns]
-    if not selected_columns:
-        return available
-    normalized = [column.strip() for column in selected_columns if column.strip()]
-    missing = [column for column in normalized if column not in available]
-    if missing:
-        raise DataExplorerError(
+    return _resolve_columns(
+        available,
+        selected_columns,
+        lambda missing: DataExplorerError(
             "unknown_columns",
             f"Selected columns are not in the preview schema: {missing}",
-        )
-    return normalized
+        ),
+    )
 
 
 def _bounded_rows(

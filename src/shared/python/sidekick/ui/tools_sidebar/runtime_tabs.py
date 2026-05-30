@@ -991,13 +991,37 @@ def _build_chat_status_tab(sidebar: Any) -> QtWidgets.QWidget:
     )
     layout.addWidget(install_hint)
 
+    btn_row = QtWidgets.QHBoxLayout()
+    copy_btn = QtWidgets.QPushButton("Copy", widget)
+    copy_btn.setObjectName("SidekickChatStatusCopy")
+    copy_btn.setToolTip("Copy the diagnostic text to the clipboard.")
+    copy_btn.clicked.connect(
+        partial(_copy_diagnostic_to_clipboard, copy_btn, error_view)
+    )
+    btn_row.addWidget(copy_btn)
+
     retry = QtWidgets.QPushButton("Retry", widget)
     retry.setObjectName("SidekickChatStatusRetry")
     retry.setToolTip("Re-attempt loading the embedded chat dock.")
     retry.clicked.connect(partial(_retry_chat_dock, sidebar, widget, error_view))
-    layout.addWidget(retry)
+    btn_row.addWidget(retry)
+
+    layout.addLayout(btn_row)
 
     return widget
+
+
+def _copy_diagnostic_to_clipboard(
+    button: QtWidgets.QPushButton,
+    error_view: QtWidgets.QPlainTextEdit,
+) -> None:
+    """Copy the full diagnostic text to the system clipboard, with visual feedback."""
+    text = error_view.toPlainText()
+    clipboard = QtWidgets.QApplication.clipboard()
+    if clipboard is not None:
+        clipboard.setText(text)
+        button.setText("Copied!")
+        QtCore.QTimer.singleShot(1500, lambda: button.setText("Copy"))
 
 
 def _monospace_font() -> Any | None:

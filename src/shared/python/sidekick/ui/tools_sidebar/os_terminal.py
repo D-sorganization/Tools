@@ -672,7 +672,7 @@ class SidekickOsTerminalWidget(QtWidgets.QWidget):
         self._input.clear()
         if self._backend is None:
             return
-        payload = (line + os.linesep).encode("utf-8", errors="replace")
+        payload = (line + "\r").encode("utf-8", errors="replace")
         if not payload:
             return
         try:
@@ -701,7 +701,7 @@ class SidekickOsTerminalWidget(QtWidgets.QWidget):
             self._on_cwd_changed(cwd)
         text = strip_ansi(data).decode("utf-8", errors="replace")
         if text:
-            self._output.appendPlainText(text.rstrip("\r\n"))
+            self._output.appendPlainText(text)
 
     def _on_cwd_changed(self, path: Path) -> None:
         """Single slot for cwd updates (LOD: one path, no chains)."""

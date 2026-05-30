@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from . import design_tokens as theme
+from ._column_utils import _resolve_columns
 from .help_content import DEFAULT_SIDEBAR_TAB_HELP
 from .qt_compat import QtWidgets
 from .registry import WorkspaceRegistry, WorkspaceVariable
@@ -245,15 +246,13 @@ def _resolve_selected_columns(
     available: list[str],
     selected_columns: list[str] | None,
 ) -> list[str]:
-    if not selected_columns:
-        return available
-    normalized = [column.strip() for column in selected_columns if column.strip()]
-    missing = [column for column in normalized if column not in available]
-    if missing:
-        raise DataProcessorTabError(
+    return _resolve_columns(
+        available,
+        selected_columns,
+        lambda missing: DataProcessorTabError(
             f"Selected columns are not available in the current dataset: {missing}"
-        )
-    return normalized
+        ),
+    )
 
 
 def _frame_records(frame: Any, columns: list[str]) -> list[dict[str, Any]]:
