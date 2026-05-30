@@ -166,6 +166,8 @@ jobs:
           python-version: "3.12"
           cache: pip
 
+      - name: Purge pip cache
+        run: python -m pip cache purge || true
       - name: Reject Raw Merge Conflict Markers
         run: |
           conflict_marker='<<<<<'
@@ -445,6 +447,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
 
+      - name: Purge pip cache
+        run: python -m pip cache purge || true
       - name: Reject Raw Merge Conflict Markers
         run: |
           conflict_marker='<<<<<'
@@ -698,6 +702,8 @@ jobs:
           python-version: "3.11"
           cache: pip
 
+      - name: Purge pip cache
+        run: python -m pip cache purge || true
       - name: Format Check (rustfmt)
         if: steps.rust-changes.outputs.has_changes == 'true'
         run: cargo fmt --all -- --check
