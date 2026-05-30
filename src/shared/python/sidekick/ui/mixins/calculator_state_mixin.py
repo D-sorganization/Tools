@@ -419,12 +419,14 @@ class CalculatorStateMixin:
         Override this method in subclasses to handle calculator-specific data
         """
         # Validate the top-level shape before touching any sub-key: a corrupt
-        # profile must degrade gracefully on open rather than crash *every*
-        # calculator at load/auto-load (#3102 F4).
-        if not isinstance(state, dict):
+        # profile (loaded from JSON) may not actually be a dict at runtime even
+        # though the annotation says so, and must degrade gracefully on open
+        # rather than crash *every* calculator at load/auto-load (#3102 F4).
+        raw_state: Any = state
+        if not isinstance(raw_state, dict):
             _logger.warning(
                 "Ignoring corrupt calculator state: expected dict, got %s",
-                type(state).__name__,
+                type(raw_state).__name__,
             )
             return
 
