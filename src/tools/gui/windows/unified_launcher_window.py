@@ -4,7 +4,12 @@
 import html
 import queue
 import threading
-from datetime import UTC, datetime
+from datetime import datetime, timezone
+
+try:
+    from datetime import UTC
+except ImportError:
+    UTC = timezone.utc  # noqa: UP017
 from typing import Any
 
 from PyQt6.QtCore import Qt, QTimer

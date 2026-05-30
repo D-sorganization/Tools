@@ -35,7 +35,12 @@ import importlib
 import importlib.util
 import logging
 import sys
-from datetime import UTC
+from datetime import timezone
+
+try:
+    from datetime import UTC
+except ImportError:
+    UTC = timezone.utc  # noqa: UP017
 from pathlib import Path
 from typing import Any
 

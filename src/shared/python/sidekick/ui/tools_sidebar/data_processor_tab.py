@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from . import design_tokens as theme
+from .data_explorer_service import resolve_columns as _resolve_columns
 from .help_content import DEFAULT_SIDEBAR_TAB_HELP
 from .qt_compat import QtWidgets
 from .registry import WorkspaceRegistry, WorkspaceVariable
@@ -59,7 +60,13 @@ def export_data_processor_frame(
     if not name:
         raise DataProcessorTabError("Workspace variable name must be non-empty.")
     available = _frame_columns(frame)
-    columns = _resolve_selected_columns(available, selected_columns)
+    columns = _resolve_columns(
+        available,
+        selected_columns,
+        error_cls=DataProcessorTabError,
+        error_code="unknown_columns",
+        error_msg_prefix="Selected columns are not available in the current dataset: ",
+    )
     records = _frame_records(frame, columns)
     if len(columns) == 1:
         value: Any = [_normalize_cell(record.get(columns[0])) for record in records]
@@ -239,21 +246,6 @@ def _frame_columns(frame: Any) -> list[str]:
     if columns is None:
         raise DataProcessorTabError("Current Data Processor results are not tabular.")
     return [str(column) for column in columns]
-
-
-def _resolve_selected_columns(
-    available: list[str],
-    selected_columns: list[str] | None,
-) -> list[str]:
-    if not selected_columns:
-        return available
-    normalized = [column.strip() for column in selected_columns if column.strip()]
-    missing = [column for column in normalized if column not in available]
-    if missing:
-        raise DataProcessorTabError(
-            f"Selected columns are not available in the current dataset: {missing}"
-        )
-    return normalized
 
 
 def _frame_records(frame: Any, columns: list[str]) -> list[dict[str, Any]]:
