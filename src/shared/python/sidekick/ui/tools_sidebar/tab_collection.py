@@ -149,7 +149,7 @@ class TabCollection:
         # Qt ownership transfer — neither instance owns the widget after removal.
         target = widget_ref if widget_ref is not None else widget
         if target is not None:
-            target.setParent(None)  # type: ignore[arg-type]
+            target.setParent(None)
             target.deleteLater()
         return True
 
@@ -190,7 +190,7 @@ class TabCollection:
 
         self._tab_widgets[tab_id] = new_widget
 
-        old_widget.setParent(None)  # type: ignore[arg-type]
+        old_widget.setParent(None)
         old_widget.deleteLater()
         return True
 
