@@ -97,12 +97,33 @@ jobs:
 
       - name: Force-clean stale Python tool cache (NVMe runners)
         run: |
-          for cache_root in /home/dieterolson/actions-runners/.shared-tool-cache /home/dieterolson/actions-runners-nvme/.shared-tool-cache; do
+          for cache_root in /opt/runner-tool-cache /home/dieterolson/actions-runners/.shared-tool-cache /home/dieterolson/actions-runners-nvme/.shared-tool-cache; do
             if [ -d "$cache_root/Python" ]; then
-              echo "Moving stale Python toolcache at $cache_root/Python"
-              stale_dir="$cache_root/Python_stale_$RANDOM"
-              sudo mv "$cache_root/Python" "$stale_dir" || true
-              sudo rm -rf "$stale_dir" || true
+              echo "Checking $cache_root/Python for stale 3.11 installations..."
+              for version_dir in "$cache_root/Python"/3.11.*; do
+                if [ -d "$version_dir" ]; then
+                  for arch_dir in "$version_dir"/*; do
+                    if [ -d "$arch_dir" ]; then
+                      if [ ! -x "$arch_dir/bin/python" ] && [ ! -x "$arch_dir/bin/python3" ]; then
+                        echo "Directory $arch_dir is incomplete or broken. Cleaning..."
+                        sudo rm -rf "$arch_dir" || rm -rf "$arch_dir" || true
+                      else
+                        py_bin="$arch_dir/bin/python"
+                        if [ ! -x "$py_bin" ]; then
+                          py_bin="$arch_dir/bin/python3"
+                        fi
+                        echo "Testing zlib import on $py_bin..."
+                        if ! "$py_bin" -c "import zlib"; then
+                          echo "Directory $arch_dir is corrupt (zlib import failed). Cleaning..."
+                          sudo rm -rf "$arch_dir" || rm -rf "$arch_dir" || true
+                        else
+                          echo "Directory $arch_dir is healthy."
+                        fi
+                      fi
+                    fi
+                  done
+                fi
+              done
             fi
           done
       - name: Set up Python
