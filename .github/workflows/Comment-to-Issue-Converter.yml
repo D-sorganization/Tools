@@ -79,6 +79,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: actions/setup-python@v6
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         with:
           python-version: "3.11"
           cache: pip

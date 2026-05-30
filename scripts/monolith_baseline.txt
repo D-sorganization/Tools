@@ -4,6 +4,7 @@ src/data_processing/data_processor/python/benchmarks/performance_benchmark.py
 src/data_processing/data_processor/python/data_processor/core/anova.py
 src/data_processing/data_processor/python/data_processor/core/augmentation_transforms.py
 src/data_processing/data_processor/python/data_processor/core/cross_correlation.py
+src/data_processing/data_processor/python/data_processor/core/data_loader.py
 src/data_processing/data_processor/python/data_processor/core/dataset_manager.py
 src/data_processing/data_processor/python/data_processor/core/feature_extractor.py
 src/data_processing/data_processor/python/data_processor/core/kalman_filter.py

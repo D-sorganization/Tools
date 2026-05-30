@@ -21,11 +21,24 @@ Contract surface under test
 
 from __future__ import annotations
 
+import importlib.util
 import sys
 from pathlib import Path
 
 import pandas as pd
 import pytest
+
+# Parquet round-trips need an optional engine (pyarrow or fastparquet). When
+# neither is installed (e.g. the lean CI test image) the parquet-specific
+# contract cases skip instead of failing — the CSV contract still runs.
+_PARQUET_ENGINE_AVAILABLE = (
+    importlib.util.find_spec("pyarrow") is not None
+    or importlib.util.find_spec("fastparquet") is not None
+)
+_requires_parquet = pytest.mark.skipif(
+    not _PARQUET_ENGINE_AVAILABLE,
+    reason="no parquet engine (pyarrow/fastparquet) installed",
+)
 
 # ── Path setup ────────────────────────────────────────────────────────────────
 _REPO_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -36,7 +49,13 @@ for _extra in [
     if str(_extra) not in sys.path:
         sys.path.insert(0, str(_extra))
 
-from data_processor.rust_engine import (  # noqa: E402
+# Import via the fully-qualified package path. The bare top-level name
+# ``data_processor`` is also used by the full Data Processor application
+# (src/data_processing/data_processor); using the qualified name here keeps this
+# contract test pinned to the issue-#2989 wrapper regardless of import order.
+import importlib.util
+
+from shared.python.data_processor.rust_engine import (  # noqa: E402
     ConversionReport,
     SchemaInfo,
     cancel,
@@ -45,6 +64,12 @@ from data_processor.rust_engine import (  # noqa: E402
     inspect,
     preview,
     scan_batch,
+)
+
+# Check if parquet support is available in pandas
+HAS_PARQUET = (
+    importlib.util.find_spec("pyarrow") is not None
+    or importlib.util.find_spec("fastparquet") is not None
 )
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
@@ -63,6 +88,8 @@ def csv_file(tmp_path: Path) -> Path:
 @pytest.fixture()
 def parquet_file(tmp_path: Path, csv_file: Path) -> Path:
     """A small Parquet fixture derived from csv_file."""
+    if not _PARQUET_ENGINE_AVAILABLE:
+        pytest.skip("no parquet engine (pyarrow/fastparquet) installed")
     p = tmp_path / "sample.parquet"
     df = pd.read_csv(csv_file)
     df.to_parquet(p, index=False)
@@ -198,6 +225,7 @@ class TestConvert:
         convert(csv_file, dst, "csv")
         assert dst.is_file()
 
+    @_requires_parquet
     def test_csv_to_parquet(self, csv_file: Path, tmp_path: Path) -> None:
         dst = tmp_path / "out.parquet"
         report = convert(csv_file, dst, "parquet")
@@ -314,6 +342,7 @@ class TestFilterExport:
         result_df = pd.read_csv(dst)
         assert list(result_df.columns) == ["time", "force"]
 
+    @_requires_parquet
     def test_parquet_destination(self, csv_file: Path, tmp_path: Path) -> None:
         dst = tmp_path / "filtered.parquet"
         n = filter_export(csv_file, dst, "force > 10.0")

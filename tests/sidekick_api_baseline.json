@@ -4511,6 +4511,62 @@
       }
     }
   },
+  "data_processing/embedding.py": {
+    "__all__": [
+      "REQUIRED_SUBPATHS",
+      "DataProcessorUnavailableError",
+      "create_full_data_processor_widget",
+      "ensure_full_data_processor_on_path",
+      "full_data_processor_available"
+    ],
+    "symbols": {
+      "REQUIRED_SUBPATHS": {
+        "type": "variable"
+      },
+      "DataProcessorUnavailableError": {
+        "type": "class",
+        "info": {
+          "bases": ["RuntimeError"],
+          "methods": {}
+        }
+      },
+      "create_full_data_processor_widget": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "parent",
+              "annotation": "QWidget | None",
+              "default": "None",
+              "kind": "arg"
+            }
+          ],
+          "returns": "QWidget"
+        }
+      },
+      "ensure_full_data_processor_on_path": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "repo_root",
+              "annotation": "Path | None",
+              "default": "None",
+              "kind": "arg"
+            }
+          ],
+          "returns": "Path"
+        }
+      },
+      "full_data_processor_available": {
+        "type": "function",
+        "signature": {
+          "args": [],
+          "returns": "bool"
+        }
+      }
+    }
+  },
   "data_processing/exceptions.py": {
     "__all__": [
       "ColumnNotFoundError",

@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.217                                    |
+| **Spec Version**        | 1.1.221                                    |
 | **Last Spec Update**    | 2026-05-30                                 |
 
 ## 2. Purpose & Mission
@@ -947,12 +947,20 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 9. Changelog
 
+### Version 1.1.221
+
+- 2026-05-30: test(rust-engine, #3114) — the #2989 bulk-I/O contract suite now runs in CI after the Data Processor embedding PR fixed its import path; guard the parquet round-trip cases (`test_csv_to_parquet`, `test_parquet_destination`, and the `parquet_file` fixture) with a skipif on parquet-engine (pyarrow/fastparquet) availability so the lean CI test image skips them instead of failing, honoring the file's "runs in CI without native deps" contract. CSV contract cases continue to run unconditionally.
+
 ### Version 1.1.220
 
 - 2026-05-29: fix(sidekick conversions, #3101) — reconcile `flow_rate_converter` with the DRY constants layer: `ton`/`ton/hr` now means a short ton (907.18 kg) fleet-wide (metric is `tonne`), STP is the IUPAC 0°C/1 bar definition, the gas constant and standard conditions import from `unit_constants`, `Nm3/hr` spellings are recognized, `convert_via_table` raises `ValueError` on unknown units, `_normalize_unit` raises `UnknownUnitError` (O(1)) instead of silently echoing, and the temperature path validates finiteness. Restored the four empty conversion test stubs with known-value and round-trip assertions.
 - 2026-05-29: fix(sidekick process numerics, #3103) — remove the duplicated compressible-flow solver (`_flow_calculations` now imports the canonical `compressible_flow`) and the malformed in-sqrt expansion factor; solve WGS extent directly from the equilibrium constant so reported K and composition are self-consistent and guard `T>0`; replace precondition `assert`s with `ValueError` in flare/financial; raise on laminar `Re<=0`; return ideal-gas Z=1 for unknown-only compositions; flag compressible-solver non-convergence; clarify the acid-gas °C Antoine convention.
 - 2026-05-29: fix(sidekick PSA UI, #3105) — refresh the sensitivity plot when components change (dirty flag + re-plot when visible); resolve the pre-calc tab trigger via `indexOf` instead of a magic index; size the O2 hazard band from the plotted data max so it can't collapse to the default y-limit.
 - 2026-05-29: fix(sidekick widget/state layer, #3102) — wrap Data Processor engine ops (filter/query/aggregate/add/transform/rename/drop/fit) in `try/except DataProcessingError` so bad input shows a warning instead of crashing; validate corrupt saved-state shape (via an `Any`-typed alias so the runtime guard stays reachable) and broaden the load except; parent the auto-save `QTimer` to the host widget and guard `auto_save_state` against teardown; route unit-converter save/delete through `_get_row_by_index`; add a public `UnitConversionService.get_compatible_units`.
+
+### Version 1.1.219
+
+- 2026-05-30: test(data-processor) — added skip guards to rust engine contract tests to handle missing parquet engines (pyarrow/fastparquet) gracefully in minimal test environments.
 
 ### Version 1.1.217
 
@@ -1005,3 +1013,4 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **2026-05-20**: Harden health-check API responses to return generic client-facing errors while logging exception details server-side.
 - **2026-05-20**: Restore shared logging and environment helper modules required by AI adapter and chat service connection imports.
 - **2026-05-20**: Clarify shared chat provider dropdown ownership by removing stale UpstreamDrift issue references from Tools-owned source and tests, and synchronize the GitHub CLI provider descriptor with the default terminal registry (#3020).
+- **2026-05-30**: Resolve mypy type check errors in core data loader, signal processing, and Sidekick embedding.

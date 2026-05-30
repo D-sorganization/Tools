@@ -20,11 +20,30 @@ import ast
 import logging
 import re
 from enum import Enum
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
-from numba import jit
+
+try:  # numba is an optional accelerator; the pure-Python fallback is correct.
+    from numba import jit
+except ImportError:  # pragma: no cover - exercised only when numba is absent
+
+    def jit(*args: Any, **kwargs: Any) -> Any:
+        """No-op ``@jit`` fallback used when numba is unavailable.
+
+        Supports both bare ``@jit`` and parameterized ``@jit(...)`` usage so the
+        decorated function runs as ordinary Python (no JIT compilation).
+        """
+        if len(args) == 1 and callable(args[0]) and not kwargs:
+            return args[0]
+
+        def _decorator(func: Any) -> Any:
+            return func
+
+        return _decorator
+
+
 from scipy.interpolate import UnivariateSpline
 from scipy.optimize import curve_fit
 from shared.python.safe_eval import safe_eval
@@ -168,7 +187,6 @@ def integrate_signals(
 
 
 @jit(nopython=True, fastmath=True)
-@jit(nopython=True, fastmath=True)
 def _compute_integral(signal_data: pd.Series, dt: pd.Series, method: str) -> np.ndarray:
     """Compute the cumulative integral of a signal."""
     if signal_data is None:
@@ -298,7 +316,7 @@ def _spline_derivative(
         derivative = deriv_spline(time_numeric.values)
         derivative[~valid_mask] = np.nan
 
-        return derivative
+        return cast(np.ndarray, derivative)
 
     except (ValueError, ZeroDivisionError, OverflowError, TypeError):
         return np.full(len(signal_data), np.nan)
@@ -322,14 +340,14 @@ def _rolling_poly_derivative(
 
     def get_deriv(w: np.ndarray) -> float:
         if len(w) < window or np.isnan(w).any():
-            return np.nan
+            return float(np.nan)
         x = np.arange(len(w)) * delta_x
         try:
             coeffs = np.polyfit(x, w, poly_order)
             deriv_coeffs = np.polyder(coeffs, deriv_order)
             return float(np.polyval(deriv_coeffs, x[-1]))
         except (np.linalg.LinAlgError, TypeError):
-            return np.nan
+            return float(np.nan)
 
     result = padded_series.rolling(window=window).apply(get_deriv, raw=True)
     return result.iloc[window - 1 :].reset_index(drop=True)
@@ -498,7 +516,7 @@ def _parse_formula(
     signal_refs: set[str] = set()
 
     def replace_signal(match: re.Match) -> str:
-        signal_name = match.group(1)
+        signal_name = str(match.group(1))
         if signal_name not in columns:
             raise ValueError(f"Signal not found: {signal_name}")
         if signal_name == time_col:

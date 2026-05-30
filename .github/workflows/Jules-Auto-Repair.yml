@@ -201,6 +201,8 @@ jobs:
           token: ${{ secrets.RUNNER_CHECK_TOKEN }}
 
       - uses: actions/setup-python@v6
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         if: steps.branch.outputs.skip != 'true' && steps.limits.outputs.exceeded != 'true'
         with:
           python-version: "3.11"

@@ -111,6 +111,8 @@ jobs:
           done
 
       - name: Set up Python
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         uses: actions/setup-python@v6
         with:
           python-version: "3.12"

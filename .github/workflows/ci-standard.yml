@@ -126,6 +126,8 @@ jobs:
         with:
           fetch-depth: 0
       - name: Force-clean stale Python tool cache (NVMe runners)
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         # Defensive prepass: actions/setup-python uses ``rmdir`` to delete
         # cached Python directories before installing, which fails when
         # the cache contains read-only or stubborn files (e.g. test/certdata
@@ -162,6 +164,8 @@ jobs:
             fi
           done
       - uses: actions/setup-python@v6
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         with:
           python-version: "3.12"
           cache: pip
@@ -184,6 +188,8 @@ jobs:
           while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done;  sudo env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6 xvfb
 
       - name: Install Dependencies
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         # Force-reinstall sortedcontainers (and hypothesis) before anything
         # else: the shared self-hosted runner toolcache occasionally carries a
         # half-installed `sortedcontainers` where pip metadata claims 2.4.0 but
@@ -407,6 +413,8 @@ jobs:
         with:
           fetch-depth: 0
       - name: Force-clean stale Python tool cache (NVMe runners)
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         # See quality-gate job for rationale: ``actions/setup-python`` uses
         # ``rmdir`` and fails on read-only items left behind (test/certdata
         # etc.). ``rm -rf`` succeeds. We check and clean only the broken/incomplete
@@ -442,6 +450,8 @@ jobs:
             fi
           done
       - uses: actions/setup-python@v6
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
@@ -522,6 +532,8 @@ jobs:
           echo "coverage_gate_required=$coverage_gate_required" >> "$GITHUB_OUTPUT"
 
       - name: Run Tests with Coverage (Python ${{ matrix.python-version }})
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         run: |
           # Core required test suite — always runs regardless of which files changed.
           # Covers: utilities, shared-library contracts, architecture boundaries,
@@ -694,6 +706,8 @@ jobs:
           cache-on-failure: true
 
       - name: Set up Python for wheel checks
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         if: steps.rust-changes.outputs.has_changes == 'true'
         uses: actions/setup-python@v6
         with:
