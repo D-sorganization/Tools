@@ -81,7 +81,11 @@ def test_widget_shell_dropdown_lists_discovered_shells(
     assert "zsh" in items
 
 
-def test_widget_updates_cwd_on_osc7(qt_app, tmp_path: Path, qtbot) -> None:  # noqa: ANN001
+def test_widget_updates_cwd_on_osc7(
+    qt_app,
+    tmp_path: Path,
+    qtbot,
+) -> None:  # noqa: ANN001
     """OSC 7 sequences update the live cwd label via a single slot."""
     from upstream_drift_tools.ui.tools_sidebar.os_terminal import (
         SidekickOsTerminalWidget,
@@ -189,6 +193,51 @@ def test_widget_switching_shell_terminates_previous(
     widget.switch_shell("zsh")
     assert terminated == ["/usr/bin/bash"]
     assert started[-1] == "/usr/bin/zsh"
+
+
+def test_submit_writes_single_carriage_return_on_windows_linesep(
+    qt_app,  # noqa: ANN001
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot,
+) -> None:
+    """Submitting a line writes one PTY newline, not Windows CRLF."""
+    from upstream_drift_tools.ui.tools_sidebar import os_terminal
+
+    writes: list[bytes] = []
+
+    class FakeBackend:
+        is_running = True
+
+        def start(self) -> None:
+            return None
+
+        def write(self, data: bytes) -> None:
+            writes.append(data)
+
+        def read(self, timeout: float = 0.0) -> bytes:  # noqa: ARG002
+            return b""
+
+        def terminate(self) -> None:
+            self.is_running = False
+
+        def resize(self, rows: int, cols: int) -> None:  # noqa: ARG002
+            return None
+
+    monkeypatch.setattr(os_terminal.os, "linesep", "\r\n")
+
+    widget = os_terminal.SidekickOsTerminalWidget(
+        project_root=tmp_path,
+        shells=[_make_descriptor("bash")],
+        autostart=False,
+    )
+    qtbot.addWidget(widget)
+    widget._backend = FakeBackend()  # noqa: SLF001
+    widget._input.setText("echo hi")  # noqa: SLF001
+
+    widget._on_submit()  # noqa: SLF001
+
+    assert writes == [b"echo hi\r"]
 
 
 def test_widget_resets_cwd_on_shell_switch(

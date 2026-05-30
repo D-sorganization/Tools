@@ -55,6 +55,7 @@ _OSC7_PATTERN = re.compile(
 )
 _ANSI_ESCAPE_RE = re.compile(rb"\x1b\[[0-?]*[ -/]*[@-~]")
 _OSC_ESCAPE_RE = re.compile(rb"\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)")
+_SUBMIT_NEWLINE = b"\r"
 
 
 # ---------------------------------------------------------------------------
@@ -647,7 +648,7 @@ class SidekickOsTerminalWidget(QtWidgets.QWidget):
         self._input.clear()
         if self._backend is None:
             return
-        payload = (line + os.linesep).encode("utf-8", errors="replace")
+        payload = line.encode("utf-8", errors="replace") + _SUBMIT_NEWLINE
         if not payload:
             return
         try:

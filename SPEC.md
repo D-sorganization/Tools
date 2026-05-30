@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.214                                    |
-| **Last Spec Update**    | 2026-05-28                                 |
+| **Spec Version**        | 1.1.215                                    |
+| **Last Spec Update**    | 2026-05-30                                 |
 
 ## 2. Purpose & Mission
 
@@ -943,6 +943,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.215
+
+- 2026-05-30: fix(sidekick): OS terminal submit now writes one PTY carriage return per command instead of using platform `os.linesep`, preventing Windows CRLF double-submit behavior.
 
 ### Version 1.1.212
 
