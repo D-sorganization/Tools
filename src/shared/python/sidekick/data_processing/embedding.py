@@ -20,7 +20,7 @@ import importlib.util
 import logging
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
     from PyQt6.QtWidgets import QWidget
@@ -164,4 +164,4 @@ def create_full_data_processor_widget(parent: QWidget | None = None) -> QWidget:
         raise DataProcessorUnavailableError(
             f"failed to import {_WIDGET_MODULE}.{_WIDGET_CLASS}: {exc}"
         ) from exc
-    return widget_class(parent)
+    return cast("QWidget", widget_class(parent))

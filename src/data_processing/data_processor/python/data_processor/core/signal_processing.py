@@ -20,7 +20,7 @@ import ast
 import logging
 import re
 from enum import Enum
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -316,7 +316,7 @@ def _spline_derivative(
         derivative = deriv_spline(time_numeric.values)
         derivative[~valid_mask] = np.nan
 
-        return derivative
+        return cast(np.ndarray, derivative)
 
     except (ValueError, ZeroDivisionError, OverflowError, TypeError):
         return np.full(len(signal_data), np.nan)
@@ -340,14 +340,14 @@ def _rolling_poly_derivative(
 
     def get_deriv(w: np.ndarray) -> float:
         if len(w) < window or np.isnan(w).any():
-            return np.nan
+            return float(np.nan)
         x = np.arange(len(w)) * delta_x
         try:
             coeffs = np.polyfit(x, w, poly_order)
             deriv_coeffs = np.polyder(coeffs, deriv_order)
             return float(np.polyval(deriv_coeffs, x[-1]))
         except (np.linalg.LinAlgError, TypeError):
-            return np.nan
+            return float(np.nan)
 
     result = padded_series.rolling(window=window).apply(get_deriv, raw=True)
     return result.iloc[window - 1 :].reset_index(drop=True)
@@ -516,7 +516,7 @@ def _parse_formula(
     signal_refs: set[str] = set()
 
     def replace_signal(match: re.Match) -> str:
-        signal_name = match.group(1)
+        signal_name = str(match.group(1))
         if signal_name not in columns:
             raise ValueError(f"Signal not found: {signal_name}")
         if signal_name == time_col:
