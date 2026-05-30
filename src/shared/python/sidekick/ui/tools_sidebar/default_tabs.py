@@ -10,7 +10,13 @@ from pathlib import Path
 from typing import Any, TypeVar
 
 from . import design_tokens as theme
+from .appearance import (
+    DEFAULT_LIGHT_PANEL_APPEARANCE,
+    PanelAppearance,
+    panel_qss,
+)
 from .calculator_plotting import CALCULATOR_PLOT_TAB_ID
+from .chat_settings import CHAT_TAB_SETTINGS
 from .data_explorer_tab import (
     DATA_EXPLORER_TAB_ID,
     DATA_EXPLORER_TAB_SETTINGS,
@@ -23,6 +29,11 @@ from .project_file_explorer import ProjectFileExplorer
 from .qt_compat import QT_API, QtCore, QtGui, QtWidgets, Signal
 from .registry import WorkspaceRegistry
 from .reporting_tab import build_reporting_tab
+from .runtime_tab_settings import (
+    PYTHON_REPL_TAB_SETTINGS,
+    TERMINAL_TAB_SETTINGS,
+    WORKSPACE_TAB_SETTINGS,
+)
 from .runtime_tabs import (
     build_calculator_tab,
     build_chat_tab,
@@ -77,6 +88,7 @@ def build_default_tab_definitions(
             "Chat",
             build_chat_tab,
             help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP["chat"]),
+            settings=CHAT_TAB_SETTINGS,
         ),
         tab_definition(
             "files",
@@ -90,6 +102,7 @@ def build_default_tab_definitions(
             "Workspace",
             build_workspace_tab,
             help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP["workspace"]),
+            settings=WORKSPACE_TAB_SETTINGS,
         ),
         tab_definition(
             "terminal",
@@ -97,6 +110,7 @@ def build_default_tab_definitions(
             build_terminal_tab,
             duplicate_enabled=True,
             help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP["terminal"]),
+            settings=TERMINAL_TAB_SETTINGS,
         ),
         tab_definition(
             "python_repl",
@@ -104,6 +118,7 @@ def build_default_tab_definitions(
             build_python_repl_tab,
             duplicate_enabled=True,
             help_metadata=dict(DEFAULT_SIDEBAR_TAB_HELP["python_repl"]),
+            settings=PYTHON_REPL_TAB_SETTINGS,
         ),
         tab_definition(
             "calculator",
@@ -230,7 +245,9 @@ class WorkspaceTableWidget(QtWidgets.QWidget):
         super().__init__(parent)
         self.setObjectName(theme.SIDEKICK_WORKSPACE_TAB_OBJECT_NAME)
         self._registry = registry
+        self._appearance: PanelAppearance = DEFAULT_LIGHT_PANEL_APPEARANCE
         self._build_ui()
+        self.apply_appearance(self._appearance)
         self._subscription = registry.subscribe(self._on_registry_event)
         self.refresh()
 
@@ -238,6 +255,14 @@ class WorkspaceTableWidget(QtWidgets.QWidget):
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(8, 8, 8, 8)
         layout.setSpacing(8)
+
+        self._heading = QtWidgets.QLabel("Workspace variables", self)
+        self._heading.setObjectName("SidekickWorkspaceHeading")
+        self._heading.setToolTip(
+            "Variables shared across the Python REPL, Calculator, and chat."
+        )
+        layout.addWidget(self._heading)
+
         self._table = QtWidgets.QTableView(self)
         self._table.setObjectName("SidekickWorkspaceTable")
         self._table.setToolTip(DEFAULT_SIDEBAR_TAB_HELP["workspace"]["summary"])
@@ -255,6 +280,19 @@ class WorkspaceTableWidget(QtWidgets.QWidget):
         self._table.setModel(self._model)
         layout.addWidget(self._table, stretch=3)
 
+        # Empty-state guidance shown over the (otherwise blank) table so the
+        # tab does not read as undifferentiated white space.
+        self._empty_label = QtWidgets.QLabel(
+            "No workspace variables yet.\n"
+            "Run code in the Python REPL or Calculator — assigned variables "
+            "appear here automatically.",
+            self,
+        )
+        self._empty_label.setObjectName("SidekickWorkspaceEmptyState")
+        self._empty_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self._empty_label.setWordWrap(True)
+        layout.addWidget(self._empty_label, stretch=1)
+
         self._history_label = QtWidgets.QLabel("Command History", self)
         self._history_label.setObjectName("SidekickWorkspaceHistoryLabel")
         layout.addWidget(self._history_label)
@@ -262,6 +300,17 @@ class WorkspaceTableWidget(QtWidgets.QWidget):
         self._history.setObjectName("SidekickWorkspaceHistory")
         self._history.setToolTip("Recent commands run from this sidebar's REPL.")
         layout.addWidget(self._history, stretch=1)
+
+    def apply_appearance(self, appearance: PanelAppearance) -> None:
+        """Apply user-adjustable colours/border to the workspace surfaces."""
+        if not isinstance(appearance, PanelAppearance):
+            raise TypeError("appearance must be a PanelAppearance")
+        self._appearance = appearance
+        self.setStyleSheet(panel_qss(self.objectName(), appearance))
+
+    def appearance(self) -> PanelAppearance:
+        """Return the currently applied appearance."""
+        return self._appearance
 
     def column_headers(self) -> tuple[str, ...]:
         """Return column header labels."""
@@ -306,6 +355,13 @@ class WorkspaceTableWidget(QtWidgets.QWidget):
         self._model.removeRows(0, self._model.rowCount())
         for variable in self._registry.variables():
             self._append_row(variable)
+        self._update_empty_state()
+
+    def _update_empty_state(self) -> None:
+        """Show the empty-state hint and hide the table when there are no rows."""
+        is_empty = self._model.rowCount() == 0
+        self._empty_label.setVisible(is_empty)
+        self._table.setVisible(not is_empty)
 
     def _append_row(self, variable: Any) -> None:
         size_text = "" if variable.size is None else str(variable.size)

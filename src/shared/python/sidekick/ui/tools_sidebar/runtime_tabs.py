@@ -14,6 +14,12 @@ from pathlib import Path
 from typing import Any, cast
 
 from . import design_tokens as theme
+from .appearance import (
+    DEFAULT_DARK_PANEL_APPEARANCE,
+    PanelAppearance,
+    coerce_appearance,
+    panel_qss,
+)
 from .calculator_assist import (
     calculator_predictive_text_enabled,
     calculator_startup_config,
@@ -23,8 +29,11 @@ from .calculator_runtime import (
     SidekickCalculatorWidget,
 )
 from .calculator_startup import (
+    CalculatorStartupConfig,
+    CalculatorStartupResult,
     apply_calculator_startup_imports,
     default_calculator_startup_config,
+    default_repl_startup_config,
 )
 from .help_content import DEFAULT_SIDEBAR_TAB_HELP
 from .qt_compat import QT_API, QtCore, QtWidgets
@@ -163,16 +172,48 @@ def build_python_repl_tab(sidebar: Any) -> QtWidgets.QWidget:
     bounded Python snippets against the shared workspace registry; see
     :class:`SidekickPythonReplWidget`.
     """
+    startup_config, appearance = _repl_settings_from_sidebar(sidebar)
     widget = SidekickPythonReplWidget(
         registry=sidebar.registry,
         set_variable=sidebar.set_context_variable,
         terminal_theme=theme.SidekickTerminalTheme.inherited(
             getattr(sidebar, "_design_tokens", None),
         ),
+        startup_config=startup_config,
+        appearance=appearance,
         parent=sidebar,
     )
     widget.setToolTip(DEFAULT_SIDEBAR_TAB_HELP["python_repl"]["summary"])
     return widget
+
+
+def _repl_settings_from_sidebar(
+    sidebar: Any,
+) -> tuple[CalculatorStartupConfig, PanelAppearance]:
+    """Read persisted REPL startup imports + appearance from ``sidebar``.
+
+    Defensive: if the settings store is not yet configured or the payload is
+    malformed, fall back to the default scientific bundle and dark panel
+    appearance so tab construction never fails.
+    """
+    values: dict[str, Any] = {}
+    getter = getattr(sidebar, "tab_settings", None)
+    if callable(getter):
+        try:
+            payload = getter("python_repl")
+            if isinstance(payload, dict) and isinstance(payload.get("values"), dict):
+                values = payload["values"]
+        except Exception:  # noqa: BLE001 - degrade to defaults on store error
+            _logger.debug("Reading python_repl tab settings failed", exc_info=True)
+    raw_imports = values.get("startup_imports")
+    if raw_imports in (None, ""):
+        startup_config = default_repl_startup_config()
+    else:
+        try:
+            startup_config = CalculatorStartupConfig.from_list(raw_imports)
+        except (TypeError, ValueError):
+            startup_config = default_repl_startup_config()
+    return startup_config, coerce_appearance(values, DEFAULT_DARK_PANEL_APPEARANCE)
 
 
 def build_calculator_tab(sidebar: Any) -> QtWidgets.QWidget:
@@ -223,6 +264,8 @@ class PythonReplWidget(QtWidgets.QWidget):
         registry: WorkspaceRegistry,
         set_variable: SetVariable,
         object_name: str = SIDEKICK_PYTHON_REPL_OBJECT_NAME,
+        startup_config: CalculatorStartupConfig | None = None,
+        appearance: PanelAppearance | None = None,
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
         if registry is None:
@@ -239,18 +282,30 @@ class PythonReplWidget(QtWidgets.QWidget):
         self._set_variable = set_variable
         self._namespace: dict[str, Any] = {}
         self._history: list[str] = []
+        self._startup_config = startup_config or default_repl_startup_config()
+        self._appearance = appearance or DEFAULT_DARK_PANEL_APPEARANCE
         self._load_workspace_namespace()
-        _preload_scientific_namespace(self._namespace)
+        _preload_scientific_namespace(self._namespace, self._startup_config)
         self._build_ui()
+        self.apply_appearance(self._appearance)
 
     def _build_ui(self) -> None:
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(8, 8, 8, 8)
-        layout.setSpacing(8)
+        layout.setSpacing(6)
+
+        self._input_label = QtWidgets.QLabel("Python input", self)
+        self._input_label.setObjectName("SidekickPythonReplInputLabel")
+        self._input_label.setToolTip(
+            "Type Python here. Assigned names are exported to the Workspace tab."
+        )
+        layout.addWidget(self._input_label)
 
         self._input = QtWidgets.QPlainTextEdit(self)
         self._input.setObjectName("SidekickPythonReplInput")
-        self._input.setPlaceholderText("result = np.array([1, 2, 3]).sum()")
+        self._input.setPlaceholderText(
+            "Type Python here, then press Run …  e.g.  result = np.array([1, 2]).sum()"
+        )
         self._input.setToolTip(
             "Enter Python code that can read and write shared workspace variables."
         )
@@ -264,9 +319,14 @@ class PythonReplWidget(QtWidgets.QWidget):
         self._run_button.clicked.connect(self._on_run_clicked)
         layout.addWidget(self._run_button)
 
+        self._output_label = QtWidgets.QLabel("Output", self)
+        self._output_label.setObjectName("SidekickPythonReplOutputLabel")
+        layout.addWidget(self._output_label)
+
         self._output = QtWidgets.QPlainTextEdit(self)
         self._output.setObjectName("SidekickPythonReplOutput")
         self._output.setReadOnly(True)
+        self._output.setPlaceholderText("stdout, stderr, and results appear here.")
         self._output.setToolTip("Shows stdout, stderr, and execution errors.")
         layout.addWidget(self._output, stretch=3)
 
@@ -343,6 +403,40 @@ class PythonReplWidget(QtWidgets.QWidget):
             raise TypeError("terminal_theme must be provided")
         self.setStyleSheet(terminal_theme.qss(self.objectName()))
 
+    def apply_appearance(self, appearance: PanelAppearance) -> None:
+        """Apply user-adjustable colours/border to the REPL surfaces.
+
+        Single-value handoff (LOD): the panel passes a validated
+        :class:`PanelAppearance`; the widget renders it via shared QSS.
+        """
+        if not isinstance(appearance, PanelAppearance):
+            raise TypeError("appearance must be a PanelAppearance")
+        self._appearance = appearance
+        self.setStyleSheet(panel_qss(self.objectName(), appearance))
+
+    def appearance(self) -> PanelAppearance:
+        """Return the currently applied appearance."""
+        return self._appearance
+
+    def startup_config(self) -> CalculatorStartupConfig:
+        """Return the startup-import config currently backing the REPL."""
+        return self._startup_config
+
+    def apply_startup_config(
+        self, config: CalculatorStartupConfig
+    ) -> CalculatorStartupResult:
+        """Re-import the configured packages into the live namespace.
+
+        Lets the user change preloaded scientific packages without
+        rebuilding the tab. Missing optional packages degrade to warnings.
+        """
+        if not isinstance(config, CalculatorStartupConfig):
+            raise TypeError("config must be a CalculatorStartupConfig")
+        self._startup_config = config
+        result = apply_calculator_startup_imports(self._namespace, config)
+        self._sync_namespace_to_registry()
+        return result
+
     def _load_workspace_namespace(self) -> None:
         for name in self._registry.list_names():
             self._namespace[name] = self._registry.get(name)
@@ -381,6 +475,8 @@ class SidekickPythonReplWidget(QtWidgets.QWidget):
         registry: WorkspaceRegistry,
         set_variable: SetVariable,
         terminal_theme: theme.SidekickTerminalTheme | None = None,
+        startup_config: CalculatorStartupConfig | None = None,
+        appearance: PanelAppearance | None = None,
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
         if registry is None:
@@ -393,6 +489,8 @@ class SidekickPythonReplWidget(QtWidgets.QWidget):
         self._repl = PythonReplWidget(
             registry=registry,
             set_variable=set_variable,
+            startup_config=startup_config,
+            appearance=appearance,
             parent=self,
         )
         # Preserve legacy attribute names that hosts/tests inspect.
@@ -408,6 +506,9 @@ class SidekickPythonReplWidget(QtWidgets.QWidget):
         self._repl._output.setObjectName("SidekickTerminalOutput")  # noqa: SLF001
         self._repl._run_button.setObjectName("SidekickTerminalRun")  # noqa: SLF001
         self.apply_terminal_theme(self._terminal_theme)
+        # Appearance (visible borders + user colours) is applied last so it is
+        # authoritative over the legacy inherited terminal theme.
+        self.apply_appearance(self._repl.appearance())
 
     def execute_script(self) -> None:
         """Execute the current script and export user variables (legacy API)."""
@@ -419,6 +520,27 @@ class SidekickPythonReplWidget(QtWidgets.QWidget):
             raise ValueError("terminal_theme must be provided")
         self._terminal_theme = terminal_theme
         self.setStyleSheet(terminal_theme.qss(SIDEKICK_TERMINAL_OBJECT_NAME))
+
+    def apply_appearance(self, appearance: PanelAppearance) -> None:
+        """Apply user-adjustable colours/border to the REPL (delegates inward)."""
+        if not isinstance(appearance, PanelAppearance):
+            raise TypeError("appearance must be a PanelAppearance")
+        self._repl.apply_appearance(appearance)
+        self.setStyleSheet(panel_qss(SIDEKICK_TERMINAL_OBJECT_NAME, appearance))
+
+    def appearance(self) -> PanelAppearance:
+        """Return the currently applied appearance."""
+        return self._repl.appearance()
+
+    def startup_config(self) -> CalculatorStartupConfig:
+        """Return the startup-import config backing the REPL."""
+        return self._repl.startup_config()
+
+    def apply_startup_config(
+        self, config: CalculatorStartupConfig
+    ) -> CalculatorStartupResult:
+        """Re-import configured packages into the live namespace."""
+        return self._repl.apply_startup_config(config)
 
 
 class SidekickNotesWidget(QtWidgets.QWidget):
@@ -972,10 +1094,13 @@ def _note_card_store(project_root: Path) -> Any:
     return NoteCardStore(project_dir=project_root)
 
 
-def _preload_scientific_namespace(namespace: dict[str, Any]) -> None:
+def _preload_scientific_namespace(
+    namespace: dict[str, Any],
+    config: CalculatorStartupConfig | None = None,
+) -> None:
     apply_calculator_startup_imports(
         namespace,
-        default_calculator_startup_config(),
+        config or default_calculator_startup_config(),
     )
 
 

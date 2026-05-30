@@ -15,9 +15,11 @@ __all__ = [
     "CalculatorStartupResult",
     "CalculatorStartupWarning",
     "DEFAULT_CALCULATOR_STARTUP_IMPORTS",
+    "DEFAULT_REPL_STARTUP_IMPORTS",
     "apply_calculator_startup_imports",
     "calculator_startup_config_from_state_payload",
     "default_calculator_startup_config",
+    "default_repl_startup_config",
 ]
 
 
@@ -184,7 +186,23 @@ DEFAULT_CALCULATOR_STARTUP_IMPORTS = (
     CalculatorStartupImport("scipy", "scipy"),
 )
 
+# Broader "scientific bundle" preloaded into the Python REPL window. Users can
+# add/remove entries from the REPL's settings gear; missing optional packages
+# degrade gracefully (a CalculatorStartupWarning, not a crash).
+DEFAULT_REPL_STARTUP_IMPORTS = (
+    CalculatorStartupImport("numpy", "np"),
+    CalculatorStartupImport("scipy", "scipy"),
+    CalculatorStartupImport("pandas", "pd"),
+    CalculatorStartupImport("matplotlib.pyplot", "plt"),
+    CalculatorStartupImport("sympy", "sympy"),
+)
+
 
 def default_calculator_startup_config() -> CalculatorStartupConfig:
     """Return the default optional scientific imports."""
     return CalculatorStartupConfig(DEFAULT_CALCULATOR_STARTUP_IMPORTS)
+
+
+def default_repl_startup_config() -> CalculatorStartupConfig:
+    """Return the default scientific bundle preloaded in the Python REPL."""
+    return CalculatorStartupConfig(DEFAULT_REPL_STARTUP_IMPORTS)

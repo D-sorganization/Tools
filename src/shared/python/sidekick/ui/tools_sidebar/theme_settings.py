@@ -80,10 +80,14 @@ class SidekickThemeSettings:
     def __post_init__(self) -> None:
         mode = _coerce_theme_mode(self.mode)
         colors = _normalize_custom_colors(self.colors)
+        # ``font`` is declared as SidekickFontSettings but is reconstructed from
+        # a plain mapping when loaded from persisted state; widen through Any so
+        # the runtime dict branch type-checks without changing the public field.
+        raw_font: Any = self.font
         font = (
-            self.font
-            if isinstance(self.font, SidekickFontSettings)
-            else SidekickFontSettings.from_dict(self.font)
+            raw_font
+            if isinstance(raw_font, SidekickFontSettings)
+            else SidekickFontSettings.from_dict(raw_font)
         )
         object.__setattr__(self, "mode", mode)
         object.__setattr__(self, "colors", MappingProxyType(colors))
