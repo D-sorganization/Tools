@@ -49,6 +49,13 @@ from .tab_visibility import (
 )
 from .theme_settings import resolve_sidekick_theme
 
+# QSettings constants (F5) — single source of truth for the persistence key.
+# Using explicit org/app avoids writing to the default/empty store when the
+# host hasn't called QCoreApplication.setOrganizationName().
+_QS_ORG = "DSorganization"
+_QS_APP = "Sidekick"
+_QS_VISIBLE_TABS_KEY = "sidekick_visible_tabs"
+
 __all__ = [
     "LayoutMode",
     "MatlabHomeWidget",
@@ -359,8 +366,8 @@ class UnifiedToolsSidebar(
         self._configure_tab_settings()
 
         # Load visibility overrides from QSettings if available
-        settings = QtCore.QSettings()
-        saved_visible = settings.value("sidekick_visible_tabs", None)
+        settings = QtCore.QSettings(_QS_ORG, _QS_APP)
+        saved_visible = settings.value(_QS_VISIBLE_TABS_KEY, None)
         if saved_visible is not None:
             if isinstance(saved_visible, list):
                 visible_defaults = {
@@ -511,11 +518,7 @@ class UnifiedToolsSidebar(
             self._add_defined_tab(definition)
             self._sync_tab_order_from_widget()
             self._emit_context()
-
-            # Save the new set of visible tab IDs to QSettings
-            settings = QtCore.QSettings()
-            settings.setValue("sidekick_visible_tabs", list(self._tab_ids))
-
+            self._persist_visible_tabs()
             return True
 
         if tab_id not in self._tab_ids:
@@ -531,11 +534,7 @@ class UnifiedToolsSidebar(
             widget.setParent(None)
             widget.deleteLater()
         self._emit_context()
-
-        # Save the new set of visible tab IDs to QSettings
-        settings = QtCore.QSettings()
-        settings.setValue("sidekick_visible_tabs", list(self._tab_ids))
-
+        self._persist_visible_tabs()
         return True
 
     def set_default_tab_visible(self, tab_id: str, visible: bool) -> bool:
@@ -753,18 +752,30 @@ class UnifiedToolsSidebar(
         return dict(definition.help_metadata)
 
     def show_tab_help(self, tab_id: str | None = None) -> bool:
-        """Open a compact dialog for one tab's help metadata."""
+        """Open a compact dialog for one tab's help metadata.
+
+        If a help dialog is already open, raises/activates it instead of
+        creating a duplicate (F7 — single help dialog instance).
+        """
         resolved_tab_id = tab_id or self.active_tab_id()
         metadata = self.tab_help_metadata(resolved_tab_id)
         if not metadata:
             return False
+
+        # Re-use existing dialog if still alive (F7).
+        if self._help_dialog is not None and self._help_dialog.isVisible():
+            self._help_dialog.raise_()
+            self._help_dialog.activateWindow()
+            return True
+
+        from shared.python.ui import HoverCopyTextBrowser
 
         dialog = QtWidgets.QDialog(self)
         dialog.setObjectName(f"SidekickTabHelpDialog_{resolved_tab_id}")
         dialog.setWindowTitle(f"{self.tab_display_name(resolved_tab_id)} Help")
         dialog.resize(480, 360)
         layout = QtWidgets.QVBoxLayout(dialog)
-        browser = QtWidgets.QTextBrowser(dialog)
+        browser = HoverCopyTextBrowser(dialog)
         browser.setOpenExternalLinks(True)
         browser.setMarkdown(render_help_markdown(metadata))
         layout.addWidget(browser)
@@ -809,10 +820,17 @@ class UnifiedToolsSidebar(
             self._tab_ids = ordered
         self._refresh_settings_button()
         self._emit_context()
+        self._persist_visible_tabs()
 
-        # Save the new set/order of visible tab IDs to QSettings
-        settings = QtCore.QSettings()
-        settings.setValue("sidekick_visible_tabs", list(self._tab_ids))
+    def _persist_visible_tabs(self) -> None:
+        """Write the current visible-tab list to QSettings (F5 — single write path).
+
+        All three former write sites (set_tab_visible/show, set_tab_visible/hide,
+        _sync_tab_order_from_widget) now call this single method so the key and
+        QSettings org/app remain consistent.
+        """
+        settings = QtCore.QSettings(_QS_ORG, _QS_APP)
+        settings.setValue(_QS_VISIBLE_TABS_KEY, list(self._tab_ids))
 
     def _apply_tab_state(self, state: SidebarState) -> None:
         self._state = sanitize_tab_state(state, self._tab_definitions)

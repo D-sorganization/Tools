@@ -672,7 +672,10 @@ class SidekickOsTerminalWidget(QtWidgets.QWidget):
         self._input.clear()
         if self._backend is None:
             return
-        payload = (line + os.linesep).encode("utf-8", errors="replace")
+        # Always send a single newline to the PTY regardless of host os.linesep.
+        # On Windows os.linesep == "\r\n"; sending both bytes to ConPTY produces
+        # a CR *and* LF which the shell interprets as two submits (F1).
+        payload = (line + "\n").encode("utf-8", errors="replace")
         if not payload:
             return
         try:
@@ -701,7 +704,16 @@ class SidekickOsTerminalWidget(QtWidgets.QWidget):
             self._on_cwd_changed(cwd)
         text = strip_ansi(data).decode("utf-8", errors="replace")
         if text:
-            self._output.appendPlainText(text.rstrip("\r\n"))
+            # Append raw decoded text without stripping trailing newlines (F3).
+            # Per-chunk rstrip collapses blank lines and joins a prompt onto the
+            # previous line when chunks split at a token boundary.  Moving the
+            # cursor to End + insertPlainText lets the widget handle newlines
+            # natively and preserves inter-chunk blank lines.
+            cursor = self._output.textCursor()
+            cursor.movePosition(cursor.MoveOperation.End)
+            cursor.insertText(text)
+            self._output.setTextCursor(cursor)
+            self._output.ensureCursorVisible()
 
     def _on_cwd_changed(self, path: Path) -> None:
         """Single slot for cwd updates (LOD: one path, no chains)."""

@@ -1,0 +1,281 @@
+"""Tests for Sidekick UX hardening fixes (issue #3104).
+
+F1 — PTY submit always sends a single newline (never os.linesep).
+F3 — Per-chunk output is appended raw; trailing newlines are not stripped.
+F5 — QSettings writes are funnelled through a single helper (_persist_visible_tabs).
+F7 — Help dialog is reused when already open (no duplicate windows).
+"""
+
+from __future__ import annotations
+
+import os
+import sys
+from pathlib import Path
+from typing import Any
+
+import pytest
+
+pytestmark = pytest.mark.serial
+
+if sys.platform == "win32" and os.environ.get("PYTEST_XDIST_WORKER"):
+    pytest.skip(
+        "Qt sidebar tests run serially on Windows.",
+        allow_module_level=True,
+    )
+
+
+# ---------------------------------------------------------------------------
+# F1 — _on_submit writes exactly one newline to the PTY
+# ---------------------------------------------------------------------------
+
+
+class TestF1PtyNewline:
+    """_on_submit must always write a single \\n (never \\r\\n from os.linesep)."""
+
+    def test_submit_sends_single_newline(  # noqa: ANN201
+        self, tmp_path: Path, qtbot: Any
+    ) -> None:
+        """Exactly one \\n is written per submit regardless of os.linesep."""
+        try:
+            from upstream_drift_tools.ui.tools_sidebar import os_terminal
+            from upstream_drift_tools.ui.tools_sidebar.qt_compat import (
+                QtWidgets,
+            )
+            from upstream_drift_tools.ui.tools_sidebar.shell_discovery import (
+                ShellDescriptor,
+            )
+        except ImportError:
+            pytest.skip("Qt/sidekick unavailable")
+
+        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+
+        written: list[bytes] = []
+
+        class _FakeBackend:
+            is_running = True
+
+            def start(self) -> None:
+                pass
+
+            def write(self, data: bytes) -> None:
+                written.append(data)
+
+            def read(self, timeout: float = 0.0) -> bytes:  # noqa: ARG002
+                return b""
+
+            def terminate(self) -> None:
+                self.is_running = False
+
+            def resize(self, rows: int, cols: int) -> None:  # noqa: ARG002
+                pass
+
+        widget = os_terminal.SidekickOsTerminalWidget(
+            project_root=tmp_path,
+            shells=[
+                ShellDescriptor(identifier="fake", label="fake", command=("fake",))
+            ],
+            autostart=False,
+        )
+        widget._backend = _FakeBackend()  # noqa: SLF001
+        qtbot.addWidget(widget)
+
+        widget._input.setText("hello")  # noqa: SLF001
+        widget._on_submit()  # noqa: SLF001
+
+        assert written, "write() was never called"
+        payload = written[0]
+        # Must end with exactly one newline byte, not \\r\\n
+        assert payload == b"hello\n", (
+            f"Expected b'hello\\n' but got {payload!r}; "
+            "os.linesep is still being used (F1 regression)"
+        )
+
+
+# ---------------------------------------------------------------------------
+# F3 — _handle_output does NOT strip trailing newlines per chunk
+# ---------------------------------------------------------------------------
+
+
+class TestF3RawOutputAppend:
+    """_handle_output must preserve trailing newlines so blank lines are kept."""
+
+    def _make_widget(  # noqa: ANN202
+        self, tmp_path: Path, qtbot: Any
+    ) -> Any:  # noqa: ANN401
+        try:
+            from upstream_drift_tools.ui.tools_sidebar.os_terminal import (
+                SidekickOsTerminalWidget,
+            )
+            from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
+            from upstream_drift_tools.ui.tools_sidebar.shell_discovery import (
+                ShellDescriptor,
+            )
+        except ImportError:
+            pytest.skip("Qt/sidekick unavailable")
+
+        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+        widget = SidekickOsTerminalWidget(
+            project_root=tmp_path,
+            shells=[
+                ShellDescriptor(identifier="fake", label="fake", command=("fake",))
+            ],
+            autostart=False,
+        )
+        qtbot.addWidget(widget)
+        return widget
+
+    def test_blank_line_in_output_is_preserved(  # noqa: ANN201
+        self, tmp_path: Path, qtbot: Any
+    ) -> None:
+        """A blank line inside PTY output must appear in the widget."""
+        widget = self._make_widget(tmp_path, qtbot)
+        # Two lines with a blank line between them (common in shell output).
+        widget._handle_output(b"line1\n\nline2\n")  # noqa: SLF001
+        text = widget._output.toPlainText()  # noqa: SLF001
+        assert "line1" in text
+        assert "line2" in text
+        # There should be at least one blank line between them
+        assert "\n\n" in text or text.count("\n") >= 2  # noqa: PLR2004
+
+    def test_chunk_boundary_does_not_join_lines(  # noqa: ANN201
+        self, tmp_path: Path, qtbot: Any
+    ) -> None:
+        """Successive chunks must not be joined onto a single line."""
+        widget = self._make_widget(tmp_path, qtbot)
+        widget._handle_output(b"first\n")  # noqa: SLF001
+        widget._handle_output(b"second\n")  # noqa: SLF001
+        text = widget._output.toPlainText()  # noqa: SLF001
+        assert "first" in text
+        assert "second" in text
+        lines = [ln for ln in text.splitlines() if ln.strip()]
+        assert any("first" in ln for ln in lines)
+        assert any("second" in ln for ln in lines)
+
+
+# ---------------------------------------------------------------------------
+# F5 — QSettings writes are consolidated in _persist_visible_tabs
+# ---------------------------------------------------------------------------
+
+
+class TestF5QSettingsConsolidation:
+    """All QSettings writes must go through _persist_visible_tabs()."""
+
+    def test_persist_helper_exists(self) -> None:
+        """UnifiedToolsSidebar exposes _persist_visible_tabs."""
+        try:
+            from upstream_drift_tools.ui.tools_sidebar.sidebar import (
+                UnifiedToolsSidebar,
+            )
+        except ImportError:
+            pytest.skip("sidekick unavailable")
+
+        assert hasattr(UnifiedToolsSidebar, "_persist_visible_tabs"), (
+            "_persist_visible_tabs helper missing (F5 regression)"
+        )
+
+    def test_qs_constants_are_defined(self) -> None:
+        """Module-level QSettings constants must be present."""
+        try:
+            from upstream_drift_tools.ui.tools_sidebar import sidebar as sb
+        except ImportError:
+            pytest.skip("sidekick unavailable")
+
+        assert hasattr(sb, "_QS_ORG"), "_QS_ORG constant missing"
+        assert hasattr(sb, "_QS_APP"), "_QS_APP constant missing"
+        assert hasattr(sb, "_QS_VISIBLE_TABS_KEY"), (  # noqa: E501
+            "_QS_VISIBLE_TABS_KEY constant missing"
+        )
+
+    def test_persist_uses_explicit_org_app(  # noqa: ANN201
+        self, tmp_path: Path, qtbot: Any
+    ) -> None:
+        """_persist_visible_tabs must write to org/app-scoped QSettings."""
+        try:
+            from upstream_drift_tools.ui.tools_sidebar.qt_compat import (
+                QtCore,
+                QtWidgets,
+            )
+        except ImportError:
+            pytest.skip("Qt/sidekick unavailable")
+
+        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+        written: dict[str, Any] = {}
+
+        class _FakeQSettings:
+            def __init__(self, org: str, app_name: str) -> None:
+                written["org"] = org
+                written["app"] = app_name
+
+            def setValue(self, key: str, value: Any) -> None:  # noqa: N802
+                written["key"] = key
+                written["value"] = value
+
+        original_qs = QtCore.QSettings
+
+        try:
+            from upstream_drift_tools.ui.tools_sidebar.sidebar import (
+                _QS_APP,
+                _QS_ORG,
+                _QS_VISIBLE_TABS_KEY,
+                UnifiedToolsSidebar,
+            )
+
+            QtCore.QSettings = _FakeQSettings  # type: ignore[assignment]
+
+            sidebar = UnifiedToolsSidebar(project_root=tmp_path)
+            qtbot.addWidget(sidebar)
+            sidebar._persist_visible_tabs()  # noqa: SLF001
+
+            assert written.get("org") == _QS_ORG
+            assert written.get("app") == _QS_APP
+            assert written.get("key") == _QS_VISIBLE_TABS_KEY
+        finally:
+            QtCore.QSettings = original_qs  # type: ignore[assignment]
+
+
+# ---------------------------------------------------------------------------
+# F7 — Help dialog is reused when already visible
+# ---------------------------------------------------------------------------
+
+
+class TestF7HelpDialogSingleton:
+    """show_tab_help must reuse the existing dialog rather than spawn a new one."""
+
+    def test_second_call_raises_existing_dialog(  # noqa: ANN201
+        self, tmp_path: Path, qtbot: Any
+    ) -> None:
+        """Calling show_tab_help twice must not create a second dialog window."""
+        try:
+            from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
+            from upstream_drift_tools.ui.tools_sidebar.sidebar import (
+                UnifiedToolsSidebar,
+            )
+        except ImportError:
+            pytest.skip("Qt/sidekick unavailable")
+
+        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+        sidebar = UnifiedToolsSidebar(project_root=tmp_path)
+        qtbot.addWidget(sidebar)
+
+        # We need at least one tab with help metadata to open the dialog.
+        if not sidebar.visible_tab_ids():
+            pytest.skip("No tabs with help metadata available")
+
+        tab_id = sidebar.visible_tab_ids()[0]
+        if not sidebar.tab_help_metadata(tab_id):
+            pytest.skip(f"Tab '{tab_id}' has no help metadata")
+
+        # First call — creates the dialog.
+        result1 = sidebar.show_tab_help(tab_id)
+        dialog1 = sidebar._help_dialog  # noqa: SLF001
+
+        # Second call — must reuse the same dialog.
+        result2 = sidebar.show_tab_help(tab_id)
+        dialog2 = sidebar._help_dialog  # noqa: SLF001
+
+        assert result1 is True
+        assert result2 is True
+        assert dialog1 is dialog2, (
+            "show_tab_help created a second QDialog instead of "
+            "reusing the first (F7 regression)"
+        )
