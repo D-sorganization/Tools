@@ -31,10 +31,19 @@ from __future__ import annotations
 
 import logging
 from dataclasses import asdict, dataclass
-from typing import Any
+from importlib import import_module
+from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
-from compatibility import StrEnum
+if TYPE_CHECKING:
+    from enum import StrEnum
+else:
+    try:
+        _compatibility = import_module("...compatibility", __package__)
+    except ImportError:  # pragma: no cover - top-level sidekick package fallback
+        _compatibility = import_module("compatibility")
+
+    StrEnum = _compatibility.StrEnum
 
 __all__ = [
     "ErrorCode",

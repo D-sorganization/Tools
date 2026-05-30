@@ -77,6 +77,8 @@ jobs:
           python-version: "3.11"
           cache: pip
 
+      - name: Purge pip cache
+        run: python -m pip cache purge || true
       - name: Generate tools.json and tool_surface_contract.json
         run: python scripts/generate_tools_json.py
 

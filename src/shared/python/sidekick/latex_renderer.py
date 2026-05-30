@@ -40,6 +40,14 @@ try:
 except ImportError:
     _SYMPY_AVAILABLE = False
 
+try:
+    import numpy as _np
+    from matplotlib.mathtext import MathTextParser as _MathTextParser
+
+    _MATPLOTLIB_AVAILABLE = True
+except ImportError:
+    _MATPLOTLIB_AVAILABLE = False
+
 
 class LatexRenderError(RuntimeError):
     """Raised when a LaTeX render operation fails."""
@@ -155,11 +163,59 @@ def render_latex_label(
         raise TypeError(f"latex_str must be str, got {type(latex_str).__name__!r}")
     if not latex_str.strip():
         raise ValueError("latex_str must not be empty")
+    if not _QT_AVAILABLE:
+        raise LatexRenderError(
+            "PyQt6 is not installed; install it with: pip install PyQt6"
+        )
+
+    label = _make_label_widget("", parent=parent)
+    label.setToolTip(f"LaTeX: {latex_str}")
+
+    if _MATPLOTLIB_AVAILABLE:
+        try:
+            clean_formula = latex_str.strip()
+            if clean_formula.startswith("$") and clean_formula.endswith("$"):
+                clean_formula = clean_formula[1:-1].strip()
+
+            parser = _MathTextParser("agg")
+            res = parser.parse(clean_formula, dpi=120)
+            arr = _np.asarray(res.image)
+            h, w = arr.shape
+
+            if h > 0 and w > 0:
+                palette = label.palette()
+                fg_color = palette.color(label.foregroundRole())
+                r, g, b = fg_color.red(), fg_color.green(), fg_color.blue()
+
+                rgba = _np.zeros((h, w, 4), dtype=_np.uint8)
+                rgba[..., 0] = r
+                rgba[..., 1] = g
+                rgba[..., 2] = b
+                rgba[..., 3] = arr
+
+                from PyQt6.QtGui import QImage, QPixmap
+
+                qimg = QImage(rgba.data, w, h, QImage.Format.Format_RGBA8888)
+                qimg._rgba_buffer = rgba  # Keep reference alive
+                pm = QPixmap.fromImage(qimg)
+                label.setPixmap(pm)
+                _log.debug("render_latex_label(%r) rendered as QPixmap", latex_str)
+                return label
+        except Exception as exc:
+            _log.warning(
+                "Could not render LaTeX %r as QPixmap, falling back: %s",
+                latex_str,
+                exc,
+            )
 
     display_text = f"$  {latex_str}  $"
-    label = _make_label_widget(display_text, monospace=True, parent=parent)
-    label.setToolTip(f"LaTeX: {latex_str}")
-    _log.debug("render_latex_label(%r)", latex_str)
+    label.setText(display_text)
+    from PyQt6.QtGui import QFont
+
+    font = QFont("Courier")
+    font.setStyleHint(QFont.StyleHint.Monospace)
+    label.setFont(font)
+    _log.debug("render_latex_label(%r) fallback to monospace text", latex_str)
     return label
 
 

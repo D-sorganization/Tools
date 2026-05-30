@@ -203,7 +203,7 @@ class AnalysisTab:
         if _HAS_MPL:
             # 2D canvas
             self._fig_2d = Figure(figsize=(7, 5), dpi=100)
-            self._fig_2d.patch.set_facecolor("#1a1a28")  # type: ignore[attr-defined]
+            self._fig_2d.patch.set_facecolor("#1a1a28")
             self._ax_2d = self._fig_2d.add_subplot(111)
             _tm = get_theme_manager()
             apply_plot_theme(self._fig_2d, _tm.get_current_colors())
@@ -217,7 +217,7 @@ class AnalysisTab:
 
             # 3D canvas
             self._fig_3d = Figure(figsize=(7, 5), dpi=100)
-            self._fig_3d.patch.set_facecolor("#1a1a28")  # type: ignore[attr-defined]
+            self._fig_3d.patch.set_facecolor("#1a1a28")
             self._ax_3d = self._fig_3d.add_subplot(111, projection="3d")
             _tm = get_theme_manager()
             apply_plot_theme(self._fig_3d, _tm.get_current_colors())
@@ -319,12 +319,8 @@ class AnalysisTab:
         from ..data_extractor import extract_series
 
         try:
-            x_vals, x_desc, x_unit = extract_series(
-                self._result, x_key, self._model_type
-            )
-            y_vals, y_desc, y_unit = extract_series(
-                self._result, y_key, self._model_type
-            )
+            x_vals, x_desc, x_unit = extract_series(self._result, x_key, self._model_type)
+            y_vals, y_desc, y_unit = extract_series(self._result, y_key, self._model_type)
         except (KeyError, AttributeError) as exc:
             logger.error("Failed to extract series: %s", exc)
             return
@@ -514,9 +510,7 @@ class AnalysisTab:
         if z_key == "potential_energy":
 
             def _eval(angles: dict) -> float:
-                state = np.array(
-                    [angles.get("theta1", 0.0), angles.get("phi", 0.0), 0.0, 0.0]
-                )
+                state = np.array([angles.get("theta1", 0.0), angles.get("phi", 0.0), 0.0, 0.0])
                 return potential_energy(state, params)
 
             return _eval

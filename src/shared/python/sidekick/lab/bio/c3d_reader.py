@@ -63,6 +63,8 @@ _SUPPORTED_EXPORT_FORMATS = frozenset({"csv", "json", "npz"})
 
 C3DMapping = dict[str, Any]
 SCHEMA_VERSION = "1.0"
+C3D_HEADER_MAGIC_BYTE = 0x50
+C3D_HEADER_LENGTH = 2
 
 # Guideline P1: Biomechanical marker validation thresholds [m]
 # Source: NIST - Human body dimensions range from
@@ -760,8 +762,17 @@ class C3DDataReader:
                 )
             if not self.file_path.exists():
                 raise FileNotFoundError(f"File not found: {self.file_path}")
+            self._validate_c3d_header()
             self._c3d_data = ezc3d.c3d(str(self.file_path))
         return self._c3d_data
+
+    def _validate_c3d_header(self) -> None:
+        """Validate the C3D header magic byte before ezc3d parses the file."""
+        with self.file_path.open("rb") as c3d_file:
+            header = c3d_file.read(C3D_HEADER_LENGTH)
+
+        if len(header) < C3D_HEADER_LENGTH or header[1] != C3D_HEADER_MAGIC_BYTE:
+            raise ValueError(f"Not a valid C3D file: {self.file_path}")
 
     @staticmethod
     def _sanitize_for_csv(value: Any) -> Any:

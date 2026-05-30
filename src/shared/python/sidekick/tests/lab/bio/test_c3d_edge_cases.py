@@ -11,8 +11,10 @@ Design by Contract
 
 from __future__ import annotations
 
+from collections.abc import Generator
 from pathlib import Path
-from unittest.mock import patch
+from typing import Any
+from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pytest
@@ -141,6 +143,19 @@ class TestC3DDataReaderContracts:
         reader = C3DDataReader("sample.c3d")
         assert reader.file_path == Path("sample.c3d")
 
+    def test_invalid_c3d_header_raises_before_ezc3d(self, tmp_path: Path) -> None:
+        """Non-C3D files fail with a typed error before ezc3d parses them."""
+        invalid_c3d = tmp_path / "not-c3d.c3d"
+        invalid_c3d.write_bytes(b"\x02\x00")
+
+        with patch("sidekick.lab.bio.c3d_reader.ezc3d") as mock_ezc3d:
+            reader = C3DDataReader(invalid_c3d)
+
+            with pytest.raises(ValueError, match="Not a valid C3D file"):
+                reader.get_metadata()
+
+        mock_ezc3d.c3d.assert_not_called()
+
 
 # ---------------------------------------------------------------------------
 # Analog edge cases
@@ -151,12 +166,18 @@ class TestAnalogEdgeCases:
     """Tests for analog channel edge cases."""
 
     @pytest.fixture()
-    def mock_ezc3d(self):
+    def mock_ezc3d(self) -> Generator[MagicMock, None, None]:
         with patch("upstream_drift_tools.lab.bio.c3d_reader.ezc3d") as mock:
             yield mock
 
     @pytest.fixture()
-    def c3d_no_analog(self):
+    def valid_c3d_path(self, tmp_path: Path) -> Path:
+        c3d_path = tmp_path / "test.c3d"
+        c3d_path.write_bytes(b"\x02\x50")
+        return c3d_path
+
+    @pytest.fixture()
+    def c3d_no_analog(self) -> dict[str, Any]:
         """C3D data with markers but no analog channels."""
         return {
             "parameters": {
@@ -183,7 +204,7 @@ class TestAnalogEdgeCases:
         }
 
     @pytest.fixture()
-    def c3d_many_analog(self):
+    def c3d_many_analog(self) -> dict[str, Any]:
         """C3D data with many analog channels (high analog ratio)."""
         n_analog = 32
         n_frames = 100
@@ -212,28 +233,40 @@ class TestAnalogEdgeCases:
             },
         }
 
-    def test_no_analog_metadata(self, mock_ezc3d, c3d_no_analog) -> None:
+    def test_no_analog_metadata(
+        self,
+        mock_ezc3d: MagicMock,
+        c3d_no_analog: dict[str, Any],
+        valid_c3d_path: Path,
+    ) -> None:
         """File with no analog channels reports 0 analog count."""
         mock_ezc3d.c3d.return_value = c3d_no_analog
-        with patch("pathlib.Path.exists", return_value=True):
-            reader = C3DDataReader("test.c3d")
-            meta = reader.get_metadata()
-            assert meta.analog_count == 0
+        reader = C3DDataReader(valid_c3d_path)
+        meta = reader.get_metadata()
+        assert meta.analog_count == 0
 
-    def test_high_analog_count(self, mock_ezc3d, c3d_many_analog) -> None:
+    def test_high_analog_count(
+        self,
+        mock_ezc3d: MagicMock,
+        c3d_many_analog: dict[str, Any],
+        valid_c3d_path: Path,
+    ) -> None:
         """File with 32 analog channels at 10x oversampling."""
         mock_ezc3d.c3d.return_value = c3d_many_analog
-        with patch("pathlib.Path.exists", return_value=True):
-            reader = C3DDataReader("test.c3d")
-            meta = reader.get_metadata()
-            assert meta.analog_count == 32
-            assert meta.analog_rate == 1000.0
+        reader = C3DDataReader(valid_c3d_path)
+        meta = reader.get_metadata()
+        assert meta.analog_count == 32
+        assert meta.analog_rate == 1000.0
 
-    def test_analog_dataframe_many_channels(self, mock_ezc3d, c3d_many_analog) -> None:
+    def test_analog_dataframe_many_channels(
+        self,
+        mock_ezc3d: MagicMock,
+        c3d_many_analog: dict[str, Any],
+        valid_c3d_path: Path,
+    ) -> None:
         """Analog DataFrame includes all channels."""
         mock_ezc3d.c3d.return_value = c3d_many_analog
-        with patch("pathlib.Path.exists", return_value=True):
-            reader = C3DDataReader("test.c3d")
-            df = reader.analog_dataframe()
-            unique_channels = set(df["channel"].unique())
-            assert len(unique_channels) == 32
+        reader = C3DDataReader(valid_c3d_path)
+        df = reader.analog_dataframe()
+        unique_channels = set(df["channel"].unique())
+        assert len(unique_channels) == 32

@@ -244,7 +244,10 @@ def test_latex_render_label_creates_widget(qtbot) -> None:  # type: ignore[no-un
 
     label = render_latex_label("x^{2}")
     qtbot.addWidget(label)
-    assert "x^{2}" in label.text()
+    if label.pixmap() is not None:
+        assert not label.text()
+    else:
+        assert "x^{2}" in label.text()
     assert label.objectName() == "SidekickLatexLabel"
 
 
@@ -256,6 +259,7 @@ def test_render_expr_label_creates_widget(qtbot) -> None:  # type: ignore[no-unt
 
     label = render_expr_label("x**2")
     qtbot.addWidget(label)
-    text = label.text()
-    # Should contain LaTeX exponent notation
-    assert "2" in text
+    if label.pixmap() is not None:
+        assert not label.text()
+    else:
+        assert "2" in label.text()

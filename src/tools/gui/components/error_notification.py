@@ -11,11 +11,11 @@ from PyQt6.QtWidgets import (
     QDialog,
     QLabel,
     QPushButton,
-    QTextEdit,
     QVBoxLayout,
 )
 
 from shared.python.theme.integration import ThemedDialogMixin
+from shared.python.ui import HoverCopyTextBrowser
 from tools.launch_utils import (
     LaunchError,
     PlatformError,
@@ -63,7 +63,7 @@ class ErrorNotificationDialog(ThemedDialogMixin, QDialog):
                 font-size: 11px;
                 color: #666;
             }
-            QTextEdit {
+            QTextEdit, QTextBrowser {
                 background-color: white;
                 border: 1px solid #ccc;
                 border-radius: 4px;
@@ -103,7 +103,7 @@ class ErrorNotificationDialog(ThemedDialogMixin, QDialog):
         error_msg_label.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
         layout.addWidget(error_msg_label)
 
-        error_text = QTextEdit()
+        error_text = HoverCopyTextBrowser()
         error_text.setReadOnly(True)
         error_text.setPlainText(str(self.error))
         error_text.setMaximumHeight(120)
@@ -113,7 +113,7 @@ class ErrorNotificationDialog(ThemedDialogMixin, QDialog):
         suggestions_label.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
         layout.addWidget(suggestions_label)
 
-        suggestions_text = QTextEdit()
+        suggestions_text = HoverCopyTextBrowser()
         suggestions_text.setReadOnly(True)
         suggestions_text.setPlainText(self._get_suggestions())
         suggestions_text.setMaximumHeight(120)
