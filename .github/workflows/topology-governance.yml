@@ -89,15 +89,17 @@ jobs:
           "
       - name: Force-clean stale Python tool cache (NVMe runners)
         run: |
-          for cache_root in /home/dieterolson/actions-runners/.shared-tool-cache /home/dieterolson/actions-runners-nvme/.shared-tool-cache; do
+          for cache_root in /opt/runner-tool-cache /home/dieterolson/actions-runners/.shared-tool-cache /home/dieterolson/actions-runners-nvme/.shared-tool-cache; do
             if [ -d "$cache_root/Python" ]; then
               echo "Cleaning $cache_root/Python (pre-setup-python)"
-              sudo rm -rf "$cache_root/Python"
+              sudo rm -rf "$cache_root/Python" || true
             fi
           done
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: pip
+      - name: Purge pip cache
+        run: python -m pip cache purge || true
       - name: Validate topology policy
         run: python3 scripts/check_repo_topology.py

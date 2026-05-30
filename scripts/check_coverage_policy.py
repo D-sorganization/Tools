@@ -4,9 +4,10 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any, TypedDict
+
+import defusedxml.ElementTree as ET
 
 
 class CoverageStats(TypedDict):
@@ -56,12 +57,42 @@ def _json_float(mapping: dict[str, Any], key: str, default: float = 0.0) -> floa
     return default
 
 
+def _changed_tracked_packages(
+    changed_files: Path | None,
+    tracked_packages: dict[str, Any],
+) -> set[str] | None:
+    """Return tracked packages touched by this change, or None for full enforcement."""
+    if changed_files is None:
+        return None
+    if not changed_files.exists():
+        return set()
+
+    changed = [
+        line.strip().replace("\\", "/")
+        for line in changed_files.read_text(encoding="utf-8").splitlines()
+    ]
+    return {
+        package
+        for package in tracked_packages
+        if any(path == package or path.startswith(f"{package}/") for path in changed)
+    }
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--coverage-file", default="coverage.xml")
     ap.add_argument("--policy-file", default="config/coverage_policy.json")
     ap.add_argument("--baseline-file", default="config/coverage_baseline.json")
     ap.add_argument("--output-json", default="coverage_trend.json")
+    ap.add_argument(
+        "--changed-files",
+        default=None,
+        help=(
+            "Optional newline-delimited changed-file list. When provided, "
+            "per-package thresholds are enforced only for tracked packages "
+            "touched by the change."
+        ),
+    )
     args = ap.parse_args()
 
     policy: dict[str, Any] = json.loads(
@@ -74,6 +105,10 @@ def main() -> int:
     policy_packages = policy.get("tracked_packages", {})
     tracked_packages = policy_packages if isinstance(policy_packages, dict) else {}
     tracked = [str(package) for package in tracked_packages]
+    changed_tracked_packages = _changed_tracked_packages(
+        Path(args.changed_files) if args.changed_files else None,
+        tracked_packages,
+    )
     current = parse_coverage(Path(args.coverage_file), tracked)
 
     min_total = _json_float(policy, "minimum_total_percent")
@@ -95,6 +130,8 @@ def main() -> int:
 
     pkg_current = current["package_percent"]
     for pkg, threshold in tracked_packages.items():
+        if changed_tracked_packages is not None and pkg not in changed_tracked_packages:
+            continue
         cur = float(pkg_current.get(pkg, 0.0))
         if cur < float(threshold):
             failures.append(
@@ -109,6 +146,9 @@ def main() -> int:
     sys.stdout.write(f"- total: {total}%\n")
     for pkg, value in pkg_current.items():
         sys.stdout.write(f"- {pkg}: {value}%\n")
+    if changed_tracked_packages is not None:
+        packages = ", ".join(sorted(changed_tracked_packages)) or "none"
+        sys.stdout.write(f"- changed tracked packages: {packages}\n")
 
     if failures:
         sys.stderr.write("Coverage policy failed:\n")

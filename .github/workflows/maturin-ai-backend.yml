@@ -65,6 +65,8 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Purge pip cache
+        run: python -m pip cache purge || true
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -136,6 +138,8 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Purge pip cache
+        run: python -m pip cache purge || true
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 

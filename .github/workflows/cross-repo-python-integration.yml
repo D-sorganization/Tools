@@ -97,7 +97,7 @@ jobs:
           for cache_root in /home/dieterolson/actions-runners/.shared-tool-cache /home/dieterolson/actions-runners-nvme/.shared-tool-cache; do
             if [ -d "$cache_root/Python" ]; then
               echo "Cleaning $cache_root/Python (pre-setup-python)"
-              sudo rm -rf "$cache_root/Python"
+              sudo rm -rf "$cache_root/Python" || true
             fi
           done
       - name: Set up Python
@@ -107,6 +107,8 @@ jobs:
           python-version: "3.11"
           cache: pip
 
+      - name: Purge pip cache
+        run: python -m pip cache purge || true
       - name: Install system dependencies
         if: steps.checkout_downstream.outcome == 'success'
         run: |

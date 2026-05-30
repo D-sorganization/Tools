@@ -97,6 +97,8 @@ jobs:
           python-version: "3.11"
           cache: pip
 
+      - name: Purge pip cache
+        run: python -m pip cache purge || true
       - name: Install Documentation Tools
         run: |
           pip install pydocstyle interrogate darglint

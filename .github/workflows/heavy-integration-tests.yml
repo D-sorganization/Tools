@@ -24,6 +24,8 @@ jobs:
           python-version: "3.11"
           cache: pip
 
+      - name: Purge pip cache
+        run: python -m pip cache purge || true
       - name: Install system display dependencies
         run: |
           while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock && sudo apt-get -o DPkg::Lock::Timeout=300 update || true -qq

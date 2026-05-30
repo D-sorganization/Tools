@@ -78,12 +78,19 @@ def test_make_label_widget_no_qt() -> None:
             _make_label_widget("test_text")
 
 
+from sidekick.latex_renderer import _MATPLOTLIB_AVAILABLE
+
+
 def test_render_latex_label_success(qapp: Any) -> None:
     """Test rendering latex label successfully."""
     label = render_latex_label(r"x^{2}")
     assert isinstance(label, QLabel)
-    assert label.text() == r"$  x^{2}  $"
     assert label.toolTip() == r"LaTeX: x^{2}"
+    if _MATPLOTLIB_AVAILABLE:
+        assert label.pixmap() is not None
+        assert not label.text()
+    else:
+        assert label.text() == r"$  x^{2}  $"
 
 
 def test_render_latex_label_invalid_input() -> None:
@@ -102,7 +109,11 @@ def test_render_expr_label_success(qapp: Any) -> None:
     """Test rendering expression label successfully."""
     label = render_expr_label("x**2")
     assert isinstance(label, QLabel)
-    assert "x^{2}" in label.text()
+    if _MATPLOTLIB_AVAILABLE:
+        assert label.pixmap() is not None
+        assert not label.text()
+    else:
+        assert "x^{2}" in label.text()
 
 
 def test_render_expr_label_invalid_input() -> None:

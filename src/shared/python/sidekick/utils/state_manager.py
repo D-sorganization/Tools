@@ -155,8 +155,10 @@ class StateManager:
                 _logger.warning("State file not found: %s", state_name)
                 return None
 
-            with open(state_file) as f:
-                full_state = json.load(f)
+            full_state = safe_read_json(state_file, default=None)
+            if full_state is None:
+                _logger.error("Could not read state file: %s", state_name)
+                return None
 
             # Validate state structure
             if not self._validate_state(full_state):
@@ -522,10 +524,6 @@ class _StateManagerHolder:
     instance: StateManager | None = None
 
 
-# Global instance for shared use
-state_manager = StateManager()
-
-
 def get_state_manager(base_directory: str = "saved_states") -> StateManager:
     """Get or create the global state manager instance (lazy initialization).
 
@@ -540,8 +538,22 @@ def get_state_manager(base_directory: str = "saved_states") -> StateManager:
     return _StateManagerHolder.instance
 
 
+def __getattr__(name: str) -> Any:
+    """Lazy-load the global state_manager singleton with a deprecation warning."""
+    if name == "state_manager":
+        import warnings
+
+        warnings.warn(
+            "Use of global 'state_manager' is deprecated. Use 'get_state_manager()' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return get_state_manager()
+    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
+
+
 __all__ = [
     "StateManager",
     "get_state_manager",
-    "state_manager",
+    "state_manager",  # noqa: F822
 ]

@@ -107,6 +107,8 @@ jobs:
           python-version: "3.12"
           cache: pip
 
+      - name: Purge pip cache
+        run: python -m pip cache purge || true
       - name: Install Python Dependencies
         run: |
           pip install PyGithub requests

@@ -82,6 +82,8 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+      - name: Purge pip cache
+        run: python -m pip cache purge || true
       - name: Collect Review Comments
         id: collect
         env:
