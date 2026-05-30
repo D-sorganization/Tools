@@ -53,6 +53,8 @@ for _extra in [
 # ``data_processor`` is also used by the full Data Processor application
 # (src/data_processing/data_processor); using the qualified name here keeps this
 # contract test pinned to the issue-#2989 wrapper regardless of import order.
+import importlib.util
+
 from shared.python.data_processor.rust_engine import (  # noqa: E402
     ConversionReport,
     SchemaInfo,
@@ -62,6 +64,12 @@ from shared.python.data_processor.rust_engine import (  # noqa: E402
     inspect,
     preview,
     scan_batch,
+)
+
+# Check if parquet support is available in pandas
+HAS_PARQUET = (
+    importlib.util.find_spec("pyarrow") is not None
+    or importlib.util.find_spec("fastparquet") is not None
 )
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────

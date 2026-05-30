@@ -958,6 +958,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 - 2026-05-29: fix(sidekick PSA UI, #3105) — refresh the sensitivity plot when components change (dirty flag + re-plot when visible); resolve the pre-calc tab trigger via `indexOf` instead of a magic index; size the O2 hazard band from the plotted data max so it can't collapse to the default y-limit.
 - 2026-05-29: fix(sidekick widget/state layer, #3102) — wrap Data Processor engine ops (filter/query/aggregate/add/transform/rename/drop/fit) in `try/except DataProcessingError` so bad input shows a warning instead of crashing; validate corrupt saved-state shape (via an `Any`-typed alias so the runtime guard stays reachable) and broaden the load except; parent the auto-save `QTimer` to the host widget and guard `auto_save_state` against teardown; route unit-converter save/delete through `_get_row_by_index`; add a public `UnitConversionService.get_compatible_units`.
 
+### Version 1.1.219
+
+- 2026-05-30: test(data-processor) — added skip guards to rust engine contract tests to handle missing parquet engines (pyarrow/fastparquet) gracefully in minimal test environments.
+
 ### Version 1.1.217
 
 - 2026-05-30: feat(sidekick) — consolidated Sidekick quality and cleanup issues (#3106). Replaced global instantiation of `state_manager` with lazy-loading module `__getattr__` wrapper and deprecation warning to prevent eager directory creation on import. Added support for native matplotlib rendering of LaTeX formulas to crisp QPixmaps in `latex_renderer.py`, falling back to monospace text on missing dependencies. Added type annotations to state manager tests.
