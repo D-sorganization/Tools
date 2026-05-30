@@ -279,3 +279,151 @@ class TestF7HelpDialogSingleton:
             "show_tab_help created a second QDialog instead of "
             "reusing the first (F7 regression)"
         )
+
+
+# ---------------------------------------------------------------------------
+# F10 — Quick-access pins are persisted to and restored from QSettings
+# ---------------------------------------------------------------------------
+
+
+class TestF10QuickAccessPersistence:
+    """Quick-access folder pins must survive a restart (QSettings round-trip)."""
+
+    def test_resolve_columns_helper_exists(self) -> None:
+        """resolve_columns is exported from data_explorer_service."""
+        try:
+            from upstream_drift_tools.ui.tools_sidebar.data_explorer_service import (
+                resolve_columns,
+            )
+        except ImportError:
+            pytest.skip("sidekick unavailable")
+
+        assert callable(resolve_columns), "resolve_columns is not callable"
+
+    def test_quick_access_methods_exist(self) -> None:
+        """ProjectFileExplorer exposes persistence helpers."""
+        try:
+            from upstream_drift_tools.ui.tools_sidebar.project_file_explorer import (
+                ProjectFileExplorer,
+            )
+        except ImportError:
+            pytest.skip("sidekick unavailable")
+
+        assert hasattr(ProjectFileExplorer, "_restore_quick_access"), (
+            "_restore_quick_access missing (F10 regression)"
+        )
+        assert hasattr(ProjectFileExplorer, "_save_quick_access"), (
+            "_save_quick_access missing (F10 regression)"
+        )
+        assert hasattr(ProjectFileExplorer, "_quick_access_settings_key"), (
+            "_quick_access_settings_key missing (F10 regression)"
+        )
+
+    def test_add_to_quick_access_rejects_duplicates(  # noqa: ANN201
+        self, tmp_path: Path, qtbot: Any
+    ) -> None:
+        """Adding the same folder twice must not create a duplicate pin."""
+        try:
+            from upstream_drift_tools.ui.tools_sidebar.project_file_explorer import (
+                ProjectFileExplorer,
+            )
+            from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
+        except ImportError:
+            pytest.skip("Qt/sidekick unavailable")
+
+        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+        explorer = ProjectFileExplorer(project_root=tmp_path, parent=None)
+        qtbot.addWidget(explorer)
+
+        initial_count = explorer._common_locations.count()  # noqa: SLF001
+
+        # Add the same path twice — second call must be a no-op.
+        explorer._add_to_quick_access(tmp_path)  # noqa: SLF001
+        explorer._add_to_quick_access(tmp_path)  # noqa: SLF001
+
+        final_count = explorer._common_locations.count()  # noqa: SLF001
+        assert final_count == initial_count + 1, (
+            f"Expected {initial_count + 1} items but got {final_count}; "
+            "duplicate quick-access pin was added (F10 regression)"
+        )
+
+
+# ---------------------------------------------------------------------------
+# F11 — Shared resolve_columns helper eliminates duplication
+# ---------------------------------------------------------------------------
+
+
+class TestF11DryResolveColumns:
+    """resolve_columns from data_explorer_service must be used by both modules."""
+
+    def test_resolve_all_when_none_selected(self) -> None:
+        """Passing selected=None must return all available columns."""
+        try:
+            from upstream_drift_tools.ui.tools_sidebar.data_explorer_service import (
+                DataExplorerError,
+                resolve_columns,
+            )
+        except ImportError:
+            pytest.skip("sidekick unavailable")
+
+        available = ["a", "b", "c"]
+        result = resolve_columns(available, None, DataExplorerError)
+        assert result == available
+
+    def test_resolve_subset(self) -> None:
+        """Only the requested columns are returned when a subset is given."""
+        try:
+            from upstream_drift_tools.ui.tools_sidebar.data_explorer_service import (
+                DataExplorerError,
+                resolve_columns,
+            )
+        except ImportError:
+            pytest.skip("sidekick unavailable")
+
+        available = ["a", "b", "c"]
+        result = resolve_columns(available, ["b", "c"], DataExplorerError)
+        assert result == ["b", "c"]
+
+    def test_unknown_column_raises(self) -> None:
+        """A column not in available must raise the given error_cls."""
+        try:
+            from upstream_drift_tools.ui.tools_sidebar.data_explorer_service import (
+                DataExplorerError,
+                resolve_columns,
+            )
+        except ImportError:
+            pytest.skip("sidekick unavailable")
+
+        with pytest.raises(DataExplorerError):
+            resolve_columns(["a", "b"], ["a", "z"], DataExplorerError)
+
+    def test_unknown_column_raises_with_single_arg_error(self) -> None:
+        """resolve_columns also works with single-argument exception classes."""
+        try:
+            from upstream_drift_tools.ui.tools_sidebar.data_explorer_service import (
+                resolve_columns,
+            )
+        except ImportError:
+            pytest.skip("sidekick unavailable")
+
+        class _SimpleError(ValueError):
+            pass
+
+        with pytest.raises(_SimpleError):
+            resolve_columns(["a", "b"], ["a", "z"], _SimpleError)
+
+    def test_data_processor_imports_shared_helper(self) -> None:
+        """data_processor_tab must import resolve_columns from data_explorer_service."""
+        try:
+            import upstream_drift_tools.ui.tools_sidebar.data_processor_tab as dpt
+        except ImportError:
+            pytest.skip("sidekick unavailable")
+
+        from upstream_drift_tools.ui.tools_sidebar.data_explorer_service import (
+            resolve_columns,
+        )
+
+        assert getattr(dpt, "_resolve_columns", None) is resolve_columns, (
+            "data_processor_tab is not using the shared resolve_columns "
+            "(F11 regression)"
+        )
