@@ -37,6 +37,25 @@ def qtbot(qt_app: Any) -> Generator[Any, None, None]:
         def addWidget(self, widget: Any) -> None:
             self._widgets.append(widget)
 
+        def waitUntil(self, callback: Any, timeout: int = 1000) -> None:
+            import time
+
+            try:
+                from upstream_drift_tools.ui.tools_sidebar.qt_compat import (
+                    QtWidgets,
+                )
+
+                deadline = time.time() + timeout / 1000.0
+                while time.time() < deadline:
+                    if callback():
+                        return
+                    QtWidgets.QApplication.processEvents()
+                    time.sleep(0.01)
+            except Exception:
+                pass
+            if not callback():
+                raise TimeoutError("waitUntil condition not met within timeout")
+
     bot = MockQtBot()
     yield bot
     for w in bot._widgets:
