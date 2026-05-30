@@ -950,6 +950,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 ### Version 1.1.217
 
 - 2026-05-30: feat(sidekick) — consolidated Sidekick quality and cleanup issues (#3106). Replaced global instantiation of `state_manager` with lazy-loading module `__getattr__` wrapper and deprecation warning to prevent eager directory creation on import. Added support for native matplotlib rendering of LaTeX formulas to crisp QPixmaps in `latex_renderer.py`, falling back to monospace text on missing dependencies. Added type annotations to state manager tests.
+- 2026-05-30: feat(ui) — added a reusable `HoverCopyTextBrowser` widget with hover-triggered copy-to-clipboard overlay buttons and integrated it into the double pendulum simulator diagnostics/analysis tabs and error notifications.
 - 2026-05-30: fix(sidekick) — validate C3D header magic bytes in `c3d_reader.py` and package-relative standard response import fixes.
 
 ### Version 1.1.216
