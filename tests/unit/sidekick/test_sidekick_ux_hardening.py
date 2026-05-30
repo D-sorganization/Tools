@@ -427,3 +427,175 @@ class TestF11DryResolveColumns:
             "data_processor_tab is not using the shared resolve_columns "
             "(F11 regression)"
         )
+
+
+# ---------------------------------------------------------------------------
+# F8 — replace_tab_widget atomically updates widget map and QTabWidget
+# ---------------------------------------------------------------------------
+
+
+class TestF8AtomicTabSwap:
+    """UnifiedToolsSidebar.replace_tab_widget must update both QTabWidget and map."""
+
+    def test_replace_tab_widget_exists(self) -> None:
+        """UnifiedToolsSidebar exposes replace_tab_widget as a public method."""
+        try:
+            from upstream_drift_tools.ui.tools_sidebar.sidebar import (
+                UnifiedToolsSidebar,
+            )
+        except ImportError:
+            pytest.skip("sidekick unavailable")
+
+        assert hasattr(UnifiedToolsSidebar, "replace_tab_widget"), (
+            "replace_tab_widget public method missing (F8 regression)"
+        )
+        assert callable(UnifiedToolsSidebar.replace_tab_widget)
+
+    def test_replace_tab_widget_updates_map(self, tmp_path: Path, qtbot: Any) -> None:
+        """After a swap, _tab_widgets[tab_id] must point to the new widget."""
+        try:
+            from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
+            from upstream_drift_tools.ui.tools_sidebar.sidebar import (
+                UnifiedToolsSidebar,
+            )
+        except ImportError:
+            pytest.skip("Qt/sidekick unavailable")
+
+        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+        sidebar = UnifiedToolsSidebar(project_root=tmp_path)
+        qtbot.addWidget(sidebar)
+
+        old_widget = QtWidgets.QLabel("old", sidebar)
+        new_widget = QtWidgets.QLabel("new", sidebar)
+
+        sidebar.add_tab("swap_test", "Swap", old_widget)
+
+        assert sidebar._tab_widgets.get("swap_test") is old_widget  # noqa: SLF001
+
+        result = sidebar.replace_tab_widget(old_widget, new_widget)
+
+        assert result is True, "replace_tab_widget returned False unexpectedly"
+        assert sidebar._tab_widgets.get("swap_test") is new_widget, (  # noqa: SLF001
+            "_tab_widgets still points to old_widget after swap (F8 regression)"
+        )
+
+    def test_replace_tab_widget_returns_false_for_unknown(
+        self, tmp_path: Path, qtbot: Any
+    ) -> None:
+        """replace_tab_widget returns False when old_widget is not in any tab."""
+        try:
+            from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
+            from upstream_drift_tools.ui.tools_sidebar.sidebar import (
+                UnifiedToolsSidebar,
+            )
+        except ImportError:
+            pytest.skip("Qt/sidekick unavailable")
+
+        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+        sidebar = UnifiedToolsSidebar(project_root=tmp_path)
+        qtbot.addWidget(sidebar)
+
+        ghost = QtWidgets.QLabel("ghost")
+        new_w = QtWidgets.QLabel("new")
+        assert sidebar.replace_tab_widget(ghost, new_w) is False
+
+
+# ---------------------------------------------------------------------------
+# F9 — registry.update_from merges via public set() and emits events
+# ---------------------------------------------------------------------------
+
+
+class TestF9RegistryUpdateFrom:
+    """update_from must validate entries and notify subscribers."""
+
+    def test_update_from_notifies_subscribers(self) -> None:
+        """Subscribers must receive a 'set' event for each merged variable."""
+        try:
+            from upstream_drift_tools.ui.tools_sidebar.registry import (
+                WorkspaceRegistry,
+            )
+        except ImportError:
+            pytest.skip("sidekick unavailable")
+
+        source = WorkspaceRegistry({"x": 1, "y": 2})
+        target = WorkspaceRegistry()
+
+        events: list[tuple[str, str]] = []
+        target.subscribe(lambda event, name: events.append((event, name)))
+
+        target.update_from(source)
+
+        notified_names = {name for _, name in events}
+        assert "x" in notified_names, (
+            "Subscriber was not notified for 'x' (F9 regression)"
+        )
+        assert "y" in notified_names, (
+            "Subscriber was not notified for 'y' (F9 regression)"
+        )
+
+    def test_update_from_validates_names(self) -> None:
+        """update_from must reject invalid variable names from the source."""
+        try:
+            from upstream_drift_tools.ui.tools_sidebar.registry import (
+                WorkspaceRegistry,
+            )
+        except ImportError:
+            pytest.skip("sidekick unavailable")
+
+        # Directly inject a bad name into source's private store to simulate a
+        # malformed loaded file (bypassing source.set() validation).
+        source = WorkspaceRegistry()
+        source._values["   "] = 42  # noqa: SLF001 - deliberately injecting bad name
+        target = WorkspaceRegistry()
+
+        with pytest.raises(ValueError, match="non-empty"):
+            target.update_from(source)
+
+    def test_update_from_replace_clears_existing(self) -> None:
+        """replace=True must clear target before merging."""
+        try:
+            from upstream_drift_tools.ui.tools_sidebar.registry import (
+                WorkspaceRegistry,
+            )
+        except ImportError:
+            pytest.skip("sidekick unavailable")
+
+        target = WorkspaceRegistry({"old": 99})
+        source = WorkspaceRegistry({"new": 1})
+
+        target.update_from(source, replace=True)
+
+        assert target.list_names() == ["new"], (
+            "replace=True did not clear existing variables (F9 regression)"
+        )
+
+    def test_repr_only_entries_are_merged_and_notified(self) -> None:
+        """Repr-only entries from a loaded registry must be merged + notify fired."""
+        try:
+            from upstream_drift_tools.ui.tools_sidebar.registry import (
+                WorkspaceRegistry,
+            )
+        except ImportError:
+            pytest.skip("sidekick unavailable")
+
+        # Simulate a loaded repr-only variable by calling _set_repr_entry directly.
+        source = WorkspaceRegistry()
+        source._set_repr_entry(  # noqa: SLF001
+            "arr",
+            "<numpy.ndarray at 0x…>",
+            "<numpy.ndarray at 0x…>",
+            {"shape": (3, 3), "dtype": "float64", "size": 9, "preview": "…"},
+        )
+
+        target = WorkspaceRegistry()
+        events: list[str] = []
+        target.subscribe(lambda ev, name: events.append(name))
+
+        target.update_from(source)
+
+        assert "arr" in target.list_names(), (
+            "repr-only variable not merged by update_from (F9 regression)"
+        )
+        assert "arr" in events, (
+            "Subscriber not notified for repr-only variable (F9 regression)"
+        )

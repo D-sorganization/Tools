@@ -355,6 +355,53 @@ class UnifiedToolsSidebar(
         self._tab_widgets[tab_id] = widget
         self.tabs.addTab(widget, self._tab_display_name(tab_id, title))
 
+    def replace_tab_widget(
+        self,
+        old_widget: QtWidgets.QWidget,
+        new_widget: QtWidgets.QWidget,
+    ) -> bool:
+        """Atomically swap ``old_widget`` for ``new_widget`` inside the tab bar.
+
+        Updates both the QTabWidget visual index *and* the ``_tab_widgets`` dict
+        so that subsequent remove/popout/duplicate operations target the correct
+        widget.  The stable tab id and order in ``_tab_ids`` are unchanged — only
+        the widget reference is replaced.
+
+        Returns:
+            ``True`` when the swap succeeded; ``False`` when ``old_widget`` was
+            not found in the current docked tabs.
+        """
+        # Locate the tab_id that currently maps to old_widget.
+        tab_id: str | None = None
+        for tid, w in self._tab_widgets.items():
+            if w is old_widget:
+                tab_id = tid
+                break
+        if tab_id is None:
+            return False
+
+        # Locate the visual index in the QTabWidget.
+        index = self.tabs.indexOf(old_widget)
+        if index < 0:
+            return False
+
+        title = self.tabs.tabText(index)
+        tooltip = self.tabs.tabToolTip(index)
+
+        # Perform the swap atomically: remove → insert at same position → update map.
+        self.tabs.removeTab(index)
+        self.tabs.insertTab(index, new_widget, title)
+        if tooltip:
+            self.tabs.setTabToolTip(index, tooltip)
+        self.tabs.setCurrentIndex(index)
+
+        self._tab_widgets[tab_id] = new_widget
+
+        # Retire the old widget cleanly.
+        old_widget.setParent(None)  # type: ignore[arg-type]
+        old_widget.deleteLater()
+        return True
+
     def configure_tabs(self, definitions: list[SidebarTabDefinition]) -> None:
         """Configure the available tab set for this Sidekick instance."""
         self.tabs.clear()
