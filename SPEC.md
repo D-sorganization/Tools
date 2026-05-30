@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.230                                    |
+| **Spec Version**        | 1.1.231                                    |
 | **Last Spec Update**    | 2026-05-30                                 |
 
 ## 2. Purpose & Mission
@@ -630,6 +630,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-05-30 | 1.1.231 | perf(p1am frontend, #3126): optimize array aggregations in AlarmsHeader.tsx by replacing chained .filter() and .reduce() operations with a single-pass loop. |
 | 2026-05-30 | 1.1.230 | Fix CI failures on PR #3123: re-export \_QS_ORG/\_QS_APP/\_QS_VISIBLE_TABS_KEY from sidebar, fix apply_state \_dock_widget AttributeError (now uses \_dock_chrome.dock_widget), add waitUntil to MockQtBot, fix F6 isVisible→isHidden for headless tests, fix F10 duplicate-pin test to use subdirectory, add runtime_tabs.py and registry.py to monolith baseline, bump SPEC version. |
 | 2026-05-30 | 1.1.229 | chore: remove stale type-ignore suppression comments in data_explorer_service, project_file_explorer, runtime_tabs; add explicit bool() cast on eventFilter return in os_terminal to satisfy mypy no-any-return. |
 | 2026-05-30 | 1.1.228 | F4: Patched TabCollection.replace() to correctly update internal id mapping when swapping widgets; fixes stale id→widget reference after atomic swap. |
@@ -954,6 +955,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.231
+
+- 2026-05-30: perf(p1am frontend, #3126) — optimize array aggregations in `AlarmsHeader.tsx` by replacing chained `.filter()` and `.reduce()` operations with a single-pass `for` loop, eliminating intermediate array allocations and minimizing garbage collection overhead during high-frequency alarm updates.
 
 ### Version 1.1.230
 
