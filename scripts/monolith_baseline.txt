@@ -8,8 +8,8 @@ src/data_processing/data_processor/python/data_processor/core/data_loader.py
 src/data_processing/data_processor/python/data_processor/core/dataset_manager.py
 src/data_processing/data_processor/python/data_processor/core/feature_extractor.py
 src/data_processing/data_processor/python/data_processor/core/kalman_filter.py
-src/data_processing/data_processor/python/data_processor/core/nn_script_exporter_renderers.py
 src/data_processing/data_processor/python/data_processor/core/nn_script_exporter.py
+src/data_processing/data_processor/python/data_processor/core/nn_script_exporter_renderers.py
 src/data_processing/data_processor/python/data_processor/core/nn_trainer.py
 src/data_processing/data_processor/python/data_processor/core/outlier_detection.py
 src/data_processing/data_processor/python/data_processor/core/pca_analysis.py
@@ -26,8 +26,8 @@ src/data_processing/data_processor/python/data_processor/gui_refactored.py
 src/data_processing/data_processor/python/data_processor/high_performance_loader.py
 src/data_processing/data_processor/python/data_processor/ui/folder_tool_tab.py
 src/data_processing/data_processor/python/data_processor/ui/format_converter_tab.py
-src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window_tabs.py
 src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window.py
+src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window_tabs.py
 src/data_processing/data_processor/python/data_processor/ui/pyqt6/statistical_widgets.py
 src/data_processing/data_processor/python/data_processor/ui/pyqt6/visualization_widgets.py
 src/data_processing/data_processor/python/data_processor/ui/pyqt6/widgets.py
@@ -47,14 +47,15 @@ src/lower_body_model/simulator.py
 src/multi_param_analysis/python/multi_param_analysis/ui/pyqt6/main_window.py
 src/ode_solver/python/ode_solver/ui/pyqt6/main_window.py
 src/optimizer_gui/python/optimizer_gui/ui/pyqt6/main_window.py
+src/p1am_control_system/backend/main.py
 src/pendulum_simulator/pendulum-core/python/physics_native.py
 src/pendulum_simulator/pendulum-core/src/cmaes.rs
 src/pendulum_simulator/pendulum-core/src/golfer.rs
 src/pendulum_simulator/src/double_pendulum_golf/gui/analysis_tab.py
 src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py
+src/pendulum_simulator/src/double_pendulum_golf/gui/controls_widget.py
 src/pendulum_simulator/src/double_pendulum_golf/gui/controls_widget_base.py
 src/pendulum_simulator/src/double_pendulum_golf/gui/controls_widget_golfer.py
-src/pendulum_simulator/src/double_pendulum_golf/gui/controls_widget.py
 src/pendulum_simulator/src/double_pendulum_golf/gui/equations_data.py
 src/pendulum_simulator/src/double_pendulum_golf/gui/equations_popup.py
 src/pendulum_simulator/src/double_pendulum_golf/gui/golfer_pendulum_widget.py
@@ -67,9 +68,9 @@ src/pendulum_simulator/src/double_pendulum_golf/gui/simulation_panel.py
 src/pendulum_simulator/src/double_pendulum_golf/gui/swing_comparison_dialog.py
 src/pendulum_simulator/src/double_pendulum_golf/gui/toolstrip_widget.py
 src/pendulum_simulator/src/double_pendulum_golf/native_backend.py
+src/pendulum_simulator/src/double_pendulum_golf/physics.py
 src/pendulum_simulator/src/double_pendulum_golf/physics_golfer_jax.py
 src/pendulum_simulator/src/double_pendulum_golf/physics_triple.py
-src/pendulum_simulator/src/double_pendulum_golf/physics.py
 src/pendulum_simulator/tests/test_analytical_jacobians.py
 src/pendulum_simulator/tests/test_friction_triple.py
 src/pendulum_simulator/tests/test_golfer_dynamics_extended.py
@@ -106,8 +107,8 @@ src/shared/python/ai/tool_registry.py
 src/shared/python/ai/tools/agent_control.py
 src/shared/python/ai/tools/cli_tools.py
 src/shared/python/ai/types.py
-src/shared/python/calc_backend/tests/test_calc_backend_gaps.py
 src/shared/python/calc_backend/tests/test_calc_backend.py
+src/shared/python/calc_backend/tests/test_calc_backend_gaps.py
 src/shared/python/chat/_chat_dock_widget_qt.py
 src/shared/python/contracts.py
 src/shared/python/data_processing/processor.py
@@ -148,6 +149,7 @@ src/shared/python/plot_theme/themes.py
 src/shared/python/programmatic_pid/cli.py
 src/shared/python/sidekick/calculators/conversion/flow_rate_converter.py
 src/shared/python/sidekick/calculators/conversion/service.py
+src/shared/python/sidekick/lab/bio/c3d_reader.py
 src/shared/python/sidekick/process_calculators/acid_gas_dewpoint_calculator.py
 src/shared/python/sidekick/process_calculators/pressure_drop_calculator/utils/gas_properties.py
 src/shared/python/sidekick/process_calculators/wgs_reactor_calculator.py
@@ -156,7 +158,11 @@ src/shared/python/sidekick/tests/process_calculators/test_psa_model.py
 src/shared/python/sidekick/tests/test_data_processor_engine.py
 src/shared/python/sidekick/ui/mixins/calculator_state_mixin.py
 src/shared/python/sidekick/ui/tools_sidebar/os_terminal.py
+src/shared/python/sidekick/ui/tools_sidebar/registry.py
+src/shared/python/sidekick/ui/tools_sidebar/runtime_tabs.py
 src/shared/python/sidekick/ui/tools_sidebar/sidebar.py
+src/shared/python/sidekick/ui/widgets/unit_converter_widget.py
+src/shared/python/sidekick/utils/state_manager.py
 src/shared/python/signal_toolkit/calculus.py
 src/shared/python/signal_toolkit/core.py
 src/shared/python/signal_toolkit/filters.py
@@ -167,8 +173,8 @@ src/shared/python/signal_toolkit/noise.py
 src/shared/python/signal_toolkit/polynomial_generator.py
 src/shared/python/signal_toolkit/series.py
 src/shared/python/signal_toolkit/tests/test_series.py
-src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py
 src/shared/python/signal_toolkit/tests/test_signal_toolkit.py
+src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py
 src/shared/python/signal_toolkit/widget_processing.py
 src/shared/python/signal_toolkit/widget_ui.py
 src/shared/python/theme/colors.py
@@ -182,7 +188,6 @@ src/shared/python/upstream_drift_tools/calculators/conversion/tables.py
 src/shared/python/upstream_drift_tools/calculators/electrical/electrical_model.py
 src/shared/python/upstream_drift_tools/calculators/thermo/steam_engine.py
 src/shared/python/upstream_drift_tools/data_processing/core.py
-src/shared/python/sidekick/lab/bio/c3d_reader.py
 src/shared/python/upstream_drift_tools/lab/bio/c3d_reader.py
 src/shared/python/upstream_drift_tools/process_calculators/acid_gas_dewpoint_calculator.py
 src/shared/python/upstream_drift_tools/process_calculators/constants.py
@@ -201,8 +206,6 @@ src/shared/python/upstream_drift_tools/tests/calculators/conversion/test_convers
 src/shared/python/upstream_drift_tools/tests/process_calculators/test_psa_model.py
 src/shared/python/upstream_drift_tools/tests/test_data_processor_engine.py
 src/shared/python/upstream_drift_tools/ui/mixins/calculator_state_mixin.py
-src/shared/python/sidekick/ui/widgets/unit_converter_widget.py
-src/shared/python/sidekick/utils/state_manager.py
 src/shared/python/upstream_drift_tools/ui/tools_sidebar/runtime_tabs.py
 src/shared/python/upstream_drift_tools/ui/widgets/data_processor_widget.py
 src/shared/python/upstream_drift_tools/ui/widgets/unit_converter_widget.py

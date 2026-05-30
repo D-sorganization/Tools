@@ -48,7 +48,7 @@ jobs:
         id: check
         shell: bash
         run: |
-          echo "runner=d-sorg-fleet-14core" >> $GITHUB_OUTPUT
+          echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
           echo "Routing to self-hosted fleet runner."
 
   check-and-trigger:
