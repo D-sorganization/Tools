@@ -36,6 +36,8 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Purge pip cache
+        run: python -m pip cache purge || true
       - name: Install PyYAML
         run: pip install --disable-pip-version-check pyyaml==6.0.2
 
