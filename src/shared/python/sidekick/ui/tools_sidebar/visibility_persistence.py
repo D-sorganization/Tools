@@ -25,6 +25,8 @@ __all__ = ["VisibilityPersistence"]
 _QS_ORG = "DSorganization"
 _QS_APP = "Sidekick"
 _QS_VISIBLE_TABS_KEY_GLOBAL = "sidekick_visible_tabs"
+# Backward-compat alias used by the sidebar module and older tests.
+_QS_VISIBLE_TABS_KEY = _QS_VISIBLE_TABS_KEY_GLOBAL
 
 
 def _scoped_key(project_root: Path) -> str:

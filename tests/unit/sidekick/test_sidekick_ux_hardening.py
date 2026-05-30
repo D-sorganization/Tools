@@ -210,6 +210,12 @@ class TestF5QSettingsConsolidation:
                 written["key"] = key
                 written["value"] = value
 
+            def value(self, key: str, default: Any = None, **kwargs: Any) -> Any:  # noqa: N802
+                return default
+
+            def sync(self) -> None:  # noqa: N802
+                pass
+
         original_qs = QtCore.QSettings
 
         try:
@@ -220,15 +226,21 @@ class TestF5QSettingsConsolidation:
                 UnifiedToolsSidebar,
             )
 
-            QtCore.QSettings = _FakeQSettings  # type: ignore[assignment]
-
+            # Create the sidebar with real QSettings, then patch to capture
+            # the single persist write.
             sidebar = UnifiedToolsSidebar(project_root=tmp_path)
             qtbot.addWidget(sidebar)
+
+            QtCore.QSettings = _FakeQSettings  # type: ignore[assignment]
             sidebar._persist_visible_tabs()  # noqa: SLF001
 
             assert written.get("org") == _QS_ORG
             assert written.get("app") == _QS_APP
-            assert written.get("key") == _QS_VISIBLE_TABS_KEY
+            # The written key is project-root-scoped (starts with the global prefix).
+            assert written.get("key", "").startswith(_QS_VISIBLE_TABS_KEY), (
+                f"Expected key starting with {_QS_VISIBLE_TABS_KEY!r}, "
+                f"got {written.get('key')!r}"
+            )
         finally:
             QtCore.QSettings = original_qs  # type: ignore[assignment]
 
@@ -335,11 +347,17 @@ class TestF10QuickAccessPersistence:
         explorer = ProjectFileExplorer(project_root=tmp_path, parent=None)
         qtbot.addWidget(explorer)
 
+        # Use a subdirectory so the pin target is distinct from tmp_path
+        # itself (which _refresh_common_locations may already list as the
+        # project root).
+        pin_dir = tmp_path / "quick_access_pin"
+        pin_dir.mkdir()
+
         initial_count = explorer._common_locations.count()  # noqa: SLF001
 
         # Add the same path twice — second call must be a no-op.
-        explorer._add_to_quick_access(tmp_path)  # noqa: SLF001
-        explorer._add_to_quick_access(tmp_path)  # noqa: SLF001
+        explorer._add_to_quick_access(pin_dir)  # noqa: SLF001
+        explorer._add_to_quick_access(pin_dir)  # noqa: SLF001
 
         final_count = explorer._common_locations.count()  # noqa: SLF001
         assert final_count == initial_count + 1, (
@@ -790,8 +808,10 @@ class TestF6AsyncRepl:
 
         # Wait up to 3 s for the worker to finish (signal updates output)
         qtbot.waitUntil(
-            lambda: not widget._run_button.isEnabled()  # noqa: SLF001
-            or "x" in widget._namespace,  # noqa: SLF001
+            lambda: (
+                not widget._run_button.isEnabled()  # noqa: SLF001
+                or "x" in widget._namespace
+            ),  # noqa: SLF001
             timeout=3000,
         )
 
@@ -803,17 +823,20 @@ class TestF6AsyncRepl:
         assert not widget._run_button.isEnabled(), (  # noqa: SLF001
             "Run button must be disabled while running (F6 regression)"
         )
-        assert widget._cancel_button.isVisible(), (  # noqa: SLF001
-            "Cancel button must be visible while running (F6 regression)"
+        # In headless tests the top-level window is never shown, so isVisible()
+        # returns False even after setVisible(True).  isHidden() checks the
+        # widget's own explicit visibility bit, which is reliable here.
+        assert not widget._cancel_button.isHidden(), (  # noqa: SLF001
+            "Cancel button must not be hidden while running (F6 regression)"
         )
-        assert widget._status_label.isVisible(), (  # noqa: SLF001
-            "Status label must be visible while running (F6 regression)"
+        assert not widget._status_label.isHidden(), (  # noqa: SLF001
+            "Status label must not be hidden while running (F6 regression)"
         )
 
         widget._set_running(False)  # noqa: SLF001
         assert widget._run_button.isEnabled(), (  # noqa: SLF001
             "Run button must re-enable after stop (F6 regression)"
         )
-        assert not widget._cancel_button.isVisible(), (  # noqa: SLF001
-            "Cancel button must hide after stop (F6 regression)"
+        assert widget._cancel_button.isHidden(), (  # noqa: SLF001
+            "Cancel button must be hidden after stop (F6 regression)"
         )

@@ -49,7 +49,12 @@ from .tab_visibility import (
     without_default_tab_visibility,
 )
 from .theme_settings import resolve_sidekick_theme
-from .visibility_persistence import VisibilityPersistence
+from .visibility_persistence import (
+    _QS_APP,  # noqa: F401  # re-exported for backward compat
+    _QS_ORG,  # noqa: F401  # re-exported for backward compat
+    _QS_VISIBLE_TABS_KEY,  # noqa: F401  # re-exported for backward compat
+    VisibilityPersistence,
+)
 
 __all__ = [
     "LayoutMode",
@@ -543,9 +548,10 @@ class UnifiedToolsSidebar(
         self._apply_tab_state(state)
         self.set_minimized(state.minimized)
         self.set_active_tab(state.active_tab)
-        if self._dock_widget is not None:
-            self._dock_widget.setFloating(state.floating)
-            self._dock_widget.resize(state.width, state.height)
+        _dw = self._dock_chrome.dock_widget
+        if _dw is not None:
+            _dw.setFloating(state.floating)
+            _dw.resize(state.width, state.height)
 
     def active_tab_id(self) -> str:
         index = int(self.tabs.currentIndex())
