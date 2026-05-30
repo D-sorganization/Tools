@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.215                                    |
+| **Spec Version**        | 1.1.216                                    |
 | **Last Spec Update**    | 2026-05-29                                 |
 
 ## 2. Purpose & Mission
@@ -945,12 +945,19 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 9. Changelog
 
+### Version 1.1.216
+
+- 2026-05-29: chore(sidekick) — type-gate hardening surfaced by the changed-file CI mypy run: `register_shortcuts` now resolves `QShortcut`/`QKeySequence` through the active `qt_compat` binding instead of a PyQt6/PyQt5 dual-import fork, `_default_tab_definitions` returns an annotated local rather than `cast()`, and `SidekickThemeSettings.__post_init__` widens the persisted-`font` branch through `Any` so the runtime-dict reconstruction type-checks. Clears pre-existing `no-redef`/`unused-ignore`/`redundant-cast`/`no-any-return`/`arg-type` findings on `sidebar.py` and `theme_settings.py`.
+- 2026-05-29: feat(sidekick) — wired working ⚙ settings into the Chat, Terminal, Python REPL, and Workspace tabs (previously the gear was disabled on every tab except Data Explorer). New shared `appearance.py` (`PanelAppearance` value object + `panel_qss` generator) gives the terminal/REPL/workspace always-on visible borders and user-adjustable colours; the Workspace now shows an empty-state hint instead of blank white space and the REPL gained input/output labels. `chat_settings.py` adds provider/model/reasoning/agent-mode/auto-condense config plus keyring-backed API-key management. `runtime_tab_settings.py` adds per-tab appearance panels (native colour pickers) and a configurable preloaded scientific-package bundle (numpy/scipy/pandas/matplotlib/sympy) for the Python REPL, reusing the validated `CalculatorStartupConfig`. Added narrow `UnifiedToolsSidebar.tab_widget(tab_id)` accessor for live application (LOD). 130+ new tests; sidekick API stability baseline regenerated (purely additive).
+
 ### Version 1.1.215
 
 - 2026-05-29: fix(sidekick) — validate C3D header magic bytes before handing files to ezc3d, returning a clear `ValueError` for truncated or mislabeled files and covering the pre-parser failure path with focused tests.
 
 ### Version 1.1.212
 
+- 2026-05-29: chore(ci) — scope coverage policy package thresholds to tracked packages changed in the PR while preserving total coverage and Sidekick-specific coverage gates.
+- 2026-05-29: fix(sidekick) — make the standard response API import its shared StrEnum helper via the repo package path while preserving top-level Sidekick compatibility (#3106).
 - 2026-05-27: fix(p1am) — extend interlock contract to 4 limits (lolo/low/high/hihi) in SafetyInterlock to align with host. Chunk Modbus client read/write routing into 64-register packets to satisfy pymodbus's request size caps.
 - 2026-05-27: chore(ci) — use `sudo rm -rf` in Python tool cache cleanup to ensure complete removal of corrupted files, and add cleanup step to topology-governance, detect-secrets, and cross-repo integration workflows.
 

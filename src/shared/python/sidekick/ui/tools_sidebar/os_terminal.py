@@ -33,6 +33,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol
 
+from .appearance import (
+    DEFAULT_DARK_PANEL_APPEARANCE,
+    PanelAppearance,
+    panel_qss,
+)
 from .qt_compat import QtCore, QtWidgets
 from .shell_discovery import ShellDescriptor, discover_shells
 
@@ -492,6 +497,7 @@ class SidekickOsTerminalWidget(QtWidgets.QWidget):
         self._install_hint: str | None = None
         self._current_shell: ShellDescriptor | None = None
         self._autostart: bool = autostart
+        self._appearance: PanelAppearance = DEFAULT_DARK_PANEL_APPEARANCE
 
         if shells is not None:
             self._shells = list(shells)
@@ -571,6 +577,25 @@ class SidekickOsTerminalWidget(QtWidgets.QWidget):
         self._poll_timer = QtCore.QTimer(self)
         self._poll_timer.setInterval(80)
         self._poll_timer.timeout.connect(self._poll_backend)
+
+        # Apply a visible border + colours so the terminal surfaces read as
+        # distinct panels rather than borderless white space.
+        self.apply_appearance(self._appearance)
+
+    def apply_appearance(self, appearance: PanelAppearance) -> None:
+        """Apply user-adjustable colours/border to the terminal surfaces.
+
+        Single-value handoff (LOD): renders a validated
+        :class:`PanelAppearance` via the shared panel stylesheet.
+        """
+        if not isinstance(appearance, PanelAppearance):
+            raise TypeError("appearance must be a PanelAppearance")
+        self._appearance = appearance
+        self.setStyleSheet(panel_qss(self.objectName(), appearance))
+
+    def appearance(self) -> PanelAppearance:
+        """Return the currently applied appearance."""
+        return self._appearance
 
     def _populate_shell_selector(self) -> None:
         self._shell_selector.blockSignals(True)
