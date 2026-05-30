@@ -230,18 +230,19 @@ function calculateTempoMetrics(
 ): TempoMetrics {
   const phases = phaseResult.phases;
 
-  // Find backswing phases
-  const backswingPhases = phases.filter((p) =>
-    [SwingPhase.TAKEAWAY, SwingPhase.BACKSWING, SwingPhase.TOP_OF_BACKSWING].includes(p.phase)
-  );
+  // ⚡ Bolt Optimization: Calculate durations in a single pass instead of chained .filter().reduce()
+  // Reduces intermediate array allocations and GC overhead
+  let backswingDuration = 0;
+  let downswingDuration = 0;
 
-  // Find downswing phases
-  const downswingPhases = phases.filter((p) =>
-    [SwingPhase.TRANSITION, SwingPhase.DOWNSWING, SwingPhase.IMPACT].includes(p.phase)
-  );
-
-  const backswingDuration = backswingPhases.reduce((sum, p) => sum + p.duration, 0);
-  const downswingDuration = downswingPhases.reduce((sum, p) => sum + p.duration, 0);
+  for (let i = 0; i < phases.length; i++) {
+    const p = phases[i];
+    if (p.phase === SwingPhase.TAKEAWAY || p.phase === SwingPhase.BACKSWING || p.phase === SwingPhase.TOP_OF_BACKSWING) {
+      backswingDuration += p.duration;
+    } else if (p.phase === SwingPhase.TRANSITION || p.phase === SwingPhase.DOWNSWING || p.phase === SwingPhase.IMPACT) {
+      downswingDuration += p.duration;
+    }
+  }
   const totalSwingDuration = backswingDuration + downswingDuration;
 
   // Find transition phase for pause calculation
@@ -711,15 +712,23 @@ function calculateSwingScores(
   // Consistency score (based on variance in metrics)
   const consistencyScore = 80; // Would need multiple swings to calculate
 
-  // Issue penalty
-  const issuePenalty =
-    issues.filter((i) => i.severity === 'major').length * 10 +
-    issues.filter((i) => i.severity === 'moderate').length * 5 +
-    issues.filter((i) => i.severity === 'minor').length * 2;
+  // ⚡ Bolt Optimization: Calculate issue penalty in a single pass instead of multiple .filter() calls
+  // Eliminates intermediate array allocations
+  let issuePenalty = 0;
+  for (let i = 0; i < issues.length; i++) {
+    const sev = issues[i].severity;
+    if (sev === 'major') issuePenalty += 10;
+    else if (sev === 'moderate') issuePenalty += 5;
+    else if (sev === 'minor') issuePenalty += 2;
+  }
 
   // Overall score
   const componentScores = [tempoScore, balanceScore, planeScore, postureScore, rotationScore, timingScore];
-  const avgScore = componentScores.reduce((sum, s) => sum + s, 0) / componentScores.length;
+  let sumScores = 0;
+  for (let i = 0; i < componentScores.length; i++) {
+    sumScores += componentScores[i];
+  }
+  const avgScore = sumScores / componentScores.length;
   const overall = Math.max(0, Math.min(100, avgScore - issuePenalty / 2));
 
   return {
