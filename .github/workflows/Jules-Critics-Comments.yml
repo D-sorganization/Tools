@@ -37,11 +37,10 @@ permissions:
   contents: write
   pull-requests: write
 
-env:
-  AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
-
 jobs:
   write-critics-comments:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     timeout-minutes: 30
     runs-on: d-sorg-fleet
     steps:

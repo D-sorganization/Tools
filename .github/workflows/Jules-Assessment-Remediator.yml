@@ -70,12 +70,13 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
   MAX_ISSUES_PER_RUN: 10
   DEFAULT_ISSUE_COUNT: 5
 
 jobs:
   remediate:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     runs-on: d-sorg-fleet
     timeout-minutes: 45
     # Grant write only at this job level — remediation creates branches, pushes

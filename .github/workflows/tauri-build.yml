@@ -49,6 +49,8 @@ concurrency:
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
@@ -90,6 +92,8 @@ jobs:
   # Check - Fast validation on PRs
   # ===========================================================================
   check:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     needs: pick-runner
     name: Check (${{ matrix.app }})
     runs-on: d-sorg-fleet
@@ -156,6 +160,8 @@ jobs:
   # Build - Full build on main/release
   # ===========================================================================
   build:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     name: Build ${{ matrix.app.name }} (${{ matrix.platform.os }})
     needs: check
     if: github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main')

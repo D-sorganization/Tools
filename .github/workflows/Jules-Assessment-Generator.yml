@@ -32,11 +32,10 @@ on:
 permissions:
   contents: read
 
-env:
-  AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
-
 jobs:
   generate-assessments:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     timeout-minutes: 30
     runs-on: d-sorg-fleet
     # Grant write only at this job level — assessment commits and issue creation

@@ -30,11 +30,10 @@ on:
 permissions:
   contents: read
 
-env:
-  AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
-
 jobs:
   comprehensive-assessment:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     timeout-minutes: 30
     name: Comprehensive Assessment & Audit
     runs-on: d-sorg-fleet

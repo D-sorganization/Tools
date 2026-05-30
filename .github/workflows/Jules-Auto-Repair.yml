@@ -66,7 +66,6 @@ permissions:
   checks: read
 
 env:
-  AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
   MAX_REPAIR_ATTEMPTS: 5
   REPAIR_WINDOW_HOURS: 72
   CI_WAIT_TIMEOUT: 900
@@ -75,6 +74,8 @@ env:
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
@@ -113,6 +114,8 @@ jobs:
               ;;
           esac
   intelligent-repair:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     timeout-minutes: 30
     needs: pick-runner
     runs-on: d-sorg-fleet

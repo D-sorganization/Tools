@@ -65,12 +65,11 @@ concurrency:
   group: auto-issue-resolver
   cancel-in-progress: true
 
-env:
-  AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
-
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
@@ -109,6 +108,8 @@ jobs:
               ;;
           esac
   analyze-issues:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     timeout-minutes: 30
     needs: pick-runner
     name: Analyze and Prioritize Issues
@@ -276,6 +277,8 @@ jobs:
           path: prioritized_issues.json
 
   resolve-issues:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     timeout-minutes: 30
     name: Resolve Issue #${{ matrix.issue.number }}
     needs: [pick-runner, analyze-issues]
@@ -568,6 +571,8 @@ jobs:
           gh pr comment "$CREATED_PR_NUM" --body "Auto Issue Resolver flagged this PR as a likely phantom merge. The verification gate refused to approve closure of issue #${{ matrix.issue.number }} based on this diff. See workflow logs for details." || true
 
   summary:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     timeout-minutes: 30
     name: Generate Summary Report
     needs: [pick-runner, analyze-issues, resolve-issues]

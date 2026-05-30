@@ -6,15 +6,13 @@ concurrency:
 on:
   workflow_dispatch:
 
-env:
-  AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
-
 jobs:
   run-heavy-tests:
     name: Heavy Integration Tests
     runs-on: d-sorg-fleet-14core
     timeout-minutes: 90
     env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
       HEAVY_TEST_SLACK_WEBHOOK: ${{ secrets.HEAVY_TEST_SLACK_WEBHOOK }}
 
     steps:

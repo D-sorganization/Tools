@@ -19,6 +19,8 @@ concurrency:
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
@@ -57,6 +59,8 @@ jobs:
               ;;
           esac
   check-mention:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     timeout-minutes: 30
     needs: pick-runner
     runs-on: d-sorg-fleet
@@ -78,6 +82,8 @@ jobs:
           fi
 
   fix-issue:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     timeout-minutes: 30
     needs: [pick-runner, check-mention]
     if: needs.check-mention.outputs.should_run == 'true' && !github.event.issue.pull_request

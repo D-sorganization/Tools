@@ -27,11 +27,10 @@ defaults:
   run:
     shell: bash
 
-env:
-  AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
-
 jobs:
   fix-brick-toolcache:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     runs-on: d-sorg-fleet-2core
     timeout-minutes: 5
     steps:
@@ -71,6 +70,8 @@ jobs:
 
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
@@ -120,6 +121,7 @@ jobs:
     runs-on: d-sorg-fleet
     timeout-minutes: 20
     env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
       # Shared wheel/download cache for self-hosted runners — avoids re-downloading
       # the same packages on every run.  Path is host-stable and safe for concurrent
       # runners on the same machine.  See issue #2160.
@@ -403,6 +405,7 @@ jobs:
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
     env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
       # Shared wheel/download cache — mirrors quality-gate setting.  See issue #2160.
       PIP_CACHE_DIR: /home/dieterolson/actions-runners/.shared-tool-cache/pip
     steps:
@@ -644,6 +647,7 @@ jobs:
     runs-on: d-sorg-fleet
     timeout-minutes: 15
     env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
       CARGO_HOME: ${{ github.workspace }}/.cargo-home
       CARGO_INCREMENTAL: "0"
       CARGO_TERM_COLOR: always

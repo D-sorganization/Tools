@@ -33,6 +33,8 @@ permissions:
 
 jobs:
   audit:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     timeout-minutes: 20
     runs-on: d-sorg-fleet
     # Grant write only at this job level.

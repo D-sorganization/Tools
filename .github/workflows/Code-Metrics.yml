@@ -14,12 +14,11 @@ permissions:
   contents: read
   pull-requests: write
 
-env:
-  AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
-
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
@@ -58,6 +57,8 @@ jobs:
               ;;
           esac
   complexity-metrics:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     timeout-minutes: 30
     needs: pick-runner
     name: Complexity Analysis (radon)
@@ -141,6 +142,8 @@ jobs:
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
   duplication-metrics:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     timeout-minutes: 30
     needs: pick-runner
     name: Duplication Analysis (jscpd)
@@ -224,6 +227,8 @@ jobs:
           fi
 
   summary:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     timeout-minutes: 30
     name: Metrics Summary
     needs: [pick-runner, complexity-metrics, duplication-metrics]

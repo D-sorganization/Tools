@@ -25,12 +25,11 @@ permissions:
   contents: write
   pull-requests: write
 
-env:
-  AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
-
 jobs:
   # ── 1. Determine if this commit warrants a release ────────────────────
   analyse-commits:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     timeout-minutes: 60
     name: Analyse Commits
     runs-on: d-sorg-fleet
@@ -140,6 +139,8 @@ jobs:
 
   # ── 2. Validate: tests + quality gates ──────────────────────────────
   validate:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     timeout-minutes: 60
     name: Validate
     runs-on: d-sorg-fleet
@@ -184,6 +185,8 @@ jobs:
 
   # ── 3. Bump version in pyproject.toml + VERSION file ────────────────
   bump-version:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     timeout-minutes: 60
     name: Bump Version
     runs-on: d-sorg-fleet
@@ -286,6 +289,8 @@ jobs:
 
   # ── 4. Create GitHub Release ─────────────────────────────────────────
   github-release:
+    env:
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
     timeout-minutes: 60
     name: GitHub Release
     runs-on: d-sorg-fleet
