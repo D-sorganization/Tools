@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.214                                    |
-| **Last Spec Update**    | 2026-05-28                                 |
+| **Spec Version**        | 1.1.216                                    |
+| **Last Spec Update**    | 2026-05-29                                 |
 
 ## 2. Purpose & Mission
 
@@ -944,12 +944,17 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 9. Changelog
 
-### Version 1.1.214
+### Version 1.1.218
 
 - 2026-05-29: fix(sidekick conversions, #3101) — reconcile `flow_rate_converter` with the DRY constants layer: `ton`/`ton/hr` now means a short ton (907.18 kg) fleet-wide (metric is `tonne`), STP is the IUPAC 0°C/1 bar definition, the gas constant and standard conditions import from `unit_constants`, `Nm3/hr` spellings are recognized, `convert_via_table` raises `ValueError` on unknown units, `_normalize_unit` raises `UnknownUnitError` (O(1)) instead of silently echoing, and the temperature path validates finiteness. Restored the four empty conversion test stubs with known-value and round-trip assertions.
-- 2026-05-29: fix(sidekick process numerics, #3103) — remove the duplicated compressible-flow solver (`_flow_calculations` now imports the canonical `compressible_flow`) and the malformed in-sqrt expansion factor; solve WGS extent directly from the equilibrium constant so reported K and composition are self-consistent and guard `T>0`; replace precondition `assert`s with `ValueError` in flare/financial/baghouse; raise on laminar `Re<=0`; return ideal-gas Z=1 for unknown-only compositions; flag compressible-solver non-convergence; clarify the acid-gas °C Antoine convention.
+- 2026-05-29: fix(sidekick process numerics, #3103) — remove the duplicated compressible-flow solver (`_flow_calculations` now imports the canonical `compressible_flow`) and the malformed in-sqrt expansion factor; solve WGS extent directly from the equilibrium constant so reported K and composition are self-consistent and guard `T>0`; replace precondition `assert`s with `ValueError` in flare/financial; raise on laminar `Re<=0`; return ideal-gas Z=1 for unknown-only compositions; flag compressible-solver non-convergence; clarify the acid-gas °C Antoine convention.
 - 2026-05-29: fix(sidekick PSA UI, #3105) — refresh the sensitivity plot when components change (dirty flag + re-plot when visible); resolve the pre-calc tab trigger via `indexOf` instead of a magic index; size the O2 hazard band from the plotted data max so it can't collapse to the default y-limit.
 - 2026-05-29: fix(sidekick widget/state layer, #3102) — wrap Data Processor engine ops (filter/query/aggregate/add/transform/rename/drop/fit) in `try/except DataProcessingError` so bad input shows a warning instead of crashing; validate corrupt saved-state shape (via an `Any`-typed alias so the runtime guard stays reachable) and broaden the load except; parent the auto-save `QTimer` to the host widget and guard `auto_save_state` against teardown; route unit-converter save/delete through `_get_row_by_index`; add a public `UnitConversionService.get_compatible_units`.
+
+### Version 1.1.216
+
+- 2026-05-29: chore(sidekick) — type-gate hardening surfaced by the changed-file CI mypy run: `register_shortcuts` now resolves `QShortcut`/`QKeySequence` through the active `qt_compat` binding instead of a PyQt6/PyQt5 dual-import fork, `_default_tab_definitions` returns an annotated local rather than `cast()`, and `SidekickThemeSettings.__post_init__` widens the persisted-`font` branch through `Any` so the runtime-dict reconstruction type-checks. Clears pre-existing `no-redef`/`unused-ignore`/`redundant-cast`/`no-any-return`/`arg-type` findings on `sidebar.py` and `theme_settings.py`.
+- 2026-05-29: feat(sidekick) — wired working ⚙ settings into the Chat, Terminal, Python REPL, and Workspace tabs (previously the gear was disabled on every tab except Data Explorer). New shared `appearance.py` (`PanelAppearance` value object + `panel_qss` generator) gives the terminal/REPL/workspace always-on visible borders and user-adjustable colours; the Workspace now shows an empty-state hint instead of blank white space and the REPL gained input/output labels. `chat_settings.py` adds provider/model/reasoning/agent-mode/auto-condense config plus keyring-backed API-key management. `runtime_tab_settings.py` adds per-tab appearance panels (native colour pickers) and a configurable preloaded scientific-package bundle (numpy/scipy/pandas/matplotlib/sympy) for the Python REPL, reusing the validated `CalculatorStartupConfig`. Added narrow `UnifiedToolsSidebar.tab_widget(tab_id)` accessor for live application (LOD). 130+ new tests; sidekick API stability baseline regenerated (purely additive).
 
 ### Version 1.1.212
 
