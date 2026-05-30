@@ -61,15 +61,15 @@ jobs:
           if [ -d /opt/hostedtoolcache/Python ]; then
             ls -la /opt/hostedtoolcache/Python
             echo "Deleting cached Python versions in /opt/hostedtoolcache..."
-            rm -rf /opt/hostedtoolcache/Python/* || echo "rm /opt/hostedtoolcache failed"
+            rm -rf /opt/hostedtoolcache/Python || echo "rm /opt/hostedtoolcache failed"
           fi
           # Clean home/dieterolson/actions-runners/.shared-tool-cache
           if [ -d /home/dieterolson/actions-runners/.shared-tool-cache/Python ]; then
             echo "Deleting cached Python versions in actions-runners shared cache..."
-            rm -rf /home/dieterolson/actions-runners/.shared-tool-cache/Python/* || echo "rm actions-runners shared cache failed"
+            rm -rf /home/dieterolson/actions-runners/.shared-tool-cache/Python || echo "rm actions-runners shared cache failed"
           fi
           # Clean home/dieterolson/actions-runners-nvme/.shared-tool-cache
           if [ -d /home/dieterolson/actions-runners-nvme/.shared-tool-cache/Python ]; then
             echo "Deleting cached Python versions in actions-runners-nvme shared cache..."
-            rm -rf /home/dieterolson/actions-runners-nvme/.shared-tool-cache/Python/* || echo "rm nvme shared cache failed"
+            rm -rf /home/dieterolson/actions-runners-nvme/.shared-tool-cache/Python || echo "rm nvme shared cache failed"
           fi
