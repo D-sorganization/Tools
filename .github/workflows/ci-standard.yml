@@ -29,7 +29,7 @@ defaults:
 
 jobs:
   fix-brick-toolcache:
-    runs-on: d-sorg-fleet
+    runs-on: d-sorg-fleet-2core
     timeout-minutes: 5
     steps:
       - name: Create symlink

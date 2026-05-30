@@ -11,24 +11,16 @@ export const AlarmsHeader: React.FC<AlarmsHeaderProps> = ({
   activeAlarms,
   onAcknowledgeAll,
 }) => {
-  // ⚡ Bolt Optimization: Replace chained .filter() and .reduce() with a single-pass loop
-  // to avoid intermediate array allocations and minimize garbage collection overhead.
-  let unacknowledgedCount = 0;
-  let highestSeverity = 0;
-  for (let i = 0; i < activeAlarms.length; i++) {
-    const a = activeAlarms[i];
-    if (!a.acknowledged) {
-      unacknowledgedCount++;
-    }
-    if (a.severity > highestSeverity) {
-      highestSeverity = a.severity;
-    }
-  }
+  const unacknowledged = activeAlarms.filter((a) => !a.acknowledged);
+  const highestSeverity = activeAlarms.reduce(
+    (max, a) => Math.max(max, a.severity),
+    0
+  );
 
   let headerColorClass = "bg-gray-800/50 border-gray-700/50";
   let textColorClass = "text-gray-300";
 
-  if (unacknowledgedCount > 0) {
+  if (unacknowledged.length > 0) {
     if (highestSeverity >= 2) {
       headerColorClass = "bg-red-900/30 border-red-500/50 animate-pulse";
       textColorClass = "text-red-400";
@@ -59,9 +51,9 @@ export const AlarmsHeader: React.FC<AlarmsHeaderProps> = ({
         <div>
           <h2 className="font-semibold text-gray-100 flex items-center gap-2">
             System Status
-            {unacknowledgedCount > 0 && (
+            {unacknowledged.length > 0 && (
               <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 text-xs border border-red-500/20">
-                {unacknowledgedCount} Unacknowledged
+                {unacknowledged.length} Unacknowledged
               </span>
             )}
           </h2>
@@ -74,7 +66,7 @@ export const AlarmsHeader: React.FC<AlarmsHeaderProps> = ({
       </div>
 
       <div className="flex items-center gap-2">
-        {unacknowledgedCount > 0 && (
+        {unacknowledged.length > 0 && (
           <button
             onClick={onAcknowledgeAll}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200 shadow-lg hover:scale-105 active:scale-95 ${

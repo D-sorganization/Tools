@@ -6,12 +6,7 @@ import math
 import time
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from datetime import datetime, timezone
-
-try:
-    from datetime import UTC
-except ImportError:
-    UTC = timezone.utc  # noqa: UP017
+from datetime import UTC, datetime
 from typing import Any
 
 from alicat_manager import AlicatManager, AlicatMFC
@@ -234,13 +229,16 @@ async def poll_plc_loop() -> None:
             tags = None
             if plc_client.connected:
                 tags = await plc_client.read_tags()
+
             if tags is None:
                 # Fallback to simulation step
                 tags = await backup_simulator.read_tags()
+
             # Update latest tags
             if tags is not None:
                 for key, val in tags.items():
                     latest_tags[key] = val
+
             # Pack WebSocket message payload containing tags and alicats data
             tag_list = (
                 [tags.get(f"TAG_{i}", 0.0) for i in range(32)]
@@ -255,6 +253,7 @@ async def poll_plc_loop() -> None:
                 "e_stop_active": e_stop_active,
             }
             await ws_manager.broadcast(payload)
+
             if tags is not None:
                 db_session = None
                 try:
@@ -263,6 +262,7 @@ async def poll_plc_loop() -> None:
                     for tag_name, value in tags.items():
                         log_entry = TagLog(tag_name=tag_name, value=value)
                         db_session.add(log_entry)
+
                         # Process Alarms
                         events = alarm_engine.update_tag(tag_name, value)
                         for ev in events:
@@ -288,12 +288,14 @@ async def poll_plc_loop() -> None:
                                     "acknowledged": False,
                                     "timestamp": datetime.now(UTC).isoformat(),
                                 }
+
                             event_log = EventLog(
                                 event_type="ALARM",
                                 description=f"Tag {tag_name} crossed limit. State: {cur_state} Value: {value}",
                                 severity=sev,
                             )
                             db_session.add(event_log)
+
                     db_session.commit()
                 except Exception as db_err:
                     if db_session:
@@ -302,10 +304,13 @@ async def poll_plc_loop() -> None:
                 finally:
                     if db_session:
                         db_session.close()
+
         except Exception as loop_err:
             logger.error(f"Unexpected error in PLC polling loop: {loop_err}")
+
         # Sleep to maintain 10Hz frequency (100ms cycle)
         await asyncio.sleep(0.1)
+
     logger.info("Background PLC polling loop stopped.")
 
 

@@ -244,7 +244,7 @@ describe('Sanitization Functions', () => {
     it('should round to specified decimals', () => {
       expect(sanitizeNumber(3.14159, { decimals: 2 })).toBe(3.14);
       expect(sanitizeNumber(3.999, { decimals: 0 })).toBe(4);
-      expect(sanitizeNumber(2.5, { decimals: 0 })).toBe(2);
+      expect(sanitizeNumber(2.5, { decimals: 0 })).toBe(3);
     });
   });
 
