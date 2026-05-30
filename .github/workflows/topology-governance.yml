@@ -91,8 +91,10 @@ jobs:
         run: |
           for cache_root in /home/dieterolson/actions-runners/.shared-tool-cache /home/dieterolson/actions-runners-nvme/.shared-tool-cache; do
             if [ -d "$cache_root/Python" ]; then
-              echo "Cleaning $cache_root/Python (pre-setup-python)"
-              sudo rm -rf "$cache_root/Python"
+              echo "Moving stale Python toolcache at $cache_root/Python"
+              stale_dir="$cache_root/Python_stale_$RANDOM"
+              sudo mv "$cache_root/Python" "$stale_dir" || true
+              sudo rm -rf "$stale_dir" || true
             fi
           done
       - uses: actions/setup-python@v6
