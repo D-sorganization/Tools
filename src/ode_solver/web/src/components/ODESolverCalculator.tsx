@@ -9,7 +9,7 @@
  * See issue #608.
  */
 
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useId } from 'react'
 import {
   LineChart,
   Line,
@@ -26,6 +26,7 @@ import { ODE_PRESETS, solveODESystem } from '../lib/odeSolver'
 const LINE_COLORS = ['#3b82f6', '#22c55e', '#ef4444', '#f59e0b', '#8b5cf6', '#ec4899']
 
 export function ODESolverCalculator() {
+  const formId = useId()
   const [preset, setPreset] = useState('Harmonic Oscillator')
   const [derivativesText, setDerivativesText] = useState('x: v\nv: -omega*omega*x')
   const [parametersText, setParametersText] = useState('omega: 1.0')
@@ -336,39 +337,51 @@ export function ODESolverCalculator() {
             <h2 className="text-lg font-semibold text-white mb-4">ODE System</h2>
             <div className="space-y-3">
               <div>
-                <label className="block text-sm text-slate-300 mb-1">
+                <label htmlFor={`${formId}-derivatives`} className="block text-sm text-slate-300 mb-1">
                   Derivatives (var: expression)
                 </label>
                 <textarea
+                  id={`${formId}-derivatives`}
                   value={derivativesText}
                   onChange={(e) => setDerivativesText(e.target.value)}
                   rows={3}
                   placeholder="y: -k*y"
                   className="w-full bg-slate-700 text-white rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus:outline-none font-mono text-sm"
+                  spellCheck="false"
+                  autoCorrect="off"
+                  autoCapitalize="none"
                 />
               </div>
               <div>
-                <label className="block text-sm text-slate-300 mb-1">
+                <label htmlFor={`${formId}-parameters`} className="block text-sm text-slate-300 mb-1">
                   Parameters (name: value)
                 </label>
                 <textarea
+                  id={`${formId}-parameters`}
                   value={parametersText}
                   onChange={(e) => setParametersText(e.target.value)}
                   rows={3}
                   placeholder="k: 0.1"
                   className="w-full bg-slate-700 text-white rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus:outline-none font-mono text-sm"
+                  spellCheck="false"
+                  autoCorrect="off"
+                  autoCapitalize="none"
                 />
               </div>
               <div>
-                <label className="block text-sm text-slate-300 mb-1">
+                <label htmlFor={`${formId}-initial`} className="block text-sm text-slate-300 mb-1">
                   Initial Conditions (var: value)
                 </label>
                 <textarea
+                  id={`${formId}-initial`}
                   value={initialText}
                   onChange={(e) => setInitialText(e.target.value)}
                   rows={3}
                   placeholder="y: 100"
                   className="w-full bg-slate-700 text-white rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus:outline-none font-mono text-sm"
+                  spellCheck="false"
+                  autoCorrect="off"
+                  autoCapitalize="none"
                 />
               </div>
             </div>
@@ -380,8 +393,9 @@ export function ODESolverCalculator() {
             <div className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm text-slate-300 mb-1">Start Time</label>
+                  <label htmlFor={`${formId}-tstart`} className="block text-sm text-slate-300 mb-1">Start Time</label>
                   <input
+                    id={`${formId}-tstart`}
                     type="number"
                     value={tStart}
                     onChange={(e) => setTStart(Number(e.target.value))}
@@ -389,8 +403,9 @@ export function ODESolverCalculator() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-slate-300 mb-1">End Time</label>
+                  <label htmlFor={`${formId}-tend`} className="block text-sm text-slate-300 mb-1">End Time</label>
                   <input
+                    id={`${formId}-tend`}
                     type="number"
                     value={tEnd}
                     onChange={(e) => setTEnd(Number(e.target.value))}
@@ -399,8 +414,9 @@ export function ODESolverCalculator() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm text-slate-300 mb-1">Output Points</label>
+                <label htmlFor={`${formId}-numpoints`} className="block text-sm text-slate-300 mb-1">Output Points</label>
                 <input
+                  id={`${formId}-numpoints`}
                   type="number"
                   value={numPoints}
                   onChange={(e) => setNumPoints(Number(e.target.value))}
