@@ -8,7 +8,17 @@ concurrency:
 
 jobs:
   fix-toolcache:
-    runs-on: d-sorg-fleet-2core
+    strategy:
+      matrix:
+        runner:
+          [
+            d-sorg-fleet-2core,
+            d-sorg-fleet-4core,
+            d-sorg-fleet-8core,
+            d-sorg-fleet-docker,
+          ]
+      fail-fast: false
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 5
     steps:
       - name: Create Symlink
@@ -35,4 +45,24 @@ jobs:
             find /opt/hostedtoolcache -name "*__editable__*.pth" -delete || echo "delete failed"
           else
             echo "/opt/hostedtoolcache does not exist."
+          fi
+
+      - name: Clean up corrupted Python cache
+        run: |
+          echo "Cleaning Python tool cache..."
+          # Clean opt/hostedtoolcache
+          if [ -d /opt/hostedtoolcache/Python ]; then
+            ls -la /opt/hostedtoolcache/Python
+            echo "Deleting cached Python versions in /opt/hostedtoolcache..."
+            rm -rf /opt/hostedtoolcache/Python/* || echo "rm /opt/hostedtoolcache failed"
+          fi
+          # Clean home/dieterolson/actions-runners/.shared-tool-cache
+          if [ -d /home/dieterolson/actions-runners/.shared-tool-cache/Python ]; then
+            echo "Deleting cached Python versions in actions-runners shared cache..."
+            rm -rf /home/dieterolson/actions-runners/.shared-tool-cache/Python/* || echo "rm actions-runners shared cache failed"
+          fi
+          # Clean home/dieterolson/actions-runners-nvme/.shared-tool-cache
+          if [ -d /home/dieterolson/actions-runners-nvme/.shared-tool-cache/Python ]; then
+            echo "Deleting cached Python versions in actions-runners-nvme shared cache..."
+            rm -rf /home/dieterolson/actions-runners-nvme/.shared-tool-cache/Python/* || echo "rm nvme shared cache failed"
           fi
