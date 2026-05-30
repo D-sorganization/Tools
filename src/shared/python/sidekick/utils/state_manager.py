@@ -155,8 +155,10 @@ class StateManager:
                 _logger.warning("State file not found: %s", state_name)
                 return None
 
-            with open(state_file) as f:
-                full_state = json.load(f)
+            full_state = safe_read_json(state_file, default=None)
+            if full_state is None:
+                _logger.error("Could not read state file: %s", state_name)
+                return None
 
             # Validate state structure
             if not self._validate_state(full_state):
