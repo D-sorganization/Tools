@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| 1.1.225                 |
+| 1.1.226                 |
 | **Last Spec Update**    | 2026-05-30                                 |
 
 ## 2. Purpose & Mission
@@ -630,6 +630,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-05-30 | 1.1.226 | F6: PythonReplWidget now executes user scripts on a background QThread (\_ReplWorker) so the GUI stays responsive. Added \_cancel_button (best-effort terminate), \_status_label ('Running...'), \_set_running() toggle helper, and \_on_execution_finished() slot that syncs the namespace back to the registry on completion. |
 | 2026-05-30 | 1.1.225 | F2: Added Ctrl+C interrupt button (writes 0x03 to PTY), Stop/restart button, command history ring (Up/Down navigate, newest-first, deduplicates), and eventFilter on input QLineEdit in SidekickOsTerminalWidget. |
 | 2026-05-30 | 1.1.224 | F8: Added replace_tab_widget() to UnifiedToolsSidebar for atomic chat-dock retry swaps that keep both QTabWidget and \_tab_widgets bookkeeping in sync. F9: Rewrote registry.update_from() to merge via public set()/\_set_repr_entry() so name validation runs and subscribers are notified; same fix applied to load_json(). |
 | 2026-05-30 | 1.1.223 | F10: Quick-access folder pins in ProjectFileExplorer now persist to and restore from QSettings (project-root-scoped key); duplicates are rejected. F11: Hoisted a shared `resolve_columns` helper in `data_explorer_service` to eliminate the duplicated column-validation logic in `data_processor_tab`. |

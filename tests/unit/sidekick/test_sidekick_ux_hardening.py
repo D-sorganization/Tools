@@ -732,3 +732,88 @@ class TestF2TerminalControls:
         assert widget._input.text() == "new draft", (  # noqa: SLF001
             "Navigating forward past newest should restore live draft (F2 regression)"
         )
+
+
+# ---------------------------------------------------------------------------
+# F6 — Off-thread / cancellable REPL execution
+# ---------------------------------------------------------------------------
+
+
+class TestF6AsyncRepl:
+    """PythonReplWidget must run user code on a worker thread, not the GUI thread."""
+
+    def _make_repl(self, qtbot: Any) -> Any:
+        """Return a ready-to-use PythonReplWidget with a stub registry."""
+        try:
+            from upstream_drift_tools.ui.tools_sidebar import runtime_tabs
+            from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
+            from upstream_drift_tools.ui.tools_sidebar.registry import (
+                WorkspaceRegistry,
+            )
+        except ImportError:
+            pytest.skip("Qt/sidekick unavailable")
+
+        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+        reg = WorkspaceRegistry()
+        widget = runtime_tabs.PythonReplWidget(
+            registry=reg,
+            set_variable=lambda name, value: reg.set(name, value),
+        )
+        qtbot.addWidget(widget)
+        return widget
+
+    def test_cancel_button_present_and_hidden(self, qtbot: Any) -> None:
+        """Widget must expose _cancel_button, initially hidden and disabled."""
+        widget = self._make_repl(qtbot)
+        assert hasattr(widget, "_cancel_button"), (
+            "_cancel_button missing (F6 regression)"
+        )
+        assert not widget._cancel_button.isVisible(), (  # noqa: SLF001
+            "_cancel_button should be hidden at rest (F6 regression)"
+        )
+        assert not widget._cancel_button.isEnabled(), (  # noqa: SLF001
+            "_cancel_button should be disabled at rest (F6 regression)"
+        )
+
+    def test_status_label_present_and_hidden(self, qtbot: Any) -> None:
+        """Widget must expose _status_label, initially hidden."""
+        widget = self._make_repl(qtbot)
+        assert hasattr(widget, "_status_label"), "_status_label missing (F6 regression)"
+        assert not widget._status_label.isVisible(), (  # noqa: SLF001
+            "_status_label should be hidden at rest (F6 regression)"
+        )
+
+    def test_execute_completes_and_shows_output(self, qtbot: Any) -> None:
+        """execute() must complete and write output to the output pane."""
+        widget = self._make_repl(qtbot)
+        widget.execute("x = 2 + 2")
+
+        # Wait up to 3 s for the worker to finish (signal updates output)
+        qtbot.waitUntil(
+            lambda: not widget._run_button.isEnabled()  # noqa: SLF001
+            or "x" in widget._namespace,  # noqa: SLF001
+            timeout=3000,
+        )
+
+    def test_set_running_toggles_controls(self, qtbot: Any) -> None:
+        """_set_running(True) disables Run and shows Cancel + status label."""
+        widget = self._make_repl(qtbot)
+        widget._set_running(True)  # noqa: SLF001
+
+        assert not widget._run_button.isEnabled(), (  # noqa: SLF001
+            "Run button must be disabled while running (F6 regression)"
+        )
+        assert widget._cancel_button.isVisible(), (  # noqa: SLF001
+            "Cancel button must be visible while running (F6 regression)"
+        )
+        assert widget._status_label.isVisible(), (  # noqa: SLF001
+            "Status label must be visible while running (F6 regression)"
+        )
+
+        widget._set_running(False)  # noqa: SLF001
+        assert widget._run_button.isEnabled(), (  # noqa: SLF001
+            "Run button must re-enable after stop (F6 regression)"
+        )
+        assert not widget._cancel_button.isVisible(), (  # noqa: SLF001
+            "Cancel button must hide after stop (F6 regression)"
+        )
