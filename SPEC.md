@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.218                                    |
+| **Spec Version**        | 1.1.221                                    |
 | **Last Spec Update**    | 2026-05-30                                 |
 
 ## 2. Purpose & Mission
@@ -946,6 +946,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.221
+
+- 2026-05-30: test(rust-engine, #3114) — the #2989 bulk-I/O contract suite now runs in CI after the Data Processor embedding PR fixed its import path; guard the parquet round-trip cases (`test_csv_to_parquet`, `test_parquet_destination`, and the `parquet_file` fixture) with a skipif on parquet-engine (pyarrow/fastparquet) availability so the lean CI test image skips them instead of failing, honoring the file's "runs in CI without native deps" contract. CSV contract cases continue to run unconditionally.
 
 ### Version 1.1.220
 
