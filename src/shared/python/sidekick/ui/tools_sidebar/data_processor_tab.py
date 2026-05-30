@@ -179,6 +179,25 @@ class SidekickDataProcessorTab(QtWidgets.QWidget):
 
 
 def _build_data_processor_widget(parent: QtWidgets.QWidget) -> QtWidgets.QWidget:
+    """Build the embedded Data Processor widget, preferring the full application.
+
+    The full Data Processor application (``src/data_processing/data_processor``)
+    is the single source of truth. When it is importable we embed it directly;
+    otherwise we fall back to the lightweight built-in widget so the tab still
+    works in minimal environments.
+    """
+    try:
+        from ...data_processing.embedding import (
+            DataProcessorUnavailableError,
+            create_full_data_processor_widget,
+        )
+
+        return create_full_data_processor_widget(parent)
+    except (DataProcessorUnavailableError, ImportError) as exc:
+        _logger.info(
+            "Full Data Processor unavailable; using lightweight widget: %s", exc
+        )
+
     module = importlib.import_module(
         "upstream_drift_tools.ui.widgets.data_processor_widget"
     )
@@ -186,9 +205,23 @@ def _build_data_processor_widget(parent: QtWidgets.QWidget) -> QtWidgets.QWidget
     return widget_class(parent)
 
 
-def _current_frame(widget: Any) -> Any:
+def _extract_frame(widget: Any) -> Any:
+    """Return the current data frame from either widget shape (LOD-friendly).
+
+    The full application exposes ``processed_df``/``current_df``; the lightweight
+    built-in widget exposes ``engine.data``. Ask the widget for each known
+    attribute rather than reaching through long chains.
+    """
+    for attr in ("processed_df", "current_df"):
+        frame = getattr(widget, attr, None)
+        if frame is not None:
+            return frame
     engine = getattr(widget, "engine", None)
-    frame = getattr(engine, "data", None)
+    return getattr(engine, "data", None)
+
+
+def _current_frame(widget: Any) -> Any:
+    frame = _extract_frame(widget)
     if frame is None:
         raise DataProcessorTabError(
             "Load data in the Data Processor before exporting to the workspace."

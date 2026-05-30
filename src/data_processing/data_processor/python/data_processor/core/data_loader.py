@@ -103,11 +103,34 @@ class DataLoader:
             self.hp_loader = None
         self.logger = logger
 
-    def _create_high_performance_loader(self) -> HighPerformanceDataLoader:
-        """Create the optional high-performance loader only when requested."""
+    @staticmethod
+    def _import_high_performance_loader() -> type[HighPerformanceDataLoader]:
+        """Import and return the high-performance loader class.
+
+        Extracted so the import can be patched in tests and so the optional
+        dependency surface lives in exactly one place (LOD/DRY).
+        """
         from data_processor.high_performance_loader import HighPerformanceDataLoader
 
-        return HighPerformanceDataLoader()
+        return HighPerformanceDataLoader
+
+    def _create_high_performance_loader(self) -> HighPerformanceDataLoader | None:
+        """Create the optional high-performance loader, degrading gracefully.
+
+        The high-performance loader depends on the shared ``utils`` package. If
+        that package (or any other optional dependency) is unavailable, fall back
+        to the standard pandas loader instead of failing window construction.
+        """
+        try:
+            loader_class = self._import_high_performance_loader()
+            return loader_class()
+        except Exception as exc:  # noqa: BLE001 - optional accelerator, any failure degrades
+            logger.warning(
+                "High-performance loader unavailable; using standard loader: %s",
+                exc,
+            )
+            self.use_high_performance = False
+            return None
 
     def load_csv_file(
         self,

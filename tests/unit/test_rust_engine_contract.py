@@ -36,7 +36,11 @@ for _extra in [
     if str(_extra) not in sys.path:
         sys.path.insert(0, str(_extra))
 
-from data_processor.rust_engine import (  # noqa: E402
+# Import via the fully-qualified package path. The bare top-level name
+# ``data_processor`` is also used by the full Data Processor application
+# (src/data_processing/data_processor); using the qualified name here keeps this
+# contract test pinned to the issue-#2989 wrapper regardless of import order.
+from shared.python.data_processor.rust_engine import (  # noqa: E402
     ConversionReport,
     SchemaInfo,
     cancel,

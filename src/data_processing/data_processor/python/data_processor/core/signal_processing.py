@@ -24,7 +24,26 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-from numba import jit
+
+try:  # numba is an optional accelerator; the pure-Python fallback is correct.
+    from numba import jit
+except ImportError:  # pragma: no cover - exercised only when numba is absent
+
+    def jit(*args: Any, **kwargs: Any) -> Any:
+        """No-op ``@jit`` fallback used when numba is unavailable.
+
+        Supports both bare ``@jit`` and parameterized ``@jit(...)`` usage so the
+        decorated function runs as ordinary Python (no JIT compilation).
+        """
+        if len(args) == 1 and callable(args[0]) and not kwargs:
+            return args[0]
+
+        def _decorator(func: Any) -> Any:
+            return func
+
+        return _decorator
+
+
 from scipy.interpolate import UnivariateSpline
 from scipy.optimize import curve_fit
 from shared.python.safe_eval import safe_eval
@@ -167,7 +186,6 @@ def integrate_signals(
     return result
 
 
-@jit(nopython=True, fastmath=True)
 @jit(nopython=True, fastmath=True)
 def _compute_integral(signal_data: pd.Series, dt: pd.Series, method: str) -> np.ndarray:
     """Compute the cumulative integral of a signal."""
