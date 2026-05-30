@@ -28,3 +28,6 @@
 ## 2024-06-10 - Eliminate Map/FromEntries overhead for object creation
 **Learning:** Initializing objects with `Object.fromEntries(Object.entries(obj).map(...))` allocates intermediate arrays for entries, map results, and internal fromEntries representations.
 **Action:** Always replace chained `Object.entries(obj).map()` object initializations with a pre-allocated empty object and a single-pass `for (const key of Object.keys(obj))` loop.
+## 2024-06-25 - Avoid array iteration chaining for simple counts
+**Learning:** When calculating aggregates (like counts or finding a maximum) over an array, using chained `.filter().length` and `.reduce()` operations creates unnecessary intermediate array allocations and executes multiple passes over the dataset, leading to increased garbage collection overhead in React components.
+**Action:** Replace chained `.filter()` and `.reduce()` with a single-pass `for` loop to compute all needed aggregates simultaneously, especially in frequently re-rendered UI components.
