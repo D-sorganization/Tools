@@ -20,12 +20,12 @@ from PyQt6.QtWidgets import (
     QMenu,
     QScrollArea,
     QTabWidget,
-    QTextEdit,
     QVBoxLayout,
     QWidget,
 )
 
 from shared.python.theme.integration import ThemedWindowMixin
+from shared.python.ui import HoverCopyTextBrowser
 from tools.gui.components.error_notification import ErrorNotificationDialog
 from tools.gui.components.keyboard_shortcuts_dialog import KeyboardShortcutsDialog
 from tools.gui.components.launch_progress import LaunchProgressDialog
@@ -136,9 +136,9 @@ class UnifiedLauncher(ThemedWindowMixin, ThemedWindowMixin, QMainWindow):
         search_box.textChanged.connect(self._apply_search_filter)
         return search_box
 
-    def _create_log_area(self) -> QTextEdit:
+    def _create_log_area(self) -> HoverCopyTextBrowser:
         """Create the activity log area widget."""
-        log_area = QTextEdit()
+        log_area = HoverCopyTextBrowser()
         log_area.setReadOnly(True)
         log_area.setMaximumHeight(150)
         log_area.setPlaceholderText("Activity log will appear here...")
