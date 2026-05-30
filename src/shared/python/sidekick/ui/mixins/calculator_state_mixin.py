@@ -85,8 +85,10 @@ class CalculatorStateMixin:
         # Copy/paste functionality
         self.copyable_widgets: list[dict[str, Any]] = []
 
-        # Auto-save timer
-        self.auto_save_timer = QTimer()
+        # Auto-save timer — parented to the host QWidget so Qt owns its
+        # lifetime and it cannot outlive (or be GC'd before) the C++ widget,
+        # which is the documented teardown-segfault class (#3102 F5).
+        self.auto_save_timer = QTimer(cast(QWidget, self))
         self.auto_save_timer.timeout.connect(self.auto_save_state)
         self.auto_save_timer.start(30000)  # Auto-save every 30 seconds
 
@@ -416,21 +418,37 @@ class CalculatorStateMixin:
 
         Override this method in subclasses to handle calculator-specific data
         """
+        # Validate the top-level shape before touching any sub-key: a corrupt
+        # profile must degrade gracefully on open rather than crash *every*
+        # calculator at load/auto-load (#3102 F4).
+        if not isinstance(state, dict):
+            _logger.warning(
+                "Ignoring corrupt calculator state: expected dict, got %s",
+                type(state).__name__,
+            )
+            return
+
+        import binascii
+
         try:
-            # Restore splitter states
-            if "splitter_states" in state:
-                self.restore_splitter_states(state["splitter_states"])
+            # Restore splitter states (must be a dict).
+            splitter_states = state.get("splitter_states")
+            if isinstance(splitter_states, dict):
+                self.restore_splitter_states(splitter_states)
 
-            # Restore input states
-            if "input_states" in state:
-                self.restore_input_states(state["input_states"])
+            # Restore input states (must be a dict; restore_input_states raises
+            # ValueError on None).
+            input_states = state.get("input_states")
+            if isinstance(input_states, dict):
+                self.restore_input_states(input_states)
 
-            # Restore window geometry if available
-            if state.get("window_geometry"):
+            # Restore window geometry only when it is a base64 string.
+            window_geometry = state.get("window_geometry")
+            if isinstance(window_geometry, str) and window_geometry:
                 from PyQt6.QtCore import QByteArray
 
                 geometry_data = QByteArray.fromBase64(
-                    state["window_geometry"].encode("utf-8"),
+                    window_geometry.encode("utf-8"),
                 )
                 if hasattr(self, "restoreGeometry"):
                     self.restoreGeometry(geometry_data)
@@ -440,8 +458,14 @@ class CalculatorStateMixin:
 
             self.unsaved_changes = False
 
-        except ImportError:
-            pass
+        except (
+            ImportError,
+            ValueError,
+            TypeError,
+            AttributeError,
+            binascii.Error,
+        ) as exc:
+            _logger.warning("Failed to restore calculator state: %s", exc)
 
     def set_calculator_specific_state(self, state: dict[str, Any]) -> None:
         """Set calculator-specific state data
@@ -510,9 +534,17 @@ class CalculatorStateMixin:
             return None
 
     def auto_save_state(self) -> None:
-        """Auto-save state if there are unsaved changes"""
-        if self.auto_save_enabled and self.unsaved_changes:
-            self.save_calculator_state()
+        """Auto-save state if there are unsaved changes.
+
+        Guarded so a timer firing after the C++ widget has been torn down
+        no-ops rather than dereferencing a deleted object (#3102 F5).
+        """
+        try:
+            if self.auto_save_enabled and self.unsaved_changes:
+                self.save_calculator_state()
+        except RuntimeError:
+            # Underlying C++ object already deleted; nothing to save.
+            _logger.debug("auto_save_state skipped: host widget no longer valid")
 
     def copy_selected_text(self, checked: bool = False) -> None:
         """Copy selected text from focused widget"""

@@ -33,6 +33,7 @@ def _iterate_compressible_pressure(
         raise ValueError("P1 must be provided")
 
     p2 = p2_initial
+    converged = False
     for iteration in range(max_iterations):
         p2_old = p2
         ln_term = 2.0 * math.log(p1 / p2) if p2 > 0 and p1 > p2 else 0.0
@@ -48,7 +49,18 @@ def _iterate_compressible_pressure(
         p2 = math.sqrt(p2_squared)
         if abs(p2 - p2_old) < tolerance:
             _logger.debug("Compressible flow converged in %s iterations", iteration + 1)
+            converged = True
             break
+
+    if not converged:
+        # Surface non-convergence rather than returning a stale value as valid
+        # (issue #3103 F11).
+        _logger.warning(
+            "Compressible flow solver did not converge within %s iterations "
+            "(last ΔP2 step exceeded tolerance %.3g Pa)",
+            max_iterations,
+            tolerance,
+        )
 
     return p2, False
 
@@ -92,15 +104,13 @@ def calculate_compressible_flow_correction(
         return inlet_pressure - outlet_pressure, outlet_pressure
 
     corrected_dp = inlet_pressure - p2
-    pressure_ratio = p2 / inlet_pressure
-    if pressure_ratio > 0:
-        expansion_factor = math.sqrt(
-            pressure_ratio * (1 - pressure_ratio**2) / (1 - pressure_ratio)
-            if pressure_ratio < 1
-            else 1.0
-        )
-    else:
-        expansion_factor = 1.0
+    # Expansion factor Y for logging/diagnostics. Use the dedicated, physically
+    # correct routine (issue #3103 F2) — the previous inline expression placed
+    # the if/else *inside* sqrt() and computed sqrt(pr*(1+pr)) (> 1 for pr>0.62),
+    # which is not a valid expansion factor.
+    expansion_factor = calculate_expansion_factor(
+        inlet_pressure, corrected_dp, friction_factor, resistance
+    )
 
     _logger.debug(
         "Compressible flow correction: ΔP_incomp=%.0f Pa, ΔP_comp=%.0f Pa, Y=%.3f",

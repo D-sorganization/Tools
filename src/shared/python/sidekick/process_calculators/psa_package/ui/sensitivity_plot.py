@@ -126,13 +126,25 @@ class SensitivityPlotWidget(QWidget):
 
         # Store components for later use
         self._components: list[ComponentData] = list(DEFAULT_COMPONENTS)
+        # Whether the displayed plot reflects the current components.
+        self._plot_dirty: bool = True
 
     def set_components(self, components: list[ComponentData]) -> None:
-        """Set component data for sensitivity calculations."""
+        """Set component data for sensitivity calculations.
+
+        Marks the plot dirty and, if the widget is currently visible, re-plots
+        immediately so the curves reflect the latest inputs (issue #3105 F1 —
+        previously this only stored the list and the tab kept showing the prior
+        run's data). When hidden, the tab-change handler honours the dirty flag.
+        """
         self._components = components
+        self._plot_dirty = True
+        if self.isVisible():
+            self._update_plot()
 
     def _update_plot(self) -> None:
         """Update the sensitivity plot based on selected type."""
+        self._plot_dirty = False
         plot_type = self.plot_type_combo.currentText()
         self.canvas.fig.clear()
 
@@ -257,10 +269,19 @@ class SensitivityPlotWidget(QWidget):
             )
 
         ax.axhline(y=2.0, color="red", linestyle="--", linewidth=2, label="DANGER (2%)")
+        # Size the hazard band from the actual plotted data rather than reading
+        # ax.get_ylim() before autoscale has settled (issue #3105 F3 — the old
+        # code could draw the band to the default (0, 1) limit, making the
+        # safety-critical shading wrong or invisible).
+        data_max = float(np.nanmax(o2_analysis["s2_tail_o2"]))
+        if not np.isfinite(data_max):
+            data_max = 2.0
+        band_top = max(data_max, 2.0) * 1.05
+        ax.set_ylim(0.0, band_top)
         ax.fill_between(
             s1_removal_range,
             2.0,
-            ax.get_ylim()[1] if ax.get_ylim()[1] > 2 else 50,
+            band_top,
             alpha=0.2,
             color="red",
         )

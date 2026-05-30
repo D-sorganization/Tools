@@ -10,6 +10,7 @@ import logging
 from typing import TYPE_CHECKING, Any, cast
 
 from PyQt6.QtWidgets import QMessageBox, QWidget
+from sidekick.data_processing.exceptions import DataProcessingError
 
 __all__ = [
     "DataProcessorOpsMixin",
@@ -77,7 +78,11 @@ class DataProcessorOpsMixin:
         except ValueError:
             value = value_str
 
-        result = self.engine.filter_data(column, operator, value)
+        try:
+            result = self.engine.filter_data(column, operator, value)
+        except DataProcessingError as exc:
+            QMessageBox.warning(cast(QWidget, self), "Filter Error", str(exc))
+            return
         if result.success:
             self._update_table()
             self.refresh_statistics()
@@ -95,7 +100,11 @@ class DataProcessorOpsMixin:
             )
             return
 
-        result = self.engine.query(expression)
+        try:
+            result = self.engine.query(expression)
+        except DataProcessingError as exc:
+            QMessageBox.warning(cast(QWidget, self), "Query Error", str(exc))
+            return
         if result.success:
             self._update_table()
             self.refresh_statistics()
@@ -115,7 +124,11 @@ class DataProcessorOpsMixin:
         column = self.agg_column.currentText()
         agg_type = AggregationType(self.agg_type.currentText())
 
-        result = self.engine.aggregate(group_by, column, agg_type)
+        try:
+            result = self.engine.aggregate(group_by, column, agg_type)
+        except DataProcessingError as exc:
+            QMessageBox.warning(cast(QWidget, self), "Aggregation Error", str(exc))
+            return
         if result.success:
             self._update_table()
             self._update_column_selectors()
@@ -140,7 +153,11 @@ class DataProcessorOpsMixin:
             )
             return
 
-        result = self.engine.add_calculated_column(name, expression)
+        try:
+            result = self.engine.add_calculated_column(name, expression)
+        except DataProcessingError as exc:
+            QMessageBox.warning(cast(QWidget, self), "Error", str(exc))
+            return
         if result.success:
             self._update_table()
             self._update_column_selectors()
@@ -161,7 +178,11 @@ class DataProcessorOpsMixin:
         elif transformation == "fillna":
             kwargs["value"] = self.transform_param.value()
 
-        result = self.engine.transform_column(column, transformation, **kwargs)
+        try:
+            result = self.engine.transform_column(column, transformation, **kwargs)
+        except DataProcessingError as exc:
+            QMessageBox.warning(cast(QWidget, self), "Transform Error", str(exc))
+            return
         if result.success:
             self._update_table()
             self.refresh_statistics()
@@ -181,7 +202,11 @@ class DataProcessorOpsMixin:
             )
             return
 
-        result = self.engine.rename_column(old_name, new_name)
+        try:
+            result = self.engine.rename_column(old_name, new_name)
+        except DataProcessingError as exc:
+            QMessageBox.warning(cast(QWidget, self), "Error", str(exc))
+            return
         if result.success:
             self._update_table()
             self._update_column_selectors()
@@ -201,13 +226,19 @@ class DataProcessorOpsMixin:
         )
 
         if reply == QMessageBox.StandardButton.Yes:
-            result = self.engine.drop_columns([column])
+            try:
+                result = self.engine.drop_columns([column])
+            except DataProcessingError as exc:
+                QMessageBox.warning(cast(QWidget, self), "Error", str(exc))
+                return
             if result.success:
                 self._update_table()
                 self._update_column_selectors()
                 self.refresh_statistics()
                 self.data_modified.emit()
                 self._set_status(result.message, success=True)
+            else:
+                QMessageBox.warning(cast(QWidget, self), "Error", result.message)
 
     def _fit_curve(self) -> None:
         """Perform curve fitting."""
@@ -224,15 +255,20 @@ class DataProcessorOpsMixin:
             )
             return
 
-        result = self.engine.fit_curve(x_col, y_col, fit_type, degree)
-        if result:
-            self.fit_results_text.setHtml(f"""
-                <h4>Fit Results</h4>
-                <p><b>Equation:</b> {result.equation}</p>
-                <p><b>R-squared:</b> {result.r_squared:.6f}</p>
-                <p><b>Coefficients:</b> {", ".join(f"{c:.6f}" for c in result.coefficients)}</p>
-                <p><b>Residual Sum:</b> {sum(result.residuals**2):.6f}</p>
-            """)
-            self._set_status(f"Curve fit: R² = {result.r_squared:.4f}", success=True)
-        else:
-            self.fit_results_text.setText("Curve fitting failed. Check your data.")
+        try:
+            result = self.engine.fit_curve(x_col, y_col, fit_type, degree)
+        except DataProcessingError as exc:
+            # engine.fit_curve raises on bad input (e.g. <2 points, non-numeric
+            # column, unimplemented fit type); the old ``else`` branch was
+            # unreachable since a FitResult is always truthy (#3102 F2).
+            self.fit_results_text.setText(str(exc))
+            self._set_status("Curve fitting failed.", success=False)
+            return
+        self.fit_results_text.setHtml(f"""
+            <h4>Fit Results</h4>
+            <p><b>Equation:</b> {result.equation}</p>
+            <p><b>R-squared:</b> {result.r_squared:.6f}</p>
+            <p><b>Coefficients:</b> {", ".join(f"{c:.6f}" for c in result.coefficients)}</p>
+            <p><b>Residual Sum:</b> {sum(result.residuals**2):.6f}</p>
+        """)
+        self._set_status(f"Curve fit: R² = {result.r_squared:.4f}", success=True)

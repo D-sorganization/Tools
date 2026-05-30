@@ -36,6 +36,15 @@ from ..utils.fitting_loss_coefficients import (
 )
 from ..utils.gas_properties import calculate_gas_properties
 
+# Single source of truth for the compressible-flow solver (issue #3103 F1).
+# The near-verbatim duplicate that previously lived here (with a malformed
+# expansion-factor expression) has been removed; import from the canonical
+# module instead so a fix reaches every caller.
+from .compressible_flow import (  # noqa: F401
+    calculate_compressible_flow_correction,
+    calculate_expansion_factor,
+)
+
 __all__ = [
     "GRAVITY",
     "PI",
@@ -300,197 +309,6 @@ def calculate_elevation_pressure_drop(density: float, elevation_change: float) -
 
     _logger.debug(f"Elevation: dh={elevation_change:.1f}m, dP={dp_elevation:.1f} Pa")
     return float(dp_elevation)
-
-
-def _iterate_compressible_pressure(
-    P1: float,
-    P2_initial: float,
-    coeff: float,
-    resistance: float,
-    max_iterations: int = 50,
-    tolerance: float = 1.0,
-) -> tuple[float, bool]:
-    """Iteratively solve the isothermal compressible flow equation for P2.
-
-    Uses fixed-point iteration on:
-    P2^2 = P1^2 - coeff * (resistance + 2 * ln(P1/P2))
-
-    Args:
-        P1: Inlet pressure (Pa)
-        P2_initial: Initial guess for outlet pressure (Pa)
-        coeff: G^2 * Z * R * T / M coefficient
-        resistance: f * L/D + sum(K) resistance term
-        max_iterations: Maximum iteration count
-        tolerance: Convergence tolerance (Pa)
-
-    Returns:
-        Tuple of (converged_P2, is_choked). If choked, P2 is meaningless.
-    """
-    if P1 is None:
-        raise ValueError("P1 must be provided")
-    P2 = P2_initial
-
-    for iteration in range(max_iterations):
-        P2_old = P2
-
-        ln_term = 2.0 * math.log(P1 / P2) if P2 > 0 and P1 > P2 else 0.0
-        rhs = coeff * (resistance + ln_term)
-        P2_squared = P1**2 - rhs
-
-        if P2_squared <= 0:
-            _logger.warning(
-                "Compressible flow calculation indicates choked flow condition"
-            )
-            return P2, True
-
-        P2 = math.sqrt(P2_squared)
-
-        if abs(P2 - P2_old) < tolerance:
-            _logger.debug(f"Compressible flow converged in {iteration + 1} iterations")
-            break
-
-    return P2, False
-
-
-def calculate_compressible_flow_correction(
-    inlet_pressure: float,
-    outlet_pressure: float,
-    length: float,
-    diameter: float,
-    mass_flow_rate: float,
-    temperature: float,
-    molecular_weight: float,
-    compressibility_factor: float,
-    friction_factor: float,
-    total_k_factor: float = 0.0,
-) -> tuple[float, float]:
-    """Calculate pressure drop accounting for compressibility effects.
-
-    For high pressure drops (dP/P > 10%), gas density changes significantly
-    along the pipe and requires correction.
-
-    Uses isothermal compressible flow equation (derived from continuity and
-    momentum):
-    P1^2 - P2^2 = G^2 * (Z * R * T / M) * [f * L/D + sumK + 2 * ln(P1/P2)]
-
-    Args:
-        inlet_pressure: Inlet pressure (Pa)
-        outlet_pressure: Initial estimate of outlet pressure (Pa)
-        length: Pipe length (m)
-        diameter: Pipe diameter (m)
-        mass_flow_rate: Mass flow rate (kg/s)
-        temperature: Temperature (K)
-        molecular_weight: Molecular weight (kg/kmol)
-        compressibility_factor: Z-factor
-        friction_factor: Darcy friction factor
-        total_k_factor: Sum of fitting K-factors
-
-    Returns:
-        Tuple of (corrected_pressure_drop, corrected_outlet_pressure) in Pa
-
-    Reference:
-        Perry's Chemical Engineers' Handbook, 9th Ed, Section 6
-        Crane TP-410: Flow of Compressible Fluids in Pipelines
-    """
-    if not (diameter > 0):
-        raise ValueError(f"diameter must be positive, got {diameter}")
-    if not (temperature > 0):
-        raise ValueError(f"temperature must be positive (K), got {temperature}")
-    if not (molecular_weight > 0):
-        raise ValueError(f"molecular_weight must be positive, got {molecular_weight}")
-
-    area = PI * (diameter**2) / 4.0
-    G = mass_flow_rate / area
-    resistance = friction_factor * (length / diameter) + total_k_factor
-
-    coeff = (
-        (G**2) * (compressibility_factor * R_UNIVERSAL * temperature) / molecular_weight
-    )
-
-    P2, is_choked = _iterate_compressible_pressure(
-        inlet_pressure,
-        outlet_pressure,
-        coeff,
-        resistance,
-    )
-
-    if is_choked:
-        return inlet_pressure - outlet_pressure, outlet_pressure
-
-    corrected_dp = inlet_pressure - P2
-
-    pressure_ratio = P2 / inlet_pressure
-    if pressure_ratio > 0:
-        expansion_factor = math.sqrt(
-            pressure_ratio * (1 - pressure_ratio**2) / (1 - pressure_ratio)
-            if pressure_ratio < 1
-            else 1.0
-        )
-    else:
-        expansion_factor = 1.0
-
-    _logger.debug(
-        f"Compressible flow correction: "
-        f"dP_incomp={inlet_pressure - outlet_pressure:.0f} Pa, "
-        f"dP_comp={corrected_dp:.0f} Pa, Y={expansion_factor:.3f}"
-    )
-
-    return corrected_dp, P2
-
-
-def calculate_expansion_factor(
-    inlet_pressure: float,
-    pressure_drop: float,
-    friction_factor: float,
-    length_over_diameter: float,
-    gamma: float = 1.4,
-) -> float:
-    """Calculate gas expansion factor Y for compressible flow.
-
-    The expansion factor Y accounts for gas expansion through restrictions
-    and is used to correct incompressible flow equations for gas flow.
-
-    Args:
-        inlet_pressure: Inlet pressure (Pa)
-        pressure_drop: Pressure drop (Pa)
-        friction_factor: Darcy friction factor
-        length_over_diameter: L/D ratio
-        gamma: Heat capacity ratio (kappa = Cp/Cv)
-
-    Returns:
-        Expansion factor Y (dimensionless, 0 < Y <= 1)
-
-    Reference:
-        Crane TP-410, Section 2-2: Compressible Flow
-        ISO 5167: Measurement of fluid flow
-    """
-    if inlet_pressure is None:
-        raise ValueError("inlet_pressure must be provided")
-    if inlet_pressure <= 0 or pressure_drop < 0:
-        return 1.0
-
-    pressure_ratio = (inlet_pressure - pressure_drop) / inlet_pressure
-
-    if pressure_ratio <= 0:
-        return 0.0
-
-    if pressure_ratio >= 0.99:
-        return 1.0
-
-    r = pressure_ratio
-    k = gamma
-
-    try:
-        numerator = k * (r ** (2.0 / k)) * (1.0 - r ** ((k - 1.0) / k))
-        denominator = (k - 1.0) * (1.0 - r)
-
-        Y = 1.0 if denominator <= 0 else math.sqrt(numerator / denominator)
-    except (ValueError, ZeroDivisionError):
-        Y = 1.0 - pressure_drop / (3.0 * gamma * inlet_pressure)
-
-    Y = max(0.0, min(Y, 1.0))
-
-    return Y
 
 
 def calculate_erosional_velocity(

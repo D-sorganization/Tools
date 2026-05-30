@@ -16,6 +16,19 @@ References:
 import logging
 import math
 
+from ...utils.unit_constants import (
+    NTP_PRESSURE_PA,
+    NTP_TEMPERATURE_K,
+    R_UNIVERSAL_KMOL,
+    SATP_PRESSURE_PA,
+    SATP_TEMPERATURE_K,
+    SCFM_60F_TEMPERATURE_K,
+    SCFM_PRESSURE_PA,
+    SHORT_TON_TO_KILOGRAM,
+    STP_PRESSURE_PA,
+    STP_TEMPERATURE_K,
+)
+
 __all__ = [
     "MASS_FLOW_CONVERSIONS",
     "MOLAR_FLOW_CONVERSIONS",
@@ -42,20 +55,31 @@ _logger = logging.getLogger(__name__)
 # PHYSICAL CONSTANTS
 # ============================================================================
 
-R_UNIVERSAL = 8314.46  # J/(kmol·K) = Pa·m³/(kmol·K)
+# Universal gas constant [J/(kmol·K)] — sourced from the DRY constants layer.
+R_UNIVERSAL = R_UNIVERSAL_KMOL  # J/(kmol·K) = Pa·m³/(kmol·K)
 
-# Standard reference conditions (multiple standards exist)
+# Standard reference conditions (multiple standards exist).
+# Sourced from utils.unit_constants so the same labels (STP/NTP/SATP/SCFM)
+# yield identical densities across every conversion path (issue #3101 F4).
+# "STP" is the IUPAC 1982+ definition: 0°C, 1 bar (100 kPa).
 STANDARD_CONDITIONS = {
     # Name: (Temperature_K, Pressure_Pa, description)
-    "STP": (273.15, 101325, "Standard Temperature and Pressure (NIST)"),
-    "NTP": (293.15, 101325, "Normal Temperature and Pressure"),
-    "SATP": (298.15, 101325, "Standard Ambient Temperature and Pressure"),
-    "SCFM": (288.71, 101325, "Standard Cubic Feet per Minute (60°F, 14.696 psia)"),
+    "STP": (STP_TEMPERATURE_K, STP_PRESSURE_PA, "Standard T&P (IUPAC, 0°C, 1 bar)"),
+    "NTP": (NTP_TEMPERATURE_K, NTP_PRESSURE_PA, "Normal Temperature and Pressure"),
+    "SATP": (SATP_TEMPERATURE_K, SATP_PRESSURE_PA, "Standard Ambient T&P"),
+    "SCFM": (
+        SCFM_60F_TEMPERATURE_K,
+        SCFM_PRESSURE_PA,
+        "Standard Cubic Feet per Minute (60°F, 14.696 psia)",
+    ),
     "ISO": (288.15, 101325, "ISO 5024"),
     "API": (288.71, 101560, "API 14.73 psia standard"),
 }
 
-# Conversion factors to SI
+# Conversion factors to SI.
+# NOTE on "ton": a short ton (907.18 kg) is used fleet-wide for the bare "ton"
+# spelling, matching tables.MASS_FLOW_FACTORS and UNIT_ALIASES (issue #3101 F2).
+# Use "tonne/h" for a metric ton.
 MASS_FLOW_CONVERSIONS = {
     # Unit: factor to convert to kg/s
     "kg/s": 1.0,
@@ -68,7 +92,10 @@ MASS_FLOW_CONVERSIONS = {
     "lb/h": 0.453592 / 3600.0,
     "lb/hr": 0.453592 / 3600.0,
     "lb/min": 0.453592 / 60.0,
-    "ton/h": 1000.0 / 3600.0,  # metric ton
+    "ton/h": SHORT_TON_TO_KILOGRAM / 3600.0,  # short ton (907.18 kg)
+    "ton/hr": SHORT_TON_TO_KILOGRAM / 3600.0,  # short ton (907.18 kg)
+    "tonne/h": 1000.0 / 3600.0,  # metric ton (1000 kg)
+    "tonne/hr": 1000.0 / 3600.0,  # metric ton (1000 kg)
 }
 
 MOLAR_FLOW_CONVERSIONS = {
@@ -641,8 +668,22 @@ def convert_flow_rate_to_mass(
 
 
 def _is_standard_volumetric_unit(unit: str) -> bool:
-    """Return True when unit uses standard-condition volumetric notation."""
-    return unit.upper() in {"SCFM", "NM3/H", "NM³/H", "SM3/H", "SM³/H"}
+    """Return True when unit uses standard-condition volumetric notation.
+
+    Accepts both the ``/h`` and ``/hr`` spellings (issue #3101 F8): the rest of
+    the codebase canonicalises on ``Nm3/hr``/``Nm³/hr``.
+    """
+    return unit.upper() in {
+        "SCFM",
+        "NM3/H",
+        "NM³/H",
+        "NM3/HR",
+        "NM³/HR",
+        "SM3/H",
+        "SM³/H",
+        "SM3/HR",
+        "SM³/HR",
+    }
 
 
 def _is_actual_volumetric_unit(unit: str) -> bool:
