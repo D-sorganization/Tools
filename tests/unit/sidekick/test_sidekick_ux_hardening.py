@@ -599,3 +599,136 @@ class TestF9RegistryUpdateFrom:
         assert "arr" in events, (
             "Subscriber not notified for repr-only variable (F9 regression)"
         )
+
+
+# ---------------------------------------------------------------------------
+# F2 — Ctrl+C interrupt, Stop/restart, and command history ring
+# ---------------------------------------------------------------------------
+
+
+class TestF2TerminalControls:
+    """OS terminal must support Ctrl+C, Stop/restart, and command history."""
+
+    def _make_widget_with_fake_backend(
+        self, tmp_path: Path, qtbot: Any
+    ) -> tuple[Any, list[bytes]]:
+        """Return (widget, written_list) with a fake in-memory backend."""
+        try:
+            from upstream_drift_tools.ui.tools_sidebar import os_terminal
+            from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
+            from upstream_drift_tools.ui.tools_sidebar.shell_discovery import (
+                ShellDescriptor,
+            )
+        except ImportError:
+            pytest.skip("Qt/sidekick unavailable")
+
+        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+
+        written: list[bytes] = []
+
+        class _FakeBackend:
+            is_running = True
+
+            def start(self) -> None:
+                pass
+
+            def write(self, data: bytes) -> None:
+                written.append(data)
+
+            def read(self, timeout: float = 0.0) -> bytes:  # noqa: ARG002
+                return b""
+
+            def terminate(self) -> None:
+                self.is_running = False
+
+            def resize(self, rows: int, cols: int) -> None:  # noqa: ARG002
+                pass
+
+        widget = os_terminal.SidekickOsTerminalWidget(
+            project_root=tmp_path,
+            shells=[
+                ShellDescriptor(identifier="fake", label="fake", command=("fake",))
+            ],
+            autostart=False,
+        )
+        widget._backend = _FakeBackend()  # noqa: SLF001
+        qtbot.addWidget(widget)
+        return widget, written
+
+    def test_ctrlc_button_exists(self, tmp_path: Path, qtbot: Any) -> None:
+        """Widget must expose _ctrlc_button and _stop_button controls."""
+        widget, _ = self._make_widget_with_fake_backend(tmp_path, qtbot)
+        assert hasattr(widget, "_ctrlc_button"), "_ctrlc_button missing (F2 regression)"
+        assert hasattr(widget, "_stop_button"), "_stop_button missing (F2 regression)"
+
+    def test_send_interrupt_writes_etx(self, tmp_path: Path, qtbot: Any) -> None:
+        """_send_interrupt() must write exactly b'\\x03' to the PTY backend."""
+        widget, written = self._make_widget_with_fake_backend(tmp_path, qtbot)
+        widget._send_interrupt()  # noqa: SLF001
+        assert written, "_send_interrupt did not write anything to backend"
+        assert written[0] == b"\x03", (
+            f"Expected b'\\x03' but got {written[0]!r} (F2 regression)"
+        )
+
+    def test_history_records_submitted_commands(
+        self, tmp_path: Path, qtbot: Any
+    ) -> None:
+        """Submitted commands must be prepended to the history ring."""
+        widget, _ = self._make_widget_with_fake_backend(tmp_path, qtbot)
+        widget._input.setText("ls -la")  # noqa: SLF001
+        widget._on_submit()  # noqa: SLF001
+        widget._input.setText("pwd")  # noqa: SLF001
+        widget._on_submit()  # noqa: SLF001
+
+        assert widget._history[0] == "pwd", (  # noqa: SLF001
+            "Most recent command must be first in history (F2 regression)"
+        )
+        assert widget._history[1] == "ls -la"  # noqa: SLF001
+
+    def test_history_rejects_exact_duplicates(self, tmp_path: Path, qtbot: Any) -> None:
+        """Submitting the same command twice must not duplicate it in history."""
+        widget, _ = self._make_widget_with_fake_backend(tmp_path, qtbot)
+        widget._input.setText("echo hi")  # noqa: SLF001
+        widget._on_submit()  # noqa: SLF001
+        widget._input.setText("echo hi")  # noqa: SLF001
+        widget._on_submit()  # noqa: SLF001
+
+        assert widget._history.count("echo hi") == 1, (  # noqa: SLF001
+            "Duplicate command was added to history (F2 regression)"
+        )
+
+    def test_navigate_history_older(self, tmp_path: Path, qtbot: Any) -> None:
+        """Up-arrow (direction=1) must populate the input with older commands."""
+        widget, _ = self._make_widget_with_fake_backend(tmp_path, qtbot)
+        widget._input.setText("first")  # noqa: SLF001
+        widget._on_submit()  # noqa: SLF001
+        widget._input.setText("second")  # noqa: SLF001
+        widget._on_submit()  # noqa: SLF001
+
+        # Navigate one step back (most recent = "second")
+        widget._navigate_history(direction=1)  # noqa: SLF001
+        assert widget._input.text() == "second", (  # noqa: SLF001
+            "First up-arrow should show most recent command (F2 regression)"
+        )
+
+        # Navigate one more step back (older = "first")
+        widget._navigate_history(direction=1)  # noqa: SLF001
+        assert widget._input.text() == "first", (  # noqa: SLF001
+            "Second up-arrow should show older command (F2 regression)"
+        )
+
+    def test_navigate_history_forward_restores_scratch(
+        self, tmp_path: Path, qtbot: Any
+    ) -> None:
+        """Down-arrow past newest must restore the live scratch text."""
+        widget, _ = self._make_widget_with_fake_backend(tmp_path, qtbot)
+        widget._input.setText("old_cmd")  # noqa: SLF001
+        widget._on_submit()  # noqa: SLF001
+
+        widget._input.setText("new draft")  # noqa: SLF001
+        widget._navigate_history(direction=1)  # noqa: SLF001  # go back
+        widget._navigate_history(direction=-1)  # noqa: SLF001  # come forward
+
+        assert widget._input.text() == "new draft", (  # noqa: SLF001
+            "Navigating forward past newest should restore live draft (F2 regression)"
+        )

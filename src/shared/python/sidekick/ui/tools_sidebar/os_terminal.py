@@ -499,6 +499,11 @@ class SidekickOsTerminalWidget(QtWidgets.QWidget):
         self._autostart: bool = autostart
         self._appearance: PanelAppearance = DEFAULT_DARK_PANEL_APPEARANCE
 
+        # F2: command history ring (newest-first; index walks backward through it)
+        self._history: list[str] = []
+        self._history_index: int = -1  # -1 = not navigating
+        self._history_scratch: str = ""  # stash live text while navigating
+
         if shells is not None:
             self._shells = list(shells)
             self._build_ui()
@@ -564,13 +569,41 @@ class SidekickOsTerminalWidget(QtWidgets.QWidget):
         self._output.setToolTip("Streamed stdout / stderr from the running shell.")
         layout.addWidget(self._output, stretch=4)
 
+        # F2: control row — Ctrl+C interrupt and Stop/Restart buttons.
+        ctrl_row = QtWidgets.QHBoxLayout()
+        ctrl_row.setSpacing(4)
+
+        self._ctrlc_button = QtWidgets.QPushButton("⌃C", self)
+        self._ctrlc_button.setObjectName("SidekickOsTerminalCtrlC")
+        self._ctrlc_button.setToolTip(
+            "Send SIGINT (Ctrl+C) to interrupt the running command."
+        )
+        self._ctrlc_button.setFixedWidth(36)
+        self._ctrlc_button.clicked.connect(self._send_interrupt)
+        ctrl_row.addWidget(self._ctrlc_button)
+
+        self._stop_button = QtWidgets.QPushButton("↺", self)
+        self._stop_button.setObjectName("SidekickOsTerminalStop")
+        self._stop_button.setToolTip("Stop and restart the current shell session.")
+        self._stop_button.setFixedWidth(36)
+        self._stop_button.clicked.connect(self._on_restart)
+        ctrl_row.addWidget(self._stop_button)
+
+        ctrl_row.addStretch(1)
+        layout.addLayout(ctrl_row)
+
         self._input = QtWidgets.QLineEdit(self)
         self._input.setObjectName("SidekickOsTerminalInput")
-        self._input.setPlaceholderText("Type a command and press Enter")
+        self._input.setPlaceholderText(
+            "Type a command and press Enter (↑↓ for history)"
+        )
         self._input.setToolTip(
-            "Send a single line to the shell's stdin (Enter submits)."
+            "Send a single line to the shell's stdin (Enter submits; "
+            "↑/↓ navigate command history)."
         )
         self._input.returnPressed.connect(self._on_submit)
+        # F2: install an event filter so Up/Down traverse command history.
+        self._input.installEventFilter(self)
         layout.addWidget(self._input)
 
         # Poll the backend on a short timer so output streams into the view.
@@ -670,6 +703,13 @@ class SidekickOsTerminalWidget(QtWidgets.QWidget):
     def _on_submit(self) -> None:
         line = self._input.text()
         self._input.clear()
+        # F2: commit to history (skip blank lines and exact duplicates of last entry).
+        if line.strip():
+            if not self._history or self._history[0] != line:
+                self._history.insert(0, line)
+        self._history_index = -1
+        self._history_scratch = ""
+
         if self._backend is None:
             return
         # Always send a single newline to the PTY regardless of host os.linesep.
@@ -682,6 +722,75 @@ class SidekickOsTerminalWidget(QtWidgets.QWidget):
             self._backend.write(payload)
         except Exception as exc:  # noqa: BLE001 - shell may exit
             _logger.debug("OS terminal write failed: %s", exc)
+
+    def _send_interrupt(self) -> None:
+        """Send SIGINT (Ctrl+C / ETX) to the running shell process (F2)."""
+        if self._backend is None or not self._backend.is_running:
+            return
+        try:
+            self._backend.write(b"\x03")
+        except Exception as exc:  # noqa: BLE001 - shell may exit
+            _logger.debug("OS terminal interrupt failed: %s", exc)
+
+    def _on_restart(self) -> None:
+        """Stop the current shell and restart the same shell type (F2)."""
+        shell = self._current_shell
+        if shell is None and self._shells:
+            shell = self._shells[0]
+        if shell is None:
+            return
+        self._teardown_backend()
+        self._on_cwd_changed(self._project_root)
+        self._start_backend(shell)
+
+    def eventFilter(  # noqa: N802 - Qt API
+        self, obj: QtCore.QObject, event: QtCore.QEvent
+    ) -> bool:
+        """Intercept Up/Down arrow on the input field for history navigation (F2)."""
+        from .qt_compat import QtCore as _QtCore
+
+        key_type = getattr(_QtCore.QEvent, "KeyPress", None)
+        if key_type is not None and event.type() == key_type and obj is self._input:
+            key_event = event  # type: ignore[assignment]
+            key = getattr(key_event, "key", None)
+            if callable(key):
+                pressed = key()
+                qt = _QtCore.Qt
+                up_key = getattr(qt, "Key_Up", None)
+                down_key = getattr(qt, "Key_Down", None)
+
+                if up_key is not None and pressed == up_key:
+                    self._navigate_history(direction=1)
+                    return True
+                if down_key is not None and pressed == down_key:
+                    self._navigate_history(direction=-1)
+                    return True
+
+        return super().eventFilter(obj, event)
+
+    def _navigate_history(self, *, direction: int) -> None:
+        """Move through command history. direction=1 goes older, -1 goes newer."""
+        if not self._history:
+            return
+
+        if self._history_index == -1 and direction == 1:
+            # Starting to navigate backward — stash whatever is in the input.
+            self._history_scratch = self._input.text()
+
+        new_index = self._history_index + direction
+
+        if new_index < 0:
+            # Walked past the newest entry — restore the live scratch text.
+            self._history_index = -1
+            self._input.setText(self._history_scratch)
+            return
+
+        if new_index >= len(self._history):
+            # Can't go older than the oldest entry.
+            return
+
+        self._history_index = new_index
+        self._input.setText(self._history[self._history_index])
 
     def _poll_backend(self) -> None:
         if self._backend is None or not self._backend.is_running:
