@@ -36,3 +36,15 @@ jobs:
           else
             echo "/opt/hostedtoolcache does not exist."
           fi
+
+      - name: Clean up corrupted Python cache
+        run: |
+          echo "Cleaning Python tool cache..."
+          if [ -d /opt/hostedtoolcache/Python ]; then
+            ls -la /opt/hostedtoolcache/Python
+            echo "Deleting cached Python versions..."
+            rm -rf /opt/hostedtoolcache/Python/* || echo "rm failed"
+          else
+            echo "Python cache directory not found."
+          fi
+
