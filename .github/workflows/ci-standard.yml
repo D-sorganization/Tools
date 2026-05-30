@@ -132,7 +132,7 @@ jobs:
         # symlinks). ``rm -rf`` succeeds where ``rmdir`` fails. We check and
         # clean only broken/incomplete 3.12 installations to prevent race conditions.
         run: |
-          for cache_root in /home/dieterolson/actions-runners/.shared-tool-cache /home/dieterolson/actions-runners-nvme/.shared-tool-cache; do
+          for cache_root in /opt/runner-tool-cache /home/dieterolson/actions-runners/.shared-tool-cache /home/dieterolson/actions-runners-nvme/.shared-tool-cache; do
             if [ -d "$cache_root/Python" ]; then
               echo "Checking $cache_root/Python for stale 3.12 installations..."
               for version_dir in "$cache_root/Python"/3.12.*; do
@@ -142,11 +142,18 @@ jobs:
                       if [ ! -x "$arch_dir/bin/python" ] && [ ! -x "$arch_dir/bin/python3" ]; then
                         echo "Directory $arch_dir is incomplete or broken. Cleaning..."
                         sudo rm -rf "$arch_dir" || rm -rf "$arch_dir" || true
-                      elif ! "$arch_dir/bin/python" -c "import zlib" >/dev/null 2>&1; then
-                        echo "Directory $arch_dir is corrupt (zlib import failed). Cleaning..."
-                        sudo rm -rf "$arch_dir" || rm -rf "$arch_dir" || true
                       else
-                        echo "Directory $arch_dir is healthy."
+                        py_bin="$arch_dir/bin/python"
+                        if [ ! -x "$py_bin" ]; then
+                          py_bin="$arch_dir/bin/python3"
+                        fi
+                        echo "Testing zlib import on $py_bin..."
+                        if ! "$py_bin" -c "import zlib"; then
+                          echo "Directory $arch_dir is corrupt (zlib import failed). Cleaning..."
+                          sudo rm -rf "$arch_dir" || rm -rf "$arch_dir" || true
+                        else
+                          echo "Directory $arch_dir is healthy."
+                        fi
                       fi
                     fi
                   done
@@ -403,7 +410,7 @@ jobs:
         # etc.). ``rm -rf`` succeeds. We check and clean only the broken/incomplete
         # matrix python-version directory to prevent race conditions.
         run: |
-          for cache_root in /home/dieterolson/actions-runners/.shared-tool-cache /home/dieterolson/actions-runners-nvme/.shared-tool-cache; do
+          for cache_root in /opt/runner-tool-cache /home/dieterolson/actions-runners/.shared-tool-cache /home/dieterolson/actions-runners-nvme/.shared-tool-cache; do
             if [ -d "$cache_root/Python" ]; then
               echo "Checking $cache_root/Python for stale ${{ matrix.python-version }} installations..."
               for version_dir in "$cache_root/Python"/${{ matrix.python-version }}.*; do
@@ -413,11 +420,18 @@ jobs:
                       if [ ! -x "$arch_dir/bin/python" ] && [ ! -x "$arch_dir/bin/python3" ]; then
                         echo "Directory $arch_dir is incomplete or broken. Cleaning..."
                         sudo rm -rf "$arch_dir" || rm -rf "$arch_dir" || true
-                      elif ! "$arch_dir/bin/python" -c "import zlib" >/dev/null 2>&1; then
-                        echo "Directory $arch_dir is corrupt (zlib import failed). Cleaning..."
-                        sudo rm -rf "$arch_dir" || rm -rf "$arch_dir" || true
                       else
-                        echo "Directory $arch_dir is healthy."
+                        py_bin="$arch_dir/bin/python"
+                        if [ ! -x "$py_bin" ]; then
+                          py_bin="$arch_dir/bin/python3"
+                        fi
+                        echo "Testing zlib import on $py_bin..."
+                        if ! "$py_bin" -c "import zlib"; then
+                          echo "Directory $arch_dir is corrupt (zlib import failed). Cleaning..."
+                          sudo rm -rf "$arch_dir" || rm -rf "$arch_dir" || true
+                        else
+                          echo "Directory $arch_dir is healthy."
+                        fi
                       fi
                     fi
                   done
