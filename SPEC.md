@@ -630,6 +630,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-05-30 | 1.1.233 | perf(golf): optimize array iterations in swingAnalyzer by replacing chained .filter().reduce() with single-pass for loops in calculateTempoMetrics and calculateSwingScores; ci: remove the retired fix-brick.yml toolcache-repair workflow (consolidates #3124 and #3129). |
 | 2026-05-30 | 1.1.232 | feat(ux, #3115): improve accessibility of the ODE Solver UI by explicitly linking labels to inputs and textareas using htmlFor and unique IDs, add spellcheck="false" and disabled autocorrect. |
 | 2026-05-30 | 1.1.231 | perf(p1am frontend, #3126): optimize array aggregations in AlarmsHeader.tsx by replacing chained .filter() and .reduce() operations with a single-pass loop. |
 | 2026-05-30 | 1.1.230 | Fix CI failures on PR #3123: re-export \_QS_ORG/\_QS_APP/\_QS_VISIBLE_TABS_KEY from sidebar, fix apply_state \_dock_widget AttributeError (now uses \_dock_chrome.dock_widget), add waitUntil to MockQtBot, fix F6 isVisible→isHidden for headless tests, fix F10 duplicate-pin test to use subdirectory, add runtime_tabs.py and registry.py to monolith baseline, bump SPEC version. |
