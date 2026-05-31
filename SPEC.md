@@ -99,6 +99,10 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   icon-only archive, restore, and delete controls available without right-click
 - Shared chat dock close control lives in the persistent status header instead
   of the terminal provider control row
+- Shared chat dock delegates workspace slash-commands (`/ws.read`, `/ws.write`,
+  `/plot`) and AI provider/model/thinking settings to headless, Qt-free
+  controllers (`WorkspaceCommandHandler`, `AiSettingsController`) per ADR-0022,
+  enabling unit tests without a QApplication
 - Shared unified tools sidebar widgets provide optional dockable/tear-off host
   integration for project file browsing, workspace variables, chat, terminal,
   calculator, unit conversion, and notes tabs

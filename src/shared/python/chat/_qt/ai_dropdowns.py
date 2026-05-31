@@ -14,12 +14,18 @@ from typing import Any
 
 from PyQt6.QtWidgets import QComboBox, QHBoxLayout, QSizePolicy
 
+from ..ai_settings_controller import (
+    VALID_FIELDS,
+    VALID_THINKING_NAMES,
+    AiSettingsController,
+)
 from ..cli_provider_availability import list_available_cli_providers
 
 logger = logging.getLogger(__name__)
 
-VALID_THINKING_NAMES: frozenset[str] = frozenset({"none", "low", "medium", "high"})
-VALID_FIELDS: frozenset[str] = frozenset({"provider", "model", "thinking"})
+# Re-exported from the controller so the validation vocabulary lives in one
+# place (DRY); ``ChatDockWidget`` still introspects these (Tools issue #2871).
+__all__ = ["DEFAULT_PROVIDERS", "VALID_FIELDS", "VALID_THINKING_NAMES"]
 DEFAULT_PROVIDERS: tuple[tuple[str, str], ...] = (
     ("Ollama", "ollama"),
     ("OpenAI", "openai"),
@@ -195,36 +201,21 @@ def get_active_ai_adapter(provider_name: str) -> Any | None:
         return None
 
 
+def _controller_for(dock: Any) -> AiSettingsController:
+    """Return the dock's controller, or a transient one bound to the dock view."""
+    existing = getattr(dock, "_ai_settings", None)
+    if isinstance(existing, AiSettingsController):
+        return existing
+    return AiSettingsController(dock)
+
+
 def apply_settings_change(dock: Any, field: str, value: str) -> None:
     """Single change router for the three AI header dropdowns.
 
-    DbC (issue #2871):
-        Pre: ``field`` is exactly one of ``"provider"``, ``"model"``, or
-             ``"thinking"``.
-        Pre: ``value`` is a non-empty / non-whitespace string.
-        Post: dependent combos are refreshed; settings are persisted via
-              ``dock._persist_ai_settings``.
+    Backwards-compatible shim — delegates to
+    :class:`chat.ai_settings_controller.AiSettingsController` (issue #6119).
     """
-    if field not in VALID_FIELDS:
-        raise ValueError(
-            f"apply_settings_change: unknown field {field!r}; expected "
-            f"one of {sorted(VALID_FIELDS)!r}"
-        )
-    if not isinstance(value, str) or not value.strip():
-        raise ValueError(
-            f"apply_settings_change: value for {field!r} must be non-empty"
-        )
-    value = value.strip()
-    if field == "provider":
-        dock._current_provider = value
-        dock._refresh_ai_model_combo()
-        dock._refresh_ai_thinking_combo()
-    elif field == "model":
-        dock._current_model = value
-        dock._refresh_ai_thinking_combo()
-    else:  # field == "thinking"
-        dock._current_thinking_level = value
-    dock._persist_ai_settings()
+    _controller_for(dock).apply_settings_change(field, value)
 
 
 def switch_provider(
@@ -235,36 +226,13 @@ def switch_provider(
 ) -> None:
     """Switch AI provider / model / thinking-level mid-thread.
 
-    DbC (Tools issue #2871):
-        Pre: ``name``/``model`` are non-empty strings after ``.strip()``.
-        Pre: ``thinking_level`` ∈ {none, low, medium, high} after ``.strip()``.
-        Post: ``dock._current_provider``/``_current_model``/
-              ``_current_thinking_level`` reflect the request.
-        Post: ``dock._message_history`` is the same list object and same
-              contents as before the call (history-immutability invariant).
+    Backwards-compatible shim — delegates to the headless controller, then
+    re-asserts the ``_message_history`` immutability invariant (Tools #2871),
+    which the controller cannot violate since it never touches history.
     """
-    if not isinstance(name, str) or not name.strip():
-        raise ValueError("switch_provider: name must be non-empty")
-    if not isinstance(model, str) or not model.strip():
-        raise ValueError("switch_provider: model must be non-empty")
-    if not isinstance(thinking_level, str):
-        raise ValueError("switch_provider: thinking_level must be a string")
-    normalized_level = thinking_level.strip()
-    if normalized_level not in VALID_THINKING_NAMES:
-        raise ValueError(
-            f"switch_provider: thinking_level {thinking_level!r} not in "
-            f"{sorted(VALID_THINKING_NAMES)!r}"
-        )
     history_before = dock._message_history
     snapshot_before = list(history_before)
-
-    dock._current_provider = name.strip()
-    dock._current_model = model.strip()
-    dock._current_thinking_level = normalized_level
-
-    if hasattr(dock, "_ai_provider_combo") and dock._ai_provider_combo is not None:
-        dock._sync_ai_dropdowns()
-
+    _controller_for(dock).switch_provider(name, model, thinking_level)
     assert dock._message_history is history_before, (
         "switch_provider invariant: _message_history must remain the same list"
     )
