@@ -207,6 +207,7 @@ This document defines the comprehensive 16-point assessment framework (A-O + Hig
 | 5.6     | 2026-05 | Executed Completist Audit (May 07)                                                                      |
 | 5.7     | 2026-05 | Executed Completist Audit (May 10)                                                                      |
 | 5.8     | 2026-05 | Added Adversarial Review (May 21) (see `adversarial_review_2026_05_21.md`)                              |
+| 6.0     | 2026-05 | Generated comprehensive assessment reports for 2026-05-31                                               |
 
 ---
 
@@ -222,4 +223,4 @@ private [Tools_Private](https://github.com/D-sorganization/Tools_Private) reposi
 
 Assessment history for these modules is preserved in the Tools_Private repository.
 Updated for completist report
-| 5.9     | 2026-05 | Executed Completist Audit (May 31)                                                                      |
+| 5.9 | 2026-05 | Executed Completist Audit (May 31) |
