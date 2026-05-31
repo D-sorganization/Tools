@@ -4,26 +4,26 @@
 
 ## Unified Scorecard
 
-| Category | Score |
-|----------|-------|
-| Architecture (A) | 7.5/10 |
-| Hygiene (B) | 6.8/10 |
-| Documentation (C) | 5.5/10 |
-| UX (D) | 6.0/10 |
-| Performance (E) | 6.0/10 |
-| DevOps (F) | 6.0/10 |
-| Testing (G) | 6.0/10 |
-| Error Handling (H) | 6.0/10 |
-| Security (I) | 6.0/10 |
-| Extensibility (J) | 6.0/10 |
-| Reproducibility (K) | 6.0/10 |
-| Maintainability (L) | 6.0/10 |
-| Educational (M) | 6.0/10 |
-| Visualization (N) | 6.0/10 |
-| CI/CD (O) | 6.0/10 |
-| Completist Score | 8.5/10 |
-| Pragmatic Score | 6.2/10 |
-| **Overall Grade** | **6.4/10** |
+| Category            | Score      |
+| ------------------- | ---------- |
+| Architecture (A)    | 7.5/10     |
+| Hygiene (B)         | 6.8/10     |
+| Documentation (C)   | 5.5/10     |
+| UX (D)              | 6.0/10     |
+| Performance (E)     | 6.0/10     |
+| DevOps (F)          | 6.0/10     |
+| Testing (G)         | 6.0/10     |
+| Error Handling (H)  | 6.0/10     |
+| Security (I)        | 6.0/10     |
+| Extensibility (J)   | 6.0/10     |
+| Reproducibility (K) | 6.0/10     |
+| Maintainability (L) | 6.0/10     |
+| Educational (M)     | 6.0/10     |
+| Visualization (N)   | 6.0/10     |
+| CI/CD (O)           | 6.0/10     |
+| Completist Score    | 8.5/10     |
+| Pragmatic Score     | 6.2/10     |
+| **Overall Grade**   | **6.4/10** |
 
 ## Top 10 Unified Recommendations
 
