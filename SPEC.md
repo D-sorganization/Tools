@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.233                                    |
-| **Last Spec Update**    | 2026-05-30                                 |
+| **Spec Version**        | 1.1.234                                    |
+| **Last Spec Update**    | 2026-05-31                                 |
 
 ## 2. Purpose & Mission
 
@@ -634,6 +634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-05-31 | 1.1.234 | feat(a11y, p1am frontend): add `aria-pressed` to custom toggle buttons in ControlDashboard (PID loop selector) and RoutingMatrix (input/output route cells) so screen readers announce active state. |
 | 2026-05-30 | 1.1.233 | perf(golf): optimize array iterations in swingAnalyzer by replacing chained .filter().reduce() with single-pass for loops in calculateTempoMetrics and calculateSwingScores; ci: remove the retired fix-brick.yml toolcache-repair workflow (consolidates #3124 and #3129). |
 | 2026-05-30 | 1.1.232 | feat(ux, #3115): improve accessibility of the ODE Solver UI by explicitly linking labels to inputs and textareas using htmlFor and unique IDs, add spellcheck="false" and disabled autocorrect. |
 | 2026-05-30 | 1.1.231 | perf(p1am frontend, #3126): optimize array aggregations in AlarmsHeader.tsx by replacing chained .filter() and .reduce() operations with a single-pass loop. |

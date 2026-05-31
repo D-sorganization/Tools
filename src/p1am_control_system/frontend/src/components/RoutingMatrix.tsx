@@ -77,6 +77,7 @@ export const RoutingMatrix: React.FC<RoutingMatrixProps> = ({
                           className={`matrix-cell ${isActive ? "active-input" : ""}`}
                           onClick={() => handleInputRoute(rowIdx, colIdx)}
                           title={`Route ${label} to Tag ${colIdx} (Current val: ${tagValues[colIdx]?.toFixed(2) ?? "0.00"})`}
+                          aria-pressed={isActive}
                         >
                           {isActive && <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#0b0d12" }} />}
                         </button>
@@ -127,6 +128,7 @@ export const RoutingMatrix: React.FC<RoutingMatrixProps> = ({
                           className={`matrix-cell ${isActive ? "active-output" : ""}`}
                           onClick={() => handleOutputRoute(rowIdx, colIdx)}
                           title={`Route Tag ${colIdx} (Current val: ${tagValues[colIdx]?.toFixed(2) ?? "0.00"}) to ${label}`}
+                          aria-pressed={isActive}
                         >
                           {isActive && <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#0b0d12" }} />}
                         </button>
