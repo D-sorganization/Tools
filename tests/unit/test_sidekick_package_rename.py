@@ -99,7 +99,6 @@ def _find_import_violations(root_path: Path, exclude_dir_name: str = None) -> li
 
 
 @pytest.mark.unit
-@pytest.mark.xfail(reason="TDD pending")
 def test_no_upstream_drift_tools_imports_in_sidekick_source() -> None:
     """The sidekick package itself must not import from upstream_drift_tools.
 
@@ -118,7 +117,6 @@ def test_no_upstream_drift_tools_imports_in_sidekick_source() -> None:
 
 
 @pytest.mark.unit
-@pytest.mark.xfail(reason="TDD pending")
 def test_no_upstream_drift_tools_in_tools_src_except_shim() -> None:
     """Only the shim package directory may use old-name import statements."""
     src_root = WORKTREE_ROOT / "src"

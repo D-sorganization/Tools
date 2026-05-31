@@ -65,6 +65,51 @@ class TestTabCollection:
             "b",
         ], "visible_ids() order must match add() order"
 
+    def test_set_definitions_mutates_in_place(self, qtbot: Any) -> None:
+        """set_definitions() must mutate the backing dict in place (#3138).
+
+        UnifiedToolsSidebar aliases ``_tab_definitions`` to the collection's
+        private dict.  If set_definitions() *reassigned* the dict, the sidebar
+        alias would observe stale (empty) state, breaking settings/pop-out.
+        """
+        col = self._make_collection(qtbot)
+        try:
+            from upstream_drift_tools.ui.tools_sidebar.tab_definition import (
+                SidebarTabDefinition,
+            )
+        except ImportError:
+            pytest.skip("Qt unavailable")
+
+        alias = col._tab_definitions  # noqa: SLF001 - simulate sidebar alias
+        col.set_definitions(
+            [SidebarTabDefinition(tab_id="chat", title="Chat", factory=lambda *_: None)]
+        )
+
+        assert alias is col._tab_definitions, (  # noqa: SLF001
+            "set_definitions() must not rebind the backing dict"
+        )
+        assert "chat" in alias, "alias must observe the new definition in place"
+        assert col.definition_for("chat") is not None
+
+    def test_sync_order_mutates_ids_in_place(self, qtbot: Any) -> None:
+        """sync_order_from_widget() must mutate _tab_ids in place (#3138)."""
+        col = self._make_collection(qtbot)
+        try:
+            from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
+        except ImportError:
+            pytest.skip("Qt unavailable")
+
+        col.add("a", "A", QtWidgets.QWidget())
+        col.add("b", "B", QtWidgets.QWidget())
+        alias = col._tab_ids  # noqa: SLF001 - simulate sidebar alias
+
+        col.sync_order_from_widget()
+
+        assert alias is col._tab_ids, (  # noqa: SLF001
+            "sync_order_from_widget() must not rebind the backing list"
+        )
+        assert alias == ["a", "b"], "alias must observe current visual order"
+
     def test_add_duplicate_raises(self, qtbot: Any) -> None:
         """add() must raise ValueError for a duplicate tab_id."""
         col = self._make_collection(qtbot)

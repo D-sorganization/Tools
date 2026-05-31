@@ -5,8 +5,9 @@ from __future__ import annotations
 
 import argparse
 import sys
-import xml.etree.ElementTree as ET
 from pathlib import Path
+
+import defusedxml.ElementTree as ET
 
 
 def check_sidekick_coverage(
@@ -38,6 +39,16 @@ def check_sidekick_coverage(
                 line = line.strip().replace("\\", "/")
                 if line:
                     changed_files.add(line)
+
+    # Sidekick production files that were changed in this PR. These MUST appear
+    # in the coverage data; a changed Sidekick module missing from coverage is a
+    # failure, not a vacuous pass (issue #3139).
+    changed_sidekick_files = {
+        c
+        for c in changed_files
+        if "/sidekick/" in c and "/tests/" not in c and c.endswith(".py")
+    }
+    seen_changed_sidekick: set[str] = set()
 
     # Extract source directories from XML
     sources = []
@@ -74,6 +85,11 @@ def check_sidekick_coverage(
             # If changed-files parameter is not provided, we fall back to checking target files.
             should_check = is_target or (changed_files_path is not None and is_changed)
 
+            if is_changed:
+                for c in changed_sidekick_files:
+                    if norm_path.endswith(c):
+                        seen_changed_sidekick.add(c)
+
             if not should_check:
                 continue
 
@@ -90,10 +106,41 @@ def check_sidekick_coverage(
                 failed_files.append((filename, pct))
 
     print(f"\nTotal sidekick files checked: {sidekick_files_found}")
+
+    # A changed Sidekick production file that never appears in the coverage XML
+    # cannot be enforced and must fail the gate (issue #3139).
+    missing_changed = sorted(changed_sidekick_files - seen_changed_sidekick)
+    if missing_changed:
+        print(
+            "\n[FAIL] Changed sidekick files missing from coverage data "
+            "(no coverage class entry):",
+            file=sys.stderr,
+        )
+        for missing in missing_changed:
+            print(f"  - {missing}", file=sys.stderr)
+        return 1
+
     if failed_files:
         print("\n[FAIL] Following sidekick files have < 50% coverage:", file=sys.stderr)
         for failed_file, p in failed_files:
             print(f"  - {failed_file}: {p}% (minimum required: 50.0%)", file=sys.stderr)
+        return 1
+
+    # A run that checked zero Sidekick files is a vacuous pass: the gate exists
+    # precisely to enforce per-file Sidekick coverage. When Sidekick files were
+    # changed in this PR (an enforced run) but none were counted, the coverage
+    # data is stale or missing and the gate must fail rather than pass
+    # vacuously (issue #3139). When no Sidekick files were changed and a
+    # changed-files manifest was supplied, there is legitimately nothing to
+    # enforce for this PR, so zero is acceptable.
+    enforced_run = bool(changed_sidekick_files) or changed_files_path is None
+    if sidekick_files_found == 0 and enforced_run:
+        print(
+            "\n[FAIL] Sidekick coverage gate checked zero files. The coverage "
+            "XML contains no enforced Sidekick classes; coverage data is stale "
+            "or missing.",
+            file=sys.stderr,
+        )
         return 1
 
     print("\n[PASS] All checked sidekick files meet the 50.0% coverage threshold.")

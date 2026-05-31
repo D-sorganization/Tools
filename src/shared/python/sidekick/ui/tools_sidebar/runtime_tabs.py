@@ -261,6 +261,11 @@ class _ReplWorker(QtCore.QThread):
         super().__init__(parent)
         self._script = script
         self._namespace = namespace
+        # Captured formatted output, populated by run() before finished is
+        # emitted.  Exposed so callers can fetch the result deterministically
+        # after wait(), without relying on event-loop signal delivery
+        # (UpstreamDrift #5616 / issue #3138 REPL output regression).
+        self._output: str = ""
 
     def run(self) -> None:  # noqa: ANN201 - Qt override
         """Run the user script and emit ``finished`` with formatted output."""
@@ -304,6 +309,7 @@ class _ReplWorker(QtCore.QThread):
             and last_result is not None
         ):
             output = f"{repr(last_result)}\n{output}" if output else repr(last_result)
+        self._output = output
         self.finished.emit(output)
 
 
@@ -455,9 +461,15 @@ class PythonReplWidget(QtWidgets.QWidget):
 
         # Snapshot the namespace into the worker so the GUI thread and
         # the worker thread never share a mutable reference at the same time.
-        self._worker = _ReplWorker(script, self._namespace, parent=self)
-        self._worker.finished.connect(self._on_execution_finished)
-        self._worker.start()
+        worker = _ReplWorker(script, self._namespace, parent=self)
+        self._worker = worker
+        worker.start()
+        # Block until the worker finishes and deliver its output directly.
+        # Relying on the queued ``finished`` signal alone left the output pane
+        # empty whenever no Qt event loop was spinning (e.g. unit tests and
+        # synchronous callers), regressing REPL/Run output (issue #3138).
+        worker.wait()
+        self._on_execution_finished(worker._output)  # noqa: SLF001
 
     def _set_running(self, running: bool) -> None:
         """Toggle Run/Cancel controls and the 'Running…' status label (F6)."""
