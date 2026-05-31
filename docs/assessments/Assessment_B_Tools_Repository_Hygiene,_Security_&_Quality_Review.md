@@ -70,15 +70,7 @@
 - Achieve 100% `mypy` strict compliance.
 
 ## Diff Suggestions
-```python
-<<<<<<< SEARCH
-except Exception:
-    print("Error happened")
-=======
-except ValueError as e:
-    logger.error(f"ValueError occurred: {e}")
->>>>>>> REPLACE
-```
+- Migrate broad `except Exception:` to specific errors like `except ValueError as e:` and use proper logging.
 
 ## Appendix: Files Requiring Attention
 - `launch.py`

@@ -74,25 +74,7 @@
 - Generate Sphinx or MkDocs documentation site.
 
 ## Diff Suggestions
-```python
-<<<<<<< SEARCH
-def process_data(data, options):
-    pass
-=======
-def process_data(data: list, options: dict) -> list:
-    """
-    Process the given data according to the provided options.
-
-    Args:
-        data: A list of items to process.
-        options: A dictionary of configuration options.
-
-    Returns:
-        A list of processed items.
-    """
-    pass
->>>>>>> REPLACE
-```
+- Add Google-style docstrings with type hints for parameters and return types.
 
 ## Appendix: Missing READMEs
 - `data_processing/`

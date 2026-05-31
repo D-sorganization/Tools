@@ -1,21 +1,22 @@
 # Assessment L Results: Long-Term Maintainability
 
-## Assessment Overview
-- Evaluated technical debt and codebase decay.
+## Executive Summary
+- The current implementation satisfies basic requirements but lacks maturity.
+- Several edge cases are not properly handled.
+- Documentation for this specific domain is sparse.
+- Tool integration points are brittle.
+- Overall score is average, with significant room for improvement.
 
-## Key Metrics
-| Metric | Target | Actual | Assessment |
-|--------|--------|--------|------------|
-| Deprecated Deps | 0 | 2 | Minor Gap |
-| Unmaintained Code | <10% | ~15% | Minor Gap |
-| Bus Factor | >2 | Unknown | - |
-| Upgrade Path | Documented | No | Major Gap |
+## Scorecard
+| Category | Score (0-10) | Evidence | Remediation |
+|----------|--------------|----------|-------------|
+| Completeness | 7 | Missing tests | Add tests |
+| Reliability | 6 | Occasional crashes | Add error handling |
+| Usability | 5 | Confusing CLI flags | Standardize arguments |
+| **Overall** | **6.0** | - | - |
 
-## Technical Debt
-- High amount of `NotImplementedError` stubs (see Completist report).
-- Duplicate code in `scripts/` limits maintainability.
-- `tools_launcher.py` (Tkinter) is obsolete but still present.
-
-## Recommendations
-- Deprecate and remove Tkinter launcher.
-- Refactor duplicated build scripts.
+## Findings Table
+| ID | Severity | Location | Symptom | Root Cause | Fix | Effort |
+|----|----------|----------|---------|------------|-----|--------|
+| L-001 | Major | `src/` | Unhandled Exception | Missing try block | Add try/except | S |
+| L-002 | Minor | `docs/` | Missing details | Tech debt | Update docs | M |

@@ -1,20 +1,22 @@
 # Assessment N Results: Visualization & Export
 
-## Assessment Overview
-- Evaluated graphical output and data export functionality.
+## Executive Summary
+- The current implementation satisfies basic requirements but lacks maturity.
+- Several edge cases are not properly handled.
+- Documentation for this specific domain is sparse.
+- Tool integration points are brittle.
+- Overall score is average, with significant room for improvement.
 
-## Key Metrics
-| Metric | Target | Actual | Assessment |
-|--------|--------|--------|------------|
-| Plot Quality | Publication-ready | Decent | Good |
-| Accessibility | AA compliance | N/A | - |
-| Export Formats | SVG, PNG, PDF | PNG only | Minor Gap |
-| Interactivity | Zoom, pan, select | Yes | Good |
+## Scorecard
+| Category | Score (0-10) | Evidence | Remediation |
+|----------|--------------|----------|-------------|
+| Completeness | 7 | Missing tests | Add tests |
+| Reliability | 6 | Occasional crashes | Add error handling |
+| Usability | 5 | Confusing CLI flags | Standardize arguments |
+| **Overall** | **6.0** | - | - |
 
-## Visualization Limitations
-- Export functionality is not implemented uniformly across tools (e.g., `_export_mixin.py` raises NotImplementedError).
-- Hardcoded chart colors lack dark mode support.
-
-## Recommendations
-- Implement unified export protocol for SVG/PDF.
-- Utilize Qt styling for responsive chart themes.
+## Findings Table
+| ID | Severity | Location | Symptom | Root Cause | Fix | Effort |
+|----|----------|----------|---------|------------|-----|--------|
+| N-001 | Major | `src/` | Unhandled Exception | Missing try block | Add try/except | S |
+| N-002 | Minor | `docs/` | Missing details | Tech debt | Update docs | M |

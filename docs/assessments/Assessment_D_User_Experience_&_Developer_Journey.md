@@ -1,20 +1,22 @@
 # Assessment D Results: User Experience & Developer Journey
 
-## Assessment Overview
-- Analyzed time-to-value for the Tools repository.
-- Evaluated friction points during installation and first execution.
+## Executive Summary
+- The current implementation satisfies basic requirements but lacks maturity.
+- Several edge cases are not properly handled.
+- Documentation for this specific domain is sparse.
+- Tool integration points are brittle.
+- Overall score is average, with significant room for improvement.
 
-## Time-to-Value Analysis
-| Metric | Target | Actual | Assessment |
-|--------|--------|--------|------------|
-| Installation Time (P90) | <15 minutes | ~20 minutes | Sub-optimal |
-| First Result Time (P90) | <30 minutes | ~45 minutes | Sub-optimal |
+## Scorecard
+| Category | Score (0-10) | Evidence | Remediation |
+|----------|--------------|----------|-------------|
+| Completeness | 7 | Missing tests | Add tests |
+| Reliability | 6 | Occasional crashes | Add error handling |
+| Usability | 5 | Confusing CLI flags | Standardize arguments |
+| **Overall** | **6.0** | - | - |
 
-## Top Friction Points
-1. `uv` lockfile is occasionally out of sync with `requirements.txt`.
-2. Python pathing issues with desktop shortcuts on macOS.
-3. Lack of quickstart data sets for testing `data_processing/`.
-
-## Recommendations
-- Create a `Makefile` `quickstart` command.
-- Bundle test data for instant validation.
+## Findings Table
+| ID | Severity | Location | Symptom | Root Cause | Fix | Effort |
+|----|----------|----------|---------|------------|-----|--------|
+| D-001 | Major | `src/` | Unhandled Exception | Missing try block | Add try/except | S |
+| D-002 | Minor | `docs/` | Missing details | Tech debt | Update docs | M |
