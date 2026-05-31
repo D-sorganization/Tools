@@ -102,8 +102,14 @@ class TabCollection:
 
         This does **not** clear visible tabs — call :meth:`clear` first
         if you want a hard reset.
+
+        The backing ``dict`` is mutated **in place** (cleared and refilled)
+        rather than reassigned, so live aliases held by collaborators (e.g.
+        ``UnifiedToolsSidebar._tab_definitions``) keep observing current
+        state (issue #3138).
         """
-        self._tab_definitions = {d.tab_id: d for d in definitions}
+        self._tab_definitions.clear()
+        self._tab_definitions.update({d.tab_id: d for d in definitions})
 
     def clear(self) -> None:
         """Remove all tabs from the Qt widget and wipe bookkeeping."""
@@ -197,6 +203,10 @@ class TabCollection:
     def sync_order_from_widget(self) -> list[str]:
         """Re-build ``_tab_ids`` by walking the Qt tab bar's current order.
 
+        The backing ``list`` is mutated **in place** (sliced reassignment)
+        rather than rebound, so live aliases held by collaborators keep
+        observing current state (issue #3138).
+
         Returns the new id list (may be shorter than expected if widgets
         have been orphaned).
         """
@@ -208,5 +218,5 @@ class TabCollection:
                     ordered.append(tab_id)
                     break
         if len(ordered) == len(self._tab_ids):
-            self._tab_ids = ordered
+            self._tab_ids[:] = ordered
         return list(self._tab_ids)
