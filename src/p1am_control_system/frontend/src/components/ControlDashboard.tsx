@@ -117,6 +117,7 @@ export const ControlDashboard: React.FC<ControlDashboardProps> = ({
                     background: selectedPidIdx === idx ? "rgba(0, 242, 254, 0.1)" : "rgba(0,0,0,0.2)",
                     color: selectedPidIdx === idx ? "var(--accent-cyan)" : "var(--text-secondary)",
                   }}
+                  aria-pressed={selectedPidIdx === idx}
                 >
                   Loop {idx + 1}
                 </button>
