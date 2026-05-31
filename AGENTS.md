@@ -685,9 +685,27 @@ for k in ['core', 'graphql']:
 "
 ```
 
-<!-- END FLEET-MANAGED: network-api-hygiene -->
+## <!-- END FLEET-MANAGED: network-api-hygiene -->
 
----
+<!-- BEGIN FLEET-MANAGED: reasoning-engagement -->
+
+## 🧠 Reasoning & Engagement
+
+> This section is managed centrally by Repository_Management and synced fleet-wide.
+> Do NOT edit it directly in individual repositories — edit the source in Repository_Management/AGENTS.md.
+
+These rules govern _how_ you engage with a task before and during implementation. They exist because LLM agents tend to pick an interpretation silently, overcomplicate the solution, and edit code they were not asked to touch. Each rule directly counteracts one of those failure modes.
+
+- **Surface ambiguity. Do not guess silently.** If the request has more than one plausible interpretation, list the options and ask before implementing. Picking one and running with it is the single most common cause of rework in this fleet.
+- **Push back on overcomplication.** If a simpler approach would satisfy the request, say so before you build the complicated one. Do not implement bloated 1000-line constructions when 100 would do. The senior-engineer test: would they call this overcomplicated? If yes, simplify.
+- **Stay surgical.** Every changed line must trace directly to the user's request. Do not "improve" adjacent code, comments, formatting, or imports. Do not refactor things that are not broken. Match existing style even if you would do it differently.
+- **Spotted ≠ fix.** If you notice unrelated dead code, latent bugs, or stylistic problems while working, _mention them in the PR body or as a follow-up issue_ — do not fix them in the same PR. (The `mcp__ccd_session__spawn_task` tool is the right channel when working interactively.)
+- **Clean up only your own orphans.** If your changes leave imports, variables, or functions newly unused, remove them. Do not delete pre-existing dead code unless the task asked for it.
+- **State a verifiable success criterion before coding.** For a bug fix, that's a failing test that reproduces it (RED → GREEN, see TDD section below). For a feature, the explicit check that says "done." "Make it work" is not a success criterion.
+
+**The diff test:** every line in your final diff should answer "this is here because the user asked for X." If you cannot answer that for a given line, remove it.
+
+## <!-- END FLEET-MANAGED: reasoning-engagement -->
 
 <!-- BEGIN FLEET-MANAGED: repo-context-codemap -->
 
@@ -704,4 +722,39 @@ Use repo-local context before broad exploration:
 - Do not commit `.codemap/` or `.codemap/index.db`. Codemap indexes are cache/artifact data and must stay ignored.
 - To audit local fleet posture, run `python -m scripts.codemap_context_inventory --root .. --format markdown` from `Repository_Management`. This is a local, network-free inventory; it is not a substitute for repo-specific validation.
 
-<!-- END FLEET-MANAGED: repo-context-codemap -->
+## <!-- END FLEET-MANAGED: repo-context-codemap -->
+
+## Specification
+
+This repository's specification is defined in `SPEC.md` at the repo root.
+Read SPEC.md before making any changes. Update it when your changes
+affect documented functionality, features, or architecture.
+
+## Closing issues — non-negotiable rule
+
+NEVER close a feature or bug issue without one of:
+
+1. A merged PR that implements the acceptance criteria (use `Closes #N` in the PR body or title), OR
+2. An explicit `wontfix`, `roadmap`, `duplicate`, `invalid`, or `not-planned` label.
+
+The **Verify-Issue-Closure** workflow will automatically reopen any issue closed without evidence. Do not work around it.
+
+When implementing an issue:
+
+- Write or update tests FIRST (TDD: red → green → refactor)
+- Add Design-by-Contract preconditions/postconditions where it clarifies invariants
+- Respect Law of Demeter — don’t reach through three layers
+- Don’t duplicate code (DRY)
+- Run tests locally before pushing
+- If you can’t fully implement, leave the issue open and post a status comment
+
+### How to close issues properly
+
+| Method                      | Example                                                              |
+| --------------------------- | -------------------------------------------------------------------- |
+| Closing keyword in PR body  | `Closes #1234` or `Fixes #5678`                                      |
+| Closing keyword in PR title | `fix: resolve login crash (#1234)`                                   |
+| Exempt label                | Apply `wontfix`, `roadmap`, `duplicate`, `invalid`, or `not-planned` |
+| Bot + auto-generated label  | Only for auto-generated issues closed by bots                        |
+
+The workflow checks the PR timeline for cross-referenced merged PRs with closing keywords. If none are found and no exempt label is present, the issue is reopened with an explanatory comment.

@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.236                                    |
-| **Last Spec Update**    | 2026-05-31                                 |
+| **Spec Version**        | 1.1.233                                    |
+| **Last Spec Update**    | 2026-05-30                                 |
 
 ## 2. Purpose & Mission
 
@@ -99,10 +99,6 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   icon-only archive, restore, and delete controls available without right-click
 - Shared chat dock close control lives in the persistent status header instead
   of the terminal provider control row
-- Shared chat dock delegates workspace slash-commands (`/ws.read`, `/ws.write`,
-  `/plot`) and AI provider/model/thinking settings to headless, Qt-free
-  controllers (`WorkspaceCommandHandler`, `AiSettingsController`) per ADR-0022,
-  enabling unit tests without a QApplication
 - Shared unified tools sidebar widgets provide optional dockable/tear-off host
   integration for project file browsing, workspace variables, chat, terminal,
   calculator, unit conversion, and notes tabs
@@ -634,8 +630,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
-| 2026-05-31 | 1.1.236 | perf(golf): optimize calculateTempoQuality in phaseDetector.ts by replacing the two chained .filter().reduce() passes with a single-pass for loop, eliminating intermediate array allocations while preserving the tempo score. |
-| 2026-05-31 | 1.1.235 | feat(a11y, p1am frontend): add `aria-pressed` to custom toggle buttons in ControlDashboard (PID loop selector) and RoutingMatrix (input/output route cells) so screen readers announce active state. |
 | 2026-05-30 | 1.1.233 | perf(golf): optimize array iterations in swingAnalyzer by replacing chained .filter().reduce() with single-pass for loops in calculateTempoMetrics and calculateSwingScores; ci: remove the retired fix-brick.yml toolcache-repair workflow (consolidates #3124 and #3129). |
 | 2026-05-30 | 1.1.232 | feat(ux, #3115): improve accessibility of the ODE Solver UI by explicitly linking labels to inputs and textareas using htmlFor and unique IDs, add spellcheck="false" and disabled autocorrect. |
 | 2026-05-30 | 1.1.231 | perf(p1am frontend, #3126): optimize array aggregations in AlarmsHeader.tsx by replacing chained .filter() and .reduce() operations with a single-pass loop. |
