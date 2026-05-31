@@ -106,7 +106,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install safety bandit pip-audit semgrep
+          pip install safety bandit pip-audit semgrep pip-tools wheel click>=8
           npm install -g @google/jules
 
       - name: Run Security Scanners
