@@ -15,6 +15,7 @@ except ImportError:
 from typing import Any
 
 from alicat_manager import AlicatManager, AlicatMFC
+from cors_config import resolve_cors_settings
 from database import engine, get_session, init_db
 from fastapi import (
     Depends,
@@ -334,11 +335,13 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Enable CORS for Vite frontend running on port 3002
+# Restrict CORS to a configured allowlist (no wildcard with credentials).
+# See cors_config.resolve_cors_settings for env-driven configuration.
+_cors = resolve_cors_settings()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=list(_cors.allow_origins),
+    allow_credentials=_cors.allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )
