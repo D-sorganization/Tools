@@ -55,7 +55,6 @@ from PyQt6.QtWidgets import (
 from ._qt import ai_dropdowns as _ai
 from ._qt import exports as _exports
 from ._qt import sessions as _sessions
-from ._qt import workspace as _ws
 from ._qt.bubbles import ChatMessageBubble
 from ._qt.history_sidebar import HistorySidebar
 
@@ -70,6 +69,7 @@ from ._qt.ui_builder import build_chat_dock_ui
 from ._theme_protocol import ThemeProviderProtocol, _DefaultDarkTheme
 from ._thinking_indicator import ThinkingIndicator
 from ._workspace_protocol import WorkspaceContextProtocol
+from .ai_settings_controller import AiSettingsController
 from .chat_dock_widget import (
     _read_shared_session_id,
     _resolve_default_server,
@@ -79,6 +79,7 @@ from .chat_dock_widget import (
 from .terminal_contracts import TerminalProviderRegistry
 from .terminal_providers import build_default_terminal_provider_registry
 from .voice_input_manager import VoiceInputManager
+from .workspace_command_handler import WorkspaceCommandHandler
 
 logger = logging.getLogger(__name__)
 
@@ -198,6 +199,15 @@ class ChatDockWidget(QDockWidget):
         self._current_provider: str = "ollama"
         self._current_model: str = "llama3"
         self._current_thinking_level: str = "none"
+        # ADR-0022 / issue #6119: non-Qt controllers owned by composition.
+        # State stays on the widget (the ``current_*`` view properties bridge
+        # to ``_current_*``); the controllers hold only the routing rules.
+        self._ai_settings = AiSettingsController(self)
+        self._workspace_commands = WorkspaceCommandHandler(
+            emit=lambda text: self._add_bubble("assistant", text),
+            provider=self._workspace_provider,
+            plot_sink=self._plot_request_sink,
+        )
         self._voice_manager = VoiceInputManager()
         self._terminal_start_pending = False
         self._socket: QWebSocket | None = None
@@ -855,22 +865,22 @@ class ChatDockWidget(QDockWidget):
             }
         )
 
-    # ── Workspace bridge (Tools issue #2849) ─────────────────────────
+    # ── Workspace bridge (Tools issue #2849; #6119 controller) ───────
 
     def _build_workspace_context_block(self) -> str:
-        return _ws.build_workspace_context_block(self._workspace_provider)
+        return self._workspace_commands.context_block()
 
     def _dispatch_workspace_command(self, cmd: str, arg: str) -> None:
-        _ws.dispatch_workspace_command(self, cmd, arg)
+        self._workspace_commands.dispatch(cmd, arg)
 
     def _handle_ws_read(self, arg: str) -> None:
-        _ws.handle_ws_read(self, arg)
+        self._workspace_commands.handle_ws_read(arg)
 
     def _handle_ws_write(self, arg: str) -> None:
-        _ws.handle_ws_write(self, arg)
+        self._workspace_commands.handle_ws_write(arg)
 
     def _handle_plot(self, arg: str) -> None:
-        _ws.handle_plot(self, arg)
+        self._workspace_commands.handle_plot(arg)
 
     # ── AI Provider/Model/Thinking dropdowns (Tools issue #2871) ────
 
@@ -906,8 +916,20 @@ class ChatDockWidget(QDockWidget):
             return
         self._apply_settings_change(field, value)
 
+    def _ai_settings_controller(self) -> AiSettingsController:
+        """Return the owned controller, creating one if absent.
+
+        Lazy fallback covers code paths (e.g. tests building a bare stand-in
+        via ``__new__``) that bypass ``__init__`` and never set ``_ai_settings``.
+        """
+        controller = self.__dict__.get("_ai_settings")
+        if not isinstance(controller, AiSettingsController):
+            controller = AiSettingsController(self)
+            self._ai_settings = controller
+        return controller
+
     def _apply_settings_change(self, field: str, value: str) -> None:
-        _ai.apply_settings_change(self, field, value)
+        self._ai_settings_controller().apply_settings_change(field, value)
 
     def _refresh_ai_model_combo(self) -> None:
         _ai.refresh_ai_model_combo(self)
@@ -928,14 +950,71 @@ class ChatDockWidget(QDockWidget):
         """
         return
 
+    # ── AiSettingsController view bridge (issue #6119) ───────────────
+    # These map the controller's typed ``AiSettingsView`` protocol onto the
+    # widget's canonical ``_current_*`` state + Qt refresh helpers, so the
+    # selections remain on the widget (preserving the attributes existing
+    # tests read/write) while the routing rules live in the controller.
+
+    @property
+    def current_provider(self) -> str:
+        return self._current_provider
+
+    @current_provider.setter
+    def current_provider(self, value: str) -> None:
+        self._current_provider = value
+
+    @property
+    def current_model(self) -> str:
+        return self._current_model
+
+    @current_model.setter
+    def current_model(self, value: str) -> None:
+        self._current_model = value
+
+    @property
+    def current_thinking_level(self) -> str:
+        return self._current_thinking_level
+
+    @current_thinking_level.setter
+    def current_thinking_level(self, value: str) -> None:
+        self._current_thinking_level = value
+
+    def refresh_model_combo(self) -> None:
+        self._refresh_ai_model_combo()
+
+    def refresh_thinking_combo(self) -> None:
+        self._refresh_ai_thinking_combo()
+
+    def sync_ai_view(self) -> None:
+        if hasattr(self, "_ai_provider_combo") and self._ai_provider_combo is not None:
+            self._sync_ai_dropdowns()
+
+    def persist_ai_settings(self) -> None:
+        self._persist_ai_settings()
+
     def switch_provider(
         self,
         name: str,
         model: str,
         thinking_level: str,
     ) -> None:
-        """Switch AI provider / model / thinking-level mid-thread."""
-        _ai.switch_provider(self, name, model, thinking_level)
+        """Switch AI provider / model / thinking-level mid-thread.
+
+        Delegates the validation + state update to the headless
+        :class:`AiSettingsController`. The ``_message_history`` immutability
+        invariant (issue #2871) is asserted here because the controller never
+        touches the history.
+        """
+        history_before = self._message_history
+        snapshot_before = list(history_before)
+        self._ai_settings_controller().switch_provider(name, model, thinking_level)
+        assert self._message_history is history_before, (
+            "switch_provider invariant: _message_history must remain the same list"
+        )
+        assert self._message_history == snapshot_before, (
+            "switch_provider invariant: _message_history contents must not change"
+        )
 
     # ── Terminal mode ───────────────────────────────────────────────
 
