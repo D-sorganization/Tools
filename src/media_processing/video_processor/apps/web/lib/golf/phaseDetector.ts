@@ -535,15 +535,19 @@ export function getPhaseAtFrame(
  * Calculate phase timing quality (tempo score)
  */
 export function calculateTempoQuality(phases: PhaseTransition[]): number {
-  const backswingPhases = phases.filter((p) =>
-    [SwingPhase.TAKEAWAY, SwingPhase.BACKSWING, SwingPhase.TOP_OF_BACKSWING].includes(p.phase)
-  );
-  const downswingPhases = phases.filter((p) =>
-    [SwingPhase.TRANSITION, SwingPhase.DOWNSWING, SwingPhase.IMPACT].includes(p.phase)
-  );
+  // ⚡ Bolt: Replaced chained .filter() and .reduce() with a single-pass for loop
+  // to eliminate multiple array allocations and minimize garbage collection overhead.
+  let backswingDuration = 0;
+  let downswingDuration = 0;
 
-  const backswingDuration = backswingPhases.reduce((sum, p) => sum + p.duration, 0);
-  const downswingDuration = downswingPhases.reduce((sum, p) => sum + p.duration, 0);
+  for (let i = 0; i < phases.length; i++) {
+    const p = phases[i];
+    if (p.phase === SwingPhase.TAKEAWAY || p.phase === SwingPhase.BACKSWING || p.phase === SwingPhase.TOP_OF_BACKSWING) {
+      backswingDuration += p.duration;
+    } else if (p.phase === SwingPhase.TRANSITION || p.phase === SwingPhase.DOWNSWING || p.phase === SwingPhase.IMPACT) {
+      downswingDuration += p.duration;
+    }
+  }
 
   if (downswingDuration === 0) return 0;
 
