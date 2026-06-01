@@ -16,8 +16,11 @@ class P1AMHardware : public HardwareInterface {
   void WriteInhibit(bool active) override;
 
  private:
-  static const int kSlotThm = 1;    // P1-04THM is in slot 1
-  static const int kSlotAna = 2;    // P1-4ADL2DAL-1 is in slot 2
+  // Actual bench-verified slot order via P1.printModules() on 2026-06-01:
+  //   Slot 1 = P1-4ADL2DAL-1   (analog combo, 4 AI + 2 AO, 4-20 mA)
+  //   Slot 2 = P1-04THM        (4-channel thermocouple)
+  static const int kSlotAna = 1;
+  static const int kSlotThm = 2;
   // Inhibit GPIO. MUST NOT be pin 5 — the P1AM-ETH shield hardwires the W5500
   // chip-select to D5, so driving D5 from this firmware breaks Ethernet SPI.
   // D6 is free on the P1AM-100 / P1AM-ETH stack.

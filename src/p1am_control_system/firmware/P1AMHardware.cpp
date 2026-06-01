@@ -29,14 +29,27 @@ float P1AMHardware::ReadThermocouple(int channel) {
   if (channel < 0 || channel >= 4) {
     return 0.0f;
   }
-  return P1.readTemperature(kSlotThm, channel);
+  // P1AM library channels are 1-indexed; broker uses 0-indexed.
+  return P1.readTemperature(kSlotThm, channel + 1);
 }
 
 float P1AMHardware::ReadAnalogInput(int channel) {
   if (channel < 0 || channel >= 2) {
     return 0.0f;
   }
-  return P1.readAnalog(kSlotAna, channel);
+  // P1.readAnalog returns raw ADC counts. For the P1-4ADL2DAL-1 the AI is
+  // 13-bit over a 0-20 mA span: 0 counts -> 0 mA, 8191 counts -> 20 mA.
+  // Convert to percent of the 4-20 mA process span: 4 mA -> 0 %, 20 mA -> 100 %.
+  // Library channels are 1-indexed; broker uses 0-indexed.
+  uint32_t counts = P1.readAnalog(kSlotAna, channel + 1);
+  float mA = static_cast<float>(counts) * (20.0f / 8191.0f);
+  float percent = (mA - 4.0f) * (100.0f / 16.0f);
+  if (percent < 0.0f) {
+    percent = 0.0f;
+  } else if (percent > 100.0f) {
+    percent = 100.0f;
+  }
+  return percent;
 }
 
 void P1AMHardware::WriteAnalogOutput(int channel, float value) {
@@ -48,7 +61,12 @@ void P1AMHardware::WriteAnalogOutput(int channel, float value) {
   } else if (value > 100.0f) {
     value = 100.0f;
   }
-  P1.writeAnalog(value, kSlotAna, channel);
+  // P1.writeAnalog takes raw DAC counts (uint32_t). For the P1-4ADL2DAL-1
+  // the AO is 12-bit over the 4-20 mA span: 0 counts -> 4 mA,
+  // 4095 counts -> 20 mA. Scale the 0-100 % broker value to counts.
+  // Library channels are 1-indexed; broker uses 0-indexed.
+  uint32_t counts = static_cast<uint32_t>(value * (4095.0f / 100.0f));
+  P1.writeAnalog(counts, kSlotAna, channel + 1);
 }
 
 void P1AMHardware::WriteInhibit(bool active) {
