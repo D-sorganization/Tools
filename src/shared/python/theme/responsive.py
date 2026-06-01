@@ -60,8 +60,8 @@ def readable_text_width(
     widest = max(metrics.horizontalAdvance(text) for text in candidates)
     width = max(spec.minimum_px, widest + spec.padding_px + spec.chrome_px)
     if spec.maximum_px is None:
-        return width
-    return min(width, spec.maximum_px)
+        return int(width)
+    return int(min(width, spec.maximum_px))
 
 
 def set_text_minimum_width(

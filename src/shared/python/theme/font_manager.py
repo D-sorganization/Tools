@@ -80,8 +80,7 @@ class FontManager(QObject):
     def get_available_fonts(self) -> list[str]:
         """Return a list of available built-in professional fonts."""
         # Check which of the built-in fonts are actually available on the system
-        db = QFontDatabase()
-        system_fonts = db.families()
+        system_fonts = QFontDatabase.families()
 
         available = [f for f in BUILTIN_FONTS if f in system_fonts]
         # Always add a system default option
@@ -121,7 +120,7 @@ class FontManager(QObject):
             app: Optional QApplication instance. If None, uses QApplication.instance().
         """
         target_app = app or QApplication.instance()
-        if target_app is None:
+        if not isinstance(target_app, QApplication):
             logger.warning("No QApplication instance available to apply font.")
             return
 
