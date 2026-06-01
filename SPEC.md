@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.257                                    |
+| **Spec Version**        | 1.1.258                                    |
 | **Last Spec Update**    | 2026-06-01                                 |
 
 ## 2. Purpose & Mission
@@ -983,6 +983,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.258
+
+- 2026-06-01: test(theme): Added focused FastAPI router coverage for built-in/custom theme listing, active-theme retrieval and updates, custom-theme save/delete errors, Pydantic request models, and registration guards, raising `src/shared/python/theme/api.py` focused coverage to 100%.
 
 ### Version 1.1.257
 
