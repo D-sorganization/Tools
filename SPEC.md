@@ -984,6 +984,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 9. Changelog
 
+### Version 1.1.255
+
+- 2026-06-01: test(theme): Added focused responsive PyQt helper coverage for maximum-width clamping, invalid contracts, generic widget text derivation, and zero/negative scroll-area width handling.
+
 ### Version 1.1.233
 
 - 2026-06-01: fix(ux) — improve accessibility of pendulum simulator model selector tabs by removing conflicting `aria-pressed` attributes and replacing them with standard `role="tablist"`, `role="tab"`, `role="tabpanel"`, and `aria-selected` attributes.
