@@ -37,7 +37,6 @@ import logging
 import os
 import re
 import subprocess
-import sys
 from pathlib import Path
 from typing import Any, Literal
 
@@ -203,7 +202,7 @@ def _read_json_dict(path: Path) -> dict[str, Any]:
     return data
 
 
-def _entry_round_trips(name: str, entry: dict[str, Any]) -> bool:
+def _entry_round_trips(name: str, entry: Any) -> bool:
     """Return True iff ``entry`` validates as an :class:`McpServerConfig`."""
     if not isinstance(entry, dict):
         return False
@@ -342,7 +341,7 @@ def apply_preset_to_config(
 
     if not target.is_absolute():
         raise ValueError(f"target must be an absolute path, got {target!r}")
-    cfg = apply_preset(
+    cfg: McpServerConfig = apply_preset(
         preset_id,
         name=name,
         env=env,
@@ -387,7 +386,8 @@ def _preset_npm_package(preset_id: str) -> str | None:
     for arg in preset.config.args:
         if arg.startswith("-"):
             continue
-        return arg
+        package: str = arg
+        return package
     return None
 
 
@@ -431,7 +431,6 @@ def is_preset_installed(preset_id: str) -> bool:
             capture_output=True,
             text=True,
             timeout=15,
-            shell=sys.platform == "win32",
         )
     except (subprocess.TimeoutExpired, FileNotFoundError, OSError) as exc:
         _LOG.debug("npm view %s failed: %s", package, exc)

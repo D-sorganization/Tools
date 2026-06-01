@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.246                                    |
+| **Spec Version**        | 1.1.249                                    |
 | **Last Spec Update**    | 2026-06-01                                 |
 
 ## 2. Purpose & Mission
@@ -634,6 +634,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-01 | 1.1.249 | fix(mcp): keep config-loader preset application and npx package detection typed under the CI mypy delta profile while preserving the Python 3.10 MCP compatibility and config writer coverage changes. |
+| 2026-06-01 | 1.1.248 | fix(mcp): keep MCP contracts importable on Python 3.10 by using a `str`/`Enum` transport type, keep config-loader merge validation and npx package detection mypy-clean, remove the Windows shell wrapper from the npm preset probe, and add focused deterministic coverage for the pure `config_writer` MCP server JSON writer/reader. |
+| 2026-06-01 | 1.1.247 | test(mcp): add focused deterministic coverage for the pure `config_writer` MCP server JSON writer/reader, including Claude Desktop serialization, duplicate and invalid server validation, malformed environment placeholder rejection, missing/malformed file handling, flat and `mcpServers` read normalization, invalid-entry filtering, and the `load` alias. |
 | 2026-06-01 | 1.1.246 | fix(performance-utils): make `OptimizedFileScanner` cache entries expire by both TTL and root directory mtime so changed directories are rescanned within the 60-second cache window, and handle top-level directory enumeration errors consistently with inaccessible child directories. Added focused deterministic coverage for scanner cache invalidation, TTL reuse/expiry, worker error suppression, hashing paths, and chunked/lazy memory utilities. |
 | 2026-06-01 | 1.1.245 | fix(folder-packer-pro): guard the `operations.py` messagebox import so headless Linux runners without Tk shared libraries can import the operation mixins while GUI runtime behavior stays unchanged when Tk is available. |
 | 2026-06-01 | 1.1.244 | fix(folder-packer-pro): teach `inspect_package()` to read uncompressed unencrypted archives instead of mislabeling them as encrypted, and add focused headless coverage for `folder_packer_pro` file operations, pack/unpack engine behavior, archive path traversal rejection, cancellation/error handling, and operation mixin workflows. |
