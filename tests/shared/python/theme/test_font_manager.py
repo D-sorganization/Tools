@@ -11,8 +11,8 @@ pytest.importorskip("PyQt6")
 from PyQt6.QtCore import QSettings
 from PyQt6.QtWidgets import QApplication
 
-import shared.python.theme.font_manager as font_manager_module
-from shared.python.theme.font_manager import FontManager, get_font_manager
+import src.shared.python.theme.font_manager as font_manager_module
+from src.shared.python.theme.font_manager import FontManager, get_font_manager
 
 
 @pytest.fixture
