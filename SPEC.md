@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.238                                    |
+| **Spec Version**        | 1.1.239                                    |
 | **Last Spec Update**    | 2026-05-31                                 |
 
 ## 2. Purpose & Mission
@@ -634,6 +634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-05-31 | 1.1.239 | test(sidekick): harden the Sidekick per-file coverage gate so only `src/shared/python/sidekick/` production modules are enforced, excluding changed test files from missing-coverage failures. CI now runs the full Sidekick unit suite when Sidekick source changes, and the split runtime/default-tab modules have focused contract coverage for chat bridges, plot requests, fallback diagnostics, tab definitions, and optional-tab placeholders. |
 | 2026-05-31 | 1.1.238 | fix(security, #3143 #3144): rewrite wave_solver.py to use argv lists with shell=False (no shell string from issue title/body), make --dangerously-skip-permissions opt-in, and gate destructive git/gh actions (git reset --hard, issue close, gh pr merge --auto) behind an explicit --allow-mutations flag with a dry-run default; replace P1AM backend wildcard CORS (`["*"]` + credentials) with an env-driven allowlist (cors_config.resolve_cors_settings) that defaults to local dev origins, never pairs `*` with credentials, and fails closed in production without an explicit allowlist. |
 | 2026-05-31 | 1.1.238 | fix(sidekick): Completed the #3141 monolith-decomposition follow-up by splitting runtime tab, default-tab, calculator workspace, runtime settings, and chat settings responsibilities into focused modules while preserving the historical import surface through facade modules. Added focused alias-contract and coverage-gate regression tests so hosts keep stable live tab collections and changed Sidekick files cannot silently bypass coverage enforcement. |
 | 2026-05-31 | 1.1.237 | fix(sidekick): #3138 TabCollection.set_definitions()/sync_order_from_widget() now mutate their backing dict/list in place instead of reassigning, so UnifiedToolsSidebar's live \_tab_definitions/\_tab_ids/\_tab_widgets aliases stay current (fixes duplicate/pop-out/redock/settings flows); PythonReplWidget.execute() now waits on its worker thread and delivers output deterministically without a spinning event loop (fixes REPL output). #3139 check_sidekick_coverage.py fails when a changed Sidekick file is missing from coverage XML or when an enforced run counts zero files, closing the vacuous-pass gap. #3140 removed two stale TDD-pending xfail markers now that the package-rename import-boundary contracts pass. Part of #3141 (monolith decomposition deferred to a focused follow-up). check_sidekick_coverage.py now parses coverage.xml via defusedxml.ElementTree (matching check_coverage_policy.py) to satisfy bandit B314. |

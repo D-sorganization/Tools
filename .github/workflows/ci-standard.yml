@@ -571,6 +571,12 @@ jobs:
             # Package rename compat shim unit test
             "tests/unit/test_sidekick_package_rename.py"
           )
+          if grep -q -E '^src/shared/python/sidekick/' changed_python_files.txt; then
+            core_tests+=(
+              "tests/unit/sidekick"
+              "tests/unit/test_check_sidekick_coverage.py"
+            )
+          fi
           # Use `python -m pytest` rather than the `pytest` console script so
           # the active Python interpreter resolves pytest-cov (and other pip
           # plugins) via its own site-packages. On self-hosted runners where
