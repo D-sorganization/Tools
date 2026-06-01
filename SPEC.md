@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.260                                    |
+| **Spec Version**        | 1.1.261                                    |
 | **Last Spec Update**    | 2026-06-01                                 |
 
 ## 2. Purpose & Mission
@@ -634,6 +634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-01 | 1.1.261 | test(theme): add focused PyQt-light ThemeManager coverage for singleton reset, inherited app-context preferences, theme queries, stylesheet fallback, registered window application, custom theme persistence/loading/deletion, and validation/error paths, raising `src/shared/python/theme/theme_manager.py` focused coverage above 90% without changing production behavior. |
 | 2026-06-01 | 1.1.259 | test(theme): add focused PyQt zoom controller coverage for configuration validation, persisted zoom loading, font scaling, step/reset helpers, install/uninstall, keyboard shortcuts, and Ctrl+wheel handling, raising `src/shared/python/theme/zoom.py` focused coverage above 90% without changing production behavior. |
 | 2026-06-01 | 1.1.260 | test(theme): add focused stylesheet generator coverage for complete QSS section output, minimal embedding styles, required theme color validation, and public exports, raising `src/shared/python/theme/stylesheets.py` focused coverage above 90% without changing production behavior. |
 | 2026-06-01 | 1.1.255 | fix(folder-packer-pro): keep the headless `operations.py` messagebox fallback typed under mypy by assigning the optional Tk import through an `Any`-typed alias while preserving the unavailable-messagebox runtime guard. |
