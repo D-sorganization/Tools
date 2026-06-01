@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.245                                    |
+| **Spec Version**        | 1.1.246                                    |
 | **Last Spec Update**    | 2026-06-01                                 |
 
 ## 2. Purpose & Mission
@@ -634,6 +634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-01 | 1.1.246 | fix(performance-utils): make `OptimizedFileScanner` cache entries expire by both TTL and root directory mtime so changed directories are rescanned within the 60-second cache window, and handle top-level directory enumeration errors consistently with inaccessible child directories. Added focused deterministic coverage for scanner cache invalidation, TTL reuse/expiry, worker error suppression, hashing paths, and chunked/lazy memory utilities. |
 | 2026-06-01 | 1.1.245 | fix(folder-packer-pro): guard the `operations.py` messagebox import so headless Linux runners without Tk shared libraries can import the operation mixins while GUI runtime behavior stays unchanged when Tk is available. |
 | 2026-06-01 | 1.1.244 | fix(folder-packer-pro): teach `inspect_package()` to read uncompressed unencrypted archives instead of mislabeling them as encrypted, and add focused headless coverage for `folder_packer_pro` file operations, pack/unpack engine behavior, archive path traversal rejection, cancellation/error handling, and operation mixin workflows. |
 | 2026-06-01 | 1.1.243 | test(data-processing): add focused coverage for the shared pandas formula validator and `DataProcessor.apply_formula` integration, pinning accepted arithmetic/boolean grammar, unsafe syntax rejection, complexity/exponent guards, and rejection logging without formula text leakage. |
