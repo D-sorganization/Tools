@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.250                                    |
+| **Spec Version**        | 1.1.251                                    |
 | **Last Spec Update**    | 2026-06-01                                 |
 
 ## 2. Purpose & Mission
@@ -634,6 +634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-01 | 1.1.251 | test(theme): add focused coverage for shared theme color validation, normalization, RGBA conversion, matplotlib palette mapping, JSON loader fallback/error paths, and Qt color conversion, raising `src/shared/python/theme/colors.py` focused coverage above 99% without changing production behavior. |
 | 2026-06-01 | 1.1.250 | test(theme): add focused coverage for shared theme style constants and parameterized stylesheet helpers, raising `src/shared/python/theme/style_constants.py` focused coverage to 100% without changing production behavior. |
 | 2026-06-01 | 1.1.249 | fix(mcp): keep config-loader preset application and npx package detection typed under the CI mypy delta profile while preserving the Python 3.10 MCP compatibility and config writer coverage changes. |
 | 2026-06-01 | 1.1.248 | fix(mcp): keep MCP contracts importable on Python 3.10 by using a `str`/`Enum` transport type, keep config-loader merge validation and npx package detection mypy-clean, remove the Windows shell wrapper from the npm preset probe, and add focused deterministic coverage for the pure `config_writer` MCP server JSON writer/reader. |
