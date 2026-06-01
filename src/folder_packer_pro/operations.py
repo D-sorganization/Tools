@@ -13,21 +13,6 @@ import threading
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-try:
-    from tkinter import messagebox
-except ImportError:
-
-    class _UnavailableMessageBox:
-        @staticmethod
-        def _raise_unavailable(*args: Any, **kwargs: Any) -> None:
-            raise RuntimeError("Tk messagebox is unavailable in this environment")
-
-        showerror = _raise_unavailable
-        showinfo = _raise_unavailable
-        showwarning = _raise_unavailable
-
-    messagebox = _UnavailableMessageBox()
-
 from .file_ops import (
     collect_folder_stats,
     format_size,
@@ -40,6 +25,24 @@ from .pack_engine import (
     pack_files,
     unpack_files,
 )
+
+messagebox: Any
+try:
+    from tkinter import messagebox as _messagebox
+
+    messagebox = _messagebox
+except ImportError:
+
+    class _UnavailableMessageBox:
+        @staticmethod
+        def _raise_unavailable(*args: Any, **kwargs: Any) -> None:
+            raise RuntimeError("Tk messagebox is unavailable in this environment")
+
+        showerror = _raise_unavailable
+        showinfo = _raise_unavailable
+        showwarning = _raise_unavailable
+
+    messagebox = _UnavailableMessageBox()
 
 if TYPE_CHECKING:
     pass
