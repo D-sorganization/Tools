@@ -634,6 +634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-01 | 1.1.255 | fix(folder-packer-pro): keep the headless `operations.py` messagebox fallback typed under mypy by assigning the optional Tk import through an `Any`-typed alias while preserving the unavailable-messagebox runtime guard. |
 | 2026-06-01 | 1.1.254 | test(theme): add focused headless coverage for shared matplotlib style helpers, including themed figure/axes/legend styling, default color fallbacks, canvas redraw behavior, global rcParams, palette cycling, and styled figure creation without changing production behavior. |
 | 2026-06-01 | 1.1.253 | test(theme): add focused headless coverage for shared icon SVG registry rendering, unknown-icon validation, argument type guards, external SVG recoloring, and missing-file handling, raising `src/shared/python/theme/icon_utils.py` focused coverage above 90% without changing production behavior. |
 | 2026-06-01 | 1.1.252 | test(theme): add focused coverage for shared theme typography constants, CSS font-stack exports, PyQt font-family selection, explicit-family handling, italic flags, font weights, and missing-size validation, raising `src/shared/python/theme/typography.py` focused coverage above 90% without changing production behavior. |
