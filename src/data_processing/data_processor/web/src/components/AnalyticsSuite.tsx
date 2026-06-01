@@ -47,36 +47,6 @@ type AnalyticsTab = 'correlation' | 'pca' | 'regression';
 // Math helpers
 // ---------------------------------------------------------------------------
 
-function pearsonCorrelation(x: number[] | Float64Array, y: number[] | Float64Array): number {
-  const len = x.length;
-  let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0, sumY2 = 0, count = 0;
-
-  for (let i = 0; i < len; i++) {
-    const vx = x[i];
-    const vy = y[i];
-    if (!Number.isNaN(vx) && !Number.isNaN(vy)) {
-      sumX += vx;
-      sumY += vy;
-      sumXY += vx * vy;
-      sumX2 += vx * vx;
-      sumY2 += vy * vy;
-      count++;
-    }
-  }
-
-  if (count < 2) return NaN;
-
-  const num = count * sumXY - sumX * sumY;
-  const denX = count * sumX2 - sumX * sumX;
-  const denY = count * sumY2 - sumY * sumY;
-
-  // Due to floating point inaccuracy, denX or denY might be very slightly negative
-  // if variance is essentially 0. Clamp to 0 before sqrt.
-  const den = Math.sqrt(Math.max(0, denX) * Math.max(0, denY));
-
-  return den === 0 ? 0 : num / den;
-}
-
 function computeCorrelation(data: DataRow[], signals: string[]): CorrelationMatrix {
   const n = signals.length;
   const rowCount = data.length;
@@ -94,12 +64,110 @@ function computeCorrelation(data: DataRow[], signals: string[]): CorrelationMatr
     return col;
   });
 
+  // ⚡ Bolt Optimization: Fast path for correlation calculation.
+  // We first check if there are any NaN values in the entire dataset.
+  let hasNaN = false;
   for (let i = 0; i < n; i++) {
-    for (let j = i; j < n; j++) {
-      // Avoid massive map/filter arrays for every pair calculation
-      const r = pearsonCorrelation(columns[i], columns[j]);
-      matrix[i][j] = r;
-      matrix[j][i] = r;
+    const col = columns[i];
+    for (let k = 0; k < rowCount; k++) {
+      // Fast NaN check
+      if (col[k] !== col[k]) {
+        hasNaN = true;
+        break;
+      }
+    }
+    if (hasNaN) break;
+  }
+
+  if (!hasNaN) {
+    // ⚡ Bolt Fast Path: If no missing values (NaNs), pre-compute sumX and sumX2 once per column.
+    // This reduces the O(N^2 * rowCount) inner loop complexity to only calculating sumXY.
+    const sums = new Float64Array(n);
+    const sumSqs = new Float64Array(n);
+    for (let i = 0; i < n; i++) {
+      const col = columns[i];
+      let sum = 0, sumSq = 0;
+      for (let k = 0; k < rowCount; k++) {
+        const v = col[k];
+        sum += v;
+        sumSq += v * v;
+      }
+      sums[i] = sum;
+      sumSqs[i] = sumSq;
+      matrix[i][i] = 1; // Self correlation is 1
+    }
+
+    const count = rowCount;
+    if (count < 2) {
+      for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
+          matrix[i][j] = NaN;
+        }
+      }
+      return { signals, matrix };
+    }
+
+    for (let i = 0; i < n; i++) {
+      const colI = columns[i];
+      const sumX = sums[i];
+      const sumX2 = sumSqs[i];
+
+      for (let j = i + 1; j < n; j++) {
+        const colJ = columns[j];
+        let sumXY = 0;
+        for (let k = 0; k < rowCount; k++) {
+          sumXY += colI[k] * colJ[k];
+        }
+
+        const sumY = sums[j];
+        const sumY2 = sumSqs[j];
+
+        const num = count * sumXY - sumX * sumY;
+        const denX = count * sumX2 - sumX * sumX;
+        const denY = count * sumY2 - sumY * sumY;
+        const den = Math.sqrt(Math.max(0, denX) * Math.max(0, denY));
+        const r = den === 0 ? 0 : num / den;
+        matrix[i][j] = r;
+        matrix[j][i] = r;
+      }
+    }
+  } else {
+    // ⚡ Bolt Slow Path: Handle missing values (NaNs) dynamically.
+    for (let i = 0; i < n; i++) {
+      const colI = columns[i];
+      matrix[i][i] = 1;
+      for (let j = i + 1; j < n; j++) {
+        const colJ = columns[j];
+        let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0, sumY2 = 0, count = 0;
+
+        for (let k = 0; k < rowCount; k++) {
+          const vx = colI[k];
+          const vy = colJ[k];
+          // ⚡ Bolt Optimization: Use fast `vx === vx` to check for NaN instead of `Number.isNaN`.
+          if (vx === vx && vy === vy) {
+            sumX += vx;
+            sumY += vy;
+            sumXY += vx * vy;
+            sumX2 += vx * vx;
+            sumY2 += vy * vy;
+            count++;
+          }
+        }
+
+        if (count < 2) {
+          matrix[i][j] = NaN;
+          matrix[j][i] = NaN;
+          continue;
+        }
+
+        const num = count * sumXY - sumX * sumY;
+        const denX = count * sumX2 - sumX * sumX;
+        const denY = count * sumY2 - sumY * sumY;
+        const den = Math.sqrt(Math.max(0, denX) * Math.max(0, denY));
+        const r = den === 0 ? 0 : num / den;
+        matrix[i][j] = r;
+        matrix[j][i] = r;
+      }
     }
   }
 

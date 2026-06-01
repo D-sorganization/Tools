@@ -26,7 +26,7 @@ except ImportError:
         showinfo = _raise_unavailable
         showwarning = _raise_unavailable
 
-    messagebox = _UnavailableMessageBox()
+    messagebox = _UnavailableMessageBox()  # type: ignore[assignment]
 
 from .file_ops import (
     collect_folder_stats,
