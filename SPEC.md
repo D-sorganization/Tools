@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.243                                    |
+| **Spec Version**        | 1.1.244                                    |
 | **Last Spec Update**    | 2026-06-01                                 |
 
 ## 2. Purpose & Mission
@@ -634,6 +634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-01 | 1.1.244 | fix(folder-packer-pro): teach `inspect_package()` to read uncompressed unencrypted archives instead of mislabeling them as encrypted, and add focused headless coverage for `folder_packer_pro` file operations, pack/unpack engine behavior, archive path traversal rejection, cancellation/error handling, and operation mixin workflows. |
 | 2026-06-01 | 1.1.243 | test(data-processing): add focused coverage for the shared pandas formula validator and `DataProcessor.apply_formula` integration, pinning accepted arithmetic/boolean grammar, unsafe syntax rejection, complexity/exponent guards, and rejection logging without formula text leakage. |
 | 2026-06-01 | 1.1.242 | fix(model-generation): harden the headless `model_generation` CLI library commands by parsing category/source filters into library enums, using `ModelEntry.id` in list/add output, defaulting adds to `ModelCategory.OTHER`, trimming comma-separated tags, and keeping the typed CLI dispatch path mypy-clean. Added focused CLI tests covering parser wiring, library list/add behavior, invalid filters, and inertia dimension errors. Also keeps Sidekick workspace facade name listing typed under both local and CI mypy import modes. |
 | 2026-05-31 | 1.1.240 | fix(sidekick): harden calculator workspace adapter typed boundaries so changed-file mypy checks keep `Path`, `bool`, and `list[str]` return contracts when helper modules are skipped during CI analysis. |
