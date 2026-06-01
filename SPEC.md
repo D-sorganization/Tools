@@ -986,7 +986,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ### Version 1.1.257
 
-- 2026-06-01: test(theme): Aligned font manager provider-contract imports with the canonical `src.shared.python.theme` package path so CI importlib collection validates the exported theme surface.
+- 2026-06-01: test(theme): Normalized font manager and responsive theme tests to import through the exported `src.shared.python.theme` package path so the provider-contract suite passes under importlib mode.
 
 ### Version 1.1.256
 

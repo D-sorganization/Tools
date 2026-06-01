@@ -17,7 +17,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from shared.python.theme.responsive import (
+from src.shared.python.theme.responsive import (
     TextWidthSpec,
     configure_form_layout_for_readability,
     derive_text_candidates,
