@@ -9,6 +9,20 @@ from pathlib import Path
 
 import defusedxml.ElementTree as ET
 
+SIDEKICK_SOURCE_PREFIX = "src/shared/python/sidekick/"
+
+
+def _is_sidekick_production_path(path: str) -> bool:
+    """Return true for Sidekick source modules, never for tests."""
+    normalized = path.replace("\\", "/")
+    if not normalized.endswith(".py"):
+        return False
+    if "/tests/" in normalized:
+        return False
+    return normalized.startswith(SIDEKICK_SOURCE_PREFIX) or (
+        f"/{SIDEKICK_SOURCE_PREFIX}" in normalized
+    )
+
 
 def check_sidekick_coverage(
     coverage_file: Path, changed_files_path: Path | None = None
@@ -44,9 +58,7 @@ def check_sidekick_coverage(
     # in the coverage data; a changed Sidekick module missing from coverage is a
     # failure, not a vacuous pass (issue #3139).
     changed_sidekick_files = {
-        c
-        for c in changed_files
-        if "/sidekick/" in c and "/tests/" not in c and c.endswith(".py")
+        c for c in changed_files if _is_sidekick_production_path(c)
     }
     seen_changed_sidekick: set[str] = set()
 
@@ -74,8 +86,8 @@ def check_sidekick_coverage(
 
         norm_path = abs_path.as_posix()
 
-        # Match files under sidekick/ excluding tests/
-        if "/sidekick/" in norm_path and "/tests/" not in norm_path:
+        # Match Sidekick production modules only.
+        if _is_sidekick_production_path(norm_path):
             # We enforce coverage gate on:
             # 1. Any of the 6 target files we added tests for.
             # 2. Any other file under sidekick/ that is modified/changed in this PR.
