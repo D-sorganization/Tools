@@ -455,12 +455,14 @@ def inspect_package(package_path: Path) -> dict[str, Any]:
     }
 
     try:
-        decompressed = gzip.decompress(data)
-        package_data = json.loads(decompressed.decode("utf-8"))
+        try:
+            decoded_data = gzip.decompress(data)
+        except (gzip.BadGzipFile, OSError):
+            decoded_data = data
+
+        package_data = json.loads(decoded_data.decode("utf-8"))
         info["metadata"] = package_data.get("metadata", {})
     except (
-        gzip.BadGzipFile,
-        OSError,
         json.JSONDecodeError,
         UnicodeDecodeError,
     ):
