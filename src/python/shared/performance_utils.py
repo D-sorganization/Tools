@@ -11,6 +11,7 @@ import contextlib
 import hashlib
 import os
 import threading
+import time
 from collections.abc import Callable, Generator
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -43,7 +44,7 @@ class OptimizedFileScanner:
         self.max_workers = (
             max_workers if max_workers != -1 else min(32, (os.cpu_count() or 1) + 4)
         )
-        self._cache: dict[str, tuple[float, list[Path]]] = {}
+        self._cache: dict[str, tuple[int, float, list[Path]]] = {}
         self._cache_lock = threading.Lock()
 
     def scan_directory_parallel(
@@ -67,11 +68,13 @@ class OptimizedFileScanner:
 
         # Check cache first
         cache_key = f"{root_path}:{pattern}:{max_depth}"
+        root_mtime_ns = root_path.stat().st_mtime_ns
+        now = time.monotonic()
         with self._cache_lock:
             if cache_key in self._cache:
-                cached_time, cached_files = self._cache[cache_key]
-                # Cache valid for 60 seconds
-                if (root_path.stat().st_mtime - cached_time) < 60:
+                cached_mtime_ns, cached_at, cached_files = self._cache[cache_key]
+                # Cache is valid for 60 seconds or until the root directory changes.
+                if cached_mtime_ns == root_mtime_ns and now - cached_at < 60:
                     yield from cached_files
                     return
 
@@ -105,7 +108,10 @@ class OptimizedFileScanner:
             return files
 
         # Start with immediate subdirectories in parallel
-        subdirs = [item for item in root_path.iterdir() if item.is_dir()]
+        try:
+            subdirs = [item for item in root_path.iterdir() if item.is_dir()]
+        except (PermissionError, OSError):
+            subdirs = []
 
         if len(subdirs) > 1 and self.max_workers > 1:
             with ThreadPoolExecutor(
@@ -134,7 +140,7 @@ class OptimizedFileScanner:
 
         # Cache results
         with self._cache_lock:
-            self._cache[cache_key] = (root_path.stat().st_mtime, found_files)
+            self._cache[cache_key] = (root_path.stat().st_mtime_ns, now, found_files)
 
         yield from found_files
 
