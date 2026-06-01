@@ -98,3 +98,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - pytest configuration for multi-project testing
 - Ruff and Black for code formatting
 - MyPy for type checking
+
+## [1.1.241] - 2026-06-01
+
+### Performance
+
+- Optimized the calculation of the correlation matrix in the AnalyticsSuite by implementing a "fast path" that precomputes column sums and sum of squares when no `NaN` values are present.
+- Replaced slow `Number.isNaN()` checks with fast self-equality checks (`x !== x`) inside tight hot algorithmic loops.
