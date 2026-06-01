@@ -105,10 +105,12 @@ class CalculatorWorkspaceController:
 
     def save(self, path: str | Path | None = None) -> Path:
         """Save the calculator-local registry to ``path``."""
-        return save_workspace_registry(
-            self._registry,
-            path or self._settings.default_path(),
-            scope=self._scope,
+        return Path(
+            save_workspace_registry(
+                self._registry,
+                path or self._settings.default_path(),
+                scope=self._scope,
+            )
         )
 
     @property
@@ -181,7 +183,7 @@ class GlobalWorkspaceController:
         """Delete a global variable after explicit confirmation."""
         if not confirm_delete:
             raise PermissionError("delete requires explicit confirmation")
-        return self._registry.remove(name)
+        return bool(self._registry.remove(name))
 
     def clear(self, *, confirm_clear: bool = False) -> None:
         """Clear the global workspace after explicit confirmation."""
@@ -191,10 +193,12 @@ class GlobalWorkspaceController:
 
     def save(self, path: str | Path | None = None) -> Path:
         """Save the global registry to ``path``."""
-        return save_workspace_registry(
-            self._registry,
-            path or self._settings.default_path(),
-            scope=self._scope,
+        return Path(
+            save_workspace_registry(
+                self._registry,
+                path or self._settings.default_path(),
+                scope=self._scope,
+            )
         )
 
     def load(
