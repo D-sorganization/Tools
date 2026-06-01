@@ -107,7 +107,7 @@ class CalculatorWorkspaceFacade:
         Postcondition: returns a sorted list; empty list when workspace is empty.
         Satisfies: WorkspaceContract.list_variable_names.
         """
-        return self._local_registry.list_names()
+        return [str(name) for name in self._local_registry.list_names()]
 
     def describe(
         self,
