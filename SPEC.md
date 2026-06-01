@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.252                                    |
+| **Spec Version**        | 1.1.253                                    |
 | **Last Spec Update**    | 2026-06-01                                 |
 
 ## 2. Purpose & Mission
@@ -634,6 +634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-01 | 1.1.253 | test(theme): add focused headless coverage for shared icon SVG registry rendering, unknown-icon validation, argument type guards, external SVG recoloring, and missing-file handling, raising `src/shared/python/theme/icon_utils.py` focused coverage above 90% without changing production behavior. |
 | 2026-06-01 | 1.1.252 | test(theme): add focused coverage for shared theme typography constants, CSS font-stack exports, PyQt font-family selection, explicit-family handling, italic flags, font weights, and missing-size validation, raising `src/shared/python/theme/typography.py` focused coverage above 90% without changing production behavior. |
 | 2026-06-01 | 1.1.251 | test(theme): add focused coverage for shared theme color validation, normalization, RGBA conversion, matplotlib palette mapping, JSON loader fallback/error paths, and Qt color conversion, raising `src/shared/python/theme/colors.py` focused coverage above 99% without changing production behavior. |
 | 2026-06-01 | 1.1.250 | test(theme): add focused coverage for shared theme style constants and parameterized stylesheet helpers, raising `src/shared/python/theme/style_constants.py` focused coverage to 100% without changing production behavior. |
