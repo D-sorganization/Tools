@@ -61,9 +61,17 @@ export default function IssuesPanel({ issues }: IssuesPanelProps) {
     return severityOrder[a.severity] - severityOrder[b.severity];
   });
 
-  const majorCount = issues.filter((i) => i.severity === 'major').length;
-  const moderateCount = issues.filter((i) => i.severity === 'moderate').length;
-  const minorCount = issues.filter((i) => i.severity === 'minor').length;
+  // ⚡ Bolt Optimization: Replaced multiple .filter().length calls with a single-pass for-loop
+  // to eliminate intermediate array allocations and reduce garbage collection overhead during frequent UI re-renders.
+  let majorCount = 0;
+  let moderateCount = 0;
+  let minorCount = 0;
+  for (let i = 0; i < issues.length; i++) {
+    const severity = issues[i].severity;
+    if (severity === 'major') majorCount++;
+    else if (severity === 'moderate') moderateCount++;
+    else if (severity === 'minor') minorCount++;
+  }
 
   if (issues.length === 0) {
     return (

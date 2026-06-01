@@ -11,16 +11,33 @@ export default function RecommendationsPanel({
     return null;
   }
 
-  // Categorize recommendations
-  const prioritized = recommendations.filter((r) =>
-    r.toLowerCase().includes('focus') || r.toLowerCase().includes('major')
-  );
-  const drills = recommendations.filter((r) =>
-    r.toLowerCase().includes('drill') || r.toLowerCase().includes('practice')
-  );
-  const general = recommendations.filter(
-    (r) => !prioritized.includes(r) && !drills.includes(r)
-  );
+  // ⚡ Bolt Optimization: Replaced chained .filter() passes and repeated .toLowerCase()
+  // calls with a single-pass for-loop, eliminating multiple intermediate array creations
+  // and O(N*M) inclusion checks, significantly reducing React render overhead.
+  const prioritized: string[] = [];
+  const drills: string[] = [];
+  const general: string[] = [];
+
+  for (let i = 0; i < recommendations.length; i++) {
+    const r = recommendations[i];
+    const lower = r.toLowerCase();
+
+    let isPrioritized = false;
+    let isDrill = false;
+
+    if (lower.includes('focus') || lower.includes('major')) {
+      prioritized.push(r);
+      isPrioritized = true;
+    }
+    if (lower.includes('drill') || lower.includes('practice')) {
+      drills.push(r);
+      isDrill = true;
+    }
+
+    if (!isPrioritized && !isDrill) {
+      general.push(r);
+    }
+  }
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
