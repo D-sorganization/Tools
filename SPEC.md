@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST_UPDATED: 2026-05-31
+  LAST_UPDATED: 2026-06-01
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -968,6 +968,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.233
+
+- 2026-06-01: fix(ux) — improve accessibility of pendulum simulator model selector tabs by removing conflicting `aria-pressed` attributes and replacing them with standard `role="tablist"`, `role="tab"`, `role="tabpanel"`, and `aria-selected` attributes.
 
 ### Version 1.1.232
 

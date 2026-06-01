@@ -379,15 +379,18 @@ export default function App() {
         <span className="app-status">{status}</span>
       </header>
 
-      <div className="app-body">
+      <div className="app-body" role="tabpanel" id="main-panel" aria-labelledby={`tab-${modelType}`}>
         {/* ── Model selector tabs ── */}
         <div style={{ padding: '10px', backgroundColor: '#222', borderBottom: '2px solid #444' }}>
-          <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+          <div role="tablist" aria-label="Model Types" style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
             {(['double', 'triple', 'golfer'] as ModelType[]).map(m => (
               <button
                 key={m}
+                id={`tab-${m}`}
+                role="tab"
+                aria-selected={modelType === m}
+                aria-controls="main-panel"
                 onClick={() => { setModelType(m); setResult(null); setPlaying(false); }}
-                aria-pressed={modelType === m}
                 style={{
                   padding: '8px 16px',
                   backgroundColor: modelType === m ? '#0066cc' : '#333',
