@@ -13,7 +13,10 @@ import argparse
 import json
 import logging
 import sys
+from collections.abc import Callable
+from enum import Enum
 from pathlib import Path
+from typing import TypeVar, cast
 
 # Configure logging
 logging.basicConfig(
@@ -21,6 +24,20 @@ logging.basicConfig(
     format="%(levelname)s: %(message)s",
 )
 logger = logging.getLogger(__name__)
+_EnumT = TypeVar("_EnumT", bound=Enum)
+
+
+def _parse_enum_arg(
+    enum_type: type[_EnumT], value: str | None, label: str
+) -> _EnumT | None:
+    """Parse an optional CLI enum value with a consistent error message."""
+    if value is None:
+        return None
+    try:
+        return enum_type(value)
+    except ValueError:
+        logger.error(f"Invalid {label}: {value}")
+        return None
 
 
 def setup_logging(verbose: bool = False, quiet: bool = False) -> None:
@@ -270,7 +287,7 @@ def cmd_info(args: argparse.Namespace) -> int:
 
     # Calculate statistics
     total_mass = sum(link.inertia.mass for link in model.links)
-    joint_types = {}
+    joint_types: dict[str, int] = {}
     for j in model.joints:
         jt = j.joint_type.value
         joint_types[jt] = joint_types.get(jt, 0) + 1
@@ -323,14 +340,20 @@ def cmd_info(args: argparse.Namespace) -> int:
 
 def cmd_library_list(args: argparse.Namespace) -> int:
     """List models in the library."""
-    from model_generation.library import ModelLibrary
+    from model_generation.library import ModelCategory, ModelLibrary, RepositorySource
 
     library = ModelLibrary()
+    category = _parse_enum_arg(ModelCategory, args.category, "category")
+    if args.category and category is None:
+        return 1
+    source = _parse_enum_arg(RepositorySource, args.source, "source")
+    if args.source and source is None:
+        return 1
 
     # Apply filters
     models = library.list_models(
-        category=args.category,
-        source=args.source,
+        category=category,
+        source=source,
         search=args.search,
     )
 
@@ -339,7 +362,7 @@ def cmd_library_list(args: argparse.Namespace) -> int:
             "count": len(models),
             "models": [
                 {
-                    "id": m.model_id,
+                    "id": m.id,
                     "name": m.name,
                     "category": m.category.value,
                     "source": m.source.value if m.source else None,
@@ -354,9 +377,7 @@ def cmd_library_list(args: argparse.Namespace) -> int:
             logger.info(f"Found {len(models)} models:\n")
             for model in models:
                 source = f"[{model.source.value}]" if model.source else ""
-                logger.info(
-                    f"  {model.model_id:<30} {model.category.value:<12} {source}"
-                )
+                logger.info(f"  {model.id:<30} {model.category.value:<12} {source}")
                 if args.verbose:
                     logger.info(f"    Path: {model.urdf_path}")
                     if model.tags:
@@ -379,16 +400,19 @@ def cmd_library_add(args: argparse.Namespace) -> int:
         return 1
 
     # Parse category
-    category = None
+    category = ModelCategory.OTHER
     if args.category:
-        try:
-            category = ModelCategory(args.category)
-        except ValueError:
-            logger.error(f"Invalid category: {args.category}")
+        parsed_category = _parse_enum_arg(ModelCategory, args.category, "category")
+        if parsed_category is None:
             return 1
+        category = parsed_category
 
     # Parse tags
-    tags = args.tags.split(",") if args.tags else []
+    tags = (
+        [tag.strip() for tag in args.tags.split(",") if tag.strip()]
+        if args.tags
+        else []
+    )
 
     entry = library.add_local_model(
         urdf_path=source_path,
@@ -398,7 +422,7 @@ def cmd_library_add(args: argparse.Namespace) -> int:
     )
 
     if entry:
-        logger.info(f"Added model: {entry.model_id}")
+        logger.info(f"Added model: {entry.id}")
         return 0
     else:
         logger.error("Failed to add model")
@@ -815,7 +839,8 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if hasattr(args, "func"):
-        return args.func(args)
+        handler = cast(Callable[[argparse.Namespace], int], args.func)
+        return handler(args)
     else:
         parser.print_help()
         return 0
