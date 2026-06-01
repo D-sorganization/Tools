@@ -150,7 +150,7 @@ class ApplicationZoomController(QObject):
             return self._handle_wheel(cast(QWheelEvent, event))
         if event.type() == QEvent.Type.KeyPress:
             return self._handle_key(cast(QKeyEvent, event))
-        return super().eventFilter(obj, event)
+        return bool(super().eventFilter(obj, event))
 
     def _handle_wheel(self, event: QWheelEvent) -> bool:
         if not _has_control(event.modifiers()):
@@ -220,7 +220,7 @@ def scale_px(value: int, zoom_percent: int) -> int:
 def _point_size(font: QFont) -> float:
     point_size = font.pointSizeF()
     if point_size > 0:
-        return point_size
+        return float(point_size)
     return float(font.pointSize() or 10)
 
 

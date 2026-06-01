@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.255                                    |
+| **Spec Version**        | 1.1.257                                    |
 | **Last Spec Update**    | 2026-06-01                                 |
 
 ## 2. Purpose & Mission
@@ -983,6 +983,14 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.257
+
+- 2026-06-01: test(theme): Normalized font manager and responsive theme tests to import through the exported `src.shared.python.theme` package path so the provider-contract suite passes under importlib mode.
+
+### Version 1.1.256
+
+- 2026-06-01: test(theme): Added focused font manager coverage for QSettings persistence, singleton reuse, font-change signaling, application font application, and no-application warning behavior; fixed PyQt6 font database enumeration to use the static API and tightened adjacent theme helper return typing for strict mypy.
 
 ### Version 1.1.255
 
