@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.241                                    |
-| **Last Spec Update**    | 2026-05-31                                 |
+| **Spec Version**        | 1.1.242                                    |
+| **Last Spec Update**    | 2026-06-01                                 |
 
 ## 2. Purpose & Mission
 
@@ -634,6 +634,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-01 | 1.1.242 | fix(model-generation): harden the headless `model_generation` CLI library commands by parsing category/source filters into library enums, using `ModelEntry.id` in list/add output, defaulting adds to `ModelCategory.OTHER`, trimming comma-separated tags, and keeping the typed CLI dispatch path mypy-clean. Added focused CLI tests covering parser wiring, library list/add behavior, invalid filters, and inertia dimension errors. Also keeps Sidekick workspace facade name listing typed under both local and CI mypy import modes. |
+| 2026-05-31 | 1.1.240 | fix(sidekick): harden calculator workspace adapter typed boundaries so changed-file mypy checks keep `Path`, `bool`, and `list[str]` return contracts when helper modules are skipped during CI analysis. |
 | 2026-05-31 | 1.1.241 | fix(sidekick): harden calculator workspace adapter typed boundaries so changed-file mypy checks keep `Path`, `bool`, and `list[str]` return contracts when helper modules are skipped during CI analysis. |
 | 2026-05-31 | 1.1.239 | test(sidekick): harden the Sidekick per-file coverage gate so only `src/shared/python/sidekick/` production modules are enforced, excluding changed test files from missing-coverage failures. CI now runs the full Sidekick unit suite when Sidekick source changes, and the split runtime/default-tab modules have focused contract coverage for chat bridges, plot requests, fallback diagnostics, tab definitions, and optional-tab placeholders. |
 | 2026-05-31 | 1.1.238 | fix(security, #3143 #3144): rewrite wave_solver.py to use argv lists with shell=False (no shell string from issue title/body), make --dangerously-skip-permissions opt-in, and gate destructive git/gh actions (git reset --hard, issue close, gh pr merge --auto) behind an explicit --allow-mutations flag with a dry-run default; replace P1AM backend wildcard CORS (`["*"]` + credentials) with an env-driven allowlist (cors_config.resolve_cors_settings) that defaults to local dev origins, never pairs `*` with credentials, and fails closed in production without an explicit allowlist. |
@@ -1052,4 +1054,5 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **2026-05-20**: Restore shared logging and environment helper modules required by AI adapter and chat service connection imports.
 - **2026-05-20**: Clarify shared chat provider dropdown ownership by removing stale UpstreamDrift issue references from Tools-owned source and tests, and synchronize the GitHub CLI provider descriptor with the default terminal registry (#3020).
 - **2026-05-30**: Resolve mypy type check errors in core data loader, signal processing, and Sidekick embedding.
+
 ## 1.1.241 - Replaced chained .filter() array passes with single-pass for-loops in Golf UI components
