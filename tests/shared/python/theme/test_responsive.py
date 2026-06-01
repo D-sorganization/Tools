@@ -53,8 +53,27 @@ def test_readable_text_width_rejects_invalid_contract(qapp: QApplication) -> Non
     with pytest.raises(ValueError, match="padding_px"):
         readable_text_width(metrics, ["Filter"], TextWidthSpec(padding_px=-1))
 
+    with pytest.raises(ValueError, match="maximum_px"):
+        readable_text_width(
+            metrics,
+            ["Filter"],
+            TextWidthSpec(minimum_px=120, maximum_px=80),
+        )
+
     with pytest.raises(ValueError, match="at least one"):
         readable_text_width(metrics, [], TextWidthSpec())
+
+
+def test_readable_text_width_honors_maximum(qapp: QApplication) -> None:
+    metrics = QFontMetrics(qapp.font())
+
+    width = readable_text_width(
+        metrics,
+        ["A very long label that should be clamped"],
+        TextWidthSpec(minimum_px=20, maximum_px=90),
+    )
+
+    assert width == 90
 
 
 def test_set_text_minimum_width_preserves_combo_text(qapp: QApplication) -> None:
@@ -73,11 +92,17 @@ def test_derive_text_candidates_reads_common_widgets(qapp: QApplication) -> None
     combo.addItems(["One", "Two"])
     edit = QLineEdit()
     edit.setPlaceholderText("Search feedstocks")
+    edit_with_text = QLineEdit()
+    edit_with_text.setText("actual query")
     button = QPushButton("Load Database")
+    generic = QWidget()
+    generic.setToolTip("Fallback tooltip")
 
     assert derive_text_candidates(combo) == ["One", "Two"]
     assert derive_text_candidates(edit) == ["Search feedstocks"]
+    assert derive_text_candidates(edit_with_text) == ["actual query"]
     assert derive_text_candidates(button) == ["Load Database"]
+    assert derive_text_candidates(generic) == ["Fallback tooltip"]
 
 
 def test_form_layout_uses_wrapping_growth_policy(qapp: QApplication) -> None:
@@ -99,3 +124,17 @@ def test_wrap_in_scroll_area_keeps_content_resizable(qapp: QApplication) -> None
     assert scroll.widget() is widget
     assert scroll.widgetResizable()
     assert scroll.minimumWidth() == 320
+
+
+def test_wrap_in_scroll_area_accepts_zero_minimum_width(qapp: QApplication) -> None:
+    widget = QWidget()
+
+    scroll = wrap_in_scroll_area(widget)
+
+    assert scroll.widget() is widget
+    assert scroll.widgetResizable()
+
+
+def test_wrap_in_scroll_area_rejects_negative_minimum_width(qapp: QApplication) -> None:
+    with pytest.raises(ValueError, match="minimum_width"):
+        wrap_in_scroll_area(QWidget(), minimum_width=-1)
