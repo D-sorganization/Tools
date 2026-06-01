@@ -13,3 +13,6 @@
 ## 2026-05-31 - aria-pressed on Custom Toggles
 **Learning:** When using custom toggle buttons in React that rely on dynamic styling (`className` or inline `style`) rather than standard HTML checkbox/radio inputs, screen readers have no way of knowing the button's active state.
 **Action:** Always pair custom state styling (like `.active` classes or dynamic background colors) with a dynamic `aria-pressed={isActive}` attribute on the `<button>` element to ensure the semantic state is announced to assistive technologies.
+## 2024-05-31 - Tab Roles vs aria-pressed
+**Learning:** When adding `role="tab"` to buttons to form an accessible tab list, existing `aria-pressed` attributes must be removed, as `aria-pressed` is intended for toggle buttons and creates conflicting semantics on tab elements. Furthermore, dynamically updating `aria-controls` with missing IDs creates broken reference validations.
+**Action:** When implementing tab semantics, ensure `role="tab"` is paired strictly with `aria-selected` (not `aria-pressed`), and verify `aria-controls` points to a statically identifiable and valid `role="tabpanel"` container whose `aria-labelledby` points back to the selected tab.

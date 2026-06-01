@@ -35,3 +35,6 @@
 ## 2025-02-14 - Optimize repetitive array filters
 **Learning:** Chained `.filter()` and `.reduce()` operations in high frequency code paths, like iterating through frames/phases during swing analysis, create unnecessary overhead due to memory allocation and callback invocation.
 **Action:** Always replace chained `.filter()`/`.reduce()` iterations in tight algorithmic paths with a single-pass `for` loop, eliminating array allocations and garbage collection pressure.
+## 2026-05-20 - Replace chained .filter() passes with single-pass for-loops
+**Learning:** Multiple `.filter()` passes on every render create unnecessary intermediate array allocations, closure overhead, and force the JS engine to iterate the same arrays repeatedly. In React components, this triggers excessive garbage collection and blocks the main thread unnecessarily.
+**Action:** Replace chained `.filter()` array passes with single-pass `for` loops in components to reduce array traversals from O(xN) to O(N), eliminate intermediate array allocations per render, and prevent GC pauses during high-frequency UI updates.
