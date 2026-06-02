@@ -502,7 +502,7 @@ class AnthropicAdapter(BaseAgentAdapter):
         # Brand-neutral preamble + capabilities are injected by app_context
         # rather than hardcoded here (issue #3179). Persisted-memory context
         # is appended as extra instructions when present.
-        return build_system_prompt(  # type: ignore[no-any-return]
+        return build_system_prompt(
             app_context=self._app_context,
             expertise_level=expertise,
             extra_instructions=context_instructions or None,

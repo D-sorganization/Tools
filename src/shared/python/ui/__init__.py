@@ -28,18 +28,27 @@ Usage:
     panel.model_selected.connect(on_select)
 """
 
+from typing import Any
+
 # PyQt6-dependent imports - only available when PyQt6 is installed.
 # Guarded so the package imports cleanly in headless environments without
 # PyQt6 (mirrors theme/__init__), exposing the Qt widgets only when present.
+_AutoCompleteLineEdit: Any = None
+_HoverCopyTextBrowser: Any = None
 try:
-    from .auto_complete import AutoCompleteLineEdit
-    from .hover_copy_browser import HoverCopyTextBrowser
+    from .auto_complete import AutoCompleteLineEdit as _ImportedAutoCompleteLineEdit
+    from .hover_copy_browser import (
+        HoverCopyTextBrowser as _ImportedHoverCopyTextBrowser,
+    )
 
     _PYQT6_AVAILABLE = True
+    _AutoCompleteLineEdit = _ImportedAutoCompleteLineEdit
+    _HoverCopyTextBrowser = _ImportedHoverCopyTextBrowser
 except ImportError:
     _PYQT6_AVAILABLE = False
-    AutoCompleteLineEdit = None
-    HoverCopyTextBrowser = None
+
+AutoCompleteLineEdit: Any = _AutoCompleteLineEdit
+HoverCopyTextBrowser: Any = _HoverCopyTextBrowser
 
 __all__ = [
     # Auto Complete
