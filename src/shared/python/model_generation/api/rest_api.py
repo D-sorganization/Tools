@@ -18,9 +18,9 @@ All symbols are re-exported from the focused submodules for backward compatibili
 from __future__ import annotations
 
 # Re-export all public names for backward compatibility
+from .rest_api_core import ModelGenerationAPI  # noqa: F401
 from .rest_api_fastapi import FastAPIAdapter  # noqa: F401
 from .rest_api_flask import FlaskAdapter  # noqa: F401
-from .rest_api_routes import ModelGenerationAPI  # noqa: F401
 from .rest_api_types import (  # noqa: F401
     APIRequest,
     APIResponse,

@@ -5,6 +5,7 @@ Registers ``ModelGenerationAPI`` routes with a FastAPI application instance.
 
 from __future__ import annotations
 
+import inspect
 import logging
 from collections.abc import Callable
 from typing import Any
@@ -28,49 +29,90 @@ class FastAPIAdapter:
         from fastapi import Request, Response
         from fastapi.responses import JSONResponse
 
-        for route in self.api.get_routes():
+        def make_handler(r: Route) -> Callable[..., Any]:
+            """Build the async endpoint for *r*.
 
-            async def make_handler(r: Route) -> Callable[..., Any]:
-                async def handler(request: Request, **kwargs: Any) -> Any:
-                    body = None
+            This is a *plain* (non-async) factory: it returns the inner
+            ``handler`` coroutine function so FastAPI receives a callable
+            endpoint, not an un-awaited coroutine object. ``r`` is bound as a
+            default-free closure argument to avoid late-binding across the
+            registration loop.
+            """
+
+            async def handler(request: Request) -> Any:
+                body = None
+                try:
+                    body = await request.json()
+                except (ValueError, UnicodeDecodeError) as e:
+                    logger.debug("Failed to parse request JSON body: %s", e)
+
+                files = {}
+                content_type = request.headers.get("content-type", "").lower()
+                if content_type.startswith(
+                    "multipart/form-data"
+                ) or content_type.startswith("application/x-www-form-urlencoded"):
                     try:
-                        body = await request.json()
-                    except (ValueError, UnicodeDecodeError) as e:
-                        logger.debug("Failed to parse request JSON body: %s", e)
+                        form = await request.form()
+                    except AssertionError as e:
+                        logger.debug("Failed to parse request form body: %s", e)
+                    else:
+                        for key, value in form.items():
+                            if hasattr(value, "read"):
+                                files[key] = await value.read()
 
-                    files = {}
-                    form = await request.form()
-                    for key, value in form.items():
-                        if hasattr(value, "read"):
-                            files[key] = await value.read()
+                # FastAPI inspects the endpoint signature to resolve ``{path}``
+                # params. A catch-all ``**kwargs`` is invisible to it (and a
+                # bare ``request: Request`` param is the one signature FastAPI
+                # recognises for the raw request), so path params must be read
+                # from the resolved request rather than from kwargs.
+                path_params = dict(getattr(request, "path_params", {}))
+                api_request = APIRequest(
+                    method=HTTPMethod(request.method),
+                    path=request.url.path,
+                    query_params={
+                        **request.query_params,
+                        **path_params,
+                    },
+                    body=body,
+                    files=files,
+                    headers=dict(request.headers),
+                )
 
-                    api_request = APIRequest(
-                        method=HTTPMethod(request.method),
-                        path=request.url.path,
-                        query_params={**request.query_params, **kwargs},
-                        body=body,
-                        files=files,
-                        headers=dict(request.headers),
+                response = self.api.handle_request(api_request)
+
+                if isinstance(response.body, bytes):
+                    return Response(
+                        content=response.body,
+                        status_code=response.status_code,
+                        media_type=response.content_type,
+                        headers=response.headers,
+                    )
+                else:
+                    return JSONResponse(
+                        content=response.body,
+                        status_code=response.status_code,
+                        headers=response.headers,
                     )
 
-                    response = self.api.handle_request(api_request)
+            # This module uses ``from __future__ import annotations``, so the
+            # ``request: Request`` annotation is a *string* that FastAPI would
+            # try (and fail) to resolve against ``handler.__globals__`` — where
+            # ``Request`` is not defined (it is imported locally). Attach an
+            # explicit signature whose annotation is the real ``Request`` class
+            # so FastAPI injects the raw request instead of treating it as a
+            # required query parameter (which previously produced a 422).
+            handler.__signature__ = inspect.Signature(  # type: ignore[attr-defined]
+                parameters=[
+                    inspect.Parameter(
+                        "request",
+                        inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                        annotation=Request,
+                    )
+                ]
+            )
+            return handler
 
-                    if isinstance(response.body, bytes):
-                        return Response(
-                            content=response.body,
-                            status_code=response.status_code,
-                            media_type=response.content_type,
-                            headers=response.headers,
-                        )
-                    else:
-                        return JSONResponse(
-                            content=response.body,
-                            status_code=response.status_code,
-                            headers=response.headers,
-                        )
-
-                return handler
-
+        for route in self.api.get_routes():
             # FastAPI uses {param} format already
             app.add_api_route(
                 route.path,

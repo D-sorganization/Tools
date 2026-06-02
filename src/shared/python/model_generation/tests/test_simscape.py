@@ -82,17 +82,15 @@ class TestMDLParser:
         model = parser.parse_string(SIMPLE_MDL, format="mdl")
 
         bodies = model.get_body_blocks()
-        assert len(bodies) >= 1
+        # SIMPLE_MDL declares exactly two solid bodies: Body1 (BrickSolid) and
+        # Body2 (CylinderSolid). Assert the exact count and identities.
+        assert len(bodies) == 2
+        assert {b.name for b in bodies} == {"Body1", "Body2"}
 
-        # Check block types
+        # Both expected solid block types are present.
         block_types = [b.block_type for b in bodies]
-        assert SimscapeBlockType.BRICK_SOLID in block_types or any(
-            bt in block_types
-            for bt in [
-                SimscapeBlockType.CYLINDER_SOLID,
-                SimscapeBlockType.SOLID,
-            ]
-        )
+        assert SimscapeBlockType.BRICK_SOLID in block_types
+        assert SimscapeBlockType.CYLINDER_SOLID in block_types
 
     def test_parse_joint_blocks(self) -> Any:
         """Test parsing joint blocks."""
@@ -104,8 +102,11 @@ class TestMDLParser:
         model = parser.parse_string(SIMPLE_MDL, format="mdl")
 
         joints = model.get_joint_blocks()
-        # Should find at least the revolute joint
-        assert len(joints) >= 0  # May be 0 if parsing doesn't find it
+        # SIMPLE_MDL declares exactly one joint block (Joint1, a RevoluteJoint).
+        # Assert that exact count and identity rather than the previous vacuous
+        # ``>= 0`` check, which passed even when parsing found nothing.
+        assert len(joints) == 1
+        assert joints[0].name == "Joint1"
 
     def test_parse_connections(self) -> Any:
         """Test parsing connections between blocks."""
@@ -172,15 +173,35 @@ class TestSimscapeConverter:
         assert result.robot_name == "custom_name"
 
     def test_convert_generates_urdf(self) -> Any:
-        """Test that conversion generates valid URDF string."""
+        """Conversion of SIMPLE_MDL must succeed and emit a well-formed URDF.
+
+        The previous version gated every assertion behind
+        ``if result.success and result.urdf_string:``, so a silent parse
+        failure asserted nothing. Assert success unconditionally, then assert
+        the URDF structure and the exact link/joint counts the converter
+        produces for SIMPLE_MDL (3 links: an implicit ``base_link`` plus
+        ``Body1``/``Body2``; 2 joints: ``Joint1`` plus the synthesised fixed
+        joint attaching the orphan root body to ``base_link``).
+        """
         from model_generation.converters.simscape import SimscapeToURDFConverter
 
         converter = SimscapeToURDFConverter()
         result = converter.convert_string(SIMPLE_MDL, format="mdl")
 
-        if result.success and result.urdf_string:
-            assert "<robot" in result.urdf_string
-            assert "</robot>" in result.urdf_string
+        assert result.success is True, f"conversion failed: {result.errors}"
+        assert result.urdf_string
+        assert "<robot" in result.urdf_string
+        assert "</robot>" in result.urdf_string
+
+        assert len(result.links) == 3
+        assert {getattr(link, "name", link) for link in result.links} == {
+            "base_link",
+            "Body1",
+            "Body2",
+        }
+        assert len(result.joints) == 2
+        joint_names = {getattr(j, "name", j) for j in result.joints}
+        assert "Joint1" in joint_names
 
     def test_conversion_result_contents(self) -> Any:
         """Test conversion result structure."""
