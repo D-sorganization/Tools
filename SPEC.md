@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.283                                    |
+| **Spec Version**        | 1.1.284                                    |
 | **Last Spec Update**    | 2026-06-02                                 |
 
 ## 2. Purpose & Mission
@@ -634,6 +634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-02 | 1.1.284 | fix(ai): keep OpenAI and Anthropic system-prompt assembly mypy-clean under the changed-file CI profile by casting the shared prompt builder result back to the documented `str` contract when imported through the skipped-follow-imports namespace, without changing runtime prompt behavior. |
 | 2026-06-02 | 1.1.283 | fix(ai-ui): keep the merged #3205 AI/UI hardening mypy-clean under the normal pre-push hook by removing stale system-prompt `no-any-return` ignores, routing BitNet generic errors through the shared classifier, and typing optional headless PyQt UI exports through private nullable export variables without changing runtime behavior. |
 | 2026-06-02 | 1.1.282 | fix(codemap): add focused SQLite schema coverage for canonical index paths, DB initialization, local `.codemap/.gitignore` handling, schema-version fallbacks, idempotent initialization, and FTS insert/update/delete synchronization; fix the external-content FTS column contract by replacing the legacy `co` alias with `calls_out` and migrating existing v1 FTS tables, raising `src/shared/python/codemap/db.py` focused coverage from 31.82% to 100.00%. |
 | 2026-06-02 | 1.1.281 | feat(a11y): improve the Unit Converter web app's theme-toggle and custom-unit validation accessibility. The theme button now keeps `aria-pressed` synchronized with the active dark/light state, and custom unit validation messages are announced via dynamic `aria-describedby` while preserving existing input hints. |
