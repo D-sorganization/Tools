@@ -1,4 +1,4 @@
-# SPEC.md — Repository Specification Document
+﻿# SPEC.md — Repository Specification Document
 
 <!--
   TEMPLATE VERSION: 1.0.0
@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.280                                    |
+| **Spec Version**        | 1.1.281                                    |
 | **Last Spec Update**    | 2026-06-02                                 |
 
 ## 2. Purpose & Mission
@@ -634,6 +634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-02 | 1.1.281 | test(codemap): add focused SQLite schema coverage for canonical index paths, DB initialization, local `.codemap/.gitignore` handling, schema-version fallbacks, idempotent initialization, and FTS insert/update/delete synchronization; fix the external-content FTS column contract by replacing the legacy `co` alias with `calls_out` and migrating existing v1 FTS tables, raising `src/shared/python/codemap/db.py` focused coverage from 31.82% to 100.00%. |
 | 2026-06-02 | 1.1.280 | fix(tools): consolidated A–O review fixes resolving issues #3173/#3174/#3175/#3176/#3179/#3183/#3184/#3185/#3186/#3187/#3188 — AI adapter/tool-bridge/CLI-tools hardening, model_generation FastAPI/URDF roundtrip fixes, sidekick syngas_compression calculator de-duplication, theme color fallback drift guard, UI headless import safety, plus chat routing lifecycle, programmatic PID pipeline, and humanoid builder assembly coverage. |
 | 2026-06-02 | 1.1.279 | test(codemap): add focused headless coverage for the codemap parser dispatcher, including case-insensitive extension mapping, unsupported-path handling, all registered language dispatch routes, missing-extractor fallback, and public re-export registry stability, raising `src/shared/python/codemap/parsers.py` focused coverage from 58.06% to 100.00% without changing production behavior. |
 | 2026-06-02 | 1.1.278 | test(codemap): add focused headless coverage for shared tree-sitter parser helpers, including byte/text extraction helpers, child lookup, line range conversion, unsupported-language handling, successful parser construction/cache reuse, missing optional-language caching, and initialization-failure warning behavior, raising `src/shared/python/codemap/_ts_common.py` focused coverage from 66.18% to 100.00% without changing production behavior. |
