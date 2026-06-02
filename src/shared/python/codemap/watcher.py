@@ -27,10 +27,10 @@ def _make_handler(repo: Path, conn, lock: threading.Lock, pending: dict, schedul
     from watchdog.events import FileSystemEventHandler  # type: ignore[import-not-found]
 
     class _Handler(FileSystemEventHandler):
-        def _enqueue(self, src_path: str) -> None:
+        def _enqueue(self, src_path: str, *, deleted: bool = False) -> None:
             try:
                 abs_p = Path(src_path)
-                if not abs_p.is_file():
+                if not deleted and not abs_p.is_file():
                     return
                 if parsers_mod.language_for(abs_p) is None:
                     return
@@ -56,7 +56,7 @@ def _make_handler(repo: Path, conn, lock: threading.Lock, pending: dict, schedul
             self._enqueue(getattr(event, "dest_path", event.src_path))
 
         def on_deleted(self, event):
-            self._enqueue(event.src_path)
+            self._enqueue(event.src_path, deleted=True)
 
     return _Handler()
 
@@ -65,7 +65,7 @@ def run(repo_root: str | None = None, *, debounce: float = DEBOUNCE_S) -> int:
     try:
         from watchdog.observers import Observer  # type: ignore[import-not-found]
     except Exception as exc:
-        print(f"codemap-watch requires watchdog: {exc}", file=sys.stderr)
+        sys.stderr.write(f"codemap-watch requires watchdog: {exc}\n")
         return 2
 
     repo = Path(repo_root).resolve() if repo_root else api_mod.discover_repo_root()
