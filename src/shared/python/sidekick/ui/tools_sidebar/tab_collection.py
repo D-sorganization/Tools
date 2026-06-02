@@ -103,10 +103,13 @@ class TabCollection:
         This does **not** clear visible tabs — call :meth:`clear` first
         if you want a hard reset.
 
-        The backing ``dict`` is mutated **in place** (cleared and refilled)
-        rather than reassigned, so live aliases held by collaborators (e.g.
-        ``UnifiedToolsSidebar._tab_definitions``) keep observing current
-        state (issue #3138).
+        The definition mapping is mutated **in place** (cleared and
+        repopulated) rather than rebound to a new dict. The sidebar exposes
+        ``self._tab_definitions`` as a live alias into this collaborator
+        (see ``UnifiedToolsSidebar.__init__``); rebinding here would orphan
+        that alias to a stale empty dict, silently emptying the Configure
+        Tabs dialog and disabling the active-tab settings button. Mutating
+        in place keeps the alias valid.
         """
         self._tab_definitions.clear()
         self._tab_definitions.update({d.tab_id: d for d in definitions})
