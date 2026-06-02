@@ -267,16 +267,18 @@ class UnitConversionService(
         if from_category == "temperature":
             return self._convert_temperature(value, from_unit_norm, to_unit_norm)
         if from_category == "gas_flow":
-            return self._convert_gas_flow(
-                value,
-                from_unit_norm,
-                to_unit_norm,
-                temperature=kwargs.get("temperature"),
-                pressure=kwargs.get("pressure"),
-                gas_type=kwargs.get("gas_type", "air"),
-                standard_condition=kwargs.get(
-                    "standard_condition", StandardCondition.SCFM_60F
-                ),
+            return float(
+                self._convert_gas_flow(
+                    value,
+                    from_unit_norm,
+                    to_unit_norm,
+                    temperature=kwargs.get("temperature"),
+                    pressure=kwargs.get("pressure"),
+                    gas_type=kwargs.get("gas_type", "air"),
+                    standard_condition=kwargs.get(
+                        "standard_condition", StandardCondition.SCFM_60F
+                    ),
+                )
             )
         msg = f"Unsupported unit category for {from_unit_norm}"
         raise UnknownUnitError(msg)
@@ -361,7 +363,7 @@ class UnitConversionService(
                 kelvin = self._convert_temperature(value, unit, "K")
                 if kelvin < 0:
                     return ["Temperature below absolute zero"]
-            except (KeyError, ValueError, TypeError):
+            except (KeyError, UnitConversionError, ValueError, TypeError):
                 # If conversion fails, skip validation
                 pass
         if category == "pressure" and value < 0:
@@ -376,12 +378,12 @@ class UnitConversionService(
         table: dict[str, float],
     ) -> float:
         """Convert value using a conversion table."""
-        return convert_via_table(value, from_unit, to_unit, table)
+        return float(convert_via_table(value, from_unit, to_unit, table))
 
     def _convert_temperature(self, value: float, from_unit: str, to_unit: str) -> float:
         """Convert temperature value."""
         try:
-            return convert_temperature(value, from_unit, to_unit)
+            return float(convert_temperature(value, from_unit, to_unit))
         except (
             ValueError
         ) as exc:  # pragma: no cover - converted to domain-specific error
@@ -417,6 +419,7 @@ class UnitConversionService(
 
         factors[unit] = factors[reference_unit] * factor_to_reference
         self.user_defined_units.setdefault(category, set()).add(unit)
+        self._static_clean_map[self._clean_string(unit)] = unit
         if aliases:
             self.user_defined_aliases[unit] = [alias for alias in aliases if alias]
 

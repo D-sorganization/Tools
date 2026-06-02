@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.289                                    |
+| **Spec Version**        | 1.1.291                                    |
 | **Last Spec Update**    | 2026-06-02                                 |
 
 ## 2. Purpose & Mission
@@ -634,6 +634,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-02 | 1.1.291 | fix(sidekick): keep conversion service helper boundaries explicit under CI changed-file mypy analysis by coercing skipped-import helper and mixin conversion results back to `float` without changing runtime conversion behavior. |
+| 2026-06-02 | 1.1.290 | fix(sidekick): restore custom unit conversion by adding user-defined units to the normalized lookup map, keep invalid temperature validation failures non-fatal as documented, and add focused edge coverage for `sidekick.calculators.conversion.service` singleton helpers, normalization/cache paths, validation guards, category dispatch, and compatible-unit lookup, raising focused service coverage to 99.09% and adding a 90% file-level coverage policy gate. |
 | 2026-06-02 | 1.1.289 | fix(ui): route the Windows AppUserModelID platform check through a runtime helper so Linux changed-file mypy does not mark the Windows ctypes branch unreachable while preserving the same taskbar identity behavior. |
 | 2026-06-02 | 1.1.288 | fix(sidekick): restore tab hover highlight (`QTabBar::tab:!selected:hover` QSS), fix the active-tab settings button and Configure-Tabs list by preserving `TabCollection` live aliases, add tested `set_app_user_model_id`/`apply_window_icon` helpers for Windows taskbar identity, and fix the Unified Launcher icon path to use `assets/`. |
 | 2026-06-02 | 1.1.287 | fix(codemap): add focused headless coverage for the codemap watcher daemon, including watchdog import failures, supported-path filtering, moved-path handling, debounce flushes, deleted-file cleanup, shutdown resource cleanup, and CLI option forwarding; deleted events now reach the existing DB cleanup path instead of being filtered out after the file disappears. |
