@@ -280,10 +280,17 @@ class CodexCLITool(CLIToolBase):
 
 
 class ShellTool(CLIToolBase):
-    """Adapter for secure shell command execution.
+    """Adapter for allowlisted shell command execution.
 
-    Provides sandboxed shell command execution for the AI agent.
-    Use with caution - implements allowlist-based command filtering.
+    Runs commands directly (``shell=False``) after tokenizing with
+    :func:`shlex.split`. This is **not** an OS-level sandbox: the only
+    guarantees are (1) the first token must be in ``allowed_commands``,
+    (2) no token may be a known-dangerous command, and (3) any shell
+    metacharacter/operator (``&&``, ``||``, ``;``, ``|``, redirection,
+    substitution, etc.) causes the command to be rejected. Because the
+    argv is executed without a shell, those operators are inert even if
+    they slipped through, but they are blocked defensively. Use with
+    caution.
 
     Example:
         >>> tool = ShellTool(allowed_commands=["ls", "pwd", "cat"])
@@ -301,6 +308,9 @@ class ShellTool(CLIToolBase):
             working_dir: Working directory for command execution.
             allowed_commands: List of allowed command prefixes.
         """
+        # No base command: ShellTool builds the full argv from the
+        # allowlisted user command itself (see ``execute``), so the
+        # inherited ``_command`` prefix is unused and left empty.
         super().__init__("", working_dir)
         self._allowed_commands = allowed_commands or [
             "ls",
@@ -353,7 +363,12 @@ class ShellTool(CLIToolBase):
             return False
 
     def execute(self, command: str, timeout: int = 60) -> CLIExecutionResult:
-        """Execute a shell command.
+        """Execute an allowlisted command.
+
+        The command string is tokenized with :func:`shlex.split` and the
+        resulting argv is run directly with ``shell=False`` — there is no
+        intermediate shell and no ``-c`` wrapper, so shell operators are
+        inert (and additionally rejected by :meth:`_is_command_allowed`).
 
         Args:
             command: Command to execute.
@@ -370,7 +385,48 @@ class ShellTool(CLIToolBase):
                 command=command,
             )
 
-        return self._execute_command(["-c", command], timeout=timeout)
+        # ``_is_command_allowed`` already validated that shlex.split
+        # succeeds and yields a non-empty token list whose first token is
+        # in the allowlist; re-split here to obtain the argv to execute.
+        tokens = shlex.split(command)
+
+        try:
+            result = subprocess.run(
+                tokens,
+                capture_output=True,
+                text=True,
+                cwd=self._working_dir,
+                timeout=timeout,
+                shell=False,
+            )
+            return CLIExecutionResult(
+                success=result.returncode == 0,
+                output=result.stdout,
+                error=result.stderr,
+                return_code=result.returncode,
+                command=command,
+            )
+        except subprocess.TimeoutExpired:
+            return CLIExecutionResult(
+                success=False,
+                error=f"Command timed out after {timeout} seconds",
+                return_code=-1,
+                command=command,
+            )
+        except FileNotFoundError:
+            return CLIExecutionResult(
+                success=False,
+                error=f"Command '{tokens[0]}' not found. Please install it.",
+                return_code=-1,
+                command=command,
+            )
+        except OSError as e:
+            return CLIExecutionResult(
+                success=False,
+                error=str(e),
+                return_code=-1,
+                command=command,
+            )
 
 
 @dataclass

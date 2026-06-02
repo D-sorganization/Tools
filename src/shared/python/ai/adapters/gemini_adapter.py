@@ -202,7 +202,9 @@ class GeminiAdapter(BaseAgentAdapter):
             return AgentResponse(content=response.text, usage=canonical_usage)
         except (RuntimeError, ValueError, OSError) as e:
             logger.error(f"Gemini API error: {e}")
-            return AgentResponse(content=f"Error: {e}", usage=canonical_usage)
+            # Raise a typed error rather than leaking the raw exception
+            # string as model content (issue #3179).
+            raise self._classify_error(e, provider="gemini") from e
 
     def stream_response(
         self,
@@ -238,8 +240,11 @@ class GeminiAdapter(BaseAgentAdapter):
 
         except (RuntimeError, ValueError, OSError) as e:
             logger.error(f"Gemini streaming error: {e}")
-            yield AgentChunk(content=f"\n[Error: {e}]", is_final=True)
-            emitted_final = True
+            # Raise a typed error rather than leaking the raw exception
+            # string as a chunk's content (issue #3179). Callers consuming
+            # the generator observe an AIProviderError, consistent with the
+            # synchronous send_message path and the base adapter contract.
+            raise self._classify_error(e, provider="gemini") from e
 
         # Guarantee: every stream MUST end with is_final=True (issue #2763).
         if not emitted_final:

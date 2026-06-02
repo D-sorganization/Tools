@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.272                                    |
+| **Spec Version**        | 1.1.273                                    |
 | **Last Spec Update**    | 2026-06-02                                 |
 
 ## 2. Purpose & Mission
@@ -634,6 +634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-02 | 1.1.273 | fix(ai): ShellTool runs allowlisted argv via `shlex.split` (was `["","-c",cmd]` → always FileNotFoundError) with the operator blocklist retained and the misleading "sandboxed" docstring corrected (#3176); BitNet adapter enforces a wall-clock read deadline (daemon reader thread + bounded `queue.get`, killing a hung `llama-cli`) and forwards `timeout=` → `AITimeoutError` (#3175); gemini adapter raises typed `AIProviderError` via `_classify_error` instead of leaking `"Error: {e}"`, openai/anthropic system prompts route through `build_system_prompt(app_context)` (no hardcoded "Golf Modeling Suite"), `tool_bridge` fails CLOSED when confirmation is required but no callback is configured, and `rust_adapter` replaces the busy-poll fallback with a bounded `queue.get` (#3179). |
 | 2026-06-02 | 1.1.272 | test(plot-engine): add focused headless coverage for the Matplotlib renderer, including line/scatter styling, trendline success and failure paths, 3D surface rendering, contour and heatmap options, histogram styling, filter-comparison difference plots, PNG export, validation guards, and helper defaults, raising `src/shared/python/plot_engine/matplotlib_renderer.py` focused coverage from 8.38% to 100.00% without changing production behavior. |
 | 2026-06-02 | 1.1.271 | test(plot-engine): add focused headless coverage for the Plotly converter JSON contract, including typed dispatch for line/scatter, surface, contour, heatmap, histogram, and filter-comparison specs, style/layout serialization, trendline naming and failure handling, required-input guards, and helper defaults, raising `src/shared/python/plot_engine/plotly_converter.py` focused coverage from 0% to 94.77% without changing production behavior. |
 | 2026-06-02 | 1.1.270 | fix(calc_backend,signal_toolkit): iterate the scrubber router's column area -> liquid flux -> flooding velocity -> diameter solve to convergence so `liquid_mass_flux` is self-consistent with the solved cross-section instead of an assumed 1 m2 basis (#3181); and restore Design-by-Contract `ValueError` guards on `Integrator.integrate`/`compute_integral` that reject NaN, inverted (`lower > upper`), and out-of-range integration bounds via explicit checks that survive `python -O` (#3182). Regression tests live in dedicated, fully type-annotated files (`calc_backend/tests/test_scrubber_convergence_3181.py`, `signal_toolkit/tests/test_bound_validation_3182.py`) to keep the delta-CI mypy surface clean. |

@@ -11,6 +11,7 @@ importing the adapter module directly works in a plain pytest run.
 from __future__ import annotations
 
 import subprocess
+import time
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -22,6 +23,7 @@ from src.shared.python.ai.adapters.bitnet_adapter import BitnetAdapter  # noqa: 
 from src.shared.python.ai.exceptions import (  # noqa: E402
     AIConnectionError,
     AIProviderError,
+    AITimeoutError,
 )
 from src.shared.python.ai.types import ConversationContext, ExpertiseLevel  # noqa: E402
 
@@ -348,3 +350,105 @@ class TestSendMessageSuccess:
         call_args = mock_run.call_args[0][0]  # positional cmd list
         assert "-m" in call_args
         assert adapter.model in call_args
+
+
+# ---------------------------------------------------------------------------
+# Timeout enforcement (issue #3175)
+# ---------------------------------------------------------------------------
+
+
+class TestTimeouts:
+    """A hung llama-cli must be bounded by a wall-clock deadline."""
+
+    @pytest.mark.unit
+    def test_send_message_passes_timeout_to_subprocess(
+        self, adapter: BitnetAdapter
+    ) -> None:
+        """send_message forwards self.timeout to subprocess.run."""
+        mock_result = MagicMock()
+        mock_result.stdout = "ok"
+        mock_result.stderr = ""
+        mock_result.returncode = 0
+        with patch("subprocess.run", return_value=mock_result) as run:
+            adapter.send_message("hi", _make_context(), [])
+        assert run.call_args.kwargs["timeout"] == adapter.timeout
+
+    @pytest.mark.unit
+    def test_send_message_timeout_raises_ai_timeout_error(
+        self, adapter: BitnetAdapter
+    ) -> None:
+        """subprocess.TimeoutExpired maps to AITimeoutError (issue #3175)."""
+        exc = subprocess.TimeoutExpired(cmd=["llama-cli"], timeout=adapter.timeout)
+        with patch("subprocess.run", side_effect=exc):
+            with pytest.raises(AITimeoutError) as info:
+                adapter.send_message("hi", _make_context(), [])
+        assert info.value.provider == "bitnet"
+
+    @pytest.mark.unit
+    def test_ai_timeout_error_is_ai_provider_error(
+        self, adapter: BitnetAdapter
+    ) -> None:
+        """AITimeoutError IS-A AIProviderError (hierarchy contract)."""
+        exc = subprocess.TimeoutExpired(cmd=["llama-cli"], timeout=adapter.timeout)
+        with patch("subprocess.run", side_effect=exc):
+            with pytest.raises(AIProviderError):
+                adapter.send_message("hi", _make_context(), [])
+
+    @pytest.mark.unit
+    def test_constructor_rejects_nonpositive_timeout(self) -> None:
+        """timeout <= 0 is a precondition violation (DbC)."""
+        with pytest.raises(ValueError):
+            BitnetAdapter(timeout=0)
+        with pytest.raises(ValueError):
+            BitnetAdapter(timeout=-1)
+
+    @pytest.mark.unit
+    def test_stream_terminates_hung_process_within_timeout(self) -> None:
+        """A stub process that emits a banner then never EOFs is killed.
+
+        The fake stdout yields one banner line, then blocks forever on the
+        next ``__next__`` (simulating a CLI that never reaches EOF). With a
+        tiny timeout the stream must terminate, kill the child, and yield a
+        final error chunk — all well within a few seconds.
+        """
+        adapter = BitnetAdapter(
+            model="test-model.gguf", bitnet_root="/fake/root", timeout=0.3
+        )
+
+        import threading
+
+        never_eof = threading.Event()  # never set -> blocks forever
+
+        class _HangingStdout:
+            def __init__(self) -> None:
+                self._emitted = False
+
+            def __iter__(self) -> _HangingStdout:
+                return self
+
+            def __next__(self) -> str:
+                if not self._emitted:
+                    self._emitted = True
+                    return "banner: loading model\n"
+                # Block until the (never-set) event fires.
+                never_eof.wait()
+                raise StopIteration
+
+        mock_process = MagicMock()
+        mock_process.stdout = _HangingStdout()
+        mock_process.poll.return_value = None  # appears alive
+        mock_process.wait.return_value = 0
+
+        start = time.monotonic()
+        with patch("subprocess.Popen", return_value=mock_process):
+            chunks = list(adapter.stream_response("hi", _make_context(), []))
+        elapsed = time.monotonic() - start
+
+        # Unblock the reader thread so it can exit cleanly post-assert.
+        never_eof.set()
+
+        assert elapsed < 5.0, "stream did not honor the deadline"
+        assert chunks[-1].is_final is True
+        assert "timed out" in chunks[-1].content.lower()
+        # The hung child must have been killed/reaped.
+        mock_process.kill.assert_called_once()
