@@ -112,18 +112,36 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
   let maxVal = 100;
 
   if (selectedTags.length > 0) {
-    let activeValues: number[] = [];
+    let realMin = Infinity;
+    let realMax = -Infinity;
+    let hasData = false;
+
     if (smoothedData) {
-      activeValues = Object.values(smoothedData).flat();
+      // ⚡ Bolt Optimization: Use single-pass loops instead of flat() and Math.min/max
+      const series = Object.values(smoothedData);
+      for (let i = 0; i < series.length; i++) {
+        const values = series[i];
+        for (let j = 0; j < values.length; j++) {
+          hasData = true;
+          const val = values[j];
+          if (val < realMin) realMin = val;
+          if (val > realMax) realMax = val;
+        }
+      }
     } else if (activeHistory.length > 0) {
-      activeValues = activeHistory.flatMap((sample) =>
-        selectedTags.map((tagId) => sample[tagId] ?? 0)
-      );
+      // ⚡ Bolt Optimization: Use single-pass loops instead of flatMap, map, and Math.min/max
+      hasData = true;
+      for (let i = 0; i < activeHistory.length; i++) {
+        const sample = activeHistory[i];
+        for (let j = 0; j < selectedTags.length; j++) {
+          const val = sample[selectedTags[j]] ?? 0;
+          if (val < realMin) realMin = val;
+          if (val > realMax) realMax = val;
+        }
+      }
     }
 
-    if (activeValues.length > 0) {
-      const realMin = Math.min(...activeValues);
-      const realMax = Math.max(...activeValues);
+    if (hasData) {
       const delta = realMax - realMin;
       
       const padding = delta > 0 ? delta * 0.1 : 5;
