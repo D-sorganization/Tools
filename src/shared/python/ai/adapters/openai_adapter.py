@@ -483,7 +483,7 @@ class OpenAIAdapter(BaseAgentAdapter):
             "4. Interpret results with scientific rigor"
         )
 
-        return build_system_prompt(
+        return build_system_prompt(  # type: ignore[no-any-return]
             app_context=self._app_context,
             expertise_level=expertise,
             extra_instructions="\n\n".join(extra_parts),

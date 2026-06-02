@@ -16,7 +16,6 @@ Covers:
 from __future__ import annotations
 
 import asyncio
-import sys
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -43,22 +42,13 @@ def gemini_adapter():  # type: ignore[no-untyped-def]
 
     The error-contract path only needs ``_classify_error`` (inherited) and a
     stubbed ``_build_chat_session`` / ``_with_configured_sdk``; constructing
-    via ``object.__new__`` avoids importing the optional google SDK.
-
-    The class is imported lazily under a ``sys.modules`` stub so this test
-    file does not force the gemini_adapter module to import before other
-    tests can stub the optional ``google.generativeai`` package (which would
-    leave the module's ``genai`` global unbound and break sibling tests).
+    via ``object.__new__`` avoids running __init__ which requires a real API key.
+    gemini_adapter.py guards its google SDK import with try/except ImportError,
+    so the module loads cleanly even without the SDK installed.
     """
-    with patch.dict(
-        sys.modules,
-        {
-            "google": MagicMock(),
-            "google.generativeai": MagicMock(),
-            "google.generativeai.types": MagicMock(),
-        },
-    ):
-        from src.shared.python.ai.adapters.gemini_adapter import GeminiAdapter
+    # gemini_adapter.py guards the google SDK import with try/except ImportError,
+    # so the module loads cleanly even without the SDK installed.
+    from src.shared.python.ai.adapters.gemini_adapter import GeminiAdapter
 
     adapter = object.__new__(GeminiAdapter)
     adapter._api_key = "fake-key"  # type: ignore[attr-defined]

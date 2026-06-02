@@ -128,7 +128,7 @@ class BitnetAdapter(BaseAgentAdapter):
                 f"BitNet process failed (code {error.returncode}): {error.stderr}",
                 provider="bitnet",
             ) from error
-        return super()._handle_error(error)  # type: ignore[misc,no-any-return]
+        return super()._handle_error(error)
 
     def validate_connection(self) -> tuple[bool, str]:
         """Validate that the llama-cli executable is available."""

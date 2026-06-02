@@ -38,8 +38,8 @@ try:
     _PYQT6_AVAILABLE = True
 except ImportError:
     _PYQT6_AVAILABLE = False
-    AutoCompleteLineEdit = None  # type: ignore[assignment, misc]
-    HoverCopyTextBrowser = None  # type: ignore[assignment, misc]
+    AutoCompleteLineEdit = None
+    HoverCopyTextBrowser = None
 
 __all__ = [
     # Auto Complete
