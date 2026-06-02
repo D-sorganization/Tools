@@ -11,8 +11,8 @@ from __future__ import annotations
 import logging
 import math
 from dataclasses import dataclass, field
-from pathlib import Path
-from typing import TYPE_CHECKING
+from pathlib import Path, PurePosixPath
+from typing import TYPE_CHECKING, cast
 
 import defusedxml.ElementTree as DefusedET
 
@@ -98,7 +98,7 @@ class ParsedModel:
             raise ValueError("link_name must be provided")
         for j in self.joints:
             if j.child == link_name:
-                return j.parent
+                return str(j.parent)
         return None
 
     def get_subtree(self, link_name: str) -> list[str]:
@@ -121,7 +121,7 @@ class ParsedModel:
         from model_generation.builders.urdf_writer import URDFWriter
 
         writer = URDFWriter(pretty_print=pretty_print)
-        return writer.write(self.name, self.links, self.joints, self.materials)
+        return str(writer.write(self.name, self.links, self.joints, self.materials))
 
     def copy(self) -> ParsedModel:
         """Create a deep copy."""
@@ -437,11 +437,14 @@ class URDFParser:
         # Origin (COM)
         if elem is None:
             raise ValueError("elem must be provided")
-        com = (0.0, 0.0, 0.0)
+        com: tuple[float, float, float] = (0.0, 0.0, 0.0)
         origin_elem = elem.find("origin")
         if origin_elem is not None:
             xyz_str = origin_elem.get("xyz", "0 0 0")
-            com = tuple(float(v) for v in xyz_str.split())
+            com = cast(
+                "tuple[float, float, float]",
+                tuple(float(v) for v in xyz_str.split()),
+            )
 
         # Mass
         mass = 1.0
@@ -536,11 +539,14 @@ class URDFParser:
         if not name:
             return None
 
-        color = (0.8, 0.8, 0.8, 1.0)
+        color: tuple[float, float, float, float] = (0.8, 0.8, 0.8, 1.0)
         color_elem = elem.find("color")
         if color_elem is not None:
             rgba_str = color_elem.get("rgba", "0.8 0.8 0.8 1.0")
-            color = tuple(float(v) for v in rgba_str.split())
+            color = cast(
+                "tuple[float, float, float, float]",
+                tuple(float(v) for v in rgba_str.split()),
+            )
 
         texture = None
         texture_elem = elem.find("texture")

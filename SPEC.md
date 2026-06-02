@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.270                                    |
+| **Spec Version**        | 1.1.271                                    |
 | **Last Spec Update**    | 2026-06-02                                 |
 
 ## 2. Purpose & Mission
@@ -634,6 +634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-02 | 1.1.271 | fix(model_generation, #3173 #3174): make the FastAPI adapter work on real traffic by registering a real request handler, binding path params through `request.path_params`, and merging those params into `APIRequest.query_params`; replace fake-app adapter shims with real `fastapi.testclient.TestClient` GET/POST/download coverage; add MJCF/URDF round-trip tests covering link/joint counts, names, topology, joint type, limits, mass, geometry, and documented lossy mappings; replace vacuous/success-gated Simscape assertions with exact block/joint counts and unconditional URDF-structure checks; unify `rest_api_contracts` to re-export the canonical `HTTPMethod`/`APIRequest`/`APIResponse`/`Route` from `rest_api_types` (the duplicate enum definitions produced distinct identities so `rest_api_core` route matching returned 404 for valid requests once `ModelGenerationAPI` was re-exported from the core module); add explicit return casts and tuple annotations in `urdf_parser` to clear pre-existing mypy `no-any-return`/tuple-arity errors surfaced once the file entered the diff. |
 | 2026-06-02 | 1.1.270 | fix(calc_backend,signal_toolkit): iterate the scrubber router's column area -> liquid flux -> flooding velocity -> diameter solve to convergence so `liquid_mass_flux` is self-consistent with the solved cross-section instead of an assumed 1 m2 basis (#3181); and restore Design-by-Contract `ValueError` guards on `Integrator.integrate`/`compute_integral` that reject NaN, inverted (`lower > upper`), and out-of-range integration bounds via explicit checks that survive `python -O` (#3182). Regression tests live in dedicated, fully type-annotated files (`calc_backend/tests/test_scrubber_convergence_3181.py`, `signal_toolkit/tests/test_bound_validation_3182.py`) to keep the delta-CI mypy surface clean. |
 | 2026-06-02 | 1.1.269 | fix(scripting): add an AST escape pre-screen (`_screen_source_for_escapes`) to the `ConsoleEnvironment` sandbox so user source is rejected before compile/exec when it accesses dunder attributes (`__class__`/`__bases__`/`__subclasses__`/`__globals__` traversal) or constructs dunder names at runtime via `getattr`/`setattr`/`delattr`/`vars`/`type`/`globals`/`locals` with a non-literal or dunder name argument; raises a new `SecurityError`, wires the screen into `execute()` and `refresh_user_functions()`, and documents the authoritative out-of-process trust boundary with the in-process screen as defense-in-depth (#3180). |
 | 2026-06-02 | 1.1.268 | test(plot-engine): add focused PyQt6 widget coverage for constructor theme wiring, spec rendering and signal emission, refresh/theme-change rerendering, export dialog/save behavior, empty-export guards, and image byte delegation, raising `src/shared/python/plot_engine/pyqt6_widget.py` focused coverage from 0% to 96.81% without changing production behavior. |
@@ -995,6 +996,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.271
+
+- 2026-06-02: fix(model_generation) — make the FastAPI adapter work on real traffic (#3173): `FastAPIAdapter.register` no longer registers an un-awaited coroutine as the endpoint, the endpoint exposes an explicit `request: Request` signature so FastAPI binds `{path}` params, and path params merge into `APIRequest.query_params`. Replaced fake-app shim tests with real `fastapi.testclient.TestClient` GET-with-path-param, POST-with-JSON-body, and file-download coverage. Added MJCF<->URDF round-trip tests documenting lossy joint mappings and replaced vacuous/success-gated Simscape assertions with exact block/joint-count and unconditional URDF-structure assertions (#3174).
 
 ### Version 1.1.265
 
