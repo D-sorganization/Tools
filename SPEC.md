@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.268                                    |
+| **Spec Version**        | 1.1.269                                    |
 | **Last Spec Update**    | 2026-06-02                                 |
 
 ## 2. Purpose & Mission
@@ -634,6 +634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-02 | 1.1.269 | fix(scripting): add an AST escape pre-screen (`_screen_source_for_escapes`) to the `ConsoleEnvironment` sandbox so user source is rejected before compile/exec when it accesses dunder attributes (`__class__`/`__bases__`/`__subclasses__`/`__globals__` traversal) or constructs dunder names at runtime via `getattr`/`setattr`/`delattr`/`vars`/`type`/`globals`/`locals` with a non-literal or dunder name argument; raises a new `SecurityError`, wires the screen into `execute()` and `refresh_user_functions()`, and documents the authoritative out-of-process trust boundary with the in-process screen as defense-in-depth (#3180). |
 | 2026-06-02 | 1.1.268 | test(plot-engine): add focused PyQt6 widget coverage for constructor theme wiring, spec rendering and signal emission, refresh/theme-change rerendering, export dialog/save behavior, empty-export guards, and image byte delegation, raising `src/shared/python/plot_engine/pyqt6_widget.py` focused coverage from 0% to 96.81% without changing production behavior. |
 | 2026-06-02 | 1.1.267 | test(plot-engine): add focused headless coverage for plot engine protocol contracts, including runtime structural conformance for renderers, converters, and theme color providers plus explicit protocol stub coverage, raising `src/shared/python/plot_engine/protocols.py` focused coverage to 100% without changing production behavior. |
 | 2026-06-02 | 1.1.266 | test(plot-engine): add focused headless coverage for trendline computation, including linear NaN filtering, polynomial degree capping and zero equations, exponential and power fits, optimizer fallback behavior, insufficient-data validation, unknown trend types, R-squared edge cases, and helper validation paths, raising `src/shared/python/plot_engine/trendline.py` focused coverage to 100% without changing production behavior. |

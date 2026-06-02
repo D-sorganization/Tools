@@ -30,15 +30,37 @@ The usage is *controlled* for the following reasons:
    available.  On Windows these limits cannot be applied in-process;
    full process-level sandboxing requires running ``ConsoleEnvironment``
    inside a subprocess (e.g. via ``multiprocessing`` with a ``Pool``).
-6. **Bandit suppression**: The ``# nosec B102`` / ``# nosec B307`` markers
+6. **AST escape screen**: Before any user source is compiled, it is passed
+   through :func:`_screen_source_for_escapes`, which rejects the classic
+   attribute-introspection sandbox escapes (``__class__`` /
+   ``__bases__`` / ``__subclasses__`` / ``__globals__`` traversal) and
+   runtime-constructed dunder names built via ``getattr``/``setattr``/
+   ``vars``/``type``/``delattr`` with a non-literal or dunder name
+   argument.  Violations raise :class:`SecurityError`.
+7. **Bandit suppression**: The ``# nosec B102`` / ``# nosec B307`` markers
    are intentional and reviewed.  Do not remove them without re-evaluating
    the threat model above.
 
+Real security boundary
+-----------------------
+The **authoritative** trust boundary for genuinely untrusted code is
+**out-of-process** isolation (a separate OS process with OS-level memory,
+CPU, filesystem, and network limits).  CPython's object model makes a
+perfect in-process sandbox impossible: a sufficiently determined attacker
+can find new introspection gadgets faster than a blocklist can grow.
+
+The restricted ``__builtins__`` dict and the AST escape screen are
+*defense-in-depth* layers for the intended use case (an opt-in interactive
+console where the operator types their own code), **not** a guarantee
+against a hostile adversary.  Do not expose ``ConsoleEnvironment`` to
+network-supplied input; run it out-of-process if you must.
+
 If you need to evaluate *user-supplied expressions from an untrusted source*
 (e.g. a REST API), use :mod:`shared.python.safe_eval` instead, which
-performs AST-level validation before execution.
+performs strict AST-level allowlisting before execution.
 """
 
+import ast
 import builtins
 import contextlib
 import ctypes
@@ -137,6 +159,126 @@ _BLOCKED_IMPORT_MODULES: frozenset[str] = frozenset(
         "struct",
     }
 )
+
+
+# ---------------------------------------------------------------------------
+# AST escape screen (defense-in-depth, issue #3180)
+# ---------------------------------------------------------------------------
+# Removing dangerous *builtins* does not stop user code reaching dangerous
+# *types* through object introspection, e.g.::
+#
+#     ().__class__.__bases__[0].__subclasses__()  # -> os / subprocess gadgets
+#
+# The screen below is a static AST pre-pass run before compile/exec.  It is a
+# blocklist (defense-in-depth), NOT the real boundary — see the module
+# docstring for the authoritative out-of-process boundary.
+
+
+class SecurityError(Exception):
+    """Raised when user source fails the scripting sandbox AST screen.
+
+    Signals that the submitted code contains an attribute-introspection
+    escape gadget (dunder traversal) or a runtime-constructed dunder name.
+    This is *not* a normal user-code error and therefore is reported
+    separately from :data:`USER_CODE_ERROR_TYPES`.
+    """
+
+
+# Builtins that can fabricate or follow an arbitrary attribute name at
+# runtime, defeating a purely syntactic dunder-attribute screen.
+_INTROSPECTION_GADGETS: frozenset[str] = frozenset(
+    {
+        "getattr",
+        "setattr",
+        "delattr",
+        "vars",
+        "type",
+        "globals",
+        "locals",
+    }
+)
+
+
+def _is_dunder(name: str) -> bool:
+    """Return True if *name* is a ``__dunder__`` identifier."""
+    return len(name) > 4 and name.startswith("__") and name.endswith("__")
+
+
+def _screen_source_for_escapes(source: str) -> None:
+    """Reject attribute-introspection sandbox escapes in *source*.
+
+    Performs a static AST pre-pass before the source is compiled/executed.
+    Rejected constructs (each raising :class:`SecurityError`):
+
+    1. **Dunder attribute access** — any ``x.__dunder__`` access
+       (``__class__``, ``__bases__``, ``__subclasses__``, ``__globals__``,
+       ``__dict__``, …) used to walk the object graph toward host types.
+    2. **Runtime-constructed dunder names** — calls to introspection
+       gadgets (``getattr``/``setattr``/``delattr``/``vars``/``type``/
+       ``globals``/``locals``) whose attribute-name argument is **not** a
+       safe screened string literal.  A non-literal name argument (e.g.
+       ``chr(95) * 2 + 'class' + ...``) could smuggle a dunder past a purely
+       syntactic check, so such calls are rejected outright.  A literal
+       dunder name (``getattr(x, '__class__')``) is also rejected.
+
+    Bare ``type(x)`` / ``globals()`` / ``vars()`` calls (no fabricated
+    attribute name) are permitted; it is only the name-fabrication and
+    dunder-traversal patterns that are blocked.
+
+    Args:
+        source: Raw user source about to be compiled.
+
+    Raises:
+        SecurityError: If a screened escape pattern is present.
+        SyntaxError: If *source* is not parseable (callers handle this as a
+            normal syntax error during compile).
+    """
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        # Defer to the normal compile() path for syntax-error reporting.
+        return
+
+    for node in ast.walk(tree):
+        # (1) Static dunder attribute access: x.__class__, x.__bases__, ...
+        if isinstance(node, ast.Attribute) and _is_dunder(node.attr):
+            raise SecurityError(
+                f"access to dunder attribute '{node.attr}' is blocked in "
+                "the scripting sandbox"
+            )
+
+        # (2) Dunder string literals anywhere — these have no legitimate use
+        # in console code and are the payload for indirect traversal such as
+        # ``vars(x)['__class__']`` or ``getattr(x, '__class__')``.
+        if isinstance(node, ast.Constant) and isinstance(node.value, str):
+            if _is_dunder(node.value):
+                raise SecurityError(
+                    f"use of dunder name literal '{node.value}' is blocked "
+                    "in the scripting sandbox"
+                )
+
+        # (3) Introspection-gadget calls with a fabricated/dunder name arg.
+        if isinstance(node, ast.Call):
+            func = node.func
+            if (
+                isinstance(func, ast.Name)
+                and func.id in _INTROSPECTION_GADGETS
+                and len(node.args) >= 2
+            ):
+                name_arg = node.args[1]
+                if not isinstance(name_arg, ast.Constant) or not isinstance(
+                    name_arg.value, str
+                ):
+                    raise SecurityError(
+                        f"'{func.id}' with a non-literal attribute name is "
+                        "blocked in the scripting sandbox"
+                    )
+                if _is_dunder(name_arg.value):
+                    raise SecurityError(
+                        f"'{func.id}' with dunder attribute name "
+                        f"'{name_arg.value}' is blocked in the scripting "
+                        "sandbox"
+                    )
 
 
 def _make_restricted_import(
@@ -375,9 +517,12 @@ class ConsoleEnvironment:
             code = f.read()
 
         try:
+            # Defense-in-depth: screen the persisted library for escape
+            # gadgets before executing it into the live namespace.
+            _screen_source_for_escapes(code)
             # Execute within current namespace so imports/functions are persistent
             exec(code, self.namespace)  # nosec B102
-        except USER_CODE_ERROR_TYPES as e:  # noqa: BLE001 — user library code may raise anything; report and continue
+        except (SecurityError, *USER_CODE_ERROR_TYPES) as e:  # noqa: BLE001 — user library code may raise anything; report and continue
             sys.stderr.write(f"Error loading user library: {e}\n")
             sys.stderr.flush()
 
@@ -443,6 +588,15 @@ class ConsoleEnvironment:
 
         out_buf = io.StringIO()
         err_buf = io.StringIO()
+
+        # Defense-in-depth: reject attribute-introspection escape gadgets
+        # before the source ever reaches compile/exec.  Reported like a
+        # user-visible error so the console does not crash the host app.
+        try:
+            _screen_source_for_escapes(source)
+        except SecurityError as e:
+            err_buf.write(f"SecurityError: {e}\n")
+            return out_buf.getvalue(), err_buf.getvalue()
 
         try:
             with (
