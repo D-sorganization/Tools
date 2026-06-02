@@ -10,7 +10,7 @@ return 404 for valid requests.
 
 from __future__ import annotations
 
-from model_generation.api.rest_api_types import (
+from .rest_api_types import (
     APIRequest,
     APIResponse,
     HTTPMethod,
