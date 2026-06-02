@@ -16,3 +16,6 @@
 ## 2024-05-31 - Tab Roles vs aria-pressed
 **Learning:** When adding `role="tab"` to buttons to form an accessible tab list, existing `aria-pressed` attributes must be removed, as `aria-pressed` is intended for toggle buttons and creates conflicting semantics on tab elements. Furthermore, dynamically updating `aria-controls` with missing IDs creates broken reference validations.
 **Action:** When implementing tab semantics, ensure `role="tab"` is paired strictly with `aria-selected` (not `aria-pressed`), and verify `aria-controls` points to a statically identifiable and valid `role="tabpanel"` container whose `aria-labelledby` points back to the selected tab.
+## 2024-06-05 - Preserving existing aria-describedby for dynamic validation
+**Learning:** When dynamically associating a validation error message with an input field using `aria-describedby`, setting the attribute blindly will overwrite any existing helpful associations (like an input hint ID).
+**Action:** Always concatenate the error message ID with any existing hint IDs (e.g., `aria-describedby="errorId hintId"`) to ensure screen readers announce both the validation error and the original helper text. When clearing the error, restore the `aria-describedby` to just the hint ID.

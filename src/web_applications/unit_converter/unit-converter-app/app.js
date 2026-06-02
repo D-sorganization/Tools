@@ -76,6 +76,9 @@ function init() {
 function loadTheme() {
   const savedTheme = localStorage.getItem('theme') || 'light';
   document.documentElement.setAttribute('data-theme', savedTheme);
+  if (themeToggle) {
+    themeToggle.setAttribute('aria-pressed', savedTheme === 'dark' ? 'true' : 'false');
+  }
 }
 
 function toggleTheme() {
@@ -83,6 +86,9 @@ function toggleTheme() {
   const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', newTheme);
   localStorage.setItem('theme', newTheme);
+  if (themeToggle) {
+    themeToggle.setAttribute('aria-pressed', newTheme === 'dark' ? 'true' : 'false');
+  }
 }
 
 // Standard Condition Preference Management
@@ -615,6 +621,7 @@ function addCustomUnit() {
     if (!unit) {
       customUnitInput.classList.add('has-error');
       customUnitInput.setAttribute('aria-invalid', 'true');
+      customUnitInput.setAttribute('aria-describedby', 'modalMessage');
       customUnitInput.focus();
       showModalError('Please enter a unit symbol');
       return;
@@ -623,6 +630,7 @@ function addCustomUnit() {
     if (isNaN(factor) || factor <= 0) {
       conversionFactorInput.classList.add('has-error');
       conversionFactorInput.setAttribute('aria-invalid', 'true');
+      conversionFactorInput.setAttribute('aria-describedby', 'modalMessage conversionFactorHint');
       conversionFactorInput.focus();
       showModalError('Please enter a valid positive conversion factor');
       return;
@@ -1043,6 +1051,11 @@ function setupEventListeners() {
     input.addEventListener('input', () => {
       input.classList.remove('has-error');
       input.removeAttribute('aria-invalid');
+      if (input === conversionFactorInput) {
+        input.setAttribute('aria-describedby', 'conversionFactorHint');
+      } else {
+        input.removeAttribute('aria-describedby');
+      }
       hideModalMessage();
     });
   });
