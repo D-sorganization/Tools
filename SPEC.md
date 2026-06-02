@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.266                                    |
+| **Spec Version**        | 1.1.267                                    |
 | **Last Spec Update**    | 2026-06-02                                 |
 
 ## 2. Purpose & Mission
@@ -634,6 +634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-02 | 1.1.267 | test(plot-engine): add focused headless coverage for plot engine protocol contracts, including runtime structural conformance for renderers, converters, and theme color providers plus explicit protocol stub coverage, raising `src/shared/python/plot_engine/protocols.py` focused coverage to 100% without changing production behavior. |
 | 2026-06-02 | 1.1.266 | test(plot-engine): add focused headless coverage for trendline computation, including linear NaN filtering, polynomial degree capping and zero equations, exponential and power fits, optimizer fallback behavior, insufficient-data validation, unknown trend types, R-squared edge cases, and helper validation paths, raising `src/shared/python/plot_engine/trendline.py` focused coverage to 100% without changing production behavior. |
 | 2026-06-02 | 1.1.265 | test(plot-engine): add focused headless coverage for contour data preparation, including scatter interpolation grid shape/value behavior, NaN filtering, insufficient-point validation, correlation matrix defaults, custom labels, and dimensionality validation, raising `src/shared/python/plot_engine/contour.py` focused coverage to 100% without changing production behavior. |
 | 2026-06-02 | 1.1.264 | test(notes): add focused headless coverage for the shared notes dock integration helper, covering custom/default dock areas, dock construction, parent propagation, and invalid host validation, raising `src/shared/python/notes/integration.py` focused coverage to 100% without changing production behavior. |
