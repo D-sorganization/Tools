@@ -6,8 +6,10 @@ from codemap import _lang_python as python_parser
 from codemap._ts_common import ParsedSymbol
 
 
-def test_extract_emits_imports_symbols_docstrings_signatures_and_calls() -> None:
-    source = (
+def test_extract_emits_imports_symbols_docstrings_signatures_and_calls(
+    monkeypatch,
+) -> None:
+    source_text = (
         "import os\n"
         "from . import local\n"
         "from package.sub import thing\n"
@@ -27,8 +29,109 @@ def test_extract_emits_imports_symbols_docstrings_signatures_and_calls() -> None
         '        """Run doc."""\n'
         "        return top(self)\n"
     )
+    source = source_text.encode()
+    top_function = FakeNode(
+        "function_definition",
+        start_byte=source.index(b"def top"),
+        end_byte=source.index(b"class Worker"),
+        children=[
+            _text_node(source, "identifier", b"top"),
+            _text_node(source, ":", b':\n    """Top doc.'),
+            FakeNode(
+                "block",
+                children=[
+                    FakeNode(
+                        "expression_statement",
+                        children=[
+                            _text_node(
+                                source,
+                                "string",
+                                b'"""Top doc.\n    more\n    """',
+                            )
+                        ],
+                    ),
+                    FakeNode(
+                        "call",
+                        children=[_text_node(source, "identifier", b"print")],
+                    ),
+                    FakeNode(
+                        "call",
+                        children=[_text_node(source, "identifier", b"helper")],
+                    ),
+                    FakeNode(
+                        "call",
+                        children=[_text_node(source, "attribute", b"value.method")],
+                    ),
+                ],
+            ),
+        ],
+    )
+    run_method = FakeNode(
+        "function_definition",
+        start_byte=source.index(b"def run"),
+        end_byte=len(source),
+        children=[
+            _text_node(source, "identifier", b"run"),
+            _text_node(source, ":", b':\n        """Run doc.'),
+            FakeNode(
+                "block",
+                children=[
+                    FakeNode(
+                        "expression_statement",
+                        children=[_text_node(source, "string", b'"""Run doc."""')],
+                    ),
+                    FakeNode(
+                        "call",
+                        children=[_text_node(source, "identifier", b"top", -1)],
+                    ),
+                ],
+            ),
+        ],
+    )
+    worker_class = FakeNode(
+        "class_definition",
+        start_byte=source.index(b"class Worker"),
+        end_byte=len(source),
+        children=[
+            _text_node(source, "identifier", b"Worker"),
+            _text_node(source, ":", b":\n    'Worker doc.'"),
+            FakeNode(
+                "block",
+                children=[
+                    FakeNode(
+                        "expression_statement",
+                        children=[_text_node(source, "string", b"'Worker doc.'")],
+                    ),
+                    run_method,
+                ],
+            ),
+        ],
+    )
+    root = FakeNode(
+        "module",
+        children=[
+            FakeNode(
+                "import_statement",
+                children=[_text_node(source, "dotted_name", b"os")],
+            ),
+            FakeNode(
+                "import_from_statement",
+                children=[_text_node(source, "dotted_name", b"local")],
+            ),
+            FakeNode(
+                "import_from_statement",
+                children=[_text_node(source, "dotted_name", b"package.sub")],
+            ),
+            FakeNode(
+                "decorated_definition",
+                children=[FakeNode("decorator"), top_function],
+            ),
+            worker_class,
+        ],
+    )
+    monkeypatch.setattr(python_parser, "get_parser", lambda lang_id: FakeParser(root))
 
-    result = python_parser.extract("sample.py", source.encode())
+    result = python_parser.extract("sample.py", source)
 
     assert result.language == "python"
     assert result.imports == ["os", "local", "package.sub"]
@@ -64,6 +167,30 @@ class FakeNode:
     start_point: tuple[int, int] = (0, 0)
     end_point: tuple[int, int] = (0, 0)
     children: list[FakeNode] = field(default_factory=list)
+
+
+@dataclass
+class FakeTree:
+    root_node: FakeNode
+
+
+class FakeParser:
+    def __init__(self, root_node: FakeNode) -> None:
+        self.root_node = root_node
+
+    def parse(self, source: bytes) -> FakeTree:
+        self.source = source
+        return FakeTree(self.root_node)
+
+
+def _text_node(
+    source: bytes,
+    type_name: str,
+    needle: bytes,
+    start: int = 0,
+) -> FakeNode:
+    offset = source.index(needle, start) if start >= 0 else source.rindex(needle)
+    return FakeNode(type_name, start_byte=offset, end_byte=offset + len(needle))
 
 
 def test_docstring_covers_empty_comment_and_non_string_bodies() -> None:
