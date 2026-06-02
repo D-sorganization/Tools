@@ -30,6 +30,12 @@ Usage:
 
 from typing import Any
 
+from .window_icon import (
+    apply_window_icon,
+    resolve_icon_path,
+    set_app_user_model_id,
+)
+
 # PyQt6-dependent imports - only available when PyQt6 is installed.
 # Guarded so the package imports cleanly in headless environments without
 # PyQt6 (mirrors theme/__init__), exposing the Qt widgets only when present.
@@ -55,4 +61,8 @@ __all__ = [
     "AutoCompleteLineEdit",
     # Hover Copy Text Browser
     "HoverCopyTextBrowser",
+    # Window icon / taskbar identity
+    "apply_window_icon",
+    "resolve_icon_path",
+    "set_app_user_model_id",
 ]

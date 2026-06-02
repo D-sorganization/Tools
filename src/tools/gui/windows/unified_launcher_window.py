@@ -13,8 +13,9 @@ except ImportError:
 from typing import Any
 
 from PyQt6.QtCore import Qt, QTimer
-from PyQt6.QtGui import QAction, QFont, QIcon, QKeySequence, QShortcut
+from PyQt6.QtGui import QAction, QFont, QKeySequence, QShortcut
 from PyQt6.QtWidgets import (
+    QApplication,
     QCheckBox,
     QFrame,
     QGridLayout,
@@ -31,6 +32,7 @@ from PyQt6.QtWidgets import (
 )
 
 from shared.python.theme.integration import ThemedWindowMixin
+from shared.python.ui import apply_window_icon
 from tools.gui.components.error_notification import ErrorNotificationDialog
 from tools.gui.components.keyboard_shortcuts_dialog import KeyboardShortcutsDialog
 from tools.gui.components.launch_progress import LaunchProgressDialog
@@ -66,10 +68,19 @@ class UnifiedLauncher(ThemedWindowMixin, ThemedWindowMixin, QMainWindow):
         self.resize(1000, 700)
         self.repo_root = get_repo_root()
 
-        # Set window icon if available
-        icon_path = self.repo_root / "tools_icon.ico"
-        if icon_path.exists():
-            self.setWindowIcon(QIcon(str(icon_path)))
+        # Window icon + Windows taskbar identity. The icon assets live under
+        # ``assets/`` (not the repo root), and the taskbar needs an explicit
+        # AppUserModelID to use this icon instead of the python.exe icon.
+        apply_window_icon(
+            app=QApplication.instance(),
+            window=self,
+            icon_candidates=[
+                self.repo_root / "assets" / "tools_icon.ico",
+                self.repo_root / "assets" / "tools_icon_hq.ico",
+                self.repo_root / "assets" / "tools_icon.png",
+            ],
+            app_id="D-sorganization.Tools.UnifiedLauncher",
+        )
 
         self.log_queue: queue.Queue[str] = queue.Queue()
         self.tools_config: dict[str, list[dict[str, Any]]] = {}

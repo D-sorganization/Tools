@@ -129,6 +129,23 @@ class TestSidekickDesignTokens:
         assert isinstance(qss, str)
         assert len(qss) > 0
 
+    def test_qss_defines_tab_hover_rule(self) -> None:
+        """Precondition: sidekick_qss() emits the tab-bar stylesheet.
+        Postcondition: a ``::tab`` hover rule exists so unselected tabs
+        highlight on hover (regression: hover styling was missing while
+        only ``::tab`` and ``::tab:selected`` were defined)."""
+        from sidekick.ui.tools_sidebar.design_tokens import (
+            SIDEKICK_TAB_BAR_OBJECT_NAME,
+            sidekick_qss,
+        )
+
+        qss = sidekick_qss()
+        hover_selector = f"QTabBar#{SIDEKICK_TAB_BAR_OBJECT_NAME}::tab"
+        # The hover rule targets unselected tabs and must be present.
+        assert f"{hover_selector}:!selected:hover" in qss or (
+            f"{hover_selector}:hover" in qss
+        ), "Sidekick QSS is missing a tab :hover rule"
+
     def test_terminal_theme_inherited_has_foreground_background(self) -> None:
         """Precondition: SidekickTerminalTheme.inherited() called.
         Postcondition: 'foreground' and 'background' keys are present."""
