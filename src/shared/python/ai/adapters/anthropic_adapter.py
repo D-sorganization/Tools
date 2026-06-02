@@ -21,7 +21,7 @@ Example:
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 from src.shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
 from src.shared.python.ai.config import (
@@ -502,10 +502,13 @@ class AnthropicAdapter(BaseAgentAdapter):
         # Brand-neutral preamble + capabilities are injected by app_context
         # rather than hardcoded here (issue #3179). Persisted-memory context
         # is appended as extra instructions when present.
-        return build_system_prompt(  # type: ignore[no-any-return]
-            app_context=self._app_context,
-            expertise_level=expertise,
-            extra_instructions=context_instructions or None,
+        return cast(
+            str,
+            build_system_prompt(
+                app_context=self._app_context,
+                expertise_level=expertise,
+                extra_instructions=context_instructions or None,
+            ),
         )
 
     def _parse_response(self, response: Any) -> AgentResponse:

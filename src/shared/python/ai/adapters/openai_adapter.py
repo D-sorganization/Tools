@@ -21,7 +21,7 @@ Example:
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 from src.shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
 from src.shared.python.ai.config import (
@@ -483,10 +483,13 @@ class OpenAIAdapter(BaseAgentAdapter):
             "4. Interpret results with scientific rigor"
         )
 
-        return build_system_prompt(  # type: ignore[no-any-return]
-            app_context=self._app_context,
-            expertise_level=expertise,
-            extra_instructions="\n\n".join(extra_parts),
+        return cast(
+            str,
+            build_system_prompt(
+                app_context=self._app_context,
+                expertise_level=expertise,
+                extra_instructions="\n\n".join(extra_parts),
+            ),
         )
 
     def _parse_response(self, response: Any) -> AgentResponse:
