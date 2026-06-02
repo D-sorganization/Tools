@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.263                                    |
-| **Last Spec Update**    | 2026-06-01                                 |
+| **Spec Version**        | 1.1.264                                    |
+| **Last Spec Update**    | 2026-06-02                                 |
 
 ## 2. Purpose & Mission
 
@@ -634,6 +634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-02 | 1.1.264 | test(notes): add focused headless coverage for the shared notes dock integration helper, covering custom/default dock areas, dock construction, parent propagation, and invalid host validation, raising `src/shared/python/notes/integration.py` focused coverage to 100% without changing production behavior. |
 | 2026-06-01 | 1.1.263 | test(notes): add focused headless coverage for shared notes markdown card storage, including markdown metadata round trips, create/update/list ordering, recycle/restore, settings persistence, legacy text-note migration, index helpers, and validation/error paths, raising `src/shared/python/notes/card_store.py` focused coverage to 100% without changing production behavior. |
 | 2026-06-01 | 1.1.262 | test(notes): add focused headless coverage for shared notes models and storage validation, normalization, save/load/clear, recycle/restore/purge, index ordering, and error paths, raising `src/shared/python/notes/models.py` and `src/shared/python/notes/storage.py` focused coverage to 100% without changing production behavior. |
 | 2026-06-01 | 1.1.261 | test(theme): add focused PyQt-light ThemeManager coverage for singleton reset, inherited app-context preferences, theme queries, stylesheet fallback, registered window application, custom theme persistence/loading/deletion, and validation/error paths, raising `src/shared/python/theme/theme_manager.py` focused coverage above 90% without changing production behavior. |
