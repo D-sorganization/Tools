@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.280                                    |
+| **Spec Version**        | 1.1.281                                    |
 | **Last Spec Update**    | 2026-06-02                                 |
 
 ## 2. Purpose & Mission
@@ -634,7 +634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
-| 2026-06-02 | 1.1.280 | fix(tools): consolidated A–O review fixes resolving issues #3173/#3174/#3175/#3176/#3179/#3183/#3184/#3185/#3186/#3187/#3188 — AI adapter/tool-bridge/CLI-tools hardening, model_generation FastAPI/URDF roundtrip fixes, sidekick syngas_compression calculator de-duplication, theme color fallback drift guard, UI headless import safety, plus chat routing lifecycle, programmatic PID pipeline, and humanoid builder assembly coverage. |
+| 2026-06-02 | 1.1.281 | fix(tools): consolidated A–O review fixes resolving issues #3173/#3174/#3175/#3176/#3179/#3183/#3184/#3185/#3186/#3187/#3188 — AI adapter/tool-bridge/CLI-tools hardening, model_generation FastAPI/URDF roundtrip fixes, sidekick syngas_compression calculator de-duplication, theme color fallback drift guard, UI headless import safety, plus chat routing lifecycle, programmatic PID pipeline, and humanoid builder assembly coverage. |
 | 2026-06-02 | 1.1.279 | test(codemap): add focused headless coverage for the codemap parser dispatcher, including case-insensitive extension mapping, unsupported-path handling, all registered language dispatch routes, missing-extractor fallback, and public re-export registry stability, raising `src/shared/python/codemap/parsers.py` focused coverage from 58.06% to 100.00% without changing production behavior. |
 | 2026-06-02 | 1.1.278 | test(codemap): add focused headless coverage for shared tree-sitter parser helpers, including byte/text extraction helpers, child lookup, line range conversion, unsupported-language handling, successful parser construction/cache reuse, missing optional-language caching, and initialization-failure warning behavior, raising `src/shared/python/codemap/_ts_common.py` focused coverage from 66.18% to 100.00% without changing production behavior. |
 | 2026-06-02 | 1.1.277 | test(codemap): add focused headless coverage for the Rust tree-sitter extractor, including parser-independent `use` imports, top-level functions, structs, typed and untyped impl blocks, nested modules, nested impl methods, unavailable-parser fallback, and incomplete-item guards, raising `src/shared/python/codemap/_lang_rust.py` focused coverage from 8.43% to 98.80% without changing production behavior. |
@@ -1005,6 +1005,11 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.281
+
+- 2026-06-02: perf(frontend): Optimized `TrendChart.tsx` by replacing array flattening, mapping, and `Math.min/max` spread operators with single-pass `for` loops. This prevents intermediate array allocations, reduces garbage collection pressure, and avoids "Maximum call stack size exceeded" errors when computing min/max bounds for large history streams.
+
 
 ### Version 1.1.265
 
