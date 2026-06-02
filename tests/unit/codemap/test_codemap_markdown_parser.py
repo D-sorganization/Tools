@@ -6,11 +6,34 @@ from codemap import _lang_markdown as markdown
 from codemap._ts_common import ParsedSymbol
 
 
-def test_extract_emits_atx_headings_with_truncated_symbol_fields() -> None:
+def test_extract_emits_atx_headings_with_truncated_symbol_fields(monkeypatch) -> None:
     long_title = "x" * 90
+    source = f"# Project\n\nIntro text\n\n## {long_title}\n".encode()
+    second_heading_start = source.index(b"## ")
+    root = FakeNode(
+        "document",
+        children=[
+            FakeNode(
+                "atx_heading",
+                start_byte=0,
+                end_byte=len(b"# Project"),
+                start_point=(0, 0),
+                end_point=(0, 9),
+            ),
+            FakeNode(
+                "atx_heading",
+                start_byte=second_heading_start,
+                end_byte=len(source.rstrip()),
+                start_point=(4, 0),
+                end_point=(4, 93),
+            ),
+        ],
+    )
+    monkeypatch.setattr(markdown, "get_parser", lambda lang_id: FakeParser(root))
+
     result = markdown.extract(
         "README.md",
-        f"# Project\n\nIntro text\n\n## {long_title}\n".encode(),
+        source,
     )
 
     assert result.language == "markdown"
@@ -43,6 +66,20 @@ class FakeNode:
     start_point: tuple[int, int] = (0, 0)
     end_point: tuple[int, int] = (0, 0)
     children: list[FakeNode] = field(default_factory=list)
+
+
+@dataclass
+class FakeTree:
+    root_node: FakeNode
+
+
+class FakeParser:
+    def __init__(self, root_node: FakeNode) -> None:
+        self.root_node = root_node
+
+    def parse(self, source: bytes) -> FakeTree:
+        self.source = source
+        return FakeTree(self.root_node)
 
 
 def test_walk_uses_raw_heading_text_and_skips_blank_headings() -> None:
