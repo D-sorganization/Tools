@@ -259,6 +259,40 @@ class Integrator:
         assert method is not None, "method must be provided"
         self.method = method
 
+    @staticmethod
+    def _validate_bounds(
+        lower_bound: float,
+        upper_bound: float,
+        t_start: float,
+        t_end: float,
+    ) -> None:
+        """Validate integration bounds against the signal's time range.
+
+        Args:
+            lower_bound: Requested lower integration bound.
+            upper_bound: Requested upper integration bound.
+            t_start: First time sample of the signal.
+            t_end: Last time sample of the signal.
+
+        Raises:
+            ValueError: If either bound is NaN, if ``lower_bound >
+                upper_bound``, or if either bound falls outside
+                ``[t_start, t_end]``.
+        """
+        if np.isnan(lower_bound) or np.isnan(upper_bound):
+            raise ValueError("Integration bounds must not be NaN")
+        if lower_bound > upper_bound:
+            raise ValueError(
+                "Inverted integration bounds: lower_bound "
+                f"({lower_bound}) must be <= upper_bound ({upper_bound})"
+            )
+        if lower_bound < t_start or upper_bound > t_end:
+            raise ValueError(
+                "Integration bounds out of range: "
+                f"[{lower_bound}, {upper_bound}] must lie within the signal "
+                f"time range [{t_start}, {t_end}]"
+            )
+
     def integrate(
         self,
         signal: Signal,
@@ -276,8 +310,17 @@ class Integrator:
 
         Returns:
             IntegralResult with integral value and related data.
+
+        Raises:
+            ValueError: If ``signal`` is ``None``; if either bound is NaN;
+                if ``lower_bound > upper_bound`` (inverted); or if either
+                bound falls outside the signal's time range
+                ``[signal.time[0], signal.time[-1]]``.
         """
-        assert signal is not None, "signal must be provided"
+        # DbC preconditions. Explicit ValueError guards (not bare ``assert``)
+        # so they survive ``python -O`` (issue #3182).
+        if signal is None:
+            raise ValueError("signal must be provided")
         t = signal.time
         y = signal.values
 
@@ -285,6 +328,8 @@ class Integrator:
             lower_bound = t[0]
         if upper_bound is None:
             upper_bound = t[-1]
+
+        self._validate_bounds(lower_bound, upper_bound, t[0], t[-1])
 
         # Find indices for bounds
         lower_idx = np.searchsorted(t, lower_bound)
@@ -399,8 +444,14 @@ def compute_integral(
 
     Returns:
         IntegralResult with integral value and data.
+
+    Raises:
+        ValueError: If ``signal`` is ``None``, if either bound is NaN, if
+            ``lower_bound > upper_bound`` (inverted), or if either bound is
+            outside the signal's time range. See ``Integrator.integrate``.
     """
-    assert signal is not None, "signal must be provided"
+    if signal is None:
+        raise ValueError("signal must be provided")
     integrator = Integrator(method=method)
     return integrator.integrate(signal, lower_bound, upper_bound)
 
