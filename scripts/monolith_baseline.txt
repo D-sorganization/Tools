@@ -189,6 +189,7 @@ src/shared/python/upstream_drift_tools/calculators/electrical/electrical_model.p
 src/shared/python/upstream_drift_tools/calculators/thermo/steam_engine.py
 src/shared/python/upstream_drift_tools/data_processing/core.py
 src/shared/python/upstream_drift_tools/lab/bio/c3d_reader.py
+src/shared/python/scripting/scripting_env.py
 src/shared/python/upstream_drift_tools/process_calculators/acid_gas_dewpoint_calculator.py
 src/shared/python/upstream_drift_tools/process_calculators/constants.py
 src/shared/python/upstream_drift_tools/process_calculators/optimization.py
