@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.280                                    |
+| **Spec Version**        | 1.1.281                                    |
 | **Last Spec Update**    | 2026-06-02                                 |
 
 ## 2. Purpose & Mission
@@ -634,6 +634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-02 | 1.1.281 | feat(a11y): improve the Unit Converter web app's theme-toggle and custom-unit validation accessibility. The theme button now keeps `aria-pressed` synchronized with the active dark/light state, and custom unit validation messages are announced via dynamic `aria-describedby` while preserving existing input hints. |
 | 2026-06-02 | 1.1.280 | fix(tools): consolidated A–O review fixes resolving issues #3173/#3174/#3175/#3176/#3179/#3183/#3184/#3185/#3186/#3187/#3188 — AI adapter/tool-bridge/CLI-tools hardening, model_generation FastAPI/URDF roundtrip fixes, sidekick syngas_compression calculator de-duplication, theme color fallback drift guard, UI headless import safety, plus chat routing lifecycle, programmatic PID pipeline, and humanoid builder assembly coverage. |
 | 2026-06-02 | 1.1.279 | test(codemap): add focused headless coverage for the codemap parser dispatcher, including case-insensitive extension mapping, unsupported-path handling, all registered language dispatch routes, missing-extractor fallback, and public re-export registry stability, raising `src/shared/python/codemap/parsers.py` focused coverage from 58.06% to 100.00% without changing production behavior. |
 | 2026-06-02 | 1.1.278 | test(codemap): add focused headless coverage for shared tree-sitter parser helpers, including byte/text extraction helpers, child lookup, line range conversion, unsupported-language handling, successful parser construction/cache reuse, missing optional-language caching, and initialization-failure warning behavior, raising `src/shared/python/codemap/_ts_common.py` focused coverage from 66.18% to 100.00% without changing production behavior. |
