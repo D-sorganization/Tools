@@ -283,6 +283,9 @@ def neighbors(
             # Outbound.
             for c in sym.calls_out:
                 if c not in seen:
+                    called = get_symbol(c, repo_root=repo)
+                    if called is not None:
+                        seen[called.qualified] = called
                     next_frontier.append(c)
             # Inbound.
             for caller in who_calls(q, repo_root=repo):
