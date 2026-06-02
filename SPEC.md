@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.286                                    |
+| **Spec Version**        | 1.1.287                                    |
 | **Last Spec Update**    | 2026-06-02                                 |
 
 ## 2. Purpose & Mission
@@ -634,6 +634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-02 | 1.1.287 | fix(codemap): add focused headless coverage for the codemap watcher daemon, including watchdog import failures, supported-path filtering, moved-path handling, debounce flushes, deleted-file cleanup, shutdown resource cleanup, and CLI option forwarding; deleted events now reach the existing DB cleanup path instead of being filtered out after the file disappears. |
 | 2026-06-02 | 1.1.286 | test(codemap): add focused headless coverage for the codemap indexer, including supported-file walking, `.gitignore` and fallback ignore handling, unchanged-file hash skips, incremental reprocessing and deletion, unreadable/parser-skipped files, per-file error collection, manifest writing, git helper parsing/fallbacks, and preferred blake3 hashing, raising `src/shared/python/codemap/indexer.py` focused coverage from 16.24% to 98.98% without changing production behavior. |
 | 2026-06-02 | 1.1.285 | fix(codemap): add focused public API coverage for repo-root discovery, query sanitization, FTS search filtering, symbol lookup, caller lookup, import parsing, neighbor traversal, repo summaries, malformed JSON fallbacks, and default-root caching; fix one-hop `neighbors()` so outbound callees are resolved and returned as documented, raising `src/shared/python/codemap/api.py` focused coverage to 96.93%. |
 | 2026-06-02 | 1.1.284 | fix(ai): keep OpenAI and Anthropic system-prompt assembly mypy-clean under the changed-file CI profile by casting the shared prompt builder result back to the documented `str` contract when imported through the skipped-follow-imports namespace, without changing runtime prompt behavior. |
