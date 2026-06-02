@@ -23,6 +23,11 @@ _WHEEL_MISSING_HINT = (
     "`cd rust_core/ai_backend && maturin develop --features python`."
 )
 
+# Wall-clock budget for the headless threaded streaming fallback. Bounds
+# the wait on the worker thread's result so a stalled Rust engine cannot
+# hang the generator indefinitely (issue #3179).
+_STREAM_THREAD_TIMEOUT_S: float = 120.0
+
 
 def _make_rust_stream_worker_class() -> type | None:
     """Return _RustStreamWorker(QThread), or None when PyQt6 is absent or uninitialized.
@@ -268,7 +273,6 @@ class RustAgentAdapter(BaseAgentAdapter):
     ) -> Iterator[AgentChunk]:
         """Stream via a plain daemon thread (headless / no PyQt6 fallback)."""
         import threading
-        import time
 
         def _fetch() -> None:
             try:
@@ -278,10 +282,25 @@ class RustAgentAdapter(BaseAgentAdapter):
 
         t = threading.Thread(target=_fetch, daemon=True)
         t.start()
-        while t.is_alive() and result_queue.empty():
-            time.sleep(0.01)
 
-        result = result_queue.get()
+        # Bounded blocking wait instead of a 10ms busy-poll (issue #3179):
+        # block on the queue up to the deadline so a stalled worker cannot
+        # spin the CPU or hang forever.
+        try:
+            result: Any = result_queue.get(timeout=_STREAM_THREAD_TIMEOUT_S)
+        except queue.Empty:
+            logger.error(
+                "Rust stream worker did not produce a result within %ss",
+                _STREAM_THREAD_TIMEOUT_S,
+            )
+            yield AgentChunk(
+                content=(
+                    f"Error: Rust stream timed out after {_STREAM_THREAD_TIMEOUT_S}s"
+                ),
+                is_final=True,
+            )
+            return
+
         if isinstance(result, Exception):
             try:
                 response = self.engine.generate_response(full_prompt)
