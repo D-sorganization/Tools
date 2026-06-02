@@ -108,37 +108,54 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
   const chartHeight = height - paddingTop - paddingBottom;
 
   // Compute scale boundaries across selected tags in history
-  let minVal = 0;
-  let maxVal = 100;
+  const { minVal, maxVal, valRange } = React.useMemo(() => {
+    let minVal = 0;
+    let maxVal = 100;
 
-  if (selectedTags.length > 0) {
-    let activeValues: number[] = [];
-    if (smoothedData) {
-      activeValues = Object.values(smoothedData).flat();
-    } else if (activeHistory.length > 0) {
-      activeValues = activeHistory.flatMap((sample) =>
-        selectedTags.map((tagId) => sample[tagId] ?? 0)
-      );
+    if (selectedTags.length > 0) {
+      let realMin = Infinity;
+      let realMax = -Infinity;
+      let hasData = false;
+
+      if (smoothedData) {
+        for (const tagId in smoothedData) {
+          const arr = smoothedData[tagId];
+          for (let i = 0; i < arr.length; i++) {
+            const val = arr[i];
+            if (val < realMin) realMin = val;
+            if (val > realMax) realMax = val;
+            hasData = true;
+          }
+        }
+      } else if (activeHistory.length > 0) {
+        for (let i = 0; i < activeHistory.length; i++) {
+          const sample = activeHistory[i];
+          for (let j = 0; j < selectedTags.length; j++) {
+            const val = sample[selectedTags[j]] ?? 0;
+            if (val < realMin) realMin = val;
+            if (val > realMax) realMax = val;
+            hasData = true;
+          }
+        }
+      }
+
+      if (hasData) {
+        const delta = realMax - realMin;
+
+        const padding = delta > 0 ? delta * 0.1 : 5;
+        minVal = Math.max(0, realMin - padding);
+        maxVal = realMax + padding;
+
+        // Apply Zoom multiplier
+        const center = minVal + (maxVal - minVal) / 2;
+        const zoomedRange = (maxVal - minVal) * zoomLevel;
+        minVal = Math.max(0, center - zoomedRange / 2);
+        maxVal = center + zoomedRange / 2;
+      }
     }
 
-    if (activeValues.length > 0) {
-      const realMin = Math.min(...activeValues);
-      const realMax = Math.max(...activeValues);
-      const delta = realMax - realMin;
-      
-      const padding = delta > 0 ? delta * 0.1 : 5;
-      minVal = Math.max(0, realMin - padding);
-      maxVal = realMax + padding;
-
-      // Apply Zoom multiplier
-      const center = minVal + (maxVal - minVal) / 2;
-      const zoomedRange = (maxVal - minVal) * zoomLevel;
-      minVal = Math.max(0, center - zoomedRange / 2);
-      maxVal = center + zoomedRange / 2;
-    }
-  }
-
-  const valRange = maxVal - minVal || 1;
+    return { minVal, maxVal, valRange: maxVal - minVal || 1 };
+  }, [selectedTags, smoothedData, activeHistory, zoomLevel]);
 
   // Convert (index, value) to SVG (X, Y) coordinates
   const getCoordinates = (index: number, value: number, totalPoints: number) => {
