@@ -90,6 +90,7 @@ class OpenAIAdapter(BaseAgentAdapter):
         model: str | None = None,
         timeout: float | None = None,
         organization: str | None = None,
+        app_context: str = "assistant",
     ) -> None:
         """Initialize OpenAI adapter.
 
@@ -103,6 +104,10 @@ class OpenAIAdapter(BaseAgentAdapter):
             model: Model name. Uses OPENAI_MODEL env var or default.
             timeout: Request timeout [s]. Uses OPENAI_TIMEOUT env var or default.
             organization: Organization ID. Uses OPENAI_ORGANIZATION env var if not set.
+            app_context: Registry key for the consuming application's system
+                prompt preamble (e.g. ``"upstream_drift"``, ``"gasification"``).
+                Defaults to ``"assistant"``, a brand-neutral preamble. See
+                :mod:`src.shared.python.ai.system_prompts` (issue #3179).
         """
         if api_key is None:
             raise ValueError("api_key must be provided")
@@ -112,6 +117,7 @@ class OpenAIAdapter(BaseAgentAdapter):
         self._model = model or get_openai_model()
         self._timeout = timeout if timeout is not None else get_openai_timeout()
         self._organization = organization or get_openai_organization()
+        self._app_context = app_context
         self._client: Any = None  # Lazy-loaded OpenAI client
 
         logger.info("Initialized OpenAIAdapter: model=%s", self._model)
@@ -458,31 +464,29 @@ class OpenAIAdapter(BaseAgentAdapter):
             raise ValueError("context must be provided")
         if context is None:
             raise ValueError("context must be provided")
+        from src.shared.python.ai.system_prompts import build_system_prompt
+
         expertise = context.user_expertise.name.lower()
         context_instructions = self.build_context_instruction_section(context)
 
-        return (
-            f"You are an AI assistant for the Golf Modeling Suite, a research-grade "
-            f"biomechanics simulation platform for analyzing golf swings.\n\n"
-            f"Current user expertise level: {expertise}\n\n"
-            f"Your capabilities include:\n"
-            f"- Analyzing C3D motion capture data\n"
-            f"- Running physics simulations (MuJoCo, Drake, Pinocchio)\n"
-            f"- Computing inverse dynamics and joint torques\n"
-            f"- Performing drift-control decomposition\n"
-            f"- Generating visualizations and reports\n\n"
-            f"{context_instructions}\n\n"
-            f"Guidelines:\n"
-            f"1. Use tools to perform analyses - never make up numerical results\n"
-            f"2. Explain concepts at the {expertise} level\n"
-            f"3. Validate scientific claims before presenting them\n"
-            f"4. Guide users through workflows step by step\n"
-            f"5. Acknowledge uncertainty and cite limitations\n\n"
-            f"When the user asks about analysis:\n"
-            f"1. First, understand what data they have\n"
-            f"2. Suggest appropriate analyses for their goals\n"
-            f"3. Execute using available tools\n"
-            f"4. Interpret results with scientific rigor"
+        # Brand-neutral preamble + capabilities are injected by app_context
+        # rather than hardcoded here (issue #3179). OpenAI-specific workflow
+        # guidance and persisted-memory context are appended.
+        extra_parts = []
+        if context_instructions:
+            extra_parts.append(context_instructions)
+        extra_parts.append(
+            "When the user asks about analysis:\n"
+            "1. First, understand what data they have\n"
+            "2. Suggest appropriate analyses for their goals\n"
+            "3. Execute using available tools\n"
+            "4. Interpret results with scientific rigor"
+        )
+
+        return build_system_prompt(  # type: ignore[no-any-return]
+            app_context=self._app_context,
+            expertise_level=expertise,
+            extra_instructions="\n\n".join(extra_parts),
         )
 
     def _parse_response(self, response: Any) -> AgentResponse:

@@ -152,10 +152,20 @@ class ChatToolBridge:
                         error="User declined confirmation for destructive tool",
                     )
             else:
+                # Fail closed: a tool that requires confirmation must not run
+                # when no confirmation mechanism is configured (issue #3179).
                 logger.warning(
                     "Tool %s requires confirmation but no callback set — "
-                    "proceeding without confirmation",
+                    "refusing execution (fail-closed)",
                     tool_name,
+                )
+                return _result(
+                    success=False,
+                    error=(
+                        f"Tool '{tool_name}' requires confirmation but no "
+                        "confirmation callback is configured; refusing to "
+                        "execute."
+                    ),
                 )
 
         # Execute the tool

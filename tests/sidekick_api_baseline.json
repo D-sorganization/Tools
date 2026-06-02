@@ -15054,18 +15054,6 @@
       }
     }
   },
-  "process_calculators/syngas_compression/__init__.py": {
-    "__all__": [],
-    "symbols": {}
-  },
-  "process_calculators/syngas_compression/syngas_compression_calculator.py": {
-    "__all__": [],
-    "symbols": {}
-  },
-  "process_calculators/syngas_compression/syngas_compression_calculator_simple.py": {
-    "__all__": [],
-    "symbols": {}
-  },
   "process_calculators/syngas_compression_calculator.py": {
     "__all__": [
       "CompressionCalculationWorker",
@@ -20398,6 +20386,10 @@
       }
     }
   },
+  "ui/tools_sidebar/appearance_settings_controls.py": {
+    "__all__": [],
+    "symbols": {}
+  },
   "ui/tools_sidebar/calculator_assist.py": {
     "__all__": [
       "ALLOWED_CALCULATOR_COMMANDS",
@@ -21981,6 +21973,10 @@
       }
     }
   },
+  "ui/tools_sidebar/calculator_workspace_facade.py": {
+    "__all__": [],
+    "symbols": {}
+  },
   "ui/tools_sidebar/chat_settings.py": {
     "__all__": [
       "CHAT_AGENT_MODES",
@@ -22156,6 +22152,14 @@
       }
     }
   },
+  "ui/tools_sidebar/chat_settings_contract.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "ui/tools_sidebar/chat_tab.py": {
+    "__all__": [],
+    "symbols": {}
+  },
   "ui/tools_sidebar/command_history.py": {
     "__all__": ["CommandHistoryController", "DEFAULT_COMMAND_HISTORY_LIMIT"],
     "symbols": {
@@ -22264,7 +22268,8 @@
       "DataExplorerError",
       "DataExplorerPreview",
       "DataExplorerService",
-      "SUPPORTED_DATA_EXPLORER_SUFFIXES"
+      "SUPPORTED_DATA_EXPLORER_SUFFIXES",
+      "resolve_columns"
     ],
     "symbols": {
       "DEFAULT_DATA_EXPLORER_MAX_FILE_SIZE_BYTES": {
@@ -22444,6 +22449,44 @@
       },
       "SUPPORTED_DATA_EXPLORER_SUFFIXES": {
         "type": "variable"
+      },
+      "resolve_columns": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "available",
+              "annotation": "list[str]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "selected",
+              "annotation": "list[str] | None",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "error_cls",
+              "annotation": "type[Exception]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "error_code",
+              "annotation": "str",
+              "default": "'unknown_columns'",
+              "kind": "arg"
+            },
+            {
+              "name": "error_msg_prefix",
+              "annotation": "str",
+              "default": "'Selected columns are not available: '",
+              "kind": "arg"
+            }
+          ],
+          "returns": "list[str]"
+        }
       }
     }
   },
@@ -23277,6 +23320,242 @@
             }
           ],
           "returns": "str"
+        }
+      }
+    }
+  },
+  "ui/tools_sidebar/dock_chrome.py": {
+    "__all__": ["DockChromeController"],
+    "symbols": {
+      "DockChromeController": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "sidebar_widget",
+                  "annotation": "QtWidgets.QWidget",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "tabs_widget",
+                  "annotation": "QtWidgets.QTabWidget",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "initial_state",
+                  "annotation": "SidebarState",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "dock_widget": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "QtWidgets.QDockWidget | None"
+            },
+            "title_bar": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "SidekickDockTitleBar | None"
+            },
+            "is_collapsed": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            },
+            "toggle_collapsed": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "set_minimized": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "minimized",
+                  "annotation": "bool",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "expanded_width",
+                  "annotation": "int",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "toggle_visibility": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "set_dock_area": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "area",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "state",
+                  "annotation": "SidebarState",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            },
+            "install_as_dock": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "main_window",
+                  "annotation": "QtWidgets.QMainWindow",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "state",
+                  "annotation": "SidebarState",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "area",
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "title",
+                  "annotation": "str",
+                  "default": "'Tools'",
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "state_path",
+                  "annotation": "str | Path | None",
+                  "default": "None",
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "on_collapse",
+                  "annotation": "Callable[[], None] | None",
+                  "default": "None",
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "QtWidgets.QDockWidget"
+            },
+            "snapshot": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "fallback_state",
+                  "annotation": "SidebarState",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[str, bool, int, int]"
+            },
+            "register_shortcuts": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "main_window",
+                  "annotation": "QtWidgets.QMainWindow",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "on_toggle_visibility",
+                  "annotation": "Callable[[], None]",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "on_toggle_collapsed",
+                  "annotation": "Callable[[], None]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
         }
       }
     }
@@ -24578,6 +24857,10 @@
       }
     }
   },
+  "ui/tools_sidebar/notes_tab.py": {
+    "__all__": [],
+    "symbols": {}
+  },
   "ui/tools_sidebar/os_terminal.py": {
     "__all__": [
       "PosixPtyBackend",
@@ -24788,6 +25071,29 @@
                 }
               ],
               "returns": "None"
+            },
+            "eventFilter": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "obj",
+                  "annotation": "QtCore.QObject",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "event",
+                  "annotation": "QtCore.QEvent",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
             },
             "closeEvent": {
               "args": [
@@ -25307,6 +25613,10 @@
         }
       }
     }
+  },
+  "ui/tools_sidebar/python_repl_tab.py": {
+    "__all__": [],
+    "symbols": {}
   },
   "ui/tools_sidebar/qt_compat.py": {
     "__all__": [
@@ -26971,6 +27281,29 @@
               ],
               "returns": "None"
             },
+            "replace_tab_widget": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "old_widget",
+                  "annotation": "QtWidgets.QWidget",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "new_widget",
+                  "annotation": "QtWidgets.QWidget",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            },
             "configure_tabs": {
               "args": [
                 {
@@ -27915,6 +28248,268 @@
       }
     }
   },
+  "ui/tools_sidebar/tab_collection.py": {
+    "__all__": ["TabCollection"],
+    "symbols": {
+      "TabCollection": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "qt_tabs",
+                  "annotation": "QtWidgets.QTabWidget",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "visible_ids": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "list[str]"
+            },
+            "hidden_ids": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "popout_ids",
+                  "annotation": "set[str] | None",
+                  "default": "None",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "list[str]"
+            },
+            "widget_for": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "tab_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "QtWidgets.QWidget | None"
+            },
+            "id_at": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "index",
+                  "annotation": "int",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str | None"
+            },
+            "definition_for": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "tab_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "SidebarTabDefinition | None"
+            },
+            "all_ids": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "list[str]"
+            },
+            "contains": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "tab_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            },
+            "index_of": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "tab_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "int"
+            },
+            "set_definitions": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "definitions",
+                  "annotation": "list[SidebarTabDefinition]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "clear": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "add": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "tab_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "title",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "widget",
+                  "annotation": "QtWidgets.QWidget",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "remove": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "tab_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            },
+            "replace": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "old_widget",
+                  "annotation": "QtWidgets.QWidget",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "new_widget",
+                  "annotation": "QtWidgets.QWidget",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            },
+            "sync_order_from_widget": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "list[str]"
+            }
+          }
+        }
+      }
+    }
+  },
   "ui/tools_sidebar/tab_context_menu.py": {
     "__all__": ["build_tab_context_menu", "show_tab_context_menu"],
     "symbols": {
@@ -28649,6 +29244,70 @@
       }
     }
   },
+  "ui/tools_sidebar/visibility_persistence.py": {
+    "__all__": ["VisibilityPersistence"],
+    "symbols": {
+      "VisibilityPersistence": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "project_root",
+                  "annotation": "Path | str | None",
+                  "default": "None",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "save": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "tab_ids",
+                  "annotation": "list[str]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "load": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "known_ids",
+                  "annotation": "set[str]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "list[str] | None"
+            }
+          }
+        }
+      }
+    }
+  },
   "ui/tools_sidebar/workspace_commands.py": {
     "__all__": ["WorkspaceCommandExecutor", "WorkspaceCommandResult"],
     "symbols": {
@@ -28811,6 +29470,10 @@
         }
       }
     }
+  },
+  "ui/tools_sidebar/workspace_tab.py": {
+    "__all__": [],
+    "symbols": {}
   },
   "ui/widgets/__init__.py": {
     "__all__": [

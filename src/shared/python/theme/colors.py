@@ -120,7 +120,11 @@ def _load_chart_colors_from_json() -> list[str] | None:
 # BUILT-IN THEMES
 # ============================================================================
 # Themes are loaded from themes.json when available, with hardcoded fallback.
-# When adding a new theme, edit src/shared/theme-definitions/themes.json.
+# themes.json is the single source of truth: when adding or editing a theme,
+# edit src/shared/theme-definitions/themes.json. The _HARDCODED_BUILTIN_THEMES
+# dict below is only an emergency fallback for when that JSON is unreadable;
+# tests/shared/python/theme/test_fallback_drift.py asserts it cannot silently
+# drift from the JSON (#3188).
 
 _HARDCODED_BUILTIN_THEMES: dict[str, dict[str, str]] = {
     # ------------------------------------------------------------------

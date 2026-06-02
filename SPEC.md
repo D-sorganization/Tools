@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.274                                    |
+| **Spec Version**        | 1.1.280                                    |
 | **Last Spec Update**    | 2026-06-02                                 |
 
 ## 2. Purpose & Mission
@@ -634,6 +634,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-02 | 1.1.280 | fix(tools): consolidated A–O review fixes resolving issues #3173/#3174/#3175/#3176/#3179/#3183/#3184/#3185/#3186/#3187/#3188 — AI adapter/tool-bridge/CLI-tools hardening, model_generation FastAPI/URDF roundtrip fixes, sidekick syngas_compression calculator de-duplication, theme color fallback drift guard, UI headless import safety, plus chat routing lifecycle, programmatic PID pipeline, and humanoid builder assembly coverage. |
+| 2026-06-02 | 1.1.279 | test(codemap): add focused headless coverage for the codemap parser dispatcher, including case-insensitive extension mapping, unsupported-path handling, all registered language dispatch routes, missing-extractor fallback, and public re-export registry stability, raising `src/shared/python/codemap/parsers.py` focused coverage from 58.06% to 100.00% without changing production behavior. |
 | 2026-06-02 | 1.1.278 | test(codemap): add focused headless coverage for shared tree-sitter parser helpers, including byte/text extraction helpers, child lookup, line range conversion, unsupported-language handling, successful parser construction/cache reuse, missing optional-language caching, and initialization-failure warning behavior, raising `src/shared/python/codemap/_ts_common.py` focused coverage from 66.18% to 100.00% without changing production behavior. |
 | 2026-06-02 | 1.1.277 | test(codemap): add focused headless coverage for the Rust tree-sitter extractor, including parser-independent `use` imports, top-level functions, structs, typed and untyped impl blocks, nested modules, nested impl methods, unavailable-parser fallback, and incomplete-item guards, raising `src/shared/python/codemap/_lang_rust.py` focused coverage from 8.43% to 98.80% without changing production behavior. |
 | 2026-06-02 | 1.1.276 | test(codemap): add focused headless coverage for the JavaScript and TypeScript tree-sitter extractors, including parser-independent import extraction, functions, exported/ambient declarations, class and abstract-class methods, variable-assigned function forms, TS/TSX language dispatch, unavailable-parser fallback, and incomplete-node guards, raising `src/shared/python/codemap/_lang_js.py` focused coverage from 7.08% to 96.46% without changing production behavior. |

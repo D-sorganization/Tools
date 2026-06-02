@@ -86,6 +86,7 @@ class AnthropicAdapter(BaseAgentAdapter):
         api_key: str,
         model: str | None = None,
         timeout: float | None = None,
+        app_context: str = "assistant",
     ) -> None:
         """Initialize Anthropic adapter.
 
@@ -97,6 +98,10 @@ class AnthropicAdapter(BaseAgentAdapter):
             api_key: Anthropic API key (required).
             model: Model name. Uses ANTHROPIC_MODEL env var or default.
             timeout: Request timeout [s]. Uses ANTHROPIC_TIMEOUT env var or default.
+            app_context: Registry key for the consuming application's system
+                prompt preamble (e.g. ``"upstream_drift"``, ``"gasification"``).
+                Defaults to ``"assistant"``, a brand-neutral preamble. See
+                :mod:`src.shared.python.ai.system_prompts` (issue #3179).
         """
         if api_key is None:
             raise ValueError("api_key must be provided")
@@ -105,6 +110,7 @@ class AnthropicAdapter(BaseAgentAdapter):
         self._api_key = api_key
         self._model = model or get_anthropic_model()
         self._timeout = timeout if timeout is not None else get_anthropic_timeout()
+        self._app_context = app_context
         self._client: Any = None  # Lazy-loaded Anthropic client
 
         logger.info("Initialized AnthropicAdapter: model=%s", self._model)
@@ -488,28 +494,18 @@ class AnthropicAdapter(BaseAgentAdapter):
             raise ValueError("context must be provided")
         if context is None:
             raise ValueError("context must be provided")
+        from src.shared.python.ai.system_prompts import build_system_prompt
+
         expertise = context.user_expertise.name.lower()
         context_instructions = self.build_context_instruction_section(context)
 
-        return (
-            f"You are Claude, an AI assistant for the Golf Modeling Suite, a "
-            f"research-grade biomechanics simulation platform for analyzing "
-            f"golf swings.\n\n"
-            f"Current user expertise level: {expertise}\n\n"
-            f"Your capabilities include:\n"
-            f"- Analyzing C3D motion capture data\n"
-            f"- Running physics simulations (MuJoCo, Drake, Pinocchio)\n"
-            f"- Computing inverse dynamics and joint torques\n"
-            f"- Performing drift-control decomposition\n"
-            f"- Generating visualizations and reports\n\n"
-            f"{context_instructions}\n\n"
-            f"Guidelines:\n"
-            f"1. Use tools to perform analyses - never fabricate numerical results\n"
-            f"2. Explain concepts at the {expertise} level\n"
-            f"3. Validate scientific claims before presenting them\n"
-            f"4. Guide users through workflows step by step\n"
-            f"5. Acknowledge uncertainty and cite limitations\n"
-            f"6. Be precise about physical units (SI: m, kg, s, rad, N, N·m)"
+        # Brand-neutral preamble + capabilities are injected by app_context
+        # rather than hardcoded here (issue #3179). Persisted-memory context
+        # is appended as extra instructions when present.
+        return build_system_prompt(  # type: ignore[no-any-return]
+            app_context=self._app_context,
+            expertise_level=expertise,
+            extra_instructions=context_instructions or None,
         )
 
     def _parse_response(self, response: Any) -> AgentResponse:
