@@ -144,6 +144,12 @@ void setup() {
   Serial.println(F("[hw] P1AMHardware::Begin (backplane init)..."));
   hw.Begin();
   Serial.println(F("[hw] hardware init complete"));
+  // Diagnostic: dump the signed-on module list so we can confirm the
+  // P1-04THM and P1-4ADL2DAL-1 are present on the backplane. If the AO
+  // module is missing, P1.writeAnalog silently returns and outputs hold
+  // at their DAC power-on default of 4 mA.
+  Serial.println(F("[hw] signed-on modules:"));
+  P1.printModules();
 
   // Initialize Ethernet. The P1AM-ETH shield wires W5500 CS to pin 5.
   Ethernet.init(5);
