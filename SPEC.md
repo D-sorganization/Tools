@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.273                                    |
+| **Spec Version**        | 1.1.274                                    |
 | **Last Spec Update**    | 2026-06-02                                 |
 
 ## 2. Purpose & Mission
@@ -634,6 +634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-02 | 1.1.274 | test(codemap): add focused headless coverage for the Python tree-sitter extractor, including real import/symbol/docstring/signature/call extraction, unavailable-parser fallback, missing-name guards, parser-shaped fake definition nodes, call fallback handling, import edge cases, and block recursion, raising `src/shared/python/codemap/_lang_python.py` focused coverage from 7.53% to 97.95% without changing production behavior. |
 | 2026-06-02 | 1.1.273 | test(codemap): add focused headless coverage for the Markdown tree-sitter extractor, including parser-independent ATX heading extraction from byte input, long heading truncation, unavailable-parser fallback, raw heading fallback text, and blank heading skipping, raising `src/shared/python/codemap/_lang_markdown.py` focused coverage from 0.00% to 91.43% without changing production behavior. |
 | 2026-06-02 | 1.1.272 | test(plot-engine): add focused headless coverage for the Matplotlib renderer, including line/scatter styling, trendline success and failure paths, 3D surface rendering, contour and heatmap options, histogram styling, filter-comparison difference plots, PNG export, validation guards, and helper defaults, raising `src/shared/python/plot_engine/matplotlib_renderer.py` focused coverage from 8.38% to 100.00% without changing production behavior. |
 | 2026-06-02 | 1.1.271 | test(plot-engine): add focused headless coverage for the Plotly converter JSON contract, including typed dispatch for line/scatter, surface, contour, heatmap, histogram, and filter-comparison specs, style/layout serialization, trendline naming and failure handling, required-input guards, and helper defaults, raising `src/shared/python/plot_engine/plotly_converter.py` focused coverage from 0% to 94.77% without changing production behavior. |
