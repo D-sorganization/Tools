@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.270                                    |
+| **Spec Version**        | 1.1.271                                    |
 | **Last Spec Update**    | 2026-06-02                                 |
 
 ## 2. Purpose & Mission
@@ -634,6 +634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-02 | 1.1.271 | test(plot-engine): add focused headless coverage for the Plotly converter JSON contract, including typed dispatch for line/scatter, surface, contour, heatmap, histogram, and filter-comparison specs, style/layout serialization, trendline naming and failure handling, required-input guards, and helper defaults, raising `src/shared/python/plot_engine/plotly_converter.py` focused coverage from 0% to 94.77% without changing production behavior. |
 | 2026-06-02 | 1.1.270 | fix(calc_backend,signal_toolkit): iterate the scrubber router's column area -> liquid flux -> flooding velocity -> diameter solve to convergence so `liquid_mass_flux` is self-consistent with the solved cross-section instead of an assumed 1 m2 basis (#3181); and restore Design-by-Contract `ValueError` guards on `Integrator.integrate`/`compute_integral` that reject NaN, inverted (`lower > upper`), and out-of-range integration bounds via explicit checks that survive `python -O` (#3182). Regression tests live in dedicated, fully type-annotated files (`calc_backend/tests/test_scrubber_convergence_3181.py`, `signal_toolkit/tests/test_bound_validation_3182.py`) to keep the delta-CI mypy surface clean. |
 | 2026-06-02 | 1.1.269 | fix(scripting): add an AST escape pre-screen (`_screen_source_for_escapes`) to the `ConsoleEnvironment` sandbox so user source is rejected before compile/exec when it accesses dunder attributes (`__class__`/`__bases__`/`__subclasses__`/`__globals__` traversal) or constructs dunder names at runtime via `getattr`/`setattr`/`delattr`/`vars`/`type`/`globals`/`locals` with a non-literal or dunder name argument; raises a new `SecurityError`, wires the screen into `execute()` and `refresh_user_functions()`, and documents the authoritative out-of-process trust boundary with the in-process screen as defense-in-depth (#3180). |
 | 2026-06-02 | 1.1.268 | test(plot-engine): add focused PyQt6 widget coverage for constructor theme wiring, spec rendering and signal emission, refresh/theme-change rerendering, export dialog/save behavior, empty-export guards, and image byte delegation, raising `src/shared/python/plot_engine/pyqt6_widget.py` focused coverage from 0% to 96.81% without changing production behavior. |
