@@ -47,6 +47,10 @@ __all__ = [
 _logger = logging.getLogger(__name__)
 
 
+def _is_windows() -> bool:
+    return sys.platform == "win32"
+
+
 def resolve_icon_path(
     candidates: Iterable[str | Path],
 ) -> Path | None:
@@ -97,7 +101,7 @@ def set_app_user_model_id(app_id: str) -> bool:
     if not app_id.strip():
         raise ValueError("app_id must be a non-empty string")
 
-    if sys.platform != "win32":
+    if not _is_windows():
         _logger.debug("set_app_user_model_id is a no-op on %s", sys.platform)
         return False
 

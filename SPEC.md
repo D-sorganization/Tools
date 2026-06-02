@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.287                                    |
+| **Spec Version**        | 1.1.289                                    |
 | **Last Spec Update**    | 2026-06-02                                 |
 
 ## 2. Purpose & Mission
@@ -634,6 +634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-02 | 1.1.289 | fix(ui): route the Windows AppUserModelID platform check through a runtime helper so Linux changed-file mypy does not mark the Windows ctypes branch unreachable while preserving the same taskbar identity behavior. |
 | 2026-06-02 | 1.1.288 | fix(sidekick): restore tab hover highlight (`QTabBar::tab:!selected:hover` QSS), fix the active-tab settings button and Configure-Tabs list by preserving `TabCollection` live aliases, add tested `set_app_user_model_id`/`apply_window_icon` helpers for Windows taskbar identity, and fix the Unified Launcher icon path to use `assets/`. |
 | 2026-06-02 | 1.1.287 | fix(codemap): add focused headless coverage for the codemap watcher daemon, including watchdog import failures, supported-path filtering, moved-path handling, debounce flushes, deleted-file cleanup, shutdown resource cleanup, and CLI option forwarding; deleted events now reach the existing DB cleanup path instead of being filtered out after the file disappears. |
 | 2026-06-02 | 1.1.286 | test(codemap): add focused headless coverage for the codemap indexer, including supported-file walking, `.gitignore` and fallback ignore handling, unchanged-file hash skips, incremental reprocessing and deletion, unreadable/parser-skipped files, per-file error collection, manifest writing, git helper parsing/fallbacks, and preferred blake3 hashing, raising `src/shared/python/codemap/indexer.py` focused coverage from 16.24% to 98.98% without changing production behavior. |
