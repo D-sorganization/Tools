@@ -993,6 +993,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 9. Changelog
 
+### Version 1.1.265
+
+- 2026-06-01: feat(ai): Added `AdapterReviewerLLMClient`, a production `ReviewerLLMClient` backed by `BaseAgentAdapter` that builds a structured JSON prompt, runs `send_message` off the event loop, and parses verdict/reasoning/confidence (malformed JSON → `abstain`, confidence clamped to [0,1]). Wired it as the default via `peer_review.registry.default_llm_client()`, which selects the production client when an adapter is available and falls back to `StubReviewerLLMClient` offline (#3177). Added behavioral tests for the four CLI adapters (`claude_code`/`codex_cli`/`gemini_cli` via mocked `subprocess.run`, `cline` via mocked httpx) covering success, non-zero-exit/timeout/missing-binary error classification, `_strip_telemetry`, and `validate_connection` paths (#3178).
+
 ### Version 1.1.258
 
 - 2026-06-01: test(theme): Added focused FastAPI router coverage for built-in/custom theme listing, active-theme retrieval and updates, custom-theme save/delete errors, Pydantic request models, and registration guards, raising `src/shared/python/theme/api.py` focused coverage to 100%.
