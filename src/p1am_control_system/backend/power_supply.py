@@ -19,9 +19,14 @@ from __future__ import annotations
 
 import logging
 import math
-from enum import StrEnum
+from enum import Enum
 
 from pydantic import BaseModel, Field, model_validator
+
+
+class StrEnum(str, Enum):  # noqa: UP042
+    pass
+
 
 logger = logging.getLogger("dcs_backend.power_supply")
 

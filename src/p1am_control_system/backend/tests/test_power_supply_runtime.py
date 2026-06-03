@@ -14,7 +14,13 @@ values through `tick()`:
 
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
 import pytest
+
+sys.path.insert(0, str(Path(__file__).parent))
+
 from _power_supply_helpers import (
     fresh_armed_controller,
     fresh_idle_controller,
@@ -89,16 +95,16 @@ class TestCurrentSetpoint:
     def test_rejects_non_numeric(self) -> None:
         c = fresh_armed_controller()
         with pytest.raises(TypeError):
-            c.set_current_setpoint("10")  # type: ignore[arg-type]
+            c.set_current_setpoint("10")
         with pytest.raises(TypeError):
-            c.set_current_setpoint(None)  # type: ignore[arg-type]
+            c.set_current_setpoint(None)
 
     def test_rejects_bool(self) -> None:
         # Bool is technically a subclass of int. Explicit catch keeps the
         # caller honest.
         c = fresh_armed_controller()
         with pytest.raises(TypeError):
-            c.set_current_setpoint(True)  # type: ignore[arg-type]
+            c.set_current_setpoint(True)
 
 
 # --------------------------------------------------------------------------
@@ -162,7 +168,7 @@ class TestPowerSetpoint:
         c = fresh_armed_controller()
         c.tick(0.0, 20.0, 25.0)
         with pytest.raises(TypeError):
-            c.set_power_setpoint("100")  # type: ignore[arg-type]
+            c.set_power_setpoint("100")
 
 
 # --------------------------------------------------------------------------

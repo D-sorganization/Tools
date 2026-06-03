@@ -15,8 +15,13 @@ Covers here:
 from __future__ import annotations
 
 import math
+import sys
+from pathlib import Path
 
 import pytest
+
+sys.path.insert(0, str(Path(__file__).parent))
+
 from _power_supply_helpers import (
     fresh_armed_controller,
     fresh_idle_controller,
@@ -85,9 +90,9 @@ class TestController_Init:
 
     def test_rejects_non_config_argument(self) -> None:
         with pytest.raises(TypeError):
-            PowerSupplyController("not a config")  # type: ignore[arg-type]
+            PowerSupplyController("not a config")
         with pytest.raises(TypeError):
-            PowerSupplyController({"current_full_scale_a": 10.0})  # type: ignore[arg-type]
+            PowerSupplyController({"current_full_scale_a": 10.0})
 
 
 # --------------------------------------------------------------------------
@@ -135,9 +140,9 @@ class TestPermissive:
     def test_rejects_non_bool_permissive(self) -> None:
         c = fresh_idle_controller()
         with pytest.raises(TypeError):
-            c.set_permissive(1)  # type: ignore[arg-type]
+            c.set_permissive(1)
         with pytest.raises(TypeError):
-            c.set_permissive("on")  # type: ignore[arg-type]
+            c.set_permissive("on")
 
 
 # --------------------------------------------------------------------------
@@ -235,7 +240,7 @@ class TestUpdateConfig:
     def test_update_config_type_check(self) -> None:
         c = fresh_idle_controller()
         with pytest.raises(TypeError):
-            c.update_config({"current_full_scale_a": 50.0})  # type: ignore[arg-type]
+            c.update_config({"current_full_scale_a": 50.0})
 
     def test_invalid_config_rejected_at_construction(self) -> None:
         # update_config can't take an invalid config because invalid
