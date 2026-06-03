@@ -6,6 +6,7 @@ and precondition enforcement (#3172 epic — programmatic_pid coverage).
 
 from __future__ import annotations
 
+import importlib.util
 import pathlib
 import tempfile
 
@@ -36,6 +37,11 @@ _MINIMAL_SPEC: dict = {
         },
     ],
 }
+
+requires_ezdxf = pytest.mark.skipif(
+    importlib.util.find_spec("ezdxf") is None,
+    reason="ezdxf not installed",
+)
 
 
 class TestPIDDocumentConstruction:
@@ -150,6 +156,7 @@ class TestValidation:
 
 
 class TestExport:
+    @requires_ezdxf
     def test_export_dxf_creates_file(self) -> None:
         doc = PIDDocument(_MINIMAL_SPEC)
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -163,6 +170,7 @@ class TestExport:
         with pytest.raises(ValueError):
             doc.export_dxf(None)
 
+    @requires_ezdxf
     def test_export_dxf_two_sheets_creates_process_file(self) -> None:
         doc = PIDDocument(_MINIMAL_SPEC)
         with tempfile.TemporaryDirectory() as tmpdir:
