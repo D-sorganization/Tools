@@ -30,7 +30,7 @@ def test_changed_tracked_packages_limits_package_thresholds(tmp_path: Path) -> N
     )
 
     tracked = {
-        "src/shared/python/notes": 48.0,
+        "src/shared/python/notes": 95.0,
         "src/shared/python/sidekick/calculators/conversion/service.py": 90.0,
         "src/shared/python/upstream_drift_tools": 15.0,
     }
@@ -48,7 +48,7 @@ def test_changed_tracked_packages_matches_nested_package_paths(tmp_path: Path) -
     )
 
     tracked = {
-        "src/shared/python/notes": 48.0,
+        "src/shared/python/notes": 95.0,
         "src/shared/python/sidekick/calculators/conversion/service.py": 90.0,
         "src/shared/python/upstream_drift_tools": 15.0,
     }
