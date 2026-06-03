@@ -1591,6 +1591,7 @@ export const App: React.FC = () => {
                   type="button"
                   onClick={() => setInspectorView({ type: "none" })}
                   style={{ background: "none", border: "none", color: "var(--text-secondary)", cursor: "pointer" }}
+                  aria-label="Close inspector panel"
                 >
                   <X size={16} />
                 </button>
