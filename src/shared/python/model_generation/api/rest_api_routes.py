@@ -819,10 +819,10 @@ class ModelGenerationAPI:
         models = library.list_models()
 
         for m in models:
-            if m.model_id == model_id:
+            if m.id == model_id:
                 return APIResponse.ok(
                     {
-                        "id": m.model_id,
+                        "id": m.id,
                         "name": m.name,
                         "category": m.category.value,
                         "source": m.source.value if m.source else None,
@@ -877,7 +877,7 @@ class ModelGenerationAPI:
             if entry:
                 return APIResponse.created(
                     {
-                        "id": entry.model_id,
+                        "id": entry.id,
                         "name": entry.name,
                         "category": entry.category.value,
                     }
