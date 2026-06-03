@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from pathlib import Path
 
 import pytest
@@ -57,11 +58,59 @@ def test_env_var_expansion(monkeypatch: pytest.MonkeyPatch) -> None:
     assert configs[0].env == {"API_KEY": "secret123"}
 
 
+def test_non_string_env_values_are_coerced_with_warning(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    raw = {
+        "mcpServers": {
+            "nb": {
+                "command": "python",
+                "env": {"RETRIES": 3},
+            }
+        }
+    }
+
+    with caplog.at_level(logging.WARNING):
+        configs = parse_mcp_servers(raw)
+
+    assert configs[0].env == {"RETRIES": "3"}
+    assert "non-string env value" in caplog.text
+
+
 def test_missing_env_var_left_as_placeholder(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.delenv("UNSET_VAR", raising=False)
     assert expand_env_vars("${UNSET_VAR}") == "${UNSET_VAR}"
+
+
+def test_parse_non_object_mcp_servers_returns_empty(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    with caplog.at_level(logging.WARNING):
+        configs = parse_mcp_servers({"mcpServers": ["not", "an", "object"]})
+
+    assert configs == []
+    assert "'mcpServers' is not a JSON object" in caplog.text
+
+
+def test_parse_skips_non_object_entry_and_bad_env(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    raw = {
+        "mcpServers": {
+            "scalar": "python -m server",
+            "bad_env": {"command": "python", "env": ["TOKEN=value"]},
+            "good": {"command": "python"},
+        }
+    }
+
+    with caplog.at_level(logging.WARNING):
+        configs = parse_mcp_servers(raw)
+
+    assert [cfg.name for cfg in configs] == ["good"]
+    assert "entry 'scalar' is not a JSON object" in caplog.text
+    assert "bad_env 'env' is not a JSON object" in caplog.text
 
 
 def test_invalid_entries_skipped_with_warning(
@@ -115,3 +164,16 @@ def test_load_malformed_json_returns_empty(
     with caplog.at_level(logging.WARNING):
         configs = load_mcp_servers(cfg_path)
     assert configs == []
+
+
+def test_load_top_level_array_returns_empty(
+    tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
+    cfg_path = tmp_path / "mcp_servers.json"
+    cfg_path.write_text("[]", encoding="utf-8")
+
+    with caplog.at_level(logging.WARNING):
+        configs = load_mcp_servers(cfg_path)
+
+    assert configs == []
+    assert "top-level JSON is not an object" in caplog.text

@@ -168,6 +168,34 @@ def test_merge_prefix_imported_strategy(tmp_path: Path) -> None:
     assert "memory" in data["mcpServers"]  # no conflict, no prefix
 
 
+def test_merge_prefix_imported_strategy_avoids_prefixed_collision(
+    tmp_path: Path,
+) -> None:
+    target = tmp_path / "mcp_servers.json"
+    _write_json(
+        target,
+        {
+            "mcpServers": {
+                "github": {"command": "existing", "args": []},
+                "imported_github": {"command": "also-existing", "args": []},
+            }
+        },
+    )
+    source = tmp_path / "cd.json"
+    _write_json(
+        source, {"mcpServers": {"github": _SAMPLE_CD_CONFIG["mcpServers"]["github"]}}
+    )
+
+    added = merge_external_config(
+        target.resolve(), source.resolve(), strategy="prefix_imported"
+    )
+
+    assert added == 1
+    data = json.loads(target.read_text())
+    assert "imported_github_2" in data["mcpServers"]
+    assert data["mcpServers"]["github"]["command"] == "existing"
+
+
 def test_merge_skips_invalid_entries_with_warning(
     tmp_path: Path, caplog: pytest.LogCaptureFixture
 ) -> None:
@@ -236,3 +264,32 @@ def test_merge_preserves_existing_unrelated_entries(tmp_path: Path) -> None:
     data = json.loads(target.read_text())
     assert "local_only" in data["mcpServers"]
     assert "github" in data["mcpServers"]
+
+
+def test_merge_source_mcp_servers_array_returns_zero(
+    tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
+    target = tmp_path / "mcp_servers.json"
+    source = tmp_path / "cd.json"
+    _write_json(source, {"mcpServers": []})
+
+    with caplog.at_level(logging.WARNING):
+        added = merge_external_config(target.resolve(), source.resolve())
+
+    assert added == 0
+    assert "source 'mcpServers' is not a JSON object" in caplog.text
+
+
+def test_merge_non_dict_target_servers_are_replaced(tmp_path: Path) -> None:
+    target = tmp_path / "mcp_servers.json"
+    source = tmp_path / "cd.json"
+    _write_json(target, {"mcpServers": ["stale"]})
+    _write_json(
+        source, {"mcpServers": {"memory": _SAMPLE_CD_CONFIG["mcpServers"]["memory"]}}
+    )
+
+    added = merge_external_config(target.resolve(), source.resolve())
+
+    assert added == 1
+    data = json.loads(target.read_text())
+    assert set(data["mcpServers"]) == {"memory"}

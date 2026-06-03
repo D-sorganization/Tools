@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import json
 import subprocess
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -57,8 +59,28 @@ def test_apply_preset_unknown_raises(tmp_path) -> None:
         apply_preset_to_config("nope", target.resolve())
 
 
+def test_apply_preset_requires_absolute_target() -> None:
+    with pytest.raises(ValueError, match="absolute"):
+        apply_preset_to_config("memory", Path("relative.json"))
+
+
+def test_apply_preset_replaces_non_object_mcp_servers(tmp_path) -> None:
+    target = tmp_path / "mcp_servers.json"
+    target.write_text(json.dumps({"mcpServers": ["stale"]}), encoding="utf-8")
+
+    cfg = apply_preset_to_config("memory", target.resolve())
+
+    data = json.loads(target.read_text(encoding="utf-8"))
+    assert cfg.name == "memory"
+    assert set(data["mcpServers"]) == {"memory"}
+
+
 def test_is_preset_installed_unknown_returns_false() -> None:
     assert is_preset_installed("not_a_real_preset_xyz") is False
+
+
+def test_is_preset_installed_non_npx_preset_returns_false() -> None:
+    assert is_preset_installed("time") is False
 
 
 def test_is_preset_installed_npm_success() -> None:
@@ -77,6 +99,16 @@ def test_is_preset_installed_npm_timeout() -> None:
     with patch("subprocess.run") as mock_run:
         mock_run.side_effect = subprocess.TimeoutExpired(cmd="npm", timeout=5)
         assert is_preset_installed("memory") is False
+
+
+def test_is_preset_installed_npm_missing_returns_false() -> None:
+    with patch("subprocess.run", side_effect=FileNotFoundError):
+        assert is_preset_installed("memory") is False
+
+
+def test_is_preset_installed_notebooklm_import_failure_returns_false() -> None:
+    with patch("importlib.import_module", side_effect=ImportError):
+        assert is_preset_installed("notebooklm") is False
 
 
 def test_is_preset_installed_notebooklm_local_python() -> None:

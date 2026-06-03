@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.309                                    |
+| **Spec Version**        | 1.1.310                                    |
 | **Last Spec Update**    | 2026-06-03                                 |
 
 ## 2. Purpose & Mission
@@ -641,6 +641,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-03 | 1.1.310 | test(ai-mcp): add focused deterministic coverage for MCP config-loader edge cases, including malformed server maps, env coercion, top-level JSON validation, Claude import prefix collision handling, non-dict target normalization, preset absolute-path validation, and install-probe fallbacks; raises `src/shared/python/ai/mcp/config_loader.py` focused coverage from 83.15% to 94.14% without changing production behavior. |
 | 2026-06-03 | 1.1.309 | fix(p1am-power-supply): move the power-supply controller/router and PID-pass-through integration out of `backend/main.py`, keep the split power-supply tests importable under pytest importlib mode, make the controller enums Python 3.10-compatible and mypy-clean, remove stale mypy suppressions from the invalid-input tests, and preserve the module-size budget without relaxing CI gates. |
 | 2026-06-03 | 1.1.308 | test(folder-packer): add focused workflow coverage for `folder_packer_pro.operations`, including pack/unpack start validation, worker dispatch, scan dispatch, filesystem exception handling, failed unpack results, encrypted package inspection, and missing package warnings; raises focused module coverage from 74.27% to 92.95% without changing production behavior. |
 | 2026-06-03 | 1.1.307 | test(model_generation): add focused edge-case coverage for `model_generation.library.unified_loader`, including load-result naming, preference corruption and persistence failures, manifest cache fallbacks, bundled missing-file reporting, unknown-extension fallback ordering, inline XML conversion dispatch, and malformed MJCF `LoadResult` handling; fixes malformed MJCF loads so they return a failed `LoadResult` instead of escaping parse exceptions, while keeping the loader source under the file-size budget. |
