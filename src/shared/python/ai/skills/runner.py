@@ -145,7 +145,7 @@ class SkillRunner:
             result = await asyncio.wait_for(
                 skill.run(invocation), timeout=invocation.timeout_s
             )
-        except TimeoutError as exc:
+        except (TimeoutError, asyncio.TimeoutError) as exc:  # noqa: UP041
             audit.append(
                 _audit_event(
                     "timeout",
