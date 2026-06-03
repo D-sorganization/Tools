@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.298                                    |
+| **Spec Version**        | 1.1.299                                    |
 | **Last Spec Update**    | 2026-06-03                                 |
 
 ## 2. Purpose & Mission
@@ -440,11 +440,12 @@ passes fail early in CI.
 
 ### Coverage Requirements
 
-| Scope         | Minimum                              | Current         | Enforced By                             |
-| ------------- | ------------------------------------ | --------------- | --------------------------------------- |
-| Overall       | 60% target, current-baseline ratchet | 24.48% baseline | CI (`scripts/check_coverage_policy.py`) |
-| Core tools    | 75%                                  | ~81%            | CI                                      |
-| Plugin system | 80%                                  | ~85%            | CI                                      |
+| Scope                 | Minimum                              | Current                 | Enforced By                             |
+| --------------------- | ------------------------------------ | ----------------------- | --------------------------------------- |
+| Overall               | 60% target, current-baseline ratchet | 24.48% baseline         | CI (`scripts/check_coverage_policy.py`) |
+| Core tools            | 75%                                  | ~81%                    | CI                                      |
+| Plugin system         | 80%                                  | ~85%                    | CI                                      |
+| File watcher fallback | 95%                                  | 99.46% focused coverage | CI (`scripts/check_coverage_policy.py`) |
 
 ### Required Test Scenarios
 
@@ -634,6 +635,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-03 | 1.1.299 | test(file-watcher): add focused deterministic coverage for the Python watchdog fallback covering constructor contracts, callback dispatch failures, debounce coalescing, ignore rules, fake watchdog lifecycle handling, missing optional dependencies, and no-op flush branches, raising `src/shared/python/file_watcher/_fallback.py` focused coverage to 99.46% with a 95% file-level coverage policy gate. |
 | 2026-06-03 | 1.1.298 | test(signal-toolkit): add focused deterministic LMS/RLS adaptive filter coverage for pure NumPy fallback behavior, optional Rust-kernel dispatch, output metadata, and signal preconditions, raising `src/shared/python/signal_toolkit/adaptive_filter.py` focused coverage to 95.24% with a 95% file-level coverage policy gate. |
 | 2026-06-03 | 1.1.297 | test(model-generation): add 49 focused handler tests for `rest_api_routes.ModelGenerationAPI` covering route count, health/info shape, security headers, all missing-field 400 guards for every endpoint, inertia success branches (box/sphere/cylinder/capsule) with wrong-dimension-count errors, validate/parse success and error paths, library and editor handlers; fix `library_get_model` and `library_add_model` using `ModelEntry.model_id` (non-existent attribute) to use the correct `ModelEntry.id`. |
 | 2026-06-03 | 1.1.296 | fix(programmatic-pid): guard DXF-producing `PIDDocument.export_dxf` tests on optional `ezdxf` availability so lean CI environments skip only the dependency-backed export assertions while retaining construction, validation, and precondition coverage. |

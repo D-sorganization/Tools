@@ -92,3 +92,7 @@ def test_coverage_policy_tracks_safe_eval_files() -> None:
         ]
         >= 95.0
     )
+    assert (
+        policy["tracked_packages"]["src/shared/python/file_watcher/_fallback.py"]
+        >= 95.0
+    )
