@@ -86,3 +86,9 @@ def test_coverage_policy_tracks_safe_eval_files() -> None:
 
     assert policy["tracked_packages"]["src/shared/python/safe_eval.py"] >= 99.0
     assert policy["tracked_packages"]["src/shared/python/safe_pandas_eval.py"] >= 99.0
+    assert (
+        policy["tracked_packages"][
+            "src/shared/python/signal_toolkit/adaptive_filter.py"
+        ]
+        >= 95.0
+    )
