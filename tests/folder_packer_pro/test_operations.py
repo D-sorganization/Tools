@@ -238,6 +238,32 @@ def test_start_pack_validates_required_inputs(
     assert warnings == [("No Source", "Please select a source folder.")]
 
 
+def test_start_pack_validates_output_and_encryption_password(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    warnings: list[tuple[str, str]] = []
+    monkeypatch.setattr(
+        operations.messagebox,
+        "showwarning",
+        lambda title, message: warnings.append((title, message)),
+    )
+
+    harness = PackHarness(tmp_path, tmp_path / "out.fpp")
+    harness.pack_output_entry = ValueWidget("")
+    harness._start_pack()
+
+    harness.pack_output_entry = ValueWidget(str(tmp_path / "out.fpp"))
+    harness.encrypt_var = ValueWidget(True)
+    harness.pack_password_entry = ValueWidget("")
+    harness._start_pack()
+
+    assert warnings == [
+        ("No Output", "Please select an output file."),
+        ("No Password", "Please enter an encryption password."),
+    ]
+
+
 def test_start_pack_validates_password_confirmation(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -256,6 +282,24 @@ def test_start_pack_validates_password_confirmation(
     harness._start_pack()
 
     assert warnings == [("Password Mismatch", "Passwords do not match.")]
+
+
+def test_start_pack_enables_controls_and_starts_worker(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    harness = PackHarness(tmp_path, tmp_path / "out.fpp")
+    started: list[str] = []
+    monkeypatch.setattr(operations.threading, "Thread", ImmediateThread)
+    monkeypatch.setattr(harness, "_run_pack", lambda: started.append("pack"))
+
+    harness._start_pack()
+
+    assert harness.cancel_operation is False
+    assert harness.pack_btn.states[-1] == {"state": "disabled"}
+    assert harness.pack_cancel_btn.states[-1] == {"state": "normal"}
+    assert harness.pack_progress_var.get() == 0
+    assert started == ["pack"]
 
 
 def test_run_pack_logs_success_and_updates_progress(
@@ -325,6 +369,32 @@ def test_run_pack_reports_engine_failure(
 
     assert ("Pack operation failed: disk full", "error") in harness.logs
     assert errors == [("Error", "Pack failed:\n\ndisk full")]
+    assert harness.finished == 1
+
+
+def test_run_pack_reports_filesystem_exception(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    harness = PackHarness(source, tmp_path / "out.fpp")
+    errors: list[tuple[str, str]] = []
+    monkeypatch.setattr(
+        operations,
+        "collect_files",
+        lambda *args, **kwargs: (_ for _ in ()).throw(OSError("permission denied")),
+    )
+    monkeypatch.setattr(
+        operations.messagebox,
+        "showerror",
+        lambda title, message: errors.append((title, message)),
+    )
+
+    harness._run_pack()
+
+    assert ("Pack operation failed: permission denied", "error") in harness.logs
+    assert errors == [("Error", "Pack failed:\n\npermission denied")]
     assert harness.finished == 1
 
 
@@ -437,6 +507,102 @@ def test_start_unpack_validates_destination(
     assert warnings == [("No Destination", "Please select a destination folder.")]
 
 
+def test_start_unpack_validates_package_and_password(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    warnings: list[tuple[str, str]] = []
+    monkeypatch.setattr(
+        operations.messagebox,
+        "showwarning",
+        lambda title, message: warnings.append((title, message)),
+    )
+
+    harness = UnpackHarness(tmp_path / "archive.fpp", tmp_path / "dest")
+    harness.unpack_source_entry = ValueWidget("")
+    harness._start_unpack()
+
+    harness.unpack_source_entry = ValueWidget(str(tmp_path / "archive.fpp"))
+    harness.encrypted_var = ValueWidget(True)
+    harness.unpack_password_entry = ValueWidget("")
+    harness._start_unpack()
+
+    assert warnings == [
+        ("No Package", "Please select a package file."),
+        ("No Password", "Please enter the decryption password."),
+    ]
+
+
+def test_start_unpack_enables_controls_and_starts_worker(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    harness = UnpackHarness(tmp_path / "archive.fpp", tmp_path / "dest")
+    started: list[str] = []
+    monkeypatch.setattr(operations.threading, "Thread", ImmediateThread)
+    monkeypatch.setattr(harness, "_run_unpack", lambda: started.append("unpack"))
+
+    harness._start_unpack()
+
+    assert harness.cancel_operation is False
+    assert harness.unpack_btn.states[-1] == {"state": "disabled"}
+    assert harness.unpack_cancel_btn.states[-1] == {"state": "normal"}
+    assert harness.unpack_progress_var.get() == 0
+    assert started == ["unpack"]
+
+
+def test_run_unpack_reports_engine_failure(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    package = tmp_path / "archive.fpp"
+    package.write_bytes(b"archive")
+    harness = UnpackHarness(package, tmp_path / "dest")
+    errors: list[tuple[str, str]] = []
+    monkeypatch.setattr(
+        operations,
+        "unpack_files",
+        lambda **kwargs: UnpackResult(success=False, error="bad password"),
+    )
+    monkeypatch.setattr(
+        operations.messagebox,
+        "showerror",
+        lambda title, message: errors.append((title, message)),
+    )
+
+    harness._run_unpack()
+
+    assert ("Unpack operation failed: bad password", "error") in harness.logs
+    assert errors == [("Error", "Unpack failed:\n\nbad password")]
+    assert harness.finished == 1
+
+
+def test_run_unpack_reports_filesystem_exception(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    package = tmp_path / "archive.fpp"
+    package.write_bytes(b"archive")
+    harness = UnpackHarness(package, tmp_path / "dest")
+    errors: list[tuple[str, str]] = []
+    monkeypatch.setattr(
+        operations,
+        "unpack_files",
+        lambda **kwargs: (_ for _ in ()).throw(PermissionError("locked")),
+    )
+    monkeypatch.setattr(
+        operations.messagebox,
+        "showerror",
+        lambda title, message: errors.append((title, message)),
+    )
+
+    harness._run_unpack()
+
+    assert ("Unpack operation failed: locked", "error") in harness.logs
+    assert errors == [("Error", "Unpack failed:\n\nlocked")]
+    assert harness.finished == 1
+
+
 def test_scan_folder_reports_missing_source(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -452,6 +618,36 @@ def test_scan_folder_reports_missing_source(
     harness._scan_folder()
 
     assert errors == [("Error", "Source folder does not exist.")]
+
+
+def test_scan_folder_ignores_empty_source_and_dispatches_existing_source(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    empty = ScanHarness("")
+    empty._scan_folder()
+    assert empty.root.callbacks == []
+
+    source = tmp_path / "source"
+    source.mkdir()
+    harness = ScanHarness(source)
+    expected_stats = {
+        "total_files": 1,
+        "total_size": 3,
+        "excluded_files": 0,
+        "file_types": {".txt": 1},
+    }
+    monkeypatch.setattr(operations.threading, "Thread", ImmediateThread)
+    monkeypatch.setattr(
+        operations,
+        "collect_folder_stats",
+        lambda path, patterns, include_git: expected_stats,
+    )
+
+    harness._scan_folder()
+
+    assert "Total Files: 1" in harness.stats_text.content
+    assert harness.root.callbacks
 
 
 def test_update_preview_tree_ignores_missing_source(tmp_path: Path) -> None:
@@ -499,3 +695,50 @@ def test_progress_callbacks_reject_missing_filename(
 
     assert pack_harness.finished == 1
     assert unpack_harness.finished == 1
+
+
+def test_inspect_package_validates_source_and_handles_edges(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    warnings: list[tuple[str, str]] = []
+    errors: list[tuple[str, str]] = []
+    monkeypatch.setattr(
+        operations.messagebox,
+        "showwarning",
+        lambda title, message: warnings.append((title, message)),
+    )
+    monkeypatch.setattr(
+        operations.messagebox,
+        "showerror",
+        lambda title, message: errors.append((title, message)),
+    )
+
+    harness = UnpackHarness(tmp_path / "archive.fpp", tmp_path / "dest")
+    harness.unpack_source_entry = ValueWidget("")
+    harness._inspect_package()
+
+    harness.unpack_source_entry = ValueWidget(str(tmp_path / "archive.fpp"))
+    monkeypatch.setattr(
+        operations,
+        "inspect_package",
+        lambda path: {
+            "file": Path(path).name,
+            "size_formatted": "5.00 B",
+            "encrypted": True,
+            "metadata": {},
+        },
+    )
+    harness._inspect_package()
+
+    monkeypatch.setattr(
+        operations,
+        "inspect_package",
+        lambda path: (_ for _ in ()).throw(ValueError("not a package")),
+    )
+    harness._inspect_package()
+
+    assert warnings == [("No Package", "Please select a package file first.")]
+    assert "Encrypted: Yes" in harness.package_info_text.content
+    assert "Total Files" not in harness.package_info_text.content
+    assert errors == [("Error", "Failed to inspect package:\n\nnot a package")]

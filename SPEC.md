@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.307                                    |
+| **Spec Version**        | 1.1.308                                    |
 | **Last Spec Update**    | 2026-06-03                                 |
 
 ## 2. Purpose & Mission
@@ -448,6 +448,7 @@ passes fail early in CI.
 | Codemap package       | 90%                                  | 97.72% focused coverage | CI (`scripts/check_coverage_policy.py`) |
 | File watcher fallback | 95%                                  | 99.46% focused coverage | CI (`scripts/check_coverage_policy.py`) |
 | Upstream drift shim   | 100%                                 | 100% focused coverage   | CI (`scripts/check_coverage_policy.py`) |
+| Folder packer ops     | 90%                                  | 92.95% focused coverage | Focused pytest coverage                 |
 
 ### Required Test Scenarios
 
@@ -637,6 +638,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-03 | 1.1.308 | test(folder-packer): add focused workflow coverage for `folder_packer_pro.operations`, including pack/unpack start validation, worker dispatch, scan dispatch, filesystem exception handling, failed unpack results, encrypted package inspection, and missing package warnings; raises focused module coverage from 74.27% to 92.95% without changing production behavior. |
 | 2026-06-03 | 1.1.307 | test(model_generation): add focused edge-case coverage for `model_generation.library.unified_loader`, including load-result naming, preference corruption and persistence failures, manifest cache fallbacks, bundled missing-file reporting, unknown-extension fallback ordering, inline XML conversion dispatch, and malformed MJCF `LoadResult` handling; fixes malformed MJCF loads so they return a failed `LoadResult` instead of escaping parse exceptions, while keeping the loader source under the file-size budget. |
 | 2026-06-03 | 1.1.306 | test(upstream-drift): ratchet the legacy `upstream_drift_tools` compatibility shim coverage gate to 100% after focused shim contract tests verified full line and branch coverage, and update the coverage-policy regression tests so the high-water mark is enforced in CI without changing production behavior. |
 | 2026-06-03 | 1.1.305 | test(model_generation): add focused coverage for `model_generation.library._rate_limiter`, including rate-limit header parsing, success logging, request header propagation, capped exponential backoff, terminal 429 handling, non-429 HTTP passthrough, and retried network failures; raises the focused module coverage from 53.12% toward the phase-2 model-generation coverage target without changing production behavior. |
