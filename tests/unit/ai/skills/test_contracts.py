@@ -39,6 +39,11 @@ class TestSkillDescriptor:
         with pytest.raises(ValidationError):
             _make_descriptor(id="")
 
+    def test_strips_required_string_fields(self) -> None:
+        descriptor = _make_descriptor(id=" demo.echo ", name=" Demo Echo ")
+        assert descriptor.id == "demo.echo"
+        assert descriptor.name == "Demo Echo"
+
     def test_rejects_blank_version(self) -> None:
         with pytest.raises(ValidationError):
             _make_descriptor(version="")

@@ -64,6 +64,19 @@ class _DummySkillTwo(Skill):
 
 
 class TestSkillRegistry:
+    def test_concrete_skill_without_descriptor_is_rejected(self) -> None:
+        with pytest.raises(TypeError, match="must define a 'descriptor"):
+
+            class _MissingDescriptor(Skill):
+                async def run(self, invocation: SkillInvocation) -> SkillResult:
+                    return SkillResult(
+                        request_id=invocation.request_id,
+                        success=True,
+                        value={},
+                        error=None,
+                        elapsed_ms=0.0,
+                    )
+
     def test_register_and_get(self) -> None:
         registry = SkillRegistry()
         registry.register(_DummySkill)
@@ -88,6 +101,12 @@ class TestSkillRegistry:
         registry.register(_DummySkill)
         with pytest.raises(ValueError):
             registry.register(_DummySkill)
+
+    def test_duplicate_register_instance_raises(self) -> None:
+        registry = SkillRegistry()
+        registry.register_instance(_DummySkill())
+        with pytest.raises(ValueError):
+            registry.register_instance(_DummySkill())
 
     def test_register_decorator(self) -> None:
         registry = SkillRegistry()

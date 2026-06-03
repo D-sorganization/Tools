@@ -17,6 +17,7 @@ from shared.python.ai.skills.contracts import (
     SkillResult,
 )
 from shared.python.ai.skills.errors import (
+    SkillExecutionError,
     SkillNotFoundError,
     SkillPostconditionError,
     SkillPreconditionError,
@@ -105,6 +106,22 @@ class _SlowSkill(Skill):
         )
 
 
+class _RaisesSkill(Skill):
+    descriptor = SkillDescriptor(
+        id="t.raises",
+        name="Raises",
+        version="0.0.1",
+        description="raises from body",
+        inputs={},
+        outputs={},
+        preconditions=[],
+        postconditions=[],
+    )
+
+    async def run(self, invocation: SkillInvocation) -> SkillResult:
+        raise RuntimeError("body exploded")
+
+
 def _build_runner(*skills: type[Skill]) -> SkillRunner:
     registry = SkillRegistry()
     for skill_cls in skills:
@@ -167,6 +184,18 @@ class TestSkillRunner:
         kinds = [event["kind"] for event in result.audit_trail]
         assert "timeout" in kinds
 
+    async def test_body_exception_returns_structured_execution_error(self) -> None:
+        runner = _build_runner(_RaisesSkill)
+        result = await runner.run(
+            SkillInvocation(skill_id="t.raises", args={}, request_id="r-exec")
+        )
+
+        assert result.success is False
+        assert result.error == "body exploded"
+        kinds = [event["kind"] for event in result.audit_trail]
+        assert "execution_error" in kinds
+        assert result.audit_trail[-1]["extra"]["failure_kind"] == "execution_error"
+
     async def test_raises_directly_when_skill_id_unknown(self) -> None:
         runner = _build_runner(_OkSkill)
         with pytest.raises(SkillNotFoundError):
@@ -183,4 +212,8 @@ class TestSkillRunner:
 
     async def test_timeout_error_type_can_be_raised(self) -> None:
         err = SkillTimeoutError("nope")
+        assert str(err) == "nope"
+
+    async def test_execution_error_type_can_be_raised(self) -> None:
+        err = SkillExecutionError("nope")
         assert str(err) == "nope"
