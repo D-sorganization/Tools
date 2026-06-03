@@ -409,7 +409,13 @@ class UnifiedModelLoader:
                 success=True,
                 warnings=model.warnings,
             )
-        except ImportError as exc:
+        except (
+            ImportError,
+            OSError,
+            ValueError,
+            KeyError,
+            ET.ParseError,
+        ) as exc:
             return LoadResult(
                 source_path=path,
                 source_format=ModelFormat.MJCF,
