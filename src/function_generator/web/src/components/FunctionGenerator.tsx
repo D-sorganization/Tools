@@ -686,6 +686,7 @@ export function FunctionGenerator() {
                       <button
                         onClick={(e) => { e.stopPropagation(); removeLayer(layer.id); }}
                         className="px-2 py-0.5 bg-red-600 text-white rounded text-xs hover:bg-red-500"
+                        aria-label="Remove layer"
                       >
                         ×
                       </button>
