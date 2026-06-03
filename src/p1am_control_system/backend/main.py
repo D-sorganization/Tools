@@ -46,6 +46,7 @@ from models import (
 )
 from plant_model import TagDefinition
 from plc_factory import PLCFactory
+from power_supply_integration import PowerSupplyService, create_power_supply_router
 from pydantic import BaseModel
 from pydantic import Field as PydanticField
 from simulator_client import SimulatedPLCClient
@@ -56,17 +57,16 @@ AlarmEngine = scada.AlarmEngine
 exponential_smoothing = scada.exponential_smoothing
 moving_average = scada.moving_average
 
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("dcs_backend.main")
 
-# Instantiate active PLC client and backup simulator for offline fallback
 plc_client = PLCFactory.create_client()
 modbus_manager = plc_client  # Compatibility alias
 backup_simulator = SimulatedPLCClient()
 
+power_supply_service = PowerSupplyService(plc_client=plc_client, logger=logger)
 
-# WebSocket Connection Manager
+
 class ConnectionManager:
     """Manages WebSocket client connections and broadcasts live updates."""
 
@@ -192,17 +192,13 @@ def build_alarm_engine(config: RoutingConfig) -> Any:
     return AlarmEngine(limits_dict)
 
 
-# Global Alarm Engine
 alarm_engine = build_alarm_engine(active_config)
 
-# Active alarms tracking
 active_alarms: dict[str, dict[str, Any]] = {}
 e_stop_active: bool = False
 
-# PID Tuning sessions state
 tuning_sessions: dict[int, dict[str, Any]] = {}
 
-# Bind references
 plc_client.tuning_sessions = tuning_sessions
 backup_simulator.tuning_sessions = tuning_sessions
 plc_client.active_config = active_config
@@ -248,12 +244,15 @@ async def poll_plc_loop() -> None:
                 if tags is not None
                 else []
             )
+            ps_status = await power_supply_service.poll(tags)
+
             payload = {
                 "tags": tag_list,
                 "tags_dict": tags if tags is not None else {},
                 "alicats": alicat_manager.get_devices_data(),
                 "active_alarms": active_alarms,
                 "e_stop_active": e_stop_active,
+                "power_supply": ps_status.model_dump(),
             }
             await ws_manager.broadcast(payload)
             if tags is not None:
@@ -334,6 +333,7 @@ app = FastAPI(
     description="Middleware bridging the P1AM PLC and HMI Dashboard.",
     lifespan=lifespan,
 )
+app.include_router(create_power_supply_router(power_supply_service))
 
 # Restrict CORS to a configured allowlist (no wildcard with credentials).
 # See cors_config.resolve_cors_settings for env-driven configuration.
