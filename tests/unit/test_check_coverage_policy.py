@@ -78,10 +78,11 @@ def test_changed_tracked_packages_matches_tracked_file_paths(tmp_path: Path) -> 
     }
 
 
-def test_coverage_policy_tracks_safe_pandas_eval_file() -> None:
+def test_coverage_policy_tracks_safe_eval_files() -> None:
     policy_path = (
         Path(__file__).resolve().parents[2] / "config" / "coverage_policy.json"
     )
     policy = json.loads(policy_path.read_text(encoding="utf-8"))
 
+    assert policy["tracked_packages"]["src/shared/python/safe_eval.py"] >= 99.0
     assert policy["tracked_packages"]["src/shared/python/safe_pandas_eval.py"] >= 99.0

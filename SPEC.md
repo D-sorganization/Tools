@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.293                                    |
+| **Spec Version**        | 1.1.294                                    |
 | **Last Spec Update**    | 2026-06-03                                 |
 
 ## 2. Purpose & Mission
@@ -634,6 +634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-03 | 1.1.294 | test(safe-eval): add a 99% file-level coverage policy gate for `src/shared/python/safe_eval.py`, backed by existing focused safe evaluator tests that cover validation, namespace allowlists, stripped builtins, scalar math, and NumPy math paths at 100% line and branch coverage. |
 | 2026-06-03 | 1.1.293 | test(safe-pandas): add focused validation coverage for overlong formulas, syntax errors, unsupported operators, and maximum allowed exponent boundaries, raising `src/shared/python/safe_pandas_eval.py` focused coverage to 100% and adding a 99% file-level coverage policy gate. |
 | 2026-06-02 | 1.1.292 | test(notes): add focused PyQt6 coverage for the shared notes dock widget save/reload/clear, recycle/restore, floating/redock, and initialization guard paths, raising the `src/shared/python/notes` package coverage policy gate from 48% to 95% without changing production behavior. |
 | 2026-06-02 | 1.1.291 | fix(sidekick): keep conversion service helper boundaries explicit under CI changed-file mypy analysis by coercing skipped-import helper and mixin conversion results back to `float` without changing runtime conversion behavior. |
