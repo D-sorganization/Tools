@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.302                                    |
+| **Spec Version**        | 1.1.303                                    |
 | **Last Spec Update**    | 2026-06-03                                 |
 
 ## 2. Purpose & Mission
@@ -445,7 +445,7 @@ passes fail early in CI.
 | Overall               | 60% target, current-baseline ratchet | 24.48% baseline         | CI (`scripts/check_coverage_policy.py`) |
 | Core tools            | 75%                                  | ~81%                    | CI                                      |
 | Plugin system         | 80%                                  | ~85%                    | CI                                      |
-| Codemap package       | 90%                                  | 94.39% focused coverage | CI (`scripts/check_coverage_policy.py`) |
+| Codemap package       | 90%                                  | 97.72% focused coverage | CI (`scripts/check_coverage_policy.py`) |
 | File watcher fallback | 95%                                  | 99.46% focused coverage | CI (`scripts/check_coverage_policy.py`) |
 
 ### Required Test Scenarios
@@ -636,6 +636,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-03 | 1.1.303 | test(codemap): add focused headless coverage for the `codemap-mcp` server entrypoint, including `CODEMAP_REPO_ROOT` discovery, missing optional `mcp` dependency handling, server run dispatch, and fake FastMCP tool delegation for search, symbol lookup, callers, imports, and repo summary; raises `src/shared/python/codemap/mcp_server.py` focused coverage from 0.00% to 100.00% and `src/shared/python/codemap` focused package coverage from 94.39% to 97.72% without changing production behavior. |
 | 2026-06-03 | 1.1.302 | fix(ai-skills): run shared AI skills runner coroutine tests through explicit `asyncio.run(...)` calls and handle Python 3.10 `asyncio.TimeoutError` in the runner timeout boundary so timeout failures are consistently classified as structured `timeout` audit events. |
 | 2026-06-03 | 1.1.301 | test(ai-skills): add focused contract and failure-path coverage for the shared AI skills runtime, including concrete-skill descriptor enforcement, duplicate instance registration, structured execution-error audit classification, and required descriptor field normalization, raising `src/shared/python/ai/skills` focused coverage from 90.42% to 96.17% without changing production behavior. |
 | 2026-06-03 | 1.1.300 | test(codemap): add focused CLI coverage for rebuild, search, who-calls, export, and info command paths using mocked API/indexer seams plus real SQLite JSONL/gzip export verification, raising `src/shared/python/codemap` focused package coverage to 94.39% and adding a 90% tracked coverage policy gate. |
