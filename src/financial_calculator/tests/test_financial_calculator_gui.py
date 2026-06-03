@@ -1,9 +1,35 @@
 # ruff: noqa: E501
+# mypy: disable-error-code="no-untyped-def"
 """Tests for Financial Calculator GUI components."""
 
 from __future__ import annotations
 
+import os
+import sys
+from pathlib import Path
+
 import pytest
+
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+_FINANCIAL_PYTHON = _REPO_ROOT / "src" / "financial_calculator" / "python"
+sys.path.insert(0, str(_FINANCIAL_PYTHON))
+os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+
+import financial_calculator as _financial_calculator_package
+
+_financial_calculator_package.__path__.append(
+    str(_FINANCIAL_PYTHON / "financial_calculator")
+)
+
+
+@pytest.fixture(autouse=True)
+def _reset_theme_manager():
+    """Reset shared Qt theme state so tests do not retain deleted windows."""
+    from shared.python.theme.theme_manager import ThemeManager
+
+    ThemeManager.reset_instance()
+    yield
+    ThemeManager.reset_instance()
 
 
 class TestFinancialCalculatorEngine:
@@ -292,7 +318,7 @@ class TestFinancialCalculatorMainWindowDbC:
         )
 
         with pytest.raises(TypeError, match="parent must be a QWidget or None"):
-            FinancialCalculatorMainWindow(parent="not_a_widget")  # type: ignore[arg-type]
+            FinancialCalculatorMainWindow(parent="not_a_widget")
 
     def test_update_results_rejects_wrong_type(self, app):
         """_update_results raises TypeError if results is not FinancialDesign."""
@@ -302,7 +328,7 @@ class TestFinancialCalculatorMainWindowDbC:
 
         window = FinancialCalculatorMainWindow()
         with pytest.raises(TypeError, match="results must be a FinancialDesign"):
-            window._update_results("not_a_design")  # type: ignore[arg-type]
+            window._update_results("not_a_design")
 
     def test_update_projections_rejects_wrong_type(self, app):
         """_update_projections raises TypeError if projections is not a list."""
@@ -312,7 +338,7 @@ class TestFinancialCalculatorMainWindowDbC:
 
         window = FinancialCalculatorMainWindow()
         with pytest.raises(TypeError, match="projections must be a list"):
-            window._update_projections("not_a_list")  # type: ignore[arg-type]
+            window._update_projections("not_a_list")
 
 
 class TestFinancialCalculations:
