@@ -22,6 +22,7 @@ from model_generation.converters.urdf_parser import ParsedModel, URDFParser
 from model_generation.core.contracts import postcondition, precondition
 
 logger = logging.getLogger(__name__)
+_LOAD_MJCF_ERRORS = (ImportError, OSError, ValueError, KeyError, ET.ParseError)
 
 
 class ModelFormat(Enum):
@@ -409,7 +410,7 @@ class UnifiedModelLoader:
                 success=True,
                 warnings=model.warnings,
             )
-        except ImportError as exc:
+        except _LOAD_MJCF_ERRORS as exc:
             return LoadResult(
                 source_path=path,
                 source_format=ModelFormat.MJCF,
