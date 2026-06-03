@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.300                                    |
+| **Spec Version**        | 1.1.302                                    |
 | **Last Spec Update**    | 2026-06-03                                 |
 
 ## 2. Purpose & Mission
@@ -636,6 +636,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-03 | 1.1.302 | fix(ai-skills): run shared AI skills runner coroutine tests through explicit `asyncio.run(...)` calls and handle Python 3.10 `asyncio.TimeoutError` in the runner timeout boundary so timeout failures are consistently classified as structured `timeout` audit events. |
+| 2026-06-03 | 1.1.301 | test(ai-skills): add focused contract and failure-path coverage for the shared AI skills runtime, including concrete-skill descriptor enforcement, duplicate instance registration, structured execution-error audit classification, and required descriptor field normalization, raising `src/shared/python/ai/skills` focused coverage from 90.42% to 96.17% without changing production behavior. |
 | 2026-06-03 | 1.1.300 | test(codemap): add focused CLI coverage for rebuild, search, who-calls, export, and info command paths using mocked API/indexer seams plus real SQLite JSONL/gzip export verification, raising `src/shared/python/codemap` focused package coverage to 94.39% and adding a 90% tracked coverage policy gate. |
 | 2026-06-03 | 1.1.299 | test(file-watcher): add focused deterministic coverage for the Python watchdog fallback covering constructor contracts, callback dispatch failures, debounce coalescing, ignore rules, fake watchdog lifecycle handling, missing optional dependencies, and no-op flush branches, raising `src/shared/python/file_watcher/_fallback.py` focused coverage to 99.46% with a 95% file-level coverage policy gate. |
 | 2026-06-03 | 1.1.298 | test(signal-toolkit): add focused deterministic LMS/RLS adaptive filter coverage for pure NumPy fallback behavior, optional Rust-kernel dispatch, output metadata, and signal preconditions, raising `src/shared/python/signal_toolkit/adaptive_filter.py` focused coverage to 95.24% with a 95% file-level coverage policy gate. |
