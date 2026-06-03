@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.291                                    |
+| **Spec Version**        | 1.1.292                                    |
 | **Last Spec Update**    | 2026-06-02                                 |
 
 ## 2. Purpose & Mission
@@ -634,6 +634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-02 | 1.1.292 | test(notes): add focused PyQt6 coverage for the shared notes dock widget save/reload/clear, recycle/restore, floating/redock, and initialization guard paths, raising the `src/shared/python/notes` package coverage policy gate from 48% to 95% without changing production behavior. |
 | 2026-06-02 | 1.1.291 | fix(sidekick): keep conversion service helper boundaries explicit under CI changed-file mypy analysis by coercing skipped-import helper and mixin conversion results back to `float` without changing runtime conversion behavior. |
 | 2026-06-02 | 1.1.290 | fix(sidekick): restore custom unit conversion by adding user-defined units to the normalized lookup map, keep invalid temperature validation failures non-fatal as documented, and add focused edge coverage for `sidekick.calculators.conversion.service` singleton helpers, normalization/cache paths, validation guards, category dispatch, and compatible-unit lookup, raising focused service coverage to 99.09% and adding a 90% file-level coverage policy gate. |
 | 2026-06-02 | 1.1.289 | fix(ui): route the Windows AppUserModelID platform check through a runtime helper so Linux changed-file mypy does not mark the Windows ctypes branch unreachable while preserving the same taskbar identity behavior. |
