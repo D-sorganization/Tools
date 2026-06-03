@@ -21,10 +21,13 @@ def test_validate_pandas_formula_accepts_numeric_boolean_expression() -> None:
     ("expression", "match"),
     [
         ("", "non-empty"),
+        ("x" * 513, "too long"),
+        ("value +", "Invalid formula syntax"),
         ("value + missing", "Unknown formula column: missing"),
         ("value.__class__", "forbidden pattern"),
         ("abs(value)", "Unsupported formula syntax: Call"),
         ("value[0]", "Unsupported formula syntax: Subscript"),
+        ("value | 1", "Unsupported formula operator: BitOr"),
         ("value ** scale", "Formula exponent must be a numeric constant"),
         ("value ** 7", "Formula exponent is too large"),
         ("label == 'ready'", "Formula constants must be numeric or boolean"),
@@ -46,6 +49,10 @@ def test_validate_pandas_formula_rejects_overly_complex_expression() -> None:
 
     with pytest.raises(ValueError, match="too complex"):
         validate_pandas_formula(expression, allowed_columns={"v"})
+
+
+def test_validate_pandas_formula_accepts_maximum_power_boundary() -> None:
+    validate_pandas_formula("value ** 6", allowed_columns={"value"})
 
 
 def test_log_formula_rejected_omits_expression_text(

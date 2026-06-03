@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 from pathlib import Path
 from typing import Any
 
@@ -69,8 +70,18 @@ def test_changed_tracked_packages_matches_tracked_file_paths(tmp_path: Path) -> 
 
     tracked = {
         "src/shared/python/sidekick/calculators/conversion/service.py": 90.0,
+        "src/shared/python/safe_pandas_eval.py": 99.0,
     }
 
     assert module._changed_tracked_packages(changed_files, tracked) == {
         "src/shared/python/sidekick/calculators/conversion/service.py"
     }
+
+
+def test_coverage_policy_tracks_safe_pandas_eval_file() -> None:
+    policy_path = (
+        Path(__file__).resolve().parents[2] / "config" / "coverage_policy.json"
+    )
+    policy = json.loads(policy_path.read_text(encoding="utf-8"))
+
+    assert policy["tracked_packages"]["src/shared/python/safe_pandas_eval.py"] >= 99.0
