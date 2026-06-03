@@ -19,6 +19,21 @@ def _pct(x: float) -> float:
     return round(x * 100.0, 2)
 
 
+def _coverage_path_candidates(filename: str, sources: list[str]) -> set[str]:
+    """Return normalized coverage paths that may match repo-relative policies."""
+    normalized = filename.replace("\\", "/")
+    candidates = {normalized}
+    cwd = Path.cwd()
+    for source in sources:
+        source_path = Path(source)
+        combined = source_path / filename
+        try:
+            candidates.add(combined.resolve().relative_to(cwd).as_posix())
+        except (OSError, ValueError):
+            candidates.add(str(combined).replace("\\", "/"))
+    return candidates
+
+
 def _effective_total_floor(min_total: float, baseline_total: float) -> float:
     """Use the target floor only after the committed baseline has reached it."""
     if baseline_total < min_total:
@@ -29,16 +44,25 @@ def _effective_total_floor(min_total: float, baseline_total: float) -> float:
 def parse_coverage(coverage_file: Path, tracked_prefixes: list[str]) -> CoverageStats:
     root = ET.parse(coverage_file).getroot()
     total_line_rate = float(root.attrib.get("line-rate", "0"))
+    sources = [
+        source.text
+        for source in root.findall(".//sources/source")
+        if source.text is not None
+    ]
 
     per_prefix = {p: {"covered": 0, "valid": 0} for p in tracked_prefixes}
 
     for cls in root.findall(".//class"):
         filename = cls.attrib.get("filename", "")
+        path_candidates = _coverage_path_candidates(filename, sources)
         lines = cls.findall("./lines/line")
         valid = len(lines)
         covered = sum(1 for ln in lines if int(ln.attrib.get("hits", "0")) > 0)
         for prefix in tracked_prefixes:
-            if filename.startswith(prefix):
+            if any(
+                path == prefix or path.startswith(f"{prefix}/")
+                for path in path_candidates
+            ):
                 per_prefix[prefix]["covered"] += covered
                 per_prefix[prefix]["valid"] += valid
 

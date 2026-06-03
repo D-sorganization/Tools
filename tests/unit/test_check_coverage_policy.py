@@ -33,7 +33,7 @@ def test_changed_tracked_packages_limits_package_thresholds(tmp_path: Path) -> N
     tracked = {
         "src/shared/python/notes": 95.0,
         "src/shared/python/sidekick/calculators/conversion/service.py": 90.0,
-        "src/shared/python/upstream_drift_tools": 15.0,
+        "src/shared/python/upstream_drift_tools": 100.0,
     }
 
     assert module._changed_tracked_packages(changed_files, tracked) == set()
@@ -51,7 +51,7 @@ def test_changed_tracked_packages_matches_nested_package_paths(tmp_path: Path) -
     tracked = {
         "src/shared/python/notes": 95.0,
         "src/shared/python/sidekick/calculators/conversion/service.py": 90.0,
-        "src/shared/python/upstream_drift_tools": 15.0,
+        "src/shared/python/upstream_drift_tools": 100.0,
     }
 
     assert module._changed_tracked_packages(changed_files, tracked) == {
@@ -78,6 +78,42 @@ def test_changed_tracked_packages_matches_tracked_file_paths(tmp_path: Path) -> 
     }
 
 
+def test_parse_coverage_matches_source_relative_windows_paths(tmp_path: Path) -> None:
+    """Coverage.py source roots plus short filenames still match policy paths."""
+    module = _load_coverage_policy_module()
+    source = str(Path.cwd() / "src" / "shared" / "python" / "upstream_drift_tools")
+    coverage_xml = tmp_path / "coverage.xml"
+    coverage_xml.write_text(
+        f"""<?xml version="1.0" ?>
+<coverage line-rate="1">
+  <sources>
+    <source>{source}</source>
+  </sources>
+  <packages>
+    <package name=".">
+      <classes>
+        <class name="__init__.py" filename="__init__.py">
+          <lines>
+            <line number="1" hits="1" />
+            <line number="2" hits="1" />
+          </lines>
+        </class>
+      </classes>
+    </package>
+  </packages>
+</coverage>
+""",
+        encoding="utf-8",
+    )
+
+    stats = module.parse_coverage(
+        coverage_xml,
+        ["src/shared/python/upstream_drift_tools"],
+    )
+
+    assert stats["package_percent"]["src/shared/python/upstream_drift_tools"] == 100.0
+
+
 def test_coverage_policy_tracks_safe_eval_files() -> None:
     policy_path = (
         Path(__file__).resolve().parents[2] / "config" / "coverage_policy.json"
@@ -96,3 +132,4 @@ def test_coverage_policy_tracks_safe_eval_files() -> None:
         policy["tracked_packages"]["src/shared/python/file_watcher/_fallback.py"]
         >= 95.0
     )
+    assert policy["tracked_packages"]["src/shared/python/upstream_drift_tools"] >= 100.0
