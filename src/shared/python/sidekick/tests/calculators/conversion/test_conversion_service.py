@@ -1,4 +1,5 @@
 # TRACKED_TASK: see #2310 — architecture debt extraction schedule
+# mypy: disable-error-code=no-untyped-def
 
 """Extended tests for UnitConversionService targeting uncovered lines.
 
@@ -652,3 +653,92 @@ class TestTarConcentrationPaths:
         result_g = svc.tar_concentration(1000.0, "mg/Nm3", "g/Nm3")
         result_mg = svc.tar_concentration(result_g, "g/Nm3", "mg/Nm3")
         assert abs(result_mg - 1000.0) < 1e-6
+
+
+class TestServiceEdgeCoverage:
+    def test_constructor_rejects_none_validation_flag(self):
+        with pytest.raises(ValueError, match="enable_validation"):
+            UnitConversionService(enable_validation=None)
+
+    def test_convert_rejects_none_value(self, svc):
+        with pytest.raises(ValueError, match="value must be provided"):
+            svc.convert(None, "m", "cm")
+
+    def test_resolve_categories_reports_unknown_normalized_units(self, svc):
+        with pytest.raises(UnknownUnitError, match="Unknown unit: mystery"):
+            svc._resolve_categories("mystery", "cm", "mystery", "cm")
+        with pytest.raises(UnknownUnitError, match="Unknown unit: mystery"):
+            svc._resolve_categories("m", "mystery", "m", "mystery")
+
+    def test_collect_conversion_warnings_respects_disabled_validation(self):
+        svc = UnitConversionService(enable_validation=False)
+
+        warnings = svc._collect_conversion_warnings(-1.0, "pressure", "Pa")
+
+        assert warnings == []
+
+    def test_collect_conversion_warnings_rejects_none_value(self, svc):
+        with pytest.raises(ValueError, match="value must be provided"):
+            svc._collect_conversion_warnings(None, "length", "m")
+
+    def test_dispatch_rejects_unknown_category(self, svc):
+        with pytest.raises(UnknownUnitError, match="Unsupported unit category"):
+            svc._dispatch_conversion(1.0, "custom", "custom", "unsupported", {})
+
+    def test_normalize_rejects_none_unit(self, svc):
+        with pytest.raises(ValueError, match="unit must be provided"):
+            svc._normalize_unit(None)
+
+    def test_normalize_uses_stripped_cache(self, svc):
+        svc._normalized_cache["cm"] = "cm"
+
+        assert svc._normalize_unit(" cm ") == "cm"
+
+    def test_normalize_static_alias_populates_original_cache_key(self, svc):
+        assert svc._normalize_unit("meters") == "m"
+        assert svc._normalized_cache["meters"] == "m"
+
+    def test_normalize_dynamic_canonical_and_alias_paths(self, svc):
+        svc.user_defined_aliases["league"] = ["distance league"]
+
+        assert svc._normalize_unit("league") == "league"
+        assert svc._normalize_unit("distance league") == "league"
+
+    def test_get_category_rejects_none_unit(self, svc):
+        with pytest.raises(ValueError, match="unit must be provided"):
+            svc._get_category(None)
+
+    def test_validate_value_rejects_none_value(self, svc):
+        with pytest.raises(ValueError, match="value must be provided"):
+            svc._validate_value(None, "length")
+
+    def test_validate_value_ignores_bad_temperature_unit(self, svc):
+        assert svc._validate_value(-1000.0, "temperature", "not-temperature") == []
+
+    def test_user_unit_warnings_rejects_none_from_unit(self, svc):
+        with pytest.raises(ValueError, match="from_unit must be provided"):
+            svc._user_unit_warnings("length", "length", None, "m")
+
+    def test_get_compatible_units_input_guards_and_unknowns(self, svc):
+        with pytest.raises(ValueError, match="unit must be provided"):
+            svc.get_compatible_units(None)
+        assert svc.get_compatible_units("") == []
+        assert svc.get_compatible_units("not-a-unit") == []
+
+    def test_get_compatible_units_returns_same_category_units(self, svc):
+        compatible = svc.get_compatible_units("meters")
+
+        assert "m" in compatible
+        assert "cm" in compatible
+
+    def test_global_service_singleton_and_convert_helper(self):
+        from sidekick.calculators.conversion import service as service_module
+
+        service_module._ServiceHolder.instance = None
+        first = service_module.get_service()
+        second = service_module.get_service()
+
+        assert first is second
+        assert service_module.convert(1.0, "m", "cm") == pytest.approx(100.0)
+        with pytest.raises(ValueError, match="value must be provided"):
+            service_module.convert(None, "m", "cm")
