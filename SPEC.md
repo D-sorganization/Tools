@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.303                                    |
+| **Spec Version**        | 1.1.304                                    |
 | **Last Spec Update**    | 2026-06-03                                 |
 
 ## 2. Purpose & Mission
@@ -636,6 +636,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-03 | 1.1.305 | test(model_generation): add focused coverage for `model_generation.library._rate_limiter`, including rate-limit header parsing, success logging, request header propagation, capped exponential backoff, terminal 429 handling, non-429 HTTP passthrough, and retried network failures; raises the focused module coverage from 53.12% toward the phase-2 model-generation coverage target without changing production behavior. |
 | 2026-06-03 | 1.1.304 | test(financial-calculator): add focused PyQt6 contract coverage, split across line-budgeted GUI test modules, for financial calculator import isolation, theme-manager test isolation, successful engine result/projection mapping, notes-dock toggling, summary label rendering, projection table rendering, and calculate-button refresh behavior, raising `src/financial_calculator/python/financial_calculator/ui/pyqt6/main_window.py` focused coverage to 95.28% and the focused `src/financial_calculator` package coverage to 90.53% without changing production behavior. |
 | 2026-06-03 | 1.1.303 | test(codemap): add focused headless coverage for the `codemap-mcp` server entrypoint, including `CODEMAP_REPO_ROOT` discovery, missing optional `mcp` dependency handling, server run dispatch, and fake FastMCP tool delegation for search, symbol lookup, callers, imports, and repo summary; raises `src/shared/python/codemap/mcp_server.py` focused coverage from 0.00% to 100.00% and `src/shared/python/codemap` focused package coverage from 94.39% to 97.72% without changing production behavior. |
 | 2026-06-03 | 1.1.302 | fix(ai-skills): run shared AI skills runner coroutine tests through explicit `asyncio.run(...)` calls and handle Python 3.10 `asyncio.TimeoutError` in the runner timeout boundary so timeout failures are consistently classified as structured `timeout` audit events. |
