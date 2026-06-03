@@ -46,6 +46,12 @@ from models import (
 )
 from plant_model import TagDefinition
 from plc_factory import PLCFactory
+from power_supply import (
+    PowerSupplyConfig,
+    PowerSupplyController,
+    PowerSupplyMode,
+    PowerSupplyStatus,
+)
 from pydantic import BaseModel
 from pydantic import Field as PydanticField
 from simulator_client import SimulatedPLCClient
@@ -64,6 +70,12 @@ logger = logging.getLogger("dcs_backend.main")
 plc_client = PLCFactory.create_client()
 modbus_manager = plc_client  # Compatibility alias
 backup_simulator = SimulatedPLCClient()
+
+# Power-supply controller: state machine + safety interlocks for AO1-driven
+# current command, V/I feedback on AI1/AI2, HH-temp on TC1. The polling loop
+# feeds it measured values each tick and applies the resulting command to the
+# PLC (via the PID-0 setpoint pass-through that drives AO1).
+power_supply_controller = PowerSupplyController(PowerSupplyConfig())
 
 
 # WebSocket Connection Manager
@@ -224,6 +236,60 @@ async def modbus_connect_background() -> None:
         await asyncio.sleep(5.0)
 
 
+async def _write_pid_setpoint(pid_index: int, value: float) -> bool:
+    """Write a PID setpoint as float to its dedicated register.
+
+    PID i has its setpoint at register 200 + i*10 + 2 (low, high). With
+    the existing pass-through configuration (PID 0 -> TAG_10 -> AO1,
+    PID 1 -> TAG_11 -> AO2, kp=1, ki=kd=0), changing the setpoint changes
+    the commanded analog output value in percent.
+    """
+    if not plc_client.connected:
+        return False
+    if pid_index < 0 or pid_index >= 4:
+        logger.warning("PID index %d out of range", pid_index)
+        return False
+    import struct as _struct
+
+    lo, hi = _struct.unpack("<HH", _struct.pack("<f", float(value)))
+    base = 200 + pid_index * 10
+    try:
+        async with plc_client.lock:
+            resp = await plc_client._get_client().write_registers(
+                address=base + 2, values=[lo, hi]
+            )
+        if resp.isError():
+            logger.error(
+                "write_pid_setpoint(%d, %f) failed: %s", pid_index, value, resp
+            )
+            return False
+        return True
+    except Exception as e:
+        logger.error("write_pid_setpoint(%d, %f) exception: %s", pid_index, value, e)
+        return False
+
+
+def _power_supply_inputs_from_tags(
+    tags: dict[str, float] | None,
+) -> tuple[float, float, float]:
+    """Extract (measured_current_a, measured_voltage_v, measured_temp_c) from
+    a tag snapshot, using the controller's configured tag map plus the
+    PS-supply scaling (full-scale current/voltage are in *engineering* units,
+    while AI tags are 0..100 % of the 4-20 mA span).
+
+    Returns zeros when tags are unavailable (safe behavior).
+    """
+    if not tags:
+        return 0.0, 0.0, 0.0
+    cfg = power_supply_controller.config
+    i_pct = float(tags.get(cfg.current_feedback_tag, 0.0))
+    v_pct = float(tags.get(cfg.voltage_feedback_tag, 0.0))
+    temp_c = float(tags.get(cfg.temp_tag, 0.0))
+    measured_current_a = i_pct * cfg.current_full_scale_a / 100.0
+    measured_voltage_v = v_pct * cfg.voltage_full_scale_v / 100.0
+    return measured_current_a, measured_voltage_v, temp_c
+
+
 async def poll_plc_loop() -> None:
     """Background loop polling the PLC tags at 10Hz.
 
@@ -248,12 +314,25 @@ async def poll_plc_loop() -> None:
                 if tags is not None
                 else []
             )
+            # Power-supply controller tick: feed in measured V/I/T (already
+            # scaled from 0..100 % to engineering units via configured
+            # full-scale), then push the resulting AO command to PID 0 setpoint.
+            ps_i_a, ps_v_v, ps_t_c = _power_supply_inputs_from_tags(tags)
+            ps_command_percent = power_supply_controller.tick(
+                measured_current_a=ps_i_a,
+                measured_voltage_v=ps_v_v,
+                measured_temp_c=ps_t_c,
+            )
+            await _write_pid_setpoint(0, ps_command_percent)
+            ps_status = power_supply_controller.status()
+
             payload = {
                 "tags": tag_list,
                 "tags_dict": tags if tags is not None else {},
                 "alicats": alicat_manager.get_devices_data(),
                 "active_alarms": active_alarms,
                 "e_stop_active": e_stop_active,
+                "power_supply": ps_status.model_dump(),
             }
             await ws_manager.broadcast(payload)
             if tags is not None:
@@ -1096,6 +1175,97 @@ async def stream_websocket(websocket: WebSocket) -> None:
     except Exception as e:
         logger.error(f"WebSocket connection exception: {e}")
         ws_manager.disconnect(websocket)
+
+
+# ---------------------------------------------------------------------------
+# Power-supply control endpoints
+# ---------------------------------------------------------------------------
+
+
+class PowerSupplySetpointRequest(BaseModel):
+    """Operator-facing setpoint command.
+
+    Use mode='current' with value_a, or mode='power' with value_w. Server
+    will clamp out-of-range setpoints and return the actual applied value.
+    """
+
+    mode: PowerSupplyMode
+    value_a: float | None = None
+    value_w: float | None = None
+
+
+class PowerSupplyPermissiveRequest(BaseModel):
+    enabled: bool
+
+
+@app.get("/api/power_supply/config", response_model=PowerSupplyConfig)
+async def get_power_supply_config() -> PowerSupplyConfig:
+    """Return the operator-configurable parameters currently in use."""
+    return power_supply_controller.config
+
+
+@app.put("/api/power_supply/config", response_model=PowerSupplyConfig)
+async def update_power_supply_config(
+    new_config: PowerSupplyConfig,
+) -> PowerSupplyConfig:
+    """Replace the operator-configurable parameters.
+
+    Pydantic validates field constraints and the cross-field invariants at
+    parse-time, so any 4xx error here is caused by a bad payload from the UI.
+    """
+    power_supply_controller.update_config(new_config)
+    return power_supply_controller.config
+
+
+@app.get("/api/power_supply/status", response_model=PowerSupplyStatus)
+async def get_power_supply_status() -> PowerSupplyStatus:
+    """Snapshot of controller state, measured values, and active trips."""
+    return power_supply_controller.status()
+
+
+@app.post("/api/power_supply/setpoint")
+async def apply_power_supply_setpoint(
+    req: PowerSupplySetpointRequest,
+) -> dict[str, Any]:
+    """Apply a current or power setpoint. Returns the clamped value used."""
+    if req.mode == PowerSupplyMode.CURRENT:
+        if req.value_a is None:
+            raise HTTPException(
+                status_code=400,
+                detail="value_a is required when mode='current'",
+            )
+        try:
+            applied = power_supply_controller.set_current_setpoint(req.value_a)
+        except (TypeError, ValueError) as e:
+            raise HTTPException(status_code=400, detail=str(e)) from e
+        return {"mode": "current", "applied_a": applied}
+
+    if req.value_w is None:
+        raise HTTPException(
+            status_code=400,
+            detail="value_w is required when mode='power'",
+        )
+    try:
+        achievable = power_supply_controller.set_power_setpoint(req.value_w)
+    except (TypeError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    return {"mode": "power", "achievable_w": achievable}
+
+
+@app.post("/api/power_supply/permissive")
+async def set_power_supply_permissive(
+    req: PowerSupplyPermissiveRequest,
+) -> PowerSupplyStatus:
+    """Enable/disable permissive. Disabling clears setpoint and returns to IDLE."""
+    power_supply_controller.set_permissive(req.enabled)
+    return power_supply_controller.status()
+
+
+@app.post("/api/power_supply/acknowledge_trip")
+async def acknowledge_power_supply_trip() -> PowerSupplyStatus:
+    """Clear latched trips and return to ARMED (or IDLE if permissive off)."""
+    power_supply_controller.acknowledge_trip()
+    return power_supply_controller.status()
 
 
 @app.post("/api/project/import")

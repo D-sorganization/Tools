@@ -8,6 +8,7 @@ import { EventLogView } from "./components/EventLogView";
 import { ProjectImporter } from "./components/ProjectImporter";
 import { LadderExplorer } from "./components/LadderExplorer";
 import { PlantHierarchy } from "./components/PlantHierarchy";
+import { PowerSupplyControl, type PowerSupplyStatus } from "./components/PowerSupplyControl";
 import {
   Activity,
   Sliders,
@@ -132,6 +133,7 @@ export const App: React.FC = () => {
     events: boolean;
     ladder: boolean;
     hierarchy: boolean;
+    powerSupply: boolean;
   }>({
     trends: true,
     controllers: true,
@@ -140,7 +142,11 @@ export const App: React.FC = () => {
     events: true,
     ladder: true,
     hierarchy: true,
+    powerSupply: true,
   });
+
+  // Power-supply controller live status (extracted from /api/stream).
+  const [powerSupplyStatus, setPowerSupplyStatus] = useState<PowerSupplyStatus | undefined>(undefined);
 
   // PID Tuning State
   const [selectedTuningLoop, setSelectedTuningLoop] = useState<number>(0);
@@ -692,6 +698,9 @@ export const App: React.FC = () => {
             if (typeof data.e_stop_active === "boolean") {
               setEStopActive(data.e_stop_active);
             }
+            if (data.power_supply && typeof data.power_supply === "object") {
+              setPowerSupplyStatus(data.power_supply as PowerSupplyStatus);
+            }
           } else {
             // Fallback for simple legacy tag arrays
             const rawValues = data;
@@ -1017,7 +1026,31 @@ export const App: React.FC = () => {
                 Plant Hierarchy
               </button>
             )}
+            {visibleTabs.powerSupply && (
+              <button
+                type="button"
+                className={`tab-btn ${activeTab === "powerSupply" ? "active" : ""}`}
+                onClick={() => setActiveTab("powerSupply")}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: activeTab === "powerSupply" ? "var(--accent-purple, #a78bfa)" : "var(--text-secondary)",
+                  padding: "0.5rem 1rem",
+                  fontSize: "0.85rem",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  borderBottom: activeTab === "powerSupply" ? "2px solid var(--accent-purple, #a78bfa)" : "2px solid transparent",
+                  transition: "all var(--transition-fast)",
+                }}
+              >
+                Power Supply
+              </button>
+            )}
           </div>
+
+          {activeTab === "powerSupply" && visibleTabs.powerSupply && (
+            <PowerSupplyControl liveStatus={powerSupplyStatus} />
+          )}
 
           {/* Render Tab Contents */}
           {activeTab === "trends" && visibleTabs.trends && (
