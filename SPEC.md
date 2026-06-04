@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.312                                    |
+| **Spec Version**        | 1.1.313                                    |
 | **Last Spec Update**    | 2026-06-03                                 |
 
 ## 2. Purpose & Mission
@@ -641,6 +641,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-03 | 1.1.313 | test(deprecation): add focused unit coverage for shared deprecation helpers, including decorator configuration validation, metadata preservation, warning text variants, method-qualified warnings, and wrapped callable result propagation, raising `src/shared/python/deprecation.py` focused coverage from 0.00% to above 90% without changing production behavior. |
 | 2026-06-03 | 1.1.312 | test(logging): add focused unit coverage for shared logging helpers, including package exports, sensitive-value redaction, stream/file logging setup, quiet-library defaults, file and rotating handlers, deterministic seeding, and execution-time telemetry, raising `src/shared/python/logging_pkg` focused coverage from 0.00% to above 90% without changing production behavior. |
 | 2026-06-03 | 1.1.311 | test(config): add focused unit coverage for shared environment configuration helpers, including package exports, missing/default/required reads, whitespace handling, boolean parsing, integer/float parsing, bounds errors, and structured `EnvironmentError` details, raising `src/shared/python/config` focused coverage from 0.00% to above 90% without changing production behavior. |
 | 2026-06-03 | 1.1.310 | test(chat-export): add focused pure-Python coverage for shared chat export contracts, scanner-safe secret redaction fixtures, markdown/text/html file exporters, and injected clipboard copy modes, raising `src/shared/python/chat/export` focused coverage from 0.00% to 92.79% without changing production behavior. |
