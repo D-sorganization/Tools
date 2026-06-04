@@ -5,7 +5,7 @@ from __future__ import annotations
 import enum
 import importlib
 import sys
-from datetime import UTC
+from datetime import timezone
 from typing import Any, cast
 
 import pytest
@@ -14,16 +14,18 @@ from src.shared.python import compatibility
 
 pytestmark = pytest.mark.unit
 
+TIMEZONE_UTC = timezone.utc  # noqa: UP017 - datetime.UTC is unavailable on Python 3.10.
+
 
 class NativeLabel(compatibility.StrEnum):
     ALPHA = "alpha"
 
 
 def test_native_python_aliases_use_standard_library_types() -> None:
-    assert compatibility.UTC is UTC
+    assert compatibility.UTC is TIMEZONE_UTC
     assert compatibility.StrEnum is enum.StrEnum
     assert str(NativeLabel.ALPHA) == "alpha"
-    assert NativeLabel.ALPHA.value == "alpha"
+    assert cast(Any, NativeLabel.ALPHA).value == "alpha"
 
 
 def test_python_310_fallback_exports_timezone_utc_and_str_enum() -> None:
@@ -35,7 +37,7 @@ def test_python_310_fallback_exports_timezone_utc_and_str_enum() -> None:
 
             fallback_label = fallback_str_enum("FallbackLabel", {"BETA": "beta"})
 
-            assert fallback_module.UTC is UTC
+            assert fallback_module.UTC is TIMEZONE_UTC
             assert fallback_str_enum is not enum.StrEnum
             assert issubclass(fallback_str_enum, str)
             assert issubclass(fallback_str_enum, enum.Enum)
