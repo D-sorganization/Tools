@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.316                                    |
+| **Spec Version**        | 1.1.317                                    |
 | **Last Spec Update**    | 2026-06-04                                 |
 
 ## 2. Purpose & Mission
@@ -641,6 +641,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-04 | 1.1.317 | test(gui-launcher): add focused unit coverage for the shared GUI registry, including singleton access, registration validation, lookup/listing/category behavior, helper registration, GUI_INFO conversion, auto-discovery of registration modules, missing paths, import-error handling, and empty legacy modules, raising `src/shared/python/gui_launcher/registry.py` focused coverage from 0.00% to 97.96% without changing production behavior. |
 | 2026-06-04 | 1.1.316 | test(gui-launcher): add focused unit coverage for the shared GUI manifest loader, including bundled manifest loading, custom manifest parsing, debug logging, missing files, malformed YAML, missing `tools` mappings, non-sequence `tools` values, and empty manifests, raising `src/shared/python/gui_launcher/manifest_loader.py` focused coverage from 0.00% to 100.00% without changing production behavior. |
 | 2026-06-04 | 1.1.315 | fix(compatibility-tests): keep shared Python compatibility coverage importable on Python 3.10 by asserting the UTC fallback through `datetime.timezone.utc`, avoiding Python 3.11-only `enum.StrEnum` references, and preserving Ruff and mypy cleanliness. |
 | 2026-06-03 | 1.1.314 | test(compatibility): add focused unit coverage for shared Python compatibility helpers, including Python 3.11+ standard-library alias exports and isolated Python 3.10 fallback behavior for UTC and StrEnum compatibility, raising `src/shared/python/compatibility.py` focused coverage from 0.00% to 100.00% without changing production behavior. |
