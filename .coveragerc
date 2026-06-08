@@ -50,8 +50,11 @@ exclude_lines =
     # Don't complain about script files with if __name__ == __main__
     if type\(self\) is not type\(obj\):
 
-# Minimum coverage threshold for PR gate (can be overridden by policy)
-fail_under = 15
+# Minimum coverage threshold for PR gate (can be overridden by policy).
+# Ratcheted 15 -> 20 after adding meaningful pure-logic tests for the
+# model_generation URDF/inertia/validation modules. Kept below measured
+# coverage to preserve a safety margin for environment-dependent runs.
+fail_under = 20
 
 [html]
 directory = htmlcov

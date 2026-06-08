@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.318                                    |
-| **Last Spec Update**    | 2026-06-04                                 |
+| **Spec Version**        | 1.1.319                                    |
+| **Last Spec Update**    | 2026-06-08                                 |
 
 ## 2. Purpose & Mission
 
@@ -443,15 +443,16 @@ passes fail early in CI.
 
 ### Coverage Requirements
 
-| Scope                 | Minimum                              | Current                 | Enforced By                             |
-| --------------------- | ------------------------------------ | ----------------------- | --------------------------------------- |
-| Overall               | 60% target, current-baseline ratchet | 24.48% baseline         | CI (`scripts/check_coverage_policy.py`) |
-| Core tools            | 75%                                  | ~81%                    | CI                                      |
-| Plugin system         | 80%                                  | ~85%                    | CI                                      |
-| Codemap package       | 90%                                  | 97.72% focused coverage | CI (`scripts/check_coverage_policy.py`) |
-| File watcher fallback | 95%                                  | 99.46% focused coverage | CI (`scripts/check_coverage_policy.py`) |
-| Upstream drift shim   | 100%                                 | 100% focused coverage   | CI (`scripts/check_coverage_policy.py`) |
-| Folder packer ops     | 90%                                  | 92.95% focused coverage | Focused pytest coverage                 |
+| Scope                  | Minimum                              | Current                                                                         | Enforced By                             |
+| ---------------------- | ------------------------------------ | ------------------------------------------------------------------------------- | --------------------------------------- |
+| Overall                | 60% target, current-baseline ratchet | 24.48% baseline                                                                 | CI (`scripts/check_coverage_policy.py`) |
+| Core tools             | 75%                                  | ~81%                                                                            | CI                                      |
+| Plugin system          | 80%                                  | ~85%                                                                            | CI                                      |
+| Codemap package        | 90%                                  | 97.72% focused coverage                                                         | CI (`scripts/check_coverage_policy.py`) |
+| File watcher fallback  | 95%                                  | 99.46% focused coverage                                                         | CI (`scripts/check_coverage_policy.py`) |
+| Upstream drift shim    | 100%                                 | 100% focused coverage                                                           | CI (`scripts/check_coverage_policy.py`) |
+| Folder packer ops      | 90%                                  | 92.95% focused coverage                                                         | Focused pytest coverage                 |
+| Model-gen URDF/inertia | 80%                                  | primitives 91%, spatial 100%, urdf_parser 85%, format_utils 75%, validation 93% | Focused pytest coverage                 |
 
 ### Required Test Scenarios
 
