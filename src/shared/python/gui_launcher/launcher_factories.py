@@ -44,7 +44,7 @@ def launch_tool_by_name(tool_name: str) -> int:
         logger.info("Tool '%s' has no PyQt6 configuration.", tool_name)
         return 1
 
-    return launch_pyqt6_app(config)
+    return int(launch_pyqt6_app(config))
 
 
 def make_launcher(gui_info_module: str) -> int:
@@ -99,4 +99,4 @@ def make_pyqt6_launcher(gui_info_module: str) -> int:
         logger.error("Module %r does not define a GUI_INFO dict", gui_info_module)
         return 1
 
-    return launch_from_gui_info(gui_info)
+    return int(launch_from_gui_info(gui_info))
