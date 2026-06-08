@@ -37,7 +37,9 @@ permissions:
   issues: read
 
 concurrency:
-  group: anti-phantom-${{ github.event.pull_request.number }}
+  # Separate groups per event type so unrelated label churn (pull_request_target
+  # labeled/unlabeled) cannot cancel the authoritative pull_request guard run.
+  group: anti-phantom-${{ github.event.pull_request.number }}-${{ github.event_name }}
   cancel-in-progress: true
 
 jobs:
@@ -45,7 +47,13 @@ jobs:
     timeout-minutes: 30
     name: phantom-guard
     runs-on: d-sorg-fleet
-    if: github.event.pull_request.base.ref == 'main'
+    # Run on every pull_request event. For label events (pull_request_target) only
+    # run when the override label itself is toggled — otherwise unrelated label churn
+    # spawns guard runs that cancel each other and clobber the real passing status.
+    if: >-
+      github.event.pull_request.base.ref == 'main' &&
+      (github.event_name == 'pull_request' ||
+       github.event.label.name == 'phantom-guard-override')
     steps:
       - name: Check out PR head with full history
         uses: actions/checkout@v6
