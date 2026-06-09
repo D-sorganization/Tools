@@ -92,7 +92,7 @@
             "name": "Movement Optimizer",
             "path": "src/optimizer_gui/launch_pyqt6.py",
             "type": "python",
-            "desc": "Train and compare Adam, swingset, and chain-dynamics motion policies"
+            "desc": "Optimize motion policies with Adam, swingset, and chain dynamics models"
         }
     ],
     "Process Simulation": [
