@@ -7,12 +7,39 @@ with better pattern matching and import management.
 """
 
 import logging
+import os
 import re
 import sys
 from pathlib import Path
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
+
+
+def _resolve_repo_root() -> Path:
+    """Locate the Tools repo root portably.
+
+    Resolution order:
+
+    1. The ``TOOLS_REPO_PATH`` environment variable, when set.
+    2. The repo this script lives in (``scripts/`` -> repo root).
+
+    Exits non-zero with a clear message when the directory cannot be found, so
+    a headless caller never mistakes a missing root for a silent no-op.
+    """
+    env_root = os.environ.get("TOOLS_REPO_PATH")
+    candidate = (
+        Path(env_root).expanduser() if env_root else Path(__file__).resolve().parents[1]
+    )
+    if not candidate.is_dir():
+        logger.error(
+            "Could not determine the Tools repo root. Set TOOLS_REPO_PATH to the "
+            "repository checkout (got: %s).",
+            candidate,
+        )
+        sys.exit(1)
+    return candidate
+
 
 # Track total fixes
 TOTAL_FIXES = 0
@@ -411,7 +438,7 @@ def find_python_files(root: Path) -> list[Path]:
 
 def main() -> int:
     """Main entry point."""
-    repo_root = Path("/home/dieterolson/Linux_Tools/Tools")
+    repo_root = _resolve_repo_root()
 
     # Find Python files
     logger.info("Finding Python files...")

@@ -61,13 +61,14 @@ logger = get_logger(__name__)
 # chat doesn't report a misleading timeout on the very first message.
 DEFAULT_CODEX_CLI_TIMEOUT = 180.0  # [s]
 
-# Known install locations probed when ``codex`` is not on PATH. Windows-npm
-# global-bin first because that's the npm install target on the host that
-# typically runs the launcher.
+# Known install locations probed when ``codex`` is not on PATH. Built from the
+# current user's environment and home directory (no developer-specific
+# usernames). Windows-npm global-bin first because that's the npm install
+# target on the host that typically runs the launcher.
 _FALLBACK_PATHS = (
     r"%APPDATA%\npm\codex.cmd",
     r"%APPDATA%\npm\codex",
-    "/home/dieterolson/.npm-global/bin/codex",
+    "~/.npm-global/bin/codex",
     "/usr/local/bin/codex",
 )
 
@@ -102,7 +103,7 @@ def _resolve_binary(explicit: str | None = None) -> str | None:
     if found:
         return found
     for candidate in _FALLBACK_PATHS:
-        expanded = os.path.expandvars(candidate)
+        expanded = os.path.expanduser(os.path.expandvars(candidate))
         if Path(expanded).exists():
             return expanded
     return None

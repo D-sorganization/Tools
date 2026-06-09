@@ -59,11 +59,13 @@ logger = get_logger(__name__)
 # but the first call after install can be slow because the runtime warms up.
 DEFAULT_GEMINI_CLI_TIMEOUT = 120.0  # [s]
 
-# Known install locations probed when ``gemini`` is not on PATH.
+# Known install locations probed when ``gemini`` is not on PATH. Built from the
+# current user's environment and home directory — no developer-specific
+# usernames, so they resolve on any host.
 _FALLBACK_PATHS = (
     r"%APPDATA%\npm\gemini.cmd",
     r"%APPDATA%\npm\gemini",
-    "/home/dieterolson/.npm-global/bin/gemini",
+    "~/.npm-global/bin/gemini",
     "/usr/local/bin/gemini",
 )
 
@@ -97,7 +99,7 @@ def _resolve_binary(explicit: str | None = None) -> str | None:
     if found:
         return found
     for candidate in _FALLBACK_PATHS:
-        expanded = os.path.expandvars(candidate)
+        expanded = os.path.expanduser(os.path.expandvars(candidate))
         if Path(expanded).exists():
             return expanded
     return None

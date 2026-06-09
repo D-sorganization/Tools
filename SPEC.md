@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.328                                    |
+| **Spec Version**        | 1.1.329                                    |
 | **Last Spec Update**    | 2026-06-09                                 |
 
 ## 2. Purpose & Mission
@@ -645,6 +645,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-09 | 1.1.329 | fix(portability): remove developer-specific hardcoded absolute paths (#3278) — AI CLI adapters (`claude_code`, `gemini_cli`, `codex_cli`) now build PATH fallbacks from the current user's environment and home directory (no literal usernames) and `expanduser` as well as `expandvars`; fleet scripts (`fleet_autofix_patcher.py`, `fleet_safety_patcher.py`) derive `REPOS_ROOT` from the `REPOS_ROOT` env var or checkout location and `enhanced_batch_fix_dry.py` derives its root from `TOOLS_REPO_PATH`, each exiting non-zero when the root is missing; added `tests/scripts/test_no_hardcoded_user_paths.py` guarding against `C:\Users\<name>` / `/home/<name>/` literals. |
 | 2026-06-09 | 1.1.328 | fix(ci): satisfy the changed-file quality gate by explicitly annotating access-policy registry results under skipped-import mypy, add Python 3.10 `tomli` support for metadata contract tests, assert calc-backend pressure-drop values through the standardized response `data` payload, and keep Sidekick standard responses importable from the repo package path without top-level path shims. |
 | 2026-06-09 | 1.1.327 | fix(compatibility-ci): route remaining Python 3.10-exercised `StrEnum` imports through compatibility shims, make those shims type-check as native `StrEnum` under mypy while retaining Python 3.10 fallbacks, keep the integrations dashboard empty-state property explicitly typed as `bool`, and pass `.secrets.baseline` explicitly to the detect-secrets audit test so the 3.10 CI matrix validates the canonical baseline instead of failing on CLI argument parsing. |
 | 2026-06-09 | 1.1.326 | ci(coverage): keep total coverage floors as a full-suite ratchet while changed-file scoped PR runs enforce only the tracked coverage-policy packages touched by the diff; added regression coverage for the scoped/full-suite split. |

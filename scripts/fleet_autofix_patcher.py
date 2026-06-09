@@ -1,13 +1,41 @@
 import logging
 import os
 import subprocess
+import sys
 from pathlib import Path
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
-REPOS_ROOT = Path(r"C:\Users\diete\Repositories")
+
+def _resolve_repos_root() -> Path:
+    """Locate the directory that contains the sibling fleet repos.
+
+    Resolution order, portable across machines and CI runners:
+
+    1. The ``REPOS_ROOT`` environment variable, when set.
+    2. The parent of this repo's checkout (``scripts/`` -> repo -> repos root),
+       which holds the sibling repos in the standard fleet layout.
+
+    Exits non-zero with a clear message when the directory cannot be found, so
+    a headless parent process never mistakes a missing root for a silent no-op.
+    """
+    env_root = os.environ.get("REPOS_ROOT")
+    candidate = (
+        Path(env_root).expanduser() if env_root else Path(__file__).resolve().parents[2]
+    )
+    if not candidate.is_dir():
+        logger.error(
+            "Could not determine the repos root. Set the REPOS_ROOT environment "
+            "variable to the directory containing the fleet repos (got: %s).",
+            candidate,
+        )
+        sys.exit(1)
+    return candidate
+
+
+REPOS_ROOT = _resolve_repos_root()
 TARGET_REPOS = [
     "AffineDrift",
     "Games",
