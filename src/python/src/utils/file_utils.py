@@ -7,10 +7,47 @@ the repository, following DRY principles.
 
 import json
 import logging
+import os
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
 logger = logging.getLogger(__name__)
+
+
+def atomic_write_text(
+    path: Path,
+    text: str,
+    *,
+    encoding: str = "utf-8",
+) -> None:
+    """Write *text* to *path* atomically.
+
+    Writes to a temporary sibling file in the same directory, flushes and
+    ``fsync``s it, then ``os.replace``s it onto the destination. ``os.replace``
+    is atomic on POSIX and Windows, so a crash / disk-full / interruption mid
+    write leaves the previous file intact rather than a truncated/half-written
+    destination.
+
+    Precondition: ``path``'s parent directory exists.
+    Postcondition: on any failure the destination is unchanged; on success the
+    destination contains exactly *text*.
+    """
+    tmp = path.with_name(f".{path.name}.tmp")
+    try:
+        with open(tmp, "w", encoding=encoding) as handle:
+            handle.write(text)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(tmp, path)
+    except BaseException:
+        # Clean up the temp file so a failed write does not litter the dir;
+        # the original destination is never touched until os.replace succeeds.
+        try:
+            tmp.unlink()
+        except OSError:
+            pass
+        raise
 
 
 def safe_read_json(file_path: Path | str, default: Any = None) -> Any:
@@ -47,14 +84,21 @@ def safe_write_json(
     data: Any,
     indent: int = 2,
     create_parents: bool = True,
+    default: Callable[[Any], Any] | None = None,
 ) -> bool:
-    """Safely write data to a JSON file with error handling.
+    """Safely and atomically write data to a JSON file with error handling.
+
+    The write is atomic (temp file + ``os.replace``), so a crash / disk-full /
+    interruption mid-write leaves the previous file intact rather than a
+    truncated, unparseable destination.
 
     Args:
         file_path: Path to JSON file
         data: Data to write (must be JSON serializable)
         indent: JSON indentation level
         create_parents: Whether to create parent directories if needed
+        default: Optional ``json.dump`` ``default=`` serializer for
+            non-natively-serializable objects.
 
     Returns:
         True if write succeeded, False otherwise
@@ -67,8 +111,8 @@ def safe_write_json(
         if create_parents:
             path.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=indent, ensure_ascii=False)
+        text = json.dumps(data, indent=indent, ensure_ascii=False, default=default)
+        atomic_write_text(path, text)
 
         logger.debug(f"Successfully wrote JSON to {path}")
         return True

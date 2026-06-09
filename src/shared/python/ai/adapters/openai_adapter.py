@@ -21,7 +21,7 @@ Example:
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any
 
 from src.shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
 from src.shared.python.ai.config import (
@@ -483,14 +483,16 @@ class OpenAIAdapter(BaseAgentAdapter):
             "4. Interpret results with scientific rigor"
         )
 
-        return cast(
-            str,
-            build_system_prompt(
-                app_context=self._app_context,
-                expertise_level=expertise,
-                extra_instructions="\n\n".join(extra_parts),
-            ),
+        # Annotate a local rather than cast(): build_system_prompt is typed
+        # Any under the CI mypy --follow-imports=skip lane, so the annotation
+        # pins the return type there while remaining valid (not a redundant
+        # cast) under the import-following local lane.
+        prompt: str = build_system_prompt(
+            app_context=self._app_context,
+            expertise_level=expertise,
+            extra_instructions="\n\n".join(extra_parts),
         )
+        return prompt
 
     def _parse_response(self, response: Any) -> AgentResponse:
         """Parse OpenAI response into AgentResponse.

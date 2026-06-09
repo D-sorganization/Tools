@@ -274,6 +274,28 @@ Tools/
   script creation, rejects non-directory output paths, and keeps
   `mesh_generator_makehuman.py` as a compatibility shim over the extracted
   `_makehuman_generator.py` implementation.
+- GUI discovery (`gui_launcher.registry.auto_discover_guis`) isolates each
+  `gui_registration.py`: any per-file failure (import error, malformed
+  `GUI_INFO`) is logged and skipped rather than aborting discovery for every
+  tool, and the returned count reflects only successful registrations.
+- Saved-state JSON persistence is atomic. `utils.file_utils.atomic_write_text`
+  (temp file + `fsync` + `os.replace`) backs `safe_write_json`, and
+  `StateManager` routes all state writes through it, so a crash / disk-full
+  mid-write leaves the prior file intact rather than truncated.
+- Sidekick data I/O closes sqlite connections via `contextlib.closing` on both
+  the read and write paths, bounding the connection lifecycle to the call even
+  when the query/`to_sql` raises.
+- The web-app launcher uses a bounded socket readiness probe (no fixed sleep)
+  before opening the browser, and reaps the dev-server child on Ctrl-C
+  (terminate → wait → kill) returning a non-zero exit code so no child outlives
+  the call.
+- The Sidekick calculator plot evaluator routes expressions through the
+  AST-validated `safe_eval` (attribute/dunder traversal rejected at parse time)
+  instead of raw `eval`.
+- AI CLI adapters resolve binaries via `shutil.which` plus home-relative
+  fallbacks (no hardcoded usernames); fleet scripts derive their repo/repos root
+  from `--repos-root` / env / `__file__` and exit non-zero when it cannot be
+  determined (headless-safe).
 
 ## 5. Desired Functionality
 

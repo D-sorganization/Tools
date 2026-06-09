@@ -63,7 +63,7 @@ DEFAULT_GEMINI_CLI_TIMEOUT = 120.0  # [s]
 _FALLBACK_PATHS = (
     r"%APPDATA%\npm\gemini.cmd",
     r"%APPDATA%\npm\gemini",
-    "/home/dieterolson/.npm-global/bin/gemini",
+    "~/.npm-global/bin/gemini",
     "/usr/local/bin/gemini",
 )
 
@@ -97,7 +97,7 @@ def _resolve_binary(explicit: str | None = None) -> str | None:
     if found:
         return found
     for candidate in _FALLBACK_PATHS:
-        expanded = os.path.expandvars(candidate)
+        expanded = os.path.expanduser(os.path.expandvars(candidate))
         if Path(expanded).exists():
             return expanded
     return None

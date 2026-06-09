@@ -21,7 +21,7 @@ Example:
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any
 
 from src.shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
 from src.shared.python.ai.config import (
@@ -502,14 +502,16 @@ class AnthropicAdapter(BaseAgentAdapter):
         # Brand-neutral preamble + capabilities are injected by app_context
         # rather than hardcoded here (issue #3179). Persisted-memory context
         # is appended as extra instructions when present.
-        return cast(
-            str,
-            build_system_prompt(
-                app_context=self._app_context,
-                expertise_level=expertise,
-                extra_instructions=context_instructions or None,
-            ),
+        # Annotate a local rather than cast(): build_system_prompt is typed
+        # Any under the CI mypy --follow-imports=skip lane, so the annotation
+        # pins the return type there while remaining valid (not a redundant
+        # cast) under the import-following local lane.
+        prompt: str = build_system_prompt(
+            app_context=self._app_context,
+            expertise_level=expertise,
+            extra_instructions=context_instructions or None,
         )
+        return prompt
 
     def _parse_response(self, response: Any) -> AgentResponse:
         """Parse Anthropic response into AgentResponse.

@@ -409,9 +409,39 @@ def find_python_files(root: Path) -> list[Path]:
     return files
 
 
+def _resolve_repo_root() -> Path:
+    """Resolve this repository's root portably.
+
+    Resolution order: ``--repo-root`` CLI arg, ``TOOLS_REPO_PATH`` env var,
+    then the repo checkout containing this script (``scripts/`` lives one level
+    under the repo root). Exits non-zero if the resolved directory does not
+    exist, so a headless run fails loudly rather than operating on a missing
+    developer-specific path.
+    """
+    import os
+
+    candidate: Path | None = None
+    argv = sys.argv[1:]
+    if "--repo-root" in argv:
+        idx = argv.index("--repo-root")
+        if idx + 1 < len(argv):
+            candidate = Path(argv[idx + 1])
+    if candidate is None:
+        env = os.environ.get("TOOLS_REPO_PATH")
+        if env:
+            candidate = Path(env)
+    if candidate is None:
+        candidate = Path(__file__).resolve().parents[1]
+    candidate = candidate.expanduser()
+    if not candidate.is_dir():
+        logger.error("Could not resolve a valid repo root (tried: %s)", candidate)
+        sys.exit(1)
+    return candidate
+
+
 def main() -> int:
     """Main entry point."""
-    repo_root = Path("/home/dieterolson/Linux_Tools/Tools")
+    repo_root = _resolve_repo_root()
 
     # Find Python files
     logger.info("Finding Python files...")

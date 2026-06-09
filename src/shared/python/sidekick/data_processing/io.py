@@ -80,11 +80,16 @@ class DataReader:
             )
         if fmt == "sqlite":
             import sqlite3
+            from contextlib import closing
 
-            conn = sqlite3.connect(str(path))
-            df = pd.read_sql_query(kwargs.get("query", "SELECT * FROM data"), conn)
-            conn.close()
-            return df
+            # closing() guarantees the connection is closed even if the query
+            # raises (malformed SQL, missing table, locked/corrupt DB), so the
+            # connection / file descriptor is not leaked. The lifecycle is
+            # bounded to this call.
+            with closing(sqlite3.connect(str(path))) as conn:
+                return pd.read_sql_query(
+                    kwargs.get("query", "SELECT * FROM data"), conn
+                )
 
         raise ValueError(f"Unsupported or undetected format for: {path}")
 
@@ -126,12 +131,18 @@ class DataWriter:
             np.save(str(path), df.values)
         elif fmt == "sqlite":
             import sqlite3
+            from contextlib import closing
 
-            conn = sqlite3.connect(str(path))
-            df.to_sql(
-                kwargs.get("table_name", "data"), conn, if_exists="replace", index=False
-            )
-            conn.close()
+            # closing() guarantees the connection is closed even if to_sql
+            # raises (type-coercion error, locked DB), so no connection / file
+            # descriptor is leaked. The lifecycle is bounded to this call.
+            with closing(sqlite3.connect(str(path))) as conn:
+                df.to_sql(
+                    kwargs.get("table_name", "data"),
+                    conn,
+                    if_exists="replace",
+                    index=False,
+                )
         else:
             raise ValueError(f"Unsupported or undetected format for: {path}")
 

@@ -14,6 +14,8 @@ from typing import Any
 
 from compatibility import StrEnum
 
+from shared.python.safe_eval import safe_eval
+
 from .registry import WorkspaceRegistry
 
 __all__ = [
@@ -230,13 +232,14 @@ def _linspace(x_min: float, x_max: float, points: int) -> list[float]:
 
 
 def _evaluate_expression(expression: str, x_value: float) -> float:
+    # Use the repo's AST-validated safe_eval rather than raw eval(): clearing
+    # __builtins__ does NOT prevent attribute-based sandbox escapes
+    # (e.g. (1.0).__class__.__mro__[1].__subclasses__()), which can execute
+    # arbitrary code as a side effect during evaluation. safe_eval rejects
+    # attribute access / dunder traversal at parse time.
     namespace = {**_SAFE_EXPRESSION_NAMES, "x": x_value}
     try:
-        value = eval(  # nosec B307 - restricted calculator expression namespace
-            expression,
-            {"__builtins__": {}},
-            namespace,
-        )
+        value = safe_eval(expression, namespace)
     except Exception as exc:  # noqa: BLE001 - user-facing expression validation
         raise ValueError(f"Invalid plot expression: {exc}") from exc
     if not _is_scalar_number(value):

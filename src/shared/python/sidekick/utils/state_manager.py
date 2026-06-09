@@ -126,9 +126,13 @@ class StateManager:
             if state_file.exists():
                 self._create_backup(state_file)
 
-            # Save state to file
-            with open(state_file, "w") as f:
-                json.dump(full_state, f, indent=2, default=self._json_serializer)
+            # Save state to file atomically (temp + os.replace) so a crash or
+            # disk-full mid-write never leaves the prior state truncated.
+            if not safe_write_json(
+                state_file, full_state, default=self._json_serializer
+            ):
+                _logger.error("Failed to write state '%s'", state_name)
+                return False
 
             # Invalidate cache since we modified the states directory
             self._invalidate_states_cache()
@@ -288,8 +292,7 @@ class StateManager:
 
                 full_state["metadata"]["protected"] = True
 
-                with open(state_file, "w") as f:
-                    json.dump(full_state, f, indent=2, default=self._json_serializer)
+                safe_write_json(state_file, full_state, default=self._json_serializer)
 
             _logger.info("State '%s' protected from deletion", state_name)
             return True
@@ -314,8 +317,7 @@ class StateManager:
 
                 full_state["metadata"]["protected"] = False
 
-                with open(state_file, "w") as f:
-                    json.dump(full_state, f, indent=2, default=self._json_serializer)
+                safe_write_json(state_file, full_state, default=self._json_serializer)
 
             _logger.info("State '%s' unprotected", state_name)
             return True
