@@ -148,6 +148,11 @@ dev = [
     "pytest-timeout>=2.0.0",
     "pytest-benchmark>=4.0.0",
     "pytest-vcr>=1.0.0",
+    # Property-based testing. Already imported by the test suite (e.g.
+    # tests/shared/python/sidekick/data_processing/test_io.py and the
+    # calc_backend property suite); declared here so the dependency is
+    # explicit rather than implicitly required (#3262, #3263).
+    "hypothesis>=6.0.0",
     "tomli>=2.0.0; python_version < '3.11'",
     "vcrpy>=6.0.0",
     "ruff>=0.1.0",
