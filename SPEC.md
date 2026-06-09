@@ -423,6 +423,9 @@ optional packages without requiring those packages in the base test
 environment. Sidekick Qt dock chrome tests run serially on Windows xdist
 workers and set Qt offscreen mode before importing PyQt6 to avoid GUI worker
 crashes.
+Changed Python test files must contain at least one AST-visible behavioral
+assertion, exception assertion, or unittest/mock-style assertion call unless
+they match the explicit fixture-only assertion allowlist.
 
 ### Test Organization
 
@@ -643,6 +646,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | ---- | ------- | ------- |
 
 | 2026-06-09 | 1.1.323 | fix(ci): avoid detect-secrets false positives from immutable workflow digest pins and workflow-pinning test fixtures without changing the committed secrets baseline. |
+| 2026-06-09 | 1.1.323 | test(tools): add changed-test assertion and changed-Python policy guards for the A-O audit follow-up, blocking assertion-light Python test changes and undocumented changed-file policy regressions with focused tests, allowlists, CI integration, and development notes for issues #3262 and #3263. |
 | 2026-06-09 | 1.1.322 | fix(ci): fold #3255 pinning into the consolidated branch by requiring third-party workflow actions to use immutable 40-character SHAs, allowing first-party `actions/*` and `github/*` tag refs as the explicit trust boundary, blocking `curl|sh` installers and unversioned global npm installs without a baseline, keeping wasm-pack on a pinned release archive with SHA-256 verification, and pinning Jules CLI installs to `@0.1.42`. |
 | 2026-06-09 | 1.1.321 | fix(ci): add a blocking workflow pinning ratchet, replace wasm-pack `curl | sh` installers with a pinned release archive plus SHA-256 verification, add pip retry/timeout settings for CI dependency installs, add a blocking quality-gate verifier for core Ruff/format/mypy PR gates, and split Sidekick data I/O format detection into a dedicated registry module with property/adversarial coverage. |
 | 2026-06-09 | 1.1.320 | fix(policy): remove the broken `dwsim-model` console entry, stop allowing the committed coverage baseline to lower the configured coverage floor, align root package docs with the Python 3.11 metadata floor, constrain Sidekick data I/O advertised formats to implemented handlers with focused round-trip coverage, and require the NPM publish job to use the protected `npm` environment. |
