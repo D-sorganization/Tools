@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.328                                    |
+| **Spec Version**        | 1.1.329                                    |
 | **Last Spec Update**    | 2026-06-09                                 |
 
 ## 2. Purpose & Mission
@@ -242,6 +242,7 @@ Tools/
 | Pressure Drop Calculator | `src/shared/python/upstream_drift_tools/process_calculators/pressure_drop_calculator/` | Facade-driven gas pressure-drop workflows with extracted API, validation, reference, results, and engine-domain helper modules                                                                                                                                                                                                                                                                                                                                                       |
 | Model Generation API     | `src/shared/python/model_generation/api/`                                              | Route facade with framework-specific Flask and FastAPI adapters behind a compatibility shim, plus repository download helpers that require HTTPS downloads and validate archive and mesh paths to prevent traversal                                                                                                                                                                                                                                                                  |
 | Engineering Tools        | `src/tools/`                                                                           | 45+ specialized calculation and processing tools                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Movement Optimizer       | `src/optimizer_gui/`                                                                   | Standalone PyQt6 movement optimizer exposing Adam optimization plus side-view swingset policy training and segmented chain whip-dynamics analysis tabs with adjustable segment lengths, masses, chain counts, and provider metadata for UpstreamDrift launcher tiles                                                                                                                                                                                                                 |
 | Data Processing          | `src/data_processing/`                                                                 | Pipelines, transformers, validators, and facade-based data-processor core modules for exporter, ANOVA, vectorized filter workflows, Butterworth filters with explicit or time-derived sample rates, checked normalize/standardize transforms, operator-whitelisted row filtering, and pickle-safe file I/O defaults                                                                                                                                                                  |
 | Document Processing      | `src/document_processing/`                                                             | PDF extraction, text processing                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | Media Processing         | `src/media_processing/`                                                                | Audio and video utilities                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -490,6 +491,8 @@ passes fail early in CI.
 - [ ] Rust kernel outperforms pure Python equivalent by 10x+
 - [ ] Theme system applies consistently across all GUI tools
 - [ ] Data processing pipeline handles malformed input gracefully
+- [x] Movement Optimizer launches standalone and exposes tested swingset and
+      chain-dynamics tabs with 100% focused model coverage
 
 ## 8. Quality Standards
 
@@ -1086,6 +1089,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.329
+
+- 2026-06-09: feat(movement optimizer) — restore the standalone PyQt6 swingset policy-training and segmented-chain whip-dynamics tabs, mypy-compatible typed model and Qt UI modules, focused model and UI tests, launcher bootstrap repair, and provider metadata so UpstreamDrift can discover the Movement Optimizer tile from remote main.
 
 ### Version 1.1.320
 
