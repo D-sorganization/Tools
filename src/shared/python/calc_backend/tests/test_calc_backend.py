@@ -17,10 +17,12 @@ Covers:
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 from unittest.mock import MagicMock, patch
 
 import pytest
+from fastapi import FastAPI
+from fastapi.routing import APIRoute
 from fastapi.testclient import TestClient
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -55,6 +57,24 @@ class TestAppStartup:
         assert any("/api/calc/flare" in s for s in calc_list)
         assert any("/api/calc/pressure-drop" in s for s in calc_list)
 
+    def test_listed_calculator_endpoints_are_registered_routes(
+        self,
+        client: TestClient,
+    ) -> Any:
+        r = client.get("/api/calc/endpoints")
+        assert r.status_code == 200
+
+        advertised = {tuple(item.split(" ", 1)) for item in r.json()["calculators"]}
+        app = cast(FastAPI, client.app)
+        registered = {
+            (method, route.path)
+            for route in app.routes
+            if isinstance(route, APIRoute)
+            for method in route.methods
+        }
+
+        assert not sorted(advertised - registered)
+
     def test_openapi_schema_reachable(self, client: TestClient) -> Any:
         r = client.get("/openapi.json")
         assert r.status_code == 200
@@ -68,7 +88,7 @@ class TestAppStartup:
 class TestPressureDrop:
     """Tests for the Darcy-Weisbach pressure-drop router (delegates to PressureDropCalculator)."""  # noqa: E501
 
-    def _payload(self, **overrides) -> dict[str, Any]:
+    def _payload(self, **overrides: Any) -> dict[str, Any]:
         base: dict[str, Any] = {
             "pipe_diameter_m": 0.1,
             "pipe_length_m": 100.0,
@@ -134,7 +154,7 @@ class TestPressureDrop:
         assert r.status_code == 422
 
     @pytest.mark.contract
-    def test_delegates_to_pressure_drop_calculator(self, client: TestClient):
+    def test_delegates_to_pressure_drop_calculator(self, client: TestClient) -> Any:
         """GH1705: Router must delegate to PressureDropCalculator, not inline logic.
 
         Verifies numeric parity: router result must match PressureDropCalculator
@@ -304,7 +324,7 @@ class TestFlowRate:
 class TestODESolver:
     """Tests for the inline RK4 ODE solver router."""
 
-    def _decay_payload(self, **overrides) -> dict[str, Any]:
+    def _decay_payload(self, **overrides: Any) -> dict[str, Any]:
         base: dict[str, Any] = {
             "derivatives": {"y": "-k*y"},
             "parameters": {"k": 0.1},
@@ -386,7 +406,7 @@ class TestODESolver:
 class TestThermalProfile:
     """Tests for the thermal profile router."""
 
-    def _payload(self, **overrides) -> dict[str, Any]:
+    def _payload(self, **overrides: Any) -> dict[str, Any]:
         base: dict[str, Any] = {
             "initial_temp_c": 20.0,
             "ambient_temp_c": 20.0,
@@ -449,7 +469,7 @@ class TestThermalProfile:
 class TestSyngasWater:
     """Tests for the syngas water content router."""
 
-    def _payload(self, **overrides) -> dict[str, Any]:
+    def _payload(self, **overrides: Any) -> dict[str, Any]:
         base: dict[str, Any] = {
             "temperature_c": 50.0,
             "pressure_bar": 10.0,
@@ -512,7 +532,7 @@ class TestSyngasWater:
 class TestAcidGasDewpoint:
     """Tests for the acid gas dewpoint router."""
 
-    def _payload(self, **overrides) -> dict[str, Any]:
+    def _payload(self, **overrides: Any) -> dict[str, Any]:
         base: dict[str, Any] = {
             "temperature_c": 150.0,
             "pressure_bar": 1.0,
@@ -619,7 +639,11 @@ class TestFlareRouterMocked:
         }
 
     @patch("calc_backend.routers.flare.FlareCalculator", create=True)
-    def test_flare_success_with_mock(self, mock_cls, client: TestClient) -> Any:
+    def test_flare_success_with_mock(
+        self,
+        mock_cls: MagicMock,
+        client: TestClient,
+    ) -> Any:
         mock_calc = MagicMock()
         mock_design = MagicMock(
             height=50.0,
@@ -720,7 +744,7 @@ class TestProtocols:
         from calc_backend.protocols import ValidationMixin
 
         class DummyValidator:
-            def validate_inputs(self, request) -> None:
+            def validate_inputs(self, request: dict[str, Any]) -> None:
                 if request.get("x", 0) < 0:
                     raise ValueError("x must be positive")
 
@@ -734,8 +758,8 @@ class TestProtocols:
         from calc_backend.protocols import ExpressionEvaluator
 
         class DummyEval:
-            def evaluate(self, expression: str, namespace: dict) -> float:
-                return eval(expression, {}, namespace)  # nosec B307
+            def evaluate(self, expression: str, namespace: dict[str, Any]) -> float:
+                return cast(float, eval(expression, {}, namespace))  # nosec B307
 
             def validate(self, expression: str) -> bool:
                 return True
@@ -1054,9 +1078,9 @@ class TestScrubberAsFloat:
 class TestPressureDropEdgeCases:
     """Unit-level tests for pressure-drop edge-case branches."""
 
-    def test_log10_exception_branch(self):
+    def test_log10_exception_branch(self) -> Any:
         """Very rough pipe → a_val + b_val could be ≤ 0 triggering ValueError fallback."""  # noqa: E501
-        from calc_backend.contracts.pressure_drop import PressureDropRequest
+        from calc_backend.models.pressure_drop import PressureDropRequest
         from calc_backend.routers.pressure_drop import calculate_pressure_drop as _fn
 
         req = PressureDropRequest(
@@ -1070,11 +1094,11 @@ class TestPressureDropEdgeCases:
         )
         # Should not raise, should return a valid response
         resp = _fn(req)
-        assert resp.friction_factor > 0
+        assert resp["data"]["friction_factor"] > 0
 
     def test_transitional_regime_via_unit(self) -> Any:
         """Re between 2300 and 4000 → 'Transitional' regime code path."""
-        from calc_backend.contracts.pressure_drop import PressureDropRequest
+        from calc_backend.models.pressure_drop import PressureDropRequest
         from calc_backend.routers.pressure_drop import calculate_pressure_drop as _fn
 
         # Tune flow rate to land in transitional range
@@ -1088,4 +1112,4 @@ class TestPressureDropEdgeCases:
             molecular_weight_kg_mol=0.029,
         )
         resp = _fn(req)
-        assert resp.flow_regime in {"Laminar", "Transitional", "Turbulent"}
+        assert resp["data"]["flow_regime"] in {"Laminar", "Transitional", "Turbulent"}
