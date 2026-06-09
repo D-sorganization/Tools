@@ -57,7 +57,7 @@ def allowed_tools_for_access_mode(
     if mode == ChatAccessMode.NO_REPO_ACCESS:
         return []
 
-    tools = registry.list_tools(max_expertise=max_expertise)
+    tools: list[Tool] = registry.list_tools(max_expertise=max_expertise)
     if mode == ChatAccessMode.AGENT_TOOLS:
         return tools
 

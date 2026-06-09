@@ -104,7 +104,7 @@ class TestPressureDrop:
     def test_turbulent_flow(self, client: TestClient) -> Any:
         r = client.post("/api/calc/pressure-drop", json=self._payload())
         assert r.status_code == 200
-        body = r.json()
+        body = r.json()["data"]
         assert body["pressure_drop_pa"] >= 0
         assert body["reynolds_number"] > 4000  # turbulent
         assert body["flow_regime"] == "Turbulent"
@@ -119,7 +119,7 @@ class TestPressureDrop:
             json=self._payload(flow_rate_kg_s=0.0001),
         )
         assert r.status_code == 200
-        body = r.json()
+        body = r.json()["data"]
         assert body["flow_regime"] == "Laminar"
 
     def test_transitional_flow(self, client: TestClient) -> Any:
@@ -129,13 +129,13 @@ class TestPressureDrop:
             json=self._payload(flow_rate_kg_s=0.01),
         )
         assert r.status_code == 200
-        body = r.json()
+        body = r.json()["data"]
         # Could be laminar or transitional depending on exact Re; just check shape.
         assert body["flow_regime"] in {"Laminar", "Transitional", "Turbulent"}
 
     def test_response_contains_all_fields(self, client: TestClient) -> Any:
         r = client.post("/api/calc/pressure-drop", json=self._payload())
-        body = r.json()
+        body = r.json()["data"]
         required = {
             "pressure_drop_pa",
             "reynolds_number",
@@ -167,7 +167,7 @@ class TestPressureDrop:
         payload = self._payload()
         r = client.post("/api/calc/pressure-drop", json=payload)
         assert r.status_code == 200
-        body = r.json()
+        body = r.json()["data"]
 
         calculator = PressureDropCalculator()
         direct = calculator.calculate_pressure_drop(
