@@ -432,6 +432,7 @@ crashes.
 | Integration | `tests/integration/` | pytest    | `@pytest.mark.integration` |
 | Acceptance  | `tests/acceptance/`  | pytest    | `@pytest.mark.acceptance`  |
 | Contract    | `tests/contract/`    | pytest    | `@pytest.mark.contract`    |
+| Packaging   | `tests/packaging/`   | pytest    | `@pytest.mark.contract`    |
 | GUI         | `tests/gui/`         | pytest-qt | `@pytest.mark.gui`         |
 | DWSIM       | `tests/dwsim/`       | pytest    | `@pytest.mark.dwsim`       |
 | Slow        | `tests/slow/`        | pytest    | `@pytest.mark.slow`        |
@@ -440,6 +441,11 @@ crashes.
 scientific, headless-safe, OpenGL, and parity markers. Pytest runs with strict
 marker validation and strict xfail handling so stale marker names or unexpected
 passes fail early in CI.
+
+`tests/packaging/test_console_scripts.py` is a packaging contract: it enumerates
+every `[project.scripts]` entry point in `pyproject.toml` and asserts the target
+module imports and exposes the named callable, so a stale or broken console
+script (such as the removed `dwsim-model` target) cannot ship undetected.
 
 ### Coverage Requirements
 

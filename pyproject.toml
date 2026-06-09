@@ -156,7 +156,6 @@ dev = [
 [project.scripts]
 urdf-gen = "model_generation.cli:main"
 generate-pid = "programmatic_pid.cli:main"
-dwsim-model = "dwsim_model.__main__:main"
 mypy-autofix = "tools.mypy_autofix_agent:main"
 codemap = "codemap.cli:main"
 codemap-watch = "codemap.watcher:main"
@@ -195,7 +194,6 @@ include = [
     "rotation_transforms*",
     "rotation_converter*",
     "programmatic_pid*",
-    "dwsim_model*",
     "utils*",
     "tools*",
     "web_applications*",
