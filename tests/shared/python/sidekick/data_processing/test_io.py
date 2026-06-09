@@ -2,6 +2,9 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+from hypothesis import given
+from hypothesis import strategies as st
+from sidekick.data_processing.formats import SUPPORTED_FORMATS
 from sidekick.data_processing.io import DataReader, DataWriter, FileFormatDetector
 
 
@@ -21,16 +24,7 @@ def test_supported_extensions_map_only_to_implemented_handlers() -> None:
         for extension in FileFormatDetector.get_supported_extensions()
     }
 
-    assert supported_formats == {
-        "csv",
-        "tsv",
-        "excel",
-        "parquet",
-        "json",
-        "numpy",
-        "matlab",
-        "sqlite",
-    }
+    assert supported_formats == SUPPORTED_FORMATS
 
 
 @pytest.mark.parametrize("extension", [".h5", ".hdf5", ".feather", ".pkl", ".pickle"])
@@ -97,3 +91,38 @@ def test_reader_rejects_unknown_format(tmp_path: Path) -> None:
 def test_writer_rejects_missing_frame(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="df must be provided"):
         DataWriter.write_file(None, tmp_path / "data.csv")  # type: ignore[arg-type]
+
+
+@given(
+    extension=st.sampled_from(FileFormatDetector.get_supported_extensions()),
+    prefix=st.text(
+        alphabet=st.characters(
+            whitelist_categories=("Ll", "Lu", "Nd"),
+            whitelist_characters=("_", "-"),
+        ),
+        min_size=1,
+        max_size=24,
+    ),
+)
+def test_format_detection_is_case_insensitive_for_supported_extensions(
+    extension: str, prefix: str
+) -> None:
+    expected = FileFormatDetector.detect_format(Path(f"data{extension}"))
+
+    actual = FileFormatDetector.detect_format(Path(f"{prefix}{extension.upper()}"))
+
+    assert actual == expected
+
+
+@given(
+    extension=st.text(
+        alphabet=st.characters(whitelist_categories=("Ll", "Lu", "Nd")),
+        min_size=1,
+        max_size=8,
+    ).filter(
+        lambda value: f".{value.lower()}"
+        not in FileFormatDetector.get_supported_extensions()
+    )
+)
+def test_unknown_extensions_never_map_to_supported_formats(extension: str) -> None:
+    assert FileFormatDetector.detect_format(Path(f"data.{extension}")) is None
