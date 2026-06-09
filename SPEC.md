@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.319                                    |
-| **Last Spec Update**    | 2026-06-08                                 |
+| **Spec Version**        | 1.1.320                                    |
+| **Last Spec Update**    | 2026-06-09                                 |
 
 ## 2. Purpose & Mission
 
@@ -1051,6 +1051,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.320
+
+- 2026-06-09: refactor(tools, #3261, #3262, #3263) — replaced the duplicated `scripts/mypy_autofix_agent.py` implementation with a compatibility wrapper that delegates to the canonical `src.tools.mypy_autofix_agent` entrypoint, preserving direct script execution while reducing audit-reported DRY debt. Added focused tests that guard the delegation contract and CLI help path.
 
 ### Version 1.1.265
 
