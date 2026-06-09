@@ -17,6 +17,7 @@ Covers:
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import sys
 from pathlib import Path
@@ -68,33 +69,33 @@ class _NullAsyncLock:
 
 
 class TestPowerSupplyServicePoll:
-    @pytest.mark.asyncio
-    async def test_poll_with_no_tags_uses_zero_feedback(self) -> None:
-        plc = _FakePLC()
-        svc = PowerSupplyService(plc, logging.getLogger("test"))
-        status = await svc.poll(None)
-        assert status.measured_current_a == 0.0
-        assert status.measured_voltage_v == 0.0
-        assert status.measured_temp_c == 0.0
-        # IDLE → no command write attempt expectation is loose; we just
-        # confirm the service returned status without raising.
-        assert status.state == PowerSupplyState.IDLE
+    def test_poll_with_no_tags_uses_zero_feedback(self) -> None:
+        async def _go() -> None:
+            plc = _FakePLC()
+            svc = PowerSupplyService(plc, logging.getLogger("test"))
+            status = await svc.poll(None)
+            assert status.measured_current_a == 0.0
+            assert status.measured_voltage_v == 0.0
+            assert status.measured_temp_c == 0.0
+            assert status.state == PowerSupplyState.IDLE
 
-    @pytest.mark.asyncio
-    async def test_poll_writes_pid_setpoint_when_running(self) -> None:
-        plc = _FakePLC()
-        svc = PowerSupplyService(plc, logging.getLogger("test"))
-        svc.controller.set_permissive(True)
-        svc.controller.set_current_setpoint(40.0)
-        # Two polls so slew can advance past 0
-        await svc.poll({})
-        await svc.poll({})
-        # write_registers was called for PID 0 setpoint (register 200 + 0*10 + 2 = 202)
-        call_args_list = plc._get_client().write_registers.await_args_list
-        assert len(call_args_list) >= 1
-        last_call = call_args_list[-1]
-        assert last_call.kwargs["address"] == 202
-        assert len(last_call.kwargs["values"]) == 2
+        asyncio.run(_go())
+
+    def test_poll_writes_pid_setpoint_when_running(self) -> None:
+        async def _go() -> None:
+            plc = _FakePLC()
+            svc = PowerSupplyService(plc, logging.getLogger("test"))
+            svc.controller.set_permissive(True)
+            svc.controller.set_current_setpoint(40.0)
+            await svc.poll({})
+            await svc.poll({})
+            call_args_list = plc._get_client().write_registers.await_args_list
+            assert len(call_args_list) >= 1
+            last_call = call_args_list[-1]
+            assert last_call.kwargs["address"] == 202
+            assert len(last_call.kwargs["values"]) == 2
+
+        asyncio.run(_go())
 
     def test_inputs_from_tags_scales_percent_to_engineering(self) -> None:
         plc = _FakePLC()
@@ -121,53 +122,61 @@ class TestPowerSupplyServicePoll:
 
 
 class TestPidSetpointWrite:
-    @pytest.mark.asyncio
-    async def test_write_when_disconnected_returns_false(self) -> None:
-        plc = _FakePLC(connected=False)
-        svc = PowerSupplyService(plc, logging.getLogger("test"))
-        ok = await svc._write_pid_setpoint(0, 50.0)
-        assert ok is False
-
-    @pytest.mark.asyncio
-    async def test_write_with_invalid_pid_index_returns_false(self) -> None:
-        plc = _FakePLC()
-        svc = PowerSupplyService(plc, logging.getLogger("test"))
-        for bad in (-1, 4, 5, 99):
-            ok = await svc._write_pid_setpoint(bad, 50.0)
+    def test_write_when_disconnected_returns_false(self) -> None:
+        async def _go() -> None:
+            plc = _FakePLC(connected=False)
+            svc = PowerSupplyService(plc, logging.getLogger("test"))
+            ok = await svc._write_pid_setpoint(0, 50.0)
             assert ok is False
 
-    @pytest.mark.asyncio
-    async def test_write_with_error_response_returns_false(self) -> None:
-        plc = _FakePLC()
-        plc._get_client().write_registers = AsyncMock(
-            return_value=MagicMock(isError=lambda: True)
-        )
-        svc = PowerSupplyService(plc, logging.getLogger("test"))
-        ok = await svc._write_pid_setpoint(0, 50.0)
-        assert ok is False
+        asyncio.run(_go())
 
-    @pytest.mark.asyncio
-    async def test_write_catches_underlying_exception(self) -> None:
-        plc = _FakePLC()
-        plc._get_client().write_registers = AsyncMock(
-            side_effect=RuntimeError("modbus dropped")
-        )
-        svc = PowerSupplyService(plc, logging.getLogger("test"))
-        ok = await svc._write_pid_setpoint(0, 50.0)
-        assert ok is False
+    def test_write_with_invalid_pid_index_returns_false(self) -> None:
+        async def _go() -> None:
+            plc = _FakePLC()
+            svc = PowerSupplyService(plc, logging.getLogger("test"))
+            for bad in (-1, 4, 5, 99):
+                ok = await svc._write_pid_setpoint(bad, 50.0)
+                assert ok is False
 
-    @pytest.mark.asyncio
-    async def test_write_success_returns_true_and_targets_pid_register(
-        self,
-    ) -> None:
-        plc = _FakePLC()
-        svc = PowerSupplyService(plc, logging.getLogger("test"))
-        # PID 1 setpoint sits at register 200 + 1*10 + 2 = 212
-        ok = await svc._write_pid_setpoint(1, 25.0)
-        assert ok is True
-        plc._get_client().write_registers.assert_awaited()
-        kwargs = plc._get_client().write_registers.await_args.kwargs
-        assert kwargs["address"] == 212
+        asyncio.run(_go())
+
+    def test_write_with_error_response_returns_false(self) -> None:
+        async def _go() -> None:
+            plc = _FakePLC()
+            plc._get_client().write_registers = AsyncMock(
+                return_value=MagicMock(isError=lambda: True)
+            )
+            svc = PowerSupplyService(plc, logging.getLogger("test"))
+            ok = await svc._write_pid_setpoint(0, 50.0)
+            assert ok is False
+
+        asyncio.run(_go())
+
+    def test_write_catches_underlying_exception(self) -> None:
+        async def _go() -> None:
+            plc = _FakePLC()
+            plc._get_client().write_registers = AsyncMock(
+                side_effect=RuntimeError("modbus dropped")
+            )
+            svc = PowerSupplyService(plc, logging.getLogger("test"))
+            ok = await svc._write_pid_setpoint(0, 50.0)
+            assert ok is False
+
+        asyncio.run(_go())
+
+    def test_write_success_returns_true_and_targets_pid_register(self) -> None:
+        async def _go() -> None:
+            plc = _FakePLC()
+            svc = PowerSupplyService(plc, logging.getLogger("test"))
+            # PID 1 setpoint sits at register 200 + 1*10 + 2 = 212
+            ok = await svc._write_pid_setpoint(1, 25.0)
+            assert ok is True
+            plc._get_client().write_registers.assert_awaited()
+            kwargs = plc._get_client().write_registers.await_args.kwargs
+            assert kwargs["address"] == 212
+
+        asyncio.run(_go())
 
 
 # --------------------------------------------------------------------------

@@ -174,9 +174,11 @@ class PowerSupplyController:
         if not math.isfinite(v):
             raise ValueError(f"value_a must be finite, got {v}")
 
-        clamped = max(
-            self._config.current_setpoint_min_a,
-            min(v, self._config.current_setpoint_max_a),
+        clamped = float(
+            max(
+                self._config.current_setpoint_min_a,
+                min(v, self._config.current_setpoint_max_a),
+            )
         )
 
         if self._state in (PowerSupplyState.ARMED, PowerSupplyState.RUNNING):
@@ -236,9 +238,11 @@ class PowerSupplyController:
             return 0.0
 
         i_raw = w / self._last_v
-        clamped_i = max(
-            self._config.current_setpoint_min_a,
-            min(i_raw, self._config.current_setpoint_max_a),
+        clamped_i = float(
+            max(
+                self._config.current_setpoint_min_a,
+                min(i_raw, self._config.current_setpoint_max_a),
+            )
         )
         achievable_w = clamped_i * self._last_v
 
