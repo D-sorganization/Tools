@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Search, Cpu, Eye } from "lucide-react";
 
 export interface LadderTagInfo {
@@ -51,23 +51,40 @@ export const LadderExplorer: React.FC<LadderExplorerProps> = ({
     fetchTags();
   }, []);
 
-  const areas = ["All", ...Array.from(new Set(tags.map((t) => t.area).filter(Boolean)))];
-  const regTypes = [
-    "All",
-    ...Array.from(new Set(tags.map((t) => t.register_type).filter(Boolean))),
-  ];
+  // ⚡ Bolt Optimization: Memoize and pre-compute dropdown options using a single-pass loop instead of chained .map().filter()
+  const { areas, regTypes } = useMemo(() => {
+    const areaSet = new Set<string>();
+    const regTypeSet = new Set<string>();
+    for (let i = 0; i < tags.length; i++) {
+      const t = tags[i];
+      if (t.area) areaSet.add(t.area);
+      if (t.register_type) regTypeSet.add(t.register_type);
+    }
+    return {
+      areas: ["All", ...Array.from(areaSet)],
+      regTypes: ["All", ...Array.from(regTypeSet)],
+    };
+  }, [tags]);
 
-  const filteredTags = tags.filter((t) => {
-    const matchesSearch =
-      t.name.toLowerCase().includes(search.toLowerCase()) ||
-      t.description.toLowerCase().includes(search.toLowerCase()) ||
-      (t.register_num !== null && String(t.register_num).includes(search));
+  // ⚡ Bolt Optimization: Memoize filtered tags and pull out .toLowerCase() to avoid redundant string allocations on every item
+  const filteredTags = useMemo(() => {
+    const lowerSearch = search.toLowerCase();
+    return tags.filter((t) => {
+      const matchesArea = selectedArea === "All" || t.area === selectedArea;
+      if (!matchesArea) return false;
 
-    const matchesArea = selectedArea === "All" || t.area === selectedArea;
-    const matchesRegType = selectedRegType === "All" || t.register_type === selectedRegType;
+      const matchesRegType = selectedRegType === "All" || t.register_type === selectedRegType;
+      if (!matchesRegType) return false;
 
-    return matchesSearch && matchesArea && matchesRegType;
-  });
+      if (!lowerSearch) return true;
+
+      return (
+        t.name.toLowerCase().includes(lowerSearch) ||
+        (t.description && t.description.toLowerCase().includes(lowerSearch)) ||
+        (t.register_num !== null && String(t.register_num).includes(lowerSearch))
+      );
+    });
+  }, [tags, search, selectedArea, selectedRegType]);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
