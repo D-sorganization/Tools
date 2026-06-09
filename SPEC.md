@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.323                                    |
+| **Spec Version**        | 1.1.324                                    |
 | **Last Spec Update**    | 2026-06-09                                 |
 
 ## 2. Purpose & Mission
@@ -645,6 +645,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-09 | 1.1.324 | fix(ci): invoke detect-secrets through `python -m detect_secrets` in the secret scanning workflow so runners where the console script is not on PATH still execute the installed package. |
 | 2026-06-09 | 1.1.323 | fix(ci): avoid detect-secrets false positives from immutable workflow digest pins and workflow-pinning test fixtures without changing the committed secrets baseline. |
 | 2026-06-09 | 1.1.323 | test(tools): add changed-test assertion and changed-Python policy guards for the A-O audit follow-up, blocking assertion-light Python test changes and undocumented changed-file policy regressions with focused tests, allowlists, CI integration, and development notes for issues #3262 and #3263. |
 | 2026-06-09 | 1.1.322 | fix(ci): fold #3255 pinning into the consolidated branch by requiring third-party workflow actions to use immutable 40-character SHAs, allowing first-party `actions/*` and `github/*` tag refs as the explicit trust boundary, blocking `curl|sh` installers and unversioned global npm installs without a baseline, keeping wasm-pack on a pinned release archive with SHA-256 verification, and pinning Jules CLI installs to `@0.1.42`. |
