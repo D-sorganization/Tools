@@ -613,6 +613,18 @@ python -m twine upload dist/* --skip-existing
 | Documentation       | HTML         | `docs/_build/html/` |
 | Test reports        | HTML/JSON    | `reports/`          |
 
+### Public package publishing
+
+`publish-artifacts.yml` publishes both PyPI (`publish-pypi`) and NPM
+(`publish-npm`) packages only on a `release` event or a manual
+`workflow_dispatch` with `dry_run=false`. **Both** jobs are gated behind a
+protected GitHub deployment environment (`pypi` and `npm` respectively) that
+requires reviewer approval before the publish step runs, so a manual dispatch
+cannot publish to either registry without an approval. Rollback for both
+registries is publish-forward (yank/deprecate the bad version, ship a patched
+higher version); see `docs/deployment.md` for the per-registry unpublish
+constraints.
+
 ## 11. Roadmap & Open Issues
 
 ### Current Phase

@@ -90,3 +90,38 @@ and avoid leaking developer credentials into the image.
 Docker images are built and pushed in the GitHub Actions pipeline defined in
 `.github/workflows/`. The generic `Dockerfile` is built on every commit to
 `main`; `Dockerfile.prod` is built and tagged on version tags (`v*`).
+
+## Package publishing (PyPI + NPM)
+
+Public package publishing is handled by `.github/workflows/publish-artifacts.yml`.
+Both publish jobs run **only** on a GitHub `release` event or a manual
+`workflow_dispatch` with `dry_run=false`, and both are gated behind a protected
+GitHub deployment environment that requires reviewer approval before the publish
+step runs:
+
+| Target | Job            | Protected environment | Credential               |
+| ------ | -------------- | --------------------- | ------------------------ |
+| PyPI   | `publish-pypi` | `pypi`                | `PYPI_API_TOKEN`         |
+| NPM    | `publish-npm`  | `npm`                 | `NODE_AUTH_TOKEN` / OIDC |
+
+A manual `workflow_dispatch` with `dry_run=false` therefore cannot publish to
+**either** registry without an environment approval, removing the previous
+asymmetry where NPM could be published without the review gate that protected
+PyPI.
+
+### Rollback / unpublish constraints
+
+Both registries treat a published version as effectively immutable; the safe
+recovery path is to publish a fixed higher version, not to overwrite.
+
+- **PyPI:** a released version filename can never be re-uploaded. Deleting a
+  release is permanent and does **not** free the version string for reuse. Yank
+  a bad release (hides it from resolvers but keeps existing pins working), then
+  publish a patched version.
+- **NPM:** `npm unpublish` is only permitted within 72 hours of publish and
+  only when nothing depends on the version; otherwise use `npm deprecate` and
+  publish a patched version. Re-publishing an unpublished version string is
+  blocked for 24 hours.
+
+Treat any unintended publish to either registry as an incident: deprecate/yank
+the bad version immediately and ship a corrected higher version.

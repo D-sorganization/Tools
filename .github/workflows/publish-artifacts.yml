@@ -171,6 +171,8 @@ jobs:
     if: >-
       github.event_name == 'release' ||
       (github.event_name == 'workflow_dispatch' && inputs.dry_run == 'false')
+    environment:
+      name: npm # Protected GitHub environment — same required-reviewer gate as pypi
     steps:
       - name: Download WASM Package
         uses: actions/download-artifact@v8
