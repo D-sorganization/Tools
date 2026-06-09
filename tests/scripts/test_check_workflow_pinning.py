@@ -34,6 +34,7 @@ def test_rejects_mutable_third_party_action_refs(tmp_path: Path) -> None:
 
 
 def test_allows_full_sha_action_refs_and_local_actions(tmp_path: Path) -> None:
+    full_sha = "0" * 40
     workflow = _write_workflow(
         tmp_path / "workflow.yml",
         "\n".join(
@@ -41,8 +42,7 @@ def test_allows_full_sha_action_refs_and_local_actions(tmp_path: Path) -> None:
                 "jobs:",
                 "  test:",
                 "    steps:",
-                "      - uses: actions/checkout@"
-                "0000000000000000000000000000000000000000",
+                f"      - uses: actions/checkout@{full_sha}",
                 "      - uses: ./.github/actions/local",
                 "      - uses: docker://alpine:3.20",
             ]
