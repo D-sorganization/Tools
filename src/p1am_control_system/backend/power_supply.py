@@ -19,127 +19,24 @@ from __future__ import annotations
 
 import logging
 import math
-from enum import Enum
+import time
 
-from pydantic import BaseModel, Field, model_validator
+from power_supply_models import (
+    PowerSupplyConfig,
+    PowerSupplyMode,
+    PowerSupplyState,
+    PowerSupplyStatus,
+)
 
-
-class StrEnum(str, Enum):  # noqa: UP042
-    pass
-
+__all__ = [
+    "PowerSupplyConfig",
+    "PowerSupplyController",
+    "PowerSupplyMode",
+    "PowerSupplyState",
+    "PowerSupplyStatus",
+]
 
 logger = logging.getLogger("dcs_backend.power_supply")
-
-
-class PowerSupplyMode(StrEnum):
-    """Operator-selected control mode."""
-
-    CURRENT = "current"
-    POWER = "power"
-
-
-class PowerSupplyState(StrEnum):
-    """Controller state machine state."""
-
-    IDLE = "idle"
-    ARMED = "armed"
-    RUNNING = "running"
-    TRIPPED = "tripped"
-
-
-class PowerSupplyConfig(BaseModel):
-    """Operator-configurable parameters for the power supply controller.
-
-    All numeric fields are validated by Pydantic at construction (Pydantic's
-    Field constraints raise ValidationError on bad input). The
-    `_check_invariants` validator enforces the cross-field invariants:
-        current_setpoint_min_a < current_setpoint_max_a
-        current_setpoint_max_a <= current_full_scale_a
-    """
-
-    command_tag: str = Field(
-        default="TAG_10",
-        description="Modbus tag that drives the current-command AO (AO1).",
-    )
-    current_feedback_tag: str = Field(
-        default="TAG_12",
-        description="Modbus tag carrying measured I_out from the PS (AI1).",
-    )
-    voltage_feedback_tag: str = Field(
-        default="TAG_13",
-        description="Modbus tag carrying measured V_out from the PS (AI2).",
-    )
-    temp_tag: str = Field(
-        default="TAG_0",
-        description="Modbus tag carrying the HH-monitored thermocouple (TC1).",
-    )
-
-    current_full_scale_a: float = Field(
-        default=100.0,
-        gt=0.0,
-        description="Amps at 100 % AO command (5 V on PS input after conditioner).",
-    )
-    voltage_full_scale_v: float = Field(
-        default=50.0,
-        gt=0.0,
-        description="Volts at 100 % AI reading from PS V feedback.",
-    )
-
-    current_setpoint_min_a: float = Field(
-        default=0.0,
-        ge=0.0,
-        description="Lower clamp for operator current setpoint (A).",
-    )
-    current_setpoint_max_a: float = Field(
-        default=50.0,
-        gt=0.0,
-        description="Upper clamp for operator current setpoint (A).",
-    )
-
-    power_alarm_max_w: float = Field(
-        default=1000.0,
-        gt=0.0,
-        description="Power trip threshold in watts (HH_POWER).",
-    )
-    temp_alarm_max_c: float = Field(
-        default=1200.0,
-        gt=0.0,
-        description="Temperature trip threshold in degrees Celsius (HH_TEMP).",
-    )
-
-    @model_validator(mode="after")
-    def _check_invariants(self) -> PowerSupplyConfig:
-        if self.current_setpoint_min_a >= self.current_setpoint_max_a:
-            raise ValueError(
-                "current_setpoint_min_a "
-                f"({self.current_setpoint_min_a}) must be less than "
-                f"current_setpoint_max_a ({self.current_setpoint_max_a})"
-            )
-        if self.current_setpoint_max_a > self.current_full_scale_a:
-            raise ValueError(
-                f"current_setpoint_max_a ({self.current_setpoint_max_a}) must not "
-                f"exceed current_full_scale_a ({self.current_full_scale_a})"
-            )
-        return self
-
-
-class PowerSupplyStatus(BaseModel):
-    """Snapshot of controller state for the UI / WebSocket stream."""
-
-    state: PowerSupplyState
-    mode: PowerSupplyMode
-    permissive: bool
-
-    setpoint_a: float
-    setpoint_w: float | None
-
-    measured_current_a: float
-    measured_voltage_v: float
-    measured_power_w: float
-    measured_temp_c: float
-
-    commanded_output_percent: float
-    trips: list[str]
 
 
 class PowerSupplyController:
@@ -177,6 +74,13 @@ class PowerSupplyController:
         self._last_i = 0.0
         self._last_t = 0.0
         self._last_commanded_percent = 0.0
+        # Slew-rate state: the actual percent we last sent to the AO (after
+        # ramp limiting) and the monotonic timestamp of the last tick. Both
+        # reset to zero whenever output is forced to zero (IDLE/ARMED/TRIPPED/
+        # no-permissive) so the next RUNNING period starts the ramp from
+        # zero rather than snapping up.
+        self._slewed_percent = 0.0
+        self._last_tick_monotonic: float | None = None
 
     @property
     def state(self) -> PowerSupplyState:
@@ -270,9 +174,11 @@ class PowerSupplyController:
         if not math.isfinite(v):
             raise ValueError(f"value_a must be finite, got {v}")
 
-        clamped = max(
-            self._config.current_setpoint_min_a,
-            min(v, self._config.current_setpoint_max_a),
+        clamped = float(
+            max(
+                self._config.current_setpoint_min_a,
+                min(v, self._config.current_setpoint_max_a),
+            )
         )
 
         if self._state in (PowerSupplyState.ARMED, PowerSupplyState.RUNNING):
@@ -332,9 +238,11 @@ class PowerSupplyController:
             return 0.0
 
         i_raw = w / self._last_v
-        clamped_i = max(
-            self._config.current_setpoint_min_a,
-            min(i_raw, self._config.current_setpoint_max_a),
+        clamped_i = float(
+            max(
+                self._config.current_setpoint_min_a,
+                min(i_raw, self._config.current_setpoint_max_a),
+            )
         )
         achievable_w = clamped_i * self._last_v
 
@@ -357,45 +265,19 @@ class PowerSupplyController:
             )
         return achievable_w
 
-    def tick(
-        self,
-        measured_current_a: float,
-        measured_voltage_v: float,
-        measured_temp_c: float,
-    ) -> float:
-        """Advance the controller one cycle and return the AO command percent.
+    @staticmethod
+    def _safe_finite(value: float) -> float:
+        """Coerce a feedback input to a finite float; non-finite values map
+        to 0 so a sensor failure can never accidentally trip the loop or
+        smuggle a NaN through the math."""
+        if not isinstance(value, int | float) or isinstance(value, bool):
+            return 0.0
+        v = float(value)
+        return v if math.isfinite(v) else 0.0
 
-        Reads feedback inputs, evaluates trip conditions (latching them on
-        breach), recomputes current setpoint when in POWER mode, and returns
-        the AO command percent (0..100) the caller should send to the PLC.
-
-        Precondition: all three measured inputs are finite floats. Non-finite
-        inputs are treated as 0 (safe).
-        Postcondition: returned percent is in [0, 100]; trips are latched if
-        their conditions are met.
-        """
-        self._last_i = (
-            float(measured_current_a)
-            if isinstance(measured_current_a, int | float)
-            and math.isfinite(float(measured_current_a))
-            else 0.0
-        )
-        self._last_v = (
-            float(measured_voltage_v)
-            if isinstance(measured_voltage_v, int | float)
-            and math.isfinite(float(measured_voltage_v))
-            else 0.0
-        )
-        self._last_t = (
-            float(measured_temp_c)
-            if isinstance(measured_temp_c, int | float)
-            and math.isfinite(float(measured_temp_c))
-            else 0.0
-        )
-
-        measured_power_w = self._last_v * self._last_i
-
-        # Trip evaluation (latching)
+    def _evaluate_trips(self, measured_power_w: float) -> None:
+        """Latch trips based on the latest power and temperature; flips
+        state to TRIPPED on first breach."""
         if measured_power_w > self._config.power_alarm_max_w:
             self._trips.add("HH_POWER")
         if self._last_t > self._config.temp_alarm_max_c:
@@ -409,31 +291,112 @@ class PowerSupplyController:
             )
             self._state = PowerSupplyState.TRIPPED
 
-        # In POWER mode, recompute current target from latest V
+    def _recompute_power_mode_setpoint(self) -> None:
+        """In POWER mode, derive the current setpoint from the latest V."""
         if (
-            self._mode == PowerSupplyMode.POWER
-            and self._state == PowerSupplyState.RUNNING
-            and self._setpoint_w is not None
-            and self._last_v >= 0.1
+            self._mode != PowerSupplyMode.POWER
+            or self._state != PowerSupplyState.RUNNING
+            or self._setpoint_w is None
+            or self._last_v < 0.1
         ):
-            i_raw = self._setpoint_w / self._last_v
-            self._setpoint_a = max(
-                self._config.current_setpoint_min_a,
-                min(i_raw, self._config.current_setpoint_max_a),
-            )
+            return
+        i_raw = self._setpoint_w / self._last_v
+        self._setpoint_a = max(
+            self._config.current_setpoint_min_a,
+            min(i_raw, self._config.current_setpoint_max_a),
+        )
 
-        if (
+    def _should_force_output_zero(self) -> bool:
+        """All three "kill the output now" conditions in one place."""
+        return (
             self._state != PowerSupplyState.RUNNING
             or not self._permissive
-            or self._trips
-        ):
-            self._last_commanded_percent = 0.0
+            or bool(self._trips)
+        )
+
+    def _reset_slew_state(self) -> None:
+        """Wipe slew tracker so the next RUNNING period starts at 0 % with
+        a fresh dt baseline (no accumulated wall-clock catch-up)."""
+        self._slewed_percent = 0.0
+        self._last_commanded_percent = 0.0
+        self._last_tick_monotonic = None
+
+    def _apply_slew(self, target_percent: float, dt_s: float) -> float:
+        """Slew-rate limit on increases only; decreases pass through."""
+        if target_percent <= self._slewed_percent:
+            self._slewed_percent = target_percent
+        else:
+            max_increase_pct = self._config.setpoint_ramp_rate_pct_per_s * dt_s
+            self._slewed_percent = min(
+                target_percent,
+                self._slewed_percent + max_increase_pct,
+            )
+        return self._slewed_percent
+
+    def tick(
+        self,
+        measured_current_a: float,
+        measured_voltage_v: float,
+        measured_temp_c: float,
+        now: float | None = None,
+    ) -> float:
+        """Advance the controller one cycle and return the AO command percent.
+
+        Reads feedback inputs, evaluates trip conditions (latching them on
+        breach), recomputes current setpoint when in POWER mode, applies the
+        slew-rate limiter on output increases, and returns the AO command
+        percent (0..100) the caller should send to the PLC.
+
+        Slew behavior (per `setpoint_ramp_rate_pct_per_s` in the config):
+          - Increases are clamped to rate * dt_seconds.
+          - Decreases are applied instantly (so a step-down in the operator
+            setpoint takes effect on the very next tick).
+          - Any path that forces output to zero (IDLE / ARMED / TRIPPED /
+            permissive off) bypasses the ramp completely, so emergency
+            shutdowns are always one tick.
+
+        Args:
+            measured_current_a: PS-side current feedback, engineering units.
+            measured_voltage_v: PS-side voltage feedback, engineering units.
+            measured_temp_c: HH-monitored thermocouple temperature in C.
+            now: Optional monotonic timestamp in seconds. Production code
+                leaves this as None so the controller reads
+                time.monotonic() itself; tests inject explicit values so
+                the slew behavior is deterministic.
+
+        Precondition: all three measured inputs are finite floats. Non-finite
+        inputs are treated as 0 (safe).
+        Postcondition: returned percent is in [0, 100]; trips are latched if
+        their conditions are met; internal slew tracker advanced.
+        """
+        self._last_i = self._safe_finite(measured_current_a)
+        self._last_v = self._safe_finite(measured_voltage_v)
+        self._last_t = self._safe_finite(measured_temp_c)
+
+        measured_power_w = self._last_v * self._last_i
+        self._evaluate_trips(measured_power_w)
+        self._recompute_power_mode_setpoint()
+
+        # dt for slew limiter — captured before the force-to-zero branch so
+        # _last_tick_monotonic can be reset inside _reset_slew_state without
+        # losing this tick's reading.
+        tick_now = now if now is not None else time.monotonic()
+        dt_s = (
+            0.0
+            if self._last_tick_monotonic is None
+            else max(0.0, tick_now - self._last_tick_monotonic)
+        )
+        self._last_tick_monotonic = tick_now
+
+        if self._should_force_output_zero():
+            self._reset_slew_state()
             return 0.0
 
-        percent = 100.0 * self._setpoint_a / self._config.current_full_scale_a
-        clamped_percent = max(0.0, min(percent, 100.0))
-        self._last_commanded_percent = clamped_percent
-        return clamped_percent
+        target_percent = 100.0 * self._setpoint_a / self._config.current_full_scale_a
+        target_percent = max(0.0, min(target_percent, 100.0))
+        commanded = self._apply_slew(target_percent, dt_s)
+        self._last_commanded_percent = commanded
+        return commanded
 
     def acknowledge_trip(self) -> bool:
         """Clear latched trips and return controller to safe idle/armed state.
