@@ -187,13 +187,14 @@ class SwingsetTab(QWidget):
         integer: bool = False,
     ) -> None:
         """Create and register one spin box."""
-        spin: QDoubleSpinBox | QSpinBox = QSpinBox() if integer else QDoubleSpinBox()
         if integer:
+            spin = QSpinBox()
             spin.setRange(int(lower), int(upper))
+            spin.setValue(int(value))
         else:
+            spin = QDoubleSpinBox()
             spin.setRange(lower, upper)
-        spin.setValue(int(value)) if integer else spin.setValue(value)
-        if isinstance(spin, QDoubleSpinBox):
+            spin.setValue(value)
             spin.setDecimals(3)
             spin.setSingleStep(0.01)
         spin.valueChanged.connect(self._refresh)
@@ -293,13 +294,14 @@ class ChainDynamicsTab(QWidget):
         integer: bool = False,
     ) -> None:
         """Create one chain-control spin box."""
-        spin: QDoubleSpinBox | QSpinBox = QSpinBox() if integer else QDoubleSpinBox()
         if integer:
+            spin = QSpinBox()
             spin.setRange(int(lower), int(upper))
+            spin.setValue(int(value))
         else:
+            spin = QDoubleSpinBox()
             spin.setRange(lower, upper)
-        spin.setValue(int(value)) if integer else spin.setValue(value)
-        if isinstance(spin, QDoubleSpinBox):
+            spin.setValue(value)
             spin.setDecimals(3)
             spin.setSingleStep(0.01)
         spin.valueChanged.connect(self._refresh)

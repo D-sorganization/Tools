@@ -94,8 +94,12 @@ class ChainState:
     @classmethod
     def stationary(cls, config: ChainConfig, angle_rad: float = 0.0) -> ChainState:
         """Build a stationary chain with every segment at the same angle."""
-        angles = np.full(config.segment_count, angle_rad, dtype=np.float64)
-        velocities = np.zeros(config.segment_count, dtype=np.float64)
+        angles: FloatArray = np.full(
+            config.segment_count,
+            angle_rad,
+            dtype=np.float64,
+        )
+        velocities: FloatArray = np.zeros(config.segment_count, dtype=np.float64)
         return cls(angles_rad=angles, angular_velocities_rad_s=velocities)
 
     def validated(self, config: ChainConfig) -> ChainState:
@@ -222,7 +226,7 @@ def _angular_acceleration(
         checked.angles_rad
     )
     damping_term = -config.damping * checked.angular_velocities_rad_s
-    neighbor_sum = np.zeros(config.segment_count, dtype=np.float64)
+    neighbor_sum: FloatArray = np.zeros(config.segment_count, dtype=np.float64)
     neighbor_sum[:-1] += checked.angles_rad[1:] - checked.angles_rad[:-1]
     neighbor_sum[1:] += checked.angles_rad[:-1] - checked.angles_rad[1:]
     coupling_term = config.coupling * neighbor_sum / config.link_mass_kg
@@ -265,7 +269,10 @@ def simulate_chain(
         raise ValueError("steps must be at least 1")
     _require_positive("dt_s", dt_s)
     if torque_history_nm is None:
-        torques = np.zeros((steps, config.segment_count), dtype=np.float64)
+        torques: FloatArray = np.zeros(
+            (steps, config.segment_count),
+            dtype=np.float64,
+        )
     else:
         torques = np.asarray(torque_history_nm, dtype=np.float64)
         if torques.shape != (steps, config.segment_count):

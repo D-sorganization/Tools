@@ -1070,7 +1070,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ### Version 1.1.329
 
-- 2026-06-09: feat(movement optimizer) — restore the standalone PyQt6 swingset policy-training and segmented-chain whip-dynamics tabs, mypy-compatible typed model modules, focused model and UI tests, launcher bootstrap repair, and provider metadata so UpstreamDrift can discover the Movement Optimizer tile from remote main.
+- 2026-06-09: feat(movement optimizer) — restore the standalone PyQt6 swingset policy-training and segmented-chain whip-dynamics tabs, mypy-compatible typed model and Qt UI modules, focused model and UI tests, launcher bootstrap repair, and provider metadata so UpstreamDrift can discover the Movement Optimizer tile from remote main.
 
 ### Version 1.1.320
 
