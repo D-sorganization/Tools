@@ -7,6 +7,8 @@ allowing the codebase to run on Python 3.10 (Ubuntu 22.04 default).
 
 import logging
 import sys
+from enum import Enum
+from typing import TYPE_CHECKING
 
 logger = logging.getLogger(__name__)
 
@@ -38,13 +40,15 @@ else:
     UTC = timezone.utc  # noqa: UP017
 
 # Backport StrEnum
-if sys.version_info >= (3, 11):  # noqa: UP036
+if TYPE_CHECKING:
+    from enum import StrEnum
+elif sys.version_info >= (3, 11):  # noqa: UP036
     from enum import StrEnum as _StrEnum
 
     StrEnum = _StrEnum
 else:
 
-    class StrEnum(_StrEnum):
+    class StrEnum(str, Enum):  # noqa: UP042
         """
         Enum where members are also (and must be) strings.
         Backport for Python < 3.11.

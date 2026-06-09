@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.326                                    |
+| **Spec Version**        | 1.1.327                                    |
 | **Last Spec Update**    | 2026-06-09                                 |
 
 ## 2. Purpose & Mission
@@ -645,6 +645,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-09 | 1.1.327 | fix(compatibility-ci): route remaining Python 3.10-exercised `StrEnum` imports through compatibility shims, make those shims type-check as native `StrEnum` under mypy while retaining Python 3.10 fallbacks, keep the integrations dashboard empty-state property explicitly typed as `bool`, and pass `.secrets.baseline` explicitly to the detect-secrets audit test so the 3.10 CI matrix validates the canonical baseline instead of failing on CLI argument parsing. |
 | 2026-06-09 | 1.1.326 | ci(coverage): keep total coverage floors as a full-suite ratchet while changed-file scoped PR runs enforce only the tracked coverage-policy packages touched by the diff; added regression coverage for the scoped/full-suite split. |
 | 2026-06-09 | 1.1.325 | test(calc-backend): add an adversarial route-list contract test ensuring every endpoint advertised by `/api/calc/endpoints` is backed by a registered FastAPI route, strengthening the #3262 calc_backend test-quality audit follow-up. |
 | 2026-06-09 | 1.1.324 | fix(ci): invoke detect-secrets through `python -m detect_secrets` in the secret scanning workflow so runners where the console script is not on PATH still execute the installed package. |

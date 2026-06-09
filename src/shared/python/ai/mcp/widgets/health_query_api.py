@@ -15,7 +15,12 @@ from __future__ import annotations
 import os
 import time
 from dataclasses import dataclass
-from typing import Any, Protocol, cast
+from typing import TYPE_CHECKING, Any, Protocol, cast
+
+if TYPE_CHECKING:
+    from enum import StrEnum
+else:
+    from compatibility import StrEnum
 
 __all__ = [
     "IntegrationStatus",
@@ -23,9 +28,6 @@ __all__ = [
     "list_all_integrations",
     "query_integration_status",
 ]
-
-
-from enum import StrEnum
 
 
 class IntegrationStatusLevel(StrEnum):

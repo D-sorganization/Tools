@@ -13,8 +13,12 @@ from __future__ import annotations
 import logging
 import sys
 from dataclasses import dataclass
-from enum import StrEnum
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from enum import StrEnum
+else:
+    from compatibility import StrEnum
 
 logger = logging.getLogger(__name__)
 

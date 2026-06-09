@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from enum import StrEnum
+else:
+    from compatibility import StrEnum
 
 from src.shared.python.ai.tool_registry import Tool, ToolRegistry
 from src.shared.python.ai.tools.codemap_tools import CODEMAP_TOOL_NAMES
