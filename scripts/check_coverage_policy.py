@@ -35,9 +35,8 @@ def _coverage_path_candidates(filename: str, sources: list[str]) -> set[str]:
 
 
 def _effective_total_floor(min_total: float, baseline_total: float) -> float:
-    """Use the target floor only after the committed baseline has reached it."""
-    if baseline_total < min_total:
-        return baseline_total
+    """Return the policy floor; baselines must not lower the required target."""
+    _ = baseline_total
     return min_total
 
 

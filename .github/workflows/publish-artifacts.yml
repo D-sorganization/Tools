@@ -171,6 +171,8 @@ jobs:
     if: >-
       github.event_name == 'release' ||
       (github.event_name == 'workflow_dispatch' && inputs.dry_run == 'false')
+    environment:
+      name: npm # GitHub environment with NPM_TOKEN and required reviewers.
     steps:
       - name: Download WASM Package
         uses: actions/download-artifact@v8
@@ -193,7 +195,7 @@ jobs:
           cd pkg
           if [ -z "$NODE_AUTH_TOKEN" ]; then
             echo "⚠️ NPM_TOKEN secret not configured. Skipping publish." >> $GITHUB_STEP_SUMMARY
-            echo "To enable publishing, add NPM_TOKEN secret to the repository." >> $GITHUB_STEP_SUMMARY
+            echo "To enable publishing, add NPM_TOKEN secret to the 'npm' environment." >> $GITHUB_STEP_SUMMARY
           else
             npm publish --access public
             echo "✅ Published to NPM" >> $GITHUB_STEP_SUMMARY

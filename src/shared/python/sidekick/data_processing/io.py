@@ -1,7 +1,8 @@
 """Data I/O utilities for data processing.
 
-Supports reading/writing various formats: CSV, TSV, Parquet, Excel, JSON,
-Matlab, Arrow, SQLite, NumPy, and Pickles.
+Supported formats are limited to handlers implemented below: CSV, TSV, Excel,
+Parquet, JSON, MATLAB, SQLite, and NumPy. Pickle input/output is intentionally
+disabled because loading pickle files executes untrusted payloads.
 """
 
 from __future__ import annotations
@@ -21,7 +22,7 @@ except ImportError:
     SCIPY_AVAILABLE = False
 
 try:
-    pass
+    import pyarrow  # noqa: F401
 
     PYARROW_AVAILABLE = True
 except ImportError:
@@ -146,9 +147,6 @@ class FileFormatDetector:
         ".parquet": "parquet",
         ".pq": "parquet",
         ".json": "json",
-        ".h5": "hdf5",
-        ".hdf5": "hdf5",
-        ".feather": "feather",
         ".npy": "numpy",
         ".mat": "matlab",
         ".db": "sqlite",

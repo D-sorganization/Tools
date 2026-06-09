@@ -68,7 +68,7 @@ Tools/
 
 | Requirement | Version                  | Notes                  |
 | ----------- | ------------------------ | ---------------------- |
-| Python      | 3.10+ (3.12 recommended) | Core runtime           |
+| Python      | 3.11+ (3.12 recommended) | Core runtime           |
 | Git         | Latest                   | With LFS support       |
 | MATLAB      | R2020a+                  | For MATLAB-based tools |
 | Node.js     | 18+                      | For web applications   |
@@ -1359,7 +1359,7 @@ The plugin system scans these directories for manifests:
 
 **Problem**: `ImportError: cannot import name 'StrEnum' from 'enum'`
 
-**Cause**: Running Python 3.10 which lacks features from 3.11+
+**Cause**: Running Python earlier than 3.11, which lacks required runtime features.
 
 **Solution**: Upgrade to Python 3.11 or 3.12 (recommended)
 
@@ -1399,7 +1399,7 @@ The plugin system scans these directories for manifests:
 The repository uses GitHub Actions for continuous integration:
 
 - **Quality Gate**: Ruff, Black, Mypy, pip-audit
-- **Multi-Version Testing**: Python 3.10, 3.11, 3.12
+- **Multi-Version Testing**: Python 3.11 and 3.12
 - **Tauri Builds**: Desktop application packaging
 
 Check CI status at: `https://github.com/dieterolson/Tools/actions`
