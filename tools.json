@@ -89,10 +89,10 @@
     ],
     "Optimization": [
         {
-            "name": "Adam Optimizer",
+            "name": "Movement Optimizer",
             "path": "src/optimizer_gui/launch_pyqt6.py",
             "type": "python",
-            "desc": "Configure and run Adam-based optimization"
+            "desc": "Train and compare Adam, swingset, and chain-dynamics motion policies"
         }
     ],
     "Process Simulation": [

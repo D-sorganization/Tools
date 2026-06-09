@@ -40,7 +40,21 @@ from PyQt6.QtWidgets import (
 
 from shared.python.theme.integration import ThemedWindowMixin
 
+from .motion_tabs import create_chain_tab, create_swingset_tab
+
 logger = logging.getLogger(__name__)
+
+
+def _make_window_base() -> type:
+    """Return a Qt-compatible base class, tolerating mocked PyQt imports."""
+    if not isinstance(QMainWindow, type):
+        return object
+
+    class WindowBase(ThemedWindowMixin, QMainWindow):
+        """Concrete base combining theme support and Qt main-window behavior."""
+
+    return WindowBase
+
 
 # Catppuccin Mocha color palette
 CATPPUCCIN_MOCHA = {
@@ -245,7 +259,7 @@ class ParameterConfig:
     max_val: float
 
 
-class OptimizerWindow(ThemedWindowMixin, QMainWindow):
+class OptimizerWindow(_make_window_base()):
     """Main window for Adam Optimizer application."""
 
     def __init__(self) -> None:
@@ -258,7 +272,7 @@ class OptimizerWindow(ThemedWindowMixin, QMainWindow):
 
     def _setup_ui(self) -> None:
         """Set up the user interface."""
-        self.setWindowTitle("Adam Optimizer")
+        self.setWindowTitle("Movement Optimizer")
         self.setMinimumSize(700, 800)
         self.setStyleSheet(STYLESHEET)
 
@@ -277,7 +291,7 @@ class OptimizerWindow(ThemedWindowMixin, QMainWindow):
         main_layout.setSpacing(12)
 
         # Title
-        title_label = QLabel("Adam Optimizer")
+        title_label = QLabel("Movement Optimizer")
         title_font = QFont()
         title_font.setPointSize(18)
         title_font.setBold(True)
@@ -291,10 +305,7 @@ class OptimizerWindow(ThemedWindowMixin, QMainWindow):
         self.tab_widget = QTabWidget()
         main_layout.addWidget(self.tab_widget)
 
-        # Create tabs
-        self.tab_widget.addTab(self._create_parameters_tab(), "Parameters")
-        self.tab_widget.addTab(self._create_adam_settings_tab(), "Adam Settings")
-        self.tab_widget.addTab(self._create_results_tab(), "Results")
+        self._add_optimizer_tabs()
 
         # Run button
         run_btn = QPushButton("Run Optimization")
@@ -303,6 +314,14 @@ class OptimizerWindow(ThemedWindowMixin, QMainWindow):
         main_layout.addWidget(run_btn)
 
         main_layout.addStretch()
+
+    def _add_optimizer_tabs(self) -> None:
+        """Register optimizer and motion-analysis tabs."""
+        self.tab_widget.addTab(self._create_parameters_tab(), "Parameters")
+        self.tab_widget.addTab(self._create_adam_settings_tab(), "Adam Settings")
+        self.tab_widget.addTab(self._create_results_tab(), "Results")
+        self.tab_widget.addTab(create_swingset_tab(), "Swingset Model")
+        self.tab_widget.addTab(create_chain_tab(), "Chain Dynamics")
 
     def _create_parameters_tab(self) -> QWidget:
         """Create the parameters configuration tab."""
