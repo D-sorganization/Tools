@@ -1056,6 +1056,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 9. Changelog
 
+### Version 1.1.320
+
+- 2026-06-09: refactor(tools, #3261, #3262, #3263) — replaced the duplicated `scripts/mypy_autofix_agent.py` implementation with a compatibility wrapper that delegates to the canonical `src.tools.mypy_autofix_agent` entrypoint, preserving direct script execution while reducing audit-reported DRY debt. Added focused tests that guard the delegation contract and CLI help path.
+
 ### Version 1.1.265
 
 - 2026-06-01: feat(ai): Added `AdapterReviewerLLMClient`, a production `ReviewerLLMClient` backed by `BaseAgentAdapter` that builds a structured JSON prompt, runs `send_message` off the event loop, and parses verdict/reasoning/confidence (malformed JSON → `abstain`, confidence clamped to [0,1]). Wired it as the default via `peer_review.registry.default_llm_client()`, which selects the production client when an adapter is available and falls back to `StubReviewerLLMClient` offline (#3177). Added behavioral tests for the four CLI adapters (`claude_code`/`codex_cli`/`gemini_cli` via mocked `subprocess.run`, `cline` via mocked httpx) covering success, non-zero-exit/timeout/missing-binary error classification, `_strip_telemetry`, and `validate_connection` paths (#3178).
