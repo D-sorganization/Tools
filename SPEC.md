@@ -1095,6 +1095,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ### Version 1.1.231
 
+- 2026-06-09: ci(secret-scan) — run the detect-secrets baseline scan through `python -m detect_secrets` so the configured Python environment, not the runner PATH, controls the installed scanner entrypoint.
 - 2026-06-09: perf(p1am frontend) — optimize array aggregations and string operations in `LadderExplorer.tsx` by replacing chained `.map().filter()` operations with a single-pass `for` loop and using `useMemo` to prevent main thread lag.
 - 2026-05-30: perf(p1am frontend, #3126) — optimize array aggregations in `AlarmsHeader.tsx` by replacing chained `.filter()` and `.reduce()` operations with a single-pass `for` loop, eliminating intermediate array allocations and minimizing garbage collection overhead during high-frequency alarm updates.
 

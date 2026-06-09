@@ -27,6 +27,7 @@ import pytest
 
 REPO_ROOT = Path(__file__).parent.parent.parent
 BASELINE_PATH = REPO_ROOT / ".secrets.baseline"
+DETECT_SECRETS_WORKFLOW = REPO_ROOT / ".github" / "workflows" / "detect-secrets.yml"
 
 
 def _load_baseline() -> dict[str, Any]:
@@ -100,6 +101,13 @@ def _scan_fresh_without_updating_baseline() -> dict[str, Any]:
 
 class TestBaselineExists:
     """Basic structural tests that run quickly without shelling out."""
+
+    def test_workflow_invokes_installed_python_module(self) -> None:
+        """The fleet runner PATH must not decide whether detect-secrets is runnable."""
+        workflow = DETECT_SECRETS_WORKFLOW.read_text(encoding="utf-8")
+
+        assert "python -m detect_secrets scan --baseline .secrets.baseline" in workflow
+        assert "\n          detect-secrets scan --baseline" not in workflow
 
     def test_baseline_file_exists(self) -> None:
         """Precondition: .secrets.baseline must exist in repo root."""
