@@ -1,13 +1,15 @@
-"""GUI registration for Adam Optimizer."""
+"""GUI registration for Movement Optimizer."""
 
 from __future__ import annotations
 
 from typing import Any
 
 GUI_INFO = {
-    "name": "Adam Optimizer",
+    "name": "Movement Optimizer",
     "tool_name": "optimizer_gui",
-    "description": "Configure and run Adam-based optimization",
+    "description": (
+        "Optimize motion policies with Adam, swingset, and chain dynamics models"
+    ),
     "category": "Optimization",
     "icon": "chart-line",
     "pyqt6": {
