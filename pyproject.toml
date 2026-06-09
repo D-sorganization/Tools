@@ -331,12 +331,16 @@ omit = [
 ]
 
 [tool.coverage.report]
-# Coverage floor ratcheted 15 -> 20 after adding meaningful pure-logic
-# tests for the model_generation URDF/inertia/validation modules
-# (primitives, spatial, calculator, urdf_parser, format_utils, validation).
-# Target ratchet plan (issue #2406 / #2474) ultimately aims at 60%; this is
-# an incremental, conservatively-verified step kept below measured coverage
-# to preserve a safety margin for environment-dependent CI runs.
+# Coverage TARGET is 60% (production readiness; see config/coverage_policy.json
+# `minimum_total_percent` and issues #2406 / #2474). That 60% is NOT yet
+# enforced: the repo uses a monotonic ratchet whose effective floor tracks the
+# committed baseline (config/coverage_baseline.json) until it reaches the target.
+# `fail_under` below is coverage.py's coarse local floor — the same ratchet step,
+# kept conservatively below measured coverage to absorb environment-dependent CI
+# variance (GUI/Qt + optional engines). It was ratcheted 15 -> 20 after adding
+# pure-logic tests for the model_generation URDF/inertia/validation modules.
+# Raise `fail_under` and the baseline together (monotonically); do not bump the
+# 60% comment without bumping the enforced numbers. See issue #3254.
 fail_under = 20
 show_missing = true
 skip_empty = true

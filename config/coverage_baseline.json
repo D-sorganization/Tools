@@ -1,5 +1,5 @@
 {
-  "_comment": "Coverage baseline — updated 2026-05-03 from the provider-contract suite after issue #2468 exposed that the stale 42.9% baseline no longer matched CI reality. Run scripts/check_coverage_policy.py to verify.",
+  "_comment": "Coverage RATCHET baseline: the effective total-coverage floor enforced by scripts/check_coverage_policy.py. This is the current ratchet step toward the 60% TARGET in config/coverage_policy.json — NOT the target itself. It is intentionally conservative to absorb environment-dependent CI variance (GUI/Qt and optional engines). Raise this value upward (monotonically) as measured CI coverage climbs; the gate fails if total coverage drops below this floor. Kept in sync with the coarse `tool.coverage.report.fail_under` floor in pyproject.toml. See issues #2468 / #3254.",
   "total_percent": 15.00,
   "package_percent": {}
 }

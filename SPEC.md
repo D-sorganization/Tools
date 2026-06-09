@@ -445,7 +445,7 @@ passes fail early in CI.
 
 | Scope                  | Minimum                              | Current                                                                         | Enforced By                             |
 | ---------------------- | ------------------------------------ | ------------------------------------------------------------------------------- | --------------------------------------- |
-| Overall                | 60% target, current-baseline ratchet | 24.48% baseline                                                                 | CI (`scripts/check_coverage_policy.py`) |
+| Overall                | 60% target, current-baseline ratchet | 15% ratchet floor (effective); 60% target not yet enforced                      | CI (`scripts/check_coverage_policy.py`) |
 | Core tools             | 75%                                  | ~81%                                                                            | CI                                      |
 | Plugin system          | 80%                                  | ~85%                                                                            | CI                                      |
 | Codemap package        | 90%                                  | 97.72% focused coverage                                                         | CI (`scripts/check_coverage_policy.py`) |

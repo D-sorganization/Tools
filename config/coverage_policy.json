@@ -1,5 +1,6 @@
 {
-  "_comment": "Coverage policy — raised to 60% per issue #2474 (production readiness). Previous ratchet plan (issue #2406) targeted 60% as Phase 3; issue #2474 accelerates this as the repo-wide gate.",
+  "_comment": "Coverage policy. `minimum_total_percent` is the production-readiness TARGET (60%), NOT the currently enforced floor. The repo uses a monotonic ratchet: the EFFECTIVE gate is min(`minimum_total_percent`, baseline `total_percent` from config/coverage_baseline.json). While the baseline is below the target the effective floor equals the baseline, so a drop below current coverage fails but coverage is not yet required to be 60%. Raise the baseline (never the comment alone) as coverage climbs; see issues #2406 / #2474 / #3254.",
+  "_ratchet": "effective_floor = min(minimum_total_percent, baseline.total_percent); see scripts/check_coverage_policy.py:_effective_total_floor",
   "minimum_total_percent": 60.0,
   "max_total_drop_percent": 2.0,
   "tracked_packages": {
