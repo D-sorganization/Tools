@@ -4,7 +4,7 @@ from typing import Any
 import mujoco
 import numpy as np
 
-from lower_body_model.hip_rotation import InclinedPlaneHipRotationTarget
+from .hip_rotation import InclinedPlaneHipRotationTarget
 
 
 class LowerBodySimulator:

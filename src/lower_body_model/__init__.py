@@ -1,6 +1,6 @@
 """Lower-body model public API."""
 
-from lower_body_model.hip_rotation import (
+from .hip_rotation import (
     HipRotationSample,
     InclinedPlaneHipRotationTarget,
 )

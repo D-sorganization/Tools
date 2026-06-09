@@ -14,7 +14,7 @@ from typing import Any
 
 import numpy as np
 
-from rotation_converter._contracts import require
+from ._contracts import require
 
 
 @dataclass

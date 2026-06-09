@@ -350,6 +350,28 @@ class MyTool(BaseTool):
         pass
 ```
 
+**Cross-repo import contract:**
+
+Downstream consumers (e.g. UpstreamDrift's `external_tools_adapter`) import
+this repository by placing the **repository root** on `sys.path` and importing
+packages under the `src.` namespace (`import src.<package>`). Top-level `src/`
+packages MUST therefore be importable with only the repository root on
+`sys.path` — they may not depend on the test-only `pythonpath` shims (`src`,
+`src/shared/python`) or on the editable-install finder being present. Concretely:
+
+- Package `__init__` modules use package-relative imports (`from .x import ...`)
+  rather than bare, ambiguous-root names (`from <pkg>.x import ...`).
+- Optional heavy runtime dependencies (e.g. `cv2`, `mediapipe`, `sidekick`) are
+  imported lazily (PEP 562 `__getattr__`) so that importing a package — and
+  reaching its version/type metadata or declared console-script entry point —
+  never requires those optional dependencies.
+
+This contract is enforced by the subprocess import-contract tests
+(`tests/test_src_package_import_contract.py`,
+`tests/video_analyzer/test_video_analyzer_import_contract.py`), which reproduce
+the consumer's clean `sys.path` so a regression turns CI red here rather than
+crashing the consumer at runtime.
+
 ## 6. Data & Configuration
 
 ### Input Data

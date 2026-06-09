@@ -24,8 +24,8 @@ from typing import Any
 
 import numpy as np
 
-from rotation_converter._contracts import ensure, require
-from rotation_converter.modern_robotics import (
+from ._contracts import ensure, require
+from .modern_robotics import (
     MatrixLog6,
     TransInv,
     TransToRp,
@@ -203,7 +203,7 @@ class ScrewAxisAnimator:
 
     Usage::
 
-        from rotation_converter.motion_examples import football_spiral
+        from .motion_examples import football_spiral
         traj = football_spiral(n_frames=60)
         animator = ScrewAxisAnimator(traj, title="Football Spiral")
         animator.show()  # Opens interactive matplotlib window
@@ -417,8 +417,8 @@ class ScrewAxisAnimator:
             y_text -= 0.05
 
         if self.show_euler or self.show_quaternion:
-            import rotation_converter.core as rc_core
-            from rotation_converter.converter import Rotation
+            from . import core as rc_core
+            from .converter import Rotation
 
             rot = Rotation.from_rotation_matrix(frame["orientation"])
             if self.show_euler:
@@ -464,7 +464,7 @@ class ScrewAxisAnimator:
 
         _anim = FuncAnimation(
             fig,
-            update,  # type: ignore[arg-type]
+            update,
             frames=self.n_frames,
             interval=interval,
             repeat=True,
@@ -499,7 +499,7 @@ class ScrewAxisAnimator:
 
         anim = FuncAnimation(
             fig,
-            update,  # type: ignore[arg-type]
+            update,
             frames=self.n_frames,
             interval=1000 // fps,
             repeat=False,

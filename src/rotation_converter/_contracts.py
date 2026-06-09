@@ -6,7 +6,7 @@ outside the monorepo (e.g. pip-installed or copied into another project).
 
 Consumers inside rotation_converter should always import from here::
 
-    from rotation_converter._contracts import require, ensure, ...
+    from ._contracts import require, ensure, ...
 
 This keeps the package self-contained while still using the full DbC
 infrastructure when running inside the Tools monorepo.

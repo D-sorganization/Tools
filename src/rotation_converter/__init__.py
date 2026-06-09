@@ -11,7 +11,7 @@ Rotation Converter
    Migration guide::
 
        # Before (deprecated)
-       from rotation_converter.core import euler_to_quaternion
+       from .core import euler_to_quaternion
 
        # After (recommended)
        from tools_core.math_primitives import euler_to_quaternion
@@ -70,7 +70,18 @@ The package carries its own Design-by-Contract shim
 ``contracts`` module.
 """
 
+import sys
 import warnings
+
+# Self-register the package under its bare top-level name so that the few
+# internal modules which still import via the fully-qualified
+# ``rotation_converter.<sub>`` form (e.g. the large, baseline-grandfathered
+# ``modern_robotics``) resolve correctly even when this package is imported
+# cross-repo as ``src.rotation_converter`` with only the repository root on
+# ``sys.path``. New code should use package-relative imports (``from .x``);
+# this alias only preserves the existing fully-qualified imports without
+# requiring ``src/`` to be a separate ``sys.path`` entry.
+sys.modules.setdefault("rotation_converter", sys.modules[__name__])
 
 warnings.warn(
     "rotation_converter is deprecated. "
@@ -83,10 +94,10 @@ warnings.warn(
 __version__ = "1.4.0"
 
 # ── High-level classes ────────────────────────────────────────────
-from rotation_converter.converter import Rotation, RotationConverter  # noqa: E402
+from .converter import Rotation, RotationConverter  # noqa: E402
 
 # ── Core rotation conversions ────────────────────────────────────
-from rotation_converter.core import (  # noqa: E402
+from .core import (  # noqa: E402
     axis_angle_to_quaternion,
     axis_angle_to_rotation_matrix,
     euler_to_quaternion,
@@ -105,7 +116,7 @@ from rotation_converter.core import (  # noqa: E402
 )
 
 # ── Modern Robotics (Lynch & Park) ───────────────────────────────
-from rotation_converter.modern_robotics import (  # noqa: E402
+from .modern_robotics import (  # noqa: E402
     FKinBody,
     FKinSpace,
     IKinBody,
@@ -126,22 +137,22 @@ from rotation_converter.modern_robotics import (  # noqa: E402
 )
 
 # ── Visualization / examples ─────────────────────────────────────
-from rotation_converter.motion_examples import (  # noqa: E402
+from .motion_examples import (  # noqa: E402
     football_spiral,
     frisbee_flight,
 )
-from rotation_converter.rigid_transform import (  # noqa: E402
+from .rigid_transform import (  # noqa: E402
     FrameError,
     RigidTransform,
 )
-from rotation_converter.screw_visualization import (  # noqa: E402
+from .screw_visualization import (  # noqa: E402
     ScrewAxisAnimator,
     build_animation_frames,
     extract_screw_axes_from_trajectory,
 )
 
 # ── Twist / screw axis conversions ───────────────────────────────
-from rotation_converter.twist_screw import (  # noqa: E402
+from .twist_screw import (  # noqa: E402
     adjoint_representation,
     homogeneous_to_twist_angle,
     screw_to_twist,

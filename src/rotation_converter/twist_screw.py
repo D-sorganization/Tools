@@ -20,13 +20,13 @@ from typing import Any
 
 import numpy as np
 
-from rotation_converter._contracts import (
+from ._contracts import (
     ensure,
     require,
     require_finite,
     require_unit_vector,
 )
-from rotation_converter.core import (
+from .core import (
     _skew_symmetric,
     _validate_rotation_matrix,
     rotation_matrix_to_axis_angle,

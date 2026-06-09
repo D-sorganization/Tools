@@ -20,8 +20,8 @@ import math
 
 import numpy as np
 
-from rotation_converter._contracts import ensure, require
-from rotation_converter.modern_robotics import MatrixExp3, VecToso3
+from ._contracts import ensure, require
+from .modern_robotics import MatrixExp3, VecToso3
 
 # ---------------------------------------------------------------------------
 # Shared physics helpers (DRY)

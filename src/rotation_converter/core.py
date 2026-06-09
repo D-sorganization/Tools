@@ -23,7 +23,7 @@ from typing import Any
 
 import numpy as np
 
-from rotation_converter._contracts import (
+from ._contracts import (
     ensure,
     require,
     require_finite,
@@ -68,7 +68,7 @@ def _validate_quaternion_array(q: Any, name: str = "quaternion") -> np.ndarray:
     q = np.asarray(q, dtype=float)
     require(q.shape == (4,), f"{name} must have 4 elements", q.shape)
     require_finite(q, name)
-    return q  # type: ignore[no-any-return]
+    return q
 
 
 def _validate_unit_quaternion(q: np.ndarray, name: str = "quaternion") -> None:
@@ -96,7 +96,7 @@ def _validate_rotation_matrix(R: Any, name: str = "rotation matrix") -> np.ndarr
     )
     det = np.linalg.det(R)
     require(bool(abs(det - 1.0) < 1e-6), f"{name} must have det=+1 (got {det:.6f})")
-    return R  # type: ignore[no-any-return]
+    return R
 
 
 # ===========================================================================
@@ -115,7 +115,7 @@ def normalize_quaternion(q: Any) -> np.ndarray:
     require(bool(norm > 1e-12), "cannot normalize zero quaternion", norm)
     result = q / norm
     ensure(bool(abs(np.linalg.norm(result) - 1.0) < 1e-12), "result must be unit norm")
-    return result  # type: ignore[no-any-return]
+    return result
 
 
 def quaternion_conjugate(q: Any) -> np.ndarray:
@@ -307,7 +307,7 @@ def axis_angle_to_rotation_matrix(axis: Any, angle: float) -> np.ndarray:
     R = np.eye(3) + math.sin(angle) * K + (1.0 - math.cos(angle)) * (K @ K)
 
     ensure(bool(abs(np.linalg.det(R) - 1.0) < 1e-9), "result must be SO(3)")
-    return R  # type: ignore[no-any-return]
+    return R
 
 
 def rotation_matrix_to_axis_angle(R: Any) -> tuple[np.ndarray, float]:
