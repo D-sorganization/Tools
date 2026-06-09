@@ -69,7 +69,7 @@ jobs:
           node-version: "24"
           cache: npm
       - run: |
-          npm install -g @google/jules
+          npm install -g @google/jules@0.1.42
           pip install ruff==0.14.10
 
       - name: Identify Target File

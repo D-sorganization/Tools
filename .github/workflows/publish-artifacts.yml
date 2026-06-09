@@ -70,7 +70,7 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
 
       - name: Setup Python
         env:
@@ -108,12 +108,14 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
         with:
           targets: wasm32-unknown-unknown
 
       - name: Install wasm-pack
-        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+        # Pinned install via cargo (no `curl | sh`); `--locked` builds from the
+        # crate's committed Cargo.lock for reproducibility. See issue #3255.
+        run: cargo install wasm-pack --locked --version 0.13.1
 
       - name: Build WASM Package
         run: |

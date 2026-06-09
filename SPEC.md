@@ -478,6 +478,17 @@ passes fail early in CI.
 | bandit    | latest  | Security scanning                 | Yes       |
 | pip-audit | latest  | Dependency vulnerability scanning | Yes       |
 
+### Supply-chain / workflow pinning
+
+Third-party GitHub Actions must be pinned to a full 40-character commit SHA so a
+moved tag or compromised release cannot silently change privileged CI behaviour.
+First-party `actions/*` and `github/*` actions may use a version tag (they are
+the allowlisted trust boundary). `scripts/check_action_pinning.py` enforces this
+and runs in the `lint-workflows` job; `tests/scripts/test_check_action_pinning.py`
+covers it. Installer downloads avoid `curl | sh`: `wasm-pack` is installed via a
+pinned `cargo install --locked --version`, and global CLIs (`@google/jules`,
+`jscpd`) are pinned to exact versions. See issue #3255.
+
 ### Design Principles
 
 - **TDD**: Yes — tests written before/with implementation for core tools

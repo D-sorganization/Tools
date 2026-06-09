@@ -98,7 +98,7 @@ jobs:
 
       - name: Install Jules
         run: |
-          npm install -g @google/jules
+          npm install -g @google/jules@0.1.42
           jules auth --token ${{ secrets.JULES_API_KEY }}
 
       - name: Setup Python

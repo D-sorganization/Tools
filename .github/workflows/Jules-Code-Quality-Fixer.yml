@@ -115,7 +115,7 @@ jobs:
         run: |
           pip install -r requirements.txt
           pip install ruff mypy
-          npm install -g @google/jules
+          npm install -g @google/jules@0.1.42
 
       - name: Find or Create Fix Branch
         id: branch

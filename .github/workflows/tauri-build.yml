@@ -115,14 +115,14 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
         with:
           components: rustfmt, clippy
 
       # Cache cargo registry/git + matrix-app target/ dir. Per-app workspace
       # key prevents cross-contamination between the three Tauri sub-apps.
       - name: Cache Rust target (check)
-        uses: Swatinem/rust-cache@v2
+        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
         with:
           workspaces: ${{ matrix.path }}/src-tauri -> target
           key: ${{ matrix.app }}-check
@@ -191,14 +191,14 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
         with:
           targets: ${{ matrix.platform.target }}
 
       # Per-(app, target) Rust cache. Tauri release builds compile ~400 crates;
       # warm cache typically reduces build time by 60-70%.
       - name: Cache Rust target (build)
-        uses: Swatinem/rust-cache@v2
+        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
         with:
           workspaces: ${{ matrix.app.path }}/src-tauri -> target
           key: ${{ matrix.app.name }}-${{ matrix.platform.target }}-release
@@ -218,7 +218,7 @@ jobs:
         run: npm run build
 
       - name: Build Tauri app
-        uses: tauri-apps/tauri-action@v0
+        uses: tauri-apps/tauri-action@84b9d35b5fc46c1e45415bdb6144030364f7ebc5 # v0
         env:
           GITHUB_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
         with:
