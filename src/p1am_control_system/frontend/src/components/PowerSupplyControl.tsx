@@ -30,6 +30,12 @@ export interface PowerSupplyConfig {
   current_setpoint_max_a: number;
   power_alarm_max_w: number;
   temp_alarm_max_c: number;
+  /**
+   * Max rate at which the AO command percent may INCREASE (decreases pass
+   * through instantly). Default 5 %/s gives a slow-start ramp from 0 to
+   * 100 % in 20 s.
+   */
+  setpoint_ramp_rate_pct_per_s: number;
 }
 
 export interface PowerSupplyStatus {
@@ -589,6 +595,16 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
             value={configDraft.temp_alarm_max_c}
             onChange={(v) =>
               setConfigDraft({ ...configDraft, temp_alarm_max_c: v })
+            }
+          />
+          <ConfigField
+            label="Ramp rate on INCREASE (%/s; decreases are instant)"
+            value={configDraft.setpoint_ramp_rate_pct_per_s}
+            onChange={(v) =>
+              setConfigDraft({
+                ...configDraft,
+                setpoint_ramp_rate_pct_per_s: v,
+              })
             }
           />
           <ConfigField

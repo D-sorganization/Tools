@@ -176,7 +176,20 @@ class TestModeSwitching:
 class TestStatus:
     def test_status_reports_current_state(self) -> None:
         c = fresh_running_controller(10.0)
-        c.tick(measured_current_a=5.0, measured_voltage_v=10.0, measured_temp_c=30.0)
+        # First tick establishes the slew baseline at t=0; second tick at
+        # t=100 s gives the ramp plenty of headroom to settle on target.
+        c.tick(
+            measured_current_a=5.0,
+            measured_voltage_v=10.0,
+            measured_temp_c=30.0,
+            now=0.0,
+        )
+        c.tick(
+            measured_current_a=5.0,
+            measured_voltage_v=10.0,
+            measured_temp_c=30.0,
+            now=100.0,
+        )
         s = c.status()
         assert s.state == PowerSupplyState.RUNNING
         assert s.permissive is True
@@ -206,7 +219,9 @@ class TestMathInvariants:
     def test_command_proportional_to_setpoint(self, sp_a: float) -> None:
         c = fresh_armed_controller()
         c.set_current_setpoint(sp_a)
-        cmd = c.tick(0.0, 0.0, 25.0)
+        # Two ticks with a large dt allow the slew limiter to fully settle.
+        c.tick(0.0, 0.0, 25.0, now=0.0)
+        cmd = c.tick(0.0, 0.0, 25.0, now=100.0)
         expected_pct = 100.0 * sp_a / c.config.current_full_scale_a
         assert cmd == pytest.approx(expected_pct)
 
@@ -233,7 +248,9 @@ class TestUpdateConfig:
             current_setpoint_max_a=20.0,
         )
         c.update_config(new_cfg)
-        cmd = c.tick(0.0, 0.0, 25.0)
+        # Two ticks with large dt so slew settles on the new (clamped) target.
+        c.tick(0.0, 0.0, 25.0, now=0.0)
+        cmd = c.tick(0.0, 0.0, 25.0, now=100.0)
         # Setpoint should now be 20 A → 20 % of full scale (100 A)
         assert cmd == pytest.approx(20.0)
 
