@@ -7,11 +7,15 @@ on:
       - ".github/workflows/**"
       - "scripts/actionlint_shellcheck.sh"
       - "scripts/validate_workflows.py"
+      - "scripts/check_workflow_pinning.py"
+      - "scripts/check_blocking_quality_gates.py"
   pull_request:
     paths:
       - ".github/workflows/**"
       - "scripts/actionlint_shellcheck.sh"
       - "scripts/validate_workflows.py"
+      - "scripts/check_workflow_pinning.py"
+      - "scripts/check_blocking_quality_gates.py"
   workflow_dispatch:
 
 concurrency:
@@ -129,6 +133,12 @@ jobs:
 
       - name: Validate workflow YAML structure
         run: python3 scripts/validate_workflows.py
+
+      - name: Validate workflow pinning policy
+        run: python3 scripts/check_workflow_pinning.py
+
+      - name: Validate blocking quality gates
+        run: python3 scripts/check_blocking_quality_gates.py
 
       - name: Install actionlint
         run: |

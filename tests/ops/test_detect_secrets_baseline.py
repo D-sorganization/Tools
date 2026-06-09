@@ -15,6 +15,7 @@ Acceptance criteria (issue #2947):
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -27,6 +28,23 @@ import pytest
 
 REPO_ROOT = Path(__file__).parent.parent.parent
 BASELINE_PATH = REPO_ROOT / ".secrets.baseline"
+DETECT_SECRETS_WORKFLOW = REPO_ROOT / ".github" / "workflows" / "detect-secrets.yml"
+
+
+def _detect_secrets_audit_supports(option: str) -> bool:
+    """Return whether the installed detect-secrets audit CLI supports an option."""
+    try:
+        result = subprocess.run(
+            ["detect-secrets", "audit", "--help"],
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+    except FileNotFoundError:
+        pytest.skip("detect-secrets not installed")
+    if result.returncode != 0:
+        pytest.skip(f"detect-secrets audit --help failed: {result.stderr}")
+    return option in result.stdout
 
 
 def _load_baseline() -> dict[str, Any]:
@@ -100,6 +118,13 @@ def _scan_fresh_without_updating_baseline() -> dict[str, Any]:
 
 class TestBaselineExists:
     """Basic structural tests that run quickly without shelling out."""
+
+    def test_workflow_invokes_installed_python_module(self) -> None:
+        """The fleet runner PATH must not decide whether detect-secrets is runnable."""
+        workflow = DETECT_SECRETS_WORKFLOW.read_text(encoding="utf-8")
+
+        assert "python -m detect_secrets scan --baseline .secrets.baseline" in workflow
+        assert "\n          detect-secrets scan --baseline" not in workflow
 
     def test_baseline_file_exists(self) -> None:
         """Precondition: .secrets.baseline must exist in repo root."""
@@ -231,10 +256,16 @@ class TestBaselineNotStale:
         If the baseline is stale, detect-secrets will find secrets not in the
         baseline and this test fails with a clear message.
         """
+        audit_args = ["detect-secrets", "audit", "--report"]
+        if _detect_secrets_audit_supports("--only-allowlisted"):
+            audit_args.append("--only-allowlisted")
+        audit_args.append(str(BASELINE_PATH))
+        env = {**os.environ, "PYTHONUTF8": "1"}
         try:
             result = subprocess.run(
-                ["detect-secrets", "audit", "--report", "--only-allowlisted"],
+                audit_args,
                 capture_output=True,
+                env=env,
                 text=True,
                 cwd=str(REPO_ROOT),
                 timeout=120,

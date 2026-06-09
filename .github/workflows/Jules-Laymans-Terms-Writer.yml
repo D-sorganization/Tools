@@ -63,7 +63,7 @@ jobs:
       - name: Install Dependencies
         run: |
           pip install -r requirements.txt || true
-          npm install -g @google/jules
+          npm install -g @google/jules@0.1.42
 
       - name: Initialize Review Tracking
         run: |

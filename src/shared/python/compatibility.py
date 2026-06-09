@@ -5,8 +5,12 @@ from __future__ import annotations
 import sys
 from datetime import timezone
 from enum import Enum
+from typing import TYPE_CHECKING
 
-if sys.version_info >= (3, 11):  # noqa: UP036
+if TYPE_CHECKING:
+    from datetime import UTC
+    from enum import StrEnum
+elif sys.version_info >= (3, 11):  # noqa: UP036
     from datetime import UTC
     from enum import StrEnum
 else:

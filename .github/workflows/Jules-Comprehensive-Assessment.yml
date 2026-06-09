@@ -70,7 +70,7 @@ jobs:
           pip install -r requirements.txt || true
           # Install tabulate for reports if needed
           pip install tabulate || true
-          npm install -g @google/jules
+          npm install -g @google/jules@0.1.42
 
       # ---------------------------------------------------------
       # Component 1: Pragmatic Programmer Review (Local)
@@ -136,7 +136,7 @@ jobs:
       # Commit Data for Agent Context
       # ---------------------------------------------------------
       - name: Commit Assessment Data
-        uses: stefanzweifel/git-auto-commit-action@v7
+        uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7
         with:
           commit_message: "docs(assessment): pre-assessment data collection"
           branch: "automation/assessment-${{ steps.date.outputs.date }}"

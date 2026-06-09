@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.319                                    |
-| **Last Spec Update**    | 2026-06-08                                 |
+| **Spec Version**        | 1.1.328                                    |
+| **Last Spec Update**    | 2026-06-09                                 |
 
 ## 2. Purpose & Mission
 
@@ -423,6 +423,9 @@ optional packages without requiring those packages in the base test
 environment. Sidekick Qt dock chrome tests run serially on Windows xdist
 workers and set Qt offscreen mode before importing PyQt6 to avoid GUI worker
 crashes.
+Changed Python test files must contain at least one AST-visible behavioral
+assertion, exception assertion, or unittest/mock-style assertion call unless
+they match the explicit fixture-only assertion allowlist.
 
 ### Test Organization
 
@@ -642,6 +645,16 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-09 | 1.1.328 | fix(ci): satisfy the changed-file quality gate by explicitly annotating access-policy registry results under skipped-import mypy, add Python 3.10 `tomli` support for metadata contract tests, assert calc-backend pressure-drop values through the standardized response `data` payload, and keep Sidekick standard responses importable from the repo package path without top-level path shims. |
+| 2026-06-09 | 1.1.327 | fix(compatibility-ci): route remaining Python 3.10-exercised `StrEnum` imports through compatibility shims, make those shims type-check as native `StrEnum` under mypy while retaining Python 3.10 fallbacks, keep the integrations dashboard empty-state property explicitly typed as `bool`, and pass `.secrets.baseline` explicitly to the detect-secrets audit test so the 3.10 CI matrix validates the canonical baseline instead of failing on CLI argument parsing. |
+| 2026-06-09 | 1.1.326 | ci(coverage): keep total coverage floors as a full-suite ratchet while changed-file scoped PR runs enforce only the tracked coverage-policy packages touched by the diff; added regression coverage for the scoped/full-suite split. |
+| 2026-06-09 | 1.1.325 | test(calc-backend): add an adversarial route-list contract test ensuring every endpoint advertised by `/api/calc/endpoints` is backed by a registered FastAPI route, strengthening the #3262 calc_backend test-quality audit follow-up. |
+| 2026-06-09 | 1.1.324 | fix(ci): invoke detect-secrets through `python -m detect_secrets` in the secret scanning workflow so runners where the console script is not on PATH still execute the installed package. |
+| 2026-06-09 | 1.1.323 | fix(ci): avoid detect-secrets false positives from immutable workflow digest pins and workflow-pinning test fixtures without changing the committed secrets baseline. |
+| 2026-06-09 | 1.1.323 | test(tools): add changed-test assertion and changed-Python policy guards for the A-O audit follow-up, blocking assertion-light Python test changes and undocumented changed-file policy regressions with focused tests, allowlists, CI integration, and development notes for issues #3262 and #3263. |
+| 2026-06-09 | 1.1.322 | fix(ci): fold #3255 pinning into the consolidated branch by requiring third-party workflow actions to use immutable 40-character SHAs, allowing first-party `actions/*` and `github/*` tag refs as the explicit trust boundary, blocking `curl|sh` installers and unversioned global npm installs without a baseline, keeping wasm-pack on a pinned release archive with SHA-256 verification, and pinning Jules CLI installs to `@0.1.42`. |
+| 2026-06-09 | 1.1.321 | fix(ci): add a blocking workflow pinning ratchet, replace wasm-pack `curl | sh` installers with a pinned release archive plus SHA-256 verification, add pip retry/timeout settings for CI dependency installs, add a blocking quality-gate verifier for core Ruff/format/mypy PR gates, and split Sidekick data I/O format detection into a dedicated registry module with property/adversarial coverage. |
+| 2026-06-09 | 1.1.320 | fix(policy): remove the broken `dwsim-model` console entry, stop allowing the committed coverage baseline to lower the configured coverage floor, align root package docs with the Python 3.11 metadata floor, constrain Sidekick data I/O advertised formats to implemented handlers with focused round-trip coverage, and require the NPM publish job to use the protected `npm` environment. |
 | 2026-06-04 | 1.1.318 | test(gui-launcher): add focused unit coverage for shared GUI launcher factory helpers, including launcher construction, generated launch scripts, registered-tool dispatch, missing registry entries, missing PyQt6 configs, module import errors, missing `GUI_INFO`, and successful `GUI_INFO` launch delegation, raising `src/shared/python/gui_launcher/launcher_factories.py` focused coverage from 15.52% to 98.28%; also preserve the declared integer return contract for delegated PyQt6 launch helpers. |
 | 2026-06-04 | 1.1.317 | test(gui-launcher): add focused unit coverage for the shared GUI registry, including singleton access, registration validation, lookup/listing/category behavior, helper registration, GUI_INFO conversion, auto-discovery of registration modules, missing paths, import-error handling, and empty legacy modules, raising `src/shared/python/gui_launcher/registry.py` focused coverage from 0.00% to 97.96% without changing production behavior. |
 | 2026-06-04 | 1.1.316 | test(gui-launcher): add focused unit coverage for the shared GUI manifest loader, including bundled manifest loading, custom manifest parsing, debug logging, missing files, malformed YAML, missing `tools` mappings, non-sequence `tools` values, and empty manifests, raising `src/shared/python/gui_launcher/manifest_loader.py` focused coverage from 0.00% to 100.00% without changing production behavior. |
@@ -1052,6 +1065,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 9. Changelog
 
+### Version 1.1.320
+
+- 2026-06-09: refactor(tools, #3261, #3262, #3263) — replaced the duplicated `scripts/mypy_autofix_agent.py` implementation with a compatibility wrapper that delegates to the canonical `src.tools.mypy_autofix_agent` entrypoint, preserving direct script execution while reducing audit-reported DRY debt. Added focused tests that guard the delegation contract and CLI help path.
+
 ### Version 1.1.265
 
 - 2026-06-01: feat(ai): Added `AdapterReviewerLLMClient`, a production `ReviewerLLMClient` backed by `BaseAgentAdapter` that builds a structured JSON prompt, runs `send_message` off the event loop, and parses verdict/reasoning/confidence (malformed JSON → `abstain`, confidence clamped to [0,1]). Wired it as the default via `peer_review.registry.default_llm_client()`, which selects the production client when an adapter is available and falls back to `StubReviewerLLMClient` offline (#3177). Added behavioral tests for the four CLI adapters (`claude_code`/`codex_cli`/`gemini_cli` via mocked `subprocess.run`, `cline` via mocked httpx) covering success, non-zero-exit/timeout/missing-binary error classification, `_strip_telemetry`, and `validate_connection` paths (#3178).
@@ -1082,6 +1099,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ### Version 1.1.231
 
+- 2026-06-09: ci(secret-scan) — run the detect-secrets baseline scan through `python -m detect_secrets` so the configured Python environment, not the runner PATH, controls the installed scanner entrypoint.
 - 2026-06-09: perf(p1am frontend) — optimize array aggregations and string operations in `LadderExplorer.tsx` by replacing chained `.map().filter()` operations with a single-pass `for` loop and using `useMemo` to prevent main thread lag.
 - 2026-05-30: perf(p1am frontend, #3126) — optimize array aggregations in `AlarmsHeader.tsx` by replacing chained `.filter()` and `.reduce()` operations with a single-pass `for` loop, eliminating intermediate array allocations and minimizing garbage collection overhead during high-frequency alarm updates.
 

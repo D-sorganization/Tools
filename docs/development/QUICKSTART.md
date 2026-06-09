@@ -4,7 +4,7 @@ Get up and running with the Tools repository in minutes.
 
 ## Prerequisites
 
-- **Python 3.10+** (3.12 recommended)
+- **Python 3.11+** (3.12 recommended)
 - **Git** with LFS support
 - **MATLAB R2020a+** (optional, for MATLAB-based tools)
 
@@ -40,7 +40,7 @@ python -m pip install -e ".[dev]"
 
 ```bash
 # Check Python version
-python --version  # Should be 3.10 or higher
+python --version  # Should be 3.11 or higher
 
 # Confirm the root developer entrypoints are available
 make help
@@ -181,7 +181,7 @@ python -m mypy . --config-file mypy.ini
 
 If you see `ImportError: cannot import name 'StrEnum'`:
 
-- Upgrade to Python 3.10+ (compatibility shims included for 3.10)
+- Upgrade to Python 3.11+ (the installable package metadata requires 3.11 or newer)
 - Or use Python 3.12 for best compatibility
 
 ### MATLAB Tools Not Working

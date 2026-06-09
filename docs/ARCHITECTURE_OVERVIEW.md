@@ -329,7 +329,7 @@ Tools/
 │   │   │   ├── plugin_manager.py   ← Tool discovery engine
 │   │   │   └── launcher.py         ← Legacy launcher
 │   │   └── utils/
-│   │       ├── compatibility.py    ← Python 3.10 shims
+│   │       ├── compatibility.py    ← Legacy helper compatibility shims
 │   │       └── logger.py           ← Unified logging
 │   │
 │   ├── shared/python/
@@ -474,9 +474,9 @@ See `requirements.txt` and `pyproject.toml` for complete list.
 
 ### Python Version Support
 
-- **Minimum:** Python 3.10 (with compatibility shims)
-- **Recommended:** Python 3.11 or 3.12
-- **Tested:** Python 3.10, 3.11, 3.12 (in CI)
+- **Minimum:** Python 3.11
+- **Recommended:** Python 3.12
+- **Tested:** Python 3.11 and 3.12 (in CI)
 
 ---
 

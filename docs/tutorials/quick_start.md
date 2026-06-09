@@ -16,7 +16,7 @@ Welcome to the Tools Repository! This suite contains professional-grade tools fo
    ```bash
    python setup_dev.py
    ```
-   _Requirements: Python 3.10+, Node.js (optional for web apps)._
+   _Requirements: Python 3.11+, Node.js (optional for web apps)._
 
 ## 🎮 Launching the Tools
 
@@ -53,6 +53,6 @@ mypy .
 
 ## 🆘 Troubleshooting
 
-- **Python Version Error**: Ensure you are using Python 3.10 or newer (`python --version`).
+- **Python Version Error**: Ensure you are using Python 3.11 or newer (`python --version`).
 - **Missing Dependencies**: Re-run `python setup_dev.py` or `pip install -r requirements-lock.txt`.
 - **Launcher Crashes**: Check the terminal output for error logs.

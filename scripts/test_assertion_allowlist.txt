@@ -1,0 +1,4 @@
+# Fixture-only Python test files that may intentionally contain no behavioral
+# assertion. Patterns are matched from the repository root using / separators.
+tests/**/__init__.py
+tests/**/conftest.py

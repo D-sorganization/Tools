@@ -1,5 +1,5 @@
 {
-  "_comment": "Coverage baseline — updated 2026-05-03 from the provider-contract suite after issue #2468 exposed that the stale 42.9% baseline no longer matched CI reality. Run scripts/check_coverage_policy.py to verify.",
-  "total_percent": 15.00,
+  "_comment": "Coverage ratchet baseline must never lower config/coverage_policy.json::minimum_total_percent. Keep this at or above the policy target so stale measurements cannot bypass the gate.",
+  "total_percent": 60.00,
   "package_percent": {}
 }

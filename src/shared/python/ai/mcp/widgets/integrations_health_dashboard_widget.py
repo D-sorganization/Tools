@@ -132,7 +132,7 @@ class IntegrationsHealthDashboardWidget(QWidget):
 
     @property
     def has_empty_state_visible(self) -> bool:
-        return self._stack.currentIndex() == 0
+        return bool(self._stack.currentIndex() == 0)
 
     # ------------------------------------------------------------------ #
     # Public mutation API

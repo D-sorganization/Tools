@@ -1,7 +1,8 @@
 """Data I/O utilities for data processing.
 
-Supports reading/writing various formats: CSV, TSV, Parquet, Excel, JSON,
-Matlab, Arrow, SQLite, NumPy, and Pickles.
+Supported formats are limited to handlers implemented below: CSV, TSV, Excel,
+Parquet, JSON, MATLAB, SQLite, and NumPy. Pickle input/output is intentionally
+disabled because loading pickle files executes untrusted payloads.
 """
 
 from __future__ import annotations
@@ -11,6 +12,7 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+from sidekick.data_processing.formats import FileFormatDetector
 
 # Optional imports
 try:
@@ -21,7 +23,7 @@ except ImportError:
     SCIPY_AVAILABLE = False
 
 try:
-    pass
+    import pyarrow  # noqa: F401
 
     PYARROW_AVAILABLE = True
 except ImportError:
@@ -132,41 +134,6 @@ class DataWriter:
             conn.close()
         else:
             raise ValueError(f"Unsupported or undetected format for: {path}")
-
-
-class FileFormatDetector:
-    """Utility for detecting file formats."""
-
-    _FORMAT_MAP = {
-        ".csv": "csv",
-        ".tsv": "tsv",
-        ".txt": "tsv",
-        ".xlsx": "excel",
-        ".xls": "excel",
-        ".parquet": "parquet",
-        ".pq": "parquet",
-        ".json": "json",
-        ".h5": "hdf5",
-        ".hdf5": "hdf5",
-        ".feather": "feather",
-        ".npy": "numpy",
-        ".mat": "matlab",
-        ".db": "sqlite",
-        ".sqlite": "sqlite",
-    }
-
-    @classmethod
-    def detect_format(cls, file_path: str | Path) -> str | None:
-        """Detect format from extension."""
-        if file_path is None:
-            raise ValueError("file_path must be provided")
-        path = Path(file_path)
-        return cls._FORMAT_MAP.get(path.suffix.lower())
-
-    @classmethod
-    def get_supported_extensions(cls) -> list[str]:
-        """Get list of supported extensions."""
-        return list(cls._FORMAT_MAP.keys())
 
 
 __all__ = [

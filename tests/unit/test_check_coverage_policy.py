@@ -114,6 +114,36 @@ def test_parse_coverage_matches_source_relative_windows_paths(tmp_path: Path) ->
     assert stats["package_percent"]["src/shared/python/upstream_drift_tools"] == 100.0
 
 
+def test_effective_total_floor_does_not_lower_policy_target() -> None:
+    """A stale committed baseline must not bypass the configured coverage target."""
+    module = _load_coverage_policy_module()
+
+    assert module._effective_total_floor(min_total=60.0, baseline_total=15.0) == 60.0
+
+
+def test_total_coverage_is_full_suite_gate_only() -> None:
+    """Changed-file scoped PR runs should enforce touched packages, not total."""
+    module = _load_coverage_policy_module()
+
+    assert module._should_enforce_total_coverage(None) is True
+    assert module._should_enforce_total_coverage(set()) is False
+    assert (
+        module._should_enforce_total_coverage(
+            {"src/shared/python/upstream_drift_tools"}
+        )
+        is False
+    )
+
+
+def test_committed_baseline_does_not_undercut_policy_target() -> None:
+    """The committed baseline should support ratcheting, not redefine the floor."""
+    root = Path(__file__).resolve().parents[2]
+    policy = json.loads((root / "config" / "coverage_policy.json").read_text())
+    baseline = json.loads((root / "config" / "coverage_baseline.json").read_text())
+
+    assert baseline["total_percent"] >= policy["minimum_total_percent"]
+
+
 def test_coverage_policy_tracks_safe_eval_files() -> None:
     policy_path = (
         Path(__file__).resolve().parents[2] / "config" / "coverage_policy.json"

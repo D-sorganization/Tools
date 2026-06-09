@@ -1,0 +1,5 @@
+# Exact changed Python paths allowed to keep stdout-oriented print() contracts.
+# Format:
+# relative/path.py | documented reason
+scripts/check_blocking_quality_gates.py | CLI guard reports policy failures and success summaries to GitHub Actions logs.
+scripts/check_workflow_pinning.py | CLI guard reports workflow pinning findings and success summaries to GitHub Actions logs.

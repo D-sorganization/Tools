@@ -67,7 +67,7 @@ jobs:
           cache: npm
 
       - name: Install
-        run: npm install -g @google/jules
+        run: npm install -g @google/jules@0.1.42
 
       - name: Gather History
         id: history
@@ -165,7 +165,7 @@ jobs:
           done
 
       - name: Commit
-        uses: stefanzweifel/git-auto-commit-action@v7
+        uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7
         with:
           commit_message: "docs(review): code quality review"
           file_pattern: "docs/assessments/**/*.md"

@@ -397,7 +397,7 @@ jobs:
               if ! grep -q "Python 3.11+" README.md; then
                 # Add Python requirements section after Prerequisites if it exists
                 if grep -q "## Prerequisites" README.md; then
-                  sed -i '/## Prerequisites/a \\n### Python Version\n- **Python 3.11+** required\n- Python 3.10 has limited compatibility (see troubleshooting)\n- Python 3.12 recommended for best performance' README.md
+                  sed -i '/## Prerequisites/a \\n### Python Version\n- **Python 3.11+** required\n- Python 3.12 recommended for best performance' README.md
                   echo "✅ Added Python requirements to README"
                 fi
               fi

@@ -73,6 +73,7 @@ jobs:
        github.actor != 'jules-bot' &&
        github.actor != 'jules-ai[bot]' &&
        github.actor != 'google-labs-jules' &&
+       github.actor != 'd-sorgcodexagent[bot]' &&
        github.actor != 'copilot-pull-request-reviewer[bot]')
     steps:
       - uses: actions/checkout@v6

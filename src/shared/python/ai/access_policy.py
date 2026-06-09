@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
-from enum import StrEnum
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from enum import StrEnum
+else:
+    from compatibility import StrEnum
 
 from src.shared.python.ai.tool_registry import Tool, ToolRegistry
 from src.shared.python.ai.tools.codemap_tools import CODEMAP_TOOL_NAMES
@@ -53,7 +57,7 @@ def allowed_tools_for_access_mode(
     if mode == ChatAccessMode.NO_REPO_ACCESS:
         return []
 
-    tools = registry.list_tools(max_expertise=max_expertise)
+    tools: list[Tool] = registry.list_tools(max_expertise=max_expertise)
     if mode == ChatAccessMode.AGENT_TOOLS:
         return tools
 

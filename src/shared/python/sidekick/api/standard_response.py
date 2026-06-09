@@ -39,9 +39,12 @@ if TYPE_CHECKING:
     from enum import StrEnum
 else:
     try:
-        _compatibility = import_module("...compatibility", __package__)
+        _compatibility = import_module("src.shared.python.compatibility")
     except ImportError:  # pragma: no cover - top-level sidekick package fallback
-        _compatibility = import_module("compatibility")
+        try:
+            _compatibility = import_module("...compatibility", __package__)
+        except ImportError:
+            _compatibility = import_module("compatibility")
 
     StrEnum = _compatibility.StrEnum
 

@@ -8,7 +8,12 @@ from __future__ import annotations
 import hashlib
 import hmac
 import os
-from enum import StrEnum
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from enum import StrEnum
+else:
+    from compatibility import StrEnum
 
 try:
     from dotenv import load_dotenv
