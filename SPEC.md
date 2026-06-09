@@ -490,7 +490,7 @@ passes fail early in CI.
 | Workflow                | Trigger        | Purpose                                | Blocking? |
 | ----------------------- | -------------- | -------------------------------------- | --------- |
 | `ci-standard.yml`       | Push/PR        | Unit tests, linting, type checking     | Yes       |
-| `test-matrix.yml`       | Push/PR        | Test on Python 3.10/3.11/3.12          | Yes       |
+| `ci-standard.yml`       | Push/PR        | Test on Python 3.11/3.12               | Yes       |
 | `integration-tests.yml` | Push/PR        | Integration and contract tests         | Yes       |
 | `gui-tests.yml`         | Push/PR        | GUI rendering and interaction tests    | Yes       |
 | `rust-build.yml`        | Push/PR        | Rust kernel compilation and benches    | Yes       |
@@ -558,7 +558,7 @@ passes fail early in CI.
 
 ```bash
 # Prerequisites
-- Python 3.10+
+- Python 3.11+
 - Rust toolchain (for kernel compilation)
 - pip, poetry, or uv
 - Qt6 runtime libraries (for GUI)

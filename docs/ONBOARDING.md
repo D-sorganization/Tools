@@ -7,8 +7,8 @@ Welcome to the Tools repository! This guide will get you up and running in under
 Check you have these installed:
 
 ```bash
-# Python 3.10+ (3.12 recommended for best compatibility)
-python --version  # Should output 3.10 or higher
+# Python 3.11+ (3.12 recommended for best compatibility)
+python --version  # Should output 3.11 or higher
 
 # Git with LFS support
 git --version
@@ -20,7 +20,7 @@ git lfs version
 
 ### Installing Prerequisites
 
-**Python 3.10+:**
+**Python 3.11+:**
 
 - **Ubuntu/Debian**: `sudo apt install python3.12 python3.12-venv`
 - **macOS**: `brew install python@3.12`
@@ -107,7 +107,7 @@ You should see a PyQt6 window with multiple tabs (Data Processing, Scientific Mo
 **If it doesn't open:**
 
 - Check PyQt6: `pip install --upgrade PyQt6>=6.6.0`
-- Check Python version: must be 3.10+
+- Check Python version: must be 3.11+
 - Look for error messages in the terminal
 - Try with verbose output: `python UnifiedToolsLauncher.py --verbose 2>&1 | head -50`
 
@@ -312,7 +312,7 @@ Go to GitHub and create a PR. CI will:
 
 1. Run linting checks (Ruff)
 2. Run formatting checks
-3. Run the full test suite (Python 3.10, 3.11, 3.12)
+3. Run the full test suite (Python 3.11, 3.12)
 4. Check code coverage
 5. Verify manifest changes
 
@@ -324,7 +324,7 @@ All must pass before merge.
 
 **Error**: `ImportError: cannot import name 'StrEnum' from 'enum'`
 
-**Cause**: You're on Python 3.9 or 3.10 (some features need 3.11+).
+**Cause**: You're on Python 3.10 or older (the package requires 3.11+).
 
 **Solution**:
 
@@ -332,13 +332,10 @@ All must pass before merge.
 # Check your Python version
 python --version
 
-# If <3.10, upgrade:
+# If <3.11, upgrade:
 # Ubuntu: sudo apt install python3.12
 # macOS: brew install python@3.12
 # Windows: Download from python.org
-
-# Or use the compatibility shim in the launcher
-# (It should work on Python 3.10+ with fallbacks)
 ```
 
 ### Launcher Won't Start

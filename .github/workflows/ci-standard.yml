@@ -404,7 +404,7 @@ jobs:
     runs-on: d-sorg-fleet
     strategy:
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.11", "3.12"]
     env:
       # Shared wheel/download cache — mirrors quality-gate setting.  See issue #2160.
       PIP_CACHE_DIR: /home/dieterolson/actions-runners/.shared-tool-cache/pip
