@@ -74,7 +74,7 @@ jobs:
         with:
           node-version: "24"
           cache: npm
-      - run: npm install -g @google/jules
+      - run: npm install -g @google/jules@0.1.42
 
       - name: Generate Tests
         if: steps.files.outputs.files != ''

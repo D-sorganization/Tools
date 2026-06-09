@@ -131,7 +131,7 @@ jobs:
 
         if: steps.jules.outputs.enabled == 'true'
 
-      - run: npm install -g @google/jules
+      - run: npm install -g @google/jules@0.1.42
 
         if: steps.jules.outputs.enabled == 'true'
       - run: jules auth --token ${{ secrets.JULES_API_KEY }}

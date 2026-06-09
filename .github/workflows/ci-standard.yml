@@ -364,7 +364,7 @@ jobs:
 
       - name: Secrets Scan (gitleaks)
         if: steps.gitleaks-check.outputs.has_license == 'true'
-        uses: gitleaks/gitleaks-action@v3
+        uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
@@ -701,13 +701,13 @@ jobs:
 
       - name: Install Rust toolchain
         if: steps.rust-changes.outputs.has_changes == 'true'
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
         with:
           components: rustfmt, clippy
 
       - name: Cache cargo registry, git, and target
         if: steps.rust-changes.outputs.has_changes == 'true'
-        uses: Swatinem/rust-cache@v2
+        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
         with:
           # Per-OS key implied by Swatinem/rust-cache (it includes runner.os).
           # Job-scope shared-key keeps this cache independent from

@@ -9,7 +9,6 @@ on:
       - "scripts/validate_workflows.py"
       - "scripts/check_workflow_pinning.py"
       - "scripts/check_blocking_quality_gates.py"
-      - "config/workflow_pinning_baseline.json"
   pull_request:
     paths:
       - ".github/workflows/**"
@@ -17,7 +16,6 @@ on:
       - "scripts/validate_workflows.py"
       - "scripts/check_workflow_pinning.py"
       - "scripts/check_blocking_quality_gates.py"
-      - "config/workflow_pinning_baseline.json"
   workflow_dispatch:
 
 concurrency:
