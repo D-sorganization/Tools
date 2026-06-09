@@ -321,6 +321,9 @@ jobs:
       - name: Minimum Test Contract Check
         run: python3 scripts/check_minimum_test_contract.py
 
+      - name: Changed Test Assertion Check
+        run: python3 scripts/check_test_assertions.py --changed-files changed_python_files.txt
+
       - name: Security Scan (bandit)
         run: |
           if [ -s changed_mypy_files.txt ]; then
