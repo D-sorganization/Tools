@@ -1,0 +1,3 @@
+# Exact changed Python paths allowed to keep stdout-oriented print() contracts.
+# Format:
+# relative/path.py | documented reason
