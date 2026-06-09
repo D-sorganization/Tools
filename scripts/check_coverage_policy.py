@@ -101,6 +101,11 @@ def _changed_tracked_packages(
     }
 
 
+def _should_enforce_total_coverage(changed_tracked_packages: set[str] | None) -> bool:
+    """Return whether total coverage floors apply for this policy run."""
+    return changed_tracked_packages is None
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--coverage-file", default="coverage.xml")
@@ -141,15 +146,16 @@ def main() -> int:
     failures: list[str] = []
     total = current["total_percent"]
     effective_min_total = _effective_total_floor(min_total, baseline_total)
-    if total < effective_min_total:
-        failures.append(
-            f"total coverage {total}% below effective minimum "
-            f"{effective_min_total}% (target {min_total}%)"
-        )
-    if total < (baseline_total - max_drop):
-        failures.append(
-            f"total coverage {total}% regressed beyond allowed drop ({baseline_total}% -> {baseline_total - max_drop}%)"
-        )
+    if _should_enforce_total_coverage(changed_tracked_packages):
+        if total < effective_min_total:
+            failures.append(
+                f"total coverage {total}% below effective minimum "
+                f"{effective_min_total}% (target {min_total}%)"
+            )
+        if total < (baseline_total - max_drop):
+            failures.append(
+                f"total coverage {total}% regressed beyond allowed drop ({baseline_total}% -> {baseline_total - max_drop}%)"
+            )
 
     pkg_current = current["package_percent"]
     for pkg, threshold in tracked_packages.items():
@@ -172,6 +178,9 @@ def main() -> int:
     if changed_tracked_packages is not None:
         packages = ", ".join(sorted(changed_tracked_packages)) or "none"
         sys.stdout.write(f"- changed tracked packages: {packages}\n")
+        sys.stdout.write(
+            "- total coverage floor: skipped for changed-file scoped run\n"
+        )
 
     if failures:
         sys.stderr.write("Coverage policy failed:\n")

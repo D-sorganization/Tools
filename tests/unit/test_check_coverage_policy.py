@@ -121,6 +121,20 @@ def test_effective_total_floor_does_not_lower_policy_target() -> None:
     assert module._effective_total_floor(min_total=60.0, baseline_total=15.0) == 60.0
 
 
+def test_total_coverage_is_full_suite_gate_only() -> None:
+    """Changed-file scoped PR runs should enforce touched packages, not total."""
+    module = _load_coverage_policy_module()
+
+    assert module._should_enforce_total_coverage(None) is True
+    assert module._should_enforce_total_coverage(set()) is False
+    assert (
+        module._should_enforce_total_coverage(
+            {"src/shared/python/upstream_drift_tools"}
+        )
+        is False
+    )
+
+
 def test_committed_baseline_does_not_undercut_policy_target() -> None:
     """The committed baseline should support ratcheting, not redefine the floor."""
     root = Path(__file__).resolve().parents[2]
