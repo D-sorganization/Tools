@@ -274,6 +274,12 @@ Tools/
   script creation, rejects non-directory output paths, and keeps
   `mesh_generator_makehuman.py` as a compatibility shim over the extracted
   `_makehuman_generator.py` implementation.
+- Sidekick data I/O (`sidekick/data_processing/io.py`) keeps its advertised
+  format surface honest: every extension returned by
+  `FileFormatDetector.get_supported_extensions()` resolves to a format token
+  with a working reader and writer branch. Feather is implemented via PyArrow;
+  unimplemented HDF5 (`.h5`/`.hdf5`) extensions are no longer advertised. A
+  contract suite asserts the detector and reader/writer surfaces stay in sync.
 
 ## 5. Desired Functionality
 

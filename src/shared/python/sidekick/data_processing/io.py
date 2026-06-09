@@ -1,7 +1,13 @@
 """Data I/O utilities for data processing.
 
-Supports reading/writing various formats: CSV, TSV, Parquet, Excel, JSON,
-Matlab, Arrow, SQLite, NumPy, and Pickles.
+Supports reading/writing various formats: CSV, TSV, Parquet, Feather, Excel,
+JSON, Matlab, SQLite, and NumPy. Pickle is intentionally disabled (CWE-502).
+
+Every extension advertised by :class:`FileFormatDetector` has a corresponding
+reader and writer branch here; formats without an implementation (such as
+HDF5, which would require an extra ``tables`` dependency) are deliberately not
+advertised so callers never receive a format token that the readers/writers
+cannot honour. See issue #3256.
 """
 
 from __future__ import annotations
@@ -21,7 +27,7 @@ except ImportError:
     SCIPY_AVAILABLE = False
 
 try:
-    pass
+    import pyarrow  # noqa: F401
 
     PYARROW_AVAILABLE = True
 except ImportError:
@@ -55,6 +61,10 @@ class DataReader:
             if not PYARROW_AVAILABLE:
                 raise ImportError("PyArrow is required for Parquet files")
             return pd.read_parquet(path, **kwargs)
+        if fmt == "feather":
+            if not PYARROW_AVAILABLE:
+                raise ImportError("PyArrow is required for Feather files")
+            return pd.read_feather(path, **kwargs)
         if fmt == "json":
             return pd.read_json(path, **kwargs)
         if fmt == "pickle":
@@ -114,6 +124,10 @@ class DataWriter:
             if not PYARROW_AVAILABLE:
                 raise ImportError("PyArrow is required for Parquet files")
             df.to_parquet(path, index=False, **kwargs)
+        elif fmt == "feather":
+            if not PYARROW_AVAILABLE:
+                raise ImportError("PyArrow is required for Feather files")
+            df.to_feather(path, **kwargs)
         elif fmt == "json":
             df.to_json(path, orient="records", indent=2, **kwargs)
         elif fmt == "pickle":
@@ -146,8 +160,6 @@ class FileFormatDetector:
         ".parquet": "parquet",
         ".pq": "parquet",
         ".json": "json",
-        ".h5": "hdf5",
-        ".hdf5": "hdf5",
         ".feather": "feather",
         ".npy": "numpy",
         ".mat": "matlab",
