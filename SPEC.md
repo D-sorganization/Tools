@@ -716,6 +716,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | 2026-06-10 | 1.1.332 | fix(ci, #3298): keep the P1AM project import helper mypy-clean under the changed-file quality gate by typing parsed SCADA tags as `TagDefinition` at the parser boundary and preserving the endpoint's documented `dict[str, Any]` response contract when imports are skipped. |
 | 2026-06-10 | 1.1.331 | fix(ci, #3298): avoid a detect-secrets Secret Keyword false positive in the P1AM backend auth helper by renaming the public header-name constant away from token-like wording and constructing the `X-API-Key` header name without changing the HTTP authentication contract. |
+| 2026-06-10 | 1.1.331 | fix(daemon, #3291): stop `start-gaai-daemon.sh` from writing `~/.claude/settings.json` or globally suppressing Claude Code dangerous-mode prompts; document that any safety override must be configured deliberately outside the launcher, and add a dry-run regression test proving existing global Claude settings are preserved. |
 | 2026-06-09 | 1.1.329 | fix(security, #3288 #3289 #3292): remove the P1AM HMI hardcoded default Admin password and accepted hardcoded SHA-256 hashes, fail closed when no credential is configured, and verify admin passwords with a salted PBKDF2-HMAC-SHA256 KDF (`ADMIN_PASSWORD_HASH`/`ADMIN_PASSWORD`) instead of bare SHA-256; add server-side `X-API-Key` authentication/authorization to the P1AM control backend (`auth_config.py`) so every state-mutating endpoint and the live WebSocket require an operator key and destructive/elevated operations (estop clear, tag writes, PID tuning, MPC, alicat setpoint/gas, project import) require an admin key, failing closed (503) unless `P1AM_DEV_NO_AUTH=1`, with E-stop activation intentionally left open and the Docker default bind changed to loopback; and harden `/api/project/import` against unbounded uploads (streamed size cap -> 413), zip bombs (member-count/per-file/total-size/compression-ratio limits before extraction), and partial DB wipes (atomic delete+insert in one transaction). |
 | 2026-06-09 | 1.1.329 | fix(security, #3290 #3293): add static complexity limits to `shared.python.safe_eval.validate_expression` (max expression length, max AST node count, bounded `Pow` exponent and nested-`Pow` chain depth, and rejection of oversized string/bytes constants) so pow/repetition bombs such as `9**9**9**9` fail fast instead of hanging or exhausting memory in the calc-backend ODE-solver path; and replace the web calculator's substring blocklist with a structural AST allowlist gate (`TI89Calculator._ast_security_gate`) that runs before `sympy.parse_expr`, rejecting attribute access, lambdas, comprehensions, and the walrus operator by structure rather than enumeration. Adds bypass/DoS regression tests. |
 | 2026-06-09 | 1.1.328 | fix(ci): satisfy the changed-file quality gate by explicitly annotating access-policy registry results under skipped-import mypy, add Python 3.10 `tomli` support for metadata contract tests, assert calc-backend pressure-drop values through the standardized response `data` payload, and keep Sidekick standard responses importable from the repo package path without top-level path shims. |
@@ -1146,6 +1147,12 @@ Active development with stable core, continuous tool expansion, and web API in p
   documented `dict[str, Any]` response contract when imports are skipped.
 
 ### Version 1.1.331
+
+- 2026-06-10: fix(daemon, #3291) — stop `start-gaai-daemon.sh` from
+  writing `~/.claude/settings.json` or globally suppressing Claude Code
+  dangerous-mode prompts; document that any safety override must be configured
+  deliberately outside the launcher, and add a dry-run regression test proving
+  existing global Claude settings are preserved.
 
 - 2026-06-10: ci(security) — harden
   `.github/workflows/anti-phantom-merge.yml` so the privileged

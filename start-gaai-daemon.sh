@@ -15,6 +15,11 @@
 #     bash start-gaai-daemon.sh --dry-run  # show what would launch, no action
 #     bash start-gaai-daemon.sh --status   # check active sessions
 #
+# Safety:
+#   This launcher does not modify global Claude Code settings in ~/.claude.
+#   If Claude Code requires any safety override for headless daemon operation,
+#   configure it deliberately outside this script and keep a backup.
+#
 # Monitor overnight:
 #   tmux attach -t gaai-daemon
 #   (Ctrl+B then D to detach without stopping)
@@ -38,15 +43,6 @@ check_dependency() {
 check_dependency "tmux"   "sudo apt install tmux -y"
 check_dependency "claude" "npm install -g @anthropic-ai/claude-code"
 check_dependency "git"    "sudo apt install git -y"
-
-# ── Suppress dangerous-mode permission prompt ─────────────────────────────────
-CLAUDE_SETTINGS="$HOME/.claude/settings.json"
-if [[ ! -f "$CLAUDE_SETTINGS" ]] || ! grep -q "skipDangerousModePermissionPrompt" "$CLAUDE_SETTINGS" 2>/dev/null; then
-  echo "Configuring claude to skip dangerous-mode permission prompt..."
-  mkdir -p "$HOME/.claude"
-  echo '{ "skipDangerousModePermissionPrompt": true }' > "$CLAUDE_SETTINGS"
-  echo "  -> Written to $CLAUDE_SETTINGS"
-fi
 
 # ── Ensure we're on staging branch ───────────────────────────────────────────
 cd "$REPO_ROOT"
