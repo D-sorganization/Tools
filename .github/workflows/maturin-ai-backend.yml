@@ -47,8 +47,10 @@ jobs:
     timeout-minutes: 30
     env:
       CARGO_HOME: ${{ github.workspace }}/.cargo-home
+      CARGO_BUILD_JOBS: "1"
       CARGO_INCREMENTAL: "0"
       CARGO_TERM_COLOR: always
+      RUST_MIN_STACK: "16777216"
 
     strategy:
       fail-fast: false
@@ -116,8 +118,10 @@ jobs:
     timeout-minutes: 45
     env:
       CARGO_HOME: ${{ github.workspace }}/.cargo-home
+      CARGO_BUILD_JOBS: "1"
       CARGO_INCREMENTAL: "0"
       CARGO_TERM_COLOR: always
+      RUST_MIN_STACK: "16777216"
     # Only on workflow_dispatch to keep PR feedback fast
     if: github.event_name == 'workflow_dispatch'
 
