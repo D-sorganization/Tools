@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.335                                    |
+| **Spec Version**        | 1.1.336                                    |
 | **Last Spec Update**    | 2026-06-10                                 |
 
 ## 2. Purpose & Mission
@@ -714,6 +714,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-10 | 1.1.336 | fix(ci/review-comments, #3300): keep the review-comment-to-issue converter checkout shallow because the job uses GitHub API reads plus local archive commits, avoiding full-history fetches on self-hosted runners where stale/corrupt loose objects can make checkout fail before the workflow logic runs. |
 | 2026-06-10 | 1.1.335 | fix(ci/runner-health, #3300): serialize the Tauri desktop app check/build matrices and cap Cargo jobs with non-incremental, no-debug builds so self-hosted runners do not compile multiple Tauri Rust dependency graphs concurrently and trigger rustc SIGSEGV/paging-pressure failures. |
 | 2026-06-10 | 1.1.334 | fix(ci/rust, #3291 #3294 #3295): split PyO3 `python` test features from maturin-only `extension-module` wheel linkage so `cargo test --features python` no longer emits Python extension-module binaries while wheel builds still opt into extension-module linking. |
 | 2026-06-10 | 1.1.333 | fix(bug/ci, #3294 #3295): declare pendulum `Golfer` dynamics native-only with construction-time `RuntimeError` guidance and an explicit workspace exclude for `pendulum-core`; remove `plant_simulator`'s silent random-data path so `SCADADataset` loads real SQLite `taglog` rows unless synthetic data is explicitly requested; and keep the affected native wrappers mypy-clean under the changed-file quality gate. |
