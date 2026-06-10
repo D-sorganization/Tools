@@ -136,7 +136,8 @@ def test_json_serializer(manager: StateManager) -> Any:
     assert res == str(p)
 
     class Dummy:
-        attr: str = "val"
+        def __init__(self) -> None:
+            self.attr = "val"
 
     d = Dummy()
     res = manager._json_serializer(d)
