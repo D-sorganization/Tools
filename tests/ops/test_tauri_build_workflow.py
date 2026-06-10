@@ -16,3 +16,19 @@ def test_tauri_rust_jobs_reserve_stack_requested_by_rustc() -> None:
     for job_name in ("check", "build"):
         env = jobs[job_name]["env"]
         assert int(env["RUST_MIN_STACK"]) >= MIN_RUST_STACK_BYTES
+
+
+def test_tauri_rust_cache_does_not_restore_target_directories() -> None:
+    workflow = yaml.safe_load(TAURI_WORKFLOW.read_text(encoding="utf-8"))
+    jobs = workflow["jobs"]
+
+    cache_steps = [
+        step
+        for job_name in ("check", "build")
+        for step in jobs[job_name]["steps"]
+        if step.get("uses", "").startswith("Swatinem/rust-cache")
+    ]
+
+    assert len(cache_steps) == 2
+    for step in cache_steps:
+        assert step["with"]["cache-targets"] is False
