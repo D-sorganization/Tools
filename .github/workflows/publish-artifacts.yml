@@ -88,7 +88,7 @@ jobs:
       - name: Build Wheel
         run: |
           cd rust_core/tools-core
-          maturin build --release --features python
+          maturin build --release --features python,extension-module
           echo "## Python Wheel Built" >> $GITHUB_STEP_SUMMARY
           ls -la ../../target/wheels/
 

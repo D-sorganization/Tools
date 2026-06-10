@@ -93,7 +93,7 @@ jobs:
 
       - name: Build wheel
         working-directory: rust_core/ai_backend
-        run: maturin build --release --features python --out ../../dist/${{ matrix.os }}/py${{ matrix.python-version }}
+        run: maturin build --release --features python,extension-module --out ../../dist/${{ matrix.os }}/py${{ matrix.python-version }}
 
       - name: Smoke-test wheel import
         shell: bash
@@ -156,7 +156,7 @@ jobs:
         run: |
           maturin build \
             --release \
-            --features "python,local-embeddings" \
+            --features "python,extension-module,local-embeddings" \
             --out ../../dist/local-embeddings/py${{ matrix.python-version }}
 
       - name: Upload wheel artifact (local-embeddings)
