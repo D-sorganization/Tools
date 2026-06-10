@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.352                                    |
+| **Spec Version**        | 1.1.353                                    |
 | **Last Spec Update**    | 2026-06-10                                 |
 
 ## 2. Purpose & Mission
@@ -722,6 +722,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-10 | 1.1.353 | fix(hooks, #1361): align the pre-push mypy hook with changed-file delta CI by adding `--follow-imports=skip`, so clean pushes are checked against the pushed source files without failing on unrelated pre-existing imported `ai/` debt. Added an ops regression test that keeps the hook on the pre-push stage, filename-passing mode, `src/` scope, and no-follow-import behavior. |
 | 2026-06-10 | 1.1.352 | test(sidekick): keep action-audit timestamp fixtures compatible with the Python 3.10 CI lane by using `timezone.utc` with a scoped pyupgrade suppression instead of the Python 3.11-only `datetime.UTC` alias. |
 | 2026-06-10 | 1.1.351 | test(sidekick): keep action-audit redaction fixtures covered while marking synthetic sensitive-key values with detect-secrets allowlist pragmas, so the security scan remains strict without treating redaction test data as leaked material. |
 | 2026-06-10 | 1.1.348 | test(ai): keep the #3310 GUI-thread dispatcher coverage mypy-clean under the changed-file gate by annotating the offscreen Qt fixture, worker-thread test parameters, dispatcher thunks, decorator-registered tool dispatch, and exception helper while preserving the main-thread marshalling behavior under test. |
