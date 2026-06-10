@@ -673,7 +673,7 @@ jobs:
       CARGO_BUILD_JOBS: "1"
       CARGO_INCREMENTAL: "0"
       CARGO_TERM_COLOR: always
-      RUST_MIN_STACK: "33554432"
+      RUST_MIN_STACK: "67108864"
     steps:
       - uses: actions/checkout@v6
 

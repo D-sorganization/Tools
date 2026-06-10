@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.337                                    |
+| **Spec Version**        | 1.1.338                                    |
 | **Last Spec Update**    | 2026-06-10                                 |
 
 ## 2. Purpose & Mission
@@ -714,6 +714,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-10 | 1.1.338 | fix(ci, #3300): raise Rust runner stack reservations to 64 MiB for local self-hosted Tauri and wheel builds after rustc SIGSEGV failures explicitly requested `RUST_MIN_STACK=67108864` on the fleet. |
 | 2026-06-10 | 1.1.337 | fix(ci/test-contract, #3300): recognize repo-level `tests/<package>/test_*.py` directories as satisfying the minimum test contract for changed `src/<package>` packages, with regression coverage so package-scoped tests like `tests/plant_simulator/test_dataset.py` are accepted without weakening the quality gate. |
 | 2026-06-10 | 1.1.336 | fix(ci/review-comments, #3300): keep the review-comment-to-issue converter checkout shallow because the job uses GitHub API reads plus local archive commits, avoiding full-history fetches on self-hosted runners where stale/corrupt loose objects can make checkout fail before the workflow logic runs. |
 | 2026-06-10 | 1.1.335 | fix(ci/runner-health, #3300): serialize the Tauri desktop app check/build matrices and cap Cargo jobs with non-incremental, no-debug builds so self-hosted runners do not compile multiple Tauri Rust dependency graphs concurrently and trigger rustc SIGSEGV/paging-pressure failures. |

@@ -50,7 +50,7 @@ jobs:
       CARGO_BUILD_JOBS: "1"
       CARGO_INCREMENTAL: "0"
       CARGO_TERM_COLOR: always
-      RUST_MIN_STACK: "33554432"
+      RUST_MIN_STACK: "67108864"
 
     strategy:
       fail-fast: false
@@ -121,7 +121,7 @@ jobs:
       CARGO_BUILD_JOBS: "1"
       CARGO_INCREMENTAL: "0"
       CARGO_TERM_COLOR: always
-      RUST_MIN_STACK: "33554432"
+      RUST_MIN_STACK: "67108864"
     # Only on workflow_dispatch to keep PR feedback fast
     if: github.event_name == 'workflow_dispatch'
 
