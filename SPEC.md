@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.330                                    |
+| **Spec Version**        | 1.1.331                                    |
 | **Last Spec Update**    | 2026-06-10                                 |
 
 ## 2. Purpose & Mission
@@ -712,6 +712,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-10 | 1.1.331 | fix(daemon, #3291): stop `start-gaai-daemon.sh` from writing `~/.claude/settings.json` or globally suppressing Claude Code dangerous-mode prompts; document that any safety override must be configured deliberately outside the launcher, and add a dry-run regression test proving existing global Claude settings are preserved. |
 | 2026-06-09 | 1.1.329 | fix(security, #3290 #3293): add static complexity limits to `shared.python.safe_eval.validate_expression` (max expression length, max AST node count, bounded `Pow` exponent and nested-`Pow` chain depth, and rejection of oversized string/bytes constants) so pow/repetition bombs such as `9**9**9**9` fail fast instead of hanging or exhausting memory in the calc-backend ODE-solver path; and replace the web calculator's substring blocklist with a structural AST allowlist gate (`TI89Calculator._ast_security_gate`) that runs before `sympy.parse_expr`, rejecting attribute access, lambdas, comprehensions, and the walrus operator by structure rather than enumeration. Adds bypass/DoS regression tests. |
 | 2026-06-09 | 1.1.328 | fix(ci): satisfy the changed-file quality gate by explicitly annotating access-policy registry results under skipped-import mypy, add Python 3.10 `tomli` support for metadata contract tests, assert calc-backend pressure-drop values through the standardized response `data` payload, and keep Sidekick standard responses importable from the repo package path without top-level path shims. |
 | 2026-06-09 | 1.1.327 | fix(compatibility-ci): route remaining Python 3.10-exercised `StrEnum` imports through compatibility shims, make those shims type-check as native `StrEnum` under mypy while retaining Python 3.10 fallbacks, keep the integrations dashboard empty-state property explicitly typed as `bool`, and pass `.secrets.baseline` explicitly to the detect-secrets audit test so the 3.10 CI matrix validates the canonical baseline instead of failing on CLI argument parsing. |
@@ -1132,6 +1133,14 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.331
+
+- 2026-06-10: fix(daemon, #3291) — stop `start-gaai-daemon.sh` from
+  writing `~/.claude/settings.json` or globally suppressing Claude Code
+  dangerous-mode prompts; document that any safety override must be configured
+  deliberately outside the launcher, and add a dry-run regression test proving
+  existing global Claude settings are preserved.
 
 ### Version 1.1.330
 
