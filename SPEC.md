@@ -453,6 +453,13 @@ crashes.
 Changed Python test files must contain at least one AST-visible behavioral
 assertion, exception assertion, or unittest/mock-style assertion call unless
 they match the explicit fixture-only assertion allowlist.
+Critical numerical contracts are additionally guarded by property-based tests
+(Hypothesis) that assert invariants — round-trip identity, linearity, and
+boundary/failure behavior — rather than only example outputs. The flow-rate
+conversion API (`calc_backend`) carries such a suite
+(`test_calc_backend_properties.py`); `hypothesis` is a declared `dev`
+dependency. New adversarial coverage targets invalid inputs, non-finite values,
+and missing fields so a regression fails CI here rather than downstream.
 
 ### Test Organization
 
