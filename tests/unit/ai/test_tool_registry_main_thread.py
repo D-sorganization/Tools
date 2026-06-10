@@ -92,7 +92,7 @@ def test_tool_default_does_not_require_main_thread() -> None:
 
 def test_decorator_can_mark_tool_as_main_thread_only() -> None:
     registry = ToolRegistry()
-    calls: list[Any] = []
+    calls: list[Callable[[], ToolResult]] = []
 
     @registry.register(
         "touch",
@@ -102,7 +102,11 @@ def test_decorator_can_mark_tool_as_main_thread_only() -> None:
     def touch() -> str:
         return "ok"
 
-    registry.set_main_thread_dispatcher(lambda thunk: calls.append(thunk) or thunk())
+    def dispatcher(thunk: Callable[[], ToolResult]) -> ToolResult:
+        calls.append(thunk)
+        return thunk()
+
+    registry.set_main_thread_dispatcher(dispatcher)
     result = registry.execute("touch", {})
     tool = registry.get_tool("touch")
 
