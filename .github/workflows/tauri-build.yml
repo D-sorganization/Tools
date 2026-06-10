@@ -93,7 +93,7 @@ jobs:
     needs: pick-runner
     name: Check (${{ matrix.app }})
     runs-on: ${{ needs.pick-runner.outputs.runner }}
-    timeout-minutes: 15
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       max-parallel: 1
@@ -126,6 +126,14 @@ jobs:
           if [ -d "$HOME/.cargo/bin" ]; then
             echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
           fi
+
+      - name: Use isolated Rust homes
+        shell: bash
+        run: |
+          echo "RUSTUP_HOME=$RUNNER_TEMP/rustup" >> "$GITHUB_ENV"
+          echo "CARGO_HOME=$RUNNER_TEMP/cargo" >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TEMP/rustup" "$RUNNER_TEMP/cargo/bin"
+          echo "$RUNNER_TEMP/cargo/bin" >> "$GITHUB_PATH"
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
@@ -216,6 +224,14 @@ jobs:
           if [ -d "$HOME/.cargo/bin" ]; then
             echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
           fi
+
+      - name: Use isolated Rust homes
+        shell: bash
+        run: |
+          echo "RUSTUP_HOME=$RUNNER_TEMP/rustup" >> "$GITHUB_ENV"
+          echo "CARGO_HOME=$RUNNER_TEMP/cargo" >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TEMP/rustup" "$RUNNER_TEMP/cargo/bin"
+          echo "$RUNNER_TEMP/cargo/bin" >> "$GITHUB_PATH"
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
