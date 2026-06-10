@@ -1168,8 +1168,9 @@ Active development with stable core, continuous tool expansion, and web API in p
   opt in through `ToolRegistry.register(..., requires_main_thread=True)`, so
   the normal shared-tool registration path preserves GUI-thread affinity.
   `AIAssistantPanel` installs the dispatcher on the global registry at
-  startup. Additive and backward compatible for existing downstream
-  registrations.
+  startup and uses explicit boundary return types so skipped-import mypy runs
+  remain type-clean at the panel boundary. Additive and backward compatible
+  for existing downstream registrations.
 
 ### Version 1.1.332
 

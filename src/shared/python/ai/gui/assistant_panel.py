@@ -564,7 +564,7 @@ class AIAssistantPanel(QWidget):
     # ------------------------------------------------------------------
     def _auto_index_enabled(self) -> bool:
         if hasattr(self._header, "auto_index_checkbox"):
-            return self._header.auto_index_enabled()
+            return bool(self._header.auto_index_enabled())
         return self._auto_index_on_open
 
     def _start_indexing(self) -> None:
@@ -743,13 +743,14 @@ class AIAssistantPanel(QWidget):
         return "openai"
 
     def _build_tool_declarations(self) -> list[dict[str, Any]]:
-        return tool_declarations_for_access_mode(
+        declarations: list[dict[str, Any]] = tool_declarations_for_access_mode(
             self._tools_registry,
             self._access_mode,
             provider_format=self._provider_tool_format(),
             rag_enabled=self._rag_enabled,
             max_expertise=self._context.user_expertise.value,
         )
+        return declarations
 
     # ------------------------------------------------------------------
     # Adapter / settings
