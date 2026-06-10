@@ -352,6 +352,2745 @@
       }
     }
   },
+  "agent/__init__.py": {
+    "__all__": [
+      "ActionChipModel",
+      "ActionChipState",
+      "ActionDescriptor",
+      "ActionDispatcher",
+      "ActionResult",
+      "CANONICAL_ACTION_IDS",
+      "CalculatorRun",
+      "CanonicalActionPort",
+      "CanonicalOperationResult",
+      "CanonicalToolAdapter",
+      "ChatActionEnvelope",
+      "FeatureEntry",
+      "FeatureKind",
+      "HostActionPort",
+      "HostAdapter",
+      "HostCapability",
+      "HostInvocationResult",
+      "JsonlActionAudit",
+      "MemoryActionAudit",
+      "PendingUserDecision",
+      "PlannedStep",
+      "PlannerError",
+      "PolicyDecision",
+      "SidekickActionHandler",
+      "SidekickActionPolicy",
+      "SidekickActionService",
+      "SidekickAgentPlanner",
+      "SidekickWorkflow",
+      "StateProfile",
+      "SubtabActionPort",
+      "SubtabAdapter",
+      "ToolCall",
+      "WorkflowOutcome",
+      "WorkflowStep",
+      "WorkflowStepResult",
+      "WorkflowStepStatus",
+      "WorkspaceSnapshot",
+      "action_step",
+      "build_chip",
+      "build_feature_catalog",
+      "build_sidekick_system_prompt",
+      "lookup_feature",
+      "redact_secrets",
+      "run_sidekick_workflow",
+      "search_features",
+      "serialize_envelope"
+    ],
+    "symbols": {
+      "ActionChipModel": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "with_confirmation": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ActionChipModel"
+            }
+          }
+        }
+      },
+      "ActionChipState": {
+        "type": "class",
+        "info": {
+          "bases": ["Enum"],
+          "methods": {}
+        }
+      },
+      "ActionDescriptor": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "ActionDispatcher": {
+        "type": "variable"
+      },
+      "ActionResult": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "CANONICAL_ACTION_IDS": {
+        "type": "variable"
+      },
+      "CalculatorRun": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "as_dict": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        }
+      },
+      "CanonicalActionPort": {
+        "type": "class",
+        "info": {
+          "bases": ["Protocol"],
+          "methods": {
+            "configure": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "request",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CanonicalOperationResult"
+            },
+            "validate": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "request",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CanonicalOperationResult"
+            },
+            "run": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "request",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CanonicalOperationResult"
+            },
+            "compare": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "request",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CanonicalOperationResult"
+            },
+            "interpret": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "request",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CanonicalOperationResult"
+            }
+          }
+        }
+      },
+      "CanonicalOperationResult": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "CanonicalToolAdapter": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "port",
+                  "annotation": "CanonicalActionPort",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "None"
+            },
+            "describe": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Sequence[ActionDescriptor]"
+            },
+            "invoke": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "action_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "params",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ActionResult"
+            }
+          }
+        }
+      },
+      "ChatActionEnvelope": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "FeatureEntry": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "FeatureKind": {
+        "type": "class",
+        "info": {
+          "bases": ["str", "Enum"],
+          "methods": {}
+        }
+      },
+      "HostActionPort": {
+        "type": "class",
+        "info": {
+          "bases": ["Protocol"],
+          "methods": {
+            "list_capabilities": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Sequence[HostCapability]"
+            },
+            "invoke": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "capability_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "params",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "HostInvocationResult"
+            }
+          }
+        }
+      },
+      "HostAdapter": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "port",
+                  "annotation": "HostActionPort | None",
+                  "default": "None",
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "None"
+            },
+            "set_port": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "port",
+                  "annotation": "HostActionPort | None",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "describe": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Sequence[ActionDescriptor]"
+            },
+            "invoke": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "action_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "params",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ActionResult"
+            }
+          }
+        }
+      },
+      "HostCapability": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "HostInvocationResult": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "JsonlActionAudit": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "path",
+                  "annotation": "Path",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "None"
+            },
+            "path": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Path"
+            },
+            "tail": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[RecordedCall, ...]"
+            }
+          }
+        }
+      },
+      "MemoryActionAudit": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "records": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[RecordedCall, ...]"
+            }
+          }
+        }
+      },
+      "PendingUserDecision": {
+        "type": "class",
+        "info": {
+          "bases": ["Exception"],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "workflow_name",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "action_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "error_message",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      },
+      "PlannedStep": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "PlannerError": {
+        "type": "class",
+        "info": {
+          "bases": ["RuntimeError"],
+          "methods": {}
+        }
+      },
+      "PolicyDecision": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "SidekickActionHandler": {
+        "type": "class",
+        "info": {
+          "bases": ["Protocol"],
+          "methods": {
+            "describe": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Sequence[ActionDescriptor]"
+            },
+            "invoke": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "action_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "params",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ActionResult"
+            }
+          }
+        }
+      },
+      "SidekickActionPolicy": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "permissive": {
+              "args": [
+                {
+                  "name": "cls",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "SidekickActionPolicy"
+            },
+            "decide": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "descriptor",
+                  "annotation": "ActionDescriptor",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "params",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "PolicyDecision"
+            }
+          }
+        }
+      },
+      "SidekickActionService": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "audit_sink",
+                  "annotation": "AuditSink | None",
+                  "default": "None",
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "dispatcher",
+                  "annotation": "ActionDispatcher | None",
+                  "default": "None",
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "policy",
+                  "annotation": "object | None",
+                  "default": "None",
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "None"
+            },
+            "register": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "handler",
+                  "annotation": "object",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "list_actions": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[ActionDescriptor, ...]"
+            },
+            "set_dispatcher": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "dispatcher",
+                  "annotation": "ActionDispatcher | None",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "set_main_thread_dispatcher": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "dispatcher",
+                  "annotation": "ActionDispatcher | None",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "invoke": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "action_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "params",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "dry_run",
+                  "annotation": "bool",
+                  "default": "False",
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "ActionResult"
+            },
+            "undo": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "token",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ActionResult"
+            }
+          }
+        }
+      },
+      "SidekickAgentPlanner": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "service",
+                  "annotation": "SidekickActionService",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "None"
+            },
+            "plan_from_tool_calls": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "calls",
+                  "annotation": "Sequence[ToolCall]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[PlannedStep, ...]"
+            },
+            "execute": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "step",
+                  "annotation": "PlannedStep",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "dry_run",
+                  "annotation": "bool",
+                  "default": "False",
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "ActionResult"
+            },
+            "export_for_tool_registry": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[Mapping[str, Any], ...]"
+            }
+          }
+        }
+      },
+      "SidekickWorkflow": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "StateProfile": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "SubtabActionPort": {
+        "type": "class",
+        "info": {
+          "bases": ["Protocol"],
+          "methods": {
+            "list_tabs": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Sequence[str]"
+            },
+            "active_tab": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str | None"
+            },
+            "focus": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "tab_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "set_visible": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "tab_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "visible",
+                  "annotation": "bool",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "workspace_snapshot": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "WorkspaceSnapshot"
+            },
+            "workspace_set_variable": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "name",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "value",
+                  "annotation": "Any",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Any"
+            },
+            "calculator_run": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "calculator_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "inputs",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CalculatorRun"
+            },
+            "state_profile_save": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "name",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "payload",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "state_profile_load": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "name",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "StateProfile"
+            },
+            "state_profile_delete": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "name",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      },
+      "SubtabAdapter": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "port",
+                  "annotation": "SubtabActionPort",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "None"
+            },
+            "describe": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Sequence[ActionDescriptor]"
+            },
+            "invoke": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "action_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "params",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ActionResult"
+            }
+          }
+        }
+      },
+      "ToolCall": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "WorkflowOutcome": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "WorkflowStep": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "WorkflowStepResult": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "WorkflowStepStatus": {
+        "type": "class",
+        "info": {
+          "bases": ["Enum"],
+          "methods": {}
+        }
+      },
+      "WorkspaceSnapshot": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "action_step": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "action_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "params",
+              "annotation": "Mapping[str, Any]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "on_failure",
+              "annotation": "RecoveryStrategy",
+              "default": "'abort'",
+              "kind": "kwonlyarg"
+            },
+            {
+              "name": "rationale",
+              "annotation": "str",
+              "default": "''",
+              "kind": "kwonlyarg"
+            }
+          ],
+          "returns": "WorkflowStep"
+        }
+      },
+      "build_chip": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "step",
+              "annotation": "PlannedStep",
+              "default": null,
+              "kind": "kwonlyarg"
+            },
+            {
+              "name": "service",
+              "annotation": "SidekickActionService",
+              "default": null,
+              "kind": "kwonlyarg"
+            }
+          ],
+          "returns": "ActionChipModel"
+        }
+      },
+      "build_feature_catalog": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "force_refresh",
+              "annotation": "bool",
+              "default": "False",
+              "kind": "kwonlyarg"
+            }
+          ],
+          "returns": "Mapping[str, FeatureEntry]"
+        }
+      },
+      "build_sidekick_system_prompt": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "service",
+              "annotation": "SidekickActionService",
+              "default": null,
+              "kind": "kwonlyarg"
+            }
+          ],
+          "returns": "str"
+        }
+      },
+      "lookup_feature": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "feature_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "FeatureEntry"
+        }
+      },
+      "redact_secrets": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "payload",
+              "annotation": "Mapping[str, Any]",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "dict[str, Any]"
+        }
+      },
+      "run_sidekick_workflow": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "workflow",
+              "annotation": "SidekickWorkflow",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "service",
+              "annotation": "SidekickActionService",
+              "default": null,
+              "kind": "kwonlyarg"
+            }
+          ],
+          "returns": "WorkflowOutcome"
+        }
+      },
+      "search_features": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "query",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "limit",
+              "annotation": "int",
+              "default": "5",
+              "kind": "kwonlyarg"
+            }
+          ],
+          "returns": "tuple[FeatureEntry, ...]"
+        }
+      },
+      "serialize_envelope": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "envelope",
+              "annotation": "ChatActionEnvelope",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "dict[str, Any]"
+        }
+      }
+    }
+  },
+  "agent/access_policy.py": {
+    "__all__": ["PolicyDecision", "SidekickActionPolicy"],
+    "symbols": {
+      "PolicyDecision": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "SidekickActionPolicy": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "permissive": {
+              "args": [
+                {
+                  "name": "cls",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "SidekickActionPolicy"
+            },
+            "decide": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "descriptor",
+                  "annotation": "ActionDescriptor",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "params",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "PolicyDecision"
+            }
+          }
+        }
+      }
+    }
+  },
+  "agent/action_audit.py": {
+    "__all__": ["JsonlActionAudit", "MemoryActionAudit", "redact_secrets"],
+    "symbols": {
+      "JsonlActionAudit": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "path",
+                  "annotation": "Path",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "None"
+            },
+            "path": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Path"
+            },
+            "tail": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[RecordedCall, ...]"
+            }
+          }
+        }
+      },
+      "MemoryActionAudit": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "records": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[RecordedCall, ...]"
+            }
+          }
+        }
+      },
+      "redact_secrets": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "payload",
+              "annotation": "Mapping[str, Any]",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "dict[str, Any]"
+        }
+      }
+    }
+  },
+  "agent/action_contracts.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "agent/action_service.py": {
+    "__all__": [
+      "ActionDescriptor",
+      "ActionDispatcher",
+      "ActionResult",
+      "AuditSink",
+      "RecordedCall",
+      "SideEffect",
+      "SidekickActionHandler",
+      "SidekickActionService"
+    ],
+    "symbols": {
+      "ActionDescriptor": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "ActionDispatcher": {
+        "type": "variable"
+      },
+      "ActionResult": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "AuditSink": {
+        "type": "variable"
+      },
+      "RecordedCall": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "SideEffect": {
+        "type": "variable"
+      },
+      "SidekickActionHandler": {
+        "type": "class",
+        "info": {
+          "bases": ["Protocol"],
+          "methods": {
+            "describe": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Sequence[ActionDescriptor]"
+            },
+            "invoke": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "action_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "params",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ActionResult"
+            }
+          }
+        }
+      },
+      "SidekickActionService": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "audit_sink",
+                  "annotation": "AuditSink | None",
+                  "default": "None",
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "dispatcher",
+                  "annotation": "ActionDispatcher | None",
+                  "default": "None",
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "policy",
+                  "annotation": "object | None",
+                  "default": "None",
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "None"
+            },
+            "register": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "handler",
+                  "annotation": "object",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "list_actions": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[ActionDescriptor, ...]"
+            },
+            "set_dispatcher": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "dispatcher",
+                  "annotation": "ActionDispatcher | None",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "set_main_thread_dispatcher": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "dispatcher",
+                  "annotation": "ActionDispatcher | None",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "invoke": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "action_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "params",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "dry_run",
+                  "annotation": "bool",
+                  "default": "False",
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "ActionResult"
+            },
+            "undo": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "token",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ActionResult"
+            }
+          }
+        }
+      }
+    }
+  },
+  "agent/canonical_tools.py": {
+    "__all__": [
+      "CANONICAL_ACTION_IDS",
+      "CanonicalActionPort",
+      "CanonicalOperationResult",
+      "CanonicalToolAdapter"
+    ],
+    "symbols": {
+      "CANONICAL_ACTION_IDS": {
+        "type": "variable"
+      },
+      "CanonicalActionPort": {
+        "type": "class",
+        "info": {
+          "bases": ["Protocol"],
+          "methods": {
+            "configure": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "request",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CanonicalOperationResult"
+            },
+            "validate": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "request",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CanonicalOperationResult"
+            },
+            "run": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "request",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CanonicalOperationResult"
+            },
+            "compare": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "request",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CanonicalOperationResult"
+            },
+            "interpret": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "request",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CanonicalOperationResult"
+            }
+          }
+        }
+      },
+      "CanonicalOperationResult": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "CanonicalToolAdapter": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "port",
+                  "annotation": "CanonicalActionPort",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "None"
+            },
+            "describe": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Sequence[ActionDescriptor]"
+            },
+            "invoke": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "action_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "params",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ActionResult"
+            }
+          }
+        }
+      }
+    }
+  },
+  "agent/chat_surface.py": {
+    "__all__": [
+      "ActionChipModel",
+      "ActionChipState",
+      "ChatActionEnvelope",
+      "build_chip",
+      "serialize_envelope"
+    ],
+    "symbols": {
+      "ActionChipModel": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "with_confirmation": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ActionChipModel"
+            }
+          }
+        }
+      },
+      "ActionChipState": {
+        "type": "class",
+        "info": {
+          "bases": ["Enum"],
+          "methods": {}
+        }
+      },
+      "ChatActionEnvelope": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "build_chip": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "step",
+              "annotation": "PlannedStep",
+              "default": null,
+              "kind": "kwonlyarg"
+            },
+            {
+              "name": "service",
+              "annotation": "SidekickActionService",
+              "default": null,
+              "kind": "kwonlyarg"
+            }
+          ],
+          "returns": "ActionChipModel"
+        }
+      },
+      "serialize_envelope": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "envelope",
+              "annotation": "ChatActionEnvelope",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "dict[str, Any]"
+        }
+      }
+    }
+  },
+  "agent/feature_catalog.py": {
+    "__all__": [
+      "FeatureEntry",
+      "FeatureKind",
+      "build_feature_catalog",
+      "lookup_feature",
+      "search_features"
+    ],
+    "symbols": {
+      "FeatureEntry": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "FeatureKind": {
+        "type": "class",
+        "info": {
+          "bases": ["str", "Enum"],
+          "methods": {}
+        }
+      },
+      "build_feature_catalog": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "force_refresh",
+              "annotation": "bool",
+              "default": "False",
+              "kind": "kwonlyarg"
+            }
+          ],
+          "returns": "Mapping[str, FeatureEntry]"
+        }
+      },
+      "lookup_feature": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "feature_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "FeatureEntry"
+        }
+      },
+      "search_features": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "query",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "limit",
+              "annotation": "int",
+              "default": "5",
+              "kind": "kwonlyarg"
+            }
+          ],
+          "returns": "tuple[FeatureEntry, ...]"
+        }
+      }
+    }
+  },
+  "agent/feature_discovery.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "agent/feature_types.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "agent/host_adapter.py": {
+    "__all__": [
+      "HostActionPort",
+      "HostAdapter",
+      "HostCapability",
+      "HostInvocationResult"
+    ],
+    "symbols": {
+      "HostActionPort": {
+        "type": "class",
+        "info": {
+          "bases": ["Protocol"],
+          "methods": {
+            "list_capabilities": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Sequence[HostCapability]"
+            },
+            "invoke": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "capability_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "params",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "HostInvocationResult"
+            }
+          }
+        }
+      },
+      "HostAdapter": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "port",
+                  "annotation": "HostActionPort | None",
+                  "default": "None",
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "None"
+            },
+            "set_port": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "port",
+                  "annotation": "HostActionPort | None",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "describe": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Sequence[ActionDescriptor]"
+            },
+            "invoke": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "action_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "params",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ActionResult"
+            }
+          }
+        }
+      },
+      "HostCapability": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "HostInvocationResult": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      }
+    }
+  },
+  "agent/planner.py": {
+    "__all__": [
+      "PlannedStep",
+      "PlannerError",
+      "SidekickAgentPlanner",
+      "ToolCall",
+      "build_sidekick_system_prompt"
+    ],
+    "symbols": {
+      "PlannedStep": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "PlannerError": {
+        "type": "class",
+        "info": {
+          "bases": ["RuntimeError"],
+          "methods": {}
+        }
+      },
+      "SidekickAgentPlanner": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "service",
+                  "annotation": "SidekickActionService",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "None"
+            },
+            "plan_from_tool_calls": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "calls",
+                  "annotation": "Sequence[ToolCall]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[PlannedStep, ...]"
+            },
+            "execute": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "step",
+                  "annotation": "PlannedStep",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "dry_run",
+                  "annotation": "bool",
+                  "default": "False",
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "ActionResult"
+            },
+            "export_for_tool_registry": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[Mapping[str, Any], ...]"
+            }
+          }
+        }
+      },
+      "ToolCall": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "build_sidekick_system_prompt": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "service",
+              "annotation": "SidekickActionService",
+              "default": null,
+              "kind": "kwonlyarg"
+            }
+          ],
+          "returns": "str"
+        }
+      }
+    }
+  },
+  "agent/subtab_adapter.py": {
+    "__all__": [
+      "CalculatorRun",
+      "StateProfile",
+      "SubtabActionPort",
+      "SubtabAdapter",
+      "WorkspaceSnapshot"
+    ],
+    "symbols": {
+      "CalculatorRun": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "as_dict": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        }
+      },
+      "StateProfile": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "SubtabActionPort": {
+        "type": "class",
+        "info": {
+          "bases": ["Protocol"],
+          "methods": {
+            "list_tabs": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Sequence[str]"
+            },
+            "active_tab": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str | None"
+            },
+            "focus": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "tab_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "set_visible": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "tab_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "visible",
+                  "annotation": "bool",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "workspace_snapshot": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "WorkspaceSnapshot"
+            },
+            "workspace_set_variable": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "name",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "value",
+                  "annotation": "Any",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Any"
+            },
+            "calculator_run": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "calculator_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "inputs",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CalculatorRun"
+            },
+            "state_profile_save": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "name",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "payload",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "state_profile_load": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "name",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "StateProfile"
+            },
+            "state_profile_delete": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "name",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      },
+      "SubtabAdapter": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "port",
+                  "annotation": "SubtabActionPort",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "None"
+            },
+            "describe": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Sequence[ActionDescriptor]"
+            },
+            "invoke": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "action_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "params",
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ActionResult"
+            }
+          }
+        }
+      },
+      "WorkspaceSnapshot": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      }
+    }
+  },
+  "agent/workflow_bridge.py": {
+    "__all__": [
+      "PendingUserDecision",
+      "RecoveryStrategy",
+      "SidekickWorkflow",
+      "WorkflowOutcome",
+      "WorkflowStep",
+      "WorkflowStepResult",
+      "WorkflowStepStatus",
+      "action_step",
+      "run_sidekick_workflow"
+    ],
+    "symbols": {
+      "PendingUserDecision": {
+        "type": "class",
+        "info": {
+          "bases": ["Exception"],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "workflow_name",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "action_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "error_message",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      },
+      "RecoveryStrategy": {
+        "type": "variable"
+      },
+      "SidekickWorkflow": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "WorkflowOutcome": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "WorkflowStep": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "WorkflowStepResult": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "WorkflowStepStatus": {
+        "type": "class",
+        "info": {
+          "bases": ["Enum"],
+          "methods": {}
+        }
+      },
+      "action_step": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "action_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "params",
+              "annotation": "Mapping[str, Any]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "on_failure",
+              "annotation": "RecoveryStrategy",
+              "default": "'abort'",
+              "kind": "kwonlyarg"
+            },
+            {
+              "name": "rationale",
+              "annotation": "str",
+              "default": "''",
+              "kind": "kwonlyarg"
+            }
+          ],
+          "returns": "WorkflowStep"
+        }
+      },
+      "run_sidekick_workflow": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "workflow",
+              "annotation": "SidekickWorkflow",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "service",
+              "annotation": "SidekickActionService",
+              "default": null,
+              "kind": "kwonlyarg"
+            }
+          ],
+          "returns": "WorkflowOutcome"
+        }
+      }
+    }
+  },
   "api/__init__.py": {
     "__all__": [
       "ErrorCode",
