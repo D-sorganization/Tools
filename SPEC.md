@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.346                                    |
+| **Spec Version**        | 1.1.341                                    |
 | **Last Spec Update**    | 2026-06-10                                 |
 
 ## 2. Purpose & Mission
@@ -714,8 +714,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
-| 2026-06-10 | 1.1.346 | fix(ci/runner, #3306): raise the Tauri check timeout to 30 minutes after serialized cold-cache self-hosted validation reached the 15-minute job limit while Rust clippy was still running. |
-| 2026-06-10 | 1.1.345 | fix(ci/runner, #3305): isolate Tauri `RUSTUP_HOME` and `CARGO_HOME` under each job's `RUNNER_TEMP` so parallel self-hosted jobs do not race on the shared `$HOME/.rustup` toolchain and lose `rustc` mid-clippy. |
 | 2026-06-10 | 1.1.344 | fix(ci/runner, #3304): disable Tauri Rust `target/` cache restoration while keeping cargo registry/git caching after a fast-I/O runner hit a stale dep-info fingerprint (`time-*.d` missing) during clippy. |
 | 2026-06-10 | 1.1.343 | fix(ci/runner, #3304): raise Tauri Rust stack reservations to 512 MiB after function-generator and data-processor clippy on OGLaptop explicitly requested `RUST_MIN_STACK=536870912`, with workflow regression coverage for the stack contract. |
 | 2026-06-10 | 1.1.342 | fix(ci/runner, #3304): route Rust-heavy Tauri check and Linux build jobs to the `d-sorg-fleet-fast-io` runner label so PR validation avoids OGLaptop slots that repeatedly hit rustc stack faults while keeping local self-hosted execution. |
