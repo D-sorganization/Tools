@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.349                                    |
+| **Spec Version**        | 1.1.350                                    |
 | **Last Spec Update**    | 2026-06-10                                 |
 
 ## 2. Purpose & Mission
@@ -119,6 +119,10 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   `src/shared/python/sidekick/agent`, with audited action registration,
   headless host/subtab ports, and an optional thunk dispatcher compatible with
   the shared AI main-thread tool dispatcher for GUI-affine actions
+- Sidekick agent canonical modules are protected by focused unit coverage for
+  audit sinks, feature catalog discovery/search, host capability dispatch,
+  planner validation/export, and subtab action dispatch so the per-file
+  Sidekick coverage gate can block untested drift
 - Sidekick tab bars expose per-tab context menus for left/right dock moves,
   pop-out, duplicate, close, and sidebar minimization actions without relying
   on a separate toolbar
