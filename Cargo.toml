@@ -19,6 +19,17 @@ members = [
     "rust_core/file_watcher",
     "rust_core/data-processor-core",
 ]
+# `src/pendulum_simulator/pendulum-core` is intentionally NOT a workspace member
+# (issue #3294). Its `pyo3` dependency enables `extension-module` unconditionally,
+# which breaks plain `cargo build`/`cargo test` linkage at the workspace level
+# (the symbols are only resolved when built as a Python extension via maturin).
+# It is built/tested on its own via:
+#   maturin build --release -m src/pendulum_simulator/pendulum-core/Cargo.toml
+# Listing it under `exclude` documents the decision and prevents the resolver
+# from accidentally absorbing it via path globbing.
+exclude = [
+    "src/pendulum_simulator/pendulum-core",
+]
 
 [workspace.package]
 version = "0.1.0"

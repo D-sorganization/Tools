@@ -6,10 +6,12 @@ This module uses the compiled Rust physics kernel via FFI when available.
 Fallback behaviour by class:
 - ``DoublePendulum`` / ``TriplePendulum``: pure-NumPy fallback is implemented and
   activates automatically when the native library is unavailable.
-- ``Golfer``: **no NumPy fallback** — raises ``NotImplementedError`` on all methods
-  when the native library is unavailable.  This is intentional: the Golfer dynamics
-  are analytically complex; a pure-NumPy port is tracked in GitHub issue #1736.
-  Do not add a silent fallback without a validated numerical implementation.
+- ``Golfer``: **native-only, no NumPy fallback**. ``Golfer(...)`` raises
+  ``RuntimeError`` at construction when the native library is unavailable, with
+  build/install guidance — it does not return an object whose methods fail
+  later. This is intentional: the Golfer dynamics are analytically complex; a
+  pure-NumPy port is tracked in GitHub issue #3294. Do not add a silent fallback
+  without a validated numerical implementation.
 
 Usage:
     from physics_native import DoublePendulum, TriplePendulum, Golfer
@@ -18,9 +20,10 @@ Usage:
     model = DoublePendulum(m1=1.0, m2=1.0, l1=1.0, l2=1.0)
     M = model.mass_matrix(q)
 
-    # Golfer requires the native library — raises NotImplementedError otherwise.
-    golfer = Golfer(...)
-    M = golfer.mass_matrix(q)  # raises NotImplementedError if no native lib
+    # Golfer requires the native library — raises RuntimeError at construction
+    # otherwise (no NumPy fallback).
+    golfer = Golfer(...)  # raises RuntimeError if the native lib is unavailable
+    M = golfer.mass_matrix(q)
 """
 
 import logging
@@ -144,9 +147,7 @@ class DoublePendulum:
             raise ValueError(f"q must have shape (2,), got {q.shape}")
         if self.use_native:
             try:
-                result = pendulum_core.py_double_mass_matrix(
-                    q.tolist(), self.params.to_rust()
-                )
+                result = pendulum_core.py_double_mass_matrix(q.tolist(), self.params.to_rust())
                 return np.array(result, dtype=np.float64)
             except (RuntimeError, AttributeError, TypeError) as e:
                 logger.warning(
@@ -312,9 +313,7 @@ class GolferParams:
             if not isinstance(val, (int, float)):
                 raise TypeError(f"{name} must be a number, got {type(val).__name__}")
         if not isinstance(m_clubhead, (int, float)):
-            raise TypeError(
-                f"m_clubhead must be a number, got {type(m_clubhead).__name__}"
-            )
+            raise TypeError(f"m_clubhead must be a number, got {type(m_clubhead).__name__}")
         if m_clubhead < 0:
             raise ValueError(f"m_clubhead must be non-negative, got {m_clubhead}")
         if not isinstance(g, (int, float)):
@@ -390,6 +389,19 @@ class Golfer:
         grip_left: float,
         g: float = 9.81,
     ):
+        # The Golfer (8-DOF) dynamics are native-only: there is no NumPy
+        # fallback. Fail fast at construction with actionable guidance rather
+        # than constructing an object whose every method raises later (#3294).
+        if not HAS_NATIVE:
+            raise RuntimeError(
+                "Golfer dynamics require the compiled `pendulum_core` native "
+                "library, which is not importable in this environment "
+                f"(import error: {NATIVE_ERROR}). There is no NumPy fallback. "
+                "Build/install it with:\n"
+                "    maturin develop --release -m "
+                "src/pendulum_simulator/pendulum-core/Cargo.toml\n"
+                "or install the prebuilt wheel, then retry."
+            )
         # Validation delegated to GolferParams (raises TypeError/ValueError on bad input)
         self.params = GolferParams(
             l_hub=l_hub,
@@ -421,22 +433,21 @@ class Golfer:
             raise ValueError(f"q must have shape (8,), got {q.shape}")
         if self.use_native:
             try:
-                result = pendulum_core.py_golfer_mass_matrix(
-                    q.tolist(), self.params.to_rust()
-                )
+                result = pendulum_core.py_golfer_mass_matrix(q.tolist(), self.params.to_rust())
                 return np.array(result, dtype=np.float64)
             except (RuntimeError, AttributeError, TypeError) as e:
-                logger.warning(
-                    "Rust golfer mass_matrix call failed (%s), falling back to NumPy: %s",
+                logger.error(
+                    "Rust golfer mass_matrix call failed (%s): %s",
                     type(e).__name__,
                     e,
                 )
 
-        # Golfer NumPy fallback is not implemented (see module docstring).
-        # Tracked in GitHub issue #1736.
+        # Golfer has no NumPy fallback (see module docstring). Construction is
+        # already guarded by HAS_NATIVE; this is a defensive backstop for a
+        # native call that fails at runtime. Tracked in GitHub issue #3294.
         raise NotImplementedError(
             "Golfer mass matrix has no NumPy fallback — native library required. "
-            "See GitHub issue #1736."
+            "See GitHub issue #3294."
         )
 
     def gravity_vector(self, q: np.ndarray) -> np.ndarray:
@@ -452,14 +463,12 @@ class Golfer:
                 )
                 return np.array(result, dtype=np.float64)
             except (RuntimeError, AttributeError, TypeError) as e:
-                logger.warning(
-                    "Rust golfer gravity_vector call failed (%s)", type(e).__name__
-                )
+                logger.warning("Rust golfer gravity_vector call failed (%s)", type(e).__name__)
 
-        # Golfer NumPy fallback is not implemented (see module docstring / GH#1736).
+        # Golfer NumPy fallback is not implemented (see module docstring; native-only, GH#3294).
         raise NotImplementedError(
             "Golfer gravity vector has no NumPy fallback — native library required. "
-            "See GitHub issue #1736."
+            "See GitHub issue #3294."
         )
 
     def forward_kinematics(self, q: np.ndarray) -> Dict[str, Tuple[float, float]]:
@@ -479,10 +488,10 @@ class Golfer:
                     "Rust golfer forward_kinematics call failed (%s)", type(e).__name__
                 )
 
-        # Golfer NumPy fallback is not implemented (see module docstring / GH#1736).
+        # Golfer NumPy fallback is not implemented (see module docstring; native-only, GH#3294).
         raise NotImplementedError(
             "Golfer forward kinematics has no NumPy fallback — native library required. "
-            "See GitHub issue #1736."
+            "See GitHub issue #3294."
         )
 
     def constraint_vector(self, q: np.ndarray) -> np.ndarray:
@@ -498,10 +507,10 @@ class Golfer:
                     "Rust golfer constraint_vector call failed (%s)", type(e).__name__
                 )
 
-        # Golfer NumPy fallback is not implemented (see module docstring / GH#1736).
+        # Golfer NumPy fallback is not implemented (see module docstring; native-only, GH#3294).
         raise NotImplementedError(
             "Golfer constraint vector has no NumPy fallback — native library required. "
-            "See GitHub issue #1736."
+            "See GitHub issue #3294."
         )
 
     def constraint_jacobian(self, q: np.ndarray) -> np.ndarray:
@@ -517,10 +526,10 @@ class Golfer:
                     "Rust golfer constraint_jacobian call failed (%s)", type(e).__name__
                 )
 
-        # Golfer NumPy fallback is not implemented (see module docstring / GH#1736).
+        # Golfer NumPy fallback is not implemented (see module docstring; native-only, GH#3294).
         raise NotImplementedError(
             "Golfer constraint Jacobian has no NumPy fallback — native library required. "
-            "See GitHub issue #1736."
+            "See GitHub issue #3294."
         )
 
 

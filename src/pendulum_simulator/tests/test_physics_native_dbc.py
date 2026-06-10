@@ -147,3 +147,64 @@ class TestDoublePendulumMethodsDbc:
         fk = model.forward_kinematics(q)
         assert "wrist_x" in fk
         assert "club_tip_x" in fk
+
+
+# ---------------------------------------------------------------------------
+# Golfer native-required behavior (issue #3294)
+# ---------------------------------------------------------------------------
+
+import physics_native  # noqa: E402
+
+_GOLFER_KWARGS = dict(
+    l_hub=0.2,
+    m_hub=0.01,
+    d_rs=0.1,
+    d_ls=0.1,
+    l_r_upper=0.3,
+    m_r_upper=2.0,
+    l_r_fore=0.3,
+    m_r_fore=1.5,
+    l_l_upper=0.3,
+    m_l_upper=2.0,
+    l_l_fore=0.3,
+    m_l_fore=1.5,
+    l_club=1.0,
+    m_club=0.3,
+    m_clubhead=0.2,
+    grip_right=0.5,
+    grip_left=0.5,
+)
+
+
+class TestGolferNativeRequired:
+    """Golfer must fail fast at construction when the native lib is absent (#3294)."""
+
+    def test_construction_fails_fast_without_native(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setattr(physics_native, "HAS_NATIVE", False)
+        monkeypatch.setattr(physics_native, "NATIVE_ERROR", "simulated import error")
+        with pytest.raises(RuntimeError) as exc:
+            physics_native.Golfer(**_GOLFER_KWARGS)
+        # Error must point the user at the build/install path, not a fallback.
+        message = str(exc.value)
+        assert "native" in message.lower()
+        assert "maturin" in message.lower() or "wheel" in message.lower()
+
+    def test_no_stale_1736_reference_in_source(self) -> None:
+        """The misleading closed-issue reference must be gone (#3294)."""
+        source = Path(physics_native.__file__).read_text(encoding="utf-8")
+        assert "#1736" not in source
+
+    def test_no_misleading_fallback_log_for_golfer(self) -> None:
+        """The golfer mass_matrix must not log a 'falling back to NumPy' promise."""
+        source = Path(physics_native.__file__).read_text(encoding="utf-8")
+        # The double-pendulum path legitimately falls back; the golfer path must
+        # not claim a fallback that does not exist. Assert the specific stale
+        # golfer log string is gone.
+        assert "golfer mass_matrix call failed (%s), falling back to NumPy" not in source
+
+    @pytest.mark.skipif(not physics_native.HAS_NATIVE, reason="native pendulum_core not built")
+    def test_construction_succeeds_with_native(self) -> None:
+        golfer = physics_native.Golfer(**_GOLFER_KWARGS)
+        assert golfer.use_native is True

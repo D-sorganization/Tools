@@ -55,13 +55,23 @@ jobs:
       (github.event_name == 'pull_request' ||
        github.event.label.name == 'phantom-guard-override')
     steps:
+      # SECURITY INVARIANT (issue #3296): the untrusted PR head is checked out
+      # ONLY on the `pull_request` trigger, which runs in the fork/PR context
+      # WITHOUT repository secrets or write access. On `pull_request_target`
+      # (label events) this job runs in the privileged base-repo context with
+      # `pull-requests: write` and the repo token, so it must NEVER check out or
+      # execute attacker-controlled PR code. The label path below uses only `gh`
+      # API calls. Do not add any step that runs, builds, or sources files from
+      # the checked-out tree without re-confirming this gate.
       - name: Check out PR head with full history
+        if: github.event_name == 'pull_request'
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Fetch base branch
+        if: github.event_name == 'pull_request'
         run: |
           git fetch origin "${{ github.event.pull_request.base.ref }}" --depth=1 || true
           git fetch origin "${{ github.event.pull_request.base.sha }}" || true
@@ -106,7 +116,11 @@ jobs:
           fi
 
       - name: Run phantom guard checks
-        if: steps.override.outputs.override != 'true'
+        # Only on `pull_request`, where the PR head is safely checked out (no
+        # secrets/write). On `pull_request_target` label events this step is
+        # skipped — the authoritative diff analysis already ran on the
+        # `pull_request` trigger, and that trigger never sees repo secrets.
+        if: github.event_name == 'pull_request' && steps.override.outputs.override != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
