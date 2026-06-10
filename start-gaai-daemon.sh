@@ -14,17 +14,11 @@
 #     bash start-gaai-daemon.sh            # interactive (status output)
 #     bash start-gaai-daemon.sh --dry-run  # show what would launch, no action
 #     bash start-gaai-daemon.sh --status   # check active sessions
-#     bash start-gaai-daemon.sh --yes      # also set the GLOBAL settings key
 #
-# Agent-safety note:
-#   This launcher sets "skipDangerousModePermissionPrompt": true so the daemon
-#   can run unattended. By default it writes this ONLY to a project-scoped file
-#   (.claude/settings.local.json); your global ~/.claude/settings.json is left
-#   untouched unless you pass --yes. Existing keys are always preserved (merge,
-#   not overwrite) and a timestamped backup is made.
-#   To revert: delete the "skipDangerousModePermissionPrompt" key from
-#   .claude/settings.local.json (and ~/.claude/settings.json if you used --yes),
-#   restoring from the *.bak.<timestamp> file if needed.
+# Safety:
+#   This launcher does not modify global Claude Code settings in ~/.claude.
+#   If Claude Code requires any safety override for headless daemon operation,
+#   configure it deliberately outside this script and keep a backup.
 #
 # Monitor overnight:
 #   tmux attach -t gaai-daemon
@@ -50,98 +44,24 @@ check_dependency "tmux"   "sudo apt install tmux -y"
 check_dependency "claude" "npm install -g @anthropic-ai/claude-code"
 check_dependency "git"    "sudo apt install git -y"
 
-# ── Parse our own flags up front (so --dry-run truly changes nothing) ─────────
-# Recognized: --dry-run (no filesystem/git changes), --status (query only),
-#             --yes (allow modifying the GLOBAL ~/.claude/settings.json).
-ARGS="${*}"
-DRY_RUN=false
-ASSUME_YES=false
-case " $ARGS " in
-  *" --dry-run "*) DRY_RUN=true ;;
-esac
-case " $ARGS " in
-  *" --yes "*) ASSUME_YES=true ;;
-esac
-
-# ── Suppress dangerous-mode permission prompt (NON-DESTRUCTIVE) ────────────────
-# This used to clobber the user's entire global ~/.claude/settings.json with a
-# single key, destroying their permissions/hooks/env, and silently weakened the
-# agent sandbox for every future session (issue #3291).
-#
-# Behaviour now:
-#   * Prefer a PROJECT-scoped setting (.claude/settings.local.json in this repo),
-#     which takes precedence over the global file and is the supported mechanism.
-#   * Never overwrite an existing file: merge the single key with jq and write a
-#     timestamped backup first.
-#   * Honour --dry-run (print intended change, touch nothing).
-#   * Modifying the GLOBAL settings file requires explicit --yes consent.
-SETTINGS_KEY="skipDangerousModePermissionPrompt"
-
-merge_setting() {
-  # merge_setting <path>  — idempotently set {SETTINGS_KEY: true} without
-  # discarding any existing content. Creates a timestamped backup first.
-  local target="$1"
-  if [[ -f "$target" ]] && grep -q "$SETTINGS_KEY" "$target" 2>/dev/null; then
-    echo "  -> $SETTINGS_KEY already configured in $target (no change)."
-    return 0
-  fi
-  if [[ "$DRY_RUN" == true ]]; then
-    echo "  [dry-run] would set $SETTINGS_KEY=true in $target (existing keys preserved)."
-    return 0
-  fi
-  mkdir -p "$(dirname "$target")"
-  if [[ -f "$target" ]]; then
-    cp -p "$target" "$target.bak.$(date +%Y%m%d%H%M%S)"
-    if command -v jq &>/dev/null; then
-      local tmp
-      tmp="$(mktemp)"
-      jq ". + {\"$SETTINGS_KEY\": true}" "$target" > "$tmp" && mv "$tmp" "$target"
-    else
-      echo "  -> WARNING: jq not found; leaving $target untouched to avoid data loss."
-      echo "     Install jq, or manually add \"$SETTINGS_KEY\": true to $target."
-      return 0
-    fi
-  else
-    printf '{\n  "%s": true\n}\n' "$SETTINGS_KEY" > "$target"
-  fi
-  echo "  -> Set $SETTINGS_KEY=true in $target (existing keys preserved)."
-}
-
-PROJECT_SETTINGS="$REPO_ROOT/.claude/settings.local.json"
-GLOBAL_SETTINGS="$HOME/.claude/settings.json"
-
-echo "Configuring claude to skip dangerous-mode permission prompt (project-scoped)..."
-merge_setting "$PROJECT_SETTINGS"
-
-if [[ "$ASSUME_YES" == true ]]; then
-  echo "Applying $SETTINGS_KEY to the GLOBAL settings file (--yes given)..."
-  merge_setting "$GLOBAL_SETTINGS"
-else
-  echo "  Note: global $GLOBAL_SETTINGS left untouched."
-  echo "        Pass --yes to also set it globally (this weakens the sandbox for"
-  echo "        ALL future Claude Code sessions on this machine)."
-fi
-
-# ── Ensure we're on staging branch (skipped on --dry-run) ─────────────────────
+# ── Ensure we're on staging branch ───────────────────────────────────────────
 cd "$REPO_ROOT"
-if [[ "$DRY_RUN" == true ]]; then
-  echo "[dry-run] skipping branch switch and git pull."
-else
-  CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-  if [[ "$CURRENT_BRANCH" != "staging" ]]; then
-    echo "WARNING: Not on staging branch (currently on '$CURRENT_BRANCH')."
-    echo "Switching to staging..."
-    git checkout staging
-    git pull --ff-only origin staging
-  fi
-
-  # ── Pull latest before starting ────────────────────────────────────────────
-  echo "Fetching latest from origin/staging..."
-  git fetch origin
-  git pull --ff-only origin staging || echo "Note: fast-forward failed (may have local changes)"
+CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+if [[ "$CURRENT_BRANCH" != "staging" ]]; then
+  echo "WARNING: Not on staging branch (currently on '$CURRENT_BRANCH')."
+  echo "Switching to staging..."
+  git checkout staging
+  git pull --ff-only origin staging
 fi
+
+# ── Pull latest before starting ──────────────────────────────────────────────
+echo "Fetching latest from origin/staging..."
+git fetch origin
+git pull --ff-only origin staging || echo "Note: fast-forward failed (may have local changes)"
 
 # ── Pass through arguments to daemon ─────────────────────────────────────────
+ARGS="${*}"
+
 if [[ "$ARGS" == *"--status"* ]]; then
   bash "$DAEMON_SCRIPT" --status
   exit 0
