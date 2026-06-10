@@ -15,6 +15,7 @@ from __future__ import annotations
 import logging
 import sqlite3
 from pathlib import Path
+from typing import cast
 
 import numpy as np
 import torch
@@ -138,7 +139,9 @@ class SCADADataset(Dataset):
                 ts_index[ts] = len(timestamps)
                 timestamps.append(ts)
 
-        matrix = np.zeros((len(timestamps), self.num_tags), dtype=np.float32)
+        matrix: np.ndarray = np.zeros(
+            (len(timestamps), self.num_tags), dtype=np.float32
+        )
         for ts, tag_id, value in rows:
             col = self._tag_column(tag_id)
             if col is None or not (0 <= col < self.num_tags):
@@ -170,7 +173,7 @@ class SCADADataset(Dataset):
         """Deterministic synthetic data (opt-in only) for tests/groundwork."""
         rng = np.random.default_rng(seed=0)
         rows = max(1000, min_rows)
-        return rng.random((rows, self.num_tags)).astype(np.float32)
+        return cast(np.ndarray, rng.random((rows, self.num_tags)).astype(np.float32))
 
     def __len__(self) -> int:
         return max(0, len(self.data) - self.sequence_length)

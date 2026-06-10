@@ -13,6 +13,9 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 os.environ["PLC_DRIVER"] = "modbus"
+# These functional tests exercise endpoint behavior, not the auth gate (which
+# has its own dedicated suite in test_backend_auth.py). Opt out of auth here.
+os.environ["P1AM_DEV_NO_AUTH"] = "1"
 from fastapi.testclient import TestClient
 from main import app, get_session, modbus_manager
 from models import InterlockConfig, PIDConfig, RoutingConfig, TagLog

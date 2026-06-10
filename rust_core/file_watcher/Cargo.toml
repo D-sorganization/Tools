@@ -13,8 +13,10 @@ crate-type = ["cdylib", "rlib"]
 default = []
 # Enables PyO3 bindings. Mirrors the `ai_backend` pattern: keeping pyo3 behind
 # an opt-in feature lets `cargo test --workspace` succeed without linking
-# libpython, while maturin builds the production wheel with `--features python`.
+# libpython.
 python = ["dep:pyo3"]
+# Enable PyO3's extension-module mode only for maturin wheel builds.
+extension-module = ["pyo3/extension-module"]
 
 [dependencies]
 pyo3 = { workspace = true, optional = true }
