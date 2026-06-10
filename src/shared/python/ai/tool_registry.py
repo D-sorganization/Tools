@@ -309,6 +309,7 @@ class ToolRegistry:
         description: str,
         category: ToolCategory = ToolCategory.ANALYSIS,
         requires_confirmation: bool = False,
+        requires_main_thread: bool = False,
         expertise_level: int = 1,
         examples: list[dict[str, Any]] | None = None,
     ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
@@ -319,6 +320,8 @@ class ToolRegistry:
             description: What the tool does.
             category: Tool category.
             requires_confirmation: Whether to confirm before execution.
+            requires_main_thread: Whether to execute through the registered
+                main-thread dispatcher.
             expertise_level: Minimum expertise level (1-4).
             examples: Example invocations.
 
@@ -348,6 +351,7 @@ class ToolRegistry:
                 parameters=parameters,
                 category=category,
                 requires_confirmation=requires_confirmation,
+                requires_main_thread=requires_main_thread,
                 expertise_level=expertise_level,
                 examples=examples or [],
             )

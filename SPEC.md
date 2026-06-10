@@ -1163,9 +1163,12 @@ Active development with stable core, continuous tool expansion, and web API in p
   is unaffected). `MainThreadToolDispatcher` (ai/gui) marshals a tool thunk
   from the background `StreamWorker` thread onto its owning GUI thread via a
   queued signal, returning the result synchronously and re-raising errors on
-  the caller; same-thread calls run inline. `AIAssistantPanel` installs the
-  dispatcher on the global registry at startup. Additive and backward
-  compatible — no public signature changes for downstream consumers.
+  the caller; same-thread calls run inline. Decorator-registered tools can
+  opt in through `ToolRegistry.register(..., requires_main_thread=True)`, so
+  the normal shared-tool registration path preserves GUI-thread affinity.
+  `AIAssistantPanel` installs the dispatcher on the global registry at
+  startup. Additive and backward compatible for existing downstream
+  registrations.
 
 ### Version 1.1.332
 

@@ -78,3 +78,26 @@ def test_clearing_dispatcher_restores_inline_execution() -> None:
 def test_tool_default_does_not_require_main_thread() -> None:
     tool = Tool(name="x", description="d", handler=lambda: None)
     assert tool.requires_main_thread is False
+
+
+def test_decorator_can_mark_tool_as_main_thread_only() -> None:
+    registry = ToolRegistry()
+    calls: list[Any] = []
+
+    @registry.register(
+        "touch",
+        "A tool that would touch widgets.",
+        requires_main_thread=True,
+    )
+    def touch() -> str:
+        return "ok"
+
+    registry.set_main_thread_dispatcher(lambda thunk: calls.append(thunk) or thunk())
+    result = registry.execute("touch", {})
+    tool = registry.get_tool("touch")
+
+    assert tool is not None
+    assert tool.requires_main_thread is True
+    assert result.success
+    assert result.result == "ok"
+    assert len(calls) == 1
