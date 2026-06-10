@@ -11,5 +11,12 @@ COPY . /app
 # Expose FastAPI SCADA port
 EXPOSE 8000
 
+# Bind to loopback by default (issue #3289). This is an industrial-control
+# backend: binding to 0.0.0.0 exposes E-stop/tag-write/DB-wipe endpoints to the
+# whole network. Override deliberately with `-e P1AM_BIND_HOST=0.0.0.0` only
+# behind proper network isolation, and ensure P1AM_API_KEY is configured.
+ENV P1AM_BIND_HOST=127.0.0.1
+ENV P1AM_BIND_PORT=8000
+
 # Execute server
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "uvicorn main:app --host \"$P1AM_BIND_HOST\" --port \"$P1AM_BIND_PORT\""]

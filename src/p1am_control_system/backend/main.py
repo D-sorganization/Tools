@@ -12,9 +12,10 @@ try:
     from datetime import UTC
 except ImportError:
     UTC = timezone.utc  # noqa: UP017
-from typing import Any
+from typing import Any, cast
 
 from alicat_manager import AlicatManager, AlicatMFC
+from auth_config import require_admin_key, require_api_key, verify_operator_key
 from cors_config import resolve_cors_settings
 from database import engine, get_session, init_db
 from fastapi import (
@@ -47,6 +48,7 @@ from models import (
 from plant_model import TagDefinition
 from plc_factory import PLCFactory
 from power_supply_integration import PowerSupplyService, create_power_supply_router
+from project_import import import_project_archive
 from pydantic import BaseModel
 from pydantic import Field as PydanticField
 from simulator_client import SimulatedPLCClient
@@ -445,7 +447,7 @@ async def get_routing() -> RoutingConfig:
     return config
 
 
-@app.post("/api/routing")
+@app.post("/api/routing", dependencies=[Depends(require_admin_key)])
 async def update_routing(config: RoutingConfig) -> dict[str, str]:
     """Write new routing configurations to the PLC.
 
@@ -493,6 +495,9 @@ async def update_routing(config: RoutingConfig) -> dict[str, str]:
     }
 
 
+# NOTE: E-stop *activation* is intentionally left unauthenticated so a panic
+# stop is always reachable even without a credential (safety over confidentiality).
+# Clearing the E-stop (below) requires the admin credential.
 @app.post("/api/estop")
 async def trigger_estop() -> dict[str, str]:
     """Immediate safety shutdown command, zeroing all tag variables."""
@@ -511,7 +516,7 @@ async def trigger_estop() -> dict[str, str]:
     return {"status": "success", "message": "Hardware E-stop triggered."}
 
 
-@app.post("/api/estop/clear")
+@app.post("/api/estop/clear", dependencies=[Depends(require_admin_key)])
 async def clear_estop() -> dict[str, str]:
     """Clear the E-stop state."""
     global e_stop_active
@@ -525,7 +530,10 @@ async def get_active_alarms() -> list[dict[str, Any]]:
     return list(active_alarms.values())
 
 
-@app.post("/api/alarms/{tag_id}/acknowledge")
+@app.post(
+    "/api/alarms/{tag_id}/acknowledge",
+    dependencies=[Depends(require_api_key)],
+)
 async def acknowledge_alarm(
     tag_id: str,
     db: Session = Depends(get_session),  # noqa: B008
@@ -560,7 +568,7 @@ class EventLogPayload(BaseModel):
     description: str
 
 
-@app.post("/api/events")
+@app.post("/api/events", dependencies=[Depends(require_api_key)])
 async def log_user_event(
     payload: EventLogPayload,
     db: Session = Depends(get_session),  # noqa: B008
@@ -705,7 +713,7 @@ class TagWritePayload(BaseModel):
     value: float
 
 
-@app.post("/api/tags/{tag_id}")
+@app.post("/api/tags/{tag_id}", dependencies=[Depends(require_admin_key)])
 async def write_tag_value(tag_id: str, payload: TagWritePayload) -> dict[str, str]:
     """Manually force/write a 32-bit float value directly to a tag register."""
     global latest_tags
@@ -747,7 +755,10 @@ async def write_tag_value(tag_id: str, payload: TagWritePayload) -> dict[str, st
     }
 
 
-@app.post("/api/pid/{pid_index}/tuning/start")
+@app.post(
+    "/api/pid/{pid_index}/tuning/start",
+    dependencies=[Depends(require_admin_key)],
+)
 async def start_pid_tuning(pid_index: int) -> dict[str, str]:
     """Decouples the PID loop from automatic control and begins logging step change history."""
     if not (0 <= pid_index < 4):
@@ -777,7 +788,10 @@ async def start_pid_tuning(pid_index: int) -> dict[str, str]:
     }
 
 
-@app.post("/api/pid/{pid_index}/tuning/step")
+@app.post(
+    "/api/pid/{pid_index}/tuning/step",
+    dependencies=[Depends(require_admin_key)],
+)
 async def step_pid_tuning(
     pid_index: int, payload: PIDTuningStepPayload
 ) -> dict[str, str]:
@@ -808,7 +822,10 @@ async def step_pid_tuning(
     }
 
 
-@app.post("/api/pid/{pid_index}/tuning/stop")
+@app.post(
+    "/api/pid/{pid_index}/tuning/stop",
+    dependencies=[Depends(require_admin_key)],
+)
 async def stop_pid_tuning(pid_index: int) -> dict[str, Any]:
     """Stops the tuning session, calculates FOPDT process parameters, and recommends tuned gains."""
     if pid_index not in tuning_sessions:
@@ -908,7 +925,7 @@ class MPCSimulatePayload(BaseModel):
     process_delay: float = PydanticField(1.0, ge=0.0, le=5.0)
 
 
-@app.post("/api/mpc/simulate")
+@app.post("/api/mpc/simulate", dependencies=[Depends(require_admin_key)])
 async def simulate_mpc(payload: MPCSimulatePayload) -> dict[str, Any]:
     """Simulates and compares standard PID versus Model Predictive Control (MPC)."""
     Kp = payload.process_gain
@@ -1049,7 +1066,10 @@ async def get_alicats() -> list[AlicatMFCState]:
     return [AlicatMFCState(**d) for d in alicat_manager.get_devices_data()]
 
 
-@app.post("/api/alicats/{device_id}/setpoint")
+@app.post(
+    "/api/alicats/{device_id}/setpoint",
+    dependencies=[Depends(require_admin_key)],
+)
 async def update_alicat_setpoint(
     device_id: str, payload: AlicatSetpointPayload
 ) -> dict[str, str]:
@@ -1066,7 +1086,7 @@ async def update_alicat_setpoint(
     }
 
 
-@app.post("/api/alicats/{device_id}/gas")
+@app.post("/api/alicats/{device_id}/gas", dependencies=[Depends(require_admin_key)])
 async def update_alicat_gas(
     device_id: str, payload: AlicatGasPayload
 ) -> dict[str, str]:
@@ -1085,8 +1105,29 @@ async def update_alicat_gas(
 
 @app.websocket("/api/stream")
 async def stream_websocket(websocket: WebSocket) -> None:
-    """WebSocket endpoint streaming live PLC Tag values to the client HMI."""
-    await ws_manager.connect(websocket)
+    """WebSocket endpoint streaming live PLC Tag values to the client HMI.
+
+    Requires a valid operator/admin API key supplied either as the ``api_key``
+    query parameter or as the first text frame after connect. Rejects
+    unauthenticated connections with policy-violation close code 1008.
+    """
+    # Validate the credential before accepting the stream (issue #3289).
+    provided = websocket.query_params.get("api_key")
+    if not verify_operator_key(provided):
+        await websocket.accept()
+        try:
+            first = await websocket.receive_text()
+        except Exception:
+            await websocket.close(code=1008)
+            return
+        if not verify_operator_key(first):
+            await websocket.close(code=1008)
+            return
+        # Authenticated via first frame; register without re-accepting.
+        ws_manager.active_connections.append(websocket)
+        logger.info("New WebSocket client connected (authenticated via frame).")
+    else:
+        await ws_manager.connect(websocket)
     try:
         while True:
             # We must continuously receive messages (even ping/pong) to keep socket open
@@ -1098,185 +1139,16 @@ async def stream_websocket(websocket: WebSocket) -> None:
         ws_manager.disconnect(websocket)
 
 
-@app.post("/api/project/import")
+@app.post("/api/project/import", dependencies=[Depends(require_admin_key)])
 async def import_project(
     file: UploadFile = File(...),  # noqa: B008
     db: Session = Depends(get_session),  # noqa: B008
 ) -> dict[str, Any]:
     """Upload and ingest a zip file containing tagl.json and PLC driver mapping (.SDV files)."""
-    import tempfile
-    import zipfile
-    from pathlib import Path
-
-    from parsers.indusoft_parser import parse_indusoft_tags
-    from parsers.plc_map_parser import parse_plc_map
-
-    if not file.filename or not file.filename.endswith(".zip"):
-        raise HTTPException(status_code=400, detail="Only ZIP files are supported.")
-
-    with tempfile.TemporaryDirectory() as temp_dir:
-        temp_path = Path(temp_dir)
-        zip_file_path = temp_path / "uploaded.zip"
-
-        # Save uploaded file
-        with open(zip_file_path, "wb") as f:
-            content = await file.read()
-            f.write(content)
-
-        # Extract zip file
-        try:
-            with zipfile.ZipFile(zip_file_path, "r") as zip_ref:
-                zip_ref.extractall(temp_path)
-        except Exception as e:
-            raise HTTPException(status_code=400, detail=f"Invalid ZIP file: {e}") from e
-
-        # Locate tagl.json
-        tag_json_path = None
-        for p in temp_path.rglob("*"):
-            if p.name.lower() == "tagl.json":
-                tag_json_path = p
-                break
-
-        if not tag_json_path:
-            raise HTTPException(
-                status_code=400,
-                detail="Could not find 'tagl.json' in the uploaded ZIP file.",
-            )
-
-        # Ingest tags
-        try:
-            tags = parse_indusoft_tags(tag_json_path)
-        except Exception as e:
-            raise HTTPException(
-                status_code=500, detail=f"Failed to parse tags: {e}"
-            ) from e
-
-        # Locate .SDV files (PLC maps)
-        plc_map = {}
-        for p in temp_path.rglob("*.SDV"):
-            try:
-                # Merge multiple SDV mappings if they exist
-                plc_map.update(parse_plc_map(p))
-            except Exception as e:
-                logger.warning(f"Failed to parse PLC map file {p.name}: {e}")
-
-        # Merge mappings
-        mapped_count = 0
-        for tag in tags:
-            if tag.name in plc_map:
-                m = plc_map[tag.name]
-                tag.register_type = m.get("register_type")
-                tag.register_num = m.get("register_num")
-                tag.data_format = m.get("data_format")
-                if m.get("rw_mode"):
-                    tag.rw_mode = m.get("rw_mode")
-                if m.get("scale_factor") is not None:
-                    tag.scale_factor = m.get("scale_factor")
-                mapped_count += 1
-
-        # Clear existing plant hierarchy tables
-        try:
-            for row in db.exec(select(TagDefinitionDb)).all():
-                db.delete(row)
-            for row in db.exec(select(PlantEquipment)).all():
-                db.delete(row)
-            for row in db.exec(select(PlantUnit)).all():
-                db.delete(row)
-            for row in db.exec(select(PlantArea)).all():
-                db.delete(row)
-            db.commit()
-        except Exception as e:
-            db.rollback()
-            raise HTTPException(
-                status_code=500, detail=f"Database clear failed: {e}"
-            ) from e
-
-        # Group tags and save to DB
-        areas: dict[str, PlantArea] = {}
-        units: dict[str, PlantUnit] = {}
-        equipments: dict[str, PlantEquipment] = {}
-
-        try:
-            for tag in tags:
-                # Deduce area/unit/equipment name from tag hierarchy
-                parts = tag.name.split("_")
-                if len(parts) >= 4:
-                    area_name = parts[0]
-                    unit_name = parts[1]
-                    equip_name = parts[2]
-                else:
-                    # Alternative dot notation
-                    parts_dot = tag.name.split(".")
-                    if len(parts_dot) >= 4:
-                        area_name = parts_dot[0]
-                        unit_name = parts_dot[1]
-                        equip_name = parts_dot[2]
-                    else:
-                        area_name = "Default Area"
-                        unit_name = "Default Unit"
-                        equip_name = "Default Equipment"
-
-                # Create Area
-                if area_name not in areas:
-                    area = PlantArea(name=area_name)
-                    db.add(area)
-                    db.commit()
-                    db.refresh(area)
-                    areas[area_name] = area
-                area = areas[area_name]
-
-                # Create Unit
-                unit_key = f"{area_name}:{unit_name}"
-                if unit_key not in units:
-                    unit = PlantUnit(name=unit_name, area_id=area.id)
-                    db.add(unit)
-                    db.commit()
-                    db.refresh(unit)
-                    units[unit_key] = unit
-                unit = units[unit_key]
-
-                # Create Equipment
-                equip_key = f"{unit_key}:{equip_name}"
-                if equip_key not in equipments:
-                    equip = PlantEquipment(name=equip_name, unit_id=unit.id)
-                    db.add(equip)
-                    db.commit()
-                    db.refresh(equip)
-                    equipments[equip_key] = equip
-                equip = equipments[equip_key]
-
-                # Create TagDefinitionDb
-                tag_db = TagDefinitionDb(
-                    name=tag.name,
-                    tag_type=tag.tag_type,
-                    description=tag.description,
-                    rw_mode=tag.rw_mode,
-                    register_type=tag.register_type,
-                    register_num=tag.register_num,
-                    data_format=tag.data_format,
-                    scale_factor=tag.scale_factor,
-                    equipment_id=equip.id,
-                )
-                db.add(tag_db)
-
-            db.commit()
-        except Exception as e:
-            db.rollback()
-            raise HTTPException(
-                status_code=500, detail=f"Database save failed: {e}"
-            ) from e
-
-        # Re-load tags into the active PLC clients so simulation/reading picks them up!
-        load_tags_into_plc_clients(db)
-
-        return {
-            "status": "success",
-            "tags_imported": len(tags),
-            "mapped_registers": mapped_count,
-            "areas_created": list(areas.keys()),
-            "units_created": [u.name for u in units.values()],
-            "equipment_created": [e.name for e in equipments.values()],
-        }
+    return cast(
+        "dict[str, Any]",
+        await import_project_archive(file, db, load_tags_into_plc_clients),
+    )
 
 
 @app.get("/api/project/ladder-explorer")
