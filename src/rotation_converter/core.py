@@ -19,11 +19,11 @@ Design by Contract (DbC):
 from __future__ import annotations
 
 import math
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
-from rotation_converter._contracts import (
+from ._contracts import (
     ensure,
     require,
     require_finite,
@@ -38,9 +38,19 @@ from rotation_converter._contracts import (
 _AXIS_INDEX = {"x": 0, "y": 1, "z": 2}
 
 
+def _float_array(values: Any) -> np.ndarray:
+    """Construct a float ndarray with a precise type for mypy."""
+    return cast(np.ndarray, np.array(values, dtype=float))
+
+
+def _as_float_array(values: Any) -> np.ndarray:
+    """Coerce array-like input to a float ndarray with a precise type."""
+    return cast(np.ndarray, np.asarray(values, dtype=float))
+
+
 def _skew_symmetric(v: np.ndarray) -> np.ndarray:
     """Return the 3x3 skew-symmetric matrix [v]x for cross-product."""
-    return np.array(
+    return _float_array(
         [
             [0, -v[2], v[1]],
             [v[2], 0, -v[0]],
@@ -65,10 +75,10 @@ def _validate_quaternion_array(q: Any, name: str = "quaternion") -> np.ndarray:
     """Convert to ndarray and validate shape/finiteness."""
     if not isinstance(name, str):
         raise TypeError(f"name must be a str, got {type(name).__name__!r}")
-    q = np.asarray(q, dtype=float)
-    require(q.shape == (4,), f"{name} must have 4 elements", q.shape)
-    require_finite(q, name)
-    return q  # type: ignore[no-any-return]
+    q_array: np.ndarray = _as_float_array(q)
+    require(q_array.shape == (4,), f"{name} must have 4 elements", q_array.shape)
+    require_finite(q_array, name)
+    return q_array
 
 
 def _validate_unit_quaternion(q: np.ndarray, name: str = "quaternion") -> None:
@@ -87,16 +97,16 @@ def _validate_rotation_matrix(R: Any, name: str = "rotation matrix") -> np.ndarr
     """Convert, validate shape, orthogonality, and det=+1."""
     if not isinstance(name, str):
         raise TypeError(f"name must be a str, got {type(name).__name__!r}")
-    R = np.asarray(R, dtype=float)
-    require(R.shape == (3, 3), f"{name} must be 3x3", R.shape)
-    require_finite(R, name)
-    orth_err = np.max(np.abs(R @ R.T - np.eye(3)))
+    matrix: np.ndarray = _as_float_array(R)
+    require(matrix.shape == (3, 3), f"{name} must be 3x3", matrix.shape)
+    require_finite(matrix, name)
+    orth_err: float = float(np.max(np.abs(matrix @ matrix.T - np.eye(3))))
     require(
         bool(orth_err < 1e-6), f"{name} must be orthogonal (max err={orth_err:.2e})"
     )
-    det = np.linalg.det(R)
+    det = np.linalg.det(matrix)
     require(bool(abs(det - 1.0) < 1e-6), f"{name} must have det=+1 (got {det:.6f})")
-    return R  # type: ignore[no-any-return]
+    return matrix
 
 
 # ===========================================================================
@@ -113,15 +123,15 @@ def normalize_quaternion(q: Any) -> np.ndarray:
     q = _validate_quaternion_array(q)
     norm = np.linalg.norm(q)
     require(bool(norm > 1e-12), "cannot normalize zero quaternion", norm)
-    result = q / norm
+    result = cast(np.ndarray, q / norm)
     ensure(bool(abs(np.linalg.norm(result) - 1.0) < 1e-12), "result must be unit norm")
-    return result  # type: ignore[no-any-return]
+    return result
 
 
 def quaternion_conjugate(q: Any) -> np.ndarray:
     """Return the conjugate (w, -x, -y, -z) of a quaternion."""
     q = _validate_quaternion_array(q)
-    return np.array([q[0], -q[1], -q[2], -q[3]])
+    return _float_array([q[0], -q[1], -q[2], -q[3]])
 
 
 def quaternion_multiply(q1: Any, q2: Any) -> np.ndarray:
@@ -133,7 +143,7 @@ def quaternion_multiply(q1: Any, q2: Any) -> np.ndarray:
     q2 = _validate_quaternion_array(q2, "q2")
     w1, x1, y1, z1 = q1
     w2, x2, y2, z2 = q2
-    return np.array(
+    return _float_array(
         [
             w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2,
             w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2,
@@ -158,7 +168,7 @@ def quaternion_to_rotation_matrix(q: Any) -> np.ndarray:
     _validate_unit_quaternion(q)
 
     w, x, y, z = q
-    R = np.array(
+    R = _float_array(
         [
             [1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)],
             [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],
@@ -212,8 +222,8 @@ def rotation_matrix_to_quaternion(R: Any) -> np.ndarray:
         y = (R[1, 2] + R[2, 1]) / s
         z = 0.25 * s
 
-    q = np.array([w, x, y, z])
-    q = q / np.linalg.norm(q)
+    q = _float_array([w, x, y, z])
+    q = cast(np.ndarray, q / np.linalg.norm(q))
     # Canonical form: w >= 0
     if q[0] < 0:
         q = -q
@@ -235,14 +245,14 @@ def axis_angle_to_quaternion(axis: Any, angle: float) -> np.ndarray:
     """
     if not isinstance(angle, (int, float)):
         raise TypeError(f"angle must be a number, got {type(angle).__name__!r}")
-    axis = np.asarray(axis, dtype=float)
+    axis = _as_float_array(axis)
     require(axis.shape == (3,), "axis must have 3 elements", axis.shape)
     require_finite(axis, "axis")
     require_unit_vector(axis, "axis")
     require_finite(np.array([angle]), "angle")
 
     half = angle / 2.0
-    q = np.array(
+    q = _float_array(
         [
             math.cos(half),
             axis[0] * math.sin(half),
@@ -275,7 +285,7 @@ def quaternion_to_axis_angle(q: Any) -> tuple[np.ndarray, float]:
     sin_half = math.sin(angle / 2.0)
 
     if abs(sin_half) < 1e-12:
-        axis = np.array([1.0, 0.0, 0.0])
+        axis = _float_array([1.0, 0.0, 0.0])
         angle = 0.0
     else:
         axis = q[1:] / sin_half
@@ -299,15 +309,17 @@ def axis_angle_to_rotation_matrix(axis: Any, angle: float) -> np.ndarray:
     """
     if not isinstance(angle, (int, float)):
         raise TypeError(f"angle must be a number, got {type(angle).__name__!r}")
-    axis = np.asarray(axis, dtype=float)
+    axis = _as_float_array(axis)
     require(axis.shape == (3,), "axis must have 3 elements")
     require_unit_vector(axis, "axis")
 
     K = _skew_symmetric(axis)
-    R = np.eye(3) + math.sin(angle) * K + (1.0 - math.cos(angle)) * (K @ K)
+    R = cast(
+        np.ndarray, np.eye(3) + math.sin(angle) * K + (1.0 - math.cos(angle)) * (K @ K)
+    )
 
     ensure(bool(abs(np.linalg.det(R) - 1.0) < 1e-9), "result must be SO(3)")
-    return R  # type: ignore[no-any-return]
+    return R
 
 
 def rotation_matrix_to_axis_angle(R: Any) -> tuple[np.ndarray, float]:
@@ -334,7 +346,7 @@ def quaternion_to_rodrigues(q: Any) -> np.ndarray:
     q = _validate_quaternion_array(q)
     _validate_unit_quaternion(q)
     axis, angle = quaternion_to_axis_angle(q)
-    return axis * angle
+    return cast(np.ndarray, axis * angle)
 
 
 def rodrigues_to_quaternion(r: Any) -> np.ndarray:
@@ -343,13 +355,13 @@ def rodrigues_to_quaternion(r: Any) -> np.ndarray:
     Precondition: r has 3 elements.
     Postcondition: result is unit quaternion.
     """
-    r = np.asarray(r, dtype=float)
+    r = _as_float_array(r)
     require(r.shape == (3,), "Rodrigues vector must have 3 elements", r.shape)
     require_finite(r, "rodrigues")
 
     angle = float(np.linalg.norm(r))
     if angle < 1e-12:
-        return np.array([1.0, 0.0, 0.0, 0.0])
+        return _float_array([1.0, 0.0, 0.0, 0.0])
 
     axis = r / angle
     return axis_angle_to_quaternion(axis, angle)

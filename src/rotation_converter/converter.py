@@ -20,8 +20,8 @@ from typing import Any
 
 import numpy as np
 
-from rotation_converter._contracts import require, require_finite
-from rotation_converter.core import (
+from ._contracts import require, require_finite
+from .core import (
     axis_angle_to_quaternion,
     axis_angle_to_rotation_matrix,
     euler_to_quaternion,

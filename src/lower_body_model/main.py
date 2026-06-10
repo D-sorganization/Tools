@@ -7,8 +7,8 @@ Lower Body Model - MuJoCo Simulation Viewer
 import argparse
 import logging
 
-from lower_body_model.builder import build_lower_body_xml
-from lower_body_model.simulator import LowerBodySimulator
+from .builder import build_lower_body_xml
+from .simulator import LowerBodySimulator
 
 logger = logging.getLogger(__name__)
 

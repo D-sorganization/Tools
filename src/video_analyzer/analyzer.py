@@ -15,10 +15,9 @@ import math
 import uuid
 from collections.abc import Callable
 from datetime import datetime
-from typing import Any, cast
+from typing import Any
 
-from contracts import precondition
-
+from ._contracts import precondition
 from .types import (
     BalanceMetrics,
     BodyAngles,
@@ -149,14 +148,11 @@ class SwingAnalyzer:
         processor.close()
 
         # Run analysis
-        return cast(
-            SwingAnalysis,
-            self.analyze_poses(
-                poses,
-                fps=processor.fps,
-                video_id=str(video_path),
-                stance=stance,
-            ),
+        return self.analyze_poses(
+            poses,
+            fps=processor.fps,
+            video_id=str(video_path),
+            stance=stance,
         )
 
     @precondition(

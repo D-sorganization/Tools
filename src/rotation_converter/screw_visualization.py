@@ -20,12 +20,12 @@ DbC: validates SE(3) inputs, ensures finite outputs.
 from __future__ import annotations
 
 import math
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
-from rotation_converter._contracts import ensure, require
-from rotation_converter.modern_robotics import (
+from ._contracts import ensure, require
+from .modern_robotics import (
     MatrixLog6,
     TransInv,
     TransToRp,
@@ -203,7 +203,7 @@ class ScrewAxisAnimator:
 
     Usage::
 
-        from rotation_converter.motion_examples import football_spiral
+        from .motion_examples import football_spiral
         traj = football_spiral(n_frames=60)
         animator = ScrewAxisAnimator(traj, title="Football Spiral")
         animator.show()  # Opens interactive matplotlib window
@@ -251,7 +251,7 @@ class ScrewAxisAnimator:
     @property
     def trajectory_path(self) -> np.ndarray:
         """Nx3 array of position points along the trajectory."""
-        return np.array([T[:3, 3] for T in self._trajectory])
+        return cast(np.ndarray, np.array([T[:3, 3] for T in self._trajectory]))
 
     def get_plot_bounds(self) -> dict[str, tuple[float, float]]:
         """Compute axis-aligned bounding box with padding."""
@@ -417,8 +417,8 @@ class ScrewAxisAnimator:
             y_text -= 0.05
 
         if self.show_euler or self.show_quaternion:
-            import rotation_converter.core as rc_core
-            from rotation_converter.converter import Rotation
+            from . import core as rc_core
+            from .converter import Rotation
 
             rot = Rotation.from_rotation_matrix(frame["orientation"])
             if self.show_euler:
@@ -459,12 +459,13 @@ class ScrewAxisAnimator:
         ax = fig.add_subplot(111, projection="3d", facecolor="black")
         ax.tick_params(colors="gray")
 
-        def update(frame_idx: int) -> None:
+        def update(frame_idx: int) -> list[Any]:
             self._draw_frame(ax, frame_idx)
+            return []
 
         _anim = FuncAnimation(
             fig,
-            update,  # type: ignore[arg-type]
+            update,
             frames=self.n_frames,
             interval=interval,
             repeat=True,
@@ -494,12 +495,13 @@ class ScrewAxisAnimator:
         ax = fig.add_subplot(111, projection="3d", facecolor="black")
         ax.tick_params(colors="gray")
 
-        def update(frame_idx: int) -> None:
+        def update(frame_idx: int) -> list[Any]:
             self._draw_frame(ax, frame_idx)
+            return []
 
         anim = FuncAnimation(
             fig,
-            update,  # type: ignore[arg-type]
+            update,
             frames=self.n_frames,
             interval=1000 // fps,
             repeat=False,

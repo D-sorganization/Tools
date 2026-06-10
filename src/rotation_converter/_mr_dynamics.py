@@ -13,7 +13,7 @@ from typing import Any
 
 import numpy as np
 
-from rotation_converter._mr_rotation_matrices import (
+from ._mr_rotation_matrices import (
     Adjoint,
     MatrixExp6,
     TransInv,

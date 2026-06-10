@@ -13,8 +13,8 @@ from typing import Any
 
 import numpy as np
 
-from rotation_converter._contracts import ensure, require, require_finite
-from rotation_converter._mr_rotation_matrices import (
+from ._contracts import ensure, require, require_finite
+from ._mr_rotation_matrices import (
     Adjoint,
     MatrixExp3,
     MatrixExp6,

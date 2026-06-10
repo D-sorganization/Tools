@@ -12,8 +12,8 @@ from typing import Any
 
 import numpy as np
 
-from rotation_converter._contracts import ensure, require, require_finite
-from rotation_converter.core import normalize_quaternion, quaternion_multiply
+from ._contracts import ensure, require, require_finite
+from .core import normalize_quaternion, quaternion_multiply
 
 
 def dh_to_matrix(
@@ -185,7 +185,7 @@ class DualQuaternion:
     def extract_translation(self) -> np.ndarray:
         """Extract the translation 3-vector from the dual quaternion."""
         # t = 2 * qd * conjugate(qr)
-        from rotation_converter.core import quaternion_conjugate
+        from .core import quaternion_conjugate
 
         qr_conj = quaternion_conjugate(self._qr)
         t_quat = 2.0 * quaternion_multiply(self._qd, qr_conj)

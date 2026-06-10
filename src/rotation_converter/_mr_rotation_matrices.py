@@ -13,7 +13,7 @@ from typing import Any
 
 import numpy as np
 
-from rotation_converter._contracts import ensure, require, require_finite
+from ._contracts import ensure, require, require_finite
 
 # ---------------------------------------------------------------------------
 # Internal helpers (DRY — shared across multiple functions)
