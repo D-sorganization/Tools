@@ -714,6 +714,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-10 | 1.1.344 | fix(ci/runner, #3304): disable Tauri Rust `target/` cache restoration while keeping cargo registry/git caching after a fast-I/O runner hit a stale dep-info fingerprint (`time-*.d` missing) during clippy. |
 | 2026-06-10 | 1.1.343 | fix(ci/runner, #3304): raise Tauri Rust stack reservations to 512 MiB after function-generator and data-processor clippy on OGLaptop explicitly requested `RUST_MIN_STACK=536870912`, with workflow regression coverage for the stack contract. |
 | 2026-06-10 | 1.1.342 | fix(ci/runner, #3304): route Rust-heavy Tauri check and Linux build jobs to the `d-sorg-fleet-fast-io` runner label so PR validation avoids OGLaptop slots that repeatedly hit rustc stack faults while keeping local self-hosted execution. |
 | 2026-06-10 | 1.1.341 | fix(ci/runner, #3304): raise Rust stack reservations to 256 MiB after rotation-converter clippy on OGLaptop explicitly requested `RUST_MIN_STACK=268435456`, keeping all Tauri app checks on the same fleet-safe stack setting. |
