@@ -10,51 +10,107 @@ from pathlib import Path
 
 import pytest
 
-from p1am_control_system.desktop.auth import AuthManager, Role
+from p1am_control_system.desktop.auth import (
+    AuthManager,
+    Role,
+    admin_credential_configured,
+    hash_admin_password,
+)
 from p1am_control_system.desktop.event_logger import EventLogger
 
 
-def test_auth_manager_default_password(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Verify standard AuthManager behavior with default password 'Vitro95'."""
+def test_auth_manager_fails_closed_without_credential(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """No credential configured -> Admin login fails closed (regression for #3288)."""
     monkeypatch.delenv("ADMIN_PASSWORD", raising=False)
+    monkeypatch.delenv("ADMIN_PASSWORD_HASH", raising=False)
     am = AuthManager()
     assert am.current_role is None
     assert am.is_authenticated() is False
+    assert admin_credential_configured() is False
+    assert am.admin_credential_configured() is False
 
-    # Test operator login (should not require password)
+    # Operator login still works (no password required).
     assert am.login(Role.OPERATOR) is True
     assert am.current_role == Role.OPERATOR
-    assert am.is_authenticated() is True
     assert am.is_admin() is False
 
-    # Test admin login with wrong password (should fail and maintain operator)
-    assert am.login(Role.ADMIN, "wrong_password") is False
+    # The historical hardcoded default 'Vitro95' must NOT grant Admin anymore.
+    assert am.login(Role.ADMIN, "Vitro95") is False
+    assert am.login(Role.ADMIN, "anything") is False
     assert am.current_role == Role.OPERATOR
     assert am.is_admin() is False
 
-    # Test admin login with correct password
-    assert am.login(Role.ADMIN, "Vitro95") is True
-    assert am.current_role == Role.ADMIN
-    assert am.is_admin() is True
 
-    # Test logout
-    am.logout()
-    assert am.current_role is None
-    assert am.is_authenticated() is False
-    assert am.is_admin() is False
+def test_auth_manager_rejects_legacy_hardcoded_hashes(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The two removed hardcoded fallback hashes must not be accepted (#3288)."""
+    monkeypatch.delenv("ADMIN_PASSWORD", raising=False)
+    monkeypatch.delenv("ADMIN_PASSWORD_HASH", raising=False)
+    am = AuthManager()
+    # Empty password and the old default both fail.
+    assert am.verify_admin_password("") is False
+    assert am.verify_admin_password("Vitro95") is False
 
 
-def test_auth_manager_env_password(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Verify AuthManager uses environment variable password when present."""
+def test_auth_manager_env_plaintext_password(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """AuthManager honors the ADMIN_PASSWORD convenience variable via KDF."""
+    monkeypatch.delenv("ADMIN_PASSWORD_HASH", raising=False)
     monkeypatch.setenv("ADMIN_PASSWORD", "SuperSecureEnvPass1!")
     am = AuthManager()
+    assert admin_credential_configured() is True
 
-    # Vitro95 should fail
+    # Wrong passwords (incl. the old default) fail.
     assert am.login(Role.ADMIN, "Vitro95") is False
+    assert am.login(Role.ADMIN, "") is False
 
-    # Environment variable password should succeed
+    # Correct password succeeds.
     assert am.login(Role.ADMIN, "SuperSecureEnvPass1!") is True
     assert am.current_role == Role.ADMIN
+
+    am.logout()
+    assert am.is_authenticated() is False
+
+
+def test_auth_manager_env_password_hash(monkeypatch: pytest.MonkeyPatch) -> None:
+    """AuthManager verifies against a salted ADMIN_PASSWORD_HASH (preferred)."""
+    encoded = hash_admin_password("CorrectHorseBatteryStaple")
+    assert encoded.startswith("pbkdf2_sha256$")
+    monkeypatch.delenv("ADMIN_PASSWORD", raising=False)
+    monkeypatch.setenv("ADMIN_PASSWORD_HASH", encoded)
+    am = AuthManager()
+    assert admin_credential_configured() is True
+
+    assert am.login(Role.ADMIN, "wrong") is False
+    assert am.login(Role.ADMIN, "CorrectHorseBatteryStaple") is True
+    assert am.is_admin() is True
+
+
+def test_hash_admin_password_is_salted_and_kdf(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Hashing uses a salted KDF (distinct salts) and round-trips correctly."""
+    h1 = hash_admin_password("same-password")
+    h2 = hash_admin_password("same-password")
+    # Random salt -> two hashes of the same password differ.
+    assert h1 != h2
+    # Not bare SHA-256 of the plaintext.
+    import hashlib
+
+    assert hashlib.sha256(b"same-password").hexdigest() not in h1
+
+    monkeypatch.delenv("ADMIN_PASSWORD", raising=False)
+    monkeypatch.setenv("ADMIN_PASSWORD_HASH", h1)
+    am = AuthManager()
+    assert am.verify_admin_password("same-password") is True
+    assert am.verify_admin_password("different") is False
+
+    with pytest.raises(ValueError):
+        hash_admin_password("")
 
 
 def test_event_logger_basic(tmp_path: Path) -> None:
