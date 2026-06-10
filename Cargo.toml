@@ -19,6 +19,16 @@ members = [
     "rust_core/file_watcher",
     "rust_core/data-processor-core",
 ]
+# `src/pendulum_simulator/pendulum-core` is intentionally NOT a workspace member
+# (issue #3294). It is a PyO3 extension crate whose native dynamics are built
+# through maturin rather than the generic workspace quality gate.
+# It is built/tested on its own via:
+#   maturin build --release -m src/pendulum_simulator/pendulum-core/Cargo.toml
+# Listing it under `exclude` documents the decision and prevents the resolver
+# from accidentally absorbing it via path globbing.
+exclude = [
+    "src/pendulum_simulator/pendulum-core",
+]
 
 [workspace.package]
 version = "0.1.0"
@@ -29,8 +39,11 @@ license = "MIT"
 repository = "https://github.com/D-sorganization/Tools"
 
 [workspace.dependencies]
-# Shared dependencies pinned at workspace level (DRY)
-pyo3 = { version = "0.24", features = ["extension-module"] }
+# Shared dependencies pinned at workspace level (DRY). Crates that build Python
+# extensions enable `pyo3/extension-module` through a separate maturin-only
+# feature so plain workspace tests/clippy do not link test binaries as
+# extension modules.
+pyo3 = { version = "0.24" }
 numpy = "0.24"
 wasm-bindgen = "0.2"
 serde = { version = "1", features = ["derive"] }

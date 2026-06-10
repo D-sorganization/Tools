@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.332                                    |
+| **Spec Version**        | 1.1.338                                    |
 | **Last Spec Update**    | 2026-06-10                                 |
 
 ## 2. Purpose & Mission
@@ -714,6 +714,12 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-10 | 1.1.338 | fix(ci, #3300): raise Rust runner stack reservations to 64 MiB for local self-hosted Tauri and wheel builds after rustc SIGSEGV failures explicitly requested `RUST_MIN_STACK=67108864` on the fleet. |
+| 2026-06-10 | 1.1.337 | fix(ci/test-contract, #3300): recognize repo-level `tests/<package>/test_*.py` directories as satisfying the minimum test contract for changed `src/<package>` packages, with regression coverage so package-scoped tests like `tests/plant_simulator/test_dataset.py` are accepted without weakening the quality gate. |
+| 2026-06-10 | 1.1.336 | fix(ci/review-comments, #3300): keep the review-comment-to-issue converter checkout shallow because the job uses GitHub API reads plus local archive commits, avoiding full-history fetches on self-hosted runners where stale/corrupt loose objects can make checkout fail before the workflow logic runs. |
+| 2026-06-10 | 1.1.335 | fix(ci/runner-health, #3300): serialize the Tauri desktop app check/build matrices and cap Cargo jobs with non-incremental, no-debug builds so self-hosted runners do not compile multiple Tauri Rust dependency graphs concurrently and trigger rustc SIGSEGV/paging-pressure failures. |
+| 2026-06-10 | 1.1.334 | fix(ci/rust, #3291 #3294 #3295): split PyO3 `python` test features from maturin-only `extension-module` wheel linkage so `cargo test --features python` no longer emits Python extension-module binaries while wheel builds still opt into extension-module linking. |
+| 2026-06-10 | 1.1.333 | fix(bug/ci, #3294 #3295): declare pendulum `Golfer` dynamics native-only with construction-time `RuntimeError` guidance and an explicit workspace exclude for `pendulum-core`; remove `plant_simulator`'s silent random-data path so `SCADADataset` loads real SQLite `taglog` rows unless synthetic data is explicitly requested; and keep the affected native wrappers mypy-clean under the changed-file quality gate. |
 | 2026-06-10 | 1.1.332 | fix(ci, #3298): keep the P1AM project import helper mypy-clean under the changed-file quality gate by typing parsed SCADA tags as `TagDefinition` at the parser boundary and preserving the endpoint's documented `dict[str, Any]` response contract when imports are skipped. |
 | 2026-06-10 | 1.1.331 | fix(ci, #3298): avoid a detect-secrets Secret Keyword false positive in the P1AM backend auth helper by renaming the public header-name constant away from token-like wording and constructing the `X-API-Key` header name without changing the HTTP authentication contract. |
 | 2026-06-10 | 1.1.331 | fix(daemon, #3291): stop `start-gaai-daemon.sh` from writing `~/.claude/settings.json` or globally suppressing Claude Code dangerous-mode prompts; document that any safety override must be configured deliberately outside the launcher, and add a dry-run regression test proving existing global Claude settings are preserved. |

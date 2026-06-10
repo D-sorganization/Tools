@@ -15,6 +15,6 @@ dev = [
 ]
 
 [tool.maturin]
-features = ["python"]
+features = ["python", "extension-module"]
 module-name = "file_watcher"
 manifest-path = "Cargo.toml"

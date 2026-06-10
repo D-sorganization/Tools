@@ -15,10 +15,10 @@ path = "src/main.rs"
 
 [features]
 default = []
-# Activates PyO3 Python bindings for the maturin wheel build.
-# Keep behind a feature flag so `cargo test --workspace` compiles without
-# linking libpython (mirrors the ai_backend pattern).
+# Enables PyO3 bindings for cargo checks and local Rust tests.
 python = ["dep:pyo3"]
+# Enables Python extension-module linkage only for maturin wheel builds.
+extension-module = ["pyo3/extension-module"]
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }
@@ -27,4 +27,3 @@ pyo3 = { workspace = true, optional = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 thiserror = "2"
-

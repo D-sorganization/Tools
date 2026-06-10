@@ -96,6 +96,7 @@ jobs:
     timeout-minutes: 15
     strategy:
       fail-fast: false
+      max-parallel: 1
       matrix:
         include:
           - app: function-generator
@@ -104,6 +105,11 @@ jobs:
             path: src/data_processing/data_processor/web
           - app: rotation-converter
             path: src/rotation_converter/web
+    env:
+      CARGO_BUILD_JOBS: "1"
+      CARGO_INCREMENTAL: "0"
+      RUST_MIN_STACK: "67108864"
+      RUSTFLAGS: "-Cdebuginfo=0"
     steps:
       - uses: actions/checkout@v6
 
@@ -161,6 +167,7 @@ jobs:
     if: github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     strategy:
       fail-fast: false
+      max-parallel: 1
       matrix:
         app:
           - name: function-generator
@@ -180,6 +187,11 @@ jobs:
 
     runs-on: ${{ matrix.platform.os }}
     timeout-minutes: 30
+    env:
+      CARGO_BUILD_JOBS: "1"
+      CARGO_INCREMENTAL: "0"
+      RUST_MIN_STACK: "67108864"
+      RUSTFLAGS: "-Cdebuginfo=0"
     steps:
       - uses: actions/checkout@v6
 

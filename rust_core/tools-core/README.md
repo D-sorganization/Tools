@@ -20,10 +20,11 @@ tools-core/
 
 ## Feature Flags
 
-| Feature  | Purpose                         | Build Command                       |
-| -------- | ------------------------------- | ----------------------------------- |
-| `python` | PyO3 bindings for Maturin wheel | `maturin develop --features python` |
-| `wasm`   | wasm-bindgen for NPM package    | `wasm-pack build --features wasm`   |
+| Feature            | Purpose                             | Build Command                                        |
+| ------------------ | ----------------------------------- | ---------------------------------------------------- |
+| `python`           | PyO3 bindings for cargo tests       | `cargo test --features python`                       |
+| `extension-module` | PyO3 extension-module wheel linkage | `maturin develop --features python,extension-module` |
+| `wasm`             | wasm-bindgen for NPM package        | `wasm-pack build --features wasm`                    |
 
 ## Quick Start
 
@@ -32,7 +33,7 @@ tools-core/
 cargo test
 
 # Run with Python bindings
-maturin develop --features python
+maturin develop --features python,extension-module
 python -c "import tools_core; print(tools_core.Vector3(1, 2, 3))"
 
 # Build WASM package

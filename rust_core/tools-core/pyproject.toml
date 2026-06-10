@@ -17,8 +17,8 @@ dev = [
 ]
 
 [tool.maturin]
-# Build with the 'python' feature gate to enable PyO3 bindings
-features = ["python"]
+# Build with PyO3 bindings and extension-module linkage for wheel output.
+features = ["python", "extension-module"]
 # Module name matches the #[pymodule] name in lib.rs
 module-name = "tools_core"
 # Use the Cargo manifest relative to this pyproject.toml

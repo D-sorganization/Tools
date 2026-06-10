@@ -12,7 +12,7 @@
 # Acceptance criteria (issue #2870):
 #   1. Matrix: os × [d-sorg-fleet]
 #   2. Python versions: 3.10, 3.11, 3.12, 3.13
-#   3. maturin build --release --features python
+#   3. maturin build --release --features python,extension-module
 #   4. Upload wheel artifacts per platform/python combination
 
 name: Maturin — ai_backend Wheels
@@ -47,8 +47,10 @@ jobs:
     timeout-minutes: 30
     env:
       CARGO_HOME: ${{ github.workspace }}/.cargo-home
+      CARGO_BUILD_JOBS: "1"
       CARGO_INCREMENTAL: "0"
       CARGO_TERM_COLOR: always
+      RUST_MIN_STACK: "67108864"
 
     strategy:
       fail-fast: false
@@ -61,8 +63,6 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Set up Python ${{ matrix.python-version }}
-        env:
-          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
@@ -89,17 +89,13 @@ jobs:
       - name: Install maturin
         run: pip install maturin
 
-      - name: Clippy — ai_backend (python feature)
+      - name: Clippy - ai_backend (python feature)
         working-directory: rust_core/ai_backend
         run: cargo clippy --features python -- -D warnings
 
       - name: Build wheel
         working-directory: rust_core/ai_backend
-        run: |
-          maturin build \
-            --release \
-            --features python \
-            --out ../../dist/${{ matrix.os }}/py${{ matrix.python-version }}
+        run: maturin build --release --features python,extension-module --out ../../dist/${{ matrix.os }}/py${{ matrix.python-version }}
 
       - name: Smoke-test wheel import
         shell: bash
@@ -122,8 +118,10 @@ jobs:
     timeout-minutes: 45
     env:
       CARGO_HOME: ${{ github.workspace }}/.cargo-home
+      CARGO_BUILD_JOBS: "1"
       CARGO_INCREMENTAL: "0"
       CARGO_TERM_COLOR: always
+      RUST_MIN_STACK: "67108864"
     # Only on workflow_dispatch to keep PR feedback fast
     if: github.event_name == 'workflow_dispatch'
 
@@ -162,7 +160,7 @@ jobs:
         run: |
           maturin build \
             --release \
-            --features "python,local-embeddings" \
+            --features "python,extension-module,local-embeddings" \
             --out ../../dist/local-embeddings/py${{ matrix.python-version }}
 
       - name: Upload wheel artifact (local-embeddings)

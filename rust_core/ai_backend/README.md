@@ -8,7 +8,8 @@ embeddings via the `local-embeddings` Cargo feature.
 
 | Cargo feature      | Description                                             |
 | ------------------ | ------------------------------------------------------- |
-| `python`           | PyO3 bindings — required for `maturin develop`          |
+| `python`           | PyO3 bindings for cargo checks and tests                |
+| `extension-module` | PyO3 extension-module linkage for `maturin develop`     |
 | `local-embeddings` | Offline embedding via ONNX Runtime (`all-MiniLM-L6-v2`) |
 
 ## Quick Start
@@ -16,10 +17,10 @@ embeddings via the `local-embeddings` Cargo feature.
 ```bash
 # Core wheel (uses a remote embedding endpoint)
 cd rust_core/ai_backend
-maturin develop --features python
+maturin develop --features python,extension-module
 
 # With local ONNX embeddings (requires ORT_DYLIB_PATH — see below)
-maturin develop --features python,local-embeddings
+maturin develop --features python,extension-module,local-embeddings
 ```
 
 ## ONNX Runtime Setup (`local-embeddings`)
