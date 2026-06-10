@@ -12,7 +12,7 @@ try:
     from datetime import UTC
 except ImportError:
     UTC = timezone.utc  # noqa: UP017
-from typing import Any
+from typing import Any, cast
 
 from alicat_manager import AlicatManager, AlicatMFC
 from auth_config import require_admin_key, require_api_key, verify_operator_key
@@ -1145,7 +1145,10 @@ async def import_project(
     db: Session = Depends(get_session),  # noqa: B008
 ) -> dict[str, Any]:
     """Upload and ingest a zip file containing tagl.json and PLC driver mapping (.SDV files)."""
-    return await import_project_archive(file, db, load_tags_into_plc_clients)
+    return cast(
+        "dict[str, Any]",
+        await import_project_archive(file, db, load_tags_into_plc_clients),
+    )
 
 
 @app.get("/api/project/ladder-explorer")

@@ -7,12 +7,13 @@ import tempfile
 import zipfile
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from fastapi import HTTPException, UploadFile
 from models import PlantArea, PlantEquipment, PlantUnit, TagDefinitionDb
 from parsers.indusoft_parser import parse_indusoft_tags
 from parsers.plc_map_parser import parse_plc_map
+from plant_model import TagDefinition
 from sqlmodel import Session, select
 
 MAX_IMPORT_UPLOAD_BYTES = int(
@@ -137,7 +138,7 @@ def _validate_member_budget(info: zipfile.ZipInfo) -> int:
     return info.file_size
 
 
-def _parse_project_files(temp_path: Path) -> tuple[list[Any], int]:
+def _parse_project_files(temp_path: Path) -> tuple[list[TagDefinition], int]:
     tag_json_path = _find_tag_json(temp_path)
     tags = _parse_tags(tag_json_path)
     plc_map = _parse_plc_maps(temp_path)
@@ -154,9 +155,9 @@ def _find_tag_json(temp_path: Path) -> Path:
     )
 
 
-def _parse_tags(tag_json_path: Path) -> list[Any]:
+def _parse_tags(tag_json_path: Path) -> list[TagDefinition]:
     try:
-        return parse_indusoft_tags(tag_json_path)
+        return cast("list[TagDefinition]", parse_indusoft_tags(tag_json_path))
     except (OSError, ValueError, TypeError) as exc:
         raise HTTPException(
             status_code=500, detail=f"Failed to parse tags: {exc}"
@@ -173,7 +174,9 @@ def _parse_plc_maps(temp_path: Path) -> dict[str, dict[str, Any]]:
     return plc_map
 
 
-def _apply_plc_map(tags: list[Any], plc_map: dict[str, dict[str, Any]]) -> int:
+def _apply_plc_map(
+    tags: list[TagDefinition], plc_map: dict[str, dict[str, Any]]
+) -> int:
     mapped_count = 0
     for tag in tags:
         if tag.name not in plc_map:
@@ -192,7 +195,7 @@ def _apply_plc_map(tags: list[Any], plc_map: dict[str, dict[str, Any]]) -> int:
 
 def _replace_plant_configuration(
     db: Session,
-    tags: list[Any],
+    tags: list[TagDefinition],
     mapped_count: int,
 ) -> dict[str, Any]:
     areas: dict[str, PlantArea] = {}
@@ -289,7 +292,7 @@ def _equipment(
     return equipment[key]
 
 
-def _tag_row(tag: Any, equipment: PlantEquipment) -> TagDefinitionDb:
+def _tag_row(tag: TagDefinition, equipment: PlantEquipment) -> TagDefinitionDb:
     return TagDefinitionDb(
         name=tag.name,
         tag_type=tag.tag_type,
