@@ -123,3 +123,17 @@ class TestAllowDenyMatrix:
         result = tool.execute(command)
         assert result.success is False
         assert "not allowed" in result.error.lower()
+
+    @pytest.mark.unit
+    @pytest.mark.parametrize(
+        "command",
+        [
+            "ls /bin/rm",
+            "ls ./rm",
+            "ls --use-compress-program=rm",
+            "ls --exec=/usr/bin/sudo",
+        ],
+    )
+    def test_bypasses_rejected(self, tool: ShellTool, command: str) -> None:
+        """Bypass attempts with paths or embedded dangerous commands are rejected."""
+        assert tool._is_command_allowed(command) is False
