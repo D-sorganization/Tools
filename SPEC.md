@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.329                                    |
-| **Last Spec Update**    | 2026-06-09                                 |
+| **Spec Version**        | 1.1.330                                    |
+| **Last Spec Update**    | 2026-06-10                                 |
 
 ## 2. Purpose & Mission
 
@@ -460,6 +460,10 @@ conversion API (`calc_backend`) carries such a suite
 (`test_calc_backend_properties.py`); `hypothesis` is a declared `dev`
 dependency. New adversarial coverage targets invalid inputs, non-finite values,
 and missing fields so a regression fails CI here rather than downstream.
+When CI detects changes under `src/shared/python/sidekick/`, its focused Python
+test slice includes the dedicated Sidekick state-manager suites before the
+per-file Sidekick coverage gate runs, so coverage enforcement measures the
+module's own regression tests instead of an unrelated reduced slice.
 
 ### Test Organization
 
@@ -1100,6 +1104,14 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.330
+
+- 2026-06-10: test(ci) — include existing Sidekick state-manager regression
+  suites in Sidekick-changed CI slices before the per-file Sidekick coverage
+  gate runs, keeping changed-file coverage enforcement aligned with the module
+  that triggered the gate; restored JSON serialization of simple object
+  class-level defaults while keeping instance attributes authoritative.
 
 ### Version 1.1.329
 

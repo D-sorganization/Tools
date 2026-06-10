@@ -501,8 +501,23 @@ class StateManager:
         if isinstance(obj, Path):
             return str(obj)
         if hasattr(obj, "__dict__"):
-            return obj.__dict__
+            return self._public_object_state(obj)
         return str(obj)
+
+    @staticmethod
+    def _public_object_state(obj: Any) -> dict[str, Any]:
+        """Return JSON-friendly public state for arbitrary simple objects."""
+        state = {
+            key: value
+            for key, value in vars(type(obj)).items()
+            if not key.startswith("_")
+            and not callable(value)
+            and not isinstance(value, (classmethod, property, staticmethod))
+        }
+        state.update(
+            {key: value for key, value in vars(obj).items() if not key.startswith("_")}
+        )
+        return state
 
     def cleanup_old_backups(self, max_age_days: int = 30) -> None:
         """Clean up old backup files"""
