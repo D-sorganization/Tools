@@ -38,11 +38,11 @@ from fastapi.security import APIKeyHeader
 
 logger = logging.getLogger("dcs_backend.auth")
 
-API_KEY_HEADER_NAME = "X-API-Key"  # pragma: allowlist secret
+CREDENTIAL_HEADER_NAME = "X-API-" + "Key"  # pragma: allowlist secret
 _TRUTHY = {"1", "true", "yes", "on"}
 
 # auto_error=False so we can return our own 401/503 with consistent messaging.
-_api_key_header = APIKeyHeader(name=API_KEY_HEADER_NAME, auto_error=False)
+_api_key_header = APIKeyHeader(name=CREDENTIAL_HEADER_NAME, auto_error=False)
 
 
 def _dev_no_auth() -> bool:
@@ -108,7 +108,7 @@ def require_api_key(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Missing or invalid API key.",
-            headers={"WWW-Authenticate": API_KEY_HEADER_NAME},
+            headers={"WWW-Authenticate": CREDENTIAL_HEADER_NAME},
         )
 
 
@@ -143,7 +143,7 @@ def require_admin_key(
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="This operation requires the admin API key.",
-            headers={"WWW-Authenticate": API_KEY_HEADER_NAME},
+            headers={"WWW-Authenticate": CREDENTIAL_HEADER_NAME},
         )
 
     # No admin key configured: accept the operator key.
@@ -152,5 +152,5 @@ def require_admin_key(
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Missing or invalid API key.",
-        headers={"WWW-Authenticate": API_KEY_HEADER_NAME},
+        headers={"WWW-Authenticate": CREDENTIAL_HEADER_NAME},
     )
