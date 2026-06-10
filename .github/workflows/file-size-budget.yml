@@ -46,14 +46,28 @@ jobs:
                       print('Error deleting:', p, e)
           "
 
+      - name: Resolve base ref
+        id: base-ref
+        run: |
+          if [ -n "${{ github.base_ref }}" ]; then
+            base_ref="${{ github.base_ref }}"
+          else
+            base_ref="${{ github.event.repository.default_branch }}"
+          fi
+          if [ -z "$base_ref" ]; then
+            base_ref="main"
+          fi
+          echo "base_ref=$base_ref" >> "$GITHUB_OUTPUT"
+          echo "Using base ref: $base_ref"
+
       - name: Fetch base ref
         run: |
-          git fetch origin "${{ github.base_ref }}"
+          git fetch origin "${{ steps.base-ref.outputs.base_ref }}"
 
       - name: Enforce 500 LOC budget on changed files
         run: |
           python3 scripts/check_file_size_budget.py \
             --max-loc 500 \
             --changed-only \
-            --base-ref "origin/${{ github.base_ref }}" \
+            --base-ref "origin/${{ steps.base-ref.outputs.base_ref }}" \
             --baseline-file scripts/monolith_baseline.txt
