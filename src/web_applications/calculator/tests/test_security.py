@@ -2,6 +2,10 @@
 
 import unittest
 
+import pytest
+import sympy as sp
+
+from web_applications.calculator.calculator import TI89Calculator
 from web_applications.calculator.webapp import create_app
 
 
@@ -43,6 +47,71 @@ class TestSecurity(unittest.TestCase):
         # X-Frame-Options
         self.assertIn("X-Frame-Options", response.headers)
         self.assertEqual(response.headers["X-Frame-Options"], "DENY")
+
+
+class TestAstSecurityGate:
+    """Structural AST allowlist gate for parse_expr (issue #3293).
+
+    The previous boundary was a substring blocklist; these tests prove the new
+    structural gate rejects code-execution surface (attribute access, lambdas,
+    comprehensions, walrus) before the expression reaches sympy.parse_expr,
+    while still accepting legitimate mathematical input.
+    """
+
+    @pytest.fixture
+    def symbols(self) -> dict[str, sp.Symbol]:
+        return {"x": sp.Symbol("x"), "y": sp.Symbol("y")}
+
+    @pytest.mark.parametrize(
+        "expr",
+        [
+            "2*x + 3",
+            "sin(x) + cos(y)",
+            "x^2 + 1",
+            "sqrt(x)",
+            "(x + 1)*(x - 1)",
+            "2 ** 8",
+        ],
+    )
+    def test_legitimate_expressions_pass(
+        self, expr: str, symbols: dict[str, sp.Symbol]
+    ) -> None:
+        result = TI89Calculator.parse_expression(expr, symbols)
+        assert result is not None
+
+    @pytest.mark.parametrize(
+        "expr",
+        [
+            "().__class__",
+            "().__class__.__bases__",
+            "x.__class__",
+            "lambda: 1",
+            "(1).__class__.__mro__",
+            "[i for i in range(3)]",
+            "(y := 5)",
+        ],
+    )
+    def test_dangerous_constructs_blocked(
+        self, expr: str, symbols: dict[str, sp.Symbol]
+    ) -> None:
+        with pytest.raises((ValueError, TypeError, SyntaxError)):
+            TI89Calculator.parse_expression(expr, symbols)
+
+    def test_gate_rejects_attribute_access_directly(self) -> None:
+        with pytest.raises(ValueError):
+            TI89Calculator._ast_security_gate("foo.bar")
+
+    def test_gate_rejects_lambda_directly(self) -> None:
+        with pytest.raises(ValueError):
+            TI89Calculator._ast_security_gate("lambda x: x")
+
+    def test_gate_rejects_oversized_string_constant(self) -> None:
+        with pytest.raises(ValueError, match="String constant"):
+            TI89Calculator._ast_security_gate('"' + "a" * 1000 + '"')
+
+    def test_gate_allows_plain_math(self) -> None:
+        # Should not raise.
+        TI89Calculator._ast_security_gate("2 * x + sin(y)")
 
 
 if __name__ == "__main__":
