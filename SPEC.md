@@ -126,6 +126,10 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Provider-contract CI includes non-GUI coverage for the deprecated
   `upstream_drift_tools` compatibility shim so legacy imports keep resolving
   to canonical Sidekick APIs during the migration window
+- Sidekick Python REPL registry preconditions accept both canonical
+  `sidekick` and deprecated `upstream_drift_tools` `WorkspaceRegistry` module
+  identities during the compatibility migration while preserving explicit
+  TypeError failures for missing or unrelated registry objects
 - Shared Qt theme stylesheets use relative control typography and minimum tab
   widths so application-level zoom scales shared sidebar and launcher text more
   consistently
@@ -1093,6 +1097,11 @@ Active development with stable core, continuous tool expansion, and web API in p
 ### Version 1.1.329
 
 - 2026-06-09: feat(movement optimizer) — restore the standalone PyQt6 swingset policy-training and segmented-chain whip-dynamics tabs, mypy-compatible typed model and Qt UI modules, focused model and UI tests, launcher bootstrap repair, and provider metadata so UpstreamDrift can discover the Movement Optimizer tile from remote main.
+- 2026-06-09: fix(sidekick) — preserve the Python REPL `WorkspaceRegistry`
+  contract across canonical and deprecated compatibility import paths so
+  legacy `upstream_drift_tools` callers pass the same runtime precondition as
+  canonical Sidekick callers without weakening the TypeError guard for
+  unrelated registry objects.
 
 ### Version 1.1.320
 
