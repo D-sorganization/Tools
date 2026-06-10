@@ -315,6 +315,39 @@ class TestFlowRate:
         body = r.json()
         assert {"result", "from_unit", "to_unit", "category"} <= body.keys()
 
+    def test_cross_unit_round_trip_is_stable(self, client: TestClient) -> Any:
+        # Adversarial numeric stability (#3262): a multi-hop conversion chain
+        # must return to the original within tolerance rather than drifting.
+        value = 1234.5
+        hop1 = client.post(
+            "/api/calc/flow-rate",
+            json={
+                "value": value,
+                "from_unit": "kg/h",
+                "to_unit": "lb/min",
+                "category": "mass",
+            },
+        ).json()["result"]
+        hop2 = client.post(
+            "/api/calc/flow-rate",
+            json={
+                "value": hop1,
+                "from_unit": "lb/min",
+                "to_unit": "kg/h",
+                "category": "mass",
+            },
+        ).json()["result"]
+        assert pytest.approx(hop2, rel=1e-6) == value
+
+    def test_missing_value_field_returns_422(self, client: TestClient) -> Any:
+        # Adversarial input (#3262): omitting the required ``value`` field must
+        # be rejected by request validation, not coerced to a default.
+        r = client.post(
+            "/api/calc/flow-rate",
+            json={"from_unit": "kg/s", "to_unit": "lb/s", "category": "mass"},
+        )
+        assert r.status_code == 422
+
 
 # ──────────────────────────────────────────────────────────────────────────────
 # /api/calc/ode-solver
