@@ -19,6 +19,7 @@ from typing import cast
 
 import numpy as np
 import torch
+from numpy.typing import NDArray
 from torch.utils.data import Dataset
 
 logger = logging.getLogger(__name__)
@@ -60,7 +61,7 @@ class SCADADataset(Dataset):
         self.num_tags = num_tags
         self.data = self._load_data(db_path, allow_synthetic=allow_synthetic)
 
-    def _load_data(self, db_path: str, *, allow_synthetic: bool) -> np.ndarray:
+    def _load_data(self, db_path: str, *, allow_synthetic: bool) -> NDArray[np.float32]:
         """Load and pivot ``TagLog`` rows into ``(num_timesteps, num_tags)``.
 
         Reads the ``taglog`` table directly via sqlite3 (no ORM dependency),
@@ -102,7 +103,7 @@ class SCADADataset(Dataset):
             )
         return matrix
 
-    def _read_taglog(self, path: Path) -> np.ndarray | None:
+    def _read_taglog(self, path: Path) -> NDArray[np.float32] | None:
         """Read and pivot the ``taglog`` table, or return None if unavailable."""
         try:
             conn = sqlite3.connect(f"file:{path}?mode=ro", uri=True)
@@ -139,7 +140,7 @@ class SCADADataset(Dataset):
                 ts_index[ts] = len(timestamps)
                 timestamps.append(ts)
 
-        matrix: np.ndarray = np.zeros(
+        matrix: NDArray[np.float32] = np.zeros(
             (len(timestamps), self.num_tags), dtype=np.float32
         )
         for ts, tag_id, value in rows:
@@ -169,11 +170,14 @@ class SCADADataset(Dataset):
                 return None
         return None
 
-    def _synthetic(self, min_rows: int) -> np.ndarray:
+    def _synthetic(self, min_rows: int) -> NDArray[np.float32]:
         """Deterministic synthetic data (opt-in only) for tests/groundwork."""
         rng = np.random.default_rng(seed=0)
         rows = max(1000, min_rows)
-        return cast(np.ndarray, rng.random((rows, self.num_tags)).astype(np.float32))
+        return cast(
+            NDArray[np.float32],
+            rng.random((rows, self.num_tags)).astype(np.float32),
+        )
 
     def __len__(self) -> int:
         return max(0, len(self.data) - self.sequence_length)

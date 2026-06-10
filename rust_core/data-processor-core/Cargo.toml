@@ -19,7 +19,6 @@ default = []
 # Keep behind a feature flag so `cargo test --workspace` compiles without
 # linking libpython (mirrors the ai_backend pattern).
 python = ["dep:pyo3"]
-# Enable PyO3's extension-module mode only for maturin wheel builds.
 extension-module = ["pyo3/extension-module"]
 
 [dependencies]
