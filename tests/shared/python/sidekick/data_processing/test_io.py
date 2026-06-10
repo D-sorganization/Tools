@@ -120,9 +120,75 @@ def test_format_detection_is_case_insensitive_for_supported_extensions(
         min_size=1,
         max_size=8,
     ).filter(
-        lambda value: f".{value.lower()}"
-        not in FileFormatDetector.get_supported_extensions()
+        lambda value: (
+            f".{value.lower()}" not in FileFormatDetector.get_supported_extensions()
+        )
     )
 )
 def test_unknown_extensions_never_map_to_supported_formats(extension: str) -> None:
     assert FileFormatDetector.detect_format(Path(f"data.{extension}")) is None
+
+
+def test_failed_sqlite_read_closes_connection(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A failing sqlite read must still close the connection (#3277).
+
+    Pointing the reader at a valid sqlite file but querying a missing table
+    raises; the connection opened for the call must be closed regardless, or a
+    consumer importing files in a loop leaks descriptors / leaves the DB locked.
+    """
+    import sqlite3
+
+    path = tmp_path / "data.sqlite"
+    DataWriter.write_file(_sample_frame(), path, table_name="measurements")
+
+    opened: list[sqlite3.Connection] = []
+    real_connect = sqlite3.connect
+
+    def _tracking_connect(*args: object, **kwargs: object) -> sqlite3.Connection:
+        conn = real_connect(*args, **kwargs)  # type: ignore[arg-type]
+        opened.append(conn)
+        return conn
+
+    monkeypatch.setattr(sqlite3, "connect", _tracking_connect)
+
+    with pytest.raises(Exception):  # noqa: B017,PT011 - sqlite raises OperationalError
+        DataReader.read_file(path, query="SELECT * FROM no_such_table")
+
+    assert opened, "expected a sqlite connection to be opened"
+    for conn in opened:
+        # Closed connections raise ProgrammingError when reused.
+        with pytest.raises(sqlite3.ProgrammingError):
+            conn.execute("SELECT 1")
+
+
+def test_failed_sqlite_write_closes_connection(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A failing sqlite write must still close the connection (#3277)."""
+    import sqlite3
+
+    path = tmp_path / "data_write.sqlite"
+
+    opened: list[sqlite3.Connection] = []
+    real_connect = sqlite3.connect
+
+    def _tracking_connect(*args: object, **kwargs: object) -> sqlite3.Connection:
+        conn = real_connect(*args, **kwargs)  # type: ignore[arg-type]
+        opened.append(conn)
+        return conn
+
+    monkeypatch.setattr(sqlite3, "connect", _tracking_connect)
+
+    class _Unserializable:
+        pass
+
+    frame = pd.DataFrame({"bad": [_Unserializable()]})
+    with pytest.raises(Exception):  # noqa: B017 - to_sql raises on bad dtype
+        DataWriter.write_file(frame, path, format_type="sqlite")
+
+    assert opened, "expected a sqlite connection to be opened"
+    for conn in opened:
+        with pytest.raises(sqlite3.ProgrammingError):
+            conn.execute("SELECT 1")

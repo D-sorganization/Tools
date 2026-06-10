@@ -580,6 +580,9 @@ jobs:
           )
           if grep -q -E '^src/shared/python/sidekick/' changed_python_files.txt; then
             core_tests+=(
+              "src/shared/python/sidekick/tests/test_state_manager.py"
+              "src/shared/python/sidekick/tests/test_state_manager_atomic.py"
+              "src/shared/python/sidekick/tests/test_state_manager_side_effects.py"
               "tests/unit/sidekick"
               "tests/unit/test_check_sidekick_coverage.py"
             )

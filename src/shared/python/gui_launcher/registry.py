@@ -313,37 +313,61 @@ def auto_discover_guis(search_paths: list[Path]) -> int:
         search_paths: List of paths to search for GUI registrations
 
     Returns:
-        Number of GUIs registered
+        Number of GUIs successfully registered. A ``gui_registration.py`` that
+        fails to import or whose ``GUI_INFO`` is missing/invalid is skipped
+        with a logged warning and does **not** count, so one broken file
+        cannot abort discovery of the others.
     """
     require(isinstance(search_paths, list), "search_paths must be a list of Paths")
     import importlib.util
 
     count = 0
+    discovered = 0
 
     for search_path in search_paths:
         if not search_path.exists():
             continue
 
         for reg_file in search_path.rglob("gui_registration.py"):
+            discovered += 1
             try:
                 spec = importlib.util.spec_from_file_location(
-                    f"gui_reg_{count}",
+                    f"gui_reg_{discovered}",
                     reg_file,
                 )
-                if spec and spec.loader:
-                    module = importlib.util.module_from_spec(spec)
-                    spec.loader.exec_module(module)
+                if not (spec and spec.loader):
+                    logger.warning(
+                        "Skipping GUI registration with no import spec: %s",
+                        reg_file,
+                    )
+                    continue
 
-                    # Check for GUI_INFO dict pattern
-                    gui_info = getattr(module, "GUI_INFO", None)
-                    if gui_info and isinstance(gui_info, dict):
-                        _gui_info_to_registration(gui_info)
+                module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(module)
 
-                    count += 1
-                    logger.debug("Loaded GUI registration from: %s", reg_file)
-            except ImportError as e:
+                # Check for GUI_INFO dict pattern
+                gui_info = getattr(module, "GUI_INFO", None)
+                if not (gui_info and isinstance(gui_info, dict)):
+                    logger.warning(
+                        "Skipping GUI registration with missing/invalid GUI_INFO: %s",
+                        reg_file,
+                    )
+                    continue
+
+                _gui_info_to_registration(gui_info)
+                count += 1
+                logger.debug("Loaded GUI registration from: %s", reg_file)
+            except (KeyboardInterrupt, SystemExit):
+                # Never swallow interpreter-level control-flow signals.
+                raise
+            except Exception:
+                # A single malformed gui_registration.py (SyntaxError, NameError,
+                # RuntimeError, a malformed GUI_INFO raising KeyError/TypeError,
+                # etc.) must not abort discovery for every other tool.
                 logger.warning(
-                    "Failed to load GUI registration from %s: %s", reg_file, e
+                    "Failed to load GUI registration from %s; skipping",
+                    reg_file,
+                    exc_info=True,
                 )
 
     return count

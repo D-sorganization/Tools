@@ -3,10 +3,13 @@ import csv
 import io
 import logging
 import math
+import os
 import time
+import zipfile
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
+from pathlib import Path
 
 try:
     from datetime import UTC
@@ -15,6 +18,7 @@ except ImportError:
 from typing import Any
 
 from alicat_manager import AlicatManager, AlicatMFC
+from auth_config import require_admin_key, require_api_key, verify_operator_key
 from cors_config import resolve_cors_settings
 from database import engine, get_session, init_db
 from fastapi import (
@@ -445,7 +449,7 @@ async def get_routing() -> RoutingConfig:
     return config
 
 
-@app.post("/api/routing")
+@app.post("/api/routing", dependencies=[Depends(require_admin_key)])
 async def update_routing(config: RoutingConfig) -> dict[str, str]:
     """Write new routing configurations to the PLC.
 
@@ -493,6 +497,9 @@ async def update_routing(config: RoutingConfig) -> dict[str, str]:
     }
 
 
+# NOTE: E-stop *activation* is intentionally left unauthenticated so a panic
+# stop is always reachable even without a credential (safety over confidentiality).
+# Clearing the E-stop (below) requires the admin credential.
 @app.post("/api/estop")
 async def trigger_estop() -> dict[str, str]:
     """Immediate safety shutdown command, zeroing all tag variables."""
@@ -511,7 +518,7 @@ async def trigger_estop() -> dict[str, str]:
     return {"status": "success", "message": "Hardware E-stop triggered."}
 
 
-@app.post("/api/estop/clear")
+@app.post("/api/estop/clear", dependencies=[Depends(require_admin_key)])
 async def clear_estop() -> dict[str, str]:
     """Clear the E-stop state."""
     global e_stop_active
@@ -525,7 +532,10 @@ async def get_active_alarms() -> list[dict[str, Any]]:
     return list(active_alarms.values())
 
 
-@app.post("/api/alarms/{tag_id}/acknowledge")
+@app.post(
+    "/api/alarms/{tag_id}/acknowledge",
+    dependencies=[Depends(require_api_key)],
+)
 async def acknowledge_alarm(
     tag_id: str,
     db: Session = Depends(get_session),  # noqa: B008
@@ -560,7 +570,7 @@ class EventLogPayload(BaseModel):
     description: str
 
 
-@app.post("/api/events")
+@app.post("/api/events", dependencies=[Depends(require_api_key)])
 async def log_user_event(
     payload: EventLogPayload,
     db: Session = Depends(get_session),  # noqa: B008
@@ -705,7 +715,7 @@ class TagWritePayload(BaseModel):
     value: float
 
 
-@app.post("/api/tags/{tag_id}")
+@app.post("/api/tags/{tag_id}", dependencies=[Depends(require_admin_key)])
 async def write_tag_value(tag_id: str, payload: TagWritePayload) -> dict[str, str]:
     """Manually force/write a 32-bit float value directly to a tag register."""
     global latest_tags
@@ -747,7 +757,10 @@ async def write_tag_value(tag_id: str, payload: TagWritePayload) -> dict[str, st
     }
 
 
-@app.post("/api/pid/{pid_index}/tuning/start")
+@app.post(
+    "/api/pid/{pid_index}/tuning/start",
+    dependencies=[Depends(require_admin_key)],
+)
 async def start_pid_tuning(pid_index: int) -> dict[str, str]:
     """Decouples the PID loop from automatic control and begins logging step change history."""
     if not (0 <= pid_index < 4):
@@ -777,7 +790,10 @@ async def start_pid_tuning(pid_index: int) -> dict[str, str]:
     }
 
 
-@app.post("/api/pid/{pid_index}/tuning/step")
+@app.post(
+    "/api/pid/{pid_index}/tuning/step",
+    dependencies=[Depends(require_admin_key)],
+)
 async def step_pid_tuning(
     pid_index: int, payload: PIDTuningStepPayload
 ) -> dict[str, str]:
@@ -808,7 +824,10 @@ async def step_pid_tuning(
     }
 
 
-@app.post("/api/pid/{pid_index}/tuning/stop")
+@app.post(
+    "/api/pid/{pid_index}/tuning/stop",
+    dependencies=[Depends(require_admin_key)],
+)
 async def stop_pid_tuning(pid_index: int) -> dict[str, Any]:
     """Stops the tuning session, calculates FOPDT process parameters, and recommends tuned gains."""
     if pid_index not in tuning_sessions:
@@ -908,7 +927,7 @@ class MPCSimulatePayload(BaseModel):
     process_delay: float = PydanticField(1.0, ge=0.0, le=5.0)
 
 
-@app.post("/api/mpc/simulate")
+@app.post("/api/mpc/simulate", dependencies=[Depends(require_admin_key)])
 async def simulate_mpc(payload: MPCSimulatePayload) -> dict[str, Any]:
     """Simulates and compares standard PID versus Model Predictive Control (MPC)."""
     Kp = payload.process_gain
@@ -1049,7 +1068,10 @@ async def get_alicats() -> list[AlicatMFCState]:
     return [AlicatMFCState(**d) for d in alicat_manager.get_devices_data()]
 
 
-@app.post("/api/alicats/{device_id}/setpoint")
+@app.post(
+    "/api/alicats/{device_id}/setpoint",
+    dependencies=[Depends(require_admin_key)],
+)
 async def update_alicat_setpoint(
     device_id: str, payload: AlicatSetpointPayload
 ) -> dict[str, str]:
@@ -1066,7 +1088,7 @@ async def update_alicat_setpoint(
     }
 
 
-@app.post("/api/alicats/{device_id}/gas")
+@app.post("/api/alicats/{device_id}/gas", dependencies=[Depends(require_admin_key)])
 async def update_alicat_gas(
     device_id: str, payload: AlicatGasPayload
 ) -> dict[str, str]:
@@ -1085,8 +1107,29 @@ async def update_alicat_gas(
 
 @app.websocket("/api/stream")
 async def stream_websocket(websocket: WebSocket) -> None:
-    """WebSocket endpoint streaming live PLC Tag values to the client HMI."""
-    await ws_manager.connect(websocket)
+    """WebSocket endpoint streaming live PLC Tag values to the client HMI.
+
+    Requires a valid operator/admin API key supplied either as the ``api_key``
+    query parameter or as the first text frame after connect. Rejects
+    unauthenticated connections with policy-violation close code 1008.
+    """
+    # Validate the credential before accepting the stream (issue #3289).
+    provided = websocket.query_params.get("api_key")
+    if not verify_operator_key(provided):
+        await websocket.accept()
+        try:
+            first = await websocket.receive_text()
+        except Exception:
+            await websocket.close(code=1008)
+            return
+        if not verify_operator_key(first):
+            await websocket.close(code=1008)
+            return
+        # Authenticated via first frame; register without re-accepting.
+        ws_manager.active_connections.append(websocket)
+        logger.info("New WebSocket client connected (authenticated via frame).")
+    else:
+        await ws_manager.connect(websocket)
     try:
         while True:
             # We must continuously receive messages (even ping/pong) to keep socket open
@@ -1098,15 +1141,68 @@ async def stream_websocket(websocket: WebSocket) -> None:
         ws_manager.disconnect(websocket)
 
 
-@app.post("/api/project/import")
+# Resource limits for project import (issue #3292). Override via env if needed.
+MAX_IMPORT_UPLOAD_BYTES = int(
+    os.environ.get("P1AM_MAX_IMPORT_BYTES", str(50 * 1024 * 1024))
+)  # 50 MiB compressed upload cap
+MAX_IMPORT_MEMBERS = int(os.environ.get("P1AM_MAX_IMPORT_MEMBERS", "10000"))
+MAX_IMPORT_MEMBER_BYTES = int(
+    os.environ.get("P1AM_MAX_IMPORT_MEMBER_BYTES", str(100 * 1024 * 1024))
+)  # 100 MiB per uncompressed member
+MAX_IMPORT_TOTAL_BYTES = int(
+    os.environ.get("P1AM_MAX_IMPORT_TOTAL_BYTES", str(500 * 1024 * 1024))
+)  # 500 MiB total uncompressed budget
+MAX_IMPORT_COMPRESSION_RATIO = float(
+    os.environ.get("P1AM_MAX_IMPORT_RATIO", "100.0")
+)  # reject pathological compression ratios (zip bombs)
+_IMPORT_CHUNK = 1024 * 1024  # stream 1 MiB at a time
+
+
+def _safe_extract_zip(zip_ref: zipfile.ZipFile, dest: Path) -> None:
+    """Validate and extract a zip with member/size/ratio budgets (anti zip-bomb).
+
+    Raises HTTPException(413) when any limit is exceeded.
+    """
+    infos = zip_ref.infolist()
+    if len(infos) > MAX_IMPORT_MEMBERS:
+        raise HTTPException(
+            status_code=413,
+            detail=f"Archive has too many members (> {MAX_IMPORT_MEMBERS}).",
+        )
+    total_uncompressed = 0
+    for info in infos:
+        if info.file_size > MAX_IMPORT_MEMBER_BYTES:
+            raise HTTPException(
+                status_code=413,
+                detail=f"Archive member '{info.filename}' exceeds size limit.",
+            )
+        total_uncompressed += info.file_size
+        if total_uncompressed > MAX_IMPORT_TOTAL_BYTES:
+            raise HTTPException(
+                status_code=413,
+                detail="Archive uncompressed size exceeds total budget.",
+            )
+        if info.compress_size > 0:
+            ratio = info.file_size / info.compress_size
+            if ratio > MAX_IMPORT_COMPRESSION_RATIO:
+                raise HTTPException(
+                    status_code=413,
+                    detail=(
+                        f"Archive member '{info.filename}' has a suspicious "
+                        "compression ratio (possible zip bomb)."
+                    ),
+                )
+    # extractall already sanitizes absolute paths and '..' components.
+    zip_ref.extractall(dest)
+
+
+@app.post("/api/project/import", dependencies=[Depends(require_admin_key)])
 async def import_project(
     file: UploadFile = File(...),  # noqa: B008
     db: Session = Depends(get_session),  # noqa: B008
 ) -> dict[str, Any]:
     """Upload and ingest a zip file containing tagl.json and PLC driver mapping (.SDV files)."""
     import tempfile
-    import zipfile
-    from pathlib import Path
 
     from parsers.indusoft_parser import parse_indusoft_tags
     from parsers.plc_map_parser import parse_plc_map
@@ -1118,15 +1214,31 @@ async def import_project(
         temp_path = Path(temp_dir)
         zip_file_path = temp_path / "uploaded.zip"
 
-        # Save uploaded file
+        # Stream the upload to disk in bounded chunks, enforcing the size cap
+        # so a huge upload can never be buffered entirely in memory (#3292).
+        total = 0
         with open(zip_file_path, "wb") as f:
-            content = await file.read()
-            f.write(content)
+            while True:
+                chunk = await file.read(_IMPORT_CHUNK)
+                if not chunk:
+                    break
+                total += len(chunk)
+                if total > MAX_IMPORT_UPLOAD_BYTES:
+                    raise HTTPException(
+                        status_code=413,
+                        detail=(
+                            "Uploaded file exceeds the maximum allowed size "
+                            f"({MAX_IMPORT_UPLOAD_BYTES} bytes)."
+                        ),
+                    )
+                f.write(chunk)
 
-        # Extract zip file
+        # Extract zip file with zip-bomb guards.
         try:
             with zipfile.ZipFile(zip_file_path, "r") as zip_ref:
-                zip_ref.extractall(temp_path)
+                _safe_extract_zip(zip_ref, temp_path)
+        except HTTPException:
+            raise
         except Exception as e:
             raise HTTPException(status_code=400, detail=f"Invalid ZIP file: {e}") from e
 
@@ -1174,7 +1286,15 @@ async def import_project(
                     tag.scale_factor = m.get("scale_factor")
                 mapped_count += 1
 
-        # Clear existing plant hierarchy tables
+        # Replace the plant configuration atomically (#3292): the delete and the
+        # re-insert share a single transaction, so a parse/save failure rolls
+        # everything back and leaves the existing plant DB untouched. IDs are
+        # obtained with flush() (no intermediate commit) so nothing is durably
+        # written until the whole import succeeds.
+        areas: dict[str, PlantArea] = {}
+        units: dict[str, PlantUnit] = {}
+        equipments: dict[str, PlantEquipment] = {}
+
         try:
             for row in db.exec(select(TagDefinitionDb)).all():
                 db.delete(row)
@@ -1184,19 +1304,8 @@ async def import_project(
                 db.delete(row)
             for row in db.exec(select(PlantArea)).all():
                 db.delete(row)
-            db.commit()
-        except Exception as e:
-            db.rollback()
-            raise HTTPException(
-                status_code=500, detail=f"Database clear failed: {e}"
-            ) from e
+            db.flush()
 
-        # Group tags and save to DB
-        areas: dict[str, PlantArea] = {}
-        units: dict[str, PlantUnit] = {}
-        equipments: dict[str, PlantEquipment] = {}
-
-        try:
             for tag in tags:
                 # Deduce area/unit/equipment name from tag hierarchy
                 parts = tag.name.split("_")
@@ -1220,7 +1329,7 @@ async def import_project(
                 if area_name not in areas:
                     area = PlantArea(name=area_name)
                     db.add(area)
-                    db.commit()
+                    db.flush()
                     db.refresh(area)
                     areas[area_name] = area
                 area = areas[area_name]
@@ -1230,7 +1339,7 @@ async def import_project(
                 if unit_key not in units:
                     unit = PlantUnit(name=unit_name, area_id=area.id)
                     db.add(unit)
-                    db.commit()
+                    db.flush()
                     db.refresh(unit)
                     units[unit_key] = unit
                 unit = units[unit_key]
@@ -1240,7 +1349,7 @@ async def import_project(
                 if equip_key not in equipments:
                     equip = PlantEquipment(name=equip_name, unit_id=unit.id)
                     db.add(equip)
-                    db.commit()
+                    db.flush()
                     db.refresh(equip)
                     equipments[equip_key] = equip
                 equip = equipments[equip_key]
@@ -1260,6 +1369,9 @@ async def import_project(
                 db.add(tag_db)
 
             db.commit()
+        except HTTPException:
+            db.rollback()
+            raise
         except Exception as e:
             db.rollback()
             raise HTTPException(

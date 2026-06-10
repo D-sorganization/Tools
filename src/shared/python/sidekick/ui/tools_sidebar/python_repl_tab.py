@@ -5,6 +5,7 @@ from __future__ import annotations
 import contextlib
 import io
 import logging
+import sys
 import types
 from collections.abc import Callable
 from typing import Any
@@ -36,6 +37,16 @@ _RESERVED_NAMESPACE_NAMES = {
 }
 
 SetVariable = Callable[[str, Any], None]
+
+
+def _is_workspace_registry(value: object) -> bool:
+    """Return True for canonical or legacy-imported workspace registries."""
+    if isinstance(value, WorkspaceRegistry):
+        return True
+
+    legacy_registry = sys.modules.get("upstream_drift_tools.ui.tools_sidebar.registry")
+    legacy_type = getattr(legacy_registry, "WorkspaceRegistry", None)
+    return isinstance(legacy_type, type) and isinstance(value, legacy_type)
 
 
 class _ReplWorker(QtCore.QThread):
@@ -133,7 +144,7 @@ class PythonReplWidget(QtWidgets.QWidget):
     ) -> None:
         if registry is None:
             raise TypeError("registry must be provided")
-        if not isinstance(registry, WorkspaceRegistry):
+        if not _is_workspace_registry(registry):
             raise TypeError("registry must be a WorkspaceRegistry")
         if set_variable is None:
             raise TypeError("set_variable must be provided")

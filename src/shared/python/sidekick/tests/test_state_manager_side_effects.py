@@ -18,9 +18,12 @@ def test_import_has_no_filesystem_side_effects() -> None:
         )
 
         shared_python_path = os.path.join(tools_root, "src", "shared", "python")
+        python_src_path = os.path.join(tools_root, "src", "python", "src")
         src_path = os.path.join(tools_root, "src")
 
-        pythonpath = os.path.pathsep.join([shared_python_path, src_path])
+        pythonpath = os.path.pathsep.join(
+            [shared_python_path, python_src_path, src_path]
+        )
         env = os.environ.copy()
         env["PYTHONPATH"] = pythonpath
 

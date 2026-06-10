@@ -28,7 +28,7 @@
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
 | **Spec Version**        | 1.1.330                                    |
-| **Last Spec Update**    | 2026-06-09                                 |
+| **Last Spec Update**    | 2026-06-10                                 |
 
 ## 2. Purpose & Mission
 
@@ -126,6 +126,10 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Provider-contract CI includes non-GUI coverage for the deprecated
   `upstream_drift_tools` compatibility shim so legacy imports keep resolving
   to canonical Sidekick APIs during the migration window
+- Sidekick Python REPL registry preconditions accept both canonical
+  `sidekick` and deprecated `upstream_drift_tools` `WorkspaceRegistry` module
+  identities during the compatibility migration while preserving explicit
+  TypeError failures for missing or unrelated registry objects
 - Shared Qt theme stylesheets use relative control typography and minimum tab
   widths so application-level zoom scales shared sidebar and launcher text more
   consistently
@@ -275,6 +279,28 @@ Tools/
   script creation, rejects non-directory output paths, and keeps
   `mesh_generator_makehuman.py` as a compatibility shim over the extracted
   `_makehuman_generator.py` implementation.
+- GUI discovery (`gui_launcher.registry.auto_discover_guis`) isolates each
+  `gui_registration.py`: any per-file failure (import error, malformed
+  `GUI_INFO`) is logged and skipped rather than aborting discovery for every
+  tool, and the returned count reflects only successful registrations.
+- Saved-state JSON persistence is atomic. `utils.file_utils.atomic_write_text`
+  (temp file + `fsync` + `os.replace`) backs `safe_write_json`, and
+  `StateManager` routes all state writes through it, so a crash / disk-full
+  mid-write leaves the prior file intact rather than truncated.
+- Sidekick data I/O closes sqlite connections via `contextlib.closing` on both
+  the read and write paths, bounding the connection lifecycle to the call even
+  when the query/`to_sql` raises.
+- The web-app launcher uses a bounded socket readiness probe (no fixed sleep)
+  before opening the browser, and reaps the dev-server child on Ctrl-C
+  (terminate → wait → kill) returning a non-zero exit code so no child outlives
+  the call.
+- The Sidekick calculator plot evaluator routes expressions through the
+  AST-validated `safe_eval` (attribute/dunder traversal rejected at parse time)
+  instead of raw `eval`.
+- AI CLI adapters resolve binaries via `shutil.which` plus home-relative
+  fallbacks (no hardcoded usernames); fleet scripts derive their repo/repos root
+  from `--repos-root` / env / `__file__` and exit non-zero when it cannot be
+  determined (headless-safe).
 
 ## 5. Desired Functionality
 
@@ -461,6 +487,10 @@ conversion API (`calc_backend`) carries such a suite
 (`test_calc_backend_properties.py`); `hypothesis` is a declared `dev`
 dependency. New adversarial coverage targets invalid inputs, non-finite values,
 and missing fields so a regression fails CI here rather than downstream.
+When CI detects changes under `src/shared/python/sidekick/`, its focused Python
+test slice includes the dedicated Sidekick state-manager suites before the
+per-file Sidekick coverage gate runs, so coverage enforcement measures the
+module's own regression tests instead of an unrelated reduced slice.
 
 ### Test Organization
 
@@ -675,13 +705,16 @@ Active development with stable core, continuous tool expansion, and web API in p
 - Some MATLAB tools require MATLAB runtime installed
 - Large datasets may cause GUI slowdowns without optimization
 - Plugin system doesn't yet support hot-reloading
-- Web API authentication/authorization not yet implemented
+- Web API authentication/authorization: the P1AM control backend now gates all
+  mutating endpoints behind an `X-API-Key` credential (`auth_config.py`); other
+  web apps' APIs may still lack auth.
 
 ## 12. Change Log
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-09 | 1.1.329 | fix(security, #3288 #3289 #3292): remove the P1AM HMI hardcoded default Admin password and accepted hardcoded SHA-256 hashes, fail closed when no credential is configured, and verify admin passwords with a salted PBKDF2-HMAC-SHA256 KDF (`ADMIN_PASSWORD_HASH`/`ADMIN_PASSWORD`) instead of bare SHA-256; add server-side `X-API-Key` authentication/authorization to the P1AM control backend (`auth_config.py`) so every state-mutating endpoint and the live WebSocket require an operator key and destructive/elevated operations (estop clear, tag writes, PID tuning, MPC, alicat setpoint/gas, project import) require an admin key, failing closed (503) unless `P1AM_DEV_NO_AUTH=1`, with E-stop activation intentionally left open and the Docker default bind changed to loopback; and harden `/api/project/import` against unbounded uploads (streamed size cap → 413), zip bombs (member-count/per-file/total-size/compression-ratio limits before extraction), and partial DB wipes (atomic delete+insert in one transaction). |
 | 2026-06-09 | 1.1.328 | fix(ci): satisfy the changed-file quality gate by explicitly annotating access-policy registry results under skipped-import mypy, add Python 3.10 `tomli` support for metadata contract tests, assert calc-backend pressure-drop values through the standardized response `data` payload, and keep Sidekick standard responses importable from the repo package path without top-level path shims. |
 | 2026-06-09 | 1.1.327 | fix(compatibility-ci): route remaining Python 3.10-exercised `StrEnum` imports through compatibility shims, make those shims type-check as native `StrEnum` under mypy while retaining Python 3.10 fallbacks, keep the integrations dashboard empty-state property explicitly typed as `bool`, and pass `.secrets.baseline` explicitly to the detect-secrets audit test so the 3.10 CI matrix validates the canonical baseline instead of failing on CLI argument parsing. |
 | 2026-06-09 | 1.1.326 | ci(coverage): keep total coverage floors as a full-suite ratchet while changed-file scoped PR runs enforce only the tracked coverage-policy packages touched by the diff; added regression coverage for the scoped/full-suite split. |
@@ -1104,6 +1137,13 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ### Version 1.1.330
 
+- 2026-06-10: test(ci) — include existing Sidekick state-manager regression
+  suites in Sidekick-changed CI slices before the per-file Sidekick coverage
+  gate runs, keeping changed-file coverage enforcement aligned with the module
+  that triggered the gate; restored JSON serialization of simple object
+  class-level defaults while keeping instance attributes authoritative; keep the
+  state-manager import side-effect subprocess on the same shared `utils` source
+  path used by clean CI runners.
 - 2026-06-09: fix(import-contracts) — keep rotation-converter NumPy helpers,
   screw-axis animation callbacks, and the video-analyzer DbC shim mypy-clean
   under changed-file CI by adding explicit typed array boundaries and
@@ -1115,6 +1155,11 @@ Active development with stable core, continuous tool expansion, and web API in p
 ### Version 1.1.329
 
 - 2026-06-09: feat(movement optimizer) — restore the standalone PyQt6 swingset policy-training and segmented-chain whip-dynamics tabs, mypy-compatible typed model and Qt UI modules, focused model and UI tests, launcher bootstrap repair, and provider metadata so UpstreamDrift can discover the Movement Optimizer tile from remote main.
+- 2026-06-09: fix(sidekick) — preserve the Python REPL `WorkspaceRegistry`
+  contract across canonical and deprecated compatibility import paths so
+  legacy `upstream_drift_tools` callers pass the same runtime precondition as
+  canonical Sidekick callers without weakening the TypeError guard for
+  unrelated registry objects.
 
 ### Version 1.1.320
 

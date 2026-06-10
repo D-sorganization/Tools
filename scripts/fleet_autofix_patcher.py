@@ -1,13 +1,44 @@
 import logging
 import os
 import subprocess
+import sys
 from pathlib import Path
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
-REPOS_ROOT = Path(r"C:\Users\diete\Repositories")
+
+def _resolve_repos_root() -> Path:
+    """Resolve the directory that contains the fleet repos, portably.
+
+    Resolution order: ``--repos-root`` CLI arg, ``FLEET_REPOS_ROOT`` /
+    ``TOOLS_REPO_PATH`` env vars, then the parent of this repo checkout
+    (``scripts/`` lives one level under the repo root). Exits non-zero if the
+    resolved directory does not exist, so a headless run fails loudly rather
+    than silently no-op'ing on a missing developer-specific path.
+    """
+    candidate: Path | None = None
+    argv = sys.argv[1:]
+    if "--repos-root" in argv:
+        idx = argv.index("--repos-root")
+        if idx + 1 < len(argv):
+            candidate = Path(argv[idx + 1])
+    if candidate is None:
+        env = os.environ.get("FLEET_REPOS_ROOT") or os.environ.get("TOOLS_REPO_PATH")
+        if env:
+            candidate = Path(env)
+    if candidate is None:
+        # scripts/<this file> -> repo root -> repos root (its parent)
+        candidate = Path(__file__).resolve().parents[1].parent
+    candidate = candidate.expanduser()
+    if not candidate.is_dir():
+        logger.error("Could not resolve a valid repos root (tried: %s)", candidate)
+        sys.exit(1)
+    return candidate
+
+
+REPOS_ROOT = _resolve_repos_root()
 TARGET_REPOS = [
     "AffineDrift",
     "Games",
@@ -28,7 +59,9 @@ PR_TITLE = "Fix: Enhance Autofix Robustness and Scope PR Fixes"
 PR_BODY = """This PR updates the Jules PR AutoFix workflow to only target changed files in a PR, preventing it from making unintended changes to unrelated parts of the codebase. It also enhances the Mypy agent to support targeted file analysis and increases timeout/max limits for more robust behavior."""
 
 
-def run_cmd(cmd, cwd=None):
+def run_cmd(
+    cmd: list[str], cwd: str | Path | None = None
+) -> subprocess.CompletedProcess[str]:
     logger.info(f">>> Running: {' '.join(cmd)} in {cwd or os.getcwd()}")
     result = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
     if result.returncode != 0:
@@ -36,7 +69,7 @@ def run_cmd(cmd, cwd=None):
     return result
 
 
-def patch_mypy_agent(repo_path: Path):
+def patch_mypy_agent(repo_path: Path) -> bool:
     agent_path = repo_path / "scripts" / "mypy_autofix_agent.py"
     if not agent_path.exists():
         logger.info(f"Skipping {agent_path} (not found)")
@@ -115,7 +148,7 @@ def patch_mypy_agent(repo_path: Path):
     return True
 
 
-def patch_workflow(repo_path: Path):
+def patch_workflow(repo_path: Path) -> bool:
     workflow_path = repo_path / ".github" / "workflows" / "Jules-PR-AutoFix.yml"
     if not workflow_path.exists():
         logger.info(f"Skipping {workflow_path} (not found)")
@@ -173,7 +206,7 @@ def patch_workflow(repo_path: Path):
     return True
 
 
-def process_repo(repo_name):
+def process_repo(repo_name: str) -> None:
     repo_path = REPOS_ROOT / repo_name
     logger.info(f"\nProcessing {repo_name}...")
 

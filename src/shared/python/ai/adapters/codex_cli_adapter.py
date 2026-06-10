@@ -67,7 +67,7 @@ DEFAULT_CODEX_CLI_TIMEOUT = 180.0  # [s]
 _FALLBACK_PATHS = (
     r"%APPDATA%\npm\codex.cmd",
     r"%APPDATA%\npm\codex",
-    "/home/dieterolson/.npm-global/bin/codex",
+    "~/.npm-global/bin/codex",
     "/usr/local/bin/codex",
 )
 
@@ -102,7 +102,7 @@ def _resolve_binary(explicit: str | None = None) -> str | None:
     if found:
         return found
     for candidate in _FALLBACK_PATHS:
-        expanded = os.path.expandvars(candidate)
+        expanded = os.path.expanduser(os.path.expandvars(candidate))
         if Path(expanded).exists():
             return expanded
     return None
