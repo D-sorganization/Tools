@@ -22,9 +22,11 @@ from textwrap import dedent
 from unittest.mock import patch
 
 import pytest
+import yaml
 
 # Ensure scripts/ is importable
 _SCRIPTS_DIR = Path(__file__).parent.parent.parent / "scripts"
+_REPO_ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(_SCRIPTS_DIR))
 
 import anti_phantom_merge_guard as guard  # noqa: E402
@@ -40,6 +42,34 @@ SAMPLE_BASE_SHA = "bbbb2222" * 5
 def _make_diff(files: list[str]) -> str:
     """Return a fake ``git diff --name-only`` output for *files*."""
     return "\n".join(files)
+
+
+def _workflow_uses_pull_request_target(workflow: dict[str, object]) -> bool:
+    """Return whether a workflow is triggered by ``pull_request_target``."""
+    triggers = workflow.get("on", {})
+    if isinstance(triggers, str):
+        return triggers == "pull_request_target"
+    if isinstance(triggers, list):
+        return "pull_request_target" in triggers
+    if isinstance(triggers, dict):
+        return "pull_request_target" in triggers
+    return False
+
+
+def _iter_workflow_steps(workflow: dict[str, object]) -> list[dict[str, object]]:
+    """Return all step dictionaries from a GitHub Actions workflow."""
+    jobs = workflow.get("jobs", {})
+    if not isinstance(jobs, dict):
+        return []
+    steps: list[dict[str, object]] = []
+    for job in jobs.values():
+        if not isinstance(job, dict):
+            continue
+        job_steps = job.get("steps", [])
+        if not isinstance(job_steps, list):
+            continue
+        steps.extend(step for step in job_steps if isinstance(step, dict))
+    return steps
 
 
 # ---------------------------------------------------------------------------
@@ -126,6 +156,48 @@ class TestGetDiffViaGit:
     def test_rejects_empty_head_sha(self) -> None:
         with pytest.raises((ValueError, AssertionError)):
             guard.get_diff_via_git(base_sha=SAMPLE_BASE_SHA, head_sha="")
+
+
+# ---------------------------------------------------------------------------
+# Workflow hardening
+# ---------------------------------------------------------------------------
+
+
+class TestPullRequestTargetWorkflowHardening:
+    """Privileged label workflows must never check out untrusted PR code."""
+
+    def test_pull_request_target_workflows_guard_untrusted_head_checkout(self) -> None:
+        failures: list[str] = []
+        for path in sorted((_REPO_ROOT / ".github" / "workflows").glob("*.yml")):
+            workflow = yaml.load(
+                path.read_text(encoding="utf-8"), Loader=yaml.BaseLoader
+            )
+            if not isinstance(workflow, dict):
+                continue
+            if not _workflow_uses_pull_request_target(workflow):
+                continue
+            for step in _iter_workflow_steps(workflow):
+                uses = str(step.get("uses", ""))
+                if not uses.startswith("actions/checkout"):
+                    continue
+                step_with = step.get("with", {})
+                if not isinstance(step_with, dict):
+                    continue
+                checkout_ref = str(step_with.get("ref", ""))
+                if "github.event.pull_request.head.sha" not in checkout_ref:
+                    continue
+                condition = str(step.get("if", ""))
+                if "github.event_name == 'pull_request'" not in condition:
+                    failures.append(f"{path}: {step.get('name', 'checkout')}")
+
+        assert failures == []
+
+    def test_anti_phantom_documents_privileged_checkout_invariant(self) -> None:
+        workflow_text = (
+            _REPO_ROOT / ".github" / "workflows" / "anti-phantom-merge.yml"
+        ).read_text(encoding="utf-8")
+
+        assert "Never check out PR head code on pull_request_target" in workflow_text
 
 
 # ---------------------------------------------------------------------------

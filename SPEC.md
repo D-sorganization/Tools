@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.330                                    |
+| **Spec Version**        | 1.1.331                                    |
 | **Last Spec Update**    | 2026-06-10                                 |
 
 ## 2. Purpose & Mission
@@ -1133,6 +1133,18 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.331
+
+- 2026-06-10: ci(security) — harden
+  `.github/workflows/anti-phantom-merge.yml` so the privileged
+  `pull_request_target` label path never checks out untrusted PR head code.
+  Full git-diff phantom checks continue to run only on `pull_request`; label
+  events validate the admin override through GitHub API calls and emit notices
+  for ignored non-admin overrides. Added an ops regression that scans all
+  `pull_request_target` workflows for unguarded `actions/checkout` steps using
+  `github.event.pull_request.head.sha`, preserving the invariant across future
+  workflow edits.
 
 ### Version 1.1.330
 
