@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+import threading
+from collections.abc import Callable
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
 from compatibility import UTC
 from PyQt6 import QtGui
-from PyQt6.QtCore import Qt, QThread, pyqtSignal
+from PyQt6.QtCore import QObject, Qt, QThread, pyqtSignal
 from PyQt6.QtWidgets import (
     QFrame,
     QHBoxLayout,
@@ -226,6 +228,80 @@ class StreamWorker(QThread):
             self.error.emit(str(e))
         finally:
             self.finished.emit()
+
+
+class _ThunkCall:
+    """Cross-thread carrier for one main-thread dispatch.
+
+    Holds the thunk to run plus slots for its result/error and an
+    ``Event`` the calling (worker) thread waits on.
+    """
+
+    __slots__ = ("thunk", "result", "error", "done")
+
+    def __init__(self, thunk: Callable[[], Any]) -> None:
+        self.thunk = thunk
+        self.result: Any = None
+        self.error: BaseException | None = None
+        self.done = threading.Event()
+
+
+class MainThreadToolDispatcher(QObject):
+    """Runs GUI-thread-affine tool handlers on the GUI thread.
+
+    The chat executes tools from a background :class:`StreamWorker`
+    thread. Handlers that mutate Qt widgets must run on the thread that
+    owns those widgets; this dispatcher marshals such a call across the
+    thread boundary and returns its result synchronously (the agent loop
+    needs the ``ToolResult`` before continuing).
+
+    Install on the registry::
+
+        registry.set_main_thread_dispatcher(MainThreadToolDispatcher(panel))
+
+    The instance must live on the GUI thread (pass a GUI-thread parent,
+    or construct it there). Calling it from the GUI thread runs the thunk
+    inline, so it never deadlocks against itself.
+    """
+
+    _dispatch = pyqtSignal(object)
+
+    def __init__(self, parent: QObject | None = None) -> None:
+        super().__init__(parent)
+        # Default AutoConnection is exactly what we want: a cross-thread
+        # emit (from the worker) is delivered as a queued call on this
+        # object's owning (GUI) thread, while a same-thread emit runs
+        # directly. ``__call__`` short-circuits same-thread callers anyway.
+        self._dispatch.connect(self._run)
+
+    def __call__(self, thunk: Callable[[], Any]) -> Any:
+        """Run ``thunk`` on the GUI thread and return its result.
+
+        Args:
+            thunk: Zero-argument callable to execute on the GUI thread.
+
+        Returns:
+            Whatever ``thunk`` returns.
+
+        Raises:
+            Whatever ``thunk`` raises (re-raised on the calling thread).
+        """
+        if QThread.currentThread() is self.thread():
+            return thunk()
+        call = _ThunkCall(thunk)
+        self._dispatch.emit(call)
+        call.done.wait()
+        if call.error is not None:
+            raise call.error
+        return call.result
+
+    def _run(self, call: _ThunkCall) -> None:
+        try:
+            call.result = call.thunk()
+        except Exception as exc:  # noqa: BLE001 - propagate across threads
+            call.error = exc
+        finally:
+            call.done.set()
 
 
 class ChatInput(QPlainTextEdit):

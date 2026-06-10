@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.347                                    |
+| **Spec Version**        | 1.1.348                                    |
 | **Last Spec Update**    | 2026-06-10                                 |
 
 ## 2. Purpose & Mission
@@ -714,6 +714,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-10 | 1.1.348 | test(ai): keep the #3310 GUI-thread dispatcher coverage mypy-clean under the changed-file gate by annotating the offscreen Qt fixture, worker-thread test parameters, dispatcher thunks, decorator-registered tool dispatch, and exception helper while preserving the main-thread marshalling behavior under test. |
 | 2026-06-10 | 1.1.347 | fix(ci/runner): split Tauri build matrix display labels from `runs-on` targets so Windows jobs no longer render as `Array`, and run Windows Rust path/tool-home setup through PowerShell while preserving bash setup on Linux. |
 | 2026-06-10 | 1.1.346 | fix(ci/runner, #3308): restore the Tauri 30-minute check timeout on current main after #3307 accidentally reverted the runner hardening while adding the ShellTool command-injection fix. |
 | 2026-06-10 | 1.1.345 | fix(ci/runner, #3305): isolate Tauri `RUSTUP_HOME` and `CARGO_HOME` under each job's `RUNNER_TEMP` so parallel self-hosted jobs do not race on the shared `$HOME/.rustup` toolchain and lose `rustc` mid-clippy. |
@@ -1153,6 +1154,23 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.333
+
+- 2026-06-10: feat(ai) — marshal GUI-affine chat tools onto the main
+  thread. `Tool` gains an opt-in `requires_main_thread` flag; `ToolRegistry`
+  gains `set_main_thread_dispatcher` and routes flagged tools through it in
+  `execute` (running inline when no dispatcher is installed, so headless use
+  is unaffected). `MainThreadToolDispatcher` (ai/gui) marshals a tool thunk
+  from the background `StreamWorker` thread onto its owning GUI thread via a
+  queued signal, returning the result synchronously and re-raising errors on
+  the caller; same-thread calls run inline. Decorator-registered tools can
+  opt in through `ToolRegistry.register(..., requires_main_thread=True)`, so
+  the normal shared-tool registration path preserves GUI-thread affinity.
+  `AIAssistantPanel` installs the dispatcher on the global registry at
+  startup and uses explicit boundary return types so skipped-import mypy runs
+  remain type-clean at the panel boundary. Additive and backward compatible
+  for existing downstream registrations.
 
 ### Version 1.1.332
 
