@@ -453,7 +453,7 @@ workers and set Qt offscreen mode before importing PyQt6 to avoid GUI worker
 crashes.
 Changed Python test files must contain at least one AST-visible behavioral
 assertion, exception assertion, or unittest/mock-style assertion call unless
-they match the explicit fixture-only assertion allowlist.
+they match the explicit fixture/support-only assertion allowlist.
 Critical numerical contracts are additionally guarded by property-based tests
 (Hypothesis) that assert invariants — round-trip identity, linearity, and
 boundary/failure behavior — rather than only example outputs. The flow-rate
@@ -1108,7 +1108,9 @@ Active development with stable core, continuous tool expansion, and web API in p
   screw-axis animation callbacks, and the video-analyzer DbC shim mypy-clean
   under changed-file CI by adding explicit typed array boundaries and
   non-redefining contract import fallbacks without changing runtime validation
-  behavior.
+  behavior; declare the import-contract subprocess bootstrap as assertion-free
+  test support so the changed-test assertion ratchet continues to block real
+  assertion-light test cases without forcing fake assertions into helpers.
 
 ### Version 1.1.329
 
