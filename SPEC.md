@@ -1319,3 +1319,4 @@ Active development with stable core, continuous tool expansion, and web API in p
 ## 1.1.241 - Replaced chained .filter() array passes with single-pass for-loops in Golf UI components
 
 - **2026-06-09**: fix(sidekick) — regenerate `sidekick_api_baseline.json` to include the `data_processing/formats.py` module added in ed6e415fa (only addition; no public API removals or signature changes), and correct `test_json_serializer` to set the Dummy attribute on the instance `__dict__` so it matches `_json_serializer`'s `hasattr(obj, "__dict__")` branch.
+- **2026-06-10**: Fix command injection bypasses in `cli_tools.py` `ShellTool._is_command_allowed` by explicitly parsing executable names using `pathlib.Path` and parsing arguments with assignment flags.
