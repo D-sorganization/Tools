@@ -135,8 +135,8 @@
     },
     {
       "id": "optimizer_gui",
-      "name": "Adam Optimizer",
-      "description": "Configure and run Adam-based optimization",
+      "name": "Movement Optimizer",
+      "description": "Optimize motion policies with Adam, swingset, and chain dynamics models",
       "category": "Optimization",
       "surfaces": {
         "pyqt6": true,

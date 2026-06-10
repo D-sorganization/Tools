@@ -91,3 +91,25 @@ models:
       logo: "data_explorer.svg"
       status: "ready"
       web_route: "/tools/data-processor"
+
+  - id: "tools_movement_optimizer"
+    name: "Movement Optimizer"
+    description: "PyQt6 motion optimizer with swingset policy training and chain whip dynamics."
+    type: "special_app"
+    path: "src/optimizer_gui/launch_pyqt6.py"
+    working_dir: "."
+    python_paths:
+      - "src"
+      - "src/shared/python"
+      - "src/optimizer_gui/python"
+    capabilities:
+      - "swingset"
+      - "chain_dynamics"
+      - "policy_optimization"
+      - "pyqt6"
+    order: 15
+    launcher:
+      category: "tool"
+      logo: "swing_optimizer.svg"
+      status: "ready"
+      web_route: "/tools/movement-optimizer"
