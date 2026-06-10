@@ -1153,6 +1153,19 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 9. Changelog
 
+### Version 1.1.333
+
+- 2026-06-10: feat(ai) — marshal GUI-affine chat tools onto the main
+  thread. `Tool` gains an opt-in `requires_main_thread` flag; `ToolRegistry`
+  gains `set_main_thread_dispatcher` and routes flagged tools through it in
+  `execute` (running inline when no dispatcher is installed, so headless use
+  is unaffected). `MainThreadToolDispatcher` (ai/gui) marshals a tool thunk
+  from the background `StreamWorker` thread onto its owning GUI thread via a
+  queued signal, returning the result synchronously and re-raising errors on
+  the caller; same-thread calls run inline. `AIAssistantPanel` installs the
+  dispatcher on the global registry at startup. Additive and backward
+  compatible — no public signature changes for downstream consumers.
+
 ### Version 1.1.332
 
 - 2026-06-10: fix(ci) — keep the P1AM project import helper mypy-clean under

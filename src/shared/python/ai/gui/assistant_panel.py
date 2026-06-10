@@ -39,7 +39,11 @@ from src.shared.python.ai.gui._input_area import InputArea
 from src.shared.python.ai.gui._message_display import MessageDisplayController
 from src.shared.python.ai.gui._panel_header import PanelHeaderController
 from src.shared.python.ai.gui._panel_tools import register_panel_tools
-from src.shared.python.ai.gui.assistant_widgets import MessageWidget, StreamWorker
+from src.shared.python.ai.gui.assistant_widgets import (
+    MainThreadToolDispatcher,
+    MessageWidget,
+    StreamWorker,
+)
 from src.shared.python.ai.gui.chat_export import (
     copy_thread_to_clipboard,
     save_thread_as_markdown,
@@ -123,6 +127,12 @@ class AIAssistantPanel(QWidget):
 
         # --- Tools / RAG / memory ----------------------------------------
         self._tools_registry = get_global_registry()
+        # Tools flagged ``requires_main_thread`` mutate Qt widgets; route
+        # them onto this (GUI) thread when the chat invokes them from its
+        # background StreamWorker. The dispatcher is parented to the panel
+        # so it shares the panel's (GUI) thread affinity.
+        self._main_thread_dispatcher = MainThreadToolDispatcher(self)
+        self._tools_registry.set_main_thread_dispatcher(self._main_thread_dispatcher)
         self._rag_store = SimpleRAGStore()
         self._memory_manager = MemoryManager()
         self._refresh_prompt_memory()
