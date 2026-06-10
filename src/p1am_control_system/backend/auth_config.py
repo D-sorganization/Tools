@@ -38,7 +38,7 @@ from fastapi.security import APIKeyHeader
 
 logger = logging.getLogger("dcs_backend.auth")
 
-API_KEY_HEADER_NAME = "X-API-Key"
+API_KEY_HEADER_NAME = "X-API-Key"  # pragma: allowlist secret
 _TRUTHY = {"1", "true", "yes", "on"}
 
 # auto_error=False so we can return our own 401/503 with consistent messaging.

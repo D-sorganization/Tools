@@ -3,13 +3,10 @@ import csv
 import io
 import logging
 import math
-import os
 import time
-import zipfile
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
-from pathlib import Path
 
 try:
     from datetime import UTC
@@ -51,6 +48,7 @@ from models import (
 from plant_model import TagDefinition
 from plc_factory import PLCFactory
 from power_supply_integration import PowerSupplyService, create_power_supply_router
+from project_import import import_project_archive
 from pydantic import BaseModel
 from pydantic import Field as PydanticField
 from simulator_client import SimulatedPLCClient
@@ -1141,254 +1139,13 @@ async def stream_websocket(websocket: WebSocket) -> None:
         ws_manager.disconnect(websocket)
 
 
-# Resource limits for project import (issue #3292). Override via env if needed.
-MAX_IMPORT_UPLOAD_BYTES = int(
-    os.environ.get("P1AM_MAX_IMPORT_BYTES", str(50 * 1024 * 1024))
-)  # 50 MiB compressed upload cap
-MAX_IMPORT_MEMBERS = int(os.environ.get("P1AM_MAX_IMPORT_MEMBERS", "10000"))
-MAX_IMPORT_MEMBER_BYTES = int(
-    os.environ.get("P1AM_MAX_IMPORT_MEMBER_BYTES", str(100 * 1024 * 1024))
-)  # 100 MiB per uncompressed member
-MAX_IMPORT_TOTAL_BYTES = int(
-    os.environ.get("P1AM_MAX_IMPORT_TOTAL_BYTES", str(500 * 1024 * 1024))
-)  # 500 MiB total uncompressed budget
-MAX_IMPORT_COMPRESSION_RATIO = float(
-    os.environ.get("P1AM_MAX_IMPORT_RATIO", "100.0")
-)  # reject pathological compression ratios (zip bombs)
-_IMPORT_CHUNK = 1024 * 1024  # stream 1 MiB at a time
-
-
-def _safe_extract_zip(zip_ref: zipfile.ZipFile, dest: Path) -> None:
-    """Validate and extract a zip with member/size/ratio budgets (anti zip-bomb).
-
-    Raises HTTPException(413) when any limit is exceeded.
-    """
-    infos = zip_ref.infolist()
-    if len(infos) > MAX_IMPORT_MEMBERS:
-        raise HTTPException(
-            status_code=413,
-            detail=f"Archive has too many members (> {MAX_IMPORT_MEMBERS}).",
-        )
-    total_uncompressed = 0
-    for info in infos:
-        if info.file_size > MAX_IMPORT_MEMBER_BYTES:
-            raise HTTPException(
-                status_code=413,
-                detail=f"Archive member '{info.filename}' exceeds size limit.",
-            )
-        total_uncompressed += info.file_size
-        if total_uncompressed > MAX_IMPORT_TOTAL_BYTES:
-            raise HTTPException(
-                status_code=413,
-                detail="Archive uncompressed size exceeds total budget.",
-            )
-        if info.compress_size > 0:
-            ratio = info.file_size / info.compress_size
-            if ratio > MAX_IMPORT_COMPRESSION_RATIO:
-                raise HTTPException(
-                    status_code=413,
-                    detail=(
-                        f"Archive member '{info.filename}' has a suspicious "
-                        "compression ratio (possible zip bomb)."
-                    ),
-                )
-    # extractall already sanitizes absolute paths and '..' components.
-    zip_ref.extractall(dest)
-
-
 @app.post("/api/project/import", dependencies=[Depends(require_admin_key)])
 async def import_project(
     file: UploadFile = File(...),  # noqa: B008
     db: Session = Depends(get_session),  # noqa: B008
 ) -> dict[str, Any]:
     """Upload and ingest a zip file containing tagl.json and PLC driver mapping (.SDV files)."""
-    import tempfile
-
-    from parsers.indusoft_parser import parse_indusoft_tags
-    from parsers.plc_map_parser import parse_plc_map
-
-    if not file.filename or not file.filename.endswith(".zip"):
-        raise HTTPException(status_code=400, detail="Only ZIP files are supported.")
-
-    with tempfile.TemporaryDirectory() as temp_dir:
-        temp_path = Path(temp_dir)
-        zip_file_path = temp_path / "uploaded.zip"
-
-        # Stream the upload to disk in bounded chunks, enforcing the size cap
-        # so a huge upload can never be buffered entirely in memory (#3292).
-        total = 0
-        with open(zip_file_path, "wb") as f:
-            while True:
-                chunk = await file.read(_IMPORT_CHUNK)
-                if not chunk:
-                    break
-                total += len(chunk)
-                if total > MAX_IMPORT_UPLOAD_BYTES:
-                    raise HTTPException(
-                        status_code=413,
-                        detail=(
-                            "Uploaded file exceeds the maximum allowed size "
-                            f"({MAX_IMPORT_UPLOAD_BYTES} bytes)."
-                        ),
-                    )
-                f.write(chunk)
-
-        # Extract zip file with zip-bomb guards.
-        try:
-            with zipfile.ZipFile(zip_file_path, "r") as zip_ref:
-                _safe_extract_zip(zip_ref, temp_path)
-        except HTTPException:
-            raise
-        except Exception as e:
-            raise HTTPException(status_code=400, detail=f"Invalid ZIP file: {e}") from e
-
-        # Locate tagl.json
-        tag_json_path = None
-        for p in temp_path.rglob("*"):
-            if p.name.lower() == "tagl.json":
-                tag_json_path = p
-                break
-
-        if not tag_json_path:
-            raise HTTPException(
-                status_code=400,
-                detail="Could not find 'tagl.json' in the uploaded ZIP file.",
-            )
-
-        # Ingest tags
-        try:
-            tags = parse_indusoft_tags(tag_json_path)
-        except Exception as e:
-            raise HTTPException(
-                status_code=500, detail=f"Failed to parse tags: {e}"
-            ) from e
-
-        # Locate .SDV files (PLC maps)
-        plc_map = {}
-        for p in temp_path.rglob("*.SDV"):
-            try:
-                # Merge multiple SDV mappings if they exist
-                plc_map.update(parse_plc_map(p))
-            except Exception as e:
-                logger.warning(f"Failed to parse PLC map file {p.name}: {e}")
-
-        # Merge mappings
-        mapped_count = 0
-        for tag in tags:
-            if tag.name in plc_map:
-                m = plc_map[tag.name]
-                tag.register_type = m.get("register_type")
-                tag.register_num = m.get("register_num")
-                tag.data_format = m.get("data_format")
-                if m.get("rw_mode"):
-                    tag.rw_mode = m.get("rw_mode")
-                if m.get("scale_factor") is not None:
-                    tag.scale_factor = m.get("scale_factor")
-                mapped_count += 1
-
-        # Replace the plant configuration atomically (#3292): the delete and the
-        # re-insert share a single transaction, so a parse/save failure rolls
-        # everything back and leaves the existing plant DB untouched. IDs are
-        # obtained with flush() (no intermediate commit) so nothing is durably
-        # written until the whole import succeeds.
-        areas: dict[str, PlantArea] = {}
-        units: dict[str, PlantUnit] = {}
-        equipments: dict[str, PlantEquipment] = {}
-
-        try:
-            for row in db.exec(select(TagDefinitionDb)).all():
-                db.delete(row)
-            for row in db.exec(select(PlantEquipment)).all():
-                db.delete(row)
-            for row in db.exec(select(PlantUnit)).all():
-                db.delete(row)
-            for row in db.exec(select(PlantArea)).all():
-                db.delete(row)
-            db.flush()
-
-            for tag in tags:
-                # Deduce area/unit/equipment name from tag hierarchy
-                parts = tag.name.split("_")
-                if len(parts) >= 4:
-                    area_name = parts[0]
-                    unit_name = parts[1]
-                    equip_name = parts[2]
-                else:
-                    # Alternative dot notation
-                    parts_dot = tag.name.split(".")
-                    if len(parts_dot) >= 4:
-                        area_name = parts_dot[0]
-                        unit_name = parts_dot[1]
-                        equip_name = parts_dot[2]
-                    else:
-                        area_name = "Default Area"
-                        unit_name = "Default Unit"
-                        equip_name = "Default Equipment"
-
-                # Create Area
-                if area_name not in areas:
-                    area = PlantArea(name=area_name)
-                    db.add(area)
-                    db.flush()
-                    db.refresh(area)
-                    areas[area_name] = area
-                area = areas[area_name]
-
-                # Create Unit
-                unit_key = f"{area_name}:{unit_name}"
-                if unit_key not in units:
-                    unit = PlantUnit(name=unit_name, area_id=area.id)
-                    db.add(unit)
-                    db.flush()
-                    db.refresh(unit)
-                    units[unit_key] = unit
-                unit = units[unit_key]
-
-                # Create Equipment
-                equip_key = f"{unit_key}:{equip_name}"
-                if equip_key not in equipments:
-                    equip = PlantEquipment(name=equip_name, unit_id=unit.id)
-                    db.add(equip)
-                    db.flush()
-                    db.refresh(equip)
-                    equipments[equip_key] = equip
-                equip = equipments[equip_key]
-
-                # Create TagDefinitionDb
-                tag_db = TagDefinitionDb(
-                    name=tag.name,
-                    tag_type=tag.tag_type,
-                    description=tag.description,
-                    rw_mode=tag.rw_mode,
-                    register_type=tag.register_type,
-                    register_num=tag.register_num,
-                    data_format=tag.data_format,
-                    scale_factor=tag.scale_factor,
-                    equipment_id=equip.id,
-                )
-                db.add(tag_db)
-
-            db.commit()
-        except HTTPException:
-            db.rollback()
-            raise
-        except Exception as e:
-            db.rollback()
-            raise HTTPException(
-                status_code=500, detail=f"Database save failed: {e}"
-            ) from e
-
-        # Re-load tags into the active PLC clients so simulation/reading picks them up!
-        load_tags_into_plc_clients(db)
-
-        return {
-            "status": "success",
-            "tags_imported": len(tags),
-            "mapped_registers": mapped_count,
-            "areas_created": list(areas.keys()),
-            "units_created": [u.name for u in units.values()],
-            "equipment_created": [e.name for e in equipments.values()],
-        }
+    return await import_project_archive(file, db, load_tags_into_plc_clients)
 
 
 @app.get("/api/project/ladder-explorer")

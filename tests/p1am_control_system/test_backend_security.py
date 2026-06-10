@@ -30,6 +30,7 @@ fastapi_testclient = pytest.importorskip("fastapi.testclient")
 
 try:
     import main  # type: ignore[import-not-found]
+    import project_import  # type: ignore[import-not-found]
     from models import (  # type: ignore[import-not-found]
         PlantArea,
         PlantEquipment,
@@ -205,7 +206,7 @@ def test_import_requires_admin_auth(monkeypatch: pytest.MonkeyPatch) -> None:
 
 def test_import_rejects_oversized_upload(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("P1AM_ADMIN_API_KEY", ADMIN_KEY)
-    monkeypatch.setattr(main, "MAX_IMPORT_UPLOAD_BYTES", 1024, raising=False)
+    monkeypatch.setattr(project_import, "MAX_IMPORT_UPLOAD_BYTES", 1024)
     big = b"x" * 5000
     zip_bytes = _make_zip({"tagl.json": big})
     resp = client.post(
@@ -218,9 +219,7 @@ def test_import_rejects_oversized_upload(monkeypatch: pytest.MonkeyPatch) -> Non
 
 def test_import_rejects_zip_bomb_ratio(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("P1AM_ADMIN_API_KEY", ADMIN_KEY)
-    monkeypatch.setattr(
-        main, "MAX_IMPORT_UPLOAD_BYTES", 50 * 1024 * 1024, raising=False
-    )
+    monkeypatch.setattr(project_import, "MAX_IMPORT_UPLOAD_BYTES", 50 * 1024 * 1024)
     bomb = b"\x00" * (5 * 1024 * 1024)  # compresses tiny -> huge ratio
     zip_bytes = _make_zip({"tagl.json": b"[]", "bomb.bin": bomb})
     resp = client.post(
@@ -234,9 +233,7 @@ def test_import_rejects_zip_bomb_ratio(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_import_failure_leaves_db_intact(monkeypatch: pytest.MonkeyPatch) -> None:
     """A parse failure during import must not wipe the existing plant config."""
     monkeypatch.setenv("P1AM_ADMIN_API_KEY", ADMIN_KEY)
-    monkeypatch.setattr(
-        main, "MAX_IMPORT_UPLOAD_BYTES", 50 * 1024 * 1024, raising=False
-    )
+    monkeypatch.setattr(project_import, "MAX_IMPORT_UPLOAD_BYTES", 50 * 1024 * 1024)
 
     with Session(_test_engine) as s:
         area = PlantArea(name="ExistingArea")
@@ -270,3 +267,20 @@ def test_import_failure_leaves_db_intact(monkeypatch: pytest.MonkeyPatch) -> Non
         assert any(t.name == "EXISTING_TAG" for t in tags), (
             "import failure wiped the existing plant DB"
         )
+
+
+def test_safe_extract_rejects_path_traversal(tmp_path) -> None:
+    archive = tmp_path / "traversal.zip"
+    destination = tmp_path / "extract"
+    outside = tmp_path / "evil.txt"
+    with zipfile.ZipFile(archive, "w") as zf:
+        zf.writestr("../evil.txt", "owned")
+
+    with (
+        pytest.raises(main.HTTPException) as exc_info,
+        zipfile.ZipFile(archive, "r") as zf,
+    ):
+        project_import._safe_extract_zip(zf, destination)
+
+    assert exc_info.value.status_code == 400
+    assert not outside.exists()
