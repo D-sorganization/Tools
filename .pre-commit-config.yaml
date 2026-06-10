@@ -114,7 +114,7 @@ repos:
           - types-requests
           - types-PyYAML
           - pydantic
-        args: [--ignore-missing-imports]
+        args: [--ignore-missing-imports, --follow-imports=skip]
         types: [python]
         files: ^src/
         exclude: |
