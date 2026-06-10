@@ -66,8 +66,8 @@ jobs:
 
           case "$MODE" in
             local)
-              echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
-              echo "Routing to self-hosted fleet (mode=local)"
+              echo "runner=d-sorg-fleet-fast-io" >> $GITHUB_OUTPUT
+              echo "Routing to fast-I/O self-hosted fleet (mode=local)"
               ;;
             disabled)
               echo "::error::No local self-hosted runner available; failing closed"
@@ -75,11 +75,11 @@ jobs:
               ;;
             *)
               AVAILABLE=$(gh api /orgs/${{ github.repository_owner }}/actions/runners \
-                --jq '[.runners[] | select(.status == "online") | select(.busy == false) | select(.labels[].name == "d-sorg-fleet")] | length' \
+                --jq '[.runners[] | select(.status == "online") | select(.busy == false) | select(.labels[].name == "d-sorg-fleet-fast-io")] | length' \
                 2>/dev/null || echo "0")
               if [[ "$AVAILABLE" -gt 0 ]]; then
-                echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
-                echo "$AVAILABLE idle fleet runner(s) - routing locally"
+                echo "runner=d-sorg-fleet-fast-io" >> $GITHUB_OUTPUT
+                echo "$AVAILABLE idle fast-I/O fleet runner(s) - routing locally"
               else
                 echo "::error::No local self-hosted runner available; failing closed"
                 exit 1
@@ -92,7 +92,7 @@ jobs:
   check:
     needs: pick-runner
     name: Check (${{ matrix.app }})
-    runs-on: d-sorg-fleet
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
     timeout-minutes: 15
     strategy:
       fail-fast: false
@@ -184,7 +184,7 @@ jobs:
           - name: rotation-converter
             path: src/rotation_converter/web
         platform:
-          - os: d-sorg-fleet
+          - os: d-sorg-fleet-fast-io
             target: x86_64-unknown-linux-gnu
           - os: [self-hosted, Windows]
             target: x86_64-pc-windows-msvc
@@ -230,7 +230,7 @@ jobs:
           key: ${{ matrix.app.name }}-${{ matrix.platform.target }}-release
 
       - name: Install Linux dependencies
-        if: matrix.platform.os == 'd-sorg-fleet'
+        if: matrix.platform.os == 'd-sorg-fleet-fast-io'
         run: |
           while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock && sudo apt-get -o DPkg::Lock::Timeout=300 update || true
           while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock && sudo apt-get -o DPkg::Lock::Timeout=300 update --fix-missing || true; sudo apt-get -o DPkg::Lock::Timeout=300 install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
