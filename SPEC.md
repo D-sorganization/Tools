@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.329                                    |
+| **Spec Version**        | 1.1.330                                    |
 | **Last Spec Update**    | 2026-06-09                                 |
 
 ## 2. Purpose & Mission
@@ -351,6 +351,33 @@ class MyTool(BaseTool):
         pass
 ```
 
+**Cross-repo import contract:**
+
+Downstream consumers (e.g. UpstreamDrift's `external_tools_adapter`) import
+this repository by placing the **repository root** on `sys.path` and importing
+packages under the `src.` namespace (`import src.<package>`). Top-level `src/`
+packages MUST therefore be importable with only the repository root on
+`sys.path` — they may not depend on the test-only `pythonpath` shims (`src`,
+`src/shared/python`) or on the editable-install finder being present. Concretely:
+
+- Package `__init__` modules use package-relative imports (`from .x import ...`)
+  rather than bare, ambiguous-root names (`from <pkg>.x import ...`).
+- Optional heavy runtime dependencies (e.g. `cv2`, `mediapipe`, `sidekick`) are
+  imported lazily (PEP 562 `__getattr__`) so that importing a package — and
+  reaching its version/type metadata or declared console-script entry point —
+  never requires those optional dependencies.
+
+This contract is enforced by the subprocess import-contract tests
+(`tests/test_src_package_import_contract.py`,
+`tests/video_analyzer/test_video_analyzer_import_contract.py`), which reproduce
+the consumer's clean `sys.path` so a regression turns CI red here rather than
+crashing the consumer at runtime.
+
+Rotation-converter NumPy boundaries and the video-analyzer DbC shim remain
+mypy-clean under the changed-file CI profile while preserving runtime
+validation through explicit `require`/`ensure` checks and stable fallback
+imports.
+
 ## 6. Data & Configuration
 
 ### Input Data
@@ -426,7 +453,7 @@ workers and set Qt offscreen mode before importing PyQt6 to avoid GUI worker
 crashes.
 Changed Python test files must contain at least one AST-visible behavioral
 assertion, exception assertion, or unittest/mock-style assertion call unless
-they match the explicit fixture-only assertion allowlist.
+they match the explicit fixture/support-only assertion allowlist.
 Critical numerical contracts are additionally guarded by property-based tests
 (Hypothesis) that assert invariants — round-trip identity, linearity, and
 boundary/failure behavior — rather than only example outputs. The flow-rate
@@ -1074,6 +1101,16 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.330
+
+- 2026-06-09: fix(import-contracts) — keep rotation-converter NumPy helpers,
+  screw-axis animation callbacks, and the video-analyzer DbC shim mypy-clean
+  under changed-file CI by adding explicit typed array boundaries and
+  non-redefining contract import fallbacks without changing runtime validation
+  behavior; declare the import-contract subprocess bootstrap as assertion-free
+  test support so the changed-test assertion ratchet continues to block real
+  assertion-light test cases without forcing fake assertions into helpers.
 
 ### Version 1.1.329
 

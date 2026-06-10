@@ -30,9 +30,9 @@ from typing import Any
 
 import numpy as np
 
-from rotation_converter._contracts import require, require_finite
-from rotation_converter.converter import Rotation
-from rotation_converter.core import (
+from ._contracts import require, require_finite
+from .converter import Rotation
+from .core import (
     _validate_rotation_matrix,
     axis_angle_to_rotation_matrix,
     euler_to_rotation_matrix,
@@ -44,7 +44,7 @@ from rotation_converter.core import (
     rotation_matrix_to_euler,
     rotation_matrix_to_quaternion,
 )
-from rotation_converter.twist_screw import (
+from .twist_screw import (
     adjoint_representation,
     homogeneous_to_twist_angle,
     screw_to_twist,
@@ -584,7 +584,7 @@ class RigidTransform:
         Returns:
             6-vector [omega_b; v_b] (theta embedded in magnitude).
         """
-        from rotation_converter.modern_robotics import MatrixLog6, se3ToVec
+        from .modern_robotics import MatrixLog6, se3ToVec
 
         se3_mat = MatrixLog6(self._T)
         return se3ToVec(se3_mat)

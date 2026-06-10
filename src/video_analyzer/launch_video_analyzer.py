@@ -9,15 +9,20 @@ Design by Contract:
         - Required dependencies (opencv, mediapipe) must be installed
     Postconditions:
         - Video analysis results are displayed or exported
+
+Import contract:
+    This module is the declared console-script target
+    (``video_analyzer.launch_video_analyzer:main``). Importing it must not
+    require optional heavy dependencies (cv2/mediapipe); those are imported
+    lazily inside :func:`main`.
 """
 
 from __future__ import annotations
 
+import logging
 import sys
 
-from utils.logging_utils import get_logger
-
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def main() -> int:
@@ -29,8 +34,10 @@ def main() -> int:
     logger.info("Launching Video Analyzer...")
 
     try:
-        # Import the analyzer module
-        from video_analyzer.analyzer import SwingAnalyzer
+        # Import the analyzer lazily so that importing this entry-point module
+        # (e.g. for metadata/console-script resolution) does not require the
+        # optional cv2/mediapipe runtime dependencies.
+        from .analyzer import SwingAnalyzer
 
         _analyzer = SwingAnalyzer()
         logger.info("Video Analyzer initialized successfully")
@@ -52,7 +59,5 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    from utils.logging_utils import setup_logging
-
-    setup_logging()
+    logging.basicConfig(level=logging.INFO)
     sys.exit(main())

@@ -25,9 +25,10 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from lower_body_model.builder import build_lower_body_xml
-from lower_body_model.simulator import LowerBodySimulator
 from shared.python.theme.integration import ThemedWindowMixin
+
+from .builder import build_lower_body_xml
+from .simulator import LowerBodySimulator
 
 
 class ControlPanel(ThemedWindowMixin, QMainWindow):

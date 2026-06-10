@@ -10,11 +10,11 @@ from __future__ import annotations
 import math
 from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
-from rotation_converter._contracts import require
+from ._contracts import require
 
 
 @dataclass
@@ -36,11 +36,16 @@ def _validate_spatial_vector(v: np.ndarray, name: str) -> np.ndarray:
     return v
 
 
+def _float_array(values: Any) -> np.ndarray:
+    """Construct a float ndarray with a precise type for mypy."""
+    return cast(np.ndarray, np.array(values, dtype=float))
+
+
 def crm(v: Any) -> np.ndarray:
     """Spatial cross-product operator (motion)."""
     v = _validate_spatial_vector(v, "v")
     # v = [w1 w2 w3 v1 v2 v3]
-    return np.array(
+    return _float_array(
         [
             [0.0, -v[2], v[1], 0.0, 0.0, 0.0],
             [v[2], 0.0, -v[0], 0.0, 0.0, 0.0],
@@ -49,7 +54,6 @@ def crm(v: Any) -> np.ndarray:
             [v[5], 0.0, -v[3], v[2], 0.0, -v[0]],
             [-v[4], v[3], 0.0, -v[1], v[0], 0.0],
         ],
-        dtype=float,
     )
 
 
@@ -65,7 +69,7 @@ def Xtrans(r: Any) -> np.ndarray:
     r = np.asarray(r, dtype=float).flatten()
     require(r.shape == (3,), "r must be a 3-vector")
 
-    return np.array(
+    return _float_array(
         [
             [1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             [0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
@@ -74,7 +78,6 @@ def Xtrans(r: Any) -> np.ndarray:
             [-r[2], 0.0, r[0], 0.0, 1.0, 0.0],
             [r[1], -r[0], 0.0, 0.0, 0.0, 1.0],
         ],
-        dtype=float,
     )
 
 
@@ -82,7 +85,7 @@ def Xrotx(theta: float) -> np.ndarray:
     """Spatial coordinate transform (X-axis rotation)."""
     c = math.cos(theta)
     s = math.sin(theta)
-    return np.array(
+    return _float_array(
         [
             [1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             [0.0, c, s, 0.0, 0.0, 0.0],
@@ -91,7 +94,6 @@ def Xrotx(theta: float) -> np.ndarray:
             [0.0, 0.0, 0.0, 0.0, c, s],
             [0.0, 0.0, 0.0, 0.0, -s, c],
         ],
-        dtype=float,
     )
 
 
@@ -99,7 +101,7 @@ def Xroty(theta: float) -> np.ndarray:
     """Spatial coordinate transform (Y-axis rotation)."""
     c = math.cos(theta)
     s = math.sin(theta)
-    return np.array(
+    return _float_array(
         [
             [c, 0.0, -s, 0.0, 0.0, 0.0],
             [0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
@@ -108,7 +110,6 @@ def Xroty(theta: float) -> np.ndarray:
             [0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
             [0.0, 0.0, 0.0, s, 0.0, c],
         ],
-        dtype=float,
     )
 
 
@@ -116,7 +117,7 @@ def Xrotz(theta: float) -> np.ndarray:
     """Spatial coordinate transform (Z-axis rotation)."""
     c = math.cos(theta)
     s = math.sin(theta)
-    return np.array(
+    return _float_array(
         [
             [c, s, 0.0, 0.0, 0.0, 0.0],
             [-s, c, 0.0, 0.0, 0.0, 0.0],
@@ -125,7 +126,6 @@ def Xrotz(theta: float) -> np.ndarray:
             [0.0, 0.0, 0.0, -s, c, 0.0],
             [0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
         ],
-        dtype=float,
     )
 
 
@@ -182,7 +182,7 @@ def ID(
     # 1-indexed internally (like MATLAB) to match featherstone's algorithm cleanly,
     # except we use 0-indexed arrays and adjust the parent lookup.
     NB = model.NB
-    tau = np.zeros(NB, dtype=float)
+    tau: np.ndarray = np.zeros(NB, dtype=float)
 
     if grav_accn is None:
         a_grav = np.array([0, 0, 0, 0, 0, -9.81], dtype=float)
@@ -254,7 +254,7 @@ def FDab(
     tau = np.asarray(tau, dtype=float).flatten()
 
     NB = model.NB
-    qdd = np.zeros(NB, dtype=float)
+    qdd: np.ndarray = np.zeros(NB, dtype=float)
 
     if grav_accn is None:
         a_grav = np.array([0, 0, 0, 0, 0, -9.81], dtype=float)
