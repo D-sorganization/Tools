@@ -132,13 +132,14 @@ jobs:
         with:
           components: rustfmt, clippy
 
-      # Cache cargo registry/git + matrix-app target/ dir. Per-app workspace
-      # key prevents cross-contamination between the three Tauri sub-apps.
-      - name: Cache Rust target (check)
+      # Cache cargo registry/git only. Restored target/ fingerprints can point
+      # at missing dep-info files on self-hosted runners after interrupted jobs.
+      - name: Cache Rust dependencies (check)
         uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
         with:
           workspaces: ${{ matrix.path }}/src-tauri -> target
           key: ${{ matrix.app }}-check
+          cache-targets: false
 
       - name: Install Linux dependencies
         run: |
@@ -221,13 +222,14 @@ jobs:
         with:
           targets: ${{ matrix.platform.target }}
 
-      # Per-(app, target) Rust cache. Tauri release builds compile ~400 crates;
-      # warm cache typically reduces build time by 60-70%.
-      - name: Cache Rust target (build)
+      # Cache cargo registry/git only. Build target/ caches are large and can
+      # become inconsistent across interrupted self-hosted runner jobs.
+      - name: Cache Rust dependencies (build)
         uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
         with:
           workspaces: ${{ matrix.app.path }}/src-tauri -> target
           key: ${{ matrix.app.name }}-${{ matrix.platform.target }}-release
+          cache-targets: false
 
       - name: Install Linux dependencies
         if: matrix.platform.os == 'd-sorg-fleet-fast-io'
