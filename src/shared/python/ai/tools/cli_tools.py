@@ -357,6 +357,19 @@ class ShellTool(CLIToolBase):
                 if token in dangerous:
                     return False
 
+                try:
+                    # Check for absolute/relative paths (e.g., /bin/rm, ./rm)
+                    if Path(token).name in dangerous:
+                        return False
+
+                    # Check for assignments passing executables (e.g., --exec=/bin/rm)
+                    if "=" in token:
+                        val = token.split("=", 1)[1]
+                        if val in dangerous or Path(val).name in dangerous:
+                            return False
+                except Exception:
+                    pass
+
             return True
         except ValueError:
             # e.g., missing closing quote
