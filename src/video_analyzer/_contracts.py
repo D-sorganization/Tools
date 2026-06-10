@@ -29,16 +29,22 @@ precondition: Callable[..., Callable[[_F], _F]]
 try:  # pragma: no cover - exercised via import-contract tests
     # Fully-qualified path that resolves when the repo root is on sys.path
     # and the package is imported under the ``src.`` namespace.
-    from src.shared.python.contracts import precondition
+    from src.shared.python.contracts import precondition as _shared_precondition
+
+    precondition = _shared_precondition
 except ImportError:  # pragma: no cover - fallbacks
     try:
         # Path that resolves when ``src/`` is on sys.path (in-repo test runs).
-        from shared.python.contracts import precondition  # type: ignore
+        from shared.python.contracts import precondition as _src_precondition
+
+        precondition = _src_precondition
     except ImportError:
         try:
             # Short alias that resolves when ``src/`` or ``src/shared/python``
             # is on sys.path.
-            from contracts import precondition  # type: ignore
+            from contracts import precondition as _short_precondition
+
+            precondition = _short_precondition
         except ImportError:
             # ── Standalone fallback ──────────────────────────────────
             # A no-op ``precondition`` decorator factory. It preserves the

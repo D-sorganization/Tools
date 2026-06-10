@@ -20,7 +20,7 @@ DbC: validates SE(3) inputs, ensures finite outputs.
 from __future__ import annotations
 
 import math
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
@@ -251,7 +251,7 @@ class ScrewAxisAnimator:
     @property
     def trajectory_path(self) -> np.ndarray:
         """Nx3 array of position points along the trajectory."""
-        return np.array([T[:3, 3] for T in self._trajectory])
+        return cast(np.ndarray, np.array([T[:3, 3] for T in self._trajectory]))
 
     def get_plot_bounds(self) -> dict[str, tuple[float, float]]:
         """Compute axis-aligned bounding box with padding."""
@@ -459,8 +459,9 @@ class ScrewAxisAnimator:
         ax = fig.add_subplot(111, projection="3d", facecolor="black")
         ax.tick_params(colors="gray")
 
-        def update(frame_idx: int) -> None:
+        def update(frame_idx: int) -> list[Any]:
             self._draw_frame(ax, frame_idx)
+            return []
 
         _anim = FuncAnimation(
             fig,
@@ -494,8 +495,9 @@ class ScrewAxisAnimator:
         ax = fig.add_subplot(111, projection="3d", facecolor="black")
         ax.tick_params(colors="gray")
 
-        def update(frame_idx: int) -> None:
+        def update(frame_idx: int) -> list[Any]:
             self._draw_frame(ax, frame_idx)
+            return []
 
         anim = FuncAnimation(
             fig,

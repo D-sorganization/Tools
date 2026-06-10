@@ -16,7 +16,7 @@ DRY: reuses skew-symmetric and Rodrigues from core module.
 from __future__ import annotations
 
 import math
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
@@ -31,6 +31,12 @@ from .core import (
     _validate_rotation_matrix,
     rotation_matrix_to_axis_angle,
 )
+
+
+def _as_array(value: Any) -> np.ndarray:
+    """Return a NumPy array with a precise type for mypy after validation."""
+    return cast(np.ndarray, value)
+
 
 # ---------------------------------------------------------------------------
 # Twist vector <-> se(3) matrix
@@ -80,7 +86,7 @@ def se3_matrix_to_twist_vector(M: Any) -> np.ndarray:
 
     omega = np.array([M[2, 1], M[0, 2], M[1, 0]])
     v = M[:3, 3]
-    result = np.concatenate([omega, v])
+    result = _as_array(np.concatenate([omega, v]))
 
     ensure(result.shape == (6,), "result must have 6 elements")
     return result
@@ -175,11 +181,11 @@ def homogeneous_to_twist_angle(T: Any) -> tuple[np.ndarray, float]:
         p_norm = np.linalg.norm(p)
         if p_norm < 1e-12:
             # Identity transform
-            xi, theta = np.zeros(6), 0.0
+            xi, theta = _as_array(np.zeros(6)), 0.0
         else:
             # Pure translation
             v_hat = p / p_norm
-            xi, theta = np.concatenate([np.zeros(3), v_hat]), float(p_norm)
+            xi, theta = _as_array(np.concatenate([np.zeros(3), v_hat])), float(p_norm)
     else:
         # General case: extract axis-angle from R
         _validate_rotation_matrix(R)
@@ -189,10 +195,13 @@ def homogeneous_to_twist_angle(T: Any) -> tuple[np.ndarray, float]:
             # Near-identity rotation, treat as pure translation
             p_norm = np.linalg.norm(p)
             if p_norm < 1e-12:
-                xi, theta = np.zeros(6), 0.0
+                xi, theta = _as_array(np.zeros(6)), 0.0
             else:
                 v_hat = p / p_norm
-                xi, theta = np.concatenate([np.zeros(3), v_hat]), float(p_norm)
+                xi, theta = (
+                    _as_array(np.concatenate([np.zeros(3), v_hat])),
+                    float(p_norm),
+                )
         else:
             omega = axis
             K = _skew_symmetric(omega)
@@ -204,7 +213,7 @@ def homogeneous_to_twist_angle(T: Any) -> tuple[np.ndarray, float]:
                 + (1.0 / theta - 0.5 * cot_half) * (K @ K)
             )
             v = G_inv @ p
-            xi = np.concatenate([omega, v])
+            xi = _as_array(np.concatenate([omega, v]))
 
     ensure(xi.shape == (6,), "result twist must have 6 elements")
     ensure(theta >= 0, "angle must be non-negative")
@@ -299,7 +308,7 @@ def screw_to_twist(screw: dict[str, Any]) -> np.ndarray:
         omega = axis
         v = np.cross(-omega, point) + pitch * omega
 
-    xi = np.concatenate([omega, v])
+    xi = _as_array(np.concatenate([omega, v]))
     ensure(xi.shape == (6,), "result must have 6 elements")
     return xi
 

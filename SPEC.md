@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.329                                    |
+| **Spec Version**        | 1.1.330                                    |
 | **Last Spec Update**    | 2026-06-09                                 |
 
 ## 2. Purpose & Mission
@@ -372,6 +372,11 @@ This contract is enforced by the subprocess import-contract tests
 `tests/video_analyzer/test_video_analyzer_import_contract.py`), which reproduce
 the consumer's clean `sys.path` so a regression turns CI red here rather than
 crashing the consumer at runtime.
+
+Rotation-converter NumPy boundaries and the video-analyzer DbC shim remain
+mypy-clean under the changed-file CI profile while preserving runtime
+validation through explicit `require`/`ensure` checks and stable fallback
+imports.
 
 ## 6. Data & Configuration
 
@@ -1096,6 +1101,14 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.330
+
+- 2026-06-09: fix(import-contracts) — keep rotation-converter NumPy helpers,
+  screw-axis animation callbacks, and the video-analyzer DbC shim mypy-clean
+  under changed-file CI by adding explicit typed array boundaries and
+  non-redefining contract import fallbacks without changing runtime validation
+  behavior.
 
 ### Version 1.1.329
 

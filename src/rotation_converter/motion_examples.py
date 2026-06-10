@@ -17,6 +17,7 @@ DbC: postconditions verify every output frame is valid SE(3).
 from __future__ import annotations
 
 import math
+from typing import Any, cast
 
 import numpy as np
 
@@ -28,6 +29,11 @@ from .modern_robotics import MatrixExp3, VecToso3
 # ---------------------------------------------------------------------------
 
 _GRAVITY = 9.81  # m/s^2
+
+
+def _float_array(values: Any) -> np.ndarray:
+    """Construct a float ndarray with a precise type for mypy."""
+    return cast(np.ndarray, np.array(values, dtype=float))
 
 
 def _ballistic_position(v0: float, launch_angle: float, t: float) -> np.ndarray:
@@ -42,7 +48,7 @@ def _ballistic_position(v0: float, launch_angle: float, t: float) -> np.ndarray:
     vz = v0 * math.sin(launch_angle)
     x = vx * t
     z = vz * t - 0.5 * _GRAVITY * t**2
-    return np.array([x, 0.0, max(z, 0.0)])
+    return _float_array([x, 0.0, max(z, 0.0)])
 
 
 def _time_of_flight(v0: float, launch_angle: float) -> float:
