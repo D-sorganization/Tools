@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.339                                    |
+| **Spec Version**        | 1.1.340                                    |
 | **Last Spec Update**    | 2026-06-10                                 |
 
 ## 2. Purpose & Mission
@@ -714,6 +714,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-10 | 1.1.340 | fix(ci/runner, #3304): raise Rust stack reservations to 128 MiB for local self-hosted Tauri and wheel builds after OGLaptop rustc clippy failures explicitly requested `RUST_MIN_STACK=134217728`. |
 | 2026-06-10 | 1.1.339 | fix(ci/runner, #3300): expose `$HOME/.cargo/bin` before Rust toolchain setup in self-hosted Rust jobs so fleet runners use their preinstalled rustup instead of attempting fragile bootstrap installs when non-login shells omit cargo from PATH. |
 | 2026-06-10 | 1.1.338 | fix(ci, #3300): raise Rust runner stack reservations to 64 MiB for local self-hosted Tauri and wheel builds after rustc SIGSEGV failures explicitly requested `RUST_MIN_STACK=67108864` on the fleet. |
 | 2026-06-10 | 1.1.337 | fix(ci/test-contract, #3300): recognize repo-level `tests/<package>/test_*.py` directories as satisfying the minimum test contract for changed `src/<package>` packages, with regression coverage so package-scoped tests like `tests/plant_simulator/test_dataset.py` are accepted without weakening the quality gate. |
