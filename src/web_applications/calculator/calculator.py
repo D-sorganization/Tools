@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import ast
 import contextlib
 import logging
 import math
@@ -16,6 +17,38 @@ import sympy as sp
 from sympy.parsing.sympy_parser import convert_xor, parse_expr, standard_transformations
 
 logger = logging.getLogger(__name__)
+
+# Structural AST gate run BEFORE sympy.parse_expr on untrusted input (issue
+# #3293). parse_expr internally compiles+evals transformed source, so a
+# substring blocklist is not a sound boundary. We instead require the raw
+# expression to parse as a restricted Python expression containing only the
+# node kinds a calculator needs; attribute access, lambdas, comprehensions,
+# walrus, etc. are rejected by absence rather than enumeration.
+_CALC_ALLOWED_AST_NODES: tuple[type[ast.AST], ...] = (
+    ast.Expression,
+    ast.Load,
+    ast.BinOp,
+    ast.UnaryOp,
+    ast.operator,
+    ast.unaryop,
+    ast.cmpop,
+    ast.Compare,
+    ast.BoolOp,
+    ast.boolop,
+    ast.Constant,
+    ast.Name,
+    ast.Call,
+    ast.keyword,
+    ast.Tuple,
+    ast.List,
+    ast.Subscript,
+    ast.Slice,
+    ast.IfExp,
+)
+# Hard caps to defeat trivially over-large / over-complex inputs before sympy.
+_CALC_MAX_EXPR_LENGTH = 10_000
+_CALC_MAX_AST_NODES = 1_000
+_CALC_MAX_STR_CONSTANT_LENGTH = 256
 
 
 @dataclass(frozen=True)
@@ -135,6 +168,53 @@ class TI89Calculator:
                     raise ValueError("Exponentiation result exceeds safety limits")
 
         return sp.Pow(base, exp, **kwargs)
+
+    @staticmethod
+    def _ast_security_gate(expression: str) -> None:
+        """Structurally validate untrusted input before handing it to parse_expr.
+
+        ``sympy.parse_expr`` compiles and evals transformed source, so the prior
+        substring blocklist was not a sound security boundary (issue #3293).
+        This gate parses the raw expression as a restricted Python expression and
+        rejects any construct outside an allowlist — notably attribute access
+        (``().__class__``), lambdas, comprehensions, and the walrus operator —
+        by structure rather than by enumerating dangerous substrings.
+
+        Raises:
+            ValueError: if the expression is too large/complex or contains a
+                disallowed construct.
+        """
+        if not isinstance(expression, str):
+            raise TypeError("expression must be a string")
+        stripped = expression.strip()
+        if not stripped:
+            return
+        if len(expression) > _CALC_MAX_EXPR_LENGTH:
+            raise ValueError("Expression exceeds maximum allowed length")
+
+        try:
+            tree = ast.parse(stripped, mode="eval")
+        except SyntaxError:
+            # Not valid Python surface syntax (e.g. an equation "x = y" or a
+            # sympy-specific form). Let parse_expr handle/raise on it; the
+            # restricted global_dict remains the backstop. We only *reject* here.
+            return
+
+        node_count = 0
+        for node in ast.walk(tree):
+            node_count += 1
+            if node_count > _CALC_MAX_AST_NODES:
+                raise ValueError("Expression is too complex")
+            if not isinstance(node, _CALC_ALLOWED_AST_NODES):
+                raise ValueError(
+                    f"Forbidden expression construct: {type(node).__name__}"
+                )
+            if isinstance(node, ast.Constant) and isinstance(node.value, str | bytes):
+                if len(node.value) > _CALC_MAX_STR_CONSTANT_LENGTH:
+                    raise ValueError("String constant exceeds allowed length")
+            # Only bare-name calls (no attribute calls like obj.method()).
+            if isinstance(node, ast.Call) and not isinstance(node.func, ast.Name):
+                raise ValueError("Attribute-based function calls are not allowed")
 
     @staticmethod
     def _validate_expression_tree(expr: object) -> None:
@@ -632,6 +712,12 @@ class TI89Calculator:
                     return sp.Float(clean_expr)
                 except ValueError:
                     pass
+
+        # Security (#3293): structurally gate the raw input through an AST
+        # allowlist BEFORE handing it to sympy.parse_expr (which compiles+evals
+        # transformed source). Rejects attribute access, lambdas, comprehensions,
+        # walrus, and oversized/over-complex inputs by structure, not substring.
+        TI89Calculator._ast_security_gate(expression)
 
         # Security: Parse without evaluation first to check for DoS vectors
         # Optimization: Use global_dict for allowed functions to avoid copy
