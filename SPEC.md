@@ -1111,7 +1111,9 @@ Active development with stable core, continuous tool expansion, and web API in p
   suites in Sidekick-changed CI slices before the per-file Sidekick coverage
   gate runs, keeping changed-file coverage enforcement aligned with the module
   that triggered the gate; restored JSON serialization of simple object
-  class-level defaults while keeping instance attributes authoritative.
+  class-level defaults while keeping instance attributes authoritative; keep the
+  state-manager import side-effect subprocess on the same shared `utils` source
+  path used by clean CI runners.
 
 ### Version 1.1.329
 
