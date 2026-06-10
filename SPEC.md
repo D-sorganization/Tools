@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.347                                    |
+| **Spec Version**        | 1.1.348                                    |
 | **Last Spec Update**    | 2026-06-10                                 |
 
 ## 2. Purpose & Mission
@@ -714,6 +714,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-10 | 1.1.348 | test(ai): keep the #3310 GUI-thread dispatcher coverage mypy-clean under the changed-file gate by annotating the offscreen Qt fixture, worker-thread test parameters, dispatcher thunks, and exception helper while preserving the main-thread marshalling behavior under test. |
 | 2026-06-10 | 1.1.347 | fix(ci/runner): split Tauri build matrix display labels from `runs-on` targets so Windows jobs no longer render as `Array`, and run Windows Rust path/tool-home setup through PowerShell while preserving bash setup on Linux. |
 | 2026-06-10 | 1.1.346 | fix(ci/runner, #3308): restore the Tauri 30-minute check timeout on current main after #3307 accidentally reverted the runner hardening while adding the ShellTool command-injection fix. |
 | 2026-06-10 | 1.1.345 | fix(ci/runner, #3305): isolate Tauri `RUSTUP_HOME` and `CARGO_HOME` under each job's `RUNNER_TEMP` so parallel self-hosted jobs do not race on the shared `$HOME/.rustup` toolchain and lose `rustc` mid-clippy. |

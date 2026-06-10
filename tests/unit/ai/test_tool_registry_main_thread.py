@@ -7,11 +7,11 @@ plain tools run inline. These tests use a fake dispatcher and need no Qt.
 
 from __future__ import annotations
 
-from typing import Any
+from collections.abc import Callable
 
 import pytest
 
-from src.shared.python.ai.tool_registry import Tool, ToolRegistry
+from src.shared.python.ai.tool_registry import Tool, ToolRegistry, ToolResult
 
 pytestmark = [pytest.mark.unit]
 
@@ -29,9 +29,9 @@ def _make_registry_with_tool(*, requires_main_thread: bool) -> ToolRegistry:
 
 def test_flagged_tool_routes_through_dispatcher() -> None:
     registry = _make_registry_with_tool(requires_main_thread=True)
-    calls: list[Any] = []
+    calls: list[Callable[[], ToolResult]] = []
 
-    def dispatcher(thunk):
+    def dispatcher(thunk: Callable[[], ToolResult]) -> ToolResult:
         calls.append(thunk)
         return thunk()
 
@@ -44,8 +44,13 @@ def test_flagged_tool_routes_through_dispatcher() -> None:
 
 def test_unflagged_tool_runs_inline_even_with_dispatcher() -> None:
     registry = _make_registry_with_tool(requires_main_thread=False)
-    calls: list[Any] = []
-    registry.set_main_thread_dispatcher(lambda thunk: calls.append(thunk) or thunk())
+    calls: list[Callable[[], ToolResult]] = []
+
+    def dispatcher(thunk: Callable[[], ToolResult]) -> ToolResult:
+        calls.append(thunk)
+        return thunk()
+
+    registry.set_main_thread_dispatcher(dispatcher)
     result = registry.execute("touch", {})
     assert result.success
     assert calls == []  # dispatcher must NOT be used for plain tools
@@ -67,8 +72,13 @@ def test_set_main_thread_dispatcher_rejects_non_callable() -> None:
 
 def test_clearing_dispatcher_restores_inline_execution() -> None:
     registry = _make_registry_with_tool(requires_main_thread=True)
-    calls: list[Any] = []
-    registry.set_main_thread_dispatcher(lambda thunk: calls.append(thunk) or thunk())
+    calls: list[Callable[[], ToolResult]] = []
+
+    def dispatcher(thunk: Callable[[], ToolResult]) -> ToolResult:
+        calls.append(thunk)
+        return thunk()
+
+    registry.set_main_thread_dispatcher(dispatcher)
     registry.set_main_thread_dispatcher(None)
     result = registry.execute("touch", {})
     assert result.success

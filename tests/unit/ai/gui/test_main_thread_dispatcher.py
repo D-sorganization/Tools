@@ -10,6 +10,8 @@ from __future__ import annotations
 import os
 import threading
 import time
+from collections.abc import Generator
+from typing import Any
 
 import pytest
 
@@ -28,18 +30,19 @@ pytestmark = [pytest.mark.unit, pytest.mark.requires_gl]
 
 
 @pytest.fixture(scope="module")
-def app():
+def app() -> Generator[QApplication, None, None]:
     instance = QApplication.instance() or QApplication([])
+    assert isinstance(instance, QApplication)
     yield instance
 
 
-def test_same_thread_call_runs_inline(app) -> None:
+def test_same_thread_call_runs_inline(app: QApplication) -> None:
     dispatcher = MainThreadToolDispatcher()
     out = dispatcher(lambda: threading.get_ident())
     assert out == threading.get_ident()
 
 
-def test_exception_propagates_inline(app) -> None:
+def test_exception_propagates_inline(app: QApplication) -> None:
     dispatcher = MainThreadToolDispatcher()
 
     def boom() -> None:
@@ -49,7 +52,7 @@ def test_exception_propagates_inline(app) -> None:
         dispatcher(boom)
 
 
-def test_worker_thread_marshals_to_owning_thread(app) -> None:
+def test_worker_thread_marshals_to_owning_thread(app: QApplication) -> None:
     dispatcher = MainThreadToolDispatcher()  # owned by this (GUI) thread
     gui_ident = threading.get_ident()
     captured: dict[str, int] = {}
@@ -75,14 +78,17 @@ def test_worker_thread_marshals_to_owning_thread(app) -> None:
     assert captured["ran_on"] == gui_ident  # thunk ran on the GUI thread
 
 
-def test_worker_thread_exception_propagates(app) -> None:
+def test_worker_thread_exception_propagates(app: QApplication) -> None:
     dispatcher = MainThreadToolDispatcher()
     captured: dict[str, BaseException] = {}
+
+    def raise_worker_error() -> Any:
+        raise ValueError("boom-worker")
 
     class _Worker(QThread):
         def run(self) -> None:
             try:
-                dispatcher(lambda: (_ for _ in ()).throw(ValueError("boom-worker")))
+                dispatcher(raise_worker_error)
             except ValueError as exc:  # noqa: BLE001 - capture for assertion
                 captured["error"] = exc
 
