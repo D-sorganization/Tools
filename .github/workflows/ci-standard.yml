@@ -707,6 +707,14 @@ jobs:
             echo "No Rust changes detected - skipping Rust quality gate."
           fi
 
+      - name: Expose preinstalled Rustup
+        if: steps.rust-changes.outputs.has_changes == 'true'
+        shell: bash
+        run: |
+          if [ -d "$HOME/.cargo/bin" ]; then
+            echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+          fi
+
       - name: Install Rust toolchain
         if: steps.rust-changes.outputs.has_changes == 'true'
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
