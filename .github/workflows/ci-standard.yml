@@ -673,7 +673,7 @@ jobs:
       CARGO_BUILD_JOBS: "1"
       CARGO_INCREMENTAL: "0"
       CARGO_TERM_COLOR: always
-      RUST_MIN_STACK: "67108864"
+      RUST_MIN_STACK: "268435456"
     steps:
       - uses: actions/checkout@v6
 
@@ -705,6 +705,14 @@ jobs:
           else
             echo "has_changes=false" >> "$GITHUB_OUTPUT"
             echo "No Rust changes detected - skipping Rust quality gate."
+          fi
+
+      - name: Expose preinstalled Rustup
+        if: steps.rust-changes.outputs.has_changes == 'true'
+        shell: bash
+        run: |
+          if [ -d "$HOME/.cargo/bin" ]; then
+            echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
           fi
 
       - name: Install Rust toolchain

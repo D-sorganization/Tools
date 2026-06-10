@@ -3,6 +3,7 @@ self-hosted-runner:
     - d-sorg-fleet
     - d-sorg-fleet-2core
     - d-sorg-fleet-14core
+    - d-sorg-fleet-fast-io
     - ubuntu-latest
     - ubuntu-22.04
     - ubuntu-24.04
