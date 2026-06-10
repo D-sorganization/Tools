@@ -12,7 +12,6 @@ serde = { workspace = true }
 
 [dependencies.pyo3]
 version = "0.24"
-features = ["extension-module"]
 optional = true
 
 [dependencies.numpy]
@@ -25,7 +24,7 @@ optional = true
 
 [features]
 default = []
-python = ["pyo3", "numpy"]
+python = ["pyo3", "pyo3/extension-module", "numpy"]
 wasm = ["wasm-bindgen"]
 
 [lib]

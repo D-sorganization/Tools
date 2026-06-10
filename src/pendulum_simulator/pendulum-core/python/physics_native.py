@@ -27,7 +27,7 @@ Usage:
 """
 
 import logging
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Tuple, cast
 import numpy as np
 
 logger = logging.getLogger(__name__)
@@ -42,6 +42,10 @@ try:
 except ImportError as e:
     NATIVE_ERROR = str(e)
     logger.debug("Rust pendulum_core unavailable: %s", e)
+
+
+def _float64_array(value: Any) -> np.ndarray:
+    return cast(np.ndarray, np.array(value, dtype=np.float64))
 
 
 class DoublePendulumParams:
@@ -148,7 +152,7 @@ class DoublePendulum:
         if self.use_native:
             try:
                 result = pendulum_core.py_double_mass_matrix(q.tolist(), self.params.to_rust())
-                return np.array(result, dtype=np.float64)
+                return _float64_array(result)
             except (RuntimeError, AttributeError, TypeError) as e:
                 logger.warning(
                     "Rust mass_matrix call failed (%s), falling back to NumPy: %s",
@@ -164,7 +168,7 @@ class DoublePendulum:
         m00 += 2.0 * me * self.params.l1 * self.params.l2 * cos_phi
         m01 = me * self.params.l2**2 + me * self.params.l1 * self.params.l2 * cos_phi
         m11 = me * self.params.l2**2
-        return np.array([[m00, m01], [m01, m11]], dtype=np.float64)
+        return _float64_array([[m00, m01], [m01, m11]])
 
     def gravity_vector(self, q: np.ndarray) -> np.ndarray:
         """Compute the gravity vector G(q)."""
@@ -177,7 +181,7 @@ class DoublePendulum:
                 result = pendulum_core.py_double_gravity_vector(
                     q.tolist(), self.params.to_rust()
                 )
-                return np.array(result, dtype=np.float64)
+                return _float64_array(result)
             except (RuntimeError, AttributeError, TypeError) as e:
                 logger.warning(
                     "Rust gravity_vector call failed (%s), falling back to NumPy",
@@ -192,7 +196,7 @@ class DoublePendulum:
             theta1
         ) + me * self.params.g * self.params.l2 * np.sin(theta2)
         g1 = me * self.params.g * self.params.l2 * np.sin(theta2)
-        return np.array([g0, g1], dtype=np.float64)
+        return _float64_array([g0, g1])
 
     def coriolis(self, q: np.ndarray, qdot: np.ndarray) -> np.ndarray:
         """Compute the Coriolis vector C(q, qdot)."""
@@ -209,7 +213,7 @@ class DoublePendulum:
                 result = pendulum_core.py_double_coriolis(
                     q.tolist(), qdot.tolist(), self.params.to_rust()
                 )
-                return np.array(result, dtype=np.float64)
+                return _float64_array(result)
             except (RuntimeError, AttributeError, TypeError) as e:
                 logger.warning(
                     "Rust coriolis call failed (%s), falling back to NumPy",
@@ -222,7 +226,7 @@ class DoublePendulum:
         h = -me * self.params.l1 * self.params.l2 * np.sin(phi)
         c0 = h * (2.0 * qdot[0] * qdot[1] + qdot[1] ** 2)
         c1 = -h * qdot[0] ** 2
-        return np.array([c0, c1], dtype=np.float64)
+        return _float64_array([c0, c1])
 
     def forward_kinematics(self, q: np.ndarray) -> Dict[str, float]:
         """Compute forward kinematics."""
@@ -434,7 +438,7 @@ class Golfer:
         if self.use_native:
             try:
                 result = pendulum_core.py_golfer_mass_matrix(q.tolist(), self.params.to_rust())
-                return np.array(result, dtype=np.float64)
+                return _float64_array(result)
             except (RuntimeError, AttributeError, TypeError) as e:
                 logger.error(
                     "Rust golfer mass_matrix call failed (%s): %s",
@@ -461,7 +465,7 @@ class Golfer:
                 result = pendulum_core.py_golfer_gravity_vector(
                     q.tolist(), self.params.to_rust()
                 )
-                return np.array(result, dtype=np.float64)
+                return _float64_array(result)
             except (RuntimeError, AttributeError, TypeError) as e:
                 logger.warning("Rust golfer gravity_vector call failed (%s)", type(e).__name__)
 
@@ -501,7 +505,7 @@ class Golfer:
                 result = pendulum_core.py_golfer_constraint_vector(
                     q.tolist(), self.params.to_rust()
                 )
-                return np.array(result, dtype=np.float64)
+                return _float64_array(result)
             except (RuntimeError, AttributeError, TypeError) as e:
                 logger.warning(
                     "Rust golfer constraint_vector call failed (%s)", type(e).__name__
@@ -520,7 +524,7 @@ class Golfer:
                 result = pendulum_core.py_golfer_constraint_jacobian(
                     q.tolist(), self.params.to_rust()
                 )
-                return np.array(result, dtype=np.float64)
+                return _float64_array(result)
             except (RuntimeError, AttributeError, TypeError) as e:
                 logger.warning(
                     "Rust golfer constraint_jacobian call failed (%s)", type(e).__name__

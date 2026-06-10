@@ -14,7 +14,7 @@ default = []
 # Enables PyO3 bindings. Mirrors the `ai_backend` pattern: keeping pyo3 behind
 # an opt-in feature lets `cargo test --workspace` succeed without linking
 # libpython, while maturin builds the production wheel with `--features python`.
-python = ["dep:pyo3"]
+python = ["dep:pyo3", "pyo3/extension-module"]
 
 [dependencies]
 pyo3 = { workspace = true, optional = true }

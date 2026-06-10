@@ -18,7 +18,7 @@ default = []
 # Activates PyO3 Python bindings for the maturin wheel build.
 # Keep behind a feature flag so `cargo test --workspace` compiles without
 # linking libpython (mirrors the ai_backend pattern).
-python = ["dep:pyo3"]
+python = ["dep:pyo3", "pyo3/extension-module"]
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }
@@ -27,4 +27,3 @@ pyo3 = { workspace = true, optional = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 thiserror = "2"
-

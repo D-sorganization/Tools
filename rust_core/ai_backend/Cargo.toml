@@ -16,12 +16,10 @@ required-features = []
 
 [features]
 default = []
-# Enables PyO3 bindings. The workspace-level pyo3 dependency already activates
-# the `extension-module` feature, which is required for the maturin-built wheel
-# but breaks plain `cargo test` linkage when pyo3 is unconditional. Keeping
-# pyo3 behind an opt-in feature mirrors the upstream-physics pattern and lets
-# `cargo test --workspace` succeed without linking libpython.
-python = ["dep:pyo3"]
+# Enables PyO3 bindings for maturin-built wheels. Keep both pyo3 and
+# extension-module behind the opt-in feature so plain workspace tests/clippy
+# do not link Rust test binaries as Python extension modules.
+python = ["dep:pyo3", "pyo3/extension-module"]
 # Enables local ONNX-based embeddings via `ort` + `tokenizers`. Opt-in because
 # `ort` pulls in onnxruntime native binaries that are heavyweight (~30 MB) and
 # can be fragile to set up on Windows MSVC without `ONNXRUNTIME_LIB_DIR`. The
