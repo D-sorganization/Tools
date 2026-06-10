@@ -201,13 +201,64 @@ GUI_INFO = {
     assert "Loaded GUI registration from:" in caplog.text
 
 
-def test_auto_discover_guis_counts_modules_without_gui_info(tmp_path: Path) -> None:
+def test_auto_discover_guis_does_not_count_modules_without_gui_info(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """A module without a valid GUI_INFO is not a successful registration.
+
+    The return value reflects GUIs actually registered, not modules merely
+    imported, so a registration-less module counts 0 and is logged.
+    """
     package = tmp_path / "legacy_tool"
     package.mkdir()
     (package / "gui_registration.py").write_text("VALUE = 1\n", encoding="utf-8")
 
-    assert auto_discover_guis([tmp_path]) == 1
+    with caplog.at_level(logging.WARNING, logger="gui_launcher.registry"):
+        count = auto_discover_guis([tmp_path])
+
+    assert count == 0
     assert get_registry().list_tools() == []
+    assert "missing/invalid" in caplog.text
+
+
+def test_one_bad_registration_does_not_abort_discovery(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """A single broken gui_registration.py must not abort discovery for others.
+
+    Regression test for #3275: a non-ImportError raised at import time (here a
+    RuntimeError) previously propagated out of the loop and took down discovery
+    for every tool. It must instead be skipped with a logged warning while the
+    valid registration still succeeds.
+    """
+    good = tmp_path / "good_tool"
+    good.mkdir()
+    (good / "gui_registration.py").write_text(
+        """
+GUI_INFO = {
+    "tool_name": "good",
+    "name": "Good Tool",
+    "description": "Valid registration",
+    "category": "Discovery",
+    "pyqt6": {"module": "good.ui", "class": "GoodWindow"},
+}
+""",
+        encoding="utf-8",
+    )
+
+    bad = tmp_path / "bad_tool"
+    bad.mkdir()
+    bad_reg = bad / "gui_registration.py"
+    bad_reg.write_text("raise RuntimeError('boom')\n", encoding="utf-8")
+
+    with caplog.at_level(logging.WARNING, logger="gui_launcher.registry"):
+        count = auto_discover_guis([tmp_path])
+
+    assert count == 1
+    assert get_registry().get("good").display_name == "Good Tool"
+    assert f"Failed to load GUI registration from {bad_reg}" in caplog.text
 
 
 def test_auto_discover_guis_skips_missing_paths_and_warns_on_import_error(

@@ -61,9 +61,10 @@ DEFAULT_CLAUDE_CODE_TIMEOUT = 120.0  # [s]
 # Known install locations probed when ``claude`` is not on PATH. Order matters:
 # Windows install location first because the launcher runs on Windows.
 _FALLBACK_PATHS = (
-    r"C:\Users\diete\.local\bin\claude.exe",
     r"%LOCALAPPDATA%\Programs\Claude Code\claude.exe",
-    "/home/dieterolson/.local/bin/claude",
+    r"~\.local\bin\claude.exe",
+    "~/.local/bin/claude",
+    "/usr/local/bin/claude",
 )
 
 # Static model catalogue. Claude Code does not expose a `list models` command,
@@ -100,7 +101,7 @@ def _resolve_binary(explicit: str | None = None) -> str | None:
     import os
 
     for candidate in _FALLBACK_PATHS:
-        expanded = os.path.expandvars(candidate)
+        expanded = os.path.expanduser(os.path.expandvars(candidate))
         if Path(expanded).exists():
             return expanded
     return None

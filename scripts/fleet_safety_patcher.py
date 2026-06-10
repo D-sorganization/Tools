@@ -1,13 +1,44 @@
 import logging
 import os
 import subprocess
+import sys
 from pathlib import Path
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
-REPOS_ROOT = Path(r"C:\Users\diete\Repositories")
+
+def _resolve_repos_root() -> Path:
+    """Resolve the directory that contains the fleet repos, portably.
+
+    Resolution order: ``--repos-root`` CLI arg, ``FLEET_REPOS_ROOT`` /
+    ``TOOLS_REPO_PATH`` env vars, then the parent of this repo checkout
+    (``scripts/`` lives one level under the repo root). Exits non-zero if the
+    resolved directory does not exist, so a headless run fails loudly rather
+    than silently no-op'ing on a missing developer-specific path.
+    """
+    candidate: Path | None = None
+    argv = sys.argv[1:]
+    if "--repos-root" in argv:
+        idx = argv.index("--repos-root")
+        if idx + 1 < len(argv):
+            candidate = Path(argv[idx + 1])
+    if candidate is None:
+        env = os.environ.get("FLEET_REPOS_ROOT") or os.environ.get("TOOLS_REPO_PATH")
+        if env:
+            candidate = Path(env)
+    if candidate is None:
+        # scripts/<this file> -> repo root -> repos root (its parent)
+        candidate = Path(__file__).resolve().parents[1].parent
+    candidate = candidate.expanduser()
+    if not candidate.is_dir():
+        logger.error("Could not resolve a valid repos root (tried: %s)", candidate)
+        sys.exit(1)
+    return candidate
+
+
+REPOS_ROOT = _resolve_repos_root()
 TARGET_REPOS = [
     "AffineDrift",
     "Games",
@@ -31,7 +62,9 @@ PR_BODY = """This PR implements critical safety guards to prevent automated regr
 4. **Sanity Checks**: Workflows now verify change size before committing."""
 
 
-def run_cmd(cmd, cwd=None):
+def run_cmd(
+    cmd: list[str], cwd: str | Path | None = None
+) -> subprocess.CompletedProcess[str]:
     logger.info(f">>> Running: {' '.join(cmd)} in {cwd or os.getcwd()}")
     result = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
     if result.returncode != 0:
@@ -39,7 +72,7 @@ def run_cmd(cmd, cwd=None):
     return result
 
 
-def add_codeowners(repo_path: Path):
+def add_codeowners(repo_path: Path) -> None:
     github_dir = repo_path / ".github"
     github_dir.mkdir(exist_ok=True)
     codeowners_path = github_dir / "CODEOWNERS"
@@ -53,7 +86,7 @@ scripts/ @dieterolson
     logger.info(f"Added CODEOWNERS to {repo_path.name}")
 
 
-def patch_mypy_agent_guard(repo_path: Path):
+def patch_mypy_agent_guard(repo_path: Path) -> None:
     agent_path = repo_path / "scripts" / "mypy_autofix_agent.py"
     if not agent_path.exists():
         return
@@ -71,7 +104,7 @@ def patch_mypy_agent_guard(repo_path: Path):
     agent_path.write_text(content, encoding="utf-8")
 
 
-def patch_ci_standard_deps(repo_path: Path):
+def patch_ci_standard_deps(repo_path: Path) -> None:
     ci_path = repo_path / ".github" / "workflows" / "ci-standard.yml"
     if not ci_path.exists():
         return
@@ -98,7 +131,7 @@ def patch_ci_standard_deps(repo_path: Path):
     ci_path.write_text(content, encoding="utf-8")
 
 
-def process_repo(repo_name):
+def process_repo(repo_name: str) -> None:
     repo_path = REPOS_ROOT / repo_name
     logger.info(f"\nGuard Phase: {repo_name}...")
 
