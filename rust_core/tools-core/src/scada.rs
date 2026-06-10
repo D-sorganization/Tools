@@ -1,9 +1,9 @@
 //! SCADA alarm engine, safety interlock matrix, gasification process simulator,
 //! and signal filters with PyO3 bindings.
 
-use std::collections::HashMap;
-use pyo3::prelude::*;
 use numpy::{PyArray1, PyReadonlyArray1};
+use pyo3::prelude::*;
+use std::collections::HashMap;
 
 /// Alarm state enumeration matching SCADA severity classifications.
 #[pyclass(module = "tools_core.scada")]
@@ -34,7 +34,12 @@ pub struct TagLimits {
 impl TagLimits {
     #[new]
     pub fn new(low: f64, lolo: f64, high: f64, hihi: f64) -> Self {
-        Self { low, lolo, high, hihi }
+        Self {
+            low,
+            lolo,
+            high,
+            hihi,
+        }
     }
 }
 
@@ -45,7 +50,7 @@ impl TagLimits {
 pub struct AlarmEngine {
     #[pyo3(get)]
     pub tag_limits: HashMap<String, TagLimits>,
-    
+
     // Internal trackers
     pub tag_values: HashMap<String, f64>,
     pub tag_states: HashMap<String, AlarmState>,
@@ -72,16 +77,28 @@ impl AlarmEngine {
 
         for (tag_id, limit_map) in limits {
             let low = *limit_map.get("low").ok_or_else(|| {
-                pyo3::exceptions::PyValueError::new_err(format!("Missing 'low' limit for tag {}", tag_id))
+                pyo3::exceptions::PyValueError::new_err(format!(
+                    "Missing 'low' limit for tag {}",
+                    tag_id
+                ))
             })?;
             let lolo = *limit_map.get("lolo").ok_or_else(|| {
-                pyo3::exceptions::PyValueError::new_err(format!("Missing 'lolo' limit for tag {}", tag_id))
+                pyo3::exceptions::PyValueError::new_err(format!(
+                    "Missing 'lolo' limit for tag {}",
+                    tag_id
+                ))
             })?;
             let high = *limit_map.get("high").ok_or_else(|| {
-                pyo3::exceptions::PyValueError::new_err(format!("Missing 'high' limit for tag {}", tag_id))
+                pyo3::exceptions::PyValueError::new_err(format!(
+                    "Missing 'high' limit for tag {}",
+                    tag_id
+                ))
             })?;
             let hihi = *limit_map.get("hihi").ok_or_else(|| {
-                pyo3::exceptions::PyValueError::new_err(format!("Missing 'hihi' limit for tag {}", tag_id))
+                pyo3::exceptions::PyValueError::new_err(format!(
+                    "Missing 'hihi' limit for tag {}",
+                    tag_id
+                ))
             })?;
 
             // Design by Contract: Check thresholds are monotonic
@@ -92,7 +109,15 @@ impl AlarmEngine {
                 )));
             }
 
-            tag_limits.insert(tag_id.clone(), TagLimits { low, lolo, high, hihi });
+            tag_limits.insert(
+                tag_id.clone(),
+                TagLimits {
+                    low,
+                    lolo,
+                    high,
+                    hihi,
+                },
+            );
             tag_values.insert(tag_id.clone(), 0.0);
             tag_states.insert(tag_id.clone(), AlarmState::Normal);
             tag_acknowledged.insert(tag_id.clone(), false);
@@ -109,7 +134,12 @@ impl AlarmEngine {
     }
 
     /// Update tag value and evaluate state. Returns list of new events if a limit is crossed.
-    pub fn update_tag(&mut self, py: Python<'_>, tag_id: String, value: f64) -> PyResult<Vec<PyObject>> {
+    pub fn update_tag(
+        &mut self,
+        py: Python<'_>,
+        tag_id: String,
+        value: f64,
+    ) -> PyResult<Vec<PyObject>> {
         let limits = self.tag_limits.get(&tag_id).ok_or_else(|| {
             pyo3::exceptions::PyKeyError::new_err(format!("Tag '{}' not registered", tag_id))
         })?;
@@ -132,7 +162,7 @@ impl AlarmEngine {
         let mut events = Vec::new();
         if new_state != old_state {
             self.tag_states.insert(tag_id.clone(), new_state);
-            
+
             // Reset acknowledgment on state change
             self.tag_acknowledged.insert(tag_id.clone(), false);
             self.tag_acknowledged_by.insert(tag_id.clone(), None);
@@ -152,7 +182,10 @@ impl AlarmEngine {
     /// Acknowledge active alarm for tag_id. Returns true if acknowledged successfully.
     pub fn acknowledge_alarm(&mut self, tag_id: String, user: String) -> PyResult<bool> {
         if !self.tag_limits.contains_key(&tag_id) {
-            return Err(pyo3::exceptions::PyKeyError::new_err(format!("Tag '{}' not registered", tag_id)));
+            return Err(pyo3::exceptions::PyKeyError::new_err(format!(
+                "Tag '{}' not registered",
+                tag_id
+            )));
         }
 
         let state = *self.tag_states.get(&tag_id).unwrap_or(&AlarmState::Normal);
@@ -199,7 +232,10 @@ impl AlarmEngine {
     pub fn get_alarm_state(&self, py: Python<'_>, tag_id: String) -> PyResult<PyObject> {
         use pyo3::types::PyDict;
         if !self.tag_limits.contains_key(&tag_id) {
-            return Err(pyo3::exceptions::PyKeyError::new_err(format!("Tag '{}' not registered", tag_id)));
+            return Err(pyo3::exceptions::PyKeyError::new_err(format!(
+                "Tag '{}' not registered",
+                tag_id
+            )));
         }
 
         let state = *self.tag_states.get(&tag_id).unwrap_or(&AlarmState::Normal);
@@ -253,10 +289,12 @@ impl InterlockMatrix {
     ) -> PyResult<()> {
         match operator.as_str() {
             ">" | "<" | ">=" | "<=" | "==" => {}
-            _ => return Err(pyo3::exceptions::PyValueError::new_err(format!(
-                "Invalid operator '{}'. Must be one of: '>', '<', '>=', '<=', '=='",
-                operator
-            ))),
+            _ => {
+                return Err(pyo3::exceptions::PyValueError::new_err(format!(
+                    "Invalid operator '{}'. Must be one of: '>', '<', '>=', '<=', '=='",
+                    operator
+                )))
+            }
         }
 
         self.interlocks.push(Interlock {
@@ -358,7 +396,9 @@ impl GasificationSimulator {
     pub fn step(&mut self, dt: f64, inputs: HashMap<String, f64>) -> PyResult<()> {
         // Design by Contract: Enforce dt > 0
         if dt <= 0.0 {
-            return Err(pyo3::exceptions::PyValueError::new_err("dt must be positive"));
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "dt must be positive",
+            ));
         }
 
         let oxygen_setpoint = *inputs.get("oxygen_setpoint").unwrap_or(&0.0);
@@ -367,8 +407,14 @@ impl GasificationSimulator {
         let torch_power = *inputs.get("torch_power").unwrap_or(&0.0);
 
         // Design by Contract: Enforce non-negative physical inputs
-        if oxygen_setpoint < 0.0 || steam_setpoint < 0.0 || feedstock_rate < 0.0 || torch_power < 0.0 {
-            return Err(pyo3::exceptions::PyValueError::new_err("Inputs must be non-negative"));
+        if oxygen_setpoint < 0.0
+            || steam_setpoint < 0.0
+            || feedstock_rate < 0.0
+            || torch_power < 0.0
+        {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "Inputs must be non-negative",
+            ));
         }
 
         // Fault scenario: oxygen valve stuck
@@ -379,7 +425,9 @@ impl GasificationSimulator {
         };
 
         // Steady state temperatures calculation
-        let mut combustion_ss = 200.0 + 25.0 * actual_oxygen + 5.0 * torch_power - 8.0 * steam_setpoint - 0.5 * feedstock_rate;
+        let mut combustion_ss = 200.0 + 25.0 * actual_oxygen + 5.0 * torch_power
+            - 8.0 * steam_setpoint
+            - 0.5 * feedstock_rate;
 
         // Fault scenario: high feedstock moisture cools combustion
         if self.scenario == "wet_feed" {
@@ -414,7 +462,8 @@ impl GasificationSimulator {
         self.t_reduction = self.true_t_reduction;
 
         // Syngas flow model
-        let flow_ss = (0.01 * self.true_t_combustion) * (0.4 * feedstock_rate + 0.6 * actual_oxygen + 0.3 * steam_setpoint);
+        let flow_ss = (0.01 * self.true_t_combustion)
+            * (0.4 * feedstock_rate + 0.6 * actual_oxygen + 0.3 * steam_setpoint);
         let alpha_flow = (dt / 1.0).min(1.0);
         self.syngas_flow += alpha_flow * (flow_ss - self.syngas_flow);
         self.syngas_flow = self.syngas_flow.max(0.0);
@@ -565,7 +614,11 @@ fn compute_savgol_coefficients(window_size: usize, poly_order: usize) -> Result<
 }
 
 /// Apply Savitzky-Golay polynomial smoothing to a 1D signal.
-pub fn savitzky_golay(values: &[f64], window_size: usize, poly_order: usize) -> Result<Vec<f64>, String> {
+pub fn savitzky_golay(
+    values: &[f64],
+    window_size: usize,
+    poly_order: usize,
+) -> Result<Vec<f64>, String> {
     let n = values.len();
     if n == 0 {
         return Ok(Vec::new());
@@ -694,10 +747,15 @@ mod tests {
             assert_eq!(engine.tag_acknowledged["T1"], false);
 
             // Acknowledge alarm
-            let ack = engine.acknowledge_alarm("T1".to_string(), "OperatorA".to_string()).unwrap();
+            let ack = engine
+                .acknowledge_alarm("T1".to_string(), "OperatorA".to_string())
+                .unwrap();
             assert!(ack);
             assert_eq!(engine.tag_acknowledged["T1"], true);
-            assert_eq!(engine.tag_acknowledged_by["T1"], Some("OperatorA".to_string()));
+            assert_eq!(
+                engine.tag_acknowledged_by["T1"],
+                Some("OperatorA".to_string())
+            );
 
             // Go to Normal
             let events = engine.update_tag(py, "T1".to_string(), 50.0).unwrap();
@@ -710,12 +768,14 @@ mod tests {
     #[test]
     fn test_interlock_matrix() {
         let mut matrix = InterlockMatrix::new();
-        matrix.register_interlock(
-            "T_pyrolysis".to_string(),
-            ">".to_string(),
-            95.0,
-            vec![("O2_valve".to_string(), 0.0), ("E_stop".to_string(), 1.0)],
-        ).unwrap();
+        matrix
+            .register_interlock(
+                "T_pyrolysis".to_string(),
+                ">".to_string(),
+                95.0,
+                vec![("O2_valve".to_string(), 0.0), ("E_stop".to_string(), 1.0)],
+            )
+            .unwrap();
 
         let mut tags = HashMap::new();
         tags.insert("T_pyrolysis".to_string(), 90.0);
