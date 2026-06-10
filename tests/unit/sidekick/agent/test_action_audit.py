@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -20,7 +20,7 @@ pytestmark = pytest.mark.unit
 
 def _call(**params: Any) -> RecordedCall:
     return RecordedCall(
-        timestamp=datetime(2026, 1, 2, tzinfo=UTC),
+        timestamp=datetime(2026, 1, 2, tzinfo=timezone.utc),  # noqa: UP017 - Python 3.10 CI lacks datetime.UTC.
         action_id="test.echo",
         params=params,
         descriptor=ActionDescriptor(
@@ -36,7 +36,10 @@ def _call(**params: Any) -> RecordedCall:
 
 
 def test_redact_secrets_masks_nested_sensitive_keys_without_mutating_input() -> None:
-    payload = {"Token": "abc", "nested": {"password": "pw", "visible": 1}}
+    payload = {
+        "Token": "abc",  # pragma: allowlist secret
+        "nested": {"password": "pw", "visible": 1},  # pragma: allowlist secret
+    }
 
     redacted = redact_secrets(payload)
 
@@ -59,7 +62,12 @@ def test_jsonl_audit_writes_redacted_json_line(tmp_path: Path) -> None:
     path = tmp_path / "nested" / "audit.jsonl"
     audit = JsonlActionAudit(path=path)
 
-    audit(_call(api_key="secret", nested={"credential": "hidden"}))
+    audit(
+        _call(
+            api_key="secret",  # pragma: allowlist secret
+            nested={"credential": "hidden"},  # pragma: allowlist secret
+        )
+    )
 
     record = json.loads(path.read_text(encoding="utf-8"))
     assert record["action_id"] == "test.echo"
