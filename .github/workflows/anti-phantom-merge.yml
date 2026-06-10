@@ -88,7 +88,7 @@ jobs:
           SENDER: ${{ github.event.sender.login }}
         run: |
           set -euo pipefail
-          labels=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json labels --jq '[.labels[].name]')
+          labels=$(gh api "repos/$REPO/issues/$PR_NUMBER/labels" --jq '[.[].name]')
           has_label=$(echo "$labels" | grep -c 'phantom-guard-override' || true)
           if [ "$has_label" -eq 0 ]; then
             echo "override=false" >> "$GITHUB_OUTPUT"
