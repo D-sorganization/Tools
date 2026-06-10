@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.336                                    |
+| **Spec Version**        | 1.1.337                                    |
 | **Last Spec Update**    | 2026-06-10                                 |
 
 ## 2. Purpose & Mission
@@ -714,6 +714,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-10 | 1.1.337 | fix(ci/test-contract, #3300): recognize repo-level `tests/<package>/test_*.py` directories as satisfying the minimum test contract for changed `src/<package>` packages, with regression coverage so package-scoped tests like `tests/plant_simulator/test_dataset.py` are accepted without weakening the quality gate. |
 | 2026-06-10 | 1.1.336 | fix(ci/review-comments, #3300): keep the review-comment-to-issue converter checkout shallow because the job uses GitHub API reads plus local archive commits, avoiding full-history fetches on self-hosted runners where stale/corrupt loose objects can make checkout fail before the workflow logic runs. |
 | 2026-06-10 | 1.1.335 | fix(ci/runner-health, #3300): serialize the Tauri desktop app check/build matrices and cap Cargo jobs with non-incremental, no-debug builds so self-hosted runners do not compile multiple Tauri Rust dependency graphs concurrently and trigger rustc SIGSEGV/paging-pressure failures. |
 | 2026-06-10 | 1.1.334 | fix(ci/rust, #3291 #3294 #3295): split PyO3 `python` test features from maturin-only `extension-module` wheel linkage so `cargo test --features python` no longer emits Python extension-module binaries while wheel builds still opt into extension-module linking. |
