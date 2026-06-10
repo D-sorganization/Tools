@@ -17,6 +17,7 @@ pub use schema::{ConversionReport, SchemaInfo};
 
 #[cfg(feature = "python")]
 mod python_bindings {
+    use std::collections::BTreeMap;
     use std::collections::HashMap;
     use std::path::Path;
 
@@ -84,7 +85,7 @@ mod python_bindings {
         path: &str,
         nrows: usize,
         columns: Option<Vec<String>>,
-    ) -> PyResult<Vec<HashMap<String, String>>> {
+    ) -> PyResult<Vec<BTreeMap<String, String>>> {
         let col_refs: Option<Vec<&str>> = columns
             .as_ref()
             .map(|cs| cs.iter().map(String::as_str).collect());
