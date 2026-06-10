@@ -95,11 +95,7 @@ jobs:
 
       - name: Build wheel
         working-directory: rust_core/ai_backend
-        run: |
-          maturin build \
-            --release \
-            --features python \
-            --out ../../dist/${{ matrix.os }}/py${{ matrix.python-version }}
+        run: maturin build --release --features python --out ../../dist/${{ matrix.os }}/py${{ matrix.python-version }}
 
       - name: Smoke-test wheel import
         shell: bash
