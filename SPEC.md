@@ -1142,6 +1142,16 @@ Active development with stable core, continuous tool expansion, and web API in p
   deliberately outside the launcher, and add a dry-run regression test proving
   existing global Claude settings are preserved.
 
+- 2026-06-10: ci(security) — harden
+  `.github/workflows/anti-phantom-merge.yml` so the privileged
+  `pull_request_target` label path never checks out untrusted PR head code.
+  Full git-diff phantom checks continue to run only on `pull_request`; label
+  events validate the admin override through GitHub API calls and emit notices
+  for ignored non-admin overrides. Added an ops regression that scans all
+  `pull_request_target` workflows for unguarded `actions/checkout` steps using
+  `github.event.pull_request.head.sha`, preserving the invariant across future
+  workflow edits.
+
 ### Version 1.1.330
 
 - 2026-06-10: test(ci) — include existing Sidekick state-manager regression
