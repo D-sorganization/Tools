@@ -24,7 +24,7 @@ optional = true
 
 [features]
 default = []
-python = ["pyo3", "numpy"]
+python = ["dep:pyo3", "dep:numpy"]
 extension-module = ["pyo3/extension-module"]
 wasm = ["wasm-bindgen"]
 

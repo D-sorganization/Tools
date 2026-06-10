@@ -13,8 +13,9 @@ crate-type = ["cdylib", "rlib"]
 
 [features]
 default = []
-# Enable PyO3 bindings for Python wheel builds (maturin).
+# Enable PyO3 bindings for cargo checks and local Rust tests.
 python = ["dep:pyo3", "dep:numpy", "math-primitives/python"]
+# Enable Python extension-module linkage only for maturin wheel builds.
 extension-module = ["pyo3/extension-module", "math-primitives/extension-module"]
 # Enable wasm-bindgen for WASM/NPM builds (wasm-pack)
 wasm = ["dep:wasm-bindgen", "math-primitives/wasm"]

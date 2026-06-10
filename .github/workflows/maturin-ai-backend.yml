@@ -12,7 +12,7 @@
 # Acceptance criteria (issue #2870):
 #   1. Matrix: os × [d-sorg-fleet]
 #   2. Python versions: 3.10, 3.11, 3.12, 3.13
-#   3. maturin build --release --features python
+#   3. maturin build --release --features python,extension-module
 #   4. Upload wheel artifacts per platform/python combination
 
 name: Maturin — ai_backend Wheels
@@ -87,7 +87,7 @@ jobs:
       - name: Install maturin
         run: pip install maturin
 
-      - name: Clippy — ai_backend (python feature)
+      - name: Clippy - ai_backend (python feature)
         working-directory: rust_core/ai_backend
         run: cargo clippy --features python -- -D warnings
 
