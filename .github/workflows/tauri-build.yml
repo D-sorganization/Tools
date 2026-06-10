@@ -108,7 +108,7 @@ jobs:
     env:
       CARGO_BUILD_JOBS: "1"
       CARGO_INCREMENTAL: "0"
-      RUST_MIN_STACK: "268435456"
+      RUST_MIN_STACK: "536870912"
       RUSTFLAGS: "-Cdebuginfo=0"
     steps:
       - uses: actions/checkout@v6
@@ -197,7 +197,7 @@ jobs:
     env:
       CARGO_BUILD_JOBS: "1"
       CARGO_INCREMENTAL: "0"
-      RUST_MIN_STACK: "268435456"
+      RUST_MIN_STACK: "536870912"
       RUSTFLAGS: "-Cdebuginfo=0"
     steps:
       - uses: actions/checkout@v6
