@@ -4661,6 +4661,10 @@
       }
     }
   },
+  "data_processing/formats.py": {
+    "__all__": [],
+    "symbols": {}
+  },
   "data_processing/io.py": {
     "__all__": ["DataReader", "DataWriter", "FileFormatDetector"],
     "symbols": {
