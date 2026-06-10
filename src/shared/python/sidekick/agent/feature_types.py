@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass, field
-from enum import StrEnum
+from enum import Enum
 from types import MappingProxyType
 
 
-class FeatureKind(StrEnum):
+class FeatureKind(str, Enum):  # noqa: UP042 - Python 3.10 compatibility.
     """Closed set of feature categories the catalog understands."""
 
     CALCULATOR = "calculator"
