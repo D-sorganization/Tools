@@ -18,6 +18,8 @@ import math
 from dataclasses import dataclass
 from functools import lru_cache
 
+from sidekick.utils.unit_constants import R_UNIVERSAL
+
 __all__ = [
     "MOLAR_CP_298",
     "MOLECULAR_WEIGHTS",
@@ -68,7 +70,7 @@ MOLAR_CP_298: dict[str, float] = {
     "C3H8": 73.60,
 }
 
-R_GAS = 8.314  # J/(mol*K)
+R_GAS = R_UNIVERSAL  # J/(mol*K)
 
 
 @lru_cache(maxsize=256)

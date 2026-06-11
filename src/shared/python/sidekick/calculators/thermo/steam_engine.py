@@ -17,6 +17,12 @@ from typing import Any
 
 import numpy as np
 
+from sidekick.process_calculators.constants import (
+    ANTOINE_WATER_A as ANTOINE_A,
+    ANTOINE_WATER_B as ANTOINE_B,
+    ANTOINE_WATER_C as ANTOINE_C_CELSIUS,
+)
+
 __all__ = [
     "ANTOINE_A",
     "ANTOINE_B",
@@ -136,9 +142,6 @@ NEWTON_RAPHSON_STEP_SIZE: float = 0.1  # [°C] Step size for numerical derivativ
 
 # Antoine equation constants for water vapor pressure (valid 1-100°C)
 # For saturation calculations, use different C value when temperature is in Kelvin
-ANTOINE_A: float = 8.07131  # [dimensionless] Antoine equation constant A
-ANTOINE_B: float = 1730.63  # [°C] Antoine equation constant B
-ANTOINE_C_CELSIUS: float = 233.426  # [°C] Antoine C constant for temp in Celsius
 ANTOINE_C_KELVIN: float = 39.724  # [K] Antoine C constant for temp in Kelvin
 
 # Buck equation constants for water vapor pressure (improved accuracy)
