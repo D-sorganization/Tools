@@ -15,8 +15,7 @@ from typing import Any, cast
 from fastapi import APIRouter, HTTPException
 from sidekick.api import (
     ErrorCode,
-    ErrorDetail,
-    StandardResponse,
+    StandardResponseBuilder,
 )
 from sidekick.process_calculators.pressure_drop_calculator import (
     PressureDropCalculator,
@@ -85,7 +84,7 @@ def calculate_pressure_drop(
         }
         ```
     """
-    start_time = time.perf_counter()
+    builder = StandardResponseBuilder()
 
     try:
         result: PressureDropResult = _calculator.calculate_pressure_drop(
@@ -99,8 +98,7 @@ def calculate_pressure_drop(
             viscosity_pa_s=request.viscosity_pa_s,
         )
     except (ValueError, ZeroDivisionError, OverflowError, TypeError) as exc:
-        processing_time_ms = (time.perf_counter() - start_time) * 1000
-        error = ErrorDetail(
+        response = builder.error(
             code=ErrorCode.INVALID_INPUT,
             message=f"Pressure drop calculation failed: {str(exc)}",
             details={
@@ -108,13 +106,7 @@ def calculate_pressure_drop(
                 "exception_message": str(exc),
             },
         )
-        response = StandardResponse.error(
-            error=error,
-            processing_time_ms=processing_time_ms,
-        )
         raise HTTPException(status_code=422, detail=response.to_dict())  # noqa: B904
-
-    processing_time_ms = (time.perf_counter() - start_time) * 1000
 
     response_data = PressureDropResponse(
         pressure_drop_pa=result.pressure_drop_pa,
@@ -126,8 +118,7 @@ def calculate_pressure_drop(
         viscosity_pa_s=result.viscosity,
     ).model_dump()
 
-    response = StandardResponse.success(
+    response = builder.success(
         data=response_data,
-        processing_time_ms=processing_time_ms,
     )
     return cast(dict[str, Any], response.to_dict())

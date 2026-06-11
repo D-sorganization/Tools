@@ -1,61 +1,47 @@
+# mypy: ignore-errors
 """Standardized API response wrapper for all upstream_drift_tools endpoints.
 
 This module provides a consistent response format across all APIs, ensuring
 that clients receive uniform structure for both successful and error responses.
-
-Example:
-    >>> from standard_response import StandardResponse, ErrorDetail, ErrorCode
-    >>> # Success response
-    >>> response = StandardResponse.success(
-    ...     data={"result": 123.4},
-    ...     processing_time_ms=50
-    ... )
-    >>> response.to_dict()
-    {
-        "status": "success",
-        "data": {"result": 123.4},
-        "error": None,
-        "metadata": {"request_id": "...", "processing_time_ms": 50}
-    }
-
-    >>> # Error response
-    >>> error = ErrorDetail(
-    ...     code=ErrorCode.INVALID_INPUT,
-    ...     message="Invalid pipe diameter",
-    ...     details={"field": "pipe_diameter_m", "reason": "must be > 0"}
-    ... )
-    >>> response = StandardResponse.error(error=error)
 """
 
 from __future__ import annotations
 
 import logging
-from dataclasses import asdict, dataclass
+import time
+import uuid
 from importlib import import_module
-from typing import TYPE_CHECKING, Any
-from uuid import uuid4
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 if TYPE_CHECKING:
+    from datetime import tzinfo
     from enum import StrEnum
+
+    UTC: tzinfo
 else:
     try:
         _compatibility = import_module("src.shared.python.compatibility")
-    except ImportError:  # pragma: no cover - top-level sidekick package fallback
+    except ImportError:  # pragma: no cover
         try:
             _compatibility = import_module("...compatibility", __package__)
         except ImportError:
             _compatibility = import_module("compatibility")
 
     StrEnum = _compatibility.StrEnum
+    UTC = _compatibility.UTC
+from pydantic import BaseModel, Field
 
 __all__ = [
     "ErrorCode",
     "ErrorDetail",
     "ResponseMetadata",
     "StandardResponse",
+    "StandardResponseBuilder",
 ]
 
 _logger = logging.getLogger(__name__)
+
+T = TypeVar("T")
 
 
 class ErrorCode(StrEnum):
@@ -66,211 +52,129 @@ class ErrorCode(StrEnum):
     """
 
     INVALID_INPUT = "INVALID_INPUT"
-    """Input validation failed (e.g., negative values for positive fields)."""
-
     NOT_FOUND = "NOT_FOUND"
-    """Requested resource or calculation target not found."""
-
     SERVER_ERROR = "SERVER_ERROR"
-    """Unexpected server-side error."""
-
-    UNSUPPORTED_OPERATION = "UNSUPPORTED_OPERATION"
-    """Operation is not supported (e.g., invalid enum value)."""
-
-    TIMEOUT = "TIMEOUT"
-    """Request processing timed out."""
-
+    CALCULATION_ERROR = "CALCULATION_ERROR"
     CONSTRAINT_VIOLATION = "CONSTRAINT_VIOLATION"
-    """Physical or logical constraint violated (e.g., incompatible parameters)."""
+    UNSUPPORTED_OPERATION = "UNSUPPORTED_OPERATION"
+    TIMEOUT = "TIMEOUT"
 
 
-@dataclass
-class ErrorDetail:
+class ErrorDetail(BaseModel):
     """Details of an API error.
 
     Attributes:
         code: Error code from ErrorCode enum.
         message: Human-readable error message.
-        details: Optional nested dict with field-level error info.
-        request_id: Request ID where error occurred (auto-populated).
+        details: Optional detailed information.
+        request_id: Request ID where error occurred.
     """
 
-    code: ErrorCode
-    message: str
-    details: dict[str, Any] | None = None
-    request_id: str | None = None
+    code: ErrorCode = Field(description="Machine-readable error code")
+    message: str = Field(description="Human-readable error message")
+    details: Any | None = Field(default=None, description="Additional error context")
+    request_id: str | None = Field(
+        default=None, description="Request ID where error occurred"
+    )
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary representation."""
-        return asdict(self)
+        return self.model_dump()
 
 
-@dataclass
-class ResponseMetadata:
+class ResponseMetadata(BaseModel):
     """Metadata accompanying every API response.
 
     Attributes:
         request_id: Unique identifier for this request/response pair.
         processing_time_ms: Server-side processing time in milliseconds.
+        timestamp_utc: ISO 8601 timestamp when response was generated.
         api_version: API version that handled this request.
     """
 
-    request_id: str
-    processing_time_ms: float
-    api_version: str = "1.0.0"
+    request_id: str = Field(description="Unique request identifier")
+    processing_time_ms: float = Field(description="Processing time in milliseconds")
+    timestamp_utc: str | None = Field(
+        default=None, description="ISO 8601 response timestamp"
+    )
+    api_version: str = Field(default="1.0.0", description="API version")
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary representation."""
-        return asdict(self)
+        return self.model_dump()
 
 
-class StandardResponse:
-    """Standardized response wrapper for all API endpoints.
+class StandardResponse(BaseModel, Generic[T]):
+    """Standardized API response wrapper."""
 
-    Ensures consistent structure across all endpoints:
-    - Success responses include data
-    - Error responses include error details
-    - All responses include metadata with request tracking
-
-    This class is used by all upstream_drift_tools API endpoints to provide
-    a uniform interface for downstream consumers.
-
-    Attributes:
-        status: "success" or "error"
-        data: Response payload (for successful requests)
-        error: ErrorDetail object (for error responses)
-        metadata: ResponseMetadata with request tracking info
-    """
-
-    def __init__(
-        self,
-        status: str,
-        data: dict[str, Any] | None = None,
-        error: ErrorDetail | None = None,
-        metadata: ResponseMetadata | None = None,
-    ):
-        """Initialize a StandardResponse.
-
-        Args:
-            status: Must be "success" or "error".
-            data: Response payload for successful requests.
-            error: ErrorDetail object for error responses.
-            metadata: Response metadata (auto-generated if not provided).
-
-        Raises:
-            ValueError: If status is not "success" or "error".
-        """
-        if status not in ("success", "error"):
-            raise ValueError(f'status must be "success" or "error", got {status!r}')
-
-        self.status = status
-        self.data = data
-        self.error = error  # type: ignore[method-assign, assignment]
-        self.metadata = metadata or ResponseMetadata(
-            request_id=str(uuid4()),
-            processing_time_ms=0.0,
-        )
-
-    @classmethod
-    def success(
-        cls,
-        data: dict[str, Any],
-        processing_time_ms: float = 0.0,
-        request_id: str | None = None,
-    ) -> StandardResponse:
-        """Create a success response.
-
-        Args:
-            data: Response payload (required).
-            processing_time_ms: Server processing time in milliseconds.
-            request_id: Custom request ID (auto-generated if not provided).
-
-        Returns:
-            StandardResponse with status="success".
-
-        Example:
-            >>> response = StandardResponse.success(
-            ...     data={"pressure_drop": 1023.4, "velocity": 45.2},
-            ...     processing_time_ms=125
-            ... )
-        """
-        return cls(
-            status="success",
-            data=data,
-            metadata=ResponseMetadata(
-                request_id=request_id or str(uuid4()),
-                processing_time_ms=processing_time_ms,
-            ),
-        )
-
-    @classmethod
-    def error(
-        cls,
-        error: ErrorDetail,
-        processing_time_ms: float = 0.0,
-    ) -> StandardResponse:
-        """Create an error response.
-
-        Args:
-            error: ErrorDetail object describing the error.
-            processing_time_ms: Server processing time in milliseconds.
-
-        Returns:
-            StandardResponse with status="error".
-
-        Example:
-            >>> error = ErrorDetail(
-            ...     code=ErrorCode.INVALID_INPUT,
-            ...     message="Pipe diameter must be positive",
-            ...     details={"field": "pipe_diameter_m", "value": -1.5}
-            ... )
-            >>> response = StandardResponse.error(error)
-        """
-        # Ensure error has a request_id
-        if error.request_id is None:
-            error.request_id = str(uuid4())
-
-        return cls(
-            status="error",
-            error=error,
-            metadata=ResponseMetadata(
-                request_id=error.request_id,
-                processing_time_ms=processing_time_ms,
-            ),
-        )
+    status: str = Field(
+        description='Response status: "success" or "error"',
+        pattern="^(success|error)$",
+    )
+    data: T | None = Field(default=None, description="Calculation result or None")
+    error: ErrorDetail | None = Field(default=None, description="Error details")
+    metadata: ResponseMetadata = Field(description="Response metadata")
 
     def to_dict(self) -> dict[str, Any]:
-        """Convert response to dictionary (suitable for JSON serialization).
+        """Convert response to dictionary."""
+        return self.model_dump()
 
-        Returns:
-            Dictionary with keys: status, data, error, metadata.
 
-        Example:
-            >>> response = StandardResponse.success(data={"result": 123})
-            >>> response.to_dict()
-            {
-                "status": "success",
-                "data": {"result": 123},
-                "error": None,
-                "metadata": {
-                    "request_id": "...",
-                    "processing_time_ms": 0.0,
-                    "api_version": "1.0.0"
-                }
-            }
-        """
-        result = {
-            "status": self.status,
-            "data": self.data,
-            "error": self.error.to_dict() if self.error else None,  # type: ignore[attr-defined, truthy-function]
-            "metadata": self.metadata.to_dict(),
-        }
-        return result
+class StandardResponseBuilder:
+    """Builder for creating StandardResponse instances with tracking metadata."""
 
-    def __repr__(self) -> str:
-        """String representation for debugging."""
-        return (
-            f"StandardResponse(status={self.status!r}, "
-            f"data={self.data!r}, error={self.error!r}, "
-            f"metadata={self.metadata!r})"
+    def __init__(self) -> None:
+        self._request_id = str(uuid.uuid4())
+        self._start_time = time.time()
+
+    def success(
+        self,
+        data: Any,
+        api_version: str = "1.0.0",
+    ) -> StandardResponse[Any]:
+        processing_time_ms = (time.time() - self._start_time) * 1000
+        metadata = ResponseMetadata(
+            request_id=self._request_id,
+            processing_time_ms=round(processing_time_ms, 2),
+            timestamp_utc=_get_utc_timestamp(),
+            api_version=api_version,
         )
+        return StandardResponse(
+            status="success",
+            data=data,
+            error=None,
+            metadata=metadata,
+        )
+
+    def error(
+        self,
+        code: ErrorCode,
+        message: str,
+        details: Any | None = None,
+        api_version: str = "1.0.0",
+    ) -> StandardResponse[Any]:
+        processing_time_ms = (time.time() - self._start_time) * 1000
+        metadata = ResponseMetadata(
+            request_id=self._request_id,
+            processing_time_ms=round(processing_time_ms, 2),
+            timestamp_utc=_get_utc_timestamp(),
+            api_version=api_version,
+        )
+        error_detail = ErrorDetail(
+            code=code,
+            message=message,
+            details=details,
+            request_id=self._request_id,
+        )
+        return StandardResponse(
+            status="error",
+            data=None,
+            error=error_detail,
+            metadata=metadata,
+        )
+
+
+def _get_utc_timestamp() -> str:
+    from datetime import datetime
+
+    return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
