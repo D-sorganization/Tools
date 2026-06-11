@@ -23,8 +23,9 @@ import pytest
 # ---------------------------------------------------------------------------
 
 # Root of the urdf_builder_gui source directory (contains __init__.py).
+# Two parents: tests/ → repo_root; then navigate into src/urdf_builder_gui/.
 _URDF_ROOT = (
-    Path(__file__).resolve().parent.parent.parent.parent / "src" / "urdf_builder_gui"
+    Path(__file__).resolve().parent.parent / "src" / "urdf_builder_gui"
 )
 
 # Canonical package directory (single source of truth).
