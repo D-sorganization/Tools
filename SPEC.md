@@ -1354,3 +1354,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **2026-06-10**: Fix command injection bypasses in `cli_tools.py` `ShellTool._is_command_allowed` by explicitly parsing executable names using `pathlib.Path` and parsing arguments with assignment flags.
 
 - Update event logger to debounce queries
+
+### Version 1.1.242
+
+- 2026-06-11: Performance — Replaced slow `Number.isNaN()` checks with fast `x !== x` (self-inequality) in the high-frequency numeric loops of `useDataProcessor.ts` to reduce GC and function overhead.
