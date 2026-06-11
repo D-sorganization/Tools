@@ -1354,6 +1354,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 - **2026-06-09**: fix(sidekick) — regenerate `sidekick_api_baseline.json` to include the `data_processing/formats.py` module added in ed6e415fa (only addition; no public API removals or signature changes), and correct `test_json_serializer` to set the Dummy attribute on the instance `__dict__` so it matches `_json_serializer`'s `hasattr(obj, "__dict__")` branch.
 - **2026-06-10**: Fix command injection bypasses in `cli_tools.py` `ShellTool._is_command_allowed` by explicitly parsing executable names using `pathlib.Path` and parsing arguments with assignment flags.
+- **2026-06-11**: fix(test): correct `_URDF_ROOT` ancestor-walk depth in `tests/test_no_urdf_builder_root_duplicates.py` — path used 4 `.parent` calls, overshooting repo root to `_work/` on CI; 2 parents is correct when the test lives under `tests/` (#3346).
 
 - Update event logger to debounce queries
 
