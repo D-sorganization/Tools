@@ -113,12 +113,17 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: "24"
-          cache: "npm"
-          cache-dependency-path: package-lock.json
+      - name: Use local Node.js 24 toolcache
+        shell: bash
+        run: |
+          node_dir="/opt/hostedtoolcache/node/24.16.0/x64/bin"
+          if [ ! -x "$node_dir/node" ]; then
+            echo "::error::Expected local Node.js 24 toolcache at $node_dir"
+            exit 1
+          fi
+          echo "$node_dir" >> "$GITHUB_PATH"
+          "$node_dir/node" --version
+          PATH="$node_dir:$PATH" "$node_dir/npm" --version
 
       - name: Expose preinstalled Rustup
         shell: bash
@@ -213,7 +218,21 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Setup Node.js
+      - name: Use local Node.js 24 toolcache (Linux)
+        if: matrix.platform.label == 'linux-x64'
+        shell: bash
+        run: |
+          node_dir="/opt/hostedtoolcache/node/24.16.0/x64/bin"
+          if [ ! -x "$node_dir/node" ]; then
+            echo "::error::Expected local Node.js 24 toolcache at $node_dir"
+            exit 1
+          fi
+          echo "$node_dir" >> "$GITHUB_PATH"
+          "$node_dir/node" --version
+          PATH="$node_dir:$PATH" "$node_dir/npm" --version
+
+      - name: Setup Node.js (Windows)
+        if: matrix.platform.label == 'windows-x64'
         uses: actions/setup-node@v6
         with:
           node-version: "24"
