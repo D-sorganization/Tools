@@ -16,6 +16,8 @@ from dataclasses import dataclass, field
 
 from urdf_builder_gui.contracts import require
 
+from humanoid_character_builder.core.anthropometry import get_urdf_mass_ratios
+
 logger = logging.getLogger(__name__)
 
 # ── Height-to-segment-length ratios (fraction of total standing height) ──
@@ -23,7 +25,7 @@ logger = logging.getLogger(__name__)
 HEIGHT_RATIOS: dict[str, float] = {
     "pelvis": 0.078,
     "torso": 0.278,
-    "head": 0.139,
+    "head": 0.1395,
     "thigh": 0.245,
     "shin": 0.246,
     "upper_arm": 0.186,
@@ -34,20 +36,7 @@ HEIGHT_RATIOS: dict[str, float] = {
 
 # ── Mass distribution ratios (fraction of total body mass) ──
 
-MASS_RATIOS: dict[str, float] = {
-    "pelvis": 0.112,
-    "lumbar": 0.139,
-    "thorax": 0.216,
-    "torso": 0.355,  # lumbar + thorax combined
-    "neck": 0.024,
-    "head": 0.069,
-    "upper_arm": 0.027,  # per arm
-    "forearm": 0.016,  # per arm
-    "hand": 0.006,  # per arm
-    "thigh": 0.142,  # per leg
-    "shin": 0.043,  # per leg
-    "foot": 0.014,  # per leg
-}
+MASS_RATIOS: dict[str, float] = get_urdf_mass_ratios(1.0)
 
 # ── Gender-dependent width scaling factors ──
 

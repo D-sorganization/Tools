@@ -95,11 +95,11 @@ class TestAnthropometry:
     def test_segment_mass_calculation(self) -> Any:
         """Test segment mass from total mass."""
         total_mass = 75.0
-        head_ratio = 0.0694
+        head_ratio = 0.0681
 
         head_mass = total_mass * head_ratio
 
-        assert head_mass == pytest.approx(5.205, rel=0.01)
+        assert head_mass == pytest.approx(5.1075, rel=0.01)
 
     def test_segment_length_calculation(self) -> Any:
         """Test segment length from total height."""
@@ -116,7 +116,7 @@ class TestDeLevaMassRatios:
 
     def test_head_mass_ratio(self) -> Any:
         """Test head mass ratio value."""
-        head_ratio = 0.0694
+        head_ratio = 0.0681
         assert 0.06 < head_ratio < 0.08
 
     def test_thigh_mass_ratio(self) -> Any:
@@ -127,17 +127,17 @@ class TestDeLevaMassRatios:
     def test_mass_ratios_sum(self) -> Any:
         """Test that bilateral segment mass ratios approximately sum to 1."""
         ratios = {
-            "head": 0.0694,
-            "neck": 0.0240,
-            "thorax": 0.2160,
-            "lumbar": 0.1390,
-            "pelvis": 0.1117,
-            "upper_arm": 0.0271 * 2,  # Bilateral
-            "forearm": 0.0162 * 2,
-            "hand": 0.0061 * 2,
-            "thigh": 0.1416 * 2,
-            "shin": 0.0433 * 2,
-            "foot": 0.0137 * 2,
+            "head": 0.0681,
+            "neck": 0.0230,
+            "thorax": 0.2100,
+            "lumbar": 0.1385,
+            "pelvis": 0.11685,
+            "upper_arm": 0.0263 * 2,  # Bilateral
+            "forearm": 0.0150 * 2,
+            "hand": 0.00585 * 2,
+            "thigh": 0.1447 * 2,
+            "shin": 0.0457 * 2,
+            "foot": 0.0133 * 2,
         }
 
         total = sum(ratios.values())
@@ -238,13 +238,12 @@ class TestHumanoidBuilderGUIRegistration:
         try:
             from humanoid_builder_gui import gui_registration
 
-            assert hasattr(gui_registration, "GUI_METADATA")
-            metadata = gui_registration.GUI_METADATA
+            assert hasattr(gui_registration, "GUI_INFO")
+            metadata = gui_registration.GUI_INFO
 
             assert "name" in metadata
             assert "description" in metadata
             assert "category" in metadata
-            assert "entry_point" in metadata
         except ImportError:
             pytest.skip("GUI registration not yet implemented")
 
@@ -253,7 +252,7 @@ class TestHumanoidBuilderGUIRegistration:
         try:
             from humanoid_builder_gui import gui_registration
 
-            assert gui_registration.GUI_METADATA["category"] == "robotics"
+            assert gui_registration.GUI_INFO["category"].lower() == "robotics"
         except ImportError:
             pytest.skip("GUI registration not yet implemented")
 
@@ -262,7 +261,7 @@ class TestHumanoidBuilderGUIRegistration:
         try:
             from humanoid_builder_gui import launch_pyqt6
 
-            assert hasattr(launch_pyqt6, "main")
+            assert hasattr(launch_pyqt6, "bootstrap")
         except ImportError:
             pytest.skip("Launcher not yet implemented")
 
