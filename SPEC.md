@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.353                                    |
-| **Last Spec Update**    | 2026-06-10                                 |
+| **Spec Version**        | 1.1.354                                    |
+| **Last Spec Update**    | 2026-06-11                                 |
 
 ## 2. Purpose & Mission
 
@@ -722,6 +722,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-11 | 1.1.354 | test(sidekick, #3339 #3340): add focused pressure-drop gas-property coverage for strict unknown-species DbC paths, physical-value helper contracts, complete gas-property calculation keys, and ideal-gas compressibility fallback so the changed gas helper module is covered by the Sidekick per-file coverage gate. |
 | 2026-06-10 | 1.1.353 | fix(hooks, #1361): align the pre-push mypy hook with changed-file delta CI by adding `--follow-imports=skip`, so clean pushes are checked against the pushed source files without failing on unrelated pre-existing imported `ai/` debt. Added an ops regression test that keeps the hook on the pre-push stage, filename-passing mode, `src/` scope, and no-follow-import behavior. |
 | 2026-06-10 | 1.1.352 | test(sidekick): keep action-audit timestamp fixtures compatible with the Python 3.10 CI lane by using `timezone.utc` with a scoped pyupgrade suppression instead of the Python 3.11-only `datetime.UTC` alias. |
 | 2026-06-10 | 1.1.351 | test(sidekick): keep action-audit redaction fixtures covered while marking synthetic sensitive-key values with detect-secrets allowlist pragmas, so the security scan remains strict without treating redaction test data as leaked material. |
