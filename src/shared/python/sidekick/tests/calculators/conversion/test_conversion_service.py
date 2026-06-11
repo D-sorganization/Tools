@@ -155,16 +155,28 @@ class TestConvertGasFlowScfmAcfm:
         assert result > 0
 
     def test_acfm_to_scfm_zero_compressibility(self, svc):
-        """Line 548: compressibility_factor <= 0 → return result without division."""
-        result = svc.convert_gas_flow_scfm_acfm(
-            100.0,
-            "ACFM",
-            "SCFM",
-            actual_temp_K=300.0,
-            actual_pressure_kPa=101.325,
-            compressibility_factor=0.0,
-        )
-        assert result > 0
+        """compressibility_factor <= 0 -> raises ValueError."""
+        with pytest.raises(ValueError, match="must be positive and finite"):
+            svc.convert_gas_flow_scfm_acfm(
+                100.0,
+                "ACFM",
+                "SCFM",
+                actual_temp_K=300.0,
+                actual_pressure_kPa=101.325,
+                compressibility_factor=0.0,
+            )
+
+    def test_scfm_to_acfm_zero_actual_temp_raises(self, svc):
+        """actual_temp_K=0.0 is passed explicitly, should raise ValueError."""
+        with pytest.raises(ValueError, match="positive and finite"):
+            svc.convert_gas_flow_scfm_acfm(
+                100.0,
+                "SCFM",
+                "ACFM",
+                actual_temp_K=0.0,
+                actual_pressure_kPa=101.325,
+                compressibility_factor=1.0,
+            )
 
     def test_acfm_ensure_inputs_raises_when_no_tp(self, svc):
         """Lines 416-420: _ensure_acfm_inputs with ACFM and no T/P → ValueError."""
