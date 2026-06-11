@@ -367,12 +367,14 @@ class Integrator:
         t = signal.time
         y = signal.values
 
+        signal_start = float(t[0])
+        signal_end = float(t[-1])
         if lower_bound is None:
-            lower_bound = t[0]
+            lower_bound = signal_start
         if upper_bound is None:
-            upper_bound = t[-1]
+            upper_bound = signal_end
 
-        self._validate_bounds(lower_bound, upper_bound, t[0], t[-1])
+        self._validate_bounds(lower_bound, upper_bound, signal_start, signal_end)
 
         # Find indices for bounds
         lower_idx = np.searchsorted(t, lower_bound)

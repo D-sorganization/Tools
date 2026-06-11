@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.359                                    |
+| **Spec Version**        | 1.1.360                                    |
 | **Last Spec Update**    | 2026-06-11                                 |
 
 ## 2. Purpose & Mission
@@ -722,6 +722,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-11 | 1.1.360 | fix(ci): restore Tools consolidation CI by replacing the coverage tracked-package regex generator with a shell-safe Python expression, adding changed-file mypy annotations for the multi-parameter PyQt meshgrid arrays, and resolving signal-toolkit integration bounds to concrete floats before validation/result construction. |
 | 2026-06-11 | 1.1.354 | fix(consolidation, #3314 #3315 #3350 #3356 #3358): restore and relocate truncated test coverage across shared calculators, signal tooling, GUI launchers, folder tooling, data processing, rotation conversion, and integration surfaces; unify humanoid anthropometry under the shared implementation; propagate P1AM E-STOP clear commands through the backend API; refresh assessment artifacts and CI baselines for the consolidated changes. |
 | 2026-06-11 | 1.1.354 | test(sidekick, #3339 #3340): add focused pressure-drop gas-property coverage for strict unknown-species DbC paths, physical-value helper contracts, complete gas-property calculation keys, and ideal-gas compressibility fallback so the changed gas helper module is covered by the Sidekick per-file coverage gate. |
 | 2026-06-10 | 1.1.353 | fix(hooks, #1361): align the pre-push mypy hook with changed-file delta CI by adding `--follow-imports=skip`, so clean pushes are checked against the pushed source files without failing on unrelated pre-existing imported `ai/` debt. Added an ops regression test that keeps the hook on the pre-push stage, filename-passing mode, `src/` scope, and no-follow-import behavior. |

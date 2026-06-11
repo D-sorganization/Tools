@@ -530,7 +530,7 @@ jobs:
             if [ ! -s changed_test_files.txt ] && [ ! -s changed_python_files.txt ]; then
               coverage_gate_required=false
             else
-              TRACKED_REGEX=$(python3 -c 'import json; d = json.load(open("config/coverage_policy.json"))["tracked_packages"]; p = [f"{k.replace(\".\", r\"\.\")}$" if k.endswith(".py") else f"{k.replace(\".\", r\"\.\")}/" for k in d]; print("^(" + "|".join(p) + ")")')
+              TRACKED_REGEX=$(python3 -c 'import json, re; d = json.load(open("config/coverage_policy.json", encoding="utf-8"))["tracked_packages"]; p = [(re.escape(k) + "$" if k.endswith(".py") else re.escape(k) + "/") for k in d]; print("^(" + "|".join(p) + ")")')
               if ! grep -q -E "$TRACKED_REGEX" changed_python_files.txt; then
                 coverage_gate_required=false
               fi

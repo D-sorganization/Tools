@@ -12,6 +12,7 @@ from __future__ import annotations
 import sys
 
 import numpy as np
+from numpy.typing import NDArray
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
@@ -395,6 +396,8 @@ class MultiParamAnalysisWindow(ThemedWindowMixin, QMainWindow):
         demo_func = self.demo_func_combo.currentText()
 
         # Create meshgrid
+        X: NDArray[np.floating]
+        Y: NDArray[np.floating]
         X, Y = np.meshgrid(param1_values, param2_values)
 
         # Normalize to [-5, 5] range for demo functions
