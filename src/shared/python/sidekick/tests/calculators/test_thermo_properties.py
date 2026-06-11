@@ -34,12 +34,9 @@ def test_thermo_properties_calculator() -> None:
     assert zero_comp_result.molecular_weight_g_mol == 0.0
 
     # Test unknown species
-    unknown_result = calc.calculate(
-        temperature_c=100.0,
-        pressure_kpa=200.0,
-        composition={"UnknownGas": 1.0},
-    )
-    # The code defaults completely missing specs to MW=28.0, Cp=29.0
-    assert unknown_result.molecular_weight_g_mol == 28.0
-    assert unknown_result.cp_j_molk == 29.0
-    assert unknown_result.gamma > 1.0
+    with pytest.raises(ValueError, match="Unknown gas species: UnknownGas"):
+        calc.calculate(
+            temperature_c=100.0,
+            pressure_kpa=200.0,
+            composition={"UnknownGas": 1.0},
+        )
