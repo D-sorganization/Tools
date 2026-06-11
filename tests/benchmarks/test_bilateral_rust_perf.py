@@ -57,11 +57,15 @@ def signal_1m() -> Signal:
 
 
 def test_bilateral_python_16k(benchmark, signal_16k: Signal) -> None:
-    benchmark(apply_bilateral_filter, signal_16k)
+    result = benchmark(apply_bilateral_filter, signal_16k)
+    assert isinstance(result, Signal)
+    assert result.values.shape == signal_16k.values.shape
 
 
 def test_bilateral_rust_16k(benchmark, signal_16k: Signal) -> None:
-    benchmark(apply_bilateral_filter_rust, signal_16k)
+    result = benchmark(apply_bilateral_filter_rust, signal_16k)
+    assert isinstance(result, Signal)
+    assert result.values.shape == signal_16k.values.shape
 
 
 # ---------------------------------------------------------------------------
@@ -75,4 +79,6 @@ def test_bilateral_rust_1m(benchmark, signal_1m: Signal) -> None:
     to include in the default suite (≈ tens of seconds); a paired Python
     run is left as an opt-in measurement when re-baselining the speedup
     ratio reported in the PR."""
-    benchmark(apply_bilateral_filter_rust, signal_1m)
+    result = benchmark(apply_bilateral_filter_rust, signal_1m)
+    assert isinstance(result, Signal)
+    assert result.values.shape == signal_1m.values.shape

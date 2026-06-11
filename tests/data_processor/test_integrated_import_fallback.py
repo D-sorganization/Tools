@@ -16,3 +16,4 @@ import pytest
 )
 def test_integrated_module_imports_without_legacy_r0() -> None:
     """Legacy test — module has been archived."""
+    assert False, "skip sentinel only; pytest.mark.skip prevents execution"

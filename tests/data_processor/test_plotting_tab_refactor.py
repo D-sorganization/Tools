@@ -9,3 +9,8 @@ import pytest
 pytestmark = pytest.mark.skip(
     reason="Legacy plotting-tab refactor suite removed; path retained for CI tooling."
 )
+
+
+def test_plotting_tab_refactor_suite_is_retired() -> None:
+    """Legacy skip sentinel retained for changed-file CI path compatibility."""
+    assert False, "skip sentinel only; module pytestmark prevents execution"
