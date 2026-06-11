@@ -1,6 +1,6 @@
 # Utility Tools
 
-A collection of development utilities, code quality tools, and analysis scripts for the Golf Biomechanics Simulator & Game Engine repository.
+A collection of development utilities, code quality helpers, launch utilities, and analysis scripts for the Tools repository.
 
 ## Overview
 
@@ -9,19 +9,31 @@ This directory contains general-purpose utility scripts and tools for code quali
 ## Directory Structure
 
 ```
-tools/
-├── README.md                    # This file
-├── code_quality_check.py        # Python code quality checker
-├── scientific_auditor.py        # Scientific code auditor
-├── matlab_code_analyzer_gui/    # MATLAB analysis GUI tool
-└── matlab_utilities/            # MATLAB quality utilities package
+src/tools/
+├── README.md                     # This file
+├── __init__.py                   # Package marker
+├── config_loader.py              # Tool configuration loading helpers
+├── dependency_utils.py           # Optional dependency checks
+├── icon_utils.py                 # Shared icon helpers
+├── launch_utils.py               # Tool launch helpers
+├── logger.py                     # Logging setup
+├── matlab_quality_utils.py       # MATLAB quality utility helpers
+├── mypy_autofix_agent.py         # Mypy autofix support
+├── quality_utils.py              # Python quality-check helpers
+├── scientific_auditor.py         # Scientific code auditor
+├── ui_utils.py                   # Shared UI helpers
+├── folder_tools/                 # Folder utility tools
+├── gui/                          # GUI utility modules
+├── matlab_code_analyzer_gui/     # MATLAB analysis GUI tool
+└── matlab_utilities/             # MATLAB quality utilities package
 ```
 
 ## Tools
 
-### Code Quality Check (`code_quality_check.py`)
+### Code Quality Helpers (`quality_utils.py`)
 
-Automated Python code quality verification tool that checks for:
+Reusable Python code quality helper functions used by `scripts/quality-check.py`.
+The quality check script verifies:
 
 - **Banned Patterns**: TRACKED_TASK, TRACKED_DEFECT, placeholders, NotImplementedError
 - **Pass Statement Analysis**: Detects empty placeholder pass statements
@@ -32,10 +44,10 @@ Automated Python code quality verification tool that checks for:
 
 ```bash
 # Check all Python files in current directory
-python tools/code_quality_check.py
+python scripts/quality-check.py
 
 # Check specific files
-python tools/code_quality_check.py file1.py file2.py
+python scripts/quality-check.py file1.py file2.py
 ```
 
 **Pre-commit Integration:**
@@ -48,7 +60,7 @@ repos:
     hooks:
       - id: code-quality-check
         name: Code Quality Check
-        entry: python tools/code_quality_check.py
+        entry: python scripts/quality-check.py
         language: system
         types: [python]
 ```
@@ -64,13 +76,13 @@ AST-based auditor for scientific Python code that detects potential issues:
 
 ```bash
 # Audit current directory
-python tools/scientific_auditor.py
+python src/tools/scientific_auditor.py
 
 # Audit specific directory
-python tools/scientific_auditor.py /path/to/code
+python src/tools/scientific_auditor.py /path/to/code
 
 # Output is JSON format
-python tools/scientific_auditor.py | jq .
+python src/tools/scientific_auditor.py | jq .
 ```
 
 **Output Format:**

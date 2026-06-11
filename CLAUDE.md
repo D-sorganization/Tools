@@ -73,7 +73,7 @@ Key markers:
 
 - **DRY:** This repo IS the DRY layer. Duplicated logic in UpstreamDrift or Gasification_Model belongs here.
 - **DbC:** Every public function validates inputs. `TypeError` for wrong types, `ValueError` for out-of-range. Document preconditions in docstrings.
-- **LOD:** No method chains >2 levels. Modules must not import across package boundaries (signal_processing must not import from calculators).
+- **LOD:** No method chains >2 levels. Modules must not import across package boundaries (`signal_processing_studio` must not import from `sidekick.process_calculators`).
 - **TDD:** Every new public function needs tests. Contract tests (`-m contract`) guard the API surface downstream repos depend on.
 - **Stable API:** No renaming, removing, or signature changes to public functions without a deprecation path and downstream coordination.
 
