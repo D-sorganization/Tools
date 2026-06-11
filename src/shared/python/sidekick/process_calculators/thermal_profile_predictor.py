@@ -3,7 +3,12 @@
 from collections.abc import Callable, Sequence
 from typing import Any
 
-import numpy as np
+try:
+    import numpy as np
+    NUMPY_AVAILABLE = True
+except ImportError:
+    np = None
+    NUMPY_AVAILABLE = False
 
 __all__ = [
     "fit_heating_parameters",
@@ -35,7 +40,7 @@ def predict_temperature_profile(
     heat_loss_coeff: float,
     ambient_temp: float,
     power_func: Callable[[float], float],
-) -> tuple[np.ndarray, np.ndarray]:
+) -> tuple['np.ndarray', 'np.ndarray']:
     """Predict temperature profile for a heated vessel."""
 
     if t_span is None:
@@ -66,7 +71,7 @@ def fit_heating_parameters(
     if times is None:
         raise ValueError("times must be provided")
 
-    def model(t: Any, thermal_mass: float, heat_loss_coeff: float) -> np.ndarray:
+    def model(t: Any, thermal_mass: float, heat_loss_coeff: float) -> 'np.ndarray':
         """Model method.
 
         Returns:
