@@ -466,7 +466,7 @@ class TestCalculus:
         diff_central = Differentiator(method=DifferentiationMethod.CENTRAL)
         with pytest.raises(ValueError, match="requires uniform sampling"):
             diff_central.differentiate(signal)
-            
+
         # SAVGOL should raise
         diff_savgol = Differentiator(method=DifferentiationMethod.SAVGOL)
         with pytest.raises(ValueError, match="requires uniform sampling"):
@@ -476,13 +476,13 @@ class TestCalculus:
         diff_grad = Differentiator(method=DifferentiationMethod.GRADIENT)
         result = diff_grad.differentiate(signal)
         assert len(result.values) == len(t)
-        
+
     def test_differentiator_decreasing_time_raises(self) -> None:
         """Test that any method raises on decreasing time array."""
         t = np.array([0.0, 0.1, 0.05, 0.2])
         values = np.sin(t)
         signal = Signal(t, values)
-        
+
         diff = Differentiator(method=DifferentiationMethod.GRADIENT)
         with pytest.raises(ValueError, match="strictly increasing"):
             diff.differentiate(signal)

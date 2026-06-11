@@ -1358,3 +1358,4 @@ Active development with stable core, continuous tool expansion, and web API in p
 ### Version 1.1.242
 
 - 2026-06-11: Performance — Replaced slow `Number.isNaN()` checks with fast `x !== x` (self-inequality) in the high-frequency numeric loops of `useDataProcessor.ts` to reduce GC and function overhead.
+- 2026-06-11: Style — Strip trailing whitespace from blank lines (ruff W293) and apply ruff formatting in `signal_toolkit` differentiator non-uniform-sampling tests (#3343).
