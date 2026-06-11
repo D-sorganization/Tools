@@ -57,8 +57,8 @@ class SteamRequest(BaseModel):
     """Input for a steam property calculation."""
 
     mode: CalculationMode = Field(description="Calculation mode")
-    temperature: float = Field(description="Temperature in Kelvin")
-    pressure: float = Field(description="Pressure in Pascals")
+    temperature: float = Field(gt=0, description="Temperature in Kelvin")
+    pressure: float = Field(gt=0, description="Pressure in Pascals")
     engine: str = Field(
         default="auto",
         description="Calculation engine: 'coolprop', 'cantera', 'simplified', 'auto'",
