@@ -13,13 +13,12 @@ for downstream repos.
 
 ## Key Directories
 
-- `src/signal_processing/` — DSP utilities, filters, spectral analysis
-- `src/urdf/` — URDF model generation and validation
-- `src/calculators/` — process engineering calculators
-- `src/pid/` — P&ID diagram utilities
-- `src/themes/` — plotting and visualization themes
+- `src/signal_processing_studio/` — DSP utilities, filters, spectral analysis
+- `src/urdf_builder_gui/` — URDF model generation and validation
+- `src/shared/python/sidekick/process_calculators/` — process engineering calculators
+- `src/pid_generator/` — P&ID diagram utilities
+- `src/shared/python/plot_theme/` — plotting and visualization themes
 - `tests/` — pytest suite organized by module
-- `manifests/` — package manifests (validated by CI)
 
 ## Python and Tooling
 
