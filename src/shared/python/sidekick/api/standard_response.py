@@ -10,9 +10,25 @@ from __future__ import annotations
 import logging
 import time
 import uuid
-from typing import Any, Generic, TypeVar
+from importlib import import_module
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
-from compatibility import UTC, StrEnum
+if TYPE_CHECKING:
+    from datetime import tzinfo
+    from enum import StrEnum
+
+    UTC: tzinfo
+else:
+    try:
+        _compatibility = import_module("src.shared.python.compatibility")
+    except ImportError:  # pragma: no cover
+        try:
+            _compatibility = import_module("...compatibility", __package__)
+        except ImportError:
+            _compatibility = import_module("compatibility")
+
+    StrEnum = _compatibility.StrEnum
+    UTC = _compatibility.UTC
 from pydantic import BaseModel, Field
 
 __all__ = [
