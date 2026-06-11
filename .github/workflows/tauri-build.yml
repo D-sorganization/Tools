@@ -117,6 +117,18 @@ jobs:
         shell: bash
         run: |
           node_dir=""
+          if [ -n "${RUNNER_TEMP:-}" ]; then
+            runner_root="$(dirname "$(dirname "$RUNNER_TEMP")")"
+            for candidate in \
+              "$runner_root"/externals/node24/bin \
+              "$runner_root"/externals/node20/bin
+            do
+              if [ -x "$candidate/node" ] && [ -x "$candidate/npm" ]; then
+                node_dir="$candidate"
+                break
+              fi
+            done
+          fi
           for candidate in \
             /opt/hostedtoolcache/node/24*/x64/bin \
             /opt/hostedtoolcache/node/22*/x64/bin \
@@ -128,7 +140,7 @@ jobs:
             fi
           done
           if [ ! -x "$node_dir/node" ]; then
-            echo "::error::Expected local Node.js 20+ toolcache under /opt/hostedtoolcache/node"
+            echo "::error::Expected local Node.js 20+ under runner externals or /opt/hostedtoolcache/node"
             exit 1
           fi
           echo "$node_dir" >> "$GITHUB_PATH"
@@ -238,6 +250,18 @@ jobs:
         shell: bash
         run: |
           node_dir=""
+          if [ -n "${RUNNER_TEMP:-}" ]; then
+            runner_root="$(dirname "$(dirname "$RUNNER_TEMP")")"
+            for candidate in \
+              "$runner_root"/externals/node24/bin \
+              "$runner_root"/externals/node20/bin
+            do
+              if [ -x "$candidate/node" ] && [ -x "$candidate/npm" ]; then
+                node_dir="$candidate"
+                break
+              fi
+            done
+          fi
           for candidate in \
             /opt/hostedtoolcache/node/24*/x64/bin \
             /opt/hostedtoolcache/node/22*/x64/bin \
@@ -249,7 +273,7 @@ jobs:
             fi
           done
           if [ ! -x "$node_dir/node" ]; then
-            echo "::error::Expected local Node.js 20+ toolcache under /opt/hostedtoolcache/node"
+            echo "::error::Expected local Node.js 20+ under runner externals or /opt/hostedtoolcache/node"
             exit 1
           fi
           echo "$node_dir" >> "$GITHUB_PATH"
