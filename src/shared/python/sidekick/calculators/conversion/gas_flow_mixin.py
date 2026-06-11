@@ -97,18 +97,18 @@ class GasFlowConversionMixin:
         from .service import UnknownUnitError
 
         if from_unit == "SCFM":
-            return scfm_to_standard_m3_per_hour(
+            return float(scfm_to_standard_m3_per_hour(
                 value, standard_condition, StandardCondition.STP
-            )
+            ))
         if from_unit == "ACFM":
             assert temperature is not None
             assert pressure is not None
             scfm = actual_to_standard_flow(
                 value, temperature, pressure, standard_condition
             )
-            return scfm_to_standard_m3_per_hour(
+            return float(scfm_to_standard_m3_per_hour(
                 scfm, standard_condition, StandardCondition.STP
-            )
+            ))
         if from_unit in {"Nm3/hr", "Nm³/hr"}:
             return value
         if from_unit in self.mass_flow_factors:
@@ -130,18 +130,18 @@ class GasFlowConversionMixin:
         from .service import UnknownUnitError
 
         if to_unit == "SCFM":
-            return standard_m3_per_hour_to_scfm(
+            return float(standard_m3_per_hour_to_scfm(
                 m3_hr_std, StandardCondition.STP, standard_condition
-            )
+            ))
         if to_unit == "ACFM":
             assert temperature is not None
             assert pressure is not None
             scfm = standard_m3_per_hour_to_scfm(
                 m3_hr_std, StandardCondition.STP, standard_condition
             )
-            return standard_to_actual_flow(
+            return float(standard_to_actual_flow(
                 scfm, temperature, pressure, standard_condition
-            )
+            ))
         if to_unit in {"Nm3/hr", "Nm³/hr"}:
             return m3_hr_std
         if to_unit in self.mass_flow_factors:
