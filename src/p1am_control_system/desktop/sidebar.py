@@ -280,17 +280,12 @@ class InspectorSidebar(QWidget):
 
             # Update safety limits
             if tag_id < len(self.routing_config.interlocks):
-                low_val = self.spin_low_limit.value()
-                high_val = self.spin_high_limit.value()
-                if low_val > high_val:
-                    QMessageBox.critical(
-                        self,
-                        "Invalid Limits",
-                        "Low limit cannot be greater than high limit.",
-                    )
-                    return
-                self.routing_config.interlocks[tag_id].low_limit = low_val
-                self.routing_config.interlocks[tag_id].high_limit = high_val
+                self.routing_config.interlocks[
+                    tag_id
+                ].low_limit = self.spin_low_limit.value()
+                self.routing_config.interlocks[
+                    tag_id
+                ].high_limit = self.spin_high_limit.value()
 
             # Update PID loop configs
             if self.pid_group.isVisible() and self.pid_loop_index >= 0:
