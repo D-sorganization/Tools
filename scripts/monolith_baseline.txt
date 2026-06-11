@@ -186,6 +186,7 @@ src/shared/python/upstream_drift_tools/calculators/conversion/flow_rate_converte
 src/shared/python/upstream_drift_tools/calculators/conversion/service.py
 src/shared/python/upstream_drift_tools/calculators/conversion/tables.py
 src/shared/python/upstream_drift_tools/calculators/electrical/electrical_model.py
+src/shared/python/sidekick/calculators/thermo/steam_engine.py
 src/shared/python/upstream_drift_tools/calculators/thermo/steam_engine.py
 src/shared/python/upstream_drift_tools/data_processing/core.py
 src/shared/python/upstream_drift_tools/lab/bio/c3d_reader.py
