@@ -1,9 +1,4 @@
-try:
-    import numpy as np
-    NUMPY_AVAILABLE = True
-except ImportError:
-    np = None
-    NUMPY_AVAILABLE = False
+import numpy as np
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
     QGridLayout,

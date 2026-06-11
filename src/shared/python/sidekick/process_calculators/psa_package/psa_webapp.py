@@ -12,12 +12,7 @@ Run with: streamlit run psa_webapp.py
 from dataclasses import dataclass, field
 from typing import TypedDict
 
-try:
-    import numpy as np
-    NUMPY_AVAILABLE = True
-except ImportError:
-    np = None
-    NUMPY_AVAILABLE = False
+import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go

@@ -27,9 +27,9 @@ The UX relies heavily on the `UnifiedToolsLauncher`, which provides a consistent
 
 ## Diff Suggestions
 ```python
-<<<<<<< SEARCH
+# BEFORE:
 # Old dev setup
 =======
 # New unified dev setup
->>>>>>> REPLACE
+# AFTER:
 ```

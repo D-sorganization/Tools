@@ -16,12 +16,7 @@ from dataclasses import dataclass, field  # noqa: E402
 from datetime import datetime  # noqa: E402
 from typing import Any  # noqa: E402
 
-try:
-    import numpy as np
-    NUMPY_AVAILABLE = True
-except ImportError:
-    np = None
-    NUMPY_AVAILABLE = False  # noqa: E402
+import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
 from shared.python.contracts import require, require_positive  # noqa: E402

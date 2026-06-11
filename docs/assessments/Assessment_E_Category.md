@@ -27,11 +27,11 @@ Performance is generally adequate, but large data processing tools and the `pend
 
 ## Diff Suggestions
 ```python
-<<<<<<< SEARCH
+# BEFORE:
 def get_data():
     return db.query()
 =======
 async def get_data():
     return await db.query()
->>>>>>> REPLACE
+# AFTER:
 ```

@@ -27,12 +27,12 @@ The Documentation review reveals that while core components like the `UnifiedToo
 
 ## Diff Suggestions
 ```python
-<<<<<<< SEARCH
+# BEFORE:
 def process_media():
     pass
 =======
 def process_media():
     """Processes the media file based on configuration."""
     pass
->>>>>>> REPLACE
+# AFTER:
 ```

@@ -27,10 +27,10 @@ Educational resources are sparse. The `AGENTS.md` provides good guidelines, but 
 
 ## Diff Suggestions
 ```python
-<<<<<<< SEARCH
+# BEFORE:
 # Docs
 =======
 # Docs
 ## How to add a tool
->>>>>>> REPLACE
+# AFTER:
 ```

@@ -21,12 +21,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import TypedDict
 
-try:
-    import numpy as np
-    NUMPY_AVAILABLE = True
-except ImportError:
-    np = None
-    NUMPY_AVAILABLE = False
+import numpy as np
 from numpy.typing import NDArray
 
 __all__ = [

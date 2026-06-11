@@ -27,10 +27,10 @@ Installation relies on the monorepo structure with `uv`. While efficient, some c
 
 ## Diff Suggestions
 ```python
-<<<<<<< SEARCH
+# BEFORE:
 # Setup Python deps
 =======
 # Setup system deps
 # sudo apt-get install portaudio19-dev
->>>>>>> REPLACE
+# AFTER:
 ```

@@ -27,9 +27,9 @@ The CI/CD pipeline uses GitHub Actions. The `file-size-budget` check is effectiv
 
 ## Diff Suggestions
 ```python
-<<<<<<< SEARCH
+# BEFORE:
 run: pip install -r requirements.txt
 =======
 run: pip install -r requirements.txt || pip install -r requirements.txt
->>>>>>> REPLACE
+# AFTER:
 ```

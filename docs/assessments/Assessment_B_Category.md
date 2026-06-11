@@ -28,11 +28,11 @@ The codebase hygiene shows room for improvement. The AST analysis revealed 106 e
 
 ## Diff Suggestions
 ```python
-<<<<<<< SEARCH
+# BEFORE:
 except Exception:
     pass
 =======
 except Exception as e:
     logging.error(f"Error occurred: {e}")
->>>>>>> REPLACE
+# AFTER:
 ```

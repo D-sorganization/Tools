@@ -26,12 +26,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
 # matplotlib and scipy imported lazily to prevent Windows hang at module load
-try:
-    import numpy as np
-    NUMPY_AVAILABLE = True
-except ImportError:
-    np = None
-    NUMPY_AVAILABLE = False
+import numpy as np
 from sidekick.utils.state_manager import safe_read_json
 
 from shared.python.theme.integration import get_theme_manager

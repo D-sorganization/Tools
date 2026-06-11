@@ -41,18 +41,8 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
-try:
-    import numpy as np
-    NUMPY_AVAILABLE = True
-except ImportError:
-    np = None
-    NUMPY_AVAILABLE = False
-try:
-    import pandas as pd
-    PANDAS_AVAILABLE = True
-except ImportError:
-    pd = None
-    PANDAS_AVAILABLE = False
+import numpy as np
+import pandas as pd
 
 from contracts import check_positive as require_positive
 from contracts import require
@@ -659,7 +649,7 @@ class AcidGasDewpointCalculator:
         composition: AcidGasComposition,
         temp_range: tuple[float, float] = (-50, 200),
         num_points: int = 100,
-    ) -> 'pd.DataFrame':
+    ) -> pd.DataFrame:
         """
         Generate dewpoint curves for analysis
 

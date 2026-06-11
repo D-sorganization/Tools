@@ -27,12 +27,12 @@ The test suite has substantial coverage but currently reports 283 errors during 
 
 ## Diff Suggestions
 ```python
-<<<<<<< SEARCH
+# BEFORE:
 import missing_module
 =======
 try:
     import missing_module
 except ImportError:
     missing_module = None
->>>>>>> REPLACE
+# AFTER:
 ```

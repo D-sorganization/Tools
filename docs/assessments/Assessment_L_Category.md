@@ -27,9 +27,9 @@ Maintainability is challenged by 10 TODOs, legacy code paths (Tkinter), and dupl
 
 ## Diff Suggestions
 ```python
-<<<<<<< SEARCH
+# BEFORE:
 # Duplicate block A
 =======
 from shared.utils import common_block
->>>>>>> REPLACE
+# AFTER:
 ```

@@ -29,10 +29,10 @@ The Architecture & Implementation review indicates the polyglot monorepo success
 
 ## Diff Suggestions
 ```python
-<<<<<<< SEARCH
+# BEFORE:
 class LegacyLauncher:
     pass
 =======
 # Legacy launcher deprecated. Use UnifiedToolsLauncher.
->>>>>>> REPLACE
+# AFTER:
 ```

@@ -27,9 +27,9 @@ The tools repository is extensible by design, allowing new tool categories to be
 
 ## Diff Suggestions
 ```python
-<<<<<<< SEARCH
+# BEFORE:
 tools = ["ToolA", "ToolB"]
 =======
 tools = load_plugins()
->>>>>>> REPLACE
+# AFTER:
 ```

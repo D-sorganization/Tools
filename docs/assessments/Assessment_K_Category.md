@@ -27,12 +27,12 @@ Reproducibility is handled via `uv.lock` and `pyproject.toml`, which is excellen
 
 ## Diff Suggestions
 ```python
-<<<<<<< SEARCH
+# BEFORE:
 def process(data):
     return data * 2
 =======
 def process(data):
     log_provenance("Multiplied data by 2")
     return data * 2
->>>>>>> REPLACE
+# AFTER:
 ```

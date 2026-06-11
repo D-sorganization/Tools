@@ -27,10 +27,10 @@ Security review indicates potential risks with input validation, especially in t
 
 ## Diff Suggestions
 ```python
-<<<<<<< SEARCH
+# BEFORE:
 subprocess.run(f"cmd {user_input}", shell=True)
 =======
 import shlex
 subprocess.run(["cmd", shlex.quote(user_input)])
->>>>>>> REPLACE
+# AFTER:
 ```

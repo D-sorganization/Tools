@@ -27,11 +27,11 @@ Error handling is inconsistent. Found 106 instances of empty exception blocks, w
 
 ## Diff Suggestions
 ```python
-<<<<<<< SEARCH
+# BEFORE:
     except:
         pass
 =======
     except Exception as e:
         logger.exception("Unexpected error")
->>>>>>> REPLACE
+# AFTER:
 ```

@@ -27,10 +27,10 @@ Visualization relies on Recharts in the frontend and matplotlib/plotly in Python
 
 ## Diff Suggestions
 ```python
-<<<<<<< SEARCH
+# BEFORE:
 return <Chart data={largeData} />
 =======
 const sampledData = useMemo(() => downsample(largeData), [largeData]);
 return <Chart data={sampledData} />
->>>>>>> REPLACE
+# AFTER:
 ```

@@ -26,12 +26,7 @@ Key Features:
 from dataclasses import dataclass  # noqa: E402
 from typing import Final  # noqa: E402
 
-try:
-    import numpy as np
-    NUMPY_AVAILABLE = True
-except ImportError:
-    np = None
-    NUMPY_AVAILABLE = False  # noqa: E402
+import numpy as np  # noqa: E402
 
 from .constants import (  # noqa: E402
     COOLING_WATER_APPROACH_TEMP,

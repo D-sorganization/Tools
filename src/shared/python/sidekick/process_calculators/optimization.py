@@ -7,12 +7,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Any, Final, TypedDict, cast
 
-try:
-    import numpy as np
-    NUMPY_AVAILABLE = True
-except ImportError:
-    np = None
-    NUMPY_AVAILABLE = False
+import numpy as np
 
 from .analysis_utils import evaluate_output
 
@@ -64,7 +59,7 @@ def _build_override_mapping(
 def _compute_gradient_component(
     index: int,
     cfg: dict[str, Any],
-    values: 'np.ndarray',
+    values: np.ndarray,
     objective: float,
     gradient_step: float,
     parameter_names: Sequence[str],
@@ -148,17 +143,17 @@ class _AdamState:
     """Mutable state for the Adam optimizer loop."""
 
     parameter_names: list[str]
-    lower_bounds: 'np.ndarray'
-    upper_bounds: 'np.ndarray'
-    values: 'np.ndarray'
-    m: 'np.ndarray'  # 1st moment estimate
-    v: 'np.ndarray'  # 2nd moment estimate
+    lower_bounds: np.ndarray
+    upper_bounds: np.ndarray
+    values: np.ndarray
+    m: np.ndarray  # 1st moment estimate
+    v: np.ndarray  # 2nd moment estimate
     best_output: float
     best_parameters: dict[str, float]
     best_state: dict[str, float]
     best_composition: dict[str, float]
     history: list[OptimizationHistoryEntry]
-    previous_values: 'np.ndarray'
+    previous_values: np.ndarray
     base_params: dict[str, float]
     output_name: str
 
@@ -236,7 +231,7 @@ def _evaluate_and_record(
 
 def _adam_update(
     st: _AdamState,
-    gradient: 'np.ndarray',
+    gradient: np.ndarray,
     iteration: int,
     *,
     maximize: bool,
@@ -375,9 +370,9 @@ OPTIMIZATION_PENALTY_VALUE: Final[float] = 1e10
 
 
 def find_optimal_on_surface(
-    x_grid: 'np.ndarray',
-    y_grid: 'np.ndarray',
-    z_grid: 'np.ndarray',
+    x_grid: np.ndarray,
+    y_grid: np.ndarray,
+    z_grid: np.ndarray,
     method: str = "Grid Search",
     bounds: tuple[tuple[float, float], tuple[float, float]] | None = None,
     callback: Any | None = None,
