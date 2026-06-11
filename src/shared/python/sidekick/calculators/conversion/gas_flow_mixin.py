@@ -176,14 +176,43 @@ class GasFlowConversionMixin:
         """Convert gas flow between SCFM and ACFM.
 
         Raises:
-            ValueError: If ``value`` is ``None``.
+            ValueError: If ``value`` is ``None``; if ``compressibility_factor``
+                is not positive and finite; or if an explicitly supplied
+                ``actual_temp_K`` / ``actual_pressure_kPa`` is not positive and
+                finite.
         """
-        # Explicit ValueError guard (not bare ``assert``) so it survives
+        import math
+
+        # Explicit ValueError guards (not bare ``assert``) so they survive
         # ``python -O`` (issue #3182 / #3344).
         if value is None:
             raise ValueError("value must be provided")
+        if not math.isfinite(compressibility_factor) or compressibility_factor <= 0:
+            msg = (
+                "compressibility_factor must be positive and finite, "
+                f"got {compressibility_factor}"
+            )
+            raise ValueError(msg)
+        # An explicitly supplied actual temperature/pressure must be physical.
+        # ``None`` means "use the standard condition default"; ``0.0`` (or any
+        # non-positive/non-finite value) is an invalid explicit input and must
+        # be rejected rather than silently coerced to the default (#3342/#3367).
+        if actual_temp_K is not None and (
+            not math.isfinite(actual_temp_K) or actual_temp_K <= 0
+        ):
+            msg = f"actual_temp_K must be positive and finite, got {actual_temp_K}"
+            raise ValueError(msg)
+        if actual_pressure_kPa is not None and (
+            not math.isfinite(actual_pressure_kPa) or actual_pressure_kPa <= 0
+        ):
+            msg = (
+                "actual_pressure_kPa must be positive and finite, "
+                f"got {actual_pressure_kPa}"
+            )
+            raise ValueError(msg)
+
         std_temp, std_pressure_pa, _ = standard_condition.value
-        temperature = actual_temp_K or std_temp
+        temperature = actual_temp_K if actual_temp_K is not None else std_temp
         pressure_pa = (
             actual_pressure_kPa * 1000.0
             if actual_pressure_kPa is not None
@@ -203,8 +232,6 @@ class GasFlowConversionMixin:
         if from_unit.upper() == "SCFM" and to_unit.upper() == "ACFM":
             return result * compressibility_factor
         if from_unit.upper() == "ACFM" and to_unit.upper() == "SCFM":
-            if compressibility_factor <= 0:
-                return result
             return result / compressibility_factor
         return result
 
