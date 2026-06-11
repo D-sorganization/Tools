@@ -14,7 +14,12 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from functools import partial
 from typing import Any
 
-import numpy as np
+try:
+    import numpy as np
+    NUMPY_AVAILABLE = True
+except ImportError:
+    np = None
+    NUMPY_AVAILABLE = False
 
 from .analysis_utils import evaluate_output
 
@@ -50,8 +55,8 @@ def run_multi_parameter_analysis_parallel(
     engine: Any,
     analysis_params: dict[str, Any],
     manual_hhv: float,
-    param1_values: np.ndarray,
-    param2_values: np.ndarray,
+    param1_values: 'np.ndarray',
+    param2_values: 'np.ndarray',
     max_workers: int | None = None,
 ) -> dict[str, Any]:
     """Execute multi-parameter sweep using parallel processing.
@@ -148,8 +153,8 @@ def run_multi_parameter_analysis(
     engine: Any,
     analysis_params: dict[str, Any],
     manual_hhv: float,
-    param1_values: np.ndarray,
-    param2_values: np.ndarray,
+    param1_values: 'np.ndarray',
+    param2_values: 'np.ndarray',
 ) -> dict[str, Any]:
     """Execute multi-parameter sweep using the provided engine.
 
