@@ -529,8 +529,11 @@ jobs:
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             if [ ! -s changed_test_files.txt ] && [ ! -s changed_python_files.txt ]; then
               coverage_gate_required=false
-            elif ! grep -q -E '^src/shared/python/(notes|upstream_drift_tools|sidekick)/' changed_python_files.txt; then
-              coverage_gate_required=false
+            else
+              TRACKED_REGEX=$(python3 -c 'import json; d = json.load(open("config/coverage_policy.json"))["tracked_packages"]; p = [f"{k.replace(\".\", r\"\.\")}$" if k.endswith(".py") else f"{k.replace(\".\", r\"\.\")}/" for k in d]; print("^(" + "|".join(p) + ")")')
+              if ! grep -q -E "$TRACKED_REGEX" changed_python_files.txt; then
+                coverage_gate_required=false
+              fi
             fi
           fi
 
@@ -577,6 +580,9 @@ jobs:
             "src/shared/python/sidekick/tests/test_tab_context_menu.py"
             # Package rename compat shim unit test
             "tests/unit/test_sidekick_package_rename.py"
+            # P1AM HMI control system tests
+            "tests/p1am_control_system/"
+            "src/p1am_control_system/backend/tests/"
           )
           if grep -q -E '^src/shared/python/sidekick/' changed_python_files.txt; then
             core_tests+=(
@@ -586,6 +592,21 @@ jobs:
               "tests/unit/sidekick"
               "tests/unit/test_check_sidekick_coverage.py"
             )
+          fi
+          if grep -q -E '^src/shared/python/codemap/' changed_python_files.txt; then
+            core_tests+=("tests/unit/codemap")
+          fi
+          if grep -q -E '^src/shared/python/signal_toolkit/' changed_python_files.txt; then
+            core_tests+=("tests/shared/python/signal_toolkit")
+          fi
+          if grep -q -E '^src/shared/python/upstream_drift_tools/' changed_python_files.txt; then
+            core_tests+=("tests/shared/python/upstream_drift_tools")
+          fi
+          if grep -q -E '^src/shared/python/file_watcher/' changed_python_files.txt; then
+            core_tests+=("tests/shared/python/file_watcher")
+          fi
+          if grep -q -E '^src/shared/python/safe_pandas_eval\.py$' changed_python_files.txt; then
+            core_tests+=("tests/shared/python/test_safe_pandas_eval.py")
           fi
           # Use `python -m pytest` rather than the `pytest` console script so
           # the active Python interpreter resolves pytest-cov (and other pip
