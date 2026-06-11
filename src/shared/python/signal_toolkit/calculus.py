@@ -109,8 +109,14 @@ class Differentiator:
             method: Differentiation method to use.
             window_length: Window length for Savitzky-Golay filter (odd integer).
             polyorder: Polynomial order for Savitzky-Golay filter.
+
+        Raises:
+            ValueError: If ``method`` is ``None``.
         """
-        assert method is not None, "method must be provided"
+        # Explicit ValueError guard (not bare ``assert``) so it survives
+        # ``python -O`` (issue #3182 / #3344).
+        if method is None:
+            raise ValueError("method must be provided")
         self.method = method
         self.window_length = window_length
         self.polyorder = polyorder
@@ -128,8 +134,14 @@ class Differentiator:
 
         Returns:
             Signal containing the derivative.
+
+        Raises:
+            ValueError: If ``signal`` is ``None``.
         """
-        assert signal is not None, "signal must be provided"
+        # Explicit ValueError guard (not bare ``assert``) so it survives
+        # ``python -O`` (issue #3182 / #3344).
+        if signal is None:
+            raise ValueError("signal must be provided")
         require(order >= 1, "Derivative order must be >= 1")
         result = signal.copy()
         result.name = f"d{order}({signal.name})/dt{order}"
@@ -149,7 +161,9 @@ class Differentiator:
         Returns:
             Array of derivative values.
         """
-        assert signal is not None, "signal must be provided"
+        # Private helper — caller (differentiate) already validated signal.
+        if signal is None:
+            raise ValueError("signal must be provided")
         t = signal.time
         y = signal.values
         dt = signal.dt
@@ -226,8 +240,14 @@ class Differentiator:
 
         Returns:
             Derivative value at the point.
+
+        Raises:
+            ValueError: If ``signal`` is ``None``.
         """
-        assert signal is not None, "signal must be provided"
+        # Explicit ValueError guard (not bare ``assert``) so it survives
+        # ``python -O`` (issue #3182 / #3344).
+        if signal is None:
+            raise ValueError("signal must be provided")
         derivative_signal = self.differentiate(signal, order)
 
         # Interpolate to exact point
@@ -255,8 +275,14 @@ class Integrator:
 
         Args:
             method: Integration method to use.
+
+        Raises:
+            ValueError: If ``method`` is ``None``.
         """
-        assert method is not None, "method must be provided"
+        # Explicit ValueError guard (not bare ``assert``) so it survives
+        # ``python -O`` (issue #3182 / #3344).
+        if method is None:
+            raise ValueError("method must be provided")
         self.method = method
 
     @staticmethod
@@ -389,8 +415,14 @@ class Integrator:
 
         Returns:
             Signal with cumulative integral values.
+
+        Raises:
+            ValueError: If ``signal`` is ``None``.
         """
-        assert signal is not None, "signal must be provided"
+        # Explicit ValueError guard (not bare ``assert``) so it survives
+        # ``python -O`` (issue #3182 / #3344).
+        if signal is None:
+            raise ValueError("signal must be provided")
         cumulative = integrate.cumulative_trapezoid(
             signal.values,
             signal.time,
@@ -422,8 +454,14 @@ def compute_derivative(
 
     Returns:
         Signal containing the derivative.
+
+    Raises:
+        ValueError: If ``signal`` is ``None``.
     """
-    assert signal is not None, "signal must be provided"
+    # Explicit ValueError guard (not bare ``assert``) so it survives
+    # ``python -O`` (issue #3182 / #3344).
+    if signal is None:
+        raise ValueError("signal must be provided")
     diff = Differentiator(method=method, **kwargs)
     return diff.differentiate(signal, order)
 
@@ -472,9 +510,15 @@ def compute_tangent_line(
 
     Returns:
         TangentLine object with tangent information.
+
+    Raises:
+        ValueError: If ``signal`` is ``None``.
     """
+    # Explicit ValueError guard (not bare ``assert``) so it survives
+    # ``python -O`` (issue #3182 / #3344).
+    if signal is None:
+        raise ValueError("signal must be provided")
     # Clamp t_point to signal range
-    assert signal is not None, "signal must be provided"
     t_point = np.clip(t_point, signal.time[0], signal.time[-1])
 
     # Get signal value at point
@@ -531,8 +575,14 @@ def compute_all_tangent_lines(
 
     Returns:
         List of TangentLine objects.
+
+    Raises:
+        ValueError: If ``signal`` is ``None``.
     """
-    assert signal is not None, "signal must be provided"
+    # Explicit ValueError guard (not bare ``assert``) so it survives
+    # ``python -O`` (issue #3182 / #3344).
+    if signal is None:
+        raise ValueError("signal must be provided")
     t_points = np.linspace(signal.time[0], signal.time[-1], num_points + 2)[1:-1]
     line_width = signal.duration / (num_points + 1) * 0.8
 
@@ -558,8 +608,14 @@ def compute_curvature(
 
     Returns:
         Signal containing curvature values.
+
+    Raises:
+        ValueError: If ``signal`` is ``None``.
     """
-    assert signal is not None, "signal must be provided"
+    # Explicit ValueError guard (not bare ``assert``) so it survives
+    # ``python -O`` (issue #3182 / #3344).
+    if signal is None:
+        raise ValueError("signal must be provided")
     diff = Differentiator(method=method)
 
     y_prime = diff.differentiate(signal, order=1).values
@@ -591,8 +647,14 @@ def compute_arc_length(
 
     Returns:
         Total arc length.
+
+    Raises:
+        ValueError: If ``signal`` is ``None``.
     """
-    assert signal is not None, "signal must be provided"
+    # Explicit ValueError guard (not bare ``assert``) so it survives
+    # ``python -O`` (issue #3182 / #3344).
+    if signal is None:
+        raise ValueError("signal must be provided")
     diff = Differentiator(method=method)
     y_prime = diff.differentiate(signal, order=1).values
 
@@ -614,8 +676,14 @@ def find_extrema(
 
     Returns:
         Tuple of (maxima, minima) where each is a list of (time, value) tuples.
+
+    Raises:
+        ValueError: If ``signal`` is ``None``.
     """
-    assert signal is not None, "signal must be provided"
+    # Explicit ValueError guard (not bare ``assert``) so it survives
+    # ``python -O`` (issue #3182 / #3344).
+    if signal is None:
+        raise ValueError("signal must be provided")
     diff = Differentiator(method=method)
     derivative = diff.differentiate(signal, order=1)
 
@@ -650,8 +718,14 @@ def find_inflection_points(
 
     Returns:
         List of (time, value) tuples for inflection points.
+
+    Raises:
+        ValueError: If ``signal`` is ``None``.
     """
-    assert signal is not None, "signal must be provided"
+    # Explicit ValueError guard (not bare ``assert``) so it survives
+    # ``python -O`` (issue #3182 / #3344).
+    if signal is None:
+        raise ValueError("signal must be provided")
     diff = Differentiator(method=method)
     second_derivative = diff.differentiate(signal, order=2)
 
