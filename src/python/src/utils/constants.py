@@ -12,6 +12,10 @@ from __future__ import annotations
 
 from typing import Final
 
+# Note: Many of these constants duplicate those found in sidekick.utils.unit_constants.
+# They are kept here to avoid adding a dependency from the standalone src/python package
+# to the sidekick package. Values should be kept in sync.
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Universal physical constants
 # ─────────────────────────────────────────────────────────────────────────────
