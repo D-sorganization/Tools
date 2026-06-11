@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.361                                    |
+| **Spec Version**        | 1.1.362                                    |
 | **Last Spec Update**    | 2026-06-11                                 |
 
 ## 2. Purpose & Mission
@@ -722,6 +722,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-11 | 1.1.362 | fix(ci): align `ci-standard.yml` with the fleet's known-good `mypy==1.13.0` workflow pin so quality-gate dependency installation remains reproducible on self-hosted runners. |
 | 2026-06-11 | 1.1.361 | test(ci): satisfy the changed-test behavioral assertion gate in the Tools consolidation branch by adding benchmark output postconditions, making retired data-processor skip sentinels explicit, and documenting the shared numerical helper as support-only in the assertion allowlist. |
 | 2026-06-11 | 1.1.360 | fix(ci): restore Tools consolidation CI by replacing the coverage tracked-package regex generator with a shell-safe Python expression, adding changed-file mypy annotations for the multi-parameter PyQt meshgrid arrays, and resolving signal-toolkit integration bounds to concrete floats before validation/result construction. |
 | 2026-06-11 | 1.1.354 | fix(consolidation, #3314 #3315 #3350 #3356 #3358): restore and relocate truncated test coverage across shared calculators, signal tooling, GUI launchers, folder tooling, data processing, rotation conversion, and integration surfaces; unify humanoid anthropometry under the shared implementation; propagate P1AM E-STOP clear commands through the backend API; refresh assessment artifacts and CI baselines for the consolidated changes. |
