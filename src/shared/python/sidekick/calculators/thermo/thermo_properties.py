@@ -92,8 +92,13 @@ def _mixture_mw_cp(
         ``(mix_mw, mix_cp)`` where ``mix_mw`` is in g/mol and ``mix_cp`` is
         in J/(mol·K) at 298 K.
     """
-    mix_mw = sum(frac * MOLECULAR_WEIGHTS.get(sp, 28.0) for sp, frac in fractions)
-    mix_cp = sum(frac * MOLAR_CP_298.get(sp, 29.0) for sp, frac in fractions)
+    mix_mw = 0.0
+    mix_cp = 0.0
+    for sp, frac in fractions:
+        if sp not in MOLECULAR_WEIGHTS:
+            raise ValueError(f"Unknown gas species: {sp}")
+        mix_mw += frac * MOLECULAR_WEIGHTS[sp]
+        mix_cp += frac * MOLAR_CP_298[sp]
     return mix_mw, mix_cp
 
 

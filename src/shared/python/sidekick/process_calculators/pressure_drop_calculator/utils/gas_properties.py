@@ -463,18 +463,12 @@ def calculate_compressibility_factor(
     T_r = temperature / T_pc  # Reduced temperature
     P_r = pressure / P_pc  # Reduced pressure
 
-    # Lee-Kesler correlation for simple fluid (ω = 0)
+    # Pitzer correlation (Abbott approximation)
     B0 = 0.083 - 0.422 / (T_r**1.6)
-    C0 = 0.139 - 0.172 / (T_r**4.2)
-    D0 = 0.0
-
-    Z0 = 1.0 + B0 * P_r / T_r + C0 * (P_r / T_r) ** 2 + D0 * (P_r / T_r) ** 5
-
-    # Lee-Kesler correction for acentric factor
     B1 = 0.139 - 0.172 / (T_r**4.2)
-    C1 = 0.0
 
-    Z1 = B1 * P_r / T_r + C1 * (P_r / T_r) ** 2
+    Z0 = 1.0 + B0 * P_r / T_r
+    Z1 = B1 * P_r / T_r
 
     # Final Z-factor
     Z = Z0 + omega_mix * Z1
@@ -683,11 +677,7 @@ def _compute_pure_viscosities(
     pure_viscosities: dict[str, float] = {}
     for component in composition.keys():
         if component not in GAS_DATABASE:
-            _logger.warning(f"Component '{component}' not found, using air properties")
-            pure_viscosities[component] = float(
-                calculate_pure_gas_viscosity_sutherland(temperature)
-            )
-            continue
+            raise ValueError(f"Unknown gas species: {component}")
 
         props = GAS_DATABASE[component]
 
@@ -846,8 +836,7 @@ def calculate_mixture_viscosity_simple(
             )
             mu_mix += mole_frac * mu_i
         else:
-            _logger.warning(f"No Sutherland data for {component}, using air properties")
-            mu_mix += mole_frac * calculate_pure_gas_viscosity_sutherland(temperature)
+            raise ValueError(f"Unknown gas species: {component}")
 
     return mu_mix
 
