@@ -722,6 +722,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-11 | 1.1.354 | fix(consolidation, #3314 #3315 #3350 #3356 #3358): restore and relocate truncated test coverage across shared calculators, signal tooling, GUI launchers, folder tooling, data processing, rotation conversion, and integration surfaces; unify humanoid anthropometry under the shared implementation; propagate P1AM E-STOP clear commands through the backend API; refresh assessment artifacts and CI baselines for the consolidated changes. |
 | 2026-06-10 | 1.1.353 | fix(hooks, #1361): align the pre-push mypy hook with changed-file delta CI by adding `--follow-imports=skip`, so clean pushes are checked against the pushed source files without failing on unrelated pre-existing imported `ai/` debt. Added an ops regression test that keeps the hook on the pre-push stage, filename-passing mode, `src/` scope, and no-follow-import behavior. |
 | 2026-06-10 | 1.1.352 | test(sidekick): keep action-audit timestamp fixtures compatible with the Python 3.10 CI lane by using `timezone.utc` with a scoped pyupgrade suppression instead of the Python 3.11-only `datetime.UTC` alias. |
 | 2026-06-10 | 1.1.351 | test(sidekick): keep action-audit redaction fixtures covered while marking synthetic sensitive-key values with detect-secrets allowlist pragmas, so the security scan remains strict without treating redaction test data as leaked material. |
