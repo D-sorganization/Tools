@@ -413,7 +413,7 @@ class SteamCalculationEngine:
         p_mmhg = 10**log_p_mmhg
 
         # Convert to Pascal
-        return p_mmhg * MMHG_TO_PASCAL_FACTOR
+        return float(p_mmhg * MMHG_TO_PASCAL_FACTOR)
 
     def _buck_equation(self, temperature_c: float) -> float:
         """
@@ -615,7 +615,7 @@ class SteamCalculationEngine:
             # Use Antoine equation
             log_p_mmhg = ANTOINE_A - ANTOINE_B / (temperature - ANTOINE_C_KELVIN)
             pressure_mmhg = 10**log_p_mmhg
-            return pressure_mmhg * MMHG_TO_PASCAL_FACTOR
+            return float(pressure_mmhg * MMHG_TO_PASCAL_FACTOR)
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             _logger.exception("Saturation pressure calculation failed: %s", e)
             raise ValueError(f"Saturation pressure calculation failed: {e}") from e

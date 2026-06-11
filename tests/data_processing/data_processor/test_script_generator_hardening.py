@@ -56,7 +56,7 @@ def test_batch_script_serializes_quoted_paths_and_returns_failure(
         types.ModuleType("vectorized_filter_engine"),
     )
     namespace: dict[str, object] = {}
-    exec(compile(script, "<generated_batch>", "exec"), namespace)
+    exec(compile(script, "<generated_batch>", "exec"), namespace)  # nosec B102
 
     assert namespace["main"]() == 1
     assert output_dir.exists()
@@ -136,7 +136,7 @@ def test_batch_script_failure_surfaces_as_nonzero_exit(
     monkeypatch.setitem(sys.modules, "data_processor.vectorized_filter_engine", vfe_mod)
 
     namespace: dict[str, object] = {}
-    exec(compile(script, "<generated_batch_failure>", "exec"), namespace)
+    exec(compile(script, "<generated_batch_failure>", "exec"), namespace)  # nosec B102
 
     exit_code = namespace["main"]()
     assert exit_code == 1, f"Expected exit code 1 for failed batch, got {exit_code}"

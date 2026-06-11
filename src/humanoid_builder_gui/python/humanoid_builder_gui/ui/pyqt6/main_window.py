@@ -600,7 +600,7 @@ def main() -> int:
     app = QApplication(sys.argv)
     window = HumanoidBuilderWindow()
     window.show()
-    return app.exec()
+    return int(app.exec())
 
 
 if __name__ == "__main__":

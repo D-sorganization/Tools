@@ -1,3 +1,5 @@
+from typing import Any
+
 import requests
 from PyQt6.QtCore import QThread, pyqtSignal
 
@@ -10,7 +12,14 @@ class HttpWorker(QThread):
     success = pyqtSignal(dict)
     error = pyqtSignal(str)
 
-    def __init__(self, method, url, data=None, json=None, timeout=2.0):
+    def __init__(
+        self,
+        method: str,
+        url: str,
+        data: dict[str, Any] | None = None,
+        json: dict[str, Any] | None = None,
+        timeout: float = 2.0,
+    ) -> None:
         super().__init__()
         self.method = method.upper()
         self.url = url
@@ -18,7 +27,7 @@ class HttpWorker(QThread):
         self.json = json
         self.timeout = timeout
 
-    def run(self):
+    def run(self) -> None:
         try:
             if self.method == "GET":
                 resp = requests.get(self.url, params=self.data, timeout=self.timeout)

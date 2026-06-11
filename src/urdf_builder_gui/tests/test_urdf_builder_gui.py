@@ -20,6 +20,7 @@ import xml.etree.ElementTree as ET
 
 import pytest
 
+from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA, get_stylesheet
 from urdf_builder_gui.anthropometric_model import (
     HEIGHT_RATIOS,
     MASS_RATIOS,
@@ -40,7 +41,6 @@ from urdf_builder_gui.contracts import (
     require,
 )
 from urdf_builder_gui.preview_generator import generate_preview_text
-from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA, get_stylesheet
 from urdf_builder_gui.urdf_generator import (
     generate_urdf_xml,
     validate_urdf_structure,
@@ -333,7 +333,7 @@ class TestURDFConfig:
         """URDFConfig should be immutable."""
         cfg = URDFConfig()
         with pytest.raises(AttributeError):
-            cfg.robot_name = "changed"  # type: ignore[misc]
+            cfg.robot_name = "changed"
 
 
 # ═══════════════════════════════════════════════════════════════════════

@@ -24,8 +24,8 @@ class TestDeriveRelatedPath:
         assert result == Path("output_controls.dxf")
 
     def test_preserves_directory(self):
-        result = derive_related_path("/tmp/drawings/out.dxf", "controls")
-        assert result == Path("/tmp/drawings/out_controls.dxf")
+        result = derive_related_path("/tmp/drawings/out.dxf", "controls")  # nosec B108
+        assert result == Path("/tmp/drawings/out_controls.dxf")  # nosec B108
 
 
 class TestGenerate:

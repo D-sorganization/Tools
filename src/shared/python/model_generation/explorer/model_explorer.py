@@ -17,7 +17,6 @@ Display preview checkboxes (ordered):
 from __future__ import annotations
 
 import logging
-from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA, get_stylesheet
 import sys
 from collections.abc import Callable
 from pathlib import Path
@@ -52,6 +51,8 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA, get_stylesheet
+
 logger = logging.getLogger(__name__)
 
 ModelFileSelector = Callable[[], str | Path | None]
@@ -64,36 +65,6 @@ class ModelFileSelectionRequiredError(NotImplementedError):
 def _missing_model_file_selector() -> str | Path | None:
     raise ModelFileSelectionRequiredError("caller must provide a file selector")
 
-
-# Catppuccin Mocha color palette
-CATPPUCCIN_MOCHA = {
-    "rosewater": "#f5e0dc",
-    "flamingo": "#f2cdcd",
-    "pink": "#f5c2e7",
-    "mauve": "#cba6f7",
-    "red": "#f38ba8",
-    "maroon": "#eba0ac",
-    "peach": "#fab387",
-    "yellow": "#f9e2af",
-    "green": "#a6e3a1",
-    "teal": "#94e2d5",
-    "sky": "#89dceb",
-    "sapphire": "#74c7ec",
-    "blue": "#89b4fa",
-    "lavender": "#b4befe",
-    "text": "#cdd6f4",
-    "subtext1": "#bac2de",
-    "subtext0": "#a6adc8",
-    "overlay2": "#9399b2",
-    "overlay1": "#7f849c",
-    "overlay0": "#6c7086",
-    "surface2": "#585b70",
-    "surface1": "#45475a",
-    "surface0": "#313244",
-    "base": "#1e1e2e",
-    "mantle": "#181825",
-    "crust": "#11111b",
-}
 
 class DisplayPreviewPanel(QGroupBox):
     """
@@ -560,7 +531,7 @@ def main() -> int:
     app = QApplication(sys.argv)
     window = ModelExplorerWindow()
     window.show()
-    return app.exec()
+    return int(app.exec())
 
 
 if __name__ == "__main__":

@@ -42,7 +42,7 @@ class TestSafeJoinPath:
         """Test accepting string as base path."""
         from utils.os_utils import safe_join_path
 
-        result = safe_join_path("/tmp", "test")
+        result = safe_join_path("/tmp", "test")  # nosec B108
         assert isinstance(result, Path)
 
 

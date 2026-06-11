@@ -56,7 +56,7 @@ class TestSignalLoaderPreconditions:
 
     def test_file_not_found_raises(self) -> None:
         """load() must raise FileNotFoundError for a non-existent path."""
-        fake_path = Path("/tmp/_nonexistent_signal_file_.csv")
+        fake_path = Path("/tmp/_nonexistent_signal_file_.csv")  # nosec B108
         assert not fake_path.exists()
 
         with pytest.raises(FileNotFoundError, match="does not exist"):

@@ -247,7 +247,7 @@ class TestMockServer:
 
             # Make request
             url = f"{server.url}/test"
-            with urllib.request.urlopen(url, timeout=5) as response:
+            with urllib.request.urlopen(url, timeout=5) as response:  # nosec B310
                 data = json.loads(response.read())
                 assert data == {"result": 42}
 

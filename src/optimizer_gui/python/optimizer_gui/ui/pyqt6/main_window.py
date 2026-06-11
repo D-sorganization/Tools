@@ -11,7 +11,6 @@ A PyQt6 GUI for configuring and running Adam-based optimization.
 from __future__ import annotations
 
 import logging
-from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA, get_stylesheet
 import sys
 from dataclasses import dataclass
 
@@ -39,6 +38,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA, get_stylesheet
 from shared.python.theme.integration import ThemedWindowMixin
 
 from .motion_tabs import create_chain_tab, create_swingset_tab
@@ -56,36 +56,6 @@ def _make_window_base() -> type:
 
     return WindowBase
 
-
-# Catppuccin Mocha color palette
-CATPPUCCIN_MOCHA = {
-    "rosewater": "#f5e0dc",
-    "flamingo": "#f2cdcd",
-    "pink": "#f5c2e7",
-    "mauve": "#cba6f7",
-    "red": "#f38ba8",
-    "maroon": "#eba0ac",
-    "peach": "#fab387",
-    "yellow": "#f9e2af",
-    "green": "#a6e3a1",
-    "teal": "#94e2d5",
-    "sky": "#89dceb",
-    "sapphire": "#74c7ec",
-    "blue": "#89b4fa",
-    "lavender": "#b4befe",
-    "text": "#cdd6f4",
-    "subtext1": "#bac2de",
-    "subtext0": "#a6adc8",
-    "overlay2": "#9399b2",
-    "overlay1": "#7f849c",
-    "overlay0": "#6c7086",
-    "surface2": "#585b70",
-    "surface1": "#45475a",
-    "surface0": "#313244",
-    "base": "#1e1e2e",
-    "mantle": "#181825",
-    "crust": "#11111b",
-}
 
 @dataclass
 class ParameterConfig:

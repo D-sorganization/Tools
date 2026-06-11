@@ -10,7 +10,7 @@ from urdf_builder_gui.anthropometric_model import MASS_RATIOS as urdf_mass_ratio
 
 
 def test_anthropometry_parity():
-    """Ensure that the three anthropometry consumers are using the exact same male ratios."""
+    """Ensure anthropometry consumers use the same male ratios."""
     # 1. Canonical data
     canonical_male_head_mass = DE_LEVA_DATA.get_segment_data("head", 1.0).mass_ratio
     canonical_male_thigh_mass = DE_LEVA_DATA.get_segment_data("thigh", 1.0).mass_ratio
@@ -46,4 +46,4 @@ def test_anthropometry_parity():
     # Height
     assert canonical_male_head_length == simple_length["head"]
     assert canonical_male_thigh_length == simple_length["thigh"]
-    # URDF height ratios uses different definition (0.139 and 0.245) based on original config, but parity of mass is strictly enforced.
+    # URDF height ratios use original config definitions, but mass parity is strict.

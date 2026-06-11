@@ -15,7 +15,6 @@ from collections.abc import Callable
 from typing import Any
 
 import numpy as np
-
 from sidekick.utils.unit_constants import R_UNIVERSAL
 
 __all__ = [

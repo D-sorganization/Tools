@@ -32,7 +32,7 @@ class TestHumanoidBuilderMainWindow:
         ):
             yield
 
-    def test_main_window_imports(self, mock_qt_app) -> Any:
+    def test_main_window_imports(self, mock_qt_app: Any) -> Any:
         """Test that main window module can be imported."""
         try:
             from humanoid_builder_gui.ui.pyqt6 import main_window
@@ -41,7 +41,7 @@ class TestHumanoidBuilderMainWindow:
         except ImportError:
             pytest.skip("PyQt6 main window not yet implemented")
 
-    def test_main_window_class_exists(self, mock_qt_app) -> Any:
+    def test_main_window_class_exists(self, mock_qt_app: Any) -> Any:
         """Test that window class is defined and callable."""
         try:
             from humanoid_builder_gui.ui.pyqt6.main_window import (
@@ -274,7 +274,7 @@ class TestLoDAliases:
     """
 
     @pytest.fixture
-    def mock_qt_modules(self):
+    def mock_qt_modules(self) -> Any:
         """Mock PyQt6 modules for headless environments."""
         with patch.dict(
             sys.modules,
@@ -287,7 +287,7 @@ class TestLoDAliases:
         ):
             yield
 
-    def test_enum_aliases_defined(self, mock_qt_modules):
+    def test_enum_aliases_defined(self, mock_qt_modules: Any) -> None:
         """Test that LoD-compliant enum aliases are defined at module level."""
         try:
             import importlib
@@ -309,7 +309,9 @@ class TestLoDAliases:
         except ImportError:
             pytest.skip("PyQt6 not available in this environment")
 
-    def test_no_deep_attribute_chains_in_method_body(self, mock_qt_modules):
+    def test_no_deep_attribute_chains_in_method_body(
+        self, mock_qt_modules: Any
+    ) -> None:
         """Test that the module source has no 3-level Qt enum chains outside aliases."""
         import inspect
         import re

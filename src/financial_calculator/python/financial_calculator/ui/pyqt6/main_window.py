@@ -32,6 +32,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from shared.python.theme.catppuccin import get_stylesheet
 from shared.python.theme.integration import ThemedWindowMixin
 
 # Catppuccin Mocha colors

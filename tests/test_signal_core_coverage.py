@@ -98,7 +98,7 @@ class TestSignalImporterCSV:
     """CSV import edge cases: no header, empty file, column selection."""
 
     def _write_csv(self, content: str) -> Path:
-        tmp = Path(tempfile.mktemp(suffix=".csv"))
+        tmp = Path(tempfile.mktemp(suffix=".csv"))  # nosec B306
         tmp.write_text(content)
         return tmp
 

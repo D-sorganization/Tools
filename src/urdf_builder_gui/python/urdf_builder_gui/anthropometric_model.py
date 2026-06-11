@@ -99,7 +99,7 @@ def compute_segment_length(
         "proportion_factor must be positive",
         proportion_factor,
     )
-    return total_height * HEIGHT_RATIOS[segment_key] * proportion_factor
+    return float(total_height * HEIGHT_RATIOS[segment_key] * proportion_factor)
 
 
 def compute_segment_mass(total_mass: float, segment_key: str, count: int = 1) -> float:
@@ -119,7 +119,7 @@ def compute_segment_mass(total_mass: float, segment_key: str, count: int = 1) ->
         segment_key,
     )
     require(count >= 1, "count must be >= 1", count)
-    return total_mass * MASS_RATIOS[segment_key] * count
+    return float(total_mass * MASS_RATIOS[segment_key] * count)
 
 
 def compute_box_inertia(

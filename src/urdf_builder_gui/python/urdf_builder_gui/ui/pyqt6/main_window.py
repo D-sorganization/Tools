@@ -37,8 +37,8 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from shared.python.theme.integration import ThemedWindowMixin
 from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA, get_stylesheet
+from shared.python.theme.integration import ThemedWindowMixin
 
 logger = logging.getLogger(__name__)
 

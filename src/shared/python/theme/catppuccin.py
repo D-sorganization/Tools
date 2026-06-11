@@ -40,12 +40,13 @@ CATPPUCCIN_MOCHA: dict[str, str] = {
     "crust": "#11111b",
 }
 
+
 def get_stylesheet(palette: dict[str, str] | None = None) -> str:
     """Build a complete Qt stylesheet from a colour palette.
-    
+
     Args:
         palette: Colour palette dictionary. Defaults to CATPPUCCIN_MOCHA.
-        
+
     Returns:
         A Qt stylesheet string ready for ""setStyleSheet()"".
     """

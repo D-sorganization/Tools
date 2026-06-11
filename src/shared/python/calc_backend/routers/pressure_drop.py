@@ -9,7 +9,6 @@ See issue #613 (calc backend) and #2411 (API standardization).
 from __future__ import annotations
 
 import logging
-import time
 from typing import Any, cast
 
 from fastapi import APIRouter, HTTPException
@@ -37,8 +36,8 @@ def calculate_pressure_drop(
 ) -> dict[str, Any]:
     """Calculate pressure drop using Darcy-Weisbach equation.
 
-    Delegates to PressureDropCalculator from upstream_drift_tools to avoid
-    duplicating the Darcy-Weisbach implementation inline. See GH1705.
+    Delegates to the shared Sidekick PressureDropCalculator to avoid duplicating
+    the Darcy-Weisbach implementation inline. See GH1705.
 
     Uses standardized response format (issue #2411).
 
