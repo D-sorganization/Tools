@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.363                                    |
+| **Spec Version**        | 1.1.364                                    |
 | **Last Spec Update**    | 2026-06-11                                 |
 
 ## 2. Purpose & Mission
@@ -722,6 +722,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-11 | 1.1.364 | test(ci): keep retired data-processor skip sentinels compatible with the ruff B011 guard by using truthy documentation assertions instead of optimized-away `assert False` statements. |
 | 2026-06-11 | 1.1.363 | fix(ci/runner): harden `ci-standard.yml` Linux apt setup by clearing corrupted apt package-cache binaries alongside stale lock files before `apt-get update`, allowing self-hosted runners to recover from cache rename failures. |
 | 2026-06-11 | 1.1.362 | fix(ci): align `ci-standard.yml` with the fleet's known-good `mypy==1.13.0` workflow pin so quality-gate dependency installation remains reproducible on self-hosted runners. |
 | 2026-06-11 | 1.1.361 | test(ci): satisfy the changed-test behavioral assertion gate in the Tools consolidation branch by adding benchmark output postconditions, making retired data-processor skip sentinels explicit, and documenting the shared numerical helper as support-only in the assertion allowlist. |
