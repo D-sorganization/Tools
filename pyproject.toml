@@ -230,16 +230,16 @@ python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 pythonpath = [
+    "src/data_processing/data_processor/python",
+    "src/media_processing/video_processor/python",
     "src",
     "src/python/src",
     "src/shared/python",
     "src/tools",
     "src/web_applications",
-    "src/data_processing/data_processor/python",
     "src/solar_system_model",
     "src/scientific_modeling/solar_system_model",
     "src/scientific_modeling/rrt_path_planner/python/src",
-    "src/media_processing/video_processor/python",
     "src/pendulum_simulator/src",
     "src/folder_tool",
     "src/p1am_control_system/backend",
