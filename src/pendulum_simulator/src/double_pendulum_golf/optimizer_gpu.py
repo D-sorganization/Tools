@@ -224,9 +224,9 @@ def optimize_torque_profile(
             logger.info("Iteration %d/%d: loss = %.6f", i + 1, n_iterations, loss_val)
 
     optimal_coeffs = torque_coeffs.reshape(7, n_coeffs_per_joint)
-    assert (
-        len(history) == n_iterations
-    ), f"Expected {n_iterations} history entries, got {len(history)}"
+    assert len(history) == n_iterations, (
+        f"Expected {n_iterations} history entries, got {len(history)}"
+    )
     assert optimal_coeffs.shape == (7, n_coeffs_per_joint)
 
     return optimal_coeffs, history
@@ -287,9 +287,7 @@ def optimize_simple_torque_profile(
     @jax.jit
     @jax.value_and_grad
     def loss_fn(coeffs):  # type: ignore[no-untyped-def]
-        return clubhead_speed_objective(
-            coeffs, params, initial_state, t_end, alpha, beta, dt
-        )
+        return clubhead_speed_objective(coeffs, params, initial_state, t_end, alpha, beta, dt)
 
     history = []
 
@@ -342,9 +340,7 @@ def compute_gradient_via_finite_difference(
     assert eps > 0, f"eps must be positive, got {eps}"
     grad = jnp.zeros(7)
 
-    f0 = clubhead_speed_objective(
-        torque_coeffs, params, initial_state, t_end, alpha, beta, dt
-    )
+    f0 = clubhead_speed_objective(torque_coeffs, params, initial_state, t_end, alpha, beta, dt)
 
     for i in range(7):
         torque_plus = torque_coeffs.at[i].add(eps)  # type: ignore[attr-defined]

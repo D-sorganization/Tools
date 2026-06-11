@@ -10,11 +10,14 @@ anthropometric calculations and URDF export.
 from __future__ import annotations
 
 import logging
-from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA, get_stylesheet
 import sys
 from dataclasses import dataclass
 from enum import Enum
 
+from humanoid_character_builder.core.anthropometry import (
+    get_segment_length_ratio,
+    get_segment_mass_ratio,
+)
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
@@ -39,11 +42,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from humanoid_character_builder.core.anthropometry import (
-    get_segment_length_ratio,
-    get_segment_mass_ratio,
-)
-
+from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA, get_stylesheet
 from shared.python.theme.integration import ThemedWindowMixin
 
 logger = logging.getLogger(__name__)
@@ -57,35 +56,6 @@ _POLICY_FIXED = QSizePolicy.Policy.Fixed
 _RESIZE_MODE_STRETCH = QHeaderView.ResizeMode.Stretch
 _RESIZE_MODE_RESIZE_TO_CONTENTS = QHeaderView.ResizeMode.ResizeToContents
 
-# Catppuccin Mocha color palette
-CATPPUCCIN_MOCHA = {
-    "rosewater": "#f5e0dc",
-    "flamingo": "#f2cdcd",
-    "pink": "#f5c2e7",
-    "mauve": "#cba6f7",
-    "red": "#f38ba8",
-    "maroon": "#eba0ac",
-    "peach": "#fab387",
-    "yellow": "#f9e2af",
-    "green": "#a6e3a1",
-    "teal": "#94e2d5",
-    "sky": "#89dceb",
-    "sapphire": "#74c7ec",
-    "blue": "#89b4fa",
-    "lavender": "#b4befe",
-    "text": "#cdd6f4",
-    "subtext1": "#bac2de",
-    "subtext0": "#a6adc8",
-    "overlay2": "#9399b2",
-    "overlay1": "#7f849c",
-    "overlay0": "#6c7086",
-    "surface2": "#585b70",
-    "surface1": "#45475a",
-    "surface0": "#313244",
-    "base": "#1e1e2e",
-    "mantle": "#181825",
-    "crust": "#11111b",
-}
 
 class BuildType(Enum):
     """Body build types."""
@@ -113,9 +83,6 @@ class SegmentData:
     length_m: float
     width_m: float
     depth_m: float
-
-
-
 
 
 class HumanoidBuilderWindow(ThemedWindowMixin, QMainWindow):
@@ -499,6 +466,7 @@ class HumanoidBuilderWindow(ThemedWindowMixin, QMainWindow):
         # Calculate segment data
         self._segments = []
         total_mass = 0.0
+        gender_factor = self._get_gender_factor()
 
         segments_info = [
             ("Head", "head"),

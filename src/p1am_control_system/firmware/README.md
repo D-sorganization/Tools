@@ -79,9 +79,9 @@ debugging.
 
 These are hard-coded in `P1AMHardware.h` and assumed by `SignalBroker`:
 
-| Slot | Module        | Channels                          |
-|------|---------------|-----------------------------------|
-| 1    | P1-04THM      | 4 thermocouple inputs             |
+| Slot | Module        | Channels                                         |
+| ---- | ------------- | ------------------------------------------------ |
+| 1    | P1-04THM      | 4 thermocouple inputs                            |
 | 2    | P1-4ADL2DAL-1 | 2 analog inputs + 2 analog outputs (all 4-20 mA) |
 
 The Inhibit GPIO is wired to D6. **D5 is reserved** — the P1AM-ETH shield
@@ -90,14 +90,14 @@ breaks Ethernet SPI.
 
 ## Modbus register map
 
-| Range       | Width | Purpose                                                         |
-|-------------|-------|-----------------------------------------------------------------|
-| 0..63       | 64    | Tag values — TAG_i is at regs (i*2, i*2+1) as little-endian IEEE-754 float |
-| 100..105    | 6     | Input routing — channel -> tag id; slots 0-3 = TC0-3, 4-5 = AI0-1 |
-| 110..111    | 2     | Output routing — channel -> tag id; slots 0-1 = AO0-1 |
-| 200..239    | 40    | PID config — 4 PIDs x 10 regs = (pv_tag, cv_tag, sp, kp, ki, kd) |
-| 300..555    | 256   | Interlock limits — 32 tags x 8 regs = (lolo, low, high, hihi) IEEE-754 |
-| coil 0      | 1     | Save-to-flash trigger (firmware writes EEPROM on falling edge of write) |
+| Range    | Width | Purpose                                                                    |
+| -------- | ----- | -------------------------------------------------------------------------- |
+| 0..63    | 64    | Tag values — TAG_i is at regs (i*2, i*2+1) as little-endian IEEE-754 float |
+| 100..105 | 6     | Input routing — channel -> tag id; slots 0-3 = TC0-3, 4-5 = AI0-1          |
+| 110..111 | 2     | Output routing — channel -> tag id; slots 0-1 = AO0-1                      |
+| 200..239 | 40    | PID config — 4 PIDs x 10 regs = (pv_tag, cv_tag, sp, kp, ki, kd)           |
+| 300..555 | 256   | Interlock limits — 32 tags x 8 regs = (lolo, low, high, hihi) IEEE-754     |
+| coil 0   | 1     | Save-to-flash trigger (firmware writes EEPROM on falling edge of write)    |
 
 Tag values are clamped 0.0–100.0 by the broker. AO outputs scale linearly:
 0.0% -> 4.000 mA, 100.0% -> 20.000 mA. AI readings are pre-scaled by the P1AM
@@ -113,7 +113,7 @@ time `ConfigStruct` (or its members) change layout.
 ## Boot diagnostics
 
 `setup()` emits per-step `Serial.println` traces at 115200 baud on `/dev/ttyACM0`.
-To capture them across a reset, open the port *before* triggering the reset:
+To capture them across a reset, open the port _before_ triggering the reset:
 
 ```bash
 # 1. Open the serial monitor in one terminal (and leave it running):

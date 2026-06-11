@@ -1,14 +1,10 @@
-"""Regression tests for assert-based precondition removal in calculus.py (#3344).
+"""Tests for signal_toolkit.calculus module.
 
-Issue #3344: bare ``assert`` statements on public-API boundaries in
-``signal_toolkit.calculus`` vanish under ``python -O``, silently accepting
-``None`` and producing opaque ``AttributeError``\\s later.
-
-These tests verify that:
-1. Every converted entry-point raises ``ValueError`` (not ``AssertionError``)
-   when given ``None``.
-2. The guards survive ``python -O``  — because they are ``if``/``raise``, not
-   bare ``assert``.
+Covers:
+- DifferentiationMethod and IntegrationMethod enums
+- Differentiator: differentiate, compute_at_point, various methods
+- Integrator: integrate (definite), cumulative_integral
+- TangentLine and IntegralResult dataclasses
 """
 
 from __future__ import annotations
@@ -18,8 +14,10 @@ import subprocess
 import sys
 from pathlib import Path
 
-import numpy as np
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
 from signal_toolkit.calculus import (
     DifferentiationMethod,
     Differentiator,
@@ -35,90 +33,173 @@ from signal_toolkit.calculus import (
 )
 from signal_toolkit.core import Signal
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
+
+@pytest.fixture()
+def sine_signal() -> Signal:
+    """Create a simple sine wave signal for testing."""
+    t = np.linspace(0, 2 * np.pi, 1000)
+    values = np.sin(t)
+    return Signal(time=t, values=values, name="sine")
 
 
-def _make_signal() -> Signal:
-    """Return a simple test signal."""
-    t = np.linspace(0.0, 10.0, 201)
-    return Signal(t, np.sin(t))
+@pytest.fixture()
+def linear_signal() -> Signal:
+    """Create y = 2*t + 1."""
+    t = np.linspace(0, 10, 500)
+    values = 2.0 * t + 1.0
+    return Signal(time=t, values=values, name="linear")
 
 
-# ---------------------------------------------------------------------------
-# Differentiator.__init__ — method=None
-# ---------------------------------------------------------------------------
+@pytest.fixture()
+def constant_signal() -> Signal:
+    """Create constant signal y = 5."""
+    t = np.linspace(0, 1, 100)
+    values = np.full_like(t, 5.0)
+    return Signal(time=t, values=values, name="constant")
 
 
-class TestDifferentiatorInit:
-    """Differentiator() raises ValueError when method is None (#3344)."""
+# ── Enums ───────────────────────────────────────────────────────────────
+
+
+class TestEnums:
+    def test_diff_methods(self) -> None:
+        assert DifferentiationMethod.CENTRAL.value == "central"
+        assert DifferentiationMethod.SAVGOL.value == "savgol"
+
+    def test_int_methods(self) -> None:
+        assert IntegrationMethod.TRAPEZOID.value == "trapezoid"
+        assert IntegrationMethod.SIMPSON.value == "simpson"
+
+
+# ── Differentiator ──────────────────────────────────────────────────────
+
+
+class TestDifferentiator:
+    def test_constant_derivative_near_zero(self, constant_signal: Signal) -> None:
+        diff = Differentiator(method=DifferentiationMethod.GRADIENT)
+        result = diff.differentiate(constant_signal)
+        np.testing.assert_allclose(result.values, 0.0, atol=1e-6)
+
+    def test_linear_derivative_constant(self, linear_signal: Signal) -> None:
+        diff = Differentiator(method=DifferentiationMethod.GRADIENT)
+        result = diff.differentiate(linear_signal)
+        # dy/dt of 2t+1 = 2
+        np.testing.assert_allclose(result.values, 2.0, atol=0.1)
+
+    def test_sine_derivative_is_cosine(self, sine_signal: Signal) -> None:
+        diff = Differentiator(method=DifferentiationMethod.SAVGOL)
+        result = diff.differentiate(sine_signal)
+        expected = np.cos(sine_signal.time)
+        # Interior points should match (edges may be less accurate)
+        np.testing.assert_allclose(result.values[10:-10], expected[10:-10], atol=0.05)
+
+    def test_second_derivative(self, sine_signal: Signal) -> None:
+        """d²/dt² sin(t) ≈ -sin(t)."""
+        diff = Differentiator(method=DifferentiationMethod.SAVGOL)
+        result = diff.differentiate(sine_signal, order=2)
+        expected = -np.sin(sine_signal.time)
+        np.testing.assert_allclose(result.values[20:-20], expected[20:-20], atol=0.15)
+
+    def test_compute_at_point(self, linear_signal: Signal) -> None:
+        diff = Differentiator(method=DifferentiationMethod.GRADIENT)
+        value = diff.compute_at_point(linear_signal, t_point=5.0)
+        assert value == pytest.approx(2.0, abs=0.2)
+
+    def test_central_method(self, linear_signal: Signal) -> None:
+        diff = Differentiator(method=DifferentiationMethod.CENTRAL)
+        result = diff.differentiate(linear_signal)
+        np.testing.assert_allclose(result.values[1:-1], 2.0, atol=0.1)
+
+    def test_output_is_signal(self, sine_signal: Signal) -> None:
+        diff = Differentiator()
+        result = diff.differentiate(sine_signal)
+        assert isinstance(result, Signal)
+        assert len(result.time) == len(sine_signal.time)
+
+
+# ── Integrator ──────────────────────────────────────────────────────────
+
+
+class TestIntegrator:
+    def test_constant_integral(self, constant_signal: Signal) -> None:
+        """∫₀¹ 5 dt = 5."""
+        integ = Integrator(method=IntegrationMethod.TRAPEZOID)
+        result = integ.integrate(constant_signal)
+        assert result.value == pytest.approx(5.0, rel=0.02)
+
+    def test_linear_integral(self, linear_signal: Signal) -> None:
+        """∫₀¹⁰ (2t+1) dt = t²+t |₀¹⁰ = 110."""
+        integ = Integrator(method=IntegrationMethod.TRAPEZOID)
+        result = integ.integrate(linear_signal)
+        assert result.value == pytest.approx(110.0, rel=0.01)
+
+    def test_sine_full_period_zero(self, sine_signal: Signal) -> None:
+        """∫₀²π sin(t) dt ≈ 0."""
+        integ = Integrator(method=IntegrationMethod.TRAPEZOID)
+        result = integ.integrate(sine_signal)
+        assert result.value == pytest.approx(0.0, abs=0.05)
+
+    def test_simpson_method(self, constant_signal: Signal) -> None:
+        integ = Integrator(method=IntegrationMethod.SIMPSON)
+        result = integ.integrate(constant_signal)
+        assert result.value == pytest.approx(5.0, rel=0.02)
+
+    def test_cumulative_integral_monotonic(self, constant_signal: Signal) -> None:
+        integ = Integrator(method=IntegrationMethod.TRAPEZOID)
+        result = integ.cumulative_integral(constant_signal)
+        assert isinstance(result, Signal)
+        # Cumulative integral of positive constant should be monotonically increasing
+        assert np.all(np.diff(result.values) >= -1e-10)
+
+    def test_integral_bounds(self, linear_signal: Signal) -> None:
+        """Test integration with custom bounds."""
+        integ = Integrator()
+        result = integ.integrate(linear_signal, lower_bound=0, upper_bound=5)
+        # ∫₀⁵ (2t+1) dt = t²+t |₀⁵ = 30
+        assert result.value == pytest.approx(30.0, rel=0.05)
+        assert result.lower_bound == pytest.approx(0.0, abs=0.1)
+        assert result.upper_bound == pytest.approx(5.0, abs=0.1)
+
+
+# ── Explicit guard regressions (#3344) ──────────────────────────────────
+
+
+class TestDifferentiatorInitPreconditions:
+    """Differentiator() raises ValueError when method is None."""
 
     def test_none_method_raises_value_error(self) -> None:
         with pytest.raises(ValueError, match="method must be provided"):
             Differentiator(method=None)  # type: ignore[arg-type]
 
-    def test_valid_method_accepted(self) -> None:
-        d = Differentiator(method=DifferentiationMethod.SAVGOL)
-        assert d.method == DifferentiationMethod.SAVGOL
-
-
-# ---------------------------------------------------------------------------
-# Differentiator.differentiate — signal=None
-# ---------------------------------------------------------------------------
-
 
 class TestDifferentiatePreconditions:
-    """Differentiator.differentiate raises ValueError when signal is None (#3344)."""
+    """Differentiator.differentiate raises ValueError when signal is None."""
 
     def test_none_signal_raises_value_error(self) -> None:
-        d = Differentiator()
+        differentiator = Differentiator()
         with pytest.raises(ValueError, match="signal must be provided"):
-            d.differentiate(None)  # type: ignore[arg-type]
-
-    def test_valid_signal_returns_signal(self) -> None:
-        result = Differentiator().differentiate(_make_signal())
-        assert result is not None
-
-
-# ---------------------------------------------------------------------------
-# Differentiator.compute_at_point — signal=None
-# ---------------------------------------------------------------------------
+            differentiator.differentiate(None)  # type: ignore[arg-type]
 
 
 class TestComputeAtPointPreconditions:
-    """Differentiator.compute_at_point raises ValueError when signal is None (#3344)."""
+    """Differentiator.compute_at_point raises ValueError when signal is None."""
 
     def test_none_signal_raises_value_error(self) -> None:
-        d = Differentiator()
+        differentiator = Differentiator()
         with pytest.raises(ValueError, match="signal must be provided"):
-            d.compute_at_point(None, t_point=1.0)  # type: ignore[arg-type]
+            differentiator.compute_at_point(None, t_point=1.0)  # type: ignore[arg-type]
 
 
-# ---------------------------------------------------------------------------
-# Integrator.__init__ — method=None
-# ---------------------------------------------------------------------------
-
-
-class TestIntegratorInit:
-    """Integrator() raises ValueError when method is None (#3344)."""
+class TestIntegratorInitPreconditions:
+    """Integrator() raises ValueError when method is None."""
 
     def test_none_method_raises_value_error(self) -> None:
         with pytest.raises(ValueError, match="method must be provided"):
             Integrator(method=None)  # type: ignore[arg-type]
 
-    def test_valid_method_accepted(self) -> None:
-        i = Integrator(method=IntegrationMethod.TRAPEZOID)
-        assert i.method == IntegrationMethod.TRAPEZOID
-
-
-# ---------------------------------------------------------------------------
-# Integrator.cumulative_integral — signal=None
-# ---------------------------------------------------------------------------
-
 
 class TestCumulativeIntegralPreconditions:
-    """Integrator.cumulative_integral raises ValueError when signal is None (#3344)."""
+    """Integrator.cumulative_integral raises ValueError when signal is None."""
 
     def test_none_signal_raises_value_error(self) -> None:
         integrator = Integrator()
@@ -126,13 +207,8 @@ class TestCumulativeIntegralPreconditions:
             integrator.cumulative_integral(None)  # type: ignore[arg-type]
 
 
-# ---------------------------------------------------------------------------
-# Module-level functions — signal=None
-# ---------------------------------------------------------------------------
-
-
 class TestModuleFunctionPreconditions:
-    """Module-level funcs raise ValueError when signal is None (#3344)."""
+    """Module-level calculus helpers raise ValueError when signal is None."""
 
     def test_compute_derivative_none_raises(self) -> None:
         with pytest.raises(ValueError, match="signal must be provided"):
@@ -163,16 +239,10 @@ class TestModuleFunctionPreconditions:
             find_inflection_points(None)  # type: ignore[arg-type]
 
 
-# ---------------------------------------------------------------------------
-# python -O guard survival test
-# ---------------------------------------------------------------------------
-
-
 class TestGuardsSurviveOptimizedMode:
-    """Guards are ``if``/``raise`` (not bare ``assert``) — survive ``-O`` (#3344)."""
+    """Guards are if/raise, not bare asserts, and survive python -O."""
 
     def test_compute_derivative_raises_under_minus_o(self) -> None:
-        """Run ``python -O`` in a subprocess; expect ValueError, not AttributeError."""
         repo_root = Path(__file__).resolve().parents[4]
         env = os.environ.copy()
         shared_python = str(repo_root / "src" / "shared" / "python")
@@ -191,11 +261,8 @@ class TestGuardsSurviveOptimizedMode:
             capture_output=True,
             env=env,
             text=True,
+            check=False,
         )
-        assert result.returncode != 0, "Expected non-zero exit (exception raised)"
-        assert "ValueError" in result.stderr, (
-            f"Expected ValueError in stderr, got:\n{result.stderr}"
-        )
-        assert "AttributeError" not in result.stderr, (
-            "Got AttributeError — guard is still a bare assert (issue #3344)"
-        )
+        assert result.returncode != 0
+        assert "ValueError" in result.stderr
+        assert "AttributeError" not in result.stderr

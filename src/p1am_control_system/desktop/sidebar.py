@@ -3,7 +3,6 @@
 import logging
 import os
 
-import requests
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import (
     QCheckBox,
@@ -18,6 +17,8 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+
+from .workers import HttpWorker
 
 logger = logging.getLogger("p1am_control.desktop.sidebar")
 
@@ -69,9 +70,7 @@ class InspectorSidebar(QWidget):
 
         # 1. Header Information
         self.lbl_header = QLabel("No Selected Element", self)
-        self.lbl_header.setStyleSheet(
-            "font-weight: bold; font-size: 12pt; color: #4facfe;"
-        )
+        self.lbl_header.setStyleSheet("font-weight: bold; font-size: 12pt;")
         self.lbl_header.setWordWrap(True)
         layout.addWidget(self.lbl_header)
 
@@ -159,9 +158,7 @@ class InspectorSidebar(QWidget):
 
         # 6. Apply Button at bottom
         self.btn_apply = QPushButton("Apply Inspector Changes", self)
-        self.btn_apply.setStyleSheet(
-            "font-weight: bold; background-color: #30d158; color: white; height: 30px;"
-        )
+        self.btn_apply.setStyleSheet("font-weight: bold; height: 30px;")
         self.btn_apply.clicked.connect(self._apply_changes)
         layout.addWidget(self.btn_apply)
 
@@ -252,27 +249,17 @@ class InspectorSidebar(QWidget):
         # 1. Check if we need to write Manual Force Override
         if self.chk_force_active.isChecked():
             val = self.spin_force_val.value()
-            try:
-                resp = requests.post(
-                    f"{self.backend_url}/api/tags/{self.selected_tag_id}",
-                    json={"value": val},
-                    timeout=1.0,
-                )
-                if resp.status_code != 200:
-                    QMessageBox.critical(
-                        self,
-                        "Override Failed",
-                        f"Failed to force tag value: {resp.text}",
-                    )
-                    return
-                logger.info(f"Forced tag {self.selected_tag_id} to manual value: {val}")
-            except Exception as e:
-                QMessageBox.critical(
-                    self,
-                    "Connection Error",
-                    f"Could not contact backend for manual override: {e}",
-                )
-                return
+            self.force_worker = HttpWorker(
+                "POST",
+                f"{self.backend_url}/api/tags/{self.selected_tag_id}",
+                json={"value": val},
+                timeout=1.0,
+            )
+            self.force_worker.success.connect(
+                lambda data: self._on_force_success(val, data)
+            )
+            self.force_worker.error.connect(self._on_force_error)
+            self.force_worker.start()
 
         # 2. Update config parameters (limits & PID)
         if self.user_role == "Admin" and self.routing_config:
@@ -296,32 +283,16 @@ class InspectorSidebar(QWidget):
                 pid.kd = self.spin_pid_kd.value()
 
             # Send updated config back to PLC
-            try:
-                resp = requests.post(
-                    f"{self.backend_url}/api/routing",
-                    json=self.routing_config.dict(),
-                    timeout=2.0,
-                )
-                if resp.status_code == 200:
-                    logger.info("DCS settings updated successfully in backend.")
-                    QMessageBox.information(
-                        self,
-                        "Saved",
-                        "Inspector parameters deployed successfully to PLC.",
-                    )
-                    self.configUpdated.emit()  # Ask main window to reload configuration
-                else:
-                    QMessageBox.critical(
-                        self,
-                        "Save Failed",
-                        f"Failed to write routing updates: {resp.text}",
-                    )
-            except Exception as e:
-                QMessageBox.critical(
-                    self,
-                    "Connection Error",
-                    f"Could not contact backend for routing config: {e}",
-                )
+            self.routing_worker = HttpWorker(
+                "POST",
+                f"{self.backend_url}/api/routing",
+                json=self.routing_config.dict(),
+                timeout=2.0,
+            )
+            self.routing_worker.success.connect(self._on_routing_success)
+            self.routing_worker.error.connect(self._on_routing_error)
+            self.routing_worker.start()
+
         elif self.user_role != "Admin" and (
             self.spin_low_limit.isModified() or self.spin_pid_sp.isModified()
         ):
@@ -330,3 +301,29 @@ class InspectorSidebar(QWidget):
                 "Access Denied",
                 "Safety limits and PID gains are read-only for Operators.",
             )
+
+    def _on_force_success(self, val, data):
+        logger.info(f"Forced tag {self.selected_tag_id} to manual value: {val}")
+
+    def _on_force_error(self, err_msg):
+        QMessageBox.critical(
+            self,
+            "Override Failed",
+            f"Failed to force tag value: {err_msg}",
+        )
+
+    def _on_routing_success(self, data):
+        logger.info("DCS settings updated successfully in backend.")
+        QMessageBox.information(
+            self,
+            "Saved",
+            "Inspector parameters deployed successfully to PLC.",
+        )
+        self.configUpdated.emit()  # Ask main window to reload configuration
+
+    def _on_routing_error(self, err_msg):
+        QMessageBox.critical(
+            self,
+            "Save Failed",
+            f"Failed to write routing updates: {err_msg}",
+        )

@@ -143,9 +143,7 @@ class TestGolferSimulationResultMethods:
         cf = result.constraint_forces_at(0)
         assert np.all(np.isfinite(cf))
 
-    def test_constraint_violation_at_finite(
-        self, result: GolferSimulationResult
-    ) -> None:
+    def test_constraint_violation_at_finite(self, result: GolferSimulationResult) -> None:
         cv = result.constraint_violation_at(0)
         assert np.isfinite(cv)
 
@@ -186,9 +184,7 @@ class TestGolferSimulationResultMethods:
         tf = result.friction_torques_at(0)
         assert tf.shape == (N_DOF,)
 
-    def test_friction_torques_zero_at_rest(
-        self, result: GolferSimulationResult
-    ) -> None:
+    def test_friction_torques_zero_at_rest(self, result: GolferSimulationResult) -> None:
         """At zero velocity, friction should be zero."""
         tf = result.friction_torques_at(0)
         np.testing.assert_allclose(tf, 0.0, atol=1e-14)

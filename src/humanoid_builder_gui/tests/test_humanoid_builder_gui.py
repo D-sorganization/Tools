@@ -244,6 +244,7 @@ class TestHumanoidBuilderGUIRegistration:
             assert "name" in metadata
             assert "description" in metadata
             assert "category" in metadata
+            assert "tool_name" in metadata
         except ImportError:
             pytest.skip("GUI registration not yet implemented")
 
