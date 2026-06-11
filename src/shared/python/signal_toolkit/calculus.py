@@ -158,7 +158,7 @@ class Differentiator:
         if diffs.size > 0:
             if np.any(diffs <= 0):
                 raise ValueError("Signal time must be strictly increasing")
-                
+
             if self.method in {
                 DifferentiationMethod.FORWARD,
                 DifferentiationMethod.BACKWARD,
@@ -166,7 +166,10 @@ class Differentiator:
                 DifferentiationMethod.SAVGOL,
             }:
                 if (diffs.max() - diffs.min()) > 1e-6 * diffs.mean():
-                    raise ValueError(f"{self.method.name} requires uniform sampling; use GRADIENT or SPLINE")
+                    raise ValueError(
+                        f"{self.method.name} requires uniform sampling; "
+                        "use GRADIENT or SPLINE"
+                    )
 
         if self.method == DifferentiationMethod.FORWARD:
             # Forward difference: (y[i+1] - y[i]) / dt
