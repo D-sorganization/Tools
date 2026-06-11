@@ -100,8 +100,8 @@ class ODESolver:
         """
         if t_span[1] <= t_span[0]:
             raise ValueError(
-                f"t_end ({t_span[1]}) must be strictly greater than t_start ({t_span[0]})"
-            )
+                f"t_end ({t_span[1]}) must be strictly greater than "
+                f"t_start ({t_span[0]})"
             )
 
         from scipy.integrate import solve_ivp  # lazy import
