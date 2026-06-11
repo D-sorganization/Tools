@@ -232,3 +232,4 @@ src/video_analyzer/analyzer.py
 src/web_applications/calculator/calculator.py
 src/web_applications/calculator/webapp.py
 src/web_applications/unit_converter/converter.py
+src/p1am_control_system/desktop/event_logger.py
