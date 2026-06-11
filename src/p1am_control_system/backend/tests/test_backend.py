@@ -42,10 +42,40 @@ client = TestClient(app)
 
 @pytest.fixture(autouse=True)
 def setup_db() -> Generator[None, None, None]:
-    """Recreate test database schemas before each test case runs."""
+    """Recreate test database schemas before each test case runs.
+
+    Also re-asserts the auth opt-out env var for every test. These functional
+    tests exercise endpoint behavior, not the auth gate, so they run with
+    ``P1AM_DEV_NO_AUTH=1``. The var is set at module import, but sibling test
+    modules (e.g. ``tests/p1am_control_system/test_backend_security.py``) pop
+    it from ``os.environ`` at *their* import time during collection, which
+    would otherwise leak a 503 auth gate into these tests. Setting it per-test
+    makes this suite robust to cross-module collection order (#3289/#3292).
+    """
+    prev_no_auth = os.environ.get("P1AM_DEV_NO_AUTH")
+    os.environ["P1AM_DEV_NO_AUTH"] = "1"
+    # Re-assert the session dependency override per-test. ``app`` is a process
+    # singleton and ``dependency_overrides`` is shared module state; sibling
+    # test modules that import ``from main import app`` and register their own
+    # ``get_session`` override can clobber ours during collection, routing the
+    # ``/api/export`` and ``/api/import`` endpoints at a different (table-less)
+    # engine and yielding ``no such table`` errors. Pinning the override here
+    # makes this suite robust to cross-module collection order (#3289/#3292).
+    prev_override = app.dependency_overrides.get(get_session)
+    app.dependency_overrides[get_session] = override_get_session
     SQLModel.metadata.create_all(test_engine)
-    yield
-    SQLModel.metadata.drop_all(test_engine)
+    try:
+        yield
+    finally:
+        SQLModel.metadata.drop_all(test_engine)
+        if prev_override is None:
+            app.dependency_overrides.pop(get_session, None)
+        else:
+            app.dependency_overrides[get_session] = prev_override
+        if prev_no_auth is None:
+            os.environ.pop("P1AM_DEV_NO_AUTH", None)
+        else:
+            os.environ["P1AM_DEV_NO_AUTH"] = prev_no_auth
 
 
 @pytest.fixture
