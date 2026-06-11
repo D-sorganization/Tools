@@ -1,12 +1,15 @@
-"""Catppuccin Mocha theme — reusable palette and stylesheet.
+"""Catppuccin Mocha theme - shared color palette and stylesheet.
 
-Extracted from main_window.py for DRY compliance. This module can be
-shared across multiple GUI tools in the fleet.
+This module centralises the Catppuccin Mocha color palette and the
+standard application-wide QSS stylesheet.
 """
 
 from __future__ import annotations
 
-# ── Catppuccin Mocha Palette ────────────────────────────────────────────
+__all__ = [
+    "CATPPUCCIN_MOCHA",
+    "get_stylesheet",
+]
 
 CATPPUCCIN_MOCHA: dict[str, str] = {
     "rosewater": "#f5e0dc",
@@ -37,15 +40,14 @@ CATPPUCCIN_MOCHA: dict[str, str] = {
     "crust": "#11111b",
 }
 
-
-def build_stylesheet(palette: dict[str, str] | None = None) -> str:
+def get_stylesheet(palette: dict[str, str] | None = None) -> str:
     """Build a complete Qt stylesheet from a colour palette.
-
+    
     Args:
         palette: Colour palette dictionary. Defaults to CATPPUCCIN_MOCHA.
-
+        
     Returns:
-        A Qt stylesheet string ready for ``setStyleSheet()``.
+        A Qt stylesheet string ready for ""setStyleSheet()"".
     """
     p = palette or CATPPUCCIN_MOCHA
     return f"""
@@ -84,6 +86,10 @@ QTabBar::tab:selected {{
     color: {p["blue"]};
 }}
 
+QTabBar::tab:hover {{
+    background-color: {p["surface1"]};
+}}
+
 QGroupBox {{
     background-color: {p["surface0"]};
     border: 1px solid {p["surface1"]};
@@ -105,15 +111,67 @@ QLabel {{
     background-color: transparent;
 }}
 
-QDoubleSpinBox, QSpinBox {{
+QLabel[class="result-label"] {{
+    color: {p["green"]};
+    font-weight: bold;
+}}
+
+QLabel[class="unit-label"] {{
+    color: {p["subtext0"]};
+}}
+
+QLabel[class="header-label"] {{
+    color: {p["blue"]};
+    font-size: 14px;
+    font-weight: bold;
+}}
+
+QListWidget {{
+    background-color: {p["surface0"]};
+    color: {p["text"]};
+    border: 1px solid {p["surface2"]};
+    border-radius: 4px;
+    padding: 4px;
+}}
+
+QListWidget::item {{
+    padding: 4px;
+}}
+
+QListWidget::item:selected {{
+    background-color: {p["surface2"]};
+    color: {p["blue"]};
+}}
+
+QTableWidget {{
+    background-color: {p["surface0"]};
+    color: {p["text"]};
+    border: 1px solid {p["surface2"]};
+    border-radius: 4px;
+    gridline-color: {p["surface1"]};
+}}
+
+QTableWidget::item {{
+    padding: 4px;
+}}
+
+QHeaderView::section {{
+    background-color: {p["surface1"]};
+    color: {p["text"]};
+    padding: 6px;
+    border: none;
+}}
+
+QLineEdit, QDoubleSpinBox, QSpinBox {{
     background-color: {p["surface0"]};
     color: {p["text"]};
     border: 1px solid {p["surface2"]};
     border-radius: 4px;
     padding: 6px 10px;
+    selection-background-color: {p["surface2"]};
 }}
 
-QDoubleSpinBox:focus, QSpinBox:focus {{
+QLineEdit:focus, QDoubleSpinBox:focus, QSpinBox:focus {{
     border: 1px solid {p["blue"]};
 }}
 
@@ -123,7 +181,7 @@ QComboBox {{
     border: 1px solid {p["surface2"]};
     border-radius: 4px;
     padding: 6px 10px;
-    min-width: 150px;
+    min-width: 120px;
 }}
 
 QComboBox:hover {{
@@ -148,21 +206,6 @@ QComboBox QAbstractItemView {{
     color: {p["text"]};
     selection-background-color: {p["surface2"]};
     border: 1px solid {p["surface1"]};
-}}
-
-QSlider::groove:horizontal {{
-    border: 1px solid {p["surface2"]};
-    height: 8px;
-    background: {p["surface0"]};
-    border-radius: 4px;
-}}
-
-QSlider::handle:horizontal {{
-    background: {p["blue"]};
-    border: 1px solid {p["surface2"]};
-    width: 18px;
-    margin: -5px 0;
-    border-radius: 9px;
 }}
 
 QTextEdit {{
@@ -191,17 +234,20 @@ QPushButton:pressed {{
     background-color: {p["lavender"]};
 }}
 
-QPushButton#exportBtn {{
+QPushButton:disabled {{
+    background-color: {p["surface2"]};
+    color: {p["overlay0"]};
+}}
+
+QPushButton#loadBtn {{
     background-color: {p["green"]};
 }}
 
-QPushButton#exportBtn:hover {{
+QPushButton#loadBtn:hover {{
     background-color: {p["teal"]};
 }}
+
+QFrame[class="separator"] {{
+    background-color: {p["surface1"]};
+}}
 """
-
-
-__all__ = [
-    "CATPPUCCIN_MOCHA",
-    "build_stylesheet",
-]

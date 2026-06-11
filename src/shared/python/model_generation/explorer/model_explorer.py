@@ -17,6 +17,7 @@ Display preview checkboxes (ordered):
 from __future__ import annotations
 
 import logging
+from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA, get_stylesheet
 import sys
 from collections.abc import Callable
 from pathlib import Path
@@ -93,170 +94,6 @@ CATPPUCCIN_MOCHA = {
     "mantle": "#181825",
     "crust": "#11111b",
 }
-
-STYLESHEET = f"""
-QMainWindow {{
-    background-color: {CATPPUCCIN_MOCHA["base"]};
-}}
-
-QWidget {{
-    background-color: {CATPPUCCIN_MOCHA["base"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    font-family: "Segoe UI", "Arial", sans-serif;
-}}
-
-QScrollArea {{
-    border: none;
-    background-color: {CATPPUCCIN_MOCHA["base"]};
-}}
-
-QTabWidget::pane {{
-    border: 1px solid {CATPPUCCIN_MOCHA["surface1"]};
-    background-color: {CATPPUCCIN_MOCHA["mantle"]};
-    border-radius: 4px;
-}}
-
-QTabBar::tab {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["subtext1"]};
-    padding: 8px 16px;
-    margin-right: 2px;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-}}
-
-QTabBar::tab:selected {{
-    background-color: {CATPPUCCIN_MOCHA["surface1"]};
-    color: {CATPPUCCIN_MOCHA["blue"]};
-}}
-
-QGroupBox {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface1"]};
-    border-radius: 8px;
-    margin-top: 12px;
-    padding: 12px;
-    font-weight: bold;
-}}
-
-QGroupBox::title {{
-    subcontrol-origin: margin;
-    left: 12px;
-    padding: 0 6px;
-    color: {CATPPUCCIN_MOCHA["mauve"]};
-}}
-
-QLabel {{
-    color: {CATPPUCCIN_MOCHA["text"]};
-    background-color: transparent;
-}}
-
-QListWidget {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    border-radius: 4px;
-    padding: 4px;
-}}
-
-QListWidget::item {{
-    padding: 6px;
-}}
-
-QListWidget::item:selected {{
-    background-color: {CATPPUCCIN_MOCHA["surface2"]};
-    color: {CATPPUCCIN_MOCHA["blue"]};
-}}
-
-QTableWidget {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    border-radius: 4px;
-    gridline-color: {CATPPUCCIN_MOCHA["surface1"]};
-}}
-
-QTableWidget::item {{
-    padding: 4px;
-}}
-
-QHeaderView::section {{
-    background-color: {CATPPUCCIN_MOCHA["surface1"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    padding: 6px;
-    border: none;
-}}
-
-QCheckBox {{
-    color: {CATPPUCCIN_MOCHA["text"]};
-    spacing: 8px;
-    background-color: transparent;
-}}
-
-QCheckBox::indicator {{
-    width: 18px;
-    height: 18px;
-    border: 2px solid {CATPPUCCIN_MOCHA["surface2"]};
-    border-radius: 3px;
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-}}
-
-QCheckBox::indicator:checked {{
-    background-color: {CATPPUCCIN_MOCHA["blue"]};
-    border-color: {CATPPUCCIN_MOCHA["blue"]};
-}}
-
-QComboBox {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    border-radius: 4px;
-    padding: 6px 10px;
-}}
-
-QTextEdit {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    border-radius: 4px;
-    padding: 8px;
-    font-family: "Consolas", "Courier New", monospace;
-}}
-
-QPushButton {{
-    background-color: {CATPPUCCIN_MOCHA["blue"]};
-    color: {CATPPUCCIN_MOCHA["crust"]};
-    border: none;
-    border-radius: 4px;
-    padding: 10px 24px;
-    font-weight: bold;
-}}
-
-QPushButton:hover {{
-    background-color: {CATPPUCCIN_MOCHA["sapphire"]};
-}}
-
-QPushButton:pressed {{
-    background-color: {CATPPUCCIN_MOCHA["lavender"]};
-}}
-
-QPushButton#loadBtn {{
-    background-color: {CATPPUCCIN_MOCHA["green"]};
-}}
-
-QPushButton#loadBtn:hover {{
-    background-color: {CATPPUCCIN_MOCHA["teal"]};
-}}
-
-QPushButton#setDefaultBtn {{
-    background-color: {CATPPUCCIN_MOCHA["peach"]};
-}}
-
-QPushButton#setDefaultBtn:hover {{
-    background-color: {CATPPUCCIN_MOCHA["yellow"]};
-}}
-"""
-
 
 class DisplayPreviewPanel(QGroupBox):
     """
@@ -338,7 +175,7 @@ class ModelExplorerWindow(QMainWindow):
         """Build the user interface."""
         self.setWindowTitle("Model Explorer")
         self.setMinimumSize(900, 700)
-        self.setStyleSheet(STYLESHEET)
+        self.setStyleSheet(get_stylesheet())
 
         # Central widget
         scroll_area = QScrollArea()
