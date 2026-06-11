@@ -16,10 +16,13 @@ from dataclasses import dataclass
 from typing import Any
 
 import numpy as np
-
 from sidekick.process_calculators.constants import (
     ANTOINE_WATER_A as ANTOINE_A,
+)
+from sidekick.process_calculators.constants import (
     ANTOINE_WATER_B as ANTOINE_B,
+)
+from sidekick.process_calculators.constants import (
     ANTOINE_WATER_C as ANTOINE_C_CELSIUS,
 )
 
@@ -598,10 +601,17 @@ class SteamCalculationEngine:
 
     def get_saturation_pressure(self, temperature: float) -> float:
         """Get saturation pressure for given temperature"""
-        try:
-            if CANTERA_AVAILABLE and self.water is not None and self.water:
+        if CANTERA_AVAILABLE and self.water is not None and self.water:
+            try:
                 self.water.TQ = temperature, 1.0
                 return float(self.water.P)
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
+                _logger.warning(
+                    "Cantera saturation pressure failed; falling back to Antoine: %s",
+                    e,
+                )
+
+        try:
             # Use Antoine equation
             log_p_mmhg = ANTOINE_A - ANTOINE_B / (temperature - ANTOINE_C_KELVIN)
             pressure_mmhg = 10**log_p_mmhg

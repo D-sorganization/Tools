@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.357                                    |
+| **Spec Version**        | 1.1.358                                    |
 | **Last Spec Update**    | 2026-06-11                                 |
 
 ## 2. Purpose & Mission
@@ -739,6 +739,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-06-10 | 1.1.337 | fix(ci/test-contract, #3300): recognize repo-level `tests/<package>/test_*.py` directories as satisfying the minimum test contract for changed `src/<package>` packages, with regression coverage so package-scoped tests like `tests/plant_simulator/test_dataset.py` are accepted without weakening the quality gate. |
 | 2026-06-10 | 1.1.336 | fix(ci/review-comments, #3300): keep the review-comment-to-issue converter checkout shallow because the job uses GitHub API reads plus local archive commits, avoiding full-history fetches on self-hosted runners where stale/corrupt loose objects can make checkout fail before the workflow logic runs. |
 | 2026-06-10 | 1.1.335 | fix(ci/runner-health, #3300): serialize the Tauri desktop app check/build matrices and cap Cargo jobs with non-incremental, no-debug builds so self-hosted runners do not compile multiple Tauri Rust dependency graphs concurrently and trigger rustc SIGSEGV/paging-pressure failures. |
+| 2026-06-11 | 1.1.358 | fix(thermo, #3345): keep saturation-pressure lookups resilient by falling back to the Antoine equation when the optional Cantera water backend raises while preserving explicit failures for invalid fallback inputs. |
 | 2026-06-11 | 1.1.357 | fix(ode, #3349): preserve the consolidated `t_span` bounds guard in the Sidekick ODE solver while keeping the merged implementation syntactically valid. |
 | 2026-06-11 | 1.1.356 | fix(test, #3315): restore truncated test coverage across P1AM, pendulum, shared-tool, and architecture suites; preserve HMI emergency-stop propagation tests; and reconcile the humanoid/URDF anthropometry consolidation with the shared ratio helpers. |
 | 2026-06-11 | 1.1.355 | fix(dry, #3346): remove reintroduced root-level `urdf_builder_gui` duplicate modules and add a regression test that asserts the root package does not shadow the canonical `src/shared/python/urdf_builder_gui` implementation. |
