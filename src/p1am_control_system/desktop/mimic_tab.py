@@ -3,7 +3,7 @@
 import logging
 
 from PyQt6.QtCore import QPointF, Qt, pyqtSignal
-from PyQt6.QtGui import QBrush, QColor, QPainter, QPen, QPolygonF
+from PyQt6.QtGui import QBrush, QColor, QPainter, QPen, QPolygonF, QPalette
 from PyQt6.QtWidgets import (
     QGraphicsItem,
     QGraphicsPolygonItem,
@@ -43,11 +43,11 @@ class MimicReactorItem(QGraphicsRectItem):
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable, True)
 
         # Style
-        self.normal_pen = QPen(QColor("#4facfe"), 2)
-        self.hover_pen = QPen(QColor("#00f2fe"), 3)
-        self.selected_pen = QPen(QColor("#ffd60a"), 3, Qt.PenStyle.DashLine)
+        self.normal_pen = QPen(QColor(Qt.GlobalColor.blue), 2)
+        self.hover_pen = QPen(QColor(Qt.GlobalColor.cyan), 3)
+        self.selected_pen = QPen(QColor(Qt.GlobalColor.darkYellow), 3, Qt.PenStyle.DashLine)
 
-        self.normal_brush = QBrush(QColor("#1e222b"))
+        self.normal_brush = QBrush(self.tab_parent.palette().color(QPalette.ColorRole.Base))
         self.setPen(self.normal_pen)
         self.setBrush(self.normal_brush)
 
@@ -107,11 +107,11 @@ class MimicValveItem(QGraphicsPolygonItem):
         self.setAcceptHoverEvents(True)
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable, True)
 
-        self.normal_pen = QPen(QColor("#ff375f"), 2)
-        self.hover_pen = QPen(QColor("#ff7b93"), 3)
-        self.selected_pen = QPen(QColor("#ffd60a"), 3, Qt.PenStyle.DashLine)
+        self.normal_pen = QPen(QColor(Qt.GlobalColor.red), 2)
+        self.hover_pen = QPen(QColor(Qt.GlobalColor.magenta), 3)
+        self.selected_pen = QPen(QColor(Qt.GlobalColor.darkYellow), 3, Qt.PenStyle.DashLine)
 
-        self.normal_brush = QBrush(QColor("#2d1218"))
+        self.normal_brush = QBrush(self.tab_parent.palette().color(QPalette.ColorRole.Base))
         self.setPen(self.normal_pen)
         self.setBrush(self.normal_brush)
 
@@ -180,7 +180,7 @@ class MimicTab(QWidget):
 
         # QGraphicsView & Scene
         self.scene = QGraphicsScene(self)
-        self.scene.setBackgroundBrush(QBrush(QColor("#15181e")))
+        self.scene.setBackgroundBrush(QBrush(self.palette().color(QPalette.ColorRole.Window)))
         self.scene.setSceneRect(0, 0, 1050, 450)
 
         self.view = QGraphicsView(self.scene, self)
@@ -264,7 +264,7 @@ class MimicTab(QWidget):
         }
 
         # Draw pipes (lines connecting zones)
-        pipe_pen = QPen(QColor("#7f8c8d"), 4)
+        pipe_pen = QPen(QColor(Qt.GlobalColor.gray), 4)
 
         # Pipes between main reactors
         self.scene.addLine(130, 200, 180, 200, pipe_pen)
@@ -290,7 +290,7 @@ class MimicTab(QWidget):
 
             # Reactor title text
             title = QGraphicsTextItem(node["name"])
-            title.setDefaultTextColor(QColor("#e1e4e8"))
+            title.setDefaultTextColor(self.palette().color(QPalette.ColorRole.WindowText))
             title.setPos(node["x"] + 2, node["y"] - 25)
             # Make it bold
             font = title.font()
@@ -301,7 +301,7 @@ class MimicTab(QWidget):
 
             # Live tag label
             label = QGraphicsTextItem("PV: --")
-            label.setDefaultTextColor(QColor("#ffd60a"))
+            label.setDefaultTextColor(QColor(Qt.GlobalColor.darkYellow))
             label.setPos(node["x"] + 10, node["y"] + (node["h"] // 2) - 10)
             self.scene.addItem(label)
             self.overlays[node["tag"]] = label
@@ -346,7 +346,7 @@ class MimicTab(QWidget):
 
             # Valve label
             label = QGraphicsTextItem("CV: --")
-            label.setDefaultTextColor(QColor("#ff7b93"))
+            label.setDefaultTextColor(QColor(Qt.GlobalColor.red))
             label.setPos(valve["x"] - 20, valve["y"] + 15)
             self.scene.addItem(label)
             self.overlays[valve["tag"]] = label

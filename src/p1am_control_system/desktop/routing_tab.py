@@ -20,6 +20,8 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from .workers import HttpWorker
+
 logger = logging.getLogger("p1am_control.desktop.routing")
 
 
@@ -88,9 +90,7 @@ class RoutingTab(QWidget):
 
         # Deploy Config Button
         self.btn_deploy = QPushButton("Deploy Configuration to PLC", self)
-        self.btn_deploy.setStyleSheet(
-            "font-weight: bold; background-color: #4facfe; color: white; height: 35px;"
-        )
+        self.btn_deploy.setStyleSheet("font-weight: bold; height: 35px;")
         self.btn_deploy.clicked.connect(self._deploy_config)
         layout.addWidget(self.btn_deploy)
 
@@ -117,14 +117,8 @@ class RoutingTab(QWidget):
 
         self.btn_deploy.setEnabled(is_admin)
         if is_admin:
-            self.btn_deploy.setStyleSheet(
-                "font-weight: bold; background-color: #4facfe; color: white; height: 35px;"
-            )
             self.btn_deploy.setToolTip("Deploy changed configuration parameters to PLC")
         else:
-            self.btn_deploy.setStyleSheet(
-                "font-weight: bold; background-color: #3a3f4a; color: #7f8c8d; height: 35px;"
-            )
             self.btn_deploy.setToolTip(
                 "Requires Admin privileges to modify PLC configuration"
             )
@@ -209,23 +203,28 @@ class RoutingTab(QWidget):
                     self.routing_config.interlocks[idx].high_limit = item["high_limit"]
 
             # 3. Post back to backend
-            resp = requests.post(
-                f"{self.backend_url}/api/routing",
-                json=self.routing_config.dict(),
-                timeout=3.0,
+            self.deploy_worker = HttpWorker(
+                "POST", f"{self.backend_url}/api/routing",
+                json=self.routing_config.dict(), timeout=3.0
             )
-            if resp.status_code == 200:
-                logger.info("Deployed new DCS routing configuration to PLC.")
-                QMessageBox.information(
-                    self,
-                    "Success",
-                    "Configuration successfully deployed and saved to PLC NVRAM.",
-                )
-            else:
-                QMessageBox.critical(
-                    self, "Deployment Failed", f"DCS routing write failed: {resp.text}"
-                )
+            self.deploy_worker.success.connect(self._on_deploy_success)
+            self.deploy_worker.error.connect(self._on_deploy_error)
+            self.deploy_worker.start()
+
         except Exception as e:
             QMessageBox.critical(
-                self, "Connection Error", f"Could not reach backend: {e}"
+                self, "Error", f"Failed to prepare deploy: {e}"
             )
+
+    def _on_deploy_success(self, data):
+        logger.info("Deployed new DCS routing configuration to PLC.")
+        QMessageBox.information(
+            self,
+            "Success",
+            "Configuration successfully deployed and saved to PLC NVRAM.",
+        )
+
+    def _on_deploy_error(self, err_msg):
+        QMessageBox.critical(
+            self, "Deployment Failed", f"DCS routing write failed: {err_msg}"
+        )

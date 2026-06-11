@@ -142,7 +142,9 @@ class TrendsTab(QWidget):
 
         # PyQtGraph Plot Widget
         self.plot_widget = pg.PlotWidget(self)
-        self.plot_widget.setBackground("#15181e")
+        from PyQt6.QtGui import QPalette
+        bg_color = self.palette().color(QPalette.ColorRole.Window)
+        self.plot_widget.setBackground(bg_color)
         self.plot_widget.showGrid(x=True, y=True, alpha=0.3)
         self.plot_widget.setLabel("left", "Value")
         self.plot_widget.setLabel("bottom", "Time (seconds)")
@@ -152,11 +154,11 @@ class TrendsTab(QWidget):
 
         # Curves
         self.raw_curve = self.plot_widget.plot(
-            pen=pg.mkPen(color="#7f8c8d", width=1, style=Qt.PenStyle.DashLine),
+            pen=pg.mkPen(color=self.palette().color(QPalette.ColorRole.Text), width=1, style=Qt.PenStyle.DashLine),
             name="Raw Signal",
         )
         self.filtered_curve = self.plot_widget.plot(
-            pen=pg.mkPen(color="#00f2fe", width=2), name="Filtered Signal"
+            pen=pg.mkPen(color=self.palette().color(QPalette.ColorRole.Highlight), width=2), name="Filtered Signal"
         )
 
         layout.addWidget(self.plot_widget)
