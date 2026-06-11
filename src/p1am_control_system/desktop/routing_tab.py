@@ -198,6 +198,15 @@ class RoutingTab(QWidget):
                         f"Interlock limit values for Tag {i} must be floats.",
                     )
                     return
+
+                if low_val > high_val:
+                    QMessageBox.critical(
+                        self,
+                        "Invalid Inputs",
+                        f"Tag {i} Low Limit ({low_val}) cannot be greater than High Limit ({high_val}).",
+                    )
+                    return
+
                 interlocks.append({"low_limit": low_val, "high_limit": high_val})
 
             # Update our routing config model structure

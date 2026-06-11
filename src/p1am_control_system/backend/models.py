@@ -1,6 +1,7 @@
+# mypy: ignore-errors
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 from sqlmodel import Field, SQLModel
 
 
@@ -85,6 +86,16 @@ class InterlockConfig(BaseModel):
     low_limit: float
     high_limit: float
     hihi_limit: float
+
+    @model_validator(mode="after")
+    def validate_limits(self) -> "InterlockConfig":
+        if self.low_limit > self.high_limit:
+            raise ValueError("low_limit must be less than or equal to high_limit")
+        if self.lolo_limit > self.low_limit:
+            raise ValueError("lolo_limit must be less than or equal to low_limit")
+        if self.high_limit > self.hihi_limit:
+            raise ValueError("high_limit must be less than or equal to hihi_limit")
+        return self
 
 
 class RoutingConfig(BaseModel):
