@@ -13,8 +13,10 @@ These tests verify that:
 
 from __future__ import annotations
 
+import os
 import subprocess
 import sys
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -171,6 +173,15 @@ class TestGuardsSurviveOptimizedMode:
 
     def test_compute_derivative_raises_under_minus_o(self) -> None:
         """Run ``python -O`` in a subprocess; expect ValueError, not AttributeError."""
+        repo_root = Path(__file__).resolve().parents[4]
+        env = os.environ.copy()
+        shared_python = str(repo_root / "src" / "shared" / "python")
+        existing_pythonpath = env.get("PYTHONPATH")
+        env["PYTHONPATH"] = os.pathsep.join(
+            [shared_python, existing_pythonpath]
+            if existing_pythonpath
+            else [shared_python]
+        )
         code = (
             "from signal_toolkit.calculus import compute_derivative; "
             "compute_derivative(None)"
@@ -178,6 +189,7 @@ class TestGuardsSurviveOptimizedMode:
         result = subprocess.run(
             [sys.executable, "-O", "-c", code],
             capture_output=True,
+            env=env,
             text=True,
         )
         assert result.returncode != 0, "Expected non-zero exit (exception raised)"

@@ -97,18 +97,25 @@ class GasFlowConversionMixin:
         from .service import UnknownUnitError
 
         if from_unit == "SCFM":
-            return float(scfm_to_standard_m3_per_hour(
-                value, standard_condition, StandardCondition.STP
-            ))
+            return float(
+                scfm_to_standard_m3_per_hour(
+                    value, standard_condition, StandardCondition.STP
+                )
+            )
         if from_unit == "ACFM":
-            assert temperature is not None
-            assert pressure is not None
+            if temperature is None or pressure is None:
+                msg = (
+                    "temperature and pressure are required after ACFM input validation"
+                )
+                raise RuntimeError(msg)
             scfm = actual_to_standard_flow(
                 value, temperature, pressure, standard_condition
             )
-            return float(scfm_to_standard_m3_per_hour(
-                scfm, standard_condition, StandardCondition.STP
-            ))
+            return float(
+                scfm_to_standard_m3_per_hour(
+                    scfm, standard_condition, StandardCondition.STP
+                )
+            )
         if from_unit in {"Nm3/hr", "Nm³/hr"}:
             return value
         if from_unit in self.mass_flow_factors:
@@ -130,18 +137,23 @@ class GasFlowConversionMixin:
         from .service import UnknownUnitError
 
         if to_unit == "SCFM":
-            return float(standard_m3_per_hour_to_scfm(
-                m3_hr_std, StandardCondition.STP, standard_condition
-            ))
+            return float(
+                standard_m3_per_hour_to_scfm(
+                    m3_hr_std, StandardCondition.STP, standard_condition
+                )
+            )
         if to_unit == "ACFM":
-            assert temperature is not None
-            assert pressure is not None
+            if temperature is None or pressure is None:
+                msg = (
+                    "temperature and pressure are required after ACFM input validation"
+                )
+                raise RuntimeError(msg)
             scfm = standard_m3_per_hour_to_scfm(
                 m3_hr_std, StandardCondition.STP, standard_condition
             )
-            return float(standard_to_actual_flow(
-                scfm, temperature, pressure, standard_condition
-            ))
+            return float(
+                standard_to_actual_flow(scfm, temperature, pressure, standard_condition)
+            )
         if to_unit in {"Nm3/hr", "Nm³/hr"}:
             return m3_hr_std
         if to_unit in self.mass_flow_factors:

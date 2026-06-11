@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.353                                    |
-| **Last Spec Update**    | 2026-06-10                                 |
+| **Spec Version**        | 1.1.354                                    |
+| **Last Spec Update**    | 2026-06-11                                 |
 
 ## 2. Purpose & Mission
 
@@ -742,6 +742,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-06-10 | 1.1.334 | fix(ci/rust, #3291 #3294 #3295): split PyO3 `python` test features from maturin-only `extension-module` wheel linkage so `cargo test --features python` no longer emits Python extension-module binaries while wheel builds still opt into extension-module linking. |
 | 2026-06-10 | 1.1.333 | fix(bug/ci, #3294 #3295): declare pendulum `Golfer` dynamics native-only with construction-time `RuntimeError` guidance and an explicit workspace exclude for `pendulum-core`; remove `plant_simulator`'s silent random-data path so `SCADADataset` loads real SQLite `taglog` rows unless synthetic data is explicitly requested; and keep the affected native wrappers mypy-clean under the changed-file quality gate. |
 | 2026-06-10 | 1.1.332 | fix(ci, #3298): keep the P1AM project import helper mypy-clean under the changed-file quality gate by typing parsed SCADA tags as `TagDefinition` at the parser boundary and preserving the endpoint's documented `dict[str, Any]` response contract when imports are skipped. |
+| 2026-06-11 | 1.1.354 | fix(dbc): harden optimized-mode validation for signal-toolkit derivative guards and Sidekick gas-flow conversion internals. `signal_toolkit` optimized-mode subprocess coverage now preserves the repo shared-python import path, and gas-flow ACFM invariant checks use explicit exceptions instead of runtime `assert` statements so guard behavior remains deterministic under `python -O`. |
 | 2026-06-10 | 1.1.331 | fix(ci, #3298): avoid a detect-secrets Secret Keyword false positive in the P1AM backend auth helper by renaming the public header-name constant away from token-like wording and constructing the `X-API-Key` header name without changing the HTTP authentication contract. |
 | 2026-06-10 | 1.1.331 | fix(daemon, #3291): stop `start-gaai-daemon.sh` from writing `~/.claude/settings.json` or globally suppressing Claude Code dangerous-mode prompts; document that any safety override must be configured deliberately outside the launcher, and add a dry-run regression test proving existing global Claude settings are preserved. |
 | 2026-06-09 | 1.1.329 | fix(security, #3288 #3289 #3292): remove the P1AM HMI hardcoded default Admin password and accepted hardcoded SHA-256 hashes, fail closed when no credential is configured, and verify admin passwords with a salted PBKDF2-HMAC-SHA256 KDF (`ADMIN_PASSWORD_HASH`/`ADMIN_PASSWORD`) instead of bare SHA-256; add server-side `X-API-Key` authentication/authorization to the P1AM control backend (`auth_config.py`) so every state-mutating endpoint and the live WebSocket require an operator key and destructive/elevated operations (estop clear, tag writes, PID tuning, MPC, alicat setpoint/gas, project import) require an admin key, failing closed (503) unless `P1AM_DEV_NO_AUTH=1`, with E-stop activation intentionally left open and the Docker default bind changed to loopback; and harden `/api/project/import` against unbounded uploads (streamed size cap -> 413), zip bombs (member-count/per-file/total-size/compression-ratio limits before extraction), and partial DB wipes (atomic delete+insert in one transaction). |
