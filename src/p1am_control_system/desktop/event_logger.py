@@ -267,6 +267,18 @@ class EventLogViewerWidget(QWidget):
         self._init_ui()
         self.apply_filters()
 
+        # Debounce timer for refreshing logs
+        from PyQt6.QtCore import QTimer
+
+        self._refresh_timer = QTimer(self)
+        self._refresh_timer.setSingleShot(True)
+        self._refresh_timer.setInterval(250)
+        self._refresh_timer.timeout.connect(self.apply_filters)
+
+    def request_refresh(self) -> None:
+        """Request a refresh of the log viewer, debounced to avoid rapid re-querying."""
+        self._refresh_timer.start()
+
     def _init_ui(self) -> None:
         """Initialize the user interface elements."""
         main_layout = QVBoxLayout(self)
