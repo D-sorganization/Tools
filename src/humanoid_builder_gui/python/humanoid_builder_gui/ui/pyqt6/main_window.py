@@ -39,6 +39,11 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from humanoid_character_builder.core.anthropometry import (
+    get_segment_length_ratio,
+    get_segment_mass_ratio,
+)
+
 from shared.python.theme.integration import ThemedWindowMixin
 
 logger = logging.getLogger(__name__)
@@ -110,34 +115,7 @@ class SegmentData:
     depth_m: float
 
 
-# de Leva (1996) anthropometric data (simplified)
-SEGMENT_MASS_RATIOS = {
-    "head": 0.0694,
-    "neck": 0.0240,
-    "thorax": 0.2160,
-    "lumbar": 0.1390,
-    "pelvis": 0.1117,
-    "upper_arm": 0.0271,
-    "forearm": 0.0162,
-    "hand": 0.0061,
-    "thigh": 0.1416,
-    "shin": 0.0433,
-    "foot": 0.0137,
-}
 
-SEGMENT_LENGTH_RATIOS = {
-    "head": 0.1395,
-    "neck": 0.052,
-    "thorax": 0.170,
-    "lumbar": 0.108,
-    "pelvis": 0.078,
-    "upper_arm": 0.186,
-    "forearm": 0.146,
-    "hand": 0.108,
-    "thigh": 0.245,
-    "shin": 0.246,
-    "foot": 0.152,
-}
 
 
 class HumanoidBuilderWindow(ThemedWindowMixin, QMainWindow):
@@ -542,9 +520,11 @@ class HumanoidBuilderWindow(ThemedWindowMixin, QMainWindow):
             ("R Foot", "foot"),
         ]
 
+        gender_factor = self._get_gender_factor()
+
         for display_name, key in segments_info:
-            mass_ratio = SEGMENT_MASS_RATIOS.get(key, 0.01)
-            length_ratio = SEGMENT_LENGTH_RATIOS.get(key, 0.05)
+            mass_ratio = get_segment_mass_ratio(key, gender_factor)
+            length_ratio = get_segment_length_ratio(key, gender_factor)
 
             seg_mass = mass * mass_ratio
             seg_length = height * length_ratio

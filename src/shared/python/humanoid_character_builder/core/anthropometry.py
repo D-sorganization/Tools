@@ -478,6 +478,24 @@ def get_segment_length_ratio(segment_name: str, gender_factor: float = 0.5) -> f
     return data.length_ratio
 
 
+def get_urdf_mass_ratios(gender_factor: float = 1.0) -> dict[str, float]:
+    """Get mass ratios for URDF builder, including composite segments."""
+    return {
+        "pelvis": get_segment_mass_ratio("pelvis", gender_factor),
+        "lumbar": get_segment_mass_ratio("lumbar", gender_factor),
+        "thorax": get_segment_mass_ratio("thorax", gender_factor),
+        "torso": get_segment_mass_ratio("lumbar", gender_factor) + get_segment_mass_ratio("thorax", gender_factor),
+        "neck": get_segment_mass_ratio("neck", gender_factor),
+        "head": get_segment_mass_ratio("head", gender_factor),
+        "upper_arm": get_segment_mass_ratio("upper_arm", gender_factor),
+        "forearm": get_segment_mass_ratio("forearm", gender_factor),
+        "hand": get_segment_mass_ratio("hand", gender_factor),
+        "thigh": get_segment_mass_ratio("thigh", gender_factor),
+        "shin": get_segment_mass_ratio("shin", gender_factor),
+        "foot": get_segment_mass_ratio("foot", gender_factor),
+    }
+
+
 @precondition(lambda total_mass_kg: total_mass_kg > 0, "Total mass must be positive")
 @precondition(
     lambda gender_factor: 0.0 <= gender_factor <= 1.0,
