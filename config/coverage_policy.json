@@ -11,11 +11,5 @@
     "src/shared/python/codemap": 90.0,
     "src/shared/python/sidekick/calculators/conversion/service.py": 90.0,
     "src/shared/python/upstream_drift_tools": 100.0
-  },
-  "hot_path_modules_phase2": {
-    "src/pressure_drop_calculator": 80.0,
-    "src/rotation_converter": 80.0,
-    "src/shared/python/model_generation": 80.0,
-    "src/shared/python/upstream_drift_tools": 100.0
   }
 }

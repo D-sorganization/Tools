@@ -242,6 +242,7 @@ pythonpath = [
     "src/media_processing/video_processor/python",
     "src/pendulum_simulator/src",
     "src/folder_tool",
+    "src/p1am_control_system/backend",
 ]
 # Fleet testing standards (§2): explicit timeout + asyncio config.
 # See: Repository_Management/docs/FLEET_TESTING_STANDARDS.md
@@ -267,12 +268,6 @@ norecursedirs = [
     "*.egg-info",
     ".pytest_cache",
     "htmlcov",
-    "pdf_renamer",
-    "pdf_renamer_backup",
-    "project_packer",
-    "folder_packer_pro",
-    "rrt_path_planner",
-    "calculator",
 ]
 filterwarnings = [
     "ignore::DeprecationWarning:pkg_resources",
