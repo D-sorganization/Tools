@@ -10,6 +10,7 @@ anthropometric calculations and URDF export.
 from __future__ import annotations
 
 import logging
+from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA, get_stylesheet
 import sys
 from dataclasses import dataclass
 from enum import Enum
@@ -80,188 +81,6 @@ CATPPUCCIN_MOCHA = {
     "mantle": "#181825",
     "crust": "#11111b",
 }
-
-STYLESHEET = f"""
-QMainWindow {{
-    background-color: {CATPPUCCIN_MOCHA["base"]};
-}}
-
-QWidget {{
-    background-color: {CATPPUCCIN_MOCHA["base"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    font-family: "Segoe UI", "Arial", sans-serif;
-}}
-
-QScrollArea {{
-    border: none;
-    background-color: {CATPPUCCIN_MOCHA["base"]};
-}}
-
-QTabWidget::pane {{
-    border: 1px solid {CATPPUCCIN_MOCHA["surface1"]};
-    background-color: {CATPPUCCIN_MOCHA["mantle"]};
-    border-radius: 4px;
-}}
-
-QTabBar::tab {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["subtext1"]};
-    padding: 8px 16px;
-    margin-right: 2px;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-}}
-
-QTabBar::tab:selected {{
-    background-color: {CATPPUCCIN_MOCHA["surface1"]};
-    color: {CATPPUCCIN_MOCHA["blue"]};
-}}
-
-QGroupBox {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface1"]};
-    border-radius: 8px;
-    margin-top: 12px;
-    padding: 12px;
-    font-weight: bold;
-}}
-
-QGroupBox::title {{
-    subcontrol-origin: margin;
-    left: 12px;
-    padding: 0 6px;
-    color: {CATPPUCCIN_MOCHA["mauve"]};
-}}
-
-QLabel {{
-    color: {CATPPUCCIN_MOCHA["text"]};
-    background-color: transparent;
-}}
-
-QDoubleSpinBox {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    border-radius: 4px;
-    padding: 6px 10px;
-}}
-
-QDoubleSpinBox:focus {{
-    border: 1px solid {CATPPUCCIN_MOCHA["blue"]};
-}}
-
-QComboBox {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    border-radius: 4px;
-    padding: 6px 10px;
-    min-width: 150px;
-}}
-
-QComboBox:hover {{
-    border: 1px solid {CATPPUCCIN_MOCHA["blue"]};
-}}
-
-QComboBox::drop-down {{
-    border: none;
-    width: 24px;
-}}
-
-QComboBox QAbstractItemView {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    selection-background-color: {CATPPUCCIN_MOCHA["surface2"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface1"]};
-}}
-
-QSlider::groove:horizontal {{
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    height: 8px;
-    background: {CATPPUCCIN_MOCHA["surface0"]};
-    border-radius: 4px;
-}}
-
-QSlider::handle:horizontal {{
-    background: {CATPPUCCIN_MOCHA["blue"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["blue"]};
-    width: 16px;
-    margin: -4px 0;
-    border-radius: 8px;
-}}
-
-QSlider::sub-page:horizontal {{
-    background: {CATPPUCCIN_MOCHA["sapphire"]};
-    border-radius: 4px;
-}}
-
-QTableWidget {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    border-radius: 4px;
-    gridline-color: {CATPPUCCIN_MOCHA["surface1"]};
-}}
-
-QTableWidget::item {{
-    padding: 4px;
-}}
-
-QTableWidget::item:selected {{
-    background-color: {CATPPUCCIN_MOCHA["surface2"]};
-}}
-
-QHeaderView::section {{
-    background-color: {CATPPUCCIN_MOCHA["surface1"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    padding: 6px;
-    border: none;
-    border-bottom: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-}}
-
-QTextEdit {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    border-radius: 4px;
-    padding: 8px;
-    font-family: "Consolas", "Courier New", monospace;
-}}
-
-QPushButton {{
-    background-color: {CATPPUCCIN_MOCHA["blue"]};
-    color: {CATPPUCCIN_MOCHA["crust"]};
-    border: none;
-    border-radius: 4px;
-    padding: 10px 24px;
-    font-weight: bold;
-}}
-
-QPushButton:hover {{
-    background-color: {CATPPUCCIN_MOCHA["sapphire"]};
-}}
-
-QPushButton:pressed {{
-    background-color: {CATPPUCCIN_MOCHA["lavender"]};
-}}
-
-QPushButton#buildBtn {{
-    background-color: {CATPPUCCIN_MOCHA["green"]};
-}}
-
-QPushButton#buildBtn:hover {{
-    background-color: {CATPPUCCIN_MOCHA["teal"]};
-}}
-
-QPushButton#exportBtn {{
-    background-color: {CATPPUCCIN_MOCHA["peach"]};
-}}
-
-QPushButton#exportBtn:hover {{
-    background-color: {CATPPUCCIN_MOCHA["yellow"]};
-}}
-"""
-
 
 class BuildType(Enum):
     """Body build types."""
@@ -336,7 +155,7 @@ class HumanoidBuilderWindow(ThemedWindowMixin, QMainWindow):
         """Set up the user interface."""
         self.setWindowTitle("Humanoid Character Builder")
         self.setMinimumSize(800, 900)
-        self.setStyleSheet(STYLESHEET)
+        self.setStyleSheet(get_stylesheet())
 
         # Central widget with scroll area
         scroll_area = QScrollArea()

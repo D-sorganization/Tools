@@ -62,136 +62,6 @@ CATPPUCCIN_MOCHA = {
     "crust": "#11111b",
 }
 
-STYLESHEET = f"""
-QMainWindow {{
-    background-color: {CATPPUCCIN_MOCHA["base"]};
-}}
-
-QWidget {{
-    background-color: {CATPPUCCIN_MOCHA["base"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    font-family: "Segoe UI", "Arial", sans-serif;
-}}
-
-QScrollArea {{
-    border: none;
-    background-color: {CATPPUCCIN_MOCHA["base"]};
-}}
-
-QTabWidget::pane {{
-    border: 1px solid {CATPPUCCIN_MOCHA["surface1"]};
-    background-color: {CATPPUCCIN_MOCHA["mantle"]};
-    border-radius: 4px;
-}}
-
-QTabBar::tab {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["subtext1"]};
-    padding: 8px 16px;
-    margin-right: 2px;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-}}
-
-QTabBar::tab:selected {{
-    background-color: {CATPPUCCIN_MOCHA["surface1"]};
-    color: {CATPPUCCIN_MOCHA["blue"]};
-}}
-
-QGroupBox {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface1"]};
-    border-radius: 8px;
-    margin-top: 12px;
-    padding: 12px;
-    font-weight: bold;
-}}
-
-QGroupBox::title {{
-    subcontrol-origin: margin;
-    left: 12px;
-    padding: 0 6px;
-    color: {CATPPUCCIN_MOCHA["mauve"]};
-}}
-
-QLabel {{
-    color: {CATPPUCCIN_MOCHA["text"]};
-    background-color: transparent;
-}}
-
-QDoubleSpinBox {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    border-radius: 4px;
-    padding: 6px 10px;
-}}
-
-QDoubleSpinBox:focus {{
-    border: 1px solid {CATPPUCCIN_MOCHA["blue"]};
-}}
-
-QComboBox {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    border-radius: 4px;
-    padding: 6px 10px;
-    min-width: 150px;
-}}
-
-QComboBox:hover {{
-    border: 1px solid {CATPPUCCIN_MOCHA["blue"]};
-}}
-
-QComboBox::drop-down {{
-    border: none;
-    width: 24px;
-}}
-
-QComboBox::down-arrow {{
-    image: none;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 6px solid {CATPPUCCIN_MOCHA["text"]};
-    margin-right: 8px;
-}}
-
-QComboBox QAbstractItemView {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    selection-background-color: {CATPPUCCIN_MOCHA["surface2"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface1"]};
-}}
-
-QTextEdit {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    border-radius: 4px;
-    padding: 8px;
-    font-family: "Consolas", "Courier New", monospace;
-}}
-
-QPushButton {{
-    background-color: {CATPPUCCIN_MOCHA["blue"]};
-    color: {CATPPUCCIN_MOCHA["crust"]};
-    border: none;
-    border-radius: 4px;
-    padding: 10px 24px;
-    font-weight: bold;
-}}
-
-QPushButton:hover {{
-    background-color: {CATPPUCCIN_MOCHA["sapphire"]};
-}}
-
-QPushButton:pressed {{
-    background-color: {CATPPUCCIN_MOCHA["lavender"]};
-}}
-"""
-
-
 class InertiaCalculatorWindow(BaseCalculatorWindow):
     """Main window for Inertia Calculator application."""
 
@@ -206,7 +76,7 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
 
     def _setup_ui(self) -> None:
         """Set up the user interface."""
-        self.setStyleSheet(STYLESHEET)
+        self.setStyleSheet(get_stylesheet())
 
         # LoD: assign Qt attribute constants to local variables
         scrollbar_policy_off = Qt.ScrollBarPolicy.ScrollBarAlwaysOff

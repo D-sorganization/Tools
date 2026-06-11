@@ -38,11 +38,11 @@ from PyQt6.QtWidgets import (
 )
 
 from shared.python.theme.integration import ThemedWindowMixin
-from urdf_builder_gui.theme import CATPPUCCIN_MOCHA, build_stylesheet
+from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA, get_stylesheet
 
 logger = logging.getLogger(__name__)
 
-STYLESHEET = build_stylesheet()
+STYLESHEET = get_stylesheet()
 
 
 class URDFBuilderWindow(ThemedWindowMixin, QMainWindow):
