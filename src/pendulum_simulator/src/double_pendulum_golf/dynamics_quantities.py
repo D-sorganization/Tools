@@ -107,9 +107,7 @@ def angular_power_series(
     if not (torques.ndim == 1):
         raise ValueError(f"torques must be 1-D, got {torques.ndim}-D")
     if not (torques.shape == angular_velocities.shape):
-        raise ValueError(
-            f"Shape mismatch: {torques.shape} vs {angular_velocities.shape}"
-        )
+        raise ValueError(f"Shape mismatch: {torques.shape} vs {angular_velocities.shape}")
     if not (np.all(np.isfinite(torques))):
         raise ValueError("torques must be all finite")
     if not (np.all(np.isfinite(angular_velocities))):

@@ -3,7 +3,7 @@
 import logging
 
 from PyQt6.QtCore import QPointF, Qt, pyqtSignal
-from PyQt6.QtGui import QBrush, QColor, QPainter, QPen, QPolygonF, QPalette
+from PyQt6.QtGui import QBrush, QColor, QPainter, QPalette, QPen, QPolygonF
 from PyQt6.QtWidgets import (
     QGraphicsItem,
     QGraphicsPolygonItem,
@@ -45,9 +45,13 @@ class MimicReactorItem(QGraphicsRectItem):
         # Style
         self.normal_pen = QPen(QColor(Qt.GlobalColor.blue), 2)
         self.hover_pen = QPen(QColor(Qt.GlobalColor.cyan), 3)
-        self.selected_pen = QPen(QColor(Qt.GlobalColor.darkYellow), 3, Qt.PenStyle.DashLine)
+        self.selected_pen = QPen(
+            QColor(Qt.GlobalColor.darkYellow), 3, Qt.PenStyle.DashLine
+        )
 
-        self.normal_brush = QBrush(self.tab_parent.palette().color(QPalette.ColorRole.Base))
+        self.normal_brush = QBrush(
+            self.tab_parent.palette().color(QPalette.ColorRole.Base)
+        )
         self.setPen(self.normal_pen)
         self.setBrush(self.normal_brush)
 
@@ -109,9 +113,13 @@ class MimicValveItem(QGraphicsPolygonItem):
 
         self.normal_pen = QPen(QColor(Qt.GlobalColor.red), 2)
         self.hover_pen = QPen(QColor(Qt.GlobalColor.magenta), 3)
-        self.selected_pen = QPen(QColor(Qt.GlobalColor.darkYellow), 3, Qt.PenStyle.DashLine)
+        self.selected_pen = QPen(
+            QColor(Qt.GlobalColor.darkYellow), 3, Qt.PenStyle.DashLine
+        )
 
-        self.normal_brush = QBrush(self.tab_parent.palette().color(QPalette.ColorRole.Base))
+        self.normal_brush = QBrush(
+            self.tab_parent.palette().color(QPalette.ColorRole.Base)
+        )
         self.setPen(self.normal_pen)
         self.setBrush(self.normal_brush)
 
@@ -180,7 +188,9 @@ class MimicTab(QWidget):
 
         # QGraphicsView & Scene
         self.scene = QGraphicsScene(self)
-        self.scene.setBackgroundBrush(QBrush(self.palette().color(QPalette.ColorRole.Window)))
+        self.scene.setBackgroundBrush(
+            QBrush(self.palette().color(QPalette.ColorRole.Window))
+        )
         self.scene.setSceneRect(0, 0, 1050, 450)
 
         self.view = QGraphicsView(self.scene, self)
@@ -290,7 +300,9 @@ class MimicTab(QWidget):
 
             # Reactor title text
             title = QGraphicsTextItem(node["name"])
-            title.setDefaultTextColor(self.palette().color(QPalette.ColorRole.WindowText))
+            title.setDefaultTextColor(
+                self.palette().color(QPalette.ColorRole.WindowText)
+            )
             title.setPos(node["x"] + 2, node["y"] - 25)
             # Make it bold
             font = title.font()

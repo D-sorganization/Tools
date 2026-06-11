@@ -6,7 +6,7 @@ class HttpWorker(QThread):
     """
     Asynchronous worker for making HTTP requests without blocking the GUI thread.
     """
-    
+
     success = pyqtSignal(dict)
     error = pyqtSignal(str)
 
@@ -23,20 +23,22 @@ class HttpWorker(QThread):
             if self.method == "GET":
                 resp = requests.get(self.url, params=self.data, timeout=self.timeout)
             elif self.method == "POST":
-                resp = requests.post(self.url, data=self.data, json=self.json, timeout=self.timeout)
+                resp = requests.post(
+                    self.url, data=self.data, json=self.json, timeout=self.timeout
+                )
             else:
                 self.error.emit(f"Unsupported method: {self.method}")
                 return
 
             resp.raise_for_status()
-            
+
             try:
                 data = resp.json()
             except ValueError:
                 data = {"text": resp.text}
-                
+
             self.success.emit(data)
-            
+
         except requests.exceptions.RequestException as e:
             self.error.emit(str(e))
         except Exception as e:

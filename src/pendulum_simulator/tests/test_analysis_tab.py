@@ -30,9 +30,7 @@ class TestMakeDetEvaluator:
 
     def test_det_of_known_matrix(self) -> None:
         """det([[2,0],[0,3]]) = 6.0."""
-        evaluator = _make_det_evaluator(
-            lambda angles: np.array([[2.0, 0.0], [0.0, 3.0]])
-        )
+        evaluator = _make_det_evaluator(lambda angles: np.array([[2.0, 0.0], [0.0, 3.0]]))
         assert evaluator({}) == pytest.approx(6.0)
 
     def test_det_passes_angles_to_fn(self) -> None:
@@ -58,9 +56,7 @@ class TestMakeCondEvaluator:
 
     def test_cond_of_diagonal(self) -> None:
         """cond(diag(1, 10)) = 10.0."""
-        evaluator = _make_cond_evaluator(
-            lambda angles: np.array([[1.0, 0.0], [0.0, 10.0]])
-        )
+        evaluator = _make_cond_evaluator(lambda angles: np.array([[1.0, 0.0], [0.0, 10.0]]))
         assert evaluator({}) == pytest.approx(10.0, rel=1e-6)
 
     def test_cond_passes_angles_to_fn(self) -> None:
@@ -257,7 +253,5 @@ def test_analysis_tab_plot_2d_errors(qapp, monkeypatch) -> Any:
     def mock_extract(*args) -> Any:
         raise KeyError()
 
-    monkeypatch.setattr(
-        "double_pendulum_golf.data_extractor.extract_series", mock_extract
-    )
+    monkeypatch.setattr("double_pendulum_golf.data_extractor.extract_series", mock_extract)
     tab._on_plot_2d()

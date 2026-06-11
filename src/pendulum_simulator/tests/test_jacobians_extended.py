@@ -224,15 +224,11 @@ class TestEllipsoidsTriple:
 
 
 class TestJacobianGolfer:
-    def test_returns_dict(
-        self, golfer_params: GolferParams, zero_q: np.ndarray
-    ) -> None:
+    def test_returns_dict(self, golfer_params: GolferParams, zero_q: np.ndarray) -> None:
         J = jacobian_golfer(zero_q, golfer_params)
         assert isinstance(J, dict)
 
-    def test_joint_key_shapes(
-        self, golfer_params: GolferParams, zero_q: np.ndarray
-    ) -> None:
+    def test_joint_key_shapes(self, golfer_params: GolferParams, zero_q: np.ndarray) -> None:
         J = jacobian_golfer(zero_q, golfer_params)
         for name, mat in J.items():
             assert mat.shape == (2, N_DOF), f"Wrong shape for joint {name}"
@@ -244,9 +240,7 @@ class TestJacobianGolfer:
 
 
 class TestEllipsoidsGolfer:
-    def test_returns_dict(
-        self, golfer_params: GolferParams, zero_q: np.ndarray
-    ) -> None:
+    def test_returns_dict(self, golfer_params: GolferParams, zero_q: np.ndarray) -> None:
         result = ellipsoids_golfer(zero_q, golfer_params)
         assert isinstance(result, dict)
 
@@ -278,9 +272,7 @@ class TestZtcfMatrix:
         Z = ztcf_matrix(zero_q, golfer_params)
         assert np.all(np.isfinite(Z))
 
-    def test_different_joint(
-        self, golfer_params: GolferParams, zero_q: np.ndarray
-    ) -> None:
+    def test_different_joint(self, golfer_params: GolferParams, zero_q: np.ndarray) -> None:
         Z_tip = ztcf_matrix(zero_q, golfer_params, joint_name="club_tip")
         Z_rh = ztcf_matrix(zero_q, golfer_params, joint_name="rh")
         # Different joints should give different matrices

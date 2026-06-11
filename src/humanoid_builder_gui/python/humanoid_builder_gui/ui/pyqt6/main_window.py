@@ -291,34 +291,10 @@ class SegmentData:
     depth_m: float
 
 
-# de Leva (1996) anthropometric data (simplified)
-SEGMENT_MASS_RATIOS = {
-    "head": 0.0694,
-    "neck": 0.0240,
-    "thorax": 0.2160,
-    "lumbar": 0.1390,
-    "pelvis": 0.1117,
-    "upper_arm": 0.0271,
-    "forearm": 0.0162,
-    "hand": 0.0061,
-    "thigh": 0.1416,
-    "shin": 0.0433,
-    "foot": 0.0137,
-}
-
-SEGMENT_LENGTH_RATIOS = {
-    "head": 0.1395,
-    "neck": 0.052,
-    "thorax": 0.170,
-    "lumbar": 0.108,
-    "pelvis": 0.078,
-    "upper_arm": 0.186,
-    "forearm": 0.146,
-    "hand": 0.108,
-    "thigh": 0.245,
-    "shin": 0.246,
-    "foot": 0.152,
-}
+from humanoid_character_builder.core.anthropometry import (
+    get_simple_length_ratios,
+    get_simple_mass_ratios,
+)
 
 
 class HumanoidBuilderWindow(ThemedWindowMixin, QMainWindow):
@@ -702,6 +678,9 @@ class HumanoidBuilderWindow(ThemedWindowMixin, QMainWindow):
         # Calculate segment data
         self._segments = []
         total_mass = 0.0
+        gender_factor = self._get_gender_factor()
+        segment_mass_ratios = get_simple_mass_ratios(gender_factor)
+        segment_length_ratios = get_simple_length_ratios(gender_factor)
 
         segments_info = [
             ("Head", "head"),
@@ -724,8 +703,8 @@ class HumanoidBuilderWindow(ThemedWindowMixin, QMainWindow):
         ]
 
         for display_name, key in segments_info:
-            mass_ratio = SEGMENT_MASS_RATIOS.get(key, 0.01)
-            length_ratio = SEGMENT_LENGTH_RATIOS.get(key, 0.05)
+            mass_ratio = segment_mass_ratios.get(key, 0.01)
+            length_ratio = segment_length_ratios.get(key, 0.05)
 
             seg_mass = mass * mass_ratio
             seg_length = height * length_ratio

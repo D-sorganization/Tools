@@ -3,7 +3,6 @@
 import logging
 import os
 
-import requests
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import (
     QCheckBox,
@@ -251,10 +250,14 @@ class InspectorSidebar(QWidget):
         if self.chk_force_active.isChecked():
             val = self.spin_force_val.value()
             self.force_worker = HttpWorker(
-                "POST", f"{self.backend_url}/api/tags/{self.selected_tag_id}",
-                json={"value": val}, timeout=1.0
+                "POST",
+                f"{self.backend_url}/api/tags/{self.selected_tag_id}",
+                json={"value": val},
+                timeout=1.0,
             )
-            self.force_worker.success.connect(lambda data: self._on_force_success(val, data))
+            self.force_worker.success.connect(
+                lambda data: self._on_force_success(val, data)
+            )
             self.force_worker.error.connect(self._on_force_error)
             self.force_worker.start()
 
@@ -281,8 +284,10 @@ class InspectorSidebar(QWidget):
 
             # Send updated config back to PLC
             self.routing_worker = HttpWorker(
-                "POST", f"{self.backend_url}/api/routing",
-                json=self.routing_config.dict(), timeout=2.0
+                "POST",
+                f"{self.backend_url}/api/routing",
+                json=self.routing_config.dict(),
+                timeout=2.0,
             )
             self.routing_worker.success.connect(self._on_routing_success)
             self.routing_worker.error.connect(self._on_routing_error)

@@ -4,7 +4,6 @@ import logging
 import os
 
 import pyqtgraph as pg
-import requests
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPalette
 from PyQt6.QtWidgets import (
@@ -100,10 +99,17 @@ class ControlTab(QWidget):
         self.tracking_plot.addLegend()
 
         self.curve_pv = self.tracking_plot.plot(
-            pen=pg.mkPen(color=self.palette().color(QPalette.ColorRole.Highlight), width=2), name="PV"
+            pen=pg.mkPen(
+                color=self.palette().color(QPalette.ColorRole.Highlight), width=2
+            ),
+            name="PV",
         )
         self.curve_sp = self.tracking_plot.plot(
-            pen=pg.mkPen(color=self.palette().color(QPalette.ColorRole.WindowText), width=2, style=Qt.PenStyle.DashLine),
+            pen=pg.mkPen(
+                color=self.palette().color(QPalette.ColorRole.WindowText),
+                width=2,
+                style=Qt.PenStyle.DashLine,
+            ),
             name="Setpoint",
         )
 
@@ -315,12 +321,18 @@ class ControlTab(QWidget):
         self.routing_config = config
 
     def _on_connection_error(self, err_msg: str) -> None:
-        QMessageBox.critical(self, "Connection Error", f"Could not reach backend: {err_msg}")
+        QMessageBox.critical(
+            self, "Connection Error", f"Could not reach backend: {err_msg}"
+        )
 
     def _start_tuning(self) -> None:
         idx = self.loop_combo.currentIndex()
-        self.start_worker = HttpWorker("POST", f"{self.backend_url}/api/pid/{idx}/tuning/start", timeout=1.0)
-        self.start_worker.success.connect(lambda data: self._on_start_tuning_success(idx, data))
+        self.start_worker = HttpWorker(
+            "POST", f"{self.backend_url}/api/pid/{idx}/tuning/start", timeout=1.0
+        )
+        self.start_worker.success.connect(
+            lambda data: self._on_start_tuning_success(idx, data)
+        )
         self.start_worker.error.connect(self._on_connection_error)
         self.start_worker.start()
 
@@ -336,10 +348,14 @@ class ControlTab(QWidget):
         idx = self.loop_combo.currentIndex()
         step_val = self.spin_step_val.value()
         self.step_worker = HttpWorker(
-            "POST", f"{self.backend_url}/api/pid/{idx}/tuning/step",
-            json={"step_value": step_val}, timeout=1.0
+            "POST",
+            f"{self.backend_url}/api/pid/{idx}/tuning/step",
+            json={"step_value": step_val},
+            timeout=1.0,
         )
-        self.step_worker.success.connect(lambda data: self._on_apply_step_success(idx, step_val, data))
+        self.step_worker.success.connect(
+            lambda data: self._on_apply_step_success(idx, step_val, data)
+        )
         self.step_worker.error.connect(self._on_connection_error)
         self.step_worker.start()
 
@@ -351,8 +367,12 @@ class ControlTab(QWidget):
 
     def _stop_tuning(self) -> None:
         idx = self.loop_combo.currentIndex()
-        self.stop_worker = HttpWorker("POST", f"{self.backend_url}/api/pid/{idx}/tuning/stop", timeout=1.5)
-        self.stop_worker.success.connect(lambda data: self._on_stop_tuning_success(idx, data))
+        self.stop_worker = HttpWorker(
+            "POST", f"{self.backend_url}/api/pid/{idx}/tuning/stop", timeout=1.5
+        )
+        self.stop_worker.success.connect(
+            lambda data: self._on_stop_tuning_success(idx, data)
+        )
         self.stop_worker.error.connect(self._on_connection_error)
         self.stop_worker.start()
 
@@ -399,10 +419,14 @@ class ControlTab(QWidget):
             self.routing_config.pids[idx].kd = kd
 
             self.gains_worker = HttpWorker(
-                "POST", f"{self.backend_url}/api/routing",
-                json=self.routing_config.dict(), timeout=2.0
+                "POST",
+                f"{self.backend_url}/api/routing",
+                json=self.routing_config.dict(),
+                timeout=2.0,
             )
-            self.gains_worker.success.connect(lambda data: self._on_apply_gains_success(idx, data))
+            self.gains_worker.success.connect(
+                lambda data: self._on_apply_gains_success(idx, data)
+            )
             self.gains_worker.error.connect(self._on_connection_error)
             self.gains_worker.start()
 
@@ -430,8 +454,7 @@ class ControlTab(QWidget):
         }
 
         self.mpc_worker = HttpWorker(
-            "POST", f"{self.backend_url}/api/mpc/simulate",
-            json=payload, timeout=2.0
+            "POST", f"{self.backend_url}/api/mpc/simulate", json=payload, timeout=2.0
         )
         self.mpc_worker.success.connect(self._on_simulate_mpc_success)
         self.mpc_worker.error.connect(self._on_connection_error)

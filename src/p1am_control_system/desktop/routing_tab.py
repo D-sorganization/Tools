@@ -3,7 +3,6 @@
 import logging
 import os
 
-import requests
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QGridLayout,
@@ -204,17 +203,17 @@ class RoutingTab(QWidget):
 
             # 3. Post back to backend
             self.deploy_worker = HttpWorker(
-                "POST", f"{self.backend_url}/api/routing",
-                json=self.routing_config.dict(), timeout=3.0
+                "POST",
+                f"{self.backend_url}/api/routing",
+                json=self.routing_config.dict(),
+                timeout=3.0,
             )
             self.deploy_worker.success.connect(self._on_deploy_success)
             self.deploy_worker.error.connect(self._on_deploy_error)
             self.deploy_worker.start()
 
         except Exception as e:
-            QMessageBox.critical(
-                self, "Error", f"Failed to prepare deploy: {e}"
-            )
+            QMessageBox.critical(self, "Error", f"Failed to prepare deploy: {e}")
 
     def _on_deploy_success(self, data):
         logger.info("Deployed new DCS routing configuration to PLC.")

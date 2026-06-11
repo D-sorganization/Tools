@@ -624,3 +624,75 @@ def get_com_location(
     # COM is located along the longitudinal axis
     com_z = length_m * data.com_proximal_ratio
     return (0.0, 0.0, com_z)
+
+
+# =============================================================================
+# URDF Builder GUI Specific Ratios
+# =============================================================================
+
+# Composite mass ratios (torso = lumbar + thorax) derived from male canonical data
+URDF_MASS_RATIOS: dict[str, float] = {
+    "pelvis": _MALE_SEGMENTS["pelvis"].mass_ratio,
+    "lumbar": _MALE_SEGMENTS["lumbar"].mass_ratio,
+    "thorax": _MALE_SEGMENTS["thorax"].mass_ratio,
+    "torso": _MALE_SEGMENTS["lumbar"].mass_ratio + _MALE_SEGMENTS["thorax"].mass_ratio,
+    "neck": _MALE_SEGMENTS["neck"].mass_ratio,
+    "head": _MALE_SEGMENTS["head"].mass_ratio,
+    "upper_arm": _MALE_SEGMENTS["upper_arm"].mass_ratio,
+    "forearm": _MALE_SEGMENTS["forearm"].mass_ratio,
+    "hand": _MALE_SEGMENTS["hand"].mass_ratio,
+    "thigh": _MALE_SEGMENTS["thigh"].mass_ratio,
+    "shin": _MALE_SEGMENTS["shin"].mass_ratio,
+    "foot": _MALE_SEGMENTS["foot"].mass_ratio,
+}
+
+# Height ratios using specific measurement conventions for URDF builder (e.g. hand/foot differences)
+URDF_HEIGHT_RATIOS: dict[str, float] = {
+    "pelvis": 0.078,
+    "torso": 0.278,
+    "head": 0.139,
+    "thigh": 0.245,
+    "shin": 0.246,
+    "upper_arm": 0.186,
+    "forearm": 0.146,
+    "hand": 0.058,
+    "foot": 0.039,
+}
+
+
+def get_simple_mass_ratios(gender_factor: float = 0.5) -> dict[str, float]:
+    """Get simple mass ratios for standard segments."""
+    keys = [
+        "head",
+        "neck",
+        "thorax",
+        "lumbar",
+        "pelvis",
+        "upper_arm",
+        "forearm",
+        "hand",
+        "thigh",
+        "shin",
+        "foot",
+    ]
+    return {k: DE_LEVA_DATA.get_segment_data(k, gender_factor).mass_ratio for k in keys}
+
+
+def get_simple_length_ratios(gender_factor: float = 0.5) -> dict[str, float]:
+    """Get simple length ratios for standard segments."""
+    keys = [
+        "head",
+        "neck",
+        "thorax",
+        "lumbar",
+        "pelvis",
+        "upper_arm",
+        "forearm",
+        "hand",
+        "thigh",
+        "shin",
+        "foot",
+    ]
+    return {
+        k: DE_LEVA_DATA.get_segment_data(k, gender_factor).length_ratio for k in keys
+    }

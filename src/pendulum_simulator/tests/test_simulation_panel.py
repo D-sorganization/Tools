@@ -264,9 +264,7 @@ def test_export_data(qapp, mock_sim_kwargs, tmp_path) -> Any:
     panel = SimulationPanel(**mock_sim_kwargs)
 
     # show message if no result
-    with patch(
-        "double_pendulum_golf.gui.simulation_panel.QMessageBox.information"
-    ) as info:
+    with patch("double_pendulum_golf.gui.simulation_panel.QMessageBox.information") as info:
         panel._on_export_data()
         info.assert_called_once()
 
@@ -360,9 +358,7 @@ def test_apply_optimized_coefficients(qapp, mock_sim_kwargs) -> Any:
     panel_triple.controls.inp_tau_shoulder = MagicMock()
     panel_triple.controls.inp_tau_elbow = MagicMock()
     panel_triple.controls.inp_tau_wrist = MagicMock()
-    panel_triple._apply_optimized_coefficients(
-        {"coeffs": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]}
-    )
+    panel_triple._apply_optimized_coefficients({"coeffs": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]})
 
     # Test golfer
     mock_sim_kwargs["controls"] = MockControlsGolfer()
@@ -378,9 +374,7 @@ def test_patched_on_run_optimizer(qapp, mock_sim_kwargs) -> Any:
     panel = SimulationPanel(**mock_sim_kwargs)
 
     panel.optimizer.bind_objective_builder.assert_called_once()
-    params_getter, objective_builder = panel.optimizer.bind_objective_builder.call_args[
-        0
-    ]
+    params_getter, objective_builder = panel.optimizer.bind_objective_builder.call_args[0]
 
     assert params_getter is panel.controls.get_params
     assert objective_builder is panel.objective_builder
@@ -432,9 +426,7 @@ def test_plots_tab_present_when_torque_history_supplied(qapp, mock_sim_kwargs) -
     panel = SimulationPanel(**mock_sim_kwargs)
     labels = panel._side_tabs.panel_labels()
     assert SimulationPanel.TAB_PLOTS in labels
-    assert (
-        panel._side_tabs.panel_widget(SimulationPanel.TAB_PLOTS) is panel.torque_history
-    )
+    assert panel._side_tabs.panel_widget(SimulationPanel.TAB_PLOTS) is panel.torque_history
 
 
 def test_plots_tab_absent_when_torque_history_omitted(qapp, mock_sim_kwargs) -> Any:

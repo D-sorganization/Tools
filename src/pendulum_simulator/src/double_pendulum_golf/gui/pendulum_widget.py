@@ -582,10 +582,7 @@ class PendulumWidget(BasePendulumWidget):
         for i, jname in enumerate(joint_names):
             if i >= len(torque_list):
                 break
-            if (
-                self._visible_segments is not None
-                and jname not in self._visible_segments
-            ):
+            if self._visible_segments is not None and jname not in self._visible_segments:
                 continue
             jp = pos.get(jname)
             if jp is None:
@@ -664,10 +661,7 @@ class PendulumWidget(BasePendulumWidget):
             joint_names.append("wrist")
 
         for jname in joint_names:
-            if (
-                self._visible_segments is not None
-                and jname not in self._visible_segments
-            ):
+            if self._visible_segments is not None and jname not in self._visible_segments:
                 continue
             jp = pos.get(jname)
             if jp is None:
@@ -744,10 +738,7 @@ class PendulumWidget(BasePendulumWidget):
             }
 
         for name, ell in data.items():
-            if (
-                self._visible_segments is not None
-                and name not in self._visible_segments
-            ):
+            if self._visible_segments is not None and name not in self._visible_segments:
                 continue
             world_pos = endpoint_map.get(name)
             if world_pos is None:
@@ -799,9 +790,7 @@ class PendulumWidget(BasePendulumWidget):
                         QPointF(cx_px + dx_line, cy_px + dy_line),
                     )
                     painter.setFont(QFont("Monospace", 7))
-                    painter.drawText(
-                        QPointF(cx_px + dx_line + 4, cy_px + dy_line), "F∞"
-                    )
+                    painter.drawText(QPointF(cx_px + dx_line + 4, cy_px + dy_line), "F∞")
 
     def _draw_ellipse_axes(
         self,

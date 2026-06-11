@@ -6,7 +6,6 @@ import logging
 import os
 import time
 
-import requests
 from dotenv import load_dotenv
 from PyQt6.QtCore import Qt, QThread, pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QColor, QPalette
@@ -213,13 +212,16 @@ class HMIMainWindow(QMainWindow):
 
     def _load_routing_config(self) -> None:
         """Fetch current PLC configuration routing parameters from FastAPI."""
-        self.routing_worker = HttpWorker("GET", f"{self.backend_url}/api/routing", timeout=1.5)
+        self.routing_worker = HttpWorker(
+            "GET", f"{self.backend_url}/api/routing", timeout=1.5
+        )
         self.routing_worker.success.connect(self._on_load_routing_config_success)
         self.routing_worker.error.connect(self._on_load_routing_config_error)
         self.routing_worker.start()
 
     def _on_load_routing_config_success(self, data):
         from models import RoutingConfig
+
         self.routing_config = RoutingConfig(**data)
 
         # Pass configuration to sub-widgets
@@ -230,7 +232,9 @@ class HMIMainWindow(QMainWindow):
         logger.info("Successfully fetched and loaded PLC Routing configuration.")
 
     def _on_load_routing_config_error(self, err_msg):
-        logger.error(f"Could not reach backend to load routing configuration: {err_msg}")
+        logger.error(
+            f"Could not reach backend to load routing configuration: {err_msg}"
+        )
 
     @pyqtSlot(str, bool)
     def _handle_tab_visibility(self, tab_key: str, visible: bool) -> None:
@@ -404,7 +408,10 @@ class HMIMainWindow(QMainWindow):
             self.estop_worker.error.connect(self._on_estop_error)
             self.estop_worker.start()
         else:
-            self.log_event("ACTION", "E-STOP state cleared. Normal operations resumed.")
+            self.estop_clear_worker = HttpWorker("POST", f"{self.backend_url}/api/estop/clear", timeout=1.0)
+            self.estop_clear_worker.success.connect(lambda data: self.log_event("ACTION", "E-STOP state cleared. Normal operations resumed."))
+            self.estop_clear_worker.error.connect(lambda err: self.log_event("ALARM", f"Failed to clear E-STOP state: {err}"))
+            self.estop_clear_worker.start()
 
     def _on_estop_success(self, data):
         self.log_event("ALARM", "EMERGENCY STOP SHUTDOWN COMMAND SENT TO PLC.")

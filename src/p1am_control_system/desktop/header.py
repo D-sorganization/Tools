@@ -65,9 +65,7 @@ class HMIHeader(QWidget):
 
         # Title / Brand Label
         self.title_label = QLabel("P1AM GASIFICATION PLANT HMI", self)
-        self.title_label.setStyleSheet(
-            "font-weight: bold; font-size: 14pt;"
-        )
+        self.title_label.setStyleSheet("font-weight: bold; font-size: 14pt;")
         layout.addWidget(self.title_label)
 
         layout.addStretch()
