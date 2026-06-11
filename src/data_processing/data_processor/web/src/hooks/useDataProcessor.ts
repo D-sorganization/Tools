@@ -76,7 +76,8 @@ export function useDataProcessor() {
 
       for (let i = 0; i < dataLen; i++) {
         const v = data[i][signal];
-        if (typeof v === 'number' && !Number.isNaN(v)) {
+        // ⚡ Bolt Optimization: Replace slow Number.isNaN with fast self-inequality check
+        if (typeof v === 'number' && v === v) {
           if (count >= capacity) {
             capacity = Math.min(dataLen, capacity * 2);
             const newBuffer = new Float64Array(capacity);
@@ -496,7 +497,8 @@ export function useDataProcessor() {
           const x = row[config.xColumn] as number;
           const y = row[config.yColumn] as number;
 
-          if (Number.isNaN(x) || Number.isNaN(y)) continue;
+          // ⚡ Bolt Optimization: Replace slow Number.isNaN with fast self-inequality check
+          if (x !== x || y !== y) continue;
           if (config.xMin !== undefined && x < config.xMin) continue;
           if (config.xMax !== undefined && x > config.xMax) continue;
 
