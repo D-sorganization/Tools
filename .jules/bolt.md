@@ -48,3 +48,6 @@
 ## 2024-06-09 - Memoize and pull out string ops in React component filters
 **Learning:** Chaining `.map().filter()` combined with `toLowerCase()` string operations inside an unmemoized React component render block causes huge performance drops, especially when typed inputs continuously trigger renders.
 **Action:** Always wrap heavy list filtering/derivations in `useMemo`, pull static string operations (`.toLowerCase()`) outside of the filter callbacks, and replace array function chains with single-pass `for` loops using `Set` for distinct value extraction.
+## 2024-05-31 - Fast NaN checks and Pairwise Precomputation
+**Learning:** In hot loops computing pairwise relationships across large arrays (like Correlation Matrices), `Number.isNaN()` calls are extremely slow. Using the self-inequality check `x !== x` to identify `NaN` is significantly faster. Furthermore, if a single pass verifies there are zero `NaN` values in the dataset (the fast path), the `O(N^2)` combinatorial work can be drastically reduced by pre-computing sums (`sumX`, `sumX2`) per column, leaving only `sumXY` to be computed pair-wise.
+**Action:** Replace `Number.isNaN()` with `x !== x` (or `x === x` for validity) inside dense numeric algorithmic loops. For pairwise O(N^2) calculations, scan for missing data once upfront to enable a "fast path" that pre-computes properties per column.
