@@ -1,4 +1,5 @@
 import matplotlib
+
 try:
     import numpy as np
     NUMPY_AVAILABLE = True
