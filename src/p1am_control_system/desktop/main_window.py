@@ -386,7 +386,7 @@ class HMIMainWindow(QMainWindow):
             )
             # Update viewer if tab is active
             if hasattr(self, "event_log_viewer"):
-                self.event_log_viewer.apply_filters()
+                self.event_log_viewer.request_refresh()
         except Exception as e:
             logger.error(f"Failed to log event to database: {e}")
 
