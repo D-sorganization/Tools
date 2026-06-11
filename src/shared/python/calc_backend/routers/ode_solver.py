@@ -91,41 +91,30 @@ def _rk4_solve(
     t_end: float,
     num_points: int,
 ) -> ODESolverResponse:
-    """RK4 integration of the ODE system."""
+    """Integration of the ODE system using unified ODESolver."""
     if var_names is None:
         raise ValueError("var_names must be provided")
     if num_points < 2:
         raise ValueError("num_points must be at least 2")
-    dt = (t_end - t_start) / (num_points - 1)
-    state = {v: initial[v] for v in var_names}
+    if t_end <= t_start:
+        raise ValueError(
+            f"t_end ({t_end}) must be strictly greater than t_start ({t_start})"
+        )
 
-    times: list[float] = []
-    solutions: dict[str, list[float]] = {v: [] for v in var_names}
+    import numpy as np
 
-    def compute_derivs(t: float, s: dict[str, float]) -> dict[str, float]:
-        ctx = {**s, "t": t}
-        return {v: _safe_eval(expressions[v], ctx, parameters) for v in var_names}
+    from shared.python.sidekick.process_calculators.ode_solver import ODESolver
 
-    for i in range(num_points):
-        t = t_start + i * dt
-        times.append(round(t, 8))
-        for v in var_names:
-            solutions[v].append(round(state[v], 8))
+    solver = ODESolver(derivatives=expressions, parameters=parameters)
+    y0 = [initial[v] for v in var_names]
+    t_eval = np.linspace(t_start, t_end, num_points)
 
-        if i < num_points - 1:
-            k1 = compute_derivs(t, state)
+    sol = solver.solve((t_start, t_end), y0, t_eval=t_eval)
 
-            s2 = {v: state[v] + dt / 2 * k1[v] for v in var_names}
-            k2 = compute_derivs(t + dt / 2, s2)
-
-            s3 = {v: state[v] + dt / 2 * k2[v] for v in var_names}
-            k3 = compute_derivs(t + dt / 2, s3)
-
-            s4 = {v: state[v] + dt * k3[v] for v in var_names}
-            k4 = compute_derivs(t + dt, s4)
-
-            for v in var_names:
-                state[v] += dt / 6 * (k1[v] + 2 * k2[v] + 2 * k3[v] + k4[v])
+    times = [round(float(t), 8) for t in sol.t]
+    solutions = {
+        v: [round(float(val), 8) for val in sol.y[i]] for i, v in enumerate(var_names)
+    }
 
     summaries = []
     for v in var_names:
