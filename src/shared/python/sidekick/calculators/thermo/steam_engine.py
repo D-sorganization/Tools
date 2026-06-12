@@ -93,6 +93,8 @@ try:
 
     COOLPROP_AVAILABLE = True
 except ImportError:
+    PhaseSI = None
+    PropsSI = None
     COOLPROP_AVAILABLE = False
     logging.getLogger(__name__).warning(
         "Warning: CoolProp not available. Falling back to Cantera or simplified correlations."
