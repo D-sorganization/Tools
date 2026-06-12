@@ -109,6 +109,12 @@ describe('Unit Converter', () => {
       expect(result).toBeGreaterThan(0);
     });
 
+    test('unknown gas type throws instead of falling back to air', () => {
+      expect(() => {
+        converter.convert(1000, 'SCFM', 'kg/hr', { gasType: 'argonish' });
+      }).toThrow('Unknown gas type');
+    });
+
     test('ACFM conversion requires temperature and pressure', () => {
       expect(() => {
         converter.convert(100, 'ACFM', 'SCFM');
