@@ -247,15 +247,29 @@ class PythonReplWidget(QtWidgets.QWidget):
     def _wait_for_worker_completion(self, worker: _ReplWorker) -> None:
         """Process Qt events until the submitted worker has reported completion."""
         loop = QtCore.QEventLoop(self)
+        completion_poller = QtCore.QTimer(loop)
+        completion_poller.setInterval(10)
+
+        def quit_if_stopped() -> None:
+            if not worker.isRunning():
+                loop.quit()
+
+        completion_poller.timeout.connect(quit_if_stopped)
         worker.finished.connect(loop.quit)
         try:
+            completion_poller.start()
             worker.start()
-            loop.exec()
+            if worker.isRunning():
+                loop.exec()
             # Avoid pytest teardown racing a live QThread on Linux/offscreen CI.
             worker.wait()
+            QtWidgets.QApplication.processEvents()
         finally:
+            completion_poller.stop()
             with contextlib.suppress(TypeError, RuntimeError):
                 worker.finished.disconnect(loop.quit)
+            with contextlib.suppress(TypeError, RuntimeError):
+                completion_poller.timeout.disconnect(quit_if_stopped)
             self._retire_worker(worker)
 
     def _retire_worker(self, worker: _ReplWorker | None) -> None:
