@@ -111,10 +111,12 @@ class ODESolverWindow(ThemedWindowMixin, QMainWindow):
 
         # Menu bar with Notes toggle
         menu_bar = self.menuBar()
-        view_menu = menu_bar.addMenu("&View")
-        notes_action = view_menu.addAction("Toggle &Notes")
-        notes_triggered = notes_action.triggered
-        notes_triggered.connect(self._toggle_notes)
+        view_menu = menu_bar.addMenu("&View") if menu_bar is not None else None
+        notes_action = (
+            view_menu.addAction("Toggle &Notes") if view_menu is not None else None
+        )
+        if notes_action is not None:
+            notes_action.triggered.connect(self._toggle_notes)
 
         # Central widget with scroll area
         scroll_area = QScrollArea()

@@ -20,7 +20,7 @@ Regression logic is isolated in ``fit_regression()`` for reuse.
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
@@ -181,8 +181,11 @@ class PopOutChart:
 
         # Create figure
         self._fig = Figure(figsize=(8, 5), dpi=100)
-        self._ax = self._fig.add_subplot(111)
-        ax = self._ax
+        # ``add_subplot`` is untyped (matplotlib); bind the local directly so the
+        # plotting calls below are Any-typed rather than narrowed to ``object``
+        # via the ``self._ax: object | None`` attribute annotation.
+        ax: Any = self._fig.add_subplot(111)
+        self._ax = ax
 
         from shared.python.theme.integration import get_theme_manager
         from shared.python.theme.matplotlib_style import apply_plot_theme
