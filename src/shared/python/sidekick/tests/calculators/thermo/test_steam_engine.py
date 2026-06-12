@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+import pytest
 from sidekick.calculators.thermo.steam_engine import (
     SteamCalculationEngine,
     SteamProperties,
@@ -87,6 +88,34 @@ def test_calculate_saturated_simplified_from_pressure() -> None:
 
     assert 370.0 < props.temperature < 375.0
     assert props.pressure == 101325.0
+
+
+def test_saturation_temperature_rejects_out_of_range_input() -> None:
+    engine = SteamCalculationEngine()
+
+    with pytest.raises(ValueError, match="saturation bounds"):
+        engine.calculate_saturated_properties_from_temperature(
+            200.0, engine="simplified"
+        )
+
+
+def test_saturation_pressure_rejects_nonphysical_input() -> None:
+    engine = SteamCalculationEngine()
+
+    with pytest.raises(ValueError, match="saturation bounds"):
+        engine.calculate_saturated_properties_from_pressure(-5.0, engine="simplified")
+
+
+def test_saturation_pressure_round_trip_uses_consistent_curve() -> None:
+    engine = SteamCalculationEngine()
+
+    props = engine.calculate_saturated_properties_from_pressure(
+        101325.0, engine="simplified"
+    )
+
+    round_tripped = engine._calculate_saturated_simplified_from_temp(props.temperature)
+
+    assert round_tripped.pressure == pytest.approx(props.pressure, rel=2e-5)
 
 
 def test_calculate_properties_simplified() -> None:

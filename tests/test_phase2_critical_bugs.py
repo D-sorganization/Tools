@@ -435,3 +435,39 @@ class TestSteamAPIContract:
         assert resp.specificVolume == 1.136
         assert resp.internalEnergy == 2626000.0
         assert resp.engine == "simplified"
+
+    def test_calculate_steam_maps_precondition_errors_to_400(self, monkeypatch):
+        """Invalid saturation requests should be client errors, not server errors."""
+        pytest.importorskip("fastapi", reason="fastapi not installed")
+        api_path = (
+            Path(__file__).resolve().parent.parent
+            / "src"
+            / "steam_engine_calculator"
+            / "python"
+        )
+        if str(api_path) not in sys.path:
+            sys.path.insert(0, str(api_path))
+
+        from fastapi import HTTPException
+        from steam_engine_calculator.api import CalculationMode, SteamRequest
+
+        from steam_engine_calculator import api
+
+        monkeypatch.setattr(
+            api._engine,
+            "calculate_saturated_properties_from_temperature",
+            lambda *_args, **_kwargs: (_ for _ in ()).throw(
+                ValueError("temperature outside saturation bounds")
+            ),
+        )
+
+        request = SteamRequest(
+            mode=CalculationMode.SAT_T,
+            temperature=200.0,
+            pressure=101325.0,
+            engine="simplified",
+        )
+        with pytest.raises(HTTPException) as exc_info:
+            api.calculate_steam(request)
+
+        assert exc_info.value.status_code == 400

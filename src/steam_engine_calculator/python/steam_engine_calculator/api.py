@@ -159,6 +159,9 @@ def calculate_steam(request: SteamRequest) -> SteamResponse:
 
     except HTTPException:
         raise
-    except (ValueError, TypeError, RuntimeError, ArithmeticError) as exc:
+    except ValueError as exc:
+        logger.info("Invalid steam calculation request: %s", exc)
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except (TypeError, RuntimeError, ArithmeticError) as exc:
         logger.exception("Steam calculation failed: %s", exc)
         raise HTTPException(status_code=500, detail=str(exc)) from exc
