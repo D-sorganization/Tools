@@ -173,6 +173,19 @@ class RoutingTab(QWidget):
             )
             return
 
+        if (
+            QMessageBox.question(
+                self,
+                "Confirm PLC write",
+                "Deploy the full DCS routing and interlock matrix to the PLC? "
+                "This persists to PLC NVRAM and takes effect on the live plant.",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.No,
+            )
+            != QMessageBox.StandardButton.Yes
+        ):
+            return
+
         try:
             # 1. Collect inputs
             inputs = [spin.value() for spin in self.input_spins]

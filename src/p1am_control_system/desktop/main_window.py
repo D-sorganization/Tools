@@ -395,9 +395,10 @@ class HMIMainWindow(QMainWindow):
     @pyqtSlot(str)
     def _on_role_changed(self, role: str) -> None:
         self.user_role = role
-        # Propagate role settings to sidebar & routing matrix
+        # Propagate role settings to sidebar, routing matrix & control tab
         self.inspector_sidebar.set_role(role)
         self.routing_tab.set_role(role)
+        self.control_tab.set_role(role)
         self.log_event("ACTION", f"User logged in role switched to: {role}")
 
     @pyqtSlot(bool)

@@ -257,17 +257,30 @@ class InspectorSidebar(QWidget):
         # 1. Check if we need to write Manual Force Override
         if self.chk_force_active.isChecked():
             val = self.spin_force_val.value()
-            self.force_worker = HttpWorker(
-                "POST",
-                f"{self.backend_url}/api/tags/{self.selected_tag_id}",
-                json={"value": val},
-                timeout=1.0,
-            )
-            self.force_worker.success.connect(
-                lambda data: self._on_force_success(val, data)
-            )
-            self.force_worker.error.connect(self._on_force_error)
-            self.force_worker.start()
+            # Force overrides are allowed for Operators by design (see set_role),
+            # but a raw tag write to the live plant must be confirmed first.
+            if (
+                QMessageBox.question(
+                    self,
+                    "Confirm PLC write",
+                    f"Force Tag {self.selected_tag_id} to {val}? "
+                    "This overrides live control of the tag on the plant.",
+                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                    QMessageBox.StandardButton.No,
+                )
+                == QMessageBox.StandardButton.Yes
+            ):
+                self.force_worker = HttpWorker(
+                    "POST",
+                    f"{self.backend_url}/api/tags/{self.selected_tag_id}",
+                    json={"value": val},
+                    timeout=1.0,
+                )
+                self.force_worker.success.connect(
+                    lambda data: self._on_force_success(val, data)
+                )
+                self.force_worker.error.connect(self._on_force_error)
+                self.force_worker.start()
 
         # 2. Update config parameters (limits & PID)
         if self.user_role == "Admin" and self.routing_config:
