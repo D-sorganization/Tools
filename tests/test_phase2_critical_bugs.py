@@ -258,6 +258,17 @@ class TestGodFunctionRefactoring:
             assert hasattr(ProcessingThread, "_delete_duplicate_set")
             assert hasattr(ProcessingThread, "_scan_pdf_files")
             assert hasattr(ProcessingThread, "_process_pdf_files")
+
+            # _process_pdf_files must be a plain Python function, NOT a numba
+            # @jit dispatcher (issue #3319). A numba-compiled method would be a
+            # CPUDispatcher; the original @jit(nopython=True) raised a
+            # TypingError that escaped run() and froze the GUI.
+            import inspect
+
+            assert inspect.isfunction(ProcessingThread._process_pdf_files), (
+                "_process_pdf_files must be a plain function, not a numba "
+                f"dispatcher; got {type(ProcessingThread._process_pdf_files)!r}"
+            )
         except ImportError:
             pytest.skip("PyQt6 not available for GUI tests")
 

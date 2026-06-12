@@ -186,11 +186,28 @@ class AssetLibraryEditorRoutesMixin:
         )
 
     def library_remove_model(self, request: APIRequest) -> APIResponse:
-        """Return the current placeholder response for model deletion."""
-        ensure_request(request)
-        if not request.query_params.get("model_id"):
+        """Remove a model from the library (issue #3327).
+
+        ModelLibrary.remove_model is fully implemented; this handler previously
+        returned a 501 stub. ``delete_files`` (default False) optionally removes
+        the cached files as well.
+        """
+        from model_generation.library import ModelLibrary
+
+        model_id = ensure_request(request).query_params.get("model_id")
+        if not model_id:
             return APIResponse.error("Missing model_id")
-        return APIResponse.error("Remove not implemented", 501)
+
+        delete_files = str(request.query_params.get("delete_files", "")).lower() in (
+            "1",
+            "true",
+            "yes",
+        )
+
+        removed = ModelLibrary().remove_model(model_id, delete_files=delete_files)
+        if not removed:
+            return APIResponse.not_found(f"Model not found: {model_id}")
+        return APIResponse.ok({"removed": True, "id": model_id})
 
     def library_download_model(self, request: APIRequest) -> APIResponse:
         """Download the URDF content for a stored model."""

@@ -221,7 +221,9 @@ class SwingAnalyzer:
         recommendations = self._generate_recommendations(issues)
 
         # Calculate scores
-        scores = self._calculate_scores(tempo, balance, plane, posture, issues)
+        scores = self._calculate_scores(
+            tempo, balance, plane, posture, issues, key_positions, poses
+        )
 
         return SwingAnalysis(
             session_id=str(uuid.uuid4()),
@@ -723,11 +725,20 @@ class SwingAnalyzer:
         plane: PlaneMetrics,
         posture: PostureMetrics,
         issues: list[SwingIssue],
+        key_positions: dict[str, SwingPositionMetrics],
+        poses: list[PoseFrame],
     ) -> SwingScores:
-        """Calculate swing scores (0-100)."""
+        """Calculate swing scores (0-100).
+
+        ``rotation`` is derived from the measured X-factor (shoulder-minus-hip
+        rotation) at the top of the backswing — data the analyzer already
+        computes — instead of a hardcoded placeholder (issue #3328).
+        ``consistency`` is reported from the pose-detection confidence stability
+        across the captured frames; a single swing cannot measure swing-to-swing
+        repeatability, so this is an explicit measurement-reliability proxy
+        rather than a fabricated constant.
+        """
         # Tempo score
-        if tempo is None:
-            raise ValueError("tempo must be provided")
         if tempo is None:
             raise ValueError("tempo must be provided")
         tempo_dev = abs(tempo.tempo_ratio - 3)
@@ -749,6 +760,32 @@ class SwingAnalyzer:
             + len([i for i in issues if i.severity == "moderate"]) * 5
         )
 
+        # Rotation score — derived from the measured X-factor at the top of the
+        # backswing. A tour-quality X-factor is ~45 deg; score peaks there and
+        # falls off for under- or over-rotation. Uses the maximum X-factor seen
+        # across the key positions (top-of-backswing has the largest).
+        ideal_x_factor = 45.0
+        max_x_factor = max(
+            (m.angles.x_factor for m in key_positions.values()),
+            default=0.0,
+        )
+        rotation_score = max(
+            0.0, 100.0 - abs(max_x_factor - ideal_x_factor) * (100.0 / ideal_x_factor)
+        )
+        rotation_score = min(100.0, rotation_score)
+
+        # Consistency score — a single swing cannot measure swing-to-swing
+        # repeatability, so report the pose-detection confidence stability as an
+        # explicit measurement-reliability proxy (mean confidence penalised by
+        # its spread) instead of a fabricated constant.
+        confidences = [p.confidence for p in poses] if poses else []
+        if confidences:
+            mean_conf = sum(confidences) / len(confidences)
+            spread = max(confidences) - min(confidences)
+            consistency_score = max(0.0, min(100.0, (mean_conf - spread) * 100.0))
+        else:
+            consistency_score = 0.0
+
         # Overall
         components = [tempo_score, balance_score, plane_score, posture_score]
         overall = sum(components) / len(components) - issue_penalty / 2
@@ -760,7 +797,7 @@ class SwingAnalyzer:
             balance=balance_score,
             plane=plane_score,
             posture=posture_score,
-            rotation=75,  # Placeholder
+            rotation=rotation_score,
             timing=tempo_score,
-            consistency=80,  # Would need multiple swings
+            consistency=consistency_score,
         )
