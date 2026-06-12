@@ -21,6 +21,9 @@ const OUTPUT_LABELS = [
   "Analog Out V1 (V)",
 ];
 
+// ⚡ Bolt Optimization: Pre-calculate static index array to avoid repeated Array.from() allocations during render
+const TAG_INDICES = Array.from({ length: 32 }, (_, i) => i);
+
 export const RoutingMatrix: React.FC<RoutingMatrixProps> = ({
   config,
   onUpdate,
@@ -55,7 +58,7 @@ export const RoutingMatrix: React.FC<RoutingMatrixProps> = ({
                 <th style={{ width: "180px", textAlign: "left", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
                   Physical Channel
                 </th>
-                {Array.from({ length: 32 }).map((_, i) => (
+                {TAG_INDICES.map((i) => (
                   <th key={i} style={{ padding: "0.25rem" }}>
                     <div className="col-label" style={{ height: "45px" }}>Tag {i}</div>
                   </th>
@@ -68,7 +71,7 @@ export const RoutingMatrix: React.FC<RoutingMatrixProps> = ({
                   <td style={{ padding: "0.5rem 0", fontSize: "0.85rem", fontWeight: 500 }}>
                     {label}
                   </td>
-                  {Array.from({ length: 32 }).map((_, colIdx) => {
+                  {TAG_INDICES.map((colIdx) => {
                     const isActive = config.input_routing[rowIdx] === colIdx;
                     return (
                       <td key={colIdx} style={{ padding: "0.15rem", textAlign: "center" }}>
@@ -106,7 +109,7 @@ export const RoutingMatrix: React.FC<RoutingMatrixProps> = ({
                 <th style={{ width: "180px", textAlign: "left", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
                   Physical Channel
                 </th>
-                {Array.from({ length: 32 }).map((_, i) => (
+                {TAG_INDICES.map((i) => (
                   <th key={i} style={{ padding: "0.25rem" }}>
                     <div className="col-label" style={{ height: "45px" }}>Tag {i}</div>
                   </th>
@@ -119,7 +122,7 @@ export const RoutingMatrix: React.FC<RoutingMatrixProps> = ({
                   <td style={{ padding: "0.5rem 0", fontSize: "0.85rem", fontWeight: 500 }}>
                     {label}
                   </td>
-                  {Array.from({ length: 32 }).map((_, colIdx) => {
+                  {TAG_INDICES.map((colIdx) => {
                     const isActive = config.output_routing[rowIdx] === colIdx;
                     return (
                       <td key={colIdx} style={{ padding: "0.15rem", textAlign: "center" }}>

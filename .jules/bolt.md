@@ -48,3 +48,6 @@
 ## 2024-06-09 - Memoize and pull out string ops in React component filters
 **Learning:** Chaining `.map().filter()` combined with `toLowerCase()` string operations inside an unmemoized React component render block causes huge performance drops, especially when typed inputs continuously trigger renders.
 **Action:** Always wrap heavy list filtering/derivations in `useMemo`, pull static string operations (`.toLowerCase()`) outside of the filter callbacks, and replace array function chains with single-pass `for` loops using `Set` for distinct value extraction.
+## $(date +%Y-%m-%d) - Pre-computing static mapped index arrays
+**Learning:** In React components like the `RoutingMatrix` in `p1am_control_system`, using inline array initialization like `Array.from({ length: X }).map(...)` directly inside JSX rows allocates dozens of intermediate arrays on every single render cycle, creating severe garbage collection pressure.
+**Action:** Always pre-calculate static length iterators as `const INDICES = Array.from({length: X}, (_, i) => i);` outside the component scope and map over the static constant instead.
