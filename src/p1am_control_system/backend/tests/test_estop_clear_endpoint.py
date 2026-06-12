@@ -11,6 +11,8 @@ import pytest
 os.environ["PLC_DRIVER"] = "modbus"
 os.environ["P1AM_DEV_NO_AUTH"] = "1"
 
+pytest.importorskip("sqlmodel")
+pytest.importorskip("tools_core")
 pytest.importorskip("httpx")
 pytest.importorskip("fastapi.testclient")
 

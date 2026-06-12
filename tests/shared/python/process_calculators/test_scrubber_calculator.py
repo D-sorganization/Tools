@@ -137,35 +137,37 @@ class TestScrubberCalculatorContracts:
 
     def test_gas_density_zero_temperature_raises(self) -> None:
         """temperature_k must be > 0 K (absolute scale)."""
-        with pytest.raises(PreconditionError):
+        with pytest.raises(PreconditionError, match="temperature_k must be positive"):
             calculate_gas_density(
                 temperature_k=0.0, pressure_pa=101325.0, molecular_weight=28.0
             )
 
     def test_gas_density_negative_temperature_raises(self) -> None:
         """Negative temperature_k must raise PreconditionError."""
-        with pytest.raises(PreconditionError):
+        with pytest.raises(PreconditionError, match="temperature_k must be positive"):
             calculate_gas_density(
                 temperature_k=-10.0, pressure_pa=101325.0, molecular_weight=28.0
             )
 
     def test_gas_density_zero_pressure_raises(self) -> None:
         """pressure_pa must be positive."""
-        with pytest.raises(PreconditionError):
+        with pytest.raises(PreconditionError, match="pressure_pa must be positive"):
             calculate_gas_density(
                 temperature_k=300.0, pressure_pa=0.0, molecular_weight=28.0
             )
 
     def test_gas_density_negative_pressure_raises(self) -> None:
         """Negative pressure_pa must raise PreconditionError."""
-        with pytest.raises(PreconditionError):
+        with pytest.raises(PreconditionError, match="pressure_pa must be positive"):
             calculate_gas_density(
                 temperature_k=300.0, pressure_pa=-1.0, molecular_weight=28.0
             )
 
     def test_gas_density_zero_molecular_weight_raises(self) -> None:
         """molecular_weight must be positive."""
-        with pytest.raises(PreconditionError):
+        with pytest.raises(
+            PreconditionError, match="molecular_weight must be positive"
+        ):
             calculate_gas_density(
                 temperature_k=300.0, pressure_pa=101325.0, molecular_weight=0.0
             )
@@ -181,12 +183,14 @@ class TestScrubberCalculatorContracts:
 
     def test_gas_viscosity_zero_temperature_raises(self) -> None:
         """temperature_k must be > 0."""
-        with pytest.raises(PreconditionError):
+        with pytest.raises(PreconditionError, match="temperature_k must be positive"):
             calculate_gas_viscosity(temperature_k=0.0, molecular_weight=28.0)
 
     def test_gas_viscosity_zero_molecular_weight_raises(self) -> None:
         """molecular_weight must be positive."""
-        with pytest.raises(PreconditionError):
+        with pytest.raises(
+            PreconditionError, match="molecular_weight must be positive"
+        ):
             calculate_gas_viscosity(temperature_k=300.0, molecular_weight=0.0)
 
     # ── calculate_flooding_velocity ─────────────────────────────────────────
@@ -194,7 +198,7 @@ class TestScrubberCalculatorContracts:
     def test_flooding_velocity_zero_gas_density_raises(self) -> None:
         """gas_density must be positive."""
         packing = PACKING_DATABASE["Metal Pall Rings"]
-        with pytest.raises(PreconditionError):
+        with pytest.raises(PreconditionError, match="gas_density must be positive"):
             calculate_flooding_velocity(
                 liquid_mass_flux=5.0,
                 gas_density=0.0,
@@ -206,7 +210,7 @@ class TestScrubberCalculatorContracts:
     def test_flooding_velocity_negative_liquid_density_raises(self) -> None:
         """liquid_density must be positive."""
         packing = PACKING_DATABASE["Metal Pall Rings"]
-        with pytest.raises(PreconditionError):
+        with pytest.raises(PreconditionError, match="liquid_density must be positive"):
             calculate_flooding_velocity(
                 liquid_mass_flux=5.0,
                 gas_density=1.2,
@@ -218,7 +222,9 @@ class TestScrubberCalculatorContracts:
     def test_flooding_velocity_negative_liquid_mass_flux_raises(self) -> None:
         """liquid_mass_flux must be non-negative."""
         packing = PACKING_DATABASE["Metal Pall Rings"]
-        with pytest.raises(PreconditionError):
+        with pytest.raises(
+            PreconditionError, match="liquid_mass_flux must be non-negative"
+        ):
             calculate_flooding_velocity(
                 liquid_mass_flux=-1.0,
                 gas_density=1.2,
@@ -231,7 +237,7 @@ class TestScrubberCalculatorContracts:
 
     def test_column_diameter_zero_gas_flow_raises(self) -> None:
         """gas_flow_kg_hr must be positive."""
-        with pytest.raises(PreconditionError):
+        with pytest.raises(PreconditionError, match="gas_flow_kg_hr must be positive"):
             calculate_column_diameter(
                 gas_flow_kg_hr=0.0,
                 gas_density=1.2,
@@ -241,7 +247,7 @@ class TestScrubberCalculatorContracts:
 
     def test_column_diameter_invalid_percent_of_flood_raises(self) -> None:
         """percent_of_flood must be in (0, 100]."""
-        with pytest.raises(PreconditionError):
+        with pytest.raises(PreconditionError, match="percent_of_flood must be in"):
             calculate_column_diameter(
                 gas_flow_kg_hr=5000.0,
                 gas_density=1.2,
@@ -251,7 +257,7 @@ class TestScrubberCalculatorContracts:
 
     def test_column_diameter_percent_over_100_raises(self) -> None:
         """percent_of_flood > 100 must raise PreconditionError."""
-        with pytest.raises(PreconditionError):
+        with pytest.raises(PreconditionError, match="percent_of_flood must be in"):
             calculate_column_diameter(
                 gas_flow_kg_hr=5000.0,
                 gas_density=1.2,
@@ -263,7 +269,7 @@ class TestScrubberCalculatorContracts:
 
     def test_heat_transfer_duty_zero_gas_flow_raises(self) -> None:
         """gas_flow_kg_hr must be positive."""
-        with pytest.raises(PreconditionError):
+        with pytest.raises(PreconditionError, match="gas_flow_kg_hr must be positive"):
             calculate_heat_transfer_duty(
                 gas_flow_kg_hr=0.0,
                 inlet_temp_c=150.0,
@@ -273,7 +279,9 @@ class TestScrubberCalculatorContracts:
 
     def test_heat_transfer_duty_negative_water_condensed_raises(self) -> None:
         """water_condensed_kg_hr must be non-negative."""
-        with pytest.raises(PreconditionError):
+        with pytest.raises(
+            PreconditionError, match="water_condensed_kg_hr must be non-negative"
+        ):
             calculate_heat_transfer_duty(
                 gas_flow_kg_hr=1000.0,
                 inlet_temp_c=150.0,
