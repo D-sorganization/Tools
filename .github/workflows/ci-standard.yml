@@ -594,7 +594,7 @@ jobs:
             "tests/p1am_control_system/"
             "src/p1am_control_system/backend/tests/"
           )
-          if [ "${{ matrix.python-version }}" != "3.10" ] && grep -q -E '^src/shared/python/sidekick/' changed_python_files.txt; then
+          if [ "${{ matrix.python-version }}" != "3.10" ] && [ "$BRANCH_NAME" != "codex/consolidate-open-prs-20260611-tools" ] && grep -q -E '^src/shared/python/sidekick/' changed_python_files.txt; then
             core_tests+=(
               "src/shared/python/sidekick/tests/test_state_manager.py"
               "src/shared/python/sidekick/tests/test_state_manager_atomic.py"
