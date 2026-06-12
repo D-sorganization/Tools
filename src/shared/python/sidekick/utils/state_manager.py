@@ -16,10 +16,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from compatibility import UTC
+# Use sidekick's OWN JSON I/O helpers and the stdlib UTC, instead of reaching
+# across the tool-tree boundary via the bare top-level names ``compatibility``
+# and ``utils.file_utils`` (a different application tree, reachable only by
+# sys.path accident and colliding with sidekick's own ``utils`` package).
+# See issue #3333.
+from .json_io import safe_read_json, safe_write_json
 
-# Use canonical file I/O utilities instead of reimplementing them
-from utils.file_utils import safe_read_json, safe_write_json
+UTC = timezone.utc  # noqa: UP017 - 3.10-compatible alias for datetime.UTC
 
 # Setup logging
 _logger = logging.getLogger(__name__)

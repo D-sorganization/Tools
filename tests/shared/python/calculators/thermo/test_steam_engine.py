@@ -108,6 +108,50 @@ def test_calculate_properties_falls_back_on_exception(
     assert engine.calculate_properties(420.0, 101325.0, "coolprop").phase == "fallback"
 
 
+def test_calculate_properties_tags_engine_used(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """engine_used reflects the engine that actually ran (#3318)."""
+    engine = SteamCalculationEngine()
+    monkeypatch.setattr(steam_engine, "COOLPROP_AVAILABLE", True)
+    engine.water = object()
+    monkeypatch.setattr(
+        engine,
+        "_calculate_coolprop_properties",
+        lambda *_: _sentinel_props(500.0, 2e5, "vapor"),
+    )
+    monkeypatch.setattr(
+        engine,
+        "_calculate_simplified_properties",
+        lambda *_: _sentinel_props(500.0, 2e5, "vapor"),
+    )
+    result = engine.calculate_properties(500.0, 2e5, "coolprop")
+    assert result.engine_used == "coolprop"
+    assert result.to_dict()["Engine Used"] == "coolprop"
+
+
+def test_calculate_properties_fallback_reports_simplified(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A silent fallback tags engine_used='simplified', not requested (#3318)."""
+    engine = SteamCalculationEngine()
+    monkeypatch.setattr(steam_engine, "COOLPROP_AVAILABLE", True)
+    engine.water = object()
+    monkeypatch.setattr(
+        engine,
+        "_calculate_coolprop_properties",
+        lambda *_: (_ for _ in ()).throw(ValueError("backend failed")),
+    )
+    monkeypatch.setattr(
+        engine,
+        "_calculate_simplified_properties",
+        lambda *_: _sentinel_props(420.0, 101325.0, "vapor"),
+    )
+    result = engine.calculate_properties(420.0, 101325.0, "coolprop")
+    # Requested coolprop, but the numbers came from the simplified engine.
+    assert result.engine_used == "simplified"
+
+
 def test_vapor_pressure_methods_and_default() -> None:
     engine = SteamCalculationEngine()
     buck = engine.calculate_water_vapor_pressure(25.0, method="buck")

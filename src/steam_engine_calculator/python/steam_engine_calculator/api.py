@@ -138,7 +138,8 @@ def calculate_steam(request: SteamRequest) -> SteamResponse:
     baked into the React frontend.  See issue #605.
     """
     try:
-        engine_name = _engine._select_best_engine(request.engine)
+        # The engine the caller asked for (or that auto-selection intended).
+        requested_engine = _engine._select_best_engine(request.engine)
 
         if request.mode == CalculationMode.TP:
             props = _engine.calculate_properties(
@@ -154,6 +155,13 @@ def calculate_steam(request: SteamRequest) -> SteamResponse:
             )
         else:
             raise HTTPException(status_code=400, detail=f"Unknown mode: {request.mode}")
+
+        # Report the engine that ACTUALLY produced the numbers. After an internal
+        # fallback the accurate backend may have been replaced by the simplified
+        # correlations; reporting the requested engine would mislabel the result
+        # (issue #3318). ``engine_used`` is populated by calculate_properties; if
+        # absent (older paths) fall back to the requested engine.
+        engine_name = props.engine_used or requested_engine
 
         return _props_to_response(props, engine_name)
 
