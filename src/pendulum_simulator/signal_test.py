@@ -45,8 +45,14 @@ class TestWindow(ThemedWindowMixin, QMainWindow):
         QMessageBox.information(self, "Success", "Signal was received!")
 
 
+def _assert_window_contract(window: TestWindow) -> None:
+    assert window.windowTitle() == "Signal Test"
+    assert window.centralWidget() is not None
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = TestWindow()
+    _assert_window_contract(window)
     window.show()
     sys.exit(app.exec())
