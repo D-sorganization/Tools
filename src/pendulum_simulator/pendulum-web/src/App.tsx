@@ -466,6 +466,9 @@ export default function App() {
                     value={shoulderStr}
                     onChange={e => setShoulderStr(e.target.value)}
                     placeholder="-25, 10"
+                    spellCheck="false"
+                    autoCorrect="off"
+                    autoCapitalize="none"
                   />
                 </div>
                 <div className="coeff-row">
@@ -475,6 +478,9 @@ export default function App() {
                     value={wristStr}
                     onChange={e => setWristStr(e.target.value)}
                     placeholder="0"
+                    spellCheck="false"
+                    autoCorrect="off"
+                    autoCapitalize="none"
                   />
                 </div>
               </div>
@@ -552,15 +558,15 @@ export default function App() {
                 <h3 className="section-title">Torques</h3>
                 <div className="coeff-row">
                   <label className="param-label">Shoulder</label>
-                  <input className="coeff-input" value={shoulderStrT} onChange={e => setShoulderStrT(e.target.value)} />
+                  <input className="coeff-input" value={shoulderStrT} onChange={e => setShoulderStrT(e.target.value)} spellCheck="false" autoCorrect="off" autoCapitalize="none" />
                 </div>
                 <div className="coeff-row">
                   <label className="param-label">Elbow</label>
-                  <input className="coeff-input" value={elbowStrT} onChange={e => setElbowStrT(e.target.value)} />
+                  <input className="coeff-input" value={elbowStrT} onChange={e => setElbowStrT(e.target.value)} spellCheck="false" autoCorrect="off" autoCapitalize="none" />
                 </div>
                 <div className="coeff-row">
                   <label className="param-label">Wrist</label>
-                  <input className="coeff-input" value={wristStrT} onChange={e => setWristStrT(e.target.value)} />
+                  <input className="coeff-input" value={wristStrT} onChange={e => setWristStrT(e.target.value)} spellCheck="false" autoCorrect="off" autoCapitalize="none" />
                 </div>
               </div>
 
