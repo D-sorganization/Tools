@@ -48,3 +48,6 @@
 ## 2024-06-09 - Memoize and pull out string ops in React component filters
 **Learning:** Chaining `.map().filter()` combined with `toLowerCase()` string operations inside an unmemoized React component render block causes huge performance drops, especially when typed inputs continuously trigger renders.
 **Action:** Always wrap heavy list filtering/derivations in `useMemo`, pull static string operations (`.toLowerCase()`) outside of the filter callbacks, and replace array function chains with single-pass `for` loops using `Set` for distinct value extraction.
+## 2024-05-28 - Pre-allocate Arrays in Nelder-Mead Loops
+**Learning:** In optimization loops like Nelder-Mead (e.g. `src/pendulum_simulator/pendulum-web/src/optimizer.ts`), allocating new arrays (e.g., `new Array(n)`) inside the hot `for` loop iteration creates massive garbage collection pressure.
+**Action:** Always pre-allocate working arrays (`centroid`, `reflected`, `expanded`, `contracted`) outside the main algorithmic loop and mutate them in-place to drastically reduce continuous memory allocation and garbage collection overhead.

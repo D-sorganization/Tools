@@ -156,6 +156,13 @@ function nelderMead(
     let iter = 0;
     let converged = false;
 
+    // ⚡ Bolt Optimization: Pre-allocate working arrays to eliminate
+    // continuous array creation and garbage collection overhead in the hot loop.
+    const centroid = new Array(n);
+    const reflected = new Array(n);
+    const expanded = new Array(n);
+    const contracted = new Array(n);
+
     for (; iter < maxIter; iter++) {
         sortSimplex();
 
@@ -172,7 +179,7 @@ function nelderMead(
         }
 
         // Centroid of all except worst
-        const centroid = new Array(n).fill(0);
+        for (let j = 0; j < n; j++) centroid[j] = 0;
         for (let i = 0; i < n; i++) {
             for (let j = 0; j < n; j++) {
                 centroid[j] += simplex[i].x[j];
@@ -184,52 +191,50 @@ function nelderMead(
         const secondWorst = simplex[n - 1];
         const best = simplex[0];
 
-        // ⚡ Bolt Optimization: Replace .map() calls with pre-allocated arrays and standard for-loops
-        // to eliminate continuous callback allocation and garbage collection overhead in the tight loop.
-
         // Reflection
-        const reflected = new Array(n);
         for (let j = 0; j < n; j++) {
             reflected[j] = centroid[j] + alpha * (centroid[j] - worst.x[j]);
         }
         const fReflected = f(reflected);
 
         if (fReflected < secondWorst.cost && fReflected >= best.cost) {
-            simplex[n] = { x: reflected, cost: fReflected };
+            for (let j = 0; j < n; j++) worst.x[j] = reflected[j];
+            worst.cost = fReflected;
             continue;
         }
 
         // Expansion
         if (fReflected < best.cost) {
-            const expanded = new Array(n);
             for (let j = 0; j < n; j++) {
                 expanded[j] = centroid[j] + gamma * (reflected[j] - centroid[j]);
             }
             const fExpanded = f(expanded);
-            simplex[n] = fExpanded < fReflected
-                ? { x: expanded, cost: fExpanded }
-                : { x: reflected, cost: fReflected };
+            if (fExpanded < fReflected) {
+                for (let j = 0; j < n; j++) worst.x[j] = expanded[j];
+                worst.cost = fExpanded;
+            } else {
+                for (let j = 0; j < n; j++) worst.x[j] = reflected[j];
+                worst.cost = fReflected;
+            }
             continue;
         }
 
         // Contraction
-        const contracted = new Array(n);
         for (let j = 0; j < n; j++) {
             contracted[j] = centroid[j] + rho * (worst.x[j] - centroid[j]);
         }
         const fContracted = f(contracted);
         if (fContracted < worst.cost) {
-            simplex[n] = { x: contracted, cost: fContracted };
+            for (let j = 0; j < n; j++) worst.x[j] = contracted[j];
+            worst.cost = fContracted;
             continue;
         }
 
         // Shrink
         for (let i = 1; i <= n; i++) {
-            const newX = new Array(n);
             for (let j = 0; j < n; j++) {
-                newX[j] = best.x[j] + sigma * (simplex[i].x[j] - best.x[j]);
+                simplex[i].x[j] = best.x[j] + sigma * (simplex[i].x[j] - best.x[j]);
             }
-            simplex[i].x = newX;
             simplex[i].cost = f(simplex[i].x);
         }
     }
@@ -240,7 +245,7 @@ function nelderMead(
     }
 
     return {
-        x: simplex[0].x,
+        x: [...simplex[0].x],
         cost: simplex[0].cost,
         iterations: iter,
         converged,
