@@ -36,7 +36,7 @@ def test_state_manager_has_no_cross_tree_imports() -> None:
 def test_state_manager_utc_is_stdlib_utc() -> None:
     from sidekick.utils.state_manager import UTC
 
-    assert UTC is datetime.UTC
+    assert UTC is datetime.timezone.utc  # noqa: UP017 - Python 3.10 lacks datetime.UTC.
 
 
 @pytest.mark.unit
