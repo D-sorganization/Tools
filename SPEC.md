@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.371                                    |
+| **Spec Version**        | 1.1.372                                    |
 | **Last Spec Update**    | 2026-06-11                                 |
 
 ## 2. Purpose & Mission
@@ -722,6 +722,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-11 | 1.1.372 | fix(ci): make workflow lint validation tolerate lean runner environments where PyYAML cannot be fetched by adding stdlib fallback checks for workflow structure and blocking quality gates, while still using PyYAML when present. |
 | 2026-06-11 | 1.1.371 | fix(ci): keep the Python 3.10 CI Standard lane focused on core compatibility tests for large consolidation PRs while Python 3.11/3.12 continue to run the full changed-test slice, avoiding 3.10 runner OOM kills during collection. |
 | 2026-06-11 | 1.1.370 | fix(ci): remove the network-dependent `actions/setup-python` bootstrap from Topology Governance because the topology checker is a stdlib-only script and can run with the fleet runner's existing `python3`, avoiding transient PyPI/setup-python failures. |
 | 2026-06-11 | 1.1.369 | fix(ci): make the Python 3.10 CI Standard test lane override repo-level pytest-xdist auto-parallelism with `-n 0` so saturated self-hosted runners report deterministic test results instead of xdist worker crash exhaustion. |

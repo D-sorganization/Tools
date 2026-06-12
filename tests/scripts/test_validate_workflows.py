@@ -1,0 +1,27 @@
+from pathlib import Path
+
+from scripts import validate_workflows
+
+
+def test_validate_workflow_text_fallback_accepts_jobs_mapping(
+    tmp_path: Path, monkeypatch
+) -> None:
+    workflow = tmp_path / "workflow.yml"
+    workflow.write_text(
+        "name: Test\njobs:\n  check:\n    steps: []\n", encoding="utf-8"
+    )
+    monkeypatch.setattr(validate_workflows, "yaml", None)
+
+    assert validate_workflows.validate_workflow(workflow) == []
+
+
+def test_validate_workflow_text_fallback_rejects_missing_jobs(
+    tmp_path: Path, monkeypatch
+) -> None:
+    workflow = tmp_path / "workflow.yml"
+    workflow.write_text("name: Test\non: push\n", encoding="utf-8")
+    monkeypatch.setattr(validate_workflows, "yaml", None)
+
+    assert validate_workflows.validate_workflow(workflow) == [
+        f"{workflow}: missing top-level 'jobs'"
+    ]

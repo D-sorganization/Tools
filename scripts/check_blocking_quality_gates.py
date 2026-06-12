@@ -7,7 +7,10 @@ import re
 import sys
 from pathlib import Path
 
-import yaml
+try:
+    import yaml
+except ModuleNotFoundError:  # pragma: no cover - exercised in lean CI images
+    yaml = None
 
 REQUIRED_BLOCKING_STEPS = {
     "Lint (Ruff)": "ruff check",
@@ -30,7 +33,32 @@ def _command_masks_failure(run: str, command: str) -> bool:
     return any(command in line and "|| true" in line for line in run.splitlines())
 
 
+def _validate_ci_standard_text(path: Path) -> list[str]:
+    text = path.read_text(encoding="utf-8")
+    errors: list[str] = []
+    for step_name, command in REQUIRED_BLOCKING_STEPS.items():
+        pattern = re.compile(
+            rf"(?ms)^\s*-\s+name:\s+{re.escape(step_name)}\s*$"
+            rf"(?P<body>.*?)(?=^\s*-\s+name:|\n\s{{2}}\S|\Z)"
+        )
+        match = pattern.search(text)
+        if match is None:
+            errors.append(f"{path}: missing blocking step {step_name!r}")
+            continue
+        body = match.group("body")
+        if re.search(r"^\s*continue-on-error:\s*true\s*$", body, re.MULTILINE):
+            errors.append(f"{path}: {step_name!r} must not use continue-on-error")
+        if command not in body:
+            errors.append(f"{path}: {step_name!r} must run {command!r}")
+        if _command_masks_failure(body, command):
+            errors.append(f"{path}: {step_name!r} must not mask failures with || true")
+    return errors
+
+
 def validate_ci_standard(path: Path) -> list[str]:
+    if yaml is None:
+        return _validate_ci_standard_text(path)
+
     workflow = yaml.safe_load(path.read_text(encoding="utf-8"))
     jobs = workflow.get("jobs", {})
     quality_gate = jobs.get("quality-gate", {}) if isinstance(jobs, dict) else {}

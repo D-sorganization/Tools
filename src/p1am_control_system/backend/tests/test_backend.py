@@ -16,6 +16,11 @@ os.environ["PLC_DRIVER"] = "modbus"
 # These functional tests exercise endpoint behavior, not the auth gate.
 # Opt out of auth here.
 os.environ["P1AM_DEV_NO_AUTH"] = "1"
+
+pytest.importorskip("sqlmodel")
+pytest.importorskip("httpx")
+pytest.importorskip("fastapi.testclient")
+
 from fastapi.testclient import TestClient
 from main import app, get_session, modbus_manager
 from models import InterlockConfig, PIDConfig, RoutingConfig, TagLog

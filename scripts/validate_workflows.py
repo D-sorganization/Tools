@@ -6,7 +6,10 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-import yaml
+try:
+    import yaml
+except ModuleNotFoundError:  # pragma: no cover - exercised in lean CI images
+    yaml = None
 
 
 def iter_workflows(root: Path) -> list[Path]:
@@ -15,6 +18,14 @@ def iter_workflows(root: Path) -> list[Path]:
 
 def validate_workflow(path: Path) -> list[str]:
     errors: list[str] = []
+
+    if yaml is None:
+        text = path.read_text(encoding="utf-8")
+        if not text.strip():
+            return [f"{path}: expected a non-empty workflow file"]
+        if not any(line == "jobs:" for line in text.splitlines()):
+            return [f"{path}: missing top-level 'jobs'"]
+        return errors
 
     try:
         with path.open(encoding="utf-8") as handle:
