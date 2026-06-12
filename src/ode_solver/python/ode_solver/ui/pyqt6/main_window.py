@@ -331,7 +331,25 @@ class ODESolverWindow(ThemedWindowMixin, QMainWindow):
         pathological or stiff systems cannot hang the GUI indefinitely.
         Raises ``SolverTimeoutError`` if the computation exceeds
         ``_SOLVER_TIMEOUT_S`` seconds.
+
+        Invalid user input (a bad parameter expression, a missing initial
+        condition, a non-monotonic time span, …) is reported in the results
+        pane instead of propagating out of this slot. An unhandled exception in
+        a Qt slot aborts the whole application under PyQt6, so a typo must never
+        crash the app (issue #3321). While the (synchronous) solve runs, the
+        Solve button is disabled and a wait cursor is shown so the user has
+        feedback during the up-to-``_SOLVER_TIMEOUT_S`` blocking call.
         """
+        self.solve_btn.setEnabled(False)
+        QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
+        try:
+            self._run_solve()
+        finally:
+            QApplication.restoreOverrideCursor()
+            self.solve_btn.setEnabled(True)
+
+    def _run_solve(self) -> None:
+        """Execute the parse/solve/render pipeline (see :meth:`_solve`)."""
         try:
             from sidekick.process_calculators.ode_solver import (
                 ODESolver,
@@ -442,6 +460,18 @@ class ODESolverWindow(ThemedWindowMixin, QMainWindow):
                 f"Timeout: {e}\n\nTry reducing the time span or simplifying the ODE system."
             )
             self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['yellow']};")
+        except (ValueError, TypeError) as e:
+            # Input-validation failures: bad parameter/initial-condition text,
+            # a missing initial condition, or a contract precondition
+            # (ContractViolationError subclasses ValueError). Report rather than
+            # crash the application (issue #3321).
+            _log.info("Invalid ODE input: %s", e)
+            self.results_text.setPlainText(
+                f"Invalid input: {e}\n\n"
+                "Check that every parameter and initial condition is a number "
+                "and that an initial condition is provided for each variable."
+            )
+            self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['red']};")
         except ImportError as e:
             self.results_text.setPlainText(f"Error: {e}")
             self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['red']};")
