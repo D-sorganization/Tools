@@ -132,6 +132,19 @@ class TestCalculateFlareSize:
         mole_weighted_heat = total_flow * mole_weighted_hv / 3600.0
         assert result.heat_release < 0.9 * mole_weighted_heat
 
+    @pytest.mark.scientific
+    def test_pure_methane_heat_release_matches_mass_basis_lhv(self) -> None:
+        """Pure CH4 at 1 kg/s releases its mass-basis LHV in kW (#3391)."""
+        calc = FlareCalculator()
+        design = calc.calculate_flare_size(
+            total_flow=3600.0,
+            gas_composition={"CH4": 100.0},
+            temperature=300.0,
+            pressure=1.0,
+        )
+
+        assert design.heat_release == pytest.approx(50_010.0, rel=1e-6)
+
     def test_negative_flow_raises(self) -> None:
         calc = FlareCalculator()
         # DbC preconditions raise ValueError (not bare assert, which is stripped

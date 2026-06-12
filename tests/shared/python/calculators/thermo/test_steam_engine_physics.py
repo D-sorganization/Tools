@@ -138,6 +138,43 @@ class TestVaporPressure:
             pvap = engine._buck_equation(temp)
             assert pvap > 0, f"Negative vapor pressure at {temp}°C"
 
+    @pytest.mark.scientific
+    @pytest.mark.parametrize(
+        ("temperature_k", "expected_pa"),
+        [
+            (373.15, 101_417.0),
+            (298.15, 3_169.9),
+        ],
+    )
+    def test_saturation_pressure_matches_iapws_reference(
+        self,
+        temperature_k: float,
+        expected_pa: float,
+    ) -> None:
+        """Saturation pressure stays anchored to IAPWS-IF97 values (#3391)."""
+        from sidekick.calculators.thermo.steam_engine import (
+            SteamCalculationEngine as SidekickSteamCalculationEngine,
+        )
+
+        engine = SidekickSteamCalculationEngine()
+        assert engine.get_saturation_pressure(temperature_k) == pytest.approx(
+            expected_pa,
+            rel=0.03,
+        )
+
+    @pytest.mark.scientific
+    def test_saturation_temperature_matches_iapws_reference(self) -> None:
+        """Tsat at 1 MPa stays anchored to the IAPWS-IF97 reference (#3391)."""
+        from sidekick.calculators.thermo.steam_engine import (
+            SteamCalculationEngine as SidekickSteamCalculationEngine,
+        )
+
+        engine = SidekickSteamCalculationEngine()
+        assert engine.get_saturation_temperature(1.0e6) == pytest.approx(
+            453.03,
+            rel=0.03,
+        )
+
 
 # ── Dew Point Calculation ────────────────────────────────────────────────
 

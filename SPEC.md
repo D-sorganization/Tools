@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.398                                    |
+| **Spec Version**        | 1.1.399                                    |
 | **Last Spec Update**    | 2026-06-12                                 |
 
 ## 2. Purpose & Mission
@@ -724,6 +724,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-12 | 1.1.399 | test(golden-physics, #3391): relocate the NIST, IAPWS, flare-LHV, and calculus reference-value anchors into the existing subsystem test files named by the audit issue so the path-aware phantom guard and changed-test coverage both validate the intended scope. |
 | 2026-06-12 | 1.1.394 | chore(consolidation): refresh the quality-consolidation branch after the scientific-accuracy merge so the shared Sidekick process-calculator constants, signal calculus guards, and API baseline remain aligned with current main while preserving the data-processor facade split. |
 | 2026-06-11 | 1.1.391 | fix(sidekick): keep the Python REPL worker owned by the widget until its QThread has fully stopped, avoiding Linux/offscreen teardown aborts from premature deleteLater scheduling. |
 | 2026-06-11 | 1.1.390 | test(ci): keep the Sidekick Python REPL widget below the fleet file-size budget after QThread teardown hardening. |
