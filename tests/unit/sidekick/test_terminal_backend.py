@@ -99,6 +99,33 @@ def test_fallback_backend_terminate_kills_process(fallback_backend: Any) -> None
     assert fallback_backend.is_running is False
 
 
+def test_fallback_backend_terminate_joins_reader_and_clears_process() -> None:
+    """``terminate`` must not leave pipe reader threads alive after teardown."""
+    from upstream_drift_tools.ui.tools_sidebar.os_terminal import (
+        SubprocessFallbackBackend,
+    )
+
+    code = "import time; time.sleep(60)"
+    backend = SubprocessFallbackBackend(
+        command=(sys.executable, "-u", "-c", code), cwd=None
+    )
+    backend.start()
+    proc = backend._proc  # noqa: SLF001 - lifecycle regression evidence
+    reader = backend._reader  # noqa: SLF001 - lifecycle regression evidence
+
+    assert proc is not None
+    assert reader is not None
+    assert reader.is_alive()
+
+    backend.terminate()
+
+    assert backend.is_running is False
+    assert proc.poll() is not None
+    assert not reader.is_alive()
+    assert backend._proc is None  # noqa: SLF001
+    assert backend._reader is None  # noqa: SLF001
+
+
 def test_resize_does_not_raise_on_fallback_backend(fallback_backend: Any) -> None:
     """``resize`` is a no-op on the fallback backend (still satisfies protocol)."""
     fallback_backend.resize(rows=24, cols=80)
