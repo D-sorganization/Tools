@@ -258,7 +258,7 @@ class PythonReplWidget(QtWidgets.QWidget):
         self._history.append(script.strip())
         self._set_running(True)
 
-        self._worker = _ReplWorker(script, self._namespace, parent=self)
+        self._worker = _ReplWorker(script, self._namespace)
         self._worker.finished.connect(self._on_execution_finished)
         self._wait_for_worker_completion(self._worker)
 
@@ -266,12 +266,28 @@ class PythonReplWidget(QtWidgets.QWidget):
         """Process Qt events until the submitted worker has reported completion."""
         loop = QtCore.QEventLoop(self)
         worker.finished.connect(loop.quit)
-        worker.start()
-        loop.exec()
-        # The worker emits its payload from inside ``run()``. Returning to the
-        # caller before Qt observes the underlying thread as stopped can leave
-        # pytest teardown racing a live QThread on Linux/offscreen runners.
-        worker.wait(1000)
+        try:
+            worker.start()
+            loop.exec()
+            # The worker emits its payload from inside ``run()``. Returning to
+            # the caller before Qt observes the underlying thread as stopped can
+            # leave pytest teardown racing a live QThread on Linux/offscreen
+            # runners, so wait without a timeout after the finished signal.
+            worker.wait()
+        finally:
+            with contextlib.suppress(TypeError, RuntimeError):
+                worker.finished.disconnect(loop.quit)
+            self._retire_worker(worker)
+
+    def _retire_worker(self, worker: _ReplWorker | None) -> None:
+        """Drop a stopped worker without leaving it parented to widget teardown."""
+        if worker is None:
+            return
+        if worker.isRunning():
+            worker.wait()
+        if self._worker is worker:
+            self._worker = None
+        worker.deleteLater()
 
     def _set_running(self, running: bool) -> None:
         """Toggle Run/Cancel controls and the 'Running…' status label (F6)."""
@@ -284,9 +300,11 @@ class PythonReplWidget(QtWidgets.QWidget):
     def _on_cancel_clicked(self) -> None:
         """Best-effort cancel: terminate the worker thread (F6)."""
         if self._worker is not None and self._worker.isRunning():
-            self._worker.terminate()
-            self._worker.wait(500)
+            worker = self._worker
+            worker.terminate()
+            worker.wait()
             self._append_output("[Cancelled]")
+            self._retire_worker(worker)
         self._set_running(False)
 
     def _on_execution_finished(self, output: str) -> None:
@@ -298,7 +316,6 @@ class PythonReplWidget(QtWidgets.QWidget):
         self._sync_namespace_to_registry()
         self._set_running(False)
         self._append_output(output)
-        self._worker = None
 
     def output_text(self) -> str:
         """Return the current output pane text."""
