@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.389                                    |
+| **Spec Version**        | 1.1.390                                    |
 | **Last Spec Update**    | 2026-06-11                                 |
 
 ## 2. Purpose & Mission
@@ -724,6 +724,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-11 | 1.1.390 | test(ci): keep the Sidekick Python REPL widget below the fleet file-size budget after QThread teardown hardening. |
 | 2026-06-11 | 1.1.387 | test(ci): stabilize optional CoolProp symbol patching and data_processor nested-package imports across CI Python environments. |
 | 2026-06-11 | 1.1.386 | fix(thermo, #3381 #3382): correct the Buck water vapor-pressure exponent, tighten dew-point regression coverage against published reference points, and add pressure-dependent ideal-gas entropy in the simplified steam vapor fallback. |
 | 2026-06-11 | 1.1.385 | fix(calc-backend, #3341): require forward time spans for ODE solver and thermal-profile requests, convert diverging ODE and thermal integrations into 422 validation errors before non-finite values reach JSON responses, and add contract/API regressions for reversed spans and divergent systems. |

@@ -185,7 +185,6 @@ class PythonReplWidget(QtWidgets.QWidget):
         )
         layout.addWidget(self._input, stretch=2)
 
-        # F6: run-row — Run + Cancel buttons side-by-side.
         run_row = QtWidgets.QHBoxLayout()
         run_row.setSpacing(6)
 
@@ -225,7 +224,6 @@ class PythonReplWidget(QtWidgets.QWidget):
         self._output.setToolTip("Shows stdout, stderr, and execution errors.")
         layout.addWidget(self._output, stretch=3)
 
-        # F6: worker thread reference (None when idle).
         self._worker: _ReplWorker | None = None
 
     def _on_run_clicked(self) -> None:
@@ -251,7 +249,6 @@ class PythonReplWidget(QtWidgets.QWidget):
             self._append_output("No code to run.")
             return
 
-        # Prevent re-entrant execution.
         if self._worker is not None and self._worker.isRunning():
             _logger.debug(
                 "REPL execution already in progress; ignoring re-entrant call"
@@ -261,8 +258,6 @@ class PythonReplWidget(QtWidgets.QWidget):
         self._history.append(script.strip())
         self._set_running(True)
 
-        # Snapshot the namespace into the worker so the GUI thread and
-        # the worker thread never share a mutable reference at the same time.
         self._worker = _ReplWorker(script, self._namespace, parent=self)
         self._worker.finished.connect(self._on_execution_finished)
         self._wait_for_worker_completion(self._worker)
@@ -410,7 +405,6 @@ class SidekickPythonReplWidget(QtWidgets.QWidget):
             appearance=appearance,
             parent=self,
         )
-        # Preserve legacy attribute names that hosts/tests inspect.
         self._registry = registry
         self._set_variable = set_variable
         self._namespace = self._repl._namespace  # noqa: SLF001 - intentional alias
@@ -423,8 +417,6 @@ class SidekickPythonReplWidget(QtWidgets.QWidget):
         self._repl._output.setObjectName("SidekickTerminalOutput")  # noqa: SLF001
         self._repl._run_button.setObjectName("SidekickTerminalRun")  # noqa: SLF001
         self.apply_terminal_theme(self._terminal_theme)
-        # Appearance (visible borders + user colours) is applied last so it is
-        # authoritative over the legacy inherited terminal theme.
         self.apply_appearance(self._repl.appearance())
 
     def execute_script(self) -> None:
