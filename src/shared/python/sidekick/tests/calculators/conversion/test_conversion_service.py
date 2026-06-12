@@ -183,6 +183,11 @@ class TestConvertGasFlowScfmAcfm:
         with pytest.raises(ValueError, match="Temperature and pressure are required"):
             svc._ensure_acfm_inputs("ACFM", "SCFM", temperature=None, pressure=None)
 
+    def test_unknown_gas_type_raises_instead_of_air_fallback(self, svc):
+        """Unknown gas names must not silently reuse air density (#3339)."""
+        with pytest.raises(ValueError, match="Unknown gas type"):
+            svc.convert_gas_flow_scfm_acfm(100.0, "SCFM", "kg/s", gas_type="argonish")
+
 
 # ---------------------------------------------------------------------------
 # heating_value() (lines 552-629)
@@ -419,12 +424,25 @@ class TestCompressibilityFactor:
         with pytest.raises(ValueError, match="positive"):
             svc.compressibility_factor("air", temperature=-100.0, pressure=101.0)
 
-    def test_unknown_gas_falls_back_to_air(self, svc):
-        """Line 809: unknown gas uses air props."""
-        Z = svc.compressibility_factor(
-            "xenon_gas_xyz", temperature=400.0, pressure=200.0
+    def test_unknown_gas_raises(self, svc):
+        """Unknown gas names must fail loudly instead of reusing air props (#3339)."""
+        with pytest.raises(ValueError, match="Unknown gas type"):
+            svc.compressibility_factor(
+                "xenon_gas_xyz", temperature=400.0, pressure=200.0
+            )
+
+    def test_air_z_uses_abbott_second_virial_form(self, svc):
+        """Z uses ``(B0 + omega*B1) * Pr / Tr`` rather than Pr + Pr^2 (#3336)."""
+        z_factor = svc.compressibility_factor("air", temperature=400.0, pressure=200.0)
+        gas_props = svc._resolve_gas_type("air")
+        reduced_temperature = 400.0 / gas_props.critical_temp
+        reduced_pressure = 200.0 / gas_props.critical_pressure
+        b0 = 0.083 - 0.422 / reduced_temperature**1.6
+        b1 = 0.139 - 0.172 / reduced_temperature**4.2
+        expected = 1.0 + (b0 + svc._gas_acentric_factor("air") * b1) * (
+            reduced_pressure / reduced_temperature
         )
-        assert isinstance(Z, float)
+        assert z_factor == pytest.approx(expected, rel=1e-12)
 
 
 # ---------------------------------------------------------------------------

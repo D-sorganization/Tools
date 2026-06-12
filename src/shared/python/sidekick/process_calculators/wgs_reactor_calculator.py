@@ -37,9 +37,9 @@ from .constants import (
     KJ_HR_TO_KW,
     R_GAS_J_MOL_K,
     WGS_CATALYST_VOLUME_FRACTION,
-    WGS_DELTA_H,
-    WGS_DELTA_S,
     WGS_HEAT_KJ_PER_MOL,
+    WGS_MOE_A,
+    WGS_MOE_B,
     WGS_REACTOR_LD_RATIO,
     WGS_TYPICAL_GHSV,
 )
@@ -249,25 +249,34 @@ class WGSReactorEngine:
         self.catalysts = data.get("catalysts", {})
 
     def calculate_equilibrium_constant(self, temperature: float) -> float:
-        """Calculate WGS equilibrium constant using Van't Hoff equation"""
-        # CO + H2O ⇌ CO2 + H2
-        # ΔH° = -41.2 kJ/mol, ΔS° = -42.1 J/(mol·K)
+        """Calculate the WGS equilibrium constant.
 
+        Uses the Moe (1962) correlation ``K = exp(A/T - B)`` with
+        ``A = WGS_MOE_A`` and ``B = WGS_MOE_B``. Unlike a constant-coefficient
+        Van't Hoff form anchored at 298 K, this captures the non-constant heat
+        of reaction (dCp != 0) and reproduces the NIST-JANAF temperature
+        dependence across the 600-1200 K shift window, including the K=1
+        crossover near 1090 K (issue #3386).
+
+        Args:
+            temperature: Absolute temperature [K]. Must be > 0.
+
+        Returns:
+            The dimensionless WGS equilibrium constant for
+            CO + H2O <-> CO2 + H2.
+
+        Raises:
+            ValueError: If ``temperature`` is ``None`` or not strictly positive.
+        """
         if temperature is None:
             raise ValueError("temperature must be provided")
-        # Van't Hoff diverges/overflows for non-positive absolute temperature
-        # (the GUI passes °C+273.15, so e.g. −300 °C arrives negative here).
-        # Require a positive Kelvin temperature (issue #3103 F8).
+        # The correlation diverges/overflows for non-positive absolute
+        # temperature (the GUI passes °C+273.15, so e.g. −300 °C arrives
+        # negative here). Require a positive Kelvin temperature (issue #3103 F8).
         if not (temperature > 0):
             raise ValueError(f"temperature must be positive (K), got {temperature}")
-        delta_H = WGS_DELTA_H  # J/mol
-        delta_S = WGS_DELTA_S  # J/(mol·K)
 
-        # Van't Hoff equation
-        ln_K = -delta_H / (self.R * temperature) + delta_S / self.R
-        K_eq = math.exp(ln_K)
-
-        return K_eq
+        return math.exp(WGS_MOE_A / temperature - WGS_MOE_B)
 
     @staticmethod
     def _prepare_initial_moles(

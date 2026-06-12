@@ -82,8 +82,11 @@ class TestCalculateFlareSize:
 
     def test_higher_flow_taller_flare(self) -> None:
         calc = FlareCalculator()
-        small = calc.calculate_flare_size(100.0, _typical_composition(), 400.0, 1.5)
-        large = calc.calculate_flare_size(1000.0, _typical_composition(), 400.0, 1.5)
+        # Use flows large enough that the radiation-sized height clears the
+        # minimum-height floor for both cases, so the monotonic relationship is
+        # observable rather than masked by the clamp.
+        small = calc.calculate_flare_size(5000.0, _typical_composition(), 400.0, 1.5)
+        large = calc.calculate_flare_size(50000.0, _typical_composition(), 400.0, 1.5)
         assert large.height > small.height
 
     def test_higher_flow_larger_diameter(self) -> None:
@@ -98,29 +101,62 @@ class TestCalculateFlareSize:
         # Inert gas has no heating value
         assert result.heat_release == 0.0
 
+    def test_heat_release_uses_mass_fraction_weighting(self) -> None:
+        """Mixture HV is mass-fraction weighted, not mole-fraction (#3385).
+
+        GAS_PROPERTIES heating values are MASS-basis (kJ/kg), so a 50/50 mol
+        H2/CH4 stream must weight by mass fractions w_i = x_i*MW_i/MW_mix. Using
+        mole fractions inflated the heat release of this light-gas stream by
+        ~47%.
+        """
+        calc = FlareCalculator()
+        total_flow = 1000.0  # kg/hr
+        result = calc.calculate_flare_size(
+            total_flow, {"H2": 50.0, "CH4": 50.0}, 300.0, 1.0
+        )
+
+        # Expected mass-fraction-weighted mixture LHV.
+        mw_h2, mw_ch4 = 2.016, 16.04
+        hv_h2, hv_ch4 = 119930.0, 50010.0
+        mix_mw = 0.5 * mw_h2 + 0.5 * mw_ch4
+        w_h2 = 0.5 * mw_h2 / mix_mw
+        w_ch4 = 0.5 * mw_ch4 / mix_mw
+        mix_hv = w_h2 * hv_h2 + w_ch4 * hv_ch4  # kJ/kg
+        expected_heat_release = total_flow * mix_hv / 3600.0  # kW
+
+        assert result.heat_release == pytest.approx(expected_heat_release, rel=1e-9)
+
+        # The old mole-fraction-weighted value was materially higher; confirm
+        # the corrected value is well below it (guards against regression).
+        mole_weighted_hv = 0.5 * hv_h2 + 0.5 * hv_ch4
+        mole_weighted_heat = total_flow * mole_weighted_hv / 3600.0
+        assert result.heat_release < 0.9 * mole_weighted_heat
+
     def test_negative_flow_raises(self) -> None:
         calc = FlareCalculator()
-        with pytest.raises(AssertionError, match="total_flow"):
+        # DbC preconditions raise ValueError (not bare assert, which is stripped
+        # under ``python -O``; issue #3103 F4).
+        with pytest.raises(ValueError, match="total_flow"):
             calc.calculate_flare_size(-10.0, _typical_composition(), 400.0, 1.5)
 
     def test_zero_flow_raises(self) -> None:
         calc = FlareCalculator()
-        with pytest.raises(AssertionError, match="total_flow"):
+        with pytest.raises(ValueError, match="total_flow"):
             calc.calculate_flare_size(0.0, _typical_composition(), 400.0, 1.5)
 
     def test_negative_temp_raises(self) -> None:
         calc = FlareCalculator()
-        with pytest.raises(AssertionError, match="temperature"):
+        with pytest.raises(ValueError, match="temperature"):
             calc.calculate_flare_size(100.0, _typical_composition(), -100.0, 1.5)
 
     def test_negative_pressure_raises(self) -> None:
         calc = FlareCalculator()
-        with pytest.raises(AssertionError, match="pressure"):
+        with pytest.raises(ValueError, match="pressure"):
             calc.calculate_flare_size(100.0, _typical_composition(), 400.0, -1.0)
 
     def test_empty_composition_raises(self) -> None:
         calc = FlareCalculator()
-        with pytest.raises(AssertionError, match="gas_composition"):
+        with pytest.raises(ValueError, match="gas_composition"):
             calc.calculate_flare_size(100.0, {}, 400.0, 1.5)
 
 

@@ -9851,6 +9851,8 @@
       "WGS_DELTA_H",
       "WGS_DELTA_S",
       "WGS_HEAT_KJ_PER_MOL",
+      "WGS_MOE_A",
+      "WGS_MOE_B",
       "WGS_REACTOR_LD_RATIO",
       "WGS_TYPICAL_GHSV",
       "bar_to_pa",
@@ -10435,6 +10437,12 @@
         "type": "variable"
       },
       "WGS_HEAT_KJ_PER_MOL": {
+        "type": "variable"
+      },
+      "WGS_MOE_A": {
+        "type": "variable"
+      },
+      "WGS_MOE_B": {
         "type": "variable"
       },
       "WGS_REACTOR_LD_RATIO": {

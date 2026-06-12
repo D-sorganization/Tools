@@ -44,6 +44,18 @@ def test_evaluates_expression_and_shows_result(qt_app, qtbot) -> None:
     assert "3" in widget.output_text()
 
 
+def test_repeated_execution_finishes_before_widget_teardown(qt_app, qtbot) -> None:
+    widget, registry, _ = _build_repl(qt_app, qtbot)
+    widget.execute("x = 1")
+    widget.execute("x = x + 1")
+
+    assert registry.get("x") == 2
+    assert widget._worker is None  # noqa: SLF001
+
+    widget.close()
+    qt_app.processEvents()
+
+
 def test_assignment_stores_in_workspace_registry(qt_app, qtbot) -> None:
     widget, registry, captured = _build_repl(qt_app, qtbot)
     widget.execute("x = 3")

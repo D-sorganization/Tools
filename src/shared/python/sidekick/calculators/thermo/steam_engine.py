@@ -12,6 +12,7 @@ Provides thermodynamic calculations using CoolProp, Cantera, or simplified corre
 from __future__ import annotations
 
 import logging
+import math
 from dataclasses import dataclass
 from typing import Any
 
@@ -92,6 +93,8 @@ try:
 
     COOLPROP_AVAILABLE = True
 except ImportError:
+    PhaseSI = None
+    PropsSI = None
     COOLPROP_AVAILABLE = False
     logging.getLogger(__name__).warning(
         "Warning: CoolProp not available. Falling back to Cantera or simplified correlations."
@@ -120,9 +123,11 @@ VAPOR_SPECIFIC_HEAT_CV: float = (
 
 # Vapor entropy constants for simplified calculations
 VAPOR_ENTROPY_REFERENCE: float = (
-    8000.0  # [J/kg-K] Reference entropy for vapor calculations
+    7354.1  # [J/kg-K] Saturated vapor entropy near 100°C and 1 atm
 )
-VAPOR_ENTROPY_SLOPE: float = 2000.0  # [J/kg-K] Entropy slope for vapor calculations
+VAPOR_ENTROPY_SLOPE: float = (
+    VAPOR_SPECIFIC_HEAT_CP * 1000.0
+)  # [J/kg-K] Ideal-gas vapor entropy temperature coefficient
 
 # Temperature conversion constants
 FAHRENHEIT_TO_CELSIUS_OFFSET: float = (
@@ -351,6 +356,7 @@ class SteamCalculationEngine:
         """
         Calculate saturated steam properties from temperature
         """
+        self._validate_saturation_temperature(temperature)
         try:
             selected_engine = self._select_best_engine(engine)
 
@@ -372,6 +378,7 @@ class SteamCalculationEngine:
         """
         Calculate saturated steam properties from pressure
         """
+        self._validate_saturation_pressure(pressure)
         try:
             selected_engine = self._select_best_engine(engine)
 
@@ -419,7 +426,7 @@ class SteamCalculationEngine:
         """
         Buck equation for water vapor pressure (improved accuracy).
         """
-        # Buck equation: P = a * exp((b - T/d) * T/(T + c))
+        # Buck equation: P = a * exp((b - T/c) * T/(T + d))
         # P in kPa, T in °C
         # BUCK_A is stored in mbar, but Buck equation requires 'a' in kPa
         # Convert mbar to kPa by dividing by 10 (1 mbar = 0.1 kPa)
@@ -427,7 +434,7 @@ class SteamCalculationEngine:
             raise ValueError("temperature_c must be provided")
         a_kpa = BUCK_A / MBAR_TO_KPA_FACTOR
         p_kpa = a_kpa * np.exp(
-            (BUCK_B - temperature_c / BUCK_D) * temperature_c / (temperature_c + BUCK_C)
+            (BUCK_B - temperature_c / BUCK_C) * temperature_c / (temperature_c + BUCK_D)
         )
 
         # Convert kPa to Pascal
@@ -570,6 +577,7 @@ class SteamCalculationEngine:
         self, temperature: float
     ) -> SteamProperties:
         """Calculate saturated steam properties from temperature using simplified correlations"""
+        self._validate_saturation_temperature(temperature)
         # Antoine equation for water vapor pressure (valid 1-100°C)
         # log10(P_mmHg) = A - B/(T_K - C) where C is for temperature in Kelvin
         # Calculate saturation pressure using Antoine equation
@@ -584,23 +592,21 @@ class SteamCalculationEngine:
         self, pressure: float
     ) -> SteamProperties:
         """Calculate saturated steam properties from pressure using simplified correlations"""
+        self._validate_saturation_pressure(pressure)
         # Inverse Antoine equation to find temperature from pressure
-        if pressure is None:
-            raise ValueError("pressure must be provided")
         pressure_mmhg = pressure * PASCAL_TO_MMHG_FACTOR
 
         # Solve for temperature: T = B / (A - log10(P)) + C
-        if pressure_mmhg <= 0:
-            raise ValueError(f"Pressure must be positive, got {pressure}")
-
         log_p = np.log10(pressure_mmhg)
         temperature = ANTOINE_B / (ANTOINE_A - log_p) + ANTOINE_C_KELVIN
+        self._validate_saturation_temperature(temperature)
 
         # Calculate properties at saturation
         return self._calculate_simplified_properties(temperature, pressure)
 
     def get_saturation_pressure(self, temperature: float) -> float:
         """Get saturation pressure for given temperature"""
+        self._validate_saturation_temperature(temperature)
         if CANTERA_AVAILABLE and self.water is not None and self.water:
             try:
                 self.water.TQ = temperature, 1.0
@@ -622,6 +628,7 @@ class SteamCalculationEngine:
 
     def get_saturation_temperature(self, pressure: float) -> float:
         """Get saturation temperature for given pressure"""
+        self._validate_saturation_pressure(pressure)
         try:
             if CANTERA_AVAILABLE and self.water is not None and self.water:
                 self.water.PQ = pressure, 1.0
@@ -754,7 +761,7 @@ class SteamCalculationEngine:
                 if np.isnan(quality):
                     quality = 0.0 if phase_str.lower() == "liquid" else 1.0
             except (ValueError, ZeroDivisionError, OverflowError, TypeError):
-                quality = 0.0
+                quality = float("nan")
 
             return SteamProperties(
                 temperature=temperature,
@@ -777,6 +784,40 @@ class SteamCalculationEngine:
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             _logger.exception("CoolProp steam calculation failed: %s", e)
             return self._calculate_simplified_properties(temperature, pressure)
+
+    @staticmethod
+    def _validate_saturation_temperature(temperature: float) -> None:
+        """Validate temperatures used for saturation states."""
+        if temperature is None:
+            raise ValueError("temperature must be provided")
+        if (
+            not math.isfinite(temperature)
+            or temperature < TRIPLE_POINT_TEMPERATURE
+            or temperature > CRITICAL_TEMPERATURE_WATER
+        ):
+            msg = (
+                f"temperature must be finite and within water saturation bounds "
+                f"[{TRIPLE_POINT_TEMPERATURE}, {CRITICAL_TEMPERATURE_WATER}] K, "
+                f"got {temperature}"
+            )
+            raise ValueError(msg)
+
+    @staticmethod
+    def _validate_saturation_pressure(pressure: float) -> None:
+        """Validate pressures used for saturation states."""
+        if pressure is None:
+            raise ValueError("pressure must be provided")
+        if (
+            not math.isfinite(pressure)
+            or pressure < TRIPLE_POINT_PRESSURE
+            or pressure > CRITICAL_PRESSURE_WATER
+        ):
+            msg = (
+                f"pressure must be finite and within water saturation bounds "
+                f"[{TRIPLE_POINT_PRESSURE}, {CRITICAL_PRESSURE_WATER}] Pa, "
+                f"got {pressure}"
+            )
+            raise ValueError(msg)
 
     @staticmethod
     def _validate_coolprop_inputs(
@@ -887,9 +928,12 @@ class SteamCalculationEngine:
                 # Convert kJ/kg to J/kg
                 enthalpy *= 1000
 
-                # Simplified entropy
-                entropy = VAPOR_ENTROPY_REFERENCE + VAPOR_ENTROPY_SLOPE * np.log(
-                    temperature / 373.15
+                # Ideal-gas entropy relative to 100°C saturated vapor at 1 atm.
+                entropy = (
+                    VAPOR_ENTROPY_REFERENCE
+                    + VAPOR_ENTROPY_SLOPE * np.log(temperature / 373.15)
+                    - SPECIFIC_GAS_CONSTANT_WATER
+                    * np.log(pressure / FALLBACK_ATMOSPHERIC_PRESSURE)
                 )
 
                 cp = VAPOR_SPECIFIC_HEAT_CP * 1000  # Convert to J/kg-K

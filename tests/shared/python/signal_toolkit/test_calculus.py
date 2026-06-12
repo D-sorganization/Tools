@@ -160,6 +160,31 @@ class TestIntegrator:
         assert result.lower_bound == pytest.approx(0.0, abs=0.1)
         assert result.upper_bound == pytest.approx(5.0, abs=0.1)
 
+    def test_simpson_x_squared_includes_upper_bound(self) -> None:
+        """∫₀³ x² dx = 9 — the upper-bound sample must not be dropped (#3383).
+
+        Previously ``searchsorted(..., side='left')`` excluded the sample at the
+        upper bound, leaving Simpson's rule short by the final interval and
+        returning 8.13 instead of the exact 9.
+        """
+        x = np.linspace(0.0, 3.0, 31)  # includes the endpoint x = 3
+        signal = Signal(time=x, values=x**2, name="x^2", units="")
+        integ = Integrator(method=IntegrationMethod.SIMPSON)
+        result = integ.integrate(signal)
+        # Simpson on an even-spaced grid through the endpoint is exact for x^2.
+        assert result.value == pytest.approx(9.0, abs=1e-6)
+
+    def test_full_integral_not_short_by_one_interval(self) -> None:
+        """Default (full-range) integral spans the entire signal (#3383)."""
+        x = np.linspace(0.0, 3.0, 31)
+        signal = Signal(time=x, values=x**2, name="x^2", units="")
+        integ = Integrator(method=IntegrationMethod.TRAPEZOID)
+        result = integ.integrate(signal)
+        # Trapezoid over the full span is close to 9 (O(h^2) error), and in
+        # particular must exceed the old, one-interval-short value of ~8.13.
+        assert result.value == pytest.approx(9.0, rel=2e-3)
+        assert result.value > 8.5
+
 
 # ── Explicit guard regressions (#3344) ──────────────────────────────────
 

@@ -134,6 +134,14 @@ class TestMassFlowConversions:
         assert abs(result.result - 3.6) < 0.01
 
 
+class TestGasFlowValidation:
+    def test_unknown_gas_type_raises_instead_of_air_fallback(
+        self, converter: UnitConverter
+    ) -> None:
+        with pytest.raises(ValueError, match="Unknown gas type"):
+            converter.convert(100, "SCFM", "kg/hr", gas_type="argonish")
+
+
 class TestCrossCategoryError:
     def test_length_to_mass_fails(self, converter: UnitConverter) -> None:
         with pytest.raises(ValueError, match="Cannot convert"):

@@ -32,6 +32,7 @@ import pandas as pd
 
 logger = logging.getLogger(__name__)
 
+
 # ── Try to import the native extension ───────────────────────────────────────
 
 _RUST_AVAILABLE = False
@@ -420,3 +421,6 @@ def filter_export(
         filtered.to_parquet(p_dst, index=False)
 
     return len(filtered)
+
+
+from .bulk_facade import DataProcessorRustError, RustBulkDataEngine  # noqa: E402,F401
