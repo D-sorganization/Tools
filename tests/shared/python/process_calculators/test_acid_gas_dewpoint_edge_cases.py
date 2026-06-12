@@ -79,6 +79,31 @@ class TestVaporPressureEdgeCases:
         vp = calculator.calculate_vapor_pressure(100.0, "H2O")
         assert 90000 < vp < 120000
 
+    @pytest.mark.scientific
+    @pytest.mark.parametrize(
+        ("component", "bp_celsius"),
+        [
+            # Normal boiling points (NIST WebBook). A valid pure-species
+            # vapor-pressure correlation must return ~101.325 kPa at the normal
+            # boiling point. The old HF/HCl/H2S Antoine constants were off by
+            # 18-99% here (issue #3387); the NIST-derived replacements are
+            # within ~2%.
+            ("H2O", 100.0),
+            ("HF", 19.54),
+            ("HCl", -85.05),
+            ("H2S", -60.3),
+        ],
+    )
+    def test_vapor_pressure_at_normal_boiling_point(
+        self, calculator, component, bp_celsius
+    ):
+        vp = calculator.calculate_vapor_pressure(bp_celsius, component)
+        # Within 5% of one standard atmosphere (101_325 Pa).
+        assert vp == pytest.approx(101_325.0, rel=0.05), (
+            f"{component} at its bp {bp_celsius} C gave {vp:.0f} Pa, "
+            f"expected ~101325 Pa"
+        )
+
     def test_very_low_temperature(self, calculator):
         """Very low temperature produces a positive, small vapor pressure."""
         vp = calculator.calculate_vapor_pressure(-50.0, "H2O")

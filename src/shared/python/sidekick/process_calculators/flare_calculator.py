@@ -112,13 +112,29 @@ class FlareCalculator:
         else:
             comp_fractions = {k: v / total_comp for k, v in gas_composition.items()}
 
-        # Calculate mixture properties
+        # Calculate mixture molecular weight (mole-fraction weighted — correct).
         mix_mw = sum(
             comp_fractions[gas] * self.gas_properties[gas]["mw"]
             for gas in comp_fractions
         )
+
+        # Mixture heating value [kJ/kg].
+        #
+        # ``hv`` values in GAS_PROPERTIES are MASS-basis lower heating values
+        # (kJ/kg). A mass-specific mixture property must be averaged by MASS
+        # fractions, not mole fractions (issue #3385). The mass fraction of a
+        # component is w_i = x_i * MW_i / MW_mix.  Using mole fractions inflated
+        # the heat release of any light-gas-rich stream (e.g. +47% for 50/50
+        # mol H2/CH4) and propagated into the radiation-sized flare height.
+        if mix_mw > 0:
+            mass_fractions = {
+                gas: comp_fractions[gas] * self.gas_properties[gas]["mw"] / mix_mw
+                for gas in comp_fractions
+            }
+        else:
+            mass_fractions = dict.fromkeys(comp_fractions, 0.0)
         mix_hv = sum(
-            comp_fractions[gas] * self.gas_properties[gas]["hv"]
+            mass_fractions[gas] * self.gas_properties[gas]["hv"]
             for gas in comp_fractions
         )
 
