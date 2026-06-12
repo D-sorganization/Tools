@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.385                                    |
+| **Spec Version**        | 1.1.386                                    |
 | **Last Spec Update**    | 2026-06-11                                 |
 
 ## 2. Purpose & Mission
@@ -722,6 +722,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-11 | 1.1.386 | fix(thermo, #3381 #3382): correct the Buck water vapor-pressure exponent, tighten dew-point regression coverage against published reference points, and add pressure-dependent ideal-gas entropy in the simplified steam vapor fallback. |
 | 2026-06-11 | 1.1.385 | fix(calc-backend, #3341): require forward time spans for ODE solver and thermal-profile requests, convert diverging ODE and thermal integrations into 422 validation errors before non-finite values reach JSON responses, and add contract/API regressions for reversed spans and divergent systems. |
 | 2026-06-11 | 1.1.384 | fix(steam, #3337 #3338): enforce saturation temperature and pressure preconditions before backend fallback, reject out-of-range simplified saturation states instead of extrapolating Antoine correlations, preserve unknown CoolProp quality as NaN instead of saturated-liquid quality, and map steam API validation failures to HTTP 400. |
 | 2026-06-11 | 1.1.383 | fix(unit-converter, #3336 #3339): make gas-flow conversions fail loudly for unknown gas species across Sidekick and web converter surfaces, and align the sidekick compressibility-factor calculation with the Abbott/Pitzer second-virial form used by pressure-drop calculations. |

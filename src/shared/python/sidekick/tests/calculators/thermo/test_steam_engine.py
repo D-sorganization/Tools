@@ -46,8 +46,9 @@ def test_antoine_equation() -> None:
 
 def test_buck_equation() -> None:
     engine = SteamCalculationEngine()
-    p = engine._buck_equation(100.0)
-    assert p > 0
+    assert engine._buck_equation(0.01) == pytest.approx(611.66, rel=0.005)
+    assert engine._buck_equation(25.0) == pytest.approx(3169.9, rel=0.005)
+    assert engine._buck_equation(100.0) == pytest.approx(101417.0, rel=0.005)
 
 
 def test_calculate_water_vapor_pressure() -> None:
@@ -61,11 +62,21 @@ def test_calculate_water_vapor_pressure() -> None:
 
 def test_calculate_dew_point() -> None:
     engine = SteamCalculationEngine()
-    partial_p = engine.calculate_water_vapor_pressure(50.0, method="buck")
+    partial_p = 3169.9
     dp = engine.calculate_dew_point(partial_p, 101325.0)
 
-    # Dew point should be close to 50
-    assert 49.0 < dp < 51.0
+    assert dp == pytest.approx(25.0, abs=0.1)
+
+
+def test_buck_and_antoine_are_consistent_from_5_to_100c() -> None:
+    engine = SteamCalculationEngine()
+
+    for temperature_c in (5.0, 25.0, 50.0, 75.0, 100.0):
+        p_buck = engine.calculate_water_vapor_pressure(temperature_c, method="buck")
+        p_antoine = engine.calculate_water_vapor_pressure(
+            temperature_c, method="antoine"
+        )
+        assert p_buck == pytest.approx(p_antoine, rel=0.02)
 
 
 def test_calculate_saturated_simplified_from_temp() -> None:
@@ -126,6 +137,21 @@ def test_calculate_properties_simplified() -> None:
     assert props.pressure == 101325.0
     assert props.enthalpy > 0
     assert props.entropy > 0
+
+
+def test_simplified_vapor_entropy_includes_pressure_dependence() -> None:
+    engine = SteamCalculationEngine()
+
+    low_pressure = engine.calculate_properties(573.15, 101325.0, engine="simplified")
+    high_pressure = engine.calculate_properties(573.15, 1.0e6, engine="simplified")
+    saturated_reference = engine.calculate_properties(
+        373.15, 101325.0, engine="simplified"
+    )
+
+    assert low_pressure.entropy / 1000.0 == pytest.approx(8.217, rel=0.03)
+    assert high_pressure.entropy / 1000.0 == pytest.approx(7.123, rel=0.03)
+    assert saturated_reference.entropy / 1000.0 == pytest.approx(7.354, rel=0.03)
+    assert high_pressure.entropy < low_pressure.entropy
 
 
 def test_steam_properties_to_dict() -> None:

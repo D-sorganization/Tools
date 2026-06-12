@@ -121,9 +121,11 @@ VAPOR_SPECIFIC_HEAT_CV: float = (
 
 # Vapor entropy constants for simplified calculations
 VAPOR_ENTROPY_REFERENCE: float = (
-    8000.0  # [J/kg-K] Reference entropy for vapor calculations
+    7354.1  # [J/kg-K] Saturated vapor entropy near 100°C and 1 atm
 )
-VAPOR_ENTROPY_SLOPE: float = 2000.0  # [J/kg-K] Entropy slope for vapor calculations
+VAPOR_ENTROPY_SLOPE: float = (
+    VAPOR_SPECIFIC_HEAT_CP * 1000.0
+)  # [J/kg-K] Ideal-gas vapor entropy temperature coefficient
 
 # Temperature conversion constants
 FAHRENHEIT_TO_CELSIUS_OFFSET: float = (
@@ -422,7 +424,7 @@ class SteamCalculationEngine:
         """
         Buck equation for water vapor pressure (improved accuracy).
         """
-        # Buck equation: P = a * exp((b - T/d) * T/(T + c))
+        # Buck equation: P = a * exp((b - T/c) * T/(T + d))
         # P in kPa, T in °C
         # BUCK_A is stored in mbar, but Buck equation requires 'a' in kPa
         # Convert mbar to kPa by dividing by 10 (1 mbar = 0.1 kPa)
@@ -430,7 +432,7 @@ class SteamCalculationEngine:
             raise ValueError("temperature_c must be provided")
         a_kpa = BUCK_A / MBAR_TO_KPA_FACTOR
         p_kpa = a_kpa * np.exp(
-            (BUCK_B - temperature_c / BUCK_D) * temperature_c / (temperature_c + BUCK_C)
+            (BUCK_B - temperature_c / BUCK_C) * temperature_c / (temperature_c + BUCK_D)
         )
 
         # Convert kPa to Pascal
@@ -924,9 +926,12 @@ class SteamCalculationEngine:
                 # Convert kJ/kg to J/kg
                 enthalpy *= 1000
 
-                # Simplified entropy
-                entropy = VAPOR_ENTROPY_REFERENCE + VAPOR_ENTROPY_SLOPE * np.log(
-                    temperature / 373.15
+                # Ideal-gas entropy relative to 100°C saturated vapor at 1 atm.
+                entropy = (
+                    VAPOR_ENTROPY_REFERENCE
+                    + VAPOR_ENTROPY_SLOPE * np.log(temperature / 373.15)
+                    - SPECIFIC_GAS_CONSTANT_WATER
+                    * np.log(pressure / FALLBACK_ATMOSPHERIC_PRESSURE)
                 )
 
                 cp = VAPOR_SPECIFIC_HEAT_CP * 1000  # Convert to J/kg-K
