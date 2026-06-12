@@ -14,7 +14,7 @@ from __future__ import annotations
 import logging
 import math
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, TypedDict
 
 import numpy as np
 from sidekick.process_calculators.constants import (
@@ -203,6 +203,19 @@ SATURATED_FROM_PRESSURE_STATE: int = (
 )
 
 
+class _DerivedProperties(TypedDict):
+    """Exact key set returned by ``_compute_derived_properties``.
+
+    Declaring the keys explicitly lets ``**derived`` be splatted into
+    ``SteamProperties(...)`` without mypy fearing it could supply unrelated
+    fields such as ``engine_used`` (issue #3318).
+    """
+
+    compressibility_factor: float | None
+    prandtl_number: float | None
+    specific_heat_ratio: float | None
+
+
 @dataclass
 class SteamProperties:
     """Container for steam thermodynamic properties"""
@@ -226,6 +239,11 @@ class SteamProperties:
     compressibility_factor: float | None = None  # Dimensionless Z
     prandtl_number: float | None = None  # Dimensionless Pr
     specific_heat_ratio: float | None = None  # Cp/Cv (k)
+    # Engine that ACTUALLY produced these numbers ("coolprop", "cantera",
+    # "simplified"), independent of the engine requested. Set so a silent
+    # fallback to the low-accuracy simplified correlations is observable by
+    # callers instead of being mislabelled (issue #3318).
+    engine_used: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for easy export"""
@@ -251,6 +269,7 @@ class SteamProperties:
             "Compressibility Factor (Z)": self.compressibility_factor,
             "Prandtl Number": self.prandtl_number,
             "Cp/Cv (k)": self.specific_heat_ratio,
+            "Engine Used": self.engine_used,
         }
 
 
@@ -340,10 +359,19 @@ class SteamCalculationEngine:
                 result = self._calculate_cantera_properties(temperature, pressure)
             else:
                 result = self._calculate_simplified_properties(temperature, pressure)
+            result.engine_used = selected_engine
 
         except (RuntimeError, ValueError, TypeError) as e:
-            _logger.exception("Steam calculation failed: %s", e)
+            # The accurate backend failed (out-of-range state, library error).
+            # Record that the numbers came from the low-accuracy simplified
+            # correlations so the caller/API does not mislabel them (issue #3318).
+            _logger.exception(
+                "Steam calculation failed with the requested engine; "
+                "falling back to simplified correlations: %s",
+                e,
+            )
             result = self._calculate_simplified_properties(temperature, pressure)
+            result.engine_used = "simplified"
 
         # DbC postcondition: enthalpy and entropy should be finite
         if not np.isfinite(result.enthalpy):
@@ -361,16 +389,23 @@ class SteamCalculationEngine:
             selected_engine = self._select_best_engine(engine)
 
             if selected_engine == "coolprop":
-                return self._calculate_saturated_coolprop_from_temp(temperature)
-            if selected_engine == "cantera":
-                return self._calculate_saturated_cantera_from_temp(temperature)
-            return self._calculate_saturated_simplified_from_temp(temperature)
+                result = self._calculate_saturated_coolprop_from_temp(temperature)
+            elif selected_engine == "cantera":
+                result = self._calculate_saturated_cantera_from_temp(temperature)
+            else:
+                result = self._calculate_saturated_simplified_from_temp(temperature)
+            result.engine_used = selected_engine
+            return result
 
         except (RuntimeError, ValueError, TypeError) as e:
             _logger.exception(
-                "Saturated steam calculation from temperature failed: %s", e
+                "Saturated steam calculation from temperature failed; "
+                "falling back to simplified correlations: %s",
+                e,
             )
-            return self._calculate_saturated_simplified_from_temp(temperature)
+            result = self._calculate_saturated_simplified_from_temp(temperature)
+            result.engine_used = "simplified"
+            return result
 
     def calculate_saturated_properties_from_pressure(
         self, pressure: float, engine: str = "auto"
@@ -383,14 +418,23 @@ class SteamCalculationEngine:
             selected_engine = self._select_best_engine(engine)
 
             if selected_engine == "coolprop":
-                return self._calculate_saturated_coolprop_from_pressure(pressure)
-            if selected_engine == "cantera":
-                return self._calculate_saturated_cantera_from_pressure(pressure)
-            return self._calculate_saturated_simplified_from_pressure(pressure)
+                result = self._calculate_saturated_coolprop_from_pressure(pressure)
+            elif selected_engine == "cantera":
+                result = self._calculate_saturated_cantera_from_pressure(pressure)
+            else:
+                result = self._calculate_saturated_simplified_from_pressure(pressure)
+            result.engine_used = selected_engine
+            return result
 
         except (RuntimeError, ValueError, TypeError) as e:
-            _logger.exception("Saturated steam calculation from pressure failed: %s", e)
-            return self._calculate_saturated_simplified_from_pressure(pressure)
+            _logger.exception(
+                "Saturated steam calculation from pressure failed; "
+                "falling back to simplified correlations: %s",
+                e,
+            )
+            result = self._calculate_saturated_simplified_from_pressure(pressure)
+            result.engine_used = "simplified"
+            return result
 
     def calculate_water_vapor_pressure(
         self, temperature: float, method: str = "buck"
@@ -852,7 +896,7 @@ class SteamCalculationEngine:
         pressure: float,
         specific_volume: float,
         temperature: float,
-    ) -> dict[str, float | None]:
+    ) -> _DerivedProperties:
         """Compute derived thermo properties (Z, Pr, k)."""
         if cp is None:
             raise ValueError("cp must be provided")
