@@ -494,7 +494,13 @@ class UnitConverter:
         standard_condition: str = "SCFM_60F",
     ) -> float:
         """Convert gas flow rates via standard m3/hr as intermediate."""
-        gas_props = GAS_DATABASE.get(gas_type.lower(), GAS_DATABASE["air"])
+        gas_key = gas_type.lower()
+        gas_props = GAS_DATABASE.get(gas_key)
+        if gas_props is None:
+            supported = ", ".join(sorted(GAS_DATABASE))
+            raise ValueError(
+                f"Unknown gas type: {gas_type}. Supported gas types: {supported}"
+            )
         standard = STANDARD_CONDITIONS.get(
             standard_condition, STANDARD_CONDITIONS["SCFM_60F"]
         )  # noqa: E501

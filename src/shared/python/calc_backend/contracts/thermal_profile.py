@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class ThermalProfileRequest(BaseModel):
@@ -30,6 +30,16 @@ class ThermalProfileRequest(BaseModel):
     num_points: int = Field(
         default=100, ge=10, le=10000, description="Number of output points"
     )
+
+    @model_validator(mode="after")
+    def _validate_time_span(self) -> ThermalProfileRequest:
+        """Require forward-time thermal prediction."""
+        if self.t_end_s <= self.t_start_s:
+            raise ValueError(
+                f"t_end_s ({self.t_end_s}) must be strictly greater than "
+                f"t_start_s ({self.t_start_s})"
+            )
+        return self
 
 
 class ThermalProfileDataPoint(BaseModel):

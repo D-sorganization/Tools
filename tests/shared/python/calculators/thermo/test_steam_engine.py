@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import asdict
 
 import pytest
@@ -161,6 +162,57 @@ def test_get_saturation_pressure_falls_back_on_exception(
     engine.water = _BadWater()
     result = engine.get_saturation_pressure(300.0)
     assert result > 0
+
+
+def test_saturation_preconditions_raise_before_backend_fallback(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    engine = SteamCalculationEngine()
+    monkeypatch.setattr(
+        engine,
+        "_calculate_saturated_simplified_from_temp",
+        lambda *_: (_ for _ in ()).throw(AssertionError("fallback should not run")),
+    )
+
+    with pytest.raises(ValueError, match="saturation bounds"):
+        engine.calculate_saturated_properties_from_temperature(200.0)
+
+
+def test_get_saturation_temperature_rejects_invalid_pressure() -> None:
+    engine = SteamCalculationEngine()
+
+    with pytest.raises(ValueError, match="saturation bounds"):
+        engine.get_saturation_temperature(-5.0)
+
+
+def test_coolprop_quality_error_is_unknown_not_saturated_liquid(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    engine = SteamCalculationEngine()
+
+    def fake_props(prop: str, *_args: object) -> float:
+        values = {
+            "D": 1.0,
+            "H": 2.0,
+            "S": 3.0,
+            "U": 4.0,
+            "Cpmass": 5.0,
+            "Cvmass": 4.0,
+            "A": 6.0,
+            "L": 0.5,
+            "VISCOSITY": 0.01,
+        }
+        if prop == "Q":
+            raise ValueError("quality unavailable")
+        return values[prop]
+
+    monkeypatch.setattr(steam_engine, "PropsSI", fake_props)
+    monkeypatch.setattr(steam_engine, "PhaseSI", lambda *_args: "unknown")
+
+    props = engine._calculate_coolprop_properties(400.0, 101325.0)
+
+    assert math.isnan(props.quality)
+    assert props.phase == "unknown"
 
 
 def test_determine_phase_and_quality_paths() -> None:

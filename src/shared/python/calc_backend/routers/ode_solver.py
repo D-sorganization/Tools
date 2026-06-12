@@ -110,6 +110,13 @@ def _rk4_solve(
     t_eval = np.linspace(t_start, t_end, num_points)
 
     sol = solver.solve((t_start, t_end), y0, t_eval=t_eval)
+    if not sol.success:
+        raise ValueError(f"ODE solver failed: {sol.message}")
+    if not np.all(np.isfinite(sol.y)):
+        raise ValueError(
+            "ODE solution diverged with non-finite values; reduce the time span "
+            "or check the derivative system"
+        )
 
     times = [round(float(t), 8) for t in sol.t]
     solutions = {

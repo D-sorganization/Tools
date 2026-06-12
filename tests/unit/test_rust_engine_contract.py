@@ -57,6 +57,8 @@ import importlib.util
 
 from shared.python.data_processor.rust_engine import (  # noqa: E402
     ConversionReport,
+    DataProcessorRustError,
+    RustBulkDataEngine,
     SchemaInfo,
     cancel,
     convert,
@@ -65,6 +67,13 @@ from shared.python.data_processor.rust_engine import (  # noqa: E402
     preview,
     scan_batch,
 )
+
+
+def test_shared_rust_engine_exports_bulk_facade() -> None:
+    """The shared shadow package must satisfy the full data_processor imports."""
+    assert issubclass(DataProcessorRustError, RuntimeError)
+    assert RustBulkDataEngine.from_repo_root().is_available()
+
 
 # Check if parquet support is available in pandas
 HAS_PARQUET = (

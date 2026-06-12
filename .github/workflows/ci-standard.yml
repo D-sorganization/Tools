@@ -203,6 +203,7 @@ jobs:
         run: |
           # Keep pip and python bound to the same setup-python interpreter so
           # pytest plugins land in the environment that later runs `python -m pytest`.
+          python -m pip install --upgrade click setuptools wheel
           python -m pip install --ignore-installed --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
           python -m pip install --ignore-installed --no-deps mypy==1.13.0
           grep -v -E '^mypy==' requirements.txt > requirements-ci.txt
@@ -497,8 +498,9 @@ jobs:
         run: |
           # Match the plugin install interpreter to the `python -m pytest`
           # invocation below so benchmark support is always discoverable.
+          python -m pip install --upgrade click setuptools wheel
           python -m pip install --ignore-installed --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
-          python -m pip install --ignore-installed --no-deps "py-cpuinfo>=9.0.0" "pytest-benchmark>=5.2.3"
+          python -m pip install --ignore-installed --no-deps --no-cache-dir "py-cpuinfo>=9.0.0" "pytest-benchmark>=5.2.3"
           python -m pip install --ignore-installed --no-deps mypy==1.13.0
           grep -v -E '^mypy==' requirements.txt > requirements-ci.txt
           python -m pip install --ignore-installed -r requirements-ci.txt
