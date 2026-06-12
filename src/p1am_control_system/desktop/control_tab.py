@@ -263,10 +263,10 @@ class ControlTab(QWidget):
         self.mpc_pv_plot.setTitle("PV Tracking Comparison")
 
         self.curve_pid_pv = self.mpc_pv_plot.plot(
-            pen=pg.mkPen(color=Qt.GlobalColor.red, width=2), name="PID PV"
+            pen=pg.mkPen(color="r", width=2), name="PID PV"
         )
         self.curve_mpc_pv = self.mpc_pv_plot.plot(
-            pen=pg.mkPen(color=Qt.GlobalColor.darkGreen, width=2), name="MPC PV"
+            pen=pg.mkPen(color=(0, 100, 0), width=2), name="MPC PV"
         )
         right_layout.addWidget(self.mpc_pv_plot)
 
@@ -280,10 +280,10 @@ class ControlTab(QWidget):
         self.mpc_cv_plot.setTitle("CV Output Effort Comparison")
 
         self.curve_pid_cv = self.mpc_cv_plot.plot(
-            pen=pg.mkPen(color=Qt.GlobalColor.red, width=2), name="PID CV"
+            pen=pg.mkPen(color="r", width=2), name="PID CV"
         )
         self.curve_mpc_cv = self.mpc_cv_plot.plot(
-            pen=pg.mkPen(color=Qt.GlobalColor.darkGreen, width=2), name="MPC CV"
+            pen=pg.mkPen(color=(0, 100, 0), width=2), name="MPC CV"
         )
         right_layout.addWidget(self.mpc_cv_plot)
 
