@@ -274,6 +274,10 @@ class PythonReplWidget(QtWidgets.QWidget):
         worker.finished.connect(worker.deleteLater)
         worker.start()
         loop.exec()
+        # The worker emits its payload from inside ``run()``. Returning to the
+        # caller before Qt observes the underlying thread as stopped can leave
+        # pytest teardown racing a live QThread on Linux/offscreen runners.
+        worker.wait(1000)
 
     def _set_running(self, running: bool) -> None:
         """Toggle Run/Cancel controls and the 'Running…' status label (F6)."""
