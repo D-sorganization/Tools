@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.402                                    |
+| **Spec Version**        | 1.1.403                                    |
 | **Last Spec Update**    | 2026-06-12                                 |
 
 ## 2. Purpose & Mission
@@ -723,6 +723,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-12 | 1.1.403 | test(p1am, #3314): split endpoint-level E-STOP clear regressions into a focused backend test module so the confirmed PLC reset, rejected-reset latch preservation, and offline simulator-clear contracts remain covered while `test_backend.py` stays inside the fleet file-size budget. |
 | 2026-06-12 | 1.1.402 | fix(p1am, #3314): make the HMI E-STOP clear actually reach the PLC. Add a `clear_estop()` contract to `BasePLCClient`, implement it as an explicit reset-coil write in the Modbus client and a latch reset in the simulator, and rework `/api/estop/clear` to command the controller and only lower the server-side `e_stop_active` flag when the controller (or backup simulator) acknowledges — returning 502 and keeping the latch on rejection. The desktop header now shows a pending "CLEARING…" state and only goes green ("E-STOP CLEAR") on confirmed success, reverting to red on failure, so the header can no longer claim cleared while the plant remains tripped. REQUIRES HARDWARE VALIDATION before trusted. |
 | 2026-06-12 | 1.1.401 | fix(sidekick): make OS terminal backend teardown close subprocess pipes, join reader threads, and clear stale process handles so Qt/Sidekick tests do not abort during interpreter shutdown after terminal widgets close. |
 | 2026-06-12 | 1.1.400 | fix(sidekick): guard the Python REPL worker wait loop with a timer-backed `isRunning()` poll so fast worker completion cannot miss the nested Qt loop's `finished` signal and hang Linux/offscreen Python 3.11/3.12 test lanes until pytest-timeout aborts. |
