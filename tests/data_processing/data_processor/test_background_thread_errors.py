@@ -10,14 +10,69 @@ from unittest.mock import MagicMock, patch
 
 from data_processor.ui.background_worker import start_background_thread
 
-tkinter_stub = types.ModuleType("tkinter")
-tkinter_stub.filedialog = types.SimpleNamespace()
-tkinter_stub.messagebox = types.SimpleNamespace(
-    showerror=MagicMock(),
-    showwarning=MagicMock(),
-    showinfo=MagicMock(),
-)
-sys.modules.setdefault("tkinter", tkinter_stub)
+try:
+    import tkinter as tkinter_stub
+    from tkinter import filedialog, messagebox, ttk
+
+    _USING_TKINTER_FALLBACK = False
+except ImportError:
+    tkinter_stub = types.ModuleType("tkinter")
+    filedialog = types.ModuleType("tkinter.filedialog")
+    messagebox = types.ModuleType("tkinter.messagebox")
+    ttk = types.ModuleType("tkinter.ttk")
+    _USING_TKINTER_FALLBACK = True
+
+    class _TkWidget:
+        def __init__(self, *args, **kwargs) -> None:  # noqa: ANN002, ANN003
+            pass
+
+    for _widget_name in (
+        "Button",
+        "Checkbutton",
+        "Entry",
+        "Frame",
+        "Label",
+        "LabelFrame",
+        "Progressbar",
+        "Radiobutton",
+        "Scrollbar",
+        "Style",
+    ):
+        setattr(ttk, _widget_name, _TkWidget)
+
+    tkinter_stub.TclError = RuntimeError
+    tkinter_stub.Tk = _TkWidget
+    tkinter_stub.Toplevel = _TkWidget
+    tkinter_stub.Text = _TkWidget
+    tkinter_stub.Canvas = _TkWidget
+    tkinter_stub.Listbox = _TkWidget
+    tkinter_stub.StringVar = _TkWidget
+    tkinter_stub.BooleanVar = _TkWidget
+    tkinter_stub.DoubleVar = _TkWidget
+    tkinter_stub.END = "end"
+    tkinter_stub.LEFT = "left"
+    tkinter_stub.BOTH = "both"
+    tkinter_stub.Y = "y"
+    tkinter_stub.VERTICAL = "vertical"
+
+if _USING_TKINTER_FALLBACK:
+    messagebox.showerror = MagicMock()
+    messagebox.showwarning = MagicMock()
+    messagebox.showinfo = MagicMock()
+    filedialog.askdirectory = MagicMock()
+tkinter_stub.filedialog = filedialog
+tkinter_stub.messagebox = messagebox
+tkinter_stub.ttk = ttk
+if _USING_TKINTER_FALLBACK:
+    sys.modules["tkinter"] = tkinter_stub
+    sys.modules["tkinter.filedialog"] = filedialog
+    sys.modules["tkinter.messagebox"] = messagebox
+    sys.modules["tkinter.ttk"] = ttk
+else:
+    sys.modules.setdefault("tkinter", tkinter_stub)
+    sys.modules.setdefault("tkinter.filedialog", filedialog)
+    sys.modules.setdefault("tkinter.messagebox", messagebox)
+    sys.modules.setdefault("tkinter.ttk", ttk)
 
 
 class _CtkWidget:
@@ -67,6 +122,13 @@ class ImmediateAfterMixin:
     def after(self, ms: int, func: Callable[[], None]) -> None:
         assert ms == 0
         func()
+
+
+def test_tkinter_test_double_keeps_ttk_importable() -> None:
+    """Keep this module's optional tkinter shim compatible with later tests."""
+    from tkinter import ttk as imported_ttk
+
+    assert imported_ttk is not None
 
 
 class DummyFolderTool(ImmediateAfterMixin, FolderToolMixin):

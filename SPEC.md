@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.367                                    |
+| **Spec Version**        | 1.1.368                                    |
 | **Last Spec Update**    | 2026-06-11                                 |
 
 ## 2. Purpose & Mission
@@ -722,6 +722,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-11 | 1.1.368 | test(ci): keep data-processor tkinter fallbacks from leaking a partial `tkinter` stub into folder-tool collection by preferring real tkinter when available and installing a complete fallback with `ttk`, `messagebox`, and `filedialog` modules only when needed. |
 | 2026-06-11 | 1.1.367 | fix(ci/runner): make Tauri Linux checks discover an available local Node 24, 22, or 20 toolcache on mixed self-hosted runners instead of failing on runners without the exact Node 24.16.0 path. |
 | 2026-06-11 | 1.1.364 | test(ci): keep retired data-processor skip sentinels compatible with the ruff B011 guard by using truthy documentation assertions instead of optimized-away `assert False` statements. |
 | 2026-06-11 | 1.1.363 | fix(ci/runner): harden `ci-standard.yml` Linux apt setup by clearing corrupted apt package-cache binaries alongside stale lock files before `apt-get update`, allowing self-hosted runners to recover from cache rename failures. |
