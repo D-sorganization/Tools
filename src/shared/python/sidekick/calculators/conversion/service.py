@@ -164,10 +164,34 @@ class UnitConversionService(
         self.performance_units = dict(PERFORMANCE_UNITS)
 
         # Pre-compute static lookups for optimization
-        # 1. Canonical units
+        # 1. Canonical units.
+        #
+        # First-writer-wins with explicit collision detection (issue #3384).
+        # Distinct units can normalise to the same cleaned key — most notably
+        # torque "N·m" and length "nm" both clean to "nm" once the middle dot is
+        # stripped. ``CATEGORY_TABLES`` iterates ``length`` before ``torque``, so
+        # keeping the first writer preserves the SI bare-symbol meaning of "nm"
+        # (nanometer) instead of letting torque silently shadow it. A collision
+        # against a *different* canonical is logged so it is never silent; the
+        # shadowed unit remains reachable through its category-qualified path and
+        # explicit aliases (see UNIT_ALIASES).
         for factors in self.category_map.values():
             for unit in factors:
-                self._static_clean_map[self._clean_string(unit)] = unit
+                cleaned = self._clean_string(unit)
+                existing = self._static_clean_map.get(cleaned)
+                if existing is not None and existing != unit:
+                    _logger.debug(
+                        "Unit normalization collision on %r: keeping %r, "
+                        "ignoring %r for the bare-symbol lookup (issue #3384). "
+                        "Use the category-qualified form or an explicit alias "
+                        "for %r.",
+                        cleaned,
+                        existing,
+                        unit,
+                        unit,
+                    )
+                    continue
+                self._static_clean_map[cleaned] = unit
 
         # 2. Static aliases
         for canonical, aliases in UNIT_ALIASES.items():

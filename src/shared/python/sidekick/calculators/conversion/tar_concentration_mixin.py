@@ -14,6 +14,12 @@ __all__ = [
 
 _logger = logging.getLogger(__name__)
 
+# Ideal-gas molar volume at 0 °C / 1 atm [L/mol]. This mixin anchors mg/Nm³ at
+# the normal state (273.15 K, 101.325 kPa), so ppm-by-volume <-> mg/Nm³ must use
+# the 0 °C molar volume — NOT 24.45 L/mol, which is the 25 °C value and produced
+# results ~8.3% low while still being labelled mg/Nm³ (issue #3389).
+_MOLAR_VOLUME_NORMAL_L_PER_MOL = 22.414
+
 
 class TarConcentrationConversionMixin:
     """Mixin providing tar concentration conversions for UnitConversionService."""
@@ -97,7 +103,7 @@ class TarConcentrationConversionMixin:
             return value * 1000.0 * (temperature / 273.15) * (101.325 / pressure)
         if from_key == "ppm_mass":
             assert molecular_weight is not None
-            return value * molecular_weight / 24.45
+            return value * molecular_weight / _MOLAR_VOLUME_NORMAL_L_PER_MOL
         msg = f"Conversion from {from_unit} not implemented"
         raise ValueError(msg)
 
@@ -120,7 +126,7 @@ class TarConcentrationConversionMixin:
             return mg_nm3_value / 1000.0 * (273.15 / temperature) * (pressure / 101.325)
         if to_key == "ppm_mass":
             assert molecular_weight is not None
-            return mg_nm3_value * 24.45 / molecular_weight
+            return mg_nm3_value * _MOLAR_VOLUME_NORMAL_L_PER_MOL / molecular_weight
         msg = f"Conversion to {to_unit} not implemented"
         raise ValueError(msg)
 
