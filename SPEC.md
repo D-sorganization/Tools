@@ -1183,6 +1183,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 - **Performance**: In high-frequency algorithmic optimization loops (like Nelder-Mead iterations), replaced array manipulation operations such as `.map()` and `.slice()` with pre-allocated arrays and standard `for` loops in `src/pendulum_simulator/pendulum-web/src/optimizer.ts` to eliminate continuous array creation and avoid significant garbage collection overhead.
 
+- **2026-06-12**: fix(p1am, #3323) — guard live-PLC writes behind confirmation dialogs and add Control-tab role gating. `ControlTab` now defaults to the `Operator` role and exposes `set_role()` (wired from `HMIMainWindow._on_role_changed`); starting live-loop tuning, applying a tuning step, and applying recommended PID gains are Admin-only and additionally raise a `QMessageBox.question("Confirm PLC write", …)` that fails closed (default `No`). `RoutingTab._deploy_config` now confirms before persisting the routing/interlock matrix to PLC NVRAM, and the Inspector sidebar's manual tag force override confirms before writing a raw value to the live plant (Operator-allowed by design). Client-side hardening only — server-side `/api/routing` and `/api/tags` enforcement remains tracked by the HMI auth work. Adds `tests/p1am_control_system/test_plc_write_confirmation.py`.
+
 ### Version 1.1.184
 
 - **Performance**: In `src/pendulum_simulator/pendulum-web/src/components/AnalysisPlots.tsx`, optimized chart downsampling by replacing multiple instances of `indices.map()` with pre-allocated arrays and explicit `for` loops inside `useMemo` hooks. This drastically reduces array allocation and garbage collection overhead during high-frequency component rendering.
