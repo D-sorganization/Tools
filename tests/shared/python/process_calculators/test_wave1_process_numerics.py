@@ -120,3 +120,102 @@ def test_compressibility_unknown_only_returns_unity() -> None:
     )
     assert z == pytest.approx(1.0)
     assert math.isfinite(z)
+
+
+# --------------------------------------------------------------------------- #
+# #3386 — WGS equilibrium constant uses the Moe (1962) correlation, which
+# tracks the NIST-JANAF temperature dependence across the shift window.
+# --------------------------------------------------------------------------- #
+@pytest.mark.unit
+@pytest.mark.scientific
+@pytest.mark.parametrize(
+    ("temperature", "expected_k"),
+    [
+        # Moe correlation K = exp(4577.8/T - 4.33). These anchor the curve and
+        # are within a few percent of NIST-JANAF across 600-1200 K.
+        (600.0, 27.104),
+        (800.0, 4.024),
+        (1000.0, 1.281),
+        (1200.0, 0.597),
+    ],
+)
+def test_wgs_equilibrium_matches_moe_correlation(
+    temperature: float, expected_k: float
+) -> None:
+    engine = WGSReactorEngine()
+    assert engine.calculate_equilibrium_constant(temperature) == pytest.approx(
+        expected_k, rel=1e-3
+    )
+
+
+@pytest.mark.unit
+@pytest.mark.scientific
+def test_wgs_k_unity_crossover_near_janaf() -> None:
+    """K=1 crossover lands near ~1025-1090 K (JANAF), not the old ~979 K.
+
+    The previous constant-coefficient Van't Hoff form crossed K=1 at 979 K; the
+    Moe correlation crosses near 1057 K, far closer to the JANAF value.
+    """
+    engine = WGSReactorEngine()
+    assert engine.calculate_equilibrium_constant(1000.0) > 1.0
+    assert engine.calculate_equilibrium_constant(1090.0) < 1.0
+    # Old (buggy) form gave K<1 already at 1000 K; the corrected curve does not.
+    assert engine.calculate_equilibrium_constant(1000.0) > 1.27
+
+
+# --------------------------------------------------------------------------- #
+# #3390 — compressible solver reports the physical choked state instead of
+# silently echoing the unachievable requested outlet pressure.
+# --------------------------------------------------------------------------- #
+def _choking_kwargs(outlet_pressure: float) -> dict[str, float]:
+    """Inputs whose critical pressure exceeds the requested outlet pressure."""
+    return {
+        "inlet_pressure": 5.0e5,
+        "outlet_pressure": outlet_pressure,
+        "length": 100.0,
+        "diameter": 0.05,
+        "mass_flow_rate": 5.0,
+        "temperature": 300.0,
+        "molecular_weight": 0.016,  # kg/mol (methane)
+        "compressibility_factor": 1.0,
+        "friction_factor": 0.02,
+    }
+
+
+@pytest.mark.unit
+@pytest.mark.scientific
+def test_compressible_choked_reports_critical_pressure() -> None:
+    """When choked, P2 is the critical pressure, not the requested outlet (#3390)."""
+    # Drive the request well below the critical pressure to force choking.
+    dp, p2 = compressible_flow.calculate_compressible_flow_correction(
+        **_choking_kwargs(outlet_pressure=1.0e3)
+    )
+    # Critical pressure P2_crit = G * sqrt(Z R T / M); reconstruct it here.
+    area = compressible_flow.PI * (0.05**2) / 4.0
+    mass_flux = 5.0 / area
+    coeff = mass_flux**2 * (1.0 * compressible_flow.R_UNIVERSAL * 300.0) / 0.016
+    p2_crit = math.sqrt(coeff)
+
+    assert p2 == pytest.approx(p2_crit, rel=1e-9)
+    # Reported P2 must NOT be the unachievable requested outlet pressure.
+    assert p2 > 1.0e3
+    assert dp == pytest.approx(5.0e5 - p2_crit, rel=1e-9)
+
+
+@pytest.mark.unit
+def test_compressible_unchoked_returns_solved_outlet() -> None:
+    """A comfortably sub-critical request solves normally (not flagged choked)."""
+    # Small mass flow -> low critical pressure -> request is achievable.
+    dp, p2 = compressible_flow.calculate_compressible_flow_correction(
+        inlet_pressure=5.0e5,
+        outlet_pressure=4.5e5,
+        length=10.0,
+        diameter=0.2,
+        mass_flow_rate=0.1,
+        temperature=300.0,
+        molecular_weight=0.016,
+        compressibility_factor=1.0,
+        friction_factor=0.02,
+    )
+    assert 0.0 < p2 <= 5.0e5
+    assert dp == pytest.approx(5.0e5 - p2, rel=1e-9)

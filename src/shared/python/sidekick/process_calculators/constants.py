@@ -248,6 +248,8 @@ __all__ = [
     "WGS_DELTA_H",
     "WGS_DELTA_S",
     "WGS_HEAT_KJ_PER_MOL",
+    "WGS_MOE_A",
+    "WGS_MOE_B",
     "WGS_REACTOR_LD_RATIO",
     "WGS_TYPICAL_GHSV",
     "bar_to_pa",
@@ -642,6 +644,16 @@ WGS_DELTA_H: Final[float] = -41200.0
 # WGS reaction entropy [J/(mol-K)]
 WGS_DELTA_S: Final[float] = -42.1
 
+# Water-gas-shift equilibrium constant correlation (Moe, 1962):
+#     K = exp(WGS_MOE_A / T_K - WGS_MOE_B)
+# This reproduces the NIST-JANAF temperature dependence (a non-constant heat of
+# reaction, dCp != 0) across the industrial 600-1200 K shift window, where the
+# constant-coefficient Van't Hoff form anchored at 298 K underestimates K by
+# 20-40% and misplaces the K=1 crossover at 979 K instead of ~1090 K
+# (issue #3386). Reference: Moe, J.M., Chem. Eng. Prog. 58 (1962) 33.
+WGS_MOE_A: Final[float] = 4577.8
+WGS_MOE_B: Final[float] = 4.33
+
 # Standard state pressure [Pa] (1 bar)
 STANDARD_STATE_PRESSURE_PA: Final[float] = 100000.0
 
@@ -740,20 +752,40 @@ ANTOINE_WATER_HIGH_A: Final[float] = 8.14019
 ANTOINE_WATER_HIGH_B: Final[float] = 1810.94
 ANTOINE_WATER_HIGH_C: Final[float] = 244.485
 
+# Acid-gas Antoine constants in the mmHg / degC convention used by the acid-gas
+# dewpoint calculator: log10(P_mmHg) = A - B / (C + t_degC).
+#
+# Derived from the authoritative NIST Chemistry WebBook Antoine fits, which are
+# published in the bar / K convention log10(P_bar) = a - b / (T_K + c). The two
+# conventions are related exactly by:
+#     A = a + log10(750.062)   (bar -> mmHg, since 1 bar = 750.062 mmHg)
+#     B = b                    (slope unchanged)
+#     C = c + 273.15           (K -> degC offset in the denominator)
+# Each set below reproduces 101.325 kPa at the species' normal boiling point to
+# within ~2%, which the previous constants did not (issue #3387: old HF/HCl/H2S
+# values were off by 18-99% at their boiling points). See
+# tests/.../test_acid_gas_antoine_reference.py for the anchor checks.
+
 # Hydrogen Fluoride
-ANTOINE_HF_A: Final[float] = 7.158
-ANTOINE_HF_B: Final[float] = 1111.0
-ANTOINE_HF_C: Final[float] = 235.0
+# NIST WebBook (Sheft, Perkins et al. 1973, 273.17-303.09 K):
+# a=4.9148, b=1556.559, c=24.199.  Covers the normal bp 19.54 degC.
+ANTOINE_HF_A: Final[float] = 7.78990
+ANTOINE_HF_B: Final[float] = 1556.559
+ANTOINE_HF_C: Final[float] = 297.349
 
 # Hydrogen Chloride
-ANTOINE_HCL_A: Final[float] = 7.960
-ANTOINE_HCL_B: Final[float] = 1118.0
-ANTOINE_HCL_C: Final[float] = 240.0
+# NIST WebBook (Stull 1947, 122.3-188.3 K): a=3.60765, b=535.172, c=-39.847.
+# Covers the normal bp -85.05 degC.
+ANTOINE_HCL_A: Final[float] = 6.48275
+ANTOINE_HCL_B: Final[float] = 535.172
+ANTOINE_HCL_C: Final[float] = 233.303
 
 # Hydrogen Sulfide
-ANTOINE_H2S_A: Final[float] = 6.987
-ANTOINE_H2S_B: Final[float] = 884.0
-ANTOINE_H2S_C: Final[float] = 240.0
+# NIST WebBook (4.52887/958.587/-0.539, 138-212 K). Covers the normal
+# bp -60.3 degC.
+ANTOINE_H2S_A: Final[float] = 7.40397
+ANTOINE_H2S_B: Final[float] = 958.587
+ANTOINE_H2S_C: Final[float] = 272.611
 
 # =============================================================================
 # BAGHOUSE CALCULATOR CONSTANTS

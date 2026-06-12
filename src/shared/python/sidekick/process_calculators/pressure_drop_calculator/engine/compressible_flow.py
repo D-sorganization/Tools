@@ -94,6 +94,28 @@ def calculate_compressible_flow_correction(
         / molecular_weight
     )
 
+    # Physical isothermal choking criterion (Crane TP-410, ch. 1 — limiting
+    # flow of a compressible fluid). The governing isothermal equation
+    #     P1^2 - P2^2 = G^2 (Z R T / M) [fL/D + 2 ln(P1/P2)]
+    # has no finite-gradient solution once the exit pressure falls to the
+    # critical value P2_crit = G * sqrt(Z R T / M) (equivalently exit Mach
+    # 1/sqrt(gamma)). Since ``coeff = G^2 (Z R T / M)``, P2_crit = sqrt(coeff).
+    # Below P2_crit the pipe physically cannot pass the requested mass flow, so
+    # we report the CHOKED state — minimum achievable outlet pressure P2_crit
+    # and the corresponding pressure drop — instead of silently echoing the
+    # (unachievable) user-requested outlet pressure (issue #3390).
+    p2_critical = math.sqrt(coeff)
+    if outlet_pressure <= p2_critical:
+        _logger.warning(
+            "Compressible flow is choked: requested outlet pressure %.0f Pa is "
+            "at or below the isothermal critical pressure %.0f Pa; the pipe "
+            "cannot pass the requested mass flow. Reporting choked outlet "
+            "pressure.",
+            outlet_pressure,
+            p2_critical,
+        )
+        return inlet_pressure - p2_critical, p2_critical
+
     p2, is_choked = _iterate_compressible_pressure(
         inlet_pressure,
         outlet_pressure,
@@ -101,7 +123,15 @@ def calculate_compressible_flow_correction(
         resistance,
     )
     if is_choked:
-        return inlet_pressure - outlet_pressure, outlet_pressure
+        # The iteration drove P2^2 non-positive, which can only happen at/below
+        # the critical pressure — report the choked critical outlet pressure
+        # rather than the unachievable requested one (issue #3390).
+        _logger.warning(
+            "Compressible flow solver hit a choked condition; reporting "
+            "critical outlet pressure %.0f Pa.",
+            p2_critical,
+        )
+        return inlet_pressure - p2_critical, p2_critical
 
     corrected_dp = inlet_pressure - p2
     # Expansion factor Y for logging/diagnostics. Use the dedicated, physically
