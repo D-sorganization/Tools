@@ -498,7 +498,7 @@ jobs:
           # Match the plugin install interpreter to the `python -m pytest`
           # invocation below so benchmark support is always discoverable.
           python -m pip install --ignore-installed --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
-          python -m pip install --ignore-installed --no-deps "py-cpuinfo>=9.0.0" "pytest-benchmark>=5.2.3"
+          python -m pip install --ignore-installed --no-deps --no-cache-dir "py-cpuinfo>=9.0.0" "pytest-benchmark>=5.2.3"
           python -m pip install --ignore-installed --no-deps mypy==1.13.0
           grep -v -E '^mypy==' requirements.txt > requirements-ci.txt
           python -m pip install --ignore-installed -r requirements-ci.txt

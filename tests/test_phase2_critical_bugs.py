@@ -229,6 +229,39 @@ class TestDataProcessingImports:
         assert logger is not None
         assert logger.name == "test_phase2"
 
+    def test_full_package_imports_after_shared_package_loaded(self):
+        """The shared rust-engine package should not shadow the full package."""
+        repo_root = Path(__file__).resolve().parent.parent
+        shared_path = repo_root / "src" / "shared" / "python"
+        dp_path = repo_root / "src" / "data_processing" / "data_processor" / "python"
+        for module_name in [
+            "data_processor",
+            "data_processor.core",
+            "data_processor.logging_config",
+            "data_processor.rust_engine",
+        ]:
+            sys.modules.pop(module_name, None)
+        try:
+            sys.path.insert(0, str(shared_path))
+            import data_processor
+
+            assert any("shared" in path for path in data_processor.__path__)
+
+            sys.path.insert(0, str(dp_path))
+            import data_processor.core
+            from data_processor.logging_config import get_logger
+        finally:
+            sys.path = [
+                path
+                for path in sys.path
+                if path not in {str(shared_path), str(dp_path)}
+            ]
+
+        assert "ConfigManager" in data_processor.core.__all__
+        assert (
+            get_logger("test_phase2_shared_shadow").name == "test_phase2_shared_shadow"
+        )
+
 
 # ========================================================================
 # Issue #531: God Function Refactoring
