@@ -6,11 +6,14 @@ from __future__ import annotations
 import re
 import sys
 from pathlib import Path
+from typing import Any
 
 try:
-    import yaml
+    import yaml as yaml_module
 except ModuleNotFoundError:  # pragma: no cover - exercised in lean CI images
-    yaml = None
+    yaml: Any = None
+else:
+    yaml = yaml_module
 
 REQUIRED_BLOCKING_STEPS = {
     "Lint (Ruff)": "ruff check",
