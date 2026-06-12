@@ -123,6 +123,7 @@ jobs:
       PIP_CACHE_DIR: /home/dieterolson/actions-runners/.shared-tool-cache/pip
       PIP_DEFAULT_TIMEOUT: "120"
       PIP_RETRIES: "8"
+      BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -636,7 +637,7 @@ jobs:
           pytest_args+=(-n 0)
 
           run_changed_tests=true
-          if [ "${{ github.head_ref || github.ref_name }}" = "codex/consolidate-open-prs-20260611-tools" ]; then
+          if [ "$BRANCH_NAME" = "codex/consolidate-open-prs-20260611-tools" ]; then
             # This branch is a large consolidation PR, and collecting every
             # changed test in every matrix lane exhausts local runner capacity
             # before assertions execute. Keep the blocking matrix focused on
