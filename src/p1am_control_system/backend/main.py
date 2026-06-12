@@ -518,10 +518,39 @@ async def trigger_estop() -> dict[str, str]:
 
 @app.post("/api/estop/clear", dependencies=[Depends(require_admin_key)])
 async def clear_estop() -> dict[str, str]:
-    """Clear the E-stop state."""
+    """Clear the E-stop state on the controller, then in the HMI.
+
+    The E-stop latch lives in the PLC, not in this process. We MUST command the
+    controller to reset before reporting the HMI as cleared; otherwise the header
+    turns green while the plant is still tripped. The server-side ``e_stop_active``
+    flag is only lowered once the controller (or the backup simulator, when the
+    PLC is offline) acknowledges the reset.
+    """
     global e_stop_active
+
+    if not plc_client.connected:
+        cleared = await backup_simulator.clear_estop()
+        if not cleared:
+            raise HTTPException(
+                status_code=502,
+                detail="Backup simulator did not acknowledge the E-stop reset.",
+            )
+        e_stop_active = False
+        return {
+            "status": "success",
+            "message": "Simulated E-stop cleared.",
+        }
+
+    cleared = await plc_client.clear_estop()
+    if not cleared:
+        # Leave e_stop_active latched so the HMI keeps showing the tripped state.
+        raise HTTPException(
+            status_code=502,
+            detail=("PLC did not acknowledge the E-stop reset; plant remains tripped."),
+        )
+    await backup_simulator.clear_estop()
     e_stop_active = False
-    return {"status": "success", "message": "E-Stop cleared."}
+    return {"status": "success", "message": "Hardware E-stop cleared."}
 
 
 @app.get("/api/alarms/active")

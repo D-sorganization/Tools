@@ -413,17 +413,20 @@ class HMIMainWindow(QMainWindow):
             self.estop_clear_worker = HttpWorker(
                 "POST", f"{self.backend_url}/api/estop/clear", timeout=1.0
             )
-            self.estop_clear_worker.success.connect(
-                lambda data: self.log_event(
-                    "ACTION", "E-STOP state cleared. Normal operations resumed."
-                )
-            )
-            self.estop_clear_worker.error.connect(
-                lambda err: self.log_event(
-                    "ALARM", f"Failed to clear E-STOP state: {err}"
-                )
-            )
+            self.estop_clear_worker.success.connect(self._on_estop_clear_success)
+            self.estop_clear_worker.error.connect(self._on_estop_clear_error)
             self.estop_clear_worker.start()
+
+    def _on_estop_clear_success(self, data) -> None:
+        # Only now is the plant confirmed released; let the header go green.
+        self.header.confirm_estop_cleared()
+        self.log_event("ACTION", "E-STOP state cleared. Normal operations resumed.")
+
+    def _on_estop_clear_error(self, err_msg) -> None:
+        # PLC did not acknowledge the reset: keep the header tripped (red) so the
+        # operator is not misled into thinking the plant was released.
+        self.header.revert_estop_to_tripped()
+        self.log_event("ALARM", f"Failed to clear E-STOP state: {err_msg}")
 
     def _on_estop_success(self, data):
         self.log_event("ALARM", "EMERGENCY STOP SHUTDOWN COMMAND SENT TO PLC.")

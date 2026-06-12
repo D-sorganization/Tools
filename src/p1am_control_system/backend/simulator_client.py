@@ -19,6 +19,9 @@ class SimulatedPLCClient(BasePLCClient):
         # Standard simulated tag storage
         self.simulated_tags: dict[str, float] = {f"TAG_{i}": 0.0 for i in range(32)}
 
+        # Latched emergency-stop state for the simulated controller
+        self.e_stop_active = False
+
         # Active configuration state
         self.active_config = RoutingConfig(
             input_routing=[f"TAG_{i}" for i in range(6)],
@@ -193,6 +196,12 @@ class SimulatedPLCClient(BasePLCClient):
     async def trigger_estop(self) -> bool:
         async with self.lock:
             self.simulated_tags = {f"TAG_{i}": 0.0 for i in range(32)}
+            self.e_stop_active = True
+            return True
+
+    async def clear_estop(self) -> bool:
+        async with self.lock:
+            self.e_stop_active = False
             return True
 
     async def write_tag(self, tag_name: str, value: float) -> bool:

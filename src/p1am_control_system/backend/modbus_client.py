@@ -47,6 +47,7 @@ class AsyncModbusManager(BasePLCClient):
         self.interlock_config_address = 300
         self.save_to_flash_coil_address = 0
         self.estop_registers_address = 0
+        self.estop_reset_coil_address = 1
         self.tag_value_registers_address = 0
 
     @property
@@ -396,6 +397,35 @@ class AsyncModbusManager(BasePLCClient):
                 return True
             except (ModbusException, Exception) as e:
                 logger.error(f"Exception during E-stop Modbus execution: {e}")
+                self._connected = False
+                return False
+
+    async def clear_estop(self) -> bool:
+        """Pulse the E-stop reset coil so the PLC leaves the latched trip state.
+
+        The E-stop latch lives in the controller, not in this process. Clearing
+        it therefore requires an explicit coil write; only a confirmed,
+        non-error response means the plant has actually been released.
+
+        Returns:
+            bool: True if the reset coil write was acknowledged, False otherwise.
+        """
+        async with self.lock:
+            if not self._connected:
+                return False
+
+            try:
+                resp = await self._get_client().write_coil(
+                    address=self.estop_reset_coil_address,
+                    value=True,
+                )
+                if resp.isError():
+                    logger.error(f"Error writing E-stop reset coil: {resp}")
+                    return False
+                logger.warning("E-stop reset coil written to PLC successfully.")
+                return True
+            except (ModbusException, Exception) as e:
+                logger.error(f"Exception during E-stop reset Modbus execution: {e}")
                 self._connected = False
                 return False
 
