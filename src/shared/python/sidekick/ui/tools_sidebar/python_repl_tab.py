@@ -50,13 +50,7 @@ def _is_workspace_registry(value: object) -> bool:
 
 
 class _ReplWorker(QtCore.QThread):
-    """Execute a Python script off the GUI thread (F6).
-
-    Emits ``finished(output)`` on the GUI thread when the script
-    completes so PythonReplWidget can safely update its output pane.
-    The worker does NOT hold a reference to the widget; all UI updates
-    go through the signal.
-    """
+    """Execute a Python script off the GUI thread (F6)."""
 
     finished = QtCore.pyqtSignal(str)
 
@@ -230,19 +224,7 @@ class PythonReplWidget(QtWidgets.QWidget):
         self.execute(self._input.toPlainText())
 
     def execute(self, script: str) -> None:
-        """Execute ``script`` against the shared namespace.
-
-        Runs the script on a background QThread (F6) so the GUI stays
-        responsive during long computations. The Run button is disabled and
-        a 'Running…' label is shown while the worker is active; a Cancel
-        button allows the user to terminate the worker thread (best-effort).
-
-        Args:
-            script: Python source to execute.  Must be a ``str``.
-
-        Raises:
-            TypeError: If ``script`` is not a ``str``.
-        """
+        """Execute ``script`` against the shared namespace."""
         if not isinstance(script, str):
             raise TypeError("script must be a str")
         if not script.strip():
@@ -269,10 +251,7 @@ class PythonReplWidget(QtWidgets.QWidget):
         try:
             worker.start()
             loop.exec()
-            # The worker emits its payload from inside ``run()``. Returning to
-            # the caller before Qt observes the underlying thread as stopped can
-            # leave pytest teardown racing a live QThread on Linux/offscreen
-            # runners, so wait without a timeout after the finished signal.
+            # Avoid pytest teardown racing a live QThread on Linux/offscreen CI.
             worker.wait()
         finally:
             with contextlib.suppress(TypeError, RuntimeError):
@@ -383,19 +362,7 @@ _SENTINEL = object()
 
 
 class SidekickPythonReplWidget(QtWidgets.QWidget):
-    """Small Python execution surface sharing values with Workspace.
-
-    UpstreamDrift #5617: renamed from ``SidekickTerminalWidget``. The name
-    is more honest — this widget runs a bounded Python REPL, not an OS
-    shell. The new ``SidekickOsTerminalWidget`` (in
-    :mod:`upstream_drift_tools.ui.tools_sidebar.os_terminal`) provides the
-    real PTY-backed shell. Object name, child widget object names, and
-    tooltips are preserved so existing styling and tests continue to work.
-
-    Kept as a thin shell so existing tests and Terminal-tab plumbing
-    (theming, object-name lookup) continue to work. All REPL behaviour
-    lives in :class:`PythonReplWidget` (DRY).
-    """
+    """Legacy terminal-tab wrapper around :class:`PythonReplWidget`."""
 
     def __init__(
         self,
