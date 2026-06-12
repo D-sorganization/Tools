@@ -635,6 +635,11 @@ jobs:
             # test selection but override the repo-level `-n auto` addopt so
             # this compatibility lane reports test failures deterministically.
             pytest_args+=(-n 0)
+          else
+            # Large consolidation PRs can collect thousands of tests. Cap xdist
+            # fan-out on the memory-constrained local runner fleet so workers do
+            # not OOM before assertions run.
+            pytest_args+=(-n 2)
           fi
 
           run_changed_tests=true
