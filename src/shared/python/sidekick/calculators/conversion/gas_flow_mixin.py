@@ -15,7 +15,7 @@ from .core import (
     standard_m3_per_hour_to_scfm,
     standard_to_actual_flow,
 )
-from .tables import GAS_DATABASE, StandardCondition
+from .tables import GAS_DATABASE, GasProperties, StandardCondition
 
 __all__ = [
     "GasFlowConversionMixin",
@@ -31,6 +31,34 @@ class GasFlowConversionMixin:
     """Gas flow (SCFM/ACFM/Nm³/hr) conversion mixin for UnitConversionService."""
 
     mass_flow_factors: dict[str, float]  # provided by UnitConversionService
+
+    @staticmethod
+    def _resolve_gas_type(gas_type: str | None) -> GasProperties:
+        """Return gas properties for a supported gas or fail loudly."""
+        if gas_type is None:
+            raise ValueError("gas_type must be provided")
+        key = gas_type.lower()
+        try:
+            return GAS_DATABASE[key]
+        except KeyError as exc:
+            supported = ", ".join(sorted(GAS_DATABASE))
+            msg = f"Unknown gas type: {gas_type}. Supported gas types: {supported}"
+            raise ValueError(msg) from exc
+
+    @staticmethod
+    def _gas_acentric_factor(gas_type: str) -> float:
+        """Return available acentric factor data for the Pitzer correction."""
+        acentric_factors = {
+            "air": 0.04,
+            "co": 0.049,
+            "co2": 0.225,
+            "h2o": 0.344,
+            "hydrogen": -0.22,
+            "methane": 0.011,
+            "nitrogen": 0.037,
+            "oxygen": 0.021,
+        }
+        return acentric_factors.get(gas_type.lower(), 0.0)
 
     def _convert_gas_flow(
         self,
@@ -51,7 +79,7 @@ class GasFlowConversionMixin:
         # ``python -O`` (issue #3182 / #3344).
         if value is None:
             raise ValueError("value must be provided")
-        gas_props = GAS_DATABASE.get(gas_type.lower(), GAS_DATABASE["air"])
+        gas_props = self._resolve_gas_type(gas_type)
         self._ensure_acfm_inputs(from_unit, to_unit, temperature, pressure)
         m3_hr_std = self._gas_flow_to_standard_m3h(
             value,
@@ -259,11 +287,13 @@ class GasFlowConversionMixin:
         if not math.isfinite(pressure) or pressure <= 0:
             msg = f"pressure must be positive and finite, got {pressure}"
             raise ValueError(msg)
-        gas_props = GAS_DATABASE.get(gas_type.lower(), GAS_DATABASE["air"])
+        gas_props = self._resolve_gas_type(gas_type)
         Tr = temperature / gas_props.critical_temp
         Pr = pressure / gas_props.critical_pressure
 
         if 0.7 < Tr < 4 and Pr < 10:
-            Z = 1 + (0.083 - 0.422 / Tr**1.6) * Pr + (0.139 - 0.172 / Tr**4.2) * Pr**2
-            return float(max(Z, 0.1))
+            B0 = 0.083 - 0.422 / Tr**1.6
+            B1 = 0.139 - 0.172 / Tr**4.2
+            Z = 1.0 + (B0 + self._gas_acentric_factor(gas_type) * B1) * (Pr / Tr)
+            return float(max(0.1, min(Z, 1.5)))
         return 1.0

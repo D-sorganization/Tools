@@ -152,6 +152,30 @@ class TestThermalProfileEndpoint:
         for i in range(1, len(temps)):
             assert temps[i] >= temps[i - 1] - 0.001  # Allow tiny float error
 
+    def test_thermal_profile_rejects_reversed_time_span(self) -> None:
+        payload = {
+            **self.PAYLOAD,
+            "t_start_s": 10.0,
+            "t_end_s": 1.0,
+        }
+        resp = client.post("/api/calc/thermal-profile", json=payload)
+
+        assert resp.status_code == 422
+
+    def test_thermal_profile_rejects_non_finite_divergence(self) -> None:
+        payload = {
+            **self.PAYLOAD,
+            "thermal_mass_j_per_k": 1e-300,
+            "heat_loss_coeff_w_per_k": 1e300,
+            "power_w": 1e300,
+            "t_end_s": 1000.0,
+            "num_points": 10,
+        }
+        resp = client.post("/api/calc/thermal-profile", json=payload)
+
+        assert resp.status_code == 422
+        assert "non-finite" in resp.text
+
 
 # ---------------------------------------------------------------------------
 # ODE Solver
@@ -228,6 +252,33 @@ class TestODESolverEndpoint:
         }
         resp = client.post("/api/calc/ode-solver", json=payload)
         assert resp.status_code == 422
+
+    def test_ode_solver_rejects_reversed_time_span(self) -> None:
+        payload = {
+            "derivatives": {"y": "-k*y"},
+            "parameters": {"k": 0.1},
+            "initial_conditions": {"y": 100.0},
+            "t_start": 10.0,
+            "t_end": 1.0,
+            "num_points": 50,
+        }
+        resp = client.post("/api/calc/ode-solver", json=payload)
+
+        assert resp.status_code == 422
+
+    def test_ode_solver_rejects_diverging_solution(self) -> None:
+        payload = {
+            "derivatives": {"y": "y*y"},
+            "parameters": {},
+            "initial_conditions": {"y": 1.0},
+            "t_start": 0.0,
+            "t_end": 10.0,
+            "num_points": 100,
+        }
+        resp = client.post("/api/calc/ode-solver", json=payload)
+
+        assert resp.status_code == 422
+        assert "solver failed" in resp.text or "non-finite" in resp.text
 
     def test_variable_summaries(self) -> None:
         payload = {

@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.385                                    |
+| **Spec Version**        | 1.1.394                                    |
 | **Last Spec Update**    | 2026-06-12                                 |
 
 ## 2. Purpose & Mission
@@ -719,9 +719,19 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 12. Change Log
 
+<!-- prettier-ignore-start -->
+
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-12 | 1.1.394 | chore(consolidation): refresh the quality-consolidation branch after the scientific-accuracy merge so the shared Sidekick process-calculator constants, signal calculus guards, and API baseline remain aligned with current main while preserving the data-processor facade split. |
+| 2026-06-11 | 1.1.391 | fix(sidekick): keep the Python REPL worker owned by the widget until its QThread has fully stopped, avoiding Linux/offscreen teardown aborts from premature deleteLater scheduling. |
+| 2026-06-11 | 1.1.390 | test(ci): keep the Sidekick Python REPL widget below the fleet file-size budget after QThread teardown hardening. |
+| 2026-06-11 | 1.1.387 | test(ci): stabilize optional CoolProp symbol patching and data_processor nested-package imports across CI Python environments. |
+| 2026-06-11 | 1.1.386 | fix(thermo, #3381 #3382): correct the Buck water vapor-pressure exponent, tighten dew-point regression coverage against published reference points, and add pressure-dependent ideal-gas entropy in the simplified steam vapor fallback. |
+| 2026-06-11 | 1.1.385 | fix(calc-backend, #3341): require forward time spans for ODE solver and thermal-profile requests, convert diverging ODE and thermal integrations into 422 validation errors before non-finite values reach JSON responses, and add contract/API regressions for reversed spans and divergent systems. |
+| 2026-06-11 | 1.1.384 | fix(steam, #3337 #3338): enforce saturation temperature and pressure preconditions before backend fallback, reject out-of-range simplified saturation states instead of extrapolating Antoine correlations, preserve unknown CoolProp quality as NaN instead of saturated-liquid quality, and map steam API validation failures to HTTP 400. |
+| 2026-06-11 | 1.1.383 | fix(unit-converter, #3336 #3339): make gas-flow conversions fail loudly for unknown gas species across Sidekick and web converter surfaces, and align the sidekick compressibility-factor calculation with the Abbott/Pitzer second-virial form used by pressure-drop calculations. |
 | 2026-06-11 | 1.1.377 | fix(ci): use an actionlint-compatible relative npm cache path for Tauri jobs while keeping installs isolated from the runner user's shared npm cache. |
 | 2026-06-11 | 1.1.376 | fix(ci): isolate Tauri npm caches under the per-job runner temp directory and prefer fresh registry metadata so corrupted shared npm cache entries cannot fail `npm ci`. |
 | 2026-06-11 | 1.1.375 | fix(ci): set `fail-fast: false` on the CI Standard `tests` Python matrix. Only `tests (3.11)` is a required check; under the default `fail-fast: true` an infra crash in the non-required 3.10/3.12 lanes (SIGABRT/exit-134 from the Qt headless multi-widget segfault or an OOM kill on a saturated self-hosted runner) cancelled the required 3.11 lane before it ran, leaving consolidation PR #3380 permanently BLOCKED. Decoupling the lanes lets 3.11 report independently. |
@@ -1121,6 +1131,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 - **Security**: Disabled loading and saving of `.pkl` and `.pickle` files natively using pandas due to severe CWE-502 vulnerability. Raises `ValueError` explicitly when format is set to `pickle`.
 
+<!-- prettier-ignore-end -->
+
 ### Version 1.1.106
 
 - **Performance**: Optimized matrix and loading array copying inside `AnalyticsSuite.tsx` for PCA calculation by replacing `.map()` and array spread operations with single-pass pre-allocated loops, substantially reducing memory allocation overhead.
@@ -1189,6 +1201,20 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.393
+
+- 2026-06-12: refactor(data-processor) — move the shared
+  `RustBulkDataEngine` compatibility facade into `bulk_facade.py` while
+  preserving `data_processor.rust_engine` re-exports, keeping the CI
+  changed-file size budget green without changing runtime behavior.
+
+### Version 1.1.392
+
+- 2026-06-12: fix(data-processor) — expose `DataProcessorRustError` and a
+  `RustBulkDataEngine` compatibility facade from the shared data-processor
+  fallback package so source-tree import order cannot shadow the full
+  data-processor package and break `data_processor.core.data_loader`.
 
 ### Version 1.1.333
 
