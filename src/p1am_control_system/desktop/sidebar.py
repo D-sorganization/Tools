@@ -46,6 +46,12 @@ class InspectorSidebar(QWidget):
         # User role
         self.user_role = "Operator"
 
+        # Baseline values of the safety-limit / PID spin boxes as last loaded
+        # from the routing config. Used to detect whether the user edited a
+        # read-only control (QDoubleSpinBox has no isModified(); issue #3320).
+        self._baseline_low_limit: float = 0.0
+        self._baseline_pid_setpoint: float = 0.0
+
         # Current system configuration reference
         self.routing_config = None
 
@@ -216,6 +222,7 @@ class InspectorSidebar(QWidget):
             interlock = self.routing_config.interlocks[tag_id]
             self.spin_low_limit.setValue(interlock.low_limit)
             self.spin_high_limit.setValue(interlock.high_limit)
+            self._baseline_low_limit = self.spin_low_limit.value()
 
         # 2. Check associated PID loop (either PV or CV tag matches)
         pid_found = None
@@ -233,6 +240,7 @@ class InspectorSidebar(QWidget):
             self.spin_pid_kp.setValue(pid_found.kp)
             self.spin_pid_ki.setValue(pid_found.ki)
             self.spin_pid_kd.setValue(pid_found.kd)
+            self._baseline_pid_setpoint = self.spin_pid_sp.value()
         else:
             self.pid_group.setVisible(False)
 
@@ -294,8 +302,14 @@ class InspectorSidebar(QWidget):
             self.routing_worker.start()
 
         elif self.user_role != "Admin" and (
-            self.spin_low_limit.isModified() or self.spin_pid_sp.isModified()
+            self.spin_low_limit.value() != self._baseline_low_limit
+            or self.spin_pid_sp.value() != self._baseline_pid_setpoint
         ):
+            # QDoubleSpinBox has no isModified() (that is a QLineEdit method);
+            # calling it raised AttributeError inside this slot and, since
+            # PyQt 5.5, an unhandled exception in a slot aborts the whole HMI
+            # via qFatal. Compare against the last-loaded baseline instead
+            # (issue #3320).
             QMessageBox.critical(
                 self,
                 "Access Denied",

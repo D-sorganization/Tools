@@ -897,11 +897,20 @@ class ModelGenerationAPI:
         if not model_id:
             return APIResponse.error("Missing model_id")
 
-        ModelLibrary()
+        # ``delete_files`` is an opt-in flag (default False) mirroring
+        # ModelLibrary.remove_model; accept the usual truthy query spellings.
+        delete_files = str(request.query_params.get("delete_files", "")).lower() in (
+            "1",
+            "true",
+            "yes",
+        )
 
-        # Note: This would need implementation in ModelLibrary
-        # For now, return not implemented
-        return APIResponse.error("Remove not implemented", 501)
+        library = ModelLibrary()
+        removed = library.remove_model(model_id, delete_files=delete_files)
+        if not removed:
+            return APIResponse.not_found(f"Model not found: {model_id}")
+
+        return APIResponse.ok({"removed": True, "id": model_id})
 
     def library_download_model(self, request: APIRequest) -> APIResponse:
         """Download model URDF."""
