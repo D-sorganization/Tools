@@ -229,6 +229,39 @@ class TestDataProcessingImports:
         assert logger is not None
         assert logger.name == "test_phase2"
 
+    def test_full_package_imports_after_shared_package_loaded(self):
+        """The shared rust-engine package should not shadow the full package."""
+        repo_root = Path(__file__).resolve().parent.parent
+        shared_path = repo_root / "src" / "shared" / "python"
+        dp_path = repo_root / "src" / "data_processing" / "data_processor" / "python"
+        for module_name in [
+            "data_processor",
+            "data_processor.core",
+            "data_processor.logging_config",
+            "data_processor.rust_engine",
+        ]:
+            sys.modules.pop(module_name, None)
+        try:
+            sys.path.insert(0, str(shared_path))
+            import data_processor
+
+            assert any("shared" in path for path in data_processor.__path__)
+
+            sys.path.insert(0, str(dp_path))
+            import data_processor.core
+            from data_processor.logging_config import get_logger
+        finally:
+            sys.path = [
+                path
+                for path in sys.path
+                if path not in {str(shared_path), str(dp_path)}
+            ]
+
+        assert "ConfigManager" in data_processor.core.__all__
+        assert (
+            get_logger("test_phase2_shared_shadow").name == "test_phase2_shared_shadow"
+        )
+
 
 # ========================================================================
 # Issue #531: God Function Refactoring
@@ -258,6 +291,17 @@ class TestGodFunctionRefactoring:
             assert hasattr(ProcessingThread, "_delete_duplicate_set")
             assert hasattr(ProcessingThread, "_scan_pdf_files")
             assert hasattr(ProcessingThread, "_process_pdf_files")
+
+            # _process_pdf_files must be a plain Python function, NOT a numba
+            # @jit dispatcher (issue #3319). A numba-compiled method would be a
+            # CPUDispatcher; the original @jit(nopython=True) raised a
+            # TypingError that escaped run() and froze the GUI.
+            import inspect
+
+            assert inspect.isfunction(ProcessingThread._process_pdf_files), (
+                "_process_pdf_files must be a plain function, not a numba "
+                f"dispatcher; got {type(ProcessingThread._process_pdf_files)!r}"
+            )
         except ImportError:
             pytest.skip("PyQt6 not available for GUI tests")
 
@@ -435,3 +479,39 @@ class TestSteamAPIContract:
         assert resp.specificVolume == 1.136
         assert resp.internalEnergy == 2626000.0
         assert resp.engine == "simplified"
+
+    def test_calculate_steam_maps_precondition_errors_to_400(self, monkeypatch):
+        """Invalid saturation requests should be client errors, not server errors."""
+        pytest.importorskip("fastapi", reason="fastapi not installed")
+        api_path = (
+            Path(__file__).resolve().parent.parent
+            / "src"
+            / "steam_engine_calculator"
+            / "python"
+        )
+        if str(api_path) not in sys.path:
+            sys.path.insert(0, str(api_path))
+
+        from fastapi import HTTPException
+        from steam_engine_calculator.api import CalculationMode, SteamRequest
+
+        from steam_engine_calculator import api
+
+        monkeypatch.setattr(
+            api._engine,
+            "calculate_saturated_properties_from_temperature",
+            lambda *_args, **_kwargs: (_ for _ in ()).throw(
+                ValueError("temperature outside saturation bounds")
+            ),
+        )
+
+        request = SteamRequest(
+            mode=CalculationMode.SAT_T,
+            temperature=200.0,
+            pressure=101325.0,
+            engine="simplified",
+        )
+        with pytest.raises(HTTPException) as exc_info:
+            api.calculate_steam(request)
+
+        assert exc_info.value.status_code == 400

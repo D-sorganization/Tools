@@ -675,7 +675,12 @@ function convertGasFlow(value, fromUnit, toUnit, options = {}) {
     standardCondition = 'SCFM_60F'
   } = options;
 
-  const gasProps = GAS_DATABASE[gasType.toLowerCase()] || GAS_DATABASE['air'];
+  const gasKey = gasType.toLowerCase();
+  const gasProps = GAS_DATABASE[gasKey];
+  if (!gasProps) {
+    const supported = Object.keys(GAS_DATABASE).sort().join(', ');
+    throw new Error(`Unknown gas type: ${gasType}. Supported gas types: ${supported}`);
+  }
   const standard = StandardConditions[standardCondition] || StandardConditions.SCFM_60F;
 
   fromUnit = fromUnit.toUpperCase();

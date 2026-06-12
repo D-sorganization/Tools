@@ -495,13 +495,54 @@ def test_library_add_model_missing_content_returns_400(api: ModelGenerationAPI) 
 
 
 @pytest.mark.unit
-def test_library_remove_model_returns_501(api: ModelGenerationAPI) -> None:
+def test_library_remove_model_missing_id_returns_400(api: ModelGenerationAPI) -> None:
+    req = APIRequest(
+        method=HTTPMethod.DELETE,
+        path="/api/v1/library/models/",
+        query_params={},
+    )
+    resp = api.library_remove_model(req)
+    assert resp.status_code == 400
+    assert "error" in resp.body
+
+
+@pytest.mark.unit
+def test_library_remove_model_nonexistent_returns_404(api: ModelGenerationAPI) -> None:
+    # ModelLibrary.remove_model returns False for an unknown id -> 404 (#3327).
     resp = _delete(
         api,
-        "/api/v1/library/models/some_id",
-        query_params={"model_id": "some_id"},
+        "/api/v1/library/models/nonexistent_xyz_999",
+        query_params={"model_id": "nonexistent_xyz_999"},
     )
-    assert resp.status_code == 501
+    assert resp.status_code == 404
+    assert "error" in resp.body
+
+
+@pytest.mark.unit
+def test_library_remove_model_success_returns_200(
+    api: ModelGenerationAPI, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A successful removal returns 200 and echoes the removed id (#3327)."""
+    captured: dict[str, object] = {}
+
+    class _FakeLibrary:
+        def remove_model(self, model_id: str, delete_files: bool = False) -> bool:
+            captured["model_id"] = model_id
+            captured["delete_files"] = delete_files
+            return True
+
+    monkeypatch.setattr(
+        "model_generation.library.ModelLibrary", _FakeLibrary, raising=False
+    )
+
+    resp = _delete(
+        api,
+        "/api/v1/library/models/abc123",
+        query_params={"model_id": "abc123", "delete_files": "true"},
+    )
+    assert resp.status_code == 200
+    assert resp.body == {"removed": True, "id": "abc123"}
+    assert captured == {"model_id": "abc123", "delete_files": True}
 
 
 @pytest.mark.unit

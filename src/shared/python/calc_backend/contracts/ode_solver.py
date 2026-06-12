@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class ODESolverRequest(BaseModel):
@@ -26,6 +26,16 @@ class ODESolverRequest(BaseModel):
     num_points: int = Field(
         default=100, ge=10, le=10000, description="Number of output points"
     )
+
+    @model_validator(mode="after")
+    def _validate_time_span(self) -> ODESolverRequest:
+        """Require forward-time integration."""
+        if self.t_end <= self.t_start:
+            raise ValueError(
+                f"t_end ({self.t_end}) must be strictly greater than "
+                f"t_start ({self.t_start})"
+            )
+        return self
 
 
 class ODEVariableSummary(BaseModel):
