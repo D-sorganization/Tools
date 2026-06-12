@@ -108,6 +108,7 @@ jobs:
     env:
       CARGO_BUILD_JOBS: "1"
       CARGO_INCREMENTAL: "0"
+      NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-cache
       RUST_MIN_STACK: "536870912"
       RUSTFLAGS: "-Cdebuginfo=0"
     steps:
@@ -188,7 +189,7 @@ jobs:
 
       - name: Install frontend dependencies
         working-directory: ${{ matrix.path }}
-        run: npm ci
+        run: npm ci --prefer-online
 
       - name: TypeScript check
         working-directory: ${{ matrix.path }}
@@ -240,6 +241,7 @@ jobs:
     env:
       CARGO_BUILD_JOBS: "1"
       CARGO_INCREMENTAL: "0"
+      NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-cache
       RUST_MIN_STACK: "536870912"
       RUSTFLAGS: "-Cdebuginfo=0"
     steps:
@@ -353,7 +355,7 @@ jobs:
 
       - name: Install frontend dependencies
         working-directory: ${{ matrix.app.path }}
-        run: npm ci
+        run: npm ci --prefer-online
 
       - name: Build frontend
         working-directory: ${{ matrix.app.path }}
