@@ -146,11 +146,47 @@ class HMIHeader(QWidget):
             self.roleChanged.emit("Operator")
 
     def _on_estop_toggled(self, checked: bool) -> None:
-        self._update_estop_style(checked)
+        if checked:
+            # Tripping is immediate and fail-safe: reflect it right away.
+            self._update_estop_style(True)
+        else:
+            # Clearing must be confirmed by the controller before the button may
+            # show the green "CLEAR" state; until then show a pending state so the
+            # header never claims "clear" while the plant is still tripped.
+            self._update_estop_style(True, pending_clear=True)
         self.estopTriggered.emit(checked)
 
-    def _update_estop_style(self, active: bool) -> None:
-        if active:
+    def confirm_estop_cleared(self) -> None:
+        """Mark the E-stop as confirmed-cleared after the PLC acknowledged.
+
+        Called only on a successful backend clear so the green state reflects the
+        real plant state rather than an optimistic local toggle.
+        """
+        self.estop_btn.blockSignals(True)
+        self.estop_btn.setChecked(False)
+        self.estop_btn.blockSignals(False)
+        self._update_estop_style(False)
+
+    def revert_estop_to_tripped(self) -> None:
+        """Restore the tripped (red) state after a failed clear attempt.
+
+        Keeps the button latched/red so the operator is not misled into thinking
+        the plant was released when the controller did not acknowledge the reset.
+        """
+        self.estop_btn.blockSignals(True)
+        self.estop_btn.setChecked(True)
+        self.estop_btn.blockSignals(False)
+        self._update_estop_style(True)
+
+    def _update_estop_style(self, active: bool, pending_clear: bool = False) -> None:
+        if pending_clear:
+            self.estop_btn.setText("CLEARING…")
+            self.estop_btn.setStyleSheet(
+                "QPushButton {"
+                "  background-color: orange; color: black; font-weight: bold; font-size: 11pt;"
+                "}"
+            )
+        elif active:
             self.estop_btn.setText("E-STOP PRESSED")
             self.estop_btn.setStyleSheet(
                 "QPushButton {"

@@ -87,6 +87,20 @@ class BasePLCClient(abc.ABC):
         pass
 
     @abc.abstractmethod
+    async def clear_estop(self) -> bool:
+        """Command the PLC to clear/reset a latched emergency-stop state.
+
+        Implementations MUST issue an explicit command to the controller so the
+        plant physically leaves the tripped state. Returning ``True`` asserts the
+        controller acknowledged the reset; callers rely on this to decide whether
+        the HMI may report the E-stop as cleared.
+
+        Returns:
+            bool: True if the controller acknowledged the reset, False otherwise.
+        """
+        pass
+
+    @abc.abstractmethod
     async def write_tag(self, tag_name: str, value: float) -> bool:
         """Directly write or override a tag value on the PLC.
 
