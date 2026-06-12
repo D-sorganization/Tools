@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.373                                    |
+| **Spec Version**        | 1.1.374                                    |
 | **Last Spec Update**    | 2026-06-11                                 |
 
 ## 2. Purpose & Mission
@@ -722,6 +722,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-11 | 1.1.374 | fix(ci): keep the Sidekick extended Qt-heavy unit suite on Python 3.11/3.12 while excluding it from the Python 3.10 compatibility lane, where PyQt aborts the interpreter on saturated self-hosted runners. |
 | 2026-06-11 | 1.1.373 | fix(ci): make the workflow validation PyYAML fallback explicit for mypy so quality-gate checks accept both full and lean runner environments. |
 | 2026-06-11 | 1.1.372 | fix(ci): make workflow lint validation tolerate lean runner environments where PyYAML cannot be fetched by adding stdlib fallback checks for workflow structure and blocking quality gates, while still using PyYAML when present. |
 | 2026-06-11 | 1.1.371 | fix(ci): keep the Python 3.10 CI Standard lane focused on core compatibility tests for large consolidation PRs while Python 3.11/3.12 continue to run the full changed-test slice, avoiding 3.10 runner OOM kills during collection. |
