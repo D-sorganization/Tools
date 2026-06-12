@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.392                                    |
-| **Last Spec Update**    | 2026-06-11                                 |
+| **Spec Version**        | 1.1.393                                    |
+| **Last Spec Update**    | 2026-06-12                                 |
 
 ## 2. Purpose & Mission
 
@@ -1200,6 +1200,13 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.393
+
+- 2026-06-12: refactor(data-processor) — move the shared
+  `RustBulkDataEngine` compatibility facade into `bulk_facade.py` while
+  preserving `data_processor.rust_engine` re-exports, keeping the CI
+  changed-file size budget green without changing runtime behavior.
 
 ### Version 1.1.392
 
