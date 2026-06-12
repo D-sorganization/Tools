@@ -3096,7 +3096,8 @@
       "ErrorCode",
       "ErrorDetail",
       "ResponseMetadata",
-      "StandardResponse"
+      "StandardResponse",
+      "StandardResponseBuilder"
     ],
     "symbols": {
       "ErrorCode": {
@@ -3109,7 +3110,7 @@
       "ErrorDetail": {
         "type": "class",
         "info": {
-          "bases": [],
+          "bases": ["BaseModel"],
           "methods": {
             "to_dict": {
               "args": [
@@ -3128,7 +3129,7 @@
       "ResponseMetadata": {
         "type": "class",
         "info": {
-          "bases": [],
+          "bases": ["BaseModel"],
           "methods": {
             "to_dict": {
               "args": [
@@ -3147,95 +3148,8 @@
       "StandardResponse": {
         "type": "class",
         "info": {
-          "bases": [],
+          "bases": ["BaseModel", "Generic[T]"],
           "methods": {
-            "__init__": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "status",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "data",
-                  "annotation": "dict[str, Any] | None",
-                  "default": "None",
-                  "kind": "arg"
-                },
-                {
-                  "name": "error",
-                  "annotation": "ErrorDetail | None",
-                  "default": "None",
-                  "kind": "arg"
-                },
-                {
-                  "name": "metadata",
-                  "annotation": "ResponseMetadata | None",
-                  "default": "None",
-                  "kind": "arg"
-                }
-              ],
-              "returns": null
-            },
-            "success": {
-              "args": [
-                {
-                  "name": "cls",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "data",
-                  "annotation": "dict[str, Any]",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "processing_time_ms",
-                  "annotation": "float",
-                  "default": "0.0",
-                  "kind": "arg"
-                },
-                {
-                  "name": "request_id",
-                  "annotation": "str | None",
-                  "default": "None",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "StandardResponse"
-            },
-            "error": {
-              "args": [
-                {
-                  "name": "cls",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "error",
-                  "annotation": "ErrorDetail",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "processing_time_ms",
-                  "annotation": "float",
-                  "default": "0.0",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "StandardResponse"
-            },
             "to_dict": {
               "args": [
                 {
@@ -3246,6 +3160,83 @@
                 }
               ],
               "returns": "dict[str, Any]"
+            }
+          }
+        }
+      },
+      "StandardResponseBuilder": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "success": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "data",
+                  "annotation": "Any",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "api_version",
+                  "annotation": "str",
+                  "default": "'1.0.0'",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "StandardResponse[Any]"
+            },
+            "error": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "code",
+                  "annotation": "ErrorCode",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "message",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "details",
+                  "annotation": "Any | None",
+                  "default": "None",
+                  "kind": "arg"
+                },
+                {
+                  "name": "api_version",
+                  "annotation": "str",
+                  "default": "'1.0.0'",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "StandardResponse[Any]"
             }
           }
         }
@@ -3257,7 +3248,8 @@
       "ErrorCode",
       "ErrorDetail",
       "ResponseMetadata",
-      "StandardResponse"
+      "StandardResponse",
+      "StandardResponseBuilder"
     ],
     "symbols": {
       "ErrorCode": {
@@ -3270,7 +3262,7 @@
       "ErrorDetail": {
         "type": "class",
         "info": {
-          "bases": [],
+          "bases": ["BaseModel"],
           "methods": {
             "to_dict": {
               "args": [
@@ -3289,7 +3281,7 @@
       "ResponseMetadata": {
         "type": "class",
         "info": {
-          "bases": [],
+          "bases": ["BaseModel"],
           "methods": {
             "to_dict": {
               "args": [
@@ -3308,95 +3300,8 @@
       "StandardResponse": {
         "type": "class",
         "info": {
-          "bases": [],
+          "bases": ["BaseModel", "Generic[T]"],
           "methods": {
-            "__init__": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "status",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "data",
-                  "annotation": "dict[str, Any] | None",
-                  "default": "None",
-                  "kind": "arg"
-                },
-                {
-                  "name": "error",
-                  "annotation": "ErrorDetail | None",
-                  "default": "None",
-                  "kind": "arg"
-                },
-                {
-                  "name": "metadata",
-                  "annotation": "ResponseMetadata | None",
-                  "default": "None",
-                  "kind": "arg"
-                }
-              ],
-              "returns": null
-            },
-            "success": {
-              "args": [
-                {
-                  "name": "cls",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "data",
-                  "annotation": "dict[str, Any]",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "processing_time_ms",
-                  "annotation": "float",
-                  "default": "0.0",
-                  "kind": "arg"
-                },
-                {
-                  "name": "request_id",
-                  "annotation": "str | None",
-                  "default": "None",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "StandardResponse"
-            },
-            "error": {
-              "args": [
-                {
-                  "name": "cls",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "error",
-                  "annotation": "ErrorDetail",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "processing_time_ms",
-                  "annotation": "float",
-                  "default": "0.0",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "StandardResponse"
-            },
             "to_dict": {
               "args": [
                 {
@@ -3407,6 +3312,83 @@
                 }
               ],
               "returns": "dict[str, Any]"
+            }
+          }
+        }
+      },
+      "StandardResponseBuilder": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "success": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "data",
+                  "annotation": "Any",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "api_version",
+                  "annotation": "str",
+                  "default": "'1.0.0'",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "StandardResponse[Any]"
+            },
+            "error": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "code",
+                  "annotation": "ErrorCode",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "message",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "details",
+                  "annotation": "Any | None",
+                  "default": "None",
+                  "kind": "arg"
+                },
+                {
+                  "name": "api_version",
+                  "annotation": "str",
+                  "default": "'1.0.0'",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "StandardResponse[Any]"
             }
           }
         }
@@ -19410,14 +19392,10 @@
     "__all__": ["COLORS", "get_stylesheet"],
     "symbols": {
       "COLORS": {
-        "type": "variable"
+        "type": "unknown"
       },
       "get_stylesheet": {
-        "type": "function",
-        "signature": {
-          "args": [],
-          "returns": "str"
-        }
+        "type": "unknown"
       }
     }
   },
@@ -33761,6 +33739,69 @@
   "utils/__init__.py": {
     "__all__": [],
     "symbols": {}
+  },
+  "utils/json_io.py": {
+    "__all__": ["safe_read_json", "safe_write_json"],
+    "symbols": {
+      "safe_read_json": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "file_path",
+              "annotation": "Path | str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "default",
+              "annotation": "Any",
+              "default": "None",
+              "kind": "arg"
+            }
+          ],
+          "returns": "Any"
+        }
+      },
+      "safe_write_json": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "file_path",
+              "annotation": "Path | str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "data",
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "indent",
+              "annotation": "int",
+              "default": "2",
+              "kind": "arg"
+            },
+            {
+              "name": "create_parents",
+              "annotation": "bool",
+              "default": "True",
+              "kind": "arg"
+            },
+            {
+              "name": "default",
+              "annotation": "Callable[[Any], Any] | None",
+              "default": "None",
+              "kind": "arg"
+            }
+          ],
+          "returns": "bool"
+        }
+      }
+    }
   },
   "utils/logging.py": {
     "__all__": [
