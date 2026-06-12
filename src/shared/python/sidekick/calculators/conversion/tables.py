@@ -542,6 +542,12 @@ _INCH_TO_METER = INCH_TO_METER  # 0.0254
 TORQUE_FACTORS: Mapping[str, float] = MappingProxyType(
     {
         "N·m": 1.0,
+        # Bare "nm" normalises to the SI nanometer (length); the torque
+        # newton-metre base unit is therefore also exposed under unambiguous,
+        # non-colliding spellings so it stays reachable (issue #3384). These
+        # clean to "newtonmetre"/"newtonmeter", distinct from length "nm".
+        "newton_metre": 1.0,
+        "newton_meter": 1.0,
         "kN·m": 1000.0,
         "mN·m": 0.001,
         "lbf·ft": _LBF_TO_N * _FOOT_TO_METER,  # ≈ 1.35582 N·m
