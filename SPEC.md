@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.374                                    |
+| **Spec Version**        | 1.1.375                                    |
 | **Last Spec Update**    | 2026-06-11                                 |
 
 ## 2. Purpose & Mission
@@ -722,6 +722,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-11 | 1.1.375 | fix(ci): set `fail-fast: false` on the CI Standard `tests` Python matrix. Only `tests (3.11)` is a required check; under the default `fail-fast: true` an infra crash in the non-required 3.10/3.12 lanes (SIGABRT/exit-134 from the Qt headless multi-widget segfault or an OOM kill on a saturated self-hosted runner) cancelled the required 3.11 lane before it ran, leaving consolidation PR #3380 permanently BLOCKED. Decoupling the lanes lets 3.11 report independently. |
 | 2026-06-11 | 1.1.374 | fix(ci): keep the Sidekick extended Qt-heavy unit suite on Python 3.11/3.12 while excluding it from the Python 3.10 compatibility lane, where PyQt aborts the interpreter on saturated self-hosted runners. |
 | 2026-06-11 | 1.1.373 | fix(ci): make the workflow validation PyYAML fallback explicit for mypy so quality-gate checks accept both full and lean runner environments. |
 | 2026-06-11 | 1.1.372 | fix(ci): make workflow lint validation tolerate lean runner environments where PyYAML cannot be fetched by adding stdlib fallback checks for workflow structure and blocking quality gates, while still using PyYAML when present. |
