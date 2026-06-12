@@ -5,13 +5,11 @@
 
 from __future__ import annotations
 
-from shared.python.theme.integration import ThemedWindowMixin
 import logging
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
-from numba import jit
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QFont, QTextCursor
 from PyQt6.QtWidgets import (
@@ -37,6 +35,8 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+
+from shared.python.theme.integration import ThemedWindowMixin
 
 from .api_mode import APIRenameManager, RenameProposal
 from .cache import ResultCache
@@ -187,9 +187,18 @@ class ProcessingThread(QThread):
         )
         return pdf_files
 
-    @jit(nopython=True, fastmath=True)
     def _process_pdf_files(self, pdf_files: list[Path]) -> None:
-        """Process PDF files in parallel using ThreadPoolExecutor."""
+        """Process PDF files in parallel using ThreadPoolExecutor.
+
+        This method performs file I/O, constructs ``ResultCache`` /
+        ``TransactionLog`` / ``GeminiTitleLLM`` / ``ThreadPoolExecutor`` objects
+        and emits Qt signals — none of which numba ``nopython`` mode can
+        compile. The previous ``@jit(nopython=True)`` decorator raised a numba
+        ``TypingError`` on first call; since that derives from ``NumbaError``
+        (not ``TypeError``) it escaped ``run()``'s ``except`` clause, killed the
+        QThread without emitting ``finished``, and left the UI permanently stuck
+        with Start disabled and Cancel enabled (issue #3319).
+        """
         if pdf_files is None:
             raise ValueError("pdf_files must be provided")
         cache = ResultCache(self.db_path)
