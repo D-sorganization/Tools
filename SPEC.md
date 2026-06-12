@@ -723,9 +723,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-
 | 2026-06-12 | 1.1.399 | test(ci): compact Sidekick Python REPL worker documentation so the QThread teardown hardening remains below the 500-line changed-file budget without changing runtime behavior. |
 | 2026-06-12 | 1.1.398 | fix(sidekick): retire Python REPL worker threads only after the finished signal and full QThread stop, keeping Linux/offscreen CI teardown from racing parented worker destruction while preserving cancellable execution controls. |
+| 2026-06-12 | 1.1.397 | test(conversion, #3384 #3388 #3389): add shared conversion-service policy coverage for normalization, validation, custom-unit warnings, gas-flow dispatch, syngas/performance helpers, and singleton conversion helpers so `src/shared/python/sidekick/calculators/conversion/service.py` stays above the changed-file coverage gate without changing production behavior. |
 | 2026-06-12 | 1.1.394 | chore(consolidation): refresh the quality-consolidation branch after the scientific-accuracy merge so the shared Sidekick process-calculator constants, signal calculus guards, and API baseline remain aligned with current main while preserving the data-processor facade split. |
 | 2026-06-11 | 1.1.391 | fix(sidekick): keep the Python REPL worker owned by the widget until its QThread has fully stopped, avoiding Linux/offscreen teardown aborts from premature deleteLater scheduling. |
 | 2026-06-11 | 1.1.390 | test(ci): keep the Sidekick Python REPL widget below the fleet file-size budget after QThread teardown hardening. |
