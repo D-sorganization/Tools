@@ -478,6 +478,25 @@ def get_segment_length_ratio(segment_name: str, gender_factor: float = 0.5) -> f
     return data.length_ratio
 
 
+def get_urdf_mass_ratios(gender_factor: float = 1.0) -> dict[str, float]:
+    """Get mass ratios for URDF builder, including composite segments."""
+    return {
+        "pelvis": get_segment_mass_ratio("pelvis", gender_factor),
+        "lumbar": get_segment_mass_ratio("lumbar", gender_factor),
+        "thorax": get_segment_mass_ratio("thorax", gender_factor),
+        "torso": get_segment_mass_ratio("lumbar", gender_factor)
+        + get_segment_mass_ratio("thorax", gender_factor),
+        "neck": get_segment_mass_ratio("neck", gender_factor),
+        "head": get_segment_mass_ratio("head", gender_factor),
+        "upper_arm": get_segment_mass_ratio("upper_arm", gender_factor),
+        "forearm": get_segment_mass_ratio("forearm", gender_factor),
+        "hand": get_segment_mass_ratio("hand", gender_factor),
+        "thigh": get_segment_mass_ratio("thigh", gender_factor),
+        "shin": get_segment_mass_ratio("shin", gender_factor),
+        "foot": get_segment_mass_ratio("foot", gender_factor),
+    }
+
+
 @precondition(lambda total_mass_kg: total_mass_kg > 0, "Total mass must be positive")
 @precondition(
     lambda gender_factor: 0.0 <= gender_factor <= 1.0,
@@ -624,3 +643,76 @@ def get_com_location(
     # COM is located along the longitudinal axis
     com_z = length_m * data.com_proximal_ratio
     return (0.0, 0.0, com_z)
+
+
+# =============================================================================
+# URDF Builder GUI Specific Ratios
+# =============================================================================
+
+# Composite mass ratios (torso = lumbar + thorax) derived from male canonical data
+URDF_MASS_RATIOS: dict[str, float] = {
+    "pelvis": _MALE_SEGMENTS["pelvis"].mass_ratio,
+    "lumbar": _MALE_SEGMENTS["lumbar"].mass_ratio,
+    "thorax": _MALE_SEGMENTS["thorax"].mass_ratio,
+    "torso": _MALE_SEGMENTS["lumbar"].mass_ratio + _MALE_SEGMENTS["thorax"].mass_ratio,
+    "neck": _MALE_SEGMENTS["neck"].mass_ratio,
+    "head": _MALE_SEGMENTS["head"].mass_ratio,
+    "upper_arm": _MALE_SEGMENTS["upper_arm"].mass_ratio,
+    "forearm": _MALE_SEGMENTS["forearm"].mass_ratio,
+    "hand": _MALE_SEGMENTS["hand"].mass_ratio,
+    "thigh": _MALE_SEGMENTS["thigh"].mass_ratio,
+    "shin": _MALE_SEGMENTS["shin"].mass_ratio,
+    "foot": _MALE_SEGMENTS["foot"].mass_ratio,
+}
+
+# Height ratios using URDF builder measurement conventions.
+# Some segment conventions differ from the simple humanoid builder ratios.
+URDF_HEIGHT_RATIOS: dict[str, float] = {
+    "pelvis": 0.078,
+    "torso": 0.278,
+    "head": 0.139,
+    "thigh": 0.245,
+    "shin": 0.246,
+    "upper_arm": 0.186,
+    "forearm": 0.146,
+    "hand": 0.058,
+    "foot": 0.039,
+}
+
+
+def get_simple_mass_ratios(gender_factor: float = 0.5) -> dict[str, float]:
+    """Get simple mass ratios for standard segments."""
+    keys = [
+        "head",
+        "neck",
+        "thorax",
+        "lumbar",
+        "pelvis",
+        "upper_arm",
+        "forearm",
+        "hand",
+        "thigh",
+        "shin",
+        "foot",
+    ]
+    return {k: DE_LEVA_DATA.get_segment_data(k, gender_factor).mass_ratio for k in keys}
+
+
+def get_simple_length_ratios(gender_factor: float = 0.5) -> dict[str, float]:
+    """Get simple length ratios for standard segments."""
+    keys = [
+        "head",
+        "neck",
+        "thorax",
+        "lumbar",
+        "pelvis",
+        "upper_arm",
+        "forearm",
+        "hand",
+        "thigh",
+        "shin",
+        "foot",
+    ]
+    return {
+        k: DE_LEVA_DATA.get_segment_data(k, gender_factor).length_ratio for k in keys
+    }

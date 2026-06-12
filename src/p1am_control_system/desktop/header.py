@@ -65,9 +65,7 @@ class HMIHeader(QWidget):
 
         # Title / Brand Label
         self.title_label = QLabel("P1AM GASIFICATION PLANT HMI", self)
-        self.title_label.setStyleSheet(
-            "font-weight: bold; font-size: 14pt; color: #ffffff;"
-        )
+        self.title_label.setStyleSheet("font-weight: bold; font-size: 14pt;")
         layout.addWidget(self.title_label)
 
         layout.addStretch()
@@ -75,7 +73,7 @@ class HMIHeader(QWidget):
         # Connection Status Label
         self.conn_label = QLabel("PLC Connection: Offline", self)
         self.conn_label.setStyleSheet(
-            "font-weight: 500; font-size: 10pt; color: #ff375f; padding: 4px 8px; border: 1px solid #ff375f; border-radius: 4px;"
+            "font-weight: 500; font-size: 10pt; color: red; padding: 4px 8px; border: 1px solid red; border-radius: 4px;"
         )
         layout.addWidget(self.conn_label)
 
@@ -96,9 +94,7 @@ class HMIHeader(QWidget):
         self.ack_btn = QPushButton("ACK ALARMS", self)
         self.ack_btn.clicked.connect(self._on_ack_clicked)
         self.ack_btn.setMinimumWidth(120)
-        self.ack_btn.setStyleSheet(
-            "font-weight: bold; background-color: #24272e; color: #e1e4e8; border: 1px solid #3a3f4a;"
-        )
+        self.ack_btn.setStyleSheet("font-weight: bold;")
         layout.addWidget(self.ack_btn)
 
         # E-Stop Button (Checkable status button)
@@ -116,9 +112,7 @@ class HMIHeader(QWidget):
         layout.addWidget(self.theme_btn)
 
         # Apply default QSS styles for the header container
-        self.setStyleSheet(
-            "background-color: #1a1d23; border-bottom: 2px solid #3a3f4a; min-height: 50px;"
-        )
+        self.setStyleSheet("min-height: 50px;")
 
     def _on_role_changed(self, text: str) -> None:
         if text == "Admin":
@@ -160,14 +154,14 @@ class HMIHeader(QWidget):
             self.estop_btn.setText("E-STOP PRESSED")
             self.estop_btn.setStyleSheet(
                 "QPushButton {"
-                "  background-color: #FF375F; color: white; border: 2px solid #ffffff; font-weight: bold; font-size: 11pt;"
+                "  background-color: red; color: white; font-weight: bold; font-size: 11pt;"
                 "}"
             )
         else:
             self.estop_btn.setText("E-STOP CLEAR")
             self.estop_btn.setStyleSheet(
                 "QPushButton {"
-                "  background-color: #30D158; color: white; border: 1px solid #24272e; font-weight: bold; font-size: 11pt;"
+                "  background-color: green; color: white; font-weight: bold; font-size: 11pt;"
                 "}"
             )
 
@@ -189,15 +183,15 @@ class HMIHeader(QWidget):
 
         if state == "Connected":
             self.conn_label.setStyleSheet(
-                "font-weight: bold; font-size: 10pt; color: #30D158; padding: 4px 8px; border: 1px solid #30D158; border-radius: 4px;"
+                "font-weight: bold; font-size: 10pt; color: green; padding: 4px 8px; border: 1px solid green; border-radius: 4px;"
             )
         elif state == "Simulating":
             self.conn_label.setStyleSheet(
-                "font-weight: bold; font-size: 10pt; color: #ffd60a; padding: 4px 8px; border: 1px solid #ffd60a; border-radius: 4px;"
+                "font-weight: bold; font-size: 10pt; color: orange; padding: 4px 8px; border: 1px solid orange; border-radius: 4px;"
             )
         else:
             self.conn_label.setStyleSheet(
-                "font-weight: bold; font-size: 10pt; color: #ff375f; padding: 4px 8px; border: 1px solid #ff375f; border-radius: 4px;"
+                "font-weight: bold; font-size: 10pt; color: red; padding: 4px 8px; border: 1px solid red; border-radius: 4px;"
             )
 
     def set_alarms_state(self, has_hl: bool, has_hhll: bool) -> None:
@@ -206,9 +200,7 @@ class HMIHeader(QWidget):
         self._has_hhll_alarms = has_hhll
         if not has_hl and not has_hhll:
             # Reset button styling immediately if no alarms
-            self.ack_btn.setStyleSheet(
-                "font-weight: bold; background-color: #24272e; color: #e1e4e8; border: 1px solid #3a3f4a;"
-            )
+            self.ack_btn.setStyleSheet("font-weight: bold;")
 
     def _toggle_flash(self) -> None:
         if not self._has_hl_alarms and not self._has_hhll_alarms:
@@ -221,15 +213,13 @@ class HMIHeader(QWidget):
             if self._has_hhll_alarms:
                 # Flash Red for HH/LL alarms
                 self.ack_btn.setStyleSheet(
-                    "font-weight: bold; background-color: #FF375F; color: white; border: 1px solid #ffffff;"
+                    "font-weight: bold; background-color: red; color: white;"
                 )
             elif self._has_hl_alarms:
                 # Flash Yellow for H/L alarms
                 self.ack_btn.setStyleSheet(
-                    "font-weight: bold; background-color: #FFD60A; color: black; border: 1px solid #ffffff;"
+                    "font-weight: bold; background-color: orange; color: black;"
                 )
         else:
             # Default state color during flash
-            self.ack_btn.setStyleSheet(
-                "font-weight: bold; background-color: #24272e; color: #e1e4e8; border: 1px solid #3a3f4a;"
-            )
+            self.ack_btn.setStyleSheet("font-weight: bold;")

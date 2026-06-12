@@ -68,8 +68,26 @@ def _fallback_calculate(request: SyngasWaterRequest) -> SyngasWaterResponse:
     """Basic fallback when full calculator is not available."""
     import math
 
+    try:
+        from sidekick.process_calculators.constants import (
+            ANTOINE_WATER_A,
+            ANTOINE_WATER_B,
+            ANTOINE_WATER_C,
+        )
+        from sidekick.utils.unit_constants import (
+            CELSIUS_TO_KELVIN_OFFSET,
+            R_UNIVERSAL,
+        )
+
+        A, B, C = ANTOINE_WATER_A, ANTOINE_WATER_B, ANTOINE_WATER_C
+        r_gas = R_UNIVERSAL
+        c_to_k = CELSIUS_TO_KELVIN_OFFSET
+    except ImportError:
+        A, B, C = 8.07131, 1730.63, 233.426
+        r_gas = 8.314
+        c_to_k = 273.15
+
     # Antoine equation for water vapor pressure
-    A, B, C = 8.07131, 1730.63, 233.426
     log_p = A - B / (C + request.temperature_c)
     vp_bar = math.pow(10, log_p) * 133.322 / 1e5
 
@@ -88,14 +106,14 @@ def _fallback_calculate(request: SyngasWaterRequest) -> SyngasWaterResponse:
     g_m3 = (
         mole_frac
         * (18.015 * request.pressure_bar * 1e5)
-        / (8.314 * (request.temperature_c + 273.15))
+        / (r_gas * (request.temperature_c + c_to_k))
     )
     lb_mmscf = ppmv * 18.015 / (385.5 * 453.592) * 1e6
 
     # Dew point via inverse Antoine
     pp = mole_frac * request.pressure_bar
     dew_c = (
-        B / (A - math.log10(max(pp * 1e5 / 133.322, 1e-10))) - C if pp > 0 else -273.15
+        B / (A - math.log10(max(pp * 1e5 / 133.322, 1e-10))) - C if pp > 0 else -c_to_k
     )
 
     margin = request.temperature_c - dew_c

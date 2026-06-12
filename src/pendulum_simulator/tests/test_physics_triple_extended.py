@@ -68,9 +68,7 @@ def moving_state() -> np.ndarray:
 
 
 class TestMassMatrixComponents:
-    def test_returns_dict_with_required_keys(
-        self, params: TriplePendulumParams
-    ) -> None:
+    def test_returns_dict_with_required_keys(self, params: TriplePendulumParams) -> None:
         result = mass_matrix_components(0.0, 0.0, params)
         assert isinstance(result, dict)
         for key in ("M11", "M22", "M33", "M_full"):
@@ -180,9 +178,7 @@ class TestLinearAccelerations:
 
 
 class TestKineticEnergy:
-    def test_zero_at_rest(
-        self, params: TriplePendulumParams, rest_state: np.ndarray
-    ) -> None:
+    def test_zero_at_rest(self, params: TriplePendulumParams, rest_state: np.ndarray) -> None:
         T = kinetic_energy(rest_state, params)
         assert T == pytest.approx(0.0, abs=1e-12)
 
@@ -191,9 +187,7 @@ class TestKineticEnergy:
         T = kinetic_energy(state, params)
         assert T > 0
 
-    def test_scales_quadratically_with_velocity(
-        self, params: TriplePendulumParams
-    ) -> None:
+    def test_scales_quadratically_with_velocity(self, params: TriplePendulumParams) -> None:
         """Doubling velocity should roughly quadruple KE."""
         state_slow = np.array([0.0, 0.0, 0.0, 0.5, 0.0, 0.0])
         state_fast = np.array([0.0, 0.0, 0.0, 1.0, 0.0, 0.0])
@@ -201,9 +195,7 @@ class TestKineticEnergy:
         T_fast = kinetic_energy(state_fast, params)
         assert T_fast == pytest.approx(4 * T_slow, rel=1e-6)
 
-    def test_finite(
-        self, params: TriplePendulumParams, moving_state: np.ndarray
-    ) -> None:
+    def test_finite(self, params: TriplePendulumParams, moving_state: np.ndarray) -> None:
         assert np.isfinite(kinetic_energy(moving_state, params))
 
 
@@ -257,9 +249,7 @@ class TestTotalEnergy:
         V = potential_energy(moving_state, params)
         assert E == pytest.approx(T + V, rel=1e-8)
 
-    def test_finite(
-        self, params: TriplePendulumParams, moving_state: np.ndarray
-    ) -> None:
+    def test_finite(self, params: TriplePendulumParams, moving_state: np.ndarray) -> None:
         assert np.isfinite(total_energy(moving_state, params))
 
     def test_more_than_potential_alone(

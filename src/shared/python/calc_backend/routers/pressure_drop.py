@@ -9,14 +9,12 @@ See issue #613 (calc backend) and #2411 (API standardization).
 from __future__ import annotations
 
 import logging
-import time
 from typing import Any, cast
 
 from fastapi import APIRouter, HTTPException
 from sidekick.api import (
     ErrorCode,
-    ErrorDetail,
-    StandardResponse,
+    StandardResponseBuilder,
 )
 from sidekick.process_calculators.pressure_drop_calculator import (
     PressureDropCalculator,
@@ -38,8 +36,8 @@ def calculate_pressure_drop(
 ) -> dict[str, Any]:
     """Calculate pressure drop using Darcy-Weisbach equation.
 
-    Delegates to PressureDropCalculator from upstream_drift_tools to avoid
-    duplicating the Darcy-Weisbach implementation inline. See GH1705.
+    Delegates to the shared Sidekick PressureDropCalculator to avoid duplicating
+    the Darcy-Weisbach implementation inline. See GH1705.
 
     Uses standardized response format (issue #2411).
 
@@ -85,7 +83,7 @@ def calculate_pressure_drop(
         }
         ```
     """
-    start_time = time.perf_counter()
+    builder = StandardResponseBuilder()
 
     try:
         result: PressureDropResult = _calculator.calculate_pressure_drop(
@@ -99,8 +97,7 @@ def calculate_pressure_drop(
             viscosity_pa_s=request.viscosity_pa_s,
         )
     except (ValueError, ZeroDivisionError, OverflowError, TypeError) as exc:
-        processing_time_ms = (time.perf_counter() - start_time) * 1000
-        error = ErrorDetail(
+        response = builder.error(
             code=ErrorCode.INVALID_INPUT,
             message=f"Pressure drop calculation failed: {str(exc)}",
             details={
@@ -108,13 +105,7 @@ def calculate_pressure_drop(
                 "exception_message": str(exc),
             },
         )
-        response = StandardResponse.error(
-            error=error,
-            processing_time_ms=processing_time_ms,
-        )
         raise HTTPException(status_code=422, detail=response.to_dict())  # noqa: B904
-
-    processing_time_ms = (time.perf_counter() - start_time) * 1000
 
     response_data = PressureDropResponse(
         pressure_drop_pa=result.pressure_drop_pa,
@@ -126,8 +117,7 @@ def calculate_pressure_drop(
         viscosity_pa_s=result.viscosity,
     ).model_dump()
 
-    response = StandardResponse.success(
+    response = builder.success(
         data=response_data,
-        processing_time_ms=processing_time_ms,
     )
     return cast(dict[str, Any], response.to_dict())

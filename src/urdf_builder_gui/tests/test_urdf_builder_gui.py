@@ -8,7 +8,7 @@ Tests cover:
   - urdf_generator: generate_urdf_xml, validate_urdf_structure, template
     dispatch, config propagation, XML validity.
   - preview_generator: generate_preview_text, DbC, content validation.
-  - theme: build_stylesheet, palette structure.
+  - theme: get_stylesheet, palette structure.
   - contracts: require/ensure, PreconditionError/PostconditionError.
 
 Replaces the old mock-heavy tests with real functional tests.
@@ -20,6 +20,7 @@ import xml.etree.ElementTree as ET
 
 import pytest
 
+from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA, get_stylesheet
 from urdf_builder_gui.anthropometric_model import (
     HEIGHT_RATIOS,
     MASS_RATIOS,
@@ -40,7 +41,6 @@ from urdf_builder_gui.contracts import (
     require,
 )
 from urdf_builder_gui.preview_generator import generate_preview_text
-from urdf_builder_gui.theme import CATPPUCCIN_MOCHA, build_stylesheet
 from urdf_builder_gui.urdf_generator import (
     generate_urdf_xml,
     validate_urdf_structure,
@@ -91,19 +91,19 @@ class TestTheme:
             assert val.startswith("#"), f"{key} is not a hex colour"
             assert len(val) == 7, f"{key} must be #RRGGBB"
 
-    def test_build_stylesheet_returns_string(self) -> None:
-        ss = build_stylesheet()
+    def test_get_stylesheet_returns_string(self) -> None:
+        ss = get_stylesheet()
         assert isinstance(ss, str)
         assert "QMainWindow" in ss
         assert "QPushButton" in ss
 
-    def test_build_stylesheet_with_custom_palette(self) -> None:
+    def test_get_stylesheet_with_custom_palette(self) -> None:
         custom = {**CATPPUCCIN_MOCHA, "base": "#000000"}
-        ss = build_stylesheet(custom)
+        ss = get_stylesheet(custom)
         assert "#000000" in ss
 
-    def test_build_stylesheet_contains_all_widgets(self) -> None:
-        ss = build_stylesheet()
+    def test_get_stylesheet_contains_all_widgets(self) -> None:
+        ss = get_stylesheet()
         widgets = [
             "QMainWindow",
             "QWidget",
@@ -333,7 +333,7 @@ class TestURDFConfig:
         """URDFConfig should be immutable."""
         cfg = URDFConfig()
         with pytest.raises(AttributeError):
-            cfg.robot_name = "changed"  # type: ignore[misc]
+            cfg.robot_name = "changed"
 
 
 # ═══════════════════════════════════════════════════════════════════════

@@ -66,7 +66,7 @@ jobs:
 
           case "$MODE" in
             local)
-              echo "runner=d-sorg-fleet-fast-io" >> $GITHUB_OUTPUT
+              echo "runner=d-sorg-fleet-fast-io" >> "$GITHUB_OUTPUT"
               echo "Routing to fast-I/O self-hosted fleet (mode=local)"
               ;;
             disabled)
@@ -78,7 +78,7 @@ jobs:
                 --jq '[.runners[] | select(.status == "online") | select(.busy == false) | select(.labels[].name == "d-sorg-fleet-fast-io")] | length' \
                 2>/dev/null || echo "0")
               if [[ "$AVAILABLE" -gt 0 ]]; then
-                echo "runner=d-sorg-fleet-fast-io" >> $GITHUB_OUTPUT
+                echo "runner=d-sorg-fleet-fast-io" >> "$GITHUB_OUTPUT"
                 echo "$AVAILABLE idle fast-I/O fleet runner(s) - routing locally"
               else
                 echo "::error::No local self-hosted runner available; failing closed"
@@ -108,17 +108,45 @@ jobs:
     env:
       CARGO_BUILD_JOBS: "1"
       CARGO_INCREMENTAL: "0"
+      NPM_CONFIG_CACHE: .npm-cache
       RUST_MIN_STACK: "536870912"
       RUSTFLAGS: "-Cdebuginfo=0"
     steps:
       - uses: actions/checkout@v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: "24"
-          cache: "npm"
-          cache-dependency-path: package-lock.json
+      - name: Use local Node.js 24 toolcache
+        shell: bash
+        run: |
+          node_dir=""
+          if [ -n "${RUNNER_TEMP:-}" ]; then
+            runner_root="$(dirname "$(dirname "$RUNNER_TEMP")")"
+            for candidate in \
+              "$runner_root"/externals/node24/bin \
+              "$runner_root"/externals/node20/bin
+            do
+              if [ -x "$candidate/node" ] && [ -x "$candidate/npm" ]; then
+                node_dir="$candidate"
+                break
+              fi
+            done
+          fi
+          for candidate in \
+            /opt/hostedtoolcache/node/24*/x64/bin \
+            /opt/hostedtoolcache/node/22*/x64/bin \
+            /opt/hostedtoolcache/node/20*/x64/bin
+          do
+            if [ -x "$candidate/node" ] && [ -x "$candidate/npm" ]; then
+              node_dir="$candidate"
+              break
+            fi
+          done
+          if [ ! -x "$node_dir/node" ]; then
+            echo "::error::Expected local Node.js 20+ under runner externals or /opt/hostedtoolcache/node"
+            exit 1
+          fi
+          echo "$node_dir" >> "$GITHUB_PATH"
+          "$node_dir/node" --version
+          PATH="$node_dir:$PATH" "$node_dir/npm" --version
 
       - name: Expose preinstalled Rustup
         shell: bash
@@ -151,12 +179,17 @@ jobs:
 
       - name: Install Linux dependencies
         run: |
-          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock && sudo apt-get -o DPkg::Lock::Timeout=300 update || true
-          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock && sudo apt-get -o DPkg::Lock::Timeout=300 update --fix-missing || true; sudo apt-get -o DPkg::Lock::Timeout=300 install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done
+          sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock
+          sudo apt-get -o DPkg::Lock::Timeout=300 update || true
+          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done
+          sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock
+          sudo apt-get -o DPkg::Lock::Timeout=300 update --fix-missing || true
+          sudo apt-get -o DPkg::Lock::Timeout=300 install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
       - name: Install frontend dependencies
         working-directory: ${{ matrix.path }}
-        run: npm ci
+        run: npm ci --prefer-online
 
       - name: TypeScript check
         working-directory: ${{ matrix.path }}
@@ -208,12 +241,49 @@ jobs:
     env:
       CARGO_BUILD_JOBS: "1"
       CARGO_INCREMENTAL: "0"
+      NPM_CONFIG_CACHE: .npm-cache
       RUST_MIN_STACK: "536870912"
       RUSTFLAGS: "-Cdebuginfo=0"
     steps:
       - uses: actions/checkout@v6
 
-      - name: Setup Node.js
+      - name: Use local Node.js 24 toolcache (Linux)
+        if: matrix.platform.label == 'linux-x64'
+        shell: bash
+        run: |
+          node_dir=""
+          if [ -n "${RUNNER_TEMP:-}" ]; then
+            runner_root="$(dirname "$(dirname "$RUNNER_TEMP")")"
+            for candidate in \
+              "$runner_root"/externals/node24/bin \
+              "$runner_root"/externals/node20/bin
+            do
+              if [ -x "$candidate/node" ] && [ -x "$candidate/npm" ]; then
+                node_dir="$candidate"
+                break
+              fi
+            done
+          fi
+          for candidate in \
+            /opt/hostedtoolcache/node/24*/x64/bin \
+            /opt/hostedtoolcache/node/22*/x64/bin \
+            /opt/hostedtoolcache/node/20*/x64/bin
+          do
+            if [ -x "$candidate/node" ] && [ -x "$candidate/npm" ]; then
+              node_dir="$candidate"
+              break
+            fi
+          done
+          if [ ! -x "$node_dir/node" ]; then
+            echo "::error::Expected local Node.js 20+ under runner externals or /opt/hostedtoolcache/node"
+            exit 1
+          fi
+          echo "$node_dir" >> "$GITHUB_PATH"
+          "$node_dir/node" --version
+          PATH="$node_dir:$PATH" "$node_dir/npm" --version
+
+      - name: Setup Node.js (Windows)
+        if: matrix.platform.label == 'windows-x64'
         uses: actions/setup-node@v6
         with:
           node-version: "24"
@@ -275,12 +345,17 @@ jobs:
       - name: Install Linux dependencies
         if: matrix.platform.label == 'linux-x64'
         run: |
-          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock && sudo apt-get -o DPkg::Lock::Timeout=300 update || true
-          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock && sudo apt-get -o DPkg::Lock::Timeout=300 update --fix-missing || true; sudo apt-get -o DPkg::Lock::Timeout=300 install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done
+          sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock
+          sudo apt-get -o DPkg::Lock::Timeout=300 update || true
+          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done
+          sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock
+          sudo apt-get -o DPkg::Lock::Timeout=300 update --fix-missing || true
+          sudo apt-get -o DPkg::Lock::Timeout=300 install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
       - name: Install frontend dependencies
         working-directory: ${{ matrix.app.path }}
-        run: npm ci
+        run: npm ci --prefer-online
 
       - name: Build frontend
         working-directory: ${{ matrix.app.path }}

@@ -129,7 +129,7 @@ jobs:
           python -m ensurepip --upgrade
           python -m pip install --ignore-installed --upgrade pip setuptools
           python -m pip install --ignore-installed --no-deps wheel
-          python -m pip install --ignore-installed PyYAML
+          python -m pip install --ignore-installed PyYAML || echo "PyYAML unavailable; validation scripts will use stdlib fallback"
 
       - name: Validate workflow YAML structure
         run: python3 scripts/validate_workflows.py

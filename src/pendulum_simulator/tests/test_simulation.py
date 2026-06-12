@@ -134,9 +134,7 @@ class TestSimulationBasics:
             assert len(result.t) == 10
             assert np.isclose(result.t[1] - result.t[0], 0.1)
 
-    def test_native_backend_too_few_points(
-        self, default_params: PendulumParams
-    ) -> None:
+    def test_native_backend_too_few_points(self, default_params: PendulumParams) -> None:
         import unittest.mock as mock
 
         with (
@@ -211,16 +209,13 @@ class TestEnergyConservation:
         )
         E0 = total_energy(result.states[0], equal_params)
         energies = np.array(
-            [
-                total_energy(result.states[i], equal_params)
-                for i in range(result.n_steps)
-            ]
+            [total_energy(result.states[i], equal_params) for i in range(result.n_steps)]
         )
         max_drift = np.max(np.abs(energies - E0))
         relative_drift = max_drift / abs(E0) if abs(E0) > 1e-10 else max_drift
-        assert (
-            relative_drift < 1e-3
-        ), f"Energy drift {relative_drift:.2e} exceeds 0.1% threshold"
+        assert relative_drift < 1e-3, (
+            f"Energy drift {relative_drift:.2e} exceeds 0.1% threshold"
+        )
 
 
 class TestSimulationAccessors:

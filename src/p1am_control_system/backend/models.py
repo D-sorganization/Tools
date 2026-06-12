@@ -1,11 +1,10 @@
-# mypy: ignore-errors
 from datetime import datetime
 
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel
 from sqlmodel import Field, SQLModel
 
 
-class TagLog(SQLModel, table=True):
+class TagLog(SQLModel, table=True):  # type: ignore[call-arg]
     """SQLModel representing a logged tag state in the database."""
 
     id: int | None = Field(default=None, primary_key=True)
@@ -17,14 +16,14 @@ class TagLog(SQLModel, table=True):
     )
 
 
-class PlantArea(SQLModel, table=True):
+class PlantArea(SQLModel, table=True):  # type: ignore[call-arg]
     """SQLModel representing a physical plant area."""
 
     id: int | None = Field(default=None, primary_key=True)
     name: str = Field(index=True, unique=True)
 
 
-class PlantUnit(SQLModel, table=True):
+class PlantUnit(SQLModel, table=True):  # type: ignore[call-arg]
     """SQLModel representing a plant unit within an area."""
 
     id: int | None = Field(default=None, primary_key=True)
@@ -32,7 +31,7 @@ class PlantUnit(SQLModel, table=True):
     area_id: int = Field(foreign_key="plantarea.id")
 
 
-class PlantEquipment(SQLModel, table=True):
+class PlantEquipment(SQLModel, table=True):  # type: ignore[call-arg]
     """SQLModel representing an equipment module within a unit."""
 
     id: int | None = Field(default=None, primary_key=True)
@@ -40,7 +39,7 @@ class PlantEquipment(SQLModel, table=True):
     unit_id: int = Field(foreign_key="plantunit.id")
 
 
-class TagDefinitionDb(SQLModel, table=True):
+class TagDefinitionDb(SQLModel, table=True):  # type: ignore[call-arg]
     """SQLModel representing a DB-backed tag definition."""
 
     id: int | None = Field(default=None, primary_key=True)
@@ -55,7 +54,7 @@ class TagDefinitionDb(SQLModel, table=True):
     equipment_id: int | None = Field(default=None, foreign_key="plantequipment.id")
 
 
-class EventLog(SQLModel, table=True):
+class EventLog(SQLModel, table=True):  # type: ignore[call-arg]
     """SQLModel representing an event or alarm log in the database."""
 
     id: int | None = Field(default=None, primary_key=True)
@@ -86,16 +85,6 @@ class InterlockConfig(BaseModel):
     low_limit: float
     high_limit: float
     hihi_limit: float
-
-    @model_validator(mode="after")
-    def validate_limits(self) -> "InterlockConfig":
-        if self.low_limit > self.high_limit:
-            raise ValueError("low_limit must be less than or equal to high_limit")
-        if self.lolo_limit > self.low_limit:
-            raise ValueError("lolo_limit must be less than or equal to low_limit")
-        if self.high_limit > self.hihi_limit:
-            raise ValueError("high_limit must be less than or equal to hihi_limit")
-        return self
 
 
 class RoutingConfig(BaseModel):

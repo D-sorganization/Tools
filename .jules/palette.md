@@ -19,3 +19,6 @@
 ## 2024-06-05 - Preserving existing aria-describedby for dynamic validation
 **Learning:** When dynamically associating a validation error message with an input field using `aria-describedby`, setting the attribute blindly will overwrite any existing helpful associations (like an input hint ID).
 **Action:** Always concatenate the error message ID with any existing hint IDs (e.g., `aria-describedby="errorId hintId"`) to ensure screen readers announce both the validation error and the original helper text. When clearing the error, restore the `aria-describedby` to just the hint ID.
+## 2024-06-11 - Dynamic Input ID Generation for Screen Readers
+**Learning:** Hardcoded IDs in reusable React components (like `InputField` in `FinancialCalculator.tsx`) lead to ID collisions when rendered multiple times. This breaks `<label htmlFor="...">` associations, severely impacting screen reader accessibility as the label will only associate with the first instance of the ID on the page.
+**Action:** Always use React's `useId()` hook within reusable components to dynamically generate unique, accessible, and SSR-safe IDs for `htmlFor` and `id` bindings.

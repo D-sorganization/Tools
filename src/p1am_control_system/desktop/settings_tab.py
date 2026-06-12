@@ -31,7 +31,7 @@ class SettingsTab(QWidget):
         layout.setSpacing(15)
 
         title = QLabel("Dashboard Settings", self)
-        title.setStyleSheet("font-weight: bold; font-size: 14pt; color: #ffffff;")
+        title.setStyleSheet("font-weight: bold; font-size: 14pt;")
         layout.addWidget(title)
 
         # Tab Visibility settings card

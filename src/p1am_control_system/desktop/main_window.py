@@ -6,10 +6,9 @@ import logging
 import os
 import time
 
-import requests
 from dotenv import load_dotenv
 from PyQt6.QtCore import Qt, QThread, pyqtSignal, pyqtSlot
-from PyQt6.QtGui import QColor
+from PyQt6.QtGui import QColor, QPalette
 from PyQt6.QtWidgets import (
     QDockWidget,
     QListWidget,
@@ -35,6 +34,7 @@ from p1am_control_system.desktop.routing_tab import RoutingTab
 from p1am_control_system.desktop.settings_tab import SettingsTab
 from p1am_control_system.desktop.sidebar import InspectorSidebar
 from p1am_control_system.desktop.trends_tab import TrendsTab
+from p1am_control_system.desktop.workers import HttpWorker
 
 logger = logging.getLogger("p1am_control.desktop.main_window")
 
@@ -191,9 +191,7 @@ class HMIMainWindow(QMainWindow):
         # 4. Bottom Event Log
         self.log_list = QListWidget(self)
         self.log_list.setMaximumHeight(120)
-        self.log_list.setStyleSheet(
-            "background-color: #1a1d23; color: #a9b2c3; font-family: Consolas, monospace;"
-        )
+        self.log_list.setStyleSheet("font-family: Consolas, monospace;")
         main_layout.addWidget(self.log_list)
 
         # 5. Inspector Sidebar Dock (Left)
@@ -214,25 +212,29 @@ class HMIMainWindow(QMainWindow):
 
     def _load_routing_config(self) -> None:
         """Fetch current PLC configuration routing parameters from FastAPI."""
-        try:
-            resp = requests.get(f"{self.backend_url}/api/routing", timeout=1.5)
-            if resp.status_code == 200:
-                from models import RoutingConfig
+        self.routing_worker = HttpWorker(
+            "GET", f"{self.backend_url}/api/routing", timeout=1.5
+        )
+        self.routing_worker.success.connect(self._on_load_routing_config_success)
+        self.routing_worker.error.connect(self._on_load_routing_config_error)
+        self.routing_worker.start()
 
-                self.routing_config = RoutingConfig(**resp.json())
+    def _on_load_routing_config_success(self, data):
+        from models import RoutingConfig
 
-                # Pass configuration to sub-widgets
-                self.routing_tab.set_routing_config(self.routing_config)
-                self.control_tab.set_routing_config(self.routing_config)
-                self.inspector_sidebar.set_routing_config(self.routing_config)
+        self.routing_config = RoutingConfig(**data)
 
-                logger.info(
-                    "Successfully fetched and loaded PLC Routing configuration."
-                )
-            else:
-                logger.error(f"Failed to fetch routing config: {resp.text}")
-        except Exception as e:
-            logger.error(f"Could not reach backend to load routing configuration: {e}")
+        # Pass configuration to sub-widgets
+        self.routing_tab.set_routing_config(self.routing_config)
+        self.control_tab.set_routing_config(self.routing_config)
+        self.inspector_sidebar.set_routing_config(self.routing_config)
+
+        logger.info("Successfully fetched and loaded PLC Routing configuration.")
+
+    def _on_load_routing_config_error(self, err_msg):
+        logger.error(
+            f"Could not reach backend to load routing configuration: {err_msg}"
+        )
 
     @pyqtSlot(str, bool)
     def _handle_tab_visibility(self, tab_key: str, visible: bool) -> None:
@@ -353,23 +355,23 @@ class HMIMainWindow(QMainWindow):
         severity = "INFO"
         event_type = "info"
         if level == "ALARM":
-            item.setForeground(QColor("#FF375F"))  # Red
+            item.setForeground(QColor(Qt.GlobalColor.red))
             severity = "CRITICAL"
             event_type = "alarm_trip"
         elif level == "CLEAR":
-            item.setForeground(QColor("#30D158"))  # Green
+            item.setForeground(QColor(Qt.GlobalColor.darkGreen))
             severity = "INFO"
             event_type = "alarm_clear"
         elif level == "ACTION":
-            item.setForeground(QColor("#4facfe"))  # Blue
+            item.setForeground(QColor(Qt.GlobalColor.blue))
             severity = "INFO"
             event_type = "user_action"
         elif level == "WARN":
-            item.setForeground(QColor("#FFD60A"))  # Yellow
+            item.setForeground(QColor(Qt.GlobalColor.darkYellow))
             severity = "WARNING"
             event_type = "warning"
         else:
-            item.setForeground(QColor("#e1e4e8"))  # Gray
+            item.setForeground(self.palette().color(QPalette.ColorRole.WindowText))
             severity = "INFO"
             event_type = "info"
 
@@ -386,7 +388,7 @@ class HMIMainWindow(QMainWindow):
             )
             # Update viewer if tab is active
             if hasattr(self, "event_log_viewer"):
-                self.event_log_viewer.request_refresh()
+                self.event_log_viewer.apply_filters()
         except Exception as e:
             logger.error(f"Failed to log event to database: {e}")
 
@@ -401,20 +403,33 @@ class HMIMainWindow(QMainWindow):
     @pyqtSlot(bool)
     def _on_estop_triggered(self, active: bool) -> None:
         if active:
-            try:
-                resp = requests.post(f"{self.backend_url}/api/estop", timeout=1.0)
-                if resp.status_code == 200:
-                    self.log_event(
-                        "ALARM", "EMERGENCY STOP SHUTDOWN COMMAND SENT TO PLC."
-                    )
-                else:
-                    self.log_event(
-                        "ALARM", f"Failed to send E-STOP command: {resp.text}"
-                    )
-            except Exception as e:
-                self.log_event("ALARM", f"E-STOP communication failed: {e}")
+            self.estop_worker = HttpWorker(
+                "POST", f"{self.backend_url}/api/estop", timeout=1.0
+            )
+            self.estop_worker.success.connect(self._on_estop_success)
+            self.estop_worker.error.connect(self._on_estop_error)
+            self.estop_worker.start()
         else:
-            self.log_event("ACTION", "E-STOP state cleared. Normal operations resumed.")
+            self.estop_clear_worker = HttpWorker(
+                "POST", f"{self.backend_url}/api/estop/clear", timeout=1.0
+            )
+            self.estop_clear_worker.success.connect(
+                lambda data: self.log_event(
+                    "ACTION", "E-STOP state cleared. Normal operations resumed."
+                )
+            )
+            self.estop_clear_worker.error.connect(
+                lambda err: self.log_event(
+                    "ALARM", f"Failed to clear E-STOP state: {err}"
+                )
+            )
+            self.estop_clear_worker.start()
+
+    def _on_estop_success(self, data):
+        self.log_event("ALARM", "EMERGENCY STOP SHUTDOWN COMMAND SENT TO PLC.")
+
+    def _on_estop_error(self, err_msg):
+        self.log_event("ALARM", f"Failed to send E-STOP command: {err_msg}")
 
     @pyqtSlot()
     def _on_alarm_acknowledged(self) -> None:

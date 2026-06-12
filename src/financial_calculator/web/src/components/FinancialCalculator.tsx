@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useId } from 'react'
 
 // Catppuccin Mocha colors
 const colors = {
@@ -192,7 +192,7 @@ function FinancialCalculator() {
 
           <button
             onClick={calculate}
-            className="w-full py-3 rounded-lg font-bold text-lg transition-colors"
+            className="w-full py-3 rounded-lg font-bold text-lg transition-colors hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#89b4fa] focus-visible:ring-offset-[#1e1e2e]"
             style={{ backgroundColor: colors.blue, color: colors.base }}
           >
             Calculate Financial Model
@@ -240,17 +240,19 @@ interface InputFieldProps {
 }
 
 function InputField({ label, value, onChange, min = 0, max = 100, step = 1 }: InputFieldProps) {
+  const inputId = useId()
   return (
     <div className="flex items-center justify-between gap-4">
-      <label className="text-sm" style={{ color: colors.text }}>{label}</label>
+      <label htmlFor={inputId} className="text-sm" style={{ color: colors.text }}>{label}</label>
       <input
+        id={inputId}
         type="number"
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
         min={min}
         max={max}
         step={step}
-        className="w-32 px-3 py-2 rounded text-right"
+        className="w-32 px-3 py-2 rounded text-right focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89b4fa]"
         style={{
           backgroundColor: colors.surface0,
           color: colors.text,

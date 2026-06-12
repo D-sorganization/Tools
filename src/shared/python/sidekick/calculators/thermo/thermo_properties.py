@@ -18,6 +18,8 @@ import math
 from dataclasses import dataclass
 from functools import lru_cache
 
+from sidekick.utils.unit_constants import R_UNIVERSAL
+
 __all__ = [
     "MOLAR_CP_298",
     "MOLECULAR_WEIGHTS",
@@ -68,7 +70,7 @@ MOLAR_CP_298: dict[str, float] = {
     "C3H8": 73.60,
 }
 
-R_GAS = 8.314  # J/(mol*K)
+R_GAS = R_UNIVERSAL  # J/(mol*K)
 
 
 @lru_cache(maxsize=256)
@@ -90,8 +92,13 @@ def _mixture_mw_cp(
         ``(mix_mw, mix_cp)`` where ``mix_mw`` is in g/mol and ``mix_cp`` is
         in J/(mol·K) at 298 K.
     """
-    mix_mw = sum(frac * MOLECULAR_WEIGHTS.get(sp, 28.0) for sp, frac in fractions)
-    mix_cp = sum(frac * MOLAR_CP_298.get(sp, 29.0) for sp, frac in fractions)
+    mix_mw = 0.0
+    mix_cp = 0.0
+    for sp, frac in fractions:
+        if sp not in MOLECULAR_WEIGHTS:
+            raise ValueError(f"Unknown gas species: {sp}")
+        mix_mw += frac * MOLECULAR_WEIGHTS[sp]
+        mix_cp += frac * MOLAR_CP_298[sp]
     return mix_mw, mix_cp
 
 

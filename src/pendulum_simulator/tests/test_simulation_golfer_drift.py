@@ -55,9 +55,7 @@ class TestConstraintDriftLogging:
         initial_state = np.concatenate([q0, np.zeros(N_DOF)])
 
         # Always return a value above warn threshold → exercises line 266
-        with caplog.at_level(
-            logging.WARNING, logger="double_pendulum_golf.simulation_golfer"
-        ):
+        with caplog.at_level(logging.WARNING, logger="double_pendulum_golf.simulation_golfer"):
             with patch(
                 "double_pendulum_golf.simulation_golfer.constraint_violation",
                 return_value=1e-3,  # > _CONSTRAINT_WARN_TOL (1e-4)
@@ -84,9 +82,7 @@ class TestConstraintDriftLogging:
         initial_state = np.concatenate([q0, np.zeros(N_DOF)])
 
         # Always return a value above abort threshold
-        with caplog.at_level(
-            logging.ERROR, logger="double_pendulum_golf.simulation_golfer"
-        ):
+        with caplog.at_level(logging.ERROR, logger="double_pendulum_golf.simulation_golfer"):
             with patch(
                 "double_pendulum_golf.simulation_golfer.constraint_violation",
                 return_value=0.5,  # >> _CONSTRAINT_ABORT_TOL (1e-2)
@@ -112,9 +108,7 @@ class TestConstraintDriftLogging:
         initial_state = np.concatenate([q0, np.zeros(N_DOF)])
 
         # Always return a value between warn and abort thresholds
-        with caplog.at_level(
-            logging.WARNING, logger="double_pendulum_golf.simulation_golfer"
-        ):
+        with caplog.at_level(logging.WARNING, logger="double_pendulum_golf.simulation_golfer"):
             with patch(
                 "double_pendulum_golf.simulation_golfer.constraint_violation",
                 return_value=5e-3,  # > WARN (1e-4), < ABORT (1e-2)

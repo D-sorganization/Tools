@@ -118,13 +118,5 @@ jobs:
               done
             fi
           done
-      - uses: actions/setup-python@v6
-        env:
-          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
-        with:
-          python-version: "3.12"
-          cache: pip
-      - name: Purge pip cache
-        run: python -m pip cache purge || true
       - name: Validate topology policy
         run: python3 scripts/check_repo_topology.py

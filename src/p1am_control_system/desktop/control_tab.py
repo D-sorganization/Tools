@@ -4,8 +4,8 @@ import logging
 import os
 
 import pyqtgraph as pg
-import requests
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QPalette
 from PyQt6.QtWidgets import (
     QComboBox,
     QDoubleSpinBox,
@@ -20,6 +20,8 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+
+from .workers import HttpWorker
 
 logger = logging.getLogger("p1am_control.desktop.control")
 
@@ -90,17 +92,24 @@ class ControlTab(QWidget):
 
         # Plot Widget for PV/SP tracking
         self.tracking_plot = pg.PlotWidget(widget)
-        self.tracking_plot.setBackground("#15181e")
+        self.tracking_plot.setBackground(self.palette().color(QPalette.ColorRole.Base))
         self.tracking_plot.showGrid(x=True, y=True, alpha=0.3)
         self.tracking_plot.setLabel("left", "Process Value")
         self.tracking_plot.setLabel("bottom", "Time (samples)")
         self.tracking_plot.addLegend()
 
         self.curve_pv = self.tracking_plot.plot(
-            pen=pg.mkPen(color="#00f2fe", width=2), name="PV"
+            pen=pg.mkPen(
+                color=self.palette().color(QPalette.ColorRole.Highlight), width=2
+            ),
+            name="PV",
         )
         self.curve_sp = self.tracking_plot.plot(
-            pen=pg.mkPen(color="#ffd60a", width=2, style=Qt.PenStyle.DashLine),
+            pen=pg.mkPen(
+                color=self.palette().color(QPalette.ColorRole.WindowText),
+                width=2,
+                style=Qt.PenStyle.DashLine,
+            ),
             name="Setpoint",
         )
 
@@ -241,7 +250,7 @@ class ControlTab(QWidget):
 
         # PV comparison plot
         self.mpc_pv_plot = pg.PlotWidget(widget)
-        self.mpc_pv_plot.setBackground("#15181e")
+        self.mpc_pv_plot.setBackground(self.palette().color(QPalette.ColorRole.Base))
         self.mpc_pv_plot.showGrid(x=True, y=True, alpha=0.3)
         self.mpc_pv_plot.setLabel("left", "Process Value (PV)")
         self.mpc_pv_plot.setLabel("bottom", "Time (seconds)")
@@ -249,16 +258,16 @@ class ControlTab(QWidget):
         self.mpc_pv_plot.setTitle("PV Tracking Comparison")
 
         self.curve_pid_pv = self.mpc_pv_plot.plot(
-            pen=pg.mkPen(color="#ff375f", width=2), name="PID PV"
+            pen=pg.mkPen(color=Qt.GlobalColor.red, width=2), name="PID PV"
         )
         self.curve_mpc_pv = self.mpc_pv_plot.plot(
-            pen=pg.mkPen(color="#30d158", width=2), name="MPC PV"
+            pen=pg.mkPen(color=Qt.GlobalColor.darkGreen, width=2), name="MPC PV"
         )
         right_layout.addWidget(self.mpc_pv_plot)
 
         # CV comparison plot
         self.mpc_cv_plot = pg.PlotWidget(widget)
-        self.mpc_cv_plot.setBackground("#15181e")
+        self.mpc_cv_plot.setBackground(self.palette().color(QPalette.ColorRole.Base))
         self.mpc_cv_plot.showGrid(x=True, y=True, alpha=0.3)
         self.mpc_cv_plot.setLabel("left", "Control Value (CV)")
         self.mpc_cv_plot.setLabel("bottom", "Time (seconds)")
@@ -266,10 +275,10 @@ class ControlTab(QWidget):
         self.mpc_cv_plot.setTitle("CV Output Effort Comparison")
 
         self.curve_pid_cv = self.mpc_cv_plot.plot(
-            pen=pg.mkPen(color="#ff375f", width=2), name="PID CV"
+            pen=pg.mkPen(color=Qt.GlobalColor.red, width=2), name="PID CV"
         )
         self.curve_mpc_cv = self.mpc_cv_plot.plot(
-            pen=pg.mkPen(color="#30d158", width=2), name="MPC CV"
+            pen=pg.mkPen(color=Qt.GlobalColor.darkGreen, width=2), name="MPC CV"
         )
         right_layout.addWidget(self.mpc_cv_plot)
 
@@ -311,91 +320,87 @@ class ControlTab(QWidget):
         """Saves current routing/PID configs fetched from backend."""
         self.routing_config = config
 
+    def _on_connection_error(self, err_msg: str) -> None:
+        QMessageBox.critical(
+            self, "Connection Error", f"Could not reach backend: {err_msg}"
+        )
+
     def _start_tuning(self) -> None:
         idx = self.loop_combo.currentIndex()
-        try:
-            resp = requests.post(
-                f"{self.backend_url}/api/pid/{idx}/tuning/start", timeout=1.0
-            )
-            if resp.status_code == 200:
-                self.tuning_active = True
-                self.btn_start_tuning.setEnabled(False)
-                self.btn_apply_step.setEnabled(True)
-                self.btn_stop_tuning.setEnabled(True)
-                self.btn_apply_gains.setEnabled(False)
-                logger.info(f"Tuning mode started for PID loop {idx}")
-            else:
-                QMessageBox.critical(
-                    self, "Tuning Error", f"Failed to start tuning: {resp.text}"
-                )
-        except Exception as e:
-            QMessageBox.critical(
-                self, "Connection Error", f"Could not reach backend: {e}"
-            )
+        self.start_worker = HttpWorker(
+            "POST", f"{self.backend_url}/api/pid/{idx}/tuning/start", timeout=1.0
+        )
+        self.start_worker.success.connect(
+            lambda data: self._on_start_tuning_success(idx, data)
+        )
+        self.start_worker.error.connect(self._on_connection_error)
+        self.start_worker.start()
+
+    def _on_start_tuning_success(self, idx, data):
+        self.tuning_active = True
+        self.btn_start_tuning.setEnabled(False)
+        self.btn_apply_step.setEnabled(True)
+        self.btn_stop_tuning.setEnabled(True)
+        self.btn_apply_gains.setEnabled(False)
+        logger.info(f"Tuning mode started for PID loop {idx}")
 
     def _apply_step(self) -> None:
         idx = self.loop_combo.currentIndex()
         step_val = self.spin_step_val.value()
-        try:
-            resp = requests.post(
-                f"{self.backend_url}/api/pid/{idx}/tuning/step",
-                json={"step_value": step_val},
-                timeout=1.0,
-            )
-            if resp.status_code == 200:
-                logger.info(f"Tuning step applied to loop {idx}: {step_val}%")
-                QMessageBox.information(
-                    self, "Step Applied", f"Tuning step CV set to {step_val}%"
-                )
-            else:
-                QMessageBox.critical(
-                    self, "Tuning Error", f"Failed to apply step: {resp.text}"
-                )
-        except Exception as e:
-            QMessageBox.critical(
-                self, "Connection Error", f"Could not reach backend: {e}"
-            )
+        self.step_worker = HttpWorker(
+            "POST",
+            f"{self.backend_url}/api/pid/{idx}/tuning/step",
+            json={"step_value": step_val},
+            timeout=1.0,
+        )
+        self.step_worker.success.connect(
+            lambda data: self._on_apply_step_success(idx, step_val, data)
+        )
+        self.step_worker.error.connect(self._on_connection_error)
+        self.step_worker.start()
+
+    def _on_apply_step_success(self, idx, step_val, data):
+        logger.info(f"Tuning step applied to loop {idx}: {step_val}%")
+        QMessageBox.information(
+            self, "Step Applied", f"Tuning step CV set to {step_val}%"
+        )
 
     def _stop_tuning(self) -> None:
         idx = self.loop_combo.currentIndex()
-        try:
-            resp = requests.post(
-                f"{self.backend_url}/api/pid/{idx}/tuning/stop", timeout=1.5
-            )
-            if resp.status_code == 200:
-                self.tuning_active = False
-                self.btn_start_tuning.setEnabled(True)
-                self.btn_apply_step.setEnabled(False)
-                self.btn_stop_tuning.setEnabled(False)
+        self.stop_worker = HttpWorker(
+            "POST", f"{self.backend_url}/api/pid/{idx}/tuning/stop", timeout=1.5
+        )
+        self.stop_worker.success.connect(
+            lambda data: self._on_stop_tuning_success(idx, data)
+        )
+        self.stop_worker.error.connect(self._on_connection_error)
+        self.stop_worker.start()
 
-                data = resp.json()
-                if data.get("status") == "success":
-                    params = data["parameters"]
-                    recom = data["recommended_pid"]
+    def _on_stop_tuning_success(self, idx, data):
+        self.tuning_active = False
+        self.btn_start_tuning.setEnabled(True)
+        self.btn_apply_step.setEnabled(False)
+        self.btn_stop_tuning.setEnabled(False)
 
-                    self.lbl_ident_kp.setText(str(params["kp"]))
-                    self.lbl_ident_tau.setText(str(params["tau"]))
-                    self.lbl_ident_theta.setText(str(params["theta"]))
+        if data.get("status") == "success":
+            params = data["parameters"]
+            recom = data["recommended_pid"]
 
-                    self.lbl_recom_kp.setText(str(recom["kp"]))
-                    self.lbl_recom_ki.setText(str(recom["ki"]))
-                    self.lbl_recom_kd.setText(str(recom["kd"]))
+            self.lbl_ident_kp.setText(str(params["kp"]))
+            self.lbl_ident_tau.setText(str(params["tau"]))
+            self.lbl_ident_theta.setText(str(params["theta"]))
 
-                    self.btn_apply_gains.setEnabled(True)
-                    logger.info(f"Tuning stopped for loop {idx}. Parameters: {params}")
-                else:
-                    QMessageBox.warning(
-                        self,
-                        "Tuning Stopped",
-                        data.get("message", "No parameters identified."),
-                    )
-            else:
-                QMessageBox.critical(
-                    self, "Tuning Error", f"Failed to stop tuning: {resp.text}"
-                )
-        except Exception as e:
-            QMessageBox.critical(
-                self, "Connection Error", f"Could not reach backend: {e}"
+            self.lbl_recom_kp.setText(str(recom["kp"]))
+            self.lbl_recom_ki.setText(str(recom["ki"]))
+            self.lbl_recom_kd.setText(str(recom["kd"]))
+
+            self.btn_apply_gains.setEnabled(True)
+            logger.info(f"Tuning stopped for loop {idx}. Parameters: {params}")
+        else:
+            QMessageBox.warning(
+                self,
+                "Tuning Stopped",
+                data.get("message", "No parameters identified."),
             )
 
     def _apply_recommended_gains(self) -> None:
@@ -413,26 +418,29 @@ class ControlTab(QWidget):
             self.routing_config.pids[idx].ki = ki
             self.routing_config.pids[idx].kd = kd
 
-            # Send updated config back to backend
-            resp = requests.post(
+            self.gains_worker = HttpWorker(
+                "POST",
                 f"{self.backend_url}/api/routing",
                 json=self.routing_config.dict(),
                 timeout=2.0,
             )
-            if resp.status_code == 200:
-                QMessageBox.information(
-                    self,
-                    "Gains Applied",
-                    f"Successfully applied gains to PLC Loop {idx}.",
-                )
-                self.btn_apply_gains.setEnabled(False)
-                logger.info(f"Applied recommended PID gains to Loop {idx}")
-            else:
-                QMessageBox.critical(
-                    self, "Routing Error", f"Failed to apply gains: {resp.text}"
-                )
+            self.gains_worker.success.connect(
+                lambda data: self._on_apply_gains_success(idx, data)
+            )
+            self.gains_worker.error.connect(self._on_connection_error)
+            self.gains_worker.start()
+
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to apply gains: {e}")
+
+    def _on_apply_gains_success(self, idx, data):
+        QMessageBox.information(
+            self,
+            "Gains Applied",
+            f"Successfully applied gains to PLC Loop {idx}.",
+        )
+        self.btn_apply_gains.setEnabled(False)
+        logger.info(f"Applied recommended PID gains to Loop {idx}")
 
     def _simulate_mpc(self) -> None:
         payload = {
@@ -445,27 +453,21 @@ class ControlTab(QWidget):
             "process_delay": self.spin_plant_delay.value(),
         }
 
-        try:
-            resp = requests.post(
-                f"{self.backend_url}/api/mpc/simulate", json=payload, timeout=2.0
-            )
-            if resp.status_code == 200:
-                data = resp.json()
-                times = data["time"]
+        self.mpc_worker = HttpWorker(
+            "POST", f"{self.backend_url}/api/mpc/simulate", json=payload, timeout=2.0
+        )
+        self.mpc_worker.success.connect(self._on_simulate_mpc_success)
+        self.mpc_worker.error.connect(self._on_connection_error)
+        self.mpc_worker.start()
 
-                # Plot responses
-                self.curve_pid_pv.setData(times, data["pid"]["pv"])
-                self.curve_mpc_pv.setData(times, data["mpc"]["pv"])
+    def _on_simulate_mpc_success(self, data):
+        times = data["time"]
 
-                self.curve_pid_cv.setData(times, data["pid"]["cv"])
-                self.curve_mpc_cv.setData(times, data["mpc"]["cv"])
+        # Plot responses
+        self.curve_pid_pv.setData(times, data["pid"]["pv"])
+        self.curve_mpc_pv.setData(times, data["mpc"]["pv"])
 
-                logger.info("MPC vs PID simulation completed successfully.")
-            else:
-                QMessageBox.critical(
-                    self, "Simulation Error", f"Failed to run simulation: {resp.text}"
-                )
-        except Exception as e:
-            QMessageBox.critical(
-                self, "Connection Error", f"Could not reach backend: {e}"
-            )
+        self.curve_pid_cv.setData(times, data["pid"]["cv"])
+        self.curve_mpc_cv.setData(times, data["mpc"]["cv"])
+
+        logger.info("MPC vs PID simulation completed successfully.")

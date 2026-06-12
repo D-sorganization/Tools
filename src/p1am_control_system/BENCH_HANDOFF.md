@@ -44,9 +44,9 @@ PLC_DRIVER=modbus PLC_IP=192.168.1.100 PLC_PORT=502 \
 
 ## Open PRs (today's work)
 
-| PR | Branch | Status |
-|----|--------|--------|
-| [#3078](https://github.com/D-sorganization/Tools/pull/3078) — `feat(calibration): P1AM analog I/O calibration procedure + helper` | `calibrate-analog-io` | Open; needs review. Live-PLC verified. |
+| PR                                                                                                                                    | Branch                   | Status                                                            |
+| ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ | ----------------------------------------------------------------- |
+| [#3078](https://github.com/D-sorganization/Tools/pull/3078) — `feat(calibration): P1AM analog I/O calibration procedure + helper`     | `calibrate-analog-io`    | Open; needs review. Live-PLC verified.                            |
 | [#3081](https://github.com/D-sorganization/Tools/pull/3081) — `fix(p1am): extend interlock contract to 4 limits (lolo/low/high/hihi)` | `fix-interlock-contract` | Open; needs review. Live-PLC verified with 0 errors on roundtrip. |
 
 The calibration helper (PR #3078) cannot drive AOs directly because the
@@ -91,14 +91,17 @@ HMI at `frontend/` (port 3002) can't start.
 ## How to verify everything still works after the reboot
 
 1. Confirm the PLC is reachable:
+
    ```bash
    ping -c 2 192.168.1.100
    ```
+
    If this fails, check that the Ethernet cable is in the PLC (not the home
    router) and that `nmcli -t -f NAME,DEVICE,STATE c show --active` lists
    `Wired connection 1` as activated.
 
 2. Read tags via Modbus:
+
    ```bash
    cd ~/Repositories/Tools
    .venv/bin/python -c "
@@ -122,8 +125,8 @@ HMI at `frontend/` (port 3002) can't start.
    silently overwrites the bootloader and bricks the unit until reflashed.
 2. **1200bps touch for serial capture.** The touch is also the upload trigger;
    doing it just to read Serial puts the SAMD in bootloader and requires a
-   reflash to recover. Open the monitor *before* triggering a reset, never
-   *to* trigger one.
+   reflash to recover. Open the monitor _before_ triggering a reset, never
+   _to_ trigger one.
 3. **Direct tag-value writes don't stick.** The 10 Hz scan rewrites
    regs (i*2, i*2+1) from `broker.GetTag(i)` every tick. To drive an AO from
    the host, configure a pass-through PID (see PR #3078's calibration code)

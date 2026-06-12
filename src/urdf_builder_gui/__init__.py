@@ -17,11 +17,12 @@ from pathlib import Path
 _CANONICAL_PKG = Path(__file__).resolve().parent / "python" / "urdf_builder_gui"
 
 # Extend __path__ so that sub-module lookups (e.g. urdf_builder_gui.contracts)
-# resolve into the canonical directory even when Python found this __init__.py
-# first via the tool-root sys.path entry.
+# resolve into the canonical directory.  Use insert(0, …) so the canonical
+# tree always wins even if a flat copy is accidentally re-introduced here
+# (issue #3346 / GH1693).
 _canonical_str = str(_CANONICAL_PKG)
 if _canonical_str not in __path__:
-    __path__.append(_canonical_str)
+    __path__.insert(0, _canonical_str)
 
 # Also ensure the python/ directory itself is on sys.path for standalone
 # launcher scripts that do bare ``import urdf_builder_gui``.

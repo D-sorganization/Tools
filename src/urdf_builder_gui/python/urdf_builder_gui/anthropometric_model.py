@@ -14,40 +14,16 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
 
+from humanoid_character_builder.core.anthropometry import (
+    URDF_HEIGHT_RATIOS as HEIGHT_RATIOS,
+)
+from humanoid_character_builder.core.anthropometry import (
+    URDF_MASS_RATIOS as MASS_RATIOS,
+)
+
 from urdf_builder_gui.contracts import require
 
 logger = logging.getLogger(__name__)
-
-# ── Height-to-segment-length ratios (fraction of total standing height) ──
-
-HEIGHT_RATIOS: dict[str, float] = {
-    "pelvis": 0.078,
-    "torso": 0.278,
-    "head": 0.139,
-    "thigh": 0.245,
-    "shin": 0.246,
-    "upper_arm": 0.186,
-    "forearm": 0.146,
-    "hand": 0.058,
-    "foot": 0.039,
-}
-
-# ── Mass distribution ratios (fraction of total body mass) ──
-
-MASS_RATIOS: dict[str, float] = {
-    "pelvis": 0.112,
-    "lumbar": 0.139,
-    "thorax": 0.216,
-    "torso": 0.355,  # lumbar + thorax combined
-    "neck": 0.024,
-    "head": 0.069,
-    "upper_arm": 0.027,  # per arm
-    "forearm": 0.016,  # per arm
-    "hand": 0.006,  # per arm
-    "thigh": 0.142,  # per leg
-    "shin": 0.043,  # per leg
-    "foot": 0.014,  # per leg
-}
 
 # ── Gender-dependent width scaling factors ──
 
@@ -123,7 +99,7 @@ def compute_segment_length(
         "proportion_factor must be positive",
         proportion_factor,
     )
-    return total_height * HEIGHT_RATIOS[segment_key] * proportion_factor
+    return float(total_height * HEIGHT_RATIOS[segment_key] * proportion_factor)
 
 
 def compute_segment_mass(total_mass: float, segment_key: str, count: int = 1) -> float:
@@ -143,7 +119,7 @@ def compute_segment_mass(total_mass: float, segment_key: str, count: int = 1) ->
         segment_key,
     )
     require(count >= 1, "count must be >= 1", count)
-    return total_mass * MASS_RATIOS[segment_key] * count
+    return float(total_mass * MASS_RATIOS[segment_key] * count)
 
 
 def compute_box_inertia(

@@ -14,6 +14,10 @@ import sys
 from dataclasses import dataclass
 from enum import Enum
 
+from humanoid_character_builder.core.anthropometry import (
+    get_segment_length_ratio,
+    get_segment_mass_ratio,
+)
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
@@ -38,6 +42,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA, get_stylesheet
 from shared.python.theme.integration import ThemedWindowMixin
 
 logger = logging.getLogger(__name__)
@@ -50,217 +55,6 @@ _POLICY_EXPANDING = QSizePolicy.Policy.Expanding
 _POLICY_FIXED = QSizePolicy.Policy.Fixed
 _RESIZE_MODE_STRETCH = QHeaderView.ResizeMode.Stretch
 _RESIZE_MODE_RESIZE_TO_CONTENTS = QHeaderView.ResizeMode.ResizeToContents
-
-# Catppuccin Mocha color palette
-CATPPUCCIN_MOCHA = {
-    "rosewater": "#f5e0dc",
-    "flamingo": "#f2cdcd",
-    "pink": "#f5c2e7",
-    "mauve": "#cba6f7",
-    "red": "#f38ba8",
-    "maroon": "#eba0ac",
-    "peach": "#fab387",
-    "yellow": "#f9e2af",
-    "green": "#a6e3a1",
-    "teal": "#94e2d5",
-    "sky": "#89dceb",
-    "sapphire": "#74c7ec",
-    "blue": "#89b4fa",
-    "lavender": "#b4befe",
-    "text": "#cdd6f4",
-    "subtext1": "#bac2de",
-    "subtext0": "#a6adc8",
-    "overlay2": "#9399b2",
-    "overlay1": "#7f849c",
-    "overlay0": "#6c7086",
-    "surface2": "#585b70",
-    "surface1": "#45475a",
-    "surface0": "#313244",
-    "base": "#1e1e2e",
-    "mantle": "#181825",
-    "crust": "#11111b",
-}
-
-STYLESHEET = f"""
-QMainWindow {{
-    background-color: {CATPPUCCIN_MOCHA["base"]};
-}}
-
-QWidget {{
-    background-color: {CATPPUCCIN_MOCHA["base"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    font-family: "Segoe UI", "Arial", sans-serif;
-}}
-
-QScrollArea {{
-    border: none;
-    background-color: {CATPPUCCIN_MOCHA["base"]};
-}}
-
-QTabWidget::pane {{
-    border: 1px solid {CATPPUCCIN_MOCHA["surface1"]};
-    background-color: {CATPPUCCIN_MOCHA["mantle"]};
-    border-radius: 4px;
-}}
-
-QTabBar::tab {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["subtext1"]};
-    padding: 8px 16px;
-    margin-right: 2px;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-}}
-
-QTabBar::tab:selected {{
-    background-color: {CATPPUCCIN_MOCHA["surface1"]};
-    color: {CATPPUCCIN_MOCHA["blue"]};
-}}
-
-QGroupBox {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface1"]};
-    border-radius: 8px;
-    margin-top: 12px;
-    padding: 12px;
-    font-weight: bold;
-}}
-
-QGroupBox::title {{
-    subcontrol-origin: margin;
-    left: 12px;
-    padding: 0 6px;
-    color: {CATPPUCCIN_MOCHA["mauve"]};
-}}
-
-QLabel {{
-    color: {CATPPUCCIN_MOCHA["text"]};
-    background-color: transparent;
-}}
-
-QDoubleSpinBox {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    border-radius: 4px;
-    padding: 6px 10px;
-}}
-
-QDoubleSpinBox:focus {{
-    border: 1px solid {CATPPUCCIN_MOCHA["blue"]};
-}}
-
-QComboBox {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    border-radius: 4px;
-    padding: 6px 10px;
-    min-width: 150px;
-}}
-
-QComboBox:hover {{
-    border: 1px solid {CATPPUCCIN_MOCHA["blue"]};
-}}
-
-QComboBox::drop-down {{
-    border: none;
-    width: 24px;
-}}
-
-QComboBox QAbstractItemView {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    selection-background-color: {CATPPUCCIN_MOCHA["surface2"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface1"]};
-}}
-
-QSlider::groove:horizontal {{
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    height: 8px;
-    background: {CATPPUCCIN_MOCHA["surface0"]};
-    border-radius: 4px;
-}}
-
-QSlider::handle:horizontal {{
-    background: {CATPPUCCIN_MOCHA["blue"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["blue"]};
-    width: 16px;
-    margin: -4px 0;
-    border-radius: 8px;
-}}
-
-QSlider::sub-page:horizontal {{
-    background: {CATPPUCCIN_MOCHA["sapphire"]};
-    border-radius: 4px;
-}}
-
-QTableWidget {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    border-radius: 4px;
-    gridline-color: {CATPPUCCIN_MOCHA["surface1"]};
-}}
-
-QTableWidget::item {{
-    padding: 4px;
-}}
-
-QTableWidget::item:selected {{
-    background-color: {CATPPUCCIN_MOCHA["surface2"]};
-}}
-
-QHeaderView::section {{
-    background-color: {CATPPUCCIN_MOCHA["surface1"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    padding: 6px;
-    border: none;
-    border-bottom: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-}}
-
-QTextEdit {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    border-radius: 4px;
-    padding: 8px;
-    font-family: "Consolas", "Courier New", monospace;
-}}
-
-QPushButton {{
-    background-color: {CATPPUCCIN_MOCHA["blue"]};
-    color: {CATPPUCCIN_MOCHA["crust"]};
-    border: none;
-    border-radius: 4px;
-    padding: 10px 24px;
-    font-weight: bold;
-}}
-
-QPushButton:hover {{
-    background-color: {CATPPUCCIN_MOCHA["sapphire"]};
-}}
-
-QPushButton:pressed {{
-    background-color: {CATPPUCCIN_MOCHA["lavender"]};
-}}
-
-QPushButton#buildBtn {{
-    background-color: {CATPPUCCIN_MOCHA["green"]};
-}}
-
-QPushButton#buildBtn:hover {{
-    background-color: {CATPPUCCIN_MOCHA["teal"]};
-}}
-
-QPushButton#exportBtn {{
-    background-color: {CATPPUCCIN_MOCHA["peach"]};
-}}
-
-QPushButton#exportBtn:hover {{
-    background-color: {CATPPUCCIN_MOCHA["yellow"]};
-}}
-"""
 
 
 class BuildType(Enum):
@@ -291,36 +85,6 @@ class SegmentData:
     depth_m: float
 
 
-# de Leva (1996) anthropometric data (simplified)
-SEGMENT_MASS_RATIOS = {
-    "head": 0.0694,
-    "neck": 0.0240,
-    "thorax": 0.2160,
-    "lumbar": 0.1390,
-    "pelvis": 0.1117,
-    "upper_arm": 0.0271,
-    "forearm": 0.0162,
-    "hand": 0.0061,
-    "thigh": 0.1416,
-    "shin": 0.0433,
-    "foot": 0.0137,
-}
-
-SEGMENT_LENGTH_RATIOS = {
-    "head": 0.1395,
-    "neck": 0.052,
-    "thorax": 0.170,
-    "lumbar": 0.108,
-    "pelvis": 0.078,
-    "upper_arm": 0.186,
-    "forearm": 0.146,
-    "hand": 0.108,
-    "thigh": 0.245,
-    "shin": 0.246,
-    "foot": 0.152,
-}
-
-
 class HumanoidBuilderWindow(ThemedWindowMixin, QMainWindow):
     """Main window for Humanoid Character Builder application."""
 
@@ -336,7 +100,7 @@ class HumanoidBuilderWindow(ThemedWindowMixin, QMainWindow):
         """Set up the user interface."""
         self.setWindowTitle("Humanoid Character Builder")
         self.setMinimumSize(800, 900)
-        self.setStyleSheet(STYLESHEET)
+        self.setStyleSheet(get_stylesheet())
 
         # Central widget with scroll area
         scroll_area = QScrollArea()
@@ -702,6 +466,7 @@ class HumanoidBuilderWindow(ThemedWindowMixin, QMainWindow):
         # Calculate segment data
         self._segments = []
         total_mass = 0.0
+        gender_factor = self._get_gender_factor()
 
         segments_info = [
             ("Head", "head"),
@@ -723,9 +488,11 @@ class HumanoidBuilderWindow(ThemedWindowMixin, QMainWindow):
             ("R Foot", "foot"),
         ]
 
+        gender_factor = self._get_gender_factor()
+
         for display_name, key in segments_info:
-            mass_ratio = SEGMENT_MASS_RATIOS.get(key, 0.01)
-            length_ratio = SEGMENT_LENGTH_RATIOS.get(key, 0.05)
+            mass_ratio = get_segment_mass_ratio(key, gender_factor)
+            length_ratio = get_segment_length_ratio(key, gender_factor)
 
             seg_mass = mass * mass_ratio
             seg_length = height * length_ratio
@@ -833,7 +600,7 @@ def main() -> int:
     app = QApplication(sys.argv)
     window = HumanoidBuilderWindow()
     window.show()
-    return app.exec()
+    return int(app.exec())
 
 
 if __name__ == "__main__":

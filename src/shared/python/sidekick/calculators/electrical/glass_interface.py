@@ -15,6 +15,7 @@ from collections.abc import Callable
 from typing import Any
 
 import numpy as np
+from sidekick.utils.unit_constants import R_UNIVERSAL
 
 __all__ = [
     "GlassPropertiesInterface",
@@ -24,7 +25,7 @@ _logger = logging.getLogger(__name__)
 
 # Performance constants
 _CACHE_MAX_SIZE = 1000  # Maximum cache entries before LRU eviction
-_R_GAS = 8.314  # Gas constant J/(mol·K) - pre-computed to avoid repeated lookups
+_R_GAS = R_UNIVERSAL  # Gas constant J/(mol·K) - pre-computed to avoid repeated lookups
 
 
 class GlassPropertiesInterface:

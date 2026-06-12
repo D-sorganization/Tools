@@ -42,8 +42,15 @@ class GasFlowConversionMixin:
         gas_type: str = "air",
         standard_condition: StandardCondition = StandardCondition.SCFM_60F,
     ) -> float:
-        """Convert gas flow rate."""
-        assert value is not None, "value must be provided"
+        """Convert gas flow rate.
+
+        Raises:
+            ValueError: If ``value`` is ``None``.
+        """
+        # Explicit ValueError guard (not bare ``assert``) so it survives
+        # ``python -O`` (issue #3182 / #3344).
+        if value is None:
+            raise ValueError("value must be provided")
         gas_props = GAS_DATABASE.get(gas_type.lower(), GAS_DATABASE["air"])
         self._ensure_acfm_inputs(from_unit, to_unit, temperature, pressure)
         m3_hr_std = self._gas_flow_to_standard_m3h(
@@ -90,17 +97,24 @@ class GasFlowConversionMixin:
         from .service import UnknownUnitError
 
         if from_unit == "SCFM":
-            return scfm_to_standard_m3_per_hour(
-                value, standard_condition, StandardCondition.STP
+            return float(
+                scfm_to_standard_m3_per_hour(
+                    value, standard_condition, StandardCondition.STP
+                )
             )
         if from_unit == "ACFM":
-            assert temperature is not None
-            assert pressure is not None
+            if temperature is None or pressure is None:
+                msg = (
+                    "temperature and pressure are required after ACFM input validation"
+                )
+                raise RuntimeError(msg)
             scfm = actual_to_standard_flow(
                 value, temperature, pressure, standard_condition
             )
-            return scfm_to_standard_m3_per_hour(
-                scfm, standard_condition, StandardCondition.STP
+            return float(
+                scfm_to_standard_m3_per_hour(
+                    scfm, standard_condition, StandardCondition.STP
+                )
             )
         if from_unit in {"Nm3/hr", "Nm³/hr"}:
             return value
@@ -123,17 +137,22 @@ class GasFlowConversionMixin:
         from .service import UnknownUnitError
 
         if to_unit == "SCFM":
-            return standard_m3_per_hour_to_scfm(
-                m3_hr_std, StandardCondition.STP, standard_condition
+            return float(
+                standard_m3_per_hour_to_scfm(
+                    m3_hr_std, StandardCondition.STP, standard_condition
+                )
             )
         if to_unit == "ACFM":
-            assert temperature is not None
-            assert pressure is not None
+            if temperature is None or pressure is None:
+                msg = (
+                    "temperature and pressure are required after ACFM input validation"
+                )
+                raise RuntimeError(msg)
             scfm = standard_m3_per_hour_to_scfm(
                 m3_hr_std, StandardCondition.STP, standard_condition
             )
-            return standard_to_actual_flow(
-                scfm, temperature, pressure, standard_condition
+            return float(
+                standard_to_actual_flow(scfm, temperature, pressure, standard_condition)
             )
         if to_unit in {"Nm3/hr", "Nm³/hr"}:
             return m3_hr_std
@@ -154,10 +173,46 @@ class GasFlowConversionMixin:
         standard_condition: StandardCondition = StandardCondition.SCFM_60F,
         compressibility_factor: float = 1.0,
     ) -> float:
-        """Convert gas flow between SCFM and ACFM."""
-        assert value is not None, "value must be provided"
+        """Convert gas flow between SCFM and ACFM.
+
+        Raises:
+            ValueError: If ``value`` is ``None``; if ``compressibility_factor``
+                is not positive and finite; or if an explicitly supplied
+                ``actual_temp_K`` / ``actual_pressure_kPa`` is not positive and
+                finite.
+        """
+        import math
+
+        # Explicit ValueError guards (not bare ``assert``) so they survive
+        # ``python -O`` (issue #3182 / #3344).
+        if value is None:
+            raise ValueError("value must be provided")
+        if not math.isfinite(compressibility_factor) or compressibility_factor <= 0:
+            msg = (
+                "compressibility_factor must be positive and finite, "
+                f"got {compressibility_factor}"
+            )
+            raise ValueError(msg)
+        # An explicitly supplied actual temperature/pressure must be physical.
+        # ``None`` means "use the standard condition default"; ``0.0`` (or any
+        # non-positive/non-finite value) is an invalid explicit input and must
+        # be rejected rather than silently coerced to the default (#3342/#3367).
+        if actual_temp_K is not None and (
+            not math.isfinite(actual_temp_K) or actual_temp_K <= 0
+        ):
+            msg = f"actual_temp_K must be positive and finite, got {actual_temp_K}"
+            raise ValueError(msg)
+        if actual_pressure_kPa is not None and (
+            not math.isfinite(actual_pressure_kPa) or actual_pressure_kPa <= 0
+        ):
+            msg = (
+                "actual_pressure_kPa must be positive and finite, "
+                f"got {actual_pressure_kPa}"
+            )
+            raise ValueError(msg)
+
         std_temp, std_pressure_pa, _ = standard_condition.value
-        temperature = actual_temp_K or std_temp
+        temperature = actual_temp_K if actual_temp_K is not None else std_temp
         pressure_pa = (
             actual_pressure_kPa * 1000.0
             if actual_pressure_kPa is not None
@@ -177,8 +232,6 @@ class GasFlowConversionMixin:
         if from_unit.upper() == "SCFM" and to_unit.upper() == "ACFM":
             return result * compressibility_factor
         if from_unit.upper() == "ACFM" and to_unit.upper() == "SCFM":
-            if compressibility_factor <= 0:
-                return result
             return result / compressibility_factor
         return result
 
@@ -188,10 +241,18 @@ class GasFlowConversionMixin:
         temperature: float,
         pressure: float,
     ) -> float:
-        """Calculate compressibility factor."""
+        """Calculate compressibility factor.
+
+        Raises:
+            ValueError: If ``gas_type`` is ``None``, if ``temperature`` is not
+                positive and finite, or if ``pressure`` is not positive and finite.
+        """
         import math
 
-        assert gas_type is not None, "gas_type must be provided"
+        # Explicit ValueError guard (not bare ``assert``) so it survives
+        # ``python -O`` (issue #3182 / #3344).
+        if gas_type is None:
+            raise ValueError("gas_type must be provided")
         if not math.isfinite(temperature) or temperature <= 0:
             msg = f"temperature must be positive and finite, got {temperature}"
             raise ValueError(msg)

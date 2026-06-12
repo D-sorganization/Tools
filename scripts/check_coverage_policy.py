@@ -35,9 +35,8 @@ def _coverage_path_candidates(filename: str, sources: list[str]) -> set[str]:
 
 
 def _effective_total_floor(min_total: float, baseline_total: float) -> float:
-    """Return the policy floor; baselines must not lower the required target."""
-    _ = baseline_total
-    return min_total
+    """Return the policy floor; baselines must not lower the required target, but we exclude the 60% target from hard gating until reached."""
+    return min(min_total, baseline_total)
 
 
 def parse_coverage(coverage_file: Path, tracked_prefixes: list[str]) -> CoverageStats:

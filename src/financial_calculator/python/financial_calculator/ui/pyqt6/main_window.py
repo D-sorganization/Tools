@@ -32,6 +32,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from shared.python.theme.catppuccin import get_stylesheet
 from shared.python.theme.integration import ThemedWindowMixin
 
 # Catppuccin Mocha colors
@@ -58,96 +59,6 @@ COLORS = {
 # LoD: extract deep enum references to module-level constants (avoids obj.prop.subprop chains)
 _SCROLLBAR_OFF = Qt.ScrollBarPolicy.ScrollBarAlwaysOff
 _BOLD_WEIGHT = QFont.Weight.Bold
-
-
-def get_stylesheet() -> str:
-    """Generate Catppuccin Mocha stylesheet."""
-    return f"""
-        QMainWindow, QWidget {{
-            background-color: {COLORS["base"]};
-            color: {COLORS["text"]};
-        }}
-        QGroupBox {{
-            font-weight: bold;
-            border: 1px solid {COLORS["surface1"]};
-            border-radius: 6px;
-            margin-top: 12px;
-            padding: 10px;
-            background-color: {COLORS["mantle"]};
-        }}
-        QGroupBox::title {{
-            subcontrol-origin: margin;
-            left: 10px;
-            padding: 0 5px;
-            color: {COLORS["lavender"]};
-        }}
-        QLabel {{
-            color: {COLORS["text"]};
-        }}
-        QSpinBox, QDoubleSpinBox {{
-            background-color: {COLORS["surface0"]};
-            color: {COLORS["text"]};
-            border: 1px solid {COLORS["surface1"]};
-            border-radius: 4px;
-            padding: 4px 8px;
-            min-width: 100px;
-        }}
-        QSpinBox:focus, QDoubleSpinBox:focus {{
-            border-color: {COLORS["blue"]};
-        }}
-        QPushButton {{
-            background-color: {COLORS["blue"]};
-            color: {COLORS["crust"]};
-            border: none;
-            border-radius: 6px;
-            padding: 10px 20px;
-            font-weight: bold;
-        }}
-        QPushButton:hover {{
-            background-color: {COLORS["lavender"]};
-        }}
-        QPushButton:pressed {{
-            background-color: {COLORS["mauve"]};
-        }}
-        QTableWidget {{
-            background-color: {COLORS["mantle"]};
-            color: {COLORS["text"]};
-            gridline-color: {COLORS["surface1"]};
-            border: 1px solid {COLORS["surface1"]};
-            border-radius: 4px;
-        }}
-        QTableWidget::item {{
-            padding: 5px;
-        }}
-        QHeaderView::section {{
-            background-color: {COLORS["surface0"]};
-            color: {COLORS["text"]};
-            padding: 8px;
-            border: none;
-            font-weight: bold;
-        }}
-        QTabWidget::pane {{
-            border: 1px solid {COLORS["surface1"]};
-            border-radius: 4px;
-            background-color: {COLORS["mantle"]};
-        }}
-        QTabBar::tab {{
-            background-color: {COLORS["surface0"]};
-            color: {COLORS["text"]};
-            padding: 8px 16px;
-            margin-right: 2px;
-            border-top-left-radius: 4px;
-            border-top-right-radius: 4px;
-        }}
-        QTabBar::tab:selected {{
-            background-color: {COLORS["blue"]};
-            color: {COLORS["crust"]};
-        }}
-        QScrollArea {{
-            border: none;
-            background-color: transparent;
-        }}
-    """
 
 
 @dataclass

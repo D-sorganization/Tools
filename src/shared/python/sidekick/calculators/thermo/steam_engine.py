@@ -16,6 +16,15 @@ from dataclasses import dataclass
 from typing import Any
 
 import numpy as np
+from sidekick.process_calculators.constants import (
+    ANTOINE_WATER_A as ANTOINE_A,
+)
+from sidekick.process_calculators.constants import (
+    ANTOINE_WATER_B as ANTOINE_B,
+)
+from sidekick.process_calculators.constants import (
+    ANTOINE_WATER_C as ANTOINE_C_CELSIUS,
+)
 
 __all__ = [
     "ANTOINE_A",
@@ -136,9 +145,6 @@ NEWTON_RAPHSON_STEP_SIZE: float = 0.1  # [°C] Step size for numerical derivativ
 
 # Antoine equation constants for water vapor pressure (valid 1-100°C)
 # For saturation calculations, use different C value when temperature is in Kelvin
-ANTOINE_A: float = 8.07131  # [dimensionless] Antoine equation constant A
-ANTOINE_B: float = 1730.63  # [°C] Antoine equation constant B
-ANTOINE_C_CELSIUS: float = 233.426  # [°C] Antoine C constant for temp in Celsius
 ANTOINE_C_KELVIN: float = 39.724  # [K] Antoine C constant for temp in Kelvin
 
 # Buck equation constants for water vapor pressure (improved accuracy)
@@ -407,7 +413,7 @@ class SteamCalculationEngine:
         p_mmhg = 10**log_p_mmhg
 
         # Convert to Pascal
-        return p_mmhg * MMHG_TO_PASCAL_FACTOR
+        return float(p_mmhg * MMHG_TO_PASCAL_FACTOR)
 
     def _buck_equation(self, temperature_c: float) -> float:
         """
@@ -566,15 +572,6 @@ class SteamCalculationEngine:
         """Calculate saturated steam properties from temperature using simplified correlations"""
         # Antoine equation for water vapor pressure (valid 1-100°C)
         # log10(P_mmHg) = A - B/(T_K - C) where C is for temperature in Kelvin
-        if temperature is None:
-            raise ValueError("temperature must be provided")
-        temp_c = temperature - KELVIN_TO_CELSIUS_OFFSET
-
-        if temp_c < 1.0:
-            temp_c = 1.0
-        elif temp_c > 374.0:  # Above critical temperature
-            temp_c = 374.0
-
         # Calculate saturation pressure using Antoine equation
         log_p_mmhg = ANTOINE_A - ANTOINE_B / (temperature - ANTOINE_C_KELVIN)
         pressure_mmhg = 10**log_p_mmhg
@@ -594,33 +591,34 @@ class SteamCalculationEngine:
 
         # Solve for temperature: T = B / (A - log10(P)) + C
         if pressure_mmhg <= 0:
-            pressure_mmhg = 1.0
+            raise ValueError(f"Pressure must be positive, got {pressure}")
 
         log_p = np.log10(pressure_mmhg)
         temperature = ANTOINE_B / (ANTOINE_A - log_p) + ANTOINE_C_KELVIN
-
-        # Ensure reasonable temperature range
-        if temperature < 274.15:  # Below 1°C
-            temperature = 274.15
-        elif temperature > 647.15:  # Above critical temperature
-            temperature = 647.15
 
         # Calculate properties at saturation
         return self._calculate_simplified_properties(temperature, pressure)
 
     def get_saturation_pressure(self, temperature: float) -> float:
         """Get saturation pressure for given temperature"""
-        try:
-            if CANTERA_AVAILABLE and self.water is not None and self.water:
+        if CANTERA_AVAILABLE and self.water is not None and self.water:
+            try:
                 self.water.TQ = temperature, 1.0
                 return float(self.water.P)
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
+                _logger.warning(
+                    "Cantera saturation pressure failed; falling back to Antoine: %s",
+                    e,
+                )
+
+        try:
             # Use Antoine equation
             log_p_mmhg = ANTOINE_A - ANTOINE_B / (temperature - ANTOINE_C_KELVIN)
             pressure_mmhg = 10**log_p_mmhg
-            return pressure_mmhg * MMHG_TO_PASCAL_FACTOR
+            return float(pressure_mmhg * MMHG_TO_PASCAL_FACTOR)
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             _logger.exception("Saturation pressure calculation failed: %s", e)
-            return FALLBACK_ATMOSPHERIC_PRESSURE
+            raise ValueError(f"Saturation pressure calculation failed: {e}") from e
 
     def get_saturation_temperature(self, pressure: float) -> float:
         """Get saturation temperature for given pressure"""
@@ -634,7 +632,7 @@ class SteamCalculationEngine:
             return float(ANTOINE_B / (ANTOINE_A - log_p) + ANTOINE_C_KELVIN)
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             _logger.exception("Saturation temperature calculation failed: %s", e)
-            return FALLBACK_BOILING_TEMPERATURE
+            raise ValueError(f"Saturation temperature calculation failed: {e}") from e
 
     def _calculate_cantera_properties(
         self, temperature: float, pressure: float

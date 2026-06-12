@@ -13,13 +13,12 @@ for downstream repos.
 
 ## Key Directories
 
-- `src/signal_processing/` — DSP utilities, filters, spectral analysis
-- `src/urdf/` — URDF model generation and validation
-- `src/calculators/` — process engineering calculators
-- `src/pid/` — P&ID diagram utilities
-- `src/themes/` — plotting and visualization themes
+- `src/signal_processing_studio/` — DSP utilities, filters, spectral analysis
+- `src/urdf_builder_gui/` — URDF model generation and validation
+- `src/shared/python/sidekick/process_calculators/` — process engineering calculators
+- `src/pid_generator/` — P&ID diagram utilities
+- `src/shared/python/plot_theme/` — plotting and visualization themes
 - `tests/` — pytest suite organized by module
-- `manifests/` — package manifests (validated by CI)
 
 ## Python and Tooling
 
@@ -74,7 +73,7 @@ Key markers:
 
 - **DRY:** This repo IS the DRY layer. Duplicated logic in UpstreamDrift or Gasification_Model belongs here.
 - **DbC:** Every public function validates inputs. `TypeError` for wrong types, `ValueError` for out-of-range. Document preconditions in docstrings.
-- **LOD:** No method chains >2 levels. Modules must not import across package boundaries (signal_processing must not import from calculators).
+- **LOD:** No method chains >2 levels. Modules must not import across package boundaries (`signal_processing_studio` must not import from `sidekick.process_calculators`).
 - **TDD:** Every new public function needs tests. Contract tests (`-m contract`) guard the API surface downstream repos depend on.
 - **Stable API:** No renaming, removing, or signature changes to public functions without a deprecation path and downstream coordination.
 
@@ -176,14 +175,13 @@ Each built wheel is uploaded as a GitHub Actions artifact
 - `/gaai-deliver` — Run Delivery Loop for next ready backlog item
 - `/gaai-status` — Show current backlog and memory state
 
-
 ## Hook bypass policy
 
-**Never use `git commit --no-verify` or `git push --no-verify` unless the hook itself is broken** (tooling not installed, hook script crashes). It is *not* an acceptable workaround for a hook that flags real issues.
+**Never use `git commit --no-verify` or `git push --no-verify` unless the hook itself is broken** (tooling not installed, hook script crashes). It is _not_ an acceptable workaround for a hook that flags real issues.
 
 ### When a hook fails on something you didn't touch
 
-The hook is scoped to *your diff*. If `fleet-fast-guardrails` or any other guardrail reports a violation in a file you didn't change, that's a regression — file an issue against `Repository_Management`. Bypassing locally doesn't help: the same checks run in CI's `quality-gate` and will block the PR.
+The hook is scoped to _your diff_. If `fleet-fast-guardrails` or any other guardrail reports a violation in a file you didn't change, that's a regression — file an issue against `Repository_Management`. Bypassing locally doesn't help: the same checks run in CI's `quality-gate` and will block the PR.
 
 ### When the hook is legitimately broken
 

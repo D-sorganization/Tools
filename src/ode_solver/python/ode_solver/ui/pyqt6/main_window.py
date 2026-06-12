@@ -34,6 +34,7 @@ from PyQt6.QtWidgets import (
 
 from contracts import require
 from ode_solver.timeout import SolverTimeoutError, with_timeout
+from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA, get_stylesheet
 from shared.python.theme.integration import ThemedWindowMixin
 
 _log = logging.getLogger(__name__)
@@ -42,150 +43,6 @@ _log = logging.getLogger(__name__)
 _SCROLL_BAR_OFF = Qt.ScrollBarPolicy.ScrollBarAlwaysOff
 _ALIGN_CENTER = Qt.AlignmentFlag.AlignCenter
 
-# Catppuccin Mocha color palette
-CATPPUCCIN_MOCHA = {
-    "rosewater": "#f5e0dc",
-    "flamingo": "#f2cdcd",
-    "pink": "#f5c2e7",
-    "mauve": "#cba6f7",
-    "red": "#f38ba8",
-    "maroon": "#eba0ac",
-    "peach": "#fab387",
-    "yellow": "#f9e2af",
-    "green": "#a6e3a1",
-    "teal": "#94e2d5",
-    "sky": "#89dceb",
-    "sapphire": "#74c7ec",
-    "blue": "#89b4fa",
-    "lavender": "#b4befe",
-    "text": "#cdd6f4",
-    "subtext1": "#bac2de",
-    "subtext0": "#a6adc8",
-    "overlay2": "#9399b2",
-    "overlay1": "#7f849c",
-    "overlay0": "#6c7086",
-    "surface2": "#585b70",
-    "surface1": "#45475a",
-    "surface0": "#313244",
-    "base": "#1e1e2e",
-    "mantle": "#181825",
-    "crust": "#11111b",
-}
-
-STYLESHEET = f"""
-QMainWindow {{
-    background-color: {CATPPUCCIN_MOCHA["base"]};
-}}
-
-QWidget {{
-    background-color: {CATPPUCCIN_MOCHA["base"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    font-family: "Segoe UI", "Arial", sans-serif;
-}}
-
-QScrollArea {{
-    border: none;
-    background-color: {CATPPUCCIN_MOCHA["base"]};
-}}
-
-QGroupBox {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface1"]};
-    border-radius: 8px;
-    margin-top: 12px;
-    padding: 12px;
-    font-weight: bold;
-}}
-
-QGroupBox::title {{
-    subcontrol-origin: margin;
-    left: 12px;
-    padding: 0 6px;
-    color: {CATPPUCCIN_MOCHA["mauve"]};
-}}
-
-QLabel {{
-    color: {CATPPUCCIN_MOCHA["text"]};
-    background-color: transparent;
-}}
-
-QLineEdit, QDoubleSpinBox, QSpinBox {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    border-radius: 4px;
-    padding: 6px 10px;
-    selection-background-color: {CATPPUCCIN_MOCHA["surface2"]};
-}}
-
-QLineEdit:focus, QDoubleSpinBox:focus, QSpinBox:focus {{
-    border: 1px solid {CATPPUCCIN_MOCHA["blue"]};
-}}
-
-QComboBox {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    border-radius: 4px;
-    padding: 6px 10px;
-    min-width: 150px;
-}}
-
-QComboBox:hover {{
-    border: 1px solid {CATPPUCCIN_MOCHA["blue"]};
-}}
-
-QComboBox::drop-down {{
-    border: none;
-    width: 24px;
-}}
-
-QComboBox::down-arrow {{
-    image: none;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 6px solid {CATPPUCCIN_MOCHA["text"]};
-    margin-right: 8px;
-}}
-
-QComboBox QAbstractItemView {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    selection-background-color: {CATPPUCCIN_MOCHA["surface2"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface1"]};
-}}
-
-QTextEdit {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    border-radius: 4px;
-    padding: 8px;
-    font-family: "Consolas", "Courier New", monospace;
-}}
-
-QPushButton {{
-    background-color: {CATPPUCCIN_MOCHA["blue"]};
-    color: {CATPPUCCIN_MOCHA["crust"]};
-    border: none;
-    border-radius: 4px;
-    padding: 10px 24px;
-    font-weight: bold;
-}}
-
-QPushButton:hover {{
-    background-color: {CATPPUCCIN_MOCHA["sapphire"]};
-}}
-
-QPushButton:pressed {{
-    background-color: {CATPPUCCIN_MOCHA["lavender"]};
-}}
-
-QPushButton:disabled {{
-    background-color: {CATPPUCCIN_MOCHA["surface2"]};
-    color: {CATPPUCCIN_MOCHA["overlay0"]};
-}}
-"""
 
 # Preset ODE examples
 ODE_PRESETS: dict[str, dict[str, Any]] = {
@@ -251,7 +108,7 @@ class ODESolverWindow(ThemedWindowMixin, QMainWindow):
         """Set up the user interface."""
         self.setWindowTitle("ODE Solver")
         self.setMinimumSize(700, 800)
-        self.setStyleSheet(STYLESHEET)
+        self.setStyleSheet(get_stylesheet())
 
         # Menu bar with Notes toggle
         menu_bar = self.menuBar()
