@@ -32,6 +32,11 @@ import pandas as pd
 
 logger = logging.getLogger(__name__)
 
+
+class DataProcessorRustError(RuntimeError):
+    """Raised when the Rust data engine rejects or cannot complete a request."""
+
+
 # ── Try to import the native extension ───────────────────────────────────────
 
 _RUST_AVAILABLE = False
@@ -73,6 +78,122 @@ class ConversionReport:
     rows_written: int = 0
     columns: list[str] = field(default_factory=list)
     bytes_written: int = 0
+
+
+@dataclass(frozen=True)
+class DatasetMetadata:
+    """Compatibility metadata returned by :class:`RustBulkDataEngine`."""
+
+    format: str
+    row_count: int
+    columns: list[str]
+    byte_size: int
+
+
+@dataclass(frozen=True)
+class PreviewTable:
+    """Compatibility preview returned by :class:`RustBulkDataEngine`."""
+
+    columns: list[str]
+    rows: list[dict[str, str]]
+    rows_returned: int
+
+
+@dataclass(frozen=True)
+class BulkConversionReport:
+    """Compatibility conversion report returned by :class:`RustBulkDataEngine`."""
+
+    input: str
+    output: str
+    output_format: str
+    rows_read: int
+    rows_written: int
+    columns: list[str]
+    bytes_written: int
+
+
+class RustBulkDataEngine:
+    """Compatibility facade over the pandas fallback bulk-data functions."""
+
+    def __init__(self, *, repo_root: Path | None = None) -> None:
+        self.repo_root = repo_root
+
+    @classmethod
+    def from_repo_root(cls, repo_root: Path | None = None) -> RustBulkDataEngine:
+        """Construct the compatibility engine using the current repository layout."""
+        return cls(repo_root=repo_root)
+
+    def is_available(self) -> bool:
+        """Return whether this process can service bulk-data requests."""
+        return True
+
+    def inspect(self, path: str | os.PathLike[str]) -> DatasetMetadata:
+        """Inspect a supported dataset through the fallback implementation."""
+        info = inspect(path)
+        return DatasetMetadata(
+            format=info.format,
+            row_count=info.row_count_estimate,
+            columns=info.columns,
+            byte_size=info.file_size_bytes,
+        )
+
+    def preview(
+        self,
+        path: str | os.PathLike[str],
+        *,
+        rows: int = 100,
+        columns: list[str] | None = None,
+    ) -> PreviewTable:
+        """Preview rows through the fallback implementation."""
+        frame = preview(path, nrows=rows, columns=columns)
+        return PreviewTable(
+            columns=[str(column) for column in frame.columns],
+            rows=[
+                {str(key): str(value) for key, value in row.items()}
+                for row in frame.to_dict(orient="records")
+            ],
+            rows_returned=len(frame),
+        )
+
+    def convert(
+        self,
+        input_path: str | os.PathLike[str],
+        output_path: str | os.PathLike[str],
+        *,
+        output_format: str = "csv",
+        columns: list[str] | None = None,
+    ) -> BulkConversionReport:
+        """Convert a dataset through the fallback implementation."""
+        if columns is not None:
+            frame = preview(input_path, nrows=10**12, columns=columns)
+            Path(output_path).parent.mkdir(parents=True, exist_ok=True)
+            if output_format == "csv":
+                frame.to_csv(output_path, index=False)
+            elif output_format == "parquet":
+                frame.to_parquet(output_path, index=False)
+            else:
+                raise ValueError(
+                    f"unsupported output format '{output_format}': "
+                    "only csv and parquet are supported"
+                )
+            rows_written = len(frame)
+            bytes_written = Path(output_path).stat().st_size
+            output_columns = [str(column) for column in frame.columns]
+        else:
+            report = convert(input_path, output_path, output_format)
+            rows_written = report.rows_written
+            bytes_written = report.bytes_written
+            output_columns = report.columns
+
+        return BulkConversionReport(
+            input=str(input_path),
+            output=str(output_path),
+            output_format=output_format,
+            rows_read=rows_written,
+            rows_written=rows_written,
+            columns=output_columns,
+            bytes_written=bytes_written,
+        )
 
 
 # ── Cancellation token ────────────────────────────────────────────────────────

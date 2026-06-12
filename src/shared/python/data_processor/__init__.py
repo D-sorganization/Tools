@@ -15,6 +15,8 @@ from pathlib import Path
 
 from .rust_engine import (
     ConversionReport,
+    DataProcessorRustError,
+    RustBulkDataEngine,
     SchemaInfo,
     convert,
     filter_export,
@@ -25,6 +27,8 @@ from .rust_engine import (
 
 __all__ = [
     "ConversionReport",
+    "DataProcessorRustError",
+    "RustBulkDataEngine",
     "SchemaInfo",
     "convert",
     "filter_export",
