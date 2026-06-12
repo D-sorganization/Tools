@@ -14,6 +14,7 @@ from calc_backend.contracts.rotation_converter import (
     RotationConverterRequest,
     RotationConverterResponse,
 )
+from calc_backend.contracts.thermal_profile import ThermalProfileRequest
 from pydantic import ValidationError
 
 
@@ -46,6 +47,7 @@ from pydantic import ValidationError
                 "temperature_k",
                 "pressure_pa",
                 "molecular_weight_kg_mol",
+                "viscosity_pa_s",
             },
         ),
         (
@@ -104,6 +106,29 @@ def test_ode_solver_request_rejects_too_few_output_points():
             parameters={"k": 0.1},
             initial_conditions={"y": 1.0},
             num_points=1,
+        )
+
+
+@pytest.mark.contract
+def test_ode_solver_request_rejects_reversed_time_span():
+    with pytest.raises(ValidationError, match="t_end"):
+        ODESolverRequest(
+            derivatives={"y": "-k*y"},
+            parameters={"k": 0.1},
+            initial_conditions={"y": 1.0},
+            t_start=10.0,
+            t_end=1.0,
+        )
+
+
+@pytest.mark.contract
+def test_thermal_profile_request_rejects_reversed_time_span():
+    with pytest.raises(ValidationError, match="t_end_s"):
+        ThermalProfileRequest(
+            thermal_mass_j_per_k=50000.0,
+            heat_loss_coeff_w_per_k=50.0,
+            t_start_s=10.0,
+            t_end_s=1.0,
         )
 
 

@@ -2,6 +2,8 @@
 
 from __future__ import annotations  # noqa: E402, F404
 
+import math  # noqa: E402
+
 from fastapi import APIRouter, HTTPException  # noqa: E402
 
 from ..contracts.thermal_profile import (  # noqa: E402
@@ -63,6 +65,11 @@ def _solve_thermal_profile(
         t = request.t_start_s + i * dt
         q = power_func(t)
         q_loss = h * (temp - t_amb)
+        if not all(math.isfinite(value) for value in (t, temp, q, q_loss)):
+            raise ValueError(
+                "Thermal profile diverged with non-finite values; reduce the "
+                "time span or check the thermal inputs"
+            )
 
         data.append(
             ThermalProfileDataPoint(
@@ -79,6 +86,11 @@ def _solve_thermal_profile(
             k3 = deriv(t + dt / 2, temp + dt * k2 / 2)
             k4 = deriv(t + dt, temp + dt * k3)
             temp += dt * (k1 + 2 * k2 + 2 * k3 + k4) / 6
+            if not math.isfinite(temp):
+                raise ValueError(
+                    "Thermal profile diverged with non-finite values; reduce the "
+                    "time span or check the thermal inputs"
+                )
 
     temps = [d.temperature_c for d in data]
     final_temp = temps[-1]
