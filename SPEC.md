@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.376                                    |
+| **Spec Version**        | 1.1.377                                    |
 | **Last Spec Update**    | 2026-06-11                                 |
 
 ## 2. Purpose & Mission
@@ -722,6 +722,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-11 | 1.1.377 | fix(ci): use an actionlint-compatible relative npm cache path for Tauri jobs while keeping installs isolated from the runner user's shared npm cache. |
 | 2026-06-11 | 1.1.376 | fix(ci): isolate Tauri npm caches under the per-job runner temp directory and prefer fresh registry metadata so corrupted shared npm cache entries cannot fail `npm ci`. |
 | 2026-06-11 | 1.1.375 | fix(ci): set `fail-fast: false` on the CI Standard `tests` Python matrix. Only `tests (3.11)` is a required check; under the default `fail-fast: true` an infra crash in the non-required 3.10/3.12 lanes (SIGABRT/exit-134 from the Qt headless multi-widget segfault or an OOM kill on a saturated self-hosted runner) cancelled the required 3.11 lane before it ran, leaving consolidation PR #3380 permanently BLOCKED. Decoupling the lanes lets 3.11 report independently. |
 | 2026-06-11 | 1.1.374 | fix(ci): keep the Sidekick extended Qt-heavy unit suite on Python 3.11/3.12 while excluding it from the Python 3.10 compatibility lane, where PyQt aborts the interpreter on saturated self-hosted runners. |

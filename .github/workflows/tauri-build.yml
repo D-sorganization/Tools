@@ -108,7 +108,7 @@ jobs:
     env:
       CARGO_BUILD_JOBS: "1"
       CARGO_INCREMENTAL: "0"
-      NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-cache
+      NPM_CONFIG_CACHE: .npm-cache
       RUST_MIN_STACK: "536870912"
       RUSTFLAGS: "-Cdebuginfo=0"
     steps:
@@ -241,7 +241,7 @@ jobs:
     env:
       CARGO_BUILD_JOBS: "1"
       CARGO_INCREMENTAL: "0"
-      NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-cache
+      NPM_CONFIG_CACHE: .npm-cache
       RUST_MIN_STACK: "536870912"
       RUSTFLAGS: "-Cdebuginfo=0"
     steps:
