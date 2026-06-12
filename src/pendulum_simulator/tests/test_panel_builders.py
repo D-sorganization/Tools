@@ -1,14 +1,11 @@
-from PyQt6.QtCore import Qt
-from shared.python.theme.integration import ThemedWindowMixin
-from typing import Any
-
 """Tests for panel builders."""
 
-
-import numpy as np
+from typing import Any
 from unittest.mock import MagicMock, patch
 
+import numpy as np
 from PyQt6.QtWidgets import QMainWindow, QTabWidget
+from shared.python.theme.integration import ThemedWindowMixin
 from double_pendulum_golf.gui.panel_builders import (
     build_double_panel,
     build_triple_panel,
@@ -273,7 +270,6 @@ def test_wire_toolstrip(qapp) -> Any:
         def __init__(self):
             super().__init__()
             self.setup_theme_support()
-            self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
             self._toolstrip = ToolStrip()
             self._tabs = QTabWidget()
             self._double_panel = MagicMock()

@@ -50,7 +50,6 @@ class SelectionDialog(ThemedDialogMixin, QDialog):
             raise ValueError("title must be provided")
         super().__init__()
         self.setup_theme_support()
-        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setWindowTitle(title)
         self.setModal(True)
         self.selected_id: str | None = None
@@ -96,7 +95,6 @@ class LauncherWindow(ThemedWindowMixin, QMainWindow):
             raise ValueError("manager must be provided")
         super().__init__()
         self.setup_theme_support()
-        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.manager = manager
         self.edit_mode = False
         self.notes_dock: NotesDockWidget | None = None

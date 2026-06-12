@@ -1183,6 +1183,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 - **Performance**: In high-frequency algorithmic optimization loops (like Nelder-Mead iterations), replaced array manipulation operations such as `.map()` and `.slice()` with pre-allocated arrays and standard `for` loops in `src/pendulum_simulator/pendulum-web/src/optimizer.ts` to eliminate continuous array creation and avoid significant garbage collection overhead.
 
+- **2026-06-12**: fix(ui) — remove `Qt.WindowType.FramelessWindowHint` from all 24 standalone tool main windows (Data Explorer, ODE Solver, financial/rotation/PID/PSA calculators, c3d/urdf/humanoid/optimizer/multi-param/vessel-drafter GUIs, pdf_renamer, tile launcher, the Unified Tools Launcher, etc.) so the OS draws normal, movable/resizable/closable window chrome again. These windows previously had no custom title bar, drag handling, or min/max/close buttons, leaving them un-manageable by mouse (#3322). Also dedupe the `ThemedWindowMixin` base class and the doubled `setup_theme_support()` call in `unified_launcher_window.py`. Adds an architecture guard `tests/architecture/test_no_frameless_windows_3322.py` that fails if any `src/` file reintroduces `FramelessWindowHint` without sanctioned custom chrome.
+
 ### Version 1.1.184
 
 - **Performance**: In `src/pendulum_simulator/pendulum-web/src/components/AnalysisPlots.tsx`, optimized chart downsampling by replacing multiple instances of `indices.map()` with pre-allocated arrays and explicit `for` loops inside `useMemo` hooks. This drastically reduces array allocation and garbage collection overhead during high-frequency component rendering.

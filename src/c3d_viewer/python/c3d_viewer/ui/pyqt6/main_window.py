@@ -45,7 +45,6 @@ class C3DViewerWindow(ThemedWindowMixin, QMainWindow):
         """Initialize the main window."""
         super().__init__()
         self.setup_theme_support()
-        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self._current_file: Path | None = None
         self._metadata: dict | None = None
         self._notes_dock: Any | None = None

@@ -27,7 +27,6 @@ class KeyboardShortcutsDialog(ThemedDialogMixin, QDialog):
         """
         super().__init__(parent)
         self.setup_theme_support()
-        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setup_ui()
 
     def setup_ui(self) -> None:

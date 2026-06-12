@@ -74,7 +74,6 @@ class OptimizerWindow(_make_window_base()):
         """Initialize the main window."""
         super().__init__()
         self.setup_theme_support()
-        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self._history: list[dict] = []
         self._setup_ui()
 

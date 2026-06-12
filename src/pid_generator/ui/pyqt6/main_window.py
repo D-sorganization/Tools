@@ -13,7 +13,6 @@ from pathlib import Path
 
 from programmatic_pid import PIDDocument
 from programmatic_pid.profiles import PROFILE_PRESETS
-from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QApplication,
     QComboBox,
@@ -44,7 +43,6 @@ class PIDGeneratorMainWindow(ThemedWindowMixin, QMainWindow):
             )
         super().__init__(parent)
         self.setup_theme_support()
-        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setWindowTitle("P&ID Generator")
         self.setMinimumSize(800, 400)
         self._build_ui()

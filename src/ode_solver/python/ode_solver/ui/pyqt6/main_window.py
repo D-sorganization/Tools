@@ -86,7 +86,6 @@ class ODESolverWindow(ThemedWindowMixin, QMainWindow):
         """Initialize the main window."""
         super().__init__()
         self.setup_theme_support()
-        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self._notes_dock: Any | None = None
         self._setup_ui()
 

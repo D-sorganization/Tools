@@ -57,13 +57,11 @@ except ImportError:
     HELP_AVAILABLE = False
 
 
-class UnifiedLauncher(ThemedWindowMixin, ThemedWindowMixin, QMainWindow):
+class UnifiedLauncher(ThemedWindowMixin, QMainWindow):
     """Main launcher window with tabbed interface for all tools."""
 
     def __init__(self) -> None:
         super().__init__()
-        self.setup_theme_support()
-        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setWindowTitle("Antigravity Unified Tools Launcher")
         self.resize(1000, 700)
         self.repo_root = get_repo_root()

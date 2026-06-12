@@ -223,9 +223,6 @@ class PopOutChart:
 
         self._window = PopOutWindow(self._parent)
         self._window.setup_theme_support()
-        self._window.setWindowFlags(
-            self._window.windowFlags() | Qt.WindowType.FramelessWindowHint
-        )
         self._window.setWindowTitle(self._title)
         self._window.setMinimumSize(700, 450)
         self._window.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)

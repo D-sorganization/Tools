@@ -273,7 +273,6 @@ class PDFRenamerGUI(ThemedWindowMixin, QMainWindow):
     def __init__(self) -> None:
         super().__init__()
         self.setup_theme_support()
-        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.processing_thread: ProcessingThread | None = None
         self.preferences = get_user_preferences()
         self.api_manager: APIRenameManager | None = None

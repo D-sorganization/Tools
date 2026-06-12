@@ -176,9 +176,6 @@ class DataExplorerWindow(ThemedWindowMixin, QtWidgets.QMainWindow):
     def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
         super().__init__(parent)
         self.setup_theme_support()
-        self.setWindowFlags(
-            self.windowFlags() | QtCore.Qt.WindowType.FramelessWindowHint
-        )
         self.setWindowTitle("Data Explorer")
         self._main_widget = MainWidget(self)
         self.setCentralWidget(self._main_widget)

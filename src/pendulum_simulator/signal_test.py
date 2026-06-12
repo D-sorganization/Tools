@@ -25,7 +25,6 @@ class TestWindow(ThemedWindowMixin, QMainWindow):
     def __init__(self):  # type: ignore[no-untyped-def]
         super().__init__()
         self.setup_theme_support()
-        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setWindowTitle("Signal Test")
         self.setGeometry(100, 100, 300, 200)
 
