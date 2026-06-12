@@ -109,11 +109,10 @@ class DataReader:
             return table.to_pandas()
         if fmt == "sqlite":
             import sqlite3
+            from contextlib import closing
 
-            conn = sqlite3.connect(str(file_path))
-            df = pd.read_sql_query("SELECT * FROM data", conn)
-            conn.close()
-            return df
+            with closing(sqlite3.connect(str(file_path))) as conn:
+                return pd.read_sql_query("SELECT * FROM data", conn)
 
         msg = f"Unsupported format: {format_type}"
         raise ValueError(msg)
@@ -246,10 +245,10 @@ class DataWriter:
                     writer.write(table)
         elif fmt == "sqlite":
             import sqlite3
+            from contextlib import closing
 
-            conn = sqlite3.connect(str(file_path))
-            data.to_sql("data", conn, if_exists="replace", index=False)
-            conn.close()
+            with closing(sqlite3.connect(str(file_path))) as conn:
+                data.to_sql("data", conn, if_exists="replace", index=False)
         else:
             msg = f"Unsupported format: {format_type}"
             raise ValueError(msg)
