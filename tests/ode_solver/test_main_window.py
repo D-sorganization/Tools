@@ -84,6 +84,51 @@ class TestParseDictInput:
             ODESolverWindow._parse_dict_input(mock_self, ["k: 1"])
 
 
+class TestRunSolveValidationHandling:
+    """_run_solve reports invalid input instead of raising (issue #3321).
+
+    Exercised via an unbound call with a mock ``self`` so no live QApplication
+    is required. The key guarantee is that bad user input never escapes the slot
+    (which would abort the whole app under PyQt6).
+    """
+
+    def _mock_window(self) -> MagicMock:
+        # No spec= here: _run_solve reads instance attributes (the Qt edit
+        # widgets, results_text) that are not part of the class namespace, so a
+        # spec-restricted mock would reject them. The widgets' return values are
+        # irrelevant because _parse_dict_input is stubbed below.
+        mock_self = MagicMock()
+        mock_self._SOLVER_TIMEOUT_S = 30.0
+        return mock_self
+
+    def test_bad_parameter_value_is_reported_not_raised(self) -> None:
+        mock_self = self._mock_window()
+        # derivatives valid; a parameter value is non-numeric -> float() raises
+        # ValueError inside _run_solve, which must be caught.
+        mock_self._parse_dict_input.side_effect = [
+            {"x": "-k*x"},  # derivatives
+            {"k": "abc"},  # parameters (non-numeric)
+            {"x": "1.0"},  # initial conditions
+        ]
+        ODESolverWindow._run_solve(mock_self)  # must NOT raise
+
+        mock_self.results_text.setPlainText.assert_called_once()
+        message = mock_self.results_text.setPlainText.call_args[0][0]
+        assert "Invalid input" in message
+
+    def test_missing_initial_condition_is_reported_not_raised(self) -> None:
+        mock_self = self._mock_window()
+        mock_self._parse_dict_input.side_effect = [
+            {"x": "-k*x"},  # derivatives
+            {"k": "0.5"},  # parameters
+            {},  # initial conditions — missing x
+        ]
+        ODESolverWindow._run_solve(mock_self)  # must NOT raise
+
+        message = mock_self.results_text.setPlainText.call_args[0][0]
+        assert "Invalid input" in message
+
+
 class TestOnPresetChangedPreconditions:
     """Unit tests for ODESolverWindow._on_preset_changed DbC guards.
 
