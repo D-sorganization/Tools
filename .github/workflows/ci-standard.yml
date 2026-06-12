@@ -622,6 +622,13 @@ jobs:
           if [ "${{ steps.coverage_inputs.outputs.coverage_gate_required }}" = "true" ]; then
             pytest_args+=(--cov=. --cov-report=xml:coverage.xml)
           fi
+          if [ "${{ matrix.python-version }}" = "3.10" ]; then
+            # The Python 3.10 lane has repeatedly hit pytest-xdist worker
+            # process crashes on saturated self-hosted runners. Keep the same
+            # test selection but override the repo-level `-n auto` addopt so
+            # this compatibility lane reports test failures deterministically.
+            pytest_args+=(-n 0)
+          fi
 
           if [ -s changed_test_files.txt ]; then
             mapfile -t changed_test_files < changed_test_files.txt

@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.368                                    |
+| **Spec Version**        | 1.1.369                                    |
 | **Last Spec Update**    | 2026-06-11                                 |
 
 ## 2. Purpose & Mission
@@ -722,6 +722,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 
+| 2026-06-11 | 1.1.369 | fix(ci): make the Python 3.10 CI Standard test lane override repo-level pytest-xdist auto-parallelism with `-n 0` so saturated self-hosted runners report deterministic test results instead of xdist worker crash exhaustion. |
 | 2026-06-11 | 1.1.368 | test(ci): keep data-processor tkinter fallbacks from leaking a partial `tkinter` stub into folder-tool collection by preferring real tkinter when available and installing a complete fallback with `ttk`, `messagebox`, and `filedialog` modules only when needed. |
 | 2026-06-11 | 1.1.367 | fix(ci/runner): make Tauri Linux checks discover an available local Node 24, 22, or 20 toolcache on mixed self-hosted runners instead of failing on runners without the exact Node 24.16.0 path. |
 | 2026-06-11 | 1.1.364 | test(ci): keep retired data-processor skip sentinels compatible with the ruff B011 guard by using truthy documentation assertions instead of optimized-away `assert False` statements. |
