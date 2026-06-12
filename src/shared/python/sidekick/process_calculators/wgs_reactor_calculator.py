@@ -29,9 +29,12 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 from sidekick.utils.state_manager import safe_read_json
 
-from shared.python.theme.integration import get_theme_manager
-from shared.python.theme.matplotlib_style import apply_plot_theme
-
+# NOTE: the theme layer (get_theme_manager / apply_plot_theme) is imported
+# lazily inside the GUI plotting method, NOT at module top. theme.integration
+# imports PyQt6 unconditionally, and this module's WGSReactorEngine is consumed
+# headlessly by the FastAPI calc_backend; a top-level theme import would drag a
+# GUI toolkit into the server process and make the engine un-importable without
+# PyQt6 installed (issue #3317).
 from .constants import (
     CELSIUS_TO_KELVIN_OFFSET,
     KJ_HR_TO_KW,
@@ -602,6 +605,11 @@ if BASE_CALCULATOR_AVAILABLE:
             """Create plots tab"""
             self._plots_widget = QWidget()
             layout = QVBoxLayout()
+
+            # Lazy GUI-only imports (issue #3317): keep the headless engine
+            # import path free of PyQt6.
+            from shared.python.theme.integration import get_theme_manager
+            from shared.python.theme.matplotlib_style import apply_plot_theme
 
             self.figure = Figure(figsize=(10, 6))
             _tm = get_theme_manager()

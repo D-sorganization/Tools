@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.397                                    |
+| **Spec Version**        | 1.1.401                                    |
 | **Last Spec Update**    | 2026-06-12                                 |
 
 ## 2. Purpose & Mission
@@ -723,6 +723,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-12 | 1.1.401 | fix(sidekick): make OS terminal backend teardown close subprocess pipes, join reader threads, and clear stale process handles so Qt/Sidekick tests do not abort during interpreter shutdown after terminal widgets close. |
+| 2026-06-12 | 1.1.400 | fix(sidekick): guard the Python REPL worker wait loop with a timer-backed `isRunning()` poll so fast worker completion cannot miss the nested Qt loop's `finished` signal and hang Linux/offscreen Python 3.11/3.12 test lanes until pytest-timeout aborts. |
+| 2026-06-12 | 1.1.399 | test(sidekick): keep the state-manager UTC boundary regression compatible with the Python 3.10 CI lane by asserting the shared stdlib `timezone.utc` singleton instead of the Python 3.11-only `datetime.UTC` alias. |
+| 2026-06-12 | 1.1.398 | fix(consolidation): consolidate Tools PRs #3398-#3405 into one branch to reduce CI load, covering steam-engine actual-backend reporting, Sidekick REPL QThread teardown hardening under the file-size budget, golden physics anchors, P1AM and pendulum frontend optimizations, SQLite connection cleanup, headless calc-backend imports, pendulum input autocorrect suppression, and Sidekick JSON/state-manager boundary enforcement. |
 | 2026-06-12 | 1.1.397 | test(conversion, #3384 #3388 #3389): add shared conversion-service policy coverage for normalization, validation, custom-unit warnings, gas-flow dispatch, syngas/performance helpers, and singleton conversion helpers so `src/shared/python/sidekick/calculators/conversion/service.py` stays above the changed-file coverage gate without changing production behavior. |
 
 | 2026-06-12 | 1.1.394 | chore(consolidation): refresh the quality-consolidation branch after the scientific-accuracy merge so the shared Sidekick process-calculator constants, signal calculus guards, and API baseline remain aligned with current main while preserving the data-processor facade split. |

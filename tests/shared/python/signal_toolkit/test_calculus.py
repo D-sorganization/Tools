@@ -93,6 +93,18 @@ class TestDifferentiator:
         # Interior points should match (edges may be less accurate)
         np.testing.assert_allclose(result.values[10:-10], expected[10:-10], atol=0.05)
 
+    @pytest.mark.scientific
+    def test_central_derivative_of_sine_matches_cosine_reference(self) -> None:
+        """Central-difference derivative stays anchored to d/dt sin(t)=cos(t)."""
+        t = np.linspace(0.0, 2 * np.pi, 101)
+        signal = Signal(time=t, values=np.sin(t), name="sin", units="")
+        deriv = Differentiator(method=DifferentiationMethod.CENTRAL).differentiate(
+            signal
+        )
+
+        interior_err = np.max(np.abs(deriv.values[2:-2] - np.cos(t)[2:-2]))
+        assert interior_err < 1e-2
+
     def test_second_derivative(self, sine_signal: Signal) -> None:
         """d²/dt² sin(t) ≈ -sin(t)."""
         diff = Differentiator(method=DifferentiationMethod.SAVGOL)
@@ -173,6 +185,15 @@ class TestIntegrator:
         result = integ.integrate(signal)
         # Simpson on an even-spaced grid through the endpoint is exact for x^2.
         assert result.value == pytest.approx(9.0, abs=1e-6)
+
+    @pytest.mark.scientific
+    def test_trapezoid_linear_integral_is_exact_reference(self) -> None:
+        """Trapezoid integration is exact on a linear reference signal (#3391)."""
+        x = np.linspace(0.0, 10.0, 51)
+        signal = Signal(time=x, values=2 * x + 1, name="linear", units="")
+        result = Integrator(method=IntegrationMethod.TRAPEZOID).integrate(signal)
+
+        assert result.value == pytest.approx(110.0, rel=1e-9)
 
     def test_full_integral_not_short_by_one_interval(self) -> None:
         """Default (full-range) integral spans the entire signal (#3383)."""

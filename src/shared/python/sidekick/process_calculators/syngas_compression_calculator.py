@@ -26,9 +26,10 @@ import logging
 import os
 from typing import TYPE_CHECKING, Any, cast
 
-from shared.python.theme.integration import get_theme_manager
-from shared.python.theme.matplotlib_style import apply_plot_theme
-
+# The theme layer (get_theme_manager / apply_plot_theme) is imported lazily in
+# the GUI plotting method below, NOT at module top: theme.integration imports
+# PyQt6 unconditionally, and this module is consumed headlessly by the FastAPI
+# calc_backend (issue #3317).
 from .constants import (
     ATOL_ZERO,
     CELSIUS_TO_KELVIN_OFFSET,
@@ -533,6 +534,10 @@ if HAS_PYQT:
 
             # Create matplotlib figure
             from matplotlib.figure import Figure  # lazy import
+
+            # Lazy GUI-only theme imports (issue #3317).
+            from shared.python.theme.integration import get_theme_manager
+            from shared.python.theme.matplotlib_style import apply_plot_theme
 
             self.figure = Figure(figsize=(10, 8))
             _tm = get_theme_manager()

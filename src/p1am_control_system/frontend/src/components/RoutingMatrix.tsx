@@ -16,10 +16,10 @@ const INPUT_LABELS = [
   "Analog In A1 (V)",
 ];
 
-const OUTPUT_LABELS = [
-  "Analog Out V0 (V)",
-  "Analog Out V1 (V)",
-];
+const OUTPUT_LABELS = ["Analog Out V0 (V)", "Analog Out V1 (V)"];
+
+// ⚡ Bolt Optimization: Pre-calculate static index array to avoid repeated Array.from() allocations during render
+const TAG_INDICES = Array.from({ length: 32 }, (_, i) => i);
 
 export const RoutingMatrix: React.FC<RoutingMatrixProps> = ({
   config,
@@ -44,7 +44,13 @@ export const RoutingMatrix: React.FC<RoutingMatrixProps> = ({
       <div className="glass-panel">
         <div className="panel-header">
           <span>Input Routing Matrix (Sensor ➜ Tag)</span>
-          <span style={{ fontSize: "0.8rem", color: "var(--accent-cyan)", fontWeight: 500 }}>
+          <span
+            style={{
+              fontSize: "0.8rem",
+              color: "var(--accent-cyan)",
+              fontWeight: 500,
+            }}
+          >
             Active Signal Broker Routing
           </span>
         </div>
@@ -52,26 +58,49 @@ export const RoutingMatrix: React.FC<RoutingMatrixProps> = ({
           <table style={{ borderCollapse: "collapse", width: "100%" }}>
             <thead>
               <tr>
-                <th style={{ width: "180px", textAlign: "left", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+                <th
+                  style={{
+                    width: "180px",
+                    textAlign: "left",
+                    fontSize: "0.8rem",
+                    color: "var(--text-secondary)",
+                  }}
+                >
                   Physical Channel
                 </th>
-                {Array.from({ length: 32 }).map((_, i) => (
+                {TAG_INDICES.map((i) => (
                   <th key={i} style={{ padding: "0.25rem" }}>
-                    <div className="col-label" style={{ height: "45px" }}>Tag {i}</div>
+                    <div className="col-label" style={{ height: "45px" }}>
+                      Tag {i}
+                    </div>
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {INPUT_LABELS.map((label, rowIdx) => (
-                <tr key={rowIdx} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.03)" }}>
-                  <td style={{ padding: "0.5rem 0", fontSize: "0.85rem", fontWeight: 500 }}>
+                <tr
+                  key={rowIdx}
+                  style={{
+                    borderBottom: "1px solid rgba(255, 255, 255, 0.03)",
+                  }}
+                >
+                  <td
+                    style={{
+                      padding: "0.5rem 0",
+                      fontSize: "0.85rem",
+                      fontWeight: 500,
+                    }}
+                  >
                     {label}
                   </td>
-                  {Array.from({ length: 32 }).map((_, colIdx) => {
+                  {TAG_INDICES.map((colIdx) => {
                     const isActive = config.input_routing[rowIdx] === colIdx;
                     return (
-                      <td key={colIdx} style={{ padding: "0.15rem", textAlign: "center" }}>
+                      <td
+                        key={colIdx}
+                        style={{ padding: "0.15rem", textAlign: "center" }}
+                      >
                         <button
                           type="button"
                           className={`matrix-cell ${isActive ? "active-input" : ""}`}
@@ -79,7 +108,16 @@ export const RoutingMatrix: React.FC<RoutingMatrixProps> = ({
                           title={`Route ${label} to Tag ${colIdx} (Current val: ${tagValues[colIdx]?.toFixed(2) ?? "0.00"})`}
                           aria-pressed={isActive}
                         >
-                          {isActive && <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#0b0d12" }} />}
+                          {isActive && (
+                            <div
+                              style={{
+                                width: "6px",
+                                height: "6px",
+                                borderRadius: "50%",
+                                background: "#0b0d12",
+                              }}
+                            />
+                          )}
                         </button>
                       </td>
                     );
@@ -95,7 +133,13 @@ export const RoutingMatrix: React.FC<RoutingMatrixProps> = ({
       <div className="glass-panel">
         <div className="panel-header">
           <span>Output Routing Matrix (Tag ➜ Actuator)</span>
-          <span style={{ fontSize: "0.8rem", color: "var(--accent-purple)", fontWeight: 500 }}>
+          <span
+            style={{
+              fontSize: "0.8rem",
+              color: "var(--accent-purple)",
+              fontWeight: 500,
+            }}
+          >
             Active Actuator Mappings
           </span>
         </div>
@@ -103,26 +147,49 @@ export const RoutingMatrix: React.FC<RoutingMatrixProps> = ({
           <table style={{ borderCollapse: "collapse", width: "100%" }}>
             <thead>
               <tr>
-                <th style={{ width: "180px", textAlign: "left", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+                <th
+                  style={{
+                    width: "180px",
+                    textAlign: "left",
+                    fontSize: "0.8rem",
+                    color: "var(--text-secondary)",
+                  }}
+                >
                   Physical Channel
                 </th>
-                {Array.from({ length: 32 }).map((_, i) => (
+                {TAG_INDICES.map((i) => (
                   <th key={i} style={{ padding: "0.25rem" }}>
-                    <div className="col-label" style={{ height: "45px" }}>Tag {i}</div>
+                    <div className="col-label" style={{ height: "45px" }}>
+                      Tag {i}
+                    </div>
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {OUTPUT_LABELS.map((label, rowIdx) => (
-                <tr key={rowIdx} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.03)" }}>
-                  <td style={{ padding: "0.5rem 0", fontSize: "0.85rem", fontWeight: 500 }}>
+                <tr
+                  key={rowIdx}
+                  style={{
+                    borderBottom: "1px solid rgba(255, 255, 255, 0.03)",
+                  }}
+                >
+                  <td
+                    style={{
+                      padding: "0.5rem 0",
+                      fontSize: "0.85rem",
+                      fontWeight: 500,
+                    }}
+                  >
                     {label}
                   </td>
-                  {Array.from({ length: 32 }).map((_, colIdx) => {
+                  {TAG_INDICES.map((colIdx) => {
                     const isActive = config.output_routing[rowIdx] === colIdx;
                     return (
-                      <td key={colIdx} style={{ padding: "0.15rem", textAlign: "center" }}>
+                      <td
+                        key={colIdx}
+                        style={{ padding: "0.15rem", textAlign: "center" }}
+                      >
                         <button
                           type="button"
                           className={`matrix-cell ${isActive ? "active-output" : ""}`}
@@ -130,7 +197,16 @@ export const RoutingMatrix: React.FC<RoutingMatrixProps> = ({
                           title={`Route Tag ${colIdx} (Current val: ${tagValues[colIdx]?.toFixed(2) ?? "0.00"}) to ${label}`}
                           aria-pressed={isActive}
                         >
-                          {isActive && <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#0b0d12" }} />}
+                          {isActive && (
+                            <div
+                              style={{
+                                width: "6px",
+                                height: "6px",
+                                borderRadius: "50%",
+                                background: "#0b0d12",
+                              }}
+                            />
+                          )}
                         </button>
                       </td>
                     );

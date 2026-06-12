@@ -50,13 +50,7 @@ def _is_workspace_registry(value: object) -> bool:
 
 
 class _ReplWorker(QtCore.QThread):
-    """Execute a Python script off the GUI thread (F6).
-
-    Emits ``finished(output)`` on the GUI thread when the script
-    completes so PythonReplWidget can safely update its output pane.
-    The worker does NOT hold a reference to the widget; all UI updates
-    go through the signal.
-    """
+    """Execute a Python script off the GUI thread (F6)."""
 
     finished = QtCore.pyqtSignal(str)
 
@@ -230,19 +224,7 @@ class PythonReplWidget(QtWidgets.QWidget):
         self.execute(self._input.toPlainText())
 
     def execute(self, script: str) -> None:
-        """Execute ``script`` against the shared namespace.
-
-        Runs the script on a background QThread (F6) so the GUI stays
-        responsive during long computations. The Run button is disabled and
-        a 'Running…' label is shown while the worker is active; a Cancel
-        button allows the user to terminate the worker thread (best-effort).
-
-        Args:
-            script: Python source to execute.  Must be a ``str``.
-
-        Raises:
-            TypeError: If ``script`` is not a ``str``.
-        """
+        """Execute ``script`` against the shared namespace."""
         if not isinstance(script, str):
             raise TypeError("script must be a str")
         if not script.strip():
@@ -258,20 +240,47 @@ class PythonReplWidget(QtWidgets.QWidget):
         self._history.append(script.strip())
         self._set_running(True)
 
-        self._worker = _ReplWorker(script, self._namespace, parent=self)
+        self._worker = _ReplWorker(script, self._namespace)
         self._worker.finished.connect(self._on_execution_finished)
         self._wait_for_worker_completion(self._worker)
 
     def _wait_for_worker_completion(self, worker: _ReplWorker) -> None:
         """Process Qt events until the submitted worker has reported completion."""
         loop = QtCore.QEventLoop(self)
+        completion_poller = QtCore.QTimer(loop)
+        completion_poller.setInterval(10)
+
+        def quit_if_stopped() -> None:
+            if not worker.isRunning():
+                loop.quit()
+
+        completion_poller.timeout.connect(quit_if_stopped)
         worker.finished.connect(loop.quit)
-        worker.start()
-        loop.exec()
-        # The worker emits its payload from inside ``run()``. Returning to the
-        # caller before Qt observes the underlying thread as stopped can leave
-        # pytest teardown racing a live QThread on Linux/offscreen runners.
-        worker.wait(1000)
+        try:
+            completion_poller.start()
+            worker.start()
+            if worker.isRunning():
+                loop.exec()
+            # Avoid pytest teardown racing a live QThread on Linux/offscreen CI.
+            worker.wait()
+            QtWidgets.QApplication.processEvents()
+        finally:
+            completion_poller.stop()
+            with contextlib.suppress(TypeError, RuntimeError):
+                worker.finished.disconnect(loop.quit)
+            with contextlib.suppress(TypeError, RuntimeError):
+                completion_poller.timeout.disconnect(quit_if_stopped)
+            self._retire_worker(worker)
+
+    def _retire_worker(self, worker: _ReplWorker | None) -> None:
+        """Drop a stopped worker without leaving it parented to widget teardown."""
+        if worker is None:
+            return
+        if worker.isRunning():
+            worker.wait()
+        if self._worker is worker:
+            self._worker = None
+        worker.deleteLater()
 
     def _set_running(self, running: bool) -> None:
         """Toggle Run/Cancel controls and the 'Running…' status label (F6)."""
@@ -284,9 +293,11 @@ class PythonReplWidget(QtWidgets.QWidget):
     def _on_cancel_clicked(self) -> None:
         """Best-effort cancel: terminate the worker thread (F6)."""
         if self._worker is not None and self._worker.isRunning():
-            self._worker.terminate()
-            self._worker.wait(500)
+            worker = self._worker
+            worker.terminate()
+            worker.wait()
             self._append_output("[Cancelled]")
+            self._retire_worker(worker)
         self._set_running(False)
 
     def _on_execution_finished(self, output: str) -> None:
@@ -298,7 +309,6 @@ class PythonReplWidget(QtWidgets.QWidget):
         self._sync_namespace_to_registry()
         self._set_running(False)
         self._append_output(output)
-        self._worker = None
 
     def output_text(self) -> str:
         """Return the current output pane text."""
@@ -366,19 +376,7 @@ _SENTINEL = object()
 
 
 class SidekickPythonReplWidget(QtWidgets.QWidget):
-    """Small Python execution surface sharing values with Workspace.
-
-    UpstreamDrift #5617: renamed from ``SidekickTerminalWidget``. The name
-    is more honest — this widget runs a bounded Python REPL, not an OS
-    shell. The new ``SidekickOsTerminalWidget`` (in
-    :mod:`upstream_drift_tools.ui.tools_sidebar.os_terminal`) provides the
-    real PTY-backed shell. Object name, child widget object names, and
-    tooltips are preserved so existing styling and tests continue to work.
-
-    Kept as a thin shell so existing tests and Terminal-tab plumbing
-    (theming, object-name lookup) continue to work. All REPL behaviour
-    lives in :class:`PythonReplWidget` (DRY).
-    """
+    """Legacy terminal-tab wrapper around :class:`PythonReplWidget`."""
 
     def __init__(
         self,

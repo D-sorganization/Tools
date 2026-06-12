@@ -10,3 +10,7 @@
 **Vulnerability:** ShellTool's `_is_command_allowed` verified tokens using `if token in dangerous:`, missing bypasses via absolute paths (`/bin/rm`), relative paths (`./rm`), or assignment flags (`--exec=/bin/rm`).
 **Learning:** Checking for command injection requires strict validation of the basename of executable targets, not just exact token matches, as interpreters and shell wrappers process commands differently.
 **Prevention:** Use `pathlib.Path(token).name` for command token validations to extract the base command, and correctly parse options with assignments to prevent nested bypasses.
+## 2025-12-11 - Prevent Denial of Service (DoS) via Unclosed SQLite Connections
+**Vulnerability:** Found a resource leak vulnerability in `src/data_processing/data_processor/python/data_processor/file_utils.py` where a `sqlite3` connection was established but not guaranteed to close if an exception occurred during data processing (`pd.read_sql_query` or `data.to_sql`).
+**Learning:** `sqlite3.connect()` creates a context manager that manages *transactions* (commit/rollback), not the connection lifecycle itself. It will not close the connection when exiting the `with` block. Failing to close connections explicitly can exhaust system file descriptors, leading to Denial of Service (DoS), or leave the database in a locked state.
+**Prevention:** Always use `contextlib.closing` to wrap `sqlite3.connect()` (i.e. `with closing(sqlite3.connect(...)) as conn:`) to guarantee the connection is closed even if an exception occurs during the database operation.

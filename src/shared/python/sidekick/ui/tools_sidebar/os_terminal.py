@@ -60,6 +60,27 @@ _OSC7_PATTERN = re.compile(
 )
 _ANSI_ESCAPE_RE = re.compile(rb"\x1b\[[0-?]*[ -/]*[@-~]")
 _OSC_ESCAPE_RE = re.compile(rb"\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)")
+_READER_JOIN_TIMEOUT_SECONDS = 2.0
+
+
+def _join_reader_thread(reader: threading.Thread | None) -> bool:
+    """Join a backend reader thread without allowing teardown to hang."""
+    if reader is None or reader is threading.current_thread():
+        return True
+    reader.join(timeout=_READER_JOIN_TIMEOUT_SECONDS)
+    return not reader.is_alive()
+
+
+def _close_stream(stream: object | None) -> None:
+    """Best-effort close for subprocess pipes and PTY-like handles."""
+    if stream is None:
+        return
+    close = getattr(stream, "close", None)
+    if callable(close):
+        try:
+            close()
+        except Exception as exc:  # noqa: BLE001 - close is best-effort
+            _logger.debug("Terminal stream close failed: %s", exc)
 
 
 # ---------------------------------------------------------------------------
@@ -167,11 +188,15 @@ class PosixPtyBackend(_BackendBase):
         if self._proc is None:
             self.is_running = False
             return
+        proc = self._proc
         try:
-            self._proc.terminate(force=True)  # type: ignore[attr-defined]
+            proc.terminate(force=True)  # type: ignore[attr-defined]
         except Exception as exc:  # noqa: BLE001 - terminate is best-effort
             _logger.debug("PosixPtyBackend terminate failed: %s", exc)
         self.is_running = False
+        if _join_reader_thread(self._reader):
+            self._reader = None
+        self._proc = None
 
     def resize(self, rows: int, cols: int) -> None:
         if not self.is_running or self._proc is None:
@@ -248,11 +273,15 @@ class WindowsPtyBackend(_BackendBase):
         if self._proc is None:
             self.is_running = False
             return
+        proc = self._proc
         try:
-            self._proc.terminate()  # type: ignore[attr-defined]
+            proc.terminate()  # type: ignore[attr-defined]
         except Exception as exc:  # noqa: BLE001 - terminate is best-effort
             _logger.debug("WindowsPtyBackend terminate failed: %s", exc)
         self.is_running = False
+        if _join_reader_thread(self._reader):
+            self._reader = None
+        self._proc = None
 
     def resize(self, rows: int, cols: int) -> None:
         if not self.is_running or self._proc is None:
@@ -337,14 +366,26 @@ class SubprocessFallbackBackend(_BackendBase):
         if proc is None:
             self.is_running = False
             return
+        self.is_running = False
         try:
-            proc.terminate()
-            proc.wait(timeout=2.0)
+            _close_stream(proc.stdin)
+            if proc.poll() is None:
+                proc.terminate()
+                try:
+                    proc.wait(timeout=2.0)
+                except subprocess.TimeoutExpired:
+                    proc.kill()
+                    proc.wait(timeout=2.0)
         except subprocess.TimeoutExpired:
             proc.kill()
+            proc.wait(timeout=2.0)
         except Exception as exc:  # noqa: BLE001 - terminate is best-effort
             _logger.debug("SubprocessFallbackBackend terminate failed: %s", exc)
-        self.is_running = False
+        finally:
+            _close_stream(proc.stdout)
+            if _join_reader_thread(self._reader):
+                self._reader = None
+            self._proc = None
 
     def resize(self, rows: int, cols: int) -> None:  # noqa: ARG002 - no-op for pipes
         return None
