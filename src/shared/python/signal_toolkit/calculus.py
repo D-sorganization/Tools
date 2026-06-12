@@ -376,9 +376,19 @@ class Integrator:
 
         self._validate_bounds(lower_bound, upper_bound, signal_start, signal_end)
 
-        # Find indices for bounds
-        lower_idx = np.searchsorted(t, lower_bound)
-        upper_idx = np.searchsorted(t, upper_bound)
+        # Find indices for bounds.
+        #
+        # The slice ``t[lower_idx:upper_idx]`` is half-open, so the upper index
+        # must point one PAST the last sample to include. Using ``side="right"``
+        # for the upper bound makes a sample lying exactly on ``upper_bound``
+        # (the common case — e.g. the signal end) part of the integration range
+        # instead of being dropped, which previously left every definite
+        # integral short by the final sampling interval (issue #3383: Simpson of
+        # x^2 over [0, 3] returned 8.13 instead of 9). ``side="left"`` for the
+        # lower bound keeps an exact lower-bound sample included as the first
+        # point of the range.
+        lower_idx = np.searchsorted(t, lower_bound, side="left")
+        upper_idx = np.searchsorted(t, upper_bound, side="right")
 
         lower_idx = np.clip(lower_idx, 0, len(t) - 1)
         upper_idx = np.clip(upper_idx, 0, len(t))
