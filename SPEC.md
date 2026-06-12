@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.401                                    |
+| **Spec Version**        | 1.1.403                                    |
 | **Last Spec Update**    | 2026-06-12                                 |
 
 ## 2. Purpose & Mission
@@ -723,6 +723,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-12 | 1.1.403 | fix(process-calculators, #3103): keep `calculate_htu`'s non-positive liquid/gas ratio fallback inside the typed float contract by returning `HTU_MAX` explicitly as a `float`, preserving the existing clamp behavior while satisfying changed-file mypy gates. |
 | 2026-06-12 | 1.1.402 | fix(process-calculators, #3103): add the missing Design-by-Contract input preconditions to `scrubber_calculator.py` so invalid physical inputs raise a level-gated `PreconditionError` (a `ValueError` subclass) instead of silently dividing by zero or returning garbage. Guards `calculate_gas_density`/`calculate_gas_viscosity` (temperature_k, pressure_pa, molecular_weight > 0), `calculate_flooding_velocity` (gas_density/liquid_density > 0, liquid_mass_flux >= 0), `calculate_column_diameter` (gas_flow_kg_hr > 0, percent_of_flood in (0, 100]), and `calculate_heat_transfer_duty` (gas_flow_kg_hr > 0, water_condensed_kg_hr >= 0) via `contracts.require`, matching the flare-calculator precedent and the repo DbC policy. The `TestScrubberCalculatorContracts` suite previously failed because the preconditions it asserts were never implemented; tests now also pin the precondition messages via `match=`. |
 | 2026-06-12 | 1.1.401 | fix(sidekick): make OS terminal backend teardown close subprocess pipes, join reader threads, and clear stale process handles so Qt/Sidekick tests do not abort during interpreter shutdown after terminal widgets close. |
 | 2026-06-12 | 1.1.400 | fix(sidekick): guard the Python REPL worker wait loop with a timer-backed `isRunning()` poll so fast worker completion cannot miss the nested Qt loop's `finished` signal and hang Linux/offscreen Python 3.11/3.12 test lanes until pytest-timeout aborts. |

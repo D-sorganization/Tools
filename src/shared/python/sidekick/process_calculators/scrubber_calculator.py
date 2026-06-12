@@ -590,7 +590,7 @@ def calculate_htu(
     l_over_g = liquid_mass_flux / max(gas_mass_flux, 0.001)
 
     if l_over_g <= 0:
-        return HTU_MAX
+        return float(HTU_MAX)
 
     # Empirical HTU calculation
     # HTU ≈ C_H * (G / (kla * a))
