@@ -28,6 +28,8 @@ from typing import Final  # noqa: E402
 
 import numpy as np  # noqa: E402
 
+from contracts import require  # noqa: E402
+
 from .constants import (  # noqa: E402
     COOLING_WATER_APPROACH_TEMP,
     CP_WATER_LIQUID,
@@ -341,7 +343,17 @@ def calculate_gas_density(
 
     Reference:
         Ideal gas law: ρ = P·M / (R·T)
+
+    Preconditions:
+        temperature_k > 0, pressure_pa > 0, molecular_weight > 0
     """
+    require(temperature_k > 0, "temperature_k must be positive (K)", temperature_k)
+    require(pressure_pa > 0, "pressure_pa must be positive (Pa)", pressure_pa)
+    require(
+        molecular_weight > 0,
+        "molecular_weight must be positive",
+        molecular_weight,
+    )
     return pressure_pa * molecular_weight / (R_GAS * temperature_k)
 
 
@@ -363,6 +375,12 @@ def calculate_gas_viscosity(temperature_k: float, molecular_weight: float) -> fl
     # Base viscosity at 300K for syngas (approximately air-like)
     if temperature_k is None:
         raise ValueError("temperature_k must be provided")
+    require(temperature_k > 0, "temperature_k must be positive (K)", temperature_k)
+    require(
+        molecular_weight > 0,
+        "molecular_weight must be positive",
+        molecular_weight,
+    )
     mu_ref = SYNGAS_VISCOSITY_REF  # Pa·s at 300K
     t_ref = SUTHERLAND_T_REF  # K
     s = SUTHERLAND_CONSTANT_AIR  # Sutherland constant for air-like gases
@@ -406,6 +424,13 @@ def calculate_flooding_velocity(
     # Flow parameter (Eckert abscissa)
     if liquid_mass_flux is None:
         raise ValueError("liquid_mass_flux must be provided")
+    require(gas_density > 0, "gas_density must be positive", gas_density)
+    require(liquid_density > 0, "liquid_density must be positive", liquid_density)
+    require(
+        liquid_mass_flux >= 0,
+        "liquid_mass_flux must be non-negative",
+        liquid_mass_flux,
+    )
     flow_param = (liquid_mass_flux / 1.0) * np.sqrt(gas_density / liquid_density)
 
     # Capacity parameter at flooding (Eckert ordinate)
@@ -565,7 +590,7 @@ def calculate_htu(
     l_over_g = liquid_mass_flux / max(gas_mass_flux, 0.001)
 
     if l_over_g <= 0:
-        return HTU_MAX
+        return float(HTU_MAX)
 
     # Empirical HTU calculation
     # HTU ≈ C_H * (G / (kla * a))
@@ -713,6 +738,12 @@ def calculate_heat_transfer_duty(
     # Convert flow to kg/s
     if gas_flow_kg_hr is None:
         raise ValueError("gas_flow_kg_hr must be provided")
+    require(gas_flow_kg_hr > 0, "gas_flow_kg_hr must be positive", gas_flow_kg_hr)
+    require(
+        water_condensed_kg_hr >= 0,
+        "water_condensed_kg_hr must be non-negative",
+        water_condensed_kg_hr,
+    )
     gas_flow_kg_s = gas_flow_kg_hr / SECONDS_PER_HOUR
     water_condensed_kg_s = water_condensed_kg_hr / SECONDS_PER_HOUR
 
@@ -824,6 +855,12 @@ def calculate_column_diameter(
     # Design velocity
     if gas_flow_kg_hr is None:
         raise ValueError("gas_flow_kg_hr must be provided")
+    require(gas_flow_kg_hr > 0, "gas_flow_kg_hr must be positive", gas_flow_kg_hr)
+    require(
+        0 < percent_of_flood <= 100,
+        "percent_of_flood must be in (0, 100]",
+        percent_of_flood,
+    )
     design_velocity = flooding_velocity * (percent_of_flood / 100.0)
 
     if design_velocity <= 0:
