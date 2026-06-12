@@ -266,7 +266,6 @@ class PythonReplWidget(QtWidgets.QWidget):
         """Process Qt events until the submitted worker has reported completion."""
         loop = QtCore.QEventLoop(self)
         worker.finished.connect(loop.quit)
-        worker.finished.connect(worker.deleteLater)
         worker.start()
         loop.exec()
         # The worker emits its payload from inside ``run()``. Returning to the
