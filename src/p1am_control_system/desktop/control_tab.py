@@ -35,6 +35,11 @@ class ControlTab(QWidget):
 
         self.backend_url = os.getenv("BACKEND_URL", "http://localhost:8000")
 
+        # Operator/Admin role gate. Live-loop tuning and gain writes require
+        # Admin; updated via :meth:`set_role` from the main window. Defaults to
+        # the least-privileged role so a tab created before login cannot write.
+        self.user_role = "Operator"
+
         # Current active PID configurations fetched from PLC/Backend
         self.routing_config = None
 
@@ -320,13 +325,68 @@ class ControlTab(QWidget):
         """Saves current routing/PID configs fetched from backend."""
         self.routing_config = config
 
+    def set_role(self, role: str) -> None:
+        """Enable/disable live-loop tuning controls based on user role.
+
+        Tuning a live loop (open-loop step tests) and writing PID gains to the
+        PLC are Admin-only actions, mirroring ``RoutingTab.set_role``. The
+        buttons are disabled for Operators for UX feedback; the slots also
+        re-check the role at runtime because tuning flows re-enable buttons.
+        """
+        self.user_role = role
+        is_admin = role == "Admin"
+
+        self.btn_start_tuning.setEnabled(is_admin)
+        # Step/Stop/Apply-gains are only meaningful mid-tuning; gate the entry
+        # point (Start Tuning) and let the existing tuning state machine manage
+        # the rest. Apply-gains is additionally disabled until a tune completes.
+        if not is_admin:
+            self.btn_apply_step.setEnabled(False)
+            self.btn_stop_tuning.setEnabled(False)
+            self.btn_apply_gains.setEnabled(False)
+
+        tip = (
+            "Tune live PID loops (Admin)"
+            if is_admin
+            else "Requires Admin privileges to tune live PID loops"
+        )
+        self.btn_start_tuning.setToolTip(tip)
+
+    def _require_admin(self, action: str) -> bool:
+        """Return ``True`` if the current role may perform *action*.
+
+        Shows an Access Denied dialog and returns ``False`` for non-Admins.
+        """
+        if self.user_role != "Admin":
+            QMessageBox.critical(
+                self,
+                "Access Denied",
+                f"Only Admin users can {action}.",
+            )
+            return False
+        return True
+
     def _on_connection_error(self, err_msg: str) -> None:
         QMessageBox.critical(
             self, "Connection Error", f"Could not reach backend: {err_msg}"
         )
 
     def _start_tuning(self) -> None:
+        if not self._require_admin("start live-loop tuning"):
+            return
         idx = self.loop_combo.currentIndex()
+        if (
+            QMessageBox.question(
+                self,
+                "Confirm PLC write",
+                f"Start open-loop tuning on live Loop {idx}? "
+                "This takes the loop out of automatic control.",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.No,
+            )
+            != QMessageBox.StandardButton.Yes
+        ):
+            return
         self.start_worker = HttpWorker(
             "POST", f"{self.backend_url}/api/pid/{idx}/tuning/start", timeout=1.0
         )
@@ -345,8 +405,21 @@ class ControlTab(QWidget):
         logger.info(f"Tuning mode started for PID loop {idx}")
 
     def _apply_step(self) -> None:
+        if not self._require_admin("apply tuning steps to a live loop"):
+            return
         idx = self.loop_combo.currentIndex()
         step_val = self.spin_step_val.value()
+        if (
+            QMessageBox.question(
+                self,
+                "Confirm PLC write",
+                f"Apply a {step_val}% control-output step to live Loop {idx}?",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.No,
+            )
+            != QMessageBox.StandardButton.Yes
+        ):
+            return
         self.step_worker = HttpWorker(
             "POST",
             f"{self.backend_url}/api/pid/{idx}/tuning/step",
@@ -407,11 +480,27 @@ class ControlTab(QWidget):
         if not self.routing_config:
             return
 
+        if not self._require_admin("apply PID gains to a live loop"):
+            return
+
         idx = self.loop_combo.currentIndex()
         try:
             kp = float(self.lbl_recom_kp.text())
             ki = float(self.lbl_recom_ki.text())
             kd = float(self.lbl_recom_kd.text())
+
+            if (
+                QMessageBox.question(
+                    self,
+                    "Confirm PLC write",
+                    f"Apply PID gains kp={kp}, ki={ki}, kd={kd} to live Loop "
+                    f"{idx}? This retunes a loop currently controlling the plant.",
+                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                    QMessageBox.StandardButton.No,
+                )
+                != QMessageBox.StandardButton.Yes
+            ):
+                return
 
             # Mutate local copy of routing config
             self.routing_config.pids[idx].kp = kp
