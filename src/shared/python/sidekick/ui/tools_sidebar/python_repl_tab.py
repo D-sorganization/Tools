@@ -65,7 +65,7 @@ class _ReplWorker(QtCore.QThread):
         self._namespace = namespace
 
     def run(self) -> None:  # noqa: ANN201 - Qt override
-        """Run the user script and emit ``finished`` with formatted output."""
+        """Run the user script and emit ``result_ready`` with formatted output."""
         stdout = io.StringIO()
         stderr = io.StringIO()
         exception: Exception | None = None
@@ -246,30 +246,15 @@ class PythonReplWidget(QtWidgets.QWidget):
 
     def _wait_for_worker_completion(self, worker: _ReplWorker) -> None:
         """Process Qt events until the submitted worker has reported completion."""
-        loop = QtCore.QEventLoop(self)
-        completion_poller = QtCore.QTimer(loop)
-        completion_poller.setInterval(10)
-
-        def quit_if_stopped() -> None:
-            if not worker.isRunning():
-                loop.quit()
-
-        completion_poller.timeout.connect(quit_if_stopped)
-        worker.finished.connect(loop.quit)
         try:
-            completion_poller.start()
             worker.start()
-            if worker.isRunning():
-                loop.exec()
+            while worker.isRunning():
+                QtWidgets.QApplication.processEvents()
+                worker.wait(10)
             # Avoid pytest teardown racing a live QThread on Linux/offscreen CI.
             worker.wait()
             QtWidgets.QApplication.processEvents()
         finally:
-            completion_poller.stop()
-            with contextlib.suppress(TypeError, RuntimeError):
-                worker.finished.disconnect(loop.quit)
-            with contextlib.suppress(TypeError, RuntimeError):
-                completion_poller.timeout.disconnect(quit_if_stopped)
             self._retire_worker(worker)
 
     def _retire_worker(self, worker: _ReplWorker | None) -> None:
@@ -301,7 +286,7 @@ class PythonReplWidget(QtWidgets.QWidget):
         self._set_running(False)
 
     def _on_execution_finished(self, output: str) -> None:
-        """Slot called on the GUI thread when the worker emits ``finished`` (F6)."""
+        """Slot called on the GUI thread when the worker emits ``result_ready`` (F6)."""
         # Sync namespace changes made by the worker back into self._namespace
         # so the workspace registry and subsequent executions share the updates.
         if self._worker is not None:

@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.407                                    |
+| **Spec Version**        | 1.1.408                                    |
 | **Last Spec Update**    | 2026-06-12                                 |
 
 ## 2. Purpose & Mission
@@ -142,6 +142,9 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   worker result signals distinct from native `QThread.finished` lifecycle
   signals so REPL execution and shell discovery remain stable across PyQt and
   PySide bindings
+- Sidekick Python REPL worker completion avoids nested Qt event loops and polls
+  `QThread` completion through the application event pump, preventing
+  Linux/offscreen Qt aborts while preserving synchronous `execute()` contracts
 - Shared Qt theme stylesheets use relative control typography and minimum tab
   widths so application-level zoom scales shared sidebar and launcher text more
   consistently
@@ -727,6 +730,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-12 | 1.1.408 | fix(sidekick): avoid the nested Qt event loop in Python REPL worker completion by polling `QThread` progress through `QApplication.processEvents()` plus bounded waits, keeping synchronous `execute()` behavior while preventing Linux/offscreen Python 3.11/3.12 test aborts in the F6 async REPL path. |
 | 2026-06-12 | 1.1.406 | test(pendulum): add an explicit runtime contract assertion to the manual PyQt signal smoke script so the changed-test assertion gate recognizes `src/pendulum_simulator/signal_test.py` as behavior-checking test surface after the frameless-window cleanup touched the file. |
 | 2026-06-12 | 1.1.405 | fix(p1am-control, #3323): stop passing `Qt.GlobalColor` enum members into `pg.mkPen(color=...)` for the MPC PID-vs-MPC comparison plots in `control_tab.py`; under pyqtgraph 0.13.7+/0.14.0 with PyQt6 `mkColor` raised `TypeError: Not sure how to make a color from "(<GlobalColor.red: 7>,)"`, aborting `ControlTab()` construction and killing any test or launch that builds the Control tab. Use pyqtgraph-native color forms (`"r"` and the `(0, 100, 0)` darkGreen tuple) while leaving the theme-derived Highlight/WindowText pens untouched, and add a regression test that constructs `ControlTab()` and asserts the four MPC curve attributes exist. |
 | 2026-06-12 | 1.1.404 | fix/test(p1am, #3314): make the HMI E-STOP clear actually reach the PLC. Add a `clear_estop()` contract to `BasePLCClient`, implement it as an explicit reset-coil write in the Modbus client and a latch reset in the simulator, and rework `/api/estop/clear` to command the controller and only lower the server-side `e_stop_active` flag when the controller (or backup simulator) acknowledges — returning 502 and keeping the latch on rejection. The desktop header now shows a pending "CLEARING…" state and only goes green ("E-STOP CLEAR") on confirmed success, reverting to red on failure. Split endpoint-level E-STOP clear regressions into a focused backend test module so the confirmed PLC reset, rejected-reset latch preservation, and offline simulator-clear contracts remain covered while `test_backend.py` stays inside the fleet file-size budget, and keep that split module aligned with the backend suite's optional dependency contract so environments without `sqlmodel` skip FastAPI endpoint tests instead of failing collection. REQUIRES HARDWARE VALIDATION before trusted. |
