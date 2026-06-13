@@ -81,6 +81,9 @@ from src.shared.python.ai.integrations.notion import (  # noqa: E402
     set_notion_api_token,
 )
 
+sys.modules.pop("src.shared.python.ai.exceptions", None)
+sys.modules.pop("src.shared.python.ai.types", None)
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

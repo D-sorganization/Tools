@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.411                                    |
-| **Last Spec Update**    | 2026-06-12                                 |
+| **Spec Version**        | 1.1.412                                    |
+| **Last Spec Update**    | 2026-06-13                                 |
 
 ## 2. Purpose & Mission
 
@@ -78,6 +78,8 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Project-scoped terminal-agent runtime coordination for shared chat provider
   processes
 - Shared chat WebSocket terminal-session actions for start/input/resize/events
+- AI integration tests that stub shared modules must restore `sys.modules`
+  before adapter tests run, preserving deterministic full-suite collection.
   and stop lifecycle control
 - Shared chat dock terminal mode with shell/provider selectors and terminal
   session input routing

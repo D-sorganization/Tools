@@ -71,6 +71,9 @@ from src.shared.python.ai.integrations.obsidian import (  # noqa: E402
     set_obsidian_vault_path,
 )
 
+sys.modules.pop("src.shared.python.ai.exceptions", None)
+sys.modules.pop("src.shared.python.ai.types", None)
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
