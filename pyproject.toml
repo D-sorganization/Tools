@@ -328,6 +328,8 @@ omit = [
     "*/test_*",
     "*/__pycache__/*",
     "*/node_modules/*",
+    # Vendored self-contained sub-app, tested in its origin repo (Tools#3407)
+    "src/movement_optimizer/*",
 ]
 
 [tool.coverage.report]

@@ -25,6 +25,10 @@ exclude = [
     "src/tools/folder_tools",
     "src/tools/code_quality_check.py",
     "src/pendulum_simulator",
+    # Vendored self-contained sub-app (migrated from D-sorganization/Movement_Optimizer,
+    # which is archived in favour of this copy — see Tools#3407). Carries its own
+    # quality bar (ruff line-length 100) and CI history; linted in its origin repo.
+    "src/movement_optimizer",
     "tests/data_processor",
     "python/src/tile_launcher/app_catalog.json",
     "python/tests",

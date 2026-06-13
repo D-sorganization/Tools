@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.408                                    |
+| **Spec Version**        | 1.1.409                                    |
 | **Last Spec Update**    | 2026-06-12                                 |
 
 ## 2. Purpose & Mission
@@ -1426,3 +1426,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **2026-06-10**: Fix command injection bypasses in `cli_tools.py` `ShellTool._is_command_allowed` by explicitly parsing executable names using `pathlib.Path` and parsing arguments with assignment flags.
 - **2026-06-11**: fix(conversion) — `convert_gas_flow_scfm_acfm` now validates inputs as a true precondition: a non-positive/non-finite `compressibility_factor` raises `ValueError` (instead of silently passing through on ACFM→SCFM), and an explicitly supplied non-positive/non-finite `actual_temp_K`/`actual_pressure_kPa` raises `ValueError` instead of being coerced to the standard-condition default via the falsy-`0.0` `or` idiom. Reconciles the #3344 gas-flow guard refactor with the restored #3367/#3342 compressibility validation tests during PR consolidation (#3380).
 - **2026-06-11**: test(p1am) — make the P1AM backend functional suite (`src/p1am_control_system/backend/tests/test_backend.py`) robust to cross-module test-collection order. An autouse fixture now re-asserts `P1AM_DEV_NO_AUTH=1` and the `get_session` dependency override per-test (restoring prior values on teardown), so the sibling security suite's import-time `os.environ.pop("P1AM_DEV_NO_AUTH")` and competing `app.dependency_overrides` no longer leak 503 auth-gate / `no such table` failures into these tests (#3289/#3292, surfaced during #3380 consolidation).
+
+## 1.1.409 - Vendor canonical Movement Optimizer biomechanics app into Tools (#3407)
+
+- **2026-06-12**: feat(movement_optimizer) — migrate the more-developed standalone Movement Optimizer (`D-sorganization/Movement_Optimizer`) into `src/movement_optimizer/` as the single canonical home so the standalone repo can be archived. Full product vendored verbatim (Lagrangian barbell dynamics + 7 exercises, swingset/chain models with force fields, spine loads, Hill strength, PyQt6 GUI, headless CLI, optional Rust/PyO3 backend) plus its own preserved test suite. Treated as a self-contained sub-app like `src/pendulum_simulator`: excluded from the monorepo ruff/ruff-format/mypy/bandit/coverage/pre-commit delta gates (and the matching CI filter lists), with `testpaths` keeping its tests out of the default suite. Registered for UpstreamDrift discovery via `model_pack.yaml` (`pack_id: tools-movement-optimizer-biomech`) validated by `scripts/movement_optimizer_provider_manifest.py` and a regression test. `gui/motion_tabs.py` was split (extracting `ChainDynamicsTab`/`create_chain_tab` into `gui/motion_tabs_chain.py`, behaviour-preserving, 34 GUI tests green) to satisfy the 1500-line module budget. Phase 1 of the consolidation epic; route-unification and code-quality follow-ups tracked under #3410/#3411.
