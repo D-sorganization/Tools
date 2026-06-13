@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.410                                    |
-| **Last Spec Update**    | 2026-06-12                                 |
+| **Spec Version**        | 1.1.411                                    |
+| **Last Spec Update**    | 2026-06-13                                 |
 
 ## 2. Purpose & Mission
 
@@ -195,6 +195,10 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Shared source-tree logging and environment helpers keep AI adapter and chat
   service imports self-contained for downstream consumers that install or
   vendor only the shared Tools modules
+- Pytest import hooks preload the AI exception hierarchy under `ai.*`,
+  `shared.python.ai.*`, and `src.shared.python.ai.*` aliases so collection
+  cannot bind adapter tests to namespace-package stubs without
+  `AIConnectionError`
 - Plugin system for extending functionality
 
 No repo is required to use Tools, but it provides optional high-value integrations.
