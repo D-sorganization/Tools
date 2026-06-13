@@ -643,6 +643,32 @@ jobs:
           # addopt and report failures deterministically.
           pytest_args+=(-n 0)
 
+          # Guard: every entry in the always-on core_tests smoke set must
+          # actually collect at least one test. Six of these files were
+          # previously 0 bytes, so the "always-on" contract/architecture/
+          # rotation/constants/manifest coverage existed in name only and
+          # passed silently (issue #3324). Fail loudly if any entry is vacuous.
+          empty_core=()
+          for ct in "${core_tests[@]}"; do
+            collected=$(python -m pytest --collect-only -q "$ct" 2>/dev/null | grep -cE '::' || true)
+            if [ "$collected" -eq 0 ]; then
+              empty_core+=("$ct")
+            fi
+          done
+          if [ "${#empty_core[@]}" -gt 0 ]; then
+            echo "::error::core_tests entries collected 0 tests (issue #3324): ${empty_core[*]}"
+            exit 1
+          fi
+
+          # Source-keyed selection (issue #3324): translate changed *source*
+          # files to the test directories that exercise them, so editing
+          # production code without touching its test file still runs that
+          # code's tests. Reuses changed_python_files.txt from the collect step.
+          source_keyed_tests=()
+          if [ -s changed_python_files.txt ]; then
+            mapfile -t source_keyed_tests < <(python scripts/select_tests_for_changes.py changed_python_files.txt)
+          fi
+
           run_changed_tests=true
           if [ "$BRANCH_NAME" = "codex/consolidate-open-prs-20260611-tools" ]; then
             # This branch is a large consolidation PR, and collecting every
@@ -655,7 +681,9 @@ jobs:
 
           if [ "$run_changed_tests" = "true" ] && [ -s changed_test_files.txt ]; then
             mapfile -t changed_test_files < changed_test_files.txt
-            python -m pytest "${changed_test_files[@]}" "${core_tests[@]}" "${pytest_args[@]}"
+            python -m pytest "${changed_test_files[@]}" "${source_keyed_tests[@]}" "${core_tests[@]}" "${pytest_args[@]}"
+          elif [ "$run_changed_tests" = "true" ] && [ "${#source_keyed_tests[@]}" -gt 0 ]; then
+            python -m pytest "${source_keyed_tests[@]}" "${core_tests[@]}" "${pytest_args[@]}"
           else
             python -m pytest "${core_tests[@]}" "${pytest_args[@]}"
           fi

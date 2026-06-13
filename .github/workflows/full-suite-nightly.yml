@@ -1,0 +1,138 @@
+name: Full Test Suite (Nightly)
+
+# Issue #3324: no automated lane ran the full pytest suite, so the overwhelming
+# majority of the ~2,760 tests under tests/ plus ~5,671 under src/ could never
+# execute — which is exactly how the P0 suite-gutting went undetected. This lane
+# runs the whole collection nightly (and on demand) and is gating-with-
+# notification: a failure fires the Slack webhook used by the heavy lanes.
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  schedule:
+    - cron: "0 5 * * *" # nightly 05:00 UTC (after the heavy lane at 04:00)
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  full-suite:
+    name: Full Test Suite
+    runs-on: d-sorg-fleet
+    timeout-minutes: 120
+    env:
+      HEAVY_TEST_SLACK_WEBHOOK: ${{ secrets.HEAVY_TEST_SLACK_WEBHOOK }}
+      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install system display dependencies
+        run: |
+          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock && sudo apt-get -o DPkg::Lock::Timeout=300 update || true
+          sudo apt-get -o DPkg::Lock::Timeout=300 install -y --no-install-recommends \
+            xvfb x11-utils mesa-utils \
+            libgl1 libegl1 libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 \
+            libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 \
+            libdbus-1-3 libxrandr2 libxss1 libxcursor1 libxcomposite1 \
+            libasound2-dev libxi6 libxtst6
+
+      - name: Install Python dependencies
+        timeout-minutes: 25
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f pyproject.toml ]; then pip install -e ".[dev,test]" || pip install -e .; fi
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install pytest pytest-cov pytest-timeout pytest-xdist pytest-qt
+
+      - name: Configure Qt for headless CI
+        run: echo "QT_QPA_PLATFORM=offscreen" >> "$GITHUB_ENV"
+
+      - name: Run full suite
+        timeout-minutes: 90
+        run: |
+          # pipefail so the tee pipe cannot mask pytest's exit code (#3324/#3325).
+          set -o pipefail
+          export PYTHONPATH="src/data_processing/data_processor/python:src/media_processing/video_processor/python:src/shared/python:src/python/src:src:${PYTHONPATH:-}"
+          # Whole collection, excluding only the markers that genuinely cannot
+          # run in this lane (live_simulation belongs to the heavy lane; slow is
+          # opt-in). Override the pyproject addopts -m deselection (last -m wins).
+          xvfb-run -a python -m pytest tests/ src/ \
+            --import-mode=importlib \
+            -m "not live_simulation and not slow" \
+            --timeout=120 \
+            --timeout-method=thread \
+            -n auto \
+            --dist loadscope \
+            --junit-xml=full_suite_results.xml \
+            --tb=short \
+            | tee full_suite_output.log
+
+      - name: Summarize full-suite results
+        if: always()
+        run: |
+          echo "## Full Test Suite Report - Tools" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          # A vacuous full-suite run (junit missing or 0 collected) means the
+          # suite was gutted again — fail rather than report green (issue #3324).
+          if [ ! -f full_suite_results.xml ]; then
+            echo "::error::full_suite_results.xml missing — pytest crashed before writing junit or collected nothing (issue #3324)." >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          python3 - <<'PYEOF'
+          import os
+          import sys
+          import xml.etree.ElementTree as ET
+          tree = ET.parse('full_suite_results.xml')
+          root = tree.getroot()
+          suite = root.find('.//testsuite') or root
+          total = int(suite.get('tests', 0))
+          failures = int(suite.get('failures', 0))
+          errors = int(suite.get('errors', 0))
+          skipped = int(suite.get('skipped', 0))
+          passed = total - failures - errors - skipped
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a', encoding='utf-8') as fh:
+              fh.write("| Status | Count |\n|--------|-------|\n")
+              fh.write(f"| Passed | {passed} |\n")
+              fh.write(f"| Failed | {failures} |\n")
+              fh.write(f"| Errors | {errors} |\n")
+              fh.write(f"| Skipped | {skipped} |\n")
+              fh.write(f"| Total | {total} |\n\n")
+          # A real full run collects thousands of tests; a handful means the
+          # collection silently broke. Require a sane floor (issue #3324).
+          if total < 500:
+              print(f"Full suite collected only {total} tests (<500) — collection broken (issue #3324).", file=sys.stderr)
+              sys.exit(1)
+          PYEOF
+          echo "### Tail of test output" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          tail -40 full_suite_output.log >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload full-suite artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: full-suite-results-${{ github.run_id }}
+          path: |
+            full_suite_results.xml
+            full_suite_output.log
+          retention-days: 30
+
+      - name: Notify on failure
+        if: failure() && env.HEAVY_TEST_SLACK_WEBHOOK != ''
+        run: |
+          curl -s -X POST "$HEAVY_TEST_SLACK_WEBHOOK" \
+            -H 'Content-type: application/json' \
+            --data "{\"text\":\"Nightly full test suite failed for Tools on ${GITHUB_REF_NAME}. Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}\"}"

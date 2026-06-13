@@ -5,6 +5,10 @@ concurrency:
 
 on:
   workflow_dispatch:
+  # The live_simulation + e2e lanes must actually run on a cadence, otherwise the
+  # heavy suite is vacuous (issue #3325). Keep workflow_dispatch for manual reruns.
+  schedule:
+    - cron: "0 4 * * *" # nightly 04:00 UTC
 
 jobs:
   run-heavy-tests:
@@ -77,10 +81,19 @@ jobs:
       - name: Run heavy integration tests
         timeout-minutes: 60
         run: |
+          # GitHub's default `bash -e {0}` lacks pipefail, so the `| tee` pipe
+          # below would mask pytest's exit code (including exit 5 = nothing
+          # collected). Enable pipefail so a vacuous or failing run fails the
+          # job instead of passing silently (issue #3325).
+          set -o pipefail
+          # Select BOTH the live_simulation and e2e markers: the restored
+          # tests/e2e/* suite uses the `e2e` marker, which `-m "live_simulation"`
+          # alone would never select. The last `-m` on the CLI overrides the
+          # pyproject addopts deselection (issue #3325).
           xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
             pytest \
               -v \
-              -m "live_simulation" \
+              -m "live_simulation or e2e" \
               --timeout=300 \
               --timeout-method=thread \
               --tb=short \
@@ -98,9 +111,17 @@ jobs:
         run: |
           echo "## Heavy Integration Test Report - Tools" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          if [ -f heavy_test_results.xml ]; then
-            python3 - <<'PYEOF'
+          # Guard against a vacuous heavy run (issue #3325): if pytest crashed
+          # before writing junit, or collected zero tests, the lane covered
+          # nothing and MUST fail rather than report a green "0 tests" run.
+          if [ ! -f heavy_test_results.xml ]; then
+            echo "::error::heavy_test_results.xml missing — pytest crashed before writing junit or collected nothing." >> "$GITHUB_STEP_SUMMARY"
+            echo "heavy_test_results.xml missing — failing the heavy lane (issue #3325)." >&2
+            exit 1
+          fi
+          python3 - <<'PYEOF'
           import os
+          import sys
           import xml.etree.ElementTree as ET
           tree = ET.parse('heavy_test_results.xml')
           root = tree.getroot()
@@ -111,14 +132,19 @@ jobs:
           skipped = int(suite.get('skipped', 0))
           passed = total - failures - errors - skipped
           with open(os.environ['GITHUB_STEP_SUMMARY'], 'a', encoding='utf-8') as fh:
-              fh.write(f"| Status | Count |\n|--------|-------|\n")
+              fh.write("| Status | Count |\n|--------|-------|\n")
               fh.write(f"| Passed | {passed} |\n")
               fh.write(f"| Failed | {failures} |\n")
               fh.write(f"| Errors | {errors} |\n")
               fh.write(f"| Skipped | {skipped} |\n")
               fh.write(f"| Total | {total} |\n\n")
+          if total == 0:
+              fh = open(os.environ['GITHUB_STEP_SUMMARY'], 'a', encoding='utf-8')
+              fh.write("::error::Heavy lane collected 0 tests — live_simulation/e2e coverage is vacuous (issue #3325).\n")
+              fh.close()
+              print("Heavy lane collected 0 tests — failing (issue #3325).", file=sys.stderr)
+              sys.exit(1)
           PYEOF
-          fi
           echo "### Tail of test output" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
           tail -40 heavy_test_output.log >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
