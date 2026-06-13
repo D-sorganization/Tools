@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.410                                    |
+| **Spec Version**        | 1.1.411                                    |
 | **Last Spec Update**    | 2026-06-12                                 |
 
 ## 2. Purpose & Mission
@@ -1431,3 +1431,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 ## 1.1.409 - Vendor canonical Movement Optimizer biomechanics app into Tools (#3407)
 
 - **2026-06-12**: feat(movement_optimizer) — migrate the more-developed standalone Movement Optimizer (`D-sorganization/Movement_Optimizer`) into `src/movement_optimizer/` as the single canonical home so the standalone repo can be archived. Full product vendored verbatim (Lagrangian barbell dynamics + 7 exercises, swingset/chain models with force fields, spine loads, Hill strength, PyQt6 GUI, headless CLI, optional Rust/PyO3 backend) plus its own preserved test suite. Treated as a self-contained sub-app like `src/pendulum_simulator`: excluded from the monorepo ruff/ruff-format/mypy/bandit/coverage/pre-commit delta gates (and the matching CI filter lists), with `testpaths` keeping its tests out of the default suite. Registered for UpstreamDrift discovery via `model_pack.yaml` (`pack_id: tools-movement-optimizer-biomech`) validated by `scripts/movement_optimizer_provider_manifest.py` and a regression test. `gui/motion_tabs.py` was split (extracting `ChainDynamicsTab`/`create_chain_tab` into `gui/motion_tabs_chain.py`, behaviour-preserving, 34 GUI tests green) to satisfy the 1500-line module budget. Phase 1 of the consolidation epic; route-unification and code-quality follow-ups tracked under #3410/#3411.
+
+### Performance Note (2026-06-13)
+- In the `pendulum_simulator` Nelder-Mead optimization loop, closure allocation for `Array.prototype.sort()` over tiny, statically-sized arrays caused severe GC pressure and main thread drag. We use an explicitly implemented in-place insertion sort to eliminate iteration callback overhead for fixed-size mathematical arrays.
