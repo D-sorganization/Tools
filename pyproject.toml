@@ -177,9 +177,10 @@ Repository = "https://github.com/D-sorganization/Tools"
 # setuptools packages.find only discovers packages; these must be listed
 # explicitly so they are included in pip install ud-tools.
 # See: https://github.com/D-sorganization/Tools/issues/1695
-py-modules = ["contracts", "cors", "deprecation", "safe_eval"]
+py-modules = ["compatibility", "contracts", "cors", "deprecation", "safe_eval"]
 
 [tool.setuptools.package-dir]
+compatibility = "src/shared/python"
 contracts = "src/shared/python"
 cors = "src/shared/python"
 deprecation = "src/shared/python"

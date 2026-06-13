@@ -23,6 +23,17 @@ def test_dead_dwsim_console_script_is_not_advertised() -> None:
     assert "dwsim-model" not in scripts
 
 
+def test_shared_compatibility_module_is_packaged() -> None:
+    """The bare compatibility shim must be present in built wheels."""
+    metadata = _project_metadata()
+    setuptools = metadata["tool"]["setuptools"]  # type: ignore[index]
+    py_modules = set(setuptools["py-modules"])  # type: ignore[index]
+    package_dir = setuptools["package-dir"]  # type: ignore[index]
+
+    assert "compatibility" in py_modules
+    assert package_dir["compatibility"] == "src/shared/python"  # type: ignore[index]
+
+
 def test_readme_python_badge_matches_package_requires_python() -> None:
     metadata = _project_metadata()
     requires_python = metadata["project"]["requires-python"]  # type: ignore[index]
