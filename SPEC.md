@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.406                                    |
+| **Spec Version**        | 1.1.407                                    |
 | **Last Spec Update**    | 2026-06-12                                 |
 
 ## 2. Purpose & Mission
@@ -138,6 +138,10 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   `sidekick` and deprecated `upstream_drift_tools` `WorkspaceRegistry` module
   identities during the compatibility migration while preserving explicit
   TypeError failures for missing or unrelated registry objects
+- Sidekick Qt runtime threads use the binding-neutral `Signal` shim and keep
+  worker result signals distinct from native `QThread.finished` lifecycle
+  signals so REPL execution and shell discovery remain stable across PyQt and
+  PySide bindings
 - Shared Qt theme stylesheets use relative control typography and minimum tab
   widths so application-level zoom scales shared sidebar and launcher text more
   consistently

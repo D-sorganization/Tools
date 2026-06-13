@@ -19,7 +19,7 @@ from .calculator_startup import (
     default_calculator_startup_config,
     default_repl_startup_config,
 )
-from .qt_compat import QtCore, QtWidgets
+from .qt_compat import QtCore, QtWidgets, Signal
 from .registry import WorkspaceRegistry
 
 _logger = logging.getLogger(__name__)
@@ -52,7 +52,7 @@ def _is_workspace_registry(value: object) -> bool:
 class _ReplWorker(QtCore.QThread):
     """Execute a Python script off the GUI thread (F6)."""
 
-    finished = QtCore.pyqtSignal(str)
+    result_ready = Signal(str)
 
     def __init__(
         self,
@@ -106,7 +106,7 @@ class _ReplWorker(QtCore.QThread):
             and last_result is not None
         ):
             output = f"{repr(last_result)}\n{output}" if output else repr(last_result)
-        self.finished.emit(output)
+        self.result_ready.emit(output)
 
 
 class PythonReplWidget(QtWidgets.QWidget):
@@ -241,7 +241,7 @@ class PythonReplWidget(QtWidgets.QWidget):
         self._set_running(True)
 
         self._worker = _ReplWorker(script, self._namespace)
-        self._worker.finished.connect(self._on_execution_finished)
+        self._worker.result_ready.connect(self._on_execution_finished)
         self._wait_for_worker_completion(self._worker)
 
     def _wait_for_worker_completion(self, worker: _ReplWorker) -> None:
