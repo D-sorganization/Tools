@@ -23,7 +23,7 @@ Or use the convenience script:
 | File                              | Purpose                                                                   |
 | --------------------------------- | ------------------------------------------------------------------------- |
 | `.coveragerc`                     | Coverage measurement configuration (source paths, exclusions, thresholds) |
-| `config/coverage_baseline.json`   | Current baseline (6.25%) — used by CI for regression detection            |
+| `config/coverage_baseline.json`   | Current ratchet baseline (60%) — used by CI for regression detection      |
 | `config/coverage_policy.json`     | Policy thresholds (minimum total, per-package targets)                    |
 | `scripts/measure_coverage.py`     | Compare coverage to baseline and policy                                   |
 | `scripts/run_coverage.sh`         | End-to-end local coverage measurement                                     |
@@ -60,7 +60,7 @@ python3 scripts/measure_coverage.py \
 
 ## CI Integration
 
-The CI workflow (`.github/workflows/ci-standard.yml`) automatically:
+The PR CI workflow (`.github/workflows/ci-standard.yml`) automatically:
 
 1. **Measures coverage** during test execution
 
@@ -68,18 +68,24 @@ The CI workflow (`.github/workflows/ci-standard.yml`) automatically:
    python -m pytest ... --cov=src --cov-report=xml:coverage.xml
    ```
 
-2. **Validates against policy**
+2. **Validates touched tracked packages against policy**
 
    ```bash
    python3 scripts/check_coverage_policy.py \
      --coverage-file coverage.xml \
      --policy-file config/coverage_policy.json \
-     --baseline-file config/coverage_baseline.json
+     --baseline-file config/coverage_baseline.json \
+     --changed-files changed_python_files.txt
    ```
 
 3. **Uploads results**
    - `coverage_trend_*.json` artifact contains trend data
    - Check CI logs for "Coverage policy evaluation" section
+
+The nightly full-suite workflow (`.github/workflows/full-suite-nightly.yml`)
+runs `tests/ src/` with repo-wide coverage and calls
+`scripts/check_coverage_policy.py` without `--changed-files`. That lane owns the
+total-coverage non-regression ratchet.
 
 ---
 
@@ -110,7 +116,7 @@ Coverage policy evaluation:
 
 Common failures:
 
-- `total ... below minimum 6.0%` → Coverage dropped too much
+- `total ... below effective minimum` → Full-suite coverage dropped below the ratchet floor
 - `total ... regressed beyond allowed drop` → Coverage decreased >2% from baseline
 - `package ... below threshold` → Specific module fell short
 
@@ -118,11 +124,11 @@ Common failures:
 
 ## Current Status
 
-**Baseline (2026-04-30):**
+**Baseline:**
 
-- Total: 6.25% (expanding over time)
-- Core test suite: 476 tests
-- Policy: minimum 6%, max drop 2%
+- Total ratchet: 60%
+- PR gate: changed tracked-package thresholds only
+- Nightly full-suite gate: repo-wide total non-regression, max drop 2%
 
 **Hot-path modules (aspirational 80% targets — NOT a CI gate):**
 
