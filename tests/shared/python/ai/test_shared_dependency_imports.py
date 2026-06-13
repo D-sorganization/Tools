@@ -27,6 +27,8 @@ def test_shared_ai_dependencies_import_without_test_stubs() -> None:
 
     probe = "\n".join(
         [
+            "import sys",
+            f"sys.path[:0] = {path_entries!r}",
             "from src.shared.python.ai.adapters.factory import AdapterFactory",
             "from src.shared.python.ai.config import get_ollama_timeout",
             "from src.shared.python.config.environment import get_env_float",

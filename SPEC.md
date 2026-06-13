@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.413                                    |
+| **Spec Version**        | 1.1.414                                    |
 | **Last Spec Update**    | 2026-06-13                                 |
 
 ## 2. Purpose & Mission
@@ -91,6 +91,9 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Shared AI CI tests install async pytest plugins in every test lane, keep live
   Codex/Gemini CLI probes opt-in, and skip retrieval assertions when optional
   scikit-learn RAG dependencies are unavailable.
+- Shared AI subprocess import probes inject the resolved repository paths inside
+  the child interpreter so dependency-import regressions do not depend on
+  runner-specific `PYTHONPATH` inheritance.
   after close while unexpected disconnects still retry
 - P1AM SCADA firmware control-loop contracts fail closed on corrupt SCADA or
   flash routing, non-finite process values, invalid PID timing, and non-finite
