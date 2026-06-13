@@ -8,15 +8,33 @@ from __future__ import annotations
 
 import logging
 
+from .tables import (
+    NORMAL_REFERENCE_PRESSURE_PA,
+    NORMAL_REFERENCE_TEMPERATURE_K,
+)
+
 __all__ = [
     "TarConcentrationConversionMixin",
 ]
 
 _logger = logging.getLogger(__name__)
 
-# Ideal-gas molar volume at 0 °C / 1 atm [L/mol]. This mixin anchors mg/Nm³ at
-# the normal state (273.15 K, 101.325 kPa), so ppm-by-volume <-> mg/Nm³ must use
-# the 0 °C molar volume — NOT 24.45 L/mol, which is the 25 °C value and produced
+# Single authoritative Nm³ reference state, shared with the gas-flow mixin so
+# the service cannot hold two contradictory definitions of "Nm³" (issue #3389).
+_NORMAL_TEMPERATURE_K: float = NORMAL_REFERENCE_TEMPERATURE_K  # 273.15 K
+_NORMAL_PRESSURE_KPA: float = NORMAL_REFERENCE_PRESSURE_PA / 1000.0  # 101.325 kPa
+
+# The public ``tar_concentration`` default arguments are spelled as the literals
+# 273.15 / 101.325 to keep the API-contract signature representation stable, but
+# they MUST equal the shared normal-state constants. This guard makes any future
+# drift fail loudly at import time rather than silently re-splitting the Nm³
+# basis (issue #3389).
+assert _NORMAL_TEMPERATURE_K == 273.15  # noqa: S101 - import-time invariant
+assert _NORMAL_PRESSURE_KPA == 101.325  # noqa: S101 - import-time invariant
+
+# Ideal-gas molar volume at the normal state (0 °C / 1 atm) [L/mol]. Because
+# mg/Nm³ is anchored at the normal state, ppm-by-volume <-> mg/Nm³ MUST use the
+# 0 °C molar volume — NOT 24.45 L/mol, which is the 25 °C value and produced
 # results ~8.3% low while still being labelled mg/Nm³ (issue #3389).
 _MOLAR_VOLUME_NORMAL_L_PER_MOL = 22.414
 
@@ -33,8 +51,8 @@ class TarConcentrationConversionMixin:
         value: float,
         from_unit: str,
         to_unit: str,
-        temperature: float = 273.15,
-        pressure: float = 101.325,
+        temperature: float = 273.15,  # == _NORMAL_TEMPERATURE_K (DIN 1343, #3389)
+        pressure: float = 101.325,  # == _NORMAL_PRESSURE_KPA (DIN 1343, #3389)
         molecular_weight: float | None = None,
     ) -> float:
         """Convert tar concentration."""
@@ -98,9 +116,18 @@ class TarConcentrationConversionMixin:
         if factor is not None:
             return value * factor
         if from_key in {"mg/m³", "mg/m3"}:
-            return value * (temperature / 273.15) * (101.325 / pressure)
+            return (
+                value
+                * (temperature / _NORMAL_TEMPERATURE_K)
+                * (_NORMAL_PRESSURE_KPA / pressure)
+            )
         if from_key in {"g/m³", "g/m3"}:
-            return value * 1000.0 * (temperature / 273.15) * (101.325 / pressure)
+            return (
+                value
+                * 1000.0
+                * (temperature / _NORMAL_TEMPERATURE_K)
+                * (_NORMAL_PRESSURE_KPA / pressure)
+            )
         if from_key == "ppm_mass":
             assert molecular_weight is not None
             return value * molecular_weight / _MOLAR_VOLUME_NORMAL_L_PER_MOL
@@ -121,9 +148,18 @@ class TarConcentrationConversionMixin:
         if factor is not None:
             return mg_nm3_value / factor
         if to_key in {"mg/m³", "mg/m3"}:
-            return mg_nm3_value * (273.15 / temperature) * (pressure / 101.325)
+            return (
+                mg_nm3_value
+                * (_NORMAL_TEMPERATURE_K / temperature)
+                * (pressure / _NORMAL_PRESSURE_KPA)
+            )
         if to_key in {"g/m³", "g/m3"}:
-            return mg_nm3_value / 1000.0 * (273.15 / temperature) * (pressure / 101.325)
+            return (
+                mg_nm3_value
+                / 1000.0
+                * (_NORMAL_TEMPERATURE_K / temperature)
+                * (pressure / _NORMAL_PRESSURE_KPA)
+            )
         if to_key == "ppm_mass":
             assert molecular_weight is not None
             return mg_nm3_value * _MOLAR_VOLUME_NORMAL_L_PER_MOL / molecular_weight

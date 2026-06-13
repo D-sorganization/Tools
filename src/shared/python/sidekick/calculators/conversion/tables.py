@@ -151,6 +151,9 @@ __all__ = [
     "LENGTH_FACTORS",
     "MASS_FACTORS",
     "MASS_FLOW_FACTORS",
+    "NORMAL_REFERENCE_CONDITION",
+    "NORMAL_REFERENCE_PRESSURE_PA",
+    "NORMAL_REFERENCE_TEMPERATURE_K",
     "PERFORMANCE_UNITS",
     "POWER_FACTORS",
     "PRESSURE_FACTORS",
@@ -204,6 +207,30 @@ class StandardCondition(Enum):
 
     # SI Standard: Explicitly 0°C, 1 bar (Same as current STP)
     STP_SI = (STP_TEMPERATURE_K, 100000.0, "SI Standard (0°C, 1 bar)")
+
+
+# ---------------------------------------------------------------------------
+# Single authoritative "normal cubic meter" reference state (issue #3389).
+#
+# A "normal cubic meter" (Nm³) in process-engineering practice — DIN 1343,
+# ISO 13443 (gas industry usage), and the syngas/tar literature this service
+# targets — is the gas volume at the *normal state*: 273.15 K and 101 325 Pa
+# (0 °C, 1 atm). This is deliberately NOT IUPAC ``STP`` (0 °C, 100 kPa), which
+# would make every Nm³ value 1.325 % off and — worse — disagree with the tar
+# concentration mixin, which already anchors mg/Nm³ at 101.325 kPa.
+#
+# Both the gas-flow mixin and the tar-concentration mixin MUST resolve "Nm³"
+# through this one constant so the service can never again hold two
+# contradictory definitions of the same unit.
+# ---------------------------------------------------------------------------
+NORMAL_REFERENCE_CONDITION: StandardCondition = StandardCondition.STP_OLD
+"""Authoritative Nm³ reference state: 273.15 K, 101 325 Pa (DIN 1343)."""
+
+NORMAL_REFERENCE_TEMPERATURE_K: float = STP_TEMPERATURE_K
+"""Temperature [K] of the normal state used for every Nm³ basis (#3389)."""
+
+NORMAL_REFERENCE_PRESSURE_PA: float = STP_OLD_PRESSURE_PA
+"""Pressure [Pa] of the normal state used for every Nm³ basis (#3389)."""
 
 
 GAS_DATABASE: Mapping[str, GasProperties] = MappingProxyType(

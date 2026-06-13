@@ -92,3 +92,54 @@ def test_ppmv_mg_nm3_roundtrip(service: UnitConversionService) -> None:
     mg = service.tar_concentration(1.0, "ppm_mass", "mg/Nm3", molecular_weight=78.11)
     back = service.tar_concentration(mg, "mg/Nm3", "ppm_mass", molecular_weight=78.11)
     assert back == pytest.approx(1.0, rel=1e-9)
+
+
+# --------------------------------------------------------------------------- #
+# #3389 (gas-flow part) — "Nm³" is the DIN 1343 normal state (0 °C, 101.325 kPa)
+# for SCFM/ACFM <-> Nm³/hr, matching the tar-concentration mixin's basis.
+# --------------------------------------------------------------------------- #
+@pytest.mark.unit
+@pytest.mark.scientific
+def test_scfm_to_nm3_hr_uses_din1343_normal_state(
+    service: UnitConversionService,
+) -> None:
+    # 1000 SCFM at 60 °F (288.706 K) -> Nm³/hr at 0 °C / 101.325 kPa.
+    # 1000 * 1.699011 m³/hr/cfm * (273.15 / 288.706) = 1607.46 Nm³/hr.
+    # The pre-#3389 IUPAC-STP (100 kPa) basis gave 1628.76 (+1.325 %).
+    value = service.convert(1000.0, "SCFM", "Nm3/hr").value
+    assert value == pytest.approx(1607.46, rel=1e-3)
+
+
+@pytest.mark.unit
+def test_scfm_nm3_hr_roundtrip(service: UnitConversionService) -> None:
+    nm3 = service.convert(1000.0, "SCFM", "Nm3/hr").value
+    back = service.convert(nm3, "Nm3/hr", "SCFM").value
+    assert back == pytest.approx(1000.0, rel=1e-9)
+
+
+@pytest.mark.unit
+def test_nm3_basis_is_shared_between_gas_flow_and_tar() -> None:
+    """The Nm³ reference state must be identical for both mixins (#3389).
+
+    A single authoritative constant is the structural guarantee that the
+    service can never again disagree with itself about what an Nm³ is.
+    """
+    from sidekick.calculators.conversion import tar_concentration_mixin as tar
+    from sidekick.calculators.conversion.tables import (
+        NORMAL_REFERENCE_CONDITION,
+        NORMAL_REFERENCE_PRESSURE_PA,
+        NORMAL_REFERENCE_TEMPERATURE_K,
+    )
+
+    # DIN 1343 normal state.
+    assert NORMAL_REFERENCE_TEMPERATURE_K == pytest.approx(273.15)
+    assert NORMAL_REFERENCE_PRESSURE_PA == pytest.approx(101325.0)
+    temp, pressure, _ = NORMAL_REFERENCE_CONDITION.value
+    assert temp == pytest.approx(NORMAL_REFERENCE_TEMPERATURE_K)
+    assert pressure == pytest.approx(NORMAL_REFERENCE_PRESSURE_PA)
+
+    # Tar mixin resolves its Nm³ basis through the same constant.
+    assert tar._NORMAL_TEMPERATURE_K == pytest.approx(NORMAL_REFERENCE_TEMPERATURE_K)
+    assert tar._NORMAL_PRESSURE_KPA == pytest.approx(
+        NORMAL_REFERENCE_PRESSURE_PA / 1000.0
+    )

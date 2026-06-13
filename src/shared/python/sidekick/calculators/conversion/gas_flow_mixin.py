@@ -15,7 +15,12 @@ from .core import (
     standard_m3_per_hour_to_scfm,
     standard_to_actual_flow,
 )
-from .tables import GAS_DATABASE, GasProperties, StandardCondition
+from .tables import (
+    GAS_DATABASE,
+    NORMAL_REFERENCE_CONDITION,
+    GasProperties,
+    StandardCondition,
+)
 
 __all__ = [
     "GasFlowConversionMixin",
@@ -124,10 +129,13 @@ class GasFlowConversionMixin:
         """Convert gas flow value to STP-normalized m³/hr."""
         from .service import UnknownUnitError
 
+        # The "standard m³/hr" pivot here IS the Nm³ basis. Anchor it on the
+        # single authoritative normal state (DIN 1343: 0 °C, 101.325 kPa) so
+        # SCFM/ACFM ↔ Nm³ agrees with the tar-concentration mixin (issue #3389).
         if from_unit == "SCFM":
             return float(
                 scfm_to_standard_m3_per_hour(
-                    value, standard_condition, StandardCondition.STP
+                    value, standard_condition, NORMAL_REFERENCE_CONDITION
                 )
             )
         if from_unit == "ACFM":
@@ -141,7 +149,7 @@ class GasFlowConversionMixin:
             )
             return float(
                 scfm_to_standard_m3_per_hour(
-                    scfm, standard_condition, StandardCondition.STP
+                    scfm, standard_condition, NORMAL_REFERENCE_CONDITION
                 )
             )
         if from_unit in {"Nm3/hr", "Nm³/hr"}:
@@ -167,7 +175,7 @@ class GasFlowConversionMixin:
         if to_unit == "SCFM":
             return float(
                 standard_m3_per_hour_to_scfm(
-                    m3_hr_std, StandardCondition.STP, standard_condition
+                    m3_hr_std, NORMAL_REFERENCE_CONDITION, standard_condition
                 )
             )
         if to_unit == "ACFM":
@@ -177,7 +185,7 @@ class GasFlowConversionMixin:
                 )
                 raise RuntimeError(msg)
             scfm = standard_m3_per_hour_to_scfm(
-                m3_hr_std, StandardCondition.STP, standard_condition
+                m3_hr_std, NORMAL_REFERENCE_CONDITION, standard_condition
             )
             return float(
                 standard_to_actual_flow(scfm, temperature, pressure, standard_condition)
