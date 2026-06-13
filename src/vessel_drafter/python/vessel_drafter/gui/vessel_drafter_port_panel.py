@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
     QDialog,
     QDialogButtonBox,
@@ -47,7 +47,6 @@ class PortValueDialog(ThemedDialogMixin, QDialog):
             raise ValueError("title must be provided")
         super().__init__(parent)
         self.setup_theme_support()
-        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setWindowTitle(title)
         self._spins = tuple(
             make_double_spin(field.default, field.minimum, field.maximum)

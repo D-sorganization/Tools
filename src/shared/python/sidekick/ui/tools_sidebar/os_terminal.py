@@ -38,7 +38,7 @@ from .appearance import (
     PanelAppearance,
     panel_qss,
 )
-from .qt_compat import QtCore, QtWidgets
+from .qt_compat import QtCore, QtWidgets, Signal
 from .shell_discovery import ShellDescriptor, discover_shells
 
 _logger = logging.getLogger(__name__)
@@ -498,7 +498,7 @@ def strip_ansi(data: bytes) -> bytes:
 class ShellDiscoveryThread(QtCore.QThread):
     """Thread for running shell discovery asynchronously to avoid UI freezing."""
 
-    discovered = QtCore.pyqtSignal(list)
+    discovered = Signal(list)
 
     def __init__(
         self,

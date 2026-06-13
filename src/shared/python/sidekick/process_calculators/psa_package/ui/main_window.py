@@ -4,7 +4,6 @@ import subprocess
 import sys
 import webbrowser
 
-from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (
     QHBoxLayout,
@@ -34,7 +33,6 @@ class PSAMainWindow(ThemedWindowMixin, QMainWindow):
     def __init__(self) -> None:
         super().__init__()
         self.setup_theme_support()
-        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setWindowTitle("Two-Stage PSA System Analysis")
         self.setMinimumSize(1400, 900)
         self._setup_menu()

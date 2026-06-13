@@ -805,7 +805,6 @@ class PSAMainWindow(ThemedWindowMixin, QMainWindow):  # noqa: F811, F821
     def __init__(self) -> None:
         super().__init__()
         self.setup_theme_support()
-        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setWindowTitle("Two-Stage PSA System Analysis")
         self.setMinimumSize(1400, 900)
         self._setup_menu()

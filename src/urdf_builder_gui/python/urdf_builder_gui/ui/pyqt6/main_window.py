@@ -52,7 +52,6 @@ class URDFBuilderWindow(ThemedWindowMixin, QMainWindow):
         """Initialize the main window."""
         super().__init__()
         self.setup_theme_support()
-        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self._setup_ui()
 
     def _setup_ui(self) -> None:

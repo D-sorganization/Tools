@@ -138,7 +138,6 @@ class MainWindow(ThemedWindowMixin, QMainWindow):
     def __init__(self) -> None:
         super().__init__()
         self.setup_theme_support()
-        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setWindowTitle(self.WINDOW_TITLE)
         self.resize(1400, 800)
         self.setMinimumSize(900, 550)

@@ -70,15 +70,15 @@ class MainWidget(QtWidgets.QWidget):
         self._table = QtWidgets.QTableWidget(0, 3, self)
         self._table.setObjectName("DataExplorerTable")
         self._table.setHorizontalHeaderLabels(["Name", "Format", "Size (bytes)"])
-        self._table.horizontalHeader().setSectionResizeMode(
-            0, QtWidgets.QHeaderView.ResizeMode.Stretch
-        )
-        self._table.horizontalHeader().setSectionResizeMode(
-            1, QtWidgets.QHeaderView.ResizeMode.ResizeToContents
-        )
-        self._table.horizontalHeader().setSectionResizeMode(
-            2, QtWidgets.QHeaderView.ResizeMode.ResizeToContents
-        )
+        header = self._table.horizontalHeader()
+        if header is not None:
+            header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeMode.Stretch)
+            header.setSectionResizeMode(
+                1, QtWidgets.QHeaderView.ResizeMode.ResizeToContents
+            )
+            header.setSectionResizeMode(
+                2, QtWidgets.QHeaderView.ResizeMode.ResizeToContents
+            )
         self._table.setEditTriggers(
             QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers
         )
@@ -176,9 +176,6 @@ class DataExplorerWindow(ThemedWindowMixin, QtWidgets.QMainWindow):
     def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
         super().__init__(parent)
         self.setup_theme_support()
-        self.setWindowFlags(
-            self.windowFlags() | QtCore.Qt.WindowType.FramelessWindowHint
-        )
         self.setWindowTitle("Data Explorer")
         self._main_widget = MainWidget(self)
         self.setCentralWidget(self._main_widget)

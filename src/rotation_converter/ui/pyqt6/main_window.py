@@ -29,7 +29,7 @@ import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
-from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtCore import QTimer
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (
     QComboBox,
@@ -1207,7 +1207,6 @@ class RotationConverterMainWindow(ThemedWindowMixin, QMainWindow):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setup_theme_support()
-        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setWindowTitle("Rotation Converter")
         self.setMinimumSize(1200, 800)
         self._build_ui()

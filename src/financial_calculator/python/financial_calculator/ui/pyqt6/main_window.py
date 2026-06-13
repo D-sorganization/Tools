@@ -232,7 +232,6 @@ class FinancialCalculatorMainWindow(ThemedWindowMixin, QMainWindow):
             raise TypeError(f"parent must be a QWidget or None, got {type(parent)}")
         super().__init__(parent)
         self.setup_theme_support()
-        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setWindowTitle("Financial Calculator")
         self.setMinimumSize(1200, 800)
         self.setStyleSheet(get_stylesheet())

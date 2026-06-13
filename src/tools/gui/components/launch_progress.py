@@ -50,7 +50,6 @@ class LaunchProgressDialog(ThemedDialogMixin, QDialog):
         """Set up the progress dialog UI."""
         self.setWindowTitle(f"Launching {self.tool_name}")
         self.setModal(True)
-        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.resize(400, 200)
         self.setStyleSheet("""
             QDialog {

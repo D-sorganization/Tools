@@ -7,7 +7,6 @@ import sys
 from pathlib import Path
 from typing import cast
 
-from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QApplication,
     QCheckBox,
@@ -66,7 +65,6 @@ class VesselDrafterWindow(ThemedWindowMixin, QMainWindow):
     def __init__(self) -> None:
         super().__init__()
         self.setup_theme_support()
-        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setWindowTitle("Vessel Drafter")
         self.resize(1400, 880)
         self._suppress_preview_updates = False

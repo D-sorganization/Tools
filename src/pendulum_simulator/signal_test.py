@@ -25,7 +25,6 @@ class TestWindow(ThemedWindowMixin, QMainWindow):
     def __init__(self):  # type: ignore[no-untyped-def]
         super().__init__()
         self.setup_theme_support()
-        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setWindowTitle("Signal Test")
         self.setGeometry(100, 100, 300, 200)
 
@@ -46,8 +45,14 @@ class TestWindow(ThemedWindowMixin, QMainWindow):
         QMessageBox.information(self, "Success", "Signal was received!")
 
 
+def _assert_window_contract(window: TestWindow) -> None:
+    assert window.windowTitle() == "Signal Test"
+    assert window.centralWidget() is not None
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = TestWindow()
+    _assert_window_contract(window)
     window.show()
     sys.exit(app.exec())

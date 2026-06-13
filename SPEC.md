@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.405                                    |
+| **Spec Version**        | 1.1.408                                    |
 | **Last Spec Update**    | 2026-06-12                                 |
 
 ## 2. Purpose & Mission
@@ -138,6 +138,13 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   `sidekick` and deprecated `upstream_drift_tools` `WorkspaceRegistry` module
   identities during the compatibility migration while preserving explicit
   TypeError failures for missing or unrelated registry objects
+- Sidekick Qt runtime threads use the binding-neutral `Signal` shim and keep
+  worker result signals distinct from native `QThread.finished` lifecycle
+  signals so REPL execution and shell discovery remain stable across PyQt and
+  PySide bindings
+- Sidekick Python REPL worker completion avoids nested Qt event loops and polls
+  `QThread` completion through the application event pump, preventing
+  Linux/offscreen Qt aborts while preserving synchronous `execute()` contracts
 - Shared Qt theme stylesheets use relative control typography and minimum tab
   widths so application-level zoom scales shared sidebar and launcher text more
   consistently
@@ -723,6 +730,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-12 | 1.1.408 | fix(sidekick): avoid the nested Qt event loop in Python REPL worker completion by polling `QThread` progress through `QApplication.processEvents()` plus bounded waits, keeping synchronous `execute()` behavior while preventing Linux/offscreen Python 3.11/3.12 test aborts in the F6 async REPL path. |
+| 2026-06-12 | 1.1.406 | test(pendulum): add an explicit runtime contract assertion to the manual PyQt signal smoke script so the changed-test assertion gate recognizes `src/pendulum_simulator/signal_test.py` as behavior-checking test surface after the frameless-window cleanup touched the file. |
 | 2026-06-12 | 1.1.405 | fix(p1am-control, #3323): stop passing `Qt.GlobalColor` enum members into `pg.mkPen(color=...)` for the MPC PID-vs-MPC comparison plots in `control_tab.py`; under pyqtgraph 0.13.7+/0.14.0 with PyQt6 `mkColor` raised `TypeError: Not sure how to make a color from "(<GlobalColor.red: 7>,)"`, aborting `ControlTab()` construction and killing any test or launch that builds the Control tab. Use pyqtgraph-native color forms (`"r"` and the `(0, 100, 0)` darkGreen tuple) while leaving the theme-derived Highlight/WindowText pens untouched, and add a regression test that constructs `ControlTab()` and asserts the four MPC curve attributes exist. |
 | 2026-06-12 | 1.1.404 | fix/test(p1am, #3314): make the HMI E-STOP clear actually reach the PLC. Add a `clear_estop()` contract to `BasePLCClient`, implement it as an explicit reset-coil write in the Modbus client and a latch reset in the simulator, and rework `/api/estop/clear` to command the controller and only lower the server-side `e_stop_active` flag when the controller (or backup simulator) acknowledges — returning 502 and keeping the latch on rejection. The desktop header now shows a pending "CLEARING…" state and only goes green ("E-STOP CLEAR") on confirmed success, reverting to red on failure. Split endpoint-level E-STOP clear regressions into a focused backend test module so the confirmed PLC reset, rejected-reset latch preservation, and offline simulator-clear contracts remain covered while `test_backend.py` stays inside the fleet file-size budget, and keep that split module aligned with the backend suite's optional dependency contract so environments without `sqlmodel` skip FastAPI endpoint tests instead of failing collection. REQUIRES HARDWARE VALIDATION before trusted. |
 | 2026-06-12 | 1.1.403 | fix(process-calculators, #3103): keep `calculate_htu`'s non-positive liquid/gas ratio fallback inside the typed float contract by returning `HTU_MAX` explicitly as a `float`, preserving the existing clamp behavior while satisfying changed-file mypy gates. |
@@ -1185,6 +1194,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Performance**: In high-frequency algorithmic optimization loops (like Nelder-Mead iterations), replaced array manipulation operations such as `.map()` and `.slice()` with pre-allocated arrays and standard `for` loops in `src/pendulum_simulator/pendulum-web/src/optimizer.ts` to eliminate continuous array creation and avoid significant garbage collection overhead.
 
 - **2026-06-12**: fix(p1am, #3323) — guard live-PLC writes behind confirmation dialogs and add Control-tab role gating. `ControlTab` now defaults to the `Operator` role and exposes `set_role()` (wired from `HMIMainWindow._on_role_changed`); starting live-loop tuning, applying a tuning step, and applying recommended PID gains are Admin-only and additionally raise a `QMessageBox.question("Confirm PLC write", …)` that fails closed (default `No`). `RoutingTab._deploy_config` now confirms before persisting the routing/interlock matrix to PLC NVRAM, and the Inspector sidebar's manual tag force override confirms before writing a raw value to the live plant (Operator-allowed by design). Client-side hardening only — server-side `/api/routing` and `/api/tags` enforcement remains tracked by the HMI auth work. Adds `tests/p1am_control_system/test_plc_write_confirmation.py`.
+
+- **2026-06-12**: fix(ui) — remove `Qt.WindowType.FramelessWindowHint` from all 24 standalone tool main windows (Data Explorer, ODE Solver, financial/rotation/PID/PSA calculators, c3d/urdf/humanoid/optimizer/multi-param/vessel-drafter GUIs, pdf_renamer, tile launcher, the Unified Tools Launcher, etc.) so the OS draws normal, movable/resizable/closable window chrome again. These windows previously had no custom title bar, drag handling, or min/max/close buttons, leaving them un-manageable by mouse (#3322). Also dedupe the `ThemedWindowMixin` base class and the doubled `setup_theme_support()` call in `unified_launcher_window.py`. Adds an architecture guard `tests/architecture/test_no_frameless_windows_3322.py` that fails if any `src/` file reintroduces `FramelessWindowHint` without sanctioned custom chrome. As part of the same change, fixed pre-existing `union-attr` typing on Qt accessors that the delta-mypy gate surfaced once these files entered the changed set: `data_explorer/gui.py` now guards `QTableWidget.horizontalHeader()`, `ode_solver` main window guards `menuBar()/addMenu()/addAction()`, and `popout_chart.py` binds the matplotlib `Axes` local as `Any` instead of letting `self._ax: object | None` narrow it.
 
 ### Version 1.1.184
 
