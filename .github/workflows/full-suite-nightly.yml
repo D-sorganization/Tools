@@ -26,7 +26,7 @@ jobs:
     timeout-minutes: 120
     env:
       HEAVY_TEST_SLACK_WEBHOOK: ${{ secrets.HEAVY_TEST_SLACK_WEBHOOK }}
-      AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
+      AGENT_TOOLSDIRECTORY: ${{ github.workspace }}/.tool-cache
 
     steps:
       - name: Checkout repository

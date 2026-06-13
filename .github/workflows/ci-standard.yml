@@ -650,7 +650,14 @@ jobs:
           # passed silently (issue #3324). Fail loudly if any entry is vacuous.
           empty_core=()
           for ct in "${core_tests[@]}"; do
-            collected=$(python -m pytest --collect-only -q "$ct" 2>/dev/null | grep -cE '::' || true)
+            collect_output="$(mktemp)"
+            if ! python -m pytest --collect-only --quiet --quiet "$ct" >"$collect_output"; then
+              cat "$collect_output"
+              rm -f "$collect_output"
+              exit 1
+            fi
+            collected=$(grep -cE '::' "$collect_output" || true)
+            rm -f "$collect_output"
             if [ "$collected" -eq 0 ]; then
               empty_core+=("$ct")
             fi
