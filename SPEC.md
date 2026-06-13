@@ -91,9 +91,9 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Shared AI CI tests install async pytest plugins in every test lane, keep live
   Codex/Gemini CLI probes opt-in, and skip retrieval assertions when optional
   scikit-learn RAG dependencies are unavailable.
-- Shared AI subprocess import probes inject the resolved repository paths inside
-  the child interpreter so dependency-import regressions do not depend on
-  runner-specific `PYTHONPATH` inheritance.
+- Shared AI subprocess import probes build a temporary repo-local `src` package
+  path so dependency-import regressions do not depend on runner-specific
+  `PYTHONPATH` inheritance or ambient editable installs.
   after close while unexpected disconnects still retry
 - P1AM SCADA firmware control-loop contracts fail closed on corrupt SCADA or
   flash routing, non-finite process values, invalid PID timing, and non-finite
@@ -744,6 +744,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-13 | 1.1.414 | test(ai): make the shared AI dependency subprocess probe independent of ambient `src` packages by creating a temporary repo-local `src` package shim whose path points at this checkout's `src/` tree before importing `src.shared.python.ai.adapters.factory`; this preserves the no-`sys.modules`-stub contract while preventing sibling editable installs or runner site-packages from deciding whether CI can import the shared AI stack. |
 | 2026-06-12 | 1.1.410 | ci(#3324, #3325, #3357): add `full-suite-nightly.yml` (whole-collection nightly run with a vacuous-run guard) and `scripts/select_tests_for_changes.py` (source-keyed test selection wired into `ci-standard.yml`); add a core_tests zero-collection guard so always-on smoke entries can no longer pass with 0 collected; make the heavy/e2e lanes real (`heavy-integration-tests.yml` nightly schedule + `live_simulation or e2e` markers, `set -o pipefail`, and missing-junit/0-collected summary failures; same guards in `heavy-tests-opt-in.yml`); and update `COVERAGE_SETUP.md`/`COVERAGE_QUICK_START.md` to stop documenting the already-removed `hot_path_modules_phase2` block as an enforced gate. |
 | 2026-06-12 | 1.1.408 | fix(sidekick): avoid the nested Qt event loop in Python REPL worker completion by polling `QThread` progress through `QApplication.processEvents()` plus bounded waits, keeping synchronous `execute()` behavior while preventing Linux/offscreen Python 3.11/3.12 test aborts in the F6 async REPL path. |
 | 2026-06-12 | 1.1.406 | test(pendulum): add an explicit runtime contract assertion to the manual PyQt signal smoke script so the changed-test assertion gate recognizes `src/pendulum_simulator/signal_test.py` as behavior-checking test surface after the frameless-window cleanup touched the file. |
