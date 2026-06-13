@@ -232,6 +232,7 @@ _HAS_CODEX = _resolve_binary() is not None
     not _HAS_CODEX,
     reason="Codex CLI not installed; skipping live integration test.",
 )
+@pytest.mark.live_simulation
 class TestLiveCodexCli:
     def test_version_probe_succeeds(self) -> None:
         adapter = CodexCliAdapter(timeout=15.0)

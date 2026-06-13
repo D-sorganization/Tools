@@ -38,6 +38,9 @@ for _mod_name, _rel_path in _PACKAGE_STUBS:
         if _rel_path is not None:
             _stub.__path__ = [str(ROOT / _rel_path)]  # type: ignore[attr-defined]
         sys.modules[_mod_name] = _stub
+    if "." in _mod_name:
+        _parent_name, _child_name = _mod_name.rsplit(".", 1)
+        setattr(sys.modules[_parent_name], _child_name, sys.modules[_mod_name])
 
 _logging_config_stub = sys.modules["src.shared.python.logging_pkg.logging_config"]
 _logging_config_stub.get_logger = logging.getLogger  # type: ignore[attr-defined]
