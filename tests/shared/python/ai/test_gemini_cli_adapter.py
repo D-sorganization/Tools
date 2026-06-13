@@ -17,6 +17,7 @@ Gemini-specific contracts pinned here:
 
 from __future__ import annotations
 
+import os
 import subprocess
 from unittest.mock import MagicMock, patch
 
@@ -199,11 +200,12 @@ class TestGeminiCliAdapter:
 
 
 _HAS_GEMINI = _resolve_binary() is not None
+_RUN_LIVE_GEMINI_CLI = os.environ.get("TOOLS_RUN_LIVE_GEMINI_CLI") == "1"
 
 
 @pytest.mark.skipif(
-    not _HAS_GEMINI,
-    reason="Gemini CLI not installed; skipping live integration test.",
+    not (_HAS_GEMINI and _RUN_LIVE_GEMINI_CLI),
+    reason="Set TOOLS_RUN_LIVE_GEMINI_CLI=1 with a working Gemini CLI to run live tests.",
 )
 class TestLiveGeminiCli:
     def test_version_probe_succeeds(self) -> None:

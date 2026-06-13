@@ -21,6 +21,7 @@ from src.shared.python.ai.rag.context_provider import (
     _truncate,
     _walk_files,
 )
+from src.shared.python.ai.rag.simple_rag import SKLEARN_AVAILABLE
 
 
 @pytest.fixture
@@ -161,10 +162,13 @@ class TestRAGContextProvider:
         assert result is False
 
     def test_query_returns_results(self, tmp_docs: Path) -> None:
+        if not SKLEARN_AVAILABLE:
+            pytest.skip("scikit-learn is optional; retrieval is disabled when missing.")
+
         provider = RAGContextProvider()
         provider.index_directory(tmp_docs, include_config=True)
 
-        results = provider.get_relevant_context("gibbs minimization")
+        results = provider.get_relevant_context("gibbs free energy minimization")
         assert len(results) > 0
         assert all("score" in r for r in results)
         assert all("content" in r for r in results)

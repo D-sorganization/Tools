@@ -8,11 +8,25 @@ import sys
 from pathlib import Path
 
 
-def test_shared_ai_dependencies_import_without_test_stubs() -> None:
+def test_shared_ai_dependencies_import_without_test_stubs(
+    tmp_path: Path,
+) -> None:
     """Adapter imports should not require sys.modules stubs from tests."""
-    repo_root = Path(__file__).resolve().parents[4]
+    repo_root = next(
+        parent
+        for parent in Path(__file__).resolve().parents
+        if (parent / "pyproject.toml").exists()
+    )
+    src_package = tmp_path / "src"
+    src_package.mkdir()
+    (src_package / "__init__.py").write_text(
+        f"__path__ = [{str(repo_root / 'src')!r}]\n",
+        encoding="utf-8",
+    )
+
     env = os.environ.copy()
     path_entries = [
+        str(tmp_path),
         str(repo_root),
         str(repo_root / "src" / "shared" / "python"),
         str(repo_root / "src" / "python" / "src"),

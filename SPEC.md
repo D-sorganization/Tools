@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.411                                    |
-| **Last Spec Update**    | 2026-06-12                                 |
+| **Spec Version**        | 1.1.414                                    |
+| **Last Spec Update**    | 2026-06-13                                 |
 
 ## 2. Purpose & Mission
 
@@ -88,6 +88,12 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   a terminal session is pending or active
 - Shared chat dock shutdown treats intentional widget close as terminal for
   WebSocket reconnects so launcher-hosted Sidekick chat surfaces do not revive
+- Shared AI CI tests install async pytest plugins in every test lane, keep live
+  Codex/Gemini CLI probes opt-in, and skip retrieval assertions when optional
+  scikit-learn RAG dependencies are unavailable.
+- Shared AI subprocess import probes build a temporary repo-local `src` package
+  path so dependency-import regressions do not depend on runner-specific
+  `PYTHONPATH` inheritance or ambient editable installs.
   after close while unexpected disconnects still retry
 - P1AM SCADA firmware control-loop contracts fail closed on corrupt SCADA or
   flash routing, non-finite process values, invalid PID timing, and non-finite
@@ -134,6 +140,10 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Provider-contract CI includes non-GUI coverage for the deprecated
   `upstream_drift_tools` compatibility shim so legacy imports keep resolving
   to canonical Sidekick APIs during the migration window
+- Shared AI adapter CI installs the pytest async/timeout plugins required by
+  the repository pytest contract, keeps isolated import smoke tests rooted by
+  repository metadata, and requires `TOOLS_RUN_LIVE_CODEX_CLI=1` before running
+  the slow real Codex chat round-trip against a developer or runner CLI install
 - Sidekick Python REPL registry preconditions accept both canonical
   `sidekick` and deprecated `upstream_drift_tools` `WorkspaceRegistry` module
   identities during the compatibility migration while preserving explicit
@@ -195,6 +205,10 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Shared source-tree logging and environment helpers keep AI adapter and chat
   service imports self-contained for downstream consumers that install or
   vendor only the shared Tools modules
+- Pytest import hooks preload the AI exception hierarchy under `ai.*`,
+  `shared.python.ai.*`, and `src.shared.python.ai.*` aliases so collection
+  cannot bind adapter tests to namespace-package stubs without
+  `AIConnectionError`
 - Plugin system for extending functionality
 
 No repo is required to use Tools, but it provides optional high-value integrations.
@@ -730,6 +744,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-13 | 1.1.414 | test(ai): make the shared AI dependency subprocess probe independent of ambient `src` packages by creating a temporary repo-local `src` package shim whose path points at this checkout's `src/` tree before importing `src.shared.python.ai.adapters.factory`; this preserves the no-`sys.modules`-stub contract while preventing sibling editable installs or runner site-packages from deciding whether CI can import the shared AI stack. |
 | 2026-06-12 | 1.1.410 | ci(#3324, #3325, #3357): add `full-suite-nightly.yml` (whole-collection nightly run with a vacuous-run guard) and `scripts/select_tests_for_changes.py` (source-keyed test selection wired into `ci-standard.yml`); add a core_tests zero-collection guard so always-on smoke entries can no longer pass with 0 collected; make the heavy/e2e lanes real (`heavy-integration-tests.yml` nightly schedule + `live_simulation or e2e` markers, `set -o pipefail`, and missing-junit/0-collected summary failures; same guards in `heavy-tests-opt-in.yml`); and update `COVERAGE_SETUP.md`/`COVERAGE_QUICK_START.md` to stop documenting the already-removed `hot_path_modules_phase2` block as an enforced gate. |
 | 2026-06-12 | 1.1.408 | fix(sidekick): avoid the nested Qt event loop in Python REPL worker completion by polling `QThread` progress through `QApplication.processEvents()` plus bounded waits, keeping synchronous `execute()` behavior while preventing Linux/offscreen Python 3.11/3.12 test aborts in the F6 async REPL path. |
 | 2026-06-12 | 1.1.406 | test(pendulum): add an explicit runtime contract assertion to the manual PyQt signal smoke script so the changed-test assertion gate recognizes `src/pendulum_simulator/signal_test.py` as behavior-checking test surface after the frameless-window cleanup touched the file. |
@@ -1432,10 +1447,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 - **2026-06-12**: feat(movement_optimizer) — migrate the more-developed standalone Movement Optimizer (`D-sorganization/Movement_Optimizer`) into `src/movement_optimizer/` as the single canonical home so the standalone repo can be archived. Full product vendored verbatim (Lagrangian barbell dynamics + 7 exercises, swingset/chain models with force fields, spine loads, Hill strength, PyQt6 GUI, headless CLI, optional Rust/PyO3 backend) plus its own preserved test suite. Treated as a self-contained sub-app like `src/pendulum_simulator`: excluded from the monorepo ruff/ruff-format/mypy/bandit/coverage/pre-commit delta gates (and the matching CI filter lists), with `testpaths` keeping its tests out of the default suite. Registered for UpstreamDrift discovery via `model_pack.yaml` (`pack_id: tools-movement-optimizer-biomech`) validated by `scripts/movement_optimizer_provider_manifest.py` and a regression test. `gui/motion_tabs.py` was split (extracting `ChainDynamicsTab`/`create_chain_tab` into `gui/motion_tabs_chain.py`, behaviour-preserving, 34 GUI tests green) to satisfy the 1500-line module budget. Phase 1 of the consolidation epic; route-unification and code-quality follow-ups tracked under #3410/#3411.
 
-### Performance Note (2026-06-13)
+## 2025-02-24 CLI Tools Validation Enhancement
 
-- In the `pendulum_simulator` Nelder-Mead optimization loop, closure allocation for `Array.prototype.sort()` over tiny, statically-sized arrays caused severe GC pressure and main thread drag. We use an explicitly implemented in-place insertion sort to eliminate iteration callback overhead for fixed-size mathematical arrays.
-
-## 1.1.411 - Performance optimization in AnalysisPlots
-
-- **Performance**: In `src/pendulum_simulator/pendulum-web/src/components/AnalysisPlots.tsx`, combined the `useMemo` hooks for generating `baseForceData` and `controlVectorData` into a single hook. This optimization eliminates duplicate calculations of the computationally expensive physics simulation (`computeAccelerations`), halving the rendering overhead for these chart metrics.
+The command injection check logic in `cli_tools.py` has been fortified. The input validation step now properly sanitizes (`.strip()`) token arguments and assignments to prevent execution of trailing/leading-space padded payloads (e.g. `--exec="  /bin/rm  "`). This effectively thwarts attacks aiming to bypass naive blocklist string matching (`token in dangerous`).

@@ -354,17 +354,18 @@ class ShellTool(CLIToolBase):
 
             # Verify no token is a dangerous command
             for token in tokens:
-                if token in dangerous:
+                clean_token = token.strip()
+                if clean_token in dangerous:
                     return False
 
                 try:
                     # Check for absolute/relative paths (e.g., /bin/rm, ./rm)
-                    if Path(token).name in dangerous:
+                    if Path(clean_token).name in dangerous:
                         return False
 
                     # Check for assignments passing executables (e.g., --exec=/bin/rm)
-                    if "=" in token:
-                        val = token.split("=", 1)[1]
+                    if "=" in clean_token:
+                        val = clean_token.split("=", 1)[1].strip()
                         if val in dangerous or Path(val).name in dangerous:
                             return False
                 except Exception:
