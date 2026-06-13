@@ -237,7 +237,7 @@ jobs:
             echo "Linting changed files..."
             # Mirror the exclude list from pyproject.toml [tool.ruff]:
             # When xargs passes files directly, ruff bypasses its own 'exclude' config.
-            grep -v -E '^src/data_processing/|^src/document_processing/|^src/pendulum_simulator/|^src/scientific_modeling/|^src/tools/folder_tools/|^src/tools/code_quality_check\.py' \
+            grep -v -E '^src/data_processing/|^src/document_processing/|^src/pendulum_simulator/|^src/movement_optimizer/|^src/scientific_modeling/|^src/tools/folder_tools/|^src/tools/code_quality_check\.py' \
               changed_python_files.txt > ruff_lint_files.txt || true
             if [ -s ruff_lint_files.txt ]; then
               xargs -r -d '\n' ruff check < ruff_lint_files.txt
@@ -253,7 +253,7 @@ jobs:
           if [ -s changed_python_files.txt ]; then
             # Mirror the exclude list from pyproject.toml [tool.ruff]:
             # When xargs passes files directly, ruff bypasses its own 'exclude' config.
-            grep -v -E '^src/data_processing/|^src/document_processing/|^src/pendulum_simulator/|^src/scientific_modeling/|^src/tools/folder_tools/|^src/tools/code_quality_check\.py' \
+            grep -v -E '^src/data_processing/|^src/document_processing/|^src/pendulum_simulator/|^src/movement_optimizer/|^src/scientific_modeling/|^src/tools/folder_tools/|^src/tools/code_quality_check\.py' \
               changed_python_files.txt > ruff_format_files.txt || true
             if [ -s ruff_format_files.txt ]; then
               xargs -r -d '\n' ruff format --check < ruff_format_files.txt
@@ -271,7 +271,7 @@ jobs:
             # Note: src/shared/python/ is now included in delta checks (issue #2296).
             # widget_processing, widget_plotting, widget_ui still have per-file
             # ignore_errors = true overrides in pyproject.toml pending full fix.
-            grep -v -E "src/electrode_advisor/|src/function_generator/|src/data_processing/data_processor/|src/glass_bath_fea/|src/tools/folder_tools/|simulation_golfer_gpu|optimizer_gpu|src/shared/python/codemap/" changed_mypy_files.txt > filtered_mypy_files.txt || true
+            grep -v -E "src/electrode_advisor/|src/function_generator/|src/data_processing/data_processor/|src/glass_bath_fea/|src/movement_optimizer/|src/tools/folder_tools/|simulation_golfer_gpu|optimizer_gpu|src/shared/python/codemap/" changed_mypy_files.txt > filtered_mypy_files.txt || true
 
             if [ -s filtered_mypy_files.txt ]; then
               export MYPYPATH=src:src/python/src
@@ -335,7 +335,7 @@ jobs:
             # src/scientific_modeling/, src/tools/folder_tools/) — pre-existing issues
             # in these directories are not blocking concerns for this CI gate.
             grep '^src/.*\.py$' changed_mypy_files.txt \
-              | grep -v -E '^src/data_processing/|^src/document_processing/|^src/pendulum_simulator/|^src/scientific_modeling/|^src/tools/folder_tools/' \
+              | grep -v -E '^src/data_processing/|^src/document_processing/|^src/pendulum_simulator/|^src/movement_optimizer/|^src/scientific_modeling/|^src/tools/folder_tools/' \
               > changed_bandit_files.txt || true
             if [ -s changed_bandit_files.txt ]; then
               xargs -r -d '\n' python -m bandit -ll -ii < changed_bandit_files.txt
@@ -535,6 +535,11 @@ jobs:
           fi
 
           git diff --diff-filter=ACMRT --name-only "$BASE_SHA" HEAD -- 'tests/test_*.py' 'tests/**/test_*.py' 'tests/**/*test.py' 'src/**/tests/test_*.py' 'src/**/tests/**/test_*.py' 'src/**/tests/**/*test.py' > changed_test_files.txt || echo "No previous commit found (initial commit?)"
+          # Vendored self-contained sub-apps run their tests in their origin repos,
+          # not in the monorepo changed-test lane (they need their own env, e.g.
+          # scipy<1.16 / offscreen Qt). Mirror the ruff/mypy/bandit exclude lists.
+          grep -v -E '^src/movement_optimizer/|^src/pendulum_simulator/' changed_test_files.txt > changed_test_files.filtered.txt || true
+          mv changed_test_files.filtered.txt changed_test_files.txt
           git diff --diff-filter=ACMRT --name-only "$BASE_SHA" HEAD -- '*.py' > changed_python_files.txt || echo "No previous commit found (initial commit?)"
 
           if [ "${{ github.event_name }}" = "pull_request" ]; then

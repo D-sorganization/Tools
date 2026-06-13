@@ -185,6 +185,7 @@ exclude: |
     archive/|
     legacy/|
     experimental/|
+    src/movement_optimizer/|
     \.git/|
     __pycache__/|
     \.mypy_cache/|

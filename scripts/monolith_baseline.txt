@@ -250,3 +250,13 @@ src/shared/python/sidekick/ui/widgets/data_processor_widget.py
 src/shared/python/sidekick/process_calculators/pressure_drop_calculator/utils/fitting_loss_coefficients.py
 src/shared/python/sidekick/calculators/electrical/electrical_model.py
 src/p1am_control_system/desktop/event_logger.py
+# Vendored Movement Optimizer sub-app (migrated from D-sorganization/Movement_Optimizer; see Tools#3407)
+src/movement_optimizer/gui/motion_tabs.py
+src/movement_optimizer/gui/motion_tabs_chain.py
+src/movement_optimizer/gui/main_window.py
+src/movement_optimizer/models/swingset.py
+src/movement_optimizer/tests/test_motion_tabs.py
+src/movement_optimizer/tests/test_main_window.py
+src/movement_optimizer/tests/test_swingset_chain_models.py
+src/movement_optimizer/tests/test_issue_217_decompose.py
+src/movement_optimizer/tests/test_joint_limits.py
