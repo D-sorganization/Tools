@@ -10,6 +10,7 @@ Covers:
 
 from __future__ import annotations
 
+import asyncio
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -90,25 +91,24 @@ class TestChatToolBridge:
         assert info is None
 
 
-@pytest.mark.asyncio
 class TestChatToolBridgeExecution:
-    async def test_execute_no_registry(self) -> None:
+    def test_execute_no_registry(self) -> None:
         bridge = ChatToolBridge(registry=None)
-        result = await bridge.handle_tool_call("s1", "test", {})
+        result = asyncio.run(bridge.handle_tool_call("s1", "test", {}))
         assert result["success"] is False
         assert "No tool registry" in result["error"]
 
-    async def test_execute_unknown_tool(self) -> None:
+    def test_execute_unknown_tool(self) -> None:
         mock_reg = MagicMock()
         mock_reg.get_tool.return_value = None
         mock_reg.get_all_tools.return_value = []
 
         bridge = ChatToolBridge(registry=mock_reg)
-        result = await bridge.handle_tool_call("s1", "unknown", {})
+        result = asyncio.run(bridge.handle_tool_call("s1", "unknown", {}))
         assert result["success"] is False
         assert "Unknown tool" in result["error"]
 
-    async def test_execute_validation_error(self) -> None:
+    def test_execute_validation_error(self) -> None:
         mock_tool = MagicMock()
         mock_tool.validate_arguments.return_value = ["Missing required: x"]
 
@@ -116,11 +116,11 @@ class TestChatToolBridgeExecution:
         mock_reg.get_tool.return_value = mock_tool
 
         bridge = ChatToolBridge(registry=mock_reg)
-        result = await bridge.handle_tool_call("s1", "tool", {})
+        result = asyncio.run(bridge.handle_tool_call("s1", "tool", {}))
         assert result["success"] is False
         assert "Validation" in result["error"]
 
-    async def test_execute_success(self) -> None:
+    def test_execute_success(self) -> None:
         mock_result = MagicMock()
         mock_result.success = True
         mock_result.result = {"data": "value"}
@@ -135,12 +135,12 @@ class TestChatToolBridgeExecution:
         mock_reg.get_tool.return_value = mock_tool
 
         bridge = ChatToolBridge(registry=mock_reg)
-        result = await bridge.handle_tool_call("s1", "tool", {"arg": "val"})
+        result = asyncio.run(bridge.handle_tool_call("s1", "tool", {"arg": "val"}))
         assert result["success"] is True
         assert result["result"] == {"data": "value"}
         assert result["execution_time_s"] >= 0
 
-    async def test_execute_with_confirmation_approved(self) -> None:
+    def test_execute_with_confirmation_approved(self) -> None:
         mock_result = MagicMock()
         mock_result.success = True
         mock_result.result = "done"
@@ -158,11 +158,11 @@ class TestChatToolBridgeExecution:
         bridge = ChatToolBridge(
             registry=mock_reg, require_confirmation_callback=confirm_cb
         )
-        result = await bridge.handle_tool_call("s1", "tool", {})
+        result = asyncio.run(bridge.handle_tool_call("s1", "tool", {}))
         assert result["success"] is True
         confirm_cb.assert_awaited_once()
 
-    async def test_execute_with_confirmation_denied(self) -> None:
+    def test_execute_with_confirmation_denied(self) -> None:
         mock_tool = MagicMock()
         mock_tool.validate_arguments.return_value = []
         mock_tool.requires_confirmation = True
@@ -174,11 +174,11 @@ class TestChatToolBridgeExecution:
         bridge = ChatToolBridge(
             registry=mock_reg, require_confirmation_callback=confirm_cb
         )
-        result = await bridge.handle_tool_call("s1", "tool", {})
+        result = asyncio.run(bridge.handle_tool_call("s1", "tool", {}))
         assert result["success"] is False
         assert "declined" in result["error"]
 
-    async def test_execute_handler_exception(self) -> None:
+    def test_execute_handler_exception(self) -> None:
         mock_tool = MagicMock()
         mock_tool.validate_arguments.return_value = []
         mock_tool.requires_confirmation = False
@@ -188,18 +188,18 @@ class TestChatToolBridgeExecution:
         mock_reg.get_tool.return_value = mock_tool
 
         bridge = ChatToolBridge(registry=mock_reg)
-        result = await bridge.handle_tool_call("s1", "tool", {})
+        result = asyncio.run(bridge.handle_tool_call("s1", "tool", {}))
         assert result["success"] is False
         assert "kaboom" in result["error"]
 
-    async def test_dbc_empty_session_id_raises(self) -> None:
+    def test_dbc_empty_session_id_raises(self) -> None:
         """DbC: empty session_id is a precondition violation."""
         bridge = ChatToolBridge(registry=MagicMock())
         with pytest.raises(ValueError, match="session_id"):
-            await bridge.handle_tool_call("", "tool", {})
+            asyncio.run(bridge.handle_tool_call("", "tool", {}))
 
-    async def test_dbc_empty_tool_name_raises(self) -> None:
+    def test_dbc_empty_tool_name_raises(self) -> None:
         """DbC: empty tool_name is a precondition violation."""
         bridge = ChatToolBridge(registry=MagicMock())
         with pytest.raises(ValueError, match="tool_name"):
-            await bridge.handle_tool_call("s1", "", {})
+            asyncio.run(bridge.handle_tool_call("s1", "", {}))
