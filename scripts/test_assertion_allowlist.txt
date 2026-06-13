@@ -5,3 +5,8 @@ tests/**/__init__.py
 tests/**/conftest.py
 tests/_import_contract_bootstrap.py
 tests/helpers/numerical.py
+# Vendored Movement Optimizer sub-app support files (migrated from D-sorganization/Movement_Optimizer; Tools#3407)
+src/movement_optimizer/tests/__init__.py
+src/movement_optimizer/tests/conftest.py
+src/movement_optimizer/tests/**/__init__.py
+src/movement_optimizer/tests/**/conftest.py
