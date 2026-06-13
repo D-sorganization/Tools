@@ -4926,6 +4926,9 @@
       "LENGTH_FACTORS",
       "MASS_FACTORS",
       "MASS_FLOW_FACTORS",
+      "NORMAL_REFERENCE_CONDITION",
+      "NORMAL_REFERENCE_PRESSURE_PA",
+      "NORMAL_REFERENCE_TEMPERATURE_K",
       "PERFORMANCE_UNITS",
       "POWER_FACTORS",
       "PRESSURE_FACTORS",
@@ -4941,6 +4944,15 @@
     ],
     "symbols": {
       "ANGULAR_VELOCITY_FACTORS": {
+        "type": "variable"
+      },
+      "NORMAL_REFERENCE_CONDITION": {
+        "type": "variable"
+      },
+      "NORMAL_REFERENCE_PRESSURE_PA": {
+        "type": "variable"
+      },
+      "NORMAL_REFERENCE_TEMPERATURE_K": {
         "type": "variable"
       },
       "AREA_FACTORS": {
