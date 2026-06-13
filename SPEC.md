@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.418                                    |
+| **Spec Version**        | 1.1.419                                    |
 | **Last Spec Update**    | 2026-06-13                                 |
 
 ## 2. Purpose & Mission
@@ -756,6 +756,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-13 | 1.1.419 | fix(ci, #3357): make the nightly full-suite workflow generate repo-wide `coverage.xml` and run `scripts/check_coverage_policy.py` without `--changed-files`, so the total coverage non-regression ratchet is enforced only on a genuine full-suite lane while PR CI remains changed-package scoped. |
 | 2026-06-13 | 1.1.418 | fix(ci): exclude in-tree `src/**/tests/**` paths from source-keyed test mapping so changed Sidekick tests do not reselect the entire Sidekick package test tree. |
 | 2026-06-13 | 1.1.417 | fix(ci): narrow source-keyed Sidekick process-calculator test selection to focused process-calculator tests so PSA/WGS changes do not drag unrelated Sidekick data-processor Qt tests into every Python matrix lane. |
 | 2026-06-13 | 1.1.416 | fix(sidekick): restore PSA GUI facade imports for the legacy `psa_gui.py` compatibility module so direct PSA GUI test collection resolves PyQt6, matplotlib, model, and safety helper names after the UI extraction. |

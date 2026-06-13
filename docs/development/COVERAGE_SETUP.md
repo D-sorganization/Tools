@@ -96,16 +96,18 @@ See `.coveragerc` for full list of excluded patterns.
 
 ### `config/coverage_baseline.json` — Current Baseline
 
-Current baseline (established 2026-04-30):
+Current ratchet baseline:
 
 ```json
 {
-  "total_percent": 6.25,
+  "total_percent": 60.0,
   "package_percent": {}
 }
 ```
 
-This is the snapshot against which regressions are measured. Updated when baseline is intentionally raised.
+This is the snapshot against which full-suite regressions are measured. It must
+not be lowered below `minimum_total_percent`; update it only when the ratchet is
+intentionally raised.
 
 ### `assessments/coverage_baseline.json` — Detailed Baseline Record
 
@@ -132,14 +134,18 @@ Full snapshot of module-level coverage at baseline, for tracking and reporting.
      --cov-fail-under=0
    ```
 
-2. **Coverage Policy Gate** — Compares XML to baseline
+2. **Coverage Policy Gate** — Enforces changed tracked-package thresholds. The
+   PR lane passes `--changed-files`, so it intentionally skips repo-wide total
+   coverage gates because its `coverage.xml` is scoped to core and selected
+   changed tests, not the whole repository.
 
    ```bash
    python3 scripts/check_coverage_policy.py \
      --coverage-file coverage.xml \
      --policy-file config/coverage_policy.json \
      --baseline-file config/coverage_baseline.json \
-     --output-json coverage_trend_${python_version}.json
+     --output-json coverage_trend_${python_version}.json \
+     --changed-files changed_python_files.txt
    ```
 
 3. **Upload Coverage Artifact** — Stores trend data
@@ -149,6 +155,12 @@ Full snapshot of module-level coverage at baseline, for tracking and reporting.
        name: coverage-trend-${{ matrix.python-version }}
        path: coverage_trend_*.json
    ```
+
+**File:** `.github/workflows/full-suite-nightly.yml`
+
+The nightly full-suite lane runs `tests/ src/` with `--cov=.` and then invokes
+`scripts/check_coverage_policy.py` without `--changed-files`. That is the
+repo-wide non-regression ratchet required by issue #3357.
 
 ### How to Interpret CI Failures
 

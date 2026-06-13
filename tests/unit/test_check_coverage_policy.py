@@ -135,6 +135,22 @@ def test_total_coverage_is_full_suite_gate_only() -> None:
     )
 
 
+def test_full_suite_nightly_enforces_repo_wide_coverage_policy() -> None:
+    """The nightly full-suite lane must run the total-coverage ratchet."""
+    root = Path(__file__).resolve().parents[2]
+    workflow = (root / ".github" / "workflows" / "full-suite-nightly.yml").read_text(
+        encoding="utf-8"
+    )
+
+    assert "--cov=." in workflow
+    assert "--cov-report=xml:coverage.xml" in workflow
+    assert "scripts/check_coverage_policy.py" in workflow
+    assert "--output-json coverage_trend_full_suite.json" in workflow
+
+    gate_block = workflow.split("name: Coverage Policy Gate", maxsplit=1)[1]
+    assert "--changed-files" not in gate_block
+
+
 def test_committed_baseline_does_not_undercut_policy_target() -> None:
     """The committed baseline should support ratcheting, not redefine the floor."""
     root = Path(__file__).resolve().parents[2]

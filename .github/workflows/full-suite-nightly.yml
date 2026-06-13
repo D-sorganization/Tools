@@ -76,6 +76,8 @@ jobs:
             -n auto \
             --dist loadscope \
             --junit-xml=full_suite_results.xml \
+            --cov=. \
+            --cov-report=xml:coverage.xml \
             --tb=short \
             | tee full_suite_output.log
 
@@ -128,6 +130,22 @@ jobs:
           path: |
             full_suite_results.xml
             full_suite_output.log
+            coverage.xml
+          retention-days: 30
+
+      - name: Coverage Policy Gate
+        run: |
+          python3 scripts/check_coverage_policy.py \
+            --coverage-file coverage.xml \
+            --policy-file config/coverage_policy.json \
+            --baseline-file config/coverage_baseline.json \
+            --output-json coverage_trend_full_suite.json
+
+      - name: Upload coverage trend
+        uses: actions/upload-artifact@v7
+        with:
+          name: full-suite-coverage-trend-${{ github.run_id }}
+          path: coverage_trend_full_suite.json
           retention-days: 30
 
       - name: Notify on failure
