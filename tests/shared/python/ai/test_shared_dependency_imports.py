@@ -10,7 +10,11 @@ from pathlib import Path
 
 def test_shared_ai_dependencies_import_without_test_stubs() -> None:
     """Adapter imports should not require sys.modules stubs from tests."""
-    repo_root = Path(__file__).resolve().parents[4]
+    repo_root = next(
+        parent
+        for parent in Path(__file__).resolve().parents
+        if (parent / "pyproject.toml").exists()
+    )
     env = os.environ.copy()
     path_entries = [
         str(repo_root),

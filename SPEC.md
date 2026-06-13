@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.411                                    |
+| **Spec Version**        | 1.1.412                                    |
 | **Last Spec Update**    | 2026-06-13                                 |
 
 ## 2. Purpose & Mission
@@ -134,6 +134,10 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Provider-contract CI includes non-GUI coverage for the deprecated
   `upstream_drift_tools` compatibility shim so legacy imports keep resolving
   to canonical Sidekick APIs during the migration window
+- Shared AI adapter CI installs the pytest async/timeout plugins required by
+  the repository pytest contract, keeps isolated import smoke tests rooted by
+  repository metadata, and requires `TOOLS_RUN_LIVE_CODEX_CLI=1` before running
+  the slow real Codex chat round-trip against a developer or runner CLI install
 - Sidekick Python REPL registry preconditions accept both canonical
   `sidekick` and deprecated `upstream_drift_tools` `WorkspaceRegistry` module
   identities during the compatibility migration while preserving explicit

@@ -20,6 +20,7 @@ Bootstrap pattern mirrors ``test_ollama_adapter.py`` to work around the broken
 
 from __future__ import annotations
 
+import os
 import subprocess
 from unittest.mock import MagicMock, patch
 
@@ -241,6 +242,8 @@ class TestLiveCodexCli:
     @pytest.mark.slow
     def test_real_chat_round_trip(self) -> None:
         """Real Codex round trip — slow (cold-start can be 30-60s)."""
+        if os.environ.get("TOOLS_RUN_LIVE_CODEX_CLI") != "1":
+            pytest.skip("Set TOOLS_RUN_LIVE_CODEX_CLI=1 to run live Codex chat.")
         adapter = CodexCliAdapter(timeout=120.0)
         response = adapter.send_message(
             "Reply with the single word PONG and nothing else.",
