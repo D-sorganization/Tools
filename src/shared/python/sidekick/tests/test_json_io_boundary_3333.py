@@ -15,6 +15,11 @@ from pathlib import Path
 import pytest
 
 _STATE_MANAGER = Path(__file__).resolve().parents[1] / "utils" / "state_manager.py"
+_WGS_REACTOR = (
+    Path(__file__).resolve().parents[1]
+    / "process_calculators"
+    / "wgs_reactor_calculator.py"
+)
 
 
 @pytest.mark.unit
@@ -30,6 +35,20 @@ def test_state_manager_has_no_cross_tree_imports() -> None:
     assert offending == [], (
         f"state_manager still imports across the tool-tree boundary: {offending}"
     )
+
+
+@pytest.mark.unit
+def test_wgs_reactor_reads_json_from_sidekick_json_io() -> None:
+    """WGS should not reach through state_manager for JSON helper functions."""
+    tree = ast.parse(_WGS_REACTOR.read_text(encoding="utf-8"))
+    imports = [
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.ImportFrom)
+        and node.module == "sidekick.utils.state_manager"
+    ]
+
+    assert imports == [], "WGS still imports JSON helpers through state_manager"
 
 
 @pytest.mark.unit
