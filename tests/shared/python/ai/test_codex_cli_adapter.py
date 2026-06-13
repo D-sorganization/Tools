@@ -20,6 +20,7 @@ Bootstrap pattern mirrors ``test_ollama_adapter.py`` to work around the broken
 
 from __future__ import annotations
 
+import os
 import subprocess
 from unittest.mock import MagicMock, patch
 
@@ -226,11 +227,12 @@ class TestCodexCliAdapter:
 
 
 _HAS_CODEX = _resolve_binary() is not None
+_RUN_LIVE_CODEX_CLI = os.environ.get("TOOLS_RUN_LIVE_CODEX_CLI") == "1"
 
 
 @pytest.mark.skipif(
-    not _HAS_CODEX,
-    reason="Codex CLI not installed; skipping live integration test.",
+    not (_HAS_CODEX and _RUN_LIVE_CODEX_CLI),
+    reason="Set TOOLS_RUN_LIVE_CODEX_CLI=1 with a working Codex CLI to run live tests.",
 )
 class TestLiveCodexCli:
     def test_version_probe_succeeds(self) -> None:

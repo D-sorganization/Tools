@@ -2,6 +2,7 @@
 # behavioral assertion. Patterns are matched from the repository root using /
 # separators.
 tests/**/__init__.py
+tests/conftest.py
 tests/**/conftest.py
 tests/_import_contract_bootstrap.py
 tests/helpers/numerical.py

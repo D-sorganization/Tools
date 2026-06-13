@@ -17,7 +17,6 @@ import pytest
 
 pytest.importorskip("PyQt6")
 pytest.importorskip("requests")
-pytest.importorskip("pyqtgraph")
 
 from PyQt6.QtWidgets import QMessageBox  # noqa: E402
 

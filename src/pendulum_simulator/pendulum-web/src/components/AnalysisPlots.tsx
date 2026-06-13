@@ -161,32 +161,40 @@ export const AnalysisPlots: React.FC<AnalysisPlotsProps> = ({ result, units, det
         return res;
     }, [t, states, params, indices, units.torque]);
 
-    // ── Base force & Control vector data ─────────────────────────────────
-    const { baseForceData, controlVectorData } = useMemo(() => {
-        // ⚡ Bolt Optimization: Combine baseForceData and controlVectorData to calculate
-        // `computeAccelerations` once per index instead of twice, halving the physics computation overhead.
+    // ── Base force data ─────────────────────────────────────────────────
+    const baseForceData = useMemo(() => {
         const len = indices.length;
-        const resBF = new Array(len);
-        const resCV = new Array(len);
+        const res = new Array(len);
         for (let j = 0; j < len; j++) {
             const i = indices[j];
             const qdd = computeAccelerations(states[i], t[i], params, torqueFunc, limits, clamp);
             const bf = baseForce(states[i], qdd, params);
-            const cv = controlVector(states[i], qdd, params, limits);
-            resBF[j] = {
+            res[j] = {
                 t: +t[i].toFixed(3),
                 'Fx': +forceFromSI(bf.fx, units.force).toFixed(2),
                 'Fy': +forceFromSI(bf.fy, units.force).toFixed(2),
                 '|F|': +forceFromSI(bf.magnitude, units.force).toFixed(2),
             };
-            resCV[j] = {
+        }
+        return res;
+    }, [t, states, params, torqueFunc, limits, clamp, indices, units.force]);
+
+    // ── Control vector data ─────────────────────────────────────────────
+    const controlVectorData = useMemo(() => {
+        const len = indices.length;
+        const res = new Array(len);
+        for (let j = 0; j < len; j++) {
+            const i = indices[j];
+            const qdd = computeAccelerations(states[i], t[i], params, torqueFunc, limits, clamp);
+            const cv = controlVector(states[i], qdd, params, limits);
+            res[j] = {
                 t: +t[i].toFixed(3),
                 'CVx': +forceFromSI(cv.cvx, units.force).toFixed(2),
                 'CVy': +forceFromSI(cv.cvy, units.force).toFixed(2),
                 '|CV|': +forceFromSI(cv.magnitude, units.force).toFixed(2),
             };
         }
-        return { baseForceData: resBF, controlVectorData: resCV };
+        return res;
     }, [t, states, params, torqueFunc, limits, clamp, indices, units.force]);
 
     // If detail mode, show just one plot in full height
