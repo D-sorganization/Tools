@@ -187,10 +187,7 @@ def test_http_401_raises_runtime_error_for_read(with_token):
     mock_client.__exit__ = MagicMock(return_value=False)
     mock_client.post.return_value = mock_resp
 
-    with patch(
-        "src.shared.python.ai.integrations.notion.httpx.Client",
-        return_value=mock_client,
-    ):
+    with patch.object(_notion_mod.httpx, "Client", return_value=mock_client):
         with pytest.raises(RuntimeError, match="Notion API error 401"):
             notion_read_knowledge_base("onboarding")
 
@@ -204,10 +201,7 @@ def test_http_401_raises_runtime_error_for_push(with_token):
     mock_client.__exit__ = MagicMock(return_value=False)
     mock_client.post.return_value = mock_resp
 
-    with patch(
-        "src.shared.python.ai.integrations.notion.httpx.Client",
-        return_value=mock_client,
-    ):
+    with patch.object(_notion_mod.httpx, "Client", return_value=mock_client):
         with pytest.raises(RuntimeError, match="Notion API error 401"):
             notion_push_report("Report", "# Hello", parent_page_id="abc123")
 
@@ -246,10 +240,7 @@ def test_notion_read_knowledge_base_returns_results(with_token):
     mock_client.__exit__ = MagicMock(return_value=False)
     mock_client.post.return_value = mock_resp
 
-    with patch(
-        "src.shared.python.ai.integrations.notion.httpx.Client",
-        return_value=mock_client,
-    ):
+    with patch.object(_notion_mod.httpx, "Client", return_value=mock_client):
         result = notion_read_knowledge_base("onboarding")
 
     assert "results" in result
@@ -282,10 +273,7 @@ def test_notion_read_knowledge_base_pagination(with_token):
     mock_client.__exit__ = MagicMock(return_value=False)
     mock_client.post.return_value = mock_resp
 
-    with patch(
-        "src.shared.python.ai.integrations.notion.httpx.Client",
-        return_value=mock_client,
-    ):
+    with patch.object(_notion_mod.httpx, "Client", return_value=mock_client):
         result = notion_read_knowledge_base("onboarding")
 
     assert result["has_more"] is True
@@ -313,10 +301,7 @@ def test_notion_push_report_returns_success(with_token):
     mock_client.__exit__ = MagicMock(return_value=False)
     mock_client.post.return_value = mock_resp
 
-    with patch(
-        "src.shared.python.ai.integrations.notion.httpx.Client",
-        return_value=mock_client,
-    ):
+    with patch.object(_notion_mod.httpx, "Client", return_value=mock_client):
         result = notion_push_report(
             "Q1 Report", "# Hello\nContent here.", parent_page_id="parent-abc"
         )

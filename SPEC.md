@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.412                                    |
+| **Spec Version**        | 1.1.413                                    |
 | **Last Spec Update**    | 2026-06-13                                 |
 
 ## 2. Purpose & Mission
@@ -88,6 +88,9 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   a terminal session is pending or active
 - Shared chat dock shutdown treats intentional widget close as terminal for
   WebSocket reconnects so launcher-hosted Sidekick chat surfaces do not revive
+- Shared AI CI tests install async pytest plugins in every test lane, keep live
+  Codex/Gemini CLI probes opt-in, and skip retrieval assertions when optional
+  scikit-learn RAG dependencies are unavailable.
   after close while unexpected disconnects still retry
 - P1AM SCADA firmware control-loop contracts fail closed on corrupt SCADA or
   flash routing, non-finite process values, invalid PID timing, and non-finite

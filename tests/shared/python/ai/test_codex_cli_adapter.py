@@ -227,11 +227,12 @@ class TestCodexCliAdapter:
 
 
 _HAS_CODEX = _resolve_binary() is not None
+_RUN_LIVE_CODEX_CLI = os.environ.get("TOOLS_RUN_LIVE_CODEX_CLI") == "1"
 
 
 @pytest.mark.skipif(
-    not _HAS_CODEX,
-    reason="Codex CLI not installed; skipping live integration test.",
+    not (_HAS_CODEX and _RUN_LIVE_CODEX_CLI),
+    reason="Set TOOLS_RUN_LIVE_CODEX_CLI=1 with a working Codex CLI to run live tests.",
 )
 class TestLiveCodexCli:
     def test_version_probe_succeeds(self) -> None:
@@ -242,8 +243,6 @@ class TestLiveCodexCli:
     @pytest.mark.slow
     def test_real_chat_round_trip(self) -> None:
         """Real Codex round trip — slow (cold-start can be 30-60s)."""
-        if os.environ.get("TOOLS_RUN_LIVE_CODEX_CLI") != "1":
-            pytest.skip("Set TOOLS_RUN_LIVE_CODEX_CLI=1 to run live Codex chat.")
         adapter = CodexCliAdapter(timeout=120.0)
         response = adapter.send_message(
             "Reply with the single word PONG and nothing else.",
