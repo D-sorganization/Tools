@@ -155,15 +155,34 @@ function nelderMead(
 
   // Initialize simplex: x0 + unit perturbations
   const simplex: { x: number[]; cost: number }[] = [];
-  simplex.push({ x: [...x0], cost: f(x0) });
+
+  // ⚡ Bolt Optimization: Replace [...x0] spread with explicit loop and pre-allocated array
+  // to eliminate iterator allocation and continuous garbage collection overhead.
+  const x0Copy = new Array(n);
+  for (let j = 0; j < n; j++) x0Copy[j] = x0[j];
+  simplex.push({ x: x0Copy, cost: f(x0Copy) });
 
   for (let i = 0; i < n; i++) {
-    const xi = [...x0];
+    const xi = new Array(n);
+    for (let j = 0; j < n; j++) xi[j] = x0[j];
     xi[i] += Math.abs(xi[i]) > 1e-6 ? xi[i] * 0.1 : 1.0;
     simplex.push({ x: xi, cost: f(xi) });
   }
 
-  const sortSimplex = () => simplex.sort((a, b) => a.cost - b.cost);
+  // ⚡ Bolt Optimization: Replace Array.sort() with manual insertion sort for the tiny simplex
+  // array (size n+1) to eliminate closure allocation and callback overhead in the hot loop.
+  const sortSimplex = () => {
+    const len = n + 1;
+    for (let i = 1; i < len; i++) {
+      const key = simplex[i];
+      let j = i - 1;
+      while (j >= 0 && simplex[j].cost > key.cost) {
+        simplex[j + 1] = simplex[j];
+        j--;
+      }
+      simplex[j + 1] = key;
+    }
+  };
   sortSimplex();
 
   let iter = 0;
@@ -257,8 +276,11 @@ function nelderMead(
     onProgress(iter, simplex[0].cost, simplex[0].x);
   }
 
+  const bestX = new Array(n);
+  for (let j = 0; j < n; j++) bestX[j] = simplex[0].x[j];
+
   return {
-    x: [...simplex[0].x],
+    x: bestX,
     cost: simplex[0].cost,
     iterations: iter,
     converged,
