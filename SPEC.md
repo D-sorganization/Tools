@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.417                                    |
+| **Spec Version**        | 1.1.418                                    |
 | **Last Spec Update**    | 2026-06-13                                 |
 
 ## 2. Purpose & Mission
@@ -329,7 +329,8 @@ Tools/
 - Source-keyed CI test selection maps Sidekick process-calculator source
   changes to focused process-calculator tests instead of the whole Sidekick
   test tree, preserving changed-source coverage while keeping Python 3.10
-  matrix load bounded.
+  matrix load bounded. In-tree `src/**/tests/**` paths are excluded from the
+  source mapper because the changed-test lane already owns them.
 - The web-app launcher uses a bounded socket readiness probe (no fixed sleep)
   before opening the browser, and reaps the dev-server child on Ctrl-C
   (terminate → wait → kill) returning a non-zero exit code so no child outlives
@@ -755,6 +756,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-13 | 1.1.418 | fix(ci): exclude in-tree `src/**/tests/**` paths from source-keyed test mapping so changed Sidekick tests do not reselect the entire Sidekick package test tree. |
 | 2026-06-13 | 1.1.417 | fix(ci): narrow source-keyed Sidekick process-calculator test selection to focused process-calculator tests so PSA/WGS changes do not drag unrelated Sidekick data-processor Qt tests into every Python matrix lane. |
 | 2026-06-13 | 1.1.416 | fix(sidekick): restore PSA GUI facade imports for the legacy `psa_gui.py` compatibility module so direct PSA GUI test collection resolves PyQt6, matplotlib, model, and safety helper names after the UI extraction. |
 | 2026-06-13 | 1.1.415 | fix(sidekick, #3333): package the root `compatibility` shim and route the WGS reactor JSON import directly through `sidekick.utils.json_io`, with metadata and AST boundary tests so installed Sidekick wheels avoid cross-tree `state_manager` reach-through. |

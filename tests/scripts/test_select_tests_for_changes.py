@@ -56,6 +56,15 @@ def test_non_source_and_non_python_paths_are_ignored() -> None:
 
 
 @pytest.mark.unit
+def test_in_tree_test_paths_are_ignored_by_source_mapper() -> None:
+    targets = select_tests_for_changes.select_targets(
+        ["src/shared/python/sidekick/tests/test_json_io_boundary_3333.py"]
+    )
+
+    assert targets == []
+
+
+@pytest.mark.unit
 def test_sidekick_process_calculator_source_change_selects_focused_tests() -> None:
     targets = select_tests_for_changes.select_targets(
         [

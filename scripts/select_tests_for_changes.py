@@ -106,6 +106,8 @@ def select_targets(changed_files: list[str]) -> list[str]:
         # are already handled by the existing changed_test_files.txt path.
         if not src_path.startswith("src/") or not src_path.endswith(".py"):
             continue
+        if "tests" in Path(src_path).parts:
+            continue
         for target in _candidate_targets(src_path):
             if target.exists():
                 selected.add(target.relative_to(REPO_ROOT).as_posix())
