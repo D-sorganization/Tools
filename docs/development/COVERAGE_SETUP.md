@@ -65,29 +65,34 @@ See `.coveragerc` for full list of excluded patterns.
 
 ```json
 {
-  "minimum_total_percent": 25.0,
+  "minimum_total_percent": 60.0,
   "max_total_drop_percent": 2.0,
   "tracked_packages": {
-    "src/shared/python/notes": 49.0,
-    "src/shared/python/upstream_drift_tools": 15.0,
-    "src/shared/python/signal_toolkit": 10.0,
-    "src/shared/python/model_generation": 10.0
-  },
-  "hot_path_modules": {
-    "src/pressure_drop_calculator": 80.0,
-    "src/rotation_converter": 80.0,
-    "src/shared/python/model_generation": 80.0,
-    "src/shared/python/upstream_drift_tools": 80.0
+    "src/shared/python/notes": 95.0,
+    "src/shared/python/safe_eval.py": 99.0,
+    "src/shared/python/safe_pandas_eval.py": 99.0,
+    "src/shared/python/file_watcher/_fallback.py": 95.0,
+    "src/shared/python/signal_toolkit/adaptive_filter.py": 95.0,
+    "src/shared/python/codemap": 90.0,
+    "src/shared/python/sidekick/calculators/conversion/service.py": 90.0,
+    "src/shared/python/upstream_drift_tools": 100.0
   }
 }
 ```
 
 **Thresholds explained:**
 
-- **minimum_total_percent** (25%): Total repository coverage must stay above 25%
-- **max_total_drop_percent** (2%): If baseline is 6%, PR cannot drop below 4%
-- **tracked_packages**: Per-package minimums (higher confidence modules)
-- **hot_path_modules**: Critical path modules requiring 80% coverage (Phase 2+ target)
+- **minimum_total_percent** (60%): Repo-wide target. Only enforced on a genuine
+  full-suite run (the nightly lane), never on the changed-file-scoped PR run.
+- **max_total_drop_percent** (2%): Non-regression ratchet against the baseline.
+- **tracked_packages**: Per-package minimums enforced by
+  `scripts/check_coverage_policy.py` when a tracked package's sources change.
+
+> **Note (issue #3357):** an earlier `hot_path_modules_phase2` block was pure
+> dead config — no code ever read it — so it was removed from
+> `config/coverage_policy.json`. The hot-path targets below remain an
+> **aspirational roadmap**, not an enforced gate. Treat any "Phase 2 / 80%"
+> hot-path language in this document as a planning target, not CI behaviour.
 
 ### `config/coverage_baseline.json` — Current Baseline
 

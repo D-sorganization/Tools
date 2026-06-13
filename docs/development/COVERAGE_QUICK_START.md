@@ -124,7 +124,11 @@ Common failures:
 - Core test suite: 476 tests
 - Policy: minimum 6%, max drop 2%
 
-**Hot-path modules (Phase 2 targets — 80%):**
+**Hot-path modules (aspirational 80% targets — NOT a CI gate):**
+
+> The `hot_path_modules_phase2` config block these targets referred to was dead
+> config (read by no code) and has been removed (issue #3357). The list below is
+> a planning roadmap only; CI does not enforce it.
 
 - `src/pressure_drop_calculator` — Core process engineering
 - `src/rotation_converter` — Robotics kinematics
