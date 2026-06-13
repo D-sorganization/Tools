@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.410                                    |
+| **Spec Version**        | 1.1.411                                    |
 | **Last Spec Update**    | 2026-06-12                                 |
 
 ## 2. Purpose & Mission
@@ -1435,3 +1435,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 ## 2025-02-24 CLI Tools Validation Enhancement
 
 The command injection check logic in `cli_tools.py` has been fortified. The input validation step now properly sanitizes (`.strip()`) token arguments and assignments to prevent execution of trailing/leading-space padded payloads (e.g. `--exec="  /bin/rm  "`). This effectively thwarts attacks aiming to bypass naive blocklist string matching (`token in dangerous`).
+
+## 1.1.411 - Performance optimization in AnalysisPlots
+
+- **Performance**: In `src/pendulum_simulator/pendulum-web/src/components/AnalysisPlots.tsx`, combined the `useMemo` hooks for generating `baseForceData` and `controlVectorData` into a single hook. This optimization eliminates duplicate calculations of the computationally expensive physics simulation (`computeAccelerations`), halving the rendering overhead for these chart metrics.

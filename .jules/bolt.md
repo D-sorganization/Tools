@@ -56,3 +56,6 @@
 ## 2026-06-12 - Pre-allocate Arrays in Nelder-Mead Loops
 **Learning:** In optimization loops like Nelder-Mead, allocating new arrays inside the hot iteration loop creates unnecessary garbage collection pressure.
 **Action:** Pre-allocate working arrays such as `centroid`, `reflected`, `expanded`, and `contracted` outside the main algorithm loop and mutate them in place.
+## 2025-03-09 - Memoization Optimization in Physics Rendering
+**Learning:** When multiple rendering hooks iterate over the same physics data and share expensive computations (like solving equations of motion with computeAccelerations), keeping them in separate useMemo hooks creates redundant calculations. Combining them allows reusing the intermediate heavy computation.
+**Action:** Scan for identical heavy computations within adjacent React hooks sharing the same dependency array, and combine them to compute the shared workload once.
