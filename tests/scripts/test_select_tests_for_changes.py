@@ -56,6 +56,33 @@ def test_non_source_and_non_python_paths_are_ignored() -> None:
 
 
 @pytest.mark.unit
+def test_sidekick_process_calculator_source_change_selects_focused_tests() -> None:
+    targets = select_tests_for_changes.select_targets(
+        [
+            "src/shared/python/sidekick/process_calculators/psa_package/psa_gui.py",
+            "src/shared/python/sidekick/process_calculators/wgs_reactor_calculator.py",
+        ]
+    )
+
+    assert targets == [
+        "src/shared/python/sidekick/tests/process_calculators/test_psa_gui.py",
+        "src/shared/python/sidekick/tests/process_calculators/test_wgs_reactor_calculator.py",
+    ]
+    assert "src/shared/python/sidekick/tests" not in targets
+
+
+@pytest.mark.unit
+def test_unknown_sidekick_process_calculator_falls_back_to_process_suite() -> None:
+    targets = select_tests_for_changes.select_targets(
+        [
+            "src/shared/python/sidekick/process_calculators/acid_gas_dewpoint_calculator.py"
+        ]
+    )
+
+    assert targets == ["src/shared/python/sidekick/tests/process_calculators"]
+
+
+@pytest.mark.unit
 def test_output_is_sorted_and_deduplicated() -> None:
     targets = select_tests_for_changes.select_targets(
         [

@@ -26,6 +26,21 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
+_SIDEKICK_PROCESS_CALCULATOR_TESTS = {
+    "psa_package/psa_gui.py": [
+        "src/shared/python/sidekick/tests/process_calculators/test_psa_gui.py",
+    ],
+    "psa_package/psa_model.py": [
+        "src/shared/python/sidekick/tests/process_calculators/test_psa_model.py",
+    ],
+    "psa_package/psa_webapp.py": [
+        "src/shared/python/sidekick/tests/process_calculators/test_psa_webapp.py",
+    ],
+    "wgs_reactor_calculator.py": [
+        "src/shared/python/sidekick/tests/process_calculators/test_wgs_reactor_calculator.py",
+    ],
+}
+
 
 def _read_changed_files(argv: list[str]) -> list[str]:
     """Read changed-file paths from a path argument or stdin."""
@@ -46,6 +61,15 @@ def _candidate_targets(src_path: str) -> list[Path]:
     p = Path(src_path)
     parts = p.parts
     targets: list[Path] = []
+
+    if parts[:5] == ("src", "shared", "python", "sidekick", "process_calculators"):
+        rel_process_path = Path(*parts[5:]).as_posix()
+        for test_path in _SIDEKICK_PROCESS_CALCULATOR_TESTS.get(
+            rel_process_path,
+            ["src/shared/python/sidekick/tests/process_calculators"],
+        ):
+            targets.append(REPO_ROOT / test_path)
+        return targets
 
     # Identify the changed file's *package root* so we can mirror it. For a
     # shared-library path the package is its 4th segment; for a top-level tool

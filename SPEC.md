@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.416                                    |
+| **Spec Version**        | 1.1.417                                    |
 | **Last Spec Update**    | 2026-06-13                                 |
 
 ## 2. Purpose & Mission
@@ -326,6 +326,10 @@ Tools/
 - Sidekick PSA GUI compatibility imports keep the legacy `psa_gui.py` facade
   self-contained for direct CI collection while the extracted `ui/` modules
   remain the canonical implementation surface.
+- Source-keyed CI test selection maps Sidekick process-calculator source
+  changes to focused process-calculator tests instead of the whole Sidekick
+  test tree, preserving changed-source coverage while keeping Python 3.10
+  matrix load bounded.
 - The web-app launcher uses a bounded socket readiness probe (no fixed sleep)
   before opening the browser, and reaps the dev-server child on Ctrl-C
   (terminate → wait → kill) returning a non-zero exit code so no child outlives
@@ -751,6 +755,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-13 | 1.1.417 | fix(ci): narrow source-keyed Sidekick process-calculator test selection to focused process-calculator tests so PSA/WGS changes do not drag unrelated Sidekick data-processor Qt tests into every Python matrix lane. |
 | 2026-06-13 | 1.1.416 | fix(sidekick): restore PSA GUI facade imports for the legacy `psa_gui.py` compatibility module so direct PSA GUI test collection resolves PyQt6, matplotlib, model, and safety helper names after the UI extraction. |
 | 2026-06-13 | 1.1.415 | fix(sidekick, #3333): package the root `compatibility` shim and route the WGS reactor JSON import directly through `sidekick.utils.json_io`, with metadata and AST boundary tests so installed Sidekick wheels avoid cross-tree `state_manager` reach-through. |
 | 2026-06-13 | 1.1.414 | test(ai): make the shared AI dependency subprocess probe independent of ambient `src` packages by creating a temporary repo-local `src` package shim whose path points at this checkout's `src/` tree before importing `src.shared.python.ai.adapters.factory`; this preserves the no-`sys.modules`-stub contract while preventing sibling editable installs or runner site-packages from deciding whether CI can import the shared AI stack. |
