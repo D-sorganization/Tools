@@ -50,11 +50,13 @@ def _make_stub(name: str) -> types.ModuleType:
     return stub
 
 
-_exc_stub = _make_stub("src.shared.python.ai.exceptions")
-_exc_stub.ToolExecutionError = Exception  # type: ignore[attr-defined]
+_exc_stub = sys.modules["src.shared.python.ai.exceptions"]
+if not hasattr(_exc_stub, "ToolExecutionError"):
+    _exc_stub.ToolExecutionError = Exception  # type: ignore[attr-defined]
 
-_types_stub = _make_stub("src.shared.python.ai.types")
-_types_stub.ToolResult = dict  # type: ignore[attr-defined]
+_types_stub = sys.modules["src.shared.python.ai.types"]
+if not hasattr(_types_stub, "ToolResult"):
+    _types_stub.ToolResult = dict  # type: ignore[attr-defined]
 
 # Import tool_registry and patch get_global_registry before notion module loads.
 from src.shared.python.ai.tool_registry import ToolRegistry  # noqa: E402

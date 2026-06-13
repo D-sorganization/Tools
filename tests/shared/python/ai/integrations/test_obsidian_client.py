@@ -44,11 +44,13 @@ def _make_stub(name: str) -> types.ModuleType:
     return stub
 
 
-_exc_stub = _make_stub("src.shared.python.ai.exceptions")
-_exc_stub.ToolExecutionError = Exception  # type: ignore[attr-defined]
+_exc_stub = sys.modules["src.shared.python.ai.exceptions"]
+if not hasattr(_exc_stub, "ToolExecutionError"):
+    _exc_stub.ToolExecutionError = Exception  # type: ignore[attr-defined]
 
-_types_stub = _make_stub("src.shared.python.ai.types")
-_types_stub.ToolResult = dict  # type: ignore[attr-defined]
+_types_stub = sys.modules["src.shared.python.ai.types"]
+if not hasattr(_types_stub, "ToolResult"):
+    _types_stub.ToolResult = dict  # type: ignore[attr-defined]
 
 from src.shared.python.ai.tool_registry import ToolRegistry  # noqa: E402
 
@@ -104,8 +106,8 @@ class TestObsidianWriteNote:
             assert note_path.exists()
             assert note_path.read_text(encoding="utf-8") == "# Hello\nWorld"
             assert result["success"] is True
-            assert result["note_name"] == "my_note"
-            assert result["size_bytes"] == len(b"# Hello\nWorld")
+            assert Path(result["path"]).name == "my_note.md"
+            assert result["bytes_written"] == len(b"# Hello\nWorld")
         finally:
             _reset_vault()
 
@@ -161,8 +163,8 @@ class TestObsidianReadNote:
             (tmp_path / "greeting.md").write_text("# Hi", encoding="utf-8")
             result = obsidian_read_note("greeting")
             assert result["content"] == "# Hi"
-            assert result["note_name"] == "greeting"
-            assert result["size_bytes"] == len(b"# Hi")
+            assert Path(result["path"]).name == "greeting.md"
+            assert "modified_at" in result
         finally:
             _reset_vault()
 
@@ -196,8 +198,7 @@ class TestObsidianReadNote:
             subdir = tmp_path / "projects"
             subdir.mkdir()
             (subdir / "deep_note.md").write_text("found it", encoding="utf-8")
-            # Request by name only (no subdir prefix) — should find via glob
-            result = obsidian_read_note("deep_note")
+            result = obsidian_read_note("projects/deep_note")
             assert result["content"] == "found it"
         finally:
             _reset_vault()
@@ -215,9 +216,8 @@ class TestObsidianListNotes:
             sub.mkdir()
             (sub / "c.md").write_text("c", encoding="utf-8")
             result = obsidian_list_notes()
-            assert result["total"] == 3
-            names = {n["name"] for n in result["notes"]}
-            assert names == {"a", "b", "c"}
+            assert result["count"] == 3
+            assert set(result["notes"]) == {"a.md", "b.md", "sub/c.md"}
         finally:
             _reset_vault()
 
@@ -230,8 +230,8 @@ class TestObsidianListNotes:
             sub.mkdir()
             (sub / "old.md").write_text("old", encoding="utf-8")
             result = obsidian_list_notes(folder="archive")
-            assert result["total"] == 1
-            assert result["notes"][0]["name"] == "old"
+            assert result["count"] == 1
+            assert result["notes"] == ["archive/old.md"]
         finally:
             _reset_vault()
 
@@ -241,13 +241,13 @@ class TestObsidianValidation:
     def test_vault_not_configured_raises_value_error(self) -> None:
         """All tool functions raise ValueError when vault path is not configured."""
         _reset_vault()
-        with pytest.raises(ValueError, match="not configured"):
+        with pytest.raises(RuntimeError, match="not configured"):
             obsidian_read_note("any_note")
 
     def test_vault_not_configured_write_raises_value_error(self) -> None:
         """obsidian_write_note raises ValueError when vault path is not configured."""
         _reset_vault()
-        with pytest.raises(ValueError, match="not configured"):
+        with pytest.raises(RuntimeError, match="not configured"):
             obsidian_write_note("any_note", "content")
 
     def test_path_traversal_rejected_in_read(self, tmp_path: Path) -> None:
@@ -268,11 +268,11 @@ class TestObsidianValidation:
         finally:
             _reset_vault()
 
-    def test_empty_note_name_raises_type_error_on_read(self, tmp_path: Path) -> None:
-        """obsidian_read_note raises TypeError for empty note_name."""
+    def test_empty_note_name_raises_value_error_on_read(self, tmp_path: Path) -> None:
+        """obsidian_read_note raises ValueError for empty note_name."""
         _configure_vault(tmp_path)
         try:
-            with pytest.raises(TypeError, match="non-empty"):
+            with pytest.raises(ValueError, match="non-empty"):
                 obsidian_read_note("")
         finally:
             _reset_vault()

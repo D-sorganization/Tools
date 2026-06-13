@@ -288,8 +288,41 @@ def _preload_ai_exception_aliases(repo_root: Path) -> None:
         sys.modules[name] = module
 
 
+def _preload_ai_type_aliases(repo_root: Path) -> None:
+    """Bind all supported AI type import paths to the real module file."""
+    module_names = (
+        "src.shared.python.ai.types",
+        "shared.python.ai.types",
+        "ai.types",
+    )
+    existing = next(
+        (
+            sys.modules[name]
+            for name in module_names
+            if hasattr(sys.modules.get(name), "ConversationContext")
+        ),
+        None,
+    )
+    if existing is not None:
+        for name in module_names:
+            sys.modules[name] = existing
+        return
+
+    module_path = repo_root / "src" / "shared" / "python" / "ai" / "types.py"
+    spec = importlib.util.spec_from_file_location(module_names[0], module_path)
+    if spec is None or spec.loader is None:
+        return
+    module = importlib.util.module_from_spec(spec)
+    for name in module_names:
+        sys.modules[name] = module
+    spec.loader.exec_module(module)
+    for name in module_names:
+        sys.modules[name] = module
+
+
 _setup_global_stubs(REPO_ROOT)
 _preload_ai_exception_aliases(REPO_ROOT)
+_preload_ai_type_aliases(REPO_ROOT)
 BRIDGED_EMBEDDED_TEST_DIRS = {
     REPO_ROOT / "src" / "pendulum_simulator" / "tests",
     REPO_ROOT / "src" / "solar_system_model" / "solar_system" / "tests",
