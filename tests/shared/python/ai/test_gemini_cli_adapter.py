@@ -205,7 +205,6 @@ _HAS_GEMINI = _resolve_binary() is not None
     not _HAS_GEMINI,
     reason="Gemini CLI not installed; skipping live integration test.",
 )
-@pytest.mark.live_simulation
 class TestLiveGeminiCli:
     def test_version_probe_succeeds(self) -> None:
         adapter = GeminiCliAdapter(timeout=15.0)

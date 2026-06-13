@@ -12,7 +12,6 @@ Covers:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import cast
 
 import pytest
 
@@ -22,24 +21,6 @@ from src.shared.python.ai.rag.context_provider import (
     _truncate,
     _walk_files,
 )
-from src.shared.python.ai.rag.simple_rag import Document, SimpleRAGStore
-
-
-class _DeterministicQueryStore:
-    """Minimal store double for provider query-shaping tests."""
-
-    def __init__(self) -> None:
-        self._doc = Document(
-            id="doc-1",
-            content="Gibbs free energy minimization for gasification equilibrium.",
-            metadata={"name": "calculator.py", "type": "code"},
-        )
-        self.documents = {self._doc.id: self._doc}
-
-    def query(self, query_text: str, top_k: int = 5) -> list[tuple[Document, float]]:
-        assert query_text
-        assert top_k > 0
-        return [(self._doc, 0.42)]
 
 
 @pytest.fixture
@@ -179,10 +160,9 @@ class TestRAGContextProvider:
         result = provider.index_file(Path("/nonexistent.py"))
         assert result is False
 
-    def test_query_returns_results(self) -> None:
-        provider = RAGContextProvider(
-            store=cast(SimpleRAGStore, _DeterministicQueryStore())
-        )
+    def test_query_returns_results(self, tmp_docs: Path) -> None:
+        provider = RAGContextProvider()
+        provider.index_directory(tmp_docs, include_config=True)
 
         results = provider.get_relevant_context("gibbs minimization")
         assert len(results) > 0

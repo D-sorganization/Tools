@@ -56,14 +56,3 @@
 ## 2026-06-12 - Pre-allocate Arrays in Nelder-Mead Loops
 **Learning:** In optimization loops like Nelder-Mead, allocating new arrays inside the hot iteration loop creates unnecessary garbage collection pressure.
 **Action:** Pre-allocate working arrays such as `centroid`, `reflected`, `expanded`, and `contracted` outside the main algorithm loop and mutate them in place.
-## 2026-06-13 - Array Spread Overhead in Initialization
-**Learning:** In optimization loops, initializing arrays using the spread operator (`[...array]`) frequently creates unnecessary allocations via hidden iterators, which compounds memory pressure. Explicitly allocating the array (`new Array(n)`) and copying elements via a `for` loop is over 2x faster.
-**Action:** Avoid array spread (`[...array]`) inside hot paths or high-frequency initializations; use pre-allocated arrays and explicit `for` loops instead.
-
-## 2026-06-13 - Array.sort() callback overhead on tiny arrays
-**Learning:** In tight numerical optimization loops (like Nelder-Mead), repeatedly calling `Array.prototype.sort((a, b) => a.cost - b.cost)` on tiny, statically-sized arrays (e.g. n=10) causes severe execution overhead due to callback invocation and V8 bailout limits on small closures. A manual in-place insertion sort is ~6x faster and produces zero garbage.
-**Action:** For tiny fixed-size arrays (<= 20 elements) sorted repeatedly inside algorithmic hot loops, replace `Array.prototype.sort()` with a manual insertion sort loop to eliminate callback overhead.
-
-## 2025-03-09 - Memoization Optimization in Physics Rendering
-**Learning:** When multiple rendering hooks iterate over the same physics data and share expensive computations (like solving equations of motion with computeAccelerations), keeping them in separate useMemo hooks creates redundant calculations. Combining them allows reusing the intermediate heavy computation.
-**Action:** Scan for identical heavy computations within adjacent React hooks sharing the same dependency array, and combine them to compute the shared workload once.

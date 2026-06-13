@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.415                                    |
-| **Last Spec Update**    | 2026-06-13                                 |
+| **Spec Version**        | 1.1.410                                    |
+| **Last Spec Update**    | 2026-06-12                                 |
 
 ## 2. Purpose & Mission
 
@@ -78,8 +78,6 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Project-scoped terminal-agent runtime coordination for shared chat provider
   processes
 - Shared chat WebSocket terminal-session actions for start/input/resize/events
-- AI integration tests that stub shared modules must restore `sys.modules`
-  before adapter tests run, preserving deterministic full-suite collection.
   and stop lifecycle control
 - Shared chat dock terminal mode with shell/provider selectors and terminal
   session input routing
@@ -732,8 +730,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-06-13 | 1.1.415 | test(ai): remove pytest async-plugin coupling from ChatToolBridge tests, make RAG retrieval assertions deterministic across reduced CI dependency sets, and harden the shared dependency import subprocess probe against source-path loss. |
-| 2026-06-13 | 1.1.414 | test(ai): align Notion and Obsidian integration tests with the current stub/package and file-contract behavior, and mark live Codex/Gemini CLI probes as `live_simulation` so standard CI does not fail on partially installed optional CLIs. |
 | 2026-06-12 | 1.1.410 | ci(#3324, #3325, #3357): add `full-suite-nightly.yml` (whole-collection nightly run with a vacuous-run guard) and `scripts/select_tests_for_changes.py` (source-keyed test selection wired into `ci-standard.yml`); add a core_tests zero-collection guard so always-on smoke entries can no longer pass with 0 collected; make the heavy/e2e lanes real (`heavy-integration-tests.yml` nightly schedule + `live_simulation or e2e` markers, `set -o pipefail`, and missing-junit/0-collected summary failures; same guards in `heavy-tests-opt-in.yml`); and update `COVERAGE_SETUP.md`/`COVERAGE_QUICK_START.md` to stop documenting the already-removed `hot_path_modules_phase2` block as an enforced gate. |
 | 2026-06-12 | 1.1.408 | fix(sidekick): avoid the nested Qt event loop in Python REPL worker completion by polling `QThread` progress through `QApplication.processEvents()` plus bounded waits, keeping synchronous `execute()` behavior while preventing Linux/offscreen Python 3.11/3.12 test aborts in the F6 async REPL path. |
 | 2026-06-12 | 1.1.406 | test(pendulum): add an explicit runtime contract assertion to the manual PyQt signal smoke script so the changed-test assertion gate recognizes `src/pendulum_simulator/signal_test.py` as behavior-checking test surface after the frameless-window cleanup touched the file. |
@@ -1439,11 +1435,3 @@ Active development with stable core, continuous tool expansion, and web API in p
 ## 2025-02-24 CLI Tools Validation Enhancement
 
 The command injection check logic in `cli_tools.py` has been fortified. The input validation step now properly sanitizes (`.strip()`) token arguments and assignments to prevent execution of trailing/leading-space padded payloads (e.g. `--exec="  /bin/rm  "`). This effectively thwarts attacks aiming to bypass naive blocklist string matching (`token in dangerous`).
-
-### Performance Note (2026-06-13)
-
-- In the `pendulum_simulator` Nelder-Mead optimization loop, closure allocation for `Array.prototype.sort()` over tiny, statically-sized arrays caused severe GC pressure and main thread drag. We use an explicitly implemented in-place insertion sort to eliminate iteration callback overhead for fixed-size mathematical arrays.
-
-## 1.1.411 - Performance optimization in AnalysisPlots
-
-- **Performance**: In `src/pendulum_simulator/pendulum-web/src/components/AnalysisPlots.tsx`, combined the `useMemo` hooks for generating `baseForceData` and `controlVectorData` into a single hook. This optimization eliminates duplicate calculations of the computationally expensive physics simulation (`computeAccelerations`), halving the rendering overhead for these chart metrics.
