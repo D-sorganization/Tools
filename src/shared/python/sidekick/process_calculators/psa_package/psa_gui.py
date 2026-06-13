@@ -11,7 +11,15 @@ This GUI provides interactive visualization and analysis of PSA system
 performance, including sensitivity analysis and O2 safety calculations.
 """
 
+import matplotlib
+import numpy as np
+from matplotlib.backends.backend_qtagg import (
+    FigureCanvasQTAgg as FigureCanvas,
+    NavigationToolbar2QT as NavigationToolbar,
+)
+from matplotlib.figure import Figure
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QAction, QDoubleValidator, QFont, QPixmap
 from shared.python.theme.integration import ThemedWindowMixin
 import logging
 import os
@@ -21,7 +29,38 @@ import webbrowser
 from collections.abc import Callable
 from typing import Any
 
-from PyQt6.QtWidgets import QApplication
+from PyQt6.QtWidgets import (
+    QApplication,
+    QCheckBox,
+    QComboBox,
+    QGridLayout,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QMainWindow,
+    QMessageBox,
+    QPushButton,
+    QScrollArea,
+    QSizePolicy,
+    QSlider,
+    QSpinBox,
+    QTabWidget,
+    QTableWidget,
+    QTableWidgetItem,
+    QVBoxLayout,
+    QWidget,
+)
+
+from .psa_model import (
+    DEFAULT_COMPONENTS,
+    ComponentData,
+    PSAModel,
+    PSAResults,
+    calculate_o2_safety_analysis,
+    calculate_sensitivity,
+    get_flammability_status,
+)
 
 # Expose components for backward compatibility
 from .ui import (

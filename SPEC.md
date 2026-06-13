@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.415                                    |
+| **Spec Version**        | 1.1.416                                    |
 | **Last Spec Update**    | 2026-06-13                                 |
 
 ## 2. Purpose & Mission
@@ -323,6 +323,9 @@ Tools/
   `sidekick.utils.json_io`; `state_manager` must not be used as a JSON-helper
   transit point, and the root `compatibility` shim is explicitly packaged so
   installed wheels preserve Python-version fallback imports.
+- Sidekick PSA GUI compatibility imports keep the legacy `psa_gui.py` facade
+  self-contained for direct CI collection while the extracted `ui/` modules
+  remain the canonical implementation surface.
 - The web-app launcher uses a bounded socket readiness probe (no fixed sleep)
   before opening the browser, and reaps the dev-server child on Ctrl-C
   (terminate → wait → kill) returning a non-zero exit code so no child outlives
@@ -748,6 +751,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-13 | 1.1.416 | fix(sidekick): restore PSA GUI facade imports for the legacy `psa_gui.py` compatibility module so direct PSA GUI test collection resolves PyQt6, matplotlib, model, and safety helper names after the UI extraction. |
 | 2026-06-13 | 1.1.415 | fix(sidekick, #3333): package the root `compatibility` shim and route the WGS reactor JSON import directly through `sidekick.utils.json_io`, with metadata and AST boundary tests so installed Sidekick wheels avoid cross-tree `state_manager` reach-through. |
 | 2026-06-13 | 1.1.414 | test(ai): make the shared AI dependency subprocess probe independent of ambient `src` packages by creating a temporary repo-local `src` package shim whose path points at this checkout's `src/` tree before importing `src.shared.python.ai.adapters.factory`; this preserves the no-`sys.modules`-stub contract while preventing sibling editable installs or runner site-packages from deciding whether CI can import the shared AI stack. |
 | 2026-06-12 | 1.1.410 | ci(#3324, #3325, #3357): add `full-suite-nightly.yml` (whole-collection nightly run with a vacuous-run guard) and `scripts/select_tests_for_changes.py` (source-keyed test selection wired into `ci-standard.yml`); add a core_tests zero-collection guard so always-on smoke entries can no longer pass with 0 collected; make the heavy/e2e lanes real (`heavy-integration-tests.yml` nightly schedule + `live_simulation or e2e` markers, `set -o pipefail`, and missing-junit/0-collected summary failures; same guards in `heavy-tests-opt-in.yml`); and update `COVERAGE_SETUP.md`/`COVERAGE_QUICK_START.md` to stop documenting the already-removed `hot_path_modules_phase2` block as an enforced gate. |
