@@ -234,6 +234,7 @@ python_functions = ["test_*"]
 pythonpath = [
     "src/data_processing/data_processor/python",
     "src/media_processing/video_processor/python",
+    "src/ode_solver/python",
     "src",
     "src/python/src",
     "src/shared/python",

@@ -5,8 +5,16 @@ import json
 import logging
 import os
 import time
+from typing import Any
 
-from dotenv import load_dotenv
+try:
+    from dotenv import load_dotenv
+except ImportError:
+
+    def load_dotenv(*_args, **_kwargs) -> bool:
+        return False
+
+
 from PyQt6.QtCore import Qt, QThread, pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QColor, QPalette
 from PyQt6.QtWidgets import (
@@ -25,6 +33,7 @@ load_dotenv()
 # Relative package imports
 # Import Sidekick Unified Tools Sidebar
 from sidekick.ui.tools_sidebar import UnifiedToolsSidebar
+from theme.theme_manager import get_theme_manager
 
 from p1am_control_system.desktop.control_tab import ControlTab
 from p1am_control_system.desktop.event_logger import EventLogger, EventLogViewerWidget
@@ -38,7 +47,12 @@ from p1am_control_system.desktop.workers import HttpWorker, start_http_request
 
 logger = logging.getLogger("p1am_control.desktop.main_window")
 
-import websockets
+try:
+    import websockets as _websockets_import
+except ImportError:
+    _websockets: Any | None = None
+else:
+    _websockets = _websockets_import
 
 
 class WebSocketClientThread(QThread):
@@ -61,10 +75,14 @@ class WebSocketClientThread(QThread):
 
     async def _listen(self) -> None:
         self.connectionStatusChanged.emit("Offline")
+        if _websockets is None:
+            logger.error("websockets dependency is not installed")
+            return
+
         while self.running:
             try:
                 logger.info(f"Connecting to WebSocket: {self.uri}")
-                async with websockets.connect(self.uri) as websocket:
+                async with _websockets.connect(self.uri) as websocket:
                     self.connectionStatusChanged.emit(
                         "Simulating"
                     )  # Default simulated state, updated on active Modbus
@@ -119,6 +137,10 @@ class HMIMainWindow(QMainWindow):
         self.event_logger = EventLogger()
 
         self._init_ui()
+        self.theme_manager = get_theme_manager(self)
+        self.theme_manager.apply_theme_to_window(self)
+        self.theme_manager.themeChanged.connect(self._on_theme_changed)
+        self._on_theme_changed(self.theme_manager.get_current_theme_name())
         self._load_routing_config()
 
         # Start WebSocket client stream thread
@@ -209,6 +231,14 @@ class HMIMainWindow(QMainWindow):
         self.sidekick_sidebar = UnifiedToolsSidebar(parent=self)
         self.sidekick_sidebar.install_as_dock(self, area="right")
         self.sidekick_sidebar.register_shortcuts(self)
+
+    @pyqtSlot(str)
+    def _on_theme_changed(self, theme_name: str) -> None:
+        """Re-apply HMI widget-local styles when the shared theme changes."""
+        if hasattr(self, "header"):
+            self.header.apply_theme_styles(theme_name)
+        if hasattr(self, "log_list"):
+            self.log_list.setStyleSheet("font-family: Consolas, monospace;")
 
     def _load_routing_config(self) -> None:
         """Fetch current PLC configuration routing parameters from FastAPI."""

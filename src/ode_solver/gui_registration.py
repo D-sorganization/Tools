@@ -18,6 +18,13 @@ GUI_INFO = {
     },
 }
 
+GUI_METADATA = {
+    "name": GUI_INFO["name"],
+    "description": GUI_INFO["description"],
+    "category": "mathematics",
+    "entry_point": "ode_solver.launch_pyqt6:main",
+}
+
 
 def get_gui_info() -> dict[str, Any]:
     """Return GUI registration information."""

@@ -2,7 +2,13 @@ from collections.abc import Callable
 from typing import Any
 from weakref import ref
 
-import requests
+try:
+    import requests as _requests_import
+except ImportError:
+    _requests: Any | None = None
+else:
+    _requests = _requests_import
+
 from PyQt6.QtCore import QObject, Qt, QThread, pyqtSignal
 from PyQt6.QtWidgets import QApplication, QPushButton, QWidget
 
@@ -42,11 +48,15 @@ class HttpWorker(QThread):
         self.timeout = _request_timeout(timeout)
 
     def run(self) -> None:
+        if _requests is None:
+            self.error.emit("requests dependency is not installed")
+            return
+
         try:
             if self.method == "GET":
-                resp = requests.get(self.url, params=self.data, timeout=self.timeout)
+                resp = _requests.get(self.url, params=self.data, timeout=self.timeout)
             elif self.method == "POST":
-                resp = requests.post(
+                resp = _requests.post(
                     self.url, data=self.data, json=self.json, timeout=self.timeout
                 )
             else:
@@ -62,7 +72,7 @@ class HttpWorker(QThread):
 
             self.success.emit(data)
 
-        except requests.exceptions.RequestException as e:
+        except _requests.exceptions.RequestException as e:
             self.error.emit(str(e))
         except Exception as e:
             self.error.emit(f"Unexpected error: {str(e)}")

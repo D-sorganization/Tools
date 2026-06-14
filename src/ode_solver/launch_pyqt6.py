@@ -11,5 +11,11 @@ bootstrap(__file__)
 
 from gui_launcher import make_pyqt6_launcher  # noqa: E402
 
+
+def main() -> int:
+    """Launch the ODE Solver PyQt6 GUI."""
+    return int(make_pyqt6_launcher("ode_solver.gui_registration"))
+
+
 if __name__ == "__main__":
-    sys.exit(make_pyqt6_launcher("ode_solver.gui_registration"))
+    sys.exit(main())

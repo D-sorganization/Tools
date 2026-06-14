@@ -129,6 +129,65 @@ class TestRunSolveValidationHandling:
         assert "Invalid input" in message
 
 
+class TestThemeIntegration:
+    """ODE Solver should delegate colors to the shared theme manager."""
+
+    def test_launch_uses_saved_theme_stylesheet(
+        self, qapp, monkeypatch: pytest.MonkeyPatch, tmp_path
+    ) -> None:
+        from theme.theme_manager import ThemeManager, get_theme_manager
+
+        settings_app = f"ODESolverWindowThemeTest-{tmp_path.name}"
+        monkeypatch.setattr(ODESolverWindow, "_settings_app", settings_app)
+        ThemeManager.reset_instance()
+        bootstrap_manager = get_theme_manager(settings_app=settings_app)
+        previous_theme = bootstrap_manager.get_theme_preference()
+        bootstrap_manager.change_theme("Light")
+        ThemeManager.reset_instance()
+
+        window = ODESolverWindow()
+        manager = window.get_theme_manager()
+        try:
+            assert manager.get_current_theme_name() == "Light"
+            assert window.styleSheet() == manager.get_current_stylesheet()
+        finally:
+            if previous_theme in manager.get_available_themes():
+                manager.change_theme(previous_theme)
+            window.close()
+            ThemeManager.reset_instance()
+
+    def test_theme_change_reapplies_result_color_tokens(
+        self, qapp, monkeypatch: pytest.MonkeyPatch, tmp_path
+    ) -> None:
+        from theme.theme_manager import ThemeManager
+
+        settings_app = f"ODESolverWindowThemeTest-{tmp_path.name}"
+        monkeypatch.setattr(ODESolverWindow, "_settings_app", settings_app)
+        ThemeManager.reset_instance()
+        window = ODESolverWindow()
+        manager = window.get_theme_manager()
+        previous_theme = manager.get_theme_preference()
+        try:
+            manager.change_theme("Dark")
+            dark_stylesheet = window.styleSheet()
+            window._set_results_status("success")
+            dark_results_style = window.results_text.styleSheet()
+
+            manager.change_theme("Light")
+            qapp.processEvents()
+
+            light_success = manager.get_current_colors()["success"]
+            assert window.styleSheet() != dark_stylesheet
+            assert light_success in window.results_text.styleSheet()
+            assert window.results_text.styleSheet() != dark_results_style
+            assert "#a6e3a1" not in window.results_text.styleSheet().lower()
+        finally:
+            if previous_theme in manager.get_available_themes():
+                manager.change_theme(previous_theme)
+            window.close()
+            ThemeManager.reset_instance()
+
+
 class TestOnPresetChangedPreconditions:
     """Unit tests for ODESolverWindow._on_preset_changed DbC guards.
 

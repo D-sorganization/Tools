@@ -5,6 +5,7 @@ Verifies role authentication, password verification, event logging, and filterin
 
 from __future__ import annotations
 
+import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -200,3 +201,89 @@ def test_event_logger_filters(tmp_path: Path) -> None:
     old_logs = logger.fetch_logs(end_date=now - timedelta(days=1, hours=12))
     assert len(old_logs) == 1
     assert old_logs[0][2] == "button_click"
+
+
+def test_hmi_main_window_restyles_when_shared_theme_changes(
+    qapp, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """HMI main window registers with ThemeManager and follows Light/Dark changes."""
+
+    class _FakeSignal:
+        def __init__(self) -> None:
+            self._slots = []
+
+        def connect(self, slot) -> None:
+            self._slots.append(slot)
+
+    class _FakeWebSocketClientThread:
+        def __init__(self, uri: str) -> None:
+            self.uri = uri
+            self.messageReceived = _FakeSignal()
+            self.connectionStatusChanged = _FakeSignal()
+
+        def start(self) -> None:
+            pass
+
+        def stop(self) -> None:
+            pass
+
+        def wait(self) -> None:
+            pass
+
+    class _FakeUnifiedToolsSidebar:
+        def __init__(self, parent=None) -> None:
+            self.parent = parent
+
+        def install_as_dock(self, main_window, area: str = "right") -> None:
+            self.main_window = main_window
+            self.area = area
+
+        def register_shortcuts(self, main_window) -> None:
+            self.shortcut_parent = main_window
+
+    from theme.theme_manager import ThemeManager, get_theme_manager
+
+    from p1am_control_system.desktop import header as hmi_header
+
+    monkeypatch.setitem(sys.modules, "dotenv", None)
+    monkeypatch.setitem(sys.modules, "requests", None)
+    monkeypatch.setitem(sys.modules, "websockets", None)
+
+    from p1am_control_system.desktop import main_window as hmi_main_window
+
+    settings_app = f"HMIMainWindowThemeTest-{tmp_path.name}"
+
+    def _test_theme_manager(window=None):
+        return get_theme_manager(window, settings_app=settings_app)
+
+    monkeypatch.setenv("EVENT_LOG_DB_PATH", str(tmp_path / "events.db"))
+    monkeypatch.setattr(hmi_header, "get_theme_manager", _test_theme_manager)
+    monkeypatch.setattr(hmi_main_window, "get_theme_manager", _test_theme_manager)
+    monkeypatch.setattr(
+        hmi_main_window.HMIMainWindow, "_load_routing_config", lambda self: None
+    )
+    monkeypatch.setattr(
+        hmi_main_window, "WebSocketClientThread", _FakeWebSocketClientThread
+    )
+    monkeypatch.setattr(
+        hmi_main_window, "UnifiedToolsSidebar", _FakeUnifiedToolsSidebar
+    )
+
+    ThemeManager.reset_instance()
+    window = hmi_main_window.HMIMainWindow()
+    manager = window.theme_manager
+    previous_theme = manager.get_theme_preference()
+    try:
+        manager.change_theme("Dark")
+        dark_stylesheet = window.styleSheet()
+        manager.change_theme("Light")
+        qapp.processEvents()
+
+        assert window.styleSheet() != dark_stylesheet
+        assert window.header.theme_btn.text() == "Theme: Light"
+        assert "#1a1d23" not in window.log_list.styleSheet().lower()
+    finally:
+        if previous_theme in manager.get_available_themes():
+            manager.change_theme(previous_theme)
+        window.close()
+        ThemeManager.reset_instance()
