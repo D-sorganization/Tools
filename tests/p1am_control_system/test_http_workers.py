@@ -47,6 +47,17 @@ def test_http_worker_converts_scalar_timeout_to_explicit_connect_read_tuple() ->
     assert worker.timeout == (0.25, 1.25)
 
 
+def test_requests_client_recovers_after_import_masking(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(workers, "requests", None)
+
+    client = workers._requests_client()
+
+    assert client is not None
+    assert workers.requests is client
+
+
 @pytest.mark.gui
 def test_mpc_simulation_http_worker_keeps_qt_event_loop_responsive(
     qapp, monkeypatch: pytest.MonkeyPatch

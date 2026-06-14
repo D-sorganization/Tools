@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.440                                    |
+| **Spec Version**        | 1.1.442                                    |
 | **Last Spec Update**    | 2026-06-14                                 |
 
 ## 2. Purpose & Mission
@@ -767,6 +767,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-14 | 1.1.442 | fix(p1am): make the desktop HTTP worker expose and lazily recover its optional `requests` client after test-time import masking, preserving responsive GUI worker tests when earlier HMI tests simulate missing optional network dependencies. |
+| 2026-06-14 | 1.1.441 | fix(matlab-audio, #3330): extract the shared phase-vocoder pitch-shift helper into `applyPitchShiftFrames.m`, route AdvancedAudioProcessor pitch correction/shift/vocoder methods through it, process multi-channel audio channel-by-channel, and convert still-unimplemented spatialization and composition placeholders into hard errors with Python static regressions that CI can enforce without requiring MATLAB. |
 | 2026-06-14 | 1.1.425 | fix(p1am, #3352): split the Control tab's MPC setup/request handling into `control_tab_mpc.py` so the responsive HTTP-worker fix satisfies the changed-file size budget without adding a monolith baseline exception. |
 | 2026-06-14 | 1.1.424 | fix(p1am, #3352): standardize desktop HMI HTTP writes through a parented `HttpWorker` launcher that uses explicit connect/read timeout tuples, applies a busy cursor, disables triggering buttons while requests are in flight, and keeps the Qt event loop responsive during backend latency. |
 | 2026-06-14 | 1.1.423 | fix(movement_optimizer, #3411): split the swingset policy worker and trace canvas out of `motion_tabs.py` so the async optimizer remains covered while satisfying the module-size quality gate. |

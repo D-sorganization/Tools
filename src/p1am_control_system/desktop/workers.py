@@ -5,9 +5,9 @@ from weakref import ref
 try:
     import requests as _requests_import
 except ImportError:
-    _requests: Any | None = None
+    requests: Any | None = None
 else:
-    _requests = _requests_import
+    requests = _requests_import
 
 from PyQt6.QtCore import QObject, Qt, QThread, pyqtSignal
 from PyQt6.QtWidgets import QApplication, QPushButton, QWidget
@@ -21,6 +21,19 @@ def _request_timeout(timeout: RequestTimeout) -> tuple[float, float]:
     if isinstance(timeout, tuple):
         return timeout
     return (min(0.5, timeout), timeout)
+
+
+def _requests_client() -> Any | None:
+    """Return the requests module, retrying after test-time import masking."""
+    global requests
+    if requests is not None:
+        return requests
+    try:
+        import requests as requests_import
+    except ImportError:
+        return None
+    requests = requests_import
+    return requests
 
 
 class HttpWorker(QThread):
@@ -48,15 +61,18 @@ class HttpWorker(QThread):
         self.timeout = _request_timeout(timeout)
 
     def run(self) -> None:
-        if _requests is None:
+        requests_client = _requests_client()
+        if requests_client is None:
             self.error.emit("requests dependency is not installed")
             return
 
         try:
             if self.method == "GET":
-                resp = _requests.get(self.url, params=self.data, timeout=self.timeout)
+                resp = requests_client.get(
+                    self.url, params=self.data, timeout=self.timeout
+                )
             elif self.method == "POST":
-                resp = _requests.post(
+                resp = requests_client.post(
                     self.url, data=self.data, json=self.json, timeout=self.timeout
                 )
             else:
@@ -72,7 +88,7 @@ class HttpWorker(QThread):
 
             self.success.emit(data)
 
-        except _requests.exceptions.RequestException as e:
+        except requests_client.exceptions.RequestException as e:
             self.error.emit(str(e))
         except Exception as e:
             self.error.emit(f"Unexpected error: {str(e)}")
