@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.423                                    |
+| **Spec Version**        | 1.1.425                                    |
 | **Last Spec Update**    | 2026-06-14                                 |
 
 ## 2. Purpose & Mission
@@ -756,6 +756,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-14 | 1.1.425 | fix(p1am, #3352): split the Control tab's MPC setup/request handling into `control_tab_mpc.py` so the responsive HTTP-worker fix satisfies the changed-file size budget without adding a monolith baseline exception. |
+| 2026-06-14 | 1.1.424 | fix(p1am, #3352): standardize desktop HMI HTTP writes through a parented `HttpWorker` launcher that uses explicit connect/read timeout tuples, applies a busy cursor, disables triggering buttons while requests are in flight, and keeps the Qt event loop responsive during backend latency. |
 | 2026-06-14 | 1.1.423 | fix(movement_optimizer, #3411): split the swingset policy worker and trace canvas out of `motion_tabs.py` so the async optimizer remains covered while satisfying the module-size quality gate. |
 | 2026-06-14 | 1.1.422 | fix(movement_optimizer, #3411): run swingset policy optimization in a `QThread` worker instead of the GUI thread, emit progress/result/error back to the tab via Qt signals, reset and report failures with a dialog, and keep shared bottom playback controls synchronized when async policy generation starts playback. |
 | 2026-06-13 | 1.1.421 | fix(ci, movement_optimizer, #3410): keep `src/movement_optimizer` launcher and registration changes from reselecting the vendored origin-repo test suite in `scripts/select_tests_for_changes.py`, hide the legacy `src/optimizer_gui` compatibility registration from generated launcher catalogs, declare the P1AM desktop `pyqtgraph` GUI dependency used by always-on CI core tests, and document the canonical `src/movement_optimizer/` provider surface in the component table. |

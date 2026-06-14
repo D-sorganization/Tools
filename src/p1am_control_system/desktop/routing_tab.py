@@ -19,7 +19,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from .workers import HttpWorker
+from .workers import HttpWorker, start_http_request
 
 logger = logging.getLogger("p1am_control.desktop.routing")
 
@@ -215,15 +215,23 @@ class RoutingTab(QWidget):
                     self.routing_config.interlocks[idx].high_limit = item["high_limit"]
 
             # 3. Post back to backend
-            self.deploy_worker = HttpWorker(
+            worker = HttpWorker(
                 "POST",
                 f"{self.backend_url}/api/routing",
                 json=self.routing_config.dict(),
                 timeout=3.0,
+                parent=self,
             )
-            self.deploy_worker.success.connect(self._on_deploy_success)
-            self.deploy_worker.error.connect(self._on_deploy_error)
-            self.deploy_worker.start()
+            worker.success.connect(self._on_deploy_success)
+            worker.error.connect(self._on_deploy_error)
+            start_http_request(
+                self,
+                "deploy_worker",
+                worker,
+                busy_button=self.btn_deploy,
+                busy_text="Deploying...",
+                restore_button=lambda was: was and self.user_role == "Admin",
+            )
 
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to prepare deploy: {e}")
