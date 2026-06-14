@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.421                                    |
-| **Last Spec Update**    | 2026-06-13                                 |
+| **Spec Version**        | 1.1.423                                    |
+| **Last Spec Update**    | 2026-06-14                                 |
 
 ## 2. Purpose & Mission
 
@@ -756,6 +756,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-14 | 1.1.423 | fix(movement_optimizer, #3411): split the swingset policy worker and trace canvas out of `motion_tabs.py` so the async optimizer remains covered while satisfying the module-size quality gate. |
+| 2026-06-14 | 1.1.422 | fix(movement_optimizer, #3411): run swingset policy optimization in a `QThread` worker instead of the GUI thread, emit progress/result/error back to the tab via Qt signals, reset and report failures with a dialog, and keep shared bottom playback controls synchronized when async policy generation starts playback. |
 | 2026-06-13 | 1.1.421 | fix(ci, movement_optimizer, #3410): keep `src/movement_optimizer` launcher and registration changes from reselecting the vendored origin-repo test suite in `scripts/select_tests_for_changes.py`, hide the legacy `src/optimizer_gui` compatibility registration from generated launcher catalogs, declare the P1AM desktop `pyqtgraph` GUI dependency used by always-on CI core tests, and document the canonical `src/movement_optimizer/` provider surface in the component table. |
 | 2026-06-13 | 1.1.420 | fix(movement_optimizer, #3410): make the vendored `src/movement_optimizer` app the single advertised Movement Optimizer provider surface by pointing the root Tools manifest and launcher catalog at `src/movement_optimizer/launch_pyqt6.py`, restoring the canonical `/tools/movement-optimizer` route, removing the old `src/optimizer_gui/model_pack.yaml` provider advertisement, and adding manifest tests that pin capabilities plus supported exercises against the tool-pack contract. |
 | 2026-06-13 | 1.1.419 | fix(ci, #3357): make the nightly full-suite workflow generate repo-wide `coverage.xml` and run `scripts/check_coverage_policy.py` without `--changed-files`, so the total coverage non-regression ratchet is enforced only on a genuine full-suite lane while PR CI remains changed-package scoped. |

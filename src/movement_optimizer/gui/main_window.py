@@ -185,6 +185,10 @@ class MainWindow(
         self._right_sidebar_toggle_btn.clicked.connect(self._toggle_right_sidebar)
         self.tabs.addTab(create_swingset_tab(), "  Swingset Model  ")
         self.tabs.addTab(create_chain_tab(), "  Chain Dynamics  ")
+        for index in range(self.tabs.count() - 2, self.tabs.count()):
+            signal = getattr(self.tabs.widget(index), "playbackStateChanged", None)
+            if signal is not None:
+                signal.connect(self._sync_analysis_playback_controls)
         self.tabs.currentChanged.connect(self._sync_motion_tab_controls)
         self.setCentralWidget(central)
         self._build_menu_bar()
