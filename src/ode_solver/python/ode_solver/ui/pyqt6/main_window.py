@@ -34,7 +34,6 @@ from PyQt6.QtWidgets import (
 
 from contracts import require
 from ode_solver.timeout import SolverTimeoutError, with_timeout
-from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA, get_stylesheet
 from shared.python.theme.integration import ThemedWindowMixin
 
 _log = logging.getLogger(__name__)
@@ -85,6 +84,7 @@ class ODESolverWindow(ThemedWindowMixin, QMainWindow):
     def __init__(self) -> None:
         """Initialize the main window."""
         super().__init__()
+        self._results_status = "default"
         self.setup_theme_support()
         self._notes_dock: Any | None = None
         self._setup_ui()
@@ -107,7 +107,6 @@ class ODESolverWindow(ThemedWindowMixin, QMainWindow):
         """Set up the user interface."""
         self.setWindowTitle("ODE Solver")
         self.setMinimumSize(700, 800)
-        self.setStyleSheet(get_stylesheet())
 
         # Menu bar with Notes toggle
         menu_bar = self.menuBar()
@@ -132,14 +131,13 @@ class ODESolverWindow(ThemedWindowMixin, QMainWindow):
         main_layout.setSpacing(12)
 
         # Title
-        title_label = QLabel("ODE Solver")
         title_font = QFont()
         title_font.setPointSize(18)
         title_font.setBold(True)
-        title_label.setFont(title_font)
-        title_label.setAlignment(_ALIGN_CENTER)
-        title_label.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['blue']};")
-        main_layout.addWidget(title_label)
+        self.title_label = QLabel("ODE Solver")
+        self.title_label.setFont(title_font)
+        self.title_label.setAlignment(_ALIGN_CENTER)
+        main_layout.addWidget(self.title_label)
 
         # Preset selector
         main_layout.addWidget(self._create_preset_group())
@@ -159,6 +157,7 @@ class ODESolverWindow(ThemedWindowMixin, QMainWindow):
         main_layout.addWidget(self._create_results_group())
 
         main_layout.addStretch()
+        self._apply_theme_styles()
 
     def _create_preset_group(self) -> QGroupBox:
         """Create the preset selector group."""
@@ -174,12 +173,53 @@ class ODESolverWindow(ThemedWindowMixin, QMainWindow):
 
         self.preset_description = QLabel("")
         self.preset_description.setWordWrap(True)
-        self.preset_description.setStyleSheet(
-            f"color: {CATPPUCCIN_MOCHA['subtext0']}; font-style: italic;"
-        )
         layout.addWidget(self.preset_description, 1, 0, 1, 2)
 
         return group
+
+    def _theme_color(self, key: str, fallback: str) -> str:
+        manager = self.get_theme_manager()
+        return str(manager.get_current_colors().get(key, fallback))
+
+    def _apply_theme_styles(self) -> None:
+        if hasattr(self, "title_label"):
+            self.title_label.setStyleSheet(
+                f"color: {self._theme_color('accent', 'blue')};"
+            )
+        if hasattr(self, "preset_description"):
+            self.preset_description.setStyleSheet(
+                f"color: {self._theme_color('text_secondary', 'gray')}; "
+                "font-style: italic;"
+            )
+        if hasattr(self, "results_text"):
+            self._apply_results_style()
+
+    def _on_theme_changed(self, theme_name: str) -> None:
+        """Re-apply widget-local styles after the theme manager updates the window."""
+        self._apply_theme_styles()
+
+    def _apply_results_style(self) -> None:
+        color_key_by_status = {
+            "default": "text",
+            "success": "success",
+            "warning": "warning",
+            "error": "error",
+        }
+        fallback_by_status = {
+            "default": "black",
+            "success": "green",
+            "warning": "orange",
+            "error": "red",
+        }
+        color_key = color_key_by_status.get(self._results_status, "text")
+        fallback = fallback_by_status.get(self._results_status, "black")
+        self.results_text.setStyleSheet(
+            f"color: {self._theme_color(color_key, fallback)};"
+        )
+
+    def _set_results_status(self, status: str) -> None:
+        self._results_status = status
+        self._apply_results_style()
 
     def _create_ode_group(self) -> QGroupBox:
         """Create the ODE definition group."""
@@ -453,14 +493,14 @@ class ODESolverWindow(ThemedWindowMixin, QMainWindow):
                 results.append(row)
 
             self.results_text.setPlainText("\n".join(results))
-            self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['green']};")
+            self._set_results_status("success")
 
         except SolverTimeoutError as e:
             _log.warning("Solver timed out: %s", e)
             self.results_text.setPlainText(
                 f"Timeout: {e}\n\nTry reducing the time span or simplifying the ODE system."
             )
-            self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['yellow']};")
+            self._set_results_status("warning")
         except (ValueError, TypeError) as e:
             # Input-validation failures: bad parameter/initial-condition text,
             # a missing initial condition, or a contract precondition
@@ -472,10 +512,10 @@ class ODESolverWindow(ThemedWindowMixin, QMainWindow):
                 "Check that every parameter and initial condition is a number "
                 "and that an initial condition is provided for each variable."
             )
-            self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['red']};")
+            self._set_results_status("error")
         except ImportError as e:
             self.results_text.setPlainText(f"Error: {e}")
-            self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['red']};")
+            self._set_results_status("error")
 
 
 def main() -> int:

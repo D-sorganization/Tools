@@ -49,8 +49,11 @@ class HMIHeader(QWidget):
         self._has_hl_alarms = False
         self._has_hhll_alarms = False
         self._flash_state = False
+        self._pending_estop_clear = False
 
         self._init_ui()
+        self.theme_manager.themeChanged.connect(self.apply_theme_styles)
+        self.apply_theme_styles(self.theme_manager.get_current_theme_name())
 
         # Setup flashing timer for unacknowledged alarms
         self.flash_timer = QTimer(self)
@@ -113,6 +116,41 @@ class HMIHeader(QWidget):
 
         # Apply default QSS styles for the header container
         self.setStyleSheet("min-height: 50px;")
+
+    def _theme_color(self, key: str, fallback: str) -> str:
+        return self.theme_manager.get_current_colors().get(key, fallback)
+
+    def _status_label_style(self, color: str) -> str:
+        return (
+            "font-weight: bold; font-size: 10pt; "
+            f"color: {color}; padding: 4px 8px; "
+            f"border: 1px solid {color}; border-radius: 4px;"
+        )
+
+    def _alarm_button_style(self, background: str, foreground: str) -> str:
+        return (
+            f"font-weight: bold; background-color: {background}; color: {foreground};"
+        )
+
+    def _estop_button_style(self, background: str, foreground: str) -> str:
+        return (
+            "QPushButton {"
+            f"  background-color: {background}; color: {foreground}; "
+            "font-weight: bold; font-size: 11pt;"
+            "}"
+        )
+
+    def apply_theme_styles(self, theme_name: str | None = None) -> None:
+        """Re-apply widget-local HMI styles from the active shared theme."""
+        active_theme = theme_name or self.theme_manager.get_current_theme_name()
+        self.theme_btn.setText(f"Theme: {active_theme}")
+        self.setStyleSheet("min-height: 50px;")
+        self.set_connection_status(self._connection_state)
+        self._update_estop_style(
+            self.estop_btn.isChecked(), pending_clear=self._pending_estop_clear
+        )
+        if not self._has_hl_alarms and not self._has_hhll_alarms:
+            self.ack_btn.setStyleSheet("font-weight: bold;")
 
     def _on_role_changed(self, text: str) -> None:
         if text == "Admin":
@@ -179,26 +217,28 @@ class HMIHeader(QWidget):
         self._update_estop_style(True)
 
     def _update_estop_style(self, active: bool, pending_clear: bool = False) -> None:
+        self._pending_estop_clear = pending_clear
+        selection_text = self._theme_color("selection_text", "white")
         if pending_clear:
             self.estop_btn.setText("CLEARING…")
             self.estop_btn.setStyleSheet(
-                "QPushButton {"
-                "  background-color: orange; color: black; font-weight: bold; font-size: 11pt;"
-                "}"
+                self._estop_button_style(
+                    self._theme_color("warning", "orange"), "black"
+                )
             )
         elif active:
             self.estop_btn.setText("E-STOP PRESSED")
             self.estop_btn.setStyleSheet(
-                "QPushButton {"
-                "  background-color: red; color: white; font-weight: bold; font-size: 11pt;"
-                "}"
+                self._estop_button_style(
+                    self._theme_color("error", "red"), selection_text
+                )
             )
         else:
             self.estop_btn.setText("E-STOP CLEAR")
             self.estop_btn.setStyleSheet(
-                "QPushButton {"
-                "  background-color: green; color: white; font-weight: bold; font-size: 11pt;"
-                "}"
+                self._estop_button_style(
+                    self._theme_color("success", "green"), selection_text
+                )
             )
 
     def _on_theme_toggled(self) -> None:
@@ -219,15 +259,15 @@ class HMIHeader(QWidget):
 
         if state == "Connected":
             self.conn_label.setStyleSheet(
-                "font-weight: bold; font-size: 10pt; color: green; padding: 4px 8px; border: 1px solid green; border-radius: 4px;"
+                self._status_label_style(self._theme_color("success", "green"))
             )
         elif state == "Simulating":
             self.conn_label.setStyleSheet(
-                "font-weight: bold; font-size: 10pt; color: orange; padding: 4px 8px; border: 1px solid orange; border-radius: 4px;"
+                self._status_label_style(self._theme_color("warning", "orange"))
             )
         else:
             self.conn_label.setStyleSheet(
-                "font-weight: bold; font-size: 10pt; color: red; padding: 4px 8px; border: 1px solid red; border-radius: 4px;"
+                self._status_label_style(self._theme_color("error", "red"))
             )
 
     def set_alarms_state(self, has_hl: bool, has_hhll: bool) -> None:
@@ -249,12 +289,17 @@ class HMIHeader(QWidget):
             if self._has_hhll_alarms:
                 # Flash Red for HH/LL alarms
                 self.ack_btn.setStyleSheet(
-                    "font-weight: bold; background-color: red; color: white;"
+                    self._alarm_button_style(
+                        self._theme_color("error", "red"),
+                        self._theme_color("selection_text", "white"),
+                    )
                 )
             elif self._has_hl_alarms:
                 # Flash Yellow for H/L alarms
                 self.ack_btn.setStyleSheet(
-                    "font-weight: bold; background-color: orange; color: black;"
+                    self._alarm_button_style(
+                        self._theme_color("warning", "orange"), "black"
+                    )
                 )
         else:
             # Default state color during flash
