@@ -94,22 +94,31 @@ models:
 
   - id: "tools_movement_optimizer"
     name: "Movement Optimizer"
-    description: "PyQt6 motion optimizer with swingset policy training and chain whip dynamics."
+    description: "Biomechanics barbell trajectory optimizer using Lagrangian inverse dynamics (3-link sagittal chain): squat, deadlift, bench press, snatch, clean, jerk; spinal-load and Hill-muscle analysis; GUI and headless CLI."
     type: "special_app"
-    path: "src/optimizer_gui/launch_pyqt6.py"
+    path: "src/movement_optimizer/launch_pyqt6.py"
     working_dir: "."
     python_paths:
       - "src"
-      - "src/shared/python"
-      - "src/optimizer_gui/python"
     capabilities:
+      - "optimization"
+      - "biomechanics"
+      - "trajectory"
+      - "cli"
+      - "pyqt6"
       - "swingset"
       - "chain_dynamics"
-      - "policy_optimization"
-      - "pyqt6"
+    supported_exercises:
+      - "squat"
+      - "full_squat"
+      - "deadlift"
+      - "bench_press"
+      - "snatch"
+      - "clean"
+      - "jerk"
     order: 15
     launcher:
       category: "tool"
-      logo: "swing_optimizer.svg"
+      logo: "src/movement_optimizer/assets/movement_optimizer_icon.svg"
       status: "ready"
       web_route: "/tools/movement-optimizer"

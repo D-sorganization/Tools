@@ -64,6 +64,11 @@ def load_gui_info(path: Path) -> dict[str, Any] | None:
         return None
 
 
+def _is_catalog_visible(info: dict[str, Any]) -> bool:
+    """Return whether a registration participates in generated catalogs."""
+    return info.get("catalog_visible", True) is not False
+
+
 def _discover_registrations(repo_root: Path) -> list[ToolRegistration]:
     """Discover all gui_registration.py files and extract ToolRegistration entries.
 
@@ -76,6 +81,8 @@ def _discover_registrations(repo_root: Path) -> list[ToolRegistration]:
     for reg_file in sorted(src_dir.glob("**/gui_registration.py")):
         info = load_gui_info(reg_file)
         if not info:
+            continue
+        if not _is_catalog_visible(info):
             continue
 
         tool_dir = reg_file.parent
@@ -199,6 +206,8 @@ def _find_tool_dir(src_dir: Path, tool_id: str) -> Path | None:
     for reg_file in sorted(src_dir.glob("**/gui_registration.py")):
         info = load_gui_info(reg_file)
         if not info:
+            continue
+        if not _is_catalog_visible(info):
             continue
         candidate_id = info.get("tool_name") or reg_file.parent.name
         if candidate_id == tool_id:

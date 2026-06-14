@@ -24,6 +24,7 @@ types-requests==2.33.0.20260518
 
 # GUI & Desktop Applications
 PyQt6==6.11.0
+pyqtgraph==0.14.0
 pygame==2.6.1
 PyOpenGL==3.1.10
 
