@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.454                                    |
+| **Spec Version**        | 1.1.455                                    |
 | **Last Spec Update**    | 2026-06-14                                 |
 
 ## 2. Purpose & Mission
@@ -767,6 +767,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-14 | 1.1.455 | fix(unit-converter): mark the web Unit Converter result field readonly and style the readonly state so converted output remains copyable but not user-editable. |
 | 2026-06-14 | 1.1.454 | test(signal-toolkit): keep QtAgg canvas tests behind an explicit display-availability guard while preserving non-GUI Matplotlib theme coverage for headless CI runners. |
 | 2026-06-14 | 1.1.453 | fix(signal-toolkit): lazy-load optional Signal Toolkit widgets from the package entrypoint so P1AM desktop imports do not force the SciPy calculus stack during always-on CI smoke tests. |
 | 2026-06-14 | 1.1.452 | ci(sidekick, #3334): keep changed-source test selection focused for tools-sidebar appearance, OS-terminal, and runtime-settings changes, and use pytest-qt's standard `qapp` fixture in Python REPL widget tests so non-required Python lanes do not depend on a local fixture alias. |
