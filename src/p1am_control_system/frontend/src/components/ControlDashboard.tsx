@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { RoutingConfig, PIDConfig, InterlockConfig } from "../App";
+import type { RoutingConfig, PIDConfig, InterlockConfig } from "../App";
 import { ShieldAlert, Cpu, HardDriveDownload } from "lucide-react";
+import { TAG_INDICES } from "./RoutingMatrix";
 
 interface ControlDashboardProps {
   config: RoutingConfig;
@@ -132,7 +133,7 @@ export const ControlDashboard: React.FC<ControlDashboardProps> = ({
                   value={activePid.pv_tag_id}
                   onChange={(e) => handlePidChange("pv_tag_id", Number(e.target.value))}
                 >
-                  {Array.from({ length: 32 }).map((_, i) => (
+                  {TAG_INDICES.map((i) => (
                     <option key={i} value={i}>Tag {i}</option>
                   ))}
                 </select>
@@ -145,7 +146,7 @@ export const ControlDashboard: React.FC<ControlDashboardProps> = ({
                   value={activePid.cv_tag_id}
                   onChange={(e) => handlePidChange("cv_tag_id", Number(e.target.value))}
                 >
-                  {Array.from({ length: 32 }).map((_, i) => (
+                  {TAG_INDICES.map((i) => (
                     <option key={i} value={i}>Tag {i}</option>
                   ))}
                 </select>
@@ -208,7 +209,7 @@ export const ControlDashboard: React.FC<ControlDashboardProps> = ({
                   value={selectedInterlockIdx}
                   onChange={(e) => setSelectedInterlockIdx(Number(e.target.value))}
                 >
-                  {Array.from({ length: 32 }).map((_, i) => (
+                  {TAG_INDICES.map((i) => (
                     <option key={i} value={i}>Tag {i} (Safety Configuration)</option>
                   ))}
                 </select>
