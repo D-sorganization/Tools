@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.452                                    |
+| **Spec Version**        | 1.1.453                                    |
 | **Last Spec Update**    | 2026-06-14                                 |
 
 ## 2. Purpose & Mission
@@ -767,6 +767,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-14 | 1.1.453 | ci(signal-toolkit, #3442): restore the QtAgg display-availability guard around Signal Toolkit canvas theme tests and keep display-independent Matplotlib theme coverage active for headless Python CI lanes. |
 | 2026-06-14 | 1.1.452 | ci(sidekick, #3334): keep changed-source test selection focused for tools-sidebar appearance, OS-terminal, and runtime-settings changes, and use pytest-qt's standard `qapp` fixture in Python REPL widget tests so non-required Python lanes do not depend on a local fixture alias. |
 | 2026-06-14 | 1.1.451 | ci(tests, #3334): isolate Python matrix jobs from runner-user site packages with `PYTHONNOUSERSITE=1` so self-hosted 3.12 jobs do not mix stale `~/.local` pytest/pluggy packages with per-job tool-cache native dependencies. |
 | 2026-06-14 | 1.1.450 | fix(sidekick, #3334): keep changed-file CI focused for touched Sidekick data-processing and tools-sidebar sources, and accept source-qualified `PanelAppearance` and `WorkspaceRegistry` aliases through explicit runtime contracts. |
