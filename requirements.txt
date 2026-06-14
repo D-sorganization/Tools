@@ -6,7 +6,7 @@
 numpy>=2.0.1  # Fundamental array processing and matrix operations
 pandas>=2.2.2  # Data analysis, manipulation, and time series
 pytz>=2026.2  # Timezone library required by pandas>=2.3.1
-scipy>=1.13.1,<1.18  # Scientific algorithms (integration, optimization)
+scipy>=1.13.1,<1.16  # Scientific algorithms (integration, optimization)
 matplotlib>=3.9.0  # Data visualization and plotting library
 sympy>=1.12  # Symbolic mathematics and algebra
 
