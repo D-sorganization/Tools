@@ -227,13 +227,10 @@ semitones = 12 * log2(pitchRatio);
 
 % Apply strength
 semitones = semitones * options.Strength;
+semitones(confidence < 0.5 | ~isfinite(semitones)) = 0;
 
-% Apply pitch shift frame-by-frame
-% (Simplified - full implementation would need phase vocoder)
-corrected = audio;  % Placeholder
-
-warning('AdvancedAudioProcessor:PitchCorrect', ...
-    'Pitch correction requires custom phase vocoder implementation');
+sampleSemitones = expandFrameSemitones(semitones, audioSampleCount(audio));
+corrected = applyPitchShiftFrames(audio, sampleSemitones, fs, 1);
 end
 
 function hr = harmonicRatio(audio, fs, varargin)
@@ -809,19 +806,18 @@ end
 function shifted = advancedPitchShift(audio, fs, semitones, varargin)
 % Advanced pitch shifting using phase vocoder
 
-% This is a placeholder - full implementation requires phase vocoder
-shifted = audio;
-warning('AdvancedAudioProcessor:PitchShift', ...
-    'Advanced pitch shifting requires custom phase vocoder implementation');
+shifted = applyPitchShiftFrames(audio, semitones, fs, 1);
 end
 
 function processed = phaseVocoder(audio, fs, varargin)
 % Custom phase vocoder processing
 
-% Placeholder for custom phase vocoder implementation
-processed = audio;
-warning('AdvancedAudioProcessor:PhaseVocoder', ...
-    'Phase vocoder requires custom implementation');
+p = inputParser;
+addParameter(p, 'Semitones', 0, @isnumeric);
+addParameter(p, 'Speed', 1, @isnumeric);
+parse(p, varargin{:});
+
+processed = applyPitchShiftFrames(audio, p.Results.Semitones, fs, p.Results.Speed);
 end
 
 %% Spatial Audio Methods
@@ -876,15 +872,42 @@ processed(:,2) = mid - side;
 end
 
 function spatialized = spatialize3D(audio, azimuth, elevation, varargin)
-% 3D audio positioning using HRTF (placeholder)
+% 3D audio positioning using HRTF
 
-% This requires HRTF database - placeholder implementation
-spatialized = audio;
-warning('AdvancedAudioProcessor:Spatialize', ...
-    '3D spatialization requires HRTF database (not included)');
+error('AdvancedAudioProcessor:Spatialize', ...
+    '3D spatialization not implemented: requires an HRTF database.');
 end
 
 %% Helper Functions
+
+function sampleSemitones = expandFrameSemitones(frameSemitones, numSamples)
+% Expand pitch-detection frame shifts to one value per audio sample.
+
+frameSemitones = frameSemitones(:);
+if isempty(frameSemitones)
+    sampleSemitones = zeros(numSamples, 1);
+    return;
+end
+if numel(frameSemitones) == 1
+    sampleSemitones = repmat(frameSemitones, numSamples, 1);
+    return;
+end
+
+framePositions = linspace(1, numSamples, numel(frameSemitones));
+samplePositions = 1:numSamples;
+sampleSemitones = interp1(framePositions, frameSemitones, samplePositions, 'linear', 'extrap').';
+sampleSemitones(~isfinite(sampleSemitones)) = 0;
+end
+
+function numSamples = audioSampleCount(audio)
+% Return samples for column, row, or multi-channel audio.
+
+if isvector(audio)
+    numSamples = numel(audio);
+else
+    numSamples = size(audio, 1);
+end
+end
 
 function [pitch, confidence] = traditionalPitchDetection(audio, fs, options)
 % Fallback autocorrelation-based pitch detection

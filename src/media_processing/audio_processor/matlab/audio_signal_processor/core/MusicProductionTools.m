@@ -726,24 +726,22 @@ end
 function harmony = generateHarmony(melody, key, style, varargin)
 % Generate harmony parts from melody
 
-% Simple harmony generator - thirds or sixths below
-harmony = melody;  % Placeholder
-fprintf('Harmony generation requires music theory implementation\n');
+error('MusicProductionTools:HarmonyNotImplemented', ...
+    'Harmony generation is not implemented; refusing to return the input melody unchanged.');
 end
 
 function bassline = generateBassline(chords, style, varargin)
 % Generate bass line from chord progression
 
-bassline = [];  % Placeholder
-fprintf('Bassline generation requires implementation\n');
+error('MusicProductionTools:BasslineNotImplemented', ...
+    'Bassline generation is not implemented; refusing to return an empty placeholder.');
 end
 
 function drums = generateDrumPattern(tempo, style, bars, varargin)
 % Generate drum pattern
 
-% Simple kick-snare pattern
-fprintf('Drum pattern generation requires implementation\n');
-drums = [];
+error('MusicProductionTools:DrumsNotImplemented', ...
+    'Drum pattern generation is not implemented; refusing to return an empty placeholder.');
 end
 
 function arp = generateArpeggio(chord, pattern, tempo, fs)
@@ -1049,115 +1047,6 @@ end
 scaleFreqs = scaleFreqs(:);
 end
 
-function shifted = applyPitchShiftFrames(audio, semitones, fs, speed)
-%APPLYPITCHSHIFTFRAMES Pitch shifting using phase vocoder
-%
-%   shifted = applyPitchShiftFrames(audio, semitones, fs, speed)
-%
-%   Uses a phase vocoder for high-quality pitch shifting. Supports both
-%   constant and time-varying semitone shifts. Formant preservation is
-%   not implemented.
-%
-%   Args:
-%       audio    : Input audio signal [Nx1] (mono)
-%       semitones: Scalar or vector of semitone shifts (length N or 1)
-%       fs       : Sample rate [Hz]
-%       speed    : (Unused, for compatibility)
-%
-%   Returns:
-%       shifted  : Pitch-shifted audio [Nx1]
-%
-%   Raises:
-%       Error if input is invalid.
-%
-%   Reference:
-%       "The Phase Vocoder: A Tutorial", J. Laroche, M. Dolson, IEEE Sig. Proc. Mag., 1999.
-
-if nargin < 4
-    speed = 1;
-end
-if size(audio,2) > 1
-    error('Input audio must be mono (Nx1 vector).');
-end
-if ~isvector(audio) || isempty(audio)
-    error('Input audio must be a non-empty vector.');
-end
-if ~(isscalar(semitones) || (isvector(semitones) && length(semitones)==length(audio)))
-    error('semitones must be a scalar or a vector of same length as audio.');
-end
-
-% Parameters
-N_FFT = 2048; % [samples] FFT size (power of 2, typical: 1024-4096)
-HOP = N_FFT/4; % [samples] Hop size (25% overlap)
-
-% Pad audio to fit frames
-audio = audio(:);
-L = length(audio);
-nFrames = ceil((L-N_FFT)/HOP)+1;
-padLen = (nFrames-1)*HOP + N_FFT - L;
-audioPadded = [audio; zeros(padLen,1)];
-
-% STFT
-win = hann(N_FFT, 'periodic');
-S = zeros(N_FFT, nFrames);
-for k = 1:nFrames
-    idx = (1:N_FFT) + (k-1)*HOP;
-    S(:,k) = fft(audioPadded(idx).*win);
-end
-
-% Pitch shift ratio per frame
-if isscalar(semitones)
-    ratio = 2^(semitones/12);
-    ratios = ratio*ones(1,nFrames);
-else
-    % Map semitones vector to frames
-    frameIdx = round(linspace(1, length(semitones), nFrames));
-    ratios = 2.^(semitones(frameIdx)/12);
-end
-
-% Phase vocoder processing
-S_shift = zeros(size(S));
-phi = angle(S(:,1));
-lastPhase = phi;
-for k = 1:nFrames
-    mag = abs(S(:,k));
-    phase = angle(S(:,k));
-    % Phase advance
-    delta = phase - lastPhase - 2*pi*HOP*(0:N_FFT-1)'/N_FFT;
-    delta = delta - 2*pi*round(delta/(2*pi));
-    trueFreq = 2*pi*(0:N_FFT-1)'/N_FFT + delta/HOP;
-    % Time-stretch by 1/ratio
-    if ratios(k) == 1
-        S_shift(:,k) = S(:,k);
-    else
-        % Synthesize at new time step
-        phi = phi + HOP*ratios(k)*trueFreq;
-        S_shift(:,k) = mag .* exp(1j*phi);
-    end
-    lastPhase = phase;
-end
-
-% ISTFT (overlap-add)
-y = zeros((nFrames-1)*HOP + N_FFT,1);
-winSum = zeros((nFrames-1)*HOP + N_FFT,1);
-for k = 1:nFrames
-    idx = (1:N_FFT) + (k-1)*HOP;
-    frame = real(ifft(S_shift(:,k))) .* win;
-    y(idx) = y(idx) + frame;
-    winSum(idx) = winSum(idx) + win.^2;
-end
-% Normalize for window overlap
-nonzero = winSum > 1e-6;
-y(nonzero) = y(nonzero) ./ winSum(nonzero);
-
-% Remove padding
-shifted = y(1:L);
-
-% Validate output
-if any(isnan(shifted)) || any(isinf(shifted))
-    error('Phase vocoder produced invalid output.');
-end
-end
 function preserved = preserveFormants(original, shifted, fs)
 % Preserve formants after pitch shifting (simplified)
 
