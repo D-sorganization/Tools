@@ -399,12 +399,12 @@ class TestWidgetModuleAvailability:
         matplotlib_colors = pytest.importorskip("matplotlib.colors")
         figure_module = pytest.importorskip("matplotlib.figure")
 
-        from shared.python.theme.colors import BUILTIN_THEMES
+        from shared.python.theme.integration import get_theme_manager
         from shared.python.theme.matplotlib_style import apply_plot_theme
 
         figure = figure_module.Figure(figsize=(2, 2), dpi=80)
         axes = figure.add_subplot(111)
-        colors = BUILTIN_THEMES["Light"]
+        colors = get_theme_manager().get_current_colors()
 
         apply_plot_theme(figure, colors)
 

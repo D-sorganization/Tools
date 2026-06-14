@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.454                                    |
+| **Spec Version**        | 1.1.455                                    |
 | **Last Spec Update**    | 2026-06-14                                 |
 
 ## 2. Purpose & Mission
@@ -767,8 +767,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-06-14 | 1.1.454 | test(signal-toolkit): keep QtAgg canvas tests behind an explicit display-availability guard while preserving non-GUI Matplotlib theme coverage for headless CI runners. |
-| 2026-06-14 | 1.1.453 | fix(signal-toolkit): lazy-load optional Signal Toolkit widgets from the package entrypoint so P1AM desktop imports do not force the SciPy calculus stack during always-on CI smoke tests. |
+| 2026-06-14 | 1.1.455 | ci(theme, #3442): add explicit return casts in the shared PyQt6 theme manager so delta-mypy can type-check the touched stylesheet and built-in-theme lookup paths without weakening runtime behavior. |
+| 2026-06-14 | 1.1.454 | fix(theme, #3442): recreate the shared PyQt6 `ThemeManager` singleton when Qt has deleted its QObject wrapper so Signal Toolkit canvas theme setup can recover from prior Qt test lifecycle cleanup while keeping focused regression coverage. |
+| 2026-06-14 | 1.1.453 | ci(signal-toolkit, #3442): restore the QtAgg display-availability guard around Signal Toolkit canvas theme tests and keep display-independent Matplotlib theme coverage active for headless Python CI lanes. |
 | 2026-06-14 | 1.1.452 | ci(sidekick, #3334): keep changed-source test selection focused for tools-sidebar appearance, OS-terminal, and runtime-settings changes, and use pytest-qt's standard `qapp` fixture in Python REPL widget tests so non-required Python lanes do not depend on a local fixture alias. |
 | 2026-06-14 | 1.1.451 | ci(tests, #3334): isolate Python matrix jobs from runner-user site packages with `PYTHONNOUSERSITE=1` so self-hosted 3.12 jobs do not mix stale `~/.local` pytest/pluggy packages with per-job tool-cache native dependencies. |
 | 2026-06-14 | 1.1.450 | fix(sidekick, #3334): keep changed-file CI focused for touched Sidekick data-processing and tools-sidebar sources, and accept source-qualified `PanelAppearance` and `WorkspaceRegistry` aliases through explicit runtime contracts. |
@@ -1535,3 +1536,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 ## 2025-02-24 CLI Tools Validation Enhancement
 
 The command injection check logic in `cli_tools.py` has been fortified. The input validation step now properly sanitizes (`.strip()`) token arguments and assignments to prevent execution of trailing/leading-space padded payloads (e.g. `--exec="  /bin/rm  "`). This effectively thwarts attacks aiming to bypass naive blocklist string matching (`token in dangerous`).
+
+## 1.1.410 - Palette Micro-UX Improvement
+
+- **2026-06-14**: feat(ux) — added `readonly` attribute to the "To" result input field in the unit converter application (`src/web_applications/unit_converter/unit-converter-app/index.html`) to prevent user confusion, alongside visual styling (`styles.css`) indicating the field's uneditable nature.
