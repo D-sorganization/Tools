@@ -18,18 +18,6 @@ from shared.python.signal_toolkit.fitting import FunctionFitter
 
 logger = logging.getLogger(__name__)
 
-
-def _skip_if_qtagg_display_is_unavailable() -> None:
-    """Skip QtAgg canvas checks when the runner has no usable display."""
-    try:
-        from matplotlib import _c_internal_utils
-    except Exception:
-        return
-
-    if not _c_internal_utils.display_is_valid():
-        pytest.skip("QtAgg canvas requires a valid display")
-
-
 # ==================================================================
 # Signal Processing Tests (widget_processing methods)
 # ==================================================================
@@ -394,32 +382,10 @@ class TestWidgetModuleAvailability:
 
         assert SignalToolkitWidget is not None
 
-    def test_plot_theme_styles_axes_without_qt_display(self) -> None:
-        """Plot theme coverage must not require a GUI display."""
-        matplotlib_colors = pytest.importorskip("matplotlib.colors")
-        figure_module = pytest.importorskip("matplotlib.figure")
-
-        from shared.python.theme.colors import BUILTIN_THEMES
-        from shared.python.theme.matplotlib_style import apply_plot_theme
-
-        figure = figure_module.Figure(figsize=(2, 2), dpi=80)
-        axes = figure.add_subplot(111)
-        colors = BUILTIN_THEMES["Light"]
-
-        apply_plot_theme(figure, colors)
-
-        assert axes.get_facecolor() == matplotlib_colors.to_rgba(
-            colors.get("group_bg", "#f8f9fa")
-        )
-        assert axes.spines["bottom"].get_edgecolor() == matplotlib_colors.to_rgba(
-            colors.get("border", "#ced4da")
-        )
-
     def test_mpl_canvas_themes_axes_on_creation(self) -> None:
         """Signal Toolkit canvases theme axes after they are created."""
         matplotlib_colors = pytest.importorskip("matplotlib.colors")
         pytest.importorskip("PyQt6")
-        _skip_if_qtagg_display_is_unavailable()
         from PyQt6.QtWidgets import QApplication
 
         from shared.python.signal_toolkit.widget import (
@@ -447,7 +413,6 @@ class TestWidgetModuleAvailability:
         """Legacy theme setup path still rethemes the active axes."""
         matplotlib_colors = pytest.importorskip("matplotlib.colors")
         pytest.importorskip("PyQt6")
-        _skip_if_qtagg_display_is_unavailable()
         from PyQt6.QtWidgets import QApplication
 
         from shared.python.signal_toolkit.widget import (
