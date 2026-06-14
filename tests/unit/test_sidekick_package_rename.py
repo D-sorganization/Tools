@@ -9,8 +9,11 @@ These tests are written BEFORE the implementation:
   - test_no_upstream_drift_tools_in_tools_src_except_shim: FAILS until rename done
 """
 
+import os
+import re
+import subprocess
 import sys
-import warnings
+import textwrap
 from pathlib import Path
 
 import pytest
@@ -18,66 +21,97 @@ import pytest
 WORKTREE_ROOT = Path(__file__).resolve().parents[2]
 
 
+def _run_import_probe(code: str) -> subprocess.CompletedProcess[str]:
+    """Run import-identity probes without mutating pytest's module cache."""
+    env = os.environ.copy()
+    roots = [
+        str(WORKTREE_ROOT / "src" / "shared" / "python"),
+        str(WORKTREE_ROOT / "src"),
+    ]
+    existing_pythonpath = env.get("PYTHONPATH")
+    if existing_pythonpath:
+        roots.append(existing_pythonpath)
+    env["PYTHONPATH"] = os.pathsep.join(roots)
+
+    return subprocess.run(
+        [
+            sys.executable,
+            "-W",
+            "always::DeprecationWarning",
+            "-c",
+            textwrap.dedent(code),
+        ],
+        cwd=WORKTREE_ROOT,
+        env=env,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+
+def _assert_import_probe_succeeds(result: subprocess.CompletedProcess[str]) -> None:
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
 @pytest.mark.unit
 def test_sidekick_package_importable() -> None:
     """The new canonical name must be importable."""
-    # Remove any cached import to get a clean slate
-    for key in list(sys.modules.keys()):
-        if key == "sidekick" or key.startswith("sidekick."):
-            del sys.modules[key]
+    result = _run_import_probe(
+        """
+        import sidekick
 
-    import sidekick  # noqa: F401 — should not raise
-
-    assert sidekick is not None
+        assert sidekick is not None
+        """
+    )
+    _assert_import_probe_succeeds(result)
 
 
 @pytest.mark.unit
 def test_upstream_drift_tools_shim_imports() -> None:
     """Old name still works (backward compat) and emits a DeprecationWarning."""
-    # Remove cached module so we can observe the warning fresh
-    for key in list(sys.modules.keys()):
-        if key == "upstream_drift_tools" or key.startswith("upstream_drift_tools."):
-            del sys.modules[key]
+    result = _run_import_probe(
+        """
+        import warnings
 
-    with warnings.catch_warnings(record=True) as caught:
-        warnings.simplefilter("always")
-        import upstream_drift_tools  # noqa: F401
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            import upstream_drift_tools
 
         deprecation_warnings = [
-            w
-            for w in caught
-            if issubclass(w.category, DeprecationWarning)
-            and "deprecated" in str(w.message).lower()
+            warning
+            for warning in caught
+            if issubclass(warning.category, DeprecationWarning)
+            and "deprecated" in str(warning.message).lower()
         ]
         assert deprecation_warnings, (
             "Expected at least one DeprecationWarning about 'deprecated' from "
-            f"the shim, but got: {[str(w.message) for w in caught]}"
+            f"the shim, but got: {[str(warning.message) for warning in caught]}"
         )
+        """
+    )
+    _assert_import_probe_succeeds(result)
 
 
 @pytest.mark.unit
 def test_shim_and_canonical_are_same_object() -> None:
     """Shim re-exports point to the same canonical sidekick objects (no duplication)."""
-    # Clear caches to guarantee a fresh load order
-    for key in list(sys.modules.keys()):
-        if key.startswith("sidekick") or key.startswith("upstream_drift_tools"):
-            del sys.modules[key]
+    result = _run_import_probe(
+        """
+        import warnings
 
-    # Load via canonical path
-    import sidekick.data_processing
+        import sidekick.data_processing
 
-    # Load via shim (suppress the deprecation warning — we test it separately)
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore", DeprecationWarning)
-        import upstream_drift_tools.data_processing
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            import upstream_drift_tools.data_processing
 
-    assert sidekick.data_processing is upstream_drift_tools.data_processing, (
-        "sidekick.data_processing and upstream_drift_tools.data_processing "
-        "must be the same module object (shim must proxy, not copy)"
+        assert sidekick.data_processing is upstream_drift_tools.data_processing, (
+            "sidekick.data_processing and upstream_drift_tools.data_processing "
+            "must be the same module object (shim must proxy, not copy)"
+        )
+        """
     )
-
-
-import re
+    _assert_import_probe_succeeds(result)
 
 
 def _find_import_violations(root_path: Path, exclude_dir_name: str = None) -> list[str]:

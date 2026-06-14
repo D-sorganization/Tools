@@ -50,7 +50,8 @@ def test_fit_heating_parameters() -> None:
         power_func=power_func,
     )
 
-    noisy_y = true_y + np.random.normal(0, 0.5, size=len(true_y))
+    rng = np.random.default_rng(0)
+    noisy_y = true_y + rng.normal(0, 0.5, size=len(true_y))
 
     mass_fit, loss_fit = fit_heating_parameters(
         times=t_eval,

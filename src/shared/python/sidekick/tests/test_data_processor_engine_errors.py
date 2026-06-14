@@ -17,12 +17,24 @@ from unittest.mock import patch
 
 import pandas as pd
 import pytest
+from sidekick.data_processing.core import (
+    AggregationType,
+    DataProcessorEngine,
+    FitType,
+    ProcessingResult,
+)
+from sidekick.data_processing.exceptions import (
+    ColumnNotFoundError,
+    DataProcessingError,
+    FileIOError,
+    FilterError,
+    FitError,
+    TransformationError,
+)
 
 
-def _engine_with_data(**extra_cols):
+def _engine_with_data(**extra_cols: object) -> DataProcessorEngine:
     """Helper: create a fresh DataProcessorEngine with a simple DataFrame loaded."""
-    from sidekick.data_processing.core import DataProcessorEngine
-
     engine = DataProcessorEngine()
     df = pd.DataFrame({"x": [1.0, 2.0, 3.0, 4.0, 5.0], "y": [2.0, 4.0, 6.0, 8.0, 10.0]})
     for col, vals in extra_cols.items():
@@ -37,13 +49,8 @@ def _engine_with_data(**extra_cols):
 
 
 class TestWrapResult:
-    def test_wrap_result_returns_correct_dict(self):
+    def test_wrap_result_returns_correct_dict(self) -> None:
         """_wrap_result converts ProcessingResult to dict with the correct keys."""
-        from sidekick.data_processing.core import (
-            DataProcessorEngine,
-            ProcessingResult,
-        )
-
         engine = DataProcessorEngine()
         df = pd.DataFrame({"x": [1.0, 2.0]})
         result = ProcessingResult(success=True, message="OK", data=df, stats={})
@@ -61,11 +68,8 @@ class TestWrapResult:
 
 
 class TestLoadFileErrorPath:
-    def test_load_file_with_invalid_format_raises(self):
+    def test_load_file_with_invalid_format_raises(self) -> None:
         """DataReader.read_file raising ValueError → re-raises as FileIOError."""
-        from sidekick.data_processing.core import DataProcessorEngine
-        from sidekick.data_processing.exceptions import FileIOError
-
         engine = DataProcessorEngine()
         with patch(
             "upstream_drift_tools.data_processing.core.DataReader.read_file",
@@ -74,18 +78,13 @@ class TestLoadFileErrorPath:
             with pytest.raises((FileIOError, ValueError)):
                 engine.load_file("/tmp/bad.xyz")  # nosec B108
 
-    def test_load_file_empty_path_raises(self):
-        from sidekick.data_processing.core import DataProcessorEngine
-        from sidekick.data_processing.exceptions import FileIOError
-
+    def test_load_file_empty_path_raises(self) -> None:
         engine = DataProcessorEngine()
         with pytest.raises(FileIOError, match="file_path must not be empty"):
             engine.load_file("")
 
-    def test_load_file_success_path(self):
+    def test_load_file_success_path(self) -> None:
         """Lines 191-196: successful load_file sets data, original_data, path."""
-        from sidekick.data_processing.core import DataProcessorEngine
-
         engine = DataProcessorEngine()
         mock_df = pd.DataFrame({"a": [1, 2], "b": [3, 4]})
 
@@ -108,10 +107,8 @@ class TestLoadFileErrorPath:
 
 
 class TestGetBasicStatsNull:
-    def test_get_basic_stats_returns_empty_when_no_data(self):
+    def test_get_basic_stats_returns_empty_when_no_data(self) -> None:
         """Line 572: _get_basic_stats returns {} when self.data is None."""
-        from sidekick.data_processing.core import DataProcessorEngine
-
         engine = DataProcessorEngine()
         # data is None at start
         assert engine.data is None
@@ -125,17 +122,13 @@ class TestGetBasicStatsNull:
 
 
 class TestTransformColumnErrorPath:
-    def test_transform_invalid_column_raises_column_not_found(self):
-        from sidekick.data_processing.exceptions import ColumnNotFoundError
-
+    def test_transform_invalid_column_raises_column_not_found(self) -> None:
         engine = _engine_with_data()
         with pytest.raises(ColumnNotFoundError):
             engine.transform_column("nonexistent_col", "log")
 
-    def test_transform_value_error_raises_transformation_error(self):
+    def test_transform_value_error_raises_transformation_error(self) -> None:
         """TypeError/ValueError during transform → undo + TransformationError."""
-        from sidekick.data_processing.exceptions import TransformationError
-
         engine = _engine_with_data()
         # Patching np.log to raise TypeError to trigger lines 337-339
         with patch("numpy.log", side_effect=TypeError("type error")):
@@ -149,10 +142,8 @@ class TestTransformColumnErrorPath:
 
 
 class TestSmoothColumnErrorPath:
-    def test_smooth_value_error_raises_transformation_error(self):
+    def test_smooth_value_error_raises_transformation_error(self) -> None:
         """ValueError during moving_average → undo + TransformationError."""
-        from sidekick.data_processing.exceptions import TransformationError
-
         engine = _engine_with_data()
         # Patch rolling().mean() to raise ValueError
         with patch(
@@ -169,11 +160,8 @@ class TestSmoothColumnErrorPath:
 
 
 class TestAggregateErrorPath:
-    def test_aggregate_missing_column_raises_transformation_error(self):
+    def test_aggregate_missing_column_raises_transformation_error(self) -> None:
         """aggregate() with unknown column raises TransformationError."""
-        from sidekick.data_processing.core import AggregationType
-        from sidekick.data_processing.exceptions import TransformationError
-
         engine = _engine_with_data()
         with pytest.raises(TransformationError, match="Aggregation failed"):
             engine.aggregate(
@@ -187,14 +175,8 @@ class TestAggregateErrorPath:
 
 
 class TestFitCurveErrorPath:
-    def test_fit_curve_non_numeric_raises_fit_error(self):
+    def test_fit_curve_non_numeric_raises_fit_error(self) -> None:
         """Non-numeric column data raises FitError."""
-        from sidekick.data_processing.core import (
-            DataProcessorEngine,
-            FitType,
-        )
-        from sidekick.data_processing.exceptions import FitError
-
         engine = DataProcessorEngine()
         df = pd.DataFrame({"x": ["a", "b", "c"], "y": [1.0, 2.0, 3.0]})
         engine.load_dataframe(df)
@@ -209,18 +191,14 @@ class TestFitCurveErrorPath:
 
 
 class TestFilterDataErrorPath:
-    def test_filter_query_expression_error_raises_filter_error(self):
+    def test_filter_query_expression_error_raises_filter_error(self) -> None:
         """A bad pandas query expression raises FilterError."""
-        from sidekick.data_processing.exceptions import FilterError
-
         engine = _engine_with_data()
         with pytest.raises(FilterError):
             engine.filter_data("x", ">", "not_a_number")
 
-    def test_filter_bad_query_operator_raises_filter_error(self):
+    def test_filter_bad_query_operator_raises_filter_error(self) -> None:
         """Using a pandas query op with a non-numeric value raises FilterError."""
-        from sidekick.data_processing.exceptions import FilterError
-
         engine = _engine_with_data()
         # query() raises on invalid expression syntax → FilterError
         with pytest.raises(FilterError):
@@ -233,16 +211,12 @@ class TestFilterDataErrorPath:
 
 
 class TestQueryErrorPath:
-    def test_query_bad_expression_raises_filter_error(self):
-        from sidekick.data_processing.exceptions import FilterError
-
+    def test_query_bad_expression_raises_filter_error(self) -> None:
         engine = _engine_with_data()
         with pytest.raises(FilterError):
             engine.query("this is not valid pandas query syntax @@@")
 
-    def test_query_empty_expression_raises_filter_error(self):
-        from sidekick.data_processing.exceptions import FilterError
-
+    def test_query_empty_expression_raises_filter_error(self) -> None:
         engine = _engine_with_data()
         with pytest.raises(FilterError, match="expression"):
             engine.query("")
@@ -254,32 +228,23 @@ class TestQueryErrorPath:
 
 
 class TestColumnNotFoundError:
-    def test_without_available_list(self):
+    def test_without_available_list(self) -> None:
         """Lines 22-25: no available columns → message without suffix."""
-        from sidekick.data_processing.exceptions import ColumnNotFoundError
-
         err = ColumnNotFoundError("missing_col")
         assert err.column == "missing_col"
         assert err.available == []
         assert "missing_col" in str(err)
         assert "Available" not in str(err)
 
-    def test_with_available_list(self):
+    def test_with_available_list(self) -> None:
         """Lines 26-27: available columns → message with 'Available' suffix."""
-        from sidekick.data_processing.exceptions import ColumnNotFoundError
-
         err = ColumnNotFoundError("missing_col", ["col_a", "col_b"])
         assert err.column == "missing_col"
         assert err.available == ["col_a", "col_b"]
         assert "Available" in str(err)
         assert "col_a" in str(err)
 
-    def test_is_data_processing_error(self):
+    def test_is_data_processing_error(self) -> None:
         """ColumnNotFoundError is a DataProcessingError subclass."""
-        from sidekick.data_processing.exceptions import (
-            ColumnNotFoundError,
-            DataProcessingError,
-        )
-
         err = ColumnNotFoundError("x")
         assert isinstance(err, DataProcessingError)

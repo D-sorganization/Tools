@@ -1,4 +1,5 @@
 # ruff: noqa: E501
+# mypy: disable-error-code=no-untyped-def
 from typing import Any
 
 import pytest
@@ -67,7 +68,7 @@ def test_calculate_dewpoint_mixture_invalid(
     dewpoint_calc: AcidGasDewpointCalculator,
 ) -> None:
     comp = AcidGasComposition(h2o=0.1)
-    with pytest.raises(ValueError, match="pressure_bar must be > 0"):
+    with pytest.raises(ValueError, match="pressure_bar must be positive"):
         dewpoint_calc.calculate_dewpoint_mixture(150.0, -1.0, comp)
 
     with pytest.raises(ValueError, match="temperature must yield a positive Kelvin"):

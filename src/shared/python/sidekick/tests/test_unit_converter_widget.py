@@ -1,3 +1,5 @@
+# mypy: disable-error-code=no-untyped-def
+
 from __future__ import annotations
 
 from typing import Any
@@ -28,8 +30,9 @@ def test_conversion_row() -> None:
     assert r2.to_unit == "km"
     assert r2.is_saved is True
 
+    row.last_used = "2000-01-01T00:00:00+00:00"
     row.update_last_used()
-    assert row.last_used != d["last_used"]
+    assert row.last_used != "2000-01-01T00:00:00+00:00"
 
 
 def test_case_insensitive_completer() -> None:
@@ -45,7 +48,7 @@ def clean_settings() -> Any:
     settings = QSettings("UpstreamDriftTools", "UnitConverter_Test")
     settings.clear()
     with patch(
-        "upstream_drift_tools.ui.widgets.unit_converter_widget.QSettings",
+        "sidekick.ui.widgets.unit_converter_widget.QSettings",
         return_value=settings,
     ):
         yield settings
@@ -68,7 +71,7 @@ def mock_converter(monkeypatch) -> Any:
     mock.convert.side_effect = mock_conv
 
     with patch(
-        "upstream_drift_tools.ui.widgets.unit_converter_widget.get_service",
+        "sidekick.ui.widgets.unit_converter_widget.get_service",
         return_value=mock,
     ):
         yield mock
@@ -166,11 +169,11 @@ def test_unit_converter_load_corrupt(qapp, clean_settings, mock_converter) -> No
 
 def test_unit_converter_incompatible(qapp, clean_settings, mock_converter) -> None:
     widget = UnitConverterWidget()
-    # If mock_converter._get_category raises exception
-    mock_converter._get_category.side_effect = RuntimeError("Err")
+    # If compatibility lookup raises, the widget falls back to all known units.
+    mock_converter.get_compatible_units.side_effect = RuntimeError("Err")
     units = widget._get_compatible_units("m")
     assert set(units) == {"°C", "km", "m"}  # all units
-    mock_converter._get_category.side_effect = None
+    mock_converter.get_compatible_units.side_effect = None
 
 
 def test_convert_row_invalid_val(qapp, clean_settings, mock_converter) -> None:

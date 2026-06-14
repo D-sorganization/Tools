@@ -553,7 +553,7 @@ class DataProcessorEngine(BaseCalculationEngine):
         _ALLOWED_OPERATORS = {"==", "!=", ">", ">=", "<", "<=", "contains", "in"}
         if operator not in _ALLOWED_OPERATORS:
             raise FilterError(
-                f"Unsupported operator '{operator}'. "
+                f"Unsupported filter operator '{operator}'. "
                 f"Allowed: {', '.join(sorted(_ALLOWED_OPERATORS))}"
             )
         self._save_undo_state()

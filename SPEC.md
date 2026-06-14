@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.442                                    |
+| **Spec Version**        | 1.1.452                                    |
 | **Last Spec Update**    | 2026-06-14                                 |
 
 ## 2. Purpose & Mission
@@ -767,6 +767,12 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-14 | 1.1.452 | ci(sidekick, #3334): keep changed-source test selection focused for tools-sidebar appearance, OS-terminal, and runtime-settings changes, and use pytest-qt's standard `qapp` fixture in Python REPL widget tests so non-required Python lanes do not depend on a local fixture alias. |
+| 2026-06-14 | 1.1.451 | ci(tests, #3334): isolate Python matrix jobs from runner-user site packages with `PYTHONNOUSERSITE=1` so self-hosted 3.12 jobs do not mix stale `~/.local` pytest/pluggy packages with per-job tool-cache native dependencies. |
+| 2026-06-14 | 1.1.450 | fix(sidekick, #3334): keep changed-file CI focused for touched Sidekick data-processing and tools-sidebar sources, and accept source-qualified `PanelAppearance` and `WorkspaceRegistry` aliases through explicit runtime contracts. |
+| 2026-06-14 | 1.1.449 | fix(sidekick, #3334): centralize workspace registry alias recognition so `sidekick` and legacy `upstream_drift_tools` imports share the same runtime contract, and keep C3D invalid-header coverage independent of optional `ezc3d` availability. |
+| 2026-06-14 | 1.1.448 | test(sidekick, #3334): document the legacy touched Sidekick test modules that retain untyped pytest helper signatures while the import-collision regression coverage stays under the repository mypy pre-push hook. |
+| 2026-06-14 | 1.1.447 | fix(sidekick, #3334): stabilize the full Sidekick/import-order test surface after the data-processor wrapper rename by isolating import-cache probes in subprocesses, removing pandas/theme/mock leakage between tests, aligning stale DbC expectations with current explicit exceptions, and resolving the syngas compression plot canvas lookup at runtime. |
 | 2026-06-14 | 1.1.442 | fix(p1am): make the desktop HTTP worker expose and lazily recover its optional `requests` client after test-time import masking, preserving responsive GUI worker tests when earlier HMI tests simulate missing optional network dependencies. |
 | 2026-06-14 | 1.1.441 | fix(matlab-audio, #3330): extract the shared phase-vocoder pitch-shift helper into `applyPitchShiftFrames.m`, route AdvancedAudioProcessor pitch correction/shift/vocoder methods through it, process multi-channel audio channel-by-channel, and convert still-unimplemented spatialization and composition placeholders into hard errors with Python static regressions that CI can enforce without requiring MATLAB. |
 | 2026-06-14 | 1.1.425 | fix(p1am, #3352): split the Control tab's MPC setup/request handling into `control_tab_mpc.py` so the responsive HTTP-worker fix satisfies the changed-file size budget without adding a monolith baseline exception. |
@@ -1275,6 +1281,47 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.447
+
+- 2026-06-14: fix(sidekick, #3334) — stabilize the broad
+  Sidekick/import-order test surface after the data-processor wrapper rename:
+  isolate cache-sensitive import probes in subprocesses, stop PSA webapp tests
+  from poisoning pandas/pyarrow imports, align stale DbC and validation
+  expectations with explicit exceptions, make theme fallback probes
+  process-isolated, and resolve the syngas compression plot canvas class at
+  runtime.
+
+### Version 1.1.446
+
+- 2026-06-14: test(data-processor) — add an explicit
+  `DATA_PROCESSOR_IO_DISABLE_NATIVE` fallback switch for the compatibility
+  wrapper contract tests and keep the Sidekick rename-test module cache reset
+  scoped to public `sidekick`/`upstream_drift_tools` imports so pytest's
+  source-qualified collection namespace remains stable.
+
+### Version 1.1.445
+
+- 2026-06-14: test(data-processor) — move the `data_processor_io` Rust wrapper
+  contract tests under the matching package test namespace and contain
+  Sidekick rename-test module-cache mutations with typed error-path tests so
+  CI import-order checks do not leak stale module identities into
+  data-processing tests.
+
+### Version 1.1.444
+
+- 2026-06-14: fix(sidekick-data-processing) — keep invalid filter operator
+  errors on the documented "Unsupported filter operator" contract and make
+  the curve-fit widget fail gracefully if an injected engine returns no
+  `FitResult`.
+
+### Version 1.1.443
+
+- 2026-06-14: fix(data-processor) — rename the shared Rust bulk-I/O wrapper to
+  `data_processor_io` and remove Sidekick's private `sys.modules` eviction and
+  `sys.path` reordering from the full Data Processor embedding bridge. The
+  public `ensure_full_data_processor_on_path` API remains stable and
+  idempotent while bare `data_processor` stays reserved for the full app.
 
 ### Version 1.1.393
 

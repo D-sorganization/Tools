@@ -3,13 +3,15 @@
 Targets: 32% → 100% coverage.
 """
 
-from __future__ import annotations
+# mypy: disable-error-code=no-untyped-def
 
 import pytest
 from sidekick.process_calculators.baghouse_calculator import (
     BaghouseCalculator,
     BaghouseResult,
 )
+
+from shared.python.contracts import PreconditionError
 
 # ---------------------------------------------------------------------------
 # Helper
@@ -243,24 +245,24 @@ class TestBaghouseCalculate:
         expected = result.flow_acfm / 200.0
         assert abs(result.air_to_cloth_ratio - expected) < 0.001
 
-    def test_bag_area_zero_gives_zero_atc(self):
-        """Line 390: bag_area=0 → air_to_cloth = 0."""
+    def test_bag_area_zero_violates_contract(self):
+        """bag_area=0 is invalid physical input."""
         calc = _calc()
-        result = calc.calculate(
-            gas_flow_kg_s=1.0,
-            inlet_temp_k=700.0,
-            pressure_pa=101325.0,
-            composition=SYNGAS_COMP,
-            solid_carbon_in_kg_hr=50.0,
-            ash_in_kg_hr=30.0,
-            carbon_removal_efficiency=0.99,
-            ash_removal_efficiency=0.95,
-            heat_loss_w=0.0,
-            drum_volume_m3=0.2,
-            solid_density_kg_m3=500.0,
-            bag_area_ft2=0.0,
-        )
-        assert result.air_to_cloth_ratio == 0.0
+        with pytest.raises(PreconditionError, match="bag_area_ft2 must be positive"):
+            calc.calculate(
+                gas_flow_kg_s=1.0,
+                inlet_temp_k=700.0,
+                pressure_pa=101325.0,
+                composition=SYNGAS_COMP,
+                solid_carbon_in_kg_hr=50.0,
+                ash_in_kg_hr=30.0,
+                carbon_removal_efficiency=0.99,
+                ash_removal_efficiency=0.95,
+                heat_loss_w=0.0,
+                drum_volume_m3=0.2,
+                solid_density_kg_m3=500.0,
+                bag_area_ft2=0.0,
+            )
 
     def test_ash_stream_composition_sums_to_one(self):
         """Lines 392-397: carbon_fraction + ash_fraction should sum to 1.0."""
@@ -292,9 +294,9 @@ class TestBaghouseCalculate:
         assert result.ash_stream_composition["ash_fraction"] == 0.0
 
     def test_negative_gas_flow_raises(self):
-        """Line 351: gas_flow <= 0 → AssertionError."""
+        """gas_flow <= 0 violates the shared DbC precondition."""
         calc = _calc()
-        with pytest.raises(AssertionError, match="Gas flow must be positive"):
+        with pytest.raises(PreconditionError, match="gas_flow_kg_s must be positive"):
             calc.calculate(
                 gas_flow_kg_s=-1.0,
                 inlet_temp_k=700.0,
@@ -311,10 +313,11 @@ class TestBaghouseCalculate:
             )
 
     def test_efficiency_out_of_range_raises(self):
-        """Lines 354-359: efficiency > 1 → AssertionError."""
+        """efficiency > 1 violates the shared DbC precondition."""
         calc = _calc()
         with pytest.raises(
-            AssertionError, match="Carbon removal efficiency must be 0-1"
+            PreconditionError,
+            match=r"carbon_removal_efficiency must be in \[0, 1\]",
         ):
             calc.calculate(
                 gas_flow_kg_s=1.0,

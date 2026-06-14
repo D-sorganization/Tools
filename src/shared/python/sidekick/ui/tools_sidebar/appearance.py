@@ -30,6 +30,7 @@ __all__ = [
     "PanelAppearance",
     "coerce_appearance",
     "is_hex_color",
+    "is_panel_appearance",
     "panel_qss",
 ]
 
@@ -125,6 +126,31 @@ DEFAULT_LIGHT_PANEL_APPEARANCE = PanelAppearance(
 )
 
 
+def is_panel_appearance(value: object) -> bool:
+    """Return True for canonical or compatibility-imported appearances."""
+    if isinstance(value, PanelAppearance):
+        return True
+
+    value_type = type(value)
+    module_name = getattr(value_type, "__module__", "")
+    return (
+        value_type.__name__ == "PanelAppearance"
+        and module_name.endswith(".ui.tools_sidebar.appearance")
+        and all(
+            hasattr(value, field_name)
+            for field_name in (
+                "foreground",
+                "background",
+                "border_color",
+                "border_width",
+                "border_radius",
+                "to_dict",
+                "with_overrides",
+            )
+        )
+    )
+
+
 def coerce_appearance(
     values: Mapping[str, Any] | None,
     base: PanelAppearance = DEFAULT_DARK_PANEL_APPEARANCE,
@@ -183,7 +209,7 @@ def panel_qss(object_name: str, appearance: PanelAppearance) -> str:
     """
     if not isinstance(object_name, str) or not object_name.strip():
         raise ValueError("object_name must be a non-empty string")
-    if not isinstance(appearance, PanelAppearance):
+    if not is_panel_appearance(appearance):
         raise TypeError("appearance must be a PanelAppearance")
 
     scope = f"QWidget#{object_name}"

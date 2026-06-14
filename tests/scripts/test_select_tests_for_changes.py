@@ -105,6 +105,57 @@ def test_unknown_sidekick_process_calculator_falls_back_to_process_suite() -> No
 
 
 @pytest.mark.unit
+def test_sidekick_data_processing_source_change_selects_focused_tests() -> None:
+    targets = select_tests_for_changes.select_targets(
+        [
+            "src/shared/python/sidekick/data_processing/core.py",
+            "src/shared/python/sidekick/data_processing/embedding.py",
+        ]
+    )
+
+    assert targets == [
+        "src/shared/python/sidekick/tests/test_data_processor_engine_errors.py",
+        "tests/shared/python/sidekick/data_processing/test_io.py",
+        "tests/test_data_processor_embedding.py",
+        "tests/test_phase2_critical_bugs.py",
+    ]
+    assert "src/shared/python/sidekick/tests" not in targets
+    assert "tests/shared/python/sidekick" not in targets
+
+
+@pytest.mark.unit
+def test_sidekick_tools_sidebar_source_change_selects_focused_tests() -> None:
+    targets = select_tests_for_changes.select_targets(
+        [
+            "src/shared/python/sidekick/ui/tools_sidebar/appearance.py",
+            "src/shared/python/sidekick/ui/tools_sidebar/os_terminal.py",
+            "src/shared/python/sidekick/ui/tools_sidebar/python_repl_tab.py",
+            "src/shared/python/sidekick/ui/tools_sidebar/registry.py",
+            "src/shared/python/sidekick/ui/tools_sidebar/runtime_tab_settings.py",
+            "src/shared/python/sidekick/ui/tools_sidebar/workspace_tab.py",
+            "src/shared/python/sidekick/ui/widgets/mixins/data_processor_ops.py",
+        ]
+    )
+
+    assert targets == [
+        "tests/shared/python/sidekick/ui/test_tools_sidebar_data_processor.py",
+        "tests/shared/python/sidekick/ui/test_tools_sidebar_registry.py",
+        "tests/test_data_processor_tab_export.py",
+        "tests/unit/sidekick/test_appearance.py",
+        "tests/unit/sidekick/test_os_terminal_widget.py",
+        "tests/unit/sidekick/test_python_repl_widget.py",
+        "tests/unit/sidekick/test_python_repl_widget_renamed.py",
+        "tests/unit/sidekick/test_runtime_tab_settings.py",
+        "tests/unit/sidekick/test_tab_context_menu.py",
+        "tests/unit/sidekick/test_tab_definitions_alias_regression.py",
+        "tests/unit/sidekick/test_workspace_registry_subscribe.py",
+        "tests/unit/sidekick/test_workspace_tab_table.py",
+    ]
+    assert "src/shared/python/sidekick/tests" not in targets
+    assert "tests/shared/python/sidekick" not in targets
+
+
+@pytest.mark.unit
 def test_output_is_sorted_and_deduplicated() -> None:
     targets = select_tests_for_changes.select_targets(
         [

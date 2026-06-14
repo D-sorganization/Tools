@@ -9,13 +9,14 @@ import numpy as np
 import pytest
 
 # Adjust import path if needed based on where pytest is running from
+from sidekick.lab.bio import c3d_reader as c3d_reader_module
 from sidekick.lab.bio.c3d_reader import C3DDataReader
 
 
 class TestC3DDataReader:
     @pytest.fixture
     def mock_ezc3d(self) -> Any:
-        with patch("upstream_drift_tools.lab.bio.c3d_reader.ezc3d") as mock:
+        with patch.object(c3d_reader_module, "ezc3d") as mock:
             yield mock
 
     @pytest.fixture
@@ -101,5 +102,8 @@ class TestC3DDataReader:
         invalid_path = tmp_path / "invalid.c3d"
         invalid_path.write_bytes(b"\x02\x00")
         reader = C3DDataReader(invalid_path)
-        with pytest.raises(ValueError, match="Not a valid C3D file"):
+        with (
+            patch.object(c3d_reader_module, "ezc3d", object()),
+            pytest.raises(ValueError, match="Not a valid C3D file"),
+        ):
             reader.get_metadata()

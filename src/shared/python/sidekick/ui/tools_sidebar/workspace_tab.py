@@ -6,10 +6,15 @@ import contextlib
 from typing import Any
 
 from . import design_tokens as theme
-from .appearance import DEFAULT_LIGHT_PANEL_APPEARANCE, PanelAppearance, panel_qss
+from .appearance import (
+    DEFAULT_LIGHT_PANEL_APPEARANCE,
+    PanelAppearance,
+    is_panel_appearance,
+    panel_qss,
+)
 from .help_content import DEFAULT_SIDEBAR_TAB_HELP
 from .qt_compat import QtCore, QtGui, QtWidgets, Signal
-from .registry import WorkspaceRegistry
+from .registry import WorkspaceRegistry, is_workspace_registry
 
 QtGui_QStandardItemModel = QtGui.QStandardItemModel
 QtGui_QStandardItem = QtGui.QStandardItem
@@ -44,7 +49,7 @@ class WorkspaceTableWidget(QtWidgets.QWidget):
     ) -> None:
         if registry is None:
             raise TypeError("registry must be provided")
-        if not isinstance(registry, WorkspaceRegistry):
+        if not is_workspace_registry(registry):
             raise TypeError("registry must be a WorkspaceRegistry")
         super().__init__(parent)
         self.setObjectName(theme.SIDEKICK_WORKSPACE_TAB_OBJECT_NAME)
@@ -107,7 +112,7 @@ class WorkspaceTableWidget(QtWidgets.QWidget):
 
     def apply_appearance(self, appearance: PanelAppearance) -> None:
         """Apply user-adjustable colours/border to the workspace surfaces."""
-        if not isinstance(appearance, PanelAppearance):
+        if not is_panel_appearance(appearance):
             raise TypeError("appearance must be a PanelAppearance")
         self._appearance = appearance
         self.setStyleSheet(panel_qss(self.objectName(), appearance))
