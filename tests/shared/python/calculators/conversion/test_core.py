@@ -10,7 +10,13 @@ import math
 
 import pytest
 from sidekick.calculators.conversion import core
-from sidekick.calculators.conversion.tables import StandardCondition
+from sidekick.calculators.conversion.tables import (
+    NORMAL_REFERENCE_CONDITION,
+    StandardCondition,
+)
+from sidekick.process_calculators.pressure_drop_calculator.utils.gas_properties import (
+    calculate_compressibility_factor,
+)
 
 
 @pytest.mark.unit
@@ -84,3 +90,23 @@ def test_scfm_round_trip_through_standard() -> None:
         m3hr, StandardCondition.STP, StandardCondition.SCFM_60F
     )
     assert back == pytest.approx(500.0, rel=1e-9)
+
+
+@pytest.mark.scientific
+def test_scfm_to_normal_cubic_meters_matches_din_1343_reference() -> None:
+    """1000 SCFM at 60 F converts to 1607.46 Nm3/hr at DIN 1343 (#3391)."""
+    converted = core.scfm_to_standard_m3_per_hour(
+        1000.0,
+        StandardCondition.SCFM_60F,
+        NORMAL_REFERENCE_CONDITION,
+    )
+
+    assert converted == pytest.approx(1607.46, rel=1e-5)
+
+
+@pytest.mark.scientific
+def test_methane_compressibility_matches_nist_reference() -> None:
+    """CH4 at 300 K and 5 MPa stays near the NIST Z=0.9069 anchor (#3391)."""
+    z_factor = calculate_compressibility_factor({"CH4": 1.0}, 300.0, 5.0e6)
+
+    assert z_factor == pytest.approx(0.9069, rel=0.02)

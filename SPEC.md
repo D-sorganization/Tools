@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.457                                    |
+| **Spec Version**        | 1.1.458                                    |
 | **Last Spec Update**    | 2026-06-14                                 |
 
 ## 2. Purpose & Mission
@@ -767,6 +767,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-14 | 1.1.458 | test(scientific, #3391): add ODE closed-form and harmonic-energy reference anchors plus DIN 1343 SCFM-to-Nm3/hr and methane Z-factor checks so shared calculation regressions are pinned to absolute values, not only monotonic/property behavior. |
 | 2026-06-14 | 1.1.455 | ci(theme, #3442): add explicit return casts in the shared PyQt6 theme manager so delta-mypy can type-check the touched stylesheet and built-in-theme lookup paths without weakening runtime behavior. |
 | 2026-06-14 | 1.1.454 | fix(theme, #3442): recreate the shared PyQt6 `ThemeManager` singleton when Qt has deleted its QObject wrapper so Signal Toolkit canvas theme setup can recover from prior Qt test lifecycle cleanup while keeping focused regression coverage. |
 | 2026-06-14 | 1.1.453 | ci(signal-toolkit, #3442): restore the QtAgg display-availability guard around Signal Toolkit canvas theme tests and keep display-independent Matplotlib theme coverage active for headless Python CI lanes. |
