@@ -10,7 +10,6 @@ import numpy as np
 from PyQt6.QtCore import QPointF, Qt, QTimer, pyqtSignal
 from PyQt6.QtGui import QColor, QPainter, QPen
 from PyQt6.QtWidgets import (
-    QApplication,
     QCheckBox,
     QFormLayout,
     QGridLayout,
@@ -18,6 +17,7 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QLineEdit,
+    QMessageBox,
     QProgressBar,
     QPushButton,
     QScrollArea,
@@ -49,15 +49,12 @@ from movement_optimizer.models.swingset import (
     CyclicPolicyBounds,
     CyclicPolicySearchResult,
     CyclicPolicySearchSpace,
-    CyclicPolicyTraceSample,
     HumanSegmentSpec,
     SwingPose,
     SwingRollout,
     SwingSetConfig,
     build_swingset_snapshot,
     estimate_swingset_joint_torques,
-    optimize_cyclic_policy,
-    optimize_cyclic_policy_iterative,
 )
 from movement_optimizer.models.swingset_forces import (
     SwingForceField,
@@ -68,6 +65,8 @@ from movement_optimizer.rendering import Palette, get_chart_color
 
 from . import plot_renderer
 from .motion_analysis_panel import MotionAnalysisPanel
+from .policy_trace_canvas import PolicyTraceCanvas, refresh_policy_trace_palette
+from .policy_worker import PolicyOptimizationWorker
 from .vector_overlay import (
     ComMarker,
     ForceArrow,
@@ -91,9 +90,6 @@ def _build_motion_colors() -> dict[str, QColor]:
         "ARM": QColor(get_chart_color(2)),
         "SURFACE": QColor(Palette.BG),
         "GRID": QColor(Palette.BG_INPUT),
-        "TRACE_BEST": QColor(Palette.GREEN),
-        "TRACE_SCORE": QColor(get_chart_color(1)),
-        "TRACE_PARAM": QColor(get_chart_color(0)),
     }
 
 
@@ -105,15 +101,11 @@ LEG = _MOTION_COLORS["LEG"]
 ARM = _MOTION_COLORS["ARM"]
 SURFACE = _MOTION_COLORS["SURFACE"]
 GRID = _MOTION_COLORS["GRID"]
-TRACE_BEST = _MOTION_COLORS["TRACE_BEST"]
-TRACE_SCORE = _MOTION_COLORS["TRACE_SCORE"]
-TRACE_PARAM = _MOTION_COLORS["TRACE_PARAM"]
 
 
 def refresh_motion_palette() -> None:
     """Rebind the motion-canvas colours from the active theme palette."""
     global ACCENT, CHAIN, BODY, LEG, ARM, SURFACE, GRID
-    global TRACE_BEST, TRACE_SCORE, TRACE_PARAM
     colors = _build_motion_colors()
     ACCENT = colors["ACCENT"]
     CHAIN = colors["CHAIN"]
@@ -122,9 +114,7 @@ def refresh_motion_palette() -> None:
     ARM = colors["ARM"]
     SURFACE = colors["SURFACE"]
     GRID = colors["GRID"]
-    TRACE_BEST = colors["TRACE_BEST"]
-    TRACE_SCORE = colors["TRACE_SCORE"]
-    TRACE_PARAM = colors["TRACE_PARAM"]
+    refresh_policy_trace_palette()
 
 
 def _swing_overlay_scene(
@@ -400,120 +390,6 @@ class MotionCanvas(QWidget):
             )
 
 
-class PolicyTraceCanvas(QWidget):
-    """Compact plot of policy-search score and parameter traces."""
-
-    def __init__(self) -> None:
-        super().__init__()
-        self.setMinimumHeight(160)
-        self._samples: tuple[CyclicPolicyTraceSample, ...] = ()
-        self._series: dict[str, np.ndarray] = {}
-
-    def set_trace(self, samples: tuple[CyclicPolicyTraceSample, ...]) -> None:
-        self._samples = samples
-        self._series = self._build_series(samples)
-        self.update()
-
-    def sample_count(self) -> int:
-        return len(self._samples)
-
-    def has_parameter_series(self, name: str) -> bool:
-        return name in self._series and self._series[name].size > 0
-
-    def paintEvent(self, _event: object) -> None:
-        painter = QPainter(self)
-        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-        painter.fillRect(self.rect(), SURFACE)
-        painter.setPen(QPen(GRID, 1))
-        painter.drawRect(self.rect().adjusted(0, 0, -1, -1))
-        if len(self._samples) < 2:
-            return
-        self._draw_normalized_series(painter, "best_score_m", TRACE_BEST, 3)
-        self._draw_normalized_series(painter, "score_m", TRACE_SCORE, 2)
-        self._draw_normalized_series(painter, "frequency_hz", TRACE_PARAM, 1)
-        self._draw_normalized_series(painter, "hip_rate_amplitude_rad_s", ARM, 1)
-        self._draw_normalized_series(painter, "torso_rate_amplitude_rad_s", BODY, 1)
-        self._draw_normalized_series(painter, "knee_rate_ratio", LEG, 1)
-        self._draw_legend(painter)
-
-    def _draw_normalized_series(
-        self,
-        painter: QPainter,
-        key: str,
-        color: QColor,
-        width: int,
-    ) -> None:
-        values = self._series.get(key)
-        if values is None or values.size < 2:
-            return
-        lower = float(np.min(values))
-        upper = float(np.max(values))
-        if np.isclose(lower, upper):
-            normalized = np.full(values.shape, 0.5, dtype=np.float64)
-        else:
-            normalized = (values - lower) / (upper - lower)
-        points = [
-            QPointF(
-                8.0 + index * (self.width() - 16.0) / (values.size - 1),
-                self.height() - 8.0 - value * (self.height() - 16.0),
-            )
-            for index, value in enumerate(normalized)
-        ]
-        painter.setPen(QPen(color, width))
-        for start, end in pairwise(points):
-            painter.drawLine(start, end)
-
-    def _draw_legend(self, painter: QPainter) -> None:
-        legend = (
-            ("best", TRACE_BEST),
-            ("score", TRACE_SCORE),
-            ("freq", TRACE_PARAM),
-            ("hip", ARM),
-            ("torso", BODY),
-            ("knee", LEG),
-        )
-        x = 8
-        y = 16
-        for label, color in legend:
-            painter.setPen(QPen(color, 2))
-            painter.drawLine(x, y - 4, x + 12, y - 4)
-            painter.setPen(QPen(color, 1))
-            painter.drawText(x + 16, y, label)
-            x += 54
-        painter.setPen(QPen(CHAIN, 1))
-        painter.drawText(max(8, self.width() - 64), self.height() - 8, "iteration")
-
-    def _build_series(
-        self,
-        samples: tuple[CyclicPolicyTraceSample, ...],
-    ) -> dict[str, np.ndarray]:
-        return {
-            "score_m": np.asarray([sample.score_m for sample in samples], dtype=np.float64),
-            "best_score_m": np.asarray(
-                [sample.best_score_m for sample in samples], dtype=np.float64
-            ),
-            "frequency_hz": np.asarray(
-                [sample.parameters.frequency_hz for sample in samples], dtype=np.float64
-            ),
-            "hip_rate_amplitude_rad_s": np.asarray(
-                [sample.parameters.hip_rate_amplitude_rad_s for sample in samples],
-                dtype=np.float64,
-            ),
-            "torso_rate_amplitude_rad_s": np.asarray(
-                [sample.parameters.torso_rate_amplitude_rad_s for sample in samples],
-                dtype=np.float64,
-            ),
-            "knee_rate_ratio": np.asarray(
-                [sample.parameters.knee_rate_ratio for sample in samples],
-                dtype=np.float64,
-            ),
-            "phase_rad": np.asarray(
-                [sample.parameters.phase_rad for sample in samples],
-                dtype=np.float64,
-            ),
-        }
-
-
 def _scrollable_control_panel(panel: QWidget) -> QScrollArea:
     scroll_area = QScrollArea()
     scroll_area.setWidget(panel)
@@ -526,6 +402,8 @@ def _scrollable_control_panel(panel: QWidget) -> QScrollArea:
 
 class SwingsetTab(QWidget):
     """Interactive swingset model tab with cyclic policy optimization."""
+
+    playbackStateChanged = pyqtSignal()
 
     def __init__(self) -> None:
         super().__init__()
@@ -549,6 +427,8 @@ class SwingsetTab(QWidget):
         self._control_panel_visible = True
         self._control_scroll: QScrollArea | None = None
         self._control_panel_widget: QWidget | None = None
+        self._policy_worker: PolicyOptimizationWorker | None = None
+        self._play_after_policy = False
         self._timer = QTimer(self)
         self._timer.timeout.connect(self._advance_frame)
         self._build_ui()
@@ -929,47 +809,71 @@ class SwingsetTab(QWidget):
         )
 
     def _optimize_policy(self) -> None:
+        if self._policy_worker is not None and self._policy_worker.isRunning():
+            return
         self.progress_bar.setRange(0, 1)
         self.progress_bar.setValue(0)
         self.policy_status_label.setText("Evaluating swing-policy candidates")
+        self.optimize_button.setEnabled(False)
+        self.optimize_button.setText("Optimizing...")
+        self._timer.stop()
 
-        def _progress(
-            completed: int,
-            total: int,
-            best_score: float,
-            params,
-        ) -> None:
-            self.progress_bar.setRange(0, total)
-            self.progress_bar.setValue(completed)
-            self.policy_status_label.setText(
-                f"{completed}/{total} candidates | best {best_score:.3f} m | "
-                f"{params.frequency_hz:.2f} Hz"
-            )
-            app = QApplication.instance()
-            if app is not None:
-                app.processEvents()
+        worker = PolicyOptimizationWorker(
+            config=self._config(),
+            iterative=self.iterative_checkbox.isChecked(),
+            steps=int(self._value("policy_steps")),
+            cycles=self._value("cycles"),
+            bounds=self._policy_bounds(),
+            budget=int(self._value("budget")),
+            seed=int(self._value("seed")),
+            search_space=self._search_space(),
+            parent=self,
+        )
+        worker.progress.connect(self._on_policy_progress)
+        worker.succeeded.connect(self._on_policy_success)
+        worker.failed.connect(self._on_policy_error)
+        worker.finished.connect(lambda: self._on_policy_finished(worker))
+        worker.finished.connect(worker.deleteLater)
+        self._policy_worker = worker
+        worker.start()
 
-        if self.iterative_checkbox.isChecked():
-            result = optimize_cyclic_policy_iterative(
-                self._config(),
-                steps=int(self._value("policy_steps")),
-                dt_s=DEFAULT_POLICY_DT_S,
-                cycles=self._value("cycles"),
-                bounds=self._policy_bounds(),
-                budget=int(self._value("budget")),
-                seed=int(self._value("seed")),
-                progress_callback=_progress,
-            )
-        else:
-            result = optimize_cyclic_policy(
-                self._config(),
-                steps=int(self._value("policy_steps")),
-                dt_s=DEFAULT_POLICY_DT_S,
-                cycles=self._value("cycles"),
-                search_space=self._search_space(),
-                progress_callback=_progress,
-            )
-        self._set_policy_result(result)
+    def _on_policy_progress(
+        self,
+        completed: int,
+        total: int,
+        best_score: float,
+        params: object,
+    ) -> None:
+        self.progress_bar.setRange(0, total)
+        self.progress_bar.setValue(completed)
+        frequency = getattr(params, "frequency_hz", 0.0)
+        self.policy_status_label.setText(
+            f"{completed}/{total} candidates | best {best_score:.3f} m | "
+            f"{float(frequency):.2f} Hz"
+        )
+
+    def _on_policy_success(self, result: object) -> None:
+        self._set_policy_result(result)  # type: ignore[arg-type]
+        if self._play_after_policy:
+            self.play_button.setText("Pause")
+            self._timer.start(self._playback_interval_ms(DEFAULT_POLICY_DT_S))
+        self.playbackStateChanged.emit()
+
+    def _on_policy_error(self, message: str) -> None:
+        self._play_after_policy = False
+        self.policy_status_label.setText("Policy optimization failed.")
+        self.policy_detail_label.setText(message)
+        self.progress_bar.setRange(0, 1)
+        self.progress_bar.setValue(0)
+        QMessageBox.critical(self, "Policy Optimization Failed", message)
+        self.playbackStateChanged.emit()
+
+    def _on_policy_finished(self, worker: PolicyOptimizationWorker) -> None:
+        if self._policy_worker is worker:
+            self._policy_worker = None
+        self._play_after_policy = False
+        self.optimize_button.setEnabled(True)
+        self.optimize_button.setText("Optimize Swing Policy")
 
     def _policy_bounds(self) -> CyclicPolicyBounds:
         return CyclicPolicyBounds(
@@ -1073,13 +977,19 @@ class SwingsetTab(QWidget):
 
     def _toggle_playback(self) -> None:
         if self._rollout is None:
+            self._play_after_policy = True
             self._optimize_policy()
+            self.play_button.setText("Pause")
+            self.playbackStateChanged.emit()
+            return
         if self._timer.isActive():
             self._timer.stop()
             self.play_button.setText("Play")
+            self.playbackStateChanged.emit()
             return
         self.play_button.setText("Pause")
         self._timer.start(self._playback_interval_ms(DEFAULT_POLICY_DT_S))
+        self.playbackStateChanged.emit()
 
     def playback_toggle(self) -> None:
         self._toggle_playback()
@@ -1093,6 +1003,7 @@ class SwingsetTab(QWidget):
         self._frame_index = min(self._frame_index + 1, len(self._rollout.snapshots) - 1)
         self._render_snapshot(self._rollout.snapshots[self._frame_index])
         self._refresh_overlays()
+        self.playbackStateChanged.emit()
 
     def playback_step_back(self) -> None:
         self._ensure_rollout()
@@ -1103,6 +1014,7 @@ class SwingsetTab(QWidget):
         self._frame_index = max(self._frame_index - 1, 0)
         self._render_snapshot(self._rollout.snapshots[self._frame_index])
         self._refresh_overlays()
+        self.playbackStateChanged.emit()
 
     def playback_rewind(self) -> None:
         self._ensure_rollout()
@@ -1113,6 +1025,7 @@ class SwingsetTab(QWidget):
         self._frame_index = 0
         self._render_snapshot(self._rollout.snapshots[self._frame_index])
         self._refresh_overlays()
+        self.playbackStateChanged.emit()
 
     def playback_jump_to_end(self) -> None:
         self._ensure_rollout()
@@ -1123,6 +1036,7 @@ class SwingsetTab(QWidget):
         self._frame_index = len(self._rollout.snapshots) - 1
         self._render_snapshot(self._rollout.snapshots[self._frame_index])
         self._refresh_overlays()
+        self.playbackStateChanged.emit()
 
     def set_playback_speed(self, speed: float) -> None:
         self._controls["speed"].set_value(speed)
@@ -1144,6 +1058,7 @@ class SwingsetTab(QWidget):
         self._render_snapshot(self._rollout.snapshots[self._frame_index])
         self._refresh_overlays()
         self._timer.start(self._playback_interval_ms(DEFAULT_POLICY_DT_S))
+        self.playbackStateChanged.emit()
 
     def _playback_interval_ms(self, dt_s: float) -> int:
         speed = max(0.05, self._value("speed"))

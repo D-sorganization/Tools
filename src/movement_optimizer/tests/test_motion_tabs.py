@@ -3,7 +3,9 @@
 
 from __future__ import annotations
 
+import inspect
 import os
+import time
 
 import numpy as np
 import pytest
@@ -22,6 +24,7 @@ from PyQt6.QtWidgets import (
     QSplitter,
 )
 
+from movement_optimizer.gui import motion_tabs, policy_worker
 from movement_optimizer.gui.app_icon import movement_optimizer_icon, movement_optimizer_icon_path
 from movement_optimizer.gui.main_window import MainWindow
 from movement_optimizer.gui.motion_tabs import (
@@ -30,6 +33,15 @@ from movement_optimizer.gui.motion_tabs import (
     NumericControl,
     SwingsetTab,
 )
+
+
+def _wait_for_policy_worker(qapp, swingset: SwingsetTab, timeout_s: float = 10.0) -> None:
+    deadline = time.monotonic() + timeout_s
+    while swingset._policy_worker is not None and time.monotonic() < deadline:
+        qapp.processEvents()
+        time.sleep(0.01)
+    qapp.processEvents()
+    assert swingset._policy_worker is None
 
 
 def test_main_window_preserves_barbell_tabs_and_adds_motion_tabs(qapp) -> None:
@@ -138,6 +150,7 @@ def test_swingset_and_chain_tabs_run_local_simulations(qapp) -> None:
     swingset._controls["budget"].set_value(60)
     swingset._controls["cycles"].set_value(1)
     swingset._optimize_policy()
+    _wait_for_policy_worker(qapp, swingset)
     chain._simulate()
 
     assert "Best height" in swingset.metric_label.text()
@@ -172,6 +185,7 @@ def test_swingset_tab_exposes_policy_tuning_and_progress(qapp) -> None:
     swingset._controls["phase_samples"].set_value(2)
 
     swingset._optimize_policy()
+    _wait_for_policy_worker(qapp, swingset)
 
     progress = swingset.findChild(QProgressBar)
     assert progress is not None
@@ -229,6 +243,7 @@ def test_swingset_policy_trace_canvas_accepts_optimization_samples(qapp) -> None
     swingset._controls["phase_samples"].set_value(2)
 
     swingset._optimize_policy()
+    _wait_for_policy_worker(qapp, swingset)
 
     assert swingset.policy_trace_canvas.sample_count() == 4
     assert swingset.policy_trace_canvas.has_parameter_series("frequency_hz")
@@ -266,17 +281,21 @@ def test_bottom_playback_controls_drive_analysis_tabs(qapp) -> None:
     window = MainWindow()
     window.tabs.setCurrentIndex(window.tabs.count() - 2)
     swing_tab = window.tabs.currentWidget()
+    swing_tab._controls["budget"].set_value(50)
+    swing_tab._controls["cycles"].set_value(1)
     swing_tab._controls["policy_steps"].set_value(30)
 
     window._toggle_play()
+    _wait_for_policy_worker(qapp, swing_tab)
 
     assert swing_tab.playback_status()[2]
     assert window.controls.btn_play.text() == "Pause"
 
+    start_frame, total_frames, _playing = swing_tab.playback_status()
     window._step_fwd()
 
     assert swing_tab.playback_status()[2] is False
-    assert swing_tab.playback_status()[0] == 2
+    assert swing_tab.playback_status()[0] == min(start_frame + 1, total_frames)
 
     window.tabs.setCurrentIndex(window.tabs.count() - 1)
     window._toggle_play()
@@ -343,6 +362,7 @@ def test_motion_canvas_handles_empty_and_bodyless_paints(qapp) -> None:
 
 def test_swingset_playback_controls_cover_policy_rollout_branches(qapp) -> None:
     swingset = SwingsetTab()
+    swingset._controls["budget"].set_value(50)
     swingset._controls["cycles"].set_value(1)
     swingset._controls["policy_steps"].set_value(30)
     swingset._controls["freq_samples"].set_value(1)
@@ -352,6 +372,7 @@ def test_swingset_playback_controls_cover_policy_rollout_branches(qapp) -> None:
     swingset._controls["phase_samples"].set_value(1)
 
     swingset._ensure_rollout()
+    _wait_for_policy_worker(qapp, swingset)
     assert swingset._rollout is not None
 
     swingset._toggle_playback()
@@ -532,6 +553,7 @@ def test_swingset_iterative_optimize_populates_panel_and_overlays(qapp) -> None:
     swingset._controls["cycles"].set_value(1)
 
     swingset._optimize_policy()
+    _wait_for_policy_worker(qapp, swingset)
 
     assert swingset._rollout is not None
     progress = swingset.findChild(QProgressBar)
@@ -543,11 +565,41 @@ def test_swingset_iterative_optimize_populates_panel_and_overlays(qapp) -> None:
     assert swingset.canvas._overlay.arrows or swingset.canvas._overlay.com_markers
 
 
+def test_swingset_policy_optimization_does_not_pump_event_loop() -> None:
+    source = inspect.getsource(SwingsetTab._optimize_policy)
+    assert "processEvents" not in source
+
+
+def test_swingset_policy_worker_reports_errors(qapp, monkeypatch) -> None:
+    messages: list[tuple[str, str]] = []
+
+    def fail_policy(*_args, **_kwargs):
+        raise RuntimeError("bad policy bounds")
+
+    monkeypatch.setattr(policy_worker, "optimize_cyclic_policy_iterative", fail_policy)
+    monkeypatch.setattr(
+        motion_tabs.QMessageBox,
+        "critical",
+        lambda _parent, title, body: messages.append((title, body)),
+    )
+
+    swingset = SwingsetTab()
+    swingset._controls["budget"].set_value(1)
+    swingset._optimize_policy()
+    _wait_for_policy_worker(qapp, swingset)
+
+    assert swingset.optimize_button.isEnabled()
+    assert swingset.optimize_button.text() == "Optimize Swing Policy"
+    assert swingset.policy_status_label.text() == "Policy optimization failed."
+    assert messages == [("Policy Optimization Failed", "bad policy bounds")]
+
+
 def test_swingset_force_toggle_does_not_recompute(qapp) -> None:
     swingset = SwingsetTab()
     swingset._controls["budget"].set_value(50)
     swingset._controls["cycles"].set_value(1)
     swingset._optimize_policy()
+    _wait_for_policy_worker(qapp, swingset)
 
     rollout_id = id(swingset._rollout)
     overlay_before = swingset.canvas._overlay
