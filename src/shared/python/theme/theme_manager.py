@@ -20,6 +20,7 @@ from collections.abc import Iterable
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar
 
+from PyQt6 import sip
 from PyQt6.QtCore import QObject, QSettings, QStandardPaths, pyqtSignal
 
 from .colors import BUILTIN_THEMES, THEME_COLOR_KEYS, normalise_hex_color
@@ -120,7 +121,7 @@ class ThemeManager(QObject):
         Returns:
             The singleton ThemeManager instance
         """
-        if cls._instance is None:
+        if cls._instance is None or sip.isdeleted(cls._instance):
             cls._instance = cls(
                 main_window=main_window,
                 app_context=app_context,

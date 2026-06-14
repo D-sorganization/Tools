@@ -67,6 +67,24 @@ def test_singleton_and_convenience_function_share_instance(
     assert new_manager is not manager
 
 
+def test_singleton_recreates_deleted_qobject_wrapper(theme_manager_module) -> None:
+    org, app = _settings_names()
+    manager = theme_manager_module.ThemeManager.instance(
+        settings_org=org,
+        settings_app=app,
+    )
+
+    theme_manager_module.sip.delete(manager)
+    recreated = theme_manager_module.ThemeManager.instance(
+        settings_org=org,
+        settings_app=app,
+    )
+
+    assert recreated is not manager
+    assert not theme_manager_module.sip.isdeleted(recreated)
+    assert recreated.get_current_theme_name() == "Light"
+
+
 def test_context_theme_inherits_global_preference(theme_manager_module) -> None:
     org, app = _settings_names()
     global_manager = theme_manager_module.ThemeManager(
