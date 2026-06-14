@@ -2543,6 +2543,18 @@ wheels = [
 ]
 
 [[package]]
+name = "pyqtgraph"
+version = "0.14.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "colorama" },
+    { name = "numpy" },
+]
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/32/36/4c242f81fdcbfa4fb62a5645f6af79191f4097a0577bd5460c24f19cc4ef/pyqtgraph-0.14.0-py3-none-any.whl", hash = "sha256:7abb7c3e17362add64f8711b474dffac5e7b0e9245abdf992e9a44119b7aa4f5", size = 1924755, upload-time = "2025-11-16T19:43:22.251Z" },
+]
+
+[[package]]
 name = "pyside6"
 version = "6.11.1"
 source = { registry = "https://pypi.org/simple" }
@@ -3678,6 +3690,7 @@ dwsim = [
 gui = [
     { name = "matplotlib" },
     { name = "pyqt6" },
+    { name = "pyqtgraph" },
 ]
 jupyter = [
     { name = "nbclient" },
@@ -3750,6 +3763,7 @@ requires-dist = [
     { name = "pyqt6", marker = "extra == 'chat'", specifier = ">=6.5.0" },
     { name = "pyqt6", marker = "extra == 'gui'", specifier = ">=6.5.0" },
     { name = "pyqt6", marker = "extra == 'theme'", specifier = ">=6.5.0" },
+    { name = "pyqtgraph", marker = "extra == 'gui'", specifier = ">=0.13.7" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=9.0.3" },
     { name = "pytest-benchmark", marker = "extra == 'dev'", specifier = ">=4.0.0" },
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=4.0.0" },
