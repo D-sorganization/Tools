@@ -5,13 +5,17 @@ from __future__ import annotations
 import contextlib
 import io
 import logging
-import sys
 import types
 from collections.abc import Callable
 from typing import Any
 
 from . import design_tokens as theme
-from .appearance import DEFAULT_DARK_PANEL_APPEARANCE, PanelAppearance, panel_qss
+from .appearance import (
+    DEFAULT_DARK_PANEL_APPEARANCE,
+    PanelAppearance,
+    is_panel_appearance,
+    panel_qss,
+)
 from .calculator_startup import (
     CalculatorStartupConfig,
     CalculatorStartupResult,
@@ -20,7 +24,7 @@ from .calculator_startup import (
     default_repl_startup_config,
 )
 from .qt_compat import QtCore, QtWidgets, Signal
-from .registry import WorkspaceRegistry
+from .registry import WorkspaceRegistry, is_workspace_registry
 
 _logger = logging.getLogger(__name__)
 
@@ -37,16 +41,6 @@ _RESERVED_NAMESPACE_NAMES = {
 }
 
 SetVariable = Callable[[str, Any], None]
-
-
-def _is_workspace_registry(value: object) -> bool:
-    """Return True for canonical or legacy-imported workspace registries."""
-    if isinstance(value, WorkspaceRegistry):
-        return True
-
-    legacy_registry = sys.modules.get("upstream_drift_tools.ui.tools_sidebar.registry")
-    legacy_type = getattr(legacy_registry, "WorkspaceRegistry", None)
-    return isinstance(legacy_type, type) and isinstance(value, legacy_type)
 
 
 class _ReplWorker(QtCore.QThread):
@@ -138,7 +132,7 @@ class PythonReplWidget(QtWidgets.QWidget):
     ) -> None:
         if registry is None:
             raise TypeError("registry must be provided")
-        if not _is_workspace_registry(registry):
+        if not is_workspace_registry(registry):
             raise TypeError("registry must be a WorkspaceRegistry")
         if set_variable is None:
             raise TypeError("set_variable must be provided")
@@ -315,7 +309,7 @@ class PythonReplWidget(QtWidgets.QWidget):
         Single-value handoff (LOD): the panel passes a validated
         :class:`PanelAppearance`; the widget renders it via shared QSS.
         """
-        if not isinstance(appearance, PanelAppearance):
+        if not is_panel_appearance(appearance):
             raise TypeError("appearance must be a PanelAppearance")
         self._appearance = appearance
         self.setStyleSheet(panel_qss(self.objectName(), appearance))
@@ -414,7 +408,7 @@ class SidekickPythonReplWidget(QtWidgets.QWidget):
 
     def apply_appearance(self, appearance: PanelAppearance) -> None:
         """Apply user-adjustable colours/border to the REPL (delegates inward)."""
-        if not isinstance(appearance, PanelAppearance):
+        if not is_panel_appearance(appearance):
             raise TypeError("appearance must be a PanelAppearance")
         self._repl.apply_appearance(appearance)
         self.setStyleSheet(panel_qss(SIDEKICK_TERMINAL_OBJECT_NAME, appearance))

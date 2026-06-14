@@ -1,7 +1,7 @@
 """Contract tests for the bulk-I/O engine (issue #2989, Phase 2).
 
 Verifies the public interface defined in
-``src/shared/python/data_processor/rust_engine.py``.
+``src/shared/python/data_processor_io/rust_engine.py``.
 
 These tests use the pure-pandas fallback so they run in CI without a compiled
 Rust wheel.  They are marked ``contract`` so the CI ``Provider-Contract Suite``
@@ -22,6 +22,7 @@ Contract surface under test
 from __future__ import annotations
 
 import importlib.util
+import os
 import sys
 from pathlib import Path
 
@@ -55,7 +56,12 @@ for _extra in [
 # contract test pinned to the issue-#2989 wrapper regardless of import order.
 import importlib.util
 
-from shared.python.data_processor.rust_engine import (  # noqa: E402
+# These contract tests are for the compatibility wrapper's pandas fallback.
+# CI may have a Phase-2 native wheel installed, whose scaffold intentionally
+# leaves streaming/filter operations to the fallback path.
+os.environ["DATA_PROCESSOR_IO_DISABLE_NATIVE"] = "1"
+
+from data_processor_io.rust_engine import (  # noqa: E402
     ConversionReport,
     DataProcessorRustError,
     RustBulkDataEngine,
@@ -70,9 +76,17 @@ from shared.python.data_processor.rust_engine import (  # noqa: E402
 
 
 def test_shared_rust_engine_exports_bulk_facade() -> None:
-    """The shared shadow package must satisfy the full data_processor imports."""
+    """The renamed wrapper exposes the Rust bulk-I/O compatibility surface."""
     assert issubclass(DataProcessorRustError, RuntimeError)
     assert RustBulkDataEngine.from_repo_root().is_available()
+
+
+def test_wrapper_import_does_not_bind_full_app_name() -> None:
+    """The bulk-I/O wrapper must not occupy the full app's top-level package."""
+    import data_processor_io
+
+    assert data_processor_io.__name__ == "data_processor_io"
+    assert sys.modules.get("data_processor") is not data_processor_io
 
 
 # Check if parquet support is available in pandas

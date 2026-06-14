@@ -38,17 +38,26 @@ logger = logging.getLogger(__name__)
 _RUST_AVAILABLE = False
 _rust_mod = None
 
-try:
-    import data_processor_core as _rust_mod_lib
+_DISABLE_NATIVE = os.environ.get("DATA_PROCESSOR_IO_DISABLE_NATIVE", "").lower() in {
+    "1",
+    "true",
+    "yes",
+}
 
-    _rust_mod = _rust_mod_lib
+if not _DISABLE_NATIVE:
+    try:
+        import data_processor_core as _rust_mod_lib
 
-    _RUST_AVAILABLE = True
-    logger.debug("data_processor_core native extension loaded")
-except ImportError:
-    logger.debug(
-        "data_processor_core native extension not found; using pandas fallback"
-    )
+        _rust_mod = _rust_mod_lib
+
+        _RUST_AVAILABLE = True
+        logger.debug("data_processor_core native extension loaded")
+    except ImportError:
+        logger.debug(
+            "data_processor_core native extension not found; using pandas fallback"
+        )
+else:
+    logger.debug("data_processor_core native extension disabled by environment")
 
 # ── Public data types ─────────────────────────────────────────────────────────
 

@@ -264,6 +264,10 @@ class DataProcessorOpsMixin:
             self.fit_results_text.setText(str(exc))
             self._set_status("Curve fitting failed.", success=False)
             return
+        if result is None:
+            self.fit_results_text.setText("Curve fitting failed.")
+            self._set_status("Curve fitting failed.", success=False)
+            return
         self.fit_results_text.setHtml(f"""
             <h4>Fit Results</h4>
             <p><b>Equation:</b> {result.equation}</p>

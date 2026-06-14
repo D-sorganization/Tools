@@ -8,6 +8,7 @@ import contextlib
 import json
 import logging
 import math
+import sys
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -25,6 +26,7 @@ __all__ = [
     "WorkspaceRegistry",
     "WorkspaceVariable",
     "format_workspace_value_preview",
+    "is_workspace_registry",
 ]
 
 JSONScalar = str | int | float | bool | None
@@ -37,6 +39,15 @@ _logger = logging.getLogger(__name__)
 
 WorkspaceEvent = Literal["set", "remove"]
 WorkspaceCallback = Callable[[WorkspaceEvent, str], None]
+_WORKSPACE_REGISTRY_METHODS = (
+    "set",
+    "get",
+    "remove",
+    "clear",
+    "subscribe",
+    "list",
+    "variables",
+)
 
 
 class Subscription:
@@ -367,6 +378,28 @@ class WorkspaceRegistry:
     def _validate_name(name: str) -> None:
         if not name or not name.strip():
             raise ValueError("Workspace variable name must be non-empty")
+
+
+def is_workspace_registry(value: object) -> bool:
+    """Return True for canonical or legacy-imported workspace registries."""
+    if isinstance(value, WorkspaceRegistry):
+        return True
+
+    legacy_registry = sys.modules.get("upstream_drift_tools.ui.tools_sidebar.registry")
+    legacy_type = getattr(legacy_registry, "WorkspaceRegistry", None)
+    if isinstance(legacy_type, type) and isinstance(value, legacy_type):
+        return True
+
+    value_type = type(value)
+    module_name = getattr(value_type, "__module__", "")
+    return (
+        value_type.__name__ == "WorkspaceRegistry"
+        and module_name.endswith(".ui.tools_sidebar.registry")
+        and all(
+            callable(getattr(value, method, None))
+            for method in _WORKSPACE_REGISTRY_METHODS
+        )
+    )
 
 
 def _is_json_safe(value: Any) -> bool:

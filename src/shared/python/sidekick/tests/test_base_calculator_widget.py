@@ -1,3 +1,5 @@
+# mypy: disable-error-code=no-untyped-def
+
 from __future__ import annotations
 
 from typing import Any
@@ -36,8 +38,8 @@ def test_base_calculator_widget_show_info(mock_info, qapp) -> Any:
 
 
 def test_base_calculator_window_init(qapp) -> Any:
-    # Missing calculator name should raise AssertionError
-    with pytest.raises(AssertionError):
+    # Missing calculator name should raise a clear contract error.
+    with pytest.raises(ValueError, match="calculator_name must be provided"):
         BaseCalculatorWindow(calculator_name=None)  # type: ignore[attr-defined]
 
     window = BaseCalculatorWindow(

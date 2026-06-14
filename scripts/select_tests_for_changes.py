@@ -41,6 +41,47 @@ _SIDEKICK_PROCESS_CALCULATOR_TESTS = {
     ],
 }
 
+_SIDEKICK_SOURCE_TESTS = {
+    "data_processing/core.py": [
+        "src/shared/python/sidekick/tests/test_data_processor_engine_errors.py",
+        "tests/shared/python/sidekick/data_processing/test_io.py",
+        "tests/test_phase2_critical_bugs.py",
+    ],
+    "data_processing/embedding.py": [
+        "tests/test_data_processor_embedding.py",
+        "tests/test_phase2_critical_bugs.py",
+    ],
+    "ui/tools_sidebar/python_repl_tab.py": [
+        "tests/unit/sidekick/test_python_repl_widget.py",
+        "tests/unit/sidekick/test_python_repl_widget_renamed.py",
+    ],
+    "ui/tools_sidebar/appearance.py": [
+        "tests/unit/sidekick/test_appearance.py",
+    ],
+    "ui/tools_sidebar/os_terminal.py": [
+        "tests/unit/sidekick/test_os_terminal_widget.py",
+        "tests/unit/sidekick/test_tab_context_menu.py",
+    ],
+    "ui/tools_sidebar/registry.py": [
+        "tests/shared/python/sidekick/ui/test_tools_sidebar_registry.py",
+        "tests/unit/sidekick/test_tab_context_menu.py",
+        "tests/unit/sidekick/test_tab_definitions_alias_regression.py",
+        "tests/unit/sidekick/test_workspace_registry_subscribe.py",
+    ],
+    "ui/tools_sidebar/runtime_tab_settings.py": [
+        "tests/unit/sidekick/test_appearance.py",
+        "tests/unit/sidekick/test_runtime_tab_settings.py",
+        "tests/unit/sidekick/test_tab_definitions_alias_regression.py",
+    ],
+    "ui/tools_sidebar/workspace_tab.py": [
+        "tests/unit/sidekick/test_workspace_tab_table.py",
+    ],
+    "ui/widgets/mixins/data_processor_ops.py": [
+        "tests/shared/python/sidekick/ui/test_tools_sidebar_data_processor.py",
+        "tests/test_data_processor_tab_export.py",
+    ],
+}
+
 _VENDORED_SOURCE_PREFIXES = (
     ("src", "movement_optimizer"),
     ("src", "pendulum_simulator"),
@@ -75,6 +116,13 @@ def _candidate_targets(src_path: str) -> list[Path]:
         ):
             targets.append(REPO_ROOT / test_path)
         return targets
+
+    if parts[:4] == ("src", "shared", "python", "sidekick"):
+        rel_sidekick_path = Path(*parts[4:]).as_posix()
+        if rel_sidekick_path in _SIDEKICK_SOURCE_TESTS:
+            for test_path in _SIDEKICK_SOURCE_TESTS[rel_sidekick_path]:
+                targets.append(REPO_ROOT / test_path)
+            return targets
 
     # Identify the changed file's *package root* so we can mirror it. For a
     # shared-library path the package is its 4th segment; for a top-level tool

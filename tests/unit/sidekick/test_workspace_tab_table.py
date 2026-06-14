@@ -93,3 +93,19 @@ def test_registry_required(qt_app) -> None:
 
     with pytest.raises((TypeError, ValueError)):
         WorkspaceTableWidget(registry=None)  # type: ignore[arg-type]
+
+
+def test_source_qualified_registry_alias_is_accepted(qt_app, qtbot) -> None:
+    from sidekick.ui.tools_sidebar.workspace_tab import WorkspaceTableWidget
+
+    from src.shared.python.sidekick.ui.tools_sidebar.registry import (
+        WorkspaceRegistry,
+    )
+
+    registry = WorkspaceRegistry()
+    widget = WorkspaceTableWidget(registry=registry)
+    qtbot.addWidget(widget)
+
+    registry.set("alias_ok", 1)
+
+    assert ("alias_ok", "int", "", "1") in widget.row_data()

@@ -36,6 +36,7 @@ from typing import Protocol
 from .appearance import (
     DEFAULT_DARK_PANEL_APPEARANCE,
     PanelAppearance,
+    is_panel_appearance,
     panel_qss,
 )
 from .qt_compat import QtCore, QtWidgets, Signal
@@ -662,7 +663,7 @@ class SidekickOsTerminalWidget(QtWidgets.QWidget):
         Single-value handoff (LOD): renders a validated
         :class:`PanelAppearance` via the shared panel stylesheet.
         """
-        if not isinstance(appearance, PanelAppearance):
+        if not is_panel_appearance(appearance):
             raise TypeError("appearance must be a PanelAppearance")
         self._appearance = appearance
         self.setStyleSheet(panel_qss(self.objectName(), appearance))

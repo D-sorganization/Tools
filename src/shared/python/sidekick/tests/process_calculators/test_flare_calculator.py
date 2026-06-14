@@ -28,10 +28,10 @@ def test_calculate_flare_size(flare_calc: FlareCalculator) -> None:
 
 
 def test_calculate_flare_size_invalid(flare_calc: FlareCalculator) -> None:
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError, match="total_flow must be positive"):
         flare_calc.calculate_flare_size(0, {"CH4": 1}, 300, 1)
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError, match="gas_composition must not be empty"):
         flare_calc.calculate_flare_size(100, {}, 300, 1)
 
 

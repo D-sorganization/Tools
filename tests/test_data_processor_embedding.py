@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import importlib
 import sys
+import types
 from pathlib import Path
 
 import numpy as np
@@ -41,6 +42,19 @@ def test_ensure_paths_is_idempotent_and_adds_required_roots() -> None:
     before = list(sys.path)
     embedding.ensure_full_data_processor_on_path()  # second call is a no-op
     assert sys.path == before
+
+
+def test_ensure_paths_does_not_evict_cached_data_processor(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The bridge must not repair imports by deleting cached modules."""
+    sentinel = types.ModuleType("data_processor")
+    sentinel.__file__ = "outside/full/app/data_processor/__init__.py"
+    monkeypatch.setitem(sys.modules, "data_processor", sentinel)
+
+    embedding.ensure_full_data_processor_on_path()
+
+    assert sys.modules["data_processor"] is sentinel
 
 
 def test_ensure_paths_rejects_wrong_type() -> None:

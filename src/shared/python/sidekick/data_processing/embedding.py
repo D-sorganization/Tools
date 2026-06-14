@@ -18,7 +18,6 @@ from __future__ import annotations
 
 import importlib.util
 import logging
-import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
 
@@ -72,36 +71,15 @@ def _find_repo_root(start: Path) -> Path:
     )
 
 
-def _evict_shadow_data_processor(app_package_dir: Path) -> None:
-    """Drop cached ``data_processor`` modules that resolve outside the full app.
-
-    A small Rust-I/O wrapper at ``src/shared/python/data_processor`` (issue #2989)
-    shares the top-level name ``data_processor`` and sits on the always-present
-    ``src/shared/python`` path. If it (or any submodule) was imported first it
-    would shadow the full application. Evicting cached entries whose file lives
-    outside the app package directory lets the next import resolve to the app.
-    Already-bound references in other modules are unaffected.
-    """
-    app_dir = str(app_package_dir.resolve())
-    for name in [
-        n
-        for n in sys.modules
-        if n == "data_processor" or n.startswith("data_processor.")
-    ]:
-        module = sys.modules.get(name)
-        module_file = getattr(module, "__file__", None) or ""
-        if not module_file or not module_file.startswith(app_dir):
-            del sys.modules[name]
-
-
 def ensure_full_data_processor_on_path(repo_root: Path | None = None) -> Path:
     """Add the full Data Processor package roots to ``sys.path`` (idempotent).
 
     **Pre-conditions** (DbC): ``repo_root`` is ``None`` or a :class:`~pathlib.Path`.
 
-    The app package directory is inserted ahead of ``src/shared/python`` and any
-    shadowing ``data_processor`` modules are evicted, so bare ``import
-    data_processor`` resolves to the full application in this process.
+    The app package directories are appended without reordering or evicting
+    cached modules. The bulk-I/O wrapper lives under the distinct
+    ``data_processor_io`` import name, so bare ``import data_processor`` remains
+    reserved for the full application package.
 
     Args:
         repo_root: Optional explicit repository root. When omitted it is located
@@ -117,19 +95,15 @@ def ensure_full_data_processor_on_path(repo_root: Path | None = None) -> Path:
         if repo_root is not None
         else _find_repo_root(Path(__file__).resolve())
     )
-    # Insert in reverse so REQUIRED_SUBPATHS[0] (the app package dir) lands first.
-    # Force it ahead of any existing occurrence — the app dir is often already on
-    # sys.path *behind* ``src/shared/python``, which would let the issue-#2989
-    # ``data_processor`` wrapper shadow the application.
+    import sys
+
     for sub in reversed(REQUIRED_SUBPATHS):
         target = root / sub
         if not target.is_dir():
             continue
         path_str = str(target)
-        while path_str in sys.path:
-            sys.path.remove(path_str)
-        sys.path.insert(0, path_str)
-    _evict_shadow_data_processor(root / REQUIRED_SUBPATHS[0])
+        if path_str not in sys.path:
+            sys.path.append(path_str)
     return root
 
 

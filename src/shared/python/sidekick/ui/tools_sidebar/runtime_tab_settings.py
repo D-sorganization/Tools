@@ -29,6 +29,7 @@ from .appearance import (
     MAX_BORDER_WIDTH,
     PanelAppearance,
     coerce_appearance,
+    is_panel_appearance,
 )
 from .appearance_settings_controls import _ColorButton
 from .calculator_startup import (
@@ -216,7 +217,7 @@ class AppearanceSettingsPanel(QtWidgets.QWidget):
             raise TypeError("sidebar must be provided")
         if not isinstance(tab_id, str) or not tab_id.strip():
             raise ValueError("tab_id must be a non-empty string")
-        if not isinstance(base_appearance, PanelAppearance):
+        if not is_panel_appearance(base_appearance):
             raise TypeError("base_appearance must be a PanelAppearance")
         super().__init__(parent)
         self.setObjectName("SidekickAppearanceSettingsPanel")

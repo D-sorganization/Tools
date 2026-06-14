@@ -151,3 +151,15 @@ def test_panel_qss_rejects_wrong_type() -> None:
     ap = _import_appearance()
     with pytest.raises(TypeError):
         ap.panel_qss("Panel", {"foreground": "#fff"})
+
+
+def test_panel_qss_accepts_source_qualified_appearance_alias() -> None:
+    ap = _import_appearance()
+    from src.shared.python.sidekick.ui.tools_sidebar.appearance import (
+        PanelAppearance,
+    )
+
+    alias_appearance = PanelAppearance("#fff", "#000", "#3b82f6")
+
+    assert ap.is_panel_appearance(alias_appearance) is True
+    assert "border: 2px solid #3b82f6" in ap.panel_qss("Panel", alias_appearance)

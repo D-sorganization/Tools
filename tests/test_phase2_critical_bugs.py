@@ -230,7 +230,7 @@ class TestDataProcessingImports:
         assert logger.name == "test_phase2"
 
     def test_full_package_imports_after_shared_package_loaded(self):
-        """The shared rust-engine package should not shadow the full package."""
+        """The Rust I/O wrapper should not shadow the full app package."""
         repo_root = Path(__file__).resolve().parent.parent
         shared_path = repo_root / "src" / "shared" / "python"
         dp_path = repo_root / "src" / "data_processing" / "data_processor" / "python"
@@ -239,15 +239,17 @@ class TestDataProcessingImports:
             "data_processor.core",
             "data_processor.logging_config",
             "data_processor.rust_engine",
+            "data_processor_io",
         ]:
             sys.modules.pop(module_name, None)
         try:
             sys.path.insert(0, str(shared_path))
-            import data_processor
+            import data_processor_io
 
-            assert any("shared" in path for path in data_processor.__path__)
+            assert data_processor_io.__name__ == "data_processor_io"
 
             sys.path.insert(0, str(dp_path))
+            import data_processor
             import data_processor.core
             from data_processor.logging_config import get_logger
         finally:
@@ -257,6 +259,7 @@ class TestDataProcessingImports:
                 if path not in {str(shared_path), str(dp_path)}
             ]
 
+        assert not any("shared" in path for path in data_processor.__path__)
         assert "ConfigManager" in data_processor.core.__all__
         assert (
             get_logger("test_phase2_shared_shadow").name == "test_phase2_shared_shadow"

@@ -1,8 +1,12 @@
+# mypy: disable-error-code=no-untyped-def
+
+from concurrent.futures import Future
 from typing import Any
 from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pytest
+from sidekick.process_calculators import multi_param_analysis as mpa
 from sidekick.process_calculators.multi_param_analysis import (
     _evaluate_single_point,
     run_multi_parameter_analysis,
@@ -67,7 +71,30 @@ class DummyEngine:
         return {"out_var": val}
 
 
-def test_run_multi_parameter_analysis_parallel(analysis_params: dict) -> None:
+class ImmediateExecutor:
+    def __init__(self, max_workers: int | None = None) -> None:
+        self.max_workers = max_workers
+
+    def __enter__(self) -> "ImmediateExecutor":
+        return self
+
+    def __exit__(self, *exc_info: object) -> None:
+        return None
+
+    def submit(self, fn: Any, *args: object) -> Future:
+        future: Future = Future()
+        try:
+            future.set_result(fn(*args))
+        except Exception as exc:  # pragma: no cover - exercised via Future.result
+            future.set_exception(exc)
+        return future
+
+
+def test_run_multi_parameter_analysis_parallel(
+    analysis_params: dict, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(mpa, "ProcessPoolExecutor", ImmediateExecutor)
+    monkeypatch.setattr(mpa, "as_completed", lambda futures: futures)
     engine = DummyEngine()
     p1_vals = np.array([1.0, 2.0])
     p2_vals = np.array([3.0, 4.0])
