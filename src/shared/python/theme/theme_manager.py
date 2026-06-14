@@ -18,7 +18,7 @@ import logging
 import weakref
 from collections.abc import Iterable
 from pathlib import Path
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, ClassVar, cast
 
 from PyQt6 import sip
 from PyQt6.QtCore import QObject, QSettings, QStandardPaths, pyqtSignal
@@ -250,7 +250,7 @@ class ThemeManager(QObject):
             theme_name = "Light"
 
         theme = self._get_theme_dict(theme_name)
-        return generate_stylesheet(theme)
+        return cast("str", generate_stylesheet(theme))
 
     def get_current_stylesheet(self) -> str:
         """Get the stylesheet for the current theme.
@@ -443,7 +443,7 @@ class ThemeManager(QObject):
         if theme_name is None:
             raise ValueError("theme_name must be provided")
         if theme_name in BUILTIN_THEMES:
-            return BUILTIN_THEMES[theme_name]
+            return cast("dict[str, str]", BUILTIN_THEMES[theme_name])
         return self.custom_themes.get(theme_name, BUILTIN_THEMES["Light"])
 
     def _get_custom_theme_path(self) -> Path:
