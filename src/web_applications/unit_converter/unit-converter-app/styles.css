@@ -291,6 +291,17 @@ body {
   background-color: var(--surface-elevated);
 }
 
+.input-number[readonly] {
+  background-color: var(--background);
+  color: var(--text-secondary);
+  cursor: default;
+}
+
+.input-number[readonly]:focus {
+  border-color: var(--border-color);
+  box-shadow: none;
+}
+
 .input-number::placeholder {
   color: var(--text-secondary);
   opacity: 0.6;
