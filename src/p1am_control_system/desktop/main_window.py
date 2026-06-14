@@ -34,7 +34,7 @@ from p1am_control_system.desktop.routing_tab import RoutingTab
 from p1am_control_system.desktop.settings_tab import SettingsTab
 from p1am_control_system.desktop.sidebar import InspectorSidebar
 from p1am_control_system.desktop.trends_tab import TrendsTab
-from p1am_control_system.desktop.workers import HttpWorker
+from p1am_control_system.desktop.workers import HttpWorker, start_http_request
 
 logger = logging.getLogger("p1am_control.desktop.main_window")
 
@@ -212,12 +212,12 @@ class HMIMainWindow(QMainWindow):
 
     def _load_routing_config(self) -> None:
         """Fetch current PLC configuration routing parameters from FastAPI."""
-        self.routing_worker = HttpWorker(
-            "GET", f"{self.backend_url}/api/routing", timeout=1.5
+        worker = HttpWorker(
+            "GET", f"{self.backend_url}/api/routing", timeout=1.5, parent=self
         )
-        self.routing_worker.success.connect(self._on_load_routing_config_success)
-        self.routing_worker.error.connect(self._on_load_routing_config_error)
-        self.routing_worker.start()
+        worker.success.connect(self._on_load_routing_config_success)
+        worker.error.connect(self._on_load_routing_config_error)
+        start_http_request(self, "routing_worker", worker)
 
     def _on_load_routing_config_success(self, data):
         from models import RoutingConfig
@@ -404,19 +404,22 @@ class HMIMainWindow(QMainWindow):
     @pyqtSlot(bool)
     def _on_estop_triggered(self, active: bool) -> None:
         if active:
-            self.estop_worker = HttpWorker(
-                "POST", f"{self.backend_url}/api/estop", timeout=1.0
+            worker = HttpWorker(
+                "POST", f"{self.backend_url}/api/estop", timeout=0.5, parent=self
             )
-            self.estop_worker.success.connect(self._on_estop_success)
-            self.estop_worker.error.connect(self._on_estop_error)
-            self.estop_worker.start()
+            worker.success.connect(self._on_estop_success)
+            worker.error.connect(self._on_estop_error)
+            start_http_request(self, "estop_worker", worker)
         else:
-            self.estop_clear_worker = HttpWorker(
-                "POST", f"{self.backend_url}/api/estop/clear", timeout=1.0
+            worker = HttpWorker(
+                "POST",
+                f"{self.backend_url}/api/estop/clear",
+                timeout=0.5,
+                parent=self,
             )
-            self.estop_clear_worker.success.connect(self._on_estop_clear_success)
-            self.estop_clear_worker.error.connect(self._on_estop_clear_error)
-            self.estop_clear_worker.start()
+            worker.success.connect(self._on_estop_clear_success)
+            worker.error.connect(self._on_estop_clear_error)
+            start_http_request(self, "estop_clear_worker", worker)
 
     def _on_estop_clear_success(self, data) -> None:
         # Only now is the plant confirmed released; let the header go green.

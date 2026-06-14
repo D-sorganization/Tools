@@ -21,6 +21,7 @@ pytest.importorskip("requests")
 from PyQt6.QtWidgets import QMessageBox  # noqa: E402
 
 from p1am_control_system.desktop import control_tab as control_tab_module  # noqa: E402
+from p1am_control_system.desktop import control_tab_mpc as mpc_module  # noqa: E402
 from p1am_control_system.desktop import routing_tab as routing_tab_module  # noqa: E402
 from p1am_control_system.desktop import sidebar as sidebar_module  # noqa: E402
 from p1am_control_system.desktop.control_tab import ControlTab  # noqa: E402
@@ -47,6 +48,7 @@ class _SpyWorker:
         self.started = False
         self.success = self._Signal()
         self.error = self._Signal()
+        self.finished = self._Signal()
         _SpyWorker.instances.append(self)
 
     def start(self) -> None:
@@ -74,6 +76,7 @@ def _robust_pyqtgraph(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr(
         control_tab_module.pg, "mkPen", lambda *a, **k: None, raising=False
     )
+    monkeypatch.setattr(mpc_module.pg, "mkPen", lambda *a, **k: None, raising=False)
 
 
 def _patch_question(monkeypatch: pytest.MonkeyPatch, module, answer) -> list[str]:

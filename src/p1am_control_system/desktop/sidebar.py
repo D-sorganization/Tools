@@ -18,7 +18,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from .workers import HttpWorker
+from .workers import HttpWorker, start_http_request
 
 logger = logging.getLogger("p1am_control.desktop.sidebar")
 
@@ -270,17 +270,22 @@ class InspectorSidebar(QWidget):
                 )
                 == QMessageBox.StandardButton.Yes
             ):
-                self.force_worker = HttpWorker(
+                worker = HttpWorker(
                     "POST",
                     f"{self.backend_url}/api/tags/{self.selected_tag_id}",
                     json={"value": val},
                     timeout=1.0,
+                    parent=self,
                 )
-                self.force_worker.success.connect(
-                    lambda data: self._on_force_success(val, data)
+                worker.success.connect(lambda data: self._on_force_success(val, data))
+                worker.error.connect(self._on_force_error)
+                start_http_request(
+                    self,
+                    "force_worker",
+                    worker,
+                    busy_button=self.btn_apply,
+                    busy_text="Applying...",
                 )
-                self.force_worker.error.connect(self._on_force_error)
-                self.force_worker.start()
 
         # 2. Update config parameters (limits & PID)
         if self.user_role == "Admin" and self.routing_config:
@@ -304,15 +309,22 @@ class InspectorSidebar(QWidget):
                 pid.kd = self.spin_pid_kd.value()
 
             # Send updated config back to PLC
-            self.routing_worker = HttpWorker(
+            worker = HttpWorker(
                 "POST",
                 f"{self.backend_url}/api/routing",
                 json=self.routing_config.dict(),
                 timeout=2.0,
+                parent=self,
             )
-            self.routing_worker.success.connect(self._on_routing_success)
-            self.routing_worker.error.connect(self._on_routing_error)
-            self.routing_worker.start()
+            worker.success.connect(self._on_routing_success)
+            worker.error.connect(self._on_routing_error)
+            start_http_request(
+                self,
+                "routing_worker",
+                worker,
+                busy_button=self.btn_apply,
+                busy_text="Applying...",
+            )
 
         elif self.user_role != "Admin" and (
             self.spin_low_limit.value() != self._baseline_low_limit

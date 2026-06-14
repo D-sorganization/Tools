@@ -15,18 +15,18 @@ from PyQt6.QtWidgets import (
     QLabel,
     QMessageBox,
     QPushButton,
-    QSpinBox,
     QTabWidget,
     QVBoxLayout,
     QWidget,
 )
 
-from .workers import HttpWorker
+from .control_tab_mpc import ControlTabMpcMixin
+from .workers import HttpWorker, start_http_request
 
 logger = logging.getLogger("p1am_control.desktop.control")
 
 
-class ControlTab(QWidget):
+class ControlTab(ControlTabMpcMixin, QWidget):
     """PID Loop control and MPC Groundwork tab."""
 
     def __init__(self, parent: QWidget | None = None) -> None:
@@ -191,104 +191,6 @@ class ControlTab(QWidget):
 
         layout.addLayout(right_layout, 1)
 
-    def _setup_mpc_tab(self, widget: QWidget) -> None:
-        layout = QHBoxLayout(widget)
-
-        # Left side: MPC configuration inputs
-        left_layout = QVBoxLayout()
-        mpc_group = QGroupBox("MPC Parameters", widget)
-        grid = QGridLayout(mpc_group)
-
-        grid.addWidget(QLabel("Prediction Horizon (P):", widget), 0, 0)
-        self.spin_p_horiz = QSpinBox(widget)
-        self.spin_p_horiz.setRange(2, 30)
-        self.spin_p_horiz.setValue(10)
-        grid.addWidget(self.spin_p_horiz, 0, 1)
-
-        grid.addWidget(QLabel("Control Horizon (M):", widget), 1, 0)
-        self.spin_c_horiz = QSpinBox(widget)
-        self.spin_c_horiz.setRange(1, 10)
-        self.spin_c_horiz.setValue(3)
-        grid.addWidget(self.spin_c_horiz, 1, 1)
-
-        grid.addWidget(QLabel("Setpoint:", widget), 2, 0)
-        self.spin_mpc_sp = QDoubleSpinBox(widget)
-        self.spin_mpc_sp.setRange(0.0, 100.0)
-        self.spin_mpc_sp.setValue(50.0)
-        grid.addWidget(self.spin_mpc_sp, 2, 1)
-
-        grid.addWidget(QLabel("Penalty Factor (rho):", widget), 3, 0)
-        self.spin_mpc_rho = QDoubleSpinBox(widget)
-        self.spin_mpc_rho.setRange(0.0, 10.0)
-        self.spin_mpc_rho.setSingleStep(0.05)
-        self.spin_mpc_rho.setValue(0.1)
-        grid.addWidget(self.spin_mpc_rho, 3, 1)
-
-        grid.addWidget(QLabel("Plant Gain (Kp):", widget), 4, 0)
-        self.spin_plant_gain = QDoubleSpinBox(widget)
-        self.spin_plant_gain.setRange(0.1, 5.0)
-        self.spin_plant_gain.setValue(1.2)
-        grid.addWidget(self.spin_plant_gain, 4, 1)
-
-        grid.addWidget(QLabel("Plant Tau (τ):", widget), 5, 0)
-        self.spin_plant_tau = QDoubleSpinBox(widget)
-        self.spin_plant_tau.setRange(0.5, 20.0)
-        self.spin_plant_tau.setValue(5.0)
-        grid.addWidget(self.spin_plant_tau, 5, 1)
-
-        grid.addWidget(QLabel("Plant Delay (θ):", widget), 6, 0)
-        self.spin_plant_delay = QDoubleSpinBox(widget)
-        self.spin_plant_delay.setRange(0.0, 5.0)
-        self.spin_plant_delay.setValue(1.0)
-        grid.addWidget(self.spin_plant_delay, 6, 1)
-
-        self.btn_simulate_mpc = QPushButton("Simulate PID vs MPC", widget)
-        self.btn_simulate_mpc.clicked.connect(self._simulate_mpc)
-        grid.addWidget(self.btn_simulate_mpc, 7, 0, 1, 2)
-
-        left_layout.addWidget(mpc_group)
-        left_layout.addStretch()
-        layout.addLayout(left_layout, 1)
-
-        # Right side: plots showing step responses of PID vs MPC
-        right_layout = QVBoxLayout()
-
-        # PV comparison plot
-        self.mpc_pv_plot = pg.PlotWidget(widget)
-        self.mpc_pv_plot.setBackground(self.palette().color(QPalette.ColorRole.Base))
-        self.mpc_pv_plot.showGrid(x=True, y=True, alpha=0.3)
-        self.mpc_pv_plot.setLabel("left", "Process Value (PV)")
-        self.mpc_pv_plot.setLabel("bottom", "Time (seconds)")
-        self.mpc_pv_plot.addLegend()
-        self.mpc_pv_plot.setTitle("PV Tracking Comparison")
-
-        self.curve_pid_pv = self.mpc_pv_plot.plot(
-            pen=pg.mkPen(color="r", width=2), name="PID PV"
-        )
-        self.curve_mpc_pv = self.mpc_pv_plot.plot(
-            pen=pg.mkPen(color=(0, 100, 0), width=2), name="MPC PV"
-        )
-        right_layout.addWidget(self.mpc_pv_plot)
-
-        # CV comparison plot
-        self.mpc_cv_plot = pg.PlotWidget(widget)
-        self.mpc_cv_plot.setBackground(self.palette().color(QPalette.ColorRole.Base))
-        self.mpc_cv_plot.showGrid(x=True, y=True, alpha=0.3)
-        self.mpc_cv_plot.setLabel("left", "Control Value (CV)")
-        self.mpc_cv_plot.setLabel("bottom", "Time (seconds)")
-        self.mpc_cv_plot.addLegend()
-        self.mpc_cv_plot.setTitle("CV Output Effort Comparison")
-
-        self.curve_pid_cv = self.mpc_cv_plot.plot(
-            pen=pg.mkPen(color="r", width=2), name="PID CV"
-        )
-        self.curve_mpc_cv = self.mpc_cv_plot.plot(
-            pen=pg.mkPen(color=(0, 100, 0), width=2), name="MPC CV"
-        )
-        right_layout.addWidget(self.mpc_cv_plot)
-
-        layout.addLayout(right_layout, 2)
-
     def _on_loop_changed(self, idx: int) -> None:
         self.tracking_time.clear()
         self.tracking_pv.clear()
@@ -387,14 +289,24 @@ class ControlTab(QWidget):
             != QMessageBox.StandardButton.Yes
         ):
             return
-        self.start_worker = HttpWorker(
-            "POST", f"{self.backend_url}/api/pid/{idx}/tuning/start", timeout=1.0
+        worker = HttpWorker(
+            "POST",
+            f"{self.backend_url}/api/pid/{idx}/tuning/start",
+            timeout=1.0,
+            parent=self,
         )
-        self.start_worker.success.connect(
-            lambda data: self._on_start_tuning_success(idx, data)
+        worker.success.connect(lambda data: self._on_start_tuning_success(idx, data))
+        worker.error.connect(self._on_connection_error)
+        start_http_request(
+            self,
+            "start_worker",
+            worker,
+            busy_button=self.btn_start_tuning,
+            busy_text="Starting...",
+            restore_button=lambda was: was
+            and self.user_role == "Admin"
+            and not self.tuning_active,
         )
-        self.start_worker.error.connect(self._on_connection_error)
-        self.start_worker.start()
 
     def _on_start_tuning_success(self, idx, data):
         self.tuning_active = True
@@ -420,17 +332,27 @@ class ControlTab(QWidget):
             != QMessageBox.StandardButton.Yes
         ):
             return
-        self.step_worker = HttpWorker(
+        worker = HttpWorker(
             "POST",
             f"{self.backend_url}/api/pid/{idx}/tuning/step",
             json={"step_value": step_val},
             timeout=1.0,
+            parent=self,
         )
-        self.step_worker.success.connect(
+        worker.success.connect(
             lambda data: self._on_apply_step_success(idx, step_val, data)
         )
-        self.step_worker.error.connect(self._on_connection_error)
-        self.step_worker.start()
+        worker.error.connect(self._on_connection_error)
+        start_http_request(
+            self,
+            "step_worker",
+            worker,
+            busy_button=self.btn_apply_step,
+            busy_text="Applying...",
+            restore_button=lambda was: was
+            and self.user_role == "Admin"
+            and self.tuning_active,
+        )
 
     def _on_apply_step_success(self, idx, step_val, data):
         logger.info(f"Tuning step applied to loop {idx}: {step_val}%")
@@ -440,14 +362,24 @@ class ControlTab(QWidget):
 
     def _stop_tuning(self) -> None:
         idx = self.loop_combo.currentIndex()
-        self.stop_worker = HttpWorker(
-            "POST", f"{self.backend_url}/api/pid/{idx}/tuning/stop", timeout=1.5
+        worker = HttpWorker(
+            "POST",
+            f"{self.backend_url}/api/pid/{idx}/tuning/stop",
+            timeout=1.5,
+            parent=self,
         )
-        self.stop_worker.success.connect(
-            lambda data: self._on_stop_tuning_success(idx, data)
+        worker.success.connect(lambda data: self._on_stop_tuning_success(idx, data))
+        worker.error.connect(self._on_connection_error)
+        start_http_request(
+            self,
+            "stop_worker",
+            worker,
+            busy_button=self.btn_stop_tuning,
+            busy_text="Stopping...",
+            restore_button=lambda was: was
+            and self.user_role == "Admin"
+            and self.tuning_active,
         )
-        self.stop_worker.error.connect(self._on_connection_error)
-        self.stop_worker.start()
 
     def _on_stop_tuning_success(self, idx, data):
         self.tuning_active = False
@@ -507,22 +439,30 @@ class ControlTab(QWidget):
             self.routing_config.pids[idx].ki = ki
             self.routing_config.pids[idx].kd = kd
 
-            self.gains_worker = HttpWorker(
+            self._gains_apply_succeeded = False
+            worker = HttpWorker(
                 "POST",
                 f"{self.backend_url}/api/routing",
                 json=self.routing_config.dict(),
                 timeout=2.0,
+                parent=self,
             )
-            self.gains_worker.success.connect(
-                lambda data: self._on_apply_gains_success(idx, data)
+            worker.success.connect(lambda data: self._on_apply_gains_success(idx, data))
+            worker.error.connect(self._on_connection_error)
+            start_http_request(
+                self,
+                "gains_worker",
+                worker,
+                busy_button=self.btn_apply_gains,
+                busy_text="Applying...",
+                restore_button=lambda was: was and not self._gains_apply_succeeded,
             )
-            self.gains_worker.error.connect(self._on_connection_error)
-            self.gains_worker.start()
 
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to apply gains: {e}")
 
     def _on_apply_gains_success(self, idx, data):
+        self._gains_apply_succeeded = True
         QMessageBox.information(
             self,
             "Gains Applied",
@@ -530,33 +470,3 @@ class ControlTab(QWidget):
         )
         self.btn_apply_gains.setEnabled(False)
         logger.info(f"Applied recommended PID gains to Loop {idx}")
-
-    def _simulate_mpc(self) -> None:
-        payload = {
-            "prediction_horizon": self.spin_p_horiz.value(),
-            "control_horizon": self.spin_c_horiz.value(),
-            "setpoint": self.spin_mpc_sp.value(),
-            "rho": self.spin_mpc_rho.value(),
-            "process_gain": self.spin_plant_gain.value(),
-            "process_tau": self.spin_plant_tau.value(),
-            "process_delay": self.spin_plant_delay.value(),
-        }
-
-        self.mpc_worker = HttpWorker(
-            "POST", f"{self.backend_url}/api/mpc/simulate", json=payload, timeout=2.0
-        )
-        self.mpc_worker.success.connect(self._on_simulate_mpc_success)
-        self.mpc_worker.error.connect(self._on_connection_error)
-        self.mpc_worker.start()
-
-    def _on_simulate_mpc_success(self, data):
-        times = data["time"]
-
-        # Plot responses
-        self.curve_pid_pv.setData(times, data["pid"]["pv"])
-        self.curve_mpc_pv.setData(times, data["mpc"]["pv"])
-
-        self.curve_pid_cv.setData(times, data["pid"]["cv"])
-        self.curve_mpc_cv.setData(times, data["mpc"]["cv"])
-
-        logger.info("MPC vs PID simulation completed successfully.")
