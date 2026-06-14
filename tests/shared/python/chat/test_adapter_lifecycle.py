@@ -13,23 +13,41 @@ ROOT = Path(__file__).resolve().parents[4]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-src_pkg = types.ModuleType("src")
+src_pkg = sys.modules.setdefault("src", types.ModuleType("src"))
 src_pkg.__path__ = [str(ROOT / "src")]
-sys.modules.setdefault("src", src_pkg)
+shared_pkg = sys.modules.setdefault("src.shared", types.ModuleType("src.shared"))
+shared_pkg.__path__ = [str(ROOT / "src" / "shared")]
+python_pkg = sys.modules.setdefault(
+    "src.shared.python", types.ModuleType("src.shared.python")
+)
+python_pkg.__path__ = [str(ROOT / "src" / "shared" / "python")]
+src_pkg.shared = shared_pkg
+shared_pkg.python = python_pkg
 
-logging_pkg = types.ModuleType("src.shared.python.logging_pkg")
-logging_config = types.ModuleType("src.shared.python.logging_pkg.logging_config")
+logging_pkg = sys.modules.setdefault(
+    "src.shared.python.logging_pkg",
+    types.ModuleType("src.shared.python.logging_pkg"),
+)
+logging_config = sys.modules.setdefault(
+    "src.shared.python.logging_pkg.logging_config",
+    types.ModuleType("src.shared.python.logging_pkg.logging_config"),
+)
 logging_config.get_logger = getLogger
 logging_config.setup_logging = lambda *a, **k: None
-sys.modules.setdefault("src.shared.python.logging_pkg", logging_pkg)
-sys.modules.setdefault("src.shared.python.logging_pkg.logging_config", logging_config)
+python_pkg.logging_pkg = logging_pkg
+logging_pkg.logging_config = logging_config
 
-config_pkg = types.ModuleType("src.shared.python.config")
-environment = types.ModuleType("src.shared.python.config.environment")
+config_pkg = sys.modules.setdefault(
+    "src.shared.python.config", types.ModuleType("src.shared.python.config")
+)
+environment = sys.modules.setdefault(
+    "src.shared.python.config.environment",
+    types.ModuleType("src.shared.python.config.environment"),
+)
 environment.get_env = lambda _name, default=None, **_k: default
 environment.get_env_float = lambda _name, default=None, **_k: default
-sys.modules.setdefault("src.shared.python.config", config_pkg)
-sys.modules.setdefault("src.shared.python.config.environment", environment)
+python_pkg.config = config_pkg
+config_pkg.environment = environment
 
 pytest.importorskip("PyQt6.QtCore")
 

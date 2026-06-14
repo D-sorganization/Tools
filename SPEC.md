@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.435                                    |
+| **Spec Version**        | 1.1.440                                    |
 | **Last Spec Update**    | 2026-06-14                                 |
 
 ## 2. Purpose & Mission
@@ -76,11 +76,14 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   diagnostics so hosts and tests can report broken Qt DLL/runtime installs
   without crashing the importing process
 - Project-scoped terminal-agent runtime coordination for shared chat provider
-  processes
+  processes is host-provided; Tools advertises terminal availability through
+  chat WebSocket session capabilities
 - Shared chat WebSocket terminal-session actions for start/input/resize/events
-  and stop lifecycle control
+  and stop lifecycle control return structured errors when a host has not
+  configured a terminal runtime
 - Shared chat dock terminal mode with shell/provider selectors and terminal
-  session input routing
+  session input routing remains hidden until the connected server advertises
+  terminal runtime support
 - Shared chat dock close and terminal stop controls, with terminal
   shell/provider dropdowns populated from the shared provider registry
 - Shared chat dock terminal lifecycle controls disable duplicate starts,
@@ -144,6 +147,14 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   the repository pytest contract, keeps isolated import smoke tests rooted by
   repository metadata, and requires `TOOLS_RUN_LIVE_CODEX_CLI=1` before running
   the slow real Codex chat round-trip against a developer or runner CLI install
+- Shared AI settings modules preserve legacy runtime aliases for the
+  `AISettings` model and provider/model combo controls while delegating
+  implementation to the split settings model and providers tab modules
+- P1AM desktop PID/MPC plots use a local PyQt-compatible plotting shim so the
+  HMI can still construct when the optional `pyqtgraph` package is absent
+- Shared AI/chat UI tests preserve the `src.shared` namespace package during
+  isolated import setup so full-suite adapter tests can safely monkeypatch
+  dotted `src.shared.*` targets across Python versions
 - Sidekick Python REPL registry preconditions accept both canonical
   `sidekick` and deprecated `upstream_drift_tools` `WorkspaceRegistry` module
   identities during the compatibility migration while preserving explicit

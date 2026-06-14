@@ -4,8 +4,6 @@ import csv
 import logging
 
 import numpy as np
-import pyqtgraph as pg
-import pyqtgraph.exporters
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QCheckBox,
@@ -19,6 +17,8 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+
+from .plot_compat import build_svg_exporter, pg
 
 # Try to import filters from signal_toolkit, with safe fallbacks
 try:
@@ -318,7 +318,9 @@ class TrendsTab(QWidget):
             return
 
         try:
-            exporter = pyqtgraph.exporters.SVGExporter(self.plot_widget.plotItem)
+            exporter = build_svg_exporter(self.plot_widget)
+            if exporter is None:
+                raise RuntimeError("SVG export requires pyqtgraph")
             exporter.export(file_path)
             QMessageBox.information(
                 self, "Export Successful", f"SVG plot saved to {file_path}"

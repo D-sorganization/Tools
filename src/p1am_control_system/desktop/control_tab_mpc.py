@@ -4,7 +4,6 @@
 
 import logging
 
-import pyqtgraph as pg
 from PyQt6.QtGui import QPalette
 from PyQt6.QtWidgets import (
     QDoubleSpinBox,
@@ -18,6 +17,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from .plot_compat import pg
 from .workers import HttpWorker, start_http_request
 
 logger = logging.getLogger("p1am_control.desktop.control")

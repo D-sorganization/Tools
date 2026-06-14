@@ -210,6 +210,7 @@ class ChatDockWidget(QDockWidget):
         )
         self._voice_manager = VoiceInputManager()
         self._terminal_start_pending = False
+        self._terminal_runtime_available = False
         self._socket: QWebSocket | None = None
         self._session_file = _session_file_path(app_name)
         # Tools issue #2872: conversation-management state.
@@ -234,6 +235,7 @@ class ChatDockWidget(QDockWidget):
         self._is_closing = False
         self._collapsed: bool = False
         self._setup_ui()
+        self._set_terminal_runtime_available(False)
         self._connect_on_show = True
 
     @property
@@ -420,6 +422,13 @@ class ChatDockWidget(QDockWidget):
             sid = data.get("session_id", "")
             ChatDockWidget._set_shared_session_id(sid)
             _write_shared_session_id(sid, self._session_file)
+            capabilities = data.get("capabilities", {})
+            self._set_terminal_runtime_available(
+                bool(
+                    isinstance(capabilities, dict)
+                    and capabilities.get("terminal_runtime")
+                )
+            )
             self._send_ws({"action": "history"})
 
         elif msg_type == "chunk":
@@ -1044,6 +1053,11 @@ class ChatDockWidget(QDockWidget):
         self._populate_provider_combo()
 
     def _on_terminal_start(self) -> None:
+        if not self._terminal_runtime_available:
+            self._append_terminal_line(
+                "[terminal] host has not enabled terminal runtime"
+            )
+            return
         if self._terminal_session_id or self._terminal_start_pending:
             self._append_terminal_line("[terminal] session already active")
             return
@@ -1158,7 +1172,9 @@ class ChatDockWidget(QDockWidget):
         self._status_label.setText(f"Voice: {message}")
 
     def _on_mode_changed(self) -> None:
-        is_terminal = self._current_mode() == "terminal"
+        is_terminal = (
+            self._current_mode() == "terminal" and self._terminal_runtime_available
+        )
         self._content_stack.setCurrentIndex(1 if is_terminal else 0)
         self._shell_combo.setVisible(is_terminal)
         self._provider_combo.setVisible(is_terminal)
@@ -1174,13 +1190,31 @@ class ChatDockWidget(QDockWidget):
         mode = self._mode_combo.currentData()
         return str(mode or "chat")
 
+    def _set_terminal_runtime_available(self, available: bool) -> None:
+        self._terminal_runtime_available = bool(available)
+        terminal_index = self._mode_combo.findData("terminal")
+        if self._terminal_runtime_available:
+            if terminal_index < 0:
+                self._mode_combo.addItem("Terminal", "terminal")
+        else:
+            if terminal_index >= 0:
+                if self._current_mode() == "terminal":
+                    chat_index = self._mode_combo.findData("chat")
+                    self._mode_combo.setCurrentIndex(max(0, chat_index))
+                self._mode_combo.removeItem(terminal_index)
+            self._terminal_session_id = None
+            self._terminal_start_pending = False
+        self._sync_terminal_controls()
+        self._on_mode_changed()
+
     def _sync_terminal_controls(self) -> None:
         if not hasattr(self, "_terminal_start_btn"):
             return
         active = bool(self._terminal_session_id)
         pending = bool(self._terminal_start_pending)
         startable = (
-            not active
+            self._terminal_runtime_available
+            and not active
             and not pending
             and bool(self._shell_combo.currentData())
             and bool(self._provider_combo.currentData())

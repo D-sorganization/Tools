@@ -149,18 +149,19 @@ class TestIndexCodebase:
         assert reply["files_parsed"] == 42
         assert reply["symbols_inserted"] == 1024
 
-    def test_missing_root_path_returns_error(self) -> None:
-        """Omitting root_path produces a validation error (not Unknown action)."""
-        client = _make_client()
+    def test_missing_root_path_uses_process_cwd(self, monkeypatch: Any) -> None:
+        """Omitting root_path falls back to cwd so dock requests work."""
+        service = _FakeChatService()
+        client = _make_client(service)
+        monkeypatch.setattr("os.getcwd", lambda: "/repo")
 
         with client.websocket_connect("/ws/chat/new") as ws:
             ws.receive_json()
             ws.send_json({"action": "index_codebase"})
             reply = ws.receive_json()
 
-        assert reply["type"] == "error"
-        assert "root_path" in reply["detail"].lower()
-        assert "Unknown action" not in reply["detail"]
+        assert reply["type"] == "index_status"
+        service._index_fn.assert_awaited_once_with("/repo")
 
     def test_value_error_returns_error_not_unknown_action(self) -> None:
         """Service ValueError produces type=error with detail (not Unknown action)."""
