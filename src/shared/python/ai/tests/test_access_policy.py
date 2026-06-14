@@ -5,6 +5,7 @@ from __future__ import annotations
 import sys
 import types
 from pathlib import Path
+from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
@@ -31,12 +32,14 @@ shared_module.__path__ = [str(REPO_ROOT / "src" / "shared")]
 if upstream_src is not None:
     shared_module.__path__.append(str(upstream_src / "shared"))
 sys.modules["src.shared"] = shared_module
+local_src.__dict__["shared"] = shared_module
 
 shared_python_module = types.ModuleType("src.shared.python")
 shared_python_module.__path__ = [str(REPO_ROOT / "src" / "shared" / "python")]
 if upstream_src is not None:
     shared_python_module.__path__.append(str(upstream_src / "shared" / "python"))
 sys.modules["src.shared.python"] = shared_python_module
+shared_module.__dict__["python"] = shared_python_module
 
 from src.shared.python.ai.access_policy import (
     READ_ONLY_REPO_TOOL_NAMES,
@@ -227,7 +230,7 @@ def _declaration_names(tools: list[dict[str, object]]) -> set[str]:
 
 
 def test_process_message_passes_mode_filtered_tools(
-    qtbot: object,
+    qtbot: Any,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     from src.shared.python.ai.gui import assistant_panel

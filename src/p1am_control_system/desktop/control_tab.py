@@ -3,7 +3,6 @@
 import logging
 import os
 
-import pyqtgraph as pg
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPalette
 from PyQt6.QtWidgets import (
@@ -21,6 +20,7 @@ from PyQt6.QtWidgets import (
 )
 
 from .control_tab_mpc import ControlTabMpcMixin
+from .plot_compat import pg
 from .workers import HttpWorker, start_http_request
 
 logger = logging.getLogger("p1am_control.desktop.control")
@@ -303,9 +303,9 @@ class ControlTab(ControlTabMpcMixin, QWidget):
             worker,
             busy_button=self.btn_start_tuning,
             busy_text="Starting...",
-            restore_button=lambda was: was
-            and self.user_role == "Admin"
-            and not self.tuning_active,
+            restore_button=lambda was: (
+                was and self.user_role == "Admin" and not self.tuning_active
+            ),
         )
 
     def _on_start_tuning_success(self, idx, data):
@@ -349,9 +349,9 @@ class ControlTab(ControlTabMpcMixin, QWidget):
             worker,
             busy_button=self.btn_apply_step,
             busy_text="Applying...",
-            restore_button=lambda was: was
-            and self.user_role == "Admin"
-            and self.tuning_active,
+            restore_button=lambda was: (
+                was and self.user_role == "Admin" and self.tuning_active
+            ),
         )
 
     def _on_apply_step_success(self, idx, step_val, data):
@@ -376,9 +376,9 @@ class ControlTab(ControlTabMpcMixin, QWidget):
             worker,
             busy_button=self.btn_stop_tuning,
             busy_text="Stopping...",
-            restore_button=lambda was: was
-            and self.user_role == "Admin"
-            and self.tuning_active,
+            restore_button=lambda was: (
+                was and self.user_role == "Admin" and self.tuning_active
+            ),
         )
 
     def _on_stop_tuning_success(self, idx, data):

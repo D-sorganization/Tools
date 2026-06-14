@@ -82,7 +82,7 @@ def test_terminal_start_returns_session_payload(tmp_path: Path) -> None:
     client = _client(runtime)
 
     with client.websocket_connect("/api/ws/chat/new") as websocket:
-        websocket.receive_json()
+        session_info = websocket.receive_json()
         websocket.send_json(
             {
                 "action": "terminal_start",
@@ -95,6 +95,7 @@ def test_terminal_start_returns_session_payload(tmp_path: Path) -> None:
         payload = websocket.receive_json()
 
     assert payload["type"] == "terminal_session"
+    assert session_info["capabilities"]["terminal_runtime"] is True
     assert payload["session"]["session_id"] == "terminal_123"
     assert runtime.started[0].project_root == tmp_path.resolve()
 
@@ -147,7 +148,7 @@ def test_terminal_action_without_runtime_returns_error(tmp_path: Path) -> None:
     client = _client()
 
     with client.websocket_connect("/api/ws/chat/new") as websocket:
-        websocket.receive_json()
+        session_info = websocket.receive_json()
         websocket.send_json(
             {
                 "action": "terminal_start",
@@ -162,6 +163,7 @@ def test_terminal_action_without_runtime_returns_error(tmp_path: Path) -> None:
         "type": "error",
         "detail": "Terminal runtime is not configured",
     }
+    assert session_info["capabilities"]["terminal_runtime"] is False
 
 
 def test_terminal_start_validation_error_is_structured() -> None:

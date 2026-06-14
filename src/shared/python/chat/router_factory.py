@@ -109,7 +109,13 @@ def create_chat_router(
             session = chat_service.get_or_create_session(session_id)
             session_id = session.session_id
 
-        await websocket.send_json({"type": "session_info", "session_id": session_id})
+        await websocket.send_json(
+            {
+                "type": "session_info",
+                "session_id": session_id,
+                "capabilities": _chat_capabilities(websocket),
+            }
+        )
 
         try:
             while True:
@@ -406,6 +412,13 @@ def _terminal_runtime(websocket: WebSocket) -> Any:
     if runtime is None:
         raise TerminalRuntimeError("Terminal runtime is not configured")
     return runtime
+
+
+def _chat_capabilities(websocket: WebSocket) -> dict[str, bool]:
+    return {
+        "terminal_runtime": getattr(websocket.app.state, "terminal_runtime", None)
+        is not None
+    }
 
 
 async def _handle_terminal_start(websocket: WebSocket, msg: dict[str, Any]) -> None:

@@ -21,7 +21,7 @@ working unchanged.
 from __future__ import annotations
 
 import contextlib
-from typing import Any
+from typing import Any, cast
 
 from PyQt6.QtCore import (  # noqa: F401  QSettings re-exported for monkeypatch in tests
     QSettings,
@@ -107,7 +107,7 @@ def ProviderConfigWidget(  # noqa: N802 - keep historical class-shaped name
     """
     if provider is None:
         raise ValueError("provider must be provided")
-    return ProviderConfigRegistry.get_widget(provider, parent)
+    return cast(QWidget, ProviderConfigRegistry.get_widget(provider, parent))
 
 
 class AISettingsDialog(QDialog):
@@ -182,6 +182,8 @@ class AISettingsDialog(QDialog):
 
         self._settings = AISettings.load()
         self._build_ui()
+        self._provider_combo = self._providers_tab.provider_combo
+        self._model_combo = self._providers_tab.model_combo
         self._load_settings_into_ui()
 
     # ---- construction --------------------------------------------------

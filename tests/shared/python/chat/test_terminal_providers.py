@@ -15,12 +15,14 @@ def test_default_provider_descriptors_cover_initial_agent_set() -> None:
         "codex",
         "cline-cli",
         "gemini-cli",
+        "github-cli",
     }
     assert {provider.executable for provider in providers} == {
         "claude",
         "codex",
         "cline",
         "gemini",
+        "gh",
     }
     assert all(provider.install_probe_args == ["--version"] for provider in providers)
 
@@ -42,6 +44,7 @@ def test_default_registry_registers_shells_before_providers() -> None:
         "codex",
         "cline-cli",
         "gemini-cli",
+        "github-cli",
     ]
     assert registry.validate_selection("bash", "gemini-cli").provider.executable == (
         "gemini"

@@ -145,13 +145,36 @@ def test_chat_dock_widget_mode_handling() -> None:
     _app = QApplication.instance() or QApplication([])
     widget = ChatDockWidget(app_context="test")
 
+    assert widget._mode_combo.findData("terminal") == -1
+    assert widget._current_mode() == "chat"
+
+    widget._set_terminal_runtime_available(True)
+
     # Switch to terminal mode
-    widget._mode_combo.setCurrentIndex(1)  # Terminal is index 1
+    widget._mode_combo.setCurrentIndex(widget._mode_combo.findData("terminal"))
     assert widget._current_mode() == "terminal"
 
     # Switch back to chat mode
-    widget._mode_combo.setCurrentIndex(0)  # Chat is index 0
+    widget._mode_combo.setCurrentIndex(widget._mode_combo.findData("chat"))
     assert widget._current_mode() == "chat"
+
+    widget._set_terminal_runtime_available(False)
+    assert widget._mode_combo.findData("terminal") == -1
+
+
+def test_chat_dock_widget_session_info_enables_terminal_mode() -> None:
+    """Terminal mode is available only when the server advertises a runtime."""
+    _app = QApplication.instance() or QApplication([])
+    widget = ChatDockWidget(app_context="test")
+
+    assert widget._mode_combo.findData("terminal") == -1
+
+    widget._on_message(
+        '{"type": "session_info", "session_id": "s1", '
+        '"capabilities": {"terminal_runtime": true}}'
+    )
+
+    assert widget._mode_combo.findData("terminal") >= 0
 
 
 def test_chat_dock_widget_adapter_refreshes() -> None:
