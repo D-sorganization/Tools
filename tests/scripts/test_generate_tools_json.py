@@ -180,6 +180,30 @@ class TestManifestGeneration:
 
         assert json.dumps(run1, sort_keys=True) == json.dumps(run2, sort_keys=True)
 
+    def test_catalog_hidden_registration_is_not_exported(
+        self, manifest_gen_module, tmp_path
+    ):
+        """Compatibility launchers can keep metadata without entering catalogs."""
+        src = tmp_path / "src"
+        src.mkdir()
+        hidden = src / "legacy_movement_optimizer"
+        hidden.mkdir()
+        (hidden / "gui_registration.py").write_text(
+            "GUI_INFO = {\n"
+            '    "name": "Movement Optimizer",\n'
+            '    "tool_name": "optimizer_gui",\n'
+            '    "catalog_visible": False,\n'
+            '    "description": "Legacy compatibility launcher",\n'
+            '    "category": "Optimization",\n'
+            '    "pyqt6": {"module": "legacy.ui", "class": "Window"}\n'
+            "}\n",
+            encoding="utf-8",
+        )
+        (hidden / "launch_pyqt6.py").touch()
+
+        assert manifest_gen_module.generate_manifest_data(tmp_path) == {}
+        assert manifest_gen_module.generate_contract_data(tmp_path)["tools"] == []
+
 
 # ============================================================================
 # Phase 1, Task 1.4 Tests: Contract Generation

@@ -112,6 +112,17 @@
       }
     },
     {
+      "id": "movement_optimizer",
+      "name": "Movement Optimizer",
+      "description": "Optimize barbell biomechanics trajectories with Lagrangian dynamics, swingset, and chain models",
+      "category": "Optimization",
+      "surfaces": {
+        "pyqt6": true,
+        "web": false,
+        "legacy_gui": false
+      }
+    },
+    {
       "id": "multi_param_analysis",
       "name": "Multi-Parameter Analysis",
       "description": "Run multi-parameter sensitivity analysis with grid evaluation",
@@ -127,17 +138,6 @@
       "name": "ODE Solver",
       "description": "Solve systems of ordinary differential equations symbolically",
       "category": "Mathematics",
-      "surfaces": {
-        "pyqt6": true,
-        "web": false,
-        "legacy_gui": false
-      }
-    },
-    {
-      "id": "optimizer_gui",
-      "name": "Movement Optimizer",
-      "description": "Optimize motion policies with Adam, swingset, and chain dynamics models",
-      "category": "Optimization",
       "surfaces": {
         "pyqt6": true,
         "web": false,

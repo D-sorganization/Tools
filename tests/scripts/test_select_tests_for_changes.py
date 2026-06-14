@@ -65,6 +65,19 @@ def test_in_tree_test_paths_are_ignored_by_source_mapper() -> None:
 
 
 @pytest.mark.unit
+def test_vendored_source_roots_do_not_select_origin_repo_tests() -> None:
+    targets = select_tests_for_changes.select_targets(
+        [
+            "src/movement_optimizer/launch_pyqt6.py",
+            "src/movement_optimizer/gui_registration.py",
+            "src/pendulum_simulator/src/double_pendulum_golf/physics.py",
+        ]
+    )
+
+    assert targets == []
+
+
+@pytest.mark.unit
 def test_sidekick_process_calculator_source_change_selects_focused_tests() -> None:
     targets = select_tests_for_changes.select_targets(
         [

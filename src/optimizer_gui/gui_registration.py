@@ -7,6 +7,7 @@ from typing import Any
 GUI_INFO = {
     "name": "Movement Optimizer",
     "tool_name": "optimizer_gui",
+    "catalog_visible": False,
     "description": (
         "Optimize motion policies with Adam, swingset, and chain dynamics models"
     ),

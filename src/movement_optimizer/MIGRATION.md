@@ -24,7 +24,7 @@ acceleration backend with a pure-NumPy fallback.
   the CI filter lists in `.github/workflows/ci-standard.yml`). Its own test suite
   lives under `tests/` here and is preserved verbatim from the origin repo.
 - **Launcher / UpstreamDrift discovery.** Published via `model_pack.yaml`
-  (`pack_id: tools-movement-optimizer-biomech`), validated by
+  (`pack_id: tools-movement-optimizer`, route `/tools/movement-optimizer`), validated by
   `scripts/movement_optimizer_provider_manifest.py` and
   `tests/test_movement_optimizer_provider_manifest.py`.
 - **Imports.** The package is importable as `movement_optimizer` because Tools

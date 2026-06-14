@@ -37,9 +37,26 @@ _REQUIRED_MODEL_FIELDS = (
     "working_dir",
     "python_paths",
     "capabilities",
+    "supported_exercises",
     "launcher",
 )
 _REQUIRED_LAUNCHER_FIELDS = ("category", "logo", "status")
+_REQUIRED_CAPABILITIES = {
+    "optimization",
+    "biomechanics",
+    "trajectory",
+    "cli",
+    "pyqt6",
+    "swingset",
+    "chain_dynamics",
+}
+
+
+def _expected_exercises() -> list[str]:
+    """Return the exercises exported by the canonical tool-pack surface."""
+    from movement_optimizer.tool_pack import list_exercises
+
+    return list(list_exercises())
 
 
 def load_movement_optimizer_provider_manifest(
@@ -124,6 +141,18 @@ def validate_movement_optimizer_provider_manifest(
         capabilities = model["capabilities"]
         if not isinstance(capabilities, list) or not capabilities:
             raise ValueError(f"{model_id}.capabilities must be a non-empty list")
+        missing_capabilities = _REQUIRED_CAPABILITIES.difference(capabilities)
+        if missing_capabilities:
+            missing = sorted(missing_capabilities)
+            raise ValueError(
+                f"{model_id}.capabilities missing required items: {missing}"
+            )
+
+        supported_exercises = model["supported_exercises"]
+        if supported_exercises != _expected_exercises():
+            raise ValueError(
+                f"{model_id}.supported_exercises must match movement_optimizer.tool_pack"
+            )
 
         launcher = model["launcher"]
         if not isinstance(launcher, dict):

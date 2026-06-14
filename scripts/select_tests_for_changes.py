@@ -41,6 +41,11 @@ _SIDEKICK_PROCESS_CALCULATOR_TESTS = {
     ],
 }
 
+_VENDORED_SOURCE_PREFIXES = (
+    ("src", "movement_optimizer"),
+    ("src", "pendulum_simulator"),
+)
+
 
 def _read_changed_files(argv: list[str]) -> list[str]:
     """Read changed-file paths from a path argument or stdin."""
@@ -106,7 +111,10 @@ def select_targets(changed_files: list[str]) -> list[str]:
         # are already handled by the existing changed_test_files.txt path.
         if not src_path.startswith("src/") or not src_path.endswith(".py"):
             continue
-        if "tests" in Path(src_path).parts:
+        parts = Path(src_path).parts
+        if "tests" in parts:
+            continue
+        if any(parts[: len(prefix)] == prefix for prefix in _VENDORED_SOURCE_PREFIXES):
             continue
         for target in _candidate_targets(src_path):
             if target.exists():

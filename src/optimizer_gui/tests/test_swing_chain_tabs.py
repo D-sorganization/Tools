@@ -14,6 +14,7 @@ def test_gui_registration_describes_movement_optimizer() -> None:
     info = gui_registration.get_gui_info()
 
     assert info["name"] == "Movement Optimizer"
+    assert info["catalog_visible"] is False
     assert "swingset" in info["description"].lower()
     assert "chain" in info["description"].lower()
 
@@ -52,7 +53,7 @@ def test_main_window_registers_motion_tabs_with_qt_mocks(monkeypatch: Any) -> No
 
 
 def test_tools_json_has_movement_optimizer_tile() -> None:
-    """Tools launcher tile is renamed and still points to the standalone app."""
+    """Tools launcher tile points to the canonical Movement Optimizer app."""
     tools_json = Path(__file__).resolve().parents[3] / "tools.json"
     data = json.loads(tools_json.read_text(encoding="utf-8"))
     optimizer_entries = data["Optimization"]
@@ -60,23 +61,19 @@ def test_tools_json_has_movement_optimizer_tile() -> None:
     tile = next(
         entry
         for entry in optimizer_entries
-        if entry["path"] == "src/optimizer_gui/launch_pyqt6.py"
+        if entry["path"] == "src/movement_optimizer/launch_pyqt6.py"
     )
 
     assert tile["name"] == "Movement Optimizer"
-    assert "swingset" in tile["desc"].lower()
+    assert "biomechanics" in tile["desc"].lower()
 
 
-def test_optimizer_model_pack_exposes_upstreamdrift_tile() -> None:
-    """UpstreamDrift provider discovery can expose the optimizer as a tile."""
+def test_optimizer_gui_model_pack_is_retired() -> None:
+    """Provider discovery must not advertise the old optimizer_gui surface."""
     manifest_path = Path(__file__).resolve().parents[1] / "model_pack.yaml"
-    text = manifest_path.read_text(encoding="utf-8")
-
-    assert "id: tools_movement_optimizer" in text
-    assert "path: src/optimizer_gui/launch_pyqt6.py" in text
-    assert "web_route: /tools/movement-optimizer" in text
+    assert not manifest_path.exists()
 
     root_manifest = Path(__file__).resolve().parents[3] / "model_pack.yaml"
     root_text = root_manifest.read_text(encoding="utf-8")
     assert 'id: "tools_movement_optimizer"' in root_text
-    assert 'path: "src/optimizer_gui/launch_pyqt6.py"' in root_text
+    assert 'path: "src/movement_optimizer/launch_pyqt6.py"' in root_text
