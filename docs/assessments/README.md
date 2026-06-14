@@ -100,7 +100,6 @@ This document defines the comprehensive 16-point assessment framework (A-O + Hig
 | 2026-03-19 | Automated Assessment Update     | `Comprehensive_Assessment.md`                   |
 | 2026-04-29 | TODO/FIXME Count Reconciliation | `todo_fixme_count_reconciliation_2026-04-29.md` |
 | 2026-05-21 | Adversarial Review              | `adversarial_review_2026_05_21.md`              |
-| 2026-06-14 | Completist Audit                | `completist/Completist_Report_2026-06-14.md`    |
 
 ---
 

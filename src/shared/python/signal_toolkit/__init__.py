@@ -34,40 +34,31 @@ logger = logging.getLogger(__name__)
 
 __version__ = "2.1.0"
 
-_OPTIONAL_WIDGETS: dict[str, tuple[str, str, str]] = {
-    "PolynomialGeneratorWidget": (
-        ".polynomial_generator",
-        "PolynomialGeneratorWidget",
-        "HAS_POLYNOMIAL_GENERATOR",
-    ),
-    "SignalToolkitWidget": (".widget", "SignalToolkitWidget", "HAS_WIDGET"),
-}
+# ---------------------------------------------------------------------------
+# Optional imports (PyQt6 / matplotlib)
+# ---------------------------------------------------------------------------
 
-_OPTIONAL_FLAGS = {
-    flag_name: widget_name
-    for widget_name, (_, _, flag_name) in _OPTIONAL_WIDGETS.items()
-}
+try:
+    from .polynomial_generator import PolynomialGeneratorWidget
+
+    HAS_POLYNOMIAL_GENERATOR = True
+except ImportError:
+    PolynomialGeneratorWidget = None  # type: ignore[misc, assignment]
+    HAS_POLYNOMIAL_GENERATOR = False
+    logger.debug("PolynomialGeneratorWidget not available (requires PyQt6)")
+
+try:
+    from .widget import SignalToolkitWidget
+
+    HAS_WIDGET = True
+except ImportError:
+    SignalToolkitWidget = None  # type: ignore[misc, assignment]
+    HAS_WIDGET = False
+    logger.debug("SignalToolkitWidget not available (requires PyQt6 + matplotlib)")
 
 
 def __getattr__(name: str) -> Any:
     """Lazy attribute loader - defers submodule imports to first access."""
-    if name in _OPTIONAL_FLAGS:
-        widget_name = _OPTIONAL_FLAGS[name]
-        if widget_name not in globals():
-            __getattr__(widget_name)
-        return globals()[name]
-    if name in _OPTIONAL_WIDGETS:
-        module_path, attr, flag_name = _OPTIONAL_WIDGETS[name]
-        try:
-            mod = importlib.import_module(module_path, package=__name__)
-            value = getattr(mod, attr)
-            globals()[name] = value
-            globals()[flag_name] = True
-        except ImportError:
-            globals()[name] = None
-            globals()[flag_name] = False
-            logger.debug("%s not available", name)
-        return globals()[name]
     if name in LAZY:
         module_path, attr = LAZY[name]
         mod = importlib.import_module(module_path, package=__name__)
@@ -79,6 +70,8 @@ def __getattr__(name: str) -> Any:
 
 __all__ = [
     *LAZY.keys(),
-    *_OPTIONAL_WIDGETS.keys(),
-    *_OPTIONAL_FLAGS.keys(),
+    "PolynomialGeneratorWidget",
+    "SignalToolkitWidget",
+    "HAS_POLYNOMIAL_GENERATOR",
+    "HAS_WIDGET",
 ]
