@@ -9,6 +9,7 @@ import { ProjectImporter } from "./components/ProjectImporter";
 import { LadderExplorer } from "./components/LadderExplorer";
 import { PlantHierarchy } from "./components/PlantHierarchy";
 import { PowerSupplyControl, type PowerSupplyStatus } from "./components/PowerSupplyControl";
+import { TAG_INDICES } from "./components/RoutingMatrix";
 import {
   Activity,
   Sliders,
@@ -50,7 +51,7 @@ export interface RoutingConfig {
 const DEFAULT_CONFIG: RoutingConfig = {
   input_routing: [0, 1, 2, 3, 4, 5],
   output_routing: [10, 11],
-  pids: Array.from({ length: 4 }).map(() => ({
+  pids: [0, 1, 2, 3].map(() => ({
     pv_tag_id: 0,
     cv_tag_id: 0,
     setpoint: 0.0,
@@ -58,7 +59,7 @@ const DEFAULT_CONFIG: RoutingConfig = {
     ki: 0.0,
     kd: 0.0,
   })),
-  interlocks: Array.from({ length: 32 }).map(() => ({
+  interlocks: TAG_INDICES.map(() => ({
     lolo_limit: 0.0,
     low_limit: 5.0,
     high_limit: 95.0,
@@ -300,7 +301,7 @@ export const App: React.FC = () => {
               }))
             : [],
           interlocks: (() => {
-            const mappedInts: InterlockConfig[] = Array.from({ length: 32 }).map(() => ({
+            const mappedInts: InterlockConfig[] = TAG_INDICES.map(() => ({
               lolo_limit: 0.0,
               low_limit: 5.0,
               high_limit: 95.0,
@@ -1077,7 +1078,7 @@ export const App: React.FC = () => {
                     gap: "0.6rem",
                   }}
                 >
-                  {Array.from({ length: 32 }).map((_, i) => {
+                  {TAG_INDICES.map((i) => {
                     const val = tagValues[i] ?? 0.0;
                     const interlock = config.interlocks[i];
                     const isTripped =
@@ -1903,7 +1904,7 @@ export const App: React.FC = () => {
                       value={config.pids[inspectorView.index].pv_tag_id}
                       onChange={(e) => handlePidChange(inspectorView.index, "pv_tag_id", Number(e.target.value))}
                     >
-                      {Array.from({ length: 32 }).map((_, i) => (
+                      {TAG_INDICES.map((i) => (
                         <option key={i} value={i}>Tag {i}</option>
                       ))}
                     </select>
@@ -1915,7 +1916,7 @@ export const App: React.FC = () => {
                       value={config.pids[inspectorView.index].cv_tag_id}
                       onChange={(e) => handlePidChange(inspectorView.index, "cv_tag_id", Number(e.target.value))}
                     >
-                      {Array.from({ length: 32 }).map((_, i) => (
+                      {TAG_INDICES.map((i) => (
                         <option key={i} value={i}>Tag {i}</option>
                       ))}
                     </select>

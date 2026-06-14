@@ -19,7 +19,7 @@ const INPUT_LABELS = [
 const OUTPUT_LABELS = ["Analog Out V0 (V)", "Analog Out V1 (V)"];
 
 // ⚡ Bolt Optimization: Pre-calculate static index array to avoid repeated Array.from() allocations during render
-const TAG_INDICES = Array.from({ length: 32 }, (_, i) => i);
+export const TAG_INDICES = Array.from({ length: 32 }, (_, i) => i);
 
 export const RoutingMatrix: React.FC<RoutingMatrixProps> = ({
   config,

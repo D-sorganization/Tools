@@ -56,3 +56,6 @@
 ## 2026-06-12 - Pre-allocate Arrays in Nelder-Mead Loops
 **Learning:** In optimization loops like Nelder-Mead, allocating new arrays inside the hot iteration loop creates unnecessary garbage collection pressure.
 **Action:** Pre-allocate working arrays such as `centroid`, `reflected`, `expanded`, and `contracted` outside the main algorithm loop and mutate them in place.
+## 2026-06-12 - Pre-computing static mapped index arrays
+**Learning:** In React components like the `RoutingMatrix` in `p1am_control_system`, using inline array initialization like `Array.from({ length: X }).map(...)` directly inside JSX rows allocates intermediate arrays on every render.
+**Action:** Pre-calculate static length iterators as module-level constants and map over the constants instead.

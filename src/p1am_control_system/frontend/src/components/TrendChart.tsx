@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Play, Pause, ZoomIn, ZoomOut, Image, FileSpreadsheet, RotateCcw } from "lucide-react";
+import { TAG_INDICES } from "./RoutingMatrix";
 
 interface TrendChartProps {
   history: number[][]; // Array of TagValue arrays: number[time][tag_id]
@@ -448,7 +449,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
           border: "1px solid var(--panel-border)",
         }}
       >
-        {Array.from({ length: 32 }).map((_, i) => {
+        {TAG_INDICES.map((i) => {
           const isSelected = selectedTags.includes(i);
           const colorIdx = selectedTags.indexOf(i);
           const buttonColor = isSelected ? LINE_COLORS[colorIdx % LINE_COLORS.length] : "transparent";
