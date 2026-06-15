@@ -8750,7 +8750,7 @@
         }
       },
       "ElectrodeAdvancementCalculator": {
-        "type": "unknown"
+        "type": "variable"
       },
       "FinancialCalculator": {
         "type": "class",
@@ -10574,16 +10574,10 @@
     }
   },
   "process_calculators/electrode_advancement_calculator.py": {
-    "__all__": ["check_non_negative", "require_positive", "warnings"],
+    "__all__": ["ElectrodeAdvancementCalculator"],
     "symbols": {
-      "check_non_negative": {
-        "type": "unknown"
-      },
-      "require_positive": {
-        "type": "unknown"
-      },
-      "warnings": {
-        "type": "unknown"
+      "ElectrodeAdvancementCalculator": {
+        "type": "variable"
       }
     }
   },
@@ -23020,6 +23014,7 @@
       "PanelAppearance",
       "coerce_appearance",
       "is_hex_color",
+      "is_panel_appearance",
       "panel_qss"
     ],
     "symbols": {
@@ -23098,6 +23093,20 @@
             {
               "name": "value",
               "annotation": "Any",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "bool"
+        }
+      },
+      "is_panel_appearance": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "value",
+              "annotation": "object",
               "default": null,
               "kind": "arg"
             }
@@ -28424,7 +28433,8 @@
       "WorkspaceEvent",
       "WorkspaceRegistry",
       "WorkspaceVariable",
-      "format_workspace_value_preview"
+      "format_workspace_value_preview",
+      "is_workspace_registry"
     ],
     "symbols": {
       "JSONScalar": {
@@ -28794,6 +28804,20 @@
             }
           ],
           "returns": "str"
+        }
+      },
+      "is_workspace_registry": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "value",
+              "annotation": "object",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "bool"
         }
       }
     }

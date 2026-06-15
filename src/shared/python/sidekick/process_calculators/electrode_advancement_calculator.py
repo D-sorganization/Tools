@@ -9,17 +9,8 @@ import warnings
 from shared.python.contracts import check_non_negative, require_positive
 
 __all__ = [
-    "check_non_negative",
-    "require_positive",
-    "warnings",
+    "ElectrodeAdvancementCalculator",
 ]
-
-try:
-    from tools_core.electrode_advisor import (
-        ElectrodeAdvancementCalculator as _RustCalculator,
-    )
-except ImportError:
-    _RustCalculator = None
 
 
 class _PyElectrodeAdvancementCalculator:
@@ -56,7 +47,4 @@ class _PyElectrodeAdvancementCalculator:
         return self.consumption_rate * current_ka * time_hrs
 
 
-if _RustCalculator is not None:
-    ElectrodeAdvancementCalculator = _RustCalculator
-else:
-    ElectrodeAdvancementCalculator = _PyElectrodeAdvancementCalculator
+ElectrodeAdvancementCalculator = _PyElectrodeAdvancementCalculator
