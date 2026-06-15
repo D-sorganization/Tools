@@ -3,6 +3,7 @@
 import sys
 import types
 from pathlib import Path
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -40,6 +41,25 @@ sys.modules.setdefault("src.shared.python.logging_pkg", logging_pkg)
 sys.modules.setdefault("src.shared.python.logging_pkg.logging_config", logging_config)
 
 from src.shared.python.chat._chat_dock_widget_qt import ChatDockWidget
+
+
+class _FakeSessionManager:
+    def list_sessions(self) -> list[dict[str, Any]]:
+        return []
+
+
+def test_chat_dock_widget_accepts_injected_session_manager() -> None:
+    """Hosts can provide session persistence without importing ai at module import."""
+    _app = QApplication.instance() or QApplication([])
+    manager = _FakeSessionManager()
+
+    widget = ChatDockWidget(
+        app_context="test",
+        app_name="test_chat_session_injection",
+        session_manager=manager,
+    )
+
+    assert widget._session_manager is manager
 
 
 def test_chat_dock_widget_collapse() -> None:

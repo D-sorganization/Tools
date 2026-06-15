@@ -6,8 +6,8 @@ Connects to a FastAPI server's WebSocket chat endpoint and provides a
 minimal streaming chat interface. Shares conversation context across
 all windows via a common session ID persisted to disk.
 
-This widget is fully portable — it depends only on PyQt6 and json,
-with no application-specific imports.
+This widget keeps application-specific integrations behind injectable or
+lazy-loaded collaborators so the chat package can be imported independently.
 
 This module historically held the entire dock widget implementation in
 one file. To stay under the repo's 1500-line per-file budget the
@@ -40,7 +40,6 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
-from ai.gui.session_manager import ChatSessionManager
 from PyQt6.QtCore import QSize, QTimer, QUrl, pyqtSignal
 from PyQt6.QtWebSockets import QWebSocket
 from PyQt6.QtWidgets import (
@@ -95,6 +94,24 @@ __all__ = [
 ]
 
 
+def _build_default_session_manager(app_name: str) -> Any:
+    """Create the default chat session manager on demand.
+
+    The AI package still owns the concrete persistence implementation while
+    the chat dock is being disentangled for Tools #3331. Keeping this import
+    local makes the chat widget module importable without importing ``ai`` and
+    lets hosts inject a manager when they already own session persistence.
+    """
+    if not isinstance(app_name, str) or not app_name.strip():
+        raise ValueError("app_name must be a non-empty string")
+    storage_dir = Path.home() / f".{app_name}" / "chat_sessions"
+    try:
+        from src.shared.python.ai.gui.session_manager import ChatSessionManager
+    except ImportError:
+        from ai.gui.session_manager import ChatSessionManager
+    return ChatSessionManager(storage_dir=storage_dir)
+
+
 class ChatDockWidget(QDockWidget):
     """Lightweight chat dock widget that connects to a FastAPI chat server.
 
@@ -144,6 +161,8 @@ class ChatDockWidget(QDockWidget):
         workspace_provider: WorkspaceContextProtocol | None = None,
         plot_request_sink: Callable[[Any], None] | None = None,
         parent: QWidget | None = None,
+        *,
+        session_manager: Any | None = None,
     ) -> None:
         if app_context is None:
             raise ValueError("app_context must be provided")
@@ -215,8 +234,8 @@ class ChatDockWidget(QDockWidget):
         self._session_file = _session_file_path(app_name)
         # Tools issue #2872: conversation-management state.
         self._loaded_context_sessions: list[str] = []
-        self._session_manager = ChatSessionManager(
-            storage_dir=Path.home() / f".{self._app_name}" / "chat_sessions"
+        self._session_manager = session_manager or _build_default_session_manager(
+            self._app_name
         )
         self._breadcrumb_widget: Any | None = None
         self._reconnect_timer = QTimer(self)
