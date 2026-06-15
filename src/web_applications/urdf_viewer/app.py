@@ -9,7 +9,6 @@ Provides:
 
 import logging
 import os
-import sys
 from pathlib import Path
 
 from cors import add_cors_middleware
@@ -21,22 +20,6 @@ from pydantic import BaseModel, Field
 # ── Security constants ──────────────────────────────────────────────────
 MAX_UPLOAD_SIZE = 25 * 1024 * 1024  # 25 MB
 ALLOWED_EXTENSIONS = {".urdf", ".xml"}
-
-# ── Ensure urdf_builder_gui is importable ───────────────────────────────
-# The urdf_builder_gui package lives under src/urdf_builder_gui/python/.
-# We add it to sys.path only if it's not already importable via
-# the bootstrap/conftest path setup.
-try:
-    import urdf_builder_gui  # noqa: F401
-except ImportError:
-    _URDF_BUILDER_DIR = str(
-        Path(__file__).resolve().parent.parent.parent / "urdf_builder_gui" / "python"
-    )
-    if _URDF_BUILDER_DIR not in sys.path:
-        sys.path.append(_URDF_BUILDER_DIR)
-        logging.getLogger(__name__).info(
-            "Added urdf_builder_gui to sys.path: %s", _URDF_BUILDER_DIR
-        )
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

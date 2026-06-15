@@ -767,6 +767,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-15 | 1.1.462 | fix(imports, #3335): remove process-global `sys.path` mutation from the production import-time bootstrap offenders (`sidekick.theme`, `signal_processing_studio`, `urdf_builder_gui`, and the URDF viewer app); nested tool packages now use package-scoped `__path__` bridges, focused AST/import-side-effect tests pin the contract without expanding into the broader #3316 multi-root cleanup, and the touched URDF stylesheet test is kept green with explicit Catppuccin `QSlider` styling. |
 | 2026-06-15 | 1.1.461 | fix(ci, #3325): keep heavy integration workflows compatible with strict pytest asyncio configuration by installing `pytest-asyncio`, constrain both scheduled and opt-in heavy lanes to explicit `tests/heavy_integration/` and `tests/e2e/` collection roots, and add an ops regression that prevents broad `tests/` collection from masking dependency/config drift. |
 | 2026-06-15 | 1.1.460 | fix(ci): make the Jules Supersede Check use `github.token` when `RUNNER_CHECK_TOKEN` is absent so same-repo PR discovery and cleanup do not fail main pushes with an empty `GH_TOKEN`. |
 | 2026-06-15 | 1.1.459 | fix(movement_optimizer, Movement_Optimizer#503): lift the vendored app's stale `scipy<1.16` ceiling after a clean SciPy 1.17 `CubicSpline` import check, remove the obsolete README limitation, and add a dependency-contract regression for the canonical Tools copy. |

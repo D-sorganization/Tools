@@ -17,29 +17,16 @@ Usage::
         get_theme_manager,
     )
 
-All symbols from ``shared.python.theme`` are re-exported here.
+All symbols from the installed top-level ``theme`` package are re-exported here.
 """
 
 from __future__ import annotations
 
 import logging
-import sys
-from pathlib import Path
 
 _logger = logging.getLogger(__name__)
 
-# Ensure the shared.python.theme sibling package is importable.
-# When installed via pip (editable or not), setuptools already
-# includes the search paths. We only add the path as a fallback
-# when the import would otherwise fail.
-try:
-    import theme  # noqa: F401
-except ImportError:
-    _shared_python_dir = str(Path(__file__).resolve().parent.parent.parent)
-    if _shared_python_dir not in sys.path:
-        sys.path.insert(0, _shared_python_dir)
-
-# Dynamically import and re-export everything from shared.python.theme
+# Dynamically import and re-export everything from the canonical theme package.
 try:
     # Re-export all public symbols
     # Protocol re-exports (no PyQt6 dependency)

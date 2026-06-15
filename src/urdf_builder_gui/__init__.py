@@ -10,7 +10,6 @@ sub-package tree rather than expecting duplicate files here.
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
 # Canonical package directory — the single source of truth for all modules.
@@ -23,11 +22,5 @@ _CANONICAL_PKG = Path(__file__).resolve().parent / "python" / "urdf_builder_gui"
 _canonical_str = str(_CANONICAL_PKG)
 if _canonical_str not in __path__:
     __path__.insert(0, _canonical_str)
-
-# Also ensure the python/ directory itself is on sys.path for standalone
-# launcher scripts that do bare ``import urdf_builder_gui``.
-_PYTHON_DIR = str(_CANONICAL_PKG.parent)
-if _PYTHON_DIR not in sys.path:
-    sys.path.insert(0, _PYTHON_DIR)
 
 __version__ = "1.0.0"

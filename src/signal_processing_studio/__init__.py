@@ -1,14 +1,15 @@
 """Signal Processing Studio - Unified signal processing application.
 
-This __init__.py ensures the python/ subdirectory is on sys.path
-so that all package submodules are importable.
+This bridge extends only this package's search path so submodules resolve from
+the canonical ``python/signal_processing_studio`` tree without mutating the
+process-global ``sys.path``.
 """
 
-import sys
+from __future__ import annotations
+
 from pathlib import Path
 
-# Ensure the python/ subdirectory is on sys.path so that the real package
-# modules (signal_bus, main_window) are findable.
-_PYTHON_DIR = str(Path(__file__).resolve().parent / "python")
-if _PYTHON_DIR not in sys.path:
-    sys.path.insert(0, _PYTHON_DIR)
+_CANONICAL_PKG = Path(__file__).resolve().parent / "python" / "signal_processing_studio"
+_canonical_str = str(_CANONICAL_PKG)
+if _canonical_str not in __path__:
+    __path__.insert(0, _canonical_str)
