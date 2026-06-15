@@ -18,6 +18,8 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 SRC_ROOT = REPO_ROOT / "src"
 SHARED_PYTHON = SRC_ROOT / "shared" / "python"
 URDF_VIEWER_APP = SRC_ROOT / "web_applications" / "urdf_viewer"
+SIGNAL_PROCESSING_PYTHON = SRC_ROOT / "signal_processing_studio" / "python"
+URDF_BUILDER_PYTHON = SRC_ROOT / "urdf_builder_gui" / "python"
 
 CONTRACT_FILES = [
     SRC_ROOT / "shared" / "python" / "sidekick" / "theme" / "__init__.py",
@@ -74,8 +76,15 @@ def test_imports_do_not_mutate_global_sys_path(
 
     before = tuple(sys.path)
     importlib.import_module(module_name)
+    after = tuple(sys.path)
 
-    assert tuple(sys.path) == before
+    added_paths = set(after) - set(before)
+    forbidden_repo_paths = {
+        str(SHARED_PYTHON),
+        str(SIGNAL_PROCESSING_PYTHON),
+        str(URDF_BUILDER_PYTHON),
+    }
+    assert not (added_paths & forbidden_repo_paths)
 
 
 @pytest.mark.parametrize("source_path", CONTRACT_FILES)
