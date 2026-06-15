@@ -51,6 +51,9 @@ _SIDEKICK_SOURCE_TESTS = {
         "tests/test_data_processor_embedding.py",
         "tests/test_phase2_critical_bugs.py",
     ],
+    "theme/__init__.py": [
+        "src/shared/python/sidekick/tests/test_theme_init.py",
+    ],
     "ui/tools_sidebar/python_repl_tab.py": [
         "tests/unit/sidekick/test_python_repl_widget.py",
         "tests/unit/sidekick/test_python_repl_widget_renamed.py",
