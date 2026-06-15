@@ -122,11 +122,9 @@ def test_tauri_windows_build_uses_powershell_for_runner_path_setup() -> None:
         if step.get("if") == "matrix.platform.label == 'windows-x64'"
     ]
 
-    windows_run_steps = [step for step in windows_steps if "run" in step]
-
-    assert windows_run_steps
-    assert all(step["shell"] == "pwsh" for step in windows_run_steps)
-    assert all(step["name"].endswith("(Windows)") for step in windows_run_steps)
+    assert windows_steps
+    assert all(step["shell"] == "pwsh" for step in windows_steps)
+    assert all(step["name"].endswith("(Windows)") for step in windows_steps)
 
 
 def test_tauri_check_timeout_allows_serial_cold_cache_builds() -> None:
@@ -134,22 +132,3 @@ def test_tauri_check_timeout_allows_serial_cold_cache_builds() -> None:
     check_job = workflow["jobs"]["check"]
 
     assert int(check_job["timeout-minutes"]) >= MIN_TAURI_CHECK_TIMEOUT_MINUTES
-
-
-def test_tauri_local_node_selection_skips_broken_npm_toolcaches() -> None:
-    workflow = yaml.safe_load(TAURI_WORKFLOW.read_text(encoding="utf-8"))
-    jobs = workflow["jobs"]
-
-    local_node_steps = [
-        step
-        for job_name in ("check", "build")
-        for step in jobs[job_name]["steps"]
-        if step.get("name", "").startswith("Use local Node.js 24 toolcache")
-    ]
-
-    assert len(local_node_steps) == 2
-    for step in local_node_steps:
-        script = step["run"]
-        assert 'PATH="$candidate:$PATH" "$candidate/npm" --version >/dev/null' in script
-        assert "::warning::Skipping broken Node.js toolcache" in script
-        assert '[ -z "$node_dir" ] || [ ! -x "$node_dir/node" ]' in script

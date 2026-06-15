@@ -124,17 +124,6 @@ def test_sidekick_data_processing_source_change_selects_focused_tests() -> None:
 
 
 @pytest.mark.unit
-def test_sidekick_theme_bridge_change_selects_focused_import_test() -> None:
-    targets = select_tests_for_changes.select_targets(
-        ["src/shared/python/sidekick/theme/__init__.py"]
-    )
-
-    assert targets == ["src/shared/python/sidekick/tests/test_theme_init.py"]
-    assert "src/shared/python/sidekick/tests" not in targets
-    assert "tests/shared/python/sidekick" not in targets
-
-
-@pytest.mark.unit
 def test_sidekick_tools_sidebar_source_change_selects_focused_tests() -> None:
     targets = select_tests_for_changes.select_targets(
         [

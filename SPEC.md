@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.467                                    |
+| **Spec Version**        | 1.1.465                                    |
 | **Last Spec Update**    | 2026-06-15                                 |
 
 ## 2. Purpose & Mission
@@ -540,12 +540,9 @@ conversion API (`calc_backend`) carries such a suite
 dependency. New adversarial coverage targets invalid inputs, non-finite values,
 and missing fields so a regression fails CI here rather than downstream.
 When CI detects changes under `src/shared/python/sidekick/`, its focused Python
-test slice includes the dedicated Sidekick state-manager suites only for
-runtime Sidekick source paths before the per-file Sidekick coverage gate runs,
-so coverage enforcement measures the module's own regression tests instead of
-an unrelated reduced slice. The `sidekick.theme` bridge maps to its focused
-theme import regression and must not select the generic Sidekick UI mirror
-suite.
+test slice includes the dedicated Sidekick state-manager suites before the
+per-file Sidekick coverage gate runs, so coverage enforcement measures the
+module's own regression tests instead of an unrelated reduced slice.
 
 ### Test Organization
 
@@ -770,10 +767,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-06-15 | 1.1.467 | fix(ci): serialize CI Standard apt update/install sections behind a shared host flock so parallel self-hosted Linux jobs cannot race on `/var/lib/apt/lists/lock` while installing GUI test dependencies. |
-| 2026-06-15 | 1.1.466 | feat(a11y, function-generator): expose Function Generator layer and operation controls as pressed-state toggles with keyboard-visible focus affordances, and harden Tauri self-hosted runner Node selection so CI skips broken runner-bundled npm installs. |
-| 2026-06-15 | 1.1.465 | ci(sidekick, #3335): map the `sidekick.theme` bridge to its focused import regression so bootstrap-path changes do not pull the generic Sidekick UI mirror suite or OS-terminal worker tests into unrelated Python matrix lanes. |
-| 2026-06-15 | 1.1.464 | fix(ci, #3335): install `python-multipart` wherever `ci-standard.yml` installs FastAPI so the URDF viewer upload route can be imported in the Python matrix, and add an ops regression that prevents FastAPI-only CI dependency drift. |
+| 2026-06-15 | 1.1.465 | fix(ci, #3335): install `python-multipart` wherever `ci-standard.yml` installs FastAPI so the URDF viewer upload route can be imported in the Python matrix, and add an ops regression that prevents FastAPI-only CI dependency drift. |
 | 2026-06-15 | 1.1.463 | test(imports, #3335): make the import-bootstrap regression suite hermetic in CI by asserting no repository bootstrap paths are added during production imports, updating the stale `sidekick.theme` fallback test to require no `sys.path` insertion, and setting subprocess `PYTHONPATH` explicitly so local and CI subprocess checks exercise the same contract. |
 | 2026-06-15 | 1.1.462 | fix(imports, #3335): remove process-global `sys.path` mutation from the production import-time bootstrap offenders (`sidekick.theme`, `signal_processing_studio`, `urdf_builder_gui`, and the URDF viewer app); nested tool packages now use package-scoped `__path__` bridges, focused AST/import-side-effect tests pin the contract without expanding into the broader #3316 multi-root cleanup, and the touched URDF stylesheet test is kept green with explicit Catppuccin `QSlider` styling. |
 | 2026-06-15 | 1.1.461 | fix(ci, #3325): keep heavy integration workflows compatible with strict pytest asyncio configuration by installing `pytest-asyncio`, constrain both scheduled and opt-in heavy lanes to explicit `tests/heavy_integration/` and `tests/e2e/` collection roots, and add an ops regression that prevents broad `tests/` collection from masking dependency/config drift. |
