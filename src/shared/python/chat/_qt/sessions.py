@@ -22,7 +22,7 @@ def resolve_use_session_target(dock: Any, target: str) -> str | None:
     """
     if not target:
         return None
-    manager = dock.__dict__.get("_session_manager")
+    manager = dock._session_manager
     if manager is None:
         return None
     sessions = list(manager.list_sessions())
@@ -41,31 +41,29 @@ def add_context_session(dock: Any, session_id: str) -> None:
     """Append ``session_id`` to the breadcrumb context list."""
     if not session_id:
         raise ValueError("session_id must be provided")
-    loaded = dock.__dict__.get("_loaded_context_sessions", [])
+    loaded = dock._loaded_context_sessions
     if session_id in loaded:
         return
     loaded.append(session_id)
-    dock.__dict__["_loaded_context_sessions"] = loaded
     dock._refresh_breadcrumb()
 
 
 def remove_context_session(dock: Any, session_id: str) -> None:
     """Remove ``session_id`` from the breadcrumb context list."""
-    loaded = dock.__dict__.get("_loaded_context_sessions", [])
+    loaded = dock._loaded_context_sessions
     if session_id in loaded:
         loaded.remove(session_id)
-        dock.__dict__["_loaded_context_sessions"] = loaded
         dock._refresh_breadcrumb()
 
 
 def breadcrumb_labels(dock: Any) -> list[str]:
     """Return the human-readable titles for the loaded context sessions."""
-    manager = dock.__dict__.get("_session_manager")
+    manager = dock._session_manager
     if manager is None:
         return []
     info_by_id = {info.get("id"): info for info in manager.list_sessions()}
     labels: list[str] = []
-    for sid in dock.__dict__.get("_loaded_context_sessions", []):
+    for sid in dock._loaded_context_sessions:
         info = info_by_id.get(sid)
         if info is None:
             labels.append(sid)
@@ -76,7 +74,10 @@ def breadcrumb_labels(dock: Any) -> list[str]:
 
 def refresh_breadcrumb(dock: Any) -> None:
     """Re-render the breadcrumb strip after a context-list mutation."""
-    widget = dock.__dict__.get("_breadcrumb_widget")
+    try:
+        widget = dock._breadcrumb_widget
+    except (AttributeError, RuntimeError):
+        widget = None
     if widget is None:
         return
     try:

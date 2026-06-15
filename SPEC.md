@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.469                                    |
+| **Spec Version**        | 1.1.474                                    |
 | **Last Spec Update**    | 2026-06-15                                 |
 
 ## 2. Purpose & Mission
@@ -75,6 +75,9 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Shared chat Qt dock imports expose subprocess-backed PyQt6 runtime
   diagnostics so hosts and tests can report broken Qt DLL/runtime installs
   without crashing the importing process
+- Shared chat drift fixtures avoid introducing contiguous secret-like SHA-256
+  literals when refreshing Tools baseline hashes, keeping CI secrets scans
+  signal-only while preserving the same runtime hash contract.
 - Project-scoped terminal-agent runtime coordination for shared chat provider
   processes is host-provided; Tools advertises terminal availability through
   chat WebSocket session capabilities
@@ -770,6 +773,11 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-15 | 1.1.474 | fix(shared-python, #3332): expose the existing `ai` package from `src.shared.python` so dotted monkeypatch paths such as `src.shared.python.ai.gui.history_sidebar` resolve consistently when tests import the shared parent package first; the history-sidebar test also links synthetic namespace modules to their parents for Python 3.10 compatibility. |
+| 2026-06-15 | 1.1.473 | test(chat, #3332): avoid contiguous secret-like SHA-256 literals in the shared chat drift fixture while preserving the reviewed `_chat_dock_widget_qt.py` baseline value, keeping detect-secrets focused on real credential drift. |
+| 2026-06-15 | 1.1.472 | test(chat, #3332): refresh the shared chat drift baseline hash for the intentional `_chat_dock_widget_qt.py` view-state refactor so the baseline guard continues to catch unreviewed drift after the approved UI state change. |
+| 2026-06-15 | 1.1.471 | test(chat, #3332): keep the chat dock view-state regression in the shared chat test suite and let breadcrumb refresh tolerate uninitialized Qt test doubles, avoiding CI changed-test collection that shadows the source `chat` package with `tests/unit/chat`. |
+| 2026-06-15 | 1.1.470 | refactor(chat, #3332): introduce an explicit `ChatDockView` dataclass for chat dock UI widgets/actions, mirror legacy `_foo` aliases from dataclass fields in one compatibility loop, and replace session helper `__dict__` pokes with direct initialized state access. |
 | 2026-06-15 | 1.1.469 | fix(ci): allow Tauri Linux Node selection to fall back to a verified `node`/`npm` pair on `PATH` when runner externals are broken and `/opt/hostedtoolcache/node` is absent, keeping self-hosted app checks from failing before source validation. |
 | 2026-06-15 | 1.1.468 | perf(data-processing): replace allocation-heavy `Array.from(...).map(...)` chains in `AnalyticsSuite.tsx` with preallocated loops so analytics rendering avoids avoidable intermediate arrays while preserving existing chart data contracts. |
 | 2026-06-15 | 1.1.467 | fix(ci): serialize CI Standard apt update/install sections behind a shared host flock so parallel self-hosted Linux jobs cannot race on `/var/lib/apt/lists/lock` while installing GUI test dependencies. |

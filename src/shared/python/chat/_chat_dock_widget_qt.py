@@ -65,7 +65,7 @@ from ._qt.history_sidebar import HistorySidebar
 from ._qt.input import install_enter_submit as _install_enter_submit  # noqa: F401
 from ._qt.queue_panel import QueuedMessage, QueuePanel  # noqa: F401
 from ._qt.styling import get_theme_colors as _get_theme_colors  # noqa: F401
-from ._qt.ui_builder import build_chat_dock_ui
+from ._qt.ui_builder import ChatDockView, build_chat_dock_ui, mirror_chat_dock_view
 from ._theme_protocol import ThemeProviderProtocol, _DefaultDarkTheme
 from ._thinking_indicator import ThinkingIndicator
 from ._workspace_protocol import WorkspaceContextProtocol
@@ -292,7 +292,12 @@ class ChatDockWidget(QDockWidget):
         return QSize(320, 0)
 
     def _setup_ui(self) -> None:
-        build_chat_dock_ui(self)
+        self._view: ChatDockView = build_chat_dock_ui(self)
+        mirror_chat_dock_view(self, self._view)
+        self._populate_shell_combo()
+        self._populate_provider_combo()
+        self._on_mode_changed()
+        self._recompute_send_button_state()
 
     # ── WebSocket connection ─────────────────────────────────────────
 
