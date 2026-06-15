@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.472                                    |
+| **Spec Version**        | 1.1.473                                    |
 | **Last Spec Update**    | 2026-06-15                                 |
 
 ## 2. Purpose & Mission
@@ -75,6 +75,9 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Shared chat Qt dock imports expose subprocess-backed PyQt6 runtime
   diagnostics so hosts and tests can report broken Qt DLL/runtime installs
   without crashing the importing process
+- Shared chat drift fixtures avoid introducing contiguous secret-like SHA-256
+  literals when refreshing Tools baseline hashes, keeping CI secrets scans
+  signal-only while preserving the same runtime hash contract.
 - Project-scoped terminal-agent runtime coordination for shared chat provider
   processes is host-provided; Tools advertises terminal availability through
   chat WebSocket session capabilities
