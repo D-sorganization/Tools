@@ -214,10 +214,11 @@ def get_active_ai_adapter(provider_name: str) -> Any | None:
     Adapter construction failures are non-fatal (offline mode, missing
     API key, etc.) — callers fall back to a static catalogue.
     """
-    try:
-        from src.shared.python.ai.adapters.factory import AdapterFactory
+    import importlib
 
-        return AdapterFactory.create(provider_name)
+    try:
+        module = importlib.import_module("src.shared.python.ai.adapters.factory")
+        return module.AdapterFactory.create(provider_name)
     except Exception:  # noqa: BLE001 - missing credentials are normal
         return None
 

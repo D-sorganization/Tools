@@ -296,7 +296,7 @@ class GeminiAdapter(BaseAgentAdapter):
 
     def thinking_capabilities(self) -> Any:
         """Gemini does not currently expose user-controllable thinking budgets."""
-        from src.shared.python.chat.models import make_none_only_capabilities
+        from chat_contracts.models import make_none_only_capabilities
 
         return make_none_only_capabilities(provider="google")
 

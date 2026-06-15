@@ -25,6 +25,7 @@ def test_chat_facade_exports_contract_models() -> None:
         "create_chat_router",
     }
 
+    assert hasattr(chat, "__all__"), getattr(chat, "__file__", "<missing>")
     assert expected.issubset(set(chat.__all__))
     lazy_exports = {"ChatDockWidget", "ChatMessageBubble", "create_chat_router"}
     for name in expected - lazy_exports:
