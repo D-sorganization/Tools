@@ -50,7 +50,9 @@ type AnalyticsTab = 'correlation' | 'pca' | 'regression';
 function computeCorrelation(data: DataRow[], signals: string[]): CorrelationMatrix {
   const n = signals.length;
   const rowCount = data.length;
-  const matrix: number[][] = Array.from({ length: n }, () => Array(n).fill(0));
+  // ⚡ Bolt Optimization: Replace Array.from().fill() chaining to avoid intermediate array allocation
+  const matrix: number[][] = new Array(n);
+  for (let i = 0; i < n; i++) matrix[i] = new Array(n).fill(0);
 
   // ⚡ Bolt Optimization: Allocate column-wise buffers using Float64Array
   // instead of allocating standard array rows (N x P) via chained map() calls.
@@ -221,7 +223,9 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
 
   // Standardized column matrix (p x n) using Float64Array for performance
   // This avoids O(N) row allocations and speeds up covariance / score calculations
-  const Z_cols: Float64Array[] = Array.from({ length: p }, (_, j) => {
+  // ⚡ Bolt Optimization: Replace Array.from() with standard loop and pre-allocated array
+  const Z_cols: Float64Array[] = new Array(p);
+  for (let j = 0; j < p; j++) {
     const colBuffer = new Float64Array(n);
     const mean = means[j];
     const std = stds[j];
@@ -229,11 +233,12 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
     for (let i = 0; i < n; i++) {
       colBuffer[i] = (c[i] - mean) / std;
     }
-    return colBuffer;
-  });
+    Z_cols[j] = colBuffer;
+  }
 
   // Covariance matrix (p x p)
-  const cov: number[][] = Array.from({ length: p }, () => Array(p).fill(0));
+  const cov: number[][] = new Array(p);
+  for (let i = 0; i < p; i++) cov[i] = new Array(p).fill(0);
   for (let i = 0; i < p; i++) {
     const zi = Z_cols[i];
     for (let j = i; j < p; j++) {
@@ -268,7 +273,8 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
   const Av = new Array<number>(p);
 
   for (let comp = 0; comp < nc; comp++) {
-    let v = Array.from({ length: p }, () => Math.random());
+    let v = new Array(p);
+    for (let i = 0; i < p; i++) v[i] = Math.random();
 
     // Initial norm
     let sqSum = 0;
@@ -338,7 +344,8 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
   // ⚡ Bolt Optimization: Reverse loop order to traverse elements sequentially within a single column (Z_cols[j][i]).
   // This maximizes CPU cache locality for the column-major Z_cols array (Float64Array[])
   // and significantly reduces execution time.
-  const scores: number[][] = Array.from({ length: n }, () => new Array(nc).fill(0));
+  const scores: number[][] = new Array(n);
+  for (let i = 0; i < n; i++) scores[i] = new Array(nc).fill(0);
   for (let j = 0; j < p; j++) {
     const col = Z_cols[j];
     for (let c = 0; c < nc; c++) {
@@ -433,7 +440,8 @@ function computeRegression(
     // ⚡ Bolt Optimization: Replace multiple .reduce()/.map() calls with a single-pass loop
     // Performance impact: Drastically reduces array allocations and callback overhead for quadratic regressions.
     const cols = degree + 1;
-    const XtX: number[][] = Array.from({ length: cols }, () => new Array(cols).fill(0));
+    const XtX: number[][] = new Array(cols);
+    for (let i = 0; i < cols; i++) XtX[i] = new Array(cols).fill(0);
     const XtY: number[] = new Array(cols).fill(0);
 
     for (let k = 0; k < n; k++) {
