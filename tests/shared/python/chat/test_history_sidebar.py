@@ -32,7 +32,10 @@ for _ns in (
     _parts = _ns.split(".")
     _mod = types.ModuleType(_ns)
     _mod.__path__ = [str(ROOT.joinpath(*_parts))]
-    sys.modules.setdefault(_ns, _mod)
+    _registered = sys.modules.setdefault(_ns, _mod)
+    _parent_name, _, _child_name = _ns.rpartition(".")
+    if _parent_name:
+        setattr(sys.modules[_parent_name], _child_name, _registered)
 
 import logging
 
