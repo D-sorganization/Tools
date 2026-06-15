@@ -59,7 +59,7 @@ jobs:
             scipy \
             sympy \
             trimesh \
-            pytest pytest-cov pytest-timeout pytest-xdist
+            pytest pytest-asyncio pytest-cov pytest-timeout pytest-xdist
 
       - name: Verify heavy dependencies
         run: |
@@ -103,7 +103,8 @@ jobs:
               --cov=. \
               --cov-report=xml:heavy_coverage.xml \
               --cov-report=term-missing \
-              tests/ \
+              tests/heavy_integration/ \
+              tests/e2e/ \
             | tee heavy_test_output.log
 
       - name: Summarize heavy test results

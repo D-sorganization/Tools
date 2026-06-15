@@ -55,7 +55,7 @@ jobs:
             scipy \
             sympy \
             trimesh \
-            pytest pytest-cov pytest-timeout pytest-xdist
+            pytest pytest-asyncio pytest-cov pytest-timeout pytest-xdist
 
       - name: Verify heavy dependencies
         run: |
@@ -83,7 +83,7 @@ jobs:
           xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
             pytest \
               -v \
-              -m "live_simulation" \
+              -m "live_simulation or e2e" \
               --timeout=300 \
               --timeout-method=thread \
               --tb=short \
@@ -94,6 +94,7 @@ jobs:
               --cov-report=xml:heavy_coverage.xml \
               --cov-report=term-missing \
               tests/heavy_integration/ \
+              tests/e2e/ \
             | tee heavy_test_output.log
 
       - name: Summarize heavy test results
