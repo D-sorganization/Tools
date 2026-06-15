@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.467                                    |
+| **Spec Version**        | 1.1.468                                    |
 | **Last Spec Update**    | 2026-06-15                                 |
 
 ## 2. Purpose & Mission
@@ -770,6 +770,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-15 | 1.1.468 | perf(data-processing): replace allocation-heavy `Array.from(...).map(...)` chains in `AnalyticsSuite.tsx` with preallocated loops so analytics rendering avoids avoidable intermediate arrays while preserving existing chart data contracts. |
 | 2026-06-15 | 1.1.467 | fix(ci): serialize CI Standard apt update/install sections behind a shared host flock so parallel self-hosted Linux jobs cannot race on `/var/lib/apt/lists/lock` while installing GUI test dependencies. |
 | 2026-06-15 | 1.1.466 | feat(a11y, function-generator): expose Function Generator layer and operation controls as pressed-state toggles with keyboard-visible focus affordances, and harden Tauri self-hosted runner Node selection so CI skips broken runner-bundled npm installs. |
 | 2026-06-15 | 1.1.465 | ci(sidekick, #3335): map the `sidekick.theme` bridge to its focused import regression so bootstrap-path changes do not pull the generic Sidekick UI mirror suite or OS-terminal worker tests into unrelated Python matrix lanes. |
