@@ -11,7 +11,7 @@ from PyQt6.QtWidgets import QApplication
 from src.shared.python.chat._chat_dock_widget_qt import ChatDockWidget
 from src.shared.python.chat._qt.ui_builder import ChatDockView
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(__file__).resolve().parents[4]
 UI_BUILDER = ROOT / "src" / "shared" / "python" / "chat" / "_qt" / "ui_builder.py"
 
 

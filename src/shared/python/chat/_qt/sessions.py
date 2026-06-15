@@ -74,7 +74,10 @@ def breadcrumb_labels(dock: Any) -> list[str]:
 
 def refresh_breadcrumb(dock: Any) -> None:
     """Re-render the breadcrumb strip after a context-list mutation."""
-    widget = dock._breadcrumb_widget
+    try:
+        widget = dock._breadcrumb_widget
+    except (AttributeError, RuntimeError):
+        widget = None
     if widget is None:
         return
     try:

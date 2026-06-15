@@ -28,7 +28,6 @@ def _build_widget() -> ChatDockWidget:
     widget._app_name = "test_app"
     widget._loaded_context_sessions = []
     widget._session_manager = MagicMock()
-    widget._breadcrumb_widget = None
     widget._breadcrumb_callbacks = []
     widget._search_query = ""
     return widget
