@@ -8,6 +8,7 @@ subsequent adapter (subtab, host, feature-catalog) implements one Protocol.
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -16,7 +17,10 @@ from sidekick.agent.action_service import (
     ActionResult,
     SidekickActionHandler,
     SidekickActionService,
+    StateError,
 )
+
+from shared.python.contracts import StateError as CanonicalStateError
 
 pytestmark = pytest.mark.unit
 
@@ -84,6 +88,24 @@ class _RaisingHandler:
         raise RuntimeError("kaboom")
 
 
+class _StateRaisingHandler:
+    namespace = "state"
+
+    def describe(self) -> Sequence[ActionDescriptor]:
+        return (
+            ActionDescriptor(
+                action_id="state.fail",
+                summary="Raises a canonical state error.",
+                params_schema={"type": "object", "properties": {}},
+                side_effects="read",
+                reversible=False,
+            ),
+        )
+
+    def invoke(self, action_id: str, params: Mapping[str, Any]) -> ActionResult:
+        raise CanonicalStateError("not ready")
+
+
 class _CollidingHandler:
     namespace = "test"
 
@@ -113,7 +135,7 @@ def test_action_descriptor_rejects_bad_side_effects() -> None:
             action_id="x.y",
             summary="s",
             params_schema={"type": "object"},
-            side_effects="erase_the_planet",  # type: ignore[arg-type]
+            side_effects="erase_the_planet",
             reversible=False,
         )
 
@@ -243,7 +265,7 @@ def test_set_main_thread_dispatcher_alias_routes_handler_call() -> None:
 def test_set_dispatcher_rejects_non_callable() -> None:
     service = SidekickActionService()
     with pytest.raises(TypeError, match="callable"):
-        service.set_dispatcher(object())  # type: ignore[arg-type]
+        service.set_dispatcher(object())
 
 
 def test_invoke_unknown_action_returns_error_result() -> None:
@@ -271,6 +293,32 @@ def test_invoke_handler_exception_is_translated_to_error_result() -> None:
     assert result.ok is False
     assert result.error is not None
     assert "kaboom" in result.error or "boom.fail" in result.error
+
+
+def test_state_error_is_tools_owned_and_translated() -> None:
+    assert StateError is CanonicalStateError
+    assert StateError.__module__ in {
+        "shared.python.contracts",
+        "src.shared.python.contracts",
+    }
+    assert "core.contracts" not in StateError.__module__
+
+    service = SidekickActionService()
+    service.register(_StateRaisingHandler())
+
+    result = service.invoke("state.fail", {})
+
+    assert result.ok is False
+    assert result.error == "state error: not ready"
+
+
+def test_action_service_does_not_import_host_core_contracts() -> None:
+    import sidekick.agent.action_service as action_service
+
+    source_path = Path(action_service.__file__)
+    source = source_path.read_text(encoding="utf-8")
+
+    assert "src.shared.python.core.contracts" not in source
 
 
 def test_invoke_records_to_audit_sink() -> None:

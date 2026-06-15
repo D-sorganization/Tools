@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.481                                    |
+| **Spec Version**        | 1.1.482                                    |
 | **Last Spec Update**    | 2026-06-15                                 |
 
 ## 2. Purpose & Mission
@@ -783,6 +783,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-15 | 1.1.482 | fix(sidekick-agent, #3359): make `StateError` a Tools-owned shared contract, remove `sidekick.agent.action_service`'s fallback import of downstream `src.shared.python.core.contracts`, re-export the canonical class through the sidekick action surface, and add regression coverage for exception identity plus the host-import boundary. |
 | 2026-06-15 | 1.1.481 | fix(sidekick-api, #3359): correct `electrode_advancement_calculator.__all__` so the shared module exports `ElectrodeAdvancementCalculator` instead of imported contract helpers and `warnings`; keep the shared calculator on its pure-Python implementation rather than importing downstream `tools_core`; refresh the sidekick public API baseline and add a focused export regression. |
 | 2026-06-15 | 1.1.480 | test(ai-cli): gate live Claude Code CLI tests behind `TOOLS_RUN_LIVE_CLAUDE_CODE=1`, matching the Codex and Gemini CLI live-test pattern so CI runners with stale or partially configured CLI shims do not fail optional provider round trips. |
 | 2026-06-15 | 1.1.479 | fix(ai-auth, #3359): make `AuthManager.refresh_token_if_needed()` fail closed when an expired access token has only a valid refresh token, because #5227 has not implemented real refresh-token exchange yet; focused tests now pin valid-token success, missing-token failure, and the expired-access/valid-refresh warning path. |

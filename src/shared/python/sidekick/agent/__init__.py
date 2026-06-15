@@ -18,6 +18,7 @@ from .action_service import (
     ActionResult,
     SidekickActionHandler,
     SidekickActionService,
+    StateError,
 )
 from .canonical_tools import (
     CANONICAL_ACTION_IDS,
@@ -99,6 +100,7 @@ __all__ = [
     "SidekickActionService",
     "SidekickAgentPlanner",
     "SidekickWorkflow",
+    "StateError",
     "StateProfile",
     "SubtabActionPort",
     "SubtabAdapter",
