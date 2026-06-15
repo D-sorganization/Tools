@@ -6,7 +6,10 @@ including positive tests, negative tests, and edge cases.
 
 import logging
 import math
+import random
+from inspect import signature
 
+import numpy as np
 import pytest
 from video_processor_src import constants, logger_utils
 
@@ -59,16 +62,23 @@ class TestLoggerUtils:
     def test_set_seeds_default(self) -> None:
         """Test setting seeds with default value."""
         logger_utils.set_seeds()
-        # Verify seeds were set (we can't easily test the actual values)
-        # but we can check no exceptions were raised
-        assert True
+        first = random.random()
+
+        logger_utils.set_seeds()
+
+        assert random.random() == first
 
     def test_set_seeds_custom(self) -> None:
         """Test setting seeds with custom value."""
         custom_seed = 12345
         logger_utils.set_seeds(custom_seed)
-        # Verify seeds were set
-        assert True
+        first_python = random.random()
+        first_numpy = np.random.random(3)
+
+        logger_utils.set_seeds(custom_seed)
+
+        assert random.random() == first_python
+        np.testing.assert_allclose(np.random.random(3), first_numpy)
 
     def test_get_logger(self) -> None:
         """Test getting a logger instance."""
@@ -78,9 +88,30 @@ class TestLoggerUtils:
 
     def test_setup_logging(self) -> None:
         """Test logging setup."""
-        logger_utils.setup_logging()
-        # Verify logging was configured
-        assert True
+        root_logger = logging.getLogger()
+        original_level = root_logger.level
+        original_handlers = list(root_logger.handlers)
+
+        try:
+            for handler in original_handlers:
+                root_logger.removeHandler(handler)
+
+            kwargs = {"level": logging.WARNING}
+            if "force" in signature(logger_utils.setup_logging).parameters:
+                kwargs["force"] = True
+            logger_utils.setup_logging(**kwargs)
+
+            assert root_logger.level == logging.WARNING
+            assert root_logger.handlers
+            assert all(
+                handler.formatter is not None for handler in root_logger.handlers
+            )
+        finally:
+            for handler in list(root_logger.handlers):
+                root_logger.removeHandler(handler)
+            for handler in original_handlers:
+                root_logger.addHandler(handler)
+            root_logger.setLevel(original_level)
 
 
 class TestNegativeCases:
@@ -89,7 +120,7 @@ class TestNegativeCases:
     def test_set_seeds_negative_value(self) -> None:
         """Test setting seeds with negative value (should work)."""
         # NumPy doesn't accept negative seeds, so we should handle this
-        with pytest.raises(ValueError, match="expected non-negative integer"):
+        with pytest.raises(ValueError, match="non-negative"):
             logger_utils.set_seeds(-42)
 
     def test_get_logger_empty_name(self) -> None:
