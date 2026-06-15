@@ -676,8 +676,10 @@ export function FunctionGenerator() {
                   <div className="flex items-center space-x-1">
                     <button
                       onClick={(e) => { e.stopPropagation(); toggleLayerEnabled(layer.id); }}
-                      className={`px-2 py-0.5 rounded text-xs ${
-                        layer.enabled ? 'bg-green-600 text-white' : 'bg-slate-600 text-slate-400'
+                      aria-pressed={layer.enabled}
+                      aria-label={`Toggle layer ${idx + 1}`}
+                      className={`px-2 py-0.5 rounded text-xs focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none transition-colors ${
+                        layer.enabled ? 'bg-green-600 text-white hover:bg-green-500' : 'bg-slate-600 text-slate-400 hover:bg-slate-500'
                       }`}
                     >
                       {layer.enabled ? 'ON' : 'OFF'}
@@ -697,16 +699,18 @@ export function FunctionGenerator() {
                   <div className="mt-2 flex space-x-2">
                     <button
                       onClick={(e) => { e.stopPropagation(); updateLayerOperation(layer.id, 'add'); }}
-                      className={`flex-1 px-2 py-1 rounded text-xs ${
-                        layer.operation === 'add' ? 'bg-blue-600 text-white' : 'bg-slate-600 text-slate-300'
+                      aria-pressed={layer.operation === 'add'}
+                      className={`flex-1 px-2 py-1 rounded text-xs focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none transition-colors ${
+                        layer.operation === 'add' ? 'bg-blue-600 text-white' : 'bg-slate-600 text-slate-300 hover:bg-slate-500'
                       }`}
                     >
                       Add (+)
                     </button>
                     <button
                       onClick={(e) => { e.stopPropagation(); updateLayerOperation(layer.id, 'subtract'); }}
-                      className={`flex-1 px-2 py-1 rounded text-xs ${
-                        layer.operation === 'subtract' ? 'bg-blue-600 text-white' : 'bg-slate-600 text-slate-300'
+                      aria-pressed={layer.operation === 'subtract'}
+                      className={`flex-1 px-2 py-1 rounded text-xs focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none transition-colors ${
+                        layer.operation === 'subtract' ? 'bg-blue-600 text-white' : 'bg-slate-600 text-slate-300 hover:bg-slate-500'
                       }`}
                     >
                       Subtract (−)
