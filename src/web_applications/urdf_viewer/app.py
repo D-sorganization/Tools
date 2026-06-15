@@ -9,11 +9,11 @@ Provides:
 
 import logging
 import os
-import sys
 from pathlib import Path
 
 from cors import add_cors_middleware
 from fastapi import FastAPI, HTTPException, Query, UploadFile
+from fastapi.dependencies.utils import ensure_multipart_is_installed
 from fastapi.responses import FileResponse, HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -21,22 +21,6 @@ from pydantic import BaseModel, Field
 # ── Security constants ──────────────────────────────────────────────────
 MAX_UPLOAD_SIZE = 25 * 1024 * 1024  # 25 MB
 ALLOWED_EXTENSIONS = {".urdf", ".xml"}
-
-# ── Ensure urdf_builder_gui is importable ───────────────────────────────
-# The urdf_builder_gui package lives under src/urdf_builder_gui/python/.
-# We add it to sys.path only if it's not already importable via
-# the bootstrap/conftest path setup.
-try:
-    import urdf_builder_gui  # noqa: F401
-except ImportError:
-    _URDF_BUILDER_DIR = str(
-        Path(__file__).resolve().parent.parent.parent / "urdf_builder_gui" / "python"
-    )
-    if _URDF_BUILDER_DIR not in sys.path:
-        sys.path.append(_URDF_BUILDER_DIR)
-        logging.getLogger(__name__).info(
-            "Added urdf_builder_gui to sys.path: %s", _URDF_BUILDER_DIR
-        )
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -115,17 +99,20 @@ def get_safe_path(filename: str) -> Path:
 # ── Model CRUD ──────────────────────────────────────────────────────────
 
 
-@app.post("/api/upload")
-async def upload_file(
+def _python_multipart_available() -> bool:
+    """Return whether FastAPI can register multipart upload routes."""
+    try:
+        ensure_multipart_is_installed()
+    except RuntimeError as exc:
+        logger.warning("Multipart upload support is unavailable: %s", exc)
+        return False
+    return True
+
+
+async def _store_uploaded_file(
     file: UploadFile,
     overwrite: bool = Query(default=False),
 ) -> dict[str, str]:
-    """Upload a URDF or XML model file.
-
-    Args:
-        file: The uploaded file (max 25 MB, must be .urdf or .xml).
-        overwrite: If True, allow overwriting an existing file.
-    """
     try:
         if not file.filename:
             raise HTTPException(status_code=400, detail="Filename is missing")
@@ -171,6 +158,34 @@ async def upload_file(
     except (PermissionError, OSError) as e:
         logger.error("Failed to upload file: %s", e)
         raise HTTPException(status_code=500, detail="Upload failed") from e
+
+
+if _python_multipart_available():
+
+    @app.post("/api/upload")
+    async def upload_file(
+        file: UploadFile,
+        overwrite: bool = Query(default=False),
+    ) -> dict[str, str]:
+        """Upload a URDF or XML model file.
+
+        Args:
+            file: The uploaded file (max 25 MB, must be .urdf or .xml).
+            overwrite: If True, allow overwriting an existing file.
+        """
+        return await _store_uploaded_file(file=file, overwrite=overwrite)
+
+else:
+
+    @app.post("/api/upload")
+    async def upload_file_unavailable(
+        overwrite: bool = Query(default=False),
+    ) -> None:
+        """Report missing multipart support without failing application import."""
+        raise HTTPException(
+            status_code=503,
+            detail="File uploads require the python-multipart package.",
+        )
 
 
 @app.get("/api/models")

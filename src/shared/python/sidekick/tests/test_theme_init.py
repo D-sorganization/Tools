@@ -3,6 +3,19 @@ import os
 import subprocess
 import sys
 import textwrap
+from pathlib import Path
+
+SHARED_PYTHON = Path(__file__).resolve().parents[2]
+
+
+def _subprocess_env() -> dict[str, str]:
+    env = os.environ.copy()
+    existing_pythonpath = env.get("PYTHONPATH")
+    paths = [str(SHARED_PYTHON)]
+    if existing_pythonpath:
+        paths.append(existing_pythonpath)
+    env["PYTHONPATH"] = os.pathsep.join(paths)
+    return env
 
 
 def test_theme_init_imports() -> None:
@@ -43,7 +56,7 @@ def test_theme_init_no_theme() -> None:
     completed = subprocess.run(
         [sys.executable, "-c", textwrap.dedent(code)],
         cwd=os.getcwd(),
-        env=os.environ.copy(),
+        env=_subprocess_env(),
         capture_output=True,
         text=True,
         check=False,
@@ -51,16 +64,17 @@ def test_theme_init_no_theme() -> None:
     assert completed.returncode == 0, completed.stdout + completed.stderr
 
 
-def test_theme_init_sys_path() -> None:
+def test_theme_init_does_not_fallback_to_sys_path() -> None:
     code = """
         import importlib
         import sys
+        from pathlib import Path
         from unittest.mock import patch
 
         import sidekick.theme as module_under_test
 
         path = str(
-            module_under_test.Path(module_under_test.__file__)
+            Path(module_under_test.__file__)
             .resolve()
             .parent
             .parent
@@ -72,12 +86,12 @@ def test_theme_init_sys_path() -> None:
         with patch.dict(sys.modules, {"theme": None}):
             importlib.reload(module_under_test)
 
-        assert path in sys.path
+        assert path not in sys.path
     """
     completed = subprocess.run(
         [sys.executable, "-c", textwrap.dedent(code)],
         cwd=os.getcwd(),
-        env=os.environ.copy(),
+        env=_subprocess_env(),
         capture_output=True,
         text=True,
         check=False,

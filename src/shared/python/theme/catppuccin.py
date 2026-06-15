@@ -218,6 +218,23 @@ QTextEdit {{
     font-family: "Consolas", "Courier New", monospace;
 }}
 
+QSlider::groove:horizontal {{
+    background-color: {p["surface1"]};
+    border-radius: 3px;
+    height: 6px;
+}}
+
+QSlider::handle:horizontal {{
+    background-color: {p["blue"]};
+    border-radius: 7px;
+    margin: -4px 0;
+    width: 14px;
+}}
+
+QSlider::handle:horizontal:hover {{
+    background-color: {p["sapphire"]};
+}}
+
 QPushButton {{
     background-color: {p["blue"]};
     color: {p["crust"]};
