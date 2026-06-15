@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.483                                    |
+| **Spec Version**        | 1.1.484                                    |
 | **Last Spec Update**    | 2026-06-15                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-15 Update
 
+- Video processor logger tests now assert observable seed and logging
+  configuration contracts instead of placeholder `assert True` checks. The
+  negative-seed regression now accepts the canonical shared logger utility's
+  fail-fast non-negative message.
 - CI source-keyed test selection keeps Sidekick agent-only changes focused on
   `tests/unit/sidekick/agent/test_action_service.py`. Agent contract changes no
   longer pull unrelated Qt runtime/sidebar suites into every matrix lane; broad
@@ -791,6 +795,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-15 | 1.1.484 | test(video-processor, #3359): replace placeholder logger utility assertions with deterministic Python/NumPy seed checks, root logging configuration assertions, and a message-stable negative-seed contract. |
+| 2026-06-15 | 1.1.483 | ci(sidekick-agent, #3359): focus source-keyed Sidekick agent test selection on `tests/unit/sidekick/agent/test_action_service.py` so agent contract changes do not pull unrelated Qt runtime/sidebar suites into every matrix lane. |
 | 2026-06-15 | 1.1.482 | fix(sidekick-agent, #3359): make `StateError` a Tools-owned shared contract, remove `sidekick.agent.action_service`'s fallback import of downstream `src.shared.python.core.contracts`, re-export the canonical class through the sidekick action surface, and add regression coverage for exception identity plus the host-import boundary. |
 | 2026-06-15 | 1.1.481 | fix(sidekick-api, #3359): correct `electrode_advancement_calculator.__all__` so the shared module exports `ElectrodeAdvancementCalculator` instead of imported contract helpers and `warnings`; keep the shared calculator on its pure-Python implementation rather than importing downstream `tools_core`; refresh the sidekick public API baseline and add a focused export regression. |
 | 2026-06-15 | 1.1.480 | test(ai-cli): gate live Claude Code CLI tests behind `TOOLS_RUN_LIVE_CLAUDE_CODE=1`, matching the Codex and Gemini CLI live-test pattern so CI runners with stale or partially configured CLI shims do not fail optional provider round trips. |
