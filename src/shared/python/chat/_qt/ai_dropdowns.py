@@ -10,6 +10,7 @@ delegate to the free functions defined here.
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from typing import Any
 
 from PyQt6.QtWidgets import QComboBox, QHBoxLayout, QSizePolicy
@@ -78,48 +79,61 @@ def build_available_cli_provider_items() -> list[tuple[str, str]]:
     ]
 
 
-def build_ai_dropdowns(dock: Any, mode_row: QHBoxLayout) -> None:
-    """Construct + wire the three AI header dropdowns on ``dock``.
+def _required_combo(view: Any, field: str) -> QComboBox:
+    combo = getattr(view, field, None)
+    if not isinstance(combo, QComboBox):
+        raise RuntimeError(f"ChatDockView.{field} must be initialized")
+    return combo
 
-    Side-effect only: instantiates ``_ai_provider_combo``, ``_ai_model_combo``,
-    ``_ai_thinking_combo`` on ``dock`` and inserts them into ``mode_row``.
+
+def build_ai_dropdowns(
+    view: Any,
+    mode_row: QHBoxLayout,
+    *,
+    on_combo_changed: Callable[[str], None],
+    refresh_model_combo: Callable[[], None],
+    refresh_thinking_combo: Callable[[], None],
+    sync_dropdowns: Callable[[], None],
+) -> None:
+    """Construct + wire the three AI header dropdowns on ``view``.
+
+    Side-effect only: populates ``ChatDockView.ai_*_combo`` fields and inserts
+    them into ``mode_row``. Legacy ``dock._ai_*_combo`` aliases are generated
+    by the view mirror in ``ui_builder.py``.
     """
     api_items = list(DEFAULT_PROVIDERS)
     cli_items = build_available_cli_provider_items()
     all_provider_items = api_items + cli_items
-    dock._ai_provider_combo = build_header_combobox(
+    view.ai_provider_combo = build_header_combobox(
         label="provider", items=all_provider_items
     )
-    mode_row.addWidget(dock._ai_provider_combo)
+    mode_row.addWidget(view.ai_provider_combo)
 
-    dock._ai_model_combo = build_header_combobox(
+    view.ai_model_combo = build_header_combobox(
         label="model", items=[("(default)", "default")]
     )
-    mode_row.addWidget(dock._ai_model_combo)
+    mode_row.addWidget(view.ai_model_combo)
 
-    dock._ai_thinking_combo = build_header_combobox(
+    view.ai_thinking_combo = build_header_combobox(
         label="thinking", items=[("Off", "none")]
     )
-    mode_row.addWidget(dock._ai_thinking_combo)
+    mode_row.addWidget(view.ai_thinking_combo)
 
-    dock._ai_provider_combo.currentIndexChanged.connect(
-        lambda _: dock._on_ai_combo_changed("provider")
+    view.ai_provider_combo.currentIndexChanged.connect(
+        lambda _: on_combo_changed("provider")
     )
-    dock._ai_model_combo.currentIndexChanged.connect(
-        lambda _: dock._on_ai_combo_changed("model")
+    view.ai_model_combo.currentIndexChanged.connect(lambda _: on_combo_changed("model"))
+    view.ai_thinking_combo.currentIndexChanged.connect(
+        lambda _: on_combo_changed("thinking")
     )
-    dock._ai_thinking_combo.currentIndexChanged.connect(
-        lambda _: dock._on_ai_combo_changed("thinking")
-    )
-    dock._refresh_ai_model_combo()
-    dock._refresh_ai_thinking_combo()
-    dock._sync_ai_dropdowns()
+    refresh_model_combo()
+    refresh_thinking_combo()
+    sync_dropdowns()
 
 
-def refresh_ai_model_combo(dock: Any) -> None:
+def refresh_ai_model_combo(view: Any, adapter: Any | None) -> None:
     """Repopulate the model combo for the currently selected provider."""
     try:
-        adapter = dock._get_active_ai_adapter()
         models = adapter.list_models() if adapter is not None else []
     except Exception:  # noqa: BLE001 - any adapter failure → empty list
         logger.debug("refresh_ai_model_combo: adapter probe failed", exc_info=True)
@@ -135,19 +149,19 @@ def refresh_ai_model_combo(dock: Any) -> None:
         items.append((display, data))
     if not items:
         items = [("(default)", "default")]
-    dock._ai_model_combo.blockSignals(True)
+    combo = _required_combo(view, "ai_model_combo")
+    combo.blockSignals(True)
     try:
-        dock._ai_model_combo.clear()
+        combo.clear()
         for display, data in items:
-            dock._ai_model_combo.addItem(display, data)
+            combo.addItem(display, data)
     finally:
-        dock._ai_model_combo.blockSignals(False)
+        combo.blockSignals(False)
 
 
-def refresh_ai_thinking_combo(dock: Any) -> None:
+def refresh_ai_thinking_combo(view: Any, adapter: Any | None) -> None:
     """Repopulate the thinking combo for the currently selected adapter."""
     try:
-        adapter = dock._get_active_ai_adapter()
         caps = adapter.thinking_capabilities() if adapter is not None else None
     except Exception:  # noqa: BLE001
         logger.debug("refresh_ai_thinking_combo: adapter probe failed", exc_info=True)
@@ -162,21 +176,28 @@ def refresh_ai_thinking_combo(dock: Any) -> None:
             )
             for level in getattr(caps, "available_levels", getattr(caps, "levels", []))
         ]
-    dock._ai_thinking_combo.blockSignals(True)
+    combo = _required_combo(view, "ai_thinking_combo")
+    combo.blockSignals(True)
     try:
-        dock._ai_thinking_combo.clear()
+        combo.clear()
         for display, data in items:
-            dock._ai_thinking_combo.addItem(display, data)
+            combo.addItem(display, data)
     finally:
-        dock._ai_thinking_combo.blockSignals(False)
+        combo.blockSignals(False)
 
 
-def sync_ai_dropdowns(dock: Any) -> None:
+def sync_ai_dropdowns(
+    view: Any,
+    *,
+    current_provider: str,
+    current_model: str,
+    current_thinking_level: str,
+) -> None:
     """Push current state into the three combos with signals blocked."""
     for combo, value in (
-        (dock._ai_provider_combo, dock._current_provider),
-        (dock._ai_model_combo, dock._current_model),
-        (dock._ai_thinking_combo, dock._current_thinking_level),
+        (_required_combo(view, "ai_provider_combo"), current_provider),
+        (_required_combo(view, "ai_model_combo"), current_model),
+        (_required_combo(view, "ai_thinking_combo"), current_thinking_level),
     ):
         combo.blockSignals(True)
         try:

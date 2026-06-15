@@ -33,6 +33,7 @@ from PyQt6.QtWidgets import (
 )
 
 from .._thinking_indicator import ThinkingIndicator
+from . import ai_dropdowns
 from .history_sidebar import HistorySidebar
 from .input import install_enter_submit
 from .queue_panel import QueuePanel
@@ -74,6 +75,9 @@ class ChatDockView:
     mode_combo: QComboBox | None = None
     shell_combo: QComboBox | None = None
     provider_combo: QComboBox | None = None
+    ai_provider_combo: QComboBox | None = None
+    ai_model_combo: QComboBox | None = None
+    ai_thinking_combo: QComboBox | None = None
     terminal_start_btn: QPushButton | None = None
     terminal_stop_btn: QPushButton | None = None
     scroll_area: QScrollArea | None = None
@@ -249,7 +253,23 @@ def build_chat_dock_ui(dock: Any) -> ChatDockView:
     layout.addWidget(view.splitter, stretch=1)
 
     mode_row = QHBoxLayout()
-    dock._build_ai_dropdowns(mode_row)
+    ai_dropdowns.build_ai_dropdowns(
+        view,
+        mode_row,
+        on_combo_changed=dock._on_ai_combo_changed,
+        refresh_model_combo=lambda: ai_dropdowns.refresh_ai_model_combo(
+            view, dock._get_active_ai_adapter()
+        ),
+        refresh_thinking_combo=lambda: ai_dropdowns.refresh_ai_thinking_combo(
+            view, dock._get_active_ai_adapter()
+        ),
+        sync_dropdowns=lambda: ai_dropdowns.sync_ai_dropdowns(
+            view,
+            current_provider=dock._current_provider,
+            current_model=dock._current_model,
+            current_thinking_level=dock._current_thinking_level,
+        ),
+    )
 
     view.mode_combo = QComboBox()
     view.mode_combo.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
