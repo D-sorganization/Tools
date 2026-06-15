@@ -11,14 +11,7 @@ license = {text = "MIT"}
 requires-python = ">=3.10"
 dependencies = [
     "numpy>=1.24,<2.0",
-    # Cap below 1.16: scipy 1.16+ added scipy.spatial.transform._rigid_transform
-    # which imports a private `_promote` symbol that does not exist in the
-    # compiled _rotation extension installed alongside, breaking
-    # `from scipy.interpolate import CubicSpline` at conftest import time.
-    # First seen as the nightly ImportError in #458 (now closed).
-    # Lifting this cap is tracked in #503 — revisit once upstream resolves the
-    # private-API drift. See README "Known limitations".
-    "scipy>=1.10,<1.16",
+    "scipy>=1.10",
     "matplotlib>=3.7,<4.0",
     "PyQt6>=6.5,<7.0",
     "openpyxl>=3.1",
