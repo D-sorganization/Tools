@@ -135,6 +135,20 @@ def test_sidekick_theme_bridge_change_selects_focused_import_test() -> None:
 
 
 @pytest.mark.unit
+def test_sidekick_agent_source_change_selects_focused_agent_tests() -> None:
+    targets = select_tests_for_changes.select_targets(
+        [
+            "src/shared/python/sidekick/agent/__init__.py",
+            "src/shared/python/sidekick/agent/action_service.py",
+        ]
+    )
+
+    assert targets == ["tests/unit/sidekick/agent/test_action_service.py"]
+    assert "src/shared/python/sidekick/tests" not in targets
+    assert "tests/shared/python/sidekick" not in targets
+
+
+@pytest.mark.unit
 def test_sidekick_tools_sidebar_source_change_selects_focused_tests() -> None:
     targets = select_tests_for_changes.select_targets(
         [

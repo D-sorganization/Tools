@@ -42,6 +42,12 @@ _SIDEKICK_PROCESS_CALCULATOR_TESTS = {
 }
 
 _SIDEKICK_SOURCE_TESTS = {
+    "agent/__init__.py": [
+        "tests/unit/sidekick/agent/test_action_service.py",
+    ],
+    "agent/action_service.py": [
+        "tests/unit/sidekick/agent/test_action_service.py",
+    ],
     "data_processing/core.py": [
         "src/shared/python/sidekick/tests/test_data_processor_engine_errors.py",
         "tests/shared/python/sidekick/data_processing/test_io.py",

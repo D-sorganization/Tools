@@ -382,6 +382,7 @@
       "SidekickActionService",
       "SidekickAgentPlanner",
       "SidekickWorkflow",
+      "StateError",
       "StateProfile",
       "SubtabActionPort",
       "SubtabAdapter",
@@ -1679,6 +1680,9 @@
           ],
           "returns": "dict[str, Any]"
         }
+      },
+      "StateError": {
+        "type": "unknown"
       }
     }
   },
@@ -1845,7 +1849,8 @@
       "RecordedCall",
       "SideEffect",
       "SidekickActionHandler",
-      "SidekickActionService"
+      "SidekickActionService",
+      "StateError"
     ],
     "symbols": {
       "ActionDescriptor": {
@@ -2064,6 +2069,9 @@
             }
           }
         }
+      },
+      "StateError": {
+        "type": "unknown"
       }
     }
   },

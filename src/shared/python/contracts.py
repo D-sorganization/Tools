@@ -159,6 +159,10 @@ class InvariantError(ContractViolationError):
         super().__init__("invariant", message, value)
 
 
+class StateError(RuntimeError):
+    """Raised when an operation is invalid for the current object state."""
+
+
 class PreconditionEvaluationError(PreconditionError):
     """Raised when a precondition cannot be evaluated due to an error in the condition itself."""  # noqa: E501
 

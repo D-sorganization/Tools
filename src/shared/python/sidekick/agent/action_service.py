@@ -35,7 +35,9 @@ import logging
 import uuid
 from collections.abc import Mapping
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Any
+from typing import Any
+
+from shared.python.contracts import StateError
 
 from .action_contracts import (
     ActionDescriptor,
@@ -46,20 +48,6 @@ from .action_contracts import (
     SideEffect,
     SidekickActionHandler,
 )
-
-if TYPE_CHECKING:
-
-    class StateError(RuntimeError):
-        """Fallback state error for repos that do not provide core contracts."""
-
-else:
-    try:
-        from src.shared.python.core.contracts.exceptions import StateError
-    except ImportError:  # pragma: no cover - Tools has no core contract package.
-
-        class StateError(RuntimeError):
-            """Fallback state error for repos without core contracts."""
-
 
 logger = logging.getLogger(__name__)
 
@@ -74,6 +62,7 @@ __all__ = [
     "SideEffect",
     "SidekickActionHandler",
     "SidekickActionService",
+    "StateError",
 ]
 
 

@@ -619,7 +619,7 @@ jobs:
           )
           if [ "${{ matrix.python-version }}" != "3.10" ] && [ "$BRANCH_NAME" != "codex/consolidate-open-prs-20260611-tools" ] && grep -q -E '^src/shared/python/sidekick/' changed_python_files.txt; then
             sidekick_runtime_tests_required=false
-            if grep -q -E '^src/shared/python/sidekick/(agent|api|calculators|data_processing|lab|notes_|selected_tab_panel|symbolic_engine|tab_context_menu|ui|utils|workspace)' changed_python_files.txt; then
+            if grep -q -E '^src/shared/python/sidekick/(api|calculators|data_processing|lab|notes_|selected_tab_panel|symbolic_engine|tab_context_menu|ui|utils|workspace)' changed_python_files.txt; then
               sidekick_runtime_tests_required=true
             fi
             if [ "$sidekick_runtime_tests_required" = "true" ]; then
