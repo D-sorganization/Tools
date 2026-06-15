@@ -7,7 +7,7 @@ Features:
     - User authentication via API keys
     - Subscription tier management (Free, Pro, Enterprise)
     - Feature gating based on subscription level
-    - Secure token storage and refresh
+    - Secure token storage; real refresh-token exchange is not implemented yet
 
 Note:
     OAuth and email/password authentication methods are NOT implemented.
@@ -29,15 +29,18 @@ from __future__ import annotations
 import contextlib
 import hashlib
 import secrets
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
 from pathlib import Path
-from typing import Any
+from typing import Any, ParamSpec, TypeVar
 
 from src.shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
+_P = ParamSpec("_P")
+_R = TypeVar("_R")
 
 
 class SubscriptionTier(Enum):
@@ -456,16 +459,20 @@ class AuthManager:
         return None
 
     def refresh_token_if_needed(self) -> bool:
-        """Refresh access token if expired.
+        """Return whether the current access token can be used.
 
         Returns:
-            True if token is valid (or refreshed), False if refresh failed.
+            True when the existing access token is valid, False when no valid
+            access token is available. Refresh-token exchange is tracked in
+            #5227 and is deliberately fail-closed until implemented.
         """
         if not self._access_token or not self._access_token.is_valid():
             if self._refresh_token and self._refresh_token.is_valid():
                 # TODO(#5227): Exchange refresh token for new access token
-                logger.info("Refreshing access token")
-                return True
+                logger.warning(
+                    "Access token expired and refresh-token exchange is not "
+                    "implemented yet (#5227); re-authentication is required"
+                )
             return False
         return True
 
@@ -492,7 +499,7 @@ class FeatureGate:
         return cls._auth
 
     @classmethod
-    def require(cls, feature: str):
+    def require(cls, feature: str) -> Callable[[Callable[_P, _R]], Callable[_P, _R]]:
         """Decorator to require a feature for access.
 
         Args:
@@ -502,8 +509,8 @@ class FeatureGate:
             Decorator function.
         """
 
-        def decorator(func):
-            def wrapper(*args, **kwargs):
+        def decorator(func: Callable[_P, _R]) -> Callable[_P, _R]:
+            def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> _R:
                 auth = cls._get_auth()
                 if not auth.has_feature(feature):
                     raise PermissionError(
@@ -517,7 +524,9 @@ class FeatureGate:
         return decorator
 
     @classmethod
-    def require_tier(cls, tier: SubscriptionTier):
+    def require_tier(
+        cls, tier: SubscriptionTier
+    ) -> Callable[[Callable[_P, _R]], Callable[_P, _R]]:
         """Decorator to require a minimum subscription tier.
 
         Args:
@@ -527,8 +536,8 @@ class FeatureGate:
             Decorator function.
         """
 
-        def decorator(func):
-            def wrapper(*args, **kwargs):
+        def decorator(func: Callable[_P, _R]) -> Callable[_P, _R]:
+            def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> _R:
                 auth = cls._get_auth()
                 tier_order = {
                     SubscriptionTier.FREE: 0,
