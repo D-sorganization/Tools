@@ -56,3 +56,6 @@
 ## 2026-06-12 - Pre-allocate Arrays in Nelder-Mead Loops
 **Learning:** In optimization loops like Nelder-Mead, allocating new arrays inside the hot iteration loop creates unnecessary garbage collection pressure.
 **Action:** Pre-allocate working arrays such as `centroid`, `reflected`, `expanded`, and `contracted` outside the main algorithm loop and mutate them in place.
+## 2026-06-12 - Avoid Array.from({ length }) in Math Hot Paths
+**Learning:** In JavaScript/V8 numerical computing hot paths (like PCA or matrix calculations), using `Array.from({ length: N }, () => ...)` incurs significant overhead from iterability checks, iterator creation, and closure execution per element.
+**Action:** Instead, pre-allocate arrays using `new Array(N)` and populate them with standard `for` loops to prevent O(N) intermediate garbage collection pressure.

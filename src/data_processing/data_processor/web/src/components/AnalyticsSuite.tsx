@@ -8,7 +8,7 @@
  *
  * See issue #607.
  */
-import { useState, useMemo, useCallback, memo } from 'react';
+import { useState, useMemo, useCallback, memo } from "react";
 import {
   BarChart,
   Bar,
@@ -23,13 +23,13 @@ import {
   LineChart,
   Line,
   Legend,
-} from 'recharts';
+} from "recharts";
 import type {
   DataRow,
   CorrelationMatrix,
   PCAResult,
   RegressionResult,
-} from '../types';
+} from "../types";
 
 // ---------------------------------------------------------------------------
 // Props
@@ -41,16 +41,21 @@ interface AnalyticsSuiteProps {
   selectedSignals: string[];
 }
 
-type AnalyticsTab = 'correlation' | 'pca' | 'regression';
+type AnalyticsTab = "correlation" | "pca" | "regression";
 
 // ---------------------------------------------------------------------------
 // Math helpers
 // ---------------------------------------------------------------------------
 
-function computeCorrelation(data: DataRow[], signals: string[]): CorrelationMatrix {
+function computeCorrelation(
+  data: DataRow[],
+  signals: string[],
+): CorrelationMatrix {
   const n = signals.length;
   const rowCount = data.length;
-  const matrix: number[][] = Array.from({ length: n }, () => Array(n).fill(0));
+  // ⚡ Bolt Optimization: Replace Array.from().fill() chaining to avoid intermediate array allocation
+  const matrix: number[][] = new Array(n);
+  for (let i = 0; i < n; i++) matrix[i] = new Array(n).fill(0);
 
   // ⚡ Bolt Optimization: Allocate column-wise buffers using Float64Array
   // instead of allocating standard array rows (N x P) via chained map() calls.
@@ -59,7 +64,7 @@ function computeCorrelation(data: DataRow[], signals: string[]): CorrelationMatr
     const col = new Float64Array(rowCount);
     for (let i = 0; i < rowCount; i++) {
       const val = data[i][sig];
-      col[i] = typeof val === 'number' ? val : NaN;
+      col[i] = typeof val === "number" ? val : NaN;
     }
     return col;
   });
@@ -86,7 +91,8 @@ function computeCorrelation(data: DataRow[], signals: string[]): CorrelationMatr
     const sumSqs = new Float64Array(n);
     for (let i = 0; i < n; i++) {
       const col = columns[i];
-      let sum = 0, sumSq = 0;
+      let sum = 0,
+        sumSq = 0;
       for (let k = 0; k < rowCount; k++) {
         const v = col[k];
         sum += v;
@@ -138,7 +144,12 @@ function computeCorrelation(data: DataRow[], signals: string[]): CorrelationMatr
       matrix[i][i] = 1;
       for (let j = i + 1; j < n; j++) {
         const colJ = columns[j];
-        let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0, sumY2 = 0, count = 0;
+        let sumX = 0,
+          sumY = 0,
+          sumXY = 0,
+          sumX2 = 0,
+          sumY2 = 0,
+          count = 0;
 
         for (let k = 0; k < rowCount; k++) {
           const vx = colI[k];
@@ -179,7 +190,11 @@ function computeCorrelation(data: DataRow[], signals: string[]): CorrelationMatr
  * top-k eigenvalues).  Good enough for interactive analytics on moderate
  * datasets.
  */
-function computePCA(data: DataRow[], signals: string[], numComponents?: number): PCAResult {
+function computePCA(
+  data: DataRow[],
+  signals: string[],
+  numComponents?: number,
+): PCAResult {
   const n = data.length;
   const p = signals.length;
   const nc = Math.min(numComponents ?? p, p);
@@ -191,7 +206,7 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
     const col = new Float64Array(n);
     for (let i = 0; i < n; i++) {
       const val = data[i][sig];
-      col[i] = typeof val === 'number' ? val : 0;
+      col[i] = typeof val === "number" ? val : 0;
     }
     return col;
   });
@@ -221,7 +236,9 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
 
   // Standardized column matrix (p x n) using Float64Array for performance
   // This avoids O(N) row allocations and speeds up covariance / score calculations
-  const Z_cols: Float64Array[] = Array.from({ length: p }, (_, j) => {
+  // ⚡ Bolt Optimization: Replace Array.from() with standard loop and pre-allocated array
+  const Z_cols: Float64Array[] = new Array(p);
+  for (let j = 0; j < p; j++) {
     const colBuffer = new Float64Array(n);
     const mean = means[j];
     const std = stds[j];
@@ -229,11 +246,12 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
     for (let i = 0; i < n; i++) {
       colBuffer[i] = (c[i] - mean) / std;
     }
-    return colBuffer;
-  });
+    Z_cols[j] = colBuffer;
+  }
 
   // Covariance matrix (p x p)
-  const cov: number[][] = Array.from({ length: p }, () => Array(p).fill(0));
+  const cov: number[][] = new Array(p);
+  for (let i = 0; i < p; i++) cov[i] = new Array(p).fill(0);
   for (let i = 0; i < p; i++) {
     const zi = Z_cols[i];
     for (let j = i; j < p; j++) {
@@ -268,7 +286,8 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
   const Av = new Array<number>(p);
 
   for (let comp = 0; comp < nc; comp++) {
-    let v = Array.from({ length: p }, () => Math.random());
+    let v = new Array(p);
+    for (let i = 0; i < p; i++) v[i] = Math.random();
 
     // Initial norm
     let sqSum = 0;
@@ -338,7 +357,8 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
   // ⚡ Bolt Optimization: Reverse loop order to traverse elements sequentially within a single column (Z_cols[j][i]).
   // This maximizes CPU cache locality for the column-major Z_cols array (Float64Array[])
   // and significantly reduces execution time.
-  const scores: number[][] = Array.from({ length: n }, () => new Array(nc).fill(0));
+  const scores: number[][] = new Array(n);
+  for (let i = 0; i < n; i++) scores[i] = new Array(nc).fill(0);
   for (let j = 0; j < p; j++) {
     const col = Z_cols[j];
     for (let c = 0; c < nc; c++) {
@@ -389,7 +409,12 @@ function computeRegression(
     const x = row[xSignal];
     const y = row[ySignal];
 
-    if (typeof x === 'number' && typeof y === 'number' && !Number.isNaN(x) && !Number.isNaN(y)) {
+    if (
+      typeof x === "number" &&
+      typeof y === "number" &&
+      !Number.isNaN(x) &&
+      !Number.isNaN(y)
+    ) {
       xsBuffer[n] = x;
       ysBuffer[n] = y;
       n++;
@@ -433,7 +458,8 @@ function computeRegression(
     // ⚡ Bolt Optimization: Replace multiple .reduce()/.map() calls with a single-pass loop
     // Performance impact: Drastically reduces array allocations and callback overhead for quadratic regressions.
     const cols = degree + 1;
-    const XtX: number[][] = Array.from({ length: cols }, () => new Array(cols).fill(0));
+    const XtX: number[][] = new Array(cols);
+    for (let i = 0; i < cols; i++) XtX[i] = new Array(cols).fill(0);
     const XtY: number[] = new Array(cols).fill(0);
 
     for (let k = 0; k < n; k++) {
@@ -495,7 +521,8 @@ function computeRegression(
   }
   const rSquared = ssTotal === 0 ? 1 : 1 - ssResidual / ssTotal;
   const p = coefficients.length;
-  const adjustedRSquared = n <= p ? rSquared : 1 - ((1 - rSquared) * (n - 1)) / (n - p);
+  const adjustedRSquared =
+    n <= p ? rSquared : 1 - ((1 - rSquared) * (n - 1)) / (n - p);
 
   // Build equation string
   let equation: string;
@@ -505,17 +532,17 @@ function computeRegression(
     const terms = coefficients
       .map((c, d) => {
         if (d === 0) return c.toFixed(4);
-        const sign = c >= 0 ? ' + ' : ' - ';
+        const sign = c >= 0 ? " + " : " - ";
         const coef = Math.abs(c).toFixed(4);
-        const xPart = d === 1 ? 'x' : `x^${d}`;
+        const xPart = d === 1 ? "x" : `x^${d}`;
         return `${sign}${coef}${xPart}`;
       })
-      .join('');
+      .join("");
     equation = `y = ${terms}`;
   }
 
   return {
-    type: degree === 1 ? 'linear' : 'polynomial',
+    type: degree === 1 ? "linear" : "polynomial",
     equation,
     rSquared,
     adjustedRSquared,
@@ -574,19 +601,27 @@ function solveLinearSystem(A: number[][], b: number[]): number[] {
 // Component
 // ---------------------------------------------------------------------------
 
-const COLORS_POSITIVE = ['#0d47a1', '#1565c0', '#1976d2', '#42a5f5', '#90caf9'];
-const COLORS_NEGATIVE = ['#b71c1c', '#c62828', '#d32f2f', '#ef5350', '#ef9a9a'];
+const COLORS_POSITIVE = ["#0d47a1", "#1565c0", "#1976d2", "#42a5f5", "#90caf9"];
+const COLORS_NEGATIVE = ["#b71c1c", "#c62828", "#d32f2f", "#ef5350", "#ef9a9a"];
 
 function correlationColor(r: number): string {
-  if (isNaN(r)) return '#4a4a4a';
+  if (isNaN(r)) return "#4a4a4a";
   const idx = Math.min(4, Math.floor(Math.abs(r) * 5));
   return r >= 0 ? COLORS_POSITIVE[4 - idx] : COLORS_NEGATIVE[4 - idx];
 }
 
-export const AnalyticsSuite = memo(function AnalyticsSuite({ data, signals, selectedSignals }: AnalyticsSuiteProps) {
-  const [tab, setTab] = useState<AnalyticsTab>('correlation');
-  const [regXSignal, setRegXSignal] = useState<string>(selectedSignals[0] ?? '');
-  const [regYSignal, setRegYSignal] = useState<string>(selectedSignals[1] ?? selectedSignals[0] ?? '');
+export const AnalyticsSuite = memo(function AnalyticsSuite({
+  data,
+  signals,
+  selectedSignals,
+}: AnalyticsSuiteProps) {
+  const [tab, setTab] = useState<AnalyticsTab>("correlation");
+  const [regXSignal, setRegXSignal] = useState<string>(
+    selectedSignals[0] ?? "",
+  );
+  const [regYSignal, setRegYSignal] = useState<string>(
+    selectedSignals[1] ?? selectedSignals[0] ?? "",
+  );
   const [regDegree, setRegDegree] = useState<number>(1);
 
   const activeSignals = useMemo(() => {
@@ -648,7 +683,7 @@ export const AnalyticsSuite = memo(function AnalyticsSuite({ data, signals, sele
       const row = data[i];
       const x = row[regression.xSignal];
       const y = row[regression.ySignal];
-      if (typeof x === 'number' && typeof y === 'number') {
+      if (typeof x === "number" && typeof y === "number") {
         result[count++] = { x, y };
       }
     }
@@ -687,7 +722,7 @@ export const AnalyticsSuite = memo(function AnalyticsSuite({ data, signals, sele
         role="tablist"
         aria-label="Analytics tools"
       >
-        {(['correlation', 'pca', 'regression'] as const).map((t) => (
+        {(["correlation", "pca", "regression"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -697,17 +732,17 @@ export const AnalyticsSuite = memo(function AnalyticsSuite({ data, signals, sele
             id={`tab-${t}`}
             className={`px-4 py-2 capitalize ${
               tab === t
-                ? 'border-b-2 border-blue-500 text-blue-400'
-                : 'text-dark-400 hover:text-dark-300'
+                ? "border-b-2 border-blue-500 text-blue-400"
+                : "text-dark-400 hover:text-dark-300"
             }`}
           >
-            {t === 'pca' ? 'PCA' : t}
+            {t === "pca" ? "PCA" : t}
           </button>
         ))}
       </div>
 
       {/* --- Correlation Matrix --- */}
-      {tab === 'correlation' && correlation && (
+      {tab === "correlation" && correlation && (
         <div
           className="card"
           role="tabpanel"
@@ -721,7 +756,10 @@ export const AnalyticsSuite = memo(function AnalyticsSuite({ data, signals, sele
                 <tr>
                   <th className="py-1 px-2 text-left text-dark-400"></th>
                   {correlation.signals.map((s) => (
-                    <th key={s} className="py-1 px-2 text-dark-400 text-center truncate max-w-[6rem]">
+                    <th
+                      key={s}
+                      className="py-1 px-2 text-dark-400 text-center truncate max-w-[6rem]"
+                    >
                       {s}
                     </th>
                   ))}
@@ -739,10 +777,10 @@ export const AnalyticsSuite = memo(function AnalyticsSuite({ data, signals, sele
                         className="py-1 px-2 text-center font-mono"
                         style={{
                           backgroundColor: correlationColor(r),
-                          color: Math.abs(r) > 0.5 ? '#fff' : '#ccc',
+                          color: Math.abs(r) > 0.5 ? "#fff" : "#ccc",
                         }}
                       >
-                        {isNaN(r) ? '-' : r.toFixed(2)}
+                        {isNaN(r) ? "-" : r.toFixed(2)}
                       </td>
                     ))}
                   </tr>
@@ -754,7 +792,7 @@ export const AnalyticsSuite = memo(function AnalyticsSuite({ data, signals, sele
       )}
 
       {/* --- PCA --- */}
-      {tab === 'pca' && pca && (
+      {tab === "pca" && pca && (
         <div
           className="space-y-4"
           role="tabpanel"
@@ -769,11 +807,28 @@ export const AnalyticsSuite = memo(function AnalyticsSuite({ data, signals, sele
                 <BarChart data={pcaScreeData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                   <XAxis dataKey="name" stroke="#94a3b8" />
-                  <YAxis stroke="#94a3b8" label={{ value: '%', angle: -90, position: 'insideLeft', fill: '#94a3b8' }} />
-                  <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none' }} />
+                  <YAxis
+                    stroke="#94a3b8"
+                    label={{
+                      value: "%",
+                      angle: -90,
+                      position: "insideLeft",
+                      fill: "#94a3b8",
+                    }}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "#1e293b",
+                      border: "none",
+                    }}
+                  />
                   <Legend />
                   <Bar dataKey="variance" name="Individual %" fill="#3b82f6" />
-                  <Bar dataKey="cumulative" name="Cumulative %" fill="#22c55e" />
+                  <Bar
+                    dataKey="cumulative"
+                    name="Cumulative %"
+                    fill="#22c55e"
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -782,9 +837,7 @@ export const AnalyticsSuite = memo(function AnalyticsSuite({ data, signals, sele
           {/* PCA Biplot (PC1 vs PC2) */}
           {pca.numComponents >= 2 && (
             <div className="card">
-              <div className="card-header">
-                PCA Score Plot (PC1 vs PC2)
-              </div>
+              <div className="card-header">PCA Score Plot (PC1 vs PC2)</div>
               <div className="card-body h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <ScatterChart>
@@ -794,16 +847,30 @@ export const AnalyticsSuite = memo(function AnalyticsSuite({ data, signals, sele
                       dataKey="x"
                       name="PC1"
                       stroke="#94a3b8"
-                      label={{ value: `PC1 (${(pca.explainedVariance[0] * 100).toFixed(1)}%)`, position: 'bottom', fill: '#94a3b8' }}
+                      label={{
+                        value: `PC1 (${(pca.explainedVariance[0] * 100).toFixed(1)}%)`,
+                        position: "bottom",
+                        fill: "#94a3b8",
+                      }}
                     />
                     <YAxis
                       type="number"
                       dataKey="y"
                       name="PC2"
                       stroke="#94a3b8"
-                      label={{ value: `PC2 (${(pca.explainedVariance[1] * 100).toFixed(1)}%)`, angle: -90, position: 'insideLeft', fill: '#94a3b8' }}
+                      label={{
+                        value: `PC2 (${(pca.explainedVariance[1] * 100).toFixed(1)}%)`,
+                        angle: -90,
+                        position: "insideLeft",
+                        fill: "#94a3b8",
+                      }}
                     />
-                    <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none' }} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#1e293b",
+                        border: "none",
+                      }}
+                    />
                     <Scatter data={pcaScatterData} fill="#3b82f6">
                       {pcaScatterData.map((_, i) => (
                         <Cell key={i} fill="#3b82f6" opacity={0.6} />
@@ -824,7 +891,9 @@ export const AnalyticsSuite = memo(function AnalyticsSuite({ data, signals, sele
                   <tr className="text-dark-400 border-b border-dark-700">
                     <th className="text-left py-1 px-2">Signal</th>
                     {pca.explainedVariance.map((_, i) => (
-                      <th key={i} className="text-right py-1 px-2">PC{i + 1}</th>
+                      <th key={i} className="text-right py-1 px-2">
+                        PC{i + 1}
+                      </th>
                     ))}
                   </tr>
                 </thead>
@@ -833,7 +902,10 @@ export const AnalyticsSuite = memo(function AnalyticsSuite({ data, signals, sele
                     <tr key={sig} className="border-b border-dark-800">
                       <td className="py-1 px-2 text-dark-300">{sig}</td>
                       {pca.loadings[si]?.map((l, ci) => (
-                        <td key={ci} className="text-right py-1 px-2 font-mono text-dark-300">
+                        <td
+                          key={ci}
+                          className="text-right py-1 px-2 font-mono text-dark-300"
+                        >
                           {l.toFixed(3)}
                         </td>
                       ))}
@@ -847,7 +919,7 @@ export const AnalyticsSuite = memo(function AnalyticsSuite({ data, signals, sele
       )}
 
       {/* --- Regression --- */}
-      {tab === 'regression' && (
+      {tab === "regression" && (
         <div
           className="space-y-4"
           role="tabpanel"
@@ -860,38 +932,50 @@ export const AnalyticsSuite = memo(function AnalyticsSuite({ data, signals, sele
             <div className="card-body space-y-3">
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs text-dark-400 mb-1">X Signal</label>
+                  <label className="block text-xs text-dark-400 mb-1">
+                    X Signal
+                  </label>
                   <select
                     value={regXSignal}
                     onChange={(e) => setRegXSignal(e.target.value)}
                     className="w-full bg-dark-700 text-dark-100 rounded px-2 py-1 text-sm border border-dark-600"
                   >
                     {signals.map((s) => (
-                      <option key={s} value={s}>{s}</option>
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs text-dark-400 mb-1">Y Signal</label>
+                  <label className="block text-xs text-dark-400 mb-1">
+                    Y Signal
+                  </label>
                   <select
                     value={regYSignal}
                     onChange={(e) => setRegYSignal(e.target.value)}
                     className="w-full bg-dark-700 text-dark-100 rounded px-2 py-1 text-sm border border-dark-600"
                   >
                     {signals.map((s) => (
-                      <option key={s} value={s}>{s}</option>
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs text-dark-400 mb-1">Degree</label>
+                  <label className="block text-xs text-dark-400 mb-1">
+                    Degree
+                  </label>
                   <select
                     value={regDegree}
                     onChange={(e) => setRegDegree(Number(e.target.value))}
                     className="w-full bg-dark-700 text-dark-100 rounded px-2 py-1 text-sm border border-dark-600"
                   >
                     {[1, 2, 3, 4, 5].map((d) => (
-                      <option key={d} value={d}>{d === 1 ? 'Linear' : `Polynomial (${d})`}</option>
+                      <option key={d} value={d}>
+                        {d === 1 ? "Linear" : `Polynomial (${d})`}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -914,20 +998,28 @@ export const AnalyticsSuite = memo(function AnalyticsSuite({ data, signals, sele
                 <div className="card-body space-y-2 text-sm">
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <span className="text-dark-400">Equation:</span>{' '}
-                      <span className="text-dark-100 font-mono text-xs">{regression.equation}</span>
+                      <span className="text-dark-400">Equation:</span>{" "}
+                      <span className="text-dark-100 font-mono text-xs">
+                        {regression.equation}
+                      </span>
                     </div>
                     <div>
-                      <span className="text-dark-400">R-squared:</span>{' '}
-                      <span className="text-green-400 font-mono">{regression.rSquared.toFixed(4)}</span>
+                      <span className="text-dark-400">R-squared:</span>{" "}
+                      <span className="text-green-400 font-mono">
+                        {regression.rSquared.toFixed(4)}
+                      </span>
                     </div>
                     <div>
-                      <span className="text-dark-400">Adj. R-squared:</span>{' '}
-                      <span className="text-green-400 font-mono">{regression.adjustedRSquared.toFixed(4)}</span>
+                      <span className="text-dark-400">Adj. R-squared:</span>{" "}
+                      <span className="text-green-400 font-mono">
+                        {regression.adjustedRSquared.toFixed(4)}
+                      </span>
                     </div>
                     <div>
-                      <span className="text-dark-400">Type:</span>{' '}
-                      <span className="text-dark-100 capitalize">{regression.type}</span>
+                      <span className="text-dark-400">Type:</span>{" "}
+                      <span className="text-dark-100 capitalize">
+                        {regression.type}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -940,9 +1032,24 @@ export const AnalyticsSuite = memo(function AnalyticsSuite({ data, signals, sele
                   <ResponsiveContainer width="100%" height="100%">
                     <ScatterChart>
                       <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                      <XAxis type="number" dataKey="x" name={regression.xSignal} stroke="#94a3b8" />
-                      <YAxis type="number" dataKey="y" name={regression.ySignal} stroke="#94a3b8" />
-                      <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none' }} />
+                      <XAxis
+                        type="number"
+                        dataKey="x"
+                        name={regression.xSignal}
+                        stroke="#94a3b8"
+                      />
+                      <YAxis
+                        type="number"
+                        dataKey="y"
+                        name={regression.ySignal}
+                        stroke="#94a3b8"
+                      />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: "#1e293b",
+                          border: "none",
+                        }}
+                      />
                       <Scatter
                         name="Data"
                         data={regressionScatterData}
@@ -963,7 +1070,12 @@ export const AnalyticsSuite = memo(function AnalyticsSuite({ data, signals, sele
                       <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                       <XAxis dataKey="index" stroke="#94a3b8" />
                       <YAxis stroke="#94a3b8" />
-                      <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none' }} />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: "#1e293b",
+                          border: "none",
+                        }}
+                      />
                       <Line
                         type="monotone"
                         dataKey="residual"

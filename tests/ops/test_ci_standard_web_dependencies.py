@@ -35,3 +35,17 @@ def test_ci_standard_serializes_apt_installs_on_shared_runners() -> None:
     assert install_steps == 2
     assert "apt-get -o DPkg::Lock::Timeout=300 update --fix-missing" in workflow
     assert "apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing" in workflow
+
+
+def test_quality_gate_dependency_install_does_not_use_shared_pip_cache() -> None:
+    import yaml
+
+    workflow = yaml.safe_load(CI_STANDARD.read_text(encoding="utf-8"))
+    install_step = next(
+        step
+        for step in workflow["jobs"]["quality-gate"]["steps"]
+        if step.get("name") == "Install Dependencies"
+    )
+
+    assert install_step["env"]["PIP_NO_CACHE_DIR"] == "1"
+    assert install_step["env"]["PIP_CACHE_DIR"] == "${{ runner.temp }}/pip-quality-gate"
