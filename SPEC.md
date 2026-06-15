@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.471                                    |
+| **Spec Version**        | 1.1.472                                    |
 | **Last Spec Update**    | 2026-06-15                                 |
 
 ## 2. Purpose & Mission
@@ -770,6 +770,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-15 | 1.1.472 | test(chat, #3332): refresh the shared chat drift baseline hash for the intentional `_chat_dock_widget_qt.py` view-state refactor so the baseline guard continues to catch unreviewed drift after the approved UI state change. |
 | 2026-06-15 | 1.1.471 | test(chat, #3332): keep the chat dock view-state regression in the shared chat test suite and let breadcrumb refresh tolerate uninitialized Qt test doubles, avoiding CI changed-test collection that shadows the source `chat` package with `tests/unit/chat`. |
 | 2026-06-15 | 1.1.470 | refactor(chat, #3332): introduce an explicit `ChatDockView` dataclass for chat dock UI widgets/actions, mirror legacy `_foo` aliases from dataclass fields in one compatibility loop, and replace session helper `__dict__` pokes with direct initialized state access. |
 | 2026-06-15 | 1.1.469 | fix(ci): allow Tauri Linux Node selection to fall back to a verified `node`/`npm` pair on `PATH` when runner externals are broken and `/opt/hostedtoolcache/node` is absent, keeping self-hosted app checks from failing before source validation. |
