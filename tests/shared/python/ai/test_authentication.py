@@ -10,6 +10,7 @@ from __future__ import annotations
 import logging
 import sys
 import types
+from datetime import datetime, timedelta
 from pathlib import Path
 from unittest.mock import patch
 
@@ -34,6 +35,7 @@ _logging_config_stub.get_logger = logging.getLogger  # type: ignore[attr-defined
 
 from src.shared.python.ai.auth.authentication import (  # noqa: E402
     AuthManager,
+    AuthToken,
     UserProfile,
 )
 
@@ -164,6 +166,52 @@ class TestIsAuthenticated:
         with pytest.raises(NotImplementedError):
             auth.login_with_email_password("a@b.com", "pw")
         assert auth.is_authenticated is False
+
+
+# ---------------------------------------------------------------------------
+# refresh_token_if_needed
+# ---------------------------------------------------------------------------
+
+
+class TestRefreshTokenIfNeeded:
+    """refresh_token_if_needed must not report success without a valid token."""
+
+    def test_true_when_access_token_is_still_valid(self, tmp_path: Path) -> None:
+        auth = _make_auth(tmp_path)
+        auth._access_token = AuthToken(  # noqa: SLF001 - focused contract test
+            token="valid-access",
+            expires_at=datetime.now() + timedelta(minutes=5),
+        )
+
+        assert auth.refresh_token_if_needed() is True
+
+    def test_false_when_no_access_token_exists(self, tmp_path: Path) -> None:
+        auth = _make_auth(tmp_path)
+
+        assert auth.refresh_token_if_needed() is False
+
+    def test_valid_refresh_token_does_not_mask_expired_access_token(
+        self, tmp_path: Path, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        auth = _make_auth(tmp_path)
+        expired_access_token = AuthToken(
+            token="expired-access",
+            expires_at=datetime.now() - timedelta(minutes=5),
+        )
+        auth._access_token = expired_access_token  # noqa: SLF001
+        auth._refresh_token = AuthToken(  # noqa: SLF001
+            token="valid-refresh",
+            token_type="refresh",
+            expires_at=datetime.now() + timedelta(days=1),
+        )
+
+        with caplog.at_level(logging.WARNING):
+            result = auth.refresh_token_if_needed()
+
+        assert result is False
+        assert auth._access_token is expired_access_token  # noqa: SLF001
+        assert auth._access_token.is_valid() is False  # noqa: SLF001
+        assert "refresh-token exchange is not implemented" in caplog.text
 
 
 # ---------------------------------------------------------------------------
