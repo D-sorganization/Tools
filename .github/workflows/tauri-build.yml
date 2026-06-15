@@ -118,29 +118,29 @@ jobs:
         shell: bash
         run: |
           node_dir=""
-          if [ -n "${RUNNER_TEMP:-}" ]; then
-            runner_root="$(dirname "$(dirname "$RUNNER_TEMP")")"
-            for candidate in \
-              "$runner_root"/externals/node24/bin \
-              "$runner_root"/externals/node20/bin
-            do
+          select_node_dir() {
+            for candidate in "$@"; do
               if [ -x "$candidate/node" ] && [ -x "$candidate/npm" ]; then
-                node_dir="$candidate"
-                break
+                if "$candidate/node" --version >/dev/null 2>&1 && PATH="$candidate:$PATH" "$candidate/npm" --version >/dev/null 2>&1; then
+                  node_dir="$candidate"
+                  return 0
+                fi
+                echo "::warning::Skipping broken Node.js toolcache at $candidate"
               fi
             done
+            return 1
+          }
+          if [ -n "${RUNNER_TEMP:-}" ]; then
+            runner_root="$(dirname "$(dirname "$RUNNER_TEMP")")"
+            select_node_dir \
+              "$runner_root"/externals/node24/bin \
+              "$runner_root"/externals/node20/bin || true
           fi
-          for candidate in \
+          select_node_dir \
             /opt/hostedtoolcache/node/24*/x64/bin \
             /opt/hostedtoolcache/node/22*/x64/bin \
-            /opt/hostedtoolcache/node/20*/x64/bin
-          do
-            if [ -x "$candidate/node" ] && [ -x "$candidate/npm" ]; then
-              node_dir="$candidate"
-              break
-            fi
-          done
-          if [ ! -x "$node_dir/node" ]; then
+            /opt/hostedtoolcache/node/20*/x64/bin || true
+          if [ -z "$node_dir" ] || [ ! -x "$node_dir/node" ]; then
             echo "::error::Expected local Node.js 20+ under runner externals or /opt/hostedtoolcache/node"
             exit 1
           fi
@@ -252,29 +252,29 @@ jobs:
         shell: bash
         run: |
           node_dir=""
-          if [ -n "${RUNNER_TEMP:-}" ]; then
-            runner_root="$(dirname "$(dirname "$RUNNER_TEMP")")"
-            for candidate in \
-              "$runner_root"/externals/node24/bin \
-              "$runner_root"/externals/node20/bin
-            do
+          select_node_dir() {
+            for candidate in "$@"; do
               if [ -x "$candidate/node" ] && [ -x "$candidate/npm" ]; then
-                node_dir="$candidate"
-                break
+                if "$candidate/node" --version >/dev/null 2>&1 && PATH="$candidate:$PATH" "$candidate/npm" --version >/dev/null 2>&1; then
+                  node_dir="$candidate"
+                  return 0
+                fi
+                echo "::warning::Skipping broken Node.js toolcache at $candidate"
               fi
             done
+            return 1
+          }
+          if [ -n "${RUNNER_TEMP:-}" ]; then
+            runner_root="$(dirname "$(dirname "$RUNNER_TEMP")")"
+            select_node_dir \
+              "$runner_root"/externals/node24/bin \
+              "$runner_root"/externals/node20/bin || true
           fi
-          for candidate in \
+          select_node_dir \
             /opt/hostedtoolcache/node/24*/x64/bin \
             /opt/hostedtoolcache/node/22*/x64/bin \
-            /opt/hostedtoolcache/node/20*/x64/bin
-          do
-            if [ -x "$candidate/node" ] && [ -x "$candidate/npm" ]; then
-              node_dir="$candidate"
-              break
-            fi
-          done
-          if [ ! -x "$node_dir/node" ]; then
+            /opt/hostedtoolcache/node/20*/x64/bin || true
+          if [ -z "$node_dir" ] || [ ! -x "$node_dir/node" ]; then
             echo "::error::Expected local Node.js 20+ under runner externals or /opt/hostedtoolcache/node"
             exit 1
           fi
