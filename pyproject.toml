@@ -194,6 +194,7 @@ where = ["src/shared/python", "src/python/src", "src"]
 include = [
     "shared*",
     "chat*",
+    "chat_contracts*",
     "data_processor_io*",
     "notes*",
     "upstream_drift_tools*",

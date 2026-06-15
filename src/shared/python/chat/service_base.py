@@ -20,9 +20,11 @@ import threading
 import time
 import uuid
 from collections import OrderedDict
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Callable
 from dataclasses import dataclass, field
 from typing import Any
+
+from chat_contracts.conversation import ArchivedConversationContext
 
 logger = logging.getLogger(__name__)
 
@@ -80,12 +82,7 @@ class ChatSession:
 
 def _conversation_context_from_session(session: ChatSession) -> Any:
     """Convert a shared chat session to the AI memory-manager context shape."""
-    try:
-        from src.shared.python.ai.types import ConversationContext
-    except ImportError:
-        from ai.types import ConversationContext  # type: ignore[no-redef]
-
-    context = ConversationContext(
+    context = ArchivedConversationContext(
         session_id=session.session_id,
         metadata=dict(session.metadata),
     )
@@ -97,6 +94,22 @@ def _conversation_context_from_session(session: ChatSession) -> Any:
             metadata=dict(message.metadata),
         )
     return context
+
+
+def _default_memory_manager_factory() -> Any:
+    """Lazily construct the optional AI memory manager.
+
+    ``chat`` accepts this runtime dependency as an injectable factory so hosts
+    and tests can supply their own memory backend without importing ``ai`` at
+    module import time.
+    """
+    import importlib
+
+    try:
+        module = importlib.import_module("src.shared.python.ai.memory_manager")
+    except ImportError:
+        module = importlib.import_module("ai.memory_manager")
+    return module.MemoryManager()
 
 
 # ── Service Base ─────────────────────────────────────────────────────
@@ -121,10 +134,17 @@ class ChatServiceBase(abc.ABC):
     SESSION_TTL_SECONDS: int = 7200  # 2 hours
     MAX_MESSAGES_PER_SESSION: int = 100
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        *,
+        memory_manager_factory: Callable[[], Any] | None = None,
+    ) -> None:
         self._sessions: OrderedDict[str, ChatSession] = OrderedDict()
         self._timestamps: dict[str, float] = {}
         self._lock = threading.Lock()
+        self._memory_manager_factory = (
+            memory_manager_factory or _default_memory_manager_factory
+        )
 
     # ── Session Lifecycle ────────────────────────────────────────────
 
@@ -350,12 +370,7 @@ class ChatServiceBase(abc.ABC):
                 contexts.append(_conversation_context_from_session(session))
 
         if memory_manager is None:
-            try:
-                from src.shared.python.ai.memory_manager import MemoryManager
-            except ImportError:
-                from ai.memory_manager import MemoryManager  # type: ignore[no-redef]
-
-            memory_manager = MemoryManager()
+            memory_manager = self._memory_manager_factory()
 
         inserted = memory_manager.digest_archived_contexts(contexts)
         memory_file = getattr(memory_manager, "memory_file", None)

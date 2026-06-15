@@ -242,8 +242,6 @@ class MemoryPanel(QWidget):
         if not isinstance(raw, dict):
             raise ValueError("memory import file must contain a JSON object")
 
-        from src.shared.python.ai.memory_manager import MemoryCandidate
-
         preferences = raw.get("preferences", {})
         if isinstance(preferences, dict):
             for key, value in preferences.items():
@@ -262,7 +260,7 @@ class MemoryPanel(QWidget):
                 content = item.get("content")
                 if not isinstance(content, str) or not content.strip():
                     continue
-                candidate = MemoryCandidate(
+                candidate = _memory_candidate(
                     kind=str(item.get("kind", "preference")),
                     content=content,
                     source=str(item.get("source", "imported")),
@@ -344,6 +342,17 @@ def _render_memories(memories: list) -> str:
         prefix = f"[{created}] " if created else ""
         rendered.append(f"{prefix}{content}")
     return "\n".join(rendered) if rendered else _MEMORIES_PLACEHOLDER
+
+
+def _memory_candidate(**kwargs: str) -> object:
+    """Build a memory candidate without importing AI at module import time."""
+    import importlib
+
+    try:
+        module = importlib.import_module("src.shared.python.ai.memory_manager")
+    except ImportError:
+        module = importlib.import_module("ai.memory_manager")
+    return module.MemoryCandidate(**kwargs)
 
 
 __all__ = ["MemoryPanel"]

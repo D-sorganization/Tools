@@ -4,11 +4,13 @@ Provides ``get_api_key``/``set_api_key``/``delete_api_key`` keyed by
 :class:`AIProvider`. Persistence still uses the per-provider ``key_service``
 strings declared in ``PROVIDER_INFO`` so previously-stored keys remain
 readable. The lower-level keyring access goes through
-:class:`src.shared.python.chat.credentials.CredentialManager` whenever
+:class:`chat_contracts.credentials.CredentialManager` whenever
 possible to keep keyring access centralised in one well-tested place.
 """
 
 from __future__ import annotations
+
+from chat_contracts.credentials import CredentialManager
 
 from src.shared.python.ai.gui._provider_registry_data import (
     PROVIDER_INFO,
@@ -24,14 +26,12 @@ def _service_name(provider: AIProvider) -> str | None:
     if not info or not info.get("requires_key"):
         return None
     service_name = info.get("key_service", "")
-    if not service_name or not isinstance(service_name, str):
+    if not isinstance(service_name, str) or not service_name:
         return None
     return service_name
 
 
-def _credential_manager(service: str):  # noqa: ANN202 - lazy import for testability
-    from src.shared.python.chat.credentials import CredentialManager
-
+def _credential_manager(service: str) -> CredentialManager:
     return CredentialManager(service_name=service)
 
 

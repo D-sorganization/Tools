@@ -104,12 +104,14 @@ def _build_default_session_manager(app_name: str) -> Any:
     """
     if not isinstance(app_name, str) or not app_name.strip():
         raise ValueError("app_name must be a non-empty string")
+    import importlib
+
     storage_dir = Path.home() / f".{app_name}" / "chat_sessions"
     try:
-        from src.shared.python.ai.gui.session_manager import ChatSessionManager
+        module = importlib.import_module("src.shared.python.ai.gui.session_manager")
     except ImportError:
-        from ai.gui.session_manager import ChatSessionManager
-    return ChatSessionManager(storage_dir=storage_dir)
+        module = importlib.import_module("ai.gui.session_manager")
+    return module.ChatSessionManager(storage_dir=storage_dir)
 
 
 class ChatDockWidget(QDockWidget):
@@ -163,6 +165,7 @@ class ChatDockWidget(QDockWidget):
         parent: QWidget | None = None,
         *,
         session_manager: Any | None = None,
+        memory_manager_factory: Callable[[], Any] | None = None,
     ) -> None:
         if app_context is None:
             raise ValueError("app_context must be provided")
@@ -186,6 +189,9 @@ class ChatDockWidget(QDockWidget):
         )
         self._workspace_provider: WorkspaceContextProtocol | None = workspace_provider
         self._plot_request_sink: Callable[[Any], None] | None = plot_request_sink
+        self._memory_manager_factory = (
+            memory_manager_factory or self._default_memory_manager_factory
+        )
         self._is_streaming = False
         # Busy-state message queue: messages typed/sent while streaming
         # land here and are flushed FIFO on each ``complete`` arrival.
@@ -256,6 +262,16 @@ class ChatDockWidget(QDockWidget):
         self._setup_ui()
         self._set_terminal_runtime_available(False)
         self._connect_on_show = True
+
+    def _default_memory_manager_factory(self) -> Any:
+        """Lazily create the AI memory manager for the memory panel."""
+        import importlib
+
+        try:
+            module = importlib.import_module("src.shared.python.ai.memory_manager")
+        except ImportError:
+            module = importlib.import_module("ai.memory_manager")
+        return module.MemoryManager()
 
     @property
     def collapsed(self) -> bool:
@@ -393,15 +409,15 @@ class ChatDockWidget(QDockWidget):
             except RuntimeError:
                 self._memory_panel_window = None
 
-        try:
-            from src.shared.python.ai.memory_manager import MemoryManager
-        except ImportError:
-            logger.warning("Memory panel unavailable: ai.memory_manager not importable")
-            return
-
         manager = self.__dict__.get("_memory_manager")
         if manager is None:
-            manager = MemoryManager()
+            try:
+                manager = self._memory_manager_factory()
+            except ImportError:
+                logger.warning(
+                    "Memory panel unavailable: ai.memory_manager not importable"
+                )
+                return
             self._memory_manager = manager
 
         panel = MemoryPanel(manager=manager)

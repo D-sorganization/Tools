@@ -160,7 +160,7 @@ class GeminiCliAdapter(BaseAgentAdapter):
 
     def thinking_capabilities(self) -> Any:
         """Gemini CLI does not surface reasoning budgets to the host."""
-        from src.shared.python.chat.models import make_none_only_capabilities
+        from chat_contracts.models import make_none_only_capabilities
 
         return make_none_only_capabilities(provider=self.PROVIDER_NAME)
 

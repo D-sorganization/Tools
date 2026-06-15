@@ -17,15 +17,17 @@ These tests run fully offline by mocking each provider client.
 from __future__ import annotations
 
 import sys
+import tempfile
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
-
-from src.shared.python.ai.adapters.base import BaseAgentAdapter  # noqa: E402
-from src.shared.python.chat.models import (  # noqa: E402
+from chat_contracts.models import (  # noqa: E402
     ThinkingCapabilities,
     ThinkingLevel,
 )
+
+from src.shared.python.ai.adapters.base import BaseAgentAdapter  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # ThinkingLevel + ThinkingCapabilities DbC tests
@@ -202,7 +204,9 @@ def _make_cline_adapter() -> BaseAgentAdapter:
 def _make_bitnet_adapter() -> BaseAgentAdapter:
     from src.shared.python.ai.adapters.bitnet_adapter import BitnetAdapter
 
-    return BitnetAdapter(model="test.gguf", bitnet_root="/tmp")
+    return BitnetAdapter(
+        model="test.gguf", bitnet_root=str(Path(tempfile.gettempdir()))
+    )
 
 
 def _make_rust_adapter() -> BaseAgentAdapter:
