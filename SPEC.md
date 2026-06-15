@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.469                                    |
+| **Spec Version**        | 1.1.470                                    |
 | **Last Spec Update**    | 2026-06-15                                 |
 
 ## 2. Purpose & Mission
@@ -770,6 +770,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-15 | 1.1.470 | refactor(chat, #3332): introduce an explicit `ChatDockView` dataclass for chat dock UI widgets/actions, mirror legacy `_foo` aliases from dataclass fields in one compatibility loop, and replace session helper `__dict__` pokes with direct initialized state access. |
 | 2026-06-15 | 1.1.469 | fix(ci): allow Tauri Linux Node selection to fall back to a verified `node`/`npm` pair on `PATH` when runner externals are broken and `/opt/hostedtoolcache/node` is absent, keeping self-hosted app checks from failing before source validation. |
 | 2026-06-15 | 1.1.468 | perf(data-processing): replace allocation-heavy `Array.from(...).map(...)` chains in `AnalyticsSuite.tsx` with preallocated loops so analytics rendering avoids avoidable intermediate arrays while preserving existing chart data contracts. |
 | 2026-06-15 | 1.1.467 | fix(ci): serialize CI Standard apt update/install sections behind a shared host flock so parallel self-hosted Linux jobs cannot race on `/var/lib/apt/lists/lock` while installing GUI test dependencies. |
