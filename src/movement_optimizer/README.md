@@ -174,12 +174,6 @@ machine that should have it is logged so the silent-fallback case is observable.
 
 ## Known Limitations
 
-- **scipy ceiling (`<1.16`).** scipy 1.16 introduced a private-API drift
-  (`scipy.spatial.transform._rigid_transform` importing a `_promote` symbol absent from the
-  bundled `_rotation` extension) that breaks `from scipy.interpolate import CubicSpline` at
-  import time (first seen in #458). The dependency is pinned `>=1.10,<1.16` until this is
-  fixed upstream; lifting the cap is tracked in
-  [#503](https://github.com/D-sorganization/Movement_Optimizer/issues/503).
 - **SLSQP convergence edge cases.** A small number of extreme configurations are known to be
   numerically unstable for SLSQP on some platforms and may return `success=False`:
 

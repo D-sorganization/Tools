@@ -11,8 +11,8 @@
 | License          | MIT                                                     |
 | Package Name     | `movement-optimizer`                                    |
 | Current Version  | `1.0.0`                                                 |
-| Spec Version     | `1.0.11`                                                |
-| Last Spec Update | 2026-05-16                                              |
+| Spec Version     | `1.0.12`                                                |
+| Last Spec Update | 2026-06-15                                              |
 
 ## 2. Purpose
 
@@ -135,6 +135,7 @@ mypy --ignore-missing-imports src/movement_optimizer/
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-06-15 | 1.0.12  | Lifted the legacy `scipy<1.16` ceiling after verifying current SciPy imports `CubicSpline` cleanly, and added a dependency-contract regression so the stale cap cannot return silently.                                                                                                                                                                                                                         |
 | 2026-05-16 | 1.0.11  | Isolated nightly workflow installs into a dedicated .nightly-venv virtual environment with PIP_NO_CACHE_DIR=1 to avoid shared runner cache corruption that caused ImportError: cannot import name '\_spropack' from scipy.sparse.linalg.\_propack (#462).                                                                                                                                                     |
 | 2026-04-22 | 1.0.10  | Added GUI sidebar/playback facade methods and routed main-window mixins through them to reduce deep object traversal in animation, comparison, cancellation, and signal binding code (#272).                                                                                                                                                                                                                  |
 | 2026-04-16 | 1.0.9   | Extracted spline-building responsibility from `TrajectoryOptimizer` into `optimizer_spline.py` (`build_splines`, `eval_trajectory`); extracted `_compute_bench_bar_cost` private helper from `_compute_cost`; exported new functions from `trajectory/__init__.py`; added 14 characterization/unit tests in `test_issue_247_split_optimizer.py` (#247).                                                       |
