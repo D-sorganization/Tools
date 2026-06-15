@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.482                                    |
+| **Spec Version**        | 1.1.483                                    |
 | **Last Spec Update**    | 2026-06-15                                 |
 
 ## 2. Purpose & Mission
@@ -35,6 +35,14 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-06-15 Update
+
+- CI source-keyed test selection keeps Sidekick agent-only changes focused on
+  `tests/unit/sidekick/agent/test_action_service.py`. Agent contract changes no
+  longer pull unrelated Qt runtime/sidebar suites into every matrix lane; broad
+  Sidekick runtime coverage remains reserved for actual UI/runtime package
+  changes.
 
 ### Goals
 
