@@ -4,6 +4,7 @@ Python-specific shared utilities and libraries.
 This package contains reusable Python logic for tools.
 
 Available packages:
+    - ai: Agent-agnostic assistant integration helpers and GUI support
     - chat: Portable AI chat dock widget and Pydantic models
     - notes: Project-backed notes workspace with recycle-bin semantics
     - theme: Fleet-wide color theme management for PyQt6 applications
@@ -14,6 +15,7 @@ Available packages:
 
 Preferred imports (direct from package, since src/shared/python is on sys.path):
     from shared.python.theme import ThemeManager, get_theme_manager  # theme: keep prefix
+    from shared.python import ai  # package-level assistant helpers
     from humanoid_character_builder import CharacterBuilder, BodyParameters
     from model_generation import quick_urdf, ManualBuilder, FrankensteinEditor
     from signal_toolkit import Signal, SignalGenerator, FunctionFitter
@@ -23,7 +25,10 @@ Preferred imports (direct from package, since src/shared/python is on sys.path):
     from plot_theme import apply_plot_theme
 """
 
+from . import ai as ai
+
 __all__ = [
+    "ai",
     "chat",
     "humanoid_character_builder",
     "model_generation",
