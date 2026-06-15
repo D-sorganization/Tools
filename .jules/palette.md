@@ -22,3 +22,6 @@
 ## 2024-06-11 - Dynamic Input ID Generation for Screen Readers
 **Learning:** Hardcoded IDs in reusable React components (like `InputField` in `FinancialCalculator.tsx`) lead to ID collisions when rendered multiple times. This breaks `<label htmlFor="...">` associations, severely impacting screen reader accessibility as the label will only associate with the first instance of the ID on the page.
 **Action:** Always use React's `useId()` hook within reusable components to dynamically generate unique, accessible, and SSR-safe IDs for `htmlFor` and `id` bindings.
+## 2024-06-25 - Custom Toggle Controls
+**Learning:** When using `<button>` elements to create custom ON/OFF toggles or mode switches (like the "Add" / "Subtract" operations) that rely entirely on background color changes for state, screen readers cannot determine their current state.
+**Action:** Always add `aria-pressed={isActive}` to custom toggle buttons, along with keyboard-accessible hover (`hover:bg-...`) and focus states (`focus-visible:ring-2`) to ensure both semantic state and visual focus are clear.
