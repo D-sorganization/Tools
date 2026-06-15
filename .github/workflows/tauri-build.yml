@@ -140,8 +140,15 @@ jobs:
             /opt/hostedtoolcache/node/24*/x64/bin \
             /opt/hostedtoolcache/node/22*/x64/bin \
             /opt/hostedtoolcache/node/20*/x64/bin || true
+          if [ -z "$node_dir" ]; then
+            path_node="$(command -v node || true)"
+            path_npm="$(command -v npm || true)"
+            if [ -n "$path_node" ] && [ -n "$path_npm" ]; then
+              select_node_dir "$(dirname "$path_node")" "$(dirname "$path_npm")" || true
+            fi
+          fi
           if [ -z "$node_dir" ] || [ ! -x "$node_dir/node" ]; then
-            echo "::error::Expected local Node.js 20+ under runner externals or /opt/hostedtoolcache/node"
+            echo "::error::Expected working local Node.js 20+ under runner externals, /opt/hostedtoolcache/node, or PATH"
             exit 1
           fi
           echo "$node_dir" >> "$GITHUB_PATH"
@@ -274,8 +281,15 @@ jobs:
             /opt/hostedtoolcache/node/24*/x64/bin \
             /opt/hostedtoolcache/node/22*/x64/bin \
             /opt/hostedtoolcache/node/20*/x64/bin || true
+          if [ -z "$node_dir" ]; then
+            path_node="$(command -v node || true)"
+            path_npm="$(command -v npm || true)"
+            if [ -n "$path_node" ] && [ -n "$path_npm" ]; then
+              select_node_dir "$(dirname "$path_node")" "$(dirname "$path_npm")" || true
+            fi
+          fi
           if [ -z "$node_dir" ] || [ ! -x "$node_dir/node" ]; then
-            echo "::error::Expected local Node.js 20+ under runner externals or /opt/hostedtoolcache/node"
+            echo "::error::Expected working local Node.js 20+ under runner externals, /opt/hostedtoolcache/node, or PATH"
             exit 1
           fi
           echo "$node_dir" >> "$GITHUB_PATH"

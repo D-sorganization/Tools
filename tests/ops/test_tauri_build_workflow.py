@@ -152,4 +152,11 @@ def test_tauri_local_node_selection_skips_broken_npm_toolcaches() -> None:
         script = step["run"]
         assert 'PATH="$candidate:$PATH" "$candidate/npm" --version >/dev/null' in script
         assert "::warning::Skipping broken Node.js toolcache" in script
+        assert 'path_node="$(command -v node || true)"' in script
+        assert 'path_npm="$(command -v npm || true)"' in script
+        assert (
+            'select_node_dir "$(dirname "$path_node")" "$(dirname "$path_npm")"'
+            in script
+        )
+        assert "runner externals, /opt/hostedtoolcache/node, or PATH" in script
         assert '[ -z "$node_dir" ] || [ ! -x "$node_dir/node" ]' in script
