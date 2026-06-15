@@ -197,6 +197,8 @@ jobs:
       - name: Install Dependencies
         env:
           AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
+          PIP_CACHE_DIR: ${{ runner.temp }}/pip-quality-gate
+          PIP_NO_CACHE_DIR: "1"
         # Force-reinstall sortedcontainers (and hypothesis) before anything
         # else: the shared self-hosted runner toolcache occasionally carries a
         # half-installed `sortedcontainers` where pip metadata claims 2.4.0 but
