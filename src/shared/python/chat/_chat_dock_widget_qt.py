@@ -909,9 +909,27 @@ class ChatDockWidget(QDockWidget):
         return _ai.build_available_cli_provider_items()
 
     def _build_ai_dropdowns(self, mode_row: QHBoxLayout) -> None:
-        _ai.build_ai_dropdowns(self, mode_row)
+        view = self.__dict__.get("_view")
+        if not isinstance(view, ChatDockView):
+            view = ChatDockView()
+            self._view = view
+        _ai.build_ai_dropdowns(
+            view,
+            mode_row,
+            on_combo_changed=self._on_ai_combo_changed,
+            refresh_model_combo=self._refresh_ai_model_combo,
+            refresh_thinking_combo=self._refresh_ai_thinking_combo,
+            sync_dropdowns=self._sync_ai_dropdowns,
+        )
+        mirror_chat_dock_view(self, view)
 
     def _combo_for_field(self, field: str) -> QComboBox:
+        view = self.__dict__.get("_view")
+        if isinstance(view, ChatDockView):
+            view_field = f"ai_{field}_combo"
+            combo = getattr(view, view_field, None)
+            if isinstance(combo, QComboBox):
+                return combo
         if field == "provider":
             return self._ai_provider_combo
         if field == "model":
@@ -946,13 +964,18 @@ class ChatDockWidget(QDockWidget):
         self._ai_settings_controller().apply_settings_change(field, value)
 
     def _refresh_ai_model_combo(self) -> None:
-        _ai.refresh_ai_model_combo(self)
+        _ai.refresh_ai_model_combo(self._view, self._get_active_ai_adapter())
 
     def _refresh_ai_thinking_combo(self) -> None:
-        _ai.refresh_ai_thinking_combo(self)
+        _ai.refresh_ai_thinking_combo(self._view, self._get_active_ai_adapter())
 
     def _sync_ai_dropdowns(self) -> None:
-        _ai.sync_ai_dropdowns(self)
+        _ai.sync_ai_dropdowns(
+            self._view,
+            current_provider=self._current_provider,
+            current_model=self._current_model,
+            current_thinking_level=self._current_thinking_level,
+        )
 
     def _get_active_ai_adapter(self) -> Any | None:
         return _ai.get_active_ai_adapter(self._current_provider)
@@ -1001,7 +1024,13 @@ class ChatDockWidget(QDockWidget):
         self._refresh_ai_thinking_combo()
 
     def sync_ai_view(self) -> None:
-        if hasattr(self, "_ai_provider_combo") and self._ai_provider_combo is not None:
+        view = self.__dict__.get("_view")
+        if (
+            isinstance(view, ChatDockView)
+            and view.ai_provider_combo is not None
+            and view.ai_model_combo is not None
+            and view.ai_thinking_combo is not None
+        ):
             self._sync_ai_dropdowns()
 
     def persist_ai_settings(self) -> None:

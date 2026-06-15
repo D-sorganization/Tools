@@ -13,6 +13,7 @@ from src.shared.python.chat._qt.ui_builder import ChatDockView
 
 ROOT = Path(__file__).resolve().parents[4]
 UI_BUILDER = ROOT / "src" / "shared" / "python" / "chat" / "_qt" / "ui_builder.py"
+AI_DROPDOWNS = ROOT / "src" / "shared" / "python" / "chat" / "_qt" / "ai_dropdowns.py"
 
 
 def test_ui_builder_uses_view_state_instead_of_private_dock_injection() -> None:
@@ -20,6 +21,15 @@ def test_ui_builder_uses_view_state_instead_of_private_dock_injection() -> None:
 
     assert not re.search(r"dock\._[A-Za-z][A-Za-z0-9_]*\s*=", source)
     assert "def mirror_chat_dock_view" in source
+
+
+def test_ai_dropdowns_use_view_state_for_combo_widgets() -> None:
+    source = AI_DROPDOWNS.read_text(encoding="utf-8")
+
+    assert "view.ai_provider_combo" in source
+    assert "view.ai_model_combo" in source
+    assert "view.ai_thinking_combo" in source
+    assert not re.search(r"dock\._ai_(provider|model|thinking)_combo", source)
 
 
 def test_chat_dock_widget_exposes_populated_view_state() -> None:
