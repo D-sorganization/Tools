@@ -64,6 +64,9 @@ try:
 
     HAS_GEMINI = True
 except ImportError:
+    genai: Any = None
+    GenerativeModel: Any = None
+    GenerateContentResponse: Any = None
     HAS_GEMINI = False
 
 try:
@@ -114,6 +117,7 @@ class GeminiAdapter(BaseAgentAdapter):
 
         self._api_key = api_key
         self._model_name = model
+        self._genai: Any = genai
 
         # Prefer the newer per-instance Client API (SDK 0.5+) which avoids
         # the global-configure footgun described in issue #2756.
@@ -128,7 +132,7 @@ class GeminiAdapter(BaseAgentAdapter):
             # model eagerly so ``validate_connection`` has something to call.
             self._client = None
             with _CONFIGURE_LOCK:
-                genai.configure(api_key=self._api_key)
+                self._genai.configure(api_key=self._api_key)
                 self._model = GenerativeModel(self._model_name)
 
     # ------------------------------------------------------------------ #
@@ -143,7 +147,7 @@ class GeminiAdapter(BaseAgentAdapter):
         """
         if self._client is not None:
             return
-        genai.configure(api_key=self._api_key)
+        self._genai.configure(api_key=self._api_key)
 
     # ------------------------------------------------------------------ #
     # Tool-arg validation (issue #2764)                                  #

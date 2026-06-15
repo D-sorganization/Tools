@@ -20,17 +20,28 @@ REPO_ROOT = Path(__file__).resolve().parents[5 if "tests" in __file__ else 4]
 TOOLS_BASELINE_HASHES: dict[str, str] = {
     "src/shared/python/chat/_chat_dock_widget_qt.py": "".join(
         (
-            "b1806a24",
-            "56615a7d",
-            "4279136e",
-            "936d8dc6",
-            "7e213cf3",
-            "1b5c97c3",
-            "2fd6c4a1",
-            "612a6901",
+            "ad0b8816",
+            "f263ea59",
+            "cbbb7ec0",
+            "5f9cd83f",
+            "1d2777de",
+            "1e6c2105",
+            "965c39fa",
+            "ea2f53a3",
         )
     ),
-    "src/shared/python/chat/models.py": "41030e0ba254ae6d3e04dbe9d154cc930fbb7e72fbc648bdacc9b2b8893384c7",  # noqa: E501
+    "src/shared/python/chat/models.py": "".join(
+        (
+            "b3d8abdc",
+            "363151d3",
+            "6f029819",
+            "d73551d9",
+            "6442db4f",
+            "972e5b55",
+            "1355da1c",
+            "274c3a0a",
+        )
+    ),
     "src/shared/python/chat/tests/__init__.py": "5a0bba6299ce217de8cbfc2e20a354ccf479e8d45152f69ad2543d9183d07812",  # noqa: E501
     "src/shared/python/chat/tests/test_chat.py": "90ee6b94e6e8cc0eade4a5067bc2d9dec86d7cd0c02181adeff17761b56f03f6",  # noqa: E501
 }
