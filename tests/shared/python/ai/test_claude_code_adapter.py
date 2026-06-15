@@ -6,8 +6,8 @@ Two layers of coverage so the adapter stays wired up:
 1. **Unit tests** — subprocess is mocked; run everywhere. These pin the
    adapter's contract (argument shape, prompt rendering, error mapping,
    timeout handling).
-2. **Live integration tests** — gated on the real ``claude`` binary being
-   present; auto-skip when the CLI is missing.
+2. **Live integration tests** — gated by ``TOOLS_RUN_LIVE_CLAUDE_CODE=1`` so
+   CI does not fail on machines with a stale or partially configured CLI shim.
 
 Bootstrap pattern mirrors ``test_ollama_adapter.py`` to work around the broken
 ``src.shared`` package import on this Python version.
@@ -15,6 +15,7 @@ Bootstrap pattern mirrors ``test_ollama_adapter.py`` to work around the broken
 
 from __future__ import annotations
 
+import os
 import subprocess
 from unittest.mock import MagicMock, patch
 
@@ -242,22 +243,26 @@ class TestClaudeCodeAdapter:
             assert chunks[0].content == "streamed"
 
 
-# ─── Live integration tests (skip when CLI missing) ────────────────────
+# ─── Live integration tests (explicit opt-in) ──────────────────────────
 
 
-_HAS_CLAUDE = _resolve_binary() is not None
+_RUN_LIVE_CLAUDE_CODE = os.environ.get("TOOLS_RUN_LIVE_CLAUDE_CODE") == "1"
 
 
 @pytest.mark.skipif(
-    not _HAS_CLAUDE,
-    reason="Claude Code CLI not installed; skipping live integration test.",
+    not _RUN_LIVE_CLAUDE_CODE,
+    reason=(
+        "Set TOOLS_RUN_LIVE_CLAUDE_CODE=1 with a working Claude Code CLI "
+        "to run live tests."
+    ),
 )
 class TestLiveClaudeCode:
     """Real CLI tests.
 
-    Auto-skip when ``claude`` is not on PATH so CI doesn't fail on machines
-    without the agent installed. On developer machines and dashboard hosts
-    that *do* have it, these guard against silent breakage of the live path.
+    Explicit opt-in keeps CI from treating a stale CLI shim as a working live
+    provider. On developer machines and dashboard hosts that do have a runnable
+    CLI, setting ``TOOLS_RUN_LIVE_CLAUDE_CODE=1`` guards against silent breakage
+    of the live path.
     """
 
     def test_version_probe_succeeds(self) -> None:

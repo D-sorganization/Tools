@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.479                                    |
+| **Spec Version**        | 1.1.480                                    |
 | **Last Spec Update**    | 2026-06-15                                 |
 
 ## 2. Purpose & Mission
@@ -783,6 +783,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-15 | 1.1.480 | test(ai-cli): gate live Claude Code CLI tests behind `TOOLS_RUN_LIVE_CLAUDE_CODE=1`, matching the Codex and Gemini CLI live-test pattern so CI runners with stale or partially configured CLI shims do not fail optional provider round trips. |
 | 2026-06-15 | 1.1.479 | fix(ai-auth, #3359): make `AuthManager.refresh_token_if_needed()` fail closed when an expired access token has only a valid refresh token, because #5227 has not implemented real refresh-token exchange yet; focused tests now pin valid-token success, missing-token failure, and the expired-access/valid-refresh warning path. |
 | 2026-06-15 | 1.1.478 | test(chat, #3331): repair the contract-extraction CI surface by updating adapter-factory credential tests to patch `chat_contracts.credentials`, keeping Gemini legacy-SDK construction stable when the optional SDK is absent or monkeypatched, and refreshing the split chat drift hashes for the extracted `chat.models` and injected chat dock widget runtime. |
 | 2026-06-15 | 1.1.477 | refactor(chat, #3331): add a dependency-free `chat_contracts` leaf package for shared thinking-capability, response-style, credential, and archived-conversation contracts; keep typed `chat.models` and `chat.credentials` compatibility exports; repoint AI adapters and API-key helpers away from `chat.*`; make chat-side AI memory/session collaborators lazy or injected; remove the empty `tests/unit/chat` package marker that shadowed the real `chat` package during combined pytest runs; and add architecture coverage preventing production `ai` code from statically importing `chat` and production `chat` code from statically importing `ai`. |
