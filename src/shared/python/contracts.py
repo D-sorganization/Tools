@@ -70,8 +70,7 @@ def _resolve_contract_level() -> ContractLevel:
 class _ContractState:
     level: ContractLevel = _resolve_contract_level()
 
-    @classmethod  # type: ignore[misc]  # @classmethod+@property deprecated in 3.12
-    @property
+    @classmethod
     def enabled(cls) -> bool:
         return cls.level != ContractLevel.OFF
 
@@ -321,11 +320,11 @@ def precondition(
         raise ValueError("condition must be provided")
 
     def decorator(func: F) -> F:
-        if not _contracts_enabled():
-            return func
-
         @functools.wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
+            if not _contracts_enabled():
+                return func(*args, **kwargs)
+
             try:
                 result = _evaluate_precondition(condition, func, args, kwargs)
             except PreconditionEvaluationError as exc:
@@ -358,12 +357,11 @@ def postcondition(
         raise ValueError("condition must be provided")
 
     def decorator(func: F) -> F:
-        if not _contracts_enabled():
-            return func
-
         @functools.wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             result = func(*args, **kwargs)
+            if not _contracts_enabled():
+                return result
 
             try:
                 check = condition(result)
@@ -472,6 +470,8 @@ def _wrap_method_with_invariant(
     @functools.wraps(orig_method)
     def wrapper(self: Any, *args: Any, **kwargs: Any) -> Any:
         result = orig_method(self, *args, **kwargs)
+        if not _contracts_enabled():
+            return result
         _check_class_invariant(self, condition, message, f"after {method_name}")
         return result
 
@@ -505,15 +505,14 @@ def class_invariant(
         raise ValueError("condition must be provided")
 
     def class_decorator(cls: type) -> type:
-        if not _contracts_enabled():
-            return cls
-
         # Wrap __init__
         original_init = cls.__init__  # type: ignore[misc]
 
         @functools.wraps(original_init)
         def new_init(self: Any, *args: Any, **kwargs: Any) -> None:
             original_init(self, *args, **kwargs)
+            if not _contracts_enabled():
+                return
             _check_class_invariant(self, condition, message, "after __init__")
 
         cls.__init__ = new_init  # type: ignore[misc]
@@ -575,12 +574,12 @@ class ContractChecker:
 
 def invariant_checked(func: F) -> F:
     """Decorator to check class invariants after method execution."""
-    if not _contracts_enabled():
-        return func
 
     @functools.wraps(func)
     def wrapper(self: ContractChecker, *args: Any, **kwargs: Any) -> Any:
         result = func(self, *args, **kwargs)
+        if not _contracts_enabled():
+            return result
         self.verify_invariants()
         return result
 

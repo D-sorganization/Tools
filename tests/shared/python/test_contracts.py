@@ -209,6 +209,19 @@ class TestPreconditionDecorator:
         with pytest.raises(PreconditionError):
             sqrt(-1.0)
 
+    def test_decorated_while_off_enforces_after_runtime_enable(self) -> None:
+        set_contract_level(ContractLevel.OFF)
+
+        @precondition(lambda x: x > 0, message="x must be positive")
+        def identity(x: int) -> int:
+            return x
+
+        assert identity(-1) == -1
+
+        set_contract_level(ContractLevel.ENFORCE)
+        with pytest.raises(PreconditionError, match="x must be positive"):
+            identity(-1)
+
 
 class TestPostconditionDecorator:
     """Test the @postcondition decorator."""
@@ -236,6 +249,19 @@ class TestPostconditionDecorator:
 
         with pytest.raises(PostconditionError):
             negate(5.0)
+
+    def test_decorated_while_off_enforces_after_runtime_enable(self) -> None:
+        set_contract_level(ContractLevel.OFF)
+
+        @postcondition(lambda result: result > 0, message="must be positive")
+        def zero() -> int:
+            return 0
+
+        assert zero() == 0
+
+        set_contract_level(ContractLevel.ENFORCE)
+        with pytest.raises(PostconditionError, match="must be positive"):
+            zero()
 
 
 class TestContractDecorator:
@@ -323,6 +349,28 @@ class TestClassInvariant:
         with pytest.raises(InvariantError):
             c.force_negative()
 
+    def test_decorated_while_off_enforces_after_runtime_enable(self) -> None:
+        set_contract_level(ContractLevel.OFF)
+
+        @class_invariant(
+            lambda self: self.count >= 0,
+            message="count must be non-negative",
+        )
+        class Counter:
+            def __init__(self) -> None:
+                self.count = 0
+
+            def force_negative(self) -> None:
+                self.count = -1
+
+        c = Counter()
+        c.force_negative()
+        assert c.count == -1
+
+        set_contract_level(ContractLevel.ENFORCE)
+        with pytest.raises(InvariantError, match="count must be non-negative"):
+            c.force_negative()
+
 
 # ── ContractChecker Mixin ────────────────────────────────────────────────
 
@@ -377,6 +425,30 @@ class TestContractCheckerMixin:
 
         with pytest.raises(InvariantError):
             obj.set_value(-1)  # Should violate invariant
+
+    def test_invariant_checked_decorated_while_off_enforces_after_runtime_enable(
+        self,
+    ) -> None:
+        set_contract_level(ContractLevel.OFF)
+
+        class MyClass(ContractChecker):
+            def __init__(self) -> None:
+                self.value = 10
+
+            def _get_invariants(self) -> list[tuple[Any, str]]:
+                return [(lambda: self.value > 0, "must be positive")]
+
+            @invariant_checked
+            def set_value(self, v: int) -> None:
+                self.value = v
+
+        obj = MyClass()
+        obj.set_value(-1)
+        assert obj.value == -1
+
+        set_contract_level(ContractLevel.ENFORCE)
+        with pytest.raises(InvariantError, match="must be positive"):
+            obj.set_value(-1)
 
 
 # ── Domain Helpers ───────────────────────────────────────────────────────

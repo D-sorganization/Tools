@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.532                                    |
+| **Spec Version**        | 1.1.533                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -47,6 +47,13 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   installer calls also coalesce stale preloaded aliases back to those
   canonical objects. `_bootstrap.py` no longer injects `src/shared/python`
   directly.
+- Issue #3316 follow-up removed the duplicate pytest-only
+  `RobustImportRedirector` implementations from both repository conftests so
+  tests and production share the same `shared.python.import_aliases` path. The
+  DbC decorators now consult the current runtime contract level even when a
+  function or class was decorated while contracts were disabled, and
+  signal-toolkit tangent-line calculation now rejects out-of-range `t_point`
+  inputs instead of silently clamping them.
 - P1AM power-supply backend documentation was tightened so the E-stop
   follow-up branch stays within the changed-file size budget without changing
   controller or Modbus behavior.

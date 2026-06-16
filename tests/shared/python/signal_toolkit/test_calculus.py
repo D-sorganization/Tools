@@ -264,6 +264,13 @@ class TestModuleFunctionPreconditions:
         with pytest.raises(ValueError, match="signal must be provided"):
             compute_tangent_line(None, t_point=1.0)  # type: ignore[arg-type]
 
+    @pytest.mark.parametrize("t_point", [-0.1, 10.1])
+    def test_compute_tangent_line_rejects_out_of_range_t_point(
+        self, linear_signal: Signal, t_point: float
+    ) -> None:
+        with pytest.raises(ValueError, match="t_point must be within"):
+            compute_tangent_line(linear_signal, t_point=t_point)
+
     def test_compute_all_tangent_lines_none_raises(self) -> None:
         with pytest.raises(ValueError, match="signal must be provided"):
             compute_all_tangent_lines(None)  # type: ignore[arg-type]
