@@ -1,16 +1,19 @@
-"""
-Compatibility Shim for Python Versions < 3.11
+"""Compatibility Shim for Python Versions < 3.11.
 
-This module provides backports for features introduced in Python 3.11,
-allowing the codebase to run on Python 3.10 (Ubuntu 22.04 default).
+The canonical UTC and StrEnum compatibility primitives live in the shared
+compatibility module. This legacy ``utils`` module preserves the historical
+version check and re-exports those shared primitives so callers do not split
+class identity across two backport implementations.
 """
 
 import logging
 import sys
-from enum import Enum
-from typing import TYPE_CHECKING
+
+from compatibility import UTC, StrEnum
 
 logger = logging.getLogger(__name__)
+
+__all__ = ["UTC", "StrEnum", "check_python_version"]
 
 
 def check_python_version() -> None:
@@ -31,31 +34,3 @@ def check_python_version() -> None:
 
 # Check Python version when module is imported
 check_python_version()
-
-if sys.version_info >= (3, 11):  # noqa: UP036
-    from datetime import UTC
-else:
-    from datetime import timezone
-
-    UTC = timezone.utc  # noqa: UP017
-
-# Backport StrEnum
-if TYPE_CHECKING:
-    from enum import StrEnum
-elif sys.version_info >= (3, 11):  # noqa: UP036
-    from enum import StrEnum as _StrEnum
-
-    StrEnum = _StrEnum
-else:
-
-    class StrEnum(str, Enum):  # noqa: UP042
-        """
-        Enum where members are also (and must be) strings.
-        Backport for Python < 3.11.
-        """
-
-        def __str__(self) -> str:
-            return str(self.value)
-
-        def __repr__(self) -> str:
-            return f"{self.__class__.__name__}.{self._name_}"
