@@ -16,14 +16,16 @@ Design notes:
 
 from __future__ import annotations
 
+import datetime as _dt
 import os
-from datetime import UTC, datetime
 
 from database import DB_FILE
 from models import EventLog, TagLog
 from pydantic import BaseModel, Field
 from sqlalchemy import delete, func
 from sqlmodel import Session, col, select
+
+UTC = getattr(_dt, "UTC", _dt.timezone.utc)  # noqa: UP017
 
 
 class CaptureStats(BaseModel):
@@ -112,7 +114,7 @@ def clear_capture(
     session: Session,
     *,
     include_events: bool = False,
-    before: datetime | None = None,
+    before: _dt.datetime | None = None,
 ) -> ClearResult:
     """Delete captured rows to reclaim storage, then VACUUM to free disk.
 
@@ -137,7 +139,7 @@ def clear_capture(
         raise TypeError(
             f"include_events must be bool, got {type(include_events).__name__}"
         )
-    if before is not None and not isinstance(before, datetime):
+    if before is not None and not isinstance(before, _dt.datetime):
         raise TypeError(f"before must be a datetime or None, got {type(before)}")
 
     bytes_before = _db_size_bytes()
@@ -172,6 +174,6 @@ def clear_capture(
     )
 
 
-def utcnow() -> datetime:
+def utcnow() -> _dt.datetime:
     """Timezone-aware current UTC instant (wrapper for easy test patching)."""
-    return datetime.now(UTC)
+    return _dt.datetime.now(UTC)
