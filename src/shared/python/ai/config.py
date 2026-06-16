@@ -41,8 +41,8 @@ from __future__ import annotations
 
 from typing import cast
 
-from src.shared.python.config.environment import get_env, get_env_float
-from src.shared.python.logging_pkg.logging_config import get_logger
+from shared.python.config.environment import get_env, get_env_float
+from shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
 

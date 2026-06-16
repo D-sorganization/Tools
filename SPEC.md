@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.521                                    |
+| **Spec Version**        | 1.1.522                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -928,6 +928,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-16 | 1.1.522 | fix(ai-core, #3316): route selected AI core production imports through canonical `shared.python.*` modules instead of the duplicate `src.shared.python.*` alias, and add an architecture guard for that slice. |
 | 2026-06-16 | 1.1.521 | fix(compatibility, #3316): route selected P1AM, AI, and calc-backend compatibility imports through canonical `shared.python.compatibility` instead of bare aliases, while preserving the packaged legacy module for external callers. |
 | 2026-06-16 | 1.1.520 | fix(ai-adapters, #3316): route AI adapter production imports through canonical `shared.python.*` modules instead of the duplicate `src.shared.python.*` alias, and add an architecture guard preventing the adapter slice from regressing. |
 | 2026-06-16 | 1.1.519 | perf(function-generator): build the shared time axis once per duration/sample-rate change and reuse it across layer and combined signal generation, avoiding duplicate O(n) array allocation in `FunctionGenerator.tsx`. |
