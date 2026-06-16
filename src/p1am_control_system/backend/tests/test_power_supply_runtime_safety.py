@@ -383,3 +383,59 @@ class TestSlewRate:
         cmd = c.tick(0.0, 0.0, 25.0, now=2.5)  # 0.5 s later
         # From 10 %, +5 %/s * 0.5 s = 12.5 %, not a jump to 40 %
         assert cmd == pytest.approx(12.5)
+
+
+# --------------------------------------------------------------------------
+# E-stop — latched kill switch (software half)
+# --------------------------------------------------------------------------
+
+
+class TestEstop:
+    """engage_estop() latches output to zero and disarms; the latch survives
+    re-arm attempts and setpoint commands until clear_estop() is called."""
+
+    def test_engage_forces_output_zero_from_running(self) -> None:
+        c = fresh_running_controller(40.0)
+        c.tick(0.0, 0.0, 25.0, now=0.0)
+        c.tick(0.0, 0.0, 25.0, now=100.0)  # ramped up
+        c.engage_estop()
+        cmd = c.tick(0.0, 0.0, 25.0, now=200.0)
+        assert cmd == 0.0
+        assert c.estopped is True
+        assert c.state == PowerSupplyState.IDLE
+        assert c.permissive is False
+
+    def test_cannot_arm_while_estopped(self) -> None:
+        c = fresh_running_controller(40.0)
+        c.engage_estop()
+        c.set_permissive(True)  # ignored
+        assert c.permissive is False
+        assert c.state == PowerSupplyState.IDLE
+        assert c.tick(0.0, 0.0, 25.0, now=300.0) == 0.0
+
+    def test_setpoint_rejected_while_estopped(self) -> None:
+        c = fresh_running_controller(40.0)
+        c.engage_estop()
+        assert c.set_current_setpoint(50.0) == 0.0
+        assert c.set_power_setpoint(100.0) == 0.0
+        assert c.tick(0.0, 0.0, 25.0, now=400.0) == 0.0
+
+    def test_clear_releases_latch_and_requires_rearm(self) -> None:
+        c = fresh_running_controller(40.0)
+        c.engage_estop()
+        c.clear_estop()
+        assert c.estopped is False
+        assert c.permissive is False  # must re-arm explicitly
+        assert c.state == PowerSupplyState.IDLE
+        # After re-arm + setpoint, output flows again.
+        c.set_permissive(True)
+        c.set_current_setpoint(10.0)
+        c.tick(0.0, 0.0, 25.0, now=0.0)
+        cmd = c.tick(0.0, 0.0, 25.0, now=100.0)
+        assert cmd == pytest.approx(10.0)
+
+    def test_clear_when_not_estopped_is_noop(self) -> None:
+        c = fresh_running_controller(10.0)
+        c.clear_estop()
+        assert c.estopped is False
+        assert c.state == PowerSupplyState.RUNNING
