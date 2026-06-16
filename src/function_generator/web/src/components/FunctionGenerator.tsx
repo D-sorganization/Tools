@@ -409,7 +409,10 @@ export function FunctionGenerator() {
   // Generate individual layer signals
   const layerSignals = useMemo(() => {
     const n = Math.floor(duration * sampleRate);
-    const time = Array.from({ length: n }, (_, i) => (i / sampleRate));
+    // ⚡ Bolt Optimization: Replace Array.from() with a pre-allocated array and for loop
+    // to avoid iterability checks and closure execution per element.
+    const time = new Array<number>(n);
+    for (let i = 0; i < n; i++) time[i] = i / sampleRate;
 
     return layers.map(layer => ({
       layer,
@@ -420,7 +423,10 @@ export function FunctionGenerator() {
   // Generate combined signal
   const signal = useMemo((): SignalData => {
     const n = Math.floor(duration * sampleRate);
-    const time = Array.from({ length: n }, (_, i) => (i / sampleRate));
+    // ⚡ Bolt Optimization: Replace Array.from() with a pre-allocated array and for loop
+    // to avoid iterability checks and closure execution per element.
+    const time = new Array<number>(n);
+    for (let i = 0; i < n; i++) time[i] = i / sampleRate;
 
     // Combine all enabled layers
     const values = new Array<number>(n);
