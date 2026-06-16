@@ -2,7 +2,7 @@
 
 When either ``pip install -e .`` has NOT been run **or** a launcher is
 executed directly (e.g. ``python src/electrode_advisor/launch_pyqt6.py``),
-the shared library directories need to be on ``sys.path``.
+the repository ``src`` directory needs to be on ``sys.path``.
 
 This module performs a **conditional** bootstrap: it silently resolves
 ``upstream_drift_tools.bootstrap.ensure_paths`` by first trying the
@@ -65,13 +65,15 @@ def bootstrap(caller_file: str) -> Path:
         else:
             repo_root = caller.parent
 
-    shared_python = repo_root / "src" / "shared" / "python"
-    if shared_python.exists() and str(shared_python) not in sys.path:
-        sys.path.insert(0, str(shared_python))
+    src_root = str(repo_root / "src")
+    if src_root not in sys.path:
+        sys.path.insert(0, src_root)
 
-    # Also add repo root and src/ for general imports
-    for path in [str(repo_root), str(repo_root / "src")]:
-        if path not in sys.path:
-            sys.path.insert(0, path)
+    try:
+        from shared.python.import_aliases import install_shared_import_aliases
+    except ImportError:
+        pass
+    else:
+        install_shared_import_aliases()
 
     return repo_root

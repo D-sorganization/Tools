@@ -1,0 +1,210 @@
+"""Shared import aliasing for legacy Tools package spellings.
+
+The canonical import root for shared code is ``shared.python``. Older entry
+points and downstream repos still import selected packages as top-level modules
+(``sidekick``, ``theme``, ``ai``) or as ``src.shared.python``. This installer
+keeps those spellings pointed at one canonical module object during the
+deprecation window.
+"""
+
+from __future__ import annotations
+
+import importlib
+import importlib.util
+import sys
+import types
+import warnings
+from collections.abc import Sequence
+from importlib.abc import MetaPathFinder
+from importlib.machinery import ModuleSpec
+from typing import Any
+
+_SHARED_ROOTS = frozenset(
+    {
+        "ai",
+        "calc_backend",
+        "chat",
+        "chat_contracts",
+        "compatibility",
+        "config",
+        "cors",
+        "deprecation",
+        "logging_pkg",
+        "notes",
+        "safe_eval",
+        "sidekick",
+        "signal_toolkit",
+        "theme",
+        "upstream_drift_tools",
+    }
+)
+
+
+def _canonical_module(aliases: Sequence[str]) -> types.ModuleType | None:
+    canonical_name = aliases[0]
+    canonical = sys.modules.get(canonical_name)
+    if canonical is not None:
+        for alias in aliases:
+            if alias in sys.modules:
+                sys.modules[alias] = canonical
+        return canonical
+
+    for alias in aliases:
+        module = sys.modules.get(alias)
+        if module is not None:
+            sys.modules[canonical_name] = module
+            for name in aliases:
+                if name in sys.modules:
+                    sys.modules[name] = module
+            return module
+    return None
+
+
+class _AliasLoader:
+    def __init__(self, module: types.ModuleType) -> None:
+        self.module = module
+
+    def create_module(self, spec: ModuleSpec) -> types.ModuleType:
+        return self.module
+
+    def exec_module(self, module: types.ModuleType) -> None:
+        return None
+
+
+class _CanonicalAliasLoader:
+    def __init__(self, canonical_spec: ModuleSpec, aliases: list[str]) -> None:
+        self.canonical_spec = canonical_spec
+        self.aliases = aliases
+
+    def create_module(self, spec: ModuleSpec) -> types.ModuleType:
+        return importlib.import_module(self.canonical_spec.name)
+
+    def exec_module(self, module: types.ModuleType) -> None:
+        canonical = importlib.import_module(self.canonical_spec.name)
+        for alias in self.aliases:
+            sys.modules[alias] = canonical
+
+
+class SharedImportAliasFinder(MetaPathFinder):
+    """Map deprecated shared import spellings to canonical module objects."""
+
+    def _parse(self, fullname: str) -> tuple[str | None, str]:
+        parts = fullname.split(".")
+        if len(parts) >= 3 and parts[:2] == ["shared", "python"]:
+            return (
+                (parts[2], ".".join(parts[3:]))
+                if parts[2] in _SHARED_ROOTS
+                else (None, "")
+            )
+        if len(parts) >= 4 and parts[:3] == ["src", "shared", "python"]:
+            return (
+                (parts[3], ".".join(parts[4:]))
+                if parts[3] in _SHARED_ROOTS
+                else (None, "")
+            )
+        if parts and parts[0] in _SHARED_ROOTS:
+            return parts[0], ".".join(parts[1:])
+        return None, ""
+
+    def _aliases(self, root: str, suffix: str) -> list[str]:
+        suffix_part = f".{suffix}" if suffix else ""
+        canonical_root = "sidekick" if root == "upstream_drift_tools" else root
+        aliases = [
+            f"shared.python.{canonical_root}{suffix_part}",
+            f"src.shared.python.{canonical_root}{suffix_part}",
+            f"{canonical_root}{suffix_part}",
+        ]
+        if root in {"sidekick", "upstream_drift_tools"}:
+            aliases.extend(
+                [
+                    f"shared.python.upstream_drift_tools{suffix_part}",
+                    f"src.shared.python.upstream_drift_tools{suffix_part}",
+                    f"upstream_drift_tools{suffix_part}",
+                ]
+            )
+        return list(dict.fromkeys(aliases))
+
+    def _find_canonical_spec(self, aliases: list[str]) -> ModuleSpec | None:
+        removed = False
+        if self in sys.meta_path:
+            sys.meta_path.remove(self)
+            removed = True
+        try:
+            for alias in aliases:
+                try:
+                    spec = importlib.util.find_spec(alias)
+                except Exception:
+                    continue
+                if spec is not None and spec.loader is not None:
+                    return spec
+            return None
+        finally:
+            if removed:
+                sys.meta_path.insert(0, self)
+
+    def _redirect_spec(
+        self, fullname: str, loader: Any, canonical_spec: ModuleSpec
+    ) -> ModuleSpec:
+        spec = ModuleSpec(
+            fullname,
+            loader,
+            origin=canonical_spec.origin,
+            loader_state=canonical_spec.loader_state,
+        )
+        spec.submodule_search_locations = canonical_spec.submodule_search_locations
+        spec.cached = canonical_spec.cached
+        spec.has_location = canonical_spec.has_location
+        return spec
+
+    def find_spec(
+        self,
+        fullname: str,
+        path: Sequence[str] | None = None,
+        target: types.ModuleType | None = None,
+    ) -> ModuleSpec | None:
+        if fullname == "shared.python" or fullname.startswith("shared.python."):
+            return None
+        root, suffix = self._parse(fullname)
+        if root is None:
+            return None
+        if root == "upstream_drift_tools" or fullname.startswith(
+            "upstream_drift_tools."
+        ):
+            warnings.warn(
+                "upstream_drift_tools is deprecated; import shared.python.sidekick.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+        aliases = self._aliases(root, suffix)
+        module = _canonical_module(aliases)
+        if module is not None:
+            alias_spec = self._find_canonical_spec(aliases) or ModuleSpec(
+                fullname, None
+            )
+            return self._redirect_spec(fullname, _AliasLoader(module), alias_spec)
+        canonical_spec = self._find_canonical_spec(aliases)
+        if canonical_spec is None:
+            return None
+        return self._redirect_spec(
+            fullname, _CanonicalAliasLoader(canonical_spec, aliases), canonical_spec
+        )
+
+
+def _coalesce_loaded_aliases(finder: SharedImportAliasFinder) -> None:
+    for fullname in list(sys.modules):
+        root, suffix = finder._parse(fullname)
+        if root is None:
+            continue
+        _canonical_module(finder._aliases(root, suffix))
+
+
+def install_shared_import_aliases() -> None:
+    """Install the shared import alias finder once per interpreter."""
+    for finder in sys.meta_path:
+        if isinstance(finder, SharedImportAliasFinder):
+            _coalesce_loaded_aliases(finder)
+            return
+    finder = SharedImportAliasFinder()
+    _coalesce_loaded_aliases(finder)
+    sys.meta_path.insert(0, finder)
+    _coalesce_loaded_aliases(finder)
