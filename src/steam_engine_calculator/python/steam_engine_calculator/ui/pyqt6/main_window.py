@@ -12,6 +12,7 @@ Uses Catppuccin Mocha dark theme for modern appearance.
 from __future__ import annotations
 
 import sys
+from numbers import Real
 from typing import TYPE_CHECKING, Any
 
 from PyQt6.QtCore import Qt
@@ -38,6 +39,11 @@ from shared.python.sidekick.ui.widgets.base_calculator_widget import (
 
 if TYPE_CHECKING:
     from shared.python.sidekick.calculators.thermo.steam_engine import SteamProperties
+
+_SCROLL_BAR_AS_NEEDED = Qt.ScrollBarPolicy.ScrollBarAsNeeded
+_FONT_WEIGHT_BOLD = QFont.Weight.Bold
+_ALIGN_CENTER = Qt.AlignmentFlag.AlignCenter
+_FRAME_STYLED_PANEL = QFrame.Shape.StyledPanel
 
 # Catppuccin Mocha color palette
 COLORS = {
@@ -81,26 +87,28 @@ def validate_pressure_pa(value: float) -> tuple[bool, str]:
     return True, ""
 
 
-def format_temperature(value: float, unit: str = "K") -> str:
+def format_temperature(value: object, unit: str = "K") -> str:
     """Format temperature with units."""
-    if value is None:
-        raise ValueError("value must be provided")
+    if not isinstance(value, Real):
+        raise TypeError("value must be a number")
+    numeric_value = float(value)
     if unit == "C":
-        return f"{value - 273.15:.2f} °C"
-    return f"{value:.2f} K"
+        return f"{numeric_value - 273.15:.2f} °C"
+    return f"{numeric_value:.2f} K"
 
 
-def format_pressure(value: float, unit: str = "Pa") -> str:
+def format_pressure(value: object, unit: str = "Pa") -> str:
     """Format pressure with units."""
-    if value is None:
-        raise ValueError("value must be provided")
+    if not isinstance(value, Real):
+        raise TypeError("value must be a number")
+    numeric_value = float(value)
     if unit == "bar":
-        return f"{value / 1e5:.4f} bar"
+        return f"{numeric_value / 1e5:.4f} bar"
     if unit == "kPa":
-        return f"{value / 1000:.2f} kPa"
+        return f"{numeric_value / 1000:.2f} kPa"
     if unit == "MPa":
-        return f"{value / 1e6:.4f} MPa"
-    return f"{value:.2f} Pa"
+        return f"{numeric_value / 1e6:.4f} MPa"
+    return f"{numeric_value:.2f} Pa"
 
 
 def format_enthalpy(value: float) -> str:
@@ -378,26 +386,30 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
 
     def _create_group(self, title: str) -> QGroupBox:
         """Create a styled group box."""
-        if title is None:
-            raise ValueError("title must be provided")
+        if not isinstance(title, str):
+            raise TypeError("title must be a string")
         group = QGroupBox(title)
-        group.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
+        group.setFont(QFont("Segoe UI", 10, _FONT_WEIGHT_BOLD))
         return group
 
     def _create_label(self, text: str) -> QLabel:
         """Create a styled label."""
-        if text is None:
-            raise ValueError("text must be provided")
+        if not isinstance(text, str):
+            raise TypeError("text must be a string")
         label = QLabel(text)
         label.setStyleSheet(f"color: {COLORS['text']};")
         return label
 
     def _create_result_card(self, name: str, key: str, color: str) -> QFrame:
         """Create a result display card."""
-        if name is None:
-            raise ValueError("name must be provided")
+        if not isinstance(name, str):
+            raise TypeError("name must be a string")
+        if not isinstance(key, str):
+            raise TypeError("key must be a string")
+        if not isinstance(color, str):
+            raise TypeError("color must be a string")
         card = QFrame()
-        card.setFrameShape(QFrame.Shape.StyledPanel)
+        card.setFrameShape(_FRAME_STYLED_PANEL)
         card.setMinimumHeight(60)
 
         layout = QVBoxLayout(card)
@@ -650,7 +662,7 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
         """Display calculation results."""
         # Phase state
         if result is None:
-            raise ValueError("result must be provided")
+            raise ValueError("result must not be None")
         phase_colors = {
             "liquid": COLORS["blue"],
             "vapor": COLORS["peach"],

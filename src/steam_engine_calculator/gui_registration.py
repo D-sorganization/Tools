@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-GUI_INFO = {
+GUI_INFO: dict[str, Any] = {
     "name": "Steam Engine Calculator",
     "tool_name": "steam_engine_calculator",
     "description": "Calculate thermodynamic properties of steam/water",

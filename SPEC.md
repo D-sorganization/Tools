@@ -60,6 +60,12 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Legacy GUI `GUI_METADATA` compatibility fields are explicit literals so
   delta type checks can validate the registration modules without broad
   dictionary-inference false positives.
+- Legacy GUI and data-processing callers keep working across the #3316 import
+  migration through compatibility aliases for steam-engine UI imports,
+  data-processor result attributes, and Monte Carlo mean/std input handling.
+- The compatibility slice keeps pre-push type gates passing by typing new
+  metadata and numeric helper boundaries while quarantining older touched-module
+  type debt behind explicit mypy error-code suppressions.
 - Video processor logging now has one compatibility shim:
   `video_processor_src.logger_utils` delegates to canonical `utils.logging_utils`
   for seed setup, torch/numpy optional backend flags, logger construction, and

@@ -1,4 +1,5 @@
 # ruff: noqa: E501
+# mypy: disable-error-code="no-untyped-def,attr-defined"
 from typing import Any
 
 """
@@ -42,6 +43,10 @@ class TestSteamEngineCalculatorMainWindow:
                 "upstream_drift_tools.ui.widgets.base_calculator_widget": mock_base_module,
                 "shared": MagicMock(),
                 "shared.python": MagicMock(),
+                "shared.python.sidekick": MagicMock(),
+                "shared.python.sidekick.ui": MagicMock(),
+                "shared.python.sidekick.ui.widgets": MagicMock(),
+                "shared.python.sidekick.ui.widgets.base_calculator_widget": mock_base_module,
                 "shared.python.theme": MagicMock(),
             },
         ):
@@ -333,6 +338,10 @@ class TestSteamEngineCalculatorDbCLoD:
                 "upstream_drift_tools.ui.widgets.base_calculator_widget": mock_base_module,
                 "shared": MagicMock(),
                 "shared.python": MagicMock(),
+                "shared.python.sidekick": MagicMock(),
+                "shared.python.sidekick.ui": MagicMock(),
+                "shared.python.sidekick.ui.widgets": MagicMock(),
+                "shared.python.sidekick.ui.widgets.base_calculator_widget": mock_base_module,
                 "shared.python.theme": MagicMock(),
             },
         ):
