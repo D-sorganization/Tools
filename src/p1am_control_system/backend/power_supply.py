@@ -54,8 +54,8 @@ class PowerSupplyController:
         - When permissive is False, returned command is 0.0.
         - When any trip is latched, returned command is 0.0.
         - When state is RUNNING, returned command tracks setpoint clamped to
-          [current_setpoint_min_a, current_setpoint_max_a] then scaled to
-          a percent of current_full_scale_a.
+          [current_setpoint_min_a, current_setpoint_max_a], scaled to a percent
+          of current_full_scale_a, then capped at config.output_clamp_percent.
     """
 
     def __init__(self, config: PowerSupplyConfig) -> None:
@@ -81,6 +81,9 @@ class PowerSupplyController:
         # zero rather than snapping up.
         self._slewed_percent = 0.0
         self._last_tick_monotonic: float | None = None
+        # True when the output clamp is actively limiting the command (the
+        # setpoint would otherwise drive the AO above output_clamp_percent).
+        self._output_clamped = False
 
     @property
     def state(self) -> PowerSupplyState:
@@ -390,10 +393,19 @@ class PowerSupplyController:
 
         if self._should_force_output_zero():
             self._reset_slew_state()
+            self._output_clamped = False
             return 0.0
 
-        target_percent = 100.0 * self._setpoint_a / self._config.current_full_scale_a
-        target_percent = max(0.0, min(target_percent, 100.0))
+        raw_percent = 100.0 * self._setpoint_a / self._config.current_full_scale_a
+        raw_percent = max(0.0, min(raw_percent, 100.0))
+
+        # Operator safety clamp: hard-cap the commanded output regardless of how
+        # the setpoint scales. Applied before the slew limiter so the ramp
+        # settles at the clamp instead of overshooting it.
+        clamp_percent = self._config.output_clamp_percent
+        target_percent = min(raw_percent, clamp_percent)
+        self._output_clamped = raw_percent > clamp_percent
+
         commanded = self._apply_slew(target_percent, dt_s)
         self._last_commanded_percent = commanded
         return commanded
@@ -433,4 +445,6 @@ class PowerSupplyController:
             measured_temp_c=self._last_t,
             commanded_output_percent=self._last_commanded_percent,
             trips=sorted(self._trips),
+            output_clamp_percent=self._config.output_clamp_percent,
+            output_clamped=self._output_clamped,
         )

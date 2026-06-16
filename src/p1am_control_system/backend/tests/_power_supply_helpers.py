@@ -38,3 +38,15 @@ def fresh_running_controller(sp_a: float = 10.0) -> PowerSupplyController:
     c = fresh_armed_controller()
     c.set_current_setpoint(sp_a)
     return c
+
+
+def fresh_armed_controller_unclamped() -> PowerSupplyController:
+    """Return an ARMED controller with the output clamp opened to 100 %.
+
+    The default config applies a 20 % safety clamp on the commanded output.
+    Tests that exercise the proportional-scaling / slew / full-scale laws in
+    isolation use this so the clamp doesn't cap the value under test.
+    """
+    c = PowerSupplyController(PowerSupplyConfig(output_clamp_percent=100.0))
+    c.set_permissive(True)
+    return c

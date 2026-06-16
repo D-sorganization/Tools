@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.529                                    |
+| **Spec Version**        | 1.1.530                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-16 Update
 
+- P1AM power-supply runtime tests are split into setpoint and safety-focused
+  modules so changed test files remain below the repository file-size budget.
+  The shared `_power_supply_helpers.py` construction helper is documented in
+  the changed-test assertion allowlist as fixture/support-only test code.
 - Issue #3316 import-canonicalization now routes AI MCP core modules and the
   NotebookLM preset command through `shared.python.ai.mcp.*` instead of the
   duplicate `src.shared.python.ai.mcp.*` spelling. Added
@@ -938,6 +942,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-16 | 1.1.530 | test(p1am-power-supply): split runtime controller safety tests out of the oversized setpoint test module and document the shared helper in the changed-test assertion allowlist. |
 | 2026-06-16 | 1.1.527 | fix(ai-tools, #3316): route selected AI tools production imports through canonical `shared.python.*` modules instead of the duplicate `src.shared.python.*` alias, and add an architecture guard for that slice. |
 | 2026-06-16 | 1.1.526 | fix(ai-tool-registry, #3316): route the AI tool registry production imports through canonical `shared.python.*` modules instead of the duplicate `src.shared.python.*` alias, and add an architecture guard for that slice. |
 | 2026-06-16 | 1.1.525 | fix(ai-education, #3316): route selected AI education production imports through canonical `shared.python.*` modules instead of the duplicate `src.shared.python.*` alias, and add an architecture guard for that slice. |

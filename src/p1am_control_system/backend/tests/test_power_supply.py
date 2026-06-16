@@ -24,6 +24,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from _power_supply_helpers import (
     fresh_armed_controller,
+    fresh_armed_controller_unclamped,
     fresh_idle_controller,
     fresh_running_controller,
 )
@@ -74,6 +75,24 @@ class TestPowerSupplyConfigValidation:
             PowerSupplyConfig(power_alarm_max_w=0.0)
         with pytest.raises(ValidationError):
             PowerSupplyConfig(temp_alarm_max_c=-10.0)
+
+    def test_output_clamp_default_is_20_percent(self) -> None:
+        assert PowerSupplyConfig().output_clamp_percent == 20.0
+
+    def test_output_clamp_must_be_positive(self) -> None:
+        with pytest.raises(ValidationError):
+            PowerSupplyConfig(output_clamp_percent=0.0)
+        with pytest.raises(ValidationError):
+            PowerSupplyConfig(output_clamp_percent=-5.0)
+
+    def test_output_clamp_cannot_exceed_100_percent(self) -> None:
+        with pytest.raises(ValidationError):
+            PowerSupplyConfig(output_clamp_percent=100.1)
+
+    def test_output_clamp_accepts_full_range_bounds(self) -> None:
+        assert PowerSupplyConfig(output_clamp_percent=100.0).output_clamp_percent == (
+            100.0
+        )
 
 
 # --------------------------------------------------------------------------
@@ -217,7 +236,9 @@ class TestStatus:
 class TestMathInvariants:
     @pytest.mark.parametrize("sp_a", [0.0, 10.0, 25.0, 50.0])
     def test_command_proportional_to_setpoint(self, sp_a: float) -> None:
-        c = fresh_armed_controller()
+        # Unclamped: this checks the proportional law across the full setpoint
+        # range; the 20 % output clamp is exercised in TestOutputClamp.
+        c = fresh_armed_controller_unclamped()
         c.set_current_setpoint(sp_a)
         # Two ticks with a large dt allow the slew limiter to fully settle.
         c.tick(0.0, 0.0, 25.0, now=0.0)
