@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.513                                    |
+| **Spec Version**        | 1.1.514                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -85,6 +85,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Calc backend endpoint inventory regressions now live in a focused companion
   test module so the legacy aggregate backend test file stays under the module
   size budget while preserving route-repair coverage.
+- Calc backend router repair now re-includes calculator routers whenever any
+  declared route signature is missing from the active app, not only when a
+  whole router is absent, and then recomputes the registered route inventory.
 - Calc backend endpoint discovery normalizes route path and method metadata
   before comparing registered calculator endpoints, keeping the repair path
   stable across FastAPI/Starlette route implementations in the Linux CI matrix.

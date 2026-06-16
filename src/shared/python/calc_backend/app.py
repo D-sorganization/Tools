@@ -215,9 +215,9 @@ def _ensure_calculator_routes_registered(
             router.routes,
             prefix=str(getattr(router, "prefix", "")),
         )
-        if router_signatures and router_signatures.isdisjoint(registered):
+        if router_signatures and not router_signatures.issubset(registered):
             active_app.include_router(router)
-            registered.update(router_signatures)
+            registered = _calculator_route_signatures(active_app.routes)
 
 
 def _join_route_prefix(prefix: str, path: str) -> str:
