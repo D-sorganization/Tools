@@ -56,7 +56,7 @@ def _solve_flux_flooding_diameter(
     (e.g. zero flooding velocity) the seed area is retained so behaviour
     degrades gracefully.
     """
-    from sidekick.process_calculators.scrubber_calculator import (
+    from shared.python.sidekick.process_calculators.scrubber_calculator import (
         WATER_DENSITY,
         WATER_VISCOSITY,
         calculate_column_diameter,
@@ -103,7 +103,7 @@ def _solve_flux_flooding_diameter(
 @router.post("", response_model=ScrubberResponse)
 def calculate_scrubber(request: ScrubberRequest) -> ScrubberResponse:
     """Calculate packed-bed scrubber column sizing and caustic requirements."""
-    from sidekick.process_calculators.scrubber_calculator import (
+    from shared.python.sidekick.process_calculators.scrubber_calculator import (
         PACKING_DATABASE,
         calculate_caustic_requirement,
         calculate_gas_density,

@@ -392,7 +392,7 @@ class ODESolverWindow(ThemedWindowMixin, QMainWindow):
     def _run_solve(self) -> None:
         """Execute the parse/solve/render pipeline (see :meth:`_solve`)."""
         try:
-            from sidekick.process_calculators.ode_solver import (
+            from shared.python.sidekick.process_calculators.ode_solver import (
                 ODESolver,
             )
 

@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any
 
 try:
-    from sidekick.utils.paths import get_repo_root
+    from shared.python.sidekick.utils.paths import get_repo_root
 except ImportError:
     try:
         from tools.launch_utils import get_repo_root

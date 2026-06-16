@@ -110,6 +110,11 @@ class SeasonalityDetectionResult:
     is_seasonal: bool
     autocorrelation_peaks: list[int]
 
+    @property
+    def period(self) -> int | None:
+        """Backward-compatible alias for the dominant detected period."""
+        return self.dominant_period
+
 
 __all__ = [
     "DecompositionConfig",

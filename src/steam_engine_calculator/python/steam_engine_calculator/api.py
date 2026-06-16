@@ -17,11 +17,12 @@ import logging
 from cors import add_cors_middleware
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
-from sidekick.calculators.thermo.steam_engine import (
+from utils.compatibility import StrEnum
+
+from shared.python.sidekick.calculators.thermo.steam_engine import (
     SteamCalculationEngine,
     SteamProperties,
 )
-from utils.compatibility import StrEnum
 
 logger = logging.getLogger(__name__)
 

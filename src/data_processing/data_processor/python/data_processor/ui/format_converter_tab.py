@@ -15,7 +15,7 @@ from typing import Any
 import customtkinter as ctk
 import pandas as pd
 from numba import jit
-from sidekick.data_processing.io import (
+from shared.python.sidekick.data_processing.io import (
     DataReader,
     DataWriter,
     FileFormatDetector,

@@ -23,7 +23,7 @@ from enum import Enum
 from typing import Any
 
 from double_pendulum_golf.constants import GRAVITY_STANDARD
-from sidekick.utils.unit_constants import (
+from shared.python.sidekick.utils.unit_constants import (
     FOOT_POUND_PER_SECOND_TO_WATT,
     FOOT_POUND_TO_JOULE,
     FOOT_POUND_TO_NEWTON_METER,

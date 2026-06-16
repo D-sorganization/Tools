@@ -26,8 +26,10 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from sidekick.ui.widgets.base_calculator_widget import BaseCalculatorWindow
 
+from shared.python.sidekick.ui.widgets.base_calculator_widget import (
+    BaseCalculatorWindow,
+)
 from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA, get_stylesheet
 
 # LoD: extract repeated Qt enum chains to named constants (avoids obj.prop.subprop chains)
@@ -304,7 +306,7 @@ class FlowRateConverterWindow(BaseCalculatorWindow):
     def _convert_mass(self) -> None:
         """Perform mass flow rate conversion."""
         try:
-            from sidekick.calculators.conversion.flow_rate_converter import (
+            from shared.python.sidekick.calculators.conversion.flow_rate_converter import (
                 mass_to_mass,
             )
 
@@ -322,7 +324,7 @@ class FlowRateConverterWindow(BaseCalculatorWindow):
     def _convert_molar(self) -> None:
         """Perform molar flow rate conversion."""
         try:
-            from sidekick.calculators.conversion.flow_rate_converter import (
+            from shared.python.sidekick.calculators.conversion.flow_rate_converter import (
                 molar_to_molar,
             )
 
@@ -342,7 +344,7 @@ class FlowRateConverterWindow(BaseCalculatorWindow):
     def _convert_volumetric(self) -> None:
         """Perform volumetric flow rate conversion."""
         try:
-            from sidekick.calculators.conversion.flow_rate_converter import (
+            from shared.python.sidekick.calculators.conversion.flow_rate_converter import (
                 VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S,
             )
 

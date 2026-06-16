@@ -17,8 +17,8 @@ router = APIRouter(prefix="/api/calc/wgs-reactor", tags=["wgs-reactor"])
 @router.post("", response_model=WGSReactorResponse)
 def calculate_wgs(request: WGSReactorRequest) -> WGSReactorResponse:
     """Calculate WGS reactor equilibrium and optional sizing."""
-    import sidekick.process_calculators as _pc
-    from sidekick.process_calculators import WGSReactorEngine
+    import shared.python.sidekick.process_calculators as _pc
+    from shared.python.sidekick.process_calculators import WGSReactorEngine
 
     if WGSReactorEngine is None:
         # Surface the ACTUAL import failure rather than a hardcoded, misleading

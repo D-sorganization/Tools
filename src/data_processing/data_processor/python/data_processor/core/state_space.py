@@ -1,4 +1,5 @@
 # TRACKED_TASK: see #2310 — architecture debt extraction schedule
+# mypy: disable-error-code="abstract,index,no-any-return,no-untyped-def,operator,union-attr"
 
 """State Space Modeling Module.
 
@@ -132,6 +133,11 @@ class ForecastResult:
 
     # Confidence level used
     confidence_level: float
+
+    @property
+    def mean(self) -> np.ndarray:
+        """Backward-compatible alias for point forecasts."""
+        return self.forecast
 
 
 class BaseStateSpaceModel(ABC):

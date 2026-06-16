@@ -32,7 +32,6 @@ load_dotenv()
 
 # Relative package imports
 # Import Sidekick Unified Tools Sidebar
-from sidekick.ui.tools_sidebar import UnifiedToolsSidebar
 from theme.theme_manager import get_theme_manager
 
 from p1am_control_system.desktop.control_tab import ControlTab
@@ -50,6 +49,7 @@ from p1am_control_system.desktop.sidebar import InspectorSidebar
 from p1am_control_system.desktop.tab_labels import TAB_ORDER, TAB_TITLES
 from p1am_control_system.desktop.trends_tab import TrendsTab
 from p1am_control_system.desktop.workers import HttpWorker, start_http_request
+from shared.python.sidekick.ui.tools_sidebar import UnifiedToolsSidebar
 
 logger = logging.getLogger("p1am_control.desktop.main_window")
 

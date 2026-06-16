@@ -79,7 +79,7 @@ class FinancialCalculatorEngine:
 
     def __init__(self) -> None:
         """Initialize the engine."""
-        from sidekick.process_calculators.financial_calculator import (
+        from shared.python.sidekick.process_calculators.financial_calculator import (
             FinancialModelCalculator,
             FinancialParameters,
         )
