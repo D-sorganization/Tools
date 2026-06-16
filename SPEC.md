@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.547                                    |
+| **Spec Version**        | 1.1.548                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -91,6 +91,12 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   guarded by focused import, provider-contract, bootstrap, and shim tests. The
   branch-name check is passed through the workflow environment so actionlint's
   script-injection guard remains enforced.
+- P1AM safety review follow-up keeps the E-stop reachable above drawer
+  overlays, makes E-stop clear/trigger UI state follow acknowledged controller
+  responses, preserves operator-owned power-supply mode selection after initial
+  server adoption, refuses setpoint applies without live status, reasserts a
+  latched E-stop on PLC reconnect, and makes Modbus E-stop writes best-effort
+  across all kill outputs before reporting failure.
 - Issue #3316 CI repair keeps the broad import-canonicalization PR's Python
   matrix on the always-on core tests plus targeted import identity,
   bootstrap, metadata, host integration, and shim contracts, avoiding the

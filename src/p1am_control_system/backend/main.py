@@ -232,6 +232,12 @@ async def modbus_connect_background() -> None:
                 connected = await plc_client.connect()
                 if connected:
                     logger.info("Connected to PLC successfully in background.")
+                    if e_stop_active:
+                        try:
+                            await plc_client.trigger_estop()
+                            logger.warning("Re-asserted hardware E-stop on reconnect.")
+                        except Exception as estop_err:
+                            logger.error(f"Failed to re-assert E-stop: {estop_err}")
                     # Adopt the device's real routing + interlock limits so the
                     # alarm set reflects the PLC, not the startup defaults.
                     try:
@@ -548,8 +554,13 @@ async def trigger_estop() -> dict[str, str]:
             "message": "Simulated E-stop triggered. All simulated tag values zeroed.",
         }
 
-    await plc_client.trigger_estop()
+    ok = await plc_client.trigger_estop()
     await backup_simulator.trigger_estop()
+    if not ok:
+        raise HTTPException(
+            status_code=502,
+            detail="E-stop command was not acknowledged by the PLC; controller remains latched and will retry.",
+        )
     return {"status": "success", "message": "Hardware E-stop triggered."}
 
 

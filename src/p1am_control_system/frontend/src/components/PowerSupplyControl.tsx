@@ -126,10 +126,17 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
     load();
   }, []);
 
-  // Sync mode display with whatever the server most recently applied.
+  // Adopt the server's mode ONCE, on the first status frame. After that the
+  // toggle is operator-owned: continuously syncing to liveStatus.mode would
+  // yank the toggle back mid-selection (the server only changes mode on an
+  // applied setpoint), which could lead to commanding the wrong quantity.
+  const modeInitialized = useRef(false);
   useEffect(() => {
-    if (liveStatus) setMode(liveStatus.mode);
-  }, [liveStatus?.mode]);
+    if (liveStatus && !modeInitialized.current) {
+      modeInitialized.current = true;
+      setMode(liveStatus.mode);
+    }
+  }, [liveStatus]);
 
   // Accumulate a rolling trend buffer from the live status broadcasts.
   useEffect(() => {
@@ -175,11 +182,16 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
       }
       // Guard rail: the server silently ignores setpoints unless the controller
       // is armed, so tell the operator instead of pretending it was applied.
-      if (liveStatus && liveStatus.state === "tripped") {
+      // If we have no live status, we can't verify permissive/trip — refuse.
+      if (!liveStatus) {
+        flash("Live status unavailable — cannot confirm permissive/trip.", "error");
+        return;
+      }
+      if (liveStatus.state === "tripped") {
         flash("Controller is TRIPPED — acknowledge the trip first.", "error");
         return;
       }
-      if (liveStatus && !liveStatus.permissive) {
+      if (!liveStatus.permissive) {
         flash("Permissive is OFF — enable it before commanding output.", "error");
         return;
       }
