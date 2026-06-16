@@ -60,6 +60,15 @@ interface SignalLayer {
 
 const LAYER_COLORS = ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
+function buildTimeAxis(duration: number, sampleRate: number): number[] {
+  const n = Math.floor(duration * sampleRate);
+  const time = new Array<number>(n);
+  for (let i = 0; i < n; i++) {
+    time[i] = i / sampleRate;
+  }
+  return time;
+}
+
 // Signal generation functions
 function generateSinusoid(t: number[], params: WaveformParams): number[] {
   const { amplitude, frequency, phase, offset } = params;
@@ -406,21 +415,21 @@ export function FunctionGenerator() {
     ));
   }, []);
 
+  const time = useMemo(() => buildTimeAxis(duration, sampleRate), [duration, sampleRate]);
+
   // Generate individual layer signals
   const layerSignals = useMemo(() => {
-    const n = Math.floor(duration * sampleRate);
-    const time = Array.from({ length: n }, (_, i) => (i / sampleRate));
+    const n = time.length;
 
     return layers.map(layer => ({
       layer,
       values: layer.enabled ? generateSignalValues(time, layer.waveformType, layer.params) : new Array<number>(n).fill(0),
     }));
-  }, [layers, duration, sampleRate]);
+  }, [layers, time]);
 
   // Generate combined signal
   const signal = useMemo((): SignalData => {
-    const n = Math.floor(duration * sampleRate);
-    const time = Array.from({ length: n }, (_, i) => (i / sampleRate));
+    const n = time.length;
 
     // Combine all enabled layers
     const values = new Array<number>(n);
@@ -441,7 +450,7 @@ export function FunctionGenerator() {
     }
 
     return { time, values };
-  }, [duration, sampleRate, layerSignals]);
+  }, [time, layerSignals]);
 
   // Compute FFT
   const fftData = useMemo(() => {

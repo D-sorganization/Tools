@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.518                                    |
+| **Spec Version**        | 1.1.519                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -928,6 +928,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-16 | 1.1.519 | perf(function-generator): build the shared time axis once per duration/sample-rate change and reuse it across layer and combined signal generation, avoiding duplicate O(n) array allocation in `FunctionGenerator.tsx`. |
 | 2026-06-16 | 1.1.518 | fix(p1am-security): require the elevated admin API key for mutating power-supply routes (`/config`, `/setpoint`, `/permissive`, and `/acknowledge_trip`) while keeping read-only config/status endpoints unauthenticated. |
 | 2026-06-16 | 1.1.511 | fix(calc-backend, #3316): make calculator route signature extraction `APIRouter.prefix`-aware so repair can derive declared `/api/calc/*` endpoints from prefixless child routes in the Linux CI FastAPI matrix. |
 | 2026-06-16 | 1.1.510 | fix(calc-backend, #3316): derive and repair `/api/calc/endpoints` from `request.app` instead of the module-global app so alias-loaded FastAPI apps in the Linux CI matrix keep the advertised endpoint list attached to the serving app. |
