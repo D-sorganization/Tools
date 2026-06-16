@@ -26,11 +26,12 @@ import yaml
 
 from movement_optimizer import tool_pack
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
-YAML_PATH = REPO_ROOT / "tool_pack.yaml"
+PACKAGE_ROOT = Path(__file__).resolve().parent.parent
+SRC_ROOT = PACKAGE_ROOT.parent
+YAML_PATH = PACKAGE_ROOT / "tool_pack.yaml"
 SUBPROCESS_ENV = {
     **os.environ,
-    "PYTHONPATH": str(REPO_ROOT / "src") + os.pathsep + os.environ.get("PYTHONPATH", ""),
+    "PYTHONPATH": str(SRC_ROOT) + os.pathsep + os.environ.get("PYTHONPATH", ""),
 }
 
 EXPECTED_EXERCISES = (

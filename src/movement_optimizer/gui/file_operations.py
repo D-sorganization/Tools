@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 class FileOperationsMixin:
     """Mixin providing file I/O actions for MainWindow."""
 
-    def _export(self: MainWindow) -> None:  # type: ignore[misc]
+    def _export(self: MainWindow) -> None:
         idx = self.tabs.currentIndex()
         r, _fi, _body, _dyn = self._snapshot_idx_state(idx)
         if r is None:
@@ -48,7 +48,7 @@ class FileOperationsMixin:
             return
         _write_csv(self, path, r)
 
-    def _save_solution(self: MainWindow) -> None:  # type: ignore[misc]
+    def _save_solution(self: MainWindow) -> None:
         idx = self.tabs.currentIndex()
         r, _fi, _body, _dyn = self._snapshot_idx_state(idx)
         if r is None:
@@ -85,7 +85,7 @@ class FileOperationsMixin:
             logger.error("Save solution serialisation error: %s", err.message)
             QMessageBox.critical(self, "Save Failed", str(err))
 
-    def _load_solution(self: MainWindow) -> None:  # type: ignore[misc]
+    def _load_solution(self: MainWindow) -> None:
         path, _ = QFileDialog.getOpenFileName(
             self,
             "Load Solution",
@@ -140,7 +140,7 @@ class FileOperationsMixin:
             logger.error("Load solution format error: %s", err.message)
             QMessageBox.critical(self, "Load Failed", str(err))
 
-    def _export_video(self: MainWindow) -> None:  # type: ignore[misc]
+    def _export_video(self: MainWindow) -> None:
         idx = self.tabs.currentIndex()
         r, _fi, body, dyn = self._snapshot_idx_state(idx)
         if r is None:
@@ -185,7 +185,7 @@ class FileOperationsMixin:
             logger.error("GIF render error: %s", err.message)
             QMessageBox.critical(self, "Export Failed", str(err))
 
-    def _export_plots(self: MainWindow) -> None:  # type: ignore[misc]
+    def _export_plots(self: MainWindow) -> None:
         idx = self.tabs.currentIndex()
         r, _fi, _body, _dyn = self._snapshot_idx_state(idx)
         if r is None:
@@ -224,7 +224,7 @@ class FileOperationsMixin:
             logger.error("Plot render error: %s", err.message)
             QMessageBox.critical(self, "Export Failed", str(err))
 
-    def _export_excel(self: MainWindow) -> None:  # type: ignore[misc]
+    def _export_excel(self: MainWindow) -> None:
         idx = self.tabs.currentIndex()
         r, _fi, body, _dyn = self._snapshot_idx_state(idx)
         if r is None:
@@ -240,7 +240,6 @@ class FileOperationsMixin:
         if not path:
             return
         try:
-            body = self.bodies_list[idx]
             mass = getattr(body, "body_mass", None)  # BodyModel uses body_mass, not mass
             height = getattr(body, "height", None)
             export_to_excel(

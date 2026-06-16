@@ -9,6 +9,7 @@ from typing import ClassVar
 
 from conftest import make_test_result
 
+from movement_optimizer.gui.exercise_state import ExerciseRuntimeState
 from movement_optimizer.gui.session_state import (
     collect_results,
     collect_slider_values,
@@ -47,7 +48,11 @@ class _FakeWindow:
     ]
 
     def __init__(self) -> None:
-        self.results = [make_test_result(cost=10.0), None, make_test_result(cost=20.0)]
+        self.exercise_states = [
+            ExerciseRuntimeState(result=make_test_result(cost=10.0)),
+            ExerciseRuntimeState(),
+            ExerciseRuntimeState(result=make_test_result(cost=20.0)),
+        ]
         # collect_results acquires this lock to take a consistent snapshot.
         self._opt_lock = threading.RLock()
 

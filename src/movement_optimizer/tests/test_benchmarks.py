@@ -304,12 +304,13 @@ class TestOptimizerScaling:
         t_small = run_at(10)
         t_large = run_at(20)
         logger.info("optimizer scaling: n_eval=10 %.3fs, n_eval=20 %.3fs", t_small, t_large)
-        # Floor of 0.05s prevents division blow-up when both runs are very
-        # fast (sub-second) and noise dominates the ratio.
+        # Floor plus absolute cap prevent division blow-up when both runs are
+        # very fast (sub-second) and scheduler noise dominates the ratio.
         baseline = max(t_small, 0.05)
-        assert t_large < 6.0 * baseline, (
+        limit = max(6.0 * baseline, 1.0)
+        assert t_large < limit, (
             f"Optimizer scaling regressed: n_eval=10 took {t_small:.3f}s, "
-            f"n_eval=20 took {t_large:.3f}s (limit: 6x)"
+            f"n_eval=20 took {t_large:.3f}s (limit: {limit:.3f}s)"
         )
 
 

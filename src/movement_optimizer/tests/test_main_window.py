@@ -216,12 +216,10 @@ class _FakeWindow:
     )
 
     def __init__(self) -> None:
+        from movement_optimizer.gui.exercise_state import ExerciseRuntimeState
         from movement_optimizer.trajectory import SolutionCache
 
-        self.results = [None] * len(self.EXERCISE_CONFIGS)
-        self.dynamics_list = [None] * len(self.EXERCISE_CONFIGS)
-        self.bodies_list = [None] * len(self.EXERCISE_CONFIGS)
-        self.anim_frames = [0] * len(self.EXERCISE_CONFIGS)
+        self.exercise_states = [ExerciseRuntimeState() for _name, _etype in self.EXERCISE_CONFIGS]
         self.sidebar = _FakeSidebar()
         self.status_label = _FakeLabel()
         self.exercise_tabs = [_FakeTab() for _ in self.EXERCISE_CONFIGS]
@@ -516,14 +514,14 @@ class TestResolveExerciseParams:
 
         window = _FakeWindow()
         OptimizationMixin._resolve_exercise_params(window, 0)  # type: ignore[arg-type]
-        assert window.dynamics_list[0] is not None
+        assert window.exercise_states[0].dynamics is not None
 
     def test_stores_body_in_list(self) -> None:
         from movement_optimizer.gui.optimization_mixin import OptimizationMixin
 
         window = _FakeWindow()
         OptimizationMixin._resolve_exercise_params(window, 0)  # type: ignore[arg-type]
-        assert window.bodies_list[0] is not None
+        assert window.exercise_states[0].body is not None
 
     def test_bar_value_from_slider(self) -> None:
         from movement_optimizer.gui.optimization_mixin import OptimizationMixin

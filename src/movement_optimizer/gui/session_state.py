@@ -16,10 +16,10 @@ def collect_results(window: MainWindow) -> dict[str, OptimizationResult]:
     """Collect non-null exercise results keyed by exercise type.
 
     Briefly acquires ``window._opt_lock`` so the snapshot is consistent with
-    the worker thread's writes to ``window.results``.
+    the worker thread's writes to ``window.exercise_states``.
     """
     with window._opt_lock:
-        snapshot = list(window.results)
+        snapshot = [state.result for state in window.exercise_states]
     results: dict[str, OptimizationResult] = {}
     for index, (_, exercise_type) in enumerate(window.EXERCISE_CONFIGS):
         result = snapshot[index]

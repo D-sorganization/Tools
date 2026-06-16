@@ -25,8 +25,8 @@ def window(qapp, monkeypatch):
 
 def test_resolve_exercise_params_populates_shared_state(window) -> None:
     body, dyn, etype, bar, _dur, _smoothness = window._resolve_exercise_params(0)
-    assert window.dynamics_list[0] is dyn
-    assert window.bodies_list[0] is body
+    assert window.exercise_states[0].dynamics is dyn
+    assert window.exercise_states[0].body is body
     assert etype == "squat"
     assert bar > 0
 
@@ -82,7 +82,7 @@ def test_update_result_summary_both_branches(window) -> None:
 
 def test_on_done_success_and_warning_paths(window) -> None:
     window._resolve_exercise_params(0)
-    body = window.bodies_list[0]
+    body = window.exercise_states[0].body
     window._opt_running = True
     window._on_done(0, make_test_result(), body, 60.0, None)
     assert not window._opt_running  # finished (no chain)
