@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
+import "./PowerSupplyControl.css";
 
 /**
  * Power-supply control tab.
@@ -8,15 +9,14 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
  * scan tick by the polling loop in main.py).
  *
  * Safety patterns implemented:
+ *  - Output clamp: a hard upper limit (% of full output) the controller never
+ *    commands above, regardless of setpoint. Front-and-center, adjustable,
+ *    default 20 % — the operator's guard rail for live-current testing.
  *  - Setpoint clamping happens server-side, so the displayed value reflects
  *    what was actually applied (not what was typed).
- *  - "Apply" button submits the staged value — typing in the textbox alone
- *    doesn't command anything. Fat-finger protection.
- *  - Up/down nudges step by a configurable increment, also clamped server-side.
+ *  - "Apply" commits the staged value — typing alone commands nothing.
  *  - Permissive must be ON before any setpoint takes effect (server enforces).
  *  - Trip indicator + acknowledge are first-class UI.
- *  - Power-mode and current-mode are visually distinct; switching modes is
- *    explicit.
  */
 
 export interface PowerSupplyConfig {
@@ -36,6 +36,12 @@ export interface PowerSupplyConfig {
    * 100 % in 20 s.
    */
   setpoint_ramp_rate_pct_per_s: number;
+  /**
+   * Hard upper clamp on the commanded AO output, as a percent of full output
+   * (0-100]. The controller never commands above this even when the setpoint
+   * would scale higher. Operator safety limit for live-current testing.
+   */
+  output_clamp_percent: number;
 }
 
 export interface PowerSupplyStatus {
@@ -50,19 +56,16 @@ export interface PowerSupplyStatus {
   measured_temp_c: number;
   commanded_output_percent: number;
   trips: string[];
+  /** Active hard clamp on commanded output (% of full). */
+  output_clamp_percent: number;
+  /** True when the clamp is actively limiting the command this tick. */
+  output_clamped: boolean;
 }
 
 interface Props {
-  /** Status object pushed each scan via the parent's WebSocket; undefined while waiting. */
+  /** Status pushed each scan via the parent's WebSocket; undefined while waiting. */
   liveStatus?: PowerSupplyStatus;
 }
-
-const STATE_COLORS: Record<PowerSupplyStatus["state"], string> = {
-  idle: "var(--text-secondary)",
-  armed: "var(--accent-cyan)",
-  running: "var(--color-success, #4ade80)",
-  tripped: "var(--color-danger, #ef4444)",
-};
 
 const STATE_LABELS: Record<PowerSupplyStatus["state"], string> = {
   idle: "IDLE",
@@ -71,12 +74,20 @@ const STATE_LABELS: Record<PowerSupplyStatus["state"], string> = {
   tripped: "TRIPPED",
 };
 
+const STATE_HINTS: Record<PowerSupplyStatus["state"], string> = {
+  idle: "permissive off",
+  armed: "ready · set a target",
+  running: "commanding output",
+  tripped: "latched · acknowledge",
+};
+
 export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
   const [config, setConfig] = useState<PowerSupplyConfig | null>(null);
   const [configDraft, setConfigDraft] = useState<PowerSupplyConfig | null>(null);
   const [mode, setMode] = useState<"current" | "power">("current");
   const [stagedSetpointText, setStagedSetpointText] = useState<string>("0");
   const [setpointStep, setSetpointStep] = useState<number>(1.0);
+  const [clampDraft, setClampDraft] = useState<number>(20);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
@@ -91,6 +102,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
         const cfg = (await res.json()) as PowerSupplyConfig;
         setConfig(cfg);
         setConfigDraft(cfg);
+        setClampDraft(cfg.output_clamp_percent);
       } catch (e) {
         setError(`Load config failed: ${(e as Error).message}`);
       }
@@ -162,7 +174,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
   const nudgeSetpoint = useCallback(
     (delta: number) => {
       const current = Number.parseFloat(stagedSetpointText);
-      const next = (Number.isFinite(current) ? current : 0) + delta;
+      const next = Math.max(0, (Number.isFinite(current) ? current : 0) + delta);
       setStagedSetpointText(next.toFixed(2));
       applySetpoint(next);
     },
@@ -221,353 +233,344 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
     }
   }, [flash]);
 
-  const saveConfig = useCallback(async () => {
-    if (!configDraft) return;
-    setBusy(true);
-    try {
-      const res = await fetch("/api/power_supply/config", {
-        method: "PUT",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(configDraft),
-      });
-      const json = await res.json();
-      if (!res.ok) {
-        flash(
-          `Config rejected: ${json.detail ? JSON.stringify(json.detail) : res.statusText}`,
-          "error",
-        );
-        return;
+  // PUT the full config with one or more fields overridden. Used by both the
+  // clamp control (override output_clamp_percent only) and the advanced editor.
+  const putConfig = useCallback(
+    async (next: PowerSupplyConfig, okMessage: string) => {
+      setBusy(true);
+      try {
+        const res = await fetch("/api/power_supply/config", {
+          method: "PUT",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(next),
+        });
+        const json = await res.json();
+        if (!res.ok) {
+          flash(
+            `Config rejected: ${
+              json.detail ? JSON.stringify(json.detail) : res.statusText
+            }`,
+            "error",
+          );
+          return;
+        }
+        setConfig(json);
+        setConfigDraft(json);
+        setClampDraft(json.output_clamp_percent);
+        flash(okMessage);
+      } catch (e) {
+        flash(`Config save failed: ${(e as Error).message}`, "error");
+      } finally {
+        setBusy(false);
       }
-      setConfig(json);
-      setConfigDraft(json);
-      flash("Config saved");
-    } catch (e) {
-      flash(`Config save failed: ${(e as Error).message}`, "error");
-    } finally {
-      setBusy(false);
-    }
-  }, [configDraft, flash]);
+    },
+    [flash],
+  );
+
+  const applyClamp = useCallback(() => {
+    if (!config) return;
+    const clamped = Math.min(100, Math.max(0.1, clampDraft));
+    putConfig(
+      { ...config, output_clamp_percent: clamped },
+      `Output limit set to ${clamped.toFixed(0)} %`,
+    );
+  }, [config, clampDraft, putConfig]);
+
+  const saveConfig = useCallback(() => {
+    if (!configDraft) return;
+    putConfig(configDraft, "Configuration saved");
+  }, [configDraft, putConfig]);
 
   if (!config || !configDraft) {
     return (
-      <div style={{ padding: 16, color: "var(--text-secondary)" }}>
-        Loading power-supply config…
+      <div className="ps">
+        <div className="ps-card" style={{ color: "var(--text-muted)" }}>
+          Loading power-supply config…
+        </div>
       </div>
     );
   }
 
   const s = liveStatus;
-  const stateColor = s ? STATE_COLORS[s.state] : "var(--text-secondary)";
-  const stateLabel = s ? STATE_LABELS[s.state] : "—";
+  const state = s?.state ?? "idle";
+  const activeClamp = s?.output_clamp_percent ?? config.output_clamp_percent;
+  const commanded = s?.commanded_output_percent ?? 0;
+  const isClamped = s?.output_clamped ?? false;
+  const unit = mode === "current" ? "A" : "W";
+  const clampDirty = Math.abs(clampDraft - config.output_clamp_percent) > 1e-6;
+
+  const powerWarn = s
+    ? s.measured_power_w >= 0.9 * configDraft.power_alarm_max_w
+    : false;
+  const tempWarn = s
+    ? s.measured_temp_c >= 0.9 * configDraft.temp_alarm_max_c
+    : false;
 
   return (
-    <div style={{ display: "grid", gap: 16, padding: 16 }}>
-      {/* State strip */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "auto 1fr auto auto",
-          gap: 16,
-          alignItems: "center",
-          padding: "12px 16px",
-          background: "rgba(255,255,255,0.03)",
-          border: `1px solid ${stateColor}`,
-          borderRadius: 8,
-        }}
-      >
-        <span
-          style={{
-            fontWeight: 700,
-            fontSize: "1.25rem",
-            color: stateColor,
-            padding: "4px 12px",
-            background: "rgba(255,255,255,0.05)",
-            borderRadius: 4,
-          }}
-        >
-          {stateLabel}
-        </span>
-        <span style={{ color: "var(--text-secondary)" }}>
-          Mode: <strong style={{ color: "var(--text-primary)" }}>{s?.mode ?? "—"}</strong>
-          &nbsp;|&nbsp; Output cmd:{" "}
-          <strong style={{ color: "var(--text-primary)" }}>
-            {s ? s.commanded_output_percent.toFixed(2) : "—"} %
-          </strong>
-        </span>
-        <button
-          onClick={() => setPermissive(!s?.permissive)}
-          disabled={busy}
-          style={{
-            background: s?.permissive
-              ? "var(--color-success, #4ade80)"
-              : "var(--text-secondary)",
-            color: "#000",
-            border: "none",
-            borderRadius: 4,
-            padding: "8px 14px",
-            cursor: "pointer",
-            fontWeight: 600,
-          }}
-        >
-          Permissive: {s?.permissive ? "ON" : "OFF"}
-        </button>
-        {s?.state === "tripped" && (
-          <button
-            onClick={acknowledgeTrip}
-            disabled={busy}
-            style={{
-              background: "var(--color-danger, #ef4444)",
-              color: "#fff",
-              border: "none",
-              borderRadius: 4,
-              padding: "8px 14px",
-              cursor: "pointer",
-              fontWeight: 600,
-            }}
-          >
-            Acknowledge Trip
-          </button>
-        )}
-      </div>
-
-      {/* Trips banner */}
-      {s && s.trips.length > 0 && (
-        <div
-          style={{
-            padding: "10px 14px",
-            background: "rgba(239,68,68,0.12)",
-            border: "1px solid rgba(239,68,68,0.5)",
-            borderRadius: 6,
-            color: "var(--color-danger, #ef4444)",
-            fontWeight: 600,
-          }}
-        >
-          Active trips: {s.trips.join(", ")}
+    <div className="ps">
+      {/* ---- Status header ---- */}
+      <div className={`ps-status is-${state}`}>
+        <div className="ps-state">
+          <span className="ps-state-badge">{STATE_LABELS[state]}</span>
+          <span className="ps-state-sub">{STATE_HINTS[state]}</span>
         </div>
-      )}
 
-      {/* Setpoint card */}
-      <div
-        style={{
-          background: "rgba(255,255,255,0.03)",
-          border: "1px solid rgba(255,255,255,0.08)",
-          borderRadius: 8,
-          padding: 16,
-        }}
-      >
-        <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 12 }}>
-          <h3 style={{ margin: 0, color: "var(--text-primary)" }}>Setpoint</h3>
-          <div style={{ display: "flex", gap: 4 }}>
-            {(["current", "power"] as const).map((m) => (
-              <button
-                key={m}
-                onClick={() => setMode(m)}
-                style={{
-                  padding: "4px 12px",
-                  background:
-                    mode === m ? "var(--accent-cyan)" : "rgba(255,255,255,0.05)",
-                  color: mode === m ? "#000" : "var(--text-secondary)",
-                  border: "none",
-                  borderRadius: 4,
-                  cursor: "pointer",
-                  fontWeight: 600,
-                }}
-              >
-                {m === "current" ? "Current (A)" : "Power (W)"}
-              </button>
-            ))}
+        <div className="ps-status-metrics">
+          <div className="ps-metric">
+            <span className="ps-metric-label">Output cmd</span>
+            <span className="ps-metric-value">{commanded.toFixed(1)} %</span>
+          </div>
+          <div className="ps-metric">
+            <span className="ps-metric-label">Measured I</span>
+            <span className="ps-metric-value">
+              {s ? s.measured_current_a.toFixed(2) : "—"} A
+            </span>
+          </div>
+          <div className="ps-metric">
+            <span className="ps-metric-label">Measured V</span>
+            <span className="ps-metric-value">
+              {s ? s.measured_voltage_v.toFixed(2) : "—"} V
+            </span>
+          </div>
+          <div className="ps-metric">
+            <span className="ps-metric-label">Limit</span>
+            <span className="ps-metric-value is-warning">
+              {activeClamp.toFixed(0)} %
+            </span>
           </div>
         </div>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "auto 1fr auto auto auto",
-            gap: 8,
-            alignItems: "center",
-          }}
-        >
+        <div className="ps-status-actions">
+          {state === "tripped" && (
+            <button
+              className={`btn ps-btn-danger ${busy ? "ps-disabled" : ""}`}
+              onClick={acknowledgeTrip}
+              disabled={busy}
+            >
+              Acknowledge trip
+            </button>
+          )}
           <button
-            onClick={() => nudgeSetpoint(-setpointStep)}
+            className={`ps-permissive ${s?.permissive ? "is-on" : ""}`}
+            onClick={() => setPermissive(!s?.permissive)}
             disabled={busy}
-            style={{
-              padding: "8px 14px",
-              fontSize: "1.25rem",
-              background: "rgba(255,255,255,0.05)",
-              color: "var(--text-primary)",
-              border: "1px solid rgba(255,255,255,0.1)",
-              borderRadius: 4,
-              cursor: "pointer",
-            }}
-            title={`Decrement by ${setpointStep}`}
+            title="Master enable — output is forced to 0 while OFF"
           >
-            ▼
-          </button>
-          <input
-            type="text"
-            inputMode="decimal"
-            value={stagedSetpointText}
-            onChange={(e) => setStagedSetpointText(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleApplyClick();
-            }}
-            style={{
-              padding: "10px 12px",
-              fontSize: "1.25rem",
-              background: "rgba(0,0,0,0.4)",
-              color: "var(--text-primary)",
-              border: "1px solid rgba(255,255,255,0.15)",
-              borderRadius: 4,
-              fontFamily: "monospace",
-              textAlign: "right",
-            }}
-          />
-          <button
-            onClick={() => nudgeSetpoint(setpointStep)}
-            disabled={busy}
-            style={{
-              padding: "8px 14px",
-              fontSize: "1.25rem",
-              background: "rgba(255,255,255,0.05)",
-              color: "var(--text-primary)",
-              border: "1px solid rgba(255,255,255,0.1)",
-              borderRadius: 4,
-              cursor: "pointer",
-            }}
-            title={`Increment by ${setpointStep}`}
-          >
-            ▲
-          </button>
-          <input
-            type="number"
-            value={setpointStep}
-            min={0.01}
-            step={0.1}
-            onChange={(e) =>
-              setSetpointStep(Math.max(0.01, Number.parseFloat(e.target.value) || 0.01))
-            }
-            style={{
-              width: 80,
-              padding: "8px",
-              background: "rgba(0,0,0,0.4)",
-              color: "var(--text-primary)",
-              border: "1px solid rgba(255,255,255,0.15)",
-              borderRadius: 4,
-              fontFamily: "monospace",
-            }}
-            title="Step size for ▲/▼"
-          />
-          <button
-            onClick={handleApplyClick}
-            disabled={busy}
-            style={{
-              padding: "10px 16px",
-              background: "var(--accent-cyan)",
-              color: "#000",
-              border: "none",
-              borderRadius: 4,
-              cursor: "pointer",
-              fontWeight: 700,
-              fontSize: "1rem",
-            }}
-          >
-            Apply
+            <span className="dot" />
+            {s?.permissive ? "PERMISSIVE ON" : "PERMISSIVE OFF"}
           </button>
         </div>
-        <p style={{ color: "var(--text-secondary)", marginTop: 8, fontSize: "0.85rem" }}>
-          {mode === "current"
-            ? `Range ${configDraft.current_setpoint_min_a} – ${configDraft.current_setpoint_max_a} A (server clamps any value outside this band).`
-            : `Power is converted to current via measured V. Server clamps resulting current to [${configDraft.current_setpoint_min_a}, ${configDraft.current_setpoint_max_a}] A.`}
-        </p>
       </div>
 
-      {/* Live readings card */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: 12,
-          background: "rgba(255,255,255,0.03)",
-          border: "1px solid rgba(255,255,255,0.08)",
-          borderRadius: 8,
-          padding: 16,
-        }}
-      >
-        <Reading label="Setpoint" value={`${s?.setpoint_a.toFixed(2) ?? "—"} A`} />
-        <Reading
-          label="Measured I"
-          value={`${s?.measured_current_a.toFixed(2) ?? "—"} A`}
-        />
-        <Reading
-          label="Measured V"
-          value={`${s?.measured_voltage_v.toFixed(2) ?? "—"} V`}
-        />
-        <Reading
-          label="Power (V × I)"
-          value={`${s?.measured_power_w.toFixed(1) ?? "—"} W`}
-          warning={
-            s ? s.measured_power_w >= 0.9 * configDraft.power_alarm_max_w : false
-          }
-        />
-        <Reading
-          label="Temp"
-          value={`${s?.measured_temp_c.toFixed(1) ?? "—"} °C`}
-          warning={
-            s ? s.measured_temp_c >= 0.9 * configDraft.temp_alarm_max_c : false
-          }
-        />
-        <Reading
-          label="Commanded Output"
-          value={`${s?.commanded_output_percent.toFixed(2) ?? "—"} %`}
-        />
-        {s?.mode === "power" && (
-          <Reading
-            label="Power Setpoint"
-            value={s.setpoint_w != null ? `${s.setpoint_w.toFixed(1)} W` : "—"}
+      {/* ---- Trips banner ---- */}
+      {s && s.trips.length > 0 && (
+        <div className="ps-trip-banner">⚠ Active trips: {s.trips.join(", ")}</div>
+      )}
+
+      <div className="ps-grid">
+        {/* ---- Output clamp (safety) ---- */}
+        <div className="ps-card ps-clamp">
+          <div className="ps-card-title">
+            <span>Output limit</span>
+            {isClamped && <span className="ps-clamp-badge">● clamping</span>}
+          </div>
+
+          <div className="ps-clamp-row">
+            <input
+              type="range"
+              className="ps-slider"
+              min={1}
+              max={100}
+              step={1}
+              value={clampDraft}
+              style={{ ["--ps-fill" as string]: `${clampDraft}%` }}
+              onChange={(e) => setClampDraft(Number.parseFloat(e.target.value))}
+              disabled={busy}
+              aria-label="Output current limit percent"
+            />
+            <span className="ps-clamp-value">{clampDraft.toFixed(0)}%</span>
+          </div>
+
+          <div className="ps-setpoint-controls">
+            <span className="ps-step-field">
+              precise&nbsp;
+              <input
+                type="number"
+                min={1}
+                max={100}
+                step={1}
+                value={clampDraft}
+                onChange={(e) =>
+                  setClampDraft(
+                    Math.min(100, Math.max(1, Number.parseFloat(e.target.value) || 1)),
+                  )
+                }
+                disabled={busy}
+              />
+              %
+            </span>
+            <button
+              className={`btn ${clampDirty ? "btn-primary" : ""} ${
+                busy ? "ps-disabled" : ""
+              }`}
+              onClick={applyClamp}
+              disabled={busy || !clampDirty}
+            >
+              {clampDirty ? "Set limit" : "Limit set"}
+            </button>
+          </div>
+
+          <p className="ps-clamp-hint">
+            Hard cap on commanded output. The supply will never drive above this
+            percent of full scale even if the setpoint asks for more — your guard
+            rail for live-current testing. Lowering it takes effect immediately.
+          </p>
+        </div>
+
+        {/* ---- Setpoint ---- */}
+        <div className="ps-card">
+          <div className="ps-card-title">
+            <span>Setpoint</span>
+            <span className="ps-segment">
+              {(["current", "power"] as const).map((m) => (
+                <button
+                  key={m}
+                  className={mode === m ? "is-active" : ""}
+                  onClick={() => setMode(m)}
+                >
+                  {m === "current" ? "Current (A)" : "Power (W)"}
+                </button>
+              ))}
+            </span>
+          </div>
+
+          <div className="ps-setpoint-row">
+            <button
+              className="ps-step-btn"
+              onClick={() => nudgeSetpoint(-setpointStep)}
+              disabled={busy}
+              title={`Decrease by ${setpointStep}`}
+            >
+              −
+            </button>
+            <input
+              className="ps-setpoint-input"
+              type="text"
+              inputMode="decimal"
+              value={stagedSetpointText}
+              onChange={(e) => setStagedSetpointText(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleApplyClick();
+              }}
+            />
+            <button
+              className="ps-step-btn"
+              onClick={() => nudgeSetpoint(setpointStep)}
+              disabled={busy}
+              title={`Increase by ${setpointStep}`}
+            >
+              +
+            </button>
+          </div>
+
+          <div className="ps-setpoint-controls">
+            <span className="ps-step-field">
+              step&nbsp;
+              <input
+                type="number"
+                min={0.01}
+                step={0.1}
+                value={setpointStep}
+                onChange={(e) =>
+                  setSetpointStep(
+                    Math.max(0.01, Number.parseFloat(e.target.value) || 0.01),
+                  )
+                }
+              />
+              {unit}
+            </span>
+            <button
+              className={`btn btn-primary ${busy ? "ps-disabled" : ""}`}
+              onClick={handleApplyClick}
+              disabled={busy}
+            >
+              Apply setpoint
+            </button>
+          </div>
+
+          <p className="ps-clamp-hint">
+            {mode === "current"
+              ? `Range ${configDraft.current_setpoint_min_a}–${configDraft.current_setpoint_max_a} A; server clamps outside this band.`
+              : `Power → current via measured V; resulting current clamped to ${configDraft.current_setpoint_min_a}–${configDraft.current_setpoint_max_a} A.`}
+          </p>
+        </div>
+      </div>
+
+      {/* ---- Live telemetry ---- */}
+      <div className="ps-card">
+        <div className="ps-card-title">Live telemetry</div>
+        <div className="ps-readouts">
+          <Readout label="Setpoint" value={`${s?.setpoint_a.toFixed(2) ?? "—"} A`} />
+          <Readout
+            label="Measured I"
+            value={`${s?.measured_current_a.toFixed(2) ?? "—"} A`}
           />
-        )}
+          <Readout
+            label="Measured V"
+            value={`${s?.measured_voltage_v.toFixed(2) ?? "—"} V`}
+          />
+          <Readout
+            label="Power (V × I)"
+            value={`${s?.measured_power_w.toFixed(1) ?? "—"} W`}
+            warning={powerWarn}
+          />
+          <Readout
+            label="Temp"
+            value={`${s?.measured_temp_c.toFixed(1) ?? "—"} °C`}
+            warning={tempWarn}
+          />
+          {s?.mode === "power" && (
+            <Readout
+              label="Power setpoint"
+              value={s.setpoint_w != null ? `${s.setpoint_w.toFixed(1)} W` : "—"}
+            />
+          )}
+        </div>
+
+        {/* Output-vs-limit bar */}
+        <div className="ps-outbar-wrap">
+          <div className="ps-outbar-head">
+            <span>Commanded output</span>
+            <span>
+              {commanded.toFixed(1)} % / {activeClamp.toFixed(0)} % limit
+            </span>
+          </div>
+          <div className="ps-outbar">
+            <div
+              className={`ps-outbar-fill ${isClamped ? "is-clamped" : ""}`}
+              style={{ width: `${Math.min(100, commanded)}%` }}
+            />
+            <div
+              className="ps-outbar-marker"
+              style={{ left: `${Math.min(100, activeClamp)}%` }}
+            />
+          </div>
+        </div>
       </div>
 
-      {/* Config card */}
-      <details
-        style={{
-          background: "rgba(255,255,255,0.03)",
-          border: "1px solid rgba(255,255,255,0.08)",
-          borderRadius: 8,
-          padding: 16,
-        }}
-      >
-        <summary
-          style={{
-            cursor: "pointer",
-            fontWeight: 600,
-            color: "var(--text-primary)",
-            userSelect: "none",
-          }}
-        >
-          Configuration (scaling, bounds, alarm thresholds, tag map)
-        </summary>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: 12,
-            marginTop: 14,
-          }}
-        >
+      {/* ---- Advanced config ---- */}
+      <details className="ps-card ps-config">
+        <summary>Advanced — scaling, bounds, alarms, ramp, tag map</summary>
+        <div className="ps-config-grid">
           <ConfigField
             label="Current full scale (A at 100 %)"
             value={configDraft.current_full_scale_a}
-            onChange={(v) =>
-              setConfigDraft({ ...configDraft, current_full_scale_a: v })
-            }
+            onChange={(v) => setConfigDraft({ ...configDraft, current_full_scale_a: v })}
           />
           <ConfigField
             label="Voltage full scale (V at 100 %)"
             value={configDraft.voltage_full_scale_v}
-            onChange={(v) =>
-              setConfigDraft({ ...configDraft, voltage_full_scale_v: v })
-            }
+            onChange={(v) => setConfigDraft({ ...configDraft, voltage_full_scale_v: v })}
           />
           <ConfigField
             label="Min current setpoint (A)"
@@ -584,28 +587,28 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
             }
           />
           <ConfigField
+            label="Output limit (% of full)"
+            value={configDraft.output_clamp_percent}
+            onChange={(v) =>
+              setConfigDraft({ ...configDraft, output_clamp_percent: v })
+            }
+          />
+          <ConfigField
+            label="Ramp rate on INCREASE (%/s)"
+            value={configDraft.setpoint_ramp_rate_pct_per_s}
+            onChange={(v) =>
+              setConfigDraft({ ...configDraft, setpoint_ramp_rate_pct_per_s: v })
+            }
+          />
+          <ConfigField
             label="HH Power alarm (W)"
             value={configDraft.power_alarm_max_w}
-            onChange={(v) =>
-              setConfigDraft({ ...configDraft, power_alarm_max_w: v })
-            }
+            onChange={(v) => setConfigDraft({ ...configDraft, power_alarm_max_w: v })}
           />
           <ConfigField
             label="HH Temperature alarm (°C)"
             value={configDraft.temp_alarm_max_c}
-            onChange={(v) =>
-              setConfigDraft({ ...configDraft, temp_alarm_max_c: v })
-            }
-          />
-          <ConfigField
-            label="Ramp rate on INCREASE (%/s; decreases are instant)"
-            value={configDraft.setpoint_ramp_rate_pct_per_s}
-            onChange={(v) =>
-              setConfigDraft({
-                ...configDraft,
-                setpoint_ramp_rate_pct_per_s: v,
-              })
-            }
+            onChange={(v) => setConfigDraft({ ...configDraft, temp_alarm_max_c: v })}
           />
           <ConfigField
             label="Command tag"
@@ -646,90 +649,31 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
             }
           />
         </div>
-        <div style={{ marginTop: 14 }}>
+        <div style={{ marginTop: "1rem" }}>
           <button
+            className={`btn ${busy ? "ps-disabled" : ""}`}
             onClick={saveConfig}
             disabled={busy}
-            style={{
-              padding: "8px 16px",
-              background: "var(--accent-purple, #a78bfa)",
-              color: "#000",
-              border: "none",
-              borderRadius: 4,
-              cursor: "pointer",
-              fontWeight: 600,
-            }}
           >
-            Save config
+            Save configuration
           </button>
         </div>
       </details>
 
-      {info && (
-        <div
-          style={{
-            padding: "8px 12px",
-            background: "rgba(74,222,128,0.12)",
-            border: "1px solid rgba(74,222,128,0.5)",
-            color: "var(--color-success, #4ade80)",
-            borderRadius: 6,
-          }}
-        >
-          {info}
-        </div>
-      )}
-      {error && (
-        <div
-          style={{
-            padding: "8px 12px",
-            background: "rgba(239,68,68,0.12)",
-            border: "1px solid rgba(239,68,68,0.5)",
-            color: "var(--color-danger, #ef4444)",
-            borderRadius: 6,
-          }}
-        >
-          {error}
-        </div>
-      )}
+      {info && <div className="ps-toast is-info">{info}</div>}
+      {error && <div className="ps-toast is-error">{error}</div>}
     </div>
   );
 };
 
-const Reading: React.FC<{ label: string; value: string; warning?: boolean }> = ({
+const Readout: React.FC<{ label: string; value: string; warning?: boolean }> = ({
   label,
   value,
   warning,
 }) => (
-  <div
-    style={{
-      padding: "8px 12px",
-      borderRadius: 4,
-      background: warning ? "rgba(245,158,11,0.12)" : "rgba(0,0,0,0.25)",
-      border: warning
-        ? "1px solid rgba(245,158,11,0.5)"
-        : "1px solid rgba(255,255,255,0.05)",
-    }}
-  >
-    <div
-      style={{
-        color: "var(--text-secondary)",
-        fontSize: "0.75rem",
-        textTransform: "uppercase",
-        letterSpacing: 0.5,
-      }}
-    >
-      {label}
-    </div>
-    <div
-      style={{
-        color: warning ? "var(--color-warning, #f59e0b)" : "var(--text-primary)",
-        fontSize: "1.25rem",
-        fontFamily: "monospace",
-        fontWeight: 600,
-      }}
-    >
-      {value}
-    </div>
+  <div className={`ps-readout ${warning ? "is-warning" : ""}`}>
+    <div className="ps-readout-label">{label}</div>
+    <div className="ps-readout-value">{value}</div>
   </div>
 );
 
@@ -745,8 +689,8 @@ const ConfigField: React.FC<ConfigFieldProps> = ({
   stringMode,
   onChange,
 }) => (
-  <label style={{ display: "grid", gap: 4 }}>
-    <span style={{ color: "var(--text-secondary)", fontSize: "0.8rem" }}>{label}</span>
+  <label className="ps-field">
+    <span>{label}</span>
     <input
       type={stringMode ? "text" : "number"}
       value={value}
@@ -755,14 +699,6 @@ const ConfigField: React.FC<ConfigFieldProps> = ({
           (stringMode ? e.target.value : Number.parseFloat(e.target.value)) as number,
         )
       }
-      style={{
-        padding: "6px 8px",
-        background: "rgba(0,0,0,0.4)",
-        color: "var(--text-primary)",
-        border: "1px solid rgba(255,255,255,0.15)",
-        borderRadius: 4,
-        fontFamily: "monospace",
-      }}
     />
   </label>
 );

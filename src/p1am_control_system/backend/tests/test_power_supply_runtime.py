@@ -23,6 +23,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from _power_supply_helpers import (
     fresh_armed_controller,
+    fresh_armed_controller_unclamped,
     fresh_idle_controller,
     fresh_running_controller,
 )
@@ -46,7 +47,9 @@ class TestCurrentSetpoint:
         assert c.state == PowerSupplyState.RUNNING
 
     def test_setpoint_above_max_is_clamped(self) -> None:
-        c = fresh_armed_controller()
+        # Unclamped output so this verifies setpoint clamping, not the 20 %
+        # output clamp (covered in TestOutputClamp).
+        c = fresh_armed_controller_unclamped()
         applied = c.set_current_setpoint(9999.0)
         assert applied == c.config.current_setpoint_max_a
         c.tick(0.0, 0.0, 25.0, now=0.0)
@@ -284,8 +287,9 @@ class TestTickOutput:
         assert c.tick(0.0, 0.0, 25.0) == 0.0
 
     def test_tick_returns_scaled_percent_when_running(self) -> None:
-        # Default current_full_scale_a = 100 A; setpoint 25 A → 25 %
-        c = fresh_armed_controller()
+        # Default current_full_scale_a = 100 A; setpoint 25 A → 25 %.
+        # Unclamped so the 20 % output clamp doesn't cap the 25 % result.
+        c = fresh_armed_controller_unclamped()
         c.set_current_setpoint(25.0)
         # Two ticks with large dt so slew limiter doesn't gate the result.
         c.tick(0.0, 0.0, 25.0, now=0.0)
@@ -293,10 +297,12 @@ class TestTickOutput:
         assert cmd == pytest.approx(25.0)
 
     def test_tick_clamps_percent_to_100(self) -> None:
-        # Construct so setpoint can equal full scale.
+        # Construct so setpoint can equal full scale, with the output clamp
+        # opened to 100 % so this isolates the 100 % ceiling behavior.
         cfg = PowerSupplyConfig(
             current_full_scale_a=100.0,
             current_setpoint_max_a=100.0,
+            output_clamp_percent=100.0,
         )
         c = PowerSupplyController(cfg)
         c.set_permissive(True)
@@ -322,6 +328,76 @@ class TestTickOutput:
         # Bad inputs → treated as 0 → no trip, command tracks setpoint
         assert cmd > 0.0
         assert c.state == PowerSupplyState.RUNNING
+
+
+# --------------------------------------------------------------------------
+# Output clamp — operator safety cap on commanded output (live-current limit)
+# --------------------------------------------------------------------------
+
+
+class TestOutputClamp:
+    """The output clamp hard-caps the commanded AO percent regardless of how
+    the current setpoint scales. It is the operator's safety limit when
+    testing into live current. Default 20 %, user-adjustable, applied before
+    the slew limiter so the ramp settles at the clamp."""
+
+    @staticmethod
+    def _settle(c: PowerSupplyController) -> float:
+        """Two ticks with a huge dt so the slew limiter never gates the
+        result; returns the settled command percent."""
+        c.tick(0.0, 0.0, 25.0, now=0.0)
+        return c.tick(0.0, 0.0, 25.0, now=1000.0)
+
+    def test_command_capped_at_clamp_when_setpoint_higher(self) -> None:
+        # Default clamp 20 %; setpoint 50 A → 50 % raw, capped to 20 %.
+        c = fresh_armed_controller()
+        c.set_current_setpoint(50.0)
+        cmd = self._settle(c)
+        assert cmd == pytest.approx(20.0)
+        assert c.status().output_clamped is True
+
+    def test_command_unaffected_when_below_clamp(self) -> None:
+        # Setpoint 10 A → 10 % raw, under the 20 % clamp → passes through.
+        c = fresh_armed_controller()
+        c.set_current_setpoint(10.0)
+        cmd = self._settle(c)
+        assert cmd == pytest.approx(10.0)
+        assert c.status().output_clamped is False
+
+    def test_custom_clamp_value_is_enforced(self) -> None:
+        cfg = PowerSupplyConfig(output_clamp_percent=35.0)
+        c = PowerSupplyController(cfg)
+        c.set_permissive(True)
+        c.set_current_setpoint(50.0)  # 50 % raw
+        cmd = self._settle(c)
+        assert cmd == pytest.approx(35.0)
+        assert c.status().output_clamped is True
+
+    def test_lowering_clamp_takes_effect_immediately(self) -> None:
+        # Settle at the default 20 % clamp, then lower it to 10 %. A decrease
+        # passes through the slew limiter instantly.
+        c = fresh_armed_controller()
+        c.set_current_setpoint(50.0)
+        assert self._settle(c) == pytest.approx(20.0)
+        c.update_config(PowerSupplyConfig(output_clamp_percent=10.0))
+        cmd = c.tick(0.0, 0.0, 25.0, now=1001.0)
+        assert cmd == pytest.approx(10.0)
+        assert c.status().output_clamped is True
+
+    def test_clamp_status_fields_reported(self) -> None:
+        c = PowerSupplyController(PowerSupplyConfig(output_clamp_percent=15.0))
+        status = c.status()
+        assert status.output_clamp_percent == pytest.approx(15.0)
+        assert status.output_clamped is False
+
+    def test_force_zero_clears_clamped_flag(self) -> None:
+        c = fresh_armed_controller()
+        c.set_current_setpoint(50.0)
+        self._settle(c)
+        assert c.status().output_clamped is True
+        c.set_permissive(False)
+        assert c.tick(0.0, 0.0, 25.0, now=1001.0) == 0.0
+        assert c.status().output_clamped is False
 
 
 # --------------------------------------------------------------------------
@@ -369,7 +445,7 @@ class TestSlewRate:
         assert cmd2 == pytest.approx(15.0)  # +10 % over 2 more seconds
 
     def test_ramp_settles_at_target_when_given_enough_time(self) -> None:
-        c = fresh_armed_controller()
+        c = fresh_armed_controller_unclamped()  # 30 % target exceeds 20 % clamp
         c.set_current_setpoint(30.0)  # target 30 %
         c.tick(0.0, 0.0, 25.0, now=0.0)
         # 30 % / (5 %/s) = 6 s. Give 10 s just to be sure.

@@ -107,6 +107,19 @@ class PowerSupplyConfig(BaseModel):
             "start ramp (0 % -> 100 % takes 20 s)."
         ),
     )
+    output_clamp_percent: float = Field(
+        default=20.0,
+        gt=0.0,
+        le=100.0,
+        description=(
+            "Hard upper clamp on the commanded AO output, as a percent of full "
+            "output (0-100]. The controller never commands above this even when "
+            "the current setpoint would scale higher — the command is capped, "
+            "not the setpoint. This is the operator's safety limit for live-"
+            "current testing; default 20 %. Decreasing it takes effect on the "
+            "next tick (the slew limiter passes decreases through instantly)."
+        ),
+    )
 
     @model_validator(mode="after")
     def _check_invariants(self) -> PowerSupplyConfig:
@@ -141,3 +154,17 @@ class PowerSupplyStatus(BaseModel):
 
     commanded_output_percent: float
     trips: list[str]
+
+    output_clamp_percent: float = Field(
+        default=20.0,
+        description="Active hard upper clamp on commanded output (% of full).",
+    )
+    output_clamped: bool = Field(
+        default=False,
+        description=(
+            "True when the output clamp is actively limiting the command — i.e. "
+            "the current setpoint would otherwise drive the AO above "
+            "output_clamp_percent. Lets the UI flag that the operator's limit "
+            "is in effect."
+        ),
+    )
