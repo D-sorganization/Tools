@@ -9,8 +9,8 @@ if TYPE_CHECKING:
 else:
     from shared.python.compatibility import StrEnum
 
-from src.shared.python.ai.tool_registry import Tool, ToolRegistry
-from src.shared.python.ai.tools.codemap_tools import CODEMAP_TOOL_NAMES
+from shared.python.ai.tool_registry import Tool, ToolRegistry
+from shared.python.ai.tools.codemap_tools import CODEMAP_TOOL_NAMES
 
 
 class ChatAccessMode(StrEnum):
