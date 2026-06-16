@@ -38,6 +38,11 @@ from theme.theme_manager import get_theme_manager
 from p1am_control_system.desktop.control_tab import ControlTab
 from p1am_control_system.desktop.event_logger import EventLogger, EventLogViewerWidget
 from p1am_control_system.desktop.header import HMIHeader
+from p1am_control_system.desktop.layout_settings import (
+    make_hmi_settings,
+    persist_window_settings,
+    restore_window_settings,
+)
 from p1am_control_system.desktop.mimic_tab import MimicTab
 from p1am_control_system.desktop.routing_tab import RoutingTab
 from p1am_control_system.desktop.settings_tab import SettingsTab
@@ -142,9 +147,11 @@ class HMIMainWindow(QMainWindow):
         self.theme_manager.apply_theme_to_window(self)
         self.theme_manager.themeChanged.connect(self._on_theme_changed)
         self._on_theme_changed(self.theme_manager.get_current_theme_name())
+
+        restore_window_settings(self, make_hmi_settings())
         self._load_routing_config()
 
-        # Start WebSocket client stream thread
+        # Start WebSocket client stream thread.
         self.ws_thread = WebSocketClientThread(self.ws_uri)
         self.ws_thread.messageReceived.connect(self._on_telemetry_update)
         self.ws_thread.connectionStatusChanged.connect(
@@ -476,6 +483,7 @@ class HMIMainWindow(QMainWindow):
         logger.info(f"HMI Connection State Changed: {status}")
 
     def closeEvent(self, event) -> None:
+        persist_window_settings(self, make_hmi_settings())
         # Stop background thread on close
         self.ws_thread.stop()
         self.ws_thread.wait()

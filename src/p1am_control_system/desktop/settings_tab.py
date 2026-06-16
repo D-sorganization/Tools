@@ -11,7 +11,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from p1am_control_system.desktop.tab_labels import TAB_TITLES
+from p1am_control_system.desktop.tab_labels import TAB_TITLES, TOGGLEABLE_TAB_ORDER
 
 logger = logging.getLogger("p1am_control.desktop.settings")
 
@@ -72,6 +72,14 @@ class SettingsTab(QWidget):
             lambda checked: self._on_toggled("history", checked)
         )
 
+        self._tab_checkboxes = {
+            "mimic": self.chk_mimic,
+            "trends": self.chk_trends,
+            "control": self.chk_control,
+            "routing": self.chk_routing,
+            "history": self.chk_history,
+        }
+
         vis_layout.addWidget(self.chk_mimic)
         vis_layout.addWidget(self.chk_trends)
         vis_layout.addWidget(self.chk_control)
@@ -94,3 +102,23 @@ class SettingsTab(QWidget):
     def _on_toggled(self, tab_key: str, checked: bool) -> None:
         logger.info(f"Tab '{tab_key}' visibility requested change to: {checked}")
         self.tabVisibilityChanged.emit(tab_key, checked)
+
+    def set_tab_visible(
+        self, tab_key: str, visible: bool, *, emit: bool = True
+    ) -> None:
+        """Set a tab checkbox while optionally suppressing the visibility signal."""
+        if tab_key not in TOGGLEABLE_TAB_ORDER:
+            raise ValueError(f"unknown toggleable tab: {tab_key}")
+        checkbox = self._tab_checkboxes[tab_key]
+        was_blocked = checkbox.blockSignals(not emit)
+        try:
+            checkbox.setChecked(visible)
+        finally:
+            checkbox.blockSignals(was_blocked)
+
+    def visible_tabs(self) -> dict[str, bool]:
+        """Return the current visibility checkbox state by tab key."""
+        return {
+            tab_key: self._tab_checkboxes[tab_key].isChecked()
+            for tab_key in TOGGLEABLE_TAB_ORDER
+        }

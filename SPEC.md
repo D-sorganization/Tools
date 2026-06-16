@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.497                                    |
+| **Spec Version**        | 1.1.499                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -59,6 +59,13 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Refactored PSA main-window tests now cover the calculation, panel signal,
   sensitivity-tab refresh, launch, and help branches directly so the extracted
   module remains above the Sidekick per-file coverage gate.
+- P1AM desktop HMI now persists window geometry, dock state, and operator tab
+  visibility through org/app-scoped QSettings. The Settings tab exposes a
+  signal-suppressing visibility setter and a read facade so startup restore and
+  shutdown persistence do not duplicate checkbox state logic.
+- P1AM layout-restore regression coverage now substitutes lightweight Qt child
+  panels around the main window so settings persistence is verified without
+  unrelated GUI teardown instability.
 
 ### 2026-06-15 Update
 
