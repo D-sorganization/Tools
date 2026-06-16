@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.494                                    |
+| **Spec Version**        | 1.1.495                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -47,6 +47,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   `scripts/convert_print_to_logging.py`. The obsolete root-level
   `migrate_print_to_logging.py` duplicate with a hardcoded local checkout path
   was removed, and tests now guard against reintroducing it.
+- Assessment generation now has one canonical generator:
+  `scripts/generate_comprehensive_assessment.py`. The older
+  `generate_assessments.py` and `generate_fresh_assessments.py` scripts were
+  removed after live-reference checks, and script topology tests guard against
+  reintroducing or referencing them.
 
 ### 2026-06-15 Update
 
@@ -838,6 +843,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-16 | 1.1.495 | refactor(scripts, #3359): keep `scripts/generate_comprehensive_assessment.py` as the sole assessment generator, delete the unreferenced `generate_assessments.py` and `generate_fresh_assessments.py` duplicates, and add live-reference topology coverage. |
 | 2026-06-16 | 1.1.494 | refactor(scripts, #3359): remove the obsolete root-level `migrate_print_to_logging.py` duplicate so `scripts/convert_print_to_logging.py` is the single print-to-logging migration tool, with regression coverage preventing the root shim from returning. |
 | 2026-06-16 | 1.1.493 | refactor(video-processor, #3359): collapse duplicate logger utility shims by keeping `video_processor_src.logger_utils` as the single compatibility facade over canonical `utils.logging_utils`, preserving dynamic torch/numpy backend state and deleting the obsolete `python/src` package-root shim. |
 | 2026-06-15 | 1.1.492 | fix(vessel-drafter, #3359): align the standalone contract fallback with the shared/data-processor contract semantics by adding typed postcondition errors, honoring `DBC_LEVEL=off`, routing legacy validation wrappers through `require()`, keeping fallback definitions mypy-clean, routing source-keyed CI for contract-only edits to the contract suite, and covering the isolated fallback import path. |
