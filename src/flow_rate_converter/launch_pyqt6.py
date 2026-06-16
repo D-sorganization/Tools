@@ -11,5 +11,11 @@ bootstrap(__file__)
 
 from gui_launcher import make_launcher  # noqa: E402
 
+
+def main() -> int:
+    """Launch the flow rate converter GUI."""
+    return int(make_launcher("flow_rate_converter.gui_registration") or 0)
+
+
 if __name__ == "__main__":
-    sys.exit(make_launcher("flow_rate_converter.gui_registration"))
+    sys.exit(main())

@@ -114,12 +114,12 @@ class RobustImportRedirector(MetaPathFinder):
         suffix = "." + ".".join(remainder) if remainder else ""
         if pkg in ("sidekick", "upstream_drift_tools"):
             return [
-                f"src.shared.python.sidekick{suffix}",
                 f"shared.python.sidekick{suffix}",
                 f"sidekick{suffix}",
-                f"src.shared.python.upstream_drift_tools{suffix}",
                 f"shared.python.upstream_drift_tools{suffix}",
                 f"upstream_drift_tools{suffix}",
+                f"src.shared.python.sidekick{suffix}",
+                f"src.shared.python.upstream_drift_tools{suffix}",
             ]
         return [
             f"src.shared.python.{pkg}{suffix}",
@@ -323,6 +323,14 @@ def _preload_ai_type_aliases(repo_root: Path) -> None:
 _setup_global_stubs(REPO_ROOT)
 _preload_ai_exception_aliases(REPO_ROOT)
 _preload_ai_type_aliases(REPO_ROOT)
+
+
+@pytest.fixture
+def repo_root() -> Path:
+    """Return the repository root for tests that inspect source files."""
+    return REPO_ROOT
+
+
 BRIDGED_EMBEDDED_TEST_DIRS = {
     REPO_ROOT / "src" / "pendulum_simulator" / "tests",
     REPO_ROOT / "src" / "solar_system_model" / "solar_system" / "tests",

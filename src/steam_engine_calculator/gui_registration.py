@@ -18,6 +18,13 @@ GUI_INFO = {
     },
 }
 
+GUI_METADATA = {
+    "name": GUI_INFO["name"],
+    "description": GUI_INFO["description"],
+    "category": GUI_INFO["category"].lower(),
+    "entry_point": GUI_INFO["pyqt6"]["module"],
+}
+
 
 def get_gui_info() -> dict[str, Any]:
     """Return GUI registration information."""

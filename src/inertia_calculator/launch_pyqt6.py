@@ -11,5 +11,11 @@ bootstrap(__file__)
 
 from gui_launcher import make_launcher  # noqa: E402
 
+
+def main() -> int:
+    """Launch the inertia calculator GUI."""
+    return int(make_launcher("inertia_calculator.gui_registration") or 0)
+
+
 if __name__ == "__main__":
-    sys.exit(make_launcher("inertia_calculator.gui_registration"))
+    sys.exit(main())

@@ -31,6 +31,16 @@ router = APIRouter(prefix="/api/calc/pressure-drop", tags=["pressure-drop"])
 _calculator = PressureDropCalculator()
 
 
+class _PressureDropApiResponse(dict[str, Any]):
+    """Standard-response dict with direct access to pressure-drop data fields."""
+
+    def __getattr__(self, name: str) -> Any:
+        data = self.get("data")
+        if isinstance(data, dict) and name in data:
+            return data[name]
+        raise AttributeError(name)
+
+
 @router.post("")
 def calculate_pressure_drop(
     request: PressureDropRequest,
@@ -121,4 +131,4 @@ def calculate_pressure_drop(
     response = builder.success(
         data=response_data,
     )
-    return cast(dict[str, Any], response.to_dict())
+    return cast(dict[str, Any], _PressureDropApiResponse(response.to_dict()))

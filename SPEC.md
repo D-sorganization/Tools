@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.501                                    |
+| **Spec Version**        | 1.1.502                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -51,6 +51,12 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   `shared.python.sidekick.*` imports instead of direct `sidekick.*` imports.
   Added `tests/architecture/test_sidekick_external_imports_3316.py` to enforce
   that boundary while preserving the existing compatibility shim tests.
+- The Sidekick pytest import redirector now prefers this checkout's canonical
+  `shared.python.sidekick`/`sidekick` packages before `src.shared` aliases, so
+  editable sibling repositories cannot satisfy canonical imports during CI.
+  Root test configuration also provides a shared `repo_root` fixture, preserves
+  legacy GUI `GUI_METADATA` and launcher `main()` compatibility, and keeps
+  pressure-drop and symbolic solver direct-call response contracts stable.
 - Video processor logging now has one compatibility shim:
   `video_processor_src.logger_utils` delegates to canonical `utils.logging_utils`
   for seed setup, torch/numpy optional backend flags, logger construction, and
