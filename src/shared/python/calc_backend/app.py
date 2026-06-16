@@ -151,24 +151,19 @@ async def api_ready() -> dict[str, str | dict[str, object] | bool]:
 @app.get("/api/calc/endpoints")
 def list_endpoints() -> dict[str, list[str]]:
     """List all available calculator endpoints."""
-    return {
-        "calculators": [
-            "POST /api/calc/flare",
-            "POST /api/calc/wgs-reactor",
-            "POST /api/calc/baghouse",
-            "POST /api/calc/scrubber",
-            "POST /api/calc/financial",
-            "POST /api/calc/acid-gas-dewpoint",
-            "POST /api/calc/pressure-drop",
-            "POST /api/calc/flow-rate",
-            "POST /api/calc/syngas-water",
-            "POST /api/calc/thermal-profile",
-            "POST /api/calc/ode-solver",
-            "POST /api/calc/rotation-converter",
-            "POST /api/calc/rotation-converter/reference-frame",
-            "GET /api/calc/symbolic/help",
-            "POST /api/calc/symbolic/solve",
-            "POST /api/calc/symbolic/derivative",
-            "POST /api/calc/symbolic/simplify",
-        ],
-    }
+    calculators: set[str] = set()
+    for route in app.routes:
+        path = getattr(route, "path", None)
+        methods = getattr(route, "methods", None)
+        if (
+            not isinstance(path, str)
+            or not path.startswith("/api/calc/")
+            or path == "/api/calc/endpoints"
+            or not methods
+        ):
+            continue
+        for method in methods:
+            if method not in {"HEAD", "OPTIONS"}:
+                calculators.add(f"{method} {path}")
+
+    return {"calculators": sorted(calculators)}
