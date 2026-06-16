@@ -14,6 +14,8 @@ except ImportError:
     UTC = timezone.utc  # noqa: UP017
 from typing import Any, cast
 
+import historian
+from alarm_processing import process_alarm_events
 from alicat_manager import AlicatManager, AlicatMFC
 from auth_config import require_admin_key, require_api_key, verify_operator_key
 from cors_config import resolve_cors_settings
@@ -293,41 +295,14 @@ async def poll_plc_loop() -> None:
                 db_session = None
                 try:
                     db_session = next(get_session())
-                    # Log tags
-                    for tag_name, value in tags.items():
-                        log_entry = TagLog(tag_name=tag_name, value=value)
-                        db_session.add(log_entry)
-                        # Process Alarms
-                        events = alarm_engine.update_tag(tag_name, value)
-                        for ev in events:
-                            cur_state = str(ev["current_state"]).split(".")[-1]
-                            sev = 0
-                            if cur_state in ["Low", "High"]:
-                                sev = 1
-                            elif cur_state in ["LoLo", "HiHi"]:
-                                sev = 2
-                            tag_str = tag_name
-                            if cur_state == "Normal":
-                                if tag_str in active_alarms:
-                                    if active_alarms[tag_str]["acknowledged"]:
-                                        del active_alarms[tag_str]
-                                    else:
-                                        active_alarms[tag_str]["state"] = "Normal"
-                            else:
-                                active_alarms[tag_str] = {
-                                    "tag_id": tag_name,
-                                    "tag_name": tag_name,
-                                    "state": cur_state,
-                                    "severity": sev,
-                                    "acknowledged": False,
-                                    "timestamp": datetime.now(UTC).isoformat(),
-                                }
-                            event_log = EventLog(
-                                event_type="ALARM",
-                                description=f"Tag {tag_name} crossed limit. State: {cur_state} Value: {value}",
-                                severity=sev,
-                            )
-                            db_session.add(event_log)
+                    # Bulk-insert this scan's samples (cheap single INSERT), then
+                    # fold alarm transitions into active_alarms and persist their
+                    # event rows — all under one commit.
+                    historian.log_scan(db_session, tags)
+                    for event_log in process_alarm_events(
+                        alarm_engine, tags, active_alarms
+                    ):
+                        db_session.add(event_log)
                     db_session.commit()
                 except Exception as db_err:
                     if db_session:
