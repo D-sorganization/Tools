@@ -14,10 +14,16 @@ CORE = (
     / "audio_signal_processor"
     / "core"
 )
+APP_ROOT = CORE.parent
+GUI = APP_ROOT / "gui"
 
 
 def _source(name: str) -> str:
     return (CORE / name).read_text(encoding="utf-8")
+
+
+def _app_source(*parts: str) -> str:
+    return APP_ROOT.joinpath(*parts).read_text(encoding="utf-8")
 
 
 def _function_body(source: str, name: str) -> str:
@@ -97,3 +103,17 @@ def test_music_tools_use_shared_phase_vocoder_file() -> None:
         music,
         re.M,
     )
+
+
+def test_audio_gui_does_not_ship_coming_soon_alerts_or_false_completion_claims() -> (
+    None
+):
+    main_window = (GUI / "MainWindow.m").read_text(encoding="utf-8")
+    summary = _app_source("PULL_REQUEST_SUMMARY.md")
+
+    assert "Coming Soon" not in main_window
+    assert "coming soon" not in main_window.lower()
+    assert "Feature unavailable" in main_window
+    assert "showUnavailableFeature" in main_window
+    assert "All placeholder" not in summary
+    assert "fully functional interfaces" not in summary

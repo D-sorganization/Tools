@@ -2,7 +2,7 @@
 
 ## Overview
 
-This PR implements all missing GUI panels for the Audio Signal Processor, connecting them to the existing backend functionality. All placeholder "Coming Soon" panels have been replaced with fully functional interfaces.
+This historical PR summary is retained for context. The Audio Signal Processor GUI contains a mix of implemented panels and deliberately unavailable controls where backend support is not yet wired into the interactive workflow.
 
 ## Branch Information
 
@@ -16,7 +16,7 @@ This PR implements all missing GUI panels for the Audio Signal Processor, connec
 
 ## What's New
 
-### 🎨 **Complete GUI Implementation**
+### 🎨 **GUI Implementation Progress**
 
 #### 1. **Filters Panel** - Fully Implemented
 
@@ -276,7 +276,7 @@ AudioExporter(audio, 'output.wav', 'SampleRate', fs, 'BitDepth', 24);
 
 ## ⚠️ **Known Limitations (By Design)**
 
-Some features show "coming soon" alerts as they represent future enhancements:
+Some controls are explicitly marked unavailable because they represent future enhancements:
 
 - Track effects editor (complex dialog needed)
 - Stem export (individual track export)
@@ -305,7 +305,7 @@ These are optional enhancements beyond the core functionality.
 
 ## 🔗 **Related Issues**
 
-This PR completes the Audio Signal Processor GUI implementation, transforming placeholder panels into fully functional interfaces connected to the sophisticated DSP backend.
+This PR advanced the Audio Signal Processor GUI implementation, but it should not be read as evidence that every visible control is fully wired to backend behavior.
 
 ---
 

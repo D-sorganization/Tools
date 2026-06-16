@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.499                                    |
+| **Spec Version**        | 1.1.500                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,14 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-16 Update
 
+- MATLAB Audio Signal Processor GUI callbacks no longer present deferred work
+  as "Coming Soon" dialogs or claim that every panel is fully functional.
+  Deferred controls now use an explicit unavailable-feature path, and a static
+  contract test guards both the GUI and stale PR-summary wording.
+- The fleet fast guardrails now support exact-path oversized source baselines
+  for legacy monoliths. Baseline entries are ratchets, not exclusions: a
+  grandfathered file can be cleaned up only if it does not grow beyond its
+  recorded line budget.
 - Video processor logging now has one compatibility shim:
   `video_processor_src.logger_utils` delegates to canonical `utils.logging_utils`
   for seed setup, torch/numpy optional backend flags, logger construction, and

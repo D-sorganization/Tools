@@ -1613,8 +1613,14 @@ function previewFadeOut(mainWindow)
 uialert(mainWindow.Figure, 'Fade preview: Apply fade to hear result', 'Info');
 end
 
+function showUnavailableFeature(mainWindow, featureName, detail)
+message = sprintf('%s is not available in this build. %s', featureName, detail);
+uialert(mainWindow.Figure, message, 'Feature unavailable');
+mainWindow.StatusText.Text = sprintf('%s unavailable', featureName);
+end
+
 function showRemoveSilenceDialog(mainWindow)
-uialert(mainWindow.Figure, 'Remove silence feature: Set threshold and minimum duration, then apply', 'Coming Soon');
+showUnavailableFeature(mainWindow, 'Remove silence', 'Use trim/cut editing or offline batch tools until silence detection is wired into the GUI.');
 end
 
 function showGainDialog(mainWindow)
@@ -1647,15 +1653,15 @@ mainWindow.StatusText.Text = sprintf('Gain adjusted: %+.1f dB', gainDB);
 end
 
 function insertSilence(mainWindow)
-uialert(mainWindow.Figure, 'Insert silence: Select position and duration', 'Coming Soon');
+showUnavailableFeature(mainWindow, 'Insert silence', 'The GUI does not yet expose an insertion position/duration editor.');
 end
 
 function generateTone(mainWindow)
-uialert(mainWindow.Figure, 'Generate tone: Select frequency and duration', 'Coming Soon');
+showUnavailableFeature(mainWindow, 'Generate tone', 'Tone synthesis is not wired to the active audio buffer.');
 end
 
 function generateNoise(mainWindow)
-uialert(mainWindow.Figure, 'Generate noise: Select type and duration', 'Coming Soon');
+showUnavailableFeature(mainWindow, 'Generate noise', 'Noise synthesis is not wired to the active audio buffer.');
 end
 
 %% EFFECTS TAB FUNCTIONS
@@ -1742,7 +1748,7 @@ switch effect.Type
     case 'Compression'
         addCompressionControls(mainWindow, effectIdx);
     otherwise
-        uilabel(mainWindow.EffectControlGrid, 'Text', 'Effect parameters coming soon');
+        uilabel(mainWindow.EffectControlGrid, 'Text', 'No parameter editor is available for this effect.');
 end
 
 % Bypass and remove buttons
@@ -1896,11 +1902,11 @@ end
 end
 
 function saveEffectPreset(mainWindow)
-uialert(mainWindow.Figure, 'Save preset: Name your effect chain and save', 'Coming Soon');
+showUnavailableFeature(mainWindow, 'Save effect preset', 'Effect-chain preset persistence is not wired into the GUI.');
 end
 
 function loadEffectPreset(mainWindow)
-uialert(mainWindow.Figure, 'Load preset: Choose from saved presets', 'Coming Soon');
+showUnavailableFeature(mainWindow, 'Load effect preset', 'Effect-chain preset loading is not wired into the GUI.');
 end
 
 function loadCustomIR(mainWindow, effectIdx)
@@ -1984,7 +1990,7 @@ end
 end
 
 function showTrackEffects(mainWindow, trackIndex)
-uialert(mainWindow.Figure, sprintf('Track %d effects: Add effects to this track', trackIndex), 'Coming Soon');
+showUnavailableFeature(mainWindow, sprintf('Track %d effects', trackIndex), 'Per-track effect chains are not wired into the mixer.');
 end
 
 function showFadeInDialog(mainWindow, trackIndex)
@@ -2170,7 +2176,7 @@ end
 end
 
 function exportStems(mainWindow)
-uialert(mainWindow.Figure, 'Export stems: Save each track individually', 'Coming Soon');
+showUnavailableFeature(mainWindow, 'Export stems', 'Per-track stem export is not wired into the mixer.');
 end
 
 %% This file continues in the main MainWindow.m
@@ -2404,7 +2410,7 @@ end
 end
 
 function showVocoderDialog(mainWindow)
-uialert(mainWindow.Figure, 'Vocoder: Load carrier and modulator signals', 'Coming Soon');
+showUnavailableFeature(mainWindow, 'Vocoder', 'Carrier/modulator routing is not exposed in the GUI.');
 end
 
 function audioToMIDI(mainWindow)
@@ -3160,19 +3166,19 @@ end
 end
 
 function addSampleToLibrary(mainWindow)
-uialert(mainWindow.Figure, 'Add sample: Select audio file to add to your library', 'Coming Soon');
+showUnavailableFeature(mainWindow, 'Add sample', 'Sample-library file ingestion is not wired into the GUI.');
 end
 
 function createSampleCollection(mainWindow)
-uialert(mainWindow.Figure, 'Create collection: Group samples into collection', 'Coming Soon');
+showUnavailableFeature(mainWindow, 'Create sample collection', 'Collection authoring is not wired into the GUI.');
 end
 
 function importSampleCollection(mainWindow)
-uialert(mainWindow.Figure, 'Import collection: Load collection file', 'Coming Soon');
+showUnavailableFeature(mainWindow, 'Import sample collection', 'Collection import is not wired into the GUI.');
 end
 
 function exportSampleCollection(mainWindow)
-uialert(mainWindow.Figure, 'Export collection: Save collection to file', 'Coming Soon');
+showUnavailableFeature(mainWindow, 'Export sample collection', 'Collection export is not wired into the GUI.');
 end
 
 %% SETTINGS TAB FUNCTIONS
@@ -3222,7 +3228,7 @@ end
 %% HELP MENU FUNCTIONS
 
 function showBatchProcessor(mainWindow)
-uialert(mainWindow.Figure, 'Batch Processor: Process multiple files with same settings', 'Coming Soon');
+showUnavailableFeature(mainWindow, 'Batch Processor', 'Batch-processing controls are not wired into this GUI.');
 end
 
 function showQuickStart(mainWindow)
