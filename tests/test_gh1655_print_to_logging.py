@@ -87,6 +87,17 @@ class TestNoUnguardedPrintInSrc:
                 )
 
 
+class TestPrintMigrationTooling:
+    """The print-to-logging migration path has one canonical script."""
+
+    REPO_ROOT = Path(__file__).parents[1]
+
+    def test_root_migration_script_is_not_reintroduced(self) -> None:
+        """The retained migrator lives under scripts/, not the repo root."""
+        assert not (self.REPO_ROOT / "migrate_print_to_logging.py").exists()
+        assert (self.REPO_ROOT / "scripts" / "convert_print_to_logging.py").is_file()
+
+
 class TestRuffT201Configured:
     """Verify T201 (print-statement) rule is enabled in ruff config.
 
