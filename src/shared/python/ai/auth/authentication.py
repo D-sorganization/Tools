@@ -36,7 +36,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, ParamSpec, TypeVar
 
-from src.shared.python.logging_pkg.logging_config import get_logger
+from shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
 _P = ParamSpec("_P")
