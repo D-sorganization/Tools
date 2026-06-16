@@ -16,7 +16,7 @@ from collections.abc import Iterable
 from typing import Any
 
 from cors import add_cors_middleware
-from fastapi import APIRouter, FastAPI, HTTPException
+from fastapi import APIRouter, FastAPI, HTTPException, Request
 
 from .health import CheckStatus, get_health_checker
 from .routers import (
@@ -156,10 +156,11 @@ async def api_ready() -> dict[str, str | dict[str, object] | bool]:
 
 
 @app.get("/api/calc/endpoints")
-def list_endpoints() -> dict[str, list[str]]:
+def list_endpoints(request: Request) -> dict[str, list[str]]:
     """List all available calculator endpoints."""
-    _ensure_calculator_routes_registered()
-    calculators = _calculator_route_signatures(app.routes)
+    active_app = request.app
+    _ensure_calculator_routes_registered(active_app)
+    calculators = _calculator_route_signatures(active_app.routes)
     return {"calculators": sorted(f"{method} {path}" for method, path in calculators)}
 
 
@@ -182,10 +183,10 @@ def _calculator_route_signatures(routes: Iterable[Any]) -> set[tuple[str, str]]:
     return signatures
 
 
-def _ensure_calculator_routes_registered() -> None:
-    registered = _calculator_route_signatures(app.routes)
+def _ensure_calculator_routes_registered(active_app: FastAPI) -> None:
+    registered = _calculator_route_signatures(active_app.routes)
     for router in CALCULATOR_ROUTERS:
         router_signatures = _calculator_route_signatures(router.routes)
         if router_signatures and router_signatures.isdisjoint(registered):
-            app.include_router(router)
+            active_app.include_router(router)
             registered.update(router_signatures)
