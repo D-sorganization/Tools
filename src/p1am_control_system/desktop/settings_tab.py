@@ -11,6 +11,8 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from p1am_control_system.desktop.tab_labels import TAB_TITLES
+
 logger = logging.getLogger("p1am_control.desktop.settings")
 
 
@@ -40,31 +42,31 @@ class SettingsTab(QWidget):
         vis_layout.setSpacing(10)
         vis_layout.setContentsMargins(15, 15, 15, 15)
 
-        self.chk_mimic = QCheckBox("Mimic Process Flow Diagram", self)
+        self.chk_mimic = QCheckBox(TAB_TITLES["mimic"], self)
         self.chk_mimic.setChecked(True)
         self.chk_mimic.toggled.connect(
             lambda checked: self._on_toggled("mimic", checked)
         )
 
-        self.chk_trends = QCheckBox("Real-Time Trends & Signal Filters", self)
+        self.chk_trends = QCheckBox(TAB_TITLES["trends"], self)
         self.chk_trends.setChecked(True)
         self.chk_trends.toggled.connect(
             lambda checked: self._on_toggled("trends", checked)
         )
 
-        self.chk_control = QCheckBox("PID Loops & MPC Groundwork", self)
+        self.chk_control = QCheckBox(TAB_TITLES["control"], self)
         self.chk_control.setChecked(True)
         self.chk_control.toggled.connect(
             lambda checked: self._on_toggled("control", checked)
         )
 
-        self.chk_routing = QCheckBox("DCS Routing Matrix & Interlocks", self)
+        self.chk_routing = QCheckBox(TAB_TITLES["routing"], self)
         self.chk_routing.setChecked(True)
         self.chk_routing.toggled.connect(
             lambda checked: self._on_toggled("routing", checked)
         )
 
-        self.chk_history = QCheckBox("Event History Log Query", self)
+        self.chk_history = QCheckBox(TAB_TITLES["history"], self)
         self.chk_history.setChecked(True)
         self.chk_history.toggled.connect(
             lambda checked: self._on_toggled("history", checked)

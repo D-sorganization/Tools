@@ -42,6 +42,7 @@ from p1am_control_system.desktop.mimic_tab import MimicTab
 from p1am_control_system.desktop.routing_tab import RoutingTab
 from p1am_control_system.desktop.settings_tab import SettingsTab
 from p1am_control_system.desktop.sidebar import InspectorSidebar
+from p1am_control_system.desktop.tab_labels import TAB_ORDER, TAB_TITLES
 from p1am_control_system.desktop.trends_tab import TrendsTab
 from p1am_control_system.desktop.workers import HttpWorker, start_http_request
 
@@ -190,14 +191,7 @@ class HMIMainWindow(QMainWindow):
             "history": self.event_log_viewer,
             "settings": self.settings_tab,
         }
-        self.tab_titles = {
-            "mimic": "Plant Mimic Diagram",
-            "trends": "Trends & Signal Filters",
-            "control": "PID & MPC Control Loops",
-            "routing": "DCS Routing Matrix",
-            "history": "Event History",
-            "settings": "Settings",
-        }
+        self.tab_titles = TAB_TITLES
 
         # Connect settings tab visibility toggles
         self.settings_tab.tabVisibilityChanged.connect(self._handle_tab_visibility)
@@ -274,9 +268,8 @@ class HMIMainWindow(QMainWindow):
         if visible:
             if self.tab_widget.indexOf(widget) == -1:
                 # Insert at appropriate index keeping order
-                order = ["mimic", "trends", "control", "routing", "settings"]
                 target_idx = 0
-                for key in order:
+                for key in TAB_ORDER:
                     if key == tab_key:
                         break
                     w = self.tab_widgets.get(key)
