@@ -24,9 +24,9 @@ from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import Any, get_type_hints
 
-from src.shared.python.ai.exceptions import ToolExecutionError
-from src.shared.python.ai.types import ToolResult
-from src.shared.python.logging_pkg.logging_config import get_logger
+from shared.python.ai.exceptions import ToolExecutionError
+from shared.python.ai.types import ToolResult
+from shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
 
