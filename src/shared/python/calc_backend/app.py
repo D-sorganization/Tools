@@ -164,7 +164,11 @@ def list_endpoints(request: Request) -> dict[str, list[str]]:
     return {"calculators": sorted(f"{method} {path}" for method, path in calculators)}
 
 
-def _calculator_route_signatures(routes: Iterable[Any]) -> set[tuple[str, str]]:
+def _calculator_route_signatures(
+    routes: Iterable[Any],
+    *,
+    prefix: str = "",
+) -> set[tuple[str, str]]:
     signatures: set[tuple[str, str]] = set()
     for route in routes:
         raw_path = getattr(route, "path", None)
@@ -172,7 +176,7 @@ def _calculator_route_signatures(routes: Iterable[Any]) -> set[tuple[str, str]]:
         if raw_path is None or not methods:
             continue
 
-        path = str(raw_path)
+        path = _join_route_prefix(prefix, str(raw_path))
         if not path.startswith("/api/calc/") or path == "/api/calc/endpoints":
             continue
 
@@ -186,7 +190,20 @@ def _calculator_route_signatures(routes: Iterable[Any]) -> set[tuple[str, str]]:
 def _ensure_calculator_routes_registered(active_app: FastAPI) -> None:
     registered = _calculator_route_signatures(active_app.routes)
     for router in CALCULATOR_ROUTERS:
-        router_signatures = _calculator_route_signatures(router.routes)
+        router_signatures = _calculator_route_signatures(
+            router.routes,
+            prefix=str(getattr(router, "prefix", "")),
+        )
         if router_signatures and router_signatures.isdisjoint(registered):
             active_app.include_router(router)
             registered.update(router_signatures)
+
+
+def _join_route_prefix(prefix: str, path: str) -> str:
+    if not prefix:
+        return path
+    if path.startswith(prefix) or path.startswith("/api/calc/"):
+        return path
+    if not path or path == "/":
+        return prefix
+    return f"{prefix.rstrip('/')}/{path.lstrip('/')}"

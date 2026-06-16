@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.510                                    |
+| **Spec Version**        | 1.1.511                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -86,6 +86,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   request's active FastAPI app instance rather than the module-global app, so
   import aliases and repeated in-process test selection cannot advertise stale
   or empty endpoint lists.
+- Calc backend router repair now combines `APIRouter.prefix` with child route
+  paths when deriving declared calculator endpoints, preserving endpoint
+  discovery across FastAPI versions that expose prefixless router child routes.
 - Video processor logging now has one compatibility shim:
   `video_processor_src.logger_utils` delegates to canonical `utils.logging_utils`
   for seed setup, torch/numpy optional backend flags, logger construction, and
@@ -905,6 +908,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-16 | 1.1.511 | fix(calc-backend, #3316): make calculator route signature extraction `APIRouter.prefix`-aware so repair can derive declared `/api/calc/*` endpoints from prefixless child routes in the Linux CI FastAPI matrix. |
 | 2026-06-16 | 1.1.510 | fix(calc-backend, #3316): derive and repair `/api/calc/endpoints` from `request.app` instead of the module-global app so alias-loaded FastAPI apps in the Linux CI matrix keep the advertised endpoint list attached to the serving app. |
 | 2026-06-16 | 1.1.509 | fix(calc-backend, #3316): normalize FastAPI route path and method metadata before deriving or repairing `/api/calc/endpoints`, preventing Linux CI route implementations from producing an empty advertised endpoint list. |
 | 2026-06-16 | 1.1.508 | fix(calc-backend, #3316): repair missing calculator routers before deriving `/api/calc/endpoints`, keeping endpoint discovery deterministic when full-suite import order observes a partial FastAPI app. |

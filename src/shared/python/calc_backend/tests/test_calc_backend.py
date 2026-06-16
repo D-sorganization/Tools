@@ -121,6 +121,27 @@ class TestAppStartup:
             for route in isolated_app.routes
         )
 
+    def test_calculator_route_signatures_apply_router_prefix(self) -> None:
+        from calc_backend.app import _calculator_route_signatures
+
+        class PrefixlessRoute:
+            path = ""
+            methods = {"POST"}
+
+        assert _calculator_route_signatures(
+            [PrefixlessRoute()],
+            prefix="/api/calc/flare",
+        ) == {("POST", "/api/calc/flare")}
+
+        class PrefixedRoute:
+            path = "/api/calc/flare"
+            methods = {"POST"}
+
+        assert _calculator_route_signatures(
+            [PrefixedRoute()],
+            prefix="/api/calc/flare",
+        ) == {("POST", "/api/calc/flare")}
+
     def test_openapi_schema_reachable(self, client: TestClient) -> Any:
         r = client.get("/openapi.json")
         assert r.status_code == 200
