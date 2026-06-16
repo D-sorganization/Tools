@@ -35,6 +35,12 @@ def client() -> Any:
     return TestClient(app)
 
 
+def _registered_calculator_routes(client: TestClient) -> set[tuple[str, str]]:
+    from calc_backend.app import _calculator_route_signatures
+
+    return cast(set[tuple[str, str]], _calculator_route_signatures(client.app.routes))
+
+
 # ──────────────────────────────────────────────────────────────────────────────
 # App-level smoke tests
 # ──────────────────────────────────────────────────────────────────────────────
@@ -63,12 +69,7 @@ class TestAppStartup:
         assert r.status_code == 200
 
         advertised = {tuple(item.split(" ", 1)) for item in r.json()["calculators"]}
-        registered = {
-            (method, route.path)
-            for route in client.app.routes
-            if hasattr(route, "path") and hasattr(route, "methods")
-            for method in route.methods
-        }
+        registered = _registered_calculator_routes(client)
 
         assert not sorted(advertised - registered)
 
@@ -93,10 +94,7 @@ class TestAppStartup:
 
             calc_list = r.json()["calculators"]
             assert "POST /api/calc/flare" in calc_list
-            assert any(
-                getattr(route, "path", None) == "/api/calc/flare"
-                for route in client.app.routes
-            )
+            assert ("POST", "/api/calc/flare") in _registered_calculator_routes(client)
         finally:
             client.app.router.routes[:] = original_routes
 

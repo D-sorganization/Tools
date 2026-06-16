@@ -173,6 +173,8 @@ def _calculator_route_signatures(
     signatures: set[tuple[str, str]] = set()
     for route in routes:
         raw_path = getattr(route, "path", None)
+        if raw_path is None:
+            raw_path = getattr(route, "path_format", None)
         methods = getattr(route, "methods", None)
         if raw_path is None or not methods:
             continue

@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.515                                    |
+| **Spec Version**        | 1.1.516                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -93,6 +93,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   `src.shared.python.calc_backend.*` resolve to the active checkout instead of
   ambient vendored copies, with this checkout's source roots pinned ahead of
   external sibling repositories in each test worker.
+- Calc backend route inventory now accepts FastAPI route objects that expose
+  `path_format` instead of `path`, and route-registration assertions share the
+  same protocol helper used by production endpoint discovery.
 - Calc backend endpoint discovery normalizes route path and method metadata
   before comparing registered calculator endpoints, keeping the repair path
   stable across FastAPI/Starlette route implementations in the Linux CI matrix.

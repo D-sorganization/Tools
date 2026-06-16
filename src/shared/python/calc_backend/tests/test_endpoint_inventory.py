@@ -17,7 +17,7 @@ def test_calc_backend_import_aliases_share_app_instance() -> None:
 
 
 def test_list_endpoints_repairs_request_app_not_module_global() -> None:
-    from calc_backend.app import list_endpoints
+    from calc_backend.app import _calculator_route_signatures, list_endpoints
 
     isolated_app = FastAPI()
     isolated_app.add_api_route(
@@ -31,9 +31,8 @@ def test_list_endpoints_repairs_request_app_not_module_global() -> None:
 
     assert response.status_code == 200
     assert "POST /api/calc/flare" in response.json()["calculators"]
-    assert any(
-        getattr(route, "path", None) == "/api/calc/flare"
-        for route in isolated_app.routes
+    assert ("POST", "/api/calc/flare") in _calculator_route_signatures(
+        isolated_app.routes
     )
 
 
@@ -55,5 +54,14 @@ def test_calculator_route_signatures_apply_router_prefix() -> None:
 
     assert _calculator_route_signatures(
         [PrefixedRoute()],
+        prefix="/api/calc/flare",
+    ) == {("POST", "/api/calc/flare")}
+
+    class PathFormatRoute:
+        path_format = "/api/calc/flare"
+        methods = {"POST"}
+
+    assert _calculator_route_signatures(
+        [PathFormatRoute()],
         prefix="/api/calc/flare",
     ) == {("POST", "/api/calc/flare")}
