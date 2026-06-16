@@ -72,6 +72,34 @@ class TestAppStartup:
 
         assert not sorted(advertised - registered)
 
+    def test_list_endpoints_repairs_missing_calculator_router(
+        self,
+        client: TestClient,
+    ) -> Any:
+        original_routes = list(client.app.routes)
+        try:
+            client.app.router.routes[:] = [
+                route
+                for route in client.app.routes
+                if getattr(route, "path", None) != "/api/calc/flare"
+            ]
+            assert not any(
+                getattr(route, "path", None) == "/api/calc/flare"
+                for route in client.app.routes
+            )
+
+            r = client.get("/api/calc/endpoints")
+            assert r.status_code == 200
+
+            calc_list = r.json()["calculators"]
+            assert "POST /api/calc/flare" in calc_list
+            assert any(
+                getattr(route, "path", None) == "/api/calc/flare"
+                for route in client.app.routes
+            )
+        finally:
+            client.app.router.routes[:] = original_routes
+
     def test_openapi_schema_reachable(self, client: TestClient) -> Any:
         r = client.get("/openapi.json")
         assert r.status_code == 200

@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.507                                    |
+| **Spec Version**        | 1.1.508                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -75,8 +75,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   FastAPI route protocol instead of concrete `APIRoute` class identity, avoiding
   false negatives when full-suite import aliasing loads compatible route types.
 - Calc backend endpoint discovery now derives `/api/calc/endpoints` from the
-  FastAPI routes currently registered on the app, so import-order-specific
-  partial app states cannot advertise unavailable calculator routes.
+  FastAPI routes registered on the app and repairs missing calculator routers
+  from the declared router set before listing them, so import-order-specific
+  partial app states cannot advertise or preserve a degraded calculator route
+  surface.
 - Video processor logging now has one compatibility shim:
   `video_processor_src.logger_utils` delegates to canonical `utils.logging_utils`
   for seed setup, torch/numpy optional backend flags, logger construction, and
@@ -896,6 +898,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-16 | 1.1.508 | fix(calc-backend, #3316): repair missing calculator routers before deriving `/api/calc/endpoints`, keeping endpoint discovery deterministic when full-suite import order observes a partial FastAPI app. |
 | 2026-06-16 | 1.1.507 | fix(calc-backend, #3316): derive `/api/calc/endpoints` from the FastAPI app's registered `/api/calc/*` routes instead of a static list, preventing stale advertisements when CI import order sees a partial app state. |
 | 2026-06-16 | 1.1.495 | refactor(scripts, #3359): keep `scripts/generate_comprehensive_assessment.py` as the sole assessment generator, delete the unreferenced `generate_assessments.py` and `generate_fresh_assessments.py` duplicates, and add live-reference topology coverage. |
 | 2026-06-16 | 1.1.494 | refactor(scripts, #3359): remove the obsolete root-level `migrate_print_to_logging.py` duplicate so `scripts/convert_print_to_logging.py` is the single print-to-logging migration tool, with regression coverage preventing the root shim from returning. |

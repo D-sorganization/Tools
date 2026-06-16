@@ -12,9 +12,11 @@ See issue #613.
 from __future__ import annotations
 
 import logging
+from collections.abc import Iterable
+from typing import Any
 
 from cors import add_cors_middleware
-from fastapi import FastAPI, HTTPException
+from fastapi import APIRouter, FastAPI, HTTPException
 
 from .health import CheckStatus, get_health_checker
 from .routers import (
@@ -35,6 +37,22 @@ from .routers import (
 
 logger = logging.getLogger(__name__)
 
+CALCULATOR_ROUTERS: tuple[APIRouter, ...] = (
+    flare.router,
+    wgs_reactor.router,
+    baghouse.router,
+    scrubber.router,
+    financial.router,
+    acid_gas_dewpoint.router,
+    pressure_drop.router,
+    flow_rate.router,
+    syngas_water.router,
+    thermal_profile.router,
+    ode_solver.router,
+    rotation_converter.router,
+    symbolic_solver.router,
+)
+
 # ---------------------------------------------------------------------------
 # FastAPI application
 # ---------------------------------------------------------------------------
@@ -53,19 +71,8 @@ add_cors_middleware(app)
 # Include routers
 # ---------------------------------------------------------------------------
 
-app.include_router(flare.router)
-app.include_router(wgs_reactor.router)
-app.include_router(baghouse.router)
-app.include_router(scrubber.router)
-app.include_router(financial.router)
-app.include_router(acid_gas_dewpoint.router)
-app.include_router(pressure_drop.router)
-app.include_router(flow_rate.router)
-app.include_router(syngas_water.router)
-app.include_router(thermal_profile.router)
-app.include_router(ode_solver.router)
-app.include_router(rotation_converter.router)
-app.include_router(symbolic_solver.router)
+for router in CALCULATOR_ROUTERS:
+    app.include_router(router)
 
 
 # ---------------------------------------------------------------------------
@@ -151,8 +158,14 @@ async def api_ready() -> dict[str, str | dict[str, object] | bool]:
 @app.get("/api/calc/endpoints")
 def list_endpoints() -> dict[str, list[str]]:
     """List all available calculator endpoints."""
-    calculators: set[str] = set()
-    for route in app.routes:
+    _ensure_calculator_routes_registered()
+    calculators = _calculator_route_signatures(app.routes)
+    return {"calculators": sorted(f"{method} {path}" for method, path in calculators)}
+
+
+def _calculator_route_signatures(routes: Iterable[Any]) -> set[tuple[str, str]]:
+    signatures: set[tuple[str, str]] = set()
+    for route in routes:
         path = getattr(route, "path", None)
         methods = getattr(route, "methods", None)
         if (
@@ -163,7 +176,15 @@ def list_endpoints() -> dict[str, list[str]]:
         ):
             continue
         for method in methods:
-            if method not in {"HEAD", "OPTIONS"}:
-                calculators.add(f"{method} {path}")
+            if isinstance(method, str) and method not in {"HEAD", "OPTIONS"}:
+                signatures.add((method, path))
+    return signatures
 
-    return {"calculators": sorted(calculators)}
+
+def _ensure_calculator_routes_registered() -> None:
+    registered = _calculator_route_signatures(app.routes)
+    for router in CALCULATOR_ROUTERS:
+        router_signatures = _calculator_route_signatures(router.routes)
+        if router_signatures and router_signatures.isdisjoint(registered):
+            app.include_router(router)
+            registered.update(router_signatures)
