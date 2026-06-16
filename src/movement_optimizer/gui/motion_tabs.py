@@ -27,20 +27,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from movement_optimizer.models.chain_dynamics import (
-    ChainConfig,
-    ChainRollout,
-    ChainState,
-    initial_catenary_angles,
-    random_wadded_chain_state,
-    simulate_chain_for_duration,
-    steps_for_duration,
-)
-from movement_optimizer.models.chain_forces import (
-    ChainForceField,
-    chain_force_field,
-    chain_force_history,
-)
+from movement_optimizer.models.chain_forces import ChainForceField
 from movement_optimizer.models.swingset import (
     DEFAULT_OPTIMIZER_BUDGET,
     DEFAULT_POLICY_DT_S,
@@ -58,7 +45,7 @@ from movement_optimizer.models.swingset import (
 )
 from movement_optimizer.models.swingset_forces import (
     SwingForceField,
-    swing_force_field,
+    swing_force_fields,
     swing_force_history,
 )
 from movement_optimizer.rendering import Palette, get_chart_color
@@ -201,6 +188,7 @@ class NumericControl(QWidget):
         self.setMinimumHeight(32)
         self.slider = QSlider(Qt.Orientation.Horizontal)
         self.slider.setRange(0, self._steps)
+        self.slider.setTracking(False)
         self.slider.setMinimumHeight(28)
         self.slider.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         self.edit = QLineEdit()
@@ -271,6 +259,7 @@ class MotionCanvas(QWidget):
         self._chain_nodes: list[tuple[float, float]] = []
         self._body_points: dict[str, tuple[float, float]] = {}
         self._overlay = OverlayScene()
+        self._path_length_m = 0.5
 
     def set_scene(
         self,
@@ -279,6 +268,7 @@ class MotionCanvas(QWidget):
     ) -> None:
         self._chain_nodes = chain_nodes
         self._body_points = body_points or {}
+        self._path_length_m = self._compute_chain_path_length(chain_nodes)
         self.update()
 
     def set_overlays(self, scene: OverlayScene) -> None:
@@ -342,9 +332,12 @@ class MotionCanvas(QWidget):
         return _project
 
     def _chain_path_length(self) -> float:
+        return self._path_length_m
+
+    @staticmethod
+    def _compute_chain_path_length(chain_nodes: list[tuple[float, float]]) -> float:
         distances = [
-            np.hypot(end[0] - start[0], end[1] - start[1])
-            for start, end in pairwise(self._chain_nodes)
+            np.hypot(end[0] - start[0], end[1] - start[1]) for start, end in pairwise(chain_nodes)
         ]
         return max(float(sum(distances)), 0.5)
 
@@ -403,7 +396,7 @@ def _scrollable_control_panel(panel: QWidget) -> QScrollArea:
 class SwingsetTab(QWidget):
     """Interactive swingset model tab with cyclic policy optimization."""
 
-    playbackStateChanged = pyqtSignal()
+    playbackStateChanged = pyqtSignal()  # noqa: N815 - Qt signal naming convention.
 
     def __init__(self) -> None:
         super().__init__()
@@ -422,6 +415,7 @@ class SwingsetTab(QWidget):
         self._controls: dict[str, NumericControl] = {}
         self._force_toggles: dict[str, QCheckBox] = {}
         self._force_history: object | None = None
+        self._force_fields: tuple[SwingForceField, ...] | None = None
         self._rollout: SwingRollout | None = None
         self._frame_index = 0
         self._control_panel_visible = True
@@ -487,6 +481,12 @@ class SwingsetTab(QWidget):
         layout.setSpacing(6)
         row = QHBoxLayout()
         self.optimize_button = QPushButton("Optimize Swing Policy")
+        self.optimize_button.setProperty("class", "primary")
+        self.optimize_button.setMinimumHeight(42)
+        self.optimize_button.setAccessibleName("Optimize swing policy")
+        self.optimize_button.setAccessibleDescription(
+            "Run the swingset policy optimizer and populate playback, charts, and force vectors."
+        )
         self.optimize_button.setToolTip(
             "Search for the rider pumping policy that maximises swing height, "
             "then plot torques/power and draw force vectors."
@@ -768,6 +768,7 @@ class SwingsetTab(QWidget):
         self._timer.stop()
         self.play_button.setText("Play")
         self._rollout = None
+        self._force_fields = None
         self.policy_trace_canvas.set_trace(())
         self.policy_detail_label.setText("Policy not optimized.")
         config = self._config()
@@ -848,8 +849,7 @@ class SwingsetTab(QWidget):
         self.progress_bar.setValue(completed)
         frequency = getattr(params, "frequency_hz", 0.0)
         self.policy_status_label.setText(
-            f"{completed}/{total} candidates | best {best_score:.3f} m | "
-            f"{float(frequency):.2f} Hz"
+            f"{completed}/{total} candidates | best {best_score:.3f} m | {float(frequency):.2f} Hz"
         )
 
     def _on_policy_success(self, result: object) -> None:
@@ -885,6 +885,7 @@ class SwingsetTab(QWidget):
 
     def _set_policy_result(self, result: CyclicPolicySearchResult) -> None:
         self._rollout = result.rollout
+        self._force_fields = None
         self._frame_index = 0
         self._render_snapshot(result.rollout.snapshots[0])
         self._populate_analysis_panel()
@@ -944,6 +945,7 @@ class SwingsetTab(QWidget):
             return
         history = swing_force_history(self._config(), self._rollout, DEFAULT_POLICY_DT_S)
         self._force_history = history
+        self._force_fields = swing_force_fields(self._config(), self._rollout, DEFAULT_POLICY_DT_S)
         panel = self.analysis_panel
         panel.clear()
         plot_renderer.plot_swing_joint_torques(panel.axes["torques"], history)
@@ -963,9 +965,7 @@ class SwingsetTab(QWidget):
         if self._rollout is None:
             self.canvas.set_overlays(OverlayScene())
             return
-        field = swing_force_field(
-            self._config(), self._rollout, DEFAULT_POLICY_DT_S, self._frame_index
-        )
+        field = self._current_force_field()
         scene = _swing_overlay_scene(
             field,
             gravity=self._force_toggles["gravity"].isChecked(),
@@ -974,6 +974,25 @@ class SwingsetTab(QWidget):
             com=self._force_toggles["com"].isChecked(),
         )
         self.canvas.set_overlays(scene)
+
+    def _current_force_field(self) -> SwingForceField:
+        """Return the cached force field for the active rollout frame.
+
+        Preconditions:
+            A rollout exists and ``_frame_index`` points at one of its snapshots.
+        """
+        if self._rollout is None:
+            raise RuntimeError("DbC Blocked: force field requires an optimized rollout")
+        frame_count = len(self._rollout.snapshots)
+        if not 0 <= self._frame_index < frame_count:
+            raise RuntimeError("DbC Blocked: frame index is outside the rollout")
+        if self._force_fields is None or len(self._force_fields) != frame_count:
+            self._force_fields = swing_force_fields(
+                self._config(),
+                self._rollout,
+                DEFAULT_POLICY_DT_S,
+            )
+        return self._force_fields[self._frame_index]
 
     def _toggle_playback(self) -> None:
         if self._rollout is None:
@@ -1080,7 +1099,5 @@ def create_swingset_tab() -> QWidget:
     return SwingsetTab()
 
 
-from .motion_tabs_chain import (  # noqa: E402
-    ChainDynamicsTab,
-    create_chain_tab,
-)
+from .motion_tabs_chain import ChainDynamicsTab as ChainDynamicsTab  # noqa: E402
+from .motion_tabs_chain import create_chain_tab as create_chain_tab  # noqa: E402

@@ -423,6 +423,8 @@ class MainWindow(
     def _sync_motion_tab_controls(self, _index: int | None = None) -> None:
         """Disable barbell-only controls while an analysis tab is selected."""
         enabled = self._is_exercise_tab()
+        if not enabled and (self.is_playing or self.anim_timer.isActive()):
+            self._stop_anim()
         buttons = (
             self.sidebar.opt_btn,
             self.sidebar.both_btn,

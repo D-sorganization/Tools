@@ -24,13 +24,24 @@ def _require_body_for_animation(body: BodyModel | None) -> BodyModel:
     return body
 
 
+def _active_exercise_index(window: MainWindow) -> int | None:
+    """Return the active barbell exercise index, or ``None`` for analysis tabs."""
+    idx = window.tabs.currentIndex()
+    if 0 <= idx < len(window.EXERCISE_CONFIGS):
+        return idx
+    return None
+
+
 class AnimationControlMixin:
     """Mixin providing animation playback for MainWindow."""
 
     is_playing: bool
 
     def _toggle_play(self: MainWindow) -> None:  # type: ignore[override]
-        idx = self.tabs.currentIndex()
+        idx = _active_exercise_index(self)
+        if idx is None:
+            self._stop_anim()
+            return
         r, _fi, _body, _dyn = self._snapshot_idx_state(idx)
         if r is None:
             return
@@ -49,9 +60,13 @@ class AnimationControlMixin:
     def _anim_step(self: MainWindow) -> None:  # type: ignore[override]
         if not self.is_playing:
             return
-        idx = self.tabs.currentIndex()
+        idx = _active_exercise_index(self)
+        if idx is None:
+            self._stop_anim()
+            return
         r, fi, body, dyn = self._snapshot_idx_state(idx)
         if r is None:
+            self._stop_anim()
             return
 
         _, etype = self.EXERCISE_CONFIGS[idx]
@@ -75,7 +90,10 @@ class AnimationControlMixin:
         self.anim_timer.start(delay)
 
     def _step_fwd(self: MainWindow) -> None:  # type: ignore[override]
-        idx = self.tabs.currentIndex()
+        idx = _active_exercise_index(self)
+        if idx is None:
+            self._stop_anim()
+            return
         r, fi, body, dyn = self._snapshot_idx_state(idx)
         if r is None:
             return
@@ -99,7 +117,10 @@ class AnimationControlMixin:
         )
 
     def _step_back(self: MainWindow) -> None:  # type: ignore[override]
-        idx = self.tabs.currentIndex()
+        idx = _active_exercise_index(self)
+        if idx is None:
+            self._stop_anim()
+            return
         r, fi, body, dyn = self._snapshot_idx_state(idx)
         if r is None:
             return
@@ -118,7 +139,10 @@ class AnimationControlMixin:
         )
 
     def _rewind(self: MainWindow) -> None:  # type: ignore[override]
-        idx = self.tabs.currentIndex()
+        idx = _active_exercise_index(self)
+        if idx is None:
+            self._stop_anim()
+            return
         r, _fi, body, dyn = self._snapshot_idx_state(idx)
         if r is None:
             return
@@ -135,7 +159,10 @@ class AnimationControlMixin:
         )
 
     def _jump_to_end(self: MainWindow) -> None:  # type: ignore[override]
-        idx = self.tabs.currentIndex()
+        idx = _active_exercise_index(self)
+        if idx is None:
+            self._stop_anim()
+            return
         r, _fi, body, dyn = self._snapshot_idx_state(idx)
         if r is None:
             return

@@ -11,14 +11,25 @@
 | License          | MIT                                                     |
 | Package Name     | `movement-optimizer`                                    |
 | Current Version  | `1.0.0`                                                 |
-| Spec Version     | `1.0.12`                                                |
-| Last Spec Update | 2026-06-15                                              |
+| Spec Version     | `1.0.13`                                                |
+| Last Spec Update | 2026-06-16                                              |
 
 ## 2. Purpose
 
 Movement-Optimizer is a biomechanics trajectory optimizer for barbell exercises. It models the body as a sagittal-plane planar chain, computes trajectories with Lagrangian inverse dynamics, and exposes both a GUI workflow and a headless CLI for batch optimisation.
 
 ## 3. Scope
+
+### 2026-06-16 Update
+
+- Analysis-tab playback now has explicit responsiveness contracts: switching
+  from a playing barbell exercise into Swingset Model or Chain Dynamics stops
+  the barbell animation timer before the shared playback controls retarget.
+- Swingset and chain overlays cache rollout-wide force fields, avoiding
+  repeated finite-difference and torque recomputation during every animation
+  frame.
+- Numeric sliders no longer emit continuous drag-time refreshes, and the
+  Swingset optimizer action is styled as the primary command.
 
 ### In Scope
 

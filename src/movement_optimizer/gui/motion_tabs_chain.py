@@ -36,7 +36,8 @@ from movement_optimizer.models.chain_dynamics import (
     steps_for_duration,
 )
 from movement_optimizer.models.chain_forces import (
-    chain_force_field,
+    ChainForceField,
+    chain_force_fields,
     chain_force_history,
 )
 
@@ -70,6 +71,7 @@ class ChainDynamicsTab(QWidget):
         )
         self._controls: dict[str, NumericControl] = {}
         self._force_toggles: dict[str, QCheckBox] = {}
+        self._force_fields: tuple[ChainForceField, ...] | None = None
         self._rollout: ChainRollout | None = None
         self._frame_index = 0
         self._dt_s = 0.01
@@ -344,6 +346,7 @@ class ChainDynamicsTab(QWidget):
         self._timer.stop()
         self.play_button.setText("Play")
         self._rollout = None
+        self._force_fields = None
         try:
             config = self._config()
             state = self._state()
@@ -379,6 +382,7 @@ class ChainDynamicsTab(QWidget):
         except ValueError as exc:
             self.metric_label.setText(str(exc))
             return
+        self._force_fields = None
         self._frame_index = 0
         self._render_chain_frame()
         self._populate_analysis_panel()
@@ -391,6 +395,7 @@ class ChainDynamicsTab(QWidget):
     def _populate_analysis_panel(self) -> None:
         if self._rollout is None:
             return
+        self._force_fields = chain_force_fields(self._config(), self._rollout, self._dt_s)
         history = chain_force_history(self._config(), self._rollout, self._dt_s)
         time_s = history.time_s
         count = len(time_s)
@@ -411,7 +416,7 @@ class ChainDynamicsTab(QWidget):
         if self._rollout is None:
             self.canvas.set_overlays(OverlayScene())
             return
-        field = chain_force_field(self._config(), self._rollout, self._dt_s, self._frame_index)
+        field = self._current_force_field()
         scene = _chain_overlay_scene(
             field,
             gravity=self._force_toggles["gravity"].isChecked(),
@@ -419,6 +424,21 @@ class ChainDynamicsTab(QWidget):
             net=self._force_toggles["net"].isChecked(),
         )
         self.canvas.set_overlays(scene)
+
+    def _current_force_field(self) -> ChainForceField:
+        """Return the cached force field for the active chain frame.
+
+        Preconditions:
+            A rollout exists and ``_frame_index`` points at one of its frames.
+        """
+        if self._rollout is None:
+            raise RuntimeError("DbC Blocked: force field requires a simulated rollout")
+        frame_count = self._rollout.positions.shape[0]
+        if not 0 <= self._frame_index < frame_count:
+            raise RuntimeError("DbC Blocked: frame index is outside the rollout")
+        if self._force_fields is None or len(self._force_fields) != frame_count:
+            self._force_fields = chain_force_fields(self._config(), self._rollout, self._dt_s)
+        return self._force_fields[self._frame_index]
 
     def _toggle_playback(self) -> None:
         if self._rollout is None:

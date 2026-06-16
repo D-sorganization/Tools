@@ -24,7 +24,7 @@ from PyQt6.QtWidgets import (
     QSplitter,
 )
 
-from movement_optimizer.gui import motion_tabs, policy_worker
+from movement_optimizer.gui import motion_tabs, motion_tabs_chain, policy_worker
 from movement_optimizer.gui.app_icon import movement_optimizer_icon, movement_optimizer_icon_path
 from movement_optimizer.gui.main_window import MainWindow
 from movement_optimizer.gui.motion_tabs import (
@@ -88,6 +88,20 @@ def test_analysis_tabs_disable_barbell_only_controls(qapp) -> None:
     assert window.sidebar.opt_btn.isEnabled()
     assert window.sidebar.export_btn.isEnabled()
     assert window.controls.isEnabled()
+
+
+def test_switching_to_analysis_tab_stops_barbell_animation(qapp) -> None:
+    window = MainWindow()
+    window.tabs.setCurrentIndex(0)
+    window.is_playing = True
+    window.anim_timer.start(100)
+
+    window.tabs.setCurrentIndex(window.tabs.count() - 2)
+    qapp.processEvents()
+
+    assert not window.is_playing
+    assert not window.anim_timer.isActive()
+    assert window.controls.btn_play.text() == "Play"
 
 
 def test_layout_header_status_and_splitter_use_full_height(qapp) -> None:
@@ -229,6 +243,8 @@ def test_swingset_optimize_policy_action_is_sticky_above_scroll_area(qapp) -> No
 
     assert scroll_area is not None
     assert swingset.optimize_button.text() == "Optimize Swing Policy"
+    assert swingset.optimize_button.property("class") == "primary"
+    assert swingset.optimize_button.minimumHeight() >= 42
     assert swingset.optimize_button not in scroll_area.widget().findChildren(QPushButton)
 
 
@@ -609,6 +625,23 @@ def test_swingset_force_toggle_does_not_recompute(qapp) -> None:
     assert swingset.canvas._overlay is not overlay_before  # overlay rebuilt
 
 
+def test_swingset_playback_uses_cached_force_fields(qapp, monkeypatch) -> None:
+    swingset = SwingsetTab()
+    swingset._controls["budget"].set_value(50)
+    swingset._controls["cycles"].set_value(1)
+    swingset._optimize_policy()
+    _wait_for_policy_worker(qapp, swingset)
+
+    def fail_recompute(*_args, **_kwargs):
+        raise AssertionError("playback must not recompute rollout-wide swing force fields")
+
+    monkeypatch.setattr(motion_tabs, "swing_force_fields", fail_recompute)
+
+    swingset._advance_frame()
+
+    assert swingset.canvas._overlay.arrows or swingset.canvas._overlay.com_markers
+
+
 def test_swingset_force_toggle_before_optimize_is_safe(qapp) -> None:
     swingset = SwingsetTab()
     swingset._force_toggles["com"].setChecked(False)  # must not raise without a rollout
@@ -638,6 +671,23 @@ def test_chain_force_toggle_does_not_recompute(qapp) -> None:
     rollout_id = id(chain._rollout)
     chain._force_toggles["net"].setChecked(False)
     assert id(chain._rollout) == rollout_id
+
+
+def test_chain_playback_uses_cached_force_fields(qapp, monkeypatch) -> None:
+    chain = ChainDynamicsTab()
+    chain._controls["segments"].set_value(6)
+    chain._controls["duration"].set_value(0.2)
+    chain._controls["dt"].set_value(0.02)
+    chain._simulate()
+
+    def fail_recompute(*_args, **_kwargs):
+        raise AssertionError("playback must not recompute rollout-wide chain force fields")
+
+    monkeypatch.setattr(motion_tabs_chain, "chain_force_fields", fail_recompute)
+
+    chain._advance_frame()
+
+    assert chain.canvas._overlay.arrows
 
 
 def test_motion_tab_buttons_and_controls_have_tooltips(qapp) -> None:
