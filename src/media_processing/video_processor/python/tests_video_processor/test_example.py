@@ -113,6 +113,19 @@ class TestLoggerUtils:
                 root_logger.addHandler(handler)
             root_logger.setLevel(original_level)
 
+    def test_video_processor_logger_shims_share_canonical_functions(self) -> None:
+        """Both legacy logger shims must delegate to utils.logging_utils."""
+        import utils.logging_utils as canonical_logger_utils
+
+        import src.logger_utils as legacy_logger_utils
+
+        assert logger_utils.set_seeds is canonical_logger_utils.set_seeds
+        assert logger_utils.setup_logging is canonical_logger_utils.setup_logging
+        assert logger_utils.get_logger is canonical_logger_utils.get_logger
+        assert legacy_logger_utils.set_seeds is canonical_logger_utils.set_seeds
+        assert legacy_logger_utils.setup_logging is canonical_logger_utils.setup_logging
+        assert legacy_logger_utils.get_logger is canonical_logger_utils.get_logger
+
 
 class TestNegativeCases:
     """Test negative cases and error handling."""

@@ -1,69 +1,22 @@
-"""Logging utilities - Uses shared logging utilities.
-
-This module re-exports from the central utils.logging_utils module.
-New code should use utils.logging_utils directly.
-"""
+"""Deprecated logging utility shim for ``video_processor_src``."""
 
 import logging
+import sys
 import warnings
+from typing import Any
 
-# Try to import from shared utils
-try:
-    from utils.logging_utils import (
-        DEFAULT_FORMAT,
-        DEFAULT_SEED,
-        get_logger,
-        logger,
-        set_seeds,
-        setup_logging,
-    )
+import utils.logging_utils as _logging_utils
+from utils.logging_utils import (
+    DEFAULT_FORMAT,
+    DEFAULT_SEED,
+    get_logger,
+    logger,
+    set_seeds,
+    setup_logging,
+)
 
-    # Provide backward-compatible aliases
-    LOG_FORMAT = DEFAULT_FORMAT
-    LOG_LEVEL = logging.INFO
-
-except ImportError:
-    # Minimal fallback if shared utils not available
-    import sys
-
-    DEFAULT_SEED = 42
-    LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    DEFAULT_FORMAT = LOG_FORMAT
-    LOG_LEVEL = logging.INFO
-    logger = logging.getLogger(__name__)
-
-    def get_logger(name: str | None = None) -> logging.Logger:
-        """Get a logger instance."""
-        if name is None:
-            name = __name__
-        return logging.getLogger(name)
-
-    def setup_logging(
-        level: int = LOG_LEVEL,
-        format_string: str = LOG_FORMAT,
-    ) -> None:
-        """Set up logging configuration."""
-        fmt = format_string if format_string is not None else LOG_FORMAT
-        logging.basicConfig(
-            level=level,
-            format=fmt,
-            handlers=[logging.StreamHandler(sys.stdout)],
-        )
-
-    def set_seeds(seed: int = DEFAULT_SEED) -> None:
-        """Set random seeds for reproducibility."""
-        import random
-
-        if seed < 0:
-            raise ValueError(f"expected non-negative integer, got: {seed}")
-        random.seed(seed)
-        try:
-            import numpy as np
-
-            np_random = np.random
-            np_random.seed(seed)
-        except ImportError:
-            pass
+LOG_FORMAT = DEFAULT_FORMAT
+LOG_LEVEL = logging.INFO
 
 
 # Issue deprecation warning for direct imports
@@ -83,3 +36,11 @@ __all__ = [
     "set_seeds",
     "setup_logging",
 ]
+
+
+def __getattr__(name: str) -> Any:
+    if name == "TORCH_AVAILABLE":
+        return "torch" in sys.modules or _logging_utils.TORCH_AVAILABLE
+    if name == "NUMPY_AVAILABLE":
+        return _logging_utils.NUMPY_AVAILABLE
+    raise AttributeError(name)

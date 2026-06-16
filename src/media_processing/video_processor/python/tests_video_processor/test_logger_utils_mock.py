@@ -3,6 +3,8 @@
 import importlib
 import sys
 from pathlib import Path
+from types import ModuleType
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 # Bootstrap for test discovery
@@ -14,8 +16,11 @@ ensure_paths(_REPO_ROOT)
 
 def test_torch_available_seeds() -> None:
     """Test set_seeds when torch is available."""
-    # Mock torch module
-    mock_torch = MagicMock()
+    # Mock torch as a real module because utils.logging_utils intentionally
+    # accepts only module-shaped sys.modules entries.
+    mock_torch: Any = ModuleType("torch")
+    mock_torch.manual_seed = MagicMock()
+    mock_torch.cuda = MagicMock()
     mock_torch.cuda.is_available.return_value = True
 
     # Patch sys.modules to include torch

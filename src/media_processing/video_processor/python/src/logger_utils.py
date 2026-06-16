@@ -5,7 +5,11 @@ New code should use utils.logging_utils directly.
 """
 
 import logging
+import sys
 import warnings
+from typing import Any
+
+import utils.logging_utils as _logging_utils
 
 # Re-export from shared logging utilities
 from utils.logging_utils import (
@@ -38,3 +42,11 @@ __all__ = [
     "set_seeds",
     "setup_logging",
 ]
+
+
+def __getattr__(name: str) -> Any:
+    if name == "TORCH_AVAILABLE":
+        return "torch" in sys.modules or _logging_utils.TORCH_AVAILABLE
+    if name == "NUMPY_AVAILABLE":
+        return _logging_utils.NUMPY_AVAILABLE
+    raise AttributeError(name)

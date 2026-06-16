@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.492                                    |
+| **Spec Version**        | 1.1.493                                    |
 | **Last Spec Update**    | 2026-06-15                                 |
 
 ## 2. Purpose & Mission
@@ -73,6 +73,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   configuration contracts instead of placeholder `assert True` checks. The
   negative-seed regression now accepts the canonical shared logger utility's
   fail-fast non-negative message.
+- Video processor logger shims now delegate to the canonical
+  `utils.logging_utils` implementation instead of carrying a standalone
+  fallback copy, with regression coverage that pins both legacy import paths to
+  the same seed/logging functions.
 - CI source-keyed test selection keeps Sidekick agent-only changes focused on
   `tests/unit/sidekick/agent/test_action_service.py`. Agent contract changes no
   longer pull unrelated Qt runtime/sidebar suites into every matrix lane; broad
@@ -827,6 +831,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 | 2026-06-15 | 1.1.492 | fix(vessel-drafter, #3359): align the standalone contract fallback with the shared/data-processor contract semantics by adding typed postcondition errors, honoring `DBC_LEVEL=off`, routing legacy validation wrappers through `require()`, keeping fallback definitions mypy-clean, routing source-keyed CI for contract-only edits to the contract suite, and covering the isolated fallback import path. |
+| 2026-06-15 | 1.1.493 | refactor(video-processor, #3359): remove the inline fallback logger implementation from `video_processor_src.logger_utils`, keep both video-processor logger shims delegated to `utils.logging_utils`, and add regression coverage for canonical function identity plus module-shaped torch seeding. |
 | 2026-06-15 | 1.1.491 | fix(pendulum, #3359): source pendulum simulator imperial foot-pound torque, energy, and power factors from shared Sidekick unit constants, add full-precision foot-pound aliases, and cover `lbf·ft`, `lbf·in`, `ft·lbf`, and `ft·lbf/s` round trips. |
 | 2026-06-15 | 1.1.490 | refactor(compatibility, #3359): make the legacy `utils.compatibility` shim re-export the shared `UTC` and `StrEnum` primitives while preserving `check_python_version()`, and add identity regression coverage so utility callers cannot split compatibility class identity from shared modules. |
 | 2026-06-15 | 1.1.488 | ci(quality-check, #3359): add `scripts/quality-check.py --report-only`, wire the banned-pattern scan into pre-commit and the CI quality-gate summary without blocking legacy findings, add CLI regression coverage for blocking versus report-only exits, and update user-facing docs to describe the report-only ratchet. |
