@@ -22,6 +22,14 @@ logger = logging.getLogger(__name__)
 ROOT = Path.cwd()
 DEFAULT_MAX_BYTES = 1_000_000
 DEFAULT_MAX_SOURCE_LINES = 1500
+OVERSIZED_SOURCE_LINE_BASELINES = {
+    # Legacy MATLAB GUI monolith tracked by Tools #3359. It may be touched for
+    # cleanup, but it must not grow beyond this frozen line-count budget.
+    (
+        "src/media_processing/audio_processor/matlab/audio_signal_processor/gui/"
+        "MainWindow.m"
+    ): 3528,
+}
 
 SOURCE_SUFFIXES = {
     ".c",
@@ -126,6 +134,13 @@ def rel(path: Path) -> str:
     return path.as_posix()
 
 
+def repo_rel(path: Path) -> str:
+    try:
+        return path.relative_to(ROOT).as_posix()
+    except ValueError:
+        return path.as_posix()
+
+
 def is_source(path: str) -> bool:
     posix = path.replace("\\", "/")
     suffix = Path(posix).suffix.lower()
@@ -161,6 +176,14 @@ def check_file_size(args: argparse.Namespace) -> int:
                 text = path.read_text(encoding="utf-8", errors="ignore")
                 lines = text.count("\n") + 1
             except OSError:
+                continue
+            oversized_baseline = OVERSIZED_SOURCE_LINE_BASELINES.get(repo_rel(path))
+            if oversized_baseline is not None:
+                if lines > oversized_baseline:
+                    failures.append(
+                        f"{rel(path)} has {lines} lines; baseline is "
+                        f"{oversized_baseline}"
+                    )
                 continue
             if lines > args.max_source_lines:
                 failures.append(
