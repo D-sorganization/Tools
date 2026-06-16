@@ -31,7 +31,7 @@ import logging
 from dataclasses import dataclass
 from typing import Any
 
-from src.shared.python.ai.tool_registry import ToolCategory, ToolRegistry
+from shared.python.ai.tool_registry import ToolCategory, ToolRegistry
 
 logger = logging.getLogger(__name__)
 
@@ -118,7 +118,7 @@ def _try_local_api() -> _ApiHandle | None:
     copy of the Tools canonical, so the six functions are imported directly.
     """
     try:
-        from src.shared.python.codemap import api as local_api
+        from shared.python.codemap import api as local_api
     except ImportError:
         return None
     required = (

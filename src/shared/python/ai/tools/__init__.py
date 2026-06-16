@@ -1,12 +1,12 @@
 """AI Tools module for agent capabilities."""
 
-from src.shared.python.ai.tools.agent_control import (
+from shared.python.ai.tools.agent_control import (
     AgentActionResult,
     AgentController,
     EngineStatus,
     create_agent_tools_for_registry,
 )
-from src.shared.python.ai.tools.cli_tools import (
+from shared.python.ai.tools.cli_tools import (
     ClaudeCodeTool,
     CLIExecutionResult,
     CLIToolConfig,
@@ -15,7 +15,7 @@ from src.shared.python.ai.tools.cli_tools import (
     ShellTool,
     create_cli_tools_for_registry,
 )
-from src.shared.python.ai.tools.codemap_tools import (
+from shared.python.ai.tools.codemap_tools import (
     CODEMAP_TOOL_NAMES,
     register_codemap_tools,
 )

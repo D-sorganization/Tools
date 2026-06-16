@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from src.shared.python.ai.tool_registry import ToolCategory, ToolRegistry
+from shared.python.ai.tool_registry import ToolCategory, ToolRegistry
 
 
 def register_file_tools(registry: ToolRegistry) -> None:  # noqa: C901
