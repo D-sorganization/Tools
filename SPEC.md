@@ -27,14 +27,22 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.492                                    |
-| **Last Spec Update**    | 2026-06-15                                 |
+| **Spec Version**        | 1.1.493                                    |
+| **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-06-16 Update
+
+- Video processor logging now has one compatibility shim:
+  `video_processor_src.logger_utils` delegates to canonical `utils.logging_utils`
+  for seed setup, torch/numpy optional backend flags, logger construction, and
+  root logging configuration. The obsolete `python/src` package-root shim was
+  removed.
 
 ### 2026-06-15 Update
 
@@ -826,6 +834,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-16 | 1.1.493 | refactor(video-processor, #3359): collapse duplicate logger utility shims by keeping `video_processor_src.logger_utils` as the single compatibility facade over canonical `utils.logging_utils`, preserving dynamic torch/numpy backend state and deleting the obsolete `python/src` package-root shim. |
 | 2026-06-15 | 1.1.492 | fix(vessel-drafter, #3359): align the standalone contract fallback with the shared/data-processor contract semantics by adding typed postcondition errors, honoring `DBC_LEVEL=off`, routing legacy validation wrappers through `require()`, keeping fallback definitions mypy-clean, routing source-keyed CI for contract-only edits to the contract suite, and covering the isolated fallback import path. |
 | 2026-06-15 | 1.1.491 | fix(pendulum, #3359): source pendulum simulator imperial foot-pound torque, energy, and power factors from shared Sidekick unit constants, add full-precision foot-pound aliases, and cover `lbf·ft`, `lbf·in`, `ft·lbf`, and `ft·lbf/s` round trips. |
 | 2026-06-15 | 1.1.490 | refactor(compatibility, #3359): make the legacy `utils.compatibility` shim re-export the shared `UTC` and `StrEnum` primitives while preserving `check_python_version()`, and add identity regression coverage so utility callers cannot split compatibility class identity from shared modules. |

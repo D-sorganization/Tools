@@ -2,44 +2,31 @@
 
 import importlib
 import sys
-from pathlib import Path
-from unittest.mock import MagicMock, patch
-
-# Bootstrap for test discovery
-_REPO_ROOT = Path(__file__).resolve().parents[5]
-from sidekick.bootstrap import ensure_paths  # noqa: E402
-
-ensure_paths(_REPO_ROOT)
+from types import ModuleType
+from typing import Any, cast
+from unittest.mock import Mock, patch
 
 
 def test_torch_available_seeds() -> None:
     """Test set_seeds when torch is available."""
-    # Mock torch module
-    mock_torch = MagicMock()
-    mock_torch.cuda.is_available.return_value = True
+    mock_torch = cast(Any, ModuleType("torch"))
+    manual_seed = Mock()
+    cuda = Mock()
+    cuda.is_available.return_value = True
+    mock_torch.manual_seed = manual_seed
+    mock_torch.cuda = cuda
 
-    # Patch sys.modules to include torch
     with patch.dict(sys.modules, {"torch": mock_torch}):
-        # Import (or reload) logger_utils to trigger torch import detection
-        import src.logger_utils
+        import video_processor_src.logger_utils
 
-        importlib.reload(src.logger_utils)
+        importlib.reload(video_processor_src.logger_utils)
 
-        # Verify TORCH_AVAILABLE is True
-        assert src.logger_utils.TORCH_AVAILABLE is True
+        video_processor_src.logger_utils.set_seeds(123)
 
-        # Call set_seeds
-        src.logger_utils.set_seeds(123)
+        assert video_processor_src.logger_utils.TORCH_AVAILABLE is True
 
-        # Verify torch functions were called
-        mock_torch.manual_seed.assert_called_with(123)
-        mock_torch.cuda.manual_seed_all.assert_called_with(123)
-        mock_torch.cuda.manual_seed.assert_called_with(123)
+        manual_seed.assert_called_with(123)
+        cuda.manual_seed_all.assert_called_with(123)
+        cuda.manual_seed.assert_called_with(123)
 
-    # Cleanup: reload logger_utils without mock to restore original state
-    # (assuming torch is NOT installed in the environment,
-    # which caused the missing coverage)
-    importlib.reload(src.logger_utils)
-    # Note: If torch IS installed in the env,
-    # this reload will set TORCH_AVAILABLE=True again,
-    # which is fine. The test assumes we want to force True to test that branch.
+    importlib.reload(video_processor_src.logger_utils)
