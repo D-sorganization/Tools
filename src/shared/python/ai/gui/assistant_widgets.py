@@ -7,7 +7,6 @@ from collections.abc import Callable
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
-from compatibility import UTC
 from PyQt6 import QtGui
 from PyQt6.QtCore import QObject, Qt, QThread, pyqtSignal
 from PyQt6.QtWidgets import (
@@ -22,6 +21,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from shared.python.compatibility import UTC
 from src.shared.python.ai.types import ConversationContext
 from src.shared.python.logging_pkg.logging_config import get_logger
 from src.shared.python.theme.style_constants import Styles

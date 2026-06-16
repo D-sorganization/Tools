@@ -20,7 +20,7 @@ from typing import TYPE_CHECKING, Any, Protocol, cast
 if TYPE_CHECKING:
     from enum import StrEnum
 else:
-    from compatibility import StrEnum
+    from shared.python.compatibility import StrEnum
 
 __all__ = [
     "IntegrationStatus",

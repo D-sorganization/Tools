@@ -25,8 +25,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from compatibility import UTC
-
+from shared.python.compatibility import UTC
 from src.shared.python.ai.tool_registry import ToolCategory, get_global_registry
 
 logger = logging.getLogger(__name__)

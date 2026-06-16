@@ -18,7 +18,7 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from enum import StrEnum
 else:
-    from compatibility import StrEnum
+    from shared.python.compatibility import StrEnum
 
 logger = logging.getLogger(__name__)
 
