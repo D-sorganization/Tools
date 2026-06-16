@@ -166,17 +166,18 @@ def list_endpoints() -> dict[str, list[str]]:
 def _calculator_route_signatures(routes: Iterable[Any]) -> set[tuple[str, str]]:
     signatures: set[tuple[str, str]] = set()
     for route in routes:
-        path = getattr(route, "path", None)
+        raw_path = getattr(route, "path", None)
         methods = getattr(route, "methods", None)
-        if (
-            not isinstance(path, str)
-            or not path.startswith("/api/calc/")
-            or path == "/api/calc/endpoints"
-            or not methods
-        ):
+        if raw_path is None or not methods:
             continue
+
+        path = str(raw_path)
+        if not path.startswith("/api/calc/") or path == "/api/calc/endpoints":
+            continue
+
         for method in methods:
-            if isinstance(method, str) and method not in {"HEAD", "OPTIONS"}:
+            method = str(method)
+            if method not in {"HEAD", "OPTIONS"}:
                 signatures.add((method, path))
     return signatures
 
