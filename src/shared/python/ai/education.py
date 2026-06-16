@@ -18,8 +18,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from src.shared.python.ai.types import ExpertiseLevel
-from src.shared.python.logging_pkg.logging_config import get_logger
+from shared.python.ai.types import ExpertiseLevel
+from shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
 
@@ -482,14 +482,14 @@ def _load_data_file_entries(
             )
 
     try:
-        from src.shared.python.ai.glossary_data_core import get_core_entries
+        from shared.python.ai.glossary_data_core import get_core_entries
 
         _load_entries(get_core_entries())
     except ImportError:
         logger.debug("Core glossary data not available")
 
     try:
-        from src.shared.python.ai.glossary_data_extended import get_extended_entries
+        from shared.python.ai.glossary_data_extended import get_extended_entries
 
         _load_entries(get_extended_entries())
     except ImportError:
