@@ -1,6 +1,6 @@
 [
   {
-    "file": "migrate_print_to_logging.py",
+    "file": "scripts/convert_print_to_logging.py",
     "line_num": 53615,
     "severity": "MAJOR",
     "message": "Print statement found (use logging)",

@@ -67,7 +67,7 @@ Design by Contract evidence includes validation, assertions, typed models, expli
 - Evidence: `launch.py`
 - Evidence: `launch_signal_toolkit.py`
 - Evidence: `matlab/+rotation_converter/RigidTransform.m`
-- Evidence: `migrate_print_to_logging.py`
+- Evidence: `scripts/convert_print_to_logging.py`
 
 ### E. Reliability and Error Handling: C (76/100)
 
@@ -96,7 +96,7 @@ Evaluates function size, script/module size, and single responsibility using sta
 - Evidence: `scripts/mypy_autofix_agent.py (724 lines)`
 - Evidence: `src/asteroid_jumper/renderer.py (551 lines)`
 - Evidence: `matlab/test_rotation_converter.m (coarse avg 84 lines/definition)`
-- Evidence: `scripts/generate_assessments.py (coarse avg 315 lines/definition)`
+- Evidence: `scripts/generate_comprehensive_assessment.py (coarse avg 315 lines/definition)`
 - Evidence: `scripts/quality-check.py (coarse avg 92 lines/definition)`
 
 ### G. Testing and TDD Posture: B (82/100)
@@ -165,9 +165,9 @@ DRY is assessed through duplicate filename clusters and TODO/FIXME density as st
 - Evidence: `cli appears in 4 files`
 - Evidence: `config appears in 4 files`
 - Evidence: `scripts/analyze_completist_data.py`
-- Evidence: `scripts/generate_assessments.py`
 - Evidence: `scripts/generate_comprehensive_assessment.py`
-- Evidence: `scripts/generate_fresh_assessments.py`
+- Evidence: `scripts/generate_comprehensive_assessment.py`
+- Evidence: `scripts/generate_comprehensive_assessment.py`
 - Evidence: `scripts/legacy_tools/code_quality_check.py`
 
 ### L. API Surface and Law of Demeter: F (58/100)
@@ -192,7 +192,7 @@ Checks for logging, metrics, monitoring, and operational artifacts.
 - Evidence: `.github/workflows/Code-Metrics.yml`
 - Evidence: `docs/assessments/Assessment_L_Logging.md`
 - Evidence: `docs/assessments/issues/ISSUE_LOGGING_SPLIT.md`
-- Evidence: `migrate_print_to_logging.py`
+- Evidence: `scripts/convert_print_to_logging.py`
 - Evidence: `scripts/convert_print_to_logging.py`
 - Evidence: `src/asteroid_jumper/metrics_panel.py`
 - Evidence: `src/data_processing/data_processor/python/data_processor/logging_config.py`
