@@ -84,6 +84,10 @@ class PowerSupplyController:
         # True when the output clamp is actively limiting the command (the
         # setpoint would otherwise drive the AO above output_clamp_percent).
         self._output_clamped = False
+        # E-stop latch. While set, the controller forces output to zero, refuses
+        # to arm, and rejects setpoints until clear_estop() is called. This is a
+        # one-way kill — it must be explicitly cleared by an operator.
+        self._estopped = False
 
     @property
     def state(self) -> PowerSupplyState:
@@ -141,6 +145,13 @@ class PowerSupplyController:
         """
         if not isinstance(on, bool):
             raise TypeError(f"on must be bool, got {type(on).__name__}")
+        if self._estopped:
+            # A latched E-stop cannot be armed around. Output stays zero until
+            # the operator explicitly clears the E-stop.
+            if on:
+                logger.warning("permissive ON ignored — E-stop is latched")
+            self._permissive = False
+            return
         self._permissive = on
         if self._state == PowerSupplyState.TRIPPED:
             return
@@ -176,6 +187,10 @@ class PowerSupplyController:
         v = float(value_a)
         if not math.isfinite(v):
             raise ValueError(f"value_a must be finite, got {v}")
+
+        if self._estopped:
+            logger.warning("current setpoint ignored — E-stop is latched")
+            return 0.0
 
         clamped = float(
             max(
@@ -230,6 +245,10 @@ class PowerSupplyController:
             raise ValueError(f"value_w must be finite, got {w}")
         if w < 0.0:
             raise ValueError(f"value_w must be non-negative, got {w}")
+
+        if self._estopped:
+            logger.warning("power setpoint ignored — E-stop is latched")
+            return 0.0
 
         if self._last_v < 0.1:
             logger.warning(
@@ -310,12 +329,55 @@ class PowerSupplyController:
         )
 
     def _should_force_output_zero(self) -> bool:
-        """All three "kill the output now" conditions in one place."""
+        """All "kill the output now" conditions in one place."""
         return (
-            self._state != PowerSupplyState.RUNNING
+            self._estopped
+            or self._state != PowerSupplyState.RUNNING
             or not self._permissive
             or bool(self._trips)
         )
+
+    def engage_estop(self) -> None:
+        """Latch the emergency stop: force output to zero and disarm.
+
+        This is the software half of the kill switch. It immediately drops the
+        commanded output to zero (via the latch checked in `tick()`), clears the
+        setpoint, turns permissive off, and returns the state machine to IDLE.
+        The latch persists — `set_permissive(True)` and setpoint commands are
+        rejected — until `clear_estop()` is called.
+
+        Postcondition: estopped; permissive False; state IDLE; setpoint 0.
+        """
+        self._estopped = True
+        self._permissive = False
+        self._setpoint_a = 0.0
+        self._setpoint_w = None
+        self._state = PowerSupplyState.IDLE
+        self._reset_slew_state()
+        self._output_clamped = False
+        logger.error("E-STOP engaged — power-supply output latched to zero")
+
+    def clear_estop(self) -> None:
+        """Release the emergency-stop latch.
+
+        Leaves the controller IDLE with permissive off, so the operator must
+        deliberately re-arm (permissive on) and re-enter a setpoint before any
+        output can flow again.
+
+        Postcondition: not estopped; permissive False; state IDLE; setpoint 0.
+        """
+        if not self._estopped:
+            return
+        self._estopped = False
+        self._permissive = False
+        self._setpoint_a = 0.0
+        self._setpoint_w = None
+        self._state = PowerSupplyState.IDLE
+        logger.warning("E-stop cleared — controller idle, re-arm required")
+
+    @property
+    def estopped(self) -> bool:
+        return self._estopped
 
     def _reset_slew_state(self) -> None:
         """Wipe slew tracker so the next RUNNING period starts at 0 % with
