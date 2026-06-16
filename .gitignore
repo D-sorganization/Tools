@@ -204,3 +204,7 @@ collect_all.txt
 failed2848.txt
 failed2852.txt
 =2.0.0
+
+# SQLite WAL sidecar files (generated at runtime)
+src/p1am_control_system/backend/dcs_scada.db-wal
+src/p1am_control_system/backend/dcs_scada.db-shm
