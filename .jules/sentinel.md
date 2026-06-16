@@ -18,3 +18,7 @@
 **Vulnerability:** Found a validation bypass in `cli_tools.py` where a user-controlled token was directly compared with a list of dangerous executables without properly handling whitespace characters around it. This could allow dangerous shell commands wrapped with spaces (e.g., `--exec="  /bin/rm  "`) to bypass the `token in dangerous` and assignment parsing checks.
 **Learning:** Checking for blocklisted items must thoroughly normalize the input strings (e.g. using `strip()`) before performing string and path-matching comparisons to prevent bypass by padding with spaces.
 **Prevention:** Always normalize the strings extracted from user inputs using `.strip()` before verifying them against a blocklist, especially when processing tokenized arguments parsed from shell commands.
+## 2026-06-16 - [Missing auth on power_supply_integration.py routers]
+**Vulnerability:** Found unauthenticated API routes in `power_supply_integration.py` that could modify configuration and setpoints.
+**Learning:** Newly created routers (like `power_supply`) aren't automatically protected by the main app's dependencies.
+**Prevention:** Apply `Depends(require_admin_key)` to mutating endpoints inside newly added APIRouters.
