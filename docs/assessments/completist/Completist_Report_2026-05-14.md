@@ -57,7 +57,7 @@ pie title Issues by Module
 | `./src/shared/python/ai/auth/authentication.py`                                       | # TODO(#5227): Exchange refresh token for new access token              | TRACKED_TASK |
 | `./scripts/generate_comprehensive_assessment.py`                                      | stats["todos"] += content.count("TODO")                                 | TRACKED_TASK |
 | `./scripts/generate_comprehensive_assessment.py`                                      | grades["O"] = (max(0, score_o), f"Technical Debt (TODO+FIXME): {debt}") | TRACKED_TASK |
-| `./scripts/generate_fresh_assessments.py`                                             | stats["todos"] += content.count("TODO")                                 | TRACKED_TASK |
+| `./scripts/generate_comprehensive_assessment.py`                                      | stats["todos"] += content.count("TODO")                                 | TRACKED_TASK |
 | `./tests/tools/test_matlab_quality_utils.py`                                          | Path("script.m"), "% TODO: fix this", 5, issues                         | TRACKED_TASK |
 
 ## Technical Debt Register
@@ -68,7 +68,7 @@ pie title Issues by Module
 | `./src/tools/matlab_quality_utils.py`            | 333  | (r"\bHACK\b", "HACK comment found"),                                       | HACK  |
 | `./src/tools/matlab_quality_utils.py`            | 334  | (r"\bXXX\b", "XXX comment found"),                                         | XXX   |
 | `./scripts/generate_comprehensive_assessment.py` | 143  | stats["fixmes"] += content.count("FIXME")                                  | FIXME |
-| `./scripts/generate_fresh_assessments.py`        | 121  | stats["fixmes"] += content.count("FIXME")                                  | FIXME |
+| `./scripts/generate_comprehensive_assessment.py` | 121  | stats["fixmes"] += content.count("FIXME")                                  | FIXME |
 | `./tests/tools/test_matlab_quality_utils.py`     | 95   | Path("script.m"), "% FIXME: broken", 3, issues                             | FIXME |
 
 ## Recommended Implementation Order
@@ -85,7 +85,7 @@ Prioritized by Impact (High) and Complexity (Low).
 | 7 | `./src/data_processing/data_processor/python/data_processor/core/script_generator.py` | # The "TODO" below is intentional generated-script content for the user | 1/2/3 |
 | 8 | `./scripts/generate_comprehensive_assessment.py` | stats["todos"] += content.count("TODO") | 1/2/3 |
 | 9 | `./scripts/generate_comprehensive_assessment.py` | grades["O"] = (max(0, score_o), f"Technical Debt (TODO+FIXME): {debt}") | 1/2/3 |
-| 10 | `./scripts/generate_fresh_assessments.py` | stats["todos"] += content.count("TODO") | 1/2/3 |
+| 10 | `./scripts/generate_comprehensive_assessment.py` | stats["todos"] += content.count("TODO") | 1/2/3 |
 | 11 | `./src/pendulum_simulator/src/double_pendulum_golf/gui/simulation_panel/_export_mixin.py` | raise NotImplementedError | 1/2/4 |
 | 12 | `./src/pendulum_simulator/src/double_pendulum_golf/gui/simulation_panel/_lifecycle_mixin.py` | raise NotImplementedError | 1/2/4 |
 | 13 | `./src/pendulum_simulator/src/double_pendulum_golf/gui/simulation_panel/_lifecycle_mixin.py` | Raises NotImplementedError in mixin context where QWidget is not yet | 1/2/4 |

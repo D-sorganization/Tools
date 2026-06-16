@@ -88,7 +88,7 @@ pie title Issues by Module
 | `./src/shared/python/ai/auth/authentication.py`                                       | # TODO(#5227): Exchange refresh token for new access token                 | TRACKED_TASK |
 | `./scripts/generate_comprehensive_assessment.py`                                      | stats["todos"] += content.count("TODO")                                    | TRACKED_TASK |
 | `./scripts/generate_comprehensive_assessment.py`                                      | grades["O"] = (max(0, score_o), f"Technical Debt (TODO+FIXME): {debt}")    | TRACKED_TASK |
-| `./scripts/generate_fresh_assessments.py`                                             | stats["todos"] += content.count("TODO")                                    | TRACKED_TASK |
+| `./scripts/generate_comprehensive_assessment.py`                                      | stats["todos"] += content.count("TODO")                                    | TRACKED_TASK |
 
 ## Technical Debt Register
 
@@ -100,7 +100,7 @@ pie title Issues by Module
 | `./src/tools/matlab_quality_utils.py`            | 333  | (r"\bHACK\b", "HACK comment found"),                                                | HACK  |
 | `./src/tools/matlab_quality_utils.py`            | 334  | (r"\bXXX\b", "XXX comment found"),                                                  | XXX   |
 | `./scripts/generate_comprehensive_assessment.py` | 143  | stats["fixmes"] += content.count("FIXME")                                           | FIXME |
-| `./scripts/generate_fresh_assessments.py`        | 121  | stats["fixmes"] += content.count("FIXME")                                           | FIXME |
+| `./scripts/generate_comprehensive_assessment.py` | 121  | stats["fixmes"] += content.count("FIXME")                                           | FIXME |
 
 ## Recommended Implementation Order
 

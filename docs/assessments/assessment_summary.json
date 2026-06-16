@@ -71,7 +71,7 @@
         "launch.py",
         "launch_signal_toolkit.py",
         "matlab/+rotation_converter/RigidTransform.m",
-        "migrate_print_to_logging.py"
+        "scripts/convert_print_to_logging.py"
       ],
       "notes": "Design by Contract evidence includes validation, assertions, typed models, explicit raised errors, and invariants."
     },
@@ -108,7 +108,7 @@
         "scripts/mypy_autofix_agent.py (724 lines)",
         "src/asteroid_jumper/renderer.py (551 lines)",
         "matlab/test_rotation_converter.m (coarse avg 84 lines/definition)",
-        "scripts/generate_assessments.py (coarse avg 315 lines/definition)",
+        "scripts/generate_comprehensive_assessment.py (coarse avg 315 lines/definition)",
         "scripts/quality-check.py (coarse avg 92 lines/definition)"
       ],
       "notes": "Evaluates function size, script/module size, and single responsibility using static size signals."
@@ -197,9 +197,9 @@
         "cli appears in 4 files",
         "config appears in 4 files",
         "scripts/analyze_completist_data.py",
-        "scripts/generate_assessments.py",
         "scripts/generate_comprehensive_assessment.py",
-        "scripts/generate_fresh_assessments.py",
+        "scripts/generate_comprehensive_assessment.py",
+        "scripts/generate_comprehensive_assessment.py",
         "scripts/legacy_tools/code_quality_check.py"
       ],
       "notes": "DRY is assessed through duplicate filename clusters and TODO/FIXME density as static heuristics."
@@ -232,7 +232,7 @@
         ".github/workflows/Code-Metrics.yml",
         "docs/assessments/Assessment_L_Logging.md",
         "docs/assessments/issues/ISSUE_LOGGING_SPLIT.md",
-        "migrate_print_to_logging.py",
+        "scripts/convert_print_to_logging.py",
         "scripts/convert_print_to_logging.py",
         "src/asteroid_jumper/metrics_panel.py",
         "src/data_processing/data_processor/python/data_processor/logging_config.py",

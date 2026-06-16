@@ -1053,7 +1053,7 @@
       "title": "High TRACKED_TASK count (123)",
       "description": "Accumulated technical debt",
       "files": [
-        "/home/dieterolson/actions-runners/runner-6/_work/Tools/Tools/scripts/generate_assessments.py",
+        "/home/dieterolson/actions-runners/runner-6/_work/Tools/Tools/scripts/generate_comprehensive_assessment.py",
         "/home/dieterolson/actions-runners/runner-6/_work/Tools/Tools/scripts/pragmatic_programmer_review.py",
         "/home/dieterolson/actions-runners/runner-6/_work/Tools/Tools/scripts/analyze_completist_data.py",
         "/home/dieterolson/actions-runners/runner-6/_work/Tools/Tools/scripts/legacy_tools/code_quality_check.py",
