@@ -1,5 +1,5 @@
-import React from "react";
-import { AlertOctagon, CheckCircle, BellRing } from "lucide-react";
+import React, { useState } from "react";
+import { AlertOctagon, CheckCircle, ChevronDown, ChevronRight } from "lucide-react";
 import { ActiveAlarm } from "../App";
 
 interface AlarmsHeaderProps {
@@ -7,87 +7,85 @@ interface AlarmsHeaderProps {
   onAcknowledgeAll: () => void;
 }
 
+/**
+ * Subtle, compact system-status bar. Shows a one-line summary; the active
+ * alarms expand into a scrollable list of clean rows (no per-row checkboxes).
+ * Acknowledge-all is the only action, and only when something is unacked.
+ */
 export const AlarmsHeader: React.FC<AlarmsHeaderProps> = ({
   activeAlarms,
   onAcknowledgeAll,
 }) => {
-  // ⚡ Bolt Optimization: Replace chained .filter() and .reduce() with a single-pass loop
-  // to avoid intermediate array allocations and minimize garbage collection overhead.
-  let unacknowledgedCount = 0;
+  const [expanded, setExpanded] = useState(false);
+
+  let unacked = 0;
   let highestSeverity = 0;
   for (let i = 0; i < activeAlarms.length; i++) {
-    const a = activeAlarms[i];
-    if (!a.acknowledged) {
-      unacknowledgedCount++;
-    }
-    if (a.severity > highestSeverity) {
-      highestSeverity = a.severity;
+    if (!activeAlarms[i].acknowledged) unacked++;
+    if (activeAlarms[i].severity > highestSeverity) {
+      highestSeverity = activeAlarms[i].severity;
     }
   }
 
-  let headerColorClass = "bg-gray-800/50 border-gray-700/50";
-  let textColorClass = "text-gray-300";
+  const count = activeAlarms.length;
+  const level = count === 0 ? "is-ok" : highestSeverity >= 2 ? "is-crit" : "is-warn";
 
-  if (unacknowledgedCount > 0) {
-    if (highestSeverity >= 2) {
-      headerColorClass = "bg-red-900/30 border-red-500/50 animate-pulse";
-      textColorClass = "text-red-400";
-    } else if (highestSeverity === 1) {
-      headerColorClass = "bg-yellow-900/30 border-yellow-500/50 animate-pulse";
-      textColorClass = "text-yellow-400";
-    }
-  } else if (activeAlarms.length > 0) {
-    if (highestSeverity >= 2) {
-      headerColorClass = "bg-red-900/20 border-red-800/50";
-      textColorClass = "text-red-500/70";
-    } else {
-      headerColorClass = "bg-yellow-900/20 border-yellow-800/50";
-      textColorClass = "text-yellow-500/70";
-    }
-  }
+  const fmtTime = (iso: string): string => {
+    const d = new Date(iso);
+    return Number.isNaN(d.getTime()) ? "" : d.toLocaleTimeString();
+  };
 
   return (
-    <div
-      className={`flex items-center justify-between px-4 py-3 border rounded-xl mb-4 transition-colors duration-300 ${headerColorClass}`}
-    >
-      <div className="flex items-center gap-3">
-        {activeAlarms.length > 0 ? (
-          <AlertOctagon className={`w-6 h-6 ${textColorClass}`} />
+    <>
+      <div className={`statusbar ${level}`}>
+        <span className="statusbar-dot" />
+        {count === 0 ? (
+          <CheckCircle size={14} color="var(--color-success)" />
         ) : (
-          <CheckCircle className="w-6 h-6 text-emerald-500" />
+          <AlertOctagon size={14} color="var(--color-error)" />
         )}
-        <div>
-          <h2 className="font-semibold text-gray-100 flex items-center gap-2">
-            System Status
-            {unacknowledgedCount > 0 && (
-              <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 text-xs border border-red-500/20">
-                {unacknowledgedCount} Unacknowledged
-              </span>
-            )}
-          </h2>
-          <p className={`text-sm ${textColorClass}`}>
-            {activeAlarms.length === 0
-              ? "All systems normal. No active alarms."
-              : `${activeAlarms.length} active alarm(s) detected.`}
-          </p>
-        </div>
-      </div>
+        <span className="statusbar-label">System</span>
+        <span className="statusbar-summary">
+          {count === 0
+            ? "All normal — no active alarms"
+            : `${count} active alarm${count === 1 ? "" : "s"}` +
+              (unacked > 0 ? ` · ${unacked} unacknowledged` : "")}
+        </span>
 
-      <div className="flex items-center gap-2">
-        {unacknowledgedCount > 0 && (
+        <span className="statusbar-spacer" />
+
+        {unacked > 0 && (
+          <button className="statusbar-ack" onClick={onAcknowledgeAll}>
+            Acknowledge all
+          </button>
+        )}
+        {count > 0 && (
           <button
-            onClick={onAcknowledgeAll}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200 shadow-lg hover:scale-105 active:scale-95 ${
-              highestSeverity >= 2
-                ? "bg-red-500 hover:bg-red-400 text-white shadow-red-500/20"
-                : "bg-yellow-500 hover:bg-yellow-400 text-black shadow-yellow-500/20"
-            }`}
+            className="statusbar-toggle"
+            onClick={() => setExpanded((v) => !v)}
+            aria-expanded={expanded}
           >
-            <BellRing className="w-4 h-4" />
-            Acknowledge All
+            {expanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+            {expanded ? "Hide" : "View"}
           </button>
         )}
       </div>
-    </div>
+
+      {expanded && count > 0 && (
+        <div className="alarm-list">
+          {activeAlarms.map((a) => (
+            <div className="alarm-row" key={a.tag_id}>
+              <span className={`alarm-sev sev-${a.severity >= 2 ? 2 : 1}`} />
+              <span className="alarm-tag">{a.tag_id}</span>
+              <span className="alarm-state">
+                {a.state}
+                {a.acknowledged ? " · ack" : ""}
+              </span>
+              <span className="alarm-time">{fmtTime(a.timestamp)}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
   );
 };

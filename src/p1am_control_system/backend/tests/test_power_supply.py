@@ -94,6 +94,26 @@ class TestPowerSupplyConfigValidation:
             100.0
         )
 
+    def test_signal_labels_default(self) -> None:
+        cfg = PowerSupplyConfig()
+        assert cfg.command_label == "Current command"
+        assert cfg.current_feedback_label == "Current"
+        assert cfg.voltage_feedback_label == "Voltage"
+        assert cfg.temp_label == "Temperature"
+
+    def test_signal_label_is_trimmed(self) -> None:
+        assert PowerSupplyConfig(command_label="  Loop A  ").command_label == "Loop A"
+
+    def test_blank_signal_label_rejected(self) -> None:
+        with pytest.raises(ValidationError):
+            PowerSupplyConfig(command_label="   ")
+        with pytest.raises(ValidationError):
+            PowerSupplyConfig(current_feedback_label="")
+
+    def test_overlong_signal_label_rejected(self) -> None:
+        with pytest.raises(ValidationError):
+            PowerSupplyConfig(voltage_feedback_label="x" * 41)
+
 
 # --------------------------------------------------------------------------
 # Constructor + initial state
@@ -193,6 +213,18 @@ class TestModeSwitching:
 
 
 class TestStatus:
+    def test_effective_max_current_reflects_clamp_and_full_scale(self) -> None:
+        # 20 % clamp of a 100 A full scale -> 20 A is the real deliverable max,
+        # even though the setpoint band may go to 50 A.
+        c = PowerSupplyController(
+            PowerSupplyConfig(output_clamp_percent=20.0, current_full_scale_a=100.0)
+        )
+        assert c.status().effective_max_current_a == pytest.approx(20.0)
+        c.update_config(
+            PowerSupplyConfig(output_clamp_percent=50.0, current_full_scale_a=80.0)
+        )
+        assert c.status().effective_max_current_a == pytest.approx(40.0)
+
     def test_status_reports_current_state(self) -> None:
         c = fresh_running_controller(10.0)
         # First tick establishes the slew baseline at t=0; second tick at

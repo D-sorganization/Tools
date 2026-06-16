@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
+import { Download } from "lucide-react";
 import { PowerSupplyTrend, type TrendSample } from "./PowerSupplyTrend";
 import "./PowerSupplyControl.css";
 
@@ -29,6 +30,11 @@ export interface PowerSupplyConfig {
   current_feedback_tag: string;
   voltage_feedback_tag: string;
   temp_tag: string;
+  command_label: string;
+  aux_command_label: string;
+  current_feedback_label: string;
+  voltage_feedback_label: string;
+  temp_label: string;
   current_full_scale_a: number;
   voltage_full_scale_v: number;
   current_setpoint_min_a: number;
@@ -65,11 +71,15 @@ export interface PowerSupplyStatus {
   output_clamp_percent: number;
   /** True when the clamp is actively limiting the command this tick. */
   output_clamped: boolean;
+  /** Real deliverable max current given the clamp (clamp% × full-scale). */
+  effective_max_current_a: number;
 }
 
 interface Props {
   /** Status pushed each scan via the parent's WebSocket; undefined while waiting. */
   liveStatus?: PowerSupplyStatus;
+  /** Opens the data-export drawer (wired to the plot-header Export button). */
+  onExport?: () => void;
 }
 
 const STATE_LABELS: Record<PowerSupplyStatus["state"], string> = {
@@ -86,7 +96,7 @@ const STATE_HINTS: Record<PowerSupplyStatus["state"], string> = {
   tripped: "latched · acknowledge",
 };
 
-export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
+export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) => {
   const [config, setConfig] = useState<PowerSupplyConfig | null>(null);
   const [configDraft, setConfigDraft] = useState<PowerSupplyConfig | null>(null);
   const [mode, setMode] = useState<"current" | "power">("current");
@@ -163,6 +173,16 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
         flash("Config not loaded", "error");
         return;
       }
+      // Guard rail: the server silently ignores setpoints unless the controller
+      // is armed, so tell the operator instead of pretending it was applied.
+      if (liveStatus && liveStatus.state === "tripped") {
+        flash("Controller is TRIPPED — acknowledge the trip first.", "error");
+        return;
+      }
+      if (liveStatus && !liveStatus.permissive) {
+        flash("Permissive is OFF — enable it before commanding output.", "error");
+        return;
+      }
       setBusy(true);
       try {
         const body =
@@ -192,7 +212,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
         setBusy(false);
       }
     },
-    [config, mode, flash],
+    [config, mode, flash, liveStatus],
   );
 
   const nudgeSetpoint = useCallback(
@@ -323,6 +343,26 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
   const unit = mode === "current" ? "A" : "W";
   const clampDirty = Math.abs(clampDraft - config.output_clamp_percent) > 1e-6;
 
+  // Effective deliverable max current = clamp% × full-scale. The setpoint band
+  // may go higher, but the output limit caps real output here. Prefer the live
+  // value from the server (single source) and fall back to the local formula.
+  const effectiveMaxA =
+    s?.effective_max_current_a ??
+    (config.output_clamp_percent / 100) * config.current_full_scale_a;
+
+  // Live setpoint warning (shown under the entry; does not block typing).
+  const stagedValue = Number.parseFloat(stagedSetpointText);
+  let setpointWarning: string | null = null;
+  if (mode === "current" && Number.isFinite(stagedValue)) {
+    if (stagedValue > config.current_setpoint_max_a) {
+      setpointWarning = `Above max setpoint (${config.current_setpoint_max_a} A) — will be clamped.`;
+    } else if (stagedValue < config.current_setpoint_min_a) {
+      setpointWarning = `Below min setpoint (${config.current_setpoint_min_a} A) — will be clamped.`;
+    } else if (stagedValue > effectiveMaxA + 1e-6) {
+      setpointWarning = `Output limit (${activeClamp.toFixed(0)} %) caps delivery at ${effectiveMaxA.toFixed(1)} A — raise the limit to go higher.`;
+    }
+  }
+
   const powerWarn = s
     ? s.measured_power_w >= 0.9 * configDraft.power_alarm_max_w
     : false;
@@ -393,12 +433,21 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
 
       {/* ---- Live trend (current + voltage from the unit) ---- */}
       <div className="ps-card">
-        <div className="ps-card-title">Live signals — current &amp; voltage feedback</div>
+        <div className="ps-card-title">
+          <span>Live signals — current, voltage &amp; power feedback</span>
+          {onExport && (
+            <button className="btn ps-export-btn" onClick={onExport} title="Export captured data">
+              <Download size={13} /> Export
+            </button>
+          )}
+        </div>
         <PowerSupplyTrend
           samples={trend}
           currentFullScale={config.current_full_scale_a}
           voltageFullScale={config.voltage_full_scale_v}
           powerFullScale={config.power_alarm_max_w}
+          currentLabel={config.current_feedback_label}
+          voltageLabel={config.voltage_feedback_label}
           windowSeconds={TREND_WINDOW_SECONDS}
         />
       </div>
@@ -533,10 +582,31 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
             </button>
           </div>
 
+          {s && s.state === "tripped" ? (
+            <p className="ps-setpoint-warn">
+              ⚠ Controller is TRIPPED — acknowledge the trip before commanding.
+            </p>
+          ) : s && !s.permissive ? (
+            <p className="ps-setpoint-warn">
+              ⚠ Permissive is OFF — enable it (switch, top-right) before commanding
+              output.
+            </p>
+          ) : (
+            setpointWarning && <p className="ps-setpoint-warn">⚠ {setpointWarning}</p>
+          )}
+
           <p className="ps-clamp-hint">
-            {mode === "current"
-              ? `Range ${configDraft.current_setpoint_min_a}–${configDraft.current_setpoint_max_a} A; server clamps outside this band.`
-              : `Power → current via measured V; resulting current clamped to ${configDraft.current_setpoint_min_a}–${configDraft.current_setpoint_max_a} A.`}
+            {mode === "current" ? (
+              <>
+                Allowed setpoint {config.current_setpoint_min_a}–
+                {config.current_setpoint_max_a} A. With the {activeClamp.toFixed(0)} %
+                output limit, the supply delivers at most{" "}
+                <strong>{effectiveMaxA.toFixed(1)} A</strong> — raise the limit on
+                the Output limit tile to deliver more.
+              </>
+            ) : (
+              `Power → current via measured V; resulting current clamped to ${config.current_setpoint_min_a}–${config.current_setpoint_max_a} A, then to the ${activeClamp.toFixed(0)} % output limit.`
+            )}
           </p>
         </div>
       </div>
@@ -547,11 +617,11 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
         <div className="ps-readouts">
           <Readout label="Setpoint" value={`${s?.setpoint_a.toFixed(2) ?? "—"} A`} />
           <Readout
-            label="Measured I"
+            label={config.current_feedback_label}
             value={`${s?.measured_current_a.toFixed(2) ?? "—"} A`}
           />
           <Readout
-            label="Measured V"
+            label={config.voltage_feedback_label}
             value={`${s?.measured_voltage_v.toFixed(2) ?? "—"} V`}
           />
           <Readout
@@ -560,7 +630,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
             warning={powerWarn}
           />
           <Readout
-            label="Temp"
+            label={config.temp_label}
             value={`${s?.measured_temp_c.toFixed(1) ?? "—"} °C`}
             warning={tempWarn}
           />
@@ -594,6 +664,100 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
       </div>
 
       {/* ---- Advanced config ---- */}
+      {/* ---- Calibration & signal names ---- */}
+      <details className="ps-card ps-config">
+        <summary>Calibration &amp; signal names</summary>
+
+        <p className="ps-clamp-hint" style={{ marginTop: "0.8rem" }}>
+          The PLC speaks 0–100 % (4–20 mA / 0–5 V). Calibration tells the HMI what
+          full scale means in real units — set these to what the supply's own
+          meters read at full output so the readings match.
+        </p>
+
+        <div className="ps-config-grid">
+          <ConfigField
+            label="Current full scale — A at 5 V / 20 mA"
+            value={configDraft.current_full_scale_a}
+            onChange={(v) => setConfigDraft({ ...configDraft, current_full_scale_a: v })}
+          />
+          <ConfigField
+            label="Voltage full scale — V at 5 V / 20 mA"
+            value={configDraft.voltage_full_scale_v}
+            onChange={(v) => setConfigDraft({ ...configDraft, voltage_full_scale_v: v })}
+          />
+        </div>
+
+        <div className="ps-card-title" style={{ marginTop: "1.1rem" }}>
+          Signal names (HMI labels)
+        </div>
+        <div className="ps-config-grid">
+          <ConfigField
+            label="Current command (AO0)"
+            value={configDraft.command_label}
+            stringMode
+            onChange={(v) =>
+              setConfigDraft({ ...configDraft, command_label: v as unknown as string })
+            }
+          />
+          <ConfigField
+            label="Aux command (AO1)"
+            value={configDraft.aux_command_label}
+            stringMode
+            onChange={(v) =>
+              setConfigDraft({
+                ...configDraft,
+                aux_command_label: v as unknown as string,
+              })
+            }
+          />
+          <ConfigField
+            label="Current feedback (AI0)"
+            value={configDraft.current_feedback_label}
+            stringMode
+            onChange={(v) =>
+              setConfigDraft({
+                ...configDraft,
+                current_feedback_label: v as unknown as string,
+              })
+            }
+          />
+          <ConfigField
+            label="Voltage feedback (AI1)"
+            value={configDraft.voltage_feedback_label}
+            stringMode
+            onChange={(v) =>
+              setConfigDraft({
+                ...configDraft,
+                voltage_feedback_label: v as unknown as string,
+              })
+            }
+          />
+          <ConfigField
+            label="Temperature (TC0)"
+            value={configDraft.temp_label}
+            stringMode
+            onChange={(v) =>
+              setConfigDraft({ ...configDraft, temp_label: v as unknown as string })
+            }
+          />
+        </div>
+
+        <div className="ps-card-title" style={{ marginTop: "1.1rem" }}>
+          Wiring guide
+        </div>
+        <WiringGuide config={configDraft} />
+
+        <div style={{ marginTop: "1rem" }}>
+          <button
+            className={`btn btn-primary ${busy ? "ps-disabled" : ""}`}
+            onClick={saveConfig}
+            disabled={busy}
+          >
+            Save calibration
+          </button>
+        </div>
+      </details>
+
       <details className="ps-card ps-config">
         <summary>Advanced — scaling, bounds, alarms, ramp, tag map</summary>
         <div className="ps-config-grid">
@@ -698,6 +862,68 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
       {info && <div className="ps-toast is-info">{info}</div>}
       {error && <div className="ps-toast is-error">{error}</div>}
     </div>
+  );
+};
+
+/**
+ * Static reference of how the power-supply signals map to the P1AM analog
+ * terminals. Labels and tags come from the config (DRY) so renaming a signal
+ * updates this table too.
+ */
+const WiringGuide: React.FC<{ config: PowerSupplyConfig }> = ({ config }) => {
+  const rows: { name: string; tag: string; terminal: string; ps: string }[] = [
+    {
+      name: config.command_label,
+      tag: config.command_tag,
+      terminal: "Slot 2 · AO0 (4–20 mA out)",
+      ps: "Remote current-setpoint input",
+    },
+    {
+      name: config.aux_command_label,
+      tag: "TAG_11",
+      terminal: "Slot 2 · AO1 (4–20 mA out)",
+      ps: "Spare (e.g. voltage-setpoint input)",
+    },
+    {
+      name: config.current_feedback_label,
+      tag: config.current_feedback_tag,
+      terminal: "Slot 2 · AI0 (4–20 mA in)",
+      ps: "Current-monitor output",
+    },
+    {
+      name: config.voltage_feedback_label,
+      tag: config.voltage_feedback_tag,
+      terminal: "Slot 2 · AI1 (4–20 mA in)",
+      ps: "Voltage-monitor output",
+    },
+    {
+      name: config.temp_label,
+      tag: config.temp_tag,
+      terminal: "Slot 1 · TC0 (thermocouple)",
+      ps: "Supply / load thermocouple",
+    },
+  ];
+  return (
+    <table className="ps-wire">
+      <thead>
+        <tr>
+          <th>Signal</th>
+          <th>Tag</th>
+          <th>P1AM terminal</th>
+          <th>Power-supply connection</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr key={r.tag + r.terminal}>
+            <td>{r.name}</td>
+            <td className="mono">{r.tag}</td>
+            <td>{r.terminal}</td>
+            <td>{r.ps}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 };
 

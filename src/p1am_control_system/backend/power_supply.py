@@ -488,4 +488,9 @@ class PowerSupplyController:
             trips=sorted(self._trips),
             output_clamp_percent=self._config.output_clamp_percent,
             output_clamped=self._output_clamped,
+            effective_max_current_a=(
+                self._config.output_clamp_percent
+                / 100.0
+                * self._config.current_full_scale_a
+            ),
         )
