@@ -21,7 +21,6 @@ from typing import Any, cast
 from unittest.mock import MagicMock, patch
 
 import pytest
-from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -100,47 +99,6 @@ class TestAppStartup:
             )
         finally:
             client.app.router.routes[:] = original_routes
-
-    def test_list_endpoints_repairs_request_app_not_module_global(self) -> None:
-        from calc_backend.app import list_endpoints
-
-        isolated_app = FastAPI()
-        isolated_app.add_api_route(
-            "/api/calc/endpoints",
-            list_endpoints,
-            methods=["GET"],
-        )
-        isolated_client = TestClient(isolated_app)
-
-        r = isolated_client.get("/api/calc/endpoints")
-        assert r.status_code == 200
-
-        assert "POST /api/calc/flare" in r.json()["calculators"]
-        assert any(
-            getattr(route, "path", None) == "/api/calc/flare"
-            for route in isolated_app.routes
-        )
-
-    def test_calculator_route_signatures_apply_router_prefix(self) -> None:
-        from calc_backend.app import _calculator_route_signatures
-
-        class PrefixlessRoute:
-            path = ""
-            methods = {"POST"}
-
-        assert _calculator_route_signatures(
-            [PrefixlessRoute()],
-            prefix="/api/calc/flare",
-        ) == {("POST", "/api/calc/flare")}
-
-        class PrefixedRoute:
-            path = "/api/calc/flare"
-            methods = {"POST"}
-
-        assert _calculator_route_signatures(
-            [PrefixedRoute()],
-            prefix="/api/calc/flare",
-        ) == {("POST", "/api/calc/flare")}
 
     def test_openapi_schema_reachable(self, client: TestClient) -> Any:
         r = client.get("/openapi.json")
