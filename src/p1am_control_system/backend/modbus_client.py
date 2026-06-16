@@ -378,37 +378,48 @@ class AsyncModbusManager(BasePLCClient):
                 return False
 
     async def trigger_estop(self) -> bool:
-        """Zero PID setpoints and tag values so outputs go to zero and hold."""
+        """Zero PID setpoints and tag values so outputs go to zero and hold.
+
+        Best-effort and non-atomic by design: a partial kill is unsafe, so on a
+        sub-write failure we do NOT early-return — every register is attempted so
+        the output is driven down as far as possible, and ``False`` is returned
+        only after all writes so the caller (and the poll-loop re-assert) knows
+        to retry. Returns True only when every write was acknowledged.
+        """
         async with self.lock:
             if not self._connected:
                 return False
+            all_ok = True
             try:
+                client = self._get_client()
                 # PID setpoint is field 3 of each 10-register block.
                 for pid_index in range(4):
                     sp_addr = self.pid_config_address + pid_index * 10 + 2
-                    resp = await self._get_client().write_registers(
-                        address=sp_addr,
-                        values=float_to_registers(0.0),
+                    resp = await client.write_registers(
+                        address=sp_addr, values=float_to_registers(0.0)
                     )
                     if resp.isError():
+                        all_ok = False
                         logger.error(
                             f"E-stop: error zeroing PID {pid_index} setpoint: {resp}"
                         )
-                        return False
 
-                # 2. Zero all tag values.
-                zeros = []
+                # Zero all tag values (covers any directly-driven, non-PID tag).
+                zeros: list[int] = []
                 for _ in range(32):
                     zeros.extend(float_to_registers(0.0))
-                resp = await self._get_client().write_registers(
-                    address=self.estop_registers_address,
-                    values=zeros,
+                resp = await client.write_registers(
+                    address=self.estop_registers_address, values=zeros
                 )
                 if resp.isError():
+                    all_ok = False
                     logger.error(f"Error writing E-stop registers: {resp}")
-                    return False
-                logger.warning("E-stop: PID setpoints and tag values zeroed.")
-                return True
+
+                if all_ok:
+                    logger.warning("E-stop: PID setpoints and tag values zeroed.")
+                else:
+                    logger.error("E-stop: one or more zeroing writes FAILED — retry.")
+                return all_ok
             except (ModbusException, Exception) as e:
                 logger.error(f"Exception during E-stop Modbus execution: {e}")
                 self._connected = False

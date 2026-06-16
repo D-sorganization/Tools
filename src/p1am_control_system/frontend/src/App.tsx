@@ -383,17 +383,55 @@ export const App: React.FC = () => {
     }
   };
 
-  // Trigger global emergency stop (E-stop)
+  // Trigger global emergency stop (E-stop). Fail toward the stopped state: on a
+  // successful POST we optimistically latch the button (the WebSocket frame
+  // corrects it), so the operator gets confirmation even if the stream is down.
   const handleEStop = async () => {
     try {
       const res = await fetch("/api/estop", { method: "POST" });
       if (res.ok) {
+        setEStopActive(true);
         triggerNotification("EMERGENCY SHUTDOWN COMMAND ISSUED!", "error");
       } else {
-        triggerNotification("Failed to issue E-stop command.", "error");
+        triggerNotification(
+          "E-STOP NOT CONFIRMED by server — verify the PLC output is dead!",
+          "error",
+        );
       }
-    } catch (err) {
-      triggerNotification("Error connecting to SCADA server for E-stop.", "error");
+    } catch {
+      triggerNotification(
+        "E-STOP request failed to reach the server — verify the PLC output!",
+        "error",
+      );
+    }
+  };
+
+  // Clear a latched E-stop. Never optimistically mark the system safe — only the
+  // server's e_stop_active (via the WebSocket) lowers the latch. On failure the
+  // button stays in the "latched" state so the UI never lies about safety.
+  const handleClearEStop = async () => {
+    if (
+      !window.confirm(
+        "Clear the emergency stop? The supply stays at zero until you " +
+          "re-enable permissive and re-enter a setpoint. Continue?",
+      )
+    )
+      return;
+    try {
+      const res = await fetch("/api/estop/clear", { method: "POST" });
+      if (!res.ok) {
+        triggerNotification(
+          "E-stop clear was rejected — system remains latched.",
+          "error",
+        );
+        return;
+      }
+      triggerNotification("E-stop cleared. Re-arm to resume.", "info");
+    } catch {
+      triggerNotification(
+        "E-stop clear failed to reach the server — system remains latched.",
+        "error",
+      );
     }
   };
 
@@ -784,7 +822,9 @@ export const App: React.FC = () => {
           justifyContent: "space-between",
           position: "sticky",
           top: 0,
-          zIndex: 50,
+          // Above the inspector drawer (200) and its backdrop (199) so the
+          // E-stop in this header is ALWAYS clickable, even with a drawer open.
+          zIndex: 300,
           background: "var(--bg-color)",
           marginBottom: "1rem",
           paddingTop: "0.85rem",
@@ -869,10 +909,7 @@ export const App: React.FC = () => {
           <EStopButton
             eStopActive={eStopActive}
             onTriggerEStop={handleEStop}
-            onClearEStop={async () => {
-              await fetch("/api/estop/clear", { method: "POST" });
-              setEStopActive(false);
-            }}
+            onClearEStop={handleClearEStop}
           />
         </div>
       </header>
