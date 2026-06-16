@@ -41,7 +41,7 @@ except ImportError:
     import enum
     import os
 
-    class ContractLevel(enum.Enum):  # type: ignore[no-redef]
+    class ContractLevel(enum.Enum):
         OFF = "off"
         WARN = "warn"
         ENFORCE = "enforce"
@@ -52,7 +52,7 @@ except ImportError:
         else "enforce"
     )
 
-    class ContractViolationError(AssertionError, ValueError):  # type: ignore[no-redef]
+    class ContractViolationError(AssertionError, ValueError):
         """Base error for standalone vessel-drafter contract violations."""
 
         def __init__(self, kind: str, message: str, value: Any = None) -> None:
