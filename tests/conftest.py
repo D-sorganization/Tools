@@ -77,6 +77,7 @@ class RobustImportRedirector(MetaPathFinder):
             "theme",
             "contracts",
             "cors",
+            "calc_backend",
             "deprecation",
             "safe_eval",
             "notes",
@@ -222,23 +223,51 @@ def _setup_global_stubs(repo_root: Path) -> None:
     """
     import logging
 
-    if str(repo_root) not in sys.path:
-        sys.path.insert(0, str(repo_root))
+    for import_root in (
+        repo_root / "src" / "shared" / "python",
+        repo_root / "src",
+        repo_root,
+    ):
+        import_path = str(import_root)
+        if import_path in sys.path:
+            sys.path.remove(import_path)
+        sys.path.insert(0, import_path)
 
-    # Define the missing package paths
-    missing_packages = [
+    def ensure_package_path(name: str, path: str) -> None:
+        package_path = str(repo_root / path)
+        module = sys.modules.get(name)
+        if module is None:
+            module = types.ModuleType(name)
+            module.__path__ = [package_path]  # type: ignore[attr-defined]
+            sys.modules[name] = module
+        else:
+            existing_paths = list(getattr(module, "__path__", []))
+            module.__path__ = [  # type: ignore[attr-defined]
+                package_path,
+                *(entry for entry in existing_paths if entry != package_path),
+            ]
+
+        if "." in name:
+            parent_name, child_name = name.rsplit(".", 1)
+            parent = sys.modules.get(parent_name)
+            if parent is not None and not hasattr(parent, child_name):
+                setattr(parent, child_name, module)
+
+    # Define the package paths that must prefer this checkout.
+    checkout_packages = [
         ("src", "src"),
         ("src.shared", "src/shared"),
         ("src.shared.python", "src/shared/python"),
+        ("shared", "src/shared"),
+        ("shared.python", "src/shared/python"),
+        ("src.shared.python.calc_backend", "src/shared/python/calc_backend"),
+        ("shared.python.calc_backend", "src/shared/python/calc_backend"),
         ("src.shared.python.config", "src/shared/python/config"),
         ("src.shared.python.logging_pkg", "src/shared/python/logging_pkg"),
     ]
 
-    for name, path in missing_packages:
-        if name not in sys.modules:
-            stub = types.ModuleType(name)
-            stub.__path__ = [str(repo_root / path)]
-            sys.modules[name] = stub
+    for name, path in checkout_packages:
+        ensure_package_path(name, path)
 
     # Specifically stub logging_config
     if "src.shared.python.logging_pkg.logging_config" not in sys.modules:

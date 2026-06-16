@@ -2,8 +2,18 @@
 
 from __future__ import annotations
 
+import importlib
+
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
+
+
+def test_calc_backend_import_aliases_share_app_instance() -> None:
+    shared_app_module = importlib.import_module("shared.python.calc_backend.app")
+    top_level_app_module = importlib.import_module("calc_backend.app")
+
+    assert top_level_app_module is shared_app_module
+    assert top_level_app_module.app is shared_app_module.app
 
 
 def test_list_endpoints_repairs_request_app_not_module_global() -> None:

@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.514                                    |
+| **Spec Version**        | 1.1.515                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -88,6 +88,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Calc backend router repair now re-includes calculator routers whenever any
   declared route signature is missing from the active app, not only when a
   whole router is absent, and then recomputes the registered route inventory.
+- Pytest import redirection now treats `calc_backend` as a shared package alias,
+  so `calc_backend.*`, `shared.python.calc_backend.*`, and
+  `src.shared.python.calc_backend.*` resolve to the active checkout instead of
+  ambient vendored copies, with this checkout's source roots pinned ahead of
+  external sibling repositories in each test worker.
 - Calc backend endpoint discovery normalizes route path and method metadata
   before comparing registered calculator endpoints, keeping the repair path
   stable across FastAPI/Starlette route implementations in the Linux CI matrix.
