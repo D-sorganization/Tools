@@ -7,7 +7,7 @@ Provides:
 - StandardResponseBuilder: convenient builder for success/error responses
 """
 
-from sidekick.api.standard_response import (
+from shared.python.sidekick.api.standard_response import (
     ErrorCode,
     ErrorDetail,
     ResponseMetadata,

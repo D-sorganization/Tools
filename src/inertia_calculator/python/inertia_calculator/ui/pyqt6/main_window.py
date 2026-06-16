@@ -30,8 +30,10 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from sidekick.ui.widgets.base_calculator_widget import BaseCalculatorWindow
 
+from shared.python.sidekick.ui.widgets.base_calculator_widget import (
+    BaseCalculatorWindow,
+)
 from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA, get_stylesheet
 
 

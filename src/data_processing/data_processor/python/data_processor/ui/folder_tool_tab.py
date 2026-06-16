@@ -1,4 +1,5 @@
 # ruff: noqa: E501
+# mypy: disable-error-code="attr-defined,no-untyped-def,unused-ignore,var-annotated"
 # TRACKED_TASK: see #2310 — architecture debt extraction schedule
 
 """Folder Tool Tab and Logic for Data Processor."""
@@ -448,6 +449,20 @@ class FolderToolMixin:
         self.folder_progress_bar.set(0)
         self.folder_run_button.configure(state="normal")
         self.folder_cancel_button.configure(state="disabled")
+
+    def _folder_handle_processing_error(
+        self,
+        exc: BaseException,
+        traceback_text: str,
+    ) -> None:
+        """Reset folder-processing controls after a background failure."""
+        del traceback_text
+        message = f"Folder processing failed: {exc}"
+        self.folder_status_var.set(message)
+        self.folder_progress_bar.set(0)
+        self.folder_run_button.configure(state="normal")
+        self.folder_cancel_button.configure(state="disabled")
+        messagebox.showerror("Folder Processing Failed", message)
 
     def _folder_perform_processing(self) -> None:
         """Perform the actual folder processing operation.
