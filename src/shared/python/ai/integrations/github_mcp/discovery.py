@@ -19,7 +19,7 @@ import logging
 import os
 import shutil
 
-from src.shared.python.ai.integrations.github_mcp.server_config import (
+from shared.python.ai.integrations.github_mcp.server_config import (
     GITHUB_MCP_PACKAGE,
     GITHUB_MCP_TOKEN_ENV_VAR,
 )
