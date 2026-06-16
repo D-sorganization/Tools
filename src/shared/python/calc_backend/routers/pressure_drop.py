@@ -12,11 +12,12 @@ import logging
 from typing import Any, cast
 
 from fastapi import APIRouter, HTTPException
-from sidekick.api import (
+
+from shared.python.sidekick.api import (
     ErrorCode,
     StandardResponseBuilder,
 )
-from sidekick.process_calculators.pressure_drop_calculator import (
+from shared.python.sidekick.process_calculators.pressure_drop_calculator import (
     PressureDropCalculator,
     PressureDropResult,
 )
@@ -28,6 +29,16 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/calc/pressure-drop", tags=["pressure-drop"])
 
 _calculator = PressureDropCalculator()
+
+
+class _PressureDropApiResponse(dict[str, Any]):
+    """Standard-response dict with direct access to pressure-drop data fields."""
+
+    def __getattr__(self, name: str) -> Any:
+        data = self.get("data")
+        if isinstance(data, dict) and name in data:
+            return data[name]
+        raise AttributeError(name)
 
 
 @router.post("")
@@ -120,4 +131,4 @@ def calculate_pressure_drop(
     response = builder.success(
         data=response_data,
     )
-    return cast(dict[str, Any], response.to_dict())
+    return cast(dict[str, Any], _PressureDropApiResponse(response.to_dict()))

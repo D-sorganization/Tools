@@ -19,7 +19,7 @@ def get_repo_root() -> Path:
     Delegates to the canonical implementation in upstream_drift_tools.utils.paths.
     """
     try:
-        from sidekick.utils.paths import get_repo_root as _get_repo_root
+        from shared.python.sidekick.utils.paths import get_repo_root as _get_repo_root
 
         return Path(_get_repo_root())
     except ImportError:

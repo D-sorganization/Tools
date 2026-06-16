@@ -18,6 +18,13 @@ GUI_INFO = {
     },
 }
 
+GUI_METADATA = {
+    "name": "Inertia Calculator",
+    "description": "Calculate and validate inertia tensors for rigid bodies",
+    "category": "robotics",
+    "entry_point": "inertia_calculator.ui.pyqt6.main_window",
+}
+
 
 def get_gui_info() -> dict[str, Any]:
     """Return GUI registration information."""

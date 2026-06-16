@@ -44,7 +44,7 @@ from .controls_widget_base import ControlsWidgetBase
 from .torque_preview_widget import TorquePreviewWidget
 
 if _HAS_UAI:
-    from sidekick.ui.widgets.unit_aware_input import UnitAwareInput
+    from shared.python.sidekick.ui.widgets.unit_aware_input import UnitAwareInput
 
 
 # ---------------------------------------------------------------------------

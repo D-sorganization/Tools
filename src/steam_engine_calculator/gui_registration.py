@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-GUI_INFO = {
+GUI_INFO: dict[str, Any] = {
     "name": "Steam Engine Calculator",
     "tool_name": "steam_engine_calculator",
     "description": "Calculate thermodynamic properties of steam/water",
@@ -16,6 +16,13 @@ GUI_INFO = {
         "dependencies": ["PyQt6", "numpy"],
         "settings_app": "SteamEngineCalculator",
     },
+}
+
+GUI_METADATA = {
+    "name": "Steam Engine Calculator",
+    "description": "Steam property calculations and Rankine cycle analysis",
+    "category": "thermodynamics",
+    "entry_point": "steam_engine_calculator.ui.pyqt6.main_window",
 }
 
 
