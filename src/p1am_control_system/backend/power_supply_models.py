@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from enum import Enum
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 class StrEnum(str, Enum):  # noqa: UP042
@@ -64,15 +64,57 @@ class PowerSupplyConfig(BaseModel):
         description="Modbus tag carrying the HH-monitored thermocouple (TC1).",
     )
 
+    # Operator-facing signal names (single source of truth for the HMI labels —
+    # trend legend, telemetry readouts, and wiring guide all read these). Kept
+    # 1..40 chars so a blank or runaway label can't slip through.
+    command_label: str = Field(
+        default="Current command",
+        min_length=1,
+        max_length=40,
+        description="HMI name for the current-command AO (AO0).",
+    )
+    aux_command_label: str = Field(
+        default="Aux command",
+        min_length=1,
+        max_length=40,
+        description="HMI name for the spare AO (AO1).",
+    )
+    current_feedback_label: str = Field(
+        default="Current",
+        min_length=1,
+        max_length=40,
+        description="HMI name for the current-feedback AI (AI0).",
+    )
+    voltage_feedback_label: str = Field(
+        default="Voltage",
+        min_length=1,
+        max_length=40,
+        description="HMI name for the voltage-feedback AI (AI1).",
+    )
+    temp_label: str = Field(
+        default="Temperature",
+        min_length=1,
+        max_length=40,
+        description="HMI name for the temperature thermocouple (TC0).",
+    )
+
     current_full_scale_a: float = Field(
         default=100.0,
         gt=0.0,
-        description="Amps at 100 % AO command (5 V on PS input after conditioner).",
+        description=(
+            "Calibration: amps that correspond to a full-scale signal "
+            "(100 % = 20 mA = 5 V) on the current command AND current-monitor "
+            "legs. Set this to what the supply's meter reads at full output."
+        ),
     )
     voltage_full_scale_v: float = Field(
         default=50.0,
         gt=0.0,
-        description="Volts at 100 % AI reading from PS V feedback.",
+        description=(
+            "Calibration: volts that correspond to a full-scale signal "
+            "(100 % = 20 mA = 5 V) on the voltage-monitor AI. Set this to what "
+            "the supply's voltmeter reads at full scale."
+        ),
     )
 
     current_setpoint_min_a: float = Field(
@@ -121,6 +163,21 @@ class PowerSupplyConfig(BaseModel):
         ),
     )
 
+    @field_validator(
+        "command_label",
+        "aux_command_label",
+        "current_feedback_label",
+        "voltage_feedback_label",
+        "temp_label",
+    )
+    @classmethod
+    def _strip_label(cls, value: str) -> str:
+        """Trim labels and reject whitespace-only names (DbC, DRY across fields)."""
+        trimmed = value.strip()
+        if not trimmed:
+            raise ValueError("signal label must not be blank")
+        return trimmed
+
     @model_validator(mode="after")
     def _check_invariants(self) -> PowerSupplyConfig:
         if self.current_setpoint_min_a >= self.current_setpoint_max_a:
@@ -166,5 +223,15 @@ class PowerSupplyStatus(BaseModel):
             "the current setpoint would otherwise drive the AO above "
             "output_clamp_percent. Lets the UI flag that the operator's limit "
             "is in effect."
+        ),
+    )
+    effective_max_current_a: float = Field(
+        default=0.0,
+        ge=0.0,
+        description=(
+            "The most current the supply can actually deliver right now given "
+            "the output limit: output_clamp_percent/100 * current_full_scale_a. "
+            "The setpoint band may go higher, but the clamp caps real output "
+            "here — the UI shows this so the two limits aren't confusing."
         ),
     )

@@ -21,6 +21,8 @@ interface Props {
   currentFullScale: number;
   voltageFullScale: number;
   powerFullScale: number;
+  currentLabel?: string;
+  voltageLabel?: string;
   windowSeconds: number;
 }
 
@@ -58,6 +60,8 @@ export const PowerSupplyTrend: React.FC<Props> = ({
   currentFullScale,
   voltageFullScale,
   powerFullScale,
+  currentLabel = "Current",
+  voltageLabel = "Voltage",
   windowSeconds,
 }) => {
   const currentPath = buildPath(
@@ -79,12 +83,12 @@ export const PowerSupplyTrend: React.FC<Props> = ({
       <div className="ps-trend-legend">
         <span className="ps-trend-key">
           <span className="swatch" style={{ background: CURRENT_COLOR }} />
-          Current
+          {currentLabel}
           <strong>{last ? `${last.i.toFixed(2)} A` : "—"}</strong>
         </span>
         <span className="ps-trend-key">
           <span className="swatch" style={{ background: VOLTAGE_COLOR }} />
-          Voltage
+          {voltageLabel}
           <strong>{last ? `${last.v.toFixed(2)} V` : "—"}</strong>
         </span>
         <span className="ps-trend-key">
