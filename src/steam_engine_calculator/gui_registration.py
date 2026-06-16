@@ -19,10 +19,10 @@ GUI_INFO = {
 }
 
 GUI_METADATA = {
-    "name": GUI_INFO["name"],
-    "description": GUI_INFO["description"],
-    "category": GUI_INFO["category"].lower(),
-    "entry_point": GUI_INFO["pyqt6"]["module"],
+    "name": "Steam Engine Calculator",
+    "description": "Steam property calculations and Rankine cycle analysis",
+    "category": "thermodynamics",
+    "entry_point": "steam_engine_calculator.ui.pyqt6.main_window",
 }
 
 
