@@ -17,6 +17,7 @@ from typing import Any, cast
 from alicat_manager import AlicatManager, AlicatMFC
 from auth_config import require_admin_key, require_api_key, verify_operator_key
 from cors_config import resolve_cors_settings
+from data_capture import CaptureStats, ClearResult, capture_stats, clear_capture
 from database import engine, get_session, init_db
 from fastapi import (
     Depends,
@@ -776,6 +777,50 @@ async def export_data(
         f"attachment; filename=tag_export_{timestamp_sec}.csv"
     )
     return response
+
+
+@app.get("/api/capture/status", response_model=CaptureStats)
+async def get_capture_status(
+    db: Session = Depends(get_session),  # noqa: B008
+) -> CaptureStats:
+    """Report the captured historian: rows, time span, distinct tags, disk size.
+
+    Capture is automatic — the polling loop logs every scan whenever the backend
+    is up — so ``capturing`` mirrors that always-on behavior for the HMI's REC
+    indicator.
+    """
+    return capture_stats(db, capturing=True)
+
+
+class CaptureClearRequest(BaseModel):
+    """Operator request to clear captured data."""
+
+    include_events: bool = False
+
+
+@app.post(
+    "/api/capture/clear",
+    response_model=ClearResult,
+    dependencies=[Depends(require_admin_key)],
+)
+async def clear_capture_data(
+    req: CaptureClearRequest,
+    db: Session = Depends(get_session),  # noqa: B008
+) -> ClearResult:
+    """Clear the captured historian and reclaim disk (VACUUM).
+
+    A destructive maintenance action — admin-gated — so a long test campaign
+    cannot silently fill the storage device. Optionally clears the event log too.
+    """
+    result = clear_capture(db, include_events=req.include_events)
+    logger.warning(
+        "Historian cleared: %d tag rows, %d event rows, %d -> %d bytes",
+        result.tag_rows_deleted,
+        result.event_rows_deleted,
+        result.db_bytes_before,
+        result.db_bytes_after,
+    )
+    return result
 
 
 class TagWritePayload(BaseModel):

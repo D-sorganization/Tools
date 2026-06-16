@@ -3,6 +3,7 @@ import { RoutingMatrix, TAG_INDICES } from "./components/RoutingMatrix";
 import { TrendChart } from "./components/TrendChart";
 import { AlarmsHeader } from "./components/AlarmsHeader";
 import { EStopButton } from "./components/EStopButton";
+import { DataCapturePanel } from "./components/DataCapturePanel";
 import { InterlocksPanel } from "./components/InterlocksPanel";
 import { EventLogView } from "./components/EventLogView";
 import { ProjectImporter } from "./components/ProjectImporter";
@@ -104,7 +105,8 @@ type InspectorState =
   | { type: "pid"; index: number }
   | { type: "routing" }
   | { type: "alicat"; deviceId: string }
-  | { type: "settings" };
+  | { type: "settings" }
+  | { type: "export" };
 
 export const App: React.FC = () => {
   const [config, setConfig] = useState<RoutingConfig>(DEFAULT_CONFIG);
@@ -774,15 +776,21 @@ export const App: React.FC = () => {
         </div>
       )}
 
-      {/* Cybernetic Flat Header */}
+      {/* Sticky header — always visible so the E-stop is always one click away */}
       <header
         style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          marginBottom: "1.25rem",
+          position: "sticky",
+          top: 0,
+          zIndex: 50,
+          background: "var(--bg-color)",
+          marginBottom: "1rem",
+          paddingTop: "0.85rem",
           paddingBottom: "0.85rem",
           borderBottom: "1px solid var(--panel-border)",
+          boxShadow: "0 6px 14px -10px rgba(0,0,0,0.5)",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
@@ -880,8 +888,8 @@ export const App: React.FC = () => {
         }} 
       />
 
-      {/* Main Two-Column Master-Detail Layout */}
-      <div className="main-layout-grid">
+      {/* Main content — the inspector is now a slide-in drawer (below), not a column */}
+      <div className="main-layout-grid" style={{ gridTemplateColumns: "1fr" }}>
         {/* Left Column (Master Dashboard elements) */}
         <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
           {/* Tabbed Navigation Bar */}
@@ -1049,7 +1057,10 @@ export const App: React.FC = () => {
           </div>
 
           {activeTab === "powerSupply" && visibleTabs.powerSupply && (
-            <PowerSupplyControl liveStatus={powerSupplyStatus} />
+            <PowerSupplyControl
+              liveStatus={powerSupplyStatus}
+              onExport={() => setInspectorView({ type: "export" })}
+            />
           )}
 
           {/* Render Tab Contents */}
@@ -1603,47 +1614,66 @@ export const App: React.FC = () => {
           )}
         </div>
 
-        {/* Right Column (Sticky Inspector Sidebar Panel) */}
+        {/* Inspector / data-export drawer — slides in from the right on demand */}
+        {inspectorView.type !== "none" && (
+          <div
+            onClick={() => setInspectorView({ type: "none" })}
+            style={{
+              position: "fixed",
+              inset: 0,
+              background: "rgba(0,0,0,0.4)",
+              zIndex: 199,
+            }}
+          />
+        )}
         <aside
           style={{
-            position: "sticky",
-            top: "1.25rem",
-            maxHeight: "calc(100vh - 2.5rem)",
+            position: "fixed",
+            top: 0,
+            right: 0,
+            height: "100vh",
+            width: "440px",
+            maxWidth: "92vw",
+            transform:
+              inspectorView.type !== "none" ? "translateX(0)" : "translateX(100%)",
+            transition: "transform 0.25s ease",
+            zIndex: 200,
+            background: "var(--bg-color)",
+            borderLeft: "1px solid var(--panel-border)",
+            boxShadow: "-10px 0 28px rgba(0,0,0,0.35)",
             overflowY: "auto",
             display: "flex",
             flexDirection: "column",
             gap: "1.25rem",
+            padding: "1.25rem",
           }}
         >
           {/* Main inspector panel */}
           <div className="glass-panel" style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             <div className="panel-header" style={{ borderBottom: "1px solid var(--panel-border)", paddingBottom: "0.5rem" }}>
-              <span>Inspector Panel</span>
-              {inspectorView.type !== "none" && (
-                <button
-                  type="button"
-                  onClick={() => setInspectorView({ type: "none" })}
-                  style={{ background: "none", border: "none", color: "var(--text-secondary)", cursor: "pointer" }}
-                  aria-label="Close inspector panel"
-                >
-                  <X size={16} />
-                </button>
-              )}
+              <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+                {inspectorView.type === "export"
+                  ? "Data export"
+                  : inspectorView.type === "settings"
+                  ? "Settings"
+                  : ""}
+              </span>
+              <button
+                type="button"
+                onClick={() => setInspectorView({ type: "none" })}
+                style={{ background: "none", border: "none", color: "var(--text-secondary)", cursor: "pointer" }}
+                aria-label="Close panel"
+              >
+                <X size={16} />
+              </button>
             </div>
 
-            {/* Render details depending on selection */}
+            {inspectorView.type === "export" && <DataCapturePanel />}
+
+            {/* Legacy default content (kept for tag/pid detail flows; the
+                drawer only opens on an explicit selection or the Export button) */}
             {inspectorView.type === "none" && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-                <div>
-                  <h3 style={{ fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "0.35rem", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                    <Info size={14} color="var(--accent-cyan)" />
-                    <span>Inspector Guide</span>
-                  </h3>
-                  <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
-                    Click on any Tag, PID Loop, or Routing matrix on the main screen to inspect safety details, tune controllers, or issue manual overrides.
-                  </p>
-                </div>
-
                 {/* CSV Log Exporter inside Default Sidebar view */}
                 <div style={{ borderTop: "1px solid var(--panel-border)", paddingTop: "1rem" }}>
                   <h3 style={{ fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "0.75rem", display: "flex", alignItems: "center", gap: "0.3rem" }}>
@@ -2013,93 +2043,32 @@ export const App: React.FC = () => {
 
             {/* Settings inspector view */}
             {inspectorView.type === "settings" && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                <div>
-                  <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--accent-cyan)", textTransform: "uppercase" }}>
-                    Dashboard Settings
-                  </h3>
-                  <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", lineHeight: 1.4, marginTop: "0.25rem" }}>
-                    Configure the SCADA dashboard tab visibility. Toggle tabs to customize your workspace layout.
-                  </p>
-                </div>
-
-                <div style={{ borderTop: "1px solid var(--panel-border)", paddingTop: "0.75rem", display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-                  <span style={{ fontSize: "0.75rem", color: "var(--text-primary)", fontWeight: 700, textTransform: "uppercase" }}>
-                    Visible Tabs
-                  </span>
-                  
-                  <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8rem", cursor: "pointer" }}>
-                    <input
-                      type="checkbox"
-                      checked={visibleTabs.trends}
-                      onChange={() => handleTabVisibilityToggle("trends")}
-                    />
-                    <span>Live Trends & Monitors</span>
-                  </label>
-
-                  <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8rem", cursor: "pointer" }}>
-                    <input
-                      type="checkbox"
-                      checked={visibleTabs.controllers}
-                      onChange={() => handleTabVisibilityToggle("controllers")}
-                    />
-                    <span>PID Loops & MFCs</span>
-                  </label>
-
-                  <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8rem", cursor: "pointer" }}>
-                    <input
-                      type="checkbox"
-                      checked={visibleTabs.routing}
-                      onChange={() => handleTabVisibilityToggle("routing")}
-                    />
-                    <span>Signal Routing Matrix</span>
-                  </label>
-
-                  <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8rem", cursor: "pointer" }}>
-                    <input
-                      type="checkbox"
-                      checked={visibleTabs.tuning}
-                      onChange={() => handleTabVisibilityToggle("tuning")}
-                    />
-                    <span>Tuning & MPC Groundwork</span>
-                  </label>
-
-                  <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8rem", cursor: "pointer" }}>
-                    <input
-                      type="checkbox"
-                      checked={visibleTabs.events}
-                      onChange={() => handleTabVisibilityToggle("events")}
-                    />
-                    <span>Alarms & Event Log</span>
-                  </label>
-
-                  <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8rem", cursor: "pointer" }}>
-                    <input
-                      type="checkbox"
-                      checked={visibleTabs.ladder}
-                      onChange={() => handleTabVisibilityToggle("ladder")}
-                    />
-                    <span>Ladder Explorer</span>
-                  </label>
-
-                  <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8rem", cursor: "pointer" }}>
-                    <input
-                      type="checkbox"
-                      checked={visibleTabs.hierarchy}
-                      onChange={() => handleTabVisibilityToggle("hierarchy")}
-                    />
-                    <span>Plant Hierarchy</span>
-                  </label>
-                </div>
-
-                <div style={{ borderTop: "1px solid var(--panel-border)", paddingTop: "0.75rem" }}>
-                  <span style={{ fontSize: "0.75rem", color: "var(--text-primary)", fontWeight: 700, textTransform: "uppercase", display: "block", marginBottom: "0.35rem" }}>
-                    Operator Guidelines
-                  </span>
-                  <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.4 }}>
-                    Maintain safety limit boundary configurations. All parameter deployments are saved to non-volatile memory (NVRAM) and persist across power cycles.
-                  </p>
-                </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+                <span style={{ fontSize: "0.75rem", color: "var(--text-primary)", fontWeight: 700, textTransform: "uppercase" }}>
+                  Visible tabs
+                </span>
+                {(
+                  [
+                    ["powerSupply", "Power Supply"],
+                    ["trends", "Live Trends & Monitors"],
+                    ["controllers", "PID Loops & MFCs"],
+                    ["routing", "Signal Routing Matrix"],
+                    ["tuning", "Tuning & MPC Groundwork"],
+                    ["events", "Alarms & Event Log"],
+                    ["ladder", "Ladder Explorer"],
+                    ["hierarchy", "Plant Hierarchy"],
+                  ] as [keyof typeof visibleTabs, string][]
+                ).map(([key, label]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    className={`tab-toggle ${visibleTabs[key] ? "on" : ""}`}
+                    onClick={() => handleTabVisibilityToggle(key)}
+                  >
+                    <span>{label}</span>
+                    <span className="tab-toggle-switch" />
+                  </button>
+                ))}
               </div>
             )}
 

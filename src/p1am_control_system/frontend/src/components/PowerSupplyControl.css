@@ -526,6 +526,12 @@
   cursor: not-allowed !important;
 }
 
+.ps-export-btn {
+  gap: 0.35rem;
+  font-size: 0.74rem;
+  padding: 0.3rem 0.7rem;
+}
+
 /* ---- Live trend ----------------------------------------------------- */
 .ps-trend {
   display: flex;
