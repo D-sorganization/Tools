@@ -6,7 +6,8 @@ import logging
 import struct
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
+from auth_config import require_admin_key
+from fastapi import APIRouter, Depends, HTTPException
 from power_supply import (
     PowerSupplyConfig,
     PowerSupplyController,
@@ -98,7 +99,11 @@ def create_power_supply_router(service: PowerSupplyService) -> APIRouter:
     async def get_power_supply_config() -> PowerSupplyConfig:
         return controller.config
 
-    @router.put("/config", response_model=PowerSupplyConfig)
+    @router.put(
+        "/config",
+        response_model=PowerSupplyConfig,
+        dependencies=[Depends(require_admin_key)],
+    )
     async def update_power_supply_config(
         new_config: PowerSupplyConfig,
     ) -> PowerSupplyConfig:
@@ -109,7 +114,7 @@ def create_power_supply_router(service: PowerSupplyService) -> APIRouter:
     async def get_power_supply_status() -> PowerSupplyStatus:
         return controller.status()
 
-    @router.post("/setpoint")
+    @router.post("/setpoint", dependencies=[Depends(require_admin_key)])
     async def apply_power_supply_setpoint(
         req: PowerSupplySetpointRequest,
     ) -> dict[str, Any]:
@@ -136,14 +141,14 @@ def create_power_supply_router(service: PowerSupplyService) -> APIRouter:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
         return {"mode": "power", "achievable_w": achievable}
 
-    @router.post("/permissive")
+    @router.post("/permissive", dependencies=[Depends(require_admin_key)])
     async def set_power_supply_permissive(
         req: PowerSupplyPermissiveRequest,
     ) -> PowerSupplyStatus:
         controller.set_permissive(req.enabled)
         return controller.status()
 
-    @router.post("/acknowledge_trip")
+    @router.post("/acknowledge_trip", dependencies=[Depends(require_admin_key)])
     async def acknowledge_power_supply_trip() -> PowerSupplyStatus:
         controller.acknowledge_trip()
         return controller.status()

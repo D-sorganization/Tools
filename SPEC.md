@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.517                                    |
+| **Spec Version**        | 1.1.518                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -928,6 +928,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-16 | 1.1.518 | fix(p1am-security): require the elevated admin API key for mutating power-supply routes (`/config`, `/setpoint`, `/permissive`, and `/acknowledge_trip`) while keeping read-only config/status endpoints unauthenticated. |
 | 2026-06-16 | 1.1.511 | fix(calc-backend, #3316): make calculator route signature extraction `APIRouter.prefix`-aware so repair can derive declared `/api/calc/*` endpoints from prefixless child routes in the Linux CI FastAPI matrix. |
 | 2026-06-16 | 1.1.510 | fix(calc-backend, #3316): derive and repair `/api/calc/endpoints` from `request.app` instead of the module-global app so alias-loaded FastAPI apps in the Linux CI matrix keep the advertised endpoint list attached to the serving app. |
 | 2026-06-16 | 1.1.509 | fix(calc-backend, #3316): normalize FastAPI route path and method metadata before deriving or repairing `/api/calc/endpoints`, preventing Linux CI route implementations from producing an empty advertised endpoint list. |
@@ -1740,3 +1741,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 1.1.410 - Palette Micro-UX Improvement
 
 - **2026-06-14**: feat(ux) — added `readonly` attribute to the "To" result input field in the unit converter application (`src/web_applications/unit_converter/unit-converter-app/index.html`) to prevent user confusion, alongside visual styling (`styles.css`) indicating the field's uneditable nature.
+
+### Security
+
+- **Power Supply Endpoints**: State-mutating power supply API routes (`/config`, `/setpoint`, `/permissive`, `/acknowledge_trip`) must be authenticated using the elevated admin key (`P1AM_ADMIN_API_KEY` or `P1AM_API_KEY` fallback), enforced via FastAPI dependencies.
