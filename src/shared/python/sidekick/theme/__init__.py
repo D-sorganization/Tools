@@ -30,7 +30,7 @@ _logger = logging.getLogger(__name__)
 try:
     # Re-export all public symbols
     # Protocol re-exports (no PyQt6 dependency)
-    from theme import (
+    from shared.python.theme import (
         BUILTIN_THEMES,
         THEME_COLOR_KEYS,
         StylesheetGenerator,
@@ -54,7 +54,7 @@ except ImportError as exc:
 # PyQt6-dependent re-exports
 if _THEME_AVAILABLE:
     try:
-        from theme import (
+        from shared.python.theme import (
             ColorFieldEditor,
             ColorPickerButton,
             CustomThemeDialog,

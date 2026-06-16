@@ -11,12 +11,13 @@ import logging
 import os
 from pathlib import Path
 
-from cors import add_cors_middleware
 from fastapi import FastAPI, HTTPException, Query, UploadFile
 from fastapi.dependencies.utils import ensure_multipart_is_installed
 from fastapi.responses import FileResponse, HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
+
+from shared.python.cors import add_cors_middleware
 
 # ── Security constants ──────────────────────────────────────────────────
 MAX_UPLOAD_SIZE = 25 * 1024 * 1024  # 25 MB

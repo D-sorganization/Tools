@@ -11,7 +11,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from humanoid_character_builder.core.body_parameters import (
+from shared.python.humanoid_character_builder.core.body_parameters import (
     BodyParameters,
     BuildType,
     GenderModel,
@@ -216,7 +216,7 @@ def load_segment_template(
     """
     # For now, return default segment configuration
     # Can be extended to load from YAML files
-    from humanoid_character_builder.core.segment_definitions import (
+    from shared.python.humanoid_character_builder.core.segment_definitions import (
         HUMANOID_SEGMENTS,
     )
 

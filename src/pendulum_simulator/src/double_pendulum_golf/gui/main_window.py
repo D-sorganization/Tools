@@ -88,7 +88,7 @@ try:
         _shared_root = _src_root / "shared" / "python"
         if str(_shared_root) not in sys.path:
             sys.path.insert(0, str(_shared_root))
-        from theme import (
+        from shared.python.theme import (
             ThemeManager as _ThemeManager,
             ThemeManagerDialog as _ThemeManagerDialog,
             create_theme_menu as _create_theme_menu,
@@ -108,7 +108,7 @@ except ImportError:
 _PLOT_THEME_AVAILABLE = False
 create_plot_theme_menu: Any = None
 try:
-    from plot_theme.integration import (
+    from shared.python.plot_theme.integration import (
         create_plot_theme_menu as _shared_create_plot_theme_menu,
     )
 

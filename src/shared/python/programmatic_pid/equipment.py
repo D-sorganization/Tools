@@ -10,7 +10,7 @@ import math  # noqa: E402
 from collections.abc import Callable  # noqa: E402
 from typing import Any  # noqa: E402
 
-from programmatic_pid.geometry import to_float  # noqa: E402
+from shared.python.programmatic_pid.geometry import to_float  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Registry

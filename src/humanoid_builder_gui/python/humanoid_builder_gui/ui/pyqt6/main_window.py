@@ -14,10 +14,6 @@ import sys
 from dataclasses import dataclass
 from enum import Enum
 
-from humanoid_character_builder.core.anthropometry import (
-    get_segment_length_ratio,
-    get_segment_mass_ratio,
-)
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
@@ -42,6 +38,10 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from shared.python.humanoid_character_builder.core.anthropometry import (
+    get_segment_length_ratio,
+    get_segment_mass_ratio,
+)
 from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA, get_stylesheet
 from shared.python.theme.integration import ThemedWindowMixin
 

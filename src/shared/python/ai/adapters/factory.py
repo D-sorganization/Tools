@@ -358,7 +358,7 @@ class AdapterFactory:
         """
         # Try CredentialManager first
         try:
-            from chat_contracts.credentials import CredentialManager
+            from shared.python.chat_contracts.credentials import CredentialManager
 
             mgr = CredentialManager()
             key: str | None = mgr.get_api_key(provider)

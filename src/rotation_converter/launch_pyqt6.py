@@ -15,7 +15,7 @@ from _bootstrap import bootstrap  # noqa: E402
 
 bootstrap(__file__)
 
-from gui_launcher import make_pyqt6_launcher  # noqa: E402
+from shared.python.gui_launcher import make_pyqt6_launcher  # noqa: E402
 
 if __name__ == "__main__":
     sys.exit(make_pyqt6_launcher("rotation_converter.gui_registration"))

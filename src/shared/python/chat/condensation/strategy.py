@@ -21,7 +21,7 @@ import abc
 import dataclasses
 from typing import Protocol
 
-from chat.service_base import ChatMessage, ChatSession
+from shared.python.chat.service_base import ChatMessage, ChatSession
 
 from .contracts import CondensationRequest
 

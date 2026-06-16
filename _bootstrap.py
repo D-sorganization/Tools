@@ -68,6 +68,9 @@ def bootstrap(caller_file: str) -> Path:
     src_root = str(repo_root / "src")
     if src_root not in sys.path:
         sys.path.insert(0, src_root)
+    python_src_root = str(repo_root / "src" / "python" / "src")
+    if python_src_root not in sys.path:
+        sys.path.insert(0, python_src_root)
 
     try:
         from shared.python.import_aliases import install_shared_import_aliases

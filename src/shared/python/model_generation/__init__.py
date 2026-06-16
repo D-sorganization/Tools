@@ -25,9 +25,9 @@ __version__ = "0.1.0"
 __author__ = "Golf Modeling Suite"
 
 # --- Only lightweight constants are imported eagerly ---
-from model_generation._convenience import quick_build, quick_urdf
-from model_generation._lazy_map import LAZY_IMPORTS
-from model_generation.core.constants import (
+from shared.python.model_generation._convenience import quick_build, quick_urdf
+from shared.python.model_generation._lazy_map import LAZY_IMPORTS
+from shared.python.model_generation.core.constants import (
     DEFAULT_DENSITY_KG_M3,
     DEFAULT_HEIGHT_M,
     DEFAULT_INERTIA_KG_M2,

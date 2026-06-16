@@ -16,7 +16,7 @@ from dataclasses import asdict
 from datetime import datetime
 from typing import Literal, Protocol
 
-from chat.service_base import ChatMessage
+from shared.python.chat.service_base import ChatMessage
 
 CopyMode = Literal["raw_text", "markdown", "code_only", "json"]
 

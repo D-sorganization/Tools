@@ -57,7 +57,7 @@ if PYQT6_AVAILABLE:
             self._setup_ui()
 
         def _setup_ui(self) -> None:
-            from plot_engine.pyqt6_widget import PlotWidget
+            from shared.python.plot_engine.pyqt6_widget import PlotWidget
 
             layout = QVBoxLayout(self)
 
@@ -125,8 +125,8 @@ if PYQT6_AVAILABLE:
             layout.addWidget(self._plot_widget, stretch=1)
 
         def _generate_plot(self) -> None:
-            from plot_engine.contour import scatter_to_grid
-            from plot_engine.specs import AxisSpec, ContourPlotSpec
+            from shared.python.plot_engine.contour import scatter_to_grid
+            from shared.python.plot_engine.specs import AxisSpec, ContourPlotSpec
 
             x_col = self._x_combo.currentText()
             y_col = self._y_combo.currentText()
@@ -180,7 +180,7 @@ if PYQT6_AVAILABLE:
             self._setup_ui()
 
         def _setup_ui(self) -> None:
-            from plot_engine.pyqt6_widget import PlotWidget
+            from shared.python.plot_engine.pyqt6_widget import PlotWidget
 
             layout = QVBoxLayout(self)
 
@@ -218,8 +218,8 @@ if PYQT6_AVAILABLE:
             layout.addWidget(self._plot_widget, stretch=1)
 
         def _generate_plot(self) -> None:
-            from plot_engine.contour import correlation_matrix
-            from plot_engine.specs import HeatmapSpec
+            from shared.python.plot_engine.contour import correlation_matrix
+            from shared.python.plot_engine.specs import HeatmapSpec
 
             try:
                 numeric_df = self.df.select_dtypes(include=[np.number])
@@ -278,7 +278,7 @@ if PYQT6_AVAILABLE:
             self._generate_plot()
 
         def _setup_ui(self) -> None:
-            from plot_engine.pyqt6_widget import PlotWidget
+            from shared.python.plot_engine.pyqt6_widget import PlotWidget
 
             layout = QVBoxLayout(self)
 
@@ -294,7 +294,7 @@ if PYQT6_AVAILABLE:
             layout.addWidget(self._plot_widget, stretch=1)
 
         def _generate_plot(self) -> None:
-            from plot_engine.specs import (
+            from shared.python.plot_engine.specs import (
                 AxisSpec,
                 FilterComparisonSpec,
                 SeriesData,

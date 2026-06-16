@@ -20,15 +20,15 @@ from PyQt6.QtWidgets import (
     QPushButton,
 )
 
-from src.shared.python.ai.access_policy import ChatAccessMode
-from src.shared.python.ai.gui._provider_registry_data import (
+from shared.python.ai.access_policy import ChatAccessMode
+from shared.python.ai.gui._provider_registry_data import (
     AIProvider,
     populate_model_combo,
     populate_provider_combo,
 )
 
 if TYPE_CHECKING:
-    from src.shared.python.ai._settings_model import AISettings
+    from shared.python.ai._settings_model import AISettings
 
 
 _CHAT_MODES = (
@@ -381,7 +381,7 @@ class PanelHeaderController(QFrame):
             self.mode_changed.emit(mode)
 
     def _on_access_mode_changed(self, _index: int) -> None:
-        from src.shared.python.ai.access_policy import coerce_access_mode
+        from shared.python.ai.access_policy import coerce_access_mode
 
         mode = coerce_access_mode(self.access_mode_combo.currentData())
         self.access_mode_changed.emit(mode)

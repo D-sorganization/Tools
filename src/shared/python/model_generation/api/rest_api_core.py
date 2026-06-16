@@ -5,14 +5,18 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from model_generation.api.rest_api_assets import AssetLibraryEditorRoutesMixin
-from model_generation.api.rest_api_contracts import (
+from shared.python.model_generation.api.rest_api_assets import (
+    AssetLibraryEditorRoutesMixin,
+)
+from shared.python.model_generation.api.rest_api_contracts import (
     APIRequest,
     APIResponse,
     HTTPMethod,
     Route,
 )
-from model_generation.api.rest_api_generation import GenerationConversionRoutesMixin
+from shared.python.model_generation.api.rest_api_generation import (
+    GenerationConversionRoutesMixin,
+)
 
 
 class ModelGenerationAPI(

@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from types import MappingProxyType
 from typing import Any
 
-from compatibility import StrEnum
+from shared.python.compatibility import StrEnum
 
 from .design_tokens import (
     _HEX_COLOR_RE,

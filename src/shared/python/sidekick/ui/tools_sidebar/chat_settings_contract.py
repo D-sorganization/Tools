@@ -156,7 +156,7 @@ def credential_status(
 def _default_credential_manager() -> Any | None:
     """Return a :class:`CredentialManager`, or ``None`` if chat is absent."""
     try:
-        from chat.credentials import CredentialManager
+        from shared.python.chat.credentials import CredentialManager
     except Exception as exc:  # noqa: BLE001 - chat extras are optional
         _logger.debug("Chat credentials unavailable: %s", exc)
         return None

@@ -12,15 +12,16 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 import numpy as np
-from model_generation.core.constants import (
+
+from shared.python.model_generation.core.constants import (
     FLOAT_TOLERANCE,
     MIN_INERTIA_KG_M2,
     MIN_MASS_KG,
 )
-from model_generation.core.contracts import postcondition, precondition
+from shared.python.model_generation.core.contracts import postcondition, precondition
 
 if TYPE_CHECKING:
-    from model_generation.core.types import Inertia, Joint, Link
+    from shared.python.model_generation.core.types import Inertia, Joint, Link
 
 logger = logging.getLogger(__name__)
 
@@ -302,7 +303,7 @@ class Validator:
             )
 
         # Check axis is normalized (for revolute/prismatic)
-        from model_generation.core.types import JointType
+        from shared.python.model_generation.core.types import JointType
 
         if joint.joint_type in (
             JointType.REVOLUTE,

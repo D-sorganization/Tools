@@ -25,8 +25,8 @@ def _run_import_probe(code: str) -> subprocess.CompletedProcess[str]:
     """Run import-identity probes without mutating pytest's module cache."""
     env = os.environ.copy()
     roots = [
-        str(WORKTREE_ROOT / "src" / "shared" / "python"),
         str(WORKTREE_ROOT / "src"),
+        str(WORKTREE_ROOT / "src" / "python" / "src"),
     ]
     existing_pythonpath = env.get("PYTHONPATH")
     if existing_pythonpath:

@@ -16,9 +16,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from programmatic_pid.geometry import to_float
-from programmatic_pid.rendering import add_box, add_text, add_text_panel
-from programmatic_pid.spec_loader import get_project
+from shared.python.programmatic_pid.geometry import to_float
+from shared.python.programmatic_pid.rendering import add_box, add_text, add_text_panel
+from shared.python.programmatic_pid.spec_loader import get_project
 
 
 def add_title_block(

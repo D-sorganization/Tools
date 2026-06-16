@@ -13,7 +13,7 @@ __all__ = [
 def __getattr__(name: str) -> object:
     """Load signal-toolkit symbols on demand for headless sidebar imports."""
     if name in __all__:
-        from signal_toolkit import Signal, SignalGenerator
+        from shared.python.signal_toolkit import Signal, SignalGenerator
 
         return {"Signal": Signal, "SignalGenerator": SignalGenerator}[name]
     raise AttributeError(name)

@@ -12,7 +12,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 
-from humanoid_character_builder.core.body_parameters import BodyParameters
+from shared.python.humanoid_character_builder.core.body_parameters import BodyParameters
 
 
 class MeshGeneratorBackend(Enum):

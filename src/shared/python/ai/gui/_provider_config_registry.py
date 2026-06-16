@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from PyQt6.QtWidgets import QWidget
 
-from src.shared.python.ai.gui._provider_config_widgets import (
+from shared.python.ai.gui._provider_config_widgets import (
     AnthropicConfigWidget,
     BitnetConfigWidget,
     ClaudeCliConfigWidget,
@@ -22,7 +22,7 @@ from src.shared.python.ai.gui._provider_config_widgets import (
     OllamaConfigWidget,
     OpenAIConfigWidget,
 )
-from src.shared.python.ai.gui._provider_registry_data import AIProvider
+from shared.python.ai.gui._provider_registry_data import AIProvider
 
 
 class ProviderConfigRegistry:

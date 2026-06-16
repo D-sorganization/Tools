@@ -33,7 +33,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from src.shared.python.ai.mcp.widgets.health_query_api import (
+from shared.python.ai.mcp.widgets.health_query_api import (
     IntegrationStatus,
     IntegrationStatusLevel,
     list_all_integrations,

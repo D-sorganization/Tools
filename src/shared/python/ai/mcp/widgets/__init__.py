@@ -16,16 +16,16 @@ Public widgets:
 
 from __future__ import annotations
 
-from src.shared.python.ai.mcp.widgets.health_query_api import (
+from shared.python.ai.mcp.widgets.health_query_api import (
     IntegrationStatus,
     IntegrationStatusLevel,
     list_all_integrations,
     query_integration_status,
 )
-from src.shared.python.ai.mcp.widgets.integrations_health_dashboard_widget import (
+from shared.python.ai.mcp.widgets.integrations_health_dashboard_widget import (
     IntegrationsHealthDashboardWidget,
 )
-from src.shared.python.ai.mcp.widgets.mcp_servers_prefs_widget import (
+from shared.python.ai.mcp.widgets.mcp_servers_prefs_widget import (
     McpServerEditDialog,
     McpServersPrefsWidget,
 )

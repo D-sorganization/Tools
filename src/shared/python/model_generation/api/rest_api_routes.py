@@ -309,7 +309,9 @@ class ModelGenerationAPI:
         """Generate humanoid URDF."""
         if request is None:
             raise ValueError("request must be provided")
-        from model_generation.builders.parametric_builder import ParametricBuilder
+        from shared.python.model_generation.builders.parametric_builder import (
+            ParametricBuilder,
+        )
 
         body = request.body or {}
         robot_name = body.get("name", "humanoid")
@@ -347,8 +349,8 @@ class ModelGenerationAPI:
         """Generate URDF from detailed parameters."""
         if request is None:
             raise ValueError("request must be provided")
-        from model_generation.builders.manual_builder import ManualBuilder
-        from model_generation.core.types import (
+        from shared.python.model_generation.builders.manual_builder import ManualBuilder
+        from shared.python.model_generation.core.types import (
             Joint,
             Link,
         )
@@ -398,7 +400,7 @@ class ModelGenerationAPI:
         """Convert SimScape MDL/SLX to URDF."""
         if request is None:
             raise ValueError("request must be provided")
-        from model_generation.converters.simscape import (
+        from shared.python.model_generation.converters.simscape import (
             ConversionConfig,
             SimscapeToURDFConverter,
         )
@@ -450,7 +452,9 @@ class ModelGenerationAPI:
         """Convert MJCF to URDF."""
         if request is None:
             raise ValueError("request must be provided")
-        from model_generation.converters.mjcf_converter import MJCFConverter
+        from shared.python.model_generation.converters.mjcf_converter import (
+            MJCFConverter,
+        )
 
         body = request.body or {}
 
@@ -479,7 +483,9 @@ class ModelGenerationAPI:
         """Convert URDF to MJCF."""
         if request is None:
             raise ValueError("request must be provided")
-        from model_generation.converters.mjcf_converter import MJCFConverter
+        from shared.python.model_generation.converters.mjcf_converter import (
+            MJCFConverter,
+        )
 
         body = request.body or {}
 
@@ -512,7 +518,7 @@ class ModelGenerationAPI:
         """Validate URDF content."""
         if request is None:
             raise ValueError("request must be provided")
-        from model_generation.editor.text_editor import (
+        from shared.python.model_generation.editor.text_editor import (
             URDFTextEditor,
             ValidationSeverity,
         )
@@ -563,7 +569,7 @@ class ModelGenerationAPI:
         """Parse URDF and return structure."""
         if request is None:
             raise ValueError("request must be provided")
-        from model_generation.converters.urdf_parser import URDFParser
+        from shared.python.model_generation.converters.urdf_parser import URDFParser
 
         body = request.body or {}
 
@@ -602,7 +608,7 @@ class ModelGenerationAPI:
         """Calculate inertia for primitive shape."""
         if request is None:
             raise ValueError("request must be provided")
-        from model_generation.core.types import Inertia
+        from shared.python.model_generation.core.types import Inertia
 
         body = request.body or {}
 
@@ -768,7 +774,7 @@ class ModelGenerationAPI:
         """List models in library."""
         if request is None:
             raise ValueError("request must be provided")
-        from model_generation.library import ModelLibrary
+        from shared.python.model_generation.library import ModelLibrary
 
         library = ModelLibrary()
 
@@ -809,7 +815,7 @@ class ModelGenerationAPI:
         """Get model details."""
         if request is None:
             raise ValueError("request must be provided")
-        from model_generation.library import ModelLibrary
+        from shared.python.model_generation.library import ModelLibrary
 
         model_id = request.query_params.get("model_id")
         if not model_id:
@@ -838,7 +844,7 @@ class ModelGenerationAPI:
         """Add model to library."""
         if request is None:
             raise ValueError("request must be provided")
-        from model_generation.library import ModelCategory, ModelLibrary
+        from shared.python.model_generation.library import ModelCategory, ModelLibrary
 
         body = request.body or {}
 
@@ -891,7 +897,7 @@ class ModelGenerationAPI:
         """Remove model from library."""
         if request is None:
             raise ValueError("request must be provided")
-        from model_generation.library import ModelLibrary
+        from shared.python.model_generation.library import ModelLibrary
 
         model_id = request.query_params.get("model_id")
         if not model_id:
@@ -916,7 +922,7 @@ class ModelGenerationAPI:
         """Download model URDF."""
         if request is None:
             raise ValueError("request must be provided")
-        from model_generation.library import ModelLibrary
+        from shared.python.model_generation.library import ModelLibrary
 
         model_id = request.query_params.get("model_id")
         if not model_id:
@@ -940,7 +946,7 @@ class ModelGenerationAPI:
         """Compose model from multiple sources."""
         if request is None:
             raise ValueError("request must be provided")
-        from model_generation.editor import FrankensteinEditor
+        from shared.python.model_generation.editor import FrankensteinEditor
 
         body = request.body or {}
 
@@ -1000,7 +1006,7 @@ class ModelGenerationAPI:
         """Compare two URDF files."""
         if request is None:
             raise ValueError("request must be provided")
-        from model_generation.editor.text_editor import URDFTextEditor
+        from shared.python.model_generation.editor.text_editor import URDFTextEditor
 
         body = request.body or {}
 

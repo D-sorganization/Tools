@@ -298,12 +298,13 @@ class TestGuardsSurviveOptimizedMode:
     def test_compute_derivative_raises_under_minus_o(self) -> None:
         repo_root = Path(__file__).resolve().parents[4]
         env = os.environ.copy()
-        shared_python = str(repo_root / "src" / "shared" / "python")
+        src = str(repo_root / "src")
+        python_src = str(repo_root / "src" / "python" / "src")
         existing_pythonpath = env.get("PYTHONPATH")
         env["PYTHONPATH"] = os.pathsep.join(
-            [shared_python, existing_pythonpath]
+            [src, python_src, existing_pythonpath]
             if existing_pythonpath
-            else [shared_python]
+            else [src, python_src]
         )
         code = (
             "from signal_toolkit.calculus import compute_derivative; "

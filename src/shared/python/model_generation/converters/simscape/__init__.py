@@ -5,7 +5,7 @@ This module provides conversion between MATLAB SimScape Multibody
 models and URDF format.
 """
 
-from model_generation.converters.simscape.mdl_parser import (
+from shared.python.model_generation.converters.simscape.mdl_parser import (
     MDLParser,
     SimscapeBlock,
     SimscapeBlockType,
@@ -13,7 +13,7 @@ from model_generation.converters.simscape.mdl_parser import (
     SimscapeModel,
     SimscapeParameter,
 )
-from model_generation.converters.simscape.simscape_converter import (
+from shared.python.model_generation.converters.simscape.simscape_converter import (
     ConversionConfig,
     ConversionResult,
     SimscapeToURDFConverter,

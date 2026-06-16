@@ -394,6 +394,6 @@ class RustAgentAdapter(BaseAgentAdapter):
 
     def thinking_capabilities(self):  # type: ignore[no-untyped-def]
         """Rust adapter does not currently surface reasoning budgets."""
-        from chat_contracts.models import make_none_only_capabilities
+        from shared.python.chat_contracts.models import make_none_only_capabilities
 
         return make_none_only_capabilities(provider="rust")

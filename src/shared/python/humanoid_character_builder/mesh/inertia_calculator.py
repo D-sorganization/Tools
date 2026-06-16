@@ -20,8 +20,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import numpy as np
-from humanoid_character_builder.contracts import precondition
 from numpy.typing import NDArray
+
+from shared.python.humanoid_character_builder.contracts import precondition
 
 if TYPE_CHECKING:
     pass  # For type hints without runtime import

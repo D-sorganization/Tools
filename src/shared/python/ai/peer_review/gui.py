@@ -24,13 +24,13 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from src.shared.python.ai.gui._provider_registry_data import (
+from shared.python.ai.gui._provider_registry_data import (
     AIProvider,
     populate_model_combo,
     populate_provider_combo,
     provider_display_name,
 )
-from src.shared.python.logging_pkg.logging_config import get_logger
+from shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
 

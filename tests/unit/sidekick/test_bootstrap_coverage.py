@@ -13,9 +13,9 @@ import pytest
 
 pytestmark = pytest.mark.unit
 
-SHARED = Path(__file__).resolve().parents[4] / "src" / "shared" / "python"
-if str(SHARED) not in sys.path:
-    sys.path.insert(0, str(SHARED))
+SRC = Path(__file__).resolve().parents[4] / "src"
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
 
 
 # ---------------------------------------------------------------------------
@@ -86,6 +86,19 @@ def test_ensure_paths_adds_python_src(bootstrap, tmp_path: Path) -> None:
     try:
         bootstrap.ensure_paths(repo_root=tmp_path)
         assert str(src) in sys.path
+    finally:
+        sys.path[:] = original_path
+
+
+def test_ensure_paths_does_not_add_src_shared_python(bootstrap, tmp_path: Path) -> None:
+    """ensure_paths never reintroduces the duplicate shared package root."""
+    shared_python = tmp_path / "src" / "shared" / "python"
+    shared_python.mkdir(parents=True)
+
+    original_path = sys.path.copy()
+    try:
+        bootstrap.ensure_paths(repo_root=tmp_path)
+        assert str(shared_python) not in sys.path
     finally:
         sys.path[:] = original_path
 

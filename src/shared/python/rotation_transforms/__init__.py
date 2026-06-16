@@ -5,7 +5,7 @@ such as ``calc_backend`` can use rotation math without depending on the
 leaf ``rotation_converter`` tool package.
 """
 
-from rotation_transforms.reference_frame_operations import (
+from shared.python.rotation_transforms.reference_frame_operations import (
     OperationName,
     ReferenceFrameResult,
     compute_homogeneous_transform,
@@ -13,7 +13,7 @@ from rotation_transforms.reference_frame_operations import (
     compute_so3_so3_maps,
     compute_twist_frame_conversion,
 )
-from rotation_transforms.rotation import Rotation
+from shared.python.rotation_transforms.rotation import Rotation
 
 __all__ = [
     "OperationName",

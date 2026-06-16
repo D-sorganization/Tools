@@ -29,7 +29,9 @@ from __future__ import annotations  # noqa: E402, F404
 import logging
 from typing import Any, cast
 
-from humanoid_character_builder.core.body_parameters import BodyParameters  # noqa: F401
+from shared.python.humanoid_character_builder.core.body_parameters import (
+    BodyParameters,  # noqa: F401
+)
 
 # Re-export sub-module symbols (public API unchanged)
 from ._makehuman_generator import MakeHumanMeshGenerator  # noqa: F401

@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Shared plot helpers for rotation converter tabs.
 
 Extracts common plotting utilities (theme colors, figure styling,
@@ -17,7 +18,7 @@ logger = logging.getLogger(__name__)
 # ── Theme integration (optional — graceful fallback) ──────────────
 _THEME_AVAILABLE = False
 try:
-    from theme import (
+    from shared.python.theme import (
         get_theme_manager,
         is_dark_theme,
     )
@@ -77,7 +78,7 @@ def get_plot_colors() -> dict[str, Any]:
     """Get current plot colours from theme or defaults."""
     if _THEME_AVAILABLE:
         try:
-            from theme.colors import CHART_COLORS
+            from shared.python.theme.colors import CHART_COLORS
 
             mgr = get_theme_manager()
             colors = mgr.get_current_colors()

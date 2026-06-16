@@ -12,7 +12,7 @@ facade class.
 from __future__ import annotations
 
 # CLI / orchestration
-from programmatic_pid.cli import (  # noqa: F401
+from shared.python.programmatic_pid.cli import (  # noqa: F401
     add_equipment,
     derive_related_path,
     generate,
@@ -22,14 +22,14 @@ from programmatic_pid.cli import (  # noqa: F401
 )
 
 # Controls
-from programmatic_pid.controls import (  # noqa: F401
+from shared.python.programmatic_pid.controls import (  # noqa: F401
     add_control_loops,
     orthogonal_control_route,
     resolve_reference_point,
 )
 
 # Equipment
-from programmatic_pid.equipment import (  # noqa: F401
+from shared.python.programmatic_pid.equipment import (  # noqa: F401
     EQUIPMENT_RENDERERS,
     draw_equipment_symbol,
     equipment_anchor,
@@ -39,7 +39,7 @@ from programmatic_pid.equipment import (  # noqa: F401
     nearest_equipment_anchor,
     register_equipment,
 )
-from programmatic_pid.geometry import (  # noqa: F401
+from shared.python.programmatic_pid.geometry import (  # noqa: F401
     clamp,
     closest_point_on_rect,
     dedupe_points,
@@ -49,10 +49,10 @@ from programmatic_pid.geometry import (  # noqa: F401
 )
 
 # Instruments
-from programmatic_pid.instruments import add_instrument  # noqa: F401
+from shared.python.programmatic_pid.instruments import add_instrument  # noqa: F401
 
 # Layout
-from programmatic_pid.layout import (  # noqa: F401
+from shared.python.programmatic_pid.layout import (  # noqa: F401
     LabelPlacer,
     compute_layout_regions,
     get_equipment_bounds,
@@ -61,10 +61,13 @@ from programmatic_pid.layout import (  # noqa: F401
 )
 
 # Profiles
-from programmatic_pid.profiles import PROFILE_PRESETS, apply_profile  # noqa: F401
+from shared.python.programmatic_pid.profiles import (  # noqa: F401
+    PROFILE_PRESETS,
+    apply_profile,
+)
 
 # Rendering primitives
-from programmatic_pid.rendering import (  # noqa: F401
+from shared.python.programmatic_pid.rendering import (  # noqa: F401
     add_arrow,
     add_arrow_head,
     add_box,
@@ -80,7 +83,7 @@ from programmatic_pid.rendering import (  # noqa: F401
 )
 
 # Spec loading
-from programmatic_pid.spec_loader import (  # noqa: F401
+from shared.python.programmatic_pid.spec_loader import (  # noqa: F401
     ensure_drawing,
     get_drawing,
     get_layer_config,
@@ -92,10 +95,13 @@ from programmatic_pid.spec_loader import (  # noqa: F401
 )
 
 # Streams
-from programmatic_pid.streams import add_stream, resolve_endpoint  # noqa: F401
+from shared.python.programmatic_pid.streams import (  # noqa: F401
+    add_stream,
+    resolve_endpoint,
+)
 
 # Title block & notes
-from programmatic_pid.title_block import (  # noqa: F401
+from shared.python.programmatic_pid.title_block import (  # noqa: F401
     add_notes,
     add_title_block,
     get_mass_balance_values,
@@ -103,7 +109,7 @@ from programmatic_pid.title_block import (  # noqa: F401
 
 # Re-export everything for backward compatibility --------------------------
 # Types & geometry
-from programmatic_pid.types import SpecValidationError  # noqa: F401
+from shared.python.programmatic_pid.types import SpecValidationError  # noqa: F401
 
 # Validation
-from programmatic_pid.validation import validate_spec  # noqa: F401
+from shared.python.programmatic_pid.validation import validate_spec  # noqa: F401

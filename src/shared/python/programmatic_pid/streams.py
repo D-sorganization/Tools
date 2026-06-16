@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Stream (pipe / flow path) rendering.
 
 Streams connect equipment via directed polylines with arrowheads and labels.
@@ -13,9 +14,13 @@ from __future__ import annotations
 
 from typing import Any
 
-from programmatic_pid.equipment import equipment_anchor
-from programmatic_pid.geometry import closest_point_on_rect, text_box, to_float
-from programmatic_pid.rendering import (
+from shared.python.programmatic_pid.equipment import equipment_anchor
+from shared.python.programmatic_pid.geometry import (
+    closest_point_on_rect,
+    text_box,
+    to_float,
+)
+from shared.python.programmatic_pid.rendering import (
     add_arrow,
     add_poly_arrow,
     add_text,

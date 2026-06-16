@@ -38,7 +38,7 @@ from PyQt6.QtWidgets import (
 )
 
 if TYPE_CHECKING:
-    from src.shared.python.ai.memory_manager import MemoryManager
+    from shared.python.ai.memory_manager import MemoryManager
 
 
 _PREFERENCES_PLACEHOLDER = "(no preferences stored)"

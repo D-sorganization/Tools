@@ -10,13 +10,12 @@ possible to keep keyring access centralised in one well-tested place.
 
 from __future__ import annotations
 
-from chat_contracts.credentials import CredentialManager
-
-from src.shared.python.ai.gui._provider_registry_data import (
+from shared.python.ai.gui._provider_registry_data import (
     PROVIDER_INFO,
     AIProvider,
 )
-from src.shared.python.logging_pkg.logging_config import get_logger
+from shared.python.chat_contracts.credentials import CredentialManager
+from shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
 

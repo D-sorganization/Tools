@@ -8,8 +8,8 @@ from typing import Any, Literal
 
 from PyQt6.QtCore import QObject, pyqtSignal
 
-from src.shared.python.ai.types import ConversationContext, Message
-from src.shared.python.logging_pkg.logging_config import get_logger
+from shared.python.ai.types import ConversationContext, Message
+from shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
 

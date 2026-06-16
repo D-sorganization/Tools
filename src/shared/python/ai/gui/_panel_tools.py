@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from src.shared.python.ai.tool_registry import ToolCategory
+from shared.python.ai.tool_registry import ToolCategory
 
 
 def register_panel_tools(tools_registry: Any, rag_store: Any) -> None:

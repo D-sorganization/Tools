@@ -14,7 +14,7 @@ Design
 
 from __future__ import annotations
 
-from sidekick.ui.tools_sidebar.tab_context_menu import (
+from shared.python.sidekick.ui.tools_sidebar.tab_context_menu import (
     build_tab_context_menu,
     show_tab_context_menu,
 )

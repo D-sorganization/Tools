@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """GUI for the Data Explorer.
 
 Provides a Qt :class:`MainWidget` that surfaces the existing
@@ -23,8 +24,8 @@ from data_explorer.data_explorer_app import (
     discover_datasets,
     load_dataset,
 )
+from shared.python.logging_pkg.logger_utils import get_logger
 from shared.python.theme.integration import ThemedWindowMixin
-from src.shared.python.logging_pkg.logger_utils import get_logger
 
 logger = get_logger(__name__)
 

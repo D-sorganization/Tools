@@ -8,7 +8,10 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
-from model_generation.api.rest_api_contracts import APIRequest, APIResponse
+from shared.python.model_generation.api.rest_api_contracts import (
+    APIRequest,
+    APIResponse,
+)
 
 MAX_MESH_UPLOAD_BYTES = 10 * 1024 * 1024
 ALLOWED_MESH_SUFFIXES = {".stl", ".obj", ".ply", ".off", ".dae", ".glb", ".gltf"}

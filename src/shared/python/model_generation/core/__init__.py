@@ -5,7 +5,7 @@ This module provides the foundational data structures and validation
 logic used throughout the model_generation package.
 """
 
-from model_generation.core.constants import (
+from shared.python.model_generation.core.constants import (
     DEFAULT_DENSITY_KG_M3,
     DEFAULT_INERTIA_KG_M2,
     DEFAULT_JOINT_DAMPING,
@@ -15,7 +15,7 @@ from model_generation.core.constants import (
     GRAVITY_M_S2,
     INTERMEDIATE_LINK_MASS,
 )
-from model_generation.core.types import (
+from shared.python.model_generation.core.types import (
     Geometry,
     GeometryType,
     Inertia,
@@ -27,7 +27,7 @@ from model_generation.core.types import (
     Material,
     Origin,
 )
-from model_generation.core.validation import (
+from shared.python.model_generation.core.validation import (
     ValidationError,
     ValidationResult,
     ValidationWarning,

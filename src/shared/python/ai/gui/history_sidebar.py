@@ -19,7 +19,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from src.shared.python.ai.gui.session_manager import ChatSessionManager
+from shared.python.ai.gui.session_manager import ChatSessionManager
 
 
 class SessionListWidgetItem(QListWidgetItem):
@@ -208,7 +208,7 @@ class ChatHistorySidebar(QWidget):
     def refresh_theme(self) -> None:
         """Dynamically update colors based on the current theme."""
         try:
-            from src.shared.python.theme.theme_manager import get_theme_manager
+            from shared.python.theme.theme_manager import get_theme_manager
 
             colors = get_theme_manager().get_current_colors()
             bg_base = colors.get("bg", "#1e1e1e")

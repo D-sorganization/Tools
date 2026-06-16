@@ -38,7 +38,9 @@ def test_legacy_package_reexports_sidekick_contracts() -> None:
 
 def test_legacy_submodule_aliases_canonical_sidekick_modules() -> None:
     """Submodule aliases point at the same module objects as sidekick."""
-    legacy_theme = importlib.import_module("upstream_drift_tools.theme")
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning)
+        legacy_theme = importlib.import_module("upstream_drift_tools.theme")
     sidekick_theme = importlib.import_module("sidekick.theme")
 
     assert legacy_theme is sidekick_theme

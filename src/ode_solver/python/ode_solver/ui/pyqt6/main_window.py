@@ -32,8 +32,8 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from contracts import require
 from ode_solver.timeout import SolverTimeoutError, with_timeout
+from shared.python.contracts import require
 from shared.python.theme.integration import ThemedWindowMixin
 
 _log = logging.getLogger(__name__)
@@ -95,7 +95,7 @@ class ODESolverWindow(ThemedWindowMixin, QMainWindow):
         try:
             from pathlib import Path
 
-            from notes.integration import attach_notes_dock
+            from shared.python.notes.integration import attach_notes_dock
         except ImportError:
             return
         if self._notes_dock is None:

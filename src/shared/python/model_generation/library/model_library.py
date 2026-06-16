@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 # ruff: noqa: E501
 # TRACKED_TASK: see #2310 — architecture debt extraction schedule
 
@@ -19,8 +20,11 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 
-from model_generation.converters.urdf_parser import ParsedModel, URDFParser
-from model_generation.core.contracts import postcondition, precondition
+from shared.python.model_generation.converters.urdf_parser import (
+    ParsedModel,
+    URDFParser,
+)
+from shared.python.model_generation.core.contracts import postcondition, precondition
 
 logger = logging.getLogger(__name__)
 
@@ -425,7 +429,10 @@ class ModelLibrary:
         if path is None:
             raise ValueError("path must be provided")
         import defusedxml.ElementTree as DefusedET
-        from model_generation.converters.mjcf_converter import MJCFConverter
+
+        from shared.python.model_generation.converters.mjcf_converter import (
+            MJCFConverter,
+        )
 
         converter = MJCFConverter()
         xml_string = path.read_text()

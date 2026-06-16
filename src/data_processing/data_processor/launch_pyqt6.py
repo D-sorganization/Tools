@@ -18,7 +18,7 @@ from shared.python.sidekick.data_processing.embedding import (  # noqa: E402
 
 ensure_full_data_processor_on_path()
 
-from gui_launcher import make_pyqt6_launcher  # noqa: E402
+from shared.python.gui_launcher import make_pyqt6_launcher  # noqa: E402
 
 if __name__ == "__main__":
     sys.exit(make_pyqt6_launcher("data_processing.data_processor.gui_registration"))

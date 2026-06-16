@@ -41,7 +41,7 @@ _get_plot_theme_manager: Any = None
 def _try_load_plot_theme() -> tuple[bool, Any]:
     """Attempt to import PlotThemeManager, searching shared/python if needed."""
     try:
-        from plot_theme.manager import get_plot_theme_manager
+        from shared.python.plot_theme.manager import get_plot_theme_manager
 
         return True, get_plot_theme_manager
     except ImportError:
@@ -57,7 +57,7 @@ def _try_load_plot_theme() -> tuple[bool, Any]:
             if candidate.exists():
                 if str(candidate) not in sys.path:
                     sys.path.insert(0, str(candidate))
-                from plot_theme.manager import get_plot_theme_manager
+                from shared.python.plot_theme.manager import get_plot_theme_manager
 
                 return True, get_plot_theme_manager
             search = search.parent

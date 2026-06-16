@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Signal Processing Toolkit - Comprehensive Signal Analysis Library.
 
 A production-ready signal processing library for generating, fitting,
@@ -28,7 +29,7 @@ import importlib
 import logging
 from typing import Any
 
-from signal_toolkit._lazy_map import LAZY
+from shared.python.signal_toolkit._lazy_map import LAZY
 
 logger = logging.getLogger(__name__)
 

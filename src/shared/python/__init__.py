@@ -13,16 +13,16 @@ Available packages:
     - humanoid_character_builder: URDF humanoid model generation
     - model_generation: URDF/MJCF model building and conversion
 
-Preferred imports (direct from package, since src/shared/python is on sys.path):
+Preferred imports:
     from shared.python.theme import ThemeManager, get_theme_manager  # theme: keep prefix
     from shared.python import ai  # package-level assistant helpers
-    from humanoid_character_builder import CharacterBuilder, BodyParameters
-    from model_generation import quick_urdf, ManualBuilder, FrankensteinEditor
-    from signal_toolkit import Signal, SignalGenerator, FunctionFitter
+    from shared.python.humanoid_character_builder import CharacterBuilder, BodyParameters
+    from shared.python.model_generation import quick_urdf, ManualBuilder, FrankensteinEditor
+    from shared.python.signal_toolkit import Signal, SignalGenerator, FunctionFitter
     from shared.python.sidekick.process_calculators import FlareCalculator
-    from gui_launcher import GUIType, LaunchConfig, register_gui
-    from plot_engine.specs import PlotSpec, SeriesData
-    from plot_theme import apply_plot_theme
+    from shared.python.gui_launcher import GUIType, LaunchConfig, register_gui
+    from shared.python.plot_engine.specs import PlotSpec, SeriesData
+    from shared.python.plot_theme import apply_plot_theme
 """
 
 from . import ai as ai

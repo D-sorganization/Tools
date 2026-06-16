@@ -15,8 +15,9 @@ from enum import Enum  # noqa: E402
 from typing import Any  # noqa: E402
 
 import numpy as np  # noqa: E402
-from model_generation.core.contracts import precondition  # noqa: E402
 from numpy.typing import NDArray  # noqa: E402
+
+from shared.python.model_generation.core.contracts import precondition  # noqa: E402
 
 
 class GeometryType(Enum):

@@ -12,7 +12,6 @@ from collections.abc import Iterable
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from notes.integration import attach_notes_dock
 from PyQt6.QtCore import QSize, Qt
 from PyQt6.QtGui import QIcon, QPalette, QPixmap
 from PyQt6.QtWidgets import (
@@ -33,12 +32,13 @@ from PyQt6.QtWidgets import (
 from tile_launcher.manager import AppManager
 from tile_launcher.models import AppDefinition, LaunchType
 
+from shared.python.notes.integration import attach_notes_dock
 from shared.python.theme.integration import ThemedDialogMixin, ThemedWindowMixin
 
 logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
-    from notes.notes_dock_widget import NotesDockWidget
+    from shared.python.notes.notes_dock_widget import NotesDockWidget
 
 
 class SelectionDialog(ThemedDialogMixin, QDialog):

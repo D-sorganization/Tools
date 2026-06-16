@@ -7,7 +7,7 @@ describing what changed. The input session is never mutated.
 
 from __future__ import annotations
 
-from chat.service_base import ChatSession
+from shared.python.chat.service_base import ChatSession
 
 from .contracts import CondensationRequest, CondensationResult
 from .strategy import STRATEGY_REGISTRY

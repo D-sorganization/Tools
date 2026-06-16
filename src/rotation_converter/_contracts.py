@@ -18,7 +18,7 @@ from typing import Any
 
 try:
     # Monorepo path — full-featured DbC from src/shared/python/contracts.py
-    from contracts import (
+    from shared.python.contracts import (
         PostconditionError,
         PreconditionError,
         ensure,

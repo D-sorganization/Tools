@@ -24,7 +24,7 @@ from collections.abc import AsyncIterator, Callable
 from dataclasses import dataclass, field
 from typing import Any
 
-from chat_contracts.conversation import ArchivedConversationContext
+from shared.python.chat_contracts.conversation import ArchivedConversationContext
 
 logger = logging.getLogger(__name__)
 

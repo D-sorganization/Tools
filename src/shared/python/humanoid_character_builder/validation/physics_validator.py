@@ -12,7 +12,8 @@ from __future__ import annotations  # noqa: E402, F404
 from dataclasses import dataclass, field  # noqa: E402
 
 import numpy as np  # noqa: E402
-from humanoid_character_builder.core.model import (  # noqa: E402
+
+from shared.python.humanoid_character_builder.core.model import (  # noqa: E402
     GeneratedLink,
     HumanoidModel,
 )

@@ -7,7 +7,9 @@ integrates the shared chat system.
 
 from __future__ import annotations
 
-from chat_contracts.models import (
+from pydantic import BaseModel, Field, model_validator
+
+from shared.python.chat_contracts.models import (
     DEFAULT_RESPONSE_STYLE,
     RESPONSE_STYLE_PROMPTS,
     ResponseStyle,
@@ -18,7 +20,6 @@ from chat_contracts.models import (
     make_none_only_capabilities,
     style_prompt,
 )
-from pydantic import BaseModel, Field, model_validator
 
 __all__ = [
     "DEFAULT_RESPONSE_STYLE",

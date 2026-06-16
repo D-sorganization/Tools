@@ -117,7 +117,7 @@ def _try_import_report_generator() -> Any | None:
         package is not installed.
     """
     try:
-        from reporting.generator import ReportGenerator
+        from shared.python.reporting.generator import ReportGenerator
 
         return ReportGenerator
     except Exception:  # noqa: BLE001 - optional dependency

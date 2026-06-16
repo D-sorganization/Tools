@@ -247,7 +247,7 @@ class FinancialCalculatorMainWindow(ThemedWindowMixin, QMainWindow):
         try:
             from pathlib import Path
 
-            from notes.integration import attach_notes_dock
+            from shared.python.notes.integration import attach_notes_dock
         except ImportError:
             return
         if self._notes_dock is None:

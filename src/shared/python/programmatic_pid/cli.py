@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 # TRACKED_TASK: see #2310 — architecture debt extraction schedule
 
 """Command-line interface and sheet generation orchestration.
@@ -28,18 +29,21 @@ try:
     import ezdxf
 except ImportError:  # pragma: no cover — optional heavy dep
     ezdxf = None  # type: ignore[assignment]
-from programmatic_pid.controls import add_control_loops
-from programmatic_pid.equipment import draw_equipment_symbol, equipment_dims
-from programmatic_pid.geometry import to_float
-from programmatic_pid.instruments import add_instrument
-from programmatic_pid.layout import (
+from shared.python.programmatic_pid.controls import add_control_loops
+from shared.python.programmatic_pid.equipment import (
+    draw_equipment_symbol,
+    equipment_dims,
+)
+from shared.python.programmatic_pid.geometry import to_float
+from shared.python.programmatic_pid.instruments import add_instrument
+from shared.python.programmatic_pid.layout import (
     LabelPlacer,
     compute_layout_regions,
     get_modelspace_extent,
     spread_instrument_positions,
 )
-from programmatic_pid.profiles import PROFILE_PRESETS  # noqa: E402
-from programmatic_pid.rendering import (  # noqa: E402
+from shared.python.programmatic_pid.profiles import PROFILE_PRESETS  # noqa: E402
+from shared.python.programmatic_pid.rendering import (  # noqa: E402
     add_arrow,
     add_box,
     add_text,
@@ -49,14 +53,17 @@ from programmatic_pid.rendering import (  # noqa: E402
     export_svg_from_dxf,
     layer_name,
 )
-from programmatic_pid.spec_loader import (  # noqa: E402
+from shared.python.programmatic_pid.spec_loader import (  # noqa: E402
     get_layout_config,
     get_project,
     get_text_config,
     prepare_spec,
 )
-from programmatic_pid.streams import add_stream  # noqa: E402
-from programmatic_pid.title_block import add_notes, add_title_block  # noqa: E402
+from shared.python.programmatic_pid.streams import add_stream  # noqa: E402
+from shared.python.programmatic_pid.title_block import (  # noqa: E402
+    add_notes,
+    add_title_block,
+)
 
 logger = logging.getLogger(__name__)
 

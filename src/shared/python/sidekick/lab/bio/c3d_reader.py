@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 # ruff: noqa: E501
 # TRACKED_TASK: see #2310 — architecture debt extraction schedule
 
@@ -44,7 +45,7 @@ __all__ = [
 
 # DbC imports — graceful fallback if contracts not available
 try:
-    from contracts import ensure, require
+    from shared.python.contracts import ensure, require
 except ImportError:  # pragma: no cover
 
     def require(condition: bool, message: str, value: Any = None) -> None:

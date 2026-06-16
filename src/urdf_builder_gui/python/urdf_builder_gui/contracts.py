@@ -7,7 +7,7 @@ full API (imperative + decorator styles) and tri-state enforcement.
 
 from __future__ import annotations
 
-from contracts import (  # noqa: F401
+from shared.python.contracts import (  # noqa: F401
     PostconditionError,
     PreconditionError,
     ensure,

@@ -17,13 +17,14 @@ from dataclasses import dataclass
 from typing import Any, TypedDict
 
 import numpy as np
-from sidekick.process_calculators.constants import (
+
+from shared.python.sidekick.process_calculators.constants import (
     ANTOINE_WATER_A as ANTOINE_A,
 )
-from sidekick.process_calculators.constants import (
+from shared.python.sidekick.process_calculators.constants import (
     ANTOINE_WATER_B as ANTOINE_B,
 )
-from sidekick.process_calculators.constants import (
+from shared.python.sidekick.process_calculators.constants import (
     ANTOINE_WATER_C as ANTOINE_C_CELSIUS,
 )
 

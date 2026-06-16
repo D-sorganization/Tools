@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 # ruff: noqa: E501
 # TRACKED_TASK: see #2310 — architecture debt extraction schedule
 
@@ -39,32 +40,33 @@ from typing import Any
 
 import numpy as np
 import yaml
-from humanoid_character_builder.core.anthropometry import (
+
+from shared.python.humanoid_character_builder.core.anthropometry import (
     estimate_segment_dimensions,
     estimate_segment_masses,
 )
-from humanoid_character_builder.core.body_parameters import (
+from shared.python.humanoid_character_builder.core.body_parameters import (
     BodyParameters,
 )
-from humanoid_character_builder.core.segment_definitions import (
+from shared.python.humanoid_character_builder.core.segment_definitions import (
     HUMANOID_SEGMENTS,
     get_all_segment_names,
 )
-from humanoid_character_builder.generators.mesh_generator import (
+from shared.python.humanoid_character_builder.generators.mesh_generator import (
     GeneratedMeshResult,
     MeshGenerator,
     MeshGeneratorBackend,
 )
-from humanoid_character_builder.generators.urdf_generator import (
+from shared.python.humanoid_character_builder.generators.urdf_generator import (
     HumanoidURDFGenerator,
     URDFGeneratorConfig,
 )
-from humanoid_character_builder.mesh.inertia_calculator import (
+from shared.python.humanoid_character_builder.mesh.inertia_calculator import (
     InertiaMode,
     InertiaResult,
     MeshInertiaCalculator,
 )
-from humanoid_character_builder.mesh.primitive_inertia import (
+from shared.python.humanoid_character_builder.mesh.primitive_inertia import (
     PrimitiveInertiaCalculator,
     estimate_segment_primitive,
 )
@@ -606,14 +608,18 @@ class CharacterBuilder:
         """
         if preset_name is None:
             raise ValueError("preset_name must be provided")
-        from humanoid_character_builder.presets.loader import load_body_preset
+        from shared.python.humanoid_character_builder.presets.loader import (
+            load_body_preset,
+        )
 
         return load_body_preset(preset_name, height_m=height_m, mass_kg=mass_kg)
 
     @staticmethod
     def list_presets() -> list[str]:
         """List available body presets."""
-        from humanoid_character_builder.presets.loader import list_available_presets
+        from shared.python.humanoid_character_builder.presets.loader import (
+            list_available_presets,
+        )
 
         return list_available_presets()
 

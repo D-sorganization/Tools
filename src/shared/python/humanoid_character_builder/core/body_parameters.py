@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
-from contracts import PreconditionError
+from shared.python.contracts import PreconditionError
 
 HEIGHT_RANGE_M = (0.5, 3.0)
 MASS_RANGE_KG = (10.0, 500.0)

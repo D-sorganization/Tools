@@ -25,15 +25,15 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from src.shared.python.ai.config import get_ollama_host
-from src.shared.python.ai.gui._api_keys import get_api_key, set_api_key
-from src.shared.python.ai.gui._provider_registry_data import (
+from shared.python.ai.config import get_ollama_host
+from shared.python.ai.gui._api_keys import get_api_key, set_api_key
+from shared.python.ai.gui._provider_registry_data import (
     BITNET_ROOT_ENV,
     DEFAULT_CLINE_HOST,
     PROVIDER_INFO,
     AIProvider,
 )
-from src.shared.python.theme.style_constants import Styles
+from shared.python.theme.style_constants import Styles
 
 
 class _BaseProviderConfigWidget(QWidget):
@@ -203,7 +203,7 @@ class OllamaConfigWidget(_BaseProviderConfigWidget):
         self._status_label.setText("Testing connection...")
         self._status_label.setStyleSheet(Styles.COLOR_RESET)
         try:
-            from src.shared.python.ai.adapters.ollama_adapter import OllamaAdapter
+            from shared.python.ai.adapters.ollama_adapter import OllamaAdapter
 
             adapter = OllamaAdapter(host=self._host_input.text().strip())
             success, message = adapter.validate_connection()
@@ -222,7 +222,7 @@ class OllamaConfigWidget(_BaseProviderConfigWidget):
         self._status_label.setText("Fetching available models...")
         self._status_label.setStyleSheet(Styles.COLOR_RESET)
         try:
-            from src.shared.python.ai.adapters.ollama_adapter import OllamaAdapter
+            from shared.python.ai.adapters.ollama_adapter import OllamaAdapter
 
             adapter = OllamaAdapter(host=self._host_input.text().strip())
             models = adapter.list_available_models()
@@ -271,7 +271,7 @@ class ClineConfigWidget(_BaseProviderConfigWidget):
         self._status_label.setText("Testing connection...")
         self._status_label.setStyleSheet(Styles.COLOR_RESET)
         try:
-            from src.shared.python.ai.adapters.cline_adapter import ClineAdapter
+            from shared.python.ai.adapters.cline_adapter import ClineAdapter
 
             adapter = ClineAdapter(host=self._host_input.text().strip())
             success, message = adapter.validate_connection()

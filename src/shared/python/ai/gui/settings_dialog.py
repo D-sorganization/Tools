@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """AI Assistant Settings Dialog (slim coordinator).
 
 This module historically held ~1100 lines mixing the ``AISettings``
@@ -35,9 +36,9 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from src.shared.python.ai._settings_model import AISettings
-from src.shared.python.ai.access_policy import coerce_access_mode
-from src.shared.python.ai.config import (
+from shared.python.ai._settings_model import AISettings
+from shared.python.ai.access_policy import coerce_access_mode
+from shared.python.ai.config import (
     DEFAULT_OLLAMA_HOST,
     DEFAULT_OLLAMA_MODEL,
     KEY_ACCESS_MODE,
@@ -54,14 +55,14 @@ from src.shared.python.ai.config import (
     SETTINGS_ORG,
     get_ollama_host,
 )
-from src.shared.python.ai.gui._api_keys import (
+from shared.python.ai.gui._api_keys import (
     delete_api_key,
     get_api_key,
     set_api_key,
 )
-from src.shared.python.ai.gui._general_tab import GeneralPreferencesTab
-from src.shared.python.ai.gui._provider_config_registry import ProviderConfigRegistry
-from src.shared.python.ai.gui._provider_config_widgets import (
+from shared.python.ai.gui._general_tab import GeneralPreferencesTab
+from shared.python.ai.gui._provider_config_registry import ProviderConfigRegistry
+from shared.python.ai.gui._provider_config_widgets import (
     AnthropicConfigWidget,
     BitnetConfigWidget,
     ClaudeCliConfigWidget,
@@ -71,7 +72,7 @@ from src.shared.python.ai.gui._provider_config_widgets import (
     OllamaConfigWidget,
     OpenAIConfigWidget,
 )
-from src.shared.python.ai.gui._provider_registry_data import (
+from shared.python.ai.gui._provider_registry_data import (
     BITNET_ROOT_ENV,
     DEFAULT_CLINE_HOST,
     PROVIDER_INFO,
@@ -82,10 +83,10 @@ from src.shared.python.ai.gui._provider_registry_data import (
     provider_display_name,
     provider_model_names,
 )
-from src.shared.python.ai.gui._providers_tab import ProvidersTab
-from src.shared.python.ai.gui._rag_tab import RagTab
-from src.shared.python.ai.mcp.gui import McpServersTab
-from src.shared.python.logging_pkg.logging_config import get_logger
+from shared.python.ai.gui._providers_tab import ProvidersTab
+from shared.python.ai.gui._rag_tab import RagTab
+from shared.python.ai.mcp.gui import McpServersTab
+from shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
 

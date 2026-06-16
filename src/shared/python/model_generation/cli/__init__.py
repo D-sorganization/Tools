@@ -11,6 +11,6 @@ Usage:
     model-gen library list
 """
 
-from model_generation.cli.main import create_parser, main
+from shared.python.model_generation.cli.main import create_parser, main
 
 __all__ = ["main", "create_parser"]

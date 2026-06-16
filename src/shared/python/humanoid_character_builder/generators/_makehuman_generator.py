@@ -12,7 +12,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-from humanoid_character_builder.core.body_parameters import BodyParameters
+from shared.python.humanoid_character_builder.core.body_parameters import BodyParameters
 
 from ._mesh_types import GeneratedMeshResult, MeshGeneratorInterface
 from ._primitive_generator import PrimitiveMeshGenerator
@@ -364,7 +364,7 @@ generate_human()
     ) -> GeneratedMeshResult:
         """Segment mesh into body parts using vertex groups or geometry."""
         assert visual_dir is not None, "visual_dir must be provided"
-        from humanoid_character_builder.core.segment_definitions import (
+        from shared.python.humanoid_character_builder.core.segment_definitions import (
             HUMANOID_SEGMENTS,
         )
 
@@ -531,7 +531,7 @@ generate_human()
         return groups
 
     def get_supported_segments(self) -> list[str]:
-        from humanoid_character_builder.core.segment_definitions import (
+        from shared.python.humanoid_character_builder.core.segment_definitions import (
             HUMANOID_SEGMENTS,
         )
 

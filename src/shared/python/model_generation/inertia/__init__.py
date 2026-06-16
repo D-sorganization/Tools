@@ -9,19 +9,19 @@ system supporting multiple modes:
 - Manual override
 """
 
-from model_generation.inertia.calculator import (
+from shared.python.model_generation.inertia.calculator import (
     InertiaCalculator,
     InertiaMode,
     InertiaResult,
 )
-from model_generation.inertia.primitives import (
+from shared.python.model_generation.inertia.primitives import (
     box_inertia,
     capsule_inertia,
     cylinder_inertia,
     ellipsoid_inertia,
     sphere_inertia,
 )
-from model_generation.inertia.spatial import (
+from shared.python.model_generation.inertia.spatial import (
     mcI,
     spatial_inertia_to_urdf,
     transform_spatial_inertia,

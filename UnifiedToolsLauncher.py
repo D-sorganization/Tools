@@ -31,9 +31,10 @@ logger = logging.getLogger(__name__)
 
 # Bootstrap imports for development mode (before pip install -e .)
 _REPO_ROOT = Path(__file__).resolve().parents[0]
-_SRC_ROOT = str(_REPO_ROOT / "src")
-if _SRC_ROOT not in sys.path:
-    sys.path.insert(0, _SRC_ROOT)
+for _path in (_REPO_ROOT / "src", _REPO_ROOT / "src" / "python" / "src"):
+    _path_str = str(_path)
+    if _path_str not in sys.path:
+        sys.path.insert(0, _path_str)
 
 
 def _ensure_bootstrap_paths() -> None:

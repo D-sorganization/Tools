@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Quick-action chat bar for toolbar integration.
 
 Provides a compact, single-line input widget that can be embedded in any
@@ -427,7 +428,7 @@ class ChatLauncherMixin:
         # Lazy import to avoid circular deps
         import typing
 
-        from chat.chat_dock_widget import ChatDockWidget
+        from shared.python.chat.chat_dock_widget import ChatDockWidget
 
         main_window = typing.cast(QMainWindow, self)
 

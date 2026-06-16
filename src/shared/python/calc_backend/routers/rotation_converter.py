@@ -11,10 +11,11 @@ from __future__ import annotations
 
 import numpy as np
 from fastapi import APIRouter, HTTPException
-from rotation_transforms.reference_frame_operations import (
+
+from shared.python.rotation_transforms.reference_frame_operations import (
     compute_reference_frame_operation,
 )
-from rotation_transforms.rotation import Rotation
+from shared.python.rotation_transforms.rotation import Rotation
 
 from ..contracts.rotation_converter import (
     ReferenceFrameConversionRequest,

@@ -21,12 +21,6 @@ import sys
 from collections.abc import Callable
 from pathlib import Path
 
-from model_generation.explorer.display_config import DISPLAY_OPTIONS
-from model_generation.library.unified_loader import (
-    LoadResult,
-    UnifiedModelLoader,
-    UserPreferences,
-)
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
@@ -51,6 +45,12 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from shared.python.model_generation.explorer.display_config import DISPLAY_OPTIONS
+from shared.python.model_generation.library.unified_loader import (
+    LoadResult,
+    UnifiedModelLoader,
+    UserPreferences,
+)
 from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA, get_stylesheet
 
 logger = logging.getLogger(__name__)

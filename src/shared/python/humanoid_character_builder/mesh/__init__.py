@@ -5,23 +5,23 @@ Provides mesh-based inertia calculation, mesh loading/processing,
 and primitive shape fallbacks.
 """
 
-from humanoid_character_builder.mesh.collision_geometry import (
+from shared.python.humanoid_character_builder.mesh.collision_geometry import (
     CollisionGeometry,
     CollisionGeometryGenerator,
 )
-from humanoid_character_builder.mesh.inertia_calculator import (
+from shared.python.humanoid_character_builder.mesh.inertia_calculator import (
     InertiaMode,
     InertiaResult,
     MeshInertiaCalculator,
 )
-from humanoid_character_builder.mesh.mesh_processor import (
+from shared.python.humanoid_character_builder.mesh.mesh_processor import (
     LODGenerationResult,
     LODGenerator,
     LODLevel,
     MeshProcessor,
     MeshSegmentResult,
 )
-from humanoid_character_builder.mesh.primitive_inertia import (
+from shared.python.humanoid_character_builder.mesh.primitive_inertia import (
     PrimitiveInertiaCalculator,
     PrimitiveShape,
 )

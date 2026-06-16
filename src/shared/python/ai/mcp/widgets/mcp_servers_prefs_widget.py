@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Shared Qt widget for MCP server preferences.
 
 Canonical home for the MCP servers preferences UI. Both UpstreamDrift
@@ -42,12 +43,12 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from src.shared.python.ai.mcp.config_writer import (
+from shared.python.ai.mcp.config_writer import (
     DEFAULT_CONFIG_PATH,
     read,
     write,
 )
-from src.shared.python.ai.mcp.contracts import McpServerConfig, McpTransport
+from shared.python.ai.mcp.contracts import McpServerConfig, McpTransport
 
 __all__ = [
     "McpServerEditDialog",

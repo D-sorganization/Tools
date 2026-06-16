@@ -15,7 +15,7 @@ import math
 from dataclasses import dataclass
 from enum import Enum
 
-from humanoid_character_builder.mesh.inertia_calculator import (
+from shared.python.humanoid_character_builder.mesh.inertia_calculator import (
     InertiaMode,
     InertiaResult,
 )

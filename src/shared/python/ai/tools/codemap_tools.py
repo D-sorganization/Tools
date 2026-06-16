@@ -87,7 +87,7 @@ def _try_tools_api() -> _ApiHandle | None:
     which adapts it.
     """
     try:
-        from codemap import api as tools_api
+        from shared.python.codemap import api as tools_api
     except ImportError:
         return None
     required = (

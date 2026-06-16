@@ -9,12 +9,12 @@ in the single source of truth.
 
 from __future__ import annotations
 
-from contracts import (
+from shared.python.contracts import (
     ContractViolationError,
     postcondition,
     precondition,
 )
-from contracts import (
+from shared.python.contracts import (
     class_invariant as invariant,
 )
 

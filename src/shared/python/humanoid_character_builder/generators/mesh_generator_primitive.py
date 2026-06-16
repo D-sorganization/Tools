@@ -26,7 +26,9 @@ from enum import Enum  # noqa: E402
 from pathlib import Path  # noqa: E402
 from typing import Any  # noqa: E402
 
-from humanoid_character_builder.core.body_parameters import BodyParameters  # noqa: E402
+from shared.python.humanoid_character_builder.core.body_parameters import (
+    BodyParameters,  # noqa: E402
+)
 
 logger = logging.getLogger(__name__)
 
@@ -150,10 +152,11 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
             )
 
         import trimesh
-        from humanoid_character_builder.core.anthropometry import (
+
+        from shared.python.humanoid_character_builder.core.anthropometry import (
             estimate_segment_dimensions,
         )
-        from humanoid_character_builder.core.segment_definitions import (
+        from shared.python.humanoid_character_builder.core.segment_definitions import (
             HUMANOID_SEGMENTS,
             GeometryType,
         )
@@ -220,7 +223,7 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
         )
 
     def get_supported_segments(self) -> list[str]:
-        from humanoid_character_builder.core.segment_definitions import (
+        from shared.python.humanoid_character_builder.core.segment_definitions import (
             HUMANOID_SEGMENTS,
         )
 

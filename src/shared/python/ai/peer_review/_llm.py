@@ -20,7 +20,7 @@ import re
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 if TYPE_CHECKING:
-    from src.shared.python.ai.adapters.base import BaseAgentAdapter
+    from shared.python.ai.adapters.base import BaseAgentAdapter
 
 _logger = logging.getLogger(__name__)
 
@@ -221,7 +221,7 @@ class AdapterReviewerLLMClient:
         """
         # Local import keeps the peer_review package importable without the
         # adapters subpackage at module load (Orthogonality / Law of Demeter).
-        from src.shared.python.ai.types import ConversationContext
+        from shared.python.ai.types import ConversationContext
 
         prompt = _build_reviewer_prompt(
             criteria_set=list(criteria_set),

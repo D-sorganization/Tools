@@ -10,7 +10,7 @@ from _bootstrap import bootstrap
 # Resolve import paths relative to repository structure
 bootstrap(__file__)
 
-from gui_launcher import make_launcher  # noqa: E402
+from shared.python.gui_launcher import make_launcher  # noqa: E402
 
 if __name__ == "__main__":
     sys.exit(make_launcher("p1am_control_system.gui_registration"))

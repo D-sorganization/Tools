@@ -14,13 +14,12 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
 
-from humanoid_character_builder.core.anthropometry import (
+from shared.python.humanoid_character_builder.core.anthropometry import (
     URDF_HEIGHT_RATIOS as HEIGHT_RATIOS,
 )
-from humanoid_character_builder.core.anthropometry import (
+from shared.python.humanoid_character_builder.core.anthropometry import (
     URDF_MASS_RATIOS as MASS_RATIOS,
 )
-
 from urdf_builder_gui.contracts import require
 
 logger = logging.getLogger(__name__)

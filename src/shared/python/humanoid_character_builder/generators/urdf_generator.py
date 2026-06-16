@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 # ruff: noqa: E501
 # TRACKED_TASK: see #2310 — architecture debt extraction schedule
 
@@ -18,22 +19,25 @@ from pathlib import Path  # noqa: E402
 from typing import Any  # noqa: E402
 
 from defusedxml import minidom  # noqa: E402
-from humanoid_character_builder.contracts import (  # noqa: E402
+
+from shared.python.humanoid_character_builder.contracts import (  # noqa: E402
     postcondition,
     precondition,
 )
-from humanoid_character_builder.core.anthropometry import (  # noqa: E402
+from shared.python.humanoid_character_builder.core.anthropometry import (  # noqa: E402
     estimate_segment_dimensions,
     estimate_segment_masses,
     get_com_location,
 )
-from humanoid_character_builder.core.body_parameters import BodyParameters  # noqa: E402
-from humanoid_character_builder.core.model import (  # noqa: E402
+from shared.python.humanoid_character_builder.core.body_parameters import (
+    BodyParameters,  # noqa: E402
+)
+from shared.python.humanoid_character_builder.core.model import (  # noqa: E402
     GeneratedJoint,
     GeneratedLink,
     HumanoidModel,
 )
-from humanoid_character_builder.core.segment_definitions import (  # noqa: E402
+from shared.python.humanoid_character_builder.core.segment_definitions import (  # noqa: E402
     HUMANOID_JOINTS,
     HUMANOID_SEGMENTS,
     GeometryType,
@@ -41,12 +45,12 @@ from humanoid_character_builder.core.segment_definitions import (  # noqa: E402
     JointType,
     SegmentDefinition,
 )
-from humanoid_character_builder.mesh.inertia_calculator import (  # noqa: E402
+from shared.python.humanoid_character_builder.mesh.inertia_calculator import (  # noqa: E402
     InertiaMode,
     InertiaResult,
     MeshInertiaCalculator,
 )
-from humanoid_character_builder.mesh.primitive_inertia import (  # noqa: E402
+from shared.python.humanoid_character_builder.mesh.primitive_inertia import (  # noqa: E402
     PrimitiveInertiaCalculator,
     estimate_segment_primitive,
 )

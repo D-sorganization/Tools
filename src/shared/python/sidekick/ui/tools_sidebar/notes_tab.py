@@ -140,7 +140,7 @@ class SidekickNotesWidget(QtWidgets.QWidget):
 
     def apply_colors(self, *, save_note: bool = True) -> None:
         """Validate and persist note-card and board colors."""
-        from notes.models import NotesBoardSettings, normalize_color
+        from shared.python.notes.models import NotesBoardSettings, normalize_color
 
         note_color = normalize_color(self._color.text().strip() or "#fff7cc")
         board = NotesBoardSettings(
@@ -184,6 +184,6 @@ class SidekickNotesWidget(QtWidgets.QWidget):
 
 
 def _note_card_store(project_root: Path) -> Any:
-    from notes.card_store import NoteCardStore
+    from shared.python.notes.card_store import NoteCardStore
 
     return NoteCardStore(project_dir=project_root)

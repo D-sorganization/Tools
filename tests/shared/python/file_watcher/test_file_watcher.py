@@ -7,8 +7,9 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
-from file_watcher import _fallback
 from file_watcher._fallback import ChangeEvent, FileWatcher
+
+from file_watcher import _fallback
 
 
 class _BaseEventHandler:

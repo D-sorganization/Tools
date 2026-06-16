@@ -22,7 +22,7 @@ from .plot_compat import build_svg_exporter, pg
 
 # Try to import filters from signal_toolkit, with safe fallbacks
 try:
-    from signal_toolkit.filters import (
+    from shared.python.signal_toolkit.filters import (
         create_moving_average_filter,
         create_savgol_filter,
     )

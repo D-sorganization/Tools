@@ -15,8 +15,9 @@ import logging
 from collections.abc import Iterable
 from typing import Any
 
-from cors import add_cors_middleware
 from fastapi import APIRouter, FastAPI, HTTPException, Request
+
+from shared.python.cors import add_cors_middleware
 
 from .health import CheckStatus, get_health_checker
 from .routers import (

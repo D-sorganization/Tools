@@ -4,7 +4,7 @@ Presets module for humanoid character builder.
 Provides pre-configured body types and segment templates.
 """
 
-from humanoid_character_builder.presets.loader import (
+from shared.python.humanoid_character_builder.presets.loader import (
     PRESET_NAMES,
     list_available_presets,
     load_body_preset,

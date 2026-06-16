@@ -15,7 +15,7 @@ Design
 
 from __future__ import annotations
 
-from sidekick.ui.tools_sidebar.tab_settings_panel import (
+from shared.python.sidekick.ui.tools_sidebar.tab_settings_panel import (
     SIDEKICK_TAB_SETTINGS_BUTTON_OBJECT_NAME,
     TabSettingsMixin,
     build_tab_settings_dialog,

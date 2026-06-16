@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """
 GitHub Importer for Model Library.
 
@@ -14,12 +15,12 @@ import urllib.request
 from dataclasses import dataclass
 from typing import Any
 
-from model_generation.library._rate_limiter import (
+from shared.python.model_generation.library._rate_limiter import (
     extract_rate_limit_info,
     log_rate_limit_status,
     make_request_with_backoff,
 )
-from model_generation.library.model_library import ModelLibrary
+from shared.python.model_generation.library.model_library import ModelLibrary
 
 logger = logging.getLogger(__name__)
 

@@ -28,7 +28,7 @@ from typing import Final  # noqa: E402
 
 import numpy as np  # noqa: E402
 
-from contracts import require  # noqa: E402
+from shared.python.contracts import require  # noqa: E402
 
 from .constants import (  # noqa: E402
     COOLING_WATER_APPROACH_TEMP,

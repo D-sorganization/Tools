@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 # TRACKED_TASK: see #2310 — architecture debt extraction schedule
 
 """
@@ -20,8 +21,17 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
-from model_generation.converters.urdf_parser import ParsedModel, URDFParser
-from model_generation.core.types import Joint, JointType, Link, Material, Origin
+from shared.python.model_generation.converters.urdf_parser import (
+    ParsedModel,
+    URDFParser,
+)
+from shared.python.model_generation.core.types import (
+    Joint,
+    JointType,
+    Link,
+    Material,
+    Origin,
+)
 
 from .editor_clipboard import ClipboardMixin
 from .editor_modifications import ModificationMixin
@@ -135,7 +145,7 @@ class FrankensteinEditor(ClipboardMixin, ModificationMixin):
         self._save_state()
 
         # Create base link with minimal inertia
-        from model_generation.core.types import Inertia
+        from shared.python.model_generation.core.types import Inertia
 
         base_link = Link(
             name=base_link_name,

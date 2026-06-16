@@ -61,7 +61,7 @@ def _build_system_theme_provider() -> ThemeProviderProtocol:
 
         def get_colors(self) -> dict[str, str]:
             try:
-                from theme.theme_manager import (  # type: ignore[import-not-found, unused-ignore]
+                from shared.python.theme.theme_manager import (  # type: ignore[import-not-found, unused-ignore]
                     get_theme_manager,
                 )
 
