@@ -4,7 +4,7 @@ A collection of development utilities, code quality helpers, launch utilities, a
 
 ## Overview
 
-This directory contains general-purpose utility scripts and tools for code quality checking, scientific auditing, and MATLAB analysis. These tools support the development workflow and CI/CD pipeline.
+This directory contains general-purpose utility scripts and tools for code quality checking, scientific auditing, and MATLAB analysis. These tools support local development and CI/CD visibility.
 
 ## Directory Structure
 
@@ -48,19 +48,23 @@ python scripts/quality-check.py
 
 # Check specific files
 python scripts/quality-check.py file1.py file2.py
+
+# Report findings without failing the command
+python scripts/quality-check.py --report-only file1.py file2.py
 ```
 
 **Pre-commit Integration:**
 
-Add to `.pre-commit-config.yaml`:
+The repository's `.pre-commit-config.yaml` runs this check in report-only mode
+so existing legacy findings are visible without blocking unrelated commits:
 
 ```yaml
 repos:
   - repo: local
     hooks:
-      - id: code-quality-check
-        name: Code Quality Check
-        entry: python scripts/quality-check.py
+      - id: code-quality-check-report
+        name: code quality check (report-only)
+        entry: python scripts/quality-check.py --report-only
         language: system
         types: [python]
 ```
@@ -125,8 +129,8 @@ See [matlab_utilities/README.md](matlab_utilities/README.md) for details.
 
 These tools are designed to work with the repository's CI/CD pipeline:
 
-1. **Pre-commit Hooks**: Quality checks run before each commit
-2. **GitHub Actions**: Automated quality checks on PR/push
+1. **Pre-commit Hooks**: Quality checks report findings before each commit
+2. **GitHub Actions**: Report-only quality checks run on PR/push
 3. **Local Development**: Run checks manually during development
 
 ### Quick Setup

@@ -35,6 +35,8 @@ class Colors:
 BANNED_PATTERNS: list[tuple[Pattern, str]] = [
     (re.compile(r"\bTODO\b"), "TRACKED_TASK placeholder found"),
     (re.compile(r"\bFIXME\b"), "TRACKED_DEFECT placeholder found"),
+    (re.compile(r"\bTRACKED_TASK\b"), "TRACKED_TASK placeholder found"),
+    (re.compile(r"\bTRACKED_DEFECT\b"), "TRACKED_DEFECT placeholder found"),
     (re.compile(r"^\s*\.\.\.\s*$"), "Ellipsis placeholder"),
     (re.compile(r"NotImplementedError"), "NotImplementedError placeholder"),
     # More specific angle bracket patterns to avoid Tkinter event bindings

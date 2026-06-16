@@ -328,6 +328,19 @@ jobs:
             grep 'Would reformat' full_repo_ruff_format.txt >> $GITHUB_STEP_SUMMARY || true
           fi
 
+      - name: Banned-Pattern Quality Check (report-only)
+        continue-on-error: true
+        run: |
+          echo "## Banned-Pattern Quality Check (report-only)" >> $GITHUB_STEP_SUMMARY
+          python scripts/quality-check.py --report-only 2>&1 | tee full_repo_quality_check.txt
+          ISSUE_SUMMARY=$(grep 'Total issues:' full_repo_quality_check.txt | tail -1 || true)
+          if [ -n "$ISSUE_SUMMARY" ]; then
+            echo "$ISSUE_SUMMARY (informational — not blocking)." >> $GITHUB_STEP_SUMMARY
+            head -40 full_repo_quality_check.txt >> $GITHUB_STEP_SUMMARY || true
+          else
+            echo "Quality check: 0 violations." >> $GITHUB_STEP_SUMMARY
+          fi
+
       - name: Minimum Test Contract Check
         run: python3 scripts/check_minimum_test_contract.py
 

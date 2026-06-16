@@ -86,6 +86,13 @@ repos:
         pass_filenames: false
         always_run: true
 
+      - id: code-quality-check-report
+        name: "code quality check (report-only)"
+        entry: python scripts/quality-check.py --report-only
+        language: system
+        types: [python]
+        exclude: ^(archive/|legacy/|experimental/|\.github/)
+
   # -------------------------------------------------------------------------
   # Stage 3: Config File Formatting - ALWAYS RUNS
   # -------------------------------------------------------------------------
