@@ -1,69 +1,33 @@
-"""Logging utilities - Uses shared logging utilities.
-
-This module re-exports from the central utils.logging_utils module.
-New code should use utils.logging_utils directly.
-"""
+"""Compatibility logging shim for the video processor package."""
 
 import logging
 import warnings
 
-# Try to import from shared utils
-try:
-    from utils.logging_utils import (
-        DEFAULT_FORMAT,
-        DEFAULT_SEED,
-        get_logger,
-        logger,
-        set_seeds,
-        setup_logging,
-    )
+from utils import logging_utils as _logging_utils
 
-    # Provide backward-compatible aliases
-    LOG_FORMAT = DEFAULT_FORMAT
-    LOG_LEVEL = logging.INFO
+DEFAULT_FORMAT = _logging_utils.DEFAULT_FORMAT
+DEFAULT_SEED = _logging_utils.DEFAULT_SEED
+LOG_FORMAT = DEFAULT_FORMAT
+LOG_LEVEL = logging.INFO
+NUMPY_AVAILABLE = _logging_utils.NUMPY_AVAILABLE
+SIMPLE_FORMAT = _logging_utils.SIMPLE_FORMAT
+TORCH_AVAILABLE = _logging_utils.TORCH_AVAILABLE
+get_logger = _logging_utils.get_logger
+logger = _logging_utils.logger
+setup_logging = _logging_utils.setup_logging
 
-except ImportError:
-    # Minimal fallback if shared utils not available
-    import sys
 
-    DEFAULT_SEED = 42
-    LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    DEFAULT_FORMAT = LOG_FORMAT
-    LOG_LEVEL = logging.INFO
-    logger = logging.getLogger(__name__)
+def _sync_backend_flags() -> None:
+    """Mirror canonical optional-backend flags for compatibility callers."""
+    global NUMPY_AVAILABLE, TORCH_AVAILABLE
+    NUMPY_AVAILABLE = _logging_utils.NUMPY_AVAILABLE
+    TORCH_AVAILABLE = _logging_utils.TORCH_AVAILABLE
 
-    def get_logger(name: str | None = None) -> logging.Logger:
-        """Get a logger instance."""
-        if name is None:
-            name = __name__
-        return logging.getLogger(name)
 
-    def setup_logging(
-        level: int = LOG_LEVEL,
-        format_string: str = LOG_FORMAT,
-    ) -> None:
-        """Set up logging configuration."""
-        fmt = format_string if format_string is not None else LOG_FORMAT
-        logging.basicConfig(
-            level=level,
-            format=fmt,
-            handlers=[logging.StreamHandler(sys.stdout)],
-        )
-
-    def set_seeds(seed: int = DEFAULT_SEED) -> None:
-        """Set random seeds for reproducibility."""
-        import random
-
-        if seed < 0:
-            raise ValueError(f"expected non-negative integer, got: {seed}")
-        random.seed(seed)
-        try:
-            import numpy as np
-
-            np_random = np.random
-            np_random.seed(seed)
-        except ImportError:
-            pass
+def set_seeds(seed: int = DEFAULT_SEED) -> None:
+    """Set random seeds through the canonical logging utility."""
+    _logging_utils.set_seeds(seed)
+    _sync_backend_flags()
 
 
 # Issue deprecation warning for direct imports
@@ -78,6 +42,9 @@ __all__ = [
     "DEFAULT_SEED",
     "LOG_FORMAT",
     "LOG_LEVEL",
+    "NUMPY_AVAILABLE",
+    "SIMPLE_FORMAT",
+    "TORCH_AVAILABLE",
     "get_logger",
     "logger",
     "set_seeds",
