@@ -8,7 +8,7 @@ from typing import Any
 
 import httpx
 
-from src.shared.python.ai.tool_registry import ToolCategory, get_global_registry
+from shared.python.ai.tool_registry import ToolCategory, get_global_registry
 
 logger = logging.getLogger(__name__)
 

@@ -22,7 +22,7 @@ DRY:
 
 from __future__ import annotations
 
-from src.shared.python.ai.mcp.contracts import McpServerConfig, McpTransport
+from shared.python.ai.mcp.contracts import McpServerConfig, McpTransport
 
 #: Default server name used when adding this server to an :class:`McpClientPool`.
 GITHUB_MCP_SERVER_NAME = "github"

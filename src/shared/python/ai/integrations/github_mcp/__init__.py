@@ -30,19 +30,19 @@ poking the pool's internals (LOD).
 
 from __future__ import annotations
 
-from src.shared.python.ai.integrations.github_mcp.discovery import (
+from shared.python.ai.integrations.github_mcp.discovery import (
     is_github_mcp_available,
 )
-from src.shared.python.ai.integrations.github_mcp.integration import (
+from shared.python.ai.integrations.github_mcp.integration import (
     register_github_mcp,
 )
-from src.shared.python.ai.integrations.github_mcp.server_config import (
+from shared.python.ai.integrations.github_mcp.server_config import (
     GITHUB_MCP_PACKAGE,
     GITHUB_MCP_SERVER_NAME,
     GITHUB_MCP_TOKEN_ENV_VAR,
     build_github_mcp_config,
 )
-from src.shared.python.ai.integrations.github_mcp.tool_descriptors import (
+from shared.python.ai.integrations.github_mcp.tool_descriptors import (
     GITHUB_MCP_TOOL_DESCRIPTORS,
     GitHubMcpToolDescriptor,
     get_tool_descriptor,

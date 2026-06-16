@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.527                                    |
+| **Spec Version**        | 1.1.528                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-16 Update
 
+- Issue #3316 import-canonicalization now routes AI integration modules,
+  including the GitHub MCP integration package, through
+  `shared.python.ai.*` imports instead of the duplicate `src.shared.python.*`
+  spelling. Added `tests/architecture/test_ai_integrations_imports_3316.py`
+  to guard the boundary.
 - MATLAB Audio Signal Processor GUI callbacks no longer present deferred work
   as "Coming Soon" dialogs or claim that every panel is fully functional.
   Deferred controls now use an explicit unavailable-feature path, and a static

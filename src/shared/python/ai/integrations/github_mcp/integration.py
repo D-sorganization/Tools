@@ -14,12 +14,12 @@ import logging
 import os
 from typing import Protocol
 
-from src.shared.python.ai.integrations.github_mcp.server_config import (
+from shared.python.ai.integrations.github_mcp.server_config import (
     GITHUB_MCP_SERVER_NAME,
     GITHUB_MCP_TOKEN_ENV_VAR,
     build_github_mcp_config,
 )
-from src.shared.python.ai.mcp.contracts import McpServerConfig
+from shared.python.ai.mcp.contracts import McpServerConfig
 
 _LOG = logging.getLogger(__name__)
 
