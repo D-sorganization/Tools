@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.500                                    |
+| **Spec Version**        | 1.1.501                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -1672,3 +1672,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 1.1.410 - Palette Micro-UX Improvement
 
 - **2026-06-14**: feat(ux) — added `readonly` attribute to the "To" result input field in the unit converter application (`src/web_applications/unit_converter/unit-converter-app/index.html`) to prevent user confusion, alongside visual styling (`styles.css`) indicating the field's uneditable nature.
+
+### Security
+
+- **Power Supply Endpoints**: State-mutating power supply API routes (`/config`, `/setpoint`, `/permissive`, `/acknowledge_trip`) must be authenticated using the elevated admin key (`P1AM_ADMIN_API_KEY` or `P1AM_API_KEY` fallback), enforced via FastAPI dependencies.
