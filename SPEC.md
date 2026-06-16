@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.536                                    |
+| **Spec Version**        | 1.1.537                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -72,6 +72,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   `StandardResponse.success()` / `StandardResponse.error()` public factories for
   calc-backend API standardization callers. Bootstrap regression tests are typed
   so the pre-push mypy gate covers the package-root path contract.
+- Sidekick OS terminal widgets now expose an explicit shutdown path and run it
+  during close/destruction so background terminal reader threads cannot outlive
+  their owning widget in the Python 3.11/3.12 CI runtime suites.
 - P1AM power-supply backend documentation was tightened so the E-stop
   follow-up branch stays within the changed-file size budget without changing
   controller or Modbus behavior.

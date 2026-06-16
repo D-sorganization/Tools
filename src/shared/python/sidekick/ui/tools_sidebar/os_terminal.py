@@ -540,6 +540,9 @@ class SidekickOsTerminalWidget(QtWidgets.QWidget):
         self._current_shell: ShellDescriptor | None = None
         self._autostart: bool = autostart
         self._appearance: PanelAppearance = DEFAULT_DARK_PANEL_APPEARANCE
+        self._discovery_thread: ShellDiscoveryThread | None = None
+        self._is_shutting_down = False
+        self.destroyed.connect(self._on_destroyed)
 
         # F2: command history ring (newest-first; index walks backward through it)
         self._history: list[str] = []
@@ -740,6 +743,21 @@ class SidekickOsTerminalWidget(QtWidgets.QWidget):
         except Exception as exc:  # noqa: BLE001 - terminate is best-effort
             _logger.debug("OS terminal teardown failed: %s", exc)
 
+    def shutdown(self) -> None:
+        """Stop terminal runtime resources owned by this widget."""
+        if self._is_shutting_down:
+            return
+        self._is_shutting_down = True
+        try:
+            discovery_thread = self._discovery_thread
+            self._discovery_thread = None
+            if discovery_thread is not None and discovery_thread.isRunning():
+                discovery_thread.quit()
+                discovery_thread.wait(2000)
+            self._teardown_backend()
+        finally:
+            self._is_shutting_down = False
+
     # -- IO routing ---------------------------------------------------------
 
     def _on_submit(self) -> None:
@@ -888,8 +906,20 @@ class SidekickOsTerminalWidget(QtWidgets.QWidget):
 
     def closeEvent(self, event: object) -> None:  # noqa: N802 - Qt API
         """Tear down the backend when Qt closes the widget."""
-        self._teardown_backend()
+        self.shutdown()
         super().closeEvent(event)  # type: ignore[misc]
+
+    def _on_destroyed(self, _obj: object | None = None) -> None:
+        """Tear down runtime resources when Qt destroys the widget."""
+        self.shutdown()
+
+    def __del__(self) -> None:
+        try:
+            self.shutdown()
+        except RuntimeError:
+            # The wrapped Qt object may already be deleted during interpreter
+            # shutdown; backend teardown is best-effort in that path.
+            return
 
 
 __all__ = [
