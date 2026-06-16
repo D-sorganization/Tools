@@ -190,7 +190,7 @@ safe_eval = "src/shared/python"
 
 
 [tool.setuptools.packages.find]
-where = ["src/shared/python", "src/python/src", "src"]
+where = ["src/python/src", "src"]
 include = [
     "shared*",
     "chat*",

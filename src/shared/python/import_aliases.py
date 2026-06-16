@@ -28,9 +28,15 @@ _SHARED_ROOTS = frozenset(
         "compatibility",
         "config",
         "cors",
+        "codemap",
+        "data_processor_io",
         "deprecation",
+        "humanoid_character_builder",
         "logging_pkg",
+        "model_generation",
         "notes",
+        "programmatic_pid",
+        "rotation_transforms",
         "safe_eval",
         "sidekick",
         "signal_toolkit",
@@ -38,6 +44,33 @@ _SHARED_ROOTS = frozenset(
         "upstream_drift_tools",
     }
 )
+
+
+def alias_legacy_package(
+    legacy_name: str,
+    canonical_name: str,
+    *,
+    warning: str | None = None,
+) -> types.ModuleType:
+    """Bind a top-level compatibility package to its canonical package.
+
+    Thin shim packages under ``src/`` use this during the deprecation window
+    after ``src/shared/python`` stops being a package-discovery root. The shim
+    preserves old import spellings without installing a second physical copy of
+    the same shared package tree.
+    """
+    partial_shim = sys.modules.pop(legacy_name, None)
+    if warning is not None:
+        warnings.warn(warning, DeprecationWarning, stacklevel=2)
+    try:
+        install_shared_import_aliases()
+        module = importlib.import_module(canonical_name)
+        sys.modules[legacy_name] = module
+    except Exception:
+        if partial_shim is not None:
+            sys.modules[legacy_name] = partial_shim
+        raise
+    return module
 
 
 def _canonical_module(aliases: Sequence[str]) -> types.ModuleType | None:
