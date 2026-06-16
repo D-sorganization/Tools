@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.538                                    |
+| **Spec Version**        | 1.1.539                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,13 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-16 Update
 
+- Movement Optimizer analysis tabs now stop barbell playback when switching
+  away from exercise tabs, avoiding stale animation timers indexing the
+  swingset/chain tabs. Swingset and chain force overlays cache rollout-wide
+  force fields for playback instead of recomputing finite differences and
+  torque estimates on every frame, slider controls emit fewer drag-time
+  refreshes, and the swingset policy optimizer action is promoted visually as
+  the primary analysis command.
 - Issue #3359 script-dedup cleanup now removes stale references to deleted
   legacy assessment/print-migration scripts from generated assessment docs and
   guards `.github`, `scripts`, `Makefile`, and `docs` against reintroducing

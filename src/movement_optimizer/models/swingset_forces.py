@@ -87,9 +87,53 @@ def _com_positions(rollout: SwingRollout) -> FloatArray:
 
 def _com_accelerations(rollout: SwingRollout, dt_s: float) -> FloatArray:
     positions = _com_positions(rollout)
+    return _com_accelerations_from_positions(positions, dt_s)
+
+
+def _com_accelerations_from_positions(positions: FloatArray, dt_s: float) -> FloatArray:
     if positions.shape[0] < 2:  # pragma: no cover - rollouts always have >= 2 snapshots
         return np.zeros_like(positions)
     return np.gradient(positions, dt_s, axis=0)
+
+
+def swing_force_fields(
+    config: SwingSetConfig,
+    rollout: SwingRollout,
+    dt_s: float,
+) -> tuple[SwingForceField, ...]:
+    """Return force vectors for every frame in ``rollout``.
+
+    Preconditions:
+        ``dt_s`` is positive and the rollout contains at least one snapshot.
+    """
+    _require_positive("dt_s", dt_s)
+    if not rollout.snapshots:
+        raise ValueError("rollout must contain at least one snapshot")
+
+    mass = _total_mass(config)
+    gravity_vec = np.asarray([0.0, mass * config.gravity_m_s2], dtype=np.float64)
+    com_positions = _com_positions(rollout)
+    accelerations = _com_accelerations_from_positions(com_positions, dt_s)
+    torques = estimate_swingset_joint_torques(config, rollout, dt_s)
+
+    fields: list[SwingForceField] = []
+    for frame_index, snapshot in enumerate(rollout.snapshots):
+        torque_index = min(frame_index, torques.shape[0] - 1)
+        chain_tension = mass * accelerations[frame_index] - gravity_vec
+        joint_points = {
+            joint: np.asarray(snapshot.points[_JOINT_POINT_KEYS[joint]], dtype=np.float64)
+            for joint in SWING_POLICY_JOINT_NAMES
+        }
+        fields.append(
+            SwingForceField(
+                com_m=np.asarray(snapshot.center_of_mass_m, dtype=np.float64),
+                gravity_n=gravity_vec,
+                chain_tension_n=chain_tension,
+                joint_torque_nm=torques[torque_index],
+                joint_points_m=joint_points,
+            )
+        )
+    return tuple(fields)
 
 
 def swing_force_field(
@@ -103,31 +147,10 @@ def swing_force_field(
     Preconditions:
         ``dt_s`` is positive and ``0 <= frame_index < len(rollout.snapshots)``.
     """
-    _require_positive("dt_s", dt_s)
     frame_count = len(rollout.snapshots)
     if not 0 <= frame_index < frame_count:
         raise ValueError(f"frame_index must be in [0, {frame_count})")
-
-    snapshot = rollout.snapshots[frame_index]
-    mass = _total_mass(config)
-    gravity_vec = np.asarray([0.0, mass * config.gravity_m_s2], dtype=np.float64)
-    accel = _com_accelerations(rollout, dt_s)[frame_index]
-    chain_tension = mass * accel - gravity_vec
-
-    torques = estimate_swingset_joint_torques(config, rollout, dt_s)
-    torque_index = min(frame_index, torques.shape[0] - 1)
-    joint_torque = torques[torque_index]
-    joint_points = {
-        joint: np.asarray(snapshot.points[_JOINT_POINT_KEYS[joint]], dtype=np.float64)
-        for joint in SWING_POLICY_JOINT_NAMES
-    }
-    return SwingForceField(
-        com_m=np.asarray(snapshot.center_of_mass_m, dtype=np.float64),
-        gravity_n=gravity_vec,
-        chain_tension_n=chain_tension,
-        joint_torque_nm=joint_torque,
-        joint_points_m=joint_points,
-    )
+    return swing_force_fields(config, rollout, dt_s)[frame_index]
 
 
 def swing_force_history(

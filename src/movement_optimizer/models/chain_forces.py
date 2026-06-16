@@ -98,27 +98,46 @@ def chain_force_field(
     Preconditions:
         ``dt_s`` is positive and ``0 <= frame_index < len(rollout.states)``.
     """
-    _require_positive("dt_s", dt_s)
     state_count = len(rollout.states)
     if not 0 <= frame_index < state_count:
         raise ValueError(f"frame_index must be in [0, {state_count})")
+    return chain_force_fields(config, rollout, dt_s)[frame_index]
 
-    state = rollout.states[frame_index]
-    midpoints = link_midpoints(state.node_positions(config))
+
+def chain_force_fields(
+    config: ChainConfig,
+    rollout: ChainRollout,
+    dt_s: float,
+) -> tuple[ChainForceField, ...]:
+    """Return force vectors for every frame in ``rollout``.
+
+    Preconditions:
+        ``dt_s`` is positive and ``rollout`` has at least one state.
+    """
+    _require_positive("dt_s", dt_s)
+    if not rollout.states:
+        raise ValueError("rollout must contain at least one state")
+
     weight = _gravity_vector(config)
     gravity = np.tile(weight, (config.segment_count, 1))
+    accelerations = link_accelerations(config, rollout, dt_s)
 
-    accelerations = link_accelerations(config, rollout, dt_s)[frame_index]
-    net_force = config.link_mass_kg * accelerations
-    # T_i = sum_{j>=i} (m*a_j - weight_j) -- reverse cumulative sum.
-    per_link = net_force - weight
-    tension = np.cumsum(per_link[::-1], axis=0)[::-1]
-    return ChainForceField(
-        midpoints_m=midpoints,
-        gravity_n=gravity,
-        tension_n=tension,
-        net_force_n=net_force,
-    )
+    fields: list[ChainForceField] = []
+    for frame_index, state in enumerate(rollout.states):
+        midpoints = link_midpoints(state.node_positions(config))
+        net_force = config.link_mass_kg * accelerations[frame_index]
+        # T_i = sum_{j>=i} (m*a_j - weight_j) -- reverse cumulative sum.
+        per_link = net_force - weight
+        tension = np.cumsum(per_link[::-1], axis=0)[::-1]
+        fields.append(
+            ChainForceField(
+                midpoints_m=midpoints,
+                gravity_n=gravity,
+                tension_n=tension,
+                net_force_n=net_force,
+            )
+        )
+    return tuple(fields)
 
 
 def chain_force_history(
