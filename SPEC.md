@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.534                                    |
+| **Spec Version**        | 1.1.535                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -66,6 +66,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   second physical package tree. Package-specific shim tests guard legacy
   `humanoid_character_builder` and `signal_toolkit` imports for CI's minimum
   test contract.
+- Issue #3316 package-root CI repair realigns sidekick bootstrap tests with the
+  current `src` and `src/python/src` path contract and restores
+  `StandardResponse.success()` / `StandardResponse.error()` public factories for
+  calc-backend API standardization callers.
 - P1AM power-supply backend documentation was tightened so the E-stop
   follow-up branch stays within the changed-file size budget without changing
   controller or Modbus behavior.
@@ -973,6 +977,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-16 | 1.1.535 | fix(api, #3316): restore `StandardResponse.success()` / `StandardResponse.error()` factories with explicit metadata controls and align sidekick bootstrap tests with the package-root follow-up's `src` path contract. |
 | 2026-06-16 | 1.1.532 | fix(import-aliases, #3316): move shared import aliasing into production code, route `_bootstrap.py`, `UnifiedToolsLauncher.py`, and pytest setup through the same installer, and add fresh-interpreter `sys.modules` identity guards for legacy aliases. |
 | 2026-06-16 | 1.1.531 | docs(p1am-power-supply): tighten backend E-stop/controller documentation so the follow-up branch satisfies the changed-file size budget without behavioral changes. |
 | 2026-06-16 | 1.1.530 | test(p1am-power-supply): split runtime controller safety tests out of the oversized setpoint test module and document the shared helper in the changed-test assertion allowlist. |

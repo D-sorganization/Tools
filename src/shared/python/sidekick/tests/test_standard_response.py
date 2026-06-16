@@ -183,6 +183,55 @@ class TestStandardResponse:
                 metadata=metadata,
             )
 
+    def test_success_factory_sets_metadata(self) -> None:
+        """Create a success response through the public factory."""
+        response = StandardResponse.success(
+            data={"result": 42},
+            processing_time_ms=12.5,
+            request_id="request-123",
+        )
+
+        assert response.status == "success"
+        assert response.data == {"result": 42}
+        assert response.error is None
+        assert response.metadata.request_id == "request-123"
+        assert response.metadata.processing_time_ms == 12.5
+
+    def test_error_factory_preserves_error_request_id(self) -> None:
+        """Create an error response through the public factory."""
+        error = ErrorDetail(
+            code=ErrorCode.INVALID_INPUT,
+            message="Invalid input",
+            request_id="request-error-123",
+        )
+
+        response = StandardResponse.error(error=error, processing_time_ms=3.0)
+
+        assert response.status == "error"
+        assert response.data is None
+        assert response.error == error
+        assert response.metadata.request_id == "request-error-123"
+        assert response.metadata.processing_time_ms == 3.0
+
+    def test_error_factory_assigns_missing_error_request_id(self) -> None:
+        """Keep error and metadata request IDs aligned."""
+        response = StandardResponse.error(
+            error=ErrorDetail(
+                code=ErrorCode.SERVER_ERROR,
+                message="Unhandled failure",
+            )
+        )
+
+        assert response.error.request_id == response.metadata.request_id
+
+    def test_factory_rejects_invalid_metadata(self) -> None:
+        """Reject invalid explicit metadata values."""
+        with pytest.raises(ValueError):
+            StandardResponse.success(data={}, processing_time_ms=-1)
+
+        with pytest.raises(ValueError):
+            StandardResponse.success(data={}, request_id="")
+
 
 class TestStandardResponseBuilder:
     """Tests for StandardResponseBuilder."""

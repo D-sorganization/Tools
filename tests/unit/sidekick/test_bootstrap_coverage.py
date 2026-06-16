@@ -54,8 +54,8 @@ def test_ensure_paths_is_callable(bootstrap) -> None:  # type: ignore[no-untyped
 def test_ensure_paths_with_explicit_root(bootstrap, tmp_path: Path) -> None:
     """ensure_paths with an explicit repo_root returns a resolved Path."""
     # Create the expected subdirectory structure
-    src_shared = tmp_path / "src" / "shared" / "python"
-    src_shared.mkdir(parents=True)
+    src = tmp_path / "src"
+    src.mkdir(parents=True)
 
     result = bootstrap.ensure_paths(repo_root=tmp_path)
 
@@ -63,9 +63,9 @@ def test_ensure_paths_with_explicit_root(bootstrap, tmp_path: Path) -> None:
     assert result == tmp_path.resolve()
 
 
-def test_ensure_paths_adds_src_shared_python(bootstrap, tmp_path: Path) -> None:
-    """ensure_paths inserts src/shared/python into sys.path when it exists."""
-    target = tmp_path / "src" / "shared" / "python"
+def test_ensure_paths_adds_src(bootstrap, tmp_path: Path) -> None:
+    """ensure_paths inserts src into sys.path when it exists."""
+    target = tmp_path / "src"
     target.mkdir(parents=True)
 
     original_path = sys.path.copy()
@@ -77,9 +77,9 @@ def test_ensure_paths_adds_src_shared_python(bootstrap, tmp_path: Path) -> None:
         sys.path[:] = original_path
 
 
-def test_ensure_paths_adds_src(bootstrap, tmp_path: Path) -> None:
-    """ensure_paths inserts src into sys.path when it exists."""
-    src = tmp_path / "src"
+def test_ensure_paths_adds_python_src(bootstrap, tmp_path: Path) -> None:
+    """ensure_paths inserts src/python/src into sys.path when it exists."""
+    src = tmp_path / "src" / "python" / "src"
     src.mkdir(parents=True)
 
     original_path = sys.path.copy()
@@ -92,7 +92,7 @@ def test_ensure_paths_adds_src(bootstrap, tmp_path: Path) -> None:
 
 def test_ensure_paths_idempotent(bootstrap, tmp_path: Path) -> None:
     """ensure_paths does not add the same path twice."""
-    target = tmp_path / "src" / "shared" / "python"
+    target = tmp_path / "src"
     target.mkdir(parents=True)
 
     original_path = sys.path.copy()

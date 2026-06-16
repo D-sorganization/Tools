@@ -59,10 +59,10 @@ class TestEnsurePaths:
         """Already-present paths don't get inserted again."""
         from sidekick.bootstrap import ensure_paths
 
-        # Create the shared/python dir so it's eligible
-        shared = tmp_path / "src" / "shared" / "python"
-        shared.mkdir(parents=True)
-        path_str = str(shared)
+        # Create the src dir so it's eligible.
+        src = tmp_path / "src"
+        src.mkdir(parents=True)
+        path_str = str(src)
 
         # Ensure it's already in sys.path
         if path_str not in sys.path:
@@ -79,10 +79,10 @@ class TestEnsurePaths:
         from sidekick.bootstrap import ensure_paths
 
         # Set up a synthetic repo structure
-        (tmp_path / "src" / "shared" / "python").mkdir(parents=True)
+        (tmp_path / "src").mkdir(parents=True)
 
         # Strip synthetic path from sys.path to test insertion
-        path_str = str(tmp_path / "src" / "shared" / "python")
+        path_str = str(tmp_path / "src")
         original = sys.path.copy()
         try:
             # Remove if present
