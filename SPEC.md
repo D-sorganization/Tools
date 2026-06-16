@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.528                                    |
+| **Spec Version**        | 1.1.529                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-16 Update
 
+- Issue #3316 import-canonicalization now routes AI MCP core modules and the
+  NotebookLM preset command through `shared.python.ai.mcp.*` instead of the
+  duplicate `src.shared.python.ai.mcp.*` spelling. Added
+  `tests/architecture/test_ai_mcp_core_imports_3316.py` to guard the core MCP
+  boundary.
 - Issue #3316 import-canonicalization now routes AI integration modules,
   including the GitHub MCP integration package, through
   `shared.python.ai.*` imports instead of the duplicate `src.shared.python.*`

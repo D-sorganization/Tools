@@ -42,7 +42,7 @@ from typing import Any, Literal
 
 from pydantic import ValidationError
 
-from src.shared.python.ai.mcp.contracts import McpServerConfig
+from shared.python.ai.mcp.contracts import McpServerConfig
 
 _LOG = logging.getLogger(__name__)
 _ENV_PATTERN = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}")
@@ -337,7 +337,7 @@ def apply_preset_to_config(
         ValueError: ``target`` is not absolute.
     """
     # Lazy import to avoid circular dependency at module load.
-    from src.shared.python.ai.mcp.presets import apply_preset
+    from shared.python.ai.mcp.presets import apply_preset
 
     if not target.is_absolute():
         raise ValueError(f"target must be an absolute path, got {target!r}")
@@ -375,7 +375,7 @@ def apply_preset_to_config(
 
 def _preset_npm_package(preset_id: str) -> str | None:
     """Return the npm package name an npx-launched preset depends on, if any."""
-    from src.shared.python.ai.mcp.presets import MCP_SERVER_PRESETS
+    from shared.python.ai.mcp.presets import MCP_SERVER_PRESETS
 
     if preset_id not in MCP_SERVER_PRESETS:
         return None
@@ -408,7 +408,7 @@ def is_preset_installed(preset_id: str) -> bool:
         ``True`` if we have positive evidence the preset can run;
         ``False`` otherwise (including unknown preset IDs).
     """
-    from src.shared.python.ai.mcp.presets import MCP_SERVER_PRESETS
+    from shared.python.ai.mcp.presets import MCP_SERVER_PRESETS
 
     if preset_id not in MCP_SERVER_PRESETS:
         return False
@@ -416,7 +416,7 @@ def is_preset_installed(preset_id: str) -> bool:
     # In-tree Python shim — importable iff its module is on sys.path.
     if preset_id == "notebooklm":
         try:
-            importlib.import_module("src.shared.python.ai.mcp.notebooklm_server")
+            importlib.import_module("shared.python.ai.mcp.notebooklm_server")
         except ImportError:
             return False
         return True

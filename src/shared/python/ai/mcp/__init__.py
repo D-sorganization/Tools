@@ -17,27 +17,27 @@ indexing into ``pool._clients`` directly (LOD).
 
 from __future__ import annotations
 
-from src.shared.python.ai.mcp.client import McpClient
-from src.shared.python.ai.mcp.config_loader import (
+from shared.python.ai.mcp.client import McpClient
+from shared.python.ai.mcp.config_loader import (
     apply_preset_to_config,
     discover_claude_desktop_config,
     is_preset_installed,
     load_mcp_servers,
     merge_external_config,
 )
-from src.shared.python.ai.mcp.config_writer import (
+from shared.python.ai.mcp.config_writer import (
     McpServersFile,
     read,
     write,
 )
-from src.shared.python.ai.mcp.contracts import (
+from shared.python.ai.mcp.contracts import (
     McpResourceDescriptor,
     McpServerConfig,
     McpToolDescriptor,
     McpTransport,
 )
-from src.shared.python.ai.mcp.pool import McpClientPool
-from src.shared.python.ai.mcp.presets import (
+from shared.python.ai.mcp.pool import McpClientPool
+from shared.python.ai.mcp.presets import (
     MCP_SERVER_PRESETS,
     McpServerPreset,
     apply_preset,

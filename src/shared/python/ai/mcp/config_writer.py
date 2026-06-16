@@ -5,7 +5,7 @@ This module is the canonical writer for ``~/.upstreamdrift/mcp_servers.json``
 Qt-free and lives in shared Tools so both UpstreamDrift and Gasification_Model
 can write the same file format.
 
-Round-trips with :mod:`src.shared.python.ai.mcp.config_loader`, which already
+Round-trips with :mod:`shared.python.ai.mcp.config_loader`, which already
 handles reading. The writer's documented failure mode is :class:`ValueError`
 (DbC: callers handle a single exception type).
 """
@@ -20,7 +20,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field, ValidationError, field_validator
 
-from src.shared.python.ai.mcp.contracts import McpServerConfig
+from shared.python.ai.mcp.contracts import McpServerConfig
 
 __all__ = [
     "DEFAULT_CONFIG_PATH",

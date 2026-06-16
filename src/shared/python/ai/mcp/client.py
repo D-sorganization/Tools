@@ -33,7 +33,7 @@ from typing import Any, Protocol
 
 import httpx
 
-from src.shared.python.ai.mcp.contracts import (
+from shared.python.ai.mcp.contracts import (
     McpResourceDescriptor,
     McpServerConfig,
     McpToolDescriptor,

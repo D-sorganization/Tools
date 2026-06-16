@@ -37,7 +37,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Final, Literal
 
-from src.shared.python.ai.mcp.contracts import McpServerConfig, McpTransport
+from shared.python.ai.mcp.contracts import McpServerConfig, McpTransport
 
 PresetCategory = Literal[
     "code",
@@ -264,7 +264,7 @@ _NOTEBOOKLM = _build_stdio_preset(
     display_name="NotebookLM (local shim)",
     description="In-tree Python NotebookLM shim — no install, no auth.",
     command="python",
-    args=["-m", "src.shared.python.ai.mcp.notebooklm_server"],
+    args=["-m", "shared.python.ai.mcp.notebooklm_server"],
     category="docs",
     docs_url=None,
 )
