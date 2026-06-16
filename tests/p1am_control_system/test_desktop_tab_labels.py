@@ -6,6 +6,7 @@ import pytest
 
 pytest.importorskip("PyQt6")
 
+from PyQt6.QtCore import pyqtSignal  # noqa: E402
 from PyQt6.QtWidgets import QTabWidget, QWidget  # noqa: E402
 
 from p1am_control_system.desktop.layout_settings import (  # noqa: E402
@@ -82,6 +83,7 @@ def test_main_window_restores_persisted_tab_visibility(
     """HMIMainWindow applies persisted tab visibility during startup restore."""
     from PyQt6.QtCore import QSettings
 
+    from p1am_control_system.desktop import main_window as hmi_main_window
     from p1am_control_system.desktop.event_logger import EventLogger
 
     settings_path = tmp_path / "p1am-window.ini"
@@ -107,6 +109,76 @@ def test_main_window_restores_persisted_tab_visibility(
         lambda: EventLogger(str(tmp_path / "events.db")),
     )
     monkeypatch.setattr(HMIMainWindow, "_load_routing_config", lambda _self: None)
+
+    class _FakeHeader(QWidget):
+        roleChanged = pyqtSignal(str)
+        estopTriggered = pyqtSignal(bool)
+        alarmAcknowledgeClicked = pyqtSignal()
+
+        def apply_theme_styles(self, _theme_name: str) -> None:
+            return None
+
+        def set_alarms_state(self, _has_hl: bool, _has_hhll: bool) -> None:
+            return None
+
+        def set_connection_status(self, _status: str) -> None:
+            return None
+
+    class _FakeMimicTab(QWidget):
+        elementSelected = pyqtSignal(object)
+
+        def update_telemetry(self, _tags) -> None:
+            return None
+
+    class _FakeRoutingTab(QWidget):
+        def set_routing_config(self, _config) -> None:
+            return None
+
+        def set_role(self, _role: str) -> None:
+            return None
+
+    class _FakeControlTab(_FakeRoutingTab):
+        def update_telemetry(self, _tags) -> None:
+            return None
+
+    class _FakeTrendsTab(QWidget):
+        def add_telemetry_point(self, _timestamp: float, _tags) -> None:
+            return None
+
+    class _FakeInspectorSidebar(QWidget):
+        configUpdated = pyqtSignal()
+
+        def select_element(self, _element) -> None:
+            return None
+
+        def set_routing_config(self, _config) -> None:
+            return None
+
+        def set_role(self, _role: str) -> None:
+            return None
+
+    class _FakeSidekickSidebar(QWidget):
+        def install_as_dock(self, _window, *, area: str) -> None:
+            return None
+
+        def register_shortcuts(self, _window) -> None:
+            return None
+
+    class _FakeEventLogViewer(QWidget):
+        def __init__(self, _event_logger, parent=None) -> None:
+            super().__init__(parent)
+
+        def apply_filters(self) -> None:
+            return None
+
+    monkeypatch.setattr(hmi_main_window, "HMIHeader", _FakeHeader)
+    monkeypatch.setattr(hmi_main_window, "MimicTab", _FakeMimicTab)
+    monkeypatch.setattr(hmi_main_window, "RoutingTab", _FakeRoutingTab)
+    monkeypatch.setattr(hmi_main_window, "ControlTab", _FakeControlTab)
+    monkeypatch.setattr(hmi_main_window, "TrendsTab", _FakeTrendsTab)
+    monkeypatch.setattr(hmi_main_window, "InspectorSidebar", _FakeInspectorSidebar)
+    monkeypatch.setattr(hmi_main_window, "UnifiedToolsSidebar", _FakeSidekickSidebar)
+    monkeypatch.setattr(hmi_main_window, "EventLogViewerWidget", _FakeEventLogViewer)
 
     class _Signal:
         def connect(self, _callback) -> None:

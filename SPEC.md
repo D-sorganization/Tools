@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.498                                    |
+| **Spec Version**        | 1.1.499                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -63,6 +63,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   visibility through org/app-scoped QSettings. The Settings tab exposes a
   signal-suppressing visibility setter and a read facade so startup restore and
   shutdown persistence do not duplicate checkbox state logic.
+- P1AM layout-restore regression coverage now substitutes lightweight Qt child
+  panels around the main window so settings persistence is verified without
+  unrelated GUI teardown instability.
 
 ### 2026-06-15 Update
 
