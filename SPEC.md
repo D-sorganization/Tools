@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.486                                    |
+| **Spec Version**        | 1.1.487                                    |
 | **Last Spec Update**    | 2026-06-15                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-15 Update
 
+- Epic #2661 child-verification summary coverage now uses a real inventory
+  invariant instead of a vacuous `assert True`, preserving the progress warning
+  while ensuring the tracked file list is internally consistent.
 - Pendulum simulator mouse-rotation coverage now replaces the placeholder
   BasePendulumWidget test with a real right-drag event-path regression that
   verifies azimuth updates, tilt updates, auto-fit release, and tilt clamping.

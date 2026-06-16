@@ -396,5 +396,6 @@ def test_epic_2661_implementation_summary() -> None:
         UserWarning,
         stacklevel=2,
     )
-    # Always passes — this is a tracking test.
-    assert True
+    assert len(present) + len(missing_core) == len(files_to_check), (
+        "Epic #2661 summary inventory lost or duplicated file entries"
+    )
