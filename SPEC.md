@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.526                                    |
+| **Spec Version**        | 1.1.527                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -928,6 +928,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-16 | 1.1.527 | fix(ai-tools, #3316): route selected AI tools production imports through canonical `shared.python.*` modules instead of the duplicate `src.shared.python.*` alias, and add an architecture guard for that slice. |
 | 2026-06-16 | 1.1.526 | fix(ai-tool-registry, #3316): route the AI tool registry production imports through canonical `shared.python.*` modules instead of the duplicate `src.shared.python.*` alias, and add an architecture guard for that slice. |
 | 2026-06-16 | 1.1.525 | fix(ai-education, #3316): route selected AI education production imports through canonical `shared.python.*` modules instead of the duplicate `src.shared.python.*` alias, and add an architecture guard for that slice. |
 | 2026-06-16 | 1.1.524 | fix(ai-auth, #3316): route selected AI auth production imports through canonical `shared.python.*` modules instead of the duplicate `src.shared.python.*` alias, and add an architecture guard for that slice. |

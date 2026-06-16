@@ -17,7 +17,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from src.shared.python.logging_pkg.logging_config import get_logger
+from shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
 
