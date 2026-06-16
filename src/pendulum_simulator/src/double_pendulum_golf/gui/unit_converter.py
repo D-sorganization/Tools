@@ -23,6 +23,12 @@ from enum import Enum
 from typing import Any
 
 from double_pendulum_golf.constants import GRAVITY_STANDARD
+from sidekick.utils.unit_constants import (
+    FOOT_POUND_PER_SECOND_TO_WATT,
+    FOOT_POUND_TO_JOULE,
+    FOOT_POUND_TO_NEWTON_METER,
+    POUND_FORCE_INCH_TO_NEWTON_METER,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -32,12 +38,12 @@ logger = logging.getLogger(__name__)
 _METERS_PER_INCH = 0.0254
 _METERS_PER_FOOT = 0.3048
 _KG_PER_LB = 0.45359237
-_NM_PER_LBFIN = 0.1129848290276167
-_NM_PER_LBFFT = 1.3558179483314
+_NM_PER_LBFIN = POUND_FORCE_INCH_TO_NEWTON_METER
+_NM_PER_LBFFT = FOOT_POUND_TO_NEWTON_METER
 _NM_PER_KGFM = GRAVITY_STANDARD
 _N_PER_LBF = 4.4482216152605
-_J_PER_FTLBF = 1.3558179483314
-_W_PER_FTLBFS = 1.3558179483314
+_J_PER_FTLBF = FOOT_POUND_TO_JOULE
+_W_PER_FTLBFS = FOOT_POUND_PER_SECOND_TO_WATT
 _RAD_PER_DEG = 0.017453292519943295
 
 
@@ -193,9 +199,10 @@ class UnitPreferences:
         Pre: unit_label must be a valid option for the category.
         """
         valid = [label for label, _ in _UNIT_OPTIONS[category]]
-        assert unit_label in valid, (
-            f"Invalid unit '{unit_label}' for {category.value}. Valid: {valid}"
-        )
+        if unit_label not in valid:
+            raise ValueError(
+                f"Invalid unit '{unit_label}' for {category.value}. Valid: {valid}"
+            )
         self.selections[category] = unit_label
 
     def save_to_qsettings(self, settings: Any) -> None:
