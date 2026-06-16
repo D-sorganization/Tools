@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.503                                    |
+| **Spec Version**        | 1.1.505                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -66,6 +66,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - The compatibility slice keeps pre-push type gates passing by typing new
   metadata and numeric helper boundaries while quarantining older touched-module
   type debt behind explicit mypy error-code suppressions.
+- Inertia calculator DbC GUI tests now load the PyQt6 module from the active
+  checkout and mock canonical Sidekick package imports, removing stale
+  GH1473-workspace assumptions from Linux and Windows CI.
+- The Inertia GUI test file carries explicit mypy error-code suppressions for
+  its legacy untyped pytest helper while preserving runtime regression coverage.
 - Video processor logging now has one compatibility shim:
   `video_processor_src.logger_utils` delegates to canonical `utils.logging_utils`
   for seed setup, torch/numpy optional backend flags, logger construction, and
