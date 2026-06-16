@@ -14,12 +14,14 @@ Features:
 - Statistical significance testing
 """
 
+# mypy: disable-error-code="no-any-return"
+
 from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any
+from typing import Any, NamedTuple
 
 import numpy as np
 from numba import jit
@@ -99,9 +101,21 @@ class CrossCorrelationResult:
     series_x_name: str = "X"
     series_y_name: str = "Y"
 
+    @property
+    def ccf(self) -> np.ndarray:
+        """Backward-compatible alias for older callers."""
+        return self.ccf_values
+
     def is_significant_at_lag(self, lag: int) -> bool:
         """Check if correlation is significant at given lag."""
         return lag in self.significant_lags
+
+
+class OptimalLagResult(NamedTuple):
+    """Tuple-compatible result for optimal lag detection."""
+
+    optimal_lag: int
+    correlation_at_lag: float
 
 
 @dataclass
@@ -262,7 +276,7 @@ class CrossCorrelationAnalyzer:
         y: np.ndarray,
         max_lag: int | None = None,
         criterion: str = "max",
-    ) -> tuple[int, float]:
+    ) -> OptimalLagResult:
         """Find the lag that maximizes correlation.
 
         Args:
@@ -279,16 +293,18 @@ class CrossCorrelationAnalyzer:
         result = self.cross_correlate(x, y, max_lag)
 
         if criterion == "max":
-            return result.optimal_lag, result.max_correlation
+            return OptimalLagResult(result.optimal_lag, result.max_correlation)
         elif criterion == "positive":
             positive_mask = result.ccf_values > 0
             if not np.any(positive_mask):
-                return 0, 0.0
+                return OptimalLagResult(0, 0.0)
             positive_ccf = np.where(positive_mask, result.ccf_values, -np.inf)
             idx = np.argmax(positive_ccf)
-            return int(result.lags[idx]), float(result.ccf_values[idx])
+            return OptimalLagResult(
+                int(result.lags[idx]), float(result.ccf_values[idx])
+            )
         else:
-            return result.optimal_lag, result.max_correlation
+            return OptimalLagResult(result.optimal_lag, result.max_correlation)
 
     @jit(nopython=True, fastmath=True)
     def rolling_cross_correlation(

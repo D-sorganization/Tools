@@ -18,6 +18,13 @@ GUI_INFO = {
     },
 }
 
+GUI_METADATA = {
+    "name": "C3D Motion Capture Viewer",
+    "description": "View and analyze C3D motion capture files",
+    "category": "biomechanics",
+    "entry_point": "c3d_viewer.ui.pyqt6.main_window",
+}
+
 
 def get_gui_info() -> dict[str, Any]:
     """Return GUI registration information."""

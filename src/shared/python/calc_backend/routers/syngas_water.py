@@ -27,7 +27,7 @@ def _sanitize(v: float) -> float:
 def calculate_syngas_water(request: SyngasWaterRequest) -> SyngasWaterResponse:
     """Calculate water content and condensation risk in syngas."""
     try:
-        from sidekick.process_calculators.syngas_water_calculator import (
+        from shared.python.sidekick.process_calculators.syngas_water_calculator import (
             SyngasWaterCalculator,
             estimate_condensation_risk,
         )
@@ -69,12 +69,12 @@ def _fallback_calculate(request: SyngasWaterRequest) -> SyngasWaterResponse:
     import math
 
     try:
-        from sidekick.process_calculators.constants import (
+        from shared.python.sidekick.process_calculators.constants import (
             ANTOINE_WATER_A,
             ANTOINE_WATER_B,
             ANTOINE_WATER_C,
         )
-        from sidekick.utils.unit_constants import (
+        from shared.python.sidekick.utils.unit_constants import (
             CELSIUS_TO_KELVIN_OFFSET,
             R_UNIVERSAL,
         )

@@ -340,7 +340,7 @@ class C3DViewerWindow(ThemedWindowMixin, QMainWindow):
 
     def _load_c3d_data(self) -> None:
         """Load actual C3D data using the reader."""
-        from sidekick.lab.bio.c3d_reader import C3DDataReader
+        from shared.python.sidekick.lab.bio.c3d_reader import C3DDataReader
 
         reader = C3DDataReader(self._current_file)
         metadata = reader.get_metadata()
@@ -474,7 +474,7 @@ class C3DViewerWindow(ThemedWindowMixin, QMainWindow):
             return
 
         try:
-            from sidekick.lab.bio.c3d_reader import C3DDataReader
+            from shared.python.sidekick.lab.bio.c3d_reader import C3DDataReader
 
             reader = C3DDataReader(self._current_file)
             plate_count = reader.get_force_plate_count()
@@ -544,7 +544,7 @@ class C3DViewerWindow(ThemedWindowMixin, QMainWindow):
             return
 
         try:
-            from sidekick.lab.bio.c3d_reader import C3DDataReader
+            from shared.python.sidekick.lab.bio.c3d_reader import C3DDataReader
 
             reader = C3DDataReader(self._current_file)
 
