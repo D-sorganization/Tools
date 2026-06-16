@@ -181,6 +181,20 @@ def test_sidekick_tools_sidebar_source_change_selects_focused_tests() -> None:
 
 
 @pytest.mark.unit
+def test_vessel_drafter_contracts_source_change_selects_contract_tests() -> None:
+    targets = select_tests_for_changes.select_targets(
+        ["src/vessel_drafter/python/vessel_drafter/contracts.py"]
+    )
+
+    assert targets == [
+        "tests/vessel_drafter/test_contracts_fallback.py",
+        "tests/vessel_drafter/test_contracts_unified.py",
+        "tests/vessel_drafter/test_vessel_drafter_contracts.py",
+    ]
+    assert "src/vessel_drafter/tests" not in targets
+
+
+@pytest.mark.unit
 def test_output_is_sorted_and_deduplicated() -> None:
     targets = select_tests_for_changes.select_targets(
         [

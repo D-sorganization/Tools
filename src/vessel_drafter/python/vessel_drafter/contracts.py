@@ -31,30 +31,69 @@ logger = logging.getLogger(__name__)
 
 try:
     from contracts import (
+        PostconditionError,
         PreconditionError,
         ensure,
         require,
     )
 except ImportError:
     # ── Standalone fallback ────────────────────────────────────────────────
-    class PreconditionError(AssertionError, ValueError):  # type: ignore[no-redef]
-        """Raised when a pre-condition is violated."""
+    import enum
+    import os
 
-        def __init__(self, message: str, value: Any = None) -> None:
-            detail = f"[DbC pre-condition] {message}"
+    class ContractLevel(enum.Enum):
+        OFF = "off"
+        WARN = "warn"
+        ENFORCE = "enforce"
+
+    _LEVEL = ContractLevel(
+        os.environ.get("DBC_LEVEL", "enforce").lower()
+        if os.environ.get("DBC_LEVEL", "").lower() in ("off", "warn", "enforce")
+        else "enforce"
+    )
+
+    class ContractViolationError(AssertionError, ValueError):
+        """Base error for standalone vessel-drafter contract violations."""
+
+        def __init__(self, kind: str, message: str, value: Any = None) -> None:
+            detail = f"[DbC {kind}] {message}"
             if value is not None:
                 detail += f" (got: {value!r})"
             super().__init__(detail)
 
+    class PreconditionError(ContractViolationError):  # type: ignore[no-redef]
+        """Raised when a pre-condition is violated."""
+
+        def __init__(self, message: str, value: Any = None) -> None:
+            super().__init__("pre-condition", message, value)
+
+    class PostconditionError(ContractViolationError):  # type: ignore[no-redef]
+        """Raised when a post-condition is violated."""
+
+        def __init__(self, message: str, value: Any = None) -> None:
+            super().__init__("post-condition", message, value)
+
+    def _fail(kind: str, message: str, value: Any = None) -> None:
+        if _LEVEL == ContractLevel.ENFORCE:
+            error_type = {
+                "pre-condition": PreconditionError,
+                "post-condition": PostconditionError,
+            }[kind]
+            raise error_type(message, value)
+
     def require(condition: bool, message: str, value: Any = None) -> None:
         """Assert a pre-condition (standard bool-style API)."""
+        if _LEVEL == ContractLevel.OFF:
+            return
         if not condition:
-            raise PreconditionError(message, value)
+            _fail("pre-condition", message, value)
 
     def ensure(condition: bool, message: str, value: Any = None) -> None:
         """Assert a post-condition (standard bool-style API)."""
+        if _LEVEL == ContractLevel.OFF:
+            return
         if not condition:
-            raise ValueError(f"[DbC post-condition] {message}")
+            _fail("post-condition", message, value)
 
 
 # ── Legacy (name, value) wrapper helpers ───────────────────────────────────
@@ -90,11 +129,11 @@ def require_positive(name: str | float, value: float | str) -> None:
         PreconditionError: If *value* <= 0.
     """
     parameter_name, numeric_value = _coerce_name_value(name, value, "require_positive")
-    if numeric_value <= 0.0:
-        raise PreconditionError(
-            f"{parameter_name} must be positive, got {numeric_value!r}",
-            numeric_value,
-        )
+    require(
+        numeric_value > 0.0,
+        f"{parameter_name} must be positive, got {numeric_value!r}",
+        numeric_value,
+    )
 
 
 def require_nonnegative(name: str, value: float) -> None:
@@ -107,8 +146,7 @@ def require_nonnegative(name: str, value: float) -> None:
     Raises:
         PreconditionError: If *value* < 0.
     """
-    if value < 0.0:
-        raise PreconditionError(f"{name} must be nonnegative, got {value!r}", value)
+    require(value >= 0.0, f"{name} must be nonnegative, got {value!r}", value)
 
 
 def require_fraction(name: str, value: float) -> None:
@@ -121,10 +159,11 @@ def require_fraction(name: str, value: float) -> None:
     Raises:
         PreconditionError: If *value* < 0.0 or *value* > 1.0.
     """
-    if value < 0.0 or value > 1.0:
-        raise PreconditionError(
-            f"{name} must be between 0.0 and 1.0, got {value!r}", value
-        )
+    require(
+        0.0 <= value <= 1.0,
+        f"{name} must be between 0.0 and 1.0, got {value!r}",
+        value,
+    )
 
 
 def require_integer_at_least(name: str, value: int, minimum: int) -> None:
@@ -138,8 +177,7 @@ def require_integer_at_least(name: str, value: int, minimum: int) -> None:
     Raises:
         PreconditionError: If *value* < *minimum*.
     """
-    if value < minimum:
-        raise PreconditionError(f"{name} must be >= {minimum}, got {value!r}", value)
+    require(value >= minimum, f"{name} must be >= {minimum}, got {value!r}", value)
 
 
 def require_less_or_equal(name: str, value: float, maximum: float) -> None:
@@ -153,8 +191,7 @@ def require_less_or_equal(name: str, value: float, maximum: float) -> None:
     Raises:
         PreconditionError: If *value* > *maximum*.
     """
-    if value > maximum:
-        raise PreconditionError(f"{name} must be <= {maximum}, got {value!r}", value)
+    require(value <= maximum, f"{name} must be <= {maximum}, got {value!r}", value)
 
 
 def require_finite(name: str, value: float) -> None:
@@ -167,12 +204,12 @@ def require_finite(name: str, value: float) -> None:
     Raises:
         PreconditionError: If *value* is NaN or infinite.
     """
-    if not isfinite(value):
-        raise PreconditionError(f"{name} must be finite, got {value!r}", value)
+    require(isfinite(value), f"{name} must be finite, got {value!r}", value)
 
 
 __all__ = [
     # Shared primitives
+    "PostconditionError",
     "PreconditionError",
     "ensure",
     "require",
