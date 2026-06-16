@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.485                                    |
+| **Spec Version**        | 1.1.486                                    |
 | **Last Spec Update**    | 2026-06-15                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-15 Update
 
+- Pendulum simulator mouse-rotation coverage now replaces the placeholder
+  BasePendulumWidget test with a real right-drag event-path regression that
+  verifies azimuth updates, tilt updates, auto-fit release, and tilt clamping.
 - Lower-body model package-local simulator coverage now replaces the empty
   placeholder test with real XML builder precondition, bilateral joint/actuator
   construction, finite initial-pose target, and out-of-range posture rejection

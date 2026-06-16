@@ -77,10 +77,74 @@ class TestNoScrollWidgets:
 class TestMouseRotation3D:
     """Verify 3D rotation state management in BasePendulumWidget."""
 
-    def test_rotation_state_init(self) -> None:
-        """BasePendulumWidget should have rotation state variables."""
-        # We test the pure state, not the Qt widget
-        assert True  # Placeholder — actual widget requires QApplication
+    def test_right_drag_updates_rotation_state(self, qapp) -> None:
+        """Right-dragging the canvas should rotate and clamp the 3D view."""
+        import numpy as np
+        from PyQt6.QtCore import QPointF, Qt
+        from PyQt6.QtGui import QMouseEvent
+
+        from double_pendulum_golf.gui.base_pendulum_widget import BasePendulumWidget
+
+        class TestPendulumWidget(BasePendulumWidget):
+            def _get_total_length(self) -> float:
+                return 1.0
+
+            def _draw_model(self, painter) -> None:
+                return None
+
+            def _draw_info(self, painter) -> None:
+                return None
+
+            def _draw_placeholder(self, painter) -> None:
+                return None
+
+            def _has_result(self) -> bool:
+                return True
+
+        widget = TestPendulumWidget()
+        right_button = Qt.MouseButton.RightButton
+        press = QMouseEvent(
+            QMouseEvent.Type.MouseButtonPress,
+            QPointF(10, 10),
+            right_button,
+            right_button,
+            Qt.KeyboardModifier.NoModifier,
+        )
+        move = QMouseEvent(
+            QMouseEvent.Type.MouseMove,
+            QPointF(60, 40),
+            Qt.MouseButton.NoButton,
+            right_button,
+            Qt.KeyboardModifier.NoModifier,
+        )
+        huge_tilt_move = QMouseEvent(
+            QMouseEvent.Type.MouseMove,
+            QPointF(60, 1000),
+            Qt.MouseButton.NoButton,
+            right_button,
+            Qt.KeyboardModifier.NoModifier,
+        )
+        release = QMouseEvent(
+            QMouseEvent.Type.MouseButtonRelease,
+            QPointF(60, 40),
+            right_button,
+            Qt.MouseButton.NoButton,
+            Qt.KeyboardModifier.NoModifier,
+        )
+
+        widget.mousePressEvent(press)
+        widget.mouseMoveEvent(move)
+
+        assert widget._rotate_start is not None
+        assert widget._view_azimuth == pytest.approx(0.5)
+        assert widget._tilt_angle == pytest.approx(0.3)
+        assert widget.is_view_auto_fit() is False
+
+        widget.mouseMoveEvent(huge_tilt_move)
+        assert widget._tilt_angle == pytest.approx(float(np.pi / 2))
+
+        widget.mouseReleaseEvent(release)
+        assert widget._rotate_start is None
 
     def test_azimuth_tilt_math(self) -> None:
         """Verify azimuth/tilt sensitivity calculation."""
