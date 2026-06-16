@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.516                                    |
+| **Spec Version**        | 1.1.517                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -96,6 +96,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Calc backend route inventory now accepts FastAPI route objects that expose
   `path_format` instead of `path`, and route-registration assertions share the
   same protocol helper used by production endpoint discovery.
+- Calc backend registered-route discovery now falls back to the active app's
+  OpenAPI path table when route objects do not expose compatible path metadata,
+  and router repair invalidates cached OpenAPI schemas after adding routes.
 - Calc backend endpoint discovery normalizes route path and method metadata
   before comparing registered calculator endpoints, keeping the repair path
   stable across FastAPI/Starlette route implementations in the Linux CI matrix.

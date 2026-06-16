@@ -17,7 +17,7 @@ def test_calc_backend_import_aliases_share_app_instance() -> None:
 
 
 def test_list_endpoints_repairs_request_app_not_module_global() -> None:
-    from calc_backend.app import _calculator_route_signatures, list_endpoints
+    from calc_backend.app import _registered_calculator_route_signatures, list_endpoints
 
     isolated_app = FastAPI()
     isolated_app.add_api_route(
@@ -31,8 +31,8 @@ def test_list_endpoints_repairs_request_app_not_module_global() -> None:
 
     assert response.status_code == 200
     assert "POST /api/calc/flare" in response.json()["calculators"]
-    assert ("POST", "/api/calc/flare") in _calculator_route_signatures(
-        isolated_app.routes
+    assert ("POST", "/api/calc/flare") in _registered_calculator_route_signatures(
+        isolated_app
     )
 
 

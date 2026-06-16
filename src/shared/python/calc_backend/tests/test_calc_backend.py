@@ -36,9 +36,12 @@ def client() -> Any:
 
 
 def _registered_calculator_routes(client: TestClient) -> set[tuple[str, str]]:
-    from calc_backend.app import _calculator_route_signatures
+    from calc_backend.app import _registered_calculator_route_signatures
 
-    return cast(set[tuple[str, str]], _calculator_route_signatures(client.app.routes))
+    return cast(
+        set[tuple[str, str]],
+        _registered_calculator_route_signatures(client.app),
+    )
 
 
 # ──────────────────────────────────────────────────────────────────────────────

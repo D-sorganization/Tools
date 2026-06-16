@@ -161,7 +161,7 @@ def list_endpoints(request: Request) -> dict[str, list[str]]:
     active_app = request.app
     expected = _expected_calculator_route_signatures()
     _ensure_calculator_routes_registered(active_app, expected=expected)
-    calculators = _calculator_route_signatures(active_app.routes) | expected
+    calculators = _registered_calculator_route_signatures(active_app) | expected
     return {"calculators": sorted(f"{method} {path}" for method, path in calculators)}
 
 
@@ -202,6 +202,28 @@ def _expected_calculator_route_signatures() -> set[tuple[str, str]]:
     return signatures
 
 
+def _registered_calculator_route_signatures(
+    active_app: FastAPI,
+) -> set[tuple[str, str]]:
+    signatures = _calculator_route_signatures(active_app.routes)
+    if signatures:
+        return signatures
+
+    openapi = getattr(active_app, "openapi", None)
+    if not callable(openapi):
+        return signatures
+
+    schema = openapi()
+    for path, operations in schema.get("paths", {}).items():
+        if not path.startswith("/api/calc/") or path == "/api/calc/endpoints":
+            continue
+        for method in operations:
+            method = str(method).upper()
+            if method not in {"HEAD", "OPTIONS", "PARAMETERS"}:
+                signatures.add((method, path))
+    return signatures
+
+
 def _ensure_calculator_routes_registered(
     active_app: FastAPI,
     *,
@@ -219,6 +241,7 @@ def _ensure_calculator_routes_registered(
         )
         if router_signatures and not router_signatures.issubset(registered):
             active_app.include_router(router)
+            active_app.openapi_schema = None
             registered = _calculator_route_signatures(active_app.routes)
 
 
