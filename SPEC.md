@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.489                                    |
+| **Spec Version**        | 1.1.490                                    |
 | **Last Spec Update**    | 2026-06-15                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-15 Update
 
+- Pendulum simulator imperial torque, energy, and power conversions now source
+  foot-pound factors from the shared Sidekick unit constants layer, including
+  full-precision `lbf·ft`, derived `lbf·in`, `ft·lbf`, and `ft·lbf/s`
+  round-trip coverage.
 - The banned-pattern quality checker is now wired into both pre-commit and the
   CI quality gate in explicit report-only mode, with CLI coverage for blocking
   versus informational exits and documentation updated to describe the current
@@ -813,6 +817,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-15 | 1.1.490 | fix(pendulum, #3359): source pendulum simulator imperial foot-pound torque, energy, and power factors from shared Sidekick unit constants, add full-precision foot-pound aliases, and cover `lbf·ft`, `lbf·in`, `ft·lbf`, and `ft·lbf/s` round trips. |
 | 2026-06-15 | 1.1.488 | ci(quality-check, #3359): add `scripts/quality-check.py --report-only`, wire the banned-pattern scan into pre-commit and the CI quality-gate summary without blocking legacy findings, add CLI regression coverage for blocking versus report-only exits, and update user-facing docs to describe the report-only ratchet. |
 | 2026-06-15 | 1.1.484 | test(video-processor, #3359): replace placeholder logger utility assertions with deterministic Python/NumPy seed checks, root logging configuration assertions, and a message-stable negative-seed contract. |
 | 2026-06-15 | 1.1.483 | ci(sidekick-agent, #3359): focus source-keyed Sidekick agent test selection on `tests/unit/sidekick/agent/test_action_service.py` so agent contract changes do not pull unrelated Qt runtime/sidebar suites into every matrix lane. |

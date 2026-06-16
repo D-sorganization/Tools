@@ -13,6 +13,12 @@ from double_pendulum_golf.gui.unit_converter import (
     UnitSystem,
     UnitConverter,
 )
+from sidekick.utils.unit_constants import (
+    FOOT_POUND_PER_SECOND_TO_WATT,
+    FOOT_POUND_TO_JOULE,
+    FOOT_POUND_TO_NEWTON_METER,
+    POUND_FORCE_INCH_TO_NEWTON_METER,
+)
 
 
 def test_unit_preferences_init() -> Any:
@@ -72,6 +78,35 @@ def test_to_from_si() -> Any:
     assert from_si(1.0, UnitCategory.LENGTH, prefs) == 100.0
 
 
+def test_imperial_foot_pound_units_use_shared_constants() -> None:
+    prefs = UnitPreferences()
+
+    prefs.set_unit(UnitCategory.TORQUE, "lbf·ft")
+    assert to_si(1.0, UnitCategory.TORQUE, prefs) == pytest.approx(FOOT_POUND_TO_NEWTON_METER)
+    assert from_si(
+        to_si(1.0, UnitCategory.TORQUE, prefs), UnitCategory.TORQUE, prefs
+    ) == pytest.approx(1.0, rel=1e-12)
+
+    prefs.set_unit(UnitCategory.TORQUE, "lbf·in")
+    assert to_si(1.0, UnitCategory.TORQUE, prefs) == pytest.approx(
+        POUND_FORCE_INCH_TO_NEWTON_METER
+    )
+
+    prefs.set_unit(UnitCategory.ENERGY, "ft·lbf")
+    assert to_si(1.0, UnitCategory.ENERGY, prefs) == pytest.approx(FOOT_POUND_TO_JOULE)
+    assert from_si(
+        to_si(1.0, UnitCategory.ENERGY, prefs), UnitCategory.ENERGY, prefs
+    ) == pytest.approx(1.0, rel=1e-12)
+
+    prefs.set_unit(UnitCategory.POWER, "ft·lbf/s")
+    assert to_si(1.0, UnitCategory.POWER, prefs) == pytest.approx(
+        FOOT_POUND_PER_SECOND_TO_WATT
+    )
+    assert from_si(
+        to_si(1.0, UnitCategory.POWER, prefs), UnitCategory.POWER, prefs
+    ) == pytest.approx(1.0, rel=1e-12)
+
+
 def test_unknown_unit_factor() -> Any:
     prefs = UnitPreferences()
     prefs.selections[UnitCategory.LENGTH] = "foo"  # Bypass setter
@@ -108,4 +143,4 @@ def test_legacy_converter() -> Any:
     assert conv_imp.to_si_length(1.0) == 0.0254
     assert conv_imp.from_si_length(0.0254) == 1.0
     assert conv_imp.to_si_mass(1.0) == 0.45359237
-    assert conv_imp.to_si_torque(1.0) == 0.1129848290276167
+    assert conv_imp.to_si_torque(1.0) == POUND_FORCE_INCH_TO_NEWTON_METER
