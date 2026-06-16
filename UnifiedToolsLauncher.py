@@ -31,12 +31,16 @@ logger = logging.getLogger(__name__)
 
 # Bootstrap imports for development mode (before pip install -e .)
 _REPO_ROOT = Path(__file__).resolve().parents[0]
-sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
+_SRC_ROOT = str(_REPO_ROOT / "src")
+if _SRC_ROOT not in sys.path:
+    sys.path.insert(0, _SRC_ROOT)
 
 
 def _ensure_bootstrap_paths() -> None:
     """Load the bootstrap helper lazily to avoid static type-check import churn."""
-    bootstrap = import_module("upstream_drift_tools.bootstrap")
+    aliases = import_module("shared.python.import_aliases")
+    aliases.install_shared_import_aliases()
+    bootstrap = import_module("shared.python.sidekick.bootstrap")
     bootstrap.ensure_paths(_REPO_ROOT)
 
 

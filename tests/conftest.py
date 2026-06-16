@@ -12,6 +12,8 @@ from typing import Any
 
 import pytest
 
+from shared.python.import_aliases import install_shared_import_aliases
+
 
 class AliasLoader(Loader):
     """A loader that simply returns an existing module object."""
@@ -209,8 +211,8 @@ class RobustImportRedirector(MetaPathFinder):
         return canonical_spec
 
 
-# Register the redirector at the beginning of the meta path
-sys.meta_path.insert(0, RobustImportRedirector())
+# Use the same aliasing path in tests and production bootstraps.
+install_shared_import_aliases()
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 

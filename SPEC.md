@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.531                                    |
+| **Spec Version**        | 1.1.532                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,15 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-16 Update
 
+- Issue #3316 import-canonicalization now ships the shared import alias
+  installer as production code (`shared.python.import_aliases`) and routes the
+  repository bootstrap plus pytest setup through that same installer. Fresh
+  interpreters now resolve `sidekick`, `upstream_drift_tools`, `theme`,
+  `compatibility`, and `src.shared.python.*` legacy spellings to the same
+  canonical `shared.python.*` module objects in `sys.modules`; repeated
+  installer calls also coalesce stale preloaded aliases back to those
+  canonical objects. `_bootstrap.py` no longer injects `src/shared/python`
+  directly.
 - P1AM power-supply backend documentation was tightened so the E-stop
   follow-up branch stays within the changed-file size budget without changing
   controller or Modbus behavior.
@@ -945,6 +954,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-16 | 1.1.532 | fix(import-aliases, #3316): move shared import aliasing into production code, route `_bootstrap.py`, `UnifiedToolsLauncher.py`, and pytest setup through the same installer, and add fresh-interpreter `sys.modules` identity guards for legacy aliases. |
 | 2026-06-16 | 1.1.531 | docs(p1am-power-supply): tighten backend E-stop/controller documentation so the follow-up branch satisfies the changed-file size budget without behavioral changes. |
 | 2026-06-16 | 1.1.530 | test(p1am-power-supply): split runtime controller safety tests out of the oversized setpoint test module and document the shared helper in the changed-test assertion allowlist. |
 | 2026-06-16 | 1.1.527 | fix(ai-tools, #3316): route selected AI tools production imports through canonical `shared.python.*` modules instead of the duplicate `src.shared.python.*` alias, and add an architecture guard for that slice. |
