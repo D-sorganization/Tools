@@ -91,6 +91,14 @@ _SIDEKICK_SOURCE_TESTS = {
     ],
 }
 
+_VESSEL_DRAFTER_SOURCE_TESTS = {
+    "python/vessel_drafter/contracts.py": [
+        "tests/vessel_drafter/test_contracts_fallback.py",
+        "tests/vessel_drafter/test_contracts_unified.py",
+        "tests/vessel_drafter/test_vessel_drafter_contracts.py",
+    ],
+}
+
 _VENDORED_SOURCE_PREFIXES = (
     ("src", "movement_optimizer"),
     ("src", "pendulum_simulator"),
@@ -130,6 +138,13 @@ def _candidate_targets(src_path: str) -> list[Path]:
         rel_sidekick_path = Path(*parts[4:]).as_posix()
         if rel_sidekick_path in _SIDEKICK_SOURCE_TESTS:
             for test_path in _SIDEKICK_SOURCE_TESTS[rel_sidekick_path]:
+                targets.append(REPO_ROOT / test_path)
+            return targets
+
+    if parts[:2] == ("src", "vessel_drafter"):
+        rel_vessel_path = Path(*parts[2:]).as_posix()
+        if rel_vessel_path in _VESSEL_DRAFTER_SOURCE_TESTS:
+            for test_path in _VESSEL_DRAFTER_SOURCE_TESTS[rel_vessel_path]:
                 targets.append(REPO_ROOT / test_path)
             return targets
 
