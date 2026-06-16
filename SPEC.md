@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.505                                    |
+| **Spec Version**        | 1.1.506                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -71,6 +71,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   GH1473-workspace assumptions from Linux and Windows CI.
 - The Inertia GUI test file carries explicit mypy error-code suppressions for
   its legacy untyped pytest helper while preserving runtime regression coverage.
+- Calc backend route-list contract tests now validate registered routes by the
+  FastAPI route protocol instead of concrete `APIRoute` class identity, avoiding
+  false negatives when full-suite import aliasing loads compatible route types.
 - Video processor logging now has one compatibility shim:
   `video_processor_src.logger_utils` delegates to canonical `utils.logging_utils`
   for seed setup, torch/numpy optional backend flags, logger construction, and

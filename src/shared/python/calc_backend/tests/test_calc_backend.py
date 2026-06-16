@@ -21,8 +21,6 @@ from typing import Any, cast
 from unittest.mock import MagicMock, patch
 
 import pytest
-from fastapi import FastAPI
-from fastapi.routing import APIRoute
 from fastapi.testclient import TestClient
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -65,11 +63,10 @@ class TestAppStartup:
         assert r.status_code == 200
 
         advertised = {tuple(item.split(" ", 1)) for item in r.json()["calculators"]}
-        app = cast(FastAPI, client.app)
         registered = {
             (method, route.path)
-            for route in app.routes
-            if isinstance(route, APIRoute)
+            for route in client.app.routes
+            if hasattr(route, "path") and hasattr(route, "methods")
             for method in route.methods
         }
 
