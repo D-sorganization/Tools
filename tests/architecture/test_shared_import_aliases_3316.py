@@ -7,6 +7,12 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+from typing import Any
+
+if sys.version_info >= (3, 11):  # noqa: UP036 - CI still runs a 3.10 lane.
+    import tomllib
+else:  # pragma: no cover - Python 3.10 compatibility.
+    import tomli as tomllib
 
 from shared.python.import_aliases import install_shared_import_aliases
 
@@ -75,6 +81,71 @@ import sys
 root = bootstrap('UnifiedToolsLauncher.py')
 assert str(root / 'src') in sys.path
 assert str(root / 'src' / 'shared' / 'python') not in sys.path
+"""
+    env = {**os.environ, "PYTHONPATH": str(repo_root / "src")}
+    subprocess.run(
+        [sys.executable, "-c", script],
+        cwd=repo_root,
+        env=env,
+        check=True,
+    )
+
+
+def test_sidekick_bootstrap_uses_src_root_not_shared_python_root() -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    script = """
+from shared.python.sidekick.bootstrap import ensure_paths
+import sys
+root = ensure_paths()
+assert str(root / 'src') in sys.path
+assert str(root / 'src' / 'shared' / 'python') not in sys.path
+"""
+    env = {**os.environ, "PYTHONPATH": str(repo_root / "src")}
+    subprocess.run(
+        [sys.executable, "-c", script],
+        cwd=repo_root,
+        env=env,
+        check=True,
+    )
+
+
+def test_setuptools_no_longer_discovers_shared_python_as_package_root() -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    pyproject: dict[str, Any] = tomllib.loads(
+        (repo_root / "pyproject.toml").read_text()
+    )
+    package_roots = pyproject["tool"]["setuptools"]["packages"]["find"]["where"]
+
+    assert "src/shared/python" not in package_roots
+    assert "src" in package_roots
+
+
+def test_legacy_package_shims_share_canonical_package_identity() -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    script = """
+import importlib
+import warnings
+
+with warnings.catch_warnings():
+    warnings.simplefilter('ignore', DeprecationWarning)
+    sidekick = importlib.import_module('sidekick')
+    upstream = importlib.import_module('upstream_drift_tools')
+
+shared_sidekick = importlib.import_module('shared.python.sidekick')
+theme = importlib.import_module('theme')
+shared_theme = importlib.import_module('shared.python.theme')
+chat = importlib.import_module('chat')
+shared_chat = importlib.import_module('shared.python.chat')
+sidekick_process = importlib.import_module('sidekick.process_calculators')
+shared_process = importlib.import_module('shared.python.sidekick.process_calculators')
+upstream_process = importlib.import_module('upstream_drift_tools.process_calculators')
+
+assert sidekick is shared_sidekick
+assert upstream is shared_sidekick
+assert theme is shared_theme
+assert chat is shared_chat
+assert sidekick_process is shared_process
+assert upstream_process is shared_process
 """
     env = {**os.environ, "PYTHONPATH": str(repo_root / "src")}
     subprocess.run(

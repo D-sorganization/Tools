@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.534                                    |
+| **Spec Version**        | 1.1.535                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -58,6 +58,17 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   function or class was decorated while contracts were disabled, and
   signal-toolkit tangent-line calculation now rejects out-of-range `t_point`
   inputs instead of silently clamping them.
+- Issue #3316 package-root follow-up removes `src/shared/python` from
+  setuptools package discovery and from `sidekick.bootstrap.ensure_paths()`.
+  Legacy top-level imports such as `sidekick`, `upstream_drift_tools`, `theme`,
+  `chat`, and related shared packages now resolve through thin shims under
+  `src/` to the canonical `shared.python.*` packages instead of installing a
+  second physical package tree. Package-specific shim tests guard legacy
+  `humanoid_character_builder` and `signal_toolkit` imports for CI's minimum
+  test contract. The `data_processor_io` shim keeps its top-level wrapper name
+  while delegating to the canonical shared implementation, and
+  `StandardResponse` preserves legacy `success()` and `error()` factory helpers
+  for downstream API-standardization tests.
 - P1AM power-supply backend documentation was tightened so the E-stop
   follow-up branch stays within the changed-file size budget without changing
   controller or Modbus behavior.

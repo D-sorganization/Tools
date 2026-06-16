@@ -59,10 +59,9 @@ class TestEnsurePaths:
         """Already-present paths don't get inserted again."""
         from sidekick.bootstrap import ensure_paths
 
-        # Create the shared/python dir so it's eligible
-        shared = tmp_path / "src" / "shared" / "python"
-        shared.mkdir(parents=True)
-        path_str = str(shared)
+        src_root = tmp_path / "src"
+        src_root.mkdir(parents=True)
+        path_str = str(src_root)
 
         # Ensure it's already in sys.path
         if path_str not in sys.path:
@@ -79,18 +78,26 @@ class TestEnsurePaths:
         from sidekick.bootstrap import ensure_paths
 
         # Set up a synthetic repo structure
-        (tmp_path / "src" / "shared" / "python").mkdir(parents=True)
+        src_root = tmp_path / "src"
+        python_src = tmp_path / "src" / "python" / "src"
+        shared_python = tmp_path / "src" / "shared" / "python"
+        src_root.mkdir(parents=True)
+        python_src.mkdir(parents=True)
+        shared_python.mkdir(parents=True)
 
         # Strip synthetic path from sys.path to test insertion
-        path_str = str(tmp_path / "src" / "shared" / "python")
+        expected_paths = {str(src_root), str(python_src)}
+        forbidden_path = str(shared_python)
         original = sys.path.copy()
         try:
             # Remove if present
-            while path_str in sys.path:
-                sys.path.remove(path_str)
+            for path_str in {*expected_paths, forbidden_path}:
+                while path_str in sys.path:
+                    sys.path.remove(path_str)
 
             ensure_paths(repo_root=tmp_path)
-            assert path_str in sys.path
+            assert expected_paths <= set(sys.path)
+            assert forbidden_path not in sys.path
         finally:
             # Restore original sys.path
             sys.path[:] = original

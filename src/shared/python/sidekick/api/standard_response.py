@@ -120,6 +120,73 @@ class StandardResponse(BaseModel, Generic[T]):
         return self.model_dump()
 
 
+def _standard_response_success(
+    cls: type[StandardResponse[Any]],
+    data: Any,
+    *,
+    processing_time_ms: float = 0.0,
+    request_id: str | None = None,
+    api_version: str = "1.0.0",
+) -> StandardResponse[Any]:
+    """Create a success response using the legacy factory API."""
+    metadata = ResponseMetadata(
+        request_id=request_id or str(uuid.uuid4()),
+        processing_time_ms=processing_time_ms,
+        timestamp_utc=_get_utc_timestamp(),
+        api_version=api_version,
+    )
+    return cls(
+        status="success",
+        data=data,
+        error=None,
+        metadata=metadata,
+    )
+
+
+def _standard_response_error(
+    cls: type[StandardResponse[Any]],
+    *,
+    error: ErrorDetail | None = None,
+    code: ErrorCode | None = None,
+    message: str | None = None,
+    details: Any | None = None,
+    processing_time_ms: float = 0.0,
+    request_id: str | None = None,
+    api_version: str = "1.0.0",
+) -> StandardResponse[Any]:
+    """Create an error response using the legacy factory API."""
+    if error is None:
+        if code is None or message is None:
+            raise ValueError("Either error or both code and message are required")
+        error = ErrorDetail(
+            code=code,
+            message=message,
+            details=details,
+            request_id=request_id,
+        )
+
+    effective_request_id = error.request_id or request_id or str(uuid.uuid4())
+    if error.request_id != effective_request_id:
+        error = error.model_copy(update={"request_id": effective_request_id})
+
+    metadata = ResponseMetadata(
+        request_id=effective_request_id,
+        processing_time_ms=processing_time_ms,
+        timestamp_utc=_get_utc_timestamp(),
+        api_version=api_version,
+    )
+    return cls(
+        status="error",
+        data=None,
+        error=error,
+        metadata=metadata,
+    )
+
+
+StandardResponse.success = classmethod(_standard_response_success)
+StandardResponse.error = classmethod(_standard_response_error)
+
+
 class StandardResponseBuilder:
     """Builder for creating StandardResponse instances with tracking metadata."""
 

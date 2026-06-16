@@ -55,7 +55,6 @@ def ensure_paths(repo_root: Path | str | None = None) -> Path:
         resolved_root = Path(repo_root).resolve()
 
     standard_paths = [
-        resolved_root / "src" / "shared" / "python",
         resolved_root / "src",
         resolved_root / "src" / "python" / "src",
     ]
