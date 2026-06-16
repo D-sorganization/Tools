@@ -22,7 +22,7 @@ from __future__ import annotations
 import logging
 from typing import Any, Protocol
 
-from src.shared.python.ai.mcp.contracts import (
+from shared.python.ai.mcp.contracts import (
     McpResourceDescriptor,
     McpServerConfig,
     McpToolDescriptor,
@@ -105,7 +105,7 @@ class McpClientPool:
         if client is None:
             # Lazy import keeps the heavy transport modules out of the pool's
             # import graph during unit tests that pass fakes.
-            from src.shared.python.ai.mcp.client import McpClient
+            from shared.python.ai.mcp.client import McpClient
 
             client = McpClient(config)
         self._clients[config.name] = client
