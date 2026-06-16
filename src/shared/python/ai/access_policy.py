@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from enum import StrEnum
 else:
-    from compatibility import StrEnum
+    from shared.python.compatibility import StrEnum
 
 from src.shared.python.ai.tool_registry import Tool, ToolRegistry
 from src.shared.python.ai.tools.codemap_tools import CODEMAP_TOOL_NAMES

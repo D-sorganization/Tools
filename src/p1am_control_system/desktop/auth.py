@@ -33,7 +33,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from enum import StrEnum
 else:
-    from compatibility import StrEnum
+    from shared.python.compatibility import StrEnum
 
 try:
     from dotenv import load_dotenv
