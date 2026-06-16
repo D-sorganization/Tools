@@ -185,7 +185,9 @@ class TestPidSetpointWrite:
 
 
 @pytest.fixture
-def client_and_service(monkeypatch: pytest.MonkeyPatch) -> tuple[TestClient, PowerSupplyService]:
+def client_and_service(
+    monkeypatch: pytest.MonkeyPatch,
+) -> tuple[TestClient, PowerSupplyService]:
     monkeypatch.setenv("P1AM_DEV_NO_AUTH", "1")
     plc = _FakePLC()
     svc = PowerSupplyService(plc, logging.getLogger("test"))

@@ -6,8 +6,8 @@ import logging
 import struct
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException
 from auth_config import require_admin_key
+from fastapi import APIRouter, Depends, HTTPException
 from power_supply import (
     PowerSupplyConfig,
     PowerSupplyController,
@@ -99,7 +99,11 @@ def create_power_supply_router(service: PowerSupplyService) -> APIRouter:
     async def get_power_supply_config() -> PowerSupplyConfig:
         return controller.config
 
-    @router.put("/config", response_model=PowerSupplyConfig, dependencies=[Depends(require_admin_key)])
+    @router.put(
+        "/config",
+        response_model=PowerSupplyConfig,
+        dependencies=[Depends(require_admin_key)],
+    )
     async def update_power_supply_config(
         new_config: PowerSupplyConfig,
     ) -> PowerSupplyConfig:
