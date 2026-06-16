@@ -31,10 +31,13 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from sidekick.ui.widgets.base_calculator_widget import BaseCalculatorWindow
+
+from shared.python.sidekick.ui.widgets.base_calculator_widget import (
+    BaseCalculatorWindow,
+)
 
 if TYPE_CHECKING:
-    from sidekick.calculators.thermo.steam_engine import SteamProperties
+    from shared.python.sidekick.calculators.thermo.steam_engine import SteamProperties
 
 # Catppuccin Mocha color palette
 COLORS = {
@@ -158,7 +161,7 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
     def _init_engine(self) -> None:
         """Initialize the calculation engine."""
         try:
-            from sidekick.calculators.thermo.steam_engine import (
+            from shared.python.sidekick.calculators.thermo.steam_engine import (
                 SteamCalculationEngine,
             )
 
@@ -533,7 +536,7 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
         """Update engine availability status."""
         status_parts = []
         try:
-            from sidekick.calculators.thermo.steam_engine import (
+            from shared.python.sidekick.calculators.thermo.steam_engine import (
                 CANTERA_AVAILABLE,
                 COOLPROP_AVAILABLE,
             )

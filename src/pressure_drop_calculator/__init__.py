@@ -17,7 +17,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:  # pragma: no cover - typing only
-    from sidekick.process_calculators.pressure_drop_calculator import (
+    from shared.python.sidekick.process_calculators.pressure_drop_calculator import (
         PressureDropCalculationEngine,
         PressureDropInputs,
         PressureDropResults,

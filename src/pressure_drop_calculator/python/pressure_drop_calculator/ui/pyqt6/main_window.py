@@ -317,7 +317,7 @@ class PressureDropCalculatorWidget(QWidget):
     def _calculate(self) -> None:
         """Perform the pressure drop calculation."""
         try:
-            from sidekick.process_calculators.pressure_drop_calculator import (
+            from shared.python.sidekick.process_calculators.pressure_drop_calculator import (
                 calculate_pressure_drop,
             )
 

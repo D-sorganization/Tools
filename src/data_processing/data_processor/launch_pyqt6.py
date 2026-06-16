@@ -12,7 +12,7 @@ bootstrap(__file__)
 # The Data Processor package is nested under ``src/data_processing/data_processor/
 # python`` (not directly under ``src``), so it needs its own roots on sys.path.
 # The shared bridge is the single source of truth for that path setup.
-from sidekick.data_processing.embedding import (  # noqa: E402
+from shared.python.sidekick.data_processing.embedding import (  # noqa: E402
     ensure_full_data_processor_on_path,
 )
 
