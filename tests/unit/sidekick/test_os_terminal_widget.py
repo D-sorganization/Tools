@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import os
 import sys
+from collections.abc import Generator
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -18,7 +20,7 @@ if sys.platform == "win32" and os.environ.get("PYTEST_XDIST_WORKER"):
 
 
 @pytest.fixture
-def qt_app():  # noqa: ANN201
+def qt_app() -> Generator[Any, None, None]:
     """Provide a singleton ``QApplication`` for widget tests."""
     try:
         from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
@@ -28,7 +30,7 @@ def qt_app():  # noqa: ANN201
     yield app
 
 
-def _make_descriptor(identifier: str = "bash"):  # noqa: ANN202
+def _make_descriptor(identifier: str = "bash") -> Any:
     from upstream_drift_tools.ui.tools_sidebar.shell_discovery import ShellDescriptor
 
     return ShellDescriptor(
@@ -38,7 +40,7 @@ def _make_descriptor(identifier: str = "bash"):  # noqa: ANN202
     )
 
 
-def test_widget_shows_cwd_label(qt_app, tmp_path: Path, qtbot) -> None:  # noqa: ANN001
+def test_widget_shows_cwd_label(qt_app: Any, tmp_path: Path, qtbot: Any) -> None:
     """The widget exposes a cwd label initialised to the starting directory."""
     from upstream_drift_tools.ui.tools_sidebar.os_terminal import (
         SidekickOsTerminalWidget,
@@ -57,9 +59,9 @@ def test_widget_shows_cwd_label(qt_app, tmp_path: Path, qtbot) -> None:  # noqa:
 
 
 def test_widget_shell_dropdown_lists_discovered_shells(
-    qt_app,  # noqa: ANN001
+    qt_app: Any,
     tmp_path: Path,
-    qtbot,
+    qtbot: Any,
 ) -> None:
     """The shell selector exposes every discovered descriptor."""
     from upstream_drift_tools.ui.tools_sidebar.os_terminal import (
@@ -81,7 +83,7 @@ def test_widget_shell_dropdown_lists_discovered_shells(
     assert "zsh" in items
 
 
-def test_widget_updates_cwd_on_osc7(qt_app, tmp_path: Path, qtbot) -> None:  # noqa: ANN001
+def test_widget_updates_cwd_on_osc7(qt_app: Any, tmp_path: Path, qtbot: Any) -> None:
     """OSC 7 sequences update the live cwd label via a single slot."""
     from upstream_drift_tools.ui.tools_sidebar.os_terminal import (
         SidekickOsTerminalWidget,
@@ -105,10 +107,10 @@ def test_widget_updates_cwd_on_osc7(qt_app, tmp_path: Path, qtbot) -> None:  # n
 
 
 def test_widget_shows_install_hint_when_no_backend_available(
-    qt_app,  # noqa: ANN001
+    qt_app: Any,
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
-    qtbot,
+    qtbot: Any,
 ) -> None:
     """When PTY libraries are missing the widget shows a labelled fallback."""
     from upstream_drift_tools.ui.tools_sidebar import os_terminal
@@ -135,10 +137,10 @@ def test_widget_shows_install_hint_when_no_backend_available(
 
 
 def test_widget_switching_shell_terminates_previous(
-    qt_app,  # noqa: ANN001
+    qt_app: Any,
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
-    qtbot,
+    qtbot: Any,
 ) -> None:
     """Selecting a different shell stops the current backend before starting."""
     from upstream_drift_tools.ui.tools_sidebar import os_terminal
@@ -191,11 +193,62 @@ def test_widget_switching_shell_terminates_previous(
     assert started[-1] == "/usr/bin/zsh"
 
 
-def test_widget_resets_cwd_on_shell_switch(
-    qt_app,  # noqa: ANN001
+def test_widget_shutdown_terminates_backend(
+    qt_app: Any,
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
-    qtbot,
+    qtbot: Any,
+) -> None:
+    """Widget shutdown must not leave backend reader threads alive."""
+    from upstream_drift_tools.ui.tools_sidebar import os_terminal
+
+    terminated: list[str] = []
+
+    class FakeBackend:
+        def __init__(self, command: tuple[str, ...], cwd: object) -> None:
+            self.command = command
+            self.is_running = False
+
+        def start(self) -> None:
+            self.is_running = True
+
+        def write(self, _data: bytes) -> None:  # pragma: no cover - unused
+            return None
+
+        def read(self, timeout: float = 0.0) -> bytes:  # noqa: ARG002
+            return b""
+
+        def terminate(self) -> None:
+            terminated.append(self.command[0])
+            self.is_running = False
+
+        def resize(self, rows: int, cols: int) -> None:  # noqa: ARG002
+            return None
+
+    monkeypatch.setattr(
+        os_terminal,
+        "select_backend",
+        lambda command, cwd, **_kwargs: (FakeBackend(command=command, cwd=cwd), None),
+    )
+
+    widget = os_terminal.SidekickOsTerminalWidget(
+        project_root=tmp_path,
+        shells=[_make_descriptor("bash")],
+        autostart=True,
+    )
+    qtbot.addWidget(widget)
+
+    widget.shutdown()
+
+    assert terminated == ["/usr/bin/bash"]
+    assert widget._backend is None  # noqa: SLF001
+
+
+def test_widget_resets_cwd_on_shell_switch(
+    qt_app: Any,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: Any,
 ) -> None:
     """Switching shells resets the cwd label to the project root."""
     from upstream_drift_tools.ui.tools_sidebar import os_terminal
