@@ -94,12 +94,13 @@ This document defines the comprehensive 16-point assessment framework (A-O + Hig
 
 ## Active Program Assessments
 
-| Date       | Topic                           | Report File                                     |
-| ---------- | ------------------------------- | ----------------------------------------------- |
-| 2026-03-15 | Testing Improvement Action Plan | `TESTING_IMPROVEMENT_ACTION_PLAN_2026-03-15.md` |
-| 2026-03-19 | Automated Assessment Update     | `Comprehensive_Assessment.md`                   |
-| 2026-04-29 | TODO/FIXME Count Reconciliation | `todo_fixme_count_reconciliation_2026-04-29.md` |
-| 2026-05-21 | Adversarial Review              | `adversarial_review_2026_05_21.md`              |
+| Date       | Topic                           | Report File                                                              |
+| ---------- | ------------------------------- | ------------------------------------------------------------------------ |
+| 2026-03-15 | Testing Improvement Action Plan | `TESTING_IMPROVEMENT_ACTION_PLAN_2026-03-15.md`                          |
+| 2026-03-19 | Automated Assessment Update     | `Comprehensive_Assessment.md`                                            |
+| 2026-04-29 | TODO/FIXME Count Reconciliation | `todo_fixme_count_reconciliation_2026-04-29.md`                          |
+| 2026-05-21 | Adversarial Review              | `adversarial_review_2026_05_21.md`                                       |
+| 2026-06-16 | Legacy Script Reference Cleanup | Generated assessment docs now reference the surviving script paths only. |
 
 ---
 

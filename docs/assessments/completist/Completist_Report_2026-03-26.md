@@ -62,13 +62,13 @@ pie title Issues by Module
 | `./scripts/legacy_tools/code_quality_check.py`                 | (re.compile(r"\bTODO\b"), "TRACKED_TASK placeholder found"),                                                          | TRACKED_TASK                                 |
 | `./scripts/pragmatic_programmer_review.py`                     | if "TRACKED_TASK" in content:                                                                                         | TRACKED_TASK                                 |
 | `./scripts/pragmatic_programmer_review.py`                     | "title": f"High TRACKED_TASK count ({len(todos)})",                                                                   | TRACKED_TASK                                 |
-| `./scripts/generate_assessments.py`                            | - **Markers**: 445 `TRACKED_TASK` and 140 `TRACKED_DEFECT` markers indicate significant unfinished work.              | TRACKED_TASK                                 |
-| `./scripts/generate_assessments.py`                            | - 445 `TRACKED_TASK` markers.                                                                                         | TRACKED_TASK                                 |
-| `./scripts/generate_assessments.py`                            | - Convert valid `TRACKED_TASK` items into GitHub Issues.                                                              | TRACKED_TASK                                 |
-| `./scripts/generate_assessments.py`                            | f.write(" - **Issue**: 445 `TRACKED_TASK` markers.\n")                                                                | TRACKED_TASK                                 |
+| `./scripts/generate_comprehensive_assessment.py`               | - **Markers**: 445 `TRACKED_TASK` and 140 `TRACKED_DEFECT` markers indicate significant unfinished work.              | TRACKED_TASK                                 |
+| `./scripts/generate_comprehensive_assessment.py`               | - 445 `TRACKED_TASK` markers.                                                                                         | TRACKED_TASK                                 |
+| `./scripts/generate_comprehensive_assessment.py`               | - Convert valid `TRACKED_TASK` items into GitHub Issues.                                                              | TRACKED_TASK                                 |
+| `./scripts/generate_comprehensive_assessment.py`               | f.write(" - **Issue**: 445 `TRACKED_TASK` markers.\n")                                                                | TRACKED_TASK                                 |
 | `./scripts/generate_comprehensive_assessment.py`               | stats["todos"] += content.count("TRACKED_TASK")                                                                       | TRACKED_TASK                                 |
 | `./scripts/generate_comprehensive_assessment.py`               | grades["O"] = (max(0, score_o), f"Technical Debt (TRACKED_TASK+TRACKED_DEFECT): {debt}")                              | TRACKED_TASK                                 |
-| `./scripts/generate_fresh_assessments.py`                      | stats["todos"] += content.count("TRACKED_TASK")                                                                       | TRACKED_TASK                                 |
+| `./scripts/generate_comprehensive_assessment.py`               | stats["todos"] += content.count("TRACKED_TASK")                                                                       | TRACKED_TASK                                 |
 | `./CLAUDE.md`                                                  | 8. No TRACKED_TASK/TRACKED_DEFECT unless tied to a tracked GitHub issue                                               | TRACKED_TASK                                 |
 | `./.agent/workflows/lint.md`                                   | description: Run linting tools (ruff, black, mypy) and fix placeholder/TRACKED_TASK statements                        | TRACKED_TASK                                 |
 | `./.agent/workflows/lint.md`                                   | grep -rn "TRACKED_TASK\\                                                                                              | TRACKED_DEFECT\\                             | XXX\\        | HACK\\ | NotImplementedError\\ | pass$" --include="\*.py" . | TRACKED_TASK |
@@ -102,10 +102,10 @@ pie title Issues by Module
 | `./src/tools/matlab_quality_utils.py`            | 326  | (r"\bHACK\b", "HACK comment found"),                               | HACK           |
 | `./src/tools/matlab_quality_utils.py`            | 327  | (r"\bXXX\b", "XXX comment found"),                                 | XXX            |
 | `./scripts/legacy_tools/code_quality_check.py`   | 35   | (re.compile(r"\bFIXME\b"), "TRACKED_DEFECT placeholder found"),    | TRACKED_DEFECT |
-| `./scripts/generate_assessments.py`              | 214  | - 140 `TRACKED_DEFECT` markers.                                    | TRACKED_DEFECT |
-| `./scripts/generate_assessments.py`              | 217  | - Audit all `TRACKED_DEFECT` items and resolve high-priority ones. | TRACKED_DEFECT |
+| `./scripts/generate_comprehensive_assessment.py` | 214  | - 140 `TRACKED_DEFECT` markers.                                    | TRACKED_DEFECT |
+| `./scripts/generate_comprehensive_assessment.py` | 217  | - Audit all `TRACKED_DEFECT` items and resolve high-priority ones. | TRACKED_DEFECT |
 | `./scripts/generate_comprehensive_assessment.py` | 143  | stats["fixmes"] += content.count("TRACKED_DEFECT")                 | TRACKED_DEFECT |
-| `./scripts/generate_fresh_assessments.py`        | 121  | stats["fixmes"] += content.count("TRACKED_DEFECT")                 | TRACKED_DEFECT |
+| `./scripts/generate_comprehensive_assessment.py` | 121  | stats["fixmes"] += content.count("TRACKED_DEFECT")                 | TRACKED_DEFECT |
 | `./.agent/workflows/issues-5-combined.md`        | 42   | Closes #XXX, closes #XXX, closes #XXX, closes #XXX, closes #XXX    | XXX            |
 | `./.agent/skills/update-issues/SKILL.md`         | 143  | \| #XXX \| Title \| High \| assessment.md \|                       | XXX            |
 | `./.agent/skills/update-issues/SKILL.md`         | 149  | \| #XXX \| Title \| Fixed in commit abc123 \|                      | XXX            |

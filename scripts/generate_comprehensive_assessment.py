@@ -344,7 +344,7 @@ def calculate_grades(stats: RepoStats) -> dict[str, tuple[float, str]]:
     return grades
 
 
-def generate_assessments(
+def generate_assessment_outputs(
     grades: dict[str, tuple[float, str]], stats: RepoStats
 ) -> None:
     for category, (score, justification) in grades.items():
@@ -456,7 +456,7 @@ def main() -> None:
     stats = analyze_codebase()
     grades = calculate_grades(stats)
 
-    generate_assessments(grades, stats)
+    generate_assessment_outputs(grades, stats)
     generate_issues(grades)
     generate_comprehensive(grades)
 

@@ -10,7 +10,7 @@ Automated review of recent changes from `.jules/review_data/`.
 
 ## Issues
 
-- **MAJOR** in `migrate_print_to_logging.py`: Print statement found (use logging)
+- **MAJOR** in `scripts/convert_print_to_logging.py`: Print statement found (use logging)
 - **MAJOR** in `src/data_processing/data_processor/python/data_processor/cli.py`: Print statement found (use logging)
 - **MAJOR** in `src/data_processing/data_processor/python/data_processor/cli.py`: Print statement found (use logging)
 - **MAJOR** in `src/data_processing/data_processor/python/data_processor/cli.py`: Print statement found (use logging)

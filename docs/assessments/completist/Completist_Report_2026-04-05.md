@@ -93,7 +93,7 @@ pie title Issues by Module
 | `SPEC.md`                                      | 2. Fill in every section — leave nothing as "[TODO]"                                          | TRACKED_TASK |
 | `scripts/generate_comprehensive_assessment.py` | stats["todos"] += content.count("TODO")                                                       | TRACKED_TASK |
 | `scripts/generate_comprehensive_assessment.py` | grades["O"] = (max(0, score_o), f"Technical Debt (TODO+FIXME): {debt}")                       | TRACKED_TASK |
-| `scripts/generate_fresh_assessments.py`        | stats["todos"] += content.count("TODO")                                                       | TRACKED_TASK |
+| `scripts/generate_comprehensive_assessment.py` | stats["todos"] += content.count("TODO")                                                       | TRACKED_TASK |
 | `tests/tools/test_matlab_quality_utils.py`     | Path("script.m"), "% TODO: fix this", 5, issues                                               | TRACKED_TASK |
 
 ## Technical Debt Register
@@ -105,7 +105,7 @@ pie title Issues by Module
 | `src/tools/matlab_quality_utils.py`            | 333  | (r"\bXXX\b", "XXX comment found"),                                         | XXX              |
 | `src/tools/matlab_utilities/README.md`         | 261  | - TRACKED_TASK, TRACKED_DEFECT, HACK, XXX placeholders                     | XXX              |
 | `scripts/generate_comprehensive_assessment.py` | 143  | stats["fixmes"] += content.count("FIXME")                                  | FIXME            |
-| `scripts/generate_fresh_assessments.py`        | 121  | stats["fixmes"] += content.count("FIXME")                                  | FIXME            |
+| `scripts/generate_comprehensive_assessment.py` | 121  | stats["fixmes"] += content.count("FIXME")                                  | FIXME            |
 | `.agent/workflows/issues-5-combined.md`        | 42   | Closes #XXX, closes #XXX, closes #XXX, closes #XXX, closes #XXX            | XXX              |
 | `.agent/workflows/lint.md`                     | 34   | grep -rn "TRACKED_TASK\\                                                   | TRACKED_DEFECT\\ | XXX\\ | HACK\\ | NotImplementedError\\ | pass$" --include="\*.py" | XXX |
 | `.agent/skills/update-issues/SKILL.md`         | 143  | \| #XXX \| Title \| High \| assessment.md \|                               | XXX              |
