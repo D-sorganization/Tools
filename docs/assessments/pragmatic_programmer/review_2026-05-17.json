@@ -929,7 +929,7 @@
       "files": [
         "/app/scripts/analyze_completist_data.py",
         "/app/scripts/pragmatic_programmer_review.py",
-        "/app/scripts/generate_assessments.py",
+        "/app/scripts/generate_comprehensive_assessment.py",
         "/app/src/folder_tool/folder_tool_ui.py",
         "/app/src/asteroid_jumper/main_window.py"
       ],

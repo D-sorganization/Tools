@@ -57,7 +57,7 @@ pie title Issues by Module
 | `./drafts/Jules-Code-Quality-Reviewer.yml`       | 5. **Placeholders**: Identify placeholder code (TODO, FIXME, NotImplemented, pass statements) | TRACKED_TASK |
 | `./scripts/generate_comprehensive_assessment.py` | stats["todos"] += content.count("TODO")                                                       | TRACKED_TASK |
 | `./scripts/generate_comprehensive_assessment.py` | grades["O"] = (max(0, score_o), f"Technical Debt (TODO+FIXME): {debt}")                       | TRACKED_TASK |
-| `./scripts/generate_fresh_assessments.py`        | stats["todos"] += content.count("TODO")                                                       | TRACKED_TASK |
+| `./scripts/generate_comprehensive_assessment.py` | stats["todos"] += content.count("TODO")                                                       | TRACKED_TASK |
 
 ## Technical Debt Register
 
@@ -68,7 +68,7 @@ pie title Issues by Module
 | `./src/tools/matlab_quality_utils.py`            | 332  | (r"\bXXX\b", "XXX comment found"),                                         | XXX              |
 | `./src/tools/matlab_utilities/README.md`         | 261  | - TRACKED_TASK, TRACKED_DEFECT, HACK, XXX placeholders                     | XXX              |
 | `./scripts/generate_comprehensive_assessment.py` | 143  | stats["fixmes"] += content.count("FIXME")                                  | FIXME            |
-| `./scripts/generate_fresh_assessments.py`        | 121  | stats["fixmes"] += content.count("FIXME")                                  | FIXME            |
+| `./scripts/generate_comprehensive_assessment.py` | 121  | stats["fixmes"] += content.count("FIXME")                                  | FIXME            |
 | `./.agent/workflows/issues-5-combined.md`        | 42   | Closes #XXX, closes #XXX, closes #XXX, closes #XXX, closes #XXX            | XXX              |
 | `./.agent/workflows/lint.md`                     | 34   | grep -rn "TRACKED_TASK\\                                                   | TRACKED_DEFECT\\ | XXX\\ | HACK\\ | NotImplementedError\\ | pass$" --include="\*.py" | XXX |
 | `./.agent/skills/update-issues/SKILL.md`         | 143  | \| #XXX \| Title \| High \| assessment.md \|                               | XXX              |
@@ -131,7 +131,7 @@ Prioritized by Impact (High) and Complexity (Low).
 | 4 | `./drafts/Jules-Code-Quality-Reviewer.yml` | 5. **Placeholders**: Identify placeholder code (TODO, FIXME, NotImplemented, pas | 1/2/3 |
 | 5 | `./scripts/generate_comprehensive_assessment.py` | stats["todos"] += content.count("TODO") | 1/2/3 |
 | 6 | `./scripts/generate_comprehensive_assessment.py` | grades["O"] = (max(0, score_o), f"Technical Debt (TODO+FIXME): {debt}") | 1/2/3 |
-| 7 | `./scripts/generate_fresh_assessments.py` | stats["todos"] += content.count("TODO") | 1/2/3 |
+| 7 | `./scripts/generate_comprehensive_assessment.py` | stats["todos"] += content.count("TODO") | 1/2/3 |
 | 8 | `./src/pendulum_simulator/pendulum-core/python/physics_native.py` | raise NotImplementedError("NumPy fallback for golfer mass matrix not yet impleme | 1/2/4 |
 | 9 | `./src/pendulum_simulator/pendulum-core/python/physics_native.py` | raise NotImplementedError("NumPy fallback for golfer gravity not yet implemented | 1/2/4 |
 | 10 | `./src/pendulum_simulator/pendulum-core/python/physics_native.py` | raise NotImplementedError("NumPy fallback for golfer FK not yet implemented") | 1/2/4 |

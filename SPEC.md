@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.533                                    |
+| **Spec Version**        | 1.1.534                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-16 Update
 
+- Issue #3359 script-dedup cleanup now removes stale references to deleted
+  legacy assessment/print-migration scripts from generated assessment docs and
+  guards `.github`, `scripts`, `Makefile`, and `docs` against reintroducing
+  those dangling references.
 - Issue #3316 import-canonicalization now ships the shared import alias
   installer as production code (`shared.python.import_aliases`) and routes the
   repository bootstrap plus pytest setup through that same installer. Fresh
