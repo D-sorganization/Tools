@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.488                                    |
+| **Spec Version**        | 1.1.489                                    |
 | **Last Spec Update**    | 2026-06-15                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-15 Update
 
+- The banned-pattern quality checker is now wired into both pre-commit and the
+  CI quality gate in explicit report-only mode, with CLI coverage for blocking
+  versus informational exits and documentation updated to describe the current
+  ratcheting status.
 - P1AM desktop tab labels now use a shared `TAB_TITLES` source so the Settings
   visibility checkboxes match the tab bar names exactly. The shared tab order
   now includes `history`, preserving Event History between Routing and Settings
@@ -809,6 +813,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-15 | 1.1.488 | ci(quality-check, #3359): add `scripts/quality-check.py --report-only`, wire the banned-pattern scan into pre-commit and the CI quality-gate summary without blocking legacy findings, add CLI regression coverage for blocking versus report-only exits, and update user-facing docs to describe the report-only ratchet. |
 | 2026-06-15 | 1.1.484 | test(video-processor, #3359): replace placeholder logger utility assertions with deterministic Python/NumPy seed checks, root logging configuration assertions, and a message-stable negative-seed contract. |
 | 2026-06-15 | 1.1.483 | ci(sidekick-agent, #3359): focus source-keyed Sidekick agent test selection on `tests/unit/sidekick/agent/test_action_service.py` so agent contract changes do not pull unrelated Qt runtime/sidebar suites into every matrix lane. |
 | 2026-06-15 | 1.1.482 | fix(sidekick-agent, #3359): make `StateError` a Tools-owned shared contract, remove `sidekick.agent.action_service`'s fallback import of downstream `src.shared.python.core.contracts`, re-export the canonical class through the sidekick action surface, and add regression coverage for exception identity plus the host-import boundary. |

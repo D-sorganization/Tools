@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Quality check script to verify AI-generated code meets standards."""
 
+import argparse
 import sys
 from pathlib import Path
 
@@ -27,9 +28,24 @@ from tools.quality_utils import (  # noqa: E402
 
 def main() -> None:
     """Run quality checks on Python files."""
+    parser = argparse.ArgumentParser(
+        description="Scan Python files for banned placeholder and quality patterns.",
+    )
+    parser.add_argument(
+        "--report-only",
+        action="store_true",
+        help="report findings but exit successfully for ratcheting/non-blocking CI",
+    )
+    parser.add_argument(
+        "files",
+        nargs="*",
+        help="specific Python files to scan; scans the repository when omitted",
+    )
+    args = parser.parse_args()
+
     # Support direct file arguments from pre-commit
-    if len(sys.argv) > 1:
-        python_files = [Path(arg) for arg in sys.argv[1:]]
+    if args.files:
+        python_files = [Path(arg) for arg in args.files]
     else:
         python_files = list(Path().rglob("*.py"))
 
@@ -49,7 +65,7 @@ def main() -> None:
     }
 
     # Filter if scanning directory
-    if len(sys.argv) <= 1:
+    if not args.files:
         python_files = [
             f for f in python_files if not any(part in exclude_dirs for part in f.parts)
         ]
@@ -81,7 +97,7 @@ def main() -> None:
         sys.stderr.write(
             f"\n{Colors.FAIL}Total issues: {total_issues}{Colors.ENDC}\n",
         )
-        sys.exit(1)
+        sys.exit(0 if args.report_only else 1)
     else:
         # success silent for pre-commit usually, but ok to print
         sys.exit(0)

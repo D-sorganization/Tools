@@ -26,7 +26,7 @@ The following tools have complete calculation engines, GUI interfaces, and test 
 | ODE Solver                    | ✅     | ✅        | —       | ✅    | SymPy + SciPy integration       |
 | Thermal Profile Predictor     | ✅     | ✅        | —       | ✅    | ODE + parameter fitting         |
 | Calculator Web App            | ✅     | —         | ✅      | ✅    | Security validated              |
-| Quality Utilities             | ✅     | —         | —       | ✅    | CI/CD integrated                |
+| Quality Utilities             | ✅     | —         | —       | ✅    | Report-only CI/pre-commit scan  |
 
 ---
 
