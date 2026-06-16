@@ -36,6 +36,14 @@ class PowerSupplyService:
         await self._write_pid_setpoint(0, command_percent)
         return self.controller.status()
 
+    def engage_estop(self) -> None:
+        """Latch the controller's E-stop (software half of the kill switch)."""
+        self.controller.engage_estop()
+
+    def clear_estop(self) -> None:
+        """Release the controller's E-stop latch (operator must re-arm)."""
+        self.controller.clear_estop()
+
     def _inputs_from_tags(
         self,
         tags: dict[str, float] | None,

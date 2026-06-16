@@ -525,3 +525,66 @@
   opacity: 0.5;
   cursor: not-allowed !important;
 }
+
+/* ---- Live trend ----------------------------------------------------- */
+.ps-trend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.ps-trend-legend {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+.ps-trend-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.ps-trend-key .swatch {
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 2px;
+}
+.ps-trend-key strong {
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}
+.ps-trend-window {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+.ps-trend-svg {
+  width: 100%;
+  height: 200px;
+  display: block;
+  background: var(--input-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+}
+.ps-trend-grid {
+  stroke: var(--panel-border);
+  stroke-width: 1;
+  opacity: 0.5;
+}
+.ps-trend-axis {
+  fill: var(--text-muted);
+  font-size: 9px;
+  font-family: var(--font-mono);
+}
+.ps-trend-line {
+  fill: none;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.ps-trend-empty {
+  fill: var(--text-muted);
+  font-size: 12px;
+}

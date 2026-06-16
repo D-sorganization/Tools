@@ -1,5 +1,10 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
+import { PowerSupplyTrend, type TrendSample } from "./PowerSupplyTrend";
 import "./PowerSupplyControl.css";
+
+// Rolling trend buffer: ~300 samples at the ~10 Hz broadcast rate ≈ 30 s.
+const TREND_MAX_POINTS = 300;
+const TREND_WINDOW_SECONDS = 30;
 
 /**
  * Power-supply control tab.
@@ -88,6 +93,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
   const [stagedSetpointText, setStagedSetpointText] = useState<string>("0");
   const [setpointStep, setSetpointStep] = useState<number>(1.0);
   const [clampDraft, setClampDraft] = useState<number>(20);
+  const [trend, setTrend] = useState<TrendSample[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
@@ -114,6 +120,24 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
   useEffect(() => {
     if (liveStatus) setMode(liveStatus.mode);
   }, [liveStatus?.mode]);
+
+  // Accumulate a rolling trend buffer from the live status broadcasts.
+  useEffect(() => {
+    if (!liveStatus) return;
+    setTrend((prev) => {
+      const next = [
+        ...prev,
+        {
+          i: liveStatus.measured_current_a,
+          v: liveStatus.measured_voltage_v,
+          p: liveStatus.measured_power_w,
+        },
+      ];
+      return next.length > TREND_MAX_POINTS
+        ? next.slice(next.length - TREND_MAX_POINTS)
+        : next;
+    });
+  }, [liveStatus]);
 
   const flash = useCallback((msg: string, kind: "info" | "error" = "info") => {
     if (kind === "info") {
@@ -367,6 +391,18 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
         <div className="ps-trip-banner">⚠ Active trips: {s.trips.join(", ")}</div>
       )}
 
+      {/* ---- Live trend (current + voltage from the unit) ---- */}
+      <div className="ps-card">
+        <div className="ps-card-title">Live signals — current &amp; voltage feedback</div>
+        <PowerSupplyTrend
+          samples={trend}
+          currentFullScale={config.current_full_scale_a}
+          voltageFullScale={config.voltage_full_scale_v}
+          powerFullScale={config.power_alarm_max_w}
+          windowSeconds={TREND_WINDOW_SECONDS}
+        />
+      </div>
+
       <div className="ps-grid">
         {/* ---- Output clamp (safety) ---- */}
         <div className="ps-card ps-clamp">
@@ -393,7 +429,6 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
 
           <div className="ps-setpoint-controls">
             <span className="ps-step-field">
-              precise&nbsp;
               <input
                 type="number"
                 min={1}

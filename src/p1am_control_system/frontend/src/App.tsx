@@ -124,7 +124,7 @@ export const App: React.FC = () => {
   const [eStopActive, setEStopActive] = useState<boolean>(false);
 
   // Tab Navigation and Visibility State
-  const [activeTab, setActiveTab] = useState<string>("trends");
+  const [activeTab, setActiveTab] = useState<string>("powerSupply");
   const [visibleTabs, setVisibleTabs] = useState<{
     trends: boolean;
     controllers: boolean;
@@ -886,6 +886,26 @@ export const App: React.FC = () => {
         <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
           {/* Tabbed Navigation Bar */}
           <div style={{ display: "flex", borderBottom: "1px solid var(--panel-border)", gap: "0.25rem", paddingBottom: "0.25rem", marginBottom: "0.5rem" }}>
+            {visibleTabs.powerSupply && (
+              <button
+                type="button"
+                className={`tab-btn ${activeTab === "powerSupply" ? "active" : ""}`}
+                onClick={() => setActiveTab("powerSupply")}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: activeTab === "powerSupply" ? "var(--accent-purple, #a78bfa)" : "var(--text-secondary)",
+                  padding: "0.5rem 1rem",
+                  fontSize: "0.85rem",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  borderBottom: activeTab === "powerSupply" ? "2px solid var(--accent-purple, #a78bfa)" : "2px solid transparent",
+                  transition: "all var(--transition-fast)",
+                }}
+              >
+                Power Supply
+              </button>
+            )}
             {visibleTabs.trends && (
               <button
                 type="button"
@@ -1024,26 +1044,6 @@ export const App: React.FC = () => {
                 }}
               >
                 Plant Hierarchy
-              </button>
-            )}
-            {visibleTabs.powerSupply && (
-              <button
-                type="button"
-                className={`tab-btn ${activeTab === "powerSupply" ? "active" : ""}`}
-                onClick={() => setActiveTab("powerSupply")}
-                style={{
-                  background: "none",
-                  border: "none",
-                  color: activeTab === "powerSupply" ? "var(--accent-purple, #a78bfa)" : "var(--text-secondary)",
-                  padding: "0.5rem 1rem",
-                  fontSize: "0.85rem",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  borderBottom: activeTab === "powerSupply" ? "2px solid var(--accent-purple, #a78bfa)" : "2px solid transparent",
-                  transition: "all var(--transition-fast)",
-                }}
-              >
-                Power Supply
               </button>
             )}
           </div>

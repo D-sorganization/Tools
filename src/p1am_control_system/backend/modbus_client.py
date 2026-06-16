@@ -378,11 +378,25 @@ class AsyncModbusManager(BasePLCClient):
                 return False
 
     async def trigger_estop(self) -> bool:
-        """Write 0.0 to all tag values to force outputs to zero immediately."""
+        """Zero PID setpoints and tag values so outputs go to zero and hold."""
         async with self.lock:
             if not self._connected:
                 return False
             try:
+                # PID setpoint is field 3 of each 10-register block.
+                for pid_index in range(4):
+                    sp_addr = self.pid_config_address + pid_index * 10 + 2
+                    resp = await self._get_client().write_registers(
+                        address=sp_addr,
+                        values=float_to_registers(0.0),
+                    )
+                    if resp.isError():
+                        logger.error(
+                            f"E-stop: error zeroing PID {pid_index} setpoint: {resp}"
+                        )
+                        return False
+
+                # 2. Zero all tag values.
                 zeros = []
                 for _ in range(32):
                     zeros.extend(float_to_registers(0.0))
@@ -393,7 +407,7 @@ class AsyncModbusManager(BasePLCClient):
                 if resp.isError():
                     logger.error(f"Error writing E-stop registers: {resp}")
                     return False
-                logger.warning("E-stop command written to tag values successfully.")
+                logger.warning("E-stop: PID setpoints and tag values zeroed.")
                 return True
             except (ModbusException, Exception) as e:
                 logger.error(f"Exception during E-stop Modbus execution: {e}")
@@ -401,15 +415,7 @@ class AsyncModbusManager(BasePLCClient):
                 return False
 
     async def clear_estop(self) -> bool:
-        """Pulse the E-stop reset coil so the PLC leaves the latched trip state.
-
-        The E-stop latch lives in the controller, not in this process. Clearing
-        it therefore requires an explicit coil write; only a confirmed,
-        non-error response means the plant has actually been released.
-
-        Returns:
-            bool: True if the reset coil write was acknowledged, False otherwise.
-        """
+        """Pulse the E-stop reset coil and return whether it was acknowledged."""
         async with self.lock:
             if not self._connected:
                 return False

@@ -199,6 +199,20 @@ alarm_engine = build_alarm_engine(active_config)
 active_alarms: dict[str, dict[str, Any]] = {}
 e_stop_active: bool = False
 
+
+def apply_alarm_config(config: RoutingConfig) -> None:
+    """Rebuild the alarm engine from `config` and clear stale active alarms.
+
+    Keeps the alarm set in sync with the active interlock configuration. Called
+    on PLC connect (to adopt the device's real interlock limits instead of the
+    startup defaults — otherwise every tag resting at 0 trips the default
+    LoLo/Low limits) and whenever routing is updated.
+    """
+    global alarm_engine
+    alarm_engine = build_alarm_engine(config)
+    active_alarms.clear()
+
+
 tuning_sessions: dict[int, dict[str, Any]] = {}
 
 plc_client.tuning_sessions = tuning_sessions
@@ -217,6 +231,17 @@ async def modbus_connect_background() -> None:
                 connected = await plc_client.connect()
                 if connected:
                     logger.info("Connected to PLC successfully in background.")
+                    # Adopt the device's real routing + interlock limits so the
+                    # alarm set reflects the PLC, not the startup defaults.
+                    try:
+                        plc_config = await plc_client.read_routing()
+                        if plc_config is not None:
+                            global active_config
+                            active_config = plc_config
+                            apply_alarm_config(plc_config)
+                            logger.info("Synced routing and alarm limits from PLC.")
+                    except Exception as sync_err:
+                        logger.warning(f"Could not sync routing from PLC: {sync_err}")
             except Exception as e:
                 logger.debug(f"Background PLC connect attempt failed: {e}")
         await asyncio.sleep(5.0)
@@ -246,7 +271,13 @@ async def poll_plc_loop() -> None:
                 if tags is not None
                 else []
             )
+            # The controller is latched while e_stop_active, so poll() commands
+            # zero. Re-assert the hardware kill every scan as well, so a stale
+            # PID setpoint or any other driver can never re-energize the loop
+            # while the E-stop is held.
             ps_status = await power_supply_service.poll(tags)
+            if e_stop_active and plc_client.connected:
+                await plc_client.trigger_estop()
 
             payload = {
                 "tags": tag_list,
@@ -461,6 +492,8 @@ async def update_routing(config: RoutingConfig) -> dict[str, str]:
     active_config = config
     plc_client.active_config = config
     backup_simulator.active_config = config
+    # Keep alarms in sync with the new interlock limits.
+    apply_alarm_config(config)
 
     if not plc_client.connected:
         await backup_simulator.write_routing(config)
@@ -503,6 +536,9 @@ async def trigger_estop() -> dict[str, str]:
     """Immediate safety shutdown command, zeroing all tag variables."""
     global latest_tags, e_stop_active
     e_stop_active = True
+    # Latch the controller FIRST so the next poll cycle cannot re-command a
+    # setpoint and re-energize the output after we zero it below.
+    power_supply_service.engage_estop()
     if not plc_client.connected:
         await backup_simulator.trigger_estop()
         latest_tags = {f"TAG_{i}": 0.0 for i in range(32)}
@@ -550,6 +586,10 @@ async def clear_estop() -> dict[str, str]:
         )
     await backup_simulator.clear_estop()
     e_stop_active = False
+    # Release the power-supply controller latch too. It returns to IDLE with
+    # permissive off, so the operator must deliberately re-arm before any
+    # output can flow.
+    power_supply_service.clear_estop()
     return {"status": "success", "message": "Hardware E-stop cleared."}
 
 
