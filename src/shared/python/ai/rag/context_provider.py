@@ -25,7 +25,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from src.shared.python.ai.rag.simple_rag import SimpleRAGStore
+from shared.python.ai.rag.simple_rag import SimpleRAGStore
 
 logger = logging.getLogger(__name__)
 
