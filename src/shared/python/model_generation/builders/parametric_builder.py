@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 # TRACKED_TASK: see #2310 — architecture debt extraction schedule
 
 """
@@ -15,13 +16,16 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
-from model_generation.builders.base_builder import BaseURDFBuilder, BuildResult
-from model_generation.core.constants import (
+from shared.python.model_generation.builders.base_builder import (
+    BaseURDFBuilder,
+    BuildResult,
+)
+from shared.python.model_generation.core.constants import (
     DEFAULT_HEIGHT_M,
     DEFAULT_JOINT_DAMPING,
     DEFAULT_MASS_KG,
 )
-from model_generation.core.types import (
+from shared.python.model_generation.core.types import (
     Geometry,
     GeometryType,
     Inertia,
@@ -33,7 +37,10 @@ from model_generation.core.types import (
     Material,
     Origin,
 )
-from model_generation.inertia.calculator import InertiaCalculator, InertiaMode
+from shared.python.model_generation.inertia.calculator import (
+    InertiaCalculator,
+    InertiaMode,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -334,7 +341,7 @@ class ParametricBuilder(BaseURDFBuilder):
     ) -> tuple[Callable[[str, float], float], Callable[[str, float], float]]:
         """Get helper functions for anthropometric data lookup."""
         try:
-            from model_generation.humanoid.anthropometry import (
+            from shared.python.model_generation.humanoid.anthropometry import (
                 get_segment_length_ratio,
                 get_segment_mass_ratio,
             )

@@ -70,7 +70,7 @@ _PolyWidget: type | None = None
 _SignalWidget: type | None = None
 
 try:
-    from signal_toolkit.polynomial_generator import (
+    from shared.python.signal_toolkit.polynomial_generator import (
         PolynomialGeneratorWidget as _PW,
     )
 
@@ -82,7 +82,7 @@ except ImportError as _exc:  # pragma: no cover
     logger.warning("PolynomialGeneratorWidget import failed: %s", _exc)
 
 try:
-    from signal_toolkit.widget import SignalToolkitWidget as _SW
+    from shared.python.signal_toolkit.widget import SignalToolkitWidget as _SW
 
     _SignalWidget = _SW
     _HAS_SIGNAL_WIDGET = True

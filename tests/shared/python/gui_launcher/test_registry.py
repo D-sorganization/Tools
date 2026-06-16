@@ -16,7 +16,7 @@ from gui_launcher.registry import (
     register_gui,
 )
 
-from contracts import PreconditionError
+from shared.python.contracts import PreconditionError
 
 pytestmark = pytest.mark.unit
 

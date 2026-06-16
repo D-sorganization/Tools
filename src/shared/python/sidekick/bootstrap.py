@@ -48,7 +48,7 @@ def ensure_paths(repo_root: Path | str | None = None) -> Path:
     """
     resolved_root: Path
     if repo_root is None:
-        from sidekick.utils.paths import get_repo_root
+        from shared.python.sidekick.utils.paths import get_repo_root
 
         resolved_root = Path(get_repo_root()).resolve()
     else:

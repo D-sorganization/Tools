@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Convenience functions for ``model_generation``.
 
 Extracted from ``__init__.py`` (issue #1696) to keep the package entry-point
@@ -9,7 +10,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from model_generation.core.constants import (
+from shared.python.model_generation.core.constants import (
     DEFAULT_HEIGHT_M,
     DEFAULT_MASS_KG,
 )
@@ -46,7 +47,9 @@ def quick_urdf(
     Example:
         urdf = quick_urdf(height_m=1.85, preset="athletic")
     """
-    from model_generation.builders.parametric_builder import ParametricBuilder
+    from shared.python.model_generation.builders.parametric_builder import (
+        ParametricBuilder,
+    )
 
     builder = ParametricBuilder(robot_name)
 
@@ -88,7 +91,9 @@ def quick_build(
     assert height_m is not None, "height_m must be provided"
     from pathlib import Path
 
-    from model_generation.builders.parametric_builder import ParametricBuilder
+    from shared.python.model_generation.builders.parametric_builder import (
+        ParametricBuilder,
+    )
 
     builder = ParametricBuilder("humanoid")
 

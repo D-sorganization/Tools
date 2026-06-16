@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from rotation_transforms.reference_frame_operations import (
+from shared.python.rotation_transforms.reference_frame_operations import (
     OperationName,
     ReferenceFrameResult,
     compute_homogeneous_transform,

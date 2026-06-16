@@ -14,9 +14,9 @@ from PyQt6.QtWidgets import (
     QSizePolicy,
     QWidget,
 )
-from theme.theme_manager import get_theme_manager
 
 from p1am_control_system.desktop.auth import AuthManager, Role
+from shared.python.theme.theme_manager import get_theme_manager
 
 logger = logging.getLogger("p1am_control.desktop.header")
 

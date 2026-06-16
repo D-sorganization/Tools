@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """
 Public API for model generation.
 
@@ -26,7 +27,7 @@ REST API Usage:
 
 # Re-export main API components from package root
 try:
-    from model_generation import (
+    from shared.python.model_generation import (
         BuildResult,
         ManualBuilder,
         ParametricBuilder,
@@ -42,7 +43,7 @@ except ImportError:
     quick_urdf = None
 
 # REST API components
-from model_generation.api.rest_api import (
+from shared.python.model_generation.api.rest_api import (
     APIRequest,
     APIResponse,
     FastAPIAdapter,

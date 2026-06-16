@@ -1,6 +1,5 @@
 """Shared pytest configuration for entire Tools repo."""
 
-import importlib.util
 import sys
 import types
 from pathlib import Path
@@ -24,9 +23,8 @@ def _setup_global_stubs(repo_root: Path) -> None:
     import logging
 
     for import_root in (
-        repo_root / "src" / "shared" / "python",
         repo_root / "src",
-        repo_root,
+        repo_root / "src" / "python" / "src",
     ):
         import_path = str(import_root)
         if import_path in sys.path:
@@ -55,103 +53,33 @@ def _setup_global_stubs(repo_root: Path) -> None:
 
     # Define the package paths that must prefer this checkout.
     checkout_packages = [
-        ("src", "src"),
-        ("src.shared", "src/shared"),
-        ("src.shared.python", "src/shared/python"),
         ("shared", "src/shared"),
         ("shared.python", "src/shared/python"),
-        ("src.shared.python.calc_backend", "src/shared/python/calc_backend"),
         ("shared.python.calc_backend", "src/shared/python/calc_backend"),
-        ("src.shared.python.config", "src/shared/python/config"),
-        ("src.shared.python.logging_pkg", "src/shared/python/logging_pkg"),
+        ("shared.python.config", "src/shared/python/config"),
+        ("shared.python.logging_pkg", "src/shared/python/logging_pkg"),
     ]
 
     for name, path in checkout_packages:
         ensure_package_path(name, path)
 
     # Specifically stub logging_config
-    if "src.shared.python.logging_pkg.logging_config" not in sys.modules:
-        config_name = "src.shared.python.logging_pkg.logging_config"
+    if "shared.python.logging_pkg.logging_config" not in sys.modules:
+        config_name = "shared.python.logging_pkg.logging_config"
         logging_config = types.ModuleType(config_name)
         logging_config.get_logger = logging.getLogger  # type: ignore
         logging_config.setup_logging = lambda *a, **kw: None  # type: ignore
         sys.modules[config_name] = logging_config
 
     # Specifically stub environment
-    if "src.shared.python.config.environment" not in sys.modules:
-        env = types.ModuleType("src.shared.python.config.environment")
+    if "shared.python.config.environment" not in sys.modules:
+        env = types.ModuleType("shared.python.config.environment")
         env.get_env = lambda key, default=None, required=False: default  # type: ignore
         env.get_env_float = lambda key, default=0.0: float(default)  # type: ignore
-        sys.modules["src.shared.python.config.environment"] = env
-
-
-def _preload_ai_exception_aliases(repo_root: Path) -> None:
-    """Bind all supported AI exception import paths to the real module file."""
-    module_names = (
-        "src.shared.python.ai.exceptions",
-        "shared.python.ai.exceptions",
-        "ai.exceptions",
-    )
-    existing = next(
-        (
-            sys.modules[name]
-            for name in module_names
-            if hasattr(sys.modules.get(name), "AIConnectionError")
-        ),
-        None,
-    )
-    if existing is not None:
-        for name in module_names:
-            sys.modules[name] = existing
-        return
-
-    module_path = repo_root / "src" / "shared" / "python" / "ai" / "exceptions.py"
-    spec = importlib.util.spec_from_file_location(module_names[0], module_path)
-    if spec is None or spec.loader is None:
-        return
-    module = importlib.util.module_from_spec(spec)
-    for name in module_names:
-        sys.modules[name] = module
-    spec.loader.exec_module(module)
-    for name in module_names:
-        sys.modules[name] = module
-
-
-def _preload_ai_type_aliases(repo_root: Path) -> None:
-    """Bind all supported AI type import paths to the real module file."""
-    module_names = (
-        "src.shared.python.ai.types",
-        "shared.python.ai.types",
-        "ai.types",
-    )
-    existing = next(
-        (
-            sys.modules[name]
-            for name in module_names
-            if hasattr(sys.modules.get(name), "ConversationContext")
-        ),
-        None,
-    )
-    if existing is not None:
-        for name in module_names:
-            sys.modules[name] = existing
-        return
-
-    module_path = repo_root / "src" / "shared" / "python" / "ai" / "types.py"
-    spec = importlib.util.spec_from_file_location(module_names[0], module_path)
-    if spec is None or spec.loader is None:
-        return
-    module = importlib.util.module_from_spec(spec)
-    for name in module_names:
-        sys.modules[name] = module
-    spec.loader.exec_module(module)
-    for name in module_names:
-        sys.modules[name] = module
+        sys.modules["shared.python.config.environment"] = env
 
 
 _setup_global_stubs(REPO_ROOT)
-_preload_ai_exception_aliases(REPO_ROOT)
-_preload_ai_type_aliases(REPO_ROOT)
 
 
 @pytest.fixture

@@ -10,8 +10,9 @@ See issue #2411 - API Standardization Foundation.
 
 from __future__ import annotations
 
-from calc_backend.api import StandardResponse
 from pydantic import BaseModel, Field
+
+from shared.python.calc_backend.api import StandardResponse
 
 
 class PressureDropRequestV2(BaseModel):

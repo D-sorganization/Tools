@@ -10,10 +10,11 @@ from pathlib import Path
 from typing import Any, cast
 
 import yaml
-from programmatic_pid.geometry import to_float
-from programmatic_pid.profiles import apply_profile
-from programmatic_pid.types import SpecDict, TextConfig
-from programmatic_pid.validation import validate_spec
+
+from shared.python.programmatic_pid.geometry import to_float
+from shared.python.programmatic_pid.profiles import apply_profile
+from shared.python.programmatic_pid.types import SpecDict, TextConfig
+from shared.python.programmatic_pid.validation import validate_spec
 
 
 def load_spec(path: str | Path) -> SpecDict:

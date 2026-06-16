@@ -14,8 +14,8 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from src.shared.python.ai.access_policy import ChatAccessMode
-from src.shared.python.theme.style_constants import Styles
+from shared.python.ai.access_policy import ChatAccessMode
+from shared.python.theme.style_constants import Styles
 
 
 class RagTab(QWidget):

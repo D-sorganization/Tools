@@ -523,6 +523,6 @@ class GitHubCliProvider(BaseAgentAdapter):
 
     def thinking_capabilities(self) -> Any:
         """``gh`` does not reason — expose only the ``none`` level."""
-        from chat_contracts.models import make_none_only_capabilities
+        from shared.python.chat_contracts.models import make_none_only_capabilities
 
         return make_none_only_capabilities(provider="github-cli")

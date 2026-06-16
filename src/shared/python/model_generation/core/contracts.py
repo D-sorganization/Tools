@@ -9,7 +9,7 @@ and condition predicates are defined in the single source of truth.
 
 from __future__ import annotations
 
-from contracts import (
+from shared.python.contracts import (
     CONTRACTS_ENABLED,
     ContractViolationError,
     InvariantError,
@@ -28,7 +28,7 @@ from contracts import (
     require_unit_vector,
     set_contracts_enabled,
 )
-from contracts import (
+from shared.python.contracts import (
     class_invariant as invariant,
 )
 

@@ -16,16 +16,16 @@ Public API::
 
 # Primary API
 # CLI / orchestration
-from programmatic_pid.cli import (
+from shared.python.programmatic_pid.cli import (
     generate,
     generate_controls_sheet,
     generate_process_sheet,
 )
-from programmatic_pid.controls import add_control_loops
-from programmatic_pid.document import PIDDocument
+from shared.python.programmatic_pid.controls import add_control_loops
+from shared.python.programmatic_pid.document import PIDDocument
 
 # Equipment
-from programmatic_pid.equipment import (
+from shared.python.programmatic_pid.equipment import (
     EQUIPMENT_RENDERERS,
     equipment_anchor,
     equipment_center,
@@ -34,21 +34,21 @@ from programmatic_pid.equipment import (
 )
 
 # Geometry
-from programmatic_pid.geometry import to_float
-from programmatic_pid.instruments import add_instrument
+from shared.python.programmatic_pid.geometry import to_float
+from shared.python.programmatic_pid.instruments import add_instrument
 
 # Layout
-from programmatic_pid.layout import (
+from shared.python.programmatic_pid.layout import (
     LabelPlacer,
     compute_layout_regions,
     spread_instrument_positions,
 )
 
 # Profiles
-from programmatic_pid.profiles import PROFILE_PRESETS, apply_profile
+from shared.python.programmatic_pid.profiles import PROFILE_PRESETS, apply_profile
 
 # Rendering
-from programmatic_pid.rendering import (
+from shared.python.programmatic_pid.rendering import (
     add_arrow,
     add_box,
     add_text,
@@ -57,14 +57,23 @@ from programmatic_pid.rendering import (
 )
 
 # Spec loading
-from programmatic_pid.spec_loader import SpecAccessor, load_spec, prepare_spec
+from shared.python.programmatic_pid.spec_loader import (
+    SpecAccessor,
+    load_spec,
+    prepare_spec,
+)
 
 # Streams, instruments, controls
-from programmatic_pid.streams import add_stream
-from programmatic_pid.types import BBox, Point, SpecValidationError, ValidationIssue
+from shared.python.programmatic_pid.streams import add_stream
+from shared.python.programmatic_pid.types import (
+    BBox,
+    Point,
+    SpecValidationError,
+    ValidationIssue,
+)
 
 # Validation
-from programmatic_pid.validation import (
+from shared.python.programmatic_pid.validation import (
     collect_issues,
     validate_spec,
     validate_spec_json,

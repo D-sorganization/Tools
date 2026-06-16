@@ -340,7 +340,7 @@ class OpenAIAdapter(BaseAgentAdapter):
 
     def thinking_capabilities(self) -> Any:
         """Return reasoning-budget levels for the current OpenAI model."""
-        from chat_contracts.models import (
+        from shared.python.chat_contracts.models import (
             make_full_thinking_capabilities,
             make_none_only_capabilities,
         )

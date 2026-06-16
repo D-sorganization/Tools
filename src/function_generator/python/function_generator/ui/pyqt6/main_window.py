@@ -41,7 +41,8 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from signal_toolkit import Signal, SignalGenerator
+
+from shared.python.signal_toolkit import Signal, SignalGenerator
 
 
 class FunctionGeneratorWidget(QWidget):

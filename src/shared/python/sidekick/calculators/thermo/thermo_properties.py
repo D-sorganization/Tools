@@ -18,7 +18,7 @@ import math
 from dataclasses import dataclass
 from functools import lru_cache
 
-from sidekick.utils.unit_constants import R_UNIVERSAL
+from shared.python.sidekick.utils.unit_constants import R_UNIVERSAL
 
 __all__ = [
     "MOLAR_CP_298",

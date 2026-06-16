@@ -11,7 +11,7 @@ import re
 from datetime import datetime
 from pathlib import Path
 
-from chat.service_base import ChatSession
+from shared.python.chat.service_base import ChatSession
 
 from .contracts import ChatExportRequest, ChatExportResult
 from .secret_redactor import SecretRedactor

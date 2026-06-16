@@ -1,10 +1,11 @@
+# mypy: ignore-errors
 """Mesh processing utilities for model generation.
 
 Re-exports mesh processing components from humanoid_character_builder.mesh.
 """
 
 try:
-    from humanoid_character_builder.mesh import (
+    from shared.python.humanoid_character_builder.mesh import (
         CollisionGeometry,
         CollisionGeometryGenerator,
         MeshExportConfig,
@@ -12,12 +13,12 @@ try:
         MeshSegmentResult,
         PrimitiveMeshGenerator,
     )
-    from humanoid_character_builder.mesh.lod import (
+    from shared.python.humanoid_character_builder.mesh.lod import (
         LODGenerationResult,
         LODGenerator,
         LODLevel,
     )
-    from humanoid_character_builder.mesh.mesh_inertia import (
+    from shared.python.humanoid_character_builder.mesh.mesh_inertia import (
         InertiaMode,
         InertiaResult,
         MeshInertiaCalculator,

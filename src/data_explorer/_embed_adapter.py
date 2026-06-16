@@ -9,8 +9,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from src.shared.python.launcher_embed import EmbedCapabilities
-from src.shared.python.logging_pkg.logger_utils import get_logger
+from shared.python.launcher_embed import EmbedCapabilities
+
+from shared.python.logging_pkg.logger_utils import get_logger
 
 logger = get_logger(__name__)
 

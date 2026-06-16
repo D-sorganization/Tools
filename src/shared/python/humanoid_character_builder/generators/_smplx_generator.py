@@ -10,7 +10,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from humanoid_character_builder.core.body_parameters import BodyParameters
+from shared.python.humanoid_character_builder.core.body_parameters import BodyParameters
 
 from ._mesh_types import GeneratedMeshResult, MeshGeneratorInterface
 from ._primitive_generator import PrimitiveMeshGenerator
@@ -217,7 +217,8 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
         """Segment SMPL-X mesh into body parts using joint positions."""
         assert visual_dir is not None, "visual_dir must be provided"
         import numpy as np
-        from humanoid_character_builder.core.segment_definitions import (
+
+        from shared.python.humanoid_character_builder.core.segment_definitions import (
             HUMANOID_SEGMENTS,
         )
 
@@ -312,7 +313,7 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
     ) -> GeneratedMeshResult:
         """Fallback segmentation using z-coordinate slicing."""
         assert visual_dir is not None, "visual_dir must be provided"
-        from humanoid_character_builder.core.segment_definitions import (
+        from shared.python.humanoid_character_builder.core.segment_definitions import (
             HUMANOID_SEGMENTS,
         )
 
@@ -395,7 +396,7 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
         )
 
     def get_supported_segments(self) -> list[str]:
-        from humanoid_character_builder.core.segment_definitions import (
+        from shared.python.humanoid_character_builder.core.segment_definitions import (
             HUMANOID_SEGMENTS,
         )
 

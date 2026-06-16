@@ -171,7 +171,7 @@ class CodexCliAdapter(BaseAgentAdapter):
 
     def thinking_capabilities(self) -> Any:
         """Codex CLI does not surface reasoning budgets to the host."""
-        from chat_contracts.models import make_none_only_capabilities
+        from shared.python.chat_contracts.models import make_none_only_capabilities
 
         return make_none_only_capabilities(provider=self.PROVIDER_NAME)
 

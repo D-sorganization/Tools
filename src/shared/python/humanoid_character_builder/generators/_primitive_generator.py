@@ -10,7 +10,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from humanoid_character_builder.core.body_parameters import BodyParameters
+from shared.python.humanoid_character_builder.core.body_parameters import BodyParameters
 
 from ._mesh_types import GeneratedMeshResult, MeshGeneratorInterface
 
@@ -53,10 +53,11 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
             )
 
         import trimesh
-        from humanoid_character_builder.core.anthropometry import (
+
+        from shared.python.humanoid_character_builder.core.anthropometry import (
             estimate_segment_dimensions,
         )
-        from humanoid_character_builder.core.segment_definitions import (
+        from shared.python.humanoid_character_builder.core.segment_definitions import (
             HUMANOID_SEGMENTS,
             GeometryType,
         )
@@ -120,7 +121,7 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
         )
 
     def get_supported_segments(self) -> list[str]:
-        from humanoid_character_builder.core.segment_definitions import (
+        from shared.python.humanoid_character_builder.core.segment_definitions import (
             HUMANOID_SEGMENTS,
         )
 

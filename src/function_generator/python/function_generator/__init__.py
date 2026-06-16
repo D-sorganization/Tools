@@ -3,7 +3,7 @@
 Provides PyQt6 GUI for waveform generation and visualization.
 """
 
-from signal_toolkit import Signal, SignalGenerator
+from shared.python.signal_toolkit import Signal, SignalGenerator
 
 __all__ = [
     "Signal",

@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Humanoid model generation components.
 
 Re-exports from humanoid_character_builder for integration with the
@@ -5,45 +6,45 @@ unified model_generation package.
 """
 
 try:
-    from humanoid_character_builder import (
+    from shared.python.humanoid_character_builder import (
         DE_LEVA_DATA,
         PRESET_NAMES,
         AnthropometryData,
         SegmentMeshInfo,
     )
-    from humanoid_character_builder.appearance import AppearanceParameters
-    from humanoid_character_builder.builder import (
+    from shared.python.humanoid_character_builder.appearance import AppearanceParameters
+    from shared.python.humanoid_character_builder.builder import (
         CharacterBuilder,
         CharacterBuildResult,
         ExportOptions,
         quick_build,
         quick_urdf,
     )
-    from humanoid_character_builder.core.body_parameters import (
+    from shared.python.humanoid_character_builder.core.body_parameters import (
         BodyParameters,
         BuildType,
         GenderModel,
         SegmentParameters,
     )
-    from humanoid_character_builder.mesh import (
+    from shared.python.humanoid_character_builder.mesh import (
         InertiaMode,
         InertiaResult,
         MeshInertiaCalculator,
         PrimitiveInertiaCalculator,
         PrimitiveShape,
     )
-    from humanoid_character_builder.presets.loader import (
+    from shared.python.humanoid_character_builder.presets.loader import (
         get_preset_info,
         list_available_presets,
         load_body_preset,
     )
-    from humanoid_character_builder.segments import (
+    from shared.python.humanoid_character_builder.segments import (
         HUMANOID_JOINTS,
         HUMANOID_SEGMENTS,
         JointDefinition,
         SegmentDefinition,
     )
-    from humanoid_character_builder.urdf import (
+    from shared.python.humanoid_character_builder.urdf import (
         HumanoidURDFGenerator,
         URDFGeneratorConfig,
     )

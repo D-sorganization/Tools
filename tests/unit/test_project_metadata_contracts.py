@@ -23,15 +23,20 @@ def test_dead_dwsim_console_script_is_not_advertised() -> None:
     assert "dwsim-model" not in scripts
 
 
-def test_shared_compatibility_module_is_packaged() -> None:
-    """The bare compatibility shim must be present in built wheels."""
+def test_shared_modules_are_only_packaged_under_shared_python() -> None:
+    """The shared library must not be double-shipped as bare top-level modules."""
     metadata = _project_metadata()
-    setuptools = metadata["tool"]["setuptools"]  # type: ignore[index]
-    py_modules = set(setuptools["py-modules"])  # type: ignore[index]
-    package_dir = setuptools["package-dir"]  # type: ignore[index]
+    package_find = metadata["tool"]["setuptools"]["packages"]["find"]  # type: ignore[index]
+    pytest_options = metadata["tool"]["pytest"]["ini_options"]  # type: ignore[index]
+    mypy_options = metadata["tool"]["mypy"]  # type: ignore[index]
+    scripts = metadata["project"].get("scripts", {})  # type: ignore[union-attr]
 
-    assert "compatibility" in py_modules
-    assert package_dir["compatibility"] == "src/shared/python"  # type: ignore[index]
+    assert "src/shared/python" not in package_find["where"]  # type: ignore[index]
+    assert "src/shared/python" not in pytest_options["pythonpath"]  # type: ignore[index]
+    assert "src/shared/python" not in mypy_options["mypy_path"]  # type: ignore[index]
+    assert scripts["urdf-gen"] == "shared.python.model_generation.cli:main"
+    assert scripts["generate-pid"] == "shared.python.programmatic_pid.cli:main"
+    assert scripts["codemap"] == "shared.python.codemap.cli:main"
 
 
 def test_readme_python_badge_matches_package_requires_python() -> None:

@@ -14,8 +14,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from programmatic_pid.geometry import to_float
-from programmatic_pid.rendering import add_text
+from shared.python.programmatic_pid.geometry import to_float
+from shared.python.programmatic_pid.rendering import add_text
 
 
 def add_instrument(

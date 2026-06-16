@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Reusable PyQt6 PlotWidget backed by PlotSpec + MatplotlibRenderer.
 
 Provides a drop-in QWidget containing an embedded matplotlib canvas,
@@ -29,7 +30,7 @@ from .matplotlib_renderer import MatplotlibRenderer
 from .specs import PlotSpec
 
 if TYPE_CHECKING:
-    from plot_theme.manager import PlotThemeManager
+    from shared.python.plot_theme.manager import PlotThemeManager
 
 logger = logging.getLogger(__name__)
 

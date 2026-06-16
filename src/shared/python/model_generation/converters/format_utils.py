@@ -91,7 +91,10 @@ def convert_urdf_to_mjcf(
     """
     if source is None:
         raise ValueError("source must be provided")
-    from model_generation.converters.mjcf_converter import MJCFConfig, MJCFConverter
+    from shared.python.model_generation.converters.mjcf_converter import (
+        MJCFConfig,
+        MJCFConverter,
+    )
 
     config = MJCFConfig(**config_options) if config_options else None
     converter = MJCFConverter(config)
@@ -117,7 +120,7 @@ def convert_mjcf_to_urdf(
     """
     if source is None:
         raise ValueError("source must be provided")
-    from model_generation.converters.mjcf_converter import MJCFConverter
+    from shared.python.model_generation.converters.mjcf_converter import MJCFConverter
 
     converter = MJCFConverter()
     return str(converter.mjcf_to_urdf(source, output_path))
@@ -222,8 +225,8 @@ def validate_urdf(source: str | Path) -> list[str]:
     Returns:
         List of error messages (empty if valid)
     """
-    from model_generation.converters.urdf_parser import URDFParser
-    from model_generation.core.validation import Validator
+    from shared.python.model_generation.converters.urdf_parser import URDFParser
+    from shared.python.model_generation.core.validation import Validator
 
     try:
         parser = URDFParser()

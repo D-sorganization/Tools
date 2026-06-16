@@ -24,7 +24,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from compatibility import UTC
+from shared.python.compatibility import UTC
 
 __all__ = [
     "NotebookSessionManager",

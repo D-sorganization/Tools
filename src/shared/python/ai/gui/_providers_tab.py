@@ -11,8 +11,8 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from src.shared.python.ai.gui._provider_config_registry import ProviderConfigRegistry
-from src.shared.python.ai.gui._provider_registry_data import (
+from shared.python.ai.gui._provider_config_registry import ProviderConfigRegistry
+from shared.python.ai.gui._provider_registry_data import (
     AIProvider,
     populate_provider_combo,
 )

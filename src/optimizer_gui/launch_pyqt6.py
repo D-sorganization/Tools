@@ -32,7 +32,7 @@ bootstrap = _load_bootstrap().bootstrap
 
 bootstrap(__file__)
 
-from gui_launcher import make_pyqt6_launcher  # noqa: E402
+from shared.python.gui_launcher import make_pyqt6_launcher  # noqa: E402
 
 
 def main() -> int:

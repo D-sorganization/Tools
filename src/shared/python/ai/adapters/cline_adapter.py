@@ -237,7 +237,7 @@ class ClineAdapter(BaseAgentAdapter):
 
     def thinking_capabilities(self) -> Any:
         """Cline forwards reasoning to its backend; expose only 'none' here."""
-        from chat_contracts.models import make_none_only_capabilities
+        from shared.python.chat_contracts.models import make_none_only_capabilities
 
         return make_none_only_capabilities(provider="cline")
 

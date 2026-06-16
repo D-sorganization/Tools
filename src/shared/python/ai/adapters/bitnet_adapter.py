@@ -106,7 +106,7 @@ class BitnetAdapter(BaseAgentAdapter):
 
     def thinking_capabilities(self):  # type: ignore[no-untyped-def]
         """BitNet local models do not expose reasoning budgets."""
-        from chat_contracts.models import make_none_only_capabilities
+        from shared.python.chat_contracts.models import make_none_only_capabilities
 
         return make_none_only_capabilities(provider="bitnet")
 

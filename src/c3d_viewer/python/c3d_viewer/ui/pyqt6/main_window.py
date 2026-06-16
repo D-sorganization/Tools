@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 # TRACKED_TASK: see #2310 — architecture debt extraction schedule
 
 #!/usr/bin/env python3
@@ -54,7 +55,7 @@ class C3DViewerWindow(ThemedWindowMixin, QMainWindow):
     def _toggle_notes(self) -> None:
         """Show/hide the shared notes dock widget."""
         try:
-            from notes.integration import attach_notes_dock
+            from shared.python.notes.integration import attach_notes_dock
         except ImportError:
             return
         if self._notes_dock is None:

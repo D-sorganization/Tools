@@ -10,7 +10,8 @@ import logging
 from typing import TYPE_CHECKING, Any, cast
 
 from PyQt6.QtWidgets import QMessageBox, QWidget
-from sidekick.data_processing.exceptions import DataProcessingError
+
+from shared.python.sidekick.data_processing.exceptions import DataProcessingError
 
 __all__ = [
     "DataProcessorOpsMixin",
@@ -115,7 +116,7 @@ class DataProcessorOpsMixin:
 
     def _aggregate_data(self) -> None:
         """Perform data aggregation."""
-        from sidekick.data_processing.core import AggregationType
+        from shared.python.sidekick.data_processing.core import AggregationType
 
         group_by: str | None = self.agg_group_by.currentText()
         if group_by == "(None)":
@@ -242,7 +243,7 @@ class DataProcessorOpsMixin:
 
     def _fit_curve(self) -> None:
         """Perform curve fitting."""
-        from sidekick.data_processing.core import FitType
+        from shared.python.sidekick.data_processing.core import FitType
 
         x_col = self.fit_x_column.currentText()
         y_col = self.fit_y_column.currentText()

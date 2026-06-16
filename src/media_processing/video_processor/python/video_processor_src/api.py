@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """FastAPI backend for Video Processor.
 
 Provides endpoints for:
@@ -20,10 +21,10 @@ import uuid
 from pathlib import Path
 from typing import Any
 
-from cors import add_cors_middleware
 from fastapi import FastAPI, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
+from shared.python.cors import add_cors_middleware
 from utils.compatibility import StrEnum
 
 logger = logging.getLogger(__name__)

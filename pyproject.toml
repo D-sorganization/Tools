@@ -162,50 +162,24 @@ dev = [
 ]
 
 [project.scripts]
-urdf-gen = "model_generation.cli:main"
-generate-pid = "programmatic_pid.cli:main"
+urdf-gen = "shared.python.model_generation.cli:main"
+generate-pid = "shared.python.programmatic_pid.cli:main"
 mypy-autofix = "tools.mypy_autofix_agent:main"
-codemap = "codemap.cli:main"
-codemap-watch = "codemap.watcher:main"
-codemap-mcp = "codemap.mcp_server:main"
+codemap = "shared.python.codemap.cli:main"
+codemap-watch = "shared.python.codemap.watcher:main"
+codemap-mcp = "shared.python.codemap.mcp_server:main"
 video-analyzer = "video_analyzer.launch_video_analyzer:main"
 
 [project.urls]
 Homepage = "https://github.com/D-sorganization/Tools"
 Repository = "https://github.com/D-sorganization/Tools"
 
-[tool.setuptools]
-# Bare modules in src/shared/python that are not packages (no __init__.py).
-# setuptools packages.find only discovers packages; these must be listed
-# explicitly so they are included in pip install ud-tools.
-# See: https://github.com/D-sorganization/Tools/issues/1695
-py-modules = ["compatibility", "contracts", "cors", "deprecation", "safe_eval"]
-
-[tool.setuptools.package-dir]
-compatibility = "src/shared/python"
-contracts = "src/shared/python"
-cors = "src/shared/python"
-deprecation = "src/shared/python"
-safe_eval = "src/shared/python"
-
-
 [tool.setuptools.packages.find]
 where = ["src/python/src", "src"]
 include = [
     "shared*",
-    "chat*",
-    "chat_contracts*",
-    "data_processor_io*",
-    "notes*",
     "upstream_drift_tools*",
     "sidekick*",
-    "model_generation*",
-    "humanoid_character_builder*",
-    "signal_toolkit*",
-    "rotation_transforms*",
-    "rotation_converter*",
-    "programmatic_pid*",
-    "dwsim_model*",
     "utils*",
     "tools*",
     "web_applications*",
@@ -240,7 +214,6 @@ pythonpath = [
     "src/ode_solver/python",
     "src",
     "src/python/src",
-    "src/shared/python",
     "src/tools",
     "src/web_applications",
     "src/solar_system_model",
@@ -365,7 +338,6 @@ files = ["src"]
 mypy_path = [
     "src",
     "src/python/src",
-    "src/shared/python",
     "src/tools",
     "src/web_applications",
     "src/data_processing/data_processor/python",

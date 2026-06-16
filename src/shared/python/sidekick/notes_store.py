@@ -17,8 +17,8 @@ import logging
 from pathlib import Path
 from typing import cast
 
-from notes.card_store import NoteCardStore
-from notes.models import DEFAULT_NOTE_COLOR, NoteCard
+from shared.python.notes.card_store import NoteCardStore
+from shared.python.notes.models import DEFAULT_NOTE_COLOR, NoteCard
 
 _log = logging.getLogger(__name__)
 

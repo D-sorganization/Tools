@@ -23,7 +23,7 @@ from typing import Any
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from contracts import require
+from shared.python.contracts import require
 
 # Default local-development origins used when CORS_ORIGINS env var is unset.
 logger = logging.getLogger(__name__)

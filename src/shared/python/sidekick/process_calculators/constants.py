@@ -11,7 +11,7 @@ needed by the standalone process calculators. Values are sourced from:
 
 from typing import Final
 
-from sidekick.utils.unit_constants import (
+from shared.python.sidekick.utils.unit_constants import (
     ATM_TO_KPA,
     ATMOSPHERE_TO_PASCAL,
     AVOGADRO_NUMBER,
@@ -37,22 +37,22 @@ from sidekick.utils.unit_constants import (
     STANDARD_GRAVITY,
     TORR_TO_PASCAL,
 )
-from sidekick.utils.unit_constants import (
+from shared.python.sidekick.utils.unit_constants import (
     CELSIUS_OFFSET as CELSIUS_TO_KELVIN_OFFSET,
 )
-from sidekick.utils.unit_constants import (
+from shared.python.sidekick.utils.unit_constants import (
     DENSITY_WATER_STD as _DENSITY_WATER_STD,
 )
-from sidekick.utils.unit_constants import (
+from shared.python.sidekick.utils.unit_constants import (
     HOURS_PER_DAY as _HOURS_PER_DAY,
 )
-from sidekick.utils.unit_constants import (
+from shared.python.sidekick.utils.unit_constants import (
     KG_TO_LB as _KG_TO_LB,
 )
-from sidekick.utils.unit_constants import (
+from shared.python.sidekick.utils.unit_constants import (
     R_UNIVERSAL_KMOL as _R_UNIVERSAL_KMOL,
 )
-from sidekick.utils.unit_constants import (
+from shared.python.sidekick.utils.unit_constants import (
     STP_TEMPERATURE_K as _STP_TEMPERATURE_K,
 )
 

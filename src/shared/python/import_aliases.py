@@ -14,10 +14,16 @@ import importlib.util
 import sys
 import types
 import warnings
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from importlib.abc import MetaPathFinder
 from importlib.machinery import ModuleSpec
 from typing import Any
+
+__all__ = [
+    "SharedImportAliasFinder",
+    "install_aliases",
+    "install_shared_import_aliases",
+]
 
 _SHARED_ROOTS = frozenset(
     {
@@ -107,12 +113,13 @@ class _CanonicalAliasLoader:
     def __init__(self, canonical_spec: ModuleSpec, aliases: list[str]) -> None:
         self.canonical_spec = canonical_spec
         self.aliases = aliases
+        self.canonical_name = aliases[0]
 
     def create_module(self, spec: ModuleSpec) -> types.ModuleType:
-        return importlib.import_module(self.canonical_spec.name)
+        return importlib.import_module(self.canonical_name)
 
     def exec_module(self, module: types.ModuleType) -> None:
-        canonical = importlib.import_module(self.canonical_spec.name)
+        canonical = importlib.import_module(self.canonical_name)
         for alias in self.aliases:
             sys.modules[alias] = canonical
 
@@ -240,3 +247,8 @@ def install_shared_import_aliases() -> None:
     _coalesce_loaded_aliases(finder)
     sys.meta_path.insert(0, finder)
     _coalesce_loaded_aliases(finder)
+
+
+def install_aliases(aliases: Mapping[str, str] | None = None) -> None:
+    """Compatibility wrapper for shim packages that install shared aliases."""
+    install_shared_import_aliases()

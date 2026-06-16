@@ -6,14 +6,14 @@ This module provides editors for URDF manipulation:
 - URDFTextEditor: Text-based editing with diff support
 """
 
-from model_generation.editor.editor_types import (
+from shared.python.model_generation.editor.editor_types import (
     ComponentReference,
     ComponentType,
 )
-from model_generation.editor.frankenstein_editor import (
+from shared.python.model_generation.editor.frankenstein_editor import (
     FrankensteinEditor,
 )
-from model_generation.editor.text_editor import (
+from shared.python.model_generation.editor.text_editor import (
     DiffHunk,
     DiffResult,
     URDFTextEditor,

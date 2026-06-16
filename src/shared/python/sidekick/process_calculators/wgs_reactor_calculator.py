@@ -27,7 +27,8 @@ from typing import TYPE_CHECKING, Any
 
 # matplotlib and scipy imported lazily to prevent Windows hang at module load
 import numpy as np
-from sidekick.utils.json_io import safe_read_json
+
+from shared.python.sidekick.utils.json_io import safe_read_json
 
 # NOTE: the theme layer (get_theme_manager / apply_plot_theme) is imported
 # lazily inside the GUI plotting method, NOT at module top. theme.integration

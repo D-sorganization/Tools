@@ -182,7 +182,7 @@ if PYQT6_AVAILABLE:
 
         def get_series_style(self) -> Any:
             """Build a SeriesStyle from current widget state."""
-            from plot_engine.specs import SeriesStyle
+            from shared.python.plot_engine.specs import SeriesStyle
 
             return SeriesStyle(
                 color=self._selected_color,
@@ -196,7 +196,7 @@ if PYQT6_AVAILABLE:
 
         def get_trendline_spec(self) -> Any:
             """Build a TrendlineSpec or None."""
-            from plot_engine.specs import TrendlineSpec
+            from shared.python.plot_engine.specs import TrendlineSpec
 
             trend_type = self._trend_type_combo.currentText()
             if trend_type == "None":
@@ -210,7 +210,7 @@ if PYQT6_AVAILABLE:
 
         def get_axis_specs(self) -> tuple[Any, Any]:
             """Build X and Y AxisSpec from current widget state."""
-            from plot_engine.specs import AxisSpec
+            from shared.python.plot_engine.specs import AxisSpec
 
             x_axis = AxisSpec(
                 label=self._x_label_edit.currentText(),
@@ -226,7 +226,7 @@ if PYQT6_AVAILABLE:
 
         def get_legend_spec(self) -> Any:
             """Build a LegendSpec from current widget state."""
-            from plot_engine.specs import LegendSpec
+            from shared.python.plot_engine.specs import LegendSpec
 
             return LegendSpec(
                 visible=self._legend_visible_check.isChecked(),

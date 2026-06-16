@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 # ── Re-export shared contracts primitives (monorepo path) ──────────────────
 
 try:
-    from contracts import (
+    from shared.python.contracts import (
         PostconditionError,
         PreconditionError,
         ensure,

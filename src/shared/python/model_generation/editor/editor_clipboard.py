@@ -10,12 +10,12 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Any
 
-from model_generation.core.types import Joint, Link, Material
+from shared.python.model_generation.core.types import Joint, Link, Material
 
 from .editor_types import ComponentType
 
 if TYPE_CHECKING:
-    from model_generation.converters.urdf_parser import ParsedModel
+    from shared.python.model_generation.converters.urdf_parser import ParsedModel
 
 logger = logging.getLogger(__name__)
 

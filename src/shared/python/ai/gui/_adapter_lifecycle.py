@@ -11,9 +11,9 @@ from typing import Any
 
 from PyQt6.QtCore import QObject, pyqtSignal
 
-from src.shared.python.ai._settings_model import AISettings
-from src.shared.python.ai.gui._provider_registry_data import AIProvider
-from src.shared.python.logging_pkg.logging_config import get_logger
+from shared.python.ai._settings_model import AISettings
+from shared.python.ai.gui._provider_registry_data import AIProvider
+from shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
 
@@ -76,7 +76,7 @@ class AdapterLifecycleManager(QObject):
 
     def _build_ollama(self, settings: AISettings) -> Any:
         try:
-            from src.shared.python.ai.adapters.rust_adapter import RustAgentAdapter
+            from shared.python.ai.adapters.rust_adapter import RustAgentAdapter
 
             adapter = RustAgentAdapter(
                 api_key="ollama",  # pragma: allowlist secret
@@ -88,39 +88,39 @@ class AdapterLifecycleManager(QObject):
             self.system_message.emit("🚀 Using high-performance Rust AI backend.")
             return adapter
         except ImportError:
-            from src.shared.python.ai.adapters.ollama_adapter import OllamaAdapter
+            from shared.python.ai.adapters.ollama_adapter import OllamaAdapter
 
             return OllamaAdapter(host=settings.ollama_host, model=settings.model)
 
     @staticmethod
     def _build_openai(settings: AISettings) -> Any:
-        from src.shared.python.ai.gui.settings_dialog import get_api_key
+        from shared.python.ai.gui.settings_dialog import get_api_key
 
         api_key = get_api_key(AIProvider.OPENAI)
         if not api_key:
             return None
-        from src.shared.python.ai.adapters.openai_adapter import OpenAIAdapter
+        from shared.python.ai.adapters.openai_adapter import OpenAIAdapter
 
         return OpenAIAdapter(api_key=api_key, model=settings.model)
 
     @staticmethod
     def _build_anthropic(settings: AISettings) -> Any:
-        from src.shared.python.ai.gui.settings_dialog import get_api_key
+        from shared.python.ai.gui.settings_dialog import get_api_key
 
         api_key = get_api_key(AIProvider.ANTHROPIC)
         if not api_key:
             return None
-        from src.shared.python.ai.adapters.anthropic_adapter import AnthropicAdapter
+        from shared.python.ai.adapters.anthropic_adapter import AnthropicAdapter
 
         return AnthropicAdapter(api_key=api_key, model=settings.model)
 
     @staticmethod
     def _build_gemini(settings: AISettings) -> Any:
-        from src.shared.python.ai.gui.settings_dialog import get_api_key
+        from shared.python.ai.gui.settings_dialog import get_api_key
 
         api_key = get_api_key(AIProvider.GEMINI)
         if not api_key:
             return None
-        from src.shared.python.ai.adapters.gemini_adapter import GeminiAdapter
+        from shared.python.ai.adapters.gemini_adapter import GeminiAdapter
 
         return GeminiAdapter(api_key=api_key, model=settings.model)

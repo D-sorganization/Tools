@@ -5,7 +5,7 @@ This module re-exports all public symbols from
 to maintain backward compatibility with internal imports.
 """
 
-from sidekick.calculators.conversion.flow_rate_converter import (
+from shared.python.sidekick.calculators.conversion.flow_rate_converter import (
     MASS_FLOW_CONVERSIONS,
     MOLAR_FLOW_CONVERSIONS,
     STANDARD_CONDITIONS,

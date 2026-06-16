@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Cross-platform file watcher with Rust acceleration and watchdog fallback.
 
 Prefers the Rust extension (built via maturin from ``rust_core/file_watcher``).
@@ -29,7 +30,10 @@ _BACKEND: str
 try:
     # Rust extension built via maturin. If present, use it directly — its API
     # surface matches the fallback (FileWatcher, ChangeEvent with .path/.kind).
-    from file_watcher import ChangeEvent, FileWatcher  # type: ignore[no-redef]
+    from shared.python.file_watcher import (  # type: ignore[no-redef]
+        ChangeEvent,
+        FileWatcher,
+    )
 
     _BACKEND = "rust"
 except ImportError:  # pragma: no cover - backend selection

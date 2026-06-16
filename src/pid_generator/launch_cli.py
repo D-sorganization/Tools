@@ -9,7 +9,7 @@ from __future__ import annotations
 
 def main() -> None:
     """Launch the PID generator CLI."""
-    from programmatic_pid.cli import main as cli_main
+    from shared.python.programmatic_pid.cli import main as cli_main
 
     cli_main()
 

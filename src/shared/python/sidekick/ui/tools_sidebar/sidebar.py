@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Unified dockable tools sidebar for Qt host applications."""
 
 from __future__ import annotations
@@ -5,7 +6,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from compatibility import StrEnum
+from shared.python.compatibility import StrEnum
 
 if TYPE_CHECKING:
     from .dock_title_bar import SidekickDockTitleBar

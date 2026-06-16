@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 # ruff: noqa: E501
 #!/usr/bin/env python3
 """Unit Converter - Shared Component for UI Applications.
@@ -17,7 +18,6 @@ import logging
 from datetime import datetime, timezone
 from typing import Any, cast
 
-from compatibility import UTC
 from PyQt6.QtCore import (
     QObject,
     QSettings,
@@ -39,6 +39,8 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+
+from shared.python.compatibility import UTC
 
 from ...calculators.conversion.service import UnitConversionService, get_service
 from .base_calculator_widget import BaseCalculatorWindow

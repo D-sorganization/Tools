@@ -29,7 +29,7 @@ class TestBootstrapEnsurePaths:
 
     def test_ensure_paths_returns_path(self, tmp_path: Path) -> None:
         """Precondition: a repo-root-like directory is provided.
-        Postcondition: returns a resolved Path, adds src/shared/python if it exists."""
+        Postcondition: returns a resolved Path without adding duplicate shared roots."""
         # Use tmp_path as a fake repo root — ensure_paths is idempotent about
         # missing directories, so no extra dirs required.
         from sidekick.bootstrap import ensure_paths
@@ -45,8 +45,8 @@ class TestBootstrapEnsurePaths:
 
         from sidekick.bootstrap import ensure_paths
 
-        # Create a src/shared/python dir so the path is actually inserted
-        src_dir = tmp_path / "src" / "shared" / "python"
+        # Create a src dir so the canonical package root is inserted.
+        src_dir = tmp_path / "src"
         src_dir.mkdir(parents=True)
 
         before = len(sys.path)
@@ -58,8 +58,8 @@ class TestBootstrapEnsurePaths:
 
         # A second call must not add more path entries than the first
         assert after_second == after_first
-        # First call may add up to 3 entries (src/shared/python, src, src/python/src)
-        assert after_first <= before + 3
+        # First call may add up to 2 entries (src, src/python/src).
+        assert after_first <= before + 2
 
 
 # ---------------------------------------------------------------------------

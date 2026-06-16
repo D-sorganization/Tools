@@ -12,8 +12,8 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from programmatic_pid.geometry import to_float
-from programmatic_pid.types import SpecValidationError, ValidationIssue
+from shared.python.programmatic_pid.geometry import to_float
+from shared.python.programmatic_pid.types import SpecValidationError, ValidationIssue
 
 logger = logging.getLogger(__name__)
 

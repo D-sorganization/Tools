@@ -50,7 +50,7 @@ def default_llm_client() -> ReviewerLLMClient:
     from ._llm import AdapterReviewerLLMClient, StubReviewerLLMClient
 
     try:
-        from src.shared.python.ai.adapters.factory import AdapterFactory
+        from shared.python.ai.adapters.factory import AdapterFactory
 
         adapter = AdapterFactory.get_best_available()
     except Exception as exc:  # noqa: BLE001 — degrade to stub on any wiring error

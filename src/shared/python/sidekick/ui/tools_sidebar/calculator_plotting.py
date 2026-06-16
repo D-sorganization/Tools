@@ -12,8 +12,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any
 
-from compatibility import StrEnum
-
+from shared.python.compatibility import StrEnum
 from shared.python.safe_eval import safe_eval
 
 from .registry import WorkspaceRegistry

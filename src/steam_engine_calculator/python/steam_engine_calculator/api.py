@@ -14,11 +14,11 @@ from __future__ import annotations
 
 import logging
 
-from cors import add_cors_middleware
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from utils.compatibility import StrEnum
 
+from shared.python.cors import add_cors_middleware
 from shared.python.sidekick.calculators.thermo.steam_engine import (
     SteamCalculationEngine,
     SteamProperties,

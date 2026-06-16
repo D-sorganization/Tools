@@ -309,7 +309,7 @@ class AnthropicAdapter(BaseAgentAdapter):
         """Return reasoning-budget levels for the current Anthropic model."""
         # Local imports to avoid the chat package depending on adapters at
         # module-import time.
-        from chat_contracts.models import (
+        from shared.python.chat_contracts.models import (
             make_full_thinking_capabilities,
             make_none_only_capabilities,
         )

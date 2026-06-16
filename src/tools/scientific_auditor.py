@@ -11,7 +11,7 @@ import logging
 import sys
 from pathlib import Path
 
-from contracts import require
+from shared.python.contracts import require
 
 logger = logging.getLogger(__name__)
 

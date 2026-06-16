@@ -80,7 +80,7 @@ def _probe_linear() -> IntegrationStatus:
     if not token:
         # Also check the module-level cached token used by linear.py.
         try:
-            from src.shared.python.ai.integrations import linear as linear_mod
+            from shared.python.ai.integrations import linear as linear_mod
 
             token = getattr(linear_mod, "_LINEAR_API_TOKEN", None)
         except ImportError:
@@ -108,7 +108,7 @@ def _probe_notion() -> IntegrationStatus:
     token = os.environ.get("NOTION_API_KEY") or os.environ.get("NOTION_TOKEN")
     if not token:
         try:
-            from src.shared.python.ai.integrations import notion as notion_mod
+            from shared.python.ai.integrations import notion as notion_mod
 
             token = getattr(notion_mod, "_NOTION_API_TOKEN", None)
         except ImportError:
@@ -135,7 +135,7 @@ def _probe_affine() -> IntegrationStatus:
     token = os.environ.get("AFFINE_API_KEY")
     if not token:
         try:
-            from src.shared.python.ai.integrations import affine as affine_mod
+            from shared.python.ai.integrations import affine as affine_mod
 
             token = getattr(affine_mod, "_AFFINE_API_TOKEN", None)
         except ImportError:
@@ -162,7 +162,7 @@ def _probe_obsidian() -> IntegrationStatus:
     vault_path = os.environ.get("OBSIDIAN_VAULT_PATH")
     if not vault_path:
         try:
-            from src.shared.python.ai.integrations import obsidian as obsidian_mod
+            from shared.python.ai.integrations import obsidian as obsidian_mod
 
             vault_path = getattr(obsidian_mod, "_VAULT_PATH", None)
         except ImportError:

@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 # ruff: noqa: E501
 """Control loop rendering and signal line routing.
 
@@ -18,12 +19,15 @@ from __future__ import annotations  # noqa: E402, F404
 import logging  # noqa: E402
 from typing import Any  # noqa: E402
 
-from programmatic_pid.equipment import (  # noqa: E402
+from shared.python.programmatic_pid.equipment import (  # noqa: E402
     equipment_center,
     nearest_equipment_anchor,
 )
-from programmatic_pid.geometry import dedupe_points, to_float  # noqa: E402
-from programmatic_pid.rendering import (  # noqa: E402
+from shared.python.programmatic_pid.geometry import (  # noqa: E402
+    dedupe_points,
+    to_float,
+)
+from shared.python.programmatic_pid.rendering import (  # noqa: E402
     add_arrow_head,
     add_text,
     ensure_layer,

@@ -13,7 +13,7 @@ import contextlib
 with contextlib.suppress(ImportError):
     # PyQt6 is optional fleet-wide; import the adapter behind a guard so
     # headless / Qt-less environments still get a usable package.
-    from src.shared.python.launcher_embed import (
+    from shared.python.launcher_embed import (
         get_embeddable_tool,
         register_embeddable_tool,
     )

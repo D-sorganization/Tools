@@ -15,7 +15,7 @@ from scipy import integrate
 from scipy.signal import savgol_filter
 
 try:
-    from src.shared.python.contracts import require
+    from shared.python.contracts import require
 except ImportError:
     from typing import Any
 

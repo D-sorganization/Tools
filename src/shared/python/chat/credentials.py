@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
-import chat_contracts.credentials as _contracts
-from chat_contracts.credentials import (
+import shared.python.chat_contracts.credentials as _contracts
+from shared.python.chat_contracts.credentials import (
     SUPPORTED_PROVIDERS,
 )
 

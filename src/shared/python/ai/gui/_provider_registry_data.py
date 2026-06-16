@@ -11,7 +11,7 @@ from enum import Enum, auto
 
 from PyQt6.QtWidgets import QComboBox
 
-from src.shared.python.ai.config import DEFAULT_OLLAMA_MODEL  # noqa: F401  re-exported
+from shared.python.ai.config import DEFAULT_OLLAMA_MODEL  # noqa: F401  re-exported
 
 
 class AIProvider(Enum):

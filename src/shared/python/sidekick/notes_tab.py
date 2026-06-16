@@ -58,7 +58,7 @@ try:
 except ImportError:
     _MISTUNE_AVAILABLE = False
 
-from notes.models import (  # noqa: E402
+from shared.python.notes.models import (  # noqa: E402
     DEFAULT_NOTE_COLOR,
     NoteCard,
 )

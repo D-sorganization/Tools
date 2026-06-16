@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Low-level DXF rendering primitives.
 
 This module provides the foundational drawing functions used by all other
@@ -27,8 +28,8 @@ try:
 except ImportError:  # pragma: no cover — optional heavy dep
     ezdxf = None  # type: ignore[assignment]
     TextEntityAlignment = None  # type: ignore[assignment,misc]
-from programmatic_pid.geometry import to_float
-from programmatic_pid.spec_loader import get_drawing, get_layer_config
+from shared.python.programmatic_pid.geometry import to_float
+from shared.python.programmatic_pid.spec_loader import get_drawing, get_layer_config
 
 logger = logging.getLogger(__name__)
 

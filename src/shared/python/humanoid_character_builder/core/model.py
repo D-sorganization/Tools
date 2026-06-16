@@ -13,10 +13,13 @@ from dataclasses import dataclass
 from typing import Any
 
 import numpy as np
-from humanoid_character_builder.contracts import precondition
-from humanoid_character_builder.mesh.inertia_calculator import InertiaResult
 from scipy.spatial import ConvexHull
 from scipy.spatial.transform import Rotation as R
+
+from shared.python.humanoid_character_builder.contracts import precondition
+from shared.python.humanoid_character_builder.mesh.inertia_calculator import (
+    InertiaResult,
+)
 
 logger = logging.getLogger(__name__)
 

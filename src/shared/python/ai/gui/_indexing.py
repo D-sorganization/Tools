@@ -11,9 +11,9 @@ from typing import Any
 
 from PyQt6.QtCore import QObject, pyqtSignal
 
-from src.shared.python.ai.rag.indexer_worker import IndexerWorker
-from src.shared.python.ai.rag.simple_rag import SimpleRAGStore
-from src.shared.python.logging_pkg.logging_config import get_logger
+from shared.python.ai.rag.indexer_worker import IndexerWorker
+from shared.python.ai.rag.simple_rag import SimpleRAGStore
+from shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
 

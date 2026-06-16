@@ -9,7 +9,7 @@ from _bootstrap import bootstrap
 
 bootstrap(__file__)
 
-from gui_launcher import make_launcher  # noqa: E402
+from shared.python.gui_launcher import make_launcher  # noqa: E402
 
 if __name__ == "__main__":
     sys.exit(make_launcher("video_analyzer.gui_registration"))

@@ -20,8 +20,9 @@ from PyQt6.QtWidgets import (
     QMessageBox,
     QTabWidget,
 )
-from signal_toolkit.polynomial_generator import PolynomialGeneratorWidget
-from signal_toolkit.widget import SignalToolkitWidget
+
+from shared.python.signal_toolkit.polynomial_generator import PolynomialGeneratorWidget
+from shared.python.signal_toolkit.widget import SignalToolkitWidget
 
 from .signal_bus import SignalBus
 
@@ -160,7 +161,8 @@ class SignalProcessingStudio(*_get_base_classes()):  # type: ignore[misc]
         if not isinstance(coeffs, list):
             raise TypeError(f"coeffs must be a list, got {type(coeffs).__name__}")
         import numpy as np
-        from signal_toolkit.core import SignalGenerator
+
+        from shared.python.signal_toolkit.core import SignalGenerator
 
         if self.toolkit.current_signal is not None:
             t = self.toolkit.current_signal.time

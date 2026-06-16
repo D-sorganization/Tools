@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from PIL import Image
 
-from contracts import require
+from shared.python.contracts import require
 
 logger = logging.getLogger(__name__)
 

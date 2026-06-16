@@ -18,7 +18,9 @@ from __future__ import annotations  # noqa: E402, F404
 
 from dataclasses import dataclass  # noqa: E402
 
-from humanoid_character_builder.contracts import precondition  # noqa: E402
+from shared.python.humanoid_character_builder.contracts import (
+    precondition,  # noqa: E402
+)
 
 
 @dataclass

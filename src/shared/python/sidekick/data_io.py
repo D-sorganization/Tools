@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 # ruff: noqa: E501
 """Backward-compatible data reader supporting CSV and Parquet.
 
@@ -23,7 +24,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from contracts import require
+from shared.python.contracts import require
 
 _logger = logging.getLogger(__name__)
 

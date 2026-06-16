@@ -9,7 +9,7 @@ class identity across two backport implementations.
 import logging
 import sys
 
-from compatibility import UTC, StrEnum
+from shared.python.compatibility import UTC, StrEnum
 
 logger = logging.getLogger(__name__)
 

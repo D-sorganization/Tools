@@ -10,8 +10,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
-from model_generation.converters.urdf_parser import ParsedModel
-from model_generation.core.types import Joint, Link
+from shared.python.model_generation.converters.urdf_parser import ParsedModel
+from shared.python.model_generation.core.types import Joint, Link
 
 
 class ComponentType(Enum):

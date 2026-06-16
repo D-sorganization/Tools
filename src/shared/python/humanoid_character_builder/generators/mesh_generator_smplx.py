@@ -27,7 +27,9 @@ from enum import Enum  # noqa: E402
 from pathlib import Path  # noqa: E402
 from typing import Any  # noqa: E402
 
-from humanoid_character_builder.core.body_parameters import BodyParameters  # noqa: E402
+from shared.python.humanoid_character_builder.core.body_parameters import (
+    BodyParameters,  # noqa: E402
+)
 
 logger = logging.getLogger(__name__)
 
@@ -336,7 +338,8 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
         if visual_dir is None:
             raise ValueError("visual_dir must be provided")
         import numpy as np
-        from humanoid_character_builder.core.segment_definitions import (
+
+        from shared.python.humanoid_character_builder.core.segment_definitions import (
             HUMANOID_SEGMENTS,
         )
 
@@ -433,7 +436,7 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
         """Fallback segmentation using z-coordinate slicing."""
         if visual_dir is None:
             raise ValueError("visual_dir must be provided")
-        from humanoid_character_builder.core.segment_definitions import (
+        from shared.python.humanoid_character_builder.core.segment_definitions import (
             HUMANOID_SEGMENTS,
         )
 
@@ -521,7 +524,7 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
 
     def get_supported_segments(self) -> list[str]:
         # SMPL-X provides full body mesh, needs segmentation
-        from humanoid_character_builder.core.segment_definitions import (
+        from shared.python.humanoid_character_builder.core.segment_definitions import (
             HUMANOID_SEGMENTS,
         )
 

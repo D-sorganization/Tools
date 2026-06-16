@@ -7,13 +7,13 @@ This module provides builder classes for constructing URDF models:
 - CompositeBuilder: Combine multiple sources/models
 """
 
-from model_generation.builders.base_builder import (
+from shared.python.model_generation.builders.base_builder import (
     BaseURDFBuilder,
     BuildResult,
 )
-from model_generation.builders.manual_builder import ManualBuilder
-from model_generation.builders.parametric_builder import ParametricBuilder
-from model_generation.builders.urdf_writer import URDFWriter
+from shared.python.model_generation.builders.manual_builder import ManualBuilder
+from shared.python.model_generation.builders.parametric_builder import ParametricBuilder
+from shared.python.model_generation.builders.urdf_writer import URDFWriter
 
 __all__ = [
     "BaseURDFBuilder",

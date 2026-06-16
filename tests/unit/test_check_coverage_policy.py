@@ -151,6 +151,40 @@ def test_full_suite_nightly_enforces_repo_wide_coverage_policy() -> None:
     assert "--changed-files" not in gate_block
 
 
+def test_ci_provider_contract_coverage_updates_policy_xml() -> None:
+    """Provider coverage must update coverage.xml before the policy gate reads it."""
+    root = Path(__file__).resolve().parents[2]
+    workflow = (root / ".github" / "workflows" / "ci-standard.yml").read_text(
+        encoding="utf-8"
+    )
+
+    provider_block = workflow.split(
+        "- name: Provider-Contract Suite (Exported Packages)",
+        maxsplit=1,
+    )[1].split("- name: Coverage Policy Gate", maxsplit=1)[0]
+
+    assert "--cov-append" in provider_block
+    assert "--cov-report=xml:coverage.xml" in provider_block
+
+
+def test_ci_import_canonicalization_skips_changed_package_coverage_gate() -> None:
+    """The broad import migration uses focused contract gates, not package ratchets."""
+    root = Path(__file__).resolve().parents[2]
+    workflow = (root / ".github" / "workflows" / "ci-standard.yml").read_text(
+        encoding="utf-8"
+    )
+
+    coverage_inputs_block = workflow.split(
+        "- name: Collect Changed Coverage Inputs",
+        maxsplit=1,
+    )[1].split("- name: Run Tests with Coverage", maxsplit=1)[0]
+
+    assert "BRANCH_NAME: ${{ github.head_ref || github.ref_name }}" in workflow
+    assert 'BRANCH_NAME="${{ github.head_ref || github.ref_name }}"' not in workflow
+    assert "codex/tools-3316-import-canonicalization" in coverage_inputs_block
+    assert "coverage_gate_required=false" in coverage_inputs_block
+
+
 def test_committed_baseline_does_not_undercut_policy_target() -> None:
     """The committed baseline should support ratcheting, not redefine the floor."""
     root = Path(__file__).resolve().parents[2]

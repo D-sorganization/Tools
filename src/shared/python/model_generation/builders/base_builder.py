@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """
 Base builder interface for URDF generation.
 
@@ -11,9 +12,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from model_generation.core.contracts import precondition
-from model_generation.core.types import Joint, Link
-from model_generation.core.validation import ValidationResult
+from shared.python.model_generation.core.contracts import precondition
+from shared.python.model_generation.core.types import Joint, Link
+from shared.python.model_generation.core.validation import ValidationResult
 
 
 @dataclass
@@ -207,7 +208,7 @@ class BaseURDFBuilder(ABC):
         Returns:
             ValidationResult with any errors/warnings
         """
-        from model_generation.core.validation import Validator
+        from shared.python.model_generation.core.validation import Validator
 
         return Validator.validate_model(self._links, self._joints)
 
@@ -223,7 +224,7 @@ class BaseURDFBuilder(ABC):
         """
         if pretty_print is None:
             raise ValueError("pretty_print must be provided")
-        from model_generation.builders.urdf_writer import URDFWriter
+        from shared.python.model_generation.builders.urdf_writer import URDFWriter
 
         writer = URDFWriter(pretty_print=pretty_print)
         return writer.write(

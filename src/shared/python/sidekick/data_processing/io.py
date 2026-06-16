@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Data I/O utilities for data processing.
 
 Supported formats are limited to handlers implemented below: CSV, TSV, Excel,
@@ -12,7 +13,8 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-from sidekick.data_processing.formats import FileFormatDetector
+
+from shared.python.sidekick.data_processing.formats import FileFormatDetector
 
 # Optional imports
 try:

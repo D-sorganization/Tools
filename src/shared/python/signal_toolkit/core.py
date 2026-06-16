@@ -13,7 +13,7 @@ from typing import ClassVar
 import numpy as np
 
 try:
-    from src.shared.python.contracts import require
+    from shared.python.contracts import require
 except ImportError:
 
     def require(condition: object, message: str = "", *args: object) -> None:
@@ -150,8 +150,11 @@ class Signal:
         new_dt = 1.0 / new_fs
         new_time = np.arange(self.time[0], self.time[-1], new_dt)
 
+        new_values: np.ndarray
         if self.values.ndim == 1:
-            new_values = np.interp(new_time, self.time, self.values)
+            new_values = np.asarray(
+                np.interp(new_time, self.time, self.values), dtype=np.float64
+            )
         else:
             # Multi-channel: interpolate each channel independently
             n_channels = self.values.shape[1]

@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from contracts import require
+from shared.python.contracts import require
 
 # Constants
 MATLAB_SCRIPT_TIMEOUT_SECONDS: int = 300

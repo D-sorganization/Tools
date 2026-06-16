@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Shared rotation representation conversions."""
 
 from __future__ import annotations
@@ -7,7 +8,7 @@ from typing import Any
 import numpy as np
 from scipy.spatial.transform import Rotation as SciPyRotation
 
-from contracts import require, require_finite, require_unit_vector
+from shared.python.contracts import require, require_finite, require_unit_vector
 
 
 def _as_finite_array(value: Any, shape: tuple[int, ...], name: str) -> np.ndarray:

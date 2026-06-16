@@ -8,14 +8,17 @@ This module provides bidirectional conversion between:
 - SimScape MDL (MATLAB Simscape, import only)
 """
 
-from model_generation.converters.format_utils import (
+from shared.python.model_generation.converters.format_utils import (
     ModelFormat,
     convert_mjcf_to_urdf,
     convert_urdf_to_mjcf,
     detect_format,
 )
-from model_generation.converters.mjcf_converter import MJCFConverter
-from model_generation.converters.urdf_parser import ParsedModel, URDFParser
+from shared.python.model_generation.converters.mjcf_converter import MJCFConverter
+from shared.python.model_generation.converters.urdf_parser import (
+    ParsedModel,
+    URDFParser,
+)
 
 __all__ = [
     "URDFParser",

@@ -28,51 +28,51 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from src.shared.python.ai.access_policy import (
+from shared.python.ai.access_policy import (
     ChatAccessMode,
     coerce_access_mode,
     tool_declarations_for_access_mode,
 )
-from src.shared.python.ai.gui._adapter_lifecycle import AdapterLifecycleManager
-from src.shared.python.ai.gui._indexing import IndexingController
-from src.shared.python.ai.gui._input_area import InputArea
-from src.shared.python.ai.gui._message_display import MessageDisplayController
-from src.shared.python.ai.gui._panel_header import PanelHeaderController
-from src.shared.python.ai.gui._panel_tools import register_panel_tools
-from src.shared.python.ai.gui.assistant_widgets import (
+from shared.python.ai.gui._adapter_lifecycle import AdapterLifecycleManager
+from shared.python.ai.gui._indexing import IndexingController
+from shared.python.ai.gui._input_area import InputArea
+from shared.python.ai.gui._message_display import MessageDisplayController
+from shared.python.ai.gui._panel_header import PanelHeaderController
+from shared.python.ai.gui._panel_tools import register_panel_tools
+from shared.python.ai.gui.assistant_widgets import (
     MainThreadToolDispatcher,
     MessageWidget,
     StreamWorker,
 )
-from src.shared.python.ai.gui.chat_export import (
+from shared.python.ai.gui.chat_export import (
     copy_thread_to_clipboard,
     save_thread_as_markdown,
 )
-from src.shared.python.ai.gui.history_sidebar import ChatHistorySidebar
-from src.shared.python.ai.gui.session_manager import ChatSessionManager
+from shared.python.ai.gui.history_sidebar import ChatHistorySidebar
+from shared.python.ai.gui.session_manager import ChatSessionManager
 
 if TYPE_CHECKING:
-    from src.shared.python.ai._settings_model import AISettings
-from src.shared.python.ai.gui._provider_registry_data import (
+    from shared.python.ai._settings_model import AISettings
+from shared.python.ai.gui._provider_registry_data import (
     AIProvider,
     provider_display_name,
 )
-from src.shared.python.ai.mcp.gui import McpStatusIndicator
-from src.shared.python.ai.memory_manager import MemoryManager
-from src.shared.python.ai.rag.simple_rag import SimpleRAGStore
-from src.shared.python.ai.thread_condensation import (
+from shared.python.ai.mcp.gui import McpStatusIndicator
+from shared.python.ai.memory_manager import MemoryManager
+from shared.python.ai.rag.simple_rag import SimpleRAGStore
+from shared.python.ai.thread_condensation import (
     condense_thread,
     estimate_token_count,
 )
-from src.shared.python.ai.tool_registry import get_global_registry
-from src.shared.python.ai.tools.codemap_tools import register_codemap_tools
-from src.shared.python.ai.tools.file_ops import register_file_tools
-from src.shared.python.logging_pkg.logging_config import get_logger
+from shared.python.ai.tool_registry import get_global_registry
+from shared.python.ai.tools.codemap_tools import register_codemap_tools
+from shared.python.ai.tools.file_ops import register_file_tools
+from shared.python.logging_pkg.logging_config import get_logger
 
 if TYPE_CHECKING:
-    from src.shared.python.ai.adapters.base import BaseAgentAdapter
+    from shared.python.ai.adapters.base import BaseAgentAdapter
 
-from src.shared.python.ai.types import ConversationContext, ExpertiseLevel
+from shared.python.ai.types import ConversationContext, ExpertiseLevel
 
 logger = get_logger(__name__)
 
@@ -112,7 +112,7 @@ class AIAssistantPanel(QWidget):
         self._adapter: BaseAgentAdapter | None = None
         self._current_worker: StreamWorker | None = None
         self._current_assistant_message: MessageWidget | None = None
-        from src.shared.python.ai._settings_model import AISettings
+        from shared.python.ai._settings_model import AISettings
 
         self._current_settings = AISettings.load()
         self._access_mode = ChatAccessMode.NO_REPO_ACCESS
@@ -337,7 +337,7 @@ class AIAssistantPanel(QWidget):
     # ------------------------------------------------------------------
     def refresh_theme(self) -> None:
         try:
-            from src.shared.python.theme.theme_manager import get_theme_manager
+            from shared.python.theme.theme_manager import get_theme_manager
 
             color_source: object = get_theme_manager().get_current_colors()
 
@@ -387,7 +387,7 @@ class AIAssistantPanel(QWidget):
 
     def _auto_load_settings(self) -> None:
         try:
-            from src.shared.python.ai._settings_model import AISettings
+            from shared.python.ai._settings_model import AISettings
 
             settings = AISettings.load()
         except ImportError as exc:
@@ -602,9 +602,9 @@ class AIAssistantPanel(QWidget):
     # ------------------------------------------------------------------
     def _on_peer_review_requested(self) -> None:
         """Open the peer-review config dialog and launch a reviewer chat tab."""
-        from src.shared.python.ai.peer_review.gui import PeerReviewConfigDialog
-        from src.shared.python.ai.peer_review.prompts import PEER_REVIEW_SYSTEM_PROMPT
-        from src.shared.python.ai.peer_review.transcript import format_transcript
+        from shared.python.ai.peer_review.gui import PeerReviewConfigDialog
+        from shared.python.ai.peer_review.prompts import PEER_REVIEW_SYSTEM_PROMPT
+        from shared.python.ai.peer_review.transcript import format_transcript
 
         dialog = PeerReviewConfigDialog(self)
         if dialog.exec() != dialog.DialogCode.Accepted:
@@ -842,7 +842,7 @@ class AIAssistantPanel(QWidget):
         self._adapter_mgr.build(settings)
 
     def _show_settings(self) -> None:
-        from src.shared.python.ai.gui.settings_dialog import AISettingsDialog
+        from shared.python.ai.gui.settings_dialog import AISettingsDialog
 
         dialog = AISettingsDialog(self)
         dialog.settings_changed.connect(self.apply_settings)

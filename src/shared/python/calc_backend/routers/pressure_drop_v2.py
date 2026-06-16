@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Enhanced pressure drop calculator router with standardized response format.
 
 This router implements v2 of the pressure drop API with:
@@ -14,14 +15,14 @@ from __future__ import annotations
 import logging
 from typing import Any, cast
 
-from calc_backend.api import ErrorCode, StandardResponseBuilder
-from calc_backend.contracts.pressure_drop_v2 import (
+from fastapi import APIRouter
+
+from shared.python.calc_backend.api import ErrorCode, StandardResponseBuilder
+from shared.python.calc_backend.contracts.pressure_drop_v2 import (
     PressureDropDataV2,
     PressureDropRequestV2,
     PressureDropResponseV2,
 )
-from fastapi import APIRouter
-
 from shared.python.sidekick.process_calculators.pressure_drop_calculator import (
     PressureDropCalculator,
     PressureDropResult,

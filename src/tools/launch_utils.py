@@ -10,7 +10,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import IO, Any
 
-from contracts import require
+from shared.python.contracts import require
 
 
 def get_repo_root() -> Path:

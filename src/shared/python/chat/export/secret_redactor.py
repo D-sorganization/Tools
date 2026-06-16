@@ -14,7 +14,7 @@ from __future__ import annotations
 import re
 from dataclasses import replace
 
-from chat.service_base import ChatMessage
+from shared.python.chat.service_base import ChatMessage
 
 _REDACTED = "[REDACTED]"
 

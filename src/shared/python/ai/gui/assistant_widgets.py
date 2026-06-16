@@ -21,13 +21,13 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from shared.python.ai.types import ConversationContext
 from shared.python.compatibility import UTC
-from src.shared.python.ai.types import ConversationContext
-from src.shared.python.logging_pkg.logging_config import get_logger
-from src.shared.python.theme.style_constants import Styles
+from shared.python.logging_pkg.logging_config import get_logger
+from shared.python.theme.style_constants import Styles
 
 if TYPE_CHECKING:
-    from src.shared.python.ai.adapters.base import BaseAgentAdapter
+    from shared.python.ai.adapters.base import BaseAgentAdapter
 
 logger = get_logger(__name__)
 
@@ -123,7 +123,7 @@ class MessageWidget(QFrame):
     def refresh_theme(self) -> None:
         """Refresh colors from ThemeManager."""
         try:
-            from src.shared.python.theme.theme_manager import get_theme_manager
+            from shared.python.theme.theme_manager import get_theme_manager
 
             color_source: object = get_theme_manager().get_current_colors()
 
@@ -179,7 +179,7 @@ class MessageWidget(QFrame):
 
     def _on_copy_clicked(self) -> None:
         """Copy this message's raw text to the system clipboard."""
-        from src.shared.python.ai.gui.chat_export import copy_message_to_clipboard
+        from shared.python.ai.gui.chat_export import copy_message_to_clipboard
 
         copy_message_to_clipboard(self._content)
         original = self._copy_btn.text()

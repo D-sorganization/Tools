@@ -68,7 +68,7 @@ try:
     from data_processor.contracts import require
 except ImportError:
     try:
-        from contracts import require  # type: ignore[no-redef]
+        from shared.python.contracts import require  # type: ignore[no-redef]
     except ImportError:
 
         def require(

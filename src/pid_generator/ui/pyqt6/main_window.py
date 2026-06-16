@@ -11,8 +11,6 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from programmatic_pid import PIDDocument
-from programmatic_pid.profiles import PROFILE_PRESETS
 from PyQt6.QtWidgets import (
     QApplication,
     QComboBox,
@@ -28,6 +26,8 @@ from PyQt6.QtWidgets import (
 )
 
 from shared.python.contracts import require
+from shared.python.programmatic_pid import PIDDocument
+from shared.python.programmatic_pid.profiles import PROFILE_PRESETS
 from shared.python.theme.integration import ThemedWindowMixin
 
 logger = logging.getLogger(__name__)

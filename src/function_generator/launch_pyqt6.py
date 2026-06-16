@@ -9,8 +9,8 @@ from _bootstrap import bootstrap
 
 bootstrap(__file__)
 
-from gui_launcher import make_pyqt6_launcher  # noqa: E402
-from gui_launcher.launcher import check_python_dependencies  # noqa: E402
+from shared.python.gui_launcher import make_pyqt6_launcher  # noqa: E402
+from shared.python.gui_launcher.launcher import check_python_dependencies  # noqa: E402
 
 
 def check_dependencies() -> list[str]:

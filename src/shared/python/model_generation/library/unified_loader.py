@@ -17,9 +17,12 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 
-from model_generation.converters.mjcf_converter import MJCFConverter
-from model_generation.converters.urdf_parser import ParsedModel, URDFParser
-from model_generation.core.contracts import postcondition, precondition
+from shared.python.model_generation.converters.mjcf_converter import MJCFConverter
+from shared.python.model_generation.converters.urdf_parser import (
+    ParsedModel,
+    URDFParser,
+)
+from shared.python.model_generation.core.contracts import postcondition, precondition
 
 logger = logging.getLogger(__name__)
 _LOAD_MJCF_ERRORS = (ImportError, OSError, ValueError, KeyError, ET.ParseError)
@@ -45,7 +48,6 @@ class ModelNotFoundError(ConversionError):
     """Raised when the requested model source cannot be read."""
 
 
-# Map of file extensions to formats
 _EXTENSION_MAP: dict[str, ModelFormat] = {
     ".urdf": ModelFormat.URDF,
     ".xacro": ModelFormat.URDF,

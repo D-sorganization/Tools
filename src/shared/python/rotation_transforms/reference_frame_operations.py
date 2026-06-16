@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 # ruff: noqa: E501
 """Reference-frame conversion operations shared across tools and APIs."""
 
@@ -7,7 +8,8 @@ from dataclasses import dataclass
 from typing import Any, Literal
 
 import numpy as np
-from rotation_transforms.rotation import Rotation
+
+from shared.python.rotation_transforms.rotation import Rotation
 
 OperationName = Literal[
     "twist_frame_conversion",

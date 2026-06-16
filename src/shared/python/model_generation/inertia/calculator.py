@@ -16,10 +16,14 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
-from model_generation.core.constants import DEFAULT_DENSITY_KG_M3, DEFAULT_INERTIA_KG_M2
-from model_generation.core.contracts import precondition
-from model_generation.core.types import Geometry, GeometryType, Inertia
-from model_generation.inertia.primitives import (
+
+from shared.python.model_generation.core.constants import (
+    DEFAULT_DENSITY_KG_M3,
+    DEFAULT_INERTIA_KG_M2,
+)
+from shared.python.model_generation.core.contracts import precondition
+from shared.python.model_generation.core.types import Geometry, GeometryType, Inertia
+from shared.python.model_generation.inertia.primitives import (
     box_inertia,
     capsule_inertia,
     cylinder_inertia,
@@ -570,7 +574,7 @@ class InertiaCalculator:
 
         # Import anthropometry data
         try:
-            from model_generation.humanoid.anthropometry import (
+            from shared.python.model_generation.humanoid.anthropometry import (
                 estimate_segment_inertia_from_gyration,
             )
 

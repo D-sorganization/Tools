@@ -10,21 +10,24 @@ This module provides a comprehensive library for managing robot models:
 - Unified loading of both URDF and MJCF formats
 """
 
-from model_generation.library.cache import ModelCache
-from model_generation.library.github_importer import GitHubImporter, ImportResult
-from model_generation.library.model_library import (
+from shared.python.model_generation.library.cache import ModelCache
+from shared.python.model_generation.library.github_importer import (
+    GitHubImporter,
+    ImportResult,
+)
+from shared.python.model_generation.library.model_library import (
     ModelCategory,
     ModelEntry,
     ModelFormat,
     ModelLibrary,
     RepositorySource,
 )
-from model_generation.library.repository import (
+from shared.python.model_generation.library.repository import (
     GitHubRepository,
     LocalRepository,
     Repository,
 )
-from model_generation.library.unified_loader import (
+from shared.python.model_generation.library.unified_loader import (
     LoadResult,
     UnifiedModelLoader,
     UserPreferences,

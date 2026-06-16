@@ -30,8 +30,8 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from src.shared.python.ai.mcp.contracts import McpServerConfig
-from src.shared.python.logging_pkg.logging_config import get_logger
+from shared.python.ai.mcp.contracts import McpServerConfig
+from shared.python.logging_pkg.logging_config import get_logger
 
 _LOG = get_logger(__name__)
 
