@@ -44,7 +44,7 @@ def get_repo_root(start_path: Path | str | None = None) -> Path:
             start_path = Path.cwd()
 
     try:
-        from sidekick.utils.paths import get_repo_root as _canonical
+        from shared.python.sidekick.utils.paths import get_repo_root as _canonical
 
         return Path(_canonical(start_path))
     except (ImportError, FileNotFoundError):

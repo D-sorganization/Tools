@@ -1,4 +1,5 @@
 # TRACKED_TASK: see #2310 — architecture debt extraction schedule
+# mypy: disable-error-code="no-any-return"
 
 """Uncertainty Quantification Module.
 
@@ -18,6 +19,7 @@ Features:
 
 from __future__ import annotations
 
+import inspect
 import logging
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -120,6 +122,17 @@ class BootstrapResult:
 
     # Method used
     method: BootstrapMethod = BootstrapMethod.PERCENTILE
+
+    @property
+    def confidence_interval(self) -> ConfidenceInterval:
+        """Backward-compatible structured confidence interval view."""
+        return ConfidenceInterval(
+            lower=float(self.ci_lower),
+            upper=float(self.ci_upper),
+            point_estimate=float(self.point_estimate),
+            confidence_level=float(self.confidence_level),
+            method=self.method.value,
+        )
 
 
 @dataclass
@@ -292,6 +305,7 @@ class UncertaintyQuantifier:
         self,
         func: Callable[..., float],
         param_distributions: dict[str, tuple[str, dict[str, Any]]],
+        stds: list[float] | tuple[float, ...] | np.ndarray | None = None,
     ) -> MonteCarloResult:
         """Propagate uncertainty through a function using Monte Carlo.
 
@@ -313,6 +327,12 @@ class UncertaintyQuantifier:
         """
         if func is None:
             raise ValueError("func must be provided")
+        if stds is not None:
+            param_distributions = self._normal_distributions_from_means_stds(
+                func,
+                param_distributions,
+                stds,
+            )
         n_samples = self.config.n_monte_carlo
 
         # Generate samples for each parameter
@@ -360,6 +380,30 @@ class UncertaintyQuantifier:
             skewness=skewness,
             kurtosis=kurtosis,
         )
+
+    def _normal_distributions_from_means_stds(
+        self,
+        func: Callable[..., float],
+        means: dict[str, float] | list[float] | tuple[float, ...] | np.ndarray,
+        stds: list[float] | tuple[float, ...] | np.ndarray,
+    ) -> dict[str, tuple[str, dict[str, Any]]]:
+        """Adapt the legacy ``means, stds`` API to named distributions."""
+        mean_values = list(means.values()) if isinstance(means, dict) else list(means)
+        std_values = list(stds)
+        if len(mean_values) != len(std_values):
+            raise ValueError("means and stds must have the same length")
+        parameter_names = list(inspect.signature(func).parameters)
+        if len(parameter_names) < len(mean_values):
+            parameter_names = [f"arg{index}" for index in range(len(mean_values))]
+        return {
+            parameter_names[index]: (
+                "normal",
+                {"loc": float(mean), "scale": float(std)},
+            )
+            for index, (mean, std) in enumerate(
+                zip(mean_values, std_values, strict=True)
+            )
+        }
 
     @jit(nopython=True, fastmath=True)
     @jit(nopython=True, fastmath=True)

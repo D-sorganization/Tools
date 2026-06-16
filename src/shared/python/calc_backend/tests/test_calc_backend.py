@@ -21,8 +21,6 @@ from typing import Any, cast
 from unittest.mock import MagicMock, patch
 
 import pytest
-from fastapi import FastAPI
-from fastapi.routing import APIRoute
 from fastapi.testclient import TestClient
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -35,6 +33,15 @@ def client() -> Any:
     from calc_backend.app import app
 
     return TestClient(app)
+
+
+def _registered_calculator_routes(client: TestClient) -> set[tuple[str, str]]:
+    from calc_backend.app import _registered_calculator_route_signatures
+
+    return cast(
+        set[tuple[str, str]],
+        _registered_calculator_route_signatures(client.app),
+    )
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -65,15 +72,34 @@ class TestAppStartup:
         assert r.status_code == 200
 
         advertised = {tuple(item.split(" ", 1)) for item in r.json()["calculators"]}
-        app = cast(FastAPI, client.app)
-        registered = {
-            (method, route.path)
-            for route in app.routes
-            if isinstance(route, APIRoute)
-            for method in route.methods
-        }
+        registered = _registered_calculator_routes(client)
 
         assert not sorted(advertised - registered)
+
+    def test_list_endpoints_repairs_missing_calculator_router(
+        self,
+        client: TestClient,
+    ) -> Any:
+        original_routes = list(client.app.routes)
+        try:
+            client.app.router.routes[:] = [
+                route
+                for route in client.app.routes
+                if getattr(route, "path", None) != "/api/calc/flare"
+            ]
+            assert not any(
+                getattr(route, "path", None) == "/api/calc/flare"
+                for route in client.app.routes
+            )
+
+            r = client.get("/api/calc/endpoints")
+            assert r.status_code == 200
+
+            calc_list = r.json()["calculators"]
+            assert "POST /api/calc/flare" in calc_list
+            assert ("POST", "/api/calc/flare") in _registered_calculator_routes(client)
+        finally:
+            client.app.router.routes[:] = original_routes
 
     def test_openapi_schema_reachable(self, client: TestClient) -> Any:
         r = client.get("/openapi.json")

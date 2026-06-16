@@ -18,6 +18,13 @@ GUI_INFO = {
     },
 }
 
+GUI_METADATA = {
+    "name": "Flow Rate Converter",
+    "description": "Convert between mass, molar, and volumetric flow rate units",
+    "category": "utilities",
+    "entry_point": "flow_rate_converter.ui.pyqt6.main_window",
+}
+
 
 def get_gui_info() -> dict[str, Any]:
     """Return GUI registration information."""

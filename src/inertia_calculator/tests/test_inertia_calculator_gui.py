@@ -1,4 +1,5 @@
 # ruff: noqa: E501
+# mypy: disable-error-code="arg-type,attr-defined,no-untyped-def,union-attr"
 from typing import Any
 
 """
@@ -11,9 +12,13 @@ Tests cover PyQt6 main window, inertia calculations, and validation.
 
 import math
 import sys
+import types
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
+
+_INERTIA_MAIN_WINDOW_MODULE: Any | None = None
 
 
 class TestInertiaCalculatorMainWindow:
@@ -176,6 +181,10 @@ def _load_main_window_module():
     Returns the loaded module with InertiaCalculatorWindow available as a real class.
     The base class is replaced with a minimal stub to avoid PyQt6 initialization.
     """
+    global _INERTIA_MAIN_WINDOW_MODULE
+    if _INERTIA_MAIN_WINDOW_MODULE is not None:
+        return _INERTIA_MAIN_WINDOW_MODULE
+
     import importlib.util
 
     class _FakeBaseCalculatorWindow:
@@ -186,6 +195,20 @@ def _load_main_window_module():
 
     base_calc_mock = MagicMock()
     base_calc_mock.BaseCalculatorWindow = _FakeBaseCalculatorWindow
+    shared_module = types.ModuleType("shared")
+    shared_module.__path__ = []
+    shared_python_module = types.ModuleType("shared.python")
+    shared_python_module.__path__ = []
+    shared_sidekick_module = types.ModuleType("shared.python.sidekick")
+    shared_sidekick_module.__path__ = []
+    shared_ui_module = types.ModuleType("shared.python.sidekick.ui")
+    shared_ui_module.__path__ = []
+    shared_widgets_module = types.ModuleType("shared.python.sidekick.ui.widgets")
+    shared_widgets_module.__path__ = []
+    shared_base_module = types.ModuleType(
+        "shared.python.sidekick.ui.widgets.base_calculator_widget"
+    )
+    shared_base_module.BaseCalculatorWindow = _FakeBaseCalculatorWindow
 
     mocks = {
         "PyQt6": MagicMock(),
@@ -196,13 +219,23 @@ def _load_main_window_module():
         "upstream_drift_tools.ui": MagicMock(),
         "upstream_drift_tools.ui.widgets": MagicMock(),
         "upstream_drift_tools.ui.widgets.base_calculator_widget": base_calc_mock,
+        "shared": shared_module,
+        "shared.python": shared_python_module,
+        "shared.python.sidekick": shared_sidekick_module,
+        "shared.python.sidekick.ui": shared_ui_module,
+        "shared.python.sidekick.ui.widgets": shared_widgets_module,
+        "shared.python.sidekick.ui.widgets.base_calculator_widget": shared_base_module,
     }
 
     # Use a unique module name to avoid caching collisions across tests
     module_name = f"_main_window_test_{id(mocks)}"
     module_path = (
-        "/home/dieterolson/gaai-fleet/GH1473-workspace/src/inertia_calculator"
-        "/python/inertia_calculator/ui/pyqt6/main_window.py"
+        Path(__file__).resolve().parents[1]
+        / "python"
+        / "inertia_calculator"
+        / "ui"
+        / "pyqt6"
+        / "main_window.py"
     )
 
     with patch.dict(sys.modules, mocks):
@@ -210,6 +243,7 @@ def _load_main_window_module():
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
 
+    _INERTIA_MAIN_WINDOW_MODULE = mod
     return mod
 
 
