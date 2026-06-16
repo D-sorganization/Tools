@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.511                                    |
+| **Spec Version**        | 1.1.512                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -79,6 +79,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   from the declared router set before listing them, so import-order-specific
   partial app states cannot advertise or preserve a degraded calculator route
   surface.
+- Calc backend endpoint discovery now unions the declared calculator router
+  inventory with registered app routes after repair, keeping endpoint listings
+  stable across FastAPI route metadata variations and full-suite import order.
 - Calc backend endpoint discovery normalizes route path and method metadata
   before comparing registered calculator endpoints, keeping the repair path
   stable across FastAPI/Starlette route implementations in the Linux CI matrix.

@@ -159,8 +159,9 @@ async def api_ready() -> dict[str, str | dict[str, object] | bool]:
 def list_endpoints(request: Request) -> dict[str, list[str]]:
     """List all available calculator endpoints."""
     active_app = request.app
-    _ensure_calculator_routes_registered(active_app)
-    calculators = _calculator_route_signatures(active_app.routes)
+    expected = _expected_calculator_route_signatures()
+    _ensure_calculator_routes_registered(active_app, expected=expected)
+    calculators = _calculator_route_signatures(active_app.routes) | expected
     return {"calculators": sorted(f"{method} {path}" for method, path in calculators)}
 
 
@@ -187,8 +188,28 @@ def _calculator_route_signatures(
     return signatures
 
 
-def _ensure_calculator_routes_registered(active_app: FastAPI) -> None:
+def _expected_calculator_route_signatures() -> set[tuple[str, str]]:
+    signatures: set[tuple[str, str]] = set()
+    for router in CALCULATOR_ROUTERS:
+        signatures.update(
+            _calculator_route_signatures(
+                router.routes,
+                prefix=str(getattr(router, "prefix", "")),
+            )
+        )
+    return signatures
+
+
+def _ensure_calculator_routes_registered(
+    active_app: FastAPI,
+    *,
+    expected: set[tuple[str, str]] | None = None,
+) -> None:
     registered = _calculator_route_signatures(active_app.routes)
+    expected = expected or _expected_calculator_route_signatures()
+    if expected.issubset(registered):
+        return
+
     for router in CALCULATOR_ROUTERS:
         router_signatures = _calculator_route_signatures(
             router.routes,
