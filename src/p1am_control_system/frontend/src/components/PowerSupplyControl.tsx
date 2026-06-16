@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
+import { Download } from "lucide-react";
 import { PowerSupplyTrend, type TrendSample } from "./PowerSupplyTrend";
 import "./PowerSupplyControl.css";
 
@@ -70,6 +71,8 @@ export interface PowerSupplyStatus {
 interface Props {
   /** Status pushed each scan via the parent's WebSocket; undefined while waiting. */
   liveStatus?: PowerSupplyStatus;
+  /** Opens the data-export drawer (wired to the plot-header Export button). */
+  onExport?: () => void;
 }
 
 const STATE_LABELS: Record<PowerSupplyStatus["state"], string> = {
@@ -86,7 +89,7 @@ const STATE_HINTS: Record<PowerSupplyStatus["state"], string> = {
   tripped: "latched · acknowledge",
 };
 
-export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
+export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) => {
   const [config, setConfig] = useState<PowerSupplyConfig | null>(null);
   const [configDraft, setConfigDraft] = useState<PowerSupplyConfig | null>(null);
   const [mode, setMode] = useState<"current" | "power">("current");
@@ -163,6 +166,16 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
         flash("Config not loaded", "error");
         return;
       }
+      // Guard rail: the server silently ignores setpoints unless the controller
+      // is armed, so tell the operator instead of pretending it was applied.
+      if (liveStatus && liveStatus.state === "tripped") {
+        flash("Controller is TRIPPED — acknowledge the trip first.", "error");
+        return;
+      }
+      if (liveStatus && !liveStatus.permissive) {
+        flash("Permissive is OFF — enable it before commanding output.", "error");
+        return;
+      }
       setBusy(true);
       try {
         const body =
@@ -192,7 +205,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
         setBusy(false);
       }
     },
-    [config, mode, flash],
+    [config, mode, flash, liveStatus],
   );
 
   const nudgeSetpoint = useCallback(
@@ -393,7 +406,14 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus }) => {
 
       {/* ---- Live trend (current + voltage from the unit) ---- */}
       <div className="ps-card">
-        <div className="ps-card-title">Live signals — current &amp; voltage feedback</div>
+        <div className="ps-card-title">
+          <span>Live signals — current, voltage &amp; power feedback</span>
+          {onExport && (
+            <button className="btn ps-export-btn" onClick={onExport} title="Export captured data">
+              <Download size={13} /> Export
+            </button>
+          )}
+        </div>
         <PowerSupplyTrend
           samples={trend}
           currentFullScale={config.current_full_scale_a}
