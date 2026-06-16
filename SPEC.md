@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.484                                    |
+| **Spec Version**        | 1.1.485                                    |
 | **Last Spec Update**    | 2026-06-15                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-15 Update
 
+- Lower-body model package-local simulator coverage now replaces the empty
+  placeholder test with real XML builder precondition, bilateral joint/actuator
+  construction, finite initial-pose target, and out-of-range posture rejection
+  assertions.
 - Video processor logger tests now assert observable seed and logging
   configuration contracts instead of placeholder `assert True` checks. The
   negative-seed regression now accepts the canonical shared logger utility's
