@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.496                                    |
+| **Spec Version**        | 1.1.497                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -56,6 +56,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   expose a single `input_changed` signal. Both the legacy monolith and
   refactored PSA main windows consume that panel-level contract instead of
   reaching through to private slider, line-edit, and table widgets.
+- Refactored PSA main-window tests now cover the calculation, panel signal,
+  sensitivity-tab refresh, launch, and help branches directly so the extracted
+  module remains above the Sidekick per-file coverage gate.
 
 ### 2026-06-15 Update
 
