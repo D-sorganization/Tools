@@ -119,72 +119,62 @@ class StandardResponse(BaseModel, Generic[T]):
         """Convert response to dictionary."""
         return self.model_dump()
 
-
-def _standard_response_success(
-    cls: type[StandardResponse[Any]],
-    data: Any,
-    *,
-    processing_time_ms: float = 0.0,
-    request_id: str | None = None,
-    api_version: str = "1.0.0",
-) -> StandardResponse[Any]:
-    """Create a success response using the legacy factory API."""
-    metadata = ResponseMetadata(
-        request_id=request_id or str(uuid.uuid4()),
-        processing_time_ms=processing_time_ms,
-        timestamp_utc=_get_utc_timestamp(),
-        api_version=api_version,
-    )
-    return cls(
-        status="success",
-        data=data,
-        error=None,
-        metadata=metadata,
-    )
-
-
-def _standard_response_error(
-    cls: type[StandardResponse[Any]],
-    *,
-    error: ErrorDetail | None = None,
-    code: ErrorCode | None = None,
-    message: str | None = None,
-    details: Any | None = None,
-    processing_time_ms: float = 0.0,
-    request_id: str | None = None,
-    api_version: str = "1.0.0",
-) -> StandardResponse[Any]:
-    """Create an error response using the legacy factory API."""
-    if error is None:
-        if code is None or message is None:
-            raise ValueError("Either error or both code and message are required")
-        error = ErrorDetail(
-            code=code,
-            message=message,
-            details=details,
-            request_id=request_id,
+    @classmethod
+    def success(
+        cls,
+        data: Any,
+        processing_time_ms: float | None = None,
+        request_id: str | None = None,
+        api_version: str = "1.0.0",
+    ) -> StandardResponse[Any]:
+        """Create a success response with explicit metadata controls."""
+        return cls(
+            status="success",
+            data=data,
+            error=None,
+            metadata=_build_metadata(
+                processing_time_ms=processing_time_ms,
+                request_id=request_id,
+                api_version=api_version,
+            ),
         )
 
-    effective_request_id = error.request_id or request_id or str(uuid.uuid4())
-    if error.request_id != effective_request_id:
-        error = error.model_copy(update={"request_id": effective_request_id})
 
-    metadata = ResponseMetadata(
-        request_id=effective_request_id,
-        processing_time_ms=processing_time_ms,
-        timestamp_utc=_get_utc_timestamp(),
-        api_version=api_version,
-    )
-    return cls(
-        status="error",
-        data=None,
-        error=error,
-        metadata=metadata,
-    )
+class _StandardResponseErrorFactory:
+    def __get__(
+        self,
+        instance: StandardResponse[Any] | None,
+        owner: type[StandardResponse[Any]],
+    ) -> Any:
+        if instance is not None:
+            return instance.__dict__.get("error")
 
+        def create_error_response(
+            *,
+            error: ErrorDetail,
+            processing_time_ms: float | None = None,
+            request_id: str | None = None,
+            api_version: str = "1.0.0",
+        ) -> StandardResponse[Any]:
+            metadata_request_id = request_id or error.request_id
+            metadata = _build_metadata(
+                processing_time_ms=processing_time_ms,
+                request_id=metadata_request_id,
+                api_version=api_version,
+            )
+            response_error = error
+            if response_error.request_id is None:
+                response_error = response_error.model_copy(
+                    update={"request_id": metadata.request_id}
+                )
+            return owner(
+                status="error",
+                data=None,
+                error=response_error,
+                metadata=metadata,
+            )
 
-StandardResponse.success = classmethod(_standard_response_success)
-StandardResponse.error = classmethod(_standard_response_error)
+        return create_error_response
 
 
 class StandardResponseBuilder:
@@ -241,7 +231,29 @@ class StandardResponseBuilder:
         )
 
 
+def _build_metadata(
+    *,
+    processing_time_ms: float | None,
+    request_id: str | None,
+    api_version: str,
+) -> ResponseMetadata:
+    if processing_time_ms is not None and processing_time_ms < 0:
+        raise ValueError("processing_time_ms must be non-negative")
+    if request_id is not None and not request_id:
+        raise ValueError("request_id must be a non-empty string")
+
+    return ResponseMetadata(
+        request_id=request_id or str(uuid.uuid4()),
+        processing_time_ms=0.0 if processing_time_ms is None else processing_time_ms,
+        timestamp_utc=_get_utc_timestamp(),
+        api_version=api_version,
+    )
+
+
 def _get_utc_timestamp() -> str:
     from datetime import datetime
 
     return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+StandardResponse.error = _StandardResponseErrorFactory()  # type: ignore[method-assign]
