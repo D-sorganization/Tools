@@ -39,9 +39,9 @@ class OptimizationMixin:
     Threading contract (provided by ``MainWindow``): ``_opt_lock`` is an
     ``RLock`` so the same thread may re-enter critical sections (e.g. a locked
     helper calling another locked helper) without deadlocking. All writes to
-    ``results``/``anim_frames``/``bodies_list``/``dynamics_list`` (and the
-    corresponding cross-thread reads) must hold this lock to prevent torn
-    updates between the worker thread and the GUI main thread.
+    ``exercise_states`` (and the corresponding cross-thread reads) must hold
+    this lock to prevent torn updates between the worker thread and the GUI
+    main thread.
     """
 
     def __init__(self) -> None:
@@ -58,17 +58,27 @@ class OptimizationMixin:
         avoiding torn reads while the worker thread is publishing a new result.
         """
         with self._opt_lock:
+            state = self.exercise_states[idx]
             return (
-                self.results[idx],
-                self.anim_frames[idx],
-                self.bodies_list[idx],
-                self.dynamics_list[idx],
+                state.result,
+                state.anim_frame,
+                state.body,
+                state.dynamics,
             )
 
     def _set_anim_frame(self: MainWindow, idx: int, frame: int) -> None:
-        """Atomically write ``anim_frames[idx]`` under the optimizer lock."""
+        """Atomically write an exercise animation frame under the optimizer lock."""
         with self._opt_lock:
-            self.anim_frames[idx] = frame
+            self.exercise_states[idx].anim_frame = frame
+
+    def _set_exercise_result(
+        self: MainWindow, idx: int, result: OptimizationResult, *, frame: int = 0
+    ) -> None:
+        """Atomically publish an optimization result and reset playback frame."""
+        with self._opt_lock:
+            state = self.exercise_states[idx]
+            state.result = result
+            state.anim_frame = frame
 
     def _resolve_exercise_params(
         self: MainWindow, idx: int
@@ -96,8 +106,9 @@ class OptimizationMixin:
             dur = max(dur, _min_durations[etype])
 
         with self._opt_lock:
-            self.dynamics_list[idx] = dyn
-            self.bodies_list[idx] = body
+            state = self.exercise_states[idx]
+            state.body = body
+            state.dynamics = dyn
             self._last_config = (dyn, qs, qe, qb, q_via, etype)
         return body, dyn, etype, bar, dur, smoothness
 
@@ -156,16 +167,12 @@ class OptimizationMixin:
             )
             if cached is not None:
                 logger.info("Cache hit for %s", etype)
-                with self._opt_lock:
-                    self.results[idx] = cached
-                    self.anim_frames[idx] = 0
+                self._set_exercise_result(idx, cached)
                 self._sig_done.emit(idx, cached, body, bar, then_chain)
                 return
 
             result = self._run_optimizer(body, bar, dur, smoothness)
-            with self._opt_lock:
-                self.results[idx] = result
-                self.anim_frames[idx] = 0
+            self._set_exercise_result(idx, result)
 
             self._cache.put(
                 etype,
@@ -258,7 +265,7 @@ class OptimizationMixin:
             tab = self.exercise_tabs[idx]
             tab.draw_all_plots(result, body, bar, exercise_type=etype)
             with self._opt_lock:
-                dyn = self.dynamics_list[idx]
+                dyn = self.exercise_states[idx].dynamics
             tab.draw_anim_frame(0, result, dyn, body, etype)
             elapsed = result.elapsed_s
             t_str = (

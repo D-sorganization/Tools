@@ -1,8 +1,8 @@
 # Copyright (c) 2026 D-Sorganization. All rights reserved.
 """Thread-safety tests for shared optimizer state on MainWindow.
 
-Issue #407: results, anim_frames, bodies_list, and dynamics_list are written
-from worker threads (running ``_opt_worker``) and read from the GUI main
+Issue #407: per-exercise runtime state is written from worker threads
+(running ``_opt_worker``) and read from the GUI main
 thread (signal handlers, animation, file I/O). These tests exercise
 concurrent writers/readers against the OptimizationMixin lock helpers and
 verify that no torn snapshots, lost updates, or deadlocks occur.
@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import os
 import threading
-from typing import Any, ClassVar
+from typing import ClassVar
 
 # Force the offscreen Qt platform before any Qt import (defensive — also set
 # by the harness command line). The OptimizationMixin code path under test
@@ -24,11 +24,12 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 from conftest import make_test_result
 
+from movement_optimizer.gui.exercise_state import ExerciseRuntimeState
 from movement_optimizer.gui.optimization_mixin import OptimizationMixin
 
 
 class _ThreadSafetyHarness:
-    """Minimal harness exposing the four shared lists plus _opt_lock.
+    """Minimal harness exposing consolidated exercise state plus _opt_lock.
 
     Mirrors the relevant attributes of MainWindow so the mixin's
     ``_snapshot_idx_state`` / ``_set_anim_frame`` helpers can be exercised
@@ -44,10 +45,7 @@ class _ThreadSafetyHarness:
 
     def __init__(self) -> None:
         n = len(self.EXERCISE_CONFIGS)
-        self.results: list[Any] = [None] * n
-        self.dynamics_list: list[Any] = [None] * n
-        self.bodies_list: list[Any] = [None] * n
-        self.anim_frames: list[int] = [0] * n
+        self.exercise_states = [ExerciseRuntimeState() for _ in range(n)]
         # RLock so re-entrant locking does not deadlock.
         self._opt_lock = threading.RLock()
 
@@ -108,10 +106,11 @@ class TestConcurrentSnapshot:
                     body_marker = ("body", i)
                     dyn_marker = ("dyn", i)
                     with harness._opt_lock:
-                        harness.results[idx] = res
-                        harness.bodies_list[idx] = body_marker
-                        harness.dynamics_list[idx] = dyn_marker
-                        harness.anim_frames[idx] = i
+                        state = harness.exercise_states[idx]
+                        state.result = res
+                        state.body = body_marker
+                        state.dynamics = dyn_marker
+                        state.anim_frame = i
             except BaseException as exc:  # pragma: no cover - debug aid
                 errors.append(exc)
                 stop.set()
@@ -188,7 +187,7 @@ class TestConcurrentAnimFrameWrites:
         # Final value must be a non-negative int that some worker wrote --
         # a corrupted/non-int value here would mean the list slot was being
         # mutated mid-read by another thread.
-        final = harness.anim_frames[idx]
+        final = harness.exercise_states[idx].anim_frame
         assert isinstance(final, int)
         assert 0 <= final < n_threads * per_thread
 
@@ -231,4 +230,4 @@ class TestReentrantLockNoDeadlock:
         )
         assert not errors, f"Runner raised: {errors!r}"
         assert completed.is_set()
-        assert harness.anim_frames[0] == 7
+        assert harness.exercise_states[0].anim_frame == 7

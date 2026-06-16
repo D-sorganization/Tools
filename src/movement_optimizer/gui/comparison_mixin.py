@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 class ComparisonMixin:
     """Mixin providing trial comparison actions for MainWindow."""
 
-    def _add_comparison(self: MainWindow) -> None:  # type: ignore[misc]
+    def _add_comparison(self: MainWindow) -> None:
         idx = self.tabs.currentIndex()
         r, _fi, _body, _dyn = self._snapshot_idx_state(idx)
         if r is None:
@@ -41,7 +41,7 @@ class ComparisonMixin:
 
         self.status_label.setText(f"Added '{trial_name}' to comparison list.")
 
-    def _compare_trials(self: MainWindow) -> None:  # type: ignore[misc]
+    def _compare_trials(self: MainWindow) -> None:
         trials = self._comparison_store.get_trials()
         if not trials:
             QMessageBox.information(self, "No Trials", "Add trials to compare first.")
@@ -49,7 +49,7 @@ class ComparisonMixin:
         dlg = ComparisonDialog(trials, self)
         dlg.exec()
 
-    def _clear_comparison(self: MainWindow) -> None:  # type: ignore[misc]
+    def _clear_comparison(self: MainWindow) -> None:
         self._comparison_store.clear()
         self.sidebar.set_comparison_available(False)
         self.sidebar.set_clear_comparison_available(False)

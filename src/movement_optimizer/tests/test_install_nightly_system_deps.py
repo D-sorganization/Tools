@@ -3,7 +3,6 @@ from __future__ import annotations
 import subprocess
 
 import pytest
-
 from scripts.install_nightly_system_deps import run_with_lock_retries
 
 

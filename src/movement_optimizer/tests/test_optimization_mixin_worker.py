@@ -36,7 +36,7 @@ def test_worker_cache_hit_emits_done(window, monkeypatch) -> None:
     window._opt_worker(0, None)
 
     assert "done" in events
-    assert window.results[0] is cached
+    assert window.exercise_states[0].result is cached
 
 
 def test_worker_success_runs_real_optimizer(window) -> None:
@@ -46,7 +46,7 @@ def test_worker_success_runs_real_optimizer(window) -> None:
     window._opt_worker(0, None)
 
     assert "done" in events
-    assert window.results[0] is not None
+    assert window.exercise_states[0].result is not None
 
 
 @pytest.mark.parametrize(

@@ -31,17 +31,14 @@ from PyQt6.QtWidgets import (
 )
 
 from ..comparison import ComparisonStore
-from ..models import BodyModel
 from ..persistence import InvalidStateFileError, load_app_state, save_app_state
 from ..rendering import ThemedWindowMixin, refresh_palette, restyle_figure
-from ..trajectory import (
-    OptimizationResult,
-    SolutionCache,
-)
+from ..trajectory import SolutionCache
 from .animation_control import AnimationControlMixin
 from .app_icon import movement_optimizer_icon
 from .commands import SliderChangeCommand, UndoStack
 from .comparison_mixin import ComparisonMixin
+from .exercise_state import ExerciseRuntimeState
 from .file_operations import FileOperationsMixin
 from .help_dialog import HELP_TOPICS, HelpCenterDialog
 from .motion_tabs import create_chain_tab, create_swingset_tab
@@ -107,10 +104,7 @@ class MainWindow(
         self.setMinimumSize(800, 600)
         self.resize(1100, 700)
 
-        self.results: list[OptimizationResult | None] = [None] * len(self.EXERCISE_CONFIGS)
-        self.dynamics_list: list[Any] = [None] * len(self.EXERCISE_CONFIGS)
-        self.bodies_list: list[BodyModel | None] = [None] * len(self.EXERCISE_CONFIGS)
-        self.anim_frames = [0] * len(self.EXERCISE_CONFIGS)
+        self.exercise_states = [ExerciseRuntimeState() for _name, _etype in self.EXERCISE_CONFIGS]
         self.is_playing = False
         self.anim_timer = QTimer(self)
         self.anim_timer.timeout.connect(self._anim_step)
