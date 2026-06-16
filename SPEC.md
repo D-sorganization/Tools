@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.491                                    |
+| **Spec Version**        | 1.1.492                                    |
 | **Last Spec Update**    | 2026-06-15                                 |
 
 ## 2. Purpose & Mission
@@ -42,6 +42,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   foot-pound factors from the shared Sidekick unit constants layer, including
   full-precision `lbf·ft`, derived `lbf·in`, `ft·lbf`, and `ft·lbf/s`
   round-trip coverage.
+- Vessel drafter's standalone contract fallback now raises typed
+  postcondition errors, honors `DBC_LEVEL=off`, and routes its legacy
+  validation wrappers through the same fallback contract gate.
 - The legacy `utils.compatibility` module now re-exports the canonical shared
   `UTC` and `StrEnum` compatibility primitives while preserving its Python
   version check, avoiding duplicate backport class identities across utility
@@ -821,6 +824,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-15 | 1.1.492 | fix(vessel-drafter, #3359): align the standalone contract fallback with the shared/data-processor contract semantics by adding typed postcondition errors, honoring `DBC_LEVEL=off`, routing legacy validation wrappers through `require()`, and covering the isolated fallback import path. |
 | 2026-06-15 | 1.1.491 | fix(pendulum, #3359): source pendulum simulator imperial foot-pound torque, energy, and power factors from shared Sidekick unit constants, add full-precision foot-pound aliases, and cover `lbf·ft`, `lbf·in`, `ft·lbf`, and `ft·lbf/s` round trips. |
 | 2026-06-15 | 1.1.490 | refactor(compatibility, #3359): make the legacy `utils.compatibility` shim re-export the shared `UTC` and `StrEnum` primitives while preserving `check_python_version()`, and add identity regression coverage so utility callers cannot split compatibility class identity from shared modules. |
 | 2026-06-15 | 1.1.488 | ci(quality-check, #3359): add `scripts/quality-check.py --report-only`, wire the banned-pattern scan into pre-commit and the CI quality-gate summary without blocking legacy findings, add CLI regression coverage for blocking versus report-only exits, and update user-facing docs to describe the report-only ratchet. |
