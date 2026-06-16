@@ -1,6 +1,6 @@
 from collections.abc import Callable
 
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QDoubleValidator
 from PyQt6.QtWidgets import (
     QGridLayout,
@@ -40,6 +40,8 @@ def create_slider(
 
 class InputPanel(QWidget):
     """Panel for PSA model input parameters."""
+
+    input_changed = pyqtSignal()
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -122,13 +124,15 @@ class InputPanel(QWidget):
 
         layout.addStretch()
 
-        # Connect text changes to trigger calculation
+        # Connect input changes to the panel-level change contract.
         self.feed_input.textChanged.connect(self._on_input_change)
+        self.s2_recycle_slider.valueChanged.connect(self._on_input_change)
+        self.prod_recycle_slider.valueChanged.connect(self._on_input_change)
         self.component_table.cellChanged.connect(self._on_input_change)
 
     def _on_input_change(self) -> None:
         """Signal that inputs have changed - emitted for auto-calculate."""
-        # This will be connected to calculate in the main window
+        self.input_changed.emit()
 
     def _reset_defaults(self) -> None:
         """Reset all inputs to default values."""

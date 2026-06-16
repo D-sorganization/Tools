@@ -18,7 +18,7 @@ from matplotlib.backends.backend_qtagg import (
     NavigationToolbar2QT as NavigationToolbar,
 )
 from matplotlib.figure import Figure
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QAction, QDoubleValidator, QFont, QPixmap
 from shared.python.theme.integration import ThemedWindowMixin
 import logging
@@ -124,6 +124,8 @@ class MplCanvas(FigureCanvas):  # noqa: F811, F821
 class InputPanel(QWidget):  # noqa: F811, F821
     """Panel for PSA model input parameters."""
 
+    input_changed = pyqtSignal()
+
     def __init__(self, parent: QWidget | None = None) -> None:  # noqa: F821
         super().__init__(parent)
         self._setup_ui()
@@ -209,13 +211,15 @@ class InputPanel(QWidget):  # noqa: F811, F821
 
         layout.addStretch()
 
-        # Connect text changes to trigger calculation
+        # Connect input changes to the panel-level change contract.
         self.feed_input.textChanged.connect(self._on_input_change)
+        self.s2_recycle_slider.valueChanged.connect(self._on_input_change)
+        self.prod_recycle_slider.valueChanged.connect(self._on_input_change)
         self.component_table.cellChanged.connect(self._on_input_change)
 
     def _on_input_change(self) -> None:
         """Signal that inputs have changed - emitted for auto-calculate."""
-        # This will be connected to calculate in the main window
+        self.input_changed.emit()
 
     def _reset_defaults(self) -> None:
         """Reset all inputs to default values."""
@@ -1029,13 +1033,7 @@ class PSAMainWindow(ThemedWindowMixin, QMainWindow):  # noqa: F811, F821
 
     def _connect_signals(self) -> None:
         """Connect UI signals to slots."""
-        # Slider changes trigger auto-calculate
-        self.input_panel.s2_recycle_slider.valueChanged.connect(self._on_input_change)
-        self.input_panel.prod_recycle_slider.valueChanged.connect(self._on_input_change)
-
-        # Text input changes trigger auto-calculate
-        self.input_panel.feed_input.textChanged.connect(self._on_input_change)
-        self.input_panel.component_table.cellChanged.connect(self._on_input_change)
+        self.input_panel.input_changed.connect(self._on_input_change)
 
         # Tab change triggers plot pre-calculation
         self.tab_widget.currentChanged.connect(self._on_tab_change)
