@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.495                                    |
+| **Spec Version**        | 1.1.496                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -52,6 +52,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   `generate_assessments.py` and `generate_fresh_assessments.py` scripts were
   removed after live-reference checks, and script topology tests guard against
   reintroducing or referencing them.
+- PSA calculator input panels now own their child-widget change wiring and
+  expose a single `input_changed` signal. Both the legacy monolith and
+  refactored PSA main windows consume that panel-level contract instead of
+  reaching through to private slider, line-edit, and table widgets.
 
 ### 2026-06-15 Update
 

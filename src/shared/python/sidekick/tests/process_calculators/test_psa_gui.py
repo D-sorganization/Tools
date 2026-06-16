@@ -3,7 +3,10 @@
 
 from __future__ import annotations
 
+import ast
 import sys
+from pathlib import Path
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -15,10 +18,17 @@ from sidekick.process_calculators.psa_package.psa_gui import (
     ResultsPanel,
     SensitivityPlotWidget,
 )
+from sidekick.process_calculators.psa_package.ui.input_panel import (
+    InputPanel as RefactoredInputPanel,
+)
+
+PSA_PACKAGE = (
+    Path(__file__).resolve().parents[2] / "process_calculators" / "psa_package"
+)
 
 
 @pytest.fixture
-def dummy_qapp():
+def dummy_qapp() -> QApplication:
     """Create a dummy QApplication for UI testing."""
     app = QApplication.instance()
     if app is None:
@@ -26,7 +36,7 @@ def dummy_qapp():
     return app
 
 
-def test_input_panel_initialization(dummy_qapp):
+def test_input_panel_initialization(dummy_qapp: QApplication) -> None:
     """Test that the input panel initializes correctly."""
     panel = InputPanel()
     assert panel.feed_input.text() == "1100"
@@ -44,7 +54,55 @@ def test_input_panel_initialization(dummy_qapp):
     assert panel.feed_input.text() == "1100"
 
 
-def test_results_panel_initialization(dummy_qapp):
+@pytest.mark.parametrize("panel_cls", [InputPanel, RefactoredInputPanel])
+def test_input_panel_emits_change_signal(
+    panel_cls: type[Any], dummy_qapp: QApplication, qtbot: Any
+) -> None:
+    """InputPanel owns child-widget wiring and exposes a panel-level signal."""
+    panel = panel_cls()
+    qtbot.addWidget(panel)
+
+    with qtbot.waitSignal(panel.input_changed, timeout=1000):
+        panel.s2_recycle_slider.setValue(99)
+
+    with qtbot.waitSignal(panel.input_changed, timeout=1000):
+        panel.prod_recycle_slider.setValue(1)
+
+    with qtbot.waitSignal(panel.input_changed, timeout=1000):
+        panel.feed_input.setText("1200")
+
+    with qtbot.waitSignal(panel.input_changed, timeout=1000):
+        item = panel.component_table.item(0, 1)
+        assert item is not None
+        item.setText("31")
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        PSA_PACKAGE / "psa_gui.py",
+        PSA_PACKAGE / "ui" / "main_window.py",
+    ],
+)
+def test_psa_main_window_uses_panel_change_contract(path: Path) -> None:
+    """Main windows must subscribe to InputPanel's public change signal."""
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.FunctionDef) and node.name == "_connect_signals":
+            source = ast.get_source_segment(path.read_text(encoding="utf-8"), node)
+            assert source is not None
+            assert "self.input_panel.input_changed.connect" in source
+            assert "self.input_panel.s2_recycle_slider" not in source
+            assert "self.input_panel.prod_recycle_slider" not in source
+            assert "self.input_panel.feed_input" not in source
+            assert "self.input_panel.component_table" not in source
+            return
+
+    raise AssertionError(f"{path} has no _connect_signals method")
+
+
+def test_results_panel_initialization(dummy_qapp: QApplication) -> None:
     """Test that the results panel initializes correctly."""
     panel = ResultsPanel()
     assert panel.h2_recovery_label.text() == "--"
@@ -93,7 +151,9 @@ def test_results_panel_initialization(dummy_qapp):
 @patch(
     "upstream_drift_tools.process_calculators.psa_package.psa_gui.calculate_sensitivity"
 )
-def test_sensitivity_plot_widget(mock_calc_sens, mock_calc_o2, dummy_qapp):
+def test_sensitivity_plot_widget(
+    mock_calc_sens: Any, mock_calc_o2: Any, dummy_qapp: QApplication
+) -> None:
     """Test the sensitivity plot widget."""
     import numpy as np
 
@@ -126,7 +186,9 @@ def test_sensitivity_plot_widget(mock_calc_sens, mock_calc_o2, dummy_qapp):
 
 @patch("upstream_drift_tools.process_calculators.psa_package.psa_gui.QMessageBox")
 @patch("PyQt6.QtWidgets.QMainWindow.show")
-def test_psa_main_window_initialization(mock_show, mock_msg_box, dummy_qapp):
+def test_psa_main_window_initialization(
+    mock_show: Any, mock_msg_box: Any, dummy_qapp: QApplication
+) -> None:
     """Test PSA main window initialization."""
     with patch(
         "upstream_drift_tools.process_calculators.psa_package.psa_gui.PSAModel"
@@ -216,7 +278,7 @@ def test_psa_main_window_initialization(mock_show, mock_msg_box, dummy_qapp):
         assert mock_msg_box.about.called
 
 
-def test_pfd_widget(dummy_qapp):
+def test_pfd_widget(dummy_qapp: QApplication) -> None:
     """Test the Process Flow Diagram widget."""
     widget = PFDWidget()
     assert widget.image_label.text() is not None

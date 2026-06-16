@@ -219,13 +219,7 @@ class PSAMainWindow(ThemedWindowMixin, QMainWindow):
 
     def _connect_signals(self) -> None:
         """Connect UI signals to slots."""
-        # Slider changes trigger auto-calculate
-        self.input_panel.s2_recycle_slider.valueChanged.connect(self._on_input_change)
-        self.input_panel.prod_recycle_slider.valueChanged.connect(self._on_input_change)
-
-        # Text input changes trigger auto-calculate
-        self.input_panel.feed_input.textChanged.connect(self._on_input_change)
-        self.input_panel.component_table.cellChanged.connect(self._on_input_change)
+        self.input_panel.input_changed.connect(self._on_input_change)
 
         # Tab change triggers plot pre-calculation
         self.tab_widget.currentChanged.connect(self._on_tab_change)
