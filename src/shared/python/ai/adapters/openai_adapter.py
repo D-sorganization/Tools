@@ -23,8 +23,8 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Any
 
-from src.shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
-from src.shared.python.ai.config import (
+from shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
+from shared.python.ai.config import (
     DEFAULT_OPENAI_MAX_TOKENS,
     DEFAULT_OPENAI_MODEL,
     DEFAULT_OPENAI_TIMEOUT,
@@ -32,10 +32,10 @@ from src.shared.python.ai.config import (
     get_openai_organization,
     get_openai_timeout,
 )
-from src.shared.python.ai.exceptions import (
+from shared.python.ai.exceptions import (
     AIProviderError,
 )
-from src.shared.python.ai.types import (
+from shared.python.ai.types import (
     AgentChunk,
     AgentResponse,
     ConversationContext,
@@ -43,8 +43,8 @@ from src.shared.python.ai.types import (
     ProviderCapability,
     ToolCall,
 )
-from src.shared.python.contracts import precondition
-from src.shared.python.logging_pkg.logging_config import get_logger
+from shared.python.contracts import precondition
+from shared.python.logging_pkg.logging_config import get_logger
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -107,7 +107,7 @@ class OpenAIAdapter(BaseAgentAdapter):
             app_context: Registry key for the consuming application's system
                 prompt preamble (e.g. ``"upstream_drift"``, ``"gasification"``).
                 Defaults to ``"assistant"``, a brand-neutral preamble. See
-                :mod:`src.shared.python.ai.system_prompts` (issue #3179).
+                :mod:`shared.python.ai.system_prompts` (issue #3179).
         """
         if api_key is None:
             raise ValueError("api_key must be provided")
@@ -464,7 +464,7 @@ class OpenAIAdapter(BaseAgentAdapter):
             raise ValueError("context must be provided")
         if context is None:
             raise ValueError("context must be provided")
-        from src.shared.python.ai.system_prompts import build_system_prompt
+        from shared.python.ai.system_prompts import build_system_prompt
 
         expertise = context.user_expertise.name.lower()
         context_instructions = self.build_context_instruction_section(context)

@@ -22,8 +22,8 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Any
 
-from src.shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
-from src.shared.python.ai.config import (
+from shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
+from shared.python.ai.config import (
     DEFAULT_OLLAMA_HOST,
     DEFAULT_OLLAMA_MODEL,
     DEFAULT_OLLAMA_TIMEOUT,
@@ -31,11 +31,11 @@ from src.shared.python.ai.config import (
     get_ollama_model,
     get_ollama_timeout,
 )
-from src.shared.python.ai.exceptions import (
+from shared.python.ai.exceptions import (
     AIConnectionError,
     AIProviderError,
 )
-from src.shared.python.ai.types import (
+from shared.python.ai.types import (
     AgentChunk,
     AgentResponse,
     ConversationContext,
@@ -43,8 +43,8 @@ from src.shared.python.ai.types import (
     ProviderCapability,
     ToolCall,
 )
-from src.shared.python.contracts import precondition
-from src.shared.python.logging_pkg.logging_config import get_logger
+from shared.python.contracts import precondition
+from shared.python.logging_pkg.logging_config import get_logger
 
 if TYPE_CHECKING:
     from collections.abc import Iterator

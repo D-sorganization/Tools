@@ -42,15 +42,15 @@ import threading
 from collections.abc import Iterator, Sequence
 from typing import Any
 
-from src.shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
-from src.shared.python.ai.types import (
+from shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
+from shared.python.ai.types import (
     AgentChunk,
     AgentResponse,
     ConversationContext,
     ProviderCapabilities,
 )
-from src.shared.python.contracts import precondition
-from src.shared.python.logging_pkg.logging_config import get_logger
+from shared.python.contracts import precondition
+from shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
 
@@ -262,7 +262,7 @@ class GeminiAdapter(BaseAgentAdapter):
         does not currently translate :class:`ToolDeclaration` into Gemini's
         function-calling format. Tracked in issue #2764.
         """
-        from src.shared.python.ai.types import ProviderCapability
+        from shared.python.ai.types import ProviderCapability
 
         return ProviderCapabilities(
             supported=frozenset(

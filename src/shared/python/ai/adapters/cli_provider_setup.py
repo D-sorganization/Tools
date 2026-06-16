@@ -13,7 +13,7 @@ not have to hardcode install URLs and command strings.
 
 Example::
 
-    >>> from src.shared.python.ai.adapters.cli_provider_setup import (
+    >>> from shared.python.ai.adapters.cli_provider_setup import (
     ...     get_cli_setup_status,
     ...     CLI_PROVIDERS,
     ... )
@@ -34,7 +34,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass, field
 
-from src.shared.python.logging_pkg.logging_config import get_logger
+from shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
 
@@ -89,7 +89,7 @@ class _CliProviderSpec:
 
 
 def _probe_claude_code() -> tuple[str | None, str | None]:
-    from src.shared.python.ai.adapters.claude_code_adapter import _resolve_binary
+    from shared.python.ai.adapters.claude_code_adapter import _resolve_binary
 
     binary = _resolve_binary()
     if binary is None:
@@ -98,7 +98,7 @@ def _probe_claude_code() -> tuple[str | None, str | None]:
 
 
 def _probe_codex_cli() -> tuple[str | None, str | None]:
-    from src.shared.python.ai.adapters.codex_cli_adapter import _resolve_binary
+    from shared.python.ai.adapters.codex_cli_adapter import _resolve_binary
 
     binary = _resolve_binary()
     if binary is None:
@@ -107,7 +107,7 @@ def _probe_codex_cli() -> tuple[str | None, str | None]:
 
 
 def _probe_gemini_cli() -> tuple[str | None, str | None]:
-    from src.shared.python.ai.adapters.gemini_cli_adapter import _resolve_binary
+    from shared.python.ai.adapters.gemini_cli_adapter import _resolve_binary
 
     binary = _resolve_binary()
     if binary is None:

@@ -11,24 +11,24 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
-from src.shared.python.logging_pkg.logging_config import get_logger
+from shared.python.logging_pkg.logging_config import get_logger
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-from src.shared.python.ai.exceptions import (
+from shared.python.ai.exceptions import (
     AIConnectionError,
     AIProviderError,
     AIRateLimitError,
     AITimeoutError,
 )
-from src.shared.python.ai.memory_manager import (
+from shared.python.ai.memory_manager import (
     build_memory_prompt_section,
     load_agents_md,
 )
-from src.shared.python.ai.types import (
+from shared.python.ai.types import (
     AgentChunk,
     AgentResponse,
     ConversationContext,
@@ -328,7 +328,7 @@ class BaseAgentAdapter(ABC):
         """Build a system prompt including tool context.
 
         This default implementation delegates the preamble to
-        :func:`src.shared.python.ai.system_prompts.build_system_prompt` so
+        :func:`shared.python.ai.system_prompts.build_system_prompt` so
         that domain-specific branding is injected by the consuming
         application rather than hardcoded here.  Callers that previously
         relied on the default Golf-Modeling-Suite preamble should pass
@@ -372,7 +372,7 @@ class BaseAgentAdapter(ABC):
                 "where it helps the user act on the answer."
             )
 
-        from src.shared.python.ai.system_prompts import (
+        from shared.python.ai.system_prompts import (
             build_system_prompt as _build_preamble,
         )
 
@@ -410,9 +410,12 @@ class BaseAgentAdapter(ABC):
         if not isinstance(prompt_memory, dict):
             prompt_memory = None
 
-        return build_memory_prompt_section(
-            prompt_memory=prompt_memory,
-            agents_md=load_agents_md(project_root),
+        return cast(
+            str,
+            build_memory_prompt_section(
+                prompt_memory=prompt_memory,
+                agents_md=load_agents_md(project_root),
+            ),
         )
 
     def _classify_error(
