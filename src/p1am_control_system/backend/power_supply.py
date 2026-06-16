@@ -1,18 +1,8 @@
-"""Power-supply controller — state machine, safety interlocks, control law.
+"""Power-supply state machine, safety interlocks, and control law.
 
-Provides the operator-facing model and control logic that the FastAPI layer
-and the React tab wrap. Designed so it can be tested completely without a
-PLC connection by feeding measured values into `tick()` and observing the
-state changes and commanded output.
-
-State machine:
-    IDLE     -- permissive off; output forced to 0 %
-    ARMED    -- permissive on, no setpoint applied; output 0 %
-    RUNNING  -- commanding output at setpoint, no trip active
-    TRIPPED  -- HH-temp or HH-power trip latched; output 0 % until ack
-
-Tripping is one-way until `acknowledge_trip()` is called. A trip latches even
-if the underlying signal returns to the safe band on the next tick.
+The controller is fully testable without a PLC: feed measured values into
+``tick()`` and inspect state plus commanded output. Trips latch until
+``acknowledge_trip()``; E-stop latches until ``clear_estop()``.
 """
 
 from __future__ import annotations
@@ -42,20 +32,9 @@ logger = logging.getLogger("dcs_backend.power_supply")
 class PowerSupplyController:
     """State machine + control law for the power supply.
 
-    The controller is fed measured feedback values via `tick()`. Each tick:
-        1. Updates internal feedback snapshot
-        2. Computes measured power (V * I)
-        3. Evaluates trip conditions (HH_POWER, HH_TEMP) and latches trips
-        4. Recomputes the implied current setpoint when in POWER mode
-        5. Returns the AO command percentage (0..100) to apply
-
-    Invariants:
-        - In IDLE / ARMED / TRIPPED state, returned command is 0.0.
-        - When permissive is False, returned command is 0.0.
-        - When any trip is latched, returned command is 0.0.
-        - When state is RUNNING, returned command tracks setpoint clamped to
-          [current_setpoint_min_a, current_setpoint_max_a], scaled to a percent
-          of current_full_scale_a, then capped at config.output_clamp_percent.
+    In non-running or unsafe states, output is always forced to 0. In RUNNING,
+    current is clamped to the configured range, scaled to percent full-scale,
+    capped by ``output_clamp_percent``, and slew-rate limited.
     """
 
     def __init__(self, config: PowerSupplyConfig) -> None:

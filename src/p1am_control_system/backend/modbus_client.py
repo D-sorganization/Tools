@@ -378,26 +378,12 @@ class AsyncModbusManager(BasePLCClient):
                 return False
 
     async def trigger_estop(self) -> bool:
-        """Force all outputs to zero immediately and keep them there.
-
-        Two writes are required for a kill that actually holds:
-
-        1. Zero every PID setpoint. AOs are driven by the firmware PID loop, so
-           zeroing the AO tag value alone does NOT stick — the 10 Hz scan
-           rewrites the AO tag from its PID setpoint every tick. Collapsing the
-           setpoints is what makes a PID-driven output go (and stay) at zero.
-        2. Zero all tag values, covering any directly-driven (non-PID) tag.
-
-        Callers should also latch the controller (see PowerSupplyController.
-        engage_estop) so the polling loop does not re-command a setpoint on the
-        next scan.
-        """
+        """Zero PID setpoints and tag values so outputs go to zero and hold."""
         async with self.lock:
             if not self._connected:
                 return False
             try:
-                # 1. Zero the four PID setpoints (setpoint is the 3rd field of
-                #    each 10-register PID block: offset +2, 2 registers/float).
+                # PID setpoint is field 3 of each 10-register block.
                 for pid_index in range(4):
                     sp_addr = self.pid_config_address + pid_index * 10 + 2
                     resp = await self._get_client().write_registers(
@@ -429,15 +415,7 @@ class AsyncModbusManager(BasePLCClient):
                 return False
 
     async def clear_estop(self) -> bool:
-        """Pulse the E-stop reset coil so the PLC leaves the latched trip state.
-
-        The E-stop latch lives in the controller, not in this process. Clearing
-        it therefore requires an explicit coil write; only a confirmed,
-        non-error response means the plant has actually been released.
-
-        Returns:
-            bool: True if the reset coil write was acknowledged, False otherwise.
-        """
+        """Pulse the E-stop reset coil and return whether it was acknowledged."""
         async with self.lock:
             if not self._connected:
                 return False

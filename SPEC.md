@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.530                                    |
+| **Spec Version**        | 1.1.531                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-16 Update
 
+- P1AM power-supply backend documentation was tightened so the E-stop
+  follow-up branch stays within the changed-file size budget without changing
+  controller or Modbus behavior.
 - P1AM power-supply runtime tests are split into setpoint and safety-focused
   modules so changed test files remain below the repository file-size budget.
   The shared `_power_supply_helpers.py` construction helper is documented in
@@ -942,6 +945,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-16 | 1.1.531 | docs(p1am-power-supply): tighten backend E-stop/controller documentation so the follow-up branch satisfies the changed-file size budget without behavioral changes. |
 | 2026-06-16 | 1.1.530 | test(p1am-power-supply): split runtime controller safety tests out of the oversized setpoint test module and document the shared helper in the changed-test assertion allowlist. |
 | 2026-06-16 | 1.1.527 | fix(ai-tools, #3316): route selected AI tools production imports through canonical `shared.python.*` modules instead of the duplicate `src.shared.python.*` alias, and add an architecture guard for that slice. |
 | 2026-06-16 | 1.1.526 | fix(ai-tool-registry, #3316): route the AI tool registry production imports through canonical `shared.python.*` modules instead of the duplicate `src.shared.python.*` alias, and add an architecture guard for that slice. |
