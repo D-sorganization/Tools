@@ -4,7 +4,7 @@ Wraps the ``codex`` CLI binary (the ``@openai/codex`` npm package) as a chat
 provider. The CLI handles its own authentication and provider routing; this
 adapter only spawns it and parses output.
 
-Distinct from :class:`~src.shared.python.ai.adapters.openai_adapter.OpenAIAdapter`,
+Distinct from :class:`~shared.python.ai.adapters.openai_adapter.OpenAIAdapter`,
 which talks directly to the OpenAI REST API and requires an API key in the
 process environment. Use the CLI adapter when the user has ``codex`` installed
 and logged in but does not want to expose an API key to the application.
@@ -23,7 +23,7 @@ launched from a git repo, so we always pass the flag.
 
 Example::
 
-    >>> from src.shared.python.ai.adapters.codex_cli_adapter import CodexCliAdapter
+    >>> from shared.python.ai.adapters.codex_cli_adapter import CodexCliAdapter
     >>> adapter = CodexCliAdapter()
     >>> ok, msg = adapter.validate_connection()
     >>> if ok:
@@ -39,20 +39,20 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
-from src.shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
-from src.shared.python.ai.exceptions import (
+from shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
+from shared.python.ai.exceptions import (
     AIConnectionError,
     AIProviderError,
     AITimeoutError,
 )
-from src.shared.python.ai.types import (
+from shared.python.ai.types import (
     AgentChunk,
     AgentResponse,
     ConversationContext,
     ProviderCapabilities,
     ProviderCapability,
 )
-from src.shared.python.logging_pkg.logging_config import get_logger
+from shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
 

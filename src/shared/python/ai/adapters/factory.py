@@ -14,7 +14,7 @@ Supported providers:
 
 Usage::
 
-    from src.shared.python.ai.adapters.factory import AdapterFactory
+    from shared.python.ai.adapters.factory import AdapterFactory
 
     adapter = AdapterFactory.get_best_available(
         prefer_local=True, app_context="gasification"
@@ -25,8 +25,8 @@ Usage::
 
 from __future__ import annotations
 
-from src.shared.python.ai.adapters.base import BaseAgentAdapter
-from src.shared.python.logging_pkg.logging_config import get_logger
+from shared.python.ai.adapters.base import BaseAgentAdapter
+from shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
 
@@ -86,17 +86,17 @@ class AdapterFactory:
     # Provider → (module_path, class_name, env_var_hint) for cloud providers
     _CLOUD_PROVIDERS: dict[str, tuple[str, str, str]] = {
         "openai": (
-            "src.shared.python.ai.adapters.openai_adapter",
+            "shared.python.ai.adapters.openai_adapter",
             "OpenAIAdapter",
             "OPENAI_API_KEY",
         ),
         "anthropic": (
-            "src.shared.python.ai.adapters.anthropic_adapter",
+            "shared.python.ai.adapters.anthropic_adapter",
             "AnthropicAdapter",
             "ANTHROPIC_API_KEY",
         ),
         "gemini": (
-            "src.shared.python.ai.adapters.gemini_adapter",
+            "shared.python.ai.adapters.gemini_adapter",
             "GeminiAdapter",
             "GEMINI_API_KEY",
         ),
@@ -167,23 +167,23 @@ class AdapterFactory:
 
         # Local adapters — no API key required
         if provider == "ollama":
-            from src.shared.python.ai.adapters.ollama_adapter import OllamaAdapter
+            from shared.python.ai.adapters.ollama_adapter import OllamaAdapter
 
             adapter = OllamaAdapter(host=host, model=model, timeout=timeout)
 
         elif provider == "cline":
-            from src.shared.python.ai.adapters.cline_adapter import ClineAdapter
+            from shared.python.ai.adapters.cline_adapter import ClineAdapter
 
             adapter = ClineAdapter(host=host, timeout=timeout)
 
         elif provider == "bitnet":
-            from src.shared.python.ai.adapters.bitnet_adapter import BitnetAdapter
+            from shared.python.ai.adapters.bitnet_adapter import BitnetAdapter
 
             # Bitnet uses 'host' param as bitnet_root in this context if provided
             adapter = BitnetAdapter(model=model, bitnet_root=host)
 
         elif provider == "claude_code":
-            from src.shared.python.ai.adapters.claude_code_adapter import (
+            from shared.python.ai.adapters.claude_code_adapter import (
                 ClaudeCodeAdapter,
             )
 
@@ -192,7 +192,7 @@ class AdapterFactory:
             adapter = ClaudeCodeAdapter(binary=host, model=model, timeout=timeout)
 
         elif provider == "codex_cli":
-            from src.shared.python.ai.adapters.codex_cli_adapter import (
+            from shared.python.ai.adapters.codex_cli_adapter import (
                 CodexCliAdapter,
             )
 
@@ -200,7 +200,7 @@ class AdapterFactory:
             adapter = CodexCliAdapter(binary=host, model=model, timeout=timeout)
 
         elif provider == "gemini_cli":
-            from src.shared.python.ai.adapters.gemini_cli_adapter import (
+            from shared.python.ai.adapters.gemini_cli_adapter import (
                 GeminiCliAdapter,
             )
 
@@ -370,17 +370,17 @@ class AdapterFactory:
         # Fall back to config module
         env_key: str | None
         if provider == "openai":
-            from src.shared.python.ai.config import get_openai_api_key
+            from shared.python.ai.config import get_openai_api_key
 
             env_key = get_openai_api_key()
             return env_key
         if provider == "anthropic":
-            from src.shared.python.ai.config import get_anthropic_api_key
+            from shared.python.ai.config import get_anthropic_api_key
 
             env_key = get_anthropic_api_key()
             return env_key
         if provider == "gemini":
-            from src.shared.python.ai.config import get_gemini_api_key
+            from shared.python.ai.config import get_gemini_api_key
 
             env_key = get_gemini_api_key()
             return env_key

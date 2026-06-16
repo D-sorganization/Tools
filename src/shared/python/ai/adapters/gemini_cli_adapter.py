@@ -22,7 +22,7 @@ Prompt is the argument to ``-p``; response comes on stdout.
 
 Example::
 
-    >>> from src.shared.python.ai.adapters.gemini_cli_adapter import GeminiCliAdapter
+    >>> from shared.python.ai.adapters.gemini_cli_adapter import GeminiCliAdapter
     >>> adapter = GeminiCliAdapter()
     >>> ok, msg = adapter.validate_connection()
     >>> if ok:
@@ -38,20 +38,20 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
-from src.shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
-from src.shared.python.ai.exceptions import (
+from shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
+from shared.python.ai.exceptions import (
     AIConnectionError,
     AIProviderError,
     AITimeoutError,
 )
-from src.shared.python.ai.types import (
+from shared.python.ai.types import (
     AgentChunk,
     AgentResponse,
     ConversationContext,
     ProviderCapabilities,
     ProviderCapability,
 )
-from src.shared.python.logging_pkg.logging_config import get_logger
+from shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
 
