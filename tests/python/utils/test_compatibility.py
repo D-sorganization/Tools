@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 
+import compatibility as shared_compatibility
 from utils.compatibility import UTC, StrEnum, check_python_version
 
 
@@ -24,6 +25,9 @@ class TestCheckPythonVersion:
 class TestUTC:
     """Tests for UTC constant."""
 
+    def test_utc_uses_shared_compatibility_export(self) -> None:
+        assert UTC is shared_compatibility.UTC
+
     def test_utc_is_timezone(self) -> None:
         dt = datetime.now(UTC)
         assert dt.tzinfo is not None
@@ -35,6 +39,9 @@ class TestUTC:
 
 class TestStrEnum:
     """Tests for StrEnum backport."""
+
+    def test_str_enum_uses_shared_compatibility_export(self) -> None:
+        assert StrEnum is shared_compatibility.StrEnum
 
     def test_basic_enum(self) -> None:
         class Color(StrEnum):
