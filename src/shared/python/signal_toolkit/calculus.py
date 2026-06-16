@@ -541,14 +541,20 @@ def compute_tangent_line(
         TangentLine object with tangent information.
 
     Raises:
-        ValueError: If ``signal`` is ``None``.
+        ValueError: If ``signal`` is ``None`` or ``t_point`` is outside the
+            signal's time range.
     """
     # Explicit ValueError guard (not bare ``assert``) so it survives
     # ``python -O`` (issue #3182 / #3344).
     if signal is None:
         raise ValueError("signal must be provided")
-    # Clamp t_point to signal range
-    t_point = np.clip(t_point, signal.time[0], signal.time[-1])
+    start_time = float(signal.time[0])
+    end_time = float(signal.time[-1])
+    if t_point < start_time or t_point > end_time:
+        raise ValueError(
+            f"t_point must be within signal time range "
+            f"[{start_time}, {end_time}], got {t_point}"
+        )
 
     # Get signal value at point
     idx = np.searchsorted(signal.time, t_point)
