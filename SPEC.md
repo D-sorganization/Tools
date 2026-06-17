@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.550                                    |
+| **Spec Version**        | 1.1.551                                    |
 | **Last Spec Update**    | 2026-06-17                                 |
 
 ## 2. Purpose & Mission
@@ -42,7 +42,8 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   collection-time FastAPI/httpx/OpenCV dependencies (#3509), while scheduled
   and opt-in heavy/e2e workflows keep coverage reports but disable the
   repo-wide `fail_under` floor for their narrow test subset (#3510). Ops tests
-  guard both workflow contracts.
+  guard both workflow contracts and use the repository's Python 3.10-compatible
+  TOML parser fallback.
 - Movement Optimizer motion-tab slider/text controls and scroll-panel
   construction now live in `movement_optimizer.gui.motion_controls`, keeping
   `motion_tabs.py` within the fleet module-size budget while preserving the
