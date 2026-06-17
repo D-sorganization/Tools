@@ -64,7 +64,23 @@ from pydantic import BaseModel
 from pydantic import Field as PydanticField
 from simulator_client import SimulatedPLCClient
 from sqlmodel import Session, col, select
-from tools_core import scada
+
+try:
+    # Prefer the Rust-accelerated SCADA kernel when the compiled wheel is
+    # installed. It is shipped as the PyO3 ``tools_core`` extension and is not
+    # present in every environment (fresh checkout, no Rust toolchain, slim
+    # deployment image), so guard the import and fall back to the pure-Python
+    # implementation rather than failing the whole backend at import time.
+    from tools_core import scada
+except ModuleNotFoundError:
+    import scada_fallback as scada
+
+    logging.getLogger("dcs_backend.main").warning(
+        "tools_core wheel not installed; using pure-Python scada fallback. "
+        "Build the Rust extension for accelerated SCADA performance "
+        "(maturin build --release --features python,extension-module "
+        "-m rust_core/tools-core/Cargo.toml)."
+    )
 
 AlarmEngine = scada.AlarmEngine
 exponential_smoothing = scada.exponential_smoothing
