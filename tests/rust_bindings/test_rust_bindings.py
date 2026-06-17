@@ -15,11 +15,12 @@ import math
 
 import pytest
 
-# This import uses the Rust-compiled wheel built by Maturin
-tools_core = pytest.importorskip(
-    "tools_core",
-    reason="tools_core wheel not installed (run: maturin develop --features python)",
-)
+from tests.rust_bindings._tools_core_import import import_required_tools_core
+
+# This import uses the Rust-compiled wheel built by Maturin. The CI tests job
+# sets TOOLS_CORE_REQUIRED=1 for the Rust-enabled lane so missing tools_core is
+# a hard import failure there; local fallback lanes may still skip explicitly.
+tools_core = import_required_tools_core()
 
 
 class TestVector3Construction:
