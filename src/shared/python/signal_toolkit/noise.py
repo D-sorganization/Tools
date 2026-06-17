@@ -7,7 +7,7 @@ and adding disturbances to signals for simulation and testing.
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Protocol
+from typing import Any, Protocol, cast
 
 import numpy as np
 
@@ -30,6 +30,11 @@ def _validate_time_array(t: np.ndarray | None) -> np.ndarray:
     if len(t) == 0:
         raise ValueError("time array must contain at least one sample")
     return t
+
+
+def _float_array(values: Any) -> np.ndarray:
+    """Return a concrete floating ndarray for stricter NumPy type checkers."""
+    return cast(np.ndarray, np.asarray(values, dtype=float))
 
 
 class NoiseType(Enum):
@@ -123,7 +128,7 @@ class NoiseGenerator:
 
     def _generate_white_noise(self, n: int, amplitude: float) -> np.ndarray:
         """Generate Gaussian white noise."""
-        return self.rng.standard_normal(n) * amplitude
+        return _float_array(self.rng.standard_normal(n) * amplitude)
 
     def _generate_pink_noise(self, n: int, amplitude: float) -> np.ndarray:
         """Generate pink (1/f) noise using the Voss-McCartney algorithm."""
@@ -132,11 +137,11 @@ class NoiseGenerator:
         num_sources = 16
 
         # Initialize sources
-        values = np.zeros(n)
+        values = _float_array(np.zeros(n))
         max_key = 2**num_sources - 1
 
         # Running sum
-        running_sum = np.zeros(num_sources)
+        running_sum = _float_array(np.zeros(num_sources))
 
         for i in range(n):
             # Determine which sources to update
@@ -152,43 +157,47 @@ class NoiseGenerator:
             values[i] = np.sum(running_sum)
 
         # Normalize to desired amplitude
-        if np.std(values) > 0:
-            values = values / np.std(values) * amplitude
+        std = float(np.std(values))
+        if std > 0:
+            values = _float_array(values / std * amplitude)
 
         return values
 
     def _generate_brown_noise(self, n: int, amplitude: float) -> np.ndarray:
         """Generate brown (Brownian) noise - integrated white noise."""
         assert n is not None, "n must be provided"
-        white = self.rng.standard_normal(n)
-        brown = np.cumsum(white)
+        white = _float_array(self.rng.standard_normal(n))
+        brown = _float_array(np.cumsum(white))
 
         # Remove trend and normalize
-        brown = brown - np.linspace(brown[0], brown[-1], n)
-        if np.std(brown) > 0:
-            brown = brown / np.std(brown) * amplitude
+        brown = _float_array(brown - np.linspace(brown[0], brown[-1], n))
+        std = float(np.std(brown))
+        if std > 0:
+            brown = _float_array(brown / std * amplitude)
 
         return brown
 
     def _generate_blue_noise(self, n: int, amplitude: float) -> np.ndarray:
         """Generate blue noise (differentiated white noise)."""
         assert n is not None, "n must be provided"
-        white = self.rng.standard_normal(n)
-        blue = np.diff(white, prepend=white[0])
+        white = _float_array(self.rng.standard_normal(n))
+        blue = _float_array(np.diff(white, prepend=white[0]))
 
-        if np.std(blue) > 0:
-            blue = blue / np.std(blue) * amplitude
+        std = float(np.std(blue))
+        if std > 0:
+            blue = _float_array(blue / std * amplitude)
 
         return blue
 
     def _generate_violet_noise(self, n: int, amplitude: float) -> np.ndarray:
         """Generate violet noise (second derivative of white noise)."""
         assert n is not None, "n must be provided"
-        white = self.rng.standard_normal(n)
-        violet = np.diff(white, n=2, prepend=[white[0], white[0]])
+        white = _float_array(self.rng.standard_normal(n))
+        violet = _float_array(np.diff(white, n=2, prepend=[white[0], white[0]]))
 
-        if np.std(violet) > 0:
-            violet = violet / np.std(violet) * amplitude
+        std = float(np.std(violet))
+        if std > 0:
+            violet = _float_array(violet / std * amplitude)
 
         return violet
 
@@ -197,7 +206,7 @@ class NoiseGenerator:
         # Uniform in [-amplitude*sqrt(3), amplitude*sqrt(3)] to have RMS = amplitude
         assert n is not None, "n must be provided"
         half_range = amplitude * np.sqrt(3)
-        return self.rng.uniform(-half_range, half_range, n)
+        return _float_array(self.rng.uniform(-half_range, half_range, n))
 
     def _generate_impulse_noise(
         self,
@@ -207,7 +216,7 @@ class NoiseGenerator:
     ) -> np.ndarray:
         """Generate impulse (spike) noise."""
         assert n is not None, "n must be provided"
-        values = np.zeros(n)
+        values = _float_array(np.zeros(n))
         impulse_mask = self.rng.random(n) < probability
         impulse_signs = self.rng.choice([-1, 1], size=n)
         values[impulse_mask] = impulse_signs[impulse_mask] * amplitude
@@ -223,7 +232,7 @@ class NoiseGenerator:
         """Generate quantization noise (uniform within quantization step)."""
         assert n is not None, "n must be provided"
         step = 2 * amplitude / levels
-        return self.rng.uniform(-step / 2, step / 2, n)
+        return _float_array(self.rng.uniform(-step / 2, step / 2, n))
 
     def _generate_periodic_noise(
         self,
@@ -234,7 +243,7 @@ class NoiseGenerator:
     ) -> np.ndarray:
         """Generate periodic disturbance (like power line noise)."""
         assert n is not None, "n must be provided"
-        t = np.arange(n) / fs
+        t = _float_array(np.arange(n) / fs)
         # Add some harmonics for realism
         values = amplitude * np.sin(2 * np.pi * frequency * t)
         values += (
@@ -248,7 +257,7 @@ class NoiseGenerator:
             * np.sin(2 * np.pi * 3 * frequency * t)
         )  # 3rd harmonic
 
-        return values
+        return _float_array(values)
 
 
 def add_noise_to_signal(
@@ -281,7 +290,7 @@ def add_noise_to_signal(
         noise_power = signal_power / (10 ** (snr_db / 10))
         amplitude = np.sqrt(noise_power)
     elif amplitude is None:
-        amplitude = 0.1 * np.std(signal.values)
+        amplitude = 0.1 * float(np.std(signal.values))
 
     assert amplitude is not None, "amplitude must be resolved before noise generation"
     noise = generator.generate(
