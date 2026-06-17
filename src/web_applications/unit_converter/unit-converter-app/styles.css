@@ -412,10 +412,16 @@ body {
   color: var(--text-secondary);
 }
 
-.swap-button:active {
-  transform: scale(0.95);
+.swap-button:hover {
   background-color: var(--primary-color);
   border-color: var(--primary-color);
+  color: white;
+}
+
+.swap-button:active {
+  transform: scale(0.95);
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
   color: white;
 }
 
@@ -487,6 +493,10 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+.clear-button:hover {
+  background-color: rgba(37, 99, 235, 0.05);
+}
+
 .clear-button:active {
   background-color: rgba(37, 99, 235, 0.1);
 }
@@ -529,6 +539,11 @@ body {
   color: inherit;
   margin: 0;
   display: block;
+}
+
+.recent-item:hover {
+  border-color: var(--primary-color);
+  background-color: var(--surface);
 }
 
 .recent-item:active {
@@ -709,9 +724,13 @@ body {
   color: white;
 }
 
+.icon-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
 .icon-button:active {
   transform: scale(0.95);
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .icon-button svg {
