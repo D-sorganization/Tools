@@ -1,0 +1,114 @@
+# Maturin CI — pendulum_core Python extension
+#
+# Builds the `pendulum_core` Rust crate (shared double/triple/golfer pendulum
+# physics kernel) as a standalone maturin sub-app and asserts the extension
+# imports so `import pendulum_core` in
+# src/pendulum_simulator/src/double_pendulum_golf/native_backend.py resolves to
+# the native backend instead of the Python fallback.
+#
+# pendulum-core is intentionally excluded from the root Cargo workspace (it has
+# its own empty `[workspace]` table) and was built by no workflow. Worse, it had
+# no pyproject.toml, so a bare `maturin build` walked up to the parent
+# setuptools project and produced a mis-named, unimportable wheel (issue #3519).
+# Adding pendulum-core/pyproject.toml fixes the module name; this gate builds the
+# wheel, hard-fails unless `import pendulum_core` succeeds, and runs the
+# Rust<->Python parity/DbC suite non-skipped (it is `skipif HAS_NATIVE` and so
+# was previously always skipped in CI).
+#
+# Runner platforms: the d-sorg-fleet self-hosted pool spans linux, windows, and
+# macos hosts (ubuntu / windows / macos). Python versions: 3.10, 3.11, 3.12,
+# 3.13.
+
+name: Maturin — pendulum_core
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/pendulum_simulator/pendulum-core/**"
+      - "src/pendulum_simulator/tests/test_physics_native_dbc.py"
+      - "rust_core/math-primitives/**"
+      - ".github/workflows/maturin-pendulum-core.yml"
+  pull_request:
+    paths:
+      - "src/pendulum_simulator/pendulum-core/**"
+      - "src/pendulum_simulator/tests/test_physics_native_dbc.py"
+      - "rust_core/math-primitives/**"
+      - ".github/workflows/maturin-pendulum-core.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: maturin-pendulum-core-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  parity-gate:
+    name: pendulum_core build + parity gate (Python ${{ matrix.python-version }})
+    runs-on: d-sorg-fleet
+    timeout-minutes: 30
+    env:
+      CARGO_TERM_COLOR: always
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install build + test deps
+        run: python -m pip install --upgrade pip maturin "numpy>=1.24" pytest
+
+      - name: Build pendulum_core wheel
+        run: maturin build --release -m src/pendulum_simulator/pendulum-core/Cargo.toml --out dist
+
+      - name: Install the built wheel
+        shell: bash
+        run: |
+          WHEEL=$(ls dist/*.whl | head -1)
+          python -m pip install "$WHEEL"
+
+      - name: Assert the extension imports (hard fail — no silent fallback)
+        shell: bash
+        run: |
+          python - <<'PY'
+          import pendulum_core as m
+          required = {
+              "PyDoublePendulumParams", "PyGolferParams",
+              "py_double_mass_matrix", "py_golfer_mass_matrix",
+          }
+          missing = required - set(dir(m))
+          assert not missing, f"pendulum_core missing exports: {missing}"
+          print("pendulum_core OK:", sorted(required))
+          PY
+
+      - name: Assert native_backend selects the Rust backend (gate)
+        shell: bash
+        env:
+          PYTHONPATH: src/pendulum_simulator/src
+        run: |
+          python - <<'PY'
+          from double_pendulum_golf import native_backend as nb
+          assert nb._pendulum_core is not None, (
+              f"native_backend did not load pendulum_core: {nb._NATIVE_IMPORT_ERROR}"
+          )
+          print("pendulum_core backend gate OK: native loaded")
+          PY
+
+      - name: Run Rust<->Python parity/DbC suite (gate, non-skipped)
+        env:
+          PYTHONPATH: src/pendulum_simulator/src
+        run: |
+          python -m pytest \
+            src/pendulum_simulator/tests/test_physics_native_dbc.py \
+            -o addopts="" -p no:cacheprovider -v
