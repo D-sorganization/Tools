@@ -26,9 +26,14 @@ pub use watcher::{ChangeEvent, ChangeKind, FileWatcher, FileWatcherConfig, Watch
 use pyo3::prelude::*;
 
 /// PyO3 module entry point. Exposes `FileWatcher` and `ChangeEvent` to Python.
+///
+/// The compiled module is named `file_watcher_rs` (not `file_watcher`) so it
+/// does NOT collide with the pure-Python wrapper package
+/// `shared.python.file_watcher`, which dispatches to this extension. A matching
+/// name would make the wrapper import itself (issue #3520).
 #[cfg(feature = "python")]
 #[pymodule]
-fn file_watcher(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
+fn file_watcher_rs(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<python::PyFileWatcher>()?;
     m.add_class::<python::PyChangeEvent>()?;
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
