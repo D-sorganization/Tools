@@ -1,0 +1,89 @@
+# Maturin CI — file_watcher Rust extension
+#
+# Builds the `file_watcher_rs` Rust crate (cross-platform notify-based watcher
+# with debouncing + gitignore filtering) and asserts the wrapper package
+# `shared.python.file_watcher` selects the Rust backend. Previously the wrapper
+# imported ITSELF (`from shared.python.file_watcher import ...`) so the compiled
+# extension was never reached and the backend was permanently `watchdog`
+# (issue #3520). Renaming the compiled module to `file_watcher_rs` removes the
+# self-import; this gate proves the extension is actually selected.
+#
+# The job installs the built wheel and hard-fails if the rust backend is not
+# selected, so a broken/missing accelerator breaks the build instead of
+# silently falling back to watchdog.
+
+name: Maturin — file_watcher
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "rust_core/file_watcher/**"
+      - "src/shared/python/file_watcher/**"
+      - ".github/workflows/maturin-file-watcher.yml"
+  pull_request:
+    paths:
+      - "rust_core/file_watcher/**"
+      - "src/shared/python/file_watcher/**"
+      - ".github/workflows/maturin-file-watcher.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: maturin-file-watcher-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rust-backend-gate:
+    name: Build file_watcher_rs + backend-selection gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      CARGO_TERM_COLOR: always
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install build + test deps
+        run: python -m pip install --upgrade pip maturin watchdog pytest
+
+      - name: Build file_watcher_rs wheel
+        run: maturin build --release -m rust_core/file_watcher/Cargo.toml
+
+      - name: Install the built wheel
+        run: python -m pip install target/wheels/*.whl
+
+      - name: Assert the compiled module imports (hard fail — no silent skip)
+        run: |
+          python - <<'PY'
+          import file_watcher_rs as m
+          required = {"FileWatcher", "ChangeEvent"}
+          missing = required - set(dir(m))
+          assert not missing, f"file_watcher_rs missing exports: {missing}"
+          print("file_watcher_rs OK:", sorted(required))
+          PY
+
+      - name: Assert the wrapper selects the Rust backend (gate)
+        env:
+          PYTHONPATH: src:src/shared/python
+        run: |
+          python - <<'PY'
+          from shared.python.file_watcher import backend
+          got = backend()
+          assert got == "rust", f"expected rust backend, got {got!r}"
+          print("file_watcher backend gate OK:", got)
+          PY
+
+      - name: Run file_watcher test suite (gate)
+        env:
+          PYTHONPATH: src:src/shared/python
+        run: |
+          python -m pytest tests/shared/python/file_watcher \
+            -o addopts="" -p no:cacheprovider -v
