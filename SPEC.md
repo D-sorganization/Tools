@@ -53,6 +53,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   legend are now toggleable (the trace legend reserves a top strip) so they no
   longer obscure the plotted data. Shared via a `_MotionViewMixin`; legend
   control is encapsulated in `MotionAnalysisPanel` (LoD).
+- Signal Toolkit noise generators now coerce generated NumPy values through
+  concrete float arrays and resolve derived amplitudes to Python floats so the
+  shared signal noise path remains compatible with delta mypy checks while
+  preserving empty-time-array validation.
 - Movement Optimizer swingset policy search now vectorizes cyclic-control
   generation before the sequential rollout loop, reducing per-candidate Python
   callback overhead while preserving state-dependent integration. The Chain
