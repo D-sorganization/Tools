@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.551                                    |
+| **Spec Version**        | 1.1.552                                    |
 | **Last Spec Update**    | 2026-06-17                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-17 Update
 
+- CI Standard now builds and installs the `tools_core` Rust wheel in the
+  required Python 3.11 tests lane, exports `TOOLS_CORE_REQUIRED=1`, and always
+  runs `tests/rust_bindings/test_rust_bindings.py` there so the Rust binding
+  parity contract hard-fails when the native wheel is missing (#3514). Optional
+  local/non-required lanes keep the explicit import-skip fallback.
 - Full-suite nightly installs now resolve a declared `test` extra for
   collection-time FastAPI/httpx/OpenCV dependencies (#3509), while scheduled
   and opt-in heavy/e2e workflows keep coverage reports but disable the

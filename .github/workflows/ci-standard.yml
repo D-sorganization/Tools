@@ -496,6 +496,18 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
 
+      - name: Expose preinstalled Rustup
+        if: ${{ matrix.python-version == '3.11' }}
+        shell: bash
+        run: |
+          if [ -d "$HOME/.cargo/bin" ]; then
+            echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+          fi
+
+      - name: Install Rust toolchain for tools_core wheel
+        if: ${{ matrix.python-version == '3.11' }}
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
+
       - name: Purge pip cache
         run: python -m pip cache purge || true
       - name: Reject Raw Merge Conflict Markers
@@ -540,6 +552,20 @@ jobs:
           python -m pip install fastapi python-multipart
           python -m pip install httpx pytest-cov pytest-xdist pytest-benchmark pytest-qt pytest-asyncio pytest-timeout
           python -m pip install --ignore-installed "opencv-python-headless>=4.8.0"
+
+      - name: Build and install tools_core Rust wheel
+        if: ${{ matrix.python-version == '3.11' }}
+        env:
+          CARGO_HOME: ${{ github.workspace }}/.cargo-home
+          CARGO_BUILD_JOBS: "1"
+          CARGO_INCREMENTAL: "0"
+          CARGO_TERM_COLOR: always
+          RUST_MIN_STACK: "268435456"
+        run: |
+          python -m pip install maturin
+          python -m maturin build --release --manifest-path rust_core/tools-core/Cargo.toml --features python,extension-module --out dist/tools-core-wheels
+          python -m pip install dist/tools-core-wheels/*.whl --force-reinstall
+          python -c "import tools_core; v = tools_core.Vector3(1.0, 2.0, 3.0); assert v.magnitude() > 0; print('tools_core wheel verified in tests job')"
 
       - name: Configure Qt for headless CI
         run: |
@@ -636,6 +662,10 @@ jobs:
             "tests/p1am_control_system/"
             "src/p1am_control_system/backend/tests/"
           )
+          if [ "${{ matrix.python-version }}" = "3.11" ]; then
+            export TOOLS_CORE_REQUIRED=1
+            core_tests+=("tests/rust_bindings/test_rust_bindings.py")
+          fi
           if [ "${{ matrix.python-version }}" != "3.10" ] && [ "$BRANCH_NAME" != "codex/consolidate-open-prs-20260611-tools" ] && grep -q -E '^src/shared/python/sidekick/' changed_python_files.txt; then
             sidekick_runtime_tests_required=false
             if grep -q -E '^src/shared/python/sidekick/(api|calculators|data_processing|lab|notes_|selected_tab_panel|symbolic_engine|tab_context_menu|ui|utils|workspace)' changed_python_files.txt; then
