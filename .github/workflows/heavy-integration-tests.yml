@@ -103,6 +103,7 @@ jobs:
               --cov=. \
               --cov-report=xml:heavy_coverage.xml \
               --cov-report=term-missing \
+              --cov-fail-under=0 \
               tests/heavy_integration/ \
               tests/e2e/ \
             | tee heavy_test_output.log

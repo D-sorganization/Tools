@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.549                                    |
+| **Spec Version**        | 1.1.551                                    |
 | **Last Spec Update**    | 2026-06-17                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,12 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-17 Update
 
+- Full-suite nightly installs now resolve a declared `test` extra for
+  collection-time FastAPI/httpx/OpenCV dependencies (#3509), while scheduled
+  and opt-in heavy/e2e workflows keep coverage reports but disable the
+  repo-wide `fail_under` floor for their narrow test subset (#3510). Ops tests
+  guard both workflow contracts and use the repository's Python 3.10-compatible
+  TOML parser fallback.
 - Movement Optimizer motion-tab slider/text controls and scroll-panel
   construction now live in `movement_optimizer.gui.motion_controls`, keeping
   `motion_tabs.py` within the fleet module-size budget while preserving the
@@ -1058,6 +1064,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-17 | 1.1.550 | fix(ci, #3509, #3510): declare the full-suite `test` extra for collection-time FastAPI/httpx/OpenCV dependencies and keep heavy/e2e coverage reporting while disabling the repo-wide coverage floor for that narrow lane. |
 | 2026-06-16 | 1.1.545 | fix(ci, #3316): append provider-contract coverage and refresh `coverage.xml` before the coverage policy gate so tracked-package thresholds see the tests that cover exported packages. |
 | 2026-06-16 | 1.1.544 | fix(imports, #3316): add a production `file_watcher` compatibility shim to preserve bare watcher imports after removing `src/shared/python` from CI and pytest search roots. |
 | 2026-06-16 | 1.1.543 | test(imports, #3316): align GUI launcher DbC coverage with canonical `shared.python.contracts` exception identity after the shared-root removal. |
