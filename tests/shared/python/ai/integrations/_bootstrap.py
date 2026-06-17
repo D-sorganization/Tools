@@ -7,6 +7,15 @@ import sys
 import types
 from pathlib import Path
 
+# Namespace-package shims only. These give the ``src.shared.python.ai`` import
+# chain a ``__path__`` so the real submodules (``exceptions``, ``types``,
+# ``tool_registry``, the integration clients) load from disk. We deliberately do
+# NOT stub ``ai.exceptions`` or ``ai.types`` here: the real modules import
+# cleanly and other AI test modules (adapter contract, classify_error, the CLI
+# adapters) import concrete names like ``AIConnectionError``/``AgentChunk`` from
+# them. Inserting bare stubs would shadow the real modules in ``sys.modules`` for
+# the rest of the collection and break those tests (regression seen when the
+# stubs covered ``exceptions``/``types``).
 _PACKAGE_STUBS: tuple[tuple[str, str | None], ...] = (
     ("src", "src"),
     ("src.shared", "src/shared"),
@@ -15,8 +24,6 @@ _PACKAGE_STUBS: tuple[tuple[str, str | None], ...] = (
     ("src.shared.python.ai.integrations", "src/shared/python/ai/integrations"),
     ("src.shared.python.logging_pkg", None),
     ("src.shared.python.logging_pkg.logging_config", None),
-    ("src.shared.python.ai.exceptions", None),
-    ("src.shared.python.ai.types", None),
 )
 
 
@@ -25,7 +32,7 @@ def _ensure_module(name: str, rel_path: str | None, root: Path) -> types.ModuleT
     if module is None:
         module = types.ModuleType(name)
         sys.modules[name] = module
-    if rel_path is not None:
+    if rel_path is not None and not hasattr(module, "__path__"):
         module.__path__ = [str(root / rel_path)]  # type: ignore[attr-defined]
     return module
 
@@ -40,13 +47,7 @@ def bootstrap_integration_client_test(root: Path) -> None:
         _ensure_module(module_name, rel_path, root)
 
     logging_config = sys.modules["src.shared.python.logging_pkg.logging_config"]
-    logging_config.get_logger = logging.getLogger  # type: ignore[attr-defined]
-    logging_config.setup_logging = lambda *a, **kw: None  # type: ignore[attr-defined]
-
-    exceptions = sys.modules["src.shared.python.ai.exceptions"]
-    if not hasattr(exceptions, "ToolExecutionError"):
-        exceptions.ToolExecutionError = Exception  # type: ignore[attr-defined]
-
-    ai_types = sys.modules["src.shared.python.ai.types"]
-    if not hasattr(ai_types, "ToolResult"):
-        ai_types.ToolResult = dict  # type: ignore[attr-defined]
+    if not hasattr(logging_config, "get_logger"):
+        logging_config.get_logger = logging.getLogger  # type: ignore[attr-defined]
+    if not hasattr(logging_config, "setup_logging"):
+        logging_config.setup_logging = lambda *a, **kw: None  # type: ignore[attr-defined]
