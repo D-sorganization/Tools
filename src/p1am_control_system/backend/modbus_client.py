@@ -1,7 +1,9 @@
 import asyncio
 import logging
+import math
 import struct
 
+import hardware
 from models import InterlockConfig, PIDConfig, RoutingConfig
 from plc_interface import BasePLCClient
 from pymodbus.client import AsyncModbusTcpClient
@@ -11,23 +13,41 @@ logger = logging.getLogger("dcs_backend.modbus_client")
 
 
 def registers_to_float(low: int, high: int) -> float:
-    """Convert two 16-bit registers to a 32-bit float (IEEE-754)."""
-    try:
-        packed = struct.pack("<HH", low, high)
-        return float(struct.unpack("<f", packed)[0])
-    except Exception as e:
-        logger.error(f"Error unpacking registers to float: {e}")
-        return 0.0
+    """Convert two 16-bit registers to a 32-bit float (IEEE-754).
+
+    DbC: registers are 16-bit unsigned ints. Inputs are validated rather than
+    masking a decode error as 0.0 — on a control system a silently-zeroed
+    feedback is indistinguishable from a real zero. A malformed read surfaces
+    to the caller (read_tags/read_routing already handle it by dropping the
+    scan), instead of poisoning a single tag with a fake zero.
+
+    Raises:
+        TypeError: If low/high are not ints.
+        ValueError: If low/high are outside [0, 65535].
+    """
+    if not isinstance(low, int) or not isinstance(high, int):
+        raise TypeError("registers must be ints")
+    if not (0 <= low <= 0xFFFF and 0 <= high <= 0xFFFF):
+        raise ValueError(f"registers out of 16-bit range: {low}, {high}")
+    return float(struct.unpack("<f", struct.pack("<HH", low, high))[0])
 
 
 def float_to_registers(val: float) -> list[int]:
-    """Convert a 32-bit float to two 16-bit registers (IEEE-754)."""
-    try:
-        packed = struct.pack("<f", val)
-        return list(struct.unpack("<HH", packed))
-    except Exception as e:
-        logger.error(f"Error packing float to registers: {e}")
-        return [0, 0]
+    """Convert a 32-bit float to two 16-bit registers (IEEE-754).
+
+    DbC: this is on the command/write path, so a non-finite value is rejected
+    rather than silently written as 0 (a bad command must never look like a
+    deliberate zero output).
+
+    Raises:
+        TypeError: If ``val`` is not numeric.
+        ValueError: If ``val`` is NaN or infinite.
+    """
+    if not isinstance(val, int | float) or isinstance(val, bool):
+        raise TypeError(f"val must be numeric, got {type(val).__name__}")
+    if not math.isfinite(val):
+        raise ValueError(f"val must be finite, got {val}")
+    return list(struct.unpack("<HH", struct.pack("<f", float(val))))
 
 
 class AsyncModbusManager(BasePLCClient):
@@ -40,15 +60,15 @@ class AsyncModbusManager(BasePLCClient):
         self.client: AsyncModbusTcpClient | None = None
         self._connected = False
 
-        # Configurable hardware memory mappings for agnostic flexibility
-        self.input_routing_address = 100
-        self.output_routing_address = 110
-        self.pid_config_address = 200
-        self.interlock_config_address = 300
-        self.save_to_flash_coil_address = 0
-        self.estop_registers_address = 0
-        self.estop_reset_coil_address = 1
-        self.tag_value_registers_address = 0
+        # Hardware register map — single source of truth in hardware.py.
+        self.input_routing_address = hardware.INPUT_ROUTING_BASE
+        self.output_routing_address = hardware.OUTPUT_ROUTING_BASE
+        self.pid_config_address = hardware.PID_CONFIG_BASE
+        self.interlock_config_address = hardware.INTERLOCK_BASE
+        self.save_to_flash_coil_address = hardware.SAVE_TO_FLASH_COIL
+        self.estop_registers_address = hardware.TAG_VALUE_BASE
+        self.estop_reset_coil_address = hardware.ESTOP_RESET_COIL
+        self.tag_value_registers_address = hardware.TAG_VALUE_BASE
 
     @property
     def connected(self) -> bool:
@@ -426,7 +446,16 @@ class AsyncModbusManager(BasePLCClient):
                 return False
 
     async def clear_estop(self) -> bool:
-        """Pulse the E-stop reset coil and return whether it was acknowledged."""
+        """Write the E-stop reset coil and return whether the write was accepted.
+
+        NOTE: the current firmware (firmware.ino) only acts on coil 0
+        (save-to-flash) and ignores coil 1, so this write is effectively a no-op
+        on the device today — the real reset is the controller un-latch in the
+        backend plus the operator re-arm. The write is kept (and succeeds at the
+        Modbus level) so a future firmware that honors a host reset coil works
+        without a backend change. If that firmware treats the coil as
+        level-sensitive, add a write-back to False here to make it a true pulse.
+        """
         async with self.lock:
             if not self._connected:
                 return False
@@ -443,6 +472,38 @@ class AsyncModbusManager(BasePLCClient):
                 return True
             except (ModbusException, Exception) as e:
                 logger.error(f"Exception during E-stop reset Modbus execution: {e}")
+                self._connected = False
+                return False
+
+    async def write_pid_setpoint(self, pid_index: int, value: float) -> bool:
+        """Write a PID loop's setpoint register pair (AO pass-through command).
+
+        Public command seam used by the power-supply service so it no longer
+        reaches into this client's private connection/lock. Address and float
+        encoding come from the shared hardware contract.
+        """
+        if not self._connected:
+            return False
+        try:
+            address = hardware.pid_setpoint_address(pid_index)
+        except ValueError as exc:
+            logger.warning("write_pid_setpoint: %s", exc)
+            return False
+        async with self.lock:
+            try:
+                resp = await self._get_client().write_registers(
+                    address=address, values=float_to_registers(value)
+                )
+                if resp.isError():
+                    logger.error(
+                        "write_pid_setpoint(%d, %f) failed: %s", pid_index, value, resp
+                    )
+                    return False
+                return True
+            except (ModbusException, Exception) as exc:
+                logger.error(
+                    "write_pid_setpoint(%d, %f) exception: %s", pid_index, value, exc
+                )
                 self._connected = False
                 return False
 

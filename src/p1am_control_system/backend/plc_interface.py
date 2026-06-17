@@ -112,3 +112,16 @@ class BasePLCClient(abc.ABC):
             bool: True if successful, False otherwise.
         """
         pass
+
+    async def write_pid_setpoint(self, pid_index: int, value: float) -> bool:
+        """Write a PID loop's setpoint (the AO pass-through command path).
+
+        Concrete default returns False (unsupported) so existing clients that
+        don't drive PIDs keep working; the Modbus and simulator clients override
+        it. Provided as the public seam so callers (e.g. PowerSupplyService) no
+        longer reach into a client's private connection/lock to write registers.
+
+        Returns:
+            bool: True if the setpoint was written/accepted, False otherwise.
+        """
+        return False

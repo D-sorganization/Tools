@@ -166,7 +166,7 @@ export const DataCapturePanel: React.FC = () => {
             Capture continues automatically afterward.
           </p>
           <button className="btn dc-btn dc-clear" onClick={handleClear} disabled={busy}>
-            <Trash2 size={14} /> Clear cache
+            <Trash2 size={14} /> Clear Cache
           </button>
         </div>
       </div>

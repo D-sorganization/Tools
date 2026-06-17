@@ -29,6 +29,7 @@ from data_capture import (
     parse_query_bound,
 )
 from database import engine, get_session, init_db
+from defaults import default_routing_config
 from fastapi import (
     Depends,
     FastAPI,
@@ -46,8 +47,6 @@ from models import (
     AlicatMFCState,
     AlicatSetpointPayload,
     EventLog,
-    InterlockConfig,
-    PIDConfig,
     PIDTuningStepPayload,
     PlantArea,
     PlantEquipment,
@@ -112,11 +111,18 @@ class ConnectionManager:
             logger.info("WebSocket client disconnected.")
 
     async def broadcast(self, message: dict[str, Any]) -> None:
-        for connection in self.active_connections:
+        # Iterate a snapshot and prune any client whose send fails — otherwise a
+        # dead socket lingers forever and gets re-tried (and re-logged) at 10 Hz,
+        # a slow leak that degrades the loop over a long session.
+        dead: list[WebSocket] = []
+        for connection in list(self.active_connections):
             try:
                 await connection.send_json(message)
             except Exception as e:
-                logger.warning(f"Error broadcasting to WebSocket client: {e}")
+                logger.warning(f"Dropping unreachable WebSocket client: {e}")
+                dead.append(connection)
+        for connection in dead:
+            self.disconnect(connection)
 
 
 ws_manager = ConnectionManager()
@@ -153,33 +159,7 @@ alicat_manager.add_device(
 )
 
 latest_tags: dict[str, float] = {f"TAG_{i}": 0.0 for i in range(32)}
-active_config: RoutingConfig = RoutingConfig(
-    input_routing=[f"TAG_{i}" for i in range(6)],
-    output_routing=["TAG_10", "TAG_11"],
-    pids=[
-        PIDConfig(
-            pv_tag="TAG_1", cv_tag="TAG_2", setpoint=50.0, kp=1.0, ki=0.5, kd=0.1
-        ),
-        PIDConfig(
-            pv_tag="TAG_3", cv_tag="TAG_4", setpoint=30.0, kp=1.5, ki=0.2, kd=0.05
-        ),
-        PIDConfig(
-            pv_tag="TAG_5", cv_tag="TAG_6", setpoint=40.0, kp=2.0, ki=0.8, kd=0.2
-        ),
-        PIDConfig(
-            pv_tag="TAG_7", cv_tag="TAG_8", setpoint=60.0, kp=0.5, ki=0.1, kd=0.01
-        ),
-    ],
-    interlocks={
-        f"TAG_{i}": InterlockConfig(
-            lolo_limit=0.0,
-            low_limit=5.0,
-            high_limit=95.0,
-            hihi_limit=100.0,
-        )
-        for i in range(32)
-    },
-)
+active_config: RoutingConfig = default_routing_config()
 
 
 def load_tags_into_plc_clients(session: Session) -> None:
