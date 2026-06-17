@@ -1,10 +1,12 @@
 # Maturin CI — file_watcher Rust extension
 #
 # Builds the `file_watcher_rs` Rust crate (cross-platform notify-based watcher
-# with debouncing + gitignore filtering) across all supported platforms
-# (windows, ubuntu/linux, macos) and Python versions (3.10, 3.11, 3.12, 3.13),
-# then asserts the wrapper package `shared.python.file_watcher` selects the Rust
-# backend.
+# with debouncing + gitignore filtering) on the local fleet across supported
+# Python versions (3.10, 3.11, 3.12, 3.13), then asserts the wrapper package
+# `shared.python.file_watcher` selects the Rust backend. The repo's
+# local-only runner guard forbids hosted ubuntu/windows/macos runners; broad
+# platform packaging remains covered by the existing allowlisted maturin
+# workflow.
 #
 # Previously the wrapper imported ITSELF
 # (`from shared.python.file_watcher import ...`) so the compiled extension was
@@ -36,8 +38,8 @@ concurrency:
 
 jobs:
   rust-backend-gate:
-    name: file_watcher_rs (${{ matrix.os }}, Python ${{ matrix.python-version }})
-    runs-on: ${{ matrix.os }}
+    name: file_watcher_rs (d-sorg-fleet, Python ${{ matrix.python-version }})
+    runs-on: d-sorg-fleet
     timeout-minutes: 30
     env:
       CARGO_TERM_COLOR: always
@@ -45,7 +47,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
@@ -58,7 +59,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
 
       - name: Install build + test deps
         run: python -m pip install --upgrade pip maturin watchdog pytest
