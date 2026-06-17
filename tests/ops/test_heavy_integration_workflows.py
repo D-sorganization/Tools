@@ -36,3 +36,13 @@ def test_heavy_workflows_collect_only_explicit_heavy_paths() -> None:
         assert "tests/heavy_integration/" in test_script, workflow_path.name
         assert "tests/e2e/" in test_script, workflow_path.name
         assert "    tests/ \\" not in test_script, workflow_path.name
+
+
+def test_heavy_workflows_report_coverage_without_global_floor() -> None:
+    for workflow_path in HEAVY_WORKFLOWS:
+        test_script = _step_script(workflow_path, "Run heavy integration tests")
+
+        assert "--cov=." in test_script, workflow_path.name
+        assert "--cov-report=xml:heavy_coverage.xml" in test_script, workflow_path.name
+        assert "--cov-report=term-missing" in test_script, workflow_path.name
+        assert "--cov-fail-under=0" in test_script, workflow_path.name
