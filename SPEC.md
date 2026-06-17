@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.560                                    |
+| **Spec Version**        | 1.1.561                                    |
 | **Last Spec Update**    | 2026-06-17                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-17 Update
 
+- P1AM Modbus register packing, routing serialization, interlock encoding, and
+  direct tag-address lookup now live in `backend/modbus_codec.py`, keeping
+  `backend/modbus_client.py` below the 500 LOC file-size gate while preserving
+  the client I/O contract and adding pure codec regression coverage.
 - P1AM historian retention and export helpers now live in `data_capture.py`
   instead of the FastAPI shell, keeping `backend/main.py` within the module-size
   budget while preserving bounded trend queries, streaming CSV export, and
@@ -1101,6 +1105,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-17 | 1.1.561 | refactor(p1am): split pure Modbus register codec helpers out of `backend/modbus_client.py`, add codec regression coverage, and declare `pymodbus` in the test extra used by backend collection. |
 | 2026-06-17 | 1.1.560 | test(ai, #3521): share the isolated AI integration-client bootstrap across Affine, Linear, Notion, and Obsidian tests, align adapter-factory credential tests with the canonical `shared.python.chat_contracts.credentials` import path, and allowlist the bootstrap helper for the changed-test assertion gate. |
 | 2026-06-17 | 1.1.559 | refactor(p1am, #3518): tighten endpoint prose in the FastAPI shell so `backend/main.py` stays below the module-size ratchet after merging the SCADA fallback branch, without changing bounded trend or streaming export behavior. |
 | 2026-06-17 | 1.1.558 | refactor(p1am, #3518): move historian retention, tag parsing, and streaming CSV export helpers into `data_capture.py` so the FastAPI shell stays below the module-size budget while preserving bounded trend queries and capture retention behavior. |

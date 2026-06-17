@@ -1,53 +1,26 @@
 import asyncio
 import logging
-import math
-import struct
 
 import hardware
-from models import InterlockConfig, PIDConfig, RoutingConfig
+from modbus_codec import (
+    INTERLOCK_CHUNK_OFFSETS,
+    TAG_COUNT,
+    decode_interlocks,
+    decode_pid_configs,
+    direct_tag_address,
+    encode_interlocks,
+    encode_pid_configs,
+    encode_tag_indices,
+    float_to_registers,
+    registers_to_float,
+    zero_float_registers,
+)
+from models import RoutingConfig
 from plc_interface import BasePLCClient
 from pymodbus.client import AsyncModbusTcpClient
 from pymodbus.exceptions import ModbusException
 
 logger = logging.getLogger("dcs_backend.modbus_client")
-
-
-def registers_to_float(low: int, high: int) -> float:
-    """Convert two 16-bit registers to a 32-bit float (IEEE-754).
-
-    DbC: registers are 16-bit unsigned ints. Inputs are validated rather than
-    masking a decode error as 0.0 — on a control system a silently-zeroed
-    feedback is indistinguishable from a real zero. A malformed read surfaces
-    to the caller (read_tags/read_routing already handle it by dropping the
-    scan), instead of poisoning a single tag with a fake zero.
-
-    Raises:
-        TypeError: If low/high are not ints.
-        ValueError: If low/high are outside [0, 65535].
-    """
-    if not isinstance(low, int) or not isinstance(high, int):
-        raise TypeError("registers must be ints")
-    if not (0 <= low <= 0xFFFF and 0 <= high <= 0xFFFF):
-        raise ValueError(f"registers out of 16-bit range: {low}, {high}")
-    return float(struct.unpack("<f", struct.pack("<HH", low, high))[0])
-
-
-def float_to_registers(val: float) -> list[int]:
-    """Convert a 32-bit float to two 16-bit registers (IEEE-754).
-
-    DbC: this is on the command/write path, so a non-finite value is rejected
-    rather than silently written as 0 (a bad command must never look like a
-    deliberate zero output).
-
-    Raises:
-        TypeError: If ``val`` is not numeric.
-        ValueError: If ``val`` is NaN or infinite.
-    """
-    if not isinstance(val, int | float) or isinstance(val, bool):
-        raise TypeError(f"val must be numeric, got {type(val).__name__}")
-    if not math.isfinite(val):
-        raise ValueError(f"val must be finite, got {val}")
-    return list(struct.unpack("<HH", struct.pack("<f", float(val))))
 
 
 class AsyncModbusManager(BasePLCClient):
@@ -194,39 +167,13 @@ class AsyncModbusManager(BasePLCClient):
                     logger.error(f"Error reading PID configurations: {pid_resp}")
                     return None
 
-                pids = []
-                for i in range(4):
-                    base = i * 10
-                    pv = pid_resp.registers[base]
-                    cv = pid_resp.registers[base + 1]
-                    sp = registers_to_float(
-                        pid_resp.registers[base + 2], pid_resp.registers[base + 3]
-                    )
-                    kp = registers_to_float(
-                        pid_resp.registers[base + 4], pid_resp.registers[base + 5]
-                    )
-                    ki = registers_to_float(
-                        pid_resp.registers[base + 6], pid_resp.registers[base + 7]
-                    )
-                    kd = registers_to_float(
-                        pid_resp.registers[base + 8], pid_resp.registers[base + 9]
-                    )
-                    pids.append(
-                        PIDConfig(
-                            pv_tag=f"TAG_{pv}",
-                            cv_tag=f"TAG_{cv}",
-                            setpoint=sp,
-                            kp=kp,
-                            ki=ki,
-                            kd=kd,
-                        )
-                    )
+                pids = decode_pid_configs(pid_resp.registers)
 
                 # 4. Read Interlocks (4 limits x 32 tags = 256 regs total,
                 # chunked under pymodbus's 125-reg single-request cap; chunk
                 # size of 64 keeps every chunk tag-aligned at 8 tags x 8 regs).
                 interlock_regs: list[int] = []
-                for offset in (0, 64, 128, 192):
+                for offset in INTERLOCK_CHUNK_OFFSETS:
                     chunk_resp = await client.read_holding_registers(
                         address=self.interlock_config_address + offset,
                         count=64,
@@ -238,33 +185,11 @@ class AsyncModbusManager(BasePLCClient):
                         return None
                     interlock_regs.extend(chunk_resp.registers)
 
-                interlocks = {}
-                for i in range(32):
-                    base = i * 8
-                    lolo = registers_to_float(
-                        interlock_regs[base], interlock_regs[base + 1]
-                    )
-                    low = registers_to_float(
-                        interlock_regs[base + 2], interlock_regs[base + 3]
-                    )
-                    high = registers_to_float(
-                        interlock_regs[base + 4], interlock_regs[base + 5]
-                    )
-                    hihi = registers_to_float(
-                        interlock_regs[base + 6], interlock_regs[base + 7]
-                    )
-                    interlocks[f"TAG_{i}"] = InterlockConfig(
-                        lolo_limit=lolo,
-                        low_limit=low,
-                        high_limit=high,
-                        hihi_limit=hihi,
-                    )
-
                 return RoutingConfig(
                     input_routing=[f"TAG_{r}" for r in input_resp.registers],
                     output_routing=[f"TAG_{r}" for r in output_resp.registers],
                     pids=pids,
-                    interlocks=interlocks,
+                    interlocks=decode_interlocks(interlock_regs),
                 )
 
             except Exception as e:
@@ -285,14 +210,8 @@ class AsyncModbusManager(BasePLCClient):
             try:
                 client = self._get_client()
 
-                def _to_idx(t: str) -> int:
-                    try:
-                        return int(t.split("_")[1])
-                    except (IndexError, ValueError):
-                        return 0
-
-                input_vals = [_to_idx(x) for x in config.input_routing]
-                output_vals = [_to_idx(x) for x in config.output_routing]
+                input_vals = encode_tag_indices(config.input_routing)
+                output_vals = encode_tag_indices(config.output_routing)
 
                 # 1. Write Input routing
                 resp = await client.write_registers(
@@ -313,14 +232,7 @@ class AsyncModbusManager(BasePLCClient):
                     return False
 
                 # 3. Write PID Config
-                pid_regs = []
-                for pid in config.pids:
-                    pid_regs.append(_to_idx(pid.pv_tag))
-                    pid_regs.append(_to_idx(pid.cv_tag))
-                    pid_regs.extend(float_to_registers(pid.setpoint))
-                    pid_regs.extend(float_to_registers(pid.kp))
-                    pid_regs.extend(float_to_registers(pid.ki))
-                    pid_regs.extend(float_to_registers(pid.kd))
+                pid_regs = encode_pid_configs(config.pids)
 
                 resp = await client.write_registers(
                     address=self.pid_config_address,
@@ -331,27 +243,12 @@ class AsyncModbusManager(BasePLCClient):
                     return False
 
                 # 4. Write Interlock Config
-                interlock_regs = []
-                for i in range(32):
-                    tag_name = f"TAG_{i}"
-                    interlock = config.interlocks.get(
-                        tag_name,
-                        InterlockConfig(
-                            lolo_limit=0.0,
-                            low_limit=5.0,
-                            high_limit=95.0,
-                            hihi_limit=100.0,
-                        ),
-                    )
-                    interlock_regs.extend(float_to_registers(interlock.lolo_limit))
-                    interlock_regs.extend(float_to_registers(interlock.low_limit))
-                    interlock_regs.extend(float_to_registers(interlock.high_limit))
-                    interlock_regs.extend(float_to_registers(interlock.hihi_limit))
+                interlock_regs = encode_interlocks(config.interlocks)
 
                 # write_multiple_registers (0x10) is capped at 123 regs per
                 # request, so chunk the 256-reg interlock block into 4 writes
                 # of 64 regs (tag-aligned).
-                for offset in (0, 64, 128, 192):
+                for offset in INTERLOCK_CHUNK_OFFSETS:
                     resp = await client.write_registers(
                         address=self.interlock_config_address + offset,
                         values=interlock_regs[offset : offset + 64],
@@ -425,11 +322,9 @@ class AsyncModbusManager(BasePLCClient):
                         )
 
                 # Zero all tag values (covers any directly-driven, non-PID tag).
-                zeros: list[int] = []
-                for _ in range(32):
-                    zeros.extend(float_to_registers(0.0))
                 resp = await client.write_registers(
-                    address=self.estop_registers_address, values=zeros
+                    address=self.estop_registers_address,
+                    values=zero_float_registers(TAG_COUNT),
                 )
                 if resp.isError():
                     all_ok = False
@@ -512,24 +407,8 @@ class AsyncModbusManager(BasePLCClient):
 
         Supports dynamic tags by name or fallback to 'TAG_idx' format.
         """
-        tag_idx: int | None = None
-        if tag_name.startswith("TAG_"):
-            try:
-                tag_idx = int(tag_name.split("_")[1])
-            except (ValueError, IndexError):
-                pass
-
-        # Fallback register address or dynamically look up
-        # from active_config if possible
-        address = None
-
-        if tag_idx is not None and (0 <= tag_idx < 32):
-            address = tag_idx * 2
-        elif hasattr(self, "tag_map") and tag_name in self.tag_map:
-            tag_def = self.tag_map[tag_name]
-            if tag_def.register_type == "V" and tag_def.register_num is not None:
-                address = tag_def.register_num
-
+        tag_map = getattr(self, "tag_map", None)
+        address = direct_tag_address(tag_name, tag_map)
         if address is None:
             logger.error(
                 f"Invalid tag name or no mapped register for write: {tag_name}"

@@ -145,6 +145,7 @@ test = [
     "fastapi>=0.100.0",
     "httpx>=0.25.0",
     "opencv-python-headless>=4.8.0",
+    "pymodbus>=3.0.0",
     "python-multipart>=0.0.7",
 ]
 # Development tools
