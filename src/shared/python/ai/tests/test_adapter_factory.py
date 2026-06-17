@@ -126,8 +126,8 @@ class TestAdapterFactory:
         mock_mgr.get_api_key.return_value = "sk-from-keyring"
 
         # Patch the import inside _resolve_api_key by intercepting builtins.
-        # AdapterFactory depends on the standalone contract package, not the
-        # chat UI compatibility shim, so AI remains independent of chat.
+        # AdapterFactory depends on the shared contract package, not the chat UI
+        # compatibility shim, so AI remains independent of chat.
         original_import = (
             __builtins__.__import__
             if hasattr(__builtins__, "__import__")
@@ -135,7 +135,7 @@ class TestAdapterFactory:
         )
 
         def mock_import(name: str, *args: object, **kwargs: object) -> object:
-            if name == "chat_contracts.credentials":
+            if name == "shared.python.chat_contracts.credentials":
                 mod = MagicMock()
                 mod.CredentialManager.return_value = mock_mgr
                 return mod
@@ -156,8 +156,8 @@ class TestAdapterFactory:
         )
 
         def mock_import(name: str, *args: object, **kwargs: object) -> object:
-            if name == "chat_contracts.credentials":
-                raise ImportError("no chat_contracts.credentials")
+            if name == "shared.python.chat_contracts.credentials":
+                raise ImportError("no shared.python.chat_contracts.credentials")
             return original_import(name, *args, **kwargs)  # type: ignore
 
         with (

@@ -5,8 +5,10 @@ tests/**/__init__.py
 tests/conftest.py
 tests/**/conftest.py
 tests/_import_contract_bootstrap.py
+tests/shared/python/ai/integrations/_bootstrap.py
 tests/rust_bindings/_tools_core_import.py
 tests/helpers/numerical.py
+tests/shared/python/ai/integrations/_bootstrap.py
 # Vendored Movement Optimizer sub-app support files (migrated from D-sorganization/Movement_Optimizer; Tools#3407)
 src/movement_optimizer/tests/__init__.py
 src/movement_optimizer/tests/conftest.py
