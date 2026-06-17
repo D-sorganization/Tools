@@ -75,22 +75,25 @@ class AdapterLifecycleManager(QObject):
         return None
 
     def _build_ollama(self, settings: AISettings) -> Any:
-        try:
-            from shared.python.ai.adapters.rust_adapter import RustAgentAdapter
+        from shared.python.ai.adapters.rust_adapter import RustAgentAdapter
 
-            adapter = RustAgentAdapter(
-                api_key="ollama",  # pragma: allowlist secret
-                base_url=settings.ollama_host,
-                model=settings.model,
-                chat_path="/v1/chat/completions",
-                embed_path="/v1/embeddings",
-            )
+        # Degrade gracefully: try_create returns None (rather than raising)
+        # when the ai_backend Rust wheel is not installed, so a missing wheel
+        # transparently falls back to the pure-Python Ollama adapter.
+        adapter = RustAgentAdapter.try_create(
+            api_key="ollama",  # pragma: allowlist secret
+            base_url=settings.ollama_host,
+            model=settings.model,
+            chat_path="/v1/chat/completions",
+            embed_path="/v1/embeddings",
+        )
+        if adapter is not None:
             self.system_message.emit("🚀 Using high-performance Rust AI backend.")
             return adapter
-        except ImportError:
-            from shared.python.ai.adapters.ollama_adapter import OllamaAdapter
 
-            return OllamaAdapter(host=settings.ollama_host, model=settings.model)
+        from shared.python.ai.adapters.ollama_adapter import OllamaAdapter
+
+        return OllamaAdapter(host=settings.ollama_host, model=settings.model)
 
     @staticmethod
     def _build_openai(settings: AISettings) -> Any:

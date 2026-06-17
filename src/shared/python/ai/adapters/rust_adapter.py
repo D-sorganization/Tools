@@ -20,8 +20,47 @@ logger = logging.getLogger(__name__)
 _WHEEL_MISSING_HINT = (
     "ai_backend Rust extension is not installed. "
     "Build it from the repo root with: "
-    "`cd rust_core/ai_backend && maturin develop --features python`."
+    "`cd rust_core/ai_backend && maturin develop --features python`. "
+    "See docs/development/rust_distribution.md."
 )
+
+
+class RustBackendUnavailableError(ImportError):
+    """Raised when the ``ai_backend`` Rust extension wheel is not installed.
+
+    Subclasses :class:`ImportError` so existing consumers that catch
+    ``ImportError`` (and degrade to a pure-Python adapter) keep working, while
+    callers that want a typed, self-documenting unavailable-state can catch
+    this specifically. Prefer :func:`ai_backend_available` /
+    :meth:`RustAgentAdapter.try_create` to avoid exception-driven control flow.
+    """
+
+
+def ai_backend_available() -> bool:
+    """Return ``True`` when the ``ai_backend`` Rust extension can be imported.
+
+    Mirrors the module-level availability probe used by other Tools Rust
+    facades (e.g. ``data_processor.rust_engine``). The spec lookup is performed
+    on each call (rather than cached) so a wheel installed mid-process — as the
+    build-on-install flow does — is picked up without restarting the
+    interpreter, and so test monkeypatches of ``sys.modules`` take effect.
+    """
+    import importlib.util
+    import sys
+
+    # Honour an explicit sys.modules entry first: ``None`` means "force
+    # unavailable" (the standard import-blocking idiom and what tests use),
+    # while a real module object means "already imported / injected".
+    if "ai_backend" in sys.modules:
+        return sys.modules["ai_backend"] is not None
+
+    try:
+        return importlib.util.find_spec("ai_backend") is not None
+    except (ImportError, ValueError):
+        # find_spec raises if a parent package is itself broken; treat any
+        # lookup failure as "unavailable" rather than letting it propagate.
+        return False
+
 
 # Wall-clock budget for the headless threaded streaming fallback. Bounds
 # the wait on the worker thread's result so a stalled Rust engine cannot
@@ -93,8 +132,18 @@ class RustAgentAdapter(BaseAgentAdapter):
     inside standard adapter methods. The wheel is built per-crate via
     ``maturin develop`` from ``rust_core/ai_backend/`` (see the crate's
     ``pyproject.toml``); if the wheel isn't installed in the active
-    environment we raise a clear ``ImportError`` rather than failing with a
-    bare ``ModuleNotFoundError`` later in the call chain.
+    environment ``__init__`` raises a typed
+    :class:`RustBackendUnavailableError` (a subclass of ``ImportError``)
+    rather than failing with a bare ``ModuleNotFoundError`` later in the call
+    chain.
+
+    Graceful degradation
+    --------------------
+    Consumers that want to fall back to a pure-Python adapter without
+    exception-driven control flow should call :meth:`try_create` (returns
+    ``None`` when the backend is unavailable) or guard with the
+    module-level :func:`ai_backend_available`. Behaviour is identical to
+    direct construction when the wheel is present.
 
     Threading model
     ---------------
@@ -146,7 +195,7 @@ class RustAgentAdapter(BaseAgentAdapter):
                 "rust_adapter: ai_backend wheel not available; using pure-Python path. "
                 "See docs/development/rust_distribution.md"
             )
-            raise ImportError(_WHEEL_MISSING_HINT) from exc
+            raise RustBackendUnavailableError(_WHEEL_MISSING_HINT) from exc
 
         self.config = ai_backend.AIConfig(
             api_key,
@@ -176,6 +225,38 @@ class RustAgentAdapter(BaseAgentAdapter):
                     "`maturin develop --features python,local-embeddings`."
                 ) from None
             self.rag = ai_backend.RagPipeline(self.memory, self.config)
+
+    # ------------------------------------------------------------------
+    # Availability / graceful construction
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def is_available() -> bool:
+        """Return ``True`` when the Rust ``ai_backend`` wheel is importable.
+
+        Lets consumers branch to a pure-Python adapter without catching an
+        exception. Equivalent to the module-level :func:`ai_backend_available`.
+        """
+        return ai_backend_available()
+
+    @classmethod
+    def try_create(cls, *args: Any, **kwargs: Any) -> RustAgentAdapter | None:
+        """Construct the adapter, or return ``None`` when the wheel is absent.
+
+        Accepts the same arguments as :meth:`__init__`. This is the preferred
+        entry point for consumers that should degrade gracefully to a
+        pure-Python adapter: a missing ``ai_backend`` wheel yields ``None``
+        instead of raising, so it cannot crash the caller. When the wheel IS
+        present, behaviour is identical to direct construction.
+        """
+        try:
+            return cls(*args, **kwargs)
+        except RustBackendUnavailableError:
+            logger.info(
+                "RustAgentAdapter unavailable (ai_backend wheel not installed); "
+                "caller should fall back to a pure-Python adapter."
+            )
+            return None
 
     # ------------------------------------------------------------------
     # Streaming
