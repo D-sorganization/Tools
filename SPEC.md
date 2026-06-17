@@ -28,7 +28,7 @@
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
 | **Spec Version**        | 1.1.549                                    |
-| **Last Spec Update**    | 2026-06-16                                 |
+| **Last Spec Update**    | 2026-06-17                                 |
 
 ## 2. Purpose & Mission
 
@@ -36,8 +36,23 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
+### 2026-06-17 Update
+
+- Movement Optimizer motion-tab slider/text controls and scroll-panel
+  construction now live in `movement_optimizer.gui.motion_controls`, keeping
+  `motion_tabs.py` within the fleet module-size budget while preserving the
+  public `NumericControl` import surface used by the tab tests.
+
 ### 2026-06-16 Update
 
+- Movement Optimizer analysis tabs (Swingset, Chain Dynamics) now give the user
+  per-element control over the animation via a "Show in animation" checklist
+  that toggles each MotionCanvas layer (grid/chain/rider/markers/forces)
+  independently, and each tab splits into Animation/Plots sub-tabs so the
+  analysis plots get a dedicated, roomy area. Plot legends and the policy-trace
+  legend are now toggleable (the trace legend reserves a top strip) so they no
+  longer obscure the plotted data. Shared via a `_MotionViewMixin`; legend
+  control is encapsulated in `MotionAnalysisPanel` (LoD).
 - Signal Toolkit noise generators now coerce generated NumPy values through
   concrete float arrays and resolve derived amplitudes to Python floats so the
   shared signal noise path remains compatible with delta mypy checks while

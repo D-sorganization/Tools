@@ -22,6 +22,7 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QPushButton,
     QScrollArea,
+    QTabWidget,
     QVBoxLayout,
     QWidget,
 )
@@ -47,16 +48,16 @@ from movement_optimizer.models.chain_forces import (
 
 from . import plot_renderer
 from .motion_analysis_panel import MotionAnalysisPanel
+from .motion_controls import NumericControl, scrollable_control_panel
 from .motion_tabs import (
     MotionCanvas,
-    NumericControl,
     _chain_overlay_scene,
-    _scrollable_control_panel,
+    _MotionViewMixin,
 )
 from .vector_overlay import OverlayScene
 
 
-class ChainDynamicsTab(QWidget):
+class ChainDynamicsTab(_MotionViewMixin, QWidget):
     """Interactive chain whip-motion analysis tab."""
 
     playbackStateChanged = pyqtSignal()  # noqa: N815 - Qt signal naming convention.
@@ -82,6 +83,7 @@ class ChainDynamicsTab(QWidget):
         )
         self._controls: dict[str, NumericControl] = {}
         self._force_toggles: dict[str, QCheckBox] = {}
+        self._layer_toggles: dict[str, QCheckBox] = {}
         self._force_fields: tuple[ChainForceField, ...] | None = None
         self._rollout: ChainRollout | None = None
         self._frame_index = 0
@@ -95,7 +97,10 @@ class ChainDynamicsTab(QWidget):
 
     def _build_ui(self) -> None:
         layout = QGridLayout(self)
-        layout.addWidget(self.canvas, 0, 0, 1, 1)
+        self.view_tabs = QTabWidget()
+        self.view_tabs.addTab(self._build_animation_view(), "Animation")
+        self.view_tabs.addTab(self._build_plots_view(), "Plots")
+        layout.addWidget(self.view_tabs, 0, 0, 2, 1)
         control_panel = QWidget()
         control_layout = QVBoxLayout(control_panel)
         control_layout.setContentsMargins(8, 0, 8, 0)
@@ -232,6 +237,8 @@ class ChainDynamicsTab(QWidget):
         self.angle_edit.editingFinished.connect(self._refresh)
         form.addRow("Segment angles", self.angle_edit)
         control_layout.addWidget(controls)
+        # The chain tab draws no articulated rider, so omit that layer.
+        control_layout.addWidget(self._build_layers_group(["grid", "chain", "markers", "forces"]))
         control_layout.addWidget(self._build_force_group())
         row = QHBoxLayout()
         simulate_button = QPushButton("Simulate Whip")
@@ -252,8 +259,7 @@ class ChainDynamicsTab(QWidget):
         control_layout.addLayout(row)
         control_layout.addWidget(self.metric_label)
         control_layout.addStretch()
-        self._control_scroll = _scrollable_control_panel(control_panel)
-        layout.addWidget(self.analysis_panel, 1, 0, 1, 1)
+        self._control_scroll = scrollable_control_panel(control_panel)
         layout.addWidget(self._control_scroll, 0, 1, 2, 1)
         layout.setColumnStretch(0, 1)
         layout.setRowStretch(0, 1)
@@ -425,6 +431,7 @@ class ChainDynamicsTab(QWidget):
         plot_renderer.plot_chain_tip_speed(
             panel.axes["tip_speed"], time_s, self._rollout.tip_speed_m_s[:count]
         )
+        self._apply_plot_legend_visibility()
         panel.draw()
 
     def _refresh_overlays(self, _state: int | None = None) -> None:

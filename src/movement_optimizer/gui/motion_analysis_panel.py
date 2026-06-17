@@ -72,6 +72,22 @@ class MotionAnalysisPanel(QWidget):
         """Reset every axis to a blank, themed state."""
         self._build_axes()
 
+    def set_legends_visible(self, visible: bool) -> None:
+        """Show or hide the legend on every axis that has one.
+
+        Encapsulates legend management so callers need not reach into the
+        figure's axes (Law of Demeter). Does not repaint; the caller draws.
+        Axes without a legend are skipped.
+        """
+        for axes in self.axes.values():
+            legend = axes.get_legend()
+            if legend is not None:
+                legend.set_visible(bool(visible))
+
+    def has_legends(self) -> bool:
+        """Return True if any axis currently carries a legend."""
+        return any(axes.get_legend() is not None for axes in self.axes.values())
+
     def draw(self) -> None:
         """Lay out and repaint the figure after the axes have been populated."""
         self.figure.tight_layout()

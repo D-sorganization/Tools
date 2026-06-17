@@ -3,11 +3,11 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from itertools import pairwise
 
 import numpy as np
-from PyQt6.QtCore import QPointF, Qt, QTimer, pyqtSignal
+from PyQt6.QtCore import QPointF, QTimer, pyqtSignal
 from PyQt6.QtGui import QColor, QPainter, QPen
 from PyQt6.QtWidgets import (
     QCheckBox,
@@ -16,13 +16,11 @@ from PyQt6.QtWidgets import (
     QGroupBox,
     QHBoxLayout,
     QLabel,
-    QLineEdit,
     QMessageBox,
     QProgressBar,
     QPushButton,
     QScrollArea,
-    QSizePolicy,
-    QSlider,
+    QTabWidget,
     QVBoxLayout,
     QWidget,
 )
@@ -52,6 +50,7 @@ from movement_optimizer.rendering import Palette, get_chart_color
 
 from . import plot_renderer
 from .motion_analysis_panel import MotionAnalysisPanel
+from .motion_controls import NumericControl, scrollable_control_panel
 from .policy_trace_canvas import PolicyTraceCanvas, refresh_policy_trace_palette
 from .policy_worker import PolicyOptimizationWorker
 from .vector_overlay import (
@@ -157,101 +156,17 @@ def _chain_overlay_scene(
     return OverlayScene(arrows=tuple(arrows))
 
 
-class NumericControl(QWidget):
-    """Slider plus typed value field without spin-box arrows."""
-
-    valueChanged = pyqtSignal(float)  # noqa: N815 - Qt signal naming convention.
-
-    def __init__(
-        self,
-        lower: float,
-        upper: float,
-        value: float,
-        *,
-        integer: bool = False,
-        decimals: int = 3,
-        steps: int = 1000,
-    ) -> None:
-        super().__init__()
-        if upper <= lower:
-            raise ValueError("upper must be greater than lower")
-        self._lower = lower
-        self._upper = upper
-        self._integer = integer
-        self._decimals = 0 if integer else decimals
-        self._steps = max(1, int(upper - lower) if integer else steps)
-        self._value = self._coerce(value)
-
-        layout = QHBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(8)
-        self.setMinimumHeight(32)
-        self.slider = QSlider(Qt.Orientation.Horizontal)
-        self.slider.setRange(0, self._steps)
-        self.slider.setTracking(False)
-        self.slider.setMinimumHeight(28)
-        self.slider.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        self.edit = QLineEdit()
-        self.edit.setFixedWidth(88)
-        self.edit.setMinimumHeight(28)
-        self.edit.setAlignment(Qt.AlignmentFlag.AlignRight)
-        layout.addWidget(self.slider, stretch=1)
-        layout.addWidget(self.edit)
-
-        self.slider.valueChanged.connect(self._on_slider_changed)
-        self.edit.editingFinished.connect(self._on_text_changed)
-        self._sync_widgets()
-
-    def value(self) -> float:
-        return self._value
-
-    def set_value(self, value: float) -> None:
-        new_value = self._coerce(value)
-        if new_value == self._value:
-            self._sync_widgets()
-            return
-        self._value = new_value
-        self._sync_widgets()
-        self.valueChanged.emit(self._value)
-
-    def _coerce(self, value: float) -> float:
-        bounded = min(max(float(value), self._lower), self._upper)
-        return float(round(bounded)) if self._integer else bounded
-
-    def _value_to_slider(self, value: float) -> int:
-        ratio = (value - self._lower) / (self._upper - self._lower)
-        return round(ratio * self._steps)
-
-    def _slider_to_value(self, position: int) -> float:
-        ratio = position / self._steps
-        return self._coerce(self._lower + ratio * (self._upper - self._lower))
-
-    def _sync_widgets(self) -> None:
-        slider_value = self._value_to_slider(self._value)
-        if self.slider.value() != slider_value:
-            self.slider.blockSignals(True)
-            self.slider.setValue(slider_value)
-            self.slider.blockSignals(False)
-        text = f"{int(self._value)}" if self._integer else f"{self._value:.{self._decimals}f}"
-        if self.edit.text() != text:
-            self.edit.setText(text)
-
-    def _on_slider_changed(self, position: int) -> None:
-        self._value = self._slider_to_value(position)
-        self._sync_widgets()
-        self.valueChanged.emit(self._value)
-
-    def _on_text_changed(self) -> None:
-        try:
-            parsed = float(self.edit.text())
-        except ValueError:
-            self._sync_widgets()
-            return
-        self.set_value(parsed)
-
-
 class MotionCanvas(QWidget):
     """Side-view renderer for chain and articulated rider snapshots."""
+
+    #: Drawable layers, in paint order, with their display labels.
+    LAYERS: tuple[tuple[str, str], ...] = (
+        ("grid", "Grid"),
+        ("chain", "Chain"),
+        ("rider", "Rider"),
+        ("markers", "Pivot markers"),
+        ("forces", "Force vectors"),
+    )
 
     def __init__(self) -> None:
         super().__init__()
@@ -260,6 +175,24 @@ class MotionCanvas(QWidget):
         self._body_points: dict[str, tuple[float, float]] = {}
         self._overlay = OverlayScene()
         self._path_length_m = 0.5
+        self._layers: dict[str, bool] = {key: True for key, _ in self.LAYERS}
+
+    def set_layer_visible(self, name: str, visible: bool) -> None:
+        """Show or hide a single drawable layer and repaint.
+
+        Raises ValueError for an unknown layer name so wiring mistakes
+        surface immediately rather than silently doing nothing.
+        """
+        if name not in self._layers:
+            raise ValueError(f"unknown motion-canvas layer: {name!r}")
+        self._layers[name] = bool(visible)
+        self.update()
+
+    def is_layer_visible(self, name: str) -> bool:
+        """Return whether a drawable layer is currently visible."""
+        if name not in self._layers:
+            raise ValueError(f"unknown motion-canvas layer: {name!r}")
+        return self._layers[name]
 
     def set_scene(
         self,
@@ -284,14 +217,19 @@ class MotionCanvas(QWidget):
             return
         projector = self._projector()
         chain_points = [projector(point) for point in self._chain_nodes]
-        self._draw_grid(painter)
-        self._draw_polyline(painter, chain_points, CHAIN, 3)
-        self._draw_body(painter, projector)
-        painter.setBrush(ACCENT)
-        painter.setPen(QPen(ACCENT, 1))
-        for point in chain_points[:1] + chain_points[-1:]:
-            painter.drawEllipse(point, 5, 5)
-        self._draw_overlay(painter, projector)
+        if self._layers["grid"]:
+            self._draw_grid(painter)
+        if self._layers["chain"]:
+            self._draw_polyline(painter, chain_points, CHAIN, 3)
+        if self._layers["rider"]:
+            self._draw_body(painter, projector)
+        if self._layers["markers"]:
+            painter.setBrush(ACCENT)
+            painter.setPen(QPen(ACCENT, 1))
+            for point in chain_points[:1] + chain_points[-1:]:
+                painter.drawEllipse(point, 5, 5)
+        if self._layers["forces"]:
+            self._draw_overlay(painter, projector)
 
     def _draw_overlay(
         self,
@@ -383,17 +321,92 @@ class MotionCanvas(QWidget):
             )
 
 
-def _scrollable_control_panel(panel: QWidget) -> QScrollArea:
-    scroll_area = QScrollArea()
-    scroll_area.setWidget(panel)
-    scroll_area.setWidgetResizable(True)
-    scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-    scroll_area.setMinimumWidth(340)
-    scroll_area.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
-    return scroll_area
+class _MotionViewMixin:
+    """Shared Animation/Plots subtab scaffolding for motion-analysis tabs.
+
+    Hosts the per-element animation layer toggles, the animation/plots
+    sub-tab split, and the plot-legend visibility control. Concrete tabs
+    must provide ``self.canvas`` (a :class:`MotionCanvas`),
+    ``self.analysis_panel`` (a :class:`MotionAnalysisPanel`), and the
+    ``self._layer_toggles`` / ``self._plot_legend_toggle`` attributes
+    referenced below.
+    """
+
+    canvas: MotionCanvas
+    analysis_panel: MotionAnalysisPanel
+    _layer_toggles: dict[str, QCheckBox]
+
+    def _build_animation_view(self) -> QWidget:
+        """The animation subtab: the motion canvas with full vertical room."""
+        view = QWidget()
+        view_layout = QVBoxLayout(view)
+        view_layout.setContentsMargins(0, 0, 0, 0)
+        view_layout.addWidget(self.canvas)
+        return view
+
+    def _build_plots_view(self) -> QWidget:
+        """The plots subtab: roomy analysis plots plus appearance controls."""
+        view = QWidget()
+        view_layout = QVBoxLayout(view)
+        view_layout.setContentsMargins(0, 0, 0, 0)
+        view_layout.setSpacing(6)
+        appearance = QHBoxLayout()
+        self._plot_legend_toggle = QCheckBox("Show plot legends")
+        self._plot_legend_toggle.setChecked(True)
+        self._plot_legend_toggle.setToolTip(
+            "Show or hide the legends on the analysis plots so they do not "
+            "obscure the plotted curves."
+        )
+        self._plot_legend_toggle.stateChanged.connect(self._refresh_plot_legends)
+        appearance.addWidget(self._plot_legend_toggle)
+        appearance.addStretch()
+        view_layout.addLayout(appearance)
+        view_layout.addWidget(self.analysis_panel, stretch=1)
+        return view
+
+    def _build_layers_group(self, layer_keys: Sequence[str] | None = None) -> QGroupBox:
+        """Build the "Show in animation" checklist.
+
+        ``layer_keys`` restricts the checklist to the layers a given tab
+        actually draws (e.g. the chain tab has no articulated rider), so no
+        inert toggles are shown. Defaults to every canvas layer.
+        """
+        allowed = set(layer_keys) if layer_keys is not None else None
+        group = QGroupBox("Show in animation")
+        layout = QVBoxLayout(group)
+        layout.setSpacing(4)
+        tips = {
+            "grid": "Background reference grid.",
+            "chain": "Swing chain polyline.",
+            "rider": "Articulated rider body segments.",
+            "markers": "Anchor and seat pivot markers.",
+            "forces": "All force and torque vector overlays.",
+        }
+        for key, label in MotionCanvas.LAYERS:
+            if allowed is not None and key not in allowed:
+                continue
+            checkbox = QCheckBox(label)
+            checkbox.setChecked(self.canvas.is_layer_visible(key))
+            checkbox.setToolTip(tips.get(key, ""))
+            checkbox.stateChanged.connect(
+                lambda _state, name=key, box=checkbox: self.canvas.set_layer_visible(
+                    name, box.isChecked()
+                )
+            )
+            self._layer_toggles[key] = checkbox
+            layout.addWidget(checkbox)
+        return group
+
+    def _apply_plot_legend_visibility(self) -> None:
+        """Match analysis-plot legend visibility to the appearance toggle."""
+        self.analysis_panel.set_legends_visible(self._plot_legend_toggle.isChecked())
+
+    def _refresh_plot_legends(self, _state: int | None = None) -> None:
+        self._apply_plot_legend_visibility()
+        self.analysis_panel.draw()
 
 
-class SwingsetTab(QWidget):
+class SwingsetTab(_MotionViewMixin, QWidget):
     """Interactive swingset model tab with cyclic policy optimization."""
 
     playbackStateChanged = pyqtSignal()  # noqa: N815 - Qt signal naming convention.
@@ -419,6 +432,7 @@ class SwingsetTab(QWidget):
         )
         self._controls: dict[str, NumericControl] = {}
         self._force_toggles: dict[str, QCheckBox] = {}
+        self._layer_toggles: dict[str, QCheckBox] = {}
         self._force_history: object | None = None
         self._force_fields: tuple[SwingForceField, ...] | None = None
         self._rollout: SwingRollout | None = None
@@ -435,7 +449,10 @@ class SwingsetTab(QWidget):
 
     def _build_ui(self) -> None:
         layout = QGridLayout(self)
-        layout.addWidget(self.canvas, 0, 0, 1, 1)
+        self.view_tabs = QTabWidget()
+        self.view_tabs.addTab(self._build_animation_view(), "Animation")
+        self.view_tabs.addTab(self._build_plots_view(), "Plots")
+        layout.addWidget(self.view_tabs, 0, 0, 2, 1)
         self._control_panel_widget = QWidget()
         right_layout = QVBoxLayout(self._control_panel_widget)
         right_layout.setContentsMargins(0, 0, 0, 0)
@@ -447,13 +464,13 @@ class SwingsetTab(QWidget):
         control_layout.setSpacing(10)
         control_layout.addWidget(self._build_chain_group())
         control_layout.addWidget(self._build_body_group())
+        control_layout.addWidget(self._build_layers_group())
         control_layout.addWidget(self._build_force_group())
         control_layout.addWidget(self._build_policy_group())
         control_layout.addWidget(self._build_policy_telemetry_group())
         control_layout.addStretch()
-        self._control_scroll = _scrollable_control_panel(control_panel)
+        self._control_scroll = scrollable_control_panel(control_panel)
         right_layout.addWidget(self._control_scroll)
-        layout.addWidget(self.analysis_panel, 1, 0, 1, 1)
         layout.addWidget(self._control_panel_widget, 0, 1, 2, 1)
         layout.addWidget(self.metric_label, 2, 0, 1, 2)
         layout.setColumnStretch(0, 1)
@@ -725,7 +742,18 @@ class SwingsetTab(QWidget):
     def _build_policy_telemetry_group(self) -> QGroupBox:
         group = QGroupBox("Policy Telemetry")
         layout = QVBoxLayout(group)
+        self._trace_legend_toggle = QCheckBox("Show trace legend")
+        self._trace_legend_toggle.setChecked(self.policy_trace_canvas.legend_visible())
+        self._trace_legend_toggle.setToolTip(
+            "Show or hide the legend drawn over the policy-trace plot."
+        )
+        self._trace_legend_toggle.stateChanged.connect(
+            lambda _state: self.policy_trace_canvas.set_legend_visible(
+                self._trace_legend_toggle.isChecked()
+            )
+        )
         layout.addWidget(self.policy_trace_canvas)
+        layout.addWidget(self._trace_legend_toggle)
         layout.addWidget(self.policy_detail_label)
         return group
 
@@ -963,6 +991,7 @@ class SwingsetTab(QWidget):
         plot_renderer.plot_swing_com_height(panel.axes["com_height"], history)
         plot_renderer.plot_swing_energy(panel.axes["energy"], history)
         plot_renderer.plot_swing_com_path(panel.axes["com_path"], history)
+        self._apply_plot_legend_visibility()
         panel.draw()
 
     def _refresh_overlays(self, _state: int | None = None) -> None:
