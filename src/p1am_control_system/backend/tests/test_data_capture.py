@@ -27,6 +27,8 @@ from data_capture import (  # noqa: E402
     clear_capture,
     enforce_size_cap,
     parse_query_bound,
+    parse_tag_names,
+    stream_tag_export_csv,
 )
 from models import EventLog, TagLog  # noqa: E402
 from sqlalchemy import StaticPool  # noqa: E402
@@ -151,15 +153,41 @@ class TestParseQueryBound:
 
     def test_rejects_non_str(self) -> None:
         with pytest.raises(TypeError):
-            parse_query_bound(12345)  # type: ignore[arg-type]
+            parse_query_bound(12345)
 
     def test_rejects_bad_iso(self) -> None:
         with pytest.raises(ValueError):
             parse_query_bound("not-a-date")
 
 
+class TestExportHelpers:
+    def test_parse_tag_names_normalizes_numeric_ids(self) -> None:
+        assert parse_tag_names("1, TAG_A, ,2") == ["TAG_1", "TAG_A", "TAG_2"]
+
+    def test_parse_tag_names_rejects_non_str(self) -> None:
+        with pytest.raises(TypeError):
+            parse_tag_names(12345)
+
+    def test_stream_tag_export_csv_yields_header_and_rows(
+        self, session: Session
+    ) -> None:
+        base = _dt.datetime(2026, 1, 1, tzinfo=UTC)
+        session.add(TagLog(tag_name="TAG_0", value=1.5, timestamp=base))
+        session.add(TagLog(tag_name="TAG_1", value=2.5, timestamp=base))
+        session.commit()
+
+        statement = select(TagLog).order_by(TagLog.tag_name)
+        rows = list(stream_tag_export_csv(session.get_bind(), statement, chunk_rows=1))
+
+        assert rows[0] == "Timestamp,Tag Name,Value\r\n"
+        assert "TAG_0,1.5" in rows[1]
+        assert "TAG_1,2.5" in rows[2]
+
+
 class TestEnforceSizeCap:
-    def test_under_cap_is_noop(self, session: Session, monkeypatch) -> None:
+    def test_under_cap_is_noop(
+        self, session: Session, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         base = _dt.datetime(2026, 1, 1, tzinfo=_dt.UTC)
         for i in range(10):
             session.add(TagLog(tag_name="TAG_0", value=float(i), timestamp=base))
@@ -171,7 +199,7 @@ class TestEnforceSizeCap:
         assert capture_stats(session).total_rows == 10
 
     def test_over_cap_purges_oldest_keeps_newest(
-        self, session: Session, monkeypatch
+        self, session: Session, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         base = _dt.datetime(2026, 1, 1, tzinfo=_dt.UTC)
         # ids are monotonic with insert order; value encodes age (0=oldest).
@@ -188,7 +216,7 @@ class TestEnforceSizeCap:
 
     def test_rejects_non_session(self) -> None:
         with pytest.raises(TypeError):
-            enforce_size_cap(object(), max_bytes=1000)  # type: ignore[arg-type]
+            enforce_size_cap(object(), max_bytes=1000)
 
     def test_rejects_nonpositive_max_bytes(self, session: Session) -> None:
         with pytest.raises(ValueError):

@@ -16,9 +16,14 @@ Design notes:
 
 from __future__ import annotations
 
+import asyncio
+import csv
 import datetime as _dt
+import io
 import logging
 import os
+from collections.abc import Iterator
+from typing import Any
 
 from database import DB_FILE
 from models import EventLog, TagLog
@@ -27,6 +32,9 @@ from sqlalchemy import Engine, delete, func
 from sqlmodel import Session, col, select
 
 UTC = getattr(_dt, "UTC", _dt.timezone.utc)  # noqa: UP017
+TRENDS_MAX_POINTS = 50_000
+EXPORT_CHUNK_ROWS = 5_000
+HISTORIAN_RETENTION_INTERVAL_S = 300.0
 
 
 class CaptureStats(BaseModel):
@@ -103,6 +111,69 @@ def parse_query_bound(value: str) -> _dt.datetime:
     if parsed.tzinfo is None:
         parsed = parsed.replace(tzinfo=UTC)
     return parsed.astimezone(UTC)
+
+
+def parse_tag_names(tag_ids: str) -> list[str]:
+    """Normalize comma-separated tag ids/names for historian queries."""
+    if not isinstance(tag_ids, str):
+        raise TypeError(f"tag_ids must be a str, got {type(tag_ids).__name__}")
+    return [
+        f"TAG_{tag_id}" if tag_id.isdigit() else tag_id
+        for raw in tag_ids.split(",")
+        if (tag_id := raw.strip())
+    ]
+
+
+def stream_tag_export_csv(
+    bind: Any,
+    statement: Any,
+    *,
+    chunk_rows: int = EXPORT_CHUNK_ROWS,
+) -> Iterator[str]:
+    """Yield export CSV rows without materializing the whole result set."""
+    header = io.StringIO()
+    csv.writer(header).writerow(["Timestamp", "Tag Name", "Value"])
+    yield header.getvalue()
+    with Session(bind) as stream_db:
+        result = stream_db.exec(statement).yield_per(chunk_rows)
+        for row in result:
+            line = io.StringIO()
+            csv.writer(line).writerow(
+                [row.timestamp.isoformat(), row.tag_name, row.value]
+            )
+            yield line.getvalue()
+
+
+def historian_max_bytes() -> int:
+    """Size cap for the historian (default 2 GiB). 0 disables auto-purge."""
+    try:
+        return int(os.environ.get("P1AM_HISTORIAN_MAX_BYTES", str(2 * 1024**3)))
+    except ValueError:
+        return 2 * 1024**3
+
+
+async def historian_retention_loop(
+    *,
+    shutdown_event: asyncio.Event,
+    engine: Any,
+    logger: logging.Logger,
+    interval_s: float = HISTORIAN_RETENTION_INTERVAL_S,
+) -> None:
+    """Periodically enforce the historian size cap off the request hot path."""
+    max_bytes = historian_max_bytes()
+    if max_bytes <= 0:
+        logger.info("Historian size-cap auto-purge disabled (max_bytes<=0).")
+        return
+    logger.info("Historian retention active: cap %d bytes.", max_bytes)
+    while not shutdown_event.is_set():
+        await asyncio.sleep(interval_s)
+        if shutdown_event.is_set():
+            break
+        try:
+            with Session(engine) as session:
+                enforce_size_cap(session, max_bytes)
+        except Exception as ret_err:
+            logger.error("Historian retention sweep failed: %s", ret_err)
 
 
 def _vacuum(session: Session) -> None:

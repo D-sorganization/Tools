@@ -69,6 +69,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- CI tests now build and install the `tools_core` Rust wheel in the Python 3.11
+  lane and run a non-skippable Rust binding contract, so missing native
+  acceleration fails instead of being silently skipped (#3514).
 - `Chaotic_Pendulum`: replaced all runtime `assert` DbC checks with explicit `if not condition: raise ValueError/TypeError` to prevent silent bypass under `python -O`. Added 13 regression tests covering invalid config values, solver arguments, and state shapes (closes #2058)
 - pytest.ini: Resolved 17 test collection errors
 - UnifiedToolsLauncher.py: Removed shell=True security vulnerability

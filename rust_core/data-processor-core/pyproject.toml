@@ -1,0 +1,22 @@
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "data-processor-core"
+version = "0.1.0"
+description = "Native streaming data-plane engine for the Data Processor (Rust/PyO3)"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+]
+
+[tool.maturin]
+# Compiled module name MUST match the consumer's `import data_processor_core`
+# in src/shared/python/data_processor/rust_engine.py (issue #3516).
+module-name = "data_processor_core"
+features = ["python", "extension-module"]
+manifest-path = "Cargo.toml"

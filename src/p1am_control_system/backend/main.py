@@ -1,11 +1,8 @@
 import asyncio
-import csv
-import io
 import logging
 import math
-import os
 import time
-from collections.abc import AsyncIterator, Iterator
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 
@@ -21,12 +18,15 @@ from alicat_manager import AlicatManager, AlicatMFC
 from auth_config import require_admin_key, require_api_key, verify_operator_key
 from cors_config import resolve_cors_settings
 from data_capture import (
+    TRENDS_MAX_POINTS,
     CaptureStats,
     ClearResult,
     capture_stats,
     clear_capture,
-    enforce_size_cap,
+    historian_retention_loop,
     parse_query_bound,
+    parse_tag_names,
+    stream_tag_export_csv,
 )
 from database import engine, get_session, init_db
 from defaults import default_routing_config
@@ -63,7 +63,23 @@ from pydantic import BaseModel
 from pydantic import Field as PydanticField
 from simulator_client import SimulatedPLCClient
 from sqlmodel import Session, col, select
-from tools_core import scada
+
+try:
+    # Prefer the Rust-accelerated SCADA kernel when the compiled wheel is
+    # installed. It is shipped as the PyO3 ``tools_core`` extension and is not
+    # present in every environment (fresh checkout, no Rust toolchain, slim
+    # deployment image), so guard the import and fall back to the pure-Python
+    # implementation rather than failing the whole backend at import time.
+    from tools_core import scada
+except ModuleNotFoundError:
+    import scada_fallback as scada
+
+    logging.getLogger("dcs_backend.main").warning(
+        "tools_core wheel not installed; using pure-Python scada fallback. "
+        "Build the Rust extension for accelerated SCADA performance "
+        "(maturin build --release --features python,extension-module "
+        "-m rust_core/tools-core/Cargo.toml)."
+    )
 
 AlarmEngine = scada.AlarmEngine
 exponential_smoothing = scada.exponential_smoothing
@@ -71,21 +87,6 @@ moving_average = scada.moving_average
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("dcs_backend.main")
-
-# Query/retention tuning (env-overridable).
-TRENDS_MAX_POINTS = 50_000  # max samples returned by /api/trends
-EXPORT_CHUNK_ROWS = 5_000  # server-side cursor chunk for streaming export
-
-
-def _historian_max_bytes() -> int:
-    """Size cap for the historian (default 2 GiB). 0 disables auto-purge."""
-    try:
-        return int(os.environ.get("P1AM_HISTORIAN_MAX_BYTES", str(2 * 1024**3)))
-    except ValueError:
-        return 2 * 1024**3
-
-
-HISTORIAN_RETENTION_INTERVAL_S = 300.0  # size-cap sweep cadence
 
 plc_client = PLCFactory.create_client()
 modbus_manager = plc_client  # Compatibility alias
@@ -327,25 +328,6 @@ async def poll_plc_loop() -> None:
     logger.info("Background PLC polling loop stopped.")
 
 
-async def historian_retention_loop() -> None:
-    """Keep the historian under its size cap so a long campaign can't fill the
-    storage device (which would silently stop capture). Runs off the hot path."""
-    max_bytes = _historian_max_bytes()
-    if max_bytes <= 0:
-        logger.info("Historian size-cap auto-purge disabled (max_bytes<=0).")
-        return
-    logger.info("Historian retention active: cap %d bytes.", max_bytes)
-    while not shutdown_event.is_set():
-        await asyncio.sleep(HISTORIAN_RETENTION_INTERVAL_S)
-        if shutdown_event.is_set():
-            break
-        try:
-            with Session(engine) as session:
-                enforce_size_cap(session, max_bytes)
-        except Exception as ret_err:
-            logger.error(f"Historian retention sweep failed: {ret_err}")
-
-
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # Startup: initialize database and start PLC polling thread & Alicat manager
@@ -356,7 +338,13 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     alicat_manager.start()
     connect_task = asyncio.create_task(modbus_connect_background())
     polling_task = asyncio.create_task(poll_plc_loop())
-    retention_task = asyncio.create_task(historian_retention_loop())
+    retention_task = asyncio.create_task(
+        historian_retention_loop(
+            shutdown_event=shutdown_event,
+            engine=engine,
+            logger=logger,
+        )
+    )
     yield
     # Shutdown: signal task stop, close client connection & Alicat manager
     shutdown_event.set()
@@ -696,12 +684,7 @@ async def get_trends(
     alpha: float = 0.2,
     db: Session = Depends(get_session),  # noqa: B008
 ) -> dict[str, Any]:
-    """Fetch historical trends for a tag, optionally applying server-side smoothing.
-
-    Bounds the response to TRENDS_MAX_POINTS most-recent samples so a wide range
-    can't materialize millions of rows and OOM the backend (which would stop
-    capture). The window is reported back so the UI can flag truncation.
-    """
+    """Fetch bounded historical trends, optionally applying server-side smoothing."""
     try:
         start_dt = parse_query_bound(start_time)
         end_dt = parse_query_bound(end_time)
@@ -751,12 +734,7 @@ async def export_data(
         StreamingResponse: Streaming CSV data.
     """
     try:
-        parsed_tag_names = []
-        for tid in tag_ids.split(","):
-            tid = tid.strip()
-            if not tid:
-                continue
-            parsed_tag_names.append(f"TAG_{tid}" if tid.isdigit() else tid)
+        parsed_tag_names = parse_tag_names(tag_ids)
         start_dt = parse_query_bound(start_time)
         end_dt = parse_query_bound(end_time)
     except (TypeError, ValueError) as val_err:
@@ -773,31 +751,11 @@ async def export_data(
         .order_by(col(TagLog.timestamp).asc())
     )
 
-    # Bind the streaming session to the SAME engine the request used (honors
-    # test overrides), captured now since the generator runs after this scope.
     bind = db.get_bind()
-
-    def _row_iter() -> Iterator[str]:
-        """Stream the CSV row-by-row so a multi-million-row export never
-        materializes the whole result set (or the whole CSV) in RAM — which
-        would OOM-kill the backend on the Pi and stop capture."""
-        header = io.StringIO()
-        csv.writer(header).writerow(["Timestamp", "Tag Name", "Value"])
-        yield header.getvalue()
-        # A short-lived session with a server-side cursor (yield_per) keeps
-        # memory bounded regardless of range.
-        with Session(bind) as stream_db:
-            result = stream_db.exec(statement).yield_per(EXPORT_CHUNK_ROWS)
-            for row in result:
-                line = io.StringIO()
-                csv.writer(line).writerow(
-                    [row.timestamp.isoformat(), row.tag_name, row.value]
-                )
-                yield line.getvalue()
 
     timestamp_sec = int(datetime.now(UTC).timestamp())
     return StreamingResponse(
-        _row_iter(),
+        stream_tag_export_csv(bind, statement),
         media_type="text/csv",
         headers={
             "Content-Disposition": f"attachment; filename=tag_export_{timestamp_sec}.csv"

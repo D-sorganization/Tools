@@ -1,0 +1,101 @@
+# Maturin CI — data_processor_core Python extension
+#
+# Builds the `data_processor_core` Rust crate (native streaming data-plane
+# engine — inspect / preview / convert / scan_batch / filter_export) and asserts
+# the extension imports so `import data_processor_core` in
+# src/shared/python/data_processor_io/rust_engine.py resolves to the native
+# backend instead of the permanent pandas fallback.
+#
+# Previously the crate had only a Cargo.toml (no [tool.maturin], no
+# pyproject.toml, no #[pymodule] entry point), so no wheel was ever built and
+# `import data_processor_core` always failed (issue #3516). This gate hard-fails
+# if the extension does not import, so a broken/missing accelerator breaks the
+# build instead of silently falling back to pandas.
+#
+# Runner platforms: the d-sorg-fleet self-hosted pool spans linux, windows, and
+# macos hosts (ubuntu / windows / macos). Python versions: 3.10, 3.11, 3.12,
+# 3.13.
+
+name: Maturin — data_processor_core
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "rust_core/data-processor-core/**"
+      - "src/shared/python/data_processor_io/**"
+      - ".github/workflows/maturin-data-processor-core.yml"
+  pull_request:
+    paths:
+      - "rust_core/data-processor-core/**"
+      - "src/shared/python/data_processor_io/**"
+      - ".github/workflows/maturin-data-processor-core.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: maturin-data-processor-core-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  import-gate:
+    name: data_processor_core import gate (Python ${{ matrix.python-version }})
+    runs-on: d-sorg-fleet
+    timeout-minutes: 30
+    env:
+      CARGO_TERM_COLOR: always
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
+
+      - name: Install build + test deps
+        run: python -m pip install --upgrade pip maturin pandas pytest
+
+      - name: Build data_processor_core wheel
+        run: maturin build --release -m rust_core/data-processor-core/Cargo.toml --out dist
+
+      - name: Install the built wheel
+        shell: bash
+        run: |
+          WHEEL=$(ls dist/*.whl | head -1)
+          python -m pip install "$WHEEL"
+
+      - name: Assert the extension imports (hard fail — no silent fallback)
+        shell: bash
+        run: |
+          python - <<'PY'
+          import data_processor_core as m
+          required = {
+              "py_inspect", "py_preview", "py_convert",
+              "py_scan_batch", "py_filter_export",
+          }
+          missing = required - set(dir(m))
+          assert not missing, f"data_processor_core missing exports: {missing}"
+          print("data_processor_core OK:", sorted(required))
+          PY
+
+      - name: Assert the consumer selects the Rust backend (gate)
+        shell: bash
+        env:
+          PYTHONPATH: src
+        run: |
+          python - <<'PY'
+          from shared.python.data_processor_io import rust_engine
+          assert rust_engine._RUST_AVAILABLE, (
+              "rust_engine did not detect the data_processor_core extension"
+          )
+          print("data_processor_core backend gate OK: rust available")
+          PY
