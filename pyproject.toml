@@ -147,6 +147,21 @@ test = [
     "opencv-python-headless>=4.8.0",
     "python-multipart>=0.0.7",
 ]
+# Rust acceleration: the `tools_core` PyO3 extension (math primitives + SCADA
+# kernel). It is NOT auto-built by `pip install ud-tools` because the root
+# package uses setuptools; the extension is a separate maturin wheel. This
+# extra installs the build tool so a consumer can build + install it in one go:
+#
+#   pip install "ud-tools[rust]"
+#   maturin build --release --features python,extension-module \
+#       -m rust_core/tools-core/Cargo.toml
+#   pip install target/wheels/*.whl
+#
+# Code that uses tools_core (e.g. the P1AM backend) degrades to a pure-Python
+# fallback when the wheel is absent, so this is an optional accelerator.
+rust = [
+    "maturin>=1.0",
+]
 # Development tools
 dev = [
     "pytest>=9.0.3",

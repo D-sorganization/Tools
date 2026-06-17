@@ -541,6 +541,52 @@ jobs:
           python -m pip install httpx pytest-cov pytest-xdist pytest-benchmark pytest-qt pytest-asyncio pytest-timeout
           python -m pip install --ignore-installed "opencv-python-headless>=4.8.0"
 
+      # ── Build + install the tools_core Rust wheel ──────────────────────────
+      # The math/SCADA Rust kernel is built into a wheel here (mirroring the
+      # rust-quality-gate build) and installed into the test interpreter so the
+      # PyO3 bindings under tests/rust_bindings/ actually execute instead of
+      # being `importorskip`-skipped. This is the "build-on-install" path: a
+      # checkout that runs the test job gets the compiled extension. See
+      # docs and pyproject `tools[rust]` extra for the local equivalent.
+      - name: Expose preinstalled Rustup
+        shell: bash
+        run: |
+          if [ -d "$HOME/.cargo/bin" ]; then
+            echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+          fi
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
+
+      - name: Build + install tools_core wheel
+        env:
+          # Match the rust-quality-gate cargo settings to keep the memory-bound
+          # self-hosted fleet from OOMing during the compile.
+          CARGO_BUILD_JOBS: "1"
+          CARGO_INCREMENTAL: "0"
+          RUST_MIN_STACK: "268435456"
+        run: |
+          python -m pip install maturin
+          # tools-core is a workspace member, so maturin emits the wheel into
+          # the workspace-root target/wheels (NOT rust_core/tools-core/target).
+          maturin build --release \
+            --features python,extension-module \
+            -m rust_core/tools-core/Cargo.toml
+          python -m pip install --force-reinstall target/wheels/*.whl
+
+      - name: Assert tools_core imports (hard fail — no silent skip)
+        run: |
+          python - <<'PY'
+          import tools_core
+          from tools_core import scada
+          v = tools_core.Vector3(3.0, 4.0, 0.0)
+          assert v.magnitude() == 5.0, v.magnitude()
+          # The P1AM backend and rust_bindings tests depend on these symbols.
+          for name in ("AlarmEngine", "moving_average", "exponential_smoothing"):
+              assert hasattr(scada, name), f"tools_core.scada missing {name}"
+          print("tools_core import OK:", tools_core.__name__)
+          PY
+
       - name: Configure Qt for headless CI
         run: |
           # Use Qt offscreen platform — no X11/xcb infrastructure needed.
@@ -635,6 +681,10 @@ jobs:
             # P1AM HMI/PLC backend tests
             "tests/p1am_control_system/"
             "src/p1am_control_system/backend/tests/"
+            # Rust PyO3 binding tests — now that the tools_core wheel is built
+            # and installed above, these run for real instead of importorskip
+            # (issue #3514). They hard-fail if the extension is missing.
+            "tests/rust_bindings/"
           )
           if [ "${{ matrix.python-version }}" != "3.10" ] && [ "$BRANCH_NAME" != "codex/consolidate-open-prs-20260611-tools" ] && grep -q -E '^src/shared/python/sidekick/' changed_python_files.txt; then
             sidekick_runtime_tests_required=false

@@ -16,8 +16,9 @@ implementations when the wheel is absent.
 **Package name (Python):** `tools_core`
 
 Shared simulation kernel: math primitives (Vector3, Matrix3, Quaternion),
-physics solvers (RK4 ball-flight integration), and signal-processing kernels
-(bilateral filter, LMS/RLS adaptive filters).
+physics solvers (RK4 ball-flight integration), signal-processing kernels
+(bilateral filter, LMS/RLS adaptive filters), and the SCADA kernel
+(`tools_core.scada`: `AlarmEngine`, `moving_average`, `exponential_smoothing`).
 
 Key source files:
 
@@ -93,47 +94,55 @@ print(ai_backend.__doc__)            # should print the crate doc string
 
 ---
 
-## The CI Gap
+## Distribution Model: build-on-install
 
-**Today there is no automated wheel build in CI.**
+The fleet decision (issue #3513) is to distribute the Rust extensions via
+**build-on-install** plus **build-in-CI**, rather than publishing prebuilt
+wheels to an external index.
 
-The consequence is that `pip install tools` (or any `pip install` of downstream
-packages that depend on this repo) will install the pure-Python fallback paths
-only. Users who want Rust acceleration must run `maturin develop` manually.
+### CI builds and tests against the compiled wheel
 
-The missing workflow would need to:
-
-1. Build a maturin wheel for each `(OS, Python version)` combination.
-2. Upload the wheels as release assets or to a private PyPI index.
-3. Run the test suite against the compiled wheel (not the pure-Python path).
-
-### Required CI Workflow Spec
-
-A future `build-rust-wheels.yml` workflow (ops ticket, separate from
-CLAUDE.md-governed files) should implement:
+The `tests` job in `.github/workflows/ci-standard.yml` builds the
+`tools_core` wheel and installs it before running pytest (issue #3514):
 
 ```yaml
-matrix:
-  os: [ubuntu-latest, macos-latest, windows-latest]
-  python-version: ["3.10", "3.11", "3.12", "3.13"]
+- name: Build + install tools_core wheel
+  run: |
+    python -m pip install maturin
+    maturin build --release --features python,extension-module \
+      -m rust_core/tools-core/Cargo.toml
+    python -m pip install --force-reinstall target/wheels/*.whl
 
-steps:
-  - uses: actions/checkout@v4
-  - uses: PyO3/maturin-action@v1 # OR use cibuildwheel
-    with:
-      command: build
-      args: --release --features python
-      working-directory: rust_core/tools-core
-  # repeat for rust_core/ai_backend
-  - uses: actions/upload-artifact@v4
-    with:
-      name: wheels-${{ matrix.os }}-${{ matrix.python-version }}
-      path: target/wheels/*.whl
+- name: Assert tools_core imports (hard fail — no silent skip)
+  run: python -c "import tools_core; from tools_core import scada"
 ```
 
-Alternative: `cibuildwheel` with a `[tool.cibuildwheel]` section in each
-crate's `pyproject.toml`. Both approaches are viable; `maturin-action` is
-simpler for pure-Rust wheels without C dependencies.
+Because `tools-core` is a workspace member, maturin emits the wheel into the
+**workspace-root** `target/wheels/` (not `rust_core/tools-core/target/wheels`).
+
+The hard-fail import assertion means a missing or broken extension breaks the
+build instead of being silently `importorskip`-skipped. As a result the PyO3
+binding tests under `tests/rust_bindings/` now run for real in CI (they are in
+the always-run `core_tests` set). The separate `rust-quality-gate` job
+additionally builds the wheel + WASM package whenever Rust sources change.
+
+The `ai_backend` crate is built by `.github/workflows/maturin-ai-backend.yml`.
+
+### Installing the Rust extension locally
+
+`pip install ud-tools` installs the pure-Python fallback paths only — the root
+package is setuptools and does not auto-build the maturin extension. To get
+Rust acceleration, install the `rust` extra (which provides `maturin`) and
+build the wheel:
+
+```bash
+pip install "ud-tools[rust]"
+maturin build --release --features python,extension-module \
+    -m rust_core/tools-core/Cargo.toml
+pip install target/wheels/*.whl
+# or, for an editable in-place build during development:
+cd rust_core/tools-core && maturin develop --features python
+```
 
 ---
 
@@ -149,6 +158,7 @@ message so users know they are on the slow path:
 | `src/shared/python/signal_toolkit/bilateral_rust.py`             | `tools_core.signal.bilateral_filter`          | `ImportError` at call | Yes -- on import     |
 | `src/shared/python/signal_toolkit/adaptive_filter.py`            | `tools_core.signal.lms_filter` / `rls_filter` | NumPy loop            | Yes -- on import     |
 | `src/vessel_drafter/python/vessel_drafter/models/rust_kernel.py` | `tools_core.electrode_advisor`                | pure-Python advisor   | `DeprecationWarning` |
+| `src/p1am_control_system/backend/main.py`                        | `tools_core.scada.*`                          | `scada_fallback.py`   | Yes -- on import     |
 
 Typical speedups (when Rust wheel is available):
 
