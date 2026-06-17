@@ -7,6 +7,7 @@ and adding disturbances to signals for simulation and testing.
 from __future__ import annotations
 
 from enum import Enum
+from typing import Any, Protocol
 
 import numpy as np
 
@@ -16,6 +17,19 @@ from .core import Signal
 DEFAULT_LINE_FREQUENCY_HZ: float = 60.0
 PERIODIC_NOISE_2ND_HARMONIC: float = 0.3
 PERIODIC_NOISE_3RD_HARMONIC: float = 0.1
+
+
+class _NoiseTypeLike(Protocol):
+    value: str
+
+
+def _validate_time_array(t: np.ndarray | None) -> np.ndarray:
+    """Return a time array that satisfies public generation preconditions."""
+    if t is None:
+        raise ValueError("time array must be provided")
+    if len(t) == 0:
+        raise ValueError("time array must contain at least one sample")
+    return t
 
 
 class NoiseType(Enum):
@@ -46,9 +60,9 @@ class NoiseGenerator:
     def generate(
         self,
         t: np.ndarray,
-        noise_type: NoiseType = NoiseType.WHITE,
+        noise_type: NoiseType | _NoiseTypeLike = NoiseType.WHITE,
         amplitude: float = 1.0,
-        **kwargs,
+        **kwargs: Any,
     ) -> Signal:
         """Generate a noise signal.
 
@@ -61,7 +75,7 @@ class NoiseGenerator:
         Returns:
             Signal containing the noise.
         """
-        assert t is not None, "t must be provided"
+        t = _validate_time_array(t)
         n = len(t)
 
         if noise_type == NoiseType.WHITE:
@@ -243,7 +257,7 @@ def add_noise_to_signal(
     snr_db: float | None = None,
     amplitude: float | None = None,
     seed: int | None = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> Signal:
     """Add noise to an existing signal.
 
@@ -269,6 +283,7 @@ def add_noise_to_signal(
     elif amplitude is None:
         amplitude = 0.1 * np.std(signal.values)
 
+    assert amplitude is not None, "amplitude must be resolved before noise generation"
     noise = generator.generate(
         signal.time,
         noise_type=noise_type,
@@ -290,7 +305,7 @@ def add_noise_to_signal(
 def generate_disturbance_profile(
     t: np.ndarray,
     disturbance_type: str = "step",
-    **kwargs,
+    **kwargs: Any,
 ) -> Signal:
     """Generate a disturbance signal for simulation.
 
@@ -308,7 +323,7 @@ def generate_disturbance_profile(
     Returns:
         Signal containing the disturbance.
     """
-    assert t is not None, "t must be provided"
+    t = _validate_time_array(t)
     n = len(t)
     values = np.zeros(n)
 
@@ -397,7 +412,7 @@ class DisturbanceSimulator:
         self,
         noise_type: NoiseType = NoiseType.WHITE,
         amplitude: float = 0.1,
-        **kwargs,
+        **kwargs: Any,
     ) -> DisturbanceSimulator:
         """Add a noise component.
 
@@ -500,7 +515,7 @@ class DisturbanceSimulator:
         Returns:
             Signal with all disturbances combined.
         """
-        assert t is not None, "t must be provided"
+        t = _validate_time_array(t)
         combined = np.zeros(len(t))
 
         for dist_type, params in self.disturbances:
