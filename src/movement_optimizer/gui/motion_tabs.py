@@ -406,6 +406,11 @@ class SwingsetTab(QWidget):
         self.progress_bar = QProgressBar()
         self.policy_detail_label = QLabel("Policy not optimized.")
         self.policy_detail_label.setWordWrap(True)
+        self.autoplay_checkbox = QCheckBox("Autoplay after optimization")
+        self.autoplay_checkbox.setChecked(True)
+        self.autoplay_checkbox.setToolTip(
+            "Automatically play the optimized swingset simulation when policy search finishes."
+        )
         self.policy_trace_canvas = PolicyTraceCanvas()
         self.analysis_panel = MotionAnalysisPanel(
             ["torques", "power", "angle", "com_height", "energy", "com_path"],
@@ -501,6 +506,7 @@ class SwingsetTab(QWidget):
         self.progress_bar.setRange(0, 1)
         self.progress_bar.setValue(0)
         layout.addWidget(self.progress_bar)
+        layout.addWidget(self.autoplay_checkbox)
         layout.addWidget(self.policy_status_label)
         return toolbar
 
@@ -854,9 +860,12 @@ class SwingsetTab(QWidget):
 
     def _on_policy_success(self, result: object) -> None:
         self._set_policy_result(result)  # type: ignore[arg-type]
-        if self._play_after_policy:
+        if self._play_after_policy or self.autoplay_checkbox.isChecked():
             self.play_button.setText("Pause")
             self._timer.start(self._playback_interval_ms(DEFAULT_POLICY_DT_S))
+        else:
+            self.play_button.setText("Play")
+            self._timer.stop()
         self.playbackStateChanged.emit()
 
     def _on_policy_error(self, message: str) -> None:
