@@ -149,3 +149,26 @@ class TestMotionAnalysisPanel:
 
         with pytest.raises(ValueError, match="positive"):
             MotionAnalysisPanel(["a"], rows=0, cols=1)
+
+    def test_has_legends_reflects_axis_state(self, qapp) -> None:
+        from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
+
+        panel = MotionAnalysisPanel(["a", "b"], rows=1, cols=2)
+        assert panel.has_legends() is False
+        panel.axes["a"].plot([0, 1], [0, 1], label="series")
+        panel.axes["a"].legend()
+        assert panel.has_legends() is True
+
+    def test_set_legends_visible_toggles_only_legend_bearing_axes(self, qapp) -> None:
+        from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
+
+        panel = MotionAnalysisPanel(["a", "b"], rows=1, cols=2)
+        panel.axes["a"].plot([0, 1], [0, 1], label="series")
+        legend = panel.axes["a"].legend()
+
+        panel.set_legends_visible(False)
+        assert legend.get_visible() is False
+        panel.set_legends_visible(True)
+        assert legend.get_visible() is True
+        # The legend-free axis is simply skipped (no error).
+        assert panel.axes["b"].get_legend() is None

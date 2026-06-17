@@ -38,6 +38,14 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-16 Update
 
+- Movement Optimizer analysis tabs (Swingset, Chain Dynamics) now give the user
+  per-element control over the animation via a "Show in animation" checklist
+  that toggles each MotionCanvas layer (grid/chain/rider/markers/forces)
+  independently, and each tab splits into Animation/Plots sub-tabs so the
+  analysis plots get a dedicated, roomy area. Plot legends and the policy-trace
+  legend are now toggleable (the trace legend reserves a top strip) so they no
+  longer obscure the plotted data. Shared via a `_MotionViewMixin`; legend
+  control is encapsulated in `MotionAnalysisPanel` (LoD).
 - Movement Optimizer analysis tabs now stop barbell playback when switching
   away from exercise tabs, avoiding stale animation timers indexing the
   swingset/chain tabs. Swingset and chain force overlays cache rollout-wide

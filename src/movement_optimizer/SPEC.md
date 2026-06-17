@@ -11,7 +11,7 @@
 | License          | MIT                                                     |
 | Package Name     | `movement-optimizer`                                    |
 | Current Version  | `1.0.0`                                                 |
-| Spec Version     | `1.0.13`                                                |
+| Spec Version     | `1.0.14`                                                |
 | Last Spec Update | 2026-06-16                                              |
 
 ## 2. Purpose
@@ -30,6 +30,14 @@ Movement-Optimizer is a biomechanics trajectory optimizer for barbell exercises.
   frame.
 - Numeric sliders no longer emit continuous drag-time refreshes, and the
   Swingset optimizer action is styled as the primary command.
+- The Swingset and Chain Dynamics tabs now expose per-element animation
+  visibility: a "Show in animation" checklist toggles each MotionCanvas
+  layer (grid/chain/rider/markers/forces) independently, on top of the
+  existing force-vector filters.
+- Each tab splits into Animation and Plots sub-tabs so the analysis plots
+  get a roomy dedicated area; a "Show plot legends" control and a
+  toggleable, top-strip-reserving policy-trace legend keep legends from
+  obscuring the plotted curves.
 
 ### In Scope
 
@@ -146,6 +154,7 @@ mypy --ignore-missing-imports src/movement_optimizer/
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-06-16 | 1.0.14  | Added per-element animation layer toggles (grid/chain/rider/markers/forces) to the Swingset and Chain Dynamics tabs via a shared `_MotionViewMixin`, split each tab into Animation/Plots sub-tabs, and made plot/policy-trace legends toggleable so they no longer obscure the plotted data. `MotionAnalysisPanel.set_legends_visible`/`has_legends` encapsulate legend control (LoD).                          |
 | 2026-06-15 | 1.0.12  | Lifted the legacy `scipy<1.16` ceiling after verifying current SciPy imports `CubicSpline` cleanly, and added a dependency-contract regression so the stale cap cannot return silently.                                                                                                                                                                                                                         |
 | 2026-05-16 | 1.0.11  | Isolated nightly workflow installs into a dedicated .nightly-venv virtual environment with PIP_NO_CACHE_DIR=1 to avoid shared runner cache corruption that caused ImportError: cannot import name '\_spropack' from scipy.sparse.linalg.\_propack (#462).                                                                                                                                                     |
 | 2026-04-22 | 1.0.10  | Added GUI sidebar/playback facade methods and routed main-window mixins through them to reduce deep object traversal in animation, comparison, cancellation, and signal binding code (#272).                                                                                                                                                                                                                  |

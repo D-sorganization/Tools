@@ -33,6 +33,7 @@ from movement_optimizer.gui.motion_tabs import (
     NumericControl,
     SwingsetTab,
 )
+from movement_optimizer.gui.policy_trace_canvas import PolicyTraceCanvas
 
 
 def _wait_for_policy_worker(qapp, swingset: SwingsetTab, timeout_s: float = 10.0) -> None:
@@ -712,3 +713,90 @@ def test_motion_tab_analysis_helpers_are_safe_without_rollout(qapp) -> None:
     chain._populate_analysis_panel()  # None-guard
     chain._refresh_overlays()  # None-guard clears overlays
     assert not chain.canvas._overlay.arrows
+
+
+def test_motion_canvas_layer_visibility_toggles(qapp) -> None:
+    canvas = MotionCanvas()
+    canvas.resize(320, 240)
+    canvas.set_scene([(0.0, 0.0), (0.0, 1.0)])
+
+    for key, _label in MotionCanvas.LAYERS:
+        assert canvas.is_layer_visible(key) is True
+
+    canvas.set_layer_visible("grid", False)
+    assert canvas.is_layer_visible("grid") is False
+    canvas.grab()  # repaint with a hidden layer must not raise
+
+    canvas.set_layer_visible("grid", True)
+    assert canvas.is_layer_visible("grid") is True
+
+
+def test_motion_canvas_rejects_unknown_layer(qapp) -> None:
+    canvas = MotionCanvas()
+    with pytest.raises(ValueError):
+        canvas.set_layer_visible("bogus", False)
+    with pytest.raises(ValueError):
+        canvas.is_layer_visible("bogus")
+
+
+def test_swingset_layer_toggles_drive_canvas_visibility(qapp) -> None:
+    swingset = SwingsetTab()
+    assert set(swingset._layer_toggles) == {key for key, _ in MotionCanvas.LAYERS}
+
+    toggle = swingset._layer_toggles["forces"]
+    assert toggle.isChecked() is True
+    toggle.setChecked(False)
+    assert swingset.canvas.is_layer_visible("forces") is False
+    toggle.setChecked(True)
+    assert swingset.canvas.is_layer_visible("forces") is True
+
+
+def test_swingset_splits_animation_and_plots_into_subtabs(qapp) -> None:
+    swingset = SwingsetTab()
+    titles = [swingset.view_tabs.tabText(i) for i in range(swingset.view_tabs.count())]
+    assert titles == ["Animation", "Plots"]
+
+
+def test_swingset_plot_legend_toggle_hides_axes_legends(qapp) -> None:
+    swingset = SwingsetTab()
+    axes = swingset.analysis_panel.axes["torques"]
+    axes.plot([0, 1], [0, 1], label="series")
+    legend = axes.legend()
+
+    swingset._plot_legend_toggle.setChecked(False)
+    assert legend.get_visible() is False
+    swingset._plot_legend_toggle.setChecked(True)
+    assert legend.get_visible() is True
+
+
+def test_chain_layer_toggles_drive_canvas_visibility(qapp) -> None:
+    chain = ChainDynamicsTab()
+    # The chain tab draws no rider, so that layer is omitted from its checklist.
+    assert set(chain._layer_toggles) == {"grid", "chain", "markers", "forces"}
+
+    toggle = chain._layer_toggles["forces"]
+    assert toggle.isChecked() is True
+    toggle.setChecked(False)
+    assert chain.canvas.is_layer_visible("forces") is False
+    toggle.setChecked(True)
+    assert chain.canvas.is_layer_visible("forces") is True
+
+
+def test_chain_splits_animation_and_plots_into_subtabs(qapp) -> None:
+    chain = ChainDynamicsTab()
+    titles = [chain.view_tabs.tabText(i) for i in range(chain.view_tabs.count())]
+    assert titles == ["Animation", "Plots"]
+
+
+def test_policy_trace_legend_toggle_reserves_plot_space(qapp) -> None:
+    trace = PolicyTraceCanvas()
+    assert trace.legend_visible() is True
+    top_with_legend = trace._top_margin()
+
+    trace.set_legend_visible(False)
+    assert trace.legend_visible() is False
+    # Hiding the legend reclaims the reserved top strip for the series.
+    assert trace._top_margin() < top_with_legend
+
+    trace.resize(200, 160)
+    trace.grab()  # repaint without the legend must not raise

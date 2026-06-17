@@ -59,16 +59,34 @@ def refresh_policy_trace_palette() -> None:
 class PolicyTraceCanvas(QWidget):
     """Compact plot of policy-search score and parameter traces."""
 
+    #: Height of the strip reserved at the top for the legend so it never
+    #: paints over the plotted series.
+    _LEGEND_BAND_PX = 22
+
     def __init__(self) -> None:
         super().__init__()
         self.setMinimumHeight(160)
         self._samples: tuple[CyclicPolicyTraceSample, ...] = ()
         self._series: dict[str, np.ndarray] = {}
+        self._legend_visible = True
 
     def set_trace(self, samples: tuple[CyclicPolicyTraceSample, ...]) -> None:
         self._samples = samples
         self._series = self._build_series(samples)
         self.update()
+
+    def set_legend_visible(self, visible: bool) -> None:
+        """Show or hide the inline legend and repaint."""
+        self._legend_visible = bool(visible)
+        self.update()
+
+    def legend_visible(self) -> bool:
+        """Return whether the inline legend is currently drawn."""
+        return self._legend_visible
+
+    def _top_margin(self) -> float:
+        """Top inset for the plotted series, reserving room for the legend."""
+        return float(self._LEGEND_BAND_PX if self._legend_visible else 8)
 
     def sample_count(self) -> int:
         return len(self._samples)
@@ -90,7 +108,8 @@ class PolicyTraceCanvas(QWidget):
         self._draw_normalized_series(painter, "hip_rate_amplitude_rad_s", ARM, 1)
         self._draw_normalized_series(painter, "torso_rate_amplitude_rad_s", BODY, 1)
         self._draw_normalized_series(painter, "knee_rate_ratio", LEG, 1)
-        self._draw_legend(painter)
+        if self._legend_visible:
+            self._draw_legend(painter)
 
     def _draw_normalized_series(
         self,
@@ -108,10 +127,13 @@ class PolicyTraceCanvas(QWidget):
             normalized = np.full(values.shape, 0.5, dtype=np.float64)
         else:
             normalized = (values - lower) / (upper - lower)
+        top = self._top_margin()
+        bottom = self.height() - 8.0
+        span = max(bottom - top, 1.0)
         points = [
             QPointF(
                 8.0 + index * (self.width() - 16.0) / (values.size - 1),
-                self.height() - 8.0 - value * (self.height() - 16.0),
+                bottom - value * span,
             )
             for index, value in enumerate(normalized)
         ]
@@ -146,9 +168,7 @@ class PolicyTraceCanvas(QWidget):
         return {
             "score_m": _trace_series(samples, lambda sample: sample.score_m),
             "best_score_m": _trace_series(samples, lambda sample: sample.best_score_m),
-            "frequency_hz": _trace_series(
-                samples, lambda sample: sample.parameters.frequency_hz
-            ),
+            "frequency_hz": _trace_series(samples, lambda sample: sample.parameters.frequency_hz),
             "hip_rate_amplitude_rad_s": _trace_series(
                 samples, lambda sample: sample.parameters.hip_rate_amplitude_rad_s
             ),
