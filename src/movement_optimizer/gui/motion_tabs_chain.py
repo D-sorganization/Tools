@@ -11,7 +11,7 @@ live theme recolouring continues to work exactly as before.
 from __future__ import annotations
 
 import numpy as np
-from PyQt6.QtCore import QTimer
+from PyQt6.QtCore import QTimer, pyqtSignal
 from PyQt6.QtWidgets import (
     QCheckBox,
     QFormLayout,
@@ -27,10 +27,14 @@ from PyQt6.QtWidgets import (
 )
 
 from movement_optimizer.models.chain_dynamics import (
+    DEFAULT_BEND_DAMPING,
+    DEFAULT_COUPLING,
+    DEFAULT_DAMPING,
     ChainConfig,
     ChainRollout,
     ChainState,
     initial_catenary_angles,
+    initial_tip_kick_velocities,
     random_wadded_chain_state,
     simulate_chain_for_duration,
     steps_for_duration,
@@ -55,6 +59,8 @@ from .vector_overlay import OverlayScene
 class ChainDynamicsTab(QWidget):
     """Interactive chain whip-motion analysis tab."""
 
+    playbackStateChanged = pyqtSignal()  # noqa: N815 - Qt signal naming convention.
+
     def __init__(self) -> None:
         super().__init__()
         self.canvas = MotionCanvas()
@@ -63,6 +69,11 @@ class ChainDynamicsTab(QWidget):
         self.tie_segments = QCheckBox("Tie segment starts with sag profile")
         self.tie_segments.setChecked(True)
         self.use_degrees = QCheckBox("Use degrees for typed segment angles")
+        self.autoplay_checkbox = QCheckBox("Autoplay after simulation")
+        self.autoplay_checkbox.setChecked(True)
+        self.autoplay_checkbox.setToolTip(
+            "Automatically play the chain animation when simulation finishes."
+        )
         self.angle_edit.setMinimumHeight(28)
         self.analysis_panel = MotionAnalysisPanel(
             ["tension", "curvature", "energy", "tip_speed"],
@@ -113,27 +124,27 @@ class ChainDynamicsTab(QWidget):
             "damping",
             "Joint damping",
             0.0,
-            5.0,
-            0.08,
-            tooltip="Angular damping at each joint (energy loss).",
+            0.05,
+            DEFAULT_DAMPING,
+            tooltip="Viscous joint damping in N m s/rad.",
         )
         self._add_control(
             form,
             "bend_damping",
             "Bend damping",
             0.0,
-            5.0,
-            0.25,
-            tooltip="Damping that resists bending between adjacent links.",
+            0.05,
+            DEFAULT_BEND_DAMPING,
+            tooltip="Neighbor bend-rate damping in N m s/rad.",
         )
         self._add_control(
             form,
             "coupling",
             "Bend stiffness",
             0.0,
-            60.0,
-            18.0,
-            tooltip="Spring stiffness coupling adjacent link angles.",
+            1.0,
+            DEFAULT_COUPLING,
+            tooltip="Spring stiffness coupling adjacent link angles in N m/rad.",
         )
         self._add_control(
             form,
@@ -216,6 +227,7 @@ class ChainDynamicsTab(QWidget):
         self.use_degrees.stateChanged.connect(self._refresh_angle_placeholder)
         self.use_degrees.stateChanged.connect(self._refresh)
         form.addRow("", self.use_degrees)
+        form.addRow("", self.autoplay_checkbox)
         self._refresh_angle_placeholder()
         self.angle_edit.editingFinished.connect(self._refresh)
         form.addRow("Segment angles", self.angle_edit)
@@ -305,7 +317,7 @@ class ChainDynamicsTab(QWidget):
             if self.tie_segments.isChecked()
             else self._typed_angles(config.segment_count)
         )
-        velocities = self._value("kick") * np.sin(np.linspace(0.0, np.pi, config.segment_count))
+        velocities = initial_tip_kick_velocities(config.segment_count, self._value("kick"))
         return ChainState(angles, velocities)
 
     def _typed_angles(self, segment_count: int) -> np.ndarray:
@@ -391,6 +403,10 @@ class ChainDynamicsTab(QWidget):
             f"peak tip speed {self._rollout.tip_speed_m_s.max():.3f} m/s | "
             f"real time {self._value('duration'):.2f} s"
         )
+        if self.autoplay_checkbox.isChecked():
+            self._start_playback()
+        else:
+            self._stop_playback()
 
     def _populate_analysis_panel(self) -> None:
         if self._rollout is None:
@@ -441,16 +457,17 @@ class ChainDynamicsTab(QWidget):
         return self._force_fields[self._frame_index]
 
     def _toggle_playback(self) -> None:
+        created_rollout = self._rollout is None
         if self._rollout is None:
             self._simulate()
         if self._rollout is None:
             return
-        if self._timer.isActive():
-            self._timer.stop()
-            self.play_button.setText("Play")
+        if created_rollout and self._timer.isActive():
             return
-        self.play_button.setText("Pause")
-        self._timer.start(self._playback_interval_ms())
+        if self._timer.isActive():
+            self._stop_playback()
+            return
+        self._start_playback()
 
     def playback_toggle(self) -> None:
         self._toggle_playback()
@@ -463,6 +480,7 @@ class ChainDynamicsTab(QWidget):
         self.play_button.setText("Play")
         self._frame_index = min(self._frame_index + 1, self._rollout.positions.shape[0] - 1)
         self._render_chain_frame()
+        self.playbackStateChanged.emit()
 
     def playback_step_back(self) -> None:
         self._ensure_rollout()
@@ -472,6 +490,7 @@ class ChainDynamicsTab(QWidget):
         self.play_button.setText("Play")
         self._frame_index = max(self._frame_index - 1, 0)
         self._render_chain_frame()
+        self.playbackStateChanged.emit()
 
     def playback_rewind(self) -> None:
         self._ensure_rollout()
@@ -481,6 +500,7 @@ class ChainDynamicsTab(QWidget):
         self.play_button.setText("Play")
         self._frame_index = 0
         self._render_chain_frame()
+        self.playbackStateChanged.emit()
 
     def playback_jump_to_end(self) -> None:
         self._ensure_rollout()
@@ -490,11 +510,13 @@ class ChainDynamicsTab(QWidget):
         self.play_button.setText("Play")
         self._frame_index = self._rollout.positions.shape[0] - 1
         self._render_chain_frame()
+        self.playbackStateChanged.emit()
 
     def set_playback_speed(self, speed: float) -> None:
         self._controls["speed"].set_value(speed)
         if self._timer.isActive():
             self._timer.start(self._playback_interval_ms())
+        self.playbackStateChanged.emit()
 
     def playback_status(self) -> tuple[int, int, bool]:
         total = self._rollout.positions.shape[0] if self._rollout is not None else 0
@@ -510,6 +532,17 @@ class ChainDynamicsTab(QWidget):
         self._frame_index = (self._frame_index + 1) % self._rollout.positions.shape[0]
         self._render_chain_frame()
         self._timer.start(self._playback_interval_ms())
+        self.playbackStateChanged.emit()
+
+    def _start_playback(self) -> None:
+        self.play_button.setText("Pause")
+        self._timer.start(self._playback_interval_ms())
+        self.playbackStateChanged.emit()
+
+    def _stop_playback(self) -> None:
+        self._timer.stop()
+        self.play_button.setText("Play")
+        self.playbackStateChanged.emit()
 
     def _render_chain_frame(self) -> None:
         if self._rollout is None:

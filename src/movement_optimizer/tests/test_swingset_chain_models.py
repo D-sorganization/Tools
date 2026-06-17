@@ -13,6 +13,7 @@ from movement_optimizer.models.chain_dynamics import (
     ChainConfig,
     ChainState,
     initial_catenary_angles,
+    initial_tip_kick_velocities,
     link_midpoints,
     random_wadded_chain_state,
     simulate_chain,
@@ -34,6 +35,8 @@ from movement_optimizer.models.swingset import (
     SwingSetState,
     build_swingset_snapshot,
     constrain_swing_pose,
+    cyclic_policy_controls,
+    cyclic_pumping_policy,
     estimate_swingset_joint_torques,
     heuristic_pumping_policy,
     optimize_cyclic_policy,
@@ -111,8 +114,8 @@ def test_chain_simulation_damps_energy() -> None:
 
 
 def test_chain_bend_damping_reduces_wadded_chain_tip_speed() -> None:
-    base = ChainConfig(segment_count=8, damping=0.02, bend_damping=0.0)
-    damped = ChainConfig(segment_count=8, damping=0.02, bend_damping=2.5)
+    base = ChainConfig(segment_count=8, damping=0.0015, bend_damping=0.0)
+    damped = ChainConfig(segment_count=8, damping=0.0015, bend_damping=0.005)
     initial = ChainState(
         np.asarray([0.9, -1.1, 1.4, -0.8, 1.2, -1.3, 0.7, -0.4], dtype=np.float64),
         np.full(8, 1.8, dtype=np.float64),
@@ -123,6 +126,36 @@ def test_chain_bend_damping_reduces_wadded_chain_tip_speed() -> None:
 
     assert damped_rollout.tip_speed_m_s[-1] < base_rollout.tip_speed_m_s[-1]
     assert damped_rollout.energy_j[-1] < base_rollout.energy_j[-1]
+
+
+def test_chain_single_segment_gravity_matches_slender_rod_pendulum() -> None:
+    """One chain link behaves like a physical rod pivoted at the anchor."""
+    config = ChainConfig(
+        segment_count=1,
+        segment_length_m=0.5,
+        damping=0.0,
+        coupling=0.0,
+        bend_damping=0.0,
+    )
+    angle = 0.2
+    dt_s = 1e-4
+    state = ChainState(np.asarray([angle], dtype=np.float64), np.zeros(1, dtype=np.float64))
+
+    stepped = step_chain(config, state, dt_s=dt_s)
+
+    expected_acceleration = -(3.0 * config.gravity_m_s2 / (2.0 * config.segment_length_m)) * np.sin(
+        angle
+    )
+    observed_acceleration = stepped.angular_velocities_rad_s[0] / dt_s
+    assert observed_acceleration == pytest.approx(expected_acceleration, rel=0.02)
+
+
+def test_chain_tip_kick_velocities_increase_toward_tip() -> None:
+    velocities = initial_tip_kick_velocities(5, 2.0)
+
+    assert velocities[0] == pytest.approx(0.0)
+    assert velocities[-1] == pytest.approx(2.0)
+    assert np.all(np.diff(velocities) > 0.0)
 
 
 def test_chain_random_wadded_start_is_deterministic_and_validated() -> None:
@@ -366,6 +399,24 @@ def test_swingset_heuristic_policy_builds_amplitude() -> None:
     assert rollout.metrics.mean_seat_chain_error_m == pytest.approx(0.0)
     for snapshot in rollout.snapshots:
         np.testing.assert_allclose(snapshot.chain_nodes[0], 0.0)
+
+
+def test_cyclic_policy_controls_match_callback_policy() -> None:
+    params = CyclicPolicyParameters(
+        frequency_hz=0.7,
+        hip_rate_amplitude_rad_s=1.1,
+        torso_rate_amplitude_rad_s=0.6,
+        knee_rate_ratio=0.4,
+        phase_rad=0.25,
+    )
+    dt_s = 0.02
+    controls = cyclic_policy_controls(params, steps=8, dt_s=dt_s)
+    policy = cyclic_pumping_policy(params)
+    callback_controls = np.vstack(
+        [policy(SwingSetState.rest(), step * dt_s).vector() for step in range(8)]
+    )
+
+    np.testing.assert_allclose(controls, callback_controls)
 
 
 def test_swingset_cyclic_policy_search_selects_height_objective() -> None:
