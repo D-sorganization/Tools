@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.554                                    |
+| **Spec Version**        | 1.1.557                                    |
 | **Last Spec Update**    | 2026-06-17                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-17 Update
 
+- P1AM historian retention and export helpers now live in `data_capture.py`
+  instead of the FastAPI shell, keeping `backend/main.py` within the module-size
+  budget while preserving bounded trend queries, streaming CSV export, and
+  periodic retention enforcement (#3518).
 - Movement Optimizer's Rust parity workflow now routes through the self-hosted
   runner dispatcher, uses the fleet-pinned Rust toolchain action, and imports
   its squat fixture through the canonical movement optimizer model API so the
@@ -1074,6 +1078,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-17 | 1.1.557 | refactor(p1am, #3518): move historian retention, tag parsing, and streaming CSV export helpers into `data_capture.py` so the FastAPI shell stays below the module-size budget while preserving bounded trend queries and capture retention behavior. |
 | 2026-06-17 | 1.1.554 | fix(pendulum_core, #3519): add `pendulum-core/pyproject.toml` so maturin builds a correctly-named importable `pendulum_core` wheel (was walking up to the parent setuptools project), and add a maturin CI build + Rust<->Python parity gate. |
 | 2026-06-17 | 1.1.552 | fix(ci, movement_optimizer, #3517): route the Rust parity workflow through the self-hosted runner dispatcher, pin the Rust toolchain action to the fleet-approved commit, and import the squat fixture through `movement_optimizer.models` so the Rust wheel parity gate avoids hosted-runner and package-shadowing failures. |
 | 2026-06-17 | 1.1.550 | fix(ci, #3509, #3510): declare the full-suite `test` extra for collection-time FastAPI/httpx/OpenCV dependencies and keep heavy/e2e coverage reporting while disabling the repo-wide coverage floor for that narrow lane. |
