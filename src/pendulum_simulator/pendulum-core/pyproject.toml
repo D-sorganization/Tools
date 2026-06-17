@@ -1,0 +1,27 @@
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "pendulum-core"
+version = "0.2.0"
+description = "Shared physics kernel for the pendulum golf swing simulator (Rust/PyO3)"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+
+[project.optional-dependencies]
+dev = [
+    "numpy>=1.24",
+    "pytest>=7.0",
+]
+
+[tool.maturin]
+# Compiled module name MUST match `import pendulum_core` in
+# src/pendulum_simulator/src/double_pendulum_golf/native_backend.py (issue
+# #3519). Without this pyproject.toml maturin walked up to the parent
+# setuptools project and produced a mis-named, unimportable wheel.
+module-name = "pendulum_core"
+# The `python` feature pulls in pyo3 with extension-module linkage (see
+# Cargo.toml). `default = ["parallel"]` stays active for rayon.
+features = ["python"]
+manifest-path = "Cargo.toml"

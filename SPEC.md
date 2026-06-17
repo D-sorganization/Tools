@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.553                                    |
+| **Spec Version**        | 1.1.555                                    |
 | **Last Spec Update**    | 2026-06-17                                 |
 
 ## 2. Purpose & Mission
@@ -1079,7 +1079,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-06-17 | 1.1.553 | fix(ci, tools_core, #3514): build and install the `tools_core` Rust wheel in the required Python 3.11 CI tests lane, export `TOOLS_CORE_REQUIRED=1`, and hard-fail Rust binding parity when the native wheel is missing. |
+| 2026-06-17 | 1.1.555 | fix(ci, tools_core, #3514): build and install the `tools_core` Rust wheel in the required Python 3.11 CI tests lane, export `TOOLS_CORE_REQUIRED=1`, and hard-fail Rust binding parity when the native wheel is missing. |
+| 2026-06-17 | 1.1.554 | fix(pendulum_core, #3519): add `pendulum-core/pyproject.toml` so maturin builds a correctly-named importable `pendulum_core` wheel (was walking up to the parent setuptools project), and add a maturin CI build + Rust<->Python parity gate. |
 | 2026-06-17 | 1.1.552 | fix(ci, movement_optimizer, #3517): route the Rust parity workflow through the self-hosted runner dispatcher, pin the Rust toolchain action to the fleet-approved commit, and import the squat fixture through `movement_optimizer.models` so the Rust wheel parity gate avoids hosted-runner and package-shadowing failures. |
 | 2026-06-17 | 1.1.550 | fix(ci, #3509, #3510): declare the full-suite `test` extra for collection-time FastAPI/httpx/OpenCV dependencies and keep heavy/e2e coverage reporting while disabling the repo-wide coverage floor for that narrow lane. |
 | 2026-06-16 | 1.1.545 | fix(ci, #3316): append provider-contract coverage and refresh `coverage.xml` before the coverage policy gate so tracked-package thresholds see the tests that cover exported packages. |
