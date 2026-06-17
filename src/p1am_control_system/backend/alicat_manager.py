@@ -8,6 +8,7 @@ from typing import Any
 logger = logging.getLogger("dcs_backend.alicat_manager")
 
 VALID_GASES = ["O2", "N2", "CO2", "He", "H2", "Air"]
+PHYSICAL_CONNECTION_TYPES = {"serial", "tcp"}
 
 
 class AlicatMFC:
@@ -48,14 +49,19 @@ class AlicatMFC:
         # Internals for simulation response curves
         self._target_setpoint: float = 0.0
 
-    def update_setpoint(self, value: float) -> None:
+    def update_setpoint(self, value: float) -> bool:
         """Update target flow setpoint (clamped within range)."""
-        self._target_setpoint = max(0.0, min(value, self.max_flow))
+        next_setpoint = max(0.0, min(value, self.max_flow))
         if self.connection_type == "mock":
+            self._target_setpoint = next_setpoint
             self.setpoint = self._target_setpoint
-        else:
-            # For physical connections, setpoint is committed during communication loop
-            pass
+            return True
+        if self.connection_type in PHYSICAL_CONNECTION_TYPES:
+            self._mark_physical_io_unsupported("setpoint update")
+            return False
+
+        self._target_setpoint = next_setpoint
+        return True
 
     def update_gas(self, new_gas: str) -> None:
         """Update active gas calibration."""
@@ -90,64 +96,30 @@ class AlicatMFC:
     async def poll_hardware(self) -> None:
         """Perform physical polling query over Serial or TCP socket.
 
-        Falls back to simulated parameters with warning logs if hardware
-        is not reachable.
+        Mock connections simulate readings. Physical serial/TCP paths are not
+        implemented yet and must fail closed instead of silently reporting
+        success.
         """
-        # Groundwork logic for Serial (pyserial) or TCP socket connection
-        if self.connection_type == "serial":
-            try:
-                # Lazy import to avoid hard requirement of serial package
-                # in purely mock contexts.
-                import serial
+        if self.connection_type in PHYSICAL_CONNECTION_TYPES:
+            self._mark_physical_io_unsupported("polling")
+            return
 
-                _ = serial
+        # Pure simulated behavior
+        self.simulate_step()
+        self.connection_state = "simulated"
 
-                # Groundwork for ASCII Serial query
-                # ser = serial.Serial(self.port_or_ip, 19200, timeout=0.1)
-                # ser.write(f"{self.device_id}\r".encode('ascii'))
-                # response = ser.readline().decode('ascii')
-                # self.parse_ascii_response(response)
-                # self.connection_state = "connected"
-                pass
-            except ImportError:
-                logger.warning(
-                    "pyserial not installed. "
-                    f"Falling back to simulation for MFC {self.device_id}."
-                )
-                self.simulate_step()
-                self.connection_state = "simulated"
-            except Exception as serial_err:
-                logger.error(
-                    f"Serial error on port {self.port_or_ip} "
-                    f"for MFC {self.device_id}: {serial_err}"
-                )
-                self.simulate_step()
-                self.connection_state = "disconnected"
-
-        elif self.connection_type == "tcp":
-            try:
-                # Groundwork for ASCII TCP communication
-                # reader, writer = await asyncio.open_connection(
-                #     self.port_or_ip, 23, limit=1024
-                # )
-                # writer.write(f"{self.device_id}\r".encode('ascii'))
-                # await writer.drain()
-                # data = await reader.readline()
-                # self.parse_ascii_response(data.decode('ascii'))
-                # self.connection_state = "connected"
-                pass
-            except Exception as tcp_err:
-                logger.error(
-                    f"TCP error connecting to {self.port_or_ip} "
-                    f"for MFC {self.device_id}: {tcp_err}"
-                )
-                self.simulate_step()
-                self.connection_state = "disconnected"
-
-        else:
-            # Pure simulated behavior
-            self.simulate_step()
-            self.connection_state = "simulated"
+    def _mark_physical_io_unsupported(self, operation: str) -> None:
+        """Record that real Alicat IO is unavailable for this operation."""
+        if self.connection_state != "unsupported":
+            logger.error(
+                "Alicat MFC %s is configured for %s IO at %s, but %s is not "
+                "implemented; refusing to report physical success.",
+                self.device_id,
+                self.connection_type,
+                self.port_or_ip,
+                operation,
+            )
+        self.connection_state = "unsupported"
 
     def parse_ascii_response(self, response: str) -> None:
         """Parse Alicat ASCII query response.
@@ -210,8 +182,7 @@ class AlicatManager:
     def update_mfc_setpoint(self, device_id: str, setpoint: float) -> bool:
         """Apply target setpoint to specified device ID."""
         if device_id in self.devices:
-            self.devices[device_id].update_setpoint(setpoint)
-            return True
+            return self.devices[device_id].update_setpoint(setpoint)
         return False
 
     def update_mfc_gas(self, device_id: str, gas: str) -> bool:
