@@ -19,7 +19,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from movement_optimizer.models import BodyModel
+from movement_optimizer.models import BodyModel, make_squat_config
 
 # Skip the entire module unless the compiled Rust accelerator is importable.
 # Importing the symbol here (rather than inside each test) lets a single
@@ -32,8 +32,6 @@ rust = pytest.importorskip(
 
 def _make_dynamics():
     """Build a reference squat ``LagrangianDynamics`` with cached M/a/g terms."""
-    from tests.conftest import make_squat_config
-
     body = BodyModel(75.0, 1.75)
     config = make_squat_config(body, 60.0)
     return config[0]

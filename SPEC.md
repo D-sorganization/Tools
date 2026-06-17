@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.553                                    |
+| **Spec Version**        | 1.1.554                                    |
 | **Last Spec Update**    | 2026-06-17                                 |
 
 ## 2. Purpose & Mission
@@ -38,10 +38,18 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-17 Update
 
+- Review-comment conversion workflow concurrency is now scoped by repository
+  and ref so unrelated PR events cannot cancel the current PR's converter run
+  and leave a stale cancelled required check (#3520).
 - File watcher Rust backend CI now runs its maturin backend-selection gate on
   the self-hosted fleet only, pins the Rust toolchain action, and uses canonical
   `PYTHONPATH=src` so the shared package imports on every Python matrix entry
   without hosted-runner leakage (#3520).
+- Movement Optimizer's Rust parity workflow now routes through the self-hosted
+  runner dispatcher, uses the fleet-pinned Rust toolchain action, and imports
+  its squat fixture through the canonical movement optimizer model API so the
+  Rust wheel parity gate can run without hosted-runner or package-shadowing
+  failures (#3517).
 - Full-suite nightly installs now resolve a declared `test` extra for
   collection-time FastAPI/httpx/OpenCV dependencies (#3509), while scheduled
   and opt-in heavy/e2e workflows keep coverage reports but disable the
@@ -52,6 +60,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   construction now live in `movement_optimizer.gui.motion_controls`, keeping
   `motion_tabs.py` within the fleet module-size budget while preserving the
   public `NumericControl` import surface used by the tab tests.
+- Movement Optimizer now has a fleet-routed, pinned
+  `maturin-movement-optimizer` workflow that builds the
+  `movement_optimizer_core` wheel, verifies required Rust exports, and runs the
+  Rust-to-NumPy inverse-dynamics parity gate without relying on top-level test
+  package imports.
 
 ### 2026-06-16 Update
 
@@ -1068,8 +1081,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-17 | 1.1.554 | fix(ci, review-comments, #3520): scope the review-comment converter concurrency group by repository and ref so unrelated PR events cannot cancel the current PR's converter check. |
 | 2026-06-17 | 1.1.553 | fix(ci, file_watcher, #3520): route the file watcher maturin backend-selection workflow to the self-hosted fleet, pin the Rust toolchain action, and use canonical `PYTHONPATH=src` so the shared package imports consistently without hosted-runner leakage. |
 | 2026-06-17 | 1.1.552 | fix(file_watcher, #3520): rename the compiled extension to `file_watcher_rs` so the wrapper dispatches to the Rust backend instead of importing itself, and add a maturin CI build+backend-selection gate. |
+| 2026-06-17 | 1.1.551 | fix(ci, movement_optimizer, #3517): route the Rust parity workflow through the self-hosted runner dispatcher, pin the Rust toolchain action to the fleet-approved commit, and import the squat fixture through `movement_optimizer.models` so the Rust wheel parity gate avoids hosted-runner and package-shadowing failures. |
 | 2026-06-17 | 1.1.550 | fix(ci, #3509, #3510): declare the full-suite `test` extra for collection-time FastAPI/httpx/OpenCV dependencies and keep heavy/e2e coverage reporting while disabling the repo-wide coverage floor for that narrow lane. |
 | 2026-06-16 | 1.1.545 | fix(ci, #3316): append provider-contract coverage and refresh `coverage.xml` before the coverage policy gate so tracked-package thresholds see the tests that cover exported packages. |
 | 2026-06-16 | 1.1.544 | fix(imports, #3316): add a production `file_watcher` compatibility shim to preserve bare watcher imports after removing `src/shared/python` from CI and pytest search roots. |
