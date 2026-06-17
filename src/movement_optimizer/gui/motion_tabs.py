@@ -504,7 +504,8 @@ class SwingsetTab(_MotionViewMixin, QWidget):
         row = QHBoxLayout()
         self.optimize_button = QPushButton("Optimize Swing Policy")
         self.optimize_button.setProperty("class", "primary")
-        self.optimize_button.setMinimumHeight(42)
+        self.optimize_button.setMinimumHeight(48)
+        self.optimize_button.setMinimumWidth(220)
         self.optimize_button.setAccessibleName("Optimize swing policy")
         self.optimize_button.setAccessibleDescription(
             "Run the swingset policy optimizer and populate playback, charts, and force vectors."

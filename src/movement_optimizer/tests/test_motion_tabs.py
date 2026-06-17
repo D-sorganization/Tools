@@ -248,7 +248,8 @@ def test_swingset_optimize_policy_action_is_sticky_above_scroll_area(qapp) -> No
     assert scroll_area is not None
     assert swingset.optimize_button.text() == "Optimize Swing Policy"
     assert swingset.optimize_button.property("class") == "primary"
-    assert swingset.optimize_button.minimumHeight() >= 42
+    assert swingset.optimize_button.minimumHeight() >= 48
+    assert swingset.optimize_button.minimumWidth() >= 220
     assert swingset.optimize_button not in scroll_area.widget().findChildren(QPushButton)
 
 

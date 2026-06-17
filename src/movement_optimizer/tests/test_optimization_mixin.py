@@ -93,6 +93,27 @@ def test_on_done_success_and_warning_paths(window) -> None:
     assert not window._opt_running
 
 
+def test_completed_single_exercise_autoplays_when_enabled(window, monkeypatch) -> None:
+    calls: list[str] = []
+    monkeypatch.setattr(window, "_anim_step", lambda: calls.append("anim"))
+
+    window.tabs.setCurrentIndex(0)
+    window.controls.autoplay_checkbox.setChecked(True)
+    window._maybe_autoplay_completed_result(0, make_test_result(), None)
+
+    assert calls == ["anim"]
+    assert window.is_playing
+    assert window.controls.btn_play.text() == "Pause"
+
+    calls.clear()
+    window.is_playing = False
+    window.controls.autoplay_checkbox.setChecked(False)
+    window._maybe_autoplay_completed_result(0, make_test_result(), None)
+
+    assert calls == []
+    assert not window.is_playing
+
+
 def test_finish_or_chain_advances_then_chain(window, monkeypatch) -> None:
     calls: list[tuple[int, list[int] | None]] = []
     monkeypatch.setattr(window, "_run_exercise", lambda idx, rest=None: calls.append((idx, rest)))

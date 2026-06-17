@@ -283,6 +283,7 @@ class OptimizationMixin:
                 )
                 status_msg = f"{name} done in {t_str} -- WARNING: COM balance violated"
             self._finish_or_chain(then_chain, status_msg)
+            self._maybe_autoplay_completed_result(idx, result, then_chain)
         except (ValueError, RuntimeError, OSError, AttributeError) as exc:
             with self._opt_lock:
                 self._opt_running = False
@@ -306,6 +307,24 @@ class OptimizationMixin:
                 self._opt_running = False
             self.sidebar.show_idle()
             self.status_label.setText(status_msg)
+
+    def _maybe_autoplay_completed_result(
+        self: MainWindow,
+        idx: int,
+        result: OptimizationResult,
+        then_chain: list[int] | None,
+    ) -> None:
+        """Start barbell playback after a completed single-exercise optimization."""
+        if then_chain or not result.success:
+            return
+        if not self.controls.autoplay_enabled():
+            return
+        if self.tabs.currentIndex() != idx:
+            return
+        self._set_anim_frame(idx, 0)
+        self.is_playing = True
+        self.controls.set_playing(True)
+        self._anim_step()
 
     def _on_cancelled(self: MainWindow) -> None:
         """Handle user-requested cancellation (called from main thread via signal)."""

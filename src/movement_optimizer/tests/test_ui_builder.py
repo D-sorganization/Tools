@@ -5,7 +5,7 @@ import pytest
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-from PyQt6.QtWidgets import QLabel, QPushButton, QTabWidget, QWidget
+from PyQt6.QtWidgets import QCheckBox, QLabel, QPushButton, QTabWidget, QWidget
 
 from movement_optimizer.gui.ui_builder import build_central_widget
 from movement_optimizer.gui.widgets import ParameterSidebar, PlaybackControls
@@ -62,6 +62,10 @@ class TestUIBuilder:
         assert controls.frame_label.text() == "Frame 4/12"
         assert controls.speed_label.text() == "1.5x"
         assert controls.speed_multiplier() == pytest.approx(1.5)
+        assert controls.autoplay_enabled()
+
+        controls.autoplay_checkbox.setChecked(False)
+        assert not controls.autoplay_enabled()
 
     def test_playback_buttons_have_visible_labels_and_accessible_metadata(self, qapp):
         controls = PlaybackControls()
@@ -82,6 +86,8 @@ class TestUIBuilder:
         assert controls.btn_play.text() == "Pause"
         assert controls.btn_play.accessibleName() == "Pause"
         assert controls.btn_play.accessibleDescription()
+        assert isinstance(controls.autoplay_checkbox, QCheckBox)
+        assert controls.autoplay_checkbox.toolTip()
 
     def test_sidebar_action_buttons_have_accessible_metadata(self, qapp):
         window = QWidget()
