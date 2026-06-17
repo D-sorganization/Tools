@@ -27,20 +27,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  pick-runner:
-    runs-on: d-sorg-fleet
-    timeout-minutes: 2
-    outputs:
-      runner: ${{ steps.check.outputs.runner }}
-    steps:
-      - name: Set runner
-        id: check
-        run: echo "runner=d-sorg-fleet" >> "$GITHUB_OUTPUT"
-
   parity-gate:
     name: Build movement_optimizer_core + parity gate
-    needs: pick-runner
-    runs-on: ${{ needs.pick-runner.outputs.runner }}
+    runs-on: d-sorg-fleet
     timeout-minutes: 25
     env:
       CARGO_TERM_COLOR: always
