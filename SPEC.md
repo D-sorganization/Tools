@@ -27,14 +27,21 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.548                                    |
-| **Last Spec Update**    | 2026-06-16                                 |
+| **Spec Version**        | 1.1.549                                    |
+| **Last Spec Update**    | 2026-06-17                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-06-17 Update
+
+- Movement Optimizer motion-tab slider/text controls and scroll-panel
+  construction now live in `movement_optimizer.gui.motion_controls`, keeping
+  `motion_tabs.py` within the fleet module-size budget while preserving the
+  public `NumericControl` import surface used by the tab tests.
 
 ### 2026-06-16 Update
 

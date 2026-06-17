@@ -11,14 +11,21 @@
 | License          | MIT                                                     |
 | Package Name     | `movement-optimizer`                                    |
 | Current Version  | `1.0.0`                                                 |
-| Spec Version     | `1.0.14`                                                |
-| Last Spec Update | 2026-06-16                                              |
+| Spec Version     | `1.0.15`                                                |
+| Last Spec Update | 2026-06-17                                              |
 
 ## 2. Purpose
 
 Movement-Optimizer is a biomechanics trajectory optimizer for barbell exercises. It models the body as a sagittal-plane planar chain, computes trajectories with Lagrangian inverse dynamics, and exposes both a GUI workflow and a headless CLI for batch optimisation.
 
 ## 3. Scope
+
+### 2026-06-17 Update
+
+- Motion-tab slider/text controls and scroll-panel construction now live in
+  `movement_optimizer.gui.motion_controls`, keeping the tab modules under the
+  enforced source-size budget without changing the Swingset or Chain Dynamics
+  interaction contract.
 
 ### 2026-06-16 Update
 

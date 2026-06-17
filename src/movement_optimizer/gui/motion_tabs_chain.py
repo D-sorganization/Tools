@@ -44,12 +44,11 @@ from movement_optimizer.models.chain_forces import (
 
 from . import plot_renderer
 from .motion_analysis_panel import MotionAnalysisPanel
+from .motion_controls import NumericControl, scrollable_control_panel
 from .motion_tabs import (
     MotionCanvas,
-    NumericControl,
     _chain_overlay_scene,
     _MotionViewMixin,
-    _scrollable_control_panel,
 )
 from .vector_overlay import OverlayScene
 
@@ -248,7 +247,7 @@ class ChainDynamicsTab(_MotionViewMixin, QWidget):
         control_layout.addLayout(row)
         control_layout.addWidget(self.metric_label)
         control_layout.addStretch()
-        self._control_scroll = _scrollable_control_panel(control_panel)
+        self._control_scroll = scrollable_control_panel(control_panel)
         layout.addWidget(self._control_scroll, 0, 1, 2, 1)
         layout.setColumnStretch(0, 1)
         layout.setRowStretch(0, 1)
