@@ -1,16 +1,18 @@
 # Maturin CI — file_watcher Rust extension
 #
 # Builds the `file_watcher_rs` Rust crate (cross-platform notify-based watcher
-# with debouncing + gitignore filtering) and asserts the wrapper package
-# `shared.python.file_watcher` selects the Rust backend. Previously the wrapper
-# imported ITSELF (`from shared.python.file_watcher import ...`) so the compiled
-# extension was never reached and the backend was permanently `watchdog`
-# (issue #3520). Renaming the compiled module to `file_watcher_rs` removes the
-# self-import; this gate proves the extension is actually selected.
+# with debouncing + gitignore filtering) across all supported platforms
+# (windows, ubuntu/linux, macos) and Python versions (3.10, 3.11, 3.12, 3.13),
+# then asserts the wrapper package `shared.python.file_watcher` selects the Rust
+# backend.
 #
-# The job installs the built wheel and hard-fails if the rust backend is not
-# selected, so a broken/missing accelerator breaks the build instead of
-# silently falling back to watchdog.
+# Previously the wrapper imported ITSELF
+# (`from shared.python.file_watcher import ...`) so the compiled extension was
+# never reached and the backend was permanently `watchdog` (issue #3520).
+# Renaming the compiled module to `file_watcher_rs` removes the self-import; this
+# gate proves the extension is actually selected. The job hard-fails if the rust
+# backend is not selected, so a broken/missing accelerator breaks the build
+# instead of silently falling back to watchdog.
 
 name: Maturin — file_watcher
 
@@ -34,19 +36,26 @@ concurrency:
 
 jobs:
   rust-backend-gate:
-    name: Build file_watcher_rs + backend-selection gate
-    runs-on: ubuntu-latest
-    timeout-minutes: 25
+    name: file_watcher_rs (${{ matrix.os }}, Python ${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
     env:
       CARGO_TERM_COLOR: always
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Set up Python 3.12
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v6
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python-version }}
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -55,12 +64,16 @@ jobs:
         run: python -m pip install --upgrade pip maturin watchdog pytest
 
       - name: Build file_watcher_rs wheel
-        run: maturin build --release -m rust_core/file_watcher/Cargo.toml
+        run: maturin build --release -m rust_core/file_watcher/Cargo.toml --out dist
 
       - name: Install the built wheel
-        run: python -m pip install target/wheels/*.whl
+        shell: bash
+        run: |
+          WHEEL=$(ls dist/*.whl | head -1)
+          python -m pip install "$WHEEL"
 
       - name: Assert the compiled module imports (hard fail — no silent skip)
+        shell: bash
         run: |
           python - <<'PY'
           import file_watcher_rs as m
@@ -71,6 +84,7 @@ jobs:
           PY
 
       - name: Assert the wrapper selects the Rust backend (gate)
+        shell: bash
         env:
           PYTHONPATH: src:src/shared/python
         run: |
@@ -82,6 +96,7 @@ jobs:
           PY
 
       - name: Run file_watcher test suite (gate)
+        shell: bash
         env:
           PYTHONPATH: src:src/shared/python
         run: |
