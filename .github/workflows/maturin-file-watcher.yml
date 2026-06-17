@@ -87,7 +87,7 @@ jobs:
       - name: Assert the wrapper selects the Rust backend (gate)
         shell: bash
         env:
-          PYTHONPATH: src:src/shared/python
+          PYTHONPATH: src
         run: |
           python - <<'PY'
           from shared.python.file_watcher import backend
@@ -99,7 +99,7 @@ jobs:
       - name: Run file_watcher test suite (gate)
         shell: bash
         env:
-          PYTHONPATH: src:src/shared/python
+          PYTHONPATH: src
         run: |
           python -m pytest tests/shared/python/file_watcher \
             -o addopts="" -p no:cacheprovider -v

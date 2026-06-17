@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.552                                    |
+| **Spec Version**        | 1.1.553                                    |
 | **Last Spec Update**    | 2026-06-17                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-17 Update
 
+- File watcher Rust backend CI now runs its maturin backend-selection gate on
+  the self-hosted fleet only, pins the Rust toolchain action, and uses canonical
+  `PYTHONPATH=src` so the shared package imports on every Python matrix entry
+  without hosted-runner leakage (#3520).
 - Full-suite nightly installs now resolve a declared `test` extra for
   collection-time FastAPI/httpx/OpenCV dependencies (#3509), while scheduled
   and opt-in heavy/e2e workflows keep coverage reports but disable the
@@ -1064,6 +1068,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-17 | 1.1.553 | fix(ci, file_watcher, #3520): route the file watcher maturin backend-selection workflow to the self-hosted fleet, pin the Rust toolchain action, and use canonical `PYTHONPATH=src` so the shared package imports consistently without hosted-runner leakage. |
 | 2026-06-17 | 1.1.552 | fix(file_watcher, #3520): rename the compiled extension to `file_watcher_rs` so the wrapper dispatches to the Rust backend instead of importing itself, and add a maturin CI build+backend-selection gate. |
 | 2026-06-17 | 1.1.550 | fix(ci, #3509, #3510): declare the full-suite `test` extra for collection-time FastAPI/httpx/OpenCV dependencies and keep heavy/e2e coverage reporting while disabling the repo-wide coverage floor for that narrow lane. |
 | 2026-06-16 | 1.1.545 | fix(ci, #3316): append provider-contract coverage and refresh `coverage.xml` before the coverage policy gate so tracked-package thresholds see the tests that cover exported packages. |
