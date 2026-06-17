@@ -38,6 +38,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-17 Update
 
+- Movement Optimizer's Rust parity workflow now routes through the self-hosted
+  runner dispatcher, uses the fleet-pinned Rust toolchain action, and imports
+  its squat fixture through the canonical movement optimizer model API so the
+  Rust wheel parity gate can run without hosted-runner or package-shadowing
+  failures (#3517).
 - Full-suite nightly installs now resolve a declared `test` extra for
   collection-time FastAPI/httpx/OpenCV dependencies (#3509), while scheduled
   and opt-in heavy/e2e workflows keep coverage reports but disable the
@@ -48,6 +53,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   construction now live in `movement_optimizer.gui.motion_controls`, keeping
   `motion_tabs.py` within the fleet module-size budget while preserving the
   public `NumericControl` import surface used by the tab tests.
+- Movement Optimizer now has a fleet-routed, pinned
+  `maturin-movement-optimizer` workflow that builds the
+  `movement_optimizer_core` wheel, verifies required Rust exports, and runs the
+  Rust-to-NumPy inverse-dynamics parity gate without relying on top-level test
+  package imports.
 
 ### 2026-06-16 Update
 
@@ -1065,6 +1075,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 | 2026-06-17 | 1.1.554 | fix(pendulum_core, #3519): add `pendulum-core/pyproject.toml` so maturin builds a correctly-named importable `pendulum_core` wheel (was walking up to the parent setuptools project), and add a maturin CI build + Rust<->Python parity gate. |
+| 2026-06-17 | 1.1.552 | fix(ci, movement_optimizer, #3517): route the Rust parity workflow through the self-hosted runner dispatcher, pin the Rust toolchain action to the fleet-approved commit, and import the squat fixture through `movement_optimizer.models` so the Rust wheel parity gate avoids hosted-runner and package-shadowing failures. |
 | 2026-06-17 | 1.1.550 | fix(ci, #3509, #3510): declare the full-suite `test` extra for collection-time FastAPI/httpx/OpenCV dependencies and keep heavy/e2e coverage reporting while disabling the repo-wide coverage floor for that narrow lane. |
 | 2026-06-16 | 1.1.545 | fix(ci, #3316): append provider-contract coverage and refresh `coverage.xml` before the coverage policy gate so tracked-package thresholds see the tests that cover exported packages. |
 | 2026-06-16 | 1.1.544 | fix(imports, #3316): add a production `file_watcher` compatibility shim to preserve bare watcher imports after removing `src/shared/python` from CI and pytest search roots. |
