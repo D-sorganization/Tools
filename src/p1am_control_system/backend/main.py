@@ -1174,11 +1174,21 @@ async def update_alicat_setpoint(
     device_id: str, payload: AlicatSetpointPayload
 ) -> dict[str, str]:
     """Modify the flow setpoint for a specific mass flow controller."""
-    success = alicat_manager.update_mfc_setpoint(device_id, payload.setpoint)
-    if not success:
+    mfc = alicat_manager.devices.get(device_id)
+    if mfc is None:
         raise HTTPException(
             status_code=404,
             detail=f"Alicat MFC '{device_id}' not found.",
+        )
+
+    success = alicat_manager.update_mfc_setpoint(device_id, payload.setpoint)
+    if not success:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                f"Alicat MFC '{device_id}' {mfc.connection_type} physical IO "
+                "is unsupported; setpoint was not applied."
+            ),
         )
     return {
         "status": "success",
