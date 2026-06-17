@@ -51,6 +51,13 @@ class TestNoiseType:
 
 
 class TestNoiseGenerator:
+    @pytest.mark.parametrize("noise_type", list(NoiseType))
+    def test_generate_rejects_empty_time_array(self, noise_type: NoiseType) -> None:
+        gen = NoiseGenerator(seed=42)
+
+        with pytest.raises(ValueError, match="time array.*at least one sample"):
+            gen.generate(np.array([]), noise_type)
+
     def test_white_noise_shape(self, time_array: np.ndarray) -> None:
         gen = NoiseGenerator(seed=42)
         sig = gen.generate(time_array, NoiseType.WHITE, amplitude=1.0)
@@ -109,6 +116,15 @@ class TestNoiseGenerator:
         large = gen2.generate(time_array, NoiseType.WHITE, amplitude=10.0)
         assert np.std(large.values) > np.std(small.values)
 
+    @pytest.mark.parametrize("noise_type", list(NoiseType))
+    def test_generate_accepts_single_sample_time_array(
+        self, noise_type: NoiseType
+    ) -> None:
+        gen = NoiseGenerator(seed=42)
+        sig = gen.generate(np.array([0.0]), noise_type)
+
+        assert len(sig.values) == 1
+
 
 # ── add_noise_to_signal ────────────────────────────────────────────────
 
@@ -132,6 +148,16 @@ class TestAddNoiseToSignal:
 
 
 class TestDisturbanceProfile:
+    @pytest.mark.parametrize(
+        "disturbance_type",
+        ["step", "pulse", "ramp", "sine", "random_steps", "chirp"],
+    )
+    def test_disturbance_profile_rejects_empty_time_array(
+        self, disturbance_type: str
+    ) -> None:
+        with pytest.raises(ValueError, match="time array.*at least one sample"):
+            generate_disturbance_profile(np.array([]), disturbance_type)
+
     def test_step_disturbance(self, time_array: np.ndarray) -> None:
         sig = generate_disturbance_profile(time_array, disturbance_type="step")
         assert isinstance(sig, Signal)
@@ -140,6 +166,17 @@ class TestDisturbanceProfile:
     def test_pulse_disturbance(self, time_array: np.ndarray) -> None:
         sig = generate_disturbance_profile(time_array, disturbance_type="pulse")
         assert isinstance(sig, Signal)
+
+    @pytest.mark.parametrize(
+        "disturbance_type",
+        ["step", "pulse", "ramp", "sine", "random_steps", "chirp"],
+    )
+    def test_disturbance_profile_accepts_single_sample_time_array(
+        self, disturbance_type: str
+    ) -> None:
+        sig = generate_disturbance_profile(np.array([0.0]), disturbance_type)
+
+        assert len(sig.values) == 1
 
 
 # ── DisturbanceSimulator ───────────────────────────────────────────────
