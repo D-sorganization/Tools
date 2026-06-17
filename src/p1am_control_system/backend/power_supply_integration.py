@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-import struct
 from typing import Any
 
 from auth_config import require_admin_key
@@ -60,31 +59,14 @@ class PowerSupplyService:
         return current_a, voltage_v, temp_c
 
     async def _write_pid_setpoint(self, pid_index: int, value: float) -> bool:
-        """Write a PID setpoint to the PLC register pair used for AO pass-through."""
-        if not self._plc_client.connected:
-            return False
-        if pid_index < 0 or pid_index >= 4:
-            self._logger.warning("PID index %d out of range", pid_index)
-            return False
+        """Command a PID setpoint via the client's public seam.
 
-        lo, hi = struct.unpack("<HH", struct.pack("<f", float(value)))
-        base = 200 + pid_index * 10
-        try:
-            async with self._plc_client.lock:
-                resp = await self._plc_client._get_client().write_registers(
-                    address=base + 2, values=[lo, hi]
-                )
-            if resp.isError():
-                self._logger.error(
-                    "write_pid_setpoint(%d, %f) failed: %s", pid_index, value, resp
-                )
-                return False
-            return True
-        except Exception as exc:
-            self._logger.error(
-                "write_pid_setpoint(%d, %f) exception: %s", pid_index, value, exc
-            )
-            return False
+        Delegates to ``plc_client.write_pid_setpoint`` — no longer reaches into
+        the client's private connection/lock or hand-rolls the register encoding
+        (which had diverged from modbus_client.float_to_registers). Works for the
+        real Modbus client and the simulator alike.
+        """
+        return bool(await self._plc_client.write_pid_setpoint(pid_index, value))
 
 
 class PowerSupplySetpointRequest(BaseModel):

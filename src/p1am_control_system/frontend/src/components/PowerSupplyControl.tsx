@@ -423,7 +423,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
               onClick={acknowledgeTrip}
               disabled={busy}
             >
-              Acknowledge trip
+              Acknowledge Trip
             </button>
           )}
           <button
@@ -512,7 +512,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
               onClick={applyClamp}
               disabled={busy || !clampDirty}
             >
-              {clampDirty ? "Set limit" : "Limit set"}
+              {clampDirty ? "Set Limit" : "Limit Set"}
             </button>
           </div>
 
@@ -590,7 +590,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
               onClick={handleApplyClick}
               disabled={busy}
             >
-              Apply setpoint
+              Apply Setpoint
             </button>
           </div>
 
@@ -765,7 +765,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
             onClick={saveConfig}
             disabled={busy}
           >
-            Save calibration
+            Save Calibration
           </button>
         </div>
       </details>
@@ -866,7 +866,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
             onClick={saveConfig}
             disabled={busy}
           >
-            Save configuration
+            Save Configuration
           </button>
         </div>
       </details>

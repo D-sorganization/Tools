@@ -2,7 +2,8 @@ import random
 import time
 from typing import Optional
 
-from models import InterlockConfig, PIDConfig, RoutingConfig
+from defaults import default_routing_config
+from models import RoutingConfig
 from plc_interface import BasePLCClient
 
 
@@ -22,54 +23,8 @@ class SimulatedPLCClient(BasePLCClient):
         # Latched emergency-stop state for the simulated controller
         self.e_stop_active = False
 
-        # Active configuration state
-        self.active_config = RoutingConfig(
-            input_routing=[f"TAG_{i}" for i in range(6)],
-            output_routing=["TAG_10", "TAG_11"],
-            pids=[
-                PIDConfig(
-                    pv_tag="TAG_1",
-                    cv_tag="TAG_2",
-                    setpoint=50.0,
-                    kp=1.0,
-                    ki=0.5,
-                    kd=0.1,
-                ),
-                PIDConfig(
-                    pv_tag="TAG_3",
-                    cv_tag="TAG_4",
-                    setpoint=30.0,
-                    kp=1.5,
-                    ki=0.2,
-                    kd=0.05,
-                ),
-                PIDConfig(
-                    pv_tag="TAG_5",
-                    cv_tag="TAG_6",
-                    setpoint=40.0,
-                    kp=2.0,
-                    ki=0.8,
-                    kd=0.2,
-                ),
-                PIDConfig(
-                    pv_tag="TAG_7",
-                    cv_tag="TAG_8",
-                    setpoint=60.0,
-                    kp=0.5,
-                    ki=0.1,
-                    kd=0.01,
-                ),
-            ],
-            interlocks={
-                f"TAG_{i}": InterlockConfig(
-                    lolo_limit=0.0,
-                    low_limit=5.0,
-                    high_limit=95.0,
-                    hihi_limit=100.0,
-                )
-                for i in range(32)
-            },
-        )
+        # Active configuration state (shared default — single source of truth)
+        self.active_config = default_routing_config()
 
         # Plant simulation parameters (FOPDT: First Order Plus Dead Time)
         self.fopdt_gain: list[float] = [1.5, 0.8, 1.2, 2.0]
@@ -208,5 +163,19 @@ class SimulatedPLCClient(BasePLCClient):
         async with self.lock:
             if tag_name in self.simulated_tags:
                 self.simulated_tags[tag_name] = value
+                return True
+            return False
+
+    async def write_pid_setpoint(self, pid_index: int, value: float) -> bool:
+        """Update a simulated PID loop's setpoint so the sim models the command.
+
+        Mirrors the Modbus client's public seam; the sim's step loop already
+        reads ``active_config.pids[i].setpoint``. (Previously the power-supply
+        service reached into a private ``_get_client`` that the simulator lacks,
+        which spewed harmless-but-noisy errors in simulator mode.)
+        """
+        async with self.lock:
+            if 0 <= pid_index < len(self.active_config.pids):
+                self.active_config.pids[pid_index].setpoint = value
                 return True
             return False

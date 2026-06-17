@@ -50,6 +50,8 @@ class _FakePLC:
         self._raw.write_registers = AsyncMock(
             return_value=MagicMock(isError=lambda: False)
         )
+        # Public command seam the service delegates to.
+        self.write_pid_setpoint = AsyncMock(return_value=True)
 
     def _get_client(self) -> Any:
         return self._raw
@@ -89,11 +91,10 @@ class TestPowerSupplyServicePoll:
             svc.controller.set_current_setpoint(40.0)
             await svc.poll({})
             await svc.poll({})
-            call_args_list = plc._get_client().write_registers.await_args_list
-            assert len(call_args_list) >= 1
-            last_call = call_args_list[-1]
-            assert last_call.kwargs["address"] == 202
-            assert len(last_call.kwargs["values"]) == 2
+            # The service delegates to the client's public seam (PID 0 = the
+            # power-supply actuator). It no longer reaches into write_registers.
+            assert plc.write_pid_setpoint.await_count >= 1
+            assert plc.write_pid_setpoint.await_args.args[0] == 0
 
         asyncio.run(_go())
 
@@ -122,59 +123,26 @@ class TestPowerSupplyServicePoll:
 
 
 class TestPidSetpointWrite:
-    def test_write_when_disconnected_returns_false(self) -> None:
-        async def _go() -> None:
-            plc = _FakePLC(connected=False)
-            svc = PowerSupplyService(plc, logging.getLogger("test"))
-            ok = await svc._write_pid_setpoint(0, 50.0)
-            assert ok is False
+    """The service now delegates to the client's public write_pid_setpoint seam
+    (the register-write details are tested against AsyncModbusManager in
+    test_modbus_estop.py). These verify the delegation contract."""
 
-        asyncio.run(_go())
-
-    def test_write_with_invalid_pid_index_returns_false(self) -> None:
+    def test_delegates_to_client_seam(self) -> None:
         async def _go() -> None:
             plc = _FakePLC()
             svc = PowerSupplyService(plc, logging.getLogger("test"))
-            for bad in (-1, 4, 5, 99):
-                ok = await svc._write_pid_setpoint(bad, 50.0)
-                assert ok is False
-
-        asyncio.run(_go())
-
-    def test_write_with_error_response_returns_false(self) -> None:
-        async def _go() -> None:
-            plc = _FakePLC()
-            plc._get_client().write_registers = AsyncMock(
-                return_value=MagicMock(isError=lambda: True)
-            )
-            svc = PowerSupplyService(plc, logging.getLogger("test"))
-            ok = await svc._write_pid_setpoint(0, 50.0)
-            assert ok is False
-
-        asyncio.run(_go())
-
-    def test_write_catches_underlying_exception(self) -> None:
-        async def _go() -> None:
-            plc = _FakePLC()
-            plc._get_client().write_registers = AsyncMock(
-                side_effect=RuntimeError("modbus dropped")
-            )
-            svc = PowerSupplyService(plc, logging.getLogger("test"))
-            ok = await svc._write_pid_setpoint(0, 50.0)
-            assert ok is False
-
-        asyncio.run(_go())
-
-    def test_write_success_returns_true_and_targets_pid_register(self) -> None:
-        async def _go() -> None:
-            plc = _FakePLC()
-            svc = PowerSupplyService(plc, logging.getLogger("test"))
-            # PID 1 setpoint sits at register 200 + 1*10 + 2 = 212
-            ok = await svc._write_pid_setpoint(1, 25.0)
+            ok = await svc._write_pid_setpoint(2, 25.0)
             assert ok is True
-            plc._get_client().write_registers.assert_awaited()
-            kwargs = plc._get_client().write_registers.await_args.kwargs
-            assert kwargs["address"] == 212
+            plc.write_pid_setpoint.assert_awaited_once_with(2, 25.0)
+
+        asyncio.run(_go())
+
+    def test_returns_client_result(self) -> None:
+        async def _go() -> None:
+            plc = _FakePLC()
+            plc.write_pid_setpoint = AsyncMock(return_value=False)
+            svc = PowerSupplyService(plc, logging.getLogger("test"))
+            assert await svc._write_pid_setpoint(0, 50.0) is False
 
         asyncio.run(_go())
 

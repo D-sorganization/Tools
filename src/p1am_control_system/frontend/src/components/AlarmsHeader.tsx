@@ -56,7 +56,7 @@ export const AlarmsHeader: React.FC<AlarmsHeaderProps> = ({
 
         {unacked > 0 && (
           <button className="statusbar-ack" onClick={onAcknowledgeAll}>
-            Acknowledge all
+            Acknowledge All
           </button>
         )}
         {count > 0 && (
