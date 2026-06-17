@@ -17,12 +17,13 @@ Design notes:
 from __future__ import annotations
 
 import datetime as _dt
+import logging
 import os
 
 from database import DB_FILE
 from models import EventLog, TagLog
 from pydantic import BaseModel, Field
-from sqlalchemy import delete, func
+from sqlalchemy import Engine, delete, func
 from sqlmodel import Session, col, select
 
 UTC = getattr(_dt, "UTC", _dt.timezone.utc)  # noqa: UP017
@@ -59,12 +60,66 @@ class ClearResult(BaseModel):
     db_bytes_after: int = Field(ge=0)
 
 
+class RetentionResult(BaseModel):
+    """Outcome of a size-cap retention sweep."""
+
+    over_cap: bool = Field(description="True if the DB exceeded the cap.")
+    rows_deleted: int = Field(ge=0, description="Oldest tag rows purged.")
+    db_bytes_before: int = Field(ge=0)
+    db_bytes_after: int = Field(ge=0)
+
+
 def _db_size_bytes() -> int:
-    """Best-effort on-disk size of the SQLite capture file (0 if absent)."""
+    """Total on-disk footprint of the capture DB: main file + WAL/SHM sidecars.
+
+    Under WAL, recent commits live in the ``-wal`` file until a checkpoint, so
+    counting only the main file under-reports actual usage — which would make
+    both the status display and the size-cap check inaccurate.
+    """
+    total = 0
+    for suffix in ("", "-wal", "-shm"):
+        try:
+            total += os.path.getsize(DB_FILE + suffix)
+        except OSError:
+            pass
+    return total
+
+
+def parse_query_bound(value: str) -> _dt.datetime:
+    """Parse an ISO time-range bound into an aware UTC datetime.
+
+    Accepts a trailing ``Z`` or an explicit offset; a tz-naive string is assumed
+    to be UTC. Normalizing to aware-UTC is required because the historian stores
+    aware-UTC timestamps — comparing a naive bound against them silently
+    mis-filters range queries.
+
+    Raises:
+        TypeError: If ``value`` is not a str.
+        ValueError: If ``value`` is not a valid ISO datetime.
+    """
+    if not isinstance(value, str):
+        raise TypeError(f"value must be a str, got {type(value).__name__}")
+    parsed = _dt.datetime.fromisoformat(value.replace("Z", "+00:00"))
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=UTC)
+    return parsed.astimezone(UTC)
+
+
+def _vacuum(session: Session) -> None:
+    """VACUUM on a dedicated AUTOCOMMIT connection (never the caller's session).
+
+    VACUUM cannot run inside a transaction and rewrites the whole file, so it
+    must not borrow the poll loop's connection. Best-effort: logged, not raised.
+    """
     try:
-        return os.path.getsize(DB_FILE)
-    except OSError:
-        return 0
+        bind = session.get_bind()
+        engine = bind if isinstance(bind, Engine) else bind.engine
+        with engine.connect() as conn:
+            conn.execution_options(isolation_level="AUTOCOMMIT").exec_driver_sql(
+                "VACUUM"
+            )
+    except Exception as exc:  # pragma: no cover - best-effort maintenance
+        logging.getLogger("dcs_backend.data_capture").warning("VACUUM failed: %s", exc)
 
 
 def capture_stats(session: Session, *, capturing: bool = True) -> CaptureStats:
@@ -157,18 +212,95 @@ def clear_capture(
         event_deleted = session.exec(event_stmt).rowcount
 
     session.commit()
-
-    # Reclaim disk. VACUUM cannot run inside a transaction, so use a raw
-    # connection outside the session's transaction scope.
-    try:
-        raw = session.connection().connection
-        raw.execute("VACUUM")
-    except Exception:  # pragma: no cover - VACUUM is best-effort
-        pass
+    _vacuum(session)
 
     return ClearResult(
         tag_rows_deleted=int(tag_deleted or 0),
         event_rows_deleted=int(event_deleted or 0),
+        db_bytes_before=bytes_before,
+        db_bytes_after=_db_size_bytes(),
+    )
+
+
+def enforce_size_cap(
+    session: Session,
+    max_bytes: int,
+    *,
+    headroom: float = 0.9,
+) -> RetentionResult:
+    """Keep the historian under ``max_bytes`` by purging the oldest samples.
+
+    When the on-disk file exceeds the cap, this estimates how many of the oldest
+    rows (by insert order / id) to drop to land at ``headroom`` × cap, deletes
+    them in one ranged statement, then VACUUMs to actually return the space. A
+    no-op (and cheap) while under the cap, so it is safe to call periodically.
+
+    Args:
+        session: An active SQLModel session.
+        max_bytes: Target maximum on-disk size of the capture DB.
+        headroom: Fraction of the cap to target after a purge (0 < headroom < 1),
+            leaving room before the next sweep.
+
+    Returns:
+        RetentionResult describing whether it acted and how much it freed.
+
+    Raises:
+        TypeError: If ``session``/``max_bytes`` are the wrong type.
+        ValueError: If ``max_bytes`` <= 0 or ``headroom`` not in (0, 1).
+    """
+    if not isinstance(session, Session):
+        raise TypeError(f"session must be a Session, got {type(session).__name__}")
+    if not isinstance(max_bytes, int) or isinstance(max_bytes, bool):
+        raise TypeError(f"max_bytes must be an int, got {type(max_bytes).__name__}")
+    if max_bytes <= 0:
+        raise ValueError(f"max_bytes must be positive, got {max_bytes}")
+    if not 0.0 < headroom < 1.0:
+        raise ValueError(f"headroom must be in (0, 1), got {headroom}")
+
+    bytes_before = _db_size_bytes()
+    total_rows = int(session.exec(select(func.count()).select_from(TagLog)).one() or 0)
+    if bytes_before <= max_bytes or total_rows == 0:
+        return RetentionResult(
+            over_cap=False,
+            rows_deleted=0,
+            db_bytes_before=bytes_before,
+            db_bytes_after=bytes_before,
+        )
+
+    bytes_per_row = bytes_before / total_rows
+    target_rows = int((max_bytes * headroom) / bytes_per_row)
+    to_delete = max(0, total_rows - target_rows)
+    if to_delete <= 0:
+        return RetentionResult(
+            over_cap=True,
+            rows_deleted=0,
+            db_bytes_before=bytes_before,
+            db_bytes_after=bytes_before,
+        )
+
+    # Find the id cutoff for the oldest `to_delete` rows, then delete by range —
+    # avoids materializing a huge id list.
+    cutoff = session.exec(
+        select(col(TagLog.id))
+        .order_by(col(TagLog.id).asc())
+        .offset(to_delete - 1)
+        .limit(1)
+    ).first()
+    deleted = 0
+    if cutoff is not None:
+        deleted = session.exec(delete(TagLog).where(col(TagLog.id) <= cutoff)).rowcount
+        session.commit()
+        _vacuum(session)
+
+    logging.getLogger("dcs_backend.data_capture").warning(
+        "Retention: DB over cap (%d > %d bytes); purged %d oldest rows.",
+        bytes_before,
+        max_bytes,
+        int(deleted or 0),
+    )
+    return RetentionResult(
+        over_cap=True,
+        rows_deleted=int(deleted or 0),
         db_bytes_before=bytes_before,
         db_bytes_after=_db_size_bytes(),
     )

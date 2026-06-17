@@ -20,14 +20,17 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 UTC = getattr(_dt, "UTC", _dt.timezone.utc)  # noqa: UP017
 
+import data_capture  # noqa: E402
 from data_capture import (  # noqa: E402
     CaptureStats,
     capture_stats,
     clear_capture,
+    enforce_size_cap,
+    parse_query_bound,
 )
 from models import EventLog, TagLog  # noqa: E402
 from sqlalchemy import StaticPool  # noqa: E402
-from sqlmodel import Session, SQLModel, create_engine  # noqa: E402
+from sqlmodel import Session, SQLModel, create_engine, select  # noqa: E402
 
 
 @pytest.fixture
@@ -128,3 +131,69 @@ class TestClearCapture:
     def test_rejects_bad_before_type(self, session: Session) -> None:
         with pytest.raises(TypeError):
             clear_capture(session, before="2026-01-01")
+
+
+class TestParseQueryBound:
+    def test_z_suffix_is_utc(self) -> None:
+        dt = parse_query_bound("2026-01-01T00:00:00Z")
+        assert dt.tzinfo is not None
+        assert dt.utcoffset() == _dt.timedelta(0)
+
+    def test_explicit_offset_normalized_to_utc(self) -> None:
+        # 02:00 at +02:00 == 00:00 UTC
+        dt = parse_query_bound("2026-01-01T02:00:00+02:00")
+        assert dt.hour == 0 and dt.utcoffset() == _dt.timedelta(0)
+
+    def test_naive_assumed_utc(self) -> None:
+        dt = parse_query_bound("2026-01-01T12:00:00")
+        assert dt.tzinfo is not None
+        assert dt.hour == 12 and dt.utcoffset() == _dt.timedelta(0)
+
+    def test_rejects_non_str(self) -> None:
+        with pytest.raises(TypeError):
+            parse_query_bound(12345)  # type: ignore[arg-type]
+
+    def test_rejects_bad_iso(self) -> None:
+        with pytest.raises(ValueError):
+            parse_query_bound("not-a-date")
+
+
+class TestEnforceSizeCap:
+    def test_under_cap_is_noop(self, session: Session, monkeypatch) -> None:
+        base = _dt.datetime(2026, 1, 1, tzinfo=_dt.UTC)
+        for i in range(10):
+            session.add(TagLog(tag_name="TAG_0", value=float(i), timestamp=base))
+        session.commit()
+        monkeypatch.setattr(data_capture, "_db_size_bytes", lambda: 100)
+        result = enforce_size_cap(session, max_bytes=1000)
+        assert result.over_cap is False
+        assert result.rows_deleted == 0
+        assert capture_stats(session).total_rows == 10
+
+    def test_over_cap_purges_oldest_keeps_newest(
+        self, session: Session, monkeypatch
+    ) -> None:
+        base = _dt.datetime(2026, 1, 1, tzinfo=_dt.UTC)
+        # ids are monotonic with insert order; value encodes age (0=oldest).
+        for i in range(10):
+            session.add(TagLog(tag_name="TAG_0", value=float(i), timestamp=base))
+        session.commit()
+        # 1000 bytes / 10 rows = 100 B/row; cap 500 * 0.9 headroom => keep 4.
+        monkeypatch.setattr(data_capture, "_db_size_bytes", lambda: 1000)
+        result = enforce_size_cap(session, max_bytes=500)
+        assert result.over_cap is True
+        assert result.rows_deleted == 6
+        remaining = sorted(r.value for r in session.exec(select(TagLog)).all())
+        assert remaining == [6.0, 7.0, 8.0, 9.0]  # newest kept
+
+    def test_rejects_non_session(self) -> None:
+        with pytest.raises(TypeError):
+            enforce_size_cap(object(), max_bytes=1000)  # type: ignore[arg-type]
+
+    def test_rejects_nonpositive_max_bytes(self, session: Session) -> None:
+        with pytest.raises(ValueError):
+            enforce_size_cap(session, max_bytes=0)
+
+    def test_rejects_bad_headroom(self, session: Session) -> None:
+        with pytest.raises(ValueError):
+            enforce_size_cap(session, max_bytes=1000, headroom=1.5)
