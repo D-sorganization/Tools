@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.555                                    |
+| **Spec Version**        | 1.1.557                                    |
 | **Last Spec Update**    | 2026-06-17                                 |
 
 ## 2. Purpose & Mission
@@ -67,6 +67,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   repo-root path insertion, lightweight logging stubs, and `src.shared` AI
   exception/type aliases so CI collection cannot fail when the tests shadow the
   parent package namespace (#3521).
+- AI adapter factory credential-resolution tests now mock the canonical
+  `shared.python.chat_contracts.credentials` contract import path, keeping the
+  optional-keyring fallback deterministic on Python 3.10 CI lanes. The changed
+  test assertion gate also treats the shared AI integration bootstrap as a
+  support helper instead of a behavioral test module (#3521).
 
 ### 2026-06-16 Update
 
@@ -1083,6 +1088,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-17 | 1.1.557 | test(ai, #3521): align adapter-factory credential tests with the canonical `shared.python.chat_contracts.credentials` import path so optional-keyring fallback behavior is deterministic on Python 3.10, and allowlist the shared AI integration bootstrap helper for the changed-test assertion gate. |
 | 2026-06-17 | 1.1.556 | test(ai, #3521): share the isolated AI integration-client bootstrap across Affine, Linear, Notion, and Obsidian tests and shim only the namespace packages + logging_config (not `ai.exceptions`/`ai.types`) so the real modules load and CI collection succeeds. |
 | 2026-06-17 | 1.1.555 | fix(ci, tools_core, #3514): build and install the `tools_core` Rust wheel in the required Python 3.11 CI tests lane, export `TOOLS_CORE_REQUIRED=1`, and hard-fail Rust binding parity when the native wheel is missing. |
 | 2026-06-17 | 1.1.554 | fix(pendulum_core, #3519): add `pendulum-core/pyproject.toml` so maturin builds a correctly-named importable `pendulum_core` wheel (was walking up to the parent setuptools project), and add a maturin CI build + Rust<->Python parity gate. |
