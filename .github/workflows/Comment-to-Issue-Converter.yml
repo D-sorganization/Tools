@@ -24,7 +24,7 @@ permissions:
   pull-requests: read
   issues: write
 concurrency:
-  group: comment-to-issue-${{ github.repository }}
+  group: comment-to-issue-${{ github.repository }}-${{ github.ref }}
   cancel-in-progress: true
 env:
   MAX_ISSUES_PER_RUN: 5
