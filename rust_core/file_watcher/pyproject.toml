@@ -16,5 +16,7 @@ dev = [
 
 [tool.maturin]
 features = ["python", "extension-module"]
-module-name = "file_watcher"
+# Compiled module name MUST differ from the wrapper package
+# `shared.python.file_watcher` to avoid a self-import (issue #3520).
+module-name = "file_watcher_rs"
 manifest-path = "Cargo.toml"

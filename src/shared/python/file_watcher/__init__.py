@@ -28,12 +28,14 @@ if TYPE_CHECKING:
 _BACKEND: str
 
 try:
-    # Rust extension built via maturin. If present, use it directly — its API
-    # surface matches the fallback (FileWatcher, ChangeEvent with .path/.kind).
-    from shared.python.file_watcher import (  # type: ignore[no-redef]
-        ChangeEvent,
-        FileWatcher,
-    )
+    # Rust extension built via maturin. The compiled module is named
+    # ``file_watcher_rs`` (NOT ``file_watcher`` / ``shared.python.file_watcher``)
+    # so it does not collide with — and get shadowed by — this wrapper package
+    # on ``sys.path``. Previously this imported the wrapper package itself, so
+    # the compiled extension was never reached and the backend was always
+    # ``watchdog`` (issue #3520). Its API surface matches the fallback
+    # (FileWatcher, ChangeEvent with ``.path`` / ``.kind``).
+    from file_watcher_rs import ChangeEvent, FileWatcher  # type: ignore[no-redef]
 
     _BACKEND = "rust"
 except ImportError:  # pragma: no cover - backend selection
