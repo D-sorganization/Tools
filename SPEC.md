@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.557                                    |
+| **Spec Version**        | 1.1.559                                    |
 | **Last Spec Update**    | 2026-06-17                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,13 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-17 Update
 
+- P1AM historian retention and export helpers now live in `data_capture.py`
+  instead of the FastAPI shell, keeping `backend/main.py` within the module-size
+  budget while preserving bounded trend queries, streaming CSV export, and
+  periodic retention enforcement (#3518).
+- P1AM backend endpoint prose around the new data-capture helpers was tightened
+  so `backend/main.py` remains below the module-size ratchet after merging the
+  SCADA fallback branch.
 - CI Standard now builds and installs the `tools_core` Rust wheel in the
   required Python 3.11 tests lane, exports `TOOLS_CORE_REQUIRED=1`, and always
   runs `tests/rust_bindings/test_rust_bindings.py` there so the Rust binding
@@ -1085,6 +1092,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-17 | 1.1.559 | refactor(p1am, #3518): tighten endpoint prose in the FastAPI shell so `backend/main.py` stays below the module-size ratchet after merging the SCADA fallback branch, without changing bounded trend or streaming export behavior. |
+| 2026-06-17 | 1.1.558 | refactor(p1am, #3518): move historian retention, tag parsing, and streaming CSV export helpers into `data_capture.py` so the FastAPI shell stays below the module-size budget while preserving bounded trend queries and capture retention behavior. |
 | 2026-06-17 | 1.1.557 | fix(p1am, #3515): make the SCADA fallback backend import test explicitly require `sqlmodel` like the rest of the backend suite, while keeping pure fallback algorithm coverage in the lightweight matrix, and remove stale mypy suppressions from the Rust `tools_core.scada` import path. |
 | 2026-06-17 | 1.1.555 | fix(ci, tools_core, #3514): build and install the `tools_core` Rust wheel in the required Python 3.11 CI tests lane, export `TOOLS_CORE_REQUIRED=1`, and hard-fail Rust binding parity when the native wheel is missing. |
 | 2026-06-17 | 1.1.554 | fix(pendulum_core, #3519): add `pendulum-core/pyproject.toml` so maturin builds a correctly-named importable `pendulum_core` wheel (was walking up to the parent setuptools project), and add a maturin CI build + Rust<->Python parity gate. |
