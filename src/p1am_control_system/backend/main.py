@@ -704,12 +704,7 @@ async def get_trends(
     alpha: float = 0.2,
     db: Session = Depends(get_session),  # noqa: B008
 ) -> dict[str, Any]:
-    """Fetch historical trends for a tag, optionally applying server-side smoothing.
-
-    Bounds the response to TRENDS_MAX_POINTS most-recent samples so a wide range
-    can't materialize millions of rows and OOM the backend (which would stop
-    capture). The window is reported back so the UI can flag truncation.
-    """
+    """Fetch bounded historical trends, optionally applying server-side smoothing."""
     try:
         start_dt = parse_query_bound(start_time)
         end_dt = parse_query_bound(end_time)
@@ -722,8 +717,6 @@ async def get_trends(
     if tag_id.isdigit():
         tag_name = f"TAG_{tag_id}"
 
-    # Cap the row count: take the most-recent N within the range (DESC + limit),
-    # then present oldest-first.
     statement = (
         select(TagLog)
         .where(col(TagLog.tag_name) == tag_name)
@@ -776,8 +769,6 @@ async def export_data(
         .order_by(col(TagLog.timestamp).asc())
     )
 
-    # Bind the streaming session to the SAME engine the request used (honors
-    # test overrides), captured now since the generator runs after this scope.
     bind = db.get_bind()
 
     timestamp_sec = int(datetime.now(UTC).timestamp())
