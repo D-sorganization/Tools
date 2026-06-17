@@ -208,3 +208,4 @@ failed2852.txt
 # SQLite WAL sidecar files (generated at runtime)
 src/p1am_control_system/backend/dcs_scada.db-wal
 src/p1am_control_system/backend/dcs_scada.db-shm
+src/p1am_control_system/backend/dcs_scada.db

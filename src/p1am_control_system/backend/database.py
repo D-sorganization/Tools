@@ -1,4 +1,5 @@
 import logging
+import os
 from collections.abc import Generator
 from typing import Any
 
@@ -10,6 +11,21 @@ logger = logging.getLogger("dcs_backend.database")
 
 DB_FILE = "dcs_scada.db"
 DATABASE_URL = f"sqlite:///{DB_FILE}"
+
+# Durability vs. throughput is an operator choice. NORMAL (default) keeps the
+# 10 Hz write path cheap but can lose the last un-checkpointed WAL on a hard
+# power cut; FULL fsyncs every commit (no loss, slower) for critical campaigns.
+_VALID_SYNC = {"OFF", "NORMAL", "FULL", "EXTRA"}
+
+
+def _synchronous_mode() -> str:
+    """Resolve PRAGMA synchronous from P1AM_SQLITE_SYNCHRONOUS (default NORMAL)."""
+    mode = os.environ.get("P1AM_SQLITE_SYNCHRONOUS", "NORMAL").strip().upper()
+    if mode not in _VALID_SYNC:
+        logger.warning("Invalid P1AM_SQLITE_SYNCHRONOUS=%r; using NORMAL", mode)
+        return "NORMAL"
+    return mode
+
 
 # Connect args needed for SQLite threaded async access
 engine = create_engine(
@@ -31,7 +47,7 @@ def _configure_sqlite_connection(dbapi_connection: Any, _record: Any) -> None:
     cursor = dbapi_connection.cursor()
     try:
         cursor.execute("PRAGMA journal_mode=WAL")
-        cursor.execute("PRAGMA synchronous=NORMAL")
+        cursor.execute(f"PRAGMA synchronous={_synchronous_mode()}")
         cursor.execute("PRAGMA busy_timeout=5000")
     finally:
         cursor.close()

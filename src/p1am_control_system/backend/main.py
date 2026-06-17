@@ -1,6 +1,4 @@
 import asyncio
-import csv
-import io
 import logging
 import math
 import time
@@ -19,7 +17,17 @@ from alarm_processing import process_alarm_events
 from alicat_manager import AlicatManager, AlicatMFC
 from auth_config import require_admin_key, require_api_key, verify_operator_key
 from cors_config import resolve_cors_settings
-from data_capture import CaptureStats, ClearResult, capture_stats, clear_capture
+from data_capture import (
+    TRENDS_MAX_POINTS,
+    CaptureStats,
+    ClearResult,
+    capture_stats,
+    clear_capture,
+    historian_retention_loop,
+    parse_query_bound,
+    parse_tag_names,
+    stream_tag_export_csv,
+)
 from database import engine, get_session, init_db
 from fastapi import (
     Depends,
@@ -350,11 +358,19 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     alicat_manager.start()
     connect_task = asyncio.create_task(modbus_connect_background())
     polling_task = asyncio.create_task(poll_plc_loop())
+    retention_task = asyncio.create_task(
+        historian_retention_loop(
+            shutdown_event=shutdown_event,
+            engine=engine,
+            logger=logger,
+        )
+    )
     yield
     # Shutdown: signal task stop, close client connection & Alicat manager
     shutdown_event.set()
     await connect_task
     await polling_task
+    await retention_task
     await alicat_manager.stop()
     await plc_client.disconnect()
 
@@ -688,11 +704,11 @@ async def get_trends(
     alpha: float = 0.2,
     db: Session = Depends(get_session),  # noqa: B008
 ) -> dict[str, Any]:
-    """Fetch historical trends for a tag, optionally applying server-side smoothing."""
+    """Fetch bounded historical trends, optionally applying server-side smoothing."""
     try:
-        start_dt = datetime.fromisoformat(start_time.replace("Z", "+00:00"))
-        end_dt = datetime.fromisoformat(end_time.replace("Z", "+00:00"))
-    except ValueError as val_err:
+        start_dt = parse_query_bound(start_time)
+        end_dt = parse_query_bound(end_time)
+    except (TypeError, ValueError) as val_err:
         raise HTTPException(
             status_code=400, detail=f"Invalid date format: {val_err}"
         ) from val_err
@@ -706,9 +722,11 @@ async def get_trends(
         .where(col(TagLog.tag_name) == tag_name)
         .where(col(TagLog.timestamp) >= start_dt)
         .where(col(TagLog.timestamp) <= end_dt)
-        .order_by(col(TagLog.timestamp).asc())
+        .order_by(col(TagLog.timestamp).desc())
+        .limit(TRENDS_MAX_POINTS)
     )
-    results = db.exec(statement).all()
+    results = list(reversed(db.exec(statement).all()))
+    truncated = len(results) >= TRENDS_MAX_POINTS
 
     timestamps = [r.timestamp.isoformat() for r in results]
     values = [float(r.value) for r in results]
@@ -718,7 +736,7 @@ async def get_trends(
     elif smoothing == "exponential_smoothing" and values:
         values = exponential_smoothing(values, alpha)
 
-    return {"timestamps": timestamps, "values": values}
+    return {"timestamps": timestamps, "values": values, "truncated": truncated}
 
 
 @app.get("/api/export")
@@ -734,24 +752,15 @@ async def export_data(
         StreamingResponse: Streaming CSV data.
     """
     try:
-        parsed_tag_names = []
-        for tid in tag_ids.split(","):
-            tid = tid.strip()
-            if not tid:
-                continue
-            if tid.isdigit():
-                parsed_tag_names.append(f"TAG_{tid}")
-            else:
-                parsed_tag_names.append(tid)
-        start_dt = datetime.fromisoformat(start_time.replace("Z", "+00:00"))
-        end_dt = datetime.fromisoformat(end_time.replace("Z", "+00:00"))
-    except ValueError as val_err:
+        parsed_tag_names = parse_tag_names(tag_ids)
+        start_dt = parse_query_bound(start_time)
+        end_dt = parse_query_bound(end_time)
+    except (TypeError, ValueError) as val_err:
         raise HTTPException(
             status_code=400,
             detail=f"Invalid parameter formats: {val_err}",
         ) from val_err
 
-    # Query time-series logs
     statement = (
         select(TagLog)
         .where(col(TagLog.tag_name).in_(parsed_tag_names))
@@ -759,26 +768,17 @@ async def export_data(
         .where(col(TagLog.timestamp) <= end_dt)
         .order_by(col(TagLog.timestamp).asc())
     )
-    results = db.exec(statement).all()
 
-    # Generate CSV in memory stream
-    output = io.StringIO()
-    writer = csv.writer(output)
-    writer.writerow(["Timestamp", "Tag Name", "Value"])
+    bind = db.get_bind()
 
-    for row in results:
-        writer.writerow([row.timestamp.isoformat(), row.tag_name, row.value])
-
-    output.seek(0)
-    response = StreamingResponse(
-        iter([output.getvalue()]),
-        media_type="text/csv",
-    )
     timestamp_sec = int(datetime.now(UTC).timestamp())
-    response.headers["Content-Disposition"] = (
-        f"attachment; filename=tag_export_{timestamp_sec}.csv"
+    return StreamingResponse(
+        stream_tag_export_csv(bind, statement),
+        media_type="text/csv",
+        headers={
+            "Content-Disposition": f"attachment; filename=tag_export_{timestamp_sec}.csv"
+        },
     )
-    return response
 
 
 @app.get("/api/capture/status", response_model=CaptureStats)
