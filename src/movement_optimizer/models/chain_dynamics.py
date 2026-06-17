@@ -13,9 +13,9 @@ GRAVITY_M_S2: Final[float] = 9.80665
 DEFAULT_SEGMENT_COUNT: Final[int] = 12
 DEFAULT_SEGMENT_LENGTH_M: Final[float] = 0.18
 DEFAULT_LINK_MASS_KG: Final[float] = 0.12
-DEFAULT_DAMPING: Final[float] = 0.08
-DEFAULT_COUPLING: Final[float] = 18.0
-DEFAULT_BEND_DAMPING: Final[float] = 0.25
+DEFAULT_DAMPING: Final[float] = 0.0015
+DEFAULT_COUPLING: Final[float] = 0.025
+DEFAULT_BEND_DAMPING: Final[float] = 0.001
 MIN_SEGMENTS_FOR_CATENARY: Final[int] = 2
 INTEGRATION_SUBSTEPS: Final[int] = 32
 
@@ -195,6 +195,23 @@ def initial_catenary_angles(segment_count: int, sag_rad: float) -> FloatArray:
     return np.linspace(-sag_rad, sag_rad, segment_count, dtype=np.float64)
 
 
+def initial_tip_kick_velocities(segment_count: int, amplitude_rad_s: float) -> FloatArray:
+    """Return a smooth initial angular-velocity profile concentrated at the tip.
+
+    Preconditions:
+        ``segment_count`` is at least 1 and ``amplitude_rad_s`` is non-negative.
+    """
+
+    if segment_count < 1:
+        raise ValueError("segment_count must be at least 1")
+    if amplitude_rad_s < 0.0:
+        raise ValueError("amplitude_rad_s must be non-negative")
+    if segment_count == 1:
+        return np.asarray([amplitude_rad_s], dtype=np.float64)
+    normalized_link_position = np.linspace(0.0, 1.0, segment_count, dtype=np.float64)
+    return amplitude_rad_s * normalized_link_position**2
+
+
 def random_wadded_chain_state(
     config: ChainConfig,
     *,
@@ -225,18 +242,18 @@ def _angular_acceleration(
 ) -> FloatArray:
     checked = state.validated(config)
     torques = _as_float_array("torques_nm", torques_nm, config.segment_count)
-    inertia = config.link_mass_kg * config.segment_length_m**2
-    effective_lengths = config.segment_length_m * np.arange(
-        1,
-        config.segment_count + 1,
-        dtype=np.float64,
+    inertia = config.link_mass_kg * config.segment_length_m**2 / 3.0
+    gravity_torque = (
+        -config.link_mass_kg
+        * config.gravity_m_s2
+        * (config.segment_length_m / 2.0)
+        * np.sin(checked.angles_rad)
     )
-    gravity_term = -(config.gravity_m_s2 / effective_lengths) * np.sin(checked.angles_rad)
-    damping_term = -config.damping * checked.angular_velocities_rad_s
+    damping_torque = -config.damping * checked.angular_velocities_rad_s
     neighbor_sum = np.zeros(config.segment_count, dtype=np.float64)
     neighbor_sum[:-1] += checked.angles_rad[1:] - checked.angles_rad[:-1]
     neighbor_sum[1:] += checked.angles_rad[:-1] - checked.angles_rad[1:]
-    coupling_term = config.coupling * neighbor_sum / config.link_mass_kg
+    coupling_torque = config.coupling * neighbor_sum
     neighbor_velocity_sum = np.zeros(config.segment_count, dtype=np.float64)
     neighbor_velocity_sum[:-1] += (
         checked.angular_velocities_rad_s[1:] - checked.angular_velocities_rad_s[:-1]
@@ -244,8 +261,10 @@ def _angular_acceleration(
     neighbor_velocity_sum[1:] += (
         checked.angular_velocities_rad_s[:-1] - checked.angular_velocities_rad_s[1:]
     )
-    bend_damping_term = config.bend_damping * neighbor_velocity_sum
-    return gravity_term + damping_term + coupling_term + bend_damping_term + torques / inertia
+    bend_damping_torque = config.bend_damping * neighbor_velocity_sum
+    return (
+        gravity_torque + damping_torque + coupling_torque + bend_damping_torque + torques
+    ) / inertia
 
 
 def step_chain(
@@ -293,6 +312,7 @@ def simulate_chain(
     if steps < 1:
         raise ValueError("steps must be at least 1")
     _require_positive("dt_s", dt_s)
+    torques: FloatArray
     if torque_history_nm is None:
         torques = np.zeros((steps, config.segment_count), dtype=np.float64)
     else:

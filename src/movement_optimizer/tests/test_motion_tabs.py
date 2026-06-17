@@ -152,6 +152,8 @@ def test_main_window_top_toolstrip_controls_left_and_right_sidebars(qapp) -> Non
 def test_swingset_and_chain_tabs_run_local_simulations(qapp) -> None:
     swingset = SwingsetTab()
     chain = ChainDynamicsTab()
+    swingset.autoplay_checkbox.setChecked(False)
+    chain.autoplay_checkbox.setChecked(False)
 
     # Keep the iterative optimizer cheap and deterministic for CI: the default
     # production budget (600 evaluations x ~130-220 simulated steps) takes ~30s
@@ -173,6 +175,7 @@ def test_swingset_and_chain_tabs_run_local_simulations(qapp) -> None:
 
 def test_swingset_tab_exposes_policy_tuning_and_progress(qapp) -> None:
     swingset = SwingsetTab()
+    swingset.autoplay_checkbox.setChecked(False)
     for key in (
         "cycles",
         "freq_min",
@@ -248,8 +251,29 @@ def test_swingset_optimize_policy_action_is_sticky_above_scroll_area(qapp) -> No
     assert swingset.optimize_button not in scroll_area.widget().findChildren(QPushButton)
 
 
+def test_swingset_autoplay_after_policy_optimization_is_configurable(qapp) -> None:
+    swingset = SwingsetTab()
+    swingset._controls["budget"].set_value(50)
+    swingset._controls["cycles"].set_value(1)
+
+    assert swingset.autoplay_checkbox.isChecked()
+    swingset._optimize_policy()
+    _wait_for_policy_worker(qapp, swingset)
+
+    assert swingset.playback_status()[2]
+    assert swingset.play_button.text() == "Pause"
+
+    swingset.autoplay_checkbox.setChecked(False)
+    swingset._optimize_policy()
+    _wait_for_policy_worker(qapp, swingset)
+
+    assert not swingset.playback_status()[2]
+    assert swingset.play_button.text() == "Play"
+
+
 def test_swingset_policy_trace_canvas_accepts_optimization_samples(qapp) -> None:
     swingset = SwingsetTab()
+    swingset.autoplay_checkbox.setChecked(False)
     swingset.iterative_checkbox.setChecked(False)  # exercise the grid-search fallback path.
     swingset._controls["cycles"].set_value(1)
     swingset._controls["freq_samples"].set_value(2)
@@ -378,6 +402,7 @@ def test_motion_canvas_handles_empty_and_bodyless_paints(qapp) -> None:
 
 def test_swingset_playback_controls_cover_policy_rollout_branches(qapp) -> None:
     swingset = SwingsetTab()
+    swingset.autoplay_checkbox.setChecked(False)
     swingset._controls["budget"].set_value(50)
     swingset._controls["cycles"].set_value(1)
     swingset._controls["policy_steps"].set_value(30)
@@ -425,6 +450,7 @@ def test_swingset_playback_methods_return_without_rollout(qapp, monkeypatch) -> 
 
 def test_chain_tab_supports_free_segment_angles_and_realtime_speed(qapp) -> None:
     chain = ChainDynamicsTab()
+    chain.autoplay_checkbox.setChecked(False)
     chain.tie_segments.setChecked(False)
     chain._controls["segments"].set_value(3)
     chain.angle_edit.setText("9999.0, 0.1, -9999.0")
@@ -436,6 +462,25 @@ def test_chain_tab_supports_free_segment_angles_and_realtime_speed(qapp) -> None
 
     assert chain._rollout is not None
     assert chain._playback_interval_ms() == 10
+
+
+def test_chain_autoplay_after_simulation_is_configurable(qapp) -> None:
+    chain = ChainDynamicsTab()
+    chain._controls["segments"].set_value(4)
+    chain._controls["duration"].set_value(0.12)
+    chain._controls["dt"].set_value(0.02)
+
+    assert chain.autoplay_checkbox.isChecked()
+    chain._simulate()
+
+    assert chain.playback_status()[2]
+    assert chain.play_button.text() == "Pause"
+
+    chain.autoplay_checkbox.setChecked(False)
+    chain._simulate()
+
+    assert not chain.playback_status()[2]
+    assert chain.play_button.text() == "Play"
 
 
 def test_chain_tab_converts_typed_degrees(qapp) -> None:
@@ -454,10 +499,11 @@ def test_chain_tab_converts_typed_degrees(qapp) -> None:
 
 def test_chain_tab_exposes_damping_duration_and_random_wadded_start(qapp) -> None:
     chain = ChainDynamicsTab()
+    chain.autoplay_checkbox.setChecked(False)
     chain._controls["segments"].set_value(5)
-    chain._controls["damping"].set_value(0.42)
-    chain._controls["bend_damping"].set_value(1.4)
-    chain._controls["coupling"].set_value(22.0)
+    chain._controls["damping"].set_value(0.0042)
+    chain._controls["bend_damping"].set_value(0.014)
+    chain._controls["coupling"].set_value(0.22)
     chain._controls["duration"].set_value(1.2)
     chain._controls["dt"].set_value(0.2)
     chain._controls["random_seed"].set_value(11)
@@ -466,9 +512,9 @@ def test_chain_tab_exposes_damping_duration_and_random_wadded_start(qapp) -> Non
     chain._randomize_wadded_start()
     chain._simulate()
 
-    assert config.damping == pytest.approx(0.42)
-    assert config.bend_damping == pytest.approx(1.4)
-    assert config.coupling == pytest.approx(22.0)
+    assert config.damping == pytest.approx(0.0042)
+    assert config.bend_damping == pytest.approx(0.014)
+    assert config.coupling == pytest.approx(0.22)
     assert not chain.tie_segments.isChecked()
     assert len(chain.angle_edit.text().split(",")) == 5
     assert chain._rollout is not None
@@ -516,6 +562,7 @@ def test_chain_rollout_keeps_physical_anchor_fixed(qapp) -> None:
 
 def test_chain_tab_reports_invalid_inputs_and_covers_playback_branches(qapp, monkeypatch) -> None:
     chain = ChainDynamicsTab()
+    chain.autoplay_checkbox.setChecked(False)
     chain.tie_segments.setChecked(False)
     chain._controls["segments"].set_value(3)
     chain.angle_edit.setText("0.0, 1.0")
@@ -564,6 +611,7 @@ def test_chain_tab_reports_invalid_inputs_and_covers_playback_branches(qapp, mon
 
 def test_swingset_iterative_optimize_populates_panel_and_overlays(qapp) -> None:
     swingset = SwingsetTab()
+    swingset.autoplay_checkbox.setChecked(False)
     assert swingset.iterative_checkbox.isChecked()  # iterative is the default
     swingset._controls["budget"].set_value(50)
     swingset._controls["cycles"].set_value(1)
@@ -612,6 +660,7 @@ def test_swingset_policy_worker_reports_errors(qapp, monkeypatch) -> None:
 
 def test_swingset_force_toggle_does_not_recompute(qapp) -> None:
     swingset = SwingsetTab()
+    swingset.autoplay_checkbox.setChecked(False)
     swingset._controls["budget"].set_value(50)
     swingset._controls["cycles"].set_value(1)
     swingset._optimize_policy()
@@ -627,6 +676,7 @@ def test_swingset_force_toggle_does_not_recompute(qapp) -> None:
 
 def test_swingset_playback_uses_cached_force_fields(qapp, monkeypatch) -> None:
     swingset = SwingsetTab()
+    swingset.autoplay_checkbox.setChecked(False)
     swingset._controls["budget"].set_value(50)
     swingset._controls["cycles"].set_value(1)
     swingset._optimize_policy()

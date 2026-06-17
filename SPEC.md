@@ -42,6 +42,15 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   concrete float arrays and resolve derived amplitudes to Python floats so the
   shared signal noise path remains compatible with delta mypy checks while
   preserving empty-time-array validation.
+- Movement Optimizer swingset policy search now vectorizes cyclic-control
+  generation before the sequential rollout loop, reducing per-candidate Python
+  callback overhead while preserving state-dependent integration. The Chain
+  Dynamics model now treats bend stiffness and damping as physical torques
+  divided by rod-link inertia, uses a single-link gravity contract matching a
+  slender pendulum, and applies initial kick velocity toward the chain tip
+  rather than the middle links. Swingset and chain simulations now expose
+  default-on autoplay checkboxes so completed simulations start playing without
+  a separate Play click.
 - Movement Optimizer analysis tabs now stop barbell playback when switching
   away from exercise tabs, avoiding stale animation timers indexing the
   swingset/chain tabs. Swingset and chain force overlays cache rollout-wide

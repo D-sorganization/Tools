@@ -9,7 +9,7 @@ from typing import Final, TypeAlias
 
 import numpy as np
 from numpy.typing import NDArray
-from scipy.optimize import differential_evolution, minimize
+from scipy.optimize import Bounds, differential_evolution, minimize
 
 from .chain_dynamics import (
     GRAVITY_M_S2,
@@ -650,6 +650,85 @@ def cyclic_pumping_policy(parameters: CyclicPolicyParameters) -> Policy:
     return _policy
 
 
+def cyclic_policy_controls(
+    parameters: CyclicPolicyParameters,
+    *,
+    steps: int,
+    dt_s: float,
+) -> FloatArray:
+    """Build the full cyclic control matrix with vectorized trigonometry.
+
+    Preconditions:
+        ``steps`` is at least 1 and ``dt_s`` is positive.
+    """
+
+    if steps < 1:
+        raise ValueError("steps must be at least 1")
+    _require_positive("dt_s", dt_s)
+    times = np.arange(steps, dtype=np.float64) * dt_s
+    driver = np.sin(2.0 * np.pi * parameters.frequency_hz * times + parameters.phase_rad)
+    return np.column_stack(
+        (
+            -parameters.torso_rate_amplitude_rad_s * driver,
+            parameters.hip_rate_amplitude_rad_s * driver,
+            -parameters.knee_rate_ratio * parameters.hip_rate_amplitude_rad_s * driver,
+            -0.1 * driver,
+            0.12 * driver,
+        )
+    ).astype(np.float64, copy=False)
+
+
+def _control_action_from_vector(vector: FloatArray) -> SwingControlAction:
+    control = np.asarray(vector, dtype=np.float64)
+    if control.shape != (CONTROL_DIMENSION,) or not np.all(np.isfinite(control)):
+        raise ValueError("control vector must contain 5 finite values")
+    return SwingControlAction(
+        torso_lean_rate_rad_s=float(control[0]),
+        hip_rate_rad_s=float(control[1]),
+        knee_rate_rad_s=float(control[2]),
+        shoulder_rate_rad_s=float(control[3]),
+        elbow_rate_rad_s=float(control[4]),
+    )
+
+
+def simulate_swingset_controls(
+    config: SwingSetConfig,
+    initial_state: SwingSetState,
+    controls: FloatArray,
+    dt_s: float,
+) -> SwingRollout:
+    """Roll out a precomputed control matrix for the trainable swingset model.
+
+    Preconditions:
+        ``controls`` has shape ``(N, 5)`` with ``N >= 1`` and ``dt_s`` is positive.
+    """
+
+    control_array = np.asarray(controls, dtype=np.float64)
+    if (
+        control_array.ndim != 2
+        or control_array.shape[0] < 1
+        or control_array.shape[1] != CONTROL_DIMENSION
+        or not np.all(np.isfinite(control_array))
+    ):
+        raise ValueError("controls must have shape (N >= 1, 5) and contain finite values")
+    _require_positive("dt_s", dt_s)
+    states = [replace(initial_state, pose=constrain_swing_pose(initial_state.pose))]
+    snapshots = [build_swingset_snapshot(config, initial_state.pose)]
+    for control in control_array:
+        action = _control_action_from_vector(control).clipped()
+        states.append(step_swingset(config, states[-1], action, dt_s))
+        snapshots.append(build_swingset_snapshot(config, states[-1].pose))
+    angles = np.asarray([state.pose.swing_angle_rad for state in states])
+    metrics = _rollout_metrics(config, states, snapshots, angles)
+    return SwingRollout(
+        states=tuple(states),
+        swing_angles_rad=angles,
+        controls=control_array,
+        snapshots=tuple(snapshots),
+        metrics=metrics,
+    )
+
+
 def simulate_swingset(
     config: SwingSetConfig,
     initial_state: SwingSetState,
@@ -715,12 +794,11 @@ def optimize_cyclic_policy(
     trace: list[CyclicPolicyTraceSample] = []
     for index, parameters in enumerate(candidates, start=1):
         candidate_steps = _steps_for_candidate(steps, dt_s, parameters, cycles)
-        rollout = simulate_swingset(
+        rollout = simulate_swingset_controls(
             config,
             start,
-            candidate_steps,
+            cyclic_policy_controls(parameters, steps=candidate_steps, dt_s=dt_s),
             dt_s,
-            cyclic_pumping_policy(parameters),
         )
         score = rollout.metrics.max_height_gain_m
         if score > best_score:
@@ -806,6 +884,10 @@ def optimize_cyclic_policy_iterative(
     bounds = bounds or CyclicPolicyBounds()
     start = initial_state or SwingSetState(pose=SwingPose(swing_angle_rad=0.06))
     bound_list = bounds.as_list()
+    optimizer_bounds = Bounds(
+        np.asarray([lower for lower, _upper in bound_list], dtype=np.float64),
+        np.asarray([upper for _lower, upper in bound_list], dtype=np.float64),
+    )
 
     eval_count = 0
     best_score = -np.inf
@@ -819,8 +901,11 @@ def optimize_cyclic_policy_iterative(
             return float(np.inf)  # Hard budget reached: stop spending evaluations.
         params = _params_from_vector(vector, bounds)
         candidate_steps = _steps_for_candidate(steps, dt_s, params, cycles)
-        rollout = simulate_swingset(
-            config, start, candidate_steps, dt_s, cyclic_pumping_policy(params)
+        rollout = simulate_swingset_controls(
+            config,
+            start,
+            cyclic_policy_controls(params, steps=candidate_steps, dt_s=dt_s),
+            dt_s,
         )
         score = rollout.metrics.max_height_gain_m
         eval_count += 1
@@ -848,7 +933,7 @@ def optimize_cyclic_policy_iterative(
     maxiter = max(1, de_budget // (_OPTIMIZER_POPSIZE * CONTROL_DIMENSION) - 1)
     differential_evolution(
         _objective,
-        bound_list,
+        optimizer_bounds,
         seed=seed,
         maxiter=maxiter,
         popsize=_OPTIMIZER_POPSIZE,

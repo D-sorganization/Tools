@@ -11,7 +11,7 @@
 | License          | MIT                                                     |
 | Package Name     | `movement-optimizer`                                    |
 | Current Version  | `1.0.0`                                                 |
-| Spec Version     | `1.0.13`                                                |
+| Spec Version     | `1.0.14`                                                |
 | Last Spec Update | 2026-06-16                                              |
 
 ## 2. Purpose
@@ -22,6 +22,16 @@ Movement-Optimizer is a biomechanics trajectory optimizer for barbell exercises.
 
 ### 2026-06-16 Update
 
+- Swingset policy search now precomputes cyclic control matrices with vectorized
+  NumPy trigonometry before the necessarily sequential state rollout, reducing
+  optimizer callback overhead without changing policy values.
+- Chain Dynamics now uses torque-based bend stiffness/damping over rod-link
+  inertia, validates single-link gravity against a slender pendulum, and
+  initializes kick velocity as a tip-weighted profile instead of a mid-chain
+  sine wave.
+- Swingset and Chain Dynamics analysis tabs include default-on autoplay
+  checkboxes so optimized or simulated motion starts playing as soon as results
+  are ready.
 - Analysis-tab playback now has explicit responsiveness contracts: switching
   from a playing barbell exercise into Swingset Model or Chain Dynamics stops
   the barbell animation timer before the shared playback controls retarget.
