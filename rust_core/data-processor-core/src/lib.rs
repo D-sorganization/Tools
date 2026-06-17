@@ -8,6 +8,30 @@ use std::path::{Path, PathBuf};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
+// ── PyO3 module entry point ─────────────────────────────────────────────────
+//
+// Without a `#[pymodule]` the maturin wheel exposed no importable extension, so
+// `import data_processor_core` in
+// `src/shared/python/data_processor/rust_engine.py` always failed and the
+// engine was stuck on the pandas fallback (issue #3516). This registers the
+// engine's Python bindings (`py_inspect`, `py_preview`, `py_convert`,
+// `py_scan_batch`, `py_filter_export`) under the top-level `data_processor_core`
+// module the consumer imports. Enabled only when building a maturin wheel
+// (`--features python`); `cargo test` without the feature still compiles.
+#[cfg(feature = "python")]
+use pyo3::prelude::*;
+
+/// PyO3 module entry point. The compiled module is named `data_processor_core`
+/// (see `[tool.maturin] module-name`), matching the consumer's
+/// `import data_processor_core`.
+#[cfg(feature = "python")]
+#[pymodule]
+fn data_processor_core(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
+    engine::register(m)?;
+    m.add("__version__", env!("CARGO_PKG_VERSION"))?;
+    Ok(())
+}
+
 #[derive(Debug, Error)]
 pub enum DataProcessorError {
     #[error("path must be provided")]
