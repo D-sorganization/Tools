@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.548                                    |
+| **Spec Version**        | 1.1.549                                    |
 | **Last Spec Update**    | 2026-06-16                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-16 Update
 
+- Signal Toolkit noise generators now coerce generated NumPy values through
+  concrete float arrays and resolve derived amplitudes to Python floats so the
+  shared signal noise path remains compatible with delta mypy checks while
+  preserving empty-time-array validation.
 - Movement Optimizer analysis tabs now stop barbell playback when switching
   away from exercise tabs, avoiding stale animation timers indexing the
   swingset/chain tabs. Swingset and chain force overlays cache rollout-wide

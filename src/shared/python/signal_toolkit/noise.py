@@ -175,7 +175,7 @@ class NoiseGenerator:
         if std > 0:
             brown = _float_array(brown / std * amplitude)
 
-        return brown
+        return _float_array(brown)
 
     def _generate_blue_noise(self, n: int, amplitude: float) -> np.ndarray:
         """Generate blue noise (differentiated white noise)."""
@@ -187,7 +187,7 @@ class NoiseGenerator:
         if std > 0:
             blue = _float_array(blue / std * amplitude)
 
-        return blue
+        return _float_array(blue)
 
     def _generate_violet_noise(self, n: int, amplitude: float) -> np.ndarray:
         """Generate violet noise (second derivative of white noise)."""
@@ -199,7 +199,7 @@ class NoiseGenerator:
         if std > 0:
             violet = _float_array(violet / std * amplitude)
 
-        return violet
+        return _float_array(violet)
 
     def _generate_uniform_noise(self, n: int, amplitude: float) -> np.ndarray:
         """Generate uniform distribution noise."""
@@ -288,7 +288,7 @@ def add_noise_to_signal(
         # Calculate amplitude from SNR
         signal_power = np.mean(signal.values**2)
         noise_power = signal_power / (10 ** (snr_db / 10))
-        amplitude = np.sqrt(noise_power)
+        amplitude = float(np.sqrt(noise_power))
     elif amplitude is None:
         amplitude = 0.1 * float(np.std(signal.values))
 
