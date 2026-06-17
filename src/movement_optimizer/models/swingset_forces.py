@@ -93,7 +93,8 @@ def _com_accelerations(rollout: SwingRollout, dt_s: float) -> FloatArray:
 def _com_accelerations_from_positions(positions: FloatArray, dt_s: float) -> FloatArray:
     if positions.shape[0] < 2:  # pragma: no cover - rollouts always have >= 2 snapshots
         return np.zeros_like(positions)
-    return np.gradient(positions, dt_s, axis=0)
+    velocities = np.gradient(positions, dt_s, axis=0)
+    return np.gradient(velocities, dt_s, axis=0)
 
 
 def swing_force_fields(

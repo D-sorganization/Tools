@@ -124,8 +124,15 @@ def test_chain_bend_damping_reduces_wadded_chain_tip_speed() -> None:
     base_rollout = simulate_chain(base, initial, steps=80, dt_s=0.01)
     damped_rollout = simulate_chain(damped, initial, steps=80, dt_s=0.01)
 
-    assert damped_rollout.tip_speed_m_s[-1] < base_rollout.tip_speed_m_s[-1]
+    assert damped_rollout.tip_speed_m_s.max() < base_rollout.tip_speed_m_s.max()
     assert damped_rollout.energy_j[-1] < base_rollout.energy_j[-1]
+    base_curvature = np.mean(
+        [state.metrics(base).max_curvature_rad for state in base_rollout.states]
+    )
+    damped_curvature = np.mean(
+        [state.metrics(damped).max_curvature_rad for state in damped_rollout.states]
+    )
+    assert damped_curvature < base_curvature
 
 
 def test_chain_single_segment_gravity_matches_slender_rod_pendulum() -> None:
@@ -148,6 +155,35 @@ def test_chain_single_segment_gravity_matches_slender_rod_pendulum() -> None:
     )
     observed_acceleration = stepped.angular_velocities_rad_s[0] / dt_s
     assert observed_acceleration == pytest.approx(expected_acceleration, rel=0.02)
+
+
+def test_chain_downstream_load_slows_top_link_gravity() -> None:
+    """A multi-link chain must not accelerate like independent single rods.
+
+    The top joint carries every downstream link, so for a straight N-link chain
+    it should have roughly 1/N of the single-link gravitational angular
+    acceleration. The free tip remains a single-link rod.
+    """
+    config = ChainConfig(
+        segment_count=4,
+        segment_length_m=0.5,
+        damping=0.0,
+        coupling=0.0,
+        bend_damping=0.0,
+    )
+    angle = 0.2
+    dt_s = 1e-4
+    state = ChainState(
+        np.full(config.segment_count, angle, dtype=np.float64),
+        np.zeros(config.segment_count, dtype=np.float64),
+    )
+
+    stepped = step_chain(config, state, dt_s=dt_s)
+    acceleration = stepped.angular_velocities_rad_s / dt_s
+
+    single_link = -(3.0 * config.gravity_m_s2 / (2.0 * config.segment_length_m)) * np.sin(angle)
+    assert acceleration[0] == pytest.approx(single_link / config.segment_count, rel=0.03)
+    assert acceleration[-1] == pytest.approx(single_link, rel=0.03)
 
 
 def test_chain_tip_kick_velocities_increase_toward_tip() -> None:

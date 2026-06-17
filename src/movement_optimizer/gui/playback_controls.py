@@ -6,7 +6,7 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 
 from PyQt6.QtCore import Qt, pyqtSignal
-from PyQt6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QSlider, QWidget
+from PyQt6.QtWidgets import QCheckBox, QHBoxLayout, QLabel, QPushButton, QSlider, QWidget
 
 from movement_optimizer.gui.wheel_blocker import suppress_wheel_events
 
@@ -72,6 +72,15 @@ class PlaybackControls(QWidget):
         self.speed_label.setFixedWidth(40)
         layout.addWidget(self.speed_label)
 
+        self.autoplay_checkbox = QCheckBox("Autoplay")
+        self.autoplay_checkbox.setChecked(True)
+        self.autoplay_checkbox.setAccessibleName("Autoplay completed simulations")
+        self.autoplay_checkbox.setAccessibleDescription(
+            "Automatically start animation playback after a simulation or optimization completes."
+        )
+        self.autoplay_checkbox.setToolTip("Automatically play completed simulations.")
+        layout.addWidget(self.autoplay_checkbox)
+
         layout.addStretch()
         self.frame_label = QLabel("")
         layout.addWidget(self.frame_label)
@@ -104,6 +113,10 @@ class PlaybackControls(QWidget):
     def speed_multiplier(self) -> float:
         """Return the current playback speed multiplier."""
         return self.speed_slider.value() / 10.0
+
+    def autoplay_enabled(self) -> bool:
+        """Return whether completed simulations should start playing automatically."""
+        return self.autoplay_checkbox.isChecked()
 
     def set_speed_multiplier_text(self, speed: float) -> None:
         """Display the current playback speed multiplier."""

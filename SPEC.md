@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.561                                    |
+| **Spec Version**        | 1.1.562                                    |
 | **Last Spec Update**    | 2026-06-17                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,12 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-17 Update
 
+- Movement Optimizer now keeps completed barbell optimizations autoplayable via
+  the shared playback bar, makes the Swingset optimizer command larger and
+  sticky above the settings scroller, corrects Swingset chain-tension recovery
+  to use COM acceleration rather than velocity, and updates Chain Dynamics
+  gravity response to include downstream link load/effective inertia so
+  multi-link chains no longer move like independent single rods.
 - P1AM Modbus register packing, routing serialization, interlock encoding, and
   direct tag-address lookup now live in `backend/modbus_codec.py`, keeping
   `backend/modbus_client.py` below the 500 LOC file-size gate while preserving

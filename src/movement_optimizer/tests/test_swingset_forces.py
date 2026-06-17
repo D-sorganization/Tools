@@ -63,6 +63,22 @@ def test_swing_force_field_gravity_points_down_with_weight_magnitude() -> None:
     assert field.gravity_n[1] == pytest.approx(expected)
 
 
+def test_swing_chain_tension_uses_acceleration_not_velocity() -> None:
+    config, rollout = _make_rollout()
+    snapshots = tuple(
+        dataclasses.replace(
+            snapshot,
+            center_of_mass_m=np.asarray([0.12 * frame, -0.25], dtype=np.float64),
+        )
+        for frame, snapshot in enumerate(rollout.snapshots)
+    )
+    linear_com_rollout = dataclasses.replace(rollout, snapshots=snapshots)
+
+    field = swing_force_field(config, linear_com_rollout, DEFAULT_POLICY_DT_S, frame_index=10)
+
+    np.testing.assert_allclose(field.chain_tension_n, -field.gravity_n, atol=1e-9)
+
+
 @pytest.mark.parametrize("bad_index", [-1, _STEPS + 5, 9999])
 def test_swing_force_field_rejects_out_of_range_index(bad_index: int) -> None:
     config, rollout = _make_rollout()

@@ -242,11 +242,14 @@ def _angular_acceleration(
 ) -> FloatArray:
     checked = state.validated(config)
     torques = _as_float_array("torques_nm", torques_nm, config.segment_count)
-    inertia = config.link_mass_kg * config.segment_length_m**2 / 3.0
+    downstream = np.arange(config.segment_count, 0, -1, dtype=np.float64)
+    inertia = config.link_mass_kg * config.segment_length_m**2 * downstream**3 / 3.0
     gravity_torque = (
         -config.link_mass_kg
         * config.gravity_m_s2
-        * (config.segment_length_m / 2.0)
+        * config.segment_length_m
+        * downstream**2
+        / 2.0
         * np.sin(checked.angles_rad)
     )
     damping_torque = -config.damping * checked.angular_velocities_rad_s

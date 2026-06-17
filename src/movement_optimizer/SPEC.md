@@ -11,7 +11,7 @@
 | License          | MIT                                                     |
 | Package Name     | `movement-optimizer`                                    |
 | Current Version  | `1.0.0`                                                 |
-| Spec Version     | `1.0.15`                                                |
+| Spec Version     | `1.0.16`                                                |
 | Last Spec Update | 2026-06-17                                              |
 
 ## 2. Purpose
@@ -22,6 +22,19 @@ Movement-Optimizer is a biomechanics trajectory optimizer for barbell exercises.
 
 ### 2026-06-17 Update
 
+- The canonical Tools implementation now adds a shared bottom-bar Autoplay
+  control for completed barbell optimizations, while retaining the Swingset
+  and Chain Dynamics tab-level autoplay controls for local simulations.
+- Chain Dynamics gravity response now accounts for downstream link load and
+  effective inertia, so top joints in a multi-link chain no longer accelerate
+  like independent single rods; regression tests pin the single-link slender
+  rod case and multi-link downstream-load scaling.
+- Swingset force recovery now differentiates center-of-mass position twice to
+  estimate acceleration before recovering chain tension, avoiding velocity-as-
+  acceleration force artifacts.
+- The Swingset optimizer command is kept as a larger sticky primary action
+  above the scrollable settings panel so policy optimization remains visually
+  prominent.
 - Motion-tab slider/text controls and scroll-panel construction now live in
   `movement_optimizer.gui.motion_controls`, keeping the tab modules under the
   enforced source-size budget without changing the Swingset or Chain Dynamics
