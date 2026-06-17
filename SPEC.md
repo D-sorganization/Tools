@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.551                                    |
+| **Spec Version**        | 1.1.552                                    |
 | **Last Spec Update**    | 2026-06-17                                 |
 
 ## 2. Purpose & Mission
@@ -48,6 +48,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   construction now live in `movement_optimizer.gui.motion_controls`, keeping
   `motion_tabs.py` within the fleet module-size budget while preserving the
   public `NumericControl` import surface used by the tab tests.
+- Movement Optimizer now has a fleet-routed, pinned
+  `maturin-movement-optimizer` workflow that builds the
+  `movement_optimizer_core` wheel, verifies required Rust exports, and runs the
+  Rust-to-NumPy inverse-dynamics parity gate without relying on top-level test
+  package imports.
 
 ### 2026-06-16 Update
 
