@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.557                                    |
+| **Spec Version**        | 1.1.559                                    |
 | **Last Spec Update**    | 2026-06-17                                 |
 
 ## 2. Purpose & Mission
@@ -43,6 +43,12 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   runs `tests/rust_bindings/test_rust_bindings.py` there so the Rust binding
   parity contract hard-fails when the native wheel is missing (#3514). Optional
   local/non-required lanes keep the explicit import-skip fallback.
+- P1AM SCADA fallback tests now separate pure fallback coverage from the full
+  backend import dependency boundary: the `main` import wiring test explicitly
+  requires `sqlmodel`, matching the rest of the backend suite, while the
+  pure-Python SCADA fallback algorithms still run in the default lightweight
+  matrix. The Rust `tools_core.scada` import no longer carries stale mypy
+  suppressions (#3515).
 - Movement Optimizer's Rust parity workflow now routes through the self-hosted
   runner dispatcher, uses the fleet-pinned Rust toolchain action, and imports
   its squat fixture through the canonical movement optimizer model API so the
@@ -64,9 +70,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   Rust-to-NumPy inverse-dynamics parity gate without relying on top-level test
   package imports.
 - Shared AI integration client tests now use one local bootstrap helper for
-  repo-root path insertion, lightweight logging stubs, and `src.shared` AI
-  exception/type aliases so CI collection cannot fail when the tests shadow the
-  parent package namespace (#3521).
+  repo-root path insertion and lightweight logging stubs while loading the real
+  AI exception/type modules from disk, so CI collection cannot fail by
+  shadowing the parent package namespace (#3521).
 - AI adapter factory credential-resolution tests now mock the canonical
   `shared.python.chat_contracts.credentials` contract import path, keeping the
   optional-keyring fallback deterministic on Python 3.10 CI lanes. The changed
@@ -1088,8 +1094,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-06-17 | 1.1.557 | test(ai, #3521): align adapter-factory credential tests with the canonical `shared.python.chat_contracts.credentials` import path so optional-keyring fallback behavior is deterministic on Python 3.10, and allowlist the shared AI integration bootstrap helper for the changed-test assertion gate. |
-| 2026-06-17 | 1.1.556 | test(ai, #3521): share the isolated AI integration-client bootstrap across Affine, Linear, Notion, and Obsidian tests and shim only the namespace packages + logging_config (not `ai.exceptions`/`ai.types`) so the real modules load and CI collection succeeds. |
+| 2026-06-17 | 1.1.559 | test(ai, #3521): align adapter-factory credential tests with the canonical `shared.python.chat_contracts.credentials` import path so optional-keyring fallback behavior is deterministic on Python 3.10, and allowlist the shared AI integration bootstrap helper for the changed-test assertion gate. |
+| 2026-06-17 | 1.1.558 | test(ai, #3521): share the isolated AI integration-client bootstrap across Affine, Linear, Notion, and Obsidian tests and shim only the namespace packages plus `logging_config` so the real AI exception/type modules load and CI collection succeeds. |
+| 2026-06-17 | 1.1.557 | fix(p1am, #3515): make the SCADA fallback backend import test explicitly require `sqlmodel` like the rest of the backend suite, while keeping pure fallback algorithm coverage in the lightweight matrix, and remove stale mypy suppressions from the Rust `tools_core.scada` import path. |
 | 2026-06-17 | 1.1.555 | fix(ci, tools_core, #3514): build and install the `tools_core` Rust wheel in the required Python 3.11 CI tests lane, export `TOOLS_CORE_REQUIRED=1`, and hard-fail Rust binding parity when the native wheel is missing. |
 | 2026-06-17 | 1.1.554 | fix(pendulum_core, #3519): add `pendulum-core/pyproject.toml` so maturin builds a correctly-named importable `pendulum_core` wheel (was walking up to the parent setuptools project), and add a maturin CI build + Rust<->Python parity gate. |
 | 2026-06-17 | 1.1.552 | fix(ci, movement_optimizer, #3517): route the Rust parity workflow through the self-hosted runner dispatcher, pin the Rust toolchain action to the fleet-approved commit, and import the squat fixture through `movement_optimizer.models` so the Rust wheel parity gate avoids hosted-runner and package-shadowing failures. |
