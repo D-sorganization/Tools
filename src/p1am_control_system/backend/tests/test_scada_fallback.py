@@ -107,6 +107,7 @@ def test_backend_imports_without_tools_core(monkeypatch: pytest.MonkeyPatch) -> 
     ``main`` and assert it falls back to the pure-Python ``scada_fallback``
     symbols.
     """
+    pytest.importorskip("sqlmodel")
     real_import = builtins.__import__
 
     def _blocked_import(name: str, *args: object, **kwargs: object) -> object:

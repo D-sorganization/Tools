@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.555                                    |
+| **Spec Version**        | 1.1.557                                    |
 | **Last Spec Update**    | 2026-06-17                                 |
 
 ## 2. Purpose & Mission
@@ -43,6 +43,12 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   runs `tests/rust_bindings/test_rust_bindings.py` there so the Rust binding
   parity contract hard-fails when the native wheel is missing (#3514). Optional
   local/non-required lanes keep the explicit import-skip fallback.
+- P1AM SCADA fallback tests now separate pure fallback coverage from the full
+  backend import dependency boundary: the `main` import wiring test explicitly
+  requires `sqlmodel`, matching the rest of the backend suite, while the
+  pure-Python SCADA fallback algorithms still run in the default lightweight
+  matrix. The Rust `tools_core.scada` import no longer carries stale mypy
+  suppressions (#3515).
 - Movement Optimizer's Rust parity workflow now routes through the self-hosted
   runner dispatcher, uses the fleet-pinned Rust toolchain action, and imports
   its squat fixture through the canonical movement optimizer model API so the
@@ -1079,6 +1085,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-17 | 1.1.557 | fix(p1am, #3515): make the SCADA fallback backend import test explicitly require `sqlmodel` like the rest of the backend suite, while keeping pure fallback algorithm coverage in the lightweight matrix, and remove stale mypy suppressions from the Rust `tools_core.scada` import path. |
 | 2026-06-17 | 1.1.555 | fix(ci, tools_core, #3514): build and install the `tools_core` Rust wheel in the required Python 3.11 CI tests lane, export `TOOLS_CORE_REQUIRED=1`, and hard-fail Rust binding parity when the native wheel is missing. |
 | 2026-06-17 | 1.1.554 | fix(pendulum_core, #3519): add `pendulum-core/pyproject.toml` so maturin builds a correctly-named importable `pendulum_core` wheel (was walking up to the parent setuptools project), and add a maturin CI build + Rust<->Python parity gate. |
 | 2026-06-17 | 1.1.552 | fix(ci, movement_optimizer, #3517): route the Rust parity workflow through the self-hosted runner dispatcher, pin the Rust toolchain action to the fleet-approved commit, and import the squat fixture through `movement_optimizer.models` so the Rust wheel parity gate avoids hosted-runner and package-shadowing failures. |

@@ -63,9 +63,9 @@ try:
     # present in every environment (fresh checkout, no Rust toolchain, slim
     # deployment image), so guard the import and fall back to the pure-Python
     # implementation rather than failing the whole backend at import time.
-    from tools_core import scada  # type: ignore[attr-defined]
+    from tools_core import scada
 except ModuleNotFoundError:
-    import scada_fallback as scada  # type: ignore[no-redef]
+    import scada_fallback as scada
 
     logging.getLogger("dcs_backend.main").warning(
         "tools_core wheel not installed; using pure-Python scada fallback. "
