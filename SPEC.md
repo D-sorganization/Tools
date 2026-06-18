@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.573                                    |
+| **Spec Version**        | 1.1.574                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -42,6 +42,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   MainWindow contract for tabs, playback controls, exercise tabs, and
   published exercise state, removing the module-level mypy suppression and
   per-method override ignores without changing runtime Qt dispatch.
+- Movement Optimizer optimization controller mixin now declares its own
+  MainWindow contract for optimizer state, signals, exercise tabs, controls,
+  sidebar access, and playback handoff methods, removing the module-level
+  mypy suppression and the remaining QMessageBox arg-type ignore without
+  changing worker-thread or signal behavior.
 - Movement Optimizer Swingset and Chain Dynamics analysis legends now dock
   into `MotionAnalysisPanel`-owned reserved legend rows instead of living on
   data axes, preserving visible labels for torque, power, angle, COM, energy,
