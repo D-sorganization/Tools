@@ -131,3 +131,15 @@ class BasePLCClient(abc.ABC):
             bool: True if the setpoint was written/accepted, False otherwise.
         """
         return False
+
+    async def write_coil(self, address: int, value: bool) -> bool:
+        """Write a single discrete coil (e.g. the heater relay).
+
+        Public seam for digital-output control (TemperatureService drives the
+        heater relay through this). Concrete default returns False so clients
+        that don't support coils keep working; Modbus and simulator override it.
+
+        Returns:
+            bool: True if the coil write was accepted, False otherwise.
+        """
+        return False

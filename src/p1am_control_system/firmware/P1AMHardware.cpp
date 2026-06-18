@@ -72,3 +72,14 @@ void P1AMHardware::WriteAnalogOutput(int channel, float value) {
 void P1AMHardware::WriteInhibit(bool active) {
   digitalWrite(kPinInhibit, active ? HIGH : LOW);
 }
+
+void P1AMHardware::WriteHeaterRelay(bool on) {
+  // Safe no-op until a discrete-output module slot is configured (see header).
+  // This keeps the bench-verified build unchanged when no DO module is present.
+  if (kSlotRelay < 0) {
+    return;
+  }
+  // P1.writeDiscrete drives one channel of a discrete-output module.
+  // Library channels are 1-indexed (kChanRelay).
+  P1.writeDiscrete(on ? HIGH : LOW, kSlotRelay, kChanRelay);
+}

@@ -1,10 +1,3 @@
-"""Power-supply state machine, safety interlocks, and control law.
-
-The controller is fully testable without a PLC: feed measured values into
-``tick()`` and inspect state plus commanded output. Trips latch until
-``acknowledge_trip()``; E-stop latches until ``clear_estop()``.
-"""
-
 from __future__ import annotations
 
 import logging
@@ -17,6 +10,7 @@ from power_supply_models import (
     PowerSupplyState,
     PowerSupplyStatus,
 )
+from power_supply_noise import FeedbackNoiseTracker
 
 __all__ = [
     "PowerSupplyConfig",
@@ -67,6 +61,7 @@ class PowerSupplyController:
         # to arm, and rejects setpoints until clear_estop() is called. This is a
         # one-way kill — it must be explicitly cleared by an operator.
         self._estopped = False
+        self._noise = FeedbackNoiseTracker(config)
 
     @property
     def state(self) -> PowerSupplyState:
@@ -107,6 +102,7 @@ class PowerSupplyController:
             new_config.current_setpoint_min_a,
             min(self._setpoint_a, new_config.current_setpoint_max_a),
         )
+        self._noise.update_config(new_config)
 
     def set_permissive(self, on: bool) -> None:
         """Toggle permissive. A trip latch is not cleared by a permissive change.
@@ -417,6 +413,8 @@ class PowerSupplyController:
         self._last_v = self._safe_finite(measured_voltage_v)
         self._last_t = self._safe_finite(measured_temp_c)
 
+        self._noise.append(self._last_i, self._last_v)
+
         measured_power_w = self._last_v * self._last_i
         self._evaluate_trips(measured_power_w)
         self._recompute_power_mode_setpoint()
@@ -474,6 +472,7 @@ class PowerSupplyController:
 
     def status(self) -> PowerSupplyStatus:
         """Return a snapshot of controller state for serialization."""
+        noise = self._noise.snapshot(self._config)
         return PowerSupplyStatus(
             state=self._state,
             mode=self._mode,
@@ -493,4 +492,7 @@ class PowerSupplyController:
                 / 100.0
                 * self._config.current_full_scale_a
             ),
+            current_noise=noise.current,
+            voltage_noise=noise.voltage,
+            arcing=noise.arcing,
         )

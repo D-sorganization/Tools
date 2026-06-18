@@ -27,6 +27,10 @@ StorageManager storage;
 unsigned long lastScanTime = 0;
 const unsigned long kScanIntervalMs = 100;
 
+// Modbus coil 2 = heater relay command from the temperature controller.
+// (Coil 0 = save-to-flash, coil 1 = E-stop reset.)
+const int kHeaterRelayCoil = 2;
+
 // Helper to Pack Float into 2 Modbus registers (IEEE-754)
 void WriteFloatToModbus(int regAddress, float val) {
   uint32_t raw;
@@ -245,6 +249,10 @@ void loop() {
       pids[i].Compute(broker, 0.1f);
     }
     interlock.Evaluate(broker, hw);
+    // Heater relay (Modbus coil 2): the temperature controller commands it, but
+    // the safety interlock always wins — a trip forces the relay off regardless.
+    bool relay_cmd = (modbusServer.coilRead(kHeaterRelayCoil) == 1);
+    hw.WriteHeaterRelay(relay_cmd && !interlock.IsTripped());
     for (int i = 0; i < SignalBroker::kNumTags; ++i) {
       WriteFloatToModbus(i * 2, broker.GetTag(i));
     }

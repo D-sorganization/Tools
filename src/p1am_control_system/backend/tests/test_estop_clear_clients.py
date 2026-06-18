@@ -103,3 +103,16 @@ def test_simulator_clear_estop_resets_latch() -> None:
         assert sim.e_stop_active is False
 
     asyncio.run(_go())
+
+
+def test_simulator_write_coil_records_state() -> None:
+    """The simulator must record discrete-coil writes (e.g. the heater relay)."""
+
+    async def _go() -> None:
+        sim = SimulatedPLCClient()
+        assert await sim.write_coil(2, True) is True
+        assert sim.coils[2] is True
+        assert await sim.write_coil(2, False) is True
+        assert sim.coils[2] is False
+
+    asyncio.run(_go())

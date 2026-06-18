@@ -79,6 +79,7 @@ export const telemetryFrameSchema = z.object({
   active_alarms: z.record(z.string(), activeAlarmSchema).optional(),
   e_stop_active: z.boolean().optional(),
   power_supply: z.unknown().optional(),
+  temperature: z.unknown().optional(),
 });
 export type TelemetryFrame = z.infer<typeof telemetryFrameSchema>;
 

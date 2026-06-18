@@ -70,6 +70,7 @@ async def _poll_once(
     ws: Any,
     alicats: Any,
     power_supply: Any,
+    temperature: Any = None,
     alarm_engine: Any,
     active_alarm_map: dict[str, dict[str, Any]],
     session_factory: Callable[[], Iterator[Session]],
@@ -105,6 +106,7 @@ async def _poll_once(
         [tags.get(f"TAG_{i}", 0.0) for i in range(32)] if tags is not None else []
     )
     ps_status = await power_supply.poll(tags)
+    temp_status = await temperature.poll(tags) if temperature is not None else None
     if estop_active and plc.connected:
         await plc.trigger_estop()
 
@@ -116,6 +118,8 @@ async def _poll_once(
         "e_stop_active": estop_active,
         "power_supply": ps_status.model_dump(),
     }
+    if temp_status is not None:
+        payload["temperature"] = temp_status.model_dump()
     await ws.broadcast(payload)
 
     if tags is not None:

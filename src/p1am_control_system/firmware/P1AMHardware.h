@@ -14,6 +14,7 @@ class P1AMHardware : public HardwareInterface {
   float ReadAnalogInput(int channel) override;
   void WriteAnalogOutput(int channel, float value) override;
   void WriteInhibit(bool active) override;
+  void WriteHeaterRelay(bool on) override;
 
  private:
   // Actual bench-verified slot order via P1.printModules() on 2026-06-01:
@@ -21,6 +22,14 @@ class P1AMHardware : public HardwareInterface {
   //   Slot 2 = P1-04THM        (4-channel thermocouple)
   static const int kSlotAna = 1;
   static const int kSlotThm = 2;
+  // Heater relay discrete-output module. The bench stack currently has NO
+  // discrete-output module, so this is -1 (disabled -> WriteHeaterRelay is a
+  // no-op). When a P1-08TD*/P1-08TRS (or similar 24 V DO) module is installed,
+  // set kSlotRelay to its slot (from P1.printModules()) and kChanRelay to the
+  // wired channel (1-indexed), then reflash. The temperature controller drives
+  // this via Modbus coil 2.
+  static const int kSlotRelay = -1;
+  static const int kChanRelay = 1;
   // Inhibit GPIO. MUST NOT be pin 5 — the P1AM-ETH shield hardwires the W5500
   // chip-select to D5, so driving D5 from this firmware breaks Ethernet SPI.
   // D6 is free on the P1AM-100 / P1AM-ETH stack.

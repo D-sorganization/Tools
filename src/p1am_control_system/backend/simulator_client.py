@@ -23,6 +23,9 @@ class SimulatedPLCClient(BasePLCClient):
         # Latched emergency-stop state for the simulated controller
         self.e_stop_active = False
 
+        # Discrete coil state (e.g. heater relay) so sim mode models DO writes
+        self.coils: dict[int, bool] = {}
+
         # Active configuration state (shared default — single source of truth)
         self.active_config = default_routing_config()
 
@@ -179,3 +182,9 @@ class SimulatedPLCClient(BasePLCClient):
                 self.active_config.pids[pid_index].setpoint = value
                 return True
             return False
+
+    async def write_coil(self, address: int, value: bool) -> bool:
+        """Record a simulated discrete-coil write (mirrors the Modbus seam)."""
+        async with self.lock:
+            self.coils[address] = bool(value)
+            return True
