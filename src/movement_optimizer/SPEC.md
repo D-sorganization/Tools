@@ -11,7 +11,7 @@
 | License          | MIT                                                     |
 | Package Name     | `movement-optimizer`                                    |
 | Current Version  | `1.0.0`                                                 |
-| Spec Version     | `1.0.21`                                                |
+| Spec Version     | `1.0.22`                                                |
 | Last Spec Update | 2026-06-18                                              |
 
 ## 2. Purpose
@@ -30,6 +30,10 @@ Movement-Optimizer is a biomechanics trajectory optimizer for barbell exercises.
   optimizer state, Qt signals, sidebar/control facades, and playback handoff
   methods instead of annotating every method as `MainWindow`, removing the
   module-level mypy suppression and the remaining QMessageBox arg-type ignore.
+- Sidebar builder and state helpers now use declared `ParameterSidebar` and
+  protocol contracts for dynamically created widgets, progress labels,
+  convergence plots, and body-model sliders instead of implicit untyped
+  sidebar access.
 - Swingset and Chain Dynamics analysis legends are docked into reserved
   legend rows owned by `MotionAnalysisPanel`, so visible legends identify the
   plotted series without covering plot data, neighboring subplots, or figure
@@ -205,6 +209,7 @@ mypy --ignore-missing-imports src/movement_optimizer/
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-06-18 | 1.0.22  | Typed sidebar builder/state helper surfaces against declared `ParameterSidebar` and protocol contracts, covering progress widgets, result widgets, convergence plots, and body-model sliders while preserving existing sidebar behavior.                                                                                                                                                    |
 | 2026-06-18 | 1.0.21  | Declared the optimization controller mixin's narrow MainWindow contract in `optimization_mixin.py`, removing module-level mypy suppression and the remaining QMessageBox arg-type ignore while preserving optimizer worker, signal, and autoplay behavior.                                                                                                                                |
 | 2026-06-18 | 1.0.20  | Declared the animation playback mixin's narrow MainWindow contract in `animation_control.py`, removing module-level mypy suppression and per-method override ignores while preserving runtime dispatch through the concrete `MainWindow` wrappers.                                                                                                                                                |
 | 2026-06-18 | 1.0.19  | Wrapped the Swingset policy optimization trace legend by measured widget width and derives the trace top inset from the wrapped legend band, so optimizer telemetry lines start below all legend rows even in narrow panes. Added regression coverage for the narrow-width legend layout and updated the trace legend tooltip to describe the above-plot behavior.                                                   |
