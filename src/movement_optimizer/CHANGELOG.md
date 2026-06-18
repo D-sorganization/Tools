@@ -24,6 +24,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Moved Swingset and Chain Dynamics analysis legends out of the Matplotlib
+  figure into a `MotionAnalysisPanel` Qt legend bar so compact plot panes no
+  longer let legends cover data axes, tick labels, axis labels, or subplot
+  titles.
 - Docked Swingset and Chain Dynamics analysis legends into reserved
   `MotionAnalysisPanel` legend rows so visible legends no longer obscure curves,
   neighboring plots, or compact plot-pane edges.
