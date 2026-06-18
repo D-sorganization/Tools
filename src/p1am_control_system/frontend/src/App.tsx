@@ -3,7 +3,6 @@ import { RoutingMatrix } from "./components/RoutingMatrix";
 import { TrendChart } from "./components/TrendChart";
 import { AlarmsHeader } from "./components/AlarmsHeader";
 import { EStopButton } from "./components/EStopButton";
-import { DataCapturePanel } from "./components/DataCapturePanel";
 import { InterlocksPanel } from "./components/InterlocksPanel";
 import { EventLogView } from "./components/EventLogView";
 import { ProjectImporter } from "./components/ProjectImporter";
@@ -11,12 +10,16 @@ import { LadderExplorer } from "./components/LadderExplorer";
 import { PlantHierarchy } from "./components/PlantHierarchy";
 import { PowerSupplyControl } from "./components/PowerSupplyControl";
 import { TemperatureControl } from "./components/TemperatureControl";
+import { TuningPanel } from "./components/TuningPanel";
+import {
+  InspectorDrawer,
+  type InspectorState,
+} from "./components/InspectorDrawer";
 import type { LadderTagInfo } from "./api/schemas";
 import { NotificationBanner } from "./components/NotificationBanner";
 import { TabBar } from "./components/TabBar";
-import { CsvExporter } from "./components/CsvExporter";
 import { useTelemetryStream } from "./hooks/useTelemetryStream";
-import { TABS, type TabId, defaultTabVisibility } from "./lib/tabs";
+import { type TabId, defaultTabVisibility } from "./lib/tabs";
 import { TAG_INDICES, tagName, parseTagId } from "./lib/tags";
 import { fmtNumber } from "./lib/format";
 import * as api from "./api/endpoints";
@@ -35,13 +38,10 @@ import {
   Activity,
   Sliders,
   Shuffle,
-  ShieldAlert,
   Sun,
   Moon,
   Info,
-  BookOpen,
   Settings,
-  X,
 } from "lucide-react";
 
 // Re-export domain types for back-compat with existing importers (AlarmsHeader,
@@ -74,20 +74,12 @@ const DEFAULT_CONFIG: RoutingConfig = {
   })),
 };
 
-type InspectorState =
-  | { type: "none" }
-  | { type: "tag"; tagId: number }
-  | { type: "custom_tag"; tagName: string }
-  | { type: "pid"; index: number }
-  | { type: "routing" }
-  | { type: "alicat"; deviceId: string }
-  | { type: "settings" }
-  | { type: "export" };
-
 export const App: React.FC = () => {
   const [config, setConfig] = useState<RoutingConfig>(DEFAULT_CONFIG);
   const [deploying, setDeploying] = useState<boolean>(false);
-  const [notification, setNotification] = useState<NotificationState | null>(null);
+  const [notification, setNotification] = useState<NotificationState | null>(
+    null,
+  );
 
   // Show a notification banner (declared early so the telemetry hook can use it).
   const triggerNotification = (message: string, type: NotificationType) => {
@@ -110,7 +102,8 @@ export const App: React.FC = () => {
     setActiveAlarms,
     setEStopActive,
   } = useTelemetryStream({
-    onConnect: () => triggerNotification("SCADA live stream connected.", "info"),
+    onConnect: () =>
+      triggerNotification("SCADA live stream connected.", "info"),
   });
 
   // Events history (polled separately from the live stream).
@@ -118,9 +111,8 @@ export const App: React.FC = () => {
 
   // Tab Navigation and Visibility State
   const [activeTab, setActiveTab] = useState<TabId>("powerSupply");
-  const [visibleTabs, setVisibleTabs] = useState<Record<TabId, boolean>>(
-    defaultTabVisibility,
-  );
+  const [visibleTabs, setVisibleTabs] =
+    useState<Record<TabId, boolean>>(defaultTabVisibility);
 
   // PID Tuning State
   const [selectedTuningLoop, setSelectedTuningLoop] = useState<number>(0);
@@ -144,11 +136,14 @@ export const App: React.FC = () => {
   const [theme, setTheme] = useState<"dark" | "light">(() => {
     return (localStorage.getItem("theme") as "dark" | "light") || "dark";
   });
-  const [inspectorView, setInspectorView] = useState<InspectorState>({ type: "none" });
+  const [inspectorView, setInspectorView] = useState<InspectorState>({
+    type: "none",
+  });
 
   // Manual Override Form State inside inspector
   const [overrideVal, setOverrideVal] = useState<string>("0.0");
-  const [showOverrideConfirm, setShowOverrideConfirm] = useState<boolean>(false);
+  const [showOverrideConfirm, setShowOverrideConfirm] =
+    useState<boolean>(false);
 
   // Alicat MFC form states
   const [alicatSetpointVal, setAlicatSetpointVal] = useState<string>("");
@@ -346,7 +341,10 @@ export const App: React.FC = () => {
     }
     try {
       await api.forceTag(tagId, parsed);
-      triggerNotification(`Successfully forced Tag ${tagId} to ${parsed}`, "success");
+      triggerNotification(
+        `Successfully forced Tag ${tagId} to ${parsed}`,
+        "success",
+      );
       setShowOverrideConfirm(false);
     } catch (err) {
       const detail = err instanceof ApiError ? err.message : "PLC write failed";
@@ -355,7 +353,11 @@ export const App: React.FC = () => {
   };
 
   // Helper to update active PID config
-  const handlePidChange = (index: number, field: keyof PIDConfig, value: number) => {
+  const handlePidChange = (
+    index: number,
+    field: keyof PIDConfig,
+    value: number,
+  ) => {
     const updatedPids = config.pids.map((pid, idx) => {
       if (idx === index) {
         return { ...pid, [field]: value };
@@ -366,7 +368,11 @@ export const App: React.FC = () => {
   };
 
   // Helper to update active Interlock config
-  const handleInterlockChange = (tagId: number, field: keyof InterlockConfig, value: number) => {
+  const handleInterlockChange = (
+    tagId: number,
+    field: keyof InterlockConfig,
+    value: number,
+  ) => {
     const updatedInterlocks = config.interlocks.map((interlock, idx) => {
       if (idx === tagId) {
         return { ...interlock, [field]: value };
@@ -412,9 +418,14 @@ export const App: React.FC = () => {
     try {
       await api.setAlicatSetpoint(deviceId, val);
       setAlicats((prev) =>
-        prev.map((m) => (m.device_id === deviceId ? { ...m, setpoint: val } : m)),
+        prev.map((m) =>
+          m.device_id === deviceId ? { ...m, setpoint: val } : m,
+        ),
       );
-      triggerNotification(`Setpoint for MFC ${deviceId} set to ${val} SLPM.`, "success");
+      triggerNotification(
+        `Setpoint for MFC ${deviceId} set to ${val} SLPM.`,
+        "success",
+      );
     } catch {
       triggerNotification("Failed to update Alicat setpoint.", "error");
     }
@@ -426,7 +437,10 @@ export const App: React.FC = () => {
       setAlicats((prev) =>
         prev.map((m) => (m.device_id === deviceId ? { ...m, gas } : m)),
       );
-      triggerNotification(`Alicat MFC ${deviceId} gas calibration set to ${gas}.`, "success");
+      triggerNotification(
+        `Alicat MFC ${deviceId} gas calibration set to ${gas}.`,
+        "success",
+      );
     } catch {
       triggerNotification("Failed to update Alicat gas calibration.", "error");
     }
@@ -438,7 +452,10 @@ export const App: React.FC = () => {
       await api.startTuning(index);
       setIsTuningMode(true);
       setTuningResults(null);
-      triggerNotification(`Tuning session started for PID Loop ${index + 1}. Automatic control decoupled.`, "success");
+      triggerNotification(
+        `Tuning session started for PID Loop ${index + 1}. Automatic control decoupled.`,
+        "success",
+      );
     } catch {
       triggerNotification("Failed to start tuning session.", "error");
     }
@@ -459,7 +476,10 @@ export const App: React.FC = () => {
       setTuningResults(data);
       setIsTuningMode(false);
       if (data.status === "success") {
-        triggerNotification("Tuning session stopped. Process parameters identified.", "success");
+        triggerNotification(
+          "Tuning session stopped. Process parameters identified.",
+          "success",
+        );
       } else {
         triggerNotification(data.message || "Tuning session stopped.", "info");
       }
@@ -478,7 +498,10 @@ export const App: React.FC = () => {
       return pid;
     });
     setConfig({ ...config, pids: updatedPids });
-    triggerNotification(`Applied recommended gains (Kp: ${kp}, Ki: ${ki}, Kd: ${kd}) to Loop ${index + 1}.`, "info");
+    triggerNotification(
+      `Applied recommended gains (Kp: ${kp}, Ki: ${ki}, Kd: ${kd}) to Loop ${index + 1}.`,
+      "info",
+    );
   };
 
   const runMpcSimulation = async () => {
@@ -605,9 +628,21 @@ export const App: React.FC = () => {
           {/* Settings Gear */}
           <button
             type="button"
-            onClick={() => setInspectorView(inspectorView.type === "settings" ? { type: "none" } : { type: "settings" })}
+            onClick={() =>
+              setInspectorView(
+                inspectorView.type === "settings"
+                  ? { type: "none" }
+                  : { type: "settings" },
+              )
+            }
             className="btn"
-            style={{ padding: "0.5rem", color: inspectorView.type === "settings" ? "var(--accent-cyan)" : "inherit" }}
+            style={{
+              padding: "0.5rem",
+              color:
+                inspectorView.type === "settings"
+                  ? "var(--accent-cyan)"
+                  : "inherit",
+            }}
             title="Configure visible tabs and view help docs"
           >
             <Settings size={14} />
@@ -621,21 +656,23 @@ export const App: React.FC = () => {
         </div>
       </header>
 
-      <AlarmsHeader 
-        activeAlarms={activeAlarms} 
+      <AlarmsHeader
+        activeAlarms={activeAlarms}
         onAcknowledgeAll={async () => {
           for (const a of activeAlarms) {
             if (!a.acknowledged) {
               await handleAcknowledgeAlarm(a.tag_id);
             }
           }
-        }} 
+        }}
       />
 
       {/* Main content — the inspector is now a slide-in drawer (below), not a column */}
       <div className="main-layout-grid" style={{ gridTemplateColumns: "1fr" }}>
         {/* Left Column (Master Dashboard elements) */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+        <div
+          style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}
+        >
           {/* Tabbed Navigation Bar (centralized TABS array, #3546) */}
           <TabBar
             activeTab={activeTab}
@@ -656,26 +693,42 @@ export const App: React.FC = () => {
 
           {/* Render Tab Contents */}
           {activeTab === "trends" && visibleTabs.trends && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "1.25rem",
+              }}
+            >
               {/* Live Customizable Graph */}
               <TrendChart history={history} tagValues={tagValues} />
 
               {/* 32 Tag Broker Monitor Grid */}
               <section className="glass-panel">
                 <div className="panel-header">
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                    }}
+                  >
                     <Settings size={16} color="var(--accent-magenta)" />
                     <span>Signal Monitors</span>
                   </div>
                   <span className="tooltip-container">
                     <Info size={14} color="var(--text-muted)" />
-                    <span className="tooltip-text">Click any tag cell to inspect safety limits or write a manual override value in the inspector sidebar.</span>
+                    <span className="tooltip-text">
+                      Click any tag cell to inspect safety limits or write a
+                      manual override value in the inspector sidebar.
+                    </span>
                   </span>
                 </div>
                 <div
                   style={{
                     display: "grid",
-                    gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))",
+                    gridTemplateColumns:
+                      "repeat(auto-fill, minmax(130px, 1fr))",
                     gap: "0.6rem",
                   }}
                 >
@@ -683,14 +736,17 @@ export const App: React.FC = () => {
                     const val = tagValues[i] ?? 0.0;
                     const interlock = config.interlocks[i];
                     const isTripped =
-                      interlock && (val > interlock.high_limit || val < interlock.low_limit);
+                      interlock &&
+                      (val > interlock.high_limit || val < interlock.low_limit);
 
                     return (
                       <div
                         key={i}
                         className="tag-monitor-card"
                         style={{
-                          borderColor: isTripped ? "var(--color-error)" : "var(--tag-card-border)",
+                          borderColor: isTripped
+                            ? "var(--color-error)"
+                            : "var(--tag-card-border)",
                         }}
                         onClick={() => {
                           setInspectorView({ type: "tag", tagId: i });
@@ -713,7 +769,9 @@ export const App: React.FC = () => {
                           style={{
                             fontSize: "1.05rem",
                             fontWeight: 700,
-                            color: isTripped ? "var(--color-error)" : "var(--accent-cyan)",
+                            color: isTripped
+                              ? "var(--color-error)"
+                              : "var(--accent-cyan)",
                           }}
                         >
                           {val.toFixed(2)}
@@ -727,17 +785,33 @@ export const App: React.FC = () => {
           )}
 
           {activeTab === "controllers" && visibleTabs.controllers && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "1.25rem",
+              }}
+            >
               {/* PID Loop Cards Row */}
               <div className="glass-panel">
                 <div className="panel-header">
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                    }}
+                  >
                     <Sliders size={16} color="var(--accent-purple)" />
                     <span>PID Controllers</span>
                   </div>
                   <span className="tooltip-container">
                     <Info size={14} color="var(--text-muted)" />
-                    <span className="tooltip-text">Click any controller card here to tune parameters, assign process variables, and configure output registers in the inspector sidebar.</span>
+                    <span className="tooltip-text">
+                      Click any controller card here to tune parameters, assign
+                      process variables, and configure output registers in the
+                      inspector sidebar.
+                    </span>
                   </span>
                 </div>
                 <div
@@ -763,15 +837,42 @@ export const App: React.FC = () => {
                           setInspectorView({ type: "pid", index: idx });
                         }}
                       >
-                        <div style={{ fontWeight: 800, fontSize: "0.8rem", textTransform: "uppercase", color: "var(--text-primary)", marginBottom: "0.35rem" }}>
+                        <div
+                          style={{
+                            fontWeight: 800,
+                            fontSize: "0.8rem",
+                            textTransform: "uppercase",
+                            color: "var(--text-primary)",
+                            marginBottom: "0.35rem",
+                          }}
+                        >
                           PID Loop {idx + 1}
                         </div>
-                        <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", display: "flex", justifyContent: "space-between" }}>
+                        <div
+                          style={{
+                            fontSize: "0.75rem",
+                            color: "var(--text-secondary)",
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
                           <span>SP: {pid.setpoint.toFixed(1)}</span>
-                          <span>PV: {pvVal.toFixed(1)} (Tag {pid.pv_tag_id})</span>
+                          <span>
+                            PV: {pvVal.toFixed(1)} (Tag {pid.pv_tag_id})
+                          </span>
                         </div>
-                        <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", display: "flex", justifyContent: "space-between", marginTop: "0.2rem" }}>
-                          <span>CV: {cvVal.toFixed(1)} (Tag {pid.cv_tag_id})</span>
+                        <div
+                          style={{
+                            fontSize: "0.75rem",
+                            color: "var(--text-secondary)",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            marginTop: "0.2rem",
+                          }}
+                        >
+                          <span>
+                            CV: {cvVal.toFixed(1)} (Tag {pid.cv_tag_id})
+                          </span>
                           <span>Kp: {pid.kp.toFixed(2)}</span>
                         </div>
                       </div>
@@ -783,13 +884,23 @@ export const App: React.FC = () => {
               {/* Alicat Mass Flow Controllers */}
               <div className="glass-panel">
                 <div className="panel-header">
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                    }}
+                  >
                     <Sliders size={16} color="var(--color-warning)" />
                     <span>Alicat Mass Flow Controllers</span>
                   </div>
                   <span className="tooltip-container">
                     <Info size={14} color="var(--text-muted)" />
-                    <span className="tooltip-text">Monitor and adjust R&D facility Mass Flow Controllers. Click a card to control setpoints and select active gas calibrations in the inspector sidebar.</span>
+                    <span className="tooltip-text">
+                      Monitor and adjust R&D facility Mass Flow Controllers.
+                      Click a card to control setpoints and select active gas
+                      calibrations in the inspector sidebar.
+                    </span>
                   </span>
                 </div>
                 <div
@@ -809,11 +920,28 @@ export const App: React.FC = () => {
                         padding: "0.75rem",
                       }}
                       onClick={() => {
-                        setInspectorView({ type: "alicat", deviceId: mfc.device_id });
+                        setInspectorView({
+                          type: "alicat",
+                          deviceId: mfc.device_id,
+                        });
                       }}
                     >
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.35rem" }}>
-                        <span style={{ fontWeight: 800, fontSize: "0.8rem", textTransform: "uppercase", color: "var(--text-primary)" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginBottom: "0.35rem",
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontWeight: 800,
+                            fontSize: "0.8rem",
+                            textTransform: "uppercase",
+                            color: "var(--text-primary)",
+                          }}
+                        >
                           {mfc.name} ({mfc.device_id})
                         </span>
                         <span
@@ -821,8 +949,16 @@ export const App: React.FC = () => {
                             fontSize: "0.65rem",
                             padding: "0.1rem 0.35rem",
                             borderRadius: "3px",
-                            backgroundColor: mfc.connection_state === "simulated" || mfc.connection_state === "connected" ? "rgba(16, 185, 129, 0.15)" : "rgba(239, 68, 68, 0.15)",
-                            color: mfc.connection_state === "simulated" || mfc.connection_state === "connected" ? "var(--color-success)" : "var(--color-error)",
+                            backgroundColor:
+                              mfc.connection_state === "simulated" ||
+                              mfc.connection_state === "connected"
+                                ? "rgba(16, 185, 129, 0.15)"
+                                : "rgba(239, 68, 68, 0.15)",
+                            color:
+                              mfc.connection_state === "simulated" ||
+                              mfc.connection_state === "connected"
+                                ? "var(--color-success)"
+                                : "var(--color-error)",
                             fontWeight: 700,
                             textTransform: "uppercase",
                           }}
@@ -830,24 +966,101 @@ export const App: React.FC = () => {
                           {mfc.connection_state}
                         </span>
                       </div>
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
+                      <div
+                        style={{
+                          display: "grid",
+                          gridTemplateColumns: "1fr 1fr",
+                          gap: "0.5rem",
+                        }}
+                      >
                         <div>
-                          <div style={{ fontSize: "0.65rem", color: "var(--text-muted)" }}>Mass Flow</div>
-                          <div className="mono-text" style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--accent-cyan)" }}>
-                            {mfc.mass_flow.toFixed(2)} <span style={{ fontSize: "0.7rem", fontWeight: 500 }}>SLPM</span>
+                          <div
+                            style={{
+                              fontSize: "0.65rem",
+                              color: "var(--text-muted)",
+                            }}
+                          >
+                            Mass Flow
+                          </div>
+                          <div
+                            className="mono-text"
+                            style={{
+                              fontSize: "1.1rem",
+                              fontWeight: 700,
+                              color: "var(--accent-cyan)",
+                            }}
+                          >
+                            {mfc.mass_flow.toFixed(2)}{" "}
+                            <span
+                              style={{ fontSize: "0.7rem", fontWeight: 500 }}
+                            >
+                              SLPM
+                            </span>
                           </div>
                         </div>
                         <div>
-                          <div style={{ fontSize: "0.65rem", color: "var(--text-muted)" }}>Setpoint</div>
-                          <div className="mono-text" style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--text-primary)" }}>
-                            {mfc.setpoint.toFixed(2)} <span style={{ fontSize: "0.7rem", fontWeight: 500 }}>SLPM</span>
+                          <div
+                            style={{
+                              fontSize: "0.65rem",
+                              color: "var(--text-muted)",
+                            }}
+                          >
+                            Setpoint
+                          </div>
+                          <div
+                            className="mono-text"
+                            style={{
+                              fontSize: "1.1rem",
+                              fontWeight: 700,
+                              color: "var(--text-primary)",
+                            }}
+                          >
+                            {mfc.setpoint.toFixed(2)}{" "}
+                            <span
+                              style={{ fontSize: "0.7rem", fontWeight: 500 }}
+                            >
+                              SLPM
+                            </span>
                           </div>
                         </div>
                       </div>
-                      <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr 1fr", gap: "0.25rem", marginTop: "0.5rem", borderTop: "1px solid var(--panel-border)", paddingTop: "0.5rem", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
-                        <div>Gas: <span style={{ fontWeight: 700, color: "var(--text-primary)" }}>{mfc.gas}</span></div>
-                        <div>P: <span style={{ fontWeight: 700 }}>{mfc.pressure.toFixed(1)} <span style={{ fontSize: "0.6rem" }}>PSIA</span></span></div>
-                        <div>T: <span style={{ fontWeight: 700 }}>{mfc.temperature.toFixed(1)} <span style={{ fontSize: "0.6rem" }}>°C</span></span></div>
+                      <div
+                        style={{
+                          display: "grid",
+                          gridTemplateColumns: "1.2fr 1fr 1fr",
+                          gap: "0.25rem",
+                          marginTop: "0.5rem",
+                          borderTop: "1px solid var(--panel-border)",
+                          paddingTop: "0.5rem",
+                          fontSize: "0.7rem",
+                          color: "var(--text-secondary)",
+                        }}
+                      >
+                        <div>
+                          Gas:{" "}
+                          <span
+                            style={{
+                              fontWeight: 700,
+                              color: "var(--text-primary)",
+                            }}
+                          >
+                            {mfc.gas}
+                          </span>
+                        </div>
+                        <div>
+                          P:{" "}
+                          <span style={{ fontWeight: 700 }}>
+                            {mfc.pressure.toFixed(1)}{" "}
+                            <span style={{ fontSize: "0.6rem" }}>PSIA</span>
+                          </span>
+                        </div>
+                        <div>
+                          T:{" "}
+                          <span style={{ fontWeight: 700 }}>
+                            {mfc.temperature.toFixed(1)}{" "}
+                            <span style={{ fontSize: "0.6rem" }}>°C</span>
+                          </span>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -857,20 +1070,39 @@ export const App: React.FC = () => {
           )}
 
           {activeTab === "routing" && visibleTabs.routing && (
-            <div style={{ display: "flex", gap: "1rem", flexDirection: "column" }}>
+            <div
+              style={{ display: "flex", gap: "1rem", flexDirection: "column" }}
+            >
               <div
                 className="glass-panel"
                 onClick={() => setInspectorView({ type: "routing" })}
                 title="Click to open Routing Matrix Editor"
               >
-                <div className="panel-header" style={{ borderBottom: "none", marginBottom: 0, paddingBottom: 0 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <div
+                  className="panel-header"
+                  style={{
+                    borderBottom: "none",
+                    marginBottom: 0,
+                    paddingBottom: 0,
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                    }}
+                  >
                     <Shuffle size={16} color="var(--accent-cyan)" />
                     <span>Signal Routing Matrix</span>
                   </div>
                 </div>
                 <div style={{ marginTop: "0.75rem" }}>
-                  <RoutingMatrix config={config} onUpdate={setConfig} tagValues={tagValues} />
+                  <RoutingMatrix
+                    config={config}
+                    onUpdate={setConfig}
+                    tagValues={tagValues}
+                  />
                 </div>
               </div>
 
@@ -892,297 +1124,33 @@ export const App: React.FC = () => {
           )}
 
           {activeTab === "tuning" && visibleTabs.tuning && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-              {/* PID Loop Tuning Section */}
-              <div className="glass-panel">
-                <div className="panel-header">
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <Sliders size={16} color="var(--accent-cyan)" />
-                    <span>Auto-Tuning & Transient Response Identification</span>
-                  </div>
-                  <span className="tooltip-container">
-                    <Info size={14} color="var(--text-muted)" />
-                    <span className="tooltip-text">
-                      Decouples PID loop automatic control, registers step change, and solves First Order Plus Dead Time parameters.
-                    </span>
-                  </span>
-                </div>
-
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
-                  <div>
-                    <div className="input-group" style={{ marginBottom: "1rem" }}>
-                      <label className="input-label">Select Controller Loop</label>
-                      <select
-                        className="form-input"
-                        value={selectedTuningLoop}
-                        onChange={(e) => setSelectedTuningLoop(Number(e.target.value))}
-                        disabled={isTuningMode}
-                      >
-                        {config.pids.map((_, idx) => (
-                          <option key={idx} value={idx}>Loop {idx + 1}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div style={{ display: "flex", gap: "1rem", marginTop: "1.5rem" }}>
-                      {!isTuningMode ? (
-                        <button
-                          type="button"
-                          className="btn btn-primary"
-                          style={{ flex: 1, backgroundColor: "var(--accent-purple)", borderColor: "var(--accent-purple)" }}
-                          onClick={() => startTuning(selectedTuningLoop)}
-                        >
-                          Start Tuning Mode
-                        </button>
-                      ) : (
-                        <div style={{ display: "flex", flexDirection: "column", gap: "1rem", width: "100%" }}>
-                          <div style={{ padding: "0.75rem", background: "rgba(255, 179, 0, 0.1)", border: "1px solid rgba(255, 179, 0, 0.3)", borderRadius: "4px", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
-                            <strong>Tuning Active:</strong> PID automatic calculations are paused. Setpoint tracking is decoupled.
-                          </div>
-                          <div style={{ display: "flex", gap: "0.5rem" }}>
-                            <input
-                              type="number"
-                              step="1"
-                              className="form-input"
-                              value={tuningStepVal}
-                              onChange={(e) => setTuningStepVal(e.target.value)}
-                              placeholder="Step CV"
-                              style={{ width: "100px" }}
-                            />
-                            <button
-                              type="button"
-                              className="btn"
-                              onClick={() => stepTuning(selectedTuningLoop, Number(tuningStepVal))}
-                            >
-                              Apply Step
-                            </button>
-                          </div>
-                          <button
-                            type="button"
-                            className="btn btn-primary"
-                            style={{ backgroundColor: "var(--color-error)", borderColor: "var(--color-error)" }}
-                            onClick={() => stopTuning(selectedTuningLoop)}
-                          >
-                            Stop Tuning & Solve FOPDT
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div style={{ borderLeft: "1px solid var(--panel-border)", paddingLeft: "1.5rem" }}>
-                    <h4 style={{ fontSize: "0.85rem", fontWeight: 700, textTransform: "uppercase", marginBottom: "0.75rem", color: "var(--text-secondary)" }}>
-                      Identification & Recommendations
-                    </h4>
-                    {tuningResults ? (
-                      <div>
-                        {tuningResults.status === "success" ? (
-                          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
-                              <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.5rem", borderRadius: "4px" }}>
-                                <div style={{ fontSize: "0.65rem", color: "var(--text-muted)" }}>Process Gain (Kp)</div>
-                                <div style={{ fontSize: "1rem", fontWeight: 700 }}>{tuningResults.parameters.kp.toFixed(3)}</div>
-                              </div>
-                              <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.5rem", borderRadius: "4px" }}>
-                                <div style={{ fontSize: "0.65rem", color: "var(--text-muted)" }}>Time Const (Tau)</div>
-                                <div style={{ fontSize: "1rem", fontWeight: 700 }}>{tuningResults.parameters.tau.toFixed(2)} s</div>
-                              </div>
-                              <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.5rem", borderRadius: "4px", gridColumn: "span 2" }}>
-                                <div style={{ fontSize: "0.65rem", color: "var(--text-muted)" }}>Dead Time (Theta)</div>
-                                <div style={{ fontSize: "1rem", fontWeight: 700 }}>{tuningResults.parameters.theta.toFixed(2)} s</div>
-                              </div>
-                            </div>
-
-                            <div style={{ borderTop: "1px solid var(--panel-border)", paddingTop: "0.5rem", marginTop: "0.25rem" }}>
-                              <div style={{ fontSize: "0.7rem", color: "var(--text-muted)", marginBottom: "0.35rem" }}>Cohen-Coon Recommended Gains:</div>
-                              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.5rem", marginBottom: "0.75rem" }}>
-                                <div>
-                                  <div style={{ fontSize: "0.65rem", color: "var(--text-muted)" }}>Kp</div>
-                                  <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--accent-cyan)" }}>{tuningResults.recommended_pid.kp.toFixed(2)}</div>
-                                </div>
-                                <div>
-                                  <div style={{ fontSize: "0.65rem", color: "var(--text-muted)" }}>Ki</div>
-                                  <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--accent-purple)" }}>{tuningResults.recommended_pid.ki.toFixed(2)}</div>
-                                </div>
-                                <div>
-                                  <div style={{ fontSize: "0.65rem", color: "var(--text-muted)" }}>Kd</div>
-                                  <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--color-warning)" }}>{tuningResults.recommended_pid.kd.toFixed(2)}</div>
-                                </div>
-                              </div>
-                              <button
-                                type="button"
-                                className="btn btn-primary"
-                                style={{ width: "100%", fontSize: "0.75rem", padding: "0.4rem" }}
-                                onClick={() => applyRecommendedGains(selectedTuningLoop)}
-                              >
-                                Load Gains into Controller
-                              </button>
-                            </div>
-                          </div>
-                        ) : (
-                          <div style={{ fontSize: "0.8rem", color: "var(--color-error)" }}>
-                            {tuningResults.message}
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontStyle: "italic" }}>
-                        No active or past identification results. Start tuning mode and apply a step change to compute model variables.
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* MPC & Advanced Control Section */}
-              <div className="glass-panel">
-                <div className="panel-header">
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <Sliders size={16} color="var(--accent-magenta)" />
-                    <span>Model Predictive Control (MPC) Solver Groundwork</span>
-                  </div>
-                  <span className="tooltip-container">
-                    <Info size={14} color="var(--text-muted)" />
-                    <span className="tooltip-text">
-                      Run projected gradient descent MPC solver comparisons against standard PID loop control to evaluate dynamic constraint optimization.
-                    </span>
-                  </span>
-                </div>
-
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1.5fr", gap: "1.5rem" }}>
-                  <div>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
-                      <div className="input-group">
-                        <label className="input-label" style={{ fontSize: "0.65rem" }}>Pred Horizon (Np)</label>
-                        <input
-                          type="number"
-                          className="form-input"
-                          value={mpcParams.prediction_horizon}
-                          onChange={(e) => setMpcParams({ ...mpcParams, prediction_horizon: Number(e.target.value) })}
-                        />
-                      </div>
-                      <div className="input-group">
-                        <label className="input-label" style={{ fontSize: "0.65rem" }}>Ctrl Horizon (Nc)</label>
-                        <input
-                          type="number"
-                          className="form-input"
-                          value={mpcParams.control_horizon}
-                          onChange={(e) => setMpcParams({ ...mpcParams, control_horizon: Number(e.target.value) })}
-                        />
-                      </div>
-                      <div className="input-group">
-                        <label className="input-label" style={{ fontSize: "0.65rem" }}>Setpoint SP</label>
-                        <input
-                          type="number"
-                          className="form-input"
-                          value={mpcParams.setpoint}
-                          onChange={(e) => setMpcParams({ ...mpcParams, setpoint: Number(e.target.value) })}
-                        />
-                      </div>
-                      <div className="input-group">
-                        <label className="input-label" style={{ fontSize: "0.65rem" }}>Input Penalty (Rho)</label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          className="form-input"
-                          value={mpcParams.rho}
-                          onChange={(e) => setMpcParams({ ...mpcParams, rho: Number(e.target.value) })}
-                        />
-                      </div>
-                      <div className="input-group">
-                        <label className="input-label" style={{ fontSize: "0.65rem" }}>Proc Gain (Kp)</label>
-                        <input
-                          type="number"
-                          step="0.1"
-                          className="form-input"
-                          value={mpcParams.process_gain}
-                          onChange={(e) => setMpcParams({ ...mpcParams, process_gain: Number(e.target.value) })}
-                        />
-                      </div>
-                      <div className="input-group">
-                        <label className="input-label" style={{ fontSize: "0.65rem" }}>Proc Tau (s)</label>
-                        <input
-                          type="number"
-                          step="0.1"
-                          className="form-input"
-                          value={mpcParams.process_tau}
-                          onChange={(e) => setMpcParams({ ...mpcParams, process_tau: Number(e.target.value) })}
-                        />
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      className="btn btn-primary"
-                      style={{ width: "100%", marginTop: "1rem" }}
-                      onClick={runMpcSimulation}
-                    >
-                      Run Predictive Simulation
-                    </button>
-                  </div>
-
-                  <div style={{ display: "flex", flexDirection: "column", height: "100%", justifyContent: "center" }}>
-                    {mpcSimData ? (
-                      <div style={{ position: "relative", width: "100%", height: "200px" }}>
-                        <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--text-secondary)", marginBottom: "0.25rem", textAlign: "center" }}>
-                          Transient Comparison (PID vs MPC)
-                        </div>
-                        {/* Draw SVG Graph comparing the paths */}
-                        <svg style={{ width: "100%", height: "100%", background: "rgba(0,0,0,0.15)", borderRadius: "4px" }}>
-                          {/* Grid lines */}
-                          <line x1="0" y1="50" x2="350" y2="50" stroke="rgba(255,255,255,0.05)" />
-                          <line x1="0" y1="100" x2="350" y2="100" stroke="rgba(255,255,255,0.05)" />
-                          <line x1="0" y1="150" x2="350" y2="150" stroke="rgba(255,255,255,0.05)" />
-                          
-                          {/* Setpoint (dashed line) */}
-                          {(() => {
-                            const spY = 200 - (mpcParams.setpoint * 2);
-                            return <line x1="0" y1={spY} x2="350" y2={spY} stroke="var(--text-muted)" strokeDasharray="3,3" strokeWidth="1" />;
-                          })()}
-
-                          {/* PID PV path (purple) */}
-                          {(() => {
-                            const points = mpcSimData.time.map((_, idx) => {
-                              const x = (idx / (mpcSimData.time.length - 1)) * 340 + 5;
-                              const y = 200 - (mpcSimData.pid.pv[idx] * 2);
-                              return `${x},${y}`;
-                            }).join(" ");
-                            return <polyline fill="none" stroke="var(--accent-purple)" strokeWidth="2" points={points} />;
-                          })()}
-
-                          {/* MPC PV path (cyan) */}
-                          {(() => {
-                            const points = mpcSimData.time.map((_, idx) => {
-                              const x = (idx / (mpcSimData.time.length - 1)) * 340 + 5;
-                              const y = 200 - (mpcSimData.mpc.pv[idx] * 2);
-                              return `${x},${y}`;
-                            }).join(" ");
-                            return <polyline fill="none" stroke="var(--accent-cyan)" strokeWidth="2" points={points} />;
-                          })()}
-                        </svg>
-                        <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.25rem", fontSize: "0.65rem", color: "var(--text-muted)" }}>
-                          <span>Time: 0s</span>
-                          <span style={{ display: "flex", gap: "0.75rem" }}>
-                            <span style={{ color: "var(--accent-purple)" }}>● PID</span>
-                            <span style={{ color: "var(--accent-cyan)" }}>● MPC</span>
-                            <span style={{ color: "var(--text-muted)" }}>-- Setpoint</span>
-                          </span>
-                          <span>25s</span>
-                        </div>
-                      </div>
-                    ) : (
-                      <div style={{ textAlign: "center", border: "1px dashed var(--panel-border)", padding: "2rem", borderRadius: "4px", color: "var(--text-muted)", fontSize: "0.8rem" }}>
-                        Run the predictive simulation to compare tracking trajectories.
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
+            <TuningPanel
+              pids={config.pids}
+              selectedTuningLoop={selectedTuningLoop}
+              isTuningMode={isTuningMode}
+              tuningStepVal={tuningStepVal}
+              tuningResults={tuningResults}
+              mpcParams={mpcParams}
+              mpcSimData={mpcSimData}
+              onSelectedTuningLoopChange={setSelectedTuningLoop}
+              onTuningStepValChange={setTuningStepVal}
+              onMpcParamsChange={setMpcParams}
+              onStartTuning={startTuning}
+              onStepTuning={stepTuning}
+              onStopTuning={stopTuning}
+              onApplyRecommendedGains={applyRecommendedGains}
+              onRunMpcSimulation={runMpcSimulation}
+            />
           )}
 
           {activeTab === "ladder" && visibleTabs.ladder && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "1.25rem",
+              }}
+            >
               <ProjectImporter
                 onImportSuccess={() => {
                   fetchAllTags();
@@ -1205,521 +1173,31 @@ export const App: React.FC = () => {
           )}
         </div>
 
-        {/* Inspector / data-export drawer — slides in from the right on demand */}
-        {inspectorView.type !== "none" && (
-          <div
-            onClick={() => setInspectorView({ type: "none" })}
-            style={{
-              position: "fixed",
-              inset: 0,
-              background: "rgba(0,0,0,0.4)",
-              zIndex: 199,
-            }}
-          />
-        )}
-        <aside
-          style={{
-            position: "fixed",
-            top: 0,
-            right: 0,
-            height: "100vh",
-            width: "440px",
-            maxWidth: "92vw",
-            transform:
-              inspectorView.type !== "none" ? "translateX(0)" : "translateX(100%)",
-            transition: "transform 0.25s ease",
-            zIndex: 200,
-            background: "var(--bg-color)",
-            borderLeft: "1px solid var(--panel-border)",
-            boxShadow: "-10px 0 28px rgba(0,0,0,0.35)",
-            overflowY: "auto",
-            display: "flex",
-            flexDirection: "column",
-            gap: "1.25rem",
-            padding: "1.25rem",
-          }}
-        >
-          {/* Main inspector panel */}
-          <div className="glass-panel" style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            <div className="panel-header" style={{ borderBottom: "1px solid var(--panel-border)", paddingBottom: "0.5rem" }}>
-              <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
-                {inspectorView.type === "export"
-                  ? "Data export"
-                  : inspectorView.type === "settings"
-                  ? "Settings"
-                  : ""}
-              </span>
-              <button
-                type="button"
-                onClick={() => setInspectorView({ type: "none" })}
-                style={{ background: "none", border: "none", color: "var(--text-secondary)", cursor: "pointer" }}
-                aria-label="Close panel"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            {inspectorView.type === "export" && <DataCapturePanel />}
-
-            {/* Legacy default content (kept for tag/pid detail flows; the
-                drawer only opens on an explicit selection or the Export button) */}
-            {inspectorView.type === "none" && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-                {/* CSV Log Exporter inside Default Sidebar view */}
-                <CsvExporter triggerNotification={triggerNotification} />
-
-                {/* Hardware Reference Docs Drawer */}
-                <div style={{ borderTop: "1px solid var(--panel-border)", paddingTop: "1rem" }}>
-                  <h3 style={{ fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "0.6rem", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                    <BookOpen size={14} color="var(--accent-magenta)" />
-                    <span>P1AM Hardware Reference Docs</span>
-                  </h3>
-                  <ul style={{ fontSize: "0.8rem", listStyleType: "none", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                    <li>
-                      <a href="https://www.automationdirect.com/pn/P1AM-100" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-cyan)", textDecoration: "none" }}>
-                        P1AM-100 CPU module Manual
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://www.automationdirect.com/pn/P1AM-ETH" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-cyan)", textDecoration: "none" }}>
-                        P1AM-ETH Ethernet module
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://www.automationdirect.com/pn/P1-04THM" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-cyan)", textDecoration: "none" }}>
-                        P1-04THM Thermocouple card
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://www.automationdirect.com/pn/P1-4ADL2DAL-1" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-cyan)", textDecoration: "none" }}>
-                        P1-4ADL2DAL-1 Analog I/O
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://www.automationdirect.com/pn/P1AM-GPIO" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-cyan)", textDecoration: "none" }}>
-                        P1AM-GPIO interface shield
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            )}
-
-            {/* Tag register editor (Unified for both legacy tag index and custom named tags) */}
-            {(inspectorView.type === "tag" || inspectorView.type === "custom_tag") && (() => {
-              const isCustom = inspectorView.type === "custom_tag";
-              const tagLabel = isCustom
-                ? inspectorView.tagName
-                : tagName(inspectorView.tagId);
-              const tagInfo = allTags.find((t) => t.name === tagLabel);
-
-              // Get current value
-              const currentVal = isCustom
-                ? (tagsDict[tagLabel] ?? 0.0)
-                : (tagValues[inspectorView.tagId] ?? 0.0);
-              
-              // Check if writable (legacy tags are Read/Write, custom tags lookup from registry)
-              const rwMode = tagInfo ? tagInfo.rw_mode : "Read/Write";
-              const isWritable = rwMode === "Read/Write";
-
-              return (
-                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                  <div>
-                    <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--accent-cyan)", textTransform: "uppercase" }}>
-                      Tag Inspector
-                    </h3>
-                    <div style={{ fontSize: "0.8rem", color: "var(--text-primary)", fontWeight: 700, marginTop: "0.25rem" }} className="mono-text">
-                      {tagLabel}
-                    </div>
-                    {tagInfo && tagInfo.description && (
-                      <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.25rem", lineHeight: 1.4 }}>
-                        {tagInfo.description}
-                      </p>
-                    )}
-                    <div style={{ display: "flex", justifyContent: "space-between", background: "var(--input-bg)", padding: "0.5rem", borderRadius: "4px", marginTop: "0.5rem", border: "1px solid var(--panel-border)" }}>
-                      <span style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>Current Value:</span>
-                      <span className="mono-text" style={{ fontSize: "0.9rem", fontWeight: 700, color: "var(--accent-cyan)" }}>
-                        {currentVal.toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
-
-                  {tagInfo && (
-                    <div style={{ fontSize: "0.75rem", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem", background: "rgba(255,255,255,0.01)", padding: "0.5rem", borderRadius: "4px", border: "1px solid var(--panel-border)" }}>
-                      <div>
-                        <span style={{ color: "var(--text-muted)" }}>Reg Type:</span>{" "}
-                        <strong style={{ color: "var(--text-secondary)" }}>{tagInfo.register_type || "None"}</strong>
-                      </div>
-                      <div>
-                        <span style={{ color: "var(--text-muted)" }}>Reg Num:</span>{" "}
-                        <strong style={{ color: "var(--text-secondary)" }}>{tagInfo.register_num ?? "None"}</strong>
-                      </div>
-                      <div>
-                        <span style={{ color: "var(--text-muted)" }}>Format:</span>{" "}
-                        <strong style={{ color: "var(--text-secondary)" }}>{tagInfo.data_format || "None"}</strong>
-                      </div>
-                      <div>
-                        <span style={{ color: "var(--text-muted)" }}>RW Mode:</span>{" "}
-                        <strong style={{ color: "var(--text-secondary)" }}>{tagInfo.rw_mode}</strong>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Section 1: Manual Value Override (Write Force) */}
-                  {isWritable && (
-                    <div style={{ borderTop: "1px solid var(--panel-border)", paddingTop: "0.75rem" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", marginBottom: "0.5rem" }}>
-                        <ShieldAlert size={14} color="var(--color-warning)" />
-                        <span style={{ fontSize: "0.8rem", fontWeight: 700, textTransform: "uppercase" }}>Manual Force Override</span>
-                      </div>
-                      <div className="input-group">
-                        <label className="input-label">Override Force Value</label>
-                        <input
-                          type="number"
-                          step="0.1"
-                          className="form-input"
-                          value={overrideVal}
-                          onChange={(e) => setOverrideVal(e.target.value)}
-                        />
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setShowOverrideConfirm(true)}
-                        className="btn"
-                        style={{ width: "100%", color: "var(--color-warning)", borderColor: "var(--color-warning)", padding: "0.45rem", fontSize: "0.8rem" }}
-                      >
-                        Force Register Write
-                      </button>
-
-                      {showOverrideConfirm && (
-                        <div style={{ background: "rgba(239, 68, 68, 0.1)", border: "1px solid var(--color-error)", borderRadius: "4px", padding: "0.6rem", marginTop: "0.5rem" }}>
-                          <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--color-error)", marginBottom: "0.25rem" }}>Confirm Direct Write</div>
-                          <p style={{ fontSize: "0.7rem", color: "var(--text-secondary)", marginBottom: "0.6rem" }}>
-                            Forcing Tag {tagLabel} to {overrideVal} will overwrite normal logic. Continue?
-                          </p>
-                          <div style={{ display: "flex", gap: "0.4rem" }}>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const idToSubmit = isCustom ? tagLabel : inspectorView.tagId;
-                                executeOverride(idToSubmit);
-                              }}
-                              className="btn"
-                              style={{ background: "var(--color-error)", border: "none", color: "#ffffff", padding: "0.2rem 0.5rem", fontSize: "0.75rem" }}
-                            >
-                              Confirm
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => setShowOverrideConfirm(false)}
-                              className="btn"
-                              style={{ padding: "0.2rem 0.5rem", fontSize: "0.75rem" }}
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Section 2: Safety Interlocks Boundaries (Only for legacy tags currently, or if tag is in config.interlocks) */}
-                  {!isCustom && (
-                    <div style={{ borderTop: "1px solid var(--panel-border)", paddingTop: "0.75rem" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", marginBottom: "0.5rem" }}>
-                        <Sliders size={14} color="var(--accent-purple)" />
-                        <span style={{ fontSize: "0.8rem", fontWeight: 700, textTransform: "uppercase" }}>Safety Limits Interlocks</span>
-                      </div>
-                      <div className="input-group">
-                        <label className="input-label">High Trip Limit (Alarm High)</label>
-                        <input
-                          type="number"
-                          step="0.5"
-                          className="form-input"
-                          value={config.interlocks[inspectorView.tagId]?.high_limit ?? 100.0}
-                          onChange={(e) => handleInterlockChange(inspectorView.tagId, "high_limit", Number(e.target.value))}
-                        />
-                      </div>
-                      <div className="input-group">
-                        <label className="input-label">Low Trip Limit (Alarm Low)</label>
-                        <input
-                          type="number"
-                          step="0.5"
-                          className="form-input"
-                          value={config.interlocks[inspectorView.tagId]?.low_limit ?? 0.0}
-                          onChange={(e) => handleInterlockChange(inspectorView.tagId, "low_limit", Number(e.target.value))}
-                        />
-                      </div>
-                      <button
-                        type="button"
-                        onClick={handleDeploy}
-                        disabled={deploying}
-                        className="btn btn-primary"
-                        style={{ width: "100%", padding: "0.5rem", fontSize: "0.85rem", marginTop: "0.5rem" }}
-                      >
-                        {deploying ? "Deploying Configuration..." : "Commit Safety Limits"}
-                      </button>
-                    </div>
-                  )}
-                </div>
-              );
-            })()}
-
-            {/* PID Loop Tune editor */}
-            {inspectorView.type === "pid" && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                <div>
-                  <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--accent-purple)", textTransform: "uppercase" }}>
-                    Tune PID Loop {inspectorView.index + 1}
-                  </h3>
-                </div>
-
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
-                  <div className="input-group">
-                    <label className="input-label">PV Tag ID</label>
-                    <select
-                      className="form-input"
-                      value={config.pids[inspectorView.index].pv_tag_id}
-                      onChange={(e) => handlePidChange(inspectorView.index, "pv_tag_id", Number(e.target.value))}
-                    >
-                      {TAG_INDICES.map((i) => (
-                        <option key={i} value={i}>Tag {i}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="input-group">
-                    <label className="input-label">CV Tag ID</label>
-                    <select
-                      className="form-input"
-                      value={config.pids[inspectorView.index].cv_tag_id}
-                      onChange={(e) => handlePidChange(inspectorView.index, "cv_tag_id", Number(e.target.value))}
-                    >
-                      {TAG_INDICES.map((i) => (
-                        <option key={i} value={i}>Tag {i}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="input-group">
-                  <label className="input-label">Setpoint Target</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    className="form-input"
-                    value={config.pids[inspectorView.index].setpoint}
-                    onChange={(e) => handlePidChange(inspectorView.index, "setpoint", Number(e.target.value))}
-                  />
-                </div>
-
-                <div className="input-group">
-                  <label className="input-label">Proportional Gain (Kp)</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    className="form-input"
-                    value={config.pids[inspectorView.index].kp}
-                    onChange={(e) => handlePidChange(inspectorView.index, "kp", Number(e.target.value))}
-                  />
-                </div>
-
-                <div className="input-group">
-                  <label className="input-label">Integral Gain (Ki)</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    className="form-input"
-                    value={config.pids[inspectorView.index].ki}
-                    onChange={(e) => handlePidChange(inspectorView.index, "ki", Number(e.target.value))}
-                  />
-                </div>
-
-                <div className="input-group">
-                  <label className="input-label">Derivative Gain (Kd)</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    className="form-input"
-                    value={config.pids[inspectorView.index].kd}
-                    onChange={(e) => handlePidChange(inspectorView.index, "kd", Number(e.target.value))}
-                  />
-                </div>
-
-                {/* Apply Panel Changes */}
-                <button
-                  type="button"
-                  onClick={handleDeploy}
-                  disabled={deploying}
-                  className="btn btn-primary"
-                  style={{ width: "100%", padding: "0.5rem", fontSize: "0.85rem", marginTop: "0.5rem" }}
-                >
-                  {deploying ? "Deploying Configuration..." : "Commit PID Tuning"}
-                </button>
-              </div>
-            )}
-
-            {/* Routing Matrix Panel (in inspector) */}
-            {inspectorView.type === "routing" && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                <div>
-                  <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--accent-cyan)", textTransform: "uppercase" }}>
-                    Routing Matrix Patching
-                  </h3>
-                  <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", lineHeight: 1.4, marginTop: "0.25rem" }}>
-                    Modify the crossbar mappings on the main screen matrix. Once matched correctly, click below to deploy the configuration down to the SAMD21 NVRAM.
-                  </p>
-                </div>
-
-                <div style={{ padding: "0.75rem", background: "rgba(56, 189, 248, 0.08)", border: "1px solid var(--accent-cyan)", borderRadius: "4px" }}>
-                  <span style={{ fontSize: "0.75rem", color: "var(--text-primary)", fontWeight: 700 }}>Modbus Matrix Routing Info:</span>
-                  <p style={{ fontSize: "0.7rem", color: "var(--text-secondary)", marginTop: "0.2rem" }}>
-                    Input patching links physical thermocouple or analog cards (Channels 0-5) to broker tags. Output patching links broker tags to control variable registers (Channels 10-11) driving solenoid actuators.
-                  </p>
-                </div>
-
-                {/* Apply Panel Changes */}
-                <button
-                  type="button"
-                  onClick={handleDeploy}
-                  disabled={deploying}
-                  className="btn btn-primary"
-                  style={{ width: "100%", padding: "0.5rem", fontSize: "0.85rem", marginTop: "0.5rem" }}
-                >
-                  {deploying ? "Deploying Configuration..." : "Commit Matrix Mapping"}
-                </button>
-              </div>
-            )}
-
-            {/* Settings inspector view */}
-            {inspectorView.type === "settings" && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-                <span style={{ fontSize: "0.75rem", color: "var(--text-primary)", fontWeight: 700, textTransform: "uppercase" }}>
-                  Visible tabs
-                </span>
-                {
-                  // ⚡ Bolt Optimization: Use the centralized TABS array to avoid allocating a new array of tuples on every render
-                  TABS.map((tab) => (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    className={`tab-toggle ${visibleTabs[tab.id] ? "on" : ""}`}
-                    onClick={() => handleTabVisibilityToggle(tab.id)}
-                  >
-                    <span>{tab.settingsLabel}</span>
-                    <span className="tab-toggle-switch" />
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {/* Alicat Mass Flow Controller inspector */}
-            {inspectorView.type === "alicat" && (() => {
-              const mfc = alicats.find((m) => m.device_id === inspectorView.deviceId);
-              if (!mfc) {
-                return (
-                  <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
-                    Alicat MFC {inspectorView.deviceId} not found.
-                  </div>
-                );
-              }
-              return (
-                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                  <div>
-                    <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--color-warning)", textTransform: "uppercase" }}>
-                      Inspect {mfc.name}
-                    </h3>
-                    <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.2rem" }}>
-                      Device ID: {mfc.device_id} | State: {mfc.connection_state}
-                    </div>
-                  </div>
-
-                  {/* Realtime Stats Block */}
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem", background: "var(--input-bg)", padding: "0.75rem", borderRadius: "4px", border: "1px solid var(--panel-border)" }}>
-                    <div>
-                      <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Mass Flow</div>
-                      <div className="mono-text" style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--accent-cyan)" }}>
-                        {mfc.mass_flow.toFixed(2)} <span style={{ fontSize: "0.7rem", fontWeight: 500 }}>SLPM</span>
-                      </div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Vol. Flow</div>
-                      <div className="mono-text" style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--text-secondary)" }}>
-                        {mfc.volumetric_flow.toFixed(2)} <span style={{ fontSize: "0.7rem", fontWeight: 500 }}>LPM</span>
-                      </div>
-                    </div>
-                    <div style={{ marginTop: "0.35rem" }}>
-                      <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Pressure</div>
-                      <div className="mono-text" style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--text-primary)" }}>
-                        {mfc.pressure.toFixed(2)} <span style={{ fontSize: "0.7rem", fontWeight: 500 }}>PSIA</span>
-                      </div>
-                    </div>
-                    <div style={{ marginTop: "0.35rem" }}>
-                      <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Temperature</div>
-                      <div className="mono-text" style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--text-primary)" }}>
-                        {mfc.temperature.toFixed(1)} <span style={{ fontSize: "0.7rem", fontWeight: 500 }}>°C</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Form 1: Setpoint command */}
-                  <div style={{ borderTop: "1px solid var(--panel-border)", paddingTop: "0.75rem" }}>
-                    <label className="input-label" style={{ fontWeight: 700, marginBottom: "0.4rem", display: "block" }}>
-                      Flow Setpoint Command (SLPM)
-                    </label>
-                    <div style={{ display: "flex", gap: "0.5rem" }}>
-                      <input
-                        type="number"
-                        step="0.1"
-                        min="0"
-                        max={mfc.max_flow}
-                        className="form-input"
-                        style={{ flex: 1 }}
-                        value={alicatSetpointVal}
-                        onChange={(e) => setAlicatSetpointVal(e.target.value)}
-                      />
-                      <button
-                        type="button"
-                        className="btn btn-primary"
-                        style={{ padding: "0.45rem 1rem", fontSize: "0.8rem", whiteSpace: "nowrap" }}
-                        onClick={() => {
-                          const parsed = parseFloat(alicatSetpointVal);
-                          if (!isNaN(parsed) && parsed >= 0 && parsed <= mfc.max_flow) {
-                            handleAlicatSetpoint(mfc.device_id, parsed);
-                          } else {
-                            triggerNotification(`Please enter a valid setpoint between 0 and ${mfc.max_flow}.`, "error");
-                          }
-                        }}
-                      >
-                        Set
-                      </button>
-                    </div>
-                    <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", marginTop: "0.25rem" }}>
-                      Maximum flow limit: {mfc.max_flow} SLPM
-                    </div>
-                  </div>
-
-                  {/* Form 2: Gas select dropdown */}
-                  <div style={{ borderTop: "1px solid var(--panel-border)", paddingTop: "0.75rem" }}>
-                    <label className="input-label" style={{ fontWeight: 700, marginBottom: "0.4rem", display: "block" }}>
-                      Active Gas Calibration
-                    </label>
-                    <select
-                      className="form-input"
-                      value={mfc.gas}
-                      onChange={(e) => handleAlicatGas(mfc.device_id, e.target.value)}
-                    >
-                      {["O2", "N2", "CO2", "He", "H2", "Air"].map((species) => (
-                        <option key={species} value={species}>
-                          {species} ({species === "O2" ? "Oxygen" : species === "N2" ? "Nitrogen" : species === "CO2" ? "Carbon Dioxide" : species === "He" ? "Helium" : species === "H2" ? "Hydrogen" : "Clean Air"})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              );
-            })()}
-          </div>
-        </aside>
+        <InspectorDrawer
+          inspectorView={inspectorView}
+          setInspectorView={setInspectorView}
+          config={config}
+          deploying={deploying}
+          allTags={allTags}
+          tagsDict={tagsDict}
+          tagValues={tagValues}
+          overrideVal={overrideVal}
+          showOverrideConfirm={showOverrideConfirm}
+          alicats={alicats}
+          alicatSetpointVal={alicatSetpointVal}
+          visibleTabs={visibleTabs}
+          setOverrideVal={setOverrideVal}
+          setShowOverrideConfirm={setShowOverrideConfirm}
+          setAlicatSetpointVal={setAlicatSetpointVal}
+          executeOverride={executeOverride}
+          handleInterlockChange={handleInterlockChange}
+          handlePidChange={handlePidChange}
+          handleDeploy={handleDeploy}
+          handleTabVisibilityToggle={handleTabVisibilityToggle}
+          handleAlicatSetpoint={handleAlicatSetpoint}
+          handleAlicatGas={handleAlicatGas}
+          triggerNotification={triggerNotification}
+        />
       </div>
     </div>
   );

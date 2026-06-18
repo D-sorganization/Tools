@@ -10,7 +10,6 @@ from __future__ import annotations
 import logging
 import math
 import time
-from collections import deque
 
 from power_supply_models import (
     PowerSupplyConfig,
@@ -18,7 +17,7 @@ from power_supply_models import (
     PowerSupplyState,
     PowerSupplyStatus,
 )
-from signal_stats import compute_noise
+from power_supply_noise import PowerSupplyNoiseTracker
 
 __all__ = [
     "PowerSupplyConfig",
@@ -55,24 +54,11 @@ class PowerSupplyController:
         self._last_i = 0.0
         self._last_t = 0.0
         self._last_commanded_percent = 0.0
-        # Slew-rate state: the actual percent we last sent to the AO (after
-        # ramp limiting) and the monotonic timestamp of the last tick. Both
-        # reset to zero whenever output is forced to zero (IDLE/ARMED/TRIPPED/
-        # no-permissive) so the next RUNNING period starts the ramp from
-        # zero rather than snapping up.
         self._slewed_percent = 0.0
         self._last_tick_monotonic: float | None = None
-        # True when the output clamp is actively limiting the command (the
-        # setpoint would otherwise drive the AO above output_clamp_percent).
         self._output_clamped = False
-        # E-stop latch. While set, the controller forces output to zero, refuses
-        # to arm, and rejects setpoints until clear_estop() is called. This is a
-        # one-way kill — it must be explicitly cleared by an operator.
         self._estopped = False
-        # Rolling windows of recent feedback for arc/noise quantification. Bounded
-        # by noise_window so memory and compute stay flat over a long campaign.
-        self._current_samples: deque[float] = deque(maxlen=config.noise_window)
-        self._voltage_samples: deque[float] = deque(maxlen=config.noise_window)
+        self._noise = PowerSupplyNoiseTracker(config)
 
     @property
     def state(self) -> PowerSupplyState:
@@ -113,15 +99,7 @@ class PowerSupplyController:
             new_config.current_setpoint_min_a,
             min(self._setpoint_a, new_config.current_setpoint_max_a),
         )
-        # Resize the noise windows if the operator changed noise_window, keeping
-        # the most-recent samples (deque(..., maxlen=N) drops the oldest excess).
-        if new_config.noise_window != self._current_samples.maxlen:
-            self._current_samples = deque(
-                self._current_samples, maxlen=new_config.noise_window
-            )
-            self._voltage_samples = deque(
-                self._voltage_samples, maxlen=new_config.noise_window
-            )
+        self._noise.reconfigure(new_config)
 
     def set_permissive(self, on: bool) -> None:
         """Toggle permissive. A trip latch is not cleared by a permissive change.
@@ -434,8 +412,7 @@ class PowerSupplyController:
 
         # Accumulate feedback for noise/arc quantification regardless of command
         # state — arcing is a property of the measured signal, not the setpoint.
-        self._current_samples.append(self._last_i)
-        self._voltage_samples.append(self._last_v)
+        self._noise.append(self._last_i, self._last_v)
 
         measured_power_w = self._last_v * self._last_i
         self._evaluate_trips(measured_power_w)
@@ -460,9 +437,6 @@ class PowerSupplyController:
         raw_percent = 100.0 * self._setpoint_a / self._config.current_full_scale_a
         raw_percent = max(0.0, min(raw_percent, 100.0))
 
-        # Operator safety clamp: hard-cap the commanded output regardless of how
-        # the setpoint scales. Applied before the slew limiter so the ramp
-        # settles at the clamp instead of overshooting it.
         clamp_percent = self._config.output_clamp_percent
         target_percent = min(raw_percent, clamp_percent)
         self._output_clamped = raw_percent > clamp_percent
@@ -494,16 +468,8 @@ class PowerSupplyController:
 
     def status(self) -> PowerSupplyStatus:
         """Return a snapshot of controller state for serialization."""
-        current_noise = compute_noise(
-            list(self._current_samples),
-            metric=self._config.noise_metric,
-            threshold=self._config.current_arc_threshold,
-        )
-        voltage_noise = compute_noise(
-            list(self._voltage_samples),
-            metric=self._config.noise_metric,
-            threshold=self._config.voltage_arc_threshold,
-        )
+        current_noise = self._noise.current_noise(self._config)
+        voltage_noise = self._noise.voltage_noise(self._config)
         return PowerSupplyStatus(
             state=self._state,
             mode=self._mode,
