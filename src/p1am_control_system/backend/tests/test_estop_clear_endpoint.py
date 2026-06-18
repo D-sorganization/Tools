@@ -25,14 +25,14 @@ client = TestClient(app)
 
 @pytest.fixture(autouse=True)
 def restore_estop_latch() -> Generator[None, None, None]:
-    """Keep the process-global E-stop latch isolated between tests."""
+    """Keep the shared control-context E-stop latch isolated between tests."""
     import main as backend_main
 
-    backend_main.e_stop_active = False
+    backend_main.control_context.clear_estop()
     try:
         yield
     finally:
-        backend_main.e_stop_active = False
+        backend_main.control_context.clear_estop()
 
 
 @pytest.mark.asyncio
@@ -48,14 +48,14 @@ async def test_estop_clear_commands_plc_when_connected() -> None:
         patch.object(modbus_manager, "clear_estop", mock_clear),
         patch.object(backend_main.backup_simulator, "clear_estop", mock_backup_clear),
     ):
-        backend_main.e_stop_active = True
+        backend_main.control_context.engage_estop()
         response = client.post("/api/estop/clear")
 
         assert response.status_code == 200
         assert "cleared" in response.json()["message"].lower()
         # The controller reset MUST have been commanded, not just a local flag.
         mock_clear.assert_called_once()
-        assert backend_main.e_stop_active is False
+        assert backend_main.control_context.e_stop_active is False
 
 
 @pytest.mark.asyncio
@@ -69,13 +69,13 @@ async def test_estop_clear_keeps_latch_when_plc_rejects() -> None:
         patch.object(modbus_manager, "_connected", True),
         patch.object(modbus_manager, "clear_estop", mock_clear),
     ):
-        backend_main.e_stop_active = True
+        backend_main.control_context.engage_estop()
         response = client.post("/api/estop/clear")
 
         assert response.status_code == 502
         mock_clear.assert_called_once()
         # Latch preserved: HMI keeps showing the tripped state.
-        assert backend_main.e_stop_active is True
+        assert backend_main.control_context.e_stop_active is True
 
 
 @pytest.mark.asyncio
@@ -89,10 +89,10 @@ async def test_estop_clear_uses_backup_when_plc_offline() -> None:
         patch.object(modbus_manager, "_connected", False),
         patch.object(backend_main.backup_simulator, "clear_estop", mock_backup_clear),
     ):
-        backend_main.e_stop_active = True
+        backend_main.control_context.engage_estop()
         response = client.post("/api/estop/clear")
 
         assert response.status_code == 200
         assert "Simulated" in response.json()["message"]
         mock_backup_clear.assert_called_once()
-        assert backend_main.e_stop_active is False
+        assert backend_main.control_context.e_stop_active is False
