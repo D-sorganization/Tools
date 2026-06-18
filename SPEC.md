@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.576                                    |
+| **Spec Version**        | 1.1.577                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-18 Update
 
+- P1AM backend polling now delegates one scan to `_poll_once()` and one
+  background connection attempt to `_connect_once()`, making PLC-to-simulator
+  fallback, E-stop reassertion, connect-time routing sync, WebSocket payloads,
+  and the single historian/alarm commit group directly unit-testable without
+  sleeping inside infinite loops (#3536).
 - Movement Optimizer animation playback mixin now declares its own narrow
   MainWindow contract for tabs, playback controls, exercise tabs, and
   published exercise state, removing the module-level mypy suppression and
@@ -1153,6 +1158,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-18 | 1.1.577 | test(p1am, #3536): extract single-scan `_poll_once()` and single-attempt `_connect_once()` seams from the backend loops, with typed fake-client coverage for PLC simulator fallback, E-stop reassertion, routing sync, WebSocket payloads, and one-commit historian/alarm persistence. |
 | 2026-06-18 | 1.1.572 | perf(golf): optimize `generateRecommendations` in `swingAnalyzer.ts` by classifying major and moderate swing issues in one pass, avoiding redundant `.filter()` traversals and intermediate arrays while preserving recommendation ordering. |
 | 2026-06-18 | 1.1.571 | fix(movement_optimizer): wrap the Swingset policy optimization trace legend by measured widget width and derive the trace top inset from the wrapped legend band, preventing optimizer score and parameter telemetry from being obscured in narrow panes. |
 | 2026-06-18 | 1.1.570 | refactor(p1am, #3561): tighten the extracted power-supply PID pass-through repair helper around a narrow routing-repair protocol, add focused async repair coverage, and keep `backend/main.py` below its frozen module-size budget without changing the auto-repair contract. |
