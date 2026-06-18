@@ -8,6 +8,8 @@ These import only ``defaults``/``simulator_client``/``modbus_client`` — no
 
 from __future__ import annotations
 
+import asyncio
+import logging
 import sys
 from pathlib import Path
 
@@ -24,13 +26,14 @@ from defaults import (  # noqa: E402
     is_pid_passthrough,
 )
 from modbus_client import AsyncModbusManager  # noqa: E402
-from models import PIDConfig  # noqa: E402
+from models import PIDConfig, RoutingConfig  # noqa: E402
+from power_supply_passthrough import ensure_power_supply_passthrough  # noqa: E402
 from simulator_client import SimulatedPLCClient  # noqa: E402
 
 COMMAND_TAG = "TAG_10"
 
 
-def _passthrough_config():
+def _passthrough_config() -> RoutingConfig:
     config = default_routing_config()
     config.pids[0] = PIDConfig(
         pv_tag="TAG_1",
@@ -43,7 +46,7 @@ def _passthrough_config():
     return config
 
 
-def _broken_config():
+def _broken_config() -> RoutingConfig:
     config = default_routing_config()
     # Simulate the post-NVRAM-reset unmapped state (cv=TAG_255, kp=0).
     config.pids[0] = PIDConfig(
@@ -104,3 +107,67 @@ class TestTagMapDeclared:
     def test_modbus_client_has_tag_map_attribute(self) -> None:
         client = AsyncModbusManager(host="127.0.0.1")
         assert client.tag_map == {}
+
+
+class _RoutingRepairClient:
+    def __init__(self, *, write_ok: bool = True) -> None:
+        self.write_ok = write_ok
+        self.written: list[RoutingConfig] = []
+        self.saved = 0
+
+    async def write_routing(self, config: RoutingConfig) -> bool:
+        self.written.append(config)
+        return self.write_ok
+
+    async def save_to_flash(self) -> bool:
+        self.saved += 1
+        return True
+
+
+class TestEnsurePowerSupplyPassthrough:
+    _logger = logging.getLogger(__name__)
+
+    def test_noop_when_route_is_already_passthrough(self) -> None:
+        client = _RoutingRepairClient()
+        config = _passthrough_config()
+        result = asyncio.run(
+            ensure_power_supply_passthrough(
+                client,
+                config,
+                command_tag=COMMAND_TAG,
+                logger=self._logger,
+            )
+        )
+        assert result is config
+        assert client.written == []
+        assert client.saved == 0
+
+    def test_repairs_and_persists_unmapped_pid_route(self) -> None:
+        client = _RoutingRepairClient()
+        config = _broken_config()
+        result = asyncio.run(
+            ensure_power_supply_passthrough(
+                client,
+                config,
+                command_tag=COMMAND_TAG,
+                logger=self._logger,
+            )
+        )
+        assert result is client.written[0]
+        assert is_pid_passthrough(result, 0, COMMAND_TAG) is True
+        assert client.saved == 1
+
+    def test_failed_write_keeps_original_config_unpersisted(self) -> None:
+        client = _RoutingRepairClient(write_ok=False)
+        config = _broken_config()
+        result = asyncio.run(
+            ensure_power_supply_passthrough(
+                client,
+                config,
+                command_tag=COMMAND_TAG,
+                logger=self._logger,
+            )
+        )
+        assert result is config
+        assert client.written
+        assert client.saved == 0

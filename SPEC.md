@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.569                                    |
+| **Spec Version**        | 1.1.570                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -55,6 +55,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - P1AM PID pass-through detection now uses a concrete aggregate predicate for
   the unity-gain loop contract so changed-file mypy checks keep the PID0
   auto-repair helper gated after branch rebases (#3561).
+- P1AM connect-time power-supply pass-through repair now depends only on the
+  resolved command tag and a narrow routing-repair client protocol, keeping the
+  helper independent of the full service object while preserving PID0
+  auto-repair and flash-persist behavior (#3561).
 
 ### 2026-06-17 Update
 
@@ -1131,6 +1135,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-18 | 1.1.570 | refactor(p1am, #3561): tighten the extracted power-supply PID pass-through repair helper around a narrow routing-repair protocol, add focused async repair coverage, and keep `backend/main.py` below its frozen module-size budget without changing the auto-repair contract. |
 | 2026-06-18 | 1.1.569 | fix(p1am, #3561): keep PID pass-through detection mypy-clean with a concrete aggregate predicate, preserving the PID0 auto-repair helper's declared bool contract after branch rebases. |
 | 2026-06-18 | 1.1.564 | fix(movement_optimizer): dock Swingset and Chain Dynamics analysis legends into `MotionAnalysisPanel`-owned reserved legend rows, remove them from data axes during draw, and add rendered bounding-box regression coverage so visible legends cannot cover plot data or neighboring subplots on compact panes. |
 | 2026-06-17 | 1.1.561 | refactor(p1am): split pure Modbus register codec helpers out of `backend/modbus_client.py`, add codec regression coverage, and declare `pymodbus` in the test extra used by backend collection. |
