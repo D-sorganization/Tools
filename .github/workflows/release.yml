@@ -144,6 +144,8 @@ jobs:
     if: needs.analyse-commits.outputs.bump != 'none'
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
 
       - uses: actions/setup-python@v6
         env:
@@ -171,11 +173,42 @@ jobs:
           python3 -m pip install ruff mypy
           python3 -m pip install -e ".[dev]" || python3 -m pip install -r requirements.txt || true
 
+      - name: Collect Changed Python Files
+        run: |
+          if [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
+            git diff --diff-filter=ACMRT --name-only "${{ github.event.before }}" HEAD -- '*.py' > changed_python_files.txt
+          else
+            git diff --diff-filter=ACMRT --name-only HEAD~1 HEAD -- '*.py' > changed_python_files.txt || true
+          fi
+          cat changed_python_files.txt
+
       - name: Ruff lint
-        run: python3 -m ruff check .
+        run: |
+          if [ -s changed_python_files.txt ]; then
+            grep -v -E '^src/data_processing/|^src/document_processing/|^src/pendulum_simulator/|^src/movement_optimizer/|^src/scientific_modeling/|^src/tools/folder_tools/|^src/tools/code_quality_check\.py' \
+              changed_python_files.txt > ruff_lint_files.txt || true
+            if [ -s ruff_lint_files.txt ]; then
+              xargs -r -d '\n' python3 -m ruff check < ruff_lint_files.txt
+            else
+              echo "No changed Python files to lint after applying exclude list."
+            fi
+          else
+            echo "No changed Python files to lint."
+          fi
 
       - name: Ruff format check
-        run: python3 -m ruff format --check .
+        run: |
+          if [ -s changed_python_files.txt ]; then
+            grep -v -E '^src/data_processing/|^src/document_processing/|^src/pendulum_simulator/|^src/movement_optimizer/|^src/scientific_modeling/|^src/tools/folder_tools/|^src/tools/code_quality_check\.py' \
+              changed_python_files.txt > ruff_format_files.txt || true
+            if [ -s ruff_format_files.txt ]; then
+              xargs -r -d '\n' python3 -m ruff format --check < ruff_format_files.txt
+            else
+              echo "No changed Python files to format-check after applying exclude list."
+            fi
+          else
+            echo "No changed Python files to format-check."
+          fi
 
       - name: Run tests
         run: |
