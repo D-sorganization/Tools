@@ -25,7 +25,7 @@ import pytest
 _IN_CI = os.environ.get("CI", "").lower() in {"1", "true", "yes"}
 
 # Runtime deps the safety-critical backend suite needs in order to RUN.
-_REQUIRED_DEPS = ("sqlmodel", "pymodbus", "fastapi", "httpx")
+_REQUIRED_DEPS = ("fastapi", "httpx", "pymodbus", "requests", "sqlmodel")
 
 
 @pytest.mark.skipif(not _IN_CI, reason="dep-presence gate only enforced in CI")
