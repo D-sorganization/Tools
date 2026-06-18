@@ -33,7 +33,7 @@ permissions:
 
 jobs:
   audit:
-    timeout-minutes: 20
+    timeout-minutes: 60
     runs-on: d-sorg-fleet
     # Grant write only at this job level.
     permissions:
