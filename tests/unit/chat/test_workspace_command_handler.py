@@ -10,7 +10,6 @@ sidesteps the Sidekick multi-widget Qt segfault while still covering the full
 from __future__ import annotations
 
 import pytest
-
 from chat._workspace_protocol import WorkspaceVariableInfo
 from chat.workspace_command_handler import (
     WorkspaceCommandHandler,

@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+
 from logging_pkg import (
     DEFAULT_SEED,
     LOG_FORMAT,

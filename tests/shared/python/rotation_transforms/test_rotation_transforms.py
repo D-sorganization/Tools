@@ -6,6 +6,7 @@ import pytest
 
 pytest.importorskip("numpy")
 import numpy as np
+
 from rotation_transforms import (
     Rotation,
     compute_homogeneous_transform,

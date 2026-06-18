@@ -20,8 +20,9 @@ import pytest
 fastapi = pytest.importorskip("fastapi")
 testclient = pytest.importorskip("fastapi.testclient")
 
-from chat import ChatServiceBase
 from chat.router_factory import AIProviderError, create_chat_router
+
+from chat import ChatServiceBase
 
 # ---------------------------------------------------------------------------
 # Helpers

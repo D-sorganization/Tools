@@ -3,8 +3,9 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from codemap import parsers
 from codemap._ts_common import ParsedSymbol, ParseResult
+
+from codemap import parsers
 
 
 @pytest.mark.parametrize(

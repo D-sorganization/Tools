@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.581                                    |
+| **Spec Version**        | 1.1.583                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,21 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   by the dedicated non-blocking quality workflows instead of blocking every
   release candidate. Release version bumps now open a protected-branch-friendly
   PR from a `release/v*` branch instead of attempting a direct push to `main`.
+- Release Automation's repo-wide Ruff gate now has import-sorted test modules
+  across chat, humanoid builder, logging, notes, rotation transforms, signal
+  toolkit, GUI launcher, and codemap coverage so the release workflow remains
+  deterministic after current-main CI merges (#3594).
+- Chat dock terminal-runtime capability updates now fail closed during early
+  construction or tests that bypass `_setup_ui()`, avoiding reconnect teardown
+  regressions when `_mode_combo` has not been built yet. The
+  `movement_optimizer_core` and `ai_backend` maturin gates now document or use
+  neutral self-hosted fleet platform labels while routing every job through
+  d-sorg-fleet, preserving Python 3.10-3.13 accelerator validation without
+  leaking to hosted runners (#3594).
+- Shared test bootstrap now leaves `shared.python.logging_pkg` to import its
+  real package initializer instead of installing a placeholder package, keeping
+  top-level `logging_pkg` compatibility exports available during CI collection
+  (#3594).
 - P1AM backend runtime tunables now resolve through one
   `P1AMSettings` pydantic-settings surface, covering PLC driver/host/port,
   polling and reconnect intervals, historian retention sizing, and SQLite

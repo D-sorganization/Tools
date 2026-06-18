@@ -17,8 +17,9 @@ import pytest
 fastapi = pytest.importorskip("fastapi")
 testclient = pytest.importorskip("fastapi.testclient")
 
-from chat import ChatServiceBase
 from chat.router_factory import create_chat_router
+
+from chat import ChatServiceBase
 
 # ---------------------------------------------------------------------------
 # Minimal concrete service

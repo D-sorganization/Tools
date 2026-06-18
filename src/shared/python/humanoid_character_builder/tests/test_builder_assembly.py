@@ -14,10 +14,6 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import pytest
-from humanoid_character_builder import (
-    BodyParameters,
-    CharacterBuilder,
-)
 from humanoid_character_builder.interfaces.api import (
     CharacterBuildResult,
     ExportOptions,
@@ -28,6 +24,11 @@ from humanoid_character_builder.presets.loader import (
     load_body_preset,
     load_preset_from_file,
     save_preset_to_file,
+)
+
+from humanoid_character_builder import (
+    BodyParameters,
+    CharacterBuilder,
 )
 
 # Fixed input for the golden assembly assertions.
