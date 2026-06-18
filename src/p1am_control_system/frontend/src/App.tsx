@@ -16,7 +16,14 @@ import { NotificationBanner } from "./components/NotificationBanner";
 import { TabBar } from "./components/TabBar";
 import { CsvExporter } from "./components/CsvExporter";
 import { useTelemetryStream } from "./hooks/useTelemetryStream";
-import { TABS, type TabId, defaultTabVisibility } from "./lib/tabs";
+import {
+  TABS,
+  type TabId,
+  loadTabOrder,
+  saveTabOrder,
+  loadTabVisibility,
+  saveTabVisibility,
+} from "./lib/tabs";
 import { TAG_INDICES, tagName, parseTagId } from "./lib/tags";
 import { fmtNumber } from "./lib/format";
 import * as api from "./api/endpoints";
@@ -116,11 +123,20 @@ export const App: React.FC = () => {
   // Events history (polled separately from the live stream).
   const [eventsHistory, setEventsHistory] = useState<EventLogEntry[]>([]);
 
-  // Tab Navigation and Visibility State
+  // Tab Navigation, Order, and Visibility State (order + visibility persisted
+  // to localStorage so an operator's layout survives reloads).
   const [activeTab, setActiveTab] = useState<TabId>("powerSupply");
   const [visibleTabs, setVisibleTabs] = useState<Record<TabId, boolean>>(
-    defaultTabVisibility,
+    loadTabVisibility,
   );
+  const [tabOrder, setTabOrder] = useState<TabId[]>(loadTabOrder);
+
+  useEffect(() => {
+    saveTabOrder(tabOrder);
+  }, [tabOrder]);
+  useEffect(() => {
+    saveTabVisibility(visibleTabs);
+  }, [visibleTabs]);
 
   // PID Tuning State
   const [selectedTuningLoop, setSelectedTuningLoop] = useState<number>(0);
@@ -641,6 +657,9 @@ export const App: React.FC = () => {
             activeTab={activeTab}
             visibleTabs={visibleTabs}
             onSelect={setActiveTab}
+            order={tabOrder}
+            onReorder={setTabOrder}
+            onHide={handleTabVisibilityToggle}
           />
 
           {activeTab === "powerSupply" && visibleTabs.powerSupply && (
