@@ -42,6 +42,36 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # ── Rust quality gate for the workspace-EXCLUDED pendulum-core crate ───────
+  # pendulum-core is intentionally NOT a root workspace member, so the
+  # `ci-standard.yml` rust-quality-gate never lints or tests it. Without this
+  # job a clippy regression (e.g. issue #3553) can land unnoticed. This gate
+  # mirrors the workspace gate's checks (rustfmt + clippy -D warnings + tests)
+  # for the standalone crate.
+  rust-quality-gate:
+    name: pendulum_core rust quality gate (fmt + clippy + test)
+    runs-on: d-sorg-fleet
+    timeout-minutes: 15
+    env:
+      CARGO_TERM_COLOR: always
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Format Check (rustfmt)
+        run: cargo fmt --all --manifest-path src/pendulum_simulator/pendulum-core/Cargo.toml -- --check
+
+      - name: Lint (Clippy -D warnings)
+        run: cargo clippy --all-targets --manifest-path src/pendulum_simulator/pendulum-core/Cargo.toml -- -D warnings
+
+      - name: Run Rust Tests
+        run: cargo test --manifest-path src/pendulum_simulator/pendulum-core/Cargo.toml
+
   parity-gate:
     name: pendulum_core build + parity gate (Python ${{ matrix.python-version }})
     runs-on: d-sorg-fleet

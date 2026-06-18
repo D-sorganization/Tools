@@ -264,3 +264,145 @@ impl RRTPlanner {
         path
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use proptest::prelude::*;
+
+    fn planner() -> RRTPlanner {
+        // Unit cube bounds; deterministic seed for reproducibility.
+        RRTPlanner::new([0.0, 1.0, 0.0, 1.0, 0.0, 1.0], 1000, Some(42))
+    }
+
+    // ── Obstacle distance ──────────────────────────────────────────────────
+
+    #[test]
+    fn sphere_distance_inside_and_outside() {
+        let sphere = Obstacle::new(0, [0.0, 0.0, 0.0], 1.0);
+        // Center is 1.0 inside the surface → distance -1.0.
+        assert!((sphere.distance_to_surface(&[0.0, 0.0, 0.0]) + 1.0).abs() < 1e-12);
+        // Point at radius 2 along x → distance +1.0.
+        assert!((sphere.distance_to_surface(&[2.0, 0.0, 0.0]) - 1.0).abs() < 1e-12);
+    }
+
+    #[test]
+    fn cube_distance_sign() {
+        // Cube centered at origin, full size 2.0 → half-size 1.0.
+        let cube = Obstacle::new(1, [0.0, 0.0, 0.0], 2.0);
+        // Deep inside → negative.
+        assert!(cube.distance_to_surface(&[0.0, 0.0, 0.0]) < 0.0);
+        // Clearly outside along x → positive.
+        assert!(cube.distance_to_surface(&[3.0, 0.0, 0.0]) > 0.0);
+    }
+
+    // ── Back-pointer path reconstruction (rrt.rs:255-260) ───────────────────
+
+    #[test]
+    fn extract_path_walks_back_pointers_to_root() {
+        let p = planner();
+        // Linear chain: 0 -> 1 -> 2 -> 3, parent index stored in slot [3].
+        let nodes: Vec<[f64; 4]> = vec![
+            [0.0, 0.0, 0.0, -1.0],
+            [0.1, 0.0, 0.0, 0.0],
+            [0.2, 0.0, 0.0, 1.0],
+            [0.3, 0.0, 0.0, 2.0],
+        ];
+        let path = p.extract_path(&nodes, 3);
+        // Reconstructed root-to-goal order.
+        assert_eq!(path.len(), 4);
+        assert_eq!(path[0], [0.0, 0.0, 0.0]);
+        assert_eq!(path[3], [0.3, 0.0, 0.0]);
+    }
+
+    #[test]
+    fn extract_path_single_root_node() {
+        let p = planner();
+        let nodes: Vec<[f64; 4]> = vec![[0.5, 0.5, 0.5, -1.0]];
+        let path = p.extract_path(&nodes, 0);
+        assert_eq!(path, vec![[0.5, 0.5, 0.5]]);
+    }
+
+    #[test]
+    fn extract_path_branching_tree_follows_correct_parent() {
+        let p = planner();
+        // Tree: 0 root; 1,2 children of 0; 3 child of 2.
+        let nodes: Vec<[f64; 4]> = vec![
+            [0.0, 0.0, 0.0, -1.0],
+            [0.1, 0.0, 0.0, 0.0],
+            [0.0, 0.1, 0.0, 0.0],
+            [0.0, 0.2, 0.0, 2.0],
+        ];
+        let path = p.extract_path(&nodes, 3);
+        // Path to node 3 must go 0 -> 2 -> 3, skipping the sibling node 1.
+        assert_eq!(
+            path,
+            vec![[0.0, 0.0, 0.0], [0.0, 0.1, 0.0], [0.0, 0.2, 0.0]]
+        );
+    }
+
+    // ── steer / nearest / collision helpers ─────────────────────────────────
+
+    #[test]
+    fn steer_caps_at_step_size() {
+        let p = planner();
+        // Target far away; steered point must be exactly step_size from origin.
+        let out = p.steer(&[0.0, 0.0, 0.0], &[10.0, 0.0, 0.0]);
+        let d = RRTPlanner::distance(&[0.0, 0.0, 0.0], &out);
+        assert!((d - p.step_size).abs() < 1e-9, "steered distance {d}");
+    }
+
+    #[test]
+    fn steer_zero_distance_returns_origin() {
+        let p = planner();
+        let origin = [0.3, 0.3, 0.3];
+        assert_eq!(p.steer(&origin, &origin), origin);
+    }
+
+    #[test]
+    fn nearest_node_index_picks_closest() {
+        let p = planner();
+        let nodes: Vec<[f64; 4]> = vec![
+            [0.0, 0.0, 0.0, -1.0],
+            [1.0, 0.0, 0.0, 0.0],
+            [0.5, 0.5, 0.0, 0.0],
+        ];
+        // Sample near node 1.
+        assert_eq!(p.nearest_node_index(&nodes, &[0.9, 0.05, 0.0]), 1);
+    }
+
+    #[test]
+    fn check_collision_detects_obstacle_overlap() {
+        let p = planner();
+        let obstacles = vec![Obstacle::new(0, [0.5, 0.5, 0.5], 0.2)];
+        assert!(p.check_collision(&[0.5, 0.5, 0.5], &obstacles));
+        assert!(!p.check_collision(&[0.0, 0.0, 0.0], &obstacles));
+    }
+
+    #[test]
+    fn segment_collision_free_through_clear_space() {
+        let p = planner();
+        let obstacles = vec![Obstacle::new(0, [0.5, 0.9, 0.5], 0.05)];
+        // Segment along the floor (y=0) stays clear of the obstacle up high.
+        assert!(p.segment_is_collision_free(&[0.0, 0.0, 0.0], &[0.2, 0.0, 0.0], &obstacles));
+    }
+
+    proptest! {
+        /// Invariant: `extract_path` over any valid linear back-pointer chain
+        /// returns exactly `n` points in root-to-goal order, terminating at the
+        /// root — i.e. the back-pointer walk never loops or under/over-shoots.
+        #[test]
+        fn prop_extract_path_linear_chain_len(n in 1usize..50) {
+            let p = planner();
+            let mut nodes: Vec<[f64; 4]> = Vec::with_capacity(n);
+            nodes.push([0.0, 0.0, 0.0, -1.0]);
+            for i in 1..n {
+                nodes.push([i as f64, 0.0, 0.0, (i - 1) as f64]);
+            }
+            let path = p.extract_path(&nodes, n - 1);
+            prop_assert_eq!(path.len(), n);
+            prop_assert_eq!(path[0], [0.0, 0.0, 0.0]);
+            prop_assert_eq!(path[n - 1], [(n - 1) as f64, 0.0, 0.0]);
+        }
+    }
+}

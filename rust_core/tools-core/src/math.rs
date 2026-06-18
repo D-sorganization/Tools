@@ -12,7 +12,9 @@
 //! - Physical constants are defined here once; downstream crates import them.
 
 /// Universal gas constant [J/(mol·K)] — CODATA 2018 recommended value.
-/// Must match ``engineering::R_UNIVERSAL`` exactly (single source of truth).
+///
+/// This is the single source of truth (issue #3556); `engineering::R_UNIVERSAL`
+/// is a `pub use` re-export of this constant, not an independent copy.
 pub const R_GAS: f64 = 8.314_462_618_153_24;
 
 /// Standard gravitational acceleration [m/s²].
