@@ -28,6 +28,9 @@ from ..rendering import Palette, restyle_figure
 class MotionAnalysisPanel(QWidget):
     """A themed grid of named matplotlib axes with a navigation toolbar."""
 
+    _LEGEND_HEIGHT_RATIO = 0.34
+    _DATA_LEGEND_HSPACE = 1.20
+
     def __init__(self, axis_names: Sequence[str], *, rows: int, cols: int) -> None:
         """Build the panel.
 
@@ -63,12 +66,14 @@ class MotionAnalysisPanel(QWidget):
 
     def _build_axes(self) -> None:
         self.figure.clear()
-        height_ratios = tuple(ratio for _ in range(self._rows) for ratio in (1.0, 0.34))
+        height_ratios = tuple(
+            ratio for _ in range(self._rows) for ratio in (1.0, self._LEGEND_HEIGHT_RATIO)
+        )
         grid = self.figure.add_gridspec(
             self._rows * 2,
             self._cols,
             height_ratios=height_ratios,
-            hspace=0.58,
+            hspace=self._DATA_LEGEND_HSPACE,
             wspace=0.34,
         )
         self.axes = {}
