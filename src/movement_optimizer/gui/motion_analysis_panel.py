@@ -30,6 +30,10 @@ class MotionAnalysisPanel(QWidget):
 
     _LEGEND_HEIGHT_RATIO = 0.34
     _DATA_LEGEND_HSPACE = 3.00
+    _MIN_AXIS_WIDTH_PX = 260
+    _MIN_DATA_HEIGHT_PX = 180
+    _MIN_LEGEND_HEIGHT_PX = 72
+    _MIN_TOOLBAR_HEIGHT_PX = 40
 
     def __init__(self, axis_names: Sequence[str], *, rows: int, cols: int) -> None:
         """Build the panel.
@@ -52,10 +56,15 @@ class MotionAnalysisPanel(QWidget):
 
         self.figure = Figure(figsize=(8.0, 5.0), facecolor=Palette.BG)
         self.canvas = FigureCanvasQTAgg(self.figure)
+        self.canvas.setMinimumSize(self._minimum_canvas_width(), self._minimum_canvas_height())
         self.toolbar = NavigationToolbar2QT(self.canvas, self)
         self.axes: dict[str, Axes] = {}
         self.legend_axes: dict[str, Axes] = {}
         self._legends_visible = True
+        self.setMinimumSize(
+            self._minimum_canvas_width(),
+            self._minimum_canvas_height() + self._MIN_TOOLBAR_HEIGHT_PX,
+        )
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -88,6 +97,14 @@ class MotionAnalysisPanel(QWidget):
             self.legend_axes[name] = legend_axis
         restyle_figure(self.figure)
 
+    def _minimum_canvas_width(self) -> int:
+        """Return the minimum canvas width that keeps plot legends readable."""
+        return self._cols * self._MIN_AXIS_WIDTH_PX
+
+    def _minimum_canvas_height(self) -> int:
+        """Return the minimum canvas height that keeps plot legends readable."""
+        return self._rows * (self._MIN_DATA_HEIGHT_PX + self._MIN_LEGEND_HEIGHT_PX)
+
     def clear(self) -> None:
         """Reset every axis to a blank, themed state."""
         self._build_axes()
@@ -97,7 +114,7 @@ class MotionAnalysisPanel(QWidget):
         """Return a compact column count for a dedicated legend strip."""
         if label_count < 1:
             return 1
-        return min(2, label_count)
+        return min(3, label_count)
 
     def _dock_legends(self) -> None:
         """Move per-plot legends into reserved strips outside data axes."""

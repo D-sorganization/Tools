@@ -24,6 +24,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Prevented compact Swingset and Chain Dynamics plot panes from shrinking until
+  docked legends overlap plot labels or curves by giving the motion plot panel a
+  grid-aware minimum canvas size and placing it in a scrollable plot viewport.
+- Shortened docked joint-series legends with up to three columns so Swingset
+  torque and power legends use less vertical plot-panel space.
 - Docked Swingset and Chain Dynamics analysis legends into reserved
   `MotionAnalysisPanel` legend rows so visible legends no longer obscure curves,
   neighboring plots, or compact plot-pane edges.

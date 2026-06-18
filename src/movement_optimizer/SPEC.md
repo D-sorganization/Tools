@@ -11,7 +11,7 @@
 | License          | MIT                                                     |
 | Package Name     | `movement-optimizer`                                    |
 | Current Version  | `1.0.0`                                                 |
-| Spec Version     | `1.0.23`                                                |
+| Spec Version     | `1.0.24`                                                |
 | Last Spec Update | 2026-06-18                                              |
 
 ## 2. Purpose
@@ -36,9 +36,9 @@ Movement-Optimizer is a biomechanics trajectory optimizer for barbell exercises.
   sidebar access.
 - Swingset and Chain Dynamics analysis legends are docked into reserved
   legend rows owned by `MotionAnalysisPanel`, with a larger data-to-legend
-  gap and a two-column cap so visible legends identify the plotted series
-  without covering plot data, neighboring subplots, or figure edges on compact
-  panes.
+  gap, compact multi-column legends, and minimum scrollable plot-panel sizing
+  so visible legends identify the plotted series without covering plot data,
+  neighboring subplots, axis labels, or figure edges on compact panes.
 - Compact plot panes reserve enough vertical gap between data axes and docked
   legend rows for x-axis labels, y-axis labels, and titles to remain readable
   without being obscured by legends.
@@ -210,6 +210,7 @@ mypy --ignore-missing-imports src/movement_optimizer/
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-06-18 | 1.0.24  | Prevented compact Swingset and Chain Dynamics plot panes from crushing docked legends back into the plots by giving `MotionAnalysisPanel` a grid-aware minimum canvas size, hosting plot panels in scroll areas, and using up to three docked legend columns for joint-series plots.                                                                                                                        |
 | 2026-06-18 | 1.0.22  | Typed sidebar builder/state helper surfaces against declared `ParameterSidebar` and protocol contracts, covering progress widgets, result widgets, convergence plots, and body-model sliders while preserving existing sidebar behavior.                                                                                                                                                    |
 | 2026-06-18 | 1.0.21  | Declared the optimization controller mixin's narrow MainWindow contract in `optimization_mixin.py`, removing module-level mypy suppression and the remaining QMessageBox arg-type ignore while preserving optimizer worker, signal, and autoplay behavior.                                                                                                                                |
 | 2026-06-18 | 1.0.20  | Declared the animation playback mixin's narrow MainWindow contract in `animation_control.py`, removing module-level mypy suppression and per-method override ignores while preserving runtime dispatch through the concrete `MainWindow` wrappers.                                                                                                                                                |

@@ -808,6 +808,20 @@ def test_swingset_splits_animation_and_plots_into_subtabs(qapp) -> None:
     assert titles == ["Animation", "Plots"]
 
 
+def test_swingset_plots_tab_scrolls_instead_of_crushing_legends(qapp) -> None:
+    swingset = SwingsetTab()
+    plots_view = swingset.view_tabs.widget(1)
+    plot_scrolls = [
+        scroll
+        for scroll in plots_view.findChildren(QScrollArea)
+        if scroll.widget() is swingset.analysis_panel
+    ]
+
+    assert len(plot_scrolls) == 1
+    assert plot_scrolls[0].widgetResizable() is True
+    assert swingset.analysis_panel.canvas.minimumWidth() >= 780
+
+
 def test_swingset_plot_legend_toggle_hides_axes_legends(qapp) -> None:
     swingset = SwingsetTab()
     axes = swingset.analysis_panel.axes["torques"]
@@ -840,6 +854,20 @@ def test_chain_splits_animation_and_plots_into_subtabs(qapp) -> None:
     chain = ChainDynamicsTab()
     titles = [chain.view_tabs.tabText(i) for i in range(chain.view_tabs.count())]
     assert titles == ["Animation", "Plots"]
+
+
+def test_chain_plots_tab_scrolls_instead_of_crushing_legends(qapp) -> None:
+    chain = ChainDynamicsTab()
+    plots_view = chain.view_tabs.widget(1)
+    plot_scrolls = [
+        scroll
+        for scroll in plots_view.findChildren(QScrollArea)
+        if scroll.widget() is chain.analysis_panel
+    ]
+
+    assert len(plot_scrolls) == 1
+    assert plot_scrolls[0].widgetResizable() is True
+    assert chain.analysis_panel.canvas.minimumWidth() >= 520
 
 
 def test_policy_trace_legend_toggle_reserves_plot_space(qapp) -> None:

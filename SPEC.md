@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.577                                    |
+| **Spec Version**        | 1.1.578                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -58,10 +58,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   migration without changing sidebar behavior.
 - Movement Optimizer Swingset and Chain Dynamics analysis legends now dock
   into `MotionAnalysisPanel`-owned reserved legend rows with a larger
-  data-to-legend gap and a two-column cap, preserving visible labels for
-  torque, power, angle, COM, energy, tension, curvature, and tip-speed traces
-  without obscuring curves, neighboring subplots, compact pane edges, axis
-  labels, or plot titles.
+  data-to-legend gap, compact multi-column legend rows, and grid-aware
+  minimum scrollable plot-panel sizing, preserving visible labels for torque,
+  power, angle, COM, energy, tension, curvature, and tip-speed traces without
+  obscuring curves, neighboring subplots, compact pane edges, axis labels, or
+  plot titles.
 - Movement Optimizer Swingset policy optimization trace legends now wrap by
   measured widget width and reserve the full wrapped legend band above the
   plotted telemetry, so narrow optimizer panes cannot draw legend text over
