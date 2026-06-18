@@ -23,6 +23,16 @@ def test_movement_optimizer_maturin_reinstalls_pytest_safely() -> None:
 
 
 @pytest.mark.unit
+def test_movement_optimizer_maturin_uses_job_local_virtualenv() -> None:
+    """Parity gates must not import stale NumPy/SciPy wheels from runner tool caches."""
+    content = WORKFLOW.read_text(encoding="utf-8")
+
+    assert "python -m venv .venv" in content
+    assert "$GITHUB_PATH" in content
+    assert '"$PYTHON" -m pip install' in content
+
+
+@pytest.mark.unit
 def test_movement_optimizer_maturin_enables_pyo3_python_313_forward_compat() -> None:
     """PyO3 0.21 needs an explicit compatibility override for Python 3.13."""
     content = WORKFLOW.read_text(encoding="utf-8")
