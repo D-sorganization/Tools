@@ -11,6 +11,7 @@ pytest.importorskip("sqlmodel")
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+import modbus_codec  # noqa: E402
 from modbus_codec import (  # noqa: E402
     TAG_COUNT,
     decode_interlocks,
@@ -75,8 +76,20 @@ class TestRoutingCodec:
         assert decoded["TAG_3"].hihi_limit == pytest.approx(101.0)
         assert decoded["TAG_0"].low_limit == pytest.approx(5.0)
 
-    def test_tag_index_encoding_keeps_legacy_invalid_as_zero(self) -> None:
-        assert encode_tag_indices(["TAG_1", "bad", "TAG_7"]) == [1, 0, 7]
+    def test_tag_index_encoding_valid_names(self) -> None:
+        assert encode_tag_indices(["TAG_1", "TAG_0", "TAG_7"]) == [1, 0, 7]
+
+    def test_tag_index_encoding_rejects_malformed_name(self) -> None:
+        # A malformed tag must raise, not be silently coerced to TAG_0 (#3531).
+        with pytest.raises(ValueError):
+            encode_tag_indices(["TAG_1", "bad", "TAG_7"])
+
+    def test_tag_index_encoding_rejects_non_integer_parser_result(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setattr(modbus_codec.hardware, "tag_index", lambda _name: True)
+        with pytest.raises(TypeError, match="tag index must be an int"):
+            modbus_codec.tag_to_index("TAG_1")
 
     def test_zero_float_registers_returns_register_pair_per_tag(self) -> None:
         assert zero_float_registers(3) == [0, 0, 0, 0, 0, 0]

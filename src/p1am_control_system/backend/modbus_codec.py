@@ -10,10 +10,14 @@ import math
 import struct
 from typing import Any
 
+import hardware
 from models import InterlockConfig, PIDConfig
 
-TAG_COUNT = 32
-PID_COUNT = 4
+# Single source of truth lives in ``hardware`` (the firmware contract). These
+# names are re-exported so existing ``modbus_codec`` importers keep working
+# without a second, drift-prone literal (issue #3531).
+TAG_COUNT = hardware.TAG_COUNT
+PID_COUNT = hardware.PID_COUNT
 PID_REGISTER_WIDTH = 10
 INTERLOCK_REGISTER_WIDTH = 8
 INTERLOCK_CHUNK_OFFSETS = (0, 64, 128, 192)
@@ -49,15 +53,31 @@ def float_to_registers(val: float) -> list[int]:
 
 
 def tag_to_index(tag_name: str) -> int:
-    """Return the numeric index from ``TAG_n``; invalid legacy inputs map to 0."""
-    try:
-        return int(tag_name.split("_")[1])
-    except (IndexError, ValueError):
-        return 0
+    """Return the numeric index from ``TAG_n``.
+
+    Delegates to the single strict parser (``hardware.tag_index``). A malformed
+    or out-of-range name raises ``ValueError`` rather than silently coercing to
+    ``0`` — on a control system, quietly routing a bad tag onto ``TAG_0`` is
+    unsafe (issue #3531). The encoders below run on validated ``RoutingConfig``
+    tags, and ``write_routing`` treats any raised error as a refused write.
+
+    Raises:
+        TypeError: If ``tag_name`` is not a str.
+        ValueError: If ``tag_name`` is not a well-formed in-range ``TAG_<n>``.
+    """
+    index = hardware.tag_index(tag_name)
+    if not isinstance(index, int) or isinstance(index, bool):
+        raise TypeError(f"tag index must be an int, got {type(index).__name__}")
+    return index
 
 
 def encode_tag_indices(tag_names: list[str]) -> list[int]:
-    """Encode routing tag names into PLC tag indices."""
+    """Encode routing tag names into PLC tag indices.
+
+    Raises:
+        ValueError: If any name is not a well-formed in-range ``TAG_<n>`` —
+            a bad routing config must be refused, not silently mapped to TAG_0.
+    """
     return [tag_to_index(tag_name) for tag_name in tag_names]
 
 
