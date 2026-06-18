@@ -46,12 +46,16 @@ float P1AMHardware::ReadAnalogInput(int channel) {
     return 0.0f;
   }
   // P1.readAnalog returns raw ADC counts. For the P1-4ADL2DAL-1 the AI is
-  // 13-bit over a 0-20 mA span: 0 counts -> 0 mA, 8191 counts -> 20 mA.
-  // Convert to percent of the 4-20 mA process span: 4 mA -> 0 %, 20 mA -> 100 %.
+  // 13-bit over a 0-20 mA span: 0 counts -> 0 mA, 8191 counts -> 20 mA. The
+  // power-supply monitor outputs are 0-5 V signals (0 V = zero output, 5 V =
+  // full) which drive 0-20 mA through the current input's ~250 ohm burden, so
+  // scale the full 0-20 mA span linearly to 0-100 % (0 mA -> 0 %, 20 mA ->
+  // 100 %). If a channel is instead a 4-20 mA / 1-5 V signal (reads ~1 V / 4 mA
+  // at zero output), use (mA - 4.0f) * (100.0f / 16.0f) instead.
   // Library channels are 1-indexed; broker uses 0-indexed.
   uint32_t counts = P1.readAnalog(kSlotAna, channel + 1);
   float mA = static_cast<float>(counts) * (20.0f / 8191.0f);
-  float percent = (mA - 4.0f) * (100.0f / 16.0f);
+  float percent = mA * (100.0f / 20.0f);
   if (percent < 0.0f) {
     percent = 0.0f;
   } else if (percent > 100.0f) {
