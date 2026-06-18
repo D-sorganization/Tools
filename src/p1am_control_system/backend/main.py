@@ -254,7 +254,10 @@ async def modbus_connect_background() -> None:
                             # NVRAM reset, auto-repair it to a pass-through so a
                             # commanded setpoint actually drives the AO (#3550).
                             plc_config = await ensure_power_supply_passthrough(
-                                plc_client, plc_config, power_supply_service, logger
+                                plc_client,
+                                plc_config,
+                                command_tag=power_supply_service.controller.config.command_tag,
+                                logger=logger,
                             )
                             global active_config
                             active_config = plc_config

@@ -3,21 +3,31 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Protocol
 
 from defaults import ensure_pid_passthrough
 from models import RoutingConfig
 
 
+class RoutingRepairClient(Protocol):
+    """PLC client surface needed to persist a routing repair."""
+
+    async def write_routing(self, config: RoutingConfig) -> bool:
+        """Write a repaired routing configuration."""
+
+    async def save_to_flash(self) -> bool:
+        """Persist the current routing configuration to PLC flash/NVRAM."""
+
+
 async def ensure_power_supply_passthrough(
-    client: Any,
+    client: RoutingRepairClient,
     plc_config: RoutingConfig,
-    power_supply_service: Any,
+    *,
+    command_tag: str,
     logger: logging.Logger,
     pid_index: int = 0,
 ) -> RoutingConfig:
     """Verify and auto-repair the power-supply PID pass-through on connect."""
-    command_tag: str = power_supply_service.controller.config.command_tag
     try:
         repaired_config, needs_repair = ensure_pid_passthrough(
             plc_config, pid_index, command_tag
