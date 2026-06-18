@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.586                                    |
+| **Spec Version**        | 1.1.587                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -105,6 +105,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   power, angle, COM, energy, tension, curvature, and tip-speed traces without
   obscuring curves, neighboring subplots, compact pane edges, axis labels, or
   plot titles.
+- Movement Optimizer `movement_optimizer_core` maturin CI now reinstalls
+  `pytest` with `--ignore-installed --no-cache-dir` so broken self-hosted
+  Python tool-cache metadata cannot block the parity gate, and sets
+  `PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1` so the declared Python 3.13 lane can
+  build against the current PyO3 dependency.
 - Movement Optimizer Swingset policy optimization trace legends now wrap by
   measured widget width and reserve the full wrapped legend band above the
   plotted telemetry, so narrow optimizer panes cannot draw legend text over
