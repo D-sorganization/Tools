@@ -220,7 +220,7 @@ jobs:
           # alarm / historian tests actually RUN (and gate) instead of being
           # skipped by pytest.importorskip. tools_core is optional — main.py
           # falls back to scada_fallback when the Rust wheel is absent (#3534).
-          python -m pip install pymodbus sqlmodel
+          python -m pip install pymodbus requests sqlmodel
           python -m pip install httpx pytest-cov pytest-xdist pytest-benchmark pytest-qt pytest-asyncio pytest-timeout
           python -m pip install ruff==0.14.10 bandit==1.7.7 pip-audit sortedcontainers types-PyYAML types-requests
           python -m pip install --ignore-installed mypy==1.13.0
@@ -559,7 +559,7 @@ jobs:
           # alarm / historian tests actually RUN (and gate) instead of being
           # skipped by pytest.importorskip. tools_core is optional — main.py
           # falls back to scada_fallback when the Rust wheel is absent (#3534).
-          python -m pip install pymodbus sqlmodel
+          python -m pip install pymodbus requests sqlmodel
           python -m pip install httpx pytest-cov pytest-xdist pytest-benchmark pytest-qt pytest-asyncio pytest-timeout
           python -m pip install --ignore-installed "opencv-python-headless>=4.8.0"
 
