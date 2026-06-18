@@ -147,8 +147,14 @@ class TestMotionAnalysisPanel:
     def _assert_docked_legends_do_not_cover_plots(
         panel,
         *,
-        figure_size: tuple[float, float] = (4.8, 3.2),
+        figure_size: tuple[float, float] | None = None,
     ) -> None:
+        if figure_size is None:
+            minimum_size = panel.canvas.minimumSize()
+            figure_size = (
+                minimum_size.width() / 100.0,
+                minimum_size.height() / 100.0,
+            )
         panel.figure.set_size_inches(*figure_size, forward=True)
         panel.draw()
         panel.canvas.draw()
@@ -160,17 +166,27 @@ class TestMotionAnalysisPanel:
             for axes in panel.axes.values()
             for artist in (axes.title, axes.xaxis.label, axes.yaxis.label)
         ]
+        tick_label_boxes = [
+            tick.get_window_extent(renderer)
+            for axes in panel.axes.values()
+            for tick in (*axes.get_xticklabels(), *axes.get_yticklabels())
+            if tick.get_visible()
+        ]
 
         for legend_axis in panel.legend_axes.values():
             legend = legend_axis.get_legend()
             assert legend is not None
             legend_box = legend.get_window_extent(renderer)
+            legend_axis_box = legend_axis.get_window_extent(renderer)
             assert legend_box.x0 >= figure_box.x0 - 1.0
             assert legend_box.x1 <= figure_box.x1 + 1.0
             assert legend_box.y0 >= figure_box.y0 - 1.0
             assert legend_box.y1 <= figure_box.y1 + 1.0
+            assert legend_box.y0 >= legend_axis_box.y0 - 1.0
+            assert legend_box.y1 <= legend_axis_box.y1 + 1.0
             assert not any(data_box.overlaps(legend_box) for data_box in data_boxes)
             assert not any(label_box.overlaps(legend_box) for label_box in label_boxes)
+            assert not any(tick_box.overlaps(legend_box) for tick_box in tick_label_boxes)
 
     def test_axes_keys(self, qapp) -> None:
         from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
@@ -191,8 +207,44 @@ class TestMotionAnalysisPanel:
         )
 
         assert panel.canvas.minimumWidth() >= 780
-        assert panel.canvas.minimumHeight() >= 504
+        assert panel.canvas.minimumHeight() >= 700
         assert panel.minimumHeight() > panel.canvas.minimumHeight()
+
+    def test_swingset_minimum_layout_preserves_curve_height(self, qapp, swing_history) -> None:
+        from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
+
+        panel = MotionAnalysisPanel(
+            ["torques", "power", "angle", "com_height", "energy", "com_path"],
+            rows=2,
+            cols=3,
+        )
+        plot_swing_joint_torques(panel.axes["torques"], swing_history)
+        plot_swing_joint_power(panel.axes["power"], swing_history)
+        plot_swing_angle(panel.axes["angle"], swing_history)
+        plot_swing_com_height(panel.axes["com_height"], swing_history)
+        plot_swing_energy(panel.axes["energy"], swing_history)
+        plot_swing_com_path(panel.axes["com_path"], swing_history)
+
+        minimum_size = panel.canvas.minimumSize()
+        panel.figure.set_size_inches(
+            minimum_size.width() / 100.0,
+            minimum_size.height() / 100.0,
+            forward=True,
+        )
+        panel.draw()
+        panel.canvas.draw()
+        renderer = panel.canvas.get_renderer()
+        data_heights = [axes.get_window_extent(renderer).height for axes in panel.axes.values()]
+        legend_gaps = []
+        for name, axes in panel.axes.items():
+            legend = panel.legend_axes[name].get_legend()
+            assert legend is not None
+            legend_gaps.append(
+                axes.get_window_extent(renderer).y0 - legend.get_window_extent(renderer).y1
+            )
+
+        assert min(data_heights) >= 170.0
+        assert max(legend_gaps) <= 60.0
 
     def test_docked_joint_legends_use_compact_three_column_rows(self, qapp) -> None:
         from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
