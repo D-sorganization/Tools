@@ -11,13 +11,23 @@ import { LadderExplorer } from "./components/LadderExplorer";
 import { PlantHierarchy } from "./components/PlantHierarchy";
 import { PowerSupplyControl } from "./components/PowerSupplyControl";
 import { TemperatureControl } from "./components/TemperatureControl";
+import { AlicatInspector } from "./components/AlicatInspector";
+import { TagInspector } from "./components/TagInspector";
 import type { LadderTagInfo } from "./api/schemas";
 import { NotificationBanner } from "./components/NotificationBanner";
 import { TabBar } from "./components/TabBar";
 import { CsvExporter } from "./components/CsvExporter";
 import { useTelemetryStream } from "./hooks/useTelemetryStream";
-import { TABS, type TabId, defaultTabVisibility } from "./lib/tabs";
+import {
+  TABS,
+  type TabId,
+  loadTabOrder,
+  saveTabOrder,
+  loadTabVisibility,
+  saveTabVisibility,
+} from "./lib/tabs";
 import { TAG_INDICES, tagName, parseTagId } from "./lib/tags";
+import type { InspectorState } from "./lib/inspector";
 import { fmtNumber } from "./lib/format";
 import * as api from "./api/endpoints";
 import { ApiError } from "./api/client";
@@ -35,7 +45,6 @@ import {
   Activity,
   Sliders,
   Shuffle,
-  ShieldAlert,
   Sun,
   Moon,
   Info,
@@ -74,16 +83,6 @@ const DEFAULT_CONFIG: RoutingConfig = {
   })),
 };
 
-type InspectorState =
-  | { type: "none" }
-  | { type: "tag"; tagId: number }
-  | { type: "custom_tag"; tagName: string }
-  | { type: "pid"; index: number }
-  | { type: "routing" }
-  | { type: "alicat"; deviceId: string }
-  | { type: "settings" }
-  | { type: "export" };
-
 export const App: React.FC = () => {
   const [config, setConfig] = useState<RoutingConfig>(DEFAULT_CONFIG);
   const [deploying, setDeploying] = useState<boolean>(false);
@@ -116,11 +115,20 @@ export const App: React.FC = () => {
   // Events history (polled separately from the live stream).
   const [eventsHistory, setEventsHistory] = useState<EventLogEntry[]>([]);
 
-  // Tab Navigation and Visibility State
+  // Tab Navigation, Order, and Visibility State (order + visibility persisted
+  // to localStorage so an operator's layout survives reloads).
   const [activeTab, setActiveTab] = useState<TabId>("powerSupply");
   const [visibleTabs, setVisibleTabs] = useState<Record<TabId, boolean>>(
-    defaultTabVisibility,
+    loadTabVisibility,
   );
+  const [tabOrder, setTabOrder] = useState<TabId[]>(loadTabOrder);
+
+  useEffect(() => {
+    saveTabOrder(tabOrder);
+  }, [tabOrder]);
+  useEffect(() => {
+    saveTabVisibility(visibleTabs);
+  }, [visibleTabs]);
 
   // PID Tuning State
   const [selectedTuningLoop, setSelectedTuningLoop] = useState<number>(0);
@@ -518,10 +526,8 @@ export const App: React.FC = () => {
 
   return (
     <div className="dashboard-container">
-      {/* Top Banner Notification */}
       <NotificationBanner notification={notification} />
 
-      {/* Sticky header — always visible so the E-stop is always one click away */}
       <header
         style={{
           display: "flex",
@@ -573,7 +579,6 @@ export const App: React.FC = () => {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          {/* Connection status indicator */}
           <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
             <span
               className={`status-indicator ${
@@ -591,7 +596,6 @@ export const App: React.FC = () => {
             </span>
           </div>
 
-          {/* Theme Toggle */}
           <button
             type="button"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
@@ -602,7 +606,6 @@ export const App: React.FC = () => {
             {theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}
           </button>
 
-          {/* Settings Gear */}
           <button
             type="button"
             onClick={() => setInspectorView(inspectorView.type === "settings" ? { type: "none" } : { type: "settings" })}
@@ -634,13 +637,14 @@ export const App: React.FC = () => {
 
       {/* Main content — the inspector is now a slide-in drawer (below), not a column */}
       <div className="main-layout-grid" style={{ gridTemplateColumns: "1fr" }}>
-        {/* Left Column (Master Dashboard elements) */}
         <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-          {/* Tabbed Navigation Bar (centralized TABS array, #3546) */}
           <TabBar
             activeTab={activeTab}
             visibleTabs={visibleTabs}
             onSelect={setActiveTab}
+            order={tabOrder}
+            onReorder={setTabOrder}
+            onHide={handleTabVisibilityToggle}
           />
 
           {activeTab === "powerSupply" && visibleTabs.powerSupply && (
@@ -1306,164 +1310,23 @@ export const App: React.FC = () => {
             )}
 
             {/* Tag register editor (Unified for both legacy tag index and custom named tags) */}
-            {(inspectorView.type === "tag" || inspectorView.type === "custom_tag") && (() => {
-              const isCustom = inspectorView.type === "custom_tag";
-              const tagLabel = isCustom
-                ? inspectorView.tagName
-                : tagName(inspectorView.tagId);
-              const tagInfo = allTags.find((t) => t.name === tagLabel);
-
-              // Get current value
-              const currentVal = isCustom
-                ? (tagsDict[tagLabel] ?? 0.0)
-                : (tagValues[inspectorView.tagId] ?? 0.0);
-              
-              // Check if writable (legacy tags are Read/Write, custom tags lookup from registry)
-              const rwMode = tagInfo ? tagInfo.rw_mode : "Read/Write";
-              const isWritable = rwMode === "Read/Write";
-
-              return (
-                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                  <div>
-                    <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--accent-cyan)", textTransform: "uppercase" }}>
-                      Tag Inspector
-                    </h3>
-                    <div style={{ fontSize: "0.8rem", color: "var(--text-primary)", fontWeight: 700, marginTop: "0.25rem" }} className="mono-text">
-                      {tagLabel}
-                    </div>
-                    {tagInfo && tagInfo.description && (
-                      <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.25rem", lineHeight: 1.4 }}>
-                        {tagInfo.description}
-                      </p>
-                    )}
-                    <div style={{ display: "flex", justifyContent: "space-between", background: "var(--input-bg)", padding: "0.5rem", borderRadius: "4px", marginTop: "0.5rem", border: "1px solid var(--panel-border)" }}>
-                      <span style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>Current Value:</span>
-                      <span className="mono-text" style={{ fontSize: "0.9rem", fontWeight: 700, color: "var(--accent-cyan)" }}>
-                        {currentVal.toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
-
-                  {tagInfo && (
-                    <div style={{ fontSize: "0.75rem", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem", background: "rgba(255,255,255,0.01)", padding: "0.5rem", borderRadius: "4px", border: "1px solid var(--panel-border)" }}>
-                      <div>
-                        <span style={{ color: "var(--text-muted)" }}>Reg Type:</span>{" "}
-                        <strong style={{ color: "var(--text-secondary)" }}>{tagInfo.register_type || "None"}</strong>
-                      </div>
-                      <div>
-                        <span style={{ color: "var(--text-muted)" }}>Reg Num:</span>{" "}
-                        <strong style={{ color: "var(--text-secondary)" }}>{tagInfo.register_num ?? "None"}</strong>
-                      </div>
-                      <div>
-                        <span style={{ color: "var(--text-muted)" }}>Format:</span>{" "}
-                        <strong style={{ color: "var(--text-secondary)" }}>{tagInfo.data_format || "None"}</strong>
-                      </div>
-                      <div>
-                        <span style={{ color: "var(--text-muted)" }}>RW Mode:</span>{" "}
-                        <strong style={{ color: "var(--text-secondary)" }}>{tagInfo.rw_mode}</strong>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Section 1: Manual Value Override (Write Force) */}
-                  {isWritable && (
-                    <div style={{ borderTop: "1px solid var(--panel-border)", paddingTop: "0.75rem" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", marginBottom: "0.5rem" }}>
-                        <ShieldAlert size={14} color="var(--color-warning)" />
-                        <span style={{ fontSize: "0.8rem", fontWeight: 700, textTransform: "uppercase" }}>Manual Force Override</span>
-                      </div>
-                      <div className="input-group">
-                        <label className="input-label">Override Force Value</label>
-                        <input
-                          type="number"
-                          step="0.1"
-                          className="form-input"
-                          value={overrideVal}
-                          onChange={(e) => setOverrideVal(e.target.value)}
-                        />
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setShowOverrideConfirm(true)}
-                        className="btn"
-                        style={{ width: "100%", color: "var(--color-warning)", borderColor: "var(--color-warning)", padding: "0.45rem", fontSize: "0.8rem" }}
-                      >
-                        Force Register Write
-                      </button>
-
-                      {showOverrideConfirm && (
-                        <div style={{ background: "rgba(239, 68, 68, 0.1)", border: "1px solid var(--color-error)", borderRadius: "4px", padding: "0.6rem", marginTop: "0.5rem" }}>
-                          <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--color-error)", marginBottom: "0.25rem" }}>Confirm Direct Write</div>
-                          <p style={{ fontSize: "0.7rem", color: "var(--text-secondary)", marginBottom: "0.6rem" }}>
-                            Forcing Tag {tagLabel} to {overrideVal} will overwrite normal logic. Continue?
-                          </p>
-                          <div style={{ display: "flex", gap: "0.4rem" }}>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const idToSubmit = isCustom ? tagLabel : inspectorView.tagId;
-                                executeOverride(idToSubmit);
-                              }}
-                              className="btn"
-                              style={{ background: "var(--color-error)", border: "none", color: "#ffffff", padding: "0.2rem 0.5rem", fontSize: "0.75rem" }}
-                            >
-                              Confirm
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => setShowOverrideConfirm(false)}
-                              className="btn"
-                              style={{ padding: "0.2rem 0.5rem", fontSize: "0.75rem" }}
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Section 2: Safety Interlocks Boundaries (Only for legacy tags currently, or if tag is in config.interlocks) */}
-                  {!isCustom && (
-                    <div style={{ borderTop: "1px solid var(--panel-border)", paddingTop: "0.75rem" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", marginBottom: "0.5rem" }}>
-                        <Sliders size={14} color="var(--accent-purple)" />
-                        <span style={{ fontSize: "0.8rem", fontWeight: 700, textTransform: "uppercase" }}>Safety Limits Interlocks</span>
-                      </div>
-                      <div className="input-group">
-                        <label className="input-label">High Trip Limit (Alarm High)</label>
-                        <input
-                          type="number"
-                          step="0.5"
-                          className="form-input"
-                          value={config.interlocks[inspectorView.tagId]?.high_limit ?? 100.0}
-                          onChange={(e) => handleInterlockChange(inspectorView.tagId, "high_limit", Number(e.target.value))}
-                        />
-                      </div>
-                      <div className="input-group">
-                        <label className="input-label">Low Trip Limit (Alarm Low)</label>
-                        <input
-                          type="number"
-                          step="0.5"
-                          className="form-input"
-                          value={config.interlocks[inspectorView.tagId]?.low_limit ?? 0.0}
-                          onChange={(e) => handleInterlockChange(inspectorView.tagId, "low_limit", Number(e.target.value))}
-                        />
-                      </div>
-                      <button
-                        type="button"
-                        onClick={handleDeploy}
-                        disabled={deploying}
-                        className="btn btn-primary"
-                        style={{ width: "100%", padding: "0.5rem", fontSize: "0.85rem", marginTop: "0.5rem" }}
-                      >
-                        {deploying ? "Deploying Configuration..." : "Commit Safety Limits"}
-                      </button>
-                    </div>
-                  )}
-                </div>
-              );
-            })()}
+            {(inspectorView.type === "tag" || inspectorView.type === "custom_tag") && (
+              <TagInspector
+                view={inspectorView}
+                allTags={allTags}
+                tagsDict={tagsDict}
+                tagValues={tagValues}
+                config={config}
+                overrideVal={overrideVal}
+                showOverrideConfirm={showOverrideConfirm}
+                deploying={deploying}
+                onOverrideValChange={setOverrideVal}
+                onShowOverrideConfirmChange={setShowOverrideConfirm}
+                onExecuteOverride={executeOverride}
+                onInterlockChange={handleInterlockChange}
+                onDeploy={handleDeploy}
+              />
+            )}
 
             {/* PID Loop Tune editor */}
             {inspectorView.type === "pid" && (
@@ -1612,112 +1475,17 @@ export const App: React.FC = () => {
               </div>
             )}
 
-            {/* Alicat Mass Flow Controller inspector */}
-            {inspectorView.type === "alicat" && (() => {
-              const mfc = alicats.find((m) => m.device_id === inspectorView.deviceId);
-              if (!mfc) {
-                return (
-                  <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
-                    Alicat MFC {inspectorView.deviceId} not found.
-                  </div>
-                );
-              }
-              return (
-                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                  <div>
-                    <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--color-warning)", textTransform: "uppercase" }}>
-                      Inspect {mfc.name}
-                    </h3>
-                    <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.2rem" }}>
-                      Device ID: {mfc.device_id} | State: {mfc.connection_state}
-                    </div>
-                  </div>
-
-                  {/* Realtime Stats Block */}
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem", background: "var(--input-bg)", padding: "0.75rem", borderRadius: "4px", border: "1px solid var(--panel-border)" }}>
-                    <div>
-                      <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Mass Flow</div>
-                      <div className="mono-text" style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--accent-cyan)" }}>
-                        {mfc.mass_flow.toFixed(2)} <span style={{ fontSize: "0.7rem", fontWeight: 500 }}>SLPM</span>
-                      </div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Vol. Flow</div>
-                      <div className="mono-text" style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--text-secondary)" }}>
-                        {mfc.volumetric_flow.toFixed(2)} <span style={{ fontSize: "0.7rem", fontWeight: 500 }}>LPM</span>
-                      </div>
-                    </div>
-                    <div style={{ marginTop: "0.35rem" }}>
-                      <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Pressure</div>
-                      <div className="mono-text" style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--text-primary)" }}>
-                        {mfc.pressure.toFixed(2)} <span style={{ fontSize: "0.7rem", fontWeight: 500 }}>PSIA</span>
-                      </div>
-                    </div>
-                    <div style={{ marginTop: "0.35rem" }}>
-                      <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Temperature</div>
-                      <div className="mono-text" style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--text-primary)" }}>
-                        {mfc.temperature.toFixed(1)} <span style={{ fontSize: "0.7rem", fontWeight: 500 }}>°C</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Form 1: Setpoint command */}
-                  <div style={{ borderTop: "1px solid var(--panel-border)", paddingTop: "0.75rem" }}>
-                    <label className="input-label" style={{ fontWeight: 700, marginBottom: "0.4rem", display: "block" }}>
-                      Flow Setpoint Command (SLPM)
-                    </label>
-                    <div style={{ display: "flex", gap: "0.5rem" }}>
-                      <input
-                        type="number"
-                        step="0.1"
-                        min="0"
-                        max={mfc.max_flow}
-                        className="form-input"
-                        style={{ flex: 1 }}
-                        value={alicatSetpointVal}
-                        onChange={(e) => setAlicatSetpointVal(e.target.value)}
-                      />
-                      <button
-                        type="button"
-                        className="btn btn-primary"
-                        style={{ padding: "0.45rem 1rem", fontSize: "0.8rem", whiteSpace: "nowrap" }}
-                        onClick={() => {
-                          const parsed = parseFloat(alicatSetpointVal);
-                          if (!isNaN(parsed) && parsed >= 0 && parsed <= mfc.max_flow) {
-                            handleAlicatSetpoint(mfc.device_id, parsed);
-                          } else {
-                            triggerNotification(`Please enter a valid setpoint between 0 and ${mfc.max_flow}.`, "error");
-                          }
-                        }}
-                      >
-                        Set
-                      </button>
-                    </div>
-                    <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", marginTop: "0.25rem" }}>
-                      Maximum flow limit: {mfc.max_flow} SLPM
-                    </div>
-                  </div>
-
-                  {/* Form 2: Gas select dropdown */}
-                  <div style={{ borderTop: "1px solid var(--panel-border)", paddingTop: "0.75rem" }}>
-                    <label className="input-label" style={{ fontWeight: 700, marginBottom: "0.4rem", display: "block" }}>
-                      Active Gas Calibration
-                    </label>
-                    <select
-                      className="form-input"
-                      value={mfc.gas}
-                      onChange={(e) => handleAlicatGas(mfc.device_id, e.target.value)}
-                    >
-                      {["O2", "N2", "CO2", "He", "H2", "Air"].map((species) => (
-                        <option key={species} value={species}>
-                          {species} ({species === "O2" ? "Oxygen" : species === "N2" ? "Nitrogen" : species === "CO2" ? "Carbon Dioxide" : species === "He" ? "Helium" : species === "H2" ? "Hydrogen" : "Clean Air"})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              );
-            })()}
+            {inspectorView.type === "alicat" && (
+              <AlicatInspector
+                deviceId={inspectorView.deviceId}
+                alicats={alicats}
+                setpointValue={alicatSetpointVal}
+                onSetpointValueChange={setAlicatSetpointVal}
+                onSetpoint={handleAlicatSetpoint}
+                onGasChange={handleAlicatGas}
+                triggerNotification={triggerNotification}
+              />
+            )}
           </div>
         </aside>
       </div>

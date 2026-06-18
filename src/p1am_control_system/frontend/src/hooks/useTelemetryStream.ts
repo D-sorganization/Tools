@@ -11,7 +11,19 @@ import type { AlicatMFCState, ActiveAlarm } from "../api/schemas";
  * Extracted from App.tsx, which inlined the entire WS lifecycle plus the
  * frame-parsing/duck-typing logic. The frame is now validated with the
  * `telemetryFrameSchema` zod contract (#3545) instead of `as`-casting fields.
+ *
+ * Resilience: some hosts can't hold a long-lived WebSocket (e.g. an embedded VS
+ * Code Simple Browser webview, or any client behind a proxy that drops idle
+ * sockets), and a backend restart drops every socket. So this hook also polls
+ * the `/api/snapshot` HTTP endpoint whenever no frame has arrived recently — the
+ * UI keeps updating over plain HTTP even with no usable WebSocket. A healthy
+ * WebSocket keeps the data fresh and the poll is a no-op.
  */
+
+/** Treat the stream as stale (fall back to HTTP polling) after this long. */
+const STALE_MS = 3000;
+/** How often to check staleness / poll the snapshot fallback. */
+const POLL_MS = 1500;
 export interface TelemetryState {
   tagValues: number[];
   history: number[][];
@@ -66,6 +78,7 @@ export function useTelemetryStream(
   useEffect(() => {
     let disposed = false;
     let reconnectTimer: ReturnType<typeof setTimeout> | undefined;
+    let lastFrameAt = 0; // epoch ms of the last applied frame (WS or poll)
 
     const pushTags = (values: number[]) => {
       setTagValues(values);
@@ -76,6 +89,43 @@ export function useTelemetryStream(
         }
         return updated;
       });
+    };
+
+    // Apply one telemetry frame from either transport (WS message or snapshot
+    // poll). Returns true if it was a recognized frame.
+    const applyFrame = (raw: unknown): boolean => {
+      const parsed = telemetryFrameSchema.safeParse(raw);
+      if (parsed.success) {
+        const frame = parsed.data;
+        if (frame.tags && frame.tags.length === TAG_COUNT) {
+          pushTags(frame.tags);
+        }
+        if (frame.tags_dict) setTagsDict(frame.tags_dict);
+        if (frame.alicats) setAlicats(frame.alicats);
+        if (frame.active_alarms) {
+          setActiveAlarms(Object.values(frame.active_alarms));
+        }
+        if (typeof frame.e_stop_active === "boolean") {
+          setEStopActive(frame.e_stop_active);
+        }
+        if (frame.power_supply) {
+          setPowerSupplyStatus(frame.power_supply as PowerSupplyStatus);
+        }
+        if (frame.temperature) {
+          setTemperatureStatus(frame.temperature as TemperatureStatus);
+        }
+        lastFrameAt = Date.now();
+        setIsConnected(true);
+        return true;
+      }
+      // Legacy fallback: a bare array of tag values.
+      if (Array.isArray(raw) && raw.length === TAG_COUNT) {
+        pushTags(raw as number[]);
+        lastFrameAt = Date.now();
+        setIsConnected(true);
+        return true;
+      }
+      return false;
     };
 
     const connect = () => {
@@ -91,44 +141,14 @@ export function useTelemetryStream(
       };
 
       ws.onmessage = (event) => {
-        let raw: unknown;
         try {
-          raw = JSON.parse(event.data);
+          applyFrame(JSON.parse(event.data));
         } catch {
-          return;
-        }
-
-        const parsed = telemetryFrameSchema.safeParse(raw);
-        if (parsed.success) {
-          const frame = parsed.data;
-          if (frame.tags && frame.tags.length === TAG_COUNT) {
-            pushTags(frame.tags);
-          }
-          if (frame.tags_dict) setTagsDict(frame.tags_dict);
-          if (frame.alicats) setAlicats(frame.alicats);
-          if (frame.active_alarms) {
-            setActiveAlarms(Object.values(frame.active_alarms));
-          }
-          if (typeof frame.e_stop_active === "boolean") {
-            setEStopActive(frame.e_stop_active);
-          }
-          if (frame.power_supply) {
-            setPowerSupplyStatus(frame.power_supply as PowerSupplyStatus);
-          }
-          if (frame.temperature) {
-            setTemperatureStatus(frame.temperature as TemperatureStatus);
-          }
-          return;
-        }
-
-        // Legacy fallback: a bare array of tag values.
-        if (Array.isArray(raw) && raw.length === TAG_COUNT) {
-          pushTags(raw as number[]);
+          /* malformed frame — ignore */
         }
       };
 
       ws.onclose = () => {
-        setIsConnected(false);
         if (!disposed) {
           reconnectTimer = setTimeout(connect, 3000);
         }
@@ -139,11 +159,27 @@ export function useTelemetryStream(
       };
     };
 
+    // HTTP fallback: when no frame has arrived for STALE_MS (WS down/flaky, or a
+    // webview that can't hold a socket), pull the cached snapshot over plain HTTP.
+    const pollIfStale = async () => {
+      if (disposed || Date.now() - lastFrameAt < STALE_MS) return;
+      try {
+        const res = await fetch("/api/snapshot");
+        if (res.ok && applyFrame(await res.json())) return;
+        setIsConnected(false);
+      } catch {
+        setIsConnected(false);
+      }
+    };
+
     connect();
+    void pollIfStale(); // immediate snapshot so a fresh mount shows data fast
+    const pollTimer = setInterval(pollIfStale, POLL_MS);
 
     return () => {
       disposed = true;
       if (reconnectTimer) clearTimeout(reconnectTimer);
+      clearInterval(pollTimer);
       wsRef.current?.close();
     };
   }, []);
