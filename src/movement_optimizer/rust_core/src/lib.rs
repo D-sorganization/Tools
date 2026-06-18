@@ -129,6 +129,11 @@ fn inverse_dynamics_batch_rs<'py>(
 ///   bar_mass, body_mass: load and total body mass
 ///   is_squat: true for squat/full_squat, false for deadlift
 ///   m_arms: arm mass (used for deadlift)
+///   squat_bar_height, squat_bar_depth: bar offset (m) relative to the
+///       shoulder for the squat branch.  When both are zero the bar sits at
+///       the shoulder; otherwise the bar x-coordinate is
+///       ``shoulder_x - squat_bar_height*sin(q2) - squat_bar_depth*cos(q2)``,
+///       matching the NumPy ``com_x_batch`` reference exactly.
 ///
 /// Returns: com_x (N,)
 #[pyfunction]
@@ -150,6 +155,8 @@ fn com_x_batch_rs<'py>(
     body_mass: f64,
     is_squat: bool,
     m_arms: f64,
+    squat_bar_height: f64,
+    squat_bar_depth: f64,
 ) -> PyResult<Bound<'py, PyArray1<f64>>> {
     let q = q.as_array();
 
@@ -161,11 +168,15 @@ fn com_x_batch_rs<'py>(
     }
     let n = q.shape()[0];
     let total_mass = body_mass + bar_mass;
+    // Mirror the NumPy fast-path branch selection: only apply the bar offset
+    // when at least one offset component is nonzero (issue #3518).
+    let has_bar_offset = squat_bar_height != 0.0 || squat_bar_depth != 0.0;
 
     let compute_one = |i: usize| -> f64 {
+        let q2 = q[[i, 2]];
         let sq0 = q[[i, 0]].sin();
         let sq1 = q[[i, 1]].sin();
-        let sq2 = q[[i, 2]].sin();
+        let sq2 = q2.sin();
 
         let knee_x = l0 * sq0;
         let hip_x = knee_x + l1 * sq1;
@@ -178,7 +189,12 @@ fn com_x_batch_rs<'py>(
         let mut num = m_feet * foot_com_x + m0 * c1x + m1 * c2x + m2 * c3x;
 
         if is_squat {
-            num += bar_mass * shoulder_x;
+            let bar_x = if has_bar_offset {
+                shoulder_x - squat_bar_height * sq2 - squat_bar_depth * q2.cos()
+            } else {
+                shoulder_x
+            };
+            num += bar_mass * bar_x;
         } else {
             num += (m_arms + bar_mass) * shoulder_x;
         }

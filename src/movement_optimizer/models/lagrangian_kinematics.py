@@ -9,6 +9,7 @@ physics class stays focused on mass-matrix and torque computation.
 
 from __future__ import annotations
 
+import logging
 import math
 from typing import TYPE_CHECKING
 
@@ -17,6 +18,8 @@ from numpy.typing import NDArray
 
 if TYPE_CHECKING:
     from .body_model import BodyModel
+
+logger = logging.getLogger(__name__)
 
 
 class LagrangianKinematicsMixin:
@@ -39,6 +42,11 @@ class LagrangianKinematicsMixin:
     d_eff: NDArray
     joint_names: list[str]
 
+    # Process-wide latch so the "Rust accelerator unavailable" warning for the
+    # COM-x hot path is emitted at most once per run (mirrors the dispatch in
+    # ``LagrangianDynamics.inverse_dynamics_batch``).
+    _warned_com_x_rust_fallback: bool = False
+
     def com_x_batch(
         self,
         q: NDArray,
@@ -47,6 +55,11 @@ class LagrangianKinematicsMixin:
     ) -> NDArray:
         """Vectorised batch COM x-coordinate.
 
+        Tries the Rust accelerator (``movement_optimizer_core.com_x_batch_rs``);
+        falls back to the NumPy reference path when the extension is unavailable.
+        Both paths produce identical results (parity-tested to 1e-9), including
+        the squat bar-offset branch.
+
         Parameters:
             q: shape (N, 3)
         Returns:
@@ -54,6 +67,55 @@ class LagrangianKinematicsMixin:
 
         Complexity:
             O(N) time and O(N) memory for ``N`` trajectory samples.
+        """
+        is_squat = exercise_type in ("squat", "full_squat")
+        try:
+            from movement_optimizer_core import com_x_batch_rs  # type: ignore[import-not-found]  # noqa: I001
+
+            b = self.body
+            return com_x_batch_rs(
+                np.ascontiguousarray(q, dtype=np.float64),
+                float(self.L_eff[0]),
+                float(self.L_eff[1]),
+                float(self.L_eff[2]),
+                float(self.d_eff[0]),
+                float(self.d_eff[1]),
+                float(self.d_eff[2]),
+                float(self.m[0]),
+                float(self.m[1]),
+                float(self.m[2]),
+                float(b.m_feet),
+                float(b.foot_com_x),
+                float(bar_mass),
+                float(b.body_mass),
+                is_squat,
+                float(b.m_arms),
+                float(getattr(b, "squat_bar_height", 0.0)),
+                float(getattr(b, "squat_bar_depth", 0.0)),
+            )
+        except ImportError:
+            # The Rust accelerator is optional, but on a host where it *should*
+            # be installed a failed import is a silent performance/parity
+            # regression on the cost hot path — surface it once per process.
+            if not LagrangianKinematicsMixin._warned_com_x_rust_fallback:
+                LagrangianKinematicsMixin._warned_com_x_rust_fallback = True
+                logger.warning(
+                    "Rust accelerator (movement_optimizer_core) unavailable; "
+                    "using NumPy batch COM-x. Build with "
+                    "`maturin develop --release` for the accelerated path."
+                )
+        return self._numpy_com_x_batch(q, exercise_type, bar_mass)
+
+    def _numpy_com_x_batch(
+        self,
+        q: NDArray,
+        exercise_type: str = "squat",
+        bar_mass: float = 0.0,
+    ) -> NDArray:
+        """NumPy reference implementation of :meth:`com_x_batch`.
+
+        Kept as the explicit fallback so the Rust path can be parity-tested
+        against it directly (mirrors ``_numpy_inverse_dynamics_batch``).
         """
         b = self.body
         sq = np.sin(q)
