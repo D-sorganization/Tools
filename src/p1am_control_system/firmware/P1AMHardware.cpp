@@ -32,6 +32,9 @@ void P1AMHardware::Begin() {
   P1.configureModule(kThmTypeKCelsius, kSlotThm);
   pinMode(kPinInhibit, OUTPUT);
   digitalWrite(kPinInhibit, LOW);
+  // Heater relay control output starts de-energized (LOW = heater OFF).
+  pinMode(kPinHeaterRelay, OUTPUT);
+  digitalWrite(kPinHeaterRelay, LOW);
 }
 
 void P1AMHardware::Update() {}
@@ -85,12 +88,6 @@ void P1AMHardware::WriteInhibit(bool active) {
 }
 
 void P1AMHardware::WriteHeaterRelay(bool on) {
-  // Safe no-op until a discrete-output module slot is configured (see header).
-  // This keeps the bench-verified build unchanged when no DO module is present.
-  if (kSlotRelay < 0) {
-    return;
-  }
-  // P1.writeDiscrete drives one channel of a discrete-output module.
-  // Library channels are 1-indexed (kChanRelay).
-  P1.writeDiscrete(on ? HIGH : LOW, kSlotRelay, kChanRelay);
+  // Active-HIGH GPIO drive (D2): HIGH = relay energized = heater ON.
+  digitalWrite(kPinHeaterRelay, on ? HIGH : LOW);
 }
