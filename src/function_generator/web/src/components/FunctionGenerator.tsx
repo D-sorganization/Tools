@@ -818,8 +818,12 @@ export function FunctionGenerator() {
       {/* Visualization Panel */}
       <div className="lg:col-span-2 space-y-4">
         {/* Tabs */}
-        <div className="flex space-x-2">
+        <div className="flex space-x-2" role="tablist" aria-label="Analysis Domains">
           <button
+            role="tab"
+            id="tab-time"
+            aria-selected={activeTab === 'time'}
+            aria-controls="panel-time"
             onClick={() => setActiveTab('time')}
             className={`px-4 py-2 rounded font-medium transition-colors ${
               activeTab === 'time'
@@ -830,6 +834,10 @@ export function FunctionGenerator() {
             Time Domain
           </button>
           <button
+            role="tab"
+            id="tab-frequency"
+            aria-selected={activeTab === 'frequency'}
+            aria-controls="panel-frequency"
             onClick={() => setActiveTab('frequency')}
             className={`px-4 py-2 rounded font-medium transition-colors ${
               activeTab === 'frequency'
@@ -843,7 +851,7 @@ export function FunctionGenerator() {
 
         {/* Time Domain Chart */}
         {activeTab === 'time' && (
-          <div className="bg-slate-800 rounded-lg p-4">
+          <div role="tabpanel" id="panel-time" aria-labelledby="tab-time" className="bg-slate-800 rounded-lg p-4">
             <h3 className="text-lg font-semibold text-white mb-4">
               {layers.length === 1
                 ? `${WAVEFORM_OPTIONS.find(o => o.value === waveformType)?.label} - Time Domain`
@@ -922,7 +930,7 @@ export function FunctionGenerator() {
 
         {/* Frequency Domain Chart */}
         {activeTab === 'frequency' && (
-          <div className="bg-slate-800 rounded-lg p-4">
+          <div role="tabpanel" id="panel-frequency" aria-labelledby="tab-frequency" className="bg-slate-800 rounded-lg p-4">
             <h3 className="text-lg font-semibold text-white mb-4">Frequency Spectrum</h3>
             <div className="h-96">
               <ResponsiveContainer width="100%" height="100%">
