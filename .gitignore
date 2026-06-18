@@ -125,6 +125,7 @@ document_processing/pdf_renamer/.env
 /target/
 rust_core/tools-core/target/
 src/pendulum_simulator/pendulum-core/target/
+src/movement_optimizer/rust_core/target/
 *.so
 *.dylib
 *.dll
