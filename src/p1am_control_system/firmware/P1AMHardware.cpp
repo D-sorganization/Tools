@@ -18,18 +18,12 @@
 P1AMHardware::P1AMHardware() {}
 
 void P1AMHardware::Begin() {
+  // P1.init() auto-configures the P1-04THM with the library default, which
+  // reads a real, stable thermocouple value — but in Fahrenheit. We deliberately
+  // do NOT call P1.configureModule() here: custom config arrays put the channel
+  // into a bad state (dead-flat reading) on this module, so we keep the proven
+  // default and convert F->C in software (see ReadThermocouple).
   P1.init();
-  // Override the P1-04THM's power-up default (type-J, Fahrenheit) with type-K
-  // in degrees Celsius — otherwise a type-K probe reads in F (e.g. ~28 C indoor
-  // air shows as ~83 F). Config bytes per the FACTS module reference:
-  //   0x4003           enable channels 1-4
-  //   0x6001           degrees C + low-side burnout (default 0x6005 = degrees F)
-  //   0x21 11 .. 0x24 11  per-channel range; type nibble 1 = type-K
-  // Verify after flashing with P1.readModuleConfig(); room air should read ~25 C.
-  static const char kThmTypeKCelsius[20] = {
-      0x40, 0x03, 0x60, 0x01, 0x21, 0x11, 0x22, 0x11, 0x23, 0x11,
-      0x24, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-  P1.configureModule(kThmTypeKCelsius, kSlotThm);
   pinMode(kPinInhibit, OUTPUT);
   digitalWrite(kPinInhibit, LOW);
 }
@@ -40,8 +34,11 @@ float P1AMHardware::ReadThermocouple(int channel) {
   if (channel < 0 || channel >= 4) {
     return 0.0f;
   }
+  // The P1-04THM reports in Fahrenheit under the library default config.
+  // Convert to Celsius here so the broker/backend speak one unit (deg C).
   // P1AM library channels are 1-indexed; broker uses 0-indexed.
-  return P1.readTemperature(kSlotThm, channel + 1);
+  const float fahrenheit = P1.readTemperature(kSlotThm, channel + 1);
+  return (fahrenheit - 32.0f) * 5.0f / 9.0f;
 }
 
 float P1AMHardware::ReadAnalogInput(int channel) {
