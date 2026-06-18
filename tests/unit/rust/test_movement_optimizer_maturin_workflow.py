@@ -15,6 +15,8 @@ def test_movement_optimizer_maturin_reinstalls_pytest_safely() -> None:
     """Self-hosted Python tool caches can contain pytest without RECORD metadata."""
     content = WORKFLOW.read_text(encoding="utf-8")
 
+    assert "python -m venv" in content
+    assert "VIRTUAL_ENV" in content
     assert "--ignore-installed" in content
     assert "--no-cache-dir" in content
     assert "numpy<2" in content
@@ -27,9 +29,9 @@ def test_movement_optimizer_maturin_uses_job_local_virtualenv() -> None:
     """Parity gates must not import stale NumPy/SciPy wheels from runner tool caches."""
     content = WORKFLOW.read_text(encoding="utf-8")
 
-    assert "python -m venv .venv" in content
+    assert "python -m venv .venv-movement-optimizer-core" in content
     assert "$GITHUB_PATH" in content
-    assert '"$PYTHON" -m pip install' in content
+    assert "VIRTUAL_ENV" in content
 
 
 @pytest.mark.unit
