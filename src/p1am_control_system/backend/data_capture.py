@@ -28,6 +28,7 @@ from typing import Any
 from database import DB_FILE
 from models import EventLog, TagLog
 from pydantic import BaseModel, Field
+from settings import P1AMSettings, get_settings
 from sqlalchemy import Engine, delete, func
 from sqlmodel import Session, col, select
 
@@ -144,12 +145,9 @@ def stream_tag_export_csv(
             yield line.getvalue()
 
 
-def historian_max_bytes() -> int:
+def historian_max_bytes(settings: P1AMSettings | None = None) -> int:
     """Size cap for the historian (default 2 GiB). 0 disables auto-purge."""
-    try:
-        return int(os.environ.get("P1AM_HISTORIAN_MAX_BYTES", str(2 * 1024**3)))
-    except ValueError:
-        return 2 * 1024**3
+    return int((settings or get_settings()).historian_max_bytes)
 
 
 async def historian_retention_loop(
@@ -157,16 +155,23 @@ async def historian_retention_loop(
     shutdown_event: asyncio.Event,
     engine: Any,
     logger: logging.Logger,
-    interval_s: float = HISTORIAN_RETENTION_INTERVAL_S,
+    interval_s: float | None = None,
+    settings: P1AMSettings | None = None,
 ) -> None:
     """Periodically enforce the historian size cap off the request hot path."""
-    max_bytes = historian_max_bytes()
+    settings = settings or get_settings()
+    max_bytes = historian_max_bytes(settings)
     if max_bytes <= 0:
         logger.info("Historian size-cap auto-purge disabled (max_bytes<=0).")
         return
     logger.info("Historian retention active: cap %d bytes.", max_bytes)
+    interval = (
+        interval_s
+        if interval_s is not None
+        else settings.historian_retention_interval_s
+    )
     while not shutdown_event.is_set():
-        await asyncio.sleep(interval_s)
+        await asyncio.sleep(interval)
         if shutdown_event.is_set():
             break
         try:
