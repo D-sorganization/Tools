@@ -19,11 +19,14 @@ from PyQt6.QtWidgets import (
 )
 
 if TYPE_CHECKING:
+    from matplotlib.axes import Axes
     from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
     from matplotlib.figure import Figure
 
     from .labelled_slider import LabelledSlider
 
+from ..models import BodyModel
+from ..trajectory import ProgressReport
 from . import _sidebar_builders as _sb
 from . import _sidebar_state as _st
 
@@ -71,7 +74,7 @@ class ParameterSidebar(QScrollArea):
     stall_label: QLabel
     conv_fig: Figure
     conv_canvas: FigureCanvas
-    conv_ax: object  # matplotlib.axes.Axes
+    conv_ax: Axes
     result_label: QLabel
     export_btn: QPushButton
     reset_btn: QPushButton
@@ -135,10 +138,10 @@ class ParameterSidebar(QScrollArea):
     def show_idle(self) -> None:
         _st.show_idle(self)
 
-    def update_progress(self, report) -> None:
+    def update_progress(self, report: ProgressReport) -> None:
         _st.update_progress(self, report)
 
-    def get_body_model(self):
+    def get_body_model(self) -> BodyModel:
         return _st.get_body_model(self)
 
     def reset_defaults(self) -> None:

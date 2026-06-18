@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 import logging
+from typing import TYPE_CHECKING
 
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -28,10 +29,13 @@ from ..rendering import Palette
 from .labelled_slider import LabelledSlider
 from .wheel_blocker import suppress_wheel_events
 
+if TYPE_CHECKING:
+    from .parameter_sidebar import ParameterSidebar
+
 logger = logging.getLogger(__name__)
 
 
-def build_body_params(sidebar) -> None:
+def build_body_params(sidebar: ParameterSidebar) -> None:
     grp = QGroupBox("Body Parameters")
     lay = QVBoxLayout(grp)
     sidebar.mass_slider = LabelledSlider(
@@ -57,7 +61,7 @@ def build_body_params(sidebar) -> None:
     sidebar.main_layout.addWidget(grp)
 
 
-def build_segment_lengths(sidebar) -> None:
+def build_segment_lengths(sidebar: ParameterSidebar) -> None:
     grp = QGroupBox("Segment Lengths")
     lay = QVBoxLayout(grp)
     hint = QLabel("Multipliers on base length")
@@ -96,7 +100,7 @@ def build_segment_lengths(sidebar) -> None:
     sidebar.main_layout.addWidget(grp)
 
 
-def build_barbell(sidebar) -> None:
+def build_barbell(sidebar: ParameterSidebar) -> None:
     grp = QGroupBox("Barbell")
     lay = QVBoxLayout(grp)
     hint = QLabel(f"Olympic bar = {BAR_MASS_KG:.0f} kg")
@@ -135,7 +139,7 @@ def build_barbell(sidebar) -> None:
     sidebar.main_layout.addWidget(grp)
 
 
-def build_optimization(sidebar) -> None:
+def build_optimization(sidebar: ParameterSidebar) -> None:
     grp = QGroupBox("Optimization")
     lay = QVBoxLayout(grp)
     model_row = QHBoxLayout()
@@ -186,7 +190,7 @@ def build_optimization(sidebar) -> None:
     sidebar.main_layout.addWidget(grp)
 
 
-def build_buttons(sidebar) -> None:
+def build_buttons(sidebar: ParameterSidebar) -> None:
     sidebar.opt_btn = QPushButton(tr("Run Optimization"))
     sidebar.opt_btn.setProperty("class", "primary")
     sidebar.opt_btn.setToolTip(
@@ -223,7 +227,7 @@ def build_buttons(sidebar) -> None:
     sidebar.main_layout.addWidget(sidebar.cancel_btn)
 
 
-def build_progress_panel(sidebar) -> None:
+def build_progress_panel(sidebar: ParameterSidebar) -> None:
     grp = QGroupBox("Progress")
     lay = QVBoxLayout(grp)
 
@@ -268,7 +272,7 @@ def build_progress_panel(sidebar) -> None:
     sidebar.main_layout.addWidget(grp)
 
 
-def _style_conv_ax(sidebar) -> None:
+def _style_conv_ax(sidebar: ParameterSidebar) -> None:
     ax = sidebar.conv_ax
     ax.set_facecolor(Palette.BG_PLOT)
     ax.tick_params(colors=Palette.FG_DIM, which="both", labelsize=6)
@@ -281,7 +285,7 @@ def _style_conv_ax(sidebar) -> None:
     sidebar.conv_fig.tight_layout(pad=0.3)
 
 
-def build_results(sidebar) -> None:
+def build_results(sidebar: ParameterSidebar) -> None:
     grp = QGroupBox("Results")
     lay = QVBoxLayout(grp)
     sidebar.result_label = QLabel("(none)")
@@ -310,7 +314,7 @@ def build_results(sidebar) -> None:
     build_comparison_buttons(sidebar)
 
 
-def build_persistence_buttons(sidebar) -> None:
+def build_persistence_buttons(sidebar: ParameterSidebar) -> None:
     grp = QGroupBox("Solution Files")
     lay = QVBoxLayout(grp)
     sidebar.save_btn = QPushButton("Save Solution")
@@ -329,7 +333,7 @@ def build_persistence_buttons(sidebar) -> None:
     sidebar.main_layout.addWidget(grp)
 
 
-def build_export_buttons(sidebar) -> None:
+def build_export_buttons(sidebar: ParameterSidebar) -> None:
     grp = QGroupBox("Export Media")
     lay = QVBoxLayout(grp)
     sidebar.export_video_btn = QPushButton("Export Animation GIF")
@@ -358,7 +362,7 @@ def build_export_buttons(sidebar) -> None:
     sidebar.main_layout.addWidget(grp)
 
 
-def build_comparison_buttons(sidebar) -> None:
+def build_comparison_buttons(sidebar: ParameterSidebar) -> None:
     grp = QGroupBox("Trial Comparison")
     lay = QVBoxLayout(grp)
     sidebar.add_compare_btn = QPushButton("Add to Comparison")

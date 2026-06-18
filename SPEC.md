@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.574                                    |
+| **Spec Version**        | 1.1.575                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -47,6 +47,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   sidebar access, and playback handoff methods, removing the module-level
   mypy suppression and the remaining QMessageBox arg-type ignore without
   changing worker-thread or signal behavior.
+- Movement Optimizer sidebar state and builder helpers now depend on declared
+  `ParameterSidebar`/protocol contracts for progress widgets, result widgets,
+  and body-model sliders, tightening the archived Movement_Optimizer mixin
+  migration without changing sidebar behavior.
 - Movement Optimizer Swingset and Chain Dynamics analysis legends now dock
   into `MotionAnalysisPanel`-owned reserved legend rows instead of living on
   data axes, preserving visible labels for torque, power, angle, COM, energy,

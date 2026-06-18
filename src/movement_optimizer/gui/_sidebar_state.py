@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 import logging
+from typing import TYPE_CHECKING, Protocol
 
 from ..constants import (
     PROGRESS_EVAL_SCALE,
@@ -19,10 +20,46 @@ from ..constants import (
 from ..models import BodyModel
 from ..trajectory import ProgressReport
 
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+    from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+    from matplotlib.figure import Figure
+    from PyQt6.QtWidgets import QLabel, QProgressBar, QPushButton
+
+    from .labelled_slider import LabelledSlider
+
 logger = logging.getLogger(__name__)
 
 
-def show_optimizing(sidebar) -> None:
+class SidebarStateContract(Protocol):
+    """Widgets and sliders used by sidebar state helpers."""
+
+    opt_btn: QPushButton
+    both_btn: QPushButton
+    cancel_btn: QPushButton
+    stall_label: QLabel
+    progress: QProgressBar
+    prog_label: QLabel
+    iter_label: QLabel
+    cost_label: QLabel
+    improve_label: QLabel
+    elapsed_label: QLabel
+    conv_ax: Axes
+    conv_canvas: FigureCanvas
+    conv_fig: Figure
+    mass_slider: LabelledSlider
+    height_slider: LabelledSlider
+    ll_slider: LabelledSlider
+    ul_slider: LabelledSlider
+    to_slider: LabelledSlider
+    bar_slider: LabelledSlider
+    bar_depth_slider: LabelledSlider
+    bar_height_slider: LabelledSlider
+    dur_slider: LabelledSlider
+    smooth_slider: LabelledSlider
+
+
+def show_optimizing(sidebar: SidebarStateContract) -> None:
     sidebar.opt_btn.setEnabled(False)
     sidebar.opt_btn.setToolTip("Optimization currently in progress. Please wait or cancel.")
     sidebar.both_btn.setEnabled(False)
@@ -35,7 +72,7 @@ def show_optimizing(sidebar) -> None:
     _clear_progress_labels(sidebar)
 
 
-def show_idle(sidebar) -> None:
+def show_idle(sidebar: SidebarStateContract) -> None:
     sidebar.opt_btn.setEnabled(True)
     sidebar.opt_btn.setToolTip(
         "Start trajectory optimization for the currently selected exercise tab (Ctrl+R)"
@@ -51,7 +88,7 @@ def show_idle(sidebar) -> None:
     sidebar.cancel_btn.setVisible(False)
 
 
-def update_progress(sidebar, report: ProgressReport) -> None:
+def update_progress(sidebar: SidebarStateContract, report: ProgressReport) -> None:
     n_evals = report.iteration
     pct = min(
         PROGRESS_MAX_PCT,
@@ -81,7 +118,7 @@ def update_progress(sidebar, report: ProgressReport) -> None:
     _update_conv_plot(sidebar, report.cost_history)
 
 
-def _update_conv_plot(sidebar, history: list[float]) -> None:
+def _update_conv_plot(sidebar: SidebarStateContract, history: list[float]) -> None:
     ax = sidebar.conv_ax
     ax.clear()
     _style_conv_ax(sidebar)
@@ -93,7 +130,7 @@ def _update_conv_plot(sidebar, history: list[float]) -> None:
     sidebar.conv_canvas.draw_idle()
 
 
-def _style_conv_ax(sidebar) -> None:
+def _style_conv_ax(sidebar: SidebarStateContract) -> None:
     from ..rendering import Palette
 
     ax = sidebar.conv_ax
@@ -108,7 +145,7 @@ def _style_conv_ax(sidebar) -> None:
     sidebar.conv_fig.tight_layout(pad=0.3)
 
 
-def _clear_progress_labels(sidebar) -> None:
+def _clear_progress_labels(sidebar: SidebarStateContract) -> None:
     sidebar.prog_label.setText("")
     sidebar.iter_label.setText("")
     sidebar.cost_label.setText("")
@@ -119,7 +156,7 @@ def _clear_progress_labels(sidebar) -> None:
     sidebar.conv_canvas.draw_idle()
 
 
-def get_body_model(sidebar) -> BodyModel:
+def get_body_model(sidebar: SidebarStateContract) -> BodyModel:
     return BodyModel(
         body_mass=sidebar.mass_slider.value(),
         height=sidebar.height_slider.value(),
@@ -133,7 +170,7 @@ def get_body_model(sidebar) -> BodyModel:
     )
 
 
-def reset_defaults(sidebar) -> None:
+def reset_defaults(sidebar: SidebarStateContract) -> None:
     sidebar.mass_slider.set_value(75.0)
     sidebar.height_slider.set_value(1.75)
     sidebar.ll_slider.set_value(1.00)
