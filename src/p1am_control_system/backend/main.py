@@ -58,6 +58,7 @@ from models import (
 from plant_model import TagDefinition
 from plc_factory import PLCFactory
 from power_supply_integration import PowerSupplyService, create_power_supply_router
+from power_supply_passthrough import ensure_power_supply_passthrough
 from project_import import import_project_archive
 from pydantic import BaseModel
 from pydantic import Field as PydanticField
@@ -249,6 +250,12 @@ async def modbus_connect_background() -> None:
                     try:
                         plc_config = await plc_client.read_routing()
                         if plc_config is not None:
+                            # If the power-supply PID came up unmapped after an
+                            # NVRAM reset, auto-repair it to a pass-through so a
+                            # commanded setpoint actually drives the AO (#3550).
+                            plc_config = await ensure_power_supply_passthrough(
+                                plc_client, plc_config, power_supply_service, logger
+                            )
                             global active_config
                             active_config = plc_config
                             apply_alarm_config(plc_config)

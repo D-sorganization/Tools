@@ -56,7 +56,7 @@ class SimulatedPLCClient(BasePLCClient):
                 return None
 
             # Simulate custom tags if dynamic tag map is loaded
-            if hasattr(self, "tag_map") and self.tag_map:
+            if self.tag_map:
                 for tag_name in self.tag_map:
                     if tag_name not in self.simulated_tags:
                         self.simulated_tags[tag_name] = 0.0
