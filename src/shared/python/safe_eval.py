@@ -78,7 +78,7 @@ _ALLOWED_NODE_TYPES: tuple[type, ...] = (
 MAX_EXPRESSION_LENGTH = 10_000
 #: Maximum number of AST nodes permitted in a single expression.
 MAX_AST_NODES = 500
-#: Reject a ``Pow`` whose exponent is a constant larger than this.
+#: Reject a ``Pow`` whose positive integer exponent is larger than this.
 MAX_POW_EXPONENT = 1_000
 #: Reject ``Pow`` chains (``a ** b ** c ...``) deeper than this.
 MAX_POW_CHAIN_DEPTH = 2
@@ -115,12 +115,12 @@ def _numpy_max(*values: Any) -> Any:
 
 
 def _validate_runtime_exponent(exponent: Any) -> None:
-    """Reject runtime exponents that can create unbounded pow work."""
+    """Reject runtime exponents that can create unbounded integer pow work."""
     exponent_array = np.asarray(exponent)
     try:
         if not np.all(np.isfinite(exponent_array)):
             raise ValueError("Invalid exponent")
-        if np.any(np.abs(exponent_array) > MAX_POW_EXPONENT):
+        if _has_large_positive_integer_exponent(exponent_array):
             raise ValueError(
                 f"Exponent too large (> {MAX_POW_EXPONENT}); "
                 "possible exponentiation bomb"
@@ -294,6 +294,9 @@ def validate_expression(
                 func_id = func.id
                 if allowed_names is not None and func_id not in allowed_names:
                     raise ValueError(f"Unknown function: {func_id}")
+                for keyword in node.keywords:
+                    if keyword.arg is None:
+                        raise ValueError("Keyword unpacking not allowed")
                 if func_id in _POWER_FUNCTION_NAMES:
                     _check_pow_call_safety(node)
             else:
@@ -336,14 +339,14 @@ def _check_pow_call_safety(node: ast.Call) -> None:
 
 
 def _check_exponent_safety(exponent: ast.AST) -> None:
-    """Reject statically-computable exponents above the configured bound."""
+    """Reject statically-computable positive integer exponents above the bound."""
     value = _constant_numeric_value(exponent)
     if value is None:
         return
     try:
         if not math.isfinite(float(value)):
             raise ValueError("Invalid exponent")
-        if abs(value) > MAX_POW_EXPONENT:
+        if _is_large_positive_integer_exponent(value):
             raise ValueError(
                 f"Exponent too large (> {MAX_POW_EXPONENT}); "
                 "possible exponentiation bomb"
@@ -392,6 +395,20 @@ def _constant_numeric_value(node: ast.AST) -> int | float | None:
             return None
 
     return None
+
+
+def _is_large_positive_integer_exponent(value: Any) -> bool:
+    """Return True only for positive integer exponents above the static limit."""
+    return type(value) is int and value > MAX_POW_EXPONENT
+
+
+def _has_large_positive_integer_exponent(exponent_array: np.ndarray[Any, Any]) -> bool:
+    """Return True when a runtime exponent array contains a large positive int."""
+    if np.issubdtype(exponent_array.dtype, np.integer):
+        return bool(np.any(exponent_array > MAX_POW_EXPONENT))
+    if exponent_array.shape == () and exponent_array.dtype == object:
+        return _is_large_positive_integer_exponent(exponent_array.item())
+    return False
 
 
 def safe_eval(

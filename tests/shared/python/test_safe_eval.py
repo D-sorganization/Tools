@@ -136,6 +136,13 @@ def test_unknown_function_and_attribute_calls_rejected() -> None:
         validate_expression("math.sin(x)", {"math", "x"})
 
 
+def test_keyword_unpacking_in_call_rejected_but_keywords_allowed() -> None:
+    with pytest.raises(ValueError, match="Keyword unpacking"):
+        validate_expression("func(**kwargs)", {"func", "kwargs"})
+
+    assert safe_eval("func(x=2)", {"func": lambda *, x: x}) == 2
+
+
 def test_non_string_expression_raises_contract_error() -> None:
     with pytest.raises(TypeError, match="expression must be a string"):
         validate_expression(1)  # type: ignore[arg-type]
@@ -183,6 +190,18 @@ def test_power_validation_allows_runtime_exponents_and_incomplete_pow_calls() ->
     validate_expression("2 ** x", {"x"})
     validate_expression("pow(2)", {"pow"})
     validate_expression("pow(2, x)", {"pow", "x"})
+
+
+def test_power_validation_only_rejects_large_positive_integer_exponents() -> None:
+    assert safe_eval("2 ** -5000", {}) == 0.0
+    validate_expression(f"2 ** {float(MAX_POW_EXPONENT + 1)}")
+    validate_expression(f"2 ** -{MAX_POW_EXPONENT + 1}")
+
+    assert safe_eval_math(
+        "power(2.0, exponent)",
+        {"exponent": -(MAX_POW_EXPONENT + 1)},
+    ) == pytest.approx(2.0 ** -(MAX_POW_EXPONENT + 1))
+    safe_eval_math("power(2.0, exponent)", {"exponent": MAX_POW_EXPONENT + 0.5})
 
 
 def test_safe_eval_defaults_allowed_names_to_namespace() -> None:
