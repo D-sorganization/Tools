@@ -15,7 +15,7 @@ import { NotificationBanner } from "./components/NotificationBanner";
 import { TabBar } from "./components/TabBar";
 import { CsvExporter } from "./components/CsvExporter";
 import { useTelemetryStream } from "./hooks/useTelemetryStream";
-import { type TabId, defaultTabVisibility } from "./lib/tabs";
+import { TABS, type TabId, defaultTabVisibility } from "./lib/tabs";
 import { TAG_INDICES, tagName, parseTagId } from "./lib/tags";
 import { fmtNumber } from "./lib/format";
 import * as api from "./api/endpoints";
@@ -1590,25 +1590,16 @@ export const App: React.FC = () => {
                 <span style={{ fontSize: "0.75rem", color: "var(--text-primary)", fontWeight: 700, textTransform: "uppercase" }}>
                   Visible tabs
                 </span>
-                {(
-                  [
-                    ["powerSupply", "Power Supply"],
-                    ["trends", "Live Trends & Monitors"],
-                    ["controllers", "PID Loops & MFCs"],
-                    ["routing", "Signal Routing Matrix"],
-                    ["tuning", "Tuning & MPC Groundwork"],
-                    ["events", "Alarms & Event Log"],
-                    ["ladder", "Ladder Explorer"],
-                    ["hierarchy", "Plant Hierarchy"],
-                  ] as [keyof typeof visibleTabs, string][]
-                ).map(([key, label]) => (
+                {
+                  // ⚡ Bolt Optimization: Use the centralized TABS array to avoid allocating a new array of tuples on every render
+                  TABS.map((tab) => (
                   <button
-                    key={key}
+                    key={tab.id}
                     type="button"
-                    className={`tab-toggle ${visibleTabs[key] ? "on" : ""}`}
-                    onClick={() => handleTabVisibilityToggle(key)}
+                    className={`tab-toggle ${visibleTabs[tab.id] ? "on" : ""}`}
+                    onClick={() => handleTabVisibilityToggle(tab.id)}
                   >
-                    <span>{label}</span>
+                    <span>{tab.settingsLabel}</span>
                     <span className="tab-toggle-switch" />
                   </button>
                 ))}
