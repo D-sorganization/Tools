@@ -11,7 +11,7 @@
 | License          | MIT                                                     |
 | Package Name     | `movement-optimizer`                                    |
 | Current Version  | `1.0.0`                                                 |
-| Spec Version     | `1.0.22`                                                |
+| Spec Version     | `1.0.23`                                                |
 | Last Spec Update | 2026-06-18                                              |
 
 ## 2. Purpose
@@ -35,9 +35,10 @@ Movement-Optimizer is a biomechanics trajectory optimizer for barbell exercises.
   convergence plots, and body-model sliders instead of implicit untyped
   sidebar access.
 - Swingset and Chain Dynamics analysis legends are docked into reserved
-  legend rows owned by `MotionAnalysisPanel`, so visible legends identify the
-  plotted series without covering plot data, neighboring subplots, or figure
-  edges on compact panes.
+  legend rows owned by `MotionAnalysisPanel`, with a larger data-to-legend
+  gap and a two-column cap so visible legends identify the plotted series
+  without covering plot data, neighboring subplots, or figure edges on compact
+  panes.
 - Compact plot panes reserve enough vertical gap between data axes and docked
   legend rows for x-axis labels, y-axis labels, and titles to remain readable
   without being obscured by legends.

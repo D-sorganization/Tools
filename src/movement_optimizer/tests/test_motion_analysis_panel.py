@@ -144,8 +144,12 @@ class TestChainPlots:
 
 class TestMotionAnalysisPanel:
     @staticmethod
-    def _assert_docked_legends_do_not_cover_plots(panel) -> None:
-        panel.figure.set_size_inches(4.8, 3.2, forward=True)
+    def _assert_docked_legends_do_not_cover_plots(
+        panel,
+        *,
+        figure_size: tuple[float, float] = (4.8, 3.2),
+    ) -> None:
+        panel.figure.set_size_inches(*figure_size, forward=True)
         panel.draw()
         panel.canvas.draw()
         renderer = panel.canvas.get_renderer()
@@ -210,6 +214,23 @@ class TestMotionAnalysisPanel:
 
         self._assert_docked_legends_do_not_cover_plots(panel)
         assert all(axes.get_legend() is None for axes in panel.axes.values())
+
+    def test_swingset_docked_legends_clear_compact_axis_labels(self, qapp, swing_history) -> None:
+        from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
+
+        panel = MotionAnalysisPanel(
+            ["torques", "power", "angle", "com_height", "energy", "com_path"],
+            rows=2,
+            cols=3,
+        )
+        plot_swing_joint_torques(panel.axes["torques"], swing_history)
+        plot_swing_joint_power(panel.axes["power"], swing_history)
+        plot_swing_angle(panel.axes["angle"], swing_history)
+        plot_swing_com_height(panel.axes["com_height"], swing_history)
+        plot_swing_energy(panel.axes["energy"], swing_history)
+        plot_swing_com_path(panel.axes["com_path"], swing_history)
+
+        self._assert_docked_legends_do_not_cover_plots(panel, figure_size=(4.0, 2.8))
 
     def test_chain_legends_are_docked_outside_data_axes(self, qapp, chain_history) -> None:
         from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel

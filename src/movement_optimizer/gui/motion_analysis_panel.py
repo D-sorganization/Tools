@@ -29,7 +29,7 @@ class MotionAnalysisPanel(QWidget):
     """A themed grid of named matplotlib axes with a navigation toolbar."""
 
     _LEGEND_HEIGHT_RATIO = 0.34
-    _DATA_LEGEND_HSPACE = 1.20
+    _DATA_LEGEND_HSPACE = 3.00
 
     def __init__(self, axis_names: Sequence[str], *, rows: int, cols: int) -> None:
         """Build the panel.
@@ -97,7 +97,7 @@ class MotionAnalysisPanel(QWidget):
         """Return a compact column count for a dedicated legend strip."""
         if label_count < 1:
             return 1
-        return min(3, label_count)
+        return min(2, label_count)
 
     def _dock_legends(self) -> None:
         """Move per-plot legends into reserved strips outside data axes."""
