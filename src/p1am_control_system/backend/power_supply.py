@@ -1,16 +1,8 @@
-"""Power-supply state machine, safety interlocks, and control law.
-
-The controller is fully testable without a PLC: feed measured values into
-``tick()`` and inspect state plus commanded output. Trips latch until
-``acknowledge_trip()``; E-stop latches until ``clear_estop()``.
-"""
-
 from __future__ import annotations
 
 import logging
 import math
 import time
-from collections import deque
 
 from power_supply_models import (
     PowerSupplyConfig,
@@ -18,7 +10,7 @@ from power_supply_models import (
     PowerSupplyState,
     PowerSupplyStatus,
 )
-from signal_stats import compute_noise
+from power_supply_noise import FeedbackNoiseTracker
 
 __all__ = [
     "PowerSupplyConfig",
@@ -69,10 +61,7 @@ class PowerSupplyController:
         # to arm, and rejects setpoints until clear_estop() is called. This is a
         # one-way kill — it must be explicitly cleared by an operator.
         self._estopped = False
-        # Rolling windows of recent feedback for arc/noise quantification. Bounded
-        # by noise_window so memory and compute stay flat over a long campaign.
-        self._current_samples: deque[float] = deque(maxlen=config.noise_window)
-        self._voltage_samples: deque[float] = deque(maxlen=config.noise_window)
+        self._noise = FeedbackNoiseTracker(config)
 
     @property
     def state(self) -> PowerSupplyState:
@@ -113,15 +102,7 @@ class PowerSupplyController:
             new_config.current_setpoint_min_a,
             min(self._setpoint_a, new_config.current_setpoint_max_a),
         )
-        # Resize the noise windows if the operator changed noise_window, keeping
-        # the most-recent samples (deque(..., maxlen=N) drops the oldest excess).
-        if new_config.noise_window != self._current_samples.maxlen:
-            self._current_samples = deque(
-                self._current_samples, maxlen=new_config.noise_window
-            )
-            self._voltage_samples = deque(
-                self._voltage_samples, maxlen=new_config.noise_window
-            )
+        self._noise.update_config(new_config)
 
     def set_permissive(self, on: bool) -> None:
         """Toggle permissive. A trip latch is not cleared by a permissive change.
@@ -432,10 +413,7 @@ class PowerSupplyController:
         self._last_v = self._safe_finite(measured_voltage_v)
         self._last_t = self._safe_finite(measured_temp_c)
 
-        # Accumulate feedback for noise/arc quantification regardless of command
-        # state — arcing is a property of the measured signal, not the setpoint.
-        self._current_samples.append(self._last_i)
-        self._voltage_samples.append(self._last_v)
+        self._noise.append(self._last_i, self._last_v)
 
         measured_power_w = self._last_v * self._last_i
         self._evaluate_trips(measured_power_w)
@@ -494,16 +472,7 @@ class PowerSupplyController:
 
     def status(self) -> PowerSupplyStatus:
         """Return a snapshot of controller state for serialization."""
-        current_noise = compute_noise(
-            list(self._current_samples),
-            metric=self._config.noise_metric,
-            threshold=self._config.current_arc_threshold,
-        )
-        voltage_noise = compute_noise(
-            list(self._voltage_samples),
-            metric=self._config.noise_metric,
-            threshold=self._config.voltage_arc_threshold,
-        )
+        noise = self._noise.snapshot(self._config)
         return PowerSupplyStatus(
             state=self._state,
             mode=self._mode,
@@ -523,7 +492,7 @@ class PowerSupplyController:
                 / 100.0
                 * self._config.current_full_scale_a
             ),
-            current_noise=current_noise,
-            voltage_noise=voltage_noise,
-            arcing=current_noise.arcing or voltage_noise.arcing,
+            current_noise=noise.current,
+            voltage_noise=noise.voltage,
+            arcing=noise.arcing,
         )

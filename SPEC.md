@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.588                                    |
+| **Spec Version**        | 1.1.589                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -85,6 +85,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   tags, and PID tuning sessions; the MPC route now delegates the solver to a
   tested `backend/mpc.py` helper while preserving the API response shape
   (#3538, #3539).
+- P1AM power-supply rolling feedback-noise tracking now lives in a dedicated
+  `FeedbackNoiseTracker` collaborator, keeping `backend/power_supply.py` under
+  the changed-file size budget while preserving bounded current/voltage
+  windows, arc-threshold evaluation, and status serialization.
 - Movement Optimizer animation playback mixin now declares its own narrow
   MainWindow contract for tabs, playback controls, exercise tabs, and
   published exercise state, removing the module-level mypy suppression and
@@ -1207,6 +1211,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-18 | 1.1.589 | fix(p1am): extract power-supply rolling feedback-noise sample windows into `FeedbackNoiseTracker`, keeping `backend/power_supply.py` below the 500-line changed-file budget while preserving arc/noise status behavior. |
 | 2026-06-18 | 1.1.588 | fix(ci, movement): make the `movement_optimizer_core` maturin parity workflow create a per-job virtual environment before reinstalling NumPy, SciPy, `pytest`, and `maturin`, preventing stale self-hosted runner native package files from leaking into Rust accelerator validation. |
 | 2026-06-18 | 1.1.585 | chore(release): align `SPEC.md` with the v1.1.0 package metadata bump so release PRs that update `pyproject.toml`, `VERSION`, and `CHANGELOG.md` satisfy the spec freshness gate. |
 | 2026-06-18 | 1.1.584 | fix(ci): make Release Automation treat merged `chore(release): bump version to vX.Y.Z` commits as `bump=none` unless manually forced, preventing recursive release PR creation after protected-branch release bumps merge. |
