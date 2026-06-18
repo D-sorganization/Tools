@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.595                                    |
+| **Spec Version**        | 1.1.596                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -77,6 +77,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   A merged release-bump commit with subject
   `chore(release): bump version to vX.Y.Z` resolves to `bump=none` unless a
   manual `force_bump` is supplied, preventing recursive release PR creation.
+- Data processor rolling cross-correlation now clamps its documented
+  `correlation_stability` score at 0.0 when variation exceeds the mean, keeping
+  the `1 - coefficient of variation` result inside the advertised range while
+  preserving the existing zero-mean behavior (#3745).
 - Repository package metadata is prepared for the v1.1.0 release by aligning
   `pyproject.toml`, `VERSION`, `CHANGELOG.md`, and this specification's current
   version field.

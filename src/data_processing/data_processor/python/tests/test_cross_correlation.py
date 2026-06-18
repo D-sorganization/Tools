@@ -112,6 +112,17 @@ class TestRollingCrossCorrelation:
         assert result.window_size == 20
         assert len(result.correlations) == len(x)
 
+    def test_correlation_stability_is_not_negative(
+        self, analyzer: CrossCorrelationAnalyzer
+    ) -> None:
+        """The documented 1-CV stability score should stay in [0, 1]."""
+        x = np.linspace(-1.0, 1.0, 80)
+        y = np.concatenate([x[:40], -x[40:]])
+
+        result = analyzer.rolling_cross_correlation(x, y, window=10, min_periods=5)
+
+        assert result.correlation_stability >= 0.0
+
 
 class TestMultiSeries:
     """Tests for multi_series_correlation_matrix."""

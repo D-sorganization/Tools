@@ -363,7 +363,7 @@ class CrossCorrelationAnalyzer:
         mean_corr = float(np.mean(valid_corr)) if len(valid_corr) > 0 else 0.0
         std_corr = float(np.std(valid_corr)) if len(valid_corr) > 0 else 0.0
 
-        stability = 1 - abs(std_corr / mean_corr) if mean_corr != 0 else 0.0
+        stability = max(0.0, 1 - abs(std_corr / mean_corr)) if mean_corr != 0 else 0.0
 
         return RollingCorrelationResult(
             timestamps=timestamps,
