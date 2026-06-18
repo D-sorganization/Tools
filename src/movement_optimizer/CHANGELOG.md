@@ -36,8 +36,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and docked legends, and raised the scrollable plot panel's minimum curve
   height so legends no longer dominate the plot area.
 - Hardened the `movement_optimizer_core` maturin parity workflow against
-  broken self-hosted `pytest` tool-cache metadata and enabled PyO3 forward
-  compatibility for the declared Python 3.13 lane.
+  broken self-hosted NumPy/SciPy/`pytest` tool-cache metadata and enabled PyO3
+  forward compatibility for the declared Python 3.13 lane.
 
 ## [1.2.0] - 2026-04-26
 

@@ -106,10 +106,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   obscuring curves, neighboring subplots, compact pane edges, axis labels, or
   plot titles.
 - Movement Optimizer `movement_optimizer_core` maturin CI now reinstalls
-  `pytest` with `--ignore-installed --no-cache-dir` so broken self-hosted
-  Python tool-cache metadata cannot block the parity gate, and sets
-  `PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1` so the declared Python 3.13 lane can
-  build against the current PyO3 dependency.
+  NumPy, SciPy, and `pytest` with `--ignore-installed --no-cache-dir`, pins the
+  parity gate's SciPy range below 1.16, and sets
+  `PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1` so broken self-hosted Python
+  tool-cache metadata or the declared Python 3.13 lane cannot block accelerator
+  validation.
 - Movement Optimizer Swingset policy optimization trace legends now wrap by
   measured widget width and reserve the full wrapped legend band above the
   plotted telemetry, so narrow optimizer panes cannot draw legend text over

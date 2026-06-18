@@ -17,6 +17,8 @@ def test_movement_optimizer_maturin_reinstalls_pytest_safely() -> None:
 
     assert "--ignore-installed" in content
     assert "--no-cache-dir" in content
+    assert "numpy<2" in content
+    assert "scipy>=1.10,<1.16" in content
     assert "pytest" in content
 
 
