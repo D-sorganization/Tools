@@ -643,9 +643,18 @@ function identifySwingIssues(
 function generateRecommendations(issues: SwingIssue[]): string[] {
   const recommendations: string[] = [];
 
-  // Prioritize major issues
-  const majorIssues = issues.filter((i) => i.severity === 'major');
-  const moderateIssues = issues.filter((i) => i.severity === 'moderate');
+  // ⚡ Bolt Optimization: Replace multiple .filter() calls with a single-pass for loop
+  // to avoid redundant array iterations and intermediate memory allocations.
+  const majorIssues: SwingIssue[] = [];
+  const moderateIssues: SwingIssue[] = [];
+  for (let i = 0; i < issues.length; i++) {
+    const issue = issues[i];
+    if (issue.severity === 'major') {
+      majorIssues.push(issue);
+    } else if (issue.severity === 'moderate') {
+      moderateIssues.push(issue);
+    }
+  }
 
   if (majorIssues.length > 0) {
     recommendations.push(

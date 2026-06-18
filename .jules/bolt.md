@@ -59,3 +59,7 @@
 ## 2026-06-12 - Avoid Array.from({ length }) in Math Hot Paths
 **Learning:** In JavaScript/V8 numerical computing hot paths (like PCA or matrix calculations), using `Array.from({ length: N }, () => ...)` incurs significant overhead from iterability checks, iterator creation, and closure execution per element.
 **Action:** Instead, pre-allocate arrays using `new Array(N)` and populate them with standard `for` loops to prevent O(N) intermediate garbage collection pressure.
+
+## 2024-08-01 - Avoid multiple .filter() passes for bucketing
+**Learning:** Calling `.filter()` multiple times on the same array to separate elements into different buckets (e.g. major vs moderate issues) creates unnecessary iterations and intermediate array allocations, adding up to GC pressure during recurring tasks.
+**Action:** Replace multiple `.filter()` calls over the same source array with a single-pass `for` loop that pushes into pre-allocated or localized arrays.
