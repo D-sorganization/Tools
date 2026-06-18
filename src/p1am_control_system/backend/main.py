@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import math
 import time
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -27,7 +26,6 @@ from data_capture import (
     stream_tag_export_csv,
 )
 from database import engine, get_session, init_db
-from defaults import default_routing_config
 from fastapi import (
     Depends,
     FastAPI,
@@ -53,6 +51,7 @@ from models import (
     TagDefinitionDb,
     TagLog,
 )
+from mpc import simulate_pid_vs_mpc
 from plant_model import TagDefinition
 from plc_factory import PLCFactory
 from poll_runtime import _connect_once, _poll_once
@@ -63,6 +62,7 @@ from pydantic import Field as PydanticField
 from settings import get_settings
 from simulator_client import SimulatedPLCClient
 from sqlmodel import Session, col, select
+from state import SystemState
 
 try:
     # Prefer the Rust-accelerated SCADA kernel when the compiled wheel is
@@ -160,9 +160,6 @@ alicat_manager.add_device(
     )
 )
 
-latest_tags: dict[str, float] = {f"TAG_{i}": 0.0 for i in range(32)}
-active_config: RoutingConfig = default_routing_config()
-
 
 def load_tags_into_plc_clients(session: Session) -> None:
     """Loads all tag definitions from the database and registers them with the PLC clients."""
@@ -202,31 +199,8 @@ def build_alarm_engine(config: RoutingConfig) -> Any:
     return AlarmEngine(limits_dict)
 
 
-alarm_engine = build_alarm_engine(active_config)
-
-active_alarms: dict[str, dict[str, Any]] = {}
-e_stop_active: bool = False
-
-
-def apply_alarm_config(config: RoutingConfig) -> None:
-    """Rebuild the alarm engine from `config` and clear stale active alarms.
-
-    Keeps the alarm set in sync with the active interlock configuration. Called
-    on PLC connect (to adopt the device's real interlock limits instead of the
-    startup defaults — otherwise every tag resting at 0 trips the default
-    LoLo/Low limits) and whenever routing is updated.
-    """
-    global alarm_engine
-    alarm_engine = build_alarm_engine(config)
-    active_alarms.clear()
-
-
-tuning_sessions: dict[int, dict[str, Any]] = {}
-
-plc_client.tuning_sessions = tuning_sessions
-backup_simulator.tuning_sessions = tuning_sessions
-plc_client.active_config = active_config
-backup_simulator.active_config = active_config
+control_context = SystemState(alarm_engine_factory=build_alarm_engine)
+control_context.attach_clients(plc_client, backup_simulator)
 
 
 async def modbus_connect_background() -> None:
@@ -238,7 +212,7 @@ async def modbus_connect_background() -> None:
                 plc=plc_client,
                 power_supply=power_supply_service,
                 apply_config=_publish_active_config,
-                estop_active=e_stop_active,
+                estop_active=control_context.e_stop_active,
             )
         except Exception as e:
             logger.debug(f"Background PLC connect attempt failed: {e}")
@@ -246,10 +220,8 @@ async def modbus_connect_background() -> None:
 
 
 def _publish_active_config(config: RoutingConfig) -> None:
-    """Publish a PLC routing config to globals and rebuild alarm limits."""
-    global active_config
-    active_config = config
-    apply_alarm_config(config)
+    """Publish a PLC routing config to the shared control context."""
+    control_context.apply_config(config, plc_client, backup_simulator)
 
 
 async def poll_plc_loop() -> None:
@@ -263,14 +235,14 @@ async def poll_plc_loop() -> None:
             await _poll_once(
                 plc=plc_client,
                 backup=backup_simulator,
-                latest_tag_values=latest_tags,
+                latest_tag_values=control_context.latest_tags,
                 ws=ws_manager,
                 alicats=alicat_manager,
                 power_supply=power_supply_service,
-                alarm_engine=alarm_engine,
-                active_alarm_map=active_alarms,
+                alarm_engine=control_context.alarm_engine,
+                active_alarm_map=control_context.active_alarms,
                 session_factory=get_session,
-                estop_active=e_stop_active,
+                estop_active=control_context.e_stop_active,
             )
         except Exception as loop_err:
             logger.error(f"Unexpected error in PLC polling loop: {loop_err}")
@@ -312,6 +284,7 @@ app = FastAPI(
     description="Middleware bridging the P1AM PLC and HMI Dashboard.",
     lifespan=lifespan,
 )
+app.state.control_context = control_context
 app.include_router(create_power_supply_router(power_supply_service))
 
 # Restrict CORS to a configured allowlist (no wildcard with credentials).
@@ -434,12 +407,7 @@ async def update_routing(config: RoutingConfig) -> dict[str, str]:
     Returns:
         JSON response indicating success.
     """
-    global active_config
-    active_config = config
-    plc_client.active_config = config
-    backup_simulator.active_config = config
-    # Keep alarms in sync with the new interlock limits.
-    apply_alarm_config(config)
+    control_context.apply_config(config, plc_client, backup_simulator)
 
     if not plc_client.connected:
         await backup_simulator.write_routing(config)
@@ -480,14 +448,13 @@ async def update_routing(config: RoutingConfig) -> dict[str, str]:
 @app.post("/api/estop")
 async def trigger_estop() -> dict[str, str]:
     """Immediate safety shutdown command, zeroing all tag variables."""
-    global latest_tags, e_stop_active
-    e_stop_active = True
+    control_context.engage_estop()
     # Latch the controller FIRST so the next poll cycle cannot re-command a
     # setpoint and re-energize the output after we zero it below.
     power_supply_service.engage_estop()
     if not plc_client.connected:
         await backup_simulator.trigger_estop()
-        latest_tags = {f"TAG_{i}": 0.0 for i in range(32)}
+        control_context.reset_tag_values()
         return {
             "status": "success",
             "message": "Simulated E-stop triggered. All simulated tag values zeroed.",
@@ -509,12 +476,10 @@ async def clear_estop() -> dict[str, str]:
 
     The E-stop latch lives in the PLC, not in this process. We MUST command the
     controller to reset before reporting the HMI as cleared; otherwise the header
-    turns green while the plant is still tripped. The server-side ``e_stop_active``
-    flag is only lowered once the controller (or the backup simulator, when the
-    PLC is offline) acknowledges the reset.
+    turns green while the plant is still tripped. The server-side control
+    context latch is only lowered once the controller (or the backup simulator,
+    when the PLC is offline) acknowledges the reset.
     """
-    global e_stop_active
-
     if not plc_client.connected:
         cleared = await backup_simulator.clear_estop()
         if not cleared:
@@ -522,7 +487,7 @@ async def clear_estop() -> dict[str, str]:
                 status_code=502,
                 detail="Backup simulator did not acknowledge the E-stop reset.",
             )
-        e_stop_active = False
+        control_context.clear_estop()
         return {
             "status": "success",
             "message": "Simulated E-stop cleared.",
@@ -530,13 +495,13 @@ async def clear_estop() -> dict[str, str]:
 
     cleared = await plc_client.clear_estop()
     if not cleared:
-        # Leave e_stop_active latched so the HMI keeps showing the tripped state.
+        # Leave the E-stop latch set so the HMI keeps showing the tripped state.
         raise HTTPException(
             status_code=502,
             detail=("PLC did not acknowledge the E-stop reset; plant remains tripped."),
         )
     await backup_simulator.clear_estop()
-    e_stop_active = False
+    control_context.clear_estop()
     # Release the power-supply controller latch too. It returns to IDLE with
     # permissive off, so the operator must deliberately re-arm before any
     # output can flow.
@@ -547,7 +512,7 @@ async def clear_estop() -> dict[str, str]:
 @app.get("/api/alarms/active")
 async def get_active_alarms() -> list[dict[str, Any]]:
     """Get all currently active or unacknowledged alarms."""
-    return list(active_alarms.values())
+    return list(control_context.active_alarms.values())
 
 
 @app.post(
@@ -559,9 +524,7 @@ async def acknowledge_alarm(
     db: Session = Depends(get_session),  # noqa: B008
 ) -> dict[str, str]:
     """Acknowledge a specific active alarm."""
-    if tag_id in active_alarms:
-        active_alarms[tag_id]["acknowledged"] = True
-
+    if tag_id in control_context.active_alarms:
         # Log the acknowledgment
         try:
             event_log = EventLog(
@@ -575,9 +538,7 @@ async def acknowledge_alarm(
             logger.error(f"Failed to log acknowledgment: {e}")
             db.rollback()
 
-        # If it returned to normal already, we can remove it now
-        if active_alarms[tag_id]["state"] == "Normal":
-            del active_alarms[tag_id]
+        control_context.acknowledge_alarm(tag_id)
 
         return {"status": "success", "message": f"Alarm {tag_id} acknowledged."}
     return {"status": "ignored", "message": f"Alarm {tag_id} not found."}
@@ -766,7 +727,6 @@ class TagWritePayload(BaseModel):
 @app.post("/api/tags/{tag_id}", dependencies=[Depends(require_admin_key)])
 async def write_tag_value(tag_id: str, payload: TagWritePayload) -> dict[str, str]:
     """Manually force/write a 32-bit float value directly to a tag register."""
-    global latest_tags
     tag_name = tag_id
     if tag_id.isdigit():
         val_id = int(tag_id)
@@ -784,7 +744,7 @@ async def write_tag_value(tag_id: str, payload: TagWritePayload) -> dict[str, st
                 status_code=400,
                 detail=f"Tag '{tag_name}' not found in simulator registry.",
             )
-        latest_tags[tag_name] = payload.value
+        control_context.write_tag(tag_name, payload.value)
         return {
             "status": "success",
             "message": f"Successfully forced simulated tag {tag_name} to {payload.value}.",
@@ -798,7 +758,7 @@ async def write_tag_value(tag_id: str, payload: TagWritePayload) -> dict[str, st
             detail=f"Failed to write value {payload.value} to tag {tag_name}.",
         )
 
-    latest_tags[tag_name] = payload.value
+    control_context.write_tag(tag_name, payload.value)
     return {
         "status": "success",
         "message": f"Successfully wrote {payload.value} to tag {tag_name}.",
@@ -816,12 +776,12 @@ async def start_pid_tuning(pid_index: int) -> dict[str, str]:
             status_code=400, detail="PID index must be between 0 and 3."
         )
 
-    pv_tag = active_config.pids[pid_index].pv_tag
-    cv_tag = active_config.pids[pid_index].cv_tag
-    current_pv = latest_tags[pv_tag]
-    current_cv = latest_tags[cv_tag]
+    pv_tag = control_context.active_config.pids[pid_index].pv_tag
+    cv_tag = control_context.active_config.pids[pid_index].cv_tag
+    current_pv = control_context.latest_tags[pv_tag]
+    current_cv = control_context.latest_tags[cv_tag]
 
-    tuning_sessions[pid_index] = {
+    control_context.tuning_sessions[pid_index] = {
         "start_time": time.time(),
         "history": [],
         "step_triggered": False,
@@ -846,22 +806,22 @@ async def step_pid_tuning(
     pid_index: int, payload: PIDTuningStepPayload
 ) -> dict[str, str]:
     """Executes a step change in the loop's control variable (CV)."""
-    if pid_index not in tuning_sessions:
+    if pid_index not in control_context.tuning_sessions:
         raise HTTPException(
             status_code=400, detail="Tuning session not active for this PID loop."
         )
 
-    session = tuning_sessions[pid_index]
-    cv_tag = active_config.pids[pid_index].cv_tag
+    session = control_context.tuning_sessions[pid_index]
+    cv_tag = control_context.active_config.pids[pid_index].cv_tag
 
     session["step_triggered"] = True
     session["step_time"] = time.time() - session["start_time"]
-    session["initial_cv"] = latest_tags[cv_tag]
+    session["initial_cv"] = control_context.latest_tags[cv_tag]
     session["final_cv"] = payload.step_value
 
     await plc_client.write_tag(cv_tag, payload.step_value)
     await backup_simulator.write_tag(cv_tag, payload.step_value)
-    latest_tags[cv_tag] = payload.step_value
+    control_context.write_tag(cv_tag, payload.step_value)
 
     logger.info(
         f"Tuning step triggered on loop {pid_index}: CV set to {payload.step_value}"
@@ -878,12 +838,12 @@ async def step_pid_tuning(
 )
 async def stop_pid_tuning(pid_index: int) -> dict[str, Any]:
     """Stops the tuning session, calculates FOPDT process parameters, and recommends tuned gains."""
-    if pid_index not in tuning_sessions:
+    if pid_index not in control_context.tuning_sessions:
         raise HTTPException(
             status_code=400, detail="Tuning session not active for this PID loop."
         )
 
-    session = tuning_sessions.pop(pid_index)
+    session = control_context.tuning_sessions.pop(pid_index)
     history = session["history"]
 
     if not history or not session["step_triggered"]:
@@ -978,136 +938,7 @@ class MPCSimulatePayload(BaseModel):
 @app.post("/api/mpc/simulate", dependencies=[Depends(require_admin_key)])
 async def simulate_mpc(payload: MPCSimulatePayload) -> dict[str, Any]:
     """Simulates and compares standard PID versus Model Predictive Control (MPC)."""
-    Kp = payload.process_gain
-    tau = payload.process_tau
-    theta = payload.process_delay
-    dt = 0.5
-    steps = 50
-
-    # PID Simulation
-    ratio = max(0.1, theta) / max(0.5, tau)
-    kc = (1.0 / Kp) * (tau / max(0.1, theta)) * (1.333 + 0.25 * ratio)
-    ti = max(0.1, theta) * (32.0 + 6.0 * ratio) / (13.0 + 8.0 * ratio)
-    td = max(0.1, theta) * 4.0 / (11.0 + 2.0 * ratio)
-    pid_kp = kc
-    pid_ki = kc / ti
-    pid_kd = kc * td
-
-    pid_pv = [0.0] * steps
-    pid_cv = [0.0] * steps
-    pid_integral = 0.0
-    pid_prev_err = 0.0
-    cv_hist_pid = [0.0] * steps
-
-    for k in range(1, steps):
-        err = payload.setpoint - pid_pv[k - 1]
-        pid_integral = max(-100.0, min(100.0, pid_integral + err * dt))
-        deriv = (err - pid_prev_err) / dt
-        pid_prev_err = err
-
-        cv = pid_kp * err + pid_ki * pid_integral + pid_kd * deriv
-        cv = max(0.0, min(100.0, cv))
-        pid_cv[k] = cv
-        cv_hist_pid[k] = cv
-
-        delay_idx = k - int(theta / dt)
-        delayed_cv = cv_hist_pid[max(0, delay_idx)]
-        dy = (Kp * delayed_cv - pid_pv[k - 1]) * (dt / tau)
-        pid_pv[k] = max(0.0, pid_pv[k - 1] + dy)
-
-    # MPC Simulation using Projected Gradient Descent
-    mpc_pv = [0.0] * steps
-    mpc_cv = [0.0] * steps
-    cv_hist_mpc = [0.0] * steps
-
-    P = payload.prediction_horizon
-    M = payload.control_horizon
-
-    for k in range(1, steps):
-        g = []
-        for j in range(1, P + 1):
-            t_eval = j * dt - theta
-            if t_eval <= 0:
-                g.append(0.0)
-            else:
-                g.append(Kp * (1.0 - math.exp(-t_eval / tau)))
-
-        G = [[0.0] * M for _ in range(P)]
-        for r in range(P):
-            for c in range(M):
-                if r >= c:
-                    G[r][c] = g[r - c]
-
-        f = []
-        last_u = mpc_cv[k - 1]
-        for j in range(1, P + 1):
-            t_eval = j * dt - theta
-            if t_eval <= 0:
-                f.append(mpc_pv[k - 1])
-            else:
-                f.append(
-                    mpc_pv[k - 1]
-                    + (Kp * last_u - mpc_pv[k - 1]) * (1.0 - math.exp(-t_eval / tau))
-                )
-
-        r_vec = [payload.setpoint] * P
-
-        GTG = [[0.0] * M for _ in range(M)]
-        for r_idx in range(M):
-            for c_idx in range(M):
-                val = 0.0
-                for p_idx in range(P):
-                    val += G[p_idx][r_idx] * G[p_idx][c_idx]
-                GTG[r_idx][c_idx] = val
-
-        H = [[2.0 * GTG[r_idx][c_idx] for c_idx in range(M)] for r_idx in range(M)]
-        for i in range(M):
-            H[i][i] += 2.0 * payload.rho
-
-        c_vec = [0.0] * M
-        for c_idx in range(M):
-            val = 0.0
-            for p_idx in range(P):
-                val += G[p_idx][c_idx] * (f[p_idx] - r_vec[p_idx])
-            c_vec[c_idx] = 2.0 * val
-
-        u_opt = [last_u] * M
-        alpha = 0.01 / (
-            2.0 * (sum(sum(abs(x) for x in row) for row in GTG) + payload.rho + 1.0)
-        )
-
-        for _ in range(100):
-            grad = [0.0] * M
-            for r_idx in range(M):
-                val = 0.0
-                for c_idx in range(M):
-                    val += H[r_idx][c_idx] * u_opt[c_idx]
-                grad[r_idx] = val + c_vec[r_idx]
-
-            for i in range(M):
-                u_opt[i] = max(0.0, min(100.0, u_opt[i] - alpha * grad[i]))
-
-        mpc_cv[k] = u_opt[0]
-        cv_hist_mpc[k] = mpc_cv[k]
-
-        delay_idx = k - int(theta / dt)
-        delayed_cv = cv_hist_mpc[max(0, delay_idx)]
-        dy = (Kp * delayed_cv - mpc_pv[k - 1]) * (dt / tau)
-        mpc_pv[k] = max(0.0, mpc_pv[k - 1] + dy)
-
-    time_series = [round(i * dt, 1) for i in range(steps)]
-    return {
-        "status": "success",
-        "time": time_series,
-        "pid": {
-            "pv": [round(x, 2) for x in pid_pv],
-            "cv": [round(x, 2) for x in pid_cv],
-        },
-        "mpc": {
-            "pv": [round(x, 2) for x in mpc_pv],
-            "cv": [round(x, 2) for x in mpc_cv],
-        },
-    }
+    return cast(dict[str, Any], simulate_pid_vs_mpc(payload))
 
 
 @app.get("/api/alicats", response_model=list[AlicatMFCState])

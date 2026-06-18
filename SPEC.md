@@ -79,6 +79,12 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   fallback, E-stop reassertion, connect-time routing sync, WebSocket payloads,
   and the single historian/alarm commit group directly unit-testable without
   sleeping inside infinite loops (#3536).
+- P1AM backend mutable runtime state now lives behind a shared `SystemState`
+  context exposed through `app.state`, with route handlers and background loops
+  using context methods for routing config, E-stop latch, active alarms, latest
+  tags, and PID tuning sessions; the MPC route now delegates the solver to a
+  tested `backend/mpc.py` helper while preserving the API response shape
+  (#3538, #3539).
 - Movement Optimizer animation playback mixin now declares its own narrow
   MainWindow contract for tabs, playback controls, exercise tabs, and
   published exercise state, removing the module-level mypy suppression and
