@@ -17,6 +17,23 @@ from ..trajectory import OptimizationResult
 _JOINT_COLORS = tuple(get_chart_color(i) for i in range(len(SWING_POLICY_JOINT_NAMES)))
 
 
+def _legend_outside_plot(ax: Any, *, fontsize: int = 7, columns: int = 3) -> Any:
+    """Place a legend outside the data rectangle so it cannot cover curves."""
+    if ax is None:
+        raise ValueError("axis must not be None")
+    return ax.legend(
+        fontsize=fontsize,
+        facecolor=Palette.BG_PANEL,
+        edgecolor=Palette.FG_DIM,
+        labelcolor=Palette.FG,
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.22),
+        borderaxespad=0.0,
+        ncol=max(1, int(columns)),
+        framealpha=0.9,
+    )
+
+
 def plot_angles(ax: Any, r: OptimizationResult, labels: tuple = Palette.SEG_LABELS) -> None:
     n_dof = min(r.q.shape[1], len(labels))
     for j in range(n_dof):
@@ -251,12 +268,7 @@ def _style_timeseries_axis(ax: Any, ylabel: str, title: str, *, legend_fontsize:
     ax.set_xlabel("Time (s)", color=Palette.FG_DIM, fontsize=8)
     ax.set_ylabel(ylabel, color=Palette.FG_DIM, fontsize=8)
     ax.set_title(title, color=Palette.FG, fontsize=10)
-    ax.legend(
-        fontsize=legend_fontsize,
-        facecolor=Palette.BG_PANEL,
-        edgecolor=Palette.FG_DIM,
-        labelcolor=Palette.FG,
-    )
+    _legend_outside_plot(ax, fontsize=legend_fontsize)
 
 
 def plot_swing_joint_torques(ax: Any, history: SwingForceHistory) -> None:
@@ -326,12 +338,7 @@ def plot_swing_com_path(ax: Any, history: SwingForceHistory) -> None:
     ax.set_xlabel("Horizontal (m)", color=Palette.FG_DIM, fontsize=8)
     ax.set_ylabel("Vertical (m)", color=Palette.FG_DIM, fontsize=8)
     ax.set_title("COM Path", color=Palette.FG, fontsize=10)
-    ax.legend(
-        fontsize=6,
-        facecolor=Palette.BG_PANEL,
-        edgecolor=Palette.FG_DIM,
-        labelcolor=Palette.FG,
-    )
+    _legend_outside_plot(ax, fontsize=6)
 
 
 def plot_chain_tension(ax: Any, history: ChainForceHistory) -> None:
