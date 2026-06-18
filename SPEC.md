@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.594                                    |
+| **Spec Version**        | 1.1.595                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -136,6 +136,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   power, angle, COM, energy, tension, curvature, and tip-speed traces without
   obscuring curves, neighboring subplots, compact pane edges, axis labels, or
   plot titles.
+- Movement Optimizer COM path rendering now draws the colour-graded center-of-
+  mass trace with a single Matplotlib `LineCollection` instead of one `Line2D`
+  artist per time step, preserving the path colours while reducing plot redraw
+  overhead for long optimization traces and rejecting degenerate one-sample COM
+  paths at the renderer boundary.
 - Movement Optimizer legacy `optimizer_gui` launch and registration surfaces now
   delegate to the canonical `movement_optimizer` PyQt6 app, preventing direct
   old-path launches from showing the retired minimal optimizer UI instead of
@@ -1242,6 +1247,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-18 | 1.1.595 | perf(movement_optimizer): render the colour-graded COM path through one Matplotlib `LineCollection` instead of one line artist per time step, add renderer-boundary validation for degenerate COM traces, and pin the artist-count regression in `test_plot_renderer.py`. |
 | 2026-06-18 | 1.1.594 | fix(p1am/firmware, #3606): document the first-boot bench routing defaults, PID0 unity-gain current-command pass-through default, reverted P1-04THM custom configuration, Fahrenheit-to-Celsius thermocouple conversion, and 0-20 mA analog-input scaling that keep freshly flashed P1AM units recoverable without changing persisted-config behavior. |
 | 2026-06-18 | 1.1.593 | test(shared): extend root `safe_eval` regression coverage for empty/syntax failures, function-call rejection, runtime power wrappers, numpy min/max arity, scalar pow, and constant-exponent helper branches so the changed-file coverage gate exceeds 99%. |
 | 2026-06-18 | 1.1.592 | fix(shared, #3611, #3621, #3622, #3647): harden `safe_eval` exponentiation by bounding `pow()`/`power()` calls and computed constant exponents like `**`, enforce the non-string expression contract before parsing, and make numpy-mode two-argument `min()`/`max()` elementwise instead of treating the second value as an axis. |

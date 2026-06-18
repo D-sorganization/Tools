@@ -4,6 +4,7 @@
 from typing import Any
 
 import numpy as np
+from matplotlib.collections import LineCollection
 
 from ..models import BodyModel
 from ..models.chain_forces import ChainForceHistory
@@ -111,17 +112,19 @@ def plot_power(ax: Any, r: OptimizationResult, labels: tuple = Palette.SEG_LABEL
 def plot_com_path(ax: Any, r: OptimizationResult, body: BodyModel) -> None:
     import matplotlib as mpl
 
+    if r.com.ndim != 2 or r.com.shape[1] != 2:
+        raise ValueError("COM path must be an Nx2 array")
+    if len(r.com) < 2:
+        raise ValueError("COM path must contain at least two samples")
+
     # matplotlib>=3.7 (see pyproject) always provides the registry-based
     # ``colormaps`` accessor; ``cm.get_cmap`` was removed in 3.9.
     cmap = mpl.colormaps["viridis"]
-    colors_t = cmap(np.linspace(0.2, 0.95, len(r.t)))
-    for i in range(len(r.t) - 1):
-        ax.plot(
-            r.com[i : i + 2, 0] * 100,
-            r.com[i : i + 2, 1] * 100,
-            color=colors_t[i],
-            lw=2.5,
-        )
+    colors_t = cmap(np.linspace(0.2, 0.95, len(r.com) - 1))
+    com_cm = r.com[:, :2] * 100.0
+    com_segments = np.stack((com_cm[:-1], com_cm[1:]), axis=1)
+    ax.add_collection(LineCollection(com_segments, colors=colors_t, linewidths=2.5))
+    ax.autoscale_view()
     ax.plot(
         r.bar[:, 0] * 100,
         r.bar[:, 1] * 100,
