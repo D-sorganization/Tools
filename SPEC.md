@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.563                                    |
+| **Spec Version**        | 1.1.564                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -38,10 +38,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-18 Update
 
-- Movement Optimizer Swingset and Chain Dynamics analysis legends now anchor
-  below each subplot instead of overlaying the plotted data, preserving visible
-  labels for torque, power, angle, COM, energy, tension, curvature, and
-  tip-speed traces without obscuring the curves.
+- Movement Optimizer Swingset and Chain Dynamics analysis legends now dock
+  into `MotionAnalysisPanel`-owned reserved legend rows instead of living on
+  data axes, preserving visible labels for torque, power, angle, COM, energy,
+  tension, curvature, and tip-speed traces without obscuring curves,
+  neighboring subplots, or compact pane edges.
 
 ### 2026-06-17 Update
 
@@ -1118,6 +1119,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-18 | 1.1.564 | fix(movement_optimizer): dock Swingset and Chain Dynamics analysis legends into `MotionAnalysisPanel`-owned reserved legend rows, remove them from data axes during draw, and add rendered bounding-box regression coverage so visible legends cannot cover plot data or neighboring subplots on compact panes. |
 | 2026-06-17 | 1.1.561 | refactor(p1am): split pure Modbus register codec helpers out of `backend/modbus_client.py`, add codec regression coverage, and declare `pymodbus` in the test extra used by backend collection. |
 | 2026-06-17 | 1.1.560 | test(ai, #3521): share the isolated AI integration-client bootstrap across Affine, Linear, Notion, and Obsidian tests, align adapter-factory credential tests with the canonical `shared.python.chat_contracts.credentials` import path, and allowlist the bootstrap helper for the changed-test assertion gate. |
 | 2026-06-17 | 1.1.559 | refactor(p1am, #3518): tighten endpoint prose in the FastAPI shell so `backend/main.py` stays below the module-size ratchet after merging the SCADA fallback branch, without changing bounded trend or streaming export behavior. |

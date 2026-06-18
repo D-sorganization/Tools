@@ -143,11 +143,31 @@ class TestChainPlots:
 
 
 class TestMotionAnalysisPanel:
+    @staticmethod
+    def _assert_docked_legends_do_not_cover_plots(panel) -> None:
+        panel.figure.set_size_inches(4.8, 3.2, forward=True)
+        panel.draw()
+        panel.canvas.draw()
+        renderer = panel.canvas.get_renderer()
+        figure_box = panel.figure.bbox
+        data_boxes = [axes.get_window_extent(renderer) for axes in panel.axes.values()]
+
+        for legend_axis in panel.legend_axes.values():
+            legend = legend_axis.get_legend()
+            assert legend is not None
+            legend_box = legend.get_window_extent(renderer)
+            assert legend_box.x0 >= figure_box.x0 - 1.0
+            assert legend_box.x1 <= figure_box.x1 + 1.0
+            assert legend_box.y0 >= figure_box.y0 - 1.0
+            assert legend_box.y1 <= figure_box.y1 + 1.0
+            assert not any(data_box.overlaps(legend_box) for data_box in data_boxes)
+
     def test_axes_keys(self, qapp) -> None:
         from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
 
         panel = MotionAnalysisPanel(["alpha", "beta", "gamma"], rows=2, cols=2)
         assert set(panel.axes) == {"alpha", "beta", "gamma"}
+        assert set(panel.legend_axes) == {"alpha", "beta", "gamma"}
         assert panel.canvas is not None
         assert panel.toolbar is not None
 
@@ -166,6 +186,36 @@ class TestMotionAnalysisPanel:
         panel = MotionAnalysisPanel(["torques"], rows=1, cols=1)
         plot_swing_joint_torques(panel.axes["torques"], swing_history)
         panel.draw()  # should not raise
+
+    def test_swingset_legends_are_docked_outside_data_axes(self, qapp, swing_history) -> None:
+        from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
+
+        panel = MotionAnalysisPanel(
+            ["torques", "power", "angle", "com_height", "energy", "com_path"],
+            rows=2,
+            cols=3,
+        )
+        plot_swing_joint_torques(panel.axes["torques"], swing_history)
+        plot_swing_joint_power(panel.axes["power"], swing_history)
+        plot_swing_angle(panel.axes["angle"], swing_history)
+        plot_swing_com_height(panel.axes["com_height"], swing_history)
+        plot_swing_energy(panel.axes["energy"], swing_history)
+        plot_swing_com_path(panel.axes["com_path"], swing_history)
+
+        self._assert_docked_legends_do_not_cover_plots(panel)
+        assert all(axes.get_legend() is None for axes in panel.axes.values())
+
+    def test_chain_legends_are_docked_outside_data_axes(self, qapp, chain_history) -> None:
+        from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
+
+        panel = MotionAnalysisPanel(["tension", "curvature", "energy", "tip_speed"], rows=2, cols=2)
+        plot_chain_tension(panel.axes["tension"], chain_history)
+        plot_chain_curvature(panel.axes["curvature"], chain_history)
+        plot_chain_energy(panel.axes["energy"], np.linspace(0, 1, _T), np.zeros(_T))
+        plot_chain_tip_speed(panel.axes["tip_speed"], np.linspace(0, 1, _T), np.zeros(_T))
+
+        self._assert_docked_legends_do_not_cover_plots(panel)
+        assert all(axes.get_legend() is None for axes in panel.axes.values())
 
     def test_rejects_empty_axis_names(self, qapp) -> None:
         from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
@@ -207,3 +257,20 @@ class TestMotionAnalysisPanel:
         assert legend.get_visible() is True
         # The legend-free axis is simply skipped (no error).
         assert panel.axes["b"].get_legend() is None
+
+    def test_set_legends_visible_controls_docked_legends(self, qapp) -> None:
+        from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
+
+        panel = MotionAnalysisPanel(["a"], rows=1, cols=1)
+        panel.axes["a"].plot([0, 1], [0, 1], label="series")
+        panel.axes["a"].legend()
+
+        panel.set_legends_visible(False)
+        panel.draw()
+        assert panel.axes["a"].get_legend() is None
+        assert panel.legend_axes["a"].get_legend() is None
+
+        panel.set_legends_visible(True)
+        panel.draw()
+        assert panel.axes["a"].get_legend() is None
+        assert panel.legend_axes["a"].get_legend() is not None
