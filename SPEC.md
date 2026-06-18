@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.579                                    |
+| **Spec Version**        | 1.1.580                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,12 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-18 Update
 
+- Release Automation validation now mirrors the CI Standard changed-file Ruff
+  contract: release validation collects changed Python files, applies the same
+  legacy-path exclude list, and skips Ruff lint/format when a release-triggering
+  commit changes only non-Python metadata. Full-repo Ruff debt remains reported
+  by the dedicated non-blocking quality workflows instead of blocking every
+  release candidate.
 - P1AM backend runtime tunables now resolve through one
   `P1AMSettings` pydantic-settings surface, covering PLC driver/host/port,
   polling and reconnect intervals, historian retention sizing, and SQLite
@@ -1165,6 +1171,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-18 | 1.1.580 | fix(ci): make Release Automation validate Ruff lint and format only against changed Python files using the same legacy-path exclude contract as CI Standard, so metadata-only release-triggering commits are not blocked by unrelated full-repo Ruff debt. |
 | 2026-06-18 | 1.1.579 | fix(p1am, #3541): centralize backend runtime tunables in `P1AMSettings` (`pydantic-settings`) for PLC connection, poll/reconnect cadence, historian retention, and SQLite synchronous mode while preserving legacy `PLC_*` env aliases; replace `TagLog`/`EventLog` naive `datetime.utcnow()` defaults with aware UTC factories. |
 | 2026-06-18 | 1.1.577 | test(p1am, #3536): extract single-scan `_poll_once()` and single-attempt `_connect_once()` seams from the backend loops, with typed fake-client coverage for PLC simulator fallback, E-stop reassertion, routing sync, WebSocket payloads, and one-commit historian/alarm persistence. |
 | 2026-06-18 | 1.1.572 | perf(golf): optimize `generateRecommendations` in `swingAnalyzer.ts` by classifying major and moderate swing issues in one pass, avoiding redundant `.filter()` traversals and intermediate arrays while preserving recommendation ordering. |
