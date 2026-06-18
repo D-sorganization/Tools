@@ -223,6 +223,7 @@ jobs:
     if: needs.analyse-commits.outputs.bump != 'none'
     outputs:
       new_version: ${{ needs.analyse-commits.outputs.new_version }}
+      release_pr_url: ${{ steps.release_pr.outputs.release_pr_url }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -309,14 +310,46 @@ jobs:
           print(f"CHANGELOG.md updated for v{new_version}")
           PY
 
-      - name: Commit version bump
+      - name: Open version bump PR
+        id: release_pr
         env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NEW_VERSION: ${{ needs.analyse-commits.outputs.new_version }}
+          BUMP: ${{ needs.analyse-commits.outputs.bump }}
+          CHANGELOG_ENTRY: ${{ needs.analyse-commits.outputs.changelog_entry }}
         run: |
+          BRANCH="release/v${NEW_VERSION}-${GITHUB_RUN_ID}"
+          git switch -c "$BRANCH"
           git add pyproject.toml VERSION CHANGELOG.md
-          git commit -m "chore(release): bump version to v${NEW_VERSION} [skip ci]"
-          git tag "v${NEW_VERSION}"
-          git push origin main --follow-tags
+          if git diff --cached --quiet; then
+            echo "No release version changes to commit."
+            echo "release_pr_url=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git commit -m "chore(release): bump version to v${NEW_VERSION}"
+          git push -u origin "$BRANCH"
+
+          BODY=$(cat <<EOF
+          ## Summary
+          - bump package metadata to v${NEW_VERSION}
+          - update VERSION and CHANGELOG.md
+
+          ## Release Notes
+          **Bump type:** ${BUMP}
+
+          ${CHANGELOG_ENTRY}
+
+          Created by Release Automation run ${GITHUB_RUN_ID}.
+          EOF
+          )
+          PR_URL=$(gh pr create \
+            --repo "$GITHUB_REPOSITORY" \
+            --base main \
+            --head "$BRANCH" \
+            --title "chore(release): bump version to v${NEW_VERSION}" \
+            --body "$BODY")
+          echo "release_pr_url=$PR_URL" >> "$GITHUB_OUTPUT"
+          echo "Opened release PR: $PR_URL"
 
   # ── 4. Create GitHub Release ─────────────────────────────────────────
   github-release:
@@ -324,7 +357,7 @@ jobs:
     name: GitHub Release
     runs-on: d-sorg-fleet
     needs: [analyse-commits, bump-version]
-    if: needs.analyse-commits.outputs.bump != 'none'
+    if: needs.analyse-commits.outputs.bump != 'none' && needs.bump-version.outputs.release_pr_url == ''
     steps:
       - uses: actions/checkout@v6
         with:
