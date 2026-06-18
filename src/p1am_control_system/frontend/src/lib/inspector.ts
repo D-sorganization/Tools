@@ -7,4 +7,3 @@ export type InspectorState =
   | { type: "alicat"; deviceId: string }
   | { type: "settings" }
   | { type: "export" };
-

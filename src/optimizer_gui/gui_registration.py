@@ -6,7 +6,7 @@ from typing import Any
 
 GUI_INFO = {
     "name": "Movement Optimizer",
-    "tool_name": "optimizer_gui",
+    "tool_name": "movement_optimizer",
     "catalog_visible": False,
     "description": (
         "Optimize motion policies with Adam, swingset, and chain dynamics models"
@@ -14,10 +14,10 @@ GUI_INFO = {
     "category": "Optimization",
     "icon": "chart-line",
     "pyqt6": {
-        "module": "optimizer_gui.ui.pyqt6.main_window",
-        "class": "OptimizerWindow",
-        "dependencies": ["PyQt6", "numpy"],
-        "settings_app": "OptimizerGui",
+        "module": "movement_optimizer.gui.main_window",
+        "class": "MainWindow",
+        "dependencies": ["PyQt6", "matplotlib", "numpy", "scipy"],
+        "settings_app": "MovementOptimizer",
     },
 }
 
