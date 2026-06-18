@@ -12,8 +12,6 @@ except ImportError:
     UTC = timezone.utc  # noqa: UP017
 from typing import Any, cast
 
-import historian
-from alarm_processing import process_alarm_events
 from alicat_manager import AlicatManager, AlicatMFC
 from auth_config import require_admin_key, require_api_key, verify_operator_key
 from cors_config import resolve_cors_settings
@@ -57,8 +55,8 @@ from models import (
 )
 from plant_model import TagDefinition
 from plc_factory import PLCFactory
+from poll_runtime import _connect_once, _poll_once
 from power_supply_integration import PowerSupplyService, create_power_supply_router
-from power_supply_passthrough import ensure_power_supply_passthrough
 from project_import import import_project_archive
 from pydantic import BaseModel
 from pydantic import Field as PydanticField
@@ -233,41 +231,23 @@ async def modbus_connect_background() -> None:
     """Periodically attempts to connect to PLC in background without blocking polling loop."""
     logger.info("Starting background PLC connection task...")
     while not shutdown_event.is_set():
-        if not plc_client.connected:
-            try:
-                # Do a non-blocking attempt to connect
-                connected = await plc_client.connect()
-                if connected:
-                    logger.info("Connected to PLC successfully in background.")
-                    if e_stop_active:
-                        try:
-                            await plc_client.trigger_estop()
-                            logger.warning("Re-asserted hardware E-stop on reconnect.")
-                        except Exception as estop_err:
-                            logger.error(f"Failed to re-assert E-stop: {estop_err}")
-                    # Adopt the device's real routing + interlock limits so the
-                    # alarm set reflects the PLC, not the startup defaults.
-                    try:
-                        plc_config = await plc_client.read_routing()
-                        if plc_config is not None:
-                            # If the power-supply PID came up unmapped after an
-                            # NVRAM reset, auto-repair it to a pass-through so a
-                            # commanded setpoint actually drives the AO (#3550).
-                            plc_config = await ensure_power_supply_passthrough(
-                                plc_client,
-                                plc_config,
-                                command_tag=power_supply_service.controller.config.command_tag,
-                                logger=logger,
-                            )
-                            global active_config
-                            active_config = plc_config
-                            apply_alarm_config(plc_config)
-                            logger.info("Synced routing and alarm limits from PLC.")
-                    except Exception as sync_err:
-                        logger.warning(f"Could not sync routing from PLC: {sync_err}")
-            except Exception as e:
-                logger.debug(f"Background PLC connect attempt failed: {e}")
+        try:
+            await _connect_once(
+                plc=plc_client,
+                power_supply=power_supply_service,
+                apply_config=_publish_active_config,
+                estop_active=e_stop_active,
+            )
+        except Exception as e:
+            logger.debug(f"Background PLC connect attempt failed: {e}")
         await asyncio.sleep(5.0)
+
+
+def _publish_active_config(config: RoutingConfig) -> None:
+    """Publish a PLC routing config to globals and rebuild alarm limits."""
+    global active_config
+    active_config = config
+    apply_alarm_config(config)
 
 
 async def poll_plc_loop() -> None:
@@ -278,59 +258,18 @@ async def poll_plc_loop() -> None:
     logger.info("Starting background PLC polling loop...")
     while not shutdown_event.is_set():
         try:
-            tags = None
-            if plc_client.connected:
-                tags = await plc_client.read_tags()
-            if tags is None:
-                # Fallback to simulation step
-                tags = await backup_simulator.read_tags()
-            # Update latest tags
-            if tags is not None:
-                for key, val in tags.items():
-                    latest_tags[key] = val
-            # Pack WebSocket message payload containing tags and alicats data
-            tag_list = (
-                [tags.get(f"TAG_{i}", 0.0) for i in range(32)]
-                if tags is not None
-                else []
+            await _poll_once(
+                plc=plc_client,
+                backup=backup_simulator,
+                latest_tag_values=latest_tags,
+                ws=ws_manager,
+                alicats=alicat_manager,
+                power_supply=power_supply_service,
+                alarm_engine=alarm_engine,
+                active_alarm_map=active_alarms,
+                session_factory=get_session,
+                estop_active=e_stop_active,
             )
-            # The controller is latched while e_stop_active, so poll() commands
-            # zero. Re-assert the hardware kill every scan as well, so a stale
-            # PID setpoint or any other driver can never re-energize the loop
-            # while the E-stop is held.
-            ps_status = await power_supply_service.poll(tags)
-            if e_stop_active and plc_client.connected:
-                await plc_client.trigger_estop()
-
-            payload = {
-                "tags": tag_list,
-                "tags_dict": tags if tags is not None else {},
-                "alicats": alicat_manager.get_devices_data(),
-                "active_alarms": active_alarms,
-                "e_stop_active": e_stop_active,
-                "power_supply": ps_status.model_dump(),
-            }
-            await ws_manager.broadcast(payload)
-            if tags is not None:
-                db_session = None
-                try:
-                    db_session = next(get_session())
-                    # Bulk-insert this scan's samples (cheap single INSERT), then
-                    # fold alarm transitions into active_alarms and persist their
-                    # event rows — all under one commit.
-                    historian.log_scan(db_session, tags)
-                    for event_log in process_alarm_events(
-                        alarm_engine, tags, active_alarms
-                    ):
-                        db_session.add(event_log)
-                    db_session.commit()
-                except Exception as db_err:
-                    if db_session:
-                        db_session.rollback()
-                    logger.error(f"Error logging tags/alarms: {db_err}")
-                finally:
-                    if db_session:
-                        db_session.close()
         except Exception as loop_err:
             logger.error(f"Unexpected error in PLC polling loop: {loop_err}")
         # Sleep to maintain 10Hz frequency (100ms cycle)
