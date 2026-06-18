@@ -51,6 +51,8 @@ class MotionAnalysisPanel(QWidget):
         self.canvas = FigureCanvasQTAgg(self.figure)
         self.toolbar = NavigationToolbar2QT(self.canvas, self)
         self.axes: dict[str, Axes] = {}
+        self.legend_axes: dict[str, Axes] = {}
+        self._legends_visible = True
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -61,16 +63,66 @@ class MotionAnalysisPanel(QWidget):
 
     def _build_axes(self) -> None:
         self.figure.clear()
-        grid = self.figure.add_gridspec(self._rows, self._cols)
+        height_ratios = tuple(ratio for _ in range(self._rows) for ratio in (1.0, 0.34))
+        grid = self.figure.add_gridspec(
+            self._rows * 2,
+            self._cols,
+            height_ratios=height_ratios,
+            hspace=0.58,
+            wspace=0.34,
+        )
         self.axes = {}
+        self.legend_axes = {}
         for index, name in enumerate(self._axis_names):
             row, col = divmod(index, self._cols)
-            self.axes[name] = self.figure.add_subplot(grid[row, col])
+            data_row = row * 2
+            legend_row = data_row + 1
+            self.axes[name] = self.figure.add_subplot(grid[data_row, col])
+            legend_axis = self.figure.add_subplot(grid[legend_row, col])
+            legend_axis.set_axis_off()
+            self.legend_axes[name] = legend_axis
         restyle_figure(self.figure)
 
     def clear(self) -> None:
         """Reset every axis to a blank, themed state."""
         self._build_axes()
+
+    @staticmethod
+    def _legend_columns(label_count: int) -> int:
+        """Return a compact column count for a dedicated legend strip."""
+        if label_count < 1:
+            return 1
+        return min(3, label_count)
+
+    def _dock_legends(self) -> None:
+        """Move per-plot legends into reserved strips outside data axes."""
+        for name, axes in self.axes.items():
+            handles, labels = axes.get_legend_handles_labels()
+            existing = axes.get_legend()
+            if existing is not None:
+                existing.remove()
+
+            legend_axis = self.legend_axes[name]
+            legend_axis.clear()
+            legend_axis.set_axis_off()
+            if not handles or not labels or not self._legends_visible:
+                continue
+
+            legend_axis.legend(
+                handles,
+                labels,
+                loc="center",
+                ncol=self._legend_columns(len(labels)),
+                fontsize=6,
+                facecolor=Palette.BG_PANEL,
+                edgecolor=Palette.FG_DIM,
+                labelcolor=Palette.FG,
+                framealpha=0.9,
+                borderaxespad=0.0,
+                handlelength=1.2,
+                handletextpad=0.35,
+                columnspacing=0.7,
+            )
 
     def set_legends_visible(self, visible: bool) -> None:
         """Show or hide the legend on every axis that has one.
@@ -79,16 +131,24 @@ class MotionAnalysisPanel(QWidget):
         figure's axes (Law of Demeter). Does not repaint; the caller draws.
         Axes without a legend are skipped.
         """
+        self._legends_visible = bool(visible)
         for axes in self.axes.values():
             legend = axes.get_legend()
             if legend is not None:
-                legend.set_visible(bool(visible))
+                legend.set_visible(self._legends_visible)
+        for axes in self.legend_axes.values():
+            legend = axes.get_legend()
+            if legend is not None:
+                legend.set_visible(self._legends_visible)
 
     def has_legends(self) -> bool:
         """Return True if any axis currently carries a legend."""
-        return any(axes.get_legend() is not None for axes in self.axes.values())
+        return any(axes.get_legend() is not None for axes in self.axes.values()) or any(
+            axes.get_legend() is not None for axes in self.legend_axes.values()
+        )
 
     def draw(self) -> None:
         """Lay out and repaint the figure after the axes have been populated."""
-        self.figure.tight_layout()
-        self.canvas.draw_idle()
+        self._dock_legends()
+        self.figure.subplots_adjust(left=0.08, right=0.98, top=0.94, bottom=0.06)
+        self.canvas.draw()

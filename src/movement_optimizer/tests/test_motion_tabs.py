@@ -816,8 +816,11 @@ def test_swingset_plot_legend_toggle_hides_axes_legends(qapp) -> None:
 
     swingset._plot_legend_toggle.setChecked(False)
     assert legend.get_visible() is False
+    assert swingset.analysis_panel.legend_axes["torques"].get_legend() is None
+
     swingset._plot_legend_toggle.setChecked(True)
-    assert legend.get_visible() is True
+    assert axes.get_legend() is None
+    assert swingset.analysis_panel.legend_axes["torques"].get_legend() is not None
 
 
 def test_chain_layer_toggles_drive_canvas_visibility(qapp) -> None:
