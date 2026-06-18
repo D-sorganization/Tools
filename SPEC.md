@@ -27,14 +27,21 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.562                                    |
-| **Last Spec Update**    | 2026-06-17                                 |
+| **Spec Version**        | 1.1.563                                    |
+| **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-06-18 Update
+
+- Movement Optimizer Swingset and Chain Dynamics analysis legends now anchor
+  below each subplot instead of overlaying the plotted data, preserving visible
+  labels for torque, power, angle, COM, energy, tension, curvature, and
+  tip-speed traces without obscuring the curves.
 
 ### 2026-06-17 Update
 

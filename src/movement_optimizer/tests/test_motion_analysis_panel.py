@@ -7,6 +7,7 @@ from unittest.mock import MagicMock
 
 import numpy as np
 import pytest
+from matplotlib.figure import Figure
 
 from movement_optimizer.gui.plot_renderer import (
     plot_chain_curvature,
@@ -87,6 +88,24 @@ class TestSwingPlots:
         plot_swing_com_path(mock_ax, swing_history)
         assert mock_ax.plot.call_count == 3  # path + start + end
 
+    def test_legends_are_outside_plot_area(self, swing_history) -> None:
+        plotters = (
+            plot_swing_joint_torques,
+            plot_swing_joint_power,
+            plot_swing_angle,
+            plot_swing_com_height,
+            plot_swing_energy,
+            plot_swing_com_path,
+        )
+        for plotter in plotters:
+            figure = Figure()
+            ax = figure.add_subplot(111)
+            plotter(ax, swing_history)
+
+            legend = ax.get_legend()
+            assert legend is not None
+            assert legend.get_bbox_to_anchor()._bbox.y0 < 0.0
+
 
 class TestChainPlots:
     def test_tension(self, mock_ax, chain_history) -> None:
@@ -105,6 +124,22 @@ class TestChainPlots:
     def test_tip_speed(self, mock_ax) -> None:
         plot_chain_tip_speed(mock_ax, np.linspace(0, 1, _T), np.zeros(_T))
         assert mock_ax.plot.call_count == 1
+
+    def test_legends_are_outside_plot_area(self, chain_history) -> None:
+        plotters = (
+            lambda ax: plot_chain_tension(ax, chain_history),
+            lambda ax: plot_chain_curvature(ax, chain_history),
+            lambda ax: plot_chain_energy(ax, np.linspace(0, 1, _T), np.zeros(_T)),
+            lambda ax: plot_chain_tip_speed(ax, np.linspace(0, 1, _T), np.zeros(_T)),
+        )
+        for plotter in plotters:
+            figure = Figure()
+            ax = figure.add_subplot(111)
+            plotter(ax)
+
+            legend = ax.get_legend()
+            assert legend is not None
+            assert legend.get_bbox_to_anchor()._bbox.y0 < 0.0
 
 
 class TestMotionAnalysisPanel:
