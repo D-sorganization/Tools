@@ -1,7 +1,17 @@
-from datetime import datetime
+from datetime import datetime, timezone
+
+try:
+    from datetime import UTC
+except ImportError:
+    UTC = timezone.utc  # noqa: UP017
 
 from pydantic import BaseModel
 from sqlmodel import Field, SQLModel
+
+
+def utc_now() -> datetime:
+    """Return an aware UTC timestamp for database defaults."""
+    return datetime.now(UTC)
 
 
 class TagLog(SQLModel, table=True):  # type: ignore[call-arg]
@@ -11,7 +21,7 @@ class TagLog(SQLModel, table=True):  # type: ignore[call-arg]
     tag_name: str = Field(index=True)
     value: float
     timestamp: datetime = Field(
-        default_factory=datetime.utcnow,
+        default_factory=utc_now,
         index=True,
     )
 
@@ -62,7 +72,7 @@ class EventLog(SQLModel, table=True):  # type: ignore[call-arg]
     description: str
     severity: int = Field(default=0)  # 0: Normal, 1: High/Low, 2: HiHi/LoLo
     timestamp: datetime = Field(
-        default_factory=datetime.utcnow,
+        default_factory=utc_now,
         index=True,
     )
 

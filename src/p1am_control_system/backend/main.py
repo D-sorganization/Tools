@@ -60,6 +60,7 @@ from power_supply_integration import PowerSupplyService, create_power_supply_rou
 from project_import import import_project_archive
 from pydantic import BaseModel
 from pydantic import Field as PydanticField
+from settings import get_settings
 from simulator_client import SimulatedPLCClient
 from sqlmodel import Session, col, select
 
@@ -86,8 +87,9 @@ moving_average = scada.moving_average
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("dcs_backend.main")
+settings = get_settings()
 
-plc_client = PLCFactory.create_client()
+plc_client = PLCFactory.create_client(settings)
 modbus_manager = plc_client  # Compatibility alias
 backup_simulator = SimulatedPLCClient()
 
@@ -240,7 +242,7 @@ async def modbus_connect_background() -> None:
             )
         except Exception as e:
             logger.debug(f"Background PLC connect attempt failed: {e}")
-        await asyncio.sleep(5.0)
+        await asyncio.sleep(settings.connect_retry_interval_s)
 
 
 def _publish_active_config(config: RoutingConfig) -> None:
@@ -273,7 +275,7 @@ async def poll_plc_loop() -> None:
         except Exception as loop_err:
             logger.error(f"Unexpected error in PLC polling loop: {loop_err}")
         # Sleep to maintain 10Hz frequency (100ms cycle)
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(settings.poll_interval_s)
     logger.info("Background PLC polling loop stopped.")
 
 
@@ -292,6 +294,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             shutdown_event=shutdown_event,
             engine=engine,
             logger=logger,
+            settings=settings,
         )
     )
     yield

@@ -1,8 +1,8 @@
 import logging
-import os
 from collections.abc import Generator
 from typing import Any
 
+from settings import P1AMSettings, get_settings
 from sqlalchemy import event
 from sqlmodel import Session, SQLModel, create_engine
 
@@ -12,19 +12,10 @@ logger = logging.getLogger("dcs_backend.database")
 DB_FILE = "dcs_scada.db"
 DATABASE_URL = f"sqlite:///{DB_FILE}"
 
-# Durability vs. throughput is an operator choice. NORMAL (default) keeps the
-# 10 Hz write path cheap but can lose the last un-checkpointed WAL on a hard
-# power cut; FULL fsyncs every commit (no loss, slower) for critical campaigns.
-_VALID_SYNC = {"OFF", "NORMAL", "FULL", "EXTRA"}
 
-
-def _synchronous_mode() -> str:
+def _synchronous_mode(settings: P1AMSettings | None = None) -> str:
     """Resolve PRAGMA synchronous from P1AM_SQLITE_SYNCHRONOUS (default NORMAL)."""
-    mode = os.environ.get("P1AM_SQLITE_SYNCHRONOUS", "NORMAL").strip().upper()
-    if mode not in _VALID_SYNC:
-        logger.warning("Invalid P1AM_SQLITE_SYNCHRONOUS=%r; using NORMAL", mode)
-        return "NORMAL"
-    return mode
+    return str((settings or get_settings()).sqlite_synchronous)
 
 
 # Connect args needed for SQLite threaded async access

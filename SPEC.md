@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.578                                    |
+| **Spec Version**        | 1.1.579                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,12 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-18 Update
 
+- P1AM backend runtime tunables now resolve through one
+  `P1AMSettings` pydantic-settings surface, covering PLC driver/host/port,
+  polling and reconnect intervals, historian retention sizing, and SQLite
+  synchronous mode while preserving legacy `PLC_*` environment aliases. The
+  historian `TagLog`/`EventLog` SQLModel defaults now use aware UTC timestamps
+  instead of deprecated naive `datetime.utcnow()` defaults (#3541).
 - P1AM backend polling now delegates one scan to `_poll_once()` and one
   background connection attempt to `_connect_once()`, making PLC-to-simulator
   fallback, E-stop reassertion, connect-time routing sync, WebSocket payloads,
@@ -1159,6 +1165,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-18 | 1.1.579 | fix(p1am, #3541): centralize backend runtime tunables in `P1AMSettings` (`pydantic-settings`) for PLC connection, poll/reconnect cadence, historian retention, and SQLite synchronous mode while preserving legacy `PLC_*` env aliases; replace `TagLog`/`EventLog` naive `datetime.utcnow()` defaults with aware UTC factories. |
 | 2026-06-18 | 1.1.577 | test(p1am, #3536): extract single-scan `_poll_once()` and single-attempt `_connect_once()` seams from the backend loops, with typed fake-client coverage for PLC simulator fallback, E-stop reassertion, routing sync, WebSocket payloads, and one-commit historian/alarm persistence. |
 | 2026-06-18 | 1.1.572 | perf(golf): optimize `generateRecommendations` in `swingAnalyzer.ts` by classifying major and moderate swing issues in one pass, avoiding redundant `.filter()` traversals and intermediate arrays while preserving recommendation ordering. |
 | 2026-06-18 | 1.1.571 | fix(movement_optimizer): wrap the Swingset policy optimization trace legend by measured widget width and derive the trace top inset from the wrapped legend band, preventing optimizer score and parameter telemetry from being obscured in narrow panes. |

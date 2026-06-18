@@ -1,7 +1,7 @@
 import logging
-import os
 
 from plc_interface import BasePLCClient
+from settings import P1AMSettings
 from simulator_client import SimulatedPLCClient
 
 logger = logging.getLogger("dcs_backend.plc_factory")
@@ -11,18 +11,19 @@ class PLCFactory:
     """Factory class to resolve the active PLC client based on configuration."""
 
     @staticmethod
-    def create_client() -> BasePLCClient:
-        """Create and return a concrete PLC client based on PLC_DRIVER env var.
+    def create_client(settings: P1AMSettings | None = None) -> BasePLCClient:
+        """Create and return a concrete PLC client based on Settings.
 
         Returns:
             BasePLCClient: Resolved concrete client instance.
         """
-        driver = os.getenv("PLC_DRIVER", "simulated").lower()
+        settings = settings or P1AMSettings()
+        driver = settings.plc_driver
 
         if driver == "p1am":
             from modbus_client import AsyncModbusManager
 
-            return AsyncModbusManager(host="192.168.1.100")
+            return AsyncModbusManager(host=settings.plc_ip, port=settings.plc_port)
         elif driver == "neural":
             # Add src to sys.path to allow importing plant_simulator
             from plant_simulator.neural_simulator_client import NeuralSimulatorClient
@@ -31,14 +32,12 @@ class PLCFactory:
         elif driver == "modbus":
             from modbus_client import AsyncModbusManager
 
-            host = os.getenv("PLC_IP", "192.168.1.100")
-            try:
-                port = int(os.getenv("PLC_PORT", "502"))
-            except ValueError:
-                logger.warning("Invalid PLC_PORT configuration. Defaulting to 502.")
-                port = 502
-            logger.info(f"Instantiating Modbus PLC Client at {host}:{port}")
-            return AsyncModbusManager(host=host, port=port)
+            logger.info(
+                "Instantiating Modbus PLC Client at %s:%s",
+                settings.plc_ip,
+                settings.plc_port,
+            )
+            return AsyncModbusManager(host=settings.plc_ip, port=settings.plc_port)
         elif driver == "simulator":
             logger.info("Instantiating Simulated PLC Client")
             return SimulatedPLCClient()
