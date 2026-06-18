@@ -188,7 +188,7 @@ class TestEnforceSizeCap:
     def test_under_cap_is_noop(
         self, session: Session, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        base = _dt.datetime(2026, 1, 1, tzinfo=_dt.UTC)
+        base = _dt.datetime(2026, 1, 1, tzinfo=UTC)
         for i in range(10):
             session.add(TagLog(tag_name="TAG_0", value=float(i), timestamp=base))
         session.commit()
@@ -201,7 +201,7 @@ class TestEnforceSizeCap:
     def test_over_cap_purges_oldest_keeps_newest(
         self, session: Session, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        base = _dt.datetime(2026, 1, 1, tzinfo=_dt.UTC)
+        base = _dt.datetime(2026, 1, 1, tzinfo=UTC)
         # ids are monotonic with insert order; value encodes age (0=oldest).
         for i in range(10):
             session.add(TagLog(tag_name="TAG_0", value=float(i), timestamp=base))

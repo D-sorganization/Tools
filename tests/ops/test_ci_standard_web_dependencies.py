@@ -18,12 +18,27 @@ def test_ci_standard_installs_fastapi_multipart_parser() -> None:
     assert all("python-multipart" in line.split() for line in fastapi_install_lines)
 
 
+def test_ci_standard_installs_p1am_runtime_dependencies_without_skips() -> None:
+    import yaml
+
+    workflow = yaml.safe_load(CI_STANDARD.read_text(encoding="utf-8"))
+
+    for job_name in ("quality-gate", "tests"):
+        install_step = next(
+            step
+            for step in workflow["jobs"][job_name]["steps"]
+            if step.get("name") == "Install Dependencies"
+        )
+
+        assert "python -m pip install pymodbus requests sqlmodel" in install_step["run"]
+
+
 def test_ci_standard_limits_sidekick_runtime_lane_to_runtime_sources() -> None:
     workflow = CI_STANDARD.read_text(encoding="utf-8")
 
     assert "sidekick_runtime_tests_required=false" in workflow
     assert "sidekick_runtime_tests_required=true" in workflow
-    assert "src/shared/python/sidekick/(agent|api|calculators" in workflow
+    assert "src/shared/python/sidekick/(api|calculators" in workflow
     assert "tests/unit/sidekick" in workflow
 
 
