@@ -844,13 +844,25 @@ def test_chain_splits_animation_and_plots_into_subtabs(qapp) -> None:
 
 def test_policy_trace_legend_toggle_reserves_plot_space(qapp) -> None:
     trace = PolicyTraceCanvas()
+    trace.resize(200, 160)
     assert trace.legend_visible() is True
     top_with_legend = trace._top_margin()
+    assert top_with_legend == pytest.approx(trace._legend_band_height())
 
     trace.set_legend_visible(False)
     assert trace.legend_visible() is False
     # Hiding the legend reclaims the reserved top strip for the series.
     assert trace._top_margin() < top_with_legend
 
-    trace.resize(200, 160)
     trace.grab()  # repaint without the legend must not raise
+
+
+def test_policy_trace_legend_wraps_above_plot_at_narrow_width(qapp) -> None:
+    trace = PolicyTraceCanvas()
+    trace.resize(140, 160)
+
+    assert trace._legend_row_count() > 1
+    assert trace._top_margin() == pytest.approx(trace._legend_band_height())
+    assert trace._top_margin() < trace.height() - 24
+
+    trace.grab()  # repaint with a wrapped legend must not raise
