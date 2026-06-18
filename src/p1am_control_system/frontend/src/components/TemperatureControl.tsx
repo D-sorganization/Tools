@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { fetchWithTimeout } from "../lib/fetchWithTimeout";
 import "./TemperatureControl.css";
 
 // Rolling trend buffer: ~300 samples at the ~10 Hz broadcast rate ≈ 30 s.
@@ -84,7 +85,7 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await fetch("/api/temperature/config");
+        const res = await fetchWithTimeout("/api/temperature/config");
         if (!res.ok) throw new Error(`config GET ${res.status}`);
         const cfg = (await res.json()) as TemperatureConfig;
         setConfig(cfg);
@@ -148,7 +149,7 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
       }
       setBusy(true);
       try {
-        const res = await fetch("/api/temperature/setpoint", {
+        const res = await fetchWithTimeout("/api/temperature/setpoint", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ value_c: rawValue }),
@@ -201,7 +202,7 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
         return;
       setBusy(true);
       try {
-        const res = await fetch("/api/temperature/permissive", {
+        const res = await fetchWithTimeout("/api/temperature/permissive", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ enabled }),
@@ -220,7 +221,7 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
   const acknowledgeTrip = useCallback(async () => {
     setBusy(true);
     try {
-      const res = await fetch("/api/temperature/acknowledge_trip", {
+      const res = await fetchWithTimeout("/api/temperature/acknowledge_trip", {
         method: "POST",
       });
       if (!res.ok) throw new Error(await res.text());
@@ -236,7 +237,7 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
     if (!configDraft) return;
     setBusy(true);
     try {
-      const res = await fetch("/api/temperature/config", {
+      const res = await fetchWithTimeout("/api/temperature/config", {
         method: "PUT",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(configDraft),
@@ -349,10 +350,18 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
             className={`tc-permissive ${s?.permissive ? "is-on" : ""}`}
             onClick={() => setPermissive(!s?.permissive)}
             disabled={busy}
-            title="Master enable — the heater relay is forced open while OFF"
+            title={
+              busy
+                ? "Applying — please wait…"
+                : "Master enable — the heater relay is forced open while OFF"
+            }
           >
             <span className="dot" />
-            {s?.permissive ? "PERMISSIVE ON" : "PERMISSIVE OFF"}
+            {busy
+              ? "APPLYING…"
+              : s?.permissive
+                ? "PERMISSIVE ON"
+                : "PERMISSIVE OFF"}
           </button>
         </div>
       </div>

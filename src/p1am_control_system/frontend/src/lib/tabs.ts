@@ -82,8 +82,8 @@ export const TABS: readonly TabDef[] = [
   },
   {
     id: "temperature",
-    label: "Temperature",
-    settingsLabel: "Temperature Controller",
+    label: "Heater Controls",
+    settingsLabel: "Heater Controls",
     accentVar: "var(--accent-orange, #fb923c)",
   },
 ] as const;
@@ -97,4 +97,70 @@ export function defaultTabVisibility(): Record<TabId, boolean> {
     },
     {} as Record<TabId, boolean>,
   );
+}
+
+/** The canonical tab id order as declared in {@link TABS}. */
+export function defaultTabOrder(): TabId[] {
+  return TABS.map((tab) => tab.id);
+}
+
+const ORDER_KEY = "p1am.tabOrder.v1";
+const VISIBILITY_KEY = "p1am.tabVisibility.v1";
+
+/**
+ * Reconcile a saved id list with the current {@link TABS}: keep the saved order
+ * for ids that still exist, drop unknown ids, and append any tabs added since
+ * the order was saved (so a new release's tab is never silently hidden).
+ */
+function reconcileOrder(saved: readonly unknown[]): TabId[] {
+  const known = new Set<TabId>(defaultTabOrder());
+  const kept = saved.filter(
+    (id): id is TabId => typeof id === "string" && known.has(id as TabId),
+  );
+  const missing = defaultTabOrder().filter((id) => !kept.includes(id));
+  return [...kept, ...missing];
+}
+
+/** Load the persisted tab order, falling back to the declared order. */
+export function loadTabOrder(): TabId[] {
+  try {
+    const raw = localStorage.getItem(ORDER_KEY);
+    if (raw) return reconcileOrder(JSON.parse(raw));
+  } catch {
+    /* corrupt/unavailable storage — use defaults */
+  }
+  return defaultTabOrder();
+}
+
+export function saveTabOrder(order: readonly TabId[]): void {
+  try {
+    localStorage.setItem(ORDER_KEY, JSON.stringify(order));
+  } catch {
+    /* storage unavailable — non-fatal */
+  }
+}
+
+/** Load persisted visibility, defaulting any unknown/new tab to visible. */
+export function loadTabVisibility(): Record<TabId, boolean> {
+  const base = defaultTabVisibility();
+  try {
+    const raw = localStorage.getItem(VISIBILITY_KEY);
+    if (raw) {
+      const saved = JSON.parse(raw) as Partial<Record<TabId, boolean>>;
+      for (const tab of TABS) {
+        if (typeof saved[tab.id] === "boolean") base[tab.id] = saved[tab.id]!;
+      }
+    }
+  } catch {
+    /* corrupt/unavailable storage — use defaults */
+  }
+  return base;
+}
+
+export function saveTabVisibility(visibility: Record<TabId, boolean>): void {
+  try {
+    localStorage.setItem(VISIBILITY_KEY, JSON.stringify(visibility));
+  } catch {
+    /* storage unavailable — non-fatal */
+  }
 }

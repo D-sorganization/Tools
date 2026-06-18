@@ -48,6 +48,15 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module configuration, converts Fahrenheit thermocouple readings to Celsius in
   software, and documents the 0-20 mA analog-input scaling used by the bench
   power-supply monitor outputs (#3606).
+- P1AM HMI tabs now persist operator-controlled order and visibility in
+  browser storage, with drag/drop and context-menu reorder/hide affordances
+  that reconcile saved layouts against newly added tab ids. The temperature
+  tab is presented as "Heater Controls", power and trend readouts display the
+  supply in kW, power/temperature commands use bounded fetches with explicit
+  busy feedback, and the telemetry hook falls back to polling `/api/snapshot`
+  when the WebSocket stream is stale so embedded HTTP-only views keep updating.
+  The tag inspector UI was split out of `App.tsx` without changing behavior so
+  the frontend stays inside the local HMI file-size guardrail (#3649).
 - Release Automation validation now mirrors the CI Standard changed-file Ruff
   contract: release validation collects changed Python files, applies the same
   legacy-path exclude list, and skips Ruff lint/format when a release-triggering
