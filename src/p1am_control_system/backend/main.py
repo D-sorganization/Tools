@@ -135,6 +135,10 @@ class ConnectionManager:
 ws_manager = ConnectionManager()
 shutdown_event = asyncio.Event()
 
+# Latest broadcast frame, cached so HTTP-only clients (e.g. embedded webviews
+# that can't hold a WebSocket) can poll /api/snapshot as a streaming fallback.
+latest_frame: dict[str, Any] = {}
+
 # Instantiate global Alicat manager and default devices
 alicat_manager = AlicatManager()
 alicat_manager.add_device(
@@ -234,10 +238,11 @@ async def poll_plc_loop() -> None:
 
     Saves data to DB and streams updates to WS.
     """
+    global latest_frame
     logger.info("Starting background PLC polling loop...")
     while not shutdown_event.is_set():
         try:
-            await _poll_once(
+            frame = await _poll_once(
                 plc=plc_client,
                 backup=backup_simulator,
                 latest_tag_values=control_context.latest_tags,
@@ -250,6 +255,10 @@ async def poll_plc_loop() -> None:
                 session_factory=get_session,
                 estop_active=control_context.e_stop_active,
             )
+            # Cache the frame for the /api/snapshot polling fallback. Reassigning
+            # the reference is atomic, so a concurrent reader sees a whole frame.
+            if frame:
+                latest_frame = frame
         except Exception as loop_err:
             logger.error(f"Unexpected error in PLC polling loop: {loop_err}")
         # Sleep to maintain 10Hz frequency (100ms cycle)
@@ -519,6 +528,17 @@ async def clear_estop() -> dict[str, str]:
     power_supply_service.clear_estop()
     temperature_service.clear_estop()
     return {"status": "success", "message": "Hardware E-stop cleared."}
+
+
+@app.get("/api/snapshot")
+async def get_snapshot() -> dict[str, Any]:
+    """Latest live frame — identical shape to the /api/stream WebSocket frames.
+
+    Returns the cached frame from the poll loop (no PLC round-trip), so HTTP-only
+    clients that can't hold a WebSocket — e.g. an embedded VS Code Simple Browser
+    webview — can poll this as a streaming fallback and still see live data.
+    """
+    return latest_frame
 
 
 @app.get("/api/alarms/active")
