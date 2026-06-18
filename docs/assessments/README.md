@@ -210,6 +210,7 @@ This document defines the comprehensive 16-point assessment framework (A-O + Hig
 | 5.8     | 2026-05 | Added Adversarial Review (May 21) (see `adversarial_review_2026_05_21.md`)                              |
 | 6.0     | 2026-05 | Generated comprehensive assessment reports for 2026-05-31                                               |
 | 6.1     | 2026-06 | Generated comprehensive assessment reports for 2026-06-11                                               |
+| 6.2     | 2026-06 | Executed Completist Audit (Jun 18)                                                                      |
 
 ---
 
