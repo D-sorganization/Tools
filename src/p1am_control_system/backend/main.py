@@ -29,7 +29,7 @@ from data_capture import (
     stream_tag_export_csv,
 )
 from database import engine, get_session, init_db
-from defaults import default_routing_config, ensure_pid_passthrough
+from defaults import default_routing_config
 from fastapi import (
     Depends,
     FastAPI,
@@ -58,6 +58,7 @@ from models import (
 from plant_model import TagDefinition
 from plc_factory import PLCFactory
 from power_supply_integration import PowerSupplyService, create_power_supply_router
+from power_supply_passthrough import ensure_power_supply_passthrough
 from project_import import import_project_archive
 from pydantic import BaseModel
 from pydantic import Field as PydanticField
@@ -228,64 +229,6 @@ plc_client.active_config = active_config
 backup_simulator.active_config = active_config
 
 
-async def ensure_power_supply_passthrough(
-    client: Any, plc_config: RoutingConfig
-) -> RoutingConfig:
-    """Verify (and auto-repair) the power-supply PID pass-through on connect.
-
-    The power-supply controller writes the *setpoint* of PID loop 0 and relies
-    on that loop being a unity-gain pass-through to its command AO. After a PLC
-    power-cycle the NVRAM can come up with PID0 unmapped (cv=TAG_255, kp=0), so
-    the command silently never reaches the output. On connect we detect this and
-    rewrite PID0 as a pass-through (preserving its setpoint), persisting to flash
-    so it survives, and emit a clear warning either way (issue #3550).
-
-    Returns the (possibly repaired) config so the caller adopts the corrected
-    routing. Never raises: a failed repair degrades to a logged warning so the
-    operator is told the AO is misrouted rather than the connect loop crashing.
-    """
-    ps_cfg = power_supply_service.controller.config
-    command_tag = ps_cfg.command_tag
-    pid_index = 0
-    try:
-        repaired_config, needs_repair = ensure_pid_passthrough(
-            plc_config, pid_index, command_tag
-        )
-    except ValueError as exc:
-        logger.warning("Power-supply pass-through check skipped: %s", exc)
-        return plc_config
-
-    if not needs_repair:
-        logger.info(
-            "Power-supply PID%d already a pass-through to %s.", pid_index, command_tag
-        )
-        return plc_config
-
-    logger.warning(
-        "Power-supply PID%d is NOT routed to AO %s (output will not respond) — "
-        "auto-repairing to a pass-through.",
-        pid_index,
-        command_tag,
-    )
-    try:
-        wrote = await client.write_routing(repaired_config)
-        if wrote:
-            await client.save_to_flash()
-            logger.warning(
-                "Repaired power-supply PID%d pass-through and saved to NVRAM.",
-                pid_index,
-            )
-            return repaired_config
-        logger.error(
-            "Failed to write power-supply pass-through repair — AO %s remains "
-            "misrouted; output will not respond until corrected.",
-            command_tag,
-        )
-    except Exception as exc:
-        logger.error("Error repairing power-supply pass-through: %s", exc)
-    return plc_config
-
-
 async def modbus_connect_background() -> None:
     """Periodically attempts to connect to PLC in background without blocking polling loop."""
     logger.info("Starting background PLC connection task...")
@@ -311,7 +254,7 @@ async def modbus_connect_background() -> None:
                             # NVRAM reset, auto-repair it to a pass-through so a
                             # commanded setpoint actually drives the AO (#3550).
                             plc_config = await ensure_power_supply_passthrough(
-                                plc_client, plc_config
+                                plc_client, plc_config, power_supply_service, logger
                             )
                             global active_config
                             active_config = plc_config
