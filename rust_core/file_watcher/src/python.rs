@@ -14,13 +14,20 @@
 //! time before calling the Python callable.
 
 use std::path::PathBuf;
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Mutex, MutexGuard};
 
 use pyo3::exceptions::{PyRuntimeError, PyValueError};
 use pyo3::prelude::*;
 use pyo3::types::PyList;
 
 use crate::watcher::{ChangeEvent, FileWatcher, FileWatcherConfig};
+
+/// Acquire a mutex, recovering the guard if it was poisoned by a panic on
+/// another thread. The Python callback runs on the debounce thread; letting a
+/// poisoned lock panic there would silently stop all event delivery (#3556).
+fn lock_poison_tolerant<T>(m: &Mutex<T>) -> MutexGuard<'_, T> {
+    m.lock().unwrap_or_else(|e| e.into_inner())
+}
 
 #[pyclass(name = "ChangeEvent")]
 #[derive(Clone)]
@@ -78,16 +85,24 @@ impl PyFileWatcher {
     /// Register a callback. Pass a callable that accepts `list[ChangeEvent]`.
     /// Replaces any previous callback.
     fn on_change(&self, callback: PyObject) {
-        *self.callback.lock().unwrap() = Some(callback);
+        *lock_poison_tolerant(&self.callback) = Some(callback);
         let cb_slot = self.callback.clone();
         self.inner.on_change(move |events| {
             Python::with_gil(|py| {
-                let Some(cb) = cb_slot.lock().unwrap().as_ref().map(|c| c.clone_ref(py)) else {
+                let Some(cb) = lock_poison_tolerant(&cb_slot)
+                    .as_ref()
+                    .map(|c| c.clone_ref(py))
+                else {
                     return;
                 };
                 let py_events: Vec<PyChangeEvent> =
                     events.into_iter().map(PyChangeEvent::from).collect();
-                let list = PyList::new(py, py_events).expect("PyList::new");
+                // Build the event list without `.expect()`: a panic here runs on
+                // the debounce thread and would silently kill event delivery
+                // (issue #3556). On the rare allocation failure, drop this batch.
+                let Ok(list) = PyList::new(py, py_events) else {
+                    return;
+                };
                 let _ = cb.call1(py, (list,));
             });
         });
