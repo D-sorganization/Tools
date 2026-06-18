@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.581                                    |
+| **Spec Version**        | 1.1.582                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -44,7 +44,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   commit changes only non-Python metadata. Full-repo Ruff debt remains reported
   by the dedicated non-blocking quality workflows instead of blocking every
   release candidate. Release version bumps now open a protected-branch-friendly
-  PR from a `release/v*` branch instead of attempting a direct push to `main`.
+  PR from a `release/v*` branch instead of attempting a direct push to `main`;
+  generated release PR bodies cap embedded release notes and point to
+  `CHANGELOG.md` for the full entry when the commit-derived notes are too long.
 - P1AM backend runtime tunables now resolve through one
   `P1AMSettings` pydantic-settings surface, covering PLC driver/host/port,
   polling and reconnect intervals, historian retention sizing, and SQLite
@@ -1172,6 +1174,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-18 | 1.1.582 | fix(ci): cap generated Release Automation PR body notes and use `gh pr create --body-file` so long commit-derived changelogs do not exceed GitHub's pull-request body limit. |
 | 2026-06-18 | 1.1.581 | fix(ci): make Release Automation open a version-bump PR from a `release/v*` branch instead of pushing generated release commits directly to protected `main`, and skip release publication until no release PR is pending. |
 | 2026-06-18 | 1.1.580 | fix(ci): make Release Automation validate Ruff lint and format only against changed Python files using the same legacy-path exclude contract as CI Standard, so metadata-only release-triggering commits are not blocked by unrelated full-repo Ruff debt. |
 | 2026-06-18 | 1.1.579 | fix(p1am, #3541): centralize backend runtime tunables in `P1AMSettings` (`pydantic-settings`) for PLC connection, poll/reconnect cadence, historian retention, and SQLite synchronous mode while preserving legacy `PLC_*` env aliases; replace `TagLog`/`EventLog` naive `datetime.utcnow()` defaults with aware UTC factories. |
