@@ -65,7 +65,10 @@ def tag_to_index(tag_name: str) -> int:
         TypeError: If ``tag_name`` is not a str.
         ValueError: If ``tag_name`` is not a well-formed in-range ``TAG_<n>``.
     """
-    return hardware.tag_index(tag_name)
+    index = hardware.tag_index(tag_name)
+    if not isinstance(index, int) or isinstance(index, bool):
+        raise TypeError(f"tag index must be an int, got {type(index).__name__}")
+    return index
 
 
 def encode_tag_indices(tag_names: list[str]) -> list[int]:
