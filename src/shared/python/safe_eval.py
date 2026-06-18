@@ -24,7 +24,8 @@ from __future__ import annotations
 
 import ast
 import math
-from typing import Any
+import operator
+from typing import Any, cast
 
 import numpy as np
 
@@ -84,14 +85,71 @@ MAX_POW_CHAIN_DEPTH = 2
 #: Reject string/bytes constants longer than this (math has no use for them).
 MAX_STR_CONSTANT_LENGTH = 256
 
+_POWER_FUNCTION_NAMES = frozenset({"pow", "power", "np_power"})
+_CONSTANT_NUMERIC_BINOPS = {
+    ast.Add: operator.add,
+    ast.Sub: operator.sub,
+    ast.Mult: operator.mul,
+    ast.Div: operator.truediv,
+    ast.FloorDiv: operator.floordiv,
+    ast.Mod: operator.mod,
+}
+
+
+def _numpy_min(*values: Any) -> Any:
+    """Array-safe ``min`` that preserves normal two-argument semantics."""
+    if len(values) == 1:
+        return np.min(values[0])
+    if len(values) >= 2:
+        return np.minimum.reduce(values)
+    raise TypeError("min expected at least 1 argument")
+
+
+def _numpy_max(*values: Any) -> Any:
+    """Array-safe ``max`` that preserves normal two-argument semantics."""
+    if len(values) == 1:
+        return np.max(values[0])
+    if len(values) >= 2:
+        return np.maximum.reduce(values)
+    raise TypeError("max expected at least 1 argument")
+
+
+def _validate_runtime_exponent(exponent: Any) -> None:
+    """Reject runtime exponents that can create unbounded pow work."""
+    exponent_array = np.asarray(exponent)
+    try:
+        if not np.all(np.isfinite(exponent_array)):
+            raise ValueError("Invalid exponent")
+        if np.any(np.abs(exponent_array) > MAX_POW_EXPONENT):
+            raise ValueError(
+                f"Exponent too large (> {MAX_POW_EXPONENT}); "
+                "possible exponentiation bomb"
+            )
+    except TypeError as exc:
+        raise ValueError("Exponent must be numeric") from exc
+
+
+def _numpy_power(base: Any, exponent: Any) -> Any:
+    """Bounded numpy power wrapper exposed to safe-eval expressions."""
+    _validate_runtime_exponent(exponent)
+    return np.power(base, exponent)
+
+
+def _scalar_power(base: Any, exponent: Any, modulo: Any | None = None) -> Any:
+    """Bounded scalar ``pow`` wrapper exposed to safe-eval expressions."""
+    _validate_runtime_exponent(exponent)
+    if modulo is None:
+        return pow(base, exponent)
+    return pow(base, exponent, modulo)
+
 
 # ── Pre-built namespaces ────────────────────────────────────────────────
 
 NUMPY_MATH_NAMESPACE: dict[str, Any] = {
     # Standard functions (numpy versions for array support)
     "abs": np.abs,
-    "min": np.min,
-    "max": np.max,
+    "min": _numpy_min,
+    "max": _numpy_max,
     "minimum": np.minimum,
     "maximum": np.maximum,
     "sum": np.sum,
@@ -109,7 +167,8 @@ NUMPY_MATH_NAMESPACE: dict[str, Any] = {
     "log": np.log,
     "log10": np.log10,
     "exp": np.exp,
-    "pow": np.power,
+    "pow": _numpy_power,
+    "power": _numpy_power,
     # Statistical
     "mean": np.mean,
     "std": np.std,
@@ -130,6 +189,7 @@ NUMPY_MATH_NAMESPACE: dict[str, Any] = {
     "np_std": np.std,
     "np_min": np.min,
     "np_max": np.max,
+    "np_power": _numpy_power,
 }
 
 SCALAR_MATH_NAMESPACE: dict[str, Any] = {
@@ -143,7 +203,7 @@ SCALAR_MATH_NAMESPACE: dict[str, Any] = {
     "log": math.log,
     "log10": math.log10,
     "exp": math.exp,
-    "pow": pow,
+    "pow": _scalar_power,
     "sin": math.sin,
     "cos": math.cos,
     "tan": math.tan,
@@ -180,13 +240,13 @@ def validate_expression(
     ValueError
         If the expression contains disallowed constructs.
     """
+    if not isinstance(expression, str):
+        raise TypeError("expression must be a string")
+
+    require(isinstance(expression, str), "expression must be a string")
+
     if not expression or not expression.strip():
         raise ValueError("Expression must not be empty")
-
-    require(
-        isinstance(expression, str),
-        "expression must be a string",
-    )
 
     # Cheap length guard before parsing (issue #3290).
     if len(expression) > MAX_EXPRESSION_LENGTH:
@@ -234,6 +294,8 @@ def validate_expression(
                 func_id = func.id
                 if allowed_names is not None and func_id not in allowed_names:
                     raise ValueError(f"Unknown function: {func_id}")
+                if func_id in _POWER_FUNCTION_NAMES:
+                    _check_pow_call_safety(node)
             else:
                 raise ValueError("Attribute-based function calls not allowed")
 
@@ -248,17 +310,7 @@ def _check_pow_safety(node: ast.BinOp) -> None:
     huge constant exponent and any chain of ``Pow`` deeper than
     :data:`MAX_POW_CHAIN_DEPTH`.
     """
-    # Constant exponent magnitude check.
-    exp = node.right
-    if isinstance(exp, ast.Constant) and isinstance(exp.value, int | float):
-        try:
-            if abs(exp.value) > MAX_POW_EXPONENT:
-                raise ValueError(
-                    f"Exponent too large (> {MAX_POW_EXPONENT}); "
-                    "possible exponentiation bomb"
-                )
-        except OverflowError as exc:  # pragma: no cover - inf/nan exponents
-            raise ValueError("Invalid exponent") from exc
+    _check_exponent_safety(node.right)
 
     # Nested-Pow chain depth check (count consecutive Pow on either operand).
     depth = 1
@@ -274,6 +326,72 @@ def _check_pow_safety(node: ast.BinOp) -> None:
             f"Exponentiation nested too deeply (> {MAX_POW_CHAIN_DEPTH}); "
             "possible exponentiation bomb"
         )
+
+
+def _check_pow_call_safety(node: ast.Call) -> None:
+    """Apply exponent bounds to bare ``pow``/``power`` calls."""
+    if len(node.args) < 2:
+        return
+    _check_exponent_safety(node.args[1])
+
+
+def _check_exponent_safety(exponent: ast.AST) -> None:
+    """Reject statically-computable exponents above the configured bound."""
+    value = _constant_numeric_value(exponent)
+    if value is None:
+        return
+    try:
+        if not math.isfinite(float(value)):
+            raise ValueError("Invalid exponent")
+        if abs(value) > MAX_POW_EXPONENT:
+            raise ValueError(
+                f"Exponent too large (> {MAX_POW_EXPONENT}); "
+                "possible exponentiation bomb"
+            )
+    except OverflowError as exc:  # pragma: no cover - defensive guard
+        raise ValueError("Invalid exponent") from exc
+
+
+def _constant_numeric_value(node: ast.AST) -> int | float | None:
+    """Return the value for a numeric constant expression, if statically known."""
+    if isinstance(node, ast.Constant):
+        value = node.value
+        if type(value) in (int, float):
+            return cast("int | float", value)
+        return None
+
+    if isinstance(node, ast.UnaryOp):
+        operand = _constant_numeric_value(node.operand)
+        if operand is None:
+            return None
+        if isinstance(node.op, ast.UAdd):
+            return operand
+        if isinstance(node.op, ast.USub):
+            return -operand
+        return None
+
+    if isinstance(node, ast.BinOp):
+        if isinstance(node.op, ast.Pow):
+            _check_pow_safety(node)
+            left = _constant_numeric_value(node.left)
+            right = _constant_numeric_value(node.right)
+            if left is None or right is None:
+                return None
+            return left**right
+
+        op = _CONSTANT_NUMERIC_BINOPS.get(type(node.op))
+        if op is None:
+            return None
+        left = _constant_numeric_value(node.left)
+        right = _constant_numeric_value(node.right)
+        if left is None or right is None:
+            return None
+        try:
+            return cast("int | float", op(left, right))
+        except (ArithmeticError, OverflowError, ValueError):
+            return None
+
+    return None
 
 
 def safe_eval(
