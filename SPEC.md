@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.573                                    |
+| **Spec Version**        | 1.1.574                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -52,6 +52,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   preserving visible labels for torque, power, angle, COM, energy, tension,
   curvature, and tip-speed traces without obscuring curves, neighboring
   subplots, compact pane edges, axis labels, or plot titles.
+- Movement Optimizer Swingset policy optimization trace legends now wrap by
+  measured widget width and reserve the full wrapped legend band above the
+  plotted telemetry, so narrow optimizer panes cannot draw legend text over
+  score and parameter traces.
 - Full-suite nightly CI now fail-closes when declared collection-time
   dependencies are missing, installs the expanded `test` extra for P1AM/PID
   coverage, and disables xdist on fleet runners so worker crashes cannot
@@ -1144,6 +1148,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-18 | 1.1.574 | fix(movement_optimizer): wrap the Swingset policy optimization trace legend by measured widget width and derive the trace top inset from the wrapped legend band, preventing optimizer score and parameter telemetry from being obscured in narrow panes. |
 | 2026-06-18 | 1.1.573 | fix(ci, #3582): centralize Jules PR AutoFix GitHub token wiring and fall back to the run-scoped `github.token` when `RUNNER_CHECK_TOKEN` is unavailable, with workflow regression coverage for CLI and checkout consumers. |
 | 2026-06-18 | 1.1.572 | fix(ci, #3576): extend the Jules Comprehensive Assessment and Jules Completist job timeouts so setup plus the full Jules API polling window can complete, replace the unsupported `gh pr list --sort` title fallback with portable JSON/JQ ordering, and add workflow regression coverage for both contracts. |
 | 2026-06-18 | 1.1.570 | refactor(p1am, #3561): tighten the extracted power-supply PID pass-through repair helper around a narrow routing-repair protocol, add focused async repair coverage, and keep `backend/main.py` below its frozen module-size budget without changing the auto-repair contract. |
