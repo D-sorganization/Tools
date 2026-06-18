@@ -151,6 +151,11 @@ class TestMotionAnalysisPanel:
         renderer = panel.canvas.get_renderer()
         figure_box = panel.figure.bbox
         data_boxes = [axes.get_window_extent(renderer) for axes in panel.axes.values()]
+        label_boxes = [
+            artist.get_window_extent(renderer)
+            for axes in panel.axes.values()
+            for artist in (axes.title, axes.xaxis.label, axes.yaxis.label)
+        ]
 
         for legend_axis in panel.legend_axes.values():
             legend = legend_axis.get_legend()
@@ -161,6 +166,7 @@ class TestMotionAnalysisPanel:
             assert legend_box.y0 >= figure_box.y0 - 1.0
             assert legend_box.y1 <= figure_box.y1 + 1.0
             assert not any(data_box.overlaps(legend_box) for data_box in data_boxes)
+            assert not any(label_box.overlaps(legend_box) for label_box in label_boxes)
 
     def test_axes_keys(self, qapp) -> None:
         from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel

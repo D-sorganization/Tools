@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.564                                    |
+| **Spec Version**        | 1.1.565                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -42,7 +42,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   into `MotionAnalysisPanel`-owned reserved legend rows instead of living on
   data axes, preserving visible labels for torque, power, angle, COM, energy,
   tension, curvature, and tip-speed traces without obscuring curves,
-  neighboring subplots, or compact pane edges.
+  neighboring subplots, compact pane edges, axis labels, or plot titles.
 
 ### 2026-06-17 Update
 
