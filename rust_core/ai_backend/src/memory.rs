@@ -25,7 +25,7 @@ use pyo3::prelude::*;
 use rusqlite::{params, Connection};
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Mutex, MutexGuard};
 
 /// Manages vector persistence and RAG memory.
 #[cfg_attr(feature = "python", pyclass)]
@@ -53,6 +53,16 @@ impl MemoryManager {
         })
     }
 
+    /// Acquire the connection lock, tolerating a poisoned mutex.
+    ///
+    /// A `Connection` is not left in an inconsistent state by a panic mid-query
+    /// (rusqlite rolls back an open statement on drop), so recovering the inner
+    /// guard via `into_inner()` is safe and avoids cascading every subsequent
+    /// DB call into a panic once one thread has unwound (issue #3556).
+    fn lock_conn(&self) -> MutexGuard<'_, Connection> {
+        self.conn.lock().unwrap_or_else(|e| e.into_inner())
+    }
+
     /// Initializes the database schema.
     ///
     /// Schema v2 (this crate version): single `documents` table with
@@ -61,7 +71,7 @@ impl MemoryManager {
     /// `vss_documents` virtual table — that path is gone; the migration is
     /// drop-and-recreate behind the schema check below.
     pub fn try_initialize(&self) -> Result<(), String> {
-        let conn = self.conn.lock().unwrap();
+        let conn = self.lock_conn();
 
         conn.execute(
             "CREATE TABLE IF NOT EXISTS documents (
@@ -107,7 +117,7 @@ impl MemoryManager {
         let dim = embedding.len() as i64;
         let blob = embedding_to_blob(&embedding);
 
-        let conn = self.conn.lock().unwrap();
+        let conn = self.lock_conn();
 
         // Idempotency: skip insert when an identical chunk is already stored.
         let already: i64 = conn
@@ -147,7 +157,7 @@ impl MemoryManager {
             return Err("top_k must be greater than 0".to_string());
         }
 
-        let conn = self.conn.lock().unwrap();
+        let conn = self.lock_conn();
         let q_norm = l2_norm(&query_embedding);
         let dim = query_embedding.len() as i64;
 
@@ -196,7 +206,7 @@ impl MemoryManager {
     /// Returns the number of stored documents (including those without
     /// embeddings — useful for the CLI `stats` subcommand).
     pub fn try_count(&self) -> Result<usize, String> {
-        let conn = self.conn.lock().unwrap();
+        let conn = self.lock_conn();
         let n: i64 = conn
             .query_row("SELECT COUNT(*) FROM documents", [], |row| row.get(0))
             .map_err(|e| format!("DB count error: {}", e))?;

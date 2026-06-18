@@ -377,8 +377,7 @@ where
         total_evals += population.len();
 
         // 3. Sort by fitness
-        let mut ranked: Vec<(f64, Vec<f64>)> =
-            fitnesses.into_iter().zip(population.into_iter()).collect();
+        let mut ranked: Vec<(f64, Vec<f64>)> = fitnesses.into_iter().zip(population).collect();
         ranked.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
 
         // Track best

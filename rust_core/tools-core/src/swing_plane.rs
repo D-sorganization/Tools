@@ -107,11 +107,20 @@ pub fn detect_phases(trajectory: &[Vector3]) -> Result<PhaseMarkers, FspError> {
         return Err(FspError::TooFewPoints);
     }
 
-    // Find global Z minimum (impact).
+    // Validate inputs: NaN/Inf coordinates would otherwise poison the
+    // `partial_cmp().unwrap()` comparisons below (mirror `fit_plane`'s guard).
+    for p in trajectory {
+        if !p.x.is_finite() || !p.y.is_finite() || !p.z.is_finite() {
+            return Err(FspError::NonFiniteInput);
+        }
+    }
+
+    // Find global Z minimum (impact). `total_cmp` is a total order, so even a
+    // NaN that slipped past validation cannot panic here.
     let impact_index = trajectory
         .iter()
         .enumerate()
-        .min_by(|(_, a), (_, b)| a.z.partial_cmp(&b.z).unwrap())
+        .min_by(|(_, a), (_, b)| a.z.total_cmp(&b.z))
         .map(|(i, _)| i)
         .ok_or(FspError::PhaseDetectionFailed)?;
 
@@ -123,7 +132,7 @@ pub fn detect_phases(trajectory: &[Vector3]) -> Result<PhaseMarkers, FspError> {
     let top_index = trajectory[..impact_index]
         .iter()
         .enumerate()
-        .max_by(|(_, a), (_, b)| a.z.partial_cmp(&b.z).unwrap())
+        .max_by(|(_, a), (_, b)| a.z.total_cmp(&b.z))
         .map(|(i, _)| i)
         .ok_or(FspError::PhaseDetectionFailed)?;
 
@@ -131,7 +140,7 @@ pub fn detect_phases(trajectory: &[Vector3]) -> Result<PhaseMarkers, FspError> {
     let ft_peak_index = trajectory[impact_index..]
         .iter()
         .enumerate()
-        .max_by(|(_, a), (_, b)| a.z.partial_cmp(&b.z).unwrap())
+        .max_by(|(_, a), (_, b)| a.z.total_cmp(&b.z))
         .map(|(i, _)| impact_index + i)
         .ok_or(FspError::PhaseDetectionFailed)?;
 
@@ -149,8 +158,7 @@ pub fn detect_phases(trajectory: &[Vector3]) -> Result<PhaseMarkers, FspError> {
         .min_by(|(_, a), (_, b)| {
             (a.z - z_md_target)
                 .abs()
-                .partial_cmp(&(b.z - z_md_target).abs())
-                .unwrap()
+                .total_cmp(&(b.z - z_md_target).abs())
         })
         .map(|(i, _)| top_index + i)
         .ok_or(FspError::PhaseDetectionFailed)?;
@@ -162,8 +170,7 @@ pub fn detect_phases(trajectory: &[Vector3]) -> Result<PhaseMarkers, FspError> {
         .min_by(|(_, a), (_, b)| {
             (a.z - z_mf_target)
                 .abs()
-                .partial_cmp(&(b.z - z_mf_target).abs())
-                .unwrap()
+                .total_cmp(&(b.z - z_mf_target).abs())
         })
         .map(|(i, _)| impact_index + i)
         .ok_or(FspError::PhaseDetectionFailed)?;
@@ -256,7 +263,7 @@ fn fit_plane(points: &[Vector3]) -> Result<(Vector3, Vector3), FspError> {
     if min_ev.abs() < 1e-14 * (sum_sq + 1.0) {
         // Check if the second-smallest is also near zero.
         let mut sorted = eigenvalues;
-        sorted.sort_by(|a, b| a.partial_cmp(b).unwrap());
+        sorted.sort_by(f64::total_cmp);
         if sorted[1].abs() < 1e-14 * (sum_sq + 1.0) {
             return Err(FspError::CollinearPoints);
         }
@@ -441,6 +448,7 @@ pub fn compute_fsp_from_segment(segment: &[Vector3]) -> Result<FspParameters, Fs
 #[cfg(test)]
 mod tests {
     use super::*;
+    use proptest::prelude::*;
 
     fn v(x: f64, y: f64, z: f64) -> Vector3 {
         Vector3 { x, y, z }
@@ -562,6 +570,36 @@ mod tests {
         assert_eq!(detect_phases(&traj), Err(FspError::TooFewPoints));
     }
 
+    #[test]
+    fn test_phase_detection_rejects_nan() {
+        // A NaN Z-coordinate must be rejected, not panic the `partial_cmp`
+        // comparisons (issue #3554). At least 6 points to pass the length gate.
+        let mut traj = vec![
+            v(0.0, 0.0, 0.5),
+            v(1.0, 0.0, 1.0),
+            v(2.0, 0.0, 0.0),
+            v(3.0, 0.0, 0.2),
+            v(4.0, 0.0, 0.6),
+            v(5.0, 0.0, 0.8),
+        ];
+        traj[2].z = f64::NAN;
+        assert_eq!(detect_phases(&traj), Err(FspError::NonFiniteInput));
+    }
+
+    #[test]
+    fn test_phase_detection_rejects_infinite() {
+        let mut traj = vec![
+            v(0.0, 0.0, 0.5),
+            v(1.0, 0.0, 1.0),
+            v(2.0, 0.0, 0.0),
+            v(3.0, 0.0, 0.2),
+            v(4.0, 0.0, 0.6),
+            v(5.0, 0.0, 0.8),
+        ];
+        traj[4].x = f64::INFINITY;
+        assert_eq!(detect_phases(&traj), Err(FspError::NonFiniteInput));
+    }
+
     // ── direction angle ────────────────────────────────────────────────────
 
     #[test]
@@ -590,5 +628,36 @@ mod tests {
             "expected positive direction, got {}",
             direction
         );
+    }
+
+    proptest! {
+        /// Invariant (issue #3555): for any finite, non-degenerate point cloud
+        /// the FSP slope must lie in [0°, 90°] and the direction in
+        /// (-180°, 180°]. We jitter a tilted plane so points are never collinear.
+        #[test]
+        fn prop_fsp_slope_in_range(
+            tilt in 0.0_f64..1.5_f64,
+            jitter in prop::array::uniform8(-0.05_f64..0.05_f64),
+        ) {
+            // Four base points on a plane tilted by `tilt` about the X axis,
+            // plus small jitter to guarantee a well-defined (non-collinear) fit.
+            let pts = vec![
+                v(0.0, 0.0, jitter[0]),
+                v(1.0, 0.0, jitter[1]),
+                v(0.0, 1.0, tilt + jitter[2]),
+                v(1.0, 1.0, tilt + jitter[3]),
+                v(0.5, 0.5, 0.5 * tilt + jitter[4]),
+                v(0.2, 0.8, 0.8 * tilt + jitter[5]),
+            ];
+            if let Ok(params) = compute_fsp_from_segment(&pts) {
+                prop_assert!(params.slope_deg.is_finite());
+                prop_assert!(
+                    (0.0..=90.0).contains(&params.slope_deg),
+                    "slope out of range: {}",
+                    params.slope_deg
+                );
+                prop_assert!(params.direction_deg > -180.0 && params.direction_deg <= 180.0);
+            }
+        }
     }
 }

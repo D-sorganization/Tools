@@ -10,14 +10,16 @@
 
 use std::f64::consts::PI;
 
-use crate::math::R_GAS;
-
 // ---------------------------------------------------------------------------
 // Physical constants
 // ---------------------------------------------------------------------------
 
-/// Universal gas constant (J/(mol·K))
-pub const R_UNIVERSAL: f64 = R_GAS;
+/// Universal gas constant (J/(mol·K)).
+///
+/// Single source of truth: re-exported from [`crate::math::R_GAS`] so the value
+/// is defined exactly once (DRY — issue #3556). `R_UNIVERSAL` remains the
+/// canonical name within the engineering module for readability.
+pub use crate::math::R_GAS as R_UNIVERSAL;
 
 /// Stefan-Boltzmann constant (W/(m²·K⁴))
 pub const STEFAN_BOLTZMANN: f64 = 5.670_374_419e-8;
