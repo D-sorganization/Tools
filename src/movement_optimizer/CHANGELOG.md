@@ -22,6 +22,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `Path`, raising `ValueError` with a clear message instead of silently
   accepting whitespace (closes #329).
 
+### Fixed
+
+- Kept Swingset and Chain Dynamics analysis legends outside the plot data
+  rectangle so visible legends no longer obscure curves.
+
 ## [1.2.0] - 2026-04-26
 
 ### Changed
