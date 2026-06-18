@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { RoutingMatrix, TAG_INDICES } from "./components/RoutingMatrix";
+import React, { useState, useEffect } from "react";
+import { RoutingMatrix } from "./components/RoutingMatrix";
 import { TrendChart } from "./components/TrendChart";
 import { AlarmsHeader } from "./components/AlarmsHeader";
 import { EStopButton } from "./components/EStopButton";
@@ -9,44 +9,50 @@ import { EventLogView } from "./components/EventLogView";
 import { ProjectImporter } from "./components/ProjectImporter";
 import { LadderExplorer } from "./components/LadderExplorer";
 import { PlantHierarchy } from "./components/PlantHierarchy";
-import { PowerSupplyControl, type PowerSupplyStatus } from "./components/PowerSupplyControl";
+import { PowerSupplyControl } from "./components/PowerSupplyControl";
+import type { LadderTagInfo } from "./api/schemas";
+import { NotificationBanner } from "./components/NotificationBanner";
+import { TabBar } from "./components/TabBar";
+import { CsvExporter } from "./components/CsvExporter";
+import { useTelemetryStream } from "./hooks/useTelemetryStream";
+import { type TabId, defaultTabVisibility } from "./lib/tabs";
+import { TAG_INDICES, tagName, parseTagId } from "./lib/tags";
+import { fmtNumber } from "./lib/format";
+import * as api from "./api/endpoints";
+import { ApiError } from "./api/client";
+import type {
+  PIDConfig,
+  InterlockConfig,
+  RoutingConfig,
+  NotificationState,
+  NotificationType,
+  EventLogEntry,
+  TuningResult,
+  MpcSimResult,
+} from "./types";
 import {
   Activity,
   Sliders,
   Shuffle,
   ShieldAlert,
-  Download,
   Sun,
   Moon,
   Info,
   BookOpen,
   Settings,
   X,
-  FileText,
 } from "lucide-react";
 
-export interface PIDConfig {
-  pv_tag_id: number;
-  cv_tag_id: number;
-  setpoint: number;
-  kp: number;
-  ki: number;
-  kd: number;
-}
-
-export interface InterlockConfig {
-  lolo_limit: number;
-  low_limit: number;
-  high_limit: number;
-  hihi_limit: number;
-}
-
-export interface RoutingConfig {
-  input_routing: number[];
-  output_routing: number[];
-  pids: PIDConfig[];
-  interlocks: InterlockConfig[];
-}
+// Re-export domain types for back-compat with existing importers (AlarmsHeader,
+// EventLogView, InterlocksPanel, RoutingMatrix, ControlDashboard).
+export type {
+  PIDConfig,
+  InterlockConfig,
+  RoutingConfig,
+  AlicatMFCState,
+  EventLogEntry,
+  ActiveAlarm,
+} from "./types";
 
 const DEFAULT_CONFIG: RoutingConfig = {
   input_routing: [0, 1, 2, 3, 4, 5],
@@ -67,37 +73,6 @@ const DEFAULT_CONFIG: RoutingConfig = {
   })),
 };
 
-export interface AlicatMFCState {
-  device_id: string;
-  name: string;
-  gas: string;
-  setpoint: number;
-  mass_flow: number;
-  volumetric_flow: number;
-  pressure: number;
-  temperature: number;
-  max_flow: number;
-  port_or_ip: string | null;
-  connection_state: string;
-}
-
-export interface EventLogEntry {
-  id: number;
-  event_type: string;
-  description: string;
-  severity: number;
-  timestamp: string;
-}
-
-export interface ActiveAlarm {
-  tag_id: string;
-  state: string;
-  value: number;
-  severity: number;
-  acknowledged: boolean;
-  timestamp: string;
-}
-
 type InspectorState =
   | { type: "none" }
   | { type: "tag"; tagId: number }
@@ -110,56 +85,46 @@ type InspectorState =
 
 export const App: React.FC = () => {
   const [config, setConfig] = useState<RoutingConfig>(DEFAULT_CONFIG);
-  const [tagValues, setTagValues] = useState<number[]>(Array(32).fill(0.0));
-  const [history, setHistory] = useState<number[][]>([]);
-  const [alicats, setAlicats] = useState<AlicatMFCState[]>([]);
-  const [isConnected, setIsConnected] = useState<boolean>(false);
   const [deploying, setDeploying] = useState<boolean>(false);
-  const [notification, setNotification] = useState<{
-    message: string;
-    type: "success" | "error" | "info";
-  } | null>(null);
+  const [notification, setNotification] = useState<NotificationState | null>(null);
 
-  // Alarms and Events State
-  const [eventsHistory, setEventsHistory] = useState<EventLogEntry[]>([]);
-  const [activeAlarms, setActiveAlarms] = useState<ActiveAlarm[]>([]);
-  const [eStopActive, setEStopActive] = useState<boolean>(false);
+  // Show a notification banner (declared early so the telemetry hook can use it).
+  const triggerNotification = (message: string, type: NotificationType) => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 5000);
+  };
 
-  // Tab Navigation and Visibility State
-  const [activeTab, setActiveTab] = useState<string>("powerSupply");
-  const [visibleTabs, setVisibleTabs] = useState<{
-    trends: boolean;
-    controllers: boolean;
-    routing: boolean;
-    tuning: boolean;
-    events: boolean;
-    ladder: boolean;
-    hierarchy: boolean;
-    powerSupply: boolean;
-  }>({
-    trends: true,
-    controllers: true,
-    routing: true,
-    tuning: true,
-    events: true,
-    ladder: true,
-    hierarchy: true,
-    powerSupply: true,
+  // Live telemetry (WS stream + derived state) is owned by a dedicated hook.
+  const {
+    tagValues,
+    history,
+    tagsDict,
+    alicats,
+    activeAlarms,
+    eStopActive,
+    powerSupplyStatus,
+    isConnected,
+    setAlicats,
+    setActiveAlarms,
+    setEStopActive,
+  } = useTelemetryStream({
+    onConnect: () => triggerNotification("SCADA live stream connected.", "info"),
   });
 
-  // Power-supply controller live status (extracted from /api/stream).
-  const [powerSupplyStatus, setPowerSupplyStatus] = useState<PowerSupplyStatus | undefined>(undefined);
+  // Events history (polled separately from the live stream).
+  const [eventsHistory, setEventsHistory] = useState<EventLogEntry[]>([]);
+
+  // Tab Navigation and Visibility State
+  const [activeTab, setActiveTab] = useState<TabId>("powerSupply");
+  const [visibleTabs, setVisibleTabs] = useState<Record<TabId, boolean>>(
+    defaultTabVisibility,
+  );
 
   // PID Tuning State
   const [selectedTuningLoop, setSelectedTuningLoop] = useState<number>(0);
   const [isTuningMode, setIsTuningMode] = useState<boolean>(false);
   const [tuningStepVal, setTuningStepVal] = useState<string>("50.0");
-  const [tuningResults, setTuningResults] = useState<{
-    status: string;
-    message: string;
-    parameters: { kp: number; tau: number; theta: number };
-    recommended_pid: { kp: number; ki: number; kd: number };
-  } | null>(null);
+  const [tuningResults, setTuningResults] = useState<TuningResult | null>(null);
 
   // MPC Simulation State
   const [mpcParams, setMpcParams] = useState({
@@ -171,12 +136,7 @@ export const App: React.FC = () => {
     process_tau: 5.0,
     process_delay: 1.0,
   });
-  const [mpcSimData, setMpcSimData] = useState<{
-    status: string;
-    time: number[];
-    pid: { pv: number[]; cv: number[] };
-    mpc: { pv: number[]; cv: number[] };
-  } | null>(null);
+  const [mpcSimData, setMpcSimData] = useState<MpcSimResult | null>(null);
 
   // Theme & Navigation Sidebar State
   const [theme, setTheme] = useState<"dark" | "light">(() => {
@@ -191,36 +151,27 @@ export const App: React.FC = () => {
   // Alicat MFC form states
   const [alicatSetpointVal, setAlicatSetpointVal] = useState<string>("");
 
-  // Large-scale plant tags state
-  const [tagsDict, setTagsDict] = useState<Record<string, number>>({});
-  const [allTags, setAllTags] = useState<any[]>([]);
+  // Large-scale plant tags state (ladder registry, for the inspector).
+  const [allTags, setAllTags] = useState<LadderTagInfo[]>([]);
 
   const fetchAllTags = async () => {
     try {
-      const res = await fetch("/api/project/ladder-explorer");
-      if (res.ok) {
-        const data = await res.json();
-        setAllTags(data);
-      }
+      setAllTags(await api.getLadderExplorer());
     } catch (e) {
       console.error("Failed to fetch all tags", e);
     }
   };
 
   const handleSelectTag = (name: string) => {
-    if (name.startsWith("TAG_")) {
-      const id = parseInt(name.substring(4), 10);
-      if (!isNaN(id) && id >= 0 && id < 32) {
-        setInspectorView({ type: "tag", tagId: id });
-        const val = tagValues[id] ?? 0.0;
-        setOverrideVal(val.toFixed(2));
-        setShowOverrideConfirm(false);
-        return;
-      }
+    const id = parseTagId(name);
+    if (id !== null) {
+      setInspectorView({ type: "tag", tagId: id });
+      setOverrideVal(fmtNumber(tagValues[id] ?? 0.0, 2, "0.00"));
+      setShowOverrideConfirm(false);
+      return;
     }
     setInspectorView({ type: "custom_tag", tagName: name });
-    const val = tagsDict[name] ?? 0.0;
-    setOverrideVal(val.toFixed(2));
+    setOverrideVal(fmtNumber(tagsDict[name] ?? 0.0, 2, "0.00"));
     setShowOverrideConfirm(false);
   };
 
@@ -231,25 +182,7 @@ export const App: React.FC = () => {
         setAlicatSetpointVal(mfc.setpoint.toString());
       }
     }
-  }, [inspectorView]);
-
-  // Historical Telemetry Downloader State (Inside Default Sidebar view)
-  const [exportTags, setExportTags] = useState<string>("0, 1, 10");
-  const [exportStart, setExportStart] = useState<string>(() => {
-    const d = new Date();
-    d.setMinutes(d.getMinutes() - 15);
-    const tzOffset = d.getTimezoneOffset() * 60000;
-    const localISOTime = new Date(d.getTime() - tzOffset).toISOString().slice(0, 16);
-    return localISOTime;
-  });
-  const [exportEnd, setExportEnd] = useState<string>(() => {
-    const d = new Date();
-    const tzOffset = d.getTimezoneOffset() * 60000;
-    const localISOTime = new Date(d.getTime() - tzOffset).toISOString().slice(0, 16);
-    return localISOTime;
-  });
-
-  const wsRef = useRef<WebSocket | null>(null);
+  }, [inspectorView, alicats]);
 
   // Synchronize CSS custom property set on HTML element
   useEffect(() => {
@@ -257,80 +190,72 @@ export const App: React.FC = () => {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  // Show a notification banner
-  const triggerNotification = (
-    message: string,
-    type: "success" | "error" | "info"
-  ) => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
-  };
-
-  // Fetch current PLC configuration on mount
+  // Fetch current PLC configuration on mount. The routing payload is a dynamic
+  // TAG_x <-> index normalization, so it is handled with explicit shape guards
+  // rather than a fixed schema.
   const fetchConfig = async () => {
     try {
-      const res = await fetch("/api/routing");
-      if (res.ok) {
-        const data = await res.json();
-        
-        // Helper to convert TAG_x to x (number)
-        const toInt = (t: string | number | undefined | null): number => {
-          if (t === undefined || t === null) return 0;
-          if (typeof t === "number") return t;
-          if (typeof t === "string" && t.startsWith("TAG_")) {
-            const parsed = parseInt(t.substring(4), 10);
-            return isNaN(parsed) ? 0 : parsed;
-          }
-          return 0;
-        };
+      const data = (await api.getRouting()) as {
+        input_routing?: unknown;
+        output_routing?: unknown;
+        pids?: unknown;
+        interlocks?: Record<string, Partial<InterlockConfig>>;
+      };
 
-        const mappedConfig: RoutingConfig = {
-          input_routing: Array.isArray(data.input_routing) 
-            ? data.input_routing.map(toInt) 
-            : [],
-          output_routing: Array.isArray(data.output_routing) 
-            ? data.output_routing.map(toInt) 
-            : [],
-          pids: Array.isArray(data.pids) 
-            ? data.pids.map((p: any) => ({
-                pv_tag_id: toInt(p.pv_tag),
-                cv_tag_id: toInt(p.cv_tag),
-                setpoint: typeof p.setpoint === "number" ? p.setpoint : 0,
-                kp: typeof p.kp === "number" ? p.kp : 0,
-                ki: typeof p.ki === "number" ? p.ki : 0,
-                kd: typeof p.kd === "number" ? p.kd : 0,
-              }))
-            : [],
-          interlocks: (() => {
-            const mappedInts: InterlockConfig[] = TAG_INDICES.map(() => ({
-              lolo_limit: 0.0,
-              low_limit: 5.0,
-              high_limit: 95.0,
-              hihi_limit: 100.0,
-            }));
-            if (data.interlocks && typeof data.interlocks === "object") {
-              for (let i = 0; i < 32; i++) {
-                const key = `TAG_${i}`;
-                if (data.interlocks[key]) {
-                  mappedInts[i] = {
-                    lolo_limit: data.interlocks[key].lolo_limit ?? 0.0,
-                    low_limit: data.interlocks[key].low_limit ?? 5.0,
-                    high_limit: data.interlocks[key].high_limit ?? 95.0,
-                    hihi_limit: data.interlocks[key].hihi_limit ?? 100.0,
-                  };
-                }
+      // Helper to convert TAG_x to x (number)
+      const toInt = (t: unknown): number => {
+        if (typeof t === "number") return t;
+        if (typeof t === "string") {
+          const parsed = parseTagId(t);
+          return parsed ?? 0;
+        }
+        return 0;
+      };
+
+      const mappedConfig: RoutingConfig = {
+        input_routing: Array.isArray(data.input_routing)
+          ? data.input_routing.map(toInt)
+          : [],
+        output_routing: Array.isArray(data.output_routing)
+          ? data.output_routing.map(toInt)
+          : [],
+        pids: Array.isArray(data.pids)
+          ? data.pids.map((p: Record<string, unknown>) => ({
+              pv_tag_id: toInt(p.pv_tag),
+              cv_tag_id: toInt(p.cv_tag),
+              setpoint: typeof p.setpoint === "number" ? p.setpoint : 0,
+              kp: typeof p.kp === "number" ? p.kp : 0,
+              ki: typeof p.ki === "number" ? p.ki : 0,
+              kd: typeof p.kd === "number" ? p.kd : 0,
+            }))
+          : [],
+        interlocks: (() => {
+          const mappedInts: InterlockConfig[] = TAG_INDICES.map(() => ({
+            lolo_limit: 0.0,
+            low_limit: 5.0,
+            high_limit: 95.0,
+            hihi_limit: 100.0,
+          }));
+          if (data.interlocks && typeof data.interlocks === "object") {
+            TAG_INDICES.forEach((i) => {
+              const entry = data.interlocks?.[tagName(i)];
+              if (entry) {
+                mappedInts[i] = {
+                  lolo_limit: entry.lolo_limit ?? 0.0,
+                  low_limit: entry.low_limit ?? 5.0,
+                  high_limit: entry.high_limit ?? 95.0,
+                  hihi_limit: entry.hihi_limit ?? 100.0,
+                };
               }
-            }
-            return mappedInts;
-          })(),
-        };
+            });
+          }
+          return mappedInts;
+        })(),
+      };
 
-        setConfig(mappedConfig);
-        triggerNotification("Loaded active PLC configuration.", "success");
-      } else {
-        triggerNotification("Failed to fetch routing configuration from PLC.", "error");
-      }
-    } catch (err) {
+      setConfig(mappedConfig);
+      triggerNotification("Loaded active PLC configuration.", "success");
+    } catch {
       triggerNotification("PLC offline. Unable to read registers.", "error");
     }
   };
@@ -340,11 +265,11 @@ export const App: React.FC = () => {
     setDeploying(true);
     try {
       const payload = {
-        input_routing: config.input_routing.map((idx) => `TAG_${idx}`),
-        output_routing: config.output_routing.map((idx) => `TAG_${idx}`),
+        input_routing: config.input_routing.map(tagName),
+        output_routing: config.output_routing.map(tagName),
         pids: config.pids.map((p) => ({
-          pv_tag: `TAG_${p.pv_tag_id}`,
-          cv_tag: `TAG_${p.cv_tag_id}`,
+          pv_tag: tagName(p.pv_tag_id),
+          cv_tag: tagName(p.cv_tag_id),
           setpoint: p.setpoint,
           kp: p.kp,
           ki: p.ki,
@@ -353,31 +278,20 @@ export const App: React.FC = () => {
         interlocks: (() => {
           const dict: Record<string, InterlockConfig> = {};
           config.interlocks.forEach((intVal, i) => {
-            dict[`TAG_${i}`] = intVal;
+            dict[tagName(i)] = intVal;
           });
           return dict;
         })(),
       };
 
-      const res = await fetch("/api/routing", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (res.ok) {
-        triggerNotification(
-          "Configuration deployed & written to NVRAM successfully.",
-          "success"
-        );
-      } else {
-        const errData = await res.json();
-        triggerNotification(
-          `Deployment failed: ${errData.detail || "Modbus error"}`,
-          "error"
-        );
-      }
+      await api.deployRouting(payload);
+      triggerNotification(
+        "Configuration deployed & written to NVRAM successfully.",
+        "success",
+      );
     } catch (err) {
-      triggerNotification("Deployment failed: connection error.", "error");
+      const detail = err instanceof ApiError ? err.message : "connection error";
+      triggerNotification(`Deployment failed: ${detail}`, "error");
     } finally {
       setDeploying(false);
     }
@@ -388,19 +302,12 @@ export const App: React.FC = () => {
   // corrects it), so the operator gets confirmation even if the stream is down.
   const handleEStop = async () => {
     try {
-      const res = await fetch("/api/estop", { method: "POST" });
-      if (res.ok) {
-        setEStopActive(true);
-        triggerNotification("EMERGENCY SHUTDOWN COMMAND ISSUED!", "error");
-      } else {
-        triggerNotification(
-          "E-STOP NOT CONFIRMED by server — verify the PLC output is dead!",
-          "error",
-        );
-      }
+      await api.triggerEStop();
+      setEStopActive(true);
+      triggerNotification("EMERGENCY SHUTDOWN COMMAND ISSUED!", "error");
     } catch {
       triggerNotification(
-        "E-STOP request failed to reach the server — verify the PLC output!",
+        "E-STOP NOT CONFIRMED by server — verify the PLC output is dead!",
         "error",
       );
     }
@@ -418,18 +325,11 @@ export const App: React.FC = () => {
     )
       return;
     try {
-      const res = await fetch("/api/estop/clear", { method: "POST" });
-      if (!res.ok) {
-        triggerNotification(
-          "E-stop clear was rejected — system remains latched.",
-          "error",
-        );
-        return;
-      }
+      await api.clearEStop();
       triggerNotification("E-stop cleared. Re-arm to resume.", "info");
     } catch {
       triggerNotification(
-        "E-stop clear failed to reach the server — system remains latched.",
+        "E-stop clear was rejected — system remains latched.",
         "error",
       );
     }
@@ -443,50 +343,13 @@ export const App: React.FC = () => {
       return;
     }
     try {
-      const res = await fetch(`/api/tags/${tagId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ value: parsed }),
-      });
-      if (res.ok) {
-        triggerNotification(
-          `Successfully forced Tag ${tagId} to ${parsed}`,
-          "success"
-        );
-        setShowOverrideConfirm(false);
-      } else {
-        const err = await res.json();
-        triggerNotification(
-          `Override failed: ${err.detail || "PLC write failed"}`,
-          "error"
-        );
-      }
+      await api.forceTag(tagId, parsed);
+      triggerNotification(`Successfully forced Tag ${tagId} to ${parsed}`, "success");
+      setShowOverrideConfirm(false);
     } catch (err) {
-      triggerNotification("Failed to connect to PLC backend.", "error");
+      const detail = err instanceof ApiError ? err.message : "PLC write failed";
+      triggerNotification(`Override failed: ${detail}`, "error");
     }
-  };
-
-  // Download CSV logs
-  const handleDownloadCSV = () => {
-    const startISO = new Date(exportStart).toISOString();
-    const endISO = new Date(exportEnd).toISOString();
-    const cleanedTags = exportTags
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean)
-      .join(",");
-
-    if (!cleanedTags) {
-      triggerNotification("Please enter at least one Tag ID.", "error");
-      return;
-    }
-
-    const url = `/api/export?tag_ids=${encodeURIComponent(
-      cleanedTags
-    )}&start_time=${encodeURIComponent(startISO)}&end_time=${encodeURIComponent(
-      endISO
-    )}`;
-    window.open(url, "_blank");
   };
 
   // Helper to update active PID config
@@ -514,11 +377,7 @@ export const App: React.FC = () => {
   // Fetch current Alicats configurations
   const fetchAlicats = async () => {
     try {
-      const res = await fetch("/api/alicats");
-      if (res.ok) {
-        const data = await res.json();
-        setAlicats(data);
-      }
+      setAlicats(await api.getAlicats());
     } catch (err) {
       console.error(err);
     }
@@ -526,16 +385,12 @@ export const App: React.FC = () => {
 
   const fetchAlarmsAndEvents = async () => {
     try {
-      const [alarmsRes, eventsRes] = await Promise.all([
-        fetch("/api/alarms/active"),
-        fetch("/api/events?limit=50")
+      const [alarms, events] = await Promise.all([
+        api.getActiveAlarms(),
+        api.getEvents(50),
       ]);
-      if (alarmsRes.ok) {
-        setActiveAlarms(await alarmsRes.json());
-      }
-      if (eventsRes.ok) {
-        setEventsHistory(await eventsRes.json());
-      }
+      setActiveAlarms(alarms);
+      setEventsHistory(events);
     } catch (err) {
       console.error("Failed to fetch alarms and events", err);
     }
@@ -543,106 +398,71 @@ export const App: React.FC = () => {
 
   const handleAcknowledgeAlarm = async (tagId: string) => {
     try {
-      const res = await fetch(`/api/alarms/${tagId}/acknowledge`, { method: "POST" });
-      if (res.ok) {
-        triggerNotification(`Alarm on Tag ${tagId} acknowledged`, "success");
-        fetchAlarmsAndEvents();
-      }
-    } catch (err) {
+      await api.acknowledgeAlarm(tagId);
+      triggerNotification(`Alarm on Tag ${tagId} acknowledged`, "success");
+      fetchAlarmsAndEvents();
+    } catch {
       triggerNotification("Failed to acknowledge alarm", "error");
     }
   };
 
   const handleAlicatSetpoint = async (deviceId: string, val: number) => {
     try {
-      const res = await fetch(`/api/alicats/${deviceId}/setpoint`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ setpoint: val }),
-      });
-      if (res.ok) {
-        setAlicats((prev) =>
-          prev.map((m) => (m.device_id === deviceId ? { ...m, setpoint: val } : m))
-        );
-        triggerNotification(`Setpoint for MFC ${deviceId} set to ${val} SLPM.`, "success");
-      } else {
-        triggerNotification("Failed to update Alicat setpoint.", "error");
-      }
-    } catch (err) {
-      triggerNotification("Connection error updating setpoint.", "error");
+      await api.setAlicatSetpoint(deviceId, val);
+      setAlicats((prev) =>
+        prev.map((m) => (m.device_id === deviceId ? { ...m, setpoint: val } : m)),
+      );
+      triggerNotification(`Setpoint for MFC ${deviceId} set to ${val} SLPM.`, "success");
+    } catch {
+      triggerNotification("Failed to update Alicat setpoint.", "error");
     }
   };
 
   const handleAlicatGas = async (deviceId: string, gas: string) => {
     try {
-      const res = await fetch(`/api/alicats/${deviceId}/gas`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ gas }),
-      });
-      if (res.ok) {
-        setAlicats((prev) =>
-          prev.map((m) => (m.device_id === deviceId ? { ...m, gas } : m))
-        );
-        triggerNotification(`Alicat MFC ${deviceId} gas calibration set to ${gas}.`, "success");
-      } else {
-        triggerNotification("Failed to update Alicat gas calibration.", "error");
-      }
-    } catch (err) {
-      triggerNotification("Connection error updating gas type.", "error");
+      await api.setAlicatGas(deviceId, gas);
+      setAlicats((prev) =>
+        prev.map((m) => (m.device_id === deviceId ? { ...m, gas } : m)),
+      );
+      triggerNotification(`Alicat MFC ${deviceId} gas calibration set to ${gas}.`, "success");
+    } catch {
+      triggerNotification("Failed to update Alicat gas calibration.", "error");
     }
   };
 
   // PID Tuning & MPC Helper Functions
   const startTuning = async (index: number) => {
     try {
-      const res = await fetch(`/api/pid/${index}/tuning/start`, { method: "POST" });
-      if (res.ok) {
-        setIsTuningMode(true);
-        setTuningResults(null);
-        triggerNotification(`Tuning session started for PID Loop ${index + 1}. Automatic control decoupled.`, "success");
-      } else {
-        triggerNotification("Failed to start tuning session.", "error");
-      }
-    } catch (err) {
-      triggerNotification("Connection error starting tuning.", "error");
+      await api.startTuning(index);
+      setIsTuningMode(true);
+      setTuningResults(null);
+      triggerNotification(`Tuning session started for PID Loop ${index + 1}. Automatic control decoupled.`, "success");
+    } catch {
+      triggerNotification("Failed to start tuning session.", "error");
     }
   };
 
   const stepTuning = async (index: number, val: number) => {
     try {
-      const res = await fetch(`/api/pid/${index}/tuning/step`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ step_value: val }),
-      });
-      if (res.ok) {
-        triggerNotification(`Tuning step change applied: CV = ${val}`, "success");
-      } else {
-        triggerNotification("Failed to apply tuning step change.", "error");
-      }
-    } catch (err) {
-      triggerNotification("Connection error applying step change.", "error");
+      await api.stepTuning(index, val);
+      triggerNotification(`Tuning step change applied: CV = ${val}`, "success");
+    } catch {
+      triggerNotification("Failed to apply tuning step change.", "error");
     }
   };
 
   const stopTuning = async (index: number) => {
     try {
-      const res = await fetch(`/api/pid/${index}/tuning/stop`, { method: "POST" });
-      if (res.ok) {
-        const data = await res.json();
-        setTuningResults(data);
-        setIsTuningMode(false);
-        if (data.status === "success") {
-          triggerNotification("Tuning session stopped. Process parameters identified.", "success");
-        } else {
-          triggerNotification(data.message || "Tuning session stopped.", "info");
-        }
+      const data = await api.stopTuning(index);
+      setTuningResults(data);
+      setIsTuningMode(false);
+      if (data.status === "success") {
+        triggerNotification("Tuning session stopped. Process parameters identified.", "success");
       } else {
-        triggerNotification("Failed to stop tuning session.", "error");
+        triggerNotification(data.message || "Tuning session stopped.", "info");
       }
-    } catch (err) {
-      triggerNotification("Connection error stopping tuning.", "error");
+    } catch {
+      triggerNotification("Failed to stop tuning session.", "error");
     }
   };
 
@@ -661,158 +481,43 @@ export const App: React.FC = () => {
 
   const runMpcSimulation = async () => {
     try {
-      const res = await fetch(`/api/mpc/simulate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(mpcParams),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setMpcSimData(data);
-        triggerNotification("MPC vs PID simulation complete.", "success");
-      } else {
-        triggerNotification("Failed to execute MPC simulation.", "error");
-      }
-    } catch (err) {
-      triggerNotification("Connection error running MPC simulation.", "error");
+      const data = await api.simulateMpc(mpcParams);
+      setMpcSimData(data);
+      triggerNotification("MPC vs PID simulation complete.", "success");
+    } catch {
+      triggerNotification("Failed to execute MPC simulation.", "error");
     }
   };
 
-  const handleTabVisibilityToggle = (tabName: keyof typeof visibleTabs) => {
-    const nextVisible = { ...visibleTabs, [tabName]: !visibleTabs[tabName] };
+  const handleTabVisibilityToggle = (tab: TabId) => {
+    const nextVisible = { ...visibleTabs, [tab]: !visibleTabs[tab] };
     const anyVisible = Object.values(nextVisible).some(Boolean);
     if (!anyVisible) {
       triggerNotification("At least one tab must remain visible.", "error");
       return;
     }
     setVisibleTabs(nextVisible);
-    if (activeTab === tabName && !nextVisible[tabName]) {
-      const firstVisible = Object.keys(nextVisible).find((k) => nextVisible[k as keyof typeof visibleTabs]) || "trends";
-      setActiveTab(firstVisible);
+    if (activeTab === tab && !nextVisible[tab]) {
+      const firstVisible = (Object.keys(nextVisible) as TabId[]).find(
+        (k) => nextVisible[k],
+      );
+      setActiveTab(firstVisible ?? "trends");
     }
   };
 
-  // Set up WebSocket connections for live metrics stream
+  // Initial REST fetches on mount. The live WebSocket stream is owned by the
+  // useTelemetryStream hook above; this only pulls the one-shot config/registry.
   useEffect(() => {
     fetchConfig();
     fetchAlicats();
     fetchAllTags();
-
-    const connectWebSocket = () => {
-      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-      const wsUrl = `${protocol}//${window.location.host}/api/stream`;
-
-      const ws = new WebSocket(wsUrl);
-      wsRef.current = ws;
-
-      ws.onopen = () => {
-        setIsConnected(true);
-        triggerNotification("SCADA live stream connected.", "info");
-      };
-
-      ws.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          
-          if (data && typeof data === "object" && "tags" in data) {
-            const rawValues = data.tags;
-            if (Array.isArray(rawValues) && rawValues.length === 32) {
-              setTagValues(rawValues);
-              setHistory((prev) => {
-                const updated = [...prev, rawValues];
-                if (updated.length > 1200) {
-                  updated.shift();
-                }
-                return updated;
-              });
-            }
-            if (data.tags_dict && typeof data.tags_dict === "object") {
-              setTagsDict(data.tags_dict);
-            }
-            if (Array.isArray(data.alicats)) {
-              setAlicats(data.alicats);
-            }
-            if (data.active_alarms) {
-              setActiveAlarms(Object.values(data.active_alarms));
-            }
-            if (typeof data.e_stop_active === "boolean") {
-              setEStopActive(data.e_stop_active);
-            }
-            if (data.power_supply && typeof data.power_supply === "object") {
-              setPowerSupplyStatus(data.power_supply as PowerSupplyStatus);
-            }
-          } else {
-            // Fallback for simple legacy tag arrays
-            const rawValues = data;
-            if (Array.isArray(rawValues) && rawValues.length === 32) {
-              setTagValues(rawValues);
-              setHistory((prev) => {
-                const updated = [...prev, rawValues];
-                if (updated.length > 1200) {
-                  updated.shift();
-                }
-                return updated;
-              });
-            }
-          }
-        } catch (e) {
-          console.error("Failed to parse WebSocket message:", e);
-        }
-      };
-
-      ws.onclose = () => {
-        setIsConnected(false);
-        setTimeout(connectWebSocket, 3000);
-      };
-
-      ws.onerror = (err) => {
-        console.error("WebSocket error:", err);
-        ws.close();
-      };
-    };
-
-    connectWebSocket();
-
-    return () => {
-      if (wsRef.current) {
-        wsRef.current.close();
-      }
-    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className="dashboard-container">
       {/* Top Banner Notification */}
-      {notification && (
-        <div
-          style={{
-            position: "fixed",
-            top: "1.25rem",
-            right: "1.25rem",
-            zIndex: 9999,
-            padding: "0.75rem 1.25rem",
-            borderRadius: "4px",
-            fontSize: "0.85rem",
-            fontWeight: 500,
-            borderLeft: "4px solid",
-            color: "#ffffff",
-            backgroundColor:
-              notification.type === "success"
-                ? "rgba(16, 185, 129, 0.2)"
-                : notification.type === "error"
-                ? "rgba(239, 68, 68, 0.25)"
-                : "rgba(56, 189, 248, 0.15)",
-            borderColor:
-              notification.type === "success"
-                ? "var(--color-success)"
-                : notification.type === "error"
-                ? "var(--color-error)"
-                : "var(--accent-cyan)",
-          }}
-        >
-          {notification.message}
-        </div>
-      )}
+      <NotificationBanner notification={notification} />
 
       {/* Sticky header — always visible so the E-stop is always one click away */}
       <header
@@ -929,169 +634,12 @@ export const App: React.FC = () => {
       <div className="main-layout-grid" style={{ gridTemplateColumns: "1fr" }}>
         {/* Left Column (Master Dashboard elements) */}
         <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-          {/* Tabbed Navigation Bar */}
-          <div style={{ display: "flex", borderBottom: "1px solid var(--panel-border)", gap: "0.25rem", paddingBottom: "0.25rem", marginBottom: "0.5rem" }}>
-            {visibleTabs.powerSupply && (
-              <button
-                type="button"
-                className={`tab-btn ${activeTab === "powerSupply" ? "active" : ""}`}
-                onClick={() => setActiveTab("powerSupply")}
-                style={{
-                  background: "none",
-                  border: "none",
-                  color: activeTab === "powerSupply" ? "var(--accent-purple, #a78bfa)" : "var(--text-secondary)",
-                  padding: "0.5rem 1rem",
-                  fontSize: "0.85rem",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  borderBottom: activeTab === "powerSupply" ? "2px solid var(--accent-purple, #a78bfa)" : "2px solid transparent",
-                  transition: "all var(--transition-fast)",
-                }}
-              >
-                Power Supply
-              </button>
-            )}
-            {visibleTabs.trends && (
-              <button
-                type="button"
-                className={`tab-btn ${activeTab === "trends" ? "active" : ""}`}
-                onClick={() => setActiveTab("trends")}
-                style={{
-                  background: "none",
-                  border: "none",
-                  color: activeTab === "trends" ? "var(--accent-cyan)" : "var(--text-secondary)",
-                  padding: "0.5rem 1rem",
-                  fontSize: "0.85rem",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  borderBottom: activeTab === "trends" ? "2px solid var(--accent-cyan)" : "2px solid transparent",
-                  transition: "all var(--transition-fast)",
-                }}
-              >
-                Trends & Monitors
-              </button>
-            )}
-            {visibleTabs.controllers && (
-              <button
-                type="button"
-                className={`tab-btn ${activeTab === "controllers" ? "active" : ""}`}
-                onClick={() => setActiveTab("controllers")}
-                style={{
-                  background: "none",
-                  border: "none",
-                  color: activeTab === "controllers" ? "var(--accent-purple)" : "var(--text-secondary)",
-                  padding: "0.5rem 1rem",
-                  fontSize: "0.85rem",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  borderBottom: activeTab === "controllers" ? "2px solid var(--accent-purple)" : "2px solid transparent",
-                  transition: "all var(--transition-fast)",
-                }}
-              >
-                PID & Mass Flow
-              </button>
-            )}
-            {visibleTabs.routing && (
-              <button
-                type="button"
-                className={`tab-btn ${activeTab === "routing" ? "active" : ""}`}
-                onClick={() => setActiveTab("routing")}
-                style={{
-                  background: "none",
-                  border: "none",
-                  color: activeTab === "routing" ? "var(--accent-magenta)" : "var(--text-secondary)",
-                  padding: "0.5rem 1rem",
-                  fontSize: "0.85rem",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  borderBottom: activeTab === "routing" ? "2px solid var(--accent-magenta)" : "2px solid transparent",
-                  transition: "all var(--transition-fast)",
-                }}
-              >
-                Signal Routing
-              </button>
-            )}
-            {visibleTabs.tuning && (
-              <button
-                type="button"
-                className={`tab-btn ${activeTab === "tuning" ? "active" : ""}`}
-                onClick={() => setActiveTab("tuning")}
-                style={{
-                  background: "none",
-                  border: "none",
-                  color: activeTab === "tuning" ? "var(--accent-cyan)" : "var(--text-secondary)",
-                  padding: "0.5rem 1rem",
-                  fontSize: "0.85rem",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  borderBottom: activeTab === "tuning" ? "2px solid var(--accent-cyan)" : "2px solid transparent",
-                  transition: "all var(--transition-fast)",
-                }}
-              >
-                Tuning & MPC
-              </button>
-            )}
-            {visibleTabs.events && (
-              <button
-                type="button"
-                className={`tab-btn ${activeTab === "events" ? "active" : ""}`}
-                onClick={() => setActiveTab("events")}
-                style={{
-                  background: "none",
-                  border: "none",
-                  color: activeTab === "events" ? "var(--color-warning)" : "var(--text-secondary)",
-                  padding: "0.5rem 1rem",
-                  fontSize: "0.85rem",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  borderBottom: activeTab === "events" ? "2px solid var(--color-warning)" : "2px solid transparent",
-                  transition: "all var(--transition-fast)",
-                }}
-              >
-                Events & Alarms
-              </button>
-            )}
-            {visibleTabs.ladder && (
-              <button
-                type="button"
-                className={`tab-btn ${activeTab === "ladder" ? "active" : ""}`}
-                onClick={() => setActiveTab("ladder")}
-                style={{
-                  background: "none",
-                  border: "none",
-                  color: activeTab === "ladder" ? "var(--accent-magenta)" : "var(--text-secondary)",
-                  padding: "0.5rem 1rem",
-                  fontSize: "0.85rem",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  borderBottom: activeTab === "ladder" ? "2px solid var(--accent-magenta)" : "2px solid transparent",
-                  transition: "all var(--transition-fast)",
-                }}
-              >
-                Ladder Explorer
-              </button>
-            )}
-            {visibleTabs.hierarchy && (
-              <button
-                type="button"
-                className={`tab-btn ${activeTab === "hierarchy" ? "active" : ""}`}
-                onClick={() => setActiveTab("hierarchy")}
-                style={{
-                  background: "none",
-                  border: "none",
-                  color: activeTab === "hierarchy" ? "var(--accent-cyan)" : "var(--text-secondary)",
-                  padding: "0.5rem 1rem",
-                  fontSize: "0.85rem",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  borderBottom: activeTab === "hierarchy" ? "2px solid var(--accent-cyan)" : "2px solid transparent",
-                  transition: "all var(--transition-fast)",
-                }}
-              >
-                Plant Hierarchy
-              </button>
-            )}
-          </div>
+          {/* Tabbed Navigation Bar (centralized TABS array, #3546) */}
+          <TabBar
+            activeTab={activeTab}
+            visibleTabs={visibleTabs}
+            onSelect={setActiveTab}
+          />
 
           {activeTab === "powerSupply" && visibleTabs.powerSupply && (
             <PowerSupplyControl
@@ -1712,51 +1260,7 @@ export const App: React.FC = () => {
             {inspectorView.type === "none" && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
                 {/* CSV Log Exporter inside Default Sidebar view */}
-                <div style={{ borderTop: "1px solid var(--panel-border)", paddingTop: "1rem" }}>
-                  <h3 style={{ fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "0.75rem", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                    <FileText size={14} color="var(--accent-purple)" />
-                    <span>CSV Data Exporter</span>
-                  </h3>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-                    <div className="input-group">
-                      <label className="input-label">Tags (comma-separated)</label>
-                      <input
-                        type="text"
-                        className="form-input"
-                        value={exportTags}
-                        onChange={(e) => setExportTags(e.target.value)}
-                        placeholder="e.g. 0,1,10"
-                      />
-                    </div>
-                    <div className="input-group">
-                      <label className="input-label">Start Time</label>
-                      <input
-                        type="datetime-local"
-                        className="form-input"
-                        value={exportStart}
-                        onChange={(e) => setExportStart(e.target.value)}
-                      />
-                    </div>
-                    <div className="input-group">
-                      <label className="input-label">End Time</label>
-                      <input
-                        type="datetime-local"
-                        className="form-input"
-                        value={exportEnd}
-                        onChange={(e) => setExportEnd(e.target.value)}
-                      />
-                    </div>
-                    <button
-                      type="button"
-                      onClick={handleDownloadCSV}
-                      className="btn"
-                      style={{ width: "100%", padding: "0.45rem", fontSize: "0.8rem" }}
-                    >
-                      <Download size={14} />
-                      Export Log Data
-                    </button>
-                  </div>
-                </div>
+                <CsvExporter triggerNotification={triggerNotification} />
 
                 {/* Hardware Reference Docs Drawer */}
                 <div style={{ borderTop: "1px solid var(--panel-border)", paddingTop: "1rem" }}>
@@ -1798,17 +1302,19 @@ export const App: React.FC = () => {
             {/* Tag register editor (Unified for both legacy tag index and custom named tags) */}
             {(inspectorView.type === "tag" || inspectorView.type === "custom_tag") && (() => {
               const isCustom = inspectorView.type === "custom_tag";
-              const tagName = isCustom ? inspectorView.tagName : `TAG_${inspectorView.tagId}`;
-              const tagInfo = allTags.find((t) => t.name === tagName);
-              
+              const tagLabel = isCustom
+                ? inspectorView.tagName
+                : tagName(inspectorView.tagId);
+              const tagInfo = allTags.find((t) => t.name === tagLabel);
+
               // Get current value
               const currentVal = isCustom
-                ? (tagsDict[tagName] ?? 0.0)
+                ? (tagsDict[tagLabel] ?? 0.0)
                 : (tagValues[inspectorView.tagId] ?? 0.0);
               
               // Check if writable (legacy tags are Read/Write, custom tags lookup from registry)
               const rwMode = tagInfo ? tagInfo.rw_mode : "Read/Write";
-              const isWritable = rwMode === "Read/Write" || rwMode === "Read-Write";
+              const isWritable = rwMode === "Read/Write";
 
               return (
                 <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -1817,7 +1323,7 @@ export const App: React.FC = () => {
                       Tag Inspector
                     </h3>
                     <div style={{ fontSize: "0.8rem", color: "var(--text-primary)", fontWeight: 700, marginTop: "0.25rem" }} className="mono-text">
-                      {tagName}
+                      {tagLabel}
                     </div>
                     {tagInfo && tagInfo.description && (
                       <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.25rem", lineHeight: 1.4 }}>
@@ -1883,13 +1389,13 @@ export const App: React.FC = () => {
                         <div style={{ background: "rgba(239, 68, 68, 0.1)", border: "1px solid var(--color-error)", borderRadius: "4px", padding: "0.6rem", marginTop: "0.5rem" }}>
                           <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--color-error)", marginBottom: "0.25rem" }}>Confirm Direct Write</div>
                           <p style={{ fontSize: "0.7rem", color: "var(--text-secondary)", marginBottom: "0.6rem" }}>
-                            Forcing Tag {tagName} to {overrideVal} will overwrite normal logic. Continue?
+                            Forcing Tag {tagLabel} to {overrideVal} will overwrite normal logic. Continue?
                           </p>
                           <div style={{ display: "flex", gap: "0.4rem" }}>
                             <button
                               type="button"
                               onClick={() => {
-                                const idToSubmit = isCustom ? tagName : inspectorView.tagId;
+                                const idToSubmit = isCustom ? tagLabel : inspectorView.tagId;
                                 executeOverride(idToSubmit);
                               }}
                               className="btn"
