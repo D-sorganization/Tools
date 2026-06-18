@@ -82,6 +82,28 @@ jobs:
               ).stdout.strip()
 
           messages = [m.strip() for m in log.splitlines() if m.strip()]
+          force = os.environ.get("FORCE_BUMP", "").strip().lower()
+
+          if (
+              force not in ("major", "minor", "patch")
+              and messages
+              and re.match(r"^chore\(release\): bump version to v\d+\.\d+\.\d+$", messages[0])
+          ):
+              current = os.environ["CURRENT_VERSION"]
+              with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
+                  fh.write("bump=none\n")
+                  fh.write(f"new_version={current}\n")
+                  fh.write(f"current_version={current}\n")
+                  delimiter = "EOF_CHANGELOG"
+                  fh.write(
+                      "changelog_entry<<"
+                      + delimiter
+                      + "\n- Release bump commit detected; skipping recursive release automation.\n"
+                      + delimiter
+                      + "\n"
+                  )
+              print("Release bump commit detected; skipping recursive release automation.")
+              raise SystemExit(0)
 
           # ── Conventional commits → bump type ───────────────────────────
           BREAKING = re.compile(r"BREAKING[ -]CHANGE|!:")
@@ -104,7 +126,6 @@ jobs:
               changelog_lines.append(f"- {msg}")
 
           # Allow manual override
-          force = os.environ.get("FORCE_BUMP", "").strip().lower()
           if force in ("major", "minor", "patch"):
               bump = force
 

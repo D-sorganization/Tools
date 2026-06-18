@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.582                                    |
+| **Spec Version**        | 1.1.584                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -47,6 +47,24 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   PR from a `release/v*` branch instead of attempting a direct push to `main`;
   generated release PR bodies cap embedded release notes and point to
   `CHANGELOG.md` for the full entry when the commit-derived notes are too long.
+  A merged release-bump commit with subject
+  `chore(release): bump version to vX.Y.Z` resolves to `bump=none` unless a
+  manual `force_bump` is supplied, preventing recursive release PR creation.
+- Release Automation's repo-wide Ruff gate now has import-sorted test modules
+  across chat, humanoid builder, logging, notes, rotation transforms, signal
+  toolkit, GUI launcher, and codemap coverage so the release workflow remains
+  deterministic after current-main CI merges (#3594).
+- Chat dock terminal-runtime capability updates now fail closed during early
+  construction or tests that bypass `_setup_ui()`, avoiding reconnect teardown
+  regressions when `_mode_combo` has not been built yet. The
+  `movement_optimizer_core` and `ai_backend` maturin gates now document or use
+  neutral self-hosted fleet platform labels while routing every job through
+  d-sorg-fleet, preserving Python 3.10-3.13 accelerator validation without
+  leaking to hosted runners (#3594).
+- Shared test bootstrap now leaves `shared.python.logging_pkg` to import its
+  real package initializer instead of installing a placeholder package, keeping
+  top-level `logging_pkg` compatibility exports available during CI collection
+  (#3594).
 - P1AM backend runtime tunables now resolve through one
   `P1AMSettings` pydantic-settings surface, covering PLC driver/host/port,
   polling and reconnect intervals, historian retention sizing, and SQLite
@@ -1174,6 +1192,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-18 | 1.1.584 | fix(ci): make Release Automation treat merged `chore(release): bump version to vX.Y.Z` commits as `bump=none` unless manually forced, preventing recursive release PR creation after protected-branch release bumps merge. |
 | 2026-06-18 | 1.1.582 | fix(ci): cap generated Release Automation PR body notes and use `gh pr create --body-file` so long commit-derived changelogs do not exceed GitHub's pull-request body limit. |
 | 2026-06-18 | 1.1.581 | fix(ci): make Release Automation open a version-bump PR from a `release/v*` branch instead of pushing generated release commits directly to protected `main`, and skip release publication until no release PR is pending. |
 | 2026-06-18 | 1.1.580 | fix(ci): make Release Automation validate Ruff lint and format only against changed Python files using the same legacy-path exclude contract as CI Standard, so metadata-only release-triggering commits are not blocked by unrelated full-repo Ruff debt. |

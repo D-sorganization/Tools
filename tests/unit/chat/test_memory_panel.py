@@ -26,6 +26,7 @@ pytest.importorskip("PyQt6.QtWidgets")
 def _build_panel(tmp_path: Path):
     """Construct a MemoryPanel bound to a real on-disk MemoryManager."""
     from chat.memory_panel import MemoryPanel
+
     from src.shared.python.ai.memory_manager import MemoryManager
 
     manager = MemoryManager(storage_dir=tmp_path)

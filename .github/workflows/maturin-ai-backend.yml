@@ -46,8 +46,8 @@ concurrency:
 
 jobs:
   build-wheels:
-    name: Build wheel (${{ matrix.os }}, Python ${{ matrix.python-version }})
-    runs-on: ${{ matrix.os }}
+    name: Build wheel (${{ matrix.platform }}, Python ${{ matrix.python-version }})
+    runs-on: d-sorg-fleet
     timeout-minutes: 30
     env:
       CARGO_HOME: ${{ github.workspace }}/.cargo-home
@@ -59,7 +59,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        platform: [ubuntu, windows, macos]
         python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
@@ -85,10 +85,10 @@ jobs:
             .cargo-home/registry
             .cargo-home/git
             rust_core/ai_backend/target
-          key: maturin-${{ matrix.os }}-py${{ matrix.python-version }}-${{ hashFiles('rust_core/ai_backend/Cargo.toml', 'Cargo.toml', 'rust-toolchain.toml') }}
+          key: maturin-${{ matrix.platform }}-py${{ matrix.python-version }}-${{ hashFiles('rust_core/ai_backend/Cargo.toml', 'Cargo.toml', 'rust-toolchain.toml') }}
           restore-keys: |
-            maturin-${{ matrix.os }}-py${{ matrix.python-version }}-
-            maturin-${{ matrix.os }}-
+            maturin-${{ matrix.platform }}-py${{ matrix.python-version }}-
+            maturin-${{ matrix.platform }}-
 
       - name: Install maturin
         run: pip install maturin
@@ -99,20 +99,20 @@ jobs:
 
       - name: Build wheel
         working-directory: rust_core/ai_backend
-        run: maturin build --release --features python,extension-module --out ../../dist/${{ matrix.os }}/py${{ matrix.python-version }}
+        run: maturin build --release --features python,extension-module --out ../../dist/${{ matrix.platform }}/py${{ matrix.python-version }}
 
       - name: Smoke-test wheel import
         shell: bash
         run: |
-          WHEEL=$(ls dist/${{ matrix.os }}/py${{ matrix.python-version }}/*.whl | head -1)
+          WHEEL=$(ls dist/${{ matrix.platform }}/py${{ matrix.python-version }}/*.whl | head -1)
           pip install "$WHEEL"
           python -c "import ai_backend; print('ai_backend import OK:', dir(ai_backend))"
 
       - name: Upload wheel artifact
         uses: actions/upload-artifact@v7
         with:
-          name: wheel-${{ matrix.os }}-py${{ matrix.python-version }}
-          path: dist/${{ matrix.os }}/py${{ matrix.python-version }}/*.whl
+          name: wheel-${{ matrix.platform }}-py${{ matrix.python-version }}
+          path: dist/${{ matrix.platform }}/py${{ matrix.python-version }}/*.whl
           retention-days: 14
 
   # ── Consumption gate: build + install the wheel and exercise the adapter ────
