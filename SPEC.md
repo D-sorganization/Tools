@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.584                                    |
+| **Current Version**     | 1.1.0                                      |
+| **Spec Version**        | 1.1.585                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -50,6 +50,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   A merged release-bump commit with subject
   `chore(release): bump version to vX.Y.Z` resolves to `bump=none` unless a
   manual `force_bump` is supplied, preventing recursive release PR creation.
+- Repository package metadata is prepared for the v1.1.0 release by aligning
+  `pyproject.toml`, `VERSION`, `CHANGELOG.md`, and this specification's current
+  version field.
 - Release Automation's repo-wide Ruff gate now has import-sorted test modules
   across chat, humanoid builder, logging, notes, rotation transforms, signal
   toolkit, GUI launcher, and codemap coverage so the release workflow remains
@@ -1198,6 +1201,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-18 | 1.1.585 | chore(release): align `SPEC.md` with the v1.1.0 package metadata bump so release PRs that update `pyproject.toml`, `VERSION`, and `CHANGELOG.md` satisfy the spec freshness gate. |
 | 2026-06-18 | 1.1.584 | fix(ci): make Release Automation treat merged `chore(release): bump version to vX.Y.Z` commits as `bump=none` unless manually forced, preventing recursive release PR creation after protected-branch release bumps merge. |
 | 2026-06-18 | 1.1.582 | fix(ci): cap generated Release Automation PR body notes and use `gh pr create --body-file` so long commit-derived changelogs do not exceed GitHub's pull-request body limit. |
 | 2026-06-18 | 1.1.581 | fix(ci): make Release Automation open a version-bump PR from a `release/v*` branch instead of pushing generated release commits directly to protected `main`, and skip release publication until no release PR is pending. |
