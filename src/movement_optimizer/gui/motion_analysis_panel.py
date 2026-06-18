@@ -19,33 +19,17 @@ from matplotlib.backends.backend_qtagg import (  # type: ignore[attr-defined]  #
     FigureCanvasQTAgg,
     NavigationToolbar2QT,
 )
-from matplotlib.colors import to_hex
 from matplotlib.figure import Figure
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QFrame, QGridLayout, QLabel, QScrollArea, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import QVBoxLayout, QWidget
 
 from ..rendering import Palette, restyle_figure
-
-
-class _ExternalLegendProxy:
-    """Compatibility shim for callers that inspect panel legend state."""
-
-    def __init__(self, panel: MotionAnalysisPanel, name: str) -> None:
-        self._panel = panel
-        self._name = name
-
-    def get_legend(self) -> tuple[str, ...] | None:
-        if not self._panel._legends_visible:
-            return None
-        return self._panel._legend_entries.get(self._name)
 
 
 class MotionAnalysisPanel(QWidget):
     """A themed grid of named matplotlib axes with a navigation toolbar."""
 
-    _PLOT_HSPACE = 0.58
-    _LEGEND_COLUMNS = 3
-    _LEGEND_FONT_STYLE = 'font-family: "Segoe UI", Arial, sans-serif; font-size: 10px;'
+    _LEGEND_HEIGHT_RATIO = 0.34
+    _DATA_LEGEND_HSPACE = 1.20
 
     def __init__(self, axis_names: Sequence[str], *, rows: int, cols: int) -> None:
         """Build the panel.
@@ -70,133 +54,80 @@ class MotionAnalysisPanel(QWidget):
         self.canvas = FigureCanvasQTAgg(self.figure)
         self.toolbar = NavigationToolbar2QT(self.canvas, self)
         self.axes: dict[str, Axes] = {}
-        self.legend_axes: dict[str, _ExternalLegendProxy] = {}
-        self._legend_entries: dict[str, tuple[str, ...]] = {}
+        self.legend_axes: dict[str, Axes] = {}
         self._legends_visible = True
-        self._legend_scroll = QScrollArea()
-        self._legend_scroll.setWidgetResizable(True)
-        self._legend_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        self._legend_scroll.setMaximumHeight(112)
-        self._legend_scroll.setVisible(False)
-        self._legend_widget = QWidget()
-        self._legend_layout = QGridLayout(self._legend_widget)
-        self._legend_layout.setContentsMargins(8, 4, 8, 4)
-        self._legend_layout.setHorizontalSpacing(10)
-        self._legend_layout.setVerticalSpacing(4)
-        self._legend_scroll.setWidget(self._legend_widget)
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.toolbar)
         layout.addWidget(self.canvas, stretch=1)
-        layout.addWidget(self._legend_scroll)
 
         self._build_axes()
 
     def _build_axes(self) -> None:
         self.figure.clear()
+        height_ratios = tuple(
+            ratio for _ in range(self._rows) for ratio in (1.0, self._LEGEND_HEIGHT_RATIO)
+        )
         grid = self.figure.add_gridspec(
-            self._rows,
+            self._rows * 2,
             self._cols,
-            hspace=self._PLOT_HSPACE,
+            height_ratios=height_ratios,
+            hspace=self._DATA_LEGEND_HSPACE,
             wspace=0.34,
         )
         self.axes = {}
         self.legend_axes = {}
         for index, name in enumerate(self._axis_names):
             row, col = divmod(index, self._cols)
-            self.axes[name] = self.figure.add_subplot(grid[row, col])
-            self.legend_axes[name] = _ExternalLegendProxy(self, name)
+            data_row = row * 2
+            legend_row = data_row + 1
+            self.axes[name] = self.figure.add_subplot(grid[data_row, col])
+            legend_axis = self.figure.add_subplot(grid[legend_row, col])
+            legend_axis.set_axis_off()
+            self.legend_axes[name] = legend_axis
         restyle_figure(self.figure)
 
     def clear(self) -> None:
         """Reset every axis to a blank, themed state."""
         self._build_axes()
-        self._legend_entries = {}
-        self._clear_legend_layout()
-        self._legend_scroll.setVisible(False)
 
     @staticmethod
-    def _handle_color(handle: object) -> str:
-        color_getter = getattr(handle, "get_color", None)
-        if color_getter is None:
-            return str(Palette.FG)
-        try:
-            return to_hex(color_getter())
-        except (TypeError, ValueError):
-            return str(Palette.FG)
+    def _legend_columns(label_count: int) -> int:
+        """Return a compact column count for a dedicated legend strip."""
+        if label_count < 1:
+            return 1
+        return min(3, label_count)
 
-    def _clear_legend_layout(self) -> None:
-        while self._legend_layout.count():
-            item = self._legend_layout.takeAt(0)
-            if item is None:
-                continue
-            widget = item.widget()
-            if widget is not None:
-                widget.deleteLater()
-
-    def _make_legend_group(
-        self, title: str, handles: Sequence[object], labels: Sequence[str]
-    ) -> QWidget:
-        group = QWidget()
-        group_layout = QGridLayout(group)
-        group_layout.setContentsMargins(0, 0, 0, 0)
-        group_layout.setHorizontalSpacing(5)
-        group_layout.setVerticalSpacing(2)
-
-        title_label = QLabel(f"{title}:")
-        title_label.setStyleSheet(
-            f"color: {Palette.FG}; font-weight: 600; {self._LEGEND_FONT_STYLE}"
-        )
-        group_layout.addWidget(title_label, 0, 0, 1, 6)
-
-        for index, (handle, text) in enumerate(zip(handles, labels, strict=True)):
-            row = 1 + index // 3
-            col = (index % 3) * 2
-            swatch = QFrame()
-            swatch.setFixedSize(14, 3)
-            swatch.setStyleSheet(f"background-color: {self._handle_color(handle)};")
-            label = QLabel(text)
-            label.setStyleSheet(f"color: {Palette.FG}; {self._LEGEND_FONT_STYLE}")
-            group_layout.addWidget(swatch, row, col)
-            group_layout.addWidget(label, row, col + 1)
-        return group
-
-    @staticmethod
-    def _legend_title(name: str) -> str:
-        return name.replace("_", " ").title()
-
-    def _sync_legend_bar(self) -> None:
-        """Move legends into the Qt legend bar below the canvas."""
-        self._clear_legend_layout()
-        self._legend_entries = {}
-        self._legend_scroll.setStyleSheet(
-            f"QScrollArea {{ background: {Palette.BG_PANEL}; border: 0; }}"
-        )
-        self._legend_widget.setStyleSheet(f"background: {Palette.BG_PANEL};")
-        legend_sources: list[tuple[str, list[object], list[str]]] = []
-        visible_count = 0
+    def _dock_legends(self) -> None:
+        """Move per-plot legends into reserved strips outside data axes."""
         for name, axes in self.axes.items():
             handles, labels = axes.get_legend_handles_labels()
             existing = axes.get_legend()
             if existing is not None:
-                existing.set_visible(False)
                 existing.remove()
-            if not handles or not labels:
+
+            legend_axis = self.legend_axes[name]
+            legend_axis.clear()
+            legend_axis.set_axis_off()
+            if not handles or not labels or not self._legends_visible:
                 continue
-            legend_sources.append((name, handles, labels))
 
-        if not self._legends_visible:
-            self._legend_scroll.setVisible(False)
-            return
-
-        for name, handles, labels in legend_sources:
-            label = self._make_legend_group(self._legend_title(name), handles, labels)
-            row, col = divmod(visible_count, self._LEGEND_COLUMNS)
-            self._legend_layout.addWidget(label, row, col)
-            self._legend_entries[name] = tuple(labels)
-            visible_count += 1
-        self._legend_scroll.setVisible(visible_count > 0)
+            legend_axis.legend(
+                handles,
+                labels,
+                loc="center",
+                ncol=self._legend_columns(len(labels)),
+                fontsize=6,
+                facecolor=Palette.BG_PANEL,
+                edgecolor=Palette.FG_DIM,
+                labelcolor=Palette.FG,
+                framealpha=0.9,
+                borderaxespad=0.0,
+                handlelength=1.2,
+                handletextpad=0.35,
+                columnspacing=0.7,
+            )
 
     def set_legends_visible(self, visible: bool) -> None:
         """Show or hide the legend on every axis that has one.
@@ -210,21 +141,19 @@ class MotionAnalysisPanel(QWidget):
             legend = axes.get_legend()
             if legend is not None:
                 legend.set_visible(self._legends_visible)
-        self._legend_scroll.setVisible(self._legends_visible and bool(self._legend_entries))
+        for axes in self.legend_axes.values():
+            legend = axes.get_legend()
+            if legend is not None:
+                legend.set_visible(self._legends_visible)
 
     def has_legends(self) -> bool:
         """Return True if any axis currently carries a legend."""
-        return bool(self._legend_entries) or any(
-            bool(axes.get_legend_handles_labels()[1]) for axes in self.axes.values()
+        return any(axes.get_legend() is not None for axes in self.axes.values()) or any(
+            axes.get_legend() is not None for axes in self.legend_axes.values()
         )
-
-    @property
-    def legend_entries(self) -> dict[str, tuple[str, ...]]:
-        """Return the labels currently shown in the external legend bar."""
-        return dict(self._legend_entries)
 
     def draw(self) -> None:
         """Lay out and repaint the figure after the axes have been populated."""
-        self._sync_legend_bar()
-        self.figure.subplots_adjust(left=0.08, right=0.98, top=0.91, bottom=0.14)
+        self._dock_legends()
+        self.figure.subplots_adjust(left=0.08, right=0.98, top=0.94, bottom=0.06)
         self.canvas.draw()
