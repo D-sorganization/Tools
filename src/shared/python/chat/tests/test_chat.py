@@ -224,8 +224,9 @@ class TestQtRuntimeDiagnostics:
     def test_lazy_chat_dock_loader_raises_structured_qt_error(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        from chat import chat_dock_widget
         from chat.qt_diagnostics import ChatQtDiagnostic
+
+        from chat import chat_dock_widget
 
         monkeypatch.setattr(
             chat_dock_widget,

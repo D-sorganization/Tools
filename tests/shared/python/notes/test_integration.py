@@ -1,8 +1,9 @@
 from pathlib import Path
 
 import pytest
-from notes import integration
 from PyQt6.QtCore import Qt
+
+from notes import integration
 
 
 class FakeMainWindow:

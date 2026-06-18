@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from codemap import _lang_markdown as markdown
 from codemap._ts_common import ParsedSymbol
+
+from codemap import _lang_markdown as markdown
 
 
 def test_extract_emits_atx_headings_with_truncated_symbol_fields(monkeypatch) -> None:

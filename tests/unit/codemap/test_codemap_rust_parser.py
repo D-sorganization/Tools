@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from codemap import _lang_rust as rust_parser
 from codemap._ts_common import ParsedSymbol
+
+from codemap import _lang_rust as rust_parser
 
 
 def test_extract_emits_imports_functions_structs_modules_and_impls(

@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from codemap import _lang_js as js_parser
 from codemap._ts_common import ParsedSymbol
+
+from codemap import _lang_js as js_parser
 
 
 def test_extract_javascript_emits_imports_and_symbols(monkeypatch) -> None:

@@ -1261,6 +1261,11 @@ class ChatDockWidget(QDockWidget):
 
     def _set_terminal_runtime_available(self, available: bool) -> None:
         self._terminal_runtime_available = bool(available)
+        if not hasattr(self, "_mode_combo"):
+            if not self._terminal_runtime_available:
+                self._terminal_session_id = None
+                self._terminal_start_pending = False
+            return
         terminal_index = self._mode_combo.findData("terminal")
         if self._terminal_runtime_available:
             if terminal_index < 0:
