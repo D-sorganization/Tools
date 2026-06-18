@@ -22,14 +22,15 @@ class P1AMHardware : public HardwareInterface {
   //   Slot 2 = P1-04THM        (4-channel thermocouple)
   static const int kSlotAna = 1;
   static const int kSlotThm = 2;
-  // Heater relay discrete-output module. The bench stack currently has NO
-  // discrete-output module, so this is -1 (disabled -> WriteHeaterRelay is a
-  // no-op). When a P1-08TD*/P1-08TRS (or similar 24 V DO) module is installed,
-  // set kSlotRelay to its slot (from P1.printModules()) and kChanRelay to the
-  // wired channel (1-indexed), then reflash. The temperature controller drives
-  // this via Modbus coil 2.
-  static const int kSlotRelay = -1;
-  static const int kChanRelay = 1;
+  // Heater relay control GPIO (Arduino-header digital pin D2). Driven
+  // active-HIGH: HIGH (3.3 V) = relay energized = heater ON; boots LOW. The
+  // temperature controller commands this via Modbus coil 2, and the safety
+  // interlock forces it LOW on any trip. NOTE: this is a 3.3 V logic output
+  // (~7 mA) — drive a logic-level relay board / SSR, or a small
+  // transistor/opto driver for a 24 V relay coil; it cannot switch 24 V itself.
+  // Reserved pins to avoid: D5 (Ethernet W5500 CS), D6 (inhibit), A3/A4/33
+  // (P1AM base controller).
+  static const int kPinHeaterRelay = 2;
   // Inhibit GPIO. MUST NOT be pin 5 — the P1AM-ETH shield hardwires the W5500
   // chip-select to D5, so driving D5 from this firmware breaks Ethernet SPI.
   // D6 is free on the P1AM-100 / P1AM-ETH stack.
