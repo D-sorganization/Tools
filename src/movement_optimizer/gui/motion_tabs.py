@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Sequence
 from itertools import pairwise
+from typing import cast
 
 import numpy as np
 from PyQt6.QtCore import QPointF, QTimer, pyqtSignal
@@ -38,6 +39,7 @@ from movement_optimizer.models.swingset import (
     SwingPose,
     SwingRollout,
     SwingSetConfig,
+    SwingSetSnapshot,
     build_swingset_snapshot,
     estimate_swingset_joint_torques,
 )
@@ -361,7 +363,11 @@ class _MotionViewMixin:
         appearance.addWidget(self._plot_legend_toggle)
         appearance.addStretch()
         view_layout.addLayout(appearance)
-        view_layout.addWidget(self.analysis_panel, stretch=1)
+        plot_scroll = QScrollArea()
+        plot_scroll.setWidgetResizable(True)
+        plot_scroll.setFrameShape(QScrollArea.Shape.NoFrame)
+        plot_scroll.setWidget(self.analysis_panel)
+        view_layout.addWidget(plot_scroll, stretch=1)
         return view
 
     def _build_layers_group(self, layer_keys: Sequence[str] | None = None) -> QGroupBox:
@@ -797,7 +803,7 @@ class SwingsetTab(_MotionViewMixin, QWidget):
         )
 
     def _value(self, key: str) -> float:
-        return self._controls[key].value()
+        return float(self._controls[key].value())
 
     def _refresh_static(self) -> None:
         self._timer.stop()
@@ -888,7 +894,9 @@ class SwingsetTab(_MotionViewMixin, QWidget):
         )
 
     def _on_policy_success(self, result: object) -> None:
-        self._set_policy_result(result)  # type: ignore[arg-type]
+        if not isinstance(result, CyclicPolicySearchResult):
+            raise TypeError("policy worker emitted an unexpected result type")
+        self._set_policy_result(result)
         if self._play_after_policy or self.autoplay_checkbox.isChecked():
             self.play_button.setText("Pause")
             self._timer.start(self._playback_interval_ms(DEFAULT_POLICY_DT_S))
@@ -972,7 +980,7 @@ class SwingsetTab(_MotionViewMixin, QWidget):
             f"Peak torque/RMS: {torque_text}."
         )
 
-    def _render_snapshot(self, snapshot) -> None:
+    def _render_snapshot(self, snapshot: SwingSetSnapshot) -> None:
         self.canvas.set_scene(
             [tuple(point) for point in snapshot.chain_nodes],
             {key: tuple(value) for key, value in snapshot.points.items()},
@@ -1025,13 +1033,16 @@ class SwingsetTab(_MotionViewMixin, QWidget):
         frame_count = len(self._rollout.snapshots)
         if not 0 <= self._frame_index < frame_count:
             raise RuntimeError("DbC Blocked: frame index is outside the rollout")
-        if self._force_fields is None or len(self._force_fields) != frame_count:
-            self._force_fields = swing_force_fields(
+        fields = self._force_fields
+        if fields is None or len(fields) != frame_count:
+            fields = swing_force_fields(
                 self._config(),
                 self._rollout,
                 DEFAULT_POLICY_DT_S,
             )
-        return self._force_fields[self._frame_index]
+            self._force_fields = fields
+        fields = cast(tuple[SwingForceField, ...], fields)
+        return fields[self._frame_index]
 
     def _toggle_playback(self) -> None:
         if self._rollout is None:

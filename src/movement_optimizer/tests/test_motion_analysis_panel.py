@@ -181,6 +181,27 @@ class TestMotionAnalysisPanel:
         assert panel.canvas is not None
         assert panel.toolbar is not None
 
+    def test_minimum_canvas_size_preserves_swing_legend_room(self, qapp) -> None:
+        from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
+
+        panel = MotionAnalysisPanel(
+            ["torques", "power", "angle", "com_height", "energy", "com_path"],
+            rows=2,
+            cols=3,
+        )
+
+        assert panel.canvas.minimumWidth() >= 780
+        assert panel.canvas.minimumHeight() >= 504
+        assert panel.minimumHeight() > panel.canvas.minimumHeight()
+
+    def test_docked_joint_legends_use_compact_three_column_rows(self, qapp) -> None:
+        from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
+
+        assert MotionAnalysisPanel._legend_columns(0) == 1
+        assert MotionAnalysisPanel._legend_columns(1) == 1
+        assert MotionAnalysisPanel._legend_columns(2) == 2
+        assert MotionAnalysisPanel._legend_columns(5) == 3
+
     def test_clear_rebuilds_axes(self, qapp) -> None:
         from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
 
@@ -215,7 +236,7 @@ class TestMotionAnalysisPanel:
         self._assert_docked_legends_do_not_cover_plots(panel)
         assert all(axes.get_legend() is None for axes in panel.axes.values())
 
-    def test_swingset_docked_legends_clear_compact_axis_labels(self, qapp, swing_history) -> None:
+    def test_swingset_docked_legends_clear_minimum_plot_size(self, qapp, swing_history) -> None:
         from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
 
         panel = MotionAnalysisPanel(
@@ -230,7 +251,11 @@ class TestMotionAnalysisPanel:
         plot_swing_energy(panel.axes["energy"], swing_history)
         plot_swing_com_path(panel.axes["com_path"], swing_history)
 
-        self._assert_docked_legends_do_not_cover_plots(panel, figure_size=(4.0, 2.8))
+        minimum_size = panel.canvas.minimumSize()
+        self._assert_docked_legends_do_not_cover_plots(
+            panel,
+            figure_size=(minimum_size.width() / 100.0, minimum_size.height() / 100.0),
+        )
 
     def test_chain_legends_are_docked_outside_data_axes(self, qapp, chain_history) -> None:
         from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
