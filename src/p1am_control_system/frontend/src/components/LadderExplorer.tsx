@@ -1,19 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Search, Cpu, Eye } from "lucide-react";
+import { getLadderExplorer } from "../api/endpoints";
+import type { LadderTagInfo } from "../api/schemas";
 
-export interface LadderTagInfo {
-  name: string;
-  tag_type: "Real" | "Boolean" | "Integer" | "String";
-  description: string;
-  rw_mode: "Read-only" | "Read/Write";
-  register_type: string | null;
-  register_num: number | null;
-  data_format: string | null;
-  scale_factor: number | null;
-  area: string;
-  unit: string;
-  equipment: string;
-}
+export type { LadderTagInfo };
 
 interface LadderExplorerProps {
   onSelectTag: (name: string) => void;
@@ -33,15 +23,10 @@ export const LadderExplorer: React.FC<LadderExplorerProps> = ({
   const fetchTags = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/project/ladder-explorer");
-      if (res.ok) {
-        const data = await res.json();
-        setTags(data);
-      } else {
-        triggerNotification("Failed to fetch ladder logic registry.", "error");
-      }
-    } catch (err) {
-      triggerNotification("Connection error reading ladder registry.", "error");
+      const data = await getLadderExplorer();
+      setTags(data);
+    } catch {
+      triggerNotification("Failed to fetch ladder logic registry.", "error");
     } finally {
       setLoading(false);
     }
