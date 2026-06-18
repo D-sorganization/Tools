@@ -17,7 +17,8 @@ export type TabId =
   | "events"
   | "ladder"
   | "hierarchy"
-  | "powerSupply";
+  | "powerSupply"
+  | "temperature";
 
 export interface TabDef {
   /** Stable identifier used as the `activeTab` value and visibility key. */
@@ -78,6 +79,12 @@ export const TABS: readonly TabDef[] = [
     label: "Power Supply",
     settingsLabel: "Power Supply Controller",
     accentVar: "var(--accent-purple, #a78bfa)",
+  },
+  {
+    id: "temperature",
+    label: "Temperature",
+    settingsLabel: "Temperature Controller",
+    accentVar: "var(--accent-orange, #fb923c)",
   },
 ] as const;
 

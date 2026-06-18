@@ -402,6 +402,26 @@ class AsyncModbusManager(BasePLCClient):
                 self._connected = False
                 return False
 
+    async def write_coil(self, address: int, value: bool) -> bool:
+        """Write a single discrete coil (public seam, e.g. the heater relay)."""
+        if not self._connected:
+            return False
+        if not isinstance(address, int) or isinstance(address, bool):
+            raise TypeError(f"address must be an int, got {type(address).__name__}")
+        if not isinstance(value, bool):
+            raise TypeError(f"value must be a bool, got {type(value).__name__}")
+        async with self.lock:
+            try:
+                resp = await self._get_client().write_coil(address=address, value=value)
+                if resp.isError():
+                    logger.error("write_coil(%d, %s) failed: %s", address, value, resp)
+                    return False
+                return True
+            except (ModbusException, Exception) as exc:
+                logger.error("write_coil(%d, %s) exception: %s", address, value, exc)
+                self._connected = False
+                return False
+
     async def write_tag(self, tag_name: str, value: float) -> bool:
         """Write a 32-bit float directly to a tag register.
 

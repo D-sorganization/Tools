@@ -53,6 +53,29 @@ export interface PowerSupplyConfig {
    * would scale higher. Operator safety limit for live-current testing.
    */
   output_clamp_percent: number;
+  /** Rolling window (sample count) used to quantify feedback noise. */
+  noise_window: number;
+  /** Which noise metric the arc thresholds are compared against. */
+  noise_metric: NoiseMetric;
+  /** Arc-detect threshold for current-feedback noise (null = disabled). */
+  current_arc_threshold: number | null;
+  /** Arc-detect threshold for voltage-feedback noise (null = disabled). */
+  voltage_arc_threshold: number | null;
+}
+
+export type NoiseMetric = "std" | "peak_to_peak" | "rms" | "cv";
+
+export interface NoiseStats {
+  sample_count: number;
+  mean: number;
+  std: number;
+  peak_to_peak: number;
+  rms_about_mean: number;
+  coeff_of_variation: number;
+  metric: NoiseMetric;
+  metric_value: number;
+  threshold: number | null;
+  arcing: boolean;
 }
 
 export interface PowerSupplyStatus {
@@ -73,6 +96,12 @@ export interface PowerSupplyStatus {
   output_clamped: boolean;
   /** Real deliverable max current given the clamp (clamp% × full-scale). */
   effective_max_current_a: number;
+  /** Rolling noise/variability stats for the current feedback. */
+  current_noise: NoiseStats;
+  /** Rolling noise/variability stats for the voltage feedback. */
+  voltage_noise: NoiseStats;
+  /** True when either channel's noise metric exceeds its arc threshold. */
+  arcing: boolean;
 }
 
 interface Props {
@@ -95,6 +124,37 @@ const STATE_HINTS: Record<PowerSupplyStatus["state"], string> = {
   running: "commanding output",
   tripped: "latched · acknowledge",
 };
+
+const NOISE_METRIC_LABELS: Record<NoiseMetric, string> = {
+  std: "Std deviation",
+  peak_to_peak: "Peak-to-peak",
+  rms: "AC RMS",
+  cv: "Coeff. of variation",
+};
+
+const NOISE_METRIC_HINTS: Record<NoiseMetric, string> = {
+  std: "sample standard deviation, in engineering units (A / V)",
+  peak_to_peak: "max − min over the window, in engineering units (A / V)",
+  rms: "RMS of the AC content about the mean, in engineering units (A / V)",
+  cv: "std ÷ |mean|, a dimensionless ratio (noise relative to DC level)",
+};
+
+/** Pull the value of the selected metric out of a NoiseStats snapshot. */
+function noiseMetricValue(stats: NoiseStats | undefined): number | null {
+  if (!stats) return null;
+  switch (stats.metric) {
+    case "std":
+      return stats.std;
+    case "peak_to_peak":
+      return stats.peak_to_peak;
+    case "rms":
+      return stats.rms_about_mean;
+    case "cv":
+      return stats.coeff_of_variation;
+    default:
+      return stats.metric_value;
+  }
+}
 
 export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) => {
   const [config, setConfig] = useState<PowerSupplyConfig | null>(null);
@@ -675,6 +735,39 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
         </div>
       </div>
 
+      {/* ---- Signal noise / arc detection ---- */}
+      <div className={`ps-card ps-noise ${s?.arcing ? "is-arcing" : ""}`}>
+        <div className="ps-card-title">
+          <span>Signal noise · arc detection</span>
+          <span className={`ps-arc-badge ${s?.arcing ? "is-arcing" : ""}`}>
+            {s?.arcing ? "⚡ POSSIBLE ARCING" : "stable"}
+          </span>
+        </div>
+        <p className="ps-noise-hint">
+          A DC arc rides as AC noise on the feedback. Watch the{" "}
+          <strong>{NOISE_METRIC_LABELS[config.noise_metric]}</strong> — when it
+          jumps while the setpoint is steady, the arc is active. Set a threshold
+          below to flag it automatically. Window:{" "}
+          <strong>{config.noise_window}</strong> samples (~
+          {(config.noise_window / 10).toFixed(0)} s @ 10 Hz) ·{" "}
+          {NOISE_METRIC_HINTS[config.noise_metric]}.
+        </p>
+        <div className="ps-noise-grid">
+          <NoiseChannel
+            title={config.current_feedback_label}
+            unit="A"
+            stats={s?.current_noise}
+            threshold={config.current_arc_threshold}
+          />
+          <NoiseChannel
+            title={config.voltage_feedback_label}
+            unit="V"
+            stats={s?.voltage_noise}
+            threshold={config.voltage_arc_threshold}
+          />
+        </div>
+      </div>
+
       {/* ---- Advanced config ---- */}
       {/* ---- Calibration & signal names ---- */}
       <details className="ps-card ps-config">
@@ -871,6 +964,84 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
         </div>
       </details>
 
+      <details className="ps-card ps-config">
+        <summary>Arc / noise detection — window, metric, thresholds</summary>
+        <p className="ps-noise-hint">
+          Tune how the system decides it&apos;s arcing. Pick the metric that best
+          separates a quiet DC output from a noisy arc, size the averaging window,
+          then set per-channel thresholds (leave blank to disable that channel).
+        </p>
+        <div className="ps-config-grid">
+          <ConfigField
+            label="Noise window (samples)"
+            value={configDraft.noise_window}
+            onChange={(v) =>
+              setConfigDraft({ ...configDraft, noise_window: Math.round(v) })
+            }
+          />
+          <label className="ps-field">
+            <span>Noise metric</span>
+            <select
+              value={configDraft.noise_metric}
+              onChange={(e) =>
+                setConfigDraft({
+                  ...configDraft,
+                  noise_metric: e.target.value as NoiseMetric,
+                })
+              }
+            >
+              <option value="std">Std deviation (A / V)</option>
+              <option value="peak_to_peak">Peak-to-peak (A / V)</option>
+              <option value="rms">AC RMS (A / V)</option>
+              <option value="cv">Coeff. of variation (ratio)</option>
+            </select>
+          </label>
+          <label className="ps-field">
+            <span>Current arc threshold</span>
+            <input
+              type="number"
+              placeholder="disabled"
+              value={configDraft.current_arc_threshold ?? ""}
+              onChange={(e) =>
+                setConfigDraft({
+                  ...configDraft,
+                  current_arc_threshold:
+                    e.target.value === ""
+                      ? null
+                      : Number.parseFloat(e.target.value),
+                })
+              }
+            />
+          </label>
+          <label className="ps-field">
+            <span>Voltage arc threshold</span>
+            <input
+              type="number"
+              placeholder="disabled"
+              value={configDraft.voltage_arc_threshold ?? ""}
+              onChange={(e) =>
+                setConfigDraft({
+                  ...configDraft,
+                  voltage_arc_threshold:
+                    e.target.value === ""
+                      ? null
+                      : Number.parseFloat(e.target.value),
+                })
+              }
+            />
+          </label>
+        </div>
+        <div style={{ marginTop: "1rem" }}>
+          <button
+            className={`btn ${busy ? "ps-disabled" : ""}`}
+            onClick={saveConfig}
+            disabled={busy}
+          >
+            Save Detection
+          </button>
+        </div>
+      </details>
+
       {info && <div className="ps-toast is-info">{info}</div>}
       {error && <div className="ps-toast is-error">{error}</div>}
     </div>
@@ -949,6 +1120,45 @@ const Readout: React.FC<{ label: string; value: string; warning?: boolean }> = (
     <div className="ps-readout-value">{value}</div>
   </div>
 );
+
+const NoiseChannel: React.FC<{
+  title: string;
+  unit: string;
+  stats?: NoiseStats;
+  threshold: number | null;
+}> = ({ title, unit, stats, threshold }) => {
+  const metric = stats?.metric ?? "std";
+  const u = metric === "cv" ? "" : unit;
+  const value = noiseMetricValue(stats);
+  const arcing = stats?.arcing ?? false;
+  const fmt = (n: number | null | undefined, digits = 3) =>
+    n == null ? "—" : n.toFixed(digits);
+  return (
+    <div className={`ps-noise-ch ${arcing ? "is-arcing" : ""}`}>
+      <div className="ps-noise-ch-head">
+        <span>{title}</span>
+        {arcing && <span className="ps-noise-flag">arcing</span>}
+      </div>
+      <div className="ps-noise-metric">
+        {fmt(value)} <span className="ps-noise-unit">{u || "ratio"}</span>
+      </div>
+      <div className="ps-noise-sub">
+        {NOISE_METRIC_LABELS[metric]}
+        {threshold != null
+          ? ` · threshold ${threshold} ${u}`.trimEnd()
+          : " · no threshold set"}
+      </div>
+      <div className="ps-noise-stats">
+        <span>σ {fmt(stats?.std)}</span>
+        <span>p-p {fmt(stats?.peak_to_peak)}</span>
+        <span>rms {fmt(stats?.rms_about_mean)}</span>
+        <span>cv {fmt(stats?.coeff_of_variation)}</span>
+        <span>mean {fmt(stats?.mean, 2)}</span>
+        <span>n {stats?.sample_count ?? 0}</span>
+      </div>
+    </div>
+  );
+};
 
 interface ConfigFieldProps {
   label: string;

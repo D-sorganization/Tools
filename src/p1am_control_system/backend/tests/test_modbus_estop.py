@@ -131,3 +131,65 @@ class TestWritePidSetpoint:
             assert m._connected is False
 
         asyncio.run(go())
+
+
+def _manager_with_coil(write_coil: AsyncMock) -> AsyncModbusManager:
+    m = AsyncModbusManager(host="127.0.0.1")
+    m._connected = True
+    raw = MagicMock()
+    raw.write_coil = write_coil
+    m._get_client = lambda: raw  # type: ignore[method-assign]
+    return m
+
+
+class TestWriteCoil:
+    """Discrete-coil write path (e.g. the heater relay)."""
+
+    def test_success_passes_address_and_value(self) -> None:
+        async def go() -> None:
+            captured: dict[str, object] = {}
+
+            def _side(*_: Any, address: int = 0, value: bool = False) -> MagicMock:
+                captured["address"] = address
+                captured["value"] = value
+                return _ok()
+
+            wc = AsyncMock(side_effect=_side)
+            m = _manager_with_coil(wc)
+            assert await m.write_coil(2, True) is True
+            assert captured == {"address": 2, "value": True}
+
+        asyncio.run(go())
+
+    def test_disconnected_returns_false_without_writing(self) -> None:
+        async def go() -> None:
+            wc = AsyncMock(return_value=_ok())
+            m = _manager_with_coil(wc)
+            m._connected = False
+            assert await m.write_coil(2, True) is False
+            assert wc.await_count == 0
+
+        asyncio.run(go())
+
+    def test_non_bool_value_raises(self) -> None:
+        async def go() -> None:
+            m = _manager_with_coil(AsyncMock(return_value=_ok()))
+            with pytest.raises(TypeError):
+                await m.write_coil(2, 1)  # type: ignore[arg-type]
+
+        asyncio.run(go())
+
+    def test_error_response_returns_false(self) -> None:
+        async def go() -> None:
+            m = _manager_with_coil(AsyncMock(return_value=_err()))
+            assert await m.write_coil(2, True) is False
+
+        asyncio.run(go())
+
+    def test_exception_marks_disconnected(self) -> None:
+        async def go() -> None:
+            m = _manager_with_coil(AsyncMock(side_effect=RuntimeError("dropped")))
+            assert await m.write_coil(2, False) is False
+            assert m._connected is False
+
+        asyncio.run(go())

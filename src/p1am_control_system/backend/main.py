@@ -63,6 +63,10 @@ from settings import get_settings
 from simulator_client import SimulatedPLCClient
 from sqlmodel import Session, col, select
 from state import SystemState
+from temperature_integration import (
+    TemperatureService,
+    create_temperature_router,
+)
 
 try:
     # Prefer the Rust-accelerated SCADA kernel when the compiled wheel is
@@ -94,6 +98,7 @@ modbus_manager = plc_client  # Compatibility alias
 backup_simulator = SimulatedPLCClient()
 
 power_supply_service = PowerSupplyService(plc_client=plc_client, logger=logger)
+temperature_service = TemperatureService(plc_client=plc_client, logger=logger)
 
 
 class ConnectionManager:
@@ -239,6 +244,7 @@ async def poll_plc_loop() -> None:
                 ws=ws_manager,
                 alicats=alicat_manager,
                 power_supply=power_supply_service,
+                temperature=temperature_service,
                 alarm_engine=control_context.alarm_engine,
                 active_alarm_map=control_context.active_alarms,
                 session_factory=get_session,
@@ -286,6 +292,7 @@ app = FastAPI(
 )
 app.state.control_context = control_context
 app.include_router(create_power_supply_router(power_supply_service))
+app.include_router(create_temperature_router(temperature_service))
 
 # Restrict CORS to a configured allowlist (no wildcard with credentials).
 # See cors_config.resolve_cors_settings for env-driven configuration.
@@ -449,9 +456,10 @@ async def update_routing(config: RoutingConfig) -> dict[str, str]:
 async def trigger_estop() -> dict[str, str]:
     """Immediate safety shutdown command, zeroing all tag variables."""
     control_context.engage_estop()
-    # Latch the controller FIRST so the next poll cycle cannot re-command a
-    # setpoint and re-energize the output after we zero it below.
+    # Latch the controllers FIRST so the next poll cycle cannot re-command a
+    # setpoint / re-close the heater relay and re-energize after we zero below.
     power_supply_service.engage_estop()
+    temperature_service.engage_estop()
     if not plc_client.connected:
         await backup_simulator.trigger_estop()
         control_context.reset_tag_values()
@@ -488,6 +496,10 @@ async def clear_estop() -> dict[str, str]:
                 detail="Backup simulator did not acknowledge the E-stop reset.",
             )
         control_context.clear_estop()
+        # Release the controller latches in sim mode too, otherwise they stay
+        # engaged and refuse to re-arm after the operator clears the E-stop.
+        power_supply_service.clear_estop()
+        temperature_service.clear_estop()
         return {
             "status": "success",
             "message": "Simulated E-stop cleared.",
@@ -502,10 +514,10 @@ async def clear_estop() -> dict[str, str]:
         )
     await backup_simulator.clear_estop()
     control_context.clear_estop()
-    # Release the power-supply controller latch too. It returns to IDLE with
-    # permissive off, so the operator must deliberately re-arm before any
-    # output can flow.
+    # Release the controller latches too. They return to IDLE with permissive
+    # off, so the operator must deliberately re-arm before any output can flow.
     power_supply_service.clear_estop()
+    temperature_service.clear_estop()
     return {"status": "success", "message": "Hardware E-stop cleared."}
 
 

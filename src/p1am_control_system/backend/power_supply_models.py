@@ -11,6 +11,7 @@ from __future__ import annotations
 from enum import Enum
 
 from pydantic import BaseModel, Field, field_validator, model_validator
+from signal_stats import NoiseMetric, NoiseStats, compute_noise
 
 
 class StrEnum(str, Enum):  # noqa: UP042
@@ -163,6 +164,44 @@ class PowerSupplyConfig(BaseModel):
         ),
     )
 
+    # ---- Arc / signal-noise detection (DC arc shows as AC noise on the feedback) -
+    noise_window: int = Field(
+        default=100,
+        ge=2,
+        le=10_000,
+        description=(
+            "Number of most-recent feedback samples used to quantify signal "
+            "noise. At a 10 Hz scan, 100 samples ≈ a 10 s window. Bigger = "
+            "smoother/slower; smaller = twitchier/faster arc response."
+        ),
+    )
+    noise_metric: NoiseMetric = Field(
+        default=NoiseMetric.STD,
+        description=(
+            "Which noise metric the arc thresholds are compared against: 'std' "
+            "(sample std-dev, engineering units), 'peak_to_peak', 'rms' (AC RMS "
+            "about the mean), or 'cv' (dimensionless std/|mean| ratio)."
+        ),
+    )
+    current_arc_threshold: float | None = Field(
+        default=None,
+        ge=0.0,
+        description=(
+            "Arc-detect threshold for the CURRENT feedback noise, in the units "
+            "of the selected metric (A for std/p2p/rms, ratio for cv). Arcing is "
+            "flagged when the metric exceeds this. None disables current-arc "
+            "detection. Tune by watching the live noise readout on a steady arc."
+        ),
+    )
+    voltage_arc_threshold: float | None = Field(
+        default=None,
+        ge=0.0,
+        description=(
+            "Arc-detect threshold for the VOLTAGE feedback noise (units as per "
+            "the selected metric). None disables voltage-arc detection."
+        ),
+    )
+
     @field_validator(
         "command_label",
         "aux_command_label",
@@ -233,5 +272,21 @@ class PowerSupplyStatus(BaseModel):
             "the output limit: output_clamp_percent/100 * current_full_scale_a. "
             "The setpoint band may go higher, but the clamp caps real output "
             "here — the UI shows this so the two limits aren't confusing."
+        ),
+    )
+
+    current_noise: NoiseStats = Field(
+        default_factory=lambda: compute_noise([]),
+        description="Rolling noise/variability stats for the current feedback.",
+    )
+    voltage_noise: NoiseStats = Field(
+        default_factory=lambda: compute_noise([]),
+        description="Rolling noise/variability stats for the voltage feedback.",
+    )
+    arcing: bool = Field(
+        default=False,
+        description=(
+            "True when either feedback channel's noise metric exceeds its arc "
+            "threshold — the operator-facing 'system may be arcing' indicator."
         ),
     )

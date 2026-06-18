@@ -28,6 +28,11 @@ class HardwareInterface {
   // Drive the safety Inhibit GPIO.
   // Precondition: none
   virtual void WriteInhibit(bool active) = 0;
+
+  // Drive the heater relay discrete output (24 V DO -> relay -> 110 V heater).
+  // Precondition: none. Postcondition: relay energized iff `on`. Implemented as
+  // a safe no-op until a discrete-output module slot is configured.
+  virtual void WriteHeaterRelay(bool on) = 0;
 };
 
 #endif  // P1AM_CONTROL_SYSTEM_FIRMWARE_HARDWARE_INTERFACE_H_

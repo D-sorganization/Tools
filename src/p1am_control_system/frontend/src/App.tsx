@@ -10,6 +10,7 @@ import { ProjectImporter } from "./components/ProjectImporter";
 import { LadderExplorer } from "./components/LadderExplorer";
 import { PlantHierarchy } from "./components/PlantHierarchy";
 import { PowerSupplyControl } from "./components/PowerSupplyControl";
+import { TemperatureControl } from "./components/TemperatureControl";
 import type { LadderTagInfo } from "./api/schemas";
 import { NotificationBanner } from "./components/NotificationBanner";
 import { TabBar } from "./components/TabBar";
@@ -103,6 +104,7 @@ export const App: React.FC = () => {
     activeAlarms,
     eStopActive,
     powerSupplyStatus,
+    temperatureStatus,
     isConnected,
     setAlicats,
     setActiveAlarms,
@@ -646,6 +648,10 @@ export const App: React.FC = () => {
               liveStatus={powerSupplyStatus}
               onExport={() => setInspectorView({ type: "export" })}
             />
+          )}
+
+          {activeTab === "temperature" && visibleTabs.temperature && (
+            <TemperatureControl liveStatus={temperatureStatus} />
           )}
 
           {/* Render Tab Contents */}

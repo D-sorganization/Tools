@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { TAG_COUNT } from "../lib/tags";
 import { telemetryFrameSchema } from "../api/schemas";
 import type { PowerSupplyStatus } from "../components/PowerSupplyControl";
+import type { TemperatureStatus } from "../components/TemperatureControl";
 import type { AlicatMFCState, ActiveAlarm } from "../api/schemas";
 
 /**
@@ -19,6 +20,7 @@ export interface TelemetryState {
   activeAlarms: ActiveAlarm[];
   eStopActive: boolean;
   powerSupplyStatus: PowerSupplyStatus | undefined;
+  temperatureStatus: TemperatureStatus | undefined;
   isConnected: boolean;
 }
 
@@ -51,6 +53,9 @@ export function useTelemetryStream(
   const [eStopActive, setEStopActive] = useState<boolean>(false);
   const [powerSupplyStatus, setPowerSupplyStatus] = useState<
     PowerSupplyStatus | undefined
+  >(undefined);
+  const [temperatureStatus, setTemperatureStatus] = useState<
+    TemperatureStatus | undefined
   >(undefined);
   const [isConnected, setIsConnected] = useState<boolean>(false);
 
@@ -110,6 +115,9 @@ export function useTelemetryStream(
           if (frame.power_supply) {
             setPowerSupplyStatus(frame.power_supply as PowerSupplyStatus);
           }
+          if (frame.temperature) {
+            setTemperatureStatus(frame.temperature as TemperatureStatus);
+          }
           return;
         }
 
@@ -148,6 +156,7 @@ export function useTelemetryStream(
     activeAlarms,
     eStopActive,
     powerSupplyStatus,
+    temperatureStatus,
     isConnected,
     setAlicats,
     setActiveAlarms,

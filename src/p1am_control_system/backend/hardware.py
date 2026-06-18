@@ -28,6 +28,7 @@ PID_COUNT = 4
 # ---- Coils ------------------------------------------------------------
 SAVE_TO_FLASH_COIL = 0
 ESTOP_RESET_COIL = 1
+HEATER_RELAY_COIL = 2  # 24 V DO -> relay -> 110 V resistive heater (temp ctrl)
 
 
 def tag_name(index: int) -> str:

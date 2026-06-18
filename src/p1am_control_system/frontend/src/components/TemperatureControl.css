@@ -1,0 +1,488 @@
+/* Temperature controller screen.
+ *
+ * Industrial-HMI styling built on the app theme variables (light/dark aware),
+ * mirroring the power-supply screen. Layout goals: a glanceable status header
+ * with a prominent heater relay indicator, an unambiguous setpoint entry, a
+ * high-high cutoff banner, live telemetry, and a single-trace temperature
+ * trend with setpoint / HH reference lines.
+ */
+
+.tc {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-family: var(--font-sans);
+}
+
+/* ---- Status header -------------------------------------------------- */
+.tc-status {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1rem 1.25rem;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-left-width: 4px;
+  border-radius: 8px;
+  box-shadow: var(--card-shadow);
+  transition: border-color var(--transition-normal);
+}
+
+.tc-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  min-width: 6.5rem;
+}
+
+.tc-state-badge {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  line-height: 1.1;
+}
+
+.tc-state-sub {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+/* State color theming — applied to .tc-status and the badge. */
+.tc-status.is-idle {
+  border-left-color: var(--text-muted);
+}
+.tc-status.is-armed {
+  border-left-color: var(--accent-cyan);
+}
+.tc-status.is-running {
+  border-left-color: var(--color-success);
+}
+.tc-status.is-tripped {
+  border-left-color: var(--color-error);
+  background: rgba(var(--accent-magenta-rgb), 0.04);
+}
+.is-idle .tc-state-badge {
+  color: var(--text-muted);
+}
+.is-armed .tc-state-badge {
+  color: var(--accent-cyan);
+}
+.is-running .tc-state-badge {
+  color: var(--color-success);
+}
+.is-tripped .tc-state-badge {
+  color: var(--color-error);
+}
+
+.tc-status-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.tc-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.tc-metric-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+.tc-metric-value {
+  font-family: var(--font-mono);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.tc-metric-value.is-warning {
+  color: var(--color-warning);
+}
+
+.tc-status-actions {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+/* ---- Heater relay indicator ---------------------------------------- */
+/* Glances as a glowing, red-hot pill when the relay is closed. */
+.tc-relay {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid var(--panel-border);
+  background: var(--input-bg);
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  transition: all var(--transition-normal);
+}
+.tc-relay .tc-relay-coil {
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 50%;
+  background: var(--text-muted);
+  box-shadow: 0 0 0 0 transparent;
+  transition: all var(--transition-normal);
+}
+.tc-relay.is-on {
+  border-color: var(--color-error);
+  color: var(--color-error);
+  background: linear-gradient(
+    180deg,
+    rgba(239, 68, 68, 0.18),
+    rgba(239, 68, 68, 0.05)
+  );
+  box-shadow: 0 0 14px 1px rgba(239, 68, 68, 0.45);
+}
+.tc-relay.is-on .tc-relay-coil {
+  background: var(--color-error);
+  box-shadow: 0 0 10px 2px var(--color-error);
+  animation: tc-relay-glow 1.2s ease-in-out infinite;
+}
+@keyframes tc-relay-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 8px 1px var(--color-error);
+  }
+  50% {
+    box-shadow: 0 0 16px 4px var(--color-error);
+  }
+}
+
+/* ---- Permissive switch --------------------------------------------- */
+.tc-permissive {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--panel-border);
+  background: var(--input-bg);
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+}
+.tc-permissive:hover {
+  border-color: var(--text-muted);
+}
+.tc-permissive.is-on {
+  border-color: var(--color-success);
+  color: var(--color-success);
+}
+.tc-permissive .dot {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background: var(--text-muted);
+  box-shadow: 0 0 0 0 transparent;
+  transition: all var(--transition-fast);
+}
+.tc-permissive.is-on .dot {
+  background: var(--color-success);
+  box-shadow: 0 0 8px 1px var(--color-success);
+}
+
+/* ---- Generic card --------------------------------------------------- */
+.tc-card {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  padding: 1.1rem 1.25rem;
+  box-shadow: var(--card-shadow);
+}
+
+.tc-card-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.75px;
+  color: var(--text-secondary);
+  margin-bottom: 0.9rem;
+}
+
+/* ---- Setpoint entry ------------------------------------------------- */
+.tc-setpoint-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+.tc-step-btn {
+  width: 3rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.tc-step-btn:hover:not(:disabled) {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+.tc-setpoint-input {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-align: right;
+  padding: 0.35rem 0.7rem;
+}
+.tc-setpoint-input:focus {
+  outline: none;
+  border-color: var(--accent-cyan);
+}
+
+.tc-setpoint-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.8rem;
+  flex-wrap: wrap;
+}
+.tc-step-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+.tc-step-field input {
+  width: 4.5rem;
+  background: var(--input-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  padding: 0.3rem 0.4rem;
+}
+
+.tc-hint {
+  margin-top: 0.7rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.tc-setpoint-warn {
+  margin: 0.7rem 0 0;
+  padding: 0.45rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid var(--color-warning);
+  color: var(--color-warning);
+}
+
+/* ---- Telemetry ------------------------------------------------------ */
+.tc-readouts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.7rem;
+}
+.tc-readout {
+  padding: 0.6rem 0.75rem;
+  border-radius: 6px;
+  background: var(--input-bg);
+  border: 1px solid var(--panel-border);
+}
+.tc-readout.is-warning {
+  border-color: var(--color-warning);
+  background: rgba(245, 158, 11, 0.08);
+}
+.tc-readout-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+.tc-readout-value {
+  font-family: var(--font-mono);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.tc-readout.is-warning .tc-readout-value {
+  color: var(--color-warning);
+}
+
+/* ---- Trips + toasts ------------------------------------------------- */
+.tc-trip-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--color-error);
+  color: var(--color-error);
+  font-weight: 700;
+}
+
+.tc-btn-danger {
+  background: var(--color-error);
+  border-color: var(--color-error);
+  color: #fff;
+}
+.tc-btn-danger:hover {
+  filter: brightness(1.08);
+}
+
+.tc-toast {
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.tc-toast.is-info {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid var(--color-success);
+  color: var(--color-success);
+}
+.tc-toast.is-error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--color-error);
+  color: var(--color-error);
+}
+
+/* ---- Advanced config ------------------------------------------------ */
+.tc-config summary {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  user-select: none;
+}
+.tc-config-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+@media (max-width: 700px) {
+  .tc-config-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.tc-field {
+  display: grid;
+  gap: 0.3rem;
+}
+.tc-field span {
+  font-size: 0.74rem;
+  color: var(--text-secondary);
+}
+.tc-field input {
+  background: var(--input-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  padding: 0.4rem 0.55rem;
+}
+.tc-field input:focus {
+  outline: none;
+  border-color: var(--accent-cyan);
+}
+
+.tc-disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+/* ---- Live trend ----------------------------------------------------- */
+.tc-trend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.tc-trend-legend {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+.tc-trend-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.tc-trend-key .swatch {
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 2px;
+}
+.tc-trend-key strong {
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}
+.tc-trend-window {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+.tc-trend-svg {
+  width: 100%;
+  height: 200px;
+  display: block;
+  background: var(--input-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+}
+.tc-trend-grid {
+  stroke: var(--panel-border);
+  stroke-width: 1;
+  opacity: 0.5;
+}
+.tc-trend-axis {
+  fill: var(--text-muted);
+  font-size: 9px;
+  font-family: var(--font-mono);
+}
+.tc-trend-line {
+  fill: none;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.tc-trend-ref {
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+  opacity: 0.85;
+  vector-effect: non-scaling-stroke;
+}
+.tc-trend-empty {
+  fill: var(--text-muted);
+  font-size: 12px;
+}
