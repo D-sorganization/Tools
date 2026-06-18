@@ -4,6 +4,7 @@
 
 ### Changes
 
+- fix(p1am/firmware): boot with bench routing/PID0 defaults and reverted THM config (#3606)
 - fix(ci): cap release bump pull request body
 - fix(ci): open release bump pull requests
 - fix(ci): scope release ruff validation

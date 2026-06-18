@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.593                                    |
+| **Spec Version**        | 1.1.594                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,16 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-18 Update
 
+- P1AM firmware first-boot defaults now keep `SignalBroker::Reset()` as the
+  all-unmapped primitive but layer bench-safe routing after an invalid or
+  erased flash configuration: thermocouples TC0-TC3 route to TAG_0-TAG_3,
+  analog inputs AI0/AI1 route to TAG_12/TAG_13, analog outputs AO0/AO1 source
+  TAG_10/TAG_11, and PID0 boots as a unity-gain power-supply current-command
+  pass-through with setpoint 0. The firmware also keeps the P1-04THM on the
+  P1AM library default instead of applying the reverted custom type-K Celsius
+  module configuration, converts Fahrenheit thermocouple readings to Celsius in
+  software, and documents the 0-20 mA analog-input scaling used by the bench
+  power-supply monitor outputs (#3606).
 - Shared `safe_eval` now applies the exponentiation DoS guard consistently to
   `**`, bare `pow()`/`power()` calls, and statically-computable exponent
   expressions; non-string expressions fail the documented contract before
@@ -1232,6 +1242,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-18 | 1.1.594 | fix(p1am/firmware, #3606): document the first-boot bench routing defaults, PID0 unity-gain current-command pass-through default, reverted P1-04THM custom configuration, Fahrenheit-to-Celsius thermocouple conversion, and 0-20 mA analog-input scaling that keep freshly flashed P1AM units recoverable without changing persisted-config behavior. |
 | 2026-06-18 | 1.1.593 | test(shared): extend root `safe_eval` regression coverage for empty/syntax failures, function-call rejection, runtime power wrappers, numpy min/max arity, scalar pow, and constant-exponent helper branches so the changed-file coverage gate exceeds 99%. |
 | 2026-06-18 | 1.1.592 | fix(shared, #3611, #3621, #3622, #3647): harden `safe_eval` exponentiation by bounding `pow()`/`power()` calls and computed constant exponents like `**`, enforce the non-string expression contract before parsing, and make numpy-mode two-argument `min()`/`max()` elementwise instead of treating the second value as an axis. |
 | 2026-06-18 | 1.1.591 | fix(movement_optimizer): route legacy `optimizer_gui` launcher and hidden registration metadata to the canonical `movement_optimizer` PyQt6 app so old Tools launch paths cannot expose the retired minimal swingset UI with regressed plot behavior. |

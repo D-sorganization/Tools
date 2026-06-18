@@ -199,12 +199,36 @@ void setup() {
       interlock.SetHihiLimit(i, temp_hihi[i]);
     }
   } else {
-    Serial.println(F("[storage] no valid config -- using defaults"));
+    Serial.println(F("[storage] no valid config -- using power-on defaults"));
     broker.Reset();
     interlock.Reset();
     for (int i = 0; i < 4; ++i) {
       pids[i].Reset();
     }
+    // Sensible power-on routing so a freshly-flashed unit (NVRAM erased by the
+    // upload) boots into the bench hardware map instead of all-unmapped. An
+    // all-unmapped map strands every TC/AI AND blocks recovery: the host's
+    // config encoder rejects the 255 "unmapped" sentinel, so it cannot write a
+    // good config back. Bench map: TC0-3 -> TAG_0..3, AI0/AI1 -> TAG_12/13,
+    // AO0/AO1 <- TAG_10/11.
+    broker.SetInputRouting(0, 0);
+    broker.SetInputRouting(1, 1);
+    broker.SetInputRouting(2, 2);
+    broker.SetInputRouting(3, 3);
+    broker.SetInputRouting(4, 12);
+    broker.SetInputRouting(5, 13);
+    broker.SetOutputRouting(0, 10);
+    broker.SetOutputRouting(1, 11);
+    // PID0 = power-supply current-command pass-through (CV -> AO TAG_10, unity
+    // gain, PV an unrouted tag that stays 0). The host's connect-time auto-repair
+    // then sees PID0 already correct and never rewrites config (which would choke
+    // on the still-unmapped PID1-3). Setpoint 0 => AO idle until the PS commands.
+    pids[0].SetPvTagId(30);
+    pids[0].SetCvTagId(10);
+    pids[0].SetKp(1.0f);
+    pids[0].SetKi(0.0f);
+    pids[0].SetKd(0.0f);
+    pids[0].SetSetpoint(0.0f);
   }
 
   // Publish current config to Modbus registers.

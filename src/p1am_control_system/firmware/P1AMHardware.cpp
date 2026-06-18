@@ -18,18 +18,12 @@
 P1AMHardware::P1AMHardware() {}
 
 void P1AMHardware::Begin() {
+  // P1.init() auto-configures the P1-04THM with the library default, which
+  // reads a real, stable thermocouple value — but in Fahrenheit. We deliberately
+  // do NOT call P1.configureModule() here: custom config arrays put the channel
+  // into a bad state (dead-flat reading) on this module, so we keep the proven
+  // default and convert F->C in software (see ReadThermocouple).
   P1.init();
-  // Override the P1-04THM's power-up default (type-J, Fahrenheit) with type-K
-  // in degrees Celsius — otherwise a type-K probe reads in F (e.g. ~28 C indoor
-  // air shows as ~83 F). Config bytes per the FACTS module reference:
-  //   0x4003           enable channels 1-4
-  //   0x6001           degrees C + low-side burnout (default 0x6005 = degrees F)
-  //   0x21 11 .. 0x24 11  per-channel range; type nibble 1 = type-K
-  // Verify after flashing with P1.readModuleConfig(); room air should read ~25 C.
-  static const char kThmTypeKCelsius[20] = {
-      0x40, 0x03, 0x60, 0x01, 0x21, 0x11, 0x22, 0x11, 0x23, 0x11,
-      0x24, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-  P1.configureModule(kThmTypeKCelsius, kSlotThm);
   pinMode(kPinInhibit, OUTPUT);
   digitalWrite(kPinInhibit, LOW);
   // Heater relay control output starts de-energized (LOW = heater OFF).
@@ -43,8 +37,11 @@ float P1AMHardware::ReadThermocouple(int channel) {
   if (channel < 0 || channel >= 4) {
     return 0.0f;
   }
+  // The P1-04THM reports in Fahrenheit under the library default config.
+  // Convert to Celsius here so the broker/backend speak one unit (deg C).
   // P1AM library channels are 1-indexed; broker uses 0-indexed.
-  return P1.readTemperature(kSlotThm, channel + 1);
+  const float fahrenheit = P1.readTemperature(kSlotThm, channel + 1);
+  return (fahrenheit - 32.0f) * 5.0f / 9.0f;
 }
 
 float P1AMHardware::ReadAnalogInput(int channel) {
@@ -52,12 +49,16 @@ float P1AMHardware::ReadAnalogInput(int channel) {
     return 0.0f;
   }
   // P1.readAnalog returns raw ADC counts. For the P1-4ADL2DAL-1 the AI is
-  // 13-bit over a 0-20 mA span: 0 counts -> 0 mA, 8191 counts -> 20 mA.
-  // Convert to percent of the 4-20 mA process span: 4 mA -> 0 %, 20 mA -> 100 %.
+  // 13-bit over a 0-20 mA span: 0 counts -> 0 mA, 8191 counts -> 20 mA. The
+  // power-supply monitor outputs are 0-5 V signals (0 V = zero output, 5 V =
+  // full) which drive 0-20 mA through the current input's ~250 ohm burden, so
+  // scale the full 0-20 mA span linearly to 0-100 % (0 mA -> 0 %, 20 mA ->
+  // 100 %). If a channel is instead a 4-20 mA / 1-5 V signal (reads ~1 V / 4 mA
+  // at zero output), use (mA - 4.0f) * (100.0f / 16.0f) instead.
   // Library channels are 1-indexed; broker uses 0-indexed.
   uint32_t counts = P1.readAnalog(kSlotAna, channel + 1);
   float mA = static_cast<float>(counts) * (20.0f / 8191.0f);
-  float percent = (mA - 4.0f) * (100.0f / 16.0f);
+  float percent = mA * (100.0f / 20.0f);
   if (percent < 0.0f) {
     percent = 0.0f;
   } else if (percent > 100.0f) {
