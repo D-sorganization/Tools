@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.572                                    |
+| **Spec Version**        | 1.1.573                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-18 Update
 
+- Movement Optimizer animation playback mixin now declares its own narrow
+  MainWindow contract for tabs, playback controls, exercise tabs, and
+  published exercise state, removing the module-level mypy suppression and
+  per-method override ignores without changing runtime Qt dispatch.
 - Movement Optimizer Swingset and Chain Dynamics analysis legends now dock
   into `MotionAnalysisPanel`-owned reserved legend rows instead of living on
   data axes, preserving visible labels for torque, power, angle, COM, energy,
