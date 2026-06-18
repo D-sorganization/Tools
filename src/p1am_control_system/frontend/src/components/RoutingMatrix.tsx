@@ -1,5 +1,6 @@
 import React from "react";
 import type { RoutingConfig } from "../App";
+import { TAG_INDICES } from "../lib/tags";
 
 interface RoutingMatrixProps {
   config: RoutingConfig;
@@ -18,7 +19,9 @@ const INPUT_LABELS = [
 
 const OUTPUT_LABELS = ["Analog Out V0 (V)", "Analog Out V1 (V)"];
 
-export const TAG_INDICES = Array.from({ length: 32 }, (_, i) => i);
+// Re-exported from the centralized tag helpers (#3546) so existing importers
+// (ControlDashboard, TrendChart) keep working while the source of truth is one place.
+export { TAG_INDICES };
 
 export const RoutingMatrix: React.FC<RoutingMatrixProps> = ({
   config,

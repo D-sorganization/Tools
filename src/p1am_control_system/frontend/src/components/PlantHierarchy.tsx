@@ -1,31 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { Network, HardDrive, Tag, ChevronDown, ChevronRight, Cpu } from "lucide-react";
+import { getPlant } from "../api/endpoints";
+import type {
+  HierarchicalTag,
+  HierarchicalEquipment,
+  HierarchicalUnit,
+  HierarchicalArea,
+} from "../api/schemas";
 
-export interface HierarchicalTag {
-  name: string;
-  tag_type: string;
-  description: string;
-  rw_mode: string;
-  register_type: string | null;
-  register_num: number | null;
-  data_format: string | null;
-  scale_factor: number | null;
-}
-
-export interface HierarchicalEquipment {
-  name: string;
-  tags: HierarchicalTag[];
-}
-
-export interface HierarchicalUnit {
-  name: string;
-  equipment: HierarchicalEquipment[];
-}
-
-export interface HierarchicalArea {
-  name: string;
-  units: HierarchicalUnit[];
-}
+export type {
+  HierarchicalTag,
+  HierarchicalEquipment,
+  HierarchicalUnit,
+  HierarchicalArea,
+};
 
 interface PlantHierarchyProps {
   onSelectTag: (name: string) => void;
@@ -43,24 +31,19 @@ export const PlantHierarchy: React.FC<PlantHierarchyProps> = ({
   const fetchHierarchy = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/plant");
-      if (res.ok) {
-        const data = await res.json();
-        setHierarchy(data);
-        // Expand areas by default
-        const initialExpanded: Record<string, boolean> = {};
-        data.forEach((area: HierarchicalArea) => {
-          initialExpanded[`area_${area.name}`] = true;
-          area.units.forEach((unit) => {
-            initialExpanded[`unit_${area.name}_${unit.name}`] = true;
-          });
+      const data = await getPlant();
+      setHierarchy(data);
+      // Expand areas by default
+      const initialExpanded: Record<string, boolean> = {};
+      data.forEach((area: HierarchicalArea) => {
+        initialExpanded[`area_${area.name}`] = true;
+        area.units.forEach((unit) => {
+          initialExpanded[`unit_${area.name}_${unit.name}`] = true;
         });
-        setExpandedNodes(initialExpanded);
-      } else {
-        triggerNotification("Failed to fetch plant hierarchy structure.", "error");
-      }
-    } catch (err) {
-      triggerNotification("Connection error reading plant hierarchy.", "error");
+      });
+      setExpandedNodes(initialExpanded);
+    } catch {
+      triggerNotification("Failed to fetch plant hierarchy structure.", "error");
     } finally {
       setLoading(false);
     }
