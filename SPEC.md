@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.571                                    |
+| **Spec Version**        | 1.1.572                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -1139,6 +1139,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-18 | 1.1.572 | perf(golf): optimize `generateRecommendations` in `swingAnalyzer.ts` by classifying major and moderate swing issues in one pass, avoiding redundant `.filter()` traversals and intermediate arrays while preserving recommendation ordering. |
 | 2026-06-18 | 1.1.571 | fix(movement_optimizer): wrap the Swingset policy optimization trace legend by measured widget width and derive the trace top inset from the wrapped legend band, preventing optimizer score and parameter telemetry from being obscured in narrow panes. |
 | 2026-06-18 | 1.1.570 | refactor(p1am, #3561): tighten the extracted power-supply PID pass-through repair helper around a narrow routing-repair protocol, add focused async repair coverage, and keep `backend/main.py` below its frozen module-size budget without changing the auto-repair contract. |
 | 2026-06-18 | 1.1.569 | fix(p1am, #3561): keep PID pass-through detection mypy-clean with a concrete aggregate predicate, preserving the PID0 auto-repair helper's declared bool contract after branch rebases. |
