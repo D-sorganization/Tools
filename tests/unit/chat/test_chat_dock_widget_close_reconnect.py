@@ -11,7 +11,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
@@ -20,9 +20,8 @@ pytest.importorskip("PyQt6.QtWebSockets")
 
 from typing import cast
 
-from PyQt6.QtWidgets import QApplication  # noqa: E402
-
 from chat._chat_dock_widget_qt import ChatDockWidget  # noqa: E402
+from PyQt6.QtWidgets import QApplication  # noqa: E402
 
 
 @pytest.fixture(scope="module")

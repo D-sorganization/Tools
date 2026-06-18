@@ -20,8 +20,6 @@ def _setup_global_stubs(repo_root: Path) -> None:
     This ensures that when shared code imports config or logging_pkg (which
     are not physically present in Tools), they resolve to safe mock/stub modules.
     """
-    import logging
-
     for import_root in (
         repo_root / "src",
         repo_root / "src" / "python" / "src",
@@ -57,19 +55,16 @@ def _setup_global_stubs(repo_root: Path) -> None:
         ("shared.python", "src/shared/python"),
         ("shared.python.calc_backend", "src/shared/python/calc_backend"),
         ("shared.python.config", "src/shared/python/config"),
-        ("shared.python.logging_pkg", "src/shared/python/logging_pkg"),
     ]
 
     for name, path in checkout_packages:
         ensure_package_path(name, path)
 
-    # Specifically stub logging_config
-    if "shared.python.logging_pkg.logging_config" not in sys.modules:
-        config_name = "shared.python.logging_pkg.logging_config"
-        logging_config = types.ModuleType(config_name)
-        logging_config.get_logger = logging.getLogger  # type: ignore
-        logging_config.setup_logging = lambda *a, **kw: None  # type: ignore
-        sys.modules[config_name] = logging_config
+    # Use the real logging package rather than a placeholder package. The
+    # top-level ``logging_pkg`` shim aliases to this module object, so a stub
+    # here hides public exports such as DEFAULT_SEED during CI collection.
+    sys.modules.pop("shared.python.logging_pkg", None)
+    sys.modules.pop("shared.python.logging_pkg.logging_config", None)
 
     # Specifically stub environment
     if "shared.python.config.environment" not in sys.modules:

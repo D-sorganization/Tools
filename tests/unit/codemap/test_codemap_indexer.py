@@ -8,9 +8,10 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+from codemap._ts_common import ParsedSymbol, ParseResult
+
 from codemap import db as codemap_db
 from codemap import indexer
-from codemap._ts_common import ParsedSymbol, ParseResult
 
 
 def _python_result(path: str | Path, _source: bytes | str) -> ParseResult:

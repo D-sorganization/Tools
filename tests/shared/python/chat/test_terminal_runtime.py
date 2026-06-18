@@ -6,6 +6,14 @@ from collections.abc import Mapping
 from pathlib import Path
 
 import pytest
+from chat.terminal_runtime import (
+    ProcessLaunchRequest,
+    TerminalProcessAdapter,
+    TerminalRuntimeError,
+    TerminalSessionRuntime,
+    _build_default_session_env,
+)
+
 from chat import (
     TerminalAgentEvent,
     TerminalAgentProviderInfo,
@@ -13,13 +21,6 @@ from chat import (
     TerminalProviderRegistry,
     TerminalRegistryError,
     TerminalShellInfo,
-)
-from chat.terminal_runtime import (
-    ProcessLaunchRequest,
-    TerminalProcessAdapter,
-    TerminalRuntimeError,
-    TerminalSessionRuntime,
-    _build_default_session_env,
 )
 
 

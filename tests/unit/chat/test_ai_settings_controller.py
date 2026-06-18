@@ -10,7 +10,6 @@ the Sidekick multi-widget Qt segfault.
 from __future__ import annotations
 
 import pytest
-
 from chat.ai_settings_controller import (
     VALID_FIELDS,
     VALID_THINKING_NAMES,

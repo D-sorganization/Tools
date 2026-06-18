@@ -7,9 +7,10 @@ from typing import Any
 
 import numpy as np
 import pytest
-from signal_toolkit import adaptive_filter
 from signal_toolkit.adaptive_filter import AdaptiveFilter
 from signal_toolkit.core import Signal
+
+from signal_toolkit import adaptive_filter
 
 
 def _signal(values: np.ndarray, *, name: str = "sensor", units: str = "V") -> Signal:
