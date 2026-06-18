@@ -11,7 +11,7 @@
 | License          | MIT                                                     |
 | Package Name     | `movement-optimizer`                                    |
 | Current Version  | `1.0.0`                                                 |
-| Spec Version     | `1.0.18`                                                |
+| Spec Version     | `1.0.19`                                                |
 | Last Spec Update | 2026-06-18                                              |
 
 ## 2. Purpose
@@ -29,6 +29,9 @@ Movement-Optimizer is a biomechanics trajectory optimizer for barbell exercises.
 - Compact plot panes reserve enough vertical gap between data axes and docked
   legend rows for x-axis labels, y-axis labels, and titles to remain readable
   without being obscured by legends.
+- The Swingset policy optimization trace legend now measures and wraps entries
+  by widget width, and the trace series uses the wrapped legend height as its
+  top inset so the legend does not obscure optimizer telemetry in narrow panes.
 
 ### 2026-06-17 Update
 
@@ -194,6 +197,7 @@ mypy --ignore-missing-imports src/movement_optimizer/
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-06-18 | 1.0.19  | Wrapped the Swingset policy optimization trace legend by measured widget width and derives the trace top inset from the wrapped legend band, so optimizer telemetry lines start below all legend rows even in narrow panes. Added regression coverage for the narrow-width legend layout and updated the trace legend tooltip to describe the above-plot behavior.                                                   |
 | 2026-06-18 | 1.0.17  | Replaced below-axis Swingset and Chain Dynamics analysis legends with `MotionAnalysisPanel`-owned legend rows; legends are removed from data axes and rebuilt in reserved strips during panel draw, with rendered-bounding-box regression tests proving they stay inside the figure and do not overlap any plot axis.                                                                                           |
 | 2026-06-18 | 1.0.15  | Anchored Swingset and Chain Dynamics analysis legends below each subplot via a shared renderer helper so visible legends identify torque, power, angle, COM, energy, tension, curvature, and tip-speed series without obscuring plotted data; added regression tests for the outside-plot legend contract.                                                                                                   |
 | 2026-06-16 | 1.0.14  | Added per-element animation layer toggles (grid/chain/rider/markers/forces) to the Swingset and Chain Dynamics tabs via a shared `_MotionViewMixin`, split each tab into Animation/Plots sub-tabs, and made plot/policy-trace legends toggleable so they no longer obscure the plotted data. `MotionAnalysisPanel.set_legends_visible`/`has_legends` encapsulate legend control (LoD).                          |

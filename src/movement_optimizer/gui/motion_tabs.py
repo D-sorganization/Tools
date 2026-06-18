@@ -746,7 +746,7 @@ class SwingsetTab(_MotionViewMixin, QWidget):
         self._trace_legend_toggle = QCheckBox("Show trace legend")
         self._trace_legend_toggle.setChecked(self.policy_trace_canvas.legend_visible())
         self._trace_legend_toggle.setToolTip(
-            "Show or hide the legend drawn over the policy-trace plot."
+            "Show or hide the policy-trace legend above the plotted series."
         )
         self._trace_legend_toggle.stateChanged.connect(
             lambda _state: self.policy_trace_canvas.set_legend_visible(
