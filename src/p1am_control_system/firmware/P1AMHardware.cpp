@@ -19,6 +19,17 @@ P1AMHardware::P1AMHardware() {}
 
 void P1AMHardware::Begin() {
   P1.init();
+  // Override the P1-04THM's power-up default (type-J, Fahrenheit) with type-K
+  // in degrees Celsius — otherwise a type-K probe reads in F (e.g. ~28 C indoor
+  // air shows as ~83 F). Config bytes per the FACTS module reference:
+  //   0x4003           enable channels 1-4
+  //   0x6001           degrees C + low-side burnout (default 0x6005 = degrees F)
+  //   0x21 11 .. 0x24 11  per-channel range; type nibble 1 = type-K
+  // Verify after flashing with P1.readModuleConfig(); room air should read ~25 C.
+  static const char kThmTypeKCelsius[20] = {
+      0x40, 0x03, 0x60, 0x01, 0x21, 0x11, 0x22, 0x11, 0x23, 0x11,
+      0x24, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+  P1.configureModule(kThmTypeKCelsius, kSlotThm);
   pinMode(kPinInhibit, OUTPUT);
   digitalWrite(kPinInhibit, LOW);
 }
