@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.589                                    |
+| **Spec Version**        | 1.1.590                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,16 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-18 Update
 
+- P1AM firmware first-boot defaults now keep `SignalBroker::Reset()` as the
+  all-unmapped primitive but layer bench-safe routing after an invalid or
+  erased flash configuration: thermocouples TC0-TC3 route to TAG_0-TAG_3,
+  analog inputs AI0/AI1 route to TAG_12/TAG_13, analog outputs AO0/AO1 source
+  TAG_10/TAG_11, and PID0 boots as a unity-gain power-supply current-command
+  pass-through with setpoint 0. The firmware also keeps the P1-04THM on the
+  P1AM library default instead of applying the reverted custom type-K Celsius
+  module configuration, converts Fahrenheit thermocouple readings to Celsius in
+  software, and documents the 0-20 mA analog-input scaling used by the bench
+  power-supply monitor outputs (#3606).
 - Release Automation validation now mirrors the CI Standard changed-file Ruff
   contract: release validation collects changed Python files, applies the same
   legacy-path exclude list, and skips Ruff lint/format when a release-triggering
@@ -1211,6 +1221,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-18 | 1.1.590 | fix(p1am/firmware, #3606): document the first-boot bench routing defaults, PID0 unity-gain current-command pass-through default, reverted P1-04THM custom configuration, Fahrenheit-to-Celsius thermocouple conversion, and 0-20 mA analog-input scaling that keep freshly flashed P1AM units recoverable without changing persisted-config behavior. |
 | 2026-06-18 | 1.1.589 | fix(p1am): extract power-supply rolling feedback-noise sample windows into `FeedbackNoiseTracker`, keeping `backend/power_supply.py` below the 500-line changed-file budget while preserving arc/noise status behavior. |
 | 2026-06-18 | 1.1.588 | fix(ci, movement): make the `movement_optimizer_core` maturin parity workflow create a per-job virtual environment before reinstalling NumPy, SciPy, `pytest`, and `maturin`, preventing stale self-hosted runner native package files from leaking into Rust accelerator validation. |
 | 2026-06-18 | 1.1.585 | chore(release): align `SPEC.md` with the v1.1.0 package metadata bump so release PRs that update `pyproject.toml`, `VERSION`, and `CHANGELOG.md` satisfy the spec freshness gate. |
