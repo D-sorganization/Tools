@@ -7,7 +7,9 @@
 //! - Exponential spin decay
 //!
 //! # Design by Contract
-//! - All physical parameters validated via `debug_assert!`
+//! - `simulate_trajectory` validates `velocity`/`dt`/`max_time` as real
+//!   (release-mode) preconditions via `assert!`; lower-level helpers use
+//!   `debug_assert!` for development-time checks.
 //! - Functions return `Result<T, E>` for invalid configurations
 //!
 //! # DRY
@@ -422,6 +424,13 @@ pub fn apply_spin_decay(omega: f64, decay_rate: f64, dt: f64) -> f64 {
 ///
 /// # Returns
 /// A vector of `TrajectoryPoint` values.
+///
+/// # Panics
+/// Panics if `launch.velocity`, `dt`, or `max_time` is not a finite positive
+/// value. These are real (release-mode) preconditions — unlike the previous
+/// `debug_assert!` guards they cannot be stripped from an optimized build, so a
+/// caller passing `dt = 0.0` (infinite step count) or a non-finite `max_time`
+/// (a saturating cast to a huge `Vec` capacity → OOM) fails fast and loudly.
 #[must_use]
 pub fn simulate_trajectory(
     ball: &BallProperties,
@@ -430,9 +439,19 @@ pub fn simulate_trajectory(
     max_time: f64,
     dt: f64,
 ) -> Vec<TrajectoryPoint> {
-    debug_assert!(launch.velocity > 0.0, "Launch velocity must be positive");
-    debug_assert!(dt > 0.0, "Time step must be positive");
-    debug_assert!(max_time > 0.0, "Max time must be positive");
+    assert!(
+        launch.velocity.is_finite() && launch.velocity > 0.0,
+        "Launch velocity must be finite and positive, got {}",
+        launch.velocity
+    );
+    assert!(
+        dt.is_finite() && dt > 0.0,
+        "Time step must be finite and positive, got {dt}"
+    );
+    assert!(
+        max_time.is_finite() && max_time > 0.0,
+        "Max time must be finite and positive, got {max_time}"
+    );
 
     let launch_angle_rad = launch.launch_angle.to_radians();
     let azimuth_rad = launch.azimuth_angle.to_radians();
@@ -452,7 +471,18 @@ pub fn simulate_trajectory(
     let mut state: [f64; 6] = [0.0, 0.0, 0.0, vx, vy, vz];
     let mut time = 0.0;
 
-    let capacity = (max_time / dt) as usize + 1;
+    // `max_time / dt` can be enormous (e.g. a multi-hour `max_time` with a tiny
+    // `dt`); a saturating `as usize` cast would then ask for a multi-gigabyte
+    // allocation up front. Cap the *pre-allocation* at a sane ceiling — the
+    // integration loop still honors `max_steps` and `Vec` grows on demand.
+    const MAX_PREALLOC_STEPS: usize = 1_000_000;
+    let step_count = (max_time / dt).ceil();
+    let max_steps = if step_count >= MAX_PREALLOC_STEPS as f64 {
+        MAX_PREALLOC_STEPS
+    } else {
+        step_count as usize
+    };
+    let capacity = max_steps.saturating_add(1);
     let mut trajectory = Vec::with_capacity(capacity);
 
     // Record initial point
@@ -463,7 +493,6 @@ pub fn simulate_trajectory(
         spin: omega,
     });
 
-    let max_steps = (max_time / dt) as usize;
     for _ in 0..max_steps {
         let delta = rk4_step(
             &state,
@@ -1049,5 +1078,78 @@ mod tests {
         let json = serde_json::to_string(&launch).unwrap();
         let launch2: LaunchConditions = serde_json::from_str(&json).unwrap();
         assert!((launch.velocity - launch2.velocity).abs() < 1e-12);
+    }
+
+    // ── simulate_trajectory preconditions (issue #3554) ──
+
+    #[test]
+    #[should_panic(expected = "Time step must be finite and positive")]
+    fn test_simulate_rejects_zero_dt() {
+        // dt = 0 would otherwise mean an infinite step count (0 steps + a
+        // div-by-zero capacity). Now a real (release-mode) precondition.
+        let _ = simulate_trajectory(
+            &default_ball(),
+            &default_env(),
+            &LaunchConditions::default(),
+            5.0,
+            0.0,
+        );
+    }
+
+    #[test]
+    #[should_panic(expected = "Time step must be finite and positive")]
+    fn test_simulate_rejects_negative_dt() {
+        let _ = simulate_trajectory(
+            &default_ball(),
+            &default_env(),
+            &LaunchConditions::default(),
+            5.0,
+            -0.01,
+        );
+    }
+
+    #[test]
+    #[should_panic(expected = "Max time must be finite and positive")]
+    fn test_simulate_rejects_nonfinite_max_time() {
+        let _ = simulate_trajectory(
+            &default_ball(),
+            &default_env(),
+            &LaunchConditions::default(),
+            f64::INFINITY,
+            0.01,
+        );
+    }
+
+    #[test]
+    #[should_panic(expected = "Launch velocity must be finite and positive")]
+    fn test_simulate_rejects_zero_velocity() {
+        let launch = LaunchConditions {
+            velocity: 0.0,
+            ..LaunchConditions::default()
+        };
+        let _ = simulate_trajectory(&default_ball(), &default_env(), &launch, 5.0, 0.01);
+    }
+
+    #[test]
+    fn test_simulate_huge_max_time_dt_ratio_does_not_oom() {
+        // A huge max_time with a tiny dt previously asked `Vec::with_capacity`
+        // for ~3e11 elements (instant OOM). The pre-allocation is now capped;
+        // the run terminates early via the ground/low-speed stop conditions and
+        // returns a bounded trajectory without exhausting memory.
+        let launch = LaunchConditions {
+            velocity: 50.0,
+            launch_angle: 30.0,
+            spin_rate: 0.0,
+            ..LaunchConditions::default()
+        };
+        let trajectory =
+            simulate_trajectory(&default_ball(), &default_env(), &launch, 1_000_000.0, 1e-5);
+        // Ball lands and the loop breaks; far fewer than the (capped) 1e6 steps.
+        assert!(!trajectory.is_empty());
+        assert!(
+            trajectory.len() < 1_000_000,
+            "expected early termination, got {} points",
+            trajectory.len()
+        );
     }
 }

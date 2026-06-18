@@ -333,6 +333,102 @@ impl ElectrodeAdvancementCalculator {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn build_default_placements_count_matches_electrode_count() {
+        let bath = BathDefaults::new("rectangular".to_string(), 3.0, 2.0, 2.5, 1.5);
+        let electrodes = ElectrodeDefaults::new(
+            "graphite_standard".to_string(),
+            3,
+            0.1,
+            1500.0,
+            150.0,
+            150.0,
+            2500.0,
+            1500.0,
+        );
+        let placements = build_default_placements(&bath, &electrodes);
+        assert_eq!(placements.len(), 3);
+        // Indices are 1-based and sequential.
+        assert_eq!(placements[0].index, 1);
+        assert_eq!(placements[2].index, 3);
+    }
+
+    #[test]
+    fn placements_split_current_evenly() {
+        let bath = BathDefaults::new("rectangular".to_string(), 3.0, 2.0, 2.5, 1.5);
+        let electrodes = ElectrodeDefaults::new(
+            "graphite_standard".to_string(),
+            3,
+            0.1,
+            1500.0,
+            150.0,
+            150.0,
+            3000.0,
+            1500.0,
+        );
+        let placements = build_default_placements(&bath, &electrodes);
+        for p in &placements {
+            assert!(
+                (p.current_a - 1000.0).abs() < 1e-9,
+                "current_a={}",
+                p.current_a
+            );
+        }
+        // Effective length = current - worn.
+        assert!((placements[0].effective_length_mm - 1350.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn single_electrode_is_centered() {
+        let bath = BathDefaults::new("rectangular".to_string(), 3.0, 2.0, 2.5, 1.5);
+        let electrodes = ElectrodeDefaults::new(
+            "graphite_standard".to_string(),
+            1,
+            0.1,
+            1500.0,
+            150.0,
+            150.0,
+            2500.0,
+            1500.0,
+        );
+        let placements = build_default_placements(&bath, &electrodes);
+        assert_eq!(placements.len(), 1);
+        assert_eq!(placements[0].viewer_x_m, 0.0);
+        assert_eq!(placements[0].viewer_z_m, 0.0);
+    }
+
+    #[test]
+    fn default_layout_has_three_electrodes_and_mm_getters() {
+        let layout = build_default_electrode_advisor_layout();
+        assert_eq!(layout.placements.len(), 3);
+        // Getters convert metres → millimetres.
+        assert!((layout.bath_width_mm() - 3000.0).abs() < 1e-9);
+        assert!((layout.glass_level_mm() - 1500.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn advancement_calculator_rejects_nonpositive_rate() {
+        assert!(ElectrodeAdvancementCalculator::new(0.0).is_err());
+        assert!(ElectrodeAdvancementCalculator::new(-1.0).is_err());
+        assert!(ElectrodeAdvancementCalculator::new(0.5).is_ok());
+    }
+
+    #[test]
+    fn advancement_calculator_consumption_is_linear() {
+        let calc = ElectrodeAdvancementCalculator::new(0.5).unwrap();
+        // rate * current * time
+        let c = calc.calculate_consumption(10.0, 2.0).unwrap();
+        assert!((c - 10.0).abs() < 1e-9, "consumption={c}");
+        // Rejects negative inputs.
+        assert!(calc.calculate_consumption(-1.0, 1.0).is_err());
+        assert!(calc.calculate_consumption(1.0, -1.0).is_err());
+    }
+}
+
 pub mod py_bindings {
     use super::*;
 
