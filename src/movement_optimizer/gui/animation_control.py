@@ -1,7 +1,4 @@
 # Copyright (c) 2026 D-Sorganization. All rights reserved.
-# mypy: disable-error-code="misc,has-type"
-# Mixin pattern: methods annotate self as MainWindow to access its attributes,
-# but mypy cannot verify this pattern without the concrete class in scope.
 """Animation playback helpers extracted from MainWindow.
 
 Provides play/pause toggle, step forward/back, rewind, and frame
@@ -10,12 +7,16 @@ advance as a mixin class.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from ..models import BodyModel
+from ..trajectory import OptimizationResult
 
 if TYPE_CHECKING:
-    from .main_window import MainWindow
+    from PyQt6.QtCore import QTimer
+
+    from .controls_bar import PlaybackControls
+    from .exercise_tab import ExerciseTab
 
 
 def _require_body_for_animation(body: BodyModel | None) -> BodyModel:
@@ -24,7 +25,7 @@ def _require_body_for_animation(body: BodyModel | None) -> BodyModel:
     return body
 
 
-def _active_exercise_index(window: MainWindow) -> int | None:
+def _active_exercise_index(window: AnimationControlMixin) -> int | None:
     """Return the active barbell exercise index, or ``None`` for analysis tabs."""
     idx = window.tabs.currentIndex()
     if 0 <= idx < len(window.EXERCISE_CONFIGS):
@@ -35,9 +36,26 @@ def _active_exercise_index(window: MainWindow) -> int | None:
 class AnimationControlMixin:
     """Mixin providing animation playback for MainWindow."""
 
+    EXERCISE_CONFIGS: ClassVar[tuple[tuple[str, str], ...]]
+    anim_timer: QTimer
+    controls: PlaybackControls
+    exercise_tabs: list[ExerciseTab]
     is_playing: bool
+    tabs: Any
 
-    def _toggle_play(self: MainWindow) -> None:  # type: ignore[override]
+    if TYPE_CHECKING:
+
+        def _snapshot_idx_state(
+            self, idx: int
+        ) -> tuple[OptimizationResult | None, int, BodyModel | None, Any]:
+            """Return the currently published optimization state for an exercise."""
+            raise NotImplementedError
+
+        def _set_anim_frame(self, idx: int, frame: int) -> None:
+            """Persist the current animation frame for an exercise."""
+            raise NotImplementedError
+
+    def _toggle_play(self) -> None:
         idx = _active_exercise_index(self)
         if idx is None:
             self._stop_anim()
@@ -52,12 +70,12 @@ class AnimationControlMixin:
             self.controls.set_playing(True)
             self._anim_step()
 
-    def _stop_anim(self: MainWindow) -> None:  # type: ignore[override]
+    def _stop_anim(self) -> None:
         self.is_playing = False
         self.anim_timer.stop()
         self.controls.set_playing(False)
 
-    def _anim_step(self: MainWindow) -> None:  # type: ignore[override]
+    def _anim_step(self) -> None:
         if not self.is_playing:
             return
         idx = _active_exercise_index(self)
@@ -89,7 +107,7 @@ class AnimationControlMixin:
             delay = 700
         self.anim_timer.start(delay)
 
-    def _step_fwd(self: MainWindow) -> None:  # type: ignore[override]
+    def _step_fwd(self) -> None:
         idx = _active_exercise_index(self)
         if idx is None:
             self._stop_anim()
@@ -116,7 +134,7 @@ class AnimationControlMixin:
             self.controls.speed_multiplier(),
         )
 
-    def _step_back(self: MainWindow) -> None:  # type: ignore[override]
+    def _step_back(self) -> None:
         idx = _active_exercise_index(self)
         if idx is None:
             self._stop_anim()
@@ -138,7 +156,7 @@ class AnimationControlMixin:
             etype,
         )
 
-    def _rewind(self: MainWindow) -> None:  # type: ignore[override]
+    def _rewind(self) -> None:
         idx = _active_exercise_index(self)
         if idx is None:
             self._stop_anim()
@@ -158,7 +176,7 @@ class AnimationControlMixin:
             etype,
         )
 
-    def _jump_to_end(self: MainWindow) -> None:  # type: ignore[override]
+    def _jump_to_end(self) -> None:
         idx = _active_exercise_index(self)
         if idx is None:
             self._stop_anim()
@@ -185,5 +203,5 @@ class AnimationControlMixin:
             self.controls.speed_multiplier(),
         )
 
-    def _on_speed(self: MainWindow, speed: float) -> None:  # type: ignore[override]
+    def _on_speed(self, speed: float) -> None:
         self.controls.set_speed_multiplier_text(speed)
