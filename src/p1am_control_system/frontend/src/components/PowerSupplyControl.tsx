@@ -126,6 +126,13 @@ const STATE_HINTS: Record<PowerSupplyStatus["state"], string> = {
   tripped: "latched · acknowledge",
 };
 
+/** Format a wattage as kW (the supply runs in the kW range). */
+function fmtKW(watts: number | null | undefined): string {
+  if (watts == null) return "—";
+  const kw = watts / 1000;
+  return `${kw.toFixed(kw >= 10 ? 1 : 2)} kW`;
+}
+
 const NOISE_METRIC_LABELS: Record<NoiseMetric, string> = {
   std: "Std deviation",
   peak_to_peak: "Peak-to-peak",
@@ -707,7 +714,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
           />
           <Readout
             label="Power (V × I)"
-            value={`${s?.measured_power_w.toFixed(1) ?? "—"} W`}
+            value={fmtKW(s?.measured_power_w)}
             warning={powerWarn}
           />
           <Readout
@@ -718,7 +725,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
           {s?.mode === "power" && (
             <Readout
               label="Power setpoint"
-              value={s.setpoint_w != null ? `${s.setpoint_w.toFixed(1)} W` : "—"}
+              value={s.setpoint_w != null ? fmtKW(s.setpoint_w) : "—"}
             />
           )}
         </div>

@@ -94,7 +94,9 @@ export const PowerSupplyTrend: React.FC<Props> = ({
         <span className="ps-trend-key">
           <span className="swatch" style={{ background: POWER_COLOR }} />
           Power
-          <strong>{last ? `${last.p.toFixed(1)} W` : "—"}</strong>
+          <strong>
+            {last ? `${(last.p / 1000).toFixed(last.p / 1000 >= 10 ? 1 : 2)} kW` : "—"}
+          </strong>
         </span>
         <span className="ps-trend-window">last {windowSeconds}s · % of full scale</span>
       </div>
