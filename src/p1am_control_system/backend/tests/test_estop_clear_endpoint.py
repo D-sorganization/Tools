@@ -12,7 +12,8 @@ os.environ["PLC_DRIVER"] = "modbus"
 os.environ["P1AM_DEV_NO_AUTH"] = "1"
 
 pytest.importorskip("sqlmodel")
-pytest.importorskip("tools_core")
+# tools_core is optional: main.py falls back to scada_fallback (pure Python)
+# when the Rust wheel is absent, so this E-stop suite no longer skips on it.
 pytest.importorskip("httpx")
 pytest.importorskip("fastapi.testclient")
 
