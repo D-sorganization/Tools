@@ -62,3 +62,15 @@ def test_gui_registration_names_canonical_app() -> None:
 
     assert info["tool_name"] == "movement_optimizer"
     assert info["pyqt6"]["module"] == "movement_optimizer.gui.main_window"
+
+
+def test_legacy_optimizer_gui_registration_points_to_canonical_app() -> None:
+    """Old Tools launch paths remain a shim over the migrated implementation."""
+    from optimizer_gui.gui_registration import get_gui_info
+
+    info = get_gui_info()
+
+    assert info["catalog_visible"] is False
+    assert info["tool_name"] == "movement_optimizer"
+    assert info["pyqt6"]["module"] == "movement_optimizer.gui.main_window"
+    assert info["pyqt6"]["class"] == "MainWindow"

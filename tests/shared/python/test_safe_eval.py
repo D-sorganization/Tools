@@ -141,6 +141,51 @@ def test_numpy_two_argument_min_max_are_elementwise() -> None:
     assert safe_eval_math("max(4, 2)") == 4
 
 
+def test_numpy_min_max_single_argument_and_arity_contracts() -> None:
+    values = np.array([3, 1, 2])
+
+    assert safe_eval_math("min(values)", {"values": values}) == 1
+    assert safe_eval_math("max(values)", {"values": values}) == 3
+    with pytest.raises(TypeError, match="min expected at least 1 argument"):
+        safe_eval_math("min()")
+    with pytest.raises(TypeError, match="max expected at least 1 argument"):
+        safe_eval_math("max()")
+
+
+def test_runtime_power_wrappers_enforce_exponent_contracts() -> None:
+    assert safe_eval_math("power(2, 3)") == 8
+    assert safe_eval_math("pow(2, 3)", use_numpy=False) == 8
+    assert safe_eval_math("pow(2, 3, 5)", use_numpy=False) == 3
+
+    with pytest.raises(ValueError, match="Exponent too large"):
+        safe_eval_math("power(2, exponent)", {"exponent": MAX_POW_EXPONENT + 1})
+    with pytest.raises(ValueError, match="Invalid exponent"):
+        safe_eval_math("power(2, exponent)", {"exponent": np.inf})
+    with pytest.raises(ValueError, match="Exponent must be numeric"):
+        safe_eval_math("power(2, exponent)", {"exponent": "not numeric"})
+
+
+def test_power_validation_allows_runtime_exponents_and_incomplete_pow_calls() -> None:
+    validate_expression("2 ** x", {"x"})
+    validate_expression("pow(2)", {"pow"})
+    validate_expression("pow(2, x)", {"pow", "x"})
+
+
+def test_constant_exponent_helper_edge_cases() -> None:
+    validate_expression("'short string literal'")
+    assert safe_eval("2 ** +3", {}) == 8
+    assert safe_eval("2 ** -3", {}) == 0.125
+    validate_expression("2 ** +'literal'")
+    validate_expression("2 ** ~3")
+    validate_expression("2 ** (x ** 2)", {"x"})
+    validate_expression("2 ** (1 << 2)")
+    validate_expression("2 ** (x + 1)", {"x"})
+    validate_expression("2 ** (1 // 0)")
+
+    with pytest.raises(ValueError, match="Invalid exponent"):
+        validate_expression("2 ** 1e309")
+
+
 def test_pow_bomb_does_not_block_for_long() -> None:
     """Validation of the pow bomb returns quickly (well under a second)."""
     import time
