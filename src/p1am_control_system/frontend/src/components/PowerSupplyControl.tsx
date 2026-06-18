@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Download } from "lucide-react";
 import { PowerSupplyTrend, type TrendSample } from "./PowerSupplyTrend";
+import { fetchWithTimeout } from "../lib/fetchWithTimeout";
 import "./PowerSupplyControl.css";
 
 // Rolling trend buffer: ~300 samples at the ~10 Hz broadcast rate ≈ 30 s.
@@ -125,6 +126,13 @@ const STATE_HINTS: Record<PowerSupplyStatus["state"], string> = {
   tripped: "latched · acknowledge",
 };
 
+/** Format a wattage as kW (the supply runs in the kW range). */
+function fmtKW(watts: number | null | undefined): string {
+  if (watts == null) return "—";
+  const kw = watts / 1000;
+  return `${kw.toFixed(kw >= 10 ? 1 : 2)} kW`;
+}
+
 const NOISE_METRIC_LABELS: Record<NoiseMetric, string> = {
   std: "Std deviation",
   peak_to_peak: "Peak-to-peak",
@@ -173,7 +181,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await fetch("/api/power_supply/config");
+        const res = await fetchWithTimeout("/api/power_supply/config");
         if (!res.ok) throw new Error(`config GET ${res.status}`);
         const cfg = (await res.json()) as PowerSupplyConfig;
         setConfig(cfg);
@@ -261,7 +269,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
           mode === "current"
             ? { mode: "current", value_a: rawValue }
             : { mode: "power", value_w: rawValue };
-        const res = await fetch("/api/power_supply/setpoint", {
+        const res = await fetchWithTimeout("/api/power_supply/setpoint", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify(body),
@@ -318,7 +326,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
         return;
       setBusy(true);
       try {
-        const res = await fetch("/api/power_supply/permissive", {
+        const res = await fetchWithTimeout("/api/power_supply/permissive", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ enabled }),
@@ -337,7 +345,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
   const acknowledgeTrip = useCallback(async () => {
     setBusy(true);
     try {
-      const res = await fetch("/api/power_supply/acknowledge_trip", {
+      const res = await fetchWithTimeout("/api/power_supply/acknowledge_trip", {
         method: "POST",
       });
       if (!res.ok) throw new Error(await res.text());
@@ -355,7 +363,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
     async (next: PowerSupplyConfig, okMessage: string) => {
       setBusy(true);
       try {
-        const res = await fetch("/api/power_supply/config", {
+        const res = await fetchWithTimeout("/api/power_supply/config", {
           method: "PUT",
           headers: { "content-type": "application/json" },
           body: JSON.stringify(next),
@@ -490,10 +498,18 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
             className={`ps-permissive ${s?.permissive ? "is-on" : ""}`}
             onClick={() => setPermissive(!s?.permissive)}
             disabled={busy}
-            title="Master enable — output is forced to 0 while OFF"
+            title={
+              busy
+                ? "Applying — please wait…"
+                : "Master enable — output is forced to 0 while OFF"
+            }
           >
             <span className="dot" />
-            {s?.permissive ? "PERMISSIVE ON" : "PERMISSIVE OFF"}
+            {busy
+              ? "APPLYING…"
+              : s?.permissive
+                ? "PERMISSIVE ON"
+                : "PERMISSIVE OFF"}
           </button>
         </div>
       </div>
@@ -698,7 +714,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
           />
           <Readout
             label="Power (V × I)"
-            value={`${s?.measured_power_w.toFixed(1) ?? "—"} W`}
+            value={fmtKW(s?.measured_power_w)}
             warning={powerWarn}
           />
           <Readout
@@ -709,7 +725,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
           {s?.mode === "power" && (
             <Readout
               label="Power setpoint"
-              value={s.setpoint_w != null ? `${s.setpoint_w.toFixed(1)} W` : "—"}
+              value={s.setpoint_w != null ? fmtKW(s.setpoint_w) : "—"}
             />
           )}
         </div>
