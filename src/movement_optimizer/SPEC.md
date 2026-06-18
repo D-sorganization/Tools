@@ -11,7 +11,7 @@
 | License          | MIT                                                     |
 | Package Name     | `movement-optimizer`                                    |
 | Current Version  | `1.0.0`                                                 |
-| Spec Version     | `1.0.18`                                                |
+| Spec Version     | `1.0.19`                                                |
 | Last Spec Update | 2026-06-18                                              |
 
 ## 2. Purpose
@@ -22,13 +22,11 @@ Movement-Optimizer is a biomechanics trajectory optimizer for barbell exercises.
 
 ### 2026-06-18 Update
 
-- Swingset and Chain Dynamics analysis legends are docked into reserved
-  legend rows owned by `MotionAnalysisPanel`, so visible legends identify the
-  plotted series without covering plot data, neighboring subplots, or figure
-  edges on compact panes.
-- Compact plot panes reserve enough vertical gap between data axes and docked
-  legend rows for x-axis labels, y-axis labels, and titles to remain readable
-  without being obscured by legends.
+- Swingset and Chain Dynamics analysis legends now render in an external Qt
+  legend bar owned by `MotionAnalysisPanel`, so Matplotlib data axes contain
+  only plots, labels, and titles. The legend bar identifies torque, power,
+  angle, COM, energy, tension, curvature, and tip-speed series without
+  covering plot data or tight plot text in compact panes.
 
 ### 2026-06-17 Update
 
@@ -194,6 +192,7 @@ mypy --ignore-missing-imports src/movement_optimizer/
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-06-18 | 1.0.19  | Replaced the compact-pane Swingset and Chain Dynamics reserved-row legend layout with an external Qt legend bar below the Matplotlib canvas. `MotionAnalysisPanel` strips Matplotlib legends during draw, preserves series labels in `legend_entries`, and regression tests render compact figures to ensure visible legends cannot obscure plot axes, labels, titles, or neighboring subplots.                    |
 | 2026-06-18 | 1.0.17  | Replaced below-axis Swingset and Chain Dynamics analysis legends with `MotionAnalysisPanel`-owned legend rows; legends are removed from data axes and rebuilt in reserved strips during panel draw, with rendered-bounding-box regression tests proving they stay inside the figure and do not overlap any plot axis.                                                                                           |
 | 2026-06-18 | 1.0.15  | Anchored Swingset and Chain Dynamics analysis legends below each subplot via a shared renderer helper so visible legends identify torque, power, angle, COM, energy, tension, curvature, and tip-speed series without obscuring plotted data; added regression tests for the outside-plot legend contract.                                                                                                   |
 | 2026-06-16 | 1.0.14  | Added per-element animation layer toggles (grid/chain/rider/markers/forces) to the Swingset and Chain Dynamics tabs via a shared `_MotionViewMixin`, split each tab into Animation/Plots sub-tabs, and made plot/policy-trace legends toggleable so they no longer obscure the plotted data. `MotionAnalysisPanel.set_legends_visible`/`has_legends` encapsulate legend control (LoD).                          |
