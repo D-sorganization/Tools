@@ -14,9 +14,28 @@ def test_gui_registration_describes_movement_optimizer() -> None:
     info = gui_registration.get_gui_info()
 
     assert info["name"] == "Movement Optimizer"
+    assert info["tool_name"] == "movement_optimizer"
     assert info["catalog_visible"] is False
+    assert info["pyqt6"]["module"] == "movement_optimizer.gui.main_window"
+    assert info["pyqt6"]["class"] == "MainWindow"
     assert "swingset" in info["description"].lower()
     assert "chain" in info["description"].lower()
+
+
+def test_legacy_launcher_delegates_to_canonical_app(monkeypatch: Any) -> None:
+    """Old optimizer_gui entry points must not launch the retired minimal UI."""
+    from optimizer_gui import launch_pyqt6
+
+    calls: list[list[str]] = []
+
+    def fake_main(args: list[str]) -> int:
+        calls.append(args)
+        return 0
+
+    monkeypatch.setattr(launch_pyqt6, "movement_optimizer_main", fake_main)
+
+    assert launch_pyqt6.main() == 0
+    assert calls == [["--gui"]]
 
 
 def test_main_window_registers_motion_tabs_with_qt_mocks(monkeypatch: Any) -> None:

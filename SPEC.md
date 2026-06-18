@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.589                                    |
+| **Spec Version**        | 1.1.591                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -109,6 +109,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   power, angle, COM, energy, tension, curvature, and tip-speed traces without
   obscuring curves, neighboring subplots, compact pane edges, axis labels, or
   plot titles.
+- Movement Optimizer legacy `optimizer_gui` launch and registration surfaces now
+  delegate to the canonical `movement_optimizer` PyQt6 app, preventing direct
+  old-path launches from showing the retired minimal optimizer UI instead of
+  the migrated swingset/chain plot panels with docked, non-overlapping legends.
 - Movement Optimizer `movement_optimizer_core` maturin CI now creates a
   per-job virtual environment, reinstalls NumPy, SciPy, and `pytest` with
   `--ignore-installed --no-cache-dir`, pins the parity gate's SciPy range
@@ -1211,6 +1215,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-18 | 1.1.591 | fix(movement_optimizer): route legacy `optimizer_gui` launcher and hidden registration metadata to the canonical `movement_optimizer` PyQt6 app so old Tools launch paths cannot expose the retired minimal swingset UI with regressed plot behavior. |
 | 2026-06-18 | 1.1.589 | fix(p1am): extract power-supply rolling feedback-noise sample windows into `FeedbackNoiseTracker`, keeping `backend/power_supply.py` below the 500-line changed-file budget while preserving arc/noise status behavior. |
 | 2026-06-18 | 1.1.588 | fix(ci, movement): make the `movement_optimizer_core` maturin parity workflow create a per-job virtual environment before reinstalling NumPy, SciPy, `pytest`, and `maturin`, preventing stale self-hosted runner native package files from leaking into Rust accelerator validation. |
 | 2026-06-18 | 1.1.585 | chore(release): align `SPEC.md` with the v1.1.0 package metadata bump so release PRs that update `pyproject.toml`, `VERSION`, and `CHANGELOG.md` satisfy the spec freshness gate. |
