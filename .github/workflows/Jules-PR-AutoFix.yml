@@ -50,6 +50,7 @@ env:
   # Time to wait for CI to complete (in seconds) - 10 min max
   CI_WAIT_TIMEOUT: 600
   CI_POLL_INTERVAL: 30
+  AUTOFIX_GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN || github.token }}
 
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
@@ -63,7 +64,7 @@ jobs:
         id: check
         shell: bash
         env:
-          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
+          GH_TOKEN: ${{ env.AUTOFIX_GH_TOKEN }}
           LOCAL_MODE: ${{ vars.LOCAL_RUNNER_MODE }}
         run: |
           MODE="${LOCAL_MODE:-local}"
@@ -109,7 +110,7 @@ jobs:
       - name: Get Branch Info
         id: branch
         env:
-          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
+          GH_TOKEN: ${{ env.AUTOFIX_GH_TOKEN }}
         run: |
           if [ -n "${{ github.event.inputs.branch }}" ]; then
             BRANCH="${{ github.event.inputs.branch }}"
@@ -146,7 +147,7 @@ jobs:
         id: limits
         if: steps.branch.outputs.skip != 'true'
         env:
-          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
+          GH_TOKEN: ${{ env.AUTOFIX_GH_TOKEN }}
           BRANCH: ${{ steps.branch.outputs.branch }}
         run: |
           # Count recent autofix commits on this branch to prevent loops
@@ -175,7 +176,7 @@ jobs:
         with:
           ref: ${{ steps.branch.outputs.branch }}
           fetch-depth: 0
-          token: ${{ secrets.RUNNER_CHECK_TOKEN }}
+          token: ${{ env.AUTOFIX_GH_TOKEN }}
 
       - name: Setup Python
         env:
@@ -203,7 +204,7 @@ jobs:
         id: fix-loop
         if: steps.branch.outputs.skip != 'true' && steps.limits.outputs.exceeded != 'true'
         env:
-          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
+          GH_TOKEN: ${{ env.AUTOFIX_GH_TOKEN }}
           BRANCH: ${{ steps.branch.outputs.branch }}
           PR_NUMBER: ${{ steps.branch.outputs.pr_number }}
           MAX_ITERATIONS: ${{ steps.limits.outputs.remaining_attempts }}
@@ -391,7 +392,7 @@ jobs:
           steps.fix-loop.outputs.status != '' &&
           github.event.inputs.dry_run != 'true'
         env:
-          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
+          GH_TOKEN: ${{ env.AUTOFIX_GH_TOKEN }}
           PR_NUMBER: ${{ steps.branch.outputs.pr_number }}
           STATUS: ${{ steps.fix-loop.outputs.status }}
           ITERATIONS: ${{ steps.fix-loop.outputs.iterations_used }}
