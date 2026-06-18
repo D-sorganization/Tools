@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.572                                    |
+| **Spec Version**        | 1.1.573                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-18 Update
 
+- Jules PR AutoFix now centralizes its GitHub CLI/checkout token binding and
+  falls back from `RUNNER_CHECK_TOKEN` to the run-scoped `github.token`, so
+  current-head workflow_run failures can inspect or safely skip PR branches
+  instead of failing with an empty-token 401 before branch guards run (#3582).
 - Jules Comprehensive Assessment and Jules Completist now reserve enough job
   timeout budget for dependency setup plus the full Jules API polling window,
   and the assessment PR-title fallback uses portable `gh pr list` JSON/JQ
@@ -1140,6 +1144,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-18 | 1.1.573 | fix(ci, #3582): centralize Jules PR AutoFix GitHub token wiring and fall back to the run-scoped `github.token` when `RUNNER_CHECK_TOKEN` is unavailable, with workflow regression coverage for CLI and checkout consumers. |
 | 2026-06-18 | 1.1.572 | fix(ci, #3576): extend the Jules Comprehensive Assessment and Jules Completist job timeouts so setup plus the full Jules API polling window can complete, replace the unsupported `gh pr list --sort` title fallback with portable JSON/JQ ordering, and add workflow regression coverage for both contracts. |
 | 2026-06-18 | 1.1.570 | refactor(p1am, #3561): tighten the extracted power-supply PID pass-through repair helper around a narrow routing-repair protocol, add focused async repair coverage, and keep `backend/main.py` below its frozen module-size budget without changing the auto-repair contract. |
 | 2026-06-18 | 1.1.569 | fix(p1am, #3561): keep PID pass-through detection mypy-clean with a concrete aggregate predicate, preserving the PID0 auto-repair helper's declared bool contract after branch rebases. |
