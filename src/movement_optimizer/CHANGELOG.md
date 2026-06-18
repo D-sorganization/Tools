@@ -24,8 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Kept Swingset and Chain Dynamics analysis legends outside the plot data
-  rectangle so visible legends no longer obscure curves.
+- Docked Swingset and Chain Dynamics analysis legends into reserved
+  `MotionAnalysisPanel` legend rows so visible legends no longer obscure curves,
+  neighboring plots, or compact plot-pane edges.
 
 ## [1.2.0] - 2026-04-26
 
