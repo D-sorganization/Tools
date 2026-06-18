@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.567                                    |
+| **Spec Version**        | 1.1.568                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -47,9 +47,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   dependencies are missing, installs the expanded `test` extra for P1AM/PID
   coverage, and disables xdist on fleet runners so worker crashes cannot
   produce a vacuous 24-skip junit result below the collection floor (#3567).
-- P1AM data-capture retention tests use the shared UTC fallback constant rather
-  than `datetime.UTC`, preserving the Python 3.10 CI lane while still using
-  timezone-aware historian timestamps.
+- CI Standard now hard-installs `requests` alongside the P1AM backend runtime
+  dependencies in both quality-gate and tests jobs, and the data-capture
+  retention tests use the local Python 3.10-compatible UTC constant so the
+  newly ungated P1AM backend suite stays runnable across all matrix lanes
+  (#3534, #3567).
 
 ### 2026-06-17 Update
 
