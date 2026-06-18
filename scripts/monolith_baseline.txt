@@ -260,3 +260,4 @@ src/movement_optimizer/tests/test_main_window.py
 src/movement_optimizer/tests/test_swingset_chain_models.py
 src/movement_optimizer/tests/test_issue_217_decompose.py
 src/movement_optimizer/tests/test_joint_limits.py
+docs/assessments/README.md
