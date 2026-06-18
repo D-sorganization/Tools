@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.564                                    |
+| **Spec Version**        | 1.1.565                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -43,6 +43,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   data axes, preserving visible labels for torque, power, angle, COM, energy,
   tension, curvature, and tip-speed traces without obscuring curves,
   neighboring subplots, or compact pane edges.
+- Full-suite nightly CI now fail-closes when declared collection-time
+  dependencies are missing, installs the expanded `test` extra for P1AM/PID
+  coverage, and disables xdist on fleet runners so worker crashes cannot
+  produce a vacuous 24-skip junit result below the collection floor (#3567).
 
 ### 2026-06-17 Update
 
