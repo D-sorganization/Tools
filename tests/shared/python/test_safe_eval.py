@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import math
 
+import numpy as np
 import pytest
 
 from shared.python.safe_eval import (
@@ -25,6 +26,13 @@ from shared.python.safe_eval import (
 
 def test_basic_arithmetic() -> None:
     assert safe_eval("2 + 3 * 4", {}) == 14
+
+
+def test_empty_and_invalid_syntax_rejected() -> None:
+    with pytest.raises(ValueError, match="Expression must not be empty"):
+        validate_expression("  ")
+    with pytest.raises(ValueError, match="Invalid syntax"):
+        validate_expression("2 * +")
 
 
 def test_namespace_variables() -> None:
@@ -59,6 +67,26 @@ def test_pow_bomb_rejected() -> None:
 def test_large_constant_exponent_rejected() -> None:
     with pytest.raises(ValueError, match="Exponent too large"):
         validate_expression(f"2 ** {MAX_POW_EXPONENT + 1}")
+
+
+def test_computed_constant_exponent_rejected() -> None:
+    with pytest.raises(ValueError, match="Exponent too large"):
+        validate_expression(f"2 ** ({MAX_POW_EXPONENT} + 1)")
+
+
+def test_pow_call_large_exponent_rejected() -> None:
+    with pytest.raises(ValueError, match="Exponent too large"):
+        validate_expression(f"pow(2, {MAX_POW_EXPONENT + 1})", {"pow"})
+
+
+def test_pow_call_computed_exponent_rejected() -> None:
+    with pytest.raises(ValueError, match="Exponent too large"):
+        safe_eval_math(f"pow(2, {MAX_POW_EXPONENT} + 1)")
+
+
+def test_np_power_alias_large_exponent_rejected() -> None:
+    with pytest.raises(ValueError, match="Exponent too large"):
+        validate_expression(f"np_power(2, {MAX_POW_EXPONENT + 1})", {"np_power"})
 
 
 def test_deep_pow_chain_rejected() -> None:
@@ -99,6 +127,81 @@ def test_lambda_rejected() -> None:
 def test_unknown_name_rejected_with_allowlist() -> None:
     with pytest.raises(ValueError):
         validate_expression("os", allowed_names={"x"})
+
+
+def test_unknown_function_and_attribute_calls_rejected() -> None:
+    with pytest.raises(ValueError, match="Unknown function: cos"):
+        validate_expression("cos(x)", {"sin", "x"})
+    with pytest.raises(ValueError, match="Attribute-based function calls"):
+        validate_expression("math.sin(x)", {"math", "x"})
+
+
+def test_non_string_expression_raises_contract_error() -> None:
+    with pytest.raises(TypeError, match="expression must be a string"):
+        validate_expression(1)  # type: ignore[arg-type]
+
+
+def test_numpy_two_argument_min_max_are_elementwise() -> None:
+    x = np.array([1, 4, 2])
+    y = np.array([3, 2, 5])
+
+    np.testing.assert_array_equal(
+        safe_eval_math("min(x, y)", {"x": x, "y": y}), [1, 2, 2]
+    )
+    np.testing.assert_array_equal(
+        safe_eval_math("max(x, y)", {"x": x, "y": y}), [3, 4, 5]
+    )
+    assert safe_eval_math("min(4, 2)") == 2
+    assert safe_eval_math("max(4, 2)") == 4
+
+
+def test_numpy_min_max_single_argument_and_arity_contracts() -> None:
+    values = np.array([3, 1, 2])
+
+    assert safe_eval_math("min(values)", {"values": values}) == 1
+    assert safe_eval_math("max(values)", {"values": values}) == 3
+    with pytest.raises(TypeError, match="min expected at least 1 argument"):
+        safe_eval_math("min()")
+    with pytest.raises(TypeError, match="max expected at least 1 argument"):
+        safe_eval_math("max()")
+
+
+def test_runtime_power_wrappers_enforce_exponent_contracts() -> None:
+    assert safe_eval_math("power(2, 3)") == 8
+    assert safe_eval_math("pow(2, 3)", use_numpy=False) == 8
+    assert safe_eval_math("pow(2, 3, 5)", use_numpy=False) == 3
+
+    with pytest.raises(ValueError, match="Exponent too large"):
+        safe_eval_math("power(2, exponent)", {"exponent": MAX_POW_EXPONENT + 1})
+    with pytest.raises(ValueError, match="Invalid exponent"):
+        safe_eval_math("power(2, exponent)", {"exponent": np.inf})
+    with pytest.raises(ValueError, match="Exponent must be numeric"):
+        safe_eval_math("power(2, exponent)", {"exponent": "not numeric"})
+
+
+def test_power_validation_allows_runtime_exponents_and_incomplete_pow_calls() -> None:
+    validate_expression("2 ** x", {"x"})
+    validate_expression("pow(2)", {"pow"})
+    validate_expression("pow(2, x)", {"pow", "x"})
+
+
+def test_safe_eval_defaults_allowed_names_to_namespace() -> None:
+    assert safe_eval("x + 1", {"x": 2}) == 3
+
+
+def test_constant_exponent_helper_edge_cases() -> None:
+    validate_expression("'short string literal'")
+    assert safe_eval("2 ** +3", {}) == 8
+    assert safe_eval("2 ** -3", {}) == 0.125
+    validate_expression("2 ** +'literal'")
+    validate_expression("2 ** ~3")
+    validate_expression("2 ** (x ** 2)", {"x"})
+    validate_expression("2 ** (1 << 2)")
+    validate_expression("2 ** (x + 1)", {"x"})
+    validate_expression("2 ** (1 // 0)")
+
+    with pytest.raises(ValueError, match="Invalid exponent"):
+        validate_expression("2 ** 1e309")
 
 
 def test_pow_bomb_does_not_block_for_long() -> None:
