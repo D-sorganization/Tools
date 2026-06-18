@@ -11,7 +11,7 @@
 | License          | MIT                                                     |
 | Package Name     | `movement-optimizer`                                    |
 | Current Version  | `1.0.0`                                                 |
-| Spec Version     | `1.0.17`                                                |
+| Spec Version     | `1.0.18`                                                |
 | Last Spec Update | 2026-06-18                                              |
 
 ## 2. Purpose
@@ -26,6 +26,9 @@ Movement-Optimizer is a biomechanics trajectory optimizer for barbell exercises.
   legend rows owned by `MotionAnalysisPanel`, so visible legends identify the
   plotted series without covering plot data, neighboring subplots, or figure
   edges on compact panes.
+- Compact plot panes reserve enough vertical gap between data axes and docked
+  legend rows for x-axis labels, y-axis labels, and titles to remain readable
+  without being obscured by legends.
 
 ### 2026-06-17 Update
 
