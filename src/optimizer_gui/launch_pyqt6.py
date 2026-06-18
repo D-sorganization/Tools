@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Standalone PyQt6 launcher for Adam Optimizer."""
+"""Compatibility launcher for the canonical Movement Optimizer app."""
 
 from __future__ import annotations
 
@@ -32,12 +32,12 @@ bootstrap = _load_bootstrap().bootstrap
 
 bootstrap(__file__)
 
-from shared.python.gui_launcher import make_pyqt6_launcher  # noqa: E402
+from movement_optimizer.__main__ import main as movement_optimizer_main  # noqa: E402
 
 
 def main() -> int:
-    """Launch the Movement Optimizer PyQt6 application."""
-    return int(make_pyqt6_launcher("optimizer_gui.gui_registration"))
+    """Launch the canonical Movement Optimizer PyQt6 application."""
+    return int(movement_optimizer_main(["--gui"]))
 
 
 if __name__ == "__main__":

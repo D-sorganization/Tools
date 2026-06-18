@@ -344,4 +344,3 @@ export const TagInspector: React.FC<{
     </div>
   );
 };
-
