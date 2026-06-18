@@ -62,11 +62,13 @@ def is_pid_passthrough(config: RoutingConfig, pid_index: int, command_tag: str) 
     if not (0 <= pid_index < len(config.pids)):
         return False
     pid = config.pids[pid_index]
-    return (
-        pid.cv_tag == command_tag
-        and pid.kp == PASSTHROUGH_KP
-        and pid.ki == PASSTHROUGH_KI
-        and pid.kd == PASSTHROUGH_KD
+    return all(
+        (
+            pid.cv_tag == command_tag,
+            pid.kp == PASSTHROUGH_KP,
+            pid.ki == PASSTHROUGH_KI,
+            pid.kd == PASSTHROUGH_KD,
+        )
     )
 
 
