@@ -407,8 +407,7 @@ class AsyncModbusManager(BasePLCClient):
 
         Supports dynamic tags by name or fallback to 'TAG_idx' format.
         """
-        tag_map = getattr(self, "tag_map", None)
-        address = direct_tag_address(tag_name, tag_map)
+        address = direct_tag_address(tag_name, self.tag_map)
         if address is None:
             logger.error(
                 f"Invalid tag name or no mapped register for write: {tag_name}"

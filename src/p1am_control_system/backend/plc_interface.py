@@ -16,6 +16,12 @@ class BasePLCClient(abc.ABC):
         self.lock = asyncio.Lock()
         self.tuning_sessions: dict[int, dict] = {}
         self.active_config: Any = None
+        # Dynamic name -> TagDefinition map loaded from the project DB. Declared
+        # here (rather than attached via setattr from main) so every client has
+        # a real, typed attribute and callers don't need hasattr/getattr guards
+        # (issue #3540). Values are ``plant_model.TagDefinition``; typed as
+        # ``Any`` to avoid a plant_model import cycle.
+        self.tag_map: dict[str, Any] = {}
 
     @property
     @abc.abstractmethod
