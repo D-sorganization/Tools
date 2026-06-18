@@ -1,0 +1,125 @@
+{
+  "repository": "D-sorganization/Tools",
+  "date": "2026-06-18",
+  "timestamp": "2026-06-18T12:00:00Z",
+  "commit": "325c7919",
+  "branch": "main",
+  "provider": "adversarial-ao-assessment",
+  "agent": "claude-code (Opus 4.8)",
+  "overall_score": 54.0,
+  "letter_grade": "F",
+  "delta_vs_previous": null,
+  "previous_score": null,
+  "summary": "Tools is a large, ambitious shared-library monorepo (2389 Python files, 3 language ecosystems, 62 workflows, 610+ test files) whose CORE shared layer is genuinely production-grade: an exemplary AST-allowlisting safe_eval.py, a real Design-by-Contract framework (contracts.py with env-controlled enforcement, used in 46 modules), a hardened wave_solver.py, strict pytest markers/timeouts, 3-ecosystem lockfiles, and a thorough governance set (CLAUDE.md, AGENTS.md, SPEC.md, SECURITY.md). The two bandit findings are false positives and the inflated 304-broad-except / 137-eval-exec static counts are mostly PyQt app.exec(), SQLModel session.exec(), and logged-and-handled I/O excepts — the security and crash-early posture is materially better than the raw numbers imply. However, the repo is graded against an explicit perfection/showpiece bar, and the PERIPHERY contradicts it: a legally-truncated MIT LICENSE (no named holder, missing liability clause), an 80KB stale checked-in ruff_errors.txt and a broken machine-specific ud-tools path file, a cluttered root, two dead doc links (QUICKSTART.md, DEPENDENCIES.md), a mypy version conflict (2.1.0 vs >=1.0.0), a weakened mypy hook (--follow-imports=skip), only a 20% coverage floor against a 60% target, and — most consequentially — CI is paused (.github/WORKFLOWS_PAUSED) with CodeQL scanning disabled. Net: strong engineering core dragged down by accumulated broken windows and a dormant CI feedback loop. overall = 54/100 (F against the showpiece anchors; it would land mid-C on an ordinary-project curve).",
+  "criteria": {
+    "A": {
+      "name": "Project Organization",
+      "grade": 6,
+      "weight": 5,
+      "confidence": "high",
+      "findings_count": 14
+    },
+    "B": {
+      "name": "Documentation",
+      "grade": 5,
+      "weight": 6,
+      "confidence": "high",
+      "findings_count": 9
+    },
+    "C": {
+      "name": "Testing",
+      "grade": 7,
+      "weight": 12,
+      "confidence": "medium",
+      "findings_count": 13
+    },
+    "D": {
+      "name": "Robustness",
+      "grade": 6,
+      "weight": 10,
+      "confidence": "high",
+      "findings_count": 11
+    },
+    "E": {
+      "name": "Performance",
+      "grade": 7,
+      "weight": 5,
+      "confidence": "high",
+      "findings_count": 22
+    },
+    "F": {
+      "name": "Code Craftsmanship",
+      "grade": 5,
+      "weight": 8,
+      "confidence": "high",
+      "findings_count": 43
+    },
+    "G": {
+      "name": "Dependencies",
+      "grade": 5,
+      "weight": 6,
+      "confidence": "medium",
+      "findings_count": 8
+    },
+    "H": {
+      "name": "Security",
+      "grade": 6,
+      "weight": 12,
+      "confidence": "high",
+      "findings_count": 1
+    },
+    "I": {
+      "name": "Configuration",
+      "grade": 6,
+      "weight": 4,
+      "confidence": "medium",
+      "findings_count": 3
+    },
+    "J": {
+      "name": "Observability",
+      "grade": 5,
+      "weight": 6,
+      "confidence": "medium",
+      "findings_count": 0
+    },
+    "K": {
+      "name": "Maintainability",
+      "grade": 4,
+      "weight": 6,
+      "confidence": "high",
+      "findings_count": 7
+    },
+    "L": {
+      "name": "CI/CD",
+      "grade": 5,
+      "weight": 8,
+      "confidence": "high",
+      "findings_count": 3
+    },
+    "M": {
+      "name": "Deployment",
+      "grade": 3,
+      "weight": 4,
+      "confidence": "high",
+      "findings_count": 0
+    },
+    "N": {
+      "name": "Compliance",
+      "grade": 7,
+      "weight": 2,
+      "confidence": "medium",
+      "findings_count": 0
+    },
+    "O": {
+      "name": "Agentic Usability",
+      "grade": 4,
+      "weight": 6,
+      "confidence": "high",
+      "findings_count": 0
+    }
+  },
+  "confirmed_findings": 134,
+  "issues_filed": 89,
+  "umbrella_issue": "https://github.com/D-sorganization/Tools/issues/3648",
+  "methodology": "Adversarial A-O review (TDD/DbC/LoD/DRY): read-only worktree off origin/main, uvx static sweeps, parallel deep reviewers per dimension+subsystem, independent skeptic-verification at each cited line, synthesis, weighted scoring."
+}
