@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.568                                    |
+| **Spec Version**        | 1.1.569                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -52,6 +52,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   retention tests use the local Python 3.10-compatible UTC constant so the
   newly ungated P1AM backend suite stays runnable across all matrix lanes
   (#3534, #3567).
+- P1AM PID pass-through detection now uses a concrete aggregate predicate for
+  the unity-gain loop contract so changed-file mypy checks keep the PID0
+  auto-repair helper gated after branch rebases (#3561).
 
 ### 2026-06-17 Update
 
@@ -1128,6 +1131,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-18 | 1.1.569 | fix(p1am, #3561): keep PID pass-through detection mypy-clean with a concrete aggregate predicate, preserving the PID0 auto-repair helper's declared bool contract after branch rebases. |
 | 2026-06-18 | 1.1.564 | fix(movement_optimizer): dock Swingset and Chain Dynamics analysis legends into `MotionAnalysisPanel`-owned reserved legend rows, remove them from data axes during draw, and add rendered bounding-box regression coverage so visible legends cannot cover plot data or neighboring subplots on compact panes. |
 | 2026-06-17 | 1.1.561 | refactor(p1am): split pure Modbus register codec helpers out of `backend/modbus_client.py`, add codec regression coverage, and declare `pymodbus` in the test extra used by backend collection. |
 | 2026-06-17 | 1.1.560 | test(ai, #3521): share the isolated AI integration-client bootstrap across Affine, Linear, Notion, and Obsidian tests, align adapter-factory credential tests with the canonical `shared.python.chat_contracts.credentials` import path, and allowlist the bootstrap helper for the changed-test assertion gate. |
