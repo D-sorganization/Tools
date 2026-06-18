@@ -82,6 +82,28 @@ jobs:
               ).stdout.strip()
 
           messages = [m.strip() for m in log.splitlines() if m.strip()]
+          force = os.environ.get("FORCE_BUMP", "").strip().lower()
+
+          if (
+              force not in ("major", "minor", "patch")
+              and messages
+              and re.match(r"^chore\(release\): bump version to v\d+\.\d+\.\d+$", messages[0])
+          ):
+              current = os.environ["CURRENT_VERSION"]
+              with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
+                  fh.write("bump=none\n")
+                  fh.write(f"new_version={current}\n")
+                  fh.write(f"current_version={current}\n")
+                  delimiter = "EOF_CHANGELOG"
+                  fh.write(
+                      "changelog_entry<<"
+                      + delimiter
+                      + "\n- Release bump commit detected; skipping recursive release automation.\n"
+                      + delimiter
+                      + "\n"
+                  )
+              print("Release bump commit detected; skipping recursive release automation.")
+              raise SystemExit(0)
 
           # ── Conventional commits → bump type ───────────────────────────
           BREAKING = re.compile(r"BREAKING[ -]CHANGE|!:")
@@ -104,7 +126,6 @@ jobs:
               changelog_lines.append(f"- {msg}")
 
           # Allow manual override
-          force = os.environ.get("FORCE_BUMP", "").strip().lower()
           if force in ("major", "minor", "patch"):
               bump = force
 
@@ -329,25 +350,44 @@ jobs:
           git commit -m "chore(release): bump version to v${NEW_VERSION}"
           git push -u origin "$BRANCH"
 
-          BODY=$(cat <<EOF
-          ## Summary
-          - bump package metadata to v${NEW_VERSION}
-          - update VERSION and CHANGELOG.md
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
 
-          ## Release Notes
-          **Bump type:** ${BUMP}
+          max_entry_chars = 20000
+          new_version = os.environ["NEW_VERSION"]
+          bump = os.environ["BUMP"]
+          entry = os.environ["CHANGELOG_ENTRY"]
+          if len(entry) > max_entry_chars:
+              entry = (
+                  entry[:max_entry_chars].rstrip()
+                  + "\n\n... truncated; see CHANGELOG.md in this PR for the full entry."
+              )
 
-          ${CHANGELOG_ENTRY}
-
-          Created by Release Automation run ${GITHUB_RUN_ID}.
-          EOF
+          Path("release_pr_body.md").write_text(
+              "\n".join(
+                  [
+                      "## Summary",
+                      f"- bump package metadata to v{new_version}",
+                      "- update VERSION and CHANGELOG.md",
+                      "",
+                      "## Release Notes",
+                      f"**Bump type:** {bump}",
+                      "",
+                      entry,
+                      "",
+                      f"Created by Release Automation run {os.environ['GITHUB_RUN_ID']}.",
+                      "",
+                  ]
+              )
           )
+          PY
           PR_URL=$(gh pr create \
             --repo "$GITHUB_REPOSITORY" \
             --base main \
             --head "$BRANCH" \
             --title "chore(release): bump version to v${NEW_VERSION}" \
-            --body "$BODY")
+            --body-file release_pr_body.md)
           echo "release_pr_url=$PR_URL" >> "$GITHUB_OUTPUT"
           echo "Opened release PR: $PR_URL"
 
