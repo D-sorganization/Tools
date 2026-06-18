@@ -1,6 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Circle, Download, Trash2, Database } from "lucide-react";
 import "./DataCapturePanel.css";
+import { getCaptureStatus, clearCapture } from "../api/endpoints";
+import type { CaptureStatus } from "../api/schemas";
+import { fmtBytes, fmtDuration } from "../lib/format";
+import { TAG_INDICES, tagName } from "../lib/tags";
+
+export type { CaptureStatus };
 
 /**
  * Data Capture panel.
@@ -12,34 +18,7 @@ import "./DataCapturePanel.css";
  * cannot overflow the storage device.
  */
 
-export interface CaptureStatus {
-  capturing: boolean;
-  total_rows: number;
-  distinct_tags: number;
-  oldest_timestamp: string | null;
-  newest_timestamp: string | null;
-  span_seconds: number;
-  db_bytes: number;
-  event_rows: number;
-}
-
-const ALL_TAGS = Array.from({ length: 32 }, (_, i) => `TAG_${i}`).join(",");
-
-function fmtBytes(n: number): string {
-  if (n < 1024) return `${n} B`;
-  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
-  return `${(n / (1024 * 1024)).toFixed(2)} MB`;
-}
-
-function fmtDuration(seconds: number): string {
-  if (seconds <= 0) return "—";
-  const s = Math.floor(seconds % 60);
-  const m = Math.floor((seconds / 60) % 60);
-  const h = Math.floor(seconds / 3600);
-  if (h > 0) return `${h}h ${m}m`;
-  if (m > 0) return `${m}m ${s}s`;
-  return `${s}s`;
-}
+const ALL_TAGS = TAG_INDICES.map(tagName).join(",");
 
 export const DataCapturePanel: React.FC = () => {
   const [status, setStatus] = useState<CaptureStatus | null>(null);
@@ -49,8 +28,7 @@ export const DataCapturePanel: React.FC = () => {
 
   const refresh = useCallback(async () => {
     try {
-      const res = await fetch("/api/capture/status");
-      if (res.ok) setStatus((await res.json()) as CaptureStatus);
+      setStatus(await getCaptureStatus());
     } catch {
       /* transient — keep last good status */
     }
@@ -94,13 +72,7 @@ export const DataCapturePanel: React.FC = () => {
       return;
     setBusy(true);
     try {
-      const res = await fetch("/api/capture/clear", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ include_events: true }),
-      });
-      if (!res.ok) throw new Error(await res.text());
-      const r = await res.json();
+      const r = await clearCapture(true);
       flash(
         `Cleared ${r.tag_rows_deleted.toLocaleString()} rows · ` +
           `freed ${fmtBytes(r.db_bytes_before - r.db_bytes_after)}.`,

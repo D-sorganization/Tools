@@ -538,3 +538,25 @@ body {
 }
 .tab-toggle.on .tab-toggle-switch { background: var(--accent-cyan); border-color: var(--accent-cyan); }
 .tab-toggle.on .tab-toggle-switch::after { left: 15px; background: #0f172a; }
+
+/* Tab bar buttons (#3546 F8): the .tab-btn class was applied in the markup but
+   never had a CSS rule, so the inline-styled tab buttons carried no shared
+   styling. This consolidates the base + active appearance. */
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-secondary);
+  border-bottom: 2px solid transparent;
+  transition: all var(--transition-fast);
+}
+.tab-btn:hover {
+  color: var(--text-primary);
+}
+.tab-btn.active {
+  color: var(--accent-cyan);
+  border-bottom-color: var(--accent-cyan);
+}
