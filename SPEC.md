@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.571                                    |
+| **Spec Version**        | 1.1.572                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-18 Update
 
+- Jules Comprehensive Assessment now reserves enough job timeout budget for
+  dependency setup plus the full Jules API polling window, and its PR-title
+  fallback uses portable `gh pr list` JSON/JQ filtering instead of the
+  unsupported `--sort` flag seen on fleet runners (#3576).
 - Movement Optimizer Swingset and Chain Dynamics analysis legends now render
   in a `MotionAnalysisPanel` Qt legend bar outside the Matplotlib canvas,
   preserving visible labels for torque, power, angle, COM, energy, tension,
@@ -1135,6 +1139,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-18 | 1.1.572 | fix(ci, #3576): extend the Jules Comprehensive Assessment job timeout so setup plus the full Jules API polling window can complete, replace the unsupported `gh pr list --sort` title fallback with portable JSON/JQ ordering, and add workflow regression coverage for both contracts. |
 | 2026-06-18 | 1.1.570 | refactor(p1am, #3561): tighten the extracted power-supply PID pass-through repair helper around a narrow routing-repair protocol, add focused async repair coverage, and keep `backend/main.py` below its frozen module-size budget without changing the auto-repair contract. |
 | 2026-06-18 | 1.1.569 | fix(p1am, #3561): keep PID pass-through detection mypy-clean with a concrete aggregate predicate, preserving the PID0 auto-repair helper's declared bool contract after branch rebases. |
 | 2026-06-18 | 1.1.564 | fix(movement_optimizer): dock Swingset and Chain Dynamics analysis legends into `MotionAnalysisPanel`-owned reserved legend rows, remove them from data axes during draw, and add rendered bounding-box regression coverage so visible legends cannot cover plot data or neighboring subplots on compact panes. |

@@ -32,7 +32,7 @@ permissions:
 
 jobs:
   comprehensive-assessment:
-    timeout-minutes: 30
+    timeout-minutes: 60
     name: Comprehensive Assessment & Audit
     runs-on: d-sorg-fleet
     # Grant write only at this job level.
@@ -290,7 +290,7 @@ jobs:
           if [ -z "$PR" ]; then
             # Wait a moment for creation if needed
             sleep 5
-            PR=$(gh pr list --author "app/jules" --state open --sort created --limit 1 --json number --jq '.[0].number')
+            PR=$(gh pr list --author "app/jules" --state open --limit 20 --json number,createdAt --jq 'sort_by(.createdAt) | reverse | .[0].number // ""')
           fi
 
           if [ -n "$PR" ]; then
