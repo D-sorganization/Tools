@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.592                                    |
+| **Spec Version**        | 1.1.593                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -43,6 +43,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   expressions; non-string expressions fail the documented contract before
   parsing, and numpy-mode `min()`/`max()` preserve normal two-argument
   elementwise semantics (#3611, #3621, #3622, #3647).
+- Shared `safe_eval` root test coverage now exercises the validation,
+  runtime-power, numpy min/max, and helper edge branches needed to satisfy the
+  changed-file 99% coverage gate in CI.
 - P1AM HMI tabs now persist operator-controlled order and visibility in
   browser storage, with drag/drop and context-menu reorder/hide affordances
   that reconcile saved layouts against newly added tab ids. The temperature
@@ -1229,6 +1232,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-18 | 1.1.593 | test(shared): extend root `safe_eval` regression coverage for empty/syntax failures, function-call rejection, runtime power wrappers, numpy min/max arity, scalar pow, and constant-exponent helper branches so the changed-file coverage gate exceeds 99%. |
 | 2026-06-18 | 1.1.592 | fix(shared, #3611, #3621, #3622, #3647): harden `safe_eval` exponentiation by bounding `pow()`/`power()` calls and computed constant exponents like `**`, enforce the non-string expression contract before parsing, and make numpy-mode two-argument `min()`/`max()` elementwise instead of treating the second value as an axis. |
 | 2026-06-18 | 1.1.591 | fix(movement_optimizer): route legacy `optimizer_gui` launcher and hidden registration metadata to the canonical `movement_optimizer` PyQt6 app so old Tools launch paths cannot expose the retired minimal swingset UI with regressed plot behavior. |
 | 2026-06-18 | 1.1.589 | fix(p1am): extract power-supply rolling feedback-noise sample windows into `FeedbackNoiseTracker`, keeping `backend/power_supply.py` below the 500-line changed-file budget while preserving arc/noise status behavior. |

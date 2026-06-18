@@ -28,6 +28,13 @@ def test_basic_arithmetic() -> None:
     assert safe_eval("2 + 3 * 4", {}) == 14
 
 
+def test_empty_and_invalid_syntax_rejected() -> None:
+    with pytest.raises(ValueError, match="Expression must not be empty"):
+        validate_expression("  ")
+    with pytest.raises(ValueError, match="Invalid syntax"):
+        validate_expression("2 * +")
+
+
 def test_namespace_variables() -> None:
     assert safe_eval("a * b + 1", {"a": 3, "b": 4}) == 13
 
@@ -122,6 +129,13 @@ def test_unknown_name_rejected_with_allowlist() -> None:
         validate_expression("os", allowed_names={"x"})
 
 
+def test_unknown_function_and_attribute_calls_rejected() -> None:
+    with pytest.raises(ValueError, match="Unknown function: cos"):
+        validate_expression("cos(x)", {"sin", "x"})
+    with pytest.raises(ValueError, match="Attribute-based function calls"):
+        validate_expression("math.sin(x)", {"math", "x"})
+
+
 def test_non_string_expression_raises_contract_error() -> None:
     with pytest.raises(TypeError, match="expression must be a string"):
         validate_expression(1)  # type: ignore[arg-type]
@@ -169,6 +183,10 @@ def test_power_validation_allows_runtime_exponents_and_incomplete_pow_calls() ->
     validate_expression("2 ** x", {"x"})
     validate_expression("pow(2)", {"pow"})
     validate_expression("pow(2, x)", {"pow", "x"})
+
+
+def test_safe_eval_defaults_allowed_names_to_namespace() -> None:
+    assert safe_eval("x + 1", {"x": 2}) == 3
 
 
 def test_constant_exponent_helper_edge_cases() -> None:
