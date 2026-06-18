@@ -8,7 +8,7 @@ from itertools import pairwise
 
 import numpy as np
 from PyQt6.QtCore import QPointF
-from PyQt6.QtGui import QColor, QPainter, QPen
+from PyQt6.QtGui import QColor, QFontMetrics, QPainter, QPen
 from PyQt6.QtWidgets import QWidget
 
 from movement_optimizer.models.swingset import CyclicPolicyTraceSample
@@ -59,9 +59,12 @@ def refresh_policy_trace_palette() -> None:
 class PolicyTraceCanvas(QWidget):
     """Compact plot of policy-search score and parameter traces."""
 
-    #: Height of the strip reserved at the top for the legend so it never
-    #: paints over the plotted series.
-    _LEGEND_BAND_PX = 22
+    _LEGEND_BOTTOM_PADDING_PX = 6
+    _LEGEND_GAP_PX = 12
+    _LEGEND_LINE_PX = 12
+    _LEGEND_TEXT_GAP_PX = 4
+    _LEGEND_ROW_HEIGHT_PX = 16
+    _MARGIN_PX = 8
 
     def __init__(self) -> None:
         super().__init__()
@@ -86,7 +89,47 @@ class PolicyTraceCanvas(QWidget):
 
     def _top_margin(self) -> float:
         """Top inset for the plotted series, reserving room for the legend."""
-        return float(self._LEGEND_BAND_PX if self._legend_visible else 8)
+        return float(self._legend_band_height() if self._legend_visible else self._MARGIN_PX)
+
+    @staticmethod
+    def _legend_entries() -> tuple[tuple[str, QColor], ...]:
+        return (
+            ("best", TRACE_BEST),
+            ("score", TRACE_SCORE),
+            ("freq", TRACE_PARAM),
+            ("hip", ARM),
+            ("torso", BODY),
+            ("knee", LEG),
+        )
+
+    def _legend_item_width(self, label: str) -> int:
+        metrics = QFontMetrics(self.font())
+        return (
+            self._LEGEND_LINE_PX
+            + self._LEGEND_TEXT_GAP_PX
+            + metrics.horizontalAdvance(label)
+            + self._LEGEND_GAP_PX
+        )
+
+    def _legend_row_count(self) -> int:
+        available_width = max(1, self.width() - 2 * self._MARGIN_PX)
+        rows = 1
+        row_width = 0
+        for label, _color in self._legend_entries():
+            item_width = self._legend_item_width(label)
+            if row_width > 0 and row_width + item_width > available_width:
+                rows += 1
+                row_width = 0
+            row_width += item_width
+        return rows
+
+    def _legend_band_height(self) -> int:
+        """Return the reserved legend band height for the current widget width."""
+        return (
+            self._MARGIN_PX
+            + self._legend_row_count() * self._LEGEND_ROW_HEIGHT_PX
+            + self._LEGEND_BOTTOM_PADDING_PX
+        )
 
     def sample_count(self) -> int:
         return len(self._samples)
@@ -142,24 +185,22 @@ class PolicyTraceCanvas(QWidget):
             painter.drawLine(start, end)
 
     def _draw_legend(self, painter: QPainter) -> None:
-        legend = (
-            ("best", TRACE_BEST),
-            ("score", TRACE_SCORE),
-            ("freq", TRACE_PARAM),
-            ("hip", ARM),
-            ("torso", BODY),
-            ("knee", LEG),
-        )
-        x = 8
-        y = 16
-        for label, color in legend:
+        available_width = max(1, self.width() - 2 * self._MARGIN_PX)
+        x = self._MARGIN_PX
+        baseline = self._MARGIN_PX + QFontMetrics(painter.font()).ascent()
+        y = baseline
+        for label, color in self._legend_entries():
+            item_width = self._legend_item_width(label)
+            if x > self._MARGIN_PX and x + item_width > self._MARGIN_PX + available_width:
+                x = self._MARGIN_PX
+                y += self._LEGEND_ROW_HEIGHT_PX
             painter.setPen(QPen(color, 2))
             painter.drawLine(x, y - 4, x + 12, y - 4)
             painter.setPen(QPen(color, 1))
-            painter.drawText(x + 16, y, label)
-            x += 54
+            painter.drawText(x + self._LEGEND_LINE_PX + self._LEGEND_TEXT_GAP_PX, y, label)
+            x += item_width
         painter.setPen(QPen(CHAIN, 1))
-        painter.drawText(max(8, self.width() - 64), self.height() - 8, "iteration")
+        painter.drawText(max(self._MARGIN_PX, self.width() - 64), self.height() - 8, "iteration")
 
     def _build_series(
         self,
