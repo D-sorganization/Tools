@@ -62,7 +62,7 @@ class TemperatureService:
             return 0.0
         cfg = self.controller.config
         temp_pct = float(tags.get(cfg.temp_tag, 0.0))
-        return temp_pct * cfg.temp_full_scale_c / 100.0
+        return float(temp_pct * cfg.temp_full_scale_c / 100.0)
 
     async def _write_relay(self, on: bool) -> bool:
         """Command the heater relay via the client's public coil seam."""
