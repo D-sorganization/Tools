@@ -1964,3 +1964,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ### Security
 
 - **Power Supply Endpoints**: State-mutating power supply API routes (`/config`, `/setpoint`, `/permissive`, `/acknowledge_trip`) must be authenticated using the elevated admin key (`P1AM_ADMIN_API_KEY` or `P1AM_API_KEY` fallback), enforced via FastAPI dependencies.
+
+## 1.1.411 - Rust audit hardening (DbC/DRY/test coverage across rust_core + pendulum-core)
+
+- **2026-06-17**: chore(rust) — harden the Rust crates per the #3552–#3556 audit. Converge `ai_backend::config` with UpstreamDrift by porting the #5307 `chat_url`/`embed_url` path-dedup fix + test (#3552); fix the `pendulum-core` clippy `-D warnings` failure (`zip(population.into_iter())` → `zip(population)`) and add a CI rust-quality-gate job for the workspace-excluded crate (#3553); add `is_finite()` NaN guards + `f64::total_cmp` ordering to `tools-core` `swing_plane::detect_phases`/`fit_plane`, promote `ball_flight::simulate_trajectory` `dt`/`max_time`/`velocity` preconditions from `debug_assert!` to real `assert!` validation, and cap the trajectory `Vec` pre-allocation (#3554); add unit + `proptest` tests to the previously untested `reactor`/`rrt`/`thermodynamics`/`electrode_advisor` modules, prioritizing the `rrt` back-pointer walk and `thermodynamics` numerics (#3555); make the `ai_backend::memory` and `file_watcher` mutex locks poison-tolerant (`unwrap_or_else(|e| e.into_inner())`), add file_watcher burst + gitignore tests, and collapse `R_GAS` to a single `pub use` source of truth (#3556).

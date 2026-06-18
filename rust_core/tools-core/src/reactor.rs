@@ -126,6 +126,113 @@ impl OdeSystem for Trc1DSystem {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Trivial exponential-decay system: dy/dz = -k*y, closed form y = y0*e^{-k z}.
+    struct ExpDecay {
+        k: f64,
+    }
+
+    impl OdeSystem for ExpDecay {
+        fn state_dim(&self) -> usize {
+            1
+        }
+        fn derivatives(&self, _z: f64, y: &[f64], dy: &mut [f64]) {
+            dy[0] = -self.k * y[0];
+        }
+    }
+
+    #[test]
+    #[should_panic(expected = "step size must be positive")]
+    fn new_rejects_nonpositive_step() {
+        let _ = Rk4Integrator::new(0.0);
+    }
+
+    #[test]
+    #[should_panic(expected = "Initial state length must match")]
+    fn integrate_rejects_mismatched_state_len() {
+        let integrator = Rk4Integrator::new(0.1);
+        let system = ExpDecay { k: 1.0 };
+        // system dim is 1 but we pass a 2-element initial state.
+        let _ = integrator.integrate(&system, 0.0, 1.0, &[1.0, 2.0]);
+    }
+
+    #[test]
+    fn integrate_matches_analytic_exponential_decay() {
+        let integrator = Rk4Integrator::new(0.001);
+        let system = ExpDecay { k: 2.0 };
+        let traj = integrator.integrate(&system, 0.0, 1.0, &[1.0]);
+
+        let (z_end, y_end) = traj.last().unwrap();
+        assert!((z_end - 1.0).abs() < 1e-9, "final z should reach 1.0");
+        let analytic = (-2.0_f64 * 1.0).exp();
+        assert!(
+            (y_end[0] - analytic).abs() < 1e-6,
+            "RK4 should match e^(-2): got {}, expected {analytic}",
+            y_end[0]
+        );
+    }
+
+    #[test]
+    fn integrate_records_endpoints_and_is_monotone_in_z() {
+        let integrator = Rk4Integrator::new(0.05);
+        let system = ExpDecay { k: 1.0 };
+        let traj = integrator.integrate(&system, 0.0, 0.3, &[1.0]);
+
+        // First sample is the initial condition.
+        assert_eq!(traj[0].0, 0.0);
+        assert_eq!(traj[0].1, vec![1.0]);
+        // z is strictly increasing and the last sample lands exactly on z_end
+        // (the final partial step is clamped to z_end).
+        for w in traj.windows(2) {
+            assert!(w[1].0 > w[0].0, "z must strictly increase");
+        }
+        assert!((traj.last().unwrap().0 - 0.3).abs() < 1e-9);
+    }
+
+    #[test]
+    fn trc_system_dimension_and_arrhenius_sign() {
+        // The TRC system has 2 states; at low conversion an exothermic reaction
+        // (negative heat_of_reaction) raises temperature (dT/dz > 0).
+        let sys = Trc1DSystem {
+            pre_exponential: 1e6,
+            activation_energy: 50_000.0,
+            heat_of_reaction: -100_000.0, // exothermic
+            density: 1.0,
+            cp: 1000.0,
+            velocity: 1.0,
+        };
+        assert_eq!(sys.state_dim(), 2);
+        let mut dy = [0.0; 2];
+        sys.derivatives(0.0, &[0.0, 600.0], &mut dy);
+        assert!(dy[0] > 0.0, "conversion should increase: {}", dy[0]);
+        assert!(
+            dy[1] > 0.0,
+            "exothermic reaction should raise temperature: {}",
+            dy[1]
+        );
+    }
+
+    #[test]
+    fn trc_full_conversion_has_zero_rate() {
+        // At X = 1 the (1 - X) factor zeroes both derivatives.
+        let sys = Trc1DSystem {
+            pre_exponential: 1e6,
+            activation_energy: 50_000.0,
+            heat_of_reaction: -100_000.0,
+            density: 1.0,
+            cp: 1000.0,
+            velocity: 1.0,
+        };
+        let mut dy = [0.0; 2];
+        sys.derivatives(0.0, &[1.0, 600.0], &mut dy);
+        assert_eq!(dy[0], 0.0);
+        assert_eq!(dy[1], 0.0);
+    }
+}
+
 #[cfg(feature = "python")]
 pub mod py_bindings {
     use super::*;
