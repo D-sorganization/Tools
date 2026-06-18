@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.589                                    |
+| **Spec Version**        | 1.1.590                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-18 Update
 
+- Shared `safe_eval` now applies the exponentiation DoS guard consistently to
+  `**`, bare `pow()`/`power()` calls, and statically-computable exponent
+  expressions; non-string expressions fail the documented contract before
+  parsing, and numpy-mode `min()`/`max()` preserve normal two-argument
+  elementwise semantics (#3611, #3621, #3622, #3647).
 - Release Automation validation now mirrors the CI Standard changed-file Ruff
   contract: release validation collects changed Python files, applies the same
   legacy-path exclude list, and skips Ruff lint/format when a release-triggering
@@ -1211,6 +1216,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-18 | 1.1.590 | fix(shared, #3611, #3621, #3622, #3647): harden `safe_eval` exponentiation by bounding `pow()`/`power()` calls and computed constant exponents like `**`, enforce the non-string expression contract before parsing, and make numpy-mode two-argument `min()`/`max()` elementwise instead of treating the second value as an axis. |
 | 2026-06-18 | 1.1.589 | fix(p1am): extract power-supply rolling feedback-noise sample windows into `FeedbackNoiseTracker`, keeping `backend/power_supply.py` below the 500-line changed-file budget while preserving arc/noise status behavior. |
 | 2026-06-18 | 1.1.588 | fix(ci, movement): make the `movement_optimizer_core` maturin parity workflow create a per-job virtual environment before reinstalling NumPy, SciPy, `pytest`, and `maturin`, preventing stale self-hosted runner native package files from leaking into Rust accelerator validation. |
 | 2026-06-18 | 1.1.585 | chore(release): align `SPEC.md` with the v1.1.0 package metadata bump so release PRs that update `pyproject.toml`, `VERSION`, and `CHANGELOG.md` satisfy the spec freshness gate. |

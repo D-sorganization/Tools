@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import math
 
+import numpy as np
 import pytest
 
 from shared.python.safe_eval import (
@@ -61,6 +62,26 @@ def test_large_constant_exponent_rejected() -> None:
         validate_expression(f"2 ** {MAX_POW_EXPONENT + 1}")
 
 
+def test_computed_constant_exponent_rejected() -> None:
+    with pytest.raises(ValueError, match="Exponent too large"):
+        validate_expression(f"2 ** ({MAX_POW_EXPONENT} + 1)")
+
+
+def test_pow_call_large_exponent_rejected() -> None:
+    with pytest.raises(ValueError, match="Exponent too large"):
+        validate_expression(f"pow(2, {MAX_POW_EXPONENT + 1})", {"pow"})
+
+
+def test_pow_call_computed_exponent_rejected() -> None:
+    with pytest.raises(ValueError, match="Exponent too large"):
+        safe_eval_math(f"pow(2, {MAX_POW_EXPONENT} + 1)")
+
+
+def test_np_power_alias_large_exponent_rejected() -> None:
+    with pytest.raises(ValueError, match="Exponent too large"):
+        validate_expression(f"np_power(2, {MAX_POW_EXPONENT + 1})", {"np_power"})
+
+
 def test_deep_pow_chain_rejected() -> None:
     with pytest.raises(ValueError, match="nested too deeply"):
         validate_expression("2 ** 2 ** 2 ** 2")
@@ -99,6 +120,25 @@ def test_lambda_rejected() -> None:
 def test_unknown_name_rejected_with_allowlist() -> None:
     with pytest.raises(ValueError):
         validate_expression("os", allowed_names={"x"})
+
+
+def test_non_string_expression_raises_contract_error() -> None:
+    with pytest.raises(TypeError, match="expression must be a string"):
+        validate_expression(1)  # type: ignore[arg-type]
+
+
+def test_numpy_two_argument_min_max_are_elementwise() -> None:
+    x = np.array([1, 4, 2])
+    y = np.array([3, 2, 5])
+
+    np.testing.assert_array_equal(
+        safe_eval_math("min(x, y)", {"x": x, "y": y}), [1, 2, 2]
+    )
+    np.testing.assert_array_equal(
+        safe_eval_math("max(x, y)", {"x": x, "y": y}), [3, 4, 5]
+    )
+    assert safe_eval_math("min(4, 2)") == 2
+    assert safe_eval_math("max(4, 2)") == 4
 
 
 def test_pow_bomb_does_not_block_for_long() -> None:
