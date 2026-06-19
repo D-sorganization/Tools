@@ -13,6 +13,7 @@ Design Principles:
 from __future__ import annotations
 
 from collections.abc import Sequence
+from typing import Any
 
 from matplotlib.axes import Axes
 from matplotlib.backends.backend_qtagg import (  # type: ignore[attr-defined]  # matplotlib stubs omit NavigationToolbar2QT
@@ -148,8 +149,17 @@ class MotionAnalysisPanel(QWidget):
                 handletextpad=0.35,
                 columnspacing=0.7,
             )
-            legend.set_clip_on(True)
-            legend.set_clip_box(legend_axis.bbox)
+            self._clip_legend_to_axis(legend, legend_axis)
+
+    @staticmethod
+    def _clip_legend_to_axis(legend: Any, legend_axis: Axes) -> None:
+        """Confine a docked legend and all of its child artists to its strip."""
+        clip_box = legend_axis.bbox
+        legend.set_clip_on(True)
+        legend.set_clip_box(clip_box)
+        for artist in legend.findobj():
+            artist.set_clip_on(True)
+            artist.set_clip_box(clip_box)
 
     def set_legends_visible(self, visible: bool) -> None:
         """Show or hide the legend on every axis that has one.

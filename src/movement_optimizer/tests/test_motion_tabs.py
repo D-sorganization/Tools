@@ -45,6 +45,27 @@ def _wait_for_policy_worker(qapp, swingset: SwingsetTab, timeout_s: float = 10.0
     assert swingset._policy_worker is None
 
 
+def _assert_docked_legends_are_clipped_to_reserved_strips(panel) -> None:
+    panel.canvas.draw()
+    renderer = panel.canvas.get_renderer()
+    for name, legend_axis in panel.legend_axes.items():
+        legend = legend_axis.get_legend()
+        if legend is None:
+            continue
+        legend_box = legend.get_window_extent(renderer)
+        data_box = panel.axes[name].get_window_extent(renderer)
+        strip_box = legend_axis.get_window_extent(renderer)
+
+        assert not legend_box.overlaps(data_box)
+        assert strip_box.contains(legend_box.x0, legend_box.y0)
+        assert strip_box.contains(legend_box.x1, legend_box.y1)
+        assert legend.get_clip_on()
+        assert legend.get_clip_box() is legend_axis.bbox
+        for artist in legend.findobj():
+            assert artist.get_clip_on()
+            assert artist.get_clip_box() is legend_axis.bbox
+
+
 def test_main_window_preserves_barbell_tabs_and_adds_motion_tabs(qapp) -> None:
     window = MainWindow()
 
@@ -717,6 +738,24 @@ def test_chain_simulate_populates_panel_and_overlays(qapp) -> None:
     assert all(axes.get_legend() is None for axes in chain.analysis_panel.axes.values())
     assert all(axes.get_legend() is not None for axes in chain.analysis_panel.legend_axes.values())
     assert chain.canvas._overlay.arrows
+
+
+def test_motion_analysis_panel_clips_docked_legends_to_reserved_strips(qapp) -> None:
+    swingset = SwingsetTab()
+    swingset.autoplay_checkbox.setChecked(False)
+    swingset._controls["budget"].set_value(50)
+    swingset._controls["cycles"].set_value(1)
+    swingset._optimize_policy()
+    _wait_for_policy_worker(qapp, swingset)
+
+    chain = ChainDynamicsTab()
+    chain._controls["segments"].set_value(6)
+    chain._controls["duration"].set_value(0.2)
+    chain._controls["dt"].set_value(0.02)
+    chain._simulate()
+
+    _assert_docked_legends_are_clipped_to_reserved_strips(swingset.analysis_panel)
+    _assert_docked_legends_are_clipped_to_reserved_strips(chain.analysis_panel)
 
 
 def test_chain_force_toggle_does_not_recompute(qapp) -> None:
