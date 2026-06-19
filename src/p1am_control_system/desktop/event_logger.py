@@ -6,6 +6,7 @@ Saves and queries system events (clicks, setpoints, alarms, login/logout).
 from __future__ import annotations
 
 import csv
+import logging
 import os
 import sqlite3
 from datetime import datetime
@@ -38,6 +39,8 @@ try:
     load_dotenv()
 except ImportError:
     pass
+
+logger = logging.getLogger(__name__)
 
 
 class EventLogger:
@@ -375,7 +378,7 @@ class EventLogViewerWidget(QWidget):
             for et in event_types:
                 self.event_type_combo.addItem(et)
         except Exception:
-            pass
+            logger.exception("Failed to populate event-type filter from DB")
 
         idx = self.event_type_combo.findText(current_selection)
         if idx >= 0:
