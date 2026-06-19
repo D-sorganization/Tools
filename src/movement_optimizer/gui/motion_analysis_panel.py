@@ -29,9 +29,9 @@ class MotionAnalysisPanel(QWidget):
     """A themed grid of named matplotlib axes with a navigation toolbar."""
 
     _LEGEND_HEIGHT_RATIO = 0.32
-    _DATA_LEGEND_HSPACE = 0.42
+    _DATA_LEGEND_HSPACE = 0.50
     _MIN_AXIS_WIDTH_PX = 260
-    _MIN_DATA_HEIGHT_PX = 340
+    _MIN_DATA_HEIGHT_PX = 380
     _MIN_LEGEND_HEIGHT_PX = 76
     _MIN_TOOLBAR_HEIGHT_PX = 40
 

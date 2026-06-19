@@ -184,6 +184,7 @@ class TestMotionAnalysisPanel:
         panel,
         *,
         figure_size: tuple[float, float] | None = None,
+        min_legend_padding_px: float = 18.0,
     ) -> None:
         if figure_size is None:
             minimum_size = panel.canvas.minimumSize()
@@ -222,7 +223,7 @@ class TestMotionAnalysisPanel:
             assert legend_box.y1 <= figure_box.y1 + 1.0
             assert legend_box.y0 >= legend_axis_box.y0 - 1.0
             assert legend_box.y1 <= legend_axis_box.y1 + 1.0
-            assert legend_axis_box.height >= legend_box.height + 18.0
+            assert legend_axis_box.height >= legend_box.height + min_legend_padding_px
             assert not any(data_box.overlaps(legend_box) for data_box in data_boxes)
             assert not any(label_box.overlaps(legend_box) for label_box in label_boxes)
             assert not any(tick_box.overlaps(legend_box) for tick_box in tick_label_boxes)
@@ -283,7 +284,7 @@ class TestMotionAnalysisPanel:
             )
 
         assert min(data_heights) >= 210.0
-        assert max(legend_gaps) <= 90.0
+        assert max(legend_gaps) <= 110.0
 
     def test_docked_joint_legends_use_compact_three_column_rows(self, qapp) -> None:
         from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
@@ -350,6 +351,28 @@ class TestMotionAnalysisPanel:
         self._assert_docked_legends_do_not_cover_plots(
             panel,
             figure_size=(minimum_size.width() / 100.0, minimum_size.height() / 100.0),
+        )
+        assert all(axes.get_legend() is None for axes in panel.axes.values())
+
+    def test_swingset_docked_legends_clear_compressed_plot_size(self, qapp, swing_history) -> None:
+        from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
+
+        panel = MotionAnalysisPanel(
+            ["torques", "power", "angle", "com_height", "energy", "com_path"],
+            rows=3,
+            cols=2,
+        )
+        plot_swing_joint_torques(panel.axes["torques"], swing_history, legend=False)
+        plot_swing_joint_power(panel.axes["power"], swing_history, legend=False)
+        plot_swing_angle(panel.axes["angle"], swing_history, legend=False)
+        plot_swing_com_height(panel.axes["com_height"], swing_history, legend=False)
+        plot_swing_energy(panel.axes["energy"], swing_history, legend=False)
+        plot_swing_com_path(panel.axes["com_path"], swing_history, legend=False)
+
+        self._assert_docked_legends_do_not_cover_plots(
+            panel,
+            figure_size=(5.2, 7.2),
+            min_legend_padding_px=2.0,
         )
         assert all(axes.get_legend() is None for axes in panel.axes.values())
 
