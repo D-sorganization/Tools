@@ -8,17 +8,9 @@ circular-import risk. Mirrors the structure of `power_supply_models.py`.
 
 from __future__ import annotations
 
-from enum import Enum
-
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-
-class StrEnum(str, Enum):  # noqa: UP042
-    """Compat shim for Python < 3.11 environments that don't ship StrEnum.
-
-    Inherits from `str` so the enum members serialize as plain strings when
-    passed through Pydantic / FastAPI / JSON.
-    """
+from shared.python.compatibility import StrEnum
 
 
 class TemperatureState(StrEnum):

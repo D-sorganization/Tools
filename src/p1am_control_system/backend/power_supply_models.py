@@ -8,18 +8,10 @@ controller) without circular-import risk.
 
 from __future__ import annotations
 
-from enum import Enum
-
 from pydantic import BaseModel, Field, field_validator, model_validator
 from signal_stats import NoiseMetric, NoiseStats, compute_noise
 
-
-class StrEnum(str, Enum):  # noqa: UP042
-    """Compat shim for Python < 3.11 environments that don't ship StrEnum.
-
-    Inherits from `str` so the enum members serialize as plain strings when
-    passed through Pydantic / FastAPI / JSON.
-    """
+from shared.python.compatibility import StrEnum
 
 
 class PowerSupplyMode(StrEnum):

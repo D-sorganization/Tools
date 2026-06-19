@@ -24,19 +24,13 @@ from enum import Enum
 
 from pydantic import BaseModel, Field
 
+from shared.python.compatibility import StrEnum
+
 NOISE_DEFAULT_WINDOW = 100
 NOISE_DEFAULT_THRESHOLD = 0.0
 
 
-class StrEnum(str, Enum):  # noqa: UP042
-    """Compat shim for Python < 3.11 environments that don't ship StrEnum.
-
-    Inherits from `str` so the enum members serialize as plain strings when
-    passed through Pydantic / FastAPI / JSON.
-    """
-
-
-class NoiseMetric(StrEnum):
+class NoiseMetric(StrEnum, Enum):
     """Which scalar the arc threshold is evaluated against."""
 
     STD = "std"
