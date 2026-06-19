@@ -29,8 +29,6 @@ from typing import Any, cast
 
 import numpy as np
 
-from shared.python.contracts import require
-
 __all__ = [
     "safe_eval",
     "safe_eval_math",
@@ -242,8 +240,6 @@ def validate_expression(
     """
     if not isinstance(expression, str):
         raise TypeError("expression must be a string")
-
-    require(isinstance(expression, str), "expression must be a string")
 
     if not expression or not expression.strip():
         raise ValueError("Expression must not be empty")
