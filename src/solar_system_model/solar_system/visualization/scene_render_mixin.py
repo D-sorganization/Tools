@@ -79,7 +79,8 @@ class SceneRenderMixin:
         Args:
             julian_date: The current simulation time.
         """
-        assert julian_date is not None, "julian_date must be provided"
+        if julian_date is None:
+            raise ValueError("julian_date must be provided")
         if not self.renderer:  # type: ignore[attr-defined]
             return
         renderer = self.renderer  # type: ignore[attr-defined]
@@ -102,7 +103,8 @@ class SceneRenderMixin:
 
     def _render_sun(self, renderer: Any, julian_date: float) -> None:
         """Render the Sun body and label."""
-        assert julian_date is not None, "julian_date must be provided"
+        if julian_date is None:
+            raise ValueError("julian_date must be provided")
         if self.sun:  # type: ignore[attr-defined]
             renderer.render_body(self.sun, julian_date, self.selected_body == self.sun)  # type: ignore[attr-defined]
         if self.view_state.show_labels:  # type: ignore[attr-defined]
@@ -123,7 +125,8 @@ class SceneRenderMixin:
 
     def _render_minor_bodies(self, renderer: Any, julian_date: float) -> None:
         """Render asteroids, comets, and the asteroid belt."""
-        assert julian_date is not None, "julian_date must be provided"
+        if julian_date is None:
+            raise ValueError("julian_date must be provided")
         if not self.view_state.show_minor_bodies:  # type: ignore[attr-defined]
             return
 
@@ -163,7 +166,8 @@ class SceneRenderMixin:
 
     def _render_trajectories(self, renderer: Any, julian_date: float) -> None:
         """Render active transfer trajectories and famous mission paths."""
-        assert julian_date is not None, "julian_date must be provided"
+        if julian_date is None:
+            raise ValueError("julian_date must be provided")
         if not self.view_state.show_trajectories:  # type: ignore[attr-defined]
             return
         for trajectory in self.trajectories:  # type: ignore[attr-defined]
@@ -203,7 +207,8 @@ class SceneRenderMixin:
         Args:
             julian_date: The current simulation time.
         """
-        assert julian_date is not None, "julian_date must be provided"
+        if julian_date is None:
+            raise ValueError("julian_date must be provided")
         if not self.renderer:  # type: ignore[attr-defined]
             return
         renderer = self.renderer  # type: ignore[attr-defined]
@@ -215,7 +220,8 @@ class SceneRenderMixin:
 
     def _render_sidebar(self, renderer: Any, julian_date: float) -> None:
         """Render the sidebar panel with active-tab content."""
-        assert julian_date is not None, "julian_date must be provided"
+        if julian_date is None:
+            raise ValueError("julian_date must be provided")
         if not self.sidebar_panel:  # type: ignore[attr-defined]
             return
 
@@ -229,7 +235,8 @@ class SceneRenderMixin:
         self, content_key: str, julian_date: float
     ) -> dict[str, Any] | None:
         """Build the content data dict for the active sidebar tab."""
-        assert content_key is not None, "content_key must be provided"
+        if content_key is None:
+            raise ValueError("content_key must be provided")
         if content_key == "educational" and self.educational_panel:  # type: ignore[attr-defined]
             if self.selected_body:  # type: ignore[attr-defined]
                 info = self.selected_body.get_info_dict_at_time(julian_date)  # type: ignore[attr-defined]

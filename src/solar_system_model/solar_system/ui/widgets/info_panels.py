@@ -29,7 +29,8 @@ class InfoPanel:
             width: Panel width in pixels
             style: Visual styling
         """
-        assert position is not None, "position must be provided"
+        if position is None:
+            raise ValueError("position must be provided")
         self.position = position
         self.width = width
         self.style = style or PanelStyle()
@@ -45,7 +46,8 @@ class InfoPanel:
             title: Panel title
             data: Dictionary of label -> value pairs
         """
-        assert title is not None, "title must be provided"
+        if title is None:
+            raise ValueError("title must be provided")
         self._title = title
         self._data = data
 
@@ -154,7 +156,8 @@ class EducationalInfoPanel:
             width: Panel width in pixels
             style: Visual styling
         """
-        assert position is not None, "position must be provided"
+        if position is None:
+            raise ValueError("position must be provided")
         self.position = position
         self.width = width
         self.style = style or PanelStyle()
@@ -175,7 +178,8 @@ class EducationalInfoPanel:
             properties: Dictionary of properties to display
             fun_facts: Optional list of educational fun facts
         """
-        assert name is not None, "name must be provided"
+        if name is None:
+            raise ValueError("name must be provided")
         self._body_name = name
         self._properties = properties
         self._fun_facts = fun_facts or []

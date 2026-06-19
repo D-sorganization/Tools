@@ -27,7 +27,8 @@ class ImmersionChecklistPanel:
         tasks: list[ImmersionTask] | None = None,
     ):
         """Initialize the checklist panel."""
-        assert position is not None, "position must be provided"
+        if position is None:
+            raise ValueError("position must be provided")
         self.position = position
         self.width = width
         self.style = style or PanelStyle()

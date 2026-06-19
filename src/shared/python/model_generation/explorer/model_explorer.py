@@ -83,7 +83,8 @@ class DisplayPreviewPanel(QGroupBox):
     def __init__(
         self, preferences: UserPreferences, parent: QWidget | None = None
     ) -> None:
-        assert preferences is not None, "preferences must be provided"
+        if preferences is None:
+            raise ValueError("preferences must be provided")
         super().__init__("Display Preview", parent)
         self._preferences = preferences
         self._checkboxes: dict[str, QCheckBox] = {}

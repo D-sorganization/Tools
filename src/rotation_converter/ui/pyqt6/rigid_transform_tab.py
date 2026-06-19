@@ -160,7 +160,8 @@ class RigidTransformTab(QWidget):
         self._draw_transform(T)
 
     def _display_transform(self, T: RigidTransform) -> None:
-        assert T is not None, "T must be provided"
+        if T is None:
+            raise ValueError("T must be provided")
         q, p = T.as_quaternion_translation()
         R, p2 = T.as_rotation_translation()
         euler, _ = T.as_euler_translation("xyz")
@@ -217,7 +218,8 @@ class RigidTransformTab(QWidget):
         self._tf_output.setPlainText("\n".join(lines))
 
     def _draw_transform(self, T: RigidTransform) -> None:
-        assert T is not None, "T must be provided"
+        if T is None:
+            raise ValueError("T must be provided")
         self._tf_fig.clear()
         ax = self._tf_fig.add_subplot(111, projection="3d")
         style_figure(self._tf_fig, ax)

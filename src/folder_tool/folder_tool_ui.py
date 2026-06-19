@@ -64,7 +64,8 @@ class UICreationMixin:
     def _load_ico_icon(self, ico_path: str) -> None:
         """Loads and sets the ICO icon for the application."""
         # Use iconbitmap for Windows taskbar integration
-        assert ico_path is not None, "ico_path must be provided"
+        if ico_path is None:
+            raise ValueError("ico_path must be provided")
         self.root.iconbitmap(ico_path)  # type: ignore[attr-defined]
         logger.info(f"Loaded ICO icon for taskbar: {ico_path}")
 

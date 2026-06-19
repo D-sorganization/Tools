@@ -142,7 +142,8 @@ def _right_arm_fk_jax(
     (rs, re, rh, J_offsets) as (shape-(2,), shape-(2,), shape-(2,), unused)
         rs: right shoulder, re: right elbow, rh: right hand
     """
-    assert p is not None, "p must be provided"
+    if p is None:
+        raise ValueError("p must be provided")
     rs_x = hub_x + p.d_rs * perp_x
     rs_y = hub_y + p.d_rs * perp_y
     rs = jnp.array([rs_x, rs_y])
@@ -189,7 +190,8 @@ def _left_arm_fk_jax(
     (ls, le, lh) each shape (2,)
         ls: left shoulder, le: left elbow, lh: left hand
     """
-    assert p is not None, "p must be provided"
+    if p is None:
+        raise ValueError("p must be provided")
     ls_x = hub_x - p.d_ls * perp_x
     ls_y = hub_y - p.d_ls * perp_y
     ls = jnp.array([ls_x, ls_y])
@@ -230,7 +232,8 @@ def _club_fk_jax(
     -------
     (club_base, grip_left, club_tip) each shape (2,)
     """
-    assert p is not None, "p must be provided"
+    if p is None:
+        raise ValueError("p must be provided")
     club_dx = jnp.sin(th_club)
     club_dy = -jnp.cos(th_club)
 

@@ -77,7 +77,8 @@ class SimulationPanel(_SimulationLifecycleMixin, _SimulationExportMixin, QWidget
         objective_builder: Any | None = None,
         parent: QWidget | None = None,
     ) -> None:
-        assert controls is not None, "controls must be provided"
+        if controls is None:
+            raise ValueError("controls must be provided")
         super().__init__(parent)
         self.controls = controls
         self.pendulum = pendulum
@@ -190,7 +191,8 @@ class SimulationPanel(_SimulationLifecycleMixin, _SimulationExportMixin, QWidget
         Post: ``self.perturbation_panel is panel`` and the Noise tab is
               the last entry in ``self._side_tabs.panel_labels()``.
         """
-        assert panel is not None, "perturbation panel must not be None"
+        if panel is None:
+            raise ValueError("perturbation panel must not be None")
         self.perturbation_panel = panel
         self._side_tabs.add_panel(
             self.TAB_NOISE,
@@ -313,7 +315,8 @@ class SimulationPanel(_SimulationLifecycleMixin, _SimulationExportMixin, QWidget
         self._playback_speed = speed
 
     def _on_frame_change(self, frame: int) -> None:
-        assert frame is not None, "frame must be provided"
+        if frame is None:
+            raise ValueError("frame must be provided")
         if self._result is None:
             return
         self._anim_idx = frame
@@ -388,7 +391,8 @@ class SimulationPanel(_SimulationLifecycleMixin, _SimulationExportMixin, QWidget
 
     def scrub_to_frame(self, idx: int) -> None:
         """Jump to a specific frame index (called by toolstrip slider)."""
-        assert idx is not None, "idx must be provided"
+        if idx is None:
+            raise ValueError("idx must be provided")
         if self._result is None:
             return
         idx = max(0, min(idx, self._result.n_steps - 1))

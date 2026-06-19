@@ -62,7 +62,8 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
         - 55 pose parameters for body joints
         - Hand and face parameters
         """
-        assert params is not None, "params must be provided"
+        if params is None:
+            raise ValueError("params must be provided")
         if not self.is_available:
             return GeneratedMeshResult(
                 success=False,
@@ -159,7 +160,8 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
         - beta[3]: Shoulder width
         - beta[4]: Hip width
         """
-        assert params is not None, "params must be provided"
+        if params is None:
+            raise ValueError("params must be provided")
         import numpy as np
 
         betas = np.zeros(10)
@@ -215,7 +217,8 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
         params: BodyParameters,
     ) -> GeneratedMeshResult:
         """Segment SMPL-X mesh into body parts using joint positions."""
-        assert visual_dir is not None, "visual_dir must be provided"
+        if visual_dir is None:
+            raise ValueError("visual_dir must be provided")
         import numpy as np
 
         from shared.python.humanoid_character_builder.core.segment_definitions import (
@@ -269,7 +272,8 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
         valid_segments: Any,
     ) -> tuple[dict[str, Path], dict[str, Path]]:
         """Extract and export individual segment meshes from SMPL-X vertex groups."""
-        assert visual_dir is not None, "visual_dir must be provided"
+        if visual_dir is None:
+            raise ValueError("visual_dir must be provided")
         mesh_paths: dict[str, Path] = {}
         collision_paths: dict[str, Path] = {}
 
@@ -312,7 +316,8 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
         params: BodyParameters,
     ) -> GeneratedMeshResult:
         """Fallback segmentation using z-coordinate slicing."""
-        assert visual_dir is not None, "visual_dir must be provided"
+        if visual_dir is None:
+            raise ValueError("visual_dir must be provided")
         from shared.python.humanoid_character_builder.core.segment_definitions import (
             HUMANOID_SEGMENTS,
         )
