@@ -30,7 +30,7 @@ from ..rendering import Palette, restyle_figure
 class MotionAnalysisPanel(QWidget):
     """A themed grid of named matplotlib axes with a navigation toolbar."""
 
-    _LEGEND_FOOTER_PX = 96
+    _LEGEND_ROW_PX = 58
     _GRID_WSPACE = 0.28
     _MIN_AXIS_WIDTH_PX = 440
     _MIN_DATA_HEIGHT_PX = 340
@@ -85,10 +85,16 @@ class MotionAnalysisPanel(QWidget):
 
     def _build_axes(self) -> None:
         self.figure.clear()
+        row_ratios = [
+            ratio
+            for _row in range(self._rows)
+            for ratio in (self._MIN_DATA_HEIGHT_PX, self._LEGEND_ROW_PX)
+        ]
         grid = self.figure.add_gridspec(
-            self._rows,
+            self._rows * 2,
             self._cols,
-            hspace=0.42,
+            height_ratios=row_ratios,
+            hspace=0.55,
             wspace=self._GRID_WSPACE,
         )
         self.axes = {}
@@ -96,7 +102,10 @@ class MotionAnalysisPanel(QWidget):
         self._figure_legend = None
         for index, name in enumerate(self._axis_names):
             row, col = divmod(index, self._cols)
-            self.axes[name] = self.figure.add_subplot(grid[row, col])
+            self.axes[name] = self.figure.add_subplot(grid[row * 2, col])
+            legend_axis = self.figure.add_subplot(grid[row * 2 + 1, col])
+            legend_axis.set_axis_off()
+            self.legend_axes[name] = legend_axis
         restyle_figure(self.figure)
 
     def _minimum_canvas_width(self) -> int:
@@ -105,20 +114,24 @@ class MotionAnalysisPanel(QWidget):
 
     def _minimum_canvas_height(self) -> int:
         """Return the minimum canvas height that keeps plot legends readable."""
-        return self._rows * self._MIN_DATA_HEIGHT_PX + self._LEGEND_FOOTER_PX
+        return self._rows * (self._MIN_DATA_HEIGHT_PX + self._LEGEND_ROW_PX)
 
     def clear(self) -> None:
         """Reset every axis to a blank, themed state."""
         self._build_axes()
 
     def _dock_legends(self) -> None:
-        """Move plot legends into one reserved footer outside all data axes."""
+        """Move plot legends into reserved non-data axes under each plot."""
         if self._figure_legend is not None:
             self._figure_legend.remove()
             self._figure_legend = None
 
-        handles_by_label: dict[str, Any] = {}
-        for axes in self.axes.values():
+        for legend_axis in self.legend_axes.values():
+            legend_axis.clear()
+            legend_axis.set_axis_off()
+
+        for name, axes in self.axes.items():
+            handles_by_label: dict[str, Any] = {}
             handles, labels = axes.get_legend_handles_labels()
             existing = axes.get_legend()
             if existing is not None:
@@ -127,30 +140,26 @@ class MotionAnalysisPanel(QWidget):
                 if label and not label.startswith("_"):
                     handles_by_label.setdefault(label, handle)
 
-        legend_labels = tuple(handles_by_label)
-        if not legend_labels or not self._legends_visible:
-            return
+            legend_labels = tuple(handles_by_label)
+            if not legend_labels or not self._legends_visible:
+                continue
 
-        legend_kwargs = {
-            "loc": "lower center",
-            "bbox_to_anchor": (0.5, 0.015),
-            "ncol": self._legend_columns(legend_labels),
-            "fontsize": 6,
-            "facecolor": Palette.BG_PANEL,
-            "edgecolor": Palette.FG_DIM,
-            "labelcolor": Palette.FG,
-            "framealpha": 0.9,
-            "borderaxespad": 0.0,
-            "borderpad": 0.35,
-            "handlelength": 1.2,
-            "handletextpad": 0.35,
-            "columnspacing": 0.7,
-        }
-        self._figure_legend = self.figure.legend(
-            [handles_by_label[label] for label in legend_labels],
-            legend_labels,
-            **legend_kwargs,
-        )
+            self.legend_axes[name].legend(
+                [handles_by_label[label] for label in legend_labels],
+                legend_labels,
+                loc="center",
+                ncol=self._legend_columns(legend_labels),
+                fontsize=6,
+                facecolor=Palette.BG_PANEL,
+                edgecolor=Palette.FG_DIM,
+                labelcolor=Palette.FG,
+                framealpha=0.9,
+                borderaxespad=0.0,
+                borderpad=0.3,
+                handlelength=1.15,
+                handletextpad=0.32,
+                columnspacing=0.62,
+            )
 
     @staticmethod
     def _legend_columns(labels: Sequence[str]) -> int:
@@ -180,8 +189,10 @@ class MotionAnalysisPanel(QWidget):
 
     def has_legends(self) -> bool:
         """Return True if any axis currently carries a legend."""
-        return self._figure_legend is not None or any(
-            axes.get_legend() is not None for axes in self.axes.values()
+        return (
+            self._figure_legend is not None
+            or any(axes.get_legend() is not None for axes in self.axes.values())
+            or any(axes.get_legend() is not None for axes in self.legend_axes.values())
         )
 
     def draw(self) -> None:
@@ -191,17 +202,10 @@ class MotionAnalysisPanel(QWidget):
             left=0.08,
             right=0.98,
             top=0.94,
-            bottom=self._legend_footer_fraction(),
+            bottom=0.045,
         )
         self._dock_legends()
         self.canvas.draw()
-
-    def _legend_footer_fraction(self) -> float:
-        """Return the figure bottom margin reserved for the shared legend."""
-        dpi = float(getattr(self.figure, "dpi", 100.0))
-        _width_in, height_in = self.figure.get_size_inches()
-        height_px = max(float(height_in) * dpi, 1.0)
-        return min(0.22, max(0.08, self._LEGEND_FOOTER_PX / height_px))
 
     def _enforce_minimum_figure_size(self) -> None:
         """Keep rendered figures at the panel's legend-safe minimum size."""

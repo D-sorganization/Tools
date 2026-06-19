@@ -180,7 +180,7 @@ class TestChainPlots:
 
 class TestMotionAnalysisPanel:
     @staticmethod
-    def _assert_figure_legend_does_not_cover_plots(
+    def _assert_panel_legends_do_not_cover_plots(
         panel,
         *,
         figure_size: tuple[float, float] | None = None,
@@ -209,24 +209,31 @@ class TestMotionAnalysisPanel:
             if tick.get_visible()
         ]
 
-        legend = panel._figure_legend
-        assert legend is not None
-        legend_box = legend.get_window_extent(renderer)
-        assert legend_box.x0 >= figure_box.x0 - 1.0
-        assert legend_box.x1 <= figure_box.x1 + 1.0
-        assert legend_box.y0 >= figure_box.y0 - 1.0
-        assert legend_box.y1 <= min(data_box.y0 for data_box in data_boxes) - 2.0
-        assert legend_box.y1 <= figure_box.y0 + panel._LEGEND_FOOTER_PX + 8.0
-        assert not any(data_box.overlaps(legend_box) for data_box in data_boxes)
-        assert not any(label_box.overlaps(legend_box) for label_box in label_boxes)
-        assert not any(tick_box.overlaps(legend_box) for tick_box in tick_label_boxes)
+        legends = [
+            legend
+            for legend_axis in panel.legend_axes.values()
+            if (legend := legend_axis.get_legend()) is not None
+        ]
+        assert legends
+        assert panel._figure_legend is None
+        assert all(axes.get_legend() is None for axes in panel.axes.values())
+
+        for legend in legends:
+            legend_box = legend.get_window_extent(renderer)
+            assert legend_box.x0 >= figure_box.x0 - 1.0
+            assert legend_box.x1 <= figure_box.x1 + 1.0
+            assert legend_box.y0 >= figure_box.y0 - 1.0
+            assert legend_box.y1 <= figure_box.y1 + 1.0
+            assert not any(data_box.overlaps(legend_box) for data_box in data_boxes)
+            assert not any(label_box.overlaps(legend_box) for label_box in label_boxes)
+            assert not any(tick_box.overlaps(legend_box) for tick_box in tick_label_boxes)
 
     def test_axes_keys(self, qapp) -> None:
         from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
 
         panel = MotionAnalysisPanel(["alpha", "beta", "gamma"], rows=2, cols=2)
         assert set(panel.axes) == {"alpha", "beta", "gamma"}
-        assert panel.legend_axes == {}
+        assert set(panel.legend_axes) == {"alpha", "beta", "gamma"}
         assert panel.canvas is not None
         assert panel.toolbar is not None
 
@@ -270,7 +277,7 @@ class TestMotionAnalysisPanel:
         data_heights = [axes.get_window_extent(renderer).height for axes in panel.axes.values()]
 
         assert min(data_heights) >= 210.0
-        self._assert_figure_legend_does_not_cover_plots(panel)
+        self._assert_panel_legends_do_not_cover_plots(panel)
 
     def test_swingset_live_tab_layout_preserves_usable_plot_width(
         self, qapp, swing_history
@@ -300,14 +307,12 @@ class TestMotionAnalysisPanel:
         data_widths = [axes.get_window_extent(renderer).width for axes in panel.axes.values()]
 
         assert min(data_widths) >= 300.0
-        self._assert_figure_legend_does_not_cover_plots(
+        self._assert_panel_legends_do_not_cover_plots(
             panel,
             figure_size=(minimum_size.width() / 100.0, minimum_size.height() / 100.0),
         )
 
-    def test_swingset_legends_are_docked_in_shared_footer(
-        self, qapp, swing_history
-    ) -> None:
+    def test_swingset_legends_are_docked_in_reserved_rows(self, qapp, swing_history) -> None:
         from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
 
         panel = MotionAnalysisPanel(
@@ -325,18 +330,20 @@ class TestMotionAnalysisPanel:
         panel.draw()
         renderer = panel.canvas.get_renderer()
         figure_box = panel.figure.bbox
-        legend = panel._figure_legend
-        assert legend is not None
-        legend_box = legend.get_window_extent(renderer)
+        assert panel._figure_legend is None
+        assert all(axes.get_legend() is None for axes in panel.axes.values())
+        assert all(axes.get_legend() is not None for axes in panel.legend_axes.values())
 
-        assert legend_box.x0 >= figure_box.x0 - 1.0
-        assert legend_box.x1 <= figure_box.x1 + 1.0
-        assert legend_box.y1 <= min(
-            axes.get_window_extent(renderer).y0 for axes in panel.axes.values()
-        ) - 2.0
-        assert not any(
-            legend_box.overlaps(axes.get_window_extent(renderer)) for axes in panel.axes.values()
-        )
+        for legend_axis in panel.legend_axes.values():
+            legend = legend_axis.get_legend()
+            assert legend is not None
+            legend_box = legend.get_window_extent(renderer)
+            assert legend_box.x0 >= figure_box.x0 - 1.0
+            assert legend_box.x1 <= figure_box.x1 + 1.0
+            assert not any(
+                legend_box.overlaps(axes.get_window_extent(renderer))
+                for axes in panel.axes.values()
+            )
 
     def test_clear_rebuilds_axes(self, qapp) -> None:
         from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
@@ -369,7 +376,7 @@ class TestMotionAnalysisPanel:
         plot_swing_energy(panel.axes["energy"], swing_history)
         plot_swing_com_path(panel.axes["com_path"], swing_history)
 
-        self._assert_figure_legend_does_not_cover_plots(panel)
+        self._assert_panel_legends_do_not_cover_plots(panel)
         assert all(axes.get_legend() is None for axes in panel.axes.values())
 
     def test_swingset_docked_legends_clear_minimum_plot_size(self, qapp, swing_history) -> None:
@@ -388,7 +395,7 @@ class TestMotionAnalysisPanel:
         plot_swing_com_path(panel.axes["com_path"], swing_history, legend=False)
 
         minimum_size = panel.canvas.minimumSize()
-        self._assert_figure_legend_does_not_cover_plots(
+        self._assert_panel_legends_do_not_cover_plots(
             panel,
             figure_size=(minimum_size.width() / 100.0, minimum_size.height() / 100.0),
         )
@@ -409,7 +416,7 @@ class TestMotionAnalysisPanel:
         plot_swing_energy(panel.axes["energy"], swing_history, legend=False)
         plot_swing_com_path(panel.axes["com_path"], swing_history, legend=False)
 
-        self._assert_figure_legend_does_not_cover_plots(
+        self._assert_panel_legends_do_not_cover_plots(
             panel,
             figure_size=(5.2, 7.2),
         )
@@ -438,7 +445,7 @@ class TestMotionAnalysisPanel:
         minimum_size = panel.canvas.minimumSize()
         assert panel.figure.bbox.width >= minimum_size.width() - 1.0
         assert panel.figure.bbox.height >= minimum_size.height() - 1.0
-        self._assert_figure_legend_does_not_cover_plots(panel)
+        self._assert_panel_legends_do_not_cover_plots(panel)
 
     def test_chain_legends_are_docked_outside_data_axes(self, qapp, chain_history) -> None:
         from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
@@ -449,7 +456,7 @@ class TestMotionAnalysisPanel:
         plot_chain_energy(panel.axes["energy"], np.linspace(0, 1, _T), np.zeros(_T))
         plot_chain_tip_speed(panel.axes["tip_speed"], np.linspace(0, 1, _T), np.zeros(_T))
 
-        self._assert_figure_legend_does_not_cover_plots(panel)
+        self._assert_panel_legends_do_not_cover_plots(panel)
         assert all(axes.get_legend() is None for axes in panel.axes.values())
 
     def test_rejects_empty_axis_names(self, qapp) -> None:
@@ -504,8 +511,10 @@ class TestMotionAnalysisPanel:
         panel.draw()
         assert panel.axes["a"].get_legend() is None
         assert panel._figure_legend is None
+        assert panel.legend_axes["a"].get_legend() is None
 
         panel.set_legends_visible(True)
         panel.draw()
         assert panel.axes["a"].get_legend() is None
-        assert panel._figure_legend is not None
+        assert panel._figure_legend is None
+        assert panel.legend_axes["a"].get_legend() is not None

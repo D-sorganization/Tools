@@ -39,10 +39,10 @@ Movement-Optimizer is a biomechanics trajectory optimizer for barbell exercises.
   gap, compact multi-column legends, and minimum scrollable plot-panel sizing
   so visible legends identify the plotted series without covering plot data,
   neighboring subplots, axis labels, or figure edges on compact panes.
-- Swingset and Chain Dynamics analysis panels collect labeled series into one
-  reserved figure-level legend footer instead of inserting per-plot legend
-  strips between data rows, so the legends remain visible without covering or
-  crowding any plot contents.
+- Swingset and Chain Dynamics analysis panels collect each plot's labeled
+  series into that plot's reserved legend row instead of using one shared
+  figure-level footer, so each legend remains visible and local to its plot
+  without covering or crowding plot contents.
 - Compact plot panes reserve enough vertical gap between data axes and docked
   legend rows for x-axis labels, y-axis labels, and titles to remain readable
   without being obscured by legends.
@@ -241,8 +241,8 @@ mypy --ignore-missing-imports src/movement_optimizer/
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-06-19 | 1.0.35  | Replaced per-plot Swingset and Chain Dynamics analysis legend strips with one reserved figure-level legend footer, reducing vertical clutter while preserving rendered regression coverage that the legend cannot overlap plot data, tick labels, or axis labels.                                                                                                                                              |
-| 2026-06-19 | 1.0.33  | Moved Swingset and Chain Dynamics analysis legends into right-docked per-plot strips with wider scrollable plot columns, so legends remain visible beside each plot instead of sitting between rows or covering plotted curves and neighboring axis labels.                                                                                                                                                    |
+| 2026-06-19 | 1.0.35  | Replaced per-plot Swingset and Chain Dynamics analysis legend strips with one reserved figure-level legend footer, reducing vertical clutter while preserving rendered regression coverage that the legend cannot overlap plot data, tick labels, or axis labels.                                                                                                                                             |
+| 2026-06-19 | 1.0.33  | Moved Swingset and Chain Dynamics analysis legends into right-docked per-plot strips with wider scrollable plot columns, so legends remain visible beside each plot instead of sitting between rows or covering plotted curves and neighboring axis labels.                                                                                                                                                   |
 | 2026-06-19 | 1.0.32  | Widened scrollable Swingset and Chain Dynamics analysis plot columns and anchored dense docked legends to their full reserved strips, so the live Swingset 3x2 plot layout keeps usable data-axis width without legend overlap.                                                                                                                                                                               |
 | 2026-06-19 | 1.0.29  | Enforced `MotionAnalysisPanel`'s legend-safe minimum render dimensions during draw before docking Swingset and Chain Dynamics legends, so compact panes and backend resize edge cases cannot squeeze legends into axis labels, tick labels, titles, or plotted curves.                                                                                                                                        |
 | 2026-06-19 | 1.0.28  | Rendered Swingset and Chain Dynamics panel plots without transient data-axis legends while preserving labeled artists for `MotionAnalysisPanel` docked legend strips, so visible legends cannot obscure plot contents between renderer and panel draw steps.                                                                                                                                                  |
