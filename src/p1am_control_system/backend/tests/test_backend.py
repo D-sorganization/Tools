@@ -1,3 +1,4 @@
+import copy
 import csv
 import io
 import os
@@ -22,7 +23,7 @@ pytest.importorskip("httpx")
 pytest.importorskip("fastapi.testclient")
 
 from fastapi.testclient import TestClient
-from main import app, get_session, modbus_manager
+from main import app, backup_simulator, control_context, get_session, modbus_manager
 from models import InterlockConfig, PIDConfig, RoutingConfig, TagLog
 from sqlalchemy.pool import StaticPool
 from sqlmodel import Session, SQLModel, create_engine
@@ -395,6 +396,79 @@ def test_pid_tuning_workflow() -> None:
     assert data["status"] in ("success", "warning")
     assert "parameters" in data
     assert "recommended_pid" in data
+
+
+def test_pid_tuning_start_rejects_unmapped_pv_tag() -> None:
+    """Starting tuning with an unmapped PV tag returns a controlled 4xx."""
+    original_config = control_context.active_config
+    original_sessions = dict(control_context.tuning_sessions)
+    config = copy.deepcopy(original_config)
+    config.pids[1] = PIDConfig(
+        pv_tag="TAG_255",
+        cv_tag="TAG_4",
+        setpoint=30.0,
+        kp=1.5,
+        ki=0.2,
+        kd=0.05,
+    )
+    try:
+        control_context.apply_config(config, modbus_manager, backup_simulator)
+
+        response = client.post("/api/pid/1/tuning/start")
+
+        assert response.status_code == 409
+        detail = response.json()["detail"]
+        assert "PID loop 1 PV tag 'TAG_255'" in detail
+        assert "latest tag values" in detail
+        assert 1 not in control_context.tuning_sessions
+    finally:
+        control_context.apply_config(original_config, modbus_manager, backup_simulator)
+        control_context.tuning_sessions.clear()
+        control_context.tuning_sessions.update(original_sessions)
+
+
+def test_pid_tuning_step_rejects_unmapped_cv_tag_without_write() -> None:
+    """Stepping tuning with an unmapped CV tag must not write a physical output."""
+    original_config = control_context.active_config
+    original_sessions = dict(control_context.tuning_sessions)
+    config = copy.deepcopy(original_config)
+    config.pids[1] = PIDConfig(
+        pv_tag="TAG_3",
+        cv_tag="TAG_255",
+        setpoint=30.0,
+        kp=1.5,
+        ki=0.2,
+        kd=0.05,
+    )
+    try:
+        control_context.apply_config(config, modbus_manager, backup_simulator)
+        control_context.tuning_sessions[1] = {
+            "start_time": 0.0,
+            "history": [],
+            "step_triggered": False,
+        }
+        plc_write = AsyncMock(return_value=True)
+        simulator_write = AsyncMock(return_value=True)
+
+        with (
+            patch.object(modbus_manager, "write_tag", plc_write),
+            patch.object(backup_simulator, "write_tag", simulator_write),
+        ):
+            response = client.post(
+                "/api/pid/1/tuning/step",
+                json={"step_value": 75.0},
+            )
+
+        assert response.status_code == 409
+        detail = response.json()["detail"]
+        assert "PID loop 1 CV tag 'TAG_255'" in detail
+        plc_write.assert_not_awaited()
+        simulator_write.assert_not_awaited()
+        assert control_context.tuning_sessions[1]["step_triggered"] is False
+    finally:
+        control_context.apply_config(original_config, modbus_manager, backup_simulator)
+        control_context.tuning_sessions.clear()
+        control_context.tuning_sessions.update(original_sessions)
 
 
 def test_mpc_simulation() -> None:
