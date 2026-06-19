@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7674                                   |
+| **Spec Version**        | 1.1.7675                                   |
 | **Last Spec Update**    | 2026-06-19                                 |
 
 ## 2. Purpose & Mission
@@ -1275,6 +1275,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-19 | 1.1.7675 | test(p1am, #3709 #3710): split PID tuning unmapped-tag regression coverage into `test_pid_tuning_tag_guards.py` so the endpoint behavior remains covered while `test_backend.py` stays under the fleet 500 LOC file-size budget. |
 | 2026-06-19 | 1.1.7674 | fix(p1am, #3709 #3710): return descriptive HTTP 409 errors before mutating tuning state when PID tuning start/step references PV/CV tags missing from `latest_tags`, avoiding raw `KeyError` 500s and preventing physical CV writes when a tuning step's CV tag is unmapped. |
 | 2026-06-19 | 1.1.7673 | fix(data_processor, #3673): replace the vacuous `filter_type is not None` assert in `design_frequency_window` with real precondition checks that raise `ValueError` for an unrecognized `filter_type`, `n_samples <= 0`, or `transition_bw <= 0`, preventing silent inf/NaN coefficients and all-zero filters. |
 | 2026-06-19 | 1.1.604 | fix(movement_optimizer): make Swingset policy trace canvas height track wrapped legend rows and keep Swingset/chain analysis legends docked outside rendered data axes so optimizer legends cannot obscure telemetry or analysis plot contents in narrow panes. |
