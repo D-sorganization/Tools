@@ -8,6 +8,10 @@ oversized / over-complex expressions) that previously passed validation.
 from __future__ import annotations
 
 import math
+import os
+import subprocess
+import sys
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -143,9 +147,40 @@ def test_keyword_unpacking_in_call_rejected_but_keywords_allowed() -> None:
     assert safe_eval("func(x=2)", {"func": lambda *, x: x}) == 2
 
 
-def test_non_string_expression_raises_contract_error() -> None:
+@pytest.mark.parametrize("bad_expression", [None, 1, 1.5, b"1 + 1", ["1 + 1"]])
+def test_non_string_expression_raises_type_error(bad_expression: object) -> None:
     with pytest.raises(TypeError, match="expression must be a string"):
-        validate_expression(1)  # type: ignore[arg-type]
+        validate_expression(bad_expression)  # type: ignore[arg-type]
+
+
+def test_safe_eval_non_string_expression_raises_type_error() -> None:
+    with pytest.raises(TypeError, match="expression must be a string"):
+        safe_eval(1, {})  # type: ignore[arg-type]
+
+
+def test_non_string_type_error_survives_dbc_off_and_python_optimized() -> None:
+    code = """
+from shared.python.safe_eval import validate_expression
+
+for value in (None, 123, 1.5, b"1 + 1", ["1 + 1"]):
+    try:
+        validate_expression(value)
+    except TypeError as exc:
+        if "expression must be a string" not in str(exc):
+            raise
+    else:
+        raise SystemExit(f"{type(value).__name__} was accepted")
+"""
+    env = os.environ.copy()
+    env["DBC_LEVEL"] = "off"
+    env["PYTHONPATH"] = str(Path.cwd() / "src") + os.pathsep + env.get("PYTHONPATH", "")
+
+    subprocess.run(
+        [sys.executable, "-O", "-c", code],
+        check=True,
+        cwd=Path.cwd(),
+        env=env,
+    )
 
 
 def test_numpy_two_argument_min_max_are_elementwise() -> None:
