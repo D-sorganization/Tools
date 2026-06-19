@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7676                                   |
+| **Spec Version**        | 1.1.7677                                   |
 | **Last Spec Update**    | 2026-06-19                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-18 Update
 
+- Movement Optimizer now renders Swingset and Chain Dynamics analysis legends
+  in one reserved figure-level footer instead of per-plot strips between rows,
+  preserving visible series labels while preventing legends from covering or
+  crowding plot data, ticks, and axis labels.
 - Removed redundant `assert ... is not None` guards in
   `_mr_kinematics.IKinBody` and `config_loader.validate_tools_config` that were
   shadowed by a following `require()`/`isinstance()` contract on the same

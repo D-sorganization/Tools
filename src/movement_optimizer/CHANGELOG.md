@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Replaced per-plot Swingset and Chain Dynamics analysis legend strips with a
+  single reserved figure-level legend footer so visible legends identify series
+  without sitting between plot rows or covering plot data, ticks, or labels.
 - Prevented the Swingset policy trace `iteration` label from overlapping
   optimizer telemetry by reserving a bottom axis-label band in the trace
   canvas height-for-width contract.
