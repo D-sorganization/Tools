@@ -286,18 +286,24 @@ class PluginManager:
         # Discover tools from manifests
         discovered_tools = self.scan_for_tools()
 
-        # Merge results (discovered tools take precedence for duplicates)
-        merged_tools = json_tools.copy()
+        # Merge results (discovered tools take precedence for duplicates).
+        # On a name collision within a category the discovered tool replaces
+        # the tools.json entry, so an auto-discovered manifest overrides a
+        # stale tools.json definition of the same tool.
+        merged_tools = {category: list(tools) for category, tools in json_tools.items()}
         for category, tools in discovered_tools.items():
             if category not in merged_tools:
                 merged_tools[category] = []
 
-            # Add discovered tools, avoiding duplicates by name
-            existing_names = {tool.name for tool in merged_tools[category]}
+            existing = merged_tools[category]
             for tool in tools:
-                if tool.name not in existing_names:
-                    merged_tools[category].append(tool)
-                    existing_names.add(tool.name)
+                for index, current in enumerate(existing):
+                    if current.name == tool.name:
+                        # Discovered tool wins: replace the tools.json entry.
+                        existing[index] = tool
+                        break
+                else:
+                    existing.append(tool)
 
         self.tools = merged_tools
         return merged_tools
