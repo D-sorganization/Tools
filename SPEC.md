@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.603                                    |
+| **Spec Version**        | 1.1.611                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-18 Update
 
+- `PluginManager.load_tools` now skips-and-logs a non-dict tool entry (a bare
+  string or list) instead of letting its `TypeError` escape the KeyError-only
+  per-item handler and abort the whole loop. Previously one malformed
+  `tools.json` entry wiped the entire tool registry and returned `{}`; valid
+  tools in the same and other categories now survive (#3720).
 - P1AM firmware first-boot defaults now keep `SignalBroker::Reset()` as the
   all-unmapped primitive but layer bench-safe routing after an invalid or
   erased flash configuration: thermocouples TC0-TC3 route to TAG_0-TAG_3,
