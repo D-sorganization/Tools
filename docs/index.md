@@ -21,29 +21,29 @@ To get started with the repository:
 
 ## 📚 Projects
 
-### [Data Processing](../data_processing/README.md)
+### [Data Processing](../src/data_processing/README.md)
 
 A comprehensive suite for analyzing and converting time-series data (CSV, Parquet, Excel, JSON).
 
-### [Scientific Modeling](../scientific_modeling/README.md)
+### [Scientific Modeling](../src/solar_system_model/README.md)
 
 Advanced simulations and modeling tools, including:
 
 - **Solar System Model**: Interactive 3D visualization of the solar system.
 - **RRT Path Planner**: Path planning algorithms for obstacle avoidance.
 
-### [Web Applications](../web_applications/README.md)
+### [Web Applications](../src/web_applications/README.md)
 
 Browser-based tools:
 
 - **Scientific Calculator**: A powerful Flask-based calculator with symbolic math support.
 - **Unit Converter**: A clean, accessible PWA for unit conversions.
 
-### [Media Processing](../media_processing/README.md)
+### [Media Processing](../src/media_processing/README.md)
 
 Tools for audio and video analysis (MATLAB & Python).
 
-### [Tools & Utilities](../tools/README.md)
+### [Tools & Utilities](../src/tools/README.md)
 
 Helper scripts for development, file management, and quality assurance.
 
