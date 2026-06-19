@@ -9,8 +9,10 @@ Covers:
 
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -41,10 +43,10 @@ def test_optimized_file_scanner_init_type_error() -> None:
     from performance_utils import OptimizedFileScanner
 
     with pytest.raises(TypeError, match="max_workers must be an int"):
-        OptimizedFileScanner(max_workers="4")  # type: ignore[arg-type]
+        OptimizedFileScanner(max_workers="4")
 
     with pytest.raises(TypeError, match="max_workers must be an int"):
-        OptimizedFileScanner(max_workers=4.0)  # type: ignore[arg-type]
+        OptimizedFileScanner(max_workers=4.0)
 
 
 def test_optimized_file_scanner_init_value_error() -> None:
@@ -64,7 +66,7 @@ def test_scan_directory_parallel_type_error() -> None:
     scanner = OptimizedFileScanner()
 
     with pytest.raises(TypeError, match="root_path must be a Path"):
-        list(scanner.scan_directory_parallel("/some/path"))  # type: ignore[arg-type]
+        list(scanner.scan_directory_parallel("/some/path"))
 
 
 def test_scan_directory_parallel_with_temp_dir(tmp_path: Path) -> None:
@@ -105,13 +107,13 @@ def test_scan_directory_parallel_cache_uses_stat_mtime(tmp_path: Path) -> None:
 # ---------------------------------------------------------------------------
 
 
-def _import_plugin_manager_module():
+def _import_plugin_manager_module() -> Any:
     """Import plugin_manager, skipping if dependencies unavailable."""
     import importlib.util
 
     pm_path = Path(__file__).parent.parent / "src" / "core" / "plugin_manager.py"
     if not pm_path.exists():
-        return None
+        pytest.skip("plugin_manager.py not found")
 
     # Build a fake package hierarchy to resolve relative imports
     mock_utils = MagicMock()
@@ -153,22 +155,33 @@ def _import_plugin_manager_module():
         assert spec is not None
         assert spec.loader is not None
         module = importlib.util.module_from_spec(spec)
-        module.__package__ = fake_core_name  # type: ignore[assignment]
+        module.__package__ = fake_core_name
 
         with patch.dict("sys.modules", extra_modules):
-            spec.loader.exec_module(module)  # type: ignore[union-attr]
+            spec.loader.exec_module(module)
 
         return module
     except Exception:  # noqa: BLE001 — test isolation: any import failure returns None to skip
-        return None
+        pytest.skip("plugin_manager not importable in isolation")
 
 
-def _get_plugin_manager_class():
+def _get_plugin_manager_class() -> Any:
     """Import PluginManager, skipping if dependencies unavailable."""
     module = _import_plugin_manager_module()
-    if module is None:
-        return None
     return module.PluginManager
+
+
+def _read_json_file(path: Path, default: object | None = None) -> object:
+    """Read real JSON fixtures through the plugin manager's safe_read_json seam."""
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except OSError:
+        return default
+
+
+def _write_json(path: Path, data: object) -> None:
+    """Write compact JSON fixtures for plugin manager tests."""
+    path.write_text(json.dumps(data), encoding="utf-8")
 
 
 def test_plugin_manager_init_type_error(tmp_path: Path) -> None:
@@ -178,10 +191,10 @@ def test_plugin_manager_init_type_error(tmp_path: Path) -> None:
         pytest.skip("PluginManager not importable in isolation")
 
     with pytest.raises(TypeError, match="repo_root must be a Path"):
-        PluginManager(repo_root="/some/path")  # type: ignore[arg-type]
+        PluginManager(repo_root="/some/path")
 
     with pytest.raises(TypeError, match="repo_root must be a Path"):
-        PluginManager(repo_root=str(tmp_path))  # type: ignore[arg-type]
+        PluginManager(repo_root=str(tmp_path))
 
 
 def test_plugin_manager_init_valid(tmp_path: Path) -> None:
@@ -203,10 +216,10 @@ def test_get_tool_by_name_type_error(tmp_path: Path) -> None:
     manager = PluginManager(repo_root=tmp_path)
 
     with pytest.raises(TypeError, match="name must be a str"):
-        manager.get_tool_by_name(123)  # type: ignore[arg-type]
+        manager.get_tool_by_name(123)
 
     with pytest.raises(TypeError, match="name must be a str"):
-        manager.get_tool_by_name(None)  # type: ignore[arg-type]
+        manager.get_tool_by_name(None)
 
 
 def test_get_tool_by_name_valid(tmp_path: Path) -> None:
@@ -229,10 +242,100 @@ def test_validate_tool_path_type_error_for_non_str(tmp_path: Path) -> None:
     manager = PluginManager(repo_root=tmp_path)
 
     with pytest.raises(TypeError, match="tool_path must be a str"):
-        manager.validate_tool_path(tmp_path / "tool.py")  # type: ignore[arg-type]
+        manager.validate_tool_path(tmp_path / "tool.py")
 
     with pytest.raises(TypeError, match="tool_path must be a str"):
-        manager.validate_tool_path(None)  # type: ignore[arg-type]
+        manager.validate_tool_path(None)
+
+
+def test_plugin_manager_load_tools_reads_real_manifest_entries(
+    tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
+    """load_tools accepts valid tools and skips invalid real tools.json entries."""
+    module = _import_plugin_manager_module()
+    if module is None:
+        pytest.skip("plugin_manager not importable in isolation")
+
+    tool_file = tmp_path / "valid.py"
+    tool_file.write_text("print('ok')\n", encoding="utf-8")
+    outside_tool = tmp_path.parent / f"{tmp_path.name}_outside.py"
+    outside_tool.write_text("print('outside')\n", encoding="utf-8")
+    _write_json(
+        tmp_path / "tools.json",
+        {
+            "Development Tools": [
+                {
+                    "name": "Valid",
+                    "path": "valid.py",
+                    "type": "python",
+                    "desc": "real tool",
+                },
+                {
+                    "name": "Traversal",
+                    "path": f"../{outside_tool.name}",
+                    "type": "python",
+                    "desc": "outside repo",
+                },
+                {
+                    "name": "Missing path",
+                    "type": "python",
+                    "desc": "missing path key",
+                },
+            ]
+        },
+    )
+
+    caplog.set_level("WARNING", logger=module.logger.name)
+    manager = module.PluginManager(repo_root=tmp_path)
+
+    with patch.object(module, "safe_read_json", side_effect=_read_json_file):
+        tools = manager.load_tools()
+
+    loaded = tools["Development Tools"]
+    assert [tool.name for tool in loaded] == ["Valid"]
+    assert loaded[0].path == "valid.py"
+    assert "Security Alert" in caplog.text
+    assert "Skipping invalid tool entry" in caplog.text
+
+
+def test_plugin_manager_load_tools_fail_closes_on_non_dict_entry(
+    tmp_path: Path,
+) -> None:
+    """load_tools covers malformed non-dict entries until hardening PRs refine it."""
+    module = _import_plugin_manager_module()
+    if module is None:
+        pytest.skip("plugin_manager not importable in isolation")
+
+    _write_json(tmp_path / "tools.json", {"Development Tools": ["not-a-tool-entry"]})
+    manager = module.PluginManager(repo_root=tmp_path)
+
+    with patch.object(module, "safe_read_json", side_effect=_read_json_file):
+        assert manager.load_tools() == {}
+
+
+def test_plugin_manager_load_tools_fail_closes_on_non_list_category(
+    tmp_path: Path,
+) -> None:
+    """load_tools covers non-list category payloads from real tools.json data."""
+    module = _import_plugin_manager_module()
+    if module is None:
+        pytest.skip("plugin_manager not importable in isolation")
+
+    _write_json(
+        tmp_path / "tools.json",
+        {
+            "Development Tools": {
+                "name": "Scalar",
+                "path": "tool.py",
+                "type": "python",
+                "desc": "not in a list",
+            }
+        },
+    )
+    manager = module.PluginManager(repo_root=tmp_path)
+
+    with patch.object(module, "safe_read_json", side_effect=_read_json_file):
+        assert manager.load_tools() == {}
 
 
 def test_plugin_manager_scan_defaults_are_module_constants() -> None:
@@ -300,6 +403,83 @@ def test_discovered_tool_wins_name_collision(tmp_path: Path) -> None:
     assert surviving.desc == "from manifest"
 
 
+def test_scan_for_tools_discovers_real_manifest_file(tmp_path: Path) -> None:
+    """scan_for_tools discovers a tool_manifest.json and validates its path."""
+    module = _import_plugin_manager_module()
+    if module is None:
+        pytest.skip("plugin_manager not importable in isolation")
+
+    tool_dir = tmp_path / "tools" / "demo"
+    tool_dir.mkdir(parents=True)
+    (tool_dir / "demo.py").write_text("print('demo')\n", encoding="utf-8")
+    _write_json(
+        tool_dir / "tool_manifest.json",
+        {
+            "name": "Demo",
+            "path": "demo.py",
+            "type": "python",
+            "description": "manifest demo",
+            "category": "Discovered",
+        },
+    )
+    manager = module.PluginManager(repo_root=tmp_path)
+
+    with patch.object(module, "safe_read_json", side_effect=_read_json_file):
+        discovered = manager.scan_for_tools()
+
+    assert list(discovered) == ["Discovered"]
+    tool = discovered["Discovered"][0]
+    assert tool.name == "Demo"
+    assert Path(tool.path).as_posix() == "tools/demo/demo.py"
+    assert tool.desc == "manifest demo"
+
+
+def test_load_tools_with_discovery_merges_real_files_and_deduplicates(
+    tmp_path: Path,
+) -> None:
+    """load_tools_with_discovery replaces stale tools.json entries with manifests."""
+    module = _import_plugin_manager_module()
+    if module is None:
+        pytest.skip("plugin_manager not importable in isolation")
+
+    (tmp_path / "stale.py").write_text("print('stale')\n", encoding="utf-8")
+    _write_json(
+        tmp_path / "tools.json",
+        {
+            "Development Tools": [
+                {
+                    "name": "Demo",
+                    "path": "stale.py",
+                    "type": "python",
+                    "desc": "from tools json",
+                }
+            ]
+        },
+    )
+    tool_dir = tmp_path / "tools" / "demo"
+    tool_dir.mkdir(parents=True)
+    (tool_dir / "fresh.py").write_text("print('fresh')\n", encoding="utf-8")
+    _write_json(
+        tool_dir / "tool_manifest.json",
+        {
+            "name": "Demo",
+            "path": "fresh.py",
+            "type": "python",
+            "description": "from manifest",
+            "category": "Development Tools",
+        },
+    )
+    manager = module.PluginManager(repo_root=tmp_path)
+
+    with patch.object(module, "safe_read_json", side_effect=_read_json_file):
+        merged = manager.load_tools_with_discovery()
+
+    demo_tools = [tool for tool in merged["Development Tools"] if tool.name == "Demo"]
+    assert len(demo_tools) == 1
+    assert Path(demo_tools[0].path).as_posix() == "tools/demo/fresh.py"
+    assert demo_tools[0].desc == "from manifest"
+
+
 def test_scan_for_tools_propagates_unexpected_tool_construction_error(
     tmp_path: Path,
 ) -> None:
@@ -330,7 +510,7 @@ def test_scan_for_tools_propagates_unexpected_tool_construction_error(
 # ---------------------------------------------------------------------------
 
 
-def _import_help_handlers():
+def _import_help_handlers() -> Any:
     """Import help_system handler functions, skipping if PyQt6 unavailable."""
     pytest.importorskip("PyQt6", reason="PyQt6 not available")
     try:
@@ -341,7 +521,7 @@ def _import_help_handlers():
         assert spec is not None
         assert spec.loader is not None
         module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)  # type: ignore[union-attr]
+        spec.loader.exec_module(module)
         return module
     except Exception as e:  # noqa: BLE001 — test isolation: any import failure skips suite
         pytest.skip(f"help_system not importable: {e}")
@@ -353,10 +533,10 @@ def test_handle_code_block_type_error() -> None:
     state = hs._MarkdownState()
 
     with pytest.raises(TypeError, match="line must be a str"):
-        hs._handle_code_block(None, state)  # type: ignore[arg-type]
+        hs._handle_code_block(None, state)
 
     with pytest.raises(TypeError, match="line must be a str"):
-        hs._handle_code_block(42, state)  # type: ignore[arg-type]
+        hs._handle_code_block(42, state)
 
 
 def test_handle_horizontal_rule_type_error() -> None:
@@ -365,7 +545,7 @@ def test_handle_horizontal_rule_type_error() -> None:
     state = hs._MarkdownState()
 
     with pytest.raises(TypeError, match="line must be a str"):
-        hs._handle_horizontal_rule(None, state)  # type: ignore[arg-type]
+        hs._handle_horizontal_rule(None, state)
 
 
 def test_handle_table_line_type_error() -> None:
@@ -374,7 +554,7 @@ def test_handle_table_line_type_error() -> None:
     state = hs._MarkdownState()
 
     with pytest.raises(TypeError, match="line must be a str"):
-        hs._handle_table_line(None, state)  # type: ignore[arg-type]
+        hs._handle_table_line(None, state)
 
 
 def test_handle_header_type_error() -> None:
@@ -383,7 +563,7 @@ def test_handle_header_type_error() -> None:
     state = hs._MarkdownState()
 
     with pytest.raises(TypeError, match="line must be a str"):
-        hs._handle_header(None, state)  # type: ignore[arg-type]
+        hs._handle_header(None, state)
 
 
 def test_handle_list_item_type_error() -> None:
@@ -392,7 +572,7 @@ def test_handle_list_item_type_error() -> None:
     state = hs._MarkdownState()
 
     with pytest.raises(TypeError, match="line must be a str"):
-        hs._handle_list_item(None, state)  # type: ignore[arg-type]
+        hs._handle_list_item(None, state)
 
 
 def test_handle_paragraph_type_error() -> None:
@@ -401,7 +581,7 @@ def test_handle_paragraph_type_error() -> None:
     state = hs._MarkdownState()
 
     with pytest.raises(TypeError, match="line must be a str"):
-        hs._handle_paragraph(None, state)  # type: ignore[arg-type]
+        hs._handle_paragraph(None, state)
 
 
 def test_markdown_to_html_basic() -> None:
