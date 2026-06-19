@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7677                                   |
+| **Spec Version**        | 1.1.7779                                   |
 | **Last Spec Update**    | 2026-06-19                                 |
 
 ## 2. Purpose & Mission
@@ -1304,6 +1304,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-19 | 1.1.7779 | fix(p1am, #3670): replace the bare `except Exception: pass` in `EventLogViewerWidget.update_event_types_combobox` with a module logger that records the failure, so a corrupt/locked event database no longer silently empties the event-type filter without any diagnostic. |
 | 2026-06-19 | 1.1.7676 | test(core, #3723): make the dynamic plugin-manager/help-system import helpers skip internally instead of exposing optional module sentinels, keeping the expanded plugin manager tests mypy-clean under changed-file gates. |
 | 2026-06-19 | 1.1.7675 | test(core, #3723): cover plugin manager parsing with real `tools.json` and `tool_manifest.json` fixtures, including valid tools, traversal rejection, missing keys, malformed category payloads, discovery, and merge/dedup precedence; verified `core/plugin_manager.py` at 80.98% file coverage. |
 | 2026-06-19 | 1.1.7676 | fix(p1am, #3607): annotate the Modbus codec's re-exported unmapped-sentinel constants and remove stale hardware-test suppressions so the `TAG_255` routing fix remains mypy-clean under pre-push gates. |
