@@ -164,20 +164,21 @@ def _import_plugin_manager_module() -> Any | None:
         return None
 
 
-def _get_plugin_manager_class() -> Any | None:
-    """Import PluginManager, skipping if dependencies unavailable."""
+def _require_plugin_manager_module() -> Any:
     module = _import_plugin_manager_module()
     if module is None:
-        return None
-    return module.PluginManager
+        pytest.skip("plugin_manager not importable in isolation")
+    return module
+
+
+def _get_plugin_manager_class() -> Any:
+    """Import PluginManager, skipping if dependencies unavailable."""
+    return _require_plugin_manager_module().PluginManager
 
 
 def test_plugin_manager_init_type_error(tmp_path: Path) -> None:
     """PluginManager.__init__ raises TypeError for non-Path repo_root."""
     PluginManager = _get_plugin_manager_class()
-    if PluginManager is None:
-        pytest.skip("PluginManager not importable in isolation")
-    assert PluginManager is not None
 
     with pytest.raises(TypeError, match="repo_root must be a Path"):
         PluginManager(repo_root="/some/path")
@@ -189,9 +190,6 @@ def test_plugin_manager_init_type_error(tmp_path: Path) -> None:
 def test_plugin_manager_init_valid(tmp_path: Path) -> None:
     """PluginManager.__init__ succeeds with a Path."""
     PluginManager = _get_plugin_manager_class()
-    if PluginManager is None:
-        pytest.skip("PluginManager not importable in isolation")
-    assert PluginManager is not None
 
     manager = PluginManager(repo_root=tmp_path)
     assert manager.repo_root == tmp_path
@@ -200,9 +198,6 @@ def test_plugin_manager_init_valid(tmp_path: Path) -> None:
 def test_get_tool_by_name_type_error(tmp_path: Path) -> None:
     """get_tool_by_name raises TypeError for non-str name."""
     PluginManager = _get_plugin_manager_class()
-    if PluginManager is None:
-        pytest.skip("PluginManager not importable in isolation")
-    assert PluginManager is not None
 
     manager = PluginManager(repo_root=tmp_path)
 
@@ -216,9 +211,6 @@ def test_get_tool_by_name_type_error(tmp_path: Path) -> None:
 def test_get_tool_by_name_valid(tmp_path: Path) -> None:
     """get_tool_by_name returns None for missing tool (valid str)."""
     PluginManager = _get_plugin_manager_class()
-    if PluginManager is None:
-        pytest.skip("PluginManager not importable in isolation")
-    assert PluginManager is not None
 
     manager = PluginManager(repo_root=tmp_path)
     result = manager.get_tool_by_name("nonexistent")
@@ -228,9 +220,6 @@ def test_get_tool_by_name_valid(tmp_path: Path) -> None:
 def test_validate_tool_path_type_error_for_non_str(tmp_path: Path) -> None:
     """validate_tool_path raises TypeError for non-str tool_path."""
     PluginManager = _get_plugin_manager_class()
-    if PluginManager is None:
-        pytest.skip("PluginManager not importable in isolation")
-    assert PluginManager is not None
 
     manager = PluginManager(repo_root=tmp_path)
 
@@ -246,10 +235,7 @@ def test_load_tools_skips_non_dict_entries_without_discarding_valid_tools(
     caplog: pytest.LogCaptureFixture,
 ) -> None:
     """load_tools keeps valid tools when a category contains a malformed item."""
-    module = _import_plugin_manager_module()
-    if module is None:
-        pytest.skip("plugin_manager not importable in isolation")
-    assert module is not None
+    module = _require_plugin_manager_module()
 
     tool_file = tmp_path / "valid_tool.py"
     tool_file.write_text("print('ok')\n")
@@ -285,10 +271,7 @@ def test_load_tools_skips_non_list_category_values_without_discarding_valid_tool
     bad_items: object,
 ) -> None:
     """load_tools keeps valid categories when another category has bad items."""
-    module = _import_plugin_manager_module()
-    if module is None:
-        pytest.skip("plugin_manager not importable in isolation")
-    assert module is not None
+    module = _require_plugin_manager_module()
 
     tool_file = tmp_path / "valid_tool.py"
     tool_file.write_text("print('ok')\n")
@@ -320,10 +303,7 @@ def test_load_tools_skips_non_list_category_values_without_discarding_valid_tool
 
 def test_plugin_manager_scan_defaults_are_module_constants() -> None:
     """scan_for_tools uses shared constants for manifest defaults."""
-    module = _import_plugin_manager_module()
-    if module is None:
-        pytest.skip("plugin_manager not importable in isolation")
-    assert module is not None
+    module = _require_plugin_manager_module()
 
     assert module.TOOL_MANIFEST_FILENAME == "tool_manifest.json"
     assert module.DEFAULT_TOOL_TYPE == "python"
@@ -344,9 +324,7 @@ def test_discovered_tool_wins_name_collision(tmp_path: Path) -> None:
     tools take precedence for duplicates, so a discovered manifest entry must
     replace a stale tools.json entry of the same name in the same category.
     """
-    module = _import_plugin_manager_module()
-    if module is None:
-        pytest.skip("plugin_manager not importable in isolation")
+    module = _require_plugin_manager_module()
 
     Tool = module.Tool
     PluginManager = module.PluginManager
@@ -388,10 +366,7 @@ def test_scan_for_tools_propagates_unexpected_tool_construction_error(
     tmp_path: Path,
 ) -> None:
     """scan_for_tools catches manifest errors without swallowing programming bugs."""
-    module = _import_plugin_manager_module()
-    if module is None:
-        pytest.skip("plugin_manager not importable in isolation")
-    assert module is not None
+    module = _require_plugin_manager_module()
 
     tool_dir = tmp_path / "tools" / "demo"
     tool_dir.mkdir(parents=True)
