@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.608                                    |
+| **Spec Version**        | 1.1.609                                    |
 | **Last Spec Update**    | 2026-06-19                                 |
 
 ## 2. Purpose & Mission
@@ -1295,6 +1295,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-06-19 | 1.1.606 | fix(data-processor, #3733, #3734): fail fast on invalid uncertainty-quantification confidence and normal-quantile boundaries while keeping tiny-sample skewness and kurtosis finite under default-collected regression coverage. |
 | 2026-06-19 | 1.1.607 | fix(data-processor, #3665, #3666, #3667): consolidate cross-correlation runtime regression coverage into the canonical Numba dispatcher PR and preserve pandas dtype metadata across JSON workspace fallback round trips. |
 | 2026-06-19 | 1.1.608 | fix(data-processor, #3661): keep augmentation, feature extraction, neural-network training, outlier, spectral, and decomposition object methods as mypy-clean plain Python functions instead of invalid Numba dispatchers, and extend the dispatcher regression guard to cover those runtime paths. |
+| 2026-06-19 | 1.1.609 | fix(data-processor, #3730, #3731): reject empty and single-observation inputs in bootstrap and Bayesian credible intervals before NumPy can emit NaN confidence bounds, and document the n>=2 preconditions with default-collected regression coverage. |
 | 2026-06-19 | 1.1.604 | fix(docs, #3685): repoint broken project README links on `docs/index.md` to existing `src/` targets, including the scientific-modeling entry now directed at the maintained solar-system model documentation. |
 | 2026-06-18 | 1.1.603 | fix(shared, #3703, #3705): remove the redundant DbC-only `safe_eval.validate_expression` type guard, keep the unconditional `TypeError` boundary before empty-string handling, and add int/float/bytes/list/None regression coverage under normal, `DBC_LEVEL=off`, and optimized Python execution. |
 | 2026-06-18 | 1.1.602 | fix(scripts/docs, #3740 #3741 #3742): remove the discarded `defaultdict(list)` statement from `pragmatic_programmer_review.py`, collapse duplicated `BLE001` suppressions in assessment scripts, drop nonexistent legacy launcher entries from the README, and add static regression coverage for those contracts. |

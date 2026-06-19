@@ -24,7 +24,7 @@ import logging
 from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
@@ -231,6 +231,9 @@ class UncertaintyQuantifier:
             statistic: Function that computes the statistic of interest
             method: Bootstrap method to use
 
+        Raises:
+            ValueError: If data has fewer than two observations.
+
         Returns:
             BootstrapResult with confidence interval and distribution
         """
@@ -238,6 +241,8 @@ class UncertaintyQuantifier:
             raise ValueError("data must be provided")
         data = np.asarray(data, dtype=np.float64)
         n = len(data)
+        if n < 2:
+            raise ValueError("bootstrap_ci requires at least 2 data points")
         method = method or self.config.bootstrap_method
 
         # Point estimate
@@ -254,20 +259,20 @@ class UncertaintyQuantifier:
             bootstrap_stats[i] = statistic(data[indices])
 
         # Standard error
-        se = np.std(bootstrap_stats, ddof=1)
+        se = float(np.std(bootstrap_stats, ddof=1))
 
         # Compute CI based on method
         alpha = 1 - self.config.confidence_level
 
         if method == BootstrapMethod.PERCENTILE:
-            ci_lower = np.percentile(bootstrap_stats, 100 * alpha / 2)
-            ci_upper = np.percentile(bootstrap_stats, 100 * (1 - alpha / 2))
+            ci_lower = float(np.percentile(bootstrap_stats, 100 * alpha / 2))
+            ci_upper = float(np.percentile(bootstrap_stats, 100 * (1 - alpha / 2)))
             bias = 0.0
             acceleration = 0.0
 
         elif method == BootstrapMethod.BASIC:
-            q_lower = np.percentile(bootstrap_stats, 100 * alpha / 2)
-            q_upper = np.percentile(bootstrap_stats, 100 * (1 - alpha / 2))
+            q_lower = float(np.percentile(bootstrap_stats, 100 * alpha / 2))
+            q_upper = float(np.percentile(bootstrap_stats, 100 * (1 - alpha / 2)))
             ci_lower = 2 * theta_hat - q_upper
             ci_upper = 2 * theta_hat - q_lower
             bias = 0.0
@@ -310,7 +315,13 @@ class UncertaintyQuantifier:
     def monte_carlo_propagation(
         self,
         func: Callable[..., float],
-        param_distributions: dict[str, tuple[str, dict[str, Any]]],
+        param_distributions: (
+            dict[str, tuple[str, dict[str, Any]]]
+            | dict[str, float]
+            | list[float]
+            | tuple[float, ...]
+            | np.ndarray
+        ),
         stds: list[float] | tuple[float, ...] | np.ndarray | None = None,
     ) -> MonteCarloResult:
         """Propagate uncertainty through a function using Monte Carlo.
@@ -334,16 +345,24 @@ class UncertaintyQuantifier:
         if func is None:
             raise ValueError("func must be provided")
         if stds is not None:
-            param_distributions = self._normal_distributions_from_means_stds(
-                func,
+            means = cast(
+                dict[str, float] | list[float] | tuple[float, ...] | np.ndarray,
                 param_distributions,
+            )
+            distributions = self._normal_distributions_from_means_stds(
+                func,
+                means,
                 stds,
+            )
+        else:
+            distributions = cast(
+                dict[str, tuple[str, dict[str, Any]]], param_distributions
             )
         n_samples = self.config.n_monte_carlo
 
         # Generate samples for each parameter
         param_samples = {}
-        for name, (dist_type, params) in param_distributions.items():
+        for name, (dist_type, params) in distributions.items():
             param_samples[name] = self._sample_distribution(
                 dist_type, params, n_samples
             )
@@ -641,6 +660,9 @@ class UncertaintyQuantifier:
             prior_mean: Prior mean for the parameter
             prior_std: Prior standard deviation
 
+        Raises:
+            ValueError: If data has fewer than two observations.
+
         Returns:
             ConfidenceInterval (credible interval)
         """
@@ -648,6 +670,10 @@ class UncertaintyQuantifier:
             raise ValueError("data must be provided")
         data = np.asarray(data, dtype=np.float64)
         n = len(data)
+        if n < 2:
+            raise ValueError(
+                "bayesian_credible_interval requires at least 2 observations"
+            )
 
         sample_mean = np.mean(data)
         sample_var = np.var(data, ddof=1)
@@ -750,7 +776,7 @@ class UncertaintyQuantifier:
         n = len(data)
 
         # Bias correction factor
-        prop_less = np.mean(bootstrap_stats < theta_hat)
+        prop_less = float(np.mean(bootstrap_stats < theta_hat))
         z0 = self._normal_ppf(prop_less) if 0 < prop_less < 1 else 0.0
 
         # Acceleration factor using jackknife

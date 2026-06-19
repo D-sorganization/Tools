@@ -518,6 +518,32 @@ class TestUncertaintyQuantification:
         assert result.ci_lower < 10 < result.ci_upper
         assert abs(result.point_estimate - 10) < 1
 
+    @pytest.mark.parametrize("data", [np.array([]), np.array([1.0])])
+    def test_bootstrap_ci_rejects_degenerate_samples(self, data: np.ndarray) -> None:
+        """Bootstrap intervals require at least two observations."""
+        from data_processor.core.uncertainty_quantification import (
+            UncertaintyQuantifier,
+        )
+
+        uq = UncertaintyQuantifier()
+
+        with pytest.raises(ValueError, match="at least 2 data points"):
+            uq.bootstrap_ci(data, np.mean)
+
+    @pytest.mark.parametrize("data", [np.array([]), np.array([1.0])])
+    def test_bayesian_credible_interval_rejects_degenerate_samples(
+        self, data: np.ndarray
+    ) -> None:
+        """Bayesian credible intervals require finite sample variance."""
+        from data_processor.core.uncertainty_quantification import (
+            UncertaintyQuantifier,
+        )
+
+        uq = UncertaintyQuantifier()
+
+        with pytest.raises(ValueError, match="at least 2 observations"):
+            uq.bayesian_credible_interval(data)
+
     def test_monte_carlo_propagation(self) -> None:
         """Test Monte Carlo uncertainty propagation."""
         from data_processor.core.uncertainty_quantification import UncertaintyQuantifier
