@@ -10,6 +10,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+import pytest
+
 from tools.config_loader import (
     CATEGORY_ORDER,
     load_tools_config,
@@ -109,6 +111,24 @@ class TestValidateToolsConfig:
         config: dict[str, Any] = {"Cat": [{"name": "Bad", "path": "../outside.py"}]}
         result = validate_tools_config(config, repo_root=None)
         assert "Cat" not in result
+
+    def test_none_input_still_rejected_without_assert(self) -> None:
+        """Passing None raises via the require(isinstance...) contract.
+
+        Regression for #3736: the redundant ``assert tools_dict is not None``
+        was removed (it is stripped under ``python -O``). The require() check
+        on the same argument must still reject None — i.e. validation does not
+        depend on the deleted assert.
+        """
+        from shared.python import contracts
+
+        previous = contracts.get_contract_level()
+        contracts.set_contract_level(contracts.ContractLevel.ENFORCE)
+        try:
+            with pytest.raises(ValueError):
+                validate_tools_config(None, repo_root=None)  # type: ignore[arg-type]
+        finally:
+            contracts.set_contract_level(previous)
 
     def test_no_repo_root_allows_clean_paths(self) -> None:
         config: dict[str, Any] = {"Cat": [{"name": "Good", "path": "src/tool.py"}]}
