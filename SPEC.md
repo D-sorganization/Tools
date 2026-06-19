@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7676                                   |
+| **Spec Version**        | 1.1.7779                                   |
 | **Last Spec Update**    | 2026-06-19                                 |
 
 ## 2. Purpose & Mission
@@ -1314,6 +1314,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-06-19 | 1.1.7674 | fix(data-processor, #3665, #3666, #3667): consolidate cross-correlation runtime regression coverage into the canonical Numba dispatcher PR and preserve pandas dtype metadata across JSON workspace fallback round trips. |
 | 2026-06-19 | 1.1.7674 | fix(data-processor, #3661): keep augmentation, feature extraction, neural-network training, outlier, spectral, and decomposition object methods as mypy-clean plain Python functions instead of invalid Numba dispatchers, and extend the dispatcher regression guard to cover those runtime paths. |
 | 2026-06-19 | 1.1.7674 | fix(data-processor, #3730, #3731): reject empty and single-observation inputs in bootstrap and Bayesian credible intervals before NumPy can emit NaN confidence bounds, and document the n>=2 preconditions with default-collected regression coverage. |
+| 2026-06-19 | 1.1.7779 | fix(p1am, #3670): replace the bare `except Exception: pass` in `EventLogViewerWidget.update_event_types_combobox` with a module logger that records the failure, so a corrupt/locked event database no longer silently empties the event-type filter without any diagnostic. |
 | 2026-06-19 | 1.1.7676 | fix(p1am, #3607): annotate the Modbus codec's re-exported unmapped-sentinel constants and remove stale hardware-test suppressions so the `TAG_255` routing fix remains mypy-clean under pre-push gates. |
 | 2026-06-19 | 1.1.7675 | fix(p1am, #3607): preserve the firmware `TAG_255` unmapped sentinel in Modbus routing and PID pv/cv encoders while keeping ordinary broker-tag parsing strict, with write-routing coverage for all-unmapped configs after erased-NVRAM boots. |
 | 2026-06-19 | 1.1.7674 | fix(contracts, #3736): remove redundant `assert ... is not None` guards shadowed by explicit contract checks in `_mr_kinematics.IKinBody` and `config_loader.validate_tools_config`, keeping `None` rejection covered by focused regressions under the maintained contract path. |
