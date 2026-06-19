@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.604                                    |
+| **Spec Version**        | 1.1.605                                    |
 | **Last Spec Update**    | 2026-06-19                                 |
 
 ## 2. Purpose & Mission
@@ -59,6 +59,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Shared `safe_eval` now enforces non-string expression `TypeError` handling
   independently of DbC runtime settings, including `DBC_LEVEL=off` and
   optimized Python execution.
+- Rotation converter Modern Robotics validation now routes former
+  input-validation asserts through the shared DbC `require()` helper, so invalid
+  kinematics and dynamics inputs continue to raise `PreconditionError` when
+  Python runs with optimized assertions stripped (#3736).
 - Model generation `inertia_from_mesh` now returns the loaded mesh volume for
   both mass-scaled and density-derived inertia requests, preventing the
   density path from falling through the generic mesh-processing error because
@@ -1276,6 +1280,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 | 2026-06-19 | 1.1.604 | fix(movement_optimizer): make Swingset policy trace canvas height track wrapped legend rows and keep Swingset/chain analysis legends docked outside rendered data axes so optimizer legends cannot obscure telemetry or analysis plot contents in narrow panes. |
+| 2026-06-19 | 1.1.605 | fix(rotation-converter, #3736): replace Modern Robotics input-validation asserts with `require()` preconditions across the public module and split kinematics/dynamics packages, preserving `PreconditionError` for invalid inputs under optimized Python. |
 | 2026-06-18 | 1.1.603 | fix(shared, #3703, #3705): remove the redundant DbC-only `safe_eval.validate_expression` type guard, keep the unconditional `TypeError` boundary before empty-string handling, and add int/float/bytes/list/None regression coverage under normal, `DBC_LEVEL=off`, and optimized Python execution. |
 | 2026-06-18 | 1.1.602 | fix(scripts/docs, #3740 #3741 #3742): remove the discarded `defaultdict(list)` statement from `pragmatic_programmer_review.py`, collapse duplicated `BLE001` suppressions in assessment scripts, drop nonexistent legacy launcher entries from the README, and add static regression coverage for those contracts. |
 | 2026-06-18 | 1.1.601 | fix(movement_optimizer): route exercise analysis plot legends through the shared outside-plot helper, reserve additional GridSpec spacing, and add rendered bounding-box regression coverage so squat/deadlift/bench playback legends cannot obscure plot data or neighboring panels. |

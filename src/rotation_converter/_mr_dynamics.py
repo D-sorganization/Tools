@@ -13,6 +13,7 @@ from typing import Any
 
 import numpy as np
 
+from ._contracts import require
 from ._mr_rotation_matrices import (
     Adjoint,
     MatrixExp6,
@@ -96,7 +97,7 @@ def InverseDynamics(
     Output:
         np.array([74.69616155, -33.06766016, -3.23057314])
     """
-    assert thetalist is not None, "thetalist must be provided"
+    require(thetalist is not None, "thetalist must be provided", thetalist)
     n = len(thetalist)
     Mi = np.eye(4)
     Ai = np.zeros((6, n))
@@ -150,7 +151,7 @@ def MassMatrix(thetalist: Any, Mlist: Any, Glist: Any, Slist: Any) -> np.ndarray
                   [-3.07146754e-01,  1.96850717e+00,  4.32157368e-01]
                   [-7.18426391e-03,  4.32157368e-01,  1.91630858e-01]])
     """
-    assert thetalist is not None, "thetalist must be provided"
+    require(thetalist is not None, "thetalist must be provided", thetalist)
     n = len(thetalist)
     M = np.zeros((n, n))
     for i in range(n):
@@ -221,7 +222,7 @@ def GravityForces(
     Output:
         np.array([28.40331262, -37.64094817, -5.4415892])
     """
-    assert thetalist is not None, "thetalist must be provided"
+    require(thetalist is not None, "thetalist must be provided", thetalist)
     n = len(thetalist)
     return InverseDynamics(
         thetalist, [0] * n, [0] * n, g, [0, 0, 0, 0, 0, 0], Mlist, Glist, Slist
@@ -249,7 +250,7 @@ def EndEffectorForces(
     Output:
         np.array([1.40954608, 1.85771497, 1.392409])
     """
-    assert thetalist is not None, "thetalist must be provided"
+    require(thetalist is not None, "thetalist must be provided", thetalist)
     n = len(thetalist)
     return InverseDynamics(
         thetalist, [0] * n, [0] * n, [0, 0, 0], Ftip, Mlist, Glist, Slist
@@ -353,7 +354,7 @@ def InverseDynamicsTrajectory(
     :return: The N x n matrix of joint forces/torques for the specified
              trajectory
     """
-    assert thetamat is not None, "thetamat must be provided"
+    require(thetamat is not None, "thetamat must be provided", thetamat)
     thetamat = np.array(thetamat).T
     dthetamat = np.array(dthetamat).T
     ddthetamat = np.array(ddthetamat).T
@@ -404,7 +405,7 @@ def ForwardDynamicsTrajectory(
     :return thetamat: The N x n matrix of robot joint angles
     :return dthetamat: The N x n matrix of robot joint velocities
     """
-    assert thetalist is not None, "thetalist must be provided"
+    require(thetalist is not None, "thetalist must be provided", thetalist)
     taumat = np.array(taumat).T
     Ftipmat = np.array(Ftipmat).T
     thetamat = taumat.copy().astype(float)
@@ -475,7 +476,7 @@ def ComputedTorque(
     Output:
         np.array([133.00525246, -29.94223324, -3.03276856])
     """
-    assert thetalist is not None, "thetalist must be provided"
+    require(thetalist is not None, "thetalist must be provided", thetalist)
     e = np.subtract(thetalistd, thetalist)
     return np.dot(
         MassMatrix(thetalist, Mlist, Glist, Slist),
@@ -531,7 +532,7 @@ def SimulateControl(
                     forces/torques
     :return thetamat: An Nxn matrix of actual joint angles
     """
-    assert thetalist is not None, "thetalist must be provided"
+    require(thetalist is not None, "thetalist must be provided", thetalist)
     Ftipmat = np.array(Ftipmat).T
     thetamatd = np.array(thetamatd).T
     dthetamatd = np.array(dthetamatd).T

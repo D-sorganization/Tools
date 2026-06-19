@@ -16,6 +16,7 @@ Written BEFORE implementation (TDD).
 from __future__ import annotations
 
 import math
+from typing import Any
 
 import pytest
 
@@ -27,6 +28,7 @@ from rotation_converter.modern_robotics import (
     FKinBody,
     FKinSpace,
     IKinBody,
+    IKinSpace,
     InverseDynamics,
     JacobianBody,
     JacobianSpace,
@@ -711,6 +713,48 @@ class TestModernRoboticsContracts:
         with pytest.raises(PreconditionError):
             IKinBody(Blist, M, T, np.array([0.0]), eomg=-1.0)
 
+    @pytest.mark.parametrize(
+        ("call", "message"),
+        [
+            (
+                lambda: IKinBody(
+                    np.array([[0, 0, 1, 0, 0, 0]], dtype=float).T,
+                    np.eye(4),
+                    np.eye(4),
+                    np.array([0.0]),
+                    eomg=None,
+                ),
+                "angular tolerance must be provided",
+            ),
+            (
+                lambda: IKinSpace(
+                    None,
+                    np.eye(4),
+                    np.eye(4),
+                    np.array([0.0]),
+                    1e-4,
+                    1e-4,
+                ),
+                "Slist must be provided",
+            ),
+            (
+                lambda: ScrewTrajectory(
+                    np.eye(4),
+                    np.eye(4),
+                    None,
+                    2,
+                ),
+                "Tf must be provided",
+            ),
+        ],
+    )
+    def test_modern_robotics_none_guards_use_contracts(
+        self, call: Any, message: str
+    ) -> None:
+        """Former assert guards should remain active under optimized Python."""
+        with pytest.raises(PreconditionError, match=message):
+            call()
+
 
 # ===========================================================================
 # InverseDynamics: refactored forward/backward pass helpers
@@ -908,8 +952,8 @@ class TestSimulateControlPlot:
             _simulate_control_plot(thetamat, thetamatd, dt)
 
     def test_plot_precondition_thetamat_none(self) -> None:
-        """_simulate_control_plot must raise AssertionError when thetamat is None."""
+        """_simulate_control_plot must raise PreconditionError when thetamat is None."""
         from rotation_converter.modern_robotics import _simulate_control_plot
 
-        with pytest.raises(AssertionError):
-            _simulate_control_plot(None, np.zeros((2, 2)), 0.01)  # type: ignore[arg-type]
+        with pytest.raises(PreconditionError):
+            _simulate_control_plot(None, np.zeros((2, 2)), 0.01)
