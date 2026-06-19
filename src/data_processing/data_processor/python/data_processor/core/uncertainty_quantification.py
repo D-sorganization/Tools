@@ -420,7 +420,7 @@ class UncertaintyQuantifier:
             func: Function to propagate errors through
             values: Dictionary of parameter central values
             uncertainties: Dictionary of parameter uncertainties (std)
-            method: 'linear' for linear approximation, 'quadrature' for quadrature
+            method: 'linear' or 'quadrature' for independent-error quadrature
 
         Returns:
             Tuple of (result, uncertainty)
@@ -430,19 +430,8 @@ class UncertaintyQuantifier:
             raise ValueError("func must be provided")
         central = func(**values)
 
-        if method == "linear":
-            # Linear error propagation using partial derivatives
-            variance = 0.0
-
-            for name, unc in uncertainties.items():
-                # Numerical partial derivative
-                deriv = self._numerical_derivative(func, values, name)
-                variance += (deriv * unc) ** 2
-
-            return central, np.sqrt(variance)
-
-        elif method == "quadrature":
-            # Add in quadrature (assumes independent errors)
+        if method in {"linear", "quadrature"}:
+            # Independent-error quadrature using numerical partial derivatives.
             variance = 0.0
 
             for name, unc in uncertainties.items():
@@ -451,14 +440,13 @@ class UncertaintyQuantifier:
 
             return central, np.sqrt(variance)
 
-        else:
-            # Use Monte Carlo for nonlinear case
-            distributions = {
-                name: ("normal", {"loc": val, "scale": uncertainties.get(name, 0)})
-                for name, val in values.items()
-            }
-            result = self.monte_carlo_propagation(func, distributions)
-            return result.mean, result.std
+        # Use Monte Carlo for nonlinear case
+        distributions = {
+            name: ("normal", {"loc": val, "scale": uncertainties.get(name, 0)})
+            for name, val in values.items()
+        }
+        result = self.monte_carlo_propagation(func, distributions)
+        return result.mean, result.std
 
     @jit(nopython=True, fastmath=True)
     def sensitivity_analysis(
