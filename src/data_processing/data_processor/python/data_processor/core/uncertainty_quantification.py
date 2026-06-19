@@ -212,6 +212,19 @@ class UncertaintyQuantifier:
         self.config = config or UncertaintyConfig()
         self._rng = np.random.default_rng(self.config.random_seed)
 
+    @staticmethod
+    def _require_min_sample_size(
+        data: np.ndarray,
+        *,
+        name: str,
+        min_size: int = 2,
+    ) -> np.ndarray:
+        """Return data as float array after enforcing a minimum sample size."""
+        data = np.asarray(data, dtype=np.float64)
+        if len(data) < min_size:
+            raise ValueError(f"{name} must contain at least {min_size} values")
+        return data
+
     def bootstrap_ci(
         self,
         data: np.ndarray,
@@ -230,7 +243,7 @@ class UncertaintyQuantifier:
         """
         if data is None:
             raise ValueError("data must be provided")
-        data = np.asarray(data, dtype=np.float64)
+        data = self._require_min_sample_size(data, name="data")
         n = len(data)
         method = method or self.config.bootstrap_method
 
@@ -572,6 +585,13 @@ class UncertaintyQuantifier:
 
         n, p = X.shape
         n_new = X_new.shape[0]
+        residual_degrees = n - p - 1
+        if residual_degrees <= 0:
+            raise ValueError("X must contain more rows than fitted parameters")
+        if y.shape[0] != n:
+            raise ValueError("y must have the same number of rows as X")
+        if X_new.shape[1] != p:
+            raise ValueError("X_new must have the same number of columns as X")
 
         # Add intercept
         X_design = np.column_stack([np.ones(n), X])
@@ -589,7 +609,7 @@ class UncertaintyQuantifier:
 
         # Residuals and MSE
         residuals = y - y_pred
-        mse = np.sum(residuals**2) / (n - p - 1)
+        mse = np.sum(residuals**2) / residual_degrees
         residual_std = np.sqrt(mse)
 
         # Covariance matrix of beta
@@ -600,7 +620,7 @@ class UncertaintyQuantifier:
 
         # t-value for confidence level
         alpha = 1 - self.config.confidence_level
-        t_val = self._t_ppf(1 - alpha / 2, n - p - 1)
+        t_val = self._t_ppf(1 - alpha / 2, residual_degrees)
 
         # Standard errors and intervals (vectorized)
         # var_mean_diag[i] = X_new_design[i] @ XtX_inv @ X_new_design[i].T
@@ -644,7 +664,7 @@ class UncertaintyQuantifier:
         """
         if data is None:
             raise ValueError("data must be provided")
-        data = np.asarray(data, dtype=np.float64)
+        data = self._require_min_sample_size(data, name="data")
         n = len(data)
 
         sample_mean = np.mean(data)
