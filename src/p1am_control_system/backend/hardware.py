@@ -14,6 +14,8 @@ from __future__ import annotations
 # ---- Tag broker -------------------------------------------------------
 TAG_COUNT = 32  # tags exposed by the firmware broker
 TAG_PREFIX = "TAG_"
+UNMAPPED_TAG_INDEX = 255  # firmware kUnmappedTag sentinel for routing/PID fields
+UNMAPPED_TAG_NAME = f"{TAG_PREFIX}{UNMAPPED_TAG_INDEX}"
 
 # ---- Register map (holding registers; see firmware/README.md) ---------
 TAG_VALUE_BASE = 0  # tag values: TAG_i at (i*2, i*2+1) little-endian float
