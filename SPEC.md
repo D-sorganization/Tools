@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.605                                    |
+| **Spec Version**        | 1.1.606                                    |
 | **Last Spec Update**    | 2026-06-19                                 |
 
 ## 2. Purpose & Mission
@@ -48,6 +48,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   parameter-estimation helpers. Default-collected regression coverage proves
   the affected methods remain executable object-oriented paths (#3661, #3662,
   #3663, #3665, #3666, #3667, #3681, #3744).
+- Data Processor uncertainty quantification now rejects invalid confidence
+  levels before interval calculations, rejects out-of-domain inverse-normal
+  probabilities instead of returning the median z-score, and returns finite
+  zero skewness/kurtosis for tiny samples that cannot support those higher
+  moments (#3733, #3734).
 - P1AM firmware first-boot defaults now keep `SignalBroker::Reset()` as the
   all-unmapped primitive but layer bench-safe routing after an invalid or
   erased flash configuration: thermocouples TC0-TC3 route to TAG_0-TAG_3,
@@ -1287,6 +1292,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | ---- | ------- | ------- |
 | 2026-06-19 | 1.1.604 | fix(movement_optimizer): make Swingset policy trace canvas height track wrapped legend rows and keep Swingset/chain analysis legends docked outside rendered data axes so optimizer legends cannot obscure telemetry or analysis plot contents in narrow panes. |
 | 2026-06-19 | 1.1.605 | fix(data-processor, #3661, #3662, #3663, #3665, #3666, #3667, #3681, #3744): keep object-oriented statistical analysis, filtering, and workspace persistence methods as plain Python functions instead of duplicate/triple Numba dispatchers; add default-collected regression tests for the affected runtime paths and a JSON-backed workspace fallback when optional parquet engines are unavailable. |
+| 2026-06-19 | 1.1.606 | fix(data-processor, #3733, #3734): fail fast on invalid uncertainty-quantification confidence and normal-quantile boundaries while keeping tiny-sample skewness and kurtosis finite under default-collected regression coverage. |
 | 2026-06-18 | 1.1.603 | fix(shared, #3703, #3705): remove the redundant DbC-only `safe_eval.validate_expression` type guard, keep the unconditional `TypeError` boundary before empty-string handling, and add int/float/bytes/list/None regression coverage under normal, `DBC_LEVEL=off`, and optimized Python execution. |
 | 2026-06-18 | 1.1.602 | fix(scripts/docs, #3740 #3741 #3742): remove the discarded `defaultdict(list)` statement from `pragmatic_programmer_review.py`, collapse duplicated `BLE001` suppressions in assessment scripts, drop nonexistent legacy launcher entries from the README, and add static regression coverage for those contracts. |
 | 2026-06-18 | 1.1.601 | fix(movement_optimizer): route exercise analysis plot legends through the shared outside-plot helper, reserve additional GridSpec spacing, and add rendered bounding-box regression coverage so squat/deadlift/bench playback legends cannot obscure plot data or neighboring panels. |

@@ -535,6 +535,37 @@ class TestUncertaintyQuantification:
         expected = np.pi * 25
         assert abs(result.mean - expected) < 1
 
+    @pytest.mark.parametrize("confidence_level", [0.0, 1.0, float("nan")])
+    def test_uncertainty_config_rejects_invalid_confidence_level(
+        self,
+        confidence_level: float,
+    ) -> None:
+        """Invalid confidence levels fail before intervals collapse."""
+        from data_processor.core.uncertainty_quantification import UncertaintyConfig
+
+        with pytest.raises(ValueError, match="confidence_level"):
+            UncertaintyConfig(confidence_level=confidence_level)
+
+    def test_moment_helpers_return_finite_values_for_tiny_samples(self) -> None:
+        """Tiny samples should not leak inf/NaN through Monte Carlo moments."""
+        from data_processor.core.uncertainty_quantification import UncertaintyQuantifier
+
+        uq = UncertaintyQuantifier()
+
+        assert uq._skewness(np.array([1.0])) == 0.0
+        assert uq._skewness(np.array([1.0, 2.0])) == 0.0
+        assert uq._kurtosis(np.array([1.0, 2.0, 3.0])) == 0.0
+
+    @pytest.mark.parametrize("p", [0.0, 1.0, -0.1, float("nan")])
+    def test_normal_ppf_rejects_out_of_range_probabilities(self, p: float) -> None:
+        """Out-of-range probabilities must not silently return median z=0."""
+        from data_processor.core.uncertainty_quantification import UncertaintyQuantifier
+
+        uq = UncertaintyQuantifier()
+
+        with pytest.raises(ValueError, match="p must"):
+            uq._normal_ppf(p)
+
     def test_error_propagation(self) -> None:
         """Test linear error propagation."""
         from data_processor.core.uncertainty_quantification import UncertaintyQuantifier
