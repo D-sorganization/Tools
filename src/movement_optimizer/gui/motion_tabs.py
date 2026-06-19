@@ -433,8 +433,8 @@ class SwingsetTab(_MotionViewMixin, QWidget):
         self.policy_trace_canvas = PolicyTraceCanvas()
         self.analysis_panel = MotionAnalysisPanel(
             ["torques", "power", "angle", "com_height", "energy", "com_path"],
-            rows=2,
-            cols=3,
+            rows=3,
+            cols=2,
         )
         self._controls: dict[str, NumericControl] = {}
         self._force_toggles: dict[str, QCheckBox] = {}

@@ -825,7 +825,8 @@ def test_swingset_plots_tab_scrolls_instead_of_crushing_legends(qapp) -> None:
 
     assert len(plot_scrolls) == 1
     assert plot_scrolls[0].widgetResizable() is True
-    assert swingset.analysis_panel.canvas.minimumWidth() >= 780
+    assert swingset.analysis_panel.canvas.minimumWidth() <= 640
+    assert swingset.analysis_panel.canvas.minimumHeight() >= 1200
 
 
 def test_swingset_plot_legend_toggle_hides_axes_legends(qapp) -> None:
