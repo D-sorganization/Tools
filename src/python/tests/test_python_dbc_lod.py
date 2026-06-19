@@ -105,8 +105,8 @@ def test_scan_directory_parallel_cache_uses_stat_mtime(tmp_path: Path) -> None:
 # ---------------------------------------------------------------------------
 
 
-def _get_plugin_manager_class():
-    """Import PluginManager, skipping if dependencies unavailable."""
+def _import_plugin_manager_module():
+    """Import plugin_manager, skipping if dependencies unavailable."""
     import importlib.util
 
     pm_path = Path(__file__).parent.parent / "src" / "core" / "plugin_manager.py"
@@ -158,9 +158,17 @@ def _get_plugin_manager_class():
         with patch.dict("sys.modules", extra_modules):
             spec.loader.exec_module(module)  # type: ignore[union-attr]
 
-        return module.PluginManager
+        return module
     except Exception:  # noqa: BLE001 — test isolation: any import failure returns None to skip
         return None
+
+
+def _get_plugin_manager_class():
+    """Import PluginManager, skipping if dependencies unavailable."""
+    module = _import_plugin_manager_module()
+    if module is None:
+        return None
+    return module.PluginManager
 
 
 def test_plugin_manager_init_type_error(tmp_path: Path) -> None:
@@ -210,6 +218,64 @@ def test_get_tool_by_name_valid(tmp_path: Path) -> None:
     manager = PluginManager(repo_root=tmp_path)
     result = manager.get_tool_by_name("nonexistent")
     assert result is None
+
+
+def test_validate_tool_path_type_error_for_non_str(tmp_path: Path) -> None:
+    """validate_tool_path raises TypeError for non-str tool_path."""
+    PluginManager = _get_plugin_manager_class()
+    if PluginManager is None:
+        pytest.skip("PluginManager not importable in isolation")
+
+    manager = PluginManager(repo_root=tmp_path)
+
+    with pytest.raises(TypeError, match="tool_path must be a str"):
+        manager.validate_tool_path(tmp_path / "tool.py")  # type: ignore[arg-type]
+
+    with pytest.raises(TypeError, match="tool_path must be a str"):
+        manager.validate_tool_path(None)  # type: ignore[arg-type]
+
+
+def test_plugin_manager_scan_defaults_are_module_constants() -> None:
+    """scan_for_tools uses shared constants for manifest defaults."""
+    module = _import_plugin_manager_module()
+    if module is None:
+        pytest.skip("plugin_manager not importable in isolation")
+
+    assert module.TOOL_MANIFEST_FILENAME == "tool_manifest.json"
+    assert module.DEFAULT_TOOL_TYPE == "python"
+    assert module.DEFAULT_TOOL_CATEGORY == "Development Tools"
+    assert module.DEFAULT_TOOL_SCAN_DIRS == (
+        "tools",
+        "web_applications",
+        "data_processing",
+        "scientific_modeling",
+        "media_processing",
+    )
+
+
+def test_scan_for_tools_propagates_unexpected_tool_construction_error(
+    tmp_path: Path,
+) -> None:
+    """scan_for_tools catches manifest errors without swallowing programming bugs."""
+    module = _import_plugin_manager_module()
+    if module is None:
+        pytest.skip("plugin_manager not importable in isolation")
+
+    tool_dir = tmp_path / "tools" / "demo"
+    tool_dir.mkdir(parents=True)
+    tool_file = tool_dir / "demo.py"
+    tool_file.write_text("print('demo')\n")
+    manifest_path = tool_dir / "tool_manifest.json"
+    manifest_path.write_text("{}\n")
+
+    manager = module.PluginManager(repo_root=tmp_path)
+
+    with (
+        patch.object(module, "safe_read_json", return_value={"name": "Demo"}),
+        patch.object(module, "Tool", side_effect=RuntimeError("construction bug")),
+        pytest.raises(RuntimeError, match="construction bug"),
+    ):
+        manager.scan_for_tools()
 
 
 # ---------------------------------------------------------------------------
