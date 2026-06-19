@@ -11,7 +11,7 @@
 | License          | MIT                                                     |
 | Package Name     | `movement-optimizer`                                    |
 | Current Version  | `1.0.0`                                                 |
-| Spec Version     | `1.0.35`                                                |
+| Spec Version     | `1.0.36`                                                |
 | Last Spec Update | 2026-06-19                                              |
 
 ## 2. Purpose
@@ -63,6 +63,10 @@ Movement-Optimizer is a biomechanics trajectory optimizer for barbell exercises.
   legends while preserving series labels for `MotionAnalysisPanel` to dock in
   reserved legend rows, so visible legends cannot appear over the plotted
   curves between plot rendering and panel draw.
+- Rendered `MotionAnalysisPanel` legend layout regressions now live in
+  `tests/test_motion_analysis_panel_legends.py`, keeping the broad panel test
+  module under the changed-file size budget while retaining the same
+  no-overlap pixel assertions.
 - `MotionAnalysisPanel.draw()` enforces the panel's legend-safe minimum figure
   dimensions before docking legends, so compact split-pane or backend resize
   paths cannot squeeze legend strips into axis labels or plotted curves.
@@ -241,6 +245,7 @@ mypy --ignore-missing-imports src/movement_optimizer/
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-06-19 | 1.0.36  | Split rendered MotionAnalysisPanel legend layout regressions into `tests/test_motion_analysis_panel_legends.py`, preserving the Swingset/Chain no-overlap assertions while keeping changed test files below the size budget.                                                                                                                                                                                  |
 | 2026-06-19 | 1.0.35  | Replaced per-plot Swingset and Chain Dynamics analysis legend strips with one reserved figure-level legend footer, reducing vertical clutter while preserving rendered regression coverage that the legend cannot overlap plot data, tick labels, or axis labels.                                                                                                                                             |
 | 2026-06-19 | 1.0.33  | Moved Swingset and Chain Dynamics analysis legends into right-docked per-plot strips with wider scrollable plot columns, so legends remain visible beside each plot instead of sitting between rows or covering plotted curves and neighboring axis labels.                                                                                                                                                   |
 | 2026-06-19 | 1.0.32  | Widened scrollable Swingset and Chain Dynamics analysis plot columns and anchored dense docked legends to their full reserved strips, so the live Swingset 3x2 plot layout keeps usable data-axis width without legend overlap.                                                                                                                                                                               |

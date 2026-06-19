@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7678                                   |
+| **Spec Version**        | 1.1.7679                                   |
 | **Last Spec Update**    | 2026-06-19                                 |
 
 ## 2. Purpose & Mission
@@ -42,6 +42,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   in per-plot reserved legend rows instead of one shared figure-level footer,
   preserving local series labels while preventing legends from covering or
   crowding plot data, ticks, and axis labels.
+- Movement Optimizer rendered legend layout regression coverage now lives in
+  `src/movement_optimizer/tests/test_motion_analysis_panel_legends.py`, keeping
+  the focused `MotionAnalysisPanel` test files below the changed-file size
+  budget while preserving the same TDD layout assertions.
 - Removed redundant `assert ... is not None` guards in
   `_mr_kinematics.IKinBody` and `config_loader.validate_tools_config` that were
   shadowed by a following `require()`/`isinstance()` contract on the same
