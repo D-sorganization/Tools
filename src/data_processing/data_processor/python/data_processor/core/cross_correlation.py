@@ -77,6 +77,7 @@ class CrossCorrelationConfig:
     # Significance testing
     significance_level: float = 0.05
     num_permutations: int = 1000  # For permutation testing
+    permutation_random_seed: int | None = None  # Seed for permutation testing
 
     # Granger causality
     granger_max_lag: int = 10
@@ -486,9 +487,11 @@ class CrossCorrelationAnalyzer:
         # Compute TE(Y->X)
         te_yx = self._compute_transfer_entropy(y, x, k, bins)
 
-        # Compute significance using permutation test
-        p_xy = self._permutation_test_te(x, y, k, bins, te_xy)
-        p_yx = self._permutation_test_te(y, x, k, bins, te_yx)
+        # Compute significance using a local generator so callers can seed
+        # permutation tests without mutating NumPy's global RNG state.
+        rng = np.random.default_rng(self.config.permutation_random_seed)
+        p_xy = self._permutation_test_te(x, y, k, bins, te_xy, rng)
+        p_yx = self._permutation_test_te(y, x, k, bins, te_yx, rng)
 
         # Net transfer entropy
         net_te = te_xy - te_yx
@@ -947,6 +950,7 @@ class CrossCorrelationAnalyzer:
         k: int,
         bins: int,
         observed_te: float,
+        rng: np.random.Generator,
     ) -> float:
         """Permutation test for transfer entropy significance."""
         if source is None:
@@ -956,7 +960,7 @@ class CrossCorrelationAnalyzer:
 
         for _ in range(n_perms):
             # Shuffle source (breaking temporal dependency)
-            source_shuffled = np.random.permutation(source)
+            source_shuffled = rng.permutation(source)
             te_perm = self._compute_transfer_entropy(source_shuffled, target, k, bins)
             if te_perm >= observed_te:
                 count_greater += 1
