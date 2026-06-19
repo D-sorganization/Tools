@@ -17,6 +17,12 @@ import hardware  # noqa: E402
 
 
 class TestTagName:
+    def test_exposes_unmapped_sentinel_without_making_it_a_broker_tag(self) -> None:
+        assert hardware.UNMAPPED_TAG_INDEX == 255
+        assert hardware.UNMAPPED_TAG_NAME == "TAG_255"
+        with pytest.raises(ValueError):
+            hardware.tag_index(hardware.UNMAPPED_TAG_NAME)
+
     def test_roundtrip(self) -> None:
         for i in (0, 1, 5, hardware.TAG_COUNT - 1):
             assert hardware.tag_index(hardware.tag_name(i)) == i
@@ -32,7 +38,7 @@ class TestTagName:
 
     def test_rejects_non_int(self) -> None:
         with pytest.raises(TypeError):
-            hardware.tag_name("3")  # type: ignore[arg-type]
+            hardware.tag_name("3")
         with pytest.raises(TypeError):
             hardware.tag_name(True)  # bool is not a valid index
 
@@ -56,7 +62,7 @@ class TestTagIndex:
 
     def test_rejects_non_str(self) -> None:
         with pytest.raises(TypeError):
-            hardware.tag_index(5)  # type: ignore[arg-type]
+            hardware.tag_index(5)
 
 
 class TestPidSetpointAddress:
