@@ -22,10 +22,10 @@ import logging
 from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any
 
 import numpy as np
 import pandas as pd
-from numba import jit
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +47,7 @@ class KalmanFilterConfig:
     # Measurement dimension
     measurement_dim: int = 1
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         if "obs_dim" in kwargs:
             self.measurement_dim = kwargs.pop("obs_dim")
 
@@ -213,7 +213,6 @@ class KalmanFilter:
         else:
             self.R = np.asarray(R)
 
-    @jit(nopython=True, fastmath=True)
     def filter(
         self,
         measurements: np.ndarray,
@@ -437,9 +436,9 @@ class KalmanFilter:
         m = len(innovation)
         sign, logdet = np.linalg.slogdet(innovation_cov)
         if sign <= 0:
-            return -np.inf
+            return float("-inf")
         mahalanobis = innovation @ np.linalg.inv(innovation_cov) @ innovation
-        return -0.5 * (m * np.log(2 * np.pi) + logdet + mahalanobis)
+        return float(-0.5 * (m * np.log(2 * np.pi) + logdet + mahalanobis))
 
 
 class ExtendedKalmanFilter:
@@ -454,8 +453,8 @@ class ExtendedKalmanFilter:
         self,
         state_dim: int,
         measurement_dim: int | None = None,
-        f: Callable[[np.ndarray, np.ndarray | None], np.ndarray] | None = None,
-        h: Callable[[np.ndarray], np.ndarray] | None = None,
+        f: Callable[..., np.ndarray] | None = None,
+        h: Callable[..., np.ndarray] | None = None,
         F_jacobian: Callable[[np.ndarray], np.ndarray] | None = None,
         H_jacobian: Callable[[np.ndarray], np.ndarray] | None = None,
         Q: np.ndarray | None = None,
@@ -478,13 +477,12 @@ class ExtendedKalmanFilter:
         self.x0 = x0 if x0 is not None else np.zeros(self.n)
         self.P0 = P0 if P0 is not None else np.eye(self.n)
 
-    @jit(nopython=True, fastmath=True)
     def filter(
         self,
         measurements: np.ndarray,
         control_inputs: np.ndarray | None = None,
-        transition_func: Callable | None = None,
-        observation_func: Callable | None = None,
+        transition_func: Callable[..., np.ndarray] | None = None,
+        observation_func: Callable[..., np.ndarray] | None = None,
         transition_jacobian: Callable | None = None,
         observation_jacobian: Callable | None = None,
     ) -> KalmanFilterResult:
@@ -626,7 +624,6 @@ class UnscentedKalmanFilter:
         self.Wc[0] = lambda_ / (n + lambda_) + (1 - self.alpha**2 + self.beta)
         self.Wc[1:] = 1 / (2 * (n + lambda_))
 
-    @jit(nopython=True, fastmath=True)
     def _sigma_points(self, x: np.ndarray, P: np.ndarray) -> np.ndarray:
         """Generate sigma points."""
         if x is None:
@@ -645,9 +642,6 @@ class UnscentedKalmanFilter:
 
         return sigma_pts
 
-    @jit(nopython=True, fastmath=True)
-    @jit(nopython=True, fastmath=True)
-    @jit(nopython=True, fastmath=True)
     def filter(
         self,
         measurements: np.ndarray,
@@ -860,11 +854,11 @@ def estimate_kalman_params(
 
     # Estimate measurement noise from high-frequency variation
     diff1 = np.diff(signal)
-    measurement_noise = np.var(diff1) / 2
+    measurement_noise = float(np.var(diff1) / 2)
 
     # Estimate process noise from smoother variation
     diff2 = np.diff(signal, n=2)
-    process_noise = np.var(diff2) / 4
+    process_noise = float(np.var(diff2) / 4)
 
     # Ensure positive
     return max(process_noise, 1e-6), max(measurement_noise, 1e-6)

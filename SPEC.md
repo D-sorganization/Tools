@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.604                                    |
+| **Spec Version**        | 1.1.605                                    |
 | **Last Spec Update**    | 2026-06-19                                 |
 
 ## 2. Purpose & Mission
@@ -66,6 +66,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Model generation CLI exports now keep `from model_generation.cli import main`
   bound to the callable entrypoint even after tests or callers import the
   `model_generation.cli.main` submodule first.
+- Data Processor Kalman and state-space estimators now keep object-oriented
+  filter, smoother, forecast, sigma-point, and parameter-update methods as
+  plain Python instance methods instead of invalid Numba dispatchers, restoring
+  import, fit, filter, and forecast runtime paths with real Numba installed
+  (#3661, #3662, #3663).
 - P1AM HMI tabs now persist operator-controlled order and visibility in
   browser storage, with drag/drop and context-menu reorder/hide affordances
   that reconcile saved layouts against newly added tab ids. The temperature
