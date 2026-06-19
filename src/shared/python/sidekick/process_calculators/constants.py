@@ -519,8 +519,11 @@ KG_M3_TO_LB_FT3: Final[float] = 0.062428
 # Molecular weight conversion: g/mol to kg/mol
 G_MOL_TO_KG_MOL: Final[float] = 1000.0
 
-# Pressure conversion: mmHg to Pa
-MMHG_TO_PA_CONV: Final[float] = 133.322
+# Pressure conversion: mmHg to Pa.
+# Alias of the canonical full-precision constant (133.322387415) so the
+# vapor-pressure calculators that import this name match the rest of the
+# library instead of a truncated 133.322 literal (issue #3676).
+MMHG_TO_PA_CONV: Final[float] = MMHG_TO_PASCAL
 
 # Power conversion: Watts per horsepower
 WATTS_PER_HP: Final[float] = 745.7

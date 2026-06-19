@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7779                                   |
+| **Spec Version**        | 1.1.7780                                   |
 | **Last Spec Update**    | 2026-06-19                                 |
 
 ## 2. Purpose & Mission
@@ -48,6 +48,14 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   the whole `tests/rotation_converter` and `tests/tools` directories, keeping
   small DbC cleanup PRs inside the self-hosted runner CPU budget while
   preserving changed-source coverage (#3736).
+- Unified the mmHg->Pa conversion factor on the single canonical
+  `MMHG_TO_PASCAL` (133.322387415). The truncated 133.322 copies are gone:
+  `process_calculators/constants.MMHG_TO_PA_CONV` is now an alias of the
+  canonical constant, `steam_engine.MMHG_TO_PASCAL_FACTOR` references the
+  shared `MMHG_TO_PA`, and the bare 133.322 literals in the calc_backend
+  syngas-water router use the named constant. The acid-gas/syngas
+  vapor-pressure path is no longer silently ~3e-4 less precise than the rest
+  of the library (#3676).
 - P1AM firmware first-boot defaults now keep `SignalBroker::Reset()` as the
   all-unmapped primitive but layer bench-safe routing after an invalid or
   erased flash configuration: thermocouples TC0-TC3 route to TAG_0-TAG_3,
