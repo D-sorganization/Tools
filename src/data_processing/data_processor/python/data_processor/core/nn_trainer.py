@@ -15,7 +15,6 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-from numba import jit
 
 from .nn_architecture import (
     ActivationFunction,
@@ -694,7 +693,6 @@ class NeuralNetworkTrainer:
 
         return weights, biases
 
-    @jit(nopython=True, fastmath=True)
     def _forward_pass(
         self,
         X: np.ndarray,
@@ -725,7 +723,6 @@ class NeuralNetworkTrainer:
 
         return activations
 
-    @jit(nopython=True, fastmath=True)
     def _backward_pass(
         self,
         activations: list[np.ndarray],
@@ -778,7 +775,6 @@ class NeuralNetworkTrainer:
 
         return gradients
 
-    @jit(nopython=True, fastmath=True)
     def _update_weights(
         self,
         weights: list[np.ndarray | None],

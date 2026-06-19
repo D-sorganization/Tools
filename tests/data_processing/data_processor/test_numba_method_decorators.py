@@ -71,6 +71,43 @@ import pytest
             "data_processor.core.dataset_manager.DatasetManager",
             ("save_workspace", "load_workspace"),
         ),
+        (
+            "data_processor.core.augmentation_transforms.TransformsMixin",
+            (
+                "permute",
+                "smote",
+                "mixup",
+                "cutout",
+                "cutmix",
+                "_permute_1d",
+                "_frequency_mask_1d",
+            ),
+        ),
+        (
+            "data_processor.core.feature_extractor.FeatureExtractor",
+            (
+                "extract_lag",
+                "create_polynomial_features",
+                "_count_peaks",
+                "_peak_prominences",
+            ),
+        ),
+        (
+            "data_processor.core.nn_trainer.NeuralNetworkTrainer",
+            ("_forward_pass", "_backward_pass", "_update_weights"),
+        ),
+        (
+            "data_processor.core.outlier_detection.OutlierDetector",
+            ("_detect_grubbs", "_dbscan"),
+        ),
+        (
+            "data_processor.core.spectral_analysis.SpectralAnalyzer",
+            ("_compute_multitaper",),
+        ),
+        (
+            "data_processor.core.time_series_decomposition.TimeSeriesDecomposer",
+            ("multi_seasonal_decompose",),
+        ),
     ],
 )
 def test_object_oriented_analysis_methods_are_plain_functions(

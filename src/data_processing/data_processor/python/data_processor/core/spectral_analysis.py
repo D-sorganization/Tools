@@ -26,12 +26,14 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-from numba import jit
 from scipy import fft as scipy_fft
 from scipy import signal as scipy_signal
 
 # Backward-compatible trapezoid integration (np.trapz removed in NumPy 2.0+)
-_trapz = getattr(np, "trapezoid", None) or np.trapz
+if hasattr(np, "trapezoid"):
+    _trapz = np.trapezoid
+else:
+    _trapz = np.__dict__["trapz"]
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +63,7 @@ class SpectralMethod(Enum):
 class SpectralConfig:
     """Configuration for spectral analysis."""
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         # Default values
         self.method: SpectralMethod = SpectralMethod.WELCH
         self.sampling_freq: float = 1.0
@@ -180,6 +182,7 @@ class SpectralAnalyzer:
             config: Spectral analysis configuration
         """
         self.config = config or SpectralConfig()
+        self.psd: np.ndarray = np.array([])
 
     def analyze(
         self,
@@ -239,6 +242,7 @@ class SpectralAnalyzer:
         # Total power
         total_power = _trapz(psd, freqs)
 
+        self.psd = psd
         return SpectralResult(
             frequencies=freqs,
             psd=psd,
@@ -298,7 +302,7 @@ class SpectralAnalyzer:
         sampling_freq: float | None = None,
         window_length: int | None = None,
         overlap: float | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> SpectrogramResult:
         """Compute time-frequency spectrogram.
 
@@ -542,7 +546,6 @@ class SpectralAnalyzer:
 
         return freqs, psd
 
-    @jit(nopython=True, fastmath=True)
     def _compute_multitaper(
         self,
         signal: np.ndarray,
@@ -590,26 +593,26 @@ class SpectralAnalyzer:
         """Get window function."""
         if length is None:
             raise ValueError("length must be provided")
-        win_type = self.config.window
+        win_type: object = self.config.window
 
         if win_type == WindowFunction.RECTANGULAR:
             return np.ones(length)
         elif win_type == WindowFunction.HANN:
-            return scipy_signal.windows.hann(length)
+            return np.asarray(scipy_signal.windows.hann(length))
         elif win_type == WindowFunction.HAMMING:
-            return scipy_signal.windows.hamming(length)
+            return np.asarray(scipy_signal.windows.hamming(length))
         elif win_type == WindowFunction.BLACKMAN:
-            return scipy_signal.windows.blackman(length)
+            return np.asarray(scipy_signal.windows.blackman(length))
         elif win_type == WindowFunction.KAISER:
-            return scipy_signal.windows.kaiser(length, beta=8.6)
+            return np.asarray(scipy_signal.windows.kaiser(length, beta=8.6))
         elif win_type == WindowFunction.TUKEY:
-            return scipy_signal.windows.tukey(length, alpha=0.5)
+            return np.asarray(scipy_signal.windows.tukey(length, alpha=0.5))
         elif win_type == WindowFunction.BARTLETT:
-            return scipy_signal.windows.bartlett(length)
+            return np.asarray(scipy_signal.windows.bartlett(length))
         elif win_type == WindowFunction.FLATTOP:
-            return scipy_signal.windows.flattop(length)
+            return np.asarray(scipy_signal.windows.flattop(length))
         else:
-            return scipy_signal.windows.hann(length)
+            return np.asarray(scipy_signal.windows.hann(length))
 
     def _filter_frequency_range(
         self,
@@ -645,7 +648,7 @@ class SpectralAnalyzer:
             prominence=height_threshold / 2,
         )
 
-        return peaks
+        return np.asarray(peaks)
 
 
 def compute_psd(
