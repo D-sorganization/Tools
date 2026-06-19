@@ -165,6 +165,10 @@ jobs:
               done
             fi
           done
+      - name: Restore local Python tool cache
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
+        run: .github/scripts/restore-python-toolcache.sh
       - uses: actions/setup-python@v6
         env:
           AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
@@ -494,6 +498,10 @@ jobs:
               done
             fi
           done
+      - name: Restore local Python tool cache
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
+        run: .github/scripts/restore-python-toolcache.sh
       - uses: actions/setup-python@v6
         env:
           AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
