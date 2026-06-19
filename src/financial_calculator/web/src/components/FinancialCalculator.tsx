@@ -192,6 +192,7 @@ function FinancialCalculator() {
 
           <button
             onClick={calculate}
+            aria-controls="results-panel"
             className="w-full py-3 rounded-lg font-bold text-lg transition-colors hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#89b4fa] focus-visible:ring-offset-[#1e1e2e]"
             style={{ backgroundColor: colors.blue, color: colors.base }}
           >
@@ -200,7 +201,7 @@ function FinancialCalculator() {
         </div>
 
         {/* Results Panel */}
-        <div className="space-y-6">
+        <div id="results-panel" className="space-y-6" aria-live="polite">
           <h2 className="text-2xl font-bold" style={{ color: colors.green }}>
             Financial Analysis Results
           </h2>
