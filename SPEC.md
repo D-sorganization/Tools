@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.604                                    |
+| **Spec Version**        | 1.1.605                                    |
 | **Last Spec Update**    | 2026-06-19                                 |
 
 ## 2. Purpose & Mission
@@ -59,6 +59,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Shared `safe_eval` now enforces non-string expression `TypeError` handling
   independently of DbC runtime settings, including `DBC_LEVEL=off` and
   optimized Python execution.
+- Data Processor cross-correlation no longer applies Numba JIT decorators to
+  instance methods, restoring importability plus cross-correlation,
+  rolling-correlation, Granger, transfer-entropy, and p-value runtime paths
+  without changing their public API (#3665, #3666, #3667).
 - Model generation `inertia_from_mesh` now returns the loaded mesh volume for
   both mass-scaled and density-derived inertia requests, preventing the
   density path from falling through the generic mesh-processing error because
