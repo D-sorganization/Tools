@@ -24,7 +24,19 @@ from enum import Enum
 from typing import Any, NamedTuple
 
 import numpy as np
-from numba import jit
+
+try:
+    from numba import jit
+except ImportError:
+
+    def jit(*_args: Any, **_kwargs: Any) -> Any:
+        """Fallback decorator when optional numba acceleration is unavailable."""
+
+        def decorator(func: Any) -> Any:
+            return func
+
+        return decorator
+
 
 from data_processor.contracts import require
 from data_processor.core.causality_types import (
@@ -363,7 +375,7 @@ class CrossCorrelationAnalyzer:
         mean_corr = float(np.mean(valid_corr)) if len(valid_corr) > 0 else 0.0
         std_corr = float(np.std(valid_corr)) if len(valid_corr) > 0 else 0.0
 
-        stability = 1 - abs(std_corr / mean_corr) if mean_corr != 0 else 0.0
+        stability = max(0.0, 1 - abs(std_corr / mean_corr)) if mean_corr != 0 else 0.0
 
         return RollingCorrelationResult(
             timestamps=timestamps,

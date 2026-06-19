@@ -10,6 +10,7 @@ import numpy as np
 import pytest
 from data_processor.core.cross_correlation import (
     CrossCorrelationAnalyzer,
+    CrossCorrelationConfig,
 )
 
 
@@ -111,6 +112,18 @@ class TestRollingCrossCorrelation:
         result = analyzer.rolling_cross_correlation(x, y, window=20)
         assert result.window_size == 20
         assert len(result.correlations) == len(x)
+
+    def test_correlation_stability_is_not_negative(self) -> None:
+        """The documented 1-CV stability score should stay in [0, 1]."""
+        x = np.linspace(-1.0, 1.0, 80)
+        y = np.concatenate([x[:40], -x[40:]])
+        analyzer = CrossCorrelationAnalyzer(
+            CrossCorrelationConfig(rolling_min_periods=5)
+        )
+
+        result = analyzer.rolling_cross_correlation(x, y, window=10)
+
+        assert result.correlation_stability >= 0.0
 
 
 class TestMultiSeries:
