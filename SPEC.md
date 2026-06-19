@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.605                                    |
+| **Spec Version**        | 1.1.7673                                   |
 | **Last Spec Update**    | 2026-06-19                                 |
 
 ## 2. Purpose & Mission
@@ -1279,6 +1279,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-19 | 1.1.7673 | fix(data_processor, #3673): replace the vacuous `filter_type is not None` assert in `design_frequency_window` with real precondition checks that raise `ValueError` for an unrecognized `filter_type`, `n_samples <= 0`, or `transition_bw <= 0`, preventing silent inf/NaN coefficients and all-zero filters. |
 | 2026-06-19 | 1.1.605 | refactor(p1am, #3739): route `signal_stats`, `power_supply_models`, and `temperature_models` through the canonical shared `StrEnum` compatibility helper, with backend regression coverage proving shared helper identity, type-checkable enum iteration, and preserved string-like enum serialization. |
 | 2026-06-19 | 1.1.604 | fix(movement_optimizer): make Swingset policy trace canvas height track wrapped legend rows and keep Swingset/chain analysis legends docked outside rendered data axes so optimizer legends cannot obscure telemetry or analysis plot contents in narrow panes. |
 | 2026-06-19 | 1.1.604 | fix(docs, #3685): repoint broken project README links on `docs/index.md` to existing `src/` targets, including the scientific-modeling entry now directed at the maintained solar-system model documentation. |
