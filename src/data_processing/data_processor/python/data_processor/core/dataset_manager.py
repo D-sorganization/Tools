@@ -490,6 +490,7 @@ class DatasetManager:
                     {
                         "metadata": version.metadata.to_dict(),
                         "data_format": data_format,
+                        "pandas_dtypes": self._dataframe_dtypes(version.data),
                     }
                 )
             index_path = dataset_dir / "index.json"
@@ -545,8 +546,8 @@ class DatasetManager:
             history.current_index = index_data["current_index"]
 
             for version_entry in index_data["versions"]:
-                meta_dict, data_format = self._read_workspace_version_entry(
-                    version_entry
+                meta_dict, data_format, pandas_dtypes = (
+                    self._read_workspace_version_entry(version_entry)
                 )
                 metadata = DatasetMetadata.from_dict(meta_dict)
                 data = self._load_workspace_version_data(
@@ -554,6 +555,7 @@ class DatasetManager:
                     metadata.id,
                     data_format,
                 )
+                data = self._restore_dataframe_dtypes(data, pandas_dtypes)
                 history.versions.append(DatasetVersion(metadata=metadata, data=data))
 
             self._datasets[dataset_id] = history
@@ -593,7 +595,12 @@ class DatasetManager:
                 version_id,
                 _WORKSPACE_JSON_FORMAT,
             )
-            data.to_json(json_path, orient="table", date_format="iso")
+            data.to_json(
+                json_path,
+                orient="table",
+                date_format="iso",
+                date_unit="ns",
+            )
             logger.info(
                 "Parquet engine unavailable for workspace save; used JSON fallback: %s",
                 exc,
@@ -626,16 +633,37 @@ class DatasetManager:
         raise ValueError(f"Unsupported workspace data format: {data_format!r}")
 
     @staticmethod
+    def _dataframe_dtypes(data: pd.DataFrame) -> dict[str, str]:
+        """Return a JSON-serializable dtype contract for a DataFrame."""
+        return {str(column): str(dtype) for column, dtype in data.dtypes.items()}
+
+    @staticmethod
+    def _restore_dataframe_dtypes(
+        data: pd.DataFrame,
+        pandas_dtypes: dict[str, str],
+    ) -> pd.DataFrame:
+        """Restore dtypes recorded by workspace persistence."""
+        if not pandas_dtypes:
+            return data
+
+        restored = data.copy()
+        for column, dtype in pandas_dtypes.items():
+            if column in restored.columns:
+                restored[column] = restored[column].astype(dtype)
+        return restored
+
+    @staticmethod
     def _read_workspace_version_entry(
         version_entry: dict[str, Any],
-    ) -> tuple[dict[str, Any], str]:
+    ) -> tuple[dict[str, Any], str, dict[str, str]]:
         """Read current and legacy workspace index entries."""
         if "metadata" in version_entry:
             return (
                 version_entry["metadata"],
                 version_entry.get("data_format", _WORKSPACE_PARQUET_FORMAT),
+                version_entry.get("pandas_dtypes", {}),
             )
-        return version_entry, _WORKSPACE_PARQUET_FORMAT
+        return version_entry, _WORKSPACE_PARQUET_FORMAT, {}
 
     def close_dataset(self, dataset_id: str | None = None) -> None:
         """Close a dataset and remove it from memory.
