@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7676                                   |
+| **Spec Version**        | 1.1.7779                                   |
 | **Last Spec Update**    | 2026-06-19                                 |
 
 ## 2. Purpose & Mission
@@ -1293,6 +1293,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-19 | 1.1.7779 | fix(p1am, #3670): replace the bare `except Exception: pass` in `EventLogViewerWidget.update_event_types_combobox` with a module logger that records the failure, so a corrupt/locked event database no longer silently empties the event-type filter without any diagnostic. |
 | 2026-06-19 | 1.1.7675 | test(p1am, #3709 #3710): split PID tuning unmapped-tag regression coverage into `test_pid_tuning_tag_guards.py` so the endpoint behavior remains covered while `test_backend.py` stays under the fleet 500 LOC file-size budget. |
 | 2026-06-19 | 1.1.7674 | fix(p1am, #3709 #3710): return descriptive HTTP 409 errors before mutating tuning state when PID tuning start/step references PV/CV tags missing from `latest_tags`, avoiding raw `KeyError` 500s and preventing physical CV writes when a tuning step's CV tag is unmapped. |
 | 2026-06-19 | 1.1.7676 | fix(p1am, #3607): annotate the Modbus codec's re-exported unmapped-sentinel constants and remove stale hardware-test suppressions so the `TAG_255` routing fix remains mypy-clean under pre-push gates. |
