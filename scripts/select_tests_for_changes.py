@@ -99,12 +99,10 @@ _VESSEL_DRAFTER_SOURCE_TESTS = {
     ],
 }
 
-_VENDORED_SOURCE_PREFIXES = (
-    ("src", "movement_optimizer"),
-    ("src", "pendulum_simulator"),
-)
-
 _TOP_LEVEL_SOURCE_TESTS = {
+    ("rotation_converter", "_mr_kinematics.py"): [
+        "tests/rotation_converter/test_mr_kinematics_contracts_3736.py",
+    ],
     ("rotation_converter", "_mr_dynamics.py"): [
         "tests/rotation_converter/test_modern_robotics.py",
     ],
@@ -120,7 +118,15 @@ _TOP_LEVEL_SOURCE_TESTS = {
     ("rotation_converter", "modern_robotics_pkg/trajectory.py"): [
         "tests/rotation_converter/test_modern_robotics.py",
     ],
+    ("tools", "config_loader.py"): [
+        "tests/tools/test_config_loader.py",
+    ],
 }
+
+_VENDORED_SOURCE_PREFIXES = (
+    ("src", "movement_optimizer"),
+    ("src", "pendulum_simulator"),
+)
 
 
 def _read_changed_files(argv: list[str]) -> list[str]:
@@ -166,14 +172,13 @@ def _candidate_targets(src_path: str) -> list[Path]:
                 targets.append(REPO_ROOT / test_path)
             return targets
 
-    if parts and parts[0] == "src" and len(parts) >= 3:
-        rel_top_level_path = Path(*parts[2:]).as_posix()
-        for test_path in _TOP_LEVEL_SOURCE_TESTS.get(
-            (parts[1], rel_top_level_path),
-            [],
-        ):
-            targets.append(REPO_ROOT / test_path)
-        if targets:
+    if len(parts) >= 3 and parts[0] == "src":
+        exact_top_level_tests = _TOP_LEVEL_SOURCE_TESTS.get(
+            (parts[1], Path(*parts[2:]).as_posix())
+        )
+        if exact_top_level_tests is not None:
+            for test_path in exact_top_level_tests:
+                targets.append(REPO_ROOT / test_path)
             return targets
 
     # Identify the changed file's *package root* so we can mirror it. For a

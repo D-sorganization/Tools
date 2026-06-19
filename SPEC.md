@@ -50,6 +50,16 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-18 Update
 
+- Removed redundant `assert ... is not None` guards in
+  `_mr_kinematics.IKinBody` and `config_loader.validate_tools_config` that were
+  shadowed by a following `require()`/`isinstance()` contract on the same
+  argument (asserts are stripped under `python -O`). Behavior is unchanged —
+  passing `None` still raises — and new regression tests lock this (#3736).
+- CI source-keyed test selection now maps `_mr_kinematics.py` and
+  `tools/config_loader.py` changes to their focused contract suites instead of
+  the whole `tests/rotation_converter` and `tests/tools` directories, keeping
+  small DbC cleanup PRs inside the self-hosted runner CPU budget while
+  preserving changed-source coverage (#3736).
 - P1AM firmware first-boot defaults now keep `SignalBroker::Reset()` as the
   all-unmapped primitive but layer bench-safe routing after an invalid or
   erased flash configuration: thermocouples TC0-TC3 route to TAG_0-TAG_3,
@@ -1294,6 +1304,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-06-19 | 1.1.7674 | fix(rotation-converter, #3736): replace Modern Robotics input-validation asserts with `require()` preconditions across the public module and split kinematics/dynamics packages, preserving `PreconditionError` for invalid inputs under optimized Python. |
 | 2026-06-19 | 1.1.7674 | ci(rotation-converter, #3736): map Modern Robotics contract-guard source changes to `tests/rotation_converter/test_modern_robotics.py` in the source-keyed selector so CI keeps the DbC regression surface without collecting the full rotation-converter tree in every Python lane. |
 | 2026-06-19 | 1.1.7674 | ci(rotation-converter, #3736): cast split Modern Robotics NumPy return boundaries explicitly so the CI Standard delta mypy gate stays clean under `--follow-imports=skip` without changing runtime array results. |
+| 2026-06-19 | 1.1.7674 | fix(contracts, #3736): remove redundant `assert ... is not None` guards shadowed by explicit contract checks in `_mr_kinematics.IKinBody` and `config_loader.validate_tools_config`, keeping `None` rejection covered by focused regressions under the maintained contract path. |
+| 2026-06-19 | 1.1.7674 | ci(tests, #3736): focus source-keyed CI selection for `_mr_kinematics.py` and `tools/config_loader.py` on their dedicated contract suites so redundant-assert cleanup branches do not collect package-wide rotation/tools suites in every Python matrix lane. |
 | 2026-06-19 | 1.1.7673 | fix(data_processor, #3673): replace the vacuous `filter_type is not None` assert in `design_frequency_window` with real precondition checks that raise `ValueError` for an unrecognized `filter_type`, `n_samples <= 0`, or `transition_bw <= 0`, preventing silent inf/NaN coefficients and all-zero filters. |
 | 2026-06-19 | 1.1.604 | fix(movement_optimizer): make Swingset policy trace canvas height track wrapped legend rows and keep Swingset/chain analysis legends docked outside rendered data axes so optimizer legends cannot obscure telemetry or analysis plot contents in narrow panes. |
 | 2026-06-19 | 1.1.604 | fix(docs, #3685): repoint broken project README links on `docs/index.md` to existing `src/` targets, including the scientific-modeling entry now directed at the maintained solar-system model documentation. |

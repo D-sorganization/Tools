@@ -211,6 +211,24 @@ def test_modern_robotics_contract_sources_select_focused_public_tests() -> None:
 
 
 @pytest.mark.unit
+def test_mr_kinematics_source_change_selects_focused_contract_tests() -> None:
+    targets = select_tests_for_changes.select_targets(
+        ["src/rotation_converter/_mr_kinematics.py"]
+    )
+
+    assert targets == ["tests/rotation_converter/test_mr_kinematics_contracts_3736.py"]
+    assert "tests/rotation_converter" not in targets
+
+
+@pytest.mark.unit
+def test_tools_config_loader_source_change_selects_focused_tests() -> None:
+    targets = select_tests_for_changes.select_targets(["src/tools/config_loader.py"])
+
+    assert targets == ["tests/tools/test_config_loader.py"]
+    assert "tests/tools" not in targets
+
+
+@pytest.mark.unit
 def test_output_is_sorted_and_deduplicated() -> None:
     targets = select_tests_for_changes.select_targets(
         [
