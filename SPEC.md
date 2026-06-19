@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7675                                   |
+| **Spec Version**        | 1.1.7676                                   |
 | **Last Spec Update**    | 2026-06-19                                 |
 
 ## 2. Purpose & Mission
@@ -58,6 +58,14 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module configuration, converts Fahrenheit thermocouple readings to Celsius in
   software, and documents the 0-20 mA analog-input scaling used by the bench
   power-supply monitor outputs (#3606).
+- P1AM backend Modbus routing encoders now preserve the firmware `TAG_255`
+  unmapped sentinel for input routing, output routing, and PID pv/cv fields
+  while keeping ordinary hardware tag parsing strict; all-unmapped
+  `RoutingConfig` writes now round-trip through `write_routing` instead of
+  dropping the PLC connection after an erased-NVRAM boot (#3607).
+- P1AM backend Modbus codec re-exports its sentinel constants with explicit
+  typed annotations, keeping the pure encoder contract mypy-clean while still
+  delegating broker-tag range validation to the hardware contract (#3607).
 - Shared `safe_eval` now applies the exponentiation DoS guard consistently to
   `**`, bare `pow()`/`power()` calls, and statically-computable exponent
   expressions; non-string expressions fail the documented contract before
@@ -1287,6 +1295,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 | ---- | ------- | ------- |
 | 2026-06-19 | 1.1.7675 | test(p1am, #3709 #3710): split PID tuning unmapped-tag regression coverage into `test_pid_tuning_tag_guards.py` so the endpoint behavior remains covered while `test_backend.py` stays under the fleet 500 LOC file-size budget. |
 | 2026-06-19 | 1.1.7674 | fix(p1am, #3709 #3710): return descriptive HTTP 409 errors before mutating tuning state when PID tuning start/step references PV/CV tags missing from `latest_tags`, avoiding raw `KeyError` 500s and preventing physical CV writes when a tuning step's CV tag is unmapped. |
+| 2026-06-19 | 1.1.7676 | fix(p1am, #3607): annotate the Modbus codec's re-exported unmapped-sentinel constants and remove stale hardware-test suppressions so the `TAG_255` routing fix remains mypy-clean under pre-push gates. |
+| 2026-06-19 | 1.1.7675 | fix(p1am, #3607): preserve the firmware `TAG_255` unmapped sentinel in Modbus routing and PID pv/cv encoders while keeping ordinary broker-tag parsing strict, with write-routing coverage for all-unmapped configs after erased-NVRAM boots. |
 | 2026-06-19 | 1.1.7674 | fix(contracts, #3736): remove redundant `assert ... is not None` guards shadowed by explicit contract checks in `_mr_kinematics.IKinBody` and `config_loader.validate_tools_config`, keeping `None` rejection covered by focused regressions under the maintained contract path. |
 | 2026-06-19 | 1.1.7674 | ci(tests, #3736): focus source-keyed CI selection for `_mr_kinematics.py` and `tools/config_loader.py` on their dedicated contract suites so redundant-assert cleanup branches do not collect package-wide rotation/tools suites in every Python matrix lane. |
 | 2026-06-19 | 1.1.7673 | fix(data_processor, #3673): replace the vacuous `filter_type is not None` assert in `design_frequency_window` with real precondition checks that raise `ValueError` for an unrecognized `filter_type`, `n_samples <= 0`, or `transition_bw <= 0`, preventing silent inf/NaN coefficients and all-zero filters. |
