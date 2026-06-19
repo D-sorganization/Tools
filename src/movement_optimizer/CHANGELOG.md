@@ -44,6 +44,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tightened the reserved compact-pane gap between Swingset/Chain plot data axes
   and docked legends, and raised the scrollable plot panel's minimum curve
   height so legends no longer dominate the plot area.
+- Centered docked Swingset and Chain Dynamics plot legends inside taller
+  reserved legend strips, with rendered padding coverage so multi-row joint
+  legends do not crowd the charts or appear clipped.
 - Hardened the `movement_optimizer_core` maturin parity workflow with a
   per-job virtual environment, explicit NumPy/SciPy/`pytest` reinstalls, and
   PyO3 forward compatibility for the declared Python 3.13 lane.

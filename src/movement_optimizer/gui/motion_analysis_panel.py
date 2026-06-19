@@ -28,11 +28,11 @@ from ..rendering import Palette, restyle_figure
 class MotionAnalysisPanel(QWidget):
     """A themed grid of named matplotlib axes with a navigation toolbar."""
 
-    _LEGEND_HEIGHT_RATIO = 0.22
-    _DATA_LEGEND_HSPACE = 0.50
+    _LEGEND_HEIGHT_RATIO = 0.32
+    _DATA_LEGEND_HSPACE = 0.42
     _MIN_AXIS_WIDTH_PX = 260
-    _MIN_DATA_HEIGHT_PX = 300
-    _MIN_LEGEND_HEIGHT_PX = 50
+    _MIN_DATA_HEIGHT_PX = 340
+    _MIN_LEGEND_HEIGHT_PX = 76
     _MIN_TOOLBAR_HEIGHT_PX = 40
 
     def __init__(self, axis_names: Sequence[str], *, rows: int, cols: int) -> None:
@@ -135,8 +135,8 @@ class MotionAnalysisPanel(QWidget):
             legend = legend_axis.legend(
                 handles,
                 labels,
-                loc="upper center",
-                bbox_to_anchor=(0.5, 1.0),
+                loc="center",
+                bbox_to_anchor=(0.5, 0.5),
                 ncol=self._legend_columns(len(labels)),
                 fontsize=6,
                 facecolor=Palette.BG_PANEL,
