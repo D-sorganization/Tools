@@ -176,6 +176,8 @@ class TestMotionAnalysisPanel:
         for legend_axis in panel.legend_axes.values():
             legend = legend_axis.get_legend()
             assert legend is not None
+            assert legend.get_clip_on() is True
+            assert legend.get_clip_box() is not None
             legend_box = legend.get_window_extent(renderer)
             legend_axis_box = legend_axis.get_window_extent(renderer)
             assert legend_box.x0 >= figure_box.x0 - 1.0
@@ -287,6 +289,10 @@ class TestMotionAnalysisPanel:
 
         self._assert_docked_legends_do_not_cover_plots(panel)
         assert all(axes.get_legend() is None for axes in panel.axes.values())
+        assert all(
+            panel.axes[name].get_zorder() > panel.legend_axes[name].get_zorder()
+            for name in panel.axes
+        )
 
     def test_swingset_docked_legends_clear_minimum_plot_size(self, qapp, swing_history) -> None:
         from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel

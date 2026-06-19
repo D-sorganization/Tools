@@ -94,6 +94,8 @@ class MotionAnalysisPanel(QWidget):
             self.axes[name] = self.figure.add_subplot(grid[data_row, col])
             legend_axis = self.figure.add_subplot(grid[legend_row, col])
             legend_axis.set_axis_off()
+            self.axes[name].set_zorder(2)
+            legend_axis.set_zorder(1)
             self.legend_axes[name] = legend_axis
         restyle_figure(self.figure)
 
@@ -130,7 +132,7 @@ class MotionAnalysisPanel(QWidget):
             if not handles or not labels or not self._legends_visible:
                 continue
 
-            legend_axis.legend(
+            legend = legend_axis.legend(
                 handles,
                 labels,
                 loc="upper center",
@@ -146,6 +148,8 @@ class MotionAnalysisPanel(QWidget):
                 handletextpad=0.35,
                 columnspacing=0.7,
             )
+            legend.set_clip_on(True)
+            legend.set_clip_box(legend_axis.bbox)
 
     def set_legends_visible(self, visible: bool) -> None:
         """Show or hide the legend on every axis that has one.
@@ -172,6 +176,6 @@ class MotionAnalysisPanel(QWidget):
 
     def draw(self) -> None:
         """Lay out and repaint the figure after the axes have been populated."""
-        self._dock_legends()
         self.figure.subplots_adjust(left=0.08, right=0.98, top=0.94, bottom=0.06)
+        self._dock_legends()
         self.canvas.draw()

@@ -38,6 +38,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Docked Swingset and Chain Dynamics analysis legends into reserved
   `MotionAnalysisPanel` legend rows so visible legends no longer obscure curves,
   neighboring plots, or compact plot-pane edges.
+- Clipped docked Swingset and Chain Dynamics analysis legends to their reserved
+  legend rows and draw data axes above legend strips, preventing backend sizing
+  edge cases from painting legends over plotted curves.
 - Tightened the reserved compact-pane gap between Swingset/Chain plot data axes
   and docked legends, and raised the scrollable plot panel's minimum curve
   height so legends no longer dominate the plot area.
