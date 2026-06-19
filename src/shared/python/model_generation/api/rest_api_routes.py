@@ -262,9 +262,9 @@ class ModelGenerationAPI:
                     response = route.handler(request)
                     self._add_security_headers(response)
                     return response
-                except Exception as e:  # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     logger.exception("Error handling request")
-                    response = APIResponse.error(str(e), 500)
+                    response = APIResponse.error("Internal server error", 500)
                     self._add_security_headers(response)
                     return response
 
@@ -277,6 +277,70 @@ class ModelGenerationAPI:
     # ============================================================
     # Health/Info Handlers
     # ============================================================
+
+    @staticmethod
+    def _extract_text_content(
+        request: APIRequest,
+        body: dict[str, Any],
+        missing_message: str,
+        *,
+        body_key: str = "content",
+        prefer_file: bool = False,
+    ) -> tuple[str | None, APIResponse | None, str | None]:
+        """Extract text from a JSON body field or uploaded file."""
+
+        def _decode_file() -> tuple[str | None, APIResponse | None, str | None]:
+            try:
+                content = request.files["file"].decode("utf-8")
+            except UnicodeDecodeError:
+                return (
+                    None,
+                    APIResponse.error("Uploaded file must be valid UTF-8 text", 422),
+                    "file",
+                )
+            if not content:
+                return None, APIResponse.error(missing_message), "file"
+            return content, None, "file"
+
+        if prefer_file and "file" in request.files:
+            return _decode_file()
+
+        if body_key in body and body[body_key]:
+            content = body[body_key]
+            if not isinstance(content, str):
+                return (
+                    None,
+                    APIResponse.error(f"'{body_key}' must be a string"),
+                    "body",
+                )
+            return content, None, "body"
+
+        if "file" in request.files:
+            return _decode_file()
+
+        return None, APIResponse.error(missing_message), None
+
+    @staticmethod
+    def _require_positive_number(value: Any, field_name: str) -> float:
+        """Return *value* as a positive float or raise ValueError."""
+        try:
+            number = float(value)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"'{field_name}' must be a positive number") from exc
+        if number <= 0:
+            raise ValueError(f"'{field_name}' must be a positive number")
+        return number
+
+    @staticmethod
+    def _validate_operation_fields(
+        op: dict[str, Any], op_type: str, required: tuple[str, ...]
+    ) -> APIResponse | None:
+        missing = [field for field in required if field not in op or op[field] is None]
+        if missing:
+            return APIResponse.error(
+                f"Operation '{op_type}' missing required field(s): {', '.join(missing)}"
+            )
+        return None
 
     def health_check(self, request: APIRequest) -> APIResponse:
         """Health check endpoint."""
@@ -407,20 +471,22 @@ class ModelGenerationAPI:
 
         body = request.body or {}
 
-        # Get content from file upload or body
-        content = None
-        format_type = "mdl"
+        content, error, source = self._extract_text_content(
+            request,
+            body,
+            "Missing model content or file",
+            prefer_file=True,
+        )
+        if error:
+            return error
 
-        if "file" in request.files:
-            content = request.files["file"].decode("utf-8", errors="ignore")
-            # Detect format from content
-            if content.strip().startswith("<?xml") or content.strip().startswith("<"):
-                format_type = "xml"
-        elif "content" in body:
-            content = body["content"]
-            format_type = body.get("format", "mdl")
-        else:
-            return APIResponse.error("Missing model content or file")
+        format_type = body.get("format", "mdl")
+        if (
+            source == "file"
+            and content
+            and (content.strip().startswith("<?xml") or content.strip().startswith("<"))
+        ):
+            format_type = "xml"
 
         robot_name = body.get("robot_name", "converted_robot")
         config = ConversionConfig(robot_name=robot_name)
@@ -458,12 +524,11 @@ class ModelGenerationAPI:
 
         body = request.body or {}
 
-        content = body.get("content") or (
-            request.files.get("file", b"").decode("utf-8") if request.files else None
+        content, error, _source = self._extract_text_content(
+            request, body, "Missing MJCF content"
         )
-
-        if not content:
-            return APIResponse.error("Missing MJCF content")
+        if error:
+            return error
 
         converter = MJCFConverter()
 
@@ -489,12 +554,11 @@ class ModelGenerationAPI:
 
         body = request.body or {}
 
-        content = body.get("content") or (
-            request.files.get("file", b"").decode("utf-8") if request.files else None
+        content, error, _source = self._extract_text_content(
+            request, body, "Missing URDF content"
         )
-
-        if not content:
-            return APIResponse.error("Missing URDF content")
+        if error:
+            return error
 
         converter = MJCFConverter()
 
@@ -525,12 +589,11 @@ class ModelGenerationAPI:
 
         body = request.body or {}
 
-        content = body.get("content") or (
-            request.files.get("file", b"").decode("utf-8") if request.files else None
+        content, error, _source = self._extract_text_content(
+            request, body, "Missing URDF content"
         )
-
-        if not content:
-            return APIResponse.error("Missing URDF content")
+        if error:
+            return error
 
         editor = URDFTextEditor()
         editor.load_string(content)
@@ -573,12 +636,11 @@ class ModelGenerationAPI:
 
         body = request.body or {}
 
-        content = body.get("content") or (
-            request.files.get("file", b"").decode("utf-8") if request.files else None
+        content, error, _source = self._extract_text_content(
+            request, body, "Missing URDF content"
         )
-
-        if not content:
-            return APIResponse.error("Missing URDF content")
+        if error:
+            return error
 
         parser = URDFParser()
 
@@ -681,8 +743,21 @@ class ModelGenerationAPI:
         mass = body.get("mass")
         density = body.get("density")
 
-        if not mass and not density:
+        if mass is None and density is None:
             return APIResponse.error("Must provide either 'mass' or 'density'")
+        try:
+            mass_value = (
+                self._require_positive_number(mass, "mass")
+                if mass is not None
+                else None
+            )
+            density_value = (
+                self._require_positive_number(density, "density")
+                if density is not None
+                else None
+            )
+        except ValueError as e:
+            return APIResponse.error(str(e))
 
         try:
             self._validate_mesh_upload(
@@ -712,19 +787,28 @@ class ModelGenerationAPI:
 
             mesh: Any = trimesh.load(temp_path)
 
-            if density:
-                mesh.density = density
+            mesh_mass = getattr(mesh, "mass", None)
+            try:
+                mesh_mass = self._require_positive_number(mesh_mass, "mesh mass")
+            except ValueError as e:
+                return APIResponse.error(str(e))
+
+            volume = mesh.volume
+            if density_value is not None:
+                mesh.density = density_value
                 inertia_tensor = mesh.moment_inertia
                 calculated_mass = mesh.mass
             else:
+                if mass_value is None:
+                    return APIResponse.error("Must provide either 'mass' or 'density'")
                 # Scale inertia to specified mass
-                inertia_tensor = mesh.moment_inertia * (mass / mesh.mass)
-                calculated_mass = mass
+                inertia_tensor = mesh.moment_inertia * (mass_value / mesh_mass)
+                calculated_mass = mass_value
 
             return APIResponse.ok(
                 {
                     "mass": calculated_mass,
-                    "volume": mesh.volume,
+                    "volume": volume,
                     "center_of_mass": mesh.center_mass.tolist(),
                     "inertia": {
                         "ixx": float(inertia_tensor[0, 0]),
@@ -847,11 +931,12 @@ class ModelGenerationAPI:
 
         body = request.body or {}
 
-        content = body.get("content") or (
-            request.files.get("file", b"").decode("utf-8") if request.files else None
+        content, error, _source = self._extract_text_content(
+            request, body, "Missing URDF content"
         )
-
-        if not content:
+        if error:
+            return error
+        if content is None:
             return APIResponse.error("Missing URDF content")
 
         name = body.get("name", "unnamed")
@@ -970,9 +1055,14 @@ class ModelGenerationAPI:
 
         # Process operations
         for op in operations:
+            if not isinstance(op, dict):
+                return APIResponse.error("Each operation must be an object")
             op_type = op.get("type")
 
             if op_type == "copy_subtree":
+                error = self._validate_operation_fields(op, op_type, ("source", "link"))
+                if error:
+                    return error
                 editor.copy_subtree(op["source"], op["link"])
             elif op_type == "paste":
                 editor.paste(
@@ -981,9 +1071,19 @@ class ModelGenerationAPI:
                     prefix=op.get("prefix", ""),
                 )
             elif op_type == "delete_subtree":
+                error = self._validate_operation_fields(op, op_type, ("link",))
+                if error:
+                    return error
                 editor.delete_subtree("output", op["link"])
             elif op_type == "rename":
+                error = self._validate_operation_fields(
+                    op, op_type, ("old_name", "new_name")
+                )
+                if error:
+                    return error
                 editor.rename_link("output", op["old_name"], op["new_name"])
+            else:
+                return APIResponse.error(f"Unknown operation type: {op_type}")
 
         # Export
         urdf_string = editor.export_model("output")
