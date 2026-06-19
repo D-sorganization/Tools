@@ -4,8 +4,19 @@ from unittest.mock import MagicMock
 
 import numpy as np
 import pytest
+from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.collections import LineCollection
+from matplotlib.figure import Figure
+from matplotlib.gridspec import GridSpec
 
+from movement_optimizer.constants import (
+    PLOT_GRID_COLS,
+    PLOT_GRID_HEIGHT_RATIOS,
+    PLOT_GRID_HSPACE,
+    PLOT_GRID_MARGINS,
+    PLOT_GRID_ROWS,
+    PLOT_GRID_WSPACE,
+)
 from movement_optimizer.gui.plot_renderer import (
     plot_angles,
     plot_com_balance,
@@ -116,6 +127,56 @@ class TestPlotRenderer:
         ax_shear.plot.assert_called_once()
         ax_shear.axhline.assert_called_once()
         ax_shear.set_title.assert_called_once()
+
+    def test_exercise_grid_legends_do_not_cover_plot_data(self, dummy_result, body):
+        figure = Figure(figsize=(11, 9))
+        canvas = FigureCanvasAgg(figure)
+        grid = GridSpec(
+            PLOT_GRID_ROWS,
+            PLOT_GRID_COLS,
+            figure=figure,
+            height_ratios=list(PLOT_GRID_HEIGHT_RATIOS),
+            hspace=PLOT_GRID_HSPACE,
+            wspace=PLOT_GRID_WSPACE,
+            **PLOT_GRID_MARGINS,
+        )
+        axes = {
+            "com_path": figure.add_subplot(grid[0, 3]),
+            "angles": figure.add_subplot(grid[1, 0]),
+            "torques": figure.add_subplot(grid[1, 1]),
+            "power": figure.add_subplot(grid[1, 2]),
+            "com_time": figure.add_subplot(grid[1, 3]),
+            "spine_comp": figure.add_subplot(grid[2, 0:2]),
+            "spine_shear": figure.add_subplot(grid[2, 2:4]),
+        }
+
+        plot_angles(axes["angles"], dummy_result)
+        plot_torques(axes["torques"], dummy_result)
+        plot_power(axes["power"], dummy_result)
+        plot_com_path(axes["com_path"], dummy_result, body)
+        plot_com_balance(axes["com_time"], dummy_result, body)
+        plot_spine_loads(
+            axes["spine_comp"],
+            axes["spine_shear"],
+            dummy_result,
+            body,
+            bar_mass=20.0,
+            name="squat",
+        )
+
+        canvas.draw()
+        renderer = canvas.get_renderer()
+        figure_box = figure.bbox
+        data_boxes = [axis.get_window_extent(renderer) for axis in axes.values()]
+        for axis in axes.values():
+            legend = axis.get_legend()
+            assert legend is not None
+            legend_box = legend.get_window_extent(renderer)
+            assert legend_box.x0 >= figure_box.x0 - 1.0
+            assert legend_box.x1 <= figure_box.x1 + 1.0
+            assert legend_box.y0 >= figure_box.y0 - 1.0
+            assert legend_box.y1 <= figure_box.y1 + 1.0
+            assert not any(data_box.overlaps(legend_box) for data_box in data_boxes)
 
 
 class TestPlotSpineLoadsExerciseAlias:

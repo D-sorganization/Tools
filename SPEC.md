@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.600                                    |
+| **Spec Version**        | 1.1.601                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -154,6 +154,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   artist per time step, preserving the path colours while reducing plot redraw
   overhead for long optimization traces and rejecting degenerate one-sample COM
   paths at the renderer boundary.
+- Movement Optimizer exercise analysis plots now use the shared outside-plot
+  legend helper and a roomier exercise GridSpec, so squat/deadlift/bench/snatch
+  playback plots keep joint, COM, bar-path, balance, and spine-load labels
+  visible without covering data curves or neighboring panels.
 - Movement Optimizer legacy `optimizer_gui` launch and registration surfaces now
   delegate to the canonical `movement_optimizer` PyQt6 app, preventing direct
   old-path launches from showing the retired minimal optimizer UI instead of
@@ -1260,6 +1264,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-18 | 1.1.601 | fix(movement_optimizer): route exercise analysis plot legends through the shared outside-plot helper, reserve additional GridSpec spacing, and add rendered bounding-box regression coverage so squat/deadlift/bench playback legends cannot obscure plot data or neighboring panels. |
 | 2026-06-18 | 1.1.600 | fix(model-generation): keep `from model_generation.cli import main` bound to the callable CLI entrypoint after `model_generation.cli.main` submodule imports, preserving CLI tests under importlib ordering. |
 | 2026-06-18 | 1.1.599 | fix(model-generation, #3668): return `mesh.volume` on both `inertia_from_mesh` mass and density paths so density-based inertia requests no longer hit an unbound `volume` local; add fake-trimesh regression coverage for density-derived mass/volume and mass-scaled inertia. |
 | 2026-06-18 | 1.1.595 | perf(movement_optimizer): render the colour-graded COM path through one Matplotlib `LineCollection` instead of one line artist per time step, add renderer-boundary validation for degenerate COM traces, and pin the artist-count regression in `test_plot_renderer.py`. |

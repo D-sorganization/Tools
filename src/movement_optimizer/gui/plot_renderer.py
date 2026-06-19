@@ -32,6 +32,9 @@ def _legend_outside_plot(ax: Any, *, fontsize: int = 7, columns: int = 3) -> Any
         borderaxespad=0.0,
         ncol=max(1, int(columns)),
         framealpha=0.9,
+        handlelength=1.2,
+        handletextpad=0.35,
+        columnspacing=0.7,
     )
 
 
@@ -48,12 +51,7 @@ def plot_angles(ax: Any, r: OptimizationResult, labels: tuple = Palette.SEG_LABE
     ax.set_xlabel("Time (s)", color=Palette.FG_DIM, fontsize=8)
     ax.set_ylabel("Angle (deg)", color=Palette.FG_DIM, fontsize=8)
     ax.set_title("Joint Angles", color=Palette.FG, fontsize=10)
-    ax.legend(
-        fontsize=7,
-        facecolor=Palette.BG_PANEL,
-        edgecolor=Palette.FG_DIM,
-        labelcolor=Palette.FG,
-    )
+    _legend_outside_plot(ax, fontsize=6, columns=n_dof)
 
 
 def plot_torques(ax: Any, r: OptimizationResult, labels: tuple = Palette.SEG_LABELS) -> None:
@@ -70,12 +68,7 @@ def plot_torques(ax: Any, r: OptimizationResult, labels: tuple = Palette.SEG_LAB
     ax.set_xlabel("Time (s)", color=Palette.FG_DIM, fontsize=8)
     ax.set_ylabel("Torque (N\u00b7m)", color=Palette.FG_DIM, fontsize=8)
     ax.set_title("Joint Torques", color=Palette.FG, fontsize=10)
-    ax.legend(
-        fontsize=7,
-        facecolor=Palette.BG_PANEL,
-        edgecolor=Palette.FG_DIM,
-        labelcolor=Palette.FG,
-    )
+    _legend_outside_plot(ax, fontsize=6, columns=n_dof)
 
 
 def plot_power(ax: Any, r: OptimizationResult, labels: tuple = Palette.SEG_LABELS) -> None:
@@ -101,12 +94,7 @@ def plot_power(ax: Any, r: OptimizationResult, labels: tuple = Palette.SEG_LABEL
     ax.set_xlabel("Time (s)", color=Palette.FG_DIM, fontsize=8)
     ax.set_ylabel("Power (W)", color=Palette.FG_DIM, fontsize=8)
     ax.set_title("Joint Power", color=Palette.FG, fontsize=10)
-    ax.legend(
-        fontsize=7,
-        facecolor=Palette.BG_PANEL,
-        edgecolor=Palette.FG_DIM,
-        labelcolor=Palette.FG,
-    )
+    _legend_outside_plot(ax, fontsize=6, columns=n_dof + 1)
 
 
 def plot_com_path(ax: Any, r: OptimizationResult, body: BodyModel) -> None:
@@ -166,12 +154,7 @@ def plot_com_path(ax: Any, r: OptimizationResult, body: BodyModel) -> None:
     ax.set_xlabel("Horizontal (cm)", color=Palette.FG_DIM, fontsize=8)
     ax.set_ylabel("Height (cm)", color=Palette.FG_DIM, fontsize=8)
     ax.set_title("COM & Bar Path", color=Palette.FG, fontsize=10)
-    ax.legend(
-        fontsize=6,
-        facecolor=Palette.BG_PANEL,
-        edgecolor=Palette.FG_DIM,
-        labelcolor=Palette.FG,
-    )
+    _legend_outside_plot(ax, fontsize=6, columns=4)
 
 
 def plot_com_balance(ax: Any, r: OptimizationResult, body: BodyModel) -> None:
@@ -200,12 +183,7 @@ def plot_com_balance(ax: Any, r: OptimizationResult, body: BodyModel) -> None:
     ax.set_xlabel("Time (s)", color=Palette.FG_DIM, fontsize=8)
     ax.set_ylabel("COM x (cm)", color=Palette.FG_DIM, fontsize=8)
     ax.set_title("COM Balance", color=Palette.FG, fontsize=10)
-    ax.legend(
-        fontsize=6,
-        facecolor=Palette.BG_PANEL,
-        edgecolor=Palette.FG_DIM,
-        labelcolor=Palette.FG,
-    )
+    _legend_outside_plot(ax, fontsize=6, columns=3)
 
 
 def plot_spine_loads(
@@ -240,12 +218,7 @@ def plot_spine_loads(
     ax.set_xlabel("Time (s)", color=Palette.FG_DIM, fontsize=8)
     ax.set_ylabel("Force (N)", color=Palette.FG_DIM, fontsize=8)
     ax.set_title("Spinal Compression (L5/S1)", color=Palette.FG, fontsize=10)
-    ax.legend(
-        fontsize=6,
-        facecolor=Palette.BG_PANEL,
-        edgecolor=Palette.FG_DIM,
-        labelcolor=Palette.FG,
-    )
+    _legend_outside_plot(ax, fontsize=6, columns=3)
 
     ax = ax_shear
     ax.plot(r.t, shear, color=Palette.ORANGE, lw=2, label="L5/S1 shear")
@@ -253,12 +226,7 @@ def plot_spine_loads(
     ax.set_xlabel("Time (s)", color=Palette.FG_DIM, fontsize=8)
     ax.set_ylabel("Force (N)", color=Palette.FG_DIM, fontsize=8)
     ax.set_title("Spinal Shear (L5/S1)", color=Palette.FG, fontsize=10)
-    ax.legend(
-        fontsize=6,
-        facecolor=Palette.BG_PANEL,
-        edgecolor=Palette.FG_DIM,
-        labelcolor=Palette.FG,
-    )
+    _legend_outside_plot(ax, fontsize=6, columns=1)
 
 
 # ---------------------------------------------------------------------------
