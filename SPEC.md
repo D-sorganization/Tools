@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.603                                    |
+| **Spec Version**        | 1.1.612                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,14 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-18 Update
 
+- Collapsed the diverged friction-factor twin in the pressure-drop engine.
+  `engine/friction_factors.py` is now a thin re-export of the canonical
+  `engine/_friction_factors.py` (the module the production engine imports), so
+  there is exactly one implementation of the `friction_factor_*` correlations
+  with a single `Re <= 0` laminar contract that raises (issue #3103) instead of
+  silently returning the 0.064 default. `test_pressure_drop_engine_split` now
+  resolves to the real `sidekick` engine path and asserts the shim re-exports
+  the canonical objects (#3659).
 - P1AM firmware first-boot defaults now keep `SignalBroker::Reset()` as the
   all-unmapped primitive but layer bench-safe routing after an invalid or
   erased flash configuration: thermocouples TC0-TC3 route to TAG_0-TAG_3,

@@ -5,6 +5,13 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+from upstream_drift_tools.process_calculators.pressure_drop_calculator.engine import (
+    friction_factors as _friction_factors_shim,
+)
+from upstream_drift_tools.process_calculators.pressure_drop_calculator.engine._friction_factors import (  # noqa: E501
+    friction_factor_colebrook,
+    friction_factor_laminar,
+)
 from upstream_drift_tools.process_calculators.pressure_drop_calculator.engine.compressible_flow import (  # noqa: E501
     calculate_expansion_factor,
 )
@@ -14,9 +21,6 @@ from upstream_drift_tools.process_calculators.pressure_drop_calculator.engine.fi
 from upstream_drift_tools.process_calculators.pressure_drop_calculator.engine.flow_properties import (  # noqa: E501
     calculate_elevation_pressure_drop,
     classify_flow_regime,
-)
-from upstream_drift_tools.process_calculators.pressure_drop_calculator.engine.friction_factors import (  # noqa: E501
-    friction_factor_colebrook,
 )
 from upstream_drift_tools.process_calculators.pressure_drop_calculator.engine.pressure_drop_calculation_engine import (  # noqa: E501
     PressureDropCalculationEngine,
@@ -38,13 +42,13 @@ def test_pressure_drop_engine_is_split_into_domain_modules(repo_root: Path) -> N
         / "src"
         / "shared"
         / "python"
-        / "upstream_drift_tools"
+        / "sidekick"
         / "process_calculators"
         / "pressure_drop_calculator"
         / "engine"
     )
     for name in (
-        "friction_factors.py",
+        "_friction_factors.py",
         "flow_properties.py",
         "fittings.py",
         "compressible_flow.py",
@@ -73,3 +77,24 @@ def test_extracted_pressure_drop_modules_preserve_regression_values() -> None:
 def test_pressure_drop_engine_facade_remains_constructible() -> None:
     engine = PressureDropCalculationEngine()
     assert engine is not None
+
+
+def test_friction_factors_shim_reexports_canonical_module() -> None:
+    """The non-underscore friction_factors module is a thin shim that
+    re-exports the canonical _friction_factors objects (single source of
+    truth — issue #3659)."""
+    assert _friction_factors_shim.friction_factor_laminar is friction_factor_laminar
+    assert _friction_factors_shim.friction_factor_colebrook is friction_factor_colebrook
+
+
+def test_laminar_has_single_raising_re_contract() -> None:
+    """friction_factor_laminar raises on Re<=0 (issue #3103 contract) via the
+    canonical module AND via the shim — there is no silent 0.064 default twin
+    left (issue #3659)."""
+    with pytest.raises(ValueError, match="Reynolds number must be positive"):
+        friction_factor_laminar(0.0)
+    with pytest.raises(ValueError, match="Reynolds number must be positive"):
+        friction_factor_laminar(-5.0)
+    # The shim delegates to the same raising implementation.
+    with pytest.raises(ValueError, match="Reynolds number must be positive"):
+        _friction_factors_shim.friction_factor_laminar(-1.0)
