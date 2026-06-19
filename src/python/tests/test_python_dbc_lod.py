@@ -253,6 +253,53 @@ def test_plugin_manager_scan_defaults_are_module_constants() -> None:
     )
 
 
+def test_discovered_tool_wins_name_collision(tmp_path: Path) -> None:
+    """load_tools_with_discovery: a discovered tool overrides a same-named JSON tool.
+
+    Regression for the precedence contract: the merge comment promises discovered
+    tools take precedence for duplicates, so a discovered manifest entry must
+    replace a stale tools.json entry of the same name in the same category.
+    """
+    module = _import_plugin_manager_module()
+    if module is None:
+        pytest.skip("plugin_manager not importable in isolation")
+
+    Tool = module.Tool
+    PluginManager = module.PluginManager
+
+    manager = PluginManager(repo_root=tmp_path)
+
+    json_tool = Tool(
+        name="dup",
+        path="stale.py",
+        type="python",
+        desc="from tools.json",
+        category="Development Tools",
+    )
+    discovered_tool = Tool(
+        name="dup",
+        path="fresh.py",
+        type="python",
+        desc="from manifest",
+        category="Development Tools",
+    )
+
+    manager.load_tools = MagicMock(return_value={"Development Tools": [json_tool]})
+    manager.scan_for_tools = MagicMock(
+        return_value={"Development Tools": [discovered_tool]}
+    )
+
+    merged = manager.load_tools_with_discovery()
+    category = merged["Development Tools"]
+
+    # Exactly one tool named "dup" survives, and it is the discovered one.
+    dup_tools = [t for t in category if t.name == "dup"]
+    assert len(dup_tools) == 1
+    surviving = dup_tools[0]
+    assert surviving.path == "fresh.py"
+    assert surviving.desc == "from manifest"
+
+
 def test_scan_for_tools_propagates_unexpected_tool_construction_error(
     tmp_path: Path,
 ) -> None:
