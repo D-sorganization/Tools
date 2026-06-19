@@ -83,22 +83,9 @@ See [Launcher Hierarchy & Guide](docs/LAUNCHERS.md) for detailed documentation.
    - Status: ✅ Active and maintained
    - Entry point: `python UnifiedToolsLauncher.py`
 
-2. **`launch_tools_main.py`** (Legacy CLI) - Deprecated
-
-   - Location: Repository root
-   - Type: Command-line interface
-   - Status: ⚠️ Deprecated - retained for backwards compatibility only
-   - Migration: Use `UnifiedToolsLauncher.py` instead
-
-3. **`Launcher.py`** (Legacy GUI) - No longer maintained
-   - Location: Repository root (if exists)
-   - Type: Original GUI launcher
-   - Status: ❌ Migrated to `UnifiedToolsLauncher.py`
-   - Migration: Use `UnifiedToolsLauncher.py` instead
-
 > **Important:** `tools_launcher.py` does not exist and any references to it are outdated. Use `UnifiedToolsLauncher.py` as the canonical entry point.
 
-> **Note:** Legacy launchers will be removed in v2.0. Please migrate to `UnifiedToolsLauncher.py`.
+> **Note:** Historical launcher names are not supported entry points. Use `UnifiedToolsLauncher.py`.
 
 ## 🚀 Quick Start
 

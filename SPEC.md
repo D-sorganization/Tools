@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.601                                    |
+| **Spec Version**        | 1.1.602                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -158,6 +158,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   legend helper and a roomier exercise GridSpec, so squat/deadlift/bench/snatch
   playback plots keep joint, COM, bar-path, balance, and spine-load labels
   visible without covering data curves or neighboring panels.
+- Pragmatic Programmer assessment scripts now avoid discarded duplicate-detection
+  state and duplicated `BLE001` suppressions, with a static regression covering
+  the scripts and README launcher hierarchy so nonexistent legacy launcher paths
+  are not reintroduced (#3740, #3741, #3742).
 - Movement Optimizer legacy `optimizer_gui` launch and registration surfaces now
   delegate to the canonical `movement_optimizer` PyQt6 app, preventing direct
   old-path launches from showing the retired minimal optimizer UI instead of
@@ -1264,6 +1268,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-18 | 1.1.602 | fix(scripts/docs, #3740 #3741 #3742): remove the discarded `defaultdict(list)` statement from `pragmatic_programmer_review.py`, collapse duplicated `BLE001` suppressions in assessment scripts, drop nonexistent legacy launcher entries from the README, and add static regression coverage for those contracts. |
 | 2026-06-18 | 1.1.601 | fix(movement_optimizer): route exercise analysis plot legends through the shared outside-plot helper, reserve additional GridSpec spacing, and add rendered bounding-box regression coverage so squat/deadlift/bench playback legends cannot obscure plot data or neighboring panels. |
 | 2026-06-18 | 1.1.600 | fix(model-generation): keep `from model_generation.cli import main` bound to the callable CLI entrypoint after `model_generation.cli.main` submodule imports, preserving CLI tests under importlib ordering. |
 | 2026-06-18 | 1.1.599 | fix(model-generation, #3668): return `mesh.volume` on both `inertia_from_mesh` mass and density paths so density-based inertia requests no longer hit an unbound `volume` local; add fake-trimesh regression coverage for density-derived mass/volume and mass-scaled inertia. |
