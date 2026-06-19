@@ -191,6 +191,22 @@ def test_security_headers_on_error_response(api: ModelGenerationAPI) -> None:
     assert "Content-Security-Policy" in resp.headers
 
 
+@pytest.mark.unit
+def test_handle_request_does_not_leak_raw_exception_text(
+    api: ModelGenerationAPI,
+) -> None:
+    def _raise_secret(_request: APIRequest) -> APIResponse:
+        raise RuntimeError("secret filesystem path C:/tmp/private-model.urdf")
+
+    api.add_route(HTTPMethod.GET, "/boom", _raise_secret)
+
+    resp = _get(api, "/api/v1/boom")
+
+    assert resp.status_code == 500
+    assert "secret filesystem path" not in resp.body["error"]
+    assert "internal server error" in resp.body["error"].lower()
+
+
 # ---------------------------------------------------------------------------
 # generate_from_params — missing-field guard (no heavy imports needed)
 # ---------------------------------------------------------------------------
@@ -224,6 +240,15 @@ def test_convert_mjcf_to_urdf_missing_content_returns_400(
     resp = _post(api, "/api/v1/convert/mjcf-to-urdf", body={})
     assert resp.status_code == 400
     assert "error" in resp.body
+
+
+@pytest.mark.unit
+def test_convert_mjcf_to_urdf_invalid_upload_encoding_returns_422(
+    api: ModelGenerationAPI,
+) -> None:
+    resp = _post(api, "/api/v1/convert/mjcf-to-urdf", files={"file": b"\xff"})
+    assert resp.status_code == 422
+    assert "utf-8" in resp.body["error"].lower()
 
 
 @pytest.mark.unit
@@ -456,6 +481,22 @@ def test_inertia_from_mesh_no_mass_or_density_returns_400(
     assert "error" in resp.body
 
 
+@pytest.mark.unit
+@pytest.mark.parametrize("field", ["mass", "density"])
+def test_inertia_from_mesh_rejects_non_positive_mass_inputs(
+    api: ModelGenerationAPI,
+    field: str,
+) -> None:
+    resp = _post(
+        api,
+        "/api/v1/inertia/from-mesh",
+        body={field: -1.0, "filename": "mesh.stl"},
+        files={"mesh": b"solid mesh\nendsolid mesh\n"},
+    )
+    assert resp.status_code == 400
+    assert field in resp.body["error"]
+
+
 # ---------------------------------------------------------------------------
 # Library handlers
 # ---------------------------------------------------------------------------
@@ -575,6 +616,45 @@ def test_compose_models_missing_sources_returns_400(api: ModelGenerationAPI) -> 
     resp = _post(api, "/api/v1/editor/compose", body={"name": "bot"})
     assert resp.status_code == 400
     assert "error" in resp.body
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    ("operation", "missing_key"),
+    [
+        ({"type": "copy_subtree", "source": "base"}, "link"),
+        ({"type": "delete_subtree"}, "link"),
+        ({"type": "rename", "old_name": "base"}, "new_name"),
+    ],
+)
+def test_compose_models_validates_required_operation_fields(
+    api: ModelGenerationAPI,
+    operation: dict[str, str],
+    missing_key: str,
+) -> None:
+    resp = _post(
+        api,
+        "/api/v1/editor/compose",
+        body={"sources": {"base": SIMPLE_URDF}, "operations": [operation]},
+    )
+    assert resp.status_code == 400
+    assert missing_key in resp.body["error"]
+
+
+@pytest.mark.unit
+def test_compose_models_rejects_unknown_operation_type(
+    api: ModelGenerationAPI,
+) -> None:
+    resp = _post(
+        api,
+        "/api/v1/editor/compose",
+        body={
+            "sources": {"base": SIMPLE_URDF},
+            "operations": [{"type": "cop_subtree", "source": "base", "link": "root"}],
+        },
+    )
+    assert resp.status_code == 400
+    assert "unknown operation" in resp.body["error"].lower()
 
 
 @pytest.mark.unit

@@ -3,6 +3,7 @@ from __future__ import annotations
 import sys
 import types
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pytest
@@ -234,3 +235,24 @@ def test_mesh_upload_requires_mass_or_density() -> None:
         "mass" in response.body["error"].lower()
         or "density" in response.body["error"].lower()
     )
+
+
+def test_mesh_upload_rejects_zero_source_mesh_mass(monkeypatch) -> None:
+    """Explicit mass scaling must reject meshes whose parser reports zero mass."""
+
+    class _ZeroMassMesh:
+        mass = 0.0
+        volume = 1.0
+        moment_inertia = 1.0
+        center_mass = types.SimpleNamespace(tolist=lambda: [0.0, 0.0, 0.0])
+
+    def load(_path: str | Path) -> Any:
+        return _ZeroMassMesh()
+
+    monkeypatch.setitem(sys.modules, "trimesh", types.SimpleNamespace(load=load))
+    api = ModelGenerationAPI()
+
+    response = api.inertia_from_mesh(_mesh_request(_ASCII_STL, mass=1.0))
+
+    assert response.status_code == 400
+    assert "mesh mass" in response.body["error"].lower()
