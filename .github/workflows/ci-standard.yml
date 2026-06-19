@@ -185,14 +185,7 @@ jobs:
 
       - name: Install System Dependencies
         run: |
-          set -o pipefail
-          sudo flock /tmp/d-sorg-apt-install.lock bash -c '
-            set -euo pipefail
-            while fuser /var/lib/dpkg/lock >/dev/null 2>&1 || fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done
-            rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock /var/cache/apt/pkgcache.bin /var/cache/apt/srcpkgcache.bin
-            env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=300 update --fix-missing
-            env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6 xvfb
-          '
+          .github/scripts/install-system-deps.sh libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6 xvfb
 
       - name: Install Dependencies
         env:
@@ -526,14 +519,7 @@ jobs:
 
       - name: Install System Dependencies
         run: |
-          set -o pipefail
-          sudo flock /tmp/d-sorg-apt-install.lock bash -c '
-            set -euo pipefail
-            while fuser /var/lib/dpkg/lock >/dev/null 2>&1 || fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done
-            rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock /var/cache/apt/pkgcache.bin /var/cache/apt/srcpkgcache.bin
-            env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=300 update --fix-missing
-            env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6 python3-tk
-          '
+          .github/scripts/install-system-deps.sh libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6 python3-tk
 
       - name: Install Dependencies
         # See quality-gate Install Dependencies for the rationale — the shared
