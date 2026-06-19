@@ -246,7 +246,7 @@ class TestMotionAnalysisPanel:
             cols=3,
         )
 
-        assert panel.canvas.minimumWidth() >= 780
+        assert panel.canvas.minimumWidth() >= 1200
         assert panel.canvas.minimumHeight() >= 832
         assert panel.minimumHeight() > panel.canvas.minimumHeight()
 
@@ -285,6 +285,40 @@ class TestMotionAnalysisPanel:
 
         assert min(data_heights) >= 210.0
         assert max(legend_gaps) <= 110.0
+
+    def test_swingset_live_tab_layout_preserves_usable_plot_width(
+        self, qapp, swing_history
+    ) -> None:
+        from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
+
+        panel = MotionAnalysisPanel(
+            ["torques", "power", "angle", "com_height", "energy", "com_path"],
+            rows=3,
+            cols=2,
+        )
+        plot_swing_joint_torques(panel.axes["torques"], swing_history, legend=False)
+        plot_swing_joint_power(panel.axes["power"], swing_history, legend=False)
+        plot_swing_angle(panel.axes["angle"], swing_history, legend=False)
+        plot_swing_com_height(panel.axes["com_height"], swing_history, legend=False)
+        plot_swing_energy(panel.axes["energy"], swing_history, legend=False)
+        plot_swing_com_path(panel.axes["com_path"], swing_history, legend=False)
+
+        minimum_size = panel.canvas.minimumSize()
+        panel.figure.set_size_inches(
+            minimum_size.width() / 100.0,
+            minimum_size.height() / 100.0,
+            forward=True,
+        )
+        panel.draw()
+        renderer = panel.canvas.get_renderer()
+        data_widths = [axes.get_window_extent(renderer).width for axes in panel.axes.values()]
+
+        assert min(data_widths) >= 300.0
+        self._assert_docked_legends_do_not_cover_plots(
+            panel,
+            figure_size=(minimum_size.width() / 100.0, minimum_size.height() / 100.0),
+            min_legend_padding_px=2.0,
+        )
 
     def test_docked_joint_legends_use_compact_three_column_rows(self, qapp) -> None:
         from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel

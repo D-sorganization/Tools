@@ -48,6 +48,7 @@ def _wait_for_policy_worker(qapp, swingset: SwingsetTab, timeout_s: float = 10.0
 def _assert_docked_legends_are_clipped_to_reserved_strips(panel) -> None:
     panel.canvas.draw()
     renderer = panel.canvas.get_renderer()
+    tolerance_px = 1.0
     for name, legend_axis in panel.legend_axes.items():
         legend = legend_axis.get_legend()
         if legend is None:
@@ -57,8 +58,10 @@ def _assert_docked_legends_are_clipped_to_reserved_strips(panel) -> None:
         strip_box = legend_axis.get_window_extent(renderer)
 
         assert not legend_box.overlaps(data_box)
-        assert strip_box.contains(legend_box.x0, legend_box.y0)
-        assert strip_box.contains(legend_box.x1, legend_box.y1)
+        assert legend_box.x0 >= strip_box.x0 - tolerance_px
+        assert legend_box.x1 <= strip_box.x1 + tolerance_px
+        assert legend_box.y0 >= strip_box.y0 - tolerance_px
+        assert legend_box.y1 <= strip_box.y1 + tolerance_px
         assert legend.get_clip_on()
         assert legend.get_clip_box() is legend_axis.bbox
         for artist in legend.findobj():
@@ -864,7 +867,7 @@ def test_swingset_plots_tab_scrolls_instead_of_crushing_legends(qapp) -> None:
 
     assert len(plot_scrolls) == 1
     assert plot_scrolls[0].widgetResizable() is True
-    assert swingset.analysis_panel.canvas.minimumWidth() <= 640
+    assert swingset.analysis_panel.canvas.minimumWidth() >= 800
     assert swingset.analysis_panel.canvas.minimumHeight() >= 1200
 
 

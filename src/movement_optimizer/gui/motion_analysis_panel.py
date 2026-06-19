@@ -21,7 +21,7 @@ from matplotlib.backends.backend_qtagg import (  # type: ignore[attr-defined]  #
     NavigationToolbar2QT,
 )
 from matplotlib.figure import Figure
-from PyQt6.QtWidgets import QVBoxLayout, QWidget
+from PyQt6.QtWidgets import QSizePolicy, QVBoxLayout, QWidget
 
 from ..rendering import Palette, restyle_figure
 
@@ -31,7 +31,7 @@ class MotionAnalysisPanel(QWidget):
 
     _LEGEND_HEIGHT_RATIO = 0.32
     _DATA_LEGEND_HSPACE = 0.50
-    _MIN_AXIS_WIDTH_PX = 260
+    _MIN_AXIS_WIDTH_PX = 400
     _MIN_DATA_HEIGHT_PX = 380
     _MIN_LEGEND_HEIGHT_PX = 76
     _MIN_TOOLBAR_HEIGHT_PX = 40
@@ -58,10 +58,18 @@ class MotionAnalysisPanel(QWidget):
         self.figure = Figure(figsize=(8.0, 5.0), facecolor=Palette.BG)
         self.canvas = FigureCanvasQTAgg(self.figure)
         self.canvas.setMinimumSize(self._minimum_canvas_width(), self._minimum_canvas_height())
+        self.canvas.setSizePolicy(
+            QSizePolicy.Policy.MinimumExpanding,
+            QSizePolicy.Policy.MinimumExpanding,
+        )
         self.toolbar = NavigationToolbar2QT(self.canvas, self)
         self.axes: dict[str, Axes] = {}
         self.legend_axes: dict[str, Axes] = {}
         self._legends_visible = True
+        self.setSizePolicy(
+            QSizePolicy.Policy.MinimumExpanding,
+            QSizePolicy.Policy.MinimumExpanding,
+        )
         self.setMinimumSize(
             self._minimum_canvas_width(),
             self._minimum_canvas_height() + self._MIN_TOOLBAR_HEIGHT_PX,
@@ -133,22 +141,25 @@ class MotionAnalysisPanel(QWidget):
             if not handles or not labels or not self._legends_visible:
                 continue
 
-            legend = legend_axis.legend(
-                handles,
-                labels,
-                loc="center",
-                bbox_to_anchor=(0.5, 0.5),
-                ncol=self._legend_columns(len(labels)),
-                fontsize=6,
-                facecolor=Palette.BG_PANEL,
-                edgecolor=Palette.FG_DIM,
-                labelcolor=Palette.FG,
-                framealpha=0.9,
-                borderaxespad=0.0,
-                handlelength=1.2,
-                handletextpad=0.35,
-                columnspacing=0.7,
-            )
+            legend_kwargs = {
+                "loc": "center",
+                "bbox_to_anchor": (0.0, 0.0, 1.0, 1.0),
+                "bbox_transform": legend_axis.transAxes,
+                "ncol": self._legend_columns(len(labels)),
+                "fontsize": 6,
+                "facecolor": Palette.BG_PANEL,
+                "edgecolor": Palette.FG_DIM,
+                "labelcolor": Palette.FG,
+                "framealpha": 0.9,
+                "borderaxespad": 0.0,
+                "borderpad": 0.35,
+                "handlelength": 1.2,
+                "handletextpad": 0.35,
+                "columnspacing": 0.7,
+            }
+            if len(labels) > self._legend_columns(len(labels)):
+                legend_kwargs["mode"] = "expand"
+            legend = legend_axis.legend(handles, labels, **legend_kwargs)
             self._clip_legend_to_axis(legend, legend_axis)
 
     @staticmethod
