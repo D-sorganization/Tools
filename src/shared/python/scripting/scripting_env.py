@@ -86,27 +86,52 @@ except ImportError:  # Windows
     _resource = None  # type: ignore[assignment]
     _HAS_RESOURCE = False
 
-# CPU soft/hard limits in seconds applied at module import time on supported
-# platforms.  These are process-wide ceilings; the per-call timeout inside
-# execute() provides a finer-grained guard on all platforms.
+# CPU soft/hard limits in seconds. These are *process-wide* OS ceilings.
+# They are NOT applied at import time: importing this module must be free of
+# side effects so any consumer (e.g. a numpy/scipy GUI) is not silently
+# sentenced to a 10s cumulative-CPU SIGKILL or a 512 MiB allocation ceiling.
+# Call ``apply_process_resource_limits()`` explicitly, or set the
+# ``SCRIPTING_ENV_APPLY_RLIMITS`` env var to opt in at import time.
 _CPU_SOFT_LIMIT_S = 5
 _CPU_HARD_LIMIT_S = 10
 # Virtual memory ceiling: 512 MiB
 _MEM_LIMIT_BYTES = 512 * 1024 * 1024
 
-if sys.platform != "win32" and _HAS_RESOURCE and _resource is not None:
+
+def apply_process_resource_limits() -> bool:
+    """Apply process-wide CPU/memory rlimits (Linux/macOS only).
+
+    WARNING: ``setrlimit`` mutates the *entire* OS process, not just this
+    sandbox. Only call this from a process you own (e.g. a dedicated
+    out-of-process worker), never from a shared library import path.
+
+    Returns ``True`` if limits were applied, ``False`` on unsupported
+    platforms (Windows) or if ``resource`` is unavailable.
+    """
+    if sys.platform == "win32" or not _HAS_RESOURCE or _resource is None:
+        return False
+    applied = False
     try:
         _resource.setrlimit(
             _resource.RLIMIT_CPU, (_CPU_SOFT_LIMIT_S, _CPU_HARD_LIMIT_S)
         )
+        applied = True
     except (ValueError, getattr(_resource, "error", Exception)):
         pass
     try:
         _resource.setrlimit(
             getattr(_resource, "RLIMIT_AS", 0), (_MEM_LIMIT_BYTES, _MEM_LIMIT_BYTES)
         )
+        applied = True
     except (ValueError, getattr(_resource, "error", Exception)):
         pass
+    return applied
+
+
+# Opt-in import-time application for embedders that explicitly want the
+# legacy process-global behaviour.
+if os.environ.get("SCRIPTING_ENV_APPLY_RLIMITS"):
+    apply_process_resource_limits()
 
 # ---------------------------------------------------------------------------
 # Restricted builtins
