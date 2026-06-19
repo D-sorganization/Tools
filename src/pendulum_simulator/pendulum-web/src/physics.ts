@@ -514,7 +514,9 @@ export function runSimulation(
 
     const t: number[] = [];
     const states: State[] = [];
-    const state: State = [...initialState] as State;
+    // ⚡ Bolt Optimization: Replace spread syntax with pre-allocated array copy to prevent GC pauses
+    const state: State = new Array(4) as unknown as State;
+    for (let i = 0; i < 4; i++) state[i] = initialState[i];
     let time = 0;
 
     // ⚡ Bolt Optimization: Pre-allocate buffers for RK4 to eliminate GC pauses
@@ -526,7 +528,10 @@ export function runSimulation(
 
     while (time <= tEnd + 1e-10) {
         t.push(time);
-        states.push([...state] as State);
+        // ⚡ Bolt Optimization: Replace [...state] spread with manual copy in high-frequency RK4 loop
+        const s = new Array(4) as unknown as State;
+        for (let i = 0; i < 4; i++) s[i] = state[i];
+        states.push(s);
         rk4StepMut(state, time, dt, params, torqueFunc, limits, clamp, k1, k2, k3, k4, tmp);
         time += dt;
     }
