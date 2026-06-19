@@ -9,6 +9,17 @@ from ..utils.file_utils import safe_read_json
 
 logger = logging.getLogger(__name__)
 
+TOOL_MANIFEST_FILENAME = "tool_manifest.json"
+DEFAULT_TOOL_TYPE = "python"
+DEFAULT_TOOL_CATEGORY = "Development Tools"
+DEFAULT_TOOL_SCAN_DIRS = (
+    "tools",
+    "web_applications",
+    "data_processing",
+    "scientific_modeling",
+    "media_processing",
+)
+
 
 @dataclass
 class Tool:
@@ -47,6 +58,9 @@ class PluginManager:
         Returns:
             Tuple of (is_valid, error_message)
         """
+        if not isinstance(tool_path, str):
+            raise TypeError(f"tool_path must be a str, got {type(tool_path).__name__}")
+
         try:
             path = Path(tool_path)
             # Resolve to absolute path relative to repo root
@@ -74,6 +88,31 @@ class PluginManager:
         except (TypeError, ValueError, OSError, RuntimeError) as e:
             return False, f"Invalid path format: {tool_path} ({e})"
 
+    def _build_validated_tool(
+        self,
+        item: dict[str, str],
+        category: str,
+        *,
+        warning_context: str,
+    ) -> Tool | None:
+        """Validate a configured tool path and build a Tool if valid."""
+        tool_path = item["path"]
+        is_valid, error_msg = self.validate_tool_path(tool_path)
+        if not is_valid:
+            logger.warning(
+                f"Skipping {warning_context} '{item.get('name', 'Unknown')}' "
+                f"in {category}: {error_msg}"
+            )
+            return None
+
+        return Tool(
+            name=item["name"],
+            path=tool_path,
+            type=item["type"],
+            desc=item["desc"],
+            category=category,
+        )
+
     def load_tools(self) -> dict[str, list[Tool]]:
         """
         Load tools from tools.json with path validation.
@@ -99,24 +138,13 @@ class PluginManager:
                 tool_list = []
                 for item in items:
                     try:
-                        tool_path = item["path"]
-                        # Validate path exists and is within repository (issue #236)
-                        is_valid, error_msg = self.validate_tool_path(tool_path)
-                        if not is_valid:
-                            logger.warning(
-                                f"Skipping tool '{item.get('name', 'Unknown')}' "
-                                f"in {category}: {error_msg}"
-                            )
-                            continue
-
-                        tool = Tool(
-                            name=item["name"],
-                            path=tool_path,
-                            type=item["type"],
-                            desc=item["desc"],
-                            category=category,
+                        tool = self._build_validated_tool(
+                            item,
+                            category,
+                            warning_context="tool",
                         )
-                        tool_list.append(tool)
+                        if tool is not None:
+                            tool_list.append(tool)
                     except KeyError as e:
                         logger.warning(
                             f"Skipping invalid tool entry in {category}: {e}"
@@ -157,21 +185,14 @@ class PluginManager:
         """
         discovered_tools: dict[str, list[Tool]] = {}
 
-        # Common tool directories to scan
-        tool_dirs = [
-            self.repo_root / "tools",
-            self.repo_root / "web_applications",
-            self.repo_root / "data_processing",
-            self.repo_root / "scientific_modeling",
-            self.repo_root / "media_processing",
-        ]
+        tool_dirs = [self.repo_root / dirname for dirname in DEFAULT_TOOL_SCAN_DIRS]
 
         for tool_dir in tool_dirs:
             if not tool_dir.exists():
                 continue
 
-            # Recursively search for tool_manifest.json files
-            for manifest_path in tool_dir.rglob("tool_manifest.json"):
+            # Recursively search for tool manifest files
+            for manifest_path in tool_dir.rglob(TOOL_MANIFEST_FILENAME):
                 # Use shared utility for safe JSON reading
                 manifest_data = safe_read_json(manifest_path, default={})
                 if not manifest_data:
@@ -196,27 +217,24 @@ class PluginManager:
                                 (manifest_dir / tool_path).relative_to(self.repo_root)
                             )
 
-                    tool_type = manifest_data.get("type", "python")
+                    tool_type = manifest_data.get("type", DEFAULT_TOOL_TYPE)
                     tool_desc = manifest_data.get(
                         "description", manifest_data.get("desc", "")
                     )
-                    tool_category = manifest_data.get("category", "Development Tools")
+                    tool_category = manifest_data.get("category", DEFAULT_TOOL_CATEGORY)
 
-                    # Validate path exists and is within repository (issue #236)
-                    is_valid, error_msg = self.validate_tool_path(tool_path)
-                    if not is_valid:
-                        logger.warning(
-                            f"Skipping discovered tool '{tool_name}': {error_msg}"
-                        )
-                        continue
-
-                    tool = Tool(
-                        name=tool_name,
-                        path=tool_path,
-                        type=tool_type,
-                        desc=tool_desc,
-                        category=tool_category,
+                    tool = self._build_validated_tool(
+                        {
+                            "name": tool_name,
+                            "path": tool_path,
+                            "type": tool_type,
+                            "desc": tool_desc,
+                        },
+                        tool_category,
+                        warning_context="discovered tool",
                     )
+                    if tool is None:
+                        continue
 
                     if tool_category not in discovered_tools:
                         discovered_tools[tool_category] = []
@@ -226,7 +244,7 @@ class PluginManager:
                         f"Discovered tool: {tool_name} in {manifest_path.parent}"
                     )
 
-                except Exception as e:  # noqa: BLE001 — manifest parsing must not crash discovery
+                except (KeyError, ValueError, TypeError, OSError) as e:
                     logger.warning(f"Failed to parse manifest at {manifest_path}: {e}")
                     continue
 
