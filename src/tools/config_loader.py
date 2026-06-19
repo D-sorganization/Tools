@@ -39,7 +39,6 @@ def validate_tools_config(
     Returns:
         Validated dictionary with invalid entries removed.
     """
-    assert tools_dict is not None, "tools_dict must be provided"
     from shared.python.contracts import require
 
     require(isinstance(tools_dict, dict), "tools_dict must be a dictionary")

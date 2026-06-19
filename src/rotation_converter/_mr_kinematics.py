@@ -196,7 +196,6 @@ def IKinBody(
     Returns:
         Tuple of (thetalist, success) where success indicates convergence.
     """
-    assert eomg is not None, "eomg must be provided"
     Blist = np.asarray(Blist, dtype=float)
     M = np.asarray(M, dtype=float)
     T_desired = np.asarray(T_desired, dtype=float)
