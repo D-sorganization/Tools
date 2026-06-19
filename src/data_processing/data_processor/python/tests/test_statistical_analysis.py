@@ -21,7 +21,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
-from numba import jit
 
 # =============================================================================
 # FIXTURES
@@ -176,6 +175,8 @@ class TestDatasetManager:
         self, sample_df: pd.DataFrame, temp_dir: Path
     ) -> None:
         """Test saving and loading workspace."""
+        pytest.importorskip("pyarrow", reason="pyarrow not installed")
+
         from data_processor.core.dataset_manager import DatasetManager
 
         # Create and save
@@ -436,9 +437,6 @@ class TestANOVA:
         # Should have 3 pairwise comparisons (3 choose 2)
         assert len(result.post_hoc_results) == 3
 
-    @jit(nopython=True, fastmath=True)
-    @jit(nopython=True, fastmath=True)
-    @jit(nopython=True, fastmath=True)
     def test_two_way_anova(self) -> None:
         """Test two-way ANOVA."""
         from data_processor.core.anova import ANOVAAnalyzer

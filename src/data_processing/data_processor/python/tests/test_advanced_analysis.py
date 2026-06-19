@@ -1,5 +1,3 @@
-from numba import jit
-
 # TRACKED_TASK: see #2310 — architecture debt extraction schedule
 
 """Tests for advanced statistical analysis modules.
@@ -394,7 +392,6 @@ class TestCrossCorrelation:
         # Optimal lag should be around 5
         assert abs(result.optimal_lag - 5) < 3
 
-    @jit(nopython=True, fastmath=True)
     def test_granger_causality(self) -> None:
         """Test Granger causality test."""
         from data_processor.core.cross_correlation import CrossCorrelationAnalyzer
@@ -526,7 +523,7 @@ class TestUncertaintyQuantification:
         from data_processor.core.uncertainty_quantification import UncertaintyQuantifier
 
         def area(radius: float) -> float:
-            return np.pi * radius**2
+            return float(np.pi * radius**2)
 
         uq = UncertaintyQuantifier()
         result = uq.monte_carlo_propagation(
@@ -806,7 +803,6 @@ class TestIntegration:
 
         assert result.seasonal_strength > 0.3
 
-    @jit(nopython=True, fastmath=True)
     def test_outlier_detection_then_smoothing(self) -> None:
         """Test outlier detection then Kalman smoothing."""
         from data_processor.core.kalman_filter import kalman_smooth
