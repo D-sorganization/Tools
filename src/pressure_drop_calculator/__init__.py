@@ -24,17 +24,24 @@ if TYPE_CHECKING:  # pragma: no cover - typing only
         calculate_pressure_drop,
     )
 
-_EXPORTS = (
+    from .models import PressureDropInput, PressureDropOutput
+
+_SIDEKICK_EXPORTS = (
     "PressureDropCalculationEngine",
     "PressureDropInputs",
     "PressureDropResults",
     "calculate_pressure_drop",
 )
+_MODEL_EXPORTS = (
+    "PressureDropInput",
+    "PressureDropOutput",
+)
+_EXPORTS = _SIDEKICK_EXPORTS + _MODEL_EXPORTS
 
 
 def __getattr__(name: str) -> Any:
     """Lazily import pressure-drop symbols from ``sidekick`` (:pep:`562`)."""
-    if name in _EXPORTS:
+    if name in _SIDEKICK_EXPORTS:
         import importlib
 
         module = importlib.import_module(
@@ -42,6 +49,13 @@ def __getattr__(name: str) -> Any:
         )
         value = getattr(module, name)
         globals()[name] = value  # cache for subsequent lookups
+        return value
+    if name in _MODEL_EXPORTS:
+        import importlib
+
+        module = importlib.import_module(f"{__name__}.models")
+        value = getattr(module, name)
+        globals()[name] = value
         return value
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
@@ -53,7 +67,9 @@ def __dir__() -> list[str]:
 
 __all__ = [
     "PressureDropCalculationEngine",
+    "PressureDropInput",
     "PressureDropInputs",
+    "PressureDropOutput",
     "PressureDropResults",
     "calculate_pressure_drop",
 ]
