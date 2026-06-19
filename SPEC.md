@@ -1275,11 +1275,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-<<<<<<< HEAD
-| 2026-06-19 | 1.1.7673 | fix(data_processor, #3673): replace the vacuous `filter_type is not None` assert in `design_frequency_window` with real precondition checks that raise `ValueError` for an unrecognized `filter_type`, `n_samples <= 0`, or `transition_bw <= 0`, preventing silent inf/NaN coefficients and all-zero filters. |
-=======
 | 2026-06-19 | 1.1.7701 | fix(scripting, #3701): stop calling `resource.setrlimit` at `scripting_env` import time, which silently capped the entire host process to 10s cumulative CPU / 512 MiB. Limits now live in an explicit `apply_process_resource_limits()` opt-in (also reachable via the `SCRIPTING_ENV_APPLY_RLIMITS` env flag); importing the module is side-effect-free. |
->>>>>>> 0f2245d5e (fix(scripting): make scripting_env import side-effect-free (#3701))
+| 2026-06-19 | 1.1.7673 | fix(data_processor, #3673): replace the vacuous `filter_type is not None` assert in `design_frequency_window` with real precondition checks that raise `ValueError` for an unrecognized `filter_type`, `n_samples <= 0`, or `transition_bw <= 0`, preventing silent inf/NaN coefficients and all-zero filters. |
 | 2026-06-19 | 1.1.604 | fix(movement_optimizer): make Swingset policy trace canvas height track wrapped legend rows and keep Swingset/chain analysis legends docked outside rendered data axes so optimizer legends cannot obscure telemetry or analysis plot contents in narrow panes. |
 | 2026-06-19 | 1.1.604 | fix(docs, #3685): repoint broken project README links on `docs/index.md` to existing `src/` targets, including the scientific-modeling entry now directed at the maintained solar-system model documentation. |
 | 2026-06-18 | 1.1.603 | fix(shared, #3703, #3705): remove the redundant DbC-only `safe_eval.validate_expression` type guard, keep the unconditional `TypeError` boundary before empty-string handling, and add int/float/bytes/list/None regression coverage under normal, `DBC_LEVEL=off`, and optimized Python execution. |
