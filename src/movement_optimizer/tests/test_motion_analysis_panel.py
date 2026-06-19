@@ -247,7 +247,7 @@ class TestMotionAnalysisPanel:
         )
 
         assert panel.canvas.minimumWidth() >= 1200
-        assert panel.canvas.minimumHeight() >= 832
+        assert panel.canvas.minimumHeight() >= 856
         assert panel.minimumHeight() > panel.canvas.minimumHeight()
 
     def test_swingset_minimum_layout_preserves_curve_height(self, qapp, swing_history) -> None:
@@ -284,7 +284,8 @@ class TestMotionAnalysisPanel:
             )
 
         assert min(data_heights) >= 210.0
-        assert max(legend_gaps) <= 110.0
+        assert min(legend_gaps) >= 8.0
+        assert max(legend_gaps) <= 80.0
 
     def test_swingset_live_tab_layout_preserves_usable_plot_width(
         self, qapp, swing_history
@@ -320,7 +321,7 @@ class TestMotionAnalysisPanel:
             min_legend_padding_px=2.0,
         )
 
-    def test_swingset_legends_are_right_docked_beside_each_plot(
+    def test_swingset_legends_are_docked_below_each_plot(
         self, qapp, swing_history
     ) -> None:
         from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
@@ -346,7 +347,9 @@ class TestMotionAnalysisPanel:
             legend = panel.legend_axes[name].get_legend()
 
             assert legend is not None
-            assert legend_axis_box.x0 >= data_box.x1 + 2.0
+            assert legend_axis_box.y1 <= data_box.y0 - 2.0
+            assert legend_axis_box.x0 >= data_box.x0 - 1.0
+            assert legend_axis_box.x1 <= data_box.x1 + 1.0
             assert not legend.get_window_extent(renderer).overlaps(data_box)
 
     def test_clear_rebuilds_axes(self, qapp) -> None:

@@ -11,7 +11,7 @@
 | License          | MIT                                                     |
 | Package Name     | `movement-optimizer`                                    |
 | Current Version  | `1.0.0`                                                 |
-| Spec Version     | `1.0.33`                                                |
+| Spec Version     | `1.0.34`                                                |
 | Last Spec Update | 2026-06-19                                              |
 
 ## 2. Purpose
@@ -52,10 +52,9 @@ Movement-Optimizer is a biomechanics trajectory optimizer for barbell exercises.
   columns and anchor dense docked legends to the full reserved legend strip, so
   the live Swingset `3 x 2` plot layout preserves usable data-axis width while
   legends remain outside plotted curves.
-- Swingset and Chain Dynamics analysis legends now dock into right-side strips
-  beside each plot rather than horizontal strips between plot rows, preserving
-  vertical plot continuity while keeping legends clear of curves and neighboring
-  axis labels.
+- Swingset and Chain Dynamics analysis legends now dock into dedicated bands
+  beneath each plot instead of narrow side strips, preserving full plot width
+  while keeping legends clear of curves, tick labels, and axis labels.
 - Swingset and Chain Dynamics panel renderers now suppress transient data-axis
   legends while preserving series labels for `MotionAnalysisPanel` to dock in
   reserved legend rows, so visible legends cannot appear over the plotted

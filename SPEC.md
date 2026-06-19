@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7675                                   |
+| **Spec Version**        | 1.1.7676                                   |
 | **Last Spec Update**    | 2026-06-19                                 |
 
 ## 2. Purpose & Mission
@@ -163,9 +163,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   obscuring curves, neighboring subplots, compact pane edges, axis labels, or
   plot titles.
 - Movement Optimizer Swingset and Chain Dynamics analysis legends now dock in
-  right-side strips beside each plot instead of horizontal strips between plot
-  rows, preserving vertical plot continuity while keeping legends clear of
-  plotted curves and neighboring axis labels.
+  dedicated bands below each plot instead of narrow side strips, preserving
+  full plot width while keeping legends clear of plotted curves, tick labels,
+  and axis labels.
 - Movement Optimizer COM path rendering now draws the colour-graded center-of-
   mass trace with a single Matplotlib `LineCollection` instead of one `Line2D`
   artist per time step, preserving the path colours while reducing plot redraw
@@ -1289,6 +1289,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-19 | 1.1.7676 | fix(movement_optimizer): move Swingset and Chain Dynamics analysis legends from narrow right-side strips into dedicated below-plot bands, preserving full plot width while rendered geometry coverage proves legends stay outside curves, tick labels, and axis labels. |
 | 2026-06-19 | 1.1.7675 | fix(movement_optimizer): dock Swingset and Chain Dynamics analysis legends in right-side per-plot strips instead of between-row bands, with rendered geometry coverage proving legends sit beside data axes without covering curves or neighboring axis labels. |
 | 2026-06-19 | 1.1.7674 | fix(contracts, #3736): remove redundant `assert ... is not None` guards shadowed by explicit contract checks in `_mr_kinematics.IKinBody` and `config_loader.validate_tools_config`, keeping `None` rejection covered by focused regressions under the maintained contract path. |
 | 2026-06-19 | 1.1.7674 | ci(tests, #3736): focus source-keyed CI selection for `_mr_kinematics.py` and `tools/config_loader.py` on their dedicated contract suites so redundant-assert cleanup branches do not collect package-wide rotation/tools suites in every Python matrix lane. |

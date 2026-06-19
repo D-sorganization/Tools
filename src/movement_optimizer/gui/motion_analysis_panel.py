@@ -29,11 +29,12 @@ from ..rendering import Palette, restyle_figure
 class MotionAnalysisPanel(QWidget):
     """A themed grid of named matplotlib axes with a navigation toolbar."""
 
-    _LEGEND_WIDTH_RATIO = 0.36
-    _DATA_LEGEND_WSPACE = 0.34
+    _LEGEND_HEIGHT_RATIO = 0.22
+    _DATA_LEGEND_HSPACE = 0.38
+    _GRID_WSPACE = 0.28
     _MIN_AXIS_WIDTH_PX = 440
-    _MIN_LEGEND_WIDTH_PX = 150
-    _MIN_DATA_HEIGHT_PX = 416
+    _MIN_DATA_HEIGHT_PX = 340
+    _MIN_LEGEND_HEIGHT_PX = 88
     _MIN_TOOLBAR_HEIGHT_PX = 40
 
     def __init__(self, axis_names: Sequence[str], *, rows: int, cols: int) -> None:
@@ -84,24 +85,24 @@ class MotionAnalysisPanel(QWidget):
 
     def _build_axes(self) -> None:
         self.figure.clear()
-        width_ratios = tuple(
-            ratio for _ in range(self._cols) for ratio in (1.0, self._LEGEND_WIDTH_RATIO)
+        height_ratios = tuple(
+            ratio for _ in range(self._rows) for ratio in (1.0, self._LEGEND_HEIGHT_RATIO)
         )
         grid = self.figure.add_gridspec(
-            self._rows,
-            self._cols * 2,
-            width_ratios=width_ratios,
-            hspace=0.34,
-            wspace=self._DATA_LEGEND_WSPACE,
+            self._rows * 2,
+            self._cols,
+            height_ratios=height_ratios,
+            hspace=self._DATA_LEGEND_HSPACE,
+            wspace=self._GRID_WSPACE,
         )
         self.axes = {}
         self.legend_axes = {}
         for index, name in enumerate(self._axis_names):
             row, col = divmod(index, self._cols)
-            data_col = col * 2
-            legend_col = data_col + 1
-            self.axes[name] = self.figure.add_subplot(grid[row, data_col])
-            legend_axis = self.figure.add_subplot(grid[row, legend_col])
+            data_row = row * 2
+            legend_row = data_row + 1
+            self.axes[name] = self.figure.add_subplot(grid[data_row, col])
+            legend_axis = self.figure.add_subplot(grid[legend_row, col])
             legend_axis.set_axis_off()
             self.axes[name].set_zorder(2)
             legend_axis.set_zorder(1)
@@ -110,11 +111,11 @@ class MotionAnalysisPanel(QWidget):
 
     def _minimum_canvas_width(self) -> int:
         """Return the minimum canvas width that keeps plot legends readable."""
-        return self._cols * (self._MIN_AXIS_WIDTH_PX + self._MIN_LEGEND_WIDTH_PX)
+        return self._cols * self._MIN_AXIS_WIDTH_PX
 
     def _minimum_canvas_height(self) -> int:
         """Return the minimum canvas height that keeps plot legends readable."""
-        return self._rows * self._MIN_DATA_HEIGHT_PX
+        return self._rows * (self._MIN_DATA_HEIGHT_PX + self._MIN_LEGEND_HEIGHT_PX)
 
     def clear(self) -> None:
         """Reset every axis to a blank, themed state."""
@@ -135,10 +136,10 @@ class MotionAnalysisPanel(QWidget):
                 continue
 
             legend_kwargs = {
-                "loc": "center left",
+                "loc": "center",
                 "bbox_to_anchor": (0.0, 0.0, 1.0, 1.0),
                 "bbox_transform": legend_axis.transAxes,
-                "ncol": 1,
+                "ncol": self._legend_columns(labels),
                 "fontsize": 6,
                 "facecolor": Palette.BG_PANEL,
                 "edgecolor": Palette.FG_DIM,
@@ -152,6 +153,13 @@ class MotionAnalysisPanel(QWidget):
             }
             legend = legend_axis.legend(handles, labels, **legend_kwargs)
             self._clip_legend_to_axis(legend, legend_axis)
+
+    @staticmethod
+    def _legend_columns(labels: Sequence[str]) -> int:
+        """Return a compact, readable column count for a reserved legend band."""
+        if not labels:
+            return 1
+        return min(3, max(1, len(labels)))
 
     @staticmethod
     def _clip_legend_to_axis(legend: Any, legend_axis: Axes) -> None:
