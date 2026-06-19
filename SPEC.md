@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.605                                    |
+| **Spec Version**        | 1.1.606                                    |
 | **Last Spec Update**    | 2026-06-19                                 |
 
 ## 2. Purpose & Mission
@@ -71,6 +71,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   plain Python instance methods instead of invalid Numba dispatchers, restoring
   import, fit, filter, and forecast runtime paths with real Numba installed
   (#3661, #3662, #3663).
+- The Kalman/state-space Numba decorator regression now runs under both real
+  Numba and the repository's optional no-op Numba shim, so lean CI lanes still
+  verify the plain-method contract instead of failing during test collection
+  (#3661).
 - P1AM HMI tabs now persist operator-controlled order and visibility in
   browser storage, with drag/drop and context-menu reorder/hide affordances
   that reconcile saved layouts against newly added tab ids. The temperature
@@ -1280,6 +1284,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-19 | 1.1.606 | test(data-processor, #3661): make the Kalman/state-space Numba decorator regression tolerate the repository's optional no-op Numba shim while still asserting estimator methods remain plain Python functions and runtime paths execute. |
 | 2026-06-19 | 1.1.604 | fix(movement_optimizer): make Swingset policy trace canvas height track wrapped legend rows and keep Swingset/chain analysis legends docked outside rendered data axes so optimizer legends cannot obscure telemetry or analysis plot contents in narrow panes. |
 | 2026-06-18 | 1.1.603 | fix(shared, #3703, #3705): remove the redundant DbC-only `safe_eval.validate_expression` type guard, keep the unconditional `TypeError` boundary before empty-string handling, and add int/float/bytes/list/None regression coverage under normal, `DBC_LEVEL=off`, and optimized Python execution. |
 | 2026-06-18 | 1.1.602 | fix(scripts/docs, #3740 #3741 #3742): remove the discarded `defaultdict(list)` statement from `pragmatic_programmer_review.py`, collapse duplicated `BLE001` suppressions in assessment scripts, drop nonexistent legacy launcher entries from the README, and add static regression coverage for those contracts. |

@@ -5,14 +5,20 @@ from __future__ import annotations
 import inspect
 
 import numpy as np
-from numba.core.registry import CPUDispatcher
+
+try:
+    from numba.core.registry import CPUDispatcher
+except (ImportError, AttributeError, ModuleNotFoundError):
+    _CPU_DISPATCHER_TYPES: tuple[type[object], ...] = ()
+else:
+    _CPU_DISPATCHER_TYPES = (CPUDispatcher,)
 
 
 def _assert_plain_methods(owner: type, method_names: tuple[str, ...]) -> None:
     for method_name in method_names:
         method = owner.__dict__[method_name]
         assert inspect.isfunction(method)
-        assert not isinstance(method, CPUDispatcher)
+        assert not isinstance(method, _CPU_DISPATCHER_TYPES)
 
 
 def test_kalman_filter_module_imports_and_public_filters_run() -> None:
