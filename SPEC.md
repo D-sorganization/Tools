@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7676                                   |
+| **Spec Version**        | 1.1.7677                                   |
 | **Last Spec Update**    | 2026-06-19                                 |
 
 ## 2. Purpose & Mission
@@ -55,6 +55,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Python DbC/LoD test import helpers now skip internally instead of returning
   optional sentinels, keeping changed-file mypy checks aligned with runtime
   pytest skip behavior while expanding plugin manager coverage (#3723).
+- Plugin manager DbC/LoD coverage lives in
+  `src/python/tests/test_plugin_manager_dbc_lod.py`, keeping focused
+  plugin-manager regression tests under the changed-file size budget while
+  preserving the real-manifest TDD coverage for #3723.
 - P1AM firmware first-boot defaults now keep `SignalBroker::Reset()` as the
   all-unmapped primitive but layer bench-safe routing after an invalid or
   erased flash configuration: thermocouples TC0-TC3 route to TAG_0-TAG_3,
