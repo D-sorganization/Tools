@@ -27,7 +27,6 @@ from enum import Enum
 from typing import Any
 
 import numpy as np
-from numba import jit
 
 logger = logging.getLogger(__name__)
 
@@ -405,8 +404,6 @@ class UncertaintyQuantifier:
             )
         }
 
-    @jit(nopython=True, fastmath=True)
-    @jit(nopython=True, fastmath=True)
     def error_propagation(
         self,
         func: Callable[..., float],
@@ -460,7 +457,6 @@ class UncertaintyQuantifier:
             result = self.monte_carlo_propagation(func, distributions)
             return result.mean, result.std
 
-    @jit(nopython=True, fastmath=True)
     def sensitivity_analysis(
         self,
         func: Callable[..., float],
@@ -539,7 +535,6 @@ class UncertaintyQuantifier:
             variance_explained=variance_explained,
         )
 
-    @jit(nopython=True, fastmath=True)
     def prediction_intervals(
         self,
         X: np.ndarray,
@@ -675,7 +670,6 @@ class UncertaintyQuantifier:
             method="bayesian",
         )
 
-    @jit(nopython=True, fastmath=True)
     def delta_method_ci(
         self,
         func: Callable[..., float],
@@ -792,7 +786,6 @@ class UncertaintyQuantifier:
 
         return ci_lower, ci_upper, z0, a
 
-    @jit(nopython=True, fastmath=True)
     def _studentized_interval(
         self,
         data: np.ndarray,
@@ -883,7 +876,6 @@ class UncertaintyQuantifier:
 
         return (func(**values_plus) - func(**values_minus)) / (2 * h)
 
-    @jit(nopython=True, fastmath=True)
     def _sobol_sample(
         self,
         n: int,
