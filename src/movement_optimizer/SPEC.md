@@ -11,7 +11,7 @@
 | License          | MIT                                                     |
 | Package Name     | `movement-optimizer`                                    |
 | Current Version  | `1.0.0`                                                 |
-| Spec Version     | `1.0.29`                                                |
+| Spec Version     | `1.0.30`                                                |
 | Last Spec Update | 2026-06-19                                              |
 
 ## 2. Purpose
@@ -52,6 +52,10 @@ Movement-Optimizer is a biomechanics trajectory optimizer for barbell exercises.
 - `MotionAnalysisPanel.draw()` enforces the panel's legend-safe minimum figure
   dimensions before docking legends, so compact split-pane or backend resize
   paths cannot squeeze legend strips into axis labels or plotted curves.
+- The shared exercise/swing plot-grid legend helper now anchors legends lower
+  and the exercise analysis grid reserves a larger vertical inter-row band, so
+  legends clear axis tick labels and x/y labels instead of merely clearing the
+  plotted data rectangle.
 - The Swingset policy optimization trace legend now measures and wraps entries
   by widget width, and the trace series uses the wrapped legend height as its
   top inset so the legend does not obscure optimizer telemetry in narrow panes.

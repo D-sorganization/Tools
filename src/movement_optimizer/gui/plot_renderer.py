@@ -28,7 +28,7 @@ def _legend_outside_plot(ax: Any, *, fontsize: int = 7, columns: int = 3) -> Any
         edgecolor=Palette.FG_DIM,
         labelcolor=Palette.FG,
         loc="upper center",
-        bbox_to_anchor=(0.5, -0.22),
+        bbox_to_anchor=(0.5, -0.50),
         borderaxespad=0.0,
         ncol=max(1, int(columns)),
         framealpha=0.9,

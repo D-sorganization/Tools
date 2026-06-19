@@ -53,6 +53,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enforced `MotionAnalysisPanel`'s legend-safe minimum render size during draw
   so compact panes and backend resize edge cases cannot squeeze docked legends
   into plot labels or curves.
+- Increased the exercise analysis plot-grid vertical spacing and lowered
+  outside legends so legends no longer collide with tick labels or axis labels.
 - Changed the Swingset analysis plot grid from three columns to two columns so
   the plot and legend strips fit the normal split-pane viewport without hiding
   the rightmost plots behind horizontal scrolling.

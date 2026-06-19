@@ -312,7 +312,7 @@ STALL_HINT_ELAPSED_S: float = 120.0
 PLOT_GRID_ROWS: int = 3
 PLOT_GRID_COLS: int = 4
 PLOT_GRID_HEIGHT_RATIOS: tuple[int, int, int] = (3, 1, 1)
-PLOT_GRID_HSPACE: float = 0.64
+PLOT_GRID_HSPACE: float = 1.20
 PLOT_GRID_WSPACE: float = 0.40
 PLOT_GRID_MARGINS: dict[str, float] = {
     "left": 0.06,
