@@ -888,9 +888,31 @@ def test_policy_trace_legend_toggle_reserves_plot_space(qapp) -> None:
 def test_policy_trace_legend_wraps_above_plot_at_narrow_width(qapp) -> None:
     trace = PolicyTraceCanvas()
     trace.resize(140, 160)
+    trace._sync_minimum_height()
+    trace.resize(140, trace.minimumHeight())
 
     assert trace._legend_row_count() > 1
     assert trace._top_margin() == pytest.approx(trace._legend_band_height())
-    assert trace._top_margin() < trace.height() - 24
+    assert (
+        trace.height() - trace._top_margin() - trace._TRACE_BOTTOM_PADDING_PX
+        >= trace._MINIMUM_PLOT_HEIGHT_PX
+    )
 
     trace.grab()  # repaint with a wrapped legend must not raise
+
+
+def test_policy_trace_minimum_height_tracks_wrapped_legend(qapp) -> None:
+    trace = PolicyTraceCanvas()
+
+    wide_height = trace.heightForWidth(240)
+    narrow_height = trace.heightForWidth(140)
+
+    assert narrow_height > wide_height
+    assert narrow_height >= (
+        trace._legend_band_height_for_width(140)
+        + trace._MINIMUM_PLOT_HEIGHT_PX
+        + trace._TRACE_BOTTOM_PADDING_PX
+    )
+    trace.resize(140, 120)
+    trace._sync_minimum_height()
+    assert trace.minimumHeight() >= narrow_height

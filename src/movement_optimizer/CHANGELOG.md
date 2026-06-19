@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Prevented narrow Swingset policy optimization panes from compressing the
+  telemetry plot under multi-row trace legends by making the trace canvas
+  publish a width-aware minimum height.
 - Prevented compact Swingset and Chain Dynamics plot panes from shrinking until
   docked legends overlap plot labels or curves by giving the motion plot panel a
   grid-aware minimum canvas size and placing it in a scrollable plot viewport.

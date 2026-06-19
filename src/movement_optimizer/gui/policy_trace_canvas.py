@@ -8,7 +8,7 @@ from itertools import pairwise
 
 import numpy as np
 from PyQt6.QtCore import QPointF
-from PyQt6.QtGui import QColor, QFontMetrics, QPainter, QPen
+from PyQt6.QtGui import QColor, QFontMetrics, QPainter, QPen, QResizeEvent
 from PyQt6.QtWidgets import QWidget
 
 from movement_optimizer.models.swingset import CyclicPolicyTraceSample
@@ -59,19 +59,22 @@ def refresh_policy_trace_palette() -> None:
 class PolicyTraceCanvas(QWidget):
     """Compact plot of policy-search score and parameter traces."""
 
+    _BASE_MIN_HEIGHT_PX = 160
     _LEGEND_BOTTOM_PADDING_PX = 6
     _LEGEND_GAP_PX = 12
     _LEGEND_LINE_PX = 12
     _LEGEND_TEXT_GAP_PX = 4
     _LEGEND_ROW_HEIGHT_PX = 16
     _MARGIN_PX = 8
+    _MINIMUM_PLOT_HEIGHT_PX = 96
+    _TRACE_BOTTOM_PADDING_PX = 8
 
     def __init__(self) -> None:
         super().__init__()
-        self.setMinimumHeight(160)
         self._samples: tuple[CyclicPolicyTraceSample, ...] = ()
         self._series: dict[str, np.ndarray] = {}
         self._legend_visible = True
+        self._sync_minimum_height()
 
     def set_trace(self, samples: tuple[CyclicPolicyTraceSample, ...]) -> None:
         self._samples = samples
@@ -111,8 +114,17 @@ class PolicyTraceCanvas(QWidget):
             + self._LEGEND_GAP_PX
         )
 
+    def _available_legend_width(self, width: int | None = None) -> int:
+        """Return the usable legend width after horizontal margins."""
+        widget_width = self.width() if width is None else width
+        return max(1, widget_width - 2 * self._MARGIN_PX)
+
     def _legend_row_count(self) -> int:
-        available_width = max(1, self.width() - 2 * self._MARGIN_PX)
+        return self._legend_row_count_for_width(self.width())
+
+    def _legend_row_count_for_width(self, width: int) -> int:
+        """Return wrapped legend rows for a proposed widget width."""
+        available_width = self._available_legend_width(width)
         rows = 1
         row_width = 0
         for label, _color in self._legend_entries():
@@ -125,11 +137,46 @@ class PolicyTraceCanvas(QWidget):
 
     def _legend_band_height(self) -> int:
         """Return the reserved legend band height for the current widget width."""
+        return self._legend_band_height_for_width(self.width())
+
+    def _legend_band_height_for_width(self, width: int) -> int:
+        """Return reserved legend height for a proposed widget width."""
         return (
             self._MARGIN_PX
-            + self._legend_row_count() * self._LEGEND_ROW_HEIGHT_PX
+            + self._legend_row_count_for_width(width) * self._LEGEND_ROW_HEIGHT_PX
             + self._LEGEND_BOTTOM_PADDING_PX
         )
+
+    def _minimum_height_for_width(self, width: int) -> int:
+        """Return the height needed for legends plus readable trace data."""
+        return max(
+            self._BASE_MIN_HEIGHT_PX,
+            self._legend_band_height_for_width(width)
+            + self._MINIMUM_PLOT_HEIGHT_PX
+            + self._TRACE_BOTTOM_PADDING_PX,
+        )
+
+    def _sync_minimum_height(self) -> None:
+        """Keep Qt layout constraints aligned with the wrapped legend height."""
+        width = max(1, self.width())
+        minimum_height = self._minimum_height_for_width(width)
+        if self.minimumHeight() == minimum_height:
+            return
+        self.setMinimumHeight(minimum_height)
+        self.updateGeometry()
+
+    def hasHeightForWidth(self) -> bool:
+        """Tell Qt layouts that narrow trace canvases need more height."""
+        return True
+
+    def heightForWidth(self, width: int) -> int:
+        """Return width-aware preferred height for wrapped legends."""
+        return self._minimum_height_for_width(width)
+
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        """Update the minimum height when a narrower width wraps the legend."""
+        self._sync_minimum_height()
+        super().resizeEvent(event)
 
     def sample_count(self) -> int:
         return len(self._samples)
@@ -171,7 +218,7 @@ class PolicyTraceCanvas(QWidget):
         else:
             normalized = (values - lower) / (upper - lower)
         top = self._top_margin()
-        bottom = self.height() - 8.0
+        bottom = self.height() - float(self._TRACE_BOTTOM_PADDING_PX)
         span = max(bottom - top, 1.0)
         points = [
             QPointF(
@@ -185,7 +232,7 @@ class PolicyTraceCanvas(QWidget):
             painter.drawLine(start, end)
 
     def _draw_legend(self, painter: QPainter) -> None:
-        available_width = max(1, self.width() - 2 * self._MARGIN_PX)
+        available_width = self._available_legend_width()
         x = self._MARGIN_PX
         baseline = self._MARGIN_PX + QFontMetrics(painter.font()).ascent()
         y = baseline

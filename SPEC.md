@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.602                                    |
-| **Last Spec Update**    | 2026-06-18                                 |
+| **Spec Version**        | 1.1.603                                    |
+| **Last Spec Update**    | 2026-06-19                                 |
 
 ## 2. Purpose & Mission
 
@@ -176,6 +176,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   measured widget width and reserve the full wrapped legend band above the
   plotted telemetry, so narrow optimizer panes cannot draw legend text over
   score and parameter traces.
+- Movement Optimizer Swingset policy optimization trace canvases now publish a
+  width-aware minimum height based on the wrapped legend band, keeping enough
+  telemetry area below the legend when narrow optimizer panes force multi-row
+  legend wrapping.
 - Full-suite nightly CI now fail-closes when declared collection-time
   dependencies are missing, installs the expanded `test` extra for P1AM/PID
   coverage, and disables xdist on fleet runners so worker crashes cannot
@@ -1268,6 +1272,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-19 | 1.1.603 | fix(movement_optimizer): make the Swingset policy optimization trace canvas height track wrapped legend rows so optimizer legends cannot consume the telemetry plot area in narrow panes. |
 | 2026-06-18 | 1.1.602 | fix(scripts/docs, #3740 #3741 #3742): remove the discarded `defaultdict(list)` statement from `pragmatic_programmer_review.py`, collapse duplicated `BLE001` suppressions in assessment scripts, drop nonexistent legacy launcher entries from the README, and add static regression coverage for those contracts. |
 | 2026-06-18 | 1.1.601 | fix(movement_optimizer): route exercise analysis plot legends through the shared outside-plot helper, reserve additional GridSpec spacing, and add rendered bounding-box regression coverage so squat/deadlift/bench playback legends cannot obscure plot data or neighboring panels. |
 | 2026-06-18 | 1.1.600 | fix(model-generation): keep `from model_generation.cli import main` bound to the callable CLI entrypoint after `model_generation.cli.main` submodule imports, preserving CLI tests under importlib ordering. |
