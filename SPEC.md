@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.599                                    |
+| **Spec Version**        | 1.1.600                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -60,6 +60,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   both mass-scaled and density-derived inertia requests, preventing the
   density path from falling through the generic mesh-processing error because
   of an unbound branch-local `volume` name (#3668).
+- Model generation CLI exports now keep `from model_generation.cli import main`
+  bound to the callable entrypoint even after tests or callers import the
+  `model_generation.cli.main` submodule first.
 - P1AM HMI tabs now persist operator-controlled order and visibility in
   browser storage, with drag/drop and context-menu reorder/hide affordances
   that reconcile saved layouts against newly added tab ids. The temperature
@@ -1257,6 +1260,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-18 | 1.1.600 | fix(model-generation): keep `from model_generation.cli import main` bound to the callable CLI entrypoint after `model_generation.cli.main` submodule imports, preserving CLI tests under importlib ordering. |
 | 2026-06-18 | 1.1.599 | fix(model-generation, #3668): return `mesh.volume` on both `inertia_from_mesh` mass and density paths so density-based inertia requests no longer hit an unbound `volume` local; add fake-trimesh regression coverage for density-derived mass/volume and mass-scaled inertia. |
 | 2026-06-18 | 1.1.595 | perf(movement_optimizer): render the colour-graded COM path through one Matplotlib `LineCollection` instead of one line artist per time step, add renderer-boundary validation for degenerate COM traces, and pin the artist-count regression in `test_plot_renderer.py`. |
 | 2026-06-18 | 1.1.594 | fix(p1am/firmware, #3606): document the first-boot bench routing defaults, PID0 unity-gain current-command pass-through default, reverted P1-04THM custom configuration, Fahrenheit-to-Celsius thermocouple conversion, and 0-20 mA analog-input scaling that keep freshly flashed P1AM units recoverable without changing persisted-config behavior. |

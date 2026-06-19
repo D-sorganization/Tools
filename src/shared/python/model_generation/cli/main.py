@@ -14,6 +14,7 @@ import argparse
 import json
 import logging
 import sys
+import types
 from collections.abc import Callable
 from enum import Enum
 from pathlib import Path
@@ -858,6 +859,14 @@ def main(argv: list[str] | None = None) -> int:
     else:
         parser.print_help()
         return 0
+
+
+class _CallableMainModule(types.ModuleType):
+    def __call__(self, argv: list[str] | None = None) -> int:
+        return main(argv)
+
+
+sys.modules[__name__].__class__ = _CallableMainModule
 
 
 if __name__ == "__main__":
