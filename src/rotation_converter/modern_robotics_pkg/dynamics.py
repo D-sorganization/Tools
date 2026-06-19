@@ -202,7 +202,7 @@ def InverseDynamicsTrajectory(
             Slist,
         )
     taumat = np.array(taumat).T
-    return taumat
+    return cast(np.ndarray, taumat)
 
 
 def ForwardDynamicsTrajectory(

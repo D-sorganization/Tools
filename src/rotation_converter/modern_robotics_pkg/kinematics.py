@@ -6,7 +6,7 @@ Product of Exponentials FK, Newton-Raphson IK, Space/Body Jacobians.
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
@@ -50,7 +50,7 @@ def FKinSpace(M: Any, Slist: Any, thetalist: Any) -> np.ndarray:
     T = T @ M
 
     ensure(abs(np.linalg.det(T[:3, :3]) - 1.0) < 1e-9, "result must be SE(3)")
-    return np.asarray(T, dtype=float)
+    return cast(np.ndarray, np.asarray(T, dtype=float))
 
 
 def FKinBody(M: Any, Blist: Any, thetalist: Any) -> np.ndarray:
@@ -72,7 +72,7 @@ def FKinBody(M: Any, Blist: Any, thetalist: Any) -> np.ndarray:
         T = T @ MatrixExp6(se3)
 
     ensure(abs(np.linalg.det(T[:3, :3]) - 1.0) < 1e-9, "result must be SE(3)")
-    return np.asarray(T, dtype=float)
+    return cast(np.ndarray, np.asarray(T, dtype=float))
 
 
 # ---------------------------------------------------------------------------
@@ -98,7 +98,7 @@ def JacobianSpace(Slist: Any, thetalist: Any) -> np.ndarray:
         Js[:, i] = _Adjoint(T) @ Slist[:, i]
 
     ensure(Js.shape == (6, n), "Jacobian must be 6xn")
-    return Js
+    return cast(np.ndarray, Js)
 
 
 def JacobianBody(Blist: Any, thetalist: Any) -> np.ndarray:
@@ -119,7 +119,7 @@ def JacobianBody(Blist: Any, thetalist: Any) -> np.ndarray:
         Jb[:, i] = _Adjoint(T) @ Blist[:, i]
 
     ensure(Jb.shape == (6, n), "Jacobian must be 6xn")
-    return Jb
+    return cast(np.ndarray, Jb)
 
 
 # ---------------------------------------------------------------------------
