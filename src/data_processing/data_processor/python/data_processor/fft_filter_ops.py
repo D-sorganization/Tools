@@ -39,7 +39,22 @@ def design_frequency_window(
     Returns:
         Frequency domain filter coefficients
     """
-    assert filter_type is not None, "filter_type must be provided"
+    _VALID_FILTER_TYPES = (
+        "FFT Low-pass",
+        "FFT High-pass",
+        "FFT Band-pass",
+        "FFT Band-stop",
+    )
+    if filter_type not in _VALID_FILTER_TYPES:
+        msg = f"filter_type must be one of {_VALID_FILTER_TYPES}, got {filter_type!r}"
+        raise ValueError(msg)
+    if n_samples <= 0:
+        msg = f"n_samples must be positive, got {n_samples}"
+        raise ValueError(msg)
+    if transition_bw <= 0:
+        msg = f"transition_bw must be positive, got {transition_bw}"
+        raise ValueError(msg)
+
     freqs = np.fft.fftfreq(n_samples)
     freqs = np.abs(freqs)
 
