@@ -72,6 +72,13 @@ class UncertaintyConfig:
     # Delta method
     delta_method_step: float = 1e-6
 
+    def __post_init__(self) -> None:
+        """Validate configuration values at construction time."""
+        if not np.isfinite(self.confidence_level):
+            raise ValueError("confidence_level must be finite")
+        if not 0 < self.confidence_level < 1:
+            raise ValueError("confidence_level must be between 0 and 1")
+
 
 @dataclass
 class ConfidenceInterval:
@@ -904,10 +911,12 @@ class UncertaintyQuantifier:
         if data is None:
             raise ValueError("data must be provided")
         n = len(data)
+        if n < 3:
+            return 0.0
         mean = np.mean(data)
         std = np.std(data, ddof=1)
 
-        if std == 0:
+        if not np.isfinite(std) or std == 0:
             return 0.0
 
         return float(np.mean(((data - mean) / std) ** 3) * n**2 / ((n - 1) * (n - 2)))
@@ -916,10 +925,12 @@ class UncertaintyQuantifier:
         """Compute excess kurtosis."""
         if data is None:
             raise ValueError("data must be provided")
+        if len(data) < 4:
+            return 0.0
         mean = np.mean(data)
         std = np.std(data, ddof=1)
 
-        if std == 0:
+        if not np.isfinite(std) or std == 0:
             return 0.0
 
         m4 = np.mean((data - mean) ** 4)
@@ -929,8 +940,10 @@ class UncertaintyQuantifier:
         """Inverse standard normal CDF."""
         if p is None:
             raise ValueError("p must be provided")
+        if not np.isfinite(p):
+            raise ValueError("p must be finite")
         if p <= 0 or p >= 1:
-            return 0.0
+            raise ValueError("p must be between 0 and 1")
         if p < 0.5:
             return -self._normal_ppf(1 - p)
 
