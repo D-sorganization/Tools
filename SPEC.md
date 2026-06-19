@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.604                                    |
-| **Last Spec Update**    | 2026-06-19                                 |
+| **Spec Version**        | 1.1.616                                    |
+| **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
 
@@ -38,6 +38,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-18 Update
 
+- `PluginManager.load_tools` now skips-and-logs a non-dict tool entry (a bare
+  string or list) instead of letting its `TypeError` escape the KeyError-only
+  per-item handler and abort the whole loop. Previously one malformed
+  `tools.json` entry wiped the entire tool registry and returned `{}`; valid
+  tools in the same and other categories now survive (#3720).
 - P1AM firmware first-boot defaults now keep `SignalBroker::Reset()` as the
   all-unmapped primitive but layer bench-safe routing after an invalid or
   erased flash configuration: thermocouples TC0-TC3 route to TAG_0-TAG_3,
@@ -179,10 +184,6 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   measured widget width and reserve the full wrapped legend band above the
   plotted telemetry, so narrow optimizer panes cannot draw legend text over
   score and parameter traces.
-- Movement Optimizer Swingset policy optimization trace canvases now publish a
-  width-aware minimum height based on the wrapped legend band, keeping enough
-  telemetry area below the legend when narrow optimizer panes force multi-row
-  legend wrapping.
 - Full-suite nightly CI now fail-closes when declared collection-time
   dependencies are missing, installs the expanded `test` extra for P1AM/PID
   coverage, and disables xdist on fleet runners so worker crashes cannot
@@ -1275,7 +1276,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-06-19 | 1.1.604 | fix(movement_optimizer): make Swingset policy trace canvas height track wrapped legend rows and keep Swingset/chain analysis legends docked outside rendered data axes so optimizer legends cannot obscure telemetry or analysis plot contents in narrow panes. |
 | 2026-06-18 | 1.1.603 | fix(shared, #3703, #3705): remove the redundant DbC-only `safe_eval.validate_expression` type guard, keep the unconditional `TypeError` boundary before empty-string handling, and add int/float/bytes/list/None regression coverage under normal, `DBC_LEVEL=off`, and optimized Python execution. |
 | 2026-06-18 | 1.1.602 | fix(scripts/docs, #3740 #3741 #3742): remove the discarded `defaultdict(list)` statement from `pragmatic_programmer_review.py`, collapse duplicated `BLE001` suppressions in assessment scripts, drop nonexistent legacy launcher entries from the README, and add static regression coverage for those contracts. |
 | 2026-06-18 | 1.1.601 | fix(movement_optimizer): route exercise analysis plot legends through the shared outside-plot helper, reserve additional GridSpec spacing, and add rendered bounding-box regression coverage so squat/deadlift/bench playback legends cannot obscure plot data or neighboring panels. |
@@ -1886,6 +1886,12 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.616
+
+- 2026-06-18: fix(plugin-manager, #3720) — harden `load_tools` against
+  non-dict plugin entries so malformed manifest items raise a clear
+  contract error instead of an opaque attribute failure.
 
 ### Version 1.1.598
 

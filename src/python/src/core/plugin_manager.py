@@ -137,6 +137,11 @@ class PluginManager:
             for category, items in data.items():
                 tool_list = []
                 for item in items:
+                    if not isinstance(item, dict):
+                        logger.warning(
+                            f"Skipping non-dict tool entry in {category}: {item!r}"
+                        )
+                        continue
                     try:
                         tool = self._build_validated_tool(
                             item,
@@ -145,7 +150,7 @@ class PluginManager:
                         )
                         if tool is not None:
                             tool_list.append(tool)
-                    except KeyError as e:
+                    except (KeyError, TypeError) as e:
                         logger.warning(
                             f"Skipping invalid tool entry in {category}: {e}"
                         )
