@@ -25,6 +25,8 @@ import numpy as np
 
 from rotation_converter._contracts import PreconditionError
 from rotation_converter.modern_robotics import (
+    AxisAng3,
+    AxisAng6,
     FKinBody,
     FKinSpace,
     IKinBody,
@@ -36,6 +38,7 @@ from rotation_converter.modern_robotics import (
     MatrixExp6,
     MatrixLog3,
     MatrixLog6,
+    Normalize,
     RpToTrans,
     ScrewTrajectory,
     TransInv,
@@ -668,6 +671,21 @@ class TestIKFailure:
 
 class TestModernRoboticsContracts:
     """NaN/Inf and shape contract tests for modern_robotics functions."""
+
+    def test_normalize_rejects_zero_vector(self) -> None:
+        with pytest.raises(PreconditionError, match="cannot normalize zero vector"):
+            Normalize(np.zeros(3))
+
+    def test_axis_ang3_rejects_zero_exponential_coordinates(self) -> None:
+        with pytest.raises(PreconditionError, match="cannot normalize zero vector"):
+            AxisAng3(np.zeros(3))
+
+    def test_axis_ang6_zero_twist_returns_zero_angle_without_nan(self) -> None:
+        screw_axis, theta = AxisAng6(np.zeros(6))
+
+        assert theta == 0.0
+        np.testing.assert_allclose(screw_axis, np.zeros(6))
+        assert np.isfinite(screw_axis).all()
 
     def test_nan_so3_raises(self) -> None:
         so3 = np.array([[0, float("nan"), 0], [0, 0, 0], [0, 0, 0]])

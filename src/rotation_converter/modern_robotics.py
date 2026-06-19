@@ -611,7 +611,9 @@ def Normalize(V):
     Output:
         np.array([0.26726124, 0.53452248, 0.80178373])
     """
-    return V / np.linalg.norm(V)
+    norm = np.linalg.norm(V)
+    require(not _near_zero(norm), "cannot normalize zero vector", norm)
+    return V / norm
 
 
 def RotInv(R):
@@ -708,6 +710,8 @@ def AxisAng6(expc6):
     theta = np.linalg.norm([expc6[0], expc6[1], expc6[2]])
     if _near_zero(theta):
         theta = np.linalg.norm([expc6[3], expc6[4], expc6[5]])
+    if _near_zero(theta):
+        return (np.array(expc6).copy(), 0.0)
     return (np.array(expc6 / theta), theta)
 
 

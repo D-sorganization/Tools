@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7674                                   |
+| **Spec Version**        | 1.1.7675                                   |
 | **Last Spec Update**    | 2026-06-19                                 |
 
 ## 2. Purpose & Mission
@@ -1301,6 +1301,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-19 | 1.1.7675 | fix(rotation-converter, #3690): guard Modern Robotics zero-vector normalization so `Normalize`/`AxisAng3` fail clearly with `PreconditionError`, while all-zero `AxisAng6` returns a finite zero screw axis with `theta=0` instead of propagating NaN/Inf values. |
 | 2026-06-19 | 1.1.7674 | fix(rotation-converter, #3736): replace Modern Robotics input-validation asserts with `require()` preconditions across the public module and split kinematics/dynamics packages, preserving `PreconditionError` for invalid inputs under optimized Python. |
 | 2026-06-19 | 1.1.7674 | ci(rotation-converter, #3736): map Modern Robotics contract-guard source changes to `tests/rotation_converter/test_modern_robotics.py` in the source-keyed selector so CI keeps the DbC regression surface without collecting the full rotation-converter tree in every Python lane. |
 | 2026-06-19 | 1.1.7674 | ci(rotation-converter, #3736): cast split Modern Robotics NumPy return boundaries explicitly so the CI Standard delta mypy gate stays clean under `--follow-imports=skip` without changing runtime array results. |
