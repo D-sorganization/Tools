@@ -320,13 +320,34 @@ class TestMotionAnalysisPanel:
             min_legend_padding_px=2.0,
         )
 
-    def test_docked_joint_legends_use_compact_three_column_rows(self, qapp) -> None:
+    def test_swingset_legends_are_right_docked_beside_each_plot(
+        self, qapp, swing_history
+    ) -> None:
         from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
 
-        assert MotionAnalysisPanel._legend_columns(0) == 1
-        assert MotionAnalysisPanel._legend_columns(1) == 1
-        assert MotionAnalysisPanel._legend_columns(2) == 2
-        assert MotionAnalysisPanel._legend_columns(5) == 3
+        panel = MotionAnalysisPanel(
+            ["torques", "power", "angle", "com_height", "energy", "com_path"],
+            rows=3,
+            cols=2,
+        )
+        plot_swing_joint_torques(panel.axes["torques"], swing_history, legend=False)
+        plot_swing_joint_power(panel.axes["power"], swing_history, legend=False)
+        plot_swing_angle(panel.axes["angle"], swing_history, legend=False)
+        plot_swing_com_height(panel.axes["com_height"], swing_history, legend=False)
+        plot_swing_energy(panel.axes["energy"], swing_history, legend=False)
+        plot_swing_com_path(panel.axes["com_path"], swing_history, legend=False)
+
+        panel.draw()
+        renderer = panel.canvas.get_renderer()
+
+        for name, axes in panel.axes.items():
+            data_box = axes.get_window_extent(renderer)
+            legend_axis_box = panel.legend_axes[name].get_window_extent(renderer)
+            legend = panel.legend_axes[name].get_legend()
+
+            assert legend is not None
+            assert legend_axis_box.x0 >= data_box.x1 + 2.0
+            assert not legend.get_window_extent(renderer).overlaps(data_box)
 
     def test_clear_rebuilds_axes(self, qapp) -> None:
         from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel

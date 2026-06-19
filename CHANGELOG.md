@@ -4,6 +4,7 @@
 
 ### Changes
 
+- fix(movement): dock swing plot legends beside plots
 - fix(p1am/firmware): boot with bench routing/PID0 defaults and reverted THM config (#3606)
 - fix(movement): clip docked swing plot legends to reserved strips
 - fix(ci): cap release bump pull request body
