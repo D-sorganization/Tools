@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7715                                   |
+| **Spec Version**        | 1.1.7779                                   |
 | **Last Spec Update**    | 2026-06-19                                 |
 
 ## 2. Purpose & Mission
@@ -1293,6 +1293,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-19 | 1.1.7779 | fix(p1am, #3670): replace the bare `except Exception: pass` in `EventLogViewerWidget.update_event_types_combobox` with a module logger that records the failure, so a corrupt/locked event database no longer silently empties the event-type filter without any diagnostic. |
 | 2026-06-19 | 1.1.7715 | fix(sidekick, #3715): run the Python REPL worker against an isolated copy of the namespace, merged back only on clean completion, so cancelling (which `QThread.terminate()`s the worker mid-instruction) can no longer leave the live workspace namespace half-mutated; the cancel handler also disconnects the result slot first to avoid a race-merge. |
 | 2026-06-19 | 1.1.7676 | fix(p1am, #3607): annotate the Modbus codec's re-exported unmapped-sentinel constants and remove stale hardware-test suppressions so the `TAG_255` routing fix remains mypy-clean under pre-push gates. |
 | 2026-06-19 | 1.1.7675 | fix(p1am, #3607): preserve the firmware `TAG_255` unmapped sentinel in Modbus routing and PID pv/cv encoders while keeping ordinary broker-tag parsing strict, with write-routing coverage for all-unmapped configs after erased-NVRAM boots. |
