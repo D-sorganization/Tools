@@ -11,7 +11,7 @@
 | License          | MIT                                                     |
 | Package Name     | `movement-optimizer`                                    |
 | Current Version  | `1.0.0`                                                 |
-| Spec Version     | `1.0.25`                                                |
+| Spec Version     | `1.0.26`                                                |
 | Last Spec Update | 2026-06-19                                              |
 
 ## 2. Purpose
@@ -213,6 +213,7 @@ mypy --ignore-missing-imports src/movement_optimizer/
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-06-19 | 1.0.26  | Reserved a bottom axis-label band in the Swingset policy optimization trace canvas and included that band in the width-aware minimum-height contract, so the `iteration` label stays below the plotted optimizer traces instead of overlaying telemetry at narrow widths.                                                                                                                                      |
 | 2026-06-19 | 1.0.25  | Made the Swingset policy optimization trace canvas advertise a width-aware minimum height from its wrapped legend rows plus a minimum telemetry band, so narrow optimizer panes scroll or expand instead of letting the legend dominate the plot area.                                                                                                                                                        |
 | 2026-06-18 | 1.0.24  | Prevented compact Swingset and Chain Dynamics plot panes from crushing docked legends back into the plots by giving `MotionAnalysisPanel` a grid-aware minimum canvas size, hosting plot panels in scroll areas, and using up to three docked legend columns for joint-series plots.                                                                                                                          |
 | 2026-06-18 | 1.0.22  | Typed sidebar builder/state helper surfaces against declared `ParameterSidebar` and protocol contracts, covering progress widgets, result widgets, convergence plots, and body-model sliders while preserving existing sidebar behavior.                                                                                                                                                                      |

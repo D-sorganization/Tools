@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Prevented the Swingset policy trace `iteration` label from overlapping
+  optimizer telemetry by reserving a bottom axis-label band in the trace
+  canvas height-for-width contract.
 - Prevented narrow Swingset policy optimization panes from compressing the
   telemetry plot under multi-row trace legends by making the trace canvas
   publish a width-aware minimum height.
