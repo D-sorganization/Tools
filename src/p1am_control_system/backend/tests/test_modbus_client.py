@@ -94,6 +94,33 @@ def _routing() -> RoutingConfig:
     )
 
 
+def _unmapped_routing() -> RoutingConfig:
+    return RoutingConfig(
+        input_routing=["TAG_255"] * 6,
+        output_routing=["TAG_255"] * 2,
+        pids=[
+            PIDConfig(
+                pv_tag="TAG_255",
+                cv_tag="TAG_255",
+                setpoint=0.0,
+                kp=0.0,
+                ki=0.0,
+                kd=0.0,
+            )
+            for _ in range(4)
+        ],
+        interlocks={
+            f"TAG_{i}": InterlockConfig(
+                lolo_limit=0.0,
+                low_limit=5.0,
+                high_limit=95.0,
+                hihi_limit=100.0,
+            )
+            for i in range(32)
+        },
+    )
+
+
 class TestReadTags:
     def test_decodes_32_floats(self) -> None:
         fake = _FakeModbusClient()
@@ -185,6 +212,17 @@ class TestWriteRouting:
         # Each interlock chunk is tag-aligned at 64 registers.
         interlock_writes = fake.write_calls[3:]
         assert all(len(call["values"]) == 64 for call in interlock_writes)
+
+    def test_writes_all_unmapped_routing_sentinel(self) -> None:
+        fake = _FakeModbusClient()
+        manager = _make_manager(fake)
+
+        ok = asyncio.run(manager.write_routing(_unmapped_routing()))
+
+        assert ok is True
+        assert fake.write_calls[0]["values"] == [255] * 6
+        assert fake.write_calls[1]["values"] == [255] * 2
+        assert fake.write_calls[2]["values"][:2] == [255, 255]
 
     def test_returns_false_on_write_error(self) -> None:
         fake = _FakeModbusClient()

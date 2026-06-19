@@ -79,6 +79,32 @@ class TestRoutingCodec:
     def test_tag_index_encoding_valid_names(self) -> None:
         assert encode_tag_indices(["TAG_1", "TAG_0", "TAG_7"]) == [1, 0, 7]
 
+    def test_tag_index_encoding_passes_unmapped_sentinel(self) -> None:
+        assert encode_tag_indices(["TAG_255", "TAG_0", "TAG_31"]) == [255, 0, 31]
+
+    def test_pid_config_encoding_passes_unmapped_sentinel(self) -> None:
+        registers = encode_pid_configs(
+            [
+                PIDConfig(
+                    pv_tag="TAG_255",
+                    cv_tag="TAG_255",
+                    setpoint=0.0,
+                    kp=0.0,
+                    ki=0.0,
+                    kd=0.0,
+                )
+            ]
+        )
+
+        assert registers[:2] == [255, 255]
+        decoded = decode_pid_configs(registers + [0] * 30)
+        assert decoded[0].pv_tag == "TAG_255"
+        assert decoded[0].cv_tag == "TAG_255"
+
+    def test_tag_index_encoding_rejects_non_sentinel_out_of_range(self) -> None:
+        with pytest.raises(ValueError):
+            encode_tag_indices(["TAG_254"])
+
     def test_tag_index_encoding_rejects_malformed_name(self) -> None:
         # A malformed tag must raise, not be silently coerced to TAG_0 (#3531).
         with pytest.raises(ValueError):
