@@ -926,7 +926,7 @@ class UncertaintyQuantifier:
         if p is None:
             raise ValueError("p must be provided")
         if p <= 0 or p >= 1:
-            return 0.0
+            raise ValueError("p must be between 0 and 1")
         if p < 0.5:
             return -self._normal_ppf(1 - p)
 
