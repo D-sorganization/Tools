@@ -50,6 +50,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Stopped Swingset and Chain Dynamics panel rendering from creating transient
   data-axis legends; labeled artists now feed `MotionAnalysisPanel` docked
   legend strips directly so legends cannot reappear over plot contents.
+- Enforced `MotionAnalysisPanel`'s legend-safe minimum render size during draw
+  so compact panes and backend resize edge cases cannot squeeze docked legends
+  into plot labels or curves.
 - Changed the Swingset analysis plot grid from three columns to two columns so
   the plot and legend strips fit the normal split-pane viewport without hiding
   the rightmost plots behind horizontal scrolling.

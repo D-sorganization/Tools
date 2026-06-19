@@ -376,6 +376,31 @@ class TestMotionAnalysisPanel:
         )
         assert all(axes.get_legend() is None for axes in panel.axes.values())
 
+    def test_draw_enforces_minimum_render_size_before_docking_legends(
+        self, qapp, swing_history
+    ) -> None:
+        from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
+
+        panel = MotionAnalysisPanel(
+            ["torques", "power", "angle", "com_height", "energy", "com_path"],
+            rows=3,
+            cols=2,
+        )
+        plot_swing_joint_torques(panel.axes["torques"], swing_history, legend=False)
+        plot_swing_joint_power(panel.axes["power"], swing_history, legend=False)
+        plot_swing_angle(panel.axes["angle"], swing_history, legend=False)
+        plot_swing_com_height(panel.axes["com_height"], swing_history, legend=False)
+        plot_swing_energy(panel.axes["energy"], swing_history, legend=False)
+        plot_swing_com_path(panel.axes["com_path"], swing_history, legend=False)
+
+        panel.figure.set_size_inches(3.6, 4.8, forward=True)
+        panel.draw()
+
+        minimum_size = panel.canvas.minimumSize()
+        assert panel.figure.bbox.width >= minimum_size.width() - 1.0
+        assert panel.figure.bbox.height >= minimum_size.height() - 1.0
+        self._assert_docked_legends_do_not_cover_plots(panel)
+
     def test_chain_legends_are_docked_outside_data_axes(self, qapp, chain_history) -> None:
         from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
 

@@ -176,6 +176,19 @@ class MotionAnalysisPanel(QWidget):
 
     def draw(self) -> None:
         """Lay out and repaint the figure after the axes have been populated."""
+        self._enforce_minimum_figure_size()
         self.figure.subplots_adjust(left=0.08, right=0.98, top=0.94, bottom=0.06)
         self._dock_legends()
         self.canvas.draw()
+
+    def _enforce_minimum_figure_size(self) -> None:
+        """Keep rendered figures at the panel's legend-safe minimum size."""
+        dpi = float(self.figure.dpi)
+        width_in, height_in = self.figure.get_size_inches()
+        min_width_in = self._minimum_canvas_width() / dpi
+        min_height_in = self._minimum_canvas_height() / dpi
+        next_width_in = max(float(width_in), min_width_in)
+        next_height_in = max(float(height_in), min_height_in)
+        if next_width_in == float(width_in) and next_height_in == float(height_in):
+            return
+        self.figure.set_size_inches(next_width_in, next_height_in, forward=True)
