@@ -106,6 +106,25 @@ class TestSwingPlots:
             assert legend is not None
             assert legend.get_bbox_to_anchor()._bbox.y0 < 0.0
 
+    def test_panel_mode_suppresses_data_axis_legends(self, swing_history) -> None:
+        plotters = (
+            plot_swing_joint_torques,
+            plot_swing_joint_power,
+            plot_swing_angle,
+            plot_swing_com_height,
+            plot_swing_energy,
+            plot_swing_com_path,
+        )
+        for plotter in plotters:
+            figure = Figure()
+            ax = figure.add_subplot(111)
+            plotter(ax, swing_history, legend=False)
+
+            assert ax.get_legend() is None
+            handles, labels = ax.get_legend_handles_labels()
+            assert handles
+            assert labels
+
 
 class TestChainPlots:
     def test_tension(self, mock_ax, chain_history) -> None:
@@ -140,6 +159,23 @@ class TestChainPlots:
             legend = ax.get_legend()
             assert legend is not None
             assert legend.get_bbox_to_anchor()._bbox.y0 < 0.0
+
+    def test_panel_mode_suppresses_data_axis_legends(self, chain_history) -> None:
+        plotters = (
+            lambda ax: plot_chain_tension(ax, chain_history, legend=False),
+            lambda ax: plot_chain_curvature(ax, chain_history, legend=False),
+            lambda ax: plot_chain_energy(ax, np.linspace(0, 1, _T), np.zeros(_T), legend=False),
+            lambda ax: plot_chain_tip_speed(ax, np.linspace(0, 1, _T), np.zeros(_T), legend=False),
+        )
+        for plotter in plotters:
+            figure = Figure()
+            ax = figure.add_subplot(111)
+            plotter(ax)
+
+            assert ax.get_legend() is None
+            handles, labels = ax.get_legend_handles_labels()
+            assert handles
+            assert labels
 
 
 class TestMotionAnalysisPanel:
@@ -303,18 +339,19 @@ class TestMotionAnalysisPanel:
             rows=2,
             cols=3,
         )
-        plot_swing_joint_torques(panel.axes["torques"], swing_history)
-        plot_swing_joint_power(panel.axes["power"], swing_history)
-        plot_swing_angle(panel.axes["angle"], swing_history)
-        plot_swing_com_height(panel.axes["com_height"], swing_history)
-        plot_swing_energy(panel.axes["energy"], swing_history)
-        plot_swing_com_path(panel.axes["com_path"], swing_history)
+        plot_swing_joint_torques(panel.axes["torques"], swing_history, legend=False)
+        plot_swing_joint_power(panel.axes["power"], swing_history, legend=False)
+        plot_swing_angle(panel.axes["angle"], swing_history, legend=False)
+        plot_swing_com_height(panel.axes["com_height"], swing_history, legend=False)
+        plot_swing_energy(panel.axes["energy"], swing_history, legend=False)
+        plot_swing_com_path(panel.axes["com_path"], swing_history, legend=False)
 
         minimum_size = panel.canvas.minimumSize()
         self._assert_docked_legends_do_not_cover_plots(
             panel,
             figure_size=(minimum_size.width() / 100.0, minimum_size.height() / 100.0),
         )
+        assert all(axes.get_legend() is None for axes in panel.axes.values())
 
     def test_chain_legends_are_docked_outside_data_axes(self, qapp, chain_history) -> None:
         from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel

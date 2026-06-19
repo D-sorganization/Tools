@@ -627,6 +627,10 @@ def test_swingset_iterative_optimize_populates_panel_and_overlays(qapp) -> None:
     assert 0 < swingset.policy_trace_canvas.sample_count() <= 50
     # Analysis plots populated.
     assert swingset.analysis_panel.axes["torques"].get_lines()
+    assert all(axes.get_legend() is None for axes in swingset.analysis_panel.axes.values())
+    assert all(
+        axes.get_legend() is not None for axes in swingset.analysis_panel.legend_axes.values()
+    )
     # Force overlay drawn (all toggles default-on).
     assert swingset.canvas._overlay.arrows or swingset.canvas._overlay.com_markers
 
@@ -710,6 +714,8 @@ def test_chain_simulate_populates_panel_and_overlays(qapp) -> None:
 
     assert chain._rollout is not None
     assert chain.analysis_panel.axes["tension"].get_lines()
+    assert all(axes.get_legend() is None for axes in chain.analysis_panel.axes.values())
+    assert all(axes.get_legend() is not None for axes in chain.analysis_panel.legend_axes.values())
     assert chain.canvas._overlay.arrows
 
 

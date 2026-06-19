@@ -234,15 +234,23 @@ def plot_spine_loads(
 # ---------------------------------------------------------------------------
 
 
-def _style_timeseries_axis(ax: Any, ylabel: str, title: str, *, legend_fontsize: int = 7) -> None:
+def _style_timeseries_axis(
+    ax: Any,
+    ylabel: str,
+    title: str,
+    *,
+    legend_fontsize: int = 7,
+    legend: bool = True,
+) -> None:
     """Apply the shared axis labels, title, and legend styling (DRY)."""
     ax.set_xlabel("Time (s)", color=Palette.FG_DIM, fontsize=8)
     ax.set_ylabel(ylabel, color=Palette.FG_DIM, fontsize=8)
     ax.set_title(title, color=Palette.FG, fontsize=10)
-    _legend_outside_plot(ax, fontsize=legend_fontsize)
+    if legend:
+        _legend_outside_plot(ax, fontsize=legend_fontsize)
 
 
-def plot_swing_joint_torques(ax: Any, history: SwingForceHistory) -> None:
+def plot_swing_joint_torques(ax: Any, history: SwingForceHistory, *, legend: bool = True) -> None:
     for j, name in enumerate(SWING_POLICY_JOINT_NAMES):
         ax.plot(
             history.time_s,
@@ -252,10 +260,10 @@ def plot_swing_joint_torques(ax: Any, history: SwingForceHistory) -> None:
             label=name,
         )
     ax.axhline(0, color=Palette.FG_DIM, lw=0.5, alpha=0.3)
-    _style_timeseries_axis(ax, "Torque (N·m)", "Joint Torques")
+    _style_timeseries_axis(ax, "Torque (N·m)", "Joint Torques", legend=legend)
 
 
-def plot_swing_joint_power(ax: Any, history: SwingForceHistory) -> None:
+def plot_swing_joint_power(ax: Any, history: SwingForceHistory, *, legend: bool = True) -> None:
     for j, name in enumerate(SWING_POLICY_JOINT_NAMES):
         ax.plot(
             history.time_s,
@@ -274,10 +282,10 @@ def plot_swing_joint_power(ax: Any, history: SwingForceHistory) -> None:
         label="Total",
     )
     ax.axhline(0, color=Palette.FG_DIM, lw=0.5, alpha=0.3)
-    _style_timeseries_axis(ax, "Power (W)", "Joint Power")
+    _style_timeseries_axis(ax, "Power (W)", "Joint Power", legend=legend)
 
 
-def plot_swing_angle(ax: Any, history: SwingForceHistory) -> None:
+def plot_swing_angle(ax: Any, history: SwingForceHistory, *, legend: bool = True) -> None:
     ax.plot(
         history.time_s,
         np.degrees(history.swing_angle_rad),
@@ -286,20 +294,20 @@ def plot_swing_angle(ax: Any, history: SwingForceHistory) -> None:
         label="Swing angle",
     )
     ax.axhline(0, color=Palette.FG_DIM, lw=0.5, alpha=0.3)
-    _style_timeseries_axis(ax, "Angle (deg)", "Swing Angle")
+    _style_timeseries_axis(ax, "Angle (deg)", "Swing Angle", legend=legend)
 
 
-def plot_swing_com_height(ax: Any, history: SwingForceHistory) -> None:
+def plot_swing_com_height(ax: Any, history: SwingForceHistory, *, legend: bool = True) -> None:
     ax.plot(history.time_s, history.com_height_m, color=Palette.GREEN, lw=2, label="COM height")
-    _style_timeseries_axis(ax, "Height (m)", "COM Height")
+    _style_timeseries_axis(ax, "Height (m)", "COM Height", legend=legend)
 
 
-def plot_swing_energy(ax: Any, history: SwingForceHistory) -> None:
+def plot_swing_energy(ax: Any, history: SwingForceHistory, *, legend: bool = True) -> None:
     ax.plot(history.time_s, history.energy_j, color=Palette.ORANGE, lw=2, label="Swing energy")
-    _style_timeseries_axis(ax, "Energy (J)", "Swing Energy")
+    _style_timeseries_axis(ax, "Energy (J)", "Swing Energy", legend=legend)
 
 
-def plot_swing_com_path(ax: Any, history: SwingForceHistory) -> None:
+def plot_swing_com_path(ax: Any, history: SwingForceHistory, *, legend: bool = True) -> None:
     # com_path_m is (x, +y-down); negate y so "up" is up on the plot.
     xs = history.com_path_m[:, 0]
     ys = -history.com_path_m[:, 1]
@@ -309,10 +317,11 @@ def plot_swing_com_path(ax: Any, history: SwingForceHistory) -> None:
     ax.set_xlabel("Horizontal (m)", color=Palette.FG_DIM, fontsize=8)
     ax.set_ylabel("Vertical (m)", color=Palette.FG_DIM, fontsize=8)
     ax.set_title("COM Path", color=Palette.FG, fontsize=10)
-    _legend_outside_plot(ax, fontsize=6)
+    if legend:
+        _legend_outside_plot(ax, fontsize=6)
 
 
-def plot_chain_tension(ax: Any, history: ChainForceHistory) -> None:
+def plot_chain_tension(ax: Any, history: ChainForceHistory, *, legend: bool = True) -> None:
     ax.plot(
         history.time_s, history.max_tension_n, color=Palette.RED, lw=2, label="Max link tension"
     )
@@ -324,10 +333,10 @@ def plot_chain_tension(ax: Any, history: ChainForceHistory) -> None:
     ax.plot(
         history.time_s, mean_tension, color=Palette.ACCENT, lw=1.5, alpha=0.8, label="Mean tension"
     )
-    _style_timeseries_axis(ax, "Tension (N)", "Chain Link Tension")
+    _style_timeseries_axis(ax, "Tension (N)", "Chain Link Tension", legend=legend)
 
 
-def plot_chain_curvature(ax: Any, history: ChainForceHistory) -> None:
+def plot_chain_curvature(ax: Any, history: ChainForceHistory, *, legend: bool = True) -> None:
     ax.plot(
         history.time_s,
         np.degrees(history.max_curvature_rad),
@@ -335,14 +344,14 @@ def plot_chain_curvature(ax: Any, history: ChainForceHistory) -> None:
         lw=2,
         label="Max curvature",
     )
-    _style_timeseries_axis(ax, "Curvature (deg)", "Chain Curvature")
+    _style_timeseries_axis(ax, "Curvature (deg)", "Chain Curvature", legend=legend)
 
 
-def plot_chain_energy(ax: Any, time_s: Any, energy_j: Any) -> None:
+def plot_chain_energy(ax: Any, time_s: Any, energy_j: Any, *, legend: bool = True) -> None:
     ax.plot(time_s, energy_j, color=Palette.GREEN, lw=2, label="Total energy")
-    _style_timeseries_axis(ax, "Energy (J)", "Chain Energy")
+    _style_timeseries_axis(ax, "Energy (J)", "Chain Energy", legend=legend)
 
 
-def plot_chain_tip_speed(ax: Any, time_s: Any, tip_speed_m_s: Any) -> None:
+def plot_chain_tip_speed(ax: Any, time_s: Any, tip_speed_m_s: Any, *, legend: bool = True) -> None:
     ax.plot(time_s, tip_speed_m_s, color=Palette.BLUE, lw=2, label="Tip speed")
-    _style_timeseries_axis(ax, "Speed (m/s)", "Chain Tip Speed")
+    _style_timeseries_axis(ax, "Speed (m/s)", "Chain Tip Speed", legend=legend)

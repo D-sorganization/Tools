@@ -994,12 +994,12 @@ class SwingsetTab(_MotionViewMixin, QWidget):
         self._force_fields = swing_force_fields(self._config(), self._rollout, DEFAULT_POLICY_DT_S)
         panel = self.analysis_panel
         panel.clear()
-        plot_renderer.plot_swing_joint_torques(panel.axes["torques"], history)
-        plot_renderer.plot_swing_joint_power(panel.axes["power"], history)
-        plot_renderer.plot_swing_angle(panel.axes["angle"], history)
-        plot_renderer.plot_swing_com_height(panel.axes["com_height"], history)
-        plot_renderer.plot_swing_energy(panel.axes["energy"], history)
-        plot_renderer.plot_swing_com_path(panel.axes["com_path"], history)
+        plot_renderer.plot_swing_joint_torques(panel.axes["torques"], history, legend=False)
+        plot_renderer.plot_swing_joint_power(panel.axes["power"], history, legend=False)
+        plot_renderer.plot_swing_angle(panel.axes["angle"], history, legend=False)
+        plot_renderer.plot_swing_com_height(panel.axes["com_height"], history, legend=False)
+        plot_renderer.plot_swing_energy(panel.axes["energy"], history, legend=False)
+        plot_renderer.plot_swing_com_path(panel.axes["com_path"], history, legend=False)
         self._apply_plot_legend_visibility()
         panel.draw()
 

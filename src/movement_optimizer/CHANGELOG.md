@@ -47,6 +47,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Centered docked Swingset and Chain Dynamics plot legends inside taller
   reserved legend strips, with rendered padding coverage so multi-row joint
   legends do not crowd the charts or appear clipped.
+- Stopped Swingset and Chain Dynamics panel rendering from creating transient
+  data-axis legends; labeled artists now feed `MotionAnalysisPanel` docked
+  legend strips directly so legends cannot reappear over plot contents.
 - Hardened the `movement_optimizer_core` maturin parity workflow with a
   per-job virtual environment, explicit NumPy/SciPy/`pytest` reinstalls, and
   PyO3 forward compatibility for the declared Python 3.13 lane.

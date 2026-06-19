@@ -11,7 +11,7 @@
 | License          | MIT                                                     |
 | Package Name     | `movement-optimizer`                                    |
 | Current Version  | `1.0.0`                                                 |
-| Spec Version     | `1.0.27`                                                |
+| Spec Version     | `1.0.28`                                                |
 | Last Spec Update | 2026-06-19                                              |
 
 ## 2. Purpose
@@ -45,6 +45,10 @@ Movement-Optimizer is a biomechanics trajectory optimizer for barbell exercises.
 - Docked Swingset and Chain Dynamics plot legends are centered inside taller
   reserved legend rows, with rendered padding coverage so multi-row joint
   legends cannot crowd the plots or appear clipped on compact panes.
+- Swingset and Chain Dynamics panel renderers now suppress transient data-axis
+  legends while preserving series labels for `MotionAnalysisPanel` to dock in
+  reserved legend rows, so visible legends cannot appear over the plotted
+  curves between plot rendering and panel draw.
 - The Swingset policy optimization trace legend now measures and wraps entries
   by widget width, and the trace series uses the wrapped legend height as its
   top inset so the legend does not obscure optimizer telemetry in narrow panes.
@@ -216,6 +220,7 @@ mypy --ignore-missing-imports src/movement_optimizer/
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-06-19 | 1.0.28  | Rendered Swingset and Chain Dynamics panel plots without transient data-axis legends while preserving labeled artists for `MotionAnalysisPanel` docked legend strips, so visible legends cannot obscure plot contents between renderer and panel draw steps.                                                                                                                                                  |
 | 2026-06-19 | 1.0.27  | Centered docked Swingset and Chain Dynamics plot legends inside taller reserved legend rows and added rendered padding coverage, so multi-row joint legends cannot crowd plots or appear clipped on compact panes.                                                                                                                                                                                            |
 | 2026-06-19 | 1.0.26  | Reserved a bottom axis-label band in the Swingset policy optimization trace canvas and included that band in the width-aware minimum-height contract, so the `iteration` label stays below the plotted optimizer traces instead of overlaying telemetry at narrow widths.                                                                                                                                     |
 | 2026-06-19 | 1.0.25  | Made the Swingset policy optimization trace canvas advertise a width-aware minimum height from its wrapped legend rows plus a minimum telemetry band, so narrow optimizer panes scroll or expand instead of letting the legend dominate the plot area.                                                                                                                                                        |
