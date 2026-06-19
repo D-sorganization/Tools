@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from src.pressure_drop_calculator import PressureDropInput, PressureDropOutput
+from pressure_drop_calculator import PressureDropInput, PressureDropOutput
 
 
 def _valid_input(**overrides: object) -> PressureDropInput:
