@@ -24,7 +24,19 @@ from enum import Enum
 from typing import Any, NamedTuple
 
 import numpy as np
-from numba import jit
+
+try:
+    from numba import jit
+except ImportError:
+
+    def jit(*_args: Any, **_kwargs: Any) -> Any:
+        """Fallback decorator when optional numba acceleration is unavailable."""
+
+        def decorator(func: Any) -> Any:
+            return func
+
+        return decorator
+
 
 from data_processor.contracts import require
 from data_processor.core.causality_types import (

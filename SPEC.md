@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.596                                    |
+| **Spec Version**        | 1.1.598                                    |
 | **Last Spec Update**    | 2026-06-18                                 |
 
 ## 2. Purpose & Mission
@@ -80,7 +80,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Data processor rolling cross-correlation now clamps its documented
   `correlation_stability` score at 0.0 when variation exceeds the mean, keeping
   the `1 - coefficient of variation` result inside the advertised range while
-  preserving the existing zero-mean behavior (#3745).
+  preserving the existing zero-mean behavior. Cross-correlation now also treats
+  numba as optional acceleration and falls back to a no-op `jit` decorator when
+  CI or downstream consumers install the data processor without numba (#3745).
 - Repository package metadata is prepared for the v1.1.0 release by aligning
   `pyproject.toml`, `VERSION`, `CHANGELOG.md`, and this specification's current
   version field.
@@ -1856,6 +1858,12 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.1.598
+
+- 2026-06-18: fix(data-processor, #3745) — keep cross-correlation importable
+  without optional numba acceleration and clamp the rolling
+  `correlation_stability` contract to the documented non-negative range.
 
 ### Version 1.1.447
 
