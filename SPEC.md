@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7674                                   |
+| **Spec Version**        | 1.1.7675                                   |
 | **Last Spec Update**    | 2026-06-19                                 |
 
 ## 2. Purpose & Mission
@@ -1285,6 +1285,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-19 | 1.1.7675 | fix(shared-ai, #3671): make `ShellTool._is_command_allowed` fail closed and log when per-token path validation raises, preserving the dangerous-executable guard instead of silently allowing unvalidated argv tokens. |
 | 2026-06-19 | 1.1.7674 | fix(contracts, #3736): remove redundant `assert ... is not None` guards shadowed by explicit contract checks in `_mr_kinematics.IKinBody` and `config_loader.validate_tools_config`, keeping `None` rejection covered by focused regressions under the maintained contract path. |
 | 2026-06-19 | 1.1.7674 | ci(tests, #3736): focus source-keyed CI selection for `_mr_kinematics.py` and `tools/config_loader.py` on their dedicated contract suites so redundant-assert cleanup branches do not collect package-wide rotation/tools suites in every Python matrix lane. |
 | 2026-06-19 | 1.1.7673 | fix(data_processor, #3673): replace the vacuous `filter_type is not None` assert in `design_frequency_window` with real precondition checks that raise `ValueError` for an unrecognized `filter_type`, `n_samples <= 0`, or `transition_bw <= 0`, preventing silent inf/NaN coefficients and all-zero filters. |

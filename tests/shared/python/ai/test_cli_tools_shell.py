@@ -19,6 +19,7 @@ from unittest.mock import patch
 
 import pytest
 
+from src.shared.python.ai.tools import cli_tools  # noqa: E402
 from src.shared.python.ai.tools.cli_tools import ShellTool  # noqa: E402
 
 
@@ -137,3 +138,29 @@ class TestAllowDenyMatrix:
     def test_bypasses_rejected(self, tool: ShellTool, command: str) -> None:
         """Bypass attempts with paths or embedded dangerous commands are rejected."""
         assert tool._is_command_allowed(command) is False
+
+    @pytest.mark.unit
+    def test_token_validation_errors_fail_closed_and_log(
+        self, tool: ShellTool, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        """Path-validation failures must reject the command instead of continuing."""
+
+        class InspectablePath:
+            def __init__(self, token: str) -> None:
+                self._token = token
+
+            @property
+            def name(self) -> str:
+                if self._token == "suspicious-token":
+                    raise OSError(f"cannot inspect {self._token}")
+                return Path(self._token).name
+
+        with (
+            caplog.at_level("WARNING", logger=cli_tools.logger.name),
+            patch.object(cli_tools, "Path", side_effect=InspectablePath),
+        ):
+            allowed = tool._is_command_allowed("ls suspicious-token")
+
+        assert allowed is False
+        assert "Could not validate command token" in caplog.text
+        assert "suspicious-token" in caplog.text
