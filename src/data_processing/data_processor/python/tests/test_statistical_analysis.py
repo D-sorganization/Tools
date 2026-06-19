@@ -191,6 +191,36 @@ class TestDatasetManager:
         assert manager2.active_data is not None
         assert len(manager2.active_data) == len(sample_df)
 
+    def test_workspace_save_and_load_without_parquet_engine(
+        self,
+        sample_df: pd.DataFrame,
+        temp_dir: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """Workspace persistence falls back when optional parquet engines are absent."""
+        from data_processor.core.dataset_manager import DatasetManager
+
+        def _missing_parquet_engine(*_args: object, **_kwargs: object) -> None:
+            raise ImportError("missing parquet engine")
+
+        monkeypatch.setattr(pd.DataFrame, "to_parquet", _missing_parquet_engine)
+        monkeypatch.setattr(pd, "read_parquet", _missing_parquet_engine)
+
+        manager1 = DatasetManager()
+        manager1.load_from_dataframe(sample_df, name="Test")
+        manager1.save_workspace(temp_dir)
+
+        assert list(temp_dir.rglob("*.json"))
+
+        manager2 = DatasetManager()
+        manager2.load_workspace(temp_dir)
+
+        assert manager2.active_data is not None
+        pd.testing.assert_frame_equal(
+            manager2.active_data.reset_index(drop=True),
+            sample_df.reset_index(drop=True),
+        )
+
 
 class TestUndoRedoManager:
     """Tests for the UndoRedoManager command pattern."""

@@ -67,6 +67,10 @@ import pytest
             "data_processor.core.state_space.ARIMAStateSpace",
             ("_update_matrices", "_estimate_ar"),
         ),
+        (
+            "data_processor.core.dataset_manager.DatasetManager",
+            ("save_workspace", "load_workspace"),
+        ),
     ],
 )
 def test_object_oriented_analysis_methods_are_plain_functions(
