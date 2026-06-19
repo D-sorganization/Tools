@@ -4,6 +4,7 @@ import sys
 import types
 from pathlib import Path
 
+import numpy as np
 import pytest
 from model_generation.api.rest_api_routes import (
     ALLOWED_MESH_SUFFIXES,
@@ -13,6 +14,22 @@ from model_generation.api.rest_api_routes import (
 from model_generation.api.rest_api_types import APIRequest, HTTPMethod
 
 _ASCII_STL = b"solid mesh\nendsolid mesh\n"
+
+
+class _FakeInertiaMesh:
+    volume = 0.25
+    center_mass = np.array([0.1, 0.2, 0.3])
+
+    def __init__(self) -> None:
+        self.density = 1.0
+
+    @property
+    def mass(self) -> float:
+        return self.volume * self.density
+
+    @property
+    def moment_inertia(self) -> np.ndarray:
+        return np.eye(3) * self.mass
 
 
 def _mesh_request(mesh: bytes, **body: object) -> APIRequest:
@@ -118,6 +135,52 @@ def test_mesh_upload_uses_correct_suffix_for_ply_file(monkeypatch) -> None:
     api.inertia_from_mesh(_mesh_request(b"ply\n", filename="model.ply"))
 
     assert captured_path["path"].suffix == ".ply"
+
+
+def test_mesh_upload_density_path_returns_volume(monkeypatch) -> None:
+    """Density-based inertia must return the mesh volume instead of crashing."""
+
+    fake_mesh = _FakeInertiaMesh()
+
+    def load(path: str | Path) -> _FakeInertiaMesh:
+        assert Path(path).suffix == ".stl"
+        return fake_mesh
+
+    monkeypatch.setitem(sys.modules, "trimesh", types.SimpleNamespace(load=load))
+    api = ModelGenerationAPI()
+    request = APIRequest(
+        method=HTTPMethod.POST,
+        path="/api/v1/inertia/from-mesh",
+        body={"density": 8.0, "filename": "mesh.stl"},
+        files={"mesh": _ASCII_STL},
+    )
+
+    response = api.inertia_from_mesh(request)
+
+    assert response.status_code == 200
+    assert fake_mesh.density == 8.0
+    assert response.body["mass"] == pytest.approx(2.0)
+    assert response.body["volume"] == pytest.approx(0.25)
+    assert response.body["inertia"]["ixx"] == pytest.approx(2.0)
+
+
+def test_mesh_upload_mass_path_still_returns_scaled_inertia(monkeypatch) -> None:
+    """Mass-based inertia must still scale the mesh inertia tensor."""
+    fake_mesh = _FakeInertiaMesh()
+
+    def load(path: str | Path) -> _FakeInertiaMesh:
+        assert Path(path).suffix == ".stl"
+        return fake_mesh
+
+    monkeypatch.setitem(sys.modules, "trimesh", types.SimpleNamespace(load=load))
+    api = ModelGenerationAPI()
+
+    response = api.inertia_from_mesh(_mesh_request(_ASCII_STL, mass=4.0))
+
+    assert response.status_code == 200
+    assert response.body["mass"] == pytest.approx(4.0)
+    assert response.body["volume"] == pytest.approx(0.25)
+    assert response.body["inertia"]["ixx"] == pytest.approx(4.0)
 
 
 def test_mesh_upload_no_trimesh_returns_501() -> None:

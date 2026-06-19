@@ -718,14 +718,13 @@ class ModelGenerationAPI:
                 calculated_mass = mesh.mass
             else:
                 # Scale inertia to specified mass
-                volume = mesh.volume
                 inertia_tensor = mesh.moment_inertia * (mass / mesh.mass)
                 calculated_mass = mass
 
             return APIResponse.ok(
                 {
                     "mass": calculated_mass,
-                    "volume": volume if density else mesh.volume,
+                    "volume": mesh.volume,
                     "center_of_mass": mesh.center_mass.tolist(),
                     "inertia": {
                         "ixx": float(inertia_tensor[0, 0]),
