@@ -99,6 +99,15 @@ _VESSEL_DRAFTER_SOURCE_TESTS = {
     ],
 }
 
+_TOP_LEVEL_SOURCE_TESTS = {
+    ("rotation_converter", "_mr_kinematics.py"): [
+        "tests/rotation_converter/test_mr_kinematics_contracts_3736.py",
+    ],
+    ("tools", "config_loader.py"): [
+        "tests/tools/test_config_loader.py",
+    ],
+}
+
 _VENDORED_SOURCE_PREFIXES = (
     ("src", "movement_optimizer"),
     ("src", "pendulum_simulator"),
@@ -145,6 +154,15 @@ def _candidate_targets(src_path: str) -> list[Path]:
         rel_vessel_path = Path(*parts[2:]).as_posix()
         if rel_vessel_path in _VESSEL_DRAFTER_SOURCE_TESTS:
             for test_path in _VESSEL_DRAFTER_SOURCE_TESTS[rel_vessel_path]:
+                targets.append(REPO_ROOT / test_path)
+            return targets
+
+    if len(parts) >= 3 and parts[0] == "src":
+        exact_top_level_tests = _TOP_LEVEL_SOURCE_TESTS.get(
+            (parts[1], Path(*parts[2:]).as_posix())
+        )
+        if exact_top_level_tests is not None:
+            for test_path in exact_top_level_tests:
                 targets.append(REPO_ROOT / test_path)
             return targets
 
