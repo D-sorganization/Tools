@@ -104,6 +104,24 @@ _VENDORED_SOURCE_PREFIXES = (
     ("src", "pendulum_simulator"),
 )
 
+_TOP_LEVEL_SOURCE_TESTS = {
+    ("rotation_converter", "_mr_dynamics.py"): [
+        "tests/rotation_converter/test_modern_robotics.py",
+    ],
+    ("rotation_converter", "modern_robotics.py"): [
+        "tests/rotation_converter/test_modern_robotics.py",
+    ],
+    ("rotation_converter", "modern_robotics_pkg/dynamics.py"): [
+        "tests/rotation_converter/test_modern_robotics.py",
+    ],
+    ("rotation_converter", "modern_robotics_pkg/kinematics.py"): [
+        "tests/rotation_converter/test_modern_robotics.py",
+    ],
+    ("rotation_converter", "modern_robotics_pkg/trajectory.py"): [
+        "tests/rotation_converter/test_modern_robotics.py",
+    ],
+}
+
 
 def _read_changed_files(argv: list[str]) -> list[str]:
     """Read changed-file paths from a path argument or stdin."""
@@ -146,6 +164,16 @@ def _candidate_targets(src_path: str) -> list[Path]:
         if rel_vessel_path in _VESSEL_DRAFTER_SOURCE_TESTS:
             for test_path in _VESSEL_DRAFTER_SOURCE_TESTS[rel_vessel_path]:
                 targets.append(REPO_ROOT / test_path)
+            return targets
+
+    if parts and parts[0] == "src" and len(parts) >= 3:
+        rel_top_level_path = Path(*parts[2:]).as_posix()
+        for test_path in _TOP_LEVEL_SOURCE_TESTS.get(
+            (parts[1], rel_top_level_path),
+            [],
+        ):
+            targets.append(REPO_ROOT / test_path)
+        if targets:
             return targets
 
     # Identify the changed file's *package root* so we can mirror it. For a
