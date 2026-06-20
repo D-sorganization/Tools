@@ -30,20 +30,18 @@ def test_validate_workflow_text_fallback_rejects_missing_jobs(
 def test_validate_workflow_rejects_sudo_actionlint_install(tmp_path: Path) -> None:
     workflow = tmp_path / "workflow.yml"
     workflow.write_text(
-        "\n".join(
-            [
-                "name: Test",
-                "jobs:",
-                "  lint:",
-                "    steps:",
-                "      - run: sudo mv actionlint /usr/local/bin/actionlint",
-            ]
-        ),
+        "name: Workflow Lint\n"
+        "on: push\n"
+        "jobs:\n"
+        "  lint:\n"
+        "    runs-on: d-sorg-fleet\n"
+        "    steps:\n"
+        "      - name: Install actionlint\n"
+        "        run: sudo mv actionlint /usr/local/bin/actionlint\n",
         encoding="utf-8",
     )
 
-    expected = (
+    assert validate_workflows.validate_workflow(workflow) == [
         f"{workflow}: install actionlint into a runner-local directory, "
         "not /usr/local/bin with sudo"
-    )
-    assert validate_workflows.validate_workflow(workflow) == [expected]
+    ]

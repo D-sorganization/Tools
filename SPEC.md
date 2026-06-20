@@ -1362,6 +1362,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 | 2026-06-20 | 1.1.7783 | test(pressure-drop, #3737): expose the singular `PressureDropInput` Pydantic model from `src.pressure_drop_calculator`, preserve construction-time gas-composition validation, and add focused coverage for defaults, invalid gas composition, and backend model coexistence. |
+| 2026-06-19 | 1.1.7679 | refactor(p1am, #3739): route `signal_stats`, `power_supply_models`, and `temperature_models` through the canonical shared `StrEnum` compatibility helper, with backend regression coverage proving shared helper identity, type-checkable enum iteration, and preserved string-like enum serialization. |
 | 2026-06-19 | 1.1.7678 | fix(pressure-drop, #3672): replace the public pressure-drop API's strippable pipe-length assert with unconditional boundary validation for pipe length, flow rate, pressure, flow unit, and friction method, including optimized-Python regression coverage. |
 | 2026-06-20 | 1.1.7781 | fix(data-processor, #3758): call the STL seasonal smoother with a positional fraction argument so the merged time-series helper remains mypy-clean under the existing `Callable[[np.ndarray, float], np.ndarray]` contract. |
 | 2026-06-19 | 1.1.7674 | fix(pressure-drop, #3660): collapse the duplicate `flow_properties.py` engine body into an explicit facade over `_flow_calculations.py` and add split-test coverage for single definitions plus facade identity. |
