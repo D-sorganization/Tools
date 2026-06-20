@@ -21,7 +21,6 @@ import logging
 from typing import Any
 
 import numpy as np
-from numba import jit
 
 from data_processor.core.time_series_decomposition_contracts import (
     DecompositionConfig,
@@ -196,23 +195,23 @@ class TimeSeriesDecomposer:
 
         if method == TrendModel.MOVING_AVERAGE:
             window = kwargs.get("window", self.config.ma_window or len(data) // 10)
-            return moving_average(data, window)
+            return np.asarray(moving_average(data, window))
 
         elif method == TrendModel.LOWESS:
             frac = kwargs.get("frac", 0.3)
-            return lowess_smooth(data, frac)
+            return np.asarray(lowess_smooth(data, frac))
 
         elif method == TrendModel.POLYNOMIAL:
             degree = kwargs.get("degree", self.config.polynomial_degree)
-            return polynomial_trend(data, degree)
+            return np.asarray(polynomial_trend(data, degree))
 
         elif method == TrendModel.EXPONENTIAL:
             alpha = kwargs.get("alpha", 0.3)
-            return exponential_smooth(data, alpha)
+            return np.asarray(exponential_smooth(data, alpha))
 
         elif method == TrendModel.HP_FILTER:
             lambd = kwargs.get("lambda", self.config.hp_lambda)
-            return hp_filter(data, lambd)
+            return np.asarray(hp_filter(data, lambd))
 
         else:
             raise ValueError(f"Unknown trend method: {method}")
@@ -266,7 +265,6 @@ class TimeSeriesDecomposer:
 
         return seasonal
 
-    @jit(nopython=True, fastmath=True)
     def multi_seasonal_decompose(
         self,
         data: np.ndarray,
