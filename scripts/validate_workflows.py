@@ -25,8 +25,7 @@ def validate_workflow(path: Path) -> list[str]:
 
     if "sudo mv actionlint /usr/local/bin/actionlint" in text:
         errors.append(
-            f"{path}: install actionlint into a runner-local directory, not "
-            "/usr/local/bin with sudo"
+            f"{path}: install actionlint into a runner-local directory, not /usr/local/bin with sudo"
         )
 
     if yaml is None:
