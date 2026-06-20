@@ -454,7 +454,7 @@ class ExtendedKalmanFilter:
         state_dim: int,
         measurement_dim: int | None = None,
         f: Callable[..., np.ndarray] | None = None,
-        h: Callable[[np.ndarray], np.ndarray] | None = None,
+        h: Callable[..., np.ndarray] | None = None,
         F_jacobian: Callable[[np.ndarray], np.ndarray] | None = None,
         H_jacobian: Callable[[np.ndarray], np.ndarray] | None = None,
         Q: np.ndarray | None = None,
@@ -482,9 +482,9 @@ class ExtendedKalmanFilter:
         measurements: np.ndarray,
         control_inputs: np.ndarray | None = None,
         transition_func: Callable[..., np.ndarray] | None = None,
-        observation_func: Callable[[np.ndarray], np.ndarray] | None = None,
-        transition_jacobian: Callable[[np.ndarray], np.ndarray] | None = None,
-        observation_jacobian: Callable[[np.ndarray], np.ndarray] | None = None,
+        observation_func: Callable[..., np.ndarray] | None = None,
+        transition_jacobian: Callable | None = None,
+        observation_jacobian: Callable | None = None,
     ) -> KalmanFilterResult:
         """Run EKF on measurements."""
         if measurements is None:

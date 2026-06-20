@@ -568,7 +568,7 @@ class BaseStateSpaceModel(ABC):
         for t in range(n):
             residuals[t] = y[t] - (self.Z @ smoothed_states[t]).item()
 
-        obs_var = np.mean(residuals**2)
+        obs_var = float(np.mean(residuals**2))
 
         # Estimate state variance from smoothed residuals
         state_residuals = np.zeros(n - 1)
@@ -576,7 +576,7 @@ class BaseStateSpaceModel(ABC):
             pred = self.T @ smoothed_states[t - 1]
             state_residuals[t - 1] = np.sum((smoothed_states[t] - pred) ** 2)
 
-        state_var = np.mean(state_residuals) / self.n_states
+        state_var = float(np.mean(state_residuals) / self.n_states)
 
         return np.array([max(1e-10, state_var), max(1e-10, obs_var)])
 
