@@ -25,20 +25,19 @@ def validate_workflow(path: Path) -> list[str]:
 
     if "sudo mv actionlint /usr/local/bin/actionlint" in text:
         errors.append(
-            f"{path}: install actionlint into a runner-local directory, "
-            "not /usr/local/bin with sudo"
+            f"{path}: install actionlint into a runner-local directory, not /usr/local/bin with sudo"
         )
 
     if yaml is None:
         if not text.strip():
-            errors.append(f"{path}: expected a non-empty workflow file")
-            return errors
+            return [f"{path}: expected a non-empty workflow file"]
         if not any(line == "jobs:" for line in text.splitlines()):
             errors.append(f"{path}: missing top-level 'jobs'")
         return errors
 
     try:
-        data = yaml.safe_load(text)
+        with path.open(encoding="utf-8") as handle:
+            data = yaml.safe_load(handle)
     except Exception as exc:  # pragma: no cover - surfaced directly in CI
         return [f"{path}: YAML parse error: {exc}"]
 

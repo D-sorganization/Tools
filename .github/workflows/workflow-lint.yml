@@ -150,7 +150,12 @@ jobs:
           echo "$ACTIONLINT_BIN" >> "$GITHUB_PATH"
 
       - name: Install shellcheck
-        run: while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock && sudo apt-get -o DPkg::Lock::Timeout=300 update || true && while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock && sudo apt-get -o DPkg::Lock::Timeout=300 update --fix-missing || true; sudo apt-get -o DPkg::Lock::Timeout=300 install -y shellcheck
+        run: |
+          if ! command -v shellcheck >/dev/null 2>&1; then
+            SHELLCHECK_VERSION=0.10.0
+            curl -sSL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" | tar -xJ
+            echo "$PWD/shellcheck-v${SHELLCHECK_VERSION}" >> "$GITHUB_PATH"
+          fi
 
       - name: Run actionlint
         run: actionlint -color -shellcheck ./scripts/actionlint_shellcheck.sh -pyflakes=
