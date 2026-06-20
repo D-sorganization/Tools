@@ -5,6 +5,7 @@ from __future__ import annotations
 import contextlib
 import io
 import logging
+import time
 import types
 from collections.abc import Callable
 from typing import Any
@@ -27,6 +28,8 @@ from .qt_compat import QtCore, QtWidgets, Signal
 from .registry import WorkspaceRegistry, is_workspace_registry
 
 _logger = logging.getLogger(__name__)
+
+_IMMEDIATE_COMPLETION_DRAIN_SECONDS = 0.05
 
 SIDEKICK_TERMINAL_OBJECT_NAME = "SidekickTerminalTab"
 SIDEKICK_PYTHON_REPL_OBJECT_NAME = SIDEKICK_TERMINAL_OBJECT_NAME
@@ -242,6 +245,19 @@ class PythonReplWidget(QtWidgets.QWidget):
         self._worker = _ReplWorker(script, dict(self._namespace))
         self._worker.result_ready.connect(self._on_execution_finished)
         self._worker.start()
+        self._drain_immediate_completion(self._worker)
+
+    def _drain_immediate_completion(self, worker: _ReplWorker) -> None:
+        """Publish fast completions without making long-running code synchronous."""
+        deadline = time.monotonic() + _IMMEDIATE_COMPLETION_DRAIN_SECONDS
+        while self._worker is worker and worker.isRunning():
+            if time.monotonic() >= deadline:
+                return
+            QtWidgets.QApplication.processEvents()
+            worker.wait(1)
+        if self._worker is worker:
+            worker.wait()
+            QtWidgets.QApplication.processEvents()
 
     def _retire_worker(self, worker: _ReplWorker | None) -> None:
         """Drop a stopped worker without leaving it parented to widget teardown."""

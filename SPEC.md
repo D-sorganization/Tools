@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7783                                   |
+| **Spec Version**        | 1.1.7784                                   |
 | **Last Spec Update**    | 2026-06-20                                 |
 
 ## 2. Purpose & Mission
@@ -49,6 +49,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   covered, propagates deleted or no-longer-exportable names back to the
   Workspace registry, and pins export-filter coverage for modules, callables,
   reserved aliases, and private names (#3716, #3717, #3718, #3719).
+- Sidekick Python REPL fast completions now drain a bounded result handoff after
+  worker start so trivial commands publish output and Workspace registry updates
+  for legacy immediate callers, while slower code remains asynchronous,
+  isolated, and cancel-safe (#3716, #3717, #3718, #3719).
 - CI Standard now keeps the shared apt lock for dependency installation but
   only invokes `sudo` when passwordless sudo is available; non-sudo-capable
   fleet runners warn and continue with the pre-provisioned image packages
@@ -1377,6 +1381,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-06-20 | 1.1.7781 | fix(data-processor, #3760): call the STL seasonal smoother with a positional fraction argument so the merged time-series helper remains mypy-clean under the existing `Callable[[np.ndarray, float], np.ndarray]` contract. |
 | 2026-06-20 | 1.1.7782 | fix(ci): install actionlint into a runner-local temporary bin directory, reject the old sudo actionlint move in workflow validation, and guard CI Standard apt installs so non-passwordless self-hosted runners do not fail before tests when system dependencies are pre-provisioned. |
 | 2026-06-20 | 1.1.7783 | fix(sidekick, #3716 #3717 #3718 #3719): run Python REPL workers asynchronously without a GUI-thread busy-wait, preserve cancel and re-entrant guard coverage, remove deleted or no-longer-exportable names from the Workspace registry, and cover module/callable/reserved/private namespace export filtering. |
+| 2026-06-20 | 1.1.7784 | fix(sidekick, #3716 #3717 #3718 #3719): drain fast Python REPL worker completions through the Qt event pump so immediate callers see output and Workspace registry updates while slower scripts remain asynchronous and cancel-safe. |
 | 2026-06-19 | 1.1.7674 | fix(plugin-manager, #3720 #3721): make `PluginManager.load_tools()` skip malformed `tools.json` categories and non-dict entries with warnings while preserving valid tools from the same load, with strict-mypy-clean focused regression coverage. |
 | 2026-06-19 | 1.1.7674 | test(plugin-manager, #3720 #3721): centralize isolated plugin-manager import/skip helpers in `test_python_dbc_lod.py`, preserving malformed manifest regression coverage while keeping the changed test file below the 500 LOC CI budget. |
 | 2026-06-19 | 1.1.7675 | fix(data-processor, #3661): keep time-series decomposition helpers importable when installed Numba rejects the active NumPy version by falling back to a no-op `jit` decorator, preserving pure-Python decomposition behavior under optional acceleration failures. |
