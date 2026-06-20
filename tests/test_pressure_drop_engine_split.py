@@ -6,9 +6,15 @@ import ast
 from pathlib import Path
 
 import pytest
-from upstream_drift_tools.process_calculators.pressure_drop_calculator.engine import (  # noqa: E501
+from upstream_drift_tools.process_calculators.pressure_drop_calculator.engine import (
     _flow_calculations,
     flow_properties,
+)
+from upstream_drift_tools.process_calculators.pressure_drop_calculator.engine import (
+    _friction_factors as canonical_friction_factors,
+)
+from upstream_drift_tools.process_calculators.pressure_drop_calculator.engine import (
+    friction_factors as public_friction_factors,
 )
 from upstream_drift_tools.process_calculators.pressure_drop_calculator.engine.compressible_flow import (  # noqa: E501
     calculate_expansion_factor,
@@ -74,6 +80,25 @@ def test_extracted_pressure_drop_modules_preserve_regression_values() -> None:
     assert calculate_fitting_pressure_drop(
         fittings, 1.2, 10.0, 50_000.0, 4.0
     ) == pytest.approx(180.0)
+
+
+def test_public_friction_factors_reexport_canonical_contracts() -> None:
+    assert (
+        public_friction_factors.friction_factor_laminar
+        is canonical_friction_factors.friction_factor_laminar
+    )
+    assert (
+        public_friction_factors.friction_factor_colebrook
+        is canonical_friction_factors.friction_factor_colebrook
+    )
+
+
+@pytest.mark.parametrize("reynolds_number", [0.0, -1.0])
+def test_public_laminar_friction_factor_rejects_nonpositive_reynolds(
+    reynolds_number: float,
+) -> None:
+    with pytest.raises(ValueError, match="Reynolds number must be positive"):
+        public_friction_factors.friction_factor_laminar(reynolds_number)
 
 
 def test_pressure_drop_engine_facade_remains_constructible() -> None:
