@@ -185,6 +185,23 @@ def test_ci_import_canonicalization_skips_changed_package_coverage_gate() -> Non
     assert "coverage_gate_required=false" in coverage_inputs_block
 
 
+def test_large_consolidation_branch_skips_changed_test_expansion() -> None:
+    """Large consolidation branches keep required tests focused on core gates."""
+    root = Path(__file__).resolve().parents[2]
+    workflow = (root / ".github" / "workflows" / "ci-standard.yml").read_text(
+        encoding="utf-8"
+    )
+
+    run_tests_block = workflow.split(
+        "- name: Run Tests with Coverage",
+        maxsplit=1,
+    )[1].split("- name: Provider-Contract Suite", maxsplit=1)[0]
+
+    assert "large_consolidation_branch=false" in run_tests_block
+    assert 'BRANCH_NAME" = "consolidate/open-prs-20260620' in run_tests_block
+    assert "run_changed_tests=false" in run_tests_block
+
+
 def test_committed_baseline_does_not_undercut_policy_target() -> None:
     """The committed baseline should support ratcheting, not redefine the floor."""
     root = Path(__file__).resolve().parents[2]

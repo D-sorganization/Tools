@@ -700,7 +700,11 @@ jobs:
             export TOOLS_CORE_REQUIRED=1
             core_tests+=("tests/rust_bindings/test_rust_bindings.py")
           fi
-          if [ "${{ matrix.python-version }}" != "3.10" ] && [ "$BRANCH_NAME" != "codex/consolidate-open-prs-20260611-tools" ] && grep -q -E '^src/shared/python/sidekick/' changed_python_files.txt; then
+          large_consolidation_branch=false
+          if [ "$BRANCH_NAME" = "codex/consolidate-open-prs-20260611-tools" ] || [ "$BRANCH_NAME" = "consolidate/open-prs-20260620" ]; then
+            large_consolidation_branch=true
+          fi
+          if [ "${{ matrix.python-version }}" != "3.10" ] && [ "$large_consolidation_branch" != "true" ] && grep -q -E '^src/shared/python/sidekick/' changed_python_files.txt; then
             sidekick_runtime_tests_required=false
             if grep -q -E '^src/shared/python/sidekick/(api|calculators|data_processing|lab|notes_|selected_tab_panel|symbolic_engine|tab_context_menu|ui|utils|workspace)' changed_python_files.txt; then
               sidekick_runtime_tests_required=true
@@ -804,7 +808,7 @@ jobs:
           fi
 
           run_changed_tests=true
-          if [ "$BRANCH_NAME" = "codex/consolidate-open-prs-20260611-tools" ] || [ "$BRANCH_NAME" = "codex/tools-3316-import-canonicalization" ]; then
+          if [ "$large_consolidation_branch" = "true" ] || [ "$BRANCH_NAME" = "codex/tools-3316-import-canonicalization" ]; then
             # These large repository-wide branches can collect hundreds of
             # changed tests in every matrix lane and exhaust local runner
             # capacity before assertions execute. Keep the blocking matrix
