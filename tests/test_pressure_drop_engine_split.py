@@ -2,18 +2,19 @@
 
 from __future__ import annotations
 
+import ast
 from pathlib import Path
 
 import pytest
+from upstream_drift_tools.process_calculators.pressure_drop_calculator.engine import (  # noqa: E501
+    _flow_calculations,
+    flow_properties,
+)
 from upstream_drift_tools.process_calculators.pressure_drop_calculator.engine.compressible_flow import (  # noqa: E501
     calculate_expansion_factor,
 )
 from upstream_drift_tools.process_calculators.pressure_drop_calculator.engine.fittings import (  # noqa: E501
     calculate_fitting_pressure_drop,
-)
-from upstream_drift_tools.process_calculators.pressure_drop_calculator.engine.flow_properties import (  # noqa: E501
-    calculate_elevation_pressure_drop,
-    classify_flow_regime,
 )
 from upstream_drift_tools.process_calculators.pressure_drop_calculator.engine.friction_factors import (  # noqa: E501
     friction_factor_colebrook,
@@ -32,13 +33,18 @@ def _nonblank_line_count(path: Path) -> int:
     )
 
 
+def _function_defs(path: Path) -> set[str]:
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    return {node.name for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)}
+
+
 def test_pressure_drop_engine_is_split_into_domain_modules(repo_root: Path) -> None:
     engine_dir = (
         repo_root
         / "src"
         / "shared"
         / "python"
-        / "upstream_drift_tools"
+        / "sidekick"
         / "process_calculators"
         / "pressure_drop_calculator"
         / "engine"
@@ -60,8 +66,8 @@ def test_extracted_pressure_drop_modules_preserve_regression_values() -> None:
         0.0185,
         rel=0.08,
     )
-    assert classify_flow_regime(5_000.0) == "turbulent"
-    assert calculate_elevation_pressure_drop(1.2, 10.0) > 0
+    assert _flow_calculations.classify_flow_regime(5_000.0) == "turbulent"
+    assert _flow_calculations.calculate_elevation_pressure_drop(1.2, 10.0) > 0
     assert 0.0 <= calculate_expansion_factor(100_000.0, 50_000.0, 0.02, 50.0) < 1.0
 
     fittings = [PipeFitting("custom_fitting", quantity=2, k_factor=1.5)]
@@ -73,3 +79,67 @@ def test_extracted_pressure_drop_modules_preserve_regression_values() -> None:
 def test_pressure_drop_engine_facade_remains_constructible() -> None:
     engine = PressureDropCalculationEngine()
     assert engine is not None
+
+
+def test_flow_properties_facade_delegates_to_production_flow_module(
+    repo_root: Path,
+) -> None:
+    engine_dir = (
+        repo_root
+        / "src"
+        / "shared"
+        / "python"
+        / "sidekick"
+        / "process_calculators"
+        / "pressure_drop_calculator"
+        / "engine"
+    )
+    flow_facade = engine_dir / "flow_properties.py"
+    production = engine_dir / "_flow_calculations.py"
+
+    assert not _function_defs(flow_facade)
+    assert _function_defs(production) >= {
+        "calculate_flow_properties",
+        "calculate_frictional_pressure_drop",
+        "classify_flow_regime",
+    }
+    assert (
+        flow_properties.calculate_flow_properties
+        is _flow_calculations.calculate_flow_properties
+    )
+    assert (
+        flow_properties.calculate_frictional_pressure_drop
+        is _flow_calculations.calculate_frictional_pressure_drop
+    )
+    assert (
+        flow_properties.classify_flow_regime is _flow_calculations.classify_flow_regime
+    )
+
+
+def test_flow_property_calculations_have_single_definition(repo_root: Path) -> None:
+    engine_dir = (
+        repo_root
+        / "src"
+        / "shared"
+        / "python"
+        / "sidekick"
+        / "process_calculators"
+        / "pressure_drop_calculator"
+        / "engine"
+    )
+    definitions_by_name: dict[str, list[Path]] = {
+        "calculate_flow_properties": [],
+        "calculate_frictional_pressure_drop": [],
+        "classify_flow_regime": [],
+    }
+    for path in engine_dir.glob("*.py"):
+        definitions = _function_defs(path)
+        for name in definitions_by_name:
+            if name in definitions:
+                definitions_by_name[name].append(path)
+
+    assert definitions_by_name == {
+        "calculate_flow_properties": [engine_dir / "_flow_calculations.py"],
+        "calculate_frictional_pressure_drop": [engine_dir / "_flow_calculations.py"],
+        "classify_flow_regime": [engine_dir / "_flow_calculations.py"],
+    }
