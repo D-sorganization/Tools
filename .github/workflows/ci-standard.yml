@@ -145,7 +145,7 @@ jobs:
                     if [ -d "$arch_dir" ]; then
                       if [ ! -x "$arch_dir/bin/python" ] && [ ! -x "$arch_dir/bin/python3" ]; then
                         echo "Directory $arch_dir is incomplete or broken. Cleaning..."
-                        sudo rm -rf "$arch_dir" || rm -rf "$arch_dir" || true
+                        sudo -n rm -rf "$arch_dir" 2>/dev/null || rm -rf "$arch_dir" || true
                       else
                         py_bin="$arch_dir/bin/python"
                         if [ ! -x "$py_bin" ]; then
@@ -154,7 +154,7 @@ jobs:
                         echo "Testing zlib import on $py_bin..."
                         if ! "$py_bin" -c "import zlib"; then
                           echo "Directory $arch_dir is corrupt (zlib import failed). Cleaning..."
-                          sudo rm -rf "$arch_dir" || rm -rf "$arch_dir" || true
+                          sudo -n rm -rf "$arch_dir" 2>/dev/null || rm -rf "$arch_dir" || true
                         else
                           echo "Directory $arch_dir is healthy."
                         fi
@@ -486,7 +486,7 @@ jobs:
                     if [ -d "$arch_dir" ]; then
                       if [ ! -x "$arch_dir/bin/python" ] && [ ! -x "$arch_dir/bin/python3" ]; then
                         echo "Directory $arch_dir is incomplete or broken. Cleaning..."
-                        sudo rm -rf "$arch_dir" || rm -rf "$arch_dir" || true
+                        sudo -n rm -rf "$arch_dir" 2>/dev/null || rm -rf "$arch_dir" || true
                       else
                         py_bin="$arch_dir/bin/python"
                         if [ ! -x "$py_bin" ]; then
@@ -495,7 +495,7 @@ jobs:
                         echo "Testing zlib import on $py_bin..."
                         if ! "$py_bin" -c "import zlib"; then
                           echo "Directory $arch_dir is corrupt (zlib import failed). Cleaning..."
-                          sudo rm -rf "$arch_dir" || rm -rf "$arch_dir" || true
+                          sudo -n rm -rf "$arch_dir" 2>/dev/null || rm -rf "$arch_dir" || true
                         else
                           echo "Directory $arch_dir is healthy."
                         fi
