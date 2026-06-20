@@ -2,7 +2,6 @@
 
 [![CI Standard](https://github.com/D-sorganization/Tools/actions/workflows/ci-standard.yml/badge.svg)](https://github.com/D-sorganization/Tools/actions/workflows/ci-standard.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 Welcome to the **Tools Monorepo**. This repository houses a comprehensive collection of utility tools for data processing, file management, scientific computing, and project automation. It features Python-based utilities, MATLAB scientific tools, and web-based interfaces.
@@ -134,7 +133,7 @@ See [Launcher Hierarchy & Guide](docs/LAUNCHERS.md) for detailed documentation.
    make help      # Show available targets
    make install   # Install all dependencies
    make check     # Run linters and tests
-   make format    # Format code with black and ruff
+   make format    # Format code with ruff
    ```
 
 ### Running the Tools

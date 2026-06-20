@@ -49,7 +49,7 @@ Helper scripts for development, file management, and quality assurance.
 
 ## 🛠️ Development
 
-- **Code Style**: We use `ruff` and `black`.
+- **Code Style**: We use `ruff` for formatting and linting.
 - **Type Checking**: We use `mypy` for strict type safety.
 - **Testing**: Run tests with `pytest`.
 
