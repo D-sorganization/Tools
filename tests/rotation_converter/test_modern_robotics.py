@@ -908,8 +908,8 @@ class TestSimulateControlPlot:
             _simulate_control_plot(thetamat, thetamatd, dt)
 
     def test_plot_precondition_thetamat_none(self) -> None:
-        """_simulate_control_plot must raise AssertionError when thetamat is None."""
+        """_simulate_control_plot must raise ValueError when thetamat is None."""
         from rotation_converter.modern_robotics import _simulate_control_plot
 
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError):
             _simulate_control_plot(None, np.zeros((2, 2)), 0.01)  # type: ignore[arg-type]

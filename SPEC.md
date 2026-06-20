@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7782                                   |
+| **Spec Version**        | 1.1.7783                                   |
 | **Last Spec Update**    | 2026-06-20                                 |
 
 ## 2. Purpose & Mission
@@ -49,6 +49,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   building the required Python 3.11 `tools_core` Rust wheel, repairing
   self-hosted runner tool-cache states where the package is present but its
   executable wrapper is missing (#3797).
+- The `rotation_converter.modern_robotics` compatibility shim now shares a
+  local provided-argument guard for explicit `ValueError` validation, keeping
+  the assert-removal contract while reducing the module below its frozen size
+  budget baseline; focused rotation-converter coverage now expects the explicit
+  `ValueError` path for the simulate-control plotting precondition (#3789).
 
 ### 2026-06-19 Update
 
@@ -1362,6 +1367,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-06-19 | 1.1.7674 | fix(data-processor, #3661): keep augmentation, feature extraction, neural-network training, outlier, spectral, and decomposition object methods as mypy-clean plain Python functions instead of invalid Numba dispatchers, and extend the dispatcher regression guard to cover those runtime paths. |
 | 2026-06-19 | 1.1.7674 | fix(data-processor, #3730, #3731): reject empty and single-observation inputs in bootstrap and Bayesian credible intervals before NumPy can emit NaN confidence bounds, and document the n>=2 preconditions with default-collected regression coverage. |
 | 2026-06-19 | 1.1.7674 | fix(docs, #3743): repoint the codemap "Full design" cross-reference from the missing root `chat_codemap_design.md` file to the existing SPEC codemap package baseline, and add a focused regression test that resolves the linked file from `docs/codemap.md`. |
+| 2026-06-20 | 1.1.7783 | fix(rotation-converter, #3789): share a local `modern_robotics` provided-argument guard so assert-to-`ValueError` validation stays explicit while the compatibility shim drops below its frozen module-size budget baseline; update the simulate-control plotting precondition test to expect the explicit `ValueError` contract. |
 | 2026-06-19 | 1.1.7779 | fix(p1am, #3670): replace the bare `except Exception: pass` in `EventLogViewerWidget.update_event_types_combobox` with a module logger that records the failure, so a corrupt/locked event database no longer silently empties the event-type filter without any diagnostic. |
 | 2026-06-19 | 1.1.7675 | fix(contracts, #3674): replace source `assert ... "must be provided"` boundary checks with explicit `ValueError` guards across non-test modules, and add an architecture regression so stripped asserts cannot return as public input validation. |
 | 2026-06-19 | 1.1.7674 | fix(data-processor, #3725): add a seeded local generator for transfer-entropy permutation tests so p-values and dominant direction are reproducible without mutating NumPy's global RNG state. |
