@@ -52,7 +52,8 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Sidekick Python REPL fast completions now drain a bounded result handoff after
   worker start so trivial commands publish output and Workspace registry updates
   for legacy immediate callers, while slower code remains asynchronous,
-  isolated, and cancel-safe (#3716, #3717, #3718, #3719).
+  isolated, and cancel-safe; focused Qt tests cover both immediate and delayed
+  worker completion paths (#3716, #3717, #3718, #3719).
 - CI Standard now keeps the shared apt lock for dependency installation but
   only invokes `sudo` when passwordless sudo is available; non-sudo-capable
   fleet runners warn and continue with the pre-provisioned image packages
