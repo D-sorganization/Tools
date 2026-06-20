@@ -27,6 +27,9 @@ from shared.python.sidekick.process_calculators.constants import (
 from shared.python.sidekick.process_calculators.constants import (
     ANTOINE_WATER_C as ANTOINE_C_CELSIUS,
 )
+from shared.python.sidekick.process_calculators.constants import (
+    MMHG_TO_PA as _MMHG_TO_PA,
+)
 
 __all__ = [
     "ANTOINE_A",
@@ -159,10 +162,10 @@ BUCK_B: float = 18.678  # [dimensionless] Buck equation constant B
 BUCK_C: float = 234.5  # [°C] Buck equation constant C
 BUCK_D: float = 257.14  # [°C] Buck equation constant D
 
-# Unit conversion constants
-MMHG_TO_PASCAL_FACTOR: float = (
-    133.322  # [Pa/mmHg] Conversion factor from mmHg to Pascal
-)
+# Unit conversion constants.
+# Reference the shared full-precision constant instead of a local 133.322
+# literal so this module matches the rest of the library (issue #3676).
+MMHG_TO_PASCAL_FACTOR: float = _MMHG_TO_PA  # [Pa/mmHg] mmHg -> Pascal
 PASCAL_TO_MMHG_FACTOR: float = (
     0.00750062  # [mmHg/Pa] Conversion factor from Pascal to mmHg
 )
