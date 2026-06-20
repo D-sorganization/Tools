@@ -12,7 +12,7 @@ matplotlib==3.11.0
 sympy==1.14.0
 
 # Testing & Quality Assurance
-pytest==9.0.3
+pytest==9.1.1
 pytest-cov==7.1.0
 pytest-timeout==2.4.0
 pytest-benchmark==5.2.3
