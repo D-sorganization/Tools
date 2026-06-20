@@ -222,6 +222,32 @@ class TestStateSpaceSmoke:
         assert hasattr(result, "log_likelihood")
         assert len(result.filtered_states) == n
 
+    @pytest.mark.parametrize("data", [[], [1.0]])
+    def test_local_level_rejects_too_few_observations(self, data):
+        from data_processor.core.state_space import LocalLevelModel
+
+        model = LocalLevelModel()
+
+        with pytest.raises(ValueError, match="at least 2 observations"):
+            model.fit(data)
+
+    @pytest.mark.parametrize("data", [[1.0, np.nan, 2.0], [1.0, np.inf, 2.0]])
+    def test_local_level_rejects_non_finite_observations(self, data):
+        from data_processor.core.state_space import LocalLevelModel
+
+        model = LocalLevelModel()
+
+        with pytest.raises(ValueError, match="NaN or inf"):
+            model.fit(data)
+
+    def test_local_linear_trend_rejects_too_few_observations(self):
+        from data_processor.core.state_space import LocalLinearTrendModel
+
+        model = LocalLinearTrendModel()
+
+        with pytest.raises(ValueError, match="at least 3 observations"):
+            model.fit([1.0, 2.0])
+
     def test_local_level_forecast(self):
         from data_processor.core.state_space import LocalLevelModel, StateSpaceConfig
 

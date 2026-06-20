@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7780                                   |
+| **Spec Version**        | 1.1.7781                                   |
 | **Last Spec Update**    | 2026-06-20                                 |
 
 ## 2. Purpose & Mission
@@ -41,10 +41,14 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - CI Standard now keeps the shared apt lock for dependency installation but
   only invokes `sudo` when passwordless sudo is available; non-sudo-capable
   fleet runners warn and continue with the pre-provisioned image packages
-  instead of failing before quality/tests can start (#3793).
-- Workflow Lint now installs `shellcheck` without prompting for sudo; runners
-  without shellcheck and without passwordless sudo run actionlint with
-  shellcheck integration disabled instead of failing during setup (#3793).
+  instead of failing before quality/tests can start (#3783). Workflow Lint also
+  runs the downloaded `./actionlint` binary from the workspace instead of
+  moving it into `/usr/local/bin` with `sudo`, keeping workflow validation
+  runnable on the same non-sudo fleet runners.
+- CI Standard now force-reinstalls `maturin` without using the pip cache before
+  building the required Python 3.11 `tools_core` Rust wheel, repairing
+  self-hosted runner tool-cache states where the package is present but its
+  executable wrapper is missing (#3797).
 
 ### 2026-06-18 Update
 
@@ -121,6 +125,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   preserving the existing zero-mean behavior. Cross-correlation now also treats
   numba as optional acceleration and falls back to a no-op `jit` decorator when
   CI or downstream consumers install the data processor without numba (#3745).
+- Data processor state-space fitting now validates the public `fit(y)` input
+  contract before matrix initialization: observations must be finite, local
+  level models require at least two points, and trend/seasonal models require
+  at least three points so short or non-finite series fail with `ValueError`
+  instead of producing NaN diagnostics (#3696).
 - Repository package metadata is prepared for the v1.1.0 release by aligning
   `pyproject.toml`, `VERSION`, `CHANGELOG.md`, and this specification's current
   version field.
@@ -1303,6 +1312,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-19 | 1.1.7674 | fix(docs, #3743): repoint the codemap "Full design" cross-reference from the missing root `chat_codemap_design.md` file to the existing SPEC codemap package baseline, and add a focused regression test that resolves the linked file from `docs/codemap.md`. |
 | 2026-06-19 | 1.1.7779 | fix(p1am, #3670): replace the bare `except Exception: pass` in `EventLogViewerWidget.update_event_types_combobox` with a module logger that records the failure, so a corrupt/locked event database no longer silently empties the event-type filter without any diagnostic. |
 | 2026-06-19 | 1.1.7675 | fix(data_processor, #3735): add explicit uncertainty-quantification preconditions for bootstrap and Bayesian credible intervals requiring at least two samples, and for prediction intervals requiring positive residual degrees of freedom, with deterministic coverage for prediction intervals, Bayesian credible intervals, and delta-method confidence intervals. |
 | 2026-06-19 | 1.1.7676 | fix(p1am, #3607): annotate the Modbus codec's re-exported unmapped-sentinel constants and remove stale hardware-test suppressions so the `TAG_255` routing fix remains mypy-clean under pre-push gates. |

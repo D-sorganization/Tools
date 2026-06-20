@@ -143,34 +143,16 @@ jobs:
       - name: Install actionlint
         run: |
           ACTIONLINT_VERSION=1.7.11
-          mkdir -p "$RUNNER_TEMP/actionlint-bin"
           curl -sSL "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz" | tar -xz
-          mv actionlint "$RUNNER_TEMP/actionlint-bin/actionlint"
-          echo "$RUNNER_TEMP/actionlint-bin" >> "$GITHUB_PATH"
+          chmod +x actionlint
 
       - name: Install shellcheck
         run: |
-          if command -v shellcheck >/dev/null 2>&1; then
-            echo "shellcheck is already available."
-            exit 0
-          fi
-          install_shellcheck='
-            set -euo pipefail
-            apt-get -o DPkg::Lock::Timeout=300 update --fix-missing || true
-            apt-get -o DPkg::Lock::Timeout=300 install -y shellcheck
-          '
-          if [ "$(id -u)" -eq 0 ]; then
-            flock /tmp/d-sorg-apt-install.lock bash -c "$install_shellcheck"
-          elif command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
-            sudo -n flock /tmp/d-sorg-apt-install.lock bash -c "$install_shellcheck"
-          else
-            echo "::warning::Passwordless sudo is unavailable; running actionlint without shellcheck integration."
+          if ! command -v shellcheck >/dev/null 2>&1; then
+            SHELLCHECK_VERSION=0.10.0
+            curl -sSL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" | tar -xJ
+            echo "$PWD/shellcheck-v${SHELLCHECK_VERSION}" >> "$GITHUB_PATH"
           fi
 
       - name: Run actionlint
-        run: |
-          if command -v shellcheck >/dev/null 2>&1; then
-            actionlint -color -shellcheck ./scripts/actionlint_shellcheck.sh -pyflakes=
-          else
-            actionlint -color -shellcheck= -pyflakes=
-          fi
+        run: ./actionlint -color -shellcheck ./scripts/actionlint_shellcheck.sh -pyflakes=
