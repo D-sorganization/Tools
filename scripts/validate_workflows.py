@@ -23,6 +23,15 @@ def validate_workflow(path: Path) -> list[str]:
     errors: list[str] = []
     text = path.read_text(encoding="utf-8")
 
+    if (
+        path.name == "workflow-lint.yml"
+        and "sudo apt-get -o DPkg::Lock::Timeout=300 install -y shellcheck" in text
+    ):
+        errors.append(
+            f"{path}: install shellcheck only when passwordless sudo is "
+            "available, or run actionlint without shellcheck"
+        )
+
     if "sudo mv actionlint /usr/local/bin/actionlint" in text:
         errors.append(
             f"{path}: install actionlint into a runner-local directory, "

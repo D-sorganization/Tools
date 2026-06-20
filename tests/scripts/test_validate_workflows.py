@@ -27,6 +27,26 @@ def test_validate_workflow_text_fallback_rejects_missing_jobs(
     ]
 
 
+def test_validate_workflow_rejects_sudo_shellcheck_install(tmp_path: Path) -> None:
+    workflow = tmp_path / "workflow-lint.yml"
+    workflow.write_text(
+        "name: Workflow Lint\n"
+        "on: push\n"
+        "jobs:\n"
+        "  lint:\n"
+        "    runs-on: d-sorg-fleet\n"
+        "    steps:\n"
+        "      - name: Install shellcheck\n"
+        "        run: sudo apt-get -o DPkg::Lock::Timeout=300 install -y shellcheck\n",
+        encoding="utf-8",
+    )
+
+    assert validate_workflows.validate_workflow(workflow) == [
+        f"{workflow}: install shellcheck only when passwordless sudo is "
+        "available, or run actionlint without shellcheck"
+    ]
+
+
 def test_validate_workflow_rejects_sudo_actionlint_install(tmp_path: Path) -> None:
     workflow = tmp_path / "workflow.yml"
     workflow.write_text(
