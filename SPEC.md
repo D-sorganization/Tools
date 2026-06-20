@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7780                                   |
+| **Spec Version**        | 1.1.7781                                   |
 | **Last Spec Update**    | 2026-06-20                                 |
 
 ## 2. Purpose & Mission
@@ -36,11 +36,46 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
+### 2026-06-20 Update
+
+- CI Standard now keeps the shared apt lock for dependency installation but
+  only invokes `sudo` when passwordless sudo is available; non-sudo-capable
+  fleet runners warn and continue with the pre-provisioned image packages
+  instead of failing before quality/tests can start (#3783). Workflow Lint also
+  runs the downloaded `./actionlint` binary from the workspace instead of
+  moving it into `/usr/local/bin` with `sudo`, keeping workflow validation
+  runnable on the same non-sudo fleet runners.
+- CI Standard now force-reinstalls `maturin` without using the pip cache before
+  building the required Python 3.11 `tools_core` Rust wheel, repairing
+  self-hosted runner tool-cache states where the package is present but its
+  executable wrapper is missing (#3797).
+
+### 2026-06-19 Update
+
+- `PluginManager.load_tools()` now validates each `tools.json` category and
+  item before constructing `Tool` records, skipping malformed category values
+  or non-dict entries with warnings while preserving valid tools from the same
+  manifest, backed by strict-mypy-clean focused regression coverage (#3720,
+  #3721). The shared DbC/LoD test module keeps that coverage under the 500 LOC
+  file-size budget by centralizing isolated plugin-manager import/skip helpers.
+
 ### 2026-06-18 Update
 
-- Workflow Lint now installs `actionlint` into a runner-local temporary bin
-  directory and appends it to `GITHUB_PATH`, avoiding privileged writes to
-  `/usr/local/bin` on self-hosted runners without passwordless sudo.
+- Data Processor statistical analysis methods that orchestrate Python objects,
+  pandas frames, callables, dictionaries, dataclasses, and mutable instance
+  state now stay as plain Python functions instead of being wrapped in Numba
+  `nopython` dispatchers. This removes duplicate/triple `@jit` stacks and
+  uncompilable method decorators from uncertainty quantification,
+  cross-correlation, Kalman filters, state-space models, and two-way ANOVA,
+  while preserving explicit float return contracts for Kalman likelihood and
+  parameter-estimation helpers. Default-collected regression coverage proves
+  the affected methods remain executable object-oriented paths (#3661, #3662,
+  #3663, #3665, #3666, #3667, #3681, #3744).
+- Data Processor uncertainty quantification now rejects invalid confidence
+  levels before interval calculations, rejects out-of-domain inverse-normal
+  probabilities instead of returning the median z-score, and returns finite
+  zero skewness/kurtosis for tiny samples that cannot support those higher
+  moments (#3733, #3734).
 - Removed redundant `assert ... is not None` guards in
   `_mr_kinematics.IKinBody` and `config_loader.validate_tools_config` that were
   shadowed by a following `require()`/`isinstance()` contract on the same
@@ -51,14 +86,6 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   the whole `tests/rotation_converter` and `tests/tools` directories, keeping
   small DbC cleanup PRs inside the self-hosted runner CPU budget while
   preserving changed-source coverage (#3736).
-- Unified the mmHg->Pa conversion factor on the single canonical
-  `MMHG_TO_PASCAL` (133.322387415). The truncated 133.322 copies are gone:
-  `process_calculators/constants.MMHG_TO_PA_CONV` is now an alias of the
-  canonical constant, `steam_engine.MMHG_TO_PASCAL_FACTOR` references the
-  shared `MMHG_TO_PA`, and the bare 133.322 literals in the calc_backend
-  syngas-water router use the named constant. The acid-gas/syngas
-  vapor-pressure path is no longer silently ~3e-4 less precise than the rest
-  of the library (#3676).
 - P1AM firmware first-boot defaults now keep `SignalBroker::Reset()` as the
   all-unmapped primitive but layer bench-safe routing after an invalid or
   erased flash configuration: thermocouples TC0-TC3 route to TAG_0-TAG_3,
@@ -122,6 +149,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   preserving the existing zero-mean behavior. Cross-correlation now also treats
   numba as optional acceleration and falls back to a no-op `jit` decorator when
   CI or downstream consumers install the data processor without numba (#3745).
+- Data processor state-space fitting now validates the public `fit(y)` input
+  contract before matrix initialization: observations must be finite, local
+  level models require at least two points, and trend/seasonal models require
+  at least three points so short or non-finite series fail with `ValueError`
+  instead of producing NaN diagnostics (#3696).
 - Repository package metadata is prepared for the v1.1.0 release by aligning
   `pyproject.toml`, `VERSION`, `CHANGELOG.md`, and this specification's current
   version field.
@@ -1304,7 +1336,19 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-06-20 | 1.1.7780 | ci(workflows): install `actionlint` from a runner-local temporary bin directory so self-hosted runners without interactive sudo no longer fail before workflow lint starts. |
+| 2026-06-19 | 1.1.7674 | fix(process-calculators, #3676): unify mmHg-to-Pascal conversion on canonical `MMHG_TO_PASCAL` precision across calc-backend syngas water, Sidekick steam, and process-calculator constants. |
+| 2026-06-20 | 1.1.7781 | fix(data-processor, #3758): call the STL seasonal smoother with a positional fraction argument so the merged time-series helper remains mypy-clean under the existing `Callable[[np.ndarray, float], np.ndarray]` contract. |
+| 2026-06-19 | 1.1.7674 | test(data-processor, #3738): delete the permanently skipped `tests/data_processor/test_integrated_import_fallback.py` legacy sentinel for the archived `Data_Processor_Integrated.py` module, reducing the data-processor skip surface without removing executable coverage. |
+| 2026-06-20 | 1.1.7781 | fix(data-processor, #3760): call the STL seasonal smoother with a positional fraction argument so the merged time-series helper remains mypy-clean under the existing `Callable[[np.ndarray, float], np.ndarray]` contract. |
+| 2026-06-19 | 1.1.7674 | fix(plugin-manager, #3720 #3721): make `PluginManager.load_tools()` skip malformed `tools.json` categories and non-dict entries with warnings while preserving valid tools from the same load, with strict-mypy-clean focused regression coverage. |
+| 2026-06-19 | 1.1.7674 | test(plugin-manager, #3720 #3721): centralize isolated plugin-manager import/skip helpers in `test_python_dbc_lod.py`, preserving malformed manifest regression coverage while keeping the changed test file below the 500 LOC CI budget. |
+| 2026-06-19 | 1.1.7675 | fix(data-processor, #3661): keep time-series decomposition helpers importable when installed Numba rejects the active NumPy version by falling back to a no-op `jit` decorator, preserving pure-Python decomposition behavior under optional acceleration failures. |
+| 2026-06-19 | 1.1.7674 | fix(data-processor, #3661, #3662, #3663, #3665, #3666, #3667, #3681, #3744): keep object-oriented statistical analysis, filtering, and workspace persistence methods as plain Python functions instead of duplicate/triple Numba dispatchers; add default-collected regression tests for the affected runtime paths and a JSON-backed workspace fallback when optional parquet engines are unavailable. |
+| 2026-06-19 | 1.1.7674 | fix(data-processor, #3733, #3734): fail fast on invalid uncertainty-quantification confidence and normal-quantile boundaries while keeping tiny-sample skewness and kurtosis finite under default-collected regression coverage. |
+| 2026-06-19 | 1.1.7674 | fix(data-processor, #3665, #3666, #3667): consolidate cross-correlation runtime regression coverage into the canonical Numba dispatcher PR and preserve pandas dtype metadata across JSON workspace fallback round trips. |
+| 2026-06-19 | 1.1.7674 | fix(data-processor, #3661): keep augmentation, feature extraction, neural-network training, outlier, spectral, and decomposition object methods as mypy-clean plain Python functions instead of invalid Numba dispatchers, and extend the dispatcher regression guard to cover those runtime paths. |
+| 2026-06-19 | 1.1.7674 | fix(data-processor, #3730, #3731): reject empty and single-observation inputs in bootstrap and Bayesian credible intervals before NumPy can emit NaN confidence bounds, and document the n>=2 preconditions with default-collected regression coverage. |
+| 2026-06-19 | 1.1.7674 | fix(docs, #3743): repoint the codemap "Full design" cross-reference from the missing root `chat_codemap_design.md` file to the existing SPEC codemap package baseline, and add a focused regression test that resolves the linked file from `docs/codemap.md`. |
 | 2026-06-19 | 1.1.7779 | fix(p1am, #3670): replace the bare `except Exception: pass` in `EventLogViewerWidget.update_event_types_combobox` with a module logger that records the failure, so a corrupt/locked event database no longer silently empties the event-type filter without any diagnostic. |
 | 2026-06-19 | 1.1.7676 | fix(p1am, #3607): annotate the Modbus codec's re-exported unmapped-sentinel constants and remove stale hardware-test suppressions so the `TAG_255` routing fix remains mypy-clean under pre-push gates. |
 | 2026-06-19 | 1.1.7675 | fix(p1am, #3607): preserve the firmware `TAG_255` unmapped sentinel in Modbus routing and PID pv/cv encoders while keeping ordinary broker-tag parsing strict, with write-routing coverage for all-unmapped configs after erased-NVRAM boots. |
