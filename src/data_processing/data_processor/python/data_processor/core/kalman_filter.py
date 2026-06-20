@@ -436,7 +436,7 @@ class KalmanFilter:
         m = len(innovation)
         sign, logdet = np.linalg.slogdet(innovation_cov)
         if sign <= 0:
-            return float("-inf")
+            return float(-np.inf)
         mahalanobis = innovation @ np.linalg.inv(innovation_cov) @ innovation
         return float(-0.5 * (m * np.log(2 * np.pi) + logdet + mahalanobis))
 
