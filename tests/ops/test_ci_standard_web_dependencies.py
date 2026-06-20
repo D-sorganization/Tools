@@ -74,6 +74,7 @@ def test_quality_gate_dependency_install_does_not_use_shared_pip_cache() -> None
 def test_workflow_lint_installs_actionlint_without_sudo() -> None:
     workflow = WORKFLOW_LINT.read_text(encoding="utf-8")
 
-    assert "chmod +x actionlint" in workflow
-    assert "run: ./actionlint -color" in workflow
+    assert 'chmod +x "$ACTIONLINT_BIN/actionlint"' in workflow
+    assert 'echo "$ACTIONLINT_BIN" >> "$GITHUB_PATH"' in workflow
+    assert "run: actionlint -color" in workflow
     assert "sudo mv actionlint" not in workflow
