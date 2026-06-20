@@ -42,6 +42,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   only invokes `sudo` when passwordless sudo is available; non-sudo-capable
   fleet runners warn and continue with the pre-provisioned image packages
   instead of failing before quality/tests can start (#3758).
+- CI Standard now force-reinstalls `maturin` without using the pip cache before
+  building the required Python 3.11 `tools_core` Rust wheel, repairing
+  self-hosted runner tool-cache states where the package is present but its
+  executable wrapper is missing (#3797).
 
 ### 2026-06-18 Update
 
@@ -1301,6 +1305,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 | 2026-06-19 | 1.1.7674 | test(data-processor, #3738): delete the permanently skipped `tests/data_processor/test_integrated_import_fallback.py` legacy sentinel for the archived `Data_Processor_Integrated.py` module, reducing the data-processor skip surface without removing executable coverage. |
+| 2026-06-19 | 1.1.7674 | fix(docs, #3743): repoint the codemap "Full design" cross-reference from the missing root `chat_codemap_design.md` file to the existing SPEC codemap package baseline, and add a focused regression test that resolves the linked file from `docs/codemap.md`. |
 | 2026-06-19 | 1.1.7779 | fix(p1am, #3670): replace the bare `except Exception: pass` in `EventLogViewerWidget.update_event_types_combobox` with a module logger that records the failure, so a corrupt/locked event database no longer silently empties the event-type filter without any diagnostic. |
 | 2026-06-19 | 1.1.7676 | fix(p1am, #3607): annotate the Modbus codec's re-exported unmapped-sentinel constants and remove stale hardware-test suppressions so the `TAG_255` routing fix remains mypy-clean under pre-push gates. |
 | 2026-06-19 | 1.1.7675 | fix(p1am, #3607): preserve the firmware `TAG_255` unmapped sentinel in Modbus routing and PID pv/cv encoders while keeping ordinary broker-tag parsing strict, with write-routing coverage for all-unmapped configs after erased-NVRAM boots. |
