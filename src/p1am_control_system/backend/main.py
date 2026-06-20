@@ -756,6 +756,20 @@ class TagWritePayload(BaseModel):
     value: float
 
 
+def _latest_tag_or_http_error(tag_name: str, role: str, pid_index: int) -> float:
+    """Return the latest tag value or raise a descriptive PID tuning error."""
+    try:
+        return float(control_context.latest_tags[tag_name])
+    except KeyError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                f"PID loop {pid_index} {role} tag '{tag_name}' is not mapped in "
+                "the latest tag values. Check PLC routing before tuning."
+            ),
+        ) from exc
+
+
 @app.post("/api/tags/{tag_id}", dependencies=[Depends(require_admin_key)])
 async def write_tag_value(tag_id: str, payload: TagWritePayload) -> dict[str, str]:
     """Manually force/write a 32-bit float value directly to a tag register."""
@@ -810,8 +824,8 @@ async def start_pid_tuning(pid_index: int) -> dict[str, str]:
 
     pv_tag = control_context.active_config.pids[pid_index].pv_tag
     cv_tag = control_context.active_config.pids[pid_index].cv_tag
-    current_pv = control_context.latest_tags[pv_tag]
-    current_cv = control_context.latest_tags[cv_tag]
+    current_pv = _latest_tag_or_http_error(pv_tag, "PV", pid_index)
+    current_cv = _latest_tag_or_http_error(cv_tag, "CV", pid_index)
 
     control_context.tuning_sessions[pid_index] = {
         "start_time": time.time(),
@@ -845,10 +859,11 @@ async def step_pid_tuning(
 
     session = control_context.tuning_sessions[pid_index]
     cv_tag = control_context.active_config.pids[pid_index].cv_tag
+    initial_cv = _latest_tag_or_http_error(cv_tag, "CV", pid_index)
 
     session["step_triggered"] = True
     session["step_time"] = time.time() - session["start_time"]
-    session["initial_cv"] = control_context.latest_tags[cv_tag]
+    session["initial_cv"] = initial_cv
     session["final_cv"] = payload.step_value
 
     await plc_client.write_tag(cv_tag, payload.step_value)
