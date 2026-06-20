@@ -49,6 +49,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   building the required Python 3.11 `tools_core` Rust wheel, repairing
   self-hosted runner tool-cache states where the package is present but its
   executable wrapper is missing (#3797).
+- Shared AI shell command validation now fail-closes when token path
+  normalization raises, logs the offending token through the module logger, and
+  keeps dangerous executable checks from being silently skipped (#3671).
 
 ### 2026-06-19 Update
 
@@ -1336,8 +1339,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-06-19 | 1.1.7674 | fix(shared, #3671): make AI shell command validation fail closed and log the offending token when path normalization raises, preventing dangerous-executable checks from being silently skipped. |
 | 2026-06-20 | 1.1.7781 | fix(data-processor, #3758): call the STL seasonal smoother with a positional fraction argument so the merged time-series helper remains mypy-clean under the existing `Callable[[np.ndarray, float], np.ndarray]` contract. |
+| 2026-06-19 | 1.1.7674 | fix(shared, #3671): make AI shell command validation fail closed and log the offending token when path normalization raises, preventing dangerous-executable checks from being silently skipped. |
 | 2026-06-19 | 1.1.7674 | test(data-processor, #3738): delete the permanently skipped `tests/data_processor/test_integrated_import_fallback.py` legacy sentinel for the archived `Data_Processor_Integrated.py` module, reducing the data-processor skip surface without removing executable coverage. |
 | 2026-06-20 | 1.1.7781 | fix(data-processor, #3760): call the STL seasonal smoother with a positional fraction argument so the merged time-series helper remains mypy-clean under the existing `Callable[[np.ndarray, float], np.ndarray]` contract. |
 | 2026-06-19 | 1.1.7674 | fix(plugin-manager, #3720 #3721): make `PluginManager.load_tools()` skip malformed `tools.json` categories and non-dict entries with warnings while preserving valid tools from the same load, with strict-mypy-clean focused regression coverage. |
