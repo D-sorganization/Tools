@@ -2,10 +2,23 @@
 
 from __future__ import annotations
 
-from typing import Callable
+from typing import Any, Callable
 
 import numpy as np
-from numba import jit
+
+try:  # numba is an optional accelerator; pure Python remains correct.
+    from numba import jit
+except ImportError:  # pragma: no cover - depends on the installed numba stack
+
+    def jit(*args: Any, **kwargs: Any) -> Any:
+        """No-op ``@jit`` fallback used when numba is unavailable."""
+        if len(args) == 1 and callable(args[0]) and not kwargs:
+            return args[0]
+
+        def _decorator(func: Any) -> Any:
+            return func
+
+        return _decorator
 
 
 @jit(nopython=True, fastmath=True)
@@ -150,7 +163,7 @@ def extract_stl_seasonal(
 
     for offset in range(period):
         subseries = detrended[offset::period]
-        smoothed = smoother(subseries, frac=0.5)
+        smoothed = smoother(subseries, 0.5)
         seasonal_indices[offset] = np.mean(smoothed)
 
     seasonal_indices -= np.mean(seasonal_indices)
