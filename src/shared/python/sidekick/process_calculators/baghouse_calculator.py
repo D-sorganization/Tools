@@ -49,10 +49,10 @@ __all__ = [
 
 # Standalone simplified calculations are the shared-layer contract. Importing
 # downstream ``tools`` packages from src/shared violates the fleet dependency DAG.
-HAS_THERMO = False
-FlowUnit = None
-GasStream = None
-ThermodynamicCalculator = None
+HAS_THERMO: bool = False
+FlowUnit: Any = None
+GasStream: Any = None
+ThermodynamicCalculator: Any = None
 
 
 def convert(value: float, from_unit: str, to_unit: str) -> float:
