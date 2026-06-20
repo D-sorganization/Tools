@@ -23,11 +23,17 @@ from typing import Any
 from uuid import uuid4
 
 import pandas as pd
-from numba import jit
 
 from data_processor.contracts import require
 
 logger = logging.getLogger(__name__)
+
+_WORKSPACE_PARQUET_FORMAT = "parquet"
+_WORKSPACE_JSON_FORMAT = "json"
+_WORKSPACE_DATA_SUFFIXES = {
+    _WORKSPACE_PARQUET_FORMAT: ".parquet",
+    _WORKSPACE_JSON_FORMAT: ".json",
+}
 
 
 @dataclass(frozen=True)
@@ -451,7 +457,6 @@ class DatasetManager:
         logger.info(f"Exported dataset to {output_path}")
         return output_path
 
-    @jit(nopython=True, fastmath=True)
     def save_workspace(self, workspace_path: Path | str | None = None) -> Path:
         """Save the entire workspace state to disk.
 
@@ -472,23 +477,32 @@ class DatasetManager:
             dataset_dir = save_dir / dataset_id
             dataset_dir.mkdir(exist_ok=True)
 
-            # Save metadata index
-            metadata_list = [v.metadata.to_dict() for v in history.versions]
+            # Save metadata index and data together so optional parquet support
+            # is recorded per version without relying on ambient dependencies.
+            version_entries = []
+            for version in history.versions:
+                data_format = self._save_workspace_version_data(
+                    version.data,
+                    dataset_dir,
+                    version.metadata.id,
+                )
+                version_entries.append(
+                    {
+                        "metadata": version.metadata.to_dict(),
+                        "data_format": data_format,
+                        "pandas_dtypes": self._dataframe_dtypes(version.data),
+                    }
+                )
             index_path = dataset_dir / "index.json"
             with open(index_path, "w") as f:
                 json.dump(
                     {
-                        "versions": metadata_list,
+                        "versions": version_entries,
                         "current_index": history.current_index,
                     },
                     f,
                     indent=2,
                 )
-
-            # Save data for each version
-            for version in history.versions:
-                data_path = dataset_dir / f"{version.metadata.id}.parquet"
-                version.data.to_parquet(data_path)
 
         # Save workspace index
         workspace_index = {
@@ -501,7 +515,6 @@ class DatasetManager:
         logger.info(f"Saved workspace to {save_dir}")
         return save_dir
 
-    @jit(nopython=True, fastmath=True)
     def load_workspace(self, workspace_path: Path | str) -> None:
         """Load workspace state from disk.
 
@@ -532,16 +545,125 @@ class DatasetManager:
             history = DatasetHistory()
             history.current_index = index_data["current_index"]
 
-            for meta_dict in index_data["versions"]:
+            for version_entry in index_data["versions"]:
+                meta_dict, data_format, pandas_dtypes = (
+                    self._read_workspace_version_entry(version_entry)
+                )
                 metadata = DatasetMetadata.from_dict(meta_dict)
-                data_path = dataset_dir / f"{metadata.id}.parquet"
-                data = pd.read_parquet(data_path)
+                data = self._load_workspace_version_data(
+                    dataset_dir,
+                    metadata.id,
+                    data_format,
+                )
+                data = self._restore_dataframe_dtypes(data, pandas_dtypes)
                 history.versions.append(DatasetVersion(metadata=metadata, data=data))
 
             self._datasets[dataset_id] = history
 
         self._active_dataset_id = workspace_index.get("active_dataset_id")
         logger.info(f"Loaded workspace from {load_dir}")
+
+    @staticmethod
+    def _workspace_data_path(
+        dataset_dir: Path, version_id: str, data_format: str
+    ) -> Path:
+        """Return the persisted data path for a workspace version."""
+        suffix = _WORKSPACE_DATA_SUFFIXES.get(data_format)
+        if suffix is None:
+            raise ValueError(f"Unsupported workspace data format: {data_format!r}")
+        return dataset_dir / f"{version_id}{suffix}"
+
+    @classmethod
+    def _save_workspace_version_data(
+        cls,
+        data: pd.DataFrame,
+        dataset_dir: Path,
+        version_id: str,
+    ) -> str:
+        """Persist a workspace version, falling back when parquet is unavailable."""
+        parquet_path = cls._workspace_data_path(
+            dataset_dir,
+            version_id,
+            _WORKSPACE_PARQUET_FORMAT,
+        )
+        try:
+            data.to_parquet(parquet_path)
+            return _WORKSPACE_PARQUET_FORMAT
+        except ImportError as exc:
+            json_path = cls._workspace_data_path(
+                dataset_dir,
+                version_id,
+                _WORKSPACE_JSON_FORMAT,
+            )
+            data.to_json(
+                json_path,
+                orient="table",
+                date_format="iso",
+                date_unit="ns",
+            )
+            logger.info(
+                "Parquet engine unavailable for workspace save; used JSON fallback: %s",
+                exc,
+            )
+            return _WORKSPACE_JSON_FORMAT
+
+    @classmethod
+    def _load_workspace_version_data(
+        cls,
+        dataset_dir: Path,
+        version_id: str,
+        data_format: str,
+    ) -> pd.DataFrame:
+        """Load a workspace version from its recorded data format."""
+        data_path = cls._workspace_data_path(dataset_dir, version_id, data_format)
+        if data_format == _WORKSPACE_JSON_FORMAT:
+            return pd.read_json(data_path, orient="table")
+        if data_format == _WORKSPACE_PARQUET_FORMAT:
+            try:
+                return pd.read_parquet(data_path)
+            except ImportError:
+                json_path = cls._workspace_data_path(
+                    dataset_dir,
+                    version_id,
+                    _WORKSPACE_JSON_FORMAT,
+                )
+                if json_path.exists():
+                    return pd.read_json(json_path, orient="table")
+                raise
+        raise ValueError(f"Unsupported workspace data format: {data_format!r}")
+
+    @staticmethod
+    def _dataframe_dtypes(data: pd.DataFrame) -> dict[str, str]:
+        """Return a JSON-serializable dtype contract for a DataFrame."""
+        return {str(column): str(dtype) for column, dtype in data.dtypes.items()}
+
+    @staticmethod
+    def _restore_dataframe_dtypes(
+        data: pd.DataFrame,
+        pandas_dtypes: dict[str, str],
+    ) -> pd.DataFrame:
+        """Restore dtypes recorded by workspace persistence."""
+        if not pandas_dtypes:
+            return data
+
+        restored = data.copy()
+        for column, dtype in pandas_dtypes.items():
+            if column in restored.columns:
+                restored[column] = restored[column].astype(dtype)
+        return restored
+
+    @staticmethod
+    def _read_workspace_version_entry(
+        version_entry: dict[str, Any],
+    ) -> tuple[dict[str, Any], str, dict[str, str]]:
+        """Read current and legacy workspace index entries."""
+        if "metadata" in version_entry:
+            return (
+                version_entry["metadata"],
+                version_entry.get("data_format", _WORKSPACE_PARQUET_FORMAT),
+                version_entry.get("pandas_dtypes", {}),
+            )
+        return version_entry, _WORKSPACE_PARQUET_FORMAT, {}
 
     def close_dataset(self, dataset_id: str | None = None) -> None:
         """Close a dataset and remove it from memory.
