@@ -103,6 +103,21 @@ _TOP_LEVEL_SOURCE_TESTS = {
     ("rotation_converter", "_mr_kinematics.py"): [
         "tests/rotation_converter/test_mr_kinematics_contracts_3736.py",
     ],
+    ("rotation_converter", "_mr_dynamics.py"): [
+        "tests/rotation_converter/test_modern_robotics.py",
+    ],
+    ("rotation_converter", "modern_robotics.py"): [
+        "tests/rotation_converter/test_modern_robotics.py",
+    ],
+    ("rotation_converter", "modern_robotics_pkg/dynamics.py"): [
+        "tests/rotation_converter/test_modern_robotics.py",
+    ],
+    ("rotation_converter", "modern_robotics_pkg/kinematics.py"): [
+        "tests/rotation_converter/test_modern_robotics.py",
+    ],
+    ("rotation_converter", "modern_robotics_pkg/trajectory.py"): [
+        "tests/rotation_converter/test_modern_robotics.py",
+    ],
     ("tools", "config_loader.py"): [
         "tests/tools/test_config_loader.py",
     ],
