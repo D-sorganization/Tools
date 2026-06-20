@@ -4,6 +4,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CI_STANDARD = REPO_ROOT / ".github" / "workflows" / "ci-standard.yml"
+WORKFLOW_LINT = REPO_ROOT / ".github" / "workflows" / "workflow-lint.yml"
 
 
 def test_ci_standard_installs_fastapi_multipart_parser() -> None:
@@ -45,9 +46,13 @@ def test_ci_standard_limits_sidekick_runtime_lane_to_runtime_sources() -> None:
 def test_ci_standard_serializes_apt_installs_on_shared_runners() -> None:
     workflow = CI_STANDARD.read_text(encoding="utf-8")
 
-    install_steps = workflow.count("sudo flock /tmp/d-sorg-apt-install.lock")
+    install_steps = workflow.count("Install System Dependencies")
 
     assert install_steps == 2
+    assert workflow.count("flock /tmp/d-sorg-apt-install.lock") == 4
+    assert "sudo -n true" in workflow
+    assert "sudo -n flock /tmp/d-sorg-apt-install.lock" in workflow
+    assert "Passwordless sudo is unavailable" in workflow
     assert "apt-get -o DPkg::Lock::Timeout=300 update --fix-missing" in workflow
     assert "apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing" in workflow
 
@@ -64,3 +69,11 @@ def test_quality_gate_dependency_install_does_not_use_shared_pip_cache() -> None
 
     assert install_step["env"]["PIP_NO_CACHE_DIR"] == "1"
     assert install_step["env"]["PIP_CACHE_DIR"] == "${{ runner.temp }}/pip-quality-gate"
+
+
+def test_workflow_lint_installs_actionlint_without_sudo() -> None:
+    workflow = WORKFLOW_LINT.read_text(encoding="utf-8")
+
+    assert "chmod +x actionlint" in workflow
+    assert "run: ./actionlint -color" in workflow
+    assert "sudo mv actionlint" not in workflow

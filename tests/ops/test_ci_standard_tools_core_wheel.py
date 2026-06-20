@@ -34,6 +34,9 @@ def test_ci_tests_job_builds_and_installs_tools_core_wheel_in_required_lane() ->
 
     wheel_script = wheel_step["run"]
     assert "maturin build" in wheel_script
+    assert (
+        "python -m pip install --force-reinstall --no-cache-dir maturin" in wheel_script
+    )
     assert "rust_core/tools-core/Cargo.toml" in wheel_script
     assert "python -m pip install" in wheel_script
     assert "import tools_core" in wheel_script
