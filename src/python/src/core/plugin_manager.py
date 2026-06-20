@@ -113,6 +113,22 @@ class PluginManager:
             category=category,
         )
 
+    def _is_valid_tool_category(self, category: str, items: object) -> bool:
+        """Return whether a tools.json category has a list of tool entries."""
+        if isinstance(items, list):
+            return True
+
+        logger.warning(
+            "Skipping invalid tool category %s: expected list of tool entries, got %s",
+            category,
+            type(items).__name__,
+        )
+        return False
+
+    def _warn_invalid_tool_entry(self, category: str, reason: object) -> None:
+        """Log a malformed tools.json entry without aborting the load."""
+        logger.warning("Skipping invalid tool entry in %s: %s", category, reason)
+
     def load_tools(self) -> dict[str, list[Tool]]:
         """
         Load tools from tools.json with path validation.
@@ -133,10 +149,20 @@ class PluginManager:
             return {}
 
         try:
-            self.tools = {}
+            loaded_tools: dict[str, list[Tool]] = {}
             for category, items in data.items():
+                if not self._is_valid_tool_category(category, items):
+                    continue
+
                 tool_list = []
                 for item in items:
+                    if not isinstance(item, dict):
+                        self._warn_invalid_tool_entry(
+                            category,
+                            f"expected dict, got {type(item).__name__}",
+                        )
+                        continue
+
                     try:
                         tool = self._build_validated_tool(
                             item,
@@ -145,14 +171,13 @@ class PluginManager:
                         )
                         if tool is not None:
                             tool_list.append(tool)
-                    except KeyError as e:
-                        logger.warning(
-                            f"Skipping invalid tool entry in {category}: {e}"
-                        )
+                    except (KeyError, TypeError) as e:
+                        self._warn_invalid_tool_entry(category, e)
 
                 if tool_list:
-                    self.tools[category] = tool_list
+                    loaded_tools[category] = tool_list
 
+            self.tools = loaded_tools
             return self.tools
         except (KeyError, ValueError, TypeError) as e:
             logger.error(f"Failed to load tools: {e}")
