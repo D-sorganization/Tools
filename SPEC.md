@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7782                                   |
+| **Spec Version**        | 1.1.7783                                   |
 | **Last Spec Update**    | 2026-06-20                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-20 Update
 
+- Pressure Drop Calculator now exposes the singular `PressureDropInput`
+  Pydantic request model from `src.pressure_drop_calculator`, preserving
+  construction-time gas-composition validation while focused tests cover
+  defaults, invalid compositions, and output-model coexistence (#3737).
 - CI Standard now keeps the shared apt lock for dependency installation but
   only invokes `sudo` when passwordless sudo is available; non-sudo-capable
   fleet runners warn and continue with the pre-provisioned image packages
@@ -1349,6 +1353,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-20 | 1.1.7783 | test(pressure-drop, #3737): expose the singular `PressureDropInput` Pydantic model from `src.pressure_drop_calculator`, preserve construction-time gas-composition validation, and add focused coverage for defaults, invalid gas composition, and backend model coexistence. |
 | 2026-06-20 | 1.1.7781 | fix(data-processor, #3758): call the STL seasonal smoother with a positional fraction argument so the merged time-series helper remains mypy-clean under the existing `Callable[[np.ndarray, float], np.ndarray]` contract. |
 | 2026-06-19 | 1.1.7674 | test(data-processor, #3738): delete the permanently skipped `tests/data_processor/test_integrated_import_fallback.py` legacy sentinel for the archived `Data_Processor_Integrated.py` module, reducing the data-processor skip surface without removing executable coverage. |
 | 2026-06-20 | 1.1.7781 | fix(data-processor, #3760): call the STL seasonal smoother with a positional fraction argument so the merged time-series helper remains mypy-clean under the existing `Callable[[np.ndarray, float], np.ndarray]` contract. |
