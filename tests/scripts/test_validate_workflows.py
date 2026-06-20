@@ -25,3 +25,25 @@ def test_validate_workflow_text_fallback_rejects_missing_jobs(
     assert validate_workflows.validate_workflow(workflow) == [
         f"{workflow}: missing top-level 'jobs'"
     ]
+
+
+def test_validate_workflow_rejects_sudo_actionlint_install(tmp_path: Path) -> None:
+    workflow = tmp_path / "workflow.yml"
+    workflow.write_text(
+        "\n".join(
+            [
+                "name: Test",
+                "jobs:",
+                "  lint:",
+                "    steps:",
+                "      - run: sudo mv actionlint /usr/local/bin/actionlint",
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    expected = (
+        f"{workflow}: install actionlint into a runner-local directory, "
+        "not /usr/local/bin with sudo"
+    )
+    assert validate_workflows.validate_workflow(workflow) == [expected]
