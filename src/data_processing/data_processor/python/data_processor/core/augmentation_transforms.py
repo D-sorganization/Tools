@@ -12,7 +12,6 @@ from __future__ import annotations
 import logging
 
 import numpy as np
-from numba import jit
 
 from data_processor.core.augmentation_types import AugmentationConfig
 
@@ -87,7 +86,7 @@ class TransformsMixin:
 
         if data.ndim == 1:
             warp_factors = self._generate_warp_curve(len(data), sigma, knots)
-            return data * warp_factors
+            return np.asarray(data * warp_factors)
         else:
             result = np.zeros_like(data)
             for i in range(data.shape[0]):
@@ -194,8 +193,6 @@ class TransformsMixin:
 
         return result
 
-    @jit(nopython=True, fastmath=True)
-    @jit(nopython=True, fastmath=True)
     def permute(self, data: np.ndarray, max_segments: int = 5) -> np.ndarray:
         """Randomly permute segments of the data.
 
@@ -337,7 +334,6 @@ class TransformsMixin:
     # =========================================================================
     # Synthetic data augmentations
     # =========================================================================
-    @jit(nopython=True, fastmath=True)
     def smote(
         self,
         data: np.ndarray,
@@ -356,15 +352,17 @@ class TransformsMixin:
         """
         if data is None:
             raise ValueError("data must be provided")
-        k_neighbors = k_neighbors or self.config.smote_k_neighbors
+        resolved_k_neighbors = (
+            k_neighbors if k_neighbors is not None else self.config.smote_k_neighbors
+        )
         data = np.atleast_2d(data)
         n_samples = data.shape[0]
 
         if n_samples < 2:
             return data, labels
 
-        if n_samples < k_neighbors + 1:
-            k_neighbors = max(1, n_samples - 1)
+        if n_samples < resolved_k_neighbors + 1:
+            resolved_k_neighbors = max(1, n_samples - 1)
 
         # Find k nearest neighbors for each sample
         synthetic_samples = []
@@ -373,7 +371,7 @@ class TransformsMixin:
         for i in range(n_samples):
             # Compute distances
             distances = np.linalg.norm(data - data[i], axis=1)
-            neighbor_indices = np.argsort(distances)[1 : k_neighbors + 1]
+            neighbor_indices = np.argsort(distances)[1 : resolved_k_neighbors + 1]
 
             # Generate synthetic sample
             nn_idx = self._rng.choice(neighbor_indices)
@@ -394,9 +392,6 @@ class TransformsMixin:
 
         return augmented_data, None
 
-    @jit(nopython=True, fastmath=True)
-    @jit(nopython=True, fastmath=True)
-    @jit(nopython=True, fastmath=True)
     def mixup(
         self,
         data: np.ndarray,
@@ -419,7 +414,7 @@ class TransformsMixin:
         n_samples = data.shape[0]
 
         # Generate mixing coefficients from Beta distribution
-        lambdas = self._rng.beta(alpha, alpha, n_samples)
+        lambdas = np.asarray(self._rng.beta(alpha, alpha, n_samples), dtype=float)
 
         # Random permutation for mixing pairs
         indices = self._rng.permutation(n_samples)
@@ -456,7 +451,6 @@ class TransformsMixin:
 
         return mixed_data, mixed_labels
 
-    @jit(nopython=True, fastmath=True)
     def cutout(self, data: np.ndarray, ratio: float | None = None) -> np.ndarray:
         """Apply cutout augmentation (mask random regions).
 
@@ -492,8 +486,6 @@ class TransformsMixin:
 
         return result
 
-    @jit(nopython=True, fastmath=True)
-    @jit(nopython=True, fastmath=True)
     def cutmix(
         self,
         data: np.ndarray,
@@ -638,7 +630,7 @@ class TransformsMixin:
 
         # Interpolate
         original_indices = np.arange(n)
-        return np.interp(original_indices, time_steps, data)
+        return np.asarray(np.interp(original_indices, time_steps, data))
 
     def _generate_warp_curve(self, length: int, sigma: float, knots: int) -> np.ndarray:
         """Generate smooth random warp curve."""
@@ -682,7 +674,6 @@ class TransformsMixin:
         combined = np.concatenate([before, scaled_window, after])
         return self._interpolate(combined, n)
 
-    @jit(nopython=True, fastmath=True)
     def _permute_1d(self, data: np.ndarray, max_segments: int) -> np.ndarray:
         """Permute segments of 1D data."""
         if data is None:
@@ -719,9 +710,8 @@ class TransformsMixin:
         x_original = np.linspace(0, 1, n)
         x_target = np.linspace(0, 1, target_length)
 
-        return np.interp(x_target, x_original, data)
+        return np.asarray(np.interp(x_target, x_original, data))
 
-    @jit(nopython=True, fastmath=True)
     def _frequency_mask_1d(
         self, data: np.ndarray, mask_ratio: float, num_masks: int
     ) -> np.ndarray:
