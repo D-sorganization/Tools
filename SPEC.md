@@ -49,6 +49,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   building the required Python 3.11 `tools_core` Rust wheel, repairing
   self-hosted runner tool-cache states where the package is present but its
   executable wrapper is missing (#3797).
+- Model generation REST route coverage now reaches `inertia/from-mesh` success
+  paths through the route dispatcher for both explicit mass and density inputs,
+  proving mesh volume, center of mass, and inertia responses stay populated
+  beyond early validation guards (#3669).
 
 ### 2026-06-19 Update
 
@@ -1355,6 +1359,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-06-19 | 1.1.7674 | ci(rotation-converter, #3736): map Modern Robotics contract-guard source changes to `tests/rotation_converter/test_modern_robotics.py` in the source-keyed selector so CI keeps the DbC regression surface without collecting the full rotation-converter tree in every Python lane. |
 | 2026-06-19 | 1.1.7674 | ci(rotation-converter, #3736): cast split Modern Robotics NumPy return boundaries explicitly so the CI Standard delta mypy gate stays clean under `--follow-imports=skip` without changing runtime array results. |
 | 2026-06-20 | 1.1.7781 | fix(data-processor, #3758): call the STL seasonal smoother with a positional fraction argument so the merged time-series helper remains mypy-clean under the existing `Callable[[np.ndarray, float], np.ndarray]` contract. |
+| 2026-06-19 | 1.1.7674 | test(model-generation, #3669): add route-dispatched `inertia/from-mesh` success coverage for both explicit mass and density inputs so mesh volume, COM, and inertia responses are exercised past early validation guards. |
 | 2026-06-19 | 1.1.7674 | test(data-processor, #3738): delete the permanently skipped `tests/data_processor/test_integrated_import_fallback.py` legacy sentinel for the archived `Data_Processor_Integrated.py` module, reducing the data-processor skip surface without removing executable coverage. |
 | 2026-06-20 | 1.1.7781 | fix(data-processor, #3760): call the STL seasonal smoother with a positional fraction argument so the merged time-series helper remains mypy-clean under the existing `Callable[[np.ndarray, float], np.ndarray]` contract. |
 | 2026-06-20 | 1.1.7782 | fix(ci): install actionlint into a runner-local temporary bin directory, reject the old sudo actionlint move in workflow validation, and guard CI Standard apt installs so non-passwordless self-hosted runners do not fail before tests when system dependencies are pre-provisioned. |
