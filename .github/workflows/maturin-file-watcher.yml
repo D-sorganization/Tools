@@ -65,7 +65,7 @@ jobs:
         run: python -m pip install --upgrade pip maturin watchdog pytest
 
       - name: Build file_watcher_rs wheel
-        run: maturin build --release -m rust_core/file_watcher/Cargo.toml --out dist
+        run: python -m maturin build --release -m rust_core/file_watcher/Cargo.toml --out dist
 
       - name: Install the built wheel
         shell: bash
