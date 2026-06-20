@@ -104,7 +104,7 @@ terminal = [
 
 # CAD geometry export (build123d pulls in its own matplotlib and PyQt6)
 cad = [
-    "build123d==0.10.0",
+    "build123d==0.11.0",
 ]
 # DWSIM gasification model
 dwsim = [
