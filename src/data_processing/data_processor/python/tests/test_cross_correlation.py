@@ -231,3 +231,52 @@ class TestMultiSeries:
         }
         mat, _ = analyzer.multi_series_correlation_matrix(series)
         np.testing.assert_array_almost_equal(mat, mat.T)
+
+
+class TestTransferEntropy:
+    """Tests for transfer_entropy method."""
+
+    def test_seeded_permutation_pvalues_repeat_on_same_analyzer(self) -> None:
+        """Seeded transfer-entropy permutation tests should be reproducible."""
+        rng = np.random.default_rng(123)
+        x = rng.standard_normal(80)
+        y = np.roll(x, 1) + rng.standard_normal(80) * 0.05
+        analyzer = CrossCorrelationAnalyzer(
+            CrossCorrelationConfig(
+                num_permutations=25,
+                permutation_random_seed=42,
+                te_bins=4,
+            )
+        )
+
+        first = analyzer.transfer_entropy(x, y)
+        second = analyzer.transfer_entropy(x, y)
+
+        assert second.te_x_to_y_pvalue == first.te_x_to_y_pvalue
+        assert second.te_y_to_x_pvalue == first.te_y_to_x_pvalue
+        assert second.dominant_direction == first.dominant_direction
+
+    def test_permutation_test_does_not_use_global_numpy_permutation(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Transfer entropy should use its local generator for permutations."""
+        rng = np.random.default_rng(456)
+        x = rng.standard_normal(60)
+        y = np.roll(x, 1) + rng.standard_normal(60) * 0.1
+        analyzer = CrossCorrelationAnalyzer(
+            CrossCorrelationConfig(
+                num_permutations=5,
+                permutation_random_seed=7,
+                te_bins=4,
+            )
+        )
+
+        def fail_global_permutation(_source: np.ndarray) -> np.ndarray:
+            raise AssertionError("global np.random.permutation was called")
+
+        monkeypatch.setattr(np.random, "permutation", fail_global_permutation)
+
+        result = analyzer.transfer_entropy(x, y)
+
+        assert 0.0 < result.te_x_to_y_pvalue <= 1.0
+        assert 0.0 < result.te_y_to_x_pvalue <= 1.0
