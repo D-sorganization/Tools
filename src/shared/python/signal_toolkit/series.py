@@ -257,7 +257,7 @@ class SeriesExpansion:
         errors_by_term = []
         convergent = False
         terms_for_convergence = None
-        prev_approx = None
+        prev_approx: float | None = None
 
         for n in range(1, self.max_terms + 1):
             taylor_func = self.taylor_series(f, center, n)
@@ -270,7 +270,9 @@ class SeriesExpansion:
                 terms_for_convergence = n
 
             # Check for divergence (error growing)
-            if abs(approx) > 1e15 or np.isnan(approx) or np.isinf(approx):
+            if prev_approx is not None and (
+                abs(approx) > 1e15 or np.isnan(approx) or np.isinf(approx)
+            ):
                 return {
                     "convergent": False,
                     "terms_for_convergence": None,
