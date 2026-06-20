@@ -16,8 +16,9 @@
 # was previously always skipped in CI).
 #
 # Runner platforms: the d-sorg-fleet self-hosted pool spans linux, windows, and
-# macos hosts (ubuntu / windows / macos). Python versions: 3.10, 3.11, 3.12,
-# 3.13.
+# macos hosts (ubuntu / windows / macos). Python versions 3.10, 3.11, and
+# 3.12 are hard-gated here; Python 3.13 coverage is documented but deferred
+# until all fleet runners have a 3.13 toolcache.
 
 name: Maturin — pendulum_core
 
@@ -82,7 +83,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.10", "3.11", "3.12"]
 
     steps:
       - name: Checkout repository

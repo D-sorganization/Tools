@@ -86,6 +86,8 @@ def test_maturin_ci_covers_python_versions():
     fleet_toolcache_limited = {
         "maturin-data-processor-core.yml",
         "maturin-file-watcher.yml",
+        "maturin-movement-optimizer.yml",
+        "maturin-pendulum-core.yml",
     }
     for wf_path in candidates:
         content = wf_path.read_text(encoding="utf-8")

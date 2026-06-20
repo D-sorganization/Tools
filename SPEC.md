@@ -76,6 +76,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   Python versions from documented Python 3.13 toolcache deferrals, so CI tests
   enforce the runner contract without reintroducing an unsupported 3.13 matrix
   leg.
+- The movement optimizer and pendulum Rust extension gates now use the same
+  documented Python 3.10 through 3.12 hard-gate policy on self-hosted fleet
+  runners, keeping Python 3.13 coverage deferred until runner toolcaches are
+  provisioned consistently.
 - Model generation REST route coverage now reaches `inertia/from-mesh` success
   paths through the route dispatcher for both explicit mass and density inputs,
   proving mesh volume, center of mass, and inertia responses stay populated
