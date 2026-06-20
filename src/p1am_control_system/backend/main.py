@@ -139,6 +139,9 @@ shutdown_event = asyncio.Event()
 # that can't hold a WebSocket) can poll /api/snapshot as a streaming fallback.
 latest_frame: dict[str, Any] = {}
 
+POLL_FAILURE_ESCALATION_THRESHOLD = 3
+POLL_FAILURE_MAX_BACKOFF_S = 5.0
+
 # Instantiate global Alicat manager and default devices
 alicat_manager = AlicatManager()
 alicat_manager.add_device(
@@ -233,6 +236,24 @@ def _publish_active_config(config: RoutingConfig) -> None:
     control_context.apply_config(config, plc_client, backup_simulator)
 
 
+def _reject_output_write_if_estopped() -> None:
+    if control_context.e_stop_active:
+        raise HTTPException(
+            status_code=409,
+            detail="E-stop active; output writes are inhibited.",
+        )
+
+
+def _require_latest_tag(tag_name: str, *, role: str) -> float:
+    try:
+        return float(control_context.latest_tags[tag_name])
+    except KeyError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail=f"Configured {role} tag '{tag_name}' is not mapped.",
+        ) from exc
+
+
 async def poll_plc_loop() -> None:
     """Background loop polling the PLC tags at 10Hz.
 
@@ -240,7 +261,9 @@ async def poll_plc_loop() -> None:
     """
     global latest_frame
     logger.info("Starting background PLC polling loop...")
+    consecutive_failures = 0
     while not shutdown_event.is_set():
+        retry_delay = settings.poll_interval_s
         try:
             frame = await _poll_once(
                 plc=plc_client,
@@ -259,10 +282,42 @@ async def poll_plc_loop() -> None:
             # the reference is atomic, so a concurrent reader sees a whole frame.
             if frame:
                 latest_frame = frame
+            consecutive_failures = 0
         except Exception as loop_err:
-            logger.error(f"Unexpected error in PLC polling loop: {loop_err}")
+            consecutive_failures += 1
+            retry_delay = min(
+                settings.poll_interval_s * (2 ** (consecutive_failures - 1)),
+                POLL_FAILURE_MAX_BACKOFF_S,
+            )
+            if consecutive_failures < POLL_FAILURE_ESCALATION_THRESHOLD:
+                logger.error(f"Unexpected error in PLC polling loop: {loop_err}")
+            elif consecutive_failures == POLL_FAILURE_ESCALATION_THRESHOLD:
+                logger.warning(
+                    "PLC polling loop degraded after %d consecutive failures; "
+                    "retrying in %.3fs: %s",
+                    consecutive_failures,
+                    retry_delay,
+                    loop_err,
+                )
+            else:
+                logger.debug(
+                    "PLC polling loop still degraded after %d consecutive failures; "
+                    "retrying in %.3fs: %s",
+                    consecutive_failures,
+                    retry_delay,
+                    loop_err,
+                )
+            if consecutive_failures >= POLL_FAILURE_ESCALATION_THRESHOLD:
+                latest_frame = {
+                    "polling_status": {
+                        "status": "degraded",
+                        "consecutive_failures": consecutive_failures,
+                        "retry_delay_s": retry_delay,
+                        "last_error": str(loop_err),
+                    }
+                }
         # Sleep to maintain 10Hz frequency (100ms cycle)
-        await asyncio.sleep(settings.poll_interval_s)
+        await asyncio.sleep(retry_delay)
     logger.info("Background PLC polling loop stopped.")
 
 
@@ -569,8 +624,16 @@ async def acknowledge_alarm(
         except Exception as e:
             logger.error(f"Failed to log acknowledgment: {e}")
             db.rollback()
+            raise HTTPException(
+                status_code=500,
+                detail=f"Failed to persist acknowledgment for alarm {tag_id}.",
+            ) from e
 
-        control_context.acknowledge_alarm(tag_id)
+        if not control_context.acknowledge_alarm(tag_id):
+            raise HTTPException(
+                status_code=409,
+                detail=f"Alarm {tag_id} could not be acknowledged.",
+            )
 
         return {"status": "success", "message": f"Alarm {tag_id} acknowledged."}
     return {"status": "ignored", "message": f"Alarm {tag_id} not found."}
@@ -759,6 +822,7 @@ class TagWritePayload(BaseModel):
 @app.post("/api/tags/{tag_id}", dependencies=[Depends(require_admin_key)])
 async def write_tag_value(tag_id: str, payload: TagWritePayload) -> dict[str, str]:
     """Manually force/write a 32-bit float value directly to a tag register."""
+    _reject_output_write_if_estopped()
     tag_name = tag_id
     if tag_id.isdigit():
         val_id = int(tag_id)
@@ -810,8 +874,8 @@ async def start_pid_tuning(pid_index: int) -> dict[str, str]:
 
     pv_tag = control_context.active_config.pids[pid_index].pv_tag
     cv_tag = control_context.active_config.pids[pid_index].cv_tag
-    current_pv = control_context.latest_tags[pv_tag]
-    current_cv = control_context.latest_tags[cv_tag]
+    current_pv = _require_latest_tag(pv_tag, role="PID PV")
+    current_cv = _require_latest_tag(cv_tag, role="PID CV")
 
     control_context.tuning_sessions[pid_index] = {
         "start_time": time.time(),
@@ -843,12 +907,14 @@ async def step_pid_tuning(
             status_code=400, detail="Tuning session not active for this PID loop."
         )
 
+    _reject_output_write_if_estopped()
     session = control_context.tuning_sessions[pid_index]
     cv_tag = control_context.active_config.pids[pid_index].cv_tag
+    initial_cv = _require_latest_tag(cv_tag, role="PID CV")
 
     session["step_triggered"] = True
     session["step_time"] = time.time() - session["start_time"]
-    session["initial_cv"] = control_context.latest_tags[cv_tag]
+    session["initial_cv"] = initial_cv
     session["final_cv"] = payload.step_value
 
     await plc_client.write_tag(cv_tag, payload.step_value)
