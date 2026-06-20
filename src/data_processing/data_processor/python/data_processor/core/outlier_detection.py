@@ -26,7 +26,6 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-from numba import jit
 from scipy import stats
 
 logger = logging.getLogger(__name__)
@@ -53,7 +52,7 @@ OutlierDetectionMethod = OutlierMethod
 class OutlierConfig:
     """Configuration for outlier detection."""
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         # Default values
         self.method: OutlierMethod = OutlierMethod.ENSEMBLE
         self.zscore_threshold: float = 3.0
@@ -175,7 +174,7 @@ class OutlierDetector:
         if X.ndim == 1:
             X = X.reshape(-1, 1)
 
-        return X
+        return np.asarray(X)
 
     def _detect_single(
         self,
@@ -224,19 +223,19 @@ class OutlierDetector:
             return self._build_result(mask, scores, "zscore_fallback")
 
         # Combine results
-        all_masks = np.array(all_masks)
+        all_masks_array = np.array(all_masks)
 
         if self.config.ensemble_voting == "majority":
             # Outlier if majority of methods agree
-            votes = np.sum(all_masks, axis=0)
-            threshold = len(all_masks) / 2.0
+            votes = np.sum(all_masks_array, axis=0)
+            threshold = len(all_masks_array) / 2.0
             combined_mask = votes >= threshold
         elif self.config.ensemble_voting == "any":
             # Outlier if any method flags it
-            combined_mask = np.any(all_masks, axis=0)
+            combined_mask = np.any(all_masks_array, axis=0)
         else:  # "all"
             # Outlier only if all methods agree
-            combined_mask = np.all(all_masks, axis=0)
+            combined_mask = np.all(all_masks_array, axis=0)
 
         # Score based on vote count
         scores = np.sum(all_masks, axis=0) / len(all_masks)
@@ -316,7 +315,6 @@ class OutlierDetector:
 
         return mask, scores
 
-    @jit(nopython=True, fastmath=True)
     def _detect_grubbs(self, X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """Grubbs test for outliers (iterative)."""
         if X is None:
@@ -420,7 +418,7 @@ class OutlierDetector:
         # Anomaly score
         scores = 2 ** (-avg_path / c_n)
 
-        return scores
+        return np.asarray(scores)
 
     def _build_isolation_tree(
         self,
@@ -471,7 +469,7 @@ class OutlierDetector:
             if n <= 1:
                 return depth
             c_n = 2 * (np.log(n - 1) + 0.5772156649) - 2 * (n - 1) / n
-            return depth + c_n
+            return float(depth + c_n)
 
         if x[tree["feature"]] < tree["split"]:
             return self._path_length(x, tree["left"], depth + 1)
@@ -567,7 +565,6 @@ class OutlierDetector:
 
         return mask, scores
 
-    @jit(nopython=True, fastmath=True)
     def _dbscan(
         self,
         X: np.ndarray,
