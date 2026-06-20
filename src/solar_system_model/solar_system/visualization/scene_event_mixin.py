@@ -228,7 +228,8 @@ class SceneEventMixin:
 
     def _handle_mouse_motion(self, pos: tuple[int, int], rel: tuple[int, int]) -> None:
         """Handle mouse motion."""
-        assert pos is not None, "pos must be provided"
+        if pos is None:
+            raise ValueError("pos must be provided")
         if not self.renderer:  # type: ignore[attr-defined]
             return
         if self._mouse_dragging:
@@ -251,7 +252,8 @@ class SceneEventMixin:
 
     def _handle_mouse_wheel(self, y_offset: float) -> None:
         """Handle mouse wheel events."""
-        assert y_offset is not None, "y_offset must be provided"
+        if y_offset is None:
+            raise ValueError("y_offset must be provided")
         if not self.renderer:  # type: ignore[attr-defined]
             return
         mode = "Orbit"
@@ -302,7 +304,8 @@ class SceneEventMixin:
         Returns:
             True if the click was consumed by the sidebar.
         """
-        assert x is not None, "x must be provided"
+        if x is None:
+            raise ValueError("x must be provided")
         if not self.sidebar_panel:  # type: ignore[attr-defined]
             return False
 
@@ -357,7 +360,8 @@ class SceneEventMixin:
         Returns:
             True if the click was consumed by the control panel.
         """
-        assert x is not None, "x must be provided"
+        if x is None:
+            raise ValueError("x must be provided")
         if not self.unified_controls:  # type: ignore[attr-defined]
             return False
 

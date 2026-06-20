@@ -35,7 +35,8 @@ class _SimWorker(QObject):
         run_fn: Any,
         run_kwargs: dict,
     ) -> None:
-        assert run_kwargs is not None, "run_kwargs must be provided"
+        if run_kwargs is None:
+            raise ValueError("run_kwargs must be provided")
         super().__init__()
         self._run_fn = run_fn
         self._run_kwargs = run_kwargs

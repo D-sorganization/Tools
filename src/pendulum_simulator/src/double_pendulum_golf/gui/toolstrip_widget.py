@@ -200,7 +200,8 @@ def _make_scale_slider(
     Pre: ``style`` is non-None, ``divisor > 0``, ``default`` and
          ``max_val`` are positive, ``default <= max_val``.
     """
-    assert style is not None, "style must be provided"
+    if style is None:
+        raise ValueError("style must be provided")
     assert divisor > 0, f"divisor must be > 0, got {divisor}"
     assert max_val > 0 and default > 0 and default <= max_val, (
         f"invalid slider bounds: default={default}, max_val={max_val}"
@@ -569,7 +570,8 @@ class ToolStrip(QWidget):
         All three overlay types (Force Vectors, Mobility Ellipsoids, Force Ellipsoids)
         are stacked vertically in a compact section.
         """
-        assert layout is not None, "layout must be provided"
+        if layout is None:
+            raise ValueError("layout must be provided")
         overlay_frame, overlay_layout = self._create_overlay_frame()
 
         overlay_layout.addLayout(self._build_force_vectors_row())

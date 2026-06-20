@@ -281,7 +281,8 @@ def IKinSpace(
     Output:
         (np.array([ 1.57073783,  2.99966384,  3.1415342 ]), True)
     """
-    assert Slist is not None, "Slist must be provided"
+    if Slist is None:
+        raise ValueError("Slist must be provided")
     thetalist = np.array(thetalist0).copy()
     i = 0
     maxiterations = 20
@@ -342,7 +343,8 @@ def ScrewTrajectory(
     Returns:
         List of N 4x4 SE(3) matrices along the trajectory.
     """
-    assert Tf is not None, "Tf must be provided"
+    if Tf is None:
+        raise ValueError("Tf must be provided")
     Xstart = np.asarray(Xstart, dtype=float)
     Xend = np.asarray(Xend, dtype=float)
     require(Xstart.shape == (4, 4), "Xstart must be 4x4")
@@ -431,7 +433,8 @@ def JointTrajectory(
                   [1.1792, 0.448, 0.5376, 1.0896, 1.896, 1.8128, 0.8064, 1]
                   [   1.2,   0.5,    0.6,    1.1,     2,      2,    0.9, 1]])
     """
-    assert thetastart is not None, "thetastart must be provided"
+    if thetastart is None:
+        raise ValueError("thetastart must be provided")
     N = int(N)
     timegap = Tf / (N - 1.0)
     traj = np.zeros((len(thetastart), N))
@@ -485,7 +488,8 @@ def CartesianTrajectory(
                    [0, 0, 0, 1]]),
          ...]
     """
-    assert Xstart is not None, "Xstart must be provided"
+    if Xstart is None:
+        raise ValueError("Xstart must be provided")
     N = int(N)
     timegap = Tf / (N - 1.0)
     traj = [[None]] * N

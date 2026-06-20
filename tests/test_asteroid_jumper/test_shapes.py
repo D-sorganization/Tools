@@ -33,7 +33,7 @@ class TestMakeCircle:
         assert s.semi_b == pytest.approx(7.0)
 
     def test_zero_radius_raises(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError, match="radius must be positive"):
             make_circle(0.0)
 
     def test_vertex_count(self) -> None:

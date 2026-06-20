@@ -29,7 +29,8 @@ class SidebarPanel:
         style: PanelStyle | None = None,
     ):
         """Initialize sidebar panel."""
-        assert position is not None, "position must be provided"
+        if position is None:
+            raise ValueError("position must be provided")
         self.position = position
         self.width = 380
         self.height = height
@@ -52,7 +53,8 @@ class SidebarPanel:
     def handle_click(self, rel_x: int, rel_y: int) -> str | None:
         """Handle mouse click on sidebar."""
         # Simple tab hit detection
-        assert rel_x is not None, "rel_x must be provided"
+        if rel_x is None:
+            raise ValueError("rel_x must be provided")
         tab_width = self.width // len(self.tabs)
         header_height = 35
 
@@ -98,7 +100,8 @@ class UnifiedControlPanel:
         style: PanelStyle | None = None,
     ):
         """Initialize unified control panel."""
-        assert position is not None, "position must be provided"
+        if position is None:
+            raise ValueError("position must be provided")
         self.position = position
         self.width = width
         self.height = 140  # Increased height for more toggles
@@ -119,7 +122,8 @@ class UnifiedControlPanel:
 
     def toggle_checkbox(self, index: int) -> str | None:
         """Toggle checkbox by index."""
-        assert index is not None, "index must be provided"
+        if index is None:
+            raise ValueError("index must be provided")
         if 0 <= index < len(self.checkboxes):
             self.checkboxes[index].checked = not self.checkboxes[index].checked
             return self.checkboxes[index].action
@@ -155,14 +159,16 @@ class MissionListPanel:
     def __init__(
         self, position: tuple[int, int] = (0, 0), style: PanelStyle | None = None
     ):
-        assert position is not None, "position must be provided"
+        if position is None:
+            raise ValueError("position must be provided")
         self.position = position
         self.style = style or PanelStyle()
         self.visible = True
         self.scroll_offset = 0
 
     def get_render_data(self, missions_dict: dict[str, Any]) -> dict[str, Any]:
-        assert missions_dict is not None, "missions_dict must be provided"
+        if missions_dict is None:
+            raise ValueError("missions_dict must be provided")
         missions_info = []
         for name, data in missions_dict.items():
             highlights = data.get("science_highlights", ())

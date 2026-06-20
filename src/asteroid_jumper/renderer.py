@@ -61,7 +61,8 @@ class AsteroidJumperRenderer(QWidget):
         self, controller: SimController, parent: QWidget | None = None
     ) -> None:
         super().__init__(parent)
-        assert controller is not None, "controller must not be None"
+        if controller is None:
+            raise ValueError("controller must not be None")
         self._ctrl = controller
         self._scale = VIEWPORT_SCALE
         self._pan = QPointF(0.0, 0.0)  # world-space offset (m)
@@ -129,7 +130,8 @@ class AsteroidJumperRenderer(QWidget):
     # ------------------------------------------------------------------
 
     def paintEvent(self, _event: object) -> None:
-        assert _event is not None, "_event must be provided"
+        if _event is None:
+            raise ValueError("_event must be provided")
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         snapshot = self._ctrl.snapshot()

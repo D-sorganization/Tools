@@ -80,7 +80,8 @@ class ScanPreviewMixin:
         Args:
             stats: Dictionary with folder statistics.
         """
-        assert stats is not None, "stats must be provided"
+        if stats is None:
+            raise ValueError("stats must be provided")
         self.stats_text.configure(state="normal")  # type: ignore[attr-defined]
         self.stats_text.delete("1.0", "end")  # type: ignore[attr-defined]
 

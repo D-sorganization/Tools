@@ -369,7 +369,11 @@ class ShellTool(CLIToolBase):
                         if val in dangerous or Path(val).name in dangerous:
                             return False
                 except Exception:
-                    pass
+                    logger.warning(
+                        "Could not validate token %r; rejecting command",
+                        clean_token,
+                    )
+                    return False
 
             return True
         except ValueError:

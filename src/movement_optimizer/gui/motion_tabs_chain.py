@@ -423,13 +423,13 @@ class ChainDynamicsTab(_MotionViewMixin, QWidget):
         count = len(time_s)
         panel = self.analysis_panel
         panel.clear()
-        plot_renderer.plot_chain_tension(panel.axes["tension"], history)
-        plot_renderer.plot_chain_curvature(panel.axes["curvature"], history)
+        plot_renderer.plot_chain_tension(panel.axes["tension"], history, legend=False)
+        plot_renderer.plot_chain_curvature(panel.axes["curvature"], history, legend=False)
         plot_renderer.plot_chain_energy(
-            panel.axes["energy"], time_s, self._rollout.energy_j[:count]
+            panel.axes["energy"], time_s, self._rollout.energy_j[:count], legend=False
         )
         plot_renderer.plot_chain_tip_speed(
-            panel.axes["tip_speed"], time_s, self._rollout.tip_speed_m_s[:count]
+            panel.axes["tip_speed"], time_s, self._rollout.tip_speed_m_s[:count], legend=False
         )
         self._apply_plot_legend_visibility()
         panel.draw()

@@ -56,7 +56,8 @@ class TarConcentrationConversionMixin:
         molecular_weight: float | None = None,
     ) -> float:
         """Convert tar concentration."""
-        assert value is not None, "value must be provided"
+        if value is None:
+            raise ValueError("value must be provided")
         self._validate_tar_inputs(temperature, pressure)
         from_key = from_unit.lower()
         to_key = to_unit.lower()

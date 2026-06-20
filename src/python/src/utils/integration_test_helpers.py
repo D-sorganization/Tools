@@ -131,7 +131,8 @@ def check_database_connection(
     Returns:
         ServiceStatus with check results
     """
-    assert connection_string is not None, "connection_string must be provided"
+    if connection_string is None:
+        raise ValueError("connection_string must be provided")
     start = time.perf_counter()
 
     try:
@@ -239,7 +240,8 @@ class EnvironmentManager:
             key: Environment variable name
             value: Value to set
         """
-        assert key is not None, "key must be provided"
+        if key is None:
+            raise ValueError("key must be provided")
         if key not in self._original_env:
             self._original_env[key] = os.environ.get(key)
         os.environ[key] = value
@@ -250,7 +252,8 @@ class EnvironmentManager:
         Args:
             key: Environment variable name
         """
-        assert key is not None, "key must be provided"
+        if key is None:
+            raise ValueError("key must be provided")
         if key not in self._original_env:
             self._original_env[key] = os.environ.get(key)
         os.environ.pop(key, None)
@@ -264,7 +267,8 @@ class EnvironmentManager:
         Returns:
             Path to temporary directory
         """
-        assert prefix is not None, "prefix must be provided"
+        if prefix is None:
+            raise ValueError("prefix must be provided")
         import tempfile
 
         temp_dir = Path(tempfile.mkdtemp(prefix=prefix))
@@ -375,7 +379,8 @@ class IntegrationTestBase:
             ServiceStatus with check results
         """
         # Default implementations for common services
-        assert service_name is not None, "service_name must be provided"
+        if service_name is None:
+            raise ValueError("service_name must be provided")
         if service_name.startswith("http://") or service_name.startswith("https://"):
             return check_http_service(service_name)
         elif ":" in service_name:
@@ -563,7 +568,8 @@ class ResourceManager:
         Returns:
             The registered resource
         """
-        assert resource is not None, "resource must be provided"
+        if resource is None:
+            raise ValueError("resource must be provided")
         self._resources.append((resource, cleanup_func))
         return resource
 
@@ -627,7 +633,8 @@ class MockServer:
             host: Host to bind to
             port: Port to bind to (0 for random)
         """
-        assert host is not None, "host must be provided"
+        if host is None:
+            raise ValueError("host must be provided")
         self.host = host
         self.port = port
         self._server: Any = None
@@ -716,7 +723,8 @@ class DataFileLoader:
         Args:
             data_dir: Directory containing test data files
         """
-        assert data_dir is not None, "data_dir must be provided"
+        if data_dir is None:
+            raise ValueError("data_dir must be provided")
         self.data_dir = Path(data_dir)
 
     def load_json(self, filename: str) -> dict[str, Any]:
@@ -789,7 +797,8 @@ def retry_test(
         Decorator function
     """
 
-    assert max_attempts is not None, "max_attempts must be provided"
+    if max_attempts is None:
+        raise ValueError("max_attempts must be provided")
 
     def decorator(func: F) -> F:
         @functools.wraps(func)
@@ -841,7 +850,8 @@ def compare_dicts_deep(
     Returns:
         List of difference descriptions
     """
-    assert dict1 is not None, "dict1 must be provided"
+    if dict1 is None:
+        raise ValueError("dict1 must be provided")
     ignore_keys = ignore_keys or []
     differences: list[str] = []
 

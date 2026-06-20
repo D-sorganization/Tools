@@ -29,6 +29,10 @@ OVERSIZED_SOURCE_LINE_BASELINES = {
         "src/media_processing/audio_processor/matlab/audio_signal_processor/gui/"
         "MainWindow.m"
     ): 3528,
+    # Legacy Modern Robotics compatibility module tracked in
+    # scripts/monolith_baseline.txt. It may be touched for contract cleanup,
+    # but cannot grow beyond this frozen budget without a split.
+    "src/rotation_converter/modern_robotics.py": 2105,
 }
 
 SOURCE_SUFFIXES = {

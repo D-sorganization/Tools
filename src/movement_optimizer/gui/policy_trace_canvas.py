@@ -7,7 +7,7 @@ from collections.abc import Callable
 from itertools import pairwise
 
 import numpy as np
-from PyQt6.QtCore import QPointF
+from PyQt6.QtCore import QPointF, QRect
 from PyQt6.QtGui import QColor, QFontMetrics, QPainter, QPen, QResizeEvent
 from PyQt6.QtWidgets import QWidget
 
@@ -67,7 +67,8 @@ class PolicyTraceCanvas(QWidget):
     _LEGEND_ROW_HEIGHT_PX = 16
     _MARGIN_PX = 8
     _MINIMUM_PLOT_HEIGHT_PX = 96
-    _TRACE_BOTTOM_PADDING_PX = 8
+    _AXIS_LABEL_TOP_PADDING_PX = 4
+    _AXIS_LABEL_BOTTOM_PADDING_PX = 6
 
     def __init__(self) -> None:
         super().__init__()
@@ -147,13 +148,20 @@ class PolicyTraceCanvas(QWidget):
             + self._LEGEND_BOTTOM_PADDING_PX
         )
 
+    def _axis_label_band_height(self) -> int:
+        """Return reserved bottom height for the trace x-axis label."""
+        metrics = QFontMetrics(self.font())
+        return (
+            self._AXIS_LABEL_TOP_PADDING_PX + metrics.height() + self._AXIS_LABEL_BOTTOM_PADDING_PX
+        )
+
     def _minimum_height_for_width(self, width: int) -> int:
         """Return the height needed for legends plus readable trace data."""
         return max(
             self._BASE_MIN_HEIGHT_PX,
             self._legend_band_height_for_width(width)
             + self._MINIMUM_PLOT_HEIGHT_PX
-            + self._TRACE_BOTTOM_PADDING_PX,
+            + self._axis_label_band_height(),
         )
 
     def _sync_minimum_height(self) -> None:
@@ -200,6 +208,7 @@ class PolicyTraceCanvas(QWidget):
         self._draw_normalized_series(painter, "knee_rate_ratio", LEG, 1)
         if self._legend_visible:
             self._draw_legend(painter)
+        self._draw_axis_label(painter)
 
     def _draw_normalized_series(
         self,
@@ -218,7 +227,7 @@ class PolicyTraceCanvas(QWidget):
         else:
             normalized = (values - lower) / (upper - lower)
         top = self._top_margin()
-        bottom = self.height() - float(self._TRACE_BOTTOM_PADDING_PX)
+        bottom = self._plot_bottom()
         span = max(bottom - top, 1.0)
         points = [
             QPointF(
@@ -230,6 +239,10 @@ class PolicyTraceCanvas(QWidget):
         painter.setPen(QPen(color, width))
         for start, end in pairwise(points):
             painter.drawLine(start, end)
+
+    def _plot_bottom(self) -> float:
+        """Bottom edge of the data rectangle above the reserved axis label."""
+        return float(self.height() - self._axis_label_band_height())
 
     def _draw_legend(self, painter: QPainter) -> None:
         available_width = self._available_legend_width()
@@ -246,8 +259,21 @@ class PolicyTraceCanvas(QWidget):
             painter.setPen(QPen(color, 1))
             painter.drawText(x + self._LEGEND_LINE_PX + self._LEGEND_TEXT_GAP_PX, y, label)
             x += item_width
+
+    def _iteration_label_rect(self) -> QRect:
+        """Return the reserved text rectangle for the trace x-axis label."""
+        metrics = QFontMetrics(self.font())
+        label = "iteration"
+        text_width = metrics.horizontalAdvance(label)
+        text_height = metrics.height()
+        x = max(self._MARGIN_PX, self.width() - self._MARGIN_PX - text_width)
+        y = self.height() - self._AXIS_LABEL_BOTTOM_PADDING_PX - text_height
+        return QRect(x, y, text_width, text_height)
+
+    def _draw_axis_label(self, painter: QPainter) -> None:
+        """Draw trace axis text in its reserved band, outside plotted data."""
         painter.setPen(QPen(CHAIN, 1))
-        painter.drawText(max(self._MARGIN_PX, self.width() - 64), self.height() - 8, "iteration")
+        painter.drawText(self._iteration_label_rect(), 0, "iteration")
 
     def _build_series(
         self,

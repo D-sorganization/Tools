@@ -913,7 +913,8 @@ class PendulumWidget(BasePendulumWidget):
             ⊖  zoom out
             ⤢  fit view to trajectory (always recoverable; press F)
         """
-        assert painter is not None, "painter must be provided"
+        if painter is None:
+            raise ValueError("painter must be provided")
         r = self.rect()
         btn_size = 24
         margin = 6

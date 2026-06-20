@@ -80,9 +80,10 @@ class TestFrictionFactorLaminar:
         f_high = friction_factor_laminar(2000.0)
         assert f_low > f_high
 
-    def test_zero_re_returns_default(self) -> None:
-        f = friction_factor_laminar(0.0)
-        assert f > 0  # Safe fallback, no exception
+    @pytest.mark.parametrize("reynolds_number", [0.0, -100.0])
+    def test_nonpositive_re_raises(self, reynolds_number: float) -> None:
+        with pytest.raises(ValueError, match="Reynolds number must be positive"):
+            friction_factor_laminar(reynolds_number)
 
 
 class TestFrictionFactorColebrook:

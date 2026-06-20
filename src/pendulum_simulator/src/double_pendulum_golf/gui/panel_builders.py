@@ -93,8 +93,10 @@ def _wire_double_perturbation(
     PerturbationPanel
         Fully wired; caller must call panel.set_perturbation_panel(perturb).
     """
-    assert panel is not None, "panel must be provided"
-    assert controls is not None, "controls must be provided"
+    if panel is None:
+        raise ValueError("panel must be provided")
+    if controls is None:
+        raise ValueError("controls must be provided")
     perturb = PerturbationPanel()
 
     def _double_simulate_fn(coeffs: list) -> object:
@@ -171,8 +173,10 @@ def _wire_triple_perturbation(
     PerturbationPanel
         Fully wired; caller must call panel.set_perturbation_panel(perturb).
     """
-    assert panel is not None, "panel must be provided"
-    assert controls is not None, "controls must be provided"
+    if panel is None:
+        raise ValueError("panel must be provided")
+    if controls is None:
+        raise ValueError("controls must be provided")
     perturb = PerturbationPanel()
 
     def _triple_simulate_fn(coeffs: list) -> object:
@@ -257,8 +261,10 @@ def _wire_golfer_perturbation(
     PerturbationPanel
         Fully wired; caller must call panel.set_perturbation_panel(perturb).
     """
-    assert panel is not None, "panel must be provided"
-    assert controls is not None, "controls must be provided"
+    if panel is None:
+        raise ValueError("panel must be provided")
+    if controls is None:
+        raise ValueError("controls must be provided")
     perturb = PerturbationPanel()
 
     def _golfer_simulate_fn(coeffs: list) -> object:
@@ -346,12 +352,15 @@ def _wire_panel_sim_signals(
     - panels is a tuple of SimulationPanel instances.
     - active_panel_fn() returns the currently active panel.
     """
-    assert ts is not None, "ts must be provided"
-    assert panels is not None, "panels must be provided"
-    assert active_panel_fn is not None, "active_panel_fn must be provided"
+    if ts is None:
+        raise ValueError("ts must be provided")
+    if panels is None:
+        raise ValueError("panels must be provided")
+    if active_panel_fn is None:
+        raise ValueError("active_panel_fn must be provided")
     for panel in panels:
         panel.sim_started.connect(
-            lambda _p=panel: (ts.set_running(True) if _p is active_panel_fn() else None)
+            lambda _p=panel: ts.set_running(True) if _p is active_panel_fn() else None
         )
         panel.sim_finished.connect(
             lambda _p=panel: (
@@ -364,13 +373,11 @@ def _wire_panel_sim_signals(
             )
         )
         panel.frame_changed.connect(
-            lambda idx, _p=panel: (ts.set_frame(idx) if _p is active_panel_fn() else None)
+            lambda idx, _p=panel: ts.set_frame(idx) if _p is active_panel_fn() else None
         )
         # Reset toolstrip play button when playback ends
         panel.playback_ended.connect(
-            lambda _p=panel: (
-                ts.btn_play.setChecked(False) if _p is active_panel_fn() else None
-            )
+            lambda _p=panel: ts.btn_play.setChecked(False) if _p is active_panel_fn() else None
         )
 
 
@@ -715,8 +722,10 @@ def _build_golfer_params(p: dict, pendulum: GolferPendulumWidget) -> GolferParam
     GolferParams
         Physics parameters for the golfer upper body simulation.
     """
-    assert p is not None, "p must be provided"
-    assert pendulum is not None, "pendulum must be provided"
+    if p is None:
+        raise ValueError("p must be provided")
+    if pendulum is None:
+        raise ValueError("pendulum must be provided")
     tilt_rad = np.radians(p.get("tilt_deg", 0.0))
     g = GRAVITY_MSS if p.get("gravity_on", True) else 0.0
     g_eff = g * float(np.cos(tilt_rad))  # (#1113)
@@ -757,7 +766,8 @@ def _build_golfer_params(p: dict, pendulum: GolferPendulumWidget) -> GolferParam
 
 def _build_golfer_state(p: dict) -> np.ndarray:
     """Build the 16-element golfer initial state vector from control dict."""
-    assert p is not None, "p must be provided"
+    if p is None:
+        raise ValueError("p must be provided")
     return np.array(
         [
             p["theta_hub_rad"],
@@ -782,7 +792,8 @@ def _build_golfer_state(p: dict) -> np.ndarray:
 
 def _build_golfer_torque(p: dict) -> object:
     """Build a polynomial torque function for the golfer model from control dict."""
-    assert p is not None, "p must be provided"
+    if p is None:
+        raise ValueError("p must be provided")
     return make_polynomial_torque_golfer(
         p["hub_coeffs"],
         p["rs_coeffs"],
@@ -796,7 +807,8 @@ def _build_golfer_torque(p: dict) -> object:
 
 def _build_golfer_limits(p: dict) -> JointLimitsNDOF | None:
     """Build joint limits for the golfer model, or None if disabled."""
-    assert p is not None, "p must be provided"
+    if p is None:
+        raise ValueError("p must be provided")
     if not p.get("enable_limits", False):
         return None
     return JointLimitsNDOF(
@@ -808,7 +820,8 @@ def _build_golfer_limits(p: dict) -> JointLimitsNDOF | None:
 
 def _build_golfer_clamp(p: dict) -> np.ndarray | None:
     """Build torque clamp array for the golfer model, or None if disabled."""
-    assert p is not None, "p must be provided"
+    if p is None:
+        raise ValueError("p must be provided")
     if not p.get("enable_clamp", False):
         return None
     return np.array(p["torque_limits"])
@@ -954,8 +967,10 @@ def _wire_overlay_signals(ts: Any, active_panel_fn: Callable) -> None:
       segment_visibility_changed signals.
     - active_panel_fn() returns the currently active SimulationPanel.
     """
-    assert ts is not None, "ts must be provided"
-    assert active_panel_fn is not None, "active_panel_fn must be provided"
+    if ts is None:
+        raise ValueError("ts must be provided")
+    if active_panel_fn is None:
+        raise ValueError("active_panel_fn must be provided")
 
     def _fwd_overlay(attr: str, value: object) -> None:
         pw = active_panel_fn().pendulum

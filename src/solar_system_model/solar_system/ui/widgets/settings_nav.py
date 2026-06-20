@@ -22,7 +22,8 @@ class SettingsPanel:
         self, position: tuple[int, int] = (20, 500), style: PanelStyle | None = None
     ):
         """Initialize the settings panel."""
-        assert position is not None, "position must be provided"
+        if position is None:
+            raise ValueError("position must be provided")
         self.position = position
         self.style = style or PanelStyle()
         self.visible = False
@@ -34,7 +35,8 @@ class SettingsPanel:
 
     def toggle_checkbox(self, index: int) -> str | None:
         """Toggle a checkbox by index."""
-        assert index is not None, "index must be provided"
+        if index is None:
+            raise ValueError("index must be provided")
         if 0 <= index < len(self.checkboxes):
             self.checkboxes[index].checked = not self.checkboxes[index].checked
             return self.checkboxes[index].action
@@ -63,7 +65,8 @@ class NavigationPanel:
         self, position: tuple[int, int] = (20, 300), style: PanelStyle | None = None
     ):
         """Initialize navigation panel."""
-        assert position is not None, "position must be provided"
+        if position is None:
+            raise ValueError("position must be provided")
         self.position = position
         self.style = style or PanelStyle()
         self.visible = True

@@ -51,7 +51,7 @@ jobs:
     needs: pick-runner
     runs-on: d-sorg-fleet
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with: { fetch-depth: 2 }
 
       - name: Identify New/Modified Files
